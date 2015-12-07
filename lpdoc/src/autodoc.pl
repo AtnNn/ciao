@@ -31,36 +31,23 @@
    minimum, a module title and a comment for each of the exported
    predicates be provided.
 
-@begin{alert}   
-@bf{Note: This part is obsolete. -- JFMC}
-@end{alert}
-
    The output format @cindex{documentation format} in which the
    documentation is generated is defined by the backend modules
    (@lib{autodoc_texinfo}, @lib{autodoc_html}, @lib{autodoc_man},
    etc.).
 
-   The main output format supported is @tt{texinfo} (see The GNU
-   Texinfo Documentation System manual for more info), from which
+   One of the main output format supported is @tt{texinfo} (see The
+   GNU Texinfo Documentation System manual for more info), from which
    printed manuals and several other printing and on-line formats can
-   be easily generated automatically (including info, html,
-   etc.). There is also some limited support for direct output in unix
-   @tt{man} format and direct @tt{html} (but note that html can also
-   be generated in a better way by first generating texinfo and then
-   using one of the available converters). For texinfo, the
-   documentation for a module is a texinfo chapter, suitable for
-   inclusion in a wrapper ``main'' document file.  A simple example of
-   the use of this library for generating a texinfo reference manual
-   (including a driver script, useful Makefiles, etc.) is included
-   with the library source code. Other examples can be found in the
-   Ciao documentation directory (i.e., the Ciao manuals themselves).
+   be easily generated automatically (including info). There is also
+   some limited support for direct output in unix @tt{man} format. For
+   texinfo, the documentation for a module is a texinfo chapter,
+   suitable for inclusion in a wrapper ``main'' document file.
 
-   A simple example of the use of this library for generating a
-   @tt{texinfo} @cindex{texinfo} reference manual (including a driver
-   script, useful Makefiles, etc.) is included with the library source
-   code. Other examples can be found in the Ciao documentation
-   directory (i.e., the Ciao manuals themselves).
-").
+   A simple example of the use of this library a reference manual is
+   included with the library source code. Other examples can be found
+   in the Ciao documentation directory (i.e., the Ciao manuals
+   themselves).  ").
 
 % ---------------------------------------------------------------------------
 
@@ -71,26 +58,25 @@
 :- use_module(library(ttyout)).
 :- use_module(library(aggregates)).
 :- use_module(library(read),          [read/2]).
-:- use_module(library(make(make_rt)), [verbose_message/1, verbose_message/2]).
 :- use_module(library(dict)).
 
 % Ciao libraries
 :- use_module(library(compiler), [use_module/1]).
-:- use_module(library(assertions(assrt_lib)),
+:- use_module(library(assertions/assrt_lib),
 	    [
 		cleanup_code_and_related_assertions/0,
 		clause_read/7,
 		assertion_read/9,
 		assertion_body/7,
 		get_code_and_related_assertions_opts/6,
-		set_libs/2,
 		use_pkg/2
 	    ]).
-:- use_module(library(compiler(c_itf))).
+:- use_module(library(compiler/c_itf)).
 :- use_module(library(messages)).
-:- use_module(library(filenames), [no_path_file_name/2, basename/2]).
+:- use_module(library(pathnames),
+	[path_basename/2, path_splitext/3, path_concat/3]).
 :- use_module(library(lists),
-	    [append/3, reverse/2, length/2, list_concat/2, select/3]).
+	[append/3, reverse/2, length/2, list_concat/2, select/3]).
 :- use_module(library(terms), [atom_concat/2]).
 
 :- use_module(library(system_extra), [(-) /1, try_finally/3]).
@@ -98,7 +84,7 @@
 % ---------------------------------------------------------------------------
 
 % TODO: rename predicates in assertions_props
-:- use_module(library(assertions(assertions_props)),
+:- use_module(library(assertions/assertions_props),
 	    [predfunctor/1, propfunctor/1]).
 
 % @var{X} is a definition for predicates
@@ -109,15 +95,16 @@ defkind_prop(X) :- propfunctor(X).
 % ---------------------------------------------------------------------------
 
 % Local libraries
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_settings))).
-:- use_module(lpdocsrc(src(autodoc_filesystem))).
-:- use_module(lpdocsrc(src(autodoc_structure))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
-:- use_module(lpdocsrc(src(autodoc_refsdb))).
-:- use_module(lpdocsrc(src(autodoc_parse))).
-:- use_module(lpdocsrc(src(autodoc_index))).
-:- use_module(lpdocsrc(src(comments)), [version_descriptor/1, docstring/1,
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_structure)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_refsdb)).
+:- use_module(lpdoc(autodoc_parse)).
+:- use_module(lpdoc(autodoc_index)).
+:- use_module(lpdoc(autodoc_aux), [verbose_message/1, verbose_message/2]).
+:- use_module(lpdoc(comments), [version_descriptor/1, docstring/1,
 	stringcommand/1, doc_id_type/3]).
 
 % ===========================================================================
@@ -133,7 +120,7 @@ defkind_prop(X) :- propfunctor(X).
 index_comment(Type,Text) :-
 	typeindex(Type,_,_,Text,_).
 
-:- use_module(lpdocsrc(src(autodoc_doctree))).
+:- use_module(lpdoc(autodoc_doctree)).
 
 % ---------------------------------------------------------------------------
 
@@ -177,14 +164,14 @@ prepare_auxfiles(Backend, Opts) :- Backend = html, !,
 	% Add CSS files
 	CSS = 'lpdoc.css',
 	setting_value(lpdoclib, LpdocLib),
-	atom_concat(LpdocLib, CSS, HtmlStyle),
+	path_concat(LpdocLib, CSS, HtmlStyle),
 	absfile_for_aux(CSS, Backend, OutCSS),
 	copy_file(HtmlStyle, OutCSS, [overwrite]).
 prepare_auxfiles(_, _) :- !.
 
-:- use_module(library(system_extra), [copy_file/3]).
+:- use_module(library(system), [copy_file/3]).
 
-:- use_module(lpdocsrc(src(autodoc_html_resources)),
+:- use_module(lpdoc(autodoc_html_assets),
 	[prepare_web_skel/1, prepare_mathjax/0]).
 
 % ===========================================================================
@@ -198,23 +185,18 @@ prepare_auxfiles(_, _) :- !.
 get_autodoc_opts(_Backend, Mod, Opts) :-
 	StartPage = ~setting_value_or_default(startpage),
 	PaperType = ~setting_value_or_default(papertype),
-	Libs = ~all_setting_values(filepath),
-	SysLibs = ~all_setting_values(systempath),
+	get_lib_opts(Libs, _SysLibs),
 	Indices = ~all_setting_values(index),
-	PathAliasF = ~all_setting_values(pathsfile),
 	%
 	( Mod = ~get_mainmod ->
 	    Opts0 = ~all_setting_values(doc_mainopts),
 	    % TODO: Should this be here?
 	    % Complain about not defined values (only when documenting mainmod)
 	    warn_if_empty(Libs, "no filepath variable was found"),
-	    warn_if_empty(SysLibs, "no systempath variable was found"),
-	    warn_if_empty(Indices, "no index variable was found"),
-	    warn_if_empty(PathAliasF, "no pathsfile variable was found")
+	    warn_if_empty(Indices, "no index variable was found")
 	; Opts0 = ~all_setting_values(doc_compopts)
 	),
 	Opts = [indices(Indices),
-	        lib_opts(Libs, SysLibs, PathAliasF),
 	        paper_opts(StartPage, PaperType)|Opts0].
 
 warn_if_empty(X, Msg) :-
@@ -229,7 +211,7 @@ warn_if_empty(X, Msg) :-
 
 :- export(autodoc_gen_doctree/5).
 :- pred autodoc_gen_doctree(Backend, FileBase, SourceSuffix, Opts, Mod)
-	:: backend_id * basename * atm * list(supported_option) * atm
+	:: backend_id * filename_noext * atm * list(supported_option) * atm
 
 # "@var{FileBase} is the module specifier of the source file being
    documented (without extension, @var{SourceSuffix} is the suffix of
@@ -241,18 +223,13 @@ warn_if_empty(X, Msg) :-
    documentation formats}".
 
 % indices(Indices)
-% lib_opts(LibPaths, SysLibPaths, PathAliasF)
 % paper_opts(StartPage, PaperType)
 %
-%      @var{LibPaths} is a list of @concept{library paths} where files
-%      used by the module being documented may be
-%      found. @var{SysLibPaths} is similar to @var{LibPaths} but
-%      provides paths to @em{system} libraries. @var{PathAliasF} is the
-%      name of a module containing path aliases. @var{Indices} is a list
-%      of index names (the @concept{indices generated
-%      automatically}). @var{StartPage} is the page number of the first
-%      page of the manual. This can be useful if the manual is to be
-%      included in a larger document or set of manuals.   
+%      @var{Indices} is a list of index names (the @concept{indices
+%      generated automatically}). @var{StartPage} is the page number
+%      of the first page of the manual. This can be useful if the
+%      manual is to be included in a larger document or set of
+%      manuals.
 
 % Note on performance:
 %   For the average module, doctree scan and write is fast. The
@@ -264,7 +241,7 @@ warn_if_empty(X, Msg) :-
 
 autodoc_gen_doctree(Backend, FileBase, SourceSuffix, Opts, Mod) :-
 	verbose_message("{Generating ~w documentation for ~w", [Backend, FileBase]),
-	docst_new_with_src(Backend, FileBase, SourceSuffix, Opts, DocSt, OldLibs),
+	docst_new_with_src(Backend, FileBase, SourceSuffix, Opts, DocSt),
 	%
 	docst_modtype(DocSt, ModuleType),
 	docst_message("File being documented as '~w'", [ModuleType], DocSt),
@@ -283,7 +260,6 @@ autodoc_gen_doctree(Backend, FileBase, SourceSuffix, Opts, Mod) :-
 	    fmt_infodir_entry(DocSt, GlobalVers, Mod)
 	; true
 	),
-	set_libs(_, OldLibs),
 	%
 	verbose_message("}"),
 	ttyflush,
@@ -362,14 +338,14 @@ add_author_defs([A|As], DocSt, [B|Bs]) :-
 
 % ---------------------------------------------------------------------------
 
-:- use_module(lpdocsrc(src(autodoc_texinfo)), [infodir_base/2]).
+:- use_module(lpdoc(autodoc_texinfo), [infodir_base/2]).
 
 :- doc(subsection, "Format infoindex").
 
 :- export(fmt_infodir_entry/3).
 % TODO: Generalize for other backends, not just info
 :- pred fmt_infodir_entry(DocSt, Version, Mod)
-	: docstate * term * basename
+	: docstate * term * filename_noext
 # "Generates a one line description (ASCII) of the application or library
    in a file for the directory of @tt{emacs info} manuals.".
 
@@ -378,19 +354,23 @@ fmt_infodir_entry(DocSt, Version, Mod) :-
 	verbose_message("{Generating info index", []),
 	docst_backend(DocSt, Backend),
 	main_output_name(Backend, InfoBase),
-	( docst_opt(no_version, DocSt) ->
-	    docst_modname(DocSt, NDName),
-	    InfodirName = NDName
-	; InfodirName = InfoBase % TODO: Not very nice...
-	),
+	% ( docst_opt(no_version, DocSt) ->
+	%     docst_modname(DocSt, NDName),
+	%     InfodirName = NDName
+	% ; InfodirName = InfoBase % TODO: Not very nice...
+	% ),
+	% TODO: instead, get a short pretty name for the manual? (that should be used somewhere else too)
+	main_output_name_novers(InfodirName),
+	%
 	atom_codes(InfodirName, InfodirNameS),
 	atom_codes(InfoBase, InfoBaseS),
 	%
 	get_default_title(DocSt, TitleR),
 	infodir_version(Version, VersionR),
 	%
-	R = [raw("* "), raw(InfodirNameS), raw(": ("), raw(InfoBaseS), raw(").\n\t"),
-	     TitleR, VersionR, raw_nl],
+	% TODO: reuse menu_link?
+	R = [raw("* "), raw(InfodirNameS), raw(": ("), raw(InfoBaseS), raw("). "),
+	     TitleR, VersionR, raw("."), raw_nl],
 	% Write the doctree contents of what will be in the '.infoindex' file
 	% (note: see @pred{fmt_infodir_entry2} for more details)
 	infodir_base(Mod, ModInfodir),
@@ -410,22 +390,29 @@ get_default_title(DocSt, TitleR) :-
 	  TitleR = [raw(NDNameS), raw(" Reference Manual")]
 	).
 
-% TODO: Is it standard in info? Otherwise, move next to other version formatting code?
+% (only version)
 infodir_version(Version, VersionR) :-
-	( version_date(Version, Date),
-	  version_numstr(Version, VerStr)
-	-> 
-	    format_to_string("~w", [Date], DateStr),
-	    VersionR = [raw(" (version "),
-	                raw(VerStr), raw(" of "),
-			raw(DateStr), raw(")")]
+	( version_numstr(Version, VerStr) -> 
+	    VersionR = [raw(" ("), raw(VerStr), raw(")")]
 	; VersionR = []
 	).
+
+% (version and date)
+%% infodir_version(Version, VersionR) :-
+%% 	( version_date(Version, Date),
+%% 	  version_numstr(Version, VerStr)
+%% 	-> 
+%% 	    format_to_string("~w", [Date], DateStr),
+%% 	    VersionR = [raw(" (version "),
+%% 	                raw(VerStr), raw(" of "),
+%% 			raw(DateStr), raw(")")]
+%% 	; VersionR = []
+%% 	).
 
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Version Extraction").
-% TODO: Merge with library/lpdist/ciao_bundle_db.pl
+% TODO: Merge with bundle/bundle_info.pl
 % TODO: This could be extended to extract version info other revision
 %       control system (such as SVN, GIT, Hg)
 
@@ -447,7 +434,8 @@ get_last_version_(Version, GlobalVers, Dir, DocSt) :-
 	get_doc(version_maintenance, dofail, DocSt, dir(VDir)),
 	!,
 	%% version maintained in dir (computed relative to .pl file Dir!)
-	atom_concat([Dir, '/', VDir, '/', 'GlobalChangeLog'], ChangeLogFile),
+	path_concat(Dir, VDir, DirVDir),
+	path_concat(DirVDir, 'GlobalChangeLog', ChangeLogFile),
 	docst_message("Getting global version from ~w...", [ChangeLogFile], DocSt),
 	( file_exists(ChangeLogFile) ->
 	    try_finally(
@@ -470,7 +458,7 @@ get_last_local_version(Version, DocSt) :-
 	( get_doc_changes(DocSt, _, Changes),
 	  Changes = [change(LVersion, _)|_] ->
 	    Version = LVersion
-	; ( lpdoc_option('-cv') ->
+	; ( setting_value(comment_version, yes) ->
 	      docst_inputfile(DocSt, I),
 	      note_message(loc(I, 1, 1),
 	        "no "":- doc(version(...),...)"" declaration found", [])
@@ -480,46 +468,6 @@ get_last_local_version(Version, DocSt) :-
         ).
 
 :- use_module(library(system), [file_exists/1]).
-
-%% ---------------------------------------------------------------------------
-
-:- doc(subsection, "Module Name from Module Spec").
-
-:- doc(main_filename(LongName, ShortName), "@var{ShortName} is the
-	filename of @var{LongName}, without library path.").
-
-:- pred main_filename(LongName, ShortName)
-	:: string * string
-
-# "@var{ShortName} is the filename of @var{LongName}, without
-            library path.".
-
-% TODO: Share with predicates in make_rt
-main_filename(IS, NamePLS) :-
-	filename_minus_libpath(IS, NamePLS),
-	!.
-main_filename(IS, NamePLS) :-
-	name_after_last_slash(IS, NamePLS).
-
-filename_minus_libpath(IS, NamePLS) :-
-	library_directory(L),
-	atom_codes(L, LS),
-	append(LS, [0'/, NamePLS], IS).
-
-:- doc(hide, library_directory/1).
-
-:- multifile library_directory/1.
-:- dynamic library_directory/1.
-
-name_after_last_slash(IS, NamePLS) :-
-	reverse(IS, RIS),
-	to_bar_or_end(RIS, RNamePLS),
-	reverse(RNamePLS, NamePLS).
-
-to_bar_or_end([], []) :- !.
-to_bar_or_end([0'/|_], []) :- !.
-to_bar_or_end([C|Cs], [C|Ss]) :-
-	to_bar_or_end(Cs, Ss).
 
 %% ---------------------------------------------------------------------------
 
@@ -639,6 +587,8 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	    CommentR = optional_cartouche(CommentR2)
 	; CommentR = CommentR2
 	),
+	% Show TOC (when not displayed on the sidebar)
+	TocR = show_toc(toc_view(no)),
 	%
 	doc_interface(DocSt, InterfaceR),
 	fmt_appendix(DocSt, AppendixR),
@@ -646,28 +596,31 @@ fmt_module(DocSt, Version, GlobalVers, ModR) :-
 	fmt_bugs(no, DocSt, BugsR),
 	fmt_changes(no, DocSt, ChangesR),
 	%
-	doctree_simplify([IdxR, CommentR, InterfaceR, AppendixR, AckR, BugsR, ChangesR], DocR),
+	doctree_simplify([IdxR, CommentR, TocR, InterfaceR, AppendixR, AckR, BugsR, ChangesR], DocR),
 	%
 	fmt_file_top_section([], DocR, DocSt, ModR).
 
 fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
 	get_doc(title, warning, DocSt, TitleR),
 	title_for_module_type(TitleR, DocSt, TitleR2),
-        ( docst_currmod_is_main(DocSt) ->
-	    SectLabel = global_label(_),
-	    %
+	%
+	SectLabel = global_label(_),
+	%
+        ( docst_currmod_is_main(DocSt) -> % main file
 	    docst_opt(paper_opts(StartPage, PaperType), DocSt),
 	    SecProps2 = [paper_opts(StartPage, PaperType)|SecProps0]
 	; % not main file
-	  SecProps1 = [level(1)|SecProps0],
-	  docst_modtype(DocSt, ModuleType),
-	  ( ModuleType = part ->
-	      SecProps2 = [unnumbered|SecProps1],
-	      doctree_to_rawtext(TitleR2, DocSt, RwTitle),
-	      SectLabel = global_label("*** "||RwTitle)
-	  ; SecProps2 = SecProps1,
-	    SectLabel = global_label(_)
-	  )
+	  SecProps2 = [level(1)|SecProps0]
+	  % (add '***' to parts, deprecated)
+%	  SecProps1 = [level(1)|SecProps0],
+%	  docst_modtype(DocSt, ModuleType),
+%	  ( ModuleType = part ->
+%	      SecProps2 = [unnumbered|SecProps1],
+%	      doctree_to_rawtext(TitleR2, DocSt, RwTitle),
+%	      SectLabel = global_label("*** "||RwTitle)
+%	  ; SecProps2 = SecProps1,
+%	    SectLabel = global_label(_)
+%	  )
 	),
 	get_doc(pragma, ignore, DocSt, Pragmas),
 	SecProps3 = [pragmas(Pragmas)|SecProps2],
@@ -738,7 +691,11 @@ use_copyright_section(DocSt) :-
 	docst_backend(DocSt, html).
 % Place the summary text in the cover
 summary_in_cover(DocSt) :-
-	docst_backend(DocSt, html).
+	docst_backend(DocSt, Backend),
+        ( Backend = html -> true
+	; Backend = texinfo -> true
+	; fail
+	).
 % Add the full table of contents as a section
 show_full_toc(DocSt) :-
         % TODO: allow a full TOC in a website? (this is useful as a website directory)
@@ -791,13 +748,13 @@ fmt_components(_DocSt, ComponentsR) :-
 	all_component_specs(Components),
 	gen_components_include(Components, ComponentsR).
 
+:- use_module(library(pathnames), [path_basename/2]).
+
 gen_components_include([],                      []).
 gen_components_include([Component0|Components], [CR|CsR]) :-
-	get_name(Component0, Base),
+	path_basename(Component0, Base),
 	CR = component_link(Base),
 	gen_components_include(Components, CsR).
-
-:- use_module(library(make(make_rt)), [get_name/2]).
 
 gen_short_version_note(Version, R) :-
 	version_string(Version, VersionStr),
@@ -846,8 +803,7 @@ fmt_biblio(DocSt, BiblioR) :-
 % TODO: indices are not generated here, but the section where they go
 gen_biblio_section(_DocSt, BiblioR) :-
 	Title = "References", 
-	% TODO: use linktop or not?
-	BiblioR = section_env([/*linktop,*/unnumbered,level(1),subfile('refs'),is_special(references)],
+	BiblioR = section_env([unnumbered,level(1),subfile('refs'),is_special(references)],
                               global_label(_), 
                               string_esc(Title),
                               [
@@ -876,7 +832,7 @@ gen_index_section(IdxName, _DocSt, IndexR) :-
 	typeindex(IdxName, IndexId, _, ITitle, IComment),
 	add_lines(IComment, IComment2),
 	IndexR = section_env(
-          [linktop,unnumbered,level(1),subfile(SubName),is_special(index)],
+          [unnumbered,level(1),subfile(SubName),is_special(index)],
            global_label(_), 
            string_esc(ITitle), 
            [
@@ -886,50 +842,44 @@ gen_index_section(IdxName, _DocSt, IndexR) :-
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Abstract/Summary").
+:- doc(subsection, "Formatting Abstract/Summary").
 
 fmt_summary(Version, DocSt, SummaryR) :-
+	get_mod_doc(summary, DocSt, SummaryR0),
+	fmt_summary_(Version, DocSt, SummaryR0, SummaryR).
+
+fmt_summary_(_Version, _DocSt, SummaryR0, SummaryR) :-
+	doctree_is_empty(SummaryR0),
+	!,
+	SummaryR = nop.
+fmt_summary_(Version, DocSt, SummaryR0, SummaryR) :-
+	% Version string for summary
 	( is_version(Version) ->
 	    gen_version_note(Version, VersionR)
 	; VersionR = nop
 	),
-	%
-	( docst_backend(DocSt, texinfo) ->
-	    % TODO: This requires the SummaryR part be the first one
-	    % TODO: Add the Summary directly here in info? (see other manuals)
-	    % The text of the top section
-	    % (includes the version in 'info')
-            SummaryR = [if(info, [
-                        % TODO: enable! (other info files look like this)
-			%quotation(CopyrightR),
-			VersionR]), SummaryR2]
-	; SummaryR = SummaryR2
+	% Summary contents and version
+	add_lines(SummaryR0, SummaryR1),
+	SummaryR2 = [SummaryR1, VersionR],
+	% Wrap as a section if needed
+	summary_sect(DocSt, SummaryR2, SummaryR).
+
+% Summary as a section where TextR is the summary text
+summary_sect(DocSt, TextR, SummaryR) :-
+	% Options and label for summary (as a section)
+	( summary_in_cover(DocSt) ->
+	    % NOTE: 'summary_section' is treated in texinfo backend specially
+	    Opts = [level(1),summary_section],
+	    Label = local_label(_)
+	; Opts = [unnumbered,level(1),subfile('summary')],
+	  Label = global_label(_)
 	),
-	%
-	get_mod_doc(summary, DocSt, SummaryR0),
-	( doctree_is_empty(SummaryR0) ->
-	    SummaryR2 = nop
-	; % Add version to the summary (if not 'info')
-	  ( doctree_is_empty(VersionR) ->
-	      Rv3 = nop
-	  ; docst_backend(DocSt, texinfo) ->
-	      Rv3 = [if(notinfo, VersionR)]
-	  ; Rv3 = [VersionR]
-	  ),
-	  % The summary section
-	  add_lines(SummaryR0, SummaryR1),
-	  ( summary_in_cover(DocSt) ->
-	      Opts = [level(1)],
-	      Label = local_label(_)
-	  ; % TODO: Summary must not appear in the table of contents
-	    Opts = [unnumbered,level(1),subfile('summary')],
-	    Label = global_label(_)
-	  ),
-	  SummaryR2 = section_env(Opts,
-	                          Label,
-				  string_esc("Summary"),
-				  [SummaryR1, Rv3])
-	).
+	SummaryR = section_env(Opts,
+	                       Label,
+			       string_esc("Summary"),
+			       TextR).
+
+% TODO: in pdf/ps, summary may need to appear with a different page style?
 
 % ---------------------------------------------------------------------------
 
@@ -1211,7 +1161,7 @@ check_no_definitions(ModuleType, Exports, Multifiles, DocSt) :-
 	    Ops, NDecls, NModes, R)
 	: ( docstate(DocSt), list(Exports, predname),
 	    list(Exports, predname),
-	    list(UMods, atm), list(IUMods, atm), list(SysMods, atm), list(EngMods, atm), list(PkgMods, atm),
+	    list(UMods), list(IUMods), list(SysMods), list(EngMods), list(PkgMods),
 	    list(Ops), list(NDecls, atm), list(NModes, atm),
 	    doctree(R) )
 # "The module header info is documented as the first section of the
@@ -1223,16 +1173,23 @@ fmt_module_usage(DocSt, CExports, Mults,
 	( is_nonempty_doctree(UsageR0) ->
 	    % Usage comment to override automatic one
 	    UsageR = UsageR0
-	; docst_modname(DocSt, NDName),
+	; docst_inputfile(DocSt, AbsFile),
+	  get_modspec(AbsFile, ModSpec0), % e.g., library(lists)
+	  modspec_nodoc(ModSpec0, ModSpec1), % omit _doc suffix, collapse '(.../)a/a' as '(.../)a'
 	  docst_modtype(DocSt, ModuleType),
 	  modtype_usage_command(ModuleType, Cmd),
+	  % Remove library(_) from packages 
+	  ( ModuleType = package, ModSpec1 = library(ModSpec2) ->
+	      ModSpec = ModSpec2
+	  ; ModSpec = ModSpec1
+	  ),
 	  % TODO: make sure that module spec is correct! (it is not now)
 	  ( ModuleType = package ->
-	      format_to_string(":- ~w(~w).", [Cmd, NDName], UseDeclR0),
-	      format_to_string(":- module(...,...,[~w]).", [NDName], UseDeclR1),
+	      format_to_string(":- ~w(~w).", [Cmd, ModSpec], UseDeclR0),
+	      format_to_string(":- module(...,...,[~w]).", [ModSpec], UseDeclR1),
 	      % TODO: use linebreak? or p("")?
 	      UsageR = [tt(string_esc(UseDeclR0)), raw_nl, raw_nl, string_esc("or"), raw_nl, raw_nl, tt(string_esc(UseDeclR1))]
-	  ; format_to_string(":- ~w(library(~w)).", [Cmd, NDName], UseDeclR0),
+	  ; format_to_string(":- ~w(~w).", [Cmd, ModSpec], UseDeclR0),
             UsageR = tt(string_esc(UseDeclR0))
 	  )
 	),
@@ -1430,8 +1387,8 @@ get_ops(ModuleType, NoDocS, SOps) :-
 
 get_ops_(P, Prec, PredNames, NoDocS) :-
 	clause_read(_, 1, op(P, Prec, PredNames), _, S, _, _),
-	no_path_file_name(S, FN),
-	basename(FN, BN),
+	path_basename(S, FN),
+	path_splitext(FN, BN, _),
 	\+ member(BN, NoDocS).
 
 :- pred normalize_ops/2 # "Flattens out the cases where several ops
@@ -1461,8 +1418,8 @@ normalize_ops_list([Pred|Preds], Prec,  Style,  [op(Prec, Style, Pred)|NOps],
 get_modes(M, ModuleType, NoDocS, NModes) :-
 	( modtype_include_or_package(ModuleType) ->
 	    findall(F/A, ( assertion_read(ModeP, M, _, modedef, _, _, S, _, _),
-		    no_path_file_name(S, FN),
-		    basename(FN, BN),
+		    path_basename(S, FN),
+		    path_splitext(FN, BN, _),
 		    \+ member(BN, NoDocS),
 		    functor(ModeP, F, A) ),
 		CModes),
@@ -1479,16 +1436,16 @@ get_decls(Base, M, ModuleType, NoDocS, NDecls) :-
 	    % document all having an explicit comment in the module:
 	    findall(F/A, 
                     ( assertion_read(DeclP, M, _, decl, _, _, S, _, _),
-		        no_path_file_name(S, FN),
-		        basename(FN, BN),
+		        path_basename(S, FN),
+		        path_splitext(FN, BN, _),
 		        \+ member(BN, NoDocS),
 		        functor(DeclP, F, A) ),
 		CDecls),
 	    % also those having a new_declaration in the module
 	    findall(NDP,
 		( clause_read(Base, 1, new_declaration(NDP), _, S, _, _),
-		    no_path_file_name(S, FN),
-		    basename(FN, BN),
+		    path_basename(S, FN),
+		    path_splitext(FN, BN, _),
 		    \+ member(BN, NoDocS)
 		),
 		NDDecls),
@@ -1559,76 +1516,104 @@ get_pkgs(M, Base, DocSt, PkgFiles) :-
 	    % do not document imported packages
 	    PkgFiles = []
 	; findall(PkgFile, use_pkg(Base, PkgFile), PkgFiles0),
-	  filter_pkgs(PkgFiles0, M, PkgFiles)
+	  filter_pkgs(PkgFiles0, M, PkgFiles1),
+	  pkgs_omit_lib(PkgFiles1, PkgFiles)
 	).
 
-% remove library(_) functor and packages that seem to be using
-% themselves (like assertions; that happens because the documentation
-% code is separated from the package code).
+% Remove library(_) functor from libraries (implicit by default)
+pkgs_omit_lib([], []).
+pkgs_omit_lib([P|Ps], [Q|Qs]) :-
+	( P = library(Q) -> true ; Q = P ),
+	pkgs_omit_lib(Ps, Qs).
+
+% Remove packages that seem to be using themselves (like
+% library(assertions)). That happens because the documentation code is
+% separated from the package code).
 filter_pkgs([], _, []).
 filter_pkgs([P0|Ps0], M, Qs) :-
 	( P0 = library(P) ->
 	    true
 	; P = P0
 	),
-	( same_mod(P, M) ->
+	( same_mod(P, M) ->	    
+%	    display(user_error, same_mod(P, M)), nl(user_error),
 	    Qs = Qs0
-	; Qs = [P|Qs0]
+	; Qs = [P0|Qs0]
 	),
 	filter_pkgs(Ps0, M, Qs0).
 
-% TODO: what is simpler? keeping the real file M (with optional _doc)
-%       or the effective M (without _doc). I need the effective M
-%       for file names in documentation.
-same_mod(P, M) :- P == M, !.
-same_mod(P, user(S)) :- !,
-	no_path_file_name(S, FN),
-	basename(FN, BN),
-	atom_concat(P, '_doc', BN). 
-same_mod(P, M) :-
-	% TODO: incomplete (P may be a module spec, e.g. foreign_interface(...))
-	atom(P),
-	atom_concat(P, '_doc', M). 
+% E.g. 
+%   same_mod(assertions,user(/Users/jfran/Documents/git/ciao-devel/core/lib/assertions/assertions_doc))
+%   same_mod(regtypes,user(/Users/jfran/Documents/git/ciao-devel/core/lib/regtypes/regtypes_doc))
+
+same_mod(ModSpec, M) :-
+ 	( M = user(S) ->
+ 	    path_basename(S, FN),
+ 	    path_splitext(FN, M2, _)
+	; M2 = M
+	),
+	modname_nodoc(M2, M_ND),
+	%
+	modspec_nodoc(ModSpec, ModSpec2),
+	modspec_name(ModSpec2, Name_ND),
+	%
+	M_ND = Name_ND.
+
+modspec_name(ModSpec, Name) :-
+	( ModSpec =.. [_Alias, Path] ->
+	    true
+	; Path = ModSpec
+	),
+	( Path = _/Name0 -> true ; Name0 = Path ),
+	path_basename(Name0, Name1),
+	path_splitext(Name1, Name, _).
 
 %% ---------------------------------------------------------------------------
 :- pred classify_files/5 # "Classifies file references, such as
    @tt{library(aggregates)}, into separate lists according to whether
    they are System, Engine, User, etc.".
 
-classify_files(IFiles, UFiles, SysFiles, EngFiles, DocSt) :-
-        docst_opt(lib_opts(LibPaths, SysLibPaths, _PathAliasF), DocSt),
-	classify_files_(IFiles, LibPaths, SysLibPaths, UFiles, SysFiles, EngFiles, DocSt).
+:- use_module(library(bundle/paths_extra),
+	[fsRx_get_bundle_and_basename/3]).
 
-classify_files_([],           _LibPaths, _SysLibPaths, [],     [],     [],
-	    _).
-classify_files_([File|Files], LibPaths,  SysLibPaths,  UFiles, SFiles, OEFiles,
-	    DocSt) :-
-	File =.. [engine, EFile],
-	!,
-	( docst_opt(no_engmods, DocSt) ->
-	    OEFiles = EFiles
-	; OEFiles = [EFile|EFiles]
+classify_files(IFiles, UFiles, SysFiles, EngFiles, DocSt) :-
+	classify_files_(IFiles, UFiles, SysFiles, EngFiles, DocSt).
+
+classify_files_([], [], [], [], _).
+classify_files_([File|Files], UFiles, SFiles, EFiles, DocSt) :-
+	( fsRx_get_bundle_and_basename(File, Bundle, ModName) ->
+	    true
+	; % (no bundle! perhaps a local file without any Manifest)
+	  Bundle = '',
+	  ModName = File
 	),
-	classify_files_(Files, LibPaths, SysLibPaths, UFiles, SFiles, EFiles, DocSt).
-classify_files_([RFile|Files], LibPaths, SysLibPaths, UFiles, OSFiles, EFiles, DocSt) :-
-	base_name(RFile, Base), % Daniel says, this is the way to do it
-	member(Path, SysLibPaths),
-	atom_concat(Path, LongFileName, Base),
-	atom_concat('/',  FullFile,     LongFileName), % Eliminate leading /
-	!,
-	( docst_opt(no_sysmods, DocSt) ->
-	    OSFiles = NSM
-	; OSFiles = [FullFile|NSM]
+	( File = engine(_) ->
+	    % Engine module
+	    ( docst_opt(no_engmods, DocSt) -> % (omit module)
+	        EFiles = EFiles0
+	    ; EFiles = [ModName|EFiles0]
+	    ),
+	    UFiles = UFiles0, SFiles = SFiles0
+	; get_parent_bundle(ThisBundle), % TODO: cache?
+	  \+ Bundle = ThisBundle
+	->
+	    % System module (from other bundle)
+	    ( docst_opt(no_sysmods, DocSt) -> % (omit module)
+	        SFiles = SFiles0
+	    ; SFiles = [ModName|SFiles0]
+	    ),
+	    UFiles = UFiles0, EFiles = EFiles0
+	; % Otherwise, application/user module (this bundle)
+	  UFiles = [ModName|UFiles0],
+	  SFiles = SFiles0, EFiles = EFiles0
 	),
-	classify_files_(Files, LibPaths, SysLibPaths, UFiles, NSM, EFiles, DocSt).
-classify_files_([File|Files], LibPaths, SysLibPaths, [File|UFiles], SysFiles,
-	    EFiles, DocSt) :-
-	classify_files_(Files, LibPaths, SysLibPaths, UFiles, SysFiles, EFiles, DocSt).
+	classify_files_(Files, UFiles0, SFiles0, EFiles0, DocSt).
 
 %% ---------------------------------------------------------------------------
 
 :- pred fmt_definitions_kind/5
-   # "Generates documentation for definitions of predicates, declarations, modes, etc. of a given kind.".
+   # "Generates documentation for definitions of predicates,
+     declarations, modes, etc. of a given kind.".
 
 fmt_definitions_kind(DefKind, Desc, Items, DocSt, R) :-
 	docst_message("Documenting "||Desc, DocSt),
@@ -2055,6 +2040,9 @@ fmt_standard(_Standard, []).
 gen_usage_header(_N, _Status, test, _Multiple, HeaderStr) :- !,
 	% TODO: Probably not right.
 	HeaderStr = "Test:".
+gen_usage_header(_N, _Status, entry, _Multiple, HeaderStr) :- !,
+	% TODO: check.
+	HeaderStr = "Module entry condition:".
 gen_usage_header(N, check, _AType, Multiple, HeaderStr) :- !,
 	( usage_str(N, Multiple, HeaderStr0) ->
 	    HeaderStr = HeaderStr0
@@ -2092,7 +2080,7 @@ allvars([H|T]) :-
 	allvars(T).
 
 %% ---------------------------------------------------------------------------
-:- use_module(library(assertions(assertions_props)), [assrt_type/1]).
+:- use_module(library(assertions/assertions_props), [assrt_type/1]).
 
 :- pred assrt_type_text(PType,Text,Prefix,Postfix) 
 	: assrt_type * string * string * string
@@ -2109,7 +2097,6 @@ assrt_type_text(prop,    "PROPERTY",    "",    "") :- !.
 assrt_type_text(regtype, "REGTYPE",     "",    "") :- !.
 assrt_type_text(decl,    "DECLARATION", ":- ", ".") :- !.
 assrt_type_text(modedef, "MODE",        "",    "") :- !.
-assrt_type_text(entry,   "ENTRY POINT", "",    "") :- !.
 %% This one just for undocumented reexports:
 assrt_type_text(udreexp, "(UNDOC_REEXPORT)",     "",    "") :- !.
 assrt_type_text(_,       "UNKNOWN",     "",    "") :- !.
@@ -2180,6 +2167,8 @@ status_text_prefix(pred,    _,      _,
 	           "The following properties", bullet) :- !.
 status_text_prefix(calls,   _,      _,
 	           "The following properties", bullet) :- !.
+status_text_prefix(entry,    _,      _,
+	           "The following properties", bullet) :- !.
 status_text_prefix(decl,    _,      _,
 	           "The following properties", bullet) :- !.
 % 'call' site
@@ -2199,6 +2188,7 @@ status_text_prefix(_,       global, empty,
 %% Introduced special case for guard
 status_text_mode(_, modedef, _,    "are added") :- !.
 status_text_mode(_, success, call, "hold") :- !.
+status_text_mode(_, test, call, "hold") :- !.
 status_text_mode(_, comp,    call, "hold") :- !.
 %% Introduced special case for true/trust pred.
 status_text_mode(trust,   pred, call, "should hold") :- !.
@@ -2235,7 +2225,8 @@ doc_property(Prop, Loc, P, DocSt, PropR) :-
 	    ; DocR = BasicFormat
 	    ),
 	    ( PM = user(FullPath),
-	      main_filename(FullPath, UFName) ->
+	      path_basename(FullPath, UFName0),
+	      path_splitext(UFName0, UFName, _) ->
 	        NPM = user('...'/UFName)
 	    ; NPM = PM
 	    )
@@ -2359,7 +2350,7 @@ maybe_remove_full_stop(DocSt, DocString, DocString2) :-
 
 %% ---------------------------------------------------------------------------
 
-:- use_module(lpdocsrc(src(autodoc_aux)), [all_vars/1]).
+:- use_module(lpdoc(autodoc_aux), [all_vars/1]).
 
 :- pred fix_var_arg_names(H, Loc, NH)
  # "In both @var{NH} and @var{H} the arguments of @var{H} which are
@@ -2520,55 +2511,60 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 :- doc(bug, "in Ciao tree we need to automatically create local
    subset of (clip) bibtex files to make manuals standalone.").
 
-:- doc(bug, "entry declarations documented as 'if'?.").
-
 :- doc(bug, "documentation of exceptions.").
 
-:- doc(bug, "Actually, texi, dvi, etc. should all be generated in 
-   subdirectories, containing their figures (as well as generating 
-   a tar file).").
+:- doc(bug, "Assertions should describe which database predicates are read
+   and written by a given predicate.").
 
-:- doc(bug, "Separate emacs mode from ciao.").
+:- doc(bug, "add links from types/props to their definition in all
+   formats (info, pdf, etc.).  This would be a mess in info, but in
+   info it is not necessary: you can go with C-c tab or search... ").
+
+:- doc(bug, "Local options in file -- something like :-
+   doc(options,...).").
+:- doc(bug, "List of local opts: :- doc(localopts,[no_changelog]).").
+
+:- doc(bug, "Add a way to disable usage section?").
+
+:- doc(bug, "Document implementation defined?").
+:- doc(bug, "How about using :- doc(+/2,""), where + is an
+   operator (?) ").
+
+:- doc(bug, "optimize assertion reading (in assrt_lib) of frequently
+   used modules (engine/libraries) -- evaluate if there is a
+   bottleneck here").
+
+:- doc(bug, "In usage text, hide (optionally, perhaps per package or
+   module) the modules that are implicitly imported by some package. E.g.,
+
+   :- use_module(library(iso_char)).
+ 
+   (imported by default) or:
+
+   :- use_module(library(dcg/dcg_tr)).
+
+   imported in DCG.
+").
+
+:- doc(bug, "add a @@flag@{Flag@} command to name Prolog flags
+   (interpret the @pred{define_flag/3} multifile to document flags
+   defined in modules)").
+
+:- doc(bug, "generalize @@iso command (for other labels other than ISO)").
+
+:- doc(bug, "add declarations so that, e.g., @tt{data_facts} can
+   document @tt{:- data}.").
 
 :- doc(subsection, "Known Bugs").
 
 :- doc(bug, "Make sure that richer paths are valid in @@image
    command").
 
-:- doc(bug, "Make sure that we only eliminate characters [',:-] from
-   node names, but from section names").
-
-:- doc(subsection, "Other (Unclassified) Bugs").
-% (Before my changes --JFMC)
-
-:- doc(bug, "Compression, generation of tar, etc., should be switchable 
-   by format (easy now!).").
-
-:- doc(bug, "Types and props should have a link to their
-   definitions (also in pdf!). This would be a mess in info, but in
-   info it is not necessary: you can go with C-c tab or search... ").
-
-:- doc(bug, "C-u M-x info a INSTALL and emacs mode (also in ciao)").
+:- doc(subsection, "Older or Unclassified Bugs (need review)").
 
 :- doc(bug, "single-sided versus double-sided").
 
 :- doc(bug, "Document classes: see mess from Angel").
-
-:- doc(bug, "support for path aliases and the CIAOALIASPATH variable").
-
-:- doc(bug, "BTW: Now that you've installed a new version of
-   pl2texi, why don't I get messages like:
-
-   VERY DEPRECATED: @@begin@{verbatim@}, use @@begin@{pre@} instead
-
-   And another question:
-   Have you changed the braveclean to remove .css files yet? (Or do you want
-   me to have a look at it?)
-   ").
-
-:- doc(bug, "uninstall needs to be debugged (the ifs in Makefile.skel)").
-
-:- doc(bug, "fix problems because of eps figures in pdf").
 
 :- doc(bug, "lpdoc should sign its manuals").
 
@@ -2581,52 +2577,30 @@ eliminate_duplicates_([H|T], Seen, [H|NT]) :-
 
 :- doc(bug, "Apparently parts cannot be referenced").
 
-:- doc(bug, "The first paragraph (module comment) should be an
-   'introduction' section, at least when there is going to be an
-   interface description.").
+% old bug? fixed?
+:- doc(bug, "Make sure that comp properties (those after +) are
+   correctly shown in documentation (those have an implicit
+   argument)").
 
-:- doc(bug, "The ciao manual should have the version name in the
-   file name! (i.e., ciao-0.9.info) ??? Yes, so that you can have
-   several versions installed.").
+% old bug? fixed?
+:- doc(bug, "Make that type checking do not complain about predefined
+   type definitions (term, int, ...) in the engine (with a
+   declaration?)").
 
-:- doc(bug, "Estos dos son de las aserciones:
+:- doc(bug, "customization for pretty printing in lpdoc? (e.g., to
+   define operators so that modes look nice) -- needed now?").
 
-* Distinguir propiedades ""+"" (que tienen un argumento implícito de la
-  computación) de el resto, ya que en la documentación ese argumento no
-  se nombra.
+:- doc(bug, "do not capitalize index titles? (E.g., ""Library index"",
+   etc.) is it possible?").
 
-* Hacer que el chequeador de tipos no se queje de las definiciones de
-  los tipos predefinidos (term, int, ...) en el engine. (Mediante
-  declaración?)
+:- doc(bug, "bugs: uses without any field (with with modes) do not
+   appear, e.g., in @lib{engine(atomic_basic)} or
+   @lib{engine(io_basic)} do not appear (e.g., usage of
+   @pred{nl/0}). (fixed?)").
 
-Específicos de lpdoc:
-
-* Hacer que lpdoc pueda leer al principio un fichero de
-  inicialización, por ejemplo para definir operadores (y así los modos
-  salen bonitos).
-
-* En vez de que haya un comando @@iso, que haya uno @@sign@{@} (o como se
-  llame) tal que @@sign@{ISO@} haga lo que ahora hace @@iso (para que tenga
-  más utilidad).
-
-* Es necesario que un módulo pueda definir declaraciones para que, por
-  ejemplo, data_facts pueda documentar :- data.
-
-* Cambiar lpdoc para que los títulos de los índices no estén
-  _capitalizados_: ""Library index"", etc.
-
-* Hacer un comando @@flag@{Flag@} para nombrar prolog flags.  Interpretar
-  el multifile define_flag/3 para documentar flags definidos en módulos.
-
-* Bugs: en engine(atomic_basic) no aparecen los usos sin ningun campo (pero
-  tienen modos).  Tambien pasa en engine(io_basic), donde ademas el uso
-  de nl/0 no aparece.
-
-").
-
-:- doc(bug, "if an assertion is present for p, even if the
-   predicate is reexported, it should be documented (no need for
-   doinclude). See sockets.pl").
+:- doc(bug, "if an assertion is present for p, even if the predicate
+   is reexported, it should be documented (no need for doinclude). See
+   sockets.pl").
 
 :- doc(bug, "if an imported type is redefined locally and then
    listed, all clauses appear").
@@ -2640,23 +2614,9 @@ Específicos de lpdoc:
 
    ").
 
-:- doc(bug, "Mirando en lpdoc.pl cómo se hacía lo de poner el
-   mensaje de ""Usage:"" para que salga en el man, he visto que haces
-
-   :- use_module(library(iso_byte_char)).
- 
-   pero no pareces usar nada de ahí, también haces
-
-   :- use_module(library(dcg(dcg_tr))).
-
-   y creo que tampoco es necesario (sólo es necesario si hay meta-llamadas
-   en las gramáticas).
-").
-
 :- doc(bug, "putting props in a prop should give errors?").
 
-:- doc(bug, "Es esto un bug o yo no me entero?  Dada la declaracion 
-   (en system.pl):  
+:- doc(bug, "Is this a bug or a wrong assertion (system.pl)? (old problem, fixed?)
 
    :- true pred umask(OldMask, NewMask)
         : (var(OldMask), var(NewMask), OldMask == NewMask)
@@ -2666,121 +2626,44 @@ Específicos de lpdoc:
    @{WARNING (autodoc): unknown property int(OldMask) in assertion for 
    umask(OldMask,NewMask)@} 
 
-   Tampoco funciona si pongo int * int.
+   It does not work either with @tt{int * int}.
 
    ").
-
-:- doc(bug, "El fichero m_ciaopp.pl tiene:
-   :- doc(doinclude,lub/1).
-   y la documentacion de lub/1 tiene:
-   :- doc(lub/1,
-	""This predicate handles a flag that indicates
-	 whether to lub abstract substitutions computed for each clause 
-         during analysis."").
-   :- pred lub/1 : var $=>$ ok_ans 
-	# ""Mode for querying the current flag value"" .
-   :- pred lub/1 : @{ground,ok_ans@} $=>$ ok_ans 
-	# ""Mode for setting the current flag value"" .
-
-   pero el texto de doc(lub/1,...
-   no sale en el manual. 
-   Salen solo los usages correspondientes a las dos preds ...").
-
-:- doc(bug, "Change granularity: generate one section 
-   for a given library (at least in HTML).").
 
 :- doc(bug, "Check that @@pred etc. state arity!").
 
 :- doc(bug, "Warning: '@@verbatim' is deprecated, use '@@pre' instead.
    In the new latex it is 'alltt'.").
 
-:- doc(bug, "Una solucion posible es que lpdoc cambie
-   automaticamente : @@subsection@{My section@} por @@subsection@{My
-   section (current_doc)@}.").
-
-:- doc(bug, "usage,nil or something like that so no usage section
-   is generated.").
-
-:- doc(bug, "List of local opts: :- doc(localopts,[no_changelog]).").
-
 :- doc(bug, "if an imported predicate is redefined, the local
    version should always be the one documented!!!!").
 
-:- doc(bug, "we need macros").
-
 :- doc(bug, "ops and decls from assertions should not be documented").
 
-:- doc(bug, "Conditional inclusion, in order to make several types
-   of manuals from a single file, e.g., :- doc(doinclude(refmanual),p/3)
-   and 'refmanual' is an option passed to lpdoc (in SETTINGS).  ").
+:- doc(bug, "we need macros").
 
-:- doc(bug, "assrt_lib Make sure .asr file has same permissions as 
-   .pl file!!!!").
-
-:- doc(bug, "Another list (in another Makefile variable) called
-   APPENDICES lists files that should go in appendices").
-
-:- doc(bug, "prolog flag definitions should be documented").
-
-:- doc(bug, "Documentation needs to be completed: assertions,
-   etc.").
-
-:- doc(bug, "Should install in more standard places (info, man, etc.)").
+:- doc(bug, "(using conditional compilation?) Conditional inclusion,
+   in order to make several types of manuals from a single file, e.g.,
+   :- doc(doinclude(refmanual),p/3) and 'refmanual' is an option
+   passed to lpdoc (in SETTINGS).  ").
 
 :- doc(bug, "Should support texinfo @@dircategory and the
    install-info method.").
 
-:- doc(bug, "Probar a poner abstract donde ahora va module, despues
-   interface y despues module como introduccion.  En info, interface va
-   despues de abstract. Ah, y que en info el summary y el interface van
-   en el mismo nodo.").
-
 :- doc(bug, "local properties (not exported) used in a predicate
    which is exported: documented correctly, but an error message is
    issued. CHECK!").
-
-:- doc(bug, "ppm/jpg conversion fails for certain eps files").
 
 :- doc(bug, "Documentation for main file should produce *global*
    changelog.").
 
 :- doc(bug, "Arithmetic vs. term typing (but only if -nomodes)").
 
-:- doc(bug, "(Implementation defined ?)").
-
 :- doc(bug, "The '@@@{' and '@@@}' characters must be eliminated from
    the files generated by bibtex. Also check out what is best:
    '@@dotless@{i@}' or '@@dotless i'.").
 
-:- doc(bug, "Authors should go into the index. The global/concept
-   index, or a separate 'authors' index. This may require identifying
-   author address lines separately. Subauthor (or address): these
-   lines would not be included when documenting chapters.").
-
 %%% 1. Relatively easy and nice (i.e., good for having a good time):
-
-:- doc(bug, "How about using :- doc(+/2,""), where + is an
-   operator (?) ").
-
-:- doc(bug, "Local options in file -- something like "||
-	":- doc(options,...).").
-
-:- doc(bug, "Assertions should describe which database predicates are read
-   and written by a given predicate.").
-
-:- doc(bug, "SICStus compatibility library!").
-
-:- doc(bug, "HTML indices based on templates?").
-
-:- doc(bug, "Could generate automatically a 'changes' section for
-   the htmlindex... (nice for people to know if they want to download
-   a new version).").
-
-:- doc(bug, "in assrt_lib: avoid reloading assertions from
-   libraries (or put a switch). ").
-
-:- doc(bug, "figures should not be in the doc directory?!? If not,
-   put warning in manual.").
 
 :- doc(bug, "when including support.pl in bibutils doc,
    line_count/2 fails instead of aborting... CHECK").
@@ -2790,13 +2673,12 @@ Específicos de lpdoc:
 :- doc(bug, "'.' still appears sometimes as first character of a
    line in man format: problematic!").
 
-:- doc(bug, "Esto no es realmente importante, pero resulta que los
-   predicados cuyo nombre se compone de simbolos (e.g (=:=)/2 ),
-   deberian aparecer en el indice como '=:= /2' (el nombre separado
-   del '/'), ya que unido se parsea de otra forma en Prolog (asi
-   tambien aparece en el manual de SICStus).").
+:- doc(bug, "Predicate whose name is composed by symbols (e.g.,
+   (=:=)/2), should appear in the index as '=:= /2' (name separted
+   from '/'). If not, it is parsed in a different way in Prolog (that
+   is how appears in SICStus).").
 
-:- doc(bug, "Check out haskell_doc.el!.").
+:- doc(bug, "Check out haskell_doc.el").
 
 %%% 2. More complicated (i.e., real work):
 
@@ -2822,24 +2704,12 @@ Específicos de lpdoc:
    sections with exported predicates, etc., so that it can all be done
    by hand.").
 
-:- doc(bug, "Should have a real intermediate language from which
-    all the backend stuff is done.").
-
 :- doc(bug, "Disjunctions in properties not supported yet.").
 
 %%% 3. Not really easy to fix (e.g., it is a bug in another tool):
 
 :- doc(bug, "in basic_props, properties appear twice -- why?
    Because it includes itself!!! Discuss with Daniel...").
-
-:- doc(bug, "In HTML, @@index@{patata@} should be a hyperlink to where
-   @@concept@{patata@} appears.").
-
-:- doc(bug, "Could also generate SGML and use sgml-tools in Linux
-   to generate the other formats, but the format looks somewhat
-   limited. There is a converter to rtf (windows help) though.").
-
-:- doc(bug, "Should somehow generate rtf").
 
 :- doc(bug, "Resulting info files (on-line versions) are still not
    very good regarding references (but not so easy to fix, because of

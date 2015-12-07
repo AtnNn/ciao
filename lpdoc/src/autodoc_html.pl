@@ -1,22 +1,22 @@
 :- module(autodoc_html, [], [assertions, regtypes, fsyntax]).
 % (Nothing is exported, because everything works using hooks)
 
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_structure))).
-:- use_module(lpdocsrc(src(autodoc_filesystem))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
-:- use_module(lpdocsrc(src(autodoc_index))).
-:- use_module(lpdocsrc(src(autodoc_refsdb))).
-:- use_module(lpdocsrc(src(autodoc_images))).
-:- use_module(lpdocsrc(src(autodoc_settings))).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_structure)).
+:- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_index)).
+:- use_module(lpdoc(autodoc_refsdb)).
+:- use_module(lpdoc(autodoc_images)).
+:- use_module(lpdoc(autodoc_settings)).
 :- use_module(library(lists), [append/3, list_concat/2]).
 :- use_module(library(dict)).
-:- use_module(lpdocsrc(src(comments)), [stringcommand/1]).
+:- use_module(lpdoc(comments), [stringcommand/1]).
 :- use_module(library(format_to_string), [format_to_string/3]).
 
 % (Web-site extensions)
-:- use_module(lpdocsrc(src(autodoc_html_template))).
-:- use_module(lpdocsrc(src(pbundle_download))).
+:- use_module(lpdoc(autodoc_html_template)).
+:- use_module(lpdoc(pbundle_download)).
 
 :- doc(title, "HTML Backend").
 :- doc(author, "Jose F. Morales").
@@ -146,19 +146,19 @@ rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
 	    NBody = [raw("<IMG SRC="""), raw(IFile), raw(""" WIDTH="), raw(Width),
 		     raw(" HEIGHT="), raw(Height), raw(">")]
         ).
-rw_command(bf(Body),  _DocSt, R) :- R = htmlenv(strong, Body).
-rw_command(em(Body),  _DocSt, R) :- R = htmlenv(em, Body).
-rw_command(tt(Body),  _DocSt, R) :- R = htmlenv(tt, Body).
-rw_command(key(Body), _DocSt, R) :- R = htmlenv(span, [class="emacskey"], Body).
-rw_command(var(Body), _DocSt, R) :- R = htmlenv(span, [class="var"], Body).
+rw_command(bf(Body),  _DocSt, R) :- !, R = htmlenv(strong, Body).
+rw_command(em(Body),  _DocSt, R) :- !, R = htmlenv(em, Body).
+rw_command(tt(Body),  _DocSt, R) :- !, R = htmlenv(tt, Body).
+rw_command(key(Body), _DocSt, R) :- !, R = htmlenv(span, [class="emacskey"], Body).
+rw_command(var(Body), _DocSt, R) :- !, R = htmlenv(span, [class="var"], Body).
 % .......... (plug-in commands) ..........
 % TODO: Move to external module/
-rw_command(html_template(FileC), _DocSt, R) :-
+rw_command(html_template(FileC), _DocSt, R) :- !,
 	atom_codes(File, FileC),
 	fmt_html_template(File, [], R).
-rw_command(html_template_internal(File, Params), _DocSt, R) :-
+rw_command(html_template_internal(File, Params), _DocSt, R) :- !,
 	fmt_html_template(File, Params, R).
-rw_command(pbundle_download(BranchC, ViewC), _DocSt, R) :-
+rw_command(pbundle_download(BranchC, ViewC), _DocSt, R) :- !,
 	% TODO: Define the language of Branch (it is a the branch name,
 	%       or relative subdirectory in the repository,
 	%       e.g. trunk, branches/1.14, etc.; but it could be
@@ -166,7 +166,7 @@ rw_command(pbundle_download(BranchC, ViewC), _DocSt, R) :-
 	atom_codes(Branch, BranchC),
 	atom_codes(View, ViewC),
 	fmt_pbundle_download(Branch, View, R).
-rw_command(pbundle_href(BranchC, Manual, RelC, Text), _DocSt, R) :-
+rw_command(pbundle_href(BranchC, Manual, RelC, Text), _DocSt, R) :- !,
 	% TODO: Define the language of Branch (it is a the branch name,
 	%       or relative subdirectory in the repository,
 	%       e.g. trunk, branches/1.14, etc.; but it could be
@@ -360,7 +360,7 @@ fmt_html_prop(P, _, _) :-
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	section_prop(file_top_section, SecProps),
 	!,
-	fmt_nav(DocSt, SectPathR, PrevNextR),
+	fmt_nav(DocSt, SectPathR, UpPrevNextR),
 	( section_prop(coversec(_,_,_,_,_,_,_), SecProps) ->
 	    IsCover = yes
 	; IsCover = no
@@ -411,7 +411,7 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	  )
 	),
 	%
-	fmt_layout(Layout, SectPathR, PrevNextR, SidebarR2, SectR, DocSt, R),
+	fmt_layout(Layout, SectPathR, UpPrevNextR, SidebarR2, SectR, DocSt, R),
 	fmt_headers(MaybeIcon, CssList, TitleR2, R, ModR).
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, R) :-
 	fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, R).
@@ -463,12 +463,12 @@ fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
         ].
 
 % Navigation, sidebar, and main contents
-fmt_layout(nav_sidebar_main, SectPathR, PrevNextR, SidebarR, MainR, DocSt, R) :-
+fmt_layout(nav_sidebar_main, SectPathR, UpPrevNextR, SidebarR, MainR, DocSt, R) :-
 	colophon(DocSt, Colophon),
 	R = [%htmlenv(div, [class="header"], [
              %  htmlenv(h1, [raw("HEADER")])
              %]),
-	     navigation_env(SectPathR, PrevNextR),
+	     navigation_env(SectPathR, UpPrevNextR),
 	     htmlenv(div, [class="documentwrapper"], [
 	       htmlenv(div, [class="document"], [
 	         htmlenv(div, [class="mainwrapper"], 
@@ -481,11 +481,11 @@ fmt_layout(nav_sidebar_main, SectPathR, PrevNextR, SidebarR, MainR, DocSt, R) :-
 	       htmlenv(div, [class="clearer"], [])
              ]),
 	     % repeat navigation here too
-	     navigation_env(raw("&nbsp;"), PrevNextR),
+	     navigation_env(raw("&nbsp;"), UpPrevNextR),
 	     % the footer
 	     Colophon
             ].
-fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, DocSt, R) :-
+fmt_layout(nav_searchbox_menu_main, _SectPathR, _UpPrevNextR, SidebarR, FrameR, DocSt, R) :-
 	% TODO: Generalize, this contains many definitions that are only valid
 	%   for the Ciao website. They should be defined externally.
 %	LogoImg = 'ciao2-96-shadow-reduced.png',
@@ -621,20 +621,22 @@ html_escape([], []).
 % Format the navigation links
 % (path to the root node, links to the previous and next nodes)
 
-fmt_nav(DocSt, PathR, PrevNextR):-
+fmt_nav(DocSt, PathR, UpPrevNextR):-
 	( docst_mvar_get(DocSt, nav, Nav) ->
 	    true
 	; throw(error(no_navigation, fmt_nav/3))
 	),
-	Nav = nav(Path, Prev, Next),
+	Nav = nav(Path, _Top, Up, Prev, Next),
 	navpath_links(Path, Path2),
 	sep_list(Path2, raw(" &raquo; "), PathR0),
 	( PathR0 = [] -> PathR = raw("&nbsp;") ; PathR = [PathR0, raw(" &raquo; ")] ),
+	UpUnicode = raw("&#x25B2;"),
 	LeftUnicode = raw("&#x25C4;"),
 	RightUnicode = raw("&#x25BA;"),
+	navlink(Up, UpUnicode, UpR),
 	navlink(Prev, LeftUnicode, PrevR),
 	navlink(Next, RightUnicode, NextR),
-	PrevNextR = [PrevR, NextR].
+	UpPrevNextR = [UpR, PrevR, NextR].
 
 % :- regtype step := step(..., ...).
 % :- regtype path := ~list(step).
@@ -674,7 +676,7 @@ fmt_date(R) :-
 %
 % Note: currently, only MathJax is supported
 
-:- use_module(lpdocsrc(src(autodoc_html_resources)), [using_mathjax/1]).
+:- use_module(lpdoc(autodoc_html_assets), [using_mathjax/1]).
 
 % Include mathjax, if available (for TeX output in HTML)
 fmt_mathjax(R) :-

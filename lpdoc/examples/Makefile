@@ -1,20 +1,7 @@
-# ----------------------------------------------------------------------------
-include ../SETTINGS
-include ../COMMON
-#-----------------------------------------------------------------------------
-
-# Should install examples in library?
-install:
-	@echo "Nothing to be done"
-
-uninstall: install
+CIAOCMD ?= ciao
 
 clean:
-	@echo "*** ---------------------------------------------------------"
-	@echo "*** Cleaning up $(BASEMAIN) examples directory..."
-	@echo "*** ---------------------------------------------------------"
-	-rm -f *.itf *.asr *.po *~ 
+	$(CIAOCMD) clean_tree "."
 
 distclean: clean
-# END
-#-----------------------------------------------------------------------------
+	-rm -f *~

@@ -1,4 +1,4 @@
-:- module(_, _, [ciaopaths, assertions, regtypes, fsyntax]).
+:- module(_, _, [assertions, regtypes, fsyntax]).
 
 :- include(lpdoclib('SETTINGS_schema')).
 % ****************************************************************************
@@ -6,7 +6,7 @@
 % ****************************************************************************
 
 :- use_module(library(system)).
-:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
+:- use_module(library(bundle/paths_extra), [fsR/2]).
 
 :- doc(title, "Default configuration file for LPdoc").
 :- doc(author, "The CLIP group").
@@ -22,10 +22,6 @@
    in one line. Do not use emacs but LPdoc to generate this file").
 
 filepath := '/home/clip/Systems/lpdoc/doc'|'/home/clip/Systems/ciao/doc/common'.
-
-systempath := '/home/clip/Systems/ciao/lib'|'/home/clip/Systems/ciao/library'|'/home/clip/Systems/ciao/contrib'.
-
-pathsfile(_) :- fail.  % kludge to avoid compilation error
 
 output_name := 'manual_name'.
 
@@ -58,11 +54,8 @@ docdir := '/home/clip/public_html/Local/lpdoc_docs'.
 infodir := '/home/clip/public_html/Local/lpdoc_docs'.
 mandir := '/home/clip/public_html/Local/lpdoc_docs'.
 
-datamode(perm(rw, rw, r)).
-execmode(perm(rwx, rwx, rx)).
-
-% TODO: This is defined automatically by lpdoc, but not accessible here. Fix
-lpdoclib := '/usr/local/lib/lpdoc'.
+datamode(perms(rw, rw, r)).
+execmode(perms(rwx, rwx, rx)).
 
 % ----------------------------------------------------------------------------
 % End of SETTINGS

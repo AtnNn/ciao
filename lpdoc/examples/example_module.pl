@@ -9,7 +9,7 @@
 %% exported by default from assertions). 
 
 %% We reexport list/1
-:- reexport(library(engine(basic_props)),[ list/1 ]).
+:- reexport(engine(basic_props), [list/1]).
 
 :- use_module(library(lists), [length/2]).
 %:- use_module(bar).

@@ -13,15 +13,66 @@
 
 % ===========================================================================
 
-:- doc(section, "Checking or Setting Options").
+% (settings db from make_rt)
+:- use_module(library(make/make_rt)).
 
-:- use_module(library(system_extra)).
-:- use_module(library(make(make_rt))).
+% ===========================================================================
 
-:- export(lpdoc_option/1).
-:- doc(lpdoc_option/1, "Defines the global options of lpdoc.").
-:- data lpdoc_option/1.
-lpdoc_option('-ncv').
+:- use_module(library(pathnames), [path_concat/3]).
+:- use_module(library(messages), [error_message/1]).
+
+:- doc(section, "Loading Setting").
+
+:- export(settings_file/1).
+:- data settings_file/1.
+
+set_settings_file(ConfigFile) :-
+	retractall_fact(settings_file(_)),
+	assertz_fact(settings_file(ConfigFile)).
+
+% TODO: no unload?
+% Load settings, set make options, and perform some sanity checks.
+:- export(load_settings/2).
+load_settings(ConfigFile, Opts) :-
+	clean_make_opts,
+	load_settings_(ConfigFile),
+	set_make_opts(Opts),
+	ensure_lpdoclib_defined.
+
+load_settings_(ConfigFile) :-
+	(
+	    fixed_absolute_file_name(ConfigFile, AbsFilePath),
+	    ( file_exists(AbsFilePath)
+	    ; atom_concat(AbsFilePath, '.pl', TryThisFile),
+	      file_exists(TryThisFile)
+	    )
+	->
+	    trace_message("Using configuration file ~w", [AbsFilePath]),
+	    set_settings_file(AbsFilePath),
+	    dyn_load_cfg_module_into_make(AbsFilePath)
+	;
+	    working_directory(CWD0, CWD0),
+	    path_concat(CWD0, '', CWD),
+	    add_name_value(filepath, CWD),
+	    add_name_value('$schema', 'SETTINGS_schema'), % assume that we have a valid schema
+	    trace_message("No configuration file. Setting filepath to ~w", [CWD])
+	),
+	!.
+load_settings_(ConfigFile) :-
+	throw(make_error("settings file ~w does not exist", [ConfigFile])).
+
+clean_make_opts :-
+	retractall_fact(make_option(_)),
+	retractall_fact(name_value(_, _)).
+
+set_make_opts([]).
+set_make_opts([X|Xs]) :- set_make_opt(X), set_make_opts(Xs).
+
+set_make_opt(make_option(Opt)) :- !,
+	assertz_fact(make_option(Opt)).
+set_make_opt(name_value(Name, Value)) :- !,
+	assertz_fact(name_value(Name, Value)).
+set_make_opt(X) :- throw(error(unknown_opt(X), set_make_opt/1)).
 
 % verify that the loaded settings implement SETTINGS_schema
 :- export(verify_settings/0).
@@ -31,8 +82,35 @@ verify_settings :-
 	; throw(make_error("The settings file does not seem to be including SETTINGS_schema", []))
 	).
 
+% Define 'lpdoclib' setting, check that it is valid
+ensure_lpdoclib_defined :-
+	( LpDocLibDir = ~file_search_path(lpdoclib),
+	  file_exists(~path_concat(LpDocLibDir, 'SETTINGS_schema.pl')) ->
+	    add_name_value(lpdoclib, LpDocLibDir)
+	; error_message(
+"No valid file search path for 'lpdoclib' alias. It is not defined or it does \n"||
+"not contain proper installation files. The LPdoc build/installation does not \n"||
+"seem to be correct."),
+	  fail
+	).
+
+%:- dynamic file_search_path/2.
+%:- multifile file_search_path/2.
+
+:- use_module(library(system), [file_exists/1]).
+
+% ===========================================================================
+
+:- doc(section, "Checking or Setting Options").
+
+:- use_module(library(system)).
+:- use_module(library(system_extra)).
+:- use_module(library(bundle/doc_flags), [docformatdir/2]).
+
 :- export(check_setting/1).
 check_setting(Name) :- check_var_exists(Name).
+
+:- use_module(library(bundle/doc_flags), [bibfile/1, docformatdir/2]).
 
 % (With implicit default value)
 :- export(setting_value_or_default/2).
@@ -49,9 +127,14 @@ setting_value_or_default(Name, Value) :-
 
 default_val(startpage) := 1.
 default_val(papertype) := afourpaper.
-default_val(perms) := perm(rwX, rX, rX).
+default_val(perms) := perms(rwX, rX, rX).
 default_val(owner) := ~get_pwnam.
 default_val(group) := G :- ( G = ~get_grnam -> true ; G = 'unknown' ).
+default_val(bibfile) := ~bibfile.
+default_val(htmldir) := ~docformatdir(html).
+default_val(docdir) := ~docformatdir(any).
+default_val(infodir) := ~docformatdir(info).
+default_val(mandir) := ~docformatdir(manl).
 
 % (With explicit default value)
 :- export(setting_value_or_default/3).
@@ -73,21 +156,6 @@ all_setting_values(Name) := ~all_values(Name).
 
 :- use_module(library(aggregates)).
 
-:- export(get_command_option/1).
-% TODO: Document?
-get_command_option([C]) :-
-	make_rt:get_value(stop_if_error, V),
-	stop_command_option(V, C),
-	!.
-get_command_option([nofail, silent, show_error_on_error|A]) :-
-	( current_fact(make_option('-v')) ->
-	    A = [verbose]
-	; A = []
-	).
-%get_command_option := exception.
-
-:- use_module(library(lpdist(distutils)), [stop_command_option/2]).
-
 :- export(requested_file_formats/1).
 :- pred requested_file_formats(F) # "@var{F} is a requested file format".
 requested_file_formats := F :-
@@ -99,24 +167,29 @@ requested_file_formats := F :-
 
 :- export(load_vpaths/0).
 load_vpaths :-
-	load_filepath,
-	load_systempath.
-
-load_filepath :-
-	( setting_value(filepath, P),
-	  add_vpath(P),
-	  verbose_message("Added file path: ~w", [P]),
-	  fail
+	get_lib_opts(Libs, SysLibs),
+	( % (failure-driven loop)
+	  ( member(P, Libs)
+	  ; member(P, SysLibs)
+	  ),
+	    add_vpath(P),
+	    trace_message("Added file path: ~w", [P]),
+	    fail
 	; true
 	).
 
-load_systempath :-
-	( setting_value(systempath, P),
-	  add_vpath(P),
-	  verbose_message("Added system path: ~w", [P]),
-	  fail
-	; true
-	).
+:- export(get_lib_opts/2).
+get_lib_opts(Libs, SysLibs) :-
+	Libs = ~all_setting_values(filepath),
+%	SysLibs = ~all_setting_values(systempath),
+	SysLibs = ~findall(P, (file_search_path(_Alias, P), \+ P = '.')).
+
+:- multifile file_search_path/2.
+:- dynamic file_search_path/2.
+
+% TODO: prioritize alias paths for the current bundle?
+% :- use_module(lpdoc(autodoc_filesystem), [get_parent_bundle/1]).
+% :- use_module(engine(internals), ['$bundle_alias_path'/3]).
 
 % ===========================================================================
 
@@ -131,45 +204,18 @@ load_systempath :-
 
 :- use_module(engine(system_info), [get_os/1]).
 
-:- export(viewer/4).
-% The viewer application for a given file format
-% viewer(Suffix, App, Mode):
-%   Mode = fg (call in foreground) or bg (call in background)
-% -- Default viewer for MacOS X
-viewer('html', 'open "', '"', fg) :- get_os('DARWIN'), !.
-viewer('pdf', 'open "', '"', fg) :- get_os('DARWIN'), !.
-% viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('DARWIN'), !.
-viewer('ps', 'open "', '"', fg) :- get_os('DARWIN'), !.
-viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- get_os('DARWIN'), !.
-% -- Default viewer for Windows
-viewer('html', 'cygstart "', '"', fg) :- get_os('Win32'), !.
-viewer('pdf', 'cygstart "', '"', fg) :- get_os('Win32'), !.
-% viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('Win32'), !.
-viewer('ps', 'cygstart "', '"', fg) :- get_os('Win32'), !.
-viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- get_os('Win32'), !.
-%viewer('html', 'start "', '"', fg) :- get_os('Win32'), !.
-%viewer('pdf', 'start "', '"', fg) :- get_os('Win32'), !.
-%viewer('ps', 'start "', '"', fg) :- get_os('Win32'), !.
-% -- Default viewer for LINUX
-viewer('html', 'xdg-open "', '"', fg) :- get_os('LINUX'), !.
-viewer('pdf', 'xdg-open "', '"', fg) :- get_os('LINUX'), !.
-% viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('LINUX'), !.
-viewer('ps', 'xdg-open "', '"', fg) :- get_os('LINUX'), !.
-viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- get_os('LINUX'), !.
-% -- Viewer for info files (assume emacs for all systems)
-viewer('info', 'emacsclient -n ', '"', fg) :- !.
-% -- Other default viewers (probably, this will not work)
-viewer('html', 'see "', '"', bg) :- !.
-% viewer('pdf', 'see "', '"', bg) :- !.
-viewer('pdf', 'emacsclient -n "', '"', fg) :- get_os('Win32'), !.
-viewer('ps', 'see "', '"', bg) :- !.
-viewer('manl', 'emacsclient -n --eval ''(man "./', '")''', fg) :- !.
+:- export(generic_viewer/1).
+% Generic document viewer
+generic_viewer('open') :- get_os('DARWIN'), !.
+generic_viewer('cygstart') :- get_os('Win32'), !.
+%viewer('start') :- get_os('Win32'), !.
+generic_viewer('xdg-open') :- get_os('LINUX'), !.
 
 % TODO: This seems to be done by the emacs mode...
 % lpsettings <- [] # "Generates default LPSETTINGS.pl in the current directory"
 % 	:-
 % 	working_directory(CWD0, CWD0),
-%       path_name(CWD0, CWD),
+%       path_concat(CWD0, '', CWD),
 % 	generate_default_lpsettings_file(CWD, '').
 
 %% The command that views dvi files in your system
@@ -204,11 +250,9 @@ tex := 'tex'.
 :- export(texindex/1).
 texindex := 'texindex'.
 
-%% The command that converts dvi to postscript in your system. Make
-%% sure it generates postscript fonts, not bitmaps (selecting -Ppdf
-%% often does the trick). -z preserves hypertext links.
+%% The command that converts dvi to postscript in your system.
 :- export(dvips/1).
-dvips := 'dvips -z -Ppdf'.
+dvips := 'dvips'.
 
 %% The command that converts postscript to pdf in your system. Make
 %% sure it generates postscript fonts, not bitmaps (selecting -Ppdf in
@@ -223,16 +267,6 @@ ps2pdf := 'ps2pdf'.
 %% files in your system. Set also the appropriate flags.
 :- export(makeinfo/1).
 makeinfo := 'makeinfo'.
-
-%% The command that converts .texi files into .rtf files
-% TODO: This may be obsolete, keep anyway
-:- export(makertf/1).
-makertf := 'makertf'.
-
-%% The command that converts .rtf files into Win32 .HLP files
-% TODO: This may be obsolete, keep anyway
-:- export(rtftohlp/1).
-rtftohlp := 'hc31'.
 
 :- doc(subsection, "Image Conversions").
 

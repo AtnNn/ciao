@@ -20,21 +20,22 @@
 % Other libraries
 :- use_module(library(operators)).
 :- use_module(library(format)).
+:- use_module(library(pathnames), [path_basename/2]).
 
 % Local libraries
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_refsdb))).
-:- use_module(lpdocsrc(src(autodoc_index))).
-:- use_module(lpdocsrc(src(autodoc_structure))).
-:- use_module(lpdocsrc(src(autodoc_filesystem))).
-:- use_module(lpdocsrc(src(autodoc_settings))).
-:- use_module(lpdocsrc(src(comments)), [version_descriptor/1, docstring/1,
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_refsdb)).
+:- use_module(lpdoc(autodoc_index)).
+:- use_module(lpdoc(autodoc_structure)).
+:- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(comments), [version_descriptor/1, docstring/1,
 	stringcommand/1]).
 
 % The backends
-:- use_module(lpdocsrc(src(autodoc_texinfo)), []).
-:- use_module(lpdocsrc(src(autodoc_man)),     []).
-:- use_module(lpdocsrc(src(autodoc_html)),     []).
+:- use_module(lpdoc(autodoc_texinfo), []).
+:- use_module(lpdoc(autodoc_man),     []).
+:- use_module(lpdoc(autodoc_html),     []).
 
 % ===========================================================================
 
@@ -239,6 +240,7 @@ icmd_type(backend_printindex(t)).
 icmd_type(show_toc(t)). % show the table of contents (or part of it)
 icmd_type(show_biblio).
 icmd_type(simple_link(t,t,t,s)).
+icmd_type(menu_link(t,s)). % (for texinfo)
 icmd_type(cite_link(t,s)).
 icmd_type(ref_link(t,s)).
 icmd_type(missing_link(s)).
@@ -307,25 +309,36 @@ empty_doctree([]).
 doctree_insert_end(A0, Elem, A) :-
 	doctree_simplify([A0, Elem], A).
 
-:- export(doctree_insert_before_section/3).
-:- pred doctree_insert_before_section(A0, Elem, A) :: 
+:- export(doctree_insert_before_subfile_section/3).
+:- pred doctree_insert_before_subfile_section(A0, Elem, A) :: 
    doctree * doctree * doctree 
 # "Insert @var{Elem} in @var{A0} before the first section, obtaining
-   @var{A}".
+   @var{A}. Keep @var{A0} if @var{Elem} is already present.".
 
-doctree_insert_before_section(A0, Elem, A) :-
-        doctree_insert_before_section_(A0, no, Elem, A).
+doctree_insert_before_subfile_section(A0, Elem, A) :-
+	ensure_list(A0, A1),
+        doctree_insert_before_subfile_section_(A1, no, Elem, A).
 
-% (@var(More) indicates if we should insert @tt{show_toc} or fail in
-% case that the current list ends without a section command)
-doctree_insert_before_section_([], no, Elem, [Elem]) :- !.
-doctree_insert_before_section_([A|As], _, Elem, [B|As]) :-
-        doctree_insert_before_section_(A, yes, Elem, B), !.
-doctree_insert_before_section_([A|As], _, Elem, [Elem,A|As]) :- is_section_cmd(A), !.
-doctree_insert_before_section_([A|As], More, Elem, [A|Bs]) :-
-        doctree_insert_before_section_(As, More, Elem, Bs).
+% If @var{Elem} is inserted at the end, @tt{More=no} must hold
+% (otherwise the predicate fails).
+doctree_insert_before_subfile_section_([], no, Elem, [Elem]) :- !.
+doctree_insert_before_subfile_section_([A|As], _, Elem, [B|As]) :-
+        doctree_insert_before_subfile_section_(A, yes, Elem, B), !.
+doctree_insert_before_subfile_section_([A|As], _, Elem, [A|As]) :-
+	Elem == A, !.
+doctree_insert_before_subfile_section_([A|As], _, Elem, [Elem,A|As]) :-
+	is_subfile_section_cmd(A), !.
+doctree_insert_before_subfile_section_([A|As], More, Elem, [A|Bs]) :-
+        doctree_insert_before_subfile_section_(As, More, Elem, Bs).
 
-is_section_cmd(section_env(_,_,_,_)).
+is_subfile_section_cmd(section_env(SecProps,_,_,_)) :-
+	section_prop(subfile(_), SecProps).
+
+ensure_list(A0, A) :-
+	( A0 = [] -> A = A0
+	; A0 = [_|_] -> A = A0
+	; A = [A0]
+	).
 
 % ---------------------------------------------------------------------------
 
@@ -379,7 +392,6 @@ doctokens(_). % TODO: define
 %   level(L): section at level L
 %   with_parent: section label appended with parent base
 %   unnumbered: special unnumbered section
-%   linktop: just contain navigation references to top
 %   file_top_section: first section in the file (may require special translation)
 % TODO: finish
 
@@ -736,7 +748,7 @@ plaintext_ignore(email(_)).
 %% 	Ok = yes.
 %% 
 %% :- use_module(library(system), [delete_file/1, mktemp/2]).
-%% :- use_module(lpdocsrc(src(autodoc_aux)), [read_file/2]).
+%% :- use_module(lpdoc(autodoc_aux), [read_file/2]).
 %% :- use_module(library(dec10_io)).
 
 % ---------------------------------------------------------------------------
@@ -750,10 +762,7 @@ plaintext_ignore(email(_)).
 doctree_translate_and_write(X0, DocSt, OS) :-
 	% rewrite all commands until we get a tree of tokens
 	% output the tree of tokens
-	( rewrite_command(X0, DocSt, X2) ->
-	    true
-	; throw(error(wrong_arg(1,X0), rewrite_command/1))
-	),
+	rewrite_command(X0, DocSt, X2),
 	( doctokens_write(X2, DocSt, OS) ->
 	    true
 	; throw(error(wrong_arg(1,X2), doctokens_write/3))
@@ -761,17 +770,23 @@ doctree_translate_and_write(X0, DocSt, OS) :-
 
 % ---------------------------------------------------------------------------
 
-rewrite_command(L, _DocSt, L) :- ( var(L) ; primitive_icmd(L) ), !.
-rewrite_command(A, DocSt, B) :- ( A = [] ; A = [_|_] ), !,
+rewrite_command(X0, DocSt, X2) :-
+	( rewrite_command_(X0, DocSt, X2) ->
+	    true
+	; throw(error(wrong_arg(1,X0), rewrite_command/3))
+	).
+	
+rewrite_command_(L, _DocSt, L) :- ( var(L) ; primitive_icmd(L) ), !.
+rewrite_command_(A, DocSt, B) :- ( A = [] ; A = [_|_] ), !,
 	rewrite_commands(A, DocSt, B).
 % TODO: Hack to fix unwanted blanks after "@begin{verbatim}", solve it in a better way
-rewrite_command(env_('verbatim', Body0), DocSt, R) :-
+rewrite_command_(env_('verbatim', Body0), DocSt, R) :-
 	remove_first_nl(Body0, Body),
 	!,
-	rewrite_command(env_('verbatim', Body), DocSt, R).
+	rewrite_command_(env_('verbatim', Body), DocSt, R).
 % TODO: Hack to switch item into item_num for enumerations, solve it
 %       by introducing context.
-rewrite_command(env_('enumerate', Body0), DocSt, R) :-
+rewrite_command_(env_('enumerate', Body0), DocSt, R) :-
 	member(item(_), Body0),
 	!,
 	% Use internal item_num for enumerate
@@ -784,8 +799,8 @@ rewrite_command(env_('enumerate', Body0), DocSt, R) :-
 	    R2 = description_env(Body)
 	; R2 = env_('enumerate', Body)
 	),
-	rewrite_command(R2, DocSt, R).
-rewrite_command(Command, DocSt, NewCommand2) :-
+	rewrite_command_(R2, DocSt, R).
+rewrite_command_(Command, DocSt, NewCommand2) :-
 	functor(Command, Cmd, A),
 	functor(BT, Cmd, A),
 	Command =.. [_|Xs],
@@ -797,7 +812,7 @@ rewrite_command(Command, DocSt, NewCommand2) :-
 	rewrite_cmd_args(Ts, Xs, DocSt, Ys),
 	B1 =.. [Cmd|Ys],
 	rewrite_cmd(B1, DocSt, NewCommand),
-	rewrite_command(NewCommand, DocSt, NewCommand2).
+	rewrite_command_(NewCommand, DocSt, NewCommand2).
 
 rewrite_cmd(L0, DocSt, R) :-
 	L0 = section_env(SecProps, SectLabel, TitleR, Body),
@@ -812,7 +827,7 @@ rewrite_cmd(component_link(Base), DocSt, L) :- !,
 	docst_backend(DocSt, Backend),
 	absfile_for_subtarget(Base, Backend, cr, F),
 	% TODO: hack, remove the path since we live in the same directory
-	get_name(F, FName),
+	path_basename(F, FName),
 	L = backend_include_component(FName).
 % ... (shared commands) ...
 rewrite_cmd(version(""), DocSt,  R) :- !,
@@ -897,17 +912,18 @@ rewrite_commands([X|Xs], DocSt, [Y|Ys]) :-
 
 write_as_subfile(SubSuffix, DocR0, DocSt, SubName) :-
 	docst_new_sub(DocSt, SubSuffix, DocSt1),
-	insert_show_toc(DocR0, DocSt1, DocR), % TODO: move to doctree_prepare_...?
+	( insert_show_toc(DocR0, DocSt1, DocR) -> % TODO: move to doctree_prepare_...?
+	    true
+	; throw(error(wrong_arg(1,DocR0), insert_show_toc/3))
+	),
 	%
 	docst_backend(DocSt1, Backend),
 	docst_currmod(DocSt1, SubName),
 	absfile_for_subtarget(SubName, Backend, cr, SubFile),
+	% TODO: close file on exception
 	open(SubFile, write, SubOS),
 	doctree_prepare_docst_translate_and_write(DocR, DocSt1, SubOS),
-	%
 	close(SubOS).
-
-:- use_module(library(make(make_rt)), [get_name/2]).
 
 % ---------------------------------------------------------------------------
 
@@ -945,7 +961,7 @@ escape_string(InputType, NS, DocSt, VS) :-
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Writting doctokens").
+:- doc(subsection, "Writing doctokens").
 
 :- pred doctokens_write(X, DocSt, OS) : doctokens * docstate * stream
         # "Write doctokens to the @var{OS} stream".
@@ -957,7 +973,7 @@ escape_string(InputType, NS, DocSt, VS) :-
 %   NL=nl_eat_blank: 
 %          The previous character was a new line but was not
 %          written. Space after it are moved before the new line.
-%          (useful for writting 'info' files)
+%          (useful for writing 'info' files)
 
 % TODO: Refine usage of special raw_nleb, raw_fc commands
 %       (e.g. not necessary for all backend)
@@ -1138,7 +1154,8 @@ resolve_cite(C, RefPairs, _DocSt, R) :-
 	    R = cite_link(CiteLink, Text)
 	; R = string_esc("{UNKNOWNCITE?}"),
 	  % TODO: Improve warning message
-	  message(error, ['Unresolved bibliographical reference `', Ref, '\''])
+	  atom_codes(RefAtom, C),
+	  message(error, ['Unresolved bibliographical reference `', RefAtom, '\''])
 	).
 
 % ---------------------------------------------------------------------------
@@ -1170,6 +1187,10 @@ resolve_ref(Ref, FullTree, R) :-
 % @pred{toc_kind/1} specifies the available views. The same page may
 % include more than one view.
 
+% NOTE: See texinfo documentation for menu entries (info backend)
+% https://www.gnu.org/software/texinfo/manual/texinfo/texinfo.html#Writing-a-Menu
+% https://www.gnu.org/software/texinfo/manual/texinfo/texinfo.html#Master-Menu-Parts
+
 % TODO: change names
 :- regtype toc_kind/1.
 toc_kind := toc_view(_S) % Each of the TOC views located in a page:
@@ -1183,32 +1204,33 @@ toc_kind := toc_view(_S) % Each of the TOC views located in a page:
           | indices.      % Indices
 
 % TODO: include the navigation buttons as views here?
-fmt_toc(_, DocSt, R) :-
-	% TODO: generalize?
-	docst_backend(DocSt, Backend),
-	\+ Backend = html, % ignore if not HTML
-	!,
-	R = [].
 fmt_toc(toc_view(Sidebar), DocSt, R) :- !,
+	docst_backend(DocSt, Backend),
 	show_subparts_in_maintext(DocSt, SubpartsInMaintext),
 	% TODO: add copyright, etc?
         % TODO: SubpartsInMaintext should be obtained from DocSt
-        ( SubpartsInMaintext = no, Sidebar = yes ->
+        ( Backend = html, SubpartsInMaintext = no, Sidebar = yes ->
 	    fmt_toc(global_links, DocSt, R0),
 	    fmt_toc(local, DocSt, R1),
 	    fmt_toc(global, DocSt, R2),
 	    fmt_toc(indices, DocSt, R3),
 	    doctree_simplify([R1,R2,R0,R3], R)
-        ; SubpartsInMaintext = yes, Sidebar = yes ->
+        ; Backend = html, SubpartsInMaintext = yes, Sidebar = yes ->
 	    fmt_toc(global_links, DocSt, R0),
 	    fmt_toc(indices, DocSt, R3),
 	    doctree_simplify([R0,R3], R)
+        ; Backend = texinfo, Sidebar = no, docst_currmod_is_main(DocSt) ->
+	    fmt_toc(global_and_indices, DocSt, R2),
+	    doctree_simplify([R2], R)
+        ; Backend = texinfo, Sidebar = no ->
+	    fmt_toc(global, DocSt, R2),
+	    doctree_simplify([R2], R)
         ; SubpartsInMaintext = no, Sidebar = no ->
 	    doctree_simplify([], R)
         ; SubpartsInMaintext = yes, Sidebar = no ->
 	    fmt_toc(global, DocSt, R2),
 	    doctree_simplify([R2], R)
-	; throw(error(not_in_domain_toc_view(SubpartsInMaintext, Sidebar), fmt_toc/3))
+	; throw(error(not_in_domain_toc_view(Backend, SubpartsInMaintext, Sidebar), fmt_toc/3))
 	).
 fmt_toc(global_links, DocSt, R) :- !,
         Title = string_esc("Global Links"),
@@ -1248,7 +1270,38 @@ fmt_toc(TOCKind, DocSt, R) :- TOCKind = vertical_menu, !,
 	    R = [itemize_bullet(R0)]
 	; R = []
 	).
+fmt_toc(TOCKind, DocSt, R) :- TOCKind = global_and_indices, !,
+	% TODO: ad-hoc for texinfo backend (simplify)
+	docst_backend(DocSt, Backend),
+	get_toc_tree(global, DocSt, TreeG),
+	fmt_toc_tree(TreeG, Backend, global, Rg),
+	get_toc_tree(indices, DocSt, TreeI),
+	fmt_toc_tree(TreeI, Backend, indices, Ri),
+	( \+ doctree_is_empty(Ri) ->
+	    doctree_simplify([Rg,
+                              raw_nl, raw("Indexes"), raw_nl, raw_nl,
+                              Ri], R0)
+	; R0 = Rg
+	),
+	( \+ doctree_is_empty(R0) ->
+	    R = [infoenv("menu", R0)]
+	; R = []
+	).
 fmt_toc(TOCKind, DocSt, R) :-
+	% TODO: ad-hoc for texinfo (simplify)
+	docst_backend(DocSt, Backend),
+	Backend = texinfo,
+	!,
+	get_toc_tree(TOCKind, DocSt, Tree),
+	fmt_toc_tree(Tree, Backend, TOCKind, R0),
+	fmt_toc_env(R0, DocSt, TOCKind, R).
+fmt_toc(TOCKind, DocSt, R) :-
+	docst_backend(DocSt, Backend),
+	get_toc_tree(TOCKind, DocSt, Tree),
+	fmt_toc_tree(Tree, Backend, TOCKind, R0),
+	fmt_toc_env(R0, DocSt, TOCKind, R).
+
+get_toc_tree(TOCKind, DocSt, Tree) :-
         toc_source(TOCKind, Source),
 	( docst_mvar_lookup(DocSt, Source, Tree0) ->
 	    true
@@ -1258,16 +1311,6 @@ fmt_toc(TOCKind, DocSt, R) :-
 	    % Remove the root node
 	    Tree0 = [toc_node(_,_,_,Tree)]
 	; Tree = Tree0
-	),
-	fmt_toc_(Tree, TOCKind, R0),
-	( \+ doctree_is_empty(R0) ->
-	    docst_modtype(DocSt, ModuleType),
-	    toc_title(TOCKind, ModuleType, Title),
-	    ( doctree_is_empty(Title) -> R = R1 % no title
-	    ; R = [subsection_title(Title)|R1]
-	    ),
-	    R1 = [itemize_bullet(R0)]
-	; R = []
 	).
 
 show_subparts_in_maintext(DocSt, SubpartsInMaintext) :-
@@ -1285,20 +1328,38 @@ subparts_in_maintext(part).
 
 % Format the node tree as a table of contents. Different views are
 % obtained depending on @var{TOCKind}.
-fmt_toc_([], _, []).
-fmt_toc_([toc_node(Link,T,Props,Subs)|Ss], TOCKind, Rs) :-
+fmt_toc_tree([], _Backend, _, []).
+fmt_toc_tree([toc_node(Link,T,Props,Subs)|Ss], Backend, TOCKind, Rs) :-
         % TODO: Use Props to implement views for indices, etc.
 	( toc_link_filter(TOCKind, Props, Link, Recursive) ->
 	    Rs = [R|Rs0],
 	    ( Recursive = yes ->
-	        fmt_toc_(Subs, TOCKind, SubRs)
+	        fmt_toc_tree(Subs, Backend, TOCKind, SubRs)
 	    ; SubRs = []
 	    ),
-	    fmt_toc_link(default, Link, T, SubRs, R)
+	    fmt_toc_link(Backend, default, Link, T, SubRs, R)
 	; Rs = Rs0
         ),
 	% Continue with the rest of nodes
-	fmt_toc_(Ss, TOCKind, Rs0).
+	fmt_toc_tree(Ss, Backend, TOCKind, Rs0).
+
+% Enclose the result of fmt_toc_tree in a proper environment
+% (this separation is useful for texinfo menus)
+fmt_toc_env(R0, _DocSt, _TOCKind, R) :-
+	doctree_is_empty(R0),
+	!,
+	R = [].
+fmt_toc_env(R0, DocSt, _TOCKind, R) :-
+	docst_backend(DocSt, texinfo),
+	!,
+	R = [infoenv("menu", R0)].
+fmt_toc_env(R0, DocSt, TOCKind, R) :-
+	docst_modtype(DocSt, ModuleType),
+	toc_title(TOCKind, ModuleType, Title),
+	( doctree_is_empty(Title) -> R = R1 % no title
+	; R = [subsection_title(Title)|R1]
+	),
+	R1 = [itemize_bullet(R0)].
 
 % ---------------------------------------------------------------------------
 
@@ -1316,7 +1377,7 @@ fmt_vertical_menu([toc_node(Link,T,Props,Subs)|Ss], Name, Depth, Rs) :-
 	    ; Style = 'unselmenu'
 	    ),
 	    ( Depth = 0 -> T2 = bf(T) ; T = T2 ), % use bold for first level
-	    fmt_toc_link(Style, Link, T2, SubRs, R)
+	    fmt_toc_link(html, Style, Link, T2, SubRs, R)
 	; Rs = Rs0
         ),
 	% Continue with the rest of nodes
@@ -1324,7 +1385,13 @@ fmt_vertical_menu([toc_node(Link,T,Props,Subs)|Ss], Name, Depth, Rs) :-
 
 % ---------------------------------------------------------------------------
 
-fmt_toc_link(Style, Link, Title, SubRs, R) :- !,
+fmt_toc_link(texinfo, _Style, Link, Title, SubRs, R) :- !,
+	R = [menu_link(Link, Title)|R0],
+	( SubRs = [] ->
+	    R0 = []
+	; throw(nested_texinfo_toc_not_implemented) % (not allowed, need flatten)
+	).
+fmt_toc_link(_, Style, Link, Title, SubRs, R) :- !,
 	R = [item(""), simple_link(Style, no_label, Link, Title)|R0],
 	( SubRs = [] ->
 	    R0 = []
@@ -1346,7 +1413,7 @@ fmt_toc_custom([N|Ns], DocSt, Rs) :-
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Kinds of Table of Contents").
-% This defines properties of different kinds of table of contents
+% This defines properties of different kinds of table of contents (TOC)
 
 % Title
 :- discontiguous(toc_title/3).
@@ -1355,13 +1422,14 @@ fmt_toc_custom([N|Ns], DocSt, Rs) :-
 % State variable containing the toc source
 :- discontiguous(toc_source/2).
 
-% The full table of contents (title is in the section name)
-toc_title(full, _, []).
+% Full TOC (title is in the section name)
+toc_title(full, _, []). % (no title)
 toc_source(full, full_toc_tree).
 toc_link_filter(full, Props, Link, yes) :-
         \+ doclink_is_local(Link),
 	\+ section_prop(is_special(_), Props).
 
+% TOC for global links (separate pages)
 % TODO: use different names depending on modtype
 toc_title(global, application, string_esc("Parts of this manual")).
 toc_title(global, part, string_esc("Subparts")) :- !.
@@ -1374,7 +1442,7 @@ toc_link_filter(global, Props, Link, no) :-
         \+ doclink_is_local(Link),
 	\+ section_prop(is_special(_), Props).
 
-% (in this page)
+% TOC for local links (same page)
 toc_title(local, module, string_esc("Module Sections")) :- !.
 toc_title(local, package, string_esc("Package Sections")) :- !.
 toc_title(local, _, string_esc("Sections")) :- !.
@@ -1382,6 +1450,7 @@ toc_source(local, curr_toc_tree).
 toc_link_filter(local, _Props, Link, yes) :-
         doclink_is_local(Link). 
 
+% TOC for indices
 toc_title(indices, _, string_esc("Indices")).
 toc_source(indices, full_toc_tree).
 toc_link_filter(indices, Props, _Link, yes) :-
@@ -1408,8 +1477,8 @@ insert_show_toc(R0, _DocSt, R) :-
 insert_show_toc_(R0, R) :-
 	R0 = section_env(PrevSecProps, SectLabel, TitleR, Body0),
 	Toc = show_toc(toc_view(no)),
-%	doctree_insert_before_section(Body0, Toc, Body),
-	doctree_insert_end(Body0, Toc, Body),
+	doctree_insert_before_subfile_section(Body0, Toc, Body),
+%	doctree_insert_end(Body0, Toc, Body),
 	R = section_env(PrevSecProps, SectLabel, TitleR, Body).
 
 % ---------------------------------------------------------------------------

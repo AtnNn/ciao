@@ -8,16 +8,16 @@
    references (indices, sections, bibliography, etc.). It includes the
    generation of the table of contents.").
 
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
-:- use_module(lpdocsrc(src(autodoc_structure))).
-:- use_module(lpdocsrc(src(autodoc_filesystem))).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_structure)).
+:- use_module(lpdoc(autodoc_filesystem)).
 
 % ---------------------------------------------------------------------------
 
 :- doc(section, "Resolving Bibliography").
 
-:- use_module(lpdocsrc(src(autodoc_bibrefs)), [resolve_bibliography/1]).
+:- use_module(lpdoc(autodoc_bibrefs), [resolve_bibliography/1]).
 
 % (execute between scanning and final translation)
 :- export(compute_refs_and_biblio/1).
@@ -121,8 +121,11 @@ get_secttree_([sect(Props,Link,T)|Ss], Ss0, BaseLevel, BaseName, Rs) :-
 	get_secttree_(Ss1, Ss0, BaseLevel, BaseName, Rs1).
 get_secttree_(Ss, Ss, _BaseLevel, _BaseName, []).
 
-:- use_module(.(autodoc_structure), [docstr_node/4]).
+:- use_module(lpdoc(autodoc_structure), [docstr_node/4]).
 
+% TODO: CurrPath in nav(_,_,_,_,_) would not be needed if
+%   we just traverse Up links; Top link may be global too.
+:- export(get_nav/4).
 :- pred get_nav/4 :: secttree * atm * term * secttree
    # "Obtain some navigation links and the tree for the current section from a global tree".
 get_nav(Tree, Curr, Nav, CurrTree) :-
@@ -134,19 +137,24 @@ get_nav(Tree, Curr, Nav, CurrTree) :-
 	  member123(Prev0, Curr0, Next0, Nodes) ->
 	    reverse(RootPath, CurrPath),
 	    CurrTree = CurrTree0,
+	    first_link(CurrPath, Top),
+	    first_link(RootPath, Up),
 	    df_link(Prev0, Prev),
 	    df_link(Next0, Next)
 	; % TODO: README*.lpdoc files fail here... find a better way to catch this
           fail %throw(error(arg(1,Curr), get_nav/1)) % not found!
 	),
 	!,
-	Nav = nav(CurrPath, Prev, Next).
+	Nav = nav(CurrPath, Top, Up, Prev, Next).
 get_nav(_Tree, _Curr, Nav, CurrTree) :-
-	Nav = nav([], no_link, no_link),
+	Nav = nav([], no_link, no_link, no_link, no_link),
 	CurrTree = [].
 
 df_link(X, Link) :-
         ( X = [df_item(Link0, _, _)] -> Link = Link0 ; Link = no_link ).
+
+first_link(Path, Link) :-
+	( Path = [step(Link0,_)|_] -> Link = Link0 ; Link = no_link ).
 
 :- use_module(library(lists), [reverse/2]).
 

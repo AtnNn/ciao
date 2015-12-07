@@ -8,13 +8,13 @@
 
 :- use_module(library(aggregates)).
 
-:- use_module(library(dirutils)).
-:- use_module(library(lpdist(pbundle_meta))).
+:- use_module(library(pathnames)).
+:- use_module(ciaobld(pbundle_meta)).
 
 :- use_module(library(terms), [atom_concat/2]).
 
-:- use_module(lpdocsrc(src(autodoc_settings))).
-:- use_module(lpdocsrc(src(autodoc_html_template))).
+:- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_html_template)).
 
 % ---------------------------------------------------------------------------
 
@@ -292,13 +292,13 @@ pbundle_root(Kind) := Path :-
 % TODO: Provide operations to obtain the full and relative URL
 % The URL to the pbundle root (for downloading)
 pbundle_url(Kind) := Url :-
-	% TODO: Use relative URLs is htmlurl is '' (search uses of htmlurl)
+	% TODO: Use relative URLs if htmlurl is '' (search uses of htmlurl)
 	Url0 = ~setting_value(htmlurl),
 	( pbundle_kind_is_doc(Kind) ->
 	    RelUrl = ~setting_value(pbundle_localdocurl)
 	; RelUrl = ~setting_value(pbundle_localpkgurl)
 	),
-	Url = ~atom_concat(~path_name(Url0), RelUrl).
+	Url = ~path_concat(Url0, RelUrl).
 
 % TODO: Move to some pbundle module
 pbundle_kind_is_doc(manual_html).
@@ -325,14 +325,14 @@ resolve_dfiles([D|Ds], PMeta, [R|Rs]) :-
 pbundle_file_path(ItemKind, PMeta, PFile) := Path :-
 	Rest = ~pbundle_rootrel(PMeta),
 	atom_concat(~pbundle_root(ItemKind), Rest, BaseDir),
-	Path = ~atom_concat([BaseDir, '/', PFile]).
+	Path = ~path_concat(BaseDir, PFile).
 
 % Obtain the URL for a given pbundle item
 % Note: URL for manual_html point to Rel, which is its main file if
 %       Rel=''.  Rel is ignored for any other kind of manuals.
 % Note: URL to documents in trunk/ point to the symbolic links
 pbundle_file_url(ItemKind, PMeta, PFile, PFilePath, Rel) := Url :-
-	% TODO: See item links in lpdist (share part of this code)
+	% TODO: See item links in ciao_builder (share part of this code)
 	ItemKind = manual_html,
 	!,
 	html_manual_mainfile(PFilePath, Main),
@@ -341,7 +341,7 @@ pbundle_file_url(ItemKind, PMeta, PFile, PFilePath, Rel) := Url :-
 	  Branch = trunk ->
 	    % e.g., docs/ciao/ciao.html
 	    Url0 = ~atom_concat([PUrl, '/', Main])
-	; % e.g., docs/branches/1.14/CiaoDE-.../ciao.html
+	; % e.g., docs/branches/1.14/Ciao-.../ciao.html
 	  Rest = ~pbundle_rootrel(PMeta),
 	  PUrl = ~pbundle_url(ItemKind),
 	  Url0 = ~atom_concat([PUrl, Rest, '/', PFile])
@@ -362,20 +362,20 @@ pbundle_rootrel(PMeta) := RootRel :-
 
 % ---------------------------------------------------------------------------
 
+:- use_module(library(glob), [glob/3]).
+:- use_module(library(file_utils), [file_to_string/2]).
+
 % Obtain the main file for the given HTML documentation
 html_manual_mainfile(PFilePath, Main) :-
-	Fs = ~ls(PFilePath, '*.htmlmeta'),
+	Fs = ~glob(PFilePath, '*.htmlmeta'),
 	( Fs = [F],
-	  F2 = ~atom_concat([PFilePath, '/', F]),
+	  F2 = ~path_concat(PFilePath, F),
 	  file_to_string(F2, Str),
 	  atom_codes(Main, Str) ->
 	    true
 	; % TODO: this should be a normal user error, not a bug
 	  throw(error(not_found(PFilePath), html_manual_mainfile/3))
 	).
-
-:- use_module(library(system_extra), [ls/3]).
-:- use_module(library(file_utils), [file_to_string/2]).
 
 % ---------------------------------------------------------------------------
 

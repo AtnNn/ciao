@@ -23,15 +23,14 @@ dependency.").
 :- use_module(library(file_utils), [file_to_string/2]).
 :- use_module(library(lists), [append/3]).
 :- use_module(library(format)).
+:- use_module(library(pathnames), [path_concat/3]).
 
-:- use_module(library(make(make_rt)), [verbose_message/1, verbose_message/2]).
-:- use_module(library(system_extra), [(-) /1, do/4, try_finally/3]).
-
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
-:- use_module(lpdocsrc(src(autodoc_refsdb))).
-:- use_module(lpdocsrc(src(autodoc_aux))).
-:- use_module(lpdocsrc(src(autodoc_settings))).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_refsdb)).
+:- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_aux), [autodoc_process_call/3]).
+:- use_module(lpdoc(autodoc_aux), [verbose_message/1, verbose_message/2]).
 
 :- pred resolve_bibliography(DocSt) : docstate #
 "This predicate resolves bibliographical references. The algorithm is as follows:
@@ -84,12 +83,12 @@ resolve_bibliography(DocSt) :-
 run_bibtex(TmpBase, _RAuxFile, _BblFile) :-
 	% TODO: RAuxFile can be removed later
 	bibtex(BibTex),
-	atom_concat(TmpBase, '_bibtex', LogBase),
 	% TODO: allowing errors here, fix
 	% This will take as input RAuxFile and output BblFile
-	sh_exec([BibTex, ' ', TmpBase], [no_throw, logbase(LogBase)]).
+	autodoc_process_call(path(BibTex), [TmpBase],
+	                     [logbase(TmpBase, '_bibtex'), status(_)]).
 
-:- use_module(lpdocsrc(src(autodoc_parse)), [parse_docstring_loc/4]).
+:- use_module(lpdoc(autodoc_parse), [parse_docstring_loc/4]).
 
 :- pred write_bibtex_citations(DocSt, RAuxFile) # "Write all the
    citations in the file with name @var{RAuxFile}, compatible with
@@ -108,7 +107,8 @@ write_bibtex_citations(DocSt, RAuxFile) :-
 	),
 	% Our custom style that writes cites in pseudo-lpdoc notation
 	Style = 'docstring', 
-	format(CS, "\\bibstyle{~w/~a}~n", [LibDir, Style]),
+	path_concat(LibDir, Style, StyleFile),
+	format(CS, "\\bibstyle{~w}~n", [StyleFile]),
 	% The .bib files required to resolve references
 	format(CS, "\\bibdata{", []),
 	write_list_sep(BibFiles, ',', CS),
@@ -129,7 +129,7 @@ no_citations(DocSt) :-
 bibtex_config(LibDir, BibFiles) :-
 	check_setting(lpdoclib),
 	setting_value(lpdoclib, LibDir),
-	findall(BF, setting_value(bibfile, BF), BibFiles).
+	findall(BF, setting_value_or_default(bibfile, BF), BibFiles).
 
 % ---------------------------------------------------------------------------
 :- doc(section, "Special parser for our custom BBL output").

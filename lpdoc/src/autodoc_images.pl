@@ -15,16 +15,14 @@
 
 :- use_module(library(terms), [atom_concat/2]).
 
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_filesystem))).
-:- use_module(lpdocsrc(src(autodoc_settings))).
-:- use_module(lpdocsrc(src(autodoc_aux))).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_settings)).
 
-% TODO: temporary?
-:- use_module(library(make(make_rt)), [verbose_message/1, verbose_message/2]).
-:- use_module(library(system_extra), [(-) /1]).
 :- use_module(library(system), [copy_file/3]).
-:- use_module(library(make(make_rt)), [get_name/2]).
+:- use_module(library(system_extra), [(-) /1]).
+:- use_module(library(process), [process_call/3]).
+:- use_module(library(pathnames), [path_basename/2]).
 :- use_module(library(errhandle), [error_protect/1]).
 :- use_module(library(messages)).
 
@@ -49,7 +47,7 @@ locate_and_convert_image(SrcSpecS, AcceptedFormats, DocSt, TargetFileS) :-
 	( known_format(SrcExt), % (may backtrack)
 	  %
 	  spec_add_suffix(SrcSpec, SrcExt, SrcSpecExt),
-	  catch(absolute_file_name(library(SrcSpecExt), SrcFile), _, fail) ->
+	  catch(find_file(SrcSpecExt, SrcFile), _, fail) ->
 	    % Image found!
 	    atom_concat([SrcBase, '.', SrcExt], SrcFile),
 	    % Determine the target format
@@ -62,8 +60,8 @@ locate_and_convert_image(SrcSpecS, AcceptedFormats, DocSt, TargetFileS) :-
 	      AcceptedFormats = [TargetFormat|_]
 	    ),
 	    % Determine the target file name
-	    get_name(SrcBase, SrcName),
-	    atom_concat('autofig', SrcName, TargetBase),
+	    path_basename(SrcBase, SrcName),
+	    atom_concat(SrcName, '_autofig', TargetBase),
 	    atom_concat([TargetBase, '.', TargetFormat], TargetFile),
 	    cached_image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, DocSt),
 	    %
@@ -110,20 +108,20 @@ cached_image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, DocSt) :-
 %% Names and paths of external commands used by lpdoc and other paths
 %% which get stored in the executable on installation:
 :- use_module(library(system_extra),
-		[del_file_nofail/1,
-		do/2,
-		set_perms/2]).
+	[del_file_nofail/1,
+	 set_file_perms/2]).
+:- use_module(library(process), [process_call/3]).
 
 image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 	atom_concat([SrcBase, '.', SrcExt], Source),
 	atom_concat([TargetBase, '.', TargetExt], Target),
 	%% Deprecate use of 'pstogif' ('convert' is better)
         %%( TargetExt = 'gif' ->
-	%%  do([~pstogif, ' ', Source], []),
+	%%  process_call(path(~pstogif), [Source], []),
 	%%  -del_file_nofail(~atom_concat([SrcBase, '.ppm'])),
 	%%  -del_file_nofail(~atom_concat([SrcBase, '.ppm.tmp']))
 	%%; TargetExt = 'ppm' ->
-	%%    do([~pstogif, ' ', Source], []),
+	%%    process_call0(path(~pstogif), [Source], []),
 	%%    -del_file_nofail(~atom_concat(SrcBase, '.gif')),
 	%%    -del_file_nofail(~atom_concat(SrcBase, '.ppm.tmp'))
 	%%;
@@ -138,11 +136,11 @@ image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 	    format(O, "~n[Image file: ~w.eps]~n", [SrcBase]),
 	    close(O)
         ; % TODO: use other commands?
-          sh_exec([~convertc, ' ', Source, ' ', AbsFile], [])
+          process_call(path(~convertc), [Source, AbsFile], [])
 %	; throw(error(unknown_target_ext(TargetExt), image_convert/5))
 	),
 	DataMode = ~setting_value_or_default(perms),
-	-set_perms(AbsFile, DataMode).
+	-set_file_perms(AbsFile, DataMode).
 
 %% This is a command that converts .eps files into .gif and .ppm files
 %% (the -debug option of pstogif does this!)
@@ -151,8 +149,9 @@ image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 
 % image_convert(ppm, jpg, SrcBase) :- !,
 % 	atom_concat([SrcBase,'.jpg'],Target),
-% 	do([~ppmtojpeg,' ',SrcBase,'.ppm > ',Target],[]),
-% 	-(set_perms(Target,~get_datamode)).
+% 	atom_concat([SrcBase,'.ppm'],Src),
+% 	process_call(path(~ppmtojpeg), [Src], [stdout(file(Target))]),
+% 	-set_file_perms(Target,~get_datamode).
 %
 %% This is a command that converts .ppm files into .jpg files on stdout
 %% 

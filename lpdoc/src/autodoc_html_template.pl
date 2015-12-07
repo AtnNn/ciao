@@ -1,4 +1,4 @@
-:- module(_, [], [ciaopaths, assertions, fsyntax]).
+:- module(_, [], [assertions, fsyntax]).
 
 :- doc(title, "Template Support for the HTML Backend").
 :- doc(author, "Jose F. Morales").
@@ -9,32 +9,36 @@
 :- use_module(library(file_utils)).
 :- use_module(library(system_extra)).
 
-:- use_module(library(dirutils), [path_name/2, get_abs_path/2]).
+:- use_module(library(pathnames), [path_concat/3]).
 
 :- use_module(library(lists)).
 :- use_module(library(terms), [atom_concat/2]).
 
-:- include(library(pillow(ops))).
+:- include(library(pillow/ops)).
 
-:- use_module(library(make(make_rt))).
+:- use_module(library(make/make_rt)).
 
-:- use_module(library(pillow(html)), [html_template/3]).
+:- use_module(library(pillow/html), [html_template/3]).
 
-:- use_module(lpdocsrc(src(autodoc_settings))).
+:- use_module(lpdoc(autodoc_settings)).
 
 % ---------------------------------------------------------------------------
 
 % URL to an image
 % TODO: Generalize, so that we can obtain the filesystem paths, relative URLs,
 %       etc., for any file or resource.
-:- export(img_url/2). % TODO: temporal?
-:- pred img_url(Name, Url) :: atm * string # "Obtain the @var{URL} where image @var{Name}
-   is or will be found.".
+:- export(img_url/2). % TODO: temporary?
+:- pred img_url(Name, Url) :: atm * string
+   # "Obtain the @var{URL} where image @var{Name} is or will be found.".
 img_url(Name) := Url :-
 	% TODO: Use relative URLs is htmlurl is '' (search uses of htmlurl)
 	WebURL = ~setting_value(htmlurl),
-	Url = ~list_concat([~atom_codes(~path_name(WebURL)),
-	                    "images/", ~atom_codes(Name)]).
+	( WebURL = '' ->
+	    P0 = 'images'
+	; path_concat(WebURL, 'images', P0)
+	),
+	path_concat(P0, Name, P1),
+	atom_codes(P1, Url).
 
 % ---------------------------------------------------------------------------
 
@@ -43,14 +47,19 @@ img_url(Name) := Url :-
 % Like html_template, but recognizes <v>Var</v> in strings too, and outputs
 % a doctree
 fmt_html_template(File, Args0) := R :-
-	% TODO: Use relative URLs is htmlurl is '' (search uses of htmlurl)
+	% TODO: Use relative URLs if htmlurl is '' (search uses of htmlurl)
 	WebURL = ~setting_value(htmlurl),
-	DirImages = ~atom_concat(~path_name(WebURL), 'images/'),
+	( WebURL = '' -> P0 = 'images'
+	; path_concat(WebURL, 'images', P0)
+	),
+	path_concat(P0, '', DirImages), % (adds trailing '/')
 	WS = [weburl = WebURL, dirImage = DirImages],
 	%
 	append(Args0, WS, Args),
 	%
-	( String = ~file_to_string(~get_abs_path(~locate_tmpl(File))) ->
+	( File2 = ~fixed_absolute_file_name(~locate_tmpl(File)),
+	  file_exists(File2),
+	  String = ~file_to_string(File2) ->
 	    true
 	; % TODO: this should be a normal user error, not a bug
           throw(error(html_template_not_found(File), fmt_html_template/3))
@@ -63,8 +72,7 @@ fmt_html_template(File, Args0) := R :-
 
 locate_tmpl(A, B) :-
 	BR = ~setting_value(website_root_dir),
-	WD = ~atom_concat(BR, '/tmpl/'),
-	atom_concat([WD, A], B).
+	B = ~path_concat(~path_concat(BR, 'tmpl'), A).
 
 % Connect values in the first list with the mapping B
 connect_params([], _Args).

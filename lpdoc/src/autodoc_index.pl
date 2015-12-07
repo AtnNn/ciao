@@ -14,12 +14,12 @@
 :- use_module(library(lists), [reverse/2, append/3]).
 :- use_module(library(aggregates), [findall/3]).
 
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_filesystem))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
-:- use_module(lpdocsrc(src(autodoc_structure))).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_structure)).
 % The database of references
-:- use_module(lpdocsrc(src(autodoc_refsdb))).
+:- use_module(lpdoc(autodoc_refsdb)).
 
 %% ---------------------------------------------------------------------------
 

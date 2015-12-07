@@ -5,12 +5,12 @@
 :- doc(author,"Jose F. Morales").
 :- doc(author,"Manuel Hermenegildo").
 
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
-:- use_module(lpdocsrc(src(autodoc_images))).
-:- use_module(lpdocsrc(src(autodoc_aux)), [ascii_blank_lines/2]).
-:- use_module(lpdocsrc(src(comments)), [stringcommand/1]).
-%:- use_module(lpdocsrc(src(autodoc)), 
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_images)).
+:- use_module(lpdoc(autodoc_aux), [ascii_blank_lines/2]).
+:- use_module(lpdoc(comments), [stringcommand/1]).
+%:- use_module(lpdoc(autodoc), 
 %     [version_date/2, version_numstr/2]).
 
 :- use_module(library(lists), [list_concat/2]).

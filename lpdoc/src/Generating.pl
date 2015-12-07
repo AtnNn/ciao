@@ -35,7 +35,7 @@ circumstances), then the simplest way to quickly generate a manual is
 by doing it from the @concept{Ciao Emacs mode} (this mode comes with
 the Ciao Prolog distribution and is automatically installed with
 Ciao). The Ciao Emacs mode provides menu- and keyboard-binding driven
-facilities for generating a stand-alone document with the
+facilities for generating a standalone document with the
 documentation corresponding to the file in the buffer being visited by
 Emacs.  This is specially useful while modifying the source of a file,
 in order to check the output that will be produced when incorporating
@@ -99,27 +99,29 @@ you review, at least, the following points:
 @begin{itemize}
 
 @item Set the variable @tt{filepath} to include all the directories
-where the files to be documented can be found.
+where the files to be documented can be found."||
 
-@item Set the variable @tt{systempath} to include all the @em{system}
-directories where system files used can be found, regardless whether
-they are to be documented or not.  This will be used to access
-definitions of types, etc.
+%% (JFMC - lpdoc loads paths from bundle definitions now)
+%
+% @item Set the variable @tt{systempath} to include all the @em{system}
+% directories where system files used can be found, regardless whether
+% they are to be documented or not.  This will be used to access
+% definitions of types, etc.
+% 
+% It is very important to include @em{all} related directories either in
+% @tt{filepath} or in @tt{systempath} because on startup @apl{lpdoc}
+% has @em{no default search paths for files} defined (not even those
+% typically defined by default in the @apl{Prolog} system under which it
+% was compiled! -- this allows documenting @apl{Prolog} systems other
+% than that under which @apl{lpdoc} was compiled).
+% 
+% The effect of putting a path in @tt{systempaths} instead of in
+% @tt{filepaths} is that the modules and files in those paths are
+% documented as @index{system modules} (this is useful when
+% documenting an application to distinguish its parts from those which
+% are in the system libraries).
 
-It is very important to include @em{all} related directories either in
-@tt{filepath} or in @tt{systempath} because on startup @apl{lpdoc}
-has @em{no default search paths for files} defined (not even those
-typically defined by default in the @apl{Prolog} system under which it
-was compiled! -- this allows documenting @apl{Prolog} systems other
-than that under which @apl{lpdoc} was compiled).
-
-The effect of putting a path in @tt{systempaths} instead of in
-@tt{filepaths} is that the modules and files in those paths are
-documented as @index{system modules} (this is useful when
-documenting an application to distinguish its parts from those which
-are in the system libraries).
-
-@item Set @tt{doc_structure} to be the @index{document structure}
+"@item Set @tt{doc_structure} to be the @index{document structure}
 (@pred{doc_structure/1}).
 
 @end{itemize}
@@ -279,13 +281,12 @@ manuals come ready made in the distribution itself and will not need
 to be generated during installation.
 
 @item @tt{lpdoc docsclean} deletes all intermediate files and the
-generated targets, but leaves the @tt{.texic} files. This option can be
-used in software distributions in which the manuals in the different
-formats will be generated during installation. This is generally more
-compact, but requires the presence of several tools, such as @tt{tex},
-@tt{Emacs}, etc. (see @ref{Other software packages required (lpdoc)}), in
-order to generate the manuals in the target formats during
-installation.
+generated targets, but leaves the @tt{.texic} files. This option can
+be used in software distributions in which the manuals in the
+different formats will be generated during installation. This is
+generally more compact, but requires the presence of several tools,
+such as @tt{tex}, @tt{Emacs}, etc., in order to generate the manuals
+in the target formats during installation.
 
 @item @tt{lpdoc realclean} performs a complete cleanup, deleting also
 the .texic files, i.e., it typically leaves only the
@@ -341,22 +342,26 @@ automatically combined (appearing in alphabetic order) in the
 @tt{index.html} and/or @tt{dir} indices, and a @index{contents area}
 will appear at the beginning of the @index{html index page}." ||
 
-"@cindex{index pages out of order} 
-@noindent
-@bf{Important Note:} In order for the different components to appear
-in the correct positions in the index pages mentioned above the
-traditional ('C') Lexical order must be active.  In recent Un*x
-systems (e.g., in most current Linux systems) this may not be the
-case. There are several possible fixes:
+% NOTE: It should not be a problem nowadays (we do most things in Prolog)
+	
+% "@cindex{index pages out of order} 
+% @noindent
+% @bf{Important Note:} In order for the different components to appear
+% in the correct positions in the index pages mentioned above the
+% traditional ('C') Lexical order must be active.  In recent Un*x
+% systems (e.g., in most current Linux systems) this may not be the
+% case. There are several possible fixes:
+% 
+% @begin{itemize}
+% @item For @apl{csh} put @tt{setenv LC_COLLATE C} in your @file{.cshrc}.
+% @item For @apl{bash} put @tt{export LC_COLLATE=C} in your @file{.profile}.
+% @item In many systems this can be done globally by the super-user. E.g., 
+%       in many Linux systems set @tt{LANG=""C""} in @tt{/etc/sysconfig/i18n}. 
+% @end{itemize}
+% 
+% "||
 
-@begin{itemize}
-@item For @apl{csh} put @tt{setenv LC_COLLATE C} in your @file{.cshrc}.
-@item For @apl{bash} put @tt{export LC_COLLATE=C} in your @file{.profile}.
-@item In many systems this can be done globally by the super-user. E.g., 
-      in many Linux systems set @tt{LANG=""C""} in @tt{/etc/sysconfig/i18n}. 
-@end{itemize}
-
-Note that, depending on the structure of the manuals being generated,
+"Note that, depending on the structure of the manuals being generated,
 some formats are not very suitable for public installation. For
 example, the @tt{.dvi} format has the disadvantage that it is not self
 contained if images are included in the manual."||

@@ -3,14 +3,12 @@
 :- doc(title,"Handling the Document Structure").
 :- doc(author,"Jose F. Morales").
 
-%:- use_module(.(autodoc)).
-:- use_module(library(filenames), [basename/2]).
+%:- use_module(lpdoc(autodoc)).
+:- use_module(library(pathnames), [path_splitext/3, path_basename/2]).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(terms), [atom_concat/2]).
 
-:- use_module(lpdocsrc(src(autodoc_settings))).
-
-:- use_module(library(make(make_rt)), [get_name/2]).
+:- use_module(lpdoc(autodoc_settings)).
 
 % ---------------------------------------------------------------------------
 % Parse the whole document structure (a tree)
@@ -62,9 +60,9 @@ parse_structure_(S0, Parent) :-
 	; S = S1, Mode = normal
 	),
 	% Remove extension (if present)
-	( basename(S, Base) -> true ; Base = S ),
+	( path_splitext(S, Base, _) -> true ; Base = S ),
 	% TODO: This could be simplified (I have repeated that code in some places)
-	get_name(Base, Mod), % just the name (i.e., ../<name>)
+	path_basename(Base, Mod), % just the name (i.e., ../<name>)
 %	display(user_error, docstr_node(Mod, Base, Parent, Mode)), nl(user_error),
 	add_docstr_node(Mod, Base, Parent, Mode),
 	parse_structure_(Ss, Mod).

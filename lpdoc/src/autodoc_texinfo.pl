@@ -5,20 +5,20 @@
 :- doc(author,"Manuel Hermenegildo").
 :- doc(author,"Jose F. Morales").
 
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_filesystem))).
-:- use_module(lpdocsrc(src(autodoc_structure))).
-:- use_module(lpdocsrc(src(autodoc_index))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
-:- use_module(lpdocsrc(src(autodoc_images))).
-:- use_module(lpdocsrc(src(autodoc_settings))).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_structure)).
+:- use_module(lpdoc(autodoc_index)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_images)).
+:- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_aux), [autodoc_process_call/3]).
 :- use_module(library(lists),      [list_concat/2, append/3]).
 :- use_module(library(terms),      [atom_concat/2]).
 :- use_module(library(format),     [format/3]).
 :- use_module(library(format_to_string), [format_to_string/3]).
 :- use_module(library(messages)).
-:- use_module(lpdocsrc(src(comments)), [stringcommand/1,
-		version_descriptor/1]).
+:- use_module(lpdoc(comments), [stringcommand/1, version_descriptor/1]).
 
 % ======================================================================
 
@@ -322,17 +322,23 @@ rw_command(if(Cond, X), _DocSt, R) :- !,
 rw_command(end_document, _DocSt, R) :- !,
 	R = infocmd("bye").
 rw_command(simple_link(_,_,_,_), _, nop) :- !.
+rw_command(menu_link(Link,_), _, R) :- !,
+	Link = link_to(_, Label),
+	get_nodename(Label, Label2),
+	R = [raw("* "), raw(Label2), raw("::"), raw_nl].
 rw_command(X, _DocSt, _R) :- !,
 	throw(error(not_in_domain_rw_command(X), rw_command/3)).
 
 rw_command_body(footnote(Body), "footnote", Body) :- !.
-rw_command_body(bf(Body),       "strong",   Body) :- !.
-rw_command_body(em(Body),       "emph",     Body) :- !.
+% @b is ignored in info (use @strong if you want *this output*)
+rw_command_body(bf(Body),       "b",   Body) :- !.
+% @i is ignored in info (use @emph if you want _this output_)
+rw_command_body(em(Body),       "i",     Body) :- !.
 rw_command_body(tt(Body),       "code",     Body) :- !.
 rw_command_body(key(Body),      "key",      Body) :- !.
-%% A variable in a program
+% A variable in a program
 rw_command_body(var(Body), "code", Body) :- !.
-%% Accents, etc.
+% Accents, etc.
 rw_command_body('.'([X]),      "dotaccent",    raw([X])) :- !.
 rw_command_body('u'([X]),      "u",            raw([X])) :- !.
 rw_command_body('v'([X]),      "v",            raw([X])) :- !.
@@ -383,6 +389,14 @@ fmt_section_env(SecProps, TopSectLabel0, TitleR2, RestR, DocSt, ModR) :-
 	!,
 	( section_prop(paper_opts(StartPage, PaperType), SecProps) -> true ; fail ),
 	get_nodename(TopSectLabel0, TopSectLabel),
+	%
+	( docst_mvar_get(DocSt, nav, Nav) ->
+	    true
+	; throw(error(no_navigation, fmt_section_env/6))
+	),
+	Nav = nav(_, Top, _Up, _Prev, Next),
+	nav_label(Next, Top, NextLabel2),
+	%
 	% Version (if available)
 	( doctree_is_empty(GVersShortR) ->
 	    GVersShortRs = []
@@ -429,7 +443,10 @@ fmt_section_env(SecProps, TopSectLabel0, TitleR2, RestR, DocSt, ModR) :-
 	    CopyrightR,
 	    raw_nl,
 	    % The top node
-            infocmd("node", [raw("Top, "), raw(TopSectLabel), raw(",(dir),(dir)")]),
+            infocmd("node", [raw("Top"), raw(", "),
+	                     raw(NextLabel2), raw(", "),
+			     raw("(dir)"), raw(", "),
+			     raw("(dir)")]),
 	    infocmd("top", raw(TopSectLabel))
           ]),
 	  RestR,
@@ -537,29 +554,36 @@ define_indices([IdxName|Is], DocSt, [IR|IRs]) :-
 	define_indices(Is, DocSt, IRs).
 
 fmt_section(SecProps, SectLabel0, TitleR, BodyR, DocSt, R) :-
-	get_nodename(SectLabel0, SectLabel1),
-	( section_prop(with_parent, SecProps) ->
-	    docst_currmod(DocSt, Name0),
-	    atom_codes(Name0, NameS0),
-	    texinfo_escape(NameS0, NameS),
-	    % TODO: info documentation says that parenthesis are not allowed either!
-	    format_to_string("~s (~s)", [SectLabel1, NameS], SectLabel2),
-	    TitleR2 = [TitleR, string_esc(" ("), tt(string_esc(NameS0)), string_esc(")")]
-	; SectLabel2 = SectLabel1,
-	  TitleR2 = TitleR
-	),
-	( section_prop(linktop, SecProps) ->
-	    % TODO: missing escape of SectLabel?
-	    SectR = [infocmd("node", [raw(SectLabel2), raw(", , , Top")]),
-	             backend_comment(" node-name,  next,  previous,  up"),
-		     SR]
-	; % TODO: missing escape of SectLabel?
-	  SectR = [infocmd("node", [raw(SectLabel2), raw(", next,  previous,  up")]),
-	           backend_comment("node-name, next,  previous,  up"),
+	( SectLabel0 = local_label(_) ->
+	    % do not separate in different nodes
+	    ( section_prop(summary_section, SecProps) ->
+	        SectR = [if(info, []), % do not use any structuring in info
+	                 if(notinfo, [SR])]      
+	    ; SectR = SR
+	    )
+	; ( docst_mvar_get(DocSt, nav, Nav) ->
+	      true
+	  ; throw(error(no_navigation, fmt_section/6))
+	  ),
+	  Nav = nav(_, Top, Up, Prev, Next),
+	  get_nodename(SectLabel0, SectLabel2), % TODO: missing escape of SectLabel0?
+	  nav_label(Up, Top, UpLabel2),
+	  nav_label(Prev, Top, PrevLabel2),
+	  nav_label(Next, Top, NextLabel2),
+	  SectR = [infocmd("node", [raw(SectLabel2), raw(", "),
+	                            raw(NextLabel2), raw(", "),
+			  	    raw(PrevLabel2), raw(", "), 
+			  	    raw(UpLabel2)]),
+	           backend_comment("node-name, next, previous, up"),
 		   SR]
 	),
-	fmt_structuring(SecProps, TitleR2, SR),
+	fmt_structuring(SecProps, TitleR, SR),
 	R = [SectR, BodyR].
+
+nav_label(no_link, _, SectLabel2) :- !, SectLabel2 = "".
+nav_label(Link, TopLink, SectLabel2) :- Link == TopLink, !, SectLabel2 = "Top". % Special case
+nav_label(link_to(_, SectLabel), _, SectLabel2) :-
+	get_nodename(SectLabel, SectLabel2).
 
 :- pred get_nodename(SectLabel, L) :: doclabel * string # "Obtain the node name".
 get_nodename(global_label(SectLabel0), SectLabel) :- !,
@@ -585,47 +609,61 @@ fmt_structuring(SecProps, TitleR, R) :-
 	),
 	R = infocmd(Cmd, TitleR).
 
-:- doc(fix_nodename/2, "Issue an error message
-   if the section name contains characters that info will not like
-   and try to fix it within what is allowed by texinfo.").
+:- doc(fix_nodename/2, "Normalize node names for info (eliminating
+   illegal characters and collapsing multiple and trailing blanks").
 
-fix_nodename(Section, NSection) :-
-	fix_nodename_(Section, 0, Section, NSection).
+% NOTE: Since this is so specific to info, no warning any more (simply
+% fix by eliminating the char(s), and that is all).
 
-fix_nodename_([],    _PrevChar, _Section, []).
-fix_nodename_([H|T], _PrevChar, Section,  [NH|NT]) :-
-	illegal_texinfo_section_name_char(H, NH),
-	!,
-%%% Since this is so specific to info, no warning any more 
-%%% (simply fix by eliminating the char(s), and that is all).  
+fix_nodename([], []).
+fix_nodename([C0|Cs0], Cs) :-
+	fix_nodename_char(C0, C1),
+	( C1 = 0'  -> % skip blanks at the beginning
+	    fix_nodename(Cs0, Cs)
+        ; fix_nodename_2(C1, Cs0, Cs)
+        ).
+
+fix_nodename_2(0' , [],  []) :- !. % remove trailing ' '
+fix_nodename_2(C,   [],  [C]) :- !.
+fix_nodename_2(C,   Cs0, Cs) :-
+	% Get next C1 char, fixed in C2
+	Cs0 = [C1|Cs1],
+	fix_nodename_char(C1, C2),
+	% Add C only if not repeated in C2
+	( illegal_nodename_repeated_char(C), C == C2 ->
+	    Cs = Cs2
+	; Cs = [C|Cs2]
+	),
+	fix_nodename_2(C2, Cs1, Cs2).
+
+% Fix one char
+fix_nodename_char(C, NC) :-
+	( illegal_nodename_char(C, NC0) -> NC = NC0
+	; NC = C
+	).
+
+:- pred illegal_nodename_char/2.
+% illegal_nodename_char(0'. ,0'  ). % Can actually be used?
+illegal_nodename_char(0',, 0' ).
+illegal_nodename_char(0':, 0'-).
+illegal_nodename_char(0'', 0' ).
+illegal_nodename_char(0'@, 0' ). % No commands recommended
+
+:- regtype illegal_nodename_repeated_char/1.
+illegal_nodename_repeated_char(0'-).
+illegal_nodename_repeated_char(0' ).
+
+%:- doc(fix_nodename/2, "Issue an error message
+%   if the section name contains characters that info will not like
+%   and try to fix it within what is allowed by texinfo.").
+%
 %% 	warning_message(
 %% """~s"": info format does not support char ""~c"" in section names; replaced with ""~c""",
 %% 	    [Section, H, NH]),
-	fix_nodename_(T, H, Section, NT).
-fix_nodename_([H|T], PrevChar, Section, T) :-
-	illegal_texinfo_section_name_repeated_char(H),
-	PrevChar == H,
-	!,
-%%% Since this is so specific to info, no warning any more 
-%%% (simply fix by eliminating the char(s), and that is all).  
+%
 %% 	warning_message(
 %% """~s"": info format does not support chars ""~c~c"" in section names; character ""~c"" deleted",
 %% 	    [Section, H, H, H]),
-	fix_nodename_(T, H, Section, T).
-fix_nodename_([H|T], _PrevChar, Section, [H|NT]) :-
-	fix_nodename_(T, H, Section, NT).
-
-:- pred illegal_texinfo_section_name_char/2.
-
-% illegal_texinfo_section_name_char(0'. ,0'  ). % Can actually be used?
-illegal_texinfo_section_name_char(0',, 0' ).
-illegal_texinfo_section_name_char(0':, 0'-).
-illegal_texinfo_section_name_char(0'', 0' ).
-illegal_texinfo_section_name_char(0'@, 0' ). % No commands recommended
-
-:- regtype illegal_texinfo_section_name_repeated_char/1.
-
-illegal_texinfo_section_name_repeated_char(0'-).
 
 %% ---------------------------------------------------------------------------
 :- pred texinfo_escape/2 : string * term => string * string
@@ -681,81 +719,35 @@ autodoc_finish_hook(texinfo) :- finish_texinfo.
 
 % Obtain the .texi file for mainmod and its base name (useful to compose
 % the name of some outputs or auxiliary files, e.g., logs).
-texi_file_and_base(File, Base) :-
-	main_absfile_in_format('texi', File),
-	atom_concat(Base, '.texi', File).
-
-% Group the .texic files, updating menus (local table of contents) and
-% pointers, and saves a .texi file.
-% (note: it uses emacs and emacs-library.el)
-% TODO: This would not be hard to do in Ciao now --JF
-% TODO: support for custom directories made this code really twisted
-
-finish_texinfo :-
+texi_file_and_base(In, File, Base) :-
 	Mod = ~get_mainmod,
 	% @var{In} is the .texic file, @var{Out} the .texi file
 	absfile_for_subtarget(Mod, texinfo, cr, In),
-	texi_file_and_base(Out, FileBase),
-	% Dummy file name (emacs-library.el does not like rel/full
-	% paths for outfile)
-	atom_concat(Mod, 'dummy', Dummy),
-	% Obtain the directory where In lives
-	get_name(In, InName),
-	atom_concat(InDir, InName, In),
-	% Path to Dummy
-	atom_concat(InDir, Dummy, AbsDummy),
-	% Invoke emacs-library.el (through emacs)
-	setting_value(lpdoclib, LibDir),
- 	working_directory(WD,WD),
- 	cd(InDir),
-	sh_exec(['unset EMACSLOADPATH ; unset EMACSDOC ; ', ~emacs_for_ciao,
-	     ' -batch',
-	     ' -l ', LibDir, 'emacs-library.el',
-	     ' -f update-all-nodes-in-one-file',
-	     ' -file ', InName,
-	     ' -outfile ', Dummy],
-	     [default, logbase(~atom_concat(FileBase, '_el')), no_throw]),
- 	cd(WD),
-	% Move AbsDummy to Out
-	move_file(AbsDummy, Out),
 	%
-	generate_infoindex.
+	main_absfile_in_format('texi', File),
+	atom_concat(Base, '.texi', File).
 
-move_file(In, Out) :-
-	sh_exec(['mv ', In, ' ', Out], []).
-
+:- use_module(library(emacs/emacs_batch), [emacs_path/1]).
 :- use_module(library(system), [working_directory/2, cd/1]).
-:- use_module(library(make(make_rt)), [get_name/2]).
-:- use_module(library(lpdist(ciao_config_options)), [emacs_for_ciao/1]).
 
-% TODO: Move next to autodoc:fmt_infodir_entry2. Put call there?
-% TODO: Is .infoindex extension really necessary? Can it be something else?
-generate_infoindex :-
+% Copy .infoindex and .texi file (from .texic)
+% TODO: the .texi file is now useless, except for timestamps 
+finish_texinfo :-
+	texi_file_and_base(In, Out, _FileBase),
+	copy_file(In, Out, [overwrite]),
+	%
+	% TODO: Move next to autodoc:fmt_infodir_entry2. Put call there?
+	% TODO: Is .infoindex extension really necessary? Can it be something else?
 	Mod = ~get_mainmod,
 	infodir_base(Mod, ModInfodir),
-	absfile_for_subtarget(ModInfodir, texinfo, cr, In),
-	main_absfile_in_format('infoindex', Out),
-	copy_with_perms(In, Out).
+	absfile_for_subtarget(ModInfodir, texinfo, cr, InInfodir),
+	main_absfile_in_format('infoindex', OutInfodir),
+	copy_with_perms(InInfodir, OutInfodir).
 
 copy_with_perms(In, Out) :-
 	-copy_file(In, Out, [overwrite]),
-	DataMode = ~setting_value_or_default(perms),
-	-set_perms(Out, DataMode).
-
-% Note: for global installations, this should be done with 'install-info'
-%       (old 'head' and 'tail' files are in the Attic/ directory)
-% updateinfodir <- [] # "Update info directory for all docs in docdir" :-
-% 	working_directory(WD,WD),
-% 	setting_value(docdir,DocDir),
-% 	make_dir_if_no_exist(DocDir,~get_execmode),	
-% 	cd(DocDir),
-% 	setting_value(infodir_headfile, IDH),
-% 	cat(IDH,dir),
-% 	cat_append(~ls('*.infoindex'),dir),
-% 	setting_value(infodir_tailfile, IDT),
-% 	cat_append(IDT,dir),
-% 	-set_perms(dir,~get_datamode),
-% 	cd(WD).
+	OutPerms = ~setting_value_or_default(perms),
+	-set_file_perms(Out, OutPerms).
 
 % ---------------------------------------------------------------------------
 
@@ -765,9 +757,6 @@ infodir_base(Mod, ModInfodir) :-
 
 % ---------------------------------------------------------------------------
 
-:- use_module(lpdocsrc(src(autodoc_filesystem)), [clean_tex_intermediate/0]).
-:- use_module(lpdocsrc(src(autodoc_aux)), [sh_exec/2]).
-
 :- multifile autodoc_gen_alternative_hook/2.
 autodoc_gen_alternative_hook(texinfo, Alt) :-
 	texinfo_gen_alternative(Alt).
@@ -775,75 +764,92 @@ autodoc_gen_alternative_hook(texinfo, Alt) :-
 % TODO: Fix run_* so that logs are written in separate directories
 % TODO: Computations are repeated! (not a problem if only PDF is generated)
 texinfo_gen_alternative(dvi) :- !,
-	texi_file_and_base(TexiFile, FileBase),
+	texi_file_and_base(TexiFile, _, FileBase),
 	DVIFile = ~atom_concat(FileBase, '.dvi'),
 	do_texi_to_dvi(TexiFile, DVIFile, FileBase),
-	clean_tex_intermediate.
+	clean_tex_intermediate(TexiFile).
 %
 texinfo_gen_alternative(ps) :- !,
-	texi_file_and_base(TexiFile, FileBase),
+	texi_file_and_base(TexiFile, _, FileBase),
 	DVIFile = ~atom_concat(FileBase, '.dvi'),
 	PSFile = ~atom_concat(FileBase, '.ps'),
 	do_texi_to_dvi(TexiFile, DVIFile, FileBase),
 	do_dvi_to_ps(DVIFile, PSFile, FileBase),
-	clean_tex_intermediate.
+	clean_tex_intermediate(TexiFile).
 %
 texinfo_gen_alternative(pdf) :- !,
-	texi_file_and_base(TexiFile, FileBase),
+	texi_file_and_base(TexiFile, _, FileBase),
 	DVIFile = ~atom_concat(FileBase, '.dvi'),
 	PSFile = ~atom_concat(FileBase, '.ps'),
 	PDFFile = ~atom_concat(FileBase, '.pdf'),
 	do_texi_to_dvi(TexiFile, DVIFile, FileBase),
 	do_dvi_to_ps(DVIFile, PSFile, FileBase),
 	do_ps_to_pdf(PSFile, PDFFile, FileBase),
-	clean_tex_intermediate.
+	clean_tex_intermediate(TexiFile).
 %
 texinfo_gen_alternative(info) :- !,
-	texi_file_and_base(TexiFile, FileBase),
+	texi_file_and_base(TexiFile, _, FileBase),
 	atom_concat(FileBase, '.info', InfoFile),
 	atom_concat(FileBase, '.infoindex', InfoindexFile),
 	do_texi_to_info(TexiFile, InfoFile, InfoindexFile, FileBase).
 %
 texinfo_gen_alternative(ascii) :- !,
-	texi_file_and_base(TexiFile, FileBase),
+	texi_file_and_base(TexiFile, _, FileBase),
 	AsciiFile = ~atom_concat(FileBase, '.ascii'),
 	do_texi_to_ascii(TexiFile, AsciiFile, FileBase).
-%
-texinfo_gen_alternative(rtf) :- !,
-	texi_file_and_base(TexiFile, FileBase),
-	RTFFile = ~atom_concat(FileBase, '.rtf'),
-	do_texi_to_rtf(TexiFile, RTFFile, FileBase).
 
-%% 'HLP' <= rtf :: FileBase :-
-%%      do_hlp_from_rtf(FileBase).
-%%
-%% do_hlp_from_rtf(FileBase) :-
-%% 	sh_exec([~rtftohlp,' ',FileBase], [default]),
-%% 	-(set_perms(~atom_concat([FileBase,'.HLP']),DataMode)).
+:- use_module(library(pathnames), [path_split/3, path_concat/3, path_splitext/3]).
+:- use_module(library(glob), [glob/3]).
+:- use_module(library(system_extra), [del_file_nofail/1]).
+:- use_module(library(system), [file_exists/1, rename_file/2]).
 
 %% This depends on how smart your ~tex and ~texindex are...
-do_texi_to_dvi(TexiFile, _DVIFile, FileBase) :-
-	copy_texinfo_style_if_needed,
-	TexCmd = [~tex, ' -file-line-error-style', ' ''\\nonstopmode\\input ', TexiFile, ''''],
-	% TODO: allowing errors here, fix?
-	sh_exec(TexCmd, [logbase(~atom_concat(FileBase, '_tex'))]),
-	% TODO: replace .?? by the real suffixes: .li, .pd, .pr, .te, .de, .co, .gl, .au, etc.
-	sh_exec([~texindex, ' ', FileBase, '.??'],
-                [default, logbase(~atom_concat(FileBase, '_tex1'))]),
-	% TODO: allowing errors here, fix?
-	sh_exec(TexCmd, [logbase(~atom_concat(FileBase, '_tex2'))]).
+% TODO: We allow errors in ~tex (can it be fixed?)
+do_texi_to_dvi(TexiFile, DVIFile, FileBase) :-
+	texipaths(TexiFile, TexiDir, TexiName, FileBase, AbsFileBase),
+	copy_texinfo_style_if_needed(TexiDir),
+	TexArgs = ['-file-line-error-style',
+	           ~atom_concat(['\\nonstopmode\\input ', TexiName])],
+	autodoc_process_call(path(~tex), TexArgs,
+	                     [logbase(AbsFileBase, '_tex'), cwd(TexiDir), status(_)]),
+	path_splitext(TexiFile, TexiNoext, _),
+	texindex_indices(TexiNoext, Indices),
+	autodoc_process_call(path(~texindex), Indices,
+	                     [logbase(AbsFileBase, '_tex1'), cwd(TexiDir)]),
+	autodoc_process_call(path(~tex), TexArgs,
+	                     [logbase(AbsFileBase, '_tex2'), cwd(TexiDir), status(_)]),
+	atom_concat(TexiNoext, '.dvi', DVIFile0),
+	file_exists(DVIFile0),
+	del_file_nofail(DVIFile),
+	rename_file(DVIFile0, DVIFile).
 
-copy_texinfo_style_if_needed :-
+% Get all indices for texindex associated to FileBase pathname (no extension)
+% TODO: replace .?? by the real suffixes: .li, .pd, .pr, .te, .de, .co, .gl, .au, etc.
+% TODO: escape FileName
+texindex_indices(FileBase, Indices) :-
+        path_split(FileBase, FileDir0, FileName),
+	( FileDir0 = '' -> FileDir = '.'
+	; FileDir = FileDir0
+	),
+	Indices = ~glob(FileDir, ~atom_concat(FileName, '.??')).
+
+copy_texinfo_style_if_needed(TexiDir) :-
 	( setting_value(libtexinfo, no) ->
+	    % TODO: the default texinfo.tex is NOT able to process our
+	    % .texi output!
 	    note_message("Using external texinfo.tex style")
 	; setting_value(lpdoclib, LibDir),
-	  -copy_file(~atom_concat(LibDir, 'texinfo.tex'), 'texinfo.tex', [overwrite]),
+	  In = ~path_concat(LibDir, 'texinfo.tex'),
+	  Out = ~path_concat(TexiDir, 'texinfo.tex'),
+	  -copy_file(In, Out, [overwrite]),
 	  note_message(note, "Using internal texinfo.tex style", [])
 	).
 
+%% Make sure it generates postscript fonts, not bitmaps (selecting
+%% -Ppdf often does the trick). -z preserves hypertext links.
 do_dvi_to_ps(DVIFile, PSFile, FileBase) :-
-	sh_exec([~dvips, ' ', DVIFile, ' -o ', PSFile],
-	        [default, logbase(~atom_concat(FileBase, '_dvips'))]),
+	autodoc_process_call(path(~dvips), ['-z', '-Ppdf', DVIFile, '-o', PSFile],
+	                     [logbase(FileBase, '_dvips')]),
 	% This, really to fix a bug in some versions of dvips:
 	-(del_files_nofail(['head.tmp', 'body.tmp'])).
 
@@ -854,9 +860,9 @@ do_dvi_to_ps(DVIFile, PSFile, FileBase) :-
 do_ps_to_pdf(PSFile, PDFFile, FileBase) :-
 	setting_value_or_default(papertype, PaperType),
 	ghostscript_papertype(PaperType, GSPaperType),
-	sh_exec(['GS_OPTIONS=-sPAPERSIZE=', GSPaperType, ' ', ~ps2pdf, ' ',
-		PSFile, ' ', PDFFile],
-                [default, logbase(~atom_concat(FileBase, '_ps2pdf'))]).
+	Env = ['GS_OPTIONS' = ~atom_concat('-sPAPERSIZE=', GSPaperType)],
+	autodoc_process_call(path(~ps2pdf), [PSFile, PDFFile],
+                             [env(Env), logbase(FileBase, '_ps2pdf')]).
 
 ghostscript_papertype(letterpaper, letter).
 ghostscript_papertype(smallbook,   isob5). % This is an approximation
@@ -865,45 +871,144 @@ ghostscript_papertype(afourlatex,  a4).
 ghostscript_papertype(afourwide,   a4).
 ghostscript_papertype(afourthesis, a4).
 
+texipaths(TexiFile, TexiDir, TexiName, FileBase0, FileBase) :-
+	path_split(TexiFile, TexiDir, TexiName),
+	working_directory(D,D),
+	path_concat(D, FileBase0, FileBase).
+
+% TODO: We allow errors in ~makeinfo (can it be fixed?)
 % TODO: move to autodoc_texinfo
 %% Not in all distributions: --force (only in newer versions of texinfo), 
 %% but needed: otherwise incomplete info file generated if there are any errors
 %% As an alternative, set error limit very high... --error-limit 100000
 do_texi_to_info(TexiFile, InfoFile, InfoindexFile, FileBase) :-
-	% bold_message("Generating info file and index for ~w using ~w",
+	% note_message("Generating info file and index for ~w using ~w",
 	%    [FileBase, ~makeinfo]),
-	atom_concat(FileBase, '.info.tmp', TmpFile),
-	% TODO: allowing errors here, fix
-	sh_exec([~makeinfo,
-		 ' --error-limit 100000 --force --no-split --verbose ',
-		 '--fill-column=70 --output ', TmpFile, ' ',
-		 TexiFile],
-		[no_throw, logbase(~atom_concat(FileBase, '_info'))]),
+	texipaths(TexiFile, TexiDir, TexiName, FileBase, AbsFileBase),
+	atom_concat(AbsFileBase, '.info.tmp', TmpFile2),
+	%
+	autodoc_process_call(path(~makeinfo),
+	       ['--error-limit', '100000', '--force', '--no-split', '--verbose',
+		'--no-number-sections', '--paragraph-indent=none',
+		%'--fill-column=70', 
+		'--output', TmpFile2, TexiName],
+	       [logbase(AbsFileBase, '_info'),
+		cwd(TexiDir),
+		status(_)]),
 	file_to_string(InfoindexFile, InfoIndex),
-	% TODO: "Ciao System Manuals" should be configurable
+	% TODO: info-dir-section name ("Ciao System Manuals", "Ciao", etc. should be configurable)
+	% TODO: needs to be synchronized with builder/src/infodir (for installation)
 	string_to_file(
-                ~append("INFO-DIR-SECTION Ciao System Manuals\n"||
+                ~append("INFO-DIR-SECTION Ciao\n"|| % System Manuals
                         "START-INFO-DIR-ENTRY\n" || InfoIndex,
 			"END-INFO-DIR-ENTRY\n"), InfoFile),
-	copy_file(TmpFile, InfoFile, [append]),
-	delete_file(TmpFile).
+	copy_file(TmpFile2, InfoFile, [append]),
+	delete_file(TmpFile2).
 
 do_texi_to_ascii(TexiFile, AsciiFile, FileBase) :-
-	% TODO: move to autodoc_texinfo
-	sh_exec([~makeinfo,
-		' --no-validate --error-limit 100000 --force ',
-		'--no-split --verbose --no-headers --fill-column=70 ',
-		'--output ', AsciiFile, ' ', TexiFile],
-		[default, logbase(~atom_concat(FileBase, '_ascii'))]).
+	texipaths(TexiFile, TexiDir, TexiName, FileBase, AbsFileBase),
+	atom_concat(AbsFileBase, '.ascii.tmp', TmpFile2),
+	autodoc_process_call(path(~makeinfo),
+	       ['--no-validate', '--error-limit', '100000', '--force',
+		'--no-number-sections', '--paragraph-indent=none',
+		'--no-split', '--verbose',
+		% '--fill-column=70',
+		'--no-headers', % (plain text)
+		'--output', TmpFile2, TexiName],
+	       [logbase(AbsFileBase, '_ascii'),
+		cwd(TexiDir)]),
+	%
+	( setting_value(autogen_warning, yes) ->
+	    autogen_warning(Autogen)
+	; Autogen = ""
+	),
+	string_to_file(Autogen, AsciiFile),
+	copy_file(TmpFile2, AsciiFile, [append]),
+	delete_file(TmpFile2).
 
-do_texi_to_rtf(TexiFile, RTFFile, FileBase) :-
-	sh_exec([~makertf, ' --hpj ', FileBase, '.hpj -o ',
-		RTFFile, ' ', TexiFile],
-		[default, logbase(~atom_concat(FileBase, '_rtf'))]).
+%               ...........................................................................
+autogen_warning("[This file was autogenerated by LPdoc, please do not edit.]\n\n").
 
 :- use_module(library(file_utils), [file_to_string/2, string_to_file/2]).
-:- use_module(library(system_extra), [(-)/1, copy_file/3, set_perms/2, del_files_nofail/1]).
-:- use_module(library(system), [delete_file/1]).
+:- use_module(library(system), [copy_file/3, delete_file/1]).
+:- use_module(library(system_extra), [(-)/1, set_file_perms/2, del_files_nofail/1]).
 
+% ---------------------------------------------------------------------------
+
+% Clean the temporary files created by TeX
+clean_tex_intermediate(_TexiFile) :-
+	% (ignored, all intermediate files stored in .tmp-texinfo/ dir)
+	true.
+
+% % Clean the temporary files created by TeX
+% clean_tex_intermediate(TexiFile) :-
+% 	( % Trick to obtain the base for .texi file
+% 	  main_absfile_in_format('texi', File),
+% 	  atom_concat(OutputBase, '.texi', File) ->
+%             delete_single__texitmp(OutputBase)
+% 	; true
+% 	).
+% % (note needed now that texinfo.tex is placed inside texitmp)
+% %	( setting_value(libtexinfo, no) -> true
+% %	; del_file_nofail('texinfo.tex')
+% %	).
+% 
+% single_texitmp_pattern(Pattern, Name) :-
+% 	texitmp_ext(Ext),
+% 	atom_concat([Name, '.', Ext], Pattern).
+% 
+% delete_single__texitmp(OutputBase) :-
+% 	path_split(OutputBase, Dir0, Name),
+% 	( Dir0 = '' -> Dir = '.' ; Dir = Dir0 ),
+% 	( Dir = '.' -> true ; throw(base_not_dot_dir_bug) ),
+% 	pred_to_glob_pattern(single_texitmp_pattern(Name), Pattern),
+% 	-delete_glob('.', Pattern).
+% 
+% % File extensions for temporary files generated during .texi processing
+% texitmp_ext('aux').
+% texitmp_ext('cp').
+% texitmp_ext('cps').
+% texitmp_ext('fn').
+% texitmp_ext('fns').
+% texitmp_ext('ky').
+% texitmp_ext('kys').
+% texitmp_ext('log').
+% texitmp_ext('tp').
+% texitmp_ext('tps').
+% texitmp_ext('op').
+% texitmp_ext('ops').
+% texitmp_ext('fi').
+% texitmp_ext('fis').
+% texitmp_ext('pd').
+% texitmp_ext('pds').
+% texitmp_ext('pr').
+% texitmp_ext('prs').
+% texitmp_ext('ug').
+% texitmp_ext('ugs').
+% texitmp_ext('co').
+% texitmp_ext('cos').
+% texitmp_ext('fu').
+% texitmp_ext('fus').
+% texitmp_ext('li').
+% texitmp_ext('lis').
+% texitmp_ext('pg').
+% texitmp_ext('pgs').
+% texitmp_ext('ap').
+% texitmp_ext('aps').
+% texitmp_ext('mo').
+% texitmp_ext('mos').
+% texitmp_ext('au').
+% texitmp_ext('aus').
+% texitmp_ext('gl').
+% texitmp_ext('gls').
+% texitmp_ext('te').
+% texitmp_ext('tes').
+% texitmp_ext('vr').
+% texitmp_ext('vrs').
+% texitmp_ext('de').
+% texitmp_ext('des').
+% texitmp_ext('toc').
+% texitmp_ext('bbl').
+% texitmp_ext('blg').
 
 

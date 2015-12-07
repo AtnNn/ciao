@@ -1,4 +1,4 @@
-:- module(_, _, [ciaopaths, assertions, regtypes, fsyntax]).
+:- module(_, _, [assertions, regtypes, fsyntax]).
 
 :- include(lpdoclib('SETTINGS_schema')).
 % ****************************************************************************
@@ -18,33 +18,23 @@
 
 % ----------------------------------------------------------------------------
 
-:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
-:- reexport(library(lpdist(ciao_config_options)), 
-    [bibfile/1, htmldir/1, docdir/1, infodir/1, mandir/1, lpdoclib/1]).
+:- use_module(library(bundle/paths_extra), [fsR/2]).
+
 datamode(_) :- fail.
 execmode(_) :- fail.
 
-% the bundle that contains this manual
-% TODO: This could be inferred (looking for a Manifest.pl in a parent dir)
-parent_bundle := 'lpdoc'.
+% (not customized)
+bibfile(_) :- fail.
+htmldir(_) :- fail.
+docdir(_) :- fail.
+infodir(_) :- fail.
+mandir(_) :- fail.
 
-filepath := ~fsR(bundle_src(lpdoc)/'src').
-filepath := ~fsR(bundle_src(lpdoc)/'readmes').
-filepath := ~fsR(bundle_src(lpdoc)/'examples').
-filepath := ~fsR(bundle_src(ciao)/'doc'/'common').
-
-systempath := ~fsR(bundle_src(ciao)/'lib').
-systempath := ~fsR(bundle_src(ciao)/'lib'/'assertions').
-systempath := ~fsR(bundle_src(ciao)/'lib'/'metaprops').
-systempath := ~fsR(bundle_src(ciao)/'lib'/'regtypes').
-systempath := ~fsR(bundle_src(ciao)/'lib'/'engine').
-systempath := ~fsR(bundle_src(ciao)/'lib'/'rtchecks').
-systempath := ~fsR(bundle_src(ciao)/'lib'/'unittest').
-systempath := ~fsR(bundle_src(ciao)/'library').
-systempath := ~fsR(bundle_src(ciao)/'contrib').
-systempath := ~fsR(bundle_src(ciao)/'doc'/'common').
-
-pathsfile(_) :- fail. 
+filepath := ~fsR(bundle_src(lpdoc)/doc/readmes).
+filepath := ~fsR(bundle_src(lpdoc)/src).
+filepath := ~fsR(bundle_src(lpdoc)/examples).
+%
+filepath := ~fsR(bundle_src(ciao)/doc/common).
 
 output_name := 'lpdoc'.
 
@@ -53,16 +43,22 @@ doc_structure :=
 	  'Reference'-[
 	    'Generating',
 	    'comments',
-	    'assertions_doc',
-	    'assertions_props',
-	    'regtypes_doc',
+	    'assertions/assertions_doc',
+	    'assertions/assertions_props',
+	    'regtypes/regtypes_doc',
 	    'basic_props',
-	    'native_props',
-	    'meta_props',
+	    'assertions/native_props',
+	    'metaprops/meta_props',
 	    'lpdoc_examples',
 	    'example_module',
 	    'rtchecks_doc',
-	    'unittest_doc',
+	    'unittest'-
+               ['unittest/unittest_props',
+		'unittestdecls_doc',
+		% 'unittest/unittest_utils',
+		'unittest/unittest_statistics',
+		'unittest/unittest_examples'
+	       ],
 	    'lpdoc_install'
           ],
 	  'Internals'-[
@@ -75,7 +71,7 @@ doc_structure :=
 	    'Backends'-[
 	      'autodoc_texinfo',
 	      'autodoc_html'-[
-	        'autodoc_html_resources',
+	        'autodoc_html_assets',
 	        'autodoc_html_template'
               ],
 	      'autodoc_man'

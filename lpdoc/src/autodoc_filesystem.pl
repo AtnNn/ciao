@@ -1,4 +1,4 @@
-:- module(autodoc_filesystem, [], [dcg, assertions, regtypes, basicmodes, fsyntax]).
+:- module(autodoc_filesystem, [], [dcg, assertions, regtypes, basicmodes, fsyntax, hiord]).
 
 :- doc(title, "Filesystem Abstraction").
 
@@ -8,13 +8,16 @@
    file-system paths and names for each of the intermediate and final
    results of documentation generation.").
 
-:- use_module(lpdocsrc(src(autodoc_settings))).
-:- use_module(lpdocsrc(src(autodoc_structure))).
-:- use_module(lpdocsrc(src(autodoc_state)), [backend_id/1]).
+:- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_structure)).
+:- use_module(lpdoc(autodoc_state), [backend_id/1]).
 
 :- use_module(library(aggregates)).
+:- use_module(library(pathnames),
+	[path_split/3, path_concat/3, path_get_relative/3]).
 :- use_module(library(system_extra), [(-) /1]).
 :- use_module(library(terms), [atom_concat/2]).
+:- use_module(library(make/make_rt), [find_file/2]).
 
 %% ---------------------------------------------------------------------------
 
@@ -26,11 +29,30 @@
 
 filename(X) :- atm(X).
 
-% TODO: Check again; we sometimes use basename as module names
-:- export(basename/1).
-:- regtype basename(X) # "@var{X} is the base name of a file (without extension).".
+% TODO: Check again; we sometimes use filename_noext as module names
+:- export(filename_noext/1).
+:- regtype filename_noext(X) # "@var{X} is the base name of a file (without extension).".
 
-basename(X) :- atm(X).
+filename_noext(X) :- atm(X).
+
+% ---------------------------------------------------------------------------
+
+:- export(find_file/2).
+find_file(RelPath, Path) :- make_rt:find_file(RelPath, Path).
+
+:- export(find_source/4).
+% Find the first source that exists (e.g., .pl or .lpdoc)
+find_source(Name, Suffix, NameSuffix, Path) :-
+	Suffix = ~srcsuff,
+	NameSuffix = ~atom_concat([Name, '.', Suffix]),
+%	catch(absolute_file_name(library(Main), _), _, fail),
+	% TODO: Cannot use absolute_file_name, library_directory is
+	%       not updated, only vpath.
+	% TODO: Silent fail if source does not exist
+	make_rt:find_file(NameSuffix, Path).
+
+% TODO: I am not sure if here is the place to define this.
+srcsuff := pl | lpdoc.
 
 % ---------------------------------------------------------------------------
 
@@ -62,7 +84,7 @@ subtarget_is_final(fr_alt(_), _) :- !.
 
 :- pred target_suffix/3 : atm * subtarget * atm # "A
    final suffix given a format and subtarget.".
-% TODO: put everything in a temporal directory so that suffixes can be mixed?
+% TODO: put everything in a temporary directory so that suffixes can be mixed?
 
 target_suffix(Backend, Subtarget, Suffix) :-
 	( Subtarget = fr -> % final result
@@ -105,7 +127,7 @@ file_format_name(html,  'HTML hypertext').
 file_format_name(htmlmeta,  'HTML hypertext (metafile)').
 file_format_name(info,  'GNU info hypertext').
 file_format_name(infoindex, 'GNU info hypertext (directory)').
-file_format_name(manl,  'UNIX man').
+file_format_name(manl,  'Unix man').
 
 :- export(supported_file_format/1).
 supported_file_format(Ext) :-
@@ -130,7 +152,7 @@ file_format_provided_by_backend(htmlmeta, html, fr).
 
 :- data computed_output_name/2. % name of main output
 :- data computed_output_dir/2. % directory for output
-:- data computed_cache_dir/2. % directory cached temporal results
+:- data computed_cache_dir/2. % directory cached temporary results
 
 :- export(clean_fs_db/0).
 :- pred clean_fs_db # "Clean the cached information for the
@@ -154,13 +176,11 @@ get_output_dir(Backend, Dir) :-
 	( output_packed_in_dir(Backend) ->
 	    % Use a directory inside 'htmldir'
 	    main_output_name(Backend, OutBase),
-	    atom_concat([Dir1, OutBase, '.', Backend, '/'], Dir)
+	    atom_concat([Dir1, OutBase, '.', Backend], Dir)
 	; % Store in 'htmldir' directly
 	  Dir = Dir1
 	),
 	assertz_fact(computed_output_dir(Backend, Dir)).
-
-:- use_module(library(dirutils), [path_name/2]).
 
 :- export(get_cache_dir/2).
 :- pred get_cache_dir(Backend, Dir) # "Obtain the @var{Dir} directory
@@ -171,7 +191,7 @@ get_cache_dir(Backend, Dir) :-
 get_cache_dir(Backend, Dir) :-
 	% TODO: missing some root dir
 	main_output_name(Backend, OutBase),
-	atom_concat([OutBase, '.tmp-', Backend, '/'], Dir),
+	atom_concat([OutBase, '.tmp-', Backend], Dir),
 	assertz_fact(computed_cache_dir(Backend, Dir)).
 
 % ---------------------------------------------------------------------------
@@ -180,15 +200,21 @@ get_cache_dir(Backend, Dir) :-
 :- export(ensure_output_dir/1).
 ensure_output_dir(Backend) :-
 	get_output_dir(Backend, Dir),
-	( Dir = '' -> true ; make_dirpath(Dir) ).
+	( Dir = '' -> true
+	; path_concat(Dir, '', Dir2),
+	  mkpath(Dir2)
+	).
 
 % Make sure that the cache directory exists
 :- export(ensure_cache_dir/1).
 ensure_cache_dir(Backend) :-
 	get_cache_dir(Backend, Dir),
-	( Dir = '' -> true ; make_dirpath(Dir) ).
+	( Dir = '' -> true 
+	; path_concat(Dir, '', Dir2),
+	  mkpath(Dir2) 
+	).
 
-:- use_module(library(system), [make_dirpath/1]).
+:- use_module(library(system_extra), [mkpath/1]).
 
 % ---------------------------------------------------------------------------
 % Some special cases for @pred{absfile_for_subtarget/4}
@@ -240,26 +266,19 @@ subtarget_name(Backend, Subtarget, Mod, NameExt) :-
 	).
 
 % The final (absolute) base
-% TODO: Output and temporal file handling needs a major rework
+% TODO: Output and temporary file handling needs a major rework
 % absfile_for_subtarget_(FinalBase, Backend, Subtarget, FinalAbsBase)
 absfile_for_subtarget_(Base, Backend, Subtarget, AbsFile) :-
 	( subtarget_is_final(Subtarget, Backend) ->
 	    get_output_dir(Backend, Dir)
 	; get_cache_dir(Backend, Dir)
 	),
-	concat_dir(Dir, Base, AbsFile).
-
-concat_dir(Dir, FinalBase, FinalAbsBase) :-
-	( Dir = '' ->
-	    FinalAbsBase = FinalBase
-	; atom_concat(Dir, FinalBase, FinalAbsBase)
-	).
+	path_concat(Dir, Base, AbsFile). % (note path_concat('',X,X))
 
 % ---------------------------------------------------------------------------
 
-% TODO: See makedir_aux:fsR/2
-:- use_module(library(lpdist(makedir_aux)), [fsR/2]).
-:- use_module(library(lpdist(ciao_bundle_db))).
+:- use_module(library(bundle/paths_extra), [fsR/2]).
+:- use_module(library(bundle/bundle_info), [bundle_version_patch/2]).
 
 % Note: I cannot obtain the version from version_maintenance at this
 %       point, since main_output_name needs to be calculated before
@@ -276,16 +295,10 @@ concat_dir(Dir, FinalBase, FinalAbsBase) :-
 main_output_name(Backend, NV) :-
 	computed_output_name(Backend, NV0), !, NV = NV0.
 main_output_name(Backend, NV) :-
-	( ( setting_value(output_name, OutputBase0) ->
-	      OutputBase1 = OutputBase0
-	  ; get_mainmod(InBase),
-	    modname_nodoc(InBase, OutputBase1)
-	  )
-	),
-	% TODO: do fsR(bundle_src) on bundle_obtain_version
+	main_output_name_novers(OutputBase1),
 	% Include the version (if required)
 	( \+ setting_value(doc_mainopts, no_versioned_output),
-	  setting_value(parent_bundle, Bundle),
+	  get_parent_bundle(Bundle),
 	  V = ~bundle_version_patch(Bundle),
 	  atom_concat([OutputBase1, '-', V], NV0) ->
 	    % Use the bundle version for the output name
@@ -295,18 +308,72 @@ main_output_name(Backend, NV) :-
 	),
 	assertz_fact(computed_output_name(Backend, NV)).
 
-% the physical (on-disk) module name without the '_doc' suffix (if present)
-% TODO: Do something similar for packages whose documentation is stored in 
-%       _doc files?
+:- export(main_output_name_novers/1).
+main_output_name_novers(OutputBase) :-
+	( ( setting_value(output_name, OutputBase0) ->
+	      OutputBase = OutputBase0
+	  ; get_mainmod(InBase),
+	    modname_nodoc(InBase, OutputBase)
+	  )
+	).
+
+:- use_module(library(bundle/paths_extra),
+	[reverse_fsRx/2, fsRx_get_bundle_and_basename/3]).
+
+% Extract parent bundle from mainmod (fails if not in a bundle)
+:- export(get_parent_bundle/1).
+get_parent_bundle(Bundle) :-
+	get_mainmod(Mod),
+	find_source(Mod, _, _, ModPath),
+	reverse_fsRx(ModPath, ModSpec),
+	fsRx_get_bundle_and_basename(ModSpec, Bundle, _).
+
+% Extract a modspec from an absolute file name
+% (or give back the same ModPath if not in a bundle)
+:- export(get_modspec/2).
+get_modspec(ModPath, ModSpec) :-
+	( reverse_fsRx(ModPath, ModSpec0),
+	  \+ ModSpec0 = (_/_) ->
+	    ModSpec = ModSpec0
+	; % TODO: emit warning?
+	  ModSpec = ModPath % absolute path (no better way...)
+	).
+
+% A module name without the '_doc' suffix (if present)
+:- export(modname_nodoc/2).
 modname_nodoc(Base0, Base) :-
 	( atom_concat(Base1, '_doc', Base0) -> Base = Base1
 	; Base = Base0
 	).
 
+% A modspec without '_doc' suffix in its name (.../a/a_doc path is
+% collapsed as .../a if needed).
+:- export(modspec_nodoc/2).
+modspec_nodoc(ModSpec0, ModSpec) :-
+	ModSpec0 =.. [Alias, Path0],
+	!,
+	modspec_nodoc_(Path0, Path),
+	ModSpec =.. [Alias, Path].
+modspec_nodoc(Path0, Path) :-
+	modspec_nodoc_(Path0, Path).
+
+modspec_nodoc_(Rel/Name0, Path) :- !,
+	modname_nodoc(Name0, Name),
+	( ( Rel = Name ; Rel = _/Name ) -> 
+	    % Collapse '(.../)a/a' as '(.../)a'
+	    % (was '(.../)a/a_doc')
+	    Path = Rel
+	; Path = Rel/Name
+	).
+modspec_nodoc_(Name0, Name) :-
+	modname_nodoc(Name0, Name).
+
 % ---------------------------------------------------------------------------
 
+% TODO: use library(pathnames), it looks like path_concat
 :- export(get_subbase/3).
-:- pred get_subbase(Base, Sub, SubBase) => basename * atm * basename
+:- pred get_subbase(Base, Sub, SubBase) =>
+	filename_noext * atm * filename_noext
    # "@var{SubBase} is the name for the sub-file (@var{Sub})
      associated with @var{Base}".
 % e.g., 'ciaointro' for the introduction section of 'ciao', when we
@@ -324,9 +391,7 @@ get_subbase(Base, Sub, SubBase) :-
 
 absfile_to_relfile(A, Backend, B) :-
 	get_output_dir(Backend, Dir),
-	( Dir = '' ->
-	    B = A
-	; atom_concat(Dir, B0, A) ->
+	( path_get_relative(Dir, A, B0) ->
 	    B = B0
 	; B = A
 	).
@@ -334,15 +399,14 @@ absfile_to_relfile(A, Backend, B) :-
 % ---------------------------------------------------------------------------
 % Cleaning final and temporary files
 
-:- use_module(library(dirutils), [delete_files_and_dirs/1]).
+% TODO: merge with library(source_tree) code
+
+:- use_module(library(source_tree),
+	[remove_glob/2, delete_glob/2]).
 :- use_module(library(system_extra),
-	    [ (-) /1,
-	      ls/2,
-	      del_file_nofail/1,
-	      delete_files/1,
-	      cat/2,
-	      del_endings_nofail/2
-	    ]).
+	[ (-)/1,
+	  del_file_nofail/1
+	]).
 
 :- export(clean_all/0).
 clean_all :-
@@ -355,71 +419,74 @@ clean_docs_no_texi :-
 	clean_intermediate,
 	clean_temp_no_texi.
 
-:- export(clean_all_temporal/0).
-clean_all_temporal :-
+:- export(clean_all_temporary/0).
+clean_all_temporary :-
 	clean_intermediate,
 	clean_texi.
 
 :- export(clean_intermediate/0).
 clean_intermediate :-
-	clean_tex_intermediate,
 	clean_other_intermediate.
 
+doc_output_pattern(Pattern) :-
+	pred_to_glob_pattern(doc_output_pattern_, Pattern).
+
+doc_output_pattern_(Pattern) :-
+	file_format_name(Ext, _),
+	\+ Ext = 'texi',
+	atom_concat('*.', Ext, Pattern).
+
 clean_temp_no_texi :-
-	findall(WExt, (file_format_name(Ext, _), \+ Ext = 'texi', atom_concat('|*.', Ext, WExt)),
-	    WExts),
-	-delete_files_and_dirs(~ls(~atom_concat(WExts))).
+	doc_output_pattern(Pattern),
+	-remove_glob('.', Pattern).
 
 clean_texi :-
-	delete_files(~ls('*.texi')).
+	-delete_glob('.', '*.texi').
 
 clean_other_intermediate :-
-	% TODO: It should not delete autofig*.png files, right? (indeed they are not generated here)
+	% TODO: It should not delete *_autofig.png files, right? (indeed they are not generated here)
 	% TODO: Use a directory for temporary files?
-	-delete_files(~ls('*~|*.itf|*.po|*.asr|*.infoindex|*.err|*.tmp|*.log|*.aux|*.blg|*.bbl|autofig*.jpg|autofig*.png|autofig*.eps|*.htmlmeta')),
-	( clean_suffix(Suffix),
-	  atom_concat('*.', Suffix, Pattern),
-	  -delete_files_and_dirs(~ls(Pattern)),
-	  fail
-	; true
-	).
+	pred_to_glob_pattern(other_pattern, Pattern),
+	-delete_glob('.', Pattern),
+	PatternD = '*.tmp-*', % (see get_cache_dir/2)
+	-remove_glob('.', PatternD).
 
-% TODO: Generalize (use backends)
-clean_suffix('tmp-html').
-clean_suffix('tmp-man').
-clean_suffix('tmp-texinfo').
-% clean_suffix('txt_dr').
-% clean_suffix('manl_rr').
-% clean_suffix('manl_gr').
-% clean_suffix('manl_dr').
-% clean_suffix('html_rr').
-% clean_suffix('html_gr').
-% clean_suffix('html_dr').
-% clean_suffix('texic').
-% clean_suffix('texic_rr').
-% clean_suffix('texic_gr').
-% clean_suffix('texic_dr').
+other_pattern('*~').
+other_pattern('*.itf').
+other_pattern('*.po').
+other_pattern('*.asr').
+other_pattern('*.infoindex').
+other_pattern('*.err').
+other_pattern('*.tmp').
+other_pattern('*.log').
+other_pattern('*.aux').
+other_pattern('*.blg').
+other_pattern('*.bbl').
+other_pattern('*_autofig.jpg').
+other_pattern('*_autofig.png').
+other_pattern('*_autofig.eps').
+other_pattern('*.htmlmeta').
 
-:- export(clean_tex_intermediate/0).
-% Clean the temporal files created by TeX
-clean_tex_intermediate :-
-	( % Trick to obtain the base for .texi file
-	  main_absfile_in_format('texi', File),
-	  atom_concat(OutputBase, '.texi', File) ->
-	    del_endings_nofail(
-		['.aux', '.cp', '.cps', '.fn', '.fns', '.ky', '.kys', '.log',
-		    '.tp', '.tps', '.op', '.ops', '.fi', '.fis', '.pd', '.pds',
-		    '.pr', '.prs', '.ug', '.ugs', '.co', '.cos', '.fu', '.fus',
-		    '.li', '.lis', '.pg', '.pgs', '.ap', '.aps', '.mo', '.mos',
-                    '.au', '.aus', '.gl', '.gls', '.te', '.tes', '.vr', '.vrs',
-		    '.de', '.des', '.toc', '.bbl', '.blg'
-		],
-		OutputBase)
-	; true
-	),
-	( setting_value(libtexinfo, no) -> true
-	; del_file_nofail('texinfo.tex')
-	).
+:- export(pred_to_glob_pattern/2).
+:- meta_predicate pred_to_glob_pattern(pred(1), ?).
+pred_to_glob_pattern(Pred, Pattern) :-
+	findall(P, Pred(P), Ps),
+	list_to_glob_pattern(Ps, Pattern).
+
+:- use_module(library(terms), [atom_concat/2]).
+
+:- doc(bug, "list_to_glob_pattern/2 does not optimize anything due
+   regexp implementation").
+
+:- pred list_to_glob_pattern(+List, -Pattern)
+   # "Obtain a glob pattern from a list of glob patterns
+     (concatenating atoms with @tt{'|'} as separator).".
+
+list_to_glob_pattern([], Pattern) :- !, Pattern = ''.
+list_to_glob_pattern(List, Pattern) :-
+	findall(P, (member(P0, List), atom_concat('|', P0, P)), Ps),
+	atom_concat(Ps, Pattern0),
+	atom_concat('|', Pattern, Pattern0).
 
 % ---------------------------------------------------------------------------
 

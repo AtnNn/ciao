@@ -11,13 +11,14 @@
 :- use_module(library(lists), [append/3]).
 :- use_module(library(errhandle), [error_protect/1]).
 
-:- use_module(lpdocsrc(src(autodoc_state))).
-:- use_module(lpdocsrc(src(autodoc_aux)), [read_file/2]).
-:- use_module(lpdocsrc(src(autodoc_errors))).
-:- use_module(lpdocsrc(src(autodoc_index))).
-:- use_module(lpdocsrc(src(autodoc_doctree))).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_aux), [read_file/2]).
+:- use_module(lpdoc(autodoc_errors)).
+:- use_module(lpdoc(autodoc_index)).
+:- use_module(lpdoc(autodoc_doctree)).
+:- use_module(lpdoc(autodoc_filesystem), [find_file/2, find_source/4]).
 
-:- use_module(lpdocsrc(src(comments)), [docstring/1]).
+:- use_module(lpdoc(comments), [docstring/1]).
 
 %% ---------------------------------------------------------------------------
 
@@ -447,23 +448,27 @@ parse_cmd_args([T|Ts], [X|Xs], DocSt, [Y|Ys]) :-
 handle_incl_command(include(FileS), DocSt, Verb, RContent) :-
 	!,
 	atom_codes(RelFile, FileS),
-	error_protect(absolute_file_name(library(RelFile), File)),
-	%% These are not turned off for now...
-	docst_message("{-> Including file ~w in documentation string", [File], DocSt),
-	read_file(File, Content),
-	parse_docstring__1(DocSt, Verb, Content, RContent),
-	docst_message("}", DocSt).
-handle_incl_command(includeverbatim(FileS), DocSt, _Verb, XNewComm) :-
+	( error_protect(find_file(RelFile, File)),
+	  read_file(File, Content) ->
+	    %% These are not turned off for now...
+	    docst_message("{-> Including file ~w in documentation string", [File], DocSt),
+	    parse_docstring__1(DocSt, Verb, Content, RContent),
+	    docst_message("}", DocSt)
+	; RContent = err(parse_error(cannot_read, [RelFile]))
+	).
+handle_incl_command(includeverbatim(FileS), DocSt, _Verb, RContent) :-
 	!,
 	atom_codes(RelFile, FileS),
-	error_protect(absolute_file_name(library(RelFile), File)),
-	docst_message(
-	    "{-> Including file ~w verbatim in documentation string", [File],
-	    DocSt),
-	read_file(File, Content),
-	docst_message("}", DocSt),
-	% TODO: why not string_verb?
-	XNewComm = string_esc(Content).
+	( ( error_protect(find_source(RelFile, _, _, File))
+	  ; error_protect(find_file(RelFile, File))
+	  ),
+	  read_file(File, Content) -> % TODO: detect language and do syntax highlight
+	    docst_message("{-> Including file ~w verbatim in documentation string", [File], DocSt),
+	    docst_message("}", DocSt),
+	    % TODO: why not string_verb?
+	    RContent = string_esc(Content)
+	; RContent = err(parse_error(cannot_read, [RelFile]))
+	).
 % TODO: Treat this command here or in autodoc? --JF
 %       It adds a dependency to clause_read.
 handle_incl_command(includefact(Pred), DocSt, Verb, RContent) :-
@@ -496,7 +501,7 @@ handle_incl_command(Struct, _DocSt, _Verb, XNewComm) :-
 	XNewComm = Struct.
 
 % TODO: See includefact above --JF
-:- use_module(library(assertions(assrt_lib)), [clause_read/7]).
+:- use_module(library(assertions/assrt_lib), [clause_read/7]).
 
 % ---------------------------------------------------------------------------
 % Auxiliary predicate to output to string
@@ -531,5 +536,5 @@ portray_to_string(Functor, Arity, Content) :-
 	read_file(Tmp, Content),
 	delete_file(Tmp).
 
-:- use_module(lpdocsrc(src(autodoc_aux)), [read_file/2]).
+:- use_module(lpdoc(autodoc_aux), [read_file/2]).
 :- use_module(library(system), [delete_file/1, mktemp/2]).

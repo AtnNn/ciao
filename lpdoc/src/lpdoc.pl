@@ -1,5 +1,4 @@
-:- module(lpdoc, _, [assertions, regtypes, dcg, basicmodes, make, fsyntax]).
-%:- module(_,[main/0,main/1],[make,fsyntax,assertions]).
+:- module(lpdoc, [make_doc/4], [assertions, regtypes, dcg, basicmodes, make, fsyntax]).
 
 :- doc(title, "The lpdoc Documentation Generator").
 :- doc(subtitle, "An Automatic Documentation Generator for (C)LP Systems").
@@ -18,13 +17,12 @@
 :- doc(credits, "Manuel Hermenegildo").
 :- doc(credits, "Jos@'{e} Francisco Morales").
 
-% TODO: Move to a better place or add path
-% :- include(library('ClipAddress')).
+% :- include(ciao_docsrc(common/'ClipAddress')).
 
-:- doc(copyright, " Copyright @copyright{} 1996-2011 Manuel
+:- doc(copyright, "Copyright @copyright{} 1996-2015 Manuel
 Hermenegildo and Jos@'{e} Francisco Morales.
 
-@include{Copyright.Manuals}
+@include{DocCopyright.lpdoc}
 ").
 
 :- doc(summary, "@include{README_LPDOC.lpdoc}").
@@ -58,107 +56,78 @@ cooperation with lpmake
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(messages)).
 :- use_module(library(lists), [list_concat/2, append/3]).
-:- use_module(library(errhandle), [handle_error/2]).
 :- use_module(library(file_utils)).
+:- use_module(library(pathnames), [path_concat/3, path_dirname/2]).
 
 %% LPdoc libraries
-:- use_module(.(autodoc)).
-:- use_module(.(autodoc_state)).
-:- use_module(.(autodoc_images), [clean_image_cache/0]).
-:- use_module(.(autodoc_structure)).
-:- use_module(.(autodoc_settings)).
-:- use_module(.(autodoc_filesystem)).
-:- use_module(.(autodoc_aux)).
-:- use_module(.(autodoc_texinfo), [infodir_base/2]).
+:- use_module(lpdoc(autodoc)).
+:- use_module(lpdoc(autodoc_state)).
+:- use_module(lpdoc(autodoc_images), [clean_image_cache/0]).
+:- use_module(lpdoc(autodoc_structure)).
+:- use_module(lpdoc(autodoc_settings)).
+:- use_module(lpdoc(autodoc_filesystem)).
+:- use_module(lpdoc(autodoc_texinfo), [infodir_base/2]).
 
-:- use_module(library(dirutils), [path_name/2, get_abs_path_no_check/2]).
-:- use_module(library(system), [working_directory/2]).
-
-%% Version information
-:- include(lpdocsrc(src(version_auto))).
-
-:- use_module(library(make(make_rt))).
+:- use_module(library(make/make_rt)).
 
 % ===========================================================================
 
-:- doc(section, "(Definitions for this Application)").
-:- include(library(lpsettings_based_app)). % TODO: use real interfaces...
-
-% TODO: Many of those definitions should come from the documentation
-% of this file.
-
-% The application name
-app_name('LPdoc'). % TODO: like packname in Manifest
-%app_name(lpdoc).
-% Version atom
-%% version(_)
-% Copyright
-app_copyright("CLIP Group, T.U. of Madrid (UPM)").
-
-app_options_message("
-LPdoc options:
-
--cv,--comment-version The source files contain version information.
-                If not specified lpdoc will asume the opposite.
-
--c FILE         Process FILE as a separate (stand-alone) component.
-").
-
-is_option0('-cv').
-handle_option0('-cv') :- do_comment_version.
-%
-is_option0('--comment-version').
-handle_option0('--comment-version') :- do_comment_version.
-do_comment_version :-
-	retractall_fact(lpdoc_option('-ncv')),
-	assertz_fact(lpdoc_option('-cv')).
-
-% ===========================================================================
+:- use_module(library(port_reify), [once_port_reify/2, port_call/1]).
+:- use_module(library(system), [working_directory/2, cd/1]).
 
 :- doc(section, "Processing Documentation Targets").
 
-start(Targets) :-
+% TODO: document Opts better, change format (e.g., N(V) instead of name_value(N,V))
+:- pred make_doc(ConfigFile, Opts, Targets, OutputDir) # "Process
+   @var{Targets} given @var{ConfigFile}, producing all output in
+   @var{OutputDir}. If @var{OutputDir} is free, directory name of
+   @var{ConfigFile} is used (similar to @pred{make_exec/2}).
+
+   @var{Opts} is the list of options for @lib{make_rt} (see
+   @pred{set_make_opts/1}).".
+
+make_doc(ConfigFile, Opts, Targets, OutputDir) :-
+	% Load settings and set make_rt opts
+	load_settings(ConfigFile, Opts),
+	% Call and cleanup
+	working_directory(WD, WD),
+	( var(OutputDir) ->
+	    OutputDir = ~path_dirname(~settings_file)
+	; true
+	),
+	cd(OutputDir),
+	once_port_reify(make_doc_(Targets), Port),
+	cd(WD), % move to original directory
+	% TODO: cleanup all databases here too
+	port_call(Port).
+
+make_doc_(Targets) :-
 	verify_settings,	
 	clean_fs_db,
 	clean_image_cache,
 	reset_output_dir_db,
-	ensure_lpdoclib_defined,
 	load_vpaths,
 	parse_structure,
+	%
 	process_targets(Targets).
-
-% ---------------------------------------------------------------------------
-% Find a correct definition for the lpmake variable lpdoclib 
-
-% TODO: Defined also in ciao_config_db.pl; why?
-ensure_lpdoclib_defined :-
-	% TODO: a similar problem was in ciaopp/ilciao/java_interface.pl, 
-        %       but it does not use a alias paths 
-	( LpDocLibDir = ~file_search_path(lpdoclib),
-	  file_exists(~atom_concat(LpDocLibDir, '/SETTINGS_schema.pl')) ->
-	    add_name_value(lpdoclib, ~atom_concat(LpDocLibDir,'/'))
-	; bold_message(
-"No valid file search path for 'lpdoclib' alias. It is not defined or it does \n"||
-"not contain proper installation files. The LPdoc build/installation does not \n"||
-"seem to be correct."),
-	  fail
-	).
-
-:- dynamic file_search_path/2.
-:- multifile file_search_path/2.
-
-:- use_module(library(system), [file_exists/1]).
 
 % ---------------------------------------------------------------------------
 % Process the targets
 
-process_targets([]) :- !.
-process_targets(['-c', Target|Targets]) :- !,
+% standalone target bases (does not depend on a settings file)
+:- data standalone_target_base/1.
+
+process_targets(Targets) :-
+	retractall_fact(standalone_target_base(_)),
+	process_targets_(Targets).
+
+process_targets_([]) :- !.
+process_targets_(['-c', Target|Targets]) :- !,
 	process_standalone(Target),
-	process_targets(Targets).
-process_targets([Target|Targets]) :- !,
+	process_targets_(Targets).
+process_targets_([Target|Targets]) :- !,
 	process_target(Target),
-	process_targets(Targets).
+	process_targets_(Targets).
 
 process_target(Target) :-
 	report_make_target('Starting', Target),
@@ -168,12 +137,17 @@ process_target(Target) :-
 %% Treat Target as a separated component
 process_standalone(Target) :-
 	base_from_target(Target, Base),
-	report_make_target('Starting', Base),
-	standalone_docstr(Base),
-	( make(Target) -> Ok = yes ; Ok = no ),
-	clean_docstr,
-	Ok = yes,
-	report_make_target('Finished', Base).
+	( standalone_target_base(Base) ->
+	    % (already processed)
+	    true
+	; assertz_fact(standalone_target_base(Base)),
+	  report_make_target('Starting', Base),
+	  standalone_docstr(Base),
+	  ( make(Target) -> Ok = yes ; Ok = no ),
+	  clean_docstr,
+	  Ok = yes,
+	  report_make_target('Finished', Base)
+	).
 
 % Obtain the name of a target (by removing the suffix, which must be a
 % supported one)
@@ -187,10 +161,10 @@ base_from_target(Target) := Base :-
 report_make_target(BegEnd, Ext) :-
 	file_format_name(Ext, FormatName),
 	!,
-	bold_message("~w manual generation in ~w (~w) format.",
+	simple_message("~w manual generation in ~w (~w) format.",
 	    [BegEnd, Ext, FormatName]).
 report_make_target(BegEnd, Base) :-
-	bold_message("~w processing of '~w'.", [BegEnd, Base]).
+	simple_message("~w processing of '~w'.", [BegEnd, Base]).
 
 % ===========================================================================
 
@@ -212,19 +186,23 @@ all <- ~requested_file_formats
 
 % ---------------------------------------------------------------------------
 
+:- use_module(library(pathnames), [path_basename/2]).
+
 :- doc(subsection, "Rules for Documentation Generation").
 % Schematically, there are the rules that defines how documentation is
 % generated for a specific backend. Let A be a file, Main the mainmod
 % and Ci the components:
 %
-%   1) dr(A) <- source(A)
+%   1) dr(A) <- source(A) + <SETTINGS>
 %   2) gr(Main) <- [dr(Main), dr(C1),...,dr(Cn)]
 %   3) cr(A) <- [gr(Main),dr(A)]
 %   4) fr(Main) <- [cr(Main),cr(C1),...,cr(Cn)]
+%
+% NOTE: Dependency to SETTINGS could be refined
 
 % 1) Doctree and references from each source
-~absfile_for_subtarget(~get_name(~dupspec(Spec)), ~dupft(F), dr) <-
-	    [~query_source(Spec, S)] :-
+~absfile_for_subtarget(~path_basename(~dupspec(Spec)), ~dupft(F), dr) <-
+	    ~add_settings_dep(~query_source(Spec, S), Spec) :-
 	gen_doctree(F, Spec, S).
 
 % 2) Globally resolved references
@@ -233,22 +211,23 @@ all <- ~requested_file_formats
 	compute_grefs(F).
 
 % 3) Backend-specific temporary result
-~absfile_for_subtarget(~get_name(~dupspec(Spec)), ~dupft(F), cr) <-
-	    [~absfile_for_subtarget(~get_name(Spec), F, dr), ~main_absfile_for_subtarget(F, gr)] :-
+~absfile_for_subtarget(~path_basename(~dupspec(Spec)), ~dupft(F), cr) <-
+	    [~absfile_for_subtarget(~path_basename(Spec), F, dr),
+	     ~main_absfile_for_subtarget(F, gr)] :-
 	% note: Base here is a modname (not a modspec)
-	translate_doctree(F, ~get_name(Spec)).
+	translate_doctree(F, ~path_basename(Spec)).
 
 % 4) Backend-specific final result
 ~main_absfile_for_subtarget(~dupft(F), fr) <-
 	    [~main_absfile_for_subtarget(F, cr)|~components_target(F, cr)] :-
-	bold_message("Post-processing the document.", []),
+	simple_message("Post-processing the document.", []),
 	autodoc_finish(F).
 
 % (extra) Alternative final results (e.g. PDF, PS, etc.)
 % [Rules for generating DVI, PS, and PDF from texi]
 ~main_absfile_in_format(~dup_alt_format(Alt, F)) <-
 	    [~main_absfile_for_subtarget(F, fr)] :-
-	bold_message("Generating document in ~w format.", [Alt]),
+	simple_message("Generating document in ~w format.", [Alt]),
 	autodoc_gen_alternative(F, Alt).
 
 % @var{Alt} is an alternative format for backend @var{F}
@@ -265,7 +244,7 @@ components_target(Backend, Subtarget, CompTargets) :-
 
 target_files([],           _, _) := [].
 target_files([FileBase|FileBases], Backend, Subtarget) := [NewFile|NewFiles] :-
-	get_name(FileBase, Name),
+	path_basename(FileBase, Name),
 	NewFile = ~absfile_for_subtarget(Name, Backend, Subtarget),
 	NewFiles = ~target_files(FileBases, Backend, Subtarget).
 
@@ -279,14 +258,10 @@ dup(X,X) := X.
 dupft(F) := ~dup(~backend_id,F).
 
 query_source(Spec, S) := Main :-
-	% Find the first source that exists (e.g., .pl or .lpdoc)
-	S = ~srcsuff,
-	Main = ~atom_concat([Spec, '.', S]),
-%	catch(absolute_file_name(library(Main), _), _, fail),
-	% TODO: Cannot use absolute_file_name, library_directory is
-	%       not updated, only vpath.
-	find_file(Main, _),
+	find_source(Spec, S, Main, _),
 	!.
+query_source(Spec, _S) := _Main :-
+	throw(make_error("Source file not found: ~w", [Spec])).
 
 dupspec(Spec) := ~dup(~all_specs, Spec).
 
@@ -296,8 +271,18 @@ all_specs := B :-
 	  member(B, Bs)
 	).
 
-% TODO: I am not sure if here is the place to define this.
-srcsuff := pl | lpdoc.
+settings_absfile(F) :-
+	F0 = ~fixed_absolute_file_name(~settings_file),
+	( atom_concat(_, '.pl', F0) ->
+	    F = F0
+	; atom_concat(F0, '.pl', F)
+	).
+
+add_settings_dep(SpecF, Spec) := [SpecF|Fs] :-
+	( standalone_target_base(Spec) ->
+	    Fs = []
+	; Fs = [~settings_absfile]
+	).
 
 % ---------------------------------------------------------------------------
 
@@ -305,7 +290,7 @@ srcsuff := pl | lpdoc.
 
 gen_doctree(Backend, FileBase, SourceSuffix) :-
 	ensure_cache_dir(Backend),
-	get_name(FileBase, Name),
+	path_basename(FileBase, Name),
 %	display(user_error, generating_doctree(Backend, Name)), nl(user_error),
 	get_autodoc_opts(Backend, Name, Opts),
 	autodoc_gen_doctree(Backend, FileBase, SourceSuffix, Opts, Name).
@@ -317,7 +302,7 @@ compute_grefs(Backend) :-
 	autodoc_compute_grefs(Backend, Mod, Opts).
 
 translate_doctree(Backend, FileBase) :-
-	get_name(FileBase, Base),
+	path_basename(FileBase, Base),
 %	display(user_error, translating_doctree(Backend, Base)), nl(user_error),
 	get_autodoc_opts(Backend, Base, Opts),
 	ensure_output_dir_prepared(Backend, Opts),
@@ -330,24 +315,7 @@ translate_doctree(Backend, FileBase) :-
 % Default 
 view <- [htmlview] # "Visualize default format (.html)" :- true.
 
-% TODO: Deprecate the following? 
-dviview <- [] # "Visualize .dvi (with xdvi)" :-
-	main_absfile_in_format('dvi', File),
-	sh_exec([~xdvi, ' -s ', ~xdvisize, ' -expert -geometry 623x879-0-0 "', File, '"'], [default, bg]).
-svgaview <- [] # "Visualize .dvi (with xdvi) (svga screen)" :-
-	main_absfile_in_format('dvi', File),
-	sh_exec([~xdvi, ' -s 8 -expert -geometry 643x590+1280+0 "', File, '"'], [default, bg]).
-xgaview <- [] # "Visualize .dvi (with xdvi) (xga screen)" :-
-	main_absfile_in_format('dvi', File),
-	sh_exec([~xdvi, ' -s 8 -expert -geometry 643x759-0-0 "', File, '"'], [default, bg]).
-
-% % TODO: May not work
-% psview <- [] # "Visualize .ps (with ghostscript)" :-
-%       ...
-% 	sh_exec([~ghostview, ' -magstep -1 -portrait -geometry +349+10 ',
-% 		OutputBase, '.ps'], [default, bg]).
-
-% Currently main viewers:
+% Main viewers
 pdfview <- [] # "Visualize .pdf (with a default viewer)" :-
 	view('pdf').
 psview <- [] # "Visualize .ps (with a default viewer)" :-
@@ -363,10 +331,37 @@ view(Suffix) :-
 	main_absfile_in_format(Suffix, File),
 	view_document(Suffix, File).
 
+:- use_module(library(process), [process_call/3]).
+
 view_document(Suffix, File) :-
-	viewer(Suffix, Before, After, Mode),
-	( Mode = fg -> Opts = [] ; Opts = [bg] ),
-	sh_exec([Before, File, After], [default|Opts]).
+	( view_in_emacs(Suffix, EmacsFun) ->
+	    % TODO: Use absolute file name instead?
+	    % Escape file name (for elisp expression)
+	    File0 = ~atom_concat('./', File),
+	    atom_codes(File0, File1),
+	    esc_codes(File1, File2, []),
+	    atom_codes(File3, File2),
+	    Code = ~atom_concat(['(', EmacsFun, ' \"', File3, '\")']),
+	    %
+	    process_call(path(emacsclient), ['-n', '--eval', Code], [])
+	; generic_viewer(Viewer),
+	  process_call(path(Viewer), [File], [])
+	).
+
+% view_in_emacs(Format, Fun): 
+%   view Format document with elisp function Fun
+view_in_emacs(info, info).
+view_in_emacs(manl, man).
+
+% TODO: merge esc_codes/3 with elisp_interface.pl
+
+% string-escaped codes
+esc_codes([]) --> [].
+esc_codes([X|Xs]) --> esc_code(X), esc_codes(Xs).
+
+esc_code(0'") --> !, "\\\"".
+esc_code(0'\\) --> !, "\\\\".
+esc_code(X) --> [X].
 
 %% ===========================================================================
 
@@ -376,21 +371,22 @@ view_document(Suffix, File) :-
 clean <- [] # "Delete intermediate files. Leaves .texi & docs" :-
 	clean_intermediate.
 
-docsclean <- [] # "Delete all generated document files (temporal and final). Leaves only .texi" :-
+docsclean <- [] # "Delete all generated document files (temporary and final). Leaves only .texi" :-
 	clean_docs_no_texi.
 
 %% distclean <- [clean] # "Leaves only generated docs." :- 
-distclean <- [] # "Delete all temporal files, including .texi" :-
-	clean_all_temporal.
+distclean <- [] # "Delete all temporary files, including .texi" :-
+	clean_all_temporary.
 
+% :- use_module(library(source_tree), [delete_glob/2]).
 %% realclean <- [docsclean] # "Deletes everything." :-
-%% 	-delete_files(~ls('*.texic')).
+%% 	-delete_glob('.', '*.texic').
 realclean <- [] # "Deletes everything." :-
 	clean_all.
 
 % ===========================================================================
 
-:- doc(version_maintenance,dir('../version')).
+:- doc(version_maintenance,dir('../Manifest')).
 
 :- doc(version(3*0+0,2011/07/07,16:33*15+'CEST'), "
    @begin{itemize}

@@ -927,8 +927,7 @@ escapeseq --> "@{"
    example, @tt{@@cite@{iso-prolog@}} will introduce a citation to a
    bibliographic entry whose keyword is @tt{iso-prolog}. The list of
    bibliography files which will be searched for a match is determined
-   by the @tt{BIBFILES} variable of the @apl{lpdoc} @file{SETTINGS}
-   file.
+   by @tt{bibfile/1} fact of the @apl{lpdoc} @file{SETTINGS} file.
 
    @item{@tt{@@ref@{@em{section title}@}}} @cindex{@@ref command}
    introduces at point a reference to the section or node @em{section

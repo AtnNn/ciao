@@ -28,7 +28,7 @@
 % :- doc(filetype, user).
 %
 % :- use_module(library(system)).
-% :- use_module(library(lpdist(makedir_aux)), [fsR/2]).
+% :- use_module(library(bundle/paths_extra), [fsR/2]).
 
 % ----------------------------------------------------------------------------
 % PATHS 
@@ -54,23 +54,6 @@ dirpath(P) :- atm(P).
 
 filename(P) :- atm(P).
 
-:- pred systempath/1 => dirpath
-
-# "Defines the @bf{system} directories where @tt{.pl} files used are.
-   You also need to specify all the paths containing files which are
-   used by the files being documented.  For example, library
-   subdirectories containing files used in the documentation should
-   also be included, as well as figures, @tt{@@include}s, etc.  You
-   can put these in @pred{filepath/1} instead. Putting them here only
-   means that the corresponding files will be assumed to be
-   @em{system} files (and labelled as such) in the documentation.".
-
-:- pred pathsfile(File) # "The argument denotes a file containing path
-   alias definitions and oher compiler-related info used when
-   compiling the files to be documented. This has the same
-   functionality as the @tt{-u} option in @apl{ciaoc}. Simply leave
-   undefined if you do not use path aliases, etc.".
-
 % ----------------------------------------------------------------------------
 
 :- pred output_name(Base) => sourcename
@@ -78,8 +61,7 @@ filename(P) :- atm(P).
      the generated files. By default it is equal to the root file of
      the document structure @pred{doc_structure/1}.
 
-     If @pred{parent_bundle/1} is defined and
-     the @tt{no_versioned_output} option is not specified in
+     If the @tt{no_versioned_output} option is not specified in
      @pred{doc_mainopts/1}, the bundle version number is appended
      to the output name".
 
@@ -229,15 +211,6 @@ supported_papertype := afourlatex.
 supported_papertype := afourwide.
 supported_papertype := afourthesis.
 
-% TODO: Deprecated, see website_skel, etc.
-% :- pred htmlstyle/1 => filename
-% 
-% # "Define this to point to a style sheet to be used for any html pages
-%    generated (a copy of the style sheet will be made). Set it to
-%    @tt{no} to avoid using any style sheet.".
-% 
-% htmlstyle := ~fsR(~lpdoclib/'default.css').
-
 :- pred libtexinfo/1 => yesno
 
 # "If set to yes the @file{texinfo.tex} file that comes with the
@@ -285,7 +258,7 @@ yesno := yes|no.
 
 :- regtype permission_term/1 # "Permisions: @includedef{permission_term/1}.".
 
-permission_term(perm(User, Group, Others)) :-
+permission_term(perms(User, Group, Others)) :-
 	permission(User),
 	permission(Group),
 	permission(Others).
@@ -304,16 +277,6 @@ permission := rwx.
 permission := 'X'.
 permission := wX.
 permission := rwX.
-
-% ----------------------------------------------------------------------------
-% TODO: Necessary?
-
-:- pred lpdoclib/1 => dirpath
-
-# "This points to the directory where the lpdoc library is
-   installed. This library contains a number of style files,
-   templates, and applications used by lpdoc (see the definitions of
-   other predicates in this file).".
 
 % ----------------------------------------------------------------------------
 % End of SETTINGS_schema

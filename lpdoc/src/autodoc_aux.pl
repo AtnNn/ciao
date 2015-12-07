@@ -7,7 +7,7 @@
 :- use_module(library(messages)).
 :- use_module(library(system), [file_exists/1]).
 
-:- use_module(lpdocsrc(src(autodoc_settings))).
+:- use_module(lpdoc(autodoc_settings)).
 
 % ---------------------------------------------------------------------------
 
@@ -52,66 +52,45 @@ ascii_blank_lines(N,[0'\n | R]) :-
 	ascii_blank_lines(N1,R).
 
 % ---------------------------------------------------------------------------
-% (call external commands from lpdoc)
 
-:- use_module(library(system_extra), [do/2, do/4, (-)/1]).
-:- use_module(library(lists), [append/3, select/3]).
+:- use_module(library(make/make_rt), [make_option/1]).
 
-:- export(sh_exec/2).
-% This command interfaces with do/{2,4} and includes several
-% additional options:
-%
-%  - default: uses default options specified by get_command_options
-%  - logbase(Base): specifies the file base for logs
-%  - no_throw: catches exceptions (show warnings instead) (using (-)/1)
-%  - bg: run in background
-%
-% TODO: This command could be simplified (probabily merged with system_extra)
-% TODO: (-)/1 does not seem a good predicate name
-sh_exec(Cmd, Opts0) :-
-	% Expand options (@var{OptsN} is the new list of options)
-	( select(default, Opts0, Opts1) ->
-	    append(~get_command_option, OptsN1, OptsN)
-	; OptsN = OptsN1, Opts0 = Opts1
-	),
-	%
-	( select(logbase(Base), Opts1, Opts2) ->
-	    LogBase = yes(Base), OptsN2 = OptsN1
-	; LogBase = no, Opts1 = Opts2, OptsN2 = OptsN1
-	),
-	%
-	( select(no_throw, Opts2, Opts3) ->
-	    NoThrow = yes
-	; NoThrow = no, Opts2 = Opts3
-	),
-	OptsN3 = OptsN2,
-	%
-	( select(bg, Opts3, Opts4) ->
-	    Bg = yes
-	; Bg = no, Opts3 = Opts4
-	),
-	OptsN4 = OptsN3,
-	% Append remaining options
-	OptsN4 = Opts2,
-	%
-	% TODO: ugly...
-	( LogBase = yes(Base) ->
-	    atom_concat(Base, '.log', LogFile),
-	    atom_concat(Base, '.err', ErrFile)
-	; true
-	),
-	( Bg = yes ->
-	    append(Cmd, [' &'], Cmd2)
-	; Cmd2 = Cmd
-	),
-	( NoThrow = yes ->
-	    ( LogBase = yes(_) ->
-	        -do(Cmd2, LogFile, ErrFile, OptsN)
-	    ; -do(Cmd2, OptsN)
-	    )
-        ; ( LogBase = yes(_) ->
-	      do(Cmd2, LogFile, ErrFile, OptsN)
-	  ; do(Cmd2, OptsN)
-	  )
+:- use_module(library(logged_process), [logged_process_call/3]).
+
+% TODO: logs may also be useful when status is 0
+% Options for logging external commands (controlled by verbosity options)
+logopts(LogOpts, A) :-
+	( current_fact(make_option('-v')) ->
+	    % In verbose mode, always show logs
+	    A = [show_logs(always)|LogOpts]
+	; % In non-verbose, just note where logs are stored on error
+	  % (change to 'on_error' to show full logs)
+	  A = [show_logs(note_on_error)|LogOpts]
+	).
+
+:- export(autodoc_process_call/3).
+autodoc_process_call(Cmd, Args, Opts) :-
+	logged_process_call(Cmd, Args, ~logopts(Opts)).
+
+% ---------------------------------------------------------------------------
+
+:- use_module(library(format), [format/2, format_control/1]).
+
+:- export(verbose_message/1).
+:- export(verbose_message/2).
+
+:- pred verbose_message(Text, ArgList) : format_control * list
+# "The text provided in @var{Text} is printed as a message, using the
+   arguments in @var{ArgList}, if @tt{make_option('-v')} is
+   defined. Otherwise nothing is printed.".
+
+verbose_message(Text) :-
+	verbose_message(Text, []).
+
+verbose_message(Mess, Args) :-
+	( make_option('-v') ->
+	    format(Mess, Args), nl
+	;
+	    true
 	).
 
