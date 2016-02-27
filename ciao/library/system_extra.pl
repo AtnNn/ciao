@@ -758,13 +758,17 @@ datime_atom(D, T) :-
 	atom_codes(T, S).
 
 :- export(datime_string/1).
+% datime, as a string
 datime_string(S) :- datime_string(_, S).
 
 :- export(datime_string/2).
+% datime, as a string
 datime_string(T, S) :-
 	datime(T, Year, Month, Day, Hour, Min, Sec, _WeekDay, _YearDay),
 	datime_to_string(datime(Year, Month, Day, Hour, Min, Sec), S).
 
+:- export(datime_to_string/2).
+% From datime to string representation
 datime_to_string(datime(Year, Month, Day, Hour, Min, Sec), S) :-
 	number_codes(Day,  DayS), number_codes(Month, MonthS),
 	number_codes(Year, YearS), number_codes(Hour, HourS),

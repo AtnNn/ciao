@@ -11,7 +11,7 @@ The following mailing lists are available:
 
 @begin{itemize}
 
-@item @email{ciao-users@@clip.dia.fi.upm.es} (@href{/Mail/ciao-users/}{archives})
+@item @email{ciao-users@@clip.dia.fi.upm.es} (@href{http://clip.dia.fi.upm.es/Mail/ciao-users/}{archives})
 
     Ciao questions (in English) whose answer may be of general
     interest, announcements of relevant updates, bug fixes, etc.

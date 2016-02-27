@@ -126,6 +126,9 @@ gen_download_list_([DFile|R], UseCGI, [Row|Next]) :- !,
 	gen_download_list_(R, UseCGI, Next).
 
 % ---------------------------------------------------------------------------
+% Custom link using download_cgi 
+
+% TODO: generalize as server-side computation
 
 % Obtain a URL that passes through the download CGI
 wrap_download_cgi(Url) := NewUrl :-
@@ -141,7 +144,7 @@ wrap_download_cgi(Url) := NewUrl :-
 	NewUrl = ~atom_concat([DownloadCGI, '?url=', Url2, '&list=', Maillist]).
 
 % This is the location of the download script
-download_cgi := '/download_cgi/download.cgi'.
+download_cgi := '/cgi-bin/download.cgi'.
 download_full_url := '/'. % TODO: a hack (see wrap_download_cgi)
 % Mailing list recommended (leave empty for no list)
 maillist := 'ciao-users'.
