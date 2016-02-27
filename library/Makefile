@@ -17,12 +17,9 @@ ALLFILES = *
 # installation has not been made yet.
 #---------------------------------------------------------------------------
 
-alldyn: message
-	$(MAKE) ciao_libs 
-	$(MAKE) autolibs
+alldyn:  message ciao_so_libs ciao_regular_libs autolibs
 
-allstat: message
-	$(MAKE) autolibs
+allstat: message ciao_regular_libs autolibs
 
 message:
 	@echo "*** ---------------------------------------------------------"
@@ -30,16 +27,25 @@ message:
 	@echo "*** (this may take a while and is silent; please be patient)"
 	@echo "*** ---------------------------------------------------------"
 
-ciao_libs:
+ciao_so_libs:
 #	cd distribution; $(MAKE)      # Check it out!
 #	cd file_locks; $(MAKE)
 #	cd math; $(MAKE)
 #	cd pillow; $(MAKE)
-	cd sockets; $(MAKE)
-	cd random; $(MAKE)
+	cd sockets && $(MAKE) all
+	cd random && $(MAKE) all
+
+ciao_regular_libs:
+#	cd distribution; $(MAKE)      # Check it out!
+# Make before the links, because clpr uses a file linked into clpq
+	cd clpr && $(MAKE) links 
+	cd clpq && $(MAKE) links 
+	cd clpr && $(MAKE) all
+	cd clpq && $(MAKE) all
 
 autolibs: 
 	'rm' -f all_modules all_module_messages
+	echo "set_prolog_flag(compresslib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
 	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
 	'rm' -f all_module_messages
@@ -57,22 +63,22 @@ install:
 	mkdir -p $(STDLIBDIR)
 	-chmod $(EXECMODE) $(STDLIBDIR)
 	-cp -pR $(ALLFILES) $(STDLIBDIR)
-	(cd $(STDLIBDIR); find . -type d -exec chmod $(EXECMODE) {} \; )
-	(cd $(STDLIBDIR); find . ! -type d -exec chmod $(DATAMODE) {} \; )
-	(cd $(STDLIBDIR); find . -name '*~' -exec 'rm' -f {} \; )
+	(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
+	(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
+	(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
 
 uninstall:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling $(BASEMAIN) 'library' libraries..."
-	@echo "*** (deleteing $(STDLIBDIR))"
+	@echo "*** (deleting $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(STDLIBDIR)
 
 # *.itf *.po *.asr are eliminated recursively so that no Makefiles 
-# underneath  are needed for cleaning up prolog-only libraries. MH.
+# underneath are needed for cleaning up prolog-only libraries. MH.
 distclean: 
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Cleaning $(BASEMAIN)/library..."
+	@echo "*** Cleaning $(STDLIBDIR)/library..."
 	@echo "*** ---------------------------------------------------------"
 	find . -name '*.itf' -exec 'rm' -f {} \;
 	find . -name '*.po'  -exec 'rm' -f {} \;

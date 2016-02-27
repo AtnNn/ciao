@@ -211,12 +211,12 @@ bytecode (the product of the compilation) and invokes the
 @end{itemize}
 
 Except for a couple of header lines, the contents of executables are
-almost identical under different OSs. The bytecode they contain is
-architecture-independent.  In fact, it is possible to create an
-executable under Un*x and run it on Windows or viceversa, by making
-only minor modifications (e.g., creating the @tt{.bat} file and/or
-setting environment variables or editing the start of the file to
-point to the correct engine location).
+almost identical under different OSs (except for self-contained ones).
+The bytecode they contain is architecture-independent.  In fact, it
+is possible to create an executable under Un*x and run it on Windows
+or viceversa, by making only minor modifications (e.g., creating the 
+@tt{.bat} file and/or setting environment variables or editing the
+start of the file to point to the correct engine location).
 
 @section{Types of executables generated}
 
@@ -239,7 +239,7 @@ startup time @cite{ciaoc-entcs}:
   loaded dynamically at startup. More precisely, any files that appear
   as @tt{library(...)} in @decl{use_module/1} and
   @decl{ensure_loaded/1} declarations will not be included explicitly
-  in the executable and will intead be loaded dynamically.  Is is also
+  in the executable and will instead be loaded dynamically.  Is is also
   possible to mark other @concept{path aliases} (see the documentation
   for @pred{file_search_path/2}) for dynamic loading by using the
   @tt{-d} option. Files accessed through such aliases will also be
@@ -302,7 +302,7 @@ startup time @cite{ciaoc-entcs}:
 
 @item{Dynamic executables, with lazy loading:} @cindex{executables, lazy load}
 
-  Selecting the @tt{-ll} option is very similar to the case of dynamic
+  Selecting the @tt{-l} option is very similar to the case of dynamic
   executables above, except that the code in the library modules is
   not loaded when the program is started but rather it is done during
   execution, the first time a predicate defined in that file is
@@ -314,6 +314,44 @@ startup time @cite{ciaoc-entcs}:
   load has the advantage that it starts fast, loading a minimal
   functionality on startup, and then loads the different modules
   automatically as needed.
+
+@item{Self-contained executables:} @cindex{executables, self-contained} 
+
+  @em{Self-contained} executables are static executables (i.e., this
+  option also implies @em{static} compilation) which include a Ciao
+  engine along with the bytecode, so they do not depend on an external
+  one for their execution.  This is useful to create executables which
+  run even if the machine where the program is to be executed does not
+  have a Ciao engine installed and/or libraries. The disadvantage is
+  that such execuatbles are @concept{platform-dependent} (as well as
+  larger than those that simply use an external library).  This type
+  of compilation is selected with the @tt{-S}
+  option. Cross-compilation is also possible with the @tt{-SS} option,
+  so you can specify the target OS and architecture (e.g. LINUXi86).
+  To be able to use the latter option, it is necessary to have
+  installed a ciaoengine for the target machine in the Ciao library
+  (this requires compiling the engine in that OS/architecture and
+  installing it, so that it is available in the library). 
+
+@item{Compressed executables:} @cindex{executables, compressed}
+
+  In @em{compressed} executables the bytecode is compressed. This
+  allows producing smaller executables, at the cost of a slightly
+  slower startup time. This is selected with the @tt{-z} option. You
+  can also produce compressed libraries if you use @tt{-zl} along with
+  the @tt{-c} option.  If you select @tt{-zl} while generating an
+  executable, any library which is compiled to accomplish this will be
+  also compressed.
+
+@item{Active modules:} @cindex{modules, active} 
+
+  The compiler can also compile (via the @tt{-a} option) a given file
+  into an @index{active module} (see
+  @ref{Active modules (high-level distributed execution)}
+  for a description of this).  
+
+  @comment{The way the ... using address publish module of
+  name @var{PublishMod} (which needs to be in the library paths).}
 
 @end{description}
 
@@ -411,6 +449,25 @@ handle_args_('-c', Args) :- !,
 handle_args_('-s', Args) :- !,
         set_prolog_flag(executables, static),
         handle_args(Args).
+handle_args_('-S', Args) :- !,
+        set_prolog_flag(executables, static),
+        get_os(Os),
+        get_arch(Arch),
+        atom_concat(Os,Arch,Target),
+        set_prolog_flag(selfcontained,Target),
+        handle_args(Args).
+handle_args_('-SS',[Target|Args]) :- !,
+        set_prolog_flag(executables, static),
+        set_prolog_flag(selfcontained,Target),
+        handle_args(Args).
+handle_args_('-SS',[]) :- !,
+        usage.
+handle_args_('-z', Args) :- !,
+        set_prolog_flag(compressexec,yes),
+        handle_args(Args).
+handle_args_('-zl',Args) :- !,
+        set_prolog_flag(compresslib,yes),
+        handle_args(Args).
 handle_args_('-e', Args) :- !,
         set_prolog_flag(executables, eagerload),
         handle_args(Args).
@@ -477,9 +534,22 @@ ciaoc <MiscOpts> -c  <file> ...
 
 -u  use <file> for compilation
 
-<ExecOpts> can be: [-s|-e|-l|(-ll <module>)*] (-d <alias>)* [-x]
+<ExecOpts> can be: [-s|-S|-SS <target>|-z|-zl|-e|-l|(-ll <module>)*]
+                   (-d <alias>)* [-x]
 
 -s  make a static executable (otherwise dynamic files are not included)
+
+-S  make standalone executable for the current OS and architecture
+
+-SS make standalone executable for <target> OS and architecture
+    valid <target> values may be: LINUXi86, SolarisSparc...
+
+    (both -S and -SS imply -s)
+
+-z  generate executables with compressed bytecode
+
+-zl generate libraries with compressed bytecode - any library (re)compiled
+    as consequence of normal executable compilation will also be affected
 
 -e  make executable with eager load of dynamic files at startup (default)
 
@@ -496,6 +566,12 @@ default extension for files is '.pl'
 
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*5+142,2000/05/11,14:11*20+'CEST'), "Added options for
+   the generation of self-contained executables (engine and prolog bytecode
+   in a single file) and compressed bytecode in both executables and
+   libraries (it sizes about 1/3 of uncompressed bytecode, but load time
+   gets about 125%).  (Oscar Portela Arjona)").
 
 :- comment(version(1*5+91,2000/03/24,17:18*52+'CET'), "Corrected the
    instructions for starting executables under Win32 and made some

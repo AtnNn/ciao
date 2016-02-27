@@ -20,6 +20,8 @@
 
 	[assertions,regtypes,isomodes]).
 
+:- use_module(library(concurrency)).
+
 :- comment(title,"Low-level Prolog to Java interface").
 
 :- comment(author,"Jes@'{u}s Correas").
@@ -296,7 +298,7 @@ java_remote_connection(Node):-
 	eng_call(prolog_listener, create, create).
 
 %% -----------------------------------------------------------------------
-:- pred compound_classpath(-path)
+:- pred compound_classpath(-Path)
 	:: atom # "Compounds a string with the classpath needed by java to
 	run the java server.".
 %% -----------------------------------------------------------------------

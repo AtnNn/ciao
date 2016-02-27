@@ -1,9 +1,9 @@
+foreign_compiler_options('IRIX','mips','cc',[]).
+foreign_linker_options('IRIX','mips','ld',['-shared']).
 foreign_compiler_options('LINUX','alpha','gcc',['-fPIC']).
 foreign_linker_options('LINUX','alpha','gcc',['-shared']).
 foreign_compiler_options('LINUX','i86','gcc',['-fPIC']).
 foreign_linker_options('LINUX','i86','gcc',['-shared']).
-foreign_compiler_options('IRIX','mips','cc',[]).
-foreign_linker_options('IRIX','mips','ld',['-shared']).
 foreign_compiler_options('Dynix','i86','cc',[]).
 foreign_linker_options('Dynix','i86','ld',[]).
 foreign_compiler_options('Solaris','Sparc','gcc',[]).

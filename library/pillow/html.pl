@@ -1,46 +1,47 @@
-% *** html.pl *** (Version 98.2 for ciao)
-% A Simple HTML Package for Prolog and CLP systems
-% 
-% Copyright (C) 1996/1997/1998 UPM-CLIP.
-% 
-% This package is free software; you can redistribute it and/or
-% modify it under the terms of the GNU Library General Public
-% License as published by the Free Software Foundation; either
-% version 2 of the License, or (at your option) any later version.
-% 
-% This package is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-% Library General Public License for more details.
-% 
-% You should have received a copy of the GNU Library General Public
-% License along with this package; if not, write to the Free
-% Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-% 
-% M. Hermenegildo (herme@fi.upm.es), D. Cabeza (dcabeza@fi.upm.es) and
-% S. Varma (sacha@clip.dia.fi.upm.es) using input from L. Naish's forms
-% and F. Bueno's previous Chat interface
-
 /**** Be careful when changing code, to not break auto distribution generation
  ****/
 :- module(html, [
-        url_info/2, url_info_relative/3, url_query/2,
         output_html/1, html2terms/2, xml2terms/2, html_template/3,
-        http_lines/3, 
         html_report_error/1, get_form_input/1, get_form_value/3,
-        form_empty_value/1, text_lines/2, form_default/3, my_url/1,
-        form_request_method/1, icon_address/2, html_protect/1
-        ], ['pillow/ops',dcg,assertions]).
+        form_empty_value/1, form_default/3, % text_lines/2, 
+        set_cookie/2, get_cookies/1, url_query/2, my_url/1,
+        url_info/2, url_info_relative/3,
+        form_request_method/1, icon_address/2, html_protect/1,
+        http_lines/3
+        ], ['pillow/ops',assertions,isomodes,dcg]).
 
 :- use_module(library(strings),
         [write_string/1, get_line/1, whitespace/2, whitespace0/2, string/3]).
 :- use_module(library(lists), [reverse/2, append/3, list_lookup/4]).
 :- use_module(library(system)).
-:- use_module(library('pillow/common')).
+:- use_module(library('pillow/pillow_aux')).
+:- use_module(library('pillow/pillow_types')).
+
+:- comment(title, "HTML/XML/CGI programming").
+
+:- comment(author, "Daniel Cabeza").
+:- comment(author, "Manuel Hermenegildo").
+:- comment(author, "Sacha Varma").
+
+:- comment(module, "This module implements the predicates of the PiLLoW
+   package related to @concept{HTML}/@concept{XML} generation and
+   parsing, @concept{CGI} and form handlers programming, and in general
+   all the predicates which do not imply the use of the HTTP
+   protocol.").
+
+:- comment(appendix, "The code uses input from from L. Naish's forms and
+        F. Bueno's previous Chat interface.  Other people who have
+        contributed is (please inform us if we leave out anybody):
+        Markus Fromherz, Samir Genaim.").
 
 %%% Some icon addresses %%%
 
 :- include(icon_address).
+
+:- comment(icon_address(Img, IAddress), "The PiLLoW image @var{Img} has
+           URL @var{IAddress}.").
+
+:- true pred icon_address(?atm,?atm).
 
 icon_address(Img, IAddress):-
         icon_base_address(BAddress),
@@ -58,21 +59,33 @@ icon_img(pillow,'pillow_d.gif').
 % a term and then use html2terms/2 to translate the term into a string for
 % writing and to translate a string to a term for reading
 
-%% Hook predicate to define macros
-% Leave at least one so that no existence errors are generated
-% on any system. Take care to not transform something into itself!
+:- true pred html_expansion(Term,Expansion)
+        # "Hook predicate to define macros.  Expand occurrences of
+          @var{Term} into @var{Expansion}, in @pred{output_html/1}.
+          Take care to not transform something into itself!".
+
+:- multifile html_expansion/2.
+
 html_expansion(bf(X),b(X)).
 html_expansion(it(X),i(X)).
 html_expansion(pr,
-    ref("http://www.clip.dia.fi.upm.es/miscdocs/pillow/pillow.html",
+    ref("http://www.clip.dia.fi.upm.es/Software/pillow/pillow.html",
         image(Pillow, [alt="developed with PiLLoW",border=0,align=bottom]))
               ) :-
         icon_address(pillow,Pillow).
+
+:- comment(output_html(HTMLTerm), "Outputs @var{HTMLTerm}, interpreted
+   as an @pred{html_term/1}, to current output stream.").
+
+:- true pred output_html(+html_term).
 
 % Translate html format and send to current output
 output_html(F) :-
         html_term(F,T,[]),
         write_string(T).
+
+:- true pred html_report_error(Error)
+        # "Outputs error @var{Error} as a standard HTML page.".
 
 % Error handling
 html_report_error(X) :-
@@ -89,24 +102,17 @@ html_report_error(X) :-
           end]),
         flush_output,
         halt.
-%% html_report_error(X) :-
-%%         (icon_address(warning,Icon) -> Image = image(Icon); Image = ""),
-%%         output_html([
-%%           cgi_reply,
-%%           start,
-%%           title("html.pl Error Report"), 
-%%           --,
-%%           Image,
-%%           h1("PiLLoW Error Report"),
-%%           --,
-%%           b("The following error was encountered: "),
-%%           X,
-%%           --,
-%%           end]),
-%%         flush_output,
-%%         halt.
 
 % HTML <-> Terms translation
+
+:- comment(html2terms(String,Terms), "@var{String} is a character list
+   containing HTML code and @var{Terms} is its prolog structured
+   representation.").
+
+:- true pred html2terms(-string,+html_term)
+        # "Translates an HTML-term into the HTML code it represents.".
+:- true pred html2terms(+string,?canonic_html_term)
+        # "Translates HTML code into a structured HTML-term.".
 
 html2terms(Chars, Terms) :-
         var(Chars), !,
@@ -115,6 +121,15 @@ html2terms(Chars, Terms) :-
         parse_html([], Terms, [], Chars, []).
 
 % XML <-> Terms translation
+
+:- comment(xml2terms(String,Terms), "@var{String} is a character list
+   containing XML code and @var{Terms} is its prolog structured
+   representation.").
+
+:- true pred xml2terms(-string,+html_term)
+        # "Translates a XML-term into the XML code it represents.".
+:- true pred xml2terms(+string,?canonic_xml_term)
+        # "Translates XML code into a structured XML-term.".
 
 xml2terms(Chars, Terms) :-
         var(Chars), !,
@@ -425,6 +440,64 @@ prolog_term_args(N, M, T) -->
 
 %% HTML -> Terms translation %%
 
+:- comment(html_template(Chars, Terms, Dict), "Interprets @var{Chars} as
+   an HTML template returning in @var{Terms} the corresponding
+   structured HTML-term, which includes variables, and unifying
+   @var{Dict} with a dictionary of those variables (an incomplete list of
+   @em{name}@tt{=}@em{Var} pairs).  An HTML template is standard HTML
+   code, but in which ``slots'' can be defined and given an identifier.
+   These slots represent parts of the HTML code in which other HTML code
+   can be inserted, and are represented in the HTML-term as free
+   variables.  There are two kinds of variables in templates:
+   @begin{itemize}
+
+   @item Variables representing page contents.  A variable with name
+   @em{name} is defined with the special tag @tt{<V>}@em{name}@tt{</V>}.
+
+   @item Variables representing tag attributes.  They occur as an
+   attribute or an attribute value starting with @tt{_}, followed by its
+   name, which must be formed by alphabetic characters.
+
+   @end{itemize}
+
+   As an example, suposse the following HTML template:
+@begin{verbatim}
+@includeverbatim{examples/template.html}
+@end{verbatim}
+   The following query in the Ciao toplevel shows how the template is
+   parsed, and the dictionary returned:
+@begin{verbatim}
+?- file_to_string('template.html',_S), html_template(_S,Terms,Dict). 
+
+Dict = [bgcolor=_A,content=_B|_],
+Terms = [env(html,[],[\"
+\",env(body,[bgcolor=_A],[\"
+\",_B,\"
+\"]),\"
+\"]),\"
+\"] ? 
+
+yes
+@end{verbatim}
+  If a dictionary with values is supplied at call time, then variables
+  are unified accordingly inside the template:
+@begin{verbatim}
+?- file_to_string('template.html',_S),
+   html_template(_S,Terms,[content=b(\"hello world!\"),bgcolor=\"white\"]). 
+
+Terms = [env(html,[],[\"
+\",env(body,[bgcolor=\"white\"],[\"
+\",b(\"hello world!\"),\"
+\"]),\"
+\"]),\"
+\"] ? 
+
+yes
+@end{verbatim}
+").
+
+:- true pred html_template(+string,?canonic_html_term,?list).
+
 html_template(Chars, Terms, Dict) :-
         parse_html([], Terms, Dict, Chars, []).
 
@@ -676,7 +749,17 @@ xml_tag_char(0'-) --> "-".
 
 %%% Parsing of forms input %%%
 
-% Receiving form input as a dictionary of attribute=value pairs
+:- comment(get_form_input(Dict), "Translates input from the form (with
+   either the POST or GET methods, and even with CONTENT_TYPE
+   multipart/form-data) to a dictionary @var{Dict} of
+   @em{attribute}=@em{value} pairs. It translates empty values (which
+   indicate only the presence of an attribute) to the atom
+   @tt{'$empty'}, values with more than one line (from text areas or
+   files) to a list of lines as strings, the rest to atoms or numbers
+   (using @pred{name/2}).").
+
+:- true pred get_form_input(-form_dict).
+
 get_form_input(Dic) :-
         form_request_method(M),
         get_form_input_method(M, Dic), !.
@@ -771,12 +854,17 @@ to_value_([], L, V) :- !,
         name(V, L).        % if only a line, return an atom or number
 to_value_(Ls, L, [L|Ls]).   % else, return the list of lines
 
+:- true pred http_lines(Lines, String, Tail)
+        :: list(string) * string * string
+        # "@var{Lines} is a list of the lines with occur in @var{String}
+          until @var{Tail}.  The lines may end UNIX-style or DOS-style
+          in @var{String}, in @var{Lines} they have not end of line
+          characters. Suitable to be used in DCGs.".
+
 http_lines([L|Ls]) -->
         http_line(L), !,
         http_lines(Ls).
 http_lines([]) --> "".
-
-% ----------------------------------------------------------------------------
 
 
 % ----------------------------------------------------------------------------
@@ -839,6 +927,13 @@ extract_value(file(F), Ls, file(F,Ls)).
 
 % ----------------------------------------------------------------------------
 
+:- comment(get_form_value(Dict,Var,Val), "Unifies @var{Val} with the
+   value for attribute @var{Var} in dictionary @var{Dict}. Does not
+   fail: value is @tt{''} if not found (this simplifies the programming
+   of form handlers when they can be accessed directly).").
+
+:- true pred get_form_value(+form_dict,+atm,?form_value).
+
 % Get value Val for attribute Var in dictionary Dic
 % Does not fail: value is '' if not found.
 get_form_value([],_Var,'').
@@ -846,12 +941,22 @@ get_form_value([Var=Val|_],Var,Val) :- !.
 get_form_value([_|Dic],Var,Val) :- 
         get_form_value(Dic,Var,Val).
 
-% Transform input from a text area to a list of lines
+:- comment(text_lines(Val,Lines), "Transforms a value @var{Val} from a
+  text area to a list of lines @var{Lines}.  Not needed now,
+  automatically done.").
+
+:- true pred text_lines(+form_value,-list(string)).
+
+% Transform input from a text area to a list of lines - not needed now
 text_lines('$empty', []) :- !.
 text_lines(A, [L]) :-
         atomic(A), !,
         name(A,L).
 text_lines(T,T).
+
+:- true pred form_empty_value(Term)
+        # "Checks that @var{Term}, a value comming from a text area is
+           empty (can have spaces, newlines and linefeeds).".
 
 % Some generic help for dealing with the very weird things that empty text 
 % areas and boxes can send
@@ -864,13 +969,28 @@ empty_lines([L|Ls]) :-
         whitespace0(L, []),
         empty_lines(Ls), !.
 
+:- true pred form_default(+Val,+Default,-NewVal)
+   # "Useful when a form is only partially filled, or when the
+      executable can be invoked either by a link or by a form, to set
+      form defaults. If the value of @var{Val} is empty then
+      @var{NewVal}=@var{Default}, else @var{NewVal}=@var{Val}.".
+
 % Set form defaults
 form_default(Val,Default,NewVal) :- 
         ( Val == '' -> NewVal = Default; NewVal = Val).
 
+:- true pred form_request_method(Method) => atm
+        # "Unifies @var{Method} with the method of invocation of the form
+           handler (@tt{GET} or @tt{POST}).".
+
 form_request_method(M) :-
         getenvstr('REQUEST_METHOD', MS),
         atom_codes(M,MS).
+
+:- comment(my_url(URL), "Unifies @var{URL} with the Uniform
+   Resource Locator (WWW address) of this cgi executable.").
+
+:- true pred my_url(?string).
 
 my_url(URL) :-
         getenvstr('SERVER_NAME', Server),
@@ -882,8 +1002,70 @@ my_url(URL) :-
         ;   mappend(["http://",Server,[0':|Port],File], URL)
         ).
 
+%%% Cookies, contributed by Samir Genaim %%%
+
+% sending a cookie is done by printing
+%
+%  Set-Cookie: var=value
+%
+% before sending Content-Type
+
+:- comment(set_cookie(Name,Value), "Sets a cookie of name @var{Name} and
+   value @var{Value}.  Must be invoked before outputting any data,
+   including the @tt{cgi_reply} html-term.").
+
+:- true pred set_cookie(+atm,+constant).
+
+set_cookie(Name,Value) :-
+	display_list(['Set-Cookie: ',Name,'=',Value,'\n']).
+
+:- comment(get_cookies(Cookies), "Unifies @var{Cookies} with a dictionary of
+   @em{attribute}=@em{value} pairs of the active cookies for this URL.").
+
+:- true pred get_cookies(-value_dict).
+
+% Cookies are available in the environment variable "HTTP_COOKIE".
+% The cookies string is of the form:
+% 
+%      var1=val1; var2=val2; ..... varn=valn
+
+get_cookies(Cs) :-
+	getenvstr('HTTP_COOKIE',CookiesStr),
+	cookies(Cs,[0';,0' |CookiesStr],[]), !.
+get_cookies([]).
+
+cookies([]) --> "".
+cookies([C=V|Cs]) -->
+	"; ",
+	cookie_str(StrC),
+	"=",
+	cookie_str(StrV),
+	{
+          atom_codes(C,StrC),
+	  name(V,StrV)
+        },
+	cookies(Cs).
+
+cookie_str([C]) -->
+	legal_cookie_char(C).
+cookie_str([C|Cs]) -->
+	legal_cookie_char(C),
+	cookie_str(Cs).
+
+legal_cookie_char(C) -->
+	[C],
+	{C \== 0';, C\== 0'=}.
+
+% ----------------------------------------------------------------------------
+
 %% To compute GET parameters for CGI's
 %  -- from an idea of Markus Fromherz <fromherz@parc.xerox.com> */
+
+:- comment(url_query(Dict,URLArgs), "Translates a dictionary @var{Dict}
+   of parameter values into a string @var{URLArgs} for appending to a URL
+   pointing to a form handler.").
+
+:- true pred url_query(+value_dict,-string).
 
 url_query(Args, URLArgs) :-
         params_to_string(Args, 0'?, URLArgs).
@@ -929,14 +1111,13 @@ hex_char(N,C) :- C is N-10+0'A.
 
 %%% URL encoding/decoding %%%
 
-% ============================================================================
-% url_info(+Url:(atom ; string), -Info:url_info)
-% url_info(-Url:string, +Info:url_info)
-%
-% type url_info = http(Host:atom, Port:integer, Document:string)
-%
-% Extracts information from a URL, or creates a URL from information
-% ============================================================================
+:- comment(url_info(URL,URLTerm), "Translates a URL @var{URL} to a
+   Prolog structure @var{URLTerm} which details its various components,
+   and vice-versa. For now non-HTTP URLs make the predicate fail.").
+
+:- true pred url_info(+atm, ?url_term).
+:- true pred url_info(+string, ?url_term).
+:- true pred url_info(-string, +url_term).
 
 url_info(Url, Info) :-
         atom(Url), !,
@@ -1011,6 +1192,20 @@ port_codes(Port, [0':|PortS]) :-
 % Extracts information from a URL, relative to a base page
 % ============================================================================
 
+:- comment(url_info_relative(URL,BaseURLTerm,URLTerm), "Translates a
+   relative URL @var{URL} which appears in the HTML page refered to by
+   @var{BaseURLTerm} into @var{URLTerm}, a Prolog structure containing its
+   absolute parameters. Absolute URLs are translated as with
+   @pred{url_info/2}.  E.g.
+@begin{verbatim}
+url_info_relative(\"dadu.html\",
+                  http('www.foo.com',80,\"/bar/scoob.html\"), Info)
+@end{verbatim}
+   gives @tt{Info = http('www.foo.com',80,\"/bar/dadu.html\")}.").
+
+:- true pred url_info_relative(+atm,+url_term,?url_term).
+:- true pred url_info_relative(+string,+url_term,?url_term).
+
 url_info_relative(URL, Base, Info) :-
         atom(URL), !,
         atom_codes(URL, URLStr),
@@ -1039,6 +1234,13 @@ textarea_data(L) -->
         http_lines(L), !.
 textarea_data(S) -->
         string(S).
+
+:- comment(html_protect(Goal), "Calls @var{Goal}.  If an error occurs
+   during its execution, or it fails, an HTML page is output informing
+   about the incident.  Normaly the whole execution of a CGI is
+   protected thus.").
+
+:- true pred html_protect(callable).
 
 :- meta_predicate(html_protect(:)). % For compatibility
 

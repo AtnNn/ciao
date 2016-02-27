@@ -286,10 +286,14 @@ if (stop_on_pred_calls) {  \
     t3 = Func->printname; \
   else \
     { \
+/*       fprintf(stderr, "arity is %d\n", Func->arity); */ \
       t3 = Tag(STR,H); \
+/*       fprintf(stderr, "2\n"); */ \
       HeapPush(H,SetArity(Func->printname,Func->arity)); \
+/*       fprintf(stderr, "3\n"); */ \
       for(i=0; i<Func->arity; i++) \
 	U1_XLVALC_W(i); \
+/*       fprintf(stderr, "4\n"); */ \
     } \
 }
 

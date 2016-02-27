@@ -5,23 +5,26 @@
         current_prefixop/3, current_infixop/4, current_postfixop/3],
 	[assertions,isomodes]).
 
-%% FOR TEMPORARILY PARTIALLY DOCUMENTING:
-:- use_module(library('assertions/doc_props')).
+:- comment(title, "Defining operators").
 
-:- comment(title, "Standard operators").
-
-:- comment(module, "Standard operators are defined by this predicate:
-        @includedef{standard_ops/0}").
+:- comment(module, "Operators allow writting terms in a more clear way
+   than the standard functional notation.  Standard operators in Ciao
+   are defined by this predicate (but note that the compiler itself
+   defines more operators at compile time):
+   @includedef{standard_ops/0}").
 
 :- data current_op/5.
 
-:- trust pred op(+Precedence,+Type,+Name)
-    + doc_incomplete
-    # "Declares the atom @var{Name} to be an operator of the stated
-       @var{Type} and @var{Precedence}. @var{Name} may also be a list of
+:- comment(op(Precedence,Type,Name), "Declares the atom @var{Name} to be
+       an operator of the stated @var{Type} and @var{Precedence} (0 =<
+       @var{Precedence} =< 1200).  @var{Name} may also be a list of
        atoms in which case all of them are declared to be operators.  If
        @var{Precedence} is 0 then the operator properties of @var{Name}
-       (if any) are cancelled.".
+       (if any) are cancelled.  Note that, unlike in
+       @concept{ISO-Prolog}, it is allowed to define two operators with
+       the same name, one infix and the other postfix.").
+
+:- true pred op(+int,+operator_specifier,+atm_or_atm_list) + iso.
 
 op(Prec, Ass, Ops) :-
 	nonvar(Ass),
@@ -68,12 +71,13 @@ do_ops([X|Xs], Left, Prec, Right, Type) :-
 	),
 	do_ops(Xs, Left, Prec, Right, Type).
 
-:- trust pred current_op(?Precedence,?Type,?Op)
-   + doc_incomplete
-   # "The atom @var{Op} is currently an operator of type @var{Type} and
-   precedence @var{Precedence}.  Neither @var{Op} nor the other arguments need
-   be instantiated at the time of the call; i.e., this predicate can be used
-   to generate as well as to test.".
+:- comment(current_op(Precedence,Type,Op), "The atom @var{Op} is
+   currently an operator of type @var{Type} and precedence
+   @var{Precedence}.  Neither @var{Op} nor the other arguments need be
+   instantiated at the time of the call; i.e., this predicate can be
+   used to generate as well as to test.").
+
+:- true pred current_op(?int,?operator_specifier,?atm) + iso.
 
 current_op(Prec, Ass, Op) :-
 	current_fact(current_op(Op,Left,Prec,Right,Type)),

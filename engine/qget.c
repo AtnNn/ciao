@@ -26,7 +26,9 @@
    a .po file.  If they are longer than STATICMAXATOM, the emulator will for
    sure break.  I will add DEBUG options to check this. */
 
-char workstring[STATICMAXATOM]; 
+#define WORKSTRINGLEN (STATICMAXATOM)
+
+char workstring[WORKSTRINGLEN]; 
 
 int getshort(f)
      FILE *f;
@@ -38,7 +40,7 @@ int getshort(f)
   
   for(ws = workstring; (*ws++ = GETC(f));)
 #if defined(DEBUG)
-    if (++used_length > STATICMAXATOM)
+    if (++used_length > WORKSTRINGLEN)
       SERIOUS_FAULT("workstring length exceeded in getshort()")
 #else
     ;
@@ -57,7 +59,7 @@ ENG_INT getlong(f)
   
   for(ws = workstring; (*ws++ = GETC(f));)
 #if defined(DEBUG)
-    if (++used_length > STATICMAXATOM)
+    if (++used_length > WORKSTRINGLEN)
       SERIOUS_FAULT("workstring length exceeded in getlong()")
 #else
     ;
@@ -112,7 +114,7 @@ ENG_FLT getdouble(f)
   
   for(ws = workstring; (*ws++ = GETC(f));)
 #if defined(DEBUG)
-    if (++used_length > STATICMAXATOM)
+    if (++used_length > WORKSTRINGLEN)
       SERIOUS_FAULT("workstring length exceeded in getdouble()")
 #else
     ;
@@ -131,7 +133,7 @@ char *getstring(f)
   
   for(ws = workstring; (*ws++ = GETC(f));)
 #if defined(DEBUG)
-    if (++used_length > STATICMAXATOM)
+    if (++used_length > WORKSTRINGLEN)
       SERIOUS_FAULT("workstring length exceeded in getstring()")
 #else
     ;
@@ -193,7 +195,7 @@ void getbytecode(Arg,f,insn_p,length)
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > STATICMAXATOM)
+        if (++used_length > WORKSTRINGLEN)
           SERIOUS_FAULT("workstring length exceeded in getbytecode()")
 #else
         ;
@@ -212,7 +214,7 @@ void getbytecode(Arg,f,insn_p,length)
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > STATICMAXATOM)
+        if (++used_length > WORKSTRINGLEN)
           SERIOUS_FAULT("workstring length exceeded in getbytecode()")
 #else
         ;
@@ -231,7 +233,7 @@ void getbytecode(Arg,f,insn_p,length)
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > STATICMAXATOM)
+        if (++used_length > WORKSTRINGLEN)
           SERIOUS_FAULT("workstring length exceeded in getbytecode()")
 #else
         ;
@@ -252,7 +254,7 @@ void getbytecode(Arg,f,insn_p,length)
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > STATICMAXATOM)
+        if (++used_length > WORKSTRINGLEN)
           SERIOUS_FAULT("workstring length exceeded in getbytecode()")
 #else
         ;
@@ -267,7 +269,7 @@ void getbytecode(Arg,f,insn_p,length)
 
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > STATICMAXATOM)
+        if (++used_length > WORKSTRINGLEN)
           SERIOUS_FAULT("workstring length exceeded in getbytecode()")
 #else
         ;
@@ -286,7 +288,7 @@ void getbytecode(Arg,f,insn_p,length)
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > STATICMAXATOM)
+        if (++used_length > WORKSTRINGLEN)
           SERIOUS_FAULT("workstring length exceeded in getbytecode()")
 #else
         ;
@@ -308,7 +310,7 @@ void getbytecode(Arg,f,insn_p,length)
       *ws++ = c;
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > STATICMAXATOM)
+        if (++used_length > WORKSTRINGLEN)
           SERIOUS_FAULT("workstring length exceeded in getbytecode()")
 #else
         ;

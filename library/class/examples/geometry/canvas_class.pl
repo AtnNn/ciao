@@ -8,9 +8,10 @@
 
 :- use_class(library('class/examples/geometry/shape_class')).
 
-:- use_module(library(system)).
-:- use_module(library(strings)).
+:- use_module(library(concurrency)).
 :- use_module(library(lists),[append/3]).
+:- use_module(library(strings)).
+:- use_module(library(system)).
 
 :- data cmd_stream/1.
 :- data item/2.

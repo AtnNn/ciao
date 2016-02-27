@@ -228,7 +228,7 @@ void generate_defines(cflags)
 {
   char *Dpointer;
   char *definition;
-  char *macroname;
+  char *macroname = NULL;
   char *definition_value;
 
   Dpointer = cflags;

@@ -1,47 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - ISO-Prolog modes</TITLE>
+<TITLE>The Ciao Prolog System               - Run-time checking of assertions</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC280" HREF="ciao_toc.html#TOC280">ISO-Prolog modes</A></H1>
+<H1><A NAME="SEC256" HREF="ciao_toc.html#TOC256">Run-time checking of assertions</A></H1>
 <P>
-<A NAME="IDX3373"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+<A NAME="IDX3117"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<STRONG>Author(s):</STRONG> German Puebla.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#112 (1999/11/23, 1:8:50 MET)
+This library package allows the use of run-time checks for the assertions introduced in a program. 
 
 
 <P>
-This file defines the "
-<A NAME="IDX3374"></A>
-modes" used in the documentation of the ISO-Prolog standard. See also section <A HREF="ciao_66.html#SEC283">Classical Prolog modes</A> for an alternative set of modes.
+The recommended way of performing 
+<A NAME="IDX3118"></A>
+<A NAME="IDX3119"></A>
+<EM>run-time checks</EM> of predicate assertions in a program is via the Ciao preprocessor (see <CODE>ciaopp</CODE> manual), which performs the required program transformation. However, this package can also be used to perform checking of program-point assertions. 
 
 
 
 <UL>
-<LI><A HREF="ciao_65.html#SEC281">Usage and interface (isomodes)</A>
-<LI><A HREF="ciao_65.html#SEC282">Documentation on new modes (isomodes)</A>
+<LI><A HREF="ciao_65.html#SEC257">Usage and interface (rtchecks)</A>
+<LI><A HREF="ciao_65.html#SEC258">Documentation on multifiles (rtchecks)</A>
+<LI><A HREF="ciao_65.html#SEC259">Known bugs and planned improvements (rtchecks)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC281" HREF="ciao_toc.html#TOC281">Usage and interface (<CODE>isomodes</CODE>)</A></H2>
+<H2><A NAME="SEC257" HREF="ciao_toc.html#TOC257">Usage and interface (<CODE>rtchecks</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,37 +47,11 @@ modes" used in the documentation of the ISO-Prolog standard. See also section <A
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package([assertions,isomodes]).</CODE>
+<CODE>:- use_package(rtchecks).</CODE>
 
-<LI><STRONG>New operators defined:</STRONG>
+or
 
-<A NAME="IDX3375"></A>
-<CODE>?/1</CODE> [200,fy], 
-<A NAME="IDX3376"></A>
-<CODE>@/1</CODE> [200,fy].
-
-<LI><STRONG>New modes defined:</STRONG>
-
-<A NAME="IDX3377"></A>
-<CODE>+/1</CODE>, 
-<A NAME="IDX3378"></A>
-<CODE>@/1</CODE>, 
-<A NAME="IDX3379"></A>
-<CODE>-/1</CODE>, 
-<A NAME="IDX3380"></A>
-<CODE>?/1</CODE>, 
-<A NAME="IDX3381"></A>
-<CODE>*/1</CODE>, 
-<A NAME="IDX3382"></A>
-<CODE>+/2</CODE>, 
-<A NAME="IDX3383"></A>
-<CODE>@/2</CODE>, 
-<A NAME="IDX3384"></A>
-<CODE>-/2</CODE>, 
-<A NAME="IDX3385"></A>
-<CODE>?/2</CODE>, 
-<A NAME="IDX3386"></A>
-<CODE>*/2</CODE>.
+<CODE>:- module(...,...,[rtchecks]).</CODE>
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -88,8 +60,10 @@ modes" used in the documentation of the ISO-Prolog standard. See also section <A
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3387"></A>
-<CODE>assertions/meta_props</CODE>.
+<A NAME="IDX3120"></A>
+<CODE>assertions/meta_props</CODE>, 
+<A NAME="IDX3121"></A>
+<CODE>rtchecks/rtchecks_sys</CODE>.
 
 </UL>
 
@@ -99,202 +73,96 @@ modes" used in the documentation of the ISO-Prolog standard. See also section <A
 
 
 
-<H2><A NAME="SEC282" HREF="ciao_toc.html#TOC282">Documentation on new modes (<CODE>isomodes</CODE>)</A></H2>
+<H2><A NAME="SEC258" HREF="ciao_toc.html#TOC258">Documentation on multifiles (<CODE>rtchecks</CODE>)</A></H2>
 <P>
-<A NAME="IDX3388"></A>
+<A NAME="IDX3122"></A>
+<A NAME="IDX3123"></A>
 <DL>
-<DT><span class="define">MODE:</span> <B>+/1:</B>
-<DD><A NAME="IDX3389"></A>
+<DT><span class="define">PREDICATE:</span> <B>callme/2:</B>
+<DD><A NAME="IDX3124"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>+ A</CODE>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3125"></A>
+<A NAME="IDX3126"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>callme/1:</B>
+<DD><A NAME="IDX3127"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3128"></A>
+<A NAME="IDX3129"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>proves/2:</B>
+<DD><A NAME="IDX3130"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3131"></A>
+<A NAME="IDX3132"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>disproves/2:</B>
+<DD><A NAME="IDX3133"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC259" HREF="ciao_toc.html#TOC259">Known bugs and planned improvements (<CODE>rtchecks</CODE>)</A></H2>
+
 
 <UL>
-<LI><EM>The following properties are added at call time:</EM>
 
-<CODE>A</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<LI>
+
+All the code in this package is included in the user program when it is used, ant there is a lot of it! A module should be used instead.
+
+<LI>
+
+<CODE>check/1</CODE> uses lists instead of "proper" properties.
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3390"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>@/1:</B>
-<DD><A NAME="IDX3391"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>@(A)</CODE>
-
-<UL>
-<LI><EM>The following properties are added globally:</EM>
-
-<CODE>A</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3392"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>-/1:</B>
-<DD><A NAME="IDX3393"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>- A</CODE>
-
-<UL>
-<LI><EM>The following properties are added at call time:</EM>
-
-<CODE>A</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3394"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>?/1:</B>
-<DD><A NAME="IDX3395"></A>
-
-
-<P>
-Unspecified argument.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3396"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>*/1:</B>
-<DD><A NAME="IDX3397"></A>
-
-
-<P>
-Unspecified argument.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3398"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>+/2:</B>
-<DD><A NAME="IDX3399"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>A + X</CODE>
-
-<UL>
-<LI><EM>The following properties are added at call time:</EM>
-
-<CODE>A</CODE> has property <CODE>X</CODE>.
- (<CODE>meta_props:call/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3400"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>@/2:</B>
-<DD><A NAME="IDX3401"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>@(A,X)</CODE>
-
-<UL>
-<LI><EM>The following properties are added at call time:</EM>
-
-<CODE>A</CODE> has property <CODE>X</CODE>.
- (<CODE>meta_props:call/2</CODE>)
-<LI><EM>The following properties are added upon exit:</EM>
-
-<CODE>A</CODE> has property <CODE>X</CODE>.
- (<CODE>meta_props:call/2</CODE>)
-<LI><EM>The following properties are added globally:</EM>
-
-<CODE>A</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3402"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>-/2:</B>
-<DD><A NAME="IDX3403"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>A - X</CODE>
-
-<UL>
-<LI><EM>The following properties are added at call time:</EM>
-
-<CODE>A</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties are added upon exit:</EM>
-
-<CODE>A</CODE> has property <CODE>X</CODE>.
- (<CODE>meta_props:call/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3404"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>?/2:</B>
-<DD><A NAME="IDX3405"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>?(A,X)</CODE>
-
-<UL>
-<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
-
-<CODE>A</CODE> has property <CODE>X</CODE>.
- (<CODE>meta_props:call/2</CODE>)
-<LI><EM>The following properties are added upon exit:</EM>
-
-<CODE>A</CODE> has property <CODE>X</CODE>.
- (<CODE>meta_props:call/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3406"></A>
-<DL>
-<DT><span class="define">MODE:</span> <B>*/2:</B>
-<DD><A NAME="IDX3407"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>A * X</CODE>
-
-<UL>
-<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
-
-<CODE>A</CODE> has property <CODE>X</CODE>.
- (<CODE>meta_props:call/2</CODE>)
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

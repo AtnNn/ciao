@@ -19,7 +19,7 @@
         # "Updates the @concept{operator table} for reading the terms in
           the rest of the current text, in the same way as the builtin
           @pred{op/3} does.  Its scope is local to the current text.
-          Usually included in @concept{package file}s".
+          Usually included in @concept{package file}s.".
 
 :- comment(doinclude,new_declaration/1).
 :- true decl new_declaration(Predicate) : predname
@@ -45,8 +45,8 @@
           other modules which make use of this one.".
 
 :- comment(doinclude,load_compilation_module/1).
-:- true decl load_compilation_module(Module) : sourcename
-        # "Loads code defined in @var{Module} into the compiler, usually
+:- true decl load_compilation_module(File) : sourcename
+        # "Loads code defined in @var{File} into the compiler, usually
           including predicates which define translations of terms, for
           use with the declarations @decl{add_sentence_trans/1} and similar
           ones.  Normally included in @concept{package file}s.".
@@ -57,10 +57,11 @@
           terms read by the compiler in the rest of the current text.
           For each subsequent term read by the compiler, the translation
           predicate is called to obtain a new term which will be used by
-          the compiler as if it where the term present in the file.
-          @var{Predicate} must be exported by a module previously loaded
-          with a @decl{load_compilation_module/1} declaration.  Normally
-          included in @concept{package file}s.".
+          the compiler as if it where the term present in the file.  A
+          list may be returned also, to translate a single term into
+          several terms.  @var{Predicate} must be exported by a module
+          previously loaded with a @decl{load_compilation_module/1}
+          declaration.  Normally included in @concept{package file}s.".
 
 :- comment(doinclude,add_term_trans/1).
 :- true decl add_term_trans(P) : translation_predname

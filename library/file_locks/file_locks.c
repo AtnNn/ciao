@@ -2,9 +2,6 @@
 /* AFSID           : $__Header$					*/
 /* Author          : Jose Manuel Gomez Perez			*/
 /* Created On      : Wed Feb 11 11:11:03 1998			*/
-/* Last Modified By: Jose Manuel Gomez Perez			*/
-/* Last Modified On:						*/
-/* Status          : Unknown, Use with caution!			*/
 
 #include "common_headers.h"
 #include <sys/file.h>
@@ -23,7 +20,7 @@ BOOL prolog_lock_file(Arg)
 
   DEREF(X(0), X(0));
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM)
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM)
 
   DEREF(X(1), X(1));
   if (!IsVar(X(1)))

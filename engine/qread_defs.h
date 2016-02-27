@@ -20,6 +20,7 @@ void skip_to_ctrl_l(FILE *file);
 
 #define ALLOW_COMPRESSED_CODE
 
+
 #if defined(ALLOW_COMPRESSED_CODE)
 # define GETC(f) readLZ(f)
 int readLZ(FILE *stream);

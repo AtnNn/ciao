@@ -41,7 +41,7 @@
 :- comment(assrt_body/1,"
    @cindex{assertion body syntax} This predicate defines the different
    types of syntax admissible in the bodies of @pred{pred/1},
-   @pred{func/1}, etc. assertions. Such a body is of the form:
+   @pred{decl/1}, etc. assertions. Such a body is of the form:
 
      @begin{verbatim}
       Pr [:: DP] [: CP] [=> AP] [+ GP] [# CO]

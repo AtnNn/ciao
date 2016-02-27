@@ -173,7 +173,7 @@ BOOL expand_file_name(name, target)
   case 0:
     if (dest-2 > target)
       dest[-2] = 0;
-    return TRUE;
+    goto end;
   case '/':
     goto st0;
   case '.':
@@ -193,12 +193,17 @@ BOOL expand_file_name(name, target)
  st1: /* inside file name component */
   switch (*dest++ = *src++) {
     case 0:
-      return TRUE;
+      goto end;
     case '/':
       goto st0;
     default:
       goto st1;
   }
+
+ end:
+  if (target[0] == (char)0) /* root directory */
+    target[0] = '/', target[1] = (char)0;
+  return TRUE;
 }
 
 
@@ -578,6 +583,8 @@ BOOL prolog_unix_delete(Arg)
   return TRUE;
 }
 
+
+
 /*
  *  current_host(?HostName).
  */
@@ -621,10 +628,10 @@ BOOL prolog_current_host(Arg)
       strcat(hostname, domain);
     }
 #endif
+    /*free(host_entry);*/
   }
 
   DEREF(X(0),X(0));
-
   return cunify(Arg, MakeString(hostname), X(0));
 }
 

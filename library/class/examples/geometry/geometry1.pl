@@ -16,7 +16,6 @@ main :-
 	Left_eye:set_fg_color(maroon),
 	Right_eye:set_fg_color(maroon),
 	
-
 	Lips new poly_class([(100,130),(120,150),(170,150),(190,120)]),
 	Lips:set_border_width(5),
 	Lips:set_fg_color(red),
@@ -30,6 +29,5 @@ main :-
 	destroy Right_eye.
 
 hit_enter :-
-	display('Hit ENTER to continue...'),
-	nl,
+	display('Hit ENTER to continue...'), nl,
 	get_code(_).

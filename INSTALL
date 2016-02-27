@@ -45,8 +45,8 @@ follow this summary:
 
   4. Make the following modifications in your startup scripts. This
      will make the documentation accessible, set the correct mode
-     when opening Ciao source files in `emacs', etc. (`<LIBROOT>'
-     must be replaced with the appropriate value):
+     when opening Ciao source files in `emacs', etc. Note that
+     `<LIBROOT>' must be replaced with the appropriate value:
 
         * For users a _csh-compatible shell_ (`csh', `tcsh', ...),
           add to `~/.cshrc':
@@ -198,10 +198,7 @@ Un*x full installation instructions
 
   4. *Check compilation:* If the above steps have been satisfactorily
      finished, the compiler has compiled itself and all the
-     distribution modules, and very probably everything is fine. To
-     further check this before final installation you can type `gmake
-     test', which will compile and execute a small program containing
-     several tests.
+     distribution modules, and very probably everything is fine.
 
   5. *Install Ciao:* To install Ciao in the directories selected in
      the file `SETTINGS' during step 2 above, type `gmake
@@ -365,7 +362,7 @@ Also, the following documentation-related actions should work:
      general information on Ciao (and pointing to the on-line
      manuals).
 
-   * The `DOCROOT' directory should contains the manual also in the
+   * The `DOCROOT' directory should contain the manual also in the
      other formats such as `postscript' or `pdf' which specially
      useful for printing. See *Note Printing manuals (Un*x):: for
      instructions.
@@ -530,20 +527,44 @@ Porting to currently unsupported operating systems
    If you would like to port Ciao to a currently unsupported
 platform, there are several issues to take into account. The main one
 is to get the _engine_ to compile in that platform, i.e., the C code
-under the `engine' directory. To this end, look under the directory
-`$(SRC)/makefile-sysdep': there is a `mkf-CIAOARCH' file for every
-architecture/OS under which Ciao is known to compile. You can start
-from the closest one and customize it for your local distribution or
-installed tools. But please keep the original files! Once a working
-engine is achieved, it should be possible to continue with the
-standard installation procedure, which will try to use a completely
-static version of the standalone compiler (`ciaoc.sta' in the `ciaoc'
-directory) to compile the interactive top-level (`ciaosh') and a new
-version of the standalone compiler (`ciaoc'). These in turn should be
-able to compile the Prolog libraries. You may also need to look at
-some libraries (such as, for example, `sockets') which contain C
-code. Porting to other Un*x flavours should be easy while other
-operating system families may require more work. If you do succeed in
+under the `engine' directory. The procedure currently followed by
+Ciao to decide the various flags needed to compile is as follows:
+
+   * The shell script `$(SRC)/etc/ciao_get_arch' is executed; it
+     returns a string describing the operating system and the
+     processor architecture (e.g., LINUXi86, SolarisSparc,
+     SolarisAlpha, etc.). You should make sure it returns a correct
+     (and meaningful) string for your setup. This string is used
+     trhoughout the compilation to create several
+     architecture-dependant flags.
+
+   * In the directory `$(SRC)/makefile-sysdep' there are files called
+     mkf-<OS><ARCH> for every combination of operating system and
+     architecture in which Ciao is know to (and how to) compile. They
+     set several flags regarding, for example, whether to use or not
+     threads, which threads library to use, the optimization flags to
+     use, the compiler, linker, and it also sets separately the
+     architecture name (ARCHNAME variable) and the operating system
+     (OSNAME). You should create a new mkf file for your machine,
+     starting from the one which is closest to you.
+
+   * Most times the porting problems happen in the use of locks and
+     threads. You can either disable them, or have a look at the
+     files `$(SRC)/engine/locks.h' and `$(SRC)/engine/threads.h'. If
+     you know how to implement native (assembler) locks for your
+     architecture, enable HAVE_NATIVE_SLOCKS for your architecture
+     and add the definitions. Otherwise, if you have library-based
+     locks, enable them. The mechanism in `threads.h' is similar.
+
+
+   Once a working engine is achieved, it should be possible to
+continue with the standard installation procedure, which will try to
+use a completely static version of the standalone compiler
+(`ciaoc.sta' in the `ciaoc' directory) to compile the interactive
+top-level (`ciaosh') and a new version of the standalone compiler
+(`ciaoc'). These in turn should be able to compile the Prolog
+libraries. You may also need to look at some libraries (such as, for
+example, `sockets') which contain C code. If you do succeed in
 porting to a platform that is currently unsupported please send the
 `mkf-CIAOARCH' and any patches to <ciao@clip.dia.fi.upm.es>, and we
 will include them (with due credit, of course) in the next

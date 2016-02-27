@@ -1,4 +1,4 @@
-:- module(actmod_server, [actmodmain/0], []).
+:- module(actmod_server, [actmodmain/0], [assertions]).
 
 :- use_module(user, [exe/2]).
 :- use_module(library(system)).
@@ -68,3 +68,12 @@ serve_one_stream(Goal,Stream,SS,SS) :-
 	set_output(Stream),
         display_term(Answers), flush_output,
         set_output(user_output).
+
+
+% ----------------------------------------------------------------------------
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+138,2000/05/11,13:28*28+'CEST'), "Added file to
+   version control.  (Manuel Hermenegildo)").
+% ----------------------------------------------------------------------------
+

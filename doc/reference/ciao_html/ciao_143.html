@@ -1,99 +1,68 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Ciao lpmake scripting facility</TITLE>
+<TITLE>The Ciao Prolog System               - Finding differences between two Prolog files</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC547" HREF="ciao_toc.html#TOC547">The Ciao lpmake scripting facility</A></H1>
+<H1><A NAME="SEC528" HREF="ciao_toc.html#TOC528">Finding differences between two Prolog files</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
-
-
-<P>
- 
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Note:</STRONG> 
-<A NAME="IDX5963"></A>
-<CODE>lpmake</CODE> and the 
-<A NAME="IDX5964"></A>
-<CODE>make</CODE> library are still under active development, and they may change substantially in future releases. 
+This simple program works like the good old diff but for files that contain Prolog code. It prints out the clauses that it finds are different in the files. Its use avoids textual differences such as different variable names and different formatting of the code in the files. 
 
 
-<P>
-<A NAME="IDX5965"></A>
-<CODE>lpmake</CODE> is a Ciao application which uses the Ciao 
-<A NAME="IDX5966"></A>
-<CODE>make</CODE> library to implement a dependency-driven scripts in a similar way to the Unix 
-<A NAME="IDX5967"></A>
-<CODE>make</CODE> facility. 
+
+<UL>
+<LI><A HREF="ciao_143.html#SEC529">Usage (pldiff)</A>
+<LI><A HREF="ciao_143.html#SEC530">Known bugs and planned improvements (pldiff)</A>
+</UL>
 
 
-<P>
-The original purpose of the Unix 
-<A NAME="IDX5968"></A>
-<CODE>make</CODE> utility was to determine automatically which pieces of a large program needed to be recompiled, and issue the commands to recompile them. In fact, 
-<A NAME="IDX5969"></A>
-<CODE>make</CODE> is often used for many other purposes: it can be used to describe any task where some files must be updated automatically from others whenever the others change. 
+
+<H2><A NAME="SEC529" HREF="ciao_toc.html#TOC529">Usage (pldiff)</A></H2>
 
 
-<P>
-To prepare to use 
-<A NAME="IDX5970"></A>
-<CODE>lpmake</CODE>, you must write a file (typically called 
-<A NAME="IDX5971"></A>
-<CODE>Makefile.pl</CODE>) that describes the relationships among files in your program or application, and states the commands for updating each file. In a program, typically the executable file is updated from object files, which are in turn made by compiling source files. 
+<PRE>
+   
+	pldiff &#60;file1&#62; &#60;file2&#62;
+	   : find differences 
 
+	pldiff -h
+	   : print this information
+
+</PRE>
 
 <P>
-Once a suitable makefile exists, each time you change some source files, simply typing <CODE>lpmake</CODE> suffices to perform all necessary recompilations. The 
-<A NAME="IDX5972"></A>
-<CODE>make</CODE> program uses the makefile data base and the last modification times of the files to decide which of the files need to be updated. For each of those files, it issues the commands recorded in the data base. 
+but you can also use the program as a library and invoke the predicate: 
 
 
-<P>
-<A NAME="IDX5973"></A>
-<CODE>lpmake</CODE> executes commands in the 
-<A NAME="IDX5974"></A>
-<CODE>Makefile.pl</CODE> to update one or more target <EM>names</EM>, where <EM>name</EM> is typically a program, but can also be a file to be generated or even a "virtual" target. If no <CODE>-l</CODE> or <CODE>-m</CODE> options are present, 
-<A NAME="IDX5975"></A>
-<CODE>lpmake</CODE> will look for the makefile 
-<A NAME="IDX5976"></A>
-<CODE>Makefile.pl</CODE>. 
+
+<PRE>
+   pldiff( &#60;filename&#62; , &#60;filename&#62; )
+</PRE>
 
 
-<P>
-<A NAME="IDX5977"></A>
-<CODE>lpmake</CODE> updates a target if it depends on prerequisite files that have been modified since the target was last modified, or if the target does not exist. 
+
+<H2><A NAME="SEC530" HREF="ciao_toc.html#TOC530">Known bugs and planned improvements (<CODE>pldiff</CODE>)</A></H2>
 
 
-<P>
-You can provide command line arguments to 
-<A NAME="IDX5978"></A>
-<CODE>lpmake</CODE> to control which files should be regenerated, or how. 
+<UL>
 
+<LI>
 
-<P>
-<STRONG>Note:</STRONG> if you use 
-<A NAME="IDX5979"></A>
-<CODE>make</CODE> and 
-<A NAME="IDX5980"></A>
-<CODE>functions</CODE>, then 
-<A NAME="IDX5981"></A>
-<CODE>make</CODE> should appear before 
-<A NAME="IDX5982"></A>
-<CODE>functions</CODE> in the list of packages. 
-
+Currently uses variant/2 to compare clauses. This is useful, but there should be an option to select the way clauses are compared, e.g., some form of equivalence defined by the user.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

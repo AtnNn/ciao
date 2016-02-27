@@ -1,36 +1,87 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Connecting with the Web (PiLLoW)</TITLE>
+<TITLE>The Ciao Prolog System               - The PiLLoW Web Programming Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC428" HREF="ciao_toc.html#TOC428">Connecting with the Web (PiLLoW)</A></H1>
+<H1><A NAME="SEC406" HREF="ciao_toc.html#TOC406">The PiLLoW Web Programming Library</A></H1>
 <P>
-<A NAME="IDX4670"></A>
+<A NAME="IDX4380"></A>
 
 
 <P>
-<A NAME="IDX4671"></A>
-<A NAME="IDX4672"></A>
-This package implements the PiLLoW library [CHV96a] in Ciao. It is not yet documented here, but you can access <A HREF="http://clip.dia.fi.upm.es/Software/pillow/pillow.html">http://clip.dia.fi.upm.es/Software/pillow/pillow.html</A> to see documentation on previous versions. However, note that this version is newer and has some bug fixes and added functionality (templates, XML processing, and others, which you can try to guess the rest by looking at the source). You can also find a paper and some additional information in the 
-<A NAME="IDX4673"></A>
-<CODE>library/pillow/doc</CODE> directory of the distribution.
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo, <A HREF="mailto:clip@clip.dia.fi.upm.es">clip@clip.dia.fi.upm.es</A>, <A HREF="http://www.clip.dia.fi.upm.es/">http://www.clip.dia.fi.upm.es/</A>, The CLIP Group, School of Computer Science, Technical University of Madrid.
+
+
+<P>
+<A NAME="IDX4381"></A>
+<A NAME="IDX4382"></A>
+<A NAME="IDX4383"></A>
+<A NAME="IDX4384"></A>
+
+
+<P>
+<A NAME="IDX4385"></A>
+<A NAME="IDX4386"></A>
+
+
+<P>
+<A NAME="IDX4387"></A>
+<A NAME="IDX4388"></A>
+
+
+<P>
+<A NAME="IDX4389"></A>
+<A NAME="IDX4390"></A>
+This package implements the PiLLoW library [CHV96a]. The following three chapters document, respectively, the predicates for HTML/XML/CGI programming, the predicate for HTTP conectivity, and the types used in the definition of the predicates (key for fully understanding the other predicates). You can find a paper and some additional information in the 
+<A NAME="IDX4391"></A>
+<CODE>library/pillow/doc</CODE> directory of the distribution, and in the WWW at <A HREF="http://clip.dia.fi.upm.es/Software/pillow/pillow.html">http://clip.dia.fi.upm.es/Software/pillow/pillow.html</A>. There is also a 
+<A NAME="IDX4392"></A>
+<A NAME="IDX4393"></A>
+<EM>PiLLoW on-line tutorial</EM> (slides) at <A HREF="http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html">http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html</A> which illustrates the basic features and provides a number of examples of PiLLoW use. 
 
 
 
 <UL>
-<LI><A HREF="ciao_109.html#SEC429">Usage and interface (pillow)</A>
+<LI><A HREF="ciao_109.html#SEC407">Installing PiLLoW</A>
+<LI><A HREF="ciao_109.html#SEC408">Usage and interface (pillow)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC429" HREF="ciao_toc.html#TOC429">Usage and interface (<CODE>pillow</CODE>)</A></H2>
+<H2><A NAME="SEC407" HREF="ciao_toc.html#TOC407">Installing PiLLoW</A></H2>
+<P>
+ To correctly install PiLLoW, first, make sure you downloaded the right version of PiLLoW (there are different versions for different LP/CLP systems; the version that comes with Ciao is of course the right one for Ciao). Then, please follow these steps: 
+
+
+
+<OL>
+
+<LI>Copy the files in the <CODE>images</CODE> directory to a WWW accessible directory in your server.
+
+<LI>Edit the file
+
+<A NAME="IDX4394"></A>
+<CODE>icon_address.pl</CODE> and change the fact to point to the URL to be used to access the images above. 
+
+<LI>In the Ciao system the files are in the correct place, in other systems copy the files
+
+<A NAME="IDX4395"></A>
+<CODE>pillow.pl</CODE> and 
+<A NAME="IDX4396"></A>
+<CODE>icon_address.pl</CODE> to a suitable directory so that your Prolog system will find them. 
+
+</OL>
+
+
+
+<H2><A NAME="SEC408" HREF="ciao_toc.html#TOC408">Usage and interface (<CODE>pillow</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -46,9 +97,9 @@ or
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX4674"></A>
+<A NAME="IDX4397"></A>
 <CODE>$/2</CODE> [150,xfx], 
-<A NAME="IDX4675"></A>
+<A NAME="IDX4398"></A>
 <CODE>$/1</CODE> [150,fx].
 
 <LI><STRONG>Other modules used:</STRONG>
@@ -58,9 +109,9 @@ or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4676"></A>
+<A NAME="IDX4399"></A>
 <CODE>pillow/http</CODE>, 
-<A NAME="IDX4677"></A>
+<A NAME="IDX4400"></A>
 <CODE>pillow/html</CODE>.
 
 </UL>
@@ -70,6 +121,6 @@ or
 </div class="cartouche">
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

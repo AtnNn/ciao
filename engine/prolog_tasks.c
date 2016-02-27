@@ -60,40 +60,6 @@ BOOL prolog_eng_kill(Arg)
 extern goal_descriptor_p goal_desc_list;
 extern SLOCK goal_desc_list_l;
 
-/*
-BOOL prolog_kill_other_threads(Arg)
-     Argdecl;
-{
-  THREAD_ID myself;
-  BOOL worker_killed, went_around;
-  goal_descriptor_p goal_ref;
-
-
-  myself = Thread_Id;
-  killing_threads = TRUE;
-  Wait_Acquire_slock(goal_desc_list_l);
-  do {
-    worker_killed = FALSE;
-    went_around   = FALSE;
-    goal_ref = goal_desc_list;
-
-    while (!went_around) {
-      if (goal_ref->worker_registers &&
-	  (goal_ref->state != IDLE) &&
-	  !Thread_Equal(goal_ref->thread_id, myself)){
-	kill_thread(goal_ref);
-	make_goal_desc_free(goal_ref);
-        worker_killed = TRUE;
-	goal_ref = goal_ref->backward;
-	went_around = (goal_ref == goal_desc_list);
-      }
-    }
-  } while(worker_killed);
-
-  killing_threads = FALSE;
-  return TRUE;
-}
-*/
 
 BOOL prolog_eng_killothers(Arg)
      Argdecl;
@@ -112,10 +78,6 @@ BOOL prolog_eng_killothers(Arg)
   do {
     if ((goal_ref != myself) && (goal_ref->state == WORKING)){
       Arg = goal_ref->worker_registers;
-      
-#if defined(DEBUG)
-      /* printf("Killing thread %x\n", goal_ref); */
-#endif
       Stop_This_Goal(Arg) = TRUE;
       Heap_Warn_Soft = HeapCharOffset(Heap_Start, -1);
       thread_cancelled = TRUE;
@@ -337,7 +299,7 @@ BOOL prolog_eng_backtrack(Arg)
     create_thread = CREATE_THREAD;
   else 
     if (X(1) != atom_self)
-      return FALSE;
+      MAJOR_FAULT("eng_backtrack/2: bad thread creation specifier")
 
   /* Other threads might see this one and try to backtrack over it. */
   Wait_Acquire_slock(goal->goal_lock_l);

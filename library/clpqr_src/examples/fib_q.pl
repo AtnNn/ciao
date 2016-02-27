@@ -1,3 +1,4 @@
+:- module(_, [fib/2], []).
 :- use_package(clpq).
 
 fib(X,Y):- X .=. 0, Y .=. 0.

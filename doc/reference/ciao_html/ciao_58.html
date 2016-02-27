@@ -1,28 +1,107 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - runtime_ops (library)</TITLE>
+<TITLE>The Ciao Prolog System               - The Ciao assertion package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_57.html">previous</A>, <A HREF="ciao_59.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_57.html">previous</A>, <A HREF="ciao_59.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC255" HREF="ciao_toc.html#TOC255">runtime_ops (library)</A></H1>
+<H1><A NAME="SEC228" HREF="ciao_toc.html#TOC228">The Ciao assertion package</A></H1>
 <P>
-<A NAME="IDX2872"></A>
+<A NAME="IDX2546"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo, Francisco Bueno, German Puebla.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#8 (1999/12/9, 21:1:11 MET)
+
+
+<P>
+The 
+<A NAME="IDX2547"></A>
+<CODE>assertions</CODE> package adds a number of new declaration definitions and new operator definitions which allow including 
+<A NAME="IDX2548"></A>
+program assertions in user programs. Such assertions can be used to describe predicates, properties, modules, applications, etc. These descriptions can be formal specifications (such as preconditions and post-conditions) or machine-readable textual comments. 
+
+
+<P>
+This module is part of the 
+<A NAME="IDX2549"></A>
+<CODE>assertions</CODE> library. It defines the basic code-related assertions, i.e., those intended to be used mainly by compilation-related tools, such as the static analyzer or the run-time test generator. 
+
+
+<P>
+Giving 
+<A NAME="IDX2550"></A>
+specifications for predicates and other program elements is the main functionality documented here. The exact syntax of comments 
+<A NAME="IDX2551"></A>
+<A NAME="IDX2552"></A>
+is described in the autodocumenter (
+<A NAME="IDX2553"></A>
+<CODE>lpdoc</CODE> [Knu84,Her99]) manual, although some support for adding machine-readable comments in assertions is also mentioned here. 
+
+
+<P>
+There are two kinds of assertions: predicate assertions and program point assertions. All predicate assertions are currently placed as directives in the source code, i.e., preceded by "<CODE>:-</CODE>". Program point assertions are placed as goals in clause bodies. 
 
 
 
 <UL>
-<LI><A HREF="ciao_58.html#SEC256">Usage and interface (runtime_ops)</A>
+<LI><A HREF="ciao_58.html#SEC229">More info</A>
+<LI><A HREF="ciao_58.html#SEC230">Some attention points</A>
+<LI><A HREF="ciao_58.html#SEC231">Usage and interface (assertions)</A>
+<LI><A HREF="ciao_58.html#SEC232">Documentation on new declarations (assertions)</A>
+<LI><A HREF="ciao_58.html#SEC233">Documentation on exports (assertions)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC256" HREF="ciao_toc.html#TOC256">Usage and interface (<CODE>runtime_ops</CODE>)</A></H2>
+<H2><A NAME="SEC229" HREF="ciao_toc.html#TOC229">More info</A></H2>
+
+<P>
+The facilities provided by the library are documented in the description of its component modules. This documentation is intended to provide information only at a "reference manual" level. For a more tutorial introduction to the subject and some more examples please see the document "An Assertion Language for Debugging of Constraint Logic Programs (Technical Report CLIP2/97.1)". The assertion language implemented in this library is modeled after this design document, although, due to implementation issues, it may differ in some details. The purpose of this manual is to document precisely what the implementation of the library supports at any given point in time. 
+
+
+
+
+<H2><A NAME="SEC230" HREF="ciao_toc.html#TOC230">Some attention points</A></H2>
+
+
+<UL>
+
+<LI><STRONG>Formatting commands within text strings:</STRONG>
+
+<A NAME="IDX2554"></A>
+<A NAME="IDX2555"></A>
+many of the predicates defined in these modules include arguments intended for providing textual information. This includes titles, descriptions, comments, etc. The type of this argument is a character string. In order for the automatic generation of documentation to work correctly, this 
+<A NAME="IDX2556"></A>
+character string should adhere to certain conventions. See the description of the 
+<A NAME="IDX2557"></A>
+<CODE>docstring/1</CODE> type/grammar for details. 
+
+<LI><STRONG>Referring to variables:</STRONG> In order for the automatic documentation system to work correctly,
+
+<A NAME="IDX2558"></A>
+variable names (for example, when referring to arguments in the head patterns of <EM>pred</EM> declarations) must be surrounded by an <CODE>@var</CODE> command. For example, <CODE>@var{VariableName}</CODE> should be used for referring to the variable "VariableName", which will appear then formatted as follows: <CODE>VariableName</CODE>. See the description of the 
+<A NAME="IDX2559"></A>
+<CODE>docstring/1</CODE> type/grammar for details. 
+
+</UL>
+
+
+
+<H2><A NAME="SEC231" HREF="ciao_toc.html#TOC231">Usage and interface (<CODE>assertions</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -30,11 +109,102 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_57.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(runtime_ops).</CODE>
+The recommended procedure in order to make use of assertions in user programs is to include the 
+<A NAME="IDX2560"></A>
+<CODE>assertions</CODE> syntax library, using one of the following declarations, as appropriate: 
 
-or
 
-<CODE>:- module(...,...,[runtime_ops]).</CODE>
+<PRE>
+   :- module(...,...,[assertions]).
+   :- include(library(assertions)).
+   :- use_package([assertions]).
+</PRE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX2561"></A>
+<CODE>check/1</CODE>, 
+<A NAME="IDX2562"></A>
+<CODE>trust/1</CODE>, 
+<A NAME="IDX2563"></A>
+<CODE>true/1</CODE>, 
+<A NAME="IDX2564"></A>
+<CODE>false/1</CODE>.
+
+</UL>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX2565"></A>
+<CODE>=&#62;/2</CODE> [975,xfx], 
+<A NAME="IDX2566"></A>
+<CODE>::/2</CODE> [978,xfx], 
+<A NAME="IDX2567"></A>
+<CODE>decl/1</CODE> [1150,fx], 
+<A NAME="IDX2568"></A>
+<CODE>decl/2</CODE> [1150,xfx], 
+<A NAME="IDX2569"></A>
+<CODE>pred/1</CODE> [1150,fx], 
+<A NAME="IDX2570"></A>
+<CODE>pred/2</CODE> [1150,xfx], 
+<A NAME="IDX2571"></A>
+<CODE>prop/1</CODE> [1150,fx], 
+<A NAME="IDX2572"></A>
+<CODE>prop/2</CODE> [1150,xfx], 
+<A NAME="IDX2573"></A>
+<CODE>modedef/1</CODE> [1150,fx], 
+<A NAME="IDX2574"></A>
+<CODE>calls/1</CODE> [1150,fx], 
+<A NAME="IDX2575"></A>
+<CODE>calls/2</CODE> [1150,xfx], 
+<A NAME="IDX2576"></A>
+<CODE>success/1</CODE> [1150,fx], 
+<A NAME="IDX2577"></A>
+<CODE>success/2</CODE> [1150,xfx], 
+<A NAME="IDX2578"></A>
+<CODE>comp/1</CODE> [1150,fx], 
+<A NAME="IDX2579"></A>
+<CODE>comp/2</CODE> [1150,xfx], 
+<A NAME="IDX2580"></A>
+<CODE>entry/1</CODE> [1150,fx].
+
+<LI><STRONG>New declarations defined:</STRONG>
+
+<A NAME="IDX2581"></A>
+<CODE>pred/1</CODE>, 
+<A NAME="IDX2582"></A>
+<CODE>pred/2</CODE>, 
+<A NAME="IDX2583"></A>
+<CODE>calls/1</CODE>, 
+<A NAME="IDX2584"></A>
+<CODE>calls/2</CODE>, 
+<A NAME="IDX2585"></A>
+<CODE>success/1</CODE>, 
+<A NAME="IDX2586"></A>
+<CODE>success/2</CODE>, 
+<A NAME="IDX2587"></A>
+<CODE>comp/1</CODE>, 
+<A NAME="IDX2588"></A>
+<CODE>comp/2</CODE>, 
+<A NAME="IDX2589"></A>
+<CODE>prop/1</CODE>, 
+<A NAME="IDX2590"></A>
+<CODE>prop/2</CODE>, 
+<A NAME="IDX2591"></A>
+<CODE>entry/1</CODE>, 
+<A NAME="IDX2592"></A>
+<CODE>modedef/1</CODE>, 
+<A NAME="IDX2593"></A>
+<CODE>decl/1</CODE>, 
+<A NAME="IDX2594"></A>
+<CODE>decl/2</CODE>, 
+<A NAME="IDX2595"></A>
+<CODE>comment/2</CODE>.
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -43,24 +213,8 @@ or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX2873"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX2874"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX2875"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX2876"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX2877"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX2878"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX2879"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX2880"></A>
-<CODE>streams</CODE>, 
-<A NAME="IDX2881"></A>
-<CODE>write</CODE>.
+<A NAME="IDX2596"></A>
+<CODE>assertions/assertions_props</CODE>.
 
 </UL>
 
@@ -68,7 +222,677 @@ or
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC232" HREF="ciao_toc.html#TOC232">Documentation on new declarations (<CODE>assertions</CODE>)</A></H2>
+<P>
+<A NAME="IDX2597"></A>
+<A NAME="IDX2598"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>pred/1:</B>
+<DD><A NAME="IDX2599"></A>
+
+
+<P>
+<A NAME="IDX2600"></A>
+<A NAME="IDX2601"></A>
+This assertion provides information on a predicate. The body of the assertion (its only argument) contains properties or comments in the formats defined by 
+<A NAME="IDX2602"></A>
+<CODE>assrt_body/1</CODE>. 
+
+
+<P>
+More than one of these assertions may appear per predicate, in which case each one represents a possible "
+<A NAME="IDX2603"></A>
+mode" of use (
+<A NAME="IDX2604"></A>
+usage) of the predicate. The exact scope of the usage is defined by the properties given for calls in the body of each assertion (which should thus distinguish the different usages intended). All of them together cover all possible modes of usage. 
+
+
+<P>
+For example, the following assertions describe (all the and the only) modes of usage of predicate <CODE>length/2</CODE> (see 
+<A NAME="IDX2605"></A>
+<CODE>lists</CODE>): 
+
+<PRE>
+:- pred length(L,N) : list * var =&#62; list * integer
+	# "Computes the length of <CODE>L</CODE>.".
+:- pred length(L,N) : var * integer =&#62; list * integer
+	# "Outputs <CODE>L</CODE> of length <CODE>N</CODE>.".
+:- pred length(L,N) : list * integer =&#62; list * integer
+	# "Checks that <CODE>L</CODE> is of length <CODE>N</CODE>.".
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>pred(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2606"></A>
+<A NAME="IDX2607"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>pred/2:</B>
+<DD><A NAME="IDX2608"></A>
+
+
+<P>
+<A NAME="IDX2609"></A>
+<A NAME="IDX2610"></A>
+This assertion is similar to a 
+<A NAME="IDX2611"></A>
+<CODE>pred/1</CODE> assertion but it is explicitely qualified. Non-qualified 
+<A NAME="IDX2612"></A>
+<CODE>pred/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>pred(AssertionStatus,AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionStatus</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
+
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2613"></A>
+<A NAME="IDX2614"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>calls/1:</B>
+<DD><A NAME="IDX2615"></A>
+
+
+<P>
+<A NAME="IDX2616"></A>
+<A NAME="IDX2617"></A>
+This assertion is similar to a 
+<A NAME="IDX2618"></A>
+<CODE>pred/1</CODE> assertion but it only provides information about the calls to a predicate. If one or several calls assertions are given they are understood to describe all possible calls to the predicate. 
+
+
+<P>
+For example, the following assertion describes all possible calls to predicate <CODE>is/2</CODE> (see 
+<A NAME="IDX2619"></A>
+<CODE>arithmetic</CODE>): 
+
+<PRE>
+:- calls is(term,arithexpression).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>calls(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is a call assertion body.
+ (<CODE>assertions_props:c_assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2620"></A>
+<A NAME="IDX2621"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>calls/2:</B>
+<DD><A NAME="IDX2622"></A>
+
+
+<P>
+<A NAME="IDX2623"></A>
+<A NAME="IDX2624"></A>
+This assertion is similar to a 
+<A NAME="IDX2625"></A>
+<CODE>calls/1</CODE> assertion but it is explicitely qualified. Non-qualified 
+<A NAME="IDX2626"></A>
+<CODE>calls/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>calls(AssertionStatus,AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionStatus</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
+
+<CODE>AssertionBody</CODE> is a call assertion body.
+ (<CODE>assertions_props:c_assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2627"></A>
+<A NAME="IDX2628"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>success/1:</B>
+<DD><A NAME="IDX2629"></A>
+
+
+<P>
+<A NAME="IDX2630"></A>
+<A NAME="IDX2631"></A>
+This assertion is similar to a 
+<A NAME="IDX2632"></A>
+<CODE>pred/1</CODE> assertion but it only provides information about the answers to a predicate. The described answers might be conditioned to a particular way of calling the predicate. 
+
+
+<P>
+For example, the following assertion specifies the answers of the <CODE>length/2</CODE> predicate <EM>if</EM> it is called as in the first mode of usage above (note that the previous pred assertion already conveys such information, however it also compelled the predicate calls, while the success assertion does not): 
+
+<PRE>
+:- success length(L,N) : list * var =&#62; list * integer.
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>success(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is a predicate assertion body.
+ (<CODE>assertions_props:s_assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2633"></A>
+<A NAME="IDX2634"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>success/2:</B>
+<DD><A NAME="IDX2635"></A>
+
+
+<P>
+<A NAME="IDX2636"></A>
+<A NAME="IDX2637"></A>
+This assertion is similar to a 
+<A NAME="IDX2638"></A>
+<CODE>success/1</CODE> assertion but it is explicitely qualified. Non-qualified 
+<A NAME="IDX2639"></A>
+<CODE>success/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>success(AssertionStatus,AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionStatus</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
+
+<CODE>AssertionBody</CODE> is a predicate assertion body.
+ (<CODE>assertions_props:s_assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2640"></A>
+<A NAME="IDX2641"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>comp/1:</B>
+<DD><A NAME="IDX2642"></A>
+
+
+<P>
+<A NAME="IDX2643"></A>
+<A NAME="IDX2644"></A>
+This assertion is similar to a 
+<A NAME="IDX2645"></A>
+<CODE>pred/1</CODE> assertion but it only provides information about the global execution properties of a predicate (note that such kind of information is also conveyed by pred assertions). The described properties might be conditioned to a particular way of calling the predicate. 
+
+
+<P>
+For example, the following assertion specifies that the computation of <CODE>append/3</CODE> (see 
+<A NAME="IDX2646"></A>
+<CODE>lists</CODE>) will not fail <EM>if</EM> it is called as described (but does not compel the predicate to be called that way): 
+
+<PRE>
+:- comp append(Xs,Ys,Zs) : var * var * var + not_fail.
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>comp(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is a comp assertion body.
+ (<CODE>assertions_props:g_assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2647"></A>
+<A NAME="IDX2648"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>comp/2:</B>
+<DD><A NAME="IDX2649"></A>
+
+
+<P>
+<A NAME="IDX2650"></A>
+<A NAME="IDX2651"></A>
+This assertion is similar to a 
+<A NAME="IDX2652"></A>
+<CODE>comp/1</CODE> assertion but it is explicitely qualified. Non-qualified 
+<A NAME="IDX2653"></A>
+<CODE>comp/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>comp(AssertionStatus,AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionStatus</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
+
+<CODE>AssertionBody</CODE> is a comp assertion body.
+ (<CODE>assertions_props:g_assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2654"></A>
+<A NAME="IDX2655"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>prop/1:</B>
+<DD><A NAME="IDX2656"></A>
+
+
+<P>
+<A NAME="IDX2657"></A>
+<A NAME="IDX2658"></A>
+This assertion is similar to a <CODE>pred/1</CODE> assertion but it flags that the predicate being documented is also a "
+<A NAME="IDX2659"></A>
+property." 
+
+
+<P>
+Properties are standard predicates, but which are <EM>guaranteed to terminate for any possible instantiation state of their argument(s)</EM>, do not perform side-effects which may interfere with the program behaviour, and do not further instantiate their arguments or add new constraints. 
+
+
+<P>
+Provided the above holds, properties can thus be safely used as 
+<A NAME="IDX2660"></A>
+run-time checks. The program transformation used in <CODE>ciaopp</CODE> for run-time checking guarantees the third requirement. It also performs some basic checks on properties which in most cases are enough for the second requirement. However, it is the user's responsibility to guarantee termination of the properties defined. (See also section <A HREF="ciao_60.html#SEC237">Declaring regular types</A> for some considerations applicable to writing properties.) 
+
+
+<P>
+The set of properties is thus a strict subset of the set of predicates. Note that properties can be used to describe characteristics of arguments in assertions and they can also be executed (called) as any other predicates. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>prop(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2661"></A>
+<A NAME="IDX2662"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>prop/2:</B>
+<DD><A NAME="IDX2663"></A>
+
+
+<P>
+<A NAME="IDX2664"></A>
+<A NAME="IDX2665"></A>
+This assertion is similar to a 
+<A NAME="IDX2666"></A>
+<CODE>prop/1</CODE> assertion but it is explicitely qualified. Non-qualified 
+<A NAME="IDX2667"></A>
+<CODE>prop/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>prop(AssertionStatus,AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionStatus</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
+
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2668"></A>
+<A NAME="IDX2669"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>entry/1:</B>
+<DD><A NAME="IDX2670"></A>
+
+
+<P>
+<A NAME="IDX2671"></A>
+<A NAME="IDX2672"></A>
+This assertion provides information about the <EM>external</EM> calls to a predicate. It is identical syntactically to a 
+<A NAME="IDX2673"></A>
+<CODE>calls/1</CODE> assertion. However, they describe only external calls, i.e., calls to the exported predicates of a module from outside the module, or calls to the predicates in a non-modular file from other files (or the user). 
+
+
+<P>
+These assertions are <EM>trusted</EM> by the compiler. As a result, if their descriptions are erroneous they can introduce bugs in programs. Thus, 
+<A NAME="IDX2674"></A>
+<CODE>entry/1</CODE> assertions should be written with care. 
+
+
+<P>
+An important use of these assertions is in 
+<A NAME="IDX2675"></A>
+providing information to the compiler which it may not be able to infer from the program. The main use is in providing information on the ways in which exported predicates of a module will be called from outside the module. This will greatly improve the precision of the analyzer, which otherwise has to assume that the arguments that exported predicates receive are any arbitrary term. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>entry(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is a call assertion body.
+ (<CODE>assertions_props:c_assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2676"></A>
+<A NAME="IDX2677"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>modedef/1:</B>
+<DD><A NAME="IDX2678"></A>
+
+
+<P>
+This assertion is used to define modes. A mode defines in a compact way a set of call and success properties. Once defined, modes can be applied to predicate arguments in assertions. The meaning of this application is that the call and success properties defined by the mode hold for the argument to which the mode is applied. Thus, a mode is conceptually a "property macro". 
+
+
+<P>
+The syntax of mode definitions is similar to that of pred declarations. For example, the following set of assertions: 
+
+
+
+<PRE>
+:- modedef +A : nonvar(A) # "<CODE>A</CODE> is bound upon predicate entry.".
+
+:- pred p(+A,B) : integer(A) =&#62;  ground(B).
+</PRE>
+
+<P>
+is equivalent to: 
+
+
+
+<PRE>
+:- pred p(A,B) : (nonvar(A),integer(A)) =&#62;  ground(B)
+   # "<CODE>A</CODE> is bound upon predicate entry.".
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>modedef(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2679"></A>
+<A NAME="IDX2680"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>decl/1:</B>
+<DD><A NAME="IDX2681"></A>
+
+
+<P>
+<A NAME="IDX2682"></A>
+<A NAME="IDX2683"></A>
+This assertion is similar to a 
+<A NAME="IDX2684"></A>
+<CODE>pred/1</CODE> assertion but it is used for declarations instead than for predicates. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>decl(AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2685"></A>
+<A NAME="IDX2686"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>decl/2:</B>
+<DD><A NAME="IDX2687"></A>
+
+
+<P>
+<A NAME="IDX2688"></A>
+<A NAME="IDX2689"></A>
+This assertion is similar to a 
+<A NAME="IDX2690"></A>
+<CODE>decl/1</CODE> assertion but it is explicitely qualified. Non-qualified 
+<A NAME="IDX2691"></A>
+<CODE>decl/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>decl(AssertionStatus,AssertionBody)</CODE>.
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>AssertionStatus</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
+
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2692"></A>
+<A NAME="IDX2693"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>comment/2:</B>
+<DD><A NAME="IDX2694"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>comment(Pred,Comment)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX2695"></A>
+<A NAME="IDX2696"></A>
+This assertion gives a text <CODE>Comment</CODE> for a given predicate <CODE>Pred</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is a head pattern.
+ (<CODE>assertions_props:head_pattern/1</CODE>)
+
+<CODE>Comment</CODE> is a text comment with admissible documentation commands. The usual formatting commands that are applicable in comment strings are defined by 
+<A NAME="IDX2697"></A>
+<CODE>stringcommand/1</CODE>. See the 
+<A NAME="IDX2698"></A>
+<CODE>lpdoc</CODE> manual for documentation on comments. 
+ (<CODE>assertions_props:docstring/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC233" HREF="ciao_toc.html#TOC233">Documentation on exports (<CODE>assertions</CODE>)</A></H2>
+<P>
+<A NAME="IDX2699"></A>
+<A NAME="IDX2700"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>check/1:</B>
+<DD><A NAME="IDX2701"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>check(PropertyConjunction)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX2702"></A>
+<A NAME="IDX2703"></A>
+This assertion provides information on a clause program point (position in the body of a clause). Calls to a 
+<A NAME="IDX2704"></A>
+<CODE>check/1</CODE> assertion can appear in the body of a clause in any place where a literal can normally appear. The property defined by <CODE>PropertyConjunction</CODE> should hold in all the run-time stores corresponding to that program point. See also section <A HREF="ciao_65.html#SEC256">Run-time checking of assertions</A>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PropertyConjunction</CODE> is either a term or a <EM>conjunction</EM> of terms. The main functor and arity of each of those terms corresponds to the definition of a property. The first argument of each such term is a variable which appears as a head argument.
+ (<CODE>assertions_props:property_conjunction/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2705"></A>
+<A NAME="IDX2706"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>trust/1:</B>
+<DD><A NAME="IDX2707"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>trust(PropertyConjunction)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX2708"></A>
+<A NAME="IDX2709"></A>
+This assertion also provides information on a clause program point. It is identical syntactically to a 
+<A NAME="IDX2710"></A>
+<CODE>check/1</CODE> assertion. However, the properties stated are not taken as something to be checked but are instead <EM>trusted</EM> by the compiler. While the compiler may in some cases detect an inconsistency between a 
+<A NAME="IDX2711"></A>
+<CODE>trust/1</CODE> assertion and the program, in all other cases the information given in the assertion will be taken to be true. As a result, if these assertions are erroneous they can introduce bugs in programs. Thus, 
+<A NAME="IDX2712"></A>
+<CODE>trust/1</CODE> assertions should be written with care. 
+
+An important use of these assertions is in 
+<A NAME="IDX2713"></A>
+providing information to the compiler which it may not be able to infer from the program (either because the information is not present or because the analyzer being used is not precise enough). In particular, providing information on external predicates which may not be accessible at the time of compiling the module can greatly improve the precision of the analyzer. This can be easily done with trust assertion.  
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PropertyConjunction</CODE> is either a term or a <EM>conjunction</EM> of terms. The main functor and arity of each of those terms corresponds to the definition of a property. The first argument of each such term is a variable which appears as a head argument.
+ (<CODE>assertions_props:property_conjunction/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2714"></A>
+<A NAME="IDX2715"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>true/1:</B>
+<DD><A NAME="IDX2716"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>true(PropertyConjunction)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX2717"></A>
+<A NAME="IDX2718"></A>
+This assertion is identical syntactically to a 
+<A NAME="IDX2719"></A>
+<CODE>check/1</CODE> assertion. However, the properties stated have been proved to hold by the analyzer. Thus, these assertions often represent the 
+<A NAME="IDX2720"></A>
+analyzer output. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PropertyConjunction</CODE> is either a term or a <EM>conjunction</EM> of terms. The main functor and arity of each of those terms corresponds to the definition of a property. The first argument of each such term is a variable which appears as a head argument.
+ (<CODE>assertions_props:property_conjunction/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2721"></A>
+<A NAME="IDX2722"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>false/1:</B>
+<DD><A NAME="IDX2723"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>false(PropertyConjunction)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX2724"></A>
+<A NAME="IDX2725"></A>
+This assertion is identical syntactically to a 
+<A NAME="IDX2726"></A>
+<CODE>check/1</CODE> assertion. However, the properties stated have been proved not to hold by the analyzer. Thus, these assertions often represent the 
+<A NAME="IDX2727"></A>
+analyzer output. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PropertyConjunction</CODE> is either a term or a <EM>conjunction</EM> of terms. The main functor and arity of each of those terms corresponds to the definition of a property. The first argument of each such term is a variable which appears as a head argument.
+ (<CODE>assertions_props:property_conjunction/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_57.html">previous</A>, <A HREF="ciao_59.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_57.html">previous</A>, <A HREF="ciao_59.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

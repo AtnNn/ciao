@@ -1,45 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pretty-printing assertions</TITLE>
+<TITLE>The Ciao Prolog System               - Code translation utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC333" HREF="ciao_toc.html#TOC333">Pretty-printing assertions</A></H1>
+<H1><A NAME="SEC309" HREF="ciao_toc.html#TOC309">Code translation utilities</A></H1>
 <P>
-<A NAME="IDX3895"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno Carrillo.
+<A NAME="IDX3628"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#2 (1999/11/29, 18:2:53 MET)
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
-This module defines some predicates which are useful for writing assertions in a readable form.
+<STRONG>Version of last change:</STRONG> 1.3#110 (1999/11/22, 11:52:54 MET)
+
+
+<P>
+This library offers a general way to perform clause body expansions. Goal, fact and spec translation predicates are authomatically called when needed, while this utility navigates through the meta-argument specification of the body itself. All predicates within this library must be called at <EM>second-pass expansions</EM>, since it uses information stored at 
+<A NAME="IDX3629"></A>
+<CODE>c_itf</CODE> library.
 
 
 
 <UL>
-<LI><A HREF="ciao_81.html#SEC334">Usage and interface (assrt_write)</A>
-<LI><A HREF="ciao_81.html#SEC335">Documentation on exports (assrt_write)</A>
+<LI><A HREF="ciao_81.html#SEC310">Usage and interface (expansion_tools)</A>
+<LI><A HREF="ciao_81.html#SEC311">Documentation on exports (expansion_tools)</A>
+<LI><A HREF="ciao_81.html#SEC312">Documentation on internals (expansion_tools)</A>
+<LI><A HREF="ciao_81.html#SEC313">Known bugs and planned improvements (expansion_tools)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC334" HREF="ciao_toc.html#TOC334">Usage and interface (<CODE>assrt_write</CODE>)</A></H2>
+<H2><A NAME="SEC310" HREF="ciao_toc.html#TOC310">Usage and interface (<CODE>expansion_tools</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +51,9 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(assrt_write)).</CODE>
+This library is provided as a tool for those modules which performs source-to-source code translation, usually known as <EM>code expanders</EM>. It may be loaded as other modules using a 
+<A NAME="IDX3630"></A>
+<CODE>use_module/1</CODE>. Nothing special needs to be done.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,10 +62,12 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3896"></A>
-<CODE>write_assertion/6</CODE>, 
-<A NAME="IDX3897"></A>
-<CODE>write_assertion_as_comment/6</CODE>.
+<A NAME="IDX3631"></A>
+<CODE>imports_meta_pred/3</CODE>, 
+<A NAME="IDX3632"></A>
+<CODE>body_expander/6</CODE>, 
+<A NAME="IDX3633"></A>
+<CODE>arg_expander/6</CODE>.
 
 </UL>
 
@@ -70,14 +78,8 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3898"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX3899"></A>
-<CODE>assertions/assrt_lib</CODE>, 
-<A NAME="IDX3900"></A>
-<CODE>messages</CODE>, 
-<A NAME="IDX3901"></A>
-<CODE>assertions/assertions_props</CODE>.
+<A NAME="IDX3634"></A>
+<CODE>compiler/c_itf</CODE>.
 
 </UL>
 
@@ -87,76 +89,173 @@ This module defines some predicates which are useful for writing assertions in a
 
 
 
-<H2><A NAME="SEC335" HREF="ciao_toc.html#TOC335">Documentation on exports (<CODE>assrt_write</CODE>)</A></H2>
+<H2><A NAME="SEC311" HREF="ciao_toc.html#TOC311">Documentation on exports (<CODE>expansion_tools</CODE>)</A></H2>
 <P>
-<A NAME="IDX3902"></A>
-<A NAME="IDX3903"></A>
+<A NAME="IDX3635"></A>
+<A NAME="IDX3636"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_assertion/6:</B>
-<DD><A NAME="IDX3904"></A>
+<DT><span class="define">PREDICATE:</span> <B>imports_meta_pred/3:</B>
+<DD><A NAME="IDX3637"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_assertion(Goal,Status,Type,Body,Dict,Flag)</CODE>
+Macro provided in order to know meta-predicate specifications accessible from a module.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>imports_meta_pred(Module,MetaSpec,AccessibleAt)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Writes the (normalized) assertion to current output.
+<LI><EM>Description:</EM> Tells whether <CODE>MetaSpec</CODE> meta-predicate specification is accessible from <CODE>Module</CODE>. <CODE>AccessibleAt</CODE> will be binded to '-' whether meta-predicate is a builtin one. If not, it will be unified with the module which defines the meta-predicate.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Status</CODE> is an acceptable status for an assertion.
- (<CODE>assertions_props:assrt_status/1</CODE>)
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Type</CODE> is an admissible kind of assertion.
- (<CODE>assertions_props:assrt_type/1</CODE>)
+<CODE>MetaSpec</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<CODE>Body</CODE> is a normalized assertion body.
- (<CODE>assertions_props:nabody/1</CODE>)
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>assertions_props:dictionary/1</CODE>)
-
-<CODE>Flag</CODE> is <CODE>status</CODE> or <CODE>nostatus</CODE>.
- (<CODE>assrt_write:status_flag/1</CODE>)
+<CODE>AccessibleAt</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3905"></A>
-<A NAME="IDX3906"></A>
+<A NAME="IDX3638"></A>
+<A NAME="IDX3639"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_assertion_as_comment/6:</B>
-<DD><A NAME="IDX3907"></A>
+<DT><span class="define">PREDICATE:</span> <B>body_expander/6:</B>
+<DD><A NAME="IDX3640"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_assertion_as_comment(Goal,Status,Type,Body,Dict,Flag)</CODE>
+This predicate is the main translation tool. It navigates through a clause body, when a single <EM>goal</EM> appears, user-code is called in order to perform a translation. Whether user-code fails to translate the involved goal, it remains the same. Regardless that goal is translated or not, an argument expansion will be performed over all goals if applicable (see 
+<A NAME="IDX3641"></A>
+<CODE>arg_expander/6</CODE> predicate). 
+
+
+<P>
+Variable (unknown at compile time) goals will also be attempt to translate. 
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>body_expander(pred(3),pred(3),pred(3),?,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>body_expander(GoalTrans,FactTrans,SpecTrans,Module,Body,ExpandedBody)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Writes the (normalized) assertion to current output as a Prolog comment.
+<LI><EM>Description:</EM> Translates <CODE>Body</CODE> to <CODE>ExpandedBody</CODE> by the usage of user-defined translators <CODE>GoalTrans</CODE>, <CODE>FactTrans</CODE> and <CODE>SpecTrans</CODE>. The module where the original body appears must be unified with <CODE>Module</CODE> argument.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Status</CODE> is an acceptable status for an assertion.
- (<CODE>assertions_props:assrt_status/1</CODE>)
+<CODE>GoalTrans</CODE> is a user-defined predicate which performs <EM>goal</EM> meta-type translation
+ (<CODE>expansion_tools:goal_expander/1</CODE>)
 
-<CODE>Type</CODE> is an admissible kind of assertion.
- (<CODE>assertions_props:assrt_type/1</CODE>)
+<CODE>FactTrans</CODE> is a user-defined predicate which performs <EM>fact</EM> meta-type translation
+ (<CODE>expansion_tools:fact_expander/1</CODE>)
 
-<CODE>Body</CODE> is a normalized assertion body.
- (<CODE>assertions_props:nabody/1</CODE>)
+<CODE>SpecTrans</CODE> is a user-defined predicate which performs <EM>spec</EM> meta-type translation
+ (<CODE>expansion_tools:spec_expander/1</CODE>)
 
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>assertions_props:dictionary/1</CODE>)
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Flag</CODE> is <CODE>status</CODE> or <CODE>nostatus</CODE>.
- (<CODE>assrt_write:status_flag/1</CODE>)
+<CODE>Body</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>ExpandedBody</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
+
+<P>
+<A NAME="IDX3642"></A>
+<A NAME="IDX3643"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arg_expander/6:</B>
+<DD><A NAME="IDX3644"></A>
+
+
+<P>
+This predicate is an auxiliary translation tool, which is used by 
+<A NAME="IDX3645"></A>
+<CODE>body_expander/6</CODE> predicate. It remains exported as a macro. The predicate navigates through the <EM>meta-argument specification</EM> of a goal. Whether a <EM>goal,fact or spec</EM> argument appears, user-code is called in order to perform a translation. Whether user-code fails to translate the involved argument, it remains the same. Builtins as ','/2 or ';'/2 are treated as meta-predicates defining <EM>goal</EM> meta-arguments. When a <EM>goal</EM> meta-argument is located, 
+<A NAME="IDX3646"></A>
+<CODE>body_expander/6</CODE> will be called in order to navigate through it. Notice that a <EM>goal</EM> meta-argument may be unified with another goal defining another meta-argument, so navigation is required. If arguments are not known to arg_expander/6, translation will not occur. This is posible whether goal or qualifing module are variables. 
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>arg_expander(pred(3),pred(3),pred(3),?,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>arg_expander(GoalTrans,FactTrans,SpecTrans,Module,Goal,ExpandedGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates <CODE>Goal</CODE> to <CODE>ExpandedGoal</CODE> by applying user-defined translators (<CODE>GoalTrans</CODE>, <CODE>FactTrans</CODE> and <CODE>SpecTrans</CODE>) to each meta-argument present at such goal. The module where the original goal appears must be unified with <CODE>Module</CODE> argument.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>GoalTrans</CODE> is a user-defined predicate which performs <EM>goal</EM> meta-type translation
+ (<CODE>expansion_tools:goal_expander/1</CODE>)
+
+<CODE>FactTrans</CODE> is a user-defined predicate which performs <EM>fact</EM> meta-type translation
+ (<CODE>expansion_tools:fact_expander/1</CODE>)
+
+<CODE>SpecTrans</CODE> is a user-defined predicate which performs <EM>spec</EM> meta-type translation
+ (<CODE>expansion_tools:spec_expander/1</CODE>)
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Goal</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>ExpandedBody</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC312" HREF="ciao_toc.html#TOC312">Documentation on internals (<CODE>expansion_tools</CODE>)</A></H2>
+<P>
+<A NAME="IDX3647"></A>
+<A NAME="IDX3648"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>expander_pred/1:</B>
+<DD><A NAME="IDX3649"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>expander_pred(Pred)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Pred</CODE> is a user-defined predicate used to perform code translations. First argument will be binded to the corresponding term to be translated. Second argument must be binded to the corresponding translation. Third argument will be binded to the current module were first argument appears. Additional arguments will be user-defined.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC313" HREF="ciao_toc.html#TOC313">Known bugs and planned improvements (<CODE>expansion_tools</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+<EM>pred(N)</EM> meta-arguments are not supported at this moment.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

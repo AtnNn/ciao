@@ -1,10 +1,10 @@
 :- module(write,[
         write_term/3, write_term/2,
         write_option/1,
-        write/2, write/1, write_list1/1,
+        write/2, write/1,
         writeq/2, writeq/1,
         write_canonical/2, write_canonical/1,
-        print/2, print/1,
+        print/2, print/1, write_list1/1,
         portray_clause/2, portray_clause/1,
         numbervars/3, prettyvars/1,
         printable_char/1
@@ -32,7 +32,9 @@ Changes by Mats Carlsson, Daniel Cabeza, and Manuel Hermenegildo.").
 
 :- comment(define_flag/3,"Defines flags as follows:
 	@includedef{define_flag/3}
-	(See @ref{Changing system behaviour and various flags})").
+	(See @ref{Changing system behaviour and various flags}).
+
+        If flag is @tt{on}, lists which may be written as strings are.").
 
 :- multifile define_flag/3.
 
@@ -231,7 +233,7 @@ write(Term) :-
         Options = options(false,false,true,false,1000000),
 	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- pred write_list1/1 : list => list
+:- pred write_list1/1 :: list
 	# "Writes a list to current output one element in each line.".
 
 write_list1([]).
@@ -310,7 +312,17 @@ printable_char(B) :-
 %   was of type Co.
 
 %% Print hooks
+
 :- multifile portray_attribute/2.
+
+:- pred portray_attribute(Attr, Var) : nonvar * var # "@em{A user
+defined predicate.} When an attributed variable @var{Var} is about to
+be printed, this predicate receives the variable and its attribute
+@var{Attr}.  The predicate should either print something based on
+@var{Attr} or @var{Var}, or do nothing and fail. In the latter case,
+the default printer (@pred{write/1}) will print the attributed
+variable like an unbound variable, e.g. @tt{_673}.".
+
 :- multifile portray/1.
 
 :- pred portray(?Term)
@@ -417,12 +429,12 @@ write_out_(1, F, Term, Quote, Options, Prio, _, Depth, Lpar, Ci, Co) :-
 	write_atom(Quote, F, C2, C3),
 	maybe_close_paren(O1, Prio, C3, Co).
 write_out_(1, F, Term, Quote, Options, Prio, PrePrio, Depth, Lpar, Ci, Co) :-
-        F \== -,
-        current_prefixop(F, O, P), !,
+        current_prefixop(F, O, P),
+	arg(1, Term, A),
+        (number(A) -> F \== - ; true), !,
 	(PrePrio=1200 -> O1 is P+1; O1=O),	% for "fy X yf" etc. cases
 	maybe_open_paren(O1, Prio, Lpar, _, Ci, C1),
 	write_atom(Quote, F, C1, C2),
-	arg(1, Term, A),
 	write_out(A, Options, P, P, Depth, ' (', C2, C3),
 	maybe_close_paren(O1, Prio, C3, Co).
 write_out_(2, F, Term, Quote, Options, Prio, PrePrio, Depth, Lpar, Ci, Co) :-
@@ -708,13 +720,14 @@ write_fullstop(Ci) :-
 	nl, tab(D).
 
 :- pred numbervars(?Term, +N, ?M) => term * integer * integer
-        # "Unifies each of the variables in term @var{Term} with a term of the
- form @tt{'$VAR'(I)} where @tt{I} is an integer from @var{N} onwards. @var{M}-1
- is unified with the last integer used. If the resulting term is output with a 
- write option @tt{numbervars(true)}, in the place of the variables in the
- original term will be printed a variable name consisting of a capital letter
- possibly followed by an integer. When @var{N} is 0 you will get the variable
- names A, B, ..., Z, A1, B1, etc.".
+        # "Unifies each of the variables in term @var{Term} with a term
+ of the form @tt{'$VAR'(I)} where @tt{I} is an integer from @var{N}
+ onwards. @var{M} is unified with the last integer used plus 1. If the
+ resulting term is output with a write option @tt{numbervars(true)}, in
+ the place of the variables in the original term will be printed a
+ variable name consisting of a capital letter possibly followed by an
+ integer. When @var{N} is 0 you will get the variable names A, B, ...,
+ Z, A1, B1, etc.".
 
 % It's too expensive to support cyclic structures.
 numbervars(X, N0, N) :-
@@ -743,6 +756,13 @@ numbervars1_(A0, A, X, N0, N) :-
 
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*5+158,2000/05/30,13:08*10+'CEST'), "Added
+documentation for portray_attribute.  (MCL)").
+
+:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+   predicates so that term -a is written as is (-(2) is still written
+   this way, though). (Daniel Cabeza Gras)").
 
 :- comment(version(0*5+49,1998/07/14,20:03*29+'MET DST'), "Fixed bug when
    current_prolog_flag(write_strings, on), written strings did not escape

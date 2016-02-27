@@ -31,7 +31,7 @@ are not set properly (see @ref{Un*x user setup} for how to fix this):
 
 @include{InstallTestUnix.lpdoc}
 
-@subsection{Un*x user setup}
+@section{Un*x user setup}
 
 @cindex{user setup}
 @cindex{environment variables, setup}
@@ -105,8 +105,8 @@ try reinstalling the system.
       available through libraries in Ciao.  This facilitates making
       small executables.
 
-      To change the working directory to, say, the @tt{tests}
-      directory in the Ciao source directory, first do:
+      To change the working directory to, say, the @tt{examples}
+      directory in the Ciao root directory, first do:
 
 @begin{verbatim}
       ?- use_module(library(system)).
@@ -117,7 +117,7 @@ try reinstalling the system.
       then:
 
 @begin{verbatim}
-      ?- cd('$/tests').  
+      ?- cd('$/examples').  
 @end{verbatim}
 
       @noindent (in Ciao the sequence @tt{$/} @em{at the beginning of
@@ -141,7 +141,7 @@ try reinstalling the system.
       process produces an executable @tt{foo}, automatically detecting
       which other files used by @tt{foo.pl} need recompilation.
 
-      @noindent For example, within the @file{tests} directory, you
+      @noindent For example, within the @file{examples} directory, you
       can type:
 
 @begin{verbatim}
@@ -170,7 +170,7 @@ try reinstalling the system.
       containing Prolog source but which get executed without having
       to explicitly compile them (in the same way as, e.g., @tt{.bat}
       files or programs in scripting languages). As an example, you
-      can run the file @file{hw} in the @file{tests} 
+      can run the file @file{hw} in the @file{examples} 
       directory of the Ciao distribution and look at the source with
       an editor. You can try changing the @tt{Hello world} message and
       running the program again (no need to recompile!).

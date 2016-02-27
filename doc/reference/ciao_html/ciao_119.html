@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Java to Prolog interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC482" HREF="ciao_toc.html#TOC482">Low-level Prolog to Java socket connection</A></H1>
+<H1><A NAME="SEC462" HREF="ciao_toc.html#TOC462">Low-level Java to Prolog interface</A></H1>
 <P>
-<A NAME="IDX5404"></A>
+<A NAME="IDX5146"></A>
 
 
 <P>
@@ -20,33 +20,46 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#49 (2000/2/8, 16:35:38 CET)
+<STRONG>Version of last change:</STRONG> 1.5#40 (2000/2/8, 16:32:42 CET)
 
 
 <P>
  
-<A NAME="IDX5405"></A>
-<A NAME="IDX5406"></A>
-This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
-<A NAME="IDX5407"></A>
-<CODE>javart</CODE> (Prolog to Java low-level interface) or 
-<A NAME="IDX5408"></A>
-<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
+<A NAME="IDX5147"></A>
+<A NAME="IDX5148"></A>
+This module defines a low level Java to Prolog interface. This Prolog side of the Java to Prolog interface only has one public predicate: a server that listens at the socket connection with Java, and executes the commands received from the Java side. 
+
+
+<P>
+In order to evaluate the goals received from the Java side, this module can work in two ways: executing them in the same engine, or starting a thread for each goal. The easiest way is to launch them in the same engine, but the goals must be evaluated sequentially: once a goal provides the first solution, all the subsequent goals must be finished before this goal can backtrack to provide another solution. The Prolog side of this interface works as a top-level, and the goals partially evaluated are not independent. 
+
+
+<P>
+The solution of this goal dependence is to evaluate the goals in a different prolog engine. Although Ciao includes a mechanism to evaluate goals in different engines, the approach used in this interface is to launch each goal in a different thread. 
+
+
+<P>
+The decision of what kind of goal evaluation is selected is done by the Java side. Each evaluation type has its own command terms, so the Java side can choose the type it needs. 
+
+
+<P>
+A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate. The user predicates and libraries to be called from Java must be included in the executable file, or be accesible using the built-in predicates dealing with code loading. 
 
 
 
 <UL>
-<LI><A HREF="ciao_119.html#SEC483">Usage and interface (javasock)</A>
-<LI><A HREF="ciao_119.html#SEC484">Documentation on exports (javasock)</A>
+<LI><A HREF="ciao_119.html#SEC463">Usage and interface (jtopl)</A>
+<LI><A HREF="ciao_119.html#SEC464">Documentation on exports (jtopl)</A>
+<LI><A HREF="ciao_119.html#SEC465">Documentation on internals (jtopl)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC483" HREF="ciao_toc.html#TOC483">Usage and interface (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC463" HREF="ciao_toc.html#TOC463">Usage and interface (<CODE>jtopl</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -54,7 +67,7 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(javasock)).</CODE>
+<CODE>:- use_module(library(jtopl)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -63,16 +76,8 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5409"></A>
-<CODE>socket_connection/2</CODE>, 
-<A NAME="IDX5410"></A>
-<CODE>socket_disconnection/0</CODE>, 
-<A NAME="IDX5411"></A>
-<CODE>java_fast_read/2</CODE>, 
-<A NAME="IDX5412"></A>
-<CODE>java_fast_write/2</CODE>, 
-<A NAME="IDX5413"></A>
-<CODE>java_stream/3</CODE>.
+<A NAME="IDX5149"></A>
+<CODE>prolog_server/0</CODE>.
 
 </UL>
 
@@ -83,16 +88,26 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5414"></A>
-<CODE>fastrw</CODE>, 
-<A NAME="IDX5415"></A>
+<A NAME="IDX5150"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX5151"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX5152"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX5416"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX5417"></A>
+<A NAME="IDX5153"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX5154"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX5418"></A>
-<CODE>format</CODE>.
+<A NAME="IDX5155"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX5156"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX5157"></A>
+<CODE>dynmods</CODE>, 
+<A NAME="IDX5158"></A>
+<CODE>atom2term</CODE>, 
+<A NAME="IDX5159"></A>
+<CODE>javall/javasock</CODE>.
 
 </UL>
 
@@ -102,133 +117,374 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 
 
-<H2><A NAME="SEC484" HREF="ciao_toc.html#TOC484">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Documentation on exports (<CODE>jtopl</CODE>)</A></H2>
 <P>
-<A NAME="IDX5419"></A>
-<A NAME="IDX5420"></A>
+<A NAME="IDX5160"></A>
+<A NAME="IDX5161"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>socket_connection/2:</B>
-<DD><A NAME="IDX5421"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>socket_connection(+node,+stream)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a stream connected to a node, it gets the socket port from the given stream and creates the sockets to connect to the java process.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+node</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5422"></A>
-<A NAME="IDX5423"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>socket_disconnection/0:</B>
-<DD><A NAME="IDX5424"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_server/0:</B>
+<DD><A NAME="IDX5162"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> It closes the sockets to disconnect from the java process.
+<LI><EM>Description:</EM> Prolog server entry point. Reads from the standard input the node name and port number where the java client resides, and starts the prolog server listening at the data socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_exit</CODE> command is received.
+
+<A NAME="IDX5163"></A>
+<A NAME="IDX5164"></A>
+ 
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC465" HREF="ciao_toc.html#TOC465">Documentation on internals (<CODE>jtopl</CODE>)</A></H2>
+<P>
+<A NAME="IDX5165"></A>
+<A NAME="IDX5166"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>command/1:</B>
+<DD><A NAME="IDX5167"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>command(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a command received from the java client, to be executed by the Prolog process. The command is represented as an atom or a functor with arity 1. The command to be executed must be one of the following types:
+
+<A NAME="IDX5168"></A>
+<A NAME="IDX5169"></A>
+
+<UL>
+
+<LI><CODE>prolog_launch_query(Q)</CODE> Compound term to create a new query, received as single argument of this structure. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_launch_query_on_thread(Q)</CODE> Compound term to evaluate a new query using a separate thread. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_next_solution(ID)</CODE> Compound term to get the next solution of a goal identified by the single argument of the structure. A term representing the goal instantiated with the next solution is returned to Java.
+
+<LI><CODE>prolog_terminate_query(ID)</CODE> Compound term to terminate the goal identified by the argument. If the thread option is disabled, a cut is made in the goal search tree, and the goal is removed from the goal table; if the thread option is enabled, the thread evaluating the goal is terminated.
+
+<LI><CODE>prolog_exit</CODE> Atom to terminate the current Prolog process.
+
+</UL>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5170"></A>
+<A NAME="IDX5171"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>answer/1:</B>
+<DD><A NAME="IDX5172"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>answer(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a response sent from the prolog server. Is represented as an atom or a functor with arity 1 or 2, depending on the functor name.
+
+<A NAME="IDX5173"></A>
+<A NAME="IDX5174"></A>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5175"></A>
+<A NAME="IDX5176"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>prolog_query/1:</B>
+<DD><A NAME="IDX5177"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_query(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a query to be launched from the prolog server.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5425"></A>
-<A NAME="IDX5426"></A>
+<A NAME="IDX5178"></A>
+<A NAME="IDX5179"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_fast_read/2:</B>
-<DD><A NAME="IDX5427"></A>
+<DT><span class="define">PREDICATE:</span> <B>shell_s/0:</B>
+<DD><A NAME="IDX5180"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_fast_read(+type,-(term))</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> It reads from the given stream type one term and unifies it with the term received as second argument. This is the basic predicate used to receive data from the Java side. The first argument reflects the socket type: event or data. The second argument is unified with the data received from the socket.
+<LI><EM>Description:</EM> Command execution loop. This predicate is called when the connection to Java is established, and performs an endless loop dealing with the following tasks:
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+type</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<UL>
 
-<CODE>-(term)</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<LI>reads a command from the socket. All the commands are explained in the <CODE>command</CODE> type description,
+
+<LI>processes the command using the <CODE>process_first_command/1</CODE> and <CODE>process_next_command/1</CODE> predicates, and
+
+<LI>returns the results of the command execution.
+
+</UL>
+
+ 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5428"></A>
-<A NAME="IDX5429"></A>
+<A NAME="IDX5181"></A>
+<A NAME="IDX5182"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_fast_write/2:</B>
-<DD><A NAME="IDX5430"></A>
+<DT><span class="define">PREDICATE:</span> <B>process_first_command/1:</B>
+<DD><A NAME="IDX5183"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_fast_write(+type,+term)</CODE>
+<STRONG>Usage:</STRONG> <CODE>process_first_command(+Command)</CODE>
 
 <UL>
-<LI><EM>Description:</EM>  It writes on the given stream type the term received as second argument. This is the basic predicate used to send data to the Java side. The first argument reflects the socket type: event or data. The second argument is the term to be sent to the Java side.
+<LI><EM>Description:</EM> Processes the first command of a query. Using the threads option, it processes all the commands received from the prolog server.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+type</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>+Command</CODE> is a command received from the java client, to be executed by the Prolog process. The command is represented as an atom or a functor with arity 1. The command to be executed must be one of the following types: 
+<A NAME="IDX5184"></A>
+<A NAME="IDX5185"></A>
 
-<CODE>+term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<UL>
+
+<LI><CODE>prolog_launch_query(Q)</CODE> Compound term to create a new query, received as single argument of this structure. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_launch_query_on_thread(Q)</CODE> Compound term to evaluate a new query using a separate thread. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_next_solution(ID)</CODE> Compound term to get the next solution of a goal identified by the single argument of the structure. A term representing the goal instantiated with the next solution is returned to Java.
+
+<LI><CODE>prolog_terminate_query(ID)</CODE> Compound term to terminate the goal identified by the argument. If the thread option is disabled, a cut is made in the goal search tree, and the goal is removed from the goal table; if the thread option is enabled, the thread evaluating the goal is terminated.
+
+<LI><CODE>prolog_exit</CODE> Atom to terminate the current Prolog process.
+
+</UL>
+
+ (<CODE>jtopl:command/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5431"></A>
-<A NAME="IDX5432"></A>
+<A NAME="IDX5186"></A>
+<A NAME="IDX5187"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_stream/3:</B>
-<DD><A NAME="IDX5433"></A>
+<DT><span class="define">PREDICATE:</span> <B>process_next_command/2:</B>
+<DD><A NAME="IDX5188"></A>
 
 
 <P>
-The predicate is of type <EM>dynamic</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_stream(DataStream,EventStream,Address)</CODE>
+<STRONG>Usage:</STRONG> <CODE>process_next_command(+Id,+Command)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains the data and event streams, and the network address where the Java process is running.
+<LI><EM>Description:</EM> Process the commands received from the prolog server when a query is being handled.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>DataStream</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>undefined:prolog_query_id(+Id)</CODE>
+ (undefined property)
 
-<CODE>EventStream</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>+Command</CODE> is a command received from the java client, to be executed by the Prolog process. The command is represented as an atom or a functor with arity 1. The command to be executed must be one of the following types: 
+<A NAME="IDX5189"></A>
+<A NAME="IDX5190"></A>
 
-<CODE>undefined:machine_name(Address)</CODE>
+<UL>
+
+<LI><CODE>prolog_launch_query(Q)</CODE> Compound term to create a new query, received as single argument of this structure. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_launch_query_on_thread(Q)</CODE> Compound term to evaluate a new query using a separate thread. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_next_solution(ID)</CODE> Compound term to get the next solution of a goal identified by the single argument of the structure. A term representing the goal instantiated with the next solution is returned to Java.
+
+<LI><CODE>prolog_terminate_query(ID)</CODE> Compound term to terminate the goal identified by the argument. If the thread option is disabled, a cut is made in the goal search tree, and the goal is removed from the goal table; if the thread option is enabled, the thread evaluating the goal is terminated.
+
+<LI><CODE>prolog_exit</CODE> Atom to terminate the current Prolog process.
+
+</UL>
+
+ (<CODE>jtopl:command/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5191"></A>
+<A NAME="IDX5192"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>solve/1:</B>
+<DD><A NAME="IDX5193"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>solve(+Query)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Runs the query processing the commands received from the java side, and handles query nesting. It is used only with the thread option disabled.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Query</CODE> is a query to be launched from the prolog server.
+ (<CODE>jtopl:prolog_query/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5194"></A>
+<A NAME="IDX5195"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>solve_on_thread/1:</B>
+<DD><A NAME="IDX5196"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>solve_on_thread(+Query)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Runs the query on a separate thread and stores the solutions on the <CODE>query_solutions/2</CODE> data predicate.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Query</CODE> is a query to be launched from the prolog server.
+ (<CODE>jtopl:prolog_query/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5197"></A>
+<A NAME="IDX5198"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_query_id/1:</B>
+<DD><A NAME="IDX5199"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_query_id(-Id)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Produces the query id for the next query, when is invoked the threads option disabled.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:prolog_query_id(-Id)</CODE>
  (undefined property)
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX5200"></A>
+<A NAME="IDX5201"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prolog_parse/2:</B>
+<DD><A NAME="IDX5202"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_parse(+String,-Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Parses the string received as first argument and returns the prolog term as second argument. <STRONG>Important:</STRONG> This is a private predicate but could be called from java side, to parse strings to Prolog terms.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>-Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5203"></A>
+<A NAME="IDX5204"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_command/1:</B>
+<DD><A NAME="IDX5205"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_command(-Command)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reads from the input stream a new prolog server command.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Command</CODE> is a command received from the java client, to be executed by the Prolog process. The command is represented as an atom or a functor with arity 1. The command to be executed must be one of the following types: 
+<A NAME="IDX5206"></A>
+<A NAME="IDX5207"></A>
+
+<UL>
+
+<LI><CODE>prolog_launch_query(Q)</CODE> Compound term to create a new query, received as single argument of this structure. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_launch_query_on_thread(Q)</CODE> Compound term to evaluate a new query using a separate thread. A reference to the new query is returned to Java.
+
+<LI><CODE>prolog_next_solution(ID)</CODE> Compound term to get the next solution of a goal identified by the single argument of the structure. A term representing the goal instantiated with the next solution is returned to Java.
+
+<LI><CODE>prolog_terminate_query(ID)</CODE> Compound term to terminate the goal identified by the argument. If the thread option is disabled, a cut is made in the goal search tree, and the goal is removed from the goal table; if the thread option is enabled, the thread evaluating the goal is terminated.
+
+<LI><CODE>prolog_exit</CODE> Atom to terminate the current Prolog process.
+
+</UL>
+
+ (<CODE>jtopl:command/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5208"></A>
+<A NAME="IDX5209"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>write_answer/1:</B>
+<DD><A NAME="IDX5210"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_answer(+Answer)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> writes to the output socket stream the given answer.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Answer</CODE> is a response sent from the prolog server. Is represented as an atom or a functor with arity 1 or 2, depending on the functor name. 
+<A NAME="IDX5211"></A>
+<A NAME="IDX5212"></A>
+
+ (<CODE>jtopl:answer/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

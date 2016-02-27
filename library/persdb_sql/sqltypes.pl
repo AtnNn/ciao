@@ -197,7 +197,7 @@ postgrestype(text).
 postgrestype(bool).
 %% other postgres types, not contempled now: geometric, money, user-defined
 
-:- pred postgres2sqltype(PostgresType,SQLType) => postgres * sqltype
+:- pred postgres2sqltype(PostgresType,SQLType) => postgrestype * sqltype
 
 # " @var{PostgresType} is a postgres SQL type name, and @var{SQLType} is its
     equivalent SQL-type name in CIAO.".

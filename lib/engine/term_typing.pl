@@ -49,8 +49,8 @@ float(X) :- float(X).
 
 integer(X) :- integer(X).
 
-:- true prop nonvar(@T) 
-   # "@var{T} is currently a term which is not a free variable.".
+:- true prop nonvar(@X) 
+   # "@var{X} is currently a term which is not a free variable.".
 
 nonvar(X) :- nonvar(X).
 

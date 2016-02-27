@@ -1,241 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Definite clause grammars</TITLE>
+<TITLE>The Ciao Prolog System               - List processing</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_46.html">previous</A>, <A HREF="ciao_48.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_46.html">previous</A>, <A HREF="ciao_48.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC221" HREF="ciao_toc.html#TOC221">Definite clause grammars</A></H1>
+<H1><A NAME="SEC196" HREF="ciao_toc.html#TOC196">List processing</A></H1>
 <P>
-<A NAME="IDX2535"></A>
-
-
-<P>
-This library package allows the use of DCGs (Definite Clause Grammars) [Col78,PW80] in a Ciao module/program. 
+<A NAME="IDX2215"></A>
 
 
 <P>
-Definite clause grammars are an extension of the well-known context-free grammars. Prolog's grammar rules provide a convenient notation for expressing definite clause grammars. A DCG rule in Prolog takes the general form 
-
-
-
-<PRE>
-<CODE>head</CODE> --&#62; <CODE>body</CODE>.
-</PRE>
-
-<P>
-meaning "a possible form for <CODE>head</CODE> is <CODE>body</CODE>". Both <CODE>body</CODE> and <CODE>head</CODE> are sequences of one or more items linked by the standard Prolog conjunction operator <CODE>,</CODE>. 
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
-Definite clause grammars extend context-free grammars in the following ways: 
-
-
-
-<OL>
-
-<LI>A non-terminal symbol may be any Prolog term (other than a variable or number).
-
-<LI>A terminal symbol may be any Prolog term. To distinguish terminals from non-terminals, a sequence of one or more terminal symbols is written within a grammar rule as a Prolog list. An empty sequence is written as the empty list <CODE>[]</CODE>. If the terminal symbols are ASCII character codes, such lists can be written (as elsewhere) as strings. An empty sequence is written as the empty list, <CODE>[]</CODE> or <CODE>""</CODE>.
-
-<LI>Extra conditions, in the form of Prolog procedure calls, may be included in the right-hand side of a grammar rule. Such procedure calls are written enclosed in <CODE>{}</CODE> brackets.
-
-<LI>The left-hand side of a grammar rule consists of a non-terminal, optionally followed by a sequence of terminals (again written as a Prolog list).
-
-<LI>Alternatives may be stated explicitly in the right-hand side of a grammar rule, using the disjunction operator <CODE>;</CODE> or <CODE>|</CODE> as in Prolog.
-
-<LI>The cut symbol may be included in the right-hand side of a grammar rule, as in a Prolog clause. The cut symbol does not need to be enclosed in <CODE>{}</CODE> brackets.
-
-</OL>
-
-<P>
-As an example, here is a simple grammar which parses an arithmetic expression (made up of digits and operators) and computes its value. 
-
-
-
-<PRE>
-expr(Z) --&#62; term(X), "+", expr(Y), {Z is X + Y}.
-expr(Z) --&#62; term(X), "-", expr(Y), {Z is X - Y}.
-expr(X) --&#62; term(X).
-
-term(Z) --&#62; number(X), "*", term(Y), {Z is X * Y}.
-term(Z) --&#62; number(X), "/", term(Y), {Z is X / Y}.
-term(Z) --&#62; number(Z).
-
-number(C) --&#62; "+", number(C).
-number(C) --&#62; "-", number(X), {C is -X}.
-number(X) --&#62; [C], {"0"=&#60;C, C=&#60;"9", X is C - "0"}.
-</PRE>
-
-<P>
-In the last rule, <CODE>C</CODE> is the ASCII code of some digit. 
+<STRONG>Version of last change:</STRONG> 1.5#41 (2000/2/4, 13:34:24 CET)
 
 
 <P>
-The query 
+This module provides a set of predicates for list processing.
 
-
-
-<PRE>
-| ?- expr(Z, "-2+3*5+1", []).
-</PRE>
-
-<P>
-will compute <CODE>Z</CODE>=14. The two extra arguments are explained below. 
-
-
-<P>
-Now, in fact, grammar rules are merely a convenient "syntactic sugar" for ordinary Prolog clauses. Each grammar rule takes an input string, analyses some initial portion, and produces the remaining portion (possibly enlarged) as output for further analysis. The arguments required for the input and output strings are not written explicitly in a grammar rule, but the syntax implicitly defines them. We now show how to translate grammar rules into ordinary clauses by making explicit the extra arguments. 
-
-
-<P>
-A rule such as 
-
-
-
-<PRE>
-p(X) --&#62; q(X).
-</PRE>
-
-<P>
-translates into 
-
-
-
-<PRE>
-p(X, S0, S) :- q(X, S0, S).
-</PRE>
-
-<P>
-If there is more than one non-terminal on the right-hand side, as in 
-
-
-
-<PRE>
-p(X, Y) --&#62; 
-        q(X), 
-        r(X, Y),
-        s(Y).
-</PRE>
-
-<P>
-then corresponding input and output arguments are identified, as in 
-
-
-
-<PRE>
-p(X, Y, S0, S) :- 
-        q(X, S0, S1), 
-        r(X, Y, S1, S2), 
-        r(Y, S2, S).
-</PRE>
-
-<P>
-Terminals are translated using the built-in predicate <CODE>term_basic:'C'/3</CODE> (this predicate is not normally useful in itself; it has been given the name <CODE>'C'</CODE> simply to avoid using up a more useful name). Then, for instance 
-
-
-
-<PRE>
-p(X) --&#62; [go,to], q(X), [stop].
-</PRE>
-
-<P>
-is translated by 
-
-
-
-<PRE>
-p(X, S0, S) :-
-        'C'(S0, go, S1), 
-        'C'(S1, to, S2), 
-        q(X, S2, S3), 
-        'C'(S3, stop, S).
-</PRE>
-
-<P>
-Extra conditions expressed as explicit procedure calls naturally translate as themselves, e.g. 
-
-
-
-<PRE>
-p(X) --&#62; [X], {integer(X), X&#62;0}, q(X).
-</PRE>
-
-<P>
-translates to 
-
-
-
-<PRE>
-p(X, S0, S) :- 
-        'C'(S0, X, S1), 
-        integer(X), 
-        X&#62;0, 
-        q(X, S1, S).
-</PRE>
-
-<P>
-Similarly, a cut is translated literally. 
-
-
-<P>
-Terminals on the left-hand side of a rule translate into an explicit list in the output argument of the main non-terminal, e.g. 
-
-
-
-<PRE>
-is(N), [not] --&#62; [aint].
-</PRE>
-
-<P>
-becomes 
-
-
-
-<PRE>
-is(N, S0, [not|S]) :- 'C'(S0, aint, S).
-</PRE>
-
-<P>
-Disjunction has a fairly obvious translation, e.g. 
-
-
-
-<PRE>
-args(X, Y) --&#62; 
-        (   dir(X), [to], indir(Y)
-        ;   indir(Y), dir(X)
-        ).
-</PRE>
-
-<P>
-translates to 
-
-
-
-<PRE>
-args(X, Y, S0, S) :-
-        (   dir(X, S0, S1), 
-            'C'(S1, to, S2), 
-            indir(Y, S2, S)
-        ;   indir(Y, S0, S1), 
-            dir(X, S1, S)
-        ).
-</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_47.html#SEC222">Usage and interface (dcg)</A>
+<LI><A HREF="ciao_47.html#SEC197">Usage and interface (lists)</A>
+<LI><A HREF="ciao_47.html#SEC198">Documentation on exports (lists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC222" HREF="ciao_toc.html#TOC222">Usage and interface (<CODE>dcg</CODE>)</A></H2>
+<H2><A NAME="SEC197" HREF="ciao_toc.html#TOC197">Usage and interface (<CODE>lists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -243,16 +43,764 @@ args(X, Y, S0, S) :-
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(dcg).</CODE>
+<CODE>:- use_module(library(lists)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[dcg]).</CODE>
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX2216"></A>
+<CODE>nonsingle/1</CODE>, 
+<A NAME="IDX2217"></A>
+<CODE>append/3</CODE>, 
+<A NAME="IDX2218"></A>
+<CODE>reverse/2</CODE>, 
+<A NAME="IDX2219"></A>
+<CODE>reverse/3</CODE>, 
+<A NAME="IDX2220"></A>
+<CODE>delete/3</CODE>, 
+<A NAME="IDX2221"></A>
+<CODE>select/3</CODE>, 
+<A NAME="IDX2222"></A>
+<CODE>length/2</CODE>, 
+<A NAME="IDX2223"></A>
+<CODE>nth/3</CODE>, 
+<A NAME="IDX2224"></A>
+<CODE>add_after/4</CODE>, 
+<A NAME="IDX2225"></A>
+<CODE>add_before/4</CODE>, 
+<A NAME="IDX2226"></A>
+<CODE>dlist/3</CODE>, 
+<A NAME="IDX2227"></A>
+<CODE>list_concat/2</CODE>, 
+<A NAME="IDX2228"></A>
+<CODE>list_insert/2</CODE>, 
+<A NAME="IDX2229"></A>
+<CODE>insert_last/3</CODE>, 
+<A NAME="IDX2230"></A>
+<CODE>contains_ro/2</CODE>, 
+<A NAME="IDX2231"></A>
+<CODE>contains1/2</CODE>, 
+<A NAME="IDX2232"></A>
+<CODE>nocontainsx/2</CODE>, 
+<A NAME="IDX2233"></A>
+<CODE>last/2</CODE>, 
+<A NAME="IDX2234"></A>
+<CODE>list_lookup/3</CODE>, 
+<A NAME="IDX2235"></A>
+<CODE>list_lookup/4</CODE>, 
+<A NAME="IDX2236"></A>
+<CODE>intset_insert/3</CODE>, 
+<A NAME="IDX2237"></A>
+<CODE>intset_delete/3</CODE>, 
+<A NAME="IDX2238"></A>
+<CODE>intset_in/2</CODE>, 
+<A NAME="IDX2239"></A>
+<CODE>intset_sequence/3</CODE>, 
+<A NAME="IDX2240"></A>
+<CODE>intersection/3</CODE>, 
+<A NAME="IDX2241"></A>
+<CODE>union/3</CODE>, 
+<A NAME="IDX2242"></A>
+<CODE>difference/3</CODE>, 
+<A NAME="IDX2243"></A>
+<CODE>equal_lists/2</CODE>, 
+<A NAME="IDX2244"></A>
+<CODE>list_to_list_of_lists/2</CODE>, 
+<A NAME="IDX2245"></A>
+<CODE>powerset/2</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX2246"></A>
+<CODE>list1/2</CODE>, 
+<A NAME="IDX2247"></A>
+<CODE>sublist/2</CODE>, 
+<A NAME="IDX2248"></A>
+<CODE>subordlist/2</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC198" HREF="ciao_toc.html#TOC198">Documentation on exports (<CODE>lists</CODE>)</A></H2>
+<P>
+<A NAME="IDX2249"></A>
+<A NAME="IDX2250"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nonsingle/1:</B>
+<DD><A NAME="IDX2251"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nonsingle(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is not a singleton.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2252"></A>
+<A NAME="IDX2253"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>append/3:</B>
+<DD><A NAME="IDX2254"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>append(Xs,Ys,Zs)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Zs</CODE> is <CODE>Ys</CODE> appended to <CODE>Xs</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2255"></A>
+<A NAME="IDX2256"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>reverse/2:</B>
+<DD><A NAME="IDX2257"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>reverse(Xs,Ys)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reverses the order of elements in <CODE>Xs</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Xs</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>Ys</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Xs</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>Ys</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2258"></A>
+<A NAME="IDX2259"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>reverse/3:</B>
+<DD><A NAME="IDX2260"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2261"></A>
+<A NAME="IDX2262"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
+<DD><A NAME="IDX2263"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>delete(L1,E,L2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>L2</CODE> is <CODE>L1</CODE> without the ocurrences of <CODE>E</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2264"></A>
+<A NAME="IDX2265"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>select/3:</B>
+<DD><A NAME="IDX2266"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>select(X,Xs,Ys)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Xs</CODE> and <CODE>Ys</CODE> have the same elements except for one occurrence of <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2267"></A>
+<A NAME="IDX2268"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>length/2:</B>
+<DD><A NAME="IDX2269"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>length(L,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Computes the length of <CODE>L</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>L</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>N</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>L</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>N</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>length(L,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Outputs <CODE>L</CODE> of length <CODE>N</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>L</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>N</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>L</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>N</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 3:</STRONG> <CODE>length(L,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Checks that <CODE>L</CODE> is of length <CODE>N</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>L</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>N</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>L</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>N</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2270"></A>
+<A NAME="IDX2271"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nth/3:</B>
+<DD><A NAME="IDX2272"></A>
+
+
+<P>
+<CODE>nth(N,List,Elem)</CODE>
+
+
+<P>
+<CODE>N</CODE> is the position in <CODE>List</CODE> of <CODE>Elem</CODE>. <CODE>N</CODE> counts from one.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>nth(+int,?list,?term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Elem</CODE> and the <CODE>N</CODE>th element of <CODE>List</CODE>.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>nth(-int,?list,?term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Finds the positions where <CODE>Elem</CODE> is in <CODE>List</CODE>. Positions are found in ascending order.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2273"></A>
+<A NAME="IDX2274"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
+<DD><A NAME="IDX2275"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_after(+L0,+E0,+E,-L)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after element <CODE>E0</CODE> (or at end) to list <CODE>L0</CODE> returning in <CODE>L</CODE> the new list (uses term comparison).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2276"></A>
+<A NAME="IDX2277"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
+<DD><A NAME="IDX2278"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2279"></A>
+<A NAME="IDX2280"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>list1/2:</B>
+<DD><A NAME="IDX2281"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>list1(?,pred(1))</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list1(X,Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a list of <CODE>Y</CODE>s of at least one element.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2282"></A>
+<A NAME="IDX2283"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dlist/3:</B>
+<DD><A NAME="IDX2284"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlist(List,DList,Tail)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> is the result of removing <CODE>Tail</CODE> from the end of <CODE>DList</CODE> (makes a difference list from a list).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2285"></A>
+<A NAME="IDX2286"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_concat/2:</B>
+<DD><A NAME="IDX2287"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list_concat(LL,L)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>L</CODE> is the concatenation of all the lists in <CODE>LL</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>LL</CODE> is a list of <CODE>list</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>L</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2288"></A>
+<A NAME="IDX2289"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
+<DD><A NAME="IDX2290"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list_insert(-List,+Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of <CODE>List</CODE> if there is no element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2291"></A>
+<A NAME="IDX2292"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>insert_last/3:</B>
+<DD><A NAME="IDX2293"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>insert_last(+L0,+E,-L)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> at end of list <CODE>L0</CODE> returning <CODE>L</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2294"></A>
+<A NAME="IDX2295"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>contains_ro/2:</B>
+<DD><A NAME="IDX2296"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Impure membership (does not instantiate a variable in its first argument.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2297"></A>
+<A NAME="IDX2298"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>contains1/2:</B>
+<DD><A NAME="IDX2299"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2300"></A>
+<A NAME="IDX2301"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nocontainsx/2:</B>
+<DD><A NAME="IDX2302"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nocontainsx(L,X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is not identical to any element of <CODE>L</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2303"></A>
+<A NAME="IDX2304"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>last/2:</B>
+<DD><A NAME="IDX2305"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>last(L,X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> X is the last element of L.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2306"></A>
+<A NAME="IDX2307"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_lookup/3:</B>
+<DD><A NAME="IDX2308"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2309"></A>
+<A NAME="IDX2310"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_lookup/4:</B>
+<DD><A NAME="IDX2311"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list_lookup(List,Functor,Key,Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Look up <CODE>Functor</CODE>(<CODE>Key</CODE>,<CODE>Value</CODE>) pair in variable ended key-value pair list <CODE>L</CODE> or else add it at the end.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2312"></A>
+<A NAME="IDX2313"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>intset_insert/3:</B>
+<DD><A NAME="IDX2314"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2315"></A>
+<A NAME="IDX2316"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>intset_delete/3:</B>
+<DD><A NAME="IDX2317"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2318"></A>
+<A NAME="IDX2319"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>intset_in/2:</B>
+<DD><A NAME="IDX2320"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2321"></A>
+<A NAME="IDX2322"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>intset_sequence/3:</B>
+<DD><A NAME="IDX2323"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2324"></A>
+<A NAME="IDX2325"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>intersection/3:</B>
+<DD><A NAME="IDX2326"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>intersection(+List1,+List2,-List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are both in <CODE>List1</CODE> and <CODE>List2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2327"></A>
+<A NAME="IDX2328"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>union/3:</B>
+<DD><A NAME="IDX2329"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>union(+List1,+List2,-List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> followed by the elements which are in <CODE>List2</CODE> but not in <CODE>List1</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2330"></A>
+<A NAME="IDX2331"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>difference/3:</B>
+<DD><A NAME="IDX2332"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>difference(+List1,+List2,-List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but not in <CODE>List2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2333"></A>
+<A NAME="IDX2334"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>sublist/2:</B>
+<DD><A NAME="IDX2335"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sublist(List1,List2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List2</CODE> contains all the elements of <CODE>List1</CODE>.
+
+<LI><EM>If the following properties should hold at call time:</EM>
+
+<CODE>List2</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2336"></A>
+<A NAME="IDX2337"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>subordlist/2:</B>
+<DD><A NAME="IDX2338"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>subordlist(List1,List2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List2</CODE> contains all the elements of <CODE>List1</CODE> in the same order.
+
+<LI><EM>If the following properties should hold at call time:</EM>
+
+<CODE>List2</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2339"></A>
+<A NAME="IDX2340"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>equal_lists/2:</B>
+<DD><A NAME="IDX2341"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>equal_lists(+List1,+List2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List1</CODE> has all the elements of <CODE>List2</CODE>, and vice versa.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2342"></A>
+<A NAME="IDX2343"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_to_list_of_lists/2:</B>
+<DD><A NAME="IDX2344"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list_to_list_of_lists(+List,-LList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>LList</CODE> is the list of one element lists with elements of <CODE>List</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2345"></A>
+<A NAME="IDX2346"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>powerset/2:</B>
+<DD><A NAME="IDX2347"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>powerset(+List,-LList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>LList</CODE> is the powerset of <CODE>List</CODE>, i.e., the list of all lists which have elements of <CODE>List</CODE>. If <CODE>List</CODE> is ordered, <CODE>LList</CODE> and all its elements are ordered.
+
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_46.html">previous</A>, <A HREF="ciao_48.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_46.html">previous</A>, <A HREF="ciao_48.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

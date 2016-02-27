@@ -2,6 +2,7 @@
 	[build_foreign_interface/1,
 	 rebuild_foreign_interface/1,
 	 build_foreign_interface_explicit_decls/2,
+	 rebuild_foreign_interface_explicit_decls/2,
 	 build_foreign_interface_object/1,
 	 rebuild_foreign_interface_object/1,
 	 do_interface/1
@@ -43,20 +44,41 @@
 
 % --------------------------------------------------------------------------- %
 
+:- pred build_foreign_interface(in(File)) :: sourcename
+ # "Reads assertions from @var{File}, generates the gluecode for the Ciao
+    Prolog interface, compiles the foreign files and the gluecode file, and
+    links everything in a shared object. Checks modification times to
+    determine automatically which files must be generated/compiled/linked.".
 build_foreign_interface(File) :-
 	get_decls(File, Decls),
 	build_foreign_interface_explicit_decls(File, Decls).
 
 % --------------------------------------------------------------------------- %
 
+:- pred build_foreign_interface(in(File)) :: sourcename
+ # "Like @pred{build_foreign_interface/1}, but it does not check the 
+    modification time of any file.".
 rebuild_foreign_interface(File) :-
 	get_decls(File, Decls), 
 	build_foreign_interface_explicit_decls_2(yes, File, Decls).
 
 % --------------------------------------------------------------------------- %
 
+:- pred build_foreign_interface_explicit_decls(in(File),in(Decls)) ::
+	sourcename * list(term)
+ # "Like @pred{build_foreign_interface/1}, but use declarations in @var{Decls}
+    instead of reading the declarations from @var{File}.".
 build_foreign_interface_explicit_decls(File, Decls) :-
 	build_foreign_interface_explicit_decls_2(no, File, Decls).
+
+% --------------------------------------------------------------------------- %
+
+:- pred rebuild_foreign_interface_explicit_decls(in(File),in(Decls)) ::
+	sourcename * list(term)
+ # "Like @pred{build_foreign_interface_explicit_decls/1}, but it does not
+    check the modification time of any file.".
+rebuild_foreign_interface_explicit_decls(File, Decls) :-
+	build_foreign_interface_explicit_decls_2(yes, File, Decls).
 
 % --------------------------------------------------------------------------- %
 
@@ -69,6 +91,10 @@ build_foreign_interface_explicit_decls_2(Rebuild, File, Decls) :-
 	).
 
 % -----------------------------------------------------------------------------
+
+:- pred do_interface(in(Decls)) :: list(term) # "Given the declarations in
+	@var{Decls}, this predicate succeeds if these declarations involve
+        the creation of the foreign interface".
 
 do_interface(Decls) :-
 	contains1(Decls, use_foreign_library(_)),  !.
@@ -190,7 +216,7 @@ read_foreign_predicates(PrologFile, _) :-
 	    check_all_arguments(Loc, PredName, Arguments, CP), 
 	    check_all_arguments(Loc, PredName, Arguments, AP), 
 	    get_returns(Loc, PredName, CP, GP, Arguments, VarNames, Res), 
-	    check_byte_list_correctness(Loc, PredName, DP, GP, Arguments, VarNames), 
+	    check_list_correctness(Loc, PredName, DP, GP, Arguments, VarNames),
 	    check_do_not_free_correctness(Loc, PredName, GP, Arguments), 
 	    check_status(Loc, PredName, Status), 
 						% Fill the predicate's description structure.
@@ -315,11 +341,7 @@ returns_in_output_arg(Loc, PredName, _, VarNames, Argument) :-
         set_fact(foreign_predicate_error), 
 	fail.		      
 
-check_byte_list_correctness(Loc, PredName, DP, GP, Arguments, VarNames) :-
-	one_byte_list_for_each_size_of(Loc, PredName, DP, GP, Arguments), 
-	one_size_of_for_each_byte_list(Loc, PredName, DP, GP, VarNames).
-
-one_byte_list_for_each_size_of(Loc, PredName, DP, GP, Arguments) :-
+one_list_for_each_size_of(Loc, PredName, DP, GP, Arguments) :-
 	member(size_of(_, ListVar, SizeVar), GP), 
 	\+ valid_size_of_property(Arguments, ListVar, SizeVar, DP), 
 	!, 
@@ -327,12 +349,20 @@ one_byte_list_for_each_size_of(Loc, PredName, DP, GP, Arguments) :-
 	              [PredName]), 
         set_fact(foreign_predicate_error), 
         fail.
-one_byte_list_for_each_size_of(_, _, _, _, _).
+one_list_for_each_size_of(_, _, _, _, _).
+
+check_list_correctness(Loc, PredName, DP, GP, Arguments, VarNames) :-
+	one_list_for_each_size_of(Loc, PredName, DP, GP, Arguments), 
+	one_size_of_for_each_int_list(Loc, PredName, DP, GP, VarNames),
+	one_size_of_for_each_byte_list(Loc, PredName, DP, GP, VarNames).
 
 valid_size_of_property(Arguments, ListVar, SizeVar, DP) :-
 	\+ nocontainsx(Arguments, ListVar), 
 	\+ nocontainsx(Arguments, SizeVar), 
-	\+ nocontainsx(DP, byte_list(ListVar)), 
+	( \+ nocontainsx(DP, byte_list(ListVar)) ->
+	    true
+	; \+ nocontainsx(DP, int_list(ListVar))
+	),
 	\+ nocontainsx(DP, int(SizeVar)).
 
 one_size_of_for_each_byte_list(Loc, PredName, DP, GP, VarNames) :-
@@ -346,6 +376,18 @@ one_size_of_for_each_byte_list(Loc, PredName, DP, GP, VarNames) :-
         set_fact(foreign_predicate_error), 
 	fail.
 one_size_of_for_each_byte_list(_, _, _, _, _).
+
+one_size_of_for_each_int_list(Loc, PredName, DP, GP, VarNames) :-
+	member(int_list(ListVar), DP), 
+	findall(Y, (member(size_of(_, Y, _), GP), Y==ListVar), S), 
+	nonsingle(S), 
+	!, 
+	var_name(ListVar, VarNames, VarName), 
+	error_message(Loc, "variable ~w in predicate ~w needs a (only one) " ||
+		      "size_of/3 property", [VarName, PredName]), 
+        set_fact(foreign_predicate_error), 
+	fail.
+one_size_of_for_each_int_list(_, _, _, _, _).
 
 var_name(Var, VarNames, Name) :-
 	findall(N, (member(N=X, VarNames), X==Var), [Name]).
@@ -429,6 +471,7 @@ type(atm, pointer(char), '', 'GET_CSTRING_FROM_ATOM', 'MAKE_ATOM', 'FREE').
 type(string, pointer(char), 'STRING_TEST', 'GET_CSTRING_FROM_LIST', 'MAKE_STRING', 
      'FREE').
 type(byte_list, pointer(char), 'BYTES_TEST', 'GET_BYTES', 'MakeList', 'FREE').
+type(int_list, pointer(int), 'INTS_TEST', 'GET_INTS', 'MakeIntList', 'FREE').
 type(address, pointer(void), 'GET_ADDRESS', '', 'MakeAddress', '').
 
 % -----------------------------------------------------------------------------
@@ -512,14 +555,15 @@ interface_function_body(ForeignName, InVars, OutVars, SizeLinks, CallArgs, ResVa
 	c2pl_compound_conversions(OutVars, SizeLinks), 
 	freeings(InVars, NoFreeVars), 
 	freeings(OutVars, NoFreeVars), 
-	bindings(OutVars).
+	bindings(OutVars),
+	[ return('TRUE') ].
 
 % -----------------------------------------------------------------------------
 
 ctype(In, _, in(N), CType) :- !, 
 	contains1(In, arg_type(Type, N)), 
 	type(Type, CType, _, _, _, _).
-ctype(_, Out, out(N), CType) :-
+ctype(_, Out, out(N), pointer(CType)) :-
 	contains1(Out, arg_type(Type, N)), 
 	type(Type, CType, _, _, _, _).
 
@@ -546,7 +590,7 @@ pl2c_conversions([arg_type(PType, N)|Vs], Phase) -->
 	    type(PType, _, Pl2c, _, _, _)
 	; type(PType, _, _, Pl2c, _, _)
 	}, 
-	( { (PType = byte_list ; Pl2c = '') } ->
+	( { (PType = byte_list ; PType = int_list ; Pl2c = '') } ->
 	    { true }
 	; { XN = call('X', [0]) },
 	  [call('DEREF', [XN, XN]),
@@ -563,10 +607,10 @@ pl2c_compound_conversions([arg_type(PType, N)|Vs],
 	    type(PType, _, Pl2c, _, _, _)
 	; type(PType, _, _, Pl2c, _, _)
 	}, 
-	( { PType = byte_list, Pl2c \== '' } ->
-	    { contains1(SizeLinks, size_of(N, M)) },
-	    [call(Pl2c, [N, identifier("v~d", [N]), identifier("v~d", [M])])]
-	; { true }
+	( { (PType \== byte_list, PType \== int_list ) ; Pl2c = '' } ->
+	    { true }
+	; { contains1(SizeLinks, size_of(N, M)) },
+	  [call(Pl2c, [N, identifier("v~d", [N]), identifier("v~d", [M])])]
 	), 
 	pl2c_compound_conversions(Vs, SizeLinks, Phase).
 
@@ -574,7 +618,7 @@ pl2c_compound_conversions([arg_type(PType, N)|Vs],
 
 c2pl_conversions([]) --> !.
 c2pl_conversions([arg_type(PType, N)|Vs]) -->
-	( { PType = byte_list } ->
+	( { PType = byte_list ; PType = int_list } ->
 	    { true }
 	; { type(PType, _, _, _, C2pl, _) },  
 	  [identifier("p~d", [N])=call(C2pl, ['Arg', identifier("v~d", [N])])]
@@ -585,7 +629,7 @@ c2pl_conversions([arg_type(PType, N)|Vs]) -->
 
 c2pl_compound_conversions([], _) --> !.
 c2pl_compound_conversions([arg_type(PType, N)|Vs], SizeLinks) -->
-	( { PType = byte_list } ->
+	( { PType = byte_list ; PType = int_list } ->
 	    { type(PType, _, _, _, C2pl, _), 
 	      contains1(SizeLinks, size_of(N, M)) },
 	    [identifier("p~d", [N])=call(C2pl, ['Arg', identifier("v~d", [N]), identifier("v~d", [M])])]
@@ -792,13 +836,25 @@ separate_with_blanks([A, B|Cs], [A, ' '|Ds]) :-
 
 % -----------------------------------------------------------------------------
 
+:- pred build_foreign_interface_object(in(File)) ::
+	sourcename
+ # "Compiles the gluecode file with the foreign source files producing an
+    unique object file.".
+
 build_foreign_interface_object(File) :-
 	build_foreign_interface_object_2(no,  File).
 
 % -----------------------------------------------------------------------------
 
+:- pred rebuild_foreign_interface_object(in(File)) ::
+	sourcename
+ # "Compiles (again) the gluecode file with the foreign source files
+    producing an unique object file.".
+
 rebuild_foreign_interface_object(File) :-
 	build_foreign_interface_object_2(yes,  File).
+
+% -----------------------------------------------------------------------------
 
 build_foreign_interface_object_2(Rebuild, File) :-
 	get_decls(File, Decls), 

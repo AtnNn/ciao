@@ -1,22 +1,21 @@
-%%--------------------------------------------%%
-%% class/1, at the beginning of the file,     %%
-%% will declare current source to be a class. %%
-%%--------------------------------------------%%
+%%----------------------------------------------%%
+%% A class for stacks.                          %%
+%%----------------------------------------------%%
 
+%% Class declaration: the current source defines a class.
 :- class(stack,[],[]).
 
-% State declaration: storage/1 will be an attribute.
+% State declaration: storage/1 is an attribute.
 :- dynamic storage/1.
 
 % Interface declaration: the following predicates will
 % be available at run-time.
-
 :- export(push/1).
 :- export(pop/1).
 :- export(top/1).
 :- export(is_empty/0).
 
-% Code 
+% Methods
 
 push(Item) :-
 	nonvar(Item), 
@@ -27,15 +26,8 @@ pop(Item) :-
 	retract_fact(storage(Item)).
 
 top(Top) :-
-	storage(Top),
-	!.
+	storage(Top), !.
 
 is_empty :-
-	storage(_),
-	!,
-	fail.
-
+	storage(_), !, fail.
 is_empty.
-
-:- comment(version_maintenance,off).
-

@@ -12,7 +12,8 @@
 			printdepth/1,
 			get_attributed_vars/3,
 			print_attributes/2,
-			debugging_options/1
+			debugging_options/1,
+			functor_spec/5
 		       ],
 		       [assertions]).
 
@@ -28,6 +29,7 @@
 :- comment(hide, debugging_options/1).
 :- comment(hide, spy1/1).
 :- comment(hide, nospy1/1).
+:- comment(hide, functor_spec/5).
 
 % :- multifile define_flag/3.
 % 
@@ -249,7 +251,7 @@ parse_functor_spec(S, GoalArg, Goal) :-
 	(   functor_spec(S, Name, Low, High, M),
             current_fact(debug_mod(M,Mc)),
             atom_concat(Mc, Name, PredName),
-	    current_predicate(PredName, GoalArg),
+	    current_predicate(PredName, GoalArg), % don't work
 	    functor(GoalArg, _, N),
 	    N >= Low, N =< High,
 	    '$setarg'(1, Flag, 1, true),

@@ -7,17 +7,20 @@ include $(SRC)/makefile-sysindep
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 SRCNAME=$(MODULE).c
-OBJNAME=$(MODULE)_$(CIAOARCH).o
-LIBNAME=$(MODULE)_$(CIAOARCH).so
+OBJNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).o
+LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).so
 HEADERS=common_headers.h
+
+all:
+	$(SETLOCALCOMPILER) $(CIAOC) -x -c $(MODULE)
 
 $(LIBNAME): $(HEADERS) $(OBJNAME) 
 	$(LD) $(LDSHARED) -o $(LIBNAME) $(OBJNAME) $(REQLIBS)
 
-$(OBJNAME): headers $(SRCNAME)
+$(OBJNAME): $(HEADERS) $(SRCNAME)
 	$(CC) $(CFLAGS) $(CCSHARED) -c $(SRCNAME) -o $(OBJNAME)
 
-headers:
+$(HEADERS):
 	/bin/rm -f  $(HEADERS)
 	echo \#include \"$(SRC)/bin/$(CIAOARCH)/datadefs.h\" > $(HEADERS)
 	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support.h\" >> $(HEADERS)
@@ -29,4 +32,4 @@ realclean: clean
 	/bin/rm -f $(LIBNAME) $(HEADERS)
 
 distclean:
-	/bin/rm -f $(HEADERS) $(MODULE)_*
+	/bin/rm -f $(HEADERS) $(MODULE)_* *~ *.itf *.po *.asr

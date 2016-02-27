@@ -11,15 +11,11 @@
 
 :- use_module(engine(internals)).
 
-%% FOR TEMPORARILY PARTIALLY DOCUMENTING:
-:- use_module(library('assertions/doc_props')).
-
 :- comment(title,"Term input").  
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
-:- pred read(+Stream,?Term)
-+ doc_incomplete
+:- pred read(+Stream,?Term) + iso
 # "The next term, delimited by a full-stop (i.e., a @tt{.} followed by
    either a space or a control character), is read from @var{Stream}
    and is unified with @var{Term}. The syntax of the term must agree
@@ -33,15 +29,21 @@ read(Stream, X) :-
         current_input(CurIn),
         read_internal(X, Stream, CurIn, _, _, _, read/2).
 
-:- comment(read(Term),"Like @tt{read(Stream,Term)} with @var{Stream}
-        associated to the current standard input.").
+:- comment(read(Term), "Like @tt{read(Stream,Term)} with @var{Stream}
+        associated to the current input stream.").
+
+:- pred read(?Term) + iso.
 
 read(X) :-
         current_input(Stream),
         read_internal(X, Stream, Stream, _, _, _, read/1).
 
+:- pred read_term(+Stream,?Term,+Options) + iso.
+
 read_term(Stream, X, Options) :-
         read_term_aux(Options, Stream, 3, X).
+
+:- pred read_term(?Term,+Options) + iso.
 
 read_term(X, Options) :-
         current_input(Stream),

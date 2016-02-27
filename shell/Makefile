@@ -13,12 +13,16 @@ include ../makefile-sysindep
 TOPLEVELSHELL = ciaosh
 # Used to execute prolog scripts
 SCRIPTSHELL = ciao-shell
+# To generate asr files
+ASRGEN=gen_asr
 
 # The ciao compiler (ciaoc) takes cares of the dependencies itself. 
 
 all:
 	$(SETLOCALCOMPILER) $(CIAOC) -x $(TOPLEVELSHELL)
 	$(SETLOCALCOMPILER) $(CIAOC) -x -s $(SCRIPTSHELL)
+	$(SETLOCALCOMPILER) $(CIAOC) -s -x $(ASRGEN)
+	rm $(ASRGEN)
 
 install:
 	-mkdir -p $(BINDIR)
@@ -40,7 +44,7 @@ uninstall:
 cleanbackups:
 	/bin/rm -rf *.~
 cleantmpfiles:
-	/bin/rm -rf *.itf *.dep *.po
+	/bin/rm -rf *.itf *.dep *.po *.asr
 cleanexecs: 
 	/bin/rm -rf $(TOPLEVELSHELL) $(SCRIPTSHELL)
 distclean: cleanexecs cleantmpfiles

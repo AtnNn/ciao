@@ -1,37 +1,47 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - http (library)</TITLE>
+<TITLE>The Ciao Prolog System               - HTTP conectivity</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC433" HREF="ciao_toc.html#TOC433">http (library)</A></H1>
+<H1><A NAME="SEC414" HREF="ciao_toc.html#TOC414">HTTP conectivity</A></H1>
 <P>
-<A NAME="IDX4755"></A>
+<A NAME="IDX4494"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#128 (2000/5/2, 18:4:14 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
 <STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
 
 
+<P>
+This module implements the 
+<A NAME="IDX4495"></A>
+HTTP protocol, which allows retrieving data from HTTP servers.
+
+
 
 <UL>
-<LI><A HREF="ciao_111.html#SEC434">Usage and interface (http)</A>
-<LI><A HREF="ciao_111.html#SEC435">Documentation on exports (http)</A>
+<LI><A HREF="ciao_111.html#SEC415">Usage and interface (http)</A>
+<LI><A HREF="ciao_111.html#SEC416">Documentation on exports (http)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC434" HREF="ciao_toc.html#TOC434">Usage and interface (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC415" HREF="ciao_toc.html#TOC415">Usage and interface (<CODE>http</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +58,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4756"></A>
+<A NAME="IDX4496"></A>
 <CODE>fetch_url/3</CODE>.
 
 </UL>
@@ -60,16 +70,16 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4757"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX4758"></A>
+<A NAME="IDX4497"></A>
 <CODE>strings</CODE>, 
-<A NAME="IDX4759"></A>
+<A NAME="IDX4498"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX4760"></A>
-<CODE>file_utils</CODE>, 
-<A NAME="IDX4761"></A>
-<CODE>pillow/common</CODE>.
+<A NAME="IDX4499"></A>
+<CODE>pillow/pillow_aux</CODE>, 
+<A NAME="IDX4500"></A>
+<CODE>pillow/pillow_types</CODE>, 
+<A NAME="IDX4501"></A>
+<CODE>pillow/http_ll</CODE>.
 
 </UL>
 
@@ -79,22 +89,43 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>,
 
 
 
-<H2><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Documentation on exports (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Documentation on exports (<CODE>http</CODE>)</A></H2>
 <P>
-<A NAME="IDX4762"></A>
-<A NAME="IDX4763"></A>
+<A NAME="IDX4502"></A>
+<A NAME="IDX4503"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
-<DD><A NAME="IDX4764"></A>
+<DD><A NAME="IDX4504"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>fetch_url(URL,Request,Response)</CODE>
 
+
+<P>
+Fetches the document pointed to by <CODE>URL</CODE> from Internet, using request parameters <CODE>Request</CODE>, and unifies <CODE>Response</CODE> with the parameters of the response. Fails on timeout. Note that redirections are not handled automatically, that is, if <CODE>Response</CODE> contains terms of the form <CODE>status(redirection,301,_)</CODE> and <CODE>location(NewURL)</CODE>, the program should in most cases access location <CODE>NewURL</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fetch_url(URL,Request,Response)</CODE>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>URL</CODE> specifies a URL.
+ (<CODE>pillow_types:url_term/1</CODE>)
+
+<CODE>Request</CODE> is a list of <CODE>http_request_param</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Response</CODE> is a list of <CODE>http_response_param</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,4 +1,6 @@
 :- use_package([assertions,regtypes]).
+:- comment(nodoc,assertions).
+:- comment(nodoc,regtypes).
 
 :- comment(use_foreign_source(Files),"@var{Files} is the (list of) foreign
 	file(s) that will be linked with the glue-code file."). 
@@ -46,6 +48,11 @@ byte(Byte) :- int(Byte).
  # "@var{List} is a list of bytes.".
 
 byte_list(List) :- list(List,byte).
+
+:- regtype int_list(List)
+ # "@var{List} is a list of integers.".
+
+int_list(List) :- list(List,int).
 
 
 :- prop size_of(Name,ListVar,SizeVar)
@@ -98,13 +105,15 @@ native(_,_).
 
 
 
+:- comment(version_maintenance,dir('../../version/')).
 
 
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
 
-
-
-
-
-
-
+:- comment(version(1*5+137,2000/05/10,11:29*26+'CEST'), "Added
+   int_list as external type.  (jfran)").
 

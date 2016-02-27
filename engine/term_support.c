@@ -256,9 +256,9 @@ static BOOL c_term(Arg,t,Xreg,FreeReg, x_variables, trail_origo,
 {
   INSN *psave;
   TAGGED *ssave;
-  int i, ar, decr, Treg;
+  int i, ar = ~0, decr, Treg;
   REGISTER INSN *P = *current_insn;
-  REGISTER TAGGED *s;
+  REGISTER TAGGED *s = NULL;
   REGISTER TAGGED t1;
 
   /* 1:  Emit GET instruction for term's principal functor. */
@@ -513,6 +513,13 @@ BOOL compile_term(Arg, new_worker)
   RefCar(head,X(0));
   RefCdr(body,X(0));
 
+  /*
+#if defined(DEBUG)
+  display_term(Arg, head, Output_Stream_Ptr, FALSE);
+  putchar('\n');
+#endif
+  */
+
   *new_worker = NULL;                             /* may be changed after */
 
   object = compile_term_aux(Arg, head, body, new_worker);
@@ -534,9 +541,9 @@ struct instance *compile_term_aux(Arg, head, body, new_worker)
      TAGGED head, body;
      struct worker **new_worker;
 {
-  int lsize, truesize;
+  int lsize = ~0, truesize;
   REGISTER TAGGED t0, *pt1, *pt2;
-  struct instance *object;
+  struct instance *object = NULL;
   
   int x_variables, cells, insns, maxtemps;
   TAGGED *trail_origo;

@@ -219,36 +219,41 @@ TAGGED list_of_goals(Arg)
   goal_descriptor_p current_goal = goal_desc_list;
   int arity;
   
-  switch(current_goal->state) {
-  case IDLE:
-    HeapPush(pt1,functor_available);
-    HeapPush(pt1,PointerToTerm(current_goal));
-    arity = 1;
-    break;
-  case WORKING:
-    HeapPush(pt1,functor_active);
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    arity = 4;
-    break;
-  case PENDING_SOLS:
-    HeapPush(pt1,functor_pending);
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    arity = 4;
-    break;
-  case FAILED:
-    HeapPush(pt1,functor_pending);
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    HeapPush(pt1,PointerToTerm(current_goal));
-    arity = 3;
-    break;
-  }
+  do {
+
+    switch(current_goal->state) {
+    case IDLE:
+      HeapPush(pt1,functor_available);
+      HeapPush(pt1,PointerToTerm(current_goal));
+      arity = 1;
+      break;
+    case WORKING:
+      HeapPush(pt1,functor_active);
+      HeapPush(pt1,PointerToTerm(current_goal));
+      HeapPush(pt1,PointerToTerm(current_goal->goal_number));
+      HeapPush(pt1,PointerToTerm(current_goal));
+      HeapPush(pt1,PointerToTerm(current_goal));
+      arity = 4;
+      break;
+    case PENDING_SOLS:
+      HeapPush(pt1,functor_pending);
+      HeapPush(pt1,PointerToTerm(current_goal));
+      HeapPush(pt1,PointerToTerm(current_goal));
+      HeapPush(pt1,PointerToTerm(current_goal));
+      HeapPush(pt1,PointerToTerm(current_goal));
+      arity = 4;
+      break;
+    case FAILED:
+      HeapPush(pt1,functor_failed);
+      HeapPush(pt1,PointerToTerm(current_goal));
+      HeapPush(pt1,PointerToTerm(current_goal));
+      HeapPush(pt1,PointerToTerm(current_goal));
+      arity = 3;
+      break;
+    }
+    current_goal = current_goal->forward;
+  } while (current_goal != goal_desc_list);
+
   w->global_top=pt1;
   return Tag(STR,HeapOffset(pt1,-3));
 }

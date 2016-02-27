@@ -4,6 +4,8 @@
 
 # echo ":- use_package([])." >> $1.pl
 
+echo "use_module(library(gen_asr_file))." >> $1
+
 for f in *.pl ; do
     if grep '^:- *module(' $f > /dev/null ; then
        echo "make_po('$f')." >> $1
@@ -21,6 +23,7 @@ for d in * ; do
           for f in $d/*pl ; do
               if grep -s '^:- *module(' $f > /dev/null ; then
                  echo "make_po(library('$f'))." >> $1
+                 echo "gaf(library('$f'))." >> $1
               fi
           done
        fi

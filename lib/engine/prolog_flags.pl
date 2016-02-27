@@ -20,25 +20,37 @@
 
 @begin{description}
 
+@item{@tt{argv}} Its value is a list of atoms representing the program
+      arguments supplied when the current executable was invoked.  This
+      is the value to which is instantiated the argument of the
+      @pred{main/1} predicate at executable startup.  Unchangeable.
+
+@item{@tt{bounded}} It is @tt{false}, to denote that the range of
+      integers can be considered infinite (but see @pred{int/1}).
+      Unchangeable.  @iso
+
 @item{@tt{fileerrors}} If @tt{on}, predicates handling files give errors
-      when a file is inexistent or an operation is not allowed.  If
-      @tt{off}, fail in that conditions.  Initially @tt{on}.
+      (throw exceptions) when a file is inexistent or an operation is
+      not allowed.  If @tt{off}, fail in that conditions.  Initially
+      @tt{on}.
 
-@item{@tt{unknown}} Controls action on calls to undefined predicates.
-      The possible states of the flag are:
+@item{@tt{gc}} Controls whether garbage collection is done.  May be
+      @tt{on} (default) or @tt{off}.
 
-  @begin{description}
+@item{@tt{gc_margin}} An integer @var{Margin}.  If less than
+      @var{Margin} kilobytes are reclaimed in a garbage collection then
+      the size of the garbage collected area should be increased.  Also,
+      no garbage collection is attempted unless the garbage collected
+      area has at least @var{Margin} kilobytes.  Initially 500.
 
-  @item{@tt{error}} An error is thrown with the @concept{error term}
-       @tt{existence_error(procedure, F/A)}.
+@item{@tt{gc_trace}} Governs garbage collection trace messages.  An
+      element off @tt{[on,off,terse,verbose]}. Initially @tt{off}.
 
-  @item{@tt{fail}} The call simply fails.
+@item{@tt{integer_rounding_function}} It is @tt{toward_zero}, so that
+      @tt{-1 =:= -3//2} succeeds.  Unchangeable.  @iso
 
-  @item{@tt{warning}} A warning is written and the call fails.
-
-  @end{description}
-
-  The state is initially @tt{error}. @iso
+@item{@tt{max_arity}} It is 255, so that no compound term (or predicate)
+      can have more than this number of arguments.  Unchangeable.  @iso
 
 @item{@tt{quiet}} Controls which messages issued using @lib{io_aux} are
       actually written.  As the system uses that library to report its
@@ -61,32 +73,21 @@
 
   @end{description}
 
-@item{@tt{argv}} Value is a list of atoms representing the program
-      arguments supplied when the current executable was invoked.  This
-      is the value to which is instantiated the argument of the
-      @pred{main/1} predicate at executable startup.  Unchangeable.
+@item{@tt{unknown}} Controls action on calls to undefined predicates.
+      The possible states of the flag are:
 
-@item{@tt{bounded}} It is @tt{false}, to denote that the range of
-      integers can be considered infinite (but see @pred{int/1}).
-      Unchangeable.  @iso
+  @begin{description}
 
-@item{@tt{integer_rounding_function}} It is @tt{toward_zero}, so that
-      @tt{-1 =:= -3//2} succeeds.  Unchangeable.  @iso
+  @item{@tt{error}} An error is thrown with the @concept{error term}
+       @tt{existence_error(procedure, F/A)}.
 
-@item{@tt{max_arity}} It is 255, so that no compound term (or predicate)
-      can have more than this number of arguments.  Unchangeable.  @iso
+  @item{@tt{fail}} The call simply fails.
 
-@item{@tt{gc}} Controls whether garbage collection is done.  May be
-      @tt{on} (default) or @tt{off}.
+  @item{@tt{warning}} A warning is written and the call fails.
 
-@item{@tt{gc_margin}} An integer @var{Margin}.  If less than
-      @var{Margin} kilobytes are reclaimed in a garbage collection then
-      the size of the garbage collected area should be increased.  Also,
-      no garbage collection is attempted unless the garbage collected
-      area has at least @var{Margin} kilobytes.  Initially 500.
+  @end{description}
 
-@item{@tt{gc_trace}} Governs garbage collection trace messages.  An
-      element off @tt{[on,off,terse,verbose]}. Initially @tt{off}.
+  The state is initially @tt{error}. @iso
 
 @end{description}
   ").
@@ -115,7 +116,7 @@
    below) and @var{Default} defines the predefined value associated with
    the flag (which should be compatible with @var{Values}).").
 
-:- pred define_flag(atm,=(atom),atm)
+:- pred define_flag(-atm,==(atom),-atm)
         # "Posible values for the flag are atoms.@p
      Example:
 @begin{verbatim}
@@ -124,7 +125,7 @@ define_flag(tmpdir, atom, '/tmp').
 @end{verbatim}
 ".
 
-:- pred define_flag(atm,=(integer),int)
+:- pred define_flag(-atm,==(integer),-int)
         # "Posible values for the flag are integers.@p
      Example:
 @begin{verbatim}
@@ -133,7 +134,7 @@ define_flag(max_connections, integer, 10).
 @end{verbatim}
 ".
 
-:- pred define_flag(atm(Flag),list(Values),term(Default)) :
+:- pred define_flag(atm,list(Values),Default) =>
         member(Default, Values)
         # "Posible values for the flag are the elements of @var{Values}.@p
      Example:

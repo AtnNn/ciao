@@ -29,6 +29,11 @@ enable/disable certain characteristics.
 
 main.
 
+:- comment(version(0*0+1,2000/05/08,20:27*07+'CEST'), "Solaris 5.X, X
+> 6, on Sparc returns SolarisSparc5.7; there is a separate entry in
+the system-dependent makefiles for it.  This is due to a system call
+moved to a separate library. (MCL)").
+
 :- comment(version(0*0+0,1998/08/12,19:53*41+'MET DST'), "Working.
    (MCL)").
 

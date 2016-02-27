@@ -1,7 +1,12 @@
+:- load_compilation_module(library('debugger/embedded_tr')).
+:- use_module(library('debugger/debugger_lib'), [spy/1]).
 
-:- load_compilation_module(library('srcbyrd/srcbyrd_tr')).
+:- new_declaration(spy/1).
+:- op(900, fx, [(spy)]).
 
-:- initialization(initialize_srcdebugger).
+:- add_clause_trans(srcdbg_no_expand/4).
+:- add_sentence_trans(srcdbg_no_expand_decl/3).
+
 :- initialization(nodebug).
 
-:- use_module(library('srcbyrd/srcbyrd_rt')).
+:- use_module(library('debugger/embedded_rt')).

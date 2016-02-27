@@ -1,34 +1,42 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - tokenize (library)</TITLE>
+<TITLE>The Ciao Prolog System               - A simple pretty-printer for Ciao programs</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC320" HREF="ciao_toc.html#TOC320">tokenize (library)</A></H1>
+<H1><A NAME="SEC298" HREF="ciao_toc.html#TOC298">A simple pretty-printer for Ciao programs</A></H1>
 <P>
-<A NAME="IDX3773"></A>
+<A NAME="IDX3546"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#100 (1999/5/26, 12:36:46 MEST)
+
+
+<P>
+This library module writes out to standard output a clause or a list of clauses.
 
 
 
 <UL>
-<LI><A HREF="ciao_78.html#SEC321">Usage and interface (tokenize)</A>
-<LI><A HREF="ciao_78.html#SEC322">Documentation on exports (tokenize)</A>
-<LI><A HREF="ciao_78.html#SEC323">Documentation on multifiles (tokenize)</A>
+<LI><A HREF="ciao_78.html#SEC299">Usage and interface (pretty_print)</A>
+<LI><A HREF="ciao_78.html#SEC300">Documentation on exports (pretty_print)</A>
+<LI><A HREF="ciao_78.html#SEC301">Documentation on internals (pretty_print)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC321" HREF="ciao_toc.html#TOC321">Usage and interface (<CODE>tokenize</CODE>)</A></H2>
+<H2><A NAME="SEC299" HREF="ciao_toc.html#TOC299">Usage and interface (<CODE>pretty_print</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -36,7 +44,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tokenize)).</CODE>
+<CODE>:- use_module(library(pretty_print)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -45,13 +53,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3774"></A>
-<CODE>read_tokens/2</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX3775"></A>
-<CODE>define_flag/3</CODE>.
+<A NAME="IDX3547"></A>
+<CODE>pretty_print/2</CODE>, 
+<A NAME="IDX3548"></A>
+<CODE>pretty_print/3</CODE>.
 
 </UL>
 
@@ -62,10 +67,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, 
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3776"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX3777"></A>
-<CODE>dict</CODE>.
+<A NAME="IDX3549"></A>
+<CODE>vndict</CODE>, 
+<A NAME="IDX3550"></A>
+<CODE>write</CODE>.
 
 </UL>
 
@@ -75,43 +80,189 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC322" HREF="ciao_toc.html#TOC322">Documentation on exports (<CODE>tokenize</CODE>)</A></H2>
+<H2><A NAME="SEC300" HREF="ciao_toc.html#TOC300">Documentation on exports (<CODE>pretty_print</CODE>)</A></H2>
 <P>
-<A NAME="IDX3778"></A>
-<A NAME="IDX3779"></A>
+<A NAME="IDX3551"></A>
+<A NAME="IDX3552"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_tokens/2:</B>
-<DD><A NAME="IDX3780"></A>
+<DT><span class="define">PREDICATE:</span> <B>pretty_print/2:</B>
+<DD><A NAME="IDX3553"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>pretty_print(Cls,Flags)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Prints each clause in the list <CODE>Cls</CODE> after numbering its variables.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>pretty_print:clauses(Cls)</CODE>
+ (<CODE>pretty_print:clauses/1</CODE>)
+
+<CODE>Flags</CODE> is a list of <CODE>flag</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3554"></A>
+<A NAME="IDX3555"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pretty_print/3:</B>
+<DD><A NAME="IDX3556"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pretty_print(Cls,Flags,Ds)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Prints each clause in the list <CODE>Cls</CODE> after using the corresponding variable names dictionary in <CODE>Ds</CODE> to name its variables.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>pretty_print:clauses(Cls)</CODE>
+ (<CODE>pretty_print:clauses/1</CODE>)
+
+<CODE>Flags</CODE> is a list of <CODE>flag</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>Ds</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC323" HREF="ciao_toc.html#TOC323">Documentation on multifiles (<CODE>tokenize</CODE>)</A></H2>
+<H2><A NAME="SEC301" HREF="ciao_toc.html#TOC301">Documentation on internals (<CODE>pretty_print</CODE>)</A></H2>
 <P>
-<A NAME="IDX3781"></A>
-<A NAME="IDX3782"></A>
+<A NAME="IDX3557"></A>
+<A NAME="IDX3558"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
-<DD><A NAME="IDX3783"></A>
+<DT><span class="define">REGTYPE:</span> <B>clauses/1:</B>
+<DD><A NAME="IDX3559"></A>
 
 
 <P>
-No further documentation available for this predicate.
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+clauses([]).
+clauses([_1|_2]) :-
+        clause(_1),
+        clauses(_2).
+clauses(_1) :-
+        clause(_1).
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX3560"></A>
+<A NAME="IDX3561"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>clause/1:</B>
+<DD><A NAME="IDX3562"></A>
 
 
 <P>
-The predicate is <EM>multifile</EM>.
+A regular type, defined as follows:
 
+<PRE>
+
+<PRE>
+clause(_1) :-
+        clterm(_1).
+clause((_1,_2)) :-
+        clterm(_1),
+        term(_2).
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX3563"></A>
+<A NAME="IDX3564"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>clterm/1:</B>
+<DD><A NAME="IDX3565"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+clterm(clause(_1,_2)) :-
+        callable(_1),
+        body(_2).
+clterm(directive(_1)) :-
+        body(_1).
+clterm((_1:-_2)) :-
+        callable(_1),
+        body(_2).
+clterm(_1) :-
+        callable(_1).
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX3566"></A>
+<A NAME="IDX3567"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>body/1:</B>
+<DD><A NAME="IDX3568"></A>
+
+
+<P>
+A well formed body, including cge expressions and &#38;-concurrent expressions. The atomic goals may or may not have a key in the form <CODE>^(goal:any)</CODE>, and may or may not be module qualified, but if they are it has to be in the form <CODE>^(^(moddesc:goal):any)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>body(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a printable body.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3569"></A>
+<A NAME="IDX3570"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>flag/1:</B>
+<DD><A NAME="IDX3571"></A>
+
+
+<P>
+A keyword <CODE>ask/1</CODE> flags whether to output <EM>asks</EM> or <EM>whens</EM> and <CODE>nl/1</CODE> whether to separate clauses with a blank line or not.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>flag(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a flag for the pretty-printer.
+
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

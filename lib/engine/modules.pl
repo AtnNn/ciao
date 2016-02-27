@@ -15,7 +15,7 @@
 :- comment(module, "Modularity is a basic notion in a modern computer
    language.  Modules allow dividing programs in several parts, which
    have its own independent name spaces.  The module system in Ciao
-   @cite{ciao-modules-entcs}, as in many other Prolog implementations,
+   @cite{ciao-modules-cl2000}, as in many other Prolog implementations,
    is procedure based.  This means that predicate names are local to a
    module, but functor/atom names in data are shared.
 
@@ -24,11 +24,13 @@
    predicates exported by a module can be imported from other modules.
    The default module of a given predicate name is the local one if the
    predicate is defined locally, else the last module from which the
-   predicate is imported, having explicit imports priority.  To refer to
-   a predicate from a module which is not the default for that predicate
-   the name has to be module @cindex{module qualification}qualified.  A
-   module qualified predicate name has the form
-   @var{Module}:@var{Predicate} as in the call
+   predicate is imported, having explicit imports priority (that is, a
+   predicate imported by an @tt{use_module/2} declaration is always
+   preferred above a predicate imported by an @tt{use_module/1}
+   declaration).  To refer to a predicate from a module which is not the
+   default for that predicate the name has to be module @cindex{module
+   qualification}qualified.  A module qualified predicate name has the
+   form @var{Module}:@var{Predicate} as in the call
    @tt{debugger:debug_module(M)}.  Note that this does not allow having
    access to predicates not imported, nor defining clauses of other
    modules.
@@ -138,14 +140,21 @@
           exports all such predicates .".
 
 :- comment(doinclude,meta_predicate/1).
+
 :- true decl meta_predicate(MetaSpecs) : sequence(metaspec)
         # "Specifies that the predicates in @var{MetaSpecs} have
           arguments which represent predicates and thus have to be
-          module expanded.  The directive is not mandatory in programs
-          which do not use modules.  This directive is defined as a
+          module expanded.  The directive is only mandatory for exported
+          predicates (in modules).  This directive is defined as a
           prefix operator in the compiler.".
 
 :- comment(doinclude, modulename/1).
+
+:- comment(modulename/1, "A module name is an atom, not containing
+        characters `:' or `$'.  Also, @tt{user} and @tt{multifile} are
+        reserved, as well as the module names of all builtin modules
+        (because in an executable all modules must have distinct
+        names).").
 
 :- prop modulename(M) + regtype # "@var{M} is a module name (an atom).".
 
@@ -174,11 +183,13 @@ modulename(M) :- atm(M).
 
         @item{@tt{pred(@em{N})}} This argument should be instantiated to
         a predicate construct to be called by means of a
-        @tt{call/@em{N}} predicate call (see @pred{call/2}).  Thus, it
-        should be an atom equal to the name of a predicate of arity
-        @em{N}, or a structure with functor the name of a predicate of
-        arity @em{M} (greater than @em{N}) and with @em{M}-@em{N}
-        arguments.
+        @tt{call/@em{N}} predicate call (see @pred{call/2}).
+
+        @item{@tt{addmodule}} This is in fact is not a real meta-data
+        specification.  It specifies that in an argument added after
+        this one will be passed the calling module, to allow
+        handling more involved meta-data (e.g., lists of goals) by using
+        conversion builtins.
 
         @item{@tt{?,+,-,_}} These other values denote that this argument is not
         module expanded.

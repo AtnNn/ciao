@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Quintus-like internal database</TITLE>
+<TITLE>The Ciao Prolog System               - Dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC226" HREF="ciao_toc.html#TOC226">Quintus-like internal database</A></H1>
+<H1><A NAME="SEC203" HREF="ciao_toc.html#TOC203">Dictionaries</A></H1>
 <P>
-<A NAME="IDX2551"></A>
+<A NAME="IDX2360"></A>
 
 
 <P>
@@ -20,22 +20,18 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, 
 
 
 <P>
- The predicates described in this section were introduced in early implementations of Prolog to provide efficient means of performing operations on large quantities of data. The introduction of indexed dynamic predicates have rendered these predicates obsolete, and the sole purpose of providing them is to support existing code. There is no reason whatsoever to use them in new code. 
-
-
-<P>
-These predicates store arbitrary terms in the database without interfering with the clauses which make up the program. The terms which are stored in this way can subsequently be retrieved via the key on which they were stored. Many terms may be stored on the same key, and they can be individually accessed by pattern matching. Alternatively, access can be achieved via a special identifier which uniquely identifies each recorded term and which is returned when the term is stored. 
+This module provides predicates for implementing dictionaries. Such dictionaries are currently implemented as ordered binary trees.
 
 
 
 <UL>
-<LI><A HREF="ciao_49.html#SEC227">Usage and interface (old_database)</A>
-<LI><A HREF="ciao_49.html#SEC228">Documentation on exports (old_database)</A>
+<LI><A HREF="ciao_49.html#SEC204">Usage and interface (dict)</A>
+<LI><A HREF="ciao_49.html#SEC205">Documentation on exports (dict)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC227" HREF="ciao_toc.html#TOC227">Usage and interface (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC204" HREF="ciao_toc.html#TOC204">Usage and interface (<CODE>dict</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +39,7 @@ These predicates store arbitrary terms in the database without interfering with 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(old_database)).</CODE>
+<CODE>:- use_module(library(dict)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,14 +48,16 @@ These predicates store arbitrary terms in the database without interfering with 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2552"></A>
-<CODE>recorda/3</CODE>, 
-<A NAME="IDX2553"></A>
-<CODE>recordz/3</CODE>, 
-<A NAME="IDX2554"></A>
-<CODE>recorded/3</CODE>, 
-<A NAME="IDX2555"></A>
-<CODE>current_key/2</CODE>.
+<A NAME="IDX2361"></A>
+<CODE>dic_node/2</CODE>, 
+<A NAME="IDX2362"></A>
+<CODE>dic_lookup/3</CODE>, 
+<A NAME="IDX2363"></A>
+<CODE>dic_lookup/4</CODE>, 
+<A NAME="IDX2364"></A>
+<CODE>dic_get/3</CODE>, 
+<A NAME="IDX2365"></A>
+<CODE>dic_replace/4</CODE>.
 
 </UL>
 
@@ -69,80 +67,78 @@ These predicates store arbitrary terms in the database without interfering with 
 
 
 
-<H2><A NAME="SEC228" HREF="ciao_toc.html#TOC228">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC205" HREF="ciao_toc.html#TOC205">Documentation on exports (<CODE>dict</CODE>)</A></H2>
 <P>
-<A NAME="IDX2556"></A>
-<A NAME="IDX2557"></A>
+<A NAME="IDX2366"></A>
+<A NAME="IDX2367"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>recorda/3:</B>
-<DD><A NAME="IDX2558"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_node/2:</B>
+<DD><A NAME="IDX2368"></A>
 
 
 <P>
-<CODE>recorda(+Key,?(Term),-(Ref))</CODE>
-
-
-<P>
-The term <CODE>Term</CODE> is recorded in the internal database as the first item for the key <CODE>Key</CODE>, where <CODE>Ref</CODE> is its implementation-defined identifier. The key must be given, and only its principal functor is significant. Any uninstantiated variables in the <CODE>Term</CODE> will be replaced by new private variables, along with copies of any subgoals blocked on these variables.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2559"></A>
-<A NAME="IDX2560"></A>
+<A NAME="IDX2369"></A>
+<A NAME="IDX2370"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>recordz/3:</B>
-<DD><A NAME="IDX2561"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/3:</B>
+<DD><A NAME="IDX2371"></A>
 
 
 <P>
-<CODE>recordz(+Key,?(Term),-(Ref))</CODE>
-
-
-<P>
-Like <CODE>recorda/3</CODE>, except that the new term becomes the <EM>last</EM> item for the key <CODE>Key</CODE>.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2562"></A>
-<A NAME="IDX2563"></A>
+<A NAME="IDX2372"></A>
+<A NAME="IDX2373"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>recorded/3:</B>
-<DD><A NAME="IDX2564"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/4:</B>
+<DD><A NAME="IDX2374"></A>
 
 
 <P>
-<CODE>recorded(?(Key),?(Term),?(Ref))</CODE>
-
-
-<P>
-The internal database is searched for terms recorded under the key <CODE>Key</CODE>. These terms are successively unified with <CODE>Term</CODE> in the order they occur in the database. At the same time, <CODE>Ref</CODE> is unified with the implementation-defined identifier uniquely identifying the recorded item. If the key is instantiated to a compound term, only its principal functor is significant. If the key is uninstantiated, all terms in the database are successively unified with <CODE>Term</CODE> in the order they occur.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2565"></A>
-<A NAME="IDX2566"></A>
+<A NAME="IDX2375"></A>
+<A NAME="IDX2376"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_key/2:</B>
-<DD><A NAME="IDX2567"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_get/3:</B>
+<DD><A NAME="IDX2377"></A>
 
 
 <P>
-<CODE>current_key(?(KeyName),?(KeyTerm))</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2378"></A>
+<A NAME="IDX2379"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dic_replace/4:</B>
+<DD><A NAME="IDX2380"></A>
 
 
 <P>
-<CODE>KeyTerm</CODE> is the most general form of the key for a currently recorded term, and <CODE>KeyName</CODE> is the name of that key. This predicate can be used to enumerate in undefined order all keys for currently recorded terms through backtracking.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

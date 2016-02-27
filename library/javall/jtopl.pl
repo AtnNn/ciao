@@ -4,6 +4,8 @@
 	],
 	[assertions,regtypes,isomodes]).
 
+:- use_module(library(concurrency)).
+
 :- comment(title,"Low-level Java to Prolog interface").
 
 :- comment(author,"Jes@'{u}s Correas").
@@ -294,6 +296,11 @@ error_handler(Id, Error) :-
 	open_predicate(exception_flag(_,_)),
 	set_fact(exception_flag(Id, Error)),
 	close_predicate(exception_flag(_,_)).
+
+
+%% Just to avoid complaints
+
+prolog_query_id(X):- integer(X).  
 
 %----------------------------------------------------------------------------
 :- pred get_query_id(-Id)

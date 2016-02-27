@@ -195,11 +195,15 @@ if [ "$CIAOARCH" = HPPA -a -f /bin/sysinfo ]; then CIAOARCH=CSPP; fi
 
 
 case $CIAOARCH in
-	SGI*)		CIAOARCH=SGI ;;
-	SUN4SOL2)	CIAOARCH=SolarisSparc ;;
-	SUNMP)		CIAOARCH=SolarisSparc ;;
+# We can have SGI5, SGI64, or SGIMP; we unify them 
+# (but I am not sure about this, since I did not have 
+# machines to try on)
+	SGI* )		CIAOARCH=IRIXmips ;;
+	SUN4SOL2 )	CIAOARCH=SolarisSparc ;;
+	SUNMP )		CIAOARCH=SolarisSparc ;;
 esac
 
 echo $CIAOARCH
+
 exit
 

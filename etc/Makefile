@@ -1,11 +1,13 @@
 
 include ../SETTINGS
 include ../COMMON
-include ../makefile-sysindep
+
+include $(SRC)/makefile-sysindep
+include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 # Beware: these must be .pl files: otherwise they may be eliminated on cleanup
 # get_version taken out
-PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake
+PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake cleandirs fix_size
 SHSCRIPTS=ciao_get_arch collect_modules
 
 .SUFFIXES: .pl
@@ -85,7 +87,7 @@ uninstall:
 ifeq ($(INSTALL_PROLOG_NAME),yes)
 	-rm -f $(BINDIR)/prolog
 endif
-	-rm -f $(REALLIBDIR)/NewUser
+	-rm -f $(LIBDIR)/NewUser
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Removing utilities from etc directory..."
 	@echo "*** ---------------------------------------------------------"
@@ -118,3 +120,11 @@ distclean realclean: clean
                   rm -f $${File} ; \
 	   fi ; \
 	 done
+	@if [ -f fix_size ]; \
+	  then echo "Removing fix_size"; \
+               rm -f fix_size ; \
+         fi
+
+fix_size: fix_size.c
+	$(CC) -o fix_size fix_size.c
+

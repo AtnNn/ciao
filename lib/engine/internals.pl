@@ -8,6 +8,7 @@
         '$atom_mode'/2, /* write.pl */
         '$nodebug_call'/1,
         '$meta_call'/1, % This is transformed by mexpand to call/1
+        '$eng_call'/5,  % Concurrency hook
         '$bootversion'/0, '$open'/3,
         '$purge'/1, '$erase'/1, '$ptr_ref'/2, '$inserta'/2,
         '$insertz'/2, '$make_bytecode_object'/4, '$abolish'/1,
@@ -63,7 +64,7 @@ provides handles for the module system into the internal definitions.
 ").
 
 :- impl_defined([dynlink/2, dynunlink/1,
-        '$atom_mode'/2, '$nodebug_call'/1, '$meta_call'/1,
+        '$atom_mode'/2, '$nodebug_call'/1, '$meta_call'/1, '$eng_call'/5,
         '$bootversion'/0, '$open'/3, '$purge'/1, '$erase'/1, '$ptr_ref'/2,
         '$inserta'/2, '$insertz'/2, '$make_bytecode_object'/4, '$abolish'/1,
         '$compile_term'/2, '$instance'/3, '$define_predicate'/2,
@@ -94,6 +95,7 @@ provides handles for the module system into the internal definitions.
         'CHOICE IDIOM'/1, 'CUT IDIOM'/1]).
 
 :- primitive_meta_predicate('$nodebug_call'(goal)).
+:- primitive_meta_predicate('$eng_call'(goal, ?, ?, ?, ?)).
 
 :- multifile load_libs/0.
 

@@ -81,7 +81,7 @@ obviously skip them if you have done them already at that time):
       available through libraries in Ciao.  This facilitates making
       small executables.
 
-      To change the working directory to, say, the @tt{tests}
+      To change the working directory to, say, the @tt{examples}
       directory in the Ciao source directory, first do:
 
 @begin{verbatim}
@@ -93,7 +93,7 @@ obviously skip them if you have done them already at that time):
       then:
 
 @begin{verbatim}
-      ?- cd('$/tests').  
+      ?- cd('$/examples').  
 @end{verbatim}
 
       @noindent (in Ciao the sequence @tt{$/} @em{at the beginning of
@@ -114,7 +114,7 @@ obviously skip them if you have done them already at that time):
       @pred{main/1} (or @pred{main/0}), which will be called upon
       startup (see the corresponding manual section for details).
 
-      @noindent For example, within the @file{tests} directory, you
+      @noindent For example, within the @file{examples} directory, you
       can type:
 
 @begin{verbatim}
@@ -145,7 +145,7 @@ obviously skip them if you have done them already at that time):
       having to explicitly compile them (in the same way as, e.g.,
       @tt{.bat} files or programs in scripting languages). As an
       example, you can double-click on the file @file{hw.pls} in the
-      @file{tests} folder and look at the source with an editor. You
+      @file{examples} folder and look at the source with an editor. You
       can try changing the @tt{Hello world} message and
       double-clicking again (no need to recompile!).
 

@@ -106,16 +106,19 @@ int wam(Arg, worker)
      saved and recovered in SAVE_WAM_STATE and RECOVER_WAM_STATE */
 
   REGISTER INSN *p;		                       /* program counter */
-  REGISTER int i;
+  REGISTER int i = ~0;  /* Avoid compiler complaints */
   REGISTER TAGGED
-    *pt1,			/* B and E share this.  B is valid after fail
+    *pt1 = NULL,		/* B and E share this.  B is valid after fail
 				   and over short sequences of code.  E is
 				   valid after allocate and after proceed. 
 				   Allocate does not update w->frame.  */
-    *pt2,			/* H and S share this.  H is valid in
+    *pt2 = NULL,		/* H and S share this.  H is valid in
 				   write mode.  S is valid in read mode.  */
-    t0, t1, t2, t3;		/* temps for terms (decreasing importance) */
-  REGISTER INSN *ptemp;		/* reg. decl. not critical */
+    t0 = ~0,
+    t1 = ~0, 
+    t2 = ~0, 
+    t3 = ~0;		/* temps for terms (decreasing importance) */
+  REGISTER INSN *ptemp = NULL;		/* reg. decl. not critical */
   int wam_exit_code = 0;	/* halt/0, abort/0, reinitialise/0 */
   struct instance *ins;		/* clause/2, instance/2 */
   struct worker *new_worker;    /* Temp - for changes in regbanksize */

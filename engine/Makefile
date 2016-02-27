@@ -34,12 +34,19 @@ OBJ_EXEC= $(BUILTINS) $(SUPPORTS) $(CIAOOBJ) $(ADDOBJ) $(MAIN_EXEC)
 OBJ= $(BUILTINS) $(SUPPORTS) $(CIAOOBJ) $(ADDOBJ) $(MAIN_FILES)
 DOBJ= $(BUILTINS) $(SUPPORTS) $(CIAOOBJ) $(ADDOBJ) $(DEBUGFILES) $(MAIN_FILES)
 
+#ifeq ($(OSNAME),Solaris)
+#  LIBSTA=-lsocket
+#else
+#  LIBSTA=
+#endif
 
 install: # $(ENGINENAME)
 	-mkdir -p $(ENGINEDIR)
 	-rm -f $(INSTALLEDENGINE).$(CIAOARCH)
+	-rm -f $(INSTALLEDENGINE).$(CIAOARCH).sta
 	-rm -f $(INSTALLEDENGINE)
 	-cp $(ENGINENAME) $(INSTALLEDENGINE).$(CIAOARCH)
+	-cp $(ENGINENAME) $(INSTALLEDENGINE).$(CIAOARCH).sta
 	-ln -s $(INSTALLEDENGINE).$(CIAOARCH) $(INSTALLEDENGINE)
 	-chmod $(EXECMODE) $(ENGINEDIR)
 	-chmod $(EXECMODE) $(INSTALLEDENGINE)
@@ -53,9 +60,14 @@ $(ENGINENAME): configure.h ciaoemulator
 
 #$(STATENGINENAME): configure.h statciaoemulator
 
-ciaoemulator: $(OBJ)
-	$(CC)  $(LDFLAGS) $(OBJ) $(CURRLIBS) -o $(ENGINENAME)
+ciaoemulator: $(OBJ) $(STATOBJ)
+	$(CC) $(LDFLAGS) $(OBJ) $(CURRLIBS) -o $(ENGINENAME)
+#	$(CC) $(LDFLAGS) $(OBJ) $(STATOBJ) $(CURRLIBS) $(LIBSTA) -o $(ENGINENAME).sta
+	( cd ../../etc && rm -f fix_size && $(MAKE) fix_size; );
+	../../etc/fix_size $(ENGINENAME)
+#	../../etc/fix_size $(ENGINENAME).sta
 	chmod $(EXECMODE) $(ENGINENAME)
+#	chmod $(EXECMODE) $(ENGINENAME).sta
 	if test ! -f $(SRCINCLUDEDIR)/configure.h ; then \
 	  for f in $(DATADEFS) $(SUPPORT) $(CCOMPILATIONSUPPORT); do \
 	    ln -s $(OBJDIR)/$$f $(SRCINCLUDEDIR); \
@@ -185,11 +197,11 @@ flinkage.o:
 
 # This is for Win32
 sockets_c.o:
-	cd ../../library/sockets ; $(MAKE) sockets_c_$(CIAOARCH).o
+	cd ../../library/sockets && $(MAKE) sockets_c_$(CIAOARCH).o
 	cp ../../library/sockets/sockets_c_$(CIAOARCH).o ./sockets_c.o
 
 random.o:
-	cd ../../library/random ; $(MAKE) random_$(CIAOARCH).o
+	cd ../../library/random && $(MAKE) random_$(CIAOARCH).o
 	cp ../../library/random/random_$(CIAOARCH).o ./random.o
 
 #fastrw.o:

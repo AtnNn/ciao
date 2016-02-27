@@ -1,13 +1,5 @@
 DOMAIN=r
 
-links: clean
-	cd ../clpqr_src ; \
-	for File in *.pl ; do \
-	    F=$${File%.pl} ; \
-	    ln -s ../clpqr_src/$$File ../clp$(DOMAIN)/$${F%_$(DOMAIN)}.pl ; \
-	done
+DOMAIN=r
 
-clean:
-	find . -type l -exec rm -f '{}' \;
-
-distclean:
+include ../clpqr_src/Makefile-common

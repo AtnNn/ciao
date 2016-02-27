@@ -52,7 +52,8 @@
 
 :- impl_defined([
         working_directory/2, directory_files/2, pause/1, time/1, datime/9,
-        current_host/1, getenvstr/2, get_pid/1, current_executable/1,
+        current_host/1, getenvstr/2, get_pid/1, 
+        current_executable/1,
         shell/0, shell/2, system/2, mktemp/2, file_exists/2,
         file_properties/6, chmod/2, umask/2, delete_file/1]).
 
@@ -87,15 +88,17 @@ datime_struct(datime(Year,Month,Day,Hour,Min,Sec)) :-
         int(Year), int(Month), int(Day), int(Hour), int(Min), int(Sec).
 
 :- comment(datime(Time,Year,Month,Day,Hour,Min,Sec,WeekDay,YearDay),
-        "@var{Time} is as in @pred{time/1}.  If given, the rest of the
-        arguments are unified with the date and time to which the
-        @var{Time} argument refers.  If @var{Time} is unbound, it is
-        bound to current time and the rest of the arguments refer to
-        current time.  @var{WeekDay} is the number of days since Sunday,
-        in the range 0 to 6.  @var{YearDay} is the number of days since
-        January 1, in the range 0 to 365.").
+	"@var{Time} is as in @pred{time/1}. @var{WeekDay} is the number
+	of days since Sunday, in the range 0 to 6.  @var{YearDay} is the
+	number of days since January 1, in the range 0 to 365.").
 
-:- true pred datime(?int,?int,?int,?int,?int,?int,?int,?int,?int).
+:- true pred datime(+int,?int,?int,?int,?int,?int,?int,?int,?int)
+        # "If @var{Time} is given, the rest of the arguments are unified
+        with the date and time to which the @var{Time} argument refers.".
+
+:- true pred datime(-int,?int,?int,?int,?int,?int,?int,?int,?int)
+	# "Bound @var{Time} to current time and the rest of the
+	arguments refer to current time.".
 
 :- comment(getenvstr(Name, Value), "The environment variable @var{Name}
     has @var{Value}.  Fails if variable @var{Name} is not defined.").
@@ -219,7 +222,7 @@ system(Path) :- system(Path, _Status).
 
 
 :- comment(exec(Command, StdIn, StdOut, StdErr), "Starts the process
-@var{Command} and returns the I/O streams of the process in
+@var{Command} and returns the standart I/O streams of the process in
 @var{StdIn}, @var{StdOut}, and @var{StdErr}.").
 
 :- true pred exec(+atm, -stream, -stream, -stream).
@@ -228,7 +231,7 @@ exec(Command, StdIn, StdOut, StdErr):-
         '$exec'(Command, StdIn, StdOut, StdErr).
 
 :- comment(exec(Command, StdIn, StdOut), "Starts the process
-@var{Command} and returns the I/O streams of the process in
+@var{Command} and returns the standart I/O streams of the process in
 @var{StdIn} and @var{StdOut}. @tt{Standard error} is connected to
 whichever the parent process had it connected to.").
 

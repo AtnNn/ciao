@@ -1,23 +1,23 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Object oriented programming</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Object oriented programming</A></H1>
+<H1><A NAME="SEC370" HREF="ciao_toc.html#TOC370">Object oriented programming</A></H1>
 
 <P>
 <STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
@@ -37,8 +37,8 @@ O'Ciao is a set of libraries which allows object-oriented programming in Ciao Pr
 </UL>
 
 <P>
-<A NAME="IDX4192"></A>
-<A NAME="IDX4193"></A>
+<A NAME="IDX3974"></A>
+<A NAME="IDX3975"></A>
 <EM>Polymorphism</EM> is the third fundamental concept provided by object oriented programming. This concept is not mentioned here since <STRONG>traditional PROLOG systems are polymorphic by nature</STRONG>. 
 
 
@@ -48,14 +48,14 @@ Classes are declared in the same way as modules. However, they may be enriched w
 
 
 <UL>
-<LI><A HREF="ciao_100.html#SEC392">Early examples</A>
-<LI><A HREF="ciao_100.html#SEC393">Recommendations on when to use objects</A>
-<LI><A HREF="ciao_100.html#SEC394">Limitations on object usage</A>
+<LI><A HREF="ciao_100.html#SEC371">Early examples</A>
+<LI><A HREF="ciao_100.html#SEC372">Recommendations on when to use objects</A>
+<LI><A HREF="ciao_100.html#SEC373">Limitations on object usage</A>
 </UL>
 
 
 
-<H2><A NAME="SEC392" HREF="ciao_toc.html#TOC392">Early examples</A></H2>
+<H2><A NAME="SEC371" HREF="ciao_toc.html#TOC371">Early examples</A></H2>
 
 <P>
 The following one is a very simple example which declares a class -- a simple stack. Note that if you replace <EM>class/1</EM> declaration with a <EM>module/1</EM> declaration, it will compile correctly, and can be used as a normal Prolog module. 
@@ -63,25 +63,24 @@ The following one is a very simple example which declares a class -- a simple st
 
 
 <PRE>
-%%--------------------------------------------%%
-%% class/1, at the beginning of the file,     %%
-%% will declare current source to be a class. %%
-%%--------------------------------------------%%
+%%----------------------------------------------%%
+%% A class for stacks.                          %%
+%%----------------------------------------------%%
 
+%% Class declaration: the current source defines a class.
 :- class(stack,[],[]).
 
-% State declaration: storage/1 will be an attribute.
+% State declaration: storage/1 is an attribute.
 :- dynamic storage/1.
 
 % Interface declaration: the following predicates will
 % be available at run-time.
-
 :- export(push/1).
 :- export(pop/1).
 :- export(top/1).
 :- export(is_empty/0).
 
-% Code 
+% Methods
 
 push(Item) :-
         nonvar(Item), 
@@ -92,17 +91,11 @@ pop(Item) :-
         retract_fact(storage(Item)).
 
 top(Top) :-
-        storage(Top),
-        !.
+        storage(Top), !.
 
 is_empty :-
-        storage(_),
-        !,
-        fail.
-
+        storage(_), !, fail.
 is_empty.
-
-:- comment(version_maintenance,off).
 
 </PRE>
 
@@ -166,10 +159,9 @@ The next example introduces the concepts of <EM>inheritable</EM> predicate, <EM>
 
 
 <PRE>
-%%----------------------------------%%
-%% A generic class to perform       %%
-%% item storage.                    %%
-%%----------------------------------%%
+%%----------------------------------------------%%
+%% A generic class for item storage.            %%
+%%----------------------------------------------%%
 :- class(generic).
 
 % Public interface declaration:
@@ -178,18 +170,15 @@ The next example introduces the concepts of <EM>inheritable</EM> predicate, <EM>
 % An attribute
 :- data datum/1.
 
-% inheritable/1 is used for datum/1
-% to become available to descendant
-% classes (if any).
+% Inheritance declaration: datum/1 will be available to 
+% descendant classes (if any).
 :- inheritable(datum/1).
 
-% Attribute initialization. Attributes
-% are easily initialized by writing clauses
-% for them.
-
+% Attribute initialization: attributes are easily initialized
+% by writing clauses for them.
 datum(none).
 
-% Code
+% Methods
 
 set(X) :-
         type_check(X),
@@ -198,29 +187,14 @@ set(X) :-
 get(X) :-
         datum(X).
 
-:- virtual type_check/1.
-
-type_check(X) :-
-        nonvar(X).
-
 callme :-
         a_virtual(IMPL),
         display(IMPL),
         display(' implementation of a_virtual/0 '),
         nl.
 
-% virtual/1 will tell the compiler to use the most
-% descendant implementation of a_virtual/1 when calling
-% it from inside this code (for example,see callme/0).
-% If there is no descendant implementation for it, 
-% the one defined bellow will be used.
-
-:- virtual a_virtual/1.
-a_virtual(generic).
-
 % Constructor: in this case, every time an instance
 % of this class is created, it will display a message.
-
 generic :-
         display(' generic class constructor '),
         nl.
@@ -228,10 +202,26 @@ generic :-
 % Destructor: analogous to the previous constructor,
 % it will display a message every time an instance
 % of this class is eliminated.
-
 destructor :-
         display(' generic class destructor '),
         nl.
+
+% Predicates:
+% cannot be called as messages (X:method)
+
+% Virtual declaration: tells the system to use the most
+% descendant implementation of a_virtual/1 when calling
+% it from inside this code (see callme/0).
+% If there is no descendant implementation for it, 
+% the one defined bellow will be used.
+:- virtual a_virtual/1.
+
+a_virtual(generic).
+
+:- virtual type_check/1.
+
+type_check(X) :-
+        nonvar(X).
 
 </PRE>
 
@@ -241,68 +231,62 @@ And the following example, is an extension of previous class. This is performed 
 
 
 <PRE>
-%%----------------------------------%%
-%% This class provides additional   %%
-%% functionality to the generic     %%
-%% class.                           %%
-%%----------------------------------%%
-
+%%----------------------------------------------%%
+%% This class provides additional functionality %%
+%% to the "generic" class.                      %%
+%%----------------------------------------------%%
 :- class(specific).
 
-% establish an inheritance relationship with "generic" class.
+% Establish an inheritance relationship with class "generic".
 :- inherit_class(library('class/examples/generic')).
 
-% override inherited datum/1.
-% datum/1 is said to be overriden because there are both
-% an inherited definition (from "generic" class) and a local one.
-
+% Override inherited datum/1.
+% datum/1 is said to be overriden because there are both an
+% inherited definition (from class "generic") and a local one,
+% which overrides the one inherited.
 :- data datum/1. 
 :- inheritable datum/1.
 
 % Extend the public interface inherited from "generic".
-% note that set/1 and a_virtual/0 has been also overriden. 
-% undo/0 is a new added functionality.
-
+% note that set/1 and a_virtual/0 are also overriden. 
+% undo/0 is a new functionality added.
 :- export([set/1,undo/0]).
 
-% Code
+% Methods
 
 set(Value) :-
         inherited datum(OldValue),
         !,
         inherited set(Value),
         asserta_fact(datum(OldValue)).
-
 set(Value) :-
         inherited set(Value).
 
 undo :-
-        retract_fact(datum(Last)),
-        !,
+        retract_fact(datum(Last)), !,
         asserta_fact(inherited(datum(Last))).
-
 undo :-
         retractall_fact(inherited(datum(_))).
 
-% new implementation of a_virtual. This
-% implementation will be used from inherited callme/0
-% instead of that version defined at "generic".
-
-a_virtual(specific).
-
-% constructor
-
+% Constructor
 specific :-
         generic,
         retractall_fact(inherited(datum(_))),
         display(' specific class constructor '),
         nl.
 
-% destructor
-
+% Destructor
 destructor :-
         display(' specific class destructor '),
         nl.
+
+% Predicates
+
+% New implementation of a_virtual/1. 
+% Since this predicate was declared virtual, the
+% implementation below will be called from the inherited 
+% method callme/0 instead of the version defined at "generic".
+a_virtual(specific).
 
 </PRE>
 
@@ -312,7 +296,7 @@ destructor :-
 
 
 
-<H2><A NAME="SEC393" HREF="ciao_toc.html#TOC393">Recommendations on when to use objects</A></H2>
+<H2><A NAME="SEC372" HREF="ciao_toc.html#TOC372">Recommendations on when to use objects</A></H2>
 
 <P>
 We would like to give some advice in the use of object oriented programming, in conjunction with the declarative paradigm. 
@@ -354,13 +338,13 @@ We recommend the usage of O'Ciao in the following cases:
 
 
 
-<H2><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Limitations on object usage</A></H2>
+<H2><A NAME="SEC373" HREF="ciao_toc.html#TOC373">Limitations on object usage</A></H2>
 
 <P>
 O'Ciao run-time speed is limited by the usage of meta-programming structures, for instance: <CODE>X = (Object:mymethod(25)), call(X)</CODE>. O'Ciao will optimize static manipulation of objects (those that can be determined at compile time). 
 
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

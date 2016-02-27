@@ -1,22 +1,30 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Constraint programming over rationals</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC383" HREF="ciao_toc.html#TOC383">Constraint programming over rationals</A></H1>
+<H1><A NAME="SEC362" HREF="ciao_toc.html#TOC362">Constraint programming over rationals</A></H1>
 <P>
-<A NAME="IDX4190"></A>
+<A NAME="IDX3972"></A>
 
 
 <P>
 <STRONG>Author(s):</STRONG> Christian Holzbaur, Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#156 (2000/5/30, 11:0:51 CEST)
 
 
 <P>
@@ -29,13 +37,13 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, 
 
 
 <UL>
-<LI><A HREF="ciao_98.html#SEC384">Usage and interface (clpq)</A>
-<LI><A HREF="ciao_98.html#SEC385">Other information (clpq)</A>
+<LI><A HREF="ciao_98.html#SEC363">Usage and interface (clpq)</A>
+<LI><A HREF="ciao_98.html#SEC364">Other information (clpq)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Usage and interface (<CODE>clpq</CODE>)</A></H2>
+<H2><A NAME="SEC363" HREF="ciao_toc.html#TOC363">Usage and interface (<CODE>clpq</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -54,7 +62,7 @@ or
 
 
 
-<H2><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Other information (<CODE>clpq</CODE>)</A></H2>
+<H2><A NAME="SEC364" HREF="ciao_toc.html#TOC364">Other information (<CODE>clpq</CODE>)</A></H2>
 
 <P>
  
@@ -62,12 +70,12 @@ or
 
 
 <UL>
-<LI><A HREF="ciao_98.html#SEC386">Some CLP(Q) examples</A>
+<LI><A HREF="ciao_98.html#SEC365">Some CLP(Q) examples</A>
 </UL>
 
 
 
-<H3><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Some CLP(Q) examples</A></H3>
+<H3><A NAME="SEC365" HREF="ciao_toc.html#TOC365">Some CLP(Q) examples</A></H3>
 
 <P>
 (Other examples can be found in the source and library directories.) 
@@ -84,6 +92,7 @@ or
 
 
 <PRE>
+:- module(_, [fib/2], []).
 :- use_package(clpq).
 
 fib(X,Y):- X .=. 0, Y .=. 0.
@@ -112,6 +121,7 @@ fib(N,F) :-
 
 <PRE>
 :- use_package(clpq).
+:- use_module(library(write)).
 
 mmultiply([],_,[]).
 mmultiply([V0|Rest], V1, [Result|Others]):-  
@@ -131,6 +141,13 @@ vmul([H1|T1], [H2|T2], Result):-
 matrix(1,[[1,2,3,4,5],[4,0,-1,5,6],[7,1,-2,8,9],[-1,0,1,3,2],[1,5,-3,2,4]]).
 matrix(2,[[3,2,1,0,-1],[-2,1,3,0,2],[1,2,0,-1,5],[1,3,2,4,5],[-5,1,4,2,2]]).
 
+%% Call with: ?- go(M).
+
+go(M):-
+        matrix(1,M1),
+        matrix(2,M2), 
+        mmultiply(M1, M, M2).
+
 </PRE>
 
 <P>
@@ -146,29 +163,6 @@ matrix(2,[[3,2,1,0,-1],[-2,1,3,0,2],[1,2,0,-1,5],[1,3,2,4,5],[-5,1,4,2,2]]).
 
 
 <PRE>
-:- use_package(clpq).
-
-queens(N, Qs) :- constrain_values(N, N, Qs), place_queens(N, Qs).
-
-constrain_values(0, _N, []).
-constrain_values(N, Range, [X|Xs]) :-
-        N .&#62;. 0, X .&#62;. 0, X .=&#60;. Range, 
-        N1 .=. N - 1,
-        constrain_values(N1, Range, Xs), no_attack(Xs, X, 1).
-
-no_attack([], _Queen, _Nb).
-no_attack([Y|Ys], Queen, Nb) :-
-        abs(Queen - (Y + Nb)) .&#62;. 0,  % Queen =\= Y + Nb
-        abs(Queen - (Y - Nb)) .&#62;. 0,  % Queen =\= Y - Nb
-        Nb1 .=. Nb + 1,
-        no_attack(Ys, Queen, Nb1).
-
-place_queens(0, _).
-place_queens(N, Q) :- 
-        N .&#62;. 0, member(N, Q), N1 .=. N - 1, place_queens(N1, Q).
-
-member(X, [X|_]).
-member(X, [_|Xs]) :- member(X, Xs).
 
 </PRE>
 
@@ -177,6 +171,6 @@ member(X, [_|Xs]) :- member(X, Xs).
 
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

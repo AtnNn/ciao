@@ -6,9 +6,13 @@ include ../COMMON
 include ../makefile-sysindep
 
 CIAOCNAME=ciaoc
+ASRGEN=gen_asr
 
 compiler:
-	$(SETLOCALCOMPILER) $(CIAOC) -s -x $(CIAOCNAME)
+	mv -f $(CIAOCNAME) $(CIAOCSTA)
+	$(SETLOCALCOMPILER) $(CIAOCSTA) -s -x $(CIAOCNAME)
+	$(SETLOCALCOMPILER) $(CIAOC) -s -x $(ASRGEN)
+	rm $(ASRGEN)
 
 install:
 	-mkdir -p $(BINDIR)

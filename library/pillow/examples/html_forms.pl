@@ -1,7 +1,7 @@
 % #!/bin/sh
 % exec /usr/local/bin/ciao_shell $0 $*
 
-:- syntax(pillow).
+:- use_package(pillow).
 
 :- use_module(library(aggregates)).
 
@@ -80,8 +80,7 @@ compute_food(on,on,on,'potatoes and pizza with coke.').
 compute_text(T0,T) :-
   form_empty_value(T0), !,
     T = '{Nothing}'.
-compute_text(T0,preformatted(T)) :-
-  text_lines(T0,T).
+compute_text(T,preformatted(T)).
 
 compute_password(P0,P) :-
   P0 = '$empty' -> P = '{none}'; P = P0.
@@ -89,6 +88,4 @@ compute_password(P0,P) :-
 compute_colors(C0,C) :-
   C0 = [] -> C = [none] ; C = C0.
 
-member(X,[X|_]).
-member(X,[_|Xs]) :- member(X,Xs).
 

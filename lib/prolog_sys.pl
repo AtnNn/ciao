@@ -27,22 +27,35 @@ process data, code, and stack also take up memory.  The memory
 reported for atoms is not what is actually used, but the space used up
 by the hash table (which is enlarged as needed).").
 
-:- true pred statistics(Time_option, Time_result) : term * term =>
+:- true pred statistics # "Prints statistics about the system.".
+
+:- true pred statistics(Time_option, Time_result) : time_option * term =>
 time_option * time_result # "Gather information about time (either
 process time or wall time) since last consult or since start of
 program.  Results are returned in milliseconds.".
 
-:- true pred statistics(Memory_option, Memory_result) : term * term =>
+:- true pred statistics(Memory_option, Memory_result) : memory_option * term =>
 memory_option * memory_result # "Gather information about memory
 consumption.".
 
-:- true pred statistics(Garbage_collection_option, Gc_result) : term *
+:- true pred statistics(Garbage_collection_option, Gc_result) : garbage_collection_option *
 term => garbage_collection_option * gc_result # "Gather information
 about garbage collection.".
 
-:- true pred statistics(Symbol_option, Symbol_result) : term * term =>
+:- true pred statistics(Symbol_option, Symbol_result) :symbol_option * term =>
 symbol_option * symbol_result # "Gather information about number of
 symbols and predicates.".
+
+:- true pred statistics(Option, ?term) # "If @var{Option} is unbound,
+it is bound to the values on the other cases.".
+
+:- true pred garbage_collect # "Forces garbage collection when called.".
+
+:- true pred current_predicate(?PredSpec, ?Module) #
+"PredSpec exists in Module.".
+
+:- true pred current_atom(Atom) : var => atm # "Enumerates on
+backtracking all the existing atoms in the system.".
 
 :- true pred new_atom(Atom) : var => atm # "Returns, on success, a new
 atom, not existing before in the system.  The entry argument must be a
@@ -105,7 +118,7 @@ time_result([A, B]):- integer(A), integer(B).
 :- true prop memory_result(Result) + regtype # "Result is a
 two-element list of integers.  The first element is the space taken up
 by the option selected, measured in bytes; the second integer is zero
-for program space (which grows as ncessary), and the amount of free
+for program space (which grows as necessary), and the amount of free
 space otherwise.".
 
 memory_result([A, B]):- integer(A), integer(B).
@@ -180,6 +193,9 @@ bit_decl(1, (concurrent)).
 bit_decl(2, (dynamic)).
 bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
+
+:- comment(version(1*5+153,2000/05/29,10:24*35+'CEST'), "Added some
+declarations for builtins.  (MCL)").
 
 :- comment(version(1*5+27,1999/12/29,15:09*45+'CET'), " new_atom/1
 improved: no repeated atoms and much better behavior with the hash

@@ -25,9 +25,6 @@
    @item @tt{engine(basiccontrol)}
 
          @ref{Control constructs/predicates}.
-   @item @tt{engine(concurrency)}
-
-         @ref{Low-level concurrency/multithreading primitives}.
    @item @tt{engine(data_facts)}
 
          @ref{Fast/concurrent update of facts}.

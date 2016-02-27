@@ -42,7 +42,7 @@
 
 % --------------------------------------------------------------------------
 
-:- use_module(library(lists), [append/3,list_concat/2,delete/3]).
+:- use_module(library(lists), [append/3,list_concat/2]).
 :- use_module(library(streams), [open_output/2, close_output/1]).
 :- use_module(library(system), [getenvstr/2, working_directory/2,cd/1]).
 :- use_module(library('make/system_extra'),
@@ -65,7 +65,8 @@ main([T]) :-
         working_directory(SDir,SDir), % SRC
         atom_codes(SDir,SDirStr),
         cyg2win(SDirStr,CiaoPath,swap),
-        list_concat(["""",CiaoPath,"\\Win32\\bin\\ciaoengine.exe"""],Engine),
+        append(CiaoPath,"\\Win32\\bin\\ciaoengine.exe",EnginePath),
+        list_concat(["""",EnginePath,""""],EngineQuot),
         cyg2win(SDirStr,SRCS,noswap),
         atom_codes(SRC,SRCS),
 
@@ -75,12 +76,17 @@ main([T]) :-
 	   make_ciaomode(SRC,EDir),
 
            make_header(SDir),
-           make_bats(Engine),
+           make_bats(EngineQuot),
+           make_foremacs(SRC),
 
            CReg = 'ciao.reg'
         ;  CReg =  'c:/WINDOWS/TEMP/ciaocl.reg' ),
 
 	setup_mess(['Building Win register file ',CReg,'.\n']),
+        ( getenvstr('OS',"Windows_NT") -> % Also for Windows 2000
+            Engine = EnginePath
+        ; Engine = EngineQuot
+        ),
         exec_ext(ExeExt),
         ciaoreg(CiaoPath, Engine, ExeExt, Registry),
         win_reg(Registry, String, []),
@@ -113,12 +119,12 @@ make_infoindex(SDir,IDir) :-
 make_DOTemacs(SDir,IDir,EDir) :-
 	atom_concat(SDir,'/emacs-mode',EDir),
 	cd(EDir),
-	setup_mess(['Building ',EDir,'/DOTemacs.el (emacs setup).\n']),
+	setup_mess(['Building ',SDir,'/DOTemacs.el (emacs setup).\n']),
 	atom_codes(EDir,EDirS),
 	atom_codes(IDir,IDirS),
 	replace_strings_in_file([ "<CIAOLIBDIR>" - EDirS, 
                                   "<LPDOCDIR>" - IDirS],
-                                'DOTemacs.skel','DOTemacs.el'),
+                                'DOTemacs.skel','../DOTemacs.el'),
         atom_codes(SDir,SDirS),
 	list_concat([
 	   ";; Specific to Windows installation:\n",
@@ -137,45 +143,36 @@ make_DOTemacs(SDir,IDir,EDir) :-
 	   ";; (comment out if you use bash, etc.):\n",
 	   "(setq process-coding-system-alist
 	    '((\"cmdproxy\" . (raw-text-dos . raw-text-dos))))\n",
-	   ";; Preventing ctrl-m's from being printed in the shell\n",
+	   ";; Preventing ctrln-m's from being printed in the shell\n",
 	   "(add-hook 'comint-output-filter-functions ",
 	   "  'shell-strip-ctrl-m nil t)\n",
 	   "; -----",
 	   "----------------------------------------------------------------\n"
 		    ],NewLisp),
-	writef(NewLisp,append,'DOTemacs.el'),
-	setup_mess(['Building ',SDir,'/ForEmacs (emacs setup).\n']),
-	list_concat([
-	   ";; Include this line in your ~/.emacs file:\n",
-	   "(load-file \"",SDirS,"/emacs-mode/DOTemacs.el\")\n"
-		    ],NewLispLine),
-	writef(NewLispLine,write,'../ForEmacs.txt'),
+	writef(NewLisp,append,'../DOTemacs.el'),
 	cd(SDir).
+
+make_foremacs(SDir):-
+	atom_codes(SDir, SDirS),
+        list_concat([
+                        ";; Include this line in your ~/.emacs file:\n",
+                        "(load-file \"", SDirS,  "/DOTemacs.el\")\n"],
+                        ForEmacs),
+        cd(SDir),
+        writef(ForEmacs, write, 'ForEmacs.txt').
 
 make_ciaomode(SDir,EDir) :-
 	cd(EDir),
 	setup_mess(['Building ',EDir,'/ciao.el (emacs mode).\n']),
 	atom_codes(EDir,EDirS),
-	replace_strings_in_file([ "\n" - "\n;"],
-                                'DOTemacs.el','DOTemacs.tmp'),
+	replace_strings_in_file([ "\n" - "\n;" ],
+                                '../DOTemacs.el','DOTemacs.tmp'),
 	cat(['ciao.el.header','DOTemacs.tmp','ciao.el.body'],'ciao.el.tmp'),
 	delete_file('DOTemacs.tmp'),
-	readf('../version/GlobalVersion',VersionS1),
-	no_sp_or_nl(VersionS1,VersionS),
-	readf('../version/GlobalPatch',  PatchS1),
-	no_sp_or_nl(PatchS1,PatchS),
-	append(VersionS,[0'p|PatchS],TheVersionS),
-	replace_strings_in_file([ 
-		  "<CIAOREALLIBDIR>" - EDirS,
-                  "Development Version" - TheVersionS 
-			        ],
-		  'ciao.el.tmp','ciao.el'),
+	replace_strings_in_file([ "<CIAOREALLIBDIR>" - EDirS ],
+                                'ciao.el.tmp','ciao.el'),
         delete_file('ciao.el.tmp'),
 	cd(SDir).
-
-no_sp_or_nl(I,O) :-
-	delete(I,0' ,I1),
-	delete(I1,0'\n,O).
 
 make_header(CiaoPath) :-
 	setup_mess(['Building header to ',CiaoPath,
@@ -324,12 +321,12 @@ line :-
 % --------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*5+106,2000/04/03,14:46*56+'CEST'), "Ciao mode
-   version now correctly set during windows install.  (Manuel
-   Hermenegildo)").
+:- comment(version(1*5+168,2000/07/05,16:24*21+'CEST'), "ForEmacs.txt
+        was not being created; corrected.  (MCL)").
 
-:- comment(version(1*5+102,2000/04/02,23:17*24+'CEST'), "Fixed minor
-   bug in Win install.  (Manuel Hermenegildo)").
+:- comment(version(1*5+166,2000/06/27,16:03*35+'CEST'), "Changed to
+   support Windows 2000 (with the NT registry options).  (Daniel Cabeza
+   Gras)").
 
 :- comment(version(1*3+103,1999/11/17,11:18*32+'MET'), "Moved most of
    the utilities to @lib{system_extra}.  (Manuel Hermenegildo)").

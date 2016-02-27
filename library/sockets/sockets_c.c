@@ -423,6 +423,41 @@ BOOL prolog_socket_receive(Arg)
   return cunify(Arg,cdr,X(1)) && cunify(Arg, MakeSmall(total_bytes), X(2));
 }
 
+/* hostname_address(+Hostname, ?Address) */
+
+#define MAX_BYTES_IN_HOST_ADDRESS 8             /* It is 4 at the present */
+
+BOOL prolog_hostname_address(Arg)
+     Argdecl;
+{
+  TAGGED hostname;
+  /* 3 chars per byte plus dots plus trailing zero */
+  char address[4*MAX_BYTES_IN_HOST_ADDRESS];  
+  int address_index = 0;
+  int bytes_index = 0;
+  struct hostent *host;
+
+  DEREF(hostname, X(0));
+  if (!TagIsATM(hostname))
+    USAGE_FAULT("hostname_address/2: 1st argument must be an atom");
+
+  if ((host = gethostbyname(GetString(hostname))) == NULL)
+    MAJOR_FAULT("hostname_address/2: gethostbyname() failed");
+
+  while(bytes_index < host->h_length) {
+    sprintf(&address[address_index], 
+           "%u.", 
+           (unsigned char)(host->h_addr_list[0][bytes_index]));
+    while(address[address_index])
+      address_index++;
+    bytes_index++;
+  }
+  address[--address_index] = 0;
+
+  return cunify(Arg, X(1), MakeString(address));
+}
+
+
 
 void sockets_c_init(module)
      char *module;
@@ -436,6 +471,8 @@ void sockets_c_init(module)
   define_c_mod_predicate(module, "select_socket", prolog_select_socket, 5);
   define_c_mod_predicate(module, "socket_send", prolog_socket_send, 2);
   define_c_mod_predicate(module, "socket_recv_code", prolog_socket_receive, 3);
+  define_c_mod_predicate(module ,"hostname_address",prolog_hostname_address,2);
+
   atom_stream = init_atom_check("stream");
   atom_dgram = init_atom_check("dgram");
   atom_raw = init_atom_check("raw");

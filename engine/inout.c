@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>  /* for atoi MCL */
+#include <string.h>
 
 void perror() /*, ENG_perror()*/;
 extern int errno;
@@ -747,12 +748,13 @@ BOOL prolog_clearerr(Arg)
 #define FASTRW_VERSION  'C'
 #define FASTRW_MAX_VARS 1024
 
-BOOL prolog_fast_read_on_c_aux(Argdecl,
+BOOL prolog_fast_read_in_c_aux(Argdecl,
                                TAGGED *out,
                                TAGGED *vars,
                                int *lastvar);
 
-BOOL prolog_fast_read_on_c(Arg)		/* OPA */
+
+BOOL prolog_fast_read_in_c(Arg)		/* OPA */
      Argdecl;
 {
   int i,lastvar = 0;
@@ -762,11 +764,15 @@ BOOL prolog_fast_read_on_c(Arg)		/* OPA */
      BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
   if (i != FASTRW_VERSION) return FALSE;
 
-  if (!prolog_fast_read_on_c_aux(Arg,&term,vars,&lastvar)) return FALSE;
+  if (HeapDifference(w->global_top,Heap_End) < CONTPAD+16*kCells)
+        explicit_heap_overflow(Arg,CONTPAD+16*kCells,1);
+
+  if (!prolog_fast_read_in_c_aux(Arg,&term,vars,&lastvar)) return FALSE;
+
   return cunify(Arg,X(0),term);
 }
 
-BOOL prolog_fast_read_on_c_aux(Arg,out,vars,lastvar)
+BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
      Argdecl;
      TAGGED *out,*vars;
      int *lastvar;
@@ -784,8 +790,8 @@ BOOL prolog_fast_read_on_c_aux(Arg,out,vars,lastvar)
     return TRUE;
   case '[':
     w->global_top += 2;
-    if (!prolog_fast_read_on_c_aux(Arg,h,vars,lastvar)) return FALSE;
-    if (!prolog_fast_read_on_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
+    if (!prolog_fast_read_in_c_aux(Arg,h,vars,lastvar)) return FALSE;
+    if (!prolog_fast_read_in_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
     *out = Tag(LST,h);
     return TRUE;
   case '_':
@@ -796,10 +802,11 @@ BOOL prolog_fast_read_on_c_aux(Arg,out,vars,lastvar)
   case 'S':
     j = 1;
     for (i=0; j; i++) {
-      if (i== Atom_Buffer_Length) {
+      if (i == Atom_Buffer_Length) {
 	Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
 					   i, Atom_Buffer_Length<<=1);
-	s = (unsigned char *)Atom_Buffer+i;}
+	s = (unsigned char *)Atom_Buffer+i;
+      }
       if ((j = getc(Input_Stream_Ptr->streamfile)) < -1)
 	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
       *s++ = j;
@@ -811,9 +818,10 @@ BOOL prolog_fast_read_on_c_aux(Arg,out,vars,lastvar)
       *out = vars[i];
       return TRUE;
     case 'I':
-      if((i = bn_from_string(Atom_Buffer,h, Heap_End-CONTPAD))) {
-	explicit_heap_overflow(Arg,i+CONTPAD, 2);
-	if (bn_from_string(Atom_Buffer,w->global_top, Heap_End-CONTPAD))
+      if((i = bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD))) {
+	explicit_heap_overflow(Arg,i+CONTPAD, 1);
+        h = w->global_top;        
+	if (bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD))
 	  SERIOUS_FAULT("miscalculated size of bignum");
       }
       if ((i = LargeArity(h[0])) ==2 && IntIsSmall((int)h[1]))
@@ -831,16 +839,30 @@ BOOL prolog_fast_read_on_c_aux(Arg,out,vars,lastvar)
       *out = MakeString(Atom_Buffer);
       return TRUE;
     case '"':
-      for (i--;i--;) MakeLST(*out,MakeSmall(Atom_Buffer[i]),*out);
-      if (!prolog_fast_read_on_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
+      i--;
+      /*
+      if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i<<1)){
+        printf("Prev HeapDifference is %d\n",
+               HeapDifference(w->global_top,Heap_End));
+        explicit_heap_overflow(Arg,CONTPAD+(i<<1),1);
+      }
+      */
+      while (i--) MakeLST(*out,MakeSmall(Atom_Buffer[i]),*out);
+      if (!prolog_fast_read_in_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
       return TRUE;
     case 'S':
       if ((i = getc(Input_Stream_Ptr->streamfile)) < -1)
 	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+
+          /*
+      if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i+1))
+        explicit_heap_overflow(Arg,CONTPAD+(i+1),1);
+          */
       *h = SetArity(MakeString(Atom_Buffer),i);
       *out = Tag(STR,h++);
-      for(w->global_top += i+1;i--;)
-	if (!prolog_fast_read_on_c_aux(Arg,h++,vars,lastvar)) return FALSE;
+      w->global_top += i+1;
+      while(i--)
+	if (!prolog_fast_read_in_c_aux(Arg,h++,vars,lastvar)) return FALSE;
       return TRUE;
     }
   default:
@@ -848,12 +870,12 @@ BOOL prolog_fast_read_on_c_aux(Arg,out,vars,lastvar)
   }
 }
 
-void prolog_fast_write_on_c_aux(Argdecl,
+void prolog_fast_write_in_c_aux(Argdecl,
                                 TAGGED in,
                                 TAGGED *vars, 
                                 int *lastvar);
 
-BOOL prolog_fast_write_on_c(Arg)		/* OPA */
+BOOL prolog_fast_write_in_c(Arg)		/* OPA */
      Argdecl;
 {
   TAGGED vars[FASTRW_MAX_VARS];
@@ -861,11 +883,11 @@ BOOL prolog_fast_write_on_c(Arg)		/* OPA */
 
   DEREF(X(0),X(0));
   writechar(FASTRW_VERSION,1,Output_Stream_Ptr);
-  prolog_fast_write_on_c_aux(Arg,X(0),vars,&lastvar);
+  prolog_fast_write_in_c_aux(Arg,X(0),vars,&lastvar);
   return TRUE;
 }
 
-void prolog_fast_write_on_c_aux(Arg,in,vars,lastvar)
+void prolog_fast_write_in_c_aux(Arg,in,vars,lastvar)
      Argdecl;
      TAGGED in, *vars;
      int *lastvar;
@@ -889,15 +911,15 @@ void prolog_fast_write_on_c_aux(Arg,in,vars,lastvar)
 	  }
 	  else {
 	    writechar(0,1,Output_Stream_Ptr);
-	    prolog_fast_write_on_c_aux(Arg,in,vars,lastvar);
+	    prolog_fast_write_in_c_aux(Arg,in,vars,lastvar);
 	    return;
 	  }	  
 	}
 	writechar(0,1,Output_Stream_Ptr);
       }
       writechar('[',1,Output_Stream_Ptr);
-      prolog_fast_write_on_c_aux(Arg,term,vars,lastvar);
-      prolog_fast_write_on_c_aux(Arg,in,vars,lastvar);
+      prolog_fast_write_in_c_aux(Arg,term,vars,lastvar);
+      prolog_fast_write_in_c_aux(Arg,in,vars,lastvar);
       return;
     case UBV:
     case SVA:
@@ -920,7 +942,7 @@ void prolog_fast_write_on_c_aux(Arg,in,vars,lastvar)
       print_string(Output_Stream_Ptr,TagToAtom(TagToHeadfunctor(in))->name);
       writechar(0,1,Output_Stream_Ptr);
       writechar(j = Arity(TagToHeadfunctor(in)),1,Output_Stream_Ptr);
-      for(i = 1; i <= j; prolog_fast_write_on_c_aux(Arg,term,vars,lastvar))
+      for(i = 1; i <= j; prolog_fast_write_in_c_aux(Arg,term,vars,lastvar))
 	DerefArg(term,in,i++);
       return;
       }
@@ -940,3 +962,134 @@ void prolog_fast_write_on_c_aux(Arg,in,vars,lastvar)
       return;
     }
 }
+
+/*----------------------------------------------------*/
+
+/* Routines for the compression and uncompression of bytecode, used on 
+   the CIAO compiler (OPA) */ 
+
+unsigned char sizeLZ(int n)
+{ if (n > 2047) return 12;
+  else if (n > 1023) return 11;
+  else if (n > 511) return 10;
+  else return 9;}
+
+void outLZ(Arg,Buffer,BufferSize,Code,size)
+     Argdecl;
+     int *Buffer, Code;
+     char *BufferSize;
+     unsigned char size;
+{ Buffer[0] += Code*(1<<(BufferSize[0]));
+  for(BufferSize[0] += size; BufferSize[0] >= 8; BufferSize[0] -= 8) {
+   writechar(Buffer[0] % 256,1,Output_Stream_Ptr);
+   Buffer[0] /= 256;}}
+
+BOOL compressLZ(Arg)
+     Argdecl;
+{ char *Dict[4096];
+  char *First;
+  char Vault[200000];
+  char CarrySize = 0;
+  int  i;
+  int  Carry = 0;  
+  int  Last = 256;
+  int  PrefixSize = 0;
+  int  Entry = 0;
+  int  Size[4096];
+  struct stream_node *s;
+  
+  s = stream_to_ptr_check(X(0), 'r', &i);
+  if (!s) BUILTIN_ERROR(i,X(0),1);
+
+  writechar(12,1,Output_Stream_Ptr);
+
+  for (i = 0; i < 257; Size[i++] = 1) 
+      { Dict[i] = &Vault[i];
+        Vault[i] = i % 256; }
+  First = &Vault[256];
+
+  while((First[PrefixSize] = getc(s->streamfile)) != EOF) {
+     if (First[PrefixSize++] < -1)
+      BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    for (i = Entry; Entry <= Last; Entry++) 
+      if ((Size[Entry] == PrefixSize) && (Dict[Entry][0] == First[0])
+          && !(memcmp(&Dict[Entry][1],&First[1],PrefixSize-1))) break;
+    if (Entry > Last) {
+      Entry = First[PrefixSize-1];
+      outLZ(Arg,&Carry,&CarrySize,i,sizeLZ(Last));
+      if (Last == 4095) First = &Vault[Last = 256];
+      else {
+	Dict[++Last] = First;
+	Size[Last] = PrefixSize;
+	First += PrefixSize; }
+      First[0] = Entry;
+      PrefixSize = 1;}}
+
+  if (PrefixSize) outLZ(Arg,&Carry,&CarrySize,Entry,sizeLZ(Last));
+  outLZ(Arg,&Carry,&CarrySize,256,sizeLZ(Last));
+  outLZ(Arg,&Carry,&CarrySize,0,7);
+  return TRUE;}
+
+
+BOOL inLZ(Arg,s,Buffer,BufferSize,Code,size)
+     Argdecl;
+     int *Buffer, *Code;
+     char *BufferSize, size;
+     struct stream_node *s;
+{ int i;
+ 
+ for (; BufferSize[0] < size; BufferSize[0] += 8) {
+   if ((i = getc(s->streamfile)) < -1)
+     BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+   Buffer[0] += ((unsigned char) i)*(1<<BufferSize[0]);}
+ Code[0] = Buffer[0] % (1<<size);
+ Buffer[0] /= (1<<size);
+ BufferSize[0] -= size;
+ return TRUE;}    
+      
+BOOL copyLZ(Arg)
+     Argdecl;
+{ int  i;
+  int  Last = 256;
+  int  PrefixSize = 1;
+  int  Carry = 0;
+  char CarrySize = 0;
+  char *Dict[4096];
+  int  Size[4096];
+  char *First;
+  char Vault[200000];
+  struct stream_node *s;
+  
+  s = stream_to_ptr_check(X(0), 'r', &i);
+  if (!s) BUILTIN_ERROR(i,X(0),1);
+
+  if ((i = getc(s->streamfile)) < -1)
+	 BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+  
+  if (i != 12) {
+    while (i != EOF) {
+      writechar(i,1,Output_Stream_Ptr);
+      if ((i = getc(s->streamfile)) < -1)
+	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)}
+    return TRUE;}
+  else {
+    for (i = 0; i < 257; Size[i++] = 1) {
+      Dict[i] = &Vault[i];
+      Vault[i] = i % 256;}
+    First = &Vault[256];
+ 
+    if (inLZ(Arg,s,&Carry,&CarrySize,&i,9) != TRUE) return FALSE;
+    First[0] = i;
+    while(1) {
+      for (i = 0; i < PrefixSize;) writechar(First[i++],1,Output_Stream_Ptr);
+      if (inLZ(Arg,s,&Carry,&CarrySize,&i,sizeLZ(++Last % 4096)) != TRUE)
+	return FALSE;;
+      if (i == 256) return TRUE;
+      if (Last == 4096) {
+        (First = &Vault[Last = 256])[0] = i;
+	PrefixSize = 1;}
+      else {
+	Size[Last] = PrefixSize+1;            
+	(Dict[Last] = First)[PrefixSize] = Dict[i][0];
+	bcopy(Dict[i],First += Size[Last],PrefixSize = Size[i]);}}}
+  return FALSE;}

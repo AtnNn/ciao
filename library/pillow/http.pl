@@ -1,73 +1,34 @@
-% *** pillow.pl *** Version 1.1 for ciao
-% A Simple HTTP Package for Prolog and CLP systems
-% To be used with html.pl 98.2
-% 
-% Copyright (C) 1996 UPM-CLIP.
-% 
-% This package is free software; you can redistribute it and/or
-% modify it under the terms of the GNU Library General Public
-% License as published by the Free Software Foundation; either
-% version 2 of the License, or (at your option) any later version.
-% 
-% This package is distributed in the hope that it will be useful,
-% but WITHOUT ANY WARRANTY; without even the implied warranty of
-% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-% Library General Public License for more details.
-% 
-% You should have received a copy of the GNU Library General Public
-% License along with this package; if not, write to the Free
-% Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-% 
-% M. Hermenegildo (herme@fi.upm.es), D. Cabeza (dcabeza@fi.upm.es) and
-% S. Varma (sacha@clip.dia.fi.upm.es)
-
 /**** Be careful when changing code, to not break auto distribution generation
  ****/
 :- module(http, [
         fetch_url/3
-        ], ['pillow/ops',dcg,assertions]).
+        ], ['pillow/ops',assertions,isomodes,dcg]).
 
-:- use_module(library(sockets)).
-:- use_module(library(strings), [write_string/2, string/3]).
+:- use_module(library(strings), [string/3]).
 :- use_module(library(lists), [select/3]).
-:- use_module(library(file_utils), [stream_to_string/2]).
-:- use_module(library('pillow/common')).
+:- use_module(library('pillow/pillow_aux')).
+:- use_module(library('pillow/pillow_types')).
+:- use_module(library('pillow/http_ll')).
 
 pillow_version("1.1").
 
-% ============================================================================
-% fetch_url(+URL,+Request,-Response)
-%
-% Fetch a document from an HTTP server
-%
-% `Request' is a list which may contain:
-% * head - If we don't what the document, only the heading
-% * timeout(integer) - Time to wait for the response
-% * if_modified_since(date) - Get document only if newer
-% * user_agent(atom) - Provide a user-agent field
-% * authorization(scheme,params) - ...
-% * f(atom) - Any other option (for example from('user@machine').
-%
-% `Response' is a list which may contain:
-% * content(string) - Document content
-% * status(atom,integer,string) - Type of response, status code and reason
-%     phrase
-% * pragma(string) - Misc. data
-% * message_date(date) - Date of the response
-% * location(atom) - Where has moved the document
-% * http_server(string) - Server responding
-% * authenticate(..) - Returned if document is protected
-% * allow(list(atom)) - Methods allowed by the server
-% * content_encoding(atom)
-% * content_length(integer)
-% * content_type(atom,atom,list(atom=(atom|string))) -
-% * expires(date) - Date/time after which the entity should be considered stale
-% * last_modified(date) - date and time at which the sender believes the
-%     resource was last modified 
-% * f(string) - Any other functor `f' is an extension header
+:- comment(title, "HTTP conectivity").
+:- comment(author, "Daniel Cabeza").
 
-% Notes: Does not support proxies. Fails on timeout.
+:- comment(module, "This module implements the @concept{HTTP} protocol, which
+   allows retrieving data from HTTP servers.").
 
+:- comment(fetch_url(URL, Request, Response), "Fetches the document
+   pointed to by @var{URL} from Internet, using request parameters
+   @var{Request}, and unifies @var{Response} with the parameters of the
+   response.  Fails on timeout.  Note that redirections are not handled
+   automatically, that is, if @var{Response} contains terms of the form
+   @tt{status(redirection,301,_)} and @tt{location(NewURL)}, the program
+   should in most cases access location @tt{NewURL}.").
+
+:- true pred fetch_url(URL, Request, Response)
+        : (url_term(URL), list(Request, http_request_param))
+       => list(Response, http_response_param).
 
 fetch_url(http(Host, Port, Document), Request, Response) :-
     timeout_option(Request, Timeout, Request1),
@@ -75,33 +36,19 @@ fetch_url(http(Host, Port, Document), Request, Response) :-
     http_transaction(Host, Port, RequestChars, Timeout, ResponseChars),
     http_response(Response, ResponseChars, []).
 
-% ============================================================================
-% timeout_option(+Options, -Timeout, -RestOptions)
-% 
-% Returns timeout option, by default 5 min. (300s).
-% ============================================================================
+:- pred timeout_option(+Options, -Timeout, -RestOptions)
+   # "Returns timeout option, by default 5 min. (300s).".
 
 timeout_option(Options, Timeout, RestOptions) :-
         select(timeout(Timeout), Options, RestOptions), !.
 timeout_option(Options, 300, Options).
 
-% ============================================================================
-% http_request(+Document, +Request, -RequestChars, -RequestCharsTail)
-% 
-% Generate an HTTP request from a list of parameters
-%
-% Notes: 
-%
-%        Conforms to RFC 1945 guidelines
-%        Does not use the headers:
-%          current date
-%          pragma
-%          referer
-%          entity body
-%              (this will have to change if the implementation
-%               extends beyond the GET and HEAD methods.
-%               cf RFC1945 section 7.2)
-% ============================================================================
+:- pred http_request(+Document, +Request, -RequestChars, -RequestCharsTail)
+   # "Generate an HTTP request from a list of parameters, conforming to
+      the RFC 1945 guidelines.  Does not use the headers: current date,
+      pragma, referer, and entity body (this will have to change if the
+      implementation extends beyond the GET and HEAD methods.  cf
+      RFC1945 section 7.2)".
 
 http_request(Document,Options) -->
         http_request_method(Options,Options1),
@@ -153,7 +100,8 @@ http_request_option(O) -->
         ": ",
         string(AS),
         http_crlf.
-http_request_option(_) --> "". % Perhaps give a warning?
+http_request_option(O) --> "",
+        {warning(['Invalid http_request_param ',O])}.
 
 http_credentials(basic, Cookie) --> !,
         "Basic ",
@@ -180,26 +128,6 @@ http_credential_param(P=V) -->
             atom_codes(P,PS)
         },
         string(PS), "=""", string(V), """".
-
-% ============================================================================
-% http_transaction(+Host, +Port, +Request, +Timeout, -Response)
-% type http_transaction(atom, integer, string, integer, string).
-%
-% Notes: Sends an HTTP Request to an HTTP server and returns the
-%         resultant message in Response
-% 
-%        Fails on timeout (Timeout in seconds) 
-% ============================================================================
-
-
-http_transaction(Host, Port, Request, Timeout, Response) :-
-        connect_to_socket(Host, Port, Stream),
-        write_string(Stream, Request),
-        flush_output(Stream),
-	Timeout_ms is Timeout*1000,
-        select_socket(_,_,Timeout_ms,[Stream],R),
-        R \== [],  % Fail if timeout
-        stream_to_string(Stream,Response).
 
 % ============================================================================
 % PROLOG BNF GRAMMAR FOR HTTP RESPONSES
@@ -336,6 +264,7 @@ http_extension_header(T) -->
             functor(T,Fu,1),
             arg(1,T,A)
         }.
+
 % ----------------------------------------------------------------------------
 
 http_date(date(WeekDay,Day,Month,Year,Time)) -->

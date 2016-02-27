@@ -4,7 +4,8 @@
          socket_accept/2,
          select_socket/5,
          socket_send/2,
-         socket_recv_code/3],
+         socket_recv_code/3,
+         hostname_address/2],
          [assertions]).
 
 :- impl_defined(
@@ -13,7 +14,8 @@
          socket_accept/2,
          select_socket/5,
          socket_send/2,
-         socket_recv_code/3]).
+         socket_recv_code/3,
+         hostname_address/2]).
 
 
 :- comment(module, "Everything is documented in the module sockets.").

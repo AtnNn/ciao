@@ -1,42 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - String processing</TITLE>
+<TITLE>The Ciao Prolog System               - ttyout (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC239" HREF="ciao_toc.html#TOC239">String processing</A></H1>
+<H1><A NAME="SEC216" HREF="ciao_toc.html#TOC216">ttyout (library)</A></H1>
 <P>
-<A NAME="IDX2734"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX2459"></A>
 
 
 <P>
 <STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
-<P>
-This module provides predicates for doing input/output with strings (character code lists) and for including in grammars defining strings.
-
-
 
 <UL>
-<LI><A HREF="ciao_53.html#SEC240">Usage and interface (strings)</A>
-<LI><A HREF="ciao_53.html#SEC241">Documentation on exports (strings)</A>
-<LI><A HREF="ciao_53.html#SEC242">Documentation on internals (strings)</A>
+<LI><A HREF="ciao_53.html#SEC217">Usage and interface (ttyout)</A>
+<LI><A HREF="ciao_53.html#SEC218">Documentation on exports (ttyout)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC240" HREF="ciao_toc.html#TOC240">Usage and interface (<CODE>strings</CODE>)</A></H2>
+<H2><A NAME="SEC217" HREF="ciao_toc.html#TOC217">Usage and interface (<CODE>ttyout</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -44,7 +35,7 @@ This module provides predicates for doing input/output with strings (character c
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(strings)).</CODE>
+<CODE>:- use_module(library(ttyout)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -53,20 +44,28 @@ This module provides predicates for doing input/output with strings (character c
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2735"></A>
-<CODE>get_line/2</CODE>, 
-<A NAME="IDX2736"></A>
-<CODE>get_line/1</CODE>, 
-<A NAME="IDX2737"></A>
-<CODE>write_string/2</CODE>, 
-<A NAME="IDX2738"></A>
-<CODE>write_string/1</CODE>, 
-<A NAME="IDX2739"></A>
-<CODE>whitespace/2</CODE>, 
-<A NAME="IDX2740"></A>
-<CODE>whitespace0/2</CODE>, 
-<A NAME="IDX2741"></A>
-<CODE>string/3</CODE>.
+<A NAME="IDX2460"></A>
+<CODE>ttyget/1</CODE>, 
+<A NAME="IDX2461"></A>
+<CODE>ttyget1/1</CODE>, 
+<A NAME="IDX2462"></A>
+<CODE>ttynl/0</CODE>, 
+<A NAME="IDX2463"></A>
+<CODE>ttyput/1</CODE>, 
+<A NAME="IDX2464"></A>
+<CODE>ttyskip/1</CODE>, 
+<A NAME="IDX2465"></A>
+<CODE>ttytab/1</CODE>, 
+<A NAME="IDX2466"></A>
+<CODE>ttyflush/0</CODE>, 
+<A NAME="IDX2467"></A>
+<CODE>ttydisplay/1</CODE>, 
+<A NAME="IDX2468"></A>
+<CODE>ttydisplayq/1</CODE>, 
+<A NAME="IDX2469"></A>
+<CODE>ttyskipeol/0</CODE>, 
+<A NAME="IDX2470"></A>
+<CODE>ttydisplay_string/1</CODE>.
 
 </UL>
 
@@ -76,182 +75,162 @@ This module provides predicates for doing input/output with strings (character c
 
 
 
-<H2><A NAME="SEC241" HREF="ciao_toc.html#TOC241">Documentation on exports (<CODE>strings</CODE>)</A></H2>
+<H2><A NAME="SEC218" HREF="ciao_toc.html#TOC218">Documentation on exports (<CODE>ttyout</CODE>)</A></H2>
 <P>
-<A NAME="IDX2742"></A>
-<A NAME="IDX2743"></A>
+<A NAME="IDX2471"></A>
+<A NAME="IDX2472"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_line/2:</B>
-<DD><A NAME="IDX2744"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttyget/1:</B>
+<DD><A NAME="IDX2473"></A>
 
 
 <P>
-<CODE>get_line(Stream,Line)</CODE>
-
-
-<P>
-Reads from <CODE>Stream</CODE> a line of text and unifies <CODE>Line</CODE> with it. The end of the line can have UNIX [10] or MS-DOS [13 10] termination, which is not included in <CODE>Line</CODE>. At EOF, the term end_of_file is returned.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2745"></A>
-<A NAME="IDX2746"></A>
+<A NAME="IDX2474"></A>
+<A NAME="IDX2475"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_line/1:</B>
-<DD><A NAME="IDX2747"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttyget1/1:</B>
+<DD><A NAME="IDX2476"></A>
 
 
 <P>
-<CODE>get_line(Line)</CODE>
-
-
-<P>
-Behaves like <CODE>current_input(S), get_line(S,Line)</CODE>.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2748"></A>
-<A NAME="IDX2749"></A>
+<A NAME="IDX2477"></A>
+<A NAME="IDX2478"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_string/2:</B>
-<DD><A NAME="IDX2750"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttynl/0:</B>
+<DD><A NAME="IDX2479"></A>
 
 
 <P>
-<CODE>write_string(Stream,String)</CODE>
-
-
-<P>
-Writes <CODE>String</CODE> onto <CODE>Stream</CODE>.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2751"></A>
-<A NAME="IDX2752"></A>
+<A NAME="IDX2480"></A>
+<A NAME="IDX2481"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_string/1:</B>
-<DD><A NAME="IDX2753"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttyput/1:</B>
+<DD><A NAME="IDX2482"></A>
 
 
 <P>
-<CODE>write_string(String)</CODE>
-
-
-<P>
-Behaves like <CODE>current_input(S), write_string(S, String)</CODE>.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2754"></A>
-<A NAME="IDX2755"></A>
+<A NAME="IDX2483"></A>
+<A NAME="IDX2484"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>whitespace/2:</B>
-<DD><A NAME="IDX2756"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttyskip/1:</B>
+<DD><A NAME="IDX2485"></A>
 
 
 <P>
-<CODE>whitespace(String,Rest)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-In a grammar rule, as <CODE>whitespace/0</CODE>, represents whitespace (a positive number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
-
-<PRE>
-   attrs([]) --&#62; ""
-   attrs([N|Ns]) --&#62;
-       whitespace,
-       attr(N),
-       attrs(Ns).
-</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX2757"></A>
-<A NAME="IDX2758"></A>
+<A NAME="IDX2486"></A>
+<A NAME="IDX2487"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>whitespace0/2:</B>
-<DD><A NAME="IDX2759"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttytab/1:</B>
+<DD><A NAME="IDX2488"></A>
 
 
 <P>
-<CODE>whitespace0(String,Rest)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-In a grammar rule, as <CODE>whitespace0/0</CODE>, represents possible whitespace (any number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is <CODE>String</CODE> or a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
-
-
-
-<PRE>
-   assignment(N,V) --&#62;
-       variable_name(N), whitespace0, "=", whitespace0, value(V).
-</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX2760"></A>
-<A NAME="IDX2761"></A>
+<A NAME="IDX2489"></A>
+<A NAME="IDX2490"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>string/3:</B>
-<DD><A NAME="IDX2762"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttyflush/0:</B>
+<DD><A NAME="IDX2491"></A>
 
 
 <P>
-<CODE>string(String,Head,Tail)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-In a 
-<A NAME="IDX2763"></A>
-grammar rule, as <CODE>string/1</CODE>, represents literally <CODE>String</CODE>. An example of use would be: 
-
-
-
-<PRE>
-double(A) --&#62;
-        string(A),
-        string(A).
-</PRE>
 
 </DL>
 
-
-
-<H2><A NAME="SEC242" HREF="ciao_toc.html#TOC242">Documentation on internals (<CODE>strings</CODE>)</A></H2>
 <P>
-<A NAME="IDX2764"></A>
-<A NAME="IDX2765"></A>
+<A NAME="IDX2492"></A>
+<A NAME="IDX2493"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>line/1:</B>
-<DD><A NAME="IDX2766"></A>
+<DT><span class="define">PREDICATE:</span> <B>ttydisplay/1:</B>
+<DD><A NAME="IDX2494"></A>
 
 
 <P>
-A property, defined as follows:
+No further documentation available for this predicate.
 
-<PRE>
 
-<PRE>
-line(L) :-
-        string(L).
-line(end_of_file).
-</PRE>
+</DL>
 
-</PRE>
+<P>
+<A NAME="IDX2495"></A>
+<A NAME="IDX2496"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ttydisplayq/1:</B>
+<DD><A NAME="IDX2497"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2498"></A>
+<A NAME="IDX2499"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ttyskipeol/0:</B>
+<DD><A NAME="IDX2500"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2501"></A>
+<A NAME="IDX2502"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ttydisplay_string/1:</B>
+<DD><A NAME="IDX2503"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

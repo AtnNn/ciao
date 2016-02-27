@@ -1,8 +1,7 @@
 :- module(several_sols, [main/2], []).
 
 
-:- use_module(library(andprolog),
-        [active_agents/1, &/2]).
+:- use_module(library(andprolog)).
 
 
 :- reexport(library(andprolog),[active_agents/1, &/2]).

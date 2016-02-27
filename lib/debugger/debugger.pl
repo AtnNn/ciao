@@ -46,19 +46,20 @@
 :- comment(hide, debug_trace/1).
 :- comment(hide, do_interrupt_command/1).
 
-%------------------Prolog debugger by AC------------------------------
-% Minor hacks by MC.
-% Some hacks by Takashi Chikayama (17 Dec 87)
-%   - Making tracer to use "print" rather than "write"
-%   - Temporarily switching debugging flag off while writing trace
-%     message and within "break" level.
-% Some hacks by Kish Shen (May 88)
-%   - Subterm navigation
-%   - Handle unbound arg in spy/1 and nospy/1
-%   - Trap arith errors in debug mode
-%------------- Built-in predicates for debugging------------------------
+%------------------ Bug Comments ------------------------------
+
+:- comment(bug,"Add an option to the emacs menu to automatically select
+	all modules in a project.").
+:- comment(bug,"Consider the possibility to show debugging messages 
+	directly in the source code emacs buffer.").
+
+%------------------ Version Comments ------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+148,2000/05/24,11:26*32+'CEST'), "Slight
+   changes in source debugger documentation.  (Francisco Bueno
+   Carrillo)").
 
 :- comment(version(1*5+107,2000/04/05,09:55*16+'CEST'), "When debugging,
    using the skip option in an exit or fail port does creep instead of
@@ -115,6 +116,18 @@
 
 :- comment(version(0*0+0,1998/2/23), "Added inclusion of dcg syntax
    lib. (Manuel Hermenegildo)").
+
+%------------------Prolog debugger by AC------------------------------
+% Minor hacks by MC.
+% Some hacks by Takashi Chikayama (17 Dec 87)
+%   - Making tracer to use "print" rather than "write"
+%   - Temporarily switching debugging flag off while writing trace
+%     message and within "break" level.
+% Some hacks by Kish Shen (May 88)
+%   - Subterm navigation
+%   - Handle unbound arg in spy/1 and nospy/1
+%   - Trap arith errors in debug mode
+%------------- Built-in predicates for debugging------------------------
 
 % :- multifile define_flag/3.
 % 
@@ -282,10 +295,11 @@ nospyall :-
 	# "Set a @index{breakpoint} in file @var{Src} between lines
           @var{Ln0} and @var{Ln1} at the literal corresponding to the
           @var{Number}'th occurence of (predicate) name @var{Pred}.  The
-          complication comes from the fact that the reader only gives the
-          start and end line numbers for the predicate. The rest of the
+          pair @var{Ln0}-@var{Ln1} uniquely identifies a program clause and
+          must correspond to the
+          start and end line numbers for the clause. The rest of the
           arguments provide enough information to be able to locate the
-          exact predicate that the @var{RealLine} line refers to. This is
+          exact literal that the @var{RealLine} line refers to. This is
           normally not issued by users but rather by the @apl{emacs} mode,
           which automatically computes the different argument after
           selecting a point in the source file.".

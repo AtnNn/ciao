@@ -26,15 +26,12 @@ The current state of matters is as follows:
 @begin{description}
 @item{LINUX:}     multithreading, shared DB access, and locking working.
 @item{Solaris:}   multithreading, shared DB access, and locking working.
+@item{IRIX:}  multithreading, shared DB access, and locking working.
 @item{SunOS 4:}   multithreading, shared DB access, and locking NOT working.
-@comment{@item{IRIX:}      multithreading, shared DB access, and locking NOT working.}
-@item{Win 95/NT:} multithreading working. Shared DB access, locking, and  
-	   dynamic linking of object code (C) libraries NOT working. 
+@item{Win 95/98/NT/2000:} multithreading, shared DB access, and locking working. Dynamic linking of object code (C) libraries NOT working.   
 @end{description}
 
-The features that do not work are disabled at compile time.  If
-problems appear, please disable them explicitly in the @file{SETTINGS}
-file. We will make this more automatic sometime in the future.
+The features that do not work are disabled at compile time.  
 
 @include{MailWWWBugs.lpdoc}
 

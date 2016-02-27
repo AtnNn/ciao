@@ -538,7 +538,7 @@ constructor.
         destructors will be ignored by O'Ciao, and they will be called
         only once.
 
-        This functionality is usefull when some computation is need at
+        This functionality is useful when some computation is need at
         instance destruction. For example: closing an open file.
        ").
 
@@ -562,6 +562,13 @@ destructor.
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+
+:- comment(version(1*5+162,2000/06/14,17:07*15+'CEST'), "Changed 
+   @code{goal_expansion(Goal,Exp,Module,InstanceID)} to
+   @code{goal_expansion(Goal,InstanceID,Exp,Module)}. Same for
+   @code{fact_expansion/4} and @code{spec_expansion/4}. Changes in
+   @file{class_tr_aux.pl}  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*5+89,2000/03/24,14:24*48+'CET'), "Error reporting section
    has been moved to separate appendix (Angel Fernandez Pineda)").

@@ -1,4 +1,11 @@
-:- use_module('../pillow').
+:- module(check_links, [main/1,check_links/2],[]).
+:- use_package(pillow).
+
+main([URL]) :- !,
+        check_links(URL,BadLinks),
+        report_bad_links(BadLinks).
+main(_) :-
+        error(['Correct usage: check_links <URL>']).
 
 check_links(URL,BadLinks) :-
         url_info(URL,URLInfo),
@@ -24,8 +31,8 @@ check_link(URL,BaseURL,BL0,BL) :-
         url_info_relative(URL,BaseURL,URLInfo), !,
         fetch_url_status(URLInfo,Status,Phrase),
         ( Status \== success ->
-          name(P,Phrase),
-          name(U,URL),
+          atom_codes(P,Phrase),
+          atom_codes(U,URL),
           BL = [badlink(U,P)|BL0]
         ; BL = BL0
         ).
@@ -36,6 +43,7 @@ fetch_url_status(URL,Status,Phrase) :-
         member(status(Status,_,Phrase),Response).
 fetch_url_status(_,timeout,timeout).
 
-
-member(X,[X|_]).
-member(X,[_|Xs]) :- member(X, Xs).
+report_bad_links([]).
+report_bad_links([badlink(U,P)|BLs]) :-
+        message(['URL ',U,' : ',P]),
+        report_bad_links(BLs).

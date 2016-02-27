@@ -493,13 +493,13 @@ Unfortunately, as before, this process cannot be guaranteed.
 @item @tt{d}
 (@index{display})
 
-displays the current goal using @tt{display/1}.  See write (below). 
+displays the current goal using @tt{display/1}.  See @tt{w} below. 
 
 @item @tt{p}
 (@index{print})
 
 re-prints the current goal using @tt{print/1}.  Nested structures will be
-printed to the specified @em{printdepth} (below).
+printed to the specified @em{printdepth} (see below).
 
 @item @tt{w}
 (@index{write})
@@ -552,7 +552,7 @@ the interpreter.  (This is the same as the built-in predicate
 @item @tt{@@}
 (@index{command})
 
-allows calling arbitrary goals. The initial message @tt{| :- } will be
+allows calling arbitrary goals. The initial message @tt{| ?- } will be
 output on the terminal, and a command is then read from the terminal and
 executed as if it was at top-level.
 

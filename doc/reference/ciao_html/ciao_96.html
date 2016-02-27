@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Breadth-first execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC378" HREF="ciao_toc.html#TOC378">Breadth-first execution</A></H1>
+<H1><A NAME="SEC357" HREF="ciao_toc.html#TOC357">Breadth-first execution</A></H1>
 <P>
-<A NAME="IDX4174"></A>
+<A NAME="IDX3955"></A>
 
 
 <P>
@@ -20,16 +20,24 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, 
 
 
 <P>
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#143 (2000/5/12, 13:54:34 CEST)
+
+
+<P>
 This package implements breadth-first execution of predicates. Predicates written with operators 
-<A NAME="IDX4175"></A>
+<A NAME="IDX3956"></A>
 <CODE>'&#60;-'/1</CODE> (facts) and 
-<A NAME="IDX4176"></A>
+<A NAME="IDX3957"></A>
 <CODE>'&#60;-'/2</CODE> (clauses) are executed using breadth-first search. This may be useful in search problems when a 
-<A NAME="IDX4177"></A>
+<A NAME="IDX3958"></A>
 complete proof procedure is needed. An example of code would be: 
 
 <PRE>
-:- module(bf_example, _, [bf]).
+:- module(chain, _, [bf]).
 
 test(bf) :- bfchain(a,d).
 test(df) :- chain(a,d).   % loops!
@@ -47,15 +55,32 @@ arc(c,a).
 
 </PRE>
 
+<P>
+There is another version, called 
+<A NAME="IDX3959"></A>
+<CODE>bf/af</CODE>, which ensures AND-fairness by goal shuffling. This version correctly says "<CODE>no</CODE>" executing the following test: 
+
+<PRE>
+:- module(sublistapp, [test/0,sublistapp/2], ['bf/af']).
+
+test :- sublistapp([a],[b]).
+
+sublistapp(S,L) &#60;- append(_,S,Y), append(Y,_,L).
+
+append([], L, L) &#60;- .
+append([X|Xs], L, [X|Ys]) &#60;- append(Xs, L, Ys).
+
+</PRE>
+
 
 <UL>
-<LI><A HREF="ciao_96.html#SEC379">Usage and interface (bf)</A>
-<LI><A HREF="ciao_96.html#SEC380">Known bugs and planned improvements (bf)</A>
+<LI><A HREF="ciao_96.html#SEC358">Usage and interface (bf)</A>
+<LI><A HREF="ciao_96.html#SEC359">Known bugs and planned improvements (bf)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC379" HREF="ciao_toc.html#TOC379">Usage and interface (<CODE>bf</CODE>)</A></H2>
+<H2><A NAME="SEC358" HREF="ciao_toc.html#TOC358">Usage and interface (<CODE>bf</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -71,9 +96,9 @@ or
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX4178"></A>
+<A NAME="IDX3960"></A>
 <CODE>&#60;-/2</CODE> [1200,xfx], 
-<A NAME="IDX4179"></A>
+<A NAME="IDX3961"></A>
 <CODE>&#60;-/1</CODE> [1200,xf].
 </UL>
 
@@ -81,7 +106,7 @@ or
 
 
 
-<H2><A NAME="SEC380" HREF="ciao_toc.html#TOC380">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
+<H2><A NAME="SEC359" HREF="ciao_toc.html#TOC359">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
 
 
 <UL>
@@ -92,6 +117,6 @@ Does not correctly work in user files.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

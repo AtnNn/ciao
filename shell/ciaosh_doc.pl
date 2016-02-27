@@ -241,7 +241,8 @@ yes
           @pred{ensure_loaded/1}.".
 
 :- true pred make_exec(File, ExecName)
-        :: atm(ExecName) : sourcenames(File) => atm(ExecName)
+%        :: atm(ExecName)
+        : sourcenames(File) => atm(ExecName)
         # "Make a Ciao executable from file (or files) @var{File},
            giving it name @var{ExecName}.  If @var{ExecName} is a
            variable, the compiler will choose a default name for the

@@ -76,15 +76,6 @@ char *Dict[4096], *First, Vault[200000], compressed, remaining;
    is faster when buffered input is enabled). Files containing compressed
    bytecode are recognized because they begin by ^L the bytecode sequence. */
 
-void is_compressed(FILE *file)
-{ int i;
-  
- if ((compressed = ((i=GETC(file)) == 12)))
-     { Last = 4095;
-       remaining = BufferP = 0;
-       for (i = 0; i < 257; Size[i++] = 1) (Dict[i]=&Vault[i])[0] = i%256;}
-  else UNGETC(i, file);}
-
 #define InLZ(n,n2) { for (; size < n; size += 8) \
 	                  i += GETC_LZ(stream)*(1<<size); \
                      Buffer[--BufferP] = i % n2; \
@@ -299,6 +290,24 @@ BOOL qread1(Arg,qfile,rungoal)
     {
       switch (c)
 	{
+#if defined(ALLOW_COMPRESSED_CODE)
+	case ISCOMPRESSED:
+	  compressed = 1;
+	  Last = 4095;
+	  remaining = BufferP = 0;
+	  { 
+	    int i = 0;
+	    for(;i < 257; Size[i++] = 1) (Dict[i]=&Vault[i])[0]= i%256;
+	  }
+	  break;
+#endif
+	case ISSCRIPT:
+	  {
+	    int chr;	    
+	    do chr = GETC(qfile);
+	    while ((chr != EOF) && (chr != 12));
+	  }
+          break;
 	case ENSURE_SPACE:
 	  if (HeapDifference(h,Heap_End) < (pad=getlong(qfile))){
 	    w->global_top = h;
@@ -391,52 +400,18 @@ BOOL qread1(Arg,qfile,rungoal)
   return FALSE;
 }
 
-
-int is_a_script(file)
-     FILE *file;
-{
-  int chr;
-  
-  if ((chr = GETC(file)) == '#')
-    return TRUE;
-  else {
-    UNGETC(chr, file);
-    return FALSE;
-  }
-}
-
-void skip_to_ctrl_l(file)
-     FILE *file;
-{
-  int chr;
-
-  do
-    chr = GETC(file);
-  while ((chr != EOF) && (chr != 12));            /* ASCII 12 is ctrl-L */
-}
-
-
 BOOL prolog_qread(Arg)
      Argdecl;
 {
   struct stream_node *s;
   TAGGED goal;
-  FILE *qfile;
 
-  if ((s = stream_to_ptr(X(0), 'r')) != NULL) {
-    qfile = s->streamfile;
-  if (is_a_script(qfile)) 
-    skip_to_ctrl_l(qfile);
-#if defined(ALLOW_COMPRESSED_CODE)
-  is_compressed(qfile);
-#endif
-  if (qread1(Arg,qfile, &goal))
-    return cunify(Arg,goal,X(1));
-  }
+  if ((s = stream_to_ptr(X(0), 'r')) != NULL)
+    if (qread1(Arg,s->streamfile, &goal))
+      return cunify(Arg,goal,X(1));
 
   Unify_constant(MakeSmall(-1),X(1));
   return TRUE;
 
 }
-
 

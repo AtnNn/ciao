@@ -180,7 +180,7 @@ keylist([_-_|KL]) :- keylist(KL).
 
 :- comment(doinclude,keypair/1).
 :- prop keypair(P) + regtype
-   # "@var{P} is a pair of the form @tt{K-_},
+   # "@var{P} is a pair of the form ""@tt{K-_}"",
       where @tt{K} is considered the @em{key}.".
 
 keypair(_-_).

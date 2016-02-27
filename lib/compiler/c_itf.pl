@@ -38,8 +38,8 @@
         ]).
 :- use_module(library(system), [
         modif_time0/2, modif_time/2, time/1, fmode/2, chmod/2,
-        working_directory/2, file_exists/1, file_exists/2, delete_file/1
-        ]).
+        working_directory/2, file_exists/1, file_exists/2, delete_file/1,
+        mktemp/2]).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(dynamic), [wellformed_body/3]).
 :- use_module(library(filenames), [no_path_file_name/2]).
@@ -50,6 +50,7 @@
 :- use_module(library(read)).
 :- use_module(library(operators)).
 :- use_module(library('foreign_interface/build_foreign_interface')). % JFMC
+:- use_module(library('compiler/compressed_bytecode')). % OPA
 
 :- multifile primitive_meta_predicate/2. % Used by mexpand
 
@@ -60,6 +61,7 @@ define_flag(discontiguous_warnings, [on,off], on).
 define_flag(multi_arity_warnings, [on,off], on).
 define_flag(verbose_compilation, [on,off], off).
 define_flag(itf_format, [f,r], f). % f=fast{read,write}, r=prolog terms.
+define_flag(compresslib,[yes,no],no).
 
 :- data opt_suff/1.
 
@@ -732,11 +734,8 @@ process_first_decl(Decl, Base, M, VNs, Pl, Ln0, Ln1) :-
 process_first_decl(PackageDecl, Base, M,_VNs,_Pl, Ln0, Ln1) :-
         functor(PackageDecl, Package, _),
         catch(get_base_name(library(Package), _, _, _),_,fail), !,
-        ( arg(1, PackageDecl, M) ->
-            check_define_module(Base, M, Ln0, Ln1)
-        ; module_from_base(Base, M),
-          assertz_fact(defines_module(Base, M))
-        ),
+        ( arg(1, PackageDecl, M) -> true ; true ),
+        check_define_module(Base, M, Ln0, Ln1),
         ( arg(2, PackageDecl, Exports) ->
             assert_export_list(Exports, Base, Ln0, Ln1)
         ; true
@@ -754,13 +753,18 @@ process_first_decl(Decl, Base, M, VNs, Pl, Ln0, Ln1) :-
 
 default_package([iso]).
 
-% Does not check module_redefined!
 check_define_module(Base, M, Ln0, Ln1) :-
         module_from_base(Base, SM),
-        ( SM = M, ! % Allow vars in module declarations
+        ( SM = M -> % Allow vars in module declarations
+            check_other_defines(Base, M, Ln0, Ln1)
         ; compiler_error(Ln0, Ln1, bad_module(Base, M))
         ),
         assertz_fact(defines_module(Base, M)).
+
+check_other_defines(Base, M, Ln0, Ln1) :-
+        defines_module(OtherFile, M), !,
+        compiler_error(Ln0, Ln1, module_redefined(OtherFile, Base, M)).
+check_other_defines(_, _, _, _).
 
 read_record_next(Stream, Base, Pl, M, Caller) :-
         repeat,
@@ -1695,8 +1699,6 @@ compiler_error_data(incompatible_multifile(F,A,T,T1,M1),
 compiler_error_data(incompatible_decl(F,A,Decl,Decl2),
         ['predicate ',~~(F/A),' is being defined ',Decl,
                        ' but it was already defined ',Decl2]).
-
-% This is not checked now!
 compiler_error_data(module_redefined(OtherFile, _SourceFile, M),
         ['Module ',M,' already defined in source ',OtherFile]).
 
@@ -1719,6 +1721,7 @@ make_po_file(Base) :-
         end_doing.
 
 make_po_file2(PoName, Base, Dir, Module, Source) :-
+	current_prolog_flag(compresslib,no),
         stream_of_file(PoName, Dir, Out, Ref), !, % May fail
         Mode = ql(unprofiled),
         set_compiler_mode(Mode),
@@ -1729,6 +1732,30 @@ make_po_file2(PoName, Base, Dir, Module, Source) :-
         fmode(Source, FMode),
         chmod(PoName, FMode),
         erase(Ref).
+make_po_file2(PoName, Base, Dir, Module, Source) :- %OPA
+	current_prolog_flag(compresslib,yes),      
+        open(PoName,write,Out),
+	mktemp('tmpciaoXXXXXX', TmpFile),
+	stream_of_file(TmpFile, Dir, OutTmp, Ref), !, % May fail
+        Mode = ql(unprofiled),
+        set_compiler_mode(Mode),
+        set_compiler_out(OutTmp),
+        compiler_pass(Source, Base, Module, Mode),
+        retractall_fact(incore_mode_of(_, _)),
+        close(OutTmp),
+	open(TmpFile,read,TmpStream),
+	current_output(So),
+	set_output(Out),
+	( current_prolog_flag(verbose_compilation,off), !
+        ; message(['{Compressing library}'])),
+	compressLZ(TmpStream),
+	close(TmpStream),
+	close(Out),
+	set_output(So),
+        fmode(Source, FMode),
+        chmod(PoName, FMode),
+        erase(Ref),
+	delete_file(TmpFile).
 make_po_file2(PoName, _, _, _, _) :-
         ( file_exists(PoName) ->
             message(warning, ['Unable to update ',PoName,
@@ -2574,6 +2601,9 @@ retract_clause(Head, Body) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+167,2000/06/29,16:19*20+'CEST'), "Again module
+   name duplicates are detected.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+45,2000/02/05,20:53*37+'CET'), "Added prolog flag
    itf_format to allow writing itf data in fastrw format instead as

@@ -17,6 +17,7 @@
 :- use_module(library(ctrlcclean), [delete_on_ctrlc/2]).
 :- use_module(engine(internals), [module_concat/3]).
 :- use_module(library('foreign_interface/build_foreign_interface')). % JFMC
+:- use_module(library('compiler/compressed_bytecode')). % OPA
 
 % Extension for ciao executables in Win32
 :- include(win_exec_ext).
@@ -25,6 +26,8 @@
 
 define_flag(executables, [static, eagerload, lazyload], eagerload).
 define_flag(check_libraries, [on, off], off).
+define_flag(selfcontained,atom,none).
+define_flag(compressexec,[yes,no],no).
 
 :- data ok_lazy/1.
 
@@ -355,8 +358,9 @@ create_exec(ExecName, Base, PoFiles) :-
         delete_on_ctrlc(ExecName, Ref),
 	open(ExecName,write,Stream),
         set_output(Stream),
-        copy_stdout(library('compiler/header')),
-	dump_pos(PoFiles),
+        current_prolog_flag(selfcontained,TargetEng),
+	copy_header(TargetEng),
+	copy_pos(PoFiles,Stream),
 	close(Stream),
         erase(Ref),
         set_input(Si),
@@ -365,10 +369,35 @@ create_exec(ExecName, Base, PoFiles) :-
         M1 is M0 \/ ((M0 >> 2) /\ 0o111),
         chmod(ExecName, M1).
 
+copy_header(none) :- !, % OPA
+	copy_stdout(library('compiler/header')).
+copy_header(TargetEng) :- !,
+	verbose_message(['{Using engine for ',TargetEng,'}']),
+	ciaolibdir(Libdir),
+	atom_concat(Libdir,'/engine/ciaoengine.',Dir),
+	atom_concat(Dir,TargetEng,Dir2),
+	atom_concat(Dir2,'.sta',Engine),
+	copy_stdout(Engine).
+
+copy_pos(PoFiles,_) :- % OPA
+	current_prolog_flag(compressexec,no), !,
+	dump_pos(PoFiles).
+copy_pos(PoFiles,Stream) :-
+	temp_filename(TmpFile),
+	open(TmpFile,write,TmpStreamw),
+	set_output(TmpStreamw),
+	dump_pos(PoFiles),
+	close(TmpStreamw),
+	open(TmpFile,read,TmpStreamr),
+	set_output(Stream),
+	verbose_message(['{Compressing executable}']),
+	compressLZ(TmpStreamr),
+	close(TmpStreamr).
+
 resolve_execname(ExecName, _, _, _) :- nonvar(ExecName), !.
 resolve_execname(ExecName, B, Pl, Os) :-
-% Pl file has no .pl extension or we are in Win32
-        ( Pl = B ; Os = 'Win32' ), !,
+% Pl file has no .pl extension or we are compiling for Win32
+        ( Pl = B ; Os = 'Win32' ; current_prolog_flag(selfcontained,'Win32i86')), !,
         exec_ext(EXT),
         atom_concat(B,EXT,ExecName).
 resolve_execname(ExecName, B, _, _) :- ExecName = B.
@@ -379,7 +408,9 @@ resolve_execname(ExecName, B, _, _) :- ExecName = B.
 
 dump_pos([File|Files]):-
 	verbose_message(['{Adding ',File,'}']),
-        copy_stdout(File),
+	open(File,read,Stream),
+        copyLZ(Stream),
+	close(Stream),
 	nl,
 	dump_pos(Files).
 dump_pos([]).

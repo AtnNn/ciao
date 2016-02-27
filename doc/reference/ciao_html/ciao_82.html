@@ -1,70 +1,59 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Ciao library browser</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level concurrency/multithreading primitives</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC336" HREF="ciao_toc.html#TOC336">The Ciao library browser</A></H1>
+<H1><A NAME="SEC314" HREF="ciao_toc.html#TOC314">Low-level concurrency/multithreading primitives</A></H1>
 <P>
-<A NAME="IDX3908"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<A NAME="IDX3650"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<STRONG>Author(s):</STRONG> Manuel Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#39 (1999/7/21, 12:8:4 MEST)
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
-<A NAME="IDX3909"></A>
-<CODE>librowser</CODE> library provides a set of predicates wich enables the user to interactively find Ciao/Prolog libraries and/or any predicate exported by them. 
+<STRONG>Version of last change:</STRONG> 1.5#145 (2000/5/18, 16:13:40 CEST)
 
 
 <P>
-This is a simple example: 
+This module provides basic mechanisms for using concurrency and implementing multi-goal applications.
+<A NAME="IDX3651"></A>
+<A NAME="IDX3652"></A>
+It provides a means for arbitrary goals to be specified to be run in a separate stack set; in that case, they are assigned a goal identifier with which further accesses (e.g., asking for more solutions) to the goal can be made. Additionally, in some architectures, these goals can be assigned an O.S. thread, separate from the one which made the initial call, thus providing concurrency and, in multiprocessors, parallelism capabilities. 
 
-
-
-<PRE>
-?- apropos('*find*').
-persdbrt_sql: dbfindall/4
-persdbrtsql: dbfindall/4
-conc_aggregates: findall/3
-linda: rd_findall/3
-vndict: find_name/4
-internals: $find_file/8
-aggregates: findall/4,findall/3
-
-yes
-?- 
-</PRE>
 
 <P>
-Librowser is specially usefull when using inside GNU Emacs, just place the cursor over a librowser response and press C-cTAB in order to get help on the related predicate. Refer to the <STRONG>"Using Ciao inside GNU Emacs"</STRONG> chapter for further information. 
+As for now, the memory space of the threads (c.f., stack sets) is separate in the sense that goals are copied to the new stack set, and bindings of variables are not seen among stack sets which allows forward and backward execution to proceed independently in each stack set, at the cost of the initial goal copy. However, the program space (including, specially, the 
+<A NAME="IDX3653"></A>
+concurrent predicates) are shared and seen by all the goals and threads, and should be used as the primary means of communication and synchronization. Higer level libraries can be built using these basic blocks. 
+
+
+<P>
+Additionally, a small set of lock primitives are provided. Locks are associated with atom names. Whereas the concurrent database facilities are enough to implement locks, semaphores, messages, etc., the predicates implementing atom-based locks are faster than the ones accessing the concurrent database (but they are less powerful). 
 
 
 
 <UL>
-<LI><A HREF="ciao_82.html#SEC337">Usage and interface (librowser)</A>
-<LI><A HREF="ciao_82.html#SEC338">Documentation on exports (librowser)</A>
-<LI><A HREF="ciao_82.html#SEC339">Documentation on internals (librowser)</A>
+<LI><A HREF="ciao_82.html#SEC315">Usage and interface (concurrency)</A>
+<LI><A HREF="ciao_82.html#SEC316">Documentation on exports (concurrency)</A>
+<LI><A HREF="ciao_82.html#SEC317">Known bugs and planned improvements (concurrency)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC337" HREF="ciao_toc.html#TOC337">Usage and interface (<CODE>librowser</CODE>)</A></H2>
+<H2><A NAME="SEC315" HREF="ciao_toc.html#TOC315">Usage and interface (<CODE>concurrency</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -72,29 +61,7 @@ Librowser is specially usefull when using inside GNU Emacs, just place the curso
 
 <LI><STRONG>Library usage:</STRONG>
 
-It is not necesary to use this library at user programs. It was designed to be used at the Ciao <EM>toplevel</EM> shell: 
-<A NAME="IDX3910"></A>
-<CODE>ciaosh</CODE>. In order to do so, just make use of 
-<A NAME="IDX3911"></A>
-<CODE>use_module/1</CODE> as follows: 
-
-<CODE>use_module(library(librowser))</CODE>. 
-
-Then, the library interface must be read. This is automatically done when calling any predicate at librowser, and the entire process will take a little moment.So, you should want to perform such a process after loading the Ciao toplevel: 
-
-
-<PRE>
-Ciao 0.9 #75: Fri Apr 30 19:04:24 MEST 1999
-?- use_module(library(librowser)).
-
-yes
-?- update.
-
-</PRE>
-
-Whether you want this process to be automatically performed when loading 
-<A NAME="IDX3912"></A>
-<CODE>ciaosh</CODE>, you may include those lines in your <EM>.ciaorc</EM> personal initialization file. 
+These predicates are builtin in Ciao, so nothing special has to be done to use them.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -103,40 +70,32 @@ Whether you want this process to be automatically performed when loading
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3913"></A>
-<CODE>update/0</CODE>, 
-<A NAME="IDX3914"></A>
-<CODE>browse/2</CODE>, 
-<A NAME="IDX3915"></A>
-<CODE>where/1</CODE>, 
-<A NAME="IDX3916"></A>
-<CODE>describe/1</CODE>, 
-<A NAME="IDX3917"></A>
-<CODE>system_lib/1</CODE>, 
-<A NAME="IDX3918"></A>
-<CODE>apropos/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX3919"></A>
-<CODE>filenames</CODE>, 
-<A NAME="IDX3920"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX3921"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX3922"></A>
-<CODE>streams</CODE>, 
-<A NAME="IDX3923"></A>
-<CODE>patterns</CODE>, 
-<A NAME="IDX3924"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX3654"></A>
+<CODE>eng_call/4</CODE>, 
+<A NAME="IDX3655"></A>
+<CODE>eng_call/3</CODE>, 
+<A NAME="IDX3656"></A>
+<CODE>eng_backtrack/2</CODE>, 
+<A NAME="IDX3657"></A>
+<CODE>eng_cut/1</CODE>, 
+<A NAME="IDX3658"></A>
+<CODE>eng_release/1</CODE>, 
+<A NAME="IDX3659"></A>
+<CODE>eng_wait/1</CODE>, 
+<A NAME="IDX3660"></A>
+<CODE>eng_kill/1</CODE>, 
+<A NAME="IDX3661"></A>
+<CODE>eng_killothers/0</CODE>, 
+<A NAME="IDX3662"></A>
+<CODE>eng_self/1</CODE>, 
+<A NAME="IDX3663"></A>
+<CODE>eng_status/0</CODE>, 
+<A NAME="IDX3664"></A>
+<CODE>lock_atom/1</CODE>, 
+<A NAME="IDX3665"></A>
+<CODE>unlock_atom/1</CODE>, 
+<A NAME="IDX3666"></A>
+<CODE>atom_lock_state/2</CODE>.
 
 </UL>
 
@@ -146,257 +105,374 @@ Whether you want this process to be automatically performed when loading
 
 
 
-<H2><A NAME="SEC338" HREF="ciao_toc.html#TOC338">Documentation on exports (<CODE>librowser</CODE>)</A></H2>
+<H2><A NAME="SEC316" HREF="ciao_toc.html#TOC316">Documentation on exports (<CODE>concurrency</CODE>)</A></H2>
 <P>
-<A NAME="IDX3925"></A>
-<A NAME="IDX3926"></A>
+<A NAME="IDX3667"></A>
+<A NAME="IDX3668"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>update/0:</B>
-<DD><A NAME="IDX3927"></A>
+<DT><span class="define">PREDICATE:</span> <B>eng_call/4:</B>
+<DD><A NAME="IDX3669"></A>
 
 
 <P>
-This predicate will scan the Ciao 
-<A NAME="IDX3928"></A>
-system libraries for predicate definitions. This may be done once time before calling any other predicate at this library. 
+<EM>Meta-predicate</EM> with arguments: <CODE>eng_call(goal,?,?,?)</CODE>.
 
 
 <P>
-update/0 will also be automatically called (once) when calling any other predicate at librowser.
+<STRONG>Usage:</STRONG> <CODE>eng_call(+Goal,+EngineCreation,+ThreadCreation,-GoalId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Calls <CODE>Goal</CODE> in a new engine (stack set), possibly using a new thread, and returns a <CODE>GoalId</CODE> to designate this new goal henceforth. <CODE>EngineCreation</CODE> can be either <CODE>wait</CODE> or <CODE>create</CODE>; the distinction is not yet meaningful. <CODE>ThreadCreation</CODE> can be one of <CODE>self</CODE>, <CODE>wait</CODE>, or <CODE>create</CODE>. In the first case the creating thread is used to execute <CODE>Goal</CODE>, and thus it has to wait until its first result or failure. The call will fail if <CODE>Goal</CODE> fails, and succeed otherwise. However, the call will always suceed when a remote thread is started. The space and identifiers reclaimed for the thread must be explicitly deallocated by calling
+
+<A NAME="IDX3670"></A>
+<CODE>eng_release/1</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>+EngineCreation</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+ThreadCreation</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-GoalId</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3671"></A>
+<A NAME="IDX3672"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_call/3:</B>
+<DD><A NAME="IDX3673"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>eng_call(goal,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>eng_call(+Goal,+EngineCreation,+ThreadCreation)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Similar to
+
+<A NAME="IDX3674"></A>
+<CODE>eng_call/4</CODE>, but the thread (if created) and stack areas are automatically released upon success or failure of the goal. No <CODE>GoalId</CODE> is provided for further interaction with the goal. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>+EngineCreation</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+ThreadCreation</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3675"></A>
+<A NAME="IDX3676"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_backtrack/2:</B>
+<DD><A NAME="IDX3677"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>eng_backtrack(+GoalId,+ThreadCreation)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Performs backtracking on the goal designed by <CODE>GoalId</CODE>. A new thread can be used to perform backtracking, according to <CODE>ThreadCreation</CODE> (same as in
+
+<A NAME="IDX3678"></A>
+<CODE>eng_call/4</CODE>). Fails if the goal is backtracked over by the local thread, and there are no more solutions. Always succeeds if executed by a remote thread. The engine is <STRONG>not</STRONG> automatically released up upon failure: 
+<A NAME="IDX3679"></A>
+<CODE>eng_release/1</CODE> must be called to that end. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+GoalId</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+ThreadCreation</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3680"></A>
+<A NAME="IDX3681"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_cut/1:</B>
+<DD><A NAME="IDX3682"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>eng_cut(+GoalId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Performs a <EM>cut</EM> in the execution of the goal <CODE>GoalId</CODE>. The next call to
+
+<A NAME="IDX3683"></A>
+<CODE>eng_backtrack/2</CODE> will therefore backtrack all the way and fail. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+GoalId</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3684"></A>
+<A NAME="IDX3685"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_release/1:</B>
+<DD><A NAME="IDX3686"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>eng_release(+GoalId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Cleans up and releases the engine executing the goal designed by <CODE>GoalId</CODE>. The engine must be idle, i.e., currently not exedcuting any goal.
+
+<A NAME="IDX3687"></A>
+<CODE>eng_wait/1</CODE> can be used to ensure this. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+GoalId</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3688"></A>
+<A NAME="IDX3689"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_wait/1:</B>
+<DD><A NAME="IDX3690"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>eng_wait(+GoalId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Waits for the engine executing the goal denoted by <CODE>GoalId</CODE> to finish the computation (i.e., it has finished searching for a solution, either with success or failure).
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+GoalId</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3691"></A>
+<A NAME="IDX3692"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_kill/1:</B>
+<DD><A NAME="IDX3693"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>eng_kill(+GoalId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Kills the thread executing <CODE>GoalId</CODE> (if any), and frees the memory used up by the stack set. Usually one should wait (
+
+<A NAME="IDX3694"></A>
+<CODE>eng_wait/1</CODE>) for a goal, and then release it, but killing the thread explicitly allows recovering from error states. A goal cannot kill itself. This feature should be used with caution, because there are situations where killing a thread might render the system in an unstable state. Threads should cooperate in their killing, but if the killed thread is blocked in a I/O operation, or inside an internal critical region, this cooperation is not possible and the system, although stopped, might very well end up in a incosistent state. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+GoalId</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3695"></A>
+<A NAME="IDX3696"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_killothers/0:</B>
+<DD><A NAME="IDX3697"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Creates an internal database of modules at Ciao
+<LI><EM>Description:</EM> Kills threads and releases stack sets of all active goals, but the one calling
 
-<A NAME="IDX3929"></A>
-system libraries. 
+<A NAME="IDX3698"></A>
+<CODE>eng_killothers</CODE>. Again, a safety measure. The same cautions as with 
+<A NAME="IDX3699"></A>
+<CODE>eng_kill/1</CODE> should be taken. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3930"></A>
-<A NAME="IDX3931"></A>
+<A NAME="IDX3700"></A>
+<A NAME="IDX3701"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>browse/2:</B>
-<DD><A NAME="IDX3932"></A>
+<DT><span class="define">PREDICATE:</span> <B>eng_self/1:</B>
+<DD><A NAME="IDX3702"></A>
 
 
 <P>
-This predicate is fully reversible, and is provided to inspect concrete predicate specifications. For example: 
-
-<PRE>
-?- browse(M,findall/A).
-
-A = 3,
-M = conc_aggregates ? ;
-
-A = 4,
-M = aggregates ? ;
-
-A = 3,
-M = aggregates ? ;
-
-no
-?- 
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>browse(Module,Spec)</CODE>
+<STRONG>Usage:</STRONG> <CODE>eng_self(?GoalId)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Asocciates the given <CODE>Spec</CODE> predicate specification with the <CODE>Module</CODE> which exports it.
+<LI><EM>Description:</EM> <CODE>GoalId</CODE> is unified with the identifier of the goal within which
+
+<A NAME="IDX3703"></A>
+<CODE>eng_self/1</CODE> is executed. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>?GoalId</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3704"></A>
+<A NAME="IDX3705"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>eng_status/0:</B>
+<DD><A NAME="IDX3706"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Prints to standard output the current status of the stack sets.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3707"></A>
+<A NAME="IDX3708"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lock_atom/1:</B>
+<DD><A NAME="IDX3709"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lock_atom(+Atom)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The
+
+<A NAME="IDX3710"></A>
+semaphore associated to <CODE>Atom</CODE> is accessed; if its value is nonzero, it is atomically decremented and the execution of this thread proceeds. Otherwise, the goal waits until a nonzero value is reached. The semaphore is then atomically decremented and the execution of this thread proceeds. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Atom</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3711"></A>
+<A NAME="IDX3712"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>unlock_atom/1:</B>
+<DD><A NAME="IDX3713"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>unlock_atom(+Atom)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The
+
+<A NAME="IDX3714"></A>
+semaphore associated to <CODE>Atom</CODE> is atomically incremented. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Atom</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3715"></A>
+<A NAME="IDX3716"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>atom_lock_state/2:</B>
+<DD><A NAME="IDX3717"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>atom_lock_state(+Atom,+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sets the semaphore associated to <CODE>Atom</CODE> to <CODE>Value</CODE>. This is usually done at the beginning of the execution, but can be executed at any time. If not called, semaphore associated to atoms are by default inited to 1. It should be used with caution: arbitrary use can transform programs using locks in a mess of internal relations. The change of a semaphore value in a place other than the initialization stage of a program is <STRONG>not</STRONG> among the allowed operations as defined by Dijkstra [Dij65,BA82].
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Module</CODE> is a module name (an atom)
- (<CODE>librowser:module_name/1</CODE>)
+<CODE>+Atom</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Spec</CODE> is a <STRONG>Functor/Arity</STRONG> predicate specification
- (<CODE>librowser:pred_spec/1</CODE>)
+<CODE>+Value</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX3933"></A>
-<A NAME="IDX3934"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>where/1:</B>
-<DD><A NAME="IDX3935"></A>
-
-
-<P>
-This predicate will print at the screen the module needed in order to import a given predicate specification. For example: 
-
-<PRE>
-?- where(findall/A).
-findall/3 exported at module conc_aggregates
-findall/4 exported at module aggregates
-findall/3 exported at module aggregates
-
-yes
-?- 
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>where(Spec)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>atom_lock_state(+Atom,-Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Display what module to load in order to import the given <CODE>Spec</CODE>.
+<LI><EM>Description:</EM> Consults the <CODE>Value</CODE> of the semaphore associated to <CODE>Atom</CODE>. Use sparingly and mainly as a medium to check state correctness. Not among the operations on semaphore by Djikstra.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Spec</CODE> is a <STRONG>Functor/Arity</STRONG> predicate specification
- (<CODE>librowser:pred_spec/1</CODE>)
+<CODE>+Atom</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Value</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX3936"></A>
-<A NAME="IDX3937"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>describe/1:</B>
-<DD><A NAME="IDX3938"></A>
 
 
-<P>
-This one is used to find out which predicates were exported by a given module. Very usefull when you know the library, but not the concrete predicate. For example: 
+<H2><A NAME="SEC317" HREF="ciao_toc.html#TOC317">Known bugs and planned improvements (<CODE>concurrency</CODE>)</A></H2>
 
-<PRE>
-?- describe(librowser).
-Predicates at library librowser : 
-
-apropos/1 
-system_lib/1 
-describe/1 
-where/1 
-browse/2 
-update/0 
-
-yes
-?- 
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>describe(Module)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Display a list of exported predicates at the given <CODE>Module</CODE>
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI>
 
-<CODE>Module</CODE> is a module name (an atom)
- (<CODE>librowser:module_name/1</CODE>)
+<STRONG>This library is being rewritten at the moment. The Prolog interface herein described may not correspond exactly with the existing implementation. This note will be removed when the documentation corresponds to the implementation.</STRONG>
+
+<LI>
+
+Available architectures implementing POSIX threads and in Windows 32 environments.
+
+<LI>
+
+Some implementation of threads have a limit on the total number of threads that can be created by a process. Thread creation, in this case, just hangs. A better solution is planned for the future.
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3939"></A>
-<A NAME="IDX3940"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>system_lib/1:</B>
-<DD><A NAME="IDX3941"></A>
-
-
-<P>
-It retrieves on backtracking all Ciao system libraries stored in the internal database. Certainly, those which were scanned at 
-<A NAME="IDX3942"></A>
-<CODE>update/0</CODE> calling. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>system_lib(Module)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Module</CODE> variable will be successively instantiated to the system libaries stored in the internal database.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Module</CODE> is a module name (an atom)
- (<CODE>librowser:module_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3943"></A>
-<A NAME="IDX3944"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>apropos/1:</B>
-<DD><A NAME="IDX3945"></A>
-
-
-<P>
-This tool makes use of 
-<A NAME="IDX3946"></A>
-regular expresions in order to find predicate specifications. It is very usefull whether you can't renember the full name of a predicate. Regular expresions take the same format as described in library 
-<A NAME="IDX3947"></A>
-<CODE>patterns</CODE>. Example: 
-
-<PRE>
-?- apropos('atom_*').
-
-metaterms: atom_concat/2
-concurrency: atom_lock_state/2
-atomic_basic: atom_concat/3,atom_length/2,atom_codes/2
-iso_byte_char: atom_chars/2
-
-yes
-?- 
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>apropos(RegSpec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> This will search any predicate specification <CODE>Spec</CODE> which matches the given <CODE>RegSpec</CODE> incomplete predicate specification.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>RegSpec</CODE> is a Pattern/Arity specification.
- (<CODE>librowser:apropos_spec/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC339" HREF="ciao_toc.html#TOC339">Documentation on internals (<CODE>librowser</CODE>)</A></H2>
-<P>
-<A NAME="IDX3948"></A>
-<A NAME="IDX3949"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>apropos_spec/1:</B>
-<DD><A NAME="IDX3950"></A>
-
-
-<P>
-Defined as: 
-
-<PRE>
-apropos_spec(_1).
-apropos_spec(Pattern/Arity) :-
-        pattern(Pattern),
-        int(Arity).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>apropos_spec(S)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a Pattern/Arity specification.
-
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

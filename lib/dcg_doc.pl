@@ -26,7 +26,7 @@ definite clause grammars. A DCG rule in Prolog takes the general form
 @noindent
 meaning ``a possible form for @var{head} is @var{body}''.  Both
 @var{body} and @var{head} are sequences of one or more items linked by the
-standard Prolog conjunction operator @tt{,}. 
+standard Prolog conjunction operator ""@tt{,}"". 
 
 Definite clause grammars extend context-free grammars in the following ways:
 
@@ -78,7 +78,7 @@ term(Z) --> number(Z).
 
 number(C) --> ""+"", number(C).
 number(C) --> ""-"", number(X), @{C is -X@}.
-number(X) --> [C], @{""0""=<C, C=<""9"", X is C - ""0""@}.
+number(X) --> [C], @{0'0=<C, C=<0'9, X is C - 0'0@}.
 @end{verbatim}
 
 In the last rule, @var{C} is the ASCII code of some digit.
@@ -133,7 +133,7 @@ p(X, Y, S0, S) :-
 @end{verbatim}
 
 Terminals are translated using the built-in predicate
-@tt{term_basic:'C'/3} (this predicate is not normally useful in itself;
+@tt{'C'/3} (this predicate is not normally useful in itself;
 it has been given the name @tt{'C'} simply to avoid using up a more 
 useful name). 
 Then, for instance

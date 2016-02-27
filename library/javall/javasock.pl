@@ -27,6 +27,10 @@ or @lib{jtopl} (Java to Prolog interface) libraries instead.
 :- use_module(library(dynamic)). 
 :- use_module(library(format)). 
 
+
+:- prop machine_name(?Name) # "@var{Name} is a valid host name.".
+machine_name(_).
+
 :- pred java_stream(DataStream, EventStream, Address)
 	:: atm * int * machine_name # "Stores the identifiers of the streams
 	used. A fact is asserted when the connection to the Java process is
@@ -36,7 +40,7 @@ or @lib{jtopl} (Java to Prolog interface) libraries instead.
 :- dynamic java_stream/3.
 
 %% -----------------------------------------------------------------------
-:- pred socket_connection(+node, +stream) 
+:- pred socket_connection(+Node, +Stream) 
 	:: atom * stream
         # "Given a stream connected to a node, it gets the socket port from
 	  the given stream and creates the sockets to connect to the java
@@ -62,7 +66,7 @@ socket_disconnection :-
 	!.
 
 %% -----------------------------------------------------------------------
-:- pred java_client(+address)
+:- pred java_client(+Address)
 	# "Opens a connection at an address, and asserts the @tt{java_stream}
 	  corresponding fact.".
 %% -----------------------------------------------------------------------
@@ -72,7 +76,7 @@ java_client(Address) :-
         asserta_fact(java_stream(DataStream,EventStream,Address)).
 
 %% -----------------------------------------------------------------------
-:- pred open_client(+address, -stream, -stream)
+:- pred open_client(+Address, -Stream, -Stream)
 	:: term * stream * stream
         # "Given an address (@tt{Host:Port} format), creates and synchronizes
 	  the sockets to the java process.".
@@ -93,7 +97,7 @@ open_event_client(Host, Port, EventStream) :-
         java_fast_read0(EventStream, event).
 
 %% -----------------------------------------------------------------------
-:- pred java_fast_write(+type, +term) :: atom * term # " It writes on the given
+:- pred java_fast_write(+Type, +Term) :: atom * term # " It writes on the given
 	stream type the term received as second argument. This is the basic
 	predicate used to send data to the Java side. The first argument
 	reflects the socket type: event or data. The second argument is the
@@ -121,7 +125,7 @@ java_fast_write0(Stream,T) :-
         ).
 
 %% -----------------------------------------------------------------------
-:- pred java_fast_read(+type, -term) :: atom * term # "It reads from the
+:- pred java_fast_read(+Type, -Term) :: atom * term # "It reads from the
 	given stream type one term and unifies it with the term received as
 	second argument. This is the basic predicate used to receive data
 	from the Java side. The first argument reflects the socket type:
@@ -155,6 +159,9 @@ java_fast_read0(Stream,T) :-
 %%------------------------------------------------------------------------
  
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+152,2000/05/26,13:36*48+'CEST'), "Some
+constants in pred assertions changed to variables.  (MCL)").
 
 :- comment(version(1*5+49,2000/02/08,16:35*38+'CET'), "Predicate
    documentation.  (Jesus Correas Fernandez)").

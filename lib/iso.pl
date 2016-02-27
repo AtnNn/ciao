@@ -5,7 +5,6 @@
 :- use_module(library(iso_incomplete)).
 :- use_module(library(operators)).
 :- use_module(library(read)).
-:- use_module(library(streams)).
 :- use_module(library(write)).
 
 %% Version comment prompting control for this file.

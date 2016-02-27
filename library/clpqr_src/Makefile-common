@@ -1,0 +1,39 @@
+include ../../SETTINGS
+include ../../COMMON
+
+include $(SRC)/makefile-sysindep
+include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
+
+phony:
+
+all:
+	'rm' -f all_modules
+	echo "set_prolog_flag(compresslib," $(COMPRESS_LIBS) ")." >> all_modules
+	$(SRC)/etc/collect_modules all_modules
+	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
+	-chmod $(DATAMODE) all_modules
+	'rm' -f all_module_messages
+
+links: clean
+	cd ../clpqr_src && \
+	for File in *.pl ; do \
+	    ln -s ../clpqr_src/$$File ../clp$(DOMAIN) ; \
+	done
+	cd ../clpqr_src/$(DOMAIN) && \
+	for File in *.pl ; do \
+	    ln -s ../clpqr_src/$(DOMAIN)/$$File ../../clp$(DOMAIN) ; \
+	done
+
+clean:
+	find . -type l -exec rm -f '{}' \;
+
+distclean:
+	rm -f *.po *.itf *.asr
+	cd ../clpqr_src && \
+	for File in *.pl ; do \
+	    rm -f ../clp$(DOMAIN)/$$File ; \
+	done
+	cd ../clpqr_src/$(DOMAIN) && \
+	for File in *.pl ; do \
+		rm -f ../../clp$(DOMAIN)/$$File ; \
+	done

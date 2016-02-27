@@ -14,7 +14,7 @@ main :-
     "This is a ",ref('#label',it(reference))," to ",
     bf(["another ",it(point)])," in this document.",$,
     'Let''s be ',
-    image('http://www.clip.dia.fi.upm.es/images/smile.happy.gif',[alt=':-)']),
+    image('http://localhost/images/smile.happy.gif',[alt=':-)']),
     '!',
     preformatted(['These lines',
       ['are ',b(preformatted),'.'],

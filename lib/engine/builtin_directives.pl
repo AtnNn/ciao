@@ -23,9 +23,10 @@
    As a result, by default only the builtin directives or declarations
    defined in this manual can be used in user programs. However, it is
    possible to define new declarations @cindex{declarations, user
-   defined} by using the @decl{new_declaration/1} and
-   @decl{new_declaration/2} directives documented in @ref{Extending the
-   syntax}.").
+   defined} using the @decl{new_declaration/1} and
+   @decl{new_declaration/2} directives (or using packages including
+   them). Also, packages may define new directives via code
+   translations.").
 
 %  ----------------------------------------------------------------------------
 

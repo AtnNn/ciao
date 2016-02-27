@@ -20,7 +20,7 @@
 	call_unknown/1,
 	replace_strings_in_file/3,
 	cyg2win/3,
-	writef/3 ],[assertions]).
+	writef/3 ],[assertions,isomodes]).
 
 %% The idea is that it is an extension
 :- reexport(library(system)).

@@ -212,7 +212,8 @@ absolute_file_name(File, Abs) :-
    @var{AbsBase} is the same as @var{AbsFile}, but without the second
    suffix, and @var{AbsDir} is the absolute path of the directory where
    @var{AbsFile} is.  The Ciao compiler invokes this predicate with
-   @var{Opt}='_opt' and @var{Suffix}='.pl' when searching source files.").
+   @var{Opt}=@tt{'_opt'} and @var{Suffix}=@tt{'.pl'} when searching
+   source files.").
 
 :- true pred absolute_file_name(+sourcename,+atm,+atm,+atm,-atm,-atm,-atm).
 

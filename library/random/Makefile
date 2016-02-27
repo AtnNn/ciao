@@ -12,8 +12,13 @@ OBJNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).o
 LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).so
 HEADERS=common_headers.h
 
+phony:
+
+all: $(LIBNAME)
+
 $(LIBNAME): headers $(OBJNAME) 
 	$(LD) $(LDSHARED) -o $(LIBNAME) $(OBJNAME) $(REQLIBS)
+	$(SETLOCALCOMPILER) $(CIAOC) -c $(MODULE)
 	chmod $(EXECMODE) $(LIBNAME)
 
 $(OBJNAME): headers $(SRCNAME)

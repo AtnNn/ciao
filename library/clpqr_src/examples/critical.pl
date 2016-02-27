@@ -1,4 +1,4 @@
-%:- module(_,[go1/0, go2/0, go3/0, cpm/2, print_analysis/1],[clpq]).
+:- module(_,[go1/0, go2/0, go3/0, cpm/2, print_analysis/1], []).
 :- use_package(clpq).
 
 % Sample goals: go1/0, go2/0, go3/0

@@ -114,7 +114,20 @@ connect_to_socket(Host, Port, Stream):-
 
 socket_recv(Stream, String):- socket_recv_code(Stream, String, _).
 
+:- pred hostname_address(+Hostname, ?Address) :: atm * atm #
+"@var{Address} is unified with the atom representing the address (in
+AF_INET format) corresponding to @var{Hostname}.".
+
+
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+169,2000/07/06,13:27*35+'CEST'),
+"hostname_address added.  (MCL)").
+
+:- comment(version(1*5+149,2000/05/24,20:00*09+'CEST'), "Changed
+Makefile to compile .pl to .po and .itf; otherwise the first load
+fails (and, after this, the second succeeds if the user has rights to
+write in the directory).  (MCL)").
 
 :- comment(version(1*5+127,2000/05/02,16:50*36+'CEST'), "The stream
 associated to a socket was added locally.  Now a call to a new

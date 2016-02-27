@@ -24,5 +24,5 @@ BOOL prolog_display2(Argdecl);
 BOOL prolog_displayq(Argdecl);
 BOOL prolog_displayq2(Argdecl);
 BOOL prolog_clearerr(Argdecl);
-BOOL prolog_fast_read_on_c(Argdecl);
-BOOL prolog_fast_write_on_c(Argdecl);
+BOOL prolog_fast_read_in_c(Argdecl);
+BOOL prolog_fast_write_in_c(Argdecl);

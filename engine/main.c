@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <sys/stat.h>
 
 #include "threads.h"
 #include "main.h"
@@ -34,6 +35,7 @@
 #define USAGE_STRING "Usage: %s [prolog_args] -C [-i] [-q] [-v] -b bootfile\n"
 
 BOOL interactive = FALSE;
+char emulatorlength[] = "This emulator executable has a size of        ";
 
 /*
 extern void init_kanji(), init_latin1();
@@ -96,11 +98,7 @@ void load_ql_files(Arg, qfile)
   int more_ql;
 
   push_qlinfo(NULL);
-  if (is_a_script(qfile)) 
-    skip_to_ctrl_l(qfile);
-#if defined(ALLOW_COMPRESSED_CODE)
-  is_compressed(qfile);
-#endif
+
   more_ql = qread1(w,qfile,&X(0));	            /* ignore version no. */
   w->global_top = w->node->global_top;              /* Reset heap pointer */
   
@@ -112,6 +110,44 @@ void load_ql_files(Arg, qfile)
 }
 
 
+static void open_emulator(file,stream)
+     char *file;
+     FILE **stream;
+{
+  REGISTER char *p;
+  char path[MAXPATHLEN+1];
+
+  for (p=file; *p && *p != '/'; p++);
+  if (*p == '/') p = ".";
+  else p = getenv("PATH");	
+  
+  while (*p) {
+      REGISTER char *next = path;
+      
+      while (*p && *p != ':') *next++ = *p++;
+      *next++ = '/';
+      *next++ = 0;
+      if (*p) p++;
+      if (!strcmp(path, "./")) path[0] = 0;
+      strcat(path, file);
+
+      if (!access(path, X_OK)) {
+	struct stat data;
+	stat(path,&data);
+	if (data.st_size == atoi(&emulatorlength[38])) {
+	  fprintf(stderr, USAGE_STRING, file);
+	  at_exit(1);}
+	if ((*stream = fopen(path,"r")) == NULL) {
+	  fprintf(stderr,"%s: unable to open for read\n", file);
+	  at_exit(1);
+	}
+	fseek(*stream,atoi(&emulatorlength[38]),SEEK_SET);
+	return;
+      }
+  }
+  fprintf(stderr,"%s: file not found\n", file);
+  at_exit(1);
+}
 
 extern char cwd[];
 
@@ -125,7 +161,7 @@ int main(argc, argv)
   int i;
   char *lc_ctype;
   char *raw_source_path = NULL;
-  FILE *qfile;
+  FILE *qfile = NULL;
   /*init_mm();*/
   init_locks();                                  /* global, first of all! */
 
@@ -202,10 +238,9 @@ int main(argc, argv)
 
   if (profile||predtrace) stop_on_pred_calls = TRUE;
 
-  if (raw_source_path == NULL) {   /* issue an error if no boot file given */
-    fprintf(stderr, USAGE_STRING, argv[0]);
-    at_exit(1);
-  }
+
+
+/* Find out the library_directory --- we need it before using '$' anywhere */
 
 #if defined(Win32)
   /* This assumes ciaoengine is run as relative/absolute path */
@@ -243,21 +278,27 @@ int main(argc, argv)
     library_directory = installibdir;
 #endif
 
-  /* This is here in order to be already defined library_directory */
-  expand_file_name(raw_source_path,source_path);
 
+  if (raw_source_path == NULL)  
+    open_emulator(argv[0],&qfile);
+  else {
+    expand_file_name(raw_source_path,source_path);
 #if defined(Win32)
-  i = strlen(source_path)-4;
-  if (i > 0 && strcmp(source_path+i,".bat") == SAME){
-    source_path[i+1] = 'c';
-    source_path[i+2] = 'p';
-    source_path[i+3] = 'x';
-  } else
-    if (i > 0 && strcmp(source_path+i,".cpx") != SAME)
-      strcat(source_path,".cpx");
+    i = strlen(source_path)-4;
+    if (i > 0 && strcmp(source_path+i,".bat") == SAME){
+      source_path[i+1] = 'c';
+      source_path[i+2] = 'p';
+      source_path[i+3] = 'x';
+    } else
+      if (i > 0 && strcmp(source_path+i,".cpx") != SAME){
+	strcat(source_path,".cpx");
+      }
 #endif
+  }
 
-  if((qfile=fopen(source_path,"r"))==NULL) {
+
+  if (qfile == NULL) qfile = fopen(source_path,"r");
+  if (qfile == NULL) {
     fprintf(stderr, "%s: boot file not found\n", source_path);
     at_exit(1);
   } else {                         /* We have a bootfile we can read from */

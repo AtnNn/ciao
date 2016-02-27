@@ -100,15 +100,15 @@ typedef LPTHREAD_START_ROUTINE  THREAD_START; /* The type of the routine */
 #if !defined(THREADS) || (!defined(USE_WIN32_THREADS) && !defined(USE_POSIX_THREADS))
 
 #include <unistd.h>
+#include <signal.h>
+
 
 #if defined(IRIX)
 # include <sys/types.h>
-# include <signal.h>
 #endif
 
 #if defined(SunOS4)
 #include <sys/wait.h>
-#include <signal.h>
 #endif
 
 #if defined(Solaris) || defined(LINUX) || defined(Win32)
@@ -125,7 +125,7 @@ typedef void *(*THREAD_START)(void *);
 
 #define Thread_Id getpid()
 #define Thread_Create_GoalId(Process, Arg, Id, Handle) \
-      if (Id!=NULL) Handle = Id = getpid(); Process (Arg)
+      if ((void *)Id != NULL) Handle = Id = getpid(); Process (Arg)
 #define Thread_Create_no_Id(Process, Arg) Process (Arg)
 #define Thread_Join(i)
 #define Thread_Exit(status)    exit(0)           /* Not correct, actually */

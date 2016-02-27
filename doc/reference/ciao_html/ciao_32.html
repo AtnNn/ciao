@@ -1,44 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Attributed variables</TITLE>
+<TITLE>The Ciao Prolog System               - Gathering some basic internal info</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_31.html">previous</A>, <A HREF="ciao_33.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_31.html">previous</A>, <A HREF="ciao_33.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC179" HREF="ciao_toc.html#TOC179">Attributed variables</A></H1>
+<H1><A NAME="SEC155" HREF="ciao_toc.html#TOC155">Gathering some basic internal info</A></H1>
 <P>
-<A NAME="IDX2101"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Christian Holzbaur, Daniel Cabeza, Manuel Carro.
+<A NAME="IDX1803"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
 
 
 <P>
-This library implements 
-<A NAME="IDX2102"></A>
-<A NAME="IDX2103"></A>
-<EM>attributed variables</EM>, which provide a mechanism for extensible unification.
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#13 (1999/7/2, 18:49:49 MEST)
+
+
+<P>
+This module provides predicates which return basic internal info.
 
 
 
 <UL>
-<LI><A HREF="ciao_32.html#SEC180">Usage and interface (attributes)</A>
-<LI><A HREF="ciao_32.html#SEC181">Documentation on exports (attributes)</A>
+<LI><A HREF="ciao_32.html#SEC156">Usage and interface (system_info)</A>
+<LI><A HREF="ciao_32.html#SEC157">Documentation on exports (system_info)</A>
+<LI><A HREF="ciao_32.html#SEC158">Documentation on internals (system_info)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC180" HREF="ciao_toc.html#TOC180">Usage and interface (<CODE>attributes</CODE>)</A></H2>
+<H2><A NAME="SEC156" HREF="ciao_toc.html#TOC156">Usage and interface (<CODE>system_info</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -55,14 +57,16 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2104"></A>
-<CODE>attach_attribute/2</CODE>, 
-<A NAME="IDX2105"></A>
-<CODE>get_attribute/2</CODE>, 
-<A NAME="IDX2106"></A>
-<CODE>update_attribute/2</CODE>, 
-<A NAME="IDX2107"></A>
-<CODE>detach_attribute/1</CODE>.
+<A NAME="IDX1804"></A>
+<CODE>get_arch/1</CODE>, 
+<A NAME="IDX1805"></A>
+<CODE>get_os/1</CODE>, 
+<A NAME="IDX1806"></A>
+<CODE>this_module/1</CODE>, 
+<A NAME="IDX1807"></A>
+<CODE>current_module/1</CODE>, 
+<A NAME="IDX1808"></A>
+<CODE>ciaolibdir/1</CODE>.
 
 </UL>
 
@@ -72,164 +76,261 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC181" HREF="ciao_toc.html#TOC181">Documentation on exports (<CODE>attributes</CODE>)</A></H2>
+<H2><A NAME="SEC157" HREF="ciao_toc.html#TOC157">Documentation on exports (<CODE>system_info</CODE>)</A></H2>
 <P>
-<A NAME="IDX2108"></A>
-<A NAME="IDX2109"></A>
+<A NAME="IDX1809"></A>
+<A NAME="IDX1810"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>attach_attribute/2:</B>
-<DD><A NAME="IDX2110"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_arch/1:</B>
+<DD><A NAME="IDX1811"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>attach_attribute(Var,Attr)</CODE>
+This predicate will describe the computer architecture wich is currently executing the predicate. 
+
+
+<P>
+Computer architectures are identified by a simple atom. This atom is implementation-defined, and may suffer any change from one Ciao Prolog version to another. 
+
+
+<P>
+For example,Ciao Prolog running on an Intel-based machine will retrieve: 
+
+<PRE>
+?- get_arch(I).
+
+I = i86 ? ;
+
+no
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>get_arch(?ArchDescriptor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Attach attribute <CODE>Attr</CODE> to <CODE>Var</CODE>.
+<LI><EM>Description:</EM> Unifies <CODE>ArchDescriptor</CODE> with a simple atom which describes the computer architecture currently executing the predicate.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Attr</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>?ArchDescriptor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>attach_attribute(Var,Attr)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>get_arch(ArchDescriptor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Attach attribute <CODE>Attr</CODE> to <CODE>Var</CODE>.
+<LI><EM>Description:</EM> Unifies <CODE>ArchDescriptor</CODE> with a simple atom which describes the computer architecture currently executing the predicate.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Attr</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>ArchDescriptor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2111"></A>
-<A NAME="IDX2112"></A>
+<A NAME="IDX1812"></A>
+<A NAME="IDX1813"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_attribute/2:</B>
-<DD><A NAME="IDX2113"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_os/1:</B>
+<DD><A NAME="IDX1814"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>get_attribute(Var,Attr)</CODE>
+This predicate will describe the Operating System which is running on the machine currently executing the Prolog program. 
+
+
+<P>
+Operating Systems are identified by a simple atom. This atom is implementation-defined, and may suffer any change from one Ciao Prolog version to another. 
+
+
+<P>
+For example,Ciao Prolog running on Linux will retrieve: 
+
+<PRE>
+?- get_os(I).
+
+I = 'LINUX' ? ;
+
+no
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>get_os(?OsDescriptor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Unify <CODE>Attr</CODE> with the attribute of <CODE>Var</CODE>, or fail if <CODE>Var</CODE> has no attribute.
+<LI><EM>Description:</EM> Unifies <CODE>OsDescriptor</CODE> with a simple atom which describes the running Operating System when predicate was called.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Attr</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>?OsDescriptor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>get_attribute(Var,Attr)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>get_os(OsDescriptor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Unify <CODE>Attr</CODE> with the attribute of <CODE>Var</CODE>, or fail if <CODE>Var</CODE> has no attribute.
+<LI><EM>Description:</EM> Unifies <CODE>OsDescriptor</CODE> with a simple atom which describes the running Operating System when predicate was called.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Attr</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>OsDescriptor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2114"></A>
-<A NAME="IDX2115"></A>
+<A NAME="IDX1815"></A>
+<A NAME="IDX1816"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>update_attribute/2:</B>
-<DD><A NAME="IDX2116"></A>
+<DT><span class="define">PREDICATE:</span> <B>this_module/1:</B>
+<DD><A NAME="IDX1817"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>update_attribute(Var,Attr)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>this_module(addmodule)</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>this_module(Module)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Change the attribute of attributed variable <CODE>Var</CODE> to <CODE>Attr</CODE>.
+<LI><EM>Description:</EM> <CODE>Module</CODE> is the internal module identifier for current module.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Attr</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>Module</CODE> is an internal module identifier
+ (<CODE>system_info:internal_module_id/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>update_attribute(Var,Attr)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>this_module(Module)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Change the attribute of attributed variable <CODE>Var</CODE> to <CODE>Attr</CODE>.
+<LI><EM>Description:</EM> <CODE>Module</CODE> is the internal module identifier for current module.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Attr</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>Module</CODE> is an internal module identifier
+ (<CODE>system_info:internal_module_id/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2117"></A>
-<A NAME="IDX2118"></A>
+<A NAME="IDX1818"></A>
+<A NAME="IDX1819"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>detach_attribute/1:</B>
-<DD><A NAME="IDX2119"></A>
+<DT><span class="define">PREDICATE:</span> <B>current_module/1:</B>
+<DD><A NAME="IDX1820"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>detach_attribute(Var)</CODE>
+This predicate will successively unify its argument with all module names currently loaded. Module names will be simple atoms. 
+
+
+<P>
+When called using a free variable as argument, it will retrieve on backtracking all modules currently loaded. This is usefull when called from the Ciao 
+<A NAME="IDX1821"></A>
+<CODE>toplevel</CODE>. 
+
+
+<P>
+When called using a module name as argument it will check whether the given module is loaded or not. This is usefull when called from user programs. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>current_module(Module)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Take out the attribute from the attributed variable <CODE>Var</CODE>.
+<LI><EM>Description:</EM> Retrieves (on backtracking) all currently loaded modules into your application.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<CODE>Module</CODE> is an internal module identifier
+ (<CODE>system_info:internal_module_id/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>detach_attribute(Var)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>current_module(Module)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Take out the attribute from the attributed variable <CODE>Var</CODE>.
+<LI><EM>Description:</EM> Retrieves (on backtracking) all currently loaded modules into your application.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<CODE>Module</CODE> is an internal module identifier
+ (<CODE>system_info:internal_module_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1822"></A>
+<A NAME="IDX1823"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ciaolibdir/1:</B>
+<DD><A NAME="IDX1824"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>ciaolibdir(CiaoPath)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>CiaoPath</CODE> is the path to the root of the Ciao libraries. Inside this directory, there are the directories 'lib', 'library' and 'contrib', which contain library modules.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>CiaoPath</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>ciaolibdir(CiaoPath)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>CiaoPath</CODE> is the path to the root of the Ciao libraries. Inside this directory, there are the directories 'lib', 'library' and 'contrib', which contain library modules.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>CiaoPath</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC158" HREF="ciao_toc.html#TOC158">Documentation on internals (<CODE>system_info</CODE>)</A></H2>
+<P>
+<A NAME="IDX1825"></A>
+<A NAME="IDX1826"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>internal_module_id/1:</B>
+<DD><A NAME="IDX1827"></A>
+
+
+<P>
+For a user file it is a term user/1 with an argument different for each user file, for other modules is just the name of the module (as an atom).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>internal_module_id(M)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>M</CODE> is an internal module identifier
+
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_31.html">previous</A>, <A HREF="ciao_33.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_31.html">previous</A>, <A HREF="ciao_33.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

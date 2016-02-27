@@ -1,147 +1,52 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC485" HREF="ciao_toc.html#TOC485">Calling emacs from Prolog</A></H1>
+<H1><A NAME="SEC466" HREF="ciao_toc.html#TOC466">Low-level Prolog to Java socket connection</A></H1>
 <P>
-<A NAME="IDX5434"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<A NAME="IDX5213"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
 
 
 <P>
-This library provides a 
-<A NAME="IDX5435"></A>
-<A NAME="IDX5436"></A>
-<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
-<A NAME="IDX5437"></A>
-emacs mode, which is used to develop programs from within the 
-<A NAME="IDX5438"></A>
-<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
-<A NAME="IDX5439"></A>
-<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
-<A NAME="IDX5440"></A>
-<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#152 (2000/5/26, 13:36:48 CEST)
+
+
+<P>
+ 
+<A NAME="IDX5214"></A>
+<A NAME="IDX5215"></A>
+This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
+<A NAME="IDX5216"></A>
+<CODE>javart</CODE> (Prolog to Java low-level interface) or 
+<A NAME="IDX5217"></A>
+<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
 
 
 
 <UL>
-
-<LI>Visit a file, which can then be edited.
-
-<LI>Execute arbitrary
-
-<A NAME="IDX5441"></A>
-<A NAME="IDX5442"></A>
-<EM>emacs lisp</EM> code, sent from Prolog. 
-
-</UL>
-
-<P>
-In order for this library to work correctly, the following is needed: 
-
-
-
-<UL>
-
-<LI>You should be running the
-
-<A NAME="IDX5443"></A>
-<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
-
-<LI>This
-
-<A NAME="IDX5444"></A>
-<CODE>emacs</CODE> should be running the 
-<A NAME="IDX5445"></A>
-<A NAME="IDX5446"></A>
-<EM>emacs server</EM>. This can be done by including the following line in your 
-<A NAME="IDX5447"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<PRE>
-;; Start a server that emacsclient can connect to.
-(server-start)
-</PRE>
-
-Or typing <CODE>M-x server-start</CODE> within 
-<A NAME="IDX5448"></A>
-<CODE>emacs</CODE>. 
-
-</UL>
-
-<P>
-This suffices for using 
-<A NAME="IDX5449"></A>
-<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
-<A NAME="IDX5450"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<DL COMPACT>
-
-<DT><CODE>(setq enable-local-eval t)</CODE>
-<DD>
-Allows executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval nil)</CODE>
-<DD>
-Does not allow executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
-<DD>
-Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
-
-</DL>
-
-<P>
-<STRONG>Examples:</STRONG> 
-
-
-<P>
-Assuming that a <CODE>.pl</CODE> file loads this library, then: 
-
-
-<DL COMPACT>
-
-<DT><CODE>..., emacs_edit('foo'), ...</CODE>
-<DD>
-Opens file <CODE>foo</CODE> for editing in 
-<A NAME="IDX5451"></A>
-<CODE>emacs</CODE>. 
-
-<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
-<DD>
-Starts execution of a Ciao top-level within 
-<A NAME="IDX5452"></A>
-<CODE>emacs</CODE>. 
-
-</DL>
-
-
-<UL>
-<LI><A HREF="ciao_120.html#SEC486">Usage and interface (emacs)</A>
-<LI><A HREF="ciao_120.html#SEC487">Documentation on exports (emacs)</A>
+<LI><A HREF="ciao_120.html#SEC467">Usage and interface (javasock)</A>
+<LI><A HREF="ciao_120.html#SEC468">Documentation on exports (javasock)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC486" HREF="ciao_toc.html#TOC486">Usage and interface (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC467" HREF="ciao_toc.html#TOC467">Usage and interface (<CODE>javasock</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -149,7 +54,7 @@ Starts execution of a Ciao top-level within
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(emacs)).</CODE>
+<CODE>:- use_module(library(javasock)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -158,19 +63,16 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5453"></A>
-<CODE>emacs_edit/1</CODE>, 
-<A NAME="IDX5454"></A>
-<CODE>emacs_edit_nowait/1</CODE>, 
-<A NAME="IDX5455"></A>
-<CODE>emacs_eval/1</CODE>, 
-<A NAME="IDX5456"></A>
-<CODE>emacs_eval_nowait/1</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5457"></A>
-<CODE>elisp_string/1</CODE>.
+<A NAME="IDX5218"></A>
+<CODE>socket_connection/2</CODE>, 
+<A NAME="IDX5219"></A>
+<CODE>socket_disconnection/0</CODE>, 
+<A NAME="IDX5220"></A>
+<CODE>java_fast_read/2</CODE>, 
+<A NAME="IDX5221"></A>
+<CODE>java_fast_write/2</CODE>, 
+<A NAME="IDX5222"></A>
+<CODE>java_stream/3</CODE>.
 
 </UL>
 
@@ -181,14 +83,16 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5458"></A>
-<CODE>metaterms</CODE>, 
-<A NAME="IDX5459"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX5460"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX5461"></A>
-<CODE>system</CODE>.
+<A NAME="IDX5223"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX5224"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX5225"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX5226"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX5227"></A>
+<CODE>format</CODE>.
 
 </UL>
 
@@ -198,104 +102,133 @@ Starts execution of a Ciao top-level within
 
 
 
-<H2><A NAME="SEC487" HREF="ciao_toc.html#TOC487">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC468" HREF="ciao_toc.html#TOC468">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
 <P>
-<A NAME="IDX5462"></A>
-<A NAME="IDX5463"></A>
+<A NAME="IDX5228"></A>
+<A NAME="IDX5229"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
-<DD><A NAME="IDX5464"></A>
+<DT><span class="define">PREDICATE:</span> <B>socket_connection/2:</B>
+<DD><A NAME="IDX5230"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
+<STRONG>Usage:</STRONG> <CODE>socket_connection(+Node,+Stream)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
+<LI><EM>Description:</EM> Given a stream connected to a node, it gets the socket port from the given stream and creates the sockets to connect to the java process.
 
-<A NAME="IDX5465"></A>
-<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Node</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5466"></A>
-<A NAME="IDX5467"></A>
+<A NAME="IDX5231"></A>
+<A NAME="IDX5232"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
-<DD><A NAME="IDX5468"></A>
+<DT><span class="define">PREDICATE:</span> <B>socket_disconnection/0:</B>
+<DD><A NAME="IDX5233"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
-
-<A NAME="IDX5469"></A>
-<CODE>emacs</CODE> and continues without waiting for editing to finish. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5470"></A>
-<A NAME="IDX5471"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
-<DD><A NAME="IDX5472"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
+<LI><EM>Description:</EM> It closes the sockets to disconnect from the java process.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5473"></A>
-<A NAME="IDX5474"></A>
+<A NAME="IDX5234"></A>
+<A NAME="IDX5235"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
-<DD><A NAME="IDX5475"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_fast_read/2:</B>
+<DD><A NAME="IDX5236"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_fast_read(+Type,-Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
+<LI><EM>Description:</EM> It reads from the given stream type one term and unifies it with the term received as second argument. This is the basic predicate used to receive data from the Java side. The first argument reflects the socket type: event or data. The second argument is unified with the data received from the socket.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Type</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>-Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5476"></A>
-<A NAME="IDX5477"></A>
+<A NAME="IDX5237"></A>
+<A NAME="IDX5238"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
-<DD><A NAME="IDX5478"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_fast_write/2:</B>
+<DD><A NAME="IDX5239"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
+<STRONG>Usage:</STRONG> <CODE>java_fast_write(+Type,+Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
+<LI><EM>Description:</EM>  It writes on the given stream type the term received as second argument. This is the basic predicate used to send data to the Java side. The first argument reflects the socket type: event or data. The second argument is the term to be sent to the Java side.
 
-<A NAME="IDX5479"></A>
-<CODE>emacs</CODE> lisp code. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Type</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5240"></A>
+<A NAME="IDX5241"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_stream/3:</B>
+<DD><A NAME="IDX5242"></A>
+
+
+<P>
+The predicate is of type <EM>dynamic</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_stream(DataStream,EventStream,Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains the data and event streams, and the network address where the Java process is running.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>DataStream</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>EventStream</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Address</CODE> is a valid host name.
+ (<CODE>javasock:machine_name/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

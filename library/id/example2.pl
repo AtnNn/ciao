@@ -1,6 +1,6 @@
 :- module(_,_,[id]).
 
-:- iterative(p/1,0,(_(X,Z) :- Z is X + 1),2).
+:- iterative(p/1,0,(_(X,Z) :- Z is X + 1),2). % all goals deeper than 2 will fail
 
 %:- iterative(p/1,1,(_(X,Z) :- Z is X + 3)). % change the solutions' order 
                                              % to goal p(X). 

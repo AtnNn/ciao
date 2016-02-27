@@ -299,8 +299,11 @@ extern BOOL prolog_getos PROTO((struct worker *w));               /* MCL */
 extern BOOL prolog_dynlink PROTO((struct worker *w));              /* MCL */
 extern BOOL prolog_dynunlink PROTO((struct worker *w));            /* JFMC */
 
-extern BOOL prolog_fast_read_on_c PROTO((struct worker *w));      /* OPA */
-extern BOOL prolog_fast_write_on_c PROTO((struct worker *w));     /* OPA */
+extern BOOL prolog_fast_read_in_c PROTO((struct worker *w));      /* OPA */
+extern BOOL prolog_fast_write_in_c PROTO((struct worker *w));     /* OPA */
+
+extern BOOL compressLZ PROTO((struct worker *w));                 /* OPA */
+extern BOOL copyLZ PROTO((struct worker *w));                     /* OPA */
 
 /* GLOBAL DATA STRUCTURES */
 
@@ -707,11 +710,7 @@ static struct definition *define_builtin(pname,instr,arity)
   struct definition *func;
   ENG_INT current_mem = total_mem_count;
   
- /*func = insert_definition(&prolog_predicates,MakeString(pname),arity,TRUE);*/
-  Wait_Acquire_slock(prolog_predicates_l);
   func = insert_definition(predicates_location,MakeString(pname),arity,TRUE);
-  Release_slock(prolog_predicates_l);
-  /*func->properties.public = 1;*/
   SetEnterInstr(func,instr);
   INC_MEM_PROG((total_mem_count - current_mem));
   return func;
@@ -733,11 +732,7 @@ struct definition *define_c_predicate(pname,procedure,arity)
   struct definition *func;
   ENG_INT current_mem = total_mem_count;
   
-  /*func = insert_definition(&prolog_predicates,MakeString(pname),arity,TRUE);*/
-  Wait_Acquire_slock(prolog_predicates_l);
   func = insert_definition(predicates_location,MakeString(pname),arity,TRUE);
-  Release_slock(prolog_predicates_l);
-  /* func->properties.public = public; */
   SetEnterInstr(func,ENTER_C);
 #if 0 /* was GAUGE */
   {
@@ -792,7 +787,6 @@ struct definition *define_c_mod_predicate(module,pname,procedure,arity)
     func = keyval->value.def;
   else {
     func = new_functor(mod_tagpname,arity);
-    /*add_definition(&prolog_predicates,keyval,key,func);*/
     add_definition(predicates_location,keyval,key,func);
   }
 
@@ -819,9 +813,7 @@ void undefine_c_mod_predicate(char *module, char *pname, int arity) {
   strcat(mod_pname, pname);
   mod_tagpname = MakeString(mod_pname);
 
-  Wait_Acquire_slock(prolog_predicates_l);
   f = insert_definition(predicates_location, mod_tagpname, arity, FALSE);
-  Release_slock(prolog_predicates_l);
 
   abolish(NULL, f);
 }
@@ -921,8 +913,10 @@ static void initialize_intrinsics()
   define_c_predicate("displayq",prolog_displayq,1);
   define_c_predicate("displayq",prolog_displayq2,2);
   define_c_predicate("clearerr",prolog_clearerr,1);
-  define_c_mod_predicate("fastrw","fast_read",prolog_fast_read_on_c,1);
-  define_c_mod_predicate("fastrw","fast_write",prolog_fast_write_on_c,1);
+  define_c_mod_predicate("fastrw","fast_read",prolog_fast_read_in_c,1);
+  define_c_mod_predicate("fastrw","fast_write",prolog_fast_write_in_c,1);
+  define_c_mod_predicate("compressed_bytecode","compressLZ",compressLZ,1);
+  define_c_mod_predicate("compressed_bytecode","copyLZ",copyLZ,1);
 
 				/* builtin.c */
   
@@ -982,18 +976,27 @@ static void initialize_intrinsics()
 #endif
   
 
-  define_c_predicate("eng_call",       prolog_eng_call, 5);
-  define_c_predicate("eng_backtrack",  prolog_eng_backtrack, 2);
-  define_c_predicate("eng_cut",        prolog_eng_cut, 1);
-  define_c_predicate("eng_release",    prolog_eng_release, 1);
-  define_c_predicate("eng_wait",       prolog_eng_wait, 1);
-  define_c_predicate("eng_kill",       prolog_eng_kill, 1);
-  define_c_predicate("eng_killothers", prolog_eng_killothers, 0);
-  define_c_predicate("eng_status",     prolog_eng_status, 0);
-  define_c_predicate("eng_status1",    prolog_eng_status1, 1);
-  define_c_predicate("eng_self",       prolog_eng_self, 1);
+  define_c_predicate("$eng_call",  prolog_eng_call, 5);
+
+  /* In library(concurrency), under library/concurrency */
+  define_c_mod_predicate("concurrency", "eng_backtrack",  prolog_eng_backtrack, 2);
+  define_c_mod_predicate("concurrency", "eng_cut",  prolog_eng_cut, 1);
+  define_c_mod_predicate("concurrency", "eng_release", prolog_eng_release, 1);
+  define_c_mod_predicate("concurrency", "eng_wait", prolog_eng_wait, 1);
+  define_c_mod_predicate("concurrency", "eng_kill",  prolog_eng_kill, 1);
+  define_c_mod_predicate("concurrency", "eng_killothers", prolog_eng_killothers, 0);
+  define_c_mod_predicate("concurrency", "eng_status", prolog_eng_status, 0);
+  define_c_mod_predicate("concurrency", "eng_status1", prolog_eng_status1, 1);
+  define_c_mod_predicate("concurrency", "eng_self", prolog_eng_self, 1);
   /* The next one not yet finished */ 
-  /*  define_c_predicate("eng_clean"      prolog_eng_clean, 1);*/
+  /*  define_c_predicate("concurrency", "eng_clean"      prolog_eng_clean, 1);*/
+
+  define_c_mod_predicate("concurrency", "lock_atom",prolog_lock_atom,1);
+  define_c_mod_predicate("concurrency", "unlock_atom",prolog_unlock_atom,1);
+  define_c_mod_predicate("concurrency", "atom_lock_state",prolog_lock_atom_state,2);
+
+  define_c_predicate("$unlock_predicate",prolog_unlock_predicate,1);
+
 
 
 #if defined(UNDEFINED)
@@ -1006,11 +1009,6 @@ static void initialize_intrinsics()
   define_c_predicate("release_goal",prolog_release_goal,1);
 #endif
 
-  define_c_predicate("lock_atom",prolog_lock_atom,1);
-  define_c_predicate("unlock_atom",prolog_unlock_atom,1);
-  define_c_predicate("atom_lock_state",prolog_lock_atom_state,2);
-
-  define_c_predicate("$unlock_predicate",prolog_unlock_predicate,1);
 
 				/* unix_utils.c */
 

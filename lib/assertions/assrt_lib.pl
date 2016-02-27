@@ -7,7 +7,6 @@
 	    cleanup_code_and_related_assertions/0, 
 	    check_code_and_assrt_syntax/1,
 	    clause_read/7,
-
 	    assertion_read/9,
 	    assertion_body/7,
 
@@ -339,10 +338,11 @@ save_clause_of(Base,M):-
 	-> H=Head,
 	   B=Body
 	 ; % do the "second expansion"
-	   % io_aux:message(['{Original: ',(Head:-Body)]),
+%	   io_aux:message(['{Original: ',(Head:-Body)]),
 	   expand_clause(Head,Body,M,VarNames,H,BX),
+%	   io_aux:message(['{Intermediate: ',(H:-BX)]),
 	   expand_goal(BX,M,VarNames,B)
-	   % io_aux:message(['{Expanded: ',(H:-B)])
+%	   io_aux:message(['{Expanded: ',(H:-B)])
 	),
 	% one more patch!!
 	( var(VarNames) -> VarNames=[] ; true ),

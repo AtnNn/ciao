@@ -124,6 +124,11 @@ assertz_fact(Fact, Ref) :-
    (instead of failing) for more clauses to appear after the last clause
    of @var{Fact} is returned.").
 
+%% Current fact: if no clause is available, or if it is possible to 
+%% determine that no matching exists, , $current_instance leaves
+%% the predicate unlocked.  If the predicate is called, then it is left 
+%% locked while the clause is being executed.
+
 :- true pred current_fact(+callable).
 
 current_fact(Fact) :-
@@ -133,7 +138,7 @@ current_fact(Fact) :-
 
 :- comment(current_fact_nb(Fact), "Behaves as @pred{current_fact/1} but
    a fact is never waited on even if it is @concept{concurrent} and
-   non-@concept{closed}.").
+   non-closed.").
 
 :- true pred current_fact_nb(+callable).
 
@@ -245,11 +250,12 @@ erase(Ref) :-
 	'$ptr_ref'(Ptr, Ref),
 	'$erase'(Ptr).
 
-:- comment(doinclude, fact/1).
-
-:- true prop fact(F) + regtype # "@var{F} is a fact (an atom or a structure).".
-
-fact(F) :- callable(F).
+% :- comment(doinclude, fact/1).
+% 
+% :- true prop fact(F) + regtype
+%    # "@var{F} is a fact (an atom or a structure).".
+% 
+% fact(F) :- callable(F).
 
 :- comment(doinclude, reference/1).
 

@@ -1,4 +1,4 @@
-:- module(actmodrt, [remote_call/2], []).
+:- module(actmodrt, [remote_call/2], [assertions]).
 
 :- use_module(library(lists)).
 :- use_module(library(sockets)).
@@ -23,4 +23,12 @@ remote_call_stream(Host, Port, Stream) :-
 	connect_to_socket(Host, Port, Stream),
         retractall_fact(remote_stream(_, _, _)),
         assertz_fact(remote_stream(Port, Host, Stream)).
+
+
+% ----------------------------------------------------------------------------
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+139,2000/05/11,13:29*09+'CEST'), "Added file to
+   version control.  (Manuel Hermenegildo)").
+% ----------------------------------------------------------------------------
 

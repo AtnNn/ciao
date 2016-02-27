@@ -24,6 +24,26 @@
 #define Destroy_lock(p)       
 #define Lock_is_unset(p)      1
 
+/* Conditional vars */
+#define Init_Cond(cond)
+#define Cond_Var_Init(cond)
+#define Cond_Var_Wait(cond, lock)
+#define Cond_Var_Broadcast(cond)
+#define Wait_Acquire_Cond_lock(Cond)
+#define Release_Cond_lock(Cond)
+#define Cond_Begin(Cond)
+#define Broadcast_Cond(Cond)
+#define Wait_For_Cond_End(Cond)
+#define Wait_For_Cond_Begin(Predicate, Cond)
+
+#if defined(DEBUG)
+#define Cond_Lock_is_unset(Cond) FALSE
+#endif
+
+typedef char CONDITION;                          /* Avoid compiler errors */
+typedef char SLOCK;
+typedef char LOCK;
+
 #else  /* We have THREADS!!!!! */
 
 #define USE_LOCKS
@@ -71,10 +91,12 @@ typedef volatile struct {
 
 /***************************************************************************/
 
+/* Was      asm volatile ("xchgw %0,%1"                                */
+
 # if defined(i86) || defined(Sequent)          /* Now, Intel 80x86 stuff */
 #   define aswap(adr,reg)                                       \
   ({ long int _ret;                                             \
-     asm volatile ("xchgw %0,%1"                                \
+     asm volatile ("xchgl %0,%1"                                \
         : "=q" (_ret), "=m" (*(adr))    /* Output %0,%1 */      \
         : "m"  (*(adr)), "0"  (reg));   /* Input (%2),%0 */     \
      _ret;                                                      \
@@ -171,8 +193,13 @@ do { if (mips_try_lock(p)) break;			        \
 #include <errno.h>
 
 /* IRIX machines seem to have a fair scheduling without having to relinquish
-   anything. */
-#if defined(_POSIX_PRIORITY_SCHEDULING) && !defined(IRIX)
+   anything.  Some Solaris machines define _POSIX_PRIORITY_SCHEDULING*/
+
+#if defined(_POSIX_PRIORITY_SCHEDULING) && defined(LINUX)
+/* 
+   Unlike other implementation of threads, pthreads for Linux implements
+   threads as user-space processes.
+*/
 #include <sched.h>
 #define RELINQUISH_PROCESSOR sched_yield();
 #else
@@ -287,8 +314,8 @@ typedef LOCK  int;
 
 
 /* The two below should not be used in user code, only here. */
-#define Wait_Acquire_Cond_lock_internal(Cond) Wait_Acquire_lock(Cond.cond_lock)
-#define Release_Cond_lock_internal(Cond) Release_lock(Cond.cond_lock)
+#define Wait_Acquire_Cond_lock(Cond) Wait_Acquire_lock(Cond.cond_lock)
+#define Release_Cond_lock(Cond) Release_lock(Cond.cond_lock)
 
 
 
@@ -317,9 +344,9 @@ execution continues when pred() is false.
 */
 
 
-#define Wait_For_Cond_End(Cond)  Release_Cond_lock_internal(Cond)
+#define Wait_For_Cond_End(Cond)  Release_Cond_lock(Cond)
 #define Cond_Lock_is_unset(Cond) Lock_is_unset(Cond.cond_lock)
-#define Cond_Begin(Cond)  Wait_Acquire_Cond_lock_internal(Cond)
+#define Cond_Begin(Cond)  Wait_Acquire_Cond_lock(Cond)
 
 #if defined(CONDITIONAL_VARS)
 
@@ -328,7 +355,7 @@ execution continues when pred() is false.
                           Cond_Var_Init(Cond.cond_var);   \
                         }
 #define Wait_For_Cond_Begin(Predicate, Cond) {                             \
-                     Wait_Acquire_Cond_lock_internal(Cond);                \
+                     Wait_Acquire_Cond_lock(Cond);                \
                      RELINQUISH_PROCESSOR                                  \
                      while (Predicate) {                                   \
                        Cond_Var_Wait(Cond.cond_var, Cond.cond_lock); \
@@ -336,28 +363,28 @@ execution continues when pred() is false.
                 }
 #define Signal_Cond(Cond) {                             \
                      Cond_Var_Signal(Cond.cond_var);   \
-                     Release_Cond_lock_internal(Cond);      \
+                     Release_Cond_lock(Cond);      \
                  }
 #define Broadcast_Cond(Cond) {                             \
                      Cond_Var_Broadcast(Cond.cond_var);   \
-                     Release_Cond_lock_internal(Cond);      \
+                     Release_Cond_lock(Cond);      \
                  }
 #else
 
 #define Init_Cond(Cond) Init_lock(Cond.cond_lock)
 #define Wait_For_Cond_Begin(Predicate, Cond) {                     \
                        BOOL pred_is_signaled;                      \
-                       Wait_Acquire_Cond_lock_internal(Cond);      \
+                       Wait_Acquire_Cond_lock(Cond);      \
                        pred_is_signaled = (Predicate);             \
                        while(pred_is_signaled) {                   \
-                         Release_Cond_lock_internal(Cond);         \
+                         Release_Cond_lock(Cond);         \
                          RELINQUISH_PROCESSOR                      \
-                         Wait_Acquire_Cond_lock_internal(Cond);    \
+                         Wait_Acquire_Cond_lock(Cond);    \
                          pred_is_signaled = (Predicate);           \
                        }                                           \
                      }
-#define Signal_Cond(Cond) Release_Cond_lock_internal(Cond)
-#define Broadcast_Cond(Cond) Release_Cond_lock_internal(Cond)
+#define Signal_Cond(Cond) Release_Cond_lock(Cond)
+#define Broadcast_Cond(Cond) Release_Cond_lock(Cond)
 
 #endif
 

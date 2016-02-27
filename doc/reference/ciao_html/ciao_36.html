@@ -1,62 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Standard operators</TITLE>
+<TITLE>The Ciao Prolog System               - Dynamic predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_35.html">previous</A>, <A HREF="ciao_37.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_35.html">previous</A>, <A HREF="ciao_37.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC189" HREF="ciao_toc.html#TOC189">Standard operators</A></H1>
+<H1><A NAME="SEC165" HREF="ciao_toc.html#TOC165">Dynamic predicates</A></H1>
 <P>
-<A NAME="IDX2162"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<A NAME="IDX1881"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#7 (1999/3/17, 17:29:23 MET)
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
-Standard operators are defined by this predicate: 
+<STRONG>Version of last change:</STRONG> 1.5#146 (2000/5/19, 21:1:42 CEST)
 
-<PRE>
-standard_ops :-
-        op(1200,xfx,[:-]),
-        op(1200,fx,[:-,?-]),
-        op(1100,xfy,[;]),
-        op(1050,xfy,[-&#62;]),
-        op(1000,xfy,[',']),
-        op(950,xfy,[@&#38;,\@&#38;]),
-        op(950,xf,[@&#38;]),
-        op(900,fy,[\+]),
-        op(700,xfx,[=,\=,==,\==,@&#60;,@&#62;,@=&#60;,@&#62;=,=..,is,=:=,=\=,&#60;,=&#60;,&#62;,&#62;=]),
-        op(550,xfx,[:]),
-        op(500,yfx,[+,-,/\,\/,#]),
-        op(500,fy,[++,--]),
-        op(400,yfx,[*,/,//,rem,mod,&#60;&#60;,&#62;&#62;]),
-        op(200,fy,[+,-,\]),
-        op(200,xfx,[**]),
-        op(200,xfy,[^]),
-        op(200,xfy,[`]),
-        op(25,fy,[^]).
-</PRE>
+
+<P>
+This module implements the assert/retract family of predicates to manipulate dynamic predicates. 
+
+
+<P>
+The predicates defined in this module allow modification of the program as it is actually running. Clauses can be added to the program (<EM>asserted</EM>) or removed from the program (<EM>retracted</EM>). For these predicates, the argument which corresponds to the clause head must be instantiated to an atom or a compound term. The argument corresponding to the clause must be instantiated either to a term <CODE>Head :- Body</CODE> or, if the body part is empty, to <CODE>Head</CODE>. An empty body part is represented as <CODE>true</CODE>. Note that using this library is very detrimental to global analysis, and that for most uses the predicates listed in section <A HREF="ciao_28.html#SEC140">Fast/concurrent update of facts</A> suffice.
+
 
 
 <UL>
-<LI><A HREF="ciao_36.html#SEC190">Usage and interface (operators)</A>
-<LI><A HREF="ciao_36.html#SEC191">Documentation on exports (operators)</A>
+<LI><A HREF="ciao_36.html#SEC166">Usage and interface (dynamic)</A>
+<LI><A HREF="ciao_36.html#SEC167">Documentation on exports (dynamic)</A>
+<LI><A HREF="ciao_36.html#SEC168">Documentation on multifiles (dynamic)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC190" HREF="ciao_toc.html#TOC190">Usage and interface (<CODE>operators</CODE>)</A></H2>
+<H2><A NAME="SEC166" HREF="ciao_toc.html#TOC166">Usage and interface (<CODE>dynamic</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -64,7 +48,7 @@ standard_ops :-
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(operators)).</CODE>
+<CODE>:- use_module(library(dynamic)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -73,28 +57,41 @@ standard_ops :-
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2163"></A>
-<CODE>op/3</CODE>, 
-<A NAME="IDX2164"></A>
-<CODE>current_op/3</CODE>, 
-<A NAME="IDX2165"></A>
-<CODE>current_prefixop/3</CODE>, 
-<A NAME="IDX2166"></A>
-<CODE>current_infixop/4</CODE>, 
-<A NAME="IDX2167"></A>
-<CODE>current_postfixop/3</CODE>.
+<A NAME="IDX1882"></A>
+<CODE>asserta/1</CODE>, 
+<A NAME="IDX1883"></A>
+<CODE>asserta/2</CODE>, 
+<A NAME="IDX1884"></A>
+<CODE>assertz/1</CODE>, 
+<A NAME="IDX1885"></A>
+<CODE>assertz/2</CODE>, 
+<A NAME="IDX1886"></A>
+<CODE>assert/1</CODE>, 
+<A NAME="IDX1887"></A>
+<CODE>assert/2</CODE>, 
+<A NAME="IDX1888"></A>
+<CODE>retract/1</CODE>, 
+<A NAME="IDX1889"></A>
+<CODE>retractall/1</CODE>, 
+<A NAME="IDX1890"></A>
+<CODE>abolish/1</CODE>, 
+<A NAME="IDX1891"></A>
+<CODE>clause/2</CODE>, 
+<A NAME="IDX1892"></A>
+<CODE>clause/3</CODE>, 
+<A NAME="IDX1893"></A>
+<CODE>current_predicate/1</CODE>, 
+<A NAME="IDX1894"></A>
+<CODE>current_predicate/2</CODE>, 
+<A NAME="IDX1895"></A>
+<CODE>data/1</CODE>, 
+<A NAME="IDX1896"></A>
+<CODE>wellformed_body/3</CODE>.
 
-</UL>
+<LI><EM>Multifiles:</EM>
 
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX2168"></A>
-<CODE>assertions/doc_props</CODE>.
+<A NAME="IDX1897"></A>
+<CODE>do_on_abolish/1</CODE>.
 
 </UL>
 
@@ -104,57 +101,314 @@ standard_ops :-
 
 
 
-<H2><A NAME="SEC191" HREF="ciao_toc.html#TOC191">Documentation on exports (<CODE>operators</CODE>)</A></H2>
+<H2><A NAME="SEC167" HREF="ciao_toc.html#TOC167">Documentation on exports (<CODE>dynamic</CODE>)</A></H2>
 <P>
-<A NAME="IDX2169"></A>
-<A NAME="IDX2170"></A>
+<A NAME="IDX1898"></A>
+<A NAME="IDX1899"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>op/3:</B>
-<DD><A NAME="IDX2171"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta/1:</B>
+<DD><A NAME="IDX1900"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>op(+Precedence,+Type,+Name)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>asserta(+Clause)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Declares the atom <CODE>Name</CODE> to be an operator of the stated <CODE>Type</CODE> and <CODE>Precedence</CODE>. <CODE>Name</CODE> may also be a list of atoms in which case all of them are declared to be operators. If <CODE>Precedence</CODE> is 0 then the operator properties of <CODE>Name</CODE> (if any) are cancelled.
+<LI><EM>Description:</EM> The current instance of <CODE>Clause</CODE> is interpreted as a clause and is added to the current program. The predicate concerned must be dynamic. The new clause becomes the <EM>first</EM> clause for the predicate concerned. Any uninstantiated variables in <CODE>Clause</CODE> will be replaced by new private variables.
 
-<LI><EM>The following properties hold globally:</EM>
-
-Documentation is still incomplete: <CODE>op(+Precedence,+Type,+Name)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2172"></A>
-<A NAME="IDX2173"></A>
+<A NAME="IDX1901"></A>
+<A NAME="IDX1902"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_op/3:</B>
-<DD><A NAME="IDX2174"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta/2:</B>
+<DD><A NAME="IDX1903"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>current_op(?(Precedence),?(Type),?(Op))</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>asserta(+Clause,-Ref)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The atom <CODE>Op</CODE> is currently an operator of type <CODE>Type</CODE> and precedence <CODE>Precedence</CODE>. Neither <CODE>Op</CODE> nor the other arguments need be instantiated at the time of the call; i.e., this predicate can be used to generate as well as to test.
+<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
 
-<LI><EM>The following properties hold globally:</EM>
-
-Documentation is still incomplete: <CODE>current_op(?(Precedence),?(Type),?(Op))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2175"></A>
-<A NAME="IDX2176"></A>
+<A NAME="IDX1904"></A>
+<A NAME="IDX1905"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_prefixop/3:</B>
-<DD><A NAME="IDX2177"></A>
+<DT><span class="define">PREDICATE:</span> <B>assertz/1:</B>
+<DD><A NAME="IDX1906"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz(+Clause)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>, except that the new clause becomes the <EM>last</EM> clause for the predicate concerned.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1907"></A>
+<A NAME="IDX1908"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assertz/2:</B>
+<DD><A NAME="IDX1909"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz(+Clause,-Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Like <CODE>assertz/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1910"></A>
+<A NAME="IDX1911"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assert/1:</B>
+<DD><A NAME="IDX1912"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assert(+Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Identical to <CODE>assertz/1</CODE>. Included for compatibility.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1913"></A>
+<A NAME="IDX1914"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assert/2:</B>
+<DD><A NAME="IDX1915"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assert(+Clause,-Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Identical to <CODE>assertz/2</CODE>. Included for compatibility.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1916"></A>
+<A NAME="IDX1917"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retract/1:</B>
+<DD><A NAME="IDX1918"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retract(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retract(+Clause)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The first clause in the program that matches <CODE>Clause</CODE> is erased. The predicate concerned must be dynamic.
+
+The predicate <CODE>retract/1</CODE> may be used in a non-determinate fashion, i.e., it will successively retract clauses matching the argument through backtracking. If reactivated by backtracking, invocations of the predicate whose clauses are being retracted will proceed unaffected by the retracts. This is also true for invocations of <CODE>clause</CODE> for the same predicate. The space occupied by a retracted clause will be recovered when instances of the clause are no longer in use. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1919"></A>
+<A NAME="IDX1920"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retractall/1:</B>
+<DD><A NAME="IDX1921"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retractall(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retractall(+Head)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Erase all clauses whose head matches <CODE>Head</CODE>, where <CODE>Head</CODE> must be instantiated to an atom or a compound term. The predicate concerned must be dynamic. The predicate definition is retained.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1922"></A>
+<A NAME="IDX1923"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>abolish/1:</B>
+<DD><A NAME="IDX1924"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>abolish(spec)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>abolish(+Spec)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Erase all clauses of the predicate specified by the predicate spec <CODE>Spec</CODE>. The predicate definition itself is also erased (the predicate is deemed undefined after execution of the abolish). The predicates concerned must all be user defined.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1925"></A>
+<A NAME="IDX1926"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>clause/2:</B>
+<DD><A NAME="IDX1927"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>clause(+Head,?Body)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The clause '<CODE>Head</CODE> <CODE>:-</CODE> <CODE>Body</CODE>' exists in the current program. The predicate concerned must be dynamic.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1928"></A>
+<A NAME="IDX1929"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>clause/3:</B>
+<DD><A NAME="IDX1930"></A>
+
+
+<P>
+<CODE>clause(Head,Body,Ref)</CODE>
+
+
+<P>
+Like <CODE>clause(Head,Body)</CODE>, plus the clause is uniquely identified by <CODE>Ref</CODE>.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>clause(+Head,?Body,?Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Head</CODE> must be instantiated to an atom or a compound term.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>clause(?Head,?Body,+Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Ref</CODE> must be instantiated to a valid identifier.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1931"></A>
+<A NAME="IDX1932"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_predicate/1:</B>
+<DD><A NAME="IDX1933"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>current_predicate(?Spec)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> A predicate in the current module is named <CODE>Spec</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1934"></A>
+<A NAME="IDX1935"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_predicate/2:</B>
+<DD><A NAME="IDX1936"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>current_predicate(?Spec,+Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> A predicate in <CODE>Module</CODE> is named <CODE>Spec</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1937"></A>
+<A NAME="IDX1938"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dynamic/1:</B>
+<DD><A NAME="IDX1939"></A>
 
 
 <P>
@@ -164,11 +418,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX2178"></A>
-<A NAME="IDX2179"></A>
+<A NAME="IDX1940"></A>
+<A NAME="IDX1941"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_infixop/4:</B>
-<DD><A NAME="IDX2180"></A>
+<DT><span class="define">PREDICATE:</span> <B>data/1:</B>
+<DD><A NAME="IDX1942"></A>
 
 
 <P>
@@ -178,20 +432,49 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX2181"></A>
-<A NAME="IDX2182"></A>
+<A NAME="IDX1943"></A>
+<A NAME="IDX1944"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_postfixop/3:</B>
-<DD><A NAME="IDX2183"></A>
+<DT><span class="define">PREDICATE:</span> <B>wellformed_body/3:</B>
+<DD><A NAME="IDX1945"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>wellformed_body(BodyIn,Env,BodyOut)</CODE>
+
+
+<P>
+<CODE>BodyIn</CODE> is a well-formed clause body. <CODE>BodyOut</CODE> is its counterpart with no single-variable meta-goals (i.e., with <CODE>call(X)</CODE> for <CODE>X</CODE>). <CODE>Env</CODE> denotes if global cuts are admissible in <CODE>BodyIn</CODE> (<CODE>+</CODE> if they are, <CODE>-</CODE> if they are not).
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC168" HREF="ciao_toc.html#TOC168">Documentation on multifiles (<CODE>dynamic</CODE>)</A></H2>
+<P>
+<A NAME="IDX1946"></A>
+<A NAME="IDX1947"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>do_on_abolish/1:</B>
+<DD><A NAME="IDX1948"></A>
+
+
+<P>
+<CODE>do_on_abolish(Head)</CODE>
+
+
+<P>
+A hook predicate which will be called when the definition of the predicate of <CODE>Head</CODE> is abolished.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_35.html">previous</A>, <A HREF="ciao_37.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_35.html">previous</A>, <A HREF="ciao_37.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

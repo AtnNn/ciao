@@ -1,58 +1,47 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Meta-properties</TITLE>
+<TITLE>The Ciao Prolog System               - Classical Prolog modes</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_63.html">previous</A>, <A HREF="ciao_65.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_63.html">previous</A>, <A HREF="ciao_65.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC274" HREF="ciao_toc.html#TOC274">Meta-properties</A></H1>
+<H1><A NAME="SEC253" HREF="ciao_toc.html#TOC253">Classical Prolog modes</A></H1>
 <P>
-<A NAME="IDX3346"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX3070"></A>
 
 
 <P>
-This library allows the use of some meta-constructs which provide for specifying properties of terms which are unknown at the time of the specification, or expressed with a shorthand for the property definition, i.e., without really defining it. 
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
 
 
 <P>
-An example of such use is an assertion which specifies that any property holding upon call will also hold upon exit: 
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
-<PRE>
-         :- pred p(X) : Prop(X) =&#62; Prop(X).
-</PRE>
 
 <P>
-Another example is using shorthands for properties when documenting: 
+<STRONG>Version of last change:</STRONG> 0.8#43 (1999/3/6, 18:39:38 CET)
 
-<PRE>
-         :- pred p(X) : regtype(X,(^(list;list);list)).
-</PRE>
 
 <P>
-(See below for an explanation of such a regular type.) 
+This file defines a number of very simple "
+<A NAME="IDX3071"></A>
+modes" which are frequently useful in programs. These correspond to the modes used in classical Prolog texts with some simple addtions. Note that some of these modes use the same symbol as one of the ISO-modes (see section <A HREF="ciao_63.html#SEC250">ISO-Prolog modes</A>) but with subtly different meaning.
 
 
 
 <UL>
-<LI><A HREF="ciao_64.html#SEC275">Usage and interface (meta_props)</A>
-<LI><A HREF="ciao_64.html#SEC276">Documentation on exports (meta_props)</A>
-<LI><A HREF="ciao_64.html#SEC277">Documentation on multifiles (meta_props)</A>
-<LI><A HREF="ciao_64.html#SEC278">Documentation on internals (meta_props)</A>
-<LI><A HREF="ciao_64.html#SEC279">Known bugs and planned improvements (meta_props)</A>
+<LI><A HREF="ciao_64.html#SEC254">Usage and interface (basicmodes)</A>
+<LI><A HREF="ciao_64.html#SEC255">Documentation on new modes (basicmodes)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC275" HREF="ciao_toc.html#TOC275">Usage and interface (<CODE>meta_props</CODE>)</A></H2>
+<H2><A NAME="SEC254" HREF="ciao_toc.html#TOC254">Usage and interface (<CODE>basicmodes</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -60,30 +49,55 @@ Another example is using shorthands for properties when documenting:
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library('assertions/meta_props'))</CODE> 
+:- use_package([assertions,basicmodes]).
 
-or also as a package <CODE>:- use_package(metaprops)</CODE>. 
+<LI><STRONG>New operators defined:</STRONG>
 
-Note the different names of the library and the package.
+<A NAME="IDX3072"></A>
+<CODE>?/1</CODE> [500,fx], 
+<A NAME="IDX3073"></A>
+<CODE>@/1</CODE> [500,fx].
 
-<LI><STRONG>Exports:</STRONG>
+<LI><STRONG>New modes defined:</STRONG>
+
+<A NAME="IDX3074"></A>
+<CODE>+/1</CODE>, 
+<A NAME="IDX3075"></A>
+<CODE>-/1</CODE>, 
+<A NAME="IDX3076"></A>
+<CODE>?/1</CODE>, 
+<A NAME="IDX3077"></A>
+<CODE>@/1</CODE>, 
+<A NAME="IDX3078"></A>
+<CODE>in/1</CODE>, 
+<A NAME="IDX3079"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX3080"></A>
+<CODE>go/1</CODE>, 
+<A NAME="IDX3081"></A>
+<CODE>+/2</CODE>, 
+<A NAME="IDX3082"></A>
+<CODE>-/2</CODE>, 
+<A NAME="IDX3083"></A>
+<CODE>?/2</CODE>, 
+<A NAME="IDX3084"></A>
+<CODE>@/2</CODE>, 
+<A NAME="IDX3085"></A>
+<CODE>in/2</CODE>, 
+<A NAME="IDX3086"></A>
+<CODE>out/2</CODE>, 
+<A NAME="IDX3087"></A>
+<CODE>go/2</CODE>.
+
+<LI><STRONG>Other modules used:</STRONG>
 
 
 <UL>
 
-<LI><EM>Properties:</EM>
+<LI><EM>System library modules:</EM>
 
-<A NAME="IDX3347"></A>
-<CODE>call/2</CODE>, 
-<A NAME="IDX3348"></A>
-<CODE>prop/2</CODE>, 
-<A NAME="IDX3349"></A>
-<CODE>regtype/2</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX3350"></A>
-<CODE>callme/2</CODE>.
+<A NAME="IDX3088"></A>
+<CODE>assertions/meta_props</CODE>.
 
 </UL>
 
@@ -93,178 +107,332 @@ Note the different names of the library and the package.
 
 
 
-<H2><A NAME="SEC276" HREF="ciao_toc.html#TOC276">Documentation on exports (<CODE>meta_props</CODE>)</A></H2>
+<H2><A NAME="SEC255" HREF="ciao_toc.html#TOC255">Documentation on new modes (<CODE>basicmodes</CODE>)</A></H2>
 <P>
-<A NAME="IDX3351"></A>
-<A NAME="IDX3352"></A>
+<A NAME="IDX3089"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>call/2:</B>
-<DD><A NAME="IDX3353"></A>
+<DT><span class="define">MODE:</span> <B>+/1:</B>
+<DD><A NAME="IDX3090"></A>
 
 
 <P>
-<CODE>call(P,A)</CODE>
+Input value in argument.
 
 
 <P>
-<CODE>A</CODE> has property <CODE>P</CODE> (provided that <CODE>P</CODE> is a property). Equivalent to <CODE>P(A)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>call(P,A)</CODE>
+<STRONG>Usage:</STRONG> <CODE>+ A</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>A</CODE> has property <CODE>P</CODE>.
+<LI><EM>The following properties are added at call time:</EM>
 
-<LI><EM>If the following properties hold at call time:</EM>
-
-<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<CODE>A</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3354"></A>
-<A NAME="IDX3355"></A>
+<A NAME="IDX3091"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>prop/2:</B>
-<DD><A NAME="IDX3356"></A>
+<DT><span class="define">MODE:</span> <B>-/1:</B>
+<DD><A NAME="IDX3092"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>prop(A,P)</CODE>
+No input value in argument.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>- A</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>A</CODE> has property <CODE>P</CODE>.
+<LI><EM>The following properties are added at call time:</EM>
 
-<LI><EM>If the following properties hold at call time:</EM>
-
-<CODE>P</CODE> has property <CODE>^ (callable;prop_abs)</CODE>.
- (<CODE>meta_props:prop/2</CODE>)
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3357"></A>
-<A NAME="IDX3358"></A>
+<A NAME="IDX3093"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>regtype/2:</B>
-<DD><A NAME="IDX3359"></A>
+<DT><span class="define">MODE:</span> <B>?/1:</B>
+<DD><A NAME="IDX3094"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>regtype(A,T)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>A</CODE> is of type <CODE>T</CODE>.
-
-<LI><EM>If the following properties hold at call time:</EM>
-
-<CODE>T</CODE> has property <CODE>^ (regtype;prop_abs)</CODE>.
- (<CODE>meta_props:prop/2</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC277" HREF="ciao_toc.html#TOC277">Documentation on multifiles (<CODE>meta_props</CODE>)</A></H2>
-<P>
-<A NAME="IDX3360"></A>
-<A NAME="IDX3361"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>callme/2:</B>
-<DD><A NAME="IDX3362"></A>
-
-
-<P>
-(User defined.) A hook predicate you have to define as <CODE>callme(P,X):- P(X), !.</CODE> in the program that uses this library. This is done automatically if the package is used instead of the library module (but then you <EM>should not</EM> define <CODE>callme/2</CODE> in your program).
-
-
-<P>
-The predicate is <EM>multifile</EM>.
+Unspecified argument.
 
 
 </DL>
 
-
-
-<H2><A NAME="SEC278" HREF="ciao_toc.html#TOC278">Documentation on internals (<CODE>meta_props</CODE>)</A></H2>
 <P>
-<A NAME="IDX3363"></A>
-<A NAME="IDX3364"></A>
+<A NAME="IDX3095"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>prop_abs/1:</B>
-<DD><A NAME="IDX3365"></A>
+<DT><span class="define">MODE:</span> <B>@/1:</B>
+<DD><A NAME="IDX3096"></A>
 
 
 <P>
-<CODE>prop_abs(Prop)</CODE>
+No output value in argument.
 
 
 <P>
-<CODE>Prop</CODE> is a 
-<A NAME="IDX3366"></A>
-<A NAME="IDX3367"></A>
-<EM>property abstraction</EM>, i.e., a 
-<A NAME="IDX3368"></A>
-<A NAME="IDX3369"></A>
-<EM>parametric property</EM>, or a term formed of property abstractions, where the functors used in the term are escaped by <CODE>^</CODE>. 
-
-
-<P>
-One particular case of property abstractions are 
-<A NAME="IDX3370"></A>
-<A NAME="IDX3371"></A>
-<EM>parametric regular type abstractions</EM>, i.e., a parametric type functor or a <CODE>^</CODE>-escaped term formed of regular type abstractions. 
-
-
-<P>
-Such abstractions are a short-hand for a corresponding regular type (correspondingly, property). For example, the following abstraction: 
-
-<PRE>
-         ^(list;list);list
-</PRE>
-
-<P>
-denotes terms of the form <CODE>(X;Y)</CODE> where <CODE>list(X)</CODE> and <CODE>list(Y)</CODE> hold and also terms <CODE>T</CODE> such that <CODE>list(T)</CODE> holds. It is equivalent to the regular type: 
-
-<PRE>
-         abstract_type((X;Y)):- list(X), list(Y).
-         abstract_type(T):- list(T).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prop_abs(Prop)</CODE>
+<STRONG>Usage:</STRONG> <CODE>@ A</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Prop</CODE> is a
+<LI><EM>The following properties are added globally:</EM>
 
-<A NAME="IDX3372"></A>
-property abstraction. 
+<CODE>A</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX3097"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>in/1:</B>
+<DD><A NAME="IDX3098"></A>
 
 
-<H2><A NAME="SEC279" HREF="ciao_toc.html#TOC279">Known bugs and planned improvements (<CODE>meta_props</CODE>)</A></H2>
+<P>
+Input argument.
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>in(A)</CODE>
 
 <UL>
+<LI><EM>The following properties are added at call time:</EM>
 
-<LI>
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
 
-Using a hook predicate is not very elegant. Need something else.
-
-<LI>
-
-The cut in the hook prevents backtracking (enough for most uses of properties but not quite ok).
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
 </UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3099"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>out/1:</B>
+<DD><A NAME="IDX3100"></A>
+
+
+<P>
+Output argument.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>out(A)</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3101"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>go/1:</B>
+<DD><A NAME="IDX3102"></A>
+
+
+<P>
+Ground output (input/output argument).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>go(A)</CODE>
+
+<UL>
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3103"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>+/2:</B>
+<DD><A NAME="IDX3104"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>A + X</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3105"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>-/2:</B>
+<DD><A NAME="IDX3106"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>A - X</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3107"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>?/2:</B>
+<DD><A NAME="IDX3108"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>?(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3109"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>@/2:</B>
+<DD><A NAME="IDX3110"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>@(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added globally:</EM>
+
+<CODE>A</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3111"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>in/2:</B>
+<DD><A NAME="IDX3112"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>in(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3113"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>out/2:</B>
+<DD><A NAME="IDX3114"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>out(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3115"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>go/2:</B>
+<DD><A NAME="IDX3116"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>go(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_63.html">previous</A>, <A HREF="ciao_65.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_63.html">previous</A>, <A HREF="ciao_65.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

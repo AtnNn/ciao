@@ -249,7 +249,9 @@ static int compare_args_aux(Arg,arity,pt1,pt2,x1,x2)
      TAGGED *x1, *x2;
 {
   int result;
-  REGISTER TAGGED t1, t2, t3;
+  REGISTER TAGGED 
+    t1 = ~0, t2 = ~0,  /* Avoid compiler complaints */
+    t3;
   
   /* Adapted from terminating unification of complex structures:
      See cunify_args(). */
@@ -257,43 +259,41 @@ static int compare_args_aux(Arg,arity,pt1,pt2,x1,x2)
   if (ChoiceYounger(ChoiceOffset(w->node,2*CHOICEPAD-w->value_trail),w->trail_top))
 				/* really: < 2*arity */
     choice_overflow(Arg,2*CHOICEPAD);
-  for (result=0; !result && arity>0; --arity)
-    {
-      t1 = *pt1, t2 = *pt2;
-      if (t1 != t2)
-	{
-	  DerefHeapSwitch(t1,t3,goto noforward;);
-	  DerefHeapSwitch(t2,t3,goto noforward;);
-	  if (t1!=t2 && IsComplex(t1&t2))
-	    {
-	      /* replace smaller value by larger value,
-		 using choice stack as value trail */
-	      REGISTER TAGGED *b = (TAGGED *)w->node;
-	      REGISTER int i = w->value_trail;
-	      
-	      if (t1>t2)
-		b[--i] = *pt1,
-		b[--i] = (TAGGED)pt1,
-		*pt1 = t2;
-	      else
-		b[--i] = *pt2,
-		b[--i] = (TAGGED)pt2,
-		*pt2 = t1;
-	      w->value_trail = i;
-	    }
-	noforward:
-	  if (arity>1 && t1!=t2)
-	    result = compare_aux(Arg,t1,t2);
-	}
-      (void)HeapNext(pt1);
-      (void)HeapNext(pt2);
+  for (result=0; !result && arity>0; --arity) {
+    t1 = *pt1;
+    t2 = *pt2;
+    if (t1 != t2) {
+      DerefHeapSwitch(t1,t3,goto noforward;);
+      DerefHeapSwitch(t2,t3,goto noforward;);
+      if (t1!=t2 && IsComplex(t1&t2)) {
+        /* replace smaller value by larger value,
+           using choice stack as value trail */
+        REGISTER TAGGED *b = (TAGGED *)w->node;
+        REGISTER int i = w->value_trail;
+        
+        if (t1>t2)
+          b[--i] = *pt1,
+            b[--i] = (TAGGED)pt1,
+            *pt1 = t2;
+        else
+          b[--i] = *pt2,
+            b[--i] = (TAGGED)pt2,
+            *pt2 = t1;
+        w->value_trail = i;
+      }
+    noforward:
+      if (arity>1 && t1!=t2)
+        result = compare_aux(Arg,t1,t2);
     }
-
+    (void)HeapNext(pt1);
+    (void)HeapNext(pt2);
+  }
+  
   if (!result) *x1 = t1, *x2 = t2;
   
   if (ChoiceYounger(ChoiceOffset(w->node,CHOICEPAD-w->value_trail),w->trail_top))
     choice_overflow(Arg,CHOICEPAD);
-
+  
   return result;
 }
 
@@ -1103,10 +1103,12 @@ BOOL prolog_erase_atom(Arg)
    doubles; one character more, and comparison in the symbol table takes
    longer. */
 #define NEW_ATOM_LEN 13
+#define NUM_OF_CHARS 62
+static char allowed_char_table[NUM_OF_CHARS + 1] =
+"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 static char new_atom_str[] = "!!!!!!!!!!!!!";
-#define FIRST_CHAR '!'                   /* Use only printable characters */
-#define LAST_CHAR  'z'
-#define NUM_OF_CHARS (1 + LAST_CHAR - FIRST_CHAR)
+#define FIRST_CHAR 0
+#define LAST_CHAR  (NUM_OF_CHARS-1)
 
 unsigned int x = 13*17;
 
@@ -1127,7 +1129,7 @@ BOOL prolog_new_atom(Arg)
   do {
     for (i = 0; i < NEW_ATOM_LEN; i++) {
       x = (((new_atom_str[i] + x - FIRST_CHAR) * 13) + 300031);
-      new_atom_str[i] = (x % NUM_OF_CHARS) + FIRST_CHAR;
+      new_atom_str[i] = allowed_char_table[(x % NUM_OF_CHARS) + FIRST_CHAR];
       x = x / NUM_OF_CHARS;
     }
     new_atom = init_atom_check(new_atom_str);

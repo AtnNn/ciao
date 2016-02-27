@@ -1,4 +1,5 @@
 MODULE=sockets_c
+ADDITIONAL_FILES=sockets
 
 include ../../SETTINGS
 include ../../COMMON
@@ -16,8 +17,14 @@ OBJNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).o
 LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).so
 HEADERS=common_headers.h
 
+phony:
+
+all: $(LIBNAME)
+
 $(LIBNAME): headers $(OBJNAME) 
 	$(LD) $(LDSHARED) -o $(LIBNAME) $(OBJNAME) $(REQLIBS)
+	$(SETLOCALCOMPILER) $(CIAOC) -c $(MODULE)
+	$(SETLOCALCOMPILER) $(CIAOC) -c $(ADDITIONAL_FILES)
 	chmod $(EXECMODE) $(LIBNAME)
 
 $(OBJNAME): headers $(SRCNAME)
@@ -38,7 +45,7 @@ realclean: clean
 	/bin/rm -f $(LIBNAME) $(HEADERS)
 
 distclean:
-	/bin/rm -f *.~ $(HEADERS) $(MODULE)_*
+	/bin/rm -f *~ $(HEADERS) $(MODULE)_* *.itf *.po *.asr
 
 allarchs:
 	@for machine in $(REMOTEMACHINES); do \

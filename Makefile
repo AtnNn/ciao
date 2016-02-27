@@ -3,7 +3,9 @@
 # This Makefile *needs* GNU make
 
 # make all              compile the whole Ciao system (engine, libraries, docs)
-# make install          install the whole Ciao system (engine, libraries, docs)
+# make justinstall      just install the whole Ciao system (must have been
+#                        compiled before)
+# make install          compile and install the whole Ciao system
 #
 # make eng              compile the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
@@ -12,11 +14,7 @@
 # make distclean        delete all files which can be automatically generated
 # make engclean		delete all engines created
 # make totalclean       cleanbackups + distclean
-#
-# These, condemned to disappear
-#
-# make clean		to delete object files etc. not used by ciao
-# make realclean	to delete everything that wasn't in the distribution
+
 
 #------- You should not change ANYTHING in this file -------------
 #------- All customizable options are in the file SETTINGS -------
@@ -44,9 +42,9 @@ crossengwin32:
 	$(MAKE) bin/Win32i86$(CIAODEBUG) CIAOARCH=Win32i86
 	$(MAKE) include/Win32i86 CIAOARCH=Win32i86
 	$(MAKE) commoneng CIAOARCH=Win32i86
-	(umask 002; cd $(SRC)/bin/Win32i86$(CIAODEBUG); \
-	 $(MAKE) configure ; \
-	 $(MAKE) crossconfigure.h CIAORCH=crossWin32i86; \
+	(umask 002; cd $(SRC)/bin/Win32i86$(CIAODEBUG) && \
+	 $(MAKE) configure && \
+	 $(MAKE) crossconfigure.h CIAORCH=crossWin32i86 && \
 	 $(MAKE) $(MFLAGS) ciaoemulator CIAOARCH=crossWin32i86 \
 	 ADDOBJ='$(STATOBJ)' \
          CURRLIBS='$(LIBS) $(STAT_LIBS)')
@@ -63,14 +61,15 @@ engwin32: copysrcfiles eng
 	rm -f $(SRC)/Win32/bin/$(ENGINENAME)
 	cp $(OBJDIR)/$(ENGINENAME) $(SRC)/Win32/bin
 
-dyneng: commoneng
-	(umask 002; cd $(OBJDIR);  \
-	 $(MAKE) configure.h; \
+dyneng: commoneng stateng
+	mv $(OBJDIR)/ciaoengine $(OBJDIR)/ciaoengine.sta
+	(umask 002; cd $(OBJDIR) &&  \
+	 $(MAKE) configure.h && \
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) CURRLIBS='$(LIBS)')
 
 stateng: commoneng
-	(umask 002; cd $(OBJDIR);  \
-	 $(MAKE) configure.h; \
+	(umask 002; cd $(OBJDIR) &&  \
+	 $(MAKE) configure.h && \
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) ADDOBJ='$(STATOBJ)' \
 	CURRLIBS='$(LIBS) $(STAT_LIBS)')
 
@@ -102,7 +101,7 @@ installallengs:
 # Win32 header does not change
 exe_header:
 ifneq ($(OSNAME),Win32)
-	cd lib/compiler; $(MAKE) exe_header
+	cd lib/compiler && $(MAKE) exe_header
 endif
 
 compiler:
@@ -110,22 +109,22 @@ compiler:
 	@echo "*** Compiling $(BASEMAIN) standalone compiler"
 	@echo "*** (this may take a while and is silent; please be patient)"
 	@echo "*** ---------------------------------------------------------"
-	cd ciaoc; $(MAKE) compiler
+	cd ciaoc && $(MAKE) compiler
 
 applications:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Compiling $(BASEMAIN) toplevel shell & script interpreter ..."
 	@echo "*** (this may take a while and is silent; please be patient)"
 	@echo "*** ---------------------------------------------------------"
-	cd shell; $(MAKE) all
-	cd etc; $(MAKE) all
+	cd shell && $(MAKE) all
+	cd etc && $(MAKE) all
 
 libraries:
-	cd lib; $(MAKE) all
-	cd library; $(MAKE) all$(DEFAULTYPE)
+	cd lib && $(MAKE) all
+	cd library && $(MAKE) all$(DEFAULTYPE)
 
 copysrcfiles: createsrcdir
-	cd engine ; for File in *.[ch] Makefile ; \
+	cd engine && for File in *.[ch] Makefile ; \
 	do if [ ! -f $(OBJDIR)/$${File} -o $${File} -nt $(OBJDIR)/$${File} ]; \
              then rm -f $(OBJDIR)/$${File} ; cp $${File} $(OBJDIR)/$${File} ; \
 	   fi ; \
@@ -136,9 +135,9 @@ include/$(CIAOARCH)$(CIAODEBUG):
 
 bin/$(CIAOARCH)$(CIAODEBUG):
 	$(MAKE) createsrcdir
-	cd $(OBJDIR);	                   \
-	   ln -s ../../engine/*.[ch] . ;   \
-	   ln -s ../../engine/Makefile . ; \
+	cd $(OBJDIR) &&	                   \
+	   ln -s ../../engine/*.[ch] . &&   \
+	   ln -s ../../engine/Makefile . && \
 	   rm -f configure.h
 
 createsrcdir:
@@ -153,7 +152,9 @@ createsrcdir:
 
 createincludedir:
 	if test ! -d $(SRC)/include ; then \
-	  mkdir $(SRC)/include ; chmod $(EXECMODE) $(SRC)/include ; touch $(SRC)/include/NODISTRIBUTE ; fi
+	  mkdir $(SRC)/include ; \
+	  chmod $(EXECMODE) $(SRC)/include ; \
+	  touch $(SRC)/include/NODISTRIBUTE ; fi
 	if test ! -d $(SRCINCLUDEDIR) ; then \
 	  mkdir $(SRCINCLUDEDIR) ; chmod $(EXECMODE) $(SRCINCLUDEDIR) ; fi
 
@@ -171,15 +172,15 @@ justinstalleng:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Installing $(BASEMAIN) engine for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
-	-(umask 002; mkdir -p $(REALLIBDIR); \
-	 cd $(OBJDIR); $(MAKE) install LD=$(LD) \
+	-(umask 002; mkdir -p $(REALLIBDIR) ; \
+	 cd $(OBJDIR) && $(MAKE) install LD=$(LD) \
 	 CC=$(CC) CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' LIBS=$(LIBS))
 
 uninstalleng:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling $(BASEMAIN) engine for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
-	cd $(OBJDIR); $(MAKE) uninstall
+	cd $(OBJDIR) && $(MAKE) uninstall
 
 installincludes:
 	@echo "*** ---------------------------------------------------------"
@@ -209,16 +210,18 @@ justinstall:
 	-chmod $(EXECMODE) $(REALLIBDIR)
 	$(MAKE) justinstalleng
 	$(MAKE) installincludes
-	cd ciaoc;   $(MAKE) install
-	cd shell;   $(MAKE) install
-	cd etc;     $(MAKE) install
-	cd lib;     $(MAKE) install
-	cd library; $(MAKE) install
+	cd ciaoc &&   $(MAKE) install
+	cd shell &&   $(MAKE) install
+	cd etc &&     $(MAKE) install
+	cd lib &&     $(MAKE) install
+	cd library && $(MAKE) install
+	cd contrib && $(MAKE) install
+	cd examples && $(MAKE) install
 ifeq ($(INSTALL_EMACS_SUPPORT),yes)
-	cd emacs-mode;   $(MAKE) install
+	cd emacs-mode &&   $(MAKE) install
 endif
 	find $(REALLIBDIR) -type d -exec chmod $(EXECMODE) {} \;
-	cd doc; $(MAKE) install DOCFORMATS="$(TARDOCFORMATS)"
+	cd doc && $(MAKE) install DOCFORMATS="$(TARDOCFORMATS)"
 	@echo "*** ========================================================="
 	@echo "*** Ciao installation completed"
 	@echo "*** ========================================================="
@@ -228,46 +231,45 @@ uninstall:
 	@echo "*** Uninstalling ciao"
 	@echo "*** ========================================================="
 	$(MAKE) uninstallincludes
-	cd ciaoc; $(MAKE) uninstall
-	cd shell; $(MAKE) uninstall
-	cd etc;     $(MAKE) uninstall
+	cd ciaoc && $(MAKE) uninstall
+	cd shell && $(MAKE) uninstall
+	cd etc &&     $(MAKE) uninstall
 	$(MAKE) uninstalleng
-	cd lib; $(MAKE) uninstall
-	cd library; $(MAKE) uninstall
-	cd emacs-mode; $(MAKE) uninstall
-	cd doc; $(MAKE) uninstall DOCFORMATS="$(TARDOCFORMATS)"
+	cd lib && $(MAKE) uninstall
+	cd library && $(MAKE) uninstall
+	cd examples && $(MAKE) uninstall
+	cd emacs-mode && $(MAKE) uninstall
+	cd doc && $(MAKE) uninstall DOCFORMATS="$(TARDOCFORMATS)"
 	-rm -r $(REALLIBDIR)
-	-rm -r $(LIBDIR)
+#	-rm -r $(LIBDIR)
 	@echo "*** ========================================================="
 	@echo "*** Ciao deinstallation completed"
 	@echo "*** ========================================================="
 
 test:
-	cd tests; $(MAKE) realclean suite; $(MAKE) exec_suite
+	cd examples/suite && $(MAKE) distclean suite && $(MAKE) exec_suite
 
 
 clean: engclean
-	cd ciaoc;          $(MAKE) clean
-	cd lib;            $(MAKE) clean
-	cd shell;          $(MAKE) clean
-#	cd emacs;          $(MAKE) clean
-	cd emacs-mode;     $(MAKE) clean
-	cd tests;          $(MAKE) clean
+	cd ciaoc &&          $(MAKE) clean
+	cd lib &&            $(MAKE) clean
+	cd shell &&          $(MAKE) clean
+#	cd emacs &&          $(MAKE) clean
+	cd emacs-mode &&     $(MAKE) clean
+	cd examples &&          $(MAKE) clean
 
 realclean: engrealclean
-	cd ciaoc; $(MAKE) realclean
-	cd lib; $(MAKE) realclean
-	cd shell; $(MAKE) realclean
-#	cd emacs; $(MAKE) realclean
-	cd emacs-mode; $(MAKE) realclean
-	cd tests; $(MAKE) realclean
+	cd ciaoc && $(MAKE) realclean
+	cd lib && $(MAKE) realclean
+	cd shell && $(MAKE) realclean
+#	cd emacs && $(MAKE) realclean
+	cd emacs-mode && $(MAKE) realclean
+	cd examples && $(MAKE) realclean
 
 tar:
 	(cd .. ; tar cf - $(notdir $(SRC)) | gzip -c > ciao-$(VERSION).$(PATCH).tar.gz)
 
 
-
-### Now working on these --- MCL
 
 totalclean: cleanbackups distclean
 
@@ -279,29 +281,30 @@ engrealclean engclean:
 	-rm -r $(SRC)/include
 
 cleanbackups:
-	(cd $(SRC); find . -name '*~' -exec /bin/rm {} \;)
-	(cd $(SRC); find $(SRC) -name '#*' -exec /bin/rm {} \;)
+	(cd $(SRC) && find . -name '*~' -exec /bin/rm {} \;)
+	(cd $(SRC) && find $(SRC) -name '#*' -exec /bin/rm {} \;)
 
 cleanasrs:
-	(cd $(SRC); find . -name '*.asr' -exec /bin/rm {} \;)
+	(cd $(SRC) && find . -name '*.asr' -exec /bin/rm {} \;)
 
 distclean: engclean
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning $(SRC) distribution tree... (unix)"
 	@echo "*** ---------------------------------------------------------"
-	cd ciaoc; $(MAKE) distclean
-	cd shell; $(MAKE) distclean
-	cd etc; $(MAKE) distclean
-	cd emacs-mode; $(MAKE) distclean
-	cd Win32; $(MAKE) distclean
+	cd ciaoc && $(MAKE) distclean
+	cd shell && $(MAKE) distclean
+	cd etc && $(MAKE) distclean
+	cd emacs-mode && $(MAKE) distclean
+	cd Win32 && $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/doc $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/lib $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/library $(MAKE) distclean
-	cd tests; $(MAKE) distclean
+	$(SRC)/etc/recursive_make_or_clean $(SRC)/contrib $(MAKE) distclean
+	cd examples && $(MAKE) distclean
 
 cflow:
-	cd ${OBJDIR}; cflow -i -D${CIAOARCH} *.c > ${SRC}/etc/cflow.out
+	cd ${OBJDIR} && cflow -i -D${CIAOARCH} *.c > ${SRC}/etc/cflow.out
 
 cxref:
-	cd $(OBJDIR); cxref -xref-function -D$(ARCHNAME) -D$(OSNAME) $(THREAD_FLAG) $(FOREIGN_FILES_FLAG) *.[ch] -O$(SRC)/etc/cxref
+	cd $(OBJDIR) && cxref -xref-function -D$(ARCHNAME) -D$(OSNAME) $(THREAD_FLAG) $(FOREIGN_FILES_FLAG) *.[ch] -O$(SRC)/etc/cxref
 

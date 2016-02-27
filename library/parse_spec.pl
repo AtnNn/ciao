@@ -1,4 +1,4 @@
-:- module(parse_spec, [parse_functor_spec/5]).
+:- module(parse_spec, [parse_functor_spec/5], []).
 
 % Parse predicate spec or a list of them.
 

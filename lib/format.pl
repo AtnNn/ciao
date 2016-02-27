@@ -25,7 +25,7 @@
         act as place-holders for the actual terms that will be output.
         Thus  
         @begin{verbatim}
-        | ?- format(""Hello ~q!"",world).
+        ?- format(""Hello ~q!"",world).
         @end{verbatim}
         @noindent
         will print @tt{Hello world!}.
@@ -38,16 +38,16 @@
         The character @tt{~} introduces a control sequence. To print 
         a @tt{~} verbatim just repeat it:  
         @begin{verbatim}
-        | ?- format(""Hello ~~world!"", []).
+        ?- format(""Hello ~~world!"", []).
         @end{verbatim}
         @noindent
         will result in @tt{Hello ~world!}.
 
         A format may be spread over several lines. The control
-        sequence @tt{\c} followed by a @key{LFD} will translate to the 
+        sequence @tt{\\c} followed by a @key{LFD} will translate to the 
         empty string:  
         @begin{verbatim}
-        | ?- format(""Hello \c
+        ?- format(""Hello \\c
         world!"", []).
         @end{verbatim}
         @noindent
@@ -61,14 +61,14 @@ is @tt{*}. @tt{*} implies that the next argument in @var{Arguments}
 should be used as a numeric argument in the control sequence.  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello~4cworld!"", [0'x]).
+?- format(""Hello~4cworld!"", [0'x]).
 @end{verbatim}
 
 @noindent
 and
 
 @begin{verbatim}
-| ?- format(""Hello~*cworld!"", [4,0'x]).
+?- format(""Hello~*cworld!"", [4,0'x]).
 @end{verbatim}
 
 @noindent
@@ -122,8 +122,8 @@ number of digits after the decimal point.  If @var{N} is 0 or missing, no
 decimal point will be printed.  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~1d world!"", [42]).
-| ?- format(""Hello ~d world!"", [42]).
+?- format(""Hello ~1d world!"", [42]).
+?- format(""Hello ~d world!"", [42]).
 @end{verbatim}
 
 @noindent
@@ -143,7 +143,7 @@ except that @tt{,} will separate groups of three digits to the left of the
 decimal point.  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~1D world!"", [12345]).
+?- format(""Hello ~1D world!"", [12345]).
 @end{verbatim}
 
 @noindent
@@ -159,8 +159,8 @@ Hello 1,234.5 world!
 8.  The letters @tt{a-z} will denote digits larger than 9.  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~2r world!"", [15]).
-| ?- format(""Hello ~16r world!"", [15]).
+?- format(""Hello ~2r world!"", [15]).
+?- format(""Hello ~16r world!"", [15]).
 @end{verbatim}
 
 @noindent
@@ -179,7 +179,7 @@ respectively.
 that the letters @tt{A-Z} will denote digits larger than 9.  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~16R world!"", [15]).
+?- format(""Hello ~16R world!"", [15]).
 @end{verbatim}
 
 @noindent
@@ -195,8 +195,8 @@ characters will be printed. @var{N} defaults to the length of the string.
 Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~4s ~4s!"", [""new"",""world""]).
-| ?- format(""Hello ~s world!"", [""new""]).
+?- format(""Hello ~4s ~4s!"", [""new"",""world""]).
+?- format(""Hello ~s world!"", [""new""]).
 @end{verbatim}
 
 @noindent
@@ -215,7 +215,7 @@ respectively.
 ignored.  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~i~s world!"", [""old"",""new""]).
+?- format(""Hello ~i~s world!"", [""old"",""new""]).
 @end{verbatim}
 
 @noindent
@@ -230,7 +230,7 @@ Hello new world!
 passed to @tt{write_canonical/2} (@ref{Term output}).  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~k world!"", [[a,b,c]]).
+?- format(""Hello ~k world!"", [[a,b,c]]).
 @end{verbatim}
 
 @noindent
@@ -242,11 +242,20 @@ Hello .(a,.(b,.(c,[]))) world!
 
 @item ~p
 (print.) The argument may be of any type.  The argument will be passed to
-@tt{print/2} (@ref{Term output}).  Example:  
+@tt{print/2} (@ref{Term output}).  Example:
+
+@noindent
+suposing the user has defined the predicate
 
 @begin{verbatim}
-| ?- assert((portray([X|Y]) :- print(cons(X,Y)))).
-| ?- format(""Hello ~p world!"", [[a,b,c]]).
+portray([X|Y]) :- print(cons(X,Y)).
+@end{verbatim}
+
+@noindent
+then
+
+@begin{verbatim}
+?- format(""Hello ~p world!"", [[a,b,c]]).
 @end{verbatim}
 
 @noindent
@@ -261,7 +270,7 @@ Hello cons(a,cons(b,cons(c,[]))) world!
 passed to @tt{writeq/2} (@ref{Term output}).  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~q world!"", [['A','B']]).
+?- format(""Hello ~q world!"", [['A','B']]).
 @end{verbatim}
 
 @noindent
@@ -276,7 +285,7 @@ Hello ['A','B'] world!
 @tt{write/2} (@ref{Term output}).  Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~w world!"", [['A','B']]).
+?- format(""Hello ~w world!"", [['A','B']]).
 @end{verbatim}
 
 @noindent
@@ -291,7 +300,7 @@ Hello [A,B] world!
 Example:  
 
 @begin{verbatim}
-| ?- format(""Hello ~n world!"", []).
+?- format(""Hello ~n world!"", []).
 @end{verbatim}
 
 @noindent

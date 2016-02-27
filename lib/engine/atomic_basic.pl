@@ -83,7 +83,8 @@ number_codes(N, S, Base) :-
 
 :- comment(sub_atom(Atom,Before,Length,Sub_atom), "@var{Sub_atom} is
    formed with @var{Length} consecutive characters of @var{Atom}
-   after the @var{Before} character.").
+   after the @var{Before} character.  For example, the goal
+   @tt{sub_atom(summer,1,4,umme)} succeeds.").
 
 :- true pred sub_atom(+atm,+integer,+integer,?atm).
 

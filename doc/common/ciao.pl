@@ -59,7 +59,23 @@
    @cindex{why the name Ciao}
    @cindex{Ciao, why this name}
 
-      @include{AboutName.lpdoc}
+      @include{Compliance.lpdoc}
+
+   @section{Referring to Ciao}
+   @cindex{referring to Ciao}
+   @cindex{references, to Ciao}
+
+   If you find Ciao or any of its components useful, we would
+   appreciate very much if you added a reference to this manual (i.e.,
+   the Ciao reference manual @cite{ciao-reference-manual-tr}) in your
+   work. The following is an appropriate BiBTeX entry with the
+   relevant data:
+
+@noindent
+@begin{verbatim}
+@includeverbatim{CiaoReference.lpdoc}
+@end{verbatim}
+
 
    @section{Syntax terminology and notational conventions}
    @cindex{notation}
@@ -138,46 +154,52 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*6+0,2000/07/12,18:55*50+'CEST'), "
+@begin{itemize}
+@item Source-level debugger in emacs, breakpts.
+@item Emacs environment improved, added menus for Ciaopp and LPDoc.
+@item Debugger embeddable in executables.
+@item Stand-alone executables available for UNIX-like operating
+  systems. 
+@item Many improvements to emacs interface.
+@item Menu-based interface to autodocumenter.
+@item Threads now available in Win32.
+@item Many improvements to threads.
+@item Modular clp(R) / clp(Q).
+@item Libraries implementing And-fair breadth-first and iterative
+  deepening included.
+@item Improved syntax for predicate abstractions.
+@item Library of higher-order list predicates.
+@item Better code expansion facilities (macros).
+@item New delay predicates (when/2).
+@item Compressed object code/executables on demand.
+@item The size of atoms is now unbound.
+@item Fast creation of new unique atoms.
+@item Number of clauses/predicates essentially unbound.
+@item Delayed goals with freeze restored.
+@item Faster compilation and startup.
+@item Much faster fast write/read. 
+@item Improved documentation.
+@item Other new libraries.
+@item Improved installation/deinstallation on all platforms.
+@item Many improvements to autodocumenter.
+@item Many bug fixes in libraries and engine.
+@end{itemize}
+").
+
+:- comment(version(1*5+134,2000/05/09,11:52*13+'CEST'), "Changed
+   location of suite to examples, updated documentation.  (MCL)").
+
 :- comment(version(1*5+94,2000/03/28,23:19*20+'CEST'), "The manual
    intro now provides an overview of the different parts of the
    manual.  (Manuel Hermenegildo)").
 
-%% Changes for 1.6 gathered up to patch 94
+%% Changes for 1.6 below include those up to patch 168:
+%% To add probably shortly: Libraries for displaying bar chart graphs.
+
 
 :- comment(version(1*5+0,1999/11/29,16:16*23+'MEST'),"Development
-   version following even 1.4 distribution.
-
-   Major changes so far (which will be in 1.6):
-
-@begin{itemize}
-@item Source-level debugger in emacs, breakpts.
-@item Debugger embeddable in executables.
-@item Greatly improved emacs interface.
-@item Menu-based documenter interface.
-@item Threads now available in Win32.
-@item Many improvements to threads.
-@item Modular clp(R) / clp(Q).
-@item Improved syntax for pred. abstractions.
-@item Library of higher order list predicates.
-@item Better code expansion facilities (macros).
-@item Compressed object code/executables. @comment{(.po)}
-@item The size of atoms is now unbound.
-@item Fast creation of new unique atoms.
-@item # of clauses/pred. essentially unbound.
-@item Delayed goals with freeze restored.
-@item Faster compilation and execution.
-@comment{@item Libraries not recompiled or checked unless 
-         @tt{-x} option is used.}
-@item Much faster fast write/read. 
-@item Improved documentation.
-@item Other new libraries. @comment{graphs tcltk(new version) xmrefs davinci}
-@item Improved installation/deinstallation.
-@item Many improvements to autodocumenter.
-@item Many minor bug fixes.
-@comment{@item Contrib stuff?}
-@end{itemize}
-
-   ").
+   version following even 1.4 distribution.").
 
 :- comment(version(1*4+0,1999/11/27,19:00*00+'MEST'),"
 @begin{itemize}

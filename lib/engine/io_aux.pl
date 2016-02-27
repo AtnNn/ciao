@@ -24,9 +24,9 @@
    @var{Message}, which is of type @var{Type}. The @tt{quiet}
    @index{prolog flag} (see @ref{Changing system behaviour and various
    flags}) controls which messages are actually output, depending on its
-   type. Also, for 'error', 'warning' and 'note' messages, a prefix is
-   output which denotes the severity of the message.  @var{Message} is
-   an item or a list of items from this list:
+   type. Also, for @tt{error}, @tt{warning} and @tt{note} messages, a
+   prefix is output which denotes the severity of the message.
+   @var{Message} is an item or a list of items from this list:
 @begin{description}
 
 @item{@tt{$$(String)}} @tt{String} is a string, which is output with
@@ -40,8 +40,8 @@
    @lib{write} is loaded, the term is output with @pred{write/1}, else
    with @pred{display/1}.
 
-@item{@tt{[](Term)}} @tt{Term} is output as a message, can be an item or
-   a list of items from this list.
+@item{@tt{[](Term)}} @tt{Term} is recursively output as a message, can
+   be an item or a list of items from this list.
 
 @item{@tt{Term}} Any other term is output with @pred{display/1}.
 @end{description} ").
@@ -52,7 +52,9 @@
 :- comment(message_lns(Type, L0, L1, Message), "Output to standard error
    @var{Message}, which is of type @var{Type}, and occurs between lines
    @var{L0} and @var{L1}.  This is the same as @pred{message/2}, but
-   printing the lines where the message occurs in a unified way.").
+   printing the lines where the message occurs in a unified way (this is
+   useful because automatic tools such as the emacs mode know how to
+   parse them).").
 
 :- true pred message_lns(Type, L0, L1, Message)
         : (atm(Type), member(Type, [error,warning,note,message,debug])).

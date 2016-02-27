@@ -1,46 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Dynamic predicates</TITLE>
+<TITLE>The Ciao Prolog System               - Term output</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC195" HREF="ciao_toc.html#TOC195">Dynamic predicates</A></H1>
+<H1><A NAME="SEC172" HREF="ciao_toc.html#TOC172">Term output</A></H1>
 <P>
-<A NAME="IDX2221"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+<A NAME="IDX1977"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.5#30 (1998/6/30, 14:23:37 MET DST)
+<STRONG>Author(s):</STRONG> Adapted from shared code written by Richard A. O'Keefe. Changes by Mats Carlsson, Daniel Cabeza, and Manuel Hermenegildo..
 
 
 <P>
-This module implements the assert/retract family of predicates to manipulate dynamic predicates. 
+<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
 
 
 <P>
-The predicates defined in this module allow modification of the program as it is actually running. Clauses can be added to the program (<EM>asserted</EM>) or removed from the program (<EM>retracted</EM>). For these predicates, the argument which corresponds to the clause head must be instantiated to an atom or a compound term. The argument corresponding to the clause must be instantiated either to a term <CODE>Head :- Body</CODE> or, if the body part is empty, to <CODE>Head</CODE>. An empty body part is represented as <CODE>true</CODE>. 
+<STRONG>Version of last change:</STRONG> 1.5#158 (2000/5/30, 13:8:10 CEST)
+
+
+<P>
+This library provides different predicates for term output, additional to the kernel predicates 
+<A NAME="IDX1978"></A>
+<CODE>display/1</CODE>-
+<A NAME="IDX1979"></A>
+<CODE>display/2</CODE> and <CODE>displayq/1</CODE>-<CODE>displayq/2</CODE>. All the predicates defined in ISO-Prolog are included, plus other traditionally provided by Prolog Implementations. Output predicates are provided in two versions: one that uses the current output stream and other in which the stream is specified explicitly, as an additional first argument.
 
 
 
 <UL>
-<LI><A HREF="ciao_38.html#SEC196">Usage and interface (dynamic)</A>
-<LI><A HREF="ciao_38.html#SEC197">Documentation on exports (dynamic)</A>
-<LI><A HREF="ciao_38.html#SEC198">Documentation on multifiles (dynamic)</A>
+<LI><A HREF="ciao_38.html#SEC173">Usage and interface (write)</A>
+<LI><A HREF="ciao_38.html#SEC174">Documentation on exports (write)</A>
+<LI><A HREF="ciao_38.html#SEC175">Documentation on multifiles (write)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC196" HREF="ciao_toc.html#TOC196">Usage and interface (<CODE>dynamic</CODE>)</A></H2>
+<H2><A NAME="SEC173" HREF="ciao_toc.html#TOC173">Usage and interface (<CODE>write</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +52,7 @@ The predicates defined in this module allow modification of the program as it is
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(dynamic)).</CODE>
+<CODE>:- use_module(library(write)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -57,39 +61,52 @@ The predicates defined in this module allow modification of the program as it is
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2222"></A>
-<CODE>asserta/1</CODE>, 
-<A NAME="IDX2223"></A>
-<CODE>asserta/2</CODE>, 
-<A NAME="IDX2224"></A>
-<CODE>assertz/1</CODE>, 
-<A NAME="IDX2225"></A>
-<CODE>assertz/2</CODE>, 
-<A NAME="IDX2226"></A>
-<CODE>assert/1</CODE>, 
-<A NAME="IDX2227"></A>
-<CODE>assert/2</CODE>, 
-<A NAME="IDX2228"></A>
-<CODE>retract/1</CODE>, 
-<A NAME="IDX2229"></A>
-<CODE>retractall/1</CODE>, 
-<A NAME="IDX2230"></A>
-<CODE>abolish/1</CODE>, 
-<A NAME="IDX2231"></A>
-<CODE>clause/2</CODE>, 
-<A NAME="IDX2232"></A>
-<CODE>clause/3</CODE>, 
-<A NAME="IDX2233"></A>
-<CODE>current_predicate/1</CODE>, 
-<A NAME="IDX2234"></A>
-<CODE>data/1</CODE>, 
-<A NAME="IDX2235"></A>
-<CODE>wellformed_body/3</CODE>.
+<A NAME="IDX1980"></A>
+<CODE>write_term/3</CODE>, 
+<A NAME="IDX1981"></A>
+<CODE>write_term/2</CODE>, 
+<A NAME="IDX1982"></A>
+<CODE>write/2</CODE>, 
+<A NAME="IDX1983"></A>
+<CODE>write/1</CODE>, 
+<A NAME="IDX1984"></A>
+<CODE>writeq/2</CODE>, 
+<A NAME="IDX1985"></A>
+<CODE>writeq/1</CODE>, 
+<A NAME="IDX1986"></A>
+<CODE>write_canonical/2</CODE>, 
+<A NAME="IDX1987"></A>
+<CODE>write_canonical/1</CODE>, 
+<A NAME="IDX1988"></A>
+<CODE>print/2</CODE>, 
+<A NAME="IDX1989"></A>
+<CODE>print/1</CODE>, 
+<A NAME="IDX1990"></A>
+<CODE>write_list1/1</CODE>, 
+<A NAME="IDX1991"></A>
+<CODE>portray_clause/2</CODE>, 
+<A NAME="IDX1992"></A>
+<CODE>portray_clause/1</CODE>, 
+<A NAME="IDX1993"></A>
+<CODE>numbervars/3</CODE>, 
+<A NAME="IDX1994"></A>
+<CODE>prettyvars/1</CODE>, 
+<A NAME="IDX1995"></A>
+<CODE>printable_char/1</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX1996"></A>
+<CODE>write_option/1</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX2236"></A>
-<CODE>do_on_abolish/1</CODE>.
+<A NAME="IDX1997"></A>
+<CODE>define_flag/3</CODE>, 
+<A NAME="IDX1998"></A>
+<CODE>portray_attribute/2</CODE>, 
+<A NAME="IDX1999"></A>
+<CODE>portray/1</CODE>.
 
 </UL>
 
@@ -100,8 +117,10 @@ The predicates defined in this module allow modification of the program as it is
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX2237"></A>
-<CODE>assertions/doc_props</CODE>.
+<A NAME="IDX2000"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX2001"></A>
+<CODE>sort</CODE>.
 
 </UL>
 
@@ -111,342 +130,435 @@ The predicates defined in this module allow modification of the program as it is
 
 
 
-<H2><A NAME="SEC197" HREF="ciao_toc.html#TOC197">Documentation on exports (<CODE>dynamic</CODE>)</A></H2>
+<H2><A NAME="SEC174" HREF="ciao_toc.html#TOC174">Documentation on exports (<CODE>write</CODE>)</A></H2>
 <P>
-<A NAME="IDX2238"></A>
-<A NAME="IDX2239"></A>
+<A NAME="IDX2002"></A>
+<A NAME="IDX2003"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>asserta/1:</B>
-<DD><A NAME="IDX2240"></A>
+<DT><span class="define">PREDICATE:</span> <B>write_term/3:</B>
+<DD><A NAME="IDX2004"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>asserta(+Clause)</CODE>
+<STRONG>Usage:</STRONG> <CODE>write_term(@Stream,?Term,+OptList)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> The current instance of <CODE>Clause</CODE> is interpreted as a clause and is added to the current program. The predicate concerned must be dynamic. The new clause becomes the <EM>first</EM> clause for the predicate concerned. Any uninstantiated variables in the <CODE>Clause</CODE> will be replaced by new private variables.
+<LI><EM>Description:</EM> Outputs the term <CODE>Term</CODE> to the stream <CODE>Stream</CODE>, with the list of write-options <CODE>OptList</CODE>. See
 
-<LI><EM>The following properties should hold globally:</EM>
+<A NAME="IDX2005"></A>
+<CODE>write_option/1</CODE> type for default options. 
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>asserta(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>@Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+OptList</CODE> is a list of <CODE>write_option</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2241"></A>
-<A NAME="IDX2242"></A>
+<A NAME="IDX2006"></A>
+<A NAME="IDX2007"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>asserta/2:</B>
-<DD><A NAME="IDX2243"></A>
+<DT><span class="define">PREDICATE:</span> <B>write_term/2:</B>
+<DD><A NAME="IDX2008"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>asserta(+Clause,-(Ref))</CODE>
+<STRONG>Usage:</STRONG> <CODE>write_term(?Term,+OptList)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), write_term(S,Term,OptList)</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>asserta(+Clause,-(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+OptList</CODE> is a list of <CODE>write_option</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2244"></A>
-<A NAME="IDX2245"></A>
+<A NAME="IDX2009"></A>
+<A NAME="IDX2010"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assertz/1:</B>
-<DD><A NAME="IDX2246"></A>
+<DT><span class="define">PROPERTY:</span> <B>write_option/1:</B>
+<DD><A NAME="IDX2011"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>assertz(+Clause)</CODE>
+<CODE>Opt</CODE> is a valid write option which affects the predicate <CODE>write_term/3</CODE> and similar ones. Possible write_options are: 
 
 <UL>
-<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>, except that the new clause becomes the <EM>last</EM> clause for the predicate concerned.
+<LI><STRONG>quoted(</STRONG><EM>bool</EM><STRONG>):</STRONG> If <EM>bool</EM> is <CODE>true</CODE>, atoms and functors that can't be read back by
 
-<LI><EM>The following properties should hold globally:</EM>
+<A NAME="IDX2012"></A>
+<CODE>read_term/3</CODE> are quoted, if it is <CODE>false</CODE>, each atom and functor is written as its name. Default value is <CODE>false</CODE>. 
 
-Documentation is still incomplete: <CODE>assertz(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<LI><STRONG>ignore_ops(</STRONG><EM>flag</EM><STRONG>):</STRONG> If <EM>flag</EM> is <CODE>true</CODE>, each compound term is output in functional notation, if it is <CODE>ops</CODE>, curly bracketed notation and list notation is enabled when outputing compound terms, if it is <CODE>false</CODE>, also operator notation is enabled when outputing compound terms. Default value is <CODE>false</CODE>.
+
+<LI><STRONG>numbervars(</STRONG><EM>bool</EM><STRONG>):</STRONG> If <EM>bool</EM> is <CODE>true</CODE>, a term of the form <CODE>'$VAR'(N)</CODE> where <CODE>N</CODE> is an integer, is output as a variable name consisting of a capital letter possibly followed by an integer, a term of the form <CODE>'$VAR'(Atom)</CODE> where <CODE>Atom</CODE> is an atom, as this atom (without quotes), and a term of the form <CODE>'$VAR'(String)</CODE> where <CODE>String</CODE> is a character string, as the atom corresponding to this character string. See predicates <CODE>numbervars/3</CODE> and <CODE>prettyvars/1</CODE>. If <EM>bool</EM> is <CODE>false</CODE> this cases are not treated in any special way. Default value is <CODE>false</CODE>.
+
+<LI><STRONG>portrayed(</STRONG><EM>bool</EM><STRONG>):</STRONG> If <EM>bool</EM> is <CODE>true</CODE>, then call multifile predicates
+
+<A NAME="IDX2013"></A>
+<CODE>portray/1</CODE> and 
+<A NAME="IDX2014"></A>
+<CODE>portray_attribute/1</CODE>, to provide the user handlers for pretty printing some terms. <CODE>portray_attribute/1</CODE> is called whenever an attributed variable is to be printed, <CODE>portray/1</CODE> is called whenever a non-variable term is to be printed. If either call succeeds, then it is assumed that the term has been output, else it is printed as usual. If <EM>bool</EM> is <CODE>false</CODE>, these predicates are not called. Default value is <CODE>false</CODE>. This option is set by the toplevel when writting the final values of variables, and by the debugging package when writting the goals in the tracing messages. Thus you can vary the forms of these messages if you wish. 
+
+<LI><STRONG>max_depth(</STRONG><EM>depth</EM><STRONG>):</STRONG> <EM>depth</EM> is a positive integer or cero. If it is positive, it denotes the depth limit on printing compound terms. If it is cero, there is no limit. Default value is <CODE>0</CODE> (no limit).
+
+<LI><STRONG>priority(</STRONG><EM>prio</EM><STRONG>):</STRONG> <EM>prio</EM> is an integer between 1 and 1200. If the term to be printed has higher priority than <EM>prio</EM>, it will be printed parenthesized. Default value is 1200 (no term parenthesized).
+
+</UL>
+
+<P>
+.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_option(Opt)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Opt</CODE> is a valid write option.
+
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2247"></A>
-<A NAME="IDX2248"></A>
+<A NAME="IDX2015"></A>
+<A NAME="IDX2016"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assertz/2:</B>
-<DD><A NAME="IDX2249"></A>
+<DT><span class="define">PREDICATE:</span> <B>write/2:</B>
+<DD><A NAME="IDX2017"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>assertz(+Clause,-(Ref))</CODE>
+<STRONG>Usage:</STRONG> <CODE>write(@Stream,?Term)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Like <CODE>assertz/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [numbervars(true)])</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>assertz(+Clause,-(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>@Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2250"></A>
-<A NAME="IDX2251"></A>
+<A NAME="IDX2018"></A>
+<A NAME="IDX2019"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assert/1:</B>
-<DD><A NAME="IDX2252"></A>
+<DT><span class="define">PREDICATE:</span> <B>write/1:</B>
+<DD><A NAME="IDX2020"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>assert(+Clause)</CODE>
+<STRONG>Usage:</STRONG> <CODE>write(?Term)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Identical to <CODE>assertz/1</CODE>. Included for compatibility.
+<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), write(S,Term)</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>assert(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2253"></A>
-<A NAME="IDX2254"></A>
+<A NAME="IDX2021"></A>
+<A NAME="IDX2022"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assert/2:</B>
-<DD><A NAME="IDX2255"></A>
+<DT><span class="define">PREDICATE:</span> <B>writeq/2:</B>
+<DD><A NAME="IDX2023"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>assert(+Clause,-(Ref))</CODE>
+<STRONG>Usage:</STRONG> <CODE>writeq(@Stream,?Term)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Identical to <CODE>assertz/2</CODE>. Included for compatibility.
+<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [quoted(true), numbervars(true)])</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>assert(+Clause,-(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>@Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2256"></A>
-<A NAME="IDX2257"></A>
+<A NAME="IDX2024"></A>
+<A NAME="IDX2025"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>retract/1:</B>
-<DD><A NAME="IDX2258"></A>
+<DT><span class="define">PREDICATE:</span> <B>writeq/1:</B>
+<DD><A NAME="IDX2026"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retract(clause)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>retract(+Clause)</CODE>
+<STRONG>Usage:</STRONG> <CODE>writeq(?Term)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> The first clause in the program that matches <CODE>Clause</CODE> is erased. The predicate concerned must be dynamic.
+<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), writeq(S,Term)</CODE>.
 
-The predicate <CODE>retract/1</CODE> may be used in a non-determinate fashion, i.e., it will successively retract clauses matching the argument through backtracking. If reactivated by backtracking, invocations of the predicate whose clauses are being retracted will proceed unaffected by the retracts. This is also true for invocations of <CODE>clause</CODE> for the same predicate. The space occupied by a retracted clause will be recovered when instances of the clause are no longer in use. 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>retract(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2259"></A>
-<A NAME="IDX2260"></A>
+<A NAME="IDX2027"></A>
+<A NAME="IDX2028"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>retractall/1:</B>
-<DD><A NAME="IDX2261"></A>
+<DT><span class="define">PREDICATE:</span> <B>write_canonical/2:</B>
+<DD><A NAME="IDX2029"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retractall(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>retractall(+Head)</CODE>
+<STRONG>Usage:</STRONG> <CODE>write_canonical(@Stream,?Term)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Erase all clauses whose head matches <CODE>Head</CODE>, where <CODE>Head</CODE> must be instantiated to an atom or a compound term. The predicate concerned must be dynamic. The predicate definition is retained.
+<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [quoted(true), ignore_ops(true)])</CODE>. The output of this predicate can always be parsed by
 
-<LI><EM>The following properties should hold globally:</EM>
+<A NAME="IDX2030"></A>
+<CODE>read_term/2</CODE> even if the term contains special characters or if operator declarations have changed. 
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>retractall(+Head)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>@Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2262"></A>
-<A NAME="IDX2263"></A>
+<A NAME="IDX2031"></A>
+<A NAME="IDX2032"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>abolish/1:</B>
-<DD><A NAME="IDX2264"></A>
+<DT><span class="define">PREDICATE:</span> <B>write_canonical/1:</B>
+<DD><A NAME="IDX2033"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>abolish(spec)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>abolish(+Spec)</CODE>
+<STRONG>Usage:</STRONG> <CODE>write_canonical(?Term)</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Erase all clauses of the predicate specified by the predicate spec, or list of predicate specs, <CODE>Spec</CODE>. The predicate definition itself is also erased (the predicate is deemed undefined after execution of the abolish). The predicates concerned must all be user defined.
+<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), write_canonical(S,Term)</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>abolish(+Spec)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2265"></A>
-<A NAME="IDX2266"></A>
+<A NAME="IDX2034"></A>
+<A NAME="IDX2035"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>clause/2:</B>
-<DD><A NAME="IDX2267"></A>
+<DT><span class="define">PREDICATE:</span> <B>print/2:</B>
+<DD><A NAME="IDX2036"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>clause(+Head,?(Body))</CODE>
+<STRONG>Usage:</STRONG> <CODE>print(@Stream,?Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The clause '<CODE>Head</CODE> <CODE>:-</CODE> <CODE>Body</CODE>' exists in the current program. The predicate concerned must be dynamic.
+<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [numbervars(true), portrayed(true)])</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>clause(+Head,?(Body))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>@Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2268"></A>
-<A NAME="IDX2269"></A>
+<A NAME="IDX2037"></A>
+<A NAME="IDX2038"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>clause/3:</B>
-<DD><A NAME="IDX2270"></A>
+<DT><span class="define">PREDICATE:</span> <B>print/1:</B>
+<DD><A NAME="IDX2039"></A>
 
 
 <P>
-<CODE>clause(Head,Body,Ref)</CODE>
-
-
-<P>
-Like <CODE>clause(Head,Body)</CODE>, plus the clause is uniquely identified by <CODE>Ref</CODE>.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?,?)</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>clause(+Head,?(Body),?(Ref))</CODE>
+<STRONG>Usage:</STRONG> <CODE>print(?Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Head</CODE> must be instantiated to an atom or a compound term.
+<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), print(S,Term)</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-Documentation is still incomplete: <CODE>clause(+Head,?(Body),?(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>clause(?(Head),?(Body),+Ref)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Ref</CODE> must be instantiated to a valid identifier.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>clause(?(Head),?(Body),+Ref)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2271"></A>
-<A NAME="IDX2272"></A>
+<A NAME="IDX2040"></A>
+<A NAME="IDX2041"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_predicate/1:</B>
-<DD><A NAME="IDX2273"></A>
+<DT><span class="define">PREDICATE:</span> <B>write_list1/1:</B>
+<DD><A NAME="IDX2042"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>current_predicate(?(Spec))</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> A user defined predicate is named <CODE>Spec</CODE>.
+<LI><EM>Description:</EM> Writes a list to current output one element in each line.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-Documentation is still incomplete: <CODE>current_predicate(?(Spec))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>Arg1</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2274"></A>
-<A NAME="IDX2275"></A>
+<A NAME="IDX2043"></A>
+<A NAME="IDX2044"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dynamic/1:</B>
-<DD><A NAME="IDX2276"></A>
+<DT><span class="define">PREDICATE:</span> <B>portray_clause/2:</B>
+<DD><A NAME="IDX2045"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>portray_clause(@Stream,?Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Outputs the clause <CODE>Clause</CODE> onto <CODE>Stream</CODE>, pretty printing its variables and using indentation, including a period at the end. This predicate is used by <CODE>listing/0</CODE>.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>@Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?Clause</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2046"></A>
+<A NAME="IDX2047"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>portray_clause/1:</B>
+<DD><A NAME="IDX2048"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>portray_clause(?Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), portray_clause(S,Term)</CODE>.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>?Clause</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2049"></A>
+<A NAME="IDX2050"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>numbervars/3:</B>
+<DD><A NAME="IDX2051"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>numbervars(?Term,+N,?M)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies each of the variables in term <CODE>Term</CODE> with a term of the form <CODE>'$VAR'(I)</CODE> where <CODE>I</CODE> is an integer from <CODE>N</CODE> onwards. <CODE>M</CODE> is unified with the last integer used plus 1. If the resulting term is output with a write option <CODE>numbervars(true)</CODE>, in the place of the variables in the original term will be printed a variable name consisting of a capital letter possibly followed by an integer. When <CODE>N</CODE> is 0 you will get the variable names A, B, ..., Z, A1, B1, etc.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+N</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>?M</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2052"></A>
+<A NAME="IDX2053"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prettyvars/1:</B>
+<DD><A NAME="IDX2054"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prettyvars(?Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Similar to <CODE>numbervars(Term,0,_)</CODE>, except that singleton variables in <CODE>Term</CODE> are unified with <CODE>'$VAR'('_')</CODE>, so that when the resulting term is output with a write option <CODE>numbervars(true)</CODE>, in the place of singleton variables <CODE>_</CODE> is written. This predicate is used by
+
+<A NAME="IDX2055"></A>
+<CODE>portray_clause/2</CODE>. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2056"></A>
+<A NAME="IDX2057"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>printable_char/1:</B>
+<DD><A NAME="IDX2058"></A>
 
 
 <P>
@@ -455,55 +567,30 @@ No further documentation available for this predicate.
 
 </DL>
 
+
+
+<H2><A NAME="SEC175" HREF="ciao_toc.html#TOC175">Documentation on multifiles (<CODE>write</CODE>)</A></H2>
 <P>
-<A NAME="IDX2277"></A>
-<A NAME="IDX2278"></A>
+<A NAME="IDX2059"></A>
+<A NAME="IDX2060"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>data/1:</B>
-<DD><A NAME="IDX2279"></A>
+<DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
+<DD><A NAME="IDX2061"></A>
 
 
 <P>
-No further documentation available for this predicate.
+Defines flags as follows: 
 
-
-</DL>
+<PRE>
+define_flag(write_strings,[on,off],off).
+</PRE>
 
 <P>
-<A NAME="IDX2280"></A>
-<A NAME="IDX2281"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>wellformed_body/3:</B>
-<DD><A NAME="IDX2282"></A>
+(See section <A HREF="ciao_27.html#SEC136">Changing system behaviour and various flags</A>). 
 
 
 <P>
-<CODE>wellformed_body(BodyIn,Env,BodyOut)</CODE>
-
-
-<P>
-<CODE>BodyIn</CODE> is a well-formed clause body. <CODE>BodyOut</CODE> is its counterpart with no single-variable meta-goals (i.e., with <CODE>call(X)</CODE> for <CODE>X</CODE>). <CODE>Env</CODE> denotes if global cuts are admissible in <CODE>BodyIn</CODE> (<CODE>+</CODE> if they are, <CODE>-</CODE> if they are not).
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC198" HREF="ciao_toc.html#TOC198">Documentation on multifiles (<CODE>dynamic</CODE>)</A></H2>
-<P>
-<A NAME="IDX2283"></A>
-<A NAME="IDX2284"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>do_on_abolish/1:</B>
-<DD><A NAME="IDX2285"></A>
-
-
-<P>
-<CODE>do_on_abolish(Head)</CODE>
-
-
-<P>
-A hook predicate which will be called when the definition of the predicate of <CODE>Head</CODE> is abolished.
+If flag is <CODE>on</CODE>, lists which may be written as strings are.
 
 
 <P>
@@ -512,7 +599,60 @@ The predicate is <EM>multifile</EM>.
 
 </DL>
 
+<P>
+<A NAME="IDX2062"></A>
+<A NAME="IDX2063"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>portray_attribute/2:</B>
+<DD><A NAME="IDX2064"></A>
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>portray_attribute(Attr,Var)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <EM>A user defined predicate.</EM> When an attributed variable <CODE>Var</CODE> is about to be printed, this predicate receives the variable and its attribute <CODE>Attr</CODE>. The predicate should either print something based on <CODE>Attr</CODE> or <CODE>Var</CODE>, or do nothing and fail. In the latter case, the default printer (
+
+<A NAME="IDX2065"></A>
+<CODE>write/1</CODE>) will print the attributed variable like an unbound variable, e.g. <CODE>_673</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Attr</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Var</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2066"></A>
+<A NAME="IDX2067"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>portray/1:</B>
+<DD><A NAME="IDX2068"></A>
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>portray(?Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <EM>A user defined predicate.</EM> This should either print the <CODE>Term</CODE> and succeed, or do nothing and fail. In the latter case, the default printer (<CODE>write/1</CODE>) will print the <CODE>Term</CODE>.
+
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

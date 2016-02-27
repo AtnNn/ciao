@@ -25,15 +25,58 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*5+172,2000/07/12,16:45*31+'CEST'), "Partially
+solved undetected heap overflows in fast_read: no enough checks were
+made when constructing terms.  Workaround: ensuring enough heap space
+(16 kCels at the moment) before each call to fast_read.  (MCL, DCG)").
+
+:- comment(version(1*5+171,2000/07/07,16:10*17+'CEST'), "Solved a bug
+in calls to non-blocking failing concurrent predicates: if possibly
+matching clauses exist, the lock has to be released after the
+execution (otherwise the clause might be removed in the middle of an
+execution); this was being done by an $unlock_predicate/1 after
+$current_instance/5. But if the predicate fails, $unlock_predicate/1
+is never reached.  It was solved by pushing a choicepoint even if the
+accessed clause is the last one, and, on redo, checking if the call is
+non-blocking before trying to wait on it.  next_instance_conc will
+leave a lock if there is a possibly matching clause (which will be
+released by $unlock_predicate/1) and remove it after the last clause
+is reached, for CONC_CLOSED and NON_BLOCKING calls.  (MCL)").
+
+:- comment(version(1*5+164,2000/06/22,19:48*58+'CEST'), "Changed
+new_atom/1 to generate atoms having only alphanumeric characters.
+(MCL)").
+
+:- comment(version(1*5+161,2000/06/01,20:23*24+'CEST'), "Fixed a bug
+   which made that sometimes root directory was computed as the empty
+   atom.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+160,2000/06/01,12:27*49+'CEST'), "Changed
+stat() in unix_utils.c to lstat() to gather information about links.
+(MCL)").
+
+:- comment(version(1*5+155,2000/05/29,19:34*30+'CEST'), "Changed xchgw
+to xchg in assembly code to avoid compiler complaints.  (MCL)").
+
+:- comment(version(1*5+136,2000/05/09,14:16*01+'CEST'), "Access to
+   clauses and facts is now (partially) protected.  Concurrent threads
+   can now insert/retract them without colliding.  However, a
+   fact/clause is not protected during its execution.  Anyway, it is
+   not a good idea to retract a clause which may be being executed by
+   another thread.  (MCL)").
+
+:- comment(version(1*5+135,2000/05/09,12:49*25+'CEST'), "The lock for
+   insert_definition is inside the function itself.  (MCL)").
+
 :- comment(version(1*5+133,2000/05/05,17:32*14+'CEST'),
-"SignalObjectAndWait in Win32 (the equivalent to the POSIX
-pthread_cond_wait) exists only in NT 4.0 and Windows 2000; I am
-substituting it for WaitForSingleObject with a timeout.  (MCL)").
+   "SignalObjectAndWait in Win32 (the equivalent to the POSIX
+   pthread_cond_wait) exists only in NT 4.0 and Windows 2000; I am
+   substituting it for WaitForSingleObject with a timeout.  (MCL)").
 
 :- comment(version(1*5+132,2000/05/05,17:29*54+'CEST'), "Threads in
-Win32 up and running, with native locks, kernel32 critical sections,
-and wait on events to make threads sleep when waiting for a fact to
-appear.  (MCL)").
+   Win32 up and running, with native locks, kernel32 critical
+   sections, and wait on events to make threads sleep when waiting for
+   a fact to appear.  (MCL)").
 
 :- comment(version(1*5+131,2000/05/04,19:46*36+'CEST'), "Fixed a bug
    related to attributed variables, by changing a

@@ -543,7 +543,9 @@ static struct instance *current_instance_noconc(Arg)
   REGISTER TAGGED head;
 
 
-  head=X(0); DerefSwitch(head,X(0),goto var_case_switch;);
+  Wait_Acquire_Cond_lock(root->clause_insertion_cond);
+  head=X(0); 
+  DerefSwitch(head,X(0),goto var_case_switch;);
   if (TagIsSTR(head)) {
     DerefArg(head,head,1);
     if (IsVar(head)) {
@@ -552,7 +554,10 @@ static struct instance *current_instance_noconc(Arg)
       if (x2_chain)
         x5_next = x2_next =
           ACTIVE_INSTANCE(Arg,x2_chain->forward,use_clock,TRUE);
-      else return NULL;
+      else {
+        Release_Cond_lock(root->clause_insertion_cond);
+        return NULL;
+      }
     }
     else if (TagIsLST(head)){
       x5_chain = ACTIVE_INSTANCE(Arg,root->lstcase,use_clock,FALSE);
@@ -575,7 +580,10 @@ static struct instance *current_instance_noconc(Arg)
         x2_next = ACTIVE_INSTANCE(Arg,x2_chain->next_forward,use_clock,FALSE);
       else if (x5_chain)
         x5_next = ACTIVE_INSTANCE(Arg,x5_chain->next_forward,use_clock,FALSE);
-      else return NULL;                                    /* No solution */
+      else {
+        Release_Cond_lock(root->clause_insertion_cond);
+        return NULL;                                    /* No solution */
+      }
     } else {
       struct sw_on_key_node *hnode;
 
@@ -604,6 +612,8 @@ static struct instance *current_instance_noconc(Arg)
     SaveGtop(w->node,w->global_top);
     NewShadowregs(w->global_top);
   }
+
+  Release_Cond_lock(root->clause_insertion_cond);
 
   if (!x2_chain)
     return x5_chain;
@@ -648,6 +658,9 @@ BOOL next_instance(Arg,ipp)
     REGISTER struct instance *x2_insp = *ipp =  TagToInstance(X(2));
     REGISTER struct instance *x5_insp = TagToInstance(X(5));
     CLOCK clock = GetSmall(X(4));
+    REGISTER struct int_info    *root = TagToRoot(X(6));
+
+    Wait_Acquire_Cond_lock(root->clause_insertion_cond);
 
     if (x2_insp == x5_insp)
 	x2_insp = x5_insp = ACTIVE_INSTANCE(Arg,x2_insp->forward,clock,TRUE);
@@ -665,6 +678,8 @@ BOOL next_instance(Arg,ipp)
 	goto x2_alt;
     else
 	goto x5_alt;
+
+    Release_Cond_lock(root->clause_insertion_cond);
 
     if (!x2_insp && !x5_insp)
 	return FALSE;
@@ -833,20 +848,11 @@ static struct instance *current_instance_conc(Arg, block)
     try_instance = wait_for_an_instance_pointer(&(root->first), 
                                                 &(root->first),
                                                 root, block);
-#if defined(DEBUG)
-    if (debug_conc) fprintf(stderr, "** After wait_for_an_instance_pointer\n");
-#endif
+    /* No instance at all */
     if (!try_instance) {
       Wait_For_Cond_End(root->clause_insertion_cond);
-#if defined(DEBUG)
-     if (debug_conc) fprintf(stderr,"** Exiting current_instance with NULL\n");
-#endif
       return NULL;
     }
-    
-#if defined(DEBUG)
-      if (debug_conc) fprintf(stderr, "** current_instance: got a fact!\n");
-#endif
 
 /* If we are here, we have a lock for the predicate.  Get first possibly
    matching instance; weak indexing here */
@@ -874,8 +880,10 @@ static struct instance *current_instance_conc(Arg, block)
 
  /* Do not make choicepoints unnecessarily. */
 
+  /*
   if (x2_n || x5_n || 
       (block == BLOCK && root->behavior_on_failure == CONC_OPEN)) {
+  */
 #if defined(DEBUG) && defined(THREADS)
   if (debug_conc)
     fprintf(stderr,
@@ -900,8 +908,9 @@ static struct instance *current_instance_conc(Arg, block)
     w->node->trail_top = w->trail_top;
     SaveGtop(w->node,w->global_top);
     NewShadowregs(w->global_top);
+    /*
   }
-
+    */
 #if defined(DEBUG)
   if (debug_conc) fprintf(stderr, "** Exiting current_instance\n");
 #endif
@@ -917,17 +926,20 @@ static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
 {
 
   volatile struct instance *pptr1 = NULL, *pptr2 = NULL;
-  /* volatile Behavior behavior_this_pred; */
-  
-  while(TRUE){  
+
+   /* We have to wait for a new clause only if we are blocking */
+
+
+    while(TRUE){  
     /* Wait until a change is signaled, and test that the change affects us */
-    Wait_For_Cond_Begin( \
-                   ((*inst_pptr1 == NULL) && \
-                    (*inst_pptr2 == NULL) && \
-                    block == BLOCK && \
-                    root->behavior_on_failure == CONC_OPEN ), \
-                    root->clause_insertion_cond
-                         )
+
+      if (block == BLOCK)
+        Wait_For_Cond_Begin( \
+                             ((*inst_pptr1 == NULL) && \
+                              (*inst_pptr2 == NULL) && \
+                              root->behavior_on_failure == CONC_OPEN ), \
+                             root->clause_insertion_cond
+                             )
       /* Test again to find out which was the case */
       
     pptr1 = *inst_pptr1;
@@ -937,7 +949,7 @@ static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
     else if (block == NO_BLOCK || root->behavior_on_failure == CONC_CLOSED)
       return FALSE;
     else Wait_For_Cond_End(root->clause_insertion_cond); /* Let others update */
-  }
+    }
 }
 
 static struct instance *first_possible_instance(x0, root, x2_n, x5_n)

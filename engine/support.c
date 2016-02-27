@@ -663,34 +663,18 @@ struct definition *insert_definition(swp,tagpname,arity,insertp)
   /* Lock here -- we do not want two different workers to add predicates
      concurrently. */
 
-#if defined(DEBUG) && defined(THREADS)
-  if (SLock_is_unset(prolog_predicates_l))
-    printf("**** entering insert_definition() without lock\n");
-#endif
-
-  /* Wait_Acquire_slock(prolog_predicates_l); */ /* Moved to current_clauses */
-
+  Wait_Acquire_slock(prolog_predicates_l);
   keyval = (struct sw_on_key_node *)incore_gethash((*swp),key);
 
   if (keyval->key)                                    /* Already existent */
     value = keyval->value.def;
-  else if (insertp)                                      /* New predicate */
-    add_definition(swp,keyval,key,value=new_functor(tagpname,arity));
-
-  /* Unlock here */
-
-  /*Release_slock(prolog_predicates_l);*/ /* Moved to current_clauses */
-
-  /* Maybe we can perform two separate locks instead of a big one */
-
-  /*
-#if defined(DEBUG)
-  if (value){
-    wr_functor("defining predicate", value);
-    printf("insert_definition(): atom_off is %d\n", atom_off);
+  else if (insertp){                                      /* New predicate */
+    value=new_functor(tagpname, arity);
+    add_definition(swp, keyval, key, value);
   }
-#endif
-  */
+
+  Release_slock(prolog_predicates_l);
+
   return value;
 }
 
@@ -732,7 +716,6 @@ struct definition *find_definition(swp,term,argl,insertp)
      BOOL insertp;
 {
   int arity;
-  struct definition *result;
 
   if (TagIsStructure(term)) {
     TAGGED f = TagToHeadfunctor(term);
@@ -749,26 +732,7 @@ struct definition *find_definition(swp,term,argl,insertp)
     else
       arity = 0;
 
-  /*
-#if defined(DEBUG)
-  if (debug_conc){
-      fprintf(stderr, "Entering find_definition\n");
-      if (SLock_is_unset(prolog_predicates_l))
-        fprintf(stderr, "lock is unset\n");
-      else
-        fprintf(stderr, "lock is set\n");
-  }
-#endif
-  */
-  Wait_Acquire_slock(prolog_predicates_l);
-  result = insert_definition(swp,term,arity,insertp);
-  Release_slock(prolog_predicates_l);
-  /*
-#if defined(DEBUG)
-  if (debug_conc) fprintf(stderr, "Exiting find_definition\n");
-#endif
-  */
-  return result;
+  return insert_definition(swp,term,arity,insertp);
 }
 
 
@@ -817,7 +781,6 @@ static struct definition *parse_1_definition(tagname, tagarity)
      TAGGED tagname,tagarity;
 {
   int arity;
-  struct definition *result;
 
   if (!TagIsSmall(tagarity))
     return NULL;
@@ -860,12 +823,9 @@ static struct definition *parse_1_definition(tagname, tagarity)
       return f;
     }
 
-  if (TagIsATM(tagname)) {
-    Wait_Acquire_slock(prolog_predicates_l);
-    result = insert_definition(predicates_location,tagname,arity,TRUE);
-    Release_slock(prolog_predicates_l);
-    return result;
-  } else return NULL;
+  if (TagIsATM(tagname)) 
+    return insert_definition(predicates_location,tagname,arity,TRUE);
+  else return NULL;
 }
 
 static BOOL cunify_args_aux PROTO((struct worker *w, int arity, TAGGED *pt1, TAGGED *pt2, TAGGED *x1, TAGGED *x2));
@@ -905,7 +865,10 @@ static BOOL cunify_args_aux(Arg,arity,pt1,pt2,x1,x2)
      REGISTER TAGGED *pt1, *pt2;
      TAGGED *x1, *x2;
 {
-  REGISTER TAGGED t1, t2, t3;
+  REGISTER TAGGED 
+    t1 = ~0,
+    t2 = ~0,
+    t3;
 
   /* Terminating unification of complex structures: Forward args of pt2 to
      args of pt1 using choice stack as value cell.  When done, reinstall

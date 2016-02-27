@@ -182,11 +182,11 @@ X=\=Y :- X=\=Y.
    @concept{ASCII code}; e.g. @tt{""A""} behaves within arithmetic
    expressions as the integer 65.  Note that this is not
    @cindex{ISO-Prolog}ISO-compliant, and that can be achieved by using
-   the notation @tt{0'A} (which is ISO).
+   the ISO notation @tt{0'A}.
 
    Arithmetic expressions, as described above, are just data structures.
    If you want one evaluated you must pass it as an argument to one of the
-   arithmetic predicates defined here.
+   arithmetic predicates defined in this library.
   ").
 
 arithexpression(X) :- num(X).

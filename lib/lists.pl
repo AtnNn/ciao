@@ -184,8 +184,7 @@ contains1([_|Xs], X) :- contains1(Xs, X).
 nocontainsx([], _).
 nocontainsx([X1|Xs], X) :- X\==X1, nocontainsx(Xs, X).
 
-:- pred last(L,X) # "Adds element @var{X} to incomplete (i.e., ended
-   in a variable) list @var{L}.".
+:- pred last(L,X) # "X is the last element of L.".
 
 last(L, X) :- var(L), !, L = [X|_].
 last([_|L], X) :- last(L, X).

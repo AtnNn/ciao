@@ -3,9 +3,9 @@
 # Ciao Global Compilation/Installation SETTINGS
 # ----------------------------------------------------------------------------
 # Define this to be a directory where the sources are reachable system-wide 
-# SRC=/home/clip/public_html/Software/Beta/Ciao/ciao-1.5p133
+# SRC=/home/clip/public_html/Software/Ciao/ciao-1.6p1
 #
-SRC=/home/clip/public_html/Software/Beta/Ciao/ciao-1.5p133
+SRC=/home/clip/public_html/Software/Ciao/ciao-1.6p1
 #-----------------------------------------------------------------------------
 # Define the following to be the places under which the installation
 # will be performed:
@@ -70,6 +70,12 @@ USE_POSIX_LOCKS=no
 # Ciao without optimization options first.
 OPTIM_LEVEL=optimized
 
+# If you want to compile the CIAO libraries with their bytecode compressed
+# then set the following variable to "yes". Libraries generated this way
+# will be smaller at the sake of a slightly slower usage, both in their load
+# as when employed to create an executable.
+COMPRESS_LIBS=no
+
 # ----------------------------------------------------------------------------
 # You should not need to touch anything below this line.  However,
 # these are user-definable settings, so changing them should not be
@@ -109,8 +115,8 @@ DEBUG_LEVEL=nodebug
 
 # This is for locally compiling the engine in NT under Samba, ignore it
 
-ifeq ($(OS),Windows_NT)
-    SRC=/home/clip/public_html/Software/Beta/Ciao/ciao-1.5p133
+ifeq ($(OSTYPE),cygwin32)
+    SRC=/home/clip/public_html/Software/Ciao/ciao-1.6p1
     ALT=win32
 endif
 

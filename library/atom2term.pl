@@ -9,6 +9,8 @@
 	  basicmodes
 	]).
 
+:- comment(title,"Atom to Term Conversion").
+
 :- comment(author,"Francisco Bueno").
 :- comment(author,"Daniel Cabeza").
 
@@ -27,6 +29,9 @@ atom2term(Atom,Term):-
 
 string2term(String,Term):-
 	parse_term(String,Term, _).
+
+
+:- pred parse_term(+String, -Term, ?Dummy).
 
 parse_term([],'',[]).
 parse_term([C|String0],Term,String):-

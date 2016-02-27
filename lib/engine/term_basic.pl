@@ -30,7 +30,7 @@ copy_term(X, Y) :-
 
 % Compiled inline -- these provide hooks for the interpreter and comments.
 
-:- true prop '='(?X,?Y) + iso # "Unify @var{X} and @var{Y}.".
+:- true prop '='(?X,?Y) + iso # "@var{X} and @var{Y} unify.".
 
 X=Y :- X=Y.
 
@@ -50,7 +50,7 @@ functor(X, Y, Z) :- functor(X, Y, Z).
 X=..Y :- X=..Y.
 
 :- true pred 'C'(?S1,?Terminal,?S2) # "@var{S1} is connected by the
-   terminal @var{Terminal} to @var{S2}. Used in @em{DCG grammar
+   terminal @var{Terminal} to @var{S2}. Internally used in @em{DCG grammar
    rules}. Defined as if by the single clause: @tt{'C'([X|S], X, S).}
 ".
 

@@ -9,11 +9,20 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel Carro").
 
-:- comment(usage, "These predicates are builtin in Ciao, so nothing special
+:- comment(module, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
-:- comment(module,"This library implements @index{attributed variables},
-which provide a mechanism for extensible unification.").
+:- comment(copyright,"Original copyright @copyright{} 1992 DMCAI
+
+Department of Medical Cybernetics and Artificial Intelligence 
+University of Vienna 
+Freyung 6 
+A-1010 Vienna, Austria").
+
+
+:- comment(summary, "This library implements @index{attributed
+variables}, which provide a mechanism for extensible unification.  The
+library is based on the DMCAI CLP Library by Christian Holzbaur.  ").
 
 % Compiled inline -- these are hooks for the interpreter.
 
@@ -39,5 +48,68 @@ update_attribute(X, Y) :- update_attribute(X, Y).
 
 detach_attribute(X) :- detach_attribute(X).
 
+
+
+:- multifile verify_attribute/2.
+
+:- pred verify_attribute(Attr, Term): nonvar * nonvar # "@em{A user
+defined predicate.} This predicate is called when an attributed
+variable with attribute @var{Attr} is about to be unified with the
+non-variable term @var{Term}.  The user should define this predicate
+(as multifile) in the modules implementing special unification.".
+
+:- multifile combine_attributes/2.
+
+:- pred combine_attributes(Var1, Var2): var * var # "@em{A user
+defined predicate.} This predicate is called when two attributed
+variables with attributes @var{Var1} and @var{Var2} are about to be
+unified.  The user should define this predicate (as multifile) in the
+modules implementing special unification.".
+
+:- comment(usage, "Note that @pred{combine_attributes/2} and
+@pred{verify_attribute/2} are not called with the attributed variables
+involved, but with the corresponding attributes instead.  The reasons
+are:
+
+@begin{itemize} 
+
+@item There are simple applications which only refer to the
+attributes.
+
+@item If the application wants to refer to the attributed variables
+themselves, they can be made part the attribute term.  The
+implementation of @pred{freeze/2} utilizes this technique.  Note that
+this does not lead to cyclic structures, as the connection between an
+attributed variable and its attribute is invisible to the pure parts
+of the Prolog implementation. 
+
+@item If attributed variables were passed as arguments, the user
+code would have to refer to the attributes through an extra call to
+@pred{get_attribute/2}.
+
+@item As the/one attribute is the first argument to each of the two
+predicates, indexing applies. Note that attributed variables
+themselves look like variables to the indexing mechanism.
+
+@end{itemize}
+
+However, future improvements may change or extend the interface to
+attributed variables in order to provide a richer and more expressive
+interface.
+
+For customized output of attributed variables, please refer to the
+documentation of the predicate @pred{portray_attribute/2}.  ").
+
+
 :- comment(version_maintenance,dir('../../version')).
+
+
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
+
+:- comment(version(1*5+157,2000/05/30,13:04*47+'CEST'), "Updated
+documentation: added combine and verify.  (MCL)").
 

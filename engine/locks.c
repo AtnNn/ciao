@@ -3,8 +3,8 @@
  * Author          : Manuel Carro
  * Created On      : Wed Nov 19 20:03:55 1997
  * Last Modified By: MCL
- * Last Modified On: Tue May  2 18:04:32 2000
- * Update Count    : 209
+ * Last Modified On: Tue May 30 19:24:24 2000
+ * Update Count    : 214
  * Status          : Unknown, Use with caution!
  */
 
@@ -25,10 +25,9 @@
 BOOL lock_is_unset_win32(p)
      LOCK *p;
 {
-  int value;
-  if ((value = TryEnterCriticalSection(p)))  /* value != 0 -> lock not set */
-    LeaveCriticalSection(p);
-  return value;
+  fprintf(stderr,
+          "testing lock unset in Win32: TryEnterCriticalSection may not be supported!\n");
+  return FALSE;
 }
 #else
 BOOL lock_is_unset(p)

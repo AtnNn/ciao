@@ -2,6 +2,7 @@
 :- module(geometry_man,[main/0],[objects]).
 
 :- use_module(library(system),[pause/1]).
+:- use_module(library(concurrency)).
 
 :- use_class(library('class/examples/geometry/oval_class')).
 :- use_class(library('class/examples/geometry/canvas_class')).

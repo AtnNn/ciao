@@ -18,18 +18,18 @@ Copyright @copyright{} 1996-99 The CLIP Group.
 
   Writing Prolog scripts can sometimes be advantageous with respect to
   creating binary executables for small- to medium-sized programs that
-  are modified often and perform relatively simple tasks. The
-  advantage is that no compilation is necessary, and thus changes and
+  are modified often and perform relatively simple tasks. The advantage
+  is that no explicit compilation is necessary, and thus changes and
   updates to the program imply only editing the source file. The
-  disadvantage is that startup of the script (the first time after it
-  is modified) is slower than for an application that has been
-  compiled previously.
+  disadvantage is that startup of the script (the first time after it is
+  modified) is slower than for an application that has been compiled
+  previously.
 
   An area of application is, for example, writing @index{CGI
   executables}: the slow speed of the network connection in comparison
   with that of executing a program makes program execution speed less
-  important has made scripting languages very popular for writing
-  these scripts. Logic languages are, a priori, excellent candidates
+  important and has made scripting languages very popular for writing
+  these applications. Logic languages are, a priori, excellent candidates
   to be used as scripting languages. For example, the built-in
   grammars and databases can sometimes greatly simplify many typical
   script-based applications.
@@ -45,8 +45,11 @@ Copyright @copyright{} 1996-99 The CLIP Group.
   messages are printed (error messages will be reported to
   @tt{user_error}, however).  The operation of @tt{ciao-shell} in
   Unix-like systems is based in a special compiler feature: when the
-  first character of a file is '@tt{#}', the compiler skips the first lines
-  until an empty line is found.
+  first character of a file is '@tt{#}', the compiler skips the first
+  lines until an empty line is found.  In Windows, its use is as easy as
+  naming the file with a @tt{.pls} extension, which will launch
+  @tt{ciao-shell} appropriately (the name of the module has to include
+  that extension, as in @tt{:- module('test.pls',[main/1])}).
 
   For example, in a Linux/Unix system, assume a file called
   @file{hello} contains the following program:
@@ -152,8 +155,8 @@ main :- get_alias_path,
         fail.
 
 '$load&call'(File,Rest) :-
-        set_prolog_flag(quiet, off),
         ensure_loaded(File),
+        set_prolog_flag(quiet, off),
         error_protect(main(Rest)).
 
 %----------------------------------------------------------------------------

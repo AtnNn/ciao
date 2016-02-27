@@ -1,4 +1,4 @@
-:- include('../pillow.pl').
+:- use_package(pillow).
 
 main :-
     get_form_input(Input),

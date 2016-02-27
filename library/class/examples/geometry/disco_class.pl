@@ -13,6 +13,7 @@
 :- use_module(library(random)).
 :- use_module(library(system)).
 :- use_module(library(aggregates)).
+:- use_module(library(concurrency)).
 
 %%---------------------------------------------------------------------
 %% OVERRIDEN ADD_ITEM

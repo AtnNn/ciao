@@ -10,15 +10,12 @@ constrain_values(N, Range, [X|Xs]) :-
 
 no_attack([], _Queen, _Nb).
 no_attack([Y|Ys], Queen, Nb) :-
-        abs(Queen - (Y + Nb)) .>. 0,  % Queen =\= Y + Nb
-        abs(Queen - (Y - Nb)) .>. 0,  % Queen =\= Y - Nb
+        Queen .<>. Y+Nb,
+        Queen .<>. Y-Nb,
         Nb1 .=. Nb + 1,
         no_attack(Ys, Queen, Nb1).
 
 place_queens(0, _).
 place_queens(N, Q) :- 
-	N .>. 0, member(N, Q), N1 .=. N - 1, place_queens(N1, Q).
-
-member(X, [X|_]).
-member(X, [_|Xs]) :- member(X, Xs).
+	N > 0, member(N, Q), N1 is N-1, place_queens(N1, Q).
 

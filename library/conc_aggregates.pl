@@ -3,8 +3,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%% :- use_module(library(format), [format/2]).
+:- use_module(library(prolog_sys), [new_atom/1]).
 
 :- comment(author,"Concurrent-safe (and incomplete) version of the
    aggregates predicates, based on the regular versions by Richard
@@ -27,7 +26,6 @@ particular implementation is completely based on the one used in the
  %%    provided to automate this process.
 
 :- on_abort(retractall_fact('$$temp_sol_conc_findall'(_,_))).
-:- on_abort(retractall_fact('$$conc_findall_solutions_id'(_))).
 
 :- meta_predicate findall(?, :, ?).
 
@@ -66,7 +64,7 @@ of bagof, where all free variables in the @var{Generator} are taken to
 be existentially quantified. Safe in concurrent applications.".
 
 findall(Template, Goal, Solutions):-
-        next_sols_id(Id),
+        new_atom(Id),
         assert_solutions(-Template, Goal, Id),
         recover_solutions(Id, [], Solutions).
 
@@ -89,19 +87,4 @@ list_all_sols(-Term, Id, SoFar, Rest):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% Keep index of solutions.  
-%% It is a good idea to keep our private index, in order to avoid fighting 
-%% for the access to the database.
 
-
-:- concurrent '$$conc_findall_solutions_id'/1.
-
-'$$conc_findall_solutions_id'(0).
-
-next_sols_id(N):-
-        retract_fact('$$conc_findall_solutions_id'(N)), !,
-        N1 is N + 1,
-        asserta_fact('$$conc_findall_solutions_id'(N1)).
-
-
-:- comment(bug, "Incomplete, not all predicates rewritten.").

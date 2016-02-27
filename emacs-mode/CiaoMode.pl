@@ -40,6 +40,16 @@ main.
 
 :- comment(version_maintenance,dir('../version/')).
 
+:- comment(version(1*5+159,2000/05/31,10:52*49+'CEST'), "Fixed bug in
+   source-level debug search.  (Manuel Carlos Rodriguez)").
+
+:- comment(version(1*5+151,2000/05/26,12:27*05+'CEST'), "Added support to
+   use source-level debugging in an embedded debugger.  (Manuel Carlos
+   Rodriguez)").
+
+:- comment(version(1*5+147,2000/05/24,11:15*57+'CEST'), "Add Font-lock
+   support for xemacs. (Manuel Carlos Rodriguez)").
+
 :- comment(version(1*5+118,2000/04/19,18:13*43+'CEST'), "No need to
    previously create a SETTINGS file for documenting a single buffer
    in LPdoc mode. Reordered LPdoc menus to reflect this. Also, certain

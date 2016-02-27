@@ -1,14 +1,11 @@
 :- module(dynamic, [
         asserta/1, asserta/2, assertz/1, assertz/2, assert/1, assert/2,
         retract/1, retractall/1, abolish/1,
-        clause/2, clause/3, current_predicate/1, dynamic/1, data/1,
-        wellformed_body/3
+        clause/2, clause/3, current_predicate/1, current_predicate/2,
+        dynamic/1, data/1, wellformed_body/3
         ],[assertions,isomodes]).
 
 :- use_module(engine(internals)).
-
-%% FOR TEMPORARILY PARTIALLY DOCUMENTING:
-:- use_module(library('assertions/doc_props')).
 
 :- meta_predicate
         asserta(clause),
@@ -23,22 +20,25 @@
 	dynamic(addmodule),
         data(addmodule),
         clause(fact,?),
-        clause(fact,?,?).
+        clause(fact,?,?),
+        current_predicate(addmodule).
 
 :- comment(title,"Dynamic predicates").
 
 :- comment(module,"This module implements the assert/retract family of
    predicates to manipulate dynamic predicates.
 
-   The predicates defined in this module allow modification of the program
-   as it is actually running.  Clauses can be added to the program
-   (@em{asserted}) or removed from the program (@em{retracted}).
-   For these predicates, the argument which corresponds to the clause head
-   must be instantiated to an atom or a compound term. The argument 
-   corresponding to the clause must be instantiated either to a term 
-   @tt{Head :- Body} or, if the body part is empty, to @tt{Head}. An empty
-   body part is represented as @tt{true}.
-").
+   The predicates defined in this module allow modification of the
+   program as it is actually running.  Clauses can be added to the
+   program (@em{asserted}) or removed from the program (@em{retracted}).
+   For these predicates, the argument which corresponds to the clause
+   head must be instantiated to an atom or a compound term. The argument
+   corresponding to the clause must be instantiated either to a term
+   @tt{Head :- Body} or, if the body part is empty, to @tt{Head}. An
+   empty body part is represented as @tt{true}.  Note that using this
+   library is very detrimental to global analysis, and that for most
+   uses the predicates listed in @ref{Fast/concurrent update of facts}
+   suffice.").
 
 :- comment(doinclude, dynamic/1).
 
@@ -50,12 +50,11 @@
           precede all clauses of the affected predicates.  This
           directive is defined as a prefix operator in the compiler.".
 
-:- pred asserta(+Clause)
-+ doc_incomplete
+:- pred asserta(+Clause) + iso
 # "The current instance of @var{Clause} is interpreted as a clause and is
    added to the current program.  The predicate concerned must be dynamic.
    The new clause becomes the @em{first} clause for the predicate concerned.
-   Any uninstantiated variables in the @var{Clause} will be replaced by new
+   Any uninstantiated variables in @var{Clause} will be replaced by new
    private variables.".
 %% along with copies of any subgoals blocked on these variables.
 
@@ -64,7 +63,6 @@ asserta(Clause) :-
 	'$inserta'(Root, Ptr0).
 
 :- pred asserta(+Clause,-Ref)
-+ doc_incomplete
 # "Like @tt{asserta/1}. @var{Ref} is a unique identifier of the asserted
    clause.".
 
@@ -73,8 +71,7 @@ asserta(Clause, Ref) :-
 	'$inserta'(Root, Ptr0),
 	'$ptr_ref'(Ptr0, Ref).
 
-:- pred assertz(+Clause)
-+ doc_incomplete
+:- pred assertz(+Clause) + iso
 # "Like @tt{asserta/1}, except that the new clause becomes the @em{last}
    clause for the predicate concerned.".
 
@@ -83,7 +80,6 @@ assertz(Clause) :-
 	'$insertz'(Root, Ptr0).
 
 :- pred assertz(+Clause,-Ref)
-+ doc_incomplete
 # "Like @tt{assertz/1}. @var{Ref} is a unique identifier of the asserted
    clause.".
 
@@ -93,7 +89,6 @@ assertz(Clause, Ref) :-
 	'$ptr_ref'(Ptr0, Ref).
 
 :- pred assert(+Clause)
-+ doc_incomplete
 # "Identical to @tt{assertz/1}. Included for compatibility.".
 
 assert(Clause) :-
@@ -101,7 +96,6 @@ assert(Clause) :-
 	'$insertz'(Root, Ptr0).
 
 :- pred assert(+Clause,-Ref)
-+ doc_incomplete
 # "Identical to @tt{assertz/2}. Included for compatibility.".
 
 assert(Clause, Ref) :-
@@ -181,8 +175,7 @@ dynamic1(F, _) :-
 	'$set_property'(F, (dynamic)).		% xref indexing.c
 
 
-:- pred retract(+Clause)
-+ doc_incomplete
+:- pred retract(+Clause) + iso
 # "The first clause in the program that matches @var{Clause} is erased.
    The predicate concerned must be dynamic. 
 
@@ -205,7 +198,6 @@ retract(Clause) :-
         '$unlock_predicate'(Root).
 
 :- pred retractall(+Head)
-+ doc_incomplete
 # "Erase all clauses whose head matches @var{Head}, where @var{Head} must
    be instantiated to an atom or a compound term.  The predicate concerned
    must be dynamic.  The predicate definition is retained.".
@@ -224,12 +216,11 @@ retractall_(Head) :-
 	fail.
 retractall_(_).
 
-:- pred abolish(+Spec)
-+ doc_incomplete
-# "Erase all clauses of the predicate specified by the predicate spec,
-   or list of predicate specs, @var{Spec}. The predicate definition itself
-   is also erased (the predicate is deemed undefined after execution of the
-   abolish). The predicates concerned must all be user defined.".
+:- pred abolish(+Spec) + iso
+# "Erase all clauses of the predicate specified by the predicate spec
+   @var{Spec}. The predicate definition itself is also erased (the
+   predicate is deemed undefined after execution of the abolish). The
+   predicates concerned must all be user defined.".
 
 abolish(Spec) :-
         term_to_meta(F/A, Spec),
@@ -247,8 +238,7 @@ abolish_data_of(Head) :-
         fail.
 abolish_data_of(_).
 
-:- pred clause(+Head,?Body)
-+ doc_incomplete
+:- pred clause(+Head,?Body) +iso
 # "The clause '@var{Head} @tt{:-} @var{Body}' exists in the current
    program. The predicate concerned must be dynamic.".
 
@@ -264,10 +254,9 @@ clause(HEAD, Body) :-
    clause is uniquely identified by @var{Ref}.").
 
 :- pred clause(+Head,?Body,?Ref)
-+ doc_incomplete
 # "@var{Head} must be instantiated to an atom or a compound term.".
+
 :- pred clause(?Head,?Body,+Ref)
-+ doc_incomplete
 # "@var{Ref} must be instantiated to a valid identifier.".
 
 clause(HEAD, Body, Ref) :-
@@ -284,19 +273,25 @@ clause(HEAD, Body, Ref) :-
         '$unlock_predicate'(Root),
 	'$ptr_ref'(Ptr, Ref).
 
-:- pred current_predicate(?Spec)
-+ doc_incomplete
-# "A user defined predicate is named @var{Spec}.".
+:- pred current_predicate(?Spec) + iso
+        # "A predicate in the current module is named @var{Spec}.".
 
-/* ISO */
-%>> Need to eliminate internal predicates!
-current_predicate(F/A) :-
+:- pred current_predicate(?Spec,+Module)
+        # "A predicate in @var{Module} is named @var{Spec}.".
+
+current_predicate(F/A,M) :-
+        module_concat(M,'',MPref),
         '$predicate_property'(P, _, _),
-        functor(P, F, A).
+        functor(P, MF, A),
+        atom_concat(MPref,F,MF).
 
 % ----------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*5+146,2000/05/19,21:01*42+'CEST'), "Implemented
+   current_predicate/1 better.  Added current_predicate/2. (Daniel
+   Cabeza Gras)").
 
 :- comment(version(0*5+30,1998/06/30,14:23*37+'MET DST'), "Fixed bug in
    retract/1 -- unlocking before erasing (Daniel Cabeza Gras)").

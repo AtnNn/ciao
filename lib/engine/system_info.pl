@@ -17,7 +17,8 @@
 :- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
-:- comment(module,"............... In development ...............").
+:- comment(module,"This module provides predicates which return basic
+   internal info.").
 
 %%---------------------------------------------------------------------
 
@@ -27,22 +28,6 @@
         this_module/1,
         current_module/1,
         ciaolibdir/1]).
-
-%%---------------------------------------------------------------------
-
-:- comment(internal_module_id/1, "For a user file it is a term user/1
-	with an argument different for each user file, for
-	other modules is just the name of the module (as an atom).").
-
-:- prop internal_module_id(M) #
-	"@var{M} is an internal module identifier".
-
-internal_module_id(user(M)) :-
-	atm(M).
-internal_module_id(M) :- 
-	atm(M).
-
-:- comment(doinclude,internal_module_id/1).
 
 %%---------------------------------------------------------------------
 
@@ -98,7 +83,7 @@ no
 
 %%---------------------------------------------------------------------
 
-:- pred current_module(Module) :: atm #
+:- pred current_module(Module) :: internal_module_id #
 	"Retrieves (on backtracking) all currently loaded modules into
          your application.".
 
@@ -128,8 +113,24 @@ no
 
 this_module(M, M).
 
-:- pred this_module(internal_module_id) #
+:- pred this_module(Module) :: internal_module_id #
 	"@var{Module} is the internal module identifier for current module.".
+
+%%---------------------------------------------------------------------
+
+:- comment(doinclude,internal_module_id/1).
+
+:- comment(internal_module_id/1, "For a user file it is a term user/1
+	with an argument different for each user file, for
+	other modules is just the name of the module (as an atom).").
+
+:- prop internal_module_id(M) #
+	"@var{M} is an internal module identifier".
+
+internal_module_id(user(M)) :-
+	atm(M).
+internal_module_id(M) :- 
+	atm(M).
 
 :- comment(version_maintenance,dir('../../version')).
 

@@ -1,8 +1,14 @@
 # SUNMP use Solaris. Solaris on monoprocessors is returned as SUN4SOL2
 
+SOLARIS_VERSION=$(shell $(SRC)/etc/which_solaris_version)
+
 # Threads and locks in Solaris
 ifeq ($(USE_THREADS),yes)
+ifeq ($(SOLARIS_VERSION),pre_7)
     LD_THREAD_LIB=-lpthread
+else
+    LD_THREAD_LIB=-lpthread -lrt
+endif
 ifeq ($(USE_POSIX_LOCKS),yes)
     THREAD_FLAG=-D_REENTRANT -DTHREADS
     LD_LOCK_LIB=-lposix4

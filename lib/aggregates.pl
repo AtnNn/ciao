@@ -75,19 +75,15 @@
     you got a very strange answer!  Now fixed, at a price.
 */
 
-:- pred setof(@Template, +Generator, ?Set) 
-   => (term(Template), callable(Generator), list(Set))
-   + iso
-
-   # "Finds the @var{Set} of instances of the @var{Template}
-     satisfying @var{Generator}.  The set is in ascending order
-     (see @ref{Comparing terms} for a definition of this order) without
-     duplicates, and is non-empty.  If there are no solutions, @tt{setof}
-     fails.  @tt{setof} may succeed in more than one way, binding free
-     variables in @var{Generator} to different values. This can be
-     avoided by using existential quantifiers on the free variables in
-     front of @var{Generator}, using @pred{^/2}. For example, given
-     the clauses:
+:- comment(setof(Template, Generator, Set), "Finds the @var{Set} of
+    instances of the @var{Template} satisfying @var{Generator}.  The set
+    is in ascending order (see @ref{Comparing terms} for a definition of
+    this order) without duplicates, and is non-empty.  If there are no
+    solutions, @tt{setof} fails.  @tt{setof} may succeed in more than
+    one way, binding free variables in @var{Generator} to different
+    values. This can be avoided by using existential quantifiers on the
+    free variables in front of @var{Generator}, using @pred{^/2}. For
+    example, given the clauses:
 @begin{verbatim}
 father(bill, tom).
 father(bill, ann).
@@ -108,7 +104,9 @@ Sons = [daniel,july] ? ;
 
 no
 ?- 
-@end{verbatim}".
+@end{verbatim}").
+
+:- true pred setof(@term, +callable, ?list) + iso.
 
 %% This predicate is defined on p51 of the Dec-10 Prolog manual.
 
@@ -116,16 +114,16 @@ setof(Template, Filter, Set) :-
         bagof(Template, Filter, Bag),
         sort(Bag, Set).
 
-:- pred bagof(@Template, +Generator, ?Bag) + iso
+:- comment(bagof(Template, Generator, Bag), "Finds all the instances of
+   the @var{Template} produced by the @var{Generator}, and returns them
+   in the @var{Bag} in the order in which they were found.  If the
+   @var{Generator} contains free variables which are not bound in the
+   @var{Template}, it assumes that this is like any other Prolog
+   question and that you want bindings for those variables.  This can be
+   avoided by using existential quantifiers on the free variables in
+   front of the @var{Generator}, using @pred{^/2}.").
 
-   # "Finds all the instances of the @var{Template} produced by the
-   @var{Generator}, and returns them in the @var{Bag} in the order in
-   which they were found.  If the @var{Generator} contains free
-   variables which are not bound in the @var{Template}, it assumes
-   that this is like any other Prolog question and that you want
-   bindings for those variables.  This can be avoided by using
-   existential quantifiers on the free variables in front of the
-   @var{Generator}, using @pred{^/2}.".
+:- true pred bagof(@term, +callable, ?list) + iso.
 
 %   bagof records three things under the key '.':
 %       the end-of-bag marker          -
@@ -156,11 +154,12 @@ bagof(Template, Generator, Bag) :-
         findall(Template, Generator, Bag),
         Bag \== [].
 
-:- pred findall(?Template, +Generator, ?List) + iso
+:- comment(findall(Template, Generator, List), "A special case of bagof,
+     where all free variables in the @var{Generator} are taken to be
+     existentially quantified. Faster than the other aggregation
+     predicates.").
 
-   # "A special case of bagof, where all free variables in the
-     @var{Generator} are taken to be existentially quantified. Faster
-     than the other aggregation predicates.".
+:- pred findall(@term, +callable, ?list) + iso.
 
 %%  It is described in Clocksin & Mellish on p152.  The code they give has
 %%  a bug (which the Dec-10 bagof and setof predicates share) which
@@ -170,7 +169,7 @@ findall(Template, Generator, List) :-
         save_solutions(-Template, Generator),
         list_solutions(List, []).
 
-:- pred findall(?Template, +Generator, ?List, ?Tail) + iso
+:- pred findall(Template, Generator, List, Tail)
    # "As @pred{findall/3}, but returning in @var{Tail} the tail of
      @var{List}.".
 
@@ -185,7 +184,7 @@ findall(Template, Generator, List, Tail) :-
      list.  This predicate is especially useful if @var{Generator} may
      have an infinite number of solutions.").
 
-:- pred findnsols(+int,?,+callable,?list).
+:- pred findnsols(+int,@term,+callable,?list).
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -198,7 +197,7 @@ findnsols(_,_,_,[]).
      "As @pred{findnsols/4}, but returning in @var{Tail} the tail of
      @var{List}.").
 
-:- pred findnsols(+int,?,+callable,?list,?).
+:- pred findnsols(+int,@term,+callable,?,?).
 
 findnsols(N,E,P,L) :-
         N > 0, !,

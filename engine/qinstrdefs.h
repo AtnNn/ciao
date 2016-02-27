@@ -1,5 +1,10 @@
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 
+                                /* Control codes to be detected */ 
+
+#define ISCOMPRESSED 12 /* Ctrl-L */
+#define ISSCRIPT 35 /* # */
+
 				/* Quick load instructions: 'A'..'O' */
 
 #define ENSURE_SPACE 64

@@ -65,7 +65,7 @@ interpret_args([]) :- !,
 interpret_args(['-f']) :- !. % fast start
 interpret_args(['-l',File]) :- !,
         include_if_exists(File).
-interpret_args([_WinMesh]) :-
+interpret_args(_WinMesh) :-
         get_os('Win32'), !. % For windows shortcuts
 interpret_args(_Args) :-
         display('Bad options, use either none, -f or -l <File>'), nl,

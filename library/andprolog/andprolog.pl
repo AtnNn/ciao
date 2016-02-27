@@ -14,14 +14,14 @@
 in (Herbrand-)independent fashion. It resembles the execution rules of
 &-Prolog @cite{iclp90-performance}. Basically, goals are run in
 and-parallel @em{provided that their arguments do not share bindings},
-i.e., are not bound to terms which contain a common variable.
+i.e., are not bound to terms which contain a common variable.").
 
-Beware: it is highly unstable at the moment!").
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
 %% FOR TEMPORARILY PARTIALLY DOCUMENTING:
 :- use_module(library('assertions/doc_props')).
+:- use_module(library(concurrency)).
 
 :- op(950,xfy,[(&)]).
 :- op(975,xfx,[(=>)]).
@@ -254,6 +254,9 @@ indep([]).
 indep([[X,Y]|L]):- indep(X,Y), indep(L).
 
 
+:-comment(bug,"@bf{Beware:} it is highly unstable and probably not correct
+at all at the moment! It is provided for the sole purpose of
+experimentation and development.").
 
 :- comment(bug, "The fact that only the first solution is returned for
 the conjunction is due to performance matters, and we expect to remove

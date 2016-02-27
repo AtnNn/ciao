@@ -40,6 +40,13 @@
 %% Subsequent version comments will be placed above the last one
 %% inserted.
 
+:- comment(version(1*5+150,2000/05/24,20:00*38+'CEST'), "Changed
+Makefile to compile .pl to .po and .itf; otherwise the first load
+fails (and, after this, the second succeeds if the user has rights to
+write in the directory).
+
+    (MCL)").
+
 :- comment(version(1*5+26,1999/12/29,15:07*59+'CET'), "random/3 made
 more random in the case of integer limits. (MCL)").
 

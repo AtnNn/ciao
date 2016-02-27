@@ -17,17 +17,23 @@ ALLFILES = *
 # installation has not been made yet.
 #---------------------------------------------------------------------------
 
-all: 
+all:  message ciao_so_libs ciao_regular_libs autolibs
+
+ciao_so_libs:
+
+ciao_regular_libs:
+
+message:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Building $(BASEMAIN) 'lib' libraries..."
 	@echo "*** (this may take a while and is silent; please be patient)"
 	@echo "*** ---------------------------------------------------------"
-	$(MAKE) autolibs
 
 autolibs: 
 	$(SRC)/etc/generate_foreign_compile_options $(MAKE) $(SRC)/makefile-sysdep $(SRC)/lib/auto_compile_options.pl
 	-chmod $(DATAMODE) $(SRC)/lib/auto_compile_options.pl
 	'rm' -f all_modules all_module_messages
+	echo "set_prolog_flag(compresslib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
 	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
 	-chmod $(DATAMODE) all_modules
@@ -42,9 +48,9 @@ install:
 	mkdir -p $(STDLIBDIR)
 	-chmod $(EXECMODE) $(STDLIBDIR)
 	-cp -pR $(ALLFILES) $(STDLIBDIR)
-	(cd $(STDLIBDIR); find . -type d -exec chmod $(EXECMODE) {} \; )
-	(cd $(STDLIBDIR); find . ! -type d -exec chmod $(DATAMODE) {} \; )
-	(cd $(STDLIBDIR); find . -name '*~' -exec 'rm' -f {} \; )
+	(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
+	(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
+	(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
 
 uninstall:
 	@echo "*** ---------------------------------------------------------"
@@ -57,7 +63,7 @@ uninstall:
 # underneath  are needed for cleaning up prolog-only libraries. MH.
 distclean: 
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Cleaning $(BASEMAIN)/lib..."
+	@echo "*** Cleaning $(STDLIBDIR)/lib..."
 	@echo "*** ---------------------------------------------------------"
 	find . -name '*.itf' -exec 'rm' -f {} \;
 	find . -name '*.po'  -exec 'rm' -f {} \;

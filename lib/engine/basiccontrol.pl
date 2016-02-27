@@ -87,8 +87,8 @@ if(P, Q, R) :- undefined_goal(if(P,Q,R)).
    backtracking choices.".
 
 :- comment(call(G), "Executes goal @var{G}, restricting the scope of the cuts
-        to the execution of @var{G}.  Writing a variable @var{G} in a goal
-        position is equivalent.").
+        to the execution of @var{G}.  Equivalent to writing a variable @var{G}
+        in a goal position.").
 
 :- true pred call(+callable) + iso. 
 
@@ -97,9 +97,10 @@ if(P, Q, R) :- undefined_goal(if(P,Q,R)).
 :- comment(doinclude, call/2).
 
 :- comment(call(Pred,Arg1), "There exists a set of builtin predicates of
-   the form @pred{call/N} such that execute predicate @var{Pred} given
-   arguments @var{Arg1} ... @var{ArgX}, if @var{Pred} has already
-   arguments the new ones are added to the start. This predicate can be
+   the form @pred{call/N} with @tt{N > 1} which execute predicate
+   @var{Pred} given arguments @var{Arg1} ... @var{ArgX}. If @var{Pred}
+   has already arguments @var{Arg1} is added to the start, the rest to
+   the end. This predicate, when @var{Pred} is a variable, can be
    written using the special Ciao syntax @tt{Pred(Arg1,...,ArgX)}.").
 
  :- true pred call(+callable,?). 

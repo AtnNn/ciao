@@ -14,6 +14,9 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel Hermenegildo").
 
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
+   has to be done to use them.").
+
 :- comment(module,"@cindex{properties, basic} This library contains
    the set of basic properties used by the builtin predicates, and
    which constitute the basic data types and properties of the
@@ -77,8 +80,8 @@ num(T) :- number(T), !.
 num(T) :- int(T).
 % num(T) :- flt(T). % never reached!
 
-:- comment(atm/1, "The type of atoms, or non-numeric constants.  The name of
-        an atom must be of less than 512 characters.").
+:- comment(atm/1, "The type of atoms, or non-numeric constants.  The
+        size of atoms is unbound.").
 
 :- true prop atm(T) + regtype # "@var{T} is an atom.".
 
@@ -87,7 +90,7 @@ atm(a).
 atm(T) :- atom(T).
 
 :- comment(struct/1, "The type of compound terms, or terms with
-non-zeroary functors.").
+non-zeroary functors. By now there is a limit of 255 arguments.").
 
 :- true prop struct(T) + regtype # "@var{T} is a compound term.".
 
@@ -134,7 +137,7 @@ of @em{lower} precedence than the operator itself.
 subexpression must be of lower precedence; the right-hand subexpression
 can be of the @em{same} precedence as the main operator.
 
-@item{@tt{xfx}} Infix, left-associative: same as above, but the other
+@item{@tt{yfx}} Infix, left-associative: same as above, but the other
 way around.
 
 @item{@tt{fx}} Prefix, non-associative: the subexpression must be of
@@ -155,21 +158,25 @@ way around.
 :- true prop operator_specifier(X) + regtype # "@var{X} specifies the type and
         associativity of an operator.".
 
-operator_specifier(fy). 
-operator_specifier(fx). 
+operator_specifier(fy).
+operator_specifier(fx).
 operator_specifier(yfx).
 operator_specifier(xfy).
 operator_specifier(xfx).
-operator_specifier(yf). 
-operator_specifier(xf). 
+operator_specifier(yf).
+operator_specifier(xf).
 
 :- comment(list/1, "A list is formed with successive applications of the
-functor @tt{'.'/2}, and its end is the atom @tt{[]}").
+   functor @tt{'.'/2}, and its end is the atom @tt{[]}.  Defined as
+   @includedef{list/1}").
 
 :- true prop list(L) + regtype # "@var{L} is a list.".
 
 list([]).
 list([_|L]) :- list(L).
+
+:- comment(list(L,T), "@var{L} is a list, and for all its elements,
+   @var{T} holds.").
 
 :- true prop list(L,T) + regtype # "@var{L} is a list of @var{T}s.".
 :- meta_predicate list(?, pred(1)).
@@ -210,6 +217,13 @@ sequence_or_list(E, T) :- sequence(E, T).
 
 character_code(I) :- int(I).
 
+:- comment(string/1, "A string is a list of character codes.  The usual
+        syntax for strings @tt{\"string\"} is allowed, which is
+        equivalent to @tt{[0's,0't,0'r,0'i,0'n,0'g]} or
+        @tt{[115,116,114,105,110,103]}.  There is also a special Ciao
+        syntax when the list is not complete: @tt{\"st\"||R} is
+        equivalent to @tt{[0's,0't|R]}.").
+
 :- true prop string(T) => list(character_code) + regtype
    # "@var{T} is a string (a list of character codes).".
 
@@ -245,7 +259,7 @@ atm_or_atm_list(T) :- list(T, atm).
    with the regular type @pred{list/1}, whereas the terms @tt{f(a)} and
    @tt{[1|2]} are not.").
 
-:- true prop compat(Term,Prop) 
+:- true prop compat(Term,Prop)
    # "@var{Term} is @em{compatible} with @var{Prop}".
 :- meta_predicate compat(?, pred(1)).
 
@@ -258,7 +272,8 @@ compat(T, P) :- \+ \+ P(T).
 
 :- impl_defined([iso/1]).
 
-:- true prop not_further_inst(G,V) # "@var{V} is not further instantiated.".
+:- true prop not_further_inst(G,V)
+        # "@var{V} is not further instantiated.". % by the predicate
 
 :- impl_defined(not_further_inst/2).
 
