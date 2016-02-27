@@ -2,7 +2,21 @@
 %% TCL/TK low level library
 %%------------------------------------------------------------------------
 
-:- module(tcltk_low_level,[],[assertions,isomodes,regtypes]).
+:- module(tcltk_low_level,
+	[
+	    new_interp/1,
+	    new_interp/2,
+	    new_interp_file/2,
+	    tcltk/2,
+	    tcltk_raw_code/2,
+	    receive_result/2,
+	    send_term/2,
+	    receive_event/2,
+	    receive_list/2,
+	    receive_confirm/2,
+	    delete/1
+	],
+	[assertions,isomodes,regtypes]).
 
 :- use_module(library(terms)).
 
@@ -12,27 +26,6 @@
 
 :- comment(author,"Montse Iglesias Urraca").
 %%------------------------------------------------------------------------
-
-:- export(new_interp/1).
-:- export(new_interp/2).
-:- export(new_interp_file/2).
-
-:- export(tcltk/2).
-:- export(tcltk_raw_code/2).
-%:- export(copy_stdin/1).
-%:- export(receive_term/3).
-%:- export(receive_term/2).
-:- export(receive_result/2).
-:- export(send_term/2). 
-
-:- export(receive_event/2).
-:- export(receive_list/2).
-:- export(receive_confirm/2).
-%:- export(tcl_error/1).
-%:- export(tcl_result/1).
-%:- export(delete_item_queue/1).
-:- export(delete/1).
-
 
 :- use_module(library(sockets)).
 :- use_module(library(system)).
@@ -53,69 +46,8 @@
    user programs, which use @lib{tcltk} instead. On the other hand in
    some cases it may be useful to undertand how this library works in
    order to understand possible problems in programs that use the
-   @lib{tcltk} library.").
-
-:- comment(appendix,"
-
-   Two sockets are created to connect the @em{TclInterpreter} and the
-   prolog process: the @em{event_socket} and the @em{term_socket}.
-   There are two global variables: @em{prolog_variables} and
-   @em{terms}. The value of any of the variables in the goal that is
-   bound to a term will be stored in the array @tt{prolog_variables}
-   with the variable name as index.  The string which contains the
-   printed representation of prolog @em{terms} is @em{Terms}.  These
-   are the Tcl/Tk procedures which implement the interface (the code
-   is inside the @lib{tcltk_low_level} library):
-
-   @begin{description}
-
-   @item{@tt{prolog}} Sends to @em{term_socket} the predicate
-        tcl_result which contains the goal to execute. Returns the
-        string executes and the goal.
-
-   @item{@tt{prolog_event}} Adds the new @em{term} to the @em{terms}
-        queue.
-
-   @item{@tt{prolog_delete_event}} Deletes the first @em{term} of the
-        @em{terms} queue.
-
-   @item{@tt{prolog_list_events}} Sends all the @em{terms} of the
-        @em{terms} queue by the @em{event_socket}. The last element
-        will be @em{end_of_event_list}.
-
-   @item{@tt{prolog_cmd}} Receives as an argument the tcltk
-        code. Evaluates the code and returns through the
-        @em{term_socket} the term @em{tcl_error} if there was a
-        mistake in the code or the predicate @em{tcl_result} with the
-        result of the command executed. If the argument is @em{prolog}
-        with a goal to execute, before finishing, the predicate
-        evaluated by prolog is received. In order to get the value of
-        the variables, predicates are compared using the
-        @em{unify_term} procedure.  Returs 0 when the sript runs
-        without errors, and 1 if there is an error.
-
-   @item{@tt{prolog_one_event}} Receives as an argument the @em{term}
-        which is associated with one of the tk events. Sends through
-        the @em{event_socket} the @em{term} and waits the unificated
-        @em{term} by prolog. After that it calls the @em{unify_term}
-        procedure to obtain the value of the @em{prolog_variables}.
-
-   @item{@tt{prolog_thread_event}} Receives as an argument the
-        @em{term} which is associated with one of the tk events. Sends
-        through the @em{event_socket} the @em{term} and waits for the
-        @em{term} unified by prolog. After that the @em{unify_term}
-        procedure is called to obtain the value of the
-        @em{prolog_variables}.  In this case the @em{term_socket} is
-        non blocking.
-
-   @item{@tt{convert_variables}} Receives as an argument a string
-        which contains symbols that can't be sent by the sockets. This
-        procedure deletes them from the input string and returns the
-        new string.
-
-   @item{@tt{unify_term}} Receives as argument a prolog term.
-
-   @end{description}").
+   @lib{tcltk} library.
+").
 %%------------------------------------------------------------------------
 
 :- regtype tclInterpreter(I) # "@var{I} is a reference to a @em{Tcl}
@@ -212,7 +144,7 @@ new_interp('$wish$'(Strm,TermStream,EventStream),Options) :-
         current_host(Host),
         bind_socket(Port,1,Socket),
         number_codes(Port,PortCode),
-        atom_concat('wishx',Options,V),
+        atom_concat('wish',Options,V),
         popen(V,write,Strm),
         write_string(Strm,"set prolog_host "),
         write(Strm,Host),nl(Strm),flush_output(Strm),
@@ -246,22 +178,6 @@ delete('$wish$'(Strm,TermStrm,EventStrm)) :-
         close(TermStrm),
         close(Strm),
         close(EventStrm).
-
-%%------------------------------------------------------------------------
-%:- pred delete_item_queue(+TclInterpreter) :: tclInterpreter 
-%
-%       # "".
-%%------------------------------------------------------------------------
-
-%delete_item_queue('$wish$'(Strm1,Strm2,Strm3)) :-
-%       display('En el delete'),nl,
-%       write_string(Strm1,"prolog_delete_event "),
-%       nl(Strm1),
-%       flush_output(Strm1),
-%%      display('En el delete enviado'),nl,
-%%      tcltk_raw_code("prolog_delete_event ",'$wish$'(Strm1,Strm2,Strm3)),
-%       read_term(Strm3,Term,[]),
-%       display(Term).
 
 %%------------------------------------------------------------------------
 send_initial_code(Strm) :-
@@ -353,9 +269,7 @@ send_code([sqb(Code)|Nc],Strm) :-
 
 send_code([br(Code)|Nc],Strm) :-
         write(Strm,'{'),
-%       display('in the send code'),nl,
         send_code(Code,Strm),
-%       display('en send code'),nl,
         write(Strm,'} '),
         !,
         send_code(Nc,Strm).
@@ -420,12 +334,14 @@ send_code(Not_a_list,Strm) :-
 
 send_term(Term,'$wish$'(_,Stream,_)) :-
         write_term(Stream,Term,[]),
-        nl(Stream),flush_output(Stream).
+        nl(Stream),
+	flush_output(Stream).
         
 
 %%------------------------------------------------------------------------
 %% READ A PROLOG TERM FROM TCL/TK
 %%------------------------------------------------------------------------
+
 %%------------------------------------------------------------------------
 :- pred receive_result(-Result,+TclInterpreter) :: string * tclInterpreter 
 
@@ -438,44 +354,37 @@ receive_result(Result,I) :-
         receive_term(Term,I),
         get_result(Term,Result,I).
 
-get_result(:(tcltk_low_level,tcl_result(X)),Result,_) :-
+get_result(:(tcltk_low_level,tcl_result(X)),Result,_) :- 
         Result = X.
-
 get_result(:(tcltk_low_level,tcl_error(_)),_,I) :-
         delete(I),
         fail.
 
 receive_term(Term,'$wish$'(_,Stream,_)) :-
-        read_term(Stream,Term,[]),
+	catch(read_term(Stream,Term,[]), Error, tcl_read_error(Error)),
         exceptions(Term).
 
 receive_term(Term,VarNames,'$wish$'(_,Stream,_)) :-
-        read_term(Stream,Term,[variable_names(VarNames)]).
+        catch(read_term(Stream,Term,[variable_names(VarNames)]), Error, tcl_read_error(Error)).
 
 %%------------------------------------------------------------------------
 %% EXCEPTIONS FROM TCL/TK
 %%------------------------------------------------------------------------
 
 exceptions(Term) :-
-        catch(Term,_,_).
-%       catch(Term,Error,handle(Error)).
+        catch(Term, E, tcl_error(E)).
 
-tcl_error(Text) :-
-        write('Tcl exception: '),
-        write_string(Text),
-        nl.
+tcl_error(A) :-
+	display(tcl_error(A)), nl.
 
 tcl_result(_).
+%	display(tcl_result(A)), nl.
 
-%handle(X) :-
-%       write(X),
-%       nl,
-%       halt.
-%       abort.
 
 %%________________________________________________________________________
 %% READ A PROLOG LIST OF TERMS FROM TCLTK
 %%________________________________________________________________________
+
 %%------------------------------------------------------------------------
 :- pred receive_event(-Event,+TclInterpreter) :: list * tclInterpreter 
 
@@ -484,35 +393,7 @@ tcl_result(_).
 %%------------------------------------------------------------------------
 
 receive_event([Term],'$wish$'(_,_,Stream)) :-
-%       display('before read'),nl,
         read_term(Stream,Term,[]).
-%       display('after read'),nl.
-
-
-%%------------------------------------------------------------------------
-
-%receive_list([],_,end_of_event_list).
-
-%receive_list(Nt,'$wish$'(_,_,Stream),_) :-
-%       display('before calling a receive__list'),nl,
-%       receive_list(Nt,'$wish$'(_,_,Stream)).
-
-
-%receive_list([Term|Nt],'$wish$'(_,_,Stream)) :-
-%       display('In the receive list '),
-%       read_term(Stream,Term,[]),
-%       display(Term),nl,
-%       display('Before the receive list3'),nl,
-%       receive_list(Nt,'$wish$'(_,_,Stream),Term),
-%       display('In en of receive list'),nl.
-
-%receive_list([Term|Nt],'$wish$'(_,_,Stream)) :-
-%%      display('In the receive list '),
-%       read_term(Stream,Term,[]),
-%%      display(Term),nl,
-%       ( Term = end_of_event_list -> Nt = [] 
-%       ; receive_list(Nt,'$wish$'(_,_,Stream))).
-%%      display('End of receive list ').
 
 %%------------------------------------------------------------------------
 :- pred receive_list(-List,+TclInterpreter) :: list * tclInterpreter 
@@ -522,11 +403,16 @@ receive_event([Term],'$wish$'(_,_,Stream)) :-
           that have been inserted from Tcl/Tk with the command
           prolog_event.  It is a list of terms.".
 %%------------------------------------------------------------------------
+
 receive_list([Term|Nt],'$wish$'(_,_,Stream)) :-
-        read_term(Stream,Term,[]),
+        catch(read_term(Stream,Term,[]), Error, tcl_read_error(Error)), 
         Term \== end_of_event_list,!,
-        receive_list(Nt,'$wish$'(_,_,Stream)).
+	receive_list(Nt,'$wish$'(_,_,Stream)).
 receive_list([end_of_event_list],_).
+
+tcl_read_error(_) :- 
+	fail.
+
 
 %%------------------------------------------------------------------------
 :- pred receive_confirm(-String,+TclInterpreter) :: string * tclInterpreter 
@@ -536,21 +422,12 @@ receive_list([end_of_event_list],_).
           queue is managed.".
 %%------------------------------------------------------------------------
 receive_confirm(Term,'$wish$'(_,_,Stream)) :-
-%       display('In confirm'),nl,
-        read_term(Stream,Term,[]).
-%%------------------------------------------------------------------------
-%% EVALUATE IF AN ERROR OCCURS IN THE TCLTK SCRIPT
-%%------------------------------------------------------------------------
-
-
+        catch(read_term(Stream,Term,[]), Error, tcl_read_error(Error)).
 
 %%------------------------------------------------------------------------
 %% INITIAL CODE
 %%------------------------------------------------------------------------
 
-%core("wm withdraw .").
-
-%%------------------------------------------------------------------------
 :- comment(doinclude, core/1).
 
 :- pred core(+String) :: string  
@@ -572,9 +449,20 @@ core("set term_socket [socket $prolog_host $prolog_port]").
 
 %core("[fconfigure $event_socket -blocking false]").
 
-%core(" global prolog_variables").
+
+core("set tcl_eval_mode 0").
 core("set prolog_variables(X) 1").
 core("set terms [list] ").
+
+core("proc prolog_unset_tcl_eval_mode {} {").
+core("  global tcl_eval_mode").
+core("  set tcl_eval_mode 0").
+core("} ").
+
+core("proc prolog_set_tcl_eval_mode {} {").
+core("  global tcl_eval_mode").
+core("  set tcl_eval_mode 1").
+core("} ").
 
 core("proc prolog_term {term} {").
 core("global event_socket").
@@ -583,20 +471,28 @@ core(" flush $event_socket ").
 core("} ").
 
 core("proc prolog {agoal} {").
-%core(" prolog_term goal($agoal) ").
-%core(" prolog_term execute($agoal) ").
-core(" global term_socket").
-core("  puts  $term_socket tcltk_low_level:tcl_result(execute($agoal)).").
-core("  flush $term_socket").
-core("  return execute($agoal) ").
-%core("  return execute ").
+core("  global term_socket").
+%core("  global event_socket").
+core("  global tcl_eval_mode").
+core("  if {$tcl_eval_mode} {").
+core("      puts  $term_socket tcltk_low_level:tcl_result(execute($agoal)).").
+core("      flush $term_socket").
+core("  } else {").
+core("      prolog_event execute($agoal)"). 
+core("      prolog_list_events ").
+core("  }").
+core("  gets  $term_socket term ").
+core("  set ret [unify_term execute($agoal)) $term] ").
+core("  if {$term == \"fail\" || $ret == 0} {").
+core("	   return 0").
+core("  } else { return 1}").
 core("} ").
+
 core("proc prolog1 {agoal} {").
 core(" global event_socket").
-core("   puts  $event_socket $agoal.").
+core("  puts $event_socket $agoal.").
 core("  flush $event_socket").
 core("  return execute($agoal) ").
-%core("  return execute ").
 core("} ").
 
 core("proc prolog_event {term} {").
@@ -636,17 +532,11 @@ core("} ").
 
 core("proc prolog_cmd {command} {").
 core(" global term_socket").
-%core("   set result [catch {uplevel $command} var]").
-%core(" puts $command ").
 core("   set error [catch {set result [uplevel $command]} var]").
-%core("   puts $command").
-%core("   puts $error").
-%core("   if {$result} {").
 core("   if {$error} {").
 core("       set var [convert_variable $var ]").
 core("       puts  $term_socket tcltk_low_level:tcl_error(\\""$var\\"").").
 core("       flush $term_socket").
-%%core("       return $result").
 core("       return $error").
 core("   } else { ").
 core("       set result_aux [string compare [string range $result 0 6 ] execute ]").
@@ -655,13 +545,11 @@ core("          puts  $term_socket tcltk_low_level:tcl_result(\\""$result\\"")."
 core("          flush $term_socket").
 core("       } else { ").
 core("          gets  $term_socket term ").
-%core("          puts ahora_me_fijo").
-%core("          puts $result ").
-%core("          puts $term").
 core("          set ret [unify_term $result $term]").
 core("          set error $ret").
 core("          } ").
-%core("       return $result").
+core("       puts  $term_socket tcltk_low_level:tcl_result(tcl_eval_finished).").
+core("       flush $term_socket").
 core("       return $error").
 core("   } ").
 core("} ").
@@ -678,7 +566,6 @@ core("   set result 0").
 core("   set result_var 0 ").
 %core("   puts $a_term ").
 %core("   puts $result ").
-
 core("   puts  $event_socket $a_term.").
 core("   flush $event_socket").
 %core(" puts antesdegets ").
@@ -728,13 +615,14 @@ core("} ").
 % prolog_variables with the variable name as index
 core("proc unify_term {term result} {").
 core(" global prolog_variables").
-%core("   puts $term ").
-%core("   puts $result ").
+% core("             puts $term ").
+% core("             puts $result ").
 core("   set long [string length $term] ").
-core("   incr long -3 ").
+core("  incr long -3 ").
 core("   set term [string range $term 8 $long] ").
 % the term without execute
 core("   set ret [unify_term_aux $term $result ]").
+%core("parray prolog_variables").
 core("   if { $ret == 0 } { ").
 core("        return 0 } ").
 %core("   else {          ").
@@ -744,8 +632,10 @@ core("} ").
 
 core("proc unify_term_aux {term result} {").
 core(" global prolog_variables").
-%core("   puts  $term] ").
-%core("   puts $result] ").
+
+core("   set n_c_t -1").
+core("   set n_c_r -1").
+
 core("   set pos_t [string first \"(\" $term] ").
 core("   set pos_r [string first \"(\" $result] ").
 % the name of the predicate has to be the same
@@ -761,8 +651,6 @@ core("            return 1 }").
 core("            return 0 ").
 core("         }").
 core("      }").
-
-% 
 core("   if { $pos_t == $pos_r } { ").
 core("        incr pos_t 1  ").
 core("        incr pos_r 1  ").
@@ -778,27 +666,65 @@ core("             set long_r_1 [string first \",\" $result_aux] ").
 core("             if { $long_t_1 == -1 || $long_r_1 == -1} { ").
 core("                  set long_t_1 [string first \")\" $term_aux] ").
 core("                  set long_r_1 [string first \")\" $result_aux] ").
+% Modified code --------
+core("                  set n_t [expr $long_t_1+1] ").
+core("                  set n_r [expr $long_r_1+1] ").
+core("                  set n_c_t [string first \")\" $term_aux $n_t] ").
+core("                  set n_c_r [string first \")\" $result_aux $n_r]").
+
 core("             } ").
-core("             incr long_t_1 -1").
-core("             incr long_r_1 -1").
+
+core("             if {$n_c_t == -1} { ").
+core("                  incr long_t_1 -1} else {set n_c_t -1}").
+core("             if {$n_c_r == -1} { ").
+core("                  incr long_r_1 -1} else {set n_c_r -1} ").
+% ----------------------
+%core("             puts original_variable($term_aux) ").
 core("             set term_aux_1 [string range $term_aux 0 $long_t_1] ").
 core("             set result_aux_1 [string range $result_aux 0 $long_r_1] ").
 core("             set prolog_variables($term_aux_1) $result_aux_1 ").
+%core("             puts setting_variable($term_aux_1) ").
 core("             incr long_t_1 2  ").
 core("             incr long_r_1 2  ").
 core("             if {$long_t <= $long_t_1 || $long_r <= $long_r_1 } { ").
-%core(" puts $prolog_variables(Outputval)").
 core("                  return 0 }").
 core("             set term_aux [string range $term_aux $long_t_1 $long_t] ").
 core("             set result_aux [string range $result_aux $long_r_1 $long_r] ").
 core("             set long_t [string length $term_aux] ").
 core("             set long_r [string length $result_aux] ").
+%core("             puts worked").
 core("        } ").
 core("   } ").
 core("} ").
 
 
 :- comment(version_maintenance,dir('../../version')).
+
+ 
+:- comment(version(1*9+315,2004/02/25,18:28*19+'CET'), "Documentation
+   restructured (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+312,2004/02/24,16:57*01+'CET'), " Added support
+   for sheer execution from Tcl side, i.e. not via tcl_eval/3, in
+   intial Tcl code (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+311,2004/02/20,11:57*52+'CET'), "Fixed
+   unification of variables in goals run through command 'prolog'
+   (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+310,2004/02/20,11:57*12+'CET'), "Execution of
+   Prolog goals through command 'prolog' from Tcl now returns a
+   boolean value to the Tcl side corresponding to its success or
+   failure. This permits the evaluation of Prolog commands in Tcl
+   expressions such as if-then-else.  (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+309,2004/02/20,11:56*49+'CET'), "Exception
+   treatment for read_term to protect against unexpected streams
+   crashes (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+308,2004/02/20,11:56*18+'CET'), "read_term/3
+   modified. Now considering end_of_file reception (Jose Manuel Gomez
+   Perez)").
 
 :- comment(version(1*7+124,2001/09/02,14:14*25+'CEST'), "Improved
    documentation.  (Manuel Hermenegildo)").
@@ -811,3 +737,4 @@ core("} ").
    created (Montse Urraca)").
 
 
+ 

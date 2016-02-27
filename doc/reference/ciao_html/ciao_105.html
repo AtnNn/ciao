@@ -1,41 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Constraint programming over reals</TITLE>
+<TITLE>The Ciao Prolog System               - Miscellaneous predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC432" HREF="ciao_toc.html#TOC432">Constraint programming over reals</A></H1>
+<H1><A NAME="SEC436" HREF="ciao_toc.html#TOC436">Miscellaneous predicates</A></H1>
 <P>
-<A NAME="IDX4478"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Christian Holzbaur, Daniel Cabeza.
+<A NAME="IDX5349"></A>
 
 
 <P>
- 
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
 
 
 <P>
-<STRONG>Note:</STRONG> This package is currently being adapted to the new characteristics of the Ciao module system. This new version now works right now to some extent, but it under further development at the moment. Use with (lots of) caution. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#95 (1999/11/8, 18:37:30 MET)
+
+
+<P>
+This module implements some miscellaneous non-logical (but sometimes very useful) predicates.
 
 
 
 <UL>
-<LI><A HREF="ciao_105.html#SEC433">Usage and interface (clpr)</A>
-<LI><A HREF="ciao_105.html#SEC434">Other information (clpr)</A>
+<LI><A HREF="ciao_105.html#SEC437">Usage and interface (odd)</A>
+<LI><A HREF="ciao_105.html#SEC438">Documentation on exports (odd)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC433" HREF="ciao_toc.html#TOC433">Usage and interface (<CODE>clpr</CODE>)</A></H2>
+<H2><A NAME="SEC437" HREF="ciao_toc.html#TOC437">Usage and interface (<CODE>odd</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,160 +47,100 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(clpr).</CODE>
+<CODE>:- use_module(library(odd)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[clpr]).</CODE>
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX5350"></A>
+<CODE>setarg/3</CODE>, 
+<A NAME="IDX5351"></A>
+<CODE>undo/1</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC434" HREF="ciao_toc.html#TOC434">Other information (<CODE>clpr</CODE>)</A></H2>
+<H2><A NAME="SEC438" HREF="ciao_toc.html#TOC438">Documentation on exports (<CODE>odd</CODE>)</A></H2>
+<P>
+<A NAME="IDX5352"></A>
+<A NAME="IDX5353"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>setarg/3:</B>
+<DD><A NAME="IDX5354"></A>
+
 
 <P>
- 
-
-
+<STRONG>Usage:</STRONG> <CODE>setarg(Index, Term, NewArg)</CODE>
 
 <UL>
-<LI><A HREF="ciao_105.html#SEC435">Some CLP(R) examples</A>
+<LI><EM>Description:</EM> Replace destructively argument <CODE>Index</CODE> in <CODE>Term</CODE> by <CODE>NewArg</CODE>. The assignment is undone on backtracking. This is a major change to the normal behavior of data assignment in Ciao Prolog.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
-
-
-<H3><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Some CLP(R) examples</A></H3>
+</DL>
 
 <P>
-(Other examples can be found in the source and library directories.) 
+<A NAME="IDX5355"></A>
+<A NAME="IDX5356"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>undo/1:</B>
+<DD><A NAME="IDX5357"></A>
 
 
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>undo(goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>undo(Goal)</CODE>
 
 <UL>
-<LI>'Reversible' Fibonacci (clpr):
+<LI><EM>Description:</EM>  <CODE>call(<CODE>Goal</CODE>)</CODE> is executed on backtracking. This is a major change to the normal
 
+<A NAME="IDX5358"></A>
+control of Ciao Prolog execution. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
-<P>
-
-
-
-<PRE>
-:- module(_, [fib/2], []).
-:- use_package(clpr).
-
-fib(X,Y):- X .=. 0, Y .=. 0.
-fib(X,Y):- X .=. 1, Y .=. 1.
-fib(N,F) :-
-        N .&#62;. 1,
-        N1 .=. N - 1,
-        N2 .=. N - 2,
-        fib(N1, F1),
-        fib(N2, F2),
-        F .=. F1+F2.
-
-</PRE>
-
-
-<UL>
-<LI>Dirichlet problem for Laplace's equation (clpr):
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-
-%
-% Solve the Dirichlet problem for Laplace's equation using
-% Leibman's five-point finit-differenc approximation. 
-% The goal ?- go1 is a normal example, while the goal ?- go2
-% shows output constraints for a small region where the boundary conditions
-% are not specified.
-%
-:- use_package(clpq).
-:- use_module(library(format)).
-
-laplace([_, _]).
-laplace([H1, H2, H3|T]):-
-        laplace_vec(H1, H2, H3), 
-        laplace([H2, H3|T]).
-
-laplace_vec([_, _], [_, _], [_, _]).
-laplace_vec([_TL, T, TR|T1], [ML, M, MR|T2], [_BL, B, BR|T3]):-
-        B + T + ML + MR - 4 * M .=. 0, 
-        laplace_vec([T, TR|T1], [M, MR|T2], [B, BR|T3]).
-
-printmat([]).
-printmat([H|T]):-
-        printvec(H), 
-        printmat(T).
-
-printvec([]):- nl.
-printvec([H|T]):-
-        printrat(H), 
-        printvec(T).
-
-printrat(rat(N,D)) :- !,
-        X is N/D,
-        format(" ~2f",X).
-printrat(N) :-
-        X is N*100,
-        format(" ~2d",X).
-
-go1:-
-        X =  [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-    ], 
-        laplace(X),
-        printmat(X).
-
-% Answer:
-% 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-% 100.00 51.11 32.52 24.56 21.11 20.12 21.11 24.56 32.52 51.11 100.00
-% 100.00 71.91 54.41 44.63 39.74 38.26 39.74 44.63 54.41 71.91 100.00
-% 100.00 82.12 68.59 59.80 54.97 53.44 54.97 59.80 68.59 82.12 100.00
-% 100.00 87.97 78.03 71.00 66.90 65.56 66.90 71.00 78.03 87.97 100.00
-% 100.00 91.71 84.58 79.28 76.07 75.00 76.07 79.28 84.58 91.71 100.00
-% 100.00 94.30 89.29 85.47 83.10 82.30 83.10 85.47 89.29 94.30 100.00
-% 100.00 96.20 92.82 90.20 88.56 88.00 88.56 90.20 92.82 96.20 100.00
-% 100.00 97.67 95.59 93.96 92.93 92.58 92.93 93.96 95.59 97.67 100.00
-% 100.00 98.89 97.90 97.12 96.63 96.46 96.63 97.12 97.90 98.89 100.00
-% 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00
-
-go2([B31, M32, M33, B34, B42, B43, B12, B13, B21, M22, M23, B24]) :-
-        laplace([
-            [_B11, B12, B13, _B14], 
-            [B21, M22, M23, B24], 
-            [B31, M32, M33, B34], 
-            [_B41, B42, B43, _B44]
-    ]).
-              
-
-% Answer:
-% 
-% B34.=. -4*M22+B12+B21+4*M33-B43,
-% M23.=.4*M22-M32-B12-B21,
-% B31.=. -M22+4*M32-M33-B42,
-% B24.=.15*M22-4*M32-4*B12-4*B21-M33-B13 ? 
-
-</PRE>
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

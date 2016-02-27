@@ -10,7 +10,6 @@
 
 %%% HTTP and basic parsing %%%
 
-
 http_media_type(Type,SubType,Params) -->
         http_lo_up_token(Type),
         "/",
@@ -29,14 +28,17 @@ http_type_param(A = V) -->
         "=",
         http_token_or_quoted(V).
 
-http_token_or_quoted(V) --> http_token(V), !.
+http_token_or_quoted(V) --> http_token_str(V), !.
 http_token_or_quoted(V) --> http_quoted_string(V).
 
-http_token(T) -->
+http_token_str([C|Cs]) -->
         http_token_char(C),
-        http_token_rest(Cs),
+        http_token_rest(Cs).
+
+http_token(T) -->
+        http_token_str(St),
         {
-            atom_codes(T, [C|Cs])
+            atom_codes(T, St)
         }.
 
 http_token_rest([C|Cs]) -->

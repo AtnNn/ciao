@@ -8,7 +8,12 @@
 
 #if defined(DEBUG)
 extern int debug_c;                                             /* Shared */
-extern BOOL debug_gc, debug_threads, debug_mem, debug_conc;
+extern BOOL debug_gc, 
+            debug_threads, 
+            debug_choicepoints, 
+            debug_concchoicepoints, 
+            debug_mem,  
+            debug_conc;
 #endif
 
 extern BOOL stop_on_pred_calls, predtrace, profile, prof_include_time;

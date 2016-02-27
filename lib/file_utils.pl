@@ -7,6 +7,10 @@
 
 :- comment(title,"File I/O utilities").
 
+:- comment(author,"The CLIP Group").
+
+:- comment(module,"This module implements the file I/O utilities.").
+
 :- pred file_terms(@File, ?Terms) => sourcename * list 
    # "Transform a file @var{File} to/from a list of terms @var{Terms}.".
 
@@ -81,6 +85,9 @@ read_to_close1(C, [C|L]) :-
 
 %---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+216,2003/12/21,02:30*59+'CET'), "Added comment
+   author and module.  (Edison Mera)").
 
 :- comment(version(1*5+55,2000/02/11,21:19*43+'CET'), "Changed
    file_to_string/2 and stream_to_string/2 which did not work well

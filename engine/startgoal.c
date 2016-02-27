@@ -49,6 +49,7 @@ void firstgoal(goal_desc, goal_name)
       Arg->term[0] = Arg->node->term[0];
       wam_initialized = TRUE;
       exit_code = wam(Arg, goal_desc);
+      Arg = goal_desc->worker_registers; /* segfault patch -- jf */
       flush_output(Arg);
       if (exit_code != WAM_ABORT) /* halting... */
         break;
@@ -93,8 +94,12 @@ THREAD_RES_T startgoal(wo)
            (int)Thread_Id, (int)GET_INC_COUNTER, (int)goal_desc);
 #endif
 
-  if ((wam_result = wam(Arg, goal_desc)) == WAM_ABORT) 
-    MAJOR_FAULT("Wam aborted!")
+  /* segfault patch -- jf */
+  wam_result = wam(Arg, goal_desc);
+  if (wam_result == WAM_ABORT) {
+    MAJOR_FAULT("Wam aborted!");
+  }
+  Arg = goal_desc->worker_registers;
   
 #if defined(DEBUG) && defined(THREADS)
       if (debug_threads)
@@ -158,8 +163,12 @@ THREAD_RES_T make_backtracking(THREAD_ARG wo)
   int wam_result;
   Argdecl = goal_desc->worker_registers;
 
-  if ((wam_result = wam(Arg, goal_desc)) == WAM_ABORT)
-    MAJOR_FAULT("Wam aborted while doing backtracking")
+  /* segfault patch -- jf */
+  wam_result = wam(Arg, goal_desc);
+  if (wam_result == WAM_ABORT) {
+    MAJOR_FAULT("Wam aborted while doing backtracking");
+  }
+  Arg = goal_desc->worker_registers;
 
   flush_output(Arg);
 

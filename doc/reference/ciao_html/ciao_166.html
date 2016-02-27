@@ -1,41 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - sets (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Identity lists</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC677" HREF="ciao_toc.html#TOC677">sets (library)</A></H1>
+<H1><A NAME="SEC689" HREF="ciao_toc.html#TOC689">Identity lists</A></H1>
 <P>
-<A NAME="IDX6909"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX7755"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#17 (1999/3/23, 20:57:20 MET)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-This module implements set operations. Sets are just ordered lists.
+<STRONG>Version:</STRONG> 1.9#266 (2004/1/1, 14:1:7 CET)
+
+
+<P>
+The operations in this module handle lists by performing equality checks via identity instead of unification.
 
 
 
 <UL>
-<LI><A HREF="ciao_166.html#SEC678">Usage and interface (sets)</A>
-<LI><A HREF="ciao_166.html#SEC679">Documentation on exports (sets)</A>
+<LI><A HREF="ciao_166.html#SEC690">Usage and interface (idlists)</A>
+<LI><A HREF="ciao_166.html#SEC691">Documentation on exports (idlists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC678" HREF="ciao_toc.html#TOC678">Usage and interface (<CODE>sets</CODE>)</A></H2>
+<H2><A NAME="SEC690" HREF="ciao_toc.html#TOC690">Usage and interface (<CODE>idlists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +43,7 @@ This module implements set operations. Sets are just ordered lists.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(sets)).</CODE>
+<CODE>:- use_module(library(idlists)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,52 +52,22 @@ This module implements set operations. Sets are just ordered lists.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6910"></A>
-<CODE>insert/3</CODE>, 
-<A NAME="IDX6911"></A>
-<CODE>ord_delete/3</CODE>, 
-<A NAME="IDX6912"></A>
-<CODE>ord_member/2</CODE>, 
-<A NAME="IDX6913"></A>
-<CODE>ord_test_member/3</CODE>, 
-<A NAME="IDX6914"></A>
-<CODE>ord_subtract/3</CODE>, 
-<A NAME="IDX6915"></A>
-<CODE>ord_intersection/3</CODE>, 
-<A NAME="IDX6916"></A>
-<CODE>ord_intersection_diff/4</CODE>, 
-<A NAME="IDX6917"></A>
-<CODE>ord_intersect/2</CODE>, 
-<A NAME="IDX6918"></A>
-<CODE>ord_subset/2</CODE>, 
-<A NAME="IDX6919"></A>
-<CODE>ord_subset_diff/3</CODE>, 
-<A NAME="IDX6920"></A>
-<CODE>ord_union/3</CODE>, 
-<A NAME="IDX6921"></A>
-<CODE>ord_union_diff/4</CODE>, 
-<A NAME="IDX6922"></A>
-<CODE>ord_union_symdiff/4</CODE>, 
-<A NAME="IDX6923"></A>
-<CODE>ord_union_change/3</CODE>, 
-<A NAME="IDX6924"></A>
-<CODE>merge/3</CODE>, 
-<A NAME="IDX6925"></A>
-<CODE>ord_disjoint/2</CODE>, 
-<A NAME="IDX6926"></A>
-<CODE>setproduct/3</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6927"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX7756"></A>
+<CODE>member_0/2</CODE>, 
+<A NAME="IDX7757"></A>
+<CODE>memberchk/2</CODE>, 
+<A NAME="IDX7758"></A>
+<CODE>list_insert/2</CODE>, 
+<A NAME="IDX7759"></A>
+<CODE>add_after/4</CODE>, 
+<A NAME="IDX7760"></A>
+<CODE>add_before/4</CODE>, 
+<A NAME="IDX7761"></A>
+<CODE>delete/3</CODE>, 
+<A NAME="IDX7762"></A>
+<CODE>subtract/3</CODE>, 
+<A NAME="IDX7763"></A>
+<CODE>union_idlists/3</CODE>.
 
 </UL>
 
@@ -107,314 +77,152 @@ This module implements set operations. Sets are just ordered lists.
 
 
 
-<H2><A NAME="SEC679" HREF="ciao_toc.html#TOC679">Documentation on exports (<CODE>sets</CODE>)</A></H2>
+<H2><A NAME="SEC691" HREF="ciao_toc.html#TOC691">Documentation on exports (<CODE>idlists</CODE>)</A></H2>
 <P>
-<A NAME="IDX6928"></A>
-<A NAME="IDX6929"></A>
+<A NAME="IDX7764"></A>
+<A NAME="IDX7765"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
-<DD><A NAME="IDX6930"></A>
+<DT><span class="define">PREDICATE:</span> <B>member_0/2:</B>
+<DD><A NAME="IDX7766"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>insert(+Set1,+Element,-Set2)</CODE>
+<CODE>member_0(X, Xs)</CODE>
+
+
+<P>
+True iff memberchk/2 is true.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7767"></A>
+<A NAME="IDX7768"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>memberchk/2:</B>
+<DD><A NAME="IDX7769"></A>
+
+
+<P>
+<CODE>memberchk(X, Xs)</CODE>
+
+
+<P>
+Checks that <CODE>X</CODE> is an element of (list) <CODE>Xs</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7770"></A>
+<A NAME="IDX7771"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
+<DD><A NAME="IDX7772"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list_insert(-List, +Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It is true when <CODE>Set2</CODE> is <CODE>Set1</CODE> with <CODE>Element</CODE> inserted in it, preserving the order.
+<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of (tail-opened) <CODE>List</CODE> if there is not an element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6931"></A>
-<A NAME="IDX6932"></A>
+<A NAME="IDX7773"></A>
+<A NAME="IDX7774"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_delete/3:</B>
-<DD><A NAME="IDX6933"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
+<DD><A NAME="IDX7775"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_delete(+Set0,+X,-Set)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_after(+L0, +E0, +E, -L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It succeeds if <CODE>Set</CODE> is <CODE>Set0</CODE> without element <CODE>X</CODE>.
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after the first element identical to <CODE>E0</CODE> (or at end) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6934"></A>
-<A NAME="IDX6935"></A>
+<A NAME="IDX7776"></A>
+<A NAME="IDX7777"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_member/2:</B>
-<DD><A NAME="IDX6936"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
+<DD><A NAME="IDX7778"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_member(+X,+Set)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_before(+L0, +E0, +E, -L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It succeeds if <CODE>X</CODE> is member of <CODE>Set</CODE>.
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> before the first element identical to <CODE>E0</CODE> (or at start) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6937"></A>
-<A NAME="IDX6938"></A>
+<A NAME="IDX7779"></A>
+<A NAME="IDX7780"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_test_member/3:</B>
-<DD><A NAME="IDX6939"></A>
+<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
+<DD><A NAME="IDX7781"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_test_member(+Set,+X,-Result)</CODE>
+<STRONG>Usage:</STRONG> <CODE>delete(+List, +Element, -Rest)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>X</CODE> is member of <CODE>Set</CODE> then <CODE>Result</CODE>=<CODE>yes</CODE>. Otherwise <CODE>Result</CODE>=<CODE>no</CODE>.
+<LI><EM>Description:</EM> <CODE>Rest</CODE> has the same elements of <CODE>List</CODE> except for all the occurrences of elements identical to <CODE>Element</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6940"></A>
-<A NAME="IDX6941"></A>
+<A NAME="IDX7782"></A>
+<A NAME="IDX7783"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subtract/3:</B>
-<DD><A NAME="IDX6942"></A>
+<DT><span class="define">PREDICATE:</span> <B>subtract/3:</B>
+<DD><A NAME="IDX7784"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_subtract(+Set1,+Set2,?Difference)</CODE>
+<STRONG>Usage:</STRONG> <CODE>subtract(+Set, +Set0, -Difference)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It is true when <CODE>Difference</CODE> contains all and only the elements of <CODE>Set1</CODE> which are not also in <CODE>Set2</CODE>.
+<LI><EM>Description:</EM> <CODE>Difference</CODE> has the same elements of <CODE>Set</CODE> except those which have an identical occurrence in <CODE>Set0</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6943"></A>
-<A NAME="IDX6944"></A>
+<A NAME="IDX7785"></A>
+<A NAME="IDX7786"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersection/3:</B>
-<DD><A NAME="IDX6945"></A>
+<DT><span class="define">PREDICATE:</span> <B>union_idlists/3:</B>
+<DD><A NAME="IDX7787"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersection(+Set1,+Set2,?Intersection)</CODE>
+<STRONG>Usage:</STRONG> <CODE>union_idlists(+List1, +List2, -List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It is true when <CODE>Intersection</CODE> is the ordered representation of <CODE>Set1</CODE> and <CODE>Set2</CODE>, provided that <CODE>Set1</CODE> and <CODE>Set2</CODE> are ordered lists.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6946"></A>
-<A NAME="IDX6947"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersection_diff/4:</B>
-<DD><A NAME="IDX6948"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersection_diff(+Set1,+Set2,-Intersect,-NotIntersect)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Intersect</CODE> contains those elements which are both in <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>NotIntersect</CODE> those which are in <CODE>Set1</CODE> but not in <CODE>Set2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6949"></A>
-<A NAME="IDX6950"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersect/2:</B>
-<DD><A NAME="IDX6951"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersect(+Xs,+Ys)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Succeeds when the two ordered lists have at least one element in common.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6952"></A>
-<A NAME="IDX6953"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subset/2:</B>
-<DD><A NAME="IDX6954"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_subset(+Xs,+Ys)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Succeeds when every element of <CODE>Xs</CODE> appears in <CODE>Ys</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6955"></A>
-<A NAME="IDX6956"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subset_diff/3:</B>
-<DD><A NAME="IDX6957"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_subset_diff(+Set1,+Set2,-Difference)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds when every element of <CODE>Set1</CODE> appears in <CODE>Set2</CODE> and <CODE>Difference</CODE> has the elements of <CODE>Set2</CODE> which are not in <CODE>Set1</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6958"></A>
-<A NAME="IDX6959"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union/3:</B>
-<DD><A NAME="IDX6960"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union(+Set1,+Set2,?Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>. When some element occurs in both sets, <CODE>Union</CODE> retains only one copy.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6961"></A>
-<A NAME="IDX6962"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_diff/4:</B>
-<DD><A NAME="IDX6963"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_diff(+Set1,+Set2,-Union,-Difference)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>Difference</CODE> is <CODE>Set2</CODE> set-minus <CODE>Set1</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6964"></A>
-<A NAME="IDX6965"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_symdiff/4:</B>
-<DD><A NAME="IDX6966"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_symdiff(+Set1,+Set2,-Union,-Diff)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when Diff is the symmetric difference of Set1 and Set2, and Union is the union of Set1 and Set2.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6967"></A>
-<A NAME="IDX6968"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_change/3:</B>
-<DD><A NAME="IDX6969"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_change(+Set1,+Set2,-Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE> and <CODE>Union</CODE> is different from <CODE>Set2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6970"></A>
-<A NAME="IDX6971"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>merge/3:</B>
-<DD><A NAME="IDX6972"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>merge(+Set1,+Set2,?Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> See <CODE>ord_union/3</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6973"></A>
-<A NAME="IDX6974"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_disjoint/2:</B>
-<DD><A NAME="IDX6975"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_disjoint(+Set1,+Set2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Set1</CODE> and <CODE>Set2</CODE> have no element in common.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6976"></A>
-<A NAME="IDX6977"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>setproduct/3:</B>
-<DD><A NAME="IDX6978"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>setproduct(+Set1,+Set2,-Product)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Product</CODE> has all two element sets such that one element is in <CODE>Set1</CODE> and the other in <CODE>set2</CODE>, except that if the same element belongs to both, then the corresponding one element set is in <CODE>Product</CODE>.
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but are not identical to an element in <CODE>List2</CODE> followed by the elements in <CODE>List2</CODE>.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

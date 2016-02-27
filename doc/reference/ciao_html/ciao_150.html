@@ -1,182 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Prolog to Java interface</TITLE>
+<TITLE>The Ciao Prolog System               - Filed predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC624" HREF="ciao_toc.html#TOC624">Low-level Prolog to Java interface</A></H1>
+<H1><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Filed predicates</A></H1>
 <P>
-<A NAME="IDX6346"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX6867"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#74 (2001/3/26, 12:12:29 CEST)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
- 
+<STRONG>Version of last change:</STRONG> 1.9#10 (2002/5/30, 19:46:8 CEST)
 
 
 <P>
-This module defines the low level Prolog to Java interface. This interface allows a Prolog program to start a Java process, create Java objects, invoke methods, set/get attributes (fields), and handle Java events. 
+This package allows using files as a "
+<A NAME="IDX6868"></A>
+cache" for predicates defined by facts. This is useful for huge tables of facts that may push the memory limits of the system too far. Goals of a 
+<A NAME="IDX6869"></A>
+filed predicate are executed simply by reading from the corresponding file. 
 
 
 <P>
-This interface only works with JDK version 1.2 or higher. 
+Anything in the DB file used for the predicate that is different from a fact for the corresponding predicate is ignored. Each call to a filed predicate forces opening the file, so the use of this package is subject to the limit on the number of open files that the system can support. 
 
 
 <P>
-Although the Java side interface is explained in Javadoc format (it is available at library/javall/javadoc/ in your Ciao installation), the general interface structure is detailed here. 
+Dynamic modification of the filed predicates is also allowed during execution of the program. Thus filed predicates are regarded as dynamic, data predicates residing in a file. However, dynamic modifications to the predicates do not affect the file, unless the predicate is also declared persistent. 
+
+
+<P>
+The package is compatible with 
+<A NAME="IDX6870"></A>
+<CODE>persdb</CODE> in the sense that a predicate can be made both filed and persistent. In this way, the predicate can be used in programs, but it will not be loaded (saving memory), can also be modified during execution, and modifications will persist in the file. Thus, the user interface to both packages is the same (so the DB file must be one for both filing and persistency). 
 
 
 
 <UL>
-<LI><A HREF="ciao_150.html#SEC625">Low-Level Prolog to Java Interface Structure</A>
-<LI><A HREF="ciao_150.html#SEC628">Java event handling from Prolog</A>
-<LI><A HREF="ciao_150.html#SEC629">Java exception handling from Prolog</A>
-<LI><A HREF="ciao_150.html#SEC630">Usage and interface (javart)</A>
-<LI><A HREF="ciao_150.html#SEC631">Documentation on exports (javart)</A>
+<LI><A HREF="ciao_150.html#SEC627">Usage and interface (factsdb_rt)</A>
+<LI><A HREF="ciao_150.html#SEC628">Documentation on exports (factsdb_rt)</A>
+<LI><A HREF="ciao_150.html#SEC629">Documentation on multifiles (factsdb_rt)</A>
+<LI><A HREF="ciao_150.html#SEC630">Documentation on internals (factsdb_rt)</A>
+<LI><A HREF="ciao_150.html#SEC631">Known bugs and planned improvements (factsdb_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC625" HREF="ciao_toc.html#TOC625">Low-Level Prolog to Java Interface Structure</A></H2>
-<P>
-<A NAME="IDX6347"></A>
-<A NAME="IDX6348"></A>
-This low-level prolog to java interface is made up of two parts: a Prolog part and a Java part, running in separate processes. The Prolog part receives requests from a Prolog program and sends them to the Java part through a socket. The Java part receives requests from the socket and performs the actions included in the requests. 
-
-
-<P>
-If an event is thrown in the java side, an asynchronous message must be sent away to the prolog side, in order to launch a prolog goal to handle the event. This asynchronous communication is made by the means of a second socket. The nature of this communication needs the use of threads both in java and prolog: to deal with the 'sequential program flow,' and other threads for event handling. 
-
-
-<P>
-In both sides the threads are automatically created by the context of the objects we use. The user must be aware that different requests to the other side of the interface could run concurrently. 
- 
-
-
-
-<UL>
-<LI><A HREF="ciao_150.html#SEC626">Prolog side of the Java interface</A>
-<LI><A HREF="ciao_150.html#SEC627">Java side</A>
-</UL>
-
-
-
-<H3><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Prolog side of the Java interface</A></H3>
-<P>
-<A NAME="IDX6349"></A>
-<A NAME="IDX6350"></A>
-The prolog side receives the actions to do in the java side from the user program, and sends them to the java side through the socket connection. When the action is done in the java side, the result is returned to the user program, or the action fails if there is any problem in the java side. 
-
-
-<P>
-Prolog data representation of java elements is very simple in this low-level interface. Java primitive types such as integers and characters are translated into Prolog terms, and even some Java objects are translated that way (e. g. Java strings). Java objects are represented in Prolog as compound terms with a reference to identify the corresponding Java object. Data conversion is made automatically when the interface is used, so the Prolog user programs do not have to deal with the complexity of this tasks. 
-
-
-
-
-<H3><A NAME="SEC627" HREF="ciao_toc.html#TOC627">Java side</A></H3>
-<P>
-<A NAME="IDX6351"></A>
-<A NAME="IDX6352"></A>
-The java side of this layer is more complex than the prolog side. The tasks this part have to deal to are the following: 
-
-
-
-<UL>
-
-<LI>Wait for requests from the prolog side.
-
-<LI>Translate the prolog terms received in a 'serialized' form in a more useful java representation.
-
-<LI>Interpret the requests received from the prolog side.
-
-<LI>Handle the set of objects created by or derived from the requests received from de prolog side.
-
-<LI>Handle the events raised in the java side, and launch the listeners added in the prolog side.
-
-<LI>Handle the exceptions raised in the java side, and send to the prolog side.
-
-</UL>
-
-<P>
-In the implementation of the java side, two items must be carefully designed: the handling of java objects, and the representation of prolog data structures. The last item is specially important because all the interactions between prolog and java are made using prolog structures, an easy way to standardize the different data management of both languages. Even the requests themselves are encapsulated using prolog structures. The overload of this encapsulation is not significant in terms of socket traffic, due to the optimal implementation of the prolog serialized term. 
-
-
-<P>
-The java side must handle the objects created from the prolog side dinamically, and these objects must be accessed as fast as possible from the set of objects. The java API provides a powerful implementation of Hash tables that achieves all the requirements of our implementation. 
-
-
-<P>
-On the other hand, the java representation of prolog terms is made using the inheritance of java classes. In the java side exists a representation of a generic prolog term, implemented as an abstract class in java. Variables, atoms, compound terms, lists, and numeric terms are classes in the java side which inherit from the term class. Java objects can be seen also under the prolog representation as compound terms, where the single argument corresponds to the Hash key of the actual java object in the Hash table referred to before. This behaviour makes the handling of mixed java and prolog elements easy. Prolog goals are represented in the java side as objects which contain a prolog compound term with the term representing the goal. This case will be seen more in depth next, when the java to prolog is explained. 
-
-
-
-
-<H2><A NAME="SEC628" HREF="ciao_toc.html#TOC628">Java event handling from Prolog</A></H2>
-<P>
-<A NAME="IDX6353"></A>
-<A NAME="IDX6354"></A>
-Java event handling is based on a delegation model since version 1.1.x. This approach to event handling is very powerful and elegant, but a user program cannot handle all the events that can arise on a given object: for each kind of event, a listener must be implemented and added specifically. However, the Java 2 API includes a special listener (<CODE>AWTEventListener</CODE>) that can manage the internal java event queue. 
-
-
-<P>
-The prolog to java interface has been designed to emulate the java event handler, and is also based on event objects and listeners. The low level prolog to java interface implements its own event manager, to handle those events that have prolog listeners associated to the object that raises the event. From the prolog side can be added listeners to objects for specific events. The java side includes a list of goals to launch from the object and event type. 
-
-
-<P>
-Due to the events nature, the event handler must work in a separate thread to manage the events asynchronously. The java side has its own mechanisms to work this way. The prolog side must be implemented specially for event handling using threads. The communication between java and prolog is also asynchronous, and an additional socket stream is used to avoid interferences with the main socket stream. The event stream will work in this implementation only in one way: from java to prolog. If an event handler needs to send back requests to java, it will use the main socket stream, just like the requests sent directly from a prolog program. 
-
-
-<P>
-The internal process of register a Prolog event handler to a Java event is shown in the next figure: 
-
-
-<P>
-<IMG SRC="autofigip2jbn-events-pl-reg.jpg" ALT="Image:autofigip2jbn-events-pl-reg.jpg"> 
-
-
-<P>
-When an event raises, the low-level Prolog to Java interface has to send to the Prolog user program the goal to evaluate. Graphically, the complete process takes the tasks involved in the following figure: 
-
-
-<P>
-<IMG SRC="autofigip2jbn-events-pl-fire.jpg" ALT="Image:autofigip2jbn-events-pl-fire.jpg"> 
- 
-
-
-
-
-<H2><A NAME="SEC629" HREF="ciao_toc.html#TOC629">Java exception handling from Prolog</A></H2>
-<P>
-<A NAME="IDX6355"></A>
-<A NAME="IDX6356"></A>
-Java exception handling is very similar to the peer prolog handling: it includes some specific statements to trap exceptions from user code. In the java side, the exceptions can be originated from an incorrect request, or can be originated in the code called from the request. Both exception types will be sent to prolog using the main socket stream, allowing the prolog program manage the exception. However, the first kind of exceptions are prefixed, so the user program can distinguish them from the second type of exceptions. 
-
-
-<P>
-In order to handle exceptions properly using the prolog to java and java to prolog interfaces simultaneously, in both sides of the interface will be filtered those exceptions coming from their own side: this avoids an endless loop of exceptions bouncing from one side to another. 
-
-
-
-
-<H2><A NAME="SEC630" HREF="ciao_toc.html#TOC630">Usage and interface (<CODE>javart</CODE>)</A></H2>
+<H2><A NAME="SEC627" HREF="ciao_toc.html#TOC627">Usage and interface (<CODE>factsdb_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -184,7 +68,13 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(javart)).</CODE>
+This facility is used as a package, thus either including 
+<A NAME="IDX6871"></A>
+<CODE>factsdb</CODE> in the package list of the module, or by using the 
+<A NAME="IDX6872"></A>
+<CODE>use_package/1</CODE> declaration. The facility predicates are defined in library module 
+<A NAME="IDX6873"></A>
+<CODE>factsdb_rt</CODE>.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -193,51 +83,25 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6357"></A>
-<CODE>java_start/0</CODE>, 
-<A NAME="IDX6358"></A>
-<CODE>java_start/1</CODE>, 
-<A NAME="IDX6359"></A>
-<CODE>java_start/2</CODE>, 
-<A NAME="IDX6360"></A>
-<CODE>java_stop/0</CODE>, 
-<A NAME="IDX6361"></A>
-<CODE>java_connect/2</CODE>, 
-<A NAME="IDX6362"></A>
-<CODE>java_disconnect/0</CODE>, 
-<A NAME="IDX6363"></A>
-<CODE>java_use_module/1</CODE>, 
-<A NAME="IDX6364"></A>
-<CODE>java_create_object/2</CODE>, 
-<A NAME="IDX6365"></A>
-<CODE>java_delete_object/1</CODE>, 
-<A NAME="IDX6366"></A>
-<CODE>java_invoke_method/2</CODE>, 
-<A NAME="IDX6367"></A>
-<CODE>java_get_value/2</CODE>, 
-<A NAME="IDX6368"></A>
-<CODE>java_set_value/2</CODE>, 
-<A NAME="IDX6369"></A>
-<CODE>java_add_listener/3</CODE>, 
-<A NAME="IDX6370"></A>
-<CODE>java_remove_listener/3</CODE>.
+<A NAME="IDX6874"></A>
+<CODE>asserta_fact/1</CODE>, 
+<A NAME="IDX6875"></A>
+<CODE>assertz_fact/1</CODE>, 
+<A NAME="IDX6876"></A>
+<CODE>call/1</CODE>, 
+<A NAME="IDX6877"></A>
+<CODE>current_fact/1</CODE>, 
+<A NAME="IDX6878"></A>
+<CODE>retract_fact/1</CODE>.
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Multifiles:</EM>
 
-<A NAME="IDX6371"></A>
-<CODE>machine_name/1</CODE>, 
-<A NAME="IDX6372"></A>
-<CODE>java_constructor/1</CODE>, 
-<A NAME="IDX6373"></A>
-<CODE>java_object/1</CODE>, 
-<A NAME="IDX6374"></A>
-<CODE>java_event/1</CODE>, 
-<A NAME="IDX6375"></A>
-<CODE>prolog_goal/1</CODE>, 
-<A NAME="IDX6376"></A>
-<CODE>java_field/1</CODE>, 
-<A NAME="IDX6377"></A>
-<CODE>java_method/1</CODE>.
+<A NAME="IDX6879"></A>
+<CODE>$factsdb$cached_goal/3</CODE>, 
+<A NAME="IDX6880"></A>
+<CODE>persistent_dir/2</CODE>, 
+<A NAME="IDX6881"></A>
+<CODE>file_alias/2</CODE>.
 
 </UL>
 
@@ -248,22 +112,12 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6378"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX6379"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX6380"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX6381"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6382"></A>
+<A NAME="IDX6882"></A>
+<CODE>counters</CODE>, 
+<A NAME="IDX6883"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX6383"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6384"></A>
-<CODE>javall/javasock</CODE>, 
-<A NAME="IDX6385"></A>
-<CODE>system</CODE>.
+<A NAME="IDX6884"></A>
+<CODE>persdb/persdbcache</CODE>.
 
 </UL>
 
@@ -273,452 +127,308 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 
 
-<H2><A NAME="SEC631" HREF="ciao_toc.html#TOC631">Documentation on exports (<CODE>javart</CODE>)</A></H2>
+<H2><A NAME="SEC628" HREF="ciao_toc.html#TOC628">Documentation on exports (<CODE>factsdb_rt</CODE>)</A></H2>
 <P>
-<A NAME="IDX6386"></A>
-<A NAME="IDX6387"></A>
+<A NAME="IDX6885"></A>
+<A NAME="IDX6886"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_start/0:</B>
-<DD><A NAME="IDX6388"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta_fact/1:</B>
+<DD><A NAME="IDX6887"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6389"></A>
-<A NAME="IDX6390"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_start/1:</B>
-<DD><A NAME="IDX6391"></A>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_start(+classpath)</CODE>
+<STRONG>Usage:</STRONG> <CODE>asserta_fact(Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Starts the Java server on the local machine, connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
+<LI><EM>Description:</EM> Version of
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX6888"></A>
+<CODE>data_facts:asserta_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is added at the beginning of the definition of the corresponding predicate. Therefore, before all the facts filed in the DB file for the predicate. The predicate concerned must be declared as 
+<A NAME="IDX6889"></A>
+<CODE>facts</CODE>; if it is not, then 
+<A NAME="IDX6890"></A>
+<CODE>data_facts:asserta_fact/1</CODE> is used. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>+classpath</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6392"></A>
-<A NAME="IDX6393"></A>
+<A NAME="IDX6891"></A>
+<A NAME="IDX6892"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_start/2:</B>
-<DD><A NAME="IDX6394"></A>
+<DT><span class="define">PREDICATE:</span> <B>assertz_fact/1:</B>
+<DD><A NAME="IDX6893"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_start(+machine_name,+classpath)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz_fact(Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Starts the Java server in machine_name (using rsh!), connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
+<LI><EM>Description:</EM> Version of
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX6894"></A>
+<CODE>data_facts:assertz_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is added at the end of the definition of the corresponding predicate. Therefore, after all the facts filed in the DB file for the predicate. The predicate concerned must be declared as 
+<A NAME="IDX6895"></A>
+<CODE>facts</CODE>; if it is not, then 
+<A NAME="IDX6896"></A>
+<CODE>data_facts:assertz_fact/1</CODE> is used. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>+machine_name</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+classpath</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6395"></A>
-<A NAME="IDX6396"></A>
+<A NAME="IDX6897"></A>
+<A NAME="IDX6898"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_stop/0:</B>
-<DD><A NAME="IDX6397"></A>
+<DT><span class="define">PREDICATE:</span> <B>call/1:</B>
+<DD><A NAME="IDX6899"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<EM>Meta-predicate</EM> with arguments: <CODE>call(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>call(Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Stops the interface terminating the threads that handle the socket connection, and finishing the Java interface server if it was started using java_start/n.
+<LI><EM>Description:</EM> Same as
 
+<A NAME="IDX6900"></A>
+<CODE>current_fact/1</CODE> if the predicate concerned is declared as 
+<A NAME="IDX6901"></A>
+<CODE>facts</CODE>. If it is not, an exception is raised. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6398"></A>
-<A NAME="IDX6399"></A>
+<A NAME="IDX6902"></A>
+<A NAME="IDX6903"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_connect/2:</B>
-<DD><A NAME="IDX6400"></A>
+<DT><span class="define">PREDICATE:</span> <B>current_fact/1:</B>
+<DD><A NAME="IDX6904"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_connect(+machine_name,+port_number)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>current_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>current_fact(Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Connects to an existing Java interface server running in machine_name and listening at port port_number. To connect to a Java server located in the local machine, use 'localhost' as machine_name.
+<LI><EM>Description:</EM> Version of
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX6905"></A>
+<CODE>data_facts:current_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is unified with an actual fact in the current definition of the corresponding predicate. Therefore, with a fact previously asserted or filed in the DB file for the predicate, if it has not been retracted. The predicate concerned must be declared as 
+<A NAME="IDX6906"></A>
+<CODE>facts</CODE>; if it is not, then 
+<A NAME="IDX6907"></A>
+<CODE>data_facts:current_fact/1</CODE> is used. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>+machine_name</CODE> is the network name of a machine.
- (<CODE>javart:machine_name/1</CODE>)
-
-<CODE>+port_number</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6401"></A>
-<A NAME="IDX6402"></A>
+<A NAME="IDX6908"></A>
+<A NAME="IDX6909"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_disconnect/0:</B>
-<DD><A NAME="IDX6403"></A>
+<DT><span class="define">PREDICATE:</span> <B>retract_fact/1:</B>
+<DD><A NAME="IDX6910"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retract_fact(Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Closes the connection with the java process, terminating the threads that handle the connection to Java. This predicate does not terminate the Java process (this is the disconnection procedure for Java servers not started from Prolog). This predicate should be used when the communication is established with java_connect/2.
+<LI><EM>Description:</EM> Version of
 
+<A NAME="IDX6911"></A>
+<CODE>data_facts:retract_fact/1</CODE> for filed predicates. The current instance of <CODE>Fact</CODE> is interpreted as a fact and is unified with an actual fact in the current definition of the corresponding predicate; such a fact is deleted from the predicate definition. This is true even for the facts filed in the DB file for the predicate; but these are NOT deleted from the file (unless the predicate is persistent). The predicate concerned must be declared as 
+<A NAME="IDX6912"></A>
+<CODE>facts</CODE>; if it is not, then 
+<A NAME="IDX6913"></A>
+<CODE>data_facts:retract_fact/1</CODE> is used. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC629" HREF="ciao_toc.html#TOC629">Documentation on multifiles (<CODE>factsdb_rt</CODE>)</A></H2>
+<P>
+<A NAME="IDX6914"></A>
+<A NAME="IDX6915"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>$factsdb$cached_goal/3:</B>
+<DD><A NAME="IDX6916"></A>
+
+
+<P>
+<CODE>$factsdb$cached_goal(Spec, Spec, Key)</CODE>
+
+
+<P>
+Predicate <CODE>Spec</CODE> is filed within database <CODE>Key</CODE>. Programmers should not define this predicate directly in the program.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6917"></A>
+<A NAME="IDX6918"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>persistent_dir/2:</B>
+<DD><A NAME="IDX6919"></A>
+
+
+<P>
+See 
+<A NAME="IDX6920"></A>
+<CODE>persdb</CODE>.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6921"></A>
+<A NAME="IDX6922"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_alias/2:</B>
+<DD><A NAME="IDX6923"></A>
+
+
+<P>
+See 
+<A NAME="IDX6924"></A>
+<CODE>symfnames</CODE>. This predicate is used only if 
+<A NAME="IDX6925"></A>
+<CODE>persistent_dir/2</CODE> fails.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC630" HREF="ciao_toc.html#TOC630">Documentation on internals (<CODE>factsdb_rt</CODE>)</A></H2>
+<P>
+<A NAME="IDX6926"></A>
+<A NAME="IDX6927"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>facts/2:</B>
+<DD><A NAME="IDX6928"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>facts(PredDesc, Keyword)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares the predicate <CODE>PredDesc</CODE> as filed. <CODE>Keyword</CODE> is the
+
+<A NAME="IDX6929"></A>
+identifier of a location where the file DB for the predicate is kept. The location <CODE>Keyword</CODE> is described in the 
+<A NAME="IDX6930"></A>
+<CODE>file_alias</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
+ (<CODE>persdbcache:keyword/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6404"></A>
-<A NAME="IDX6405"></A>
+<A NAME="IDX6931"></A>
+<A NAME="IDX6932"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>machine_name/1:</B>
-<DD><A NAME="IDX6406"></A>
+<DT><span class="define">PREDICATE:</span> <B>keyword/1:</B>
+<DD><A NAME="IDX6933"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>machine_name(X)</CODE>
+See 
+<A NAME="IDX6934"></A>
+<CODE>persdbrt</CODE>. The same conventions for location of DB files apply in both packages.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC631" HREF="ciao_toc.html#TOC631">Known bugs and planned improvements (<CODE>factsdb_rt</CODE>)</A></H2>
+
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is the network name of a machine.
 
+<LI>
+
+The DB files for persistent predicates have to be used as such from the beginning. Using a DB file for a filed predicate first, and then using it also when making the predicate persistent won't work. Nor the other way around: using a DB file for a persistent predicate first, and then using it also when making the predicate filed.
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6407"></A>
-<A NAME="IDX6408"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_constructor/1:</B>
-<DD><A NAME="IDX6409"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_constructor(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6410"></A>
-<A NAME="IDX6411"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_object/1:</B>
-<DD><A NAME="IDX6412"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_object(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6413"></A>
-<A NAME="IDX6414"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_event/1:</B>
-<DD><A NAME="IDX6415"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_event(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6416"></A>
-<A NAME="IDX6417"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>prolog_goal/1:</B>
-<DD><A NAME="IDX6418"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_goal(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6419"></A>
-<A NAME="IDX6420"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_field/1:</B>
-<DD><A NAME="IDX6421"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_field(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6422"></A>
-<A NAME="IDX6423"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_use_module/1:</B>
-<DD><A NAME="IDX6424"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6425"></A>
-<A NAME="IDX6426"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_create_object/2:</B>
-<DD><A NAME="IDX6427"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_create_object(+java_constructor,-java_object)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> New java object creation. The constructor must be a compound term as defined by its type, with the full class name as functor (e.g., 'java.lang.String'), and the parameters passed to the constructor as arguments of the structure.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_constructor</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
- (<CODE>javart:java_constructor/1</CODE>)
-
-<CODE>-java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6428"></A>
-<A NAME="IDX6429"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_delete_object/1:</B>
-<DD><A NAME="IDX6430"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_delete_object(+java_object)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Java object deletion. It removes the object given as argument from the Java object table.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6431"></A>
-<A NAME="IDX6432"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_invoke_method/2:</B>
-<DD><A NAME="IDX6433"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_invoke_method(+java_object,+java_method)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Invokes a java method on an object. Given a Java object reference, invokes the method represented with the second argument.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_method</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
- (<CODE>javart:java_method/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6434"></A>
-<A NAME="IDX6435"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_method/1:</B>
-<DD><A NAME="IDX6436"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_method(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6437"></A>
-<A NAME="IDX6438"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_get_value/2:</B>
-<DD><A NAME="IDX6439"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_get_value(+java_object,+java_field)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the value of a field. Given a Java object as first argument, it instantiates the variable given as second argument. This field must be uninstantiated in the java_field functor, or this predicate will fail.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_field</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
- (<CODE>javart:java_field/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6440"></A>
-<A NAME="IDX6441"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_set_value/2:</B>
-<DD><A NAME="IDX6442"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_set_value(+java_object,+java_field)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Sets the value of a Java object field. Given a Java object reference, it assigns the value included in the java_field compound term. The field value in the java_field structure must be instantiated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_field</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
- (<CODE>javart:java_field/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6443"></A>
-<A NAME="IDX6444"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_add_listener/3:</B>
-<DD><A NAME="IDX6445"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>java_add_listener(?,?,goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_add_listener(+java_object,+java_event,+prolog_goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Adds a listener to an event on an object. Given a Java object reference, it registers the goal received as third argument to be launched when the Java event raises.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_event</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
- (<CODE>javart:java_event/1</CODE>)
-
-<CODE>+prolog_goal</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
- (<CODE>javart:prolog_goal/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6446"></A>
-<A NAME="IDX6447"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_remove_listener/3:</B>
-<DD><A NAME="IDX6448"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_remove_listener(+java_object,+java_event,+prolog_goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It removes a listener from an object event queue. Given a Java object reference, goal registered for the given event is removed.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_event</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
- (<CODE>javart:java_event/1</CODE>)
-
-<CODE>+prolog_goal</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
- (<CODE>javart:prolog_goal/1</CODE>)
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

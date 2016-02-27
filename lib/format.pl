@@ -15,6 +15,8 @@
 % ------------------------------------------------------------------------
 :- comment(title,"Formatted output").
 
+:- comment(author, "The CLIP Group").
+
 :- comment(module,"The @tt{format} family of predicates is due to 
 	Quintus Prolog. They act as a Prolog interface to the C 
 	@tt{stdio} function @tt{printf()}, allowing formatted output.
@@ -361,9 +363,11 @@ format_control(C) :- atm(C).
 %				arguments
 %
 
-:- pred format(format_control(Format),Arguments)
+:- true pred format(format_control(Format),Arguments)
    # "Print @var{Arguments} onto current output stream according to format
       @var{Format}.".
+
+:- true comp format(C,A) + native(format(C,A)).
 
 format(Control, _) :-
         var(Control), !,
@@ -372,9 +376,11 @@ format(Control, Arguments) :- format1(Control, Arguments), !.
 format(Control, Arguments) :-
 	throw(error(invalid_arguments(format(Control, Arguments)), format/2)).
 
-:- pred format(+Stream,format_control(Format),Arguments)
+:- true pred format(+Stream,format_control(Format),Arguments)
    # "Print @var{Arguments} onto @var{Stream} according to format
       @var{Format}.".
+
+:- true comp format(S,C,A) + native(format(S,C,A)).
 
 format(_, Control, _) :-
         var(Control), !,
@@ -573,6 +579,9 @@ putn_list(N, [C|Chars]) :-
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+212,2003/12/21,02:18*19+'CET'), "Added comment
+   author.  (Edison Mera)").
 
 :- comment(version(1*3+27,1999/07/09,20:25*50+'MEST'), "Changed title,
    as texinfo does not allow ':' in titles.  (Daniel Cabeza Gras)").

@@ -7,9 +7,9 @@
 #define kCells   1024
 
 
-#define STATICMAXATOM 512 /* Do not create very long atoms inside the engine */
+#define STATICMAXATOM 1024     /* Avoid very long atoms inside the engine */
 
-#define USE_DYNAMIC_ATOM_SIZE
+#define USE_DYNAMIC_ATOM_SIZE                               /* By default */
 
 #if defined(USE_DYNAMIC_ATOM_SIZE) 
 # define MAXATOM  Atom_Buffer_Length

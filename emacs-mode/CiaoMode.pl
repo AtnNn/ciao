@@ -1,5 +1,5 @@
 % -----------------------------------------------------------
-% Other comments, acknowledgements and changelog/version info 
+% Other comments, acknowledgments and changelog/version info 
 % -----------------------------------------------------------
 
 :- use_package([assertions]).
@@ -38,7 +38,223 @@
 
 main.
 
-:- comment(version_maintenance,dir('../version/')).
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+323,2004/03/08,18:37*17+'CET'), "Errors now
+   also located in source files with no suffix, or .pls etc.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+281,2004/02/02,15:51*32+'CET'), "Fixed problem
+   with C-c d when module has a name with single quotes (extra set of
+   quotes not added anymore).  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+280,2004/02/02,15:51*10+'CET'), "Better
+   highlighting when newlines present in commands. Persistent
+   declarations now also highlighted. (Manuel Hermenegildo)").
+
+:- comment(version(1*9+279,2004/02/02,15:50*46+'CET'), "Eliminated
+   some spurious messages left over from debugging.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+278,2004/02/02,15:48*21+'CET'), "Fixed problem
+   due to replace-regexp-in-string not existing in older Emacs
+   versions (pre 20.7.1). This should also fix some problems of the
+   development environment in Windows. (Manuel Hermenegildo)").
+
+:- comment(version(1*9+102,2003/09/07,18:04*22+'CEST'), "Fixed minor
+   syntax problem in ciao.el file (thanks to @index{Sergey Plis}
+   @email{pliz@cs.unm.edu}).  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+95,2003/08/04,18:59*47+'CEST'), "Minor mod to
+   allow C-cC-v to work with ciaopp-1.0, which uses Ciao prompt.
+   (Manuel Hermenegildo)").
+
+:- comment(version(1*9+94,2003/08/04,17:53*02+'CEST'), "Fixed minor
+   bug when recognizing that inferior mode should be used.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+88,2003/07/18,15:58*24+'CEST'), "Added warning
+   if attempting to put a process buffer in ciao-mode (recommending to
+   use ciao-inferior-mode instead(.  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+82,2003/05/27,01:07*11+'CEST'), "Minor changes
+   to improve xemacs compatibility (some, thanks to @index{Armin
+   Rigo}).  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+73,2003/04/04,14:11*41+'CEST'), "Added new
+   icons in environment for preprocessor. Also, when showing output
+   after preprocessing the cursor is left in the original window.
+   (Manuel Hermenegildo)").
+
+:- comment(version(1*9+61,2003/02/25,12:24*25+'CET'), "Several changes
+   to programming environment/emacs-mode:
+
+   @begin{itemize}
+
+   @item (Experimental) Reorganized menus: all help and customization
+         now grouped in separate menus. No menu for deprecated
+         @emph{traditional} commands any more.
+
+   @item Visiting the corresponding file and marking the location is
+         now not done by default for messages of type NOTE (but it can
+         optionally be turned on). It is set to nil by default because
+         sometimes the user prefers not to take any action with
+         respect to these messages (for example, many come from the
+         documenter, indicating that adding certain declarations the
+         documentation would be improved).
+
+   @item Many other commands (make-exec, make-po etc.) now also locate
+         errors automatically and optionally.
+
+   @item C-cV (Preprocess buffer and show output for ciaopp) works
+         again, and improved. Improved also behavior of standard
+         ciao-show-preprocessor-output when no output file was
+         produced by preprocessor. Unified several overlapping
+         functions.
+
+   @item Informative messages given now when looking for next
+         changelog entry and at last entry.
+
+   @item Minor fixes to the handling of version maintenance (insertion
+         of version maintenance directives in empty files and help
+         strings improved).
+
+   @item LPdoc error location now starts correctly the first time
+         around (was bug). Systems files now located properly.
+
+   @item Better compatibility with @apl{xemacs} (thanks to
+         @index{Armin Rigo} for some related patches).
+
+   @item Eliminated almost all emacs compilation warnings (useful for
+         detecting bugs when making code changes).
+
+   @end{itemize}
+
+  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+54,2003/01/17,23:55*53+'CET'), "
+   @begin{itemize}
+
+   @item Major improvement to customizability of faces for
+         syntax-based highlighting. Faces now divided in conceptual
+         classes, and customizable individually.
+
+   @item Greatly improved syntax-based coloring (better regexps). 
+
+   @item Syntax-based coloring now work also on ascii terminals for
+         newer versions of emacs .
+
+   @item Literal-level assertions now correctly colored, even if they
+         span several lines or contain disjunctions.
+
+   @item Added a customizable variable @tt{ciao-user-directives} which
+         allows listing user-defined directives, to be colored in
+         special face.
+
+   @item Separated directives into several more classes, with separate
+         faces.
+
+   @item Syntax errors now colored also in inferior buffers.
+
+   @item Customizable faces now appear in the documentation.
+
+   @item Added new tool bar button (and binding) to refontify
+         block/buffer. Better definitions of what is a block for
+         syntax-based coloring to work on.
+
+   @item It is now possible to select through customize whether
+         location of any errors produced when running Ciao tools
+         (loading or preprocessing code, running the documenter, etc.)
+         will be initiated automatically. I.e., whether after running
+         a command, the system will automatically highlight any error
+         messages and the corresponding areas in source files if
+         possible.
+
+   @item Error marks now cleared automatically also when generating
+         docs. Better clearing in other cases.
+
+   @item It is now possible to have error location in source start
+         automatically after running lpdoc. Other fixes to hooks in
+         lpdoc buffer.
+
+   @item Fixed problem when loading in xemacs due to missing function
+         in newer versions.
+
+   @item Fixed problem with location of manuals in xemacs because of
+         changes in number of arguments.
+
+   @item Added portable image insertion primitives with defaults,
+         which work in emacs and xemacs. As a result image insertion
+         now works in xemacs also (hooray!).
+
+   @item Icons are now installed in a separate dir. 
+
+   @end{itemize}
+   (Manuel Hermenegildo)").
+
+:- comment(version(1*9+43,2002/12/16,10:48*42+'CET'),
+   "ciao-module-name not interactive any more (was an error).  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+37,2002/12/11,17:20*36+'CET'), "Fixed bug in
+   filepaths with \\ when loading a main file.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+35,2002/12/08,10:07*34+'CET'), "Color names are
+   uniquified in emacs mode.  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+31,2002/11/21,12:41*47+'CET'), "Reorganized
+   source of emacs mode. Icons now in a separate directory.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+18,2002/10/20,18:33*20+'CEST'), "Improved
+   handling of @tt{.cgi} files by debugger.  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+17,2002/10/13,12:29*38+'CEST'), "Several
+   improvements to emacs-based environment:
+
+   @begin{itemize} 
+
+   @item Improvements so that paths are compatible with newer versions
+         of @apl{cygwin} in Windows.
+
+   @item Improved splash procedure (ciao-startup), with sample
+         file. Useful for starting Ciao by double-clicking on an icon.
+
+   @item Several improvements to preprocessor buffer.
+
+   @item Paths in @file{GlobalChangeLog} are now relative (long
+         needed!). Paths in previous earlier @file{GlobalChangeLog}
+         files should be changed to relative paths by hand.
+
+   @item @file{GlobalChangeLog} now set in Ciao mode by default.
+
+   @item Elimination of error/debug marks improved.
+
+   @end{itemize}
+
+  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+7,2002/05/26,12:45*28+'CEST'), "Easier now to
+   adapt to different prompts in inferior processes. In particular, a
+   regexp describing the prompt used in OS shells can now be set or
+   modified through the standard customization. An important
+   consequence is that error location in source files now also works
+   when running applications which produce Ciao-style error messages
+   in inferior shells (such as LPdoc, the embedded debugger, or any
+   user application that outputs messages in the corresponding
+   format). (Manuel Hermenegildo)").
+
+:- comment(version(1*9+6,2002/05/26,12:35*54+'CEST'), "New entry point
+   (@tt{ciao-startup}, with no arguments) available, useful for
+   calling ""The Ciao Programming Environment"" from a desktop icon, by
+   making the icon call, for example, @tt{emacs -q -l
+   /usr/local/lib/ciao/DOTemacs.el -f ciao-startup} (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+5,2002/05/26,12:34*06+'CEST'), "Variables
+   @tt{ciao-library-path} / @tt{CIAOLIB} can now be set through the
+   customization panel. Also, the scope of these has been improved.
+   (Manuel Hermenegildo)").
 
 :- comment(version(1*7+219,2002/05/15,22:46*11+'CEST'), "Errors (if
    any) are now located automatically in source after coad loading and
@@ -551,7 +767,7 @@ main.
    compile-prolog to recompile entire directory.").
  
 :- comment(version(0*1+2,1992/03/20,00:0*00+'CET'), "Johan Bevemyr's
-   adaption to the comint package. Change from sicstus0.7 to sicstus2.1.
+   adaptation to the comint package. Change from sicstus0.7 to sicstus2.1.
    Treat where specially in indent-for-new-clause.").
 
  

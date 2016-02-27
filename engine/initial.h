@@ -200,6 +200,8 @@ extern struct definition *address_peek;
 extern struct definition *address_peek2;
 extern struct definition *address_skip;
 extern struct definition *address_skip2;
+extern struct definition *address_skip_line;
+extern struct definition *address_skip_line1;
 extern struct definition *address_error;
 
 extern BOOL nd_repeat PROTO((struct worker *w));

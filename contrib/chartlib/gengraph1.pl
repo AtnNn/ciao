@@ -1,5 +1,7 @@
 :- module(gengraph1,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
 :- export(graph_b1/9).
 :- export(graph_b1/13).
 :- export(graph_w1/9).
@@ -29,6 +31,7 @@
 :- use_module(library(lists)).  
 :- use_module(library(random)).
 
+:- comment(title,"Depic line graph").
 
 :- comment(module,"This module defines predicates which depict line graph
 	and scatter graph widgets. All eigth predicates exported by this
@@ -1612,4 +1615,15 @@ smooth('step').
 
 
 
+
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+269,2004/01/01,14:17*43+'CET'), "Added comment
+   title.  (Edison Mera)").
+
+:- comment(version(1*9+161,2003/12/04,17:39*30+'CET'), "Added author
+   info (Manuel Carro)").
 

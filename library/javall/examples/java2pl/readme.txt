@@ -1,11 +1,12 @@
 Java-to-Prolog interface Examples:
 
-SIMPLE EXAMPLE
+SIMPLE EXAMPLES
 --------------
-example1.java
+* example0.java
 
-This example just starts the Prolog server to get several solutions of
-a simple goal (append(X,Y,[a,b])), and prints them to a simple window.
+This example just starts the Prolog server to get all solutions of
+a simple goal (append(X,Y,[a,b])), and prints them to standard
+output. 
 
 To start this example, type:
 
@@ -22,6 +23,17 @@ Important: be sure plserver.pl is compiled using the following
 command:
 
   ciaoc plserver.pl
+
+
+
+* example1.java
+
+This example is like example0, but instead of printing to standard
+output, opens a simple Java window and prints there two solutions of
+the same goal.
+
+The example can be run using the same commands than in previous
+example. 
 
 N-QUEENS PROBLEM
 ----------------

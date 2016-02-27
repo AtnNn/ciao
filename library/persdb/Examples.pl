@@ -2,6 +2,8 @@
 
 :- comment(title,"Using the persdb library").
 
+:- comment(author,"The CLIP Group").
+
 :- comment(module,"Through the following examples we will try to
 	illustrate the two mains ways of declaring and using
 	persistent predicates: statically (the preferred method) and
@@ -48,3 +50,9 @@
 ").
 
 main.
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+232,2003/12/22,18:04*00+'CET'), "Added comment
+   author.  (Edison Mera)").

@@ -1,29 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - menubutton_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - menu_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC540" HREF="ciao_toc.html#TOC540">menubutton_class (library)</A></H1>
+<H1><A NAME="SEC551" HREF="ciao_toc.html#TOC551">menu_class (library)</A></H1>
 <P>
-<A NAME="IDX5447"></A>
+<A NAME="IDX6264"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Montserrat Urraca.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#133 (2003/12/4, 17:33:46 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_129.html#SEC541">Usage and interface (menubutton_class)</A>
-<LI><A HREF="ciao_129.html#SEC542">Documentation on exports (menubutton_class)</A>
+<LI><A HREF="ciao_129.html#SEC552">Usage and interface (menu_class)</A>
+<LI><A HREF="ciao_129.html#SEC553">Documentation on exports (menu_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC541" HREF="ciao_toc.html#TOC541">Usage and interface (<CODE>menubutton_class</CODE>)</A></H2>
+<H2><A NAME="SEC552" HREF="ciao_toc.html#TOC552">Usage and interface (<CODE>menu_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(menubutton_class)).</CODE>
+<CODE>:- use_module(library(menu_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,8 +52,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5448"></A>
-<CODE>menu_name/1</CODE>.
+<A NAME="IDX6265"></A>
+<CODE>name_menu/1</CODE>, 
+<A NAME="IDX6266"></A>
+<CODE>menu_data/1</CODE>, 
+<A NAME="IDX6267"></A>
+<CODE>label_value/1</CODE>, 
+<A NAME="IDX6268"></A>
+<CODE>tearoff_value/1</CODE>, 
+<A NAME="IDX6269"></A>
+<CODE>tcl_name/1</CODE>, 
+<A NAME="IDX6270"></A>
+<CODE>creation_options/1</CODE>, 
+<A NAME="IDX6271"></A>
+<CODE>creation_options_entry/1</CODE>, 
+<A NAME="IDX6272"></A>
+<CODE>creation_menu_name/1</CODE>.
 
 </UL>
 
@@ -52,9 +78,17 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5449"></A>
+<A NAME="IDX6273"></A>
 <CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX5450"></A>
+<A NAME="IDX6274"></A>
+<CODE>tcltk_obj/window_class</CODE>, 
+<A NAME="IDX6275"></A>
+<CODE>tcltk_obj/menu_entry_class</CODE>, 
+<A NAME="IDX6276"></A>
+<CODE>tcltk/tcltk</CODE>, 
+<A NAME="IDX6277"></A>
+<CODE>tcltk/tcltk_low_level</CODE>, 
+<A NAME="IDX6278"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -65,20 +99,42 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 
 
-<H2><A NAME="SEC542" HREF="ciao_toc.html#TOC542">Documentation on exports (<CODE>menubutton_class</CODE>)</A></H2>
+<H2><A NAME="SEC553" HREF="ciao_toc.html#TOC553">Documentation on exports (<CODE>menu_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5451"></A>
-<A NAME="IDX5452"></A>
+<A NAME="IDX6279"></A>
+<A NAME="IDX6280"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>menu_name/1:</B>
-<DD><A NAME="IDX5453"></A>
+<DT><span class="define">PREDICATE:</span> <B>name_menu/1:</B>
+<DD><A NAME="IDX6281"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>menu_name(+Menu)</CODE>
+<STRONG>Usage:</STRONG> <CODE>name_menu(+Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when menubutton is clicked.
+<LI><EM>Description:</EM> Indicates the <CODE>Name</CODE> of the menubutton associated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Name</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6282"></A>
+<A NAME="IDX6283"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>menu_data/1:</B>
+<DD><A NAME="IDX6284"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>menu_data(+Menu)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when cascade entry is invoked.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -87,10 +143,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>menu_name(-Menu)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>menu_data(-Menu)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the name of the <CODE>Menu</CODE> asociated to the menubutton.
+<LI><EM>Description:</EM> Gets the <CODE>Menu</CODE> asociated to the cascade entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -100,7 +156,163 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 </DL>
 
+<P>
+<A NAME="IDX6285"></A>
+<A NAME="IDX6286"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>label_value/1:</B>
+<DD><A NAME="IDX6287"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>label_value(+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> specifies a string to be displayed as an identifying label in the menu entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>label_value(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the string which identify the menu entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6288"></A>
+<A NAME="IDX6289"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tearoff_value/1:</B>
+<DD><A NAME="IDX6290"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>tearoff_value(+Tearoff)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Tearoff</CODE> must have a proper boolean value, which specifies wheter or not the menu should include a tear-off entry at the top. Defaults to 1.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Tearoff</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>tearoff_value(-Tearoff)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Tearoff</CODE> value
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Tearoff</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6291"></A>
+<A NAME="IDX6292"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcl_name/1:</B>
+<DD><A NAME="IDX6293"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcl_name(-Widget)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies the name of the <CODE>Widget</CODE>. In this case is menu.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Widget</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6294"></A>
+<A NAME="IDX6295"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>creation_options/1:</B>
+<DD><A NAME="IDX6296"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>creation_options(-OptionsList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a list with the options supported by the menu.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-OptionsList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6297"></A>
+<A NAME="IDX6298"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>creation_options_entry/1:</B>
+<DD><A NAME="IDX6299"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>creation_options_entry(-OptionsList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a list with the options of the menu entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-OptionsList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6300"></A>
+<A NAME="IDX6301"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>creation_menu_name/1:</B>
+<DD><A NAME="IDX6302"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>creation_menu_name(-OptionsList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a list with the name of the menu.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-OptionsList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

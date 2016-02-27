@@ -1,50 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Delaying predicates (freeze)</TITLE>
+<TITLE>The Ciao Prolog System               - Terms with named arguments -records/feature terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC408" HREF="ciao_toc.html#TOC408">Delaying predicates (freeze)</A></H1>
+<H1><A NAME="SEC408" HREF="ciao_toc.html#TOC408">Terms with named arguments -records/feature terms</A></H1>
 <P>
-<A NAME="IDX4395"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
+<A NAME="IDX5255"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza and Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#72 (2000/3/19, 19:9:14 CET)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-This library offers a simple implementation of 
-<A NAME="IDX4396"></A>
-<CODE>freeze/2</CODE>, 
-<A NAME="IDX4397"></A>
-<CODE>frozen/2</CODE>, etc. [Col82,Nai85,Nai91,Car87] based on the use of attributed variables [Hol92,Hol90].
+<STRONG>Version of last change:</STRONG> 1.7#118 (2001/8/28, 15:7:22 CEST)
+
+
+<P>
+<A NAME="IDX5256"></A>
+<A NAME="IDX5257"></A>
+This library package provides syntax which allows accessing term arguments by name (these terms are sometimes also referred to as 
+<A NAME="IDX5258"></A>
+<A NAME="IDX5259"></A>
+<EM>records</EM>, and are also similar to 
+<A NAME="IDX5260"></A>
+<A NAME="IDX5261"></A>
+<EM>feature terms</EM> [AKPS92]).
 
 
 
 <UL>
-<LI><A HREF="ciao_99.html#SEC409">Usage and interface (freeze)</A>
-<LI><A HREF="ciao_99.html#SEC410">Documentation on exports (freeze)</A>
-<LI><A HREF="ciao_99.html#SEC411">Documentation on multifiles (freeze)</A>
+<LI><A HREF="ciao_99.html#SEC409">Usage and interface (argnames)</A>
+<LI><A HREF="ciao_99.html#SEC410">Documentation on new declarations (argnames)</A>
+<LI><A HREF="ciao_99.html#SEC411">Other information (argnames)</A>
+<LI><A HREF="ciao_99.html#SEC414">Known bugs and planned improvements (argnames)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC409" HREF="ciao_toc.html#TOC409">Usage and interface (<CODE>freeze</CODE>)</A></H2>
+<H2><A NAME="SEC409" HREF="ciao_toc.html#TOC409">Usage and interface (<CODE>argnames</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,28 +57,25 @@ This library offers a simple implementation of
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(freeze)).</CODE>
+<CODE>:- use_package(argnames).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
+<CODE>:- module(...,...,[argnames]).</CODE>
 
-<UL>
+<LI><STRONG>New operators defined:</STRONG>
 
-<LI><EM>Predicates:</EM>
+<A NAME="IDX5262"></A>
+<CODE>$/2</CODE> [150,xfx], 
+<A NAME="IDX5263"></A>
+<CODE>=&#62;/2</CODE> [950,xfx], 
+<A NAME="IDX5264"></A>
+<CODE>argnames/1</CODE> [1150,fx].
 
-<A NAME="IDX4398"></A>
-<CODE>freeze/2</CODE>, 
-<A NAME="IDX4399"></A>
-<CODE>frozen/2</CODE>.
+<LI><STRONG>New declarations defined:</STRONG>
 
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX4400"></A>
-<CODE>verify_attribute/2</CODE>, 
-<A NAME="IDX4401"></A>
-<CODE>combine_attributes/2</CODE>.
-
-</UL>
+<A NAME="IDX5265"></A>
+<CODE>argnames/1</CODE>.
 
 </UL>
 
@@ -81,99 +83,211 @@ This library offers a simple implementation of
 
 
 
-<H2><A NAME="SEC410" HREF="ciao_toc.html#TOC410">Documentation on exports (<CODE>freeze</CODE>)</A></H2>
+<H2><A NAME="SEC410" HREF="ciao_toc.html#TOC410">Documentation on new declarations (<CODE>argnames</CODE>)</A></H2>
 <P>
-<A NAME="IDX4402"></A>
-<A NAME="IDX4403"></A>
+<A NAME="IDX5266"></A>
+<A NAME="IDX5267"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>freeze/2:</B>
-<DD><A NAME="IDX4404"></A>
+<DT><span class="define">DECLARATION:</span> <B>argnames/1:</B>
+<DD><A NAME="IDX5268"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>freeze(?,goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>freeze(X,Goal)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>argnames(ArgNamedPredSpec)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>X</CODE> is free delay <CODE>Goal</CODE> until <CODE>X</CODE> is non-variable.
+<LI><EM>Description:</EM> An
 
-<LI><EM>The following properties should hold at call time:</EM>
+<A NAME="IDX5269"></A>
+<CODE>argnames/1</CODE> declaration assigns names to the argument positions of terms (or literal/goals) which use a certain functor/arity. This allows referring to these arguments by their name rather than by their argument position. Sometimes, argument names may be clearer and easier to remember than argument positions, specially for predicates with many arguments. Also, in some cases this may allow adding arguments to certain predicates without having to change the code that uses them. These terms with named arguments are sometimes also referred to as 
+<A NAME="IDX5270"></A>
+records, and are also similar to 
+<A NAME="IDX5271"></A>
+feature terms [AKPS92]. For example, in order to write a program for the <EM>zebra</EM> puzzle we might declare: 
 
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+
+
+<PRE>
+:- use_package([argnames]).
+:- argnames house(color, nation, pet, drink, car).
+</PRE>
+
+which first includes the package and then assigns a name to each of the arguments of any term (or literal/goal) with <CODE>house/5</CODE> as the main functor. 
+
+Once an 
+<A NAME="IDX5272"></A>
+<CODE>argnames/1</CODE> is given, is possible to use the names to refer to the arguments of any term (or literal/goal) which has the same main functor as that of the term which appears in the 
+<A NAME="IDX5273"></A>
+<CODE>argnames/1</CODE> declaration. This is done by first writing the functor name, then the infix operator <CODE>$</CODE>, and then, between curly brackets, zero, one, or more pairs <EM>argument-name</EM><CODE>=&#62;</CODE><EM>argument-value</EM>, separated by commas (i.e., the infix operator <CODE>=&#62;</CODE> is used between the name and the value). Again, argument names must be atomic. Argument values can be any term. Arguments which are not specified are assumed to have a value of "<CODE>_</CODE>" (i.e., they are left unconstrained). 
+
+Thus, after the declaration for <CODE>house/5</CODE> in the example above, any ocurrence in that code of, for example, <CODE>house${nation=&#62;Owns_zebra,pet=&#62;zebra}</CODE> is exactly equivalent to <CODE>house(_,Owns_zebra,zebra,_,_)</CODE>. Also, <CODE>house${}</CODE> is equivalent to <CODE>house(_,_,_,_,_)</CODE>. The actual zebra puzzle specification might include a clause such as: 
+
+
+
+<PRE>
+zebra(Owns_zebra, Drinks_water, Street) :-
+   Street = [house${},house${},house${},house${},house${}],
+   member(house${nation=&#62;Owns_zebra,pet=&#62;zebra}, Street),
+   member(house${nation=&#62;Drinks_water,drink=&#62;water}, Street),
+   member(house${drink=&#62;coffee,color=&#62;green}, Street),
+   left_right(house${color=&#62;ivory}, house${color=&#62;green}, Street),
+   member(house${car=&#62;porsche,pet=&#62;snails}, Street),
+        ...
+</PRE>
+
+Any number of 
+<A NAME="IDX5274"></A>
+<CODE>argnames/1</CODE> declarations can appear in a file, one for each functor whose arguments are to be accessed by name. As with other packages, argument name declarations are <EM>local to the file</EM> in which they appear. The 
+<A NAME="IDX5275"></A>
+<CODE>argnames/1</CODE> declarations affect only program text which appears after the declaration. It is easy to make a set of declarations affect several files for example by putting such declarations in a sepatate file which is included by all such files. 
+
+An 
+<A NAME="IDX5276"></A>
+<CODE>argnames/1</CODE> declaration does not change in any way the internal representation of the associated terms and does not affect run-time efficiency. It is simply syntactic sugar. 
+
+ 
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX4405"></A>
-<A NAME="IDX4406"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>frozen/2:</B>
-<DD><A NAME="IDX4407"></A>
 
 
+<H2><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Other information (<CODE>argnames</CODE>)</A></H2>
+
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>frozen(?,goal)</CODE>.
+ 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>frozen(X,Goal)</CODE>
+Two simple examples of the use of the argnames library package follow. 
+
+
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Goal</CODE> is currently delayed until variable <CODE>X</CODE> becomes bound.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<LI><A HREF="ciao_99.html#SEC412">Using argument names in a toy database</A>
+<LI><A HREF="ciao_99.html#SEC413">Complete code for the zebra example</A>
 </UL>
 
-</DL>
 
 
-
-<H2><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Documentation on multifiles (<CODE>freeze</CODE>)</A></H2>
-<P>
-<A NAME="IDX4408"></A>
-<A NAME="IDX4409"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>verify_attribute/2:</B>
-<DD><A NAME="IDX4410"></A>
-
+<H3><A NAME="SEC412" HREF="ciao_toc.html#TOC412">Using argument names in a toy database</A></H3>
 
 <P>
-No further documentation available for this predicate.
 
+
+
+<PRE>
+:- module(simple_db,_,[argnames,assertions,regtypes]).
+:- use_module(library(aggregates)).
+
+:- comment(title,"A simple database application using argument names").
+
+:- pred product/4 :: int * string * string * int.
+
+:- argnames 
+product( id,    description,    brand,          quantity        ).
+%       ----------------------------------------------------------
+product(  1,    "Keyboard",     "Logitech",     6               ).
+product(  2,    "Mouse",        "Logitech",     5               ).
+product(  3,    "Monitor",      "Philips",      3               ).
+product(  4,    "Laptop",       "Dell",         4               ).
+
+% Compute the stock of products from a given brand.
+% Note call to findall is equivalent to: findall(Q,product(_,_,Brand,Q),L).
+brand_stock(Brand,Stock) :-
+        findall(Q,product${brand=&#62;Brand,quantity=&#62;Q},L),
+        sumlist(L,Stock).
+
+sumlist([],0).
+sumlist([X|T],S) :- 
+        sumlist(T,S1),
+        S is X + S1.
+
+</PRE>
+
+
+
+<H3><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Complete code for the zebra example</A></H3>
 
 <P>
-The predicate is <EM>multifile</EM>.
 
 
-</DL>
 
-<P>
-<A NAME="IDX4411"></A>
-<A NAME="IDX4412"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>combine_attributes/2:</B>
-<DD><A NAME="IDX4413"></A>
+<PRE>
+:- module(_,zebra/3,[argnames]).
+
+/*     There are five consecutive houses, each of a different
+color and inhabited by men of different nationalities. They each
+own a different pet, have a different favorite drink, and drive a
+different car.
+
+1.   The Englishman lives in the red house.
+2.   The Spaniard owns the dog.
+3.   Coffee is drunk in the green house.
+4.   The Ukrainian drinks tea.
+5.   The green house is immediately to the right of the ivory
+     house.
+6.   The Porsche driver owns snails.
+7.   The Masserati is driven by the man who lives in the yellow
+     house.
+8.   Milk is drunk in the middle house.
+9.   The Norwegian lives in the first house on the left.
+10.  The man who drives a Saab lives in the house next to the man
+     with the fox.
+11.  The Masserati is driven by the man in the house next to the
+     house where the horse is kept.
+12.  The Honda driver drinks orange juice.
+13.  The Japanese drives a Jaguar.
+14.  The Norwegian lives next to the blue house.
+
+The problem is: Who owns the Zebra?  Who drinks water?
+*/
+
+:- argnames house(color, nation, pet, drink, car).
+
+zebra(Owns_zebra, Drinks_water, Street) :-
+        Street = [house${},house${},house${},house${},house${}],
+        member(house${nation =&#62; Owns_zebra, pet =&#62; zebra}, Street),
+        member(house${nation =&#62; Drinks_water, drink =&#62; water}, Street),
+        member(house${nation =&#62; englishman, color =&#62; red}, Street),
+        member(house${nation =&#62; spaniard, pet =&#62; dog}, Street),
+        member(house${drink =&#62; coffee, color =&#62; green}, Street),
+        member(house${nation =&#62; ukrainian, drink =&#62; tea}, Street),
+        left_right(house${color =&#62; ivory}, house${color =&#62; green}, Street),
+        member(house${car =&#62; porsche, pet =&#62; snails}, Street),
+        member(house${car =&#62; masserati, color =&#62; yellow}, Street),
+        Street = [_, _, house${drink =&#62; milk}, _, _],
+        Street = [house${nation =&#62; norwegian}|_],
+        next_to(house${car =&#62; saab}, house${pet =&#62; fox}, Street),
+        next_to(house${car =&#62; masserati}, house${pet =&#62; horse}, Street),
+        member(house${car =&#62; honda, drink =&#62; orange_juice}, Street),
+        member(house${nation =&#62; japanese, car =&#62; jaguar}, Street),
+        next_to(house${nation =&#62; norwegian}, house${color =&#62; blue}, Street).
+
+member(X,[X|_]).
+member(X,[_|Y]) :- member(X,Y).
+
+left_right(L,R,[L,R|_]).
+left_right(L,R,[_|T]) :- left_right(L,R,T).
+
+next_to(X,Y,L) :- left_right(X,Y,L).
+next_to(X,Y,L) :- left_right(Y,X,L).
+
+</PRE>
 
 
-<P>
-No further documentation available for this predicate.
+
+<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Known bugs and planned improvements (<CODE>argnames</CODE>)</A></H2>
 
 
-<P>
-The predicate is <EM>multifile</EM>.
+<UL>
 
+<LI>
 
-</DL>
+It would be nice to add a mechanism to portray terms with named arguments in a special (user definable) way.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

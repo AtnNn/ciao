@@ -31,14 +31,21 @@ install:
 	-chmod $(EXECMODE) $(BINDIR)/$(SCRIPTSHELL)-$(VERSION)
 	-rm -f $(BINDIR)/$(TOPLEVELSHELL) 
 	-rm -f $(BINDIR)/$(SCRIPTSHELL) 
-	-ln -s $(BINDIR)/$(TOPLEVELSHELL)-$(VERSION) $(BINDIR)/$(TOPLEVELSHELL) 
-	-ln -s $(BINDIR)/$(SCRIPTSHELL)-$(VERSION) $(BINDIR)/$(SCRIPTSHELL) 
+	-ln -s $(TOPLEVELSHELL)-$(VERSION) $(BINDIR)/$(TOPLEVELSHELL) 
+	-ln -s $(SCRIPTSHELL)-$(VERSION) $(BINDIR)/$(SCRIPTSHELL) 
 
 
 uninstall:
-	/bin/rm -f $(BINDIR)/$(TOPLEVELSHELL) $(BINDIR)/$(SCRIPTSHELL) 
-	/bin/rm -f $(BINDIR)/$(TOPLEVELSHELL)-$(VERSION)
-	/bin/rm -f $(BINDIR)/$(SCRIPTSHELL)-$(VERSION)
+	@/bin/rm -f $(BINDIR)/$(TOPLEVELSHELL)-$(VERSION)
+	@/bin/rm -f $(BINDIR)/$(SCRIPTSHELL)-$(VERSION)
+# Do not remove the links if another version has already been installed
+	@if [ ! -f $(BINDIR)/$(TOPLEVELSHELL) ] ; then  \
+	/bin/rm -f $(BINDIR)/$(TOPLEVELSHELL) ; \
+	fi
+	@if [ ! -f $(BINDIR)/$(SCRIPTSHELL) ] ; then  \
+	/bin/rm -f $(BINDIR)/$(SCRIPTSHELL) ; \
+	fi
+
 
 cleanbackups:
 	/bin/rm -rf *.~

@@ -1,29 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - iso_incomplete (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Miscellaneous ISO Prolog predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC214" HREF="ciao_toc.html#TOC214">iso_incomplete (library)</A></H1>
+<H1><A NAME="SEC216" HREF="ciao_toc.html#TOC216">Miscellaneous ISO Prolog predicates</A></H1>
 <P>
-<A NAME="IDX2480"></A>
+<A NAME="IDX3006"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#304 (2004/2/17, 17:20:4 CET)
+
+
+<P>
+This module implements some miscellaneous ISO Prolog predicates.
 
 
 
 <UL>
-<LI><A HREF="ciao_42.html#SEC215">Usage and interface (iso_incomplete)</A>
-<LI><A HREF="ciao_42.html#SEC216">Documentation on exports (iso_incomplete)</A>
+<LI><A HREF="ciao_42.html#SEC217">Usage and interface (iso_misc)</A>
+<LI><A HREF="ciao_42.html#SEC218">Documentation on exports (iso_misc)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC215" HREF="ciao_toc.html#TOC215">Usage and interface (<CODE>iso_incomplete</CODE>)</A></H2>
+<H2><A NAME="SEC217" HREF="ciao_toc.html#TOC217">Usage and interface (<CODE>iso_misc</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(iso_incomplete)).</CODE>
+<CODE>:- use_module(library(iso_misc)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,12 +56,28 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2481"></A>
-<CODE>open/4</CODE>, 
-<A NAME="IDX2482"></A>
-<CODE>close/2</CODE>, 
-<A NAME="IDX2483"></A>
-<CODE>stream_property/2</CODE>.
+<A NAME="IDX3007"></A>
+<CODE>\=/2</CODE>, 
+<A NAME="IDX3008"></A>
+<CODE>once/1</CODE>, 
+<A NAME="IDX3009"></A>
+<CODE>compound/1</CODE>, 
+<A NAME="IDX3010"></A>
+<CODE>sub_atom/5</CODE>, 
+<A NAME="IDX3011"></A>
+<CODE>unify_with_occurs_check/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3012"></A>
+<CODE>between</CODE>.
 
 </UL>
 
@@ -55,50 +87,106 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC216" HREF="ciao_toc.html#TOC216">Documentation on exports (<CODE>iso_incomplete</CODE>)</A></H2>
+<H2><A NAME="SEC218" HREF="ciao_toc.html#TOC218">Documentation on exports (<CODE>iso_misc</CODE>)</A></H2>
 <P>
-<A NAME="IDX2484"></A>
-<A NAME="IDX2485"></A>
+<A NAME="IDX3013"></A>
+<A NAME="IDX3014"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>open/4:</B>
-<DD><A NAME="IDX2486"></A>
+<DT><span class="define">PREDICATE:</span> <B>\=/2:</B>
+<DD><A NAME="IDX3015"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>X \= Y</CODE>
+
+
+<P>
+<CODE>X</CODE> and <CODE>Y</CODE> are not unifiable.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2487"></A>
-<A NAME="IDX2488"></A>
+<A NAME="IDX3016"></A>
+<A NAME="IDX3017"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>close/2:</B>
-<DD><A NAME="IDX2489"></A>
+<DT><span class="define">PREDICATE:</span> <B>once/1:</B>
+<DD><A NAME="IDX3018"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>once(G)</CODE>
+
+
+<P>
+Finds the first solution of goal <CODE>G</CODE> (if any). 
+<A NAME="IDX3019"></A>
+<CODE>once/1</CODE> behaves as 
+<A NAME="IDX3020"></A>
+<CODE>call/1</CODE>, except that no further solutions are explored on backtracking.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>once(goal)</CODE>.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2490"></A>
-<A NAME="IDX2491"></A>
+<A NAME="IDX3021"></A>
+<A NAME="IDX3022"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>stream_property/2:</B>
-<DD><A NAME="IDX2492"></A>
+<DT><span class="define">PREDICATE:</span> <B>compound/1:</B>
+<DD><A NAME="IDX3023"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>compound(T)</CODE>
+
+
+<P>
+<CODE>T</CODE> is currently instantiated to a compound term.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3024"></A>
+<A NAME="IDX3025"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sub_atom/5:</B>
+<DD><A NAME="IDX3026"></A>
+
+
+<P>
+<CODE>sub_atom(Atom, Before, Length, After, Sub_atom)</CODE>
+
+
+<P>
+Is true iff atom <CODE>Atom</CODE> can be broken into three pieces, <CODE>AtomL</CODE>, <CODE>Sub_atom</CODE> and <CODE>AtomR</CODE> such that <CODE>Before</CODE> is the number of characters of the name of <CODE>AtomL</CODE>, <CODE>Length</CODE> is the number of characters of the name of <CODE>Sub_atom</CODE> and <CODE>After</CODE> is the number of characters of the name of <CODE>AtomR</CODE>
+
+
+</DL>
+
+<P>
+<A NAME="IDX3027"></A>
+<A NAME="IDX3028"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>unify_with_occurs_check/2:</B>
+<DD><A NAME="IDX3029"></A>
+
+
+<P>
+<CODE>unify_with_occurs_check(X, Y)</CODE>
+
+
+<P>
+Attempts to compute and apply a most general unifier of the two terms <CODE>X</CODE> and <CODE>Y</CODE>. Is true iff <CODE>X</CODE> and <CODE>Y</CODE> are unifiable.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

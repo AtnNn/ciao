@@ -1,4 +1,3 @@
-
 :- module(pretty_print,
 	[ pretty_print/2,
 	  pretty_print/3
@@ -8,11 +7,14 @@
 	  functions
 	]).
 
+:- use_module(library(operators)).
 :- use_module(library(vndict)).
 :- use_module(library(write)).
 
 %% -----------------------------------------------------------------------
 :- comment(title,"A simple pretty-printer for Ciao programs").
+
+:- comment(author, "The CLIP Group").
 
 :- comment(module,"This library module writes out to standard output a 
 	clause or a list of clauses.").
@@ -148,24 +150,30 @@ pp(H,K):-
 
 ppb((A,B),Tab,K) :- !,
 	ppb(A,Tab,K),
-	write(','),nl,
+	write(','), nl,
 	ppb(B,Tab,K).
 ppb('&'(A,B),Tab,K) :- !,
 	ppc(A,Tab,K),
-	write(' &'),nl,
+	write(' &'), nl,
 	ppc(B,Tab,K).
 ppb(('&'(A)),Tab,K) :- !,
 	ppb(A,Tab,K),
 	write(' &').
+ppb(true(B),Tab,K) :- !,
+	tab(Tab), write('true('), nl,
+	NTab1 is Tab+4,
+	NTab2 is Tab+7,
+	ppc(B,NTab2,K), nl,
+	tab(NTab1), write(')').
 ppb((A->B;C),Tab,K) :- !,
 	tab(Tab), write('('), nl,
 	NTab1 is Tab+2,
 	NTab2 is Tab+5,
 	ppb(A,NTab1,K),
 	write(' ->'), nl,
-	ppb(B,NTab2,K),nl,
+	ppb(B,NTab2,K), nl,
 	tab(Tab), write(';'), nl,
-	ppb(C,NTab2,K),nl,
+	ppb(C,NTab2,K), nl,
 	tab(Tab), write(')').
 ppb((A->B),Tab,K) :- !,
 	tab(Tab), write('('), nl,
@@ -173,21 +181,21 @@ ppb((A->B),Tab,K) :- !,
 	NTab2 is Tab+5,
 	ppb(A,NTab1,K),
 	write(' ->'), nl,
-	ppb(B,NTab2,K),nl,
+	ppb(B,NTab2,K), nl,
 	tab(Tab), write(')').
 ppb((A;B),Tab,K) :- !,
 	tab(Tab), write('('), nl,
 	NTab is Tab+5,
-	ppb(A,NTab,K),nl,
+	ppb(A,NTab,K), nl,
 	tab(Tab), write(';'), nl,
-	ppb(B,NTab,K),nl,
+	ppb(B,NTab,K), nl,
 	tab(Tab), write(')').
 ppb('=>'(A,B),Tab,K) :- !,
 	tab(Tab), write('('), nl,
 	NTab is Tab+5,
-	ppb(A,NTab,K),nl,
+	ppb(A,NTab,K), nl,
 	tab(Tab), write('=>'), nl,
-	ppb(B,NTab,K),nl,
+	ppb(B,NTab,K), nl,
 	tab(Tab), write(')').
 ppb(A:_,Tab,K) :- !,
  	ppg(A,Tab,K).
@@ -200,10 +208,12 @@ ppc('&'(A,B),Tab,K) :- !,
 	ppc(B,Tab,K).
 ppc(X,Tab,K) :-
 	functor(X,F,2),
-	( F=',' ; F='=>' ; F=';' ; F='->' ), !,
+%	( F=',' ; F='=>' ; F=';' ; F='->' ), !,
+% for the rest, '(' is written by ppb itself:
+	F=',' , !,
 	tab(Tab), write('('), nl,
 	NTab is Tab+1,
-	ppb(X,NTab,K),nl,
+	ppb(X,NTab,K), nl,
 	tab(Tab), write(')').
 ppc(A,Tab,K) :-
 	ppb(A,Tab,K).
@@ -219,12 +229,28 @@ ppg(ask(A,B),Tab,yes) :- !,
 	write(' & ').
 % simple or qualified atomic goal
 ppg(A,Tab,_K) :-
+	functor(A,F,_),
+	current_op(X,_,F),
+	current_op(Y,_,','),
+	X >= Y, !,
+	tab(Tab),
+	write('( '), writeq(A), write(' )').
+ppg(A,Tab,_K) :-
 	tab(Tab),
 	writeq(A).
 
-
 %% -----------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+248,2003/12/30,21:52*00+'CET'), "Added comment
+   author.  (Edison Mera)").
+
+:- comment(version(1*9+104,2003/09/17,17:36*05+'CEST'), "Take
+   operators into account.  (Francisco Bueno Carrillo)").
+
+:- comment(version(1*9+89,2003/07/21,19:43*48+'CEST'), "See 1*11+41.
+   Special care for Goal:Key out. Taken in again, for compatibility
+   with CiaoPP).  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+112,2001/06/25,17:34*09+'CEST'), "Changed
    non-default operator usages (A&).  (Daniel Cabeza Gras)").

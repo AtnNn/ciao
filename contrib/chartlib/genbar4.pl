@@ -1,5 +1,8 @@
 :- module(genbar4,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
+
 :- export(barchart4/7).
 :- export(barchart4/11).
 :- export(percentbarchart4/7).
@@ -14,6 +17,8 @@
 :- use_module(library(lists)).
 :- use_module(library(random)).
 
+
+:- comment(title, "Depict barchart widgets - 4").
 
 :- comment(module,"This module defines predicates which depict barchart
 	widgets. The three predicates exported by this module plot
@@ -471,4 +476,15 @@ xbarelement4([XValue,ForegColor,BackgColor,SPattern]):-
 
 
 
+
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+268,2004/01/01,14:15*51+'CET'), "Added comment
+   title.  (Edison Mera)").
+
+:- comment(version(1*9+160,2003/12/04,17:39*27+'CET'), "Added author
+   info (Manuel Carro)").
 

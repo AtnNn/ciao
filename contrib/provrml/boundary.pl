@@ -5,6 +5,8 @@
                     children_nodes/1],
 		    [assertions,isomodes,regtypes]).
 
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
+
 
 
 :- include(library(iso)).
@@ -17,8 +19,11 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+:- comment(version(1*9+171,2003/12/04,17:46*50+'CET'), "Added author
+info.  (Manuel Carro)").
+
 :- comment(version(0*1+1,1998/12/14,19:22*27+'MET'), "Changing place for
-   error predicates that where launched too soon, inf, inf_neg.  (Goran Smedback)").
+   error predicates that where launched too soon, inf, inf_neg.  (Goran Smedb@..{a}ck)").
 
 :- comment(version(0*1+0,1998/12/07,15:57*36+'MET'), "Documenting the file.
    (Goran Smedback)").
@@ -212,7 +217,7 @@ boundary_rotation_last(bound(_,_,Min,Max),bound(Min,Max)).
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
-%% update-version-comments: "../../version"
 %% End:
 
+:- comment(version_maintenance,dir('../../version')).
 

@@ -130,6 +130,8 @@ extern BOOL put PROTO((struct worker *w));
 extern BOOL put2 PROTO((struct worker *w));
 extern BOOL skip PROTO((struct worker *w));
 extern BOOL skip2 PROTO((struct worker *w));
+extern BOOL skip_line PROTO((struct worker *w));
+extern BOOL skip_line1 PROTO((struct worker *w));
 extern BOOL tab PROTO((struct worker *w));
 extern BOOL tab2 PROTO((struct worker *w));
 extern BOOL prolog_clearerr PROTO((struct worker *w));
@@ -141,7 +143,8 @@ extern BOOL insertz PROTO((struct worker *w));
 extern BOOL make_bytecode_object PROTO((struct worker *w));
 extern BOOL prolog_name PROTO((struct worker *w));
 extern BOOL prolog_atom_codes PROTO((struct worker *w));
-extern BOOL prolog_number_codes PROTO((struct worker *w));
+extern BOOL prolog_number_codes_2 PROTO((struct worker *w));
+extern BOOL prolog_number_codes_3 PROTO((struct worker *w));
 extern BOOL prolog_atom_length PROTO((struct worker *w));
 extern BOOL prolog_sub_atom PROTO((struct worker *w));
 extern BOOL prolog_atom_concat PROTO((struct worker *w));
@@ -319,6 +322,8 @@ BOOL stop_on_pred_calls = FALSE;            /* profile or trace -- Shared */
 #if defined(DEBUG)
 BOOL debug_gc      = FALSE;         /* debug garbage collection -- Shared */
 BOOL debug_threads = FALSE;            /* debug thread creation -- Shared */
+BOOL debug_choicepoints = FALSE;    /* debug choicepoints state -- Shared */
+BOOL debug_concchoicepoints = FALSE; /* debug conc. chpt. state -- Shared */
 BOOL debug_mem = FALSE;              /* debug memory manegement -- Shared */
 BOOL debug_conc = FALSE;                   /* debug concurrency -- Shared */
 #endif
@@ -529,6 +534,8 @@ char symbolchar[256];
  struct definition *address_peek2;
  struct definition *address_skip;
  struct definition *address_skip2;
+ struct definition *address_skip_line;
+ struct definition *address_skip_line1;
  struct definition *address_error;        /* Handle errors in Prolog (DCG)*/
 
                                           /* Attributed variables support */
@@ -884,7 +891,8 @@ static void initialize_intrinsics()
 
   define_c_predicate("name",prolog_name,2);
   define_c_predicate("atom_codes",prolog_atom_codes,2);
-  define_c_predicate("number_codes",prolog_number_codes,2);
+  define_c_predicate("number_codes",prolog_number_codes_2,2);
+  define_c_predicate("number_codes",prolog_number_codes_3,3);
   define_c_predicate("atom_length",prolog_atom_length,2);
   define_c_predicate("sub_atom",prolog_sub_atom,4);
   define_c_predicate("atom_concat",prolog_atom_concat,3);
@@ -921,6 +929,8 @@ static void initialize_intrinsics()
   define_c_predicate("tab",tab2,2);
   address_skip = define_c_predicate("skip_code",skip,1);
   address_skip2 = define_c_predicate("skip_code",skip2,2);
+  address_skip_line = define_c_predicate("skip_line",skip_line,0);
+  address_skip_line1 = define_c_predicate("skip_line",skip_line1,1);
   define_c_predicate("display",prolog_display,1);
   define_c_predicate("display",prolog_display2,2);
   define_c_predicate("displayq",prolog_displayq,1);
@@ -1677,6 +1687,8 @@ void reinitialize(Arg)
     Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
 #endif
   }
+
+  /* Create an expandable char array for loading po files */ 
 
   if (Atom_Buffer_Length != STATICMAXATOM){
     Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,

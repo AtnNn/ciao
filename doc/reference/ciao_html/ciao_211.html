@@ -1,33 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - tokeniser (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC818" HREF="ciao_toc.html#TOC818">tokeniser (library)</A></H1>
+<H1><A NAME="SEC832" HREF="ciao_toc.html#TOC832">dictionary_tree (library)</A></H1>
 <P>
-<A NAME="IDX8344"></A>
+<A NAME="IDX9040"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#171 (2002/1/3, 18:20:29 CET)
+<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#173 (2003/12/4, 17:47:16 CET)
+
+
+<P>
+This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
 
 
 
 <UL>
-<LI><A HREF="ciao_211.html#SEC819">Usage and interface (tokeniser)</A>
-<LI><A HREF="ciao_211.html#SEC820">Documentation on exports (tokeniser)</A>
+<LI><A HREF="ciao_211.html#SEC833">Usage and interface (dictionary_tree)</A>
+<LI><A HREF="ciao_211.html#SEC834">Documentation on exports (dictionary_tree)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC819" HREF="ciao_toc.html#TOC819">Usage and interface (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC833" HREF="ciao_toc.html#TOC833">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tokeniser)).</CODE>
+<CODE>:- use_module(library(dictionary_tree)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,10 +56,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8345"></A>
-<CODE>tokeniser/2</CODE>, 
-<A NAME="IDX8346"></A>
-<CODE>token_read/3</CODE>.
+<A NAME="IDX9041"></A>
+<CODE>create_dictionaries/1</CODE>, 
+<A NAME="IDX9042"></A>
+<CODE>is_dictionaries/1</CODE>, 
+<A NAME="IDX9043"></A>
+<CODE>get_definition_dictionary/2</CODE>, 
+<A NAME="IDX9044"></A>
+<CODE>get_prototype_dictionary/2</CODE>, 
+<A NAME="IDX9045"></A>
+<CODE>dictionary_insert/5</CODE>, 
+<A NAME="IDX9046"></A>
+<CODE>dictionary_lookup/5</CODE>, 
+<A NAME="IDX9047"></A>
+<CODE>merge_tree/2</CODE>.
 
 </UL>
 
@@ -58,14 +80,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8347"></A>
+<A NAME="IDX9048"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX9049"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX9050"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX9051"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX8348"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8349"></A>
+<A NAME="IDX9052"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX9053"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX9054"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX9055"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX8350"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX9056"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX9057"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -75,47 +109,195 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 
 
-<H2><A NAME="SEC820" HREF="ciao_toc.html#TOC820">Documentation on exports (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC834" HREF="ciao_toc.html#TOC834">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
 <P>
-<A NAME="IDX8351"></A>
-<A NAME="IDX8352"></A>
+<A NAME="IDX9058"></A>
+<A NAME="IDX9059"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tokeniser/2:</B>
-<DD><A NAME="IDX8353"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
+<DD><A NAME="IDX9060"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tokeniser(+VRML,-Tokens)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate will perform the parsing of the VRML code. The result will be tokens that will be the source for producing the Prolog terms of the VRML code. This is done in the parser module. From these terms analysis, changing, and any thing that you want to do with VRML code from Prolog programming language. We perform the predicate with a catch call to be able to output error messages if encountered.
+<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+VRML</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-Tokens</CODE> is a list of <CODE>term</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>-Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8354"></A>
-<A NAME="IDX8355"></A>
+<A NAME="IDX9061"></A>
+<A NAME="IDX9062"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>token_read/3:</B>
-<DD><A NAME="IDX8356"></A>
+<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
+<DD><A NAME="IDX9063"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>?Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9064"></A>
+<A NAME="IDX9065"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
+<DD><A NAME="IDX9066"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary, -Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9067"></A>
+<A NAME="IDX9068"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
+<DD><A NAME="IDX9069"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary, -Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9070"></A>
+<A NAME="IDX9071"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
+<DD><A NAME="IDX9072"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key, +Type, +Field, +Dictionary, ?Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>?Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9073"></A>
+<A NAME="IDX9074"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
+<DD><A NAME="IDX9075"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key, ?Type, ?Field, +Dictionary, -Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9076"></A>
+<A NAME="IDX9077"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
+<DD><A NAME="IDX9078"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree, +Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

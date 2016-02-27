@@ -106,7 +106,7 @@ two-element list of integers.  The first integer is the time since the
 start of the execution; the second integer is the time since the
 previous consult to time.".
 
-time_result([A, B]):- integer(A), integer(B).
+time_result([A, B]):- int(A), int(B).
 
 
 :- comment(doinclude, memory_result/1).
@@ -117,7 +117,7 @@ by the option selected, measured in bytes; the second integer is zero
 for program space (which grows as necessary), and the amount of free
 space otherwise.".
 
-memory_result([A, B]):- integer(A), integer(B).
+memory_result([A, B]):- int(A), int(B).
 
 
 :- comment(doinclude, gc_result/1).
@@ -132,7 +132,7 @@ selected, the numbers are, respectively, the number of garbage
 collections performed, the number of bytes freed, and the time spent
 in garbage collection.".
 
-gc_result([A, B, C]):- integer(A), integer(B), integer(C).
+gc_result([A, B, C]):- int(A), int(B), int(C).
 
 
 :- comment(doinclude, symbol_result/1).
@@ -143,7 +143,7 @@ gc_result([A, B, C]):- integer(A), integer(B), integer(C).
    the number of predicates known to be defined (although maybe
    without clauses).".
 
-symbol_result([A, B]):- integer(A), integer(B).
+symbol_result([A, B]):- int(A), int(B).
 
  %% memory_option(core).
  %% memory_option(heap).
@@ -190,16 +190,20 @@ bit_decl(2, (dynamic)).
 bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
 
+:- comment(version(1*9+92,2003/07/24,08:04*39+'CEST'), "Changed
+   integer by int in regtype definitions.  (Francisco Bueno
+   Carrillo)").
+
 :- comment(version(1*5+153,2000/05/29,10:24*35+'CEST'), "Added some
-declarations for builtins.  (MCL)").
+   declarations for builtins.  (MCL)").
 
 :- comment(version(1*5+27,1999/12/29,15:09*45+'CET'), " new_atom/1
-improved: no repeated atoms and much better behavior with the hash
-function of the atom table.  Now using a in house-developed
-quasi-linear congruential method.  (MCL)").
+   improved: no repeated atoms and much better behavior with the hash
+   function of the atom table.  Now using a in house-developed
+   quasi-linear congruential method.  (MCL)").
 
 :- comment(version(1*5+7,1999/12/09,09:46*03+'MET'), "Added
-new_atom/1.  (MCL)").
+   new_atom/1.  (MCL)").
 
 :- comment(version(1*3+94,1999/11/08,18:36*07+'MET'), "Moved
    statistics/2 and predicate_property/2 to prolog_sys library (Daniel

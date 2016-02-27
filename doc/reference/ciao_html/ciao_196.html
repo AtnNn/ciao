@@ -1,37 +1,73 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - boundary (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Barchart widgets - 1</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC773" HREF="ciao_toc.html#TOC773">boundary (library)</A></H1>
+<H1><A NAME="SEC781" HREF="ciao_toc.html#TOC781">Barchart widgets - 1</A></H1>
 <P>
-<A NAME="IDX7749"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#1 (1998/12/14, 19:22:27 MET)
+<A NAME="IDX8560"></A>
 
 
 <P>
-This module offers predicate to check values according to their boundaries and offers lists of possible node ascendents.
+<STRONG>Author(s):</STRONG> Isabel Martín.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#260 (2003/12/31, 0:13:52 CET)
+
+
+<P>
+This module defines predicates to show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
 
 
 
 <UL>
-<LI><A HREF="ciao_196.html#SEC774">Usage and interface (boundary)</A>
-<LI><A HREF="ciao_196.html#SEC775">Documentation on exports (boundary)</A>
+
+<LI>No numeric values for the <CODE>x</CODE> axis are needed because they will be interpreted as labels. See
+
+<A NAME="IDX8561"></A>
+<CODE>xbarelement1/1</CODE> definition type. 
+
+<LI>The bars will be displayed at uniform intervals.
+
+<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
+
+<A NAME="IDX8562"></A>
+<CODE>xbarelement1</CODE> type definition. Thus, the user can call each predicate in two ways. 
+
+<LI>The bar chart has a legend. One entry (symbol and label) per bar.
+
+<LI>If you don't want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
+
+<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
+
+</UL>
+
+<P>
+Particular features will be pointed out in the corresponding predicate. 
+
+
+
+<UL>
+<LI><A HREF="ciao_196.html#SEC782">Usage and interface (genbar1)</A>
+<LI><A HREF="ciao_196.html#SEC783">Documentation on exports (genbar1)</A>
+<LI><A HREF="ciao_196.html#SEC784">Documentation on internals (genbar1)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC774" HREF="ciao_toc.html#TOC774">Usage and interface (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC782" HREF="ciao_toc.html#TOC782">Usage and interface (<CODE>genbar1</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +75,7 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(boundary)).</CODE>
+<CODE>:- use_module(library(genbar1)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,16 +84,25 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7750"></A>
-<CODE>boundary_check/3</CODE>, 
-<A NAME="IDX7751"></A>
-<CODE>boundary_rotation_first/2</CODE>, 
-<A NAME="IDX7752"></A>
-<CODE>boundary_rotation_last/2</CODE>, 
-<A NAME="IDX7753"></A>
-<CODE>reserved_words/1</CODE>, 
-<A NAME="IDX7754"></A>
-<CODE>children_nodes/1</CODE>.
+<A NAME="IDX8563"></A>
+<CODE>barchart1/7</CODE>, 
+<A NAME="IDX8564"></A>
+<CODE>barchart1/9</CODE>, 
+<A NAME="IDX8565"></A>
+<CODE>percentbarchart1/7</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX8566"></A>
+<CODE>yelement/1</CODE>, 
+<A NAME="IDX8567"></A>
+<CODE>axis_limit/1</CODE>, 
+<A NAME="IDX8568"></A>
+<CODE>header/1</CODE>, 
+<A NAME="IDX8569"></A>
+<CODE>title/1</CODE>, 
+<A NAME="IDX8570"></A>
+<CODE>footer/1</CODE>.
 
 </UL>
 
@@ -68,26 +113,18 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7755"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX7756"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7757"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX7758"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7759"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7760"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX7761"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7762"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7763"></A>
-<CODE>provrml/internal_types</CODE>, 
-<A NAME="IDX7764"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX8571"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX8572"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX8573"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX8574"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX8575"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX8576"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -97,130 +134,345 @@ This module offers predicate to check values according to their boundaries and o
 
 
 
-<H2><A NAME="SEC775" HREF="ciao_toc.html#TOC775">Documentation on exports (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Documentation on exports (<CODE>genbar1</CODE>)</A></H2>
 <P>
-<A NAME="IDX7765"></A>
-<A NAME="IDX7766"></A>
+<A NAME="IDX8577"></A>
+<A NAME="IDX8578"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_check/3:</B>
-<DD><A NAME="IDX7767"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart1/7:</B>
+<DD><A NAME="IDX8579"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_check(+Value_to_check,+Init_value,+Bound)</CODE>
+<CODE>barchart1(Header, BarchartTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
+
+
+<P>
+The <CODE>y</CODE> axis range is determined from the limits of the data. Two examples are given to demonstrate clearly how to call the predicates. In the first example the user sets the bar appearance, in the second one the appearance features will be chosen by the system and the colors that have been assigned to the variables Color1, Color2 and Pattern will be shown also. 
+
+
+<P>
+Example 1: 
+
+
+
+<PRE>
+barchart1('This is the header text',
+  'Barchart title',
+  'xaxistitle',
+  [ ['bar1','legend_element1','Blue','Yellow','pattern1'],
+           ['bar2','legend_element2','Plum','SeaGreen','pattern2'],
+           ['bar3','legend_element3','Turquoise','Yellow','pattern5'] ],
+  'yaxixtitle',
+  [20,10,59],
+  'footer').
+</PRE>
+
+<P>
+Example 2: 
+
+
+
+<PRE>
+barchart1('This is the header text',
+  'Barchart title',
+  'xaxistitle',
+  [ ['element1','legend_element1',Color1,Color2,Pattern],
+            ['element2','legend_element2'],
+            ['element3','legend_element3'] ],
+  'yaxixtitle',
+  [20,10,59],
+  'footer').
+</PRE>
+
+<P>
+ 
+ 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8580"></A>
+<A NAME="IDX8581"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>barchart1/9:</B>
+<DD><A NAME="IDX8582"></A>
+
+
+<P>
+<CODE>barchart1(Header, BTitle, XTitle, XVector, YTitle, YVector, YMax, YMin, Footer)</CODE>
+
+
+<P>
+You can set the minimum and maximum limits of the <CODE>y</CODE> axis. Data outside the limits will not be plotted. Each limit, as you can check by looking at the 
+<A NAME="IDX8583"></A>
+<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
+
+
+<P>
+Example: 
+
+
+
+<PRE>
+barchart1('This is the header text',
+  'Barchart title',
+  'xaxistitle',
+  [ ['element1','e1','Blue','Yellow','pattern1'],
+      ['element2','e2','Turquoise','Plum','pattern5'],
+      ['element3','e3','Turquoise','Green','pattern5'] ],
+  'yaxixtitle',
+  [20,10,59],
+  70,
+  _,
+  'footer').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX8584"></A>
+<A NAME="IDX8585"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart1/7:</B>
+<DD><A NAME="IDX8586"></A>
+
+
+<P>
+<CODE>percentbarchart1(Header, BTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
+
+
+<P>
+The y axis maximum coordinate value is 100. The <CODE>x</CODE> axis limits are automatically worked out. 
+
+
+<P>
+Example: 
+
+
+
+<PRE>
+percentbarchart1('This is a special barchart to represent percentages',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+       [8,'bar2','MediumTurquoise','Plum','pattern5'] ],
+  'My yaxixtitle',
+  [80,10],
+  'This is the footer text').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX8587"></A>
+<A NAME="IDX8588"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>yelement/1:</B>
+<DD><A NAME="IDX8589"></A>
+
+
+<P>
+ 
+
+
+
+<PRE>
+yelement(Y) :-
+        number(Y).
+</PRE>
+
+<P>
+Y is the bar lenght, so it must be a numeric value. 
+
+
+<P>
+Both Prolog and Tcl-Tk support integers and floats. Integers are usually specified in decimal, but if the first character is 0 the number is read in octal (base 8), and if the first two characters are 0x, the number is read in hexadecimal (base16). Float numbers may be specified using most of the forms defined for ANSI C, including the following examples: 
+
+
 
 <UL>
-<LI><EM>Description:</EM> This predicate check the boundaries of the given value according to the boudary values. If the value is wrong according to the boundaries, the value is checked according to the initial value given. If the value continues to be wrong, an error will be raised accordingly.
+<LI>9.56
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>5.88e-2
 
-<CODE>+Value_to_check</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<LI>5.1E2
 
-<CODE>+Init_value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+</UL>
 
-<CODE>+Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
+<P>
+Note: Be careful when using floats. While 8. or 7.e4 is interpreted by Tcl-tk as 8.0 and 7.0e4, Prolog will not read them as float numbers. Example: 
+
+<PRE>
+        ?- number(8.e+5).
+        {SYNTAX ERROR: (lns 130-130) , or ) expected in arguments
+        number ( 8 
+        ** here **
+        . e + 5 ) . 
+        }
+
+        no
+        ?- number(8.).
+        {SYNTAX ERROR: (lns 138-138) , or ) expected in arguments
+        number ( 8 
+        ** here **
+        . ) . 
+        }
+
+        no
+
+        ?- number(8.0e+5).
+
+        yes
+        ?- number(8.0).
+
+        yes
+</PRE>
+
+<P>
+Precision: Tcl-tk internally represents integers with the C type <CODE>int</CODE>, which provides at least 32 bits of precision on most machines. Since Prolog integers can (in some implementations) exceed 32 bits but the precision in Tcl-tk depends on the machine, it is up to the progammer to ensure that the values fit into the maximum precision of the machine for integers. Real numbers are represented with the C type <CODE>double</CODE>, which is usually represented with 64-bit values (about 15 decimal digits of precision) using the IEEE Floating Point Standard. 
+
+
+<P>
+Conversion: If the list is composed by integers and floats, Tcl-tk will convert integers to floats. 
+ 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8590"></A>
+<A NAME="IDX8591"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>axis_limit/1:</B>
+<DD><A NAME="IDX8592"></A>
+
+
+
+<PRE>
+axis_limit(X) :-
+        number(X).
+axis_limit(_1).
+</PRE>
+
+<P>
+This type is defined in order to set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, is a number or a variable. If the argument is not a number the limit will be calculated from the data (i.e., if YMax value is <CODE>Var</CODE> the maximum y axis limit will be calculated using the largest data value). 
+ 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8593"></A>
+<A NAME="IDX8594"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>header/1:</B>
+<DD><A NAME="IDX8595"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>header(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the header of the graph.
+
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7768"></A>
-<A NAME="IDX7769"></A>
+<A NAME="IDX8596"></A>
+<A NAME="IDX8597"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_first/2:</B>
-<DD><A NAME="IDX7770"></A>
+<DT><span class="define">REGTYPE:</span> <B>title/1:</B>
+<DD><A NAME="IDX8598"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_first(+Bound_double,-Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>title(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the first bounds from a double bound.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) to be used as label, usually not very long.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
-
-<CODE>-Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7771"></A>
-<A NAME="IDX7772"></A>
+<A NAME="IDX8599"></A>
+<A NAME="IDX8600"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_last/2:</B>
-<DD><A NAME="IDX7773"></A>
+<DT><span class="define">REGTYPE:</span> <B>footer/1:</B>
+<DD><A NAME="IDX8601"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_last(+Bound_double,-Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>footer(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the last bounds from a double bound.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the footer of the graph.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
-
-<CODE>-Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC784" HREF="ciao_toc.html#TOC784">Documentation on internals (<CODE>genbar1</CODE>)</A></H2>
 <P>
-<A NAME="IDX7774"></A>
-<A NAME="IDX7775"></A>
+<A NAME="IDX8602"></A>
+<A NAME="IDX8603"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>reserved_words/1:</B>
-<DD><A NAME="IDX7776"></A>
+<DT><span class="define">REGTYPE:</span> <B>xbarelement1/1:</B>
+<DD><A NAME="IDX8604"></A>
 
+
+
+<PRE>
+xbarelement1([XValue,LegendElement]) :-
+        atomic(XValue),
+        atomic(LegendElement).
+xbarelement1([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
+        atomic(XValue),
+        atomic(LegendElement),
+        color(ForegColor),
+        color(BackgColor),
+        pattern(SPattern).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>reserved_words(-List)</CODE>
+Defines the attributes of the bar. 
+<DL COMPACT>
 
-<UL>
-<LI><EM>Description:</EM> Returns a list with the reserved words, words prohibited to use in cases not appropiated.
+<DT><CODE>XValue</CODE>
+<DD>
+bar label. Although <CODE>XValue</CODE> values may be numbers, the will be treated as labels. Different elements with the same label will produce different bars. 
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<DT><CODE>LegendElement</CODE>
+<DD>
+Legend element name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
 
-<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
+<DT><CODE>ForegColor</CODE>
+<DD>
+It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>BackgColor</CODE>
+<DD>
+It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>SPattern</CODE>
+<DD>
+It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
 
 </DL>
-
 <P>
-<A NAME="IDX7777"></A>
-<A NAME="IDX7778"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>children_nodes/1:</B>
-<DD><A NAME="IDX7779"></A>
+ 
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>children_nodes(-List)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns a list of all nodes possible as children nodes.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

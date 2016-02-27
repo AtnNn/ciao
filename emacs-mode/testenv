@@ -1,0 +1,22 @@
+#!/bin/sh
+
+TMPNAME=`mktemp /tmp/ciaomodepathsXXXXXX`
+echo "(setq load-path (cons \"/home/clip/Systems/ciao-1.9/emacs-mode/\" load-path))" \
+    > $TMPNAME
+echo "(setq load-path (cons \"/home/clip/Systems/ciao-1.9/emacs-mode/icons\" load-path))" \
+    >> $TMPNAME
+
+case $1 in
+    fsf ) emacs -geometry -0+0 -q \
+	  -l $TMPNAME -l DOTemacs.skel -l ciao.el.body $2 ;;
+    x   ) xemacs -geometry -0+0-q \
+          -l $TMPNAME -l DOTemacs.skel -l ciao.el.body $2 ;;
+    *   ) echo "Usage: $0 <fsf|x> <file>"
+          exit 0  ;;
+esac
+
+rm -f $TMPNAME
+
+
+
+

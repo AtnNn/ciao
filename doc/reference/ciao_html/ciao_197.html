@@ -1,37 +1,72 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - dictionary (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Barchart widgets - 2</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC776" HREF="ciao_toc.html#TOC776">dictionary (library)</A></H1>
+<H1><A NAME="SEC785" HREF="ciao_toc.html#TOC785">Barchart widgets - 2</A></H1>
 <P>
-<A NAME="IDX7780"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/7, 15:57:36 MET)
+<A NAME="IDX8605"></A>
 
 
 <P>
-This module contains the fixed dictionary. All the nodes in VRML with their associated fields.
+<STRONG>Author(s):</STRONG> Isabel Martín.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#265 (2003/12/31, 16:47:45 CET)
+
+
+<P>
+This module defines predicates which show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
 
 
 
 <UL>
-<LI><A HREF="ciao_197.html#SEC777">Usage and interface (dictionary)</A>
-<LI><A HREF="ciao_197.html#SEC778">Documentation on exports (dictionary)</A>
+
+<LI>Numeric values for the x axis are needed, otherwise it does not work properly. See
+
+<A NAME="IDX8606"></A>
+<CODE>xbarelement2/1</CODE> definition type. 
+
+<LI>The bar position is proportional to the x-coordinate value.
+
+<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
+
+<A NAME="IDX8607"></A>
+<CODE>xbarelement2/1</CODE> type definition. Thus, the user can call each predicate in two ways. 
+
+<LI>The bar chart has a legend and one entry (symbol and label) per bar.
+
+<LI>If you do not want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
+
+<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contain elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> does not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
+
+</UL>
+
+<P>
+Particular features will be pointed out in the corresponding predicate. 
+
+
+
+<UL>
+<LI><A HREF="ciao_197.html#SEC786">Usage and interface (genbar2)</A>
+<LI><A HREF="ciao_197.html#SEC787">Documentation on exports (genbar2)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC777" HREF="ciao_toc.html#TOC777">Usage and interface (<CODE>dictionary</CODE>)</A></H2>
+<H2><A NAME="SEC786" HREF="ciao_toc.html#TOC786">Usage and interface (<CODE>genbar2</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +74,7 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(dictionary)).</CODE>
+<CODE>:- use_module(library(genbar2)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,8 +83,17 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7781"></A>
-<CODE>dictionary/6</CODE>.
+<A NAME="IDX8608"></A>
+<CODE>barchart2/7</CODE>, 
+<A NAME="IDX8609"></A>
+<CODE>barchart2/11</CODE>, 
+<A NAME="IDX8610"></A>
+<CODE>percentbarchart2/7</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX8611"></A>
+<CODE>xbarelement2/1</CODE>.
 
 </UL>
 
@@ -60,26 +104,20 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7782"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX7783"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7784"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX7785"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7786"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7787"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX7788"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7789"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7790"></A>
+<A NAME="IDX8612"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX8613"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX8614"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX8615"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX8616"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX8617"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7791"></A>
-<CODE>provrml/internal_types</CODE>.
+<A NAME="IDX8618"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -89,72 +127,165 @@ This module contains the fixed dictionary. All the nodes in VRML with their asso
 
 
 
-<H2><A NAME="SEC778" HREF="ciao_toc.html#TOC778">Documentation on exports (<CODE>dictionary</CODE>)</A></H2>
+<H2><A NAME="SEC787" HREF="ciao_toc.html#TOC787">Documentation on exports (<CODE>genbar2</CODE>)</A></H2>
 <P>
-<A NAME="IDX7792"></A>
-<A NAME="IDX7793"></A>
+<A NAME="IDX8619"></A>
+<A NAME="IDX8620"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dictionary/6:</B>
-<DD><A NAME="IDX7794"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart2/7:</B>
+<DD><A NAME="IDX8621"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
+<CODE>barchart2(Header, BarchartTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>?NodeTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?AccessType</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?FieldTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>?FieldId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-Boundary</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
-</UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
+The maximum and minimum limits for axes are determined from the data. 
 
-<UL>
-<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+Example: 
 
-<CODE>?NodeTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>?AccessType</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>?FieldTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<PRE>
+barchart2('This is the header text',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+       [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
+  'My yaxixtitle',
+  [20,10],
+  'This is the footer text').
+</PRE>
 
-<CODE>?FieldId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+</DL>
 
-<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<P>
+<A NAME="IDX8622"></A>
+<A NAME="IDX8623"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>barchart2/11:</B>
+<DD><A NAME="IDX8624"></A>
 
-<CODE>-Boundary</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
-</UL>
+
+<P>
+<CODE>barchart2(Header, BT, XT, XVector, XMax, XMin, YT, YVector, YMax, YMin, Footer)</CODE>
+
+
+<P>
+You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, as you can check looking at the 
+<A NAME="IDX8625"></A>
+<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
+ 
+Example: 
+
+
+
+<PRE>
+barchart2('This is the header text',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1',Color1,Color2,Pattern1],
+         [2,'bar2',Color3,Color4,Pattern2] ],
+  10,
+  -10,
+  'My yaxixtitle',
+  [20,10],
+  100,
+  -10,
+  'The limits for the axes are set by the user').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX8626"></A>
+<A NAME="IDX8627"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart2/7:</B>
+<DD><A NAME="IDX8628"></A>
+
+
+<P>
+<CODE>percentbarchart2(Header, BTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
+
+
+<P>
+The y axis maximum coordinate value is 100. The x axis limits are autoarrange. 
+
+
+<P>
+Example: 
+
+
+
+<PRE>
+percentbarchart2('This is a special barchart to represent percentages',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+          [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
+  'My yaxixtitle',
+  [80,10],
+  'This is the footer text').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX8629"></A>
+<A NAME="IDX8630"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>xbarelement2/1:</B>
+<DD><A NAME="IDX8631"></A>
+
+
+
+<PRE>
+xbarelement2([XValue,LegendElement]) :-
+        number(XValue),
+        atomic(LegendElement).
+xbarelement2([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
+        number(XValue),
+        atomic(LegendElement),
+        color(ForegColor),
+        color(BackgColor),
+        pattern(SPattern).
+</PRE>
+
+<P>
+Defines the attributes of the bar. 
+
+
+<DL COMPACT>
+
+<DT><CODE>XValue</CODE>
+<DD>
+x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
+
+<DT><CODE>LegendElement</CODE>
+<DD>
+Element legend name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
+
+<DT><CODE>ForegColor</CODE>
+<DD>
+Is the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>BackgColor</CODE>
+<DD>
+Is the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>SPattern</CODE>
+<DD>
+Is the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+
+</DL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

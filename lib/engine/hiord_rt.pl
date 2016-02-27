@@ -2,6 +2,11 @@
 
 :- comment(title,"Higher-order").
 
+:- comment(author,"Daniel Cabeza Gras").
+
+:- comment(module,"This module is a wrapper to the implementation
+   defined predicate @pred{call/2}").
+
 :- impl_defined([call/2]).
 
 :- comment(call(Pred,Arg1), "There exists a set of builtin predicates of
@@ -16,6 +21,9 @@
 % :- primitive_meta_predicate(call(pred(1),?)).
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+226,2003/12/22,16:47*31+'CET'), "Added comment
+   author and version.  (Edison Mera)").
 
 :- comment(version(1*7+146,2001/11/15,19:32*38+'CET'), "Changed from lib
    to engine.  (Daniel Cabeza Gras)").

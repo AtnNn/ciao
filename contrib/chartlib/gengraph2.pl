@@ -1,5 +1,8 @@
 :- module(gengraph2,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
+
 :- export(graph_b2/9).
 :- export(graph_b2/13).
 :- export(graph_w2/9).
@@ -18,8 +21,11 @@
 :- use_module(library('chartlib/bltclass')).
 :- use_module(library('chartlib/color_pattern')).
 :- use_module(library('chartlib/test_format')).
+:- use_module(library('chartlib/install_utils')).
 :- use_module(library(lists)).
 :- use_module(library(random)).
+
+:- comment(title,"Line graph widgets").
 
 :- comment(module,"This module defines predicates which show line graph
         widgets. All eight predicates exported by this module plot
@@ -1421,3 +1427,14 @@ table(Interp):-
 	tcltk_raw_code(T9,Interp),
 	name('%W legend deactivate [%W element get current] }',T10),
         tcltk_raw_code(T10,Interp).
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+270,2004/01/01,14:19*56+'CET'), "Added comment
+   title.  (Edison Mera)").
+
+:- comment(version(1*9+162,2003/12/04,17:39*33+'CET'), "Added author
+   info (Manuel Carro)").
+

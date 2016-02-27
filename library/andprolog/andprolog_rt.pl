@@ -1,4 +1,3 @@
-
 :- module(
         andprolog_rt,
         ['&'/2,
@@ -179,8 +178,8 @@ andcallable(A&B):- callable(A), callable(B).
  %%    bound to ground terms). It does not hold for @tt{X=f(Z),Y=g(Z)} and
  %%    for @tt{X=Y}.").
 
-:- prop indep(X,Y) 
-# "@var{X} and @var{Y} do not have variables in common.".
+:- true prop indep(X,Y) + native(indep([[X,Y]]))
+	# "@var{X} and @var{Y} do not have variables in common.".
  
 indep(A,B) :- 
         mark(A,Ground),  % Ground is var if A ground
@@ -239,8 +238,8 @@ marked(Args,Mth) :-
  %% :- comment(indep(X), "The variables in each pair of the list
  %% @tt{@var{X}} are pairwise independent.").
 
-:- pred indep(X) # "The variables in pairs in @tt{@var{X}} are
-pairwise independent.".
+:- true prop indep(X) + native(indep(X))
+	# "The variables in pairs in @tt{@var{X}} are pairwise independent.".
 
 indep([]).
 indep([[X,Y]|L]):- indep(X,Y), indep(L).

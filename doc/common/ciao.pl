@@ -154,10 +154,170 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*8+3,2002/12/12,20:24*36+'CET'), "Added some
-   chapters missing in manual. Also, now pdf version of the manual
-   being distributed for increased portability.  (Manuel
-   Hermenegildo)").
+:- comment(version(1*10+0,2002/05/16,23:17*34+'CEST'), "
+@begin{itemize}
+@item Improvements related to supported platforms
+    @begin{itemize}
+          @item Compilation and installation in different palatforms have been 
+                improved.
+          @item New Mac OS X kernels supported.
+    @end{itemize}
+@item Changes in compiler behavior and user interface:
+    @begin{itemize}
+    @item Emacs-based environment improved.
+          @begin{itemize}
+          @item Revised syntax of Ciao emacs mode configuration files.
+          @item Improved emacs inferior (interaction) mode for Ciao and CiaoPP.
+          @item Xemacs compatibility improved (thanks to A. Rigo).
+          @item New icons and modifications in the environment for the 
+                preprocessor.
+          @item Icons now installed in a separate dir.
+          @item Double-click startup of programming environment.
+          @item Compatibility with newer versions of @apl{Cygwin}.
+          @item Changes to programming environment.
+                @begin{itemize}
+                @item Reorganized menus: help and customization grouped in 
+                      separate menus.
+                @item Error location extended.
+                @item Automatic/Manual location of errors produced when 
+                      running Ciao tools now customizable.
+                @item Presentation of CiaoPP preprocessor output improved.
+                @end{itemize}
+          @item Faces and coloring improved.
+                @begin{itemize}
+                @item Faces for syntax-based highlighting more customizable.
+                @item Syntax-based coloring greatly improved. Now also working 
+                      on ASCII terminals (for newer versions of emacs). 
+                @item Literal-level assertions now correctly colored.
+                @item Listing user-defined directives allowed to be colored in
+                      special face.
+                @item Syntax errors now colored also in inferior buffers.
+                @item Customizable faces now appear in the documentation.
+                @item Added new tool bar button (and binding) to refontify
+                      block/buffer.
+                @item Error marks now cleared automatically also when 
+                      generating docs.
+                @item Added some fixes to hooks in lpdoc buffer.
+                @end{itemize}  
+          @end{itemize}
+    @item Bug fixes in compiler.
+          @begin{itemize}
+          @item Replication of clauses in some cases (thanks to S. Craig).
+          @end{itemize} 
+    @end{itemize}
+
+@item Improvement and Bugs fixes in the engine:
+      @begin{itemize}
+      @item Got rid of some segmentation violation problems.
+      @item Number of significant decimal digits to be printed now computed 
+            accurately.
+      @item Added support to test conversion of a Ciao integer into a machine 
+            int.
+      @item Unbound length atoms now always working.
+      @item C interface .h files reachable through a more standard location 
+            (thanks to R. Bagnara).
+      @item Compatibility with command line options of newer versions of gcc.
+      @end{itemize}
+
+@item New libraries and utilities added to the system:
+    @begin{itemize}
+    @item Components: utilities to build modules frontiers.
+    @item Factsdb: facts defined in external files can now be automatically 
+          cached on-demand.
+    @item Symfnames: File aliasing to internal streams added.
+    @end{itemize}
+
+
+@item More libraries added (still in development):
+    @begin{itemize}
+    @item fd: clp(FD)
+    @item xml_path: XML querying and transformation to Prolog.
+    @item xdr_handle: XDR schema to HTML forms utility.
+    @item ddlist: Double linked list library.
+    @item gnuplot: Interface to GnuPlot.
+    @item time_analyzer: Execution time profiling.
+    @end{itemize}
+
+@item Some libraries greatly improved:
+    @begin{itemize}
+    @item Pillow library improved in many senses.
+          @begin{itemize}
+          @item HTTP media type parameter values returned are always strings 
+                now, not atoms. 
+          @item Changed verbatim() pillow term so that newlines are translated 
+                to <br>.
+          @item Changed management of cookies so that special characters in 
+                values are correctly handled. 
+          @item Added predicate @pred{url_query_values/2}, reversible. 
+                Predicate @pred{url_query/2} now obsolete.
+          @item Now attribute values in tags are escaped to handle values 
+                which have double quotes.
+          @item Improved @pred{get_form_input/1} and @pred{url_query/2} so 
+                that names of parameters having unusual characters are always 
+                correctly handled.
+          @end{itemize}
+    @item Fixed bug in library tokenize regarding non-terminated single or 
+          multiple-line comments.  When the last line of a file has a 
+          single-line comment and does not end in a newline, it is accepted 
+          as correct.  When an open-comment /* sequence is not terminated in 
+          a file, a syntax error is thrown.
+    @end{itemize}
+
+@item Other libraries improved:
+    @begin{itemize}
+    @item Added native_props to assertions package and include 
+          @pred{nonground/1}.
+    @item In atom2terms, changed interpretation of double quoted strings so 
+          that they are not parsed to terms.
+    @item Control on exceptions in active modules improved.
+    @item Added @pred{native/1+2} to basic_props.
+    @item Davinci error processing improved.
+    @item Foreign interfaces are now automatically declared as 
+          implementation-defined ones.
+    @item In lists, added @pred{cross_product/2} to compute the cartesian 
+          product of a list of lists. Also added 
+          @pred{delete_non_ground/3}, enabling deletion of nonground terms 
+          from a list. 
+    @item In llists added @pred{transpose/2} and changed @pred{append/2} 
+          implementation with a much more efficient code. 
+    @item The make library has been improved.
+    @item In persdb added @pred{pretractall_fact/1} and 
+          @pred{retractall_fact/1} as persdb native capabilities.
+    @item Some minor updates in persdb_sql.
+    @item Added treatment of Operators and module:pred calls to pretty-printer.
+    @item Updated report of read of syntax errors.
+    @item File locking capabilities included.
+    @item New input/output facilities added to socket-related library.
+    @item Added @pred{most_specific_generalization/3} and 
+          @pred{most_general_instance/3} to terms_check.
+    @item Added @pred{sort_dict/2} to vndict.
+    @item The xref library now treats also empty references.
+    @end{itemize}
+
+@item Miscellaneous updates:
+      @begin{itemize}
+      @item Extended documentation in libraries actmods, arrays, 
+            foreign_interface, javall, persdb_mysql, prolog_sys, old_database, 
+            and terms_vars.
+      @end{itemize}
+@end{itemize}
+").
+
+
+:- comment(version(1*9+38,2002/12/12,20:06*26+'CET'), "Manual now
+   posted in pdf format (since lpdoc now generates much better pdf).
+   (Manuel Hermenegildo)").
+
+:- comment(version(1*9+34,2002/11/30,14:42*45+'CET'), "Installation
+   can now be done in Test distribution directory (for testing
+   purposes).  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+33,2002/11/30,14:37*10+'CET'), "Modified
+   installation site text to make more explicit the fact that we
+   support Mac OS X and XP.  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+0,2002/05/16,23:17*34+'CEST'), " New
+development version after stable 1.8p0 (MCL, DCG)").
 
 :- comment(version(1*8+0,2002/05/16,21:20*27+'CEST'), "
 @begin{itemize}
@@ -374,7 +534,7 @@ now locally adds CIAOBIN path to PATH if not already present (MCL)").
    Hermenegildo)").
 
 :- comment(version(1*7+87,2001/04/08,15:15*18+'CEST'), "Added @tt{doc}
-   and @tt{installdoc} targets to top level installation @tt{Makefile}
+   and @tt{installdoc} targets to top level installation @{Makefile}
    (can be used to regenerate and reinstall documentation if
    @apl{lpdoc} is available.  (Manuel Hermenegildo)").
 
@@ -493,7 +653,7 @@ cached and next time it is needed no access to the file system is required.
       files.
 @item New concurrency primitives.
 @item Changed assertion comment operator to #.
-@item Implemented high-order with call/N.
+@item Implemented higher-order with call/N.
 @item Integrated SQL-interface to external databases with 
       persistent predicate concept. 
 @item First implementation of object oriented programming package.

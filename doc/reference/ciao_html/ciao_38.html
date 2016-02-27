@@ -1,50 +1,48 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Term output</TITLE>
+<TITLE>The Ciao Prolog System               - Term input</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC201" HREF="ciao_toc.html#TOC201">Term output</A></H1>
+<H1><A NAME="SEC200" HREF="ciao_toc.html#TOC200">Term input</A></H1>
 <P>
-<A NAME="IDX2280"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Adapted from shared code written by Richard A. O'Keefe. Changes by Mats Carlsson, Daniel Cabeza, Manuel Hermenegildo, and Manuel Carro..
+<A NAME="IDX2778"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> First versions from SICStus 0.6 code; additional changes and documentation by Daniel Cabeza and Manuel Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#197 (2002/4/17, 20:2:28 CEST)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-This library provides different predicates for term output, additional to the kernel predicates 
-<A NAME="IDX2281"></A>
-<CODE>display/1</CODE>-
-<A NAME="IDX2282"></A>
-<CODE>display/2</CODE> and <CODE>displayq/1</CODE>-<CODE>displayq/2</CODE>. All the predicates defined in ISO-Prolog are included, plus other traditionally provided by Prolog Implementations. Output predicates are provided in two versions: one that uses the current output stream and other in which the stream is specified explicitly, as an additional first argument.
+<STRONG>Version of last change:</STRONG> 1.9#289 (2004/2/13, 19:46:27 CET)
+
+
+<P>
+This module provides falicities to read terms in Prolog syntax. This is very convenient in many cases (and not only if you are writing a Prolog compiler), because Prolog terms are easy to write and can convey a lot of information in a human-readable fashion.
 
 
 
 <UL>
-<LI><A HREF="ciao_38.html#SEC202">Usage and interface (write)</A>
-<LI><A HREF="ciao_38.html#SEC203">Documentation on exports (write)</A>
-<LI><A HREF="ciao_38.html#SEC204">Documentation on multifiles (write)</A>
+<LI><A HREF="ciao_38.html#SEC201">Usage and interface (read)</A>
+<LI><A HREF="ciao_38.html#SEC202">Documentation on exports (read)</A>
+<LI><A HREF="ciao_38.html#SEC203">Documentation on multifiles (read)</A>
+<LI><A HREF="ciao_38.html#SEC204">Documentation on internals (read)</A>
+<LI><A HREF="ciao_38.html#SEC205">Known bugs and planned improvements (read)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC202" HREF="ciao_toc.html#TOC202">Usage and interface (<CODE>write</CODE>)</A></H2>
+<H2><A NAME="SEC201" HREF="ciao_toc.html#TOC201">Usage and interface (<CODE>read</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,7 +50,7 @@ This library provides different predicates for term output, additional to the ke
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(write)).</CODE>
+<CODE>:- use_module(library(read)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -61,52 +59,23 @@ This library provides different predicates for term output, additional to the ke
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2283"></A>
-<CODE>write_term/3</CODE>, 
-<A NAME="IDX2284"></A>
-<CODE>write_term/2</CODE>, 
-<A NAME="IDX2285"></A>
-<CODE>write/2</CODE>, 
-<A NAME="IDX2286"></A>
-<CODE>write/1</CODE>, 
-<A NAME="IDX2287"></A>
-<CODE>writeq/2</CODE>, 
-<A NAME="IDX2288"></A>
-<CODE>writeq/1</CODE>, 
-<A NAME="IDX2289"></A>
-<CODE>write_canonical/2</CODE>, 
-<A NAME="IDX2290"></A>
-<CODE>write_canonical/1</CODE>, 
-<A NAME="IDX2291"></A>
-<CODE>print/2</CODE>, 
-<A NAME="IDX2292"></A>
-<CODE>print/1</CODE>, 
-<A NAME="IDX2293"></A>
-<CODE>write_list1/1</CODE>, 
-<A NAME="IDX2294"></A>
-<CODE>portray_clause/2</CODE>, 
-<A NAME="IDX2295"></A>
-<CODE>portray_clause/1</CODE>, 
-<A NAME="IDX2296"></A>
-<CODE>numbervars/3</CODE>, 
-<A NAME="IDX2297"></A>
-<CODE>prettyvars/1</CODE>, 
-<A NAME="IDX2298"></A>
-<CODE>printable_char/1</CODE>.
-
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX2299"></A>
-<CODE>write_option/1</CODE>.
+<A NAME="IDX2779"></A>
+<CODE>read/1</CODE>, 
+<A NAME="IDX2780"></A>
+<CODE>read/2</CODE>, 
+<A NAME="IDX2781"></A>
+<CODE>read_term/2</CODE>, 
+<A NAME="IDX2782"></A>
+<CODE>read_term/3</CODE>, 
+<A NAME="IDX2783"></A>
+<CODE>read_top_level/3</CODE>, 
+<A NAME="IDX2784"></A>
+<CODE>second_prompt/2</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX2300"></A>
-<CODE>define_flag/3</CODE>, 
-<A NAME="IDX2301"></A>
-<CODE>portray_attribute/2</CODE>, 
-<A NAME="IDX2302"></A>
-<CODE>portray/1</CODE>.
+<A NAME="IDX2785"></A>
+<CODE>define_flag/3</CODE>.
 
 </UL>
 
@@ -117,10 +86,12 @@ This library provides different predicates for term output, additional to the ke
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX2303"></A>
+<A NAME="IDX2786"></A>
+<CODE>tokenize</CODE>, 
+<A NAME="IDX2787"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX2304"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX2788"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -130,475 +101,183 @@ This library provides different predicates for term output, additional to the ke
 
 
 
-<H2><A NAME="SEC203" HREF="ciao_toc.html#TOC203">Documentation on exports (<CODE>write</CODE>)</A></H2>
+<H2><A NAME="SEC202" HREF="ciao_toc.html#TOC202">Documentation on exports (<CODE>read</CODE>)</A></H2>
 <P>
-<A NAME="IDX2305"></A>
-<A NAME="IDX2306"></A>
+<A NAME="IDX2789"></A>
+<A NAME="IDX2790"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_term/3:</B>
-<DD><A NAME="IDX2307"></A>
+<DT><span class="define">PREDICATE:</span> <B>read/1:</B>
+<DD><A NAME="IDX2791"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_term(@Stream,?Term,+OptList)</CODE>
+<CODE>read(Term)</CODE>
+
+
+<P>
+Like <CODE>read(Stream,Term)</CODE> with <CODE>Stream</CODE> associated to the current input stream.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2792"></A>
+<A NAME="IDX2793"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read/2:</B>
+<DD><A NAME="IDX2794"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read(+Stream, ?Term)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Outputs the term <CODE>Term</CODE> to the stream <CODE>Stream</CODE>, with the list of write-options <CODE>OptList</CODE>. See
+<LI><EM>Description:</EM> The next term, delimited by a full-stop (i.e., a <CODE>.</CODE> followed by either a space or a control character), is read from <CODE>Stream</CODE> and is unified with <CODE>Term</CODE>. The syntax of the term must agree with current operator declarations. If the end of <CODE>Stream</CODE> has been reached, <CODE>Term</CODE> is unified with the term <CODE>end_of_file</CODE>. Further calls to <CODE>read/2</CODE> for the same stream will then cause an error, unless the stream is connected to the terminal (in which case a prompt is opened on the terminal).
 
-<A NAME="IDX2308"></A>
-<CODE>write_option/1</CODE> type for default options. 
-<LI><EM>The following properties should hold upon exit:</EM>
+<LI><EM>The following properties hold upon exit:</EM>
 
-<CODE>@Stream</CODE> is an open stream.
+<CODE>+Stream</CODE> is an open stream.
  (<CODE>streams_basic:stream/1</CODE>)
 
 <CODE>?Term</CODE> is any term.
  (<CODE>basic_props:term/1</CODE>)
+</UL>
 
-<CODE>+OptList</CODE> is a list of <CODE>write_option</CODE>s.
+</DL>
+
+<P>
+<A NAME="IDX2795"></A>
+<A NAME="IDX2796"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_term/2:</B>
+<DD><A NAME="IDX2797"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_term(?Term, +Options)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Like
+
+<A NAME="IDX2798"></A>
+<CODE>read_term/3</CODE>, but reading from the 
+<A NAME="IDX2799"></A>
+current input 
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>?Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Options</CODE> is a list of <CODE>read_option</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2309"></A>
-<A NAME="IDX2310"></A>
+<A NAME="IDX2800"></A>
+<A NAME="IDX2801"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_term/2:</B>
-<DD><A NAME="IDX2311"></A>
+<DT><span class="define">PREDICATE:</span> <B>read_term/3:</B>
+<DD><A NAME="IDX2802"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_term(?Term,+OptList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>read_term(+Stream, ?Term, +Options)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), write_term(S,Term,OptList)</CODE>.
+<LI><EM>Description:</EM> Reads a <CODE>Term</CODE> from <CODE>Stream</CODE> with the ISO-Prolog <CODE>Options</CODE>. These options can control the behavior of read term (see
 
-<LI><EM>The following properties should hold upon exit:</EM>
+<A NAME="IDX2803"></A>
+<CODE>read_option/1</CODE>). 
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
 
 <CODE>?Term</CODE> is any term.
  (<CODE>basic_props:term/1</CODE>)
 
-<CODE>+OptList</CODE> is a list of <CODE>write_option</CODE>s.
+<CODE>+Options</CODE> is a list of <CODE>read_option</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2312"></A>
-<A NAME="IDX2313"></A>
+<A NAME="IDX2804"></A>
+<A NAME="IDX2805"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>write_option/1:</B>
-<DD><A NAME="IDX2314"></A>
+<DT><span class="define">PREDICATE:</span> <B>read_top_level/3:</B>
+<DD><A NAME="IDX2806"></A>
 
 
 <P>
-<CODE>Opt</CODE> is a valid write option which affects the predicate <CODE>write_term/3</CODE> and similar ones. Possible write_options are: 
-
-<UL>
-<LI><STRONG>quoted(</STRONG><EM>bool</EM><STRONG>):</STRONG> If <EM>bool</EM> is <CODE>true</CODE>, atoms and functors that can't be read back by
-
-<A NAME="IDX2315"></A>
-<CODE>read_term/3</CODE> are quoted, if it is <CODE>false</CODE>, each atom and functor is written as its name. Default value is <CODE>false</CODE>. 
-
-<LI><STRONG>ignore_ops(</STRONG><EM>flag</EM><STRONG>):</STRONG> If <EM>flag</EM> is <CODE>true</CODE>, each compound term is output in functional notation, if it is <CODE>ops</CODE>, curly bracketed notation and list notation is enabled when outputing compound terms, if it is <CODE>false</CODE>, also operator notation is enabled when outputing compound terms. Default value is <CODE>false</CODE>.
-
-<LI><STRONG>numbervars(</STRONG><EM>bool</EM><STRONG>):</STRONG> If <EM>bool</EM> is <CODE>true</CODE>, a term of the form <CODE>'$VAR'(N)</CODE> where <CODE>N</CODE> is an integer, is output as a variable name consisting of a capital letter possibly followed by an integer, a term of the form <CODE>'$VAR'(Atom)</CODE> where <CODE>Atom</CODE> is an atom, as this atom (without quotes), and a term of the form <CODE>'$VAR'(String)</CODE> where <CODE>String</CODE> is a character string, as the atom corresponding to this character string. See predicates <CODE>numbervars/3</CODE> and <CODE>prettyvars/1</CODE>. If <EM>bool</EM> is <CODE>false</CODE> this cases are not treated in any special way. Default value is <CODE>false</CODE>.
-
-<LI><STRONG>portrayed(</STRONG><EM>bool</EM><STRONG>):</STRONG> If <EM>bool</EM> is <CODE>true</CODE>, then call multifile predicates
-
-<A NAME="IDX2316"></A>
-<CODE>portray/1</CODE> and 
-<A NAME="IDX2317"></A>
-<CODE>portray_attribute/1</CODE>, to provide the user handlers for pretty printing some terms. <CODE>portray_attribute/1</CODE> is called whenever an attributed variable is to be printed, <CODE>portray/1</CODE> is called whenever a non-variable term is to be printed. If either call succeeds, then it is assumed that the term has been output, else it is printed as usual. If <EM>bool</EM> is <CODE>false</CODE>, these predicates are not called. Default value is <CODE>false</CODE>. This option is set by the toplevel when writting the final values of variables, and by the debugging package when writting the goals in the tracing messages. Thus you can vary the forms of these messages if you wish. 
-
-<LI><STRONG>max_depth(</STRONG><EM>depth</EM><STRONG>):</STRONG> <EM>depth</EM> is a positive integer or cero. If it is positive, it denotes the depth limit on printing compound terms. If it is cero, there is no limit. Default value is <CODE>0</CODE> (no limit).
-
-<LI><STRONG>priority(</STRONG><EM>prio</EM><STRONG>):</STRONG> <EM>prio</EM> is an integer between 1 and 1200. If the term to be printed has higher priority than <EM>prio</EM>, it will be printed parenthesized. Default value is 1200 (no term parenthesized).
-
-</UL>
-
-<P>
-.
+<CODE>read_top_level(Stream, Data, Variables)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_option(Opt)</CODE>
+Predicate used to read in the Top Level.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Opt</CODE> is a valid write option.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2318"></A>
-<A NAME="IDX2319"></A>
+<A NAME="IDX2807"></A>
+<A NAME="IDX2808"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write/2:</B>
-<DD><A NAME="IDX2320"></A>
+<DT><span class="define">PREDICATE:</span> <B>second_prompt/2:</B>
+<DD><A NAME="IDX2809"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write(@Stream,?Term)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage:</STRONG> <CODE>second_prompt(?Old, ?New)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [numbervars(true)])</CODE>.
+<LI><EM>Description:</EM> Changes the prompt (the <EM>second prompt</EM>, as oposed to the first one, used by the toplevel) used by
 
+<A NAME="IDX2810"></A>
+<CODE>read/2</CODE> and friends to <CODE>New</CODE>, and returns the current one in <CODE>Old</CODE>. 
 <LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>@Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2321"></A>
-<A NAME="IDX2322"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write/1:</B>
-<DD><A NAME="IDX2323"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write(?Term)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), write(S,Term)</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2324"></A>
-<A NAME="IDX2325"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>writeq/2:</B>
-<DD><A NAME="IDX2326"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>writeq(@Stream,?Term)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [quoted(true), numbervars(true)])</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>@Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2327"></A>
-<A NAME="IDX2328"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>writeq/1:</B>
-<DD><A NAME="IDX2329"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>writeq(?Term)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), writeq(S,Term)</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2330"></A>
-<A NAME="IDX2331"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write_canonical/2:</B>
-<DD><A NAME="IDX2332"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write_canonical(@Stream,?Term)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [quoted(true), ignore_ops(true)])</CODE>. The output of this predicate can always be parsed by
-
-<A NAME="IDX2333"></A>
-<CODE>read_term/2</CODE> even if the term contains special characters or if operator declarations have changed. 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>@Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2334"></A>
-<A NAME="IDX2335"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write_canonical/1:</B>
-<DD><A NAME="IDX2336"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write_canonical(?Term)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), write_canonical(S,Term)</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2337"></A>
-<A NAME="IDX2338"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>print/2:</B>
-<DD><A NAME="IDX2339"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>print(@Stream,?Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>write_term(Stream, Term, [numbervars(true), portrayed(true)])</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>@Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2340"></A>
-<A NAME="IDX2341"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>print/1:</B>
-<DD><A NAME="IDX2342"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>print(?Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), print(S,Term)</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2343"></A>
-<A NAME="IDX2344"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write_list1/1:</B>
-<DD><A NAME="IDX2345"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Writes a list to current output one element in each line.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Arg1</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2346"></A>
-<A NAME="IDX2347"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>portray_clause/2:</B>
-<DD><A NAME="IDX2348"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>portray_clause(@Stream,?Clause)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Outputs the clause <CODE>Clause</CODE> onto <CODE>Stream</CODE>, pretty printing its variables and using indentation, including a period at the end. This predicate is used by <CODE>listing/0</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>@Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?Clause</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2349"></A>
-<A NAME="IDX2350"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>portray_clause/1:</B>
-<DD><A NAME="IDX2351"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>portray_clause(?Clause)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Behaves like <CODE>current_output(S), portray_clause(S,Term)</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?Clause</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2352"></A>
-<A NAME="IDX2353"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>numbervars/3:</B>
-<DD><A NAME="IDX2354"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>numbervars(?Term,+N,?M)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies each of the variables in term <CODE>Term</CODE> with a term of the form <CODE>'$VAR'(I)</CODE> where <CODE>I</CODE> is an integer from <CODE>N</CODE> onwards. <CODE>M</CODE> is unified with the last integer used plus 1. If the resulting term is output with a write option <CODE>numbervars(true)</CODE>, in the place of the variables in the original term will be printed a variable name consisting of a capital letter possibly followed by an integer. When <CODE>N</CODE> is 0 you will get the variable names A, B, ..., Z, A1, B1, etc.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+N</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-
-<CODE>?M</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2355"></A>
-<A NAME="IDX2356"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prettyvars/1:</B>
-<DD><A NAME="IDX2357"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prettyvars(?Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Similar to <CODE>numbervars(Term,0,_)</CODE>, except that singleton variables in <CODE>Term</CODE> are unified with <CODE>'$VAR'('_')</CODE>, so that when the resulting term is output with a write option <CODE>numbervars(true)</CODE>, in the place of singleton variables <CODE>_</CODE> is written. This predicate is used by
-
-<A NAME="IDX2358"></A>
-<CODE>portray_clause/2</CODE>. 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2359"></A>
-<A NAME="IDX2360"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>printable_char/1:</B>
-<DD><A NAME="IDX2361"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>printable_char(+Char)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Char</CODE> is the code of a character which can be printed.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Char</CODE> is currently instantiated to a number.
- (<CODE>term_typing:number/1</CODE>)
+<CODE>?Old</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>?New</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC204" HREF="ciao_toc.html#TOC204">Documentation on multifiles (<CODE>write</CODE>)</A></H2>
+<H2><A NAME="SEC203" HREF="ciao_toc.html#TOC203">Documentation on multifiles (<CODE>read</CODE>)</A></H2>
 <P>
-<A NAME="IDX2362"></A>
-<A NAME="IDX2363"></A>
+<A NAME="IDX2811"></A>
+<A NAME="IDX2812"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
-<DD><A NAME="IDX2364"></A>
+<DD><A NAME="IDX2813"></A>
 
 
 <P>
 Defines flags as follows: 
 
 <PRE>
-define_flag(write_strings,[on,off],off).
+define_flag(read_hiord,[on,off],off).
 </PRE>
 
 <P>
-(See section <A HREF="ciao_27.html#SEC162">Changing system behaviour and various flags</A>). 
+(See section <A HREF="ciao_27.html#SEC163">Changing system behaviour and various flags</A>). 
 
 
 <P>
-If flag is <CODE>on</CODE>, lists which may be written as strings are.
+If flag is <CODE>on</CODE> (it is <CODE>off</CODE> by default), a variable followed by a parenthesized lists of arguments is read as a 
+<A NAME="IDX2814"></A>
+<CODE>call/N</CODE> term, except if the variable is anonymous, in which case it is read as an anonymous predicate abstraction head. For example, <CODE>P(X)</CODE> is read as <CODE>call(P,X)</CODE> and <CODE>_(X,Y)</CODE> as <CODE>"(X,Y)</CODE>.
 
 
 <P>
@@ -607,60 +286,56 @@ The predicate is <EM>multifile</EM>.
 
 </DL>
 
+
+
+<H2><A NAME="SEC204" HREF="ciao_toc.html#TOC204">Documentation on internals (<CODE>read</CODE>)</A></H2>
 <P>
-<A NAME="IDX2365"></A>
-<A NAME="IDX2366"></A>
+<A NAME="IDX2815"></A>
+<A NAME="IDX2816"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>portray_attribute/2:</B>
-<DD><A NAME="IDX2367"></A>
+<DT><span class="define">REGTYPE:</span> <B>read_option/1:</B>
+<DD><A NAME="IDX2817"></A>
 
 
 <P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>portray_attribute(Attr,Var)</CODE>
+<STRONG>Usage:</STRONG> <CODE>read_option(Option)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <EM>A user defined predicate.</EM> When an attributed variable <CODE>Var</CODE> is about to be printed, this predicate receives the variable and its attribute <CODE>Attr</CODE>. The predicate should either print something based on <CODE>Attr</CODE> or <CODE>Var</CODE>, or do nothing and fail. In the latter case, the default printer (
+<LI><EM>Description:</EM> <CODE>Option</CODE> is an allowed
 
-<A NAME="IDX2368"></A>
-<CODE>write/1</CODE>) will print the attributed variable like an unbound variable, e.g. <CODE>_673</CODE>. 
-<LI><EM>The following properties should hold at call time:</EM>
+<A NAME="IDX2818"></A>
+<CODE>read_term/[2,3]</CODE> option. These options are: 
 
-<CODE>Attr</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<PRE>
+read_option(variables(_V)).
+read_option(variable_names(_N)).
+read_option(singletons(_S)).
+read_option(lines(_StartLine,_EndLine)).
+read_option(dictionary(_Dict)).
+</PRE>
 
-<CODE>Var</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+They can be used to return the singleton variables in the term, a list of variables, etc. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Option</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX2369"></A>
-<A NAME="IDX2370"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>portray/1:</B>
-<DD><A NAME="IDX2371"></A>
 
 
-<P>
-The predicate is <EM>multifile</EM>.
+<H2><A NAME="SEC205" HREF="ciao_toc.html#TOC205">Known bugs and planned improvements (<CODE>read</CODE>)</A></H2>
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>portray(?Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <EM>A user defined predicate.</EM> This should either print the <CODE>Term</CODE> and succeed, or do nothing and fail. In the latter case, the default printer (<CODE>write/1</CODE>) will print the <CODE>Term</CODE>.
 
+<LI>
+
+The comma cannot be redefined as an operator, it is defined in any case as op(1000, xfy,[',']).
 </UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -63,11 +63,11 @@ win_reg_hexstr(N, C, [X|Xs]) -->
         win_reg_hexstr(N1, X, Xs).
 
 win_reg_hex(N) -->
-        {number_codes(N,S,16), (S = [_] -> H = "0"||S ; H = S)},
+        {number_codes(N,16,S), (S = [_] -> H = "0"||S ; H = S)},
         string(H).
 
 win_reg_hexbin(Num) --> "hex:",
-        {number_codes(Num,S,16), length(S,L),
+        {number_codes(Num,16,S), length(S,L),
          R is L mod 2, addceros(R, S, Bytes), Bytes = [B1,B2|Bs]},
         win_reg_hexbytes(Bs, B1, B2).
 
@@ -78,7 +78,7 @@ win_reg_hexbytes([B1,B2|Bs], A, B) -->
 
 win_reg_dword(Num) -->
         "dword:",
-        { number_codes(Num,S,16),
+        { number_codes(Num,16,S),
           length(S,L), R is 8-L, addceros(R, S, NS) },
         string(NS).
 

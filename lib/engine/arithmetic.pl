@@ -33,48 +33,51 @@ yes
 
 :- comment(is(Val,Exp), "The arithmetic expression @var{Exp} is
    evaluated and the result is unified with @var{Val}").
-:- true pred is(?term,+arithexpression) + iso.
+%:- true pred is(?term,+arithexpression) + iso.
+%:- true pred is(X,Y) : arithexpression(Y) => num(X) + iso.
+
+:- true pred is(X,+arithexpression) => num(X) + (iso, native).
 
 X is Y :- X is +Y.
 
 :- comment((Exp1 < Exp2), "The numeric value of @var{Exp1} is less than
    the numeric value of @var{Exp2} when both are evaluated as arithmetic
    expressions.").
-:- true pred <(+arithexpression,+arithexpression) + iso.
+:- true pred <(+arithexpression,+arithexpression) + (iso, native).
 
 X<Y :- X<Y.
 
 :- comment((Exp1 =< Exp2), "The numeric value of @var{Exp1} is less than
    or equal to the numeric value of @var{Exp2} when both are evaluated as
    arithmetic expressions.").
-:- true pred =<(+arithexpression,+arithexpression) + iso.
+:- true pred =<(+arithexpression,+arithexpression) + (iso, native).
 
 X=<Y :- X=<Y.
 
 :- comment((Exp1 > Exp2), "The numeric value of @var{Exp1} is greater than
    the numeric value of @var{Exp2} when both are evaluated as arithmetic
    expressions.").
-:- true pred >(+arithexpression,+arithexpression) + iso.
+:- true pred >(+arithexpression,+arithexpression) + (iso, native).
 
 X>Y :- X>Y.
 
 :- comment((Exp1 >= Exp2), "The numeric value of @var{Exp1} is greater than
    or equal to the numeric value of @var{Exp2} when both are evaluated as
    arithmetic expressions.").
-:- true pred >=(+arithexpression,+arithexpression) + iso.
+:- true pred >=(+arithexpression,+arithexpression) + (iso, native).
 
 X>=Y :- X>=Y.
 
 :- comment((Exp1 =:= Exp2), "The numeric values of @var{Exp1} and
    @var{Exp2} are equal when both are evaluated as arithmetic expressions.").
-:- true pred =:=(+arithexpression,+arithexpression) + iso.
+:- true pred =:=(+arithexpression,+arithexpression) + (iso, native).
 
 X=:=Y :- X=:=Y.
 
 :- comment((Exp1 =\= Exp2), "The numeric values of @var{Exp1} and
    @var{Exp2} are not equal when both are evaluated as arithmetic
    expressions.").
-:- true pred =\=(+arithexpression,+arithexpression) + iso.
+:- true pred =\=(+arithexpression,+arithexpression) + (iso, native).
 
 X=\=Y :- X=\=Y.
 

@@ -1,37 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget4 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Low level Interface between Prolog and blt</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC763" HREF="ciao_toc.html#TOC763">table_widget4 (library)</A></H1>
+<H1><A NAME="SEC771" HREF="ciao_toc.html#TOC771">Low level Interface between Prolog and blt</A></H1>
 <P>
-<A NAME="IDX7637"></A>
-
-
-<P>
-In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row and column is bold. The remaining elements are in medium weight font. 
+<A NAME="IDX8481"></A>
 
 
 <P>
-If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
+<STRONG>Author(s):</STRONG> Isabel Martín.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#153 (2003/12/4, 17:38:53 CET)
+
+
+<P>
+This module exports some predicates to interact with Tcl-tk, particularly with the bltwish program. Bltwish is a windowing shell consisting of the Tcl command languaje, the Tk toolkit plus the additional commands that comes with the BLT library and a main program that reads commands. It creates a main window and then processes Tcl commands. 
 
 
 
 <UL>
-<LI><A HREF="ciao_193.html#SEC764">Usage and interface (table_widget4)</A>
-<LI><A HREF="ciao_193.html#SEC765">Documentation on exports (table_widget4)</A>
+<LI><A HREF="ciao_193.html#SEC772">Usage and interface (bltclass)</A>
+<LI><A HREF="ciao_193.html#SEC773">Documentation on exports (bltclass)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC764" HREF="ciao_toc.html#TOC764">Usage and interface (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC772" HREF="ciao_toc.html#TOC772">Usage and interface (<CODE>bltclass</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +47,7 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(table_widget4)).</CODE>
+<CODE>:- use_module(library(bltclass)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,10 +56,17 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7638"></A>
-<CODE>tablewidget4/4</CODE>, 
-<A NAME="IDX7639"></A>
-<CODE>tablewidget4/5</CODE>.
+<A NAME="IDX8482"></A>
+<CODE>new_interp/1</CODE>, 
+<A NAME="IDX8483"></A>
+<CODE>tcltk_raw_code/2</CODE>, 
+<A NAME="IDX8484"></A>
+<CODE>interp_file/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX8485"></A>
+<CODE>bltwish_interp/1</CODE>.
 
 </UL>
 
@@ -62,18 +77,20 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7640"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7641"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7642"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX7643"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7644"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7645"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX8486"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX8487"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX8488"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX8489"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX8490"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX8491"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX8492"></A>
+<CODE>terms</CODE>.
 
 </UL>
 
@@ -83,77 +100,84 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 
-<H2><A NAME="SEC765" HREF="ciao_toc.html#TOC765">Documentation on exports (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC773" HREF="ciao_toc.html#TOC773">Documentation on exports (<CODE>bltclass</CODE>)</A></H2>
 <P>
-<A NAME="IDX7646"></A>
-<A NAME="IDX7647"></A>
+<A NAME="IDX8493"></A>
+<A NAME="IDX8494"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/4:</B>
-<DD><A NAME="IDX7648"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
+<DD><A NAME="IDX8495"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer)</CODE>
+<CODE>new_interp(Interp)</CODE>
 
 
 <P>
-Shows a regular table in a window. The system sets a default background image for the widget. 
+Creates a bltwish interprter and returns a socket. The socket allows the comunication between Prolog and Tcl-tk. Thus, bltwish receives the commands through the socket. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8496"></A>
+<A NAME="IDX8497"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
+<DD><A NAME="IDX8498"></A>
 
 
 <P>
-Example: 
+<CODE>tcltk_raw_code(Command_Line, Interp)</CODE>
+
+
+<P>
+Sends a command line to the interpreter. Tcl-tk parses and executes it. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8499"></A>
+<A NAME="IDX8500"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>bltwish_interp/1:</B>
+<DD><A NAME="IDX8501"></A>
+
+
+<P>
+<CODE>bltwish_interp(Interp)</CODE>
+
+
+<P>
+This type defines a bltwish interpreter. In fact, the bltwish interpreter receives the commands through the socket created. 
 
 <PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-             'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table').
+bltwish_interp(Interp) :-
+        stream(Interp).
 </PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7649"></A>
-<A NAME="IDX7650"></A>
+<A NAME="IDX8502"></A>
+<A NAME="IDX8503"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/5:</B>
-<DD><A NAME="IDX7651"></A>
+<DT><span class="define">PREDICATE:</span> <B>interp_file/2:</B>
+<DD><A NAME="IDX8504"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+<CODE>interp_file(File, Interp)</CODE>
 
 
 <P>
-This predicate and 
-<A NAME="IDX7652"></A>
-<CODE>tablewidget4/4</CODE> are comparable, except that in the already defined you must set the background image. 
+Sends the script file (File) to the interpreter through the socket. A script file is a file that contains commands that Tcl-tk can execute. 
 
-
-<P>
-Example: 
-
-<PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-           'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table',
-  './images/rain.gif').
-</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

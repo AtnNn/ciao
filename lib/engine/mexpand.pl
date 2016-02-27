@@ -77,13 +77,12 @@ atom_expansion(A, F, N, M, QM, NA, RM) :-
         atom_expansion_here(A, F, N, M, NA),
         RM = M.
 atom_expansion(A, F, N, M, QM, NA, RM) :-
-        ( imports(M, QM, F, N, EM) ->
-              module_concat(EM, A, NA),
-              RM = EM
+        ( imports(M, QM, F, N, EM) -> true
         ; module_warning(not_imported(F, N, M, QM)),
-          atom_expansion_here(A, F, N, M, NA),
-          RM = M
-        ).
+          EM = '$bad_qualification$'
+        ),
+        module_concat(EM, A, NA),
+        RM = EM.
 
 % This is not recursive since we want the expansion not depending on the
 % imports of the modules used
@@ -100,7 +99,8 @@ unqualified_atom_expansion(A, F, N, M, NA, RM) :-
         ; imports(M, IM, F, N, EM) ->
               module_concat(EM, A, NA),
               RM = EM,
-              check_if_reimported(M, IM, F, N)
+              check_if_reimported(M, IM, F, N, EM)
+%JFKK: reexport patch              check_if_reimported(M, IM, F, N)
         ; ( M = user(_) -> true
           ; module_warning(not_defined(F, N, M))
           ),
@@ -114,10 +114,18 @@ check_if_imported(M, F, N) :-
           module_warning(imported_needs_qual(F, N, IM))
         ; true.
 
+/* JF: reexport patch
 check_if_reimported(M, IM, F, N) :-
         \+ redefining(M, F, N),
         imports(M, IM0, F, N, _),
         IM0 \== IM ->
+          module_warning(imported_needs_qual(F, N, IM0, IM))
+        ; true.
+*/
+check_if_reimported(M, IM, F, N, EM) :-
+        \+ redefining(M, F, N),
+        imports(M, IM0, F, N, EM0),
+        EM0 \== EM ->
           module_warning(imported_needs_qual(F, N, IM0, IM))
         ; true.
 
@@ -173,6 +181,7 @@ meta_expansion_arg1(X, Type, M, QM, Pr, NX, G, R) :-
         runtime_module_expansion(G, Type, Pr, M, QM, X, NX, R).
 
 term_to_meta_or_primitive(true, T, T).
+term_to_meta_or_primitive(fail, T, T) :- ciaopp_expansion, !.
 term_to_meta_or_primitive(fail, T, NT) :- term_to_meta(T,NT).
 
 % Called from internals
@@ -192,6 +201,8 @@ expand_meta_of_type(spec, S, M, QM, NS):- !,
 expand_meta_of_type(fact, Atom, M, QM, NAtom):- !,
 	atom_expansion_add_goals(Atom, M, QM, NAtom, no, no).
 expand_meta_of_type(goal, Goal, M, QM, NGoal):- !,
+	body_expansion(Goal, M, QM, NGoal).
+expand_meta_of_type(pred(_), Goal, M, QM, NGoal):- ciaopp_expansion, !,
 	body_expansion(Goal, M, QM, NGoal).
 expand_meta_of_type(pred(0), Goal, M, QM, NGoal):- !,
 	body_expansion(Goal, M, QM, NGoal).
@@ -259,6 +270,8 @@ unify_args(I, N, F, A, G) :-
         A1 is A+1,
         unify_args(I1, N, F, A1, G).
 
+runtime_module_expansion(G,_Type,_Primitive,_M,_QM, X, X, G) :-
+	ciaopp_expansion, !. % no runtime exp.
 runtime_module_expansion((P, R), Type, Primitive, M, QM, X, NX, R) :- !,
         % This predicate is defined diff. in compiler.pl and builtin.pl
         uses_runtime_module_expansion,

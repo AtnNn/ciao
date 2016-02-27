@@ -14,6 +14,7 @@ OBJFILES=wam.o format.o inout.o misc.o startgoal.o ciao.o \
 	 own_malloc_linear.o alloc.o heapgc.o indexing.o initial.o \
 	registers.o stacks.o support.o term_support.o wamsupport.o \
 	qread.o qget.o builtin.o interrupt.o gauge.o bignum.o profile.o \
+	float_consts.o float_tostr.o \
 	ciao_prolog.o start.o version.o
 
 
@@ -90,10 +91,10 @@ $(ENGINENAME): configure.h ciaoemulator
 
 ciaoemulator: $(OBJ)
 	$(CC) $(CONSOLEFLAG) $(LDFLAGS) $(OBJ) $(CURRLIBS) -o $(ENGINENAME)
-	-chmod --quiet $(DATAMODE) *.o
+	-chmod $(DATAMODE) *.o
 	( cd $(SRC)/etc && $(MAKE) force_fix_size; )
 	$(SRC)/etc/fix_size$(EXECSUFFIX) $(ENGINENAME)
-	-chmod --quiet $(EXECMODE) $(ENGINENAME)
+	-chmod $(EXECMODE) $(ENGINENAME)
 	if test ! -f $(SRCINCLUDEDIR)/configure.h ; then \
 	  for f in $(DATADEFS) $(SUPPORT) $(CCOMPILATIONSUPPORT); do \
 	    ln -s -f $(OBJDIR)/$$f $(SRCINCLUDEDIR); \
@@ -161,6 +162,8 @@ cmnd.o: $(DATADEFS) instrdefs.h predtyp.h interface.h commands.h compat.h
 dynlink.o: $(DATADEFS) $(SUPPORT) dynlink_defs.h
 # foreign.o: $(DATADEFS) $(SUPPORT) compat.h foreign_defs.h alloc_defs.h
 format.o: $(DATADEFS) $(SUPPORT) format_defs.h wamfunction_defs.h term_support_defs.h
+float_consts.o: float_consts.h
+float_tostr.o: float_tostr.h float_consts.h
 heapgc.o: $(DATADEFS) $(SUPPORT) gcdatadefs.h gcsupport.h threads.h heapgc_defs.h stacks_defs.h
 help.o: commands.h
 indexing.o: $(DATADEFS) $(SUPPORT) predtyp.h indexing_defs.h wamsupport_defs.h support_defs.h alloc_defs.h objareas_defs.h stacks_defs.h bignum_defs.h locks_defs.h start_defs.h initial_defs.h

@@ -5,17 +5,23 @@
         ],[assertions]).
 
 
+:- true comp ttyput(X) + native.
+
 ttyput(X) :- put_code(user, X).
 
 ttytab(X) :- tab(user, X).
 
 ttyskip(X) :- skip_code(user, X).
 
+:- true comp ttyflush(X) + native.
+
 ttyflush :- flush_output(user).
 
 ttyget(N) :- get_code(user, N).
 
 ttyget1(N) :- get1_code(user, N).
+
+:- true comp ttynl + native.
 
 ttynl :- nl(user).
 

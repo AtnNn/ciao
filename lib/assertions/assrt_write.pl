@@ -52,10 +52,12 @@ write_assertion_(Goal,Status,Type,Body,Dict,Flag,AsComm):-
 	),
 	assertion_body(Goal,Compat,Call,Succ,Comp,Comm,Body),
 	write_if_not_empty(Compat,'::',AsComm,conj),
-	decide_on_call(Call,Form),
-	write_if_not_empty(Call,' :',AsComm,Form),
-	write_if_not_empty(Succ,'=>',AsComm,conj),
-	write_if_not_empty(Comp,' +',AsComm,conj),
+	decide_on_call(Call,FormC),
+	write_if_not_empty(Call,' :',AsComm,FormC),
+	decide_on_call(Succ,FormS),
+	write_if_not_empty(Succ,'=>',AsComm,FormS),
+	decide_on_call(Comp,FormP),
+	write_if_not_empty(Comp,' +',AsComm,FormP),
 	write_comment(Comm,AsComm),
 	format(".~n~n",[]),
 	!.
@@ -76,12 +78,23 @@ write_status_assertion(no,Status,Type,Goal):-
 
 write_comment([],_AsComm):- !.
 write_comment(Comm,AsComm):-
-	write_comment_as_comment(AsComm,Comm).
+	check_comas_in_comment(Comm,CC ),
+	write_comment_as_comment(AsComm,CC).
 
 write_comment_as_comment(yes,Comm):-
 	format('~n%% ~8|#  "~s"',[Comm]).
 write_comment_as_comment(no,Comm):-
 	format('~n~8|#  "~s"',[Comm]).
+
+check_comas_in_comment( [] , [] ).
+
+check_comas_in_comment( [A|Ar] , [A|Br] ) :-
+	A \== 0'",
+	check_comas_in_comment(Ar,Br).
+
+check_comas_in_comment( [A|Ar] , [0'\\,A|Br] ) :-
+	check_comas_in_comment(Ar,Br).
+
 
 write_if_not_empty([],_Mod,_AsComm,_Always):- !.
 write_if_not_empty([true],_Mod,_AsComm,conj):- !.
@@ -141,6 +154,9 @@ decide_on_call(_Call,conj).
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+320,2004/03/03,18:29*59+'CET'), "BUG:printing
+   comas in comment is fixed up (David Trallero Mena)").
 
 :- comment(version(1*5+2,1999/11/29,18:02*53+'MET'), "assrt_props is
    now assertions_props. (Francisco Bueno Carrillo)").

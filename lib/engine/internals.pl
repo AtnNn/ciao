@@ -26,7 +26,8 @@
         '$quiet_flag'/2,
         '$ciao_version'/2,
         '$spypoint'/3, '$debugger_state'/2, '$debugger_mode'/0,
-        '$prolog_radix'/2, '$constraint_list'/2, '$eq'/2,
+%        '$prolog_radix'/2,
+	'$constraint_list'/2, '$eq'/2,
         '$large_data'/3, '$interpreted_clause'/2,
         '$set_global_logical_var'/2, '$get_global_logical_var'/2,
         '$erase_atom'/1,
@@ -78,7 +79,9 @@ provides handles for the module system into the internal definitions.
         '$metacut'/1, '$retry_cut'/2, '$exit'/1, '$unknown'/2, '$compiling'/2,
         '$ferror_flag'/2, '$quiet_flag'/2, '$ciao_version'/2,
         '$spypoint'/3, '$debugger_state'/2,
-        '$debugger_mode'/0, '$prolog_radix'/2, '$constraint_list'/2, '$eq'/2,
+        '$debugger_mode'/0,
+%	'$prolog_radix'/2,
+	'$constraint_list'/2, '$eq'/2,
         '$large_data'/3, '$interpreted_clause'/2, '$unix_popen'/3,
         '$exec'/4, '$unix_argv'/1, '$load_foreign_files'/4,
         '$prepare_foreign_files'/3, '$foreign_base'/1, '$find_file'/8,
@@ -174,6 +177,7 @@ control_c_handler :- throw(control_c).
 
 % Called from engine(mexpand)
 uses_runtime_module_expansion.
+ciaopp_expansion :- fail.
 
 :- data goal_trans/2.
 
@@ -186,9 +190,9 @@ module_warning(not_defined(F, N, M)) :- !,
         ; message(warning, ['Predicate ',~~(F/N),' undefined in module ',M])
         ).
 module_warning(not_imported(F, N, M, QM)) :- !,
-        message(warning, ['Module qualification of ',~~(F/N),
-                          ' ignored, module ',M,
-                          ' does not import the predicate from module ',QM]).
+        message(error, ['Bad module qualification of ',~~(F/N),
+                        ', module ',M,
+                        ' does not import the predicate from module ',QM]).
 module_warning(bad_pred_abs(PA)) :- !,
         message(error, ['Bad predicate abstraction ',~~(PA),
                           ' : head functor should be ''''']).
@@ -376,7 +380,7 @@ del_stumps(_).
 
 poload(AbsName) :-
 	'$push_qlinfo',
-        '$open'(AbsName, read, Stream),            % Gives errors
+        '$open'(AbsName, r, Stream),            % Gives errors
 	'$qread'(Stream, Version),
 	poversion(Version), !,
 	repeat,
@@ -556,6 +560,14 @@ do_undefined(warning, X) :-
 % do_undefined(fail, X) :- fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+297,2004/02/16,17:10*29+'CET'), "prolog_radix/2
+   is not required now, due to changes in number_codes/3.  (Edison
+   Mera)").
+
+:- comment(version(1*9+272,2004/01/05,19:40*06+'CET'), "Changed
+   handling of bad qualification: now it is not ignored, but changed to
+   a special module so that it is detected at runtime. (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+195,2002/04/12,14:21*57+'CEST'), "Added support
    for user exceptions (code 7) in error/5 (Jose Morales)").

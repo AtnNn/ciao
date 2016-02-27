@@ -7,6 +7,8 @@
 
 :- comment(title, "Exception handling").
 
+:- comment(author, "The CLIP Group").
+
 :- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
@@ -16,7 +18,7 @@
 :- primitive_meta_predicate(catch(goal, ?, goal)).
 :- primitive_meta_predicate(intercept(goal, ?, goal)).
 
-:- true pred halt + iso.
+:- true pred halt + (iso, native).
 
 :- comment(halt, "Halt the system, exiting to the invoking shell.").
 
@@ -39,7 +41,7 @@ abort :- '$exit'(-32768).
 
 :- concurrent catching/3, thrown/1.
 
-:- true pred catch(+callable,?term,+callable) + iso.
+:- true pred catch(+callable,?term,+callable) + (iso, native).
 
 :- comment(catch(Goal, Error, Handler), "Executes @var{Goal}.  If an
    exception is raised during its execution, @var{Error} is unified with

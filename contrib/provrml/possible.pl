@@ -1,4 +1,6 @@
-:- module(possible,[continue/3],[dcg,assertions]).
+:- module(possible,[continue/3],[dcg,assertions,isomodes]).
+
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
 
 :- use_module(library(lists)).
 

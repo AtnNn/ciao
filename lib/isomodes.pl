@@ -8,6 +8,7 @@
 :- modedef '?'(_).
 :- modedef '*'(_).
 
+:- use_module(engine(hiord_rt)).
 :- push_prolog_flag(read_hiord,on).
 
 %% Parametric versions of above

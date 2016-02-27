@@ -8,21 +8,21 @@
 
 queens(N,Qs) :-
         range(1,N,Ns),
-        queens(Ns,[],Qs).
+        do_queens(Ns,[],Qs).
 
-queens(UnplacedQs, SafeQs, Qs) :-
+do_queens(UnplacedQs, SafeQs, Qs) :-
         select(Q,UnplacedQs, UnplacedQs1),
         \+ attack(Q,SafeQs),
-        queens(UnplacedQs1,[Q|SafeQs],Qs).
-queens([], Qs, Qs).
+        do_queens(UnplacedQs1,[Q|SafeQs],Qs).
+do_queens([], Qs, Qs).
 
-attack(X,Xs) :- attack(X, 1, Xs).
+attack(X,Xs) :- do_attack(X, 1, Xs).
 
-attack(X,N,[Y|_Ys]) :- X is Y + N.
-attack(X,N,[Y|_Ys]) :- X is Y - N.
-attack(X,N,[_Y|Ys]) :- 
+do_attack(X,N,[Y|_Ys]) :- X is Y + N.
+do_attack(X,N,[Y|_Ys]) :- X is Y - N.
+do_attack(X,N,[_Y|Ys]) :- 
         N1 is N + 1,
-        attack(X,N1,Ys).
+        do_attack(X,N1,Ys).
 
 range(M,N,[M|Ns]) :-
         M < N,
@@ -73,6 +73,5 @@ go(I) :-
 show_solution(I,L) :-
         reverse(L,LR),
         tcl_eval(I,[show_solution,br(LR)],_).
-
 
 

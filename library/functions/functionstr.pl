@@ -26,6 +26,22 @@ defunc((:- function(Spec)), _, Mod) :- !,
         ; inform_user(['Invalid function specification: ',Spec])
         ).
 defunc((:- _), _, _) :- !, fail.
+defunc((FuncHead := FuncValOpts), Clauses, Mod) :-
+        nonvar(FuncValOpts),
+        FuncValOpts = (FuncVal1 | FuncValR),
+        !,
+        Clauses = [Clause1 | ClauseR],
+        defunc((FuncHead := FuncVal1), Clause1, Mod),
+        defunc((FuncHead := FuncValR), ClauseR, Mod).
+defunc((FuncHead := CondFuncVal), (Head :- Body), Mod) :-
+        nonvar(CondFuncVal),
+        CondFuncVal = (Cond ? FuncValue),
+        !,
+        arith_flag(Mod, Arith_Flag),
+        defunc_head(FuncHead, Mod, Arith_Flag, NewFuncHead, Body, RestBody1),
+        defunc_exp(FuncValue, Mod, Arith_Flag, NewFuncValue, RestBody2, true),
+        concat_bodies(Cond, (!, Val=NewFuncValue, RestBody2), RestBody1),
+        add_to_term(NewFuncHead, Val, Head).
 defunc((FuncHead := FuncValue), (Head :- Body), Mod) :- !,
         arith_flag(Mod, Arith_Flag),
         defunc_head(FuncHead, Mod, Arith_Flag, NewFuncHead, AddBody, RestBody),
@@ -96,11 +112,21 @@ defunc_exp(Fun, Mod, Arith, V, Add, Rest) :-
         add_qualification(QM, NFn, QNFn),
         new_arith(Arith, NArith),
         defunc_args(A, Fn, Mod, NArith, NFn, Add, (QNFn, Rest)).
+defunc_exp(Opts, Mod, Arith, V, Add, Rest) :- Opts = (_|_), !,
+        Add = (Assigns, Rest),
+        defunc_opts(Opts, Mod, Arith, V, Assigns).
+defunc_exp((Cond ? Val), Mod, Arith, V, Add, Rest) :- !,
+        Add = ((Cond -> Assign), Rest),
+        defunc_exp(Val, Mod, Arith, NVal, Assign, (V = NVal)).
 defunc_exp(T0, Mod, Arith, T1, Add, Rest) :-
-        (T0 = is(_,_) -> Arith = false ; true), % avoid infinite loop
+        ( T0 = is(_,_) ->
+            NArith = tempfalse % avoid infinite loop
+        ;
+            NArith = Arith
+        ),
         functor(T0, F, A),
         functor(T1, F, A),
-        defunc_args(A, T0, Mod, Arith, T1, Add, Rest).
+        defunc_args(A, T0, Mod, NArith, T1, Add, Rest).
 
 add_qualification((-), P, P) :- !.
 add_qualification(QM, P, QM:P).
@@ -108,6 +134,17 @@ add_qualification(QM, P, QM:P).
 new_arith(false, false).
 new_arith(tempfalse, true).
 new_arith(true, true).
+
+defunc_opts((A|B), Mod, Arith, V, (A_As ; Assigns)) :- !,
+        defunc_opt(A, Mod, Arith, V, A_As),
+        defunc_opts(B, Mod, Arith, V, Assigns).
+defunc_opts(A, Mod, Arith, V, A_As) :-
+        defunc_opt(A, Mod, Arith, V, A_As).
+
+defunc_opt((Cond ? Val), Mod, Arith, V, (Cond -> Assign)) :- !,
+        defunc_exp(Val, Mod, Arith, NVal, Assign, (V = NVal)).
+defunc_opt(Val, Mod, Arith, V, Assign) :-
+        defunc_exp(Val, Mod, Arith, NVal, Assign, (V = NVal)).
 
 % defunc_goal(Goal, NewGoal, Module) :-
 %   NewGoal is a goal equivalent to Goal (in Module) but without functions.
@@ -131,8 +168,11 @@ defunc_goal(QM:Goal, NewGoal, Mod) :- !,
         defunc_args(A, Goal, Mod, Arith_Flag, Goal1, NewGoal, QM:Goal1),
         NewGoal \== QM:Goal.
 defunc_goal(Goal, NewGoal, Mod) :-
-        arith_flag(Mod, Arith_Flag),
-        (Goal = is(_,_) -> Arith_Flag = false ; true), % avoid infinite loop
+        ( Goal = is(_,_) ->
+            Arith_Flag = tempfalse % avoid infinite loop
+        ; 
+            arith_flag(Mod, Arith_Flag)
+        ),
         functor(Goal, F, A),
         functor(Goal1, F, A),
         defunc_args(A, Goal, Mod, Arith_Flag, Goal1, NewGoal, Goal1),
@@ -179,7 +219,7 @@ make_function(P, Mod, QM) :-
 make_function(P, Mod, QM) :-
         asserta_fact(function(P, Mod, QM)).
 
-is_function(~V,_Mod, call(V), (-)) :- var(V), !.
+is_function(~V,_Mod, call(V), (-)) :- var(V), !. % Apply?
 is_function(~(QM:Fun),_Mod, Fun, QM) :- !.
 is_function(~(Fun),_Mod, Fun, (-)) :- !.
 is_function(QM:Fun, Mod, Fun, QM) :- !, function(Fun, Mod, QM).

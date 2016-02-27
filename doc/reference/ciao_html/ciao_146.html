@@ -1,33 +1,47 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Types for the Low-level interface to SQL databases</TITLE>
+<TITLE>The Ciao Prolog System               - HTTP conectivity</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC611" HREF="ciao_toc.html#TOC611">Types for the Low-level interface to SQL databases</A></H1>
+<H1><A NAME="SEC604" HREF="ciao_toc.html#TOC604">HTTP conectivity</A></H1>
 <P>
-<A NAME="IDX6240"></A>
+<A NAME="IDX6656"></A>
 
 
 <P>
-<STRONG>Author(s):</STRONG> D. Cabeza, M. Carro, I. Caballero, and M. Hermenegildo..
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
+
+
+<P>
+This module implements the 
+<A NAME="IDX6657"></A>
+HTTP protocol, which allows retrieving data from HTTP servers.
 
 
 
 <UL>
-<LI><A HREF="ciao_146.html#SEC612">Usage and interface (db_client_types)</A>
-<LI><A HREF="ciao_146.html#SEC613">Documentation on exports (db_client_types)</A>
+<LI><A HREF="ciao_146.html#SEC605">Usage and interface (http)</A>
+<LI><A HREF="ciao_146.html#SEC606">Documentation on exports (http)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC612" HREF="ciao_toc.html#TOC612">Usage and interface (<CODE>db_client_types</CODE>)</A></H2>
+<H2><A NAME="SEC605" HREF="ciao_toc.html#TOC605">Usage and interface (<CODE>http</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,31 +49,37 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(db_client_types)).</CODE>
+<CODE>:- use_module(library(http)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX6241"></A>
-<CODE>socketname/1</CODE>, 
-<A NAME="IDX6242"></A>
-<CODE>dbname/1</CODE>, 
-<A NAME="IDX6243"></A>
-<CODE>user/1</CODE>, 
-<A NAME="IDX6244"></A>
-<CODE>passwd/1</CODE>, 
-<A NAME="IDX6245"></A>
-<CODE>answertableterm/1</CODE>, 
-<A NAME="IDX6246"></A>
-<CODE>tuple/1</CODE>, 
-<A NAME="IDX6247"></A>
-<CODE>answertupleterm/1</CODE>, 
-<A NAME="IDX6248"></A>
-<CODE>sqlstring/1</CODE>.
+<A NAME="IDX6658"></A>
+<CODE>fetch_url/3</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6659"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX6660"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6661"></A>
+<CODE>pillow/pillow_aux</CODE>, 
+<A NAME="IDX6662"></A>
+<CODE>pillow/pillow_types</CODE>, 
+<A NAME="IDX6663"></A>
+<CODE>pillow/http_ll</CODE>.
 
 </UL>
 
@@ -69,200 +89,43 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>,
 
 
 
-<H2><A NAME="SEC613" HREF="ciao_toc.html#TOC613">Documentation on exports (<CODE>db_client_types</CODE>)</A></H2>
+<H2><A NAME="SEC606" HREF="ciao_toc.html#TOC606">Documentation on exports (<CODE>http</CODE>)</A></H2>
 <P>
-<A NAME="IDX6249"></A>
-<A NAME="IDX6250"></A>
+<A NAME="IDX6664"></A>
+<A NAME="IDX6665"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
-<DD><A NAME="IDX6251"></A>
+<DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
+<DD><A NAME="IDX6666"></A>
 
-
-
-<PRE>
-socketname(IPAddress:PortNumber) :-
-        atm(IPAddress),
-        int(PortNumber).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
+<CODE>fetch_url(URL, Request, Response)</CODE>
+
+
+<P>
+Fetches the document pointed to by <CODE>URL</CODE> from Internet, using request parameters <CODE>Request</CODE>, and unifies <CODE>Response</CODE> with the parameters of the response. Fails on timeout. Note that redirections are not handled automatically, that is, if <CODE>Response</CODE> contains terms of the form <CODE>status(redirection,301,_)</CODE> and <CODE>location(NewURL)</CODE>, the program should in most cases access location <CODE>NewURL</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fetch_url(URL, Request, Response)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
+<LI><EM>The following properties should hold at call time:</EM>
 
-</UL>
+<CODE>URL</CODE> specifies a URL.
+ (<CODE>pillow_types:url_term/1</CODE>)
 
-</DL>
+<CODE>Request</CODE> is a list of <CODE>http_request_param</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
 
-<P>
-<A NAME="IDX6252"></A>
-<A NAME="IDX6253"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
-<DD><A NAME="IDX6254"></A>
-
-
-
-<PRE>
-dbname(DBId) :-
-        atm(DBId).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6255"></A>
-<A NAME="IDX6256"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
-<DD><A NAME="IDX6257"></A>
-
-
-
-<PRE>
-user(User) :-
-        atm(User).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6258"></A>
-<A NAME="IDX6259"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
-<DD><A NAME="IDX6260"></A>
-
-
-
-<PRE>
-passwd(Passwd) :-
-        atm(Passwd).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6261"></A>
-<A NAME="IDX6262"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>answertableterm/1:</B>
-<DD><A NAME="IDX6263"></A>
-
-
-<P>
-Represents the types of responses that will be returned from the database interface. These can be a set of answer tuples, or the atom <CODE>ok</CODE> in case of a successful addition or deletion.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>answertableterm(AT)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AT</CODE> is a response from the database interface.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6264"></A>
-<A NAME="IDX6265"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
-<DD><A NAME="IDX6266"></A>
-
-
-
-<PRE>
-tuple(T) :-
-        list(T,atm).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the database interface.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6267"></A>
-<A NAME="IDX6268"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>answertupleterm/1:</B>
-<DD><A NAME="IDX6269"></A>
-
-
-
-<PRE>
-answertupleterm([]).
-answertupleterm(tup(T)) :-
-        tuple(T).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>answertupleterm(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a predicate containing a tuple.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6270"></A>
-<A NAME="IDX6271"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
-<DD><A NAME="IDX6272"></A>
-
-
-
-<PRE>
-sqlstring(S) :-
-        string(S).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a string of SQL code.
-
+<CODE>Response</CODE> is a list of <CODE>http_response_param</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

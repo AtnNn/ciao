@@ -1,45 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pretty-printing assertions</TITLE>
+<TITLE>The Ciao Prolog System               - Sets of variables in terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC345" HREF="ciao_toc.html#TOC345">Pretty-printing assertions</A></H1>
+<H1><A NAME="SEC349" HREF="ciao_toc.html#TOC349">Sets of variables in terms</A></H1>
 <P>
-<A NAME="IDX4005"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno Carrillo.
+<A NAME="IDX4582"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> The CLIP Group.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#2 (1999/11/29, 18:2:53 MET)
+<STRONG>Version:</STRONG> 1.9#220 (2003/12/21, 18:58:25 CET)
 
 
 <P>
-This module defines some predicates which are useful for writing assertions in a readable form.
+This module implements predicates to handle sets of variables in terms.
 
 
 
 <UL>
-<LI><A HREF="ciao_82.html#SEC346">Usage and interface (assrt_write)</A>
-<LI><A HREF="ciao_82.html#SEC347">Documentation on exports (assrt_write)</A>
+<LI><A HREF="ciao_82.html#SEC350">Usage and interface (terms_vars)</A>
+<LI><A HREF="ciao_82.html#SEC351">Documentation on exports (terms_vars)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC346" HREF="ciao_toc.html#TOC346">Usage and interface (<CODE>assrt_write</CODE>)</A></H2>
+<H2><A NAME="SEC350" HREF="ciao_toc.html#TOC350">Usage and interface (<CODE>terms_vars</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +43,7 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(assrt_write)).</CODE>
+<CODE>:- use_module(library(terms_vars)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,10 +52,12 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4006"></A>
-<CODE>write_assertion/6</CODE>, 
-<A NAME="IDX4007"></A>
-<CODE>write_assertion_as_comment/6</CODE>.
+<A NAME="IDX4583"></A>
+<CODE>varset/2</CODE>, 
+<A NAME="IDX4584"></A>
+<CODE>varsbag/3</CODE>, 
+<A NAME="IDX4585"></A>
+<CODE>varset_in_args/2</CODE>.
 
 </UL>
 
@@ -70,14 +68,10 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4008"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX4009"></A>
-<CODE>assertions/assrt_lib</CODE>, 
-<A NAME="IDX4010"></A>
-<CODE>messages</CODE>, 
-<A NAME="IDX4011"></A>
-<CODE>assertions/assertions_props</CODE>.
+<A NAME="IDX4586"></A>
+<CODE>idlists</CODE>, 
+<A NAME="IDX4587"></A>
+<CODE>sort</CODE>.
 
 </UL>
 
@@ -87,76 +81,70 @@ This module defines some predicates which are useful for writing assertions in a
 
 
 
-<H2><A NAME="SEC347" HREF="ciao_toc.html#TOC347">Documentation on exports (<CODE>assrt_write</CODE>)</A></H2>
+<H2><A NAME="SEC351" HREF="ciao_toc.html#TOC351">Documentation on exports (<CODE>terms_vars</CODE>)</A></H2>
 <P>
-<A NAME="IDX4012"></A>
-<A NAME="IDX4013"></A>
+<A NAME="IDX4588"></A>
+<A NAME="IDX4589"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_assertion/6:</B>
-<DD><A NAME="IDX4014"></A>
+<DT><span class="define">PREDICATE:</span> <B>varset/2:</B>
+<DD><A NAME="IDX4590"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_assertion(Goal,Status,Type,Body,Dict,Flag)</CODE>
+<CODE>varset(Term, Xs)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Writes the (normalized) assertion to current output.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+<CODE>Xs</CODE> is the sorted list of all the variables in <CODE>Term</CODE>.
 
-<CODE>Status</CODE> is an acceptable status for an assertion.
- (<CODE>assertions_props:assrt_status/1</CODE>)
-
-<CODE>Type</CODE> is an admissible kind of assertion.
- (<CODE>assertions_props:assrt_type/1</CODE>)
-
-<CODE>Body</CODE> is a normalized assertion body.
- (<CODE>assertions_props:nabody/1</CODE>)
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>assertions_props:dictionary/1</CODE>)
-
-<CODE>Flag</CODE> is <CODE>status</CODE> or <CODE>nostatus</CODE>.
- (<CODE>assrt_write:status_flag/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4015"></A>
-<A NAME="IDX4016"></A>
+<A NAME="IDX4591"></A>
+<A NAME="IDX4592"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_assertion_as_comment/6:</B>
-<DD><A NAME="IDX4017"></A>
+<DT><span class="define">PREDICATE:</span> <B>varsbag/3:</B>
+<DD><A NAME="IDX4593"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_assertion_as_comment(Goal,Status,Type,Body,Dict,Flag)</CODE>
+<CODE>varsbag(Term, Vs, Xs)</CODE>
+
+
+<P>
+<CODE>Vs</CODE> is the list of all the variables in <CODE>Term</CODE> ordered as they appear in <CODE>Term</CODE> right-to-left depth-first (including duplicates) plus <CODE>Xs</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4594"></A>
+<A NAME="IDX4595"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>varset_in_args/2:</B>
+<DD><A NAME="IDX4596"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varset_in_args(T, LL)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Writes the (normalized) assertion to current output as a Prolog comment.
+<LI><EM>Description:</EM> Each list of <CODE>LL</CODE> contains the variables of an argument of <CODE>T</CODE>, for each argument, and in left to right order.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Status</CODE> is an acceptable status for an assertion.
- (<CODE>assertions_props:assrt_status/1</CODE>)
+<CODE>T</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>Type</CODE> is an admissible kind of assertion.
- (<CODE>assertions_props:assrt_type/1</CODE>)
-
-<CODE>Body</CODE> is a normalized assertion body.
- (<CODE>assertions_props:nabody/1</CODE>)
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>assertions_props:dictionary/1</CODE>)
-
-<CODE>Flag</CODE> is <CODE>status</CODE> or <CODE>nostatus</CODE>.
- (<CODE>assrt_write:status_flag/1</CODE>)
+<CODE>LL</CODE> is a list of <CODE>list(var)</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_81.html">previous</A>, <A HREF="ciao_83.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

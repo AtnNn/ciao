@@ -10,7 +10,8 @@
                   consult/1, compile/1, '.'/2,
                   debug_module/1, nodebug_module/1,
                   debug_module_source/1,
-		  display_debugged/0
+		  display_debugged/0,
+		  top_prompt/2
 		 ],
                  [dcg,assertions]).
 
@@ -35,7 +36,9 @@
 :- use_module(library(debugger)).
 :- use_module(library('compiler/translation'),
         [expand_term/4, add_sentence_trans/2, add_term_trans/2]).
-:- use_module(library('compiler/c_itf'), [expand_list/2,interpret_srcdbg/1,multifile/1]).
+:- use_module(library('compiler/c_itf'),
+	[expand_list/2,interpret_srcdbg/1,multifile/1, 
+	 default_shell_package/1]).
 :- use_module(engine(internals),
         [imports/5, '$bootversion'/0, '$nodebug_call'/1, '$setarg'/4,
          '$open'/3, '$abolish'/1,'$empty_gcdef_bin'/0]).
@@ -52,6 +55,10 @@
 
 :- multifile exit_hook/0, after_query_hook/0, after_solution_hook/0.
 
+:- multifile define_flag/3.
+
+define_flag(prompt_alternatives_no_bindings, [on,off], off).
+
 :- data shell_module/1. % Module where queries are called
 
 main :-
@@ -61,36 +68,46 @@ main :-
         '$abolish'('user:main'),
         retract_fact(imports(user(_),ciaosh,main,0,_)),
 	current_prolog_flag(argv, Args),
-	interpret_args(Args),
+	interpret_args(Args, true),
         displayversion,
         op(900,fy,[(spy),(nospy)]),
         shell_body,
 	( '$nodebug_call'(exit_hook), fail ; true).
 
-interpret_args([]) :- !,
-        include_if_exists('~/.ciaorc').
-interpret_args(['-f']) :- !. % fast start
-interpret_args(['--version']) :- !,
+interpret_args([], Load_CiaoRC) :- !,
+	( Load_CiaoRC = true -> 
+            include_if_exists('~/.ciaorc')
+        ;
+	    true
+	).
+interpret_args(['-f'|R], _) :- !, % fast start
+	interpret_args(R, false).
+interpret_args(['--version'], _) :- !,
         '$bootversion', % Display Ciao version
          halt.
-interpret_args(['-l',File]) :- !,
-        include_if_exists(File).
-interpret_args(['-u',File]) :- !,
-        include_if_exists('~/.ciaorc'),
-        use_module(File).
-interpret_args(_WinMesh) :-
+interpret_args(['-l',File|R], _) :- !,
+        include_if_exists(File),
+	interpret_args(R, false).
+interpret_args(['-u',File|R], Load_CiaoRC) :- !,
+        use_module(File),
+	interpret_args(R, Load_CiaoRC).
+interpret_args(['-p',Prompt|R], Load_CiaoRC) :- !,
+	top_prompt(_, Prompt),
+	interpret_args(R, Load_CiaoRC).
+interpret_args(_WinMesh, _) :-
         get_os('Win32'), !, % For windows shortcuts
         include_if_exists('~/.ciaorc').
-interpret_args(_Args) :-
-        display('Bad options, use either none, -f, -l <File> or -u <File>'),
+interpret_args(_Args, _) :-
+        display('Usage: ciaosh [-f] [-l <File>] [-u <File>] [-p <Prompt>]'),
         nl,
-        fail.
+        halt(1).
 
 include_if_exists(File) :-
         ( file_exists(File) ->
             include(File)
         ; prolog_flag(quiet, QF, warning),
-          use_package(iso),
+	  default_shell_package(Package),
+          use_package(Package),
           prolog_flag(quiet, _, QF) 
         ).
 
@@ -115,7 +132,21 @@ shell_env(Vars) :-
 	Query == end_of_file,
 	!.
 
+:- push_prolog_flag(multi_arity_warnings,off).
+
 :- data top_prompt/1.
+
+:- pop_prolog_flag(multi_arity_warnings).
+
+:- data top_prompt_base/1.
+
+top_prompt_base('?- ').
+
+% Actually, sets top_prompt_base, but since seen externally, used simpler name
+top_prompt( OLD , NEW ) :-
+	top_prompt_base( OLD ),
+	retract_fact( top_prompt_base( OLD ) ),
+	asserta_fact( top_prompt_base( NEW ) ).
 
 shell_query(Variables, Query) :-
         '$empty_gcdef_bin', % Really get rid of abolished predicates
@@ -213,8 +244,10 @@ display_goal(G, Sep, ',') :-
         write_term(user, G, [quoted(true), portrayed(true),
                              numbervars(true)]).
 
-ok_solution('', _, _, _).
-ok_solution(',', Eqs, Constraints, Variables) :-
+ok_solution('', _, _, _) :-
+        current_prolog_flag(prompt_alternatives_no_bindings, off), !.
+ok_solution(Sep, Eqs, Constraints, Variables) :-
+        ( Sep = '' -> ttydisplay('OK') ; true ),
         ttyput(0' ), ttyput(0'?), ttyput(0' ),
         ttyflush,
         ttyget(C),
@@ -300,11 +333,20 @@ dec_query_level :-
 
 set_top_prompt(0) :- !,
         retractall_fact(top_prompt(_)),
-        asserta_fact(top_prompt('?- ')).
+% MH
+	top_prompt_base(P),
+        asserta_fact(top_prompt(P)).
+% Was:
+%        asserta_fact(top_prompt('?- ')).
 set_top_prompt(N) :-
         number_codes(N, NS),
         atom_codes(NA, NS),
-        atom_concat(NA, ' ?- ', TP),
+% MH
+	top_prompt_base(P),
+        atom_concat(NA, ' ', NS1),
+        atom_concat(NS1, P, TP),
+% Was:
+%       atom_concat(NA, ' ?- ', TP),
         retractall_fact(top_prompt(_)),
         asserta_fact(top_prompt(TP)).
 
@@ -344,7 +386,7 @@ shell_expand(RawQuery, VarNames, Query) :-
 include(File) :-
         absolute_file_name(File, '_opt', '.pl', '.', SourceFile, _, _),
         message(['{Including ',SourceFile]),
-        '$open'(SourceFile, read, Stream),
+        '$open'(SourceFile, r, Stream),
         include_st(Stream),
         close(Stream),
         message('}').
@@ -522,6 +564,23 @@ current_source_debugged(Ss) :-
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*9+325,2004/03/15,17:44*11+'CET'), "Added
+   prompt_alternatives_no_bindings prolog_flag so that, even when the
+   query has no variables to report bindings for, backtracking can be
+   asked.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+277,2004/01/09,17:45*58+'CET'), "Fixed problems
+   related to argument handling.  Changed package loaded by default to
+   match the one defined in the compiler. (Daniel Cabeza & Jose Morales)").
+
+:- comment(version(1*9+97,2003/08/05,19:43*37+'CEST'), "Mode prompt
+   modification more standard (prompt/2).  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+96,2003/08/05,18:25*28+'CEST'), "Predicate
+   set_base_prompt added. Now it is posible to change the prompt of
+   the ciao shell. Several arguments are accepted when
+   executing. (David Trallero Mena)").
+
 :- comment(version(1*7+110,2001/06/20,18:40*04+'CEST'), "Added -u option
    mainly to allow loading a module in a new shell with a click in
    Windows. (Daniel Cabeza Gras)").
@@ -534,4 +593,3 @@ current_source_debugged(Ss) :-
 
 :- comment(version(1*7+10,2000/08/16,12:10*56+'CEST'), "Added
     '--version' switch.  (MCL)").
-

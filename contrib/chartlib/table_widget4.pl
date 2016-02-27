@@ -1,5 +1,7 @@
 :- module(table_widget4,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
 :- export(tablewidget4/4).
 :- export(tablewidget4/5).
 
@@ -299,4 +301,12 @@ table1_column(CurrentRow,Columns,CurrentColumn,Interp):-
 
 
 
+
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+169,2003/12/04,17:39*54+'CET'), "Added author
+info (Manuel Carro)").
 

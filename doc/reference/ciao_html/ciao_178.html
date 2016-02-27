@@ -1,143 +1,84 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
+<TITLE>The Ciao Prolog System               - A Program to Help Cleaning your Directories</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC706" HREF="ciao_toc.html#TOC706">Programming MYCIN rules</A></H1>
-<P>
-<A NAME="IDX7096"></A>
-
+<H1><A NAME="SEC724" HREF="ciao_toc.html#TOC724">A Program to Help Cleaning your Directories</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<STRONG>Author(s):</STRONG> Manuel Carro.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Version:</STRONG> 0.1#3 (2001/10/25, 14:31:59 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
-
-
-<P>
-MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
-<A NAME="IDX7097"></A>
-<A NAME="IDX7098"></A>
-<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
-
-<UL>
-
-<LI>A value of -1 stands for <EM>surely not</EM>.
-
-<LI>A value of 1 stands for <EM>certainly</EM>.
-
-<LI>A value of 0 stands for <EM>I don't know</EM>.
-
-</UL>
-
-<P>
-Intermediate values are allowed. 
-
-
-<P>
-Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
+A simple program for traversing a directory tree and deciding which files may be deleted in order to save space and not to loose information. 
 
 
 
 <UL>
-<LI><A HREF="ciao_178.html#SEC707">Usage and interface (mycin)</A>
-<LI><A HREF="ciao_178.html#SEC708">Documentation on new declarations (mycin)</A>
-<LI><A HREF="ciao_178.html#SEC709">Known bugs and planned improvements (mycin)</A>
+<LI><A HREF="ciao_178.html#SEC725">Usage (cleandirs)</A>
+<LI><A HREF="ciao_178.html#SEC726">Known bugs and planned improvements (cleandirs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC707" HREF="ciao_toc.html#TOC707">Usage and interface (<CODE>mycin</CODE>)</A></H2>
+<H2><A NAME="SEC725" HREF="ciao_toc.html#TOC725">Usage (cleandirs)</A></H2>
 
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
 <PRE>
-           :- mycin(MycinDataBaseName).
-</PRE>
+   
+cleandirs [--silent] &#60;initial_dir&#62; &#60;delete_options&#62; &#60;backup_options&#62;
+cleandirs explores &#60;initial_dir&#62; (which should be an absolute path)
+and looks for backup files and files which can be generated from other
+files, using a plausible heuristic aimed at retaining the same amount
+of information while recovering some disk space.  The heuristic is
+based on the extension of the filename.
 
-<LI><STRONG>New declarations defined:</STRONG>
+Delete options is one of:
+   --list: just list the files/directories which are amenable to be deleted,
+           but do not delete them. SAFE.
+    --ask: list the files/directories and ask for deletion. UNSAFE if you
+           make a mistake.
+ --delete: just delete the files/directories without asking.  I envy your
+           brave soul if you choose this option.
 
-<A NAME="IDX7099"></A>
-<CODE>export/1</CODE>.
+Backup options is one of:
+ --includebackups: include backup files in the list of files to check.
+ --excludebackups: do not include backup files in the list of files to check.
+    --onlybackups: include only backup files in the list of files to check.
 
-</UL>
+Symbolic links are not traversed.  Special files are not checked.
 
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC708" HREF="ciao_toc.html#TOC708">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
-<P>
-<A NAME="IDX7100"></A>
-<A NAME="IDX7101"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
-<DD><A NAME="IDX7102"></A>
-
-
-<P>
-This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
-
-<PRE>
-:- export p/1.
 </PRE>
 
 <P>
-must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
-<A NAME="IDX7103"></A>
-certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
-
-</UL>
-
-</DL>
+ 
+Invoking the program with no arguments will return an up-to-date information on the options.
 
 
 
-<H2><A NAME="SEC709" HREF="ciao_toc.html#TOC709">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
+
+<H2><A NAME="SEC726" HREF="ciao_toc.html#TOC726">Known bugs and planned improvements (<CODE>cleandirs</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-Not fully implemented.
-
-<LI>
-
-Dynamic mycin predicates not implemented: open question.
-
-<LI>
-
-Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
+Recursive removal of subdirectories relies on the existence of a recursive /bin/rm command in your system.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -18,8 +18,10 @@ save_addr_actmod(Address) :-
         atom_codes(Mod, MOD),
         get_pid(Pid),
 	common_url(URL),
-	fetch_url(URL,[],Response),
-	member(content(String),Response),
-	append(String0,[_],String),
-	string2term(String0,server(Server,_)),
-        remote_call(Server,my_module_address(Mod,Address,Pid)).
+	( fetch_url(URL,[],Response), ! ; Response = [] ),
+	( member(content(String),Response), ! ; String = Response ),
+	( append(String0,[_],String), ! ; String0 = String ),
+	( string2term(String0,server(Server,_)), ! ; name(Server,String0) ),
+        ( remote_call(Server,my_module_address(Mod,Address,Pid))
+	; throw(unable_to_connect(Server,module_address(Mod,Address,Pid)))
+	).

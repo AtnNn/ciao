@@ -1,5 +1,7 @@
 :- module(test_format,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
 :- export(equalnumber/3).
 :- export(not_empty/4).
 :- export(not_empty/3).
@@ -295,3 +297,11 @@ add_doublequotes1([X|Xs],[X|Ys]):-
 
 
  
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+170,2003/12/04,17:39*57+'CET'), "Added author
+info (Manuel Carro)").
+

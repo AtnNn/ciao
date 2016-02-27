@@ -1,5 +1,7 @@
 :- module(genmultibar,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
 :- export(multibarchart/8).
 :- export(multibarchart/10).
 
@@ -12,6 +14,8 @@
 :- use_module(library('chartlib/install_utils')).
 :- use_module(library(lists)).
 :- use_module(library(random)).
+
+:- comment(title,"Multi barchart widgets").
 
 :- comment(module,"This module defines predicates which show barchart
         widgets.  These bar charts are somewhat different from the bar
@@ -648,4 +652,15 @@ xelement(Label):-
 ").
 
 
+
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+271,2004/01/01,14:21*46+'CET'), "Added comment
+   title.  (Edison Mera)").
+
+:- comment(version(1*9+163,2003/12/04,17:39*35+'CET'), "Added author
+   info (Manuel Carro)").
 

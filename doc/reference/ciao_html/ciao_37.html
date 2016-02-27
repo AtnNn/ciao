@@ -1,43 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Term input</TITLE>
+<TITLE>The Ciao Prolog System               - Dynamic predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC196" HREF="ciao_toc.html#TOC196">Term input</A></H1>
+<H1><A NAME="SEC196" HREF="ciao_toc.html#TOC196">Dynamic predicates</A></H1>
 <P>
-<A NAME="IDX2239"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> First versions from SICStus 0.6 code; additional changes and documentation by Daniel Cabeza and Manuel Carro.
+<A NAME="IDX2706"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> The CLIP Group.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#196 (2002/4/17, 20:0:32 CEST)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#197 (2003/12/19, 17:4:32 CET)
+
+
+<P>
+This module implements the assert/retract family of predicates to manipulate dynamic predicates. 
+
+
+<P>
+The predicates defined in this module allow modification of the program as it is actually running. Clauses can be added to the program (<EM>asserted</EM>) or removed from the program (<EM>retracted</EM>). For these predicates, the argument which corresponds to the clause head must be instantiated to an atom or a compound term. The argument corresponding to the clause must be instantiated either to a term <CODE>Head :- Body</CODE> or, if the body part is empty, to <CODE>Head</CODE>. An empty body part is represented as <CODE>true</CODE>. Note that using this library is very detrimental to global analysis, and that for most uses the predicates listed in section <A HREF="ciao_28.html#SEC167">Fast/concurrent update of facts</A> suffice.
 
 
 
 <UL>
-<LI><A HREF="ciao_37.html#SEC197">Usage and interface (read)</A>
-<LI><A HREF="ciao_37.html#SEC198">Documentation on exports (read)</A>
-<LI><A HREF="ciao_37.html#SEC199">Documentation on multifiles (read)</A>
-<LI><A HREF="ciao_37.html#SEC200">Documentation on internals (read)</A>
+<LI><A HREF="ciao_37.html#SEC197">Usage and interface (dynamic)</A>
+<LI><A HREF="ciao_37.html#SEC198">Documentation on exports (dynamic)</A>
+<LI><A HREF="ciao_37.html#SEC199">Documentation on multifiles (dynamic)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC197" HREF="ciao_toc.html#TOC197">Usage and interface (<CODE>read</CODE>)</A></H2>
+<H2><A NAME="SEC197" HREF="ciao_toc.html#TOC197">Usage and interface (<CODE>dynamic</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -45,7 +52,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(read)).</CODE>
+<CODE>:- use_module(library(dynamic)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -54,23 +61,43 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2240"></A>
-<CODE>read/1</CODE>, 
-<A NAME="IDX2241"></A>
-<CODE>read/2</CODE>, 
-<A NAME="IDX2242"></A>
-<CODE>read_term/2</CODE>, 
-<A NAME="IDX2243"></A>
-<CODE>read_term/3</CODE>, 
-<A NAME="IDX2244"></A>
-<CODE>read_top_level/3</CODE>, 
-<A NAME="IDX2245"></A>
-<CODE>second_prompt/2</CODE>.
+<A NAME="IDX2707"></A>
+<CODE>asserta/1</CODE>, 
+<A NAME="IDX2708"></A>
+<CODE>asserta/2</CODE>, 
+<A NAME="IDX2709"></A>
+<CODE>assertz/1</CODE>, 
+<A NAME="IDX2710"></A>
+<CODE>assertz/2</CODE>, 
+<A NAME="IDX2711"></A>
+<CODE>assert/1</CODE>, 
+<A NAME="IDX2712"></A>
+<CODE>assert/2</CODE>, 
+<A NAME="IDX2713"></A>
+<CODE>retract/1</CODE>, 
+<A NAME="IDX2714"></A>
+<CODE>retractall/1</CODE>, 
+<A NAME="IDX2715"></A>
+<CODE>abolish/1</CODE>, 
+<A NAME="IDX2716"></A>
+<CODE>clause/2</CODE>, 
+<A NAME="IDX2717"></A>
+<CODE>clause/3</CODE>, 
+<A NAME="IDX2718"></A>
+<CODE>current_predicate/1</CODE>, 
+<A NAME="IDX2719"></A>
+<CODE>current_predicate/2</CODE>, 
+<A NAME="IDX2720"></A>
+<CODE>dynamic/1</CODE>, 
+<A NAME="IDX2721"></A>
+<CODE>data/1</CODE>, 
+<A NAME="IDX2722"></A>
+<CODE>wellformed_body/3</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX2246"></A>
-<CODE>define_flag/3</CODE>.
+<A NAME="IDX2723"></A>
+<CODE>do_on_abolish/1</CODE>.
 
 </UL>
 
@@ -81,12 +108,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, 
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX2247"></A>
-<CODE>tokenize</CODE>, 
-<A NAME="IDX2248"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX2249"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX2724"></A>
+<CODE>prolog_sys</CODE>.
 
 </UL>
 
@@ -96,179 +119,439 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC198" HREF="ciao_toc.html#TOC198">Documentation on exports (<CODE>read</CODE>)</A></H2>
+<H2><A NAME="SEC198" HREF="ciao_toc.html#TOC198">Documentation on exports (<CODE>dynamic</CODE>)</A></H2>
 <P>
-<A NAME="IDX2250"></A>
-<A NAME="IDX2251"></A>
+<A NAME="IDX2725"></A>
+<A NAME="IDX2726"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read/1:</B>
-<DD><A NAME="IDX2252"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta/1:</B>
+<DD><A NAME="IDX2727"></A>
 
 
 <P>
-<CODE>read(Term)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause)</CODE>.
 
 
 <P>
-Like <CODE>read(Stream,Term)</CODE> with <CODE>Stream</CODE> associated to the current input stream.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2253"></A>
-<A NAME="IDX2254"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>read/2:</B>
-<DD><A NAME="IDX2255"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>read(+Stream,?Term)</CODE>
+<STRONG>Usage:</STRONG> <CODE>asserta(+Clause)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> The next term, delimited by a full-stop (i.e., a <CODE>.</CODE> followed by either a space or a control character), is read from <CODE>Stream</CODE> and is unified with <CODE>Term</CODE>. The syntax of the term must agree with current operator declarations. If the end of <CODE>Stream</CODE> has been reached, <CODE>Term</CODE> is unified with the term <CODE>end_of_file</CODE>. Further calls to <CODE>read/2</CODE> for the same stream will then cause an error, unless the stream is connected to the terminal (in which case a prompt is opened on the terminal).
+<LI><EM>Description:</EM> The current instance of <CODE>Clause</CODE> is interpreted as a clause and is added to the current program. The predicate concerned must be dynamic. The new clause becomes the <EM>first</EM> clause for the predicate concerned. Any uninstantiated variables in <CODE>Clause</CODE> will be replaced by new private variables.
 
-<LI><EM>The following properties should hold upon exit:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2256"></A>
-<A NAME="IDX2257"></A>
+<A NAME="IDX2728"></A>
+<A NAME="IDX2729"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_term/2:</B>
-<DD><A NAME="IDX2258"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta/2:</B>
+<DD><A NAME="IDX2730"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>read_term(?Term,+Options)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>asserta(+Clause, -Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2731"></A>
+<A NAME="IDX2732"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assertz/1:</B>
+<DD><A NAME="IDX2733"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz(+Clause)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Like
+<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>, except that the new clause becomes the <EM>last</EM> clause for the predicate concerned.
 
-<A NAME="IDX2259"></A>
-<CODE>read_term/3</CODE>, but reading from the 
-<A NAME="IDX2260"></A>
-current input 
-<LI><EM>The following properties should hold upon exit:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Options</CODE> is a list of <CODE>read_option</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2261"></A>
-<A NAME="IDX2262"></A>
+<A NAME="IDX2734"></A>
+<A NAME="IDX2735"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_term/3:</B>
-<DD><A NAME="IDX2263"></A>
+<DT><span class="define">PREDICATE:</span> <B>assertz/2:</B>
+<DD><A NAME="IDX2736"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>read_term(+Stream,?Term,+Options)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz(+Clause, -Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Like <CODE>assertz/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2737"></A>
+<A NAME="IDX2738"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assert/1:</B>
+<DD><A NAME="IDX2739"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assert(+Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Identical to <CODE>assertz/1</CODE>. Included for compatibility.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2740"></A>
+<A NAME="IDX2741"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assert/2:</B>
+<DD><A NAME="IDX2742"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assert(+Clause, -Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Identical to <CODE>assertz/2</CODE>. Included for compatibility.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2743"></A>
+<A NAME="IDX2744"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retract/1:</B>
+<DD><A NAME="IDX2745"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retract(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retract(+Clause)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Reads a <CODE>Term</CODE> from <CODE>Stream</CODE> with the ISO-Prolog <CODE>Options</CODE>. These options can control the behavior of read term (see
+<LI><EM>Description:</EM> The first clause in the program that matches <CODE>Clause</CODE> is erased. The predicate concerned must be dynamic.
 
-<A NAME="IDX2264"></A>
-<CODE>read_option/1</CODE>). 
-<LI><EM>The following properties should hold upon exit:</EM>
+The predicate <CODE>retract/1</CODE> may be used in a non-determinate fashion, i.e., it will successively retract clauses matching the argument through backtracking. If reactivated by backtracking, invocations of the predicate whose clauses are being retracted will proceed unaffected by the retracts. This is also true for invocations of <CODE>clause</CODE> for the same predicate. The space occupied by a retracted clause will be recovered when instances of the clause are no longer in use. 
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Options</CODE> is a list of <CODE>read_option</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2265"></A>
-<A NAME="IDX2266"></A>
+<A NAME="IDX2746"></A>
+<A NAME="IDX2747"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_top_level/3:</B>
-<DD><A NAME="IDX2267"></A>
+<DT><span class="define">PREDICATE:</span> <B>retractall/1:</B>
+<DD><A NAME="IDX2748"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2268"></A>
-<A NAME="IDX2269"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>second_prompt/2:</B>
-<DD><A NAME="IDX2270"></A>
+<EM>Meta-predicate</EM> with arguments: <CODE>retractall(fact)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>second_prompt(?Old,?New)</CODE>
+<STRONG>Usage:</STRONG> <CODE>retractall(+Head)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Changes the prompt (the <EM>second prompt</EM>, as oposed to the first one, used by the toplevel) used by
+<LI><EM>Description:</EM> Erase all clauses whose head matches <CODE>Head</CODE>, where <CODE>Head</CODE> must be instantiated to an atom or a compound term. The predicate concerned must be dynamic. The predicate definition is retained.
 
-<A NAME="IDX2271"></A>
-<CODE>read/2</CODE> and friends to <CODE>New</CODE>, and returns the current one in <CODE>Old</CODE>. 
-<LI><EM>The following properties should hold upon exit:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>?Old</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>?New</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2749"></A>
+<A NAME="IDX2750"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>abolish/1:</B>
+<DD><A NAME="IDX2751"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>abolish(spec)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>abolish(+Spec)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Erase all clauses of the predicate specified by the predicate spec <CODE>Spec</CODE>. The predicate definition itself is also erased (the predicate is deemed undefined after execution of the abolish). The predicates concerned must all be user defined.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2752"></A>
+<A NAME="IDX2753"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>clause/2:</B>
+<DD><A NAME="IDX2754"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>clause(+Head, ?Body)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The clause '<CODE>Head</CODE> <CODE>:-</CODE> <CODE>Body</CODE>' exists in the current program. The predicate concerned must be dynamic.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2755"></A>
+<A NAME="IDX2756"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>clause/3:</B>
+<DD><A NAME="IDX2757"></A>
+
+
+<P>
+<CODE>clause(Head, Body, Ref)</CODE>
+
+
+<P>
+Like <CODE>clause(Head,Body)</CODE>, plus the clause is uniquely identified by <CODE>Ref</CODE>.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>clause(+Head, ?Body, ?Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Head</CODE> must be instantiated to an atom or a compound term.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>clause(?Head, ?Body, +Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Ref</CODE> must be instantiated to a valid identifier.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2758"></A>
+<A NAME="IDX2759"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_predicate/1:</B>
+<DD><A NAME="IDX2760"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>current_predicate(?Spec)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> A predicate in the current module is named <CODE>Spec</CODE>.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2761"></A>
+<A NAME="IDX2762"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_predicate/2:</B>
+<DD><A NAME="IDX2763"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>current_predicate(?Spec, ?Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> A predicate in <CODE>Module</CODE> is named <CODE>Spec</CODE>. <CODE>Module</CODE> never is an engine module.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2764"></A>
+<A NAME="IDX2765"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dynamic/1:</B>
+<DD><A NAME="IDX2766"></A>
+
+
+<P>
+<CODE>dynamic Spec</CODE>
+
+
+<P>
+<CODE>Spec</CODE> is of the form <CODE>F</CODE>/<CODE>A</CODE>. The predicate named <CODE>F</CODE> with arity <CODE>A</CODE> is made 
+<A NAME="IDX2767"></A>
+dynamic in the current module at runtime (useful for predicate names generated on-the-fly). If the predicate functor name <CODE>F</CODE> is uninstatiated, a new, unique, predicate name is generated at runtime.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2768"></A>
+<A NAME="IDX2769"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>data/1:</B>
+<DD><A NAME="IDX2770"></A>
+
+
+<P>
+<CODE>data Spec</CODE>
+
+
+<P>
+<CODE>Spec</CODE> is of the form <CODE>F</CODE>/<CODE>A</CODE>. The predicate named <CODE>F</CODE> with arity <CODE>A</CODE> is made 
+<A NAME="IDX2771"></A>
+data in the current module at runtime (useful for predicate names generated on-the-fly). If the predicate functor name <CODE>F</CODE> is uninstatiated, a new, unique, predicate name is generated at runtime. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX2772"></A>
+<A NAME="IDX2773"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>wellformed_body/3:</B>
+<DD><A NAME="IDX2774"></A>
+
+
+<P>
+<CODE>wellformed_body(BodyIn, Env, BodyOut)</CODE>
+
+
+<P>
+<CODE>BodyIn</CODE> is a well-formed clause body. <CODE>BodyOut</CODE> is its counterpart with no single-variable meta-goals (i.e., with <CODE>call(X)</CODE> for <CODE>X</CODE>). <CODE>Env</CODE> denotes if global cuts are admissible in <CODE>BodyIn</CODE> (<CODE>+</CODE> if they are, <CODE>-</CODE> if they are not).
+
 
 </DL>
 
 
 
-<H2><A NAME="SEC199" HREF="ciao_toc.html#TOC199">Documentation on multifiles (<CODE>read</CODE>)</A></H2>
+<H2><A NAME="SEC199" HREF="ciao_toc.html#TOC199">Documentation on multifiles (<CODE>dynamic</CODE>)</A></H2>
 <P>
-<A NAME="IDX2272"></A>
-<A NAME="IDX2273"></A>
+<A NAME="IDX2775"></A>
+<A NAME="IDX2776"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
-<DD><A NAME="IDX2274"></A>
+<DT><span class="define">PREDICATE:</span> <B>do_on_abolish/1:</B>
+<DD><A NAME="IDX2777"></A>
 
 
 <P>
-Defines flags as follows: 
-
-<PRE>
-define_flag(read_hiord,[on,off],off).
-</PRE>
-
-<P>
-(See section <A HREF="ciao_27.html#SEC162">Changing system behaviour and various flags</A>). 
+<CODE>do_on_abolish(Head)</CODE>
 
 
 <P>
-If flag is <CODE>on</CODE> (it is <CODE>off</CODE> by default), a variable followed by a parenthesized lists of arguments is read as a 
-<A NAME="IDX2275"></A>
-<CODE>call/N</CODE> term, except if the variable is anonymous, in which case it is read as an anonymous predicate abstraction head. For example, <CODE>P(X)</CODE> is read as <CODE>call(P,X)</CODE> and <CODE>_(X,Y)</CODE> as <CODE>"(X,Y)</CODE>.
+A hook predicate which will be called when the definition of the predicate of <CODE>Head</CODE> is abolished.
 
 
 <P>
@@ -277,44 +560,7 @@ The predicate is <EM>multifile</EM>.
 
 </DL>
 
-
-
-<H2><A NAME="SEC200" HREF="ciao_toc.html#TOC200">Documentation on internals (<CODE>read</CODE>)</A></H2>
-<P>
-<A NAME="IDX2276"></A>
-<A NAME="IDX2277"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>read_option/1:</B>
-<DD><A NAME="IDX2278"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>read_option(Option)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Option</CODE> is an allowed
-
-<A NAME="IDX2279"></A>
-<CODE>read_term/[2,3]</CODE> option. These options are: 
-
-<PRE>
-read_option(variables(_V)).
-read_option(variable_names(_N)).
-read_option(singletons(_S)).
-read_option(lines(_StartLine,_EndLine)).
-read_option(dictionary(_Dict)).
-</PRE>
-
-They can be used to return the singleton variables in the term, a list of variables, etc. 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Option</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

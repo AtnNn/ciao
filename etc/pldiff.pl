@@ -156,3 +156,10 @@ variant(Term1,Term2):-
 	   numbervars(Term2,0,N),
 	   Term1 = Term2
         ).
+
+
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+258,2003/12/30,23:52*10+'CET'), "Started
+   version control.  (Edison Mera)").
+

@@ -14,16 +14,20 @@ module_address(M, Address) :-
 	current_fact(address_db(M, Address)), !.
 module_address(M, Address) :-
 	server_address(Server),
-        remote_call(Server,module_address(M,Address)),
-	asserta_fact(address_db(M, Address)).
+        ( remote_call(Server,module_address(M,Address)) 
+	-> asserta_fact(address_db(M, Address))
+	 ; throw(unable_to_connect(Server,module_address(M)))
+	).
 
 server_address(Address):-
 	current_fact(server(Address,_Pid)), !.
 server_address(Address):-
 	common_url(URL),
-	fetch_url(URL,[],Response),
-	member(content(String),Response),
-	append(String0,[_],String),
-	string2term(String0,server(Address,Pid)),
-	asserta_fact(server(Address,Pid)).
-
+	( fetch_url(URL,[],Response), ! ; Response = [] ),
+	( member(content(String),Response), ! ; String = Response ),
+	( append(String0,[_],String), ! ; String0 = String ),
+	( string2term(String0,server(Address,Pid))
+	-> asserta_fact(server(Address,Pid))
+	 ; name(Address,String0),
+	   throw(unable_to_connect(Address,webserver))
+	).

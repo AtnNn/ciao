@@ -1,8 +1,10 @@
 :- module(make_rt,[make/1,target/1,make_option/1,
 	           verbose_message/2,
                    call_unknown/1,
-	           dyn_load_cfg_module_into_make/1,
-		   dyn_load_cfg_file_into_make/1],[]).
+%                   fancy_display/1,
+%% Not used any more
+%%		   dyn_load_cfg_file_into_make/1,
+   	           dyn_load_cfg_module_into_make/1],[]).
 
 %% ---------------------------------------------------------------------------
 :- use_package(assertions).
@@ -10,17 +12,21 @@
 
 :- comment(title,"Predicates Available When Using The Make Package").
 
+:- comment(author, "Manuel Hermenegildo").
+
 :- comment(usage,"This module is loaded automatically when the
    @lib{make} library package is used.").
 
 :- comment(module,"This is the run-time module which implements the
    predicates which are provided when using the @lib{make} library
-   package.").
+   package in a given application. For example, they are used
+   internally by @apl{lpmake}.").
 
 %% ---------------------------------------------------------------------------
 
 %% ISO Prolog-like modules
-:- use_module(library(compiler), [ensure_loaded/1,use_module/1]).
+%% :- use_module(library(compiler), [ensure_loaded/1,use_module/1]).
+:- use_module(library(compiler), [use_module/1]).
 
 %% CIAO libraries
 :- use_module(library(filenames),[file_name_extension/3]).
@@ -75,7 +81,7 @@ make(Target) :-
 
 
 %% ---------------------------------------------------------------------------
-%% Procesing file dependencies
+%% Procesing target dependencies
 %% ---------------------------------------------------------------------------
 
 make_dep_target(Target,Preconds) :-
@@ -145,7 +151,8 @@ handle_suffix(Source,_SSuffix,TSuffix,FileBase,OTSuffix) :-
 handle_suffix(Source,SSuffix,TSuffix,FileBase,OTSuffix) :-
 	find_file(Source,_PathSource),
 	atom_concat([FileBase,'.',TSuffix],Target),
-	call_unknown_nofail(_:dependency_precond(SSuffix,TSuffix,FileBase)),
+        %% dependency_precond/3 used (see e.g., lpdoc)
+ 	call_unknown_nofail(_:dependency_precond(SSuffix,TSuffix,FileBase)),
 	(  needs_processing(Source,Target)
 	-> verbose_message("Generating ~w from ~w",[Target,Source]),
 	   call_unknown_nofail(_:dependency_comment(SSuffix,TSuffix,FileBase)),
@@ -182,13 +189,18 @@ find_file(File,PathFile) :-
 dyn_load_cfg_module_into_make(ConfigFile) :-
 	use_module(ConfigFile).
 
-:- pred dyn_load_cfg_file_into_make(ConfigFile) : sourcename 
-
-   # "Used to load dynamically a user file (typically, a @file{Makefile})
-      into the make library from the application using the library.".
-
-dyn_load_cfg_file_into_make(ConfigFile) :-
-	ensure_loaded(ConfigFile).
+%% :- pred dyn_load_cfg_file_into_make(ConfigFile) : sourcename 
+%% 
+%%    # "Used to load dynamically a user file (typically, a @file{Makefile})
+%%       into the make library from the application using the library.".
+%% 
+%% Needed to access predicates generated in user Makefile.pl files
+%% :- import(user,[do_dependency/3,dependency_exists/2,do_target/1,
+%%                 target_exists/1,target_deps/2,target_comment/1,
+%%                 dependency_comment/3]).
+%% 
+%% dyn_load_cfg_file_into_make(ConfigFile) :-
+%% 	ensure_loaded(ConfigFile).
 
 :- pred make_option(Option) : atm 
 
@@ -225,19 +237,48 @@ call_unknown_nofail(G) :-
 call_unknown_nofail(_G).
 
 
-%:- meta_predicate call_unknown(goal).
+%% :- meta_predicate call_unknown(goal).
 
-% This is a local copy, with less error checking.
-% Complication is so that flags are left as it was also upon failure.
+:- comment(call_unknown(G),"This is a local copy, to make package
+   independent.  Complication is so that flags are left as they were
+   also upon failure.").
+
 call_unknown(G) :-
 	prolog_flag(unknown,Old,fail),
 	prolog_flag(quiet,QOld,error),
-	(  %% call(_:G), 
+	(  %% nl, display('*** Calling (unknown): '), display(G), nl,
+	   %% %% call(_:G), 
 	   call(G),
+	   %% display('*** ...success with '), display(G), nl,
 	   prolog_flag(unknown,_,Old),
 	   prolog_flag(quiet,_,QOld)
 	;  prolog_flag(unknown,_,Old),
 	   prolog_flag(quiet,_,QOld),
+	   %% display('*** ...failure.'), nl,
 	   fail ).
 
-%% ---------------------------------------------------------------------------
+%%------------------------------------------------------------------------
+%% VERSION CONTROL
+%%------------------------------------------------------------------------
+ 
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+251,2003/12/30,22:08*03+'CET'), "Added comment
+   for call_unknown/2. (Edison Mera)").
+
+:- comment(version(1*9+250,2003/12/30,22:03*43+'CET'), "Added comment
+   author. (Edison Mera)").
+
+:- comment(version(1*9+26,2002/11/20,12:57*08+'CET'), "Major
+   improvement to @lib{make} library, and adaptation to Ciao
+   1.9. Added new examples. Improved documentation of dependency
+   rules. (Manuel Hermenegildo)").
+
+:- comment(version(1*9+25,2002/11/20,12:55*34+'CET'), "In @lib{make}
+   lib: not supporting the use of 'user' makefiles any more (too hard
+   to adapt everything to their scoping rules), i.e., at the moment
+   makefiles must be modules. May add support for user files again in
+   the future. (Manuel Hermenegildo)").
+
+%%------------------------------------------------------------------------
+

@@ -726,3 +726,10 @@ changes.)
 %% much slower, since all modules would have to be explicitly marked as
 %% unloadable even if no debugging is taken place, which is burden for
 %% correct applications.
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+188,2003/12/19,16:02*03+'CET'), "Control
+   version started.  (Edison Mera)").
+

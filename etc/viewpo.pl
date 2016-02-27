@@ -21,7 +21,7 @@ usage :-
 viewql(File) :-
         absolute_file_name(File, '_opt', '.po', '.', AbsName, _, _),
 	'$push_qlinfo',
-        '$open'(AbsName, read, Stream),            % Gives errors
+        '$open'(AbsName, r, Stream),            % Gives errors
 	repeat,
 	    '$qread'(Stream, Goal),
 	    (   Goal= -1

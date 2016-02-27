@@ -1,77 +1,146 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART VII - Ciao Prolog extensions</TITLE>
+<TITLE>The Ciao Prolog System               - All solutions concurrent predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC368" HREF="ciao_toc.html#TOC368">PART VII - Ciao Prolog extensions</A></H1>
+<H1><A NAME="SEC372" HREF="ciao_toc.html#TOC372">All solutions concurrent predicates</A></H1>
+<P>
+<A NAME="IDX4791"></A>
+
 
 <P>
-The libraries documented in this part extend the Ciao language in several different ways. The extensions include: 
+<STRONG>Author(s):</STRONG> Concurrent-safe (and incomplete) version of the aggregates predicates, based on the regular versions by Richard A. O'Keefe and David H.D. Warren. Concurrency-safeness provided by Manuel Carro..
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#221 (2003/12/21, 20:6:33 CET)
+
+
+<P>
+This module implements thread-safe aggregation predicates. Its use and results should be the same as those in the 
+<A NAME="IDX4792"></A>
+aggregates library, but several goals can use them concurrently without the interference and wrong results (due to implementation reasons) 
+<A NAME="IDX4793"></A>
+aggregates might lead to. This particular implementation is completely based on the one used in the 
+<A NAME="IDX4794"></A>
+aggregates library.
+
+
 
 <UL>
+<LI><A HREF="ciao_88.html#SEC373">Usage and interface (conc_aggregates)</A>
+<LI><A HREF="ciao_88.html#SEC374">Documentation on exports (conc_aggregates)</A>
+<LI><A HREF="ciao_88.html#SEC375">Known bugs and planned improvements (conc_aggregates)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC373" HREF="ciao_toc.html#TOC373">Usage and interface (<CODE>conc_aggregates</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(conc_aggregates)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4795"></A>
+<CODE>findall/3</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4796"></A>
+<CODE>prolog_sys</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC374" HREF="ciao_toc.html#TOC374">Documentation on exports (<CODE>conc_aggregates</CODE>)</A></H2>
+<P>
+<A NAME="IDX4797"></A>
+<A NAME="IDX4798"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>findall/3:</B>
+<DD><A NAME="IDX4799"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>findall(?,goal,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>findall(?Template, +Generator, ?List)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> A special case of bagof, where all free variables in the <CODE>Generator</CODE> are taken to be existentially quantified. Safe in concurrent applications.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Template</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Set</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC375" HREF="ciao_toc.html#TOC375">Known bugs and planned improvements (<CODE>conc_aggregates</CODE>)</A></H2>
+
+
+<UL>
+
 <LI>
 
-<A NAME="IDX4243"></A>
-pure Prolog programming (well, this can be viewed more as a restriction than an extension); 
-<LI>
-
-<A NAME="IDX4244"></A>
-feature terms or 
-<A NAME="IDX4245"></A>
-<A NAME="IDX4246"></A>
-<EM>records</EM> (i.e., structures with names for each field); 
-<LI>
-
-<A NAME="IDX4247"></A>
-parallel programming (e.g., &#38;-Prolog style); 
-<LI>
-
-<A NAME="IDX4248"></A>
-functional syntax; 
-<LI>
-
-<A NAME="IDX4249"></A>
-higher-order library; 
-<LI>
-
-<A NAME="IDX4250"></A>
-global variables; 
-<LI><CODE>setarg</CODE> and <CODE>undo</CODE>;
+Thread-safe 
+<A NAME="IDX4800"></A>
+<CODE>setof/3</CODE> is not yet implemented.
 
 <LI>
 
-<A NAME="IDX4251"></A>
-delaying predicate execution; 
-<LI>
-
-<A NAME="IDX4252"></A>
-active modules; 
-<LI>
-
-<A NAME="IDX4253"></A>
-breadth-first execution; 
-<LI>
-
-<A NAME="IDX4254"></A>
-iterative deepening-based execution; 
-<LI>
-
-<A NAME="IDX4255"></A>
-constraint logic programming; 
-<LI>
-
-<A NAME="IDX4256"></A>
-object oriented programming. 
+Thread-safe 
+<A NAME="IDX4801"></A>
+<CODE>bagof/3</CODE> is not yet implemented.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

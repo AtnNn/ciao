@@ -2,7 +2,7 @@
 
 :- comment(title, "Customizing library paths and path aliases").
 
-:- comment(author,"D.Cabeza").
+:- comment(author,"Daniel Cabeza").
 
 :- comment(module, "This library provides means for customizing, from
    environment variables, the libraries and @concept{path
@@ -53,3 +53,10 @@ record_alias([LibStr|Paths]) :-
         atom_codes(Lib, LibStr),
         asserta_fact(library_directory(Lib)),
         record_alias(Paths).
+
+
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+189,2003/12/19,16:08*47+'CET'), "Control
+   version started. (Edison Mera)").
+

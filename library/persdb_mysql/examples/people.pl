@@ -1,6 +1,6 @@
 :- module(_, _, [persdb_mysql, functions]).
 
-
+% Some contributions from Guy-Noel Mathieu
 
 :- use_module(library(write)).
 :- use_module(library(format)).
@@ -18,7 +18,6 @@ sql_persistent_location(people, db(people, User, Password, HP)):-
         people).                       %% Database local id
 
 % Low level MySQL interface.
-
 :- use_module(library('persdb_mysql/mysql_client')).
 
 
@@ -31,7 +30,14 @@ main :-
         insert_people,
         nl,
         display('Showing people'), nl,nl,
-        show_people.
+        show_people,
+	display('Removing John'), nl,nl,
+	remove_people(john,_Y,_Z),
+        display('Showing people, after removing John'), nl,nl,
+        show_people,
+	remove_people(_X,female,_Z),
+        display('Showing people, after removing female'), nl,nl,
+	show_people.
 
 % Create a database and a table of people.  Still needs to be ironed out.
 
@@ -82,8 +88,6 @@ insert_people :-
             true
         ).
 
-
-
  %% Removes people from the 'people' table.
 
  %% Still not working in MySQL due to differences in SQL: working on it.
@@ -97,7 +101,6 @@ remove_people_2(A, B, C) :-
 	fail.
 remove_people_2(_, _, _) :-
  	display('No more rows'), nl.
- 
 
 show_people :-
 	people(Name, Sex, Age),

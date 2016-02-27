@@ -1,147 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC639" HREF="ciao_toc.html#TOC639">Calling emacs from Prolog</A></H1>
+<H1><A NAME="SEC646" HREF="ciao_toc.html#TOC646">Low-level socket interface to SQL/ODBC databases</A></H1>
 <P>
-<A NAME="IDX6566"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX7229"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
+<STRONG>Author(s):</STRONG> Jose Morales.
 
 
 <P>
-This library provides a 
-<A NAME="IDX6567"></A>
-<A NAME="IDX6568"></A>
-<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
-<A NAME="IDX6569"></A>
-emacs mode, which is used to develop programs from within the 
-<A NAME="IDX6570"></A>
-<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
-<A NAME="IDX6571"></A>
-<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
-<A NAME="IDX6572"></A>
-<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.11#155 (2004/1/7, 20:9:58 CET)
+
+
+<P>
+This library provides a low-level interface to MySQL using the MySQL C API and the Ciao foreign interface to C.
 
 
 
 <UL>
-
-<LI>Visit a file, which can then be edited.
-
-<LI>Execute arbitrary
-
-<A NAME="IDX6573"></A>
-<A NAME="IDX6574"></A>
-<EM>emacs lisp</EM> code, sent from Prolog. 
-
-</UL>
-
-<P>
-In order for this library to work correctly, the following is needed: 
-
-
-
-<UL>
-
-<LI>You should be running the
-
-<A NAME="IDX6575"></A>
-<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
-
-<LI>This
-
-<A NAME="IDX6576"></A>
-<CODE>emacs</CODE> should be running the 
-<A NAME="IDX6577"></A>
-<A NAME="IDX6578"></A>
-<EM>emacs server</EM>. This can be done by including the following line in your 
-<A NAME="IDX6579"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<PRE>
-;; Start a server that emacsclient can connect to.
-(server-start)
-</PRE>
-
-Or typing <CODE>M-x server-start</CODE> within 
-<A NAME="IDX6580"></A>
-<CODE>emacs</CODE>. 
-
-</UL>
-
-<P>
-This suffices for using 
-<A NAME="IDX6581"></A>
-<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
-<A NAME="IDX6582"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<DL COMPACT>
-
-<DT><CODE>(setq enable-local-eval t)</CODE>
-<DD>
-Allows executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval nil)</CODE>
-<DD>
-Does not allow executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
-<DD>
-Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
-
-</DL>
-
-<P>
-<STRONG>Examples:</STRONG> 
-
-
-<P>
-Assuming that a <CODE>.pl</CODE> file loads this library, then: 
-
-
-<DL COMPACT>
-
-<DT><CODE>..., emacs_edit('foo'), ...</CODE>
-<DD>
-Opens file <CODE>foo</CODE> for editing in 
-<A NAME="IDX6583"></A>
-<CODE>emacs</CODE>. 
-
-<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
-<DD>
-Starts execution of a Ciao top-level within 
-<A NAME="IDX6584"></A>
-<CODE>emacs</CODE>. 
-
-</DL>
-
-
-<UL>
-<LI><A HREF="ciao_153.html#SEC640">Usage and interface (emacs)</A>
-<LI><A HREF="ciao_153.html#SEC641">Documentation on exports (emacs)</A>
+<LI><A HREF="ciao_153.html#SEC647">Usage and interface (mysql_client)</A>
+<LI><A HREF="ciao_153.html#SEC648">Documentation on exports (mysql_client)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC640" HREF="ciao_toc.html#TOC640">Usage and interface (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC647" HREF="ciao_toc.html#TOC647">Usage and interface (<CODE>mysql_client</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -149,7 +47,7 @@ Starts execution of a Ciao top-level within
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(emacs)).</CODE>
+<CODE>:- use_module(library(mysql_client)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -158,19 +56,29 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6585"></A>
-<CODE>emacs_edit/1</CODE>, 
-<A NAME="IDX6586"></A>
-<CODE>emacs_edit_nowait/1</CODE>, 
-<A NAME="IDX6587"></A>
-<CODE>emacs_eval/1</CODE>, 
-<A NAME="IDX6588"></A>
-<CODE>emacs_eval_nowait/1</CODE>.
+<A NAME="IDX7230"></A>
+<CODE>mysql_connect/5</CODE>, 
+<A NAME="IDX7231"></A>
+<CODE>mysql_query/3</CODE>, 
+<A NAME="IDX7232"></A>
+<CODE>mysql_query_one_tuple/3</CODE>, 
+<A NAME="IDX7233"></A>
+<CODE>mysql_free_query_connection/1</CODE>, 
+<A NAME="IDX7234"></A>
+<CODE>mysql_fetch/2</CODE>, 
+<A NAME="IDX7235"></A>
+<CODE>mysql_get_tables/2</CODE>, 
+<A NAME="IDX7236"></A>
+<CODE>mysql_table_types/3</CODE>, 
+<A NAME="IDX7237"></A>
+<CODE>mysql_disconnect/1</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6589"></A>
-<CODE>elisp_string/1</CODE>.
+<A NAME="IDX7238"></A>
+<CODE>dbconnection/1</CODE>, 
+<A NAME="IDX7239"></A>
+<CODE>dbqueryconnection/1</CODE>.
 
 </UL>
 
@@ -181,14 +89,10 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6590"></A>
-<CODE>terms_check</CODE>, 
-<A NAME="IDX6591"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6592"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX6593"></A>
-<CODE>system</CODE>.
+<A NAME="IDX7240"></A>
+<CODE>foreign_interface/foreign_interface_properties</CODE>, 
+<A NAME="IDX7241"></A>
+<CODE>persdb_mysql/db_client_types</CODE>.
 
 </UL>
 
@@ -198,104 +102,168 @@ Starts execution of a Ciao top-level within
 
 
 
-<H2><A NAME="SEC641" HREF="ciao_toc.html#TOC641">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC648" HREF="ciao_toc.html#TOC648">Documentation on exports (<CODE>mysql_client</CODE>)</A></H2>
 <P>
-<A NAME="IDX6594"></A>
-<A NAME="IDX6595"></A>
+<A NAME="IDX7242"></A>
+<A NAME="IDX7243"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
-<DD><A NAME="IDX6596"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_connect/5:</B>
+<DD><A NAME="IDX7244"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
-
-<A NAME="IDX6597"></A>
-<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6598"></A>
-<A NAME="IDX6599"></A>
+<A NAME="IDX7245"></A>
+<A NAME="IDX7246"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
-<DD><A NAME="IDX6600"></A>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX7247"></A>
 
+
+
+<PRE>
+dbconnection(_1) :-
+        address(_1).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
-
-<A NAME="IDX6601"></A>
-<CODE>emacs</CODE> and continues without waiting for editing to finish. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6602"></A>
-<A NAME="IDX6603"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
-<DD><A NAME="IDX6604"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6605"></A>
-<A NAME="IDX6606"></A>
+<A NAME="IDX7248"></A>
+<A NAME="IDX7249"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
-<DD><A NAME="IDX6607"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query/3:</B>
+<DD><A NAME="IDX7250"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7251"></A>
+<A NAME="IDX7252"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query_one_tuple/3:</B>
+<DD><A NAME="IDX7253"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7254"></A>
+<A NAME="IDX7255"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
+<DD><A NAME="IDX7256"></A>
+
+
+
+<PRE>
+dbqueryconnection(_1) :-
+        address(_1).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
+<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6608"></A>
-<A NAME="IDX6609"></A>
+<A NAME="IDX7257"></A>
+<A NAME="IDX7258"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
-<DD><A NAME="IDX6610"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_free_query_connection/1:</B>
+<DD><A NAME="IDX7259"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
 
-<A NAME="IDX6611"></A>
-<CODE>emacs</CODE> lisp code. 
-</UL>
+</DL>
+
+<P>
+<A NAME="IDX7260"></A>
+<A NAME="IDX7261"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_fetch/2:</B>
+<DD><A NAME="IDX7262"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7263"></A>
+<A NAME="IDX7264"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_get_tables/2:</B>
+<DD><A NAME="IDX7265"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7266"></A>
+<A NAME="IDX7267"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_table_types/3:</B>
+<DD><A NAME="IDX7268"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7269"></A>
+<A NAME="IDX7270"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_disconnect/1:</B>
+<DD><A NAME="IDX7271"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

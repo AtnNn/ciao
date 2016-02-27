@@ -1,48 +1,110 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
+<TITLE>The Ciao Prolog System               - Prolog to SQL translator</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC636" HREF="ciao_toc.html#TOC636">Low-level Prolog to Java socket connection</A></H1>
+<H1><A NAME="SEC640" HREF="ciao_toc.html#TOC640">Prolog to SQL translator</A></H1>
 <P>
-<A NAME="IDX6518"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX7084"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#2 (2002/6/14, 18:55:4 CEST)
+<STRONG>Author(s):</STRONG> C. Draxler. Adapted by M. Hermenegildo and I. Caballero.
 
 
 <P>
- 
-<A NAME="IDX6519"></A>
-<A NAME="IDX6520"></A>
-This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
-<A NAME="IDX6521"></A>
-<CODE>javart</CODE> (Prolog to Java low-level interface) or 
-<A NAME="IDX6522"></A>
-<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#112 (2003/11/27, 20:54:19 CET)
+
+
+<P>
+This library performs translation of Prolog queries into 
+<A NAME="IDX7085"></A>
+SQL. The code is an adaptation for Ciao of the 
+<A NAME="IDX7086"></A>
+Prolog to SQL compiler written by Christoph Draxler, CIS Centre for Information and Speech Processing, Ludwig-Maximilians-University Munich, <CODE>draxler@cis.uni-muenchen.de</CODE>, Version 1.1. Many thanks to Christoph for allowing us to include this adaptation of his code with Ciao. 
+
+
+<P>
+The translator needs to know the correspondence between Prolog predicates and the 
+<A NAME="IDX7087"></A>
+SQL tables in the database. To this end this module exports two multifile predicates, 
+<A NAME="IDX7088"></A>
+<CODE>sql__relation/3</CODE> and 
+<A NAME="IDX7089"></A>
+<CODE>sql__attribute/4</CODE>. See the description of these predicates for details on how such correspondance is specified. 
+
+
+<P>
+The main entry points to the translator are 
+<A NAME="IDX7090"></A>
+<CODE>pl2sqlstring/3</CODE> and 
+<A NAME="IDX7091"></A>
+<CODE>pl2sqlterm/3</CODE>. Details on the types of queries allowed can be found in the description of these predicates. 
+
+
+<P>
+<STRONG>Example:</STRONG> the following program would print out a term representing the SQL query corresponding to the given Prolog query: 
+
+
+
+<PRE>
+%jcf%:- use_module(library('persdb_sql/pl2sql')).
+:- use_module(library('persdb_mysql/pl2sql')).
+%jcf%
+:- use_module(library(strings)).
+
+:- multifile [relation/3,attribute/4].
+:- data [relation/3,attribute/4].
+
+relation(product,3,'PRODUCT').
+attribute(1,'PRODUCT','ID',int).
+attribute(2,'PRODUCT','QUANTITY',int).
+attribute(3,'PRODUCT','NAME',string).
+
+main :- 
+     pl2sqlstring( f(L,K), 
+          ((product(L,N,a); product(L,N,b)),
+           \+ product(2,3,b), 
+           L + 2 &#62; avg(Y, Z^product(Z,Y,a)),
+           K is N + max(X, product(X,2,b))
+           ), T),
+     write_string(T).
+     
+%%     printqueries(T).
+
+</PRE>
+
+<P>
+<STRONG>Note:</STRONG> while the translator can be used directly in programs, it is more convenient to use a higher-level abstraction: 
+<A NAME="IDX7092"></A>
+persistent predicates (implemented in the 
+<A NAME="IDX7093"></A>
+<CODE>persdb</CODE> library). The notion of persistent predicates provides a completely transparent interface between Prolog and relational databases. When using this library, the Prolog to SQL translation is called automatically as needed. 
 
 
 
 <UL>
-<LI><A HREF="ciao_152.html#SEC637">Usage and interface (javasock)</A>
-<LI><A HREF="ciao_152.html#SEC638">Documentation on exports (javasock)</A>
+<LI><A HREF="ciao_152.html#SEC641">Usage and interface (pl2sql)</A>
+<LI><A HREF="ciao_152.html#SEC642">Documentation on exports (pl2sql)</A>
+<LI><A HREF="ciao_152.html#SEC643">Documentation on multifiles (pl2sql)</A>
+<LI><A HREF="ciao_152.html#SEC644">Documentation on internals (pl2sql)</A>
+<LI><A HREF="ciao_152.html#SEC645">Known bugs and planned improvements (pl2sql)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC637" HREF="ciao_toc.html#TOC637">Usage and interface (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC641" HREF="ciao_toc.html#TOC641">Usage and interface (<CODE>pl2sql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -50,7 +112,7 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(javasock)).</CODE>
+<CODE>:- use_module(library(pl2sql)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -59,24 +121,28 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6523"></A>
-<CODE>start_socket_interface/2</CODE>, 
-<A NAME="IDX6524"></A>
-<CODE>stop_socket_interface/0</CODE>, 
-<A NAME="IDX6525"></A>
-<CODE>join_socket_interface/0</CODE>, 
-<A NAME="IDX6526"></A>
-<CODE>java_query/2</CODE>, 
-<A NAME="IDX6527"></A>
-<CODE>java_response/2</CODE>, 
-<A NAME="IDX6528"></A>
-<CODE>prolog_query/2</CODE>, 
-<A NAME="IDX6529"></A>
-<CODE>prolog_response/2</CODE>, 
-<A NAME="IDX6530"></A>
-<CODE>java_stream/4</CODE>, 
-<A NAME="IDX6531"></A>
-<CODE>java_debug/1</CODE>.
+<A NAME="IDX7094"></A>
+<CODE>pl2sqlstring/3</CODE>, 
+<A NAME="IDX7095"></A>
+<CODE>pl2sqlterm/3</CODE>, 
+<A NAME="IDX7096"></A>
+<CODE>sqlterm2string/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7097"></A>
+<CODE>querybody/1</CODE>, 
+<A NAME="IDX7098"></A>
+<CODE>projterm/1</CODE>, 
+<A NAME="IDX7099"></A>
+<CODE>sqlstring/1</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX7100"></A>
+<CODE>sql__relation/3</CODE>, 
+<A NAME="IDX7101"></A>
+<CODE>sql__attribute/4</CODE>.
 
 </UL>
 
@@ -87,20 +153,16 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6532"></A>
-<CODE>fastrw</CODE>, 
-<A NAME="IDX6533"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6534"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX6535"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX6536"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX6537"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX6538"></A>
-<CODE>javall/jtopl</CODE>.
+<A NAME="IDX7102"></A>
+<CODE>persdb_sql_common/sqltypes</CODE>, 
+<A NAME="IDX7103"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7104"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7105"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7106"></A>
+<CODE>messages</CODE>.
 
 </UL>
 
@@ -110,190 +172,316 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 
 
-<H2><A NAME="SEC638" HREF="ciao_toc.html#TOC638">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC642" HREF="ciao_toc.html#TOC642">Documentation on exports (<CODE>pl2sql</CODE>)</A></H2>
 <P>
-<A NAME="IDX6539"></A>
-<A NAME="IDX6540"></A>
+<A NAME="IDX7107"></A>
+<A NAME="IDX7108"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/2:</B>
-<DD><A NAME="IDX6541"></A>
+<DT><span class="define">PREDICATE:</span> <B>pl2sqlstring/3:</B>
+<DD><A NAME="IDX7109"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address,+Stream)</CODE>
+<STRONG>Usage:</STRONG> <CODE>pl2sqlstring(+ProjectionTerm, +DatabaseGoal, -SQLQueryString)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
+<LI><EM>Description:</EM> This is the top level predicate which translates complex Prolog goals into the corresponding SQL code.
+
+The query code is prepared in such a way that the result is projected onto the term <CODE>ProjectionTerm</CODE> (also in a similar way to the first argument of 
+<A NAME="IDX7110"></A>
+<CODE>setof/3</CODE>)). See the predicate 
+<A NAME="IDX7111"></A>
+<CODE>translate_projection/3</CODE> for restrictions on this term. 
+
+<CODE>SQLQueryString</CODE> contains the code of the 
+<A NAME="IDX7112"></A>
+SQL query, ready to be sent to an 
+<A NAME="IDX7113"></A>
+SQL server. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+ProjectionTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+DatabaseGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>-SQLQueryString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7114"></A>
+<A NAME="IDX7115"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
+<DD><A NAME="IDX7116"></A>
+
+
+<P>
+<CODE>DBGoal</CODE> is a goal meant to be executed in the external database. It can be a complex term containing 
+<A NAME="IDX7117"></A>
+conjunctions, 
+<A NAME="IDX7118"></A>
+disjunctions, and 
+<A NAME="IDX7119"></A>
+negations, of: 
+
+
+
+<UL>
+
+<LI>
+
+<A NAME="IDX7120"></A>
+Atomic goals, which must have been defined via 
+<A NAME="IDX7121"></A>
+<CODE>sql__relation/3</CODE> and 
+<A NAME="IDX7122"></A>
+<CODE>sql__attribute/4</CODE> and reside in the (same) database. Their arguments must be either ground or free variables. If they are ground, they must be bound to constants of the type declared for that argument. If an argument is a free variable, it may <EM>share</EM> with (i.e., be the same variable as) other free variables in other goal arguments. 
+
+<LI>
+
+<A NAME="IDX7123"></A>
+Database comparison goals, whose main functor must be a 
+<A NAME="IDX7124"></A>
+database comparison operator (see 
+<A NAME="IDX7125"></A>
+<CODE>pl2sql</CODE>:
+<A NAME="IDX7126"></A>
+<CODE>comparison/2</CODE>) and whose arguments must be <EM>database arithmetic expressions</EM>. 
+
+<LI>
+
+<A NAME="IDX7127"></A>
+Database calls to is/2. The left side of such a call may be either unbound, in which case it is bound to the result of evaluating the right side, or bound in which case an equality condition is tested. The right side must be a <EM>database arithmetic expression</EM>. 
+
+</UL>
+
+<P>
+The binding of variables follows Prolog rules: 
+
+
+
+<UL>
+
+<LI>variables are bound by positive base goals and on the left side of the
+
+<A NAME="IDX7128"></A>
+<CODE>is/2</CODE> predicate. 
+
+<LI>Comparison operations, negated goals, and right sides of the
+
+<A NAME="IDX7129"></A>
+<CODE>is/2</CODE> predicate do not return variable bindings and may even require all arguments to be bound for a safe evaluation. 
+
+</UL>
+
+<P>
+<A NAME="IDX7130"></A>
+Database arithmetic expressions may contain: 
+
+
+
+<UL>
+
+<LI>Numeric constants (i.e., integers, reals, etc.).
+
+<LI>Bound variables, i.e., variables which will be bound during execution through occurrence within a positive database goal, or by a preceding arithmetic function.
+
+<LI>
+
+<A NAME="IDX7131"></A>
+Database arithmetic functions, which are a subset of those typically accepted within 
+<A NAME="IDX7132"></A>
+<CODE>is/2</CODE> (see 
+<A NAME="IDX7133"></A>
+<CODE>pl2sql</CODE>:
+<A NAME="IDX7134"></A>
+<CODE>arithmetic_functor/2</CODE>). 
+
+<LI>
+
+<A NAME="IDX7135"></A>
+Database aggregation functions, each of which has two arguments: a variable indicating the argument over which the function is to be computed, and a goal argument which must contain in at least one argument position the variable (e.g. <CODE>avg(Seats, plane(Type, Seats))</CODE>). The goal argument may only be a conjunction of (positive or negative) base goals. See 
+<A NAME="IDX7136"></A>
+<CODE>pl2sql</CODE>:
+<A NAME="IDX7137"></A>
+<CODE>aggregate_functor/2</CODE> for the admissible aggregate functions. 
+
+</UL>
+
+<P>
+In addition, variables 
+<A NAME="IDX7138"></A>
+<A NAME="IDX7139"></A>
+can be existentially quantified using 
+<A NAME="IDX7140"></A>
+<CODE>^/2</CODE> (in a similar way to how it is done in 
+<A NAME="IDX7141"></A>
+<CODE>setof/3</CODE>). 
+
+
+<P>
+Note that it is assumed that the arithmetic operators in Prolog and SQL are the same, i.e., <CODE>+</CODE> is addition in Prolog and in SQL, etc. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7142"></A>
+<A NAME="IDX7143"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
+<DD><A NAME="IDX7144"></A>
+
+
+<P>
+<CODE>DBProjTerm</CODE> is a term onto which the result of a database query code is (in a similar way to the first argument of 
+<A NAME="IDX7145"></A>
+<CODE>setof/3</CODE>)). 
+
+
+<P>
+A <CODE>ProjectionTerm</CODE> must meet the following restrictions: 
+
+
+
+<UL>
+
+<LI>The functor of <CODE>ProjectionTerm</CODE> may not be one of the built-in predicates, i.e. ',', ';', etc. are not allowed.
+
+<LI>Only variables and constants are allowed as arguments, i.e., no structured terms may appear.
+
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7146"></A>
+<A NAME="IDX7147"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
+<DD><A NAME="IDX7148"></A>
+
+
+
+<PRE>
+sqlstring(S) :-
+        string(S).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S</CODE> is a string containing SQL code.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7149"></A>
+<A NAME="IDX7150"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pl2sqlterm/3:</B>
+<DD><A NAME="IDX7151"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pl2sqlterm(+ProjectionTerm, +DatabaseGoal, -SQLQueryTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Similar to
+
+<A NAME="IDX7152"></A>
+<CODE>pl2sqlstring/3</CODE> except that <CODE>SQLQueryTerm</CODE> is a representation of the SQL query as a Prolog term. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+ProjectionTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+DatabaseGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>-SQLQueryTerm</CODE> is a list of <CODE>sqlterm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7153"></A>
+<A NAME="IDX7154"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sqlterm2string/2:</B>
+<DD><A NAME="IDX7155"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sqlterm2string(+Queries, -QueryString)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>QueryString</CODE> is a string representation of the list of queries in Prolog-term format in <CODE>Queries</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Address</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>+Queries</CODE> is a list of <CODE>sqlterm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
+<CODE>-QueryString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6542"></A>
-<A NAME="IDX6543"></A>
+<A NAME="IDX7156"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
-<DD><A NAME="IDX6544"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
+<DD><A NAME="IDX7157"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+ Imported from 
+<A NAME="IDX7158"></A>
+<CODE>sqltypes</CODE> (see the corresponding documentation for details).
 
-<UL>
-<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
-
-</UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC643" HREF="ciao_toc.html#TOC643">Documentation on multifiles (<CODE>pl2sql</CODE>)</A></H2>
 <P>
-<A NAME="IDX6545"></A>
-<A NAME="IDX6546"></A>
+<A NAME="IDX7159"></A>
+<A NAME="IDX7160"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
-<DD><A NAME="IDX6547"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql__relation/3:</B>
+<DD><A NAME="IDX7161"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6548"></A>
-<A NAME="IDX6549"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
-<DD><A NAME="IDX6550"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_query(ThreadId,Query)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>ThreadId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6551"></A>
-<A NAME="IDX6552"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
-<DD><A NAME="IDX6553"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_response(Id,Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6554"></A>
-<A NAME="IDX6555"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
-<DD><A NAME="IDX6556"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_query(Id,Query)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6557"></A>
-<A NAME="IDX6558"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
-<DD><A NAME="IDX6559"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_response(Id,Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6560"></A>
-<A NAME="IDX6561"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_stream/4:</B>
-<DD><A NAME="IDX6562"></A>
+The predicate is <EM>multifile</EM>.
 
 
 <P>
@@ -301,43 +489,468 @@ The predicate is of type <EM>data</EM>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_stream(PJStream,JPStream,Address,Stream)</CODE>
+<STRONG>Usage:</STRONG> <CODE>sql__relation(PredName, Arity, TableName)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains prolog-to-java and java-to-prolog streams, and the network address where the Java process is running. Last argument represents the Java process standard input stream.
+<LI><EM>Description:</EM> This predicate, together with
 
+<A NAME="IDX7162"></A>
+<CODE>sql__attribute/4</CODE>, defines the correspondence between Prolog predicates and the 
+<A NAME="IDX7163"></A>
+SQL tables in the database. These two relations constitute an extensible meta-database which maps 
+<A NAME="IDX7164"></A>
+Prolog predicate names to 
+<A NAME="IDX7165"></A>
+SQL table names, and 
+<A NAME="IDX7166"></A>
+Prolog predicate argument positions to 
+<A NAME="IDX7167"></A>
+SQL attributes. 
+
+<CODE>PredName</CODE> is the chosen Prolog name for an SQL table. <CODE>Arity</CODE> is the number of arguments of the predicate. <CODE>TableName</CODE> is the name of the SQL table in the Database Management System. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>PJStream</CODE> is a compound term.
- (<CODE>basic_props:struct/1</CODE>)
+<CODE>PredName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>JPStream</CODE> is a compound term.
- (<CODE>basic_props:struct/1</CODE>)
+<CODE>Arity</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Address</CODE> is a valid host name.
- (<CODE>javasock:machine_name/1</CODE>)
-
-<CODE>Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
+<CODE>TableName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6563"></A>
-<A NAME="IDX6564"></A>
+<A NAME="IDX7168"></A>
+<A NAME="IDX7169"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
-<DD><A NAME="IDX6565"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql__attribute/4:</B>
+<DD><A NAME="IDX7170"></A>
 
 
 <P>
-No further documentation available for this predicate.
+The predicate is <EM>multifile</EM>.
 
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql__attribute(ANumber, TblName, AName, AType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This predicate maps the argument positions of a Prolog predicate to the SQL attributes of its corresponding table. The types of the arguments need to be specified, and this information is used for consistency checking during the translation and for output formatting. A minimal type system is provided to this end. The allowable types are given by
+
+<A NAME="IDX7171"></A>
+<CODE>sqltype/1</CODE>. 
+
+<CODE>ANumber</CODE> is the argument number in the Prolog relation. <CODE>TblName</CODE> is the name of the SQL table in the Database Management System. <CODE>AName</CODE> is the name of the corresponding attribute in the table. <CODE>AType</CODE> is the (translator) data type of the attribute. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>ANumber</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>TblName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>AName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>AType</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC644" HREF="ciao_toc.html#TOC644">Documentation on internals (<CODE>pl2sql</CODE>)</A></H2>
+<P>
+<A NAME="IDX7172"></A>
+<A NAME="IDX7173"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>query_generation/3:</B>
+<DD><A NAME="IDX7174"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>query_generation(+ListOfConjunctions, +ProjectionTerm, -ListOfQueries)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> For each Conjunction in <CODE>ListOfConjunctions</CODE>, translate the pair <CODE>(ProjectionTerm, Conjunction)</CODE> to an SQL query and connect each such query through a
+
+<A NAME="IDX7175"></A>
+UNION-operator to result in the <CODE>ListOfQueries</CODE>. 
+
+A Conjunction consists of positive or negative subgoals. Each subgoal is translated as follows: 
+
+
+<UL>
+
+<LI>the
+
+<A NAME="IDX7176"></A>
+functor of a goal that is not a comparison operation is translated to a 
+<A NAME="IDX7177"></A>
+relation name with a 
+<A NAME="IDX7178"></A>
+range variable, 
+
+<LI>
+
+<A NAME="IDX7179"></A>
+negated goals are translated to 
+<A NAME="IDX7180"></A>
+NOT EXISTS-subqueries with 
+<A NAME="IDX7181"></A>
+* projection, 
+
+<LI>
+
+<A NAME="IDX7182"></A>
+comparison operations are translated to comparison operations in the 
+<A NAME="IDX7183"></A>
+WHERE-clause, 
+
+<LI>
+
+<A NAME="IDX7184"></A>
+aggregate function terms are translated to 
+<A NAME="IDX7185"></A>
+aggregate function (sub)queries. 
+
+</UL>
+
+The arguments of a goal are translated as follows: 
+
+
+<UL>
+
+<LI><CODE>variables of a goal</CODE> are translated to
+
+<A NAME="IDX7186"></A>
+qualified attributes, 
+
+<LI>
+
+<A NAME="IDX7187"></A>
+variables occurring in several goals are translated to equality comparisons (equi join) in the WHERE-clause, 
+<A NAME="IDX7188"></A>
+<A NAME="IDX7189"></A>
+
+<LI>
+
+<A NAME="IDX7190"></A>
+constant arguments are translated to 
+<A NAME="IDX7191"></A>
+equality comparisons in the WHERE-clause. 
+
+</UL>
+
+Arithmetic functions are treated specially (
+<A NAME="IDX7192"></A>
+<CODE>translate_arithmetic_function/5</CODE>). See also 
+<A NAME="IDX7193"></A>
+<CODE>querybody/1</CODE> for details on the syntax accepted and restrictions. 
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7194"></A>
+<A NAME="IDX7195"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>translate_conjunction/5:</B>
+<DD><A NAME="IDX7196"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>translate_conjunction(Conjunction, SQLFrom, SQLWhere, Dict, NewDict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates a conjunction of goals (represented as a list of goals preceeded by existentially quantified variables) to
+
+<A NAME="IDX7197"></A>
+FROM-clauses and 
+<A NAME="IDX7198"></A>
+WHERE-clauses of an SQL query. A dictionary containing the associated SQL table and attribute names is built up as an accumulator pair (arguments <CODE>Dict</CODE> and <CODE>NewDict</CODE>). 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7199"></A>
+<A NAME="IDX7200"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>translate_goal/5:</B>
+<DD><A NAME="IDX7201"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>translate_goal(Goal, SQLFrom, SQLWhere, Dict, NewDict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates:
+
+
+<UL>
+
+<LI>a
+
+<A NAME="IDX7202"></A>
+positive database goal to the associated FROM- and WHERE clause of an SQL query, 
+
+<LI>a
+
+<A NAME="IDX7203"></A>
+negated database goal to a negated existential subquery, 
+
+<LI>an
+
+<A NAME="IDX7204"></A>
+arithmetic goal to an arithmetic expression or an aggregate function query, 
+
+<LI>a
+
+<A NAME="IDX7205"></A>
+comparison goal to a comparison expression, and 
+
+<LI>a
+
+<A NAME="IDX7206"></A>
+negated comparison goal to a comparison expression with the opposite comparison operator. 
+
+</UL>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7207"></A>
+<A NAME="IDX7208"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>translate_arithmetic_function/5:</B>
+<DD><A NAME="IDX7209"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>translate_arithmetic_function(Result, Expression, SQLWhere, Dict, NewDict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Arithmetic functions (left side of is/2 operator is bound to value of expression on right side) may be called with either:
+
+
+<UL>
+<LI><CODE>Result</CODE> unbound: then <CODE>Result</CODE> is bound to the value of the evaluation of <CODE>Expression</CODE>,
+
+<LI><CODE>Result</CODE> bound: then an equality condition is returned between the value of <CODE>Result</CODE> and the value of the evaluation of <CODE>Expression</CODE>.
+
+Only the equality test shows up in the WHERE clause of an SQLquery. 
+</UL>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7210"></A>
+<A NAME="IDX7211"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>translate_comparison/5:</B>
+<DD><A NAME="IDX7212"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>translate_comparison(LeftArg, RightArg, CompOp, Dict, SQLComparison)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates the left and right arguments of a comparison term into the appropriate comparison operation in SQL. The result type of each argument expression is checked for type compatibility.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7213"></A>
+<A NAME="IDX7214"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>aggregate_function/3:</B>
+<DD><A NAME="IDX7215"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>aggregate_function(AggregateFunctionTerm, Dict, AggregateFunctionQuery)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Supports the Prolog aggregate function terms listed in
+
+<A NAME="IDX7216"></A>
+<CODE>aggregate_functor/2</CODE> within arithmetic expressions. Aggregate functions are translated to the corresponding SQL built-in aggregate functions. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7217"></A>
+<A NAME="IDX7218"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>comparison/2:</B>
+<DD><A NAME="IDX7219"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>comparison(PrologOperator, SQLOperator)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines the mapping between Prolog operators and SQL operators:
+
+
+<PRE>
+comparison(=,=).
+comparison(&#60;,&#60;).
+comparison(&#62;,&#62;).
+comparison(@&#60;,&#60;).
+comparison(@&#62;,&#62;).
+</PRE>
+
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>PrologOperator</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>SQLOperator</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7220"></A>
+<A NAME="IDX7221"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>negated_comparison/2:</B>
+<DD><A NAME="IDX7222"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>negated_comparison(PrologOperator, SQLOperator)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines the mapping between Prolog operators and the complementary SQL operators:
+
+
+<PRE>
+negated_comparison(=,&#60;&#62;).
+negated_comparison(\==,=).
+negated_comparison(&#62;,=&#60;).
+negated_comparison(=&#60;,&#62;).
+negated_comparison(&#60;,&#62;=).
+negated_comparison(&#62;=,&#60;).
+</PRE>
+
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>PrologOperator</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>SQLOperator</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7223"></A>
+<A NAME="IDX7224"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arithmetic_functor/2:</B>
+<DD><A NAME="IDX7225"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>arithmetic_functor(PrologFunctor, SQLFunction)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines the admissible arithmetic functions on the Prolog side and their correspondence on the SQL side:
+
+
+<PRE>
+arithmetic_functor(+,+).
+arithmetic_functor(-,-).
+arithmetic_functor(*,*).
+arithmetic_functor(/,/).
+</PRE>
+
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>PrologFunctor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>SQLFunction</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7226"></A>
+<A NAME="IDX7227"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>aggregate_functor/2:</B>
+<DD><A NAME="IDX7228"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>aggregate_functor(PrologFunctor, SQLFunction)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines the admissible aggregate functions on the Prolog side and their correspondence on the SQL side:
+
+
+<PRE>
+aggregate_functor(avg,'AVG').
+aggregate_functor(min,'MIN').
+aggregate_functor(max,'MAX').
+aggregate_functor(sum,'SUM').
+aggregate_functor(count,'COUNT').
+</PRE>
+
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>PrologFunctor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>SQLFunction</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC645" HREF="ciao_toc.html#TOC645">Known bugs and planned improvements (<CODE>pl2sql</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Need to separate db predicate names by module.
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

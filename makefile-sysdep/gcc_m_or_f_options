@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# From version 3.1 onwards, gcc changed the -m<option> to -f<option> for
+# a series of versions.  We test them here.  If the -m<option> form is
+# allowed, we return the -m form.  If it accepts the -f<option>, we
+# return the -f form.  If it is not a gcc, we return nothing.
+if type gcc > /dev/null ; then 
+   echo 'main() {}' > /tmp/ciao_test_$$.c
+   gcc -malign-functions=2 /tmp/ciao_test_$$.c -o \
+       /tmp/ciao_test_$$.exe 2> /tmp/ciao_error_$$.err
+   if test -s /tmp/ciao_error_$$.err ; then
+      echo -fno-strict-aliasing -fomit-frame-pointer -falign-loops=2 -falign-jumps=2 -falign-functions=2
+   else
+      echo -fno-strict-aliasing -fomit-frame-pointer -malign-loops=2 -malign-jumps=2 -malign-functions=2
+   fi
+else
+   echo 
+fi
+
+# Get rid of the now unneeded intermediate files
+
+/bin/rm -f /tmp/ciao_test_$$.* /tmp/ciao_error_$$.err

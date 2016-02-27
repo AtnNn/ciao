@@ -48,12 +48,28 @@ BOOL code_class(Arg)
   return cunify(Arg,X(1),MakeSmall(symbolchar[i]));
 }
 
+/* Changed to account for unix, mac & win end-of-lines
 #define INC_COUNTS(ch,stream) \
 { \
     if (ch == (int)'\n')  \
       stream->last_nl_pos = stream->char_count += 1, stream->nl_count++; \
     else \
       stream->char_count++; \
+}
+*/
+
+#define INC_COUNTS(ch,stream) \
+{ \
+    stream->char_count++; \
+    if (ch == 0xd) { \
+      stream->last_nl_pos = stream->char_count; \
+      stream->nl_count++; \
+    } else if (ch == 0xa) { \
+      stream->last_nl_pos = stream->char_count; \
+      if (stream->previous_char != 0xd) \
+        stream->nl_count++; \
+    } \
+    stream->previous_char = ch; \
 }
 
 void writechar(ch,i,s)
@@ -100,17 +116,23 @@ int (*ENG_read_hook)() = NULL;
 
 #define REGS_TO_SAVE 32                            /* How many, actually? */
 
-#define PEEK -100
-#define GET   -10
-#define GET1   -1
+#define DELRET -5
+#define PEEK   -4
+#define GET    -3
+#define GET1   -2
+#define SKIPLN -1
 
 #define EXITCOND(op,i) \
-  (op<GET1 || i==EOF || (op==GET1 && symbolchar[i]>0) || op==i)
+  ( op<GET1 || i==EOF || (op==GET1 && symbolchar[i]>0) || \
+    (op==SKIPLN && (i==0xa || i==0xd)) || op==i )
+
+#define GIVEBACKCOND(op,i) \
+  (op==PEEK || (op==SKIPLN && i==EOF) || (op==DELRET && i!=0xa))
 
 /* Returns -2 when attempting to read past end of file //) */
 static int readchar(s, op_type, pred_address)
      struct stream_node *s;
-     int op_type;  /* PEEK = -100, GET = -10, GET1 = -1, SKIP >= 0 */
+     int op_type;  /* DELRET, PEEK, GET, GET1, SKIPLN, or >= 0 for SKIP */
      struct definition *pred_address;
 {
   FILE *f = s->streamfile;
@@ -140,7 +162,7 @@ static int readchar(s, op_type, pred_address)
       } else
         i = getc(f);
 
-      if (op_type==PEEK)
+      if GIVEBACKCOND(op_type,i)
         s->pending_char = i;
       else
         INC_COUNTS(i,root_stream_ptr);
@@ -163,7 +185,7 @@ static int readchar(s, op_type, pred_address)
       } else
         i = getc(f);
 
-      if (op_type==PEEK)
+      if GIVEBACKCOND(op_type,i)
         s->pending_char = i;
       else
         INC_COUNTS(i,s);
@@ -193,9 +215,9 @@ static int readchar(s, op_type, pred_address)
         }
       }
       
-      if (op_type==PEEK) {
+      if GIVEBACKCOND(op_type,i)
         s->pending_char = i;
-      } else {
+      else {
         INC_COUNTS(i,s);
         if (i==EOF) s->socket_eof = TRUE;
       }
@@ -521,6 +543,44 @@ BOOL skip2(Arg)
 }
 
 /*----------------------------------------------------------------*/
+
+BOOL skip_line(Arg)
+     Argdecl;
+{
+  int ch;
+
+  for (ch=0; ch!=0xa && ch!=0xd && ch>=0;)
+    ch = readchar(Input_Stream_Ptr,SKIPLN,address_skip_line);
+
+  if (ch == 0xd) /* Delete a possible 0xa (win end-of-line) */
+    readchar(Input_Stream_Ptr,DELRET,address_skip_line);
+
+  return TRUE;
+}
+
+/*----------------------------------------------------------------*/
+
+
+BOOL skip_line1(Arg)
+     Argdecl;
+{
+  int errcode, ch;
+  struct stream_node *s;
+  
+  s = stream_to_ptr_check(X(0), 'r', &errcode);
+  if (!s)
+    BUILTIN_ERROR(errcode,X(0),1);
+
+  for (ch=0; ch!=0xa && ch!=0xd && ch>=0;)
+    ch = readchar(s,SKIPLN,address_skip_line1);
+
+  if (ch == 0xd) /* Delete a possible 0xa (win end-of-line) */
+    readchar(s,DELRET,address_skip_line1);
+
+  return TRUE;
+}
+
+/*----------------------------------------------------------------*/
 /*                       Moved from streams.c (DCG)               */
 /*----------------------------------------------------------------*/
 
@@ -798,6 +858,7 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
   int i,k,j;
   unsigned char *s = (unsigned char *) Atom_Buffer;
   TAGGED *h = w->global_top;
+  int base;
 
   if ((k = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
      BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
@@ -824,8 +885,11 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
     j = 1;
     for (i=0; j; i++) {
       if (i == Atom_Buffer_Length) {
+        /*
 	Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
 					   i, Atom_Buffer_Length<<=1);
+        */  
+        EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
 	s = (unsigned char *)Atom_Buffer+i;
       }
       if ((j = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
@@ -840,10 +904,11 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
       CHECK_HEAP_SPACE;
       return TRUE;
     case 'I':
-      if((i = bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD))) {
+      base = GetSmall(current_radix);
+      if((i = bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD, base))) {
 	explicit_heap_overflow(Arg,i+CONTPAD, 1);
         h = w->global_top;        
-	if (bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD))
+	if (bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD, base))
 	  SERIOUS_FAULT("miscalculated size of bignum");
       }
       if ((i = LargeArity(h[0])) ==2 && IntIsSmall((int)h[1]))

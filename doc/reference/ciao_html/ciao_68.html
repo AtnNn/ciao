@@ -1,50 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Operating system utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC293" HREF="ciao_toc.html#TOC293">Operating system utilities</A></H1>
+<H1><A NAME="SEC297" HREF="ciao_toc.html#TOC297">Dictionaries</A></H1>
 <P>
-<A NAME="IDX3504"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
+<A NAME="IDX4258"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> The CLIP Group.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#211 (2002/4/30, 20:40:19 CEST)
+<STRONG>Version:</STRONG> 1.9#240 (2003/12/22, 18:52:17 CET)
 
 
 <P>
-This module contains predicates for invoking services which are typically provided by the operating system. Note that the predicates which take names of files or directories as arguments in this module expect atoms, not 
-<A NAME="IDX3505"></A>
-path aliases. I.e., generally these predicates will not call 
-<A NAME="IDX3506"></A>
-<CODE>absolute_file_name/2</CODE> on names of files or directories taken as arguments.
+This module provides predicates for implementing dictionaries. Such dictionaries are currently implemented as ordered binary trees of key-value pairs.
 
 
 
 <UL>
-<LI><A HREF="ciao_68.html#SEC294">Usage and interface (system)</A>
-<LI><A HREF="ciao_68.html#SEC295">Documentation on exports (system)</A>
-<LI><A HREF="ciao_68.html#SEC296">Documentation on multifiles (system)</A>
+<LI><A HREF="ciao_68.html#SEC298">Usage and interface (dict)</A>
+<LI><A HREF="ciao_68.html#SEC299">Documentation on exports (dict)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC294" HREF="ciao_toc.html#TOC294">Usage and interface (<CODE>system</CODE>)</A></H2>
+<H2><A NAME="SEC298" HREF="ciao_toc.html#TOC298">Usage and interface (<CODE>dict</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,7 +43,7 @@ path aliases. I.e., generally these predicates will not call
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(system)).</CODE>
+<CODE>:- use_module(library(dict)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -61,110 +52,23 @@ path aliases. I.e., generally these predicates will not call
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3507"></A>
-<CODE>pause/1</CODE>, 
-<A NAME="IDX3508"></A>
-<CODE>time/1</CODE>, 
-<A NAME="IDX3509"></A>
-<CODE>datime/1</CODE>, 
-<A NAME="IDX3510"></A>
-<CODE>datime/9</CODE>, 
-<A NAME="IDX3511"></A>
-<CODE>getenvstr/2</CODE>, 
-<A NAME="IDX3512"></A>
-<CODE>setenvstr/2</CODE>, 
-<A NAME="IDX3513"></A>
-<CODE>extract_paths/2</CODE>, 
-<A NAME="IDX3514"></A>
-<CODE>get_pid/1</CODE>, 
-<A NAME="IDX3515"></A>
-<CODE>current_host/1</CODE>, 
-<A NAME="IDX3516"></A>
-<CODE>current_executable/1</CODE>, 
-<A NAME="IDX3517"></A>
-<CODE>umask/2</CODE>, 
-<A NAME="IDX3518"></A>
-<CODE>make_directory/2</CODE>, 
-<A NAME="IDX3519"></A>
-<CODE>make_directory/1</CODE>, 
-<A NAME="IDX3520"></A>
-<CODE>make_dirpath/2</CODE>, 
-<A NAME="IDX3521"></A>
-<CODE>make_dirpath/1</CODE>, 
-<A NAME="IDX3522"></A>
-<CODE>working_directory/2</CODE>, 
-<A NAME="IDX3523"></A>
-<CODE>cd/1</CODE>, 
-<A NAME="IDX3524"></A>
-<CODE>shell/0</CODE>, 
-<A NAME="IDX3525"></A>
-<CODE>shell/1</CODE>, 
-<A NAME="IDX3526"></A>
-<CODE>shell/2</CODE>, 
-<A NAME="IDX3527"></A>
-<CODE>system/1</CODE>, 
-<A NAME="IDX3528"></A>
-<CODE>system/2</CODE>, 
-<A NAME="IDX3529"></A>
-<CODE>popen/3</CODE>, 
-<A NAME="IDX3530"></A>
-<CODE>exec/4</CODE>, 
-<A NAME="IDX3531"></A>
-<CODE>exec/3</CODE>, 
-<A NAME="IDX3532"></A>
-<CODE>directory_files/2</CODE>, 
-<A NAME="IDX3533"></A>
-<CODE>mktemp/2</CODE>, 
-<A NAME="IDX3534"></A>
-<CODE>file_exists/1</CODE>, 
-<A NAME="IDX3535"></A>
-<CODE>file_exists/2</CODE>, 
-<A NAME="IDX3536"></A>
-<CODE>file_property/2</CODE>, 
-<A NAME="IDX3537"></A>
-<CODE>file_properties/6</CODE>, 
-<A NAME="IDX3538"></A>
-<CODE>modif_time/2</CODE>, 
-<A NAME="IDX3539"></A>
-<CODE>modif_time0/2</CODE>, 
-<A NAME="IDX3540"></A>
-<CODE>fmode/2</CODE>, 
-<A NAME="IDX3541"></A>
-<CODE>chmod/2</CODE>, 
-<A NAME="IDX3542"></A>
-<CODE>chmod/3</CODE>, 
-<A NAME="IDX3543"></A>
-<CODE>delete_file/1</CODE>, 
-<A NAME="IDX3544"></A>
-<CODE>delete_directory/1</CODE>, 
-<A NAME="IDX3545"></A>
-<CODE>rename_file/2</CODE>, 
-<A NAME="IDX3546"></A>
-<CODE>cyg2win/3</CODE>.
+<A NAME="IDX4259"></A>
+<CODE>dictionary/5</CODE>, 
+<A NAME="IDX4260"></A>
+<CODE>dic_node/2</CODE>, 
+<A NAME="IDX4261"></A>
+<CODE>dic_lookup/3</CODE>, 
+<A NAME="IDX4262"></A>
+<CODE>dic_lookup/4</CODE>, 
+<A NAME="IDX4263"></A>
+<CODE>dic_get/3</CODE>, 
+<A NAME="IDX4264"></A>
+<CODE>dic_replace/4</CODE>.
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Properties:</EM>
 
-<A NAME="IDX3547"></A>
-<CODE>datime_struct/1</CODE>, 
-<A NAME="IDX3548"></A>
-<CODE>popen_mode/1</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX3549"></A>
-<CODE>define_flag/3</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX3550"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX4265"></A>
+<CODE>dictionary/1</CODE>.
 
 </UL>
 
@@ -174,956 +78,160 @@ path aliases. I.e., generally these predicates will not call
 
 
 
-<H2><A NAME="SEC295" HREF="ciao_toc.html#TOC295">Documentation on exports (<CODE>system</CODE>)</A></H2>
+<H2><A NAME="SEC299" HREF="ciao_toc.html#TOC299">Documentation on exports (<CODE>dict</CODE>)</A></H2>
 <P>
-<A NAME="IDX3551"></A>
-<A NAME="IDX3552"></A>
+<A NAME="IDX4266"></A>
+<A NAME="IDX4267"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pause/1:</B>
-<DD><A NAME="IDX3553"></A>
+<DT><span class="define">PROPERTY:</span> <B>dictionary/1:</B>
+<DD><A NAME="IDX4268"></A>
 
 
 <P>
-<CODE>pause(Seconds)</CODE>
-
-
-<P>
-Make this thread sleep for some <CODE>Seconds</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3554"></A>
-<A NAME="IDX3555"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>time/1:</B>
-<DD><A NAME="IDX3556"></A>
-
-
-<P>
-<CODE>time(Time)</CODE>
-
-
-<P>
-<CODE>Time</CODE> is unified with the number of seconds elapsed since January, 1, 1970 (UTC).
-
-
-</DL>
-
-<P>
-<A NAME="IDX3557"></A>
-<A NAME="IDX3558"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>datime/1:</B>
-<DD><A NAME="IDX3559"></A>
-
-
-<P>
-<CODE>datime(Datime)</CODE>
-
-
-<P>
-<CODE>Datime</CODE> is unified with a term of the form <CODE>datime(Year,Month,Day,Hour,Minute,Second)</CODE> which contains the current date and time.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3560"></A>
-<A NAME="IDX3561"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>datime/9:</B>
-<DD><A NAME="IDX3562"></A>
-
-
-<P>
-<CODE>datime(Time,Year,Month,Day,Hour,Min,Sec,WeekDay,YearDay)</CODE>
-
-
-<P>
-<CODE>Time</CODE> is as in 
-<A NAME="IDX3563"></A>
-<CODE>time/1</CODE>. <CODE>WeekDay</CODE> is the number of days since Sunday, in the range 0 to 6. <CODE>YearDay</CODE> is the number of days since January 1, in the range 0 to 365.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>datime(+int,?int,?int,?int,?int,?int,?int,?int,?int)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dictionary(D)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>Time</CODE> is given, the rest of the arguments are unified with the date and time to which the <CODE>Time</CODE> argument refers.
-
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>datime(-int,?int,?int,?int,?int,?int,?int,?int,?int)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Bound <CODE>Time</CODE> to current time and the rest of the arguments refer to current time.
+<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3564"></A>
-<A NAME="IDX3565"></A>
+<A NAME="IDX4269"></A>
+<A NAME="IDX4270"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>datime_struct/1:</B>
-<DD><A NAME="IDX3566"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary/5:</B>
+<DD><A NAME="IDX4271"></A>
 
 
 <P>
-A regular type, defined as follows:
-
-<PRE>
-
-<PRE>
-datime_struct(datime(Year,Month,Day,Hour,Min,Sec)) :-
-        int(Year),
-        int(Month),
-        int(Day),
-        int(Hour),
-        int(Min),
-        int(Sec).
-</PRE>
-
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX3567"></A>
-<A NAME="IDX3568"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>getenvstr/2:</B>
-<DD><A NAME="IDX3569"></A>
-
-
-<P>
-<CODE>getenvstr(Name,Value)</CODE>
-
-
-<P>
-The environment variable <CODE>Name</CODE> has <CODE>Value</CODE>. Fails if variable <CODE>Name</CODE> is not defined.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3570"></A>
-<A NAME="IDX3571"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>setenvstr/2:</B>
-<DD><A NAME="IDX3572"></A>
-
-
-<P>
-<CODE>setenvstr(Name,Value)</CODE>
-
-
-<P>
-The environment variable <CODE>Name</CODE> is assigned <CODE>Value</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3573"></A>
-<A NAME="IDX3574"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>extract_paths/2:</B>
-<DD><A NAME="IDX3575"></A>
-
-
-<P>
-<CODE>extract_paths(String,Paths)</CODE>
-
-
-<P>
-Interpret <CODE>String</CODE> as the value of a UNIX environment variable holding a list of paths and return in <CODE>Paths</CODE> the list of the paths. Paths in <CODE>String</CODE> are separated by colons, and an empty path is considered a shorthand for '.' (current path). The most typical environment variable with this format is PATH. For example, this is a typical use: 
-
-<PRE>
-?- set_prolog_flag(write_strings, on).
-
-yes
-?- getenvstr('PATH', PATH), extract_paths(PATH, Paths).
-
-PATH = ":/home/bardo/bin:/home/clip/bin:/opt/bin/:/bin",
-Paths = [".","/home/bardo/bin","/home/clip/bin","/opt/bin/","/bin"] ?
-
-yes
-?- 
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX3576"></A>
-<A NAME="IDX3577"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_pid/1:</B>
-<DD><A NAME="IDX3578"></A>
-
-
-<P>
-<CODE>get_pid(Pid)</CODE>
-
-
-<P>
-Unifies <CODE>Pid</CODE> with the process identificator of the current process or thread.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3579"></A>
-<A NAME="IDX3580"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>current_host/1:</B>
-<DD><A NAME="IDX3581"></A>
-
-
-<P>
-<CODE>current_host(Hostname)</CODE>
-
-
-<P>
-<CODE>Hostname</CODE> is unified with the fully qualified name of the host.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3582"></A>
-<A NAME="IDX3583"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>current_executable/1:</B>
-<DD><A NAME="IDX3584"></A>
-
-
-<P>
-<CODE>current_executable(Path)</CODE>
-
-
-<P>
-Unifies <CODE>Path</CODE> with the path to the current executable.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3585"></A>
-<A NAME="IDX3586"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>umask/2:</B>
-<DD><A NAME="IDX3587"></A>
-
-
-<P>
-<CODE>umask(OldMask,NewMask)</CODE>
-
-
-<P>
-The process file creation mask was <CODE>OldMask</CODE>, and it is changed to <CODE>NewMask</CODE>.
-
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>umask(OldMask,NewMask)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dictionary(D, K, V, L, R)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the process file creation mask without changing it.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>OldMask</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>NewMask</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-The terms <CODE>OldMask</CODE> and <CODE>NewMask</CODE> are strictly identical.
- (<CODE>term_compare:== /2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>OldMask</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>NewMask</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3588"></A>
-<A NAME="IDX3589"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_directory/2:</B>
-<DD><A NAME="IDX3590"></A>
-
-
-<P>
-<CODE>make_directory(DirName,Mode)</CODE>
-
-
-<P>
-Creates the directory <CODE>DirName</CODE> with a given <CODE>Mode</CODE>. This is, as usual, operated against the current umask value.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3591"></A>
-<A NAME="IDX3592"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_directory/1:</B>
-<DD><A NAME="IDX3593"></A>
-
-
-<P>
-<CODE>make_directory(DirName)</CODE>
-
-
-<P>
-Equivalent to <CODE>make_directory(D,0o777)</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3594"></A>
-<A NAME="IDX3595"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_dirpath/2:</B>
-<DD><A NAME="IDX3596"></A>
-
-
-<P>
-<CODE>make_dirpath(Path,Mode)</CODE>
-
-
-<P>
-Creates the whole <CODE>Path</CODE> for a given directory with a given <CODE>Mode</CODE>. As an example, <CODE>make_dirpath('/tmp/var/mydir/otherdir')</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3597"></A>
-<A NAME="IDX3598"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_dirpath/1:</B>
-<DD><A NAME="IDX3599"></A>
-
-
-<P>
-<CODE>make_dirpath(Path)</CODE>
-
-
-<P>
-Equivalent to <CODE>make_dirpath(D,0o777)</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3600"></A>
-<A NAME="IDX3601"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>working_directory/2:</B>
-<DD><A NAME="IDX3602"></A>
-
-
-<P>
-<CODE>working_directory(OldDir,NewDir)</CODE>
-
-
-<P>
-Unifies current working directory with <CODE>OldDir</CODE>, and then changes the working directory to <CODE>NewDir</CODE>. Calling <CODE>working_directory(Dir,Dir)</CODE> simply unifies <CODE>Dir</CODE> with the current working directory without changing anything else.
-
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>working_directory(OldDir,NewDir)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets current working directory.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>OldDir</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>NewDir</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-The terms <CODE>OldDir</CODE> and <CODE>NewDir</CODE> are strictly identical.
- (<CODE>term_compare:== /2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>OldDir</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>NewDir</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3603"></A>
-<A NAME="IDX3604"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>cd/1:</B>
-<DD><A NAME="IDX3605"></A>
-
-
-<P>
-<CODE>cd(Path)</CODE>
-
-
-<P>
-Changes working directory to <CODE>Path</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3606"></A>
-<A NAME="IDX3607"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>shell/0:</B>
-<DD><A NAME="IDX3608"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Execs the shell specified by the environment variable <CODE>SHELL</CODE>. When the shell process terminates, control is returned to Prolog.
+<LI><EM>Description:</EM> The dictionary node <CODE>D</CODE> has key <CODE>K</CODE>, value <CODE>V</CODE>, left child <CODE>L</CODE>, and right child <CODE>R</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3609"></A>
-<A NAME="IDX3610"></A>
+<A NAME="IDX4272"></A>
+<A NAME="IDX4273"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>shell/1:</B>
-<DD><A NAME="IDX3611"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_node/2:</B>
+<DD><A NAME="IDX4274"></A>
 
 
 <P>
-<CODE>shell(Command)</CODE>
-
-
-<P>
-<CODE>Command</CODE> is executed in the shell specified by the environment variable <CODE>SHELL</CODE>. It succeeds if the exit code is zero and fails otherwise.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3612"></A>
-<A NAME="IDX3613"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>shell/2:</B>
-<DD><A NAME="IDX3614"></A>
-
-
-<P>
-<CODE>shell(Command,ReturnCode)</CODE>
-
-
-<P>
-Executes <CODE>Command</CODE> in the shell specified by the environment variable <CODE>SHELL</CODE> and stores the exit code in <CODE>ReturnCode</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3615"></A>
-<A NAME="IDX3616"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>system/1:</B>
-<DD><A NAME="IDX3617"></A>
-
-
-<P>
-<CODE>system(Command)</CODE>
-
-
-<P>
-Executes <CODE>Command</CODE> using the shell 
-<A NAME="IDX3618"></A>
-<CODE>/bin/sh</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3619"></A>
-<A NAME="IDX3620"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>system/2:</B>
-<DD><A NAME="IDX3621"></A>
-
-
-<P>
-<CODE>system(Command,ReturnCode)</CODE>
-
-
-<P>
-Executes <CODE>Command</CODE> in the 
-<A NAME="IDX3622"></A>
-<CODE>/bin/sh</CODE> shell and stores the exit code in <CODE>ReturnCode</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3623"></A>
-<A NAME="IDX3624"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>popen/3:</B>
-<DD><A NAME="IDX3625"></A>
-
-
-<P>
-<CODE>popen(Command,Mode,Stream)</CODE>
-
-
-<P>
-Open a pipe to process <CODE>Command</CODE> in a new shell with a given <CODE>Mode</CODE> and return a communication <CODE>Stream</CODE> (as in UNIX <CODE>popen(3)</CODE>). If <CODE>Mode</CODE> is <CODE>read</CODE> the output from the process is sent to <CODE>Stream</CODE>. If <CODE>Mode</CODE> is <CODE>write</CODE>, <CODE>Stream</CODE> is sent as input to the process. <CODE>Stream</CODE> may be read from or written into using the ordinary stream I/O predicates. <CODE>Stream</CODE> must be closed explicitly using 
-<A NAME="IDX3626"></A>
-<CODE>close/1</CODE>, i.e., it is not closed automatically when the process dies. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX3627"></A>
-<A NAME="IDX3628"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>popen_mode/1:</B>
-<DD><A NAME="IDX3629"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>popen_mode(M)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dic_node(D, N)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>M</CODE> is 'read' or 'write'.
+<LI><EM>Description:</EM> <CODE>N</CODE> is a sub-dictionary of <CODE>D</CODE>.
 
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+
+<CODE>N</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3630"></A>
-<A NAME="IDX3631"></A>
+<A NAME="IDX4275"></A>
+<A NAME="IDX4276"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>exec/4:</B>
-<DD><A NAME="IDX3632"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/3:</B>
+<DD><A NAME="IDX4277"></A>
 
 
 <P>
-<CODE>exec(Command,StdIn,StdOut,StdErr)</CODE>
-
-
-<P>
-Starts the process <CODE>Command</CODE> and returns the standart I/O streams of the process in <CODE>StdIn</CODE>, <CODE>StdOut</CODE>, and <CODE>StdErr</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3633"></A>
-<A NAME="IDX3634"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>exec/3:</B>
-<DD><A NAME="IDX3635"></A>
-
-
-<P>
-<CODE>exec(Command,StdIn,StdOut)</CODE>
-
-
-<P>
-Starts the process <CODE>Command</CODE> and returns the standart I/O streams of the process in <CODE>StdIn</CODE> and <CODE>StdOut</CODE>. <CODE>Standard error</CODE> is connected to whichever the parent process had it connected to.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3636"></A>
-<A NAME="IDX3637"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>directory_files/2:</B>
-<DD><A NAME="IDX3638"></A>
-
-
-<P>
-<CODE>directory_files(Directory,FileList)</CODE>
-
-
-<P>
-<CODE>FileList</CODE> is the unordered list of entries (files, directories, etc.) in <CODE>Directory</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3639"></A>
-<A NAME="IDX3640"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mktemp/2:</B>
-<DD><A NAME="IDX3641"></A>
-
-
-<P>
-<CODE>mktemp(Template,Filename)</CODE>
-
-
-<P>
-Returns a unique <CODE>Filename</CODE> based on <CODE>Template</CODE>: <CODE>Template</CODE> must be a valid file name with six trailing X, which are substituted to create a new file name.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3642"></A>
-<A NAME="IDX3643"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_exists/1:</B>
-<DD><A NAME="IDX3644"></A>
-
-
-<P>
-<CODE>file_exists(File)</CODE>
-
-
-<P>
-Succeeds if <CODE>File</CODE> (a file or directory) exists (and is accessible).
-
-
-</DL>
-
-<P>
-<A NAME="IDX3645"></A>
-<A NAME="IDX3646"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_exists/2:</B>
-<DD><A NAME="IDX3647"></A>
-
-
-<P>
-<CODE>file_exists(File,Mode)</CODE>
-
-
-<P>
-<CODE>File</CODE> (a file or directory) exists and it is accessible with <CODE>Mode</CODE>, as in the Unix call <CODE>access(2)</CODE>. Typically, <CODE>Mode</CODE> is 4 for read permission, 2 for write permission and 1 for execute permission.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3648"></A>
-<A NAME="IDX3649"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_property/2:</B>
-<DD><A NAME="IDX3650"></A>
-
-
-<P>
-<CODE>file_property(File,Property)</CODE>
-
-
-<P>
-<CODE>File</CODE> has the property <CODE>Property</CODE>. The possible properties are: 
-
-
-<DL COMPACT>
-
-<DT>type(<CODE>Type</CODE>)
-<DD>
-<CODE>Type</CODE> is one of <CODE>regular</CODE>, <CODE>directory</CODE>, <CODE>symlink</CODE>, <CODE>fifo</CODE>, <CODE>socket</CODE> or <CODE>unknown</CODE>. 
-
-<DT>linkto(<CODE>Linkto</CODE>)
-<DD>
-If <CODE>File</CODE> is a symbolic link, <CODE>Linkto</CODE> is the file pointed to by the link (and the other properties come from that file, not from the link itself). 
-
-<DT>mod_time(<CODE>ModTime</CODE>)
-<DD>
-<CODE>ModTime</CODE> is the time of last modification (seconds since January, 1, 1970). 
-
-<DT>mode(<CODE>Protection</CODE>)
-<DD>
-<CODE>Protection</CODE> is the protection mode. 
-
-<DT>size(<CODE>Size</CODE>)
-<DD>
-<CODE>Size</CODE> is the size. 
-
-</DL>
-
-<P>
-If <CODE>Property</CODE> is uninstantiated, the predicate will enumerate the properties on backtracking.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3651"></A>
-<A NAME="IDX3652"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_properties/6:</B>
-<DD><A NAME="IDX3653"></A>
-
-
-<P>
-<CODE>file_properties(Path,Type,Linkto,Time,Protection,Size)</CODE>
-
-
-<P>
-The file <CODE>Path</CODE> has the following properties: 
-
-
+<STRONG>Usage:</STRONG> <CODE>dic_lookup(D, K, V)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> contains value <CODE>V</CODE> at key <CODE>K</CODE>. If it was not already in <CODE>D</CODE> it is added.
 
-<LI>File type <CODE>Type</CODE> (one of <CODE>regular</CODE>, <CODE>directory</CODE>, <CODE>symlink</CODE>, <CODE>fifo</CODE>, <CODE>socket</CODE> or <CODE>unknown</CODE>).
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<LI>If <CODE>Path</CODE> is a symbolic link, <CODE>Linkto</CODE> is the file pointed to. All other properties come from the file pointed, not the link. <CODE>Linkto</CODE> is " if <CODE>Path</CODE> is not a symbolic link.
-
-<LI>Time of last modification <CODE>Time</CODE> (seconds since January, 1, 1970).
-
-<LI>Protection mode <CODE>Protection</CODE>.
-
-<LI>Size in bytes <CODE>Size</CODE>.
-
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3654"></A>
-<A NAME="IDX3655"></A>
+<A NAME="IDX4278"></A>
+<A NAME="IDX4279"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>modif_time/2:</B>
-<DD><A NAME="IDX3656"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/4:</B>
+<DD><A NAME="IDX4280"></A>
 
 
 <P>
-<CODE>modif_time(File,Time)</CODE>
-
-
-<P>
-The file <CODE>File</CODE> was last modified at <CODE>Time</CODE>, which is in seconds since January, 1, 1970. Fails if <CODE>File</CODE> does not exist.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3657"></A>
-<A NAME="IDX3658"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>modif_time0/2:</B>
-<DD><A NAME="IDX3659"></A>
-
-
-<P>
-<CODE>modif_time0(File,Time)</CODE>
-
-
-<P>
-If <CODE>File</CODE> exists, <CODE>Time</CODE> is its latest modification time, as in 
-<A NAME="IDX3660"></A>
-<CODE>modif_time/2</CODE>. Otherwise, if <CODE>File</CODE> does not exist, <CODE>Time</CODE> is zero.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3661"></A>
-<A NAME="IDX3662"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fmode/2:</B>
-<DD><A NAME="IDX3663"></A>
-
-
-<P>
-<CODE>fmode(File,Mode)</CODE>
-
-
-<P>
-The file <CODE>File</CODE> has protection mode <CODE>Mode</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3664"></A>
-<A NAME="IDX3665"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>chmod/2:</B>
-<DD><A NAME="IDX3666"></A>
-
-
-<P>
-<CODE>chmod(File,NewMode)</CODE>
-
-
-<P>
-Change the protection mode of file <CODE>File</CODE> to <CODE>NewMode</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3667"></A>
-<A NAME="IDX3668"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>chmod/3:</B>
-<DD><A NAME="IDX3669"></A>
-
-
-<P>
-<CODE>chmod(File,OldMode,NewMode)</CODE>
-
-
-<P>
-The file <CODE>File</CODE> has protection mode <CODE>OldMode</CODE> and it is changed to <CODE>NewMode</CODE>.
-
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>chmod(File,OldMode,NewMode)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dic_lookup(D, K, V, O)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Equivalent to fmode(<CODE>File</CODE>,<CODE>OldMode</CODE>)
+<LI><EM>Description:</EM> Same as <CODE>dic_lookup(D,K,V)</CODE>. <CODE>O</CODE> indicates if it was already in <CODE>D</CODE> (<CODE>old</CODE>) or not (<CODE>new</CODE>).
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>File</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>OldMode</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>NewMode</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-The terms <CODE>OldMode</CODE> and <CODE>NewMode</CODE> are strictly identical.
- (<CODE>term_compare:== /2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>File</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>OldMode</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>NewMode</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3670"></A>
-<A NAME="IDX3671"></A>
+<A NAME="IDX4281"></A>
+<A NAME="IDX4282"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>delete_file/1:</B>
-<DD><A NAME="IDX3672"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_get/3:</B>
+<DD><A NAME="IDX4283"></A>
 
 
 <P>
-<CODE>delete_file(File)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dic_get(D, K, V)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> contains value <CODE>V</CODE> at key <CODE>K</CODE>. Fails if it is not already in <CODE>D</CODE>.
 
-<P>
-Delete the file <CODE>File</CODE>.
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3673"></A>
-<A NAME="IDX3674"></A>
+<A NAME="IDX4284"></A>
+<A NAME="IDX4285"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>delete_directory/1:</B>
-<DD><A NAME="IDX3675"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_replace/4:</B>
+<DD><A NAME="IDX4286"></A>
 
 
 <P>
-<CODE>delete_directory(File)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dic_replace(D, K, V, D1)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> and <CODE>D1</CODE> are identical except for the element at key <CODE>K</CODE>, which in <CODE>D1</CODE> contains value <CODE>V</CODE>, whatever has (or whether it is) in <CODE>D</CODE>.
 
-<P>
-Delete the directory <CODE>Directory</CODE>.
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 
-</DL>
-
-<P>
-<A NAME="IDX3676"></A>
-<A NAME="IDX3677"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rename_file/2:</B>
-<DD><A NAME="IDX3678"></A>
-
-
-<P>
-<CODE>rename_file(File1,File2)</CODE>
-
-
-<P>
-Change the name of <CODE>File1</CODE> to <CODE>File2</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3679"></A>
-<A NAME="IDX3680"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>cyg2win/3:</B>
-<DD><A NAME="IDX3681"></A>
-
-
-<P>
-<CODE>cyg2win(+CygWinPath,?WindowsPath,+SpawSlash)</CODE>
-
-
-<P>
-Converts a path in the CygWin style to a Windows-style path, rewriting the driver part. If <CODE>SwapSlash</CODE> is <CODE>swap</CODE>, slashes are converted in to backslash. If it is <CODE>noswap</CODE>, they are preserved.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC296" HREF="ciao_toc.html#TOC296">Documentation on multifiles (<CODE>system</CODE>)</A></H2>
-<P>
-<A NAME="IDX3682"></A>
-<A NAME="IDX3683"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
-<DD><A NAME="IDX3684"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
+<CODE>D1</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

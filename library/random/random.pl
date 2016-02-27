@@ -34,6 +34,11 @@
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*9+275,2004/01/09,16:25*09+'CET'), "Corrected
+Makefile: it tries to chmod only the files just created (permission
+errors were being given; same for the sockets Makefile) (Manuel
+Carro)").
+
 :- comment(version(1*7+194,2002/04/04,21:08*41+'CEST'), "Corrected an
 error in srandom/1 which made it to cause a segmentation violation.
 (MCL)").

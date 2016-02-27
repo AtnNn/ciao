@@ -1,50 +1,74 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Interface to daVinci</TITLE>
+<TITLE>The Ciao Prolog System               - Run time usage of objects</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_116.html">previous</A>, <A HREF="ciao_118.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_116.html">previous</A>, <A HREF="ciao_118.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC501" HREF="ciao_toc.html#TOC501">Interface to daVinci</A></H1>
+<H1><A NAME="SEC492" HREF="ciao_toc.html#TOC492">Run time usage of objects</A></H1>
 <P>
-<A NAME="IDX4965"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX5627"></A>
 
 
 <P>
-This library allows connecting a Ciao Prolog application with daVinci V2.X. 
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda, Angel Fernandez Pineda.
 
 
 <P>
-The communication is based on a two-way channel: after daVinci is started, messages are sent in to it and read in from it on demand by different Prolog predicates. Messages are sent via writing the term as text; messages are received by reading text and returning an atom. Commands sent and answers received are treated as terms from the Prolog side, since for daVinci they are text but have term syntax; the only difficulty lies in strings, for which special Prolog syntax is provided. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-See accompanying file <CODE>library('davinci/commands')</CODE> for examples on the use of this library. 
+<STRONG>Version of last change:</STRONG> 1.7#51 (2001/1/25, 21:33:0 CET)
 
 
 <P>
-daVinci is developed by U. of Bremen, Germany.
+This library provides run-time support for 
+<A NAME="IDX5628"></A>
+object creation and manipulation. Objects are also called 
+<A NAME="IDX5629"></A>
+class instances, or simply 
+<A NAME="IDX5630"></A>
+instances. 
+
+
+<P>
+Objects in Ciao are treated as normal modules. This is, an object is a run-time generated Prolog module, which may be identified by an unique term across the whole application. 
+
+
+<P>
+This is a very simple example of how to create an instance, and how to make calls to it: 
+
+
+
+<PRE>
+            AnObj new myclass,
+            AnObj:mymethod.
+</PRE>
+
+<P>
+In order to make any object accessible from code, an usage relationship must be established between the class (from which instances are derived) and the code itself. Refer to 
+<A NAME="IDX5631"></A>
+<CODE>use_class/1</CODE> predicate or 
+<A NAME="IDX5632"></A>
+<CODE>use_class/1</CODE> declaration in order to do so. 
 
 
 
 <UL>
-<LI><A HREF="ciao_117.html#SEC502">Usage and interface (davinci)</A>
-<LI><A HREF="ciao_117.html#SEC503">Documentation on exports (davinci)</A>
-<LI><A HREF="ciao_117.html#SEC504">Documentation on internals (davinci)</A>
+<LI><A HREF="ciao_117.html#SEC493">Usage and interface (objects_rt)</A>
+<LI><A HREF="ciao_117.html#SEC494">Documentation on exports (objects_rt)</A>
+<LI><A HREF="ciao_117.html#SEC495">Known bugs and planned improvements (objects_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC502" HREF="ciao_toc.html#TOC502">Usage and interface (<CODE>davinci</CODE>)</A></H2>
+<H2><A NAME="SEC493" HREF="ciao_toc.html#TOC493">Usage and interface (<CODE>objects_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,7 +76,13 @@ daVinci is developed by U. of Bremen, Germany.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(davinci)).</CODE>
+This library is automatically loaded when using the <EM>objects</EM> package: 
+
+<PRE>
+    :- module(<EM>ModuleName</EM>,<EM>Exports</EM>,[objects]).
+</PRE>
+
+Nothing special needs to be done. 
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -61,26 +91,39 @@ daVinci is developed by U. of Bremen, Germany.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4966"></A>
-<CODE>davinci/0</CODE>, 
-<A NAME="IDX4967"></A>
-<CODE>topd/0</CODE>, 
-<A NAME="IDX4968"></A>
-<CODE>davinci_get/1</CODE>, 
-<A NAME="IDX4969"></A>
-<CODE>davinci_get_all/1</CODE>, 
-<A NAME="IDX4970"></A>
-<CODE>davinci_put/1</CODE>, 
-<A NAME="IDX4971"></A>
-<CODE>davinci_quit/0</CODE>, 
-<A NAME="IDX4972"></A>
-<CODE>davinci_ugraph/1</CODE>, 
-<A NAME="IDX4973"></A>
-<CODE>davinci_lgraph/1</CODE>, 
-<A NAME="IDX4974"></A>
-<CODE>ugraph2term/2</CODE>, 
-<A NAME="IDX4975"></A>
-<CODE>formatting/2</CODE>.
+<A NAME="IDX5633"></A>
+<CODE>new/2</CODE>, 
+<A NAME="IDX5634"></A>
+<CODE>instance_of/2</CODE>, 
+<A NAME="IDX5635"></A>
+<CODE>derived_from/2</CODE>, 
+<A NAME="IDX5636"></A>
+<CODE>interface/2</CODE>, 
+<A NAME="IDX5637"></A>
+<CODE>instance_codes/2</CODE>, 
+<A NAME="IDX5638"></A>
+<CODE>destroy/1</CODE>, 
+<A NAME="IDX5639"></A>
+<CODE>use_class/1</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX5640"></A>
+<CODE>constructor/1</CODE>, 
+<A NAME="IDX5641"></A>
+<CODE>class_name/1</CODE>, 
+<A NAME="IDX5642"></A>
+<CODE>interface_name/1</CODE>, 
+<A NAME="IDX5643"></A>
+<CODE>instance_id/1</CODE>, 
+<A NAME="IDX5644"></A>
+<CODE>class_source/1</CODE>, 
+<A NAME="IDX5645"></A>
+<CODE>interface_source/1</CODE>, 
+<A NAME="IDX5646"></A>
+<CODE>method_spec/1</CODE>, 
+<A NAME="IDX5647"></A>
+<CODE>virtual_method_spec/1</CODE>.
 
 </UL>
 
@@ -91,22 +134,40 @@ daVinci is developed by U. of Bremen, Germany.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4976"></A>
+<A NAME="IDX5648"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX4977"></A>
-<CODE>prompt</CODE>, 
-<A NAME="IDX4978"></A>
-<CODE>errhandle</CODE>, 
-<A NAME="IDX4979"></A>
+<A NAME="IDX5649"></A>
+<CODE>between</CODE>, 
+<A NAME="IDX5650"></A>
+<CODE>compiler/compiler</CODE>, 
+<A NAME="IDX5651"></A>
+<CODE>dec10_io</CODE>, 
+<A NAME="IDX5652"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX5653"></A>
 <CODE>format</CODE>, 
-<A NAME="IDX4980"></A>
+<A NAME="IDX5654"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX5655"></A>
+<CODE>old_database</CODE>, 
+<A NAME="IDX5656"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX5657"></A>
+<CODE>prolog_sys</CODE>, 
+<A NAME="IDX5658"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX4981"></A>
-<CODE>graphs/ugraphs</CODE>, 
-<A NAME="IDX4982"></A>
+<A NAME="IDX5659"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX5660"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX5661"></A>
+<CODE>ttyout</CODE>, 
+<A NAME="IDX5662"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX4983"></A>
-<CODE>system</CODE>.
+<A NAME="IDX5663"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX5664"></A>
+<CODE>iso_misc</CODE>.
 
 </UL>
 
@@ -116,237 +177,539 @@ daVinci is developed by U. of Bremen, Germany.
 
 
 
-<H2><A NAME="SEC503" HREF="ciao_toc.html#TOC503">Documentation on exports (<CODE>davinci</CODE>)</A></H2>
+<H2><A NAME="SEC494" HREF="ciao_toc.html#TOC494">Documentation on exports (<CODE>objects_rt</CODE>)</A></H2>
 <P>
-<A NAME="IDX4984"></A>
-<A NAME="IDX4985"></A>
+<A NAME="IDX5665"></A>
+<A NAME="IDX5666"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci/0:</B>
-<DD><A NAME="IDX4986"></A>
+<DT><span class="define">PREDICATE:</span> <B>new/2:</B>
+<DD><A NAME="IDX5667"></A>
 
 
 <P>
-Start up a daVinci process.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4987"></A>
-<A NAME="IDX4988"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>topd/0:</B>
-<DD><A NAME="IDX4989"></A>
+Dynamic instance creation takes place by the ways of this predicate. 
 
 
 <P>
-A toplevel to send to daVinci commands from standard input.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4990"></A>
-<A NAME="IDX4991"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_get/1:</B>
-<DD><A NAME="IDX4992"></A>
+It takes a free variable as first argument which will be instantiated to an internal object identifier. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>davinci_get(Term)</CODE>
+Second argument must be instantiated to a 
+<A NAME="IDX5668"></A>
+class constructor. Class constructors are designed to perform an initialization on the new created instance. Notice that instance initialization may involve some kind of computation, not only <EM>state initialization</EM>. 
+
+
+<P>
+A class constructor is made by a functor, which must match the intended class name, and any number of parameters. For example: 
+
+
+
+<PRE>
+            Obj new myclass(1500,'hello, world!!!')
+</PRE>
+
+<P>
+Those parameters depends (obviously) on the constructors defined at the class source. If no constructors where defined, no parameters are needed. This is called the 
+<A NAME="IDX5669"></A>
+default constructor. An example: 
+
+
+
+<PRE>
+            Obj new myclass
+</PRE>
+
+<P>
+The default constructor can not be called if there is any constructor available at the class source. 
+
+
+<P>
+Instantiation will raise an exception and fail whenever any of this conditions occur: 
 
 <UL>
-<LI><EM>Description:</EM> Get a message from daVinci. <CODE>Term</CODE> is a term corresponding to daVinci's message.
+<LI>First argument is not a free variable.
+
+<LI>Second argument functor is a class, but there is no usage relationship with it.
+
+<LI>Second argument functor is not a class.
+
+<LI>The given constructor is unknown.
+
+<LI>The given constructor fails (notice that default constructor never fails).
 
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX4993"></A>
-<A NAME="IDX4994"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_get_all/1:</B>
-<DD><A NAME="IDX4995"></A>
+Objects may also be statically declared, refer to 
+<A NAME="IDX5670"></A>
+<CODE>instance_of/2</CODE> declaration. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>davinci_get_all(List)</CODE>
+<STRONG>Usage:</STRONG> <CODE>new(InstanceVar, Constructor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Get all pending messages. <CODE>List</CODE> is a list of terms as in <CODE>davinci_get/1</CODE>.
+<LI><EM>Description:</EM> Creates a new instance of the class specified by <CODE>Constructor</CODE> returning its identifier in <CODE>InstanceVar</CODE>
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>InstanceVar</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>Constructor</CODE> is a term whose functor matches a class name.
+ (<CODE>objects_rt:constructor/1</CODE>)
 <LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>List</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>InstanceVar</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4996"></A>
-<A NAME="IDX4997"></A>
+<A NAME="IDX5671"></A>
+<A NAME="IDX5672"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_put/1:</B>
-<DD><A NAME="IDX4998"></A>
+<DT><span class="define">PREDICATE:</span> <B>instance_of/2:</B>
+<DD><A NAME="IDX5673"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>davinci_put(Term)</CODE>
+This predicate is used to perform dynamic type checking. You may check whether a particular instance belongs to a particular class or related descendants. 
+
+
+<P>
+instance_of/2 is used to perform static 
+<A NAME="IDX5674"></A>
+semantic analisys over object oriented code constructions. 
+
+
+<P>
+By the use of instance_of/2 you may help to perform such analisys. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>instance_of(Instance, Class)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Send a command to daVinci.
+<LI><EM>Description:</EM> Test whether <CODE>Instance</CODE> was derived from any descendant of <CODE>Class</CODE>, or that class itself
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>davinci:davinci_command(Term)</CODE>
- (<CODE>davinci:davinci_command/1</CODE>)
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>instance_of(Instance, Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves, on backtracking, the inheritance line of <CODE>Instance</CODE> commencing on the creation class (that specified on call to
+
+<A NAME="IDX5675"></A>
+<CODE>new/2</CODE>) and continuing on the rest of ascendant classes, if any. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4999"></A>
-<A NAME="IDX5000"></A>
+<A NAME="IDX5676"></A>
+<A NAME="IDX5677"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_quit/0:</B>
-<DD><A NAME="IDX5001"></A>
+<DT><span class="define">PREDICATE:</span> <B>derived_from/2:</B>
+<DD><A NAME="IDX5678"></A>
 
 
 <P>
-Exit daVinci process. All pending answers are lost!
-
-
-</DL>
-
-<P>
-<A NAME="IDX5002"></A>
-<A NAME="IDX5003"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_ugraph/1:</B>
-<DD><A NAME="IDX5004"></A>
+Test whether an object identifier was derived directly from a class, by the usage of 
+<A NAME="IDX5679"></A>
+<CODE>new/2</CODE> or a static instance declaration (
+<A NAME="IDX5680"></A>
+<CODE>instance_of/2</CODE>). 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>davinci_ugraph(Graph)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>derived_from(Instance, Class)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Send a graph to daVinci.
+<LI><EM>Description:</EM> Test derivation of <CODE>Instance</CODE> from <CODE>Class</CODE>
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>davinci:ugraph(Graph)</CODE>
- (<CODE>davinci:ugraph/1</CODE>)
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX5005"></A>
-<A NAME="IDX5006"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_lgraph/1:</B>
-<DD><A NAME="IDX5007"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>davinci_lgraph(Graph)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>derived_from(Instance, Class)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Send a labeled graph to daVinci.
+<LI><EM>Description:</EM> Retrieves the <CODE>Class</CODE> responsable of the derivation of <CODE>Instance</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>davinci:lgraph(Graph)</CODE>
- (<CODE>davinci:lgraph/1</CODE>)
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5008"></A>
-<A NAME="IDX5009"></A>
+<A NAME="IDX5681"></A>
+<A NAME="IDX5682"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ugraph2term/2:</B>
-<DD><A NAME="IDX5010"></A>
+<DT><span class="define">PREDICATE:</span> <B>interface/2:</B>
+<DD><A NAME="IDX5683"></A>
 
 
 <P>
-No further documentation available for this predicate.
+This predicate is used to ensure a given interface to be implemented by a given instance. 
 
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>interface(Instance, Interface)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Check whether <CODE>Instance</CODE> implements the given <CODE>Interface</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Interface</CODE> is an unique atom which identifies a public interface.
+ (<CODE>objects_rt:interface_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>interface(Instance, Interfaces)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves on backtracking all the implemented <CODE>Interfaces</CODE> of <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Interfaces</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Interfaces</CODE> is an unique atom which identifies a public interface.
+ (<CODE>objects_rt:interface_name/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5011"></A>
-<A NAME="IDX5012"></A>
+<A NAME="IDX5684"></A>
+<A NAME="IDX5685"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>formatting/2:</B>
-<DD><A NAME="IDX5013"></A>
+<DT><span class="define">PREDICATE:</span> <B>instance_codes/2:</B>
+<DD><A NAME="IDX5686"></A>
 
 
 <P>
-No further documentation available for this predicate.
+Retrieves a character string representation from an object identifier and vice-versa. 
 
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>instance_codes(Instance, String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves a <CODE>String</CODE> representation of given <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>String</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>instance_codes(Instance, String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reproduces an <CODE>Instance</CODE> from its <CODE>String</CODE> representation. Such an instance must be alive across the application: this predicate will fail whether the involved instance has been destroyed.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5687"></A>
+<A NAME="IDX5688"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>destroy/1:</B>
+<DD><A NAME="IDX5689"></A>
+
+
+<P>
+As well as instances are created, they must be destroyed when no longer needed in order to release system resources. 
+
+
+<P>
+Unfortunately, current O'Ciao implementation does not support automatic instance destruction, so user must manually call <EM>destroy/1</EM> in order to do so. 
+
+
+<P>
+The programmer <STRONG>must ensure</STRONG> that no other references to the involved object are left in memory when destroy/1 is called. If not, unexpected results may be obtained. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>destroy(Instance)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Destroys the object identified by <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5690"></A>
+<A NAME="IDX5691"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
+<DD><A NAME="IDX5692"></A>
+
+
+<P>
+The behaviour of this predicate is identical to that provided by the declaration of the same name 
+<A NAME="IDX5693"></A>
+<CODE>use_class/1</CODE>. It allows user programs to dynamically load classes. Whether the given source is not a class it will perform a 
+<A NAME="IDX5694"></A>
+<CODE>use_module/1</CODE> predicate call.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>use_class(ClassSource)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamically loads the given <CODE>ClassSource</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ClassSource</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
+ (<CODE>objects_rt:class_source/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5695"></A>
+<A NAME="IDX5696"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>constructor/1:</B>
+<DD><A NAME="IDX5697"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>constructor(Cons)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Cons</CODE> is a term whose functor matches a class name.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5698"></A>
+<A NAME="IDX5699"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_name/1:</B>
+<DD><A NAME="IDX5700"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_name(ClassName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ClassName</CODE> is an atom denoting a class.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5701"></A>
+<A NAME="IDX5702"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>interface_name/1:</B>
+<DD><A NAME="IDX5703"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>interface_name(Interface)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Interface</CODE> is an unique atom which identifies a public interface.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5704"></A>
+<A NAME="IDX5705"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>instance_id/1:</B>
+<DD><A NAME="IDX5706"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>instance_id(ID)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ID</CODE> is an unique term which identifies an object.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5707"></A>
+<A NAME="IDX5708"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_source/1:</B>
+<DD><A NAME="IDX5709"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_source(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5710"></A>
+<A NAME="IDX5711"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>interface_source/1:</B>
+<DD><A NAME="IDX5712"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>interface_source(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration or an interface declaration (without .pl extension).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5713"></A>
+<A NAME="IDX5714"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>method_spec/1:</B>
+<DD><A NAME="IDX5715"></A>
+
+
+<P>
+There is no difference between method or attribute specifications, and habitual predicate specifications. It is just a Functor/Arity term. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>method_spec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method or attribute specification.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5716"></A>
+<A NAME="IDX5717"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>virtual_method_spec/1:</B>
+<DD><A NAME="IDX5718"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>virtual_method_spec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method specification.
+
+</UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC504" HREF="ciao_toc.html#TOC504">Documentation on internals (<CODE>davinci</CODE>)</A></H2>
-<P>
-<A NAME="IDX5014"></A>
-<A NAME="IDX5015"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>davinci_command/1:</B>
-<DD><A NAME="IDX5016"></A>
+<H2><A NAME="SEC495" HREF="ciao_toc.html#TOC495">Known bugs and planned improvements (<CODE>objects_rt</CODE>)</A></H2>
 
 
-<P>
-Syntactically, a command is a term. Semantically, it has to correspond to a command understood by daVinci. Two terms are interpreted in a special way: <CODE>string/1</CODE> and <CODE>text/1</CODE>: <CODE>string(Term)</CODE> is given to daVinci as <CODE>"Term"</CODE>; <CODE>text(List)</CODE> is given as <CODE>"Term1 Term2 ...Term "</CODE> for each <CODE>Term</CODE> in <CODE>List</CODE>. If your term has functors <CODE>string/1</CODE> and <CODE>text/1</CODE> that you don't want to be interpreted this way, use it twice, i.e., <CODE>string(string(Term))</CODE> is given to daVinci as <CODE>string(Term')</CODE> where <CODE>Term'</CODE> is the interpretation of <CODE>Term</CODE>.
+<UL>
 
+<LI>
 
-</DL>
+Usage of objects from the <CODE>user</CODE> module does not work properly. It is better to use the <CODE>objects</CODE> package in a (proper) module.
 
-<P>
-<A NAME="IDX5017"></A>
-<A NAME="IDX5018"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>ugraph/1:</B>
-<DD><A NAME="IDX5019"></A>
+<LI>
 
-
-<P>
-<CODE>ugraph(Graph)</CODE>
-
-
-<P>
-<CODE>Graph</CODE> is a term which denotes an ugraph as in <CODE>library(ugraphs)</CODE>. Vertices of the form <CODE>node/2</CODE> are interpreted in a special way: <CODE>node(Term,List)</CODE> is interpreted as a vertex <CODE>Term</CODE> with attributes <CODE>List</CODE>. <CODE>List</CODE> is a list of terms conforming the syntax of <CODE>davinci_put/1</CODE> and corresponding to daVinci's graph nodes attributes. If your vertex has functor <CODE>node/2</CODE> and you don't want it to be interpreted this way, use it twice, i.e., <CODE>node(node(T1,T2),[])</CODE> is given to daVinci as vertex <CODE>node(T1,T2)</CODE>. A vertex is used both as label and name of daVinci's graph node. daVinci's graph edges have label <CODE>V1-V2</CODE> where <CODE>V1</CODE> is the source and <CODE>V2</CODE> the sink of the edge. There is no support for multiple edges between the same two vertices.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5020"></A>
-<A NAME="IDX5021"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>lgraph/1:</B>
-<DD><A NAME="IDX5022"></A>
-
-
-<P>
-<CODE>lgraph(Graph)</CODE>
-
-
-<P>
-<CODE>Graph</CODE> is a term which denotes a wgraph as in <CODE>library(wgraphs)</CODE>, except that the weights are labels, i.e., they do not need to be integers. Vertices of the form <CODE>node/2</CODE> are interpreted in a special way. Edge labels are converted into special intermediate vertices. Duplicated labels are solved by adding dummy atoms <CODE>"</CODE>. There is no support for multiple edges between the same two vertices.
-
-
-</DL>
+Not really a bug: when loading code which declares static instances from the toplevel shell, predicate 
+<A NAME="IDX5719"></A>
+<CODE>use_module/1</CODE>) will not work properly: those instances may be not correctly created, and predicates will fail whenever they are not supposed to do. This may be avoided by reloading again the involved module, but make sure it is modified and saved to disk before doing so. 
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_116.html">previous</A>, <A HREF="ciao_118.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_116.html">previous</A>, <A HREF="ciao_118.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

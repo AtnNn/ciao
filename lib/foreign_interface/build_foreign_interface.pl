@@ -17,7 +17,7 @@
 
 :- comment(title, "Foreign Language Interface Builder").
 
-:- comment(summary, "Low-level utilities for building foreign
+:- comment(module, "Low-level utilities for building foreign
 interfaces.  End-users should not need to use them, as the Ciao Prolog
 Compiler reads the user assertions and calls appropriately the
 predicates in this module.").
@@ -25,7 +25,7 @@ predicates in this module.").
 :- comment(author, "Jose Morales").
 :- comment(author, "Manuel Carro").
 
-:- use_module(library(c)).
+:- use_module(library(write_c)).
 :- use_module(library(streams)).
 :- use_module(library(terms),[atom_concat/2]).
 :- use_module(library(lists)).
@@ -61,7 +61,7 @@ build_foreign_interface(File) :-
 
 % --------------------------------------------------------------------------- %
 
-:- pred build_foreign_interface(in(File)) :: sourcename
+:- pred rebuild_foreign_interface(in(File)) :: sourcename
  # "Like @pred{build_foreign_interface/1}, but it does not check the 
     modification time of any file.".
 rebuild_foreign_interface(File) :-
@@ -877,8 +877,15 @@ linker_to_use(Decls, Linker, Opts):-
 % -----------------------------------------------------------------------------
 :- comment(version_maintenance, dir('../../version')).
 
+:- comment(version(1*9+252,2003/12/30,22:15*50+'CET'), "Corrected
+   assertion for pred rebuild_foreign_interface/1.  (Edison Mera)").
+
+:- comment(version(1*9+230,2003/12/22,17:46*02+'CET'), "Changed
+   comment summary to comment module.  (Edison Mera)").
+
 :- comment(version(1*7+212,2002/05/06,01:12*02+'CEST'), "Added
- declarations to choose the compiler and linker to use.  (Manuel Carro)").
+   declarations to choose the compiler and linker to use.  (Manuel
+   Carro)").
 
 :- comment(version(1*7+75,2001/03/26,17:08*47+'CEST'), "Documentation
 updated (MCL)").

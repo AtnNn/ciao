@@ -32,8 +32,8 @@ Hermenegildo, and Manuel Carro.").
            explicitly, as an additional first argument.").
 
 :- comment(define_flag/3,"Defines flags as follows:
-	@includedef{define_flag/3}
-	(See @ref{Changing system behaviour and various flags}).
+        @includedef{define_flag/3}
+        (See @ref{Changing system behaviour and various flags}).
 
         If flag is @tt{on}, lists which may be written as strings are.").
 
@@ -47,7 +47,7 @@ writeq_quick(Term) :- atomic(Term), displayq(Term).
 write_quick(Term) :- var(Term), display(Term).
 write_quick(Term) :- atomic(Term), display(Term).
 
-:- pred write_term(@Stream, ?Term, +OptList) 
+:- true pred write_term(@Stream, ?Term, +OptList) 
    => stream * term * list(write_option) +  iso
 
    # "Outputs the term @var{Term} to the stream @var{Stream}, with the
@@ -56,12 +56,12 @@ write_quick(Term) :- atomic(Term), display(Term).
 
 write_term(Stream, Term, OptList) :-
         current_output(Curr),
-	catch(set_output(Stream),
+        catch(set_output(Stream),
               error(ErrT, _), throw(error(ErrT,write_term/3-1))),
         write_term_internal(Term, OptList, 3),
-	set_output(Curr).
+        set_output(Curr).
 
-:- pred write_term(?Term, +OptList) => term * list(write_option) + iso
+:- true pred write_term(?Term, +OptList) => term * list(write_option) + iso
 
    # "Behaves like @tt{current_output(S),
       write_term(S,Term,OptList)}.".
@@ -104,9 +104,9 @@ write_term_internal(Term, OptList, N) :-
  value is @tt{false}.
  
  @item @bf{portrayed(}@em{bool}@bf{):} If @em{bool} is @tt{true}, then 
- call multifile predicates @pred{portray/1} and @pred{portray_attribute/1},
+ call multifile predicates @pred{portray/1} and @pred{portray_attribute/2},
  to provide the user handlers for pretty printing some terms.
- @tt{portray_attribute/1} is called whenever an attributed variable is to be
+ @tt{portray_attribute/2} is called whenever an attributed variable is to be
  printed, @tt{portray/1} is called whenever a non-variable term is to be
  printed.  If either call succeeds, then it is assumed that the term has been
  output, else it is printed as usual.  If @em{bool} is @tt{false}, these
@@ -174,7 +174,7 @@ ignore_ops_flag(true).
 ignore_ops_flag(ops).
 ignore_ops_flag(false).
 
-:- pred write_canonical(@Stream, ?Term) => stream * term + iso
+:- true pred write_canonical(@Stream, ?Term) => stream * term + iso
        # "Behaves like @tt{write_term(Stream, Term, [quoted(true),
           ignore_ops(true)])}.  The output of this predicate can
           always be parsed by @pred{read_term/2} even if the term
@@ -183,82 +183,82 @@ ignore_ops_flag(false).
 
 write_canonical(Stream, Term) :-
         current_output(Curr),
-	catch(set_output(Stream),
+        catch(set_output(Stream),
               error(ErrT, _), throw(error(ErrT,write_canonical/2-1))),
         write_canonical(Term),
-	set_output(Curr).
+        set_output(Curr).
 
-:- pred write_canonical(?Term) => term + iso
+:- true pred write_canonical(?Term) => term + iso
         # "Behaves like @tt{current_output(S), write_canonical(S,Term)}.".
 
 write_canonical(Term) :-
-	writeq_quick(Term), !.
+        writeq_quick(Term), !.
 write_canonical(Term) :-
         Options = options(true,true,false,false,1000000),
-	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
+        write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- pred print(@Stream, ?Term) => stream * term
+:- true pred print(@Stream, ?Term) => stream * term
         # "Behaves like @tt{write_term(Stream, Term,
            [numbervars(true), portrayed(true)])}.".
 
 print(Stream, Term) :-
         current_output(Curr),
-	catch(set_output(Stream),
+        catch(set_output(Stream),
               error(ErrT, _), throw(error(ErrT,print/2-1))),
-	print(Term),
-	set_output(Curr).
+        print(Term),
+        set_output(Curr).
 
-:- pred print(?Term) => term
+:- true pred print(?Term) => term
         # "Behaves like @tt{current_output(S), print(S,Term)}.".
 
 print(Term) :-
         Options = options(false,false,true,true,1000000),
-	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
+        write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- pred write(@Stream, ?Term) => stream * term + iso
+:- true pred write(@Stream, ?Term) => stream * term + iso
         # "Behaves like @tt{write_term(Stream, Term, [numbervars(true)])}.".
 
 write(Stream, Term) :-
         current_output(Curr),
-	catch(set_output(Stream),
+        catch(set_output(Stream),
               error(ErrT, _), throw(error(ErrT,write/2-1))),
-	write(Term),
-	set_output(Curr).
+        write(Term),
+        set_output(Curr).
 
-:- pred write(?Term) => term + iso
+:- true pred write(?Term) => term + iso
         # "Behaves like @tt{current_output(S), write(S,Term)}.".
 
 write(Term) :-
-	write_quick(Term), !.
+        write_quick(Term), !.
 write(Term) :-
         Options = options(false,false,true,false,1000000),
-	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
+        write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- pred write_list1/1 :: list
-	# "Writes a list to current output one element in each line.".
+:- true pred write_list1/1 :: list
+        # "Writes a list to current output one element in each line.".
 
 write_list1([]).
 write_list1([H|L]) :- writeq(H), nl, write_list1(L).
 
-:- pred writeq(@Stream, ?Term) => stream * term + iso
+:- true pred writeq(@Stream, ?Term) => stream * term + iso
         # "Behaves like @tt{write_term(Stream, Term, [quoted(true),
           numbervars(true)])}.".
 
 writeq(Stream, Term) :-
         current_output(Curr),
-	catch(set_output(Stream),
+        catch(set_output(Stream),
               error(ErrT, _), throw(error(ErrT,writeq/2-1))),
-	writeq(Term),
-	set_output(Curr).
+        writeq(Term),
+        set_output(Curr).
 
-:- pred writeq(?Term) => term + iso
+:- true pred writeq(?Term) => term + iso
         # "Behaves like @tt{current_output(S), writeq(S,Term)}.".
 
 writeq(Term) :-
-	writeq_quick(Term), !.
+        writeq_quick(Term), !.
 writeq(Term) :-
         Options = options(true,false,true,false,1000000),
-	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
+        write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
 %   writes a parenthesis if the context demands it.
 %   Context = 2'000 for alpha
@@ -267,13 +267,13 @@ writeq(Term) :-
 %   Context = 2'100 for punct
 
 maybe_open_paren(P, Prio, Lpar, '(', _, 2'100) :-
-	P > Prio, !,
-	display(Lpar).
+        P > Prio, !,
+        display(Lpar).
 maybe_open_paren(_, _, Lpar, Lpar, C, C).
 
 maybe_close_paren(P, Prio, _, 2'100) :-
-	P > Prio, !,
-	display(')').
+        P > Prio, !,
+        display(')').
 maybe_close_paren(_, _, C, C).
 
 
@@ -283,7 +283,7 @@ maybe_close_paren(_, _, C, C).
 %   tokens won't run into each other.
 
 maybe_space(Ci, Co) :-
-	(   Ci\/Co<2'100, Ci#Co<2'010 -> put_code(0' )
+        (   Ci\/Co<2'100, Ci#Co<2'010 -> put_code(0' )
         ;   true
         ).
 
@@ -329,7 +329,7 @@ variable like an unbound variable, e.g. @tt{_673}.".
 
 :- multifile portray/1.
 
-:- pred portray(?Term)
+:- true pred portray(?Term)
    # "@em{A user defined predicate.} This should either print the @var{Term}
       and succeed, or do nothing and fail.  In the latter case, the default
       printer (@tt{write/1}) will print the @var{Term}.".
@@ -337,156 +337,160 @@ variable like an unbound variable, e.g. @tt{_673}.".
 % this clause is for attributed variables -- DMCAI -- ATTRVARS
 %
 write_out(Term, Options,  _, _, _, _, _, 2'000) :-
-	get_attribute(Term,M),
+        get_attribute(Term,M),
         Options = options(_,_,_,true,_),
-	( \+ portray_attribute(M,Term) ->
-              fail		 % portray_attribute might bind variables
+        ( \+ portray_attribute(M,Term) ->
+              fail               % portray_attribute might bind variables
         ; true
         ),
         !.
 write_out(Term, _, _, _, _, _, Ci, 2'000) :-
-	var(Term), !,
-	maybe_space(Ci, 2'000),
-	displayq(Term).
+        var(Term), !,
+        maybe_space(Ci, 2'000),
+        displayq(Term).
 write_out(_, Options, _, _, Depth, _, Ci, 2'010) :-
         Options = options(_,_,_,_,Limit),
-	Depth >= Limit, !,
-	maybe_space(Ci, 2'010),
-	display(...).
+        Depth >= Limit, !,
+        maybe_space(Ci, 2'010),
+        display(...).
 write_out('$VAR'(N), Options, _, _, _, _, Ci, Co) :-
         Options = options(_,_,true,_,_),
-	write_VAR(N, Ci, Co), !.
+        write_VAR(N, Ci, Co), !.
 write_out(Term, Options, _, _, _, _, _, 2'000) :-
         Options = options(_,_,_,true,_),
-	(   \+ portray(Term) ->
-	    fail		 % portray might bind variables
+        (   \+ portray(Term) ->
+            fail                 % portray might bind variables
         ;   true
         ), !.
 write_out(Atom, Options, _, PrePrio, _, Lpar, _, 2'100) :-
-	atom(Atom),
-	current_prefixop(Atom, P, _),
-	P =< PrePrio, !,
-	display(Lpar),
+        atom(Atom),
+        current_prefixop(Atom, P, _),
+        P =< PrePrio, !,
+        display(Lpar),
         Options = options(Quote,_,_,_,_),
-	write_atom(Quote, Atom, 2'100, _),
-	put_code(0')).
+        write_atom(Quote, Atom, 2'100, _),
+        put_code(0')).
 write_out(Atom, Options, _, _, _, _, Ci, Co) :-
-	atom(Atom), !,
+        atom(Atom), !,
         Options = options(Quote,_,_,_,_),
-	write_atom(Quote, Atom, Ci, Co).
+        write_atom(Quote, Atom, Ci, Co).
 write_out(N, _, _, _, _, _, Ci, 2'000) :-
-	number(N), !,
-	(   N < 0 -> maybe_space(Ci, 2'010)
-	;   maybe_space(Ci, 2'000)
-	),
-	displayq(N).
+        number(N), !,
+        (   N < 0 -> maybe_space(Ci, 2'010)
+        ;   maybe_space(Ci, 2'000)
+        ),
+        displayq(N).
 write_out(Term, Options, _, _, Depth, _, Ci, 2'100) :-
         Options = options(Quote,true,_,_,_), % Ignore lists and operators
-	functor(Term, Atom, Arity), !,
-	write_atom(Quote, Atom, Ci, _),
-	Depth1 is Depth+1,
-	write_args(0, Arity, Term, Options, Depth1).
+        functor(Term, Atom, Arity), !,
+        write_atom(Quote, Atom, Ci, _),
+        Depth1 is Depth+1,
+        write_args(0, Arity, Term, Options, Depth1).
 % Handle {...}, lists and operators
 write_out({Term}, Options, _, _, Depth, _, _, 2'100) :- !,
-	put_code(0'{),
-	Depth1 is Depth+1,
-	write_out(Term, Options, 1200, 0, Depth1, '(', 2'100, _),
-	put_code(0'}).
+        put_code(0'{),
+        Depth1 is Depth+1,
+        write_out(Term, Options, 1200, 0, Depth1, '(', 2'100, _),
+        put_code(0'}).
 write_out([Char|Tail], Options, _, _, Depth, _, _, Co) :-
         current_prolog_flag(write_strings, on),
         printable_char(Char), !,
-	put_code(0'"),  % print characters after '"'
+        put_code(0'"),  % print characters after '"'
         put_string_code(Char),
-	Depth1 is Depth+1,
-	write_string_tail(Tail, Options, Depth1, Co).
+        Depth1 is Depth+1,
+        write_string_tail(Tail, Options, Depth1, Co).
 write_out([Head|Tail], Options, _, _, Depth, _, _, 2'100) :- !,
-	put_code(0'[),
-	Depth1 is Depth+1,
-	write_out(Head, Options, 999, 0, Depth1, '(', 2'100, _),
-	write_tail(Tail, Options, Depth1).
+        put_code(0'[),
+        Depth1 is Depth+1,
+        write_out(Head, Options, 999, 0, Depth1, '(', 2'100, _),
+        write_tail(Tail, Options, Depth1).
 write_out(Term, Options, _, _, Depth, _, Ci, 2'100) :-
         Options = options(Quote,ops,_,_,_), % Ignore operators
-	functor(Term, Atom, Arity), !,
-	write_atom(Quote, Atom, Ci, _),
-	Depth1 is Depth+1,
-	write_args(0, Arity, Term, Options, Depth1).
+        functor(Term, Atom, Arity), !,
+        write_atom(Quote, Atom, Ci, _),
+        Depth1 is Depth+1,
+        write_args(0, Arity, Term, Options, Depth1).
 write_out((A,B), Options, Prio, _, Depth, Lpar, Ci, Co) :- !,
-	%  This clause stops writeq quoting commas.
-	Depth1 is Depth+1,
-	maybe_open_paren(1000, Prio, Lpar, Lpar1, Ci, C1),
-	write_out(A, Options, 999, 0, Depth1, Lpar1, C1, _),
-	put_code(0',),
-	write_out(B, Options, 1000, 1000, Depth1, '(', 2'100, C2),
-	maybe_close_paren(1000, Prio, C2, Co).
+        %  This clause stops writeq quoting commas.
+        Depth1 is Depth+1,
+        maybe_open_paren(1000, Prio, Lpar, Lpar1, Ci, C1),
+        write_out(A, Options, 999, 0, Depth1, Lpar1, C1, _),
+        put_code(0',),
+        write_out(B, Options, 1000, 1000, Depth1, '(', 2'100, C2),
+        maybe_close_paren(1000, Prio, C2, Co).
 write_out(Term, Options, Prio, PrePrio, Depth, Lpar, Ci, Co) :-
-	functor(Term, F, N),
-	Depth1 is Depth+1,
+        functor(Term, F, N),
+        Depth1 is Depth+1,
         Options = options(Quote,_,_,_,_),
-	write_out_(N, F, Term, Quote, Options, Prio, PrePrio, Depth1, Lpar, Ci, Co).
+        write_out_(N, F, Term, Quote, Options, Prio, PrePrio, Depth1, Lpar, Ci, Co).
 
 write_out_(1, F, Term, Quote, Options, Prio, _, Depth, Lpar, Ci, Co) :-
         current_postfixop(F, P, O), !,
-	(current_infixop(F, _, _, _) -> O1=1200; O1=O),
-	maybe_open_paren(O1, Prio, Lpar, Lpar1, Ci, C1),
-	arg(1, Term, A),
-	write_out(A, Options, P, 1200, Depth, Lpar1, C1, C2),
-	write_atom(Quote, F, C2, C3),
-	maybe_close_paren(O1, Prio, C3, Co).
+        (current_infixop(F, _, _, _) -> O1=1200; O1=O),
+        maybe_open_paren(O1, Prio, Lpar, Lpar1, Ci, C1),
+        arg(1, Term, A),
+        write_out(A, Options, P, 1200, Depth, Lpar1, C1, C2),
+        write_atom(Quote, F, C2, C3),
+        maybe_close_paren(O1, Prio, C3, Co).
 write_out_(1, F, Term, Quote, Options, Prio, PrePrio, Depth, Lpar, Ci, Co) :-
         current_prefixop(F, O, P),
-	arg(1, Term, A),
+        arg(1, Term, A),
         (number(A) -> F \== - ; true), !,
-	(PrePrio=1200 -> O1 is P+1; O1=O),	% for "fy X yf" etc. cases
-	maybe_open_paren(O1, Prio, Lpar, _, Ci, C1),
-	write_atom(Quote, F, C1, C2),
-	write_out(A, Options, P, P, Depth, ' (', C2, C3),
-	maybe_close_paren(O1, Prio, C3, Co).
+        (PrePrio=1200 -> O1 is P+1; O1=O),      % for "fy X yf" etc. cases
+        maybe_open_paren(O1, Prio, Lpar, _, Ci, C1),
+        write_atom(Quote, F, C1, C2),
+        write_out(A, Options, P, P, Depth, ' (', C2, C3),
+        maybe_close_paren(O1, Prio, C3, Co).
 write_out_(2, F, Term, Quote, Options, Prio, PrePrio, Depth, Lpar, Ci, Co) :-
         current_infixop(F, P, O, Q), !,
-	(PrePrio=1200 -> O1 is Q+1; O1=O),	% for "U xfy X yf" etc. cases
-	maybe_open_paren(O1, Prio, Lpar, Lpar1, Ci, C1),
-	arg(1, Term, A),
-	write_out(A, Options, P, 1200, Depth, Lpar1, C1, C2),
-	write_atom(Quote, F, C2, C3),
-	arg(2, Term, B),
-	write_out(B, Options, Q, Q, Depth, '(', C3, C4),
-	maybe_close_paren(O1, Prio, C4, Co).
+        (PrePrio=1200 -> O1 is Q+1; O1=O),      % for "U xfy X yf" etc. cases
+        maybe_open_paren(O1, Prio, Lpar, Lpar1, Ci, C1),
+        arg(1, Term, A),
+        write_out(A, Options, P, 1200, Depth, Lpar1, C1, C2),
+        ( F = '|' ->
+          write_atom(false, '|', C2, C3)
+        ;
+          write_atom(Quote, F, C2, C3)
+        ),
+        arg(2, Term, B),
+        write_out(B, Options, Q, Q, Depth, '(', C3, C4),
+        maybe_close_paren(O1, Prio, C4, Co).
 write_out_(N, F, Term, Quote, Options, _, _, Depth, _, Ci, 2'100) :-
-	write_atom(Quote, F, Ci, _),
-	write_args(0, N, Term, Options, Depth).
+        write_atom(Quote, F, Ci, _),
+        write_args(0, N, Term, Options, Depth).
 
 write_VAR(N, Ci, 2'000) :-
-	integer(N), N >= 0, !,
-	maybe_space(Ci, 2'000),
-	Letter is N mod 26 + 0'A,
-	put_code(Letter),
-	(   N>=26 ->
-	    Rest is N//26, displayq(Rest)
-	;   true
+        integer(N), N >= 0, !,
+        maybe_space(Ci, 2'000),
+        Letter is N mod 26 + 0'A,
+        put_code(Letter),
+        (   N>=26 ->
+            Rest is N//26, displayq(Rest)
+        ;   true
         ).
 write_VAR(Atom, Ci, Co) :-
-	atom(Atom), !,
-	'$atom_mode'(Atom, Co),
-	maybe_space(Ci, Co),
-	display(Atom).
+        atom(Atom), !,
+        '$atom_mode'(Atom, Co),
+        maybe_space(Ci, Co),
+        display(Atom).
 %% Added the case in which the name is a string. MH
 write_VAR(String, Ci, Co) :-
-	nonvar(String),
-	% This type test is incomplete!
-	String = [X|_],
-	integer(X),
-	atom_codes(Atom,String), !,
-	'$atom_mode'(Atom, Co),
-	maybe_space(Ci, Co),
-	display(Atom).
+        nonvar(String),
+        % This type test is incomplete!
+        String = [X|_],
+        integer(X),
+        atom_codes(Atom,String), !,
+        '$atom_mode'(Atom, Co),
+        maybe_space(Ci, Co),
+        display(Atom).
 
 write_atom(false, Atom, Ci, Co) :-
-	'$atom_mode'(Atom, Co),
-	maybe_space(Ci, Co),
+        '$atom_mode'(Atom, Co),
+        maybe_space(Ci, Co),
         display(Atom).
 write_atom(true, Atom, Ci, Co) :-
-	'$atom_mode'(Atom, Co),
-	maybe_space(Ci, Co),
+        '$atom_mode'(Atom, Co),
+        maybe_space(Ci, Co),
         displayq(Atom).
 
 
@@ -497,15 +501,15 @@ write_atom(true, Atom, Ci, Co) :-
 write_args(0, _, _, Options, Depth) :-
         Options = options(_,_,_,_,Limit),
         Depth >= Limit, !,
-        put_code(0'(), display(...),	put_code(0')).
+        put_code(0'(), display(...),    put_code(0')).
 write_args(N, N, _, _, _) :- !,
-	put_code(0')).
+        put_code(0')).
 write_args(I, N, Term, Options, Depth) :-
-	write_sep(I),
-	J is I+1,
-	arg(J, Term, A),
-	write_out(A, Options, 999, 0, Depth, '(', 2'100, _),
-	write_args(J, N, Term, Options, Depth).
+        write_sep(I),
+        J is I+1,
+        arg(J, Term, A),
+        write_out(A, Options, 999, 0, Depth, '(', 2'100, _),
+        write_args(J, N, Term, Options, Depth).
 
 write_sep(0) :- !, put_code(0'().
 write_sep(_) :- put_code(0',).
@@ -515,54 +519,54 @@ write_sep(_) :- put_code(0',).
 %   write_tail(Tail, Options, Depth)
 %   writes the tail of a list given Options, Depth.
 
-write_tail(Var, _, _) :-			%  |var]
-	var(Var), !,
-	put_code(0'|),
-	displayq(Var),
-	put_code(0']).
-write_tail([], _, _) :- !,			%  ]
-	put_code(0']).
+write_tail(Var, _, _) :-                        %  |var]
+        var(Var), !,
+        put_code(0'|),
+        displayq(Var),
+        put_code(0']).
+write_tail([], _, _) :- !,                      %  ]
+        put_code(0']).
 write_tail(_, Options, Depth) :-
         Options = options(_,_,_,_,Limit),
-	Depth >= Limit, !,
-	put_code(0'|),
-	display(...),
-	put_code(0']).
+        Depth >= Limit, !,
+        put_code(0'|),
+        display(...),
+        put_code(0']).
 write_tail([Head|Tail], Options, Depth) :- !, %  ,Head tail
-	put_code(0',),
-	write_out(Head, Options, 999, 0, Depth, '(', 2'100, _),
-	Depth1 is Depth+1,
-	write_tail(Tail, Options, Depth1).
-write_tail(Other, Options, Depth) :-	%  |junk]
-	put_code(0'|),
-	write_out(Other, Options, 999, 0, Depth, '(', 2'100, _),
-	put_code(0']).
+        put_code(0',),
+        write_out(Head, Options, 999, 0, Depth, '(', 2'100, _),
+        Depth1 is Depth+1,
+        write_tail(Tail, Options, Depth1).
+write_tail(Other, Options, Depth) :-    %  |junk]
+        put_code(0'|),
+        write_out(Other, Options, 999, 0, Depth, '(', 2'100, _),
+        put_code(0']).
 
 write_string_tail(Var, _, _, 2'000) :-
-	var(Var), !,
+        var(Var), !,
         put_code(0'"),
-	put_code(0'|),
-	put_code(0'|),
-	displayq(Var).
+        put_code(0'|),
+        put_code(0'|),
+        displayq(Var).
 write_string_tail([], _, _, 2'100) :- !,
-	put_code(0'").
+        put_code(0'").
 write_string_tail(_, Options, Depth, 2'010) :-
         Options = options(_,_,_,_,Limit),
-	Depth >= Limit, !,
+        Depth >= Limit, !,
         put_code(0'"),  % end string with '"'
-	put_code(0'|),
-	put_code(0'|),
-	display(...).
+        put_code(0'|),
+        put_code(0'|),
+        display(...).
 write_string_tail([Char|Tail], Options, Depth, Co) :-
         printable_char(Char), !,
         put_string_code(Char),
-	Depth1 is Depth+1,
-	write_string_tail(Tail, Options, Depth1, Co).
+        Depth1 is Depth+1,
+        write_string_tail(Tail, Options, Depth1, Co).
 write_string_tail(Other, Options, Depth, Co) :-
         put_code(0'"),  % end string with '"'
-	put_code(0'|),
-	put_code(0'|),
-	write_out(Other, Options, 999, 0, Depth, '(', 2'100, Co).
+        put_code(0'|),
+        put_code(0'|),
+        write_out(Other, Options, 999, 0, Depth, '(', 2'100, Co).
 
 put_string_code(0'") :- !, display('""').
 put_string_code(0'\\) :- !, display('\\\\').
@@ -570,7 +574,7 @@ put_string_code(C) :- put_code(C).
 
 /* portraying clauses */
 
-:- pred prettyvars(?Term) => term
+:- true pred prettyvars(?Term) => term
         # "Similar to @tt{numbervars(Term,0,_)}, except that singleton
  variables in @var{Term} are unified with @tt{'$VAR'('_')}, so that when the
  resulting term is output with a write option @tt{numbervars(true)}, in the
@@ -578,52 +582,52 @@ put_string_code(C) :- put_code(C).
  @pred{portray_clause/2}.".
 
 prettyvars(Term) :-
-	collect_vars(Term, Vars0, []),
-	keysort(Vars0, Vars),
-	pretty_vars(Vars, 0).
+        collect_vars(Term, Vars0, []),
+        keysort(Vars0, Vars),
+        pretty_vars(Vars, 0).
 
 collect_vars(Var) -->
-	{var(Var)}, !, [Var-[]].
+        {var(Var)}, !, [Var-[]].
 collect_vars([X|Xs]) --> !,
-	collect_vars(X),
-	collect_vars(Xs).
+        collect_vars(X),
+        collect_vars(Xs).
 collect_vars(X) -->
-	{functor(X, _, A)},
-	collect_vars_(0, A, X).
+        {functor(X, _, A)},
+        collect_vars_(0, A, X).
 
 collect_vars_(A, A, _) --> !.
 collect_vars_(A0, A, X) -->
-	{A1 is A0+1},
-	{arg(A1, X, X1)},
-	collect_vars(X1),
-	collect_vars_(A1, A, X).
+        {A1 is A0+1},
+        {arg(A1, X, X1)},
+        collect_vars(X1),
+        collect_vars_(A1, A, X).
 
 pretty_vars([], _).
 pretty_vars([X,Y|Xs], N0) :-
-	X==Y, !,
-	X='$VAR'(N0)-[],
-	N is N0+1,
-	pretty_vars_(Xs, X, N).
+        X==Y, !,
+        X='$VAR'(N0)-[],
+        N is N0+1,
+        pretty_vars_(Xs, X, N).
 pretty_vars(['$VAR'('_')-[]|Xs], N0) :-
-	pretty_vars(Xs, N0).
+        pretty_vars(Xs, N0).
 
 pretty_vars_([X|Xs], Y, N0) :-
-	X==Y, !,
-	pretty_vars_(Xs, Y, N0).
+        X==Y, !,
+        pretty_vars_(Xs, Y, N0).
 pretty_vars_(Xs, _, N0) :-
-	pretty_vars(Xs, N0).
+        pretty_vars(Xs, N0).
 
-:- pred portray_clause(?Clause) => term
+:- true pred portray_clause(?Clause) => term
         # "Behaves like @tt{current_output(S), portray_clause(S,Term)}.". 
 
 % This must be careful not to bind any variables in Clause.
 portray_clause(Clause) :-
-	prettyvars(Clause),
-	portray_clause1(Clause),
-	fail.
+        prettyvars(Clause),
+        portray_clause1(Clause),
+        fail.
 portray_clause(_).
 
-:- pred portray_clause(@Stream, ?Clause) => stream * term
+:- true pred portray_clause(@Stream, ?Clause) => stream * term
         # "Outputs the clause @var{Clause} onto @var{Stream}, pretty printing
  its variables and using indentation, including a period at the end. This
  predicate is used by @tt{listing/0}.". 
@@ -631,99 +635,99 @@ portray_clause(_).
 
 portray_clause(Stream, Clause) :-
         current_output(Curr),
-	set_output(Stream),
-	portray_clause(Clause),
-	set_output(Curr).
+        set_output(Stream),
+        portray_clause(Clause),
+        set_output(Curr).
 
 portray_clause1(:-(Command)) :-
-	functor(Command, Key, 1),
-	current_op(_, fx, Key), !,
-	arg(1, Command, Body),
-	'list clauses'(Body, :-(Key), 8, Co),
-	write_fullstop(Co).
+        functor(Command, Key, 1),
+        current_op(_, fx, Key), !,
+        arg(1, Command, Body),
+        'list clauses'(Body, :-(Key), 8, Co),
+        write_fullstop(Co).
 portray_clause1((Pred:-Body)) :- !,
-	write_out(Pred, options(true,false,true,false,1000000), 1199, 1200, -1, '(', 2'100, Ci), % writeq
-	(   Body=true -> write_fullstop(Ci)
-	;   'list clauses'(Body, 0, 8, Co),
-	    write_fullstop(Co)
+        write_out(Pred, options(true,false,true,false,1000000), 1199, 1200, -1, '(', 2'100, Ci), % writeq
+        (   Body=true -> write_fullstop(Ci)
+        ;   'list clauses'(Body, 0, 8, Co),
+            write_fullstop(Co)
         ).
 portray_clause1((Pred-->Body)) :- !,
-	write_out(Pred, options(true,false,true,false,1000000), 1199, 1200, -1, '(', 2'100, _), % writeq
-	'list clauses'(Body, 2, 8, Co),
-	write_fullstop(Co).
+        write_out(Pred, options(true,false,true,false,1000000), 1199, 1200, -1, '(', 2'100, _), % writeq
+        'list clauses'(Body, 2, 8, Co),
+        write_fullstop(Co).
 portray_clause1(Pred) :-
-	write_out(Pred, options(true,false,true,false,1000000), 1200, 0, -1, '(', 2'100, Ci), % writeq
-	write_fullstop(Ci).
+        write_out(Pred, options(true,false,true,false,1000000), 1200, 0, -1, '(', 2'100, Ci), % writeq
+        write_fullstop(Ci).
 
 write_fullstop(Ci) :-
-	maybe_space(Ci, 2'010),
-	put_code(0'.), nl.
+        maybe_space(Ci, 2'010),
+        put_code(0'.), nl.
 
 
 'list clauses'((A,B), L, D, Co) :- !,
-	'list clauses'(A, L, D, _),
-	'list clauses'(B, 1, D, Co).
+        'list clauses'(A, L, D, _),
+        'list clauses'(B, 1, D, Co).
 'list clauses'((A;B), L, D, 2'100) :- !,
-	'list magic'(L, D),
-	'list disj 1'(A, 3, D),
-	'list disj 2'(B, D).
+        'list magic'(L, D),
+        'list disj 1'(A, 3, D),
+        'list disj 2'(B, D).
 'list clauses'((A->B), L, D, 2'100) :- !,
-	'list magic'(L, D),
-	E is D+4,
-	'list clauses'(A, 3, E, _),
-	'list clauses'(B, 5, E, _),
-	nl, tab(D),
-	put_code(0')).
+        'list magic'(L, D),
+        E is D+4,
+        'list clauses'(A, 3, E, _),
+        'list clauses'(B, 5, E, _),
+        nl, tab(D),
+        put_code(0')).
 'list clauses'(!, 0, _, 2'100) :- !,
-	display(' :- !').
+        display(' :- !').
 'list clauses'(!, 1, _, 2'100) :- !,
-	display(', !').
+        display(', !').
 'list clauses'(!, 2, _, 2'100) :- !,
-	display(' --> !').
+        display(' --> !').
 'list clauses'(Goal, L, D, Co) :-
-	'list magic'(L, D),
-	write_out(Goal, options(true,false,true,false,1000000), 999, 0, -1, '(', 2'100, Co). % writeq
+        'list magic'(L, D),
+        write_out(Goal, options(true,false,true,false,1000000), 999, 0, -1, '(', 2'100, Co). % writeq
 
 
 'list magic'(0, D) :-
-	display(' :-'),
-	nl, tab(D).
+        display(' :-'),
+        nl, tab(D).
 'list magic'(1, D) :-
-	put_code(0',),
-	nl, tab(D).
+        put_code(0',),
+        nl, tab(D).
 'list magic'(2, D) :-
-	display(' -->'),
-	nl, tab(D).
+        display(' -->'),
+        nl, tab(D).
 'list magic'(3, _) :-
-	display('(   ').
+        display('(   ').
 'list magic'(4, _) :-
-	display(';   ').
+        display(';   ').
 'list magic'(5, D) :-
-	display(' ->'),
-	nl, tab(D).
+        display(' ->'),
+        nl, tab(D).
 'list magic'(:-(Key), D) :-
-	display(':- '),
-	displayq(Key),
-	nl, tab(D).
+        display(':- '),
+        displayq(Key),
+        nl, tab(D).
 
 'list disj 2'((A;B), D) :- !,
-	'list disj 1'(A, 4, D),
-	'list disj 2'(B, D).
+        'list disj 1'(A, 4, D),
+        'list disj 2'(B, D).
 'list disj 2'(Conj, D) :-
-	'list disj 1'(Conj, 4, D),
-	put_code(0')).
+        'list disj 1'(Conj, 4, D),
+        put_code(0')).
 
 'list disj 1'((A->B), L, D) :- !,
-	E is D+4,
-	'list clauses'(A, L, E, _),
-	'list clauses'(B, 5, E, _),
-	nl, tab(D).
+        E is D+4,
+        'list clauses'(A, L, E, _),
+        'list clauses'(B, 5, E, _),
+        nl, tab(D).
 'list disj 1'(A, L, D) :-
-	E is D+4,
-	'list clauses'(A, L, E, _),
-	nl, tab(D).
+        E is D+4,
+        'list clauses'(A, L, E, _),
+        nl, tab(D).
 
-:- pred numbervars(?Term, +N, ?M) => term * integer * integer
+:- true pred numbervars(?Term, +N, ?M) => term * int * int
         # "Unifies each of the variables in term @var{Term} with a term
  of the form @tt{'$VAR'(I)} where @tt{I} is an integer from @var{N}
  onwards. @var{M} is unified with the last integer used plus 1. If the
@@ -735,37 +739,41 @@ write_fullstop(Ci) :-
 
 % It's too expensive to support cyclic structures.
 numbervars(X, N0, N) :-
-	( integer(N0) ->
+        ( integer(N0) ->
                 numbervars1(X, N0, N)
-	; var(N0) ->
+        ; var(N0) ->
                 throw(error(instantiation_error, numbervars/3-2))
         ; throw(error(type_error(integer, N0), numbervars/3-2))
-	).
+        ).
 
 numbervars1(X, N0, N) :- var(X), !, X='$VAR'(N0), N is N0+1.
 numbervars1(X, N0, N) :- atomic(X), !, N0=N.
 numbervars1([X|Xs], N0, N) :- !,
-	numbervars1(X, N0, N1),
-	numbervars1(Xs, N1, N).
+        numbervars1(X, N0, N1),
+        numbervars1(Xs, N1, N).
 numbervars1(X, N0, N) :-
-	functor(X, _, A),
-	numbervars1_(0, A, X, N0, N).
+        functor(X, _, A),
+        numbervars1_(0, A, X, N0, N).
 
 numbervars1_(A, A, _, N0, N) :- !, N0=N.
 numbervars1_(A0, A, X, N0, N) :-
-	A1 is A0+1,
-	arg(A1, X, X1),
-	numbervars1(X1, N0, N1),
-	numbervars1_(A1, A, X, N1, N).
+        A1 is A0+1,
+        arg(A1, X, X1),
+        numbervars1(X1, N0, N1),
+        numbervars1_(A1, A, X, N1, N).
 
 
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*9+290,2004/02/13,20:20*03+'CET'), "Minimal change
+   so that a binary operator '|' is written always unquoted.
+   (Daniel Cabeza Gras)").
+
 :- comment(version(1*7+197,2002/04/17,20:02*28+'CEST'), "More comments
-(MCL)").
+   (MCL)").
 
 :- comment(version(1*5+158,2000/05/30,13:08*10+'CEST'), "Added
-documentation for portray_attribute.  (MCL)").
+   documentation for portray_attribute.  (MCL)").
 
 :- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written

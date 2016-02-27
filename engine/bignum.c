@@ -50,6 +50,15 @@ static int bn_div_mod_quot_not_wanted(register Bignum *x, register Bignum *y, re
 # define Getshort(p,i) (((unsigned short *)(p))[(i)+1])
 #endif
 
+/* Only intended to be used outside this file -- e.g., by routines located
+   at ciao_prolog.c */
+
+ENG_INT bn_length(REGISTER Bignum *x)
+{
+  return BignumLength(x);
+}
+
+
 BOOL bn_positive(x)
      REGISTER Bignum *x;
 {
@@ -961,17 +970,18 @@ int bn_from_float(x,ignore,z,zmax)
 
 
 /* Precond: x is a syntactically correct string denoting an integer */
-int bn_from_string(x,z,zmax)
+int bn_from_string(x,z,zmax,base)
      REGISTER char *x;
      REGISTER Bignum *z;
      Bignum *zmax;
+     int base;
 {
   BOOL sx;
   REGISTER int j;
   int zlen;
   char cur;
   unsigned long t, digit;
-  unsigned int radix = GetSmall(current_radix);
+/*   unsigned int radix = GetSmall(current_radix); */
 
   if (*x=='+')
     x++, sx=TRUE;
@@ -987,7 +997,7 @@ int bn_from_string(x,z,zmax)
     {
       digit = (cur>='a' ? cur-'a'+10 : cur>='A' ? cur-'A'+10 : cur-'0');
       for (j=1; j<zlen; j++)
-	t = radix*Getshort(z,j) + digit,
+	t = base*Getshort(z,j) + digit,
 	Getshort(z,j) = t&HalfMask,
 	digit = t>>HalfUnit;
       if (digit)
@@ -1036,10 +1046,14 @@ void bn_to_string(Arg,x,base)
   slen = (((xlen+1)*(dlen+1)) & -4)+4 + (xlen<<1);
   for (alen=Atom_Buffer_Length; slen>alen;)
     alen <<= 1;
+  /*
   if (alen>Atom_Buffer_Length)
     Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
 				       Atom_Buffer_Length, alen),
     Atom_Buffer_Length = alen;
+  */
+  if (alen > Atom_Buffer_Length)
+      EXPAND_ATOM_BUFFER(alen);
   c = Atom_Buffer;
   work = (unsigned short *)(c+slen-(xlen<<1));
   if (!sx)

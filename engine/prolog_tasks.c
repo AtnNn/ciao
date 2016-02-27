@@ -2,6 +2,7 @@
 
 #include "threads.h"
 #include "datadefs.h"
+#include "wam.h"
 #include "support.h"
 #include "task_areas.h"
 /*#include "locks.h"*/
@@ -383,10 +384,7 @@ BOOL prolog_eng_cut(Arg)
     Argdecl = goal_desc->worker_registers;
     w->node = InitialNode;            /* DOCUT to the initial choicepoint */
             /* For concurrent goals, erase the concurrent data structures */
-#if defined(THREADS)
-    if (ChoiceYounger(TopConcChpt, w->next_node))
-      remove_link_chains(&TopConcChpt, w->next_node);
-#endif
+    ConcChptCleanUp(TopConcChpt, w->next_node);
   }
 
   if (wam(goal_desc->worker_registers, goal_desc) == WAM_ABORT)

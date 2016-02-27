@@ -1,279 +1,195 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - genbar2 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - The Ciao lpmake scripting facility</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC732" HREF="ciao_toc.html#TOC732">genbar2 (library)</A></H1>
-<P>
-<A NAME="IDX7361"></A>
-
+<H1><A NAME="SEC738" HREF="ciao_toc.html#TOC738">The Ciao lpmake scripting facility</A></H1>
 
 <P>
-This module defines predicates which show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
-
-
-
-<UL>
-
-<LI>Numeric values for the x axis are needed, otherwise it does not work properly. See
-
-<A NAME="IDX7362"></A>
-<CODE>xbarelement2/1</CODE> definition type. 
-
-<LI>The bar position is proportional to the x-coordinate value.
-
-<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
-
-<A NAME="IDX7363"></A>
-<CODE>xbarelement2/1</CODE> type definition. Thus, the user can call each predicate in two ways. 
-
-<LI>The bar chart has a legend and one entry (symbol and label) per bar.
-
-<LI>If you do not want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contain elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> does not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
-
-</UL>
-
-<P>
-Particular features will be pointed out in the corresponding predicate. 
-
-
-
-<UL>
-<LI><A HREF="ciao_184.html#SEC733">Usage and interface (genbar2)</A>
-<LI><A HREF="ciao_184.html#SEC734">Documentation on exports (genbar2)</A>
-</UL>
-
-
-
-<H2><A NAME="SEC733" HREF="ciao_toc.html#TOC733">Usage and interface (<CODE>genbar2</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(genbar2)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX7364"></A>
-<CODE>barchart2/7</CODE>, 
-<A NAME="IDX7365"></A>
-<CODE>barchart2/11</CODE>, 
-<A NAME="IDX7366"></A>
-<CODE>percentbarchart2/7</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7367"></A>
-<CODE>xbarelement2/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7368"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7369"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7370"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX7371"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7372"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7373"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7374"></A>
-<CODE>random/random</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC734" HREF="ciao_toc.html#TOC734">Documentation on exports (<CODE>genbar2</CODE>)</A></H2>
-<P>
-<A NAME="IDX7375"></A>
-<A NAME="IDX7376"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart2/7:</B>
-<DD><A NAME="IDX7377"></A>
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<CODE>barchart2(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-The maximum and minimum limits for axes are determined from the data. 
+<STRONG>Version of last change:</STRONG> 1.9#27 (2002/11/20, 13:4:12 CET)
 
 
 <P>
-Example: 
-
-
-
-<PRE>
-barchart2('This is the header text',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1','Blue','Yellow','pattern1'],
-       [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
-  'My yaxixtitle',
-  [20,10],
-  'This is the footer text').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7378"></A>
-<A NAME="IDX7379"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart2/11:</B>
-<DD><A NAME="IDX7380"></A>
-
-
-<P>
-<CODE>barchart2(Header,BT,XT,XVector,XMax,XMin,YT,YVector,YMax,YMin,Footer)</CODE>
-
-
-<P>
-You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, as you can check looking at the 
-<A NAME="IDX7381"></A>
-<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
  
-Example: 
 
+
+<P>
+<A NAME="IDX8126"></A>
+<A NAME="IDX8127"></A>
+<A NAME="IDX8128"></A>
+<A NAME="IDX8129"></A>
+
+
+<P>
+<STRONG>Note:</STRONG> 
+<A NAME="IDX8130"></A>
+<CODE>lpmake</CODE> and the 
+<A NAME="IDX8131"></A>
+<CODE>make</CODE> library are still under development, and they may change in future releases. 
+
+
+<P>
+<A NAME="IDX8132"></A>
+<CODE>lpmake</CODE> is a Ciao application which uses the Ciao 
+<A NAME="IDX8133"></A>
+<CODE>make</CODE> library to implement a dependency-driven scripts in a similar way to the Un*x 
+<A NAME="IDX8134"></A>
+<CODE>make</CODE> facility. 
+
+
+<P>
+The original purpose of the Un*x 
+<A NAME="IDX8135"></A>
+<CODE>make</CODE> utility is to determine automatically which pieces of a large program needed to be recompiled, and issue the commands to recompile them. In practice, 
+<A NAME="IDX8136"></A>
+<CODE>make</CODE> is often used for many other purposes: it can be used to describe any task where some files must be updated automatically from others whenever these change. 
+<A NAME="IDX8137"></A>
+<CODE>lpmake</CODE> can be used for the same types of applications as 
+<A NAME="IDX8138"></A>
+<CODE>make</CODE>, and also for some new ones, and, while being simpler, it offers a number of advantages over 
+<A NAME="IDX8139"></A>
+<CODE>make</CODE>. The first one is <EM>portability</EM>. When compiled to a bytecode executable 
+<A NAME="IDX8140"></A>
+<CODE>lpmake</CODE> runs on any platform where a Ciao engine is available. Also, the fact that typically many of the operations are programmed in Prolog within the makefile, not needing external applications, improves portability further. The second advantage of 
+<A NAME="IDX8141"></A>
+<CODE>lpmake</CODE> is <EM>improved programming capabilities</EM>. While 
+<A NAME="IDX8142"></A>
+<CODE>lpmake</CODE> is simpler than 
+<A NAME="IDX8143"></A>
+<CODE>make</CODE>, 
+<A NAME="IDX8144"></A>
+<CODE>lpmake</CODE> allows using the Ciao Prolog language within the scripts. This allows establising more complex dependencies and programming powerful operations within the make file, and without resorting to external packages (e.g., operating system commands), which also helps portability. A final advantage of 
+<A NAME="IDX8145"></A>
+<CODE>lpmake</CODE> is that it supports a form of <EM>autodocumentation</EM>: 
+<A NAME="IDX8146"></A>
+<A NAME="IDX8147"></A>
+comments associated to targets can be included in the configuration files. Calling 
+<A NAME="IDX8148"></A>
+<CODE>lpmake</CODE> in a directory which has such a configuration file explains what commands the configuration file support and what these commands will do. 
+
+
+
+<UL>
+<LI><A HREF="ciao_184.html#SEC739">General operation</A>
+<LI><A HREF="ciao_184.html#SEC740">Format of the Configuration File</A>
+<LI><A HREF="ciao_184.html#SEC741">lpmake usage</A>
+<LI><A HREF="ciao_184.html#SEC742">Acknowledgments (lpmake)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC739" HREF="ciao_toc.html#TOC739">General operation</A></H2>
+
+<P>
+To prepare to use 
+<A NAME="IDX8149"></A>
+<CODE>lpmake</CODE>, and in a similar way to 
+<A NAME="IDX8150"></A>
+<CODE>make</CODE>, you must write a 
+<A NAME="IDX8151"></A>
+<A NAME="IDX8152"></A>
+<EM>configuration file</EM>: a module (typically called 
+<A NAME="IDX8153"></A>
+<CODE>Makefile.pl</CODE>) that describes the relationships among files in your program or application, and states the commands for updating each file. In a program, typically the executable file is updated from object files, which are in turn made by compiling source files. Another example is running 
+<A NAME="IDX8154"></A>
+<CODE>latex</CODE> and 
+<A NAME="IDX8155"></A>
+<CODE>dvips</CODE> on a set of source <CODE>.tex</CODE> files to generate a document in <CODE>dvi</CODE> and <CODE>postscript</CODE> formats. Once a suitable makefile exists, each time you change some source files, simply typing <CODE>lpmake</CODE> suffices to perform all necessary operations (recompilations, processing text files, etc.). The 
+<A NAME="IDX8156"></A>
+<CODE>lpmake</CODE> program uses the dependency rules in the makefile and the last modification times of the files to decide which of the files need to be updated. For each of those files, it issues the commands recorded in the makefile. For example, in the 
+<A NAME="IDX8157"></A>
+<CODE>latex</CODE>/
+<A NAME="IDX8158"></A>
+<CODE>dvips</CODE> case one rule states that the <CODE>.dvi</CODE> file whould be updated from the <CODE>.tex</CODE> files whenever one of them changes and another rule states that the <CODE>.ps</CODE> file needs to be updated from a <CODE>.dvi</CODE> file every time it changes. The rules also describe the commands to be issued to update the files. 
+
+
+<P>
+So, the general process is as follows: 
+<A NAME="IDX8159"></A>
+<CODE>lpmake</CODE> executes commands in the configuration file to update one or more target <EM>names</EM>, where <EM>name</EM> is often a program, but can also be a file to be generated or even a "virtual" target. 
+<A NAME="IDX8160"></A>
+<CODE>lpmake</CODE> updates a target if it depends on prerequisite files that have been modified since the target was last modified, or if the target does not exist. You can provide command line arguments to 
+<A NAME="IDX8161"></A>
+<CODE>lpmake</CODE> to control which files should be regenerated, or how. 
+
+
+
+
+<H2><A NAME="SEC740" HREF="ciao_toc.html#TOC740">Format of the Configuration File</A></H2>
+
+<P>
+<A NAME="IDX8162"></A>
+<CODE>lpmake</CODE> uses as default configuration file the file 
+<A NAME="IDX8163"></A>
+<CODE>Makefile.pl</CODE>, if it is present in the current directory. This can be overridden and another file used by means of the <CODE>-m</CODE> option. The configuration file must a <EM>module</EM> that uses the 
+<A NAME="IDX8164"></A>
+<CODE>make</CODE> package. This package provides syntax for defining the dependency rules and functionality for correctly interpreting these rules. The configuration files can contain such rules and also arbitrary Ciao Prolog predicates. The syntax of the rules is described in section <A HREF="ciao_91.html#SEC382">The Ciao Make Package</A>, together with some examples. 
+
+
+
+
+<H2><A NAME="SEC741" HREF="ciao_toc.html#TOC741">lpmake usage</A></H2>
 
 
 <PRE>
-barchart2('This is the header text',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1',Color1,Color2,Pattern1],
-         [2,'bar2',Color3,Color4,Pattern2] ],
-  10,
-  -10,
-  'My yaxixtitle',
-  [20,10],
-  100,
-  -10,
-  'The limits for the axes are set by the user').
+
+Supported command line options:
+
+lpmake [-v] &#60;command1&#62; ... &#60;commandn&#62;
+
+  Process commands &#60;command1&#62; ... &#60;commandn&#62;, using 
+  file 'Makefile.pl' in the current directory as 
+  configuration file. The configuration file must 
+  be a module. This is useful to implement 
+  inherintance across diferent configuration files, 
+  i.e., the values declared in a configuration file 
+  can be easily made to override those defined in 
+  another.
+
+  The optional argument '-v' produces verbose output, 
+  reporting on the processing of the dependency rules. 
+  Very useful for debugging Makefiles.
+
+lpmake [-v] [-m &#60;.../Configfile.pl&#62;] &#60;command1&#62; ... &#60;commandn&#62;
+
+  Same as above, but using file &#60;.../Configfile.pl&#62; 
+  as configuration file. 
+
+lpmake -h     [ -m &#60;.../Configfile.pl&#62; ]
+lpmake -help  [ -m &#60;.../Configfile.pl&#62; ]
+
+  Print this help message. If a configuration file is given, 
+  and the commands in it are commented, then information on 
+  these commands is also printed.
+
 </PRE>
 
-</DL>
+
+
+<H2><A NAME="SEC742" HREF="ciao_toc.html#TOC742">Acknowledgments (<CODE>lpmake</CODE>)</A></H2>
 
 <P>
-<A NAME="IDX7382"></A>
-<A NAME="IDX7383"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart2/7:</B>
-<DD><A NAME="IDX7384"></A>
+Some parts of the documentation are taken from the documentation of GNU's 
+<A NAME="IDX8165"></A>
+<CODE>gmake</CODE>.
 
-
-<P>
-<CODE>percentbarchart2(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-The y axis maximum coordinate value is 100. The x axis limits are autoarrange. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-percentbarchart2('This is a special barchart to represent percentages',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1','Blue','Yellow','pattern1'],
-          [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
-  'My yaxixtitle',
-  [80,10],
-  'This is the footer text').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7385"></A>
-<A NAME="IDX7386"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement2/1:</B>
-<DD><A NAME="IDX7387"></A>
-
-
-
-<PRE>
-xbarelement2([XValue,LegendElement]) :-
-        number(XValue),
-        atomic(LegendElement).
-xbarelement2([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
-        number(XValue),
-        atomic(LegendElement),
-        color(ForegColor),
-        color(BackgColor),
-        pattern(SPattern).
-</PRE>
-
-<P>
-Defines the attributes of the bar. 
-
-
-<DL COMPACT>
-
-<DT><CODE>XValue</CODE>
-<DD>
-x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
-
-<DT><CODE>LegendElement</CODE>
-<DD>
-Element legend name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
-
-<DT><CODE>ForegColor</CODE>
-<DD>
-Is the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>BackgColor</CODE>
-<DD>
-Is the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>SPattern</CODE>
-<DD>
-Is the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
-
-</DL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

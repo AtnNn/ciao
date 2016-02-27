@@ -12,6 +12,7 @@
 
 /* declarations for global functions accessed here */
 
+#include "float_tostr.h"
 #include "term_support_defs.h"
 #include "start_defs.h"
 #include "alloc_defs.h"
@@ -27,7 +28,8 @@ static BOOL c_term(Argdecl,
                    INSN **current_insn);
 static BOOL prolog_constant_codes(Argdecl,
                                   BOOL atomp,
-                                  BOOL numberp);
+                                  BOOL numberp,
+				  int ci);
 static INSN *emit_unify_void(Argdecl,
                              register INSN *P);
 static void c_term_size(Argdecl,
@@ -73,7 +75,7 @@ static void copy_it PROTO((struct worker *w, TAGGED *loc));
 void choice_overflow PROTO((Argdecl, int pad));
 void number_to_string PROTO((Argdecl,TAGGED term, int base));
 void checkdealloc PROTO((TAGGED *ptr, int decr));
-int bn_from_string PROTO((char *x, Bignum *z, Bignum *zmax));
+int  bn_from_string PROTO((char *x, Bignum *z, Bignum *zmax, int base));
 void explicit_heap_overflow PROTO((Argdecl, int pad, int arity));
 void bn_to_string PROTO((Argdecl,Bignum *x, int base));
 
@@ -782,135 +784,258 @@ BOOL prolog_init_radix()
 }
 
 
-static BOOL prolog_constant_codes PROTO((struct worker *w,BOOL a,BOOL n));
+static BOOL prolog_constant_codes PROTO((struct worker *w,BOOL a,BOOL n, int ci));
 
 BOOL prolog_name(Arg)
      Argdecl;
 {
-  return prolog_constant_codes(Arg,TRUE,TRUE);
+  return prolog_constant_codes(Arg,TRUE,TRUE,1);
 }
 
 BOOL prolog_atom_codes(Arg)
      Argdecl;
 {
-  return prolog_constant_codes(Arg,TRUE,FALSE);
+  return prolog_constant_codes(Arg,TRUE,FALSE,1);
 }
 
-BOOL prolog_number_codes(Arg)
+BOOL prolog_number_codes_2(Arg)
      Argdecl;
 {
-  return prolog_constant_codes(Arg,FALSE,TRUE);
+  return prolog_constant_codes(Arg,FALSE,TRUE,1);
+}
+
+BOOL prolog_number_codes_3(Arg)
+     Argdecl;
+{
+  return prolog_constant_codes(Arg,FALSE,TRUE,2);
 }
 
 
-static BOOL prolog_constant_codes(Arg,atomp,numberp)
+ /* INTEGER :== [minus]{digit} */
+ /* FLOAT :== [minus]{digit}.{digit}[exp[sign]{digit}] */
+ /* ATOM :== {char} */
+
+/* string_to_number() tries to convert the string pointed to by AtBuf in a
+   number contained in the tagged word *strnum.  If this cannot be done
+   (e.g., AtBuf does not correspond syntactically to a number), FALSE is
+   returned.  Otherwise, TRUE is returned and the conversion is done */
+
+BOOL string_to_number(Arg, AtBuf, base, strnum)
+     Argdecl;
+     unsigned char *AtBuf;
+     int base;
+     TAGGED *strnum;
+
+{
+  BOOL sign = FALSE;
+  unsigned char *s = AtBuf;
+  int i, d;
+  ENG_LFLT m=0;
+  double num;
+  int exp=0,e=0,se=1;
+  i = *s++;
+  if (i=='-') {
+    sign = TRUE;
+    i = *s++;
+  }
+  /* First, consider special cases */
+  if((i=='0') &&
+     (s[0]==FLOAT_POINT) &&
+     (s[1]=='N') &&
+     (s[2]=='a') &&
+     (s[3]=='n') &&
+     (s[4]=='\0'))
+  {
+    *strnum=MakeFloat(Arg,0.0/0.0); /* Nan */
+    return TRUE;
+  }
+  if((i=='0') &&
+     (s[0]==FLOAT_POINT) &&
+     (s[1]=='I') &&
+     (s[2]=='n') &&
+     (s[3]=='f') &&
+     (s[4]=='\0'))
+  {
+    *strnum=MakeFloat(Arg,1.0/0.0); /* Inf */
+    return TRUE;
+  }
+  d = char_digit[i];
+  while (0<=d && d < base) {
+    i = *s++;
+    d = char_digit[i];
+  }
+  if ((s - AtBuf) - sign > 1) {
+    if (i==0) {
+      /* It is an integer, either a small or a bignum */
+      REGISTER TAGGED *h = w->global_top;
+      TAGGED t;
+      int req = bn_from_string(AtBuf, h, Heap_End-CONTPAD, base);
+
+      if (req) {
+        explicit_heap_overflow(Arg ,req+CONTPAD, 2);
+        h = w->global_top;
+        if (bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD, base))
+          SERIOUS_FAULT("miscalculated size of bignum");
+      }
+
+      req = LargeArity(h[0]);
+      if (req==2 && IntIsSmall((int)h[1]))
+        t = MakeSmall(h[1]);
+      else {
+        w->global_top += req+1;
+        h[req] = h[0];
+        t = Tag(STR,h);
+      }
+      *strnum = t;                 /* The TAGGED word --- small or bignum */
+      return TRUE;  
+    }
+
+/* It is a float. Note that if is a float, after the point the digits
+   must not be upper case to avoid confussion with the exponent
+   indicator. This is true only if base > 10 + 'e'-'a'*/
+    if (i==FLOAT_POINT) {
+      s = AtBuf;
+      i = *s++;
+      do {
+	m = m * base+char_digit[i];
+	i = *s++;
+      }
+      while(i!='.');
+      i = *s++;
+      d = char_digit[i];
+      if ((0<=d) && (d<base)) {
+        char exponent_lower = exponents_lower[base];
+        char exponent_upper = exponents_upper[base];
+         do {
+	  m = m * base+char_digit[i];
+	  exp++;
+          i = *s++;
+	  d = char_digit[i];
+        }
+	while ((0<=d) && (d<base) && (i!=exponent_lower) && (i!=exponent_upper));
+        if ((i==exponent_lower) || (i==exponent_upper)) {
+	  i = *s++;
+	  if ((i=='+') || (i=='-')) {
+	    if(i=='-')
+	      se=-1;
+	    i = *s++;
+	  };
+	  d = char_digit[i];
+          if ((0<=d) && (d<base)) {
+            do {
+	      e = e * base + d;
+              i = *s++;
+	      d = char_digit[i];
+	    }
+	    while ((0<=d) && (d<base));
+          } else i = -1;
+        };
+      }
+      else i = -1;
+      if (i!=-1) {
+	if(se==1) {
+	  exp = -exp + e;
+	}
+	else
+	  exp = -exp - e;
+	num=m*powl_int(base,exp);
+	*strnum = MakeFloat(Arg, num);
+	return TRUE;
+      }
+    }
+  }
+  /* Could not make the conversion --- maybe a non-numeric atom */
+  return FALSE;
+}
+
+/*
+
+  Note: The ci parameter indicates where are the String argument.  If
+  ci = 2, then there are 3 parameters, indicating that the second
+  parameter could be the numberic base.
+
+ */
+static BOOL prolog_constant_codes(Arg,atomp,numberp,ci)
      Argdecl;
      BOOL atomp, numberp;
+     int ci;
 {
   REGISTER unsigned char *s;
-  REGISTER int i;
+  REGISTER int i, base;
   REGISTER TAGGED car, cdr;
 
   /*extern ENG_FLT atof PROTO((char *));*/
 
   DEREF(X(0),X(0));
   DEREF(X(1),X(1));
+  if(ci==2)
+    DEREF(X(2),X(2));
   if (IsVar(X(0))) {
-    cdr = X(1);
+    /* Construct a character string from the input list */
+    cdr = X(ci);
     s = (unsigned char *)Atom_Buffer;
     for (i=0; cdr!=atom_nil; i++) {
       if (IsVar(cdr))
         BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,2)
         else if (!TagIsLST(cdr))
-          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2)
+          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(ci),ci+1)
             else if (i == Atom_Buffer_Length){
+              /*
                  Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
                                                     i, Atom_Buffer_Length<<=1);
-                      s = (unsigned char *)Atom_Buffer+i;
+               */
+              EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
+              s = (unsigned char *)Atom_Buffer+i;
             }
       DerefCar(car,cdr);
       if (IsVar(car))
-        BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,2)
+        BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,ci+1)
         if (!TagIsSmall(car) || (car<=TaggedZero) || (car>=MakeSmall(256)))
-          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2)
+          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(ci),ci+1)
 	  *s++ = GetSmall(car);
       DerefCdr(cdr,cdr);
     }
     if (i == Atom_Buffer_Length) {
-      Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
-                                         i, Atom_Buffer_Length<<=1);
+      EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
       s = (unsigned char *)Atom_Buffer+i;
     }
     *s++ = '\0';
+
+    /* s contains now the string of character codes, and i its size */
+
     if (i>=MAXATOM) atomp = FALSE;  /* Unneded with dynamic atom sizes */
 
-    /* INTEGER :== [minus]{digit} */
-    /* FLOAT :== [minus]{digit}.{digit}[exp[sign]{digit}] */
-    /* ATOM :== {char} */
-
     if (numberp) {
-      BOOL sign = FALSE;
-	
-      s = (unsigned char *)Atom_Buffer;
-      i = *s++;
-      if (i=='-')
-        sign = TRUE, i = *s++;
-      while (((i>='0') && (i<radixlim1)) ||
-             ((i>='a') && (i<radixlim2)) ||
-             ((i>='A') && (i<radixlim3)))
-        i = *s++;
-      if ((char *)s-Atom_Buffer-sign>1) {
-        if (i==0) {
-          REGISTER TAGGED *h = w->global_top;
-          TAGGED t;
-          int req = bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD);
-
-          if (req) {
-            explicit_heap_overflow(Arg,req+CONTPAD, 2);
-            h = w->global_top;
-            if (bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD))
-              SERIOUS_FAULT("miscalculated size of bignum");
-          }
-          req = LargeArity(h[0]);
-          if (req==2 && IntIsSmall((int)h[1]))
-            t = MakeSmall(h[1]);
-          else {
-            w->global_top += req+1;
-            h[req] = h[0];
-            t = Tag(STR,h);
-          }
-          return cunify(Arg, t, X(0));
-        }
-        if (i=='.'){
-          i = *s++;
-          if ((i>='0') && (i<='9')) {
-            do
-              i = *s++;
-            while ((i>='0') && (i<='9'));
-            if ((i=='e') || (i=='E')){
-              i = *s++;
-              if ((i=='+') || (i=='-'))
-                i = *s++;
-              if ((i>='0') && (i<='9')) {
-                do
-                  i = *s++;
-                while ((i>='0') && (i<='9'));
-              } else
-                i = -1;
-            }
-          }
-          else
-            i = -1;
-        }
-        if (i==0)
-          return cunify(Arg,MakeFloat(Arg,atof(Atom_Buffer)),X(0));
+      TAGGED result;
+      if(ci==2) {
+	if(IsInteger(X(1)))
+	  base = GetSmall(X(1));
+	else
+	  BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);
       }
+      else // if (ci==1)
+	base = GetSmall(current_radix);
+      if((base < 2)||(base > 36))
+	BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);   
+      if (string_to_number(Arg, (unsigned char *)Atom_Buffer, base, &result))
+	return cunify(Arg, result, X(0));
     }
-    return (atomp && cunify(Arg,init_atom_check(Atom_Buffer),X(0)));
+    return atomp && cunify(Arg,init_atom_check(Atom_Buffer),X(0));
   } else {
-    if (numberp && IsNumber(X(0)))
-      number_to_string(Arg,X(0), GetSmall(current_radix)),
+    if (numberp && IsNumber(X(0))) {
+      if(ci==2) {
+	if(IsInteger(X(1)))
+	  base = GetSmall(X(1));
+	else
+	  BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);
+      }
+      else // if (ci==1)
+	base = GetSmall(current_radix);
+      if((base < 2)||(base > 36))
+	BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);
+      number_to_string(Arg,X(0), base);
       s = (unsigned char *)Atom_Buffer;
+    }
     else if (atomp && TagIsATM(X(0)))
       s = (unsigned char *)GetString(X(0));
     else
@@ -931,17 +1056,8 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
       i--;
       MakeLST(cdr,MakeSmall(*(--s)),cdr);
     }
-    return cunify(Arg,cdr,X(1));
+    return cunify(Arg,cdr,X(ci));
   }
-}
-
-#define EXPAND_ATOM_BUFFER(new_atom_length) \
-{ \
-  int i = Atom_Buffer_Length; \
-  while (Atom_Buffer_Length < new_atom_length) \
-    Atom_Buffer_Length<<=1; \
-  Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer, \
-                                     i, Atom_Buffer_Length); \
 }
 
 BOOL prolog_atom_length(Arg)
@@ -986,7 +1102,7 @@ BOOL prolog_sub_atom(Arg)
 #if defined(USE_ATOM_LEN)
     l = GetAtomLen(X(0));
 #else
-  l = strlen(s);
+    l = strlen(s);
 #endif
 
   b = GetInteger(X(1));
@@ -1000,7 +1116,7 @@ BOOL prolog_sub_atom(Arg)
   s += b;
 
   if (Atom_Buffer_Length <= atom_length)
-    EXPAND_ATOM_BUFFER(atom_length+1);
+     EXPAND_ATOM_BUFFER(atom_length+1);
 
   s1 = (unsigned char *)Atom_Buffer;
 
@@ -1039,8 +1155,8 @@ BOOL prolog_atom_concat(Arg)
 #endif
 
 #if defined(USE_DYNAMIC_ATOM_SIZE)
-      if (Atom_Buffer_Length < new_atom_length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      if (new_atom_length >= Atom_Buffer_Length)
+         EXPAND_ATOM_BUFFER(new_atom_length);
 #else
       if (new_atom_length > MAXATOM)
 #if defined(DEBUG)
@@ -1048,8 +1164,6 @@ BOOL prolog_atom_concat(Arg)
 #else
         return FALSE; 
 #endif
-      if (Atom_Buffer_Length < new_atom_length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
 #endif
 
       /* Append the two strings in atom_buffer */
@@ -1068,12 +1182,12 @@ BOOL prolog_atom_concat(Arg)
       s2 = (unsigned char *)GetString(X(2));
 
 #if defined(USE_ATOM_LEN)
-      if ((new_atom_length = GetAtomLen(X(2))+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = GetAtomLen(X(2))+1;
 #else
-      if ((new_atom_length = strlen(s2)+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = strlen(s2) + 1;
 #endif
+      if (new_atom_length >= Atom_Buffer_Length)
+          EXPAND_ATOM_BUFFER(new_atom_length);
 
       for ( ; *s1 && *s2 ; s1++, s2++)
         if (*s1 != *s2) return FALSE;
@@ -1106,8 +1220,8 @@ BOOL prolog_atom_concat(Arg)
         return FALSE;
 #endif
 
-      if (new_atom_length+1 > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length+1);
+      if (new_atom_length >= Atom_Buffer_Length) 
+         EXPAND_ATOM_BUFFER(new_atom_length+1);
 
       s = s2+new_atom_length;
 
@@ -1126,12 +1240,12 @@ BOOL prolog_atom_concat(Arg)
 
       s2 = (unsigned char *)GetString(X(2));
 #if defined(USE_ATOM_LEN)
-      if ((new_atom_length = GetAtomLen(X(2))+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = GetAtomLen(X(2))+1;
 #else
-      if ((new_atom_length = strlen(s2)+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = strlen(s2)+1;
 #endif
+      if (new_atom_length >= Atom_Buffer_Length)
+        EXPAND_ATOM_BUFFER(new_atom_length);
       X(3) = TaggedZero;
       push_choicept(Arg,address_nd_atom_concat);
       return nd_atom_concat(Arg);
@@ -1179,110 +1293,24 @@ void number_to_string(Arg, term, base)
   else if (IsFloat(term))
     {
       ENG_FLT f;
-      ENG_INT li;
-      unsigned int *fp = (unsigned int *)(&f);
-      int exp = 8;
-      REGISTER char *c, *c1;
-      char *cbuf = Atom_Buffer;
+/*       unsigned int *fp = (unsigned int *)(&f); */
+      char *cbuf;
+      int eng_flt_signif = (int)((SHR_EXP+1) * invlog2[base] + 1);
 
-      fp[0] = CTagToArg(term,1); /* f = GetFloat(term); */
-      fp[1] = CTagToArg(term,2);
+/*       fp[0] = CTagToArg(term,1); /\* f = GetFloat(term); *\/ */
+/*       fp[1] = CTagToArg(term,2); */
 
-      if (f != f) { /* NaN */
-        *cbuf++ = '0';
-        *cbuf++ = '.';
-        *cbuf++ = 'N';
-        *cbuf++ = 'a';
-        *cbuf++ = 'n';
-        *cbuf++ = 0;
-      } else {
+      f = GetFloat(term);
 
-#if defined(sun)
-      if (fp[1-BIGENDIAN] & 0x80000000)
-#else
-      if (f < 0.0 ||
-	  (f == 0.0 && (fp[0]|fp[1]) != 0) ||
-	  (fp[0]&fp[1]) == 0xffffffff)
-#endif
-	*cbuf++ = '-',
-	f = -f;
+      /* Print using the default precision.  'p' is a new 'prolog' :-)
+         format not considered by, e.g., the printf family, to
+         implement the expected Prolog behavior */
 
-      if (f == 0.0)
-	exp = 0;
-      else if (f == f/2.0) /* Infinity */
-	exp = 1000,
-	f = 1.0e+8;
-      else
-	{
-	  /* normalize */
-	  while (f >= 1.0e+9)
-	    exp++, f /= 10.0;
-	  while (f < 1.0e+8 && f > 0.0)
-	    --exp, f *= 10.0;
-	  /* compensate for truncations */
-	  f += ENG_FLT_ROUND;
-	  if (f >= 1.0e+9)
-	    exp++, f /= 10.0;
-	}
-      /* print 18 digits */
-      for (c=cbuf; c-18<cbuf; c+=9)
-	{
-	  li = f, f -= li, f *= 1.0e+9;
-	  for (c1=c+9; c1>c;)
-	    *(--c1) = '0'+li % 10, li /= 10;
-	}
+/*       if (1024 > Atom_Buffer_Length) */
+/* 	EXPAND_ATOM_BUFFER(102400); */
 
-      /* strip insignificant digits */
-      while (c>cbuf+ENG_FLT_SIGNIF)
-	--c;
-      /* strip trailing zeros */
-      while (c[-1] == '0' && c>cbuf)
-	--c;
-      /* select 'e' or 'f' format */
-      if (exp < -4 || exp > c-cbuf+2)
-	{
-	  for (c1=c-1; c1>=cbuf; --c1)
-	    c1[1] = c1[0];
-	  c1[2] = '.';
-	  c = (c-cbuf == 1 ? c+2 : c+1);
-	  *c++ = 'e';
-	  if (exp<0)
-	    *c++ = '-',
-	    exp = -exp;
-	
-	  for (li=10000, c1=c; li>1; li /= 10)
-	    if (exp>=li)
-	      *c++ = '0' + exp / li,
-	      exp %= li;
-	    else if (c != c1)
-	      *c++ = '0';
-	  *c++ = '0' + exp;
-	
-	  *c++ = 0;
-	}
-      else if (exp >= c-cbuf-1)
-	{
-	  while (exp > c-cbuf-1)
-	    *c++ = '0';
-	  *c++ = '.';
-	  *c++ = '0';
-	  *c++ = 0;
-	}
-      else if (exp>=0)
-	{
-	  for (c1=c-1; c1-exp>=cbuf; --c1)
-	    c1[1] = c1[0];
-	  c1[2] = '.';
-	  c[1] = 0;
-	}
-      else
-	{
-	  for (c1=c-1; c1-exp+1>=cbuf; --c1)
-	    c1[1-exp] = (c1>=cbuf ? c1[0] : '0');
-	  cbuf[1] = '.';
-	  c[1-exp] = 0;
-	}
-      }
+      cbuf = Atom_Buffer;
+      cbuf = float_to_string(cbuf, eng_flt_signif, 'p', f, base);
     }
   else
     bn_to_string(Arg,TagToSTR(term),base);

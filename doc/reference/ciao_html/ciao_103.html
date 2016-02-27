@@ -1,128 +1,62 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Iterative-deepening execution</TITLE>
+<TITLE>The Ciao Prolog System               - Andorra execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC426" HREF="ciao_toc.html#TOC426">Iterative-deepening execution</A></H1>
+<H1><A NAME="SEC425" HREF="ciao_toc.html#TOC425">Andorra execution</A></H1>
 <P>
-<A NAME="IDX4467"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Claudio Vaucheret, Manuel Hermenegildo.
+<A NAME="IDX5323"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Claudio Vaucheret, Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#119 (2001/8/28, 15:39:1 CEST)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-This package applies a <EM>compiling control</EM> technique to implement 
-<A NAME="IDX4468"></A>
-<A NAME="IDX4469"></A>
-<EM>depth first iterative deepening</EM> execution [Kor85]. It changes the usual <EM>depth-first</EM> computation rule by 
-<A NAME="IDX4470"></A>
-<A NAME="IDX4471"></A>
-<EM>iterative-deepening</EM> on those predicates specifically marked. This is very useful in search problems when a 
-<A NAME="IDX4472"></A>
-complete proof procedure is needed. 
+<STRONG>Version of last change:</STRONG> 1.7#144 (2001/11/12, 17:57:47 CET)
 
 
 <P>
-When this computation rule is used, first all goals are expanded only up to a given depth. If no solution is found or more solutions are needed by backtracking, the depth limit is incremented and the whole goal is repeated. Although it might seem that this approach is very inefficient because all higher levels are repeated for the deeper ones, it has been shown that is performs only about b/(b - 1) times as many operations than the corresponding breadth-first search, (where b is the branching factor of the proof tree) while the waste of memory is the same as depth first. 
+This package allows the execution under the Basic Andorra Model [War88]. The model classifies goals as a 
+<A NAME="IDX5324"></A>
+<A NAME="IDX5325"></A>
+<EM>determinate goal</EM>, if at most one clause matches the goal, or nondeterminate goal, otherwise. In this model a goal is delayed until either it becomes determinate or it becomes the leftmost goal and no determinate goal is available. The implementation of this selection rule is based on the use of attributed variables [Hol92,Hol90]. 
 
 
 <P>
-The usage is by means of the following directive: 
+In order to test determinacy we verify only the heads of clauses and builtins in the bodies of clauses before the first cut, if any. By default, determinacy of a goal is detected dynamically: when called, if at most one clause matches, it is executed; otherwise, it is delayed. For goals delayed the test is repeated each time a variable appearing in the goal is instantiated. In addition, efficiency can be improved by using declarations that specify the determinacy conditions. These will be considered for testing instead of the generic test on all clauses that can match. 
 
 
 <P>
-<CODE>:- iterative(Name, FirstCut, Formula).</CODE> 
+As with any other Ciao package, the andorra computation rule affects only the module that uses the package. If execution passes across two modules that use the computation rule, determinate goals are run in advance <EM>within</EM> one module and also within the other module. But determinate goals of one module do not run ahead of goals of the other module. 
 
 
 <P>
-which states than the predicate 'Name' given in functor/arity form will be executed using iterative deepening rule starting at the depth 'FirstCut' with depth being incremented by the predicate 'Formula'. This predicate compute the new depth using the previous one. It must implement a dilating function i.e. the new depth must be greater. For example, to start with depth 5 and increment by 10 you can write: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,f).</CODE> 
-
-
-<P>
-<CODE>f(X,Y) :- Y is X + 10.</CODE> 
-
-
-<P>
-or if you prefer, 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10)).</CODE> 
-
-
-<P>
-<A NAME="IDX4473"></A>
-<A NAME="IDX4474"></A>
-You can also use a fourth parameter to set a limiting depth. All goals below the given depth limit simply fail. Thus, with the following directive: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10),100).</CODE> 
-
-
-<P>
-all goals deeper than 100 will fail. 
-
-
-<P>
-An example of code using this package would be: 
-
-
-
-<PRE>
-
-</PRE>
-
-<P>
-The order of solutions are first the shallower and then the deeper. Solutions which are between two cutoff are given in the usual left to right order. For example, 
-
-
-
-<PRE>
-
-</PRE>
-
-<P>
-It is possible to preserve the iterative-deepening behavior for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will be treated in the usual way i.e. by depth-first computation. 
-
-
-<P>
-Another complete proof procedure implemented is the 
-<A NAME="IDX4475"></A>
-<CODE>bf</CODE> package (
-<A NAME="IDX4476"></A>
-breadth first execution). 
+It is however possible to preserve the computation rule for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will only be called when they became the leftmost goal. 
 
 
 
 <UL>
-<LI><A HREF="ciao_103.html#SEC427">Usage and interface (id)</A>
+<LI><A HREF="ciao_103.html#SEC426">Usage and interface (andorra)</A>
+<LI><A HREF="ciao_103.html#SEC427">Documentation on new declarations (andorra)</A>
+<LI><A HREF="ciao_103.html#SEC428">Documentation on exports (andorra)</A>
+<LI><A HREF="ciao_103.html#SEC429">Other information (andorra)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC427" HREF="ciao_toc.html#TOC427">Usage and interface (<CODE>id</CODE>)</A></H2>
+<H2><A NAME="SEC426" HREF="ciao_toc.html#TOC426">Usage and interface (<CODE>andorra</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -130,16 +64,196 @@ breadth first execution).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(id).</CODE>
+<CODE>:- use_package(andorra).</CODE>
 
 or
 
-<CODE>:- module(...,...,[id]).</CODE>
+<CODE>:- module(...,...,[andorra]).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX5326"></A>
+<CODE>detcond/1</CODE>, 
+<A NAME="IDX5327"></A>
+<CODE>path/1</CODE>.
+
+</UL>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX5328"></A>
+<CODE>?\=/2</CODE> [700,xfx], 
+<A NAME="IDX5329"></A>
+<CODE>?=/2</CODE> [700,xfx].
+
+<LI><STRONG>New declarations defined:</STRONG>
+
+<A NAME="IDX5330"></A>
+<CODE>determinate/2</CODE>.
+
 </UL>
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC427" HREF="ciao_toc.html#TOC427">Documentation on new declarations (<CODE>andorra</CODE>)</A></H2>
+<P>
+<A NAME="IDX5331"></A>
+<A NAME="IDX5332"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>determinate/2:</B>
+<DD><A NAME="IDX5333"></A>
+
+
+<P>
+:- <CODE>determinate(Pred, Cond)</CODE>.
+
+
+<P>
+Declares determinacy conditions for a predicate. Conditions <CODE>Cond</CODE> are on variables of arguments of <CODE>Pred</CODE>. For example, in: 
+
+<PRE>
+:- determinate(member(A,B,C), ( A ?= term(B,[1])  ; C?=[_|_]) ).
+
+member(A,[A|B],B).
+member(A,[B|C],[B|D]) :-
+        A==B,
+        member(A,C,D).
+</PRE>
+
+<P>
+the declaration states that a call <CODE>member(A,B,C)</CODE> is determinate when either <CODE>A</CODE> doesn't unify with the first argument of <CODE>B</CODE> or <CODE>C</CODE> doesn't unify with <CODE>[_|_]</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>determinate(Pred, Cond)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> States that the predicate <CODE>Pred</CODE> is determinate when <CODE>Cond</CODE> holds.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Cond</CODE> is a determinacy condition.
+ (<CODE>user(... /andorra_doc):detcond/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC428" HREF="ciao_toc.html#TOC428">Documentation on exports (<CODE>andorra</CODE>)</A></H2>
+<P>
+<A NAME="IDX5334"></A>
+<A NAME="IDX5335"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>detcond/1:</B>
+<DD><A NAME="IDX5336"></A>
+
+
+<P>
+Defined by: 
+
+<PRE>
+detcond(ground(X)) :-
+        var(X).
+detcond(nonvar(X)) :-
+        var(X).
+detcond(instatiated(A,Path)) :-
+        var(A),
+        list(Path,int).
+detcond(?\=(Term1,Term2)) :-
+        path(Term1),
+        path(Term2).
+detcond(?=(Term1,Term2)) :-
+        path(Term1),
+        path(Term2).
+detcond(Test) :-
+        test(Test).
+</PRE>
+
+
+<UL>
+<LI><CODE>ground/1</CODE> and <CODE>nonvar/1</CODE> have the usual meaning.
+
+<LI><CODE>instatiated(A,Path)</CODE> means that the subterm of <CODE>A</CODE> addressed by <CODE>Path</CODE> is not a variable. <CODE>Path</CODE> is a list of integer numbers describing a path to the subterm regarding the whole term A as a tree. For example, <CODE>instantiated(f(g(X),h(i(Z),Y)),[2,1])</CODE> tests whether <CODE>i(Z)</CODE> is not a variable.
+
+<LI><CODE>Term1 ?\= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> do not unify (when instantiated)". <CODE>Term1</CODE> and <CODE>Term2</CODE> can be either an argument of the predicate or a term <CODE>term(V,Path)</CODE>, which refers to the subterm of <CODE>V</CODE> addressed by <CODE>Path</CODE>.
+
+<LI><CODE>Term1 ?= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> unify (when instantiated)". The same considerations above apply to <CODE>Term1</CODE> and <CODE>Term2</CODE>.
+
+<LI>any other test that does not unify variables can also be used ( <CODE>==/2</CODE>, <CODE>\==/2</CODE>, <CODE>atomic/1</CODE>).
+
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>detcond(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a determinacy condition.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5337"></A>
+<A NAME="IDX5338"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>path/1:</B>
+<DD><A NAME="IDX5339"></A>
+
+
+<P>
+Defined by: 
+
+<PRE>
+path(X) :-
+        var(X).
+path(X) :-
+        list(X,int).
+</PRE>
+
+</DL>
+
+
+
+<H2><A NAME="SEC429" HREF="ciao_toc.html#TOC429">Other information (<CODE>andorra</CODE>)</A></H2>
+
+<P>
+The andorra transformation will include the following predicates into the code of the module that uses the package. Be careful not to define predicates by these names: 
+
+<UL>
+<LI><CODE>detcond_andorra/4</CODE>
+
+<LI><CODE>path_andorra/4</CODE>
+
+<LI><CODE>detcond_susp/4</CODE>
+
+<LI><CODE>path_susp/4</CODE>
+
+<LI><CODE>list_andorra2/5</CODE>
+
+<LI><CODE>test_andorra2/4</CODE>
+
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

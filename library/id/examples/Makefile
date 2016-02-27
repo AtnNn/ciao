@@ -1,2 +1,2 @@
 distclean:
-    rm -f *.itf *.po *.asr *~
+	rm -f *.itf *.po *.asr *~

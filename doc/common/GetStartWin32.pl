@@ -40,7 +40,7 @@ obviously skip them if you have done them already at that time):
       been discussed above. The installation script also leaves a
       @tt{ciaosh}(@tt{.bat}) file inside the @file{shell} folder of the Ciao
       distribution which can be used to start the top-level shell from
-      the command line in Windows95/98/NT.
+      the command line in Windows systems.
 
 @subsection{Getting help (Win32)}
 
@@ -203,5 +203,8 @@ regarding new versions, download new versions, report bugs, etc.
 main.
 
 %% --------------------------------------------------------------------------- 
-:- comment(version,dir('../../version')).
+:- comment(version_maintenance,dir('../../version')).
 %% --------------------------------------------------------------------------- 
+:- comment(version(1*9+116,2003/12/03,13:35*35+'CET'), "Minor fix in
+   version_maintenance (Edison Mera)").
+

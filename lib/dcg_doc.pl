@@ -1,8 +1,9 @@
-
 :- use_package(assertions).
 :- comment(nodoc,assertions).
 
 :- comment(title,"Definite clause grammars").
+
+:- comment(author, "The CLIP Group").
 
 %% see @cite{Les Grammaires de Metamorphos} by A.Colmerauer,
 %% Technical Report, Groupe d'Intelligence Artificielle,
@@ -55,8 +56,9 @@ followed by a sequence of terminals (again written as a Prolog list).
 
 @item
 Alternatives may be stated explicitly in the right-hand side of a
-grammar rule, using the disjunction operator @tt{;} or @tt{|} as in
-Prolog. 
+grammar rule, using the disjunction operator @tt{;}, or, also, as
+traditionally in Prolog, using @tt{|} (which is treated specially when this
+package is loaded).
 
 @item
 The cut symbol may be included in the right-hand side of a grammar rule, as
@@ -86,7 +88,7 @@ In the last rule, @var{C} is the ASCII code of some digit.
 The query
 
 @begin{verbatim}
-| ?- expr(Z, ""-2+3*5+1"", []).
+?- expr(Z, ""-2+3*5+1"", []).
 @end{verbatim}
 
 @noindent
@@ -210,4 +212,9 @@ args(X, Y, S0, S) :-
 @end{verbatim}
 
 ").
+
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+209,2003/12/21,02:05*22+'CET'), "Added comment
+   author.  (Edison Mera)").
 

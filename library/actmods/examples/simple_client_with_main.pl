@@ -1,7 +1,8 @@
 % A simple active module client with main
-:- module(simple_client_with_main,[main/0],[actmods]).
+%:- module(simple_client_with_main,[main/0],[actmods]).
 
-:- use_module(library('actmods/filebased_locate')).
+:- use_package(actmods).
+:- use_module(library('actmods/webbased_locate')).
 :- use_active_module(simple_server, [population/2, shutdown/0]).
 
 :- use_module(library(aggregates)).

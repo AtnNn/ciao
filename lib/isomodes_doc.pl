@@ -1,5 +1,5 @@
 
-:- use_package([assertions,metaprops]).
+:- use_package([assertions]).
 :- comment(nodoc,assertions).
 % does not work:
 %:- comment(nodoc,metaprops).
@@ -24,6 +24,9 @@
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+292,2004/02/16,14:52*52+'CET'), "Taken out use of
+   metaprops. (Daniel Cabeza Gras)").
 
 :- comment(version(1*3+112,1999/11/23,01:08*50+'MET'), "Adapted to
    new, simpler doc possible with lpdoc-1.9p22.  (Manuel

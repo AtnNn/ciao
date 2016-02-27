@@ -18,7 +18,7 @@
  	    debug_goal/3
 	],
         [
-            assertions,regtypes,metaprops,isomodes
+            assertions,regtypes,isomodes
         ]).
 
 %% NOTE: if you change the output format of messages you 
@@ -36,13 +36,18 @@
 
 :- comment(title,"Printing status and error messages").
 
+:- comment(author,"The CLIP Group").
+
 :- comment(module,"This is a very simple library for printing status
      and error messages to the console.").
 
-:- comment(nodoc,metaprops).
-
 :- comment(bug, "Debug message switching should really be done with an
    expansion, for performance.").
+
+:- comment(doinclude,location/1).
+:- regtype location/1 # "Identifies a program source line.".
+
+location(loc(File,L1,L2)):- atm(File), int(L1), int(L2).
 
 %% ---------------------------------------------------------------------------
 
@@ -66,8 +71,7 @@ error_message(Message,Module) :-
 error_message(Message,A,Module) :-
 	compose("ERROR",Module,Message,A).
 
-:- pred error_message(Lc,Text,ArgList) 
-   : regtype(^loc(atm,int,int)) * format_control * list 
+:- pred error_message(Lc,Text,ArgList) : location * format_control * list 
    # "The text provided in @var{Text} is printed as an ERROR message,
      using the arguments in @var{ArgList} to interpret any
      variable-related formatting commands embedded in @var{Text}, and
@@ -107,8 +111,7 @@ warning_message(Message,Module) :-
 warning_message(Message,A,Module) :-
 	compose("WARNING",Module,Message,A).
 
-:- pred warning_message(Lc,Text,ArgList) 
-   : regtype(^loc(atm,int,int)) * format_control * list 
+:- pred warning_message(Lc,Text,ArgList) : location * format_control * list 
 
    # "The text provided in @var{Text} is printed as a WARNING message,
      using the arguments in @var{ArgList} to interpret any
@@ -149,8 +152,7 @@ note_message(Message,Module) :-
 note_message(Message,A,Module) :-
 	compose("NOTE",Module,Message,A).
 
-:- pred note_message(Lc,Text,ArgList) 
-   : regtype(^loc(atm,int,int)) * format_control * list 
+:- pred note_message(Lc,Text,ArgList) : location * format_control * list 
 
    # "The text provided in @var{Text} is printed as a NOTE, using the
      arguments in @var{ArgList} to interpret any variable-related
@@ -339,12 +341,21 @@ simplify_module(Module,Module).
 compose(Type,Module,File,LB,LE,Mess,Args) :-
 	append("{In ~w~n~s (~q): (lns ~w-~w) ",Mess,T1),
 	append(T1,"~n}~n",CMess),
+%	append("~w: ~w-~w: ~s: (~q): ",Mess,T1),
+%	append(T1,"~n",CMess),
 	prolog_flag(write_strings, Old, on),
+%	format(user_error,CMess,[File,LB,LE,Type,Module|Args]),
 	format(user_error,CMess,[File,Type,Module,LB,LE|Args]),
 	set_prolog_flag(write_strings, Old).
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+282,2004/02/13,15:20*28+'CET'), "Taken out
+   metaprops.  (Francisco Bueno Carrillo)").
+
+:- comment(version(1*9+249,2003/12/30,22:00*50+'CET'), "Added comment
+   author.  (Edison Mera)").
 
 :- comment(version(1*3+108,1999/11/18,13:48*03+'MET'), "Imported
    @lib{regtypes} package. Still using @tt{^}, though. (Manuel

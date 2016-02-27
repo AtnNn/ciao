@@ -85,8 +85,7 @@
 :- comment(doinclude,module/2).
 :- true decl module(Name, Exports) : modulename * list(predname)
         # "Same as directive @decl{module/3}, with an implicit package
-          @tt{iso}, which enables to include @concept{ISO-Prolog}
-          compatible code (compatibility not 100\% yet).".
+          @tt{default}.".
 
 :- comment(doinclude,export/1).
 :- true decl export(Pred) : predname
@@ -205,4 +204,10 @@ metaspec(M) :- struct(M).
 
 %-----------------------------------------------------------------------------
 
+:- comment(version(1*9+28,2002/11/20,14:03*05+'CET'), "Deleted the
+   dummy @tt{main.}: it prevents proper documentation from being
+   generated!  (Manuel Hermenegildo)").
+
+:- comment(version(1*7+168,2002/01/03,17:45*02+'CET'), "Added dummy
+   main/0 to avoid documentation complaints.  (MCL)").
 

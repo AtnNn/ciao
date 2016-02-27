@@ -3,6 +3,7 @@
 int start_of_savedump = 0;                    /* Must be the first symbol */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -283,6 +284,15 @@ int wam(Arg, worker)
   /* FAILING */
 
  fail:
+#if defined(DEBUG)
+  if (debug_choicepoints){
+  fprintf(stderr, "Failing: node = %x, next_node = %x, conc. node = %x\n",   
+         (int)w->node, (int)w->next_node, (int)TopConcChpt);
+  if ((w->misc->top_conc_chpt < w->node) &&
+      (w->misc->top_conc_chpt < w->next_node))
+    fprintf(stderr, "********** what happened here?\n");
+  }
+#endif
   Heap_Warn_Soft = Int_Heap_Warn;
   SetB(w->node);
   if (TrailYounger(pt2=w->trail_top,t1=(TAGGED)TagToPointer(B->trail_top))) {
@@ -296,6 +306,10 @@ int wam(Arg, worker)
 
   if ((P = (INSN *)w->next_alt) == NULL) {           /* deep backtracking */
 
+#if defined(DEBUG)
+    if (debug_choicepoints)
+      fprintf(stderr, "deep backtracking, node = %x\n", (int)w->node);
+#endif
                                                   /* 7-8 contiguous moves */
     P = (INSN *)B->next_alt;
     w->frame = B->frame;
@@ -334,10 +348,14 @@ int wam(Arg, worker)
 
       S = (TAGGED *)w->next_node;
       i = OffsetToArity(i) - 1;
+#if defined(DEBUG)
+    if (debug_choicepoints)
+      fprintf(stderr, "Reloading %d words from node %x\n", 
+              i, (int)w->node);
+#endif
       while(i >= 0)
         wt[i--] = ChoiceNext(S);
     }
-
   }
 
   if ((w->next_alt = ((struct try_node *)P)->next)==NULL) {
@@ -449,7 +467,13 @@ int wam(Arg, worker)
 #if defined(DEBUG)
         printf("wam() detected worker expanded by C predicate\n");
 #endif
-        Arg = Expanded_Worker;
+	if (worker == NULL) {
+	  printf("bug: invalid WAM expansion\n"); /* JFKK this is temp
+                                                     sometimes wam is called
+                                                     without gd */
+	  abort();
+	}
+        worker->worker_registers = Arg = Expanded_Worker;
         Expanded_Worker = NULL;
     }
     if (i == FALSE)                                           /* i == 0 */
@@ -487,11 +511,18 @@ int wam(Arg, worker)
     PredTrace("B",Func);
     StoreH;
     if (!compile_term(Arg, &new_worker)) goto fail;
-    if (new_worker) Arg = new_worker;
+    if (new_worker) {
+      if (worker == NULL) {
+	printf("bug: invalid WAM expansion\n"); /* JFKK this is temp
+						   sometimes wam is called
+						   without gd */
+	abort();
+      }
+      worker->worker_registers = Arg = new_worker;
 #if defined(DEBUG)
-    if (new_worker)
       fprintf(stderr, "Reallocation of wrb detected in wam()\n");
 #endif
+    }
     goto proceed_r;
     
   case BUILTIN_INSTANCE:
@@ -629,10 +660,6 @@ int wam(Arg, worker)
     wam_exit_code = GetSmall(t0);
     w->next_node = InitialNode;
     DOCUT;
-#if defined(THREADS)
-    if (ChoiceYounger(TopConcChpt, w->next_node))
-      remove_link_chains(&TopConcChpt, w->next_node);
-#endif
     goto fail;
     
   case SPYPOINT:
@@ -710,6 +737,14 @@ int wam(Arg, worker)
     B->trail_top = w->trail_top;
     SaveGtop(B,w->global_top);
     NewShadowregs(w->global_top);
+#if defined(DEBUG)
+    if (debug_choicepoints)
+      fprintf(stderr, "WAM created choicepoint (r), node = %x\n", 
+                       (int)w->node);
+#endif
+    /* segfault patch -- jf */
+    if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
+      choice_overflow(Arg, CHOICEPAD);
   }
 
  ReadMode:			/* Here with H in memory. */
@@ -775,6 +810,11 @@ int wam(Arg, worker)
         if (i>ArityToOffset(0)) {
           i = OffsetToArity(i);
           SetB(w->next_node);
+#if defined(DEBUG)
+          if (debug_choicepoints)
+          fprintf(stderr, "Storing %d registers (r) in node %x\n", 
+                    i, (int)w->next_node);
+#endif
           do
             ChoicePush(pt1,(w->term-1)[i]);
           while (--i);
@@ -820,6 +860,14 @@ int wam(Arg, worker)
     B->trail_top = w->trail_top;
     SaveGtop(B,H);
     NewShadowregs(H);
+#if defined(DEBUG)
+    if (debug_choicepoints)
+      fprintf(stderr, "WAM created choicepoint (w), node = %x\n",
+                      (int)w->node);
+#endif    
+    /* segfault patch -- jf */
+    if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
+      choice_overflow(Arg, CHOICEPAD);
   }
 
  WriteMode:			/* Here with H in register. */
@@ -881,6 +929,11 @@ int wam(Arg, worker)
       if (i>ArityToOffset(0)){
         i = OffsetToArity(i);
         SetB(w->next_node);
+#if defined(DEBUG)
+       if (debug_choicepoints)
+          fprintf(stderr, "Storing %d registers (w) in node %x\n", 
+                    i, (int)w->next_node);
+#endif
         do
           ChoicePush(pt1,(w->term-1)[i]);
         while (--i);

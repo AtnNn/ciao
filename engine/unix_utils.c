@@ -7,12 +7,14 @@
 # include <netdb.h>
 # include <sys/stat.h>
 # include <sys/param.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 # include <unistd.h>
 # include <stdlib.h>
 # include <dirent.h>
 # include <pwd.h>
 # include <ctype.h>
-
+# include <errno.h>
 
 #include "datadefs.h"
 #include "support.h"
@@ -49,7 +51,7 @@ int readlink(char *path, char *buf, int bufsiz);
 #define DriveSelector(path) \
         (isalpha(path[0]) && path[1]==':' && \
          (path[2]=='/' || path[2]=='\\' || path[2]==(char)0))
-#endif   
+#endif
 
 char cwd[MAXPATHLEN+1];/* Should be private --- each thread may cd freely! */
 
@@ -68,7 +70,7 @@ BOOL expand_file_name(name, target)
   if (!name[0]) {
     target[0] = (char)0;
     return TRUE;
-  }    
+  }
 
 #if defined(Win32)
   src = name;
@@ -187,7 +189,7 @@ BOOL expand_file_name(name, target)
       }
     }
   }
-  
+
  st1: /* inside file name component */
   switch (*dest++ = *src++) {
     case 0:
@@ -260,7 +262,7 @@ BOOL prolog_unix_cd(Arg)
   if (!IsAtom(X(1))){
     BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(1),2)
   }
-  
+
   if (!expand_file_name(GetString(X(1)),pathBuf))
     return FALSE;
 
@@ -273,21 +275,54 @@ BOOL prolog_unix_cd(Arg)
   return TRUE;
 }
 
+
+// This tries to execute 'command' in $SHELL.  If $SHELL is not set, then 
+// shell_available is set to FALSE, else it is set to TRUE.  If 
+// command == NULL no command is executed (the shell is just called).
+// Otherwise, command is passed to $SHELL, and the return code of the
+// execution is returned as the result of evaluating the function.  This is
+// intended to be wrapper both for shell/0, shell/1, shell/2, and, maybe,
+// system/1.
+
+int ciao_shell_start(const char *command)
+{
+  char *shellname =  getenv("SHELL");
+  pid_t pid;
+  int retcode;
+
+  if (shellname == NULL) {  // This means an error if no SHELL
+      MAJOR_FAULT("No SHELL environment variable defined");
+  } else {
+    if ((pid = fork()) == 0) {  // Child
+      if (command == NULL) // Just start the shell
+        execlp(shellname, shellname, NULL);
+      else                 // -c is standard to "execute this command"
+        execlp(shellname, shellname, "-c", command, NULL);
+      EXIT("Execution of $SHELL failed");
+    } else if (pid < 0) { // Could not fork
+      MAJOR_FAULT("Could not start process for new shell $SHELL");
+    } else {              // Parent
+      waitpid(pid, &retcode, 0);
+     }
+  }
+    return retcode;
+}
+
+
 BOOL prolog_unix_shell0(Arg)
      Argdecl;
 {
-  char cbuf[MAXPATHLEN+10];
+  int retcode;
 
-  strcpy(cbuf,"exec ");
-  strcat(cbuf,getenv("SHELL"));
-  return !system(cbuf);
-}
+  retcode = ciao_shell_start(NULL);
+  return (retcode == 0);    
+}    
 
 BOOL prolog_unix_shell2(Arg)
      Argdecl;
 {
-  REGISTER char *p1, *p2;
   REGISTER int system_result;
+
 #if defined(USE_DYNAMIC_ATOM_SIZE)
   char *cbuf = (char *)checkalloc(2*MAXATOM+MAXPATHLEN+20);
 #else
@@ -299,19 +334,13 @@ BOOL prolog_unix_shell2(Arg)
   if (!TagIsATM(X(0)))
     ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
-  strcpy(cbuf,"exec ");
-  strcat(cbuf,getenv("SHELL"));
-  strcat(cbuf," -c ");
-  p1 = cbuf+strlen(cbuf);
-  for(p2=GetString(X(0)); *p2;)
-    *p1++ = '\\',
-    *p1++ = *p2++;
-  *p1++ = 0;
-  system_result = system(cbuf);
+  system_result = ciao_shell_start(GetString(X(0)));
+
 #if defined(USE_DYNAMIC_ATOM_SIZE)
-  checkdealloc((TAGGED *)cbuf, 2*MAXATOM+MAXPATHLEN+20);
+    checkdealloc((TAGGED *)cbuf, 2*MAXATOM+MAXPATHLEN+20);
 #endif
-  return cunify(Arg,MakeSmall(system_result),X(1));
+
+    return cunify(Arg,MakeSmall(system_result),X(1));
 }
 
 
@@ -326,8 +355,8 @@ BOOL prolog_unix_system2(Arg)
   return cunify(Arg,MakeSmall(system(GetString(X(0)))),X(1));
 }
 
-/* Return the arguments with which the current prolog was invoked */
 
+/* Return the arguments with which the current prolog was invoked */
 
 BOOL prolog_unix_argv(Arg)
      Argdecl;
@@ -335,23 +364,12 @@ BOOL prolog_unix_argv(Arg)
   REGISTER TAGGED list = atom_nil;
   REGISTER char **p1 = prolog_argv;
   REGISTER int i;
-  
+
   for (i=prolog_argc; i>1;) {
       MakeLST(list,MakeString(p1[--i]),list);
   }
   return cunify(Arg,list,X(0));
 }
-
-/* //) ( (+
-BOOL prolog_unix_exit(Arg)
-     Argdecl;
-{
-  DEREF(X(0),X(0));
-
-  exit(GetSmall(X(0)));
-  return TRUE;
-}
-*/
 
 BOOL prolog_unix_mktemp(Arg)
      Argdecl;
@@ -359,7 +377,7 @@ BOOL prolog_unix_mktemp(Arg)
   char template[STATICMAXATOM];
 
   extern char *mktemp PROTO((char *));
-  
+
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
@@ -384,7 +402,7 @@ BOOL prolog_unix_access(Arg)
   DEREF(X(1),X(1));
 
   if (!TagIsSmall(X(1)) || (mode = GetSmall(X(1))) & ~255) /* Not a byte */
-    ERROR_IN_ARG(X(1),1,BYTE)
+    ERROR_IN_ARG(X(1),2,BYTE)
 
   if (!expand_file_name(GetString(X(0)),pathBuf))
     return FALSE;
@@ -496,7 +514,7 @@ BOOL prolog_file_properties(Arg)
     if (X(3)!=atom_nil) {
       /* Cannot be Unify_constant because it is a large integer */
       if (!cunify(Arg,MakeInteger(Arg,statbuf.st_mtime),X(3)))
-        return FALSE;  
+        return FALSE;
     }
 
     if (X(4)!=atom_nil) {
@@ -507,7 +525,7 @@ BOOL prolog_file_properties(Arg)
       Unify_constant(MakeSmall(statbuf.st_size), X(5));
     }
   }
-  
+
   return TRUE;
 }
 
@@ -542,7 +560,7 @@ BOOL prolog_unix_umask(Arg)
      Argdecl;
 {
   int i;
-  
+
   DEREF(X(1),X(1));
 
   if (IsVar(X(1))) {
@@ -585,7 +603,7 @@ BOOL prolog_unix_delete(Arg)
 BOOL prolog_unix_rename(Arg)
      Argdecl;
 {
-  char 
+  char
     orig_name[MAXPATHLEN+1],
     new_name[MAXPATHLEN+1];
 
@@ -674,36 +692,36 @@ BOOL prolog_current_host(Arg)
      Argdecl;
 {
   char hostname[MAXHOSTNAMELEN*4];
-  
+
   if (gethostname(hostname, sizeof(hostname)) < 0)
     SERIOUS_FAULT("current_host/1 in gethostname");
-  
+
   if (!strchr(hostname, '.')) {
     struct hostent *host_entry;
     char **aliases;
-    
+
     /* If the name is not qualified, then pass the name through the name
        server to try get it fully qualified */
     if ((host_entry = gethostbyname(hostname)) == NULL)
-      SERIOUS_FAULT("current_host/1 in gethostbyname"); 
+      SERIOUS_FAULT("current_host/1 in gethostbyname");
     strcpy(hostname, host_entry->h_name);
-    
+
     /* If h_name is not qualified, try one of the aliases */
-    
+
     if ((aliases=host_entry->h_aliases)) {
       while (!strchr(hostname, '.') && *aliases)
         strcpy(hostname, *aliases++);
       if (!strchr(hostname, '.'))
         strcpy(hostname, host_entry->h_name);
     }
-    
+
 #if HAS_NIS
     /* If still unqualified, then get the domain name explicitly.
        This code is NIS specific, and causes problems on some machines.
        Apollos don't have getdomainname, for example. */
     if (!strchr(hostname, '.')) {
       char domain[MAXHOSTNAMELEN*3];
-      
+
       if (getdomainname(domain, sizeof(domain)) < 0)
         SERIOUS_FAULT("current_host/1 in getdomainname");
       strcat(hostname, ".");
@@ -728,7 +746,7 @@ BOOL prolog_getenvstr(Arg)
 
   DEREF(X(0),X(0));
   DEREF(X(1),X(1));
-  
+
   if (!TagIsATM(X(0)))
     BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1)
 
@@ -750,6 +768,29 @@ BOOL prolog_getenvstr(Arg)
 
 /* setenvstr(+Name,+Value) */
 
+#if defined(Solaris)
+/* emulate setenv in terms of putenv (from rpm 2.0.9) */
+int setenv(const char *name, const char *value, int overwrite)
+{
+  int len;
+  if (!overwrite && getenv(name)) return 0;
+  len = strlen(name) + strlen(value) + 2;
+  if (len < 255) {
+    char buf[256];
+    strcpy(buf, name);
+    strcat(buf, "=");
+    strcat(buf, value);
+    return putenv(buf);
+  } else {
+    char *buf = malloc(len);
+    strcpy(buf, name);
+    strcat(buf, "=");
+    strcat(buf, value);
+    return putenv(buf);
+  }
+}
+#endif
+
 BOOL prolog_setenvstr(Arg)
      Argdecl;
 {
@@ -763,9 +804,9 @@ BOOL prolog_setenvstr(Arg)
 
   DEREF(X(0),X(0));
   DEREF(X(1),X(1));
-  
+
  /* Minimal check: variable name as atom, value as string (why this
-    difference?) */ 
+    difference?) */
 
   if (!TagIsATM(X(0)))
     BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1)
@@ -780,7 +821,7 @@ BOOL prolog_setenvstr(Arg)
 
   while (TagIsLST(value)){
     DerefCar(car, value);
-    if (!TagIsSmall(car) || 
+    if (!TagIsSmall(car) ||
         ((carvalue = GetSmall(car)) > 255) ||
         carvalue < 0){
       BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2);
@@ -789,7 +830,7 @@ BOOL prolog_setenvstr(Arg)
     if (i == len){ /* Length exceeded! */
       len = len * 2;
       s = (char *)realloc(s, len);
-    } 
+    }
     DerefCdr(value, value);
   }
 
@@ -810,7 +851,7 @@ BOOL prolog_pause(Arg)
 {
   TAGGED x0;
   long time;
-  
+
   DEREF(x0, X(0));
   if (!TagIsSmall(x0)){
     BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(0),1)
@@ -825,8 +866,8 @@ BOOL prolog_pause(Arg)
 
 
 /*
-  get_pid(?PID): PID is unified with  the process identificator number 
-  of this process 
+  get_pid(?PID): PID is unified with  the process identificator number
+  of this process
 */
 
 BOOL prolog_getpid(Arg)
@@ -888,7 +929,7 @@ BOOL prolog_find_file(Arg)
   opt = GetString(X(2));
   DEREF(X(3),X(3));
   suffix = GetString(X(3));
-  
+
   if (path[0] == '/' || path[0] == '$' || path[0] == '~'
 #if defined(Win32)
       || path[0] == '\\' || DriveSelector(path)
@@ -916,7 +957,7 @@ BOOL prolog_find_file(Arg)
   t_opt = t_pri = 0;
 
  searchPath:
-  
+
   if (*opt) {
     strcpy(cp,opt);
     bp = cp + strlen(cp);
@@ -927,7 +968,7 @@ BOOL prolog_find_file(Arg)
         t_opt = file_status.st_mtime;    /* found path+opt+suffix */
     }
   }
-  
+
   bp = cp;
 
   if (*suffix) {
@@ -952,7 +993,7 @@ BOOL prolog_find_file(Arg)
   }
 
   *bp = 0;
-  
+
   if(!access(pathBuf,F_OK)){
     stat(pathBuf, &file_status);
     if (S_ISDIR(file_status.st_mode)) {    /* directory */
@@ -986,7 +1027,7 @@ BOOL prolog_find_file(Arg)
   *bp = 0;
 
   Unify_constant(MakeString(pathBuf),X(7));
-  
+
   free(relBuf);
   return TRUE;
 }
@@ -1037,11 +1078,11 @@ BOOL prolog_version(Arg)
  * exec(+Process, -StdIn, -StdOut, -StdErr): connect to an external process
  */
 
-#define Read  0 
-#define Write 1 
+#define Read  0
+#define Write 1
 
-#define STDIN  0 
-#define STDOUT 1 
+#define STDIN  0
+#define STDOUT 1
 #define STDERR 2
 
 
@@ -1050,12 +1091,12 @@ BOOL prolog_exec(Arg)
 {
   char *command;
   BOOL dup_stderr;
-  int 
+  int
     pipe_in[2],                                   /* Child standard input */
     pipe_out[2],                                 /* Child standard output */
     pipe_err[2];                                  /* Child standard error */
 
-  struct stream_node 
+  struct stream_node
     *str_in,                       /* Connection to child standard input  */
     *str_out,                     /* Connection to child standard output  */
     *str_err                       /* Connection to child standard error  */
@@ -1089,9 +1130,9 @@ BOOL prolog_exec(Arg)
 
   if (pid == -1) {
     SERIOUS_FAULT("exec/4 could not fork() new process");
-  } else 
+  } else
     if (pid == 0) {                                              /* Child */
-      close(pipe_in[Write]);      
+      close(pipe_in[Write]);
       dup2(pipe_in[Read],STDIN);
       close(pipe_out[Read]);
       dup2(pipe_out[Write],STDOUT);
@@ -1099,9 +1140,13 @@ BOOL prolog_exec(Arg)
         close(pipe_err[Read]);
         dup2(pipe_err[Write],STDERR);
       }
-      if (execlp("sh", "sh", "-c", command, NULL) < 0){
-        MAJOR_FAULT("exec(): could not start process");
-      } else return TRUE;
+
+ // If there is any error while exec'ing, we have to give an error and then
+ // abort completely. Unfortunately, if we have redirected the standard
+ // error output, the error message will be lost!
+
+      if (execlp(command, command, NULL) < 0)
+        EXIT("Execution of command failed!");   // Should never return!
     } else {                                                    /* Parent */
       close(pipe_in[Read]);
       str_in  = new_stream(X(0), "w", fdopen(pipe_in[Write], "w"));
@@ -1113,9 +1158,9 @@ BOOL prolog_exec(Arg)
       }
       return  cunify(Arg, ptr_to_stream(Arg, str_in), X(1))
         &&    cunify(Arg, ptr_to_stream(Arg, str_out), X(2))
-        &&   (dup_stderr ? 
+        &&   (dup_stderr ?
               cunify(Arg, ptr_to_stream(Arg, str_err), X(3)) :
-              TRUE); 
+              TRUE);
     }
 }
 

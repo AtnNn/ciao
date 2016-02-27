@@ -37,15 +37,22 @@
           This directive must appear the first in the file, or just
           after a @decl{module/3} declaration.  A file with no module
           declaration, in the absence of this directive, uses an
-          implicit package @tt{iso}, which enables to include
-          @concept{ISO-Prolog} compatible code (compatibility not 100\%
-          yet).").
+          implicit package @tt{default} (see @ref{Other predicates and
+          features defined by default}).").
 
 :- decl use_package(Package) : sourcename.
 :- decl use_package(Package) : list(sourcename).
 
 %------------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+30,2002/11/20,14:15*12+'CET'), "Took out the
+   unnecessary @tt{main.} fact, used to get around a temporary problem
+   with the documenter.  (Manuel Hermenegildo)").
+
+:- comment(version(1*7+166,2002/01/03,17:42*31+'CET'), "Added 'module'
+   comment and a dummy main/0 in order to avoid documentation
+   complaints.  (MCL)").
 
 :- comment(version(1*3+107,1999/11/18,13:06*14+'MET'), "Added to
    version maintenance.  (Manuel Hermenegildo)").

@@ -1,56 +1,223 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART VIII - Interfaces to other languages and systems</TITLE>
+<TITLE>The Ciao Prolog System               - Constraint programming over reals</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC469" HREF="ciao_toc.html#TOC469">PART VIII - Interfaces to other languages and systems</A></H1>
+<H1><A NAME="SEC462" HREF="ciao_toc.html#TOC462">Constraint programming over reals</A></H1>
+<P>
+<A NAME="IDX5426"></A>
+
 
 <P>
-The following interfaces to/from Ciao Prolog are documented in this part: 
+<STRONG>Author(s):</STRONG> Christian Holzbaur, Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#227 (2003/12/22, 16:55:52 CET)
+
+
+<P>
+ 
+
+
+<P>
+<STRONG>Note:</STRONG> This package is currently being adapted to the new characteristics of the Ciao module system. This new version now works right now to some extent, but it under further development at the moment. Use with (lots of) caution. 
+
+
 
 <UL>
+<LI><A HREF="ciao_112.html#SEC463">Usage and interface (clpr)</A>
+<LI><A HREF="ciao_112.html#SEC464">Other information (clpr)</A>
+<LI><A HREF="ciao_112.html#SEC466">Known bugs and planned improvements (clpr)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC463" HREF="ciao_toc.html#TOC463">Usage and interface (<CODE>clpr</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_package(clpr).</CODE>
+
+or
+
+<CODE>:- module(...,...,[clpr]).</CODE>
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Other information (<CODE>clpr</CODE>)</A></H2>
+
+<P>
+ 
+
+
+
+<UL>
+<LI><A HREF="ciao_112.html#SEC465">Some CLP(R) examples</A>
+</UL>
+
+
+
+<H3><A NAME="SEC465" HREF="ciao_toc.html#TOC465">Some CLP(R) examples</A></H3>
+
+<P>
+(Other examples can be found in the source and library directories.) 
+
+
+
+<UL>
+<LI>'Reversible' Fibonacci (clpr):
+
+</UL>
+
+<P>
+
+
+
+<PRE>
+:- module(_, [fib/2], []).
+:- use_package(clpr).
+
+fib(X,Y):- X .=. 0, Y .=. 0.
+fib(X,Y):- X .=. 1, Y .=. 1.
+fib(N,F) :-
+        N .&#62;. 1,
+        N1 .=. N - 1,
+        N2 .=. N - 2,
+        fib(N1, F1),
+        fib(N2, F2),
+        F .=. F1+F2.
+
+</PRE>
+
+
+<UL>
+<LI>Dirichlet problem for Laplace's equation (clpr):
+
+</UL>
+
+<P>
+
+
+
+<PRE>
+
+%
+% Solve the Dirichlet problem for Laplace's equation using
+% Leibman's five-point finit-differenc approximation. 
+% The goal ?- go1 is a normal example, while the goal ?- go2
+% shows output constraints for a small region where the boundary conditions
+% are not specified.
+%
+:- use_package(clpq).
+:- use_module(library(format)).
+
+laplace([_, _]).
+laplace([H1, H2, H3|T]):-
+        laplace_vec(H1, H2, H3), 
+        laplace([H2, H3|T]).
+
+laplace_vec([_, _], [_, _], [_, _]).
+laplace_vec([_TL, T, TR|T1], [ML, M, MR|T2], [_BL, B, BR|T3]):-
+        B + T + ML + MR - 4 * M .=. 0, 
+        laplace_vec([T, TR|T1], [M, MR|T2], [B, BR|T3]).
+
+printmat([]).
+printmat([H|T]):-
+        printvec(H), 
+        printmat(T).
+
+printvec([]):- nl.
+printvec([H|T]):-
+        printrat(H), 
+        printvec(T).
+
+printrat(rat(N,D)) :- !,
+        X is N/D,
+        format(" ~2f",X).
+printrat(N) :-
+        X is N*100,
+        format(" ~2d",X).
+
+go1:-
+        X =  [
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, _, _, _, _, _, _, _, _, _, 100], 
+    [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+    ], 
+        laplace(X),
+        printmat(X).
+
+% Answer:
+% 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
+% 100.00 51.11 32.52 24.56 21.11 20.12 21.11 24.56 32.52 51.11 100.00
+% 100.00 71.91 54.41 44.63 39.74 38.26 39.74 44.63 54.41 71.91 100.00
+% 100.00 82.12 68.59 59.80 54.97 53.44 54.97 59.80 68.59 82.12 100.00
+% 100.00 87.97 78.03 71.00 66.90 65.56 66.90 71.00 78.03 87.97 100.00
+% 100.00 91.71 84.58 79.28 76.07 75.00 76.07 79.28 84.58 91.71 100.00
+% 100.00 94.30 89.29 85.47 83.10 82.30 83.10 85.47 89.29 94.30 100.00
+% 100.00 96.20 92.82 90.20 88.56 88.00 88.56 90.20 92.82 96.20 100.00
+% 100.00 97.67 95.59 93.96 92.93 92.58 92.93 93.96 95.59 97.67 100.00
+% 100.00 98.89 97.90 97.12 96.63 96.46 96.63 97.12 97.90 98.89 100.00
+% 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00 100.00
+
+go2([B31, M32, M33, B34, B42, B43, B12, B13, B21, M22, M23, B24]) :-
+        laplace([
+            [_B11, B12, B13, _B14], 
+            [B21, M22, M23, B24], 
+            [B31, M32, M33, B34], 
+            [_B41, B42, B43, _B44]
+    ]).
+              
+
+% Answer:
+% 
+% B34.=. -4*M22+B12+B21+4*M33-B43,
+% M23.=.4*M22-M32-B12-B21,
+% B31.=. -M22+4*M32-M33-B42,
+% B24.=.15*M22-4*M32-4*B12-4*B21-M33-B13 ? 
+
+</PRE>
+
+
+
+<H2><A NAME="SEC466" HREF="ciao_toc.html#TOC466">Known bugs and planned improvements (<CODE>clpr</CODE>)</A></H2>
+
+
+<UL>
+
 <LI>
 
-<A NAME="IDX4792"></A>
-External interface (e.g., to C). 
-<LI>
-
-<A NAME="IDX4793"></A>
-Socket interface. 
-<LI>
-
-<A NAME="IDX4794"></A>
-Tcl/tk interface. 
-<LI>
-
-<A NAME="IDX4795"></A>
-Web interface (http, html, xml, etc.); 
-<LI>
-
-<A NAME="IDX4796"></A>
-Persistent predicate databases (interface between the Prolog internal database and the external file system). 
-<LI>
-
-<A NAME="IDX4797"></A>
-SQL-like database interface (interface between the Prolog internal database and external SQL/ODBC systems). 
-<LI>
-
-<A NAME="IDX4798"></A>
-Java interface. 
-<LI>
-
-<A NAME="IDX4799"></A>
-Calling emacs from Prolog. 
+clp(Q) and clp(R) cannot be used simultaneously in the same program, or even within the same toplevel session.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

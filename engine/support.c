@@ -52,6 +52,17 @@ void failc(mesg)
   }
 }
 
+/*-----------------------------------------------------------*/
+
+/* segfault patch -- jf */
+void trail_push_check(Argdecl, TAGGED x) {
+  TAGGED *tr = w->trail_top;
+
+  TrailPush(tr,x);
+  w->trail_top = tr;
+  if (ChoiceYounger(w->node,TrailOffset(tr,CHOICEPAD)))
+    choice_overflow(Arg,CHOICEPAD);
+}
 
 /*------------------------------------------------------------*/
 
@@ -514,6 +525,7 @@ struct stream_node *new_stream(streamname, streammode, streamfile)
   s->streamname = streamname;
   s->streammode = streammode[0];
   s->pending_char = -100;
+  s->socket_eof = FALSE;
   update_stream(s,streamfile);
 
   return insert_new_stream(s);

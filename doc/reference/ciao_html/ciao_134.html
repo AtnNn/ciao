@@ -1,29 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - poly_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - entry_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC555" HREF="ciao_toc.html#TOC555">poly_class (library)</A></H1>
+<H1><A NAME="SEC566" HREF="ciao_toc.html#TOC566">entry_class (library)</A></H1>
 <P>
-<A NAME="IDX5545"></A>
+<A NAME="IDX6359"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Montserrat Urraca.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#127 (2003/12/4, 17:33:22 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_134.html#SEC556">Usage and interface (poly_class)</A>
-<LI><A HREF="ciao_134.html#SEC557">Documentation on exports (poly_class)</A>
+<LI><A HREF="ciao_134.html#SEC567">Usage and interface (entry_class)</A>
+<LI><A HREF="ciao_134.html#SEC568">Documentation on exports (entry_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC556" HREF="ciao_toc.html#TOC556">Usage and interface (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC567" HREF="ciao_toc.html#TOC567">Usage and interface (<CODE>entry_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(poly_class)).</CODE>
+<CODE>:- use_module(library(entry_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,10 +52,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5546"></A>
-<CODE>vertices/1</CODE>, 
-<A NAME="IDX5547"></A>
-<CODE>outline_color/1</CODE>.
+<A NAME="IDX6360"></A>
+<CODE>textvariable_entry/1</CODE>, 
+<A NAME="IDX6361"></A>
+<CODE>textvariablevalue_string/1</CODE>, 
+<A NAME="IDX6362"></A>
+<CODE>textvariablevalue_number/1</CODE>, 
+<A NAME="IDX6363"></A>
+<CODE>justify_entry/1</CODE>.
 
 </UL>
 
@@ -54,10 +70,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5548"></A>
+<A NAME="IDX6364"></A>
 <CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX5549"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX6365"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6366"></A>
+<CODE>tcltk/examples/tk_test_aux</CODE>, 
+<A NAME="IDX6367"></A>
+<CODE>tcltk/tcltk</CODE>.
 
 </UL>
 
@@ -67,76 +87,144 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>,
 
 
 
-<H2><A NAME="SEC557" HREF="ciao_toc.html#TOC557">Documentation on exports (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC568" HREF="ciao_toc.html#TOC568">Documentation on exports (<CODE>entry_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5550"></A>
-<A NAME="IDX5551"></A>
+<A NAME="IDX6368"></A>
+<A NAME="IDX6369"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
-<DD><A NAME="IDX5552"></A>
+<DT><span class="define">PREDICATE:</span> <B>textvariable_entry/1:</B>
+<DD><A NAME="IDX6370"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>textvariable_entry(+Variable)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The arguments of the list specify the coordinates for three or more points that define a closed polygon. The first and last points may be the same. After the coordinates there may be any number of option-value pairs, each of which sets one of the configu- ration options for the item.
+<LI><EM>Description:</EM> <CODE>Variable</CODE> specifies the name of the Tcl variable
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+Variable</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>textvariable_entry(-Variable)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the list of vertices of the polygon.
+<LI><EM>Description:</EM> Gets the name of the Tcl <CODE>Variable</CODE> associated to the entry
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>-Variable</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5553"></A>
-<A NAME="IDX5554"></A>
+<A NAME="IDX6371"></A>
+<A NAME="IDX6372"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
-<DD><A NAME="IDX5555"></A>
+<DT><span class="define">PREDICATE:</span> <B>textvariablevalue_string/1:</B>
+<DD><A NAME="IDX6373"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>textvariablevalue_string(+Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the polygon's outline. This option defaults to black.
+<LI><EM>Description:</EM> Specifies the <CODE>Value</CODE> of the Tcl variable associated to the entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Color</CODE> is currently instantiated to an atom.
+<CODE>+Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>textvariablevalue_string(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> is the value of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6374"></A>
+<A NAME="IDX6375"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>textvariablevalue_number/1:</B>
+<DD><A NAME="IDX6376"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>textvariablevalue_number(+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies the <CODE>Value</CODE> of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>textvariablevalue_number(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> is the value of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6377"></A>
+<A NAME="IDX6378"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>justify_entry/1:</B>
+<DD><A NAME="IDX6379"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>justify_entry(+How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text in the entry. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+How</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>justify_entry(-How)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets poly's outline <CODE>Color</CODE>.
+<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Color</CODE> is currently instantiated to an atom.
+<CODE>-How</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

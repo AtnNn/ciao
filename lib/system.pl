@@ -218,6 +218,18 @@ cd(Dir) :- working_directory(_, Dir).
    variable @tt{SHELL}. When the shell process terminates, control is
    returned to Prolog.".
 
+:- comment(bug, "@pred{shell/n} commands have a bug in Windows: if the
+   environment variable SHELL is instantiated to some Windows shell
+   implementation, then it is very possible that shell/{1,2} will not
+   work, as it is always called with the -c flag to start the user
+   command.  For example, COMMAND.COM @bf{might} need the flag /C -- but
+   there is no way to know a priori which command line option is
+   necessary for every shell!  It does not seems usual that Windows sets
+   the SHELL environment variable: if it is not set, we set it up at
+   startup time to point to the @tt{sh.exe} provided with Ciao, which is
+   able to start Windows aplications.  Therefore, @tt{?-
+   shell('command.com').} just works.").
+
 :- comment(shell(Command), "@var{Command} is executed in the shell
     specified by the environment variable @tt{SHELL}. It succeeds if
     the exit code is zero and fails otherwise.").
@@ -253,6 +265,12 @@ system(Path) :- system(Path, _Status).
 :- comment(exec(Command, StdIn, StdOut, StdErr), "Starts the process
 @var{Command} and returns the standart I/O streams of the process in
 @var{StdIn}, @var{StdOut}, and @var{StdErr}.").
+
+:- comment(bug,
+   "If @pred{exec/4} does not find the command to be executed, there is 
+    no visible error message: it is sent to a error output which has already 
+    been assigned to a different stream, disconnected from the one the 
+    user sees.").
 
 :- true pred exec(+atm, -stream, -stream, -stream).
 
@@ -496,21 +514,26 @@ chmod(Path, OldMode, NewMode) :-
 make_directory(D) :-
         make_directory(D,0o777).
 
-:- pred make_dirpath(+atm, +int).
+:- pred make_dirpath(+sourcename, +int).
 
 :- comment(make_dirpath(Path, Mode),
         "Creates the whole @var{Path} for a given directory with a given @var{Mode}. As an example, @tt{make_dirpath('/tmp/var/mydir/otherdir')}."). 
 
+% We should take care of correct instantiation modes, types, etc. here.
+% We are however delegating it to make_directory/2 and absolute_file_name/7
+% (called below).
 make_dirpath(Path, Mode) :-
-        atom_codes(Path, PathCodes),
-        (          % If relative, transform it into absolute
-            PathCodes = "/"||_ ->
-            AbsPathCodes = PathCodes
-        ;
-            working_directory(CurrentDir, CurrentDir),
-            atom_codes(CurrentDir, CurrentDirCodes),
-            append(CurrentDirCodes, "/"||PathCodes, AbsPathCodes)
-        ),
+	absolute_file_name(Path, '', '', '.', AbsolutePath, _, _),
+	atom_codes(AbsolutePath, AbsPathCodes),
+%         atom_codes(Path, PathCodes),
+%         (          % If relative, transform it into absolute
+%             PathCodes = "/"||_ ->
+%             AbsPathCodes = PathCodes
+%         ;
+%             working_directory(CurrentDir, CurrentDir),
+%             atom_codes(CurrentDir, CurrentDirCodes),
+%             append(CurrentDirCodes, "/"||PathCodes, AbsPathCodes)
+%         ),
         make_abs_dir(AbsPathCodes, '', Mode).
 % 
 % Making the intermediate directories: instead of cd'ing to
@@ -539,9 +562,9 @@ make_abs_dir(Path, IncPath, Mode):-
         ),
         make_abs_dir(RestPath, NewPath, Mode).
 
-% Collapse double slashes into only one (that is the Linux/Unix convention)
-decompose("//"||PathWOSlash, RestPath, Queue):- !, 
-        decompose("/"||PathWOSlash, RestPath, Queue).
+
+% decompose("//"||PathWOSlash, RestPath, Queue):- !, 
+%         decompose("/"||PathWOSlash, RestPath, Queue).
 decompose("/"||PathWOSlash, RestPath, "/"||Queue-TailQ):-
         decompose_aux(PathWOSlash, RestPath, Queue-TailQ).
 decompose_aux("", "", Q-Q).
@@ -584,10 +607,16 @@ decompose_aux([P|Ps], RestP, [P|RestQ]-TailQ):-
 make_dirpath(Path) :-
         make_dirpath(Path, 0o777) .
 
-:- comment(cyg2win(+CygWinPath, ?WindowsPath, +SpawSlash), "Converts a
-path in the CygWin style to a Windows-style path, rewriting the driver
-part.  If @var{SwapSlash} is @tt{swap}, slashes are converted in to
-backslash.  If it is @tt{noswap}, they are preserved.").
+:- pred cyg2win(CygWinPath, WindowsPath, SwapSlash) : 
+        string * var * atom => string * string * atom
+#  "Converts a path in the CygWin style to a Windows-style path,
+    rewriting the driver part.  If @var{SwapSlash} is @tt{swap},
+    slashes are converted in to backslash.  If it is @tt{noswap}, they
+    are preserved.".
+
+:- comment(bug,
+   "If the arguments to cyg2win/3 are not strings, strange results
+    appear, as a very mild type checking is performed.").
 
 cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':| Path],Swap) :- !,
 						             % New Drive notat.
@@ -617,6 +646,17 @@ do_swapslash([C|D],[C|ND]) :-
 
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+331,2004/03/26,17:39*47+'CET'), "Errors in
+   exec() caught; processes killed in this case.  This affects shell/n
+   and exec/{3,4} (MCL)").
+
+:- comment(version(1*9+326,2004/03/16,16:18*08+'CET'), "Corrected
+   make_dirpath/2 to make directories taking into account several
+   useful UNIX conventions (e.g, ~ to design home directories).  Made
+   through a call to absolute_file_name/7, so everything supported by
+   the latter should also be by the former.  (Jesus Correas
+   Fernandez & Manuel Carro)").
 
 :- comment(version(1*7+211,2002/04/30,20:40*19+'CEST'), "setenvstr/2
         added (Jesus needed it).  (MCL)").

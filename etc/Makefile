@@ -1,4 +1,3 @@
-
 include ../SETTINGS
 include ../SHARED
 
@@ -6,7 +5,8 @@ include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 # Beware: these must be .pl files: otherwise they may be eliminated on cleanup
 # get_version taken out
-PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake cleandirs fix_size show_asr
+PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake cleandirs fix_size \
+            show_asr compiler_output
 SHSCRIPTS=ciao_get_arch collect_modules
 
 .SUFFIXES: .pl
@@ -68,9 +68,10 @@ endif
 	@echo "*** Installing utilities from etc directory..."
 	@echo "*** ---------------------------------------------------------"
 	@for File in $(PLUTILITIES) $(SHSCRIPTS) ; do \
-             rm -f $(BINDIR)/$${File} ; \
-             cp $${File} $(BINDIR)/$${File} ; \
-             chmod $(EXECMODE) $(BINDIR)/$${File} ; \
+             /bin/rm -f $(BINDIR)/$${File}-$(VERSION) ; \
+             /bin/cp $${File} $(BINDIR)/$${File}-$(VERSION) ; \
+             /bin/ln -sf $${File}-$(VERSION) $(BINDIR)/$${File} ; \
+             /bin/chmod $(EXECMODE) $(BINDIR)/$${File}-$(VERSION) ; \
 	done
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Finished installing scripts and utilities from etc dir."
@@ -91,9 +92,14 @@ endif
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Removing utilities from etc directory..."
 	@echo "*** ---------------------------------------------------------"
-	@for File in $(PLUTILITIES) $(SHSCRIPTS) ; \
-	 do if [ -f $(BINDIR)/$${File} ]; \
-             then echo "Removing $${File}..."; \
+	# Remove the files themselves and the possible dangling symbolic links 
+	@for File in $(PLUTILITIES) $(SHSCRIPTS) ; do \
+	     if [ -f $(BINDIR)/$${File}-$(VERSION) ]; \
+                then echo "Removing $${File}-$(VERSION)..."; \
+                  rm -f $(BINDIR)/$${File}-$(VERSION) ; \
+	     fi ; \
+	     if [ ! -f $(BINDIR)/$${File} ]; \
+                then echo "Removing $${File}..."; \
                   rm -f $(BINDIR)/$${File} ; \
 	   fi ; \
 	 done

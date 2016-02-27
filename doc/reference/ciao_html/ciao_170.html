@@ -1,102 +1,303 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Printing the declarations and code in a file</TITLE>
+<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC687" HREF="ciao_toc.html#TOC687">Printing the declarations and code in a file</A></H1>
-
+<H1><A NAME="SEC702" HREF="ciao_toc.html#TOC702">Unweighted graph-processing utilities</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.5#6 (1999/4/15, 20:33:6 MEST)
+<A NAME="IDX7882"></A>
 
 
 <P>
-A simple program for 
-<A NAME="IDX7037"></A>
-printing assertion information (
-<A NAME="IDX7038"></A>
-predicate declarations, 
-<A NAME="IDX7039"></A>
-property declarations, 
-<A NAME="IDX7040"></A>
-type declarations, etc.) and 
-<A NAME="IDX7041"></A>
-printing code-related information (
-<A NAME="IDX7042"></A>
-imports, 
-<A NAME="IDX7043"></A>
-exports, 
-<A NAME="IDX7044"></A>
-libraries used, etc.) on a file. The file should be a single CIAO or Prolog source file. It uses the CIAO compiler's pass one to do it. This program is specially useful for example to check what the compiler is actually seeing after syntactic expansions, as well as for checking what assertions the 
-<A NAME="IDX7045"></A>
-assertion normalizer is producing from the original assertions in the file. 
+<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#105 (1999/6/4, 12:24:49 MEST)
+
+
+<P>
+An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
+
+
+<P>
+An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
+
+
+<P>
+An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
+
+
+<P>
+A vertex can be any term. Two vertices are distinct iff they are not identical (
+<A NAME="IDX7883"></A>
+<CODE>==/2</CODE>). 
+
+
+<P>
+A path is represented as a list of vertices. No vertex can appear twice in a path. 
 
 
 
 <UL>
-<LI><A HREF="ciao_170.html#SEC688">Usage (fileinfo)</A>
-<LI><A HREF="ciao_170.html#SEC689">More detailed explanation of options (fileinfo)</A>
+<LI><A HREF="ciao_170.html#SEC703">Usage and interface (ugraphs)</A>
+<LI><A HREF="ciao_170.html#SEC704">Documentation on exports (ugraphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC688" HREF="ciao_toc.html#TOC688">Usage (fileinfo)</A></H2>
+<H2><A NAME="SEC703" HREF="ciao_toc.html#TOC703">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
 
-
-<PRE>
-   
-    fileinfo -asr &#60;filename.asr&#62; 
-       : pretty prints the contents of &#60;filename.asr&#62; 
-
-    fileinfo [-v] [-m] &#60;-a|-c|-e&#62; &#60;filename&#62; [libdir1] ... [libdirN]
-    -v : verbose output (e.g., lists all files read)
-    -m : restrict info to current module
-    -a : print assertions 
-    -c : print code and interface (imports/exports, etc.)
-    -e : print only errors - useful to check syntax of assertions in file
-
-    fileinfo -h
-       : print this information
-
-</PRE>
-
-
-
-<H2><A NAME="SEC689" HREF="ciao_toc.html#TOC689">More detailed explanation of options (fileinfo)</A></H2>
-
-<P>
- 
+<div class="cartouche">
 
 <UL>
 
-<LI>If the <CODE>-a</CODE> option is selected, <CODE>fileinfo</CODE> prints the assertions (only code-oriented assertions -- not comment-oriented assertions) in the file <EM>after normalization</EM>. If the <CODE>-c</CODE> option is selected <CODE>fileinfo</CODE> prints the file interface, the declarations contained in the file, and the actual code. If the <CODE>-e</CODE> option is selected <CODE>fileinfo</CODE> prints only any sintactic and import-export errors found in the file, including the assertions.
+<LI><STRONG>Library usage:</STRONG>
 
-<LI><CODE>filename</CODE> must be the name of a Prolog or CIAO source file.
+<CODE>:- use_module(library(ugraphs)).</CODE>
 
-<LI>This filename can be followed by other arguments which will be taken to be library directory paths in which to look for files used by the file being analyzed.
+<LI><STRONG>Exports:</STRONG>
 
-<LI>If the <CODE>-m</CODE> option is selected, only the information related to the current module is printed.
 
-<LI>The <CODE>-v</CODE> option produces verbose output. This is very useful for debugging, since all the files accessed during assertion normalization are listed.
+<UL>
 
-<LI>In the <CODE>-asr</CODE> usage,
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX7046"></A>
-<CODE>fileinfo</CODE> can be used to print the contents of a <CODE>.asr</CODE> file in human-readable form. 
+<A NAME="IDX7884"></A>
+<CODE>vertices_edges_to_ugraph/3</CODE>, 
+<A NAME="IDX7885"></A>
+<CODE>neighbors/3</CODE>, 
+<A NAME="IDX7886"></A>
+<CODE>edges/2</CODE>, 
+<A NAME="IDX7887"></A>
+<CODE>del_vertices/3</CODE>, 
+<A NAME="IDX7888"></A>
+<CODE>vertices/2</CODE>, 
+<A NAME="IDX7889"></A>
+<CODE>add_vertices/3</CODE>, 
+<A NAME="IDX7890"></A>
+<CODE>add_edges/3</CODE>, 
+<A NAME="IDX7891"></A>
+<CODE>transpose/2</CODE>, 
+<A NAME="IDX7892"></A>
+<CODE>point_to/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7893"></A>
+<CODE>ugraph/1</CODE>.
 
 </UL>
 
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7894"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX7895"></A>
+<CODE>sort</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC704" HREF="ciao_toc.html#TOC704">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
+<P>
+<A NAME="IDX7896"></A>
+<A NAME="IDX7897"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
+<DD><A NAME="IDX7898"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7899"></A>
+<A NAME="IDX7900"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
+<DD><A NAME="IDX7901"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex, +Graph, -Neighbors)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7902"></A>
+<A NAME="IDX7903"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
+<DD><A NAME="IDX7904"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges(+Graph, -Edges)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7905"></A>
+<A NAME="IDX7906"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
+<DD><A NAME="IDX7907"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1, +Vertices, -Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7908"></A>
+<A NAME="IDX7909"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
+<DD><A NAME="IDX7910"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vertices(+Graph, -Vertices)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7911"></A>
+<A NAME="IDX7912"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
+<DD><A NAME="IDX7913"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1, +Vertices, -Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7914"></A>
+<A NAME="IDX7915"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
+<DD><A NAME="IDX7916"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1, +Edges, -Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7917"></A>
+<A NAME="IDX7918"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
+<DD><A NAME="IDX7919"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>transpose(+Graph, -Transpose)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7920"></A>
+<A NAME="IDX7921"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
+<DD><A NAME="IDX7922"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex, +Graph, -Point_to)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7923"></A>
+<A NAME="IDX7924"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
+<DD><A NAME="IDX7925"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
+
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

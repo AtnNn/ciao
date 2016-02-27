@@ -34,17 +34,19 @@ Ciao-Prolog X.Y #PP: Thu Mar 25 17:20:55 MET 1999
 ?- 
 @end{verbatim}
 
-When the shell is initialized it looks for a file @file{.ciaorc} in
-the HOME directory and makes an @tt{include} of it, if it exists.
-This file is useful for including @decl{use_module/1} declarations for
-the modules one wants to be loaded by default, changing
-@concept{prolog flag}s, etc.  (Note that the @file{.ciaorc} file can
-only contain directives, not actual code; to load some code at startup
-put it in a separate file and load it using e.g. a @decl{use_module/1}
-declaration.)  If the initialization file does not exist, the
-@concept{ISO-Prolog} compatibility package @lib{iso} is included, to
-provide (almost) all the ISO builtins by default.  Two command-line
-options control the loading of the initialization file:
+When the shell is initialized it looks for a file @file{.ciaorc} in the
+HOME directory and makes an @tt{include} of it, if it exists.  This file
+is useful for including @decl{use_module/1} declarations for the modules
+one wants to be loaded by default, changing @concept{prolog flag}s, etc.
+(Note that the @file{.ciaorc} file can only contain directives, not
+actual code; to load some code at startup put it in a separate file and
+load it using e.g. a @decl{use_module/1} declaration.)  If the
+initialization file does not exist, the default package @lib{default} is
+included, to provide more or less what other prologs define by default.
+Thus, if you want to have available all builtins you had before adding
+the initialization file, you have to include @tt{:- use_package(default)}
+in it.
+Two command-line options control the loading of the initialization file:
 
 @begin{description}
 
@@ -52,7 +54,7 @@ options control the loading of the initialization file:
 
 @item{@tt{-l} @var{File}} Look for initialization file @var{File}
   instead of @tt{~/.ciaorc}. If it does not exist, include the
-  compatibility package @tt{iso}.
+  default package.
 
 @end{description}
 
@@ -89,9 +91,13 @@ query, are:
 @item If the execution failed (or produced an error), the answer is
       @tt{no}.
 
-@item If the execution was successful, and no @concept{answer
-      variable} (see below) was bound (or constraints where imposed on
-      such variables), the answer is simply @tt{yes}.
+@item If the execution was successful, and no @concept{answer variable}
+      (see below) was bound (or constraints where imposed on such
+      variables), the answer is simply @tt{yes}.  This behavior can be
+      changed by doing
+      @tt{set_prolog_flag(prompt_alternatives_no_bindings, on).}, so
+      that in any case the user will be consulted as explained in the
+      next point (useful if the solutions produce side effects).
 
 @item If the execution was successful and bindings where made (or
       constraints where imposed) on @concept{answer variable}s, then

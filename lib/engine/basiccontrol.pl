@@ -52,7 +52,7 @@
 
 (X->Y) :- undefined_goal((X->Y)).
 
-:- true pred '!'/0 + iso
+:- true pred '!'/0 + (iso, native)
    # "Commit to any choices taken in the current predicate.". 
 
 !.						% simple enough
@@ -64,6 +64,8 @@
    Fails if @var{P} has a solution, and succeeds otherwise.  No cuts are
    allowed in @var{P}.").
 
+:- meta_predicate(\+(goal)).
+:- true comp \+(X) + native(not(X)).
 :- true pred \+(+callable) + iso.
 
 \+X :- undefined_goal(\+X).
@@ -79,11 +81,11 @@ if(P, Q, R) :- undefined_goal(if(P,Q,R)).
 
 :- impl_defined([true/0, fail/0, repeat/0, call/1]).
 
-:- true pred true/0 + iso # "Succeed (noop).".
+:- true pred true/0 + (iso, native) # "Succeed (noop).".
 
-:- true pred fail/0 + iso # "Fail, backtrack immediately.".
+:- true pred fail/0 + (iso, native) # "Fail, backtrack immediately.".
 
-:- true pred repeat/0 + iso # "Generates an infinite sequence of
+:- true pred repeat/0 + (iso, native) # "Generates an infinite sequence of
    backtracking choices.".
 
 :- comment(call(G), "Executes goal @var{G}, restricting the scope of the cuts
@@ -101,6 +103,10 @@ if(P, Q, R) :- undefined_goal(if(P,Q,R)).
 :- meta_predicate srcdbg_spy(goal,?,?,?,?,?).
 
 srcdbg_spy(Goal, _, _, _, _, _) :-
+        term_to_meta(G, Goal),
+        '$meta_call'(G).
+/*
+srcdbg_spy(Goal, _, _, _, _, _) :-
 	'$debugger_state'(State,State),
 	arg(1, State, X),
 	( X = off ->
@@ -109,7 +115,7 @@ srcdbg_spy(Goal, _, _, _, _, _) :-
 	;
 	    true
 	).
-
+*/
 % srcdbg_spy(_,_,_,_,_,_):-
 %  	'$debugger_state'(State,State),
 %  	(  
@@ -127,6 +133,10 @@ srcdbg_spy(Goal, _, _, _, _, _) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+316,2004/02/25,19:16*01+'CET'), "Changed
+   @pred{srcdbg_spy/6} to solve bug when source-debugging multifile
+   predicates (see bugs/Fixed/debug_multifile.pl).  (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+37,2001/01/02,16:47*03+'CET'), "Higher-order via
    the call/N builtins is detached to the hiord package.  (Daniel Cabeza

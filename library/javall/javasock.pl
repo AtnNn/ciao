@@ -1,4 +1,5 @@
 :- module(javasock, [
+	bind_socket_interface/1,
 	start_socket_interface/2,
 	stop_socket_interface/0,
 	join_socket_interface/0,
@@ -6,8 +7,10 @@
 	java_response/2,
 	prolog_query/2,
 	prolog_response/2,
-	java_stream/4,
-	java_debug/1
+	is_connected_to_java/0,
+	java_debug/1,
+	java_debug_redo/1,
+	start_threads/0
 	],
 	[assertions,regtypes,isomodes]).
 
@@ -16,13 +19,13 @@
 :- comment(author,"Jes@'{u}s Correas").
 
 :- comment(module,"
-@cindex{Socket implementation}
-This module defines a low level socket interface, to be used by javart and
-jtopl. Includes all the code related directly to the handling of
-sockets. This library
-should not be used by any user program, because is a very low-level
-connection to Java. Use @lib{javart} (Prolog to Java low-level interface)
-or @lib{jtopl} (Java to Prolog interface) libraries instead.
+
+@cindex{Socket implementation} This module defines a low-level socket
+interface, to be used by javart and jtopl. Includes all the code
+related directly to the handling of sockets. This library should not
+be used by any user program, because is a very low-level connection to
+Java. Use @lib{javart} (Prolog to Java interface) or @lib{jtopl} (Java
+to Prolog interface) libraries instead.
 
 ").
 
@@ -44,7 +47,7 @@ machine_name(X) :- atm(X).
         prolog-to-java and java-to-prolog streams,
 	and the network	address where the Java process is running.
         Last argument represents the Java process standard input stream.".
-:- data java_stream/4.
+:- concurrent java_stream/4.
 
 :- pred java_threads(PJIn,PJOut,JPIn,JPOut,PLServer)
 	:: int * int * int * int * int # "Stores the threads used to
@@ -98,6 +101,17 @@ machine_name(X) :- atm(X).
 start_socket_interface(Node:SocketId,Stream):-
         java_client(Node:SocketId,Stream),
 	!,
+	start_threads.
+
+%% -----------------------------------------------------------------------
+:- pred start_threads
+
+        # "Starts the threads that will handle the connection to
+          Java. This predicate is declared public for internal
+          purposes, and it is not intended to be used by a user
+          program.".
+%% -----------------------------------------------------------------------
+start_threads:-
 	eng_call(pj_socket_reader, create, create, PjIn),
 	eng_call(pj_socket_writer, create, create, PjOut),
 	eng_call(jp_socket_reader, create, create, JpIn),
@@ -115,14 +129,19 @@ stop_socket_interface :-
 	assertz_fact(prolog_response(0,'$terminate')),
 	join_socket_interface,
 	retract_fact(java_threads(PjIn,PjOut,JpIn,JpOut,PlServer)),
+	java_debug('Stopping pj_socket_reader:'(PjIn)),
 	eng_release(PjIn),
+	java_debug('Stopping pj_socket_writer:'(PjOut)),
 	eng_release(PjOut),
+	java_debug('Stopping jp_socket_reader:'(JpIn)),
 	eng_release(JpIn),
+	java_debug('Stopping jp_socket_writer:'(JpOut)),
 	eng_release(JpOut),
+	java_debug('Stopping shell_s:'(PlServer)),
 	eng_release(PlServer),
-        retract_fact(java_stream(DataStream,EventStream,_,StdStream)),
-        close(DataStream),
-        close(EventStream),
+%        retract_fact(java_stream(DataStream,EventStream,_,StdStream)),
+%        close(DataStream),
+%        close(EventStream),
 	retractall_fact(java_query(_,_)),
 	retractall_fact(java_response(_,_)),
 	retractall_fact(prolog_query(_,_)),
@@ -140,12 +159,23 @@ stop_socket_interface :-
 %% -----------------------------------------------------------------------
 join_socket_interface:-
 	java_threads(PjIn,PjOut,JpIn,JpOut,PlServer),
+	java_debug('Waiting pj_socket_reader:'(PjIn)),
 	eng_wait(PjIn),
+	java_debug('Waiting pj_socket_writer:'(PjOut)),
 	eng_wait(PjOut),
+	java_debug('Waiting jp_socket_reader:'(JpIn)),
 	eng_wait(JpIn),
+	java_debug('Waiting jp_socket_writer:'(JpOut)),
 	eng_wait(JpOut),
+	java_debug('Waiting shell_s:'(PlServer)),
 	eng_wait(PlServer),
-	!.
+%	!,
+	java_debug('Retracting java_stream'(DataStream,EventStream,_,_)),
+	retract_fact_nb(java_stream(DataStream,EventStream,_,_)),
+	java_debug('Closing'(DataStream)),
+        close(DataStream),
+	java_debug('Closing'(EventStream)),
+        close(EventStream).
 
 join_socket_interface.
 
@@ -260,6 +290,80 @@ open_jp(Host, Port, JPStream) :-
 	java_fast_write0(JPStream,jp(0,event)),
         java_fast_read0(JPStream, jp(0,event)).
 
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Prolog server code.
+%% -----------------------------------------------------------------------
+:- pred bind_socket_interface(+Port) 
+	:: int
+        # "Given an port number, waits for a connection request from
+        the Java side, creates the sockets to connect to the java
+        process, and starts the threads needed to handle the
+        connection.".
+%% -----------------------------------------------------------------------
+bind_socket_interface(Port):-
+        java_server(Port),
+	!,
+	start_threads.
+
+%% -----------------------------------------------------------------------
+:- pred java_server(+Port)
+	:: int 
+        # "Given a @var{Port}, waits for a connection request from a
+	  Java client and synchronizes the sockets to the java
+	  process.".
+%% -----------------------------------------------------------------------
+:- use_module(library('sockets/sockets_io'),[serve_socket/3]).
+
+java_server(Port) :-
+	java_debug('inside open_server'),
+	set_fact(java_stream(_,_,_,_)),
+        bind_socket(Port,1, Sock),
+	eng_call(serve_socket(Sock,binding,sock_error),create,create),
+	wait_connection,
+	java_debug('after open_server').
+
+binding(Stream):-
+        java_fast_read0(Stream, Term),
+	(Term = pj(0,data) ->
+	 bind_pj(Stream)
+	;(Term = jp(0,event) ->
+	  bind_jp(Stream)
+	 ;
+	     format(user_error,
+	     '{ERROR: Socket error accepting connections from java!~n}',[]),
+	     !,
+	     fail
+	 )).
+
+bind_pj(PJStream) :-
+%        java_fast_read0(PJStream, pj(0,data)),
+	java_fast_write0(PJStream,pj(0,data)),
+	java_stream(_,JPStream,Address,Stream),
+	set_fact(java_stream(PJStream,JPStream,Address,Stream)).
+	
+
+bind_jp(JPStream) :-
+%        java_fast_read0(JPStream, jp(0,event)),
+	java_fast_write0(JPStream,jp(0,event)),
+	java_stream(PJStream,_,Address,Stream),
+	set_fact(java_stream(PJStream,JPStream,Address,Stream)).
+
+sock_error(Error):-
+	format(user_error,
+	'{ERROR: Socket error while trying to connect to java!~n~w}',[Error]),
+	fail.
+
+wait_connection:-
+	java_debug('waiting for connection established'),
+	java_stream(PJStream,JPStream,_,_),
+	(var(PJStream) ; var(JPStream)),
+	!,
+	wait_connection.
+wait_connection.
+	
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %% -----------------------------------------------------------------------
 :- pred java_fast_write(+Type, +Term) 
 	:: atom * term # " It writes on the given stream type the term
@@ -322,13 +426,20 @@ java_fast_read0(Stream,T) :-
 	 fail
         ).
 
+%% -----------------------------------------------------------------------
+:- pred is_connected_to_java/0
+	# "Checks if the connection to Java is established.".
+%% -----------------------------------------------------------------------
+is_connected_to_java :-
+	current_fact_nb(java_stream(_,_,_,_)).
+
 %%------------------------------------------------------------------
 %% ONLY FOR DEBUGGING
 %%------------------------------------------------------------------
 
 :- data debugging/0.
 % Comment/uncomment next line to set debugging off/on.
-% debugging.
+%debugging.
 
 java_debug(T) :-
 	debugging,
@@ -339,6 +450,10 @@ java_debug(T) :-
 
 java_debug(_) :- !.
 
+java_debug_redo(X):-
+	java_debug(do(X)).
+java_debug_redo(X):-
+	java_debug(redo(X)), fail.
 
 %%------------------------------------------------------------------------
 %% VERSION CONTROL
@@ -346,8 +461,8 @@ java_debug(_) :- !.
  
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*8+2,2002/06/14,18:55*04+'CEST'), "Patched
-   documentation for Java interface.  (Francisco Bueno Carrillo)").
+:- comment(version(1*9+66,2003/03/14,12:48*24+'CET'), "Documentation
+   changes (Jesus Correas Fernandez)").
 
 :- comment(version(1*7+82,2001/03/30,13:16*44+'CEST'), "Added some
 cuts & changed socket dispatch loop to be a fail loop.  (MCL)").

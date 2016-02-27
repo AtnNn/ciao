@@ -24,12 +24,12 @@ simply have not had the time to port them yet.
 The current state of matters is as follows:
 
 @begin{description}
-@item{Mac OS X (Darwin):}  multithreading, shared DB access, and locking working. 
 @item{LINUX:}     multithreading, shared DB access, and locking working.
 @item{Solaris:}   multithreading, shared DB access, and locking working.
 @item{IRIX:}  multithreading, shared DB access, and locking working.
 @item{SunOS 4:}   multithreading, shared DB access, and locking NOT working.
-@item{Win 95/98/NT/2000:} multithreading, shared DB access, and locking working. Dynamic linking of object code (C) libraries NOT working.   
+@item{Win 95/98/NT/2000/XP:} multithreading, shared DB access, and locking working. Dynamic linking of object code (C) libraries NOT working.   
+@item{Mac OS X (Darwin):}  multithreading, shared DB access, and locking working. 
 @end{description}
 
 The features that do not work are disabled at compile time.  

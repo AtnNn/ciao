@@ -32,35 +32,144 @@
 	            [sqltype/1]).
 %% sql_query_one_tuple_more/2 internal predicates
 
+%% ---------------------------------------------------------------------------
+
+%jcf% :- pred sql_persistent_location(Keyword,Location) ::  persLocId * persLocation
+%jcf% 
+%jcf% # "@var{Keyword} is an identifier for the persistent data location
+%jcf%   @var{Location}.".
+%jcf% 
+%jcf% :- regtype persLocation/1.
+%jcf% 
+%jcf% persLocation(db(Name, User, Password, Machine:Port)) :-
+%jcf% 	atm(Name),
+%jcf% 	atm(User),
+%jcf% 	atm(Password),
+%jcf% 	atm(Machine),
+%jcf% 	int(Port).
+
+%% ---------------------------------------------------------------------------
+%% Multifile predicates.
+
+:- comment(sql_persistent_location/2,"Relates names of locations
+   (the @var{Keyword}s) with descriptions of such locations
+   (@var{Location}s).").
+
+:- pred sql_persistent_location(Keyword,DBLocation) =>  persLocId * database_desc
+
+# "In this usage, @var{DBLocation} is a @em{relational database}, in which
+   case the predicate is stored as tuples in the database.".
+
 :- multifile sql_persistent_location/2.
-:- data sql_persistent_location/2.
+:- dynamic sql_persistent_location/2.
 
-:- pred sql_persistent_location(Keyword,Location) ::  persLocId * persLocation
-
-# "@var{Keyword} is an identifier for the persistent data location
-  @var{Location}.".
-
-:- regtype persLocation/1.
-
-persLocation(db(Name, User, Password, Machine:Port)) :-
-	atm(Name),
-	atm(User),
-	atm(Password),
-	atm(Machine),
-	int(Port).
-
-:- multifile '$is_sql_persistent'/3.
-
+%% -----------------------------------------
 :- comment(hide,'$is_sql_persistent'/3).
 
+:- multifile '$is_sql_persistent'/3.
 :- data sql_persistent/2.
 
+%% -----------------------------------------
+:- comment(hide,sql__relation/3).
+:- comment(hide,sql__attribute/4).
+:- multifile([sql__relation/3,sql__attribute/4]).
+:- data([sql__relation/3,sql__attribute/4]).
+
+
+%% ---------------------------------------------------------------------------
+%% Properties and regular types.
+
+:- regtype database_desc(D) # "@var{D} is a structure describing a
+   database.".
+
+database_desc(db(DBId,User,Passwd,Socket)) :-
+	dbname(DBId),
+	user(User),
+	passwd(Passwd),
+	socketname(Socket).
+
+:- comment(database_desc/1,"@includedef{database_desc/1}").
+
+:- regtype tuple(T) # "@var{T} is a tuple of values from the ODBC database
+   interface.".
+
+tuple(T) :-
+	list(T,atm).
+
+:- comment(tuple/1,"@includedef{tuple/1}").
+:- comment(doinclude, tuple/1).
+
+:- comment(doinclude, dbconnection/1).
+
+:- regtype answertableterm(AT) # "@var{AT} is a response from the ODBC
+   database interface.".
+
+answertableterm(ok).
+answertableterm(t(Answers)) :-
+	list(Answers,tuple).
+answertableterm(err(Answer)) :-
+	term(Answer).	
+
+:- comment(answertableterm/1,"@includedef{answertableterm/1}").
+
+:- regtype answertupleterm(X) #  "@var{X} is a predicate containing a tuple.".
+
+answertupleterm([]).
+answertupleterm(tup(T)) :-
+	tuple(T).
+
+:- comment(answertupleterm/1,"@includedef{answertupleterm/1}").
+
+%% Imported from db_client.
+:- comment(doinclude,dbname/1).
+:- comment(doinclude,user/1).
+:- comment(doinclude,passwd/1).
+:- comment(doinclude,socketname/1).
+
+:- comment(prologPredTypes/1,"@includedef{prologPredTypes/1}").
+
+:- prop prologPredTypes(PredTypes) # "@var{PredTypes} is a structure
+    describing a Prolog predicate name with its types.".
+
+prologPredTypes(PredTypes) :-
+	PredTypes =.. [PredName|Types],
+	atm(PredName),
+ 	list(Types,sqltype).
+
+:- comment(tableAttributes/1,"@includedef{tableAttributes/1}").
+
+:- prop tableAttributes(TableAttributes)  # "@var{TableAttributes} is a
+    structure describing a table name and some attributes.".
+
+tableAttributes(TableAttributes) :-
+ 	TableAttributes =.. [TableName|AttributeNames],
+ 	atm(TableName),
+ 	list(AttributeNames,atm).
+
+:- prop persLocId(Id)  # "@var{Id} is the name of a persistent storage location.".
+
+persLocId(Id) :-
+ 	atm(Id).
+
+:- prop fact(X)  # "@var{X} is a fact (a term whose main functor is not @tt{':-'/2}).".
+
+fact(_).
+
+:- prop atomicgoal(G)  # "@var{G} is an atomic goal.".
+
+atomicgoal( G ) :-
+	term(G).
+
+:- comment(atomicgoal/1,"@var{G} is a single goal, not containing
+   conjunctions, disjunctions, etc.").
+
+
+%-----------------------------------------------------------------------------
 :- use_module(library(dynamic)).
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(terms_vars), [varset/2]).
 :- use_module(library(messages),[error_message/2,debug_message/2]).
 :- use_module(library(lists),[length/2,append/3]).
-%% list/1,list/2,
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(engine(internals),[term_to_meta/2,module_concat/3]).
 
@@ -91,8 +200,17 @@ persLocation(db(Name, User, Password, Machine:Port)) :-
 
 :- comment(bug,"Needs to be unified with the file-based library.").
 
-%:- multifile issue_debug_messages/1.
+% :- multifile issue_debug_messages/1.
 % :- data issue_debug_messages/1.
+% %%%%issue_debug_messages(persdbrt_mysql).
+%jcf%:- use_module(library(format)).
+%jcf%:- set_prolog_flag(write_strings,on).
+%jcf%jcf_message(S):-
+%jcf%	open('/home/jcorreas/cvs/Systems/Amos/DataBase/test.sql',append,Stream),
+%jcf% 	format(Stream,"~s~n",[S]),
+%jcf% 	flush_output(Stream),
+%jcf% 	close(Stream).
+
 
 %% ---------------------------------------------------------------------------
 %% Intro
@@ -261,6 +379,13 @@ responses to the Prolog engine via backtracking.
    respectively to the predicate name and arguments of the (virtual)
    Prolog predicate.
 
+   Although a predicate may be persistent, other usual clauses can be
+   defined in the source code. When querying a persistent predicate
+   with non-persistent clauses, persistent and non-persisten clauses
+   will be evaluated in turn; the order of evaluation is the usual
+   Prolog order, considering that persistent clauses are defined in
+   the program point where the @decl{sql_persistent/3} declaration is.
+
    @bf{Example:}
 
 @begin{verbatim}
@@ -274,65 +399,6 @@ sql_persistent_location(radiowebdb,
 @end{verbatim}
 ".
 
-%% ---------------------------------------------------------------------------
-
-:- comment(prologPredTypes/1,"@includedef{prologPredTypes/1}").
-
-:- prop prologPredTypes(PredTypes) # "@var{PredTypes} is a structure
-    describing a Prolog predicate name with its types.".
-
-prologPredTypes(PredTypes) :-
-	PredTypes =.. [PredName|Types],
-	atm(PredName),
- 	list(Types,sqltype).
-
-:- comment(tableAttributes/1,"@includedef{tableAttributes/1}").
-
-:- prop tableAttributes(TableAttributes)  # "@var{TableAttributes} is a
-    structure describing a table name and some attributes.".
-
-tableAttributes(TableAttributes) :-
- 	TableAttributes =.. [TableName|AttributeNames],
- 	atm(TableName),
- 	list(AttributeNames,atm).
-
-:- prop persLocId(Id)  # "@var{Id} is the name of a persistent storage location.".
-
-persLocId(Id) :-
- 	atm(Id).
-
-%% ---------------------------------------------------------------------------
-
-:- comment(sql_persistent_location/2,"Relates names of locations
-   (the @var{Keyword}s) with descriptions of such locations
-   (@var{Location}s).").
-
-:- pred sql_persistent_location(Keyword,DBLocation) =>  persLocId * database_desc
-
-# "In this usage, @var{DBLocation} is a @em{relational database}, in which
-   case the predicate is stored as tuples in the database.".
-
-:- regtype database_desc(D) # "@var{D} is a structure describing a
-   database.".
-
-database_desc(db(DBId,User,Passwd,Socket)) :-
-	dbname(DBId),
-	user(User),
-	passwd(Passwd),
-	socketname(Socket).
-
-:- comment(database_desc/1,"@includedef{database_desc/1}").
-
-%% Imported from db_client.
-:- comment(doinclude,dbname/1).
-:- comment(doinclude,user/1).
-:- comment(doinclude,passwd/1).
-:- comment(doinclude,socketname/1).
-
-:- comment(hide,relation/3).
-:- comment(hide,attribute/4).
-:- multifile([relation/3,attribute/4]).
-:- data([relation/3,attribute/4]).
 
 :- meta_predicate make_sql_persistent(addmodule,?,?).
 :- impl_defined(make_sql_persistent/3).
@@ -346,7 +412,7 @@ make_sql_persistent(PrologDef, Mod, SQLDef, DBId) :-
 	PrologDef =.. [PrologName | Types],
 	SQLDef    =.. [TableName  | ArgNames],
 	functor(PrologDef, PrologName, Arity),
-	assertz_fact(relation(PrologName,Arity,TableName)),
+	assertz_fact(sql__relation(PrologName,Arity,TableName)),
 	assert_args(Types,ArgNames,1,TableName),
 	assertz_fact(sql_persistent(PrologName/Arity,DBId)),
 	module_concat(Mod, PrologName, ModPrologName),
@@ -371,7 +437,7 @@ assert_args([], [], _, _) :-
 assert_args([Type|Ts], [ArgName|As], N, TableName) :-
 	sqltype(Type),
 	!,
-	assertz_fact(attribute(N, TableName, ArgName, Type)),
+	assertz_fact(sql__attribute(N, TableName, ArgName, Type)),
 	N1 is N+1,
 	assert_args(Ts, As, N1, TableName).
 assert_args([T|_], [_|_], _, TableName) :-
@@ -409,12 +475,14 @@ dbassertz_fact(Fact) :-
 	debug_message("ready to call to the insertion compiler, with the fact ~w",[Fact]),
 	pl2sqlInsert(Fact,SQLString),
 	debug_message("SQL insertion sentence is ~s",[SQLString]),
+%jcf% 	jcf_message(SQLString),
 	sql_query(DBId,SQLString,ResultTerm),
 	( ResultTerm='ok' ->
 	      debug_message("Persistent fact inserted in the database",[])
 	    ;
 	      error_message("in insertion. Answer received is ~w",[ResultTerm])
 	).
+
 %% ---------------------------------------------------------------------------
 
 :- meta_predicate dbretract_fact(addmodule,?).
@@ -443,6 +511,7 @@ dbretract_fact(Fact):-
 %%                    bug)
 	mysql_delete(Fact,DBId),
 	debug_message("ODBC deletion done. Persistent fact deleted from the database",[]).
+
 
 %% ---------------------------------------------------------------------------
 
@@ -488,6 +557,7 @@ mysql_delete(Fact,DBId):-
 	copy_term(Fact,FactDB),
 	pl2sqlDelete(FactDB,SQLString),
 	debug_message("Translated select sentence is ~s",[SQLString]),
+%jcf% 	jcf_message(SQLString),
 %% Permission to create a view and to delete PL_TMP_TO_RETRACT is needed
 	%% first we delete PL_TMP_TO_RETRACT, if it exists
 	sql_query(DBId,SQLString,ResultTerm),
@@ -524,12 +594,6 @@ dbcurrent_fact(Fact) :-
  	debug_message("persistent predicate found, location: ~w",[DBId]),
 	debug_message("calling current_fact(~w) in database",[Fact]),
 	db_call_db_atomic_goal(DBId,Fact).
-
-%% ---------------------------------------------------------------------------
-
-:- prop fact(X)  # "@var{X} is a fact (a term whose main functor is not @tt{':-'/2}).".
-
-fact(_).
 
 %% ---------------------------------------------------------------------------
 %% Calling complex goals
@@ -605,14 +669,6 @@ dbcall(DBId,ComplexGoal) :-
 
 %% ---------------------------------------------------------------------------
 
-:- regtype tuple(T) # "@var{T} is a tuple of values from the ODBC database
-   interface.".
-
-tuple(T) :-
-	list(T,atm).
-
-:- comment(tuple/1,"@includedef{tuple/1}").
-
 :- comment(doinclude,db_query/4).
 
 :- pred db_query(+DBId,+ProjTerm,+Goal,ResultTerm)
@@ -628,23 +684,12 @@ db_query(DBId,ProjTerm,Goal,ResultTerm) :-
 	copy_term(pair(ProjTerm,Goal),pair(DBProjTerm,DBGoal)),
 	pl2sqlstring(DBProjTerm,DBGoal,SQLStringQuery),
 	debug_message("sending SQL query ""~s"" ",[SQLStringQuery]),
+%jcf% 	jcf_message(SQLStringQuery),
 %%	sql_query(DBId, SQLStringQuery, table(_,ResultsList) ),
 	sql_query(DBId, SQLStringQuery, t(ResultTerm) ),
 	debug_message("result is ~w",[ResultTerm]).
 
 %% ---------------------------------------------------------------------------
-
-:- regtype answertableterm(AT) # "@var{AT} is a response from the ODBC
-   database interface.".
-
-answertableterm(ok).
-answertableterm(t(Answers)) :-
-	list(Answers,tuple).
-answertableterm(err(Answer)) :-
-	term(Answer).	
-
-:- comment(answertableterm/1,"@includedef{answertableterm/1}").
-
 :- comment(doinclude,sql_query/3).
 
 :- pred sql_query(+DBId,+SQLString,AnswerTableTerm)
@@ -672,14 +717,6 @@ sql_query(DBId,SQLString,ResultTerm):-
 
 %% ---------------------------------------------------------------------------
 
-:- regtype answertupleterm(X) #  "@var{X} is a predicate containing a tuple.".
-
-answertupleterm([]).
-answertupleterm(tup(T)) :-
-	tuple(T).
-
-:- comment(answertupleterm/1,"@includedef{answertupleterm/1}").
-
 :- comment(doinclude,db_query_one_tuple/4).
 
 :- pred db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm)
@@ -697,6 +734,7 @@ db_query_one_tuple(DBId,ProjTerm,Goal,tup(ResultTerm)) :-
 	debug_message("calling pl2sqlstring",[]),
 	pl2sqlstring(DBProjTerm,DBGoal,SQLStringQuery),!,
 	debug_message("sending SQL query ""~s"" ",[SQLStringQuery]),
+%jcf% 	jcf_message(SQLStringQuery),
 	sql_query_one_tuple(DBId, SQLStringQuery, ResultTerm),
 	debug_message("result is ~w",[ResultTerm]).
 
@@ -788,20 +826,9 @@ initialize_db:-
 	fail.
 initialize_db.
 
-:- comment(doinclude, dbconnection/1).
-:- comment(doinclude, tuple/1).
-
-:- prop atomicgoal(G)  # "@var{G} is an atomic goal.".
-
-atomicgoal( G ) :-
-	term(G).
-
-:- comment(atomicgoal/1,"@var{G} is a single goal, not containing
-   conjunctions, disjunctions, etc.").
-
 %% ---------------------------------------------------------------------------
 
-:- pred sql_get_tables(+Location,-Tables) :: persLocation * list(atm)
+:- pred sql_get_tables(+Location,-Tables) :: database_desc * list(atm)
 
 # "@var{Tables} contains the tables available in @var{Location}.".
 
@@ -819,7 +846,7 @@ sql_get_tables(DBId, TablesList):-
 	sql_get_tables(Location, TablesList).
 
 :- pred sql_table_types(+Location,+Table,-AttrTypes)
-	:: persLocation * atm * list
+	:: database_desc * atm * list
 
 # "@var{AttrTypes} are the attributes and types of @var{Table} in
    @var{Location}.".
@@ -848,6 +875,18 @@ filter_types([[NativeId, NativeType]|NativeRest],[[NativeId,Type]|Rest]):-
 	
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+113,2003/11/27,20:56*06+'CET'), "Names of
+   multifile predicates relation/3 and attribute/4 changed to
+   sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
+
+:- comment(version(1*9+58,2003/02/05,10:44*19+'CET'), "Modified
+   documentation regarding sql_persistent_location/2 multifile
+   predicate: removed a redundant usage.  (Jesus Correas Fernandez)").
+
+:- comment(version(1*9+44,2002/12/17,18:58*34+'CET'), "Changed
+   sql_persistent/3 documentation: a persistent predicate can also be
+   defined locally (Jesus Correas Fernandez)").
 
 :- comment(version(1*7+126,2001/10/26,14:51*32+'CEST'), "Changed file
 to a new directory of common SQL stuff (MCL)").

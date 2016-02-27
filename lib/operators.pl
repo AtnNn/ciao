@@ -27,7 +27,7 @@ documentation by Daniel Cabeza and Manuel Carro").
        @concept{ISO-Prolog}, it is allowed to define two operators with
        the same name, one infix and the other postfix.").
 
-:- true pred op(+int,+operator_specifier,+atm_or_atm_list) + iso.
+:- true pred op(+int,+operator_specifier,+atm_or_atm_list) + (iso, native).
 
 op(Prec, Ass, Ops) :-
 	nonvar(Ass),
@@ -80,7 +80,7 @@ do_ops([X|Xs], Left, Prec, Right, Type) :-
    instantiated at the time of the call; i.e., this predicate can be
    used to generate as well as to test.").
 
-:- true pred current_op(?int,?operator_specifier,?atm) + iso.
+:- true pred current_op(?int,?operator_specifier,?atm) + (iso, native).
 
 current_op(Prec, Ass, Op) :-
 	current_fact(current_op(Op,Left,Prec,Right,Type)),
@@ -134,15 +134,17 @@ standard_ops :-
 	op( 400, yfx,[(*),(/),(//),(rem),(mod),(<<),(>>)]),
 	op( 200,  fy,[(+),(-),(\)]),
         op( 200, xfx,['**']),
-	op( 200, xfy,[(^)]),
-        op(  25,  fy,[(^)]).
+	op( 200, xfy,[(^)]).
 
 :- initialization(standard_ops).
 
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*9+287,2004/02/13,18:59*04+'CET'), "Taken out
+   @tt{(^)/1} from the predefined operators.  (Daniel Cabeza Gras)").
+
 :- comment(version(1*7+198,2002/04/17,20:13*07+'CEST'), "Added more
-        comments.  (MCL)").
+   comments. (MCL)").
 
 :- comment(version(1*7+106,2001/05/28,20:06*27+'CEST'), "Parallelism
    operators are not longer predefined. (Daniel Cabeza Gras)").

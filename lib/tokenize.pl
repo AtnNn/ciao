@@ -19,7 +19,7 @@ Diffs. with ISO:
 :- module(tokenize, [read_tokens/2],[assertions]).
 
 :- use_module(engine(internals)).
-:- use_module(library(read)).
+:- use_module(library(read), [second_prompt/2]).
 :- use_module(library(dict)).
 
 :- set_prolog_flag(multi_arity_warnings, off).
@@ -43,6 +43,7 @@ define_flag(character_escapes, [iso, sicstus, off], iso).
 %    number(number)
 %    string(string)
 %    var(term,string)
+%    '/* ...'
 %    ',' | '(' | ' (' | ')' | '[' | ']' | '|' | '{' | '}'
 %    '.' % end of term 
 
@@ -59,9 +60,16 @@ read_tokens(TokenList, Dictionary) :-
 % how the parser can tell whether <atom> <paren> must be an operator
 % application or an ordinary function symbol application.
 
-read_tokens_after_layout(5, 0'(, Dict, [' ('|Tokens]) :- !,
+read_tokens_after_layout(5, 0'(, Dict, Tokens) :- !,
         getct1(NextCh, NextTyp),
-        read_tokens(NextTyp, NextCh, Dict, Tokens).
+        ( NextCh = 0') ->
+            Tokens = [atom('()')|Tokens_],
+            getct(NextCh2, NextTyp2),
+            read_tokens(NextTyp2, NextCh2, Dict, Tokens_)
+        ;
+            Tokens = [' ('|Tokens_],
+            read_tokens(NextTyp, NextCh, Dict, Tokens_)
+        ).
 read_tokens_after_layout(Typ, Ch, Dict, Tokens) :-
 	read_tokens(Typ, Ch, Dict, Tokens).
 
@@ -101,18 +109,25 @@ read_tokens(5, Ch, Dict, Tokens) :-
         read_tokens_solo(Ch, Dict, Tokens).
 
 read_tokens_solo(0'!, Dict, [atom(!)|Tokens]) :-
-        getct1(NextCh, NextTyp),
+        getct(NextCh, NextTyp),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 read_tokens_solo(0';, Dict, [atom(;)|Tokens]) :-
-        getct1(NextCh, NextTyp),
+        getct(NextCh, NextTyp),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 read_tokens_solo(0'%, Dict, Tokens) :-          % comment
-        skip_code(10),                          % skip newline
+        skip_line,
         getct1(NextCh, NextTyp),
         read_tokens_after_layout(NextTyp, NextCh, Dict, Tokens).
-read_tokens_solo(0'(, Dict, ['('|Tokens]) :-
+read_tokens_solo(0'(, Dict, Tokens) :-
         getct1(NextCh, NextTyp),
-        read_tokens(NextTyp, NextCh, Dict, Tokens).
+        ( NextCh = 0') ->
+            Tokens = [atom('()')|Tokens_],
+            getct(NextCh2, NextTyp2),
+            read_tokens(NextTyp2, NextCh2, Dict, Tokens_)
+        ;
+            Tokens = ['('|Tokens_],
+            read_tokens(NextTyp, NextCh, Dict, Tokens_)
+        ).
 read_tokens_solo(0'), Dict, [')'|Tokens]) :-
         getct1(NextCh, NextTyp),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
@@ -179,14 +194,20 @@ read_symbol(LastTyp, LastCh, [], LastCh, LastTyp).
 % former, it skips the comment.  If the latter it just calls read_symbol.
 
 read_possible_comment(4, 0'*, Dict, Tokens) :- !,
-        skip_code(0'*),
-        getct(Ch, Typ),
-        read_end_comment(Typ, Ch, Dict, Tokens).
+        skip_comment_text(Dict, Tokens).
 read_possible_comment(Typ, Ch, Dict, [Atom|Tokens]) :-
         read_symbol(Typ, Ch, Chars, NextCh, NextTyp), % might read 0 chars
         atom_token([0'/|Chars], Atom),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 
+skip_comment_text(Dict, Tokens) :-
+        ( skip_code_prot(0'*) ->
+            getct(Ch, Typ),
+            read_end_comment(Typ, Ch, Dict, Tokens)
+        ; % end of file
+          Tokens = ['/* ...']
+        ).
+        
 read_end_comment(4, 0'/, Dict, Tokens) :- !,
         getct1(NextCh, NextTyp),
         read_tokens_after_layout(NextTyp, NextCh, Dict, Tokens).
@@ -194,9 +215,7 @@ read_end_comment(4, 0'*, Dict, Tokens) :- !,
         getct(Ch, Typ),
         read_end_comment(Typ, Ch, Dict, Tokens).
 read_end_comment(_, _, Dict, Tokens) :-
-        skip_code(0'*),
-        getct(Ch, Typ),
-        read_end_comment(Typ, Ch, Dict, Tokens).
+        skip_comment_text(Dict, Tokens).
 
 % read_fullstop(Typ, Char, Dict, Tokens)
 % looks at the next character after a full stop.  If the next character is
@@ -206,7 +225,7 @@ read_end_comment(_, _, Dict, Tokens) :-
 read_fullstop(-1, _, _, [.]) :- !.              % end of file
 read_fullstop(0, _, _, [.]) :- !.               % END OF CLAUSE
 read_fullstop(5, 0'%, _, [.]) :- !,             % END OF CLAUSE,
-        skip_code(10).                          % skip newline
+        skip_line.                              % skip newline
 read_fullstop(Typ, Ch, Dict, [Atom|Tokens]) :-
         read_symbol(Typ, Ch, S, NextCh, NextTyp),   % symbol
         atom_token([0'.|S], Atom),
@@ -255,7 +274,7 @@ escape_sequence(3, D, CEF, [Char|Chars], Chars, NextTyp, NextCh) :-
         ; read_octal_iso(Typ, Ch, Ds),
           getct(NextCh, NextTyp)
         ),
-        number_codes(Char, [D|Ds], 8).
+        number_codes(Char, 8, [D|Ds]).
 escape_sequence(1, 0'x, CEF, [Char|Chars], Chars, NextTyp, NextCh) :- !,
         getct(Ch, Typ),                     % hexadecimal escape sequence
         ( CEF = sicstus ->
@@ -263,7 +282,7 @@ escape_sequence(1, 0'x, CEF, [Char|Chars], Chars, NextTyp, NextCh) :- !,
         ; read_hexa_iso(Typ, Ch, Ds),
           getct(NextCh, NextTyp)
         ),
-        number_codes(Char, [0'0|Ds], 16).
+        number_codes(Char, 16, [0'0|Ds]).
 escape_sequence(1, 0'c, _, Chars, Chars, NextTyp, NextCh) :- !,
         getct1(NextCh, NextTyp).              % skip layout
 escape_sequence(1, L, _, [Char|Chars], Chars, NextTyp, NextCh) :-
@@ -344,6 +363,7 @@ hexa_digit(1, D) :- D =< 0'f.
 %   <digits> . <digits>                         float
 %   <digits> . <digits> (e|E) (-|+| ) <digits>  float with exponent
 %   0.Nan                                       Not-a-number value
+%   0.Inf                                       Infinite
 %   0 ' <character>                             ascii code of the character
 %   0 b <bin-digits>                            binary integer
 %   0 o <oct-digits>                            octal integer
@@ -400,6 +420,10 @@ read_after_period(3, D, [0'.,D|S], S0, N, Dict, Tokens) :- !,
 read_after_period(2, 0'N, [], "0", Nan, Dict, Tokens) :- !,
         getct(Ch, Typ),
         read_after_dot_N(Ch, Typ, Nan, Dict, Tokens).
+% next lines added by Edison Mera to handle infinite correctly
+read_after_period(2, 0'I, [], "0", Inf, Dict, Tokens) :- !,
+	getct(Ch, Typ),
+        read_after_dot_I(Ch, Typ, Inf, Dict, Tokens).
 read_after_period(Typ, Ch, [], S0, N, Dict, Tokens) :-
         number_codes(N, S0),
         read_fullstop(Typ, Ch, Dict, Tokens).
@@ -477,12 +501,33 @@ read_after_dot_N(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
         check_singleton(Node, Var),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 
-read_after_dot_Na(0'n, 1, Nan, Dict, Tokens) :- !,
-        Nan is 0/0, /* Provisional */
+read_after_dot_Na(0'n, 1, 0.Nan, Dict, Tokens) :- !,
         getct(Ch, Typ),
         read_tokens(Typ, Ch, Dict, Tokens).
 read_after_dot_Na(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
         S = [0'N,0'a|S0],
+        read_name(Typ, Ch, S0, NextCh, NextTyp),
+        dic_lookup(Dict, S, Node),
+        check_singleton(Node, Var),
+        read_tokens(NextTyp, NextCh, Dict, Tokens).
+
+% next lines added by Edison Mera to handle infinite correctly
+read_after_dot_I(0'n, 1, Inf, Dict, Tokens) :- !,
+        getct(Ch, Typ),
+        read_after_dot_In(Ch, Typ, Inf, Dict, Tokens).
+read_after_dot_I(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
+        S = [0'I|S0],
+        read_name(Typ, Ch, S0, NextCh, NextTyp),
+        dic_lookup(Dict, S, Node),
+        check_singleton(Node, Var),
+        read_tokens(NextTyp, NextCh, Dict, Tokens).
+
+read_after_dot_In(0'f, 1, Inf, Dict, Tokens) :- !,
+        Inf is 1/0,
+        getct(Ch, Typ),
+        read_tokens(Typ, Ch, Dict, Tokens).
+read_after_dot_In(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
+        S = [0'I,0'n|S0],
         read_name(Typ, Ch, S0, NextCh, NextTyp),
         dic_lookup(Dict, S, Node),
         check_singleton(Node, Var),
@@ -513,7 +558,7 @@ based_int_or_atom([], _, L, 0, Typ, Ch, Dict, [Atom|Tokens]) :- !,
         atom_token([L|S0], Atom),                   % atom with letter L      
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 based_int_or_atom(S, Base, _, N, Typ, Ch, Dict, Tokens) :-
-        number_codes(N, S, Base),
+        number_codes(N, Base, S),
         read_tokens(Typ, Ch, Dict, Tokens).
 
 based_int_or_quoted([], Base, Base, Typ, Ch, Dict, [Atom|Tokens]) :- !,
@@ -521,7 +566,7 @@ based_int_or_quoted([], Base, Base, Typ, Ch, Dict, [Atom|Tokens]) :- !,
         atom_token(S, Atom),                            % of quoted atom
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 based_int_or_quoted(S, Base, N, Typ, Ch, Dict, Tokens) :-
-        number_codes(N, S, Base),
+        number_codes(N, Base, S),
         read_tokens(Typ, Ch, Dict, Tokens).
 
 read_quoted_character(4, 92, N, Dict, Tokens) :- % backslash
@@ -559,9 +604,31 @@ atom_token(String, atom(Atom)) :-
         atom_codes(Atom, String), !.
 atom_token(String, badatom(String)).
 
-:- comment(bug, "When the last line of a file has a single-line comment
-           and does not end with a newline, an attempt to read past end
-           of stream will be produced.").
+skip_code_prot(C) :- catch(skip_code(C), _, fail).
+
+:- comment(version(1*9+300,2004/02/16,17:19*40+'CET'), "Changed to
+   lets prolog to handle correctly the infinite floating point number.
+   Now infinite can be represented as 0.Inf.  This is to avoid the
+   previous definition of infinite (1.0E1000), that was very confuse.
+   (Edison Mera)").
+
+:- comment(version(1*9+299,2004/02/16,17:15*48+'CET'), "Changed to be
+   compatible with the new order of the arguments in number_codes/3.
+   (Edison Mera)").
+
+:- comment(version(1*9+288,2004/02/13,19:29*21+'CET'), "Now \"()\" is
+   read as the name '()', similarly to \"[]\" and \"{}\".  Fixed also
+   that \"; (a,b)\" was incorrectly read as ';'(a,b).  Same with
+   \"!\". (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+286,2004/02/13,17:54*55+'CET'), "Now using
+   skip_line, in order to correctly behave in all OS. (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+56,2003/02/03,19:38*26+'CET'), "Fixed bug regarding
+   non-terminated single- or multiple-line comments.  When the last line
+   of a file has a single-line comment and does not end in a newline, it
+   is accepted as correct.  When an open-comment /* sequence is not
+   terminated in a file, a syntax error is thrown.  (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

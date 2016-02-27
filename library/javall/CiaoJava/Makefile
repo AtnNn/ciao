@@ -1,3 +1,5 @@
+include ../../../SETTINGS
+include ../../../SHARED
 JAVASOURCES=*.java
 JAVACLASSES=*.class
 JAVAC=javac
@@ -7,6 +9,7 @@ all: classes
 
 classes:
 	-$(JAVAC) $(JAVAFLAGS) $(JAVASOURCES)
+	-chmod $(DATAMODE) $(JAVACLASSES)
 
 clean realclean:
 	/bin/rm -f $(JAVACLASSES)

@@ -19,6 +19,7 @@ run:
 
 classes:
 	-$(JAVAC) $(JAVACFLAGS) $(JAVASOURCES)
+	-chmod $(DATAMODE) $(JAVACLASSES)
 
 prolog:
 	$(SETLOCALCIAO) $(CIAOC) -c $(PROLOGSOURCES)

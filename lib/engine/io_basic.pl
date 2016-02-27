@@ -1,6 +1,7 @@
 :- module(io_basic, [
         get_code/2, get_code/1, get1_code/2, get1_code/1,
         peek_code/2, peek_code/1, skip_code/2, skip_code/1,
+        skip_line/1, skip_line/0,
         put_code/2, put_code/1, nl/1, nl/0, tab/2, tab/1,
         code_class/2, getct/2, getct1/2, display/2, display/1,
         displayq/2, displayq/1],
@@ -9,6 +10,7 @@
 :- impl_defined([
         get_code/2, get_code/1, get1_code/2, get1_code/1,
         peek_code/2, peek_code/1, skip_code/2, skip_code/1,
+        skip_line/0, skip_line/1,
         put_code/2, put_code/1, nl/1, nl/0, tab/2, tab/1,
         code_class/2, getct/2, getct1/2, display/2, display/1,
         displayq/2, displayq/1]).
@@ -34,24 +36,24 @@
    character and unifies @var{Code} with its character code.  At end of
    stream, unifies @var{Code} with the integer -1.").
 
-:- true pred get_code(+stream, ?int) + iso.
+:- true pred get_code(+stream, ?int) + (iso, native).
 
 :- comment(get_code(Code), "Behaves like @tt{current_input(S),
    get_code(S,Code)}.").
 
-:- true pred get_code(?int) + iso.
+:- true pred get_code(?int) + (iso, native).
 
 :- comment(get1_code(Stream, Code), "Reads from @var{Stream} the next
    non-layout character (see @pred{code_class/2}) and unifies @var{Code}
    with its character code.  At end of stream, unifies @var{Code} with
    the integer -1.").
 
-:- true pred get1_code(+stream, ?int).
+:- true pred get1_code(+stream, ?int) + native.
 
 :- comment(get1_code(Code), "Behaves like @tt{current_input(S),
    get1_code(S,Code)}.").
 
-:- true pred get1_code(?int).
+:- true pred get1_code(?int) + native.
 
 :- comment(peek_code(Stream, Code), "Unifies @var{Code} with the
    character code of the next character of @var{Stream}, leaving the
@@ -75,32 +77,43 @@
 
 :- true pred skip_code(+int).
 
+:- comment(skip_line(Stream), "Skips from @var{Stream} the remaining
+   input characters on the current line.  If the end of the stream is
+   reached, the stream will stay at its end.  Portable among different
+   operating systems.").
+
+:- true pred skip_line(+stream).
+
+:- comment(skip_line, "Behaves like @tt{current_input(S), skip_line(S)}.").
+
+% :- true pred skip_line.
+
 :- comment(put_code(Stream, Code), "Outputs to @var{Stream} the
    character corresponding to character code @var{Code}.").
 
-:- true pred put_code(+stream, +int) + iso.
+:- true pred put_code(+stream, +int) + (iso, native).
 
 :- comment(put_code(Code), "Behaves like @tt{current_output(S),
    put_code(S,Code)}.").
 
-:- true pred put_code(+int) + iso.
+:- true pred put_code(+int) + (iso, native).
 
 :- comment(nl(Stream), "Outputs a newline character to @var{Stream}.
    Equivalent to @tt{put_code(Stream, 0'\\n)}.").
 
-:- true pred nl(+stream) + iso.
+:- true pred nl(+stream) + (iso, native).
 
 :- comment(nl, "Behaves like @tt{current_output(S), nl(S)}.").
 
-:- true pred nl + iso.
+:- true pred nl + (iso, native).
 
 :- comment(tab(Stream,Num), "Outputs @var{Num} spaces to @var{Stream}.").
 
-:- true pred tab(+stream,+int).
+:- true pred tab(+stream,+int) + native.
 
 :- comment(tab(Num), "Behaves like @tt{current_output(S), tab(S,Num)}.").
 
-:- true pred tab(+int).
+:- true pred tab(+int) + native.
 
 :- comment(code_class(Code,Class), "Unifies @var{Class} with an integer
    corresponding to the lexical class of the character whose code is
@@ -148,12 +161,12 @@
    curly bracketed notation is not used with @tt{@{@}/1}, and
    the @tt{write_strings} flag is not honored.").
 
-:- true pred display(+stream,@term).
+:- true pred display(+stream,@term) + native.
 
 :- comment(display(Term), "Behaves like @tt{current_output(S),
    display(S,Term)}.").
 
-:- true pred display(@term).
+:- true pred display(@term) + native.
 
 :- comment(displayq(Stream, Term), "Similar to @tt{display(Stream, Term)},
    but atoms and functors that can't be read back by @pred{read_term/3}
@@ -170,3 +183,9 @@
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*9+285,2004/02/13,17:36*09+'CET'), "Added
+   @pred{skip_line/0} and @pred{skip_line/1} (which understand unix,
+   mac and win end-of-lines). (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+192,2003/12/19,16:49*52+'CET'), "Documentation
+   revised.  (Edison Mera)").

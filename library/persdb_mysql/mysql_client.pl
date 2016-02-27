@@ -71,7 +71,7 @@ dbqueryconnection := ~address.
 :- true pred nth_string(in(N), in(Array), go(String)) :: int * address * string + (foreign, do_not_free(String), returns(String)).
 :- true pred nth_field_type(in(N), in(Fields), go(Type)) :: int * address * atm + (foreign, do_not_free(Type), returns(Type)).
 
-:- use_foreign_source(mysql_client).
+:- use_foreign_source(library('persdb_mysql/mysql_client')).
 :- use_foreign_library(mysqlclient).
 
 %% This is so that users can define where they have the MySQL client.
@@ -190,6 +190,10 @@ flatten_2([X|Xs], Cs) := As :- !,
 flatten_2(X, Cs) := [X|Cs].
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+155,2004/01/07,20:09*58+'CET'), "Added
+   library/1 qualification to the imported source for the persdb
+   interface (with Edison) (Manuel Carro)").
 
 :- comment(version(1*7+209,2002/04/24,14:50*46+'CEST'), "Added
    linker_options_template.pl used to generate, from the library

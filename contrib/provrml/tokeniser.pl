@@ -2,6 +2,8 @@
                       token_read/3],
 	             [dcg,assertions,isomodes]).
 
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
+
 %:- include(library(iso)).
 :- use_module(library(iso_byte_char)).
 %:- use_module(library(basicprops)).
@@ -608,15 +610,13 @@ koll([H|L]):-
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
-%% update-version-comments: "../../version"
 %% End:
 
+:- comment(version_maintenance,dir('../../version')).
 
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
+
+:- comment(version(1*9+178,2003/12/04,17:49*33+'CET'), "Added author
+info.  (Manuel Carro)").
 
 :- comment(version(1*7+171,2002/01/03,18:20*29+'CET'), "Changed an
    erroneous type (MCL)").

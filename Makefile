@@ -2,10 +2,12 @@
 
 # This Makefile *needs* GNU make
 
-# make all              compile the whole Ciao system (engine, libraries, docs)
-# make justinstall      just install the whole Ciao system (must have been
-#                        compiled before)
 # make install          compile and install the whole Ciao system
+# 
+# make all              compile the whole Ciao system (engine, libraries, ...)
+#                       (but does not regenerate docs: see make doc below)
+# make justinstall      just install the whole Ciao system (must have been
+#                       compiled before)
 #
 # make eng              compile the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
@@ -15,17 +17,21 @@
 # make engclean		delete all engines created
 # make totalclean       cleanbackups + distclean
 # 
-# make doc              regenerate all manuals from the sources. This can 
-#                       only be done if lpdoc has been installed previously. 
+# make doc              regenerate all manuals from the sources. 
+#                       NOTE: This can only be done if lpdoc has been 
+#                       installed previously.   
 #                       It does need not be done during a normal install, 
 #                       since the distribution comes with up to date 
 #                       documentation.
+# 
 # make installdoc       a subset of 'make install', which only installs the 
 #                       documentation. Useful after 'make doc'. 
 
 
+
 #------- You should not change ANYTHING in this file -------------
 #------- All customizable options are in the file SETTINGS -------
+
 
 include SETTINGS
 include SHARED
@@ -44,6 +50,14 @@ all:
 	@echo "*** Ciao compilation completed"
 	@echo "*** ========================================================="
 
+allwin32: 
+	@echo "*** ========================================================="
+	@echo "*** Compiling ciao for Windows 32"
+	@echo "*** ========================================================="
+	$(MAKE) engwin32 compiler applications libraries
+	@echo "*** ========================================================="
+	@echo "*** Ciao compilation completed"
+	@echo "*** ========================================================="
 
 crossengwin32: 
 	$(MAKE) bin/Win32i86$(CIAODEBUG) CIAOARCH=Win32i86
@@ -55,8 +69,6 @@ crossengwin32:
 	 $(MAKE) $(MFLAGS) ciaoemulator CIAOARCH=crossWin32i86 \
 	 ADDOBJ='$(STATOBJ)' \
          CURRLIBS='$(LIBS) $(STAT_LIBS)')
-
-allwin32: engwin32 compiler applications libraries
 
 allpl: compiler applications libraries
 
@@ -109,8 +121,8 @@ allengs:
 		echo -------------------------------------------- ; \
 		echo ; \
 		echo Making engine in $$machine; \
-		echo "unsetenv CIAODEBUG; cd $(SRC); gmake eng" | rsh $$machine csh; \
-		echo "setenv CIAODEBUG -debug; cd $(SRC); gmake eng" | rsh $$machine csh; \
+		echo "unsetenv CIAODEBUG; cd $(SRC); $(MAKE) eng" | rsh $$machine csh; \
+		echo "setenv CIAODEBUG -debug; cd $(SRC); $(MAKE) eng" | rsh $$machine csh; \
 	done
 
 installallengs:
@@ -119,7 +131,7 @@ installallengs:
 		echo -------------------------------------------- ; \
 		echo ; \
 		echo Installing engine in $$machine; \
-		echo "unsetenv CIAODEBUG; cd $(SRC); gmake installeng" | rsh $$machine csh; \
+		echo "unsetenv CIAODEBUG; cd $(SRC); $(MAKE) installeng" | rsh $$machine csh; \
 	done
 
 # Win32 header does not change
@@ -146,6 +158,7 @@ applications:
 libraries:
 	cd lib && $(MAKE) all
 	cd library && $(MAKE) all$(DEFAULTYPE)
+	cd contrib && $(MAKE) all
 
 copysrcfiles: createsrcdir
 	cd engine && for File in *.[ch] Makefile ; \
@@ -223,12 +236,15 @@ installincludes:
 	-chmod $(EXECMODE) $(INSTALLEDINCLUDEDIR)
 	-cp $(NODEBUGSRCINCLUDEDIR)/* $(INSTALLEDINCLUDEDIR)
 	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
+	-mkdir -p $(INCLUDEROOT)
+	-ln -s $(INSTALLEDINCLUDEDIR)/ciao_prolog.h $(INCLUDEROOT)/ciao_prolog.h
 
 uninstallincludes:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling C include files for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(INSTALLEDINCLUDEDIR)
+	-rm -f $(INCLUDEROOT)/ciao_prolog.h
 
 install: all justinstall
 
@@ -279,7 +295,7 @@ uninstall:
 	cd examples && $(MAKE) uninstall
 	cd emacs-mode && $(MAKE) uninstall
 	cd doc && $(MAKE) uninstall DOCFORMATS="$(TARDOCFORMATS)"
-	-rm -r $(REALLIBDIR)
+	-rm -rf $(REALLIBDIR)
 #	-rm -r $(LIBDIR)
 	@echo "*** ========================================================="
 	@echo "*** Ciao uninstallation completed"
@@ -319,8 +335,8 @@ engrealclean engclean:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Removing $(BASEMAIN) engine for all architectures..."
 	@echo "*** ---------------------------------------------------------"
-	-rm -r $(SRC)/bin
-	-rm -r $(SRC)/include
+	-rm -rf $(SRC)/bin
+	-rm -rf $(SRC)/include
 
 cleanbackups:
 	(cd $(SRC) && find . -name '*~' -exec /bin/rm {} \;)
@@ -340,6 +356,8 @@ distclean: engclean
 	cd Win32 && $(MAKE) distclean
 #	cd tests && $(MAKE) distclean
 	cd examples && $(MAKE) distclean
+	cd version && $(MAKE) distclean
+
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/doc $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/lib $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/library $(MAKE) distclean
@@ -350,4 +368,5 @@ cflow:
 
 cxref:
 	cd $(OBJDIR) && cxref -xref-function -D$(ARCHNAME) -D$(OSNAME) $(THREAD_FLAG) $(FOREIGN_FILES_FLAG) *.[ch] -O$(SRC)/etc/cxref
+
 

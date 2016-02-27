@@ -41,6 +41,15 @@
    to each of the arguments of any term (or literal/goal) with
    @tt{house/5} as the main functor.
 
+   For convenience the package extends the built-in @decl{data/1}
+   declaration so that names to arguments can be asigned as with the
+   @decl{argnames/1} declaration, as for example:
+
+@noindent
+@begin{verbatim}
+:- data product(id, description, brand, quantity).
+@end{verbatim}
+
    Once an @decl{argnames/1} is given, is possible to use the names to
    refer to the arguments of any term (or literal/goal) which has the
    same main functor as that of the term which appears in the
@@ -71,6 +80,11 @@ zebra(Owns_zebra, Drinks_water, Street) :-
    member(house$@{car=>porsche,pet=>snails@}, Street),
         ...
 @end{verbatim}
+
+   Another syntax supported, useful mainly in declarations, to avoid
+   specify the arity is @tt{house$@{/@}}, which is equivalent in our
+   example to @tt{house/5} (but for data declarations there is a special
+   syntax as we have seen).
 
    Any number of @decl{argnames/1} declarations can appear in a file,
    one for each functor whose arguments are to be accessed by name.

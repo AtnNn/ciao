@@ -1,177 +1,424 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Ciao lpmake scripting facility</TITLE>
+<TITLE>The Ciao Prolog System               - Set Operations</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC698" HREF="ciao_toc.html#TOC698">The Ciao lpmake scripting facility</A></H1>
-
+<H1><A NAME="SEC717" HREF="ciao_toc.html#TOC717">Set Operations</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
-
-
-<P>
- 
+<A NAME="IDX7975"></A>
 
 
 <P>
-<A NAME="IDX7056"></A>
-<A NAME="IDX7057"></A>
-<A NAME="IDX7058"></A>
-<A NAME="IDX7059"></A>
+<STRONG>Author(s):</STRONG> Lena Flood.
 
 
 <P>
-<STRONG>Note:</STRONG> 
-<A NAME="IDX7060"></A>
-<CODE>lpmake</CODE> and the 
-<A NAME="IDX7061"></A>
-<CODE>make</CODE> library are still under active development, and they may change substantially in future releases. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-<A NAME="IDX7062"></A>
-<CODE>lpmake</CODE> is a Ciao application which uses the Ciao 
-<A NAME="IDX7063"></A>
-<CODE>make</CODE> library to implement a dependency-driven scripts in a similar way to the Un*x 
-<A NAME="IDX7064"></A>
-<CODE>make</CODE> facility. 
+<STRONG>Version of last change:</STRONG> 1.9#239 (2003/12/22, 18:32:52 CET)
 
 
 <P>
-The original purpose of the Un*x 
-<A NAME="IDX7065"></A>
-<CODE>make</CODE> utility is to determine automatically which pieces of a large program needed to be recompiled, and issue the commands to recompile them. In practice, 
-<A NAME="IDX7066"></A>
-<CODE>make</CODE> is often used for many other purposes: it can be used to describe any task where some files must be updated automatically from others whenever the others change. 
-<A NAME="IDX7067"></A>
-<CODE>lpmake</CODE> can be used for the same types of applications as 
-<A NAME="IDX7068"></A>
-<CODE>make</CODE>, and also for some new ones, and offers a number of advantages over 
-<A NAME="IDX7069"></A>
-<CODE>make</CODE>. The first one is <EM>portability</EM>. When compiled to a bytecode executable 
-<A NAME="IDX7070"></A>
-<CODE>lpmake</CODE> runs on any platform where a Ciao engine is available. Also, the fact that typically many of the operations are programmed in Prolog within the makefile, not needing external applications, improves portability further. The second advantage of 
-<A NAME="IDX7071"></A>
-<CODE>lpmake</CODE> is <EM>improved programming capabilities</EM>. While 
-<A NAME="IDX7072"></A>
-<CODE>lpmake</CODE> is simpler than 
-<A NAME="IDX7073"></A>
-<CODE>make</CODE>, 
-<A NAME="IDX7074"></A>
-<CODE>lpmake</CODE> allows using the Ciao Prolog language within the scripts. This allows establising more complex dependencies and programming powerful operations within the make file, and without resorting to external packages (e.g., operating system commands), which also helps portability. A final advantage of 
-<A NAME="IDX7075"></A>
-<CODE>lpmake</CODE> is that it supports a form of <EM>autodocumentation</EM>: 
-<A NAME="IDX7076"></A>
-<A NAME="IDX7077"></A>
-comments associated to targets can be included in the configuration files. Calling 
-<A NAME="IDX7078"></A>
-<CODE>lpmake</CODE> in a directory which has such a configuration file explains what commands the configuration file support and what these commands will do. 
+This module implements set operations. Sets are just ordered lists.
 
 
 
 <UL>
-<LI><A HREF="ciao_175.html#SEC699">General operation</A>
-<LI><A HREF="ciao_175.html#SEC700">lpmake usage</A>
-<LI><A HREF="ciao_175.html#SEC701">Acknowledgments (lpmake)</A>
+<LI><A HREF="ciao_175.html#SEC718">Usage and interface (sets)</A>
+<LI><A HREF="ciao_175.html#SEC719">Documentation on exports (sets)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC699" HREF="ciao_toc.html#TOC699">General operation</A></H2>
+<H2><A NAME="SEC718" HREF="ciao_toc.html#TOC718">Usage and interface (<CODE>sets</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(sets)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7976"></A>
+<CODE>insert/3</CODE>, 
+<A NAME="IDX7977"></A>
+<CODE>ord_delete/3</CODE>, 
+<A NAME="IDX7978"></A>
+<CODE>ord_member/2</CODE>, 
+<A NAME="IDX7979"></A>
+<CODE>ord_test_member/3</CODE>, 
+<A NAME="IDX7980"></A>
+<CODE>ord_subtract/3</CODE>, 
+<A NAME="IDX7981"></A>
+<CODE>ord_intersection/3</CODE>, 
+<A NAME="IDX7982"></A>
+<CODE>ord_intersection_diff/4</CODE>, 
+<A NAME="IDX7983"></A>
+<CODE>ord_intersect/2</CODE>, 
+<A NAME="IDX7984"></A>
+<CODE>ord_subset/2</CODE>, 
+<A NAME="IDX7985"></A>
+<CODE>ord_subset_diff/3</CODE>, 
+<A NAME="IDX7986"></A>
+<CODE>ord_union/3</CODE>, 
+<A NAME="IDX7987"></A>
+<CODE>ord_union_diff/4</CODE>, 
+<A NAME="IDX7988"></A>
+<CODE>ord_union_symdiff/4</CODE>, 
+<A NAME="IDX7989"></A>
+<CODE>ord_union_change/3</CODE>, 
+<A NAME="IDX7990"></A>
+<CODE>merge/3</CODE>, 
+<A NAME="IDX7991"></A>
+<CODE>ord_disjoint/2</CODE>, 
+<A NAME="IDX7992"></A>
+<CODE>setproduct/3</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7993"></A>
+<CODE>sort</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC719" HREF="ciao_toc.html#TOC719">Documentation on exports (<CODE>sets</CODE>)</A></H2>
+<P>
+<A NAME="IDX7994"></A>
+<A NAME="IDX7995"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
+<DD><A NAME="IDX7996"></A>
+
 
 <P>
-To prepare to use 
-<A NAME="IDX7079"></A>
-<CODE>lpmake</CODE>, and in a similar way to 
-<A NAME="IDX7080"></A>
-<CODE>make</CODE>, you must write a file (typically called 
-<A NAME="IDX7081"></A>
-<CODE>Makefile.pl</CODE>) that describes the relationships among files in your program or application, and states the commands for updating each file. In a program, typically the executable file is updated from object files, which are in turn made by compiling source files. Another example is running 
-<A NAME="IDX7082"></A>
-<CODE>latex</CODE> and 
-<A NAME="IDX7083"></A>
-<CODE>dvips</CODE> on a set of source <CODE>.tex</CODE> files to generate a document in <CODE>dvi</CODE> and <CODE>postscript</CODE> formats. Once a suitable makefile exists, each time you change some source files, simply typing <CODE>lpmake</CODE> suffices to perform all necessary operations (recompilations, processing text files, etc.). The 
-<A NAME="IDX7084"></A>
-<CODE>lpmake</CODE> program uses the dependency rules in the makefile and the last modification times of the files to decide which of the files need to be updated. For each of those files, it issues the commands recorded in the makefile. For example, in the 
-<A NAME="IDX7085"></A>
-<CODE>latex</CODE>/
-<A NAME="IDX7086"></A>
-<CODE>dvips</CODE> case one rule states that the <CODE>.dvi</CODE> file whould be updated from the <CODE>.tex</CODE> files whenever one of them changes and another rule states that the <CODE>.ps</CODE> file needs to be updated from a <CODE>.dvi</CODE> file every time it changes. The rule also describe the commands to be issued to update the files. 
+<STRONG>Usage:</STRONG> <CODE>insert(+Set1, +Element, -Set2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Set2</CODE> is <CODE>Set1</CODE> with <CODE>Element</CODE> inserted in it, preserving the order.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7997"></A>
+<A NAME="IDX7998"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_delete/3:</B>
+<DD><A NAME="IDX7999"></A>
 
 
 <P>
-So, the general process is as follows: 
-<A NAME="IDX7087"></A>
-<CODE>lpmake</CODE> executes commands in the 
-<A NAME="IDX7088"></A>
-<CODE>Makefile.pl</CODE> to update one or more target <EM>names</EM>, where <EM>name</EM> is often a program, but can also be a file to be generated or even a "virtual" target. If no <CODE>-l</CODE> or <CODE>-m</CODE> options are present, 
-<A NAME="IDX7089"></A>
-<CODE>lpmake</CODE> will look for the makefile 
-<A NAME="IDX7090"></A>
-<CODE>Makefile.pl</CODE>. 
-<A NAME="IDX7091"></A>
-<CODE>lpmake</CODE> updates a target if it depends on prerequisite files that have been modified since the target was last modified, or if the target does not exist. You can provide command line arguments to 
-<A NAME="IDX7092"></A>
-<CODE>lpmake</CODE> to control which files should be regenerated, or how. 
+<STRONG>Usage:</STRONG> <CODE>ord_delete(+Set0, +X, -Set)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> It succeeds if <CODE>Set</CODE> is <CODE>Set0</CODE> without element <CODE>X</CODE>.
 
+</UL>
 
-
-<H2><A NAME="SEC700" HREF="ciao_toc.html#TOC700">lpmake usage</A></H2>
-
-
-<PRE>
-
-Supported command line options:
-
-[-v] [-u &#60;.../Configfile.pl&#62;] &#60;command1&#62; ... &#60;commandn&#62;
-
-  Process commands &#60;command1&#62; ... &#60;commandn&#62;, using user 
-  file &#60;.../Configfile.pl&#62; as configuration file. If no 
-  configuration file is specified a file 'Makefile.pl' in 
-  the current directory will be used. 
-
-[-v] [-m &#60;.../Configfile.pl&#62;] &#60;command1&#62; ... &#60;commandn&#62;
-
-  Same as above, but the configuration file is a module. 
-  Making this file a module is useful to implement 
-  inherintance across diferent configuration files, i.e., 
-  the values declared in a configuration file can be 
-  easily made to override those defined in another.
-
-  Optional argument '-v' produces verbose output, reporting 
-  on the processing of the dependency rules. Very useful 
-  for debugging Makefiles.
-
--h     [ -u &#60;.../Configfile.pl&#62; ]
--h     [ -m &#60;.../Configfile.pl&#62; ]
--help  [ -u &#60;.../Configfile.pl&#62; ]
--help  [ -m &#60;.../Configfile.pl&#62; ]
-
-  Print this help message. If a configuration file is given, 
-  and the commands in it are commented, then information on 
-  these commands is also printed.
-
-</PRE>
-
-
-
-<H2><A NAME="SEC701" HREF="ciao_toc.html#TOC701">Acknowledgments (<CODE>lpmake</CODE>)</A></H2>
+</DL>
 
 <P>
-Some parts of the documentation are taken from the documentation of GNU's 
-<A NAME="IDX7093"></A>
-<CODE>gmake</CODE>.
+<A NAME="IDX8000"></A>
+<A NAME="IDX8001"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_member/2:</B>
+<DD><A NAME="IDX8002"></A>
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_member(+X, +Set)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds if <CODE>X</CODE> is member of <CODE>Set</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8003"></A>
+<A NAME="IDX8004"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_test_member/3:</B>
+<DD><A NAME="IDX8005"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_test_member(+Set, +X, -Result)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> If <CODE>X</CODE> is member of <CODE>Set</CODE> then <CODE>Result</CODE>=<CODE>yes</CODE>. Otherwise <CODE>Result</CODE>=<CODE>no</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8006"></A>
+<A NAME="IDX8007"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_subtract/3:</B>
+<DD><A NAME="IDX8008"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_subtract(+Set1, +Set2, ?Difference)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Difference</CODE> contains all and only the elements of <CODE>Set1</CODE> which are not also in <CODE>Set2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8009"></A>
+<A NAME="IDX8010"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersection/3:</B>
+<DD><A NAME="IDX8011"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_intersection(+Set1, +Set2, ?Intersection)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Intersection</CODE> is the ordered representation of <CODE>Set1</CODE> and <CODE>Set2</CODE>, provided that <CODE>Set1</CODE> and <CODE>Set2</CODE> are ordered lists.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8012"></A>
+<A NAME="IDX8013"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersection_diff/4:</B>
+<DD><A NAME="IDX8014"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_intersection_diff(+Set1, +Set2, -Intersect, -NotIntersect)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Intersect</CODE> contains those elements which are both in <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>NotIntersect</CODE> those which are in <CODE>Set1</CODE> but not in <CODE>Set2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8015"></A>
+<A NAME="IDX8016"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersect/2:</B>
+<DD><A NAME="IDX8017"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_intersect(+Xs, +Ys)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Succeeds when the two ordered lists have at least one element in common.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8018"></A>
+<A NAME="IDX8019"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_subset/2:</B>
+<DD><A NAME="IDX8020"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_subset(+Xs, +Ys)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Succeeds when every element of <CODE>Xs</CODE> appears in <CODE>Ys</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8021"></A>
+<A NAME="IDX8022"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_subset_diff/3:</B>
+<DD><A NAME="IDX8023"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_subset_diff(+Set1, +Set2, -Difference)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds when every element of <CODE>Set1</CODE> appears in <CODE>Set2</CODE> and <CODE>Difference</CODE> has the elements of <CODE>Set2</CODE> which are not in <CODE>Set1</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8024"></A>
+<A NAME="IDX8025"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union/3:</B>
+<DD><A NAME="IDX8026"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union(+Set1, +Set2, ?Union)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>. When some element occurs in both sets, <CODE>Union</CODE> retains only one copy.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8027"></A>
+<A NAME="IDX8028"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_diff/4:</B>
+<DD><A NAME="IDX8029"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union_diff(+Set1, +Set2, -Union, -Difference)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>Difference</CODE> is <CODE>Set2</CODE> set-minus <CODE>Set1</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8030"></A>
+<A NAME="IDX8031"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_symdiff/4:</B>
+<DD><A NAME="IDX8032"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union_symdiff(+Set1, +Set2, -Union, -Diff)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when Diff is the symmetric difference of Set1 and Set2, and Union is the union of Set1 and Set2.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8033"></A>
+<A NAME="IDX8034"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_change/3:</B>
+<DD><A NAME="IDX8035"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union_change(+Set1, +Set2, -Union)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE> and <CODE>Union</CODE> is different from <CODE>Set2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8036"></A>
+<A NAME="IDX8037"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>merge/3:</B>
+<DD><A NAME="IDX8038"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>merge(+Set1, +Set2, ?Union)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> See <CODE>ord_union/3</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8039"></A>
+<A NAME="IDX8040"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_disjoint/2:</B>
+<DD><A NAME="IDX8041"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_disjoint(+Set1, +Set2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Set1</CODE> and <CODE>Set2</CODE> have no element in common.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8042"></A>
+<A NAME="IDX8043"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>setproduct/3:</B>
+<DD><A NAME="IDX8044"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>setproduct(+Set1, +Set2, -Product)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Product</CODE> has all two element sets such that one element is in <CODE>Set1</CODE> and the other in <CODE>set2</CODE>, except that if the same element belongs to both, then the corresponding one element set is in <CODE>Product</CODE>.
+
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

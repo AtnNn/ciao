@@ -40,3 +40,9 @@
 
 :- include(library(pillow)).
 
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+231,2003/12/22,17:58*08+'CET'), "Control
+   version started.  (Edison Mera)").
+

@@ -131,7 +131,8 @@ struct stream_node {
   int pending_char;                                      /* From peek'ing */
   unsigned int isatty:1;
   unsigned int socket_eof:1;
-  unsigned int socket_is_unbuffered:1;
+  /*  unsigned int socket_is_unbuffered:1; -- Not used (DCG) */
+  int previous_char; /* To correctly count lines in Mac, Win, Unix (DCG) */
   ENG_INT last_nl_pos;
   ENG_INT nl_count;
   ENG_INT char_count;

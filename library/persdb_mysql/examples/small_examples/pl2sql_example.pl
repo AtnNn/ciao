@@ -1,4 +1,6 @@
-:- use_module(library('persdb_sql/pl2sql')).
+%jcf%:- use_module(library('persdb_sql/pl2sql')).
+:- use_module(library('persdb_mysql/pl2sql')).
+%jcf%
 :- use_module(library(strings)).
 
 :- multifile [relation/3,attribute/4].

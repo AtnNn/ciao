@@ -1,37 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Term manipulation utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Symbolic filenames</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_76.html">previous</A>, <A HREF="ciao_78.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_76.html">previous</A>, <A HREF="ciao_78.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC326" HREF="ciao_toc.html#TOC326">Term manipulation utilities</A></H1>
+<H1><A NAME="SEC330" HREF="ciao_toc.html#TOC330">Symbolic filenames</A></H1>
 <P>
-<A NAME="IDX3853"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX4499"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#141 (2001/11/12, 17:47:36 CET)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#9 (2002/5/28, 19:11:29 CEST)
+
+
+<P>
+This module provides a predicate for file opening which can use any term as an alias for the filename (i.e., symbolic filenames) instead of the usual constants which are file system path names of the actual files. 
+
+
+<P>
+The correspondence between an alias and the actual file path is done dynamically, without having to recompile the program. It is possible to define the correspondence via facts for 
+<A NAME="IDX4500"></A>
+<CODE>file_alias/2</CODE> in a file declared with 
+<A NAME="IDX4501"></A>
+<CODE>multifile:alias_file/1</CODE> in the program: those facts will be dynamically loaded when running the program. Alternatively, the correspondence can be defined via shell environment variables, by defining the value of a variable by the (symbolic) name of the file to be the path of the actual file.
 
 
 
 <UL>
-<LI><A HREF="ciao_77.html#SEC327">Usage and interface (terms)</A>
-<LI><A HREF="ciao_77.html#SEC328">Documentation on exports (terms)</A>
+<LI><A HREF="ciao_77.html#SEC331">Usage and interface (symfnames)</A>
+<LI><A HREF="ciao_77.html#SEC332">Documentation on exports (symfnames)</A>
+<LI><A HREF="ciao_77.html#SEC333">Documentation on multifiles (symfnames)</A>
+<LI><A HREF="ciao_77.html#SEC334">Other information (symfnames)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC327" HREF="ciao_toc.html#TOC327">Usage and interface (<CODE>terms</CODE>)</A></H2>
+<H2><A NAME="SEC331" HREF="ciao_toc.html#TOC331">Usage and interface (<CODE>symfnames</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +57,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_76.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(terms)).</CODE>
+<CODE>:- use_module(library(symfnames)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,12 +66,29 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_76.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3854"></A>
-<CODE>copy_args/3</CODE>, 
-<A NAME="IDX3855"></A>
-<CODE>arg/2</CODE>, 
-<A NAME="IDX3856"></A>
-<CODE>atom_concat/2</CODE>.
+<A NAME="IDX4502"></A>
+<CODE>open/3</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX4503"></A>
+<CODE>alias_file/1</CODE>, 
+<A NAME="IDX4504"></A>
+<CODE>file_alias/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4505"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX4506"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -63,66 +98,132 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_76.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC328" HREF="ciao_toc.html#TOC328">Documentation on exports (<CODE>terms</CODE>)</A></H2>
+<H2><A NAME="SEC332" HREF="ciao_toc.html#TOC332">Documentation on exports (<CODE>symfnames</CODE>)</A></H2>
 <P>
-<A NAME="IDX3857"></A>
-<A NAME="IDX3858"></A>
+<A NAME="IDX4507"></A>
+<A NAME="IDX4508"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_args/3:</B>
-<DD><A NAME="IDX3859"></A>
+<DT><span class="define">PREDICATE:</span> <B>open/3:</B>
+<DD><A NAME="IDX4509"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>copy_args(N,Term,Copy)</CODE>
+<CODE>open(File, Mode, Stream)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Term</CODE> and <CODE>Copy</CODE> have the same first <CODE>N</CODE> arguments.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+Open <CODE>File</CODE> with mode <CODE>Mode</CODE> and return in <CODE>Stream</CODE> the stream associated with the file. It is like 
+<A NAME="IDX4510"></A>
+<CODE>streams_basic:open/3</CODE>, but <CODE>File</CODE> is considered a symbolic name: either defined by 
+<A NAME="IDX4511"></A>
+<CODE>user:file_alias/2</CODE> or as an environment variable. Predicate 
+<A NAME="IDX4512"></A>
+<CODE>user:file_alias/2</CODE> is inspected before the environment variables.
 
-<CODE>N</CODE> is a non-negative integer.
- (<CODE>basic_props:nnegint/1</CODE>)
-</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC333" HREF="ciao_toc.html#TOC333">Documentation on multifiles (<CODE>symfnames</CODE>)</A></H2>
+<P>
+<A NAME="IDX4513"></A>
+<A NAME="IDX4514"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>alias_file/1:</B>
+<DD><A NAME="IDX4515"></A>
+
+
+<P>
+<CODE>alias_file(File)</CODE>
+
+
+<P>
+Declares <CODE>File</CODE> to be a file defining symbolic names via 
+<A NAME="IDX4516"></A>
+<CODE>file_alias/2</CODE>. Anything else in <CODE>File</CODE> is simply ignored.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
 
 </DL>
 
 <P>
-<A NAME="IDX3860"></A>
-<A NAME="IDX3861"></A>
+<A NAME="IDX4517"></A>
+<A NAME="IDX4518"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arg/2:</B>
-<DD><A NAME="IDX3862"></A>
+<DT><span class="define">PREDICATE:</span> <B>file_alias/2:</B>
+<DD><A NAME="IDX4519"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>arg(Term,Arg)</CODE>
+<CODE>file_alias(Alias, File)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Arg</CODE> is an argument of <CODE>Term</CODE>. Gives each of the arguments on backtracking.
 
-</UL>
+<P>
+Declares <CODE>Alias</CODE> as a symbolic name for <CODE>File</CODE>, the real name of an actual file (or directory).
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
 
 </DL>
 
-<P>
-<A NAME="IDX3863"></A>
-<A NAME="IDX3864"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>atom_concat/2:</B>
-<DD><A NAME="IDX3865"></A>
 
+
+<H2><A NAME="SEC334" HREF="ciao_toc.html#TOC334">Other information (<CODE>symfnames</CODE>)</A></H2>
 
 <P>
-<CODE>atom_concat(Atms,Atm)</CODE>
+ The example discussed here is included in the distribution files. There is a main application file which uses module <CODE>mm</CODE>. This module reads a line from a file; the main predicate in the main file then prints this line. The important thing is that the file read is named by a symbolic name "<CODE>file</CODE>". The main application file declares another file where the symbolic names are assigned actual file names: 
 
+
+
+<PRE>
+
+:- use_module(mm).
+
+:- multifile alias_file/1.
+alias_file(myfiles).
+
+main :- p(X), display(X), nl.
+
+</PRE>
 
 <P>
-<CODE>Atm</CODE> is the atom resulting from concatenating all atoms in the list <CODE>Atms</CODE> in the order in which they appear.
+Now, the file <CODE>myfiles.pl</CODE> can be used to change the file you want to read from without having to recompile the application. The current assignment is: 
 
 
-</DL>
+
+<PRE>
+
+%:- use_package([]).
+file_alias(file,'mm.pl').
+
+</PRE>
+
+<P>
+so the execution of the application will show the first line of <CODE>mm.pl</CODE>. However, you can change to: 
+
+
+
+<PRE>
+file_alias(file,'main.pl').
+
+</PRE>
+
+<P>
+and then execution of the same executable will show the first line of <CODE>main.pl</CODE>. 
+ 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_76.html">previous</A>, <A HREF="ciao_78.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_76.html">previous</A>, <A HREF="ciao_78.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

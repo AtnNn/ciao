@@ -36,6 +36,7 @@
 #include <setjmp.h>
 #include <signal.h>
 #include <string.h>
+#include <math.h>
 
 #include "compat.h"
 #include "termdefs.h"                          /* because of TAGGED (MCL) */
@@ -65,6 +66,56 @@
 #define ROUND_CHARS(Chars) Chars%ALIGN == 0 ? Chars/ALIGN : Chars/ALIGN + 1
 #define MIN_MEM_BLOCK (unsigned int)(ROUND_CHARS(MIN_MEM_BLOCK_CHARS))
 
+/* Computing the accuracy of floats - Changed so that display(5.347) = 5.347 */
+
+static ENG_INT base = 2; 
+
+/*
+  safe_addition is intended to force A and B to be stored prior to doing the
+  addition of A and B , for use in situations where optimizers might hold
+  one of these in a register.
+
+  There is a problem with gcc (3.1, at least): when using -O3, which turns
+  inlining on, the number of digits in the (decimal) mantissa returned is
+  20, due to the inlining of the safe_addition function, and the further
+  optimization this brings about.  In order to avoid this in general, I have
+  put the volatile keyword which tells the optimizer not to throw away
+  references to the ret_val variable (since it may be read/written to by
+  other threads :-), even if safe_addition is inlined.
+*/
+
+ENG_FLT safe_addition(volatile ENG_FLT *a, volatile ENG_FLT *b)
+{
+  volatile ENG_FLT ret_val;
+  ret_val = *a + *b;
+  return ret_val;
+} 
+
+void find_fp_bits(ENG_INT *t)
+{
+  volatile static ENG_FLT one = 1.0;
+
+  /* 'base' was originally found out from the implementation of the FPU/FP
+     routines; it is tipically 2 in mos FP implementations.  I suppose,
+     then, that we can choose whatever base is appropriate for us and use
+     the loop below to determine the number of significant digits in
+     (pseudo-) base 10. */
+    
+  volatile ENG_FLT a, c, tmp1;
+  volatile ENG_INT lt;
+
+  lt = 0;
+  a = c = one;
+  while (c == one) {
+    ++lt;
+    a *= base;
+    c = safe_addition(&a, &one);
+    tmp1 = -a;
+    c = safe_addition(&c, &tmp1);
+  }
+  *t = lt;
+} 
+
 
 int turn_point(TAGGED *base);
 
@@ -83,7 +134,6 @@ int main(argc, argv)
      int argc;
      char **argv;
 {
-  register int i, j;
   TAGGED mbase = 1;
   int lots;
 
@@ -154,16 +204,19 @@ int main(argc, argv)
     */
   /* out:*/
   {
-    double f = 1.0;
-    
-    for (i=1; f+1.0>1.0; i++)
-      f/=2.0;
-    i = (i*0.3010299956639812)+1; /* #significant digits */
-    f = 0.5e-9;			/* rounding factor if above=18 */
+    ENG_INT bits;
+    double f;    
+    int i, j;
+
+    find_fp_bits(&bits);
+
+    i = (bits*0.301029995663981); /* #significant digits, bits*log_10(2) */
+
+    f = 0.5e-9;			/* rounding factor if above 18 */
     for (j=18; j>i; j--)
       f*=10.0;
-    printf("#define ENG_FLT_SIGNIF %d\n#define ENG_FLT_ROUND %.16g\n",
-	   i, f);
+
+    printf("#define ENG_FLT_SIGNIF %d\n#define ENG_FLT_ROUND %.*g\n", i, i, f);
   }
   
   printf("/*kernel=def*/\n");

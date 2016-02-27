@@ -931,10 +931,10 @@ normalize_properties(Ass,NAss,M,F/A,Opts,AType,S,LB,LE) :-
 	append(AAP,NAP,CNAP),
 	append(AGP,NGP,CNGP),
 	!.
-normalize_properties(Ass,_,_M,AM,_Opts,_AT,S,LB,LE):-
+normalize_properties(Ass,_,M,_FA,_Opts,_AT,S,LB,LE):-
        	assertion_body(PD,  _DP, _CP, _AP, _GP,_CO,Ass),
  	error_message(loc(S,LB,LE),
-                      "assertion syntax for ~w in module ~w",[PD,AM]),
+                      "assertion syntax for ~w in module ~w",[PD,M]),
 	fail.
 	
 normalize_modedef_properties(( PD:: DP: CP=> AP+ GP#CO),
@@ -1106,7 +1106,8 @@ resolve_applications([Call|R],[Prop|NR],S,LB,LE) :-
 	(  nonvar(CF)
 	-> CF =.. [PF|FArgs],
 	   %% we take care of call(foo(X),Y)
-	   append(FArgs,Args,AllArgs), 
+	   %PBC Wrong: append(FArgs,Args,AllArgs), 
+	   apply(Args,FArgs,AllArgs), 
 	   %% we take care recursively of nesting: call(foo,X,call(bar,Y))
 	   resolve_applications(AllArgs,AllArgsResolved,S,LB,LE),
 	   Prop =.. [PF|AllArgsResolved]
@@ -1129,6 +1130,10 @@ diff_append_props([],T-T).
 diff_append_props([H|T],PH-PT) :-
 	PH=[H|NPT],
 	diff_append_props(T,NPT-PT).
+
+apply([],Args,Args).
+apply([A|Args],FArgs,[A|AllArgs]):-
+	append(FArgs,Args,AllArgs).
 
 %% ---------------------------------------------------------------------------
 :- comment(norm_arg_props/8,"@var{Props} is a term describing
@@ -1193,6 +1198,8 @@ add_tuple_argvars(','(P,PR),Arg,PD,[NP|NPs]) :-
 add_tuple_argvars(P,Arg,PD,[NP]) :-
 	add_argvar(P,Arg,PD,NP).
 
+add_argvar(M:P,Arg,PD,M:NP) :- !,
+	add_argvar(P,Arg,PD,NP).
 add_argvar(P,Arg,PD,NP) :-
 	P =.. [F|Vars],
 	arg(Arg,PD,Var),
@@ -1220,6 +1227,11 @@ norm_goal_props((GP,GPs),[NGP|NGPs],NPD) :-
 	norm_goal_props(GPs,NGPs,NPD).
 norm_goal_props(GP,[NGP],NPD) :-
 	!,
+	norm_goal_prop_(GP,NGP,NPD).
+
+norm_goal_prop_(M:GP,M:NGP,NPD):- !,
+	norm_goal_prop(GP,NGP,NPD).
+norm_goal_prop_(GP,NGP,NPD):-
 	norm_goal_prop(GP,NGP,NPD).
 
 %% Univ is not smart enough for one version
@@ -1313,6 +1325,13 @@ check_property(Prop,F,A,M,S,LB,LE) :-
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+246,2003/12/24,17:03*06+'CET'), "Handle
+   module-name qualified properties.  (Francisco Bueno Carrillo)").
+
+:- comment(version(1*9+245,2003/12/24,16:27*05+'CET'), "Added apply/3
+   because p(+list(character_code)) was wrongly nomalized as p(X)
+   with list(character_code,X).  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*3+88,1999/10/22,14:21*30+'MEST'), "Added
    treatment of rel_data/1.  (Francisco Bueno Carrillo)").

@@ -1,29 +1,54 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - radiobutton_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Low level interface library to Tcl/Tk</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC531" HREF="ciao_toc.html#TOC531">radiobutton_class (library)</A></H1>
+<H1><A NAME="SEC541" HREF="ciao_toc.html#TOC541">Low level interface library to Tcl/Tk</A></H1>
 <P>
-<A NAME="IDX5414"></A>
+<A NAME="IDX6036"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Montse Iglesias Urraca.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#335 (2004/4/16, 16:18:8 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#315 (2004/2/25, 18:28:19 CET)
+
+
+<P>
+The 
+<A NAME="IDX6037"></A>
+<CODE>tcltk_low_level</CODE> library defines the low level interface used by the 
+<A NAME="IDX6038"></A>
+<CODE>tcltk</CODE> library. Essentially it includes all the code related directly to the handling of sockets and processes. This library should normally not be used directly by user programs, which use 
+<A NAME="IDX6039"></A>
+<CODE>tcltk</CODE> instead. On the other hand in some cases it may be useful to undertand how this library works in order to understand possible problems in programs that use the 
+<A NAME="IDX6040"></A>
+<CODE>tcltk</CODE> library. 
 
 
 
 <UL>
-<LI><A HREF="ciao_126.html#SEC532">Usage and interface (radiobutton_class)</A>
-<LI><A HREF="ciao_126.html#SEC533">Documentation on exports (radiobutton_class)</A>
+<LI><A HREF="ciao_126.html#SEC542">Usage and interface (tcltk_low_level)</A>
+<LI><A HREF="ciao_126.html#SEC543">Documentation on exports (tcltk_low_level)</A>
+<LI><A HREF="ciao_126.html#SEC544">Documentation on internals (tcltk_low_level)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC532" HREF="ciao_toc.html#TOC532">Usage and interface (<CODE>radiobutton_class</CODE>)</A></H2>
+<H2><A NAME="SEC542" HREF="ciao_toc.html#TOC542">Usage and interface (<CODE>tcltk_low_level</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +56,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(radiobutton_class)).</CODE>
+<CODE>:- use_module(library(tcltk_low_level)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,8 +65,28 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5415"></A>
-<CODE>variable_value/1</CODE>.
+<A NAME="IDX6041"></A>
+<CODE>new_interp/1</CODE>, 
+<A NAME="IDX6042"></A>
+<CODE>new_interp/2</CODE>, 
+<A NAME="IDX6043"></A>
+<CODE>new_interp_file/2</CODE>, 
+<A NAME="IDX6044"></A>
+<CODE>tcltk/2</CODE>, 
+<A NAME="IDX6045"></A>
+<CODE>tcltk_raw_code/2</CODE>, 
+<A NAME="IDX6046"></A>
+<CODE>receive_result/2</CODE>, 
+<A NAME="IDX6047"></A>
+<CODE>send_term/2</CODE>, 
+<A NAME="IDX6048"></A>
+<CODE>receive_event/2</CODE>, 
+<A NAME="IDX6049"></A>
+<CODE>receive_list/2</CODE>, 
+<A NAME="IDX6050"></A>
+<CODE>receive_confirm/2</CODE>, 
+<A NAME="IDX6051"></A>
+<CODE>delete/1</CODE>.
 
 </UL>
 
@@ -52,8 +97,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5416"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX6052"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX6053"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX6054"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX6055"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX6056"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6057"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX6058"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6059"></A>
+<CODE>format</CODE>.
 
 </UL>
 
@@ -63,42 +122,304 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>,
 
 
 
-<H2><A NAME="SEC533" HREF="ciao_toc.html#TOC533">Documentation on exports (<CODE>radiobutton_class</CODE>)</A></H2>
+<H2><A NAME="SEC543" HREF="ciao_toc.html#TOC543">Documentation on exports (<CODE>tcltk_low_level</CODE>)</A></H2>
 <P>
-<A NAME="IDX5417"></A>
-<A NAME="IDX5418"></A>
+<A NAME="IDX6060"></A>
+<A NAME="IDX6061"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>variable_value/1:</B>
-<DD><A NAME="IDX5419"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
+<DD><A NAME="IDX6062"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>variable_value(+Variable)</CODE>
+<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies the value of global <CODE>Variable</CODE> to set whenever this button is selected.
+<LI><EM>Description:</EM> Creates two sockets to connect to the <EM>wish</EM> process, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Variable</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
+</DL>
+
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>variable_value(-Variable)</CODE>
+<A NAME="IDX6063"></A>
+<A NAME="IDX6064"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/2:</B>
+<DD><A NAME="IDX6065"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter, +Options)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the value of global <CODE>Variable</CODE> which indicates if this button is selected.
+<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with the <CODE>Options</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Variable</CODE> is currently instantiated to an atom.
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+
+<CODE>+Options</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX6066"></A>
+<A NAME="IDX6067"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>new_interp_file/2:</B>
+<DD><A NAME="IDX6068"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>new_interp_file(+FileName, -TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with a <CODE>FileName</CODE>. <CODE>FileName</CODE> is treated as a name of a sript file
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6069"></A>
+<A NAME="IDX6070"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcltk/2:</B>
+<DD><A NAME="IDX6071"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcltk(+Code, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sends the <CODE>Code</CODE> converted to string to the <CODE>TclInterpreter</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Code</CODE> is a <EM>Tcl</EM> command.
+ (<CODE>tcltk_low_level:tclCommand/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6072"></A>
+<A NAME="IDX6073"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
+<DD><A NAME="IDX6074"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcltk_raw_code(+String, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sends the tcltk code items of the <CODE>Stream</CODE> to the <CODE>TclInterpreter</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6075"></A>
+<A NAME="IDX6076"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>receive_result/2:</B>
+<DD><A NAME="IDX6077"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>receive_result(-Result, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Receives the <CODE>Result</CODE> of the last <EM>TclCommand</EM> into the <CODE>TclInterpreter</CODE>. If the <EM>TclCommand</EM> is not correct the <EM>wish</EM> process is terminated and a message appears showing the error
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Result</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6078"></A>
+<A NAME="IDX6079"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>send_term/2:</B>
+<DD><A NAME="IDX6080"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>send_term(+String, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sends the goal executed to the <CODE>TclInterpreter</CODE>. <CODE>String</CODE> has the predicate with unified variables
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6081"></A>
+<A NAME="IDX6082"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>receive_event/2:</B>
+<DD><A NAME="IDX6083"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>receive_event(-Event, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Receives the <CODE>Event</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Event</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6084"></A>
+<A NAME="IDX6085"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>receive_list/2:</B>
+<DD><A NAME="IDX6086"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>receive_list(-List, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Receives the <CODE>List</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.The <CODE>List</CODE> has all the predicates that have been inserted from Tcl/Tk with the command prolog_event. It is a list of terms.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-List</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6087"></A>
+<A NAME="IDX6088"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>receive_confirm/2:</B>
+<DD><A NAME="IDX6089"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>receive_confirm(-String, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Receives the <CODE>String</CODE> from the event socket of the <CODE>TclInterpreter</CODE> when a term inserted into the event queue is managed.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6090"></A>
+<A NAME="IDX6091"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete/1:</B>
+<DD><A NAME="IDX6092"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>delete(+TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Terminates the <EM>wish</EM> process and closes the pipe, term socket and event socket. Deletes the interpreter <CODE>TclInterpreter</CODE> from the system
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC544" HREF="ciao_toc.html#TOC544">Documentation on internals (<CODE>tcltk_low_level</CODE>)</A></H2>
+<P>
+<A NAME="IDX6093"></A>
+<A NAME="IDX6094"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>core/1:</B>
+<DD><A NAME="IDX6095"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>core(+String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX6096"></A>
+<CODE>core/1</CODE> is a set of facts which contain <CODE>String</CODE>s to be sent to the Tcl/Tk interpreter on startup. They implement miscelaneous Tcl/Tk procedures which are used by the Tcl/Tk interface. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -11,14 +11,18 @@ ALLFILES = *
 # Local compilation of all libraries: since the CIAO compiler takes
 # care of dependencies, an easy way is to compile a fake program which
 # includes all loadable modules.  The library directory must be
-# patched (hence -C -L) to point to the not-yet-installed libraries.
-# We also make it to use the locally installed engine, since
-# installation has not been made yet.
+# patched to point to the not-yet-installed libraries.  We also use
+# the recently compiled, since installation has not been made yet.
+#
+# The order in which libraries are being compiled is not arbitrary:
+# for example, clp(Q,R) must be compiled first, since other libraries
+# depend on them.
+#
 #---------------------------------------------------------------------------
 
-alldyn:  message ciao_so_libs clpr_libs autolibs ciao_special_libs 
+alldyn:  message ciao_so_libs clp_libs autolibs ciao_special_libs 
 
-allstat: message autolibs clpr_libs ciao_special_libs 
+allstat: message              clp_libs autolibs ciao_special_libs 
 
 message:
 	@echo "*** ---------------------------------------------------------"
@@ -35,11 +39,11 @@ ciao_so_libs:
 
 # CLP{Q,R} needs some special consideration, as it generates 
 # internal links in order to share common sources.
-clpr_libs:
-	cd clpr && $(MAKE) links
-	cd clpq && $(MAKE) links
-	cd clpr && $(MAKE) all
-	cd clpq && $(MAKE) all
+clp_libs:
+	-ln -sf ../clpqr-common/Makefile-common clpq/Makefile && \
+		cd clpq && $(MAKE) compile
+	-ln -sf ../clpqr-common/Makefile-common clpr/Makefile && \
+		cd clpr && $(MAKE) compile
 
 ciao_special_libs:
 # The user might not have (a decent) java 

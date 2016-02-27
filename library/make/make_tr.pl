@@ -3,8 +3,8 @@
 %% Temporary (for debugging)
 :- use_module(library(write)).
 
-%% debug_tr(off).
-debug_tr(on).
+debug_tr(off).
+%% debug_tr(on).
 
 defdep( ( T <= S :: F :- Body ), Clauses, _Mod) :- 
 	!,
@@ -12,11 +12,20 @@ defdep( ( T <= S :: F :- Body ), Clauses, _Mod) :-
 	            (  dependency_exists(T,S) :- true ) ], 
 	debug_transformation(Clauses).
 
-%% defdep(   (  T <= S :- Body               ), Clauses, _Mod) :- 
+%% defdep( ( T <= S :: F <- Deps :- Body ), Clauses, _Mod) :- 
 %% 	!,
-%% 	Clauses = [ (  do_dependency(T,S,_) :- Body    ), 
-%% 	            (  dependency_exists(T,S) :- true  ) ], 
+%% 	Clauses = [ (  do_dependency(T,S,F)         :- Body ), 
+%% Note that this is different from what lpdoc 2.0 is using now!
+%% 	            (  dependency_precond(T,S,Deps) :- true ), 
+%% 	            (  dependency_exists(T,S)       :- true ) ], 
 %% 	debug_transformation(Clauses).
+
+%% %% Example (should call make(precond):
+%% double <= simple :: Name <- precond :-
+%% 	readf(~atom_concat([Name,'.simple']),Content),
+%% 	append(Content,[0'\n|Content],DoubleContent),
+%% 	writef(DoubleContent,~atom_concat([Name,'.double'])).
+
 
 defdep( ( Target <- Deps :- Body ), Clauses, _Mod) :- 
 	!,

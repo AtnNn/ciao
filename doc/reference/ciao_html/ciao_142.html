@@ -1,129 +1,154 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
+<TITLE>The Ciao Prolog System               - line_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC590" HREF="ciao_toc.html#TOC590">Using the persdb library</A></H1>
+<H1><A NAME="SEC590" HREF="ciao_toc.html#TOC590">line_class (library)</A></H1>
+<P>
+<A NAME="IDX6495"></A>
+
 
 <P>
-Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
+<STRONG>Author(s):</STRONG> Montserrat Urraca.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#131 (2003/12/4, 17:33:38 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_142.html#SEC591">An example of persistent predicates (static version)</A>
-<LI><A HREF="ciao_142.html#SEC592">An example of persistent predicates (dynamic version)</A>
-<LI><A HREF="ciao_142.html#SEC593">A simple application / a persistent queue</A>
+<LI><A HREF="ciao_142.html#SEC591">Usage and interface (line_class)</A>
+<LI><A HREF="ciao_142.html#SEC592">Documentation on exports (line_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC591" HREF="ciao_toc.html#TOC591">An example of persistent predicates (static version)</A></H2>
+<H2><A NAME="SEC591" HREF="ciao_toc.html#TOC591">Usage and interface (<CODE>line_class</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(line_class)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
-<PRE>
-:- use_package(iso).
-:- use_package(persdb).
+<UL>
 
-%% Declare the directory associated to the key "db" where the
-%% persistence sets of the persistent predicates are stored:
-persistent_dir(db,'./').
+<LI><EM>Predicates:</EM>
 
-%% Declare a persistent predicate:
-:- persistent(bar/1, db).
+<A NAME="IDX6496"></A>
+<CODE>vertices/1</CODE>, 
+<A NAME="IDX6497"></A>
+<CODE>arrowheads/1</CODE>.
 
-%% Read a term, storing it in a new fact of the persistent predicate
-%% and list all the current facts of that predicate
-main:-
-     read(X),
-     assertz_fact(bar(X)),
-     findall(Y,bar(Y),L),
-     write(L).
+</UL>
 
-</PRE>
+<LI><STRONG>Other modules used:</STRONG>
 
 
+<UL>
 
-<H2><A NAME="SEC592" HREF="ciao_toc.html#TOC592">An example of persistent predicates (dynamic version)</A></H2>
+<LI><EM>System library modules:</EM>
 
+<A NAME="IDX6498"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX6499"></A>
+<CODE>lists</CODE>.
 
-<PRE>
-:- use_package(iso).
-:- use_package(persdb).
+</UL>
 
-main([X]):-
-%%   Declare the directory associated to the key "db" 
-     asserta_fact(persistent_dir(db,'./')),
-%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
-     data(bar/1),
-%%   Declare the predicate bar/1 as persistent at run-time  
-     make_persistent(bar/1, db),
-     assertz_fact(bar(X)),
-     findall(Y, bar(Y), L),
-     write(L).    
+</UL>
 
-</PRE>
+</div class="cartouche">
 
 
 
-<H2><A NAME="SEC593" HREF="ciao_toc.html#TOC593">A simple application / a persistent queue</A></H2>
+<H2><A NAME="SEC592" HREF="ciao_toc.html#TOC592">Documentation on exports (<CODE>line_class</CODE>)</A></H2>
+<P>
+<A NAME="IDX6500"></A>
+<A NAME="IDX6501"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
+<DD><A NAME="IDX6502"></A>
 
-<PRE>
-:- module(queue, [main/0],[persdb]).
 
-:- use_package(iso).
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
 
-:- use_module(library(read)).
-:- use_module(library(write)).
-:- use_module(library(aggregates)).
+<UL>
+<LI><EM>Description:</EM> The arguments of the list specify the coordinates for two or more points that describe a serie of connected line segments.
 
-persistent_dir(queue_dir,'./pers').
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-:- persistent(queue/1, queue_dir).
+<CODE>+ListofPoints</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
 
-queue(first).
-queue(second).
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
 
-main:-
-     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
-     read(A),
-     (  handle_action(A)
-     -&#62; true
-     ;  write('Unknown command.'), nl ),
-     main.
+<UL>
+<LI><EM>Description:</EM> Gets the list of points of the line.
 
-handle_action(end_of_file) :-
-     halt.
-handle_action(halt) :-
-     halt.
-handle_action(in(Term)) :-
-     assertz_fact(queue(Term)),
-     main.
-handle_action(slip(Term)) :-
-     asserta_fact(queue(Term)),
-     main.
-handle_action(out) :-
-     (  retract_fact(queue(Term))
-     -&#62; write('Out '), write(Term)
-     ;  write('FIFO empty.') ),
-     nl,
-     main.
-handle_action(list) :-
-     findall(Term,queue(Term),Terms),
-     write('Contents: '), write(Terms), nl,
-     main.
-     
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-</PRE>
+<CODE>-ListofPoints</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6503"></A>
+<A NAME="IDX6504"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arrowheads/1:</B>
+<DD><A NAME="IDX6505"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>arrowheads(+Where)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Where</CODE> indicates whether or not arrowheads are to be drawn at one or both ends of the line. <CODE>Where</CODE> must have one of the next values: none ( for no arrowheads ), first (for an arrowhead at the first point of the line), last (for an arrowhead at the last point of the line), or both (for arrowheads at both ends). This option defaults to none.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Where</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>arrowheads(-Where)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets position of the arrowheads.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Where</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

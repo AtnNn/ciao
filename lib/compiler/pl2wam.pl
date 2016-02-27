@@ -12,7 +12,7 @@
 :- use_module(library(dict)).
 :- use_module(library(write), [portray_clause/2]). % for wam output
 :- use_module(library(lists),
-        [length/2, dlist/3, last/2, list_lookup/3,
+        [length/2, dlist/3, list_lookup/3,
          contains1/2, nocontainsx/2, contains_ro/2, nonsingle/1,
          intset_insert/3, intset_delete/3, intset_in/2, intset_sequence/3]).
 :- use_module(engine(internals),
@@ -531,8 +531,12 @@ mk_occurrences_list([inline(G)|Gs], Chn, Gn, List) :- !,
 mk_occurrences_list([pcall(G,U)|Gs], Chn, Gn, List) :-
 	Chn1 is Chn+1,
 	mk_occurrences_list(Gs, Chn1, 0, List),
-	last(List, size(U)),
+	add_last(List, size(U)),
 	record_occurrences(G, Chn-Gn, List).
+
+add_last(L, X) :- var(L), !, L = [X|_].
+add_last([_|L], X) :- add_last(L, X).
+
 
 record_occurrences(Var, Gn, D) :-
 	Var=var(_,_),
@@ -1166,12 +1170,12 @@ c_eq_vars(U, V, Du, Dv, Dic) -->
     (   {var(Du), U=V, Du=Dv} -> =          % avoid DCG bug
     ;   {var(Dv), U=V, Du=Dv} -> =
 
- %% %%% BEGIN OF FIXED CODE
+ %% %%% BEGIN OF FIXED CODE --- ERRONEOUS PATCH!!!
  %%         (   {var(Du)}, {cached_ref(V, Dv, V1, Dv1, Dic), U=V1, Du=Dv1} -> =
  %%         ;   {var(Du), U=V, Du=Dv} -> =          % avoid DCG bug
  %%         ;   {var(Dv)}, {cached_ref(U, Du, U1, Du1, Dic), U1=V, Du1=Dv} -> =
  %%         ;   {var(Dv), U=V, Du=Dv} -> =
- %%% END OF FIXED CODE
+ %% %%% END OF FIXED CODE
 
         ;   {var(Du), var(Dv)} ->
             c_eq_var_var(U, V, Du, Dv)
@@ -2118,8 +2122,9 @@ name_of_function(X**Y, 55, X, Y).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*8+1,2002/05/27,19:57*48+'CEST'), "plwam brought
-back to its original form (last patch erroneous!)  (MCL)").
+:- comment(version(1*9+317,2004/02/26,15:40*56+'CET'), "Changed use of
+   @pred{last/2} of library lists to a local version, since its
+   semantics is not standard.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+220,2002/05/16,16:13*52+'CEST'), "Corrected a
 bug which caused wrong code generation for some cases.  (jfran)").

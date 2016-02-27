@@ -10,6 +10,7 @@ builtin_export(atomic_basic,name,2,0) .
 builtin_export(atomic_basic,atom_codes,2,0) .
 builtin_export(atomic_basic,number_codes,2,0) .
 builtin_export(atomic_basic,number_codes,3,0) .
+builtin_export(atomic_basic,atom_number,2,0) .
 builtin_export(atomic_basic,atom_length,2,0) .
 builtin_export(atomic_basic,atom_concat,3,0) .
 builtin_export(atomic_basic,sub_atom,4,0) .
@@ -40,12 +41,15 @@ builtin_export(basic_props,atm_or_atm_list,1,0) .
 builtin_export(basic_props,compat,2,compat(?,pred(1))) .
 builtin_export(basic_props,iso,1,0) .
 builtin_export(basic_props,not_further_inst,2,0) .
-builtin_export(basic_props,regtype,1,0) .
+builtin_export(basic_props,sideff,2,sideff(goal,?)) .
+builtin_export(basic_props,regtype,1,regtype(goal)) .
+builtin_export(basic_props,native,1,native(goal)) .
+builtin_export(basic_props,native,2,native(goal,?)) .
 builtin_export(basiccontrol,',',2,0) .
 builtin_export(basiccontrol,;,2,0) .
 builtin_export(basiccontrol,->,2,0) .
 builtin_export(basiccontrol,!,0,0) .
-builtin_export(basiccontrol,\+,1,0) .
+builtin_export(basiccontrol,\+,1,\+(goal)) .
 builtin_export(basiccontrol,if,3,0) .
 builtin_export(basiccontrol,true,0,0) .
 builtin_export(basiccontrol,fail,0,0) .
@@ -91,6 +95,8 @@ builtin_export(io_basic,peek_code,2,0) .
 builtin_export(io_basic,peek_code,1,0) .
 builtin_export(io_basic,skip_code,2,0) .
 builtin_export(io_basic,skip_code,1,0) .
+builtin_export(io_basic,skip_line,1,0) .
+builtin_export(io_basic,skip_line,0,0) .
 builtin_export(io_basic,put_code,2,0) .
 builtin_export(io_basic,put_code,1,0) .
 builtin_export(io_basic,nl,1,0) .
@@ -115,6 +121,8 @@ builtin_export(prolog_flags,nogc,0,0) .
 builtin_export(prolog_flags,fileerrors,0,0) .
 builtin_export(prolog_flags,nofileerrors,0,0) .
 builtin_export(streams_basic,open,3,0) .
+builtin_export(streams_basic,open,4,0) .
+builtin_export(streams_basic,open_option_list,1,0) .
 builtin_export(streams_basic,close,1,0) .
 builtin_export(streams_basic,set_input,1,0) .
 builtin_export(streams_basic,current_input,1,0) .

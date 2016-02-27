@@ -1,55 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - gengraph2 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC746" HREF="ciao_toc.html#TOC746">gengraph2 (library)</A></H1>
+<H1><A NAME="SEC749" HREF="ciao_toc.html#TOC749">Programming MYCIN rules</A></H1>
 <P>
-<A NAME="IDX7504"></A>
+<A NAME="IDX8168"></A>
 
 
 <P>
-This module defines predicates which show line graph widgets. All eight predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. Every predicate share the following features: 
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
+
+
+<P>
+MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
+<A NAME="IDX8169"></A>
+<A NAME="IDX8170"></A>
+<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
+
+<UL>
+
+<LI>A value of -1 stands for <EM>surely not</EM>.
+
+<LI>A value of 1 stands for <EM>certainly</EM>.
+
+<LI>A value of 0 stands for <EM>I don't know</EM>.
+
+</UL>
+
+<P>
+Intermediate values are allowed. 
+
+
+<P>
+Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
 
 
 
 <UL>
-
-<LI>A dataset is defined by three lists xvector, yvector and attributes. The arguments named <CODE>XVectors</CODE> (or <CODE>XVs</CODE>), <CODE>YVectors</CODE> (or <CODE>YVs</CODE>) and <CODE>LAtts</CODE><A NAME="DOCF6" HREF="ciao_foot.html#FOOT6">(6)</A> contain this information. Those arguments must be lists whose elements are also lists. The first dataset is defined by the firts element of the three lists, the second dataset is defined by the second element of the three lists and so on.
-
-<LI>Numeric values for the vector elements are needed. We will use two vectors to represent the X-Y coordinates of each set of data plotted. In these predicates the vectors can have different number of points. However, the number of elements in xvector and yvector that pertain to a certain dataset must be, obviously, equal.
-
-<LI>The active line color is blue, which means that when you select a legend element, the corresponding line turns into navyblue.
-
-<LI>The user can either select the appearance for the lines and the points or not. See the
-
-<A NAME="IDX7505"></A>
-<CODE>attributes/1</CODE> type definition. Thus, the user can call each predicate in different ways ways. 
-
-<LI>The graph has a legend and one entry (symbol and label) per dataset.
-
-<LI>If you do not want to display text in the elements header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
-
-</UL>
-
-
-<UL>
-<LI><A HREF="ciao_188.html#SEC747">Usage and interface (gengraph2)</A>
-<LI><A HREF="ciao_188.html#SEC748">Documentation on exports (gengraph2)</A>
+<LI><A HREF="ciao_188.html#SEC750">Usage and interface (mycin)</A>
+<LI><A HREF="ciao_188.html#SEC751">Documentation on new declarations (mycin)</A>
+<LI><A HREF="ciao_188.html#SEC752">Known bugs and planned improvements (mycin)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC747" HREF="ciao_toc.html#TOC747">Usage and interface (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC750" HREF="ciao_toc.html#TOC750">Usage and interface (<CODE>mycin</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -57,57 +68,16 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gengraph2)).</CODE>
+In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
-<LI><STRONG>Exports:</STRONG>
+<PRE>
+           :- mycin(MycinDataBaseName).
+</PRE>
 
+<LI><STRONG>New declarations defined:</STRONG>
 
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX7506"></A>
-<CODE>graph_b2/9</CODE>, 
-<A NAME="IDX7507"></A>
-<CODE>graph_b2/13</CODE>, 
-<A NAME="IDX7508"></A>
-<CODE>graph_w2/9</CODE>, 
-<A NAME="IDX7509"></A>
-<CODE>graph_w2/13</CODE>, 
-<A NAME="IDX7510"></A>
-<CODE>scattergraph_b2/8</CODE>, 
-<A NAME="IDX7511"></A>
-<CODE>scattergraph_b2/12</CODE>, 
-<A NAME="IDX7512"></A>
-<CODE>scattergraph_w2/8</CODE>, 
-<A NAME="IDX7513"></A>
-<CODE>scattergraph_w2/12</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7514"></A>
-<CODE>chartlib/gengraph1</CODE>, 
-<A NAME="IDX7515"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7516"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7517"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX7518"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7519"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7520"></A>
-<CODE>random/random</CODE>.
-
-</UL>
+<A NAME="IDX8171"></A>
+<CODE>export/1</CODE>.
 
 </UL>
 
@@ -115,376 +85,59 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 
 
-<H2><A NAME="SEC748" HREF="ciao_toc.html#TOC748">Documentation on exports (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC751" HREF="ciao_toc.html#TOC751">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
 <P>
-<A NAME="IDX7521"></A>
-<A NAME="IDX7522"></A>
+<A NAME="IDX8172"></A>
+<A NAME="IDX8173"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/9:</B>
-<DD><A NAME="IDX7523"></A>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX8174"></A>
 
 
 <P>
-<CODE>graph_b2(Header,GTitle,XTitle,XVectors,YTitle,YVectors,LAtts,Footer,Sm)</CODE>
+This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
+
+<PRE>
+:- export p/1.
+</PRE>
+
+<P>
+must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
+<A NAME="IDX8175"></A>
+certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
 
 
 <P>
-Besides the features mentioned at the begining of the module chapter, the displayed graph generated calling this predicate has the following distinguish characteristics: 
+<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC752" HREF="ciao_toc.html#TOC752">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
 
 
 <UL>
 
-<LI>The plotting area background color is black.
+<LI>
 
-<LI>The cross hairs color is white.
+Not fully implemented.
 
-<LI>The axis limits are determined from the data.
+<LI>
 
+Dynamic mycin predicates not implemented: open question.
+
+<LI>
+
+Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
 </UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,50]],
-  [['line1','Blue','Yellow'],['line2']],
-  'footer',
-  'natural').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7524"></A>
-<A NAME="IDX7525"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/13:</B>
-<DD><A NAME="IDX7526"></A>
-
-
-<P>
-<CODE>graph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-In addition to the features brought up at the begining of the module chapter, this graph has the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the maximum and minimum values for the graph axes.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,35]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50.5,
-  _,
-  [['line1','Blue','Yellow'],['line','MediumTurquoise','Plum']],
-  'footer',
-  'step').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7527"></A>
-<A NAME="IDX7528"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/9:</B>
-<DD><A NAME="IDX7529"></A>
-
-
-<P>
-<CODE>graph_w2(Header,GT,XT,XVectors,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX7530"></A>
-<CODE>graph_b2/9</CODE>. The difference lies in the graph appearance, as you can see below. 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,40]],
-  [['element1','Blue','DarkOrchid'],['element2','DarkOliveGreen',
-    'Firebrick']],
-  'footer',
-  'natural').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7531"></A>
-<A NAME="IDX7532"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/13:</B>
-<DD><A NAME="IDX7533"></A>
-
-
-<P>
-<CODE>graph_w2(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is comparable to 
-<A NAME="IDX7534"></A>
-<CODE>graph_b2/13</CODE>. The differences lie in the plot background color and in the cross hairs color, wich are white and black respectively. 
-
-
-<P>
-Example: 
-
-<PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[10,35,40]],
-  80,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['element1','Blue','Green'],['element2','Turquoise','Black']],
-  'footer',
-  'linear').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7535"></A>
-<A NAME="IDX7536"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/8:</B>
-<DD><A NAME="IDX7537"></A>
-
-
-<P>
-<CODE>scattergraph_b2(Header,GT,XT,XVectors,YT,YVectors,PAtts,Footer)</CODE>
-
-
-<P>
-Apart from the features brought up at the beginning of the chapter, the scatter graph displayed when invoking this predicate has the following features: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,15,20],[8,30,40]],
-  'yaxixtitle',
-  [[10,35,20],[15,11,21]],
-  [['element1','Blue','Yellow'],['element2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7538"></A>
-<A NAME="IDX7539"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/12:</B>
-<DD><A NAME="IDX7540"></A>
-
-
-<P>
-<CODE>scattergraph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,50],[18,40,59]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['point dataset1'],['point dataset2']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7541"></A>
-<A NAME="IDX7542"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/8:</B>
-<DD><A NAME="IDX7543"></A>
-
-
-<P>
-<CODE>scattergraph_w2(Header,GTitle,XTitle,XVs,YTitle,YVs,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX7544"></A>
-<CODE>scattergraph_w1/8</CODE> except in the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>If the user do not provide the colors of the points, they will be chosen among the lighter ones.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,40,15,30,35,20,30]],
-  'yaxixtitle',
-  [[10,30,40,25,20,25,20,25]],
-  [['set1','cross',4]],
-  'footer').
-</PRE>
-
-<P>
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7545"></A>
-<A NAME="IDX7546"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/12:</B>
-<DD><A NAME="IDX7547"></A>
-
-
-<P>
-<CODE>scattergraph_w2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is comparable to 
-<A NAME="IDX7548"></A>
-<CODE>scattergraph_w2/13</CODE>, the differences between them are listed below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,50]],
-  150,
-  5,
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  -10,
-  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -313,7 +313,12 @@ startup time @cite{ciaoc-entcs}:
   some of them are used in a given session. An executable with lazy
   load has the advantage that it starts fast, loading a minimal
   functionality on startup, and then loads the different modules
-  automatically as needed.
+  automatically as needed.  Please beware that initialization directives
+  appearing in a module which is lazily loaded currently are not
+  executed until the module is effectively loaded.  Since this happens
+  when the module is first required at runtime, the compiler cannot
+  guarantee the exact time and order in which these directives are
+  executed.
 
 @item{Self-contained executables:} @cindex{executables, self-contained} 
 
@@ -566,6 +571,9 @@ default extension for files is '.pl'
 
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+98,2003/08/27,12:39*15+'CEST'), "Makefile
+   corrected to leave right permissions in ciaoc.sta (MCL)").
 
 :- comment(version(1*7+30,2000/11/03,16:42*01+'CET'), "Flags homogeneized
    with _ as requested by the Ciao style guide.  (Oscar Portela Arjona)").

@@ -83,7 +83,7 @@ no
 
 %%---------------------------------------------------------------------
 
-:- pred current_module(Module) :: internal_module_id #
+:- pred current_module(Module) :: internal_module_id + native #
 	"Retrieves (on backtracking) all currently loaded modules into
          your application.".
 

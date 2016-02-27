@@ -1,106 +1,135 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
+<TITLE>The Ciao Prolog System               - Labeled graph-processing utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC692" HREF="ciao_toc.html#TOC692">Crossed-references of a program</A></H1>
+<H1><A NAME="SEC708" HREF="ciao_toc.html#TOC708">Labeled graph-processing utilities</A></H1>
+<P>
+<A NAME="IDX7933"></A>
+
 
 <P>
 <STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-The libraries involved are as follows: 
+<STRONG>Version of last change:</STRONG> 1.9#256 (2003/12/30, 23:45:1 CET)
+
+
+<P>
+See the comments for the 
+<A NAME="IDX7934"></A>
+<CODE>ugraphs</CODE> library.
+
+
 
 <UL>
-<LI>
-
-<A NAME="IDX7047"></A>
-<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
-<LI>
-
-<A NAME="IDX7048"></A>
-<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
-<LI>
-
-<A NAME="IDX7049"></A>
-<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
-<LI>
-
-<A NAME="IDX7050"></A>
-<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
-<LI>
-
-<A NAME="IDX7051"></A>
-<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
+<LI><A HREF="ciao_172.html#SEC709">Usage and interface (lgraphs)</A>
+<LI><A HREF="ciao_172.html#SEC710">Documentation on exports (lgraphs)</A>
 </UL>
 
+
+
+<H2><A NAME="SEC709" HREF="ciao_toc.html#TOC709">Usage and interface (<CODE>lgraphs</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(lgraphs)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7935"></A>
+<CODE>vertices_edges_to_lgraph/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7936"></A>
+<CODE>lgraph/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7937"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX7938"></A>
+<CODE>sets</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC710" HREF="ciao_toc.html#TOC710">Documentation on exports (<CODE>lgraphs</CODE>)</A></H2>
 <P>
-The first two are intended to be used by loading in 
-<A NAME="IDX7052"></A>
-<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
+<A NAME="IDX7939"></A>
+<A NAME="IDX7940"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>lgraph/2:</B>
+<DD><A NAME="IDX7941"></A>
 
 
 <P>
-The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
+<STRONG>Usage:</STRONG> <CODE>lgraph(Graph, Type)</CODE>
 
-<PRE>
-[ciao/etc]&#62; ciaosh
-Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
-?- use_module(xmrefs).
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a labeled graph of <CODE>Type</CODE> terms.
 
-yes
-?- set_flag(X).
+</UL>
 
-X = 3 ? 
-
-yes
-?- set_files([xfrefs, xmrefs,
-              library(xrefs),
-              library('xrefs/mrefs'),
-              library('xrefs/pxrefs'),
-              library('xrefs/xrefs2graph'),
-              library('xrefs/xrefsbuild'),
-              library('xrefs/xrefsread')
-	     ]).
-
-yes
-?- xmrefs.
-
-</PRE>
+</DL>
 
 <P>
-so that it is displayed by daVinci as: 
+<A NAME="IDX7942"></A>
+<A NAME="IDX7943"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_lgraph/3:</B>
+<DD><A NAME="IDX7944"></A>
 
 
 <P>
-<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
+<CODE>vertices_edges_to_lgraph(Vertices0, Edges, Graph)</CODE>
 
 
 <P>
-The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
+This one is a copy of the same procedure in library(wgraphs) except for the definition of min/3 (ah! - the polimorphism!). 
 
 
 <P>
-<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
+It would only be needed if there are multi-edges, i.e., several edges between the same two vertices.
 
 
-<P>
-For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
-
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

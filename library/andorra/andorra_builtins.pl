@@ -88,10 +88,10 @@ number_codes_andorra(X,L,L1,_,Y):-
 	  ).
 
 number_codes_andorra(X,L,L1,_,Y,Z):-
-	((ground(X/Z);ground(Y/Z)) -> L = L1, number_codes(X,Y,Z) ;
+	((ground(X/Y);ground(Z/Y)) -> L = L1, number_codes(X,Y,Z) ;
 	    L = [S|L1],
 	    varset([X,Y,Z],LS),
-          suspend_andorra(S,LS,number_codes(X,Y,Z),(ground(X/Z);ground(Y/Z)),builtin)
+          suspend_andorra(S,LS,number_codes(X,Y,Z),(ground(X/Y);ground(Z/Y)),builtin)
 	  ).
 
 
@@ -259,4 +259,10 @@ functor_andorra(X,L,L1,_,Y,Z):-
 
 
 
+
+
+%% Local Variables: 
+%% mode: CIAO
+%% update-version-comments: "off"
+%% End:
 

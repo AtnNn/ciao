@@ -13,17 +13,16 @@
 
 :- comment(title,"Term input").  
 
-:- comment(summary,"This module provides falicities to read terms in
-Prolog syntax.  This is very convenient in many cases (and not only if you are
-writing a Prolog compiler), because Prolog terms are easy to write and
-        can convey a lot of information in a human-readable
- fashion.").
+:- comment(module,"This module provides falicities to read terms in
+   Prolog syntax.  This is very convenient in many cases (and not only
+   if you are writing a Prolog compiler), because Prolog terms are
+   easy to write and can convey a lot of information in a
+   human-readable fashion.").
 
 :- comment(author, "First versions from SICStus 0.6 code; additional
         changes and documentation by Daniel Cabeza and Manuel Carro").
 
 :- set_prolog_flag(multi_arity_warnings, off).
-
 
 
 :- comment(define_flag/3,"Defines flags as follows:
@@ -44,14 +43,14 @@ define_flag(read_hiord, [on,off], off).
 :- comment(read(Term), "Like @tt{read(Stream,Term)} with @var{Stream}
         associated to the current input stream.").
 
-:- pred read(?Term) + iso.
+:- true pred read(?Term) + iso.
 
 read(X) :-
         current_input(Stream),
         read_internal(X, Stream, Stream, _, _, _, read/1).
 
 
-:- pred read(+Stream,?Term) => stream * term + iso
+:- true pred read(+Stream,?Term) => stream * term + iso
 # "The next term, delimited by a full-stop (i.e., a @tt{.} followed by
    either a space or a control character), is read from @var{Stream}
    and is unified with @var{Term}. The syntax of the term must agree
@@ -67,7 +66,7 @@ read(Stream, X) :-
 
 
 
-:- pred read_term(+Stream,?Term,+Options) => 
+:- true pred read_term(+Stream,?Term,+Options) => 
         stream * term * list(read_option) + iso # 
 "Reads a @var{Term} from @var{Stream} with the ISO-Prolog
 @var{Options}.  These options can control the behavior of read term (see @pred{read_option/1}).".
@@ -75,7 +74,7 @@ read(Stream, X) :-
 read_term(Stream, X, Options) :-
         read_term_aux(Options, Stream, 3, X).
 
-:- pred read_term(?Term,+Options) => term * list(read_option) + iso 
+:- true pred read_term(?Term,+Options) => term * list(read_option) + iso
 # "Like @pred{read_term/3}, but reading from the @concept{current input}".
 
 read_term(X, Options) :-
@@ -88,6 +87,9 @@ read_term_aux(Options, Stream, N, X) :-
         read_internal(X, Stream, CurIn, VarDict, Tokens, Lns, read_term/N),
         extract_vars(Vs, Tokens),
         extract_names(Ns, Ss, VarDict).
+
+:- comment(read_top_level(Stream,Data,Variables),
+        "Predicate used to read in the Top Level.").
 
 read_top_level(Stream, Data, Variables) :-
         current_input(CurIn),
@@ -301,6 +303,8 @@ read(string(List), S0, Precedence, Answer, S) :- !,
 	read_rest(S0, 0, List, Precedence, Answer, S).
 read(badatom(_), S0, _, _, _) :- !,
         syntax_error(['atom too large'], S0).
+read('/* ...', S0, _, _, _) :- !,
+        syntax_error(['non-terminated /* comment'], S0).
 read(Token, S0, _, _, _) :-
 	syntax_error([Token,' cannot start an expression'], S0).
 
@@ -336,9 +340,10 @@ read_rest([','|S1], LPrec, Term, Precedence, Answer, S) :-
 	read(S1, 1000, Next, S2),
 	read_rest(S2, 1000, (Term,Next), Precedence, Answer, S).
 read_rest(['|'|S1], LPrec, Term, Precedence, Answer, S) :-
-	Precedence >= 1100, LPrec < 1100, !,
-	read(S1, 1100, Next, S2),
-	read_rest(S2, 1100, (Term;Next), Precedence, Answer, S).
+	current_infixop('|', L, O, R),
+	Precedence >= O, LPrec =< L, !,
+	read(S1, R, Next, S2),
+	read_rest(S2, O, '|'(Term,Next), Precedence, Answer, S).
 read_rest(S, _, Term, _, Term, S).
 
 
@@ -386,7 +391,7 @@ syntax_error_data(Tokens, Msg, ErrorLoc) :-
         tokens_items(Msg0, Msg),
 	length(Tokens, Length),
 	BeforeError is Length-AfterError,
-        error_localization(Tokens, BeforeError, ErrorLoc).
+        error_localization(Tokens, BeforeError, '', ErrorLoc).
 
 the_syntax_error(Msg0, AfterError0, Msg, AfterError) :-
 	current_fact('syntax error'(Msg1,AfterError1), Ptr), !,
@@ -398,14 +403,15 @@ the_syntax_error(Msg0, AfterError0, Msg, AfterError) :-
 	).
 the_syntax_error(Msg, AfterError, Msg, AfterError).
 
-error_localization(L, 0, Msg) :- !,
+error_localization(L, 0, _, Msg) :- !,
         Msg = ['\n','** here **','\n'|Msg_],
-        error_localization(L, 999999, Msg_).
-error_localization([T|Ts], BeforeError, [I,' '|Is]) :-
+        error_localization(L, -1, '', Msg_).
+error_localization([T|Ts], BeforeError, Sep0, [Sep,I|Is]) :-
+        separator(T, Sep0, Sep),
 	token_item(T, I),
 	Left is BeforeError-1,
-	error_localization(Ts, Left, Is).
-error_localization([], _, []).
+	error_localization(Ts, Left, ' ', Is).
+error_localization([], _, _, []).
 
 tokens_items([], []).
 tokens_items([T|Ts], [I|Is]) :-
@@ -416,8 +422,12 @@ token_item(atom(X),    X    ) :- !.
 token_item(number(X),  X    ) :- !.
 token_item(var(_,X),   $$(X)) :- !.
 token_item(badatom(X), $$(X)) :- !.
-token_item(string(X),  $$(S)) :- !, append([0'"|X], """", S). % "
+token_item(string(X),  $$(S)) :- !, append([0'"|X], """", S).
 token_item(X,          X).
+
+separator('(' , _, '') :- !.
+separator(' (', _, '') :- !.
+separator(_, Sep, Sep).
 
 % --
 
@@ -440,8 +450,27 @@ second_prompt(Old, New) :-
 
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(bug, "The comma cannot be redefined as an operator, it is
+   defined in any case as op(1000, xfy,[',']).").
+
+:- comment(version(1*9+289,2004/02/13,19:46*27+'CET'), "Changed handling
+   of '|': except when marking the end of a list, \"a | b\" is read as
+   '|'(a,b), if '|' is defined as an infix operator.  In any other case,
+   the name '|' cannot be written without quotes (similarly to ',').
+   (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+201,2003/12/20,01:44*07+'CET'), "Added comment
+   to read_top_level. (Edison Mera)").
+
+:- comment(version(1*9+200,2003/12/19,18:23*05+'CET'), "Changed
+   comment summary to comment module.  (Edison Mera)").
+
+:- comment(version(1*9+57,2003/02/03,19:45*33+'CET'), "Changed report of
+   syntax errors so that no space is put before the open parenthesis of
+   a functor. (Daniel Cabeza Gras)").
+
 :- comment(version(1*7+196,2002/04/17,20:00*32+'CEST'), "Added more
-comments.  (MCL)").
+   comments. (MCL)").
 
 :- comment(version(1*7+43,2001/01/15,17:34*58+'CET'), "Changes to not
    require a layout char ending in prolog files.  (Daniel Cabeza

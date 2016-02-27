@@ -15,6 +15,8 @@ BOOL tab(Argdecl);
 BOOL tab2(Argdecl);
 BOOL skip(Argdecl);
 BOOL skip2(Argdecl);
+BOOL skip_line(Argdecl);
+BOOL skip_line1(Argdecl);
 void print_string(register struct stream_node *stream, register char *p);
 void print_variable(Argdecl, struct stream_node *stream, TAGGED term);
 void print_number(Argdecl, struct stream_node *stream, TAGGED term);

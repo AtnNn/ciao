@@ -335,7 +335,7 @@ table, causing Ciao Prolog to abort.").
 :- comment(version_maintenance,dir('../../version')).
 
 :- comment(version(1*7+138,2001/11/08,19:50*32+'CET'), "The fact that
-   the currency library now needs to be loaded explicitly is now
+   the concurrency library now needs to be loaded explicitly is now
    correctly documented.  (Manuel Hermenegildo)").
 
 :- comment(version(1*7+114,2001/07/09,13:20*42+'CEST'), "eng_self/1

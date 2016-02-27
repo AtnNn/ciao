@@ -22,12 +22,12 @@ $(LIBNAME): headers $(OBJNAME)
 
 $(OBJNAME): headers $(SRCNAME)
 	$(CC) $(CFLAGS) $(CCSHARED) -c $(SRCNAME) -o $(OBJNAME)
-	-chmod $(DATAMODE) *.o
+	-chmod $(DATAMODE) $(OBJNAME)
 
 headers:
 	/bin/rm -f  $(HEADERS)
-	echo \#include \"$(SRC)/bin/$(CIAOARCH)/datadefs.h\" > $(HEADERS)
-	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support.h\" >> $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)$(CIAODEBUG)/datadefs.h\" > $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)$(CIAODEBUG)/support.h\" >> $(HEADERS)
 	-chmod $(DATAMODE) $(HEADERS)
 
 clean:
@@ -45,5 +45,5 @@ allarchs:
 		echo -------------------------------------------- ; \
 		echo ; \
 		echo Making in $$machine; \
-		echo "unsetenv CIAODEBUG; cd $(SRC)/library/random; gmake" | rsh $$machine csh; \
+		echo "unsetenv CIAODEBUG; cd $(SRC)/library/random; $(MAKE)" | rsh $$machine csh; \
 	done

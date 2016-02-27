@@ -1,4 +1,3 @@
-
 :- use_package([assertions,iso]).
 :- comment(nodoc,assertions).
 
@@ -6,8 +5,14 @@
 
 :- comment(title,"ISO-Prolog package").
 
-:- comment(module,"This library package allows the use of the ISO-Prolog
-   predicates in Ciao programs. It is included by default in modules
-   starting with a @decl{module/2} declaration or user files without a
-   starting @decl{use_package/1} declaration.").
+:- comment(author, "The CLIP Group").
 
+:- comment(module,"This library package allows the use of the
+   @concept{ISO-Prolog} predicates in Ciao programs. The compatibility
+   is not at 100\% yet.").
+
+
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+196,2003/12/19,17:02*41+'CET'), "Added comment
+   author. (Edison Mera)").

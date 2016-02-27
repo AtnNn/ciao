@@ -4,14 +4,14 @@
         output_html/1, html2terms/2, xml2terms/2, html_template/3,
         html_report_error/1, get_form_input/1, get_form_value/3,
         form_empty_value/1, form_default/3, % text_lines/2, 
-        set_cookie/2, get_cookies/1, url_query/2, my_url/1,
-        url_info/2, url_info_relative/3,
+        set_cookie/2, get_cookies/1, url_query/2, url_query_values/2,
+        my_url/1, url_info/2, url_info_relative/3,
         form_request_method/1, icon_address/2, html_protect/1,
         http_lines/3
         ], ['pillow/ops',assertions,isomodes,dcg]).
 
 :- use_module(library(strings),
-        [write_string/1, get_line/1, whitespace/2, whitespace0/2, string/3]).
+        [write_string/1, whitespace/2, whitespace0/2, string/3, get_line/1]).
 :- use_module(library(lists), [reverse/2, append/3, list_lookup/4]).
 :- use_module(library(system)).
 :- use_module(library('pillow/pillow_aux')).
@@ -33,6 +33,17 @@
         F. Bueno's previous Chat interface.  Other people who have
         contributed is (please inform us if we leave out anybody):
         Markus Fromherz, Samir Genaim.").
+
+:- comment(define_flag/3,"Defines a flag as follows:
+	@includedef{define_flag/3}
+	(See @ref{Changing system behaviour and various flags}).
+
+        If flag is @tt{on}, values returned by @pred{get_form_input/1}
+        are always atoms, unchanged from its original value.").
+
+:- multifile define_flag/3.
+
+define_flag(raw_form_values, [on,off], off).
 
 %%% Some icon addresses %%%
 
@@ -321,9 +332,21 @@ html_atts([A|As]) -->
         html_atts(As).
 
 html_att(A=V) --> {atom_codes(A,AS)}, !,
-        string(AS),"=""",atomic_or_string(V),"""".
+        string(AS),"=""",html_quoted_quote(V),"""".
 html_att(A) -->  {atom_codes(A,AS)},
         string(AS).
+
+html_quoted_quote(T) -->
+        {atomic(T) -> name(T,TS) ; TS = T},
+        html_quoted_quote_chars(TS).
+
+html_quoted_quote_chars([]) --> [].
+html_quoted_quote_chars([C|T]) -->
+        html_quoted_quote_char(C),
+        html_quoted_quote_chars(T).
+
+html_quoted_quote_char(0'") --> !, "&quot;".
+html_quoted_quote_char(C)   --> [C].
 
 html_env(E,I) -->
         "<",string(E),">",
@@ -385,15 +408,15 @@ html_options([Op|Ops]) -->
         html_options(Ops).
 
 html_option($Op) --> !,
-        "<option selected>",atomic_or_string(Op),"</option>".
+        "<option selected>",html_quoted(Op),"</option>".
 html_option(Op) -->
-        "<option>",atomic_or_string(Op),"</option>".
+        "<option>",html_quoted(Op),"</option>".
 
 html_one_option([], _) --> [].
 html_one_option([Op|Ops], Sel) -->
         "<option",
         html_one_option_sel(Op, Sel),
-        ">",atomic_or_string(Op),"</option>",
+        ">",html_quoted(Op),"</option>",
         newline,
         html_one_option(Ops, Sel).
 
@@ -401,7 +424,7 @@ html_one_option_sel(Op, Op) --> !, " selected".
 html_one_option_sel(_, _) --> "".
 
 html_quoted(T) -->
-        {atom(T) -> atom_codes(T,TS) ; TS = T},
+        {atomic(T) -> name(T,TS) ; TS = T},
         html_quoted_chars(TS).
 
 html_quoted_chars([]) --> [].
@@ -413,13 +436,13 @@ html_quoted_char(0'>) --> !, "&gt;".
 html_quoted_char(0'<) --> !, "&lt;".
 html_quoted_char(0'&) --> !, "&amp;".
 html_quoted_char(0'") --> !, "&quot;".
-html_quoted_char(0' ) --> !, "&nbsp;".
+html_quoted_char(0'\n)--> !, "<br>".
 html_quoted_char(C)   --> [C].
 
 prolog_term(V) -->
         {var(V)}, !, "_".
 prolog_term(T) -->
-        {functor(T,F,A), name(F,FS)},
+        {functor(T,F,A), atom_codes(F,FS)},
         string(FS), prolog_term_maybe_args(A,T).
 
 prolog_term_maybe_args(0,_) --> !, "".
@@ -762,11 +785,13 @@ xml_tag_char(0'-) --> "-".
 :- comment(get_form_input(Dict), "Translates input from the form (with
    either the POST or GET methods, and even with CONTENT_TYPE
    multipart/form-data) to a dictionary @var{Dict} of
-   @em{attribute}=@em{value} pairs. It translates empty values (which
-   indicate only the presence of an attribute) to the atom
+   @em{attribute}=@em{value} pairs. If the flag @tt{raw_form_values} is
+   @tt{off} (which is the default state), it translates empty values
+   (which indicate only the presence of an attribute) to the atom
    @tt{'$empty'}, values with more than one line (from text areas or
    files) to a list of lines as strings, the rest to atoms or numbers
-   (using @pred{name/2}).").
+   (using @pred{name/2}).  If the flag @tt{on}, it gives all values as
+   atoms, without translations.").
 
 :- true pred get_form_input(-form_dict).
 
@@ -799,8 +824,7 @@ get_form_input_of_type(application, 'x-www-form-urlencoded', _, Dic) :-
         ), !.
 get_form_input_of_type(multipart, 'form-data', Params, Dic) :-
         member((boundary=B), Params),
-        name(B, BS),
-        Boundary = [0'-,0'-|BS],
+        Boundary = [0'-,0'-|B],
         get_lines_to_boundary(Boundary, _, End),
         get_multipart_form_data(End, Boundary, Dic), !.
 get_form_input_of_type(Type,Subtype,_,_) :-
@@ -822,7 +846,8 @@ read_all(N) -->
 form_urlencoded_to_dic([]) --> "".
 form_urlencoded_to_dic([N1=V1|NVs]) -->
         chars_to(N,0'=),
-        {name(N1, N)},
+        {expand_esc_plus(N,EN,[]),
+         atom_codes(N1, EN)},
         chars_to(V,0'&),
         {expand_esc_plus(V,EV,[13,10]),
          http_lines(Ls, EV, []),
@@ -860,10 +885,27 @@ hex_digit(C, D) :-
 to_value([L|Ls], V) :-
         to_value_(Ls, L, V).
 
-to_value_([], [], '$empty') :- !.
-to_value_([], L, V) :- !,
-        name(V, L).        % if only a line, return an atom or number
-to_value_(Ls, L, [L|Ls]).   % else, return the list of lines
+to_value_(Ls, L, V) :-
+        current_prolog_flag(raw_form_values, on), !,
+        to_value_raw(Ls, L, V).
+to_value_(Ls, L, V) :-
+        to_value_cooked(Ls, L, V).
+
+to_value_raw([], L, V) :- !,
+        atom_codes(V, L).
+to_value_raw(Ls, L, V) :-
+        append_lines(Ls, L, Lines),
+        atom_codes(V, Lines).
+
+append_lines([], L, L).
+append_lines([L|Ls], Line, Lines) :-
+        append(Line, "\n"||Tail, Lines),
+        append_lines(Ls, L, Tail).
+
+to_value_cooked([], [], '$empty') :- !.
+to_value_cooked([], L, V) :- !,
+        name(V, L).               % if only a line, return an atom or number
+to_value_cooked(Ls, L, [L|Ls]).   % else, return the list of lines
 
 :- true pred http_lines(Lines, String, Tail)
         :: list(string) * string * string
@@ -881,40 +923,26 @@ http_lines([]) --> "".
 % ----------------------------------------------------------------------------
 
 get_multipart_form_data(end, _, []).
-get_multipart_form_data(continue, Boundary, [N=V|NVs]) :-
-        get_lines_to_boundary(Boundary, Lines, End),
-        extract_name_value(Lines, N, V),
+get_multipart_form_data(continue, Boundary, [Name=Value|NVs]) :-
+        get_m_f_d_header(HeadLines),
+        extract_name_type(HeadLines, Name, Type),
+        get_m_f_d_value(Type, Boundary, End, Value),
         get_multipart_form_data(End, Boundary, NVs).
 
-get_lines_to_boundary(Boundary, Lines, End) :-
+get_m_f_d_header(Lines) :-
         get_line(Line),
-        get_lines_to_boundary_(Line, Boundary, Lines, End).
+        get_m_f_d_header_(Line, Lines).
 
-get_lines_to_boundary_(Line, Boundary, Lines, End) :-
-        append(Boundary, R, Line),
-        check_end(R, End), !,
-        Lines = [].
-get_lines_to_boundary_(Line, Boundary, [Line|Lines], End) :-
-        get_line(OtherLine),
-        get_lines_to_boundary_(OtherLine, Boundary, Lines, End).
-
-check_end([], continue).
-check_end("--", end).
-
-extract_name_value([L|Ls], N, V) :-
-        head_and_body_lines(L, Ls, HLs, BLs),
-        extract_name_type(HLs, N, T),
-        extract_value(T, BLs, V).
-
-head_and_body_lines([], BLs, [], BLs) :- !.
-head_and_body_lines(HL, [L|Ls], [HL|HLs], BLs) :-
-        head_and_body_lines(L, Ls, HLs, BLs).
+get_m_f_d_header_([], []) :- !.
+get_m_f_d_header_(Line, [Line|Lines]) :-
+        get_line(Line1),
+        get_m_f_d_header_(Line1, Lines).
 
 extract_name_type(HLs, N, T) :-
         member(HL, HLs),
         content_disposition_header(Params, HL, []),
         extract_name(Params, N),
-        extract_type(Params, T).
+        extract_type(Params, T), !.
 
 content_disposition_header(Params) -->
         "Content-Disposition: form-data",
@@ -932,9 +960,47 @@ extract_type(Params, T) :-
         ; T = data
         ).
 
-extract_value(data, [L|Ls], V) :-
-        to_value_(Ls, L, V).
-extract_value(file(F), Ls, file(F,Ls)).
+get_m_f_d_value(data, Boundary, End, Value) :-
+        get_lines_to_boundary(Boundary, Lines, End),
+        to_value(Lines, Value).
+get_m_f_d_value(file(F), Boundary, End, file(F,Content)) :-
+        get_line_raw(Line, Tail),
+        get_lines_to_boundary_raw(Line, Tail, Boundary, Content, End).
+
+get_lines_to_boundary(Boundary, Lines, End) :-
+        get_line(Line),
+        get_lines_to_boundary_(Line, Boundary, Lines, End).
+
+get_lines_to_boundary_(Line, Boundary, Lines, End) :-
+        append(Boundary, R, Line),
+        check_end(R, End), !,
+        Lines = [].
+get_lines_to_boundary_(Line, Boundary, [Line|Lines], End) :-
+        get_line(OtherLine),
+        get_lines_to_boundary_(OtherLine, Boundary, Lines, End).
+
+check_end("--", end).
+check_end([], continue).
+
+get_line_raw([C|Cs], Tail) :-
+        get_code(C),
+        get_line_raw_after(C, Cs, Tail).
+
+get_line_raw_after(0'\n, Tail, Tail) :- !.
+get_line_raw_after(_, [C|Cs], Tail) :-
+        get_code(C),
+        get_line_raw_after(C, Cs, Tail).
+
+get_lines_to_boundary_raw(Line, _Tail, Boundary, Content, End) :-
+        append(Boundary, R, Line),
+        check_end_raw(End, R, []), !,
+        Content = [].
+get_lines_to_boundary_raw(Line, Tail, Boundary, Line, End) :-
+        get_line_raw(Line1, Tail1),
+        get_lines_to_boundary_raw(Line1, Tail1, Boundary, Tail, End).
+
+check_end_raw(end) --> "--", http_crlf.
+check_end_raw(continue) -->  http_crlf.
 
 % ----------------------------------------------------------------------------
 
@@ -1028,10 +1094,17 @@ my_url(URL) :-
 :- true pred set_cookie(+atm,+constant).
 
 set_cookie(Name,Value) :-
-	display_list(['Set-Cookie: ',Name,'=',Value,'\n']).
+        name(Value, String),
+        encoded_value(String, EValue, []),
+	display_list(['Set-Cookie: ',Name,'=']),
+        display_string(EValue),
+        nl.
 
-:- comment(get_cookies(Cookies), "Unifies @var{Cookies} with a dictionary of
-   @em{attribute}=@em{value} pairs of the active cookies for this URL.").
+:- comment(get_cookies(Cookies), "Unifies @var{Cookies} with a
+   dictionary of @em{attribute}=@em{value} pairs of the active cookies
+   for this URL.  If the flag @tt{raw_form_values} is @tt{on},
+   @em{value}s are always atoms even if they could be interpreted as
+   numbers.").
 
 :- true pred get_cookies(-value_dict).
 
@@ -1053,7 +1126,11 @@ cookies([C=V|Cs]) -->
 	cookie_str(StrV),
 	{
           atom_codes(C,StrC),
-	  name(V,StrV)
+          expand_esc_plus(StrV,UStrV,[]),
+          ( current_prolog_flag(raw_form_values, on) ->
+              atom_codes(V,UStrV)
+          ; name(V,UStrV)
+          )
         },
 	cookies(Cs).
 
@@ -1072,8 +1149,9 @@ legal_cookie_char(C) -->
 %% To compute GET parameters for CGI's
 %  -- from an idea of Markus Fromherz <fromherz@parc.xerox.com> */
 
-:- comment(url_query(Dict,URLArgs), "Translates a dictionary @var{Dict}
-   of parameter values into a string @var{URLArgs} for appending to a URL
+:- comment(url_query(Dict,URLArgs), "(Deprecated, see
+   @pred{url_query_values/2}) Translates a dictionary @var{Dict} of
+   parameter values into a string @var{URLArgs} for appending to a URL
    pointing to a form handler.").
 
 :- true pred url_query(+value_dict,-string).
@@ -1081,13 +1159,30 @@ legal_cookie_char(C) -->
 url_query(Args, URLArgs) :-
         params_to_string(Args, 0'?, URLArgs).
 
+:- comment(url_query_values(Dict,URLArgs), "@var{Dict} is a dictionary
+   of parameter values and @var{URLArgs} is the URL-encoded string of
+   those assignments, which may appear after an URL pointing to a CGI
+   script preceded by a '?'.  @var{Dict} is computed according to the
+   @tt{raw_form_values} flag.  The use of this predicate is
+   reversible.").
+
+:- true pred url_query(+value_dict,-string).
+:- true pred url_query(-value_dict,+string).
+
+url_query_values(URLencoded, Dict) :-
+        var(URLencoded), !,
+        params_to_string(Dict, 0'?, [0'?|URLencoded]).
+url_query_values(URLencoded, Dict) :-
+        append(URLencoded, "&", Values),
+        form_urlencoded_to_dic(Dict, Values, []).
+
 params_to_string([], _, "").
 params_to_string([N=V|NVs], C, [C|String]) :-
         name(N,NS),
         name(V,VS),
+        encoded_value(NS,String,[0'=|EVS]),
         encoded_value(VS,EVS,Rest),
-        params_to_string(NVs, 0'&, Rest),
-        append(NS,[0'=|EVS],String).
+        params_to_string(NVs, 0'&, Rest).
 
 encoded_value([]) --> "".
 encoded_value([32|Cs]) --> !, % " " = [32]
@@ -1270,6 +1365,48 @@ mappend([S|Ss], R) :-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+335,2004/04/16,16:18*08+'CEST'), "Changed the
+   type of file data in form dictionaries: now it is of the form
+   @tt{file(Name, ContentsString)}, that is, second arg is an string
+   with the contents of the file.  This solves a bug when the file was
+   binary. (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+84,2003/07/15,19:03*44+'CEST'), "Patch 1*9+20
+   caused ampersands in hrefs to be incorrectly expanded to the HTML
+   entities when outputting HTML terms.  (MCL)").
+
+:- comment(version(1*9+81,2003/05/21,19:10*15+'CEST'), "Changed HTTP
+   media type parameter values returned so that they are always strings,
+   not atoms. (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+60,2003/02/21,22:35*38+'CET'), "Moved
+   http_url/5 to pillow_aux.  (Francisco Bueno Carrillo)").
+
+:- comment(version(1*9+32,2002/11/21,12:54*26+'CET'), "Changed
+   verbatim() pillow term so that newlines are translated to <br>.
+   (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+22,2002/11/18,13:03*59+'CET'), "Changed
+   management of cookies so that special characters in values are
+   correctly handled.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+21,2002/11/15,17:11*14+'CET'), "Added predicate
+   @pred{url_query_values/2}, reversible, making @pred{url_query/2}
+   obsolete (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+20,2002/11/13,19:18*05+'CET'), "Now attribute
+   values in tags are escaped to handle values which have double quotes.
+   (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+14,2002/07/11,16:50*46+'CEST'), "Fixed
+   @pred{get_form_input/1} and @pred{url_query/2} so that names of
+   parameters having unusual characters are always correctly
+   handled (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+13,2002/07/11,16:50*01+'CEST'), "Added
+   raw_form_values flag, to be able to get form values in raw
+   form. (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+131,2001/10/29,20:47*56+'CET'), "The HTML parser
    now understands tag attributes between sigle quotes. (Daniel Cabeza

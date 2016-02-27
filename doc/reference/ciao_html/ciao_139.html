@@ -1,47 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - HTTP conectivity</TITLE>
+<TITLE>The Ciao Prolog System               - arc_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC572" HREF="ciao_toc.html#TOC572">HTTP conectivity</A></H1>
+<H1><A NAME="SEC581" HREF="ciao_toc.html#TOC581">arc_class (library)</A></H1>
 <P>
-<A NAME="IDX5707"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX6432"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Montserrat Urraca.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-This module implements the 
-<A NAME="IDX5708"></A>
-HTTP protocol, which allows retrieving data from HTTP servers.
+<STRONG>Version of last change:</STRONG> 1.9#120 (2003/12/4, 17:32:15 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_139.html#SEC573">Usage and interface (http)</A>
-<LI><A HREF="ciao_139.html#SEC574">Documentation on exports (http)</A>
+<LI><A HREF="ciao_139.html#SEC582">Usage and interface (arc_class)</A>
+<LI><A HREF="ciao_139.html#SEC583">Documentation on exports (arc_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC573" HREF="ciao_toc.html#TOC573">Usage and interface (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC582" HREF="ciao_toc.html#TOC582">Usage and interface (<CODE>arc_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,7 +43,7 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(http)).</CODE>
+<CODE>:- use_module(library(arc_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -58,8 +52,20 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5709"></A>
-<CODE>fetch_url/3</CODE>.
+<A NAME="IDX6433"></A>
+<CODE>coord/4</CODE>, 
+<A NAME="IDX6434"></A>
+<CODE>width/1</CODE>, 
+<A NAME="IDX6435"></A>
+<CODE>height/1</CODE>, 
+<A NAME="IDX6436"></A>
+<CODE>center/2</CODE>, 
+<A NAME="IDX6437"></A>
+<CODE>angle_start/1</CODE>, 
+<A NAME="IDX6438"></A>
+<CODE>style_type/1</CODE>, 
+<A NAME="IDX6439"></A>
+<CODE>outline_color/1</CODE>.
 
 </UL>
 
@@ -70,16 +76,8 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5710"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX5711"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX5712"></A>
-<CODE>pillow/pillow_aux</CODE>, 
-<A NAME="IDX5713"></A>
-<CODE>pillow/pillow_types</CODE>, 
-<A NAME="IDX5714"></A>
-<CODE>pillow/http_ll</CODE>.
+<A NAME="IDX6440"></A>
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -89,43 +87,249 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 
 
-<H2><A NAME="SEC574" HREF="ciao_toc.html#TOC574">Documentation on exports (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC583" HREF="ciao_toc.html#TOC583">Documentation on exports (<CODE>arc_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5715"></A>
-<A NAME="IDX5716"></A>
+<A NAME="IDX6441"></A>
+<A NAME="IDX6442"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
-<DD><A NAME="IDX5717"></A>
+<DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
+<DD><A NAME="IDX6443"></A>
 
 
 <P>
-<CODE>fetch_url(URL,Request,Response)</CODE>
-
-
-<P>
-Fetches the document pointed to by <CODE>URL</CODE> from Internet, using request parameters <CODE>Request</CODE>, and unifies <CODE>Response</CODE> with the parameters of the response. Fails on timeout. Note that redirections are not handled automatically, that is, if <CODE>Response</CODE> contains terms of the form <CODE>status(redirection,301,_)</CODE> and <CODE>location(NewURL)</CODE>, the program should in most cases access location <CODE>NewURL</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>fetch_url(URL,Request,Response)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X1, +Y1, +X2, +Y2)</CODE>
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval that defines the arc.
 
-<CODE>URL</CODE> specifies a URL.
- (<CODE>pillow_types:url_term/1</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Request</CODE> is a list of <CODE>http_request_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
+<CODE>+X1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Response</CODE> is a list of <CODE>http_response_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Y1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+X2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6444"></A>
+<A NAME="IDX6445"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>width/1:</B>
+<DD><A NAME="IDX6446"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6447"></A>
+<A NAME="IDX6448"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>height/1:</B>
+<DD><A NAME="IDX6449"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Height</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6450"></A>
+<A NAME="IDX6451"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>center/2:</B>
+<DD><A NAME="IDX6452"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>center(+X, +Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>center(-X, -Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6453"></A>
+<A NAME="IDX6454"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>angle_start/1:</B>
+<DD><A NAME="IDX6455"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>angle_start(+Angle)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Angle</CODE> specifies the beginning of the angular range occupied by the arc. Degrees are given in units of degrees measured counter-clockwise from the 3-o'clock position; it may be either positive or negative.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Angle</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>angle_start(-Angle)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the value of the <CODE>Angle</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Angle</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6456"></A>
+<A NAME="IDX6457"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>style_type/1:</B>
+<DD><A NAME="IDX6458"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>style_type(+Style)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Style</CODE> specifies how to draw the arc. If type is pieslice (the default) then the arc's region is defined by a section of the oval's perimeter plus two line segments, one between the center of the oval and each end of the perimeter section. If type is chord then the arc's region is defined by a section of the oval's perimeter plus a single line segment connecting the two end points of the perimeter section. If type is arc then the arc's region consists of a section of the perimeter alone. In this last case the -fill option is ignored.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Style</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>style_type(-Style)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Style</CODE> of the arc.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Style</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6459"></A>
+<A NAME="IDX6460"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
+<DD><A NAME="IDX6461"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color used for drawing the arc's outline. This option defaults to black.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It gets arc's outline <CODE>Color</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

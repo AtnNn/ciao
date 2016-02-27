@@ -1,33 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - ctrlcclean (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Accessing and redirecting the stream aliases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_70.html">previous</A>, <A HREF="ciao_72.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_70.html">previous</A>, <A HREF="ciao_72.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC306" HREF="ciao_toc.html#TOC306">ctrlcclean (library)</A></H1>
+<H1><A NAME="SEC310" HREF="ciao_toc.html#TOC310">Accessing and redirecting the stream aliases</A></H1>
 <P>
-<A NAME="IDX3752"></A>
+<A NAME="IDX4403"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Author(s):</STRONG> Manuel Carro.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#52 (2001/1/26, 15:34:13 CET)
+
+
+<P>
+This library allows the redefinition of the files to which the special streams <CODE>user_input</CODE>, <CODE>user_output</CODE>, and <CODE>user_error</CODE> point to. On startup they point to the standard input, standard output, and standard error, in Unix style (Windows users may find that standard error stream does not work properly). Changing the file pointed to is useful for, e.g., redirecting the place to which the Prolog's standard error stream goes from within Prolog (e.g., to start a log file).
 
 
 
 <UL>
-<LI><A HREF="ciao_71.html#SEC307">Usage and interface (ctrlcclean)</A>
-<LI><A HREF="ciao_71.html#SEC308">Documentation on exports (ctrlcclean)</A>
+<LI><A HREF="ciao_71.html#SEC311">Usage and interface (io_alias_redirection)</A>
+<LI><A HREF="ciao_71.html#SEC312">Documentation on exports (io_alias_redirection)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC307" HREF="ciao_toc.html#TOC307">Usage and interface (<CODE>ctrlcclean</CODE>)</A></H2>
+<H2><A NAME="SEC311" HREF="ciao_toc.html#TOC311">Usage and interface (<CODE>io_alias_redirection</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_70.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(ctrlcclean)).</CODE>
+<CODE>:- use_module(library(io_alias_redirection)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,24 +56,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_70.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3753"></A>
-<CODE>ctrlc_clean/1</CODE>, 
-<A NAME="IDX3754"></A>
-<CODE>delete_on_ctrlc/2</CODE>, 
-<A NAME="IDX3755"></A>
-<CODE>ctrlcclean/0</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX3756"></A>
-<CODE>system</CODE>.
+<A NAME="IDX4404"></A>
+<CODE>set_stream/3</CODE>, 
+<A NAME="IDX4405"></A>
+<CODE>get_stream/2</CODE>.
 
 </UL>
 
@@ -71,54 +69,61 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_70.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC308" HREF="ciao_toc.html#TOC308">Documentation on exports (<CODE>ctrlcclean</CODE>)</A></H2>
+<H2><A NAME="SEC312" HREF="ciao_toc.html#TOC312">Documentation on exports (<CODE>io_alias_redirection</CODE>)</A></H2>
 <P>
-<A NAME="IDX3757"></A>
-<A NAME="IDX3758"></A>
+<A NAME="IDX4406"></A>
+<A NAME="IDX4407"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ctrlc_clean/1:</B>
-<DD><A NAME="IDX3759"></A>
+<DT><span class="define">PREDICATE:</span> <B>set_stream/3:</B>
+<DD><A NAME="IDX4408"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>set_stream(+StreamAlias, +NewStream, ?OldStream)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Associate <CODE>StreamAlias</CODE> with an open stream <CODE>newStream</CODE>. Returns in <CODE>OldStream</CODE> the stream previusly associated with the alias. The mode of <CODE>NewStream</CODE> must match the intended use of <CODE>StreamAlias</CODE>.
 
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>ctrlc_clean(goal)</CODE>.
+<LI><EM>The following properties should hold at call time:</EM>
 
+<CODE>+StreamAlias</CODE> is the alias of an open stream, i.e., an atom which represents a stream at Prolog level.
+ (<CODE>streams_basic:stream_alias/1</CODE>)
+
+<CODE>+NewStream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?OldStream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3760"></A>
-<A NAME="IDX3761"></A>
+<A NAME="IDX4409"></A>
+<A NAME="IDX4410"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>delete_on_ctrlc/2:</B>
-<DD><A NAME="IDX3762"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_stream/2:</B>
+<DD><A NAME="IDX4411"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>get_stream(+StreamAlias, ?Stream)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Return in <CODE>Stream</CODE> the stream associated with <CODE>StreamAlias</CODE>.
 
-</DL>
+<LI><EM>The following properties should hold at call time:</EM>
 
-<P>
-<A NAME="IDX3763"></A>
-<A NAME="IDX3764"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ctrlcclean/0:</B>
-<DD><A NAME="IDX3765"></A>
+<CODE>+StreamAlias</CODE> is the alias of an open stream, i.e., an atom which represents a stream at Prolog level.
+ (<CODE>streams_basic:stream_alias/1</CODE>)
 
-
-<P>
-No further documentation available for this predicate.
-
+<CODE>?Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_70.html">previous</A>, <A HREF="ciao_72.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_70.html">previous</A>, <A HREF="ciao_72.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,4 +1,3 @@
-
 :- module(emacs,[emacs_edit/1,emacs_edit_nowait/1,
 	         emacs_eval/1,emacs_eval_nowait/1,
 		 elisp_string/1],
@@ -15,6 +14,8 @@
 %% :- use_module(library(streams),[close_input/1]).
 
 :- comment(title,"Calling emacs from Prolog").
+
+:- comment(author,"The CLIP Group").
 
 :- comment(module,"This library provides a @index{prolog-emacs
    interface}. This interface is complementary to (and independent
@@ -230,6 +231,9 @@ system_dependent_incompatible(Prop,Arg):-
 
 %---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+234,2003/12/22,18:14*10+'CET'), "Added comment
+   author.  (Edison Mera)").
 
 :- comment(version(1*5+54,2000/02/10,21:32*23+'CET'), "New library for
    calling @apl{emacs} from Prolog.  (Manuel Hermenegildo)").

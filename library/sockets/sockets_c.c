@@ -50,7 +50,7 @@ struct stream_node *new_socket_stream(streamname, socket)
   s->streamfile = NULL;
   s->isatty = FALSE;
   s->socket_eof = FALSE;
-  s->socket_is_unbuffered = 0;
+  /*  s->socket_is_unbuffered = 0; */
   s->last_nl_pos = 0;
   s->nl_count = 0;
   s->char_count = 0;

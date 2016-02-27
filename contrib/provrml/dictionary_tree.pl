@@ -9,6 +9,8 @@
 	],
 	[assertions,isomodes,regtypes]).
 
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
+
 :- include(library(iso)).
 :- use_module(library(iso_byte_char)).
 %:- use_module(library(basicprops)).
@@ -19,6 +21,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+
+:- comment(version(1*9+173,2003/12/04,17:47*16+'CET'), "Added author
+info.  (Manuel Carro)").
 
 :- comment(version(0*1+0,1999/01/14,15:57*36+'MET'), "Documenting the file 
    and dscovered errors search for 'name/2'.
@@ -799,6 +804,7 @@ test(A0,B0) :-
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
-%% update-version-comments: "../../version"
 %% End:
+
+:- comment(version_maintenance,dir('../../version')).
 

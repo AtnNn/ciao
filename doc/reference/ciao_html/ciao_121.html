@@ -1,29 +1,47 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - widget_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Foreign Language Interface Properties</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_120.html">previous</A>, <A HREF="ciao_122.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_120.html">previous</A>, <A HREF="ciao_122.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC516" HREF="ciao_toc.html#TOC516">widget_class (library)</A></H1>
+<H1><A NAME="SEC523" HREF="ciao_toc.html#TOC523">Foreign Language Interface Properties</A></H1>
 <P>
-<A NAME="IDX5196"></A>
+<A NAME="IDX5762"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Jose Morales, Manuel Carro.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#334 (2004/4/13, 13:28:2 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#229 (2003/12/22, 17:34:59 CET)
+
+
+<P>
+The foreign language interface uses some properties to specify linking regimes, foreign files to be compiled, types of data available, memory allocation policies, etc.
 
 
 
 <UL>
-<LI><A HREF="ciao_121.html#SEC517">Usage and interface (widget_class)</A>
-<LI><A HREF="ciao_121.html#SEC518">Documentation on exports (widget_class)</A>
+<LI><A HREF="ciao_121.html#SEC524">Usage and interface (foreign_interface_properties)</A>
+<LI><A HREF="ciao_121.html#SEC525">Documentation on exports (foreign_interface_properties)</A>
+<LI><A HREF="ciao_121.html#SEC526">Documentation on internals (foreign_interface_properties)</A>
+<LI><A HREF="ciao_121.html#SEC527">Known bugs and planned improvements (foreign_interface_properties)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC517" HREF="ciao_toc.html#TOC517">Usage and interface (<CODE>widget_class</CODE>)</A></H2>
+<H2><A NAME="SEC524" HREF="ciao_toc.html#TOC524">Usage and interface (<CODE>foreign_interface_properties</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,77 +49,44 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_120.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(widget_class)).</CODE>
+<CODE>:- use_module(library(foreign_interface_properties)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI><EM>Properties:</EM>
 
-<A NAME="IDX5197"></A>
-<CODE>text_characters/1</CODE>, 
-<A NAME="IDX5198"></A>
-<CODE>font_type/1</CODE>, 
-<A NAME="IDX5199"></A>
-<CODE>background_color/1</CODE>, 
-<A NAME="IDX5200"></A>
-<CODE>borderwidth_value/1</CODE>, 
-<A NAME="IDX5201"></A>
-<CODE>foreground_color/1</CODE>, 
-<A NAME="IDX5202"></A>
-<CODE>highlightbackground_color/1</CODE>, 
-<A NAME="IDX5203"></A>
-<CODE>highlight_color/1</CODE>, 
-<A NAME="IDX5204"></A>
-<CODE>width_value/1</CODE>, 
-<A NAME="IDX5205"></A>
-<CODE>relief_type/1</CODE>, 
-<A NAME="IDX5206"></A>
-<CODE>side_type/1</CODE>, 
-<A NAME="IDX5207"></A>
-<CODE>expand_value/1</CODE>, 
-<A NAME="IDX5208"></A>
-<CODE>fill_type/1</CODE>, 
-<A NAME="IDX5209"></A>
-<CODE>padx_value/1</CODE>, 
-<A NAME="IDX5210"></A>
-<CODE>pady_value/1</CODE>, 
-<A NAME="IDX5211"></A>
-<CODE>row_value/1</CODE>, 
-<A NAME="IDX5212"></A>
-<CODE>rowspan_value/1</CODE>, 
-<A NAME="IDX5213"></A>
-<CODE>column_value/1</CODE>, 
-<A NAME="IDX5214"></A>
-<CODE>columnspan_value/1</CODE>, 
-<A NAME="IDX5215"></A>
-<CODE>event_type_widget/1</CODE>, 
-<A NAME="IDX5216"></A>
-<CODE>action_widget/3</CODE>, 
-<A NAME="IDX5217"></A>
-<CODE>action_widget/1</CODE>, 
-<A NAME="IDX5218"></A>
-<CODE>creation_options/1</CODE>, 
-<A NAME="IDX5219"></A>
-<CODE>creation_position/1</CODE>, 
-<A NAME="IDX5220"></A>
-<CODE>creation_position_grid/1</CODE>, 
-<A NAME="IDX5221"></A>
-<CODE>creation_bind/1</CODE>.
+<A NAME="IDX5763"></A>
+<CODE>native/1</CODE>, 
+<A NAME="IDX5764"></A>
+<CODE>native/2</CODE>, 
+<A NAME="IDX5765"></A>
+<CODE>size_of/3</CODE>, 
+<A NAME="IDX5766"></A>
+<CODE>foreign/1</CODE>, 
+<A NAME="IDX5767"></A>
+<CODE>foreign/2</CODE>, 
+<A NAME="IDX5768"></A>
+<CODE>returns/2</CODE>, 
+<A NAME="IDX5769"></A>
+<CODE>do_not_free/2</CODE>.
 
-</UL>
+<LI><EM>Regular Types:</EM>
 
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX5222"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX5770"></A>
+<CODE>int_list/1</CODE>, 
+<A NAME="IDX5771"></A>
+<CODE>byte_list/1</CODE>, 
+<A NAME="IDX5772"></A>
+<CODE>byte/1</CODE>, 
+<A NAME="IDX5773"></A>
+<CODE>null/1</CODE>, 
+<A NAME="IDX5774"></A>
+<CODE>address/1</CODE>, 
+<A NAME="IDX5775"></A>
+<CODE>any_term/1</CODE>.
 
 </UL>
 
@@ -111,822 +96,563 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_120.html">previous</A>,
 
 
 
-<H2><A NAME="SEC518" HREF="ciao_toc.html#TOC518">Documentation on exports (<CODE>widget_class</CODE>)</A></H2>
+<H2><A NAME="SEC525" HREF="ciao_toc.html#TOC525">Documentation on exports (<CODE>foreign_interface_properties</CODE>)</A></H2>
 <P>
-<A NAME="IDX5223"></A>
-<A NAME="IDX5224"></A>
+<A NAME="IDX5776"></A>
+<A NAME="IDX5777"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
-<DD><A NAME="IDX5225"></A>
+<DT><span class="define">REGTYPE:</span> <B>int_list/1:</B>
+<DD><A NAME="IDX5778"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
+<STRONG>Usage:</STRONG> <CODE>int_list(List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Text</CODE> to be displayed in the widget.
+<LI><EM>Description:</EM> <CODE>List</CODE> is a list of integers.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Text</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Text</CODE> which is displayed in the widget.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Text</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5226"></A>
-<A NAME="IDX5227"></A>
+<A NAME="IDX5779"></A>
+<A NAME="IDX5780"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
-<DD><A NAME="IDX5228"></A>
+<DT><span class="define">REGTYPE:</span> <B>byte_list/1:</B>
+<DD><A NAME="IDX5781"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
+<STRONG>Usage:</STRONG> <CODE>byte_list(List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Font</CODE> of the widget's text.
+<LI><EM>Description:</EM> <CODE>List</CODE> is a list of bytes.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Font</CODE> of the widget's text.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5229"></A>
-<A NAME="IDX5230"></A>
+<A NAME="IDX5782"></A>
+<A NAME="IDX5783"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>background_color/1:</B>
-<DD><A NAME="IDX5231"></A>
+<DT><span class="define">REGTYPE:</span> <B>byte/1:</B>
+<DD><A NAME="IDX5784"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>background_color(+Background)</CODE>
+<STRONG>Usage:</STRONG> <CODE>byte(Byte)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Background</CODE> color. Default to gray.
+<LI><EM>Description:</EM> <CODE>Byte</CODE> is a byte.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Background</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>background_color(-Background)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns the <CODE>Background</CODE> color.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Background</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5232"></A>
-<A NAME="IDX5233"></A>
+<A NAME="IDX5785"></A>
+<A NAME="IDX5786"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>borderwidth_value/1:</B>
-<DD><A NAME="IDX5234"></A>
+<DT><span class="define">REGTYPE:</span> <B>null/1:</B>
+<DD><A NAME="IDX5787"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>borderwidth_value(+BorderWidth)</CODE>
+<STRONG>Usage:</STRONG> <CODE>null(Address)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the width's border. Default to 2.
+<LI><EM>Description:</EM> <CODE>Address</CODE> is a null adress.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+BorderWidth</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>borderwidth_value(-BorderWidth)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the width's border.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-BorderWidth</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5235"></A>
-<A NAME="IDX5236"></A>
+<A NAME="IDX5788"></A>
+<A NAME="IDX5789"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>foreground_color/1:</B>
-<DD><A NAME="IDX5237"></A>
+<DT><span class="define">REGTYPE:</span> <B>address/1:</B>
+<DD><A NAME="IDX5790"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>foreground_color(+Foreground)</CODE>
+<STRONG>Usage:</STRONG> <CODE>address(Address)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Foreground</CODE> color. Default to black
+<LI><EM>Description:</EM> <CODE>Address</CODE> is a memory address.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Foreground</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>foreground_color(-Foreground)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Foreground</CODE> color.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Foreground</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5238"></A>
-<A NAME="IDX5239"></A>
+<A NAME="IDX5791"></A>
+<A NAME="IDX5792"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>highlightbackground_color/1:</B>
-<DD><A NAME="IDX5240"></A>
+<DT><span class="define">REGTYPE:</span> <B>any_term/1:</B>
+<DD><A NAME="IDX5793"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>highlightbackground_color(+Color)</CODE>
+<STRONG>Usage:</STRONG> <CODE>any_term(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the highlight background color. Default to white
+<LI><EM>Description:</EM> <CODE>X</CODE> is any term. The foreign interface passes it to C functions as a general term.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>highlightbackground_color(-Color)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Color</CODE> of the highlight background.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5241"></A>
-<A NAME="IDX5242"></A>
+<A NAME="IDX5794"></A>
+<A NAME="IDX5795"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>highlight_color/1:</B>
-<DD><A NAME="IDX5243"></A>
+<DT><span class="define">PROPERTY:</span> <B>native/1:</B>
+<DD><A NAME="IDX5796"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>highlight_color(+Color)</CODE>
+<STRONG>Usage:</STRONG> <CODE>native(Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the highlight color. Default to white
+<LI><EM>Description:</EM> The Prolog predicate
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>highlight_color(-Color)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Color</CODE> of the highlight.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<A NAME="IDX5797"></A>
+<CODE>Name</CODE> is implemented using the function <CODE>Name</CODE>. The implementation is not a common C one, but it accesses directly the internal Ciao Prolog data structures and functions, and therefore no glue code is generated for it. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5244"></A>
-<A NAME="IDX5245"></A>
+<A NAME="IDX5798"></A>
+<A NAME="IDX5799"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>width_value/1:</B>
-<DD><A NAME="IDX5246"></A>
+<DT><span class="define">PROPERTY:</span> <B>native/2:</B>
+<DD><A NAME="IDX5800"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>width_value(+Width)</CODE>
+<STRONG>Usage:</STRONG> <CODE>native(PrologName, ForeignName)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies the <CODE>Width</CODE> for the widget. Default to 0
+<LI><EM>Description:</EM> The Prolog predicate
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>width_value(+Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Width</CODE> specified for the widget.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<A NAME="IDX5801"></A>
+<CODE>PrologName</CODE> is implemented using the function <CODE>ForeignName</CODE>. The same considerations as above example are to be applied. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5247"></A>
-<A NAME="IDX5248"></A>
+<A NAME="IDX5802"></A>
+<A NAME="IDX5803"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>relief_type/1:</B>
-<DD><A NAME="IDX5249"></A>
+<DT><span class="define">PROPERTY:</span> <B>size_of/3:</B>
+<DD><A NAME="IDX5804"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>relief_type(+Relief)</CODE>
+<STRONG>Usage:</STRONG> <CODE>size_of(Name, ListVar, SizeVar)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies a desired <CODE>Relief</CODE> for the widget. Default to sunken
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the size of the argument of type
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Relief</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>relief_type(-Relief)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Relief</CODE> of the widget.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Relief</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<A NAME="IDX5805"></A>
+<CODE>byte_list/1</CODE>, <CODE>ListVar</CODE>, is given by the argument of type integer <CODE>SizeVar</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5250"></A>
-<A NAME="IDX5251"></A>
+<A NAME="IDX5806"></A>
+<A NAME="IDX5807"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>side_type/1:</B>
-<DD><A NAME="IDX5252"></A>
+<DT><span class="define">PROPERTY:</span> <B>foreign/1:</B>
+<DD><A NAME="IDX5808"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>side_type(+Side)</CODE>
+<STRONG>Usage:</STRONG> <CODE>foreign(Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies which <CODE>Side</CODE> of the master, the slave(s) will be packed against. Must be left, right, top or bottom. Defaults to top
+<LI><EM>Description:</EM> The Prolog predicate
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Side</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>side_type(-Side)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the position of the canvas.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Side</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<A NAME="IDX5809"></A>
+<CODE>Name</CODE> is implemented using the foreign function <CODE>Name</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5253"></A>
-<A NAME="IDX5254"></A>
+<A NAME="IDX5810"></A>
+<A NAME="IDX5811"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>expand_value/1:</B>
-<DD><A NAME="IDX5255"></A>
+<DT><span class="define">PROPERTY:</span> <B>foreign/2:</B>
+<DD><A NAME="IDX5812"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>expand_value(+Value)</CODE>
+<STRONG>Usage:</STRONG> <CODE>foreign(PrologName, ForeignName)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies whether the slaves should be expanded to consume extra space in their master. <CODE>Value</CODE> may have any proper boolean value, such as 1 or 0. Defaults to 0
+<LI><EM>Description:</EM> The Prolog predicate
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Value</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>expand_value(-Value)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the boolean value which indicates if the slaves should be expanded or no.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Value</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<A NAME="IDX5813"></A>
+<CODE>PrologName</CODE> is implemented using the foreign function <CODE>ForeignName</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5256"></A>
-<A NAME="IDX5257"></A>
+<A NAME="IDX5814"></A>
+<A NAME="IDX5815"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fill_type/1:</B>
-<DD><A NAME="IDX5258"></A>
+<DT><span class="define">PROPERTY:</span> <B>returns/2:</B>
+<DD><A NAME="IDX5816"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>fill_type(+Option)</CODE>
+<STRONG>Usage:</STRONG> <CODE>returns(Name, Var)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> If a slave's parcel is larger than its requested dimensions, this option may be used to stretch the slave. <CODE>Option</CODE> must have one of the following values: none ( this is the default), x, y, both
+<LI><EM>Description:</EM> The result of the foreign function that implements the Prolog predicate
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Option</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>fill_type(-Option)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the fill value of the canvas
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Option</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<A NAME="IDX5817"></A>
+<CODE>Name</CODE> is unified with the Prolog variable <CODE>Var</CODE>. Cannot be used without 
+<A NAME="IDX5818"></A>
+<CODE>foreign/1</CODE> or 
+<A NAME="IDX5819"></A>
+<CODE>foreign/2</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5259"></A>
-<A NAME="IDX5260"></A>
+<A NAME="IDX5820"></A>
+<A NAME="IDX5821"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>padx_value/1:</B>
-<DD><A NAME="IDX5261"></A>
+<DT><span class="define">PROPERTY:</span> <B>do_not_free/2:</B>
+<DD><A NAME="IDX5822"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>padx_value(+Amount)</CODE>
+<STRONG>Usage:</STRONG> <CODE>do_not_free(Name, Var)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much horizontal external padding to leave on each side of the slave(s). Amount defaults to 0
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the C argument passed to (returned from) the foreign function will not be freed after calling the foreign function.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
 </UL>
 
+</DL>
+
+
+
+<H2><A NAME="SEC526" HREF="ciao_toc.html#TOC526">Documentation on internals (<CODE>foreign_interface_properties</CODE>)</A></H2>
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>padx_value(-Amount)</CODE>
+<A NAME="IDX5823"></A>
+<A NAME="IDX5824"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/1:</B>
+<DD><A NAME="IDX5825"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(Files)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much horizontal external padding to leave on each side of the slaves.
+<LI><EM>Description:</EM> <CODE>Files</CODE> is the (list of) foreign file(s) that will be linked with the glue-code file.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>-Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Files</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5262"></A>
-<A NAME="IDX5263"></A>
+<A NAME="IDX5826"></A>
+<A NAME="IDX5827"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pady_value/1:</B>
-<DD><A NAME="IDX5264"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/2:</B>
+<DD><A NAME="IDX5828"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>pady_value(+Amount)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(OsArch, Files)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much vertical external padding to leave on each side of the slave(s). Amount defaults to 0
+<LI><EM>Description:</EM> <CODE>Files</CODE> are the OS and architecture dependant foreign files. This allows compiling and linking different files depending on the O.S. and architecture.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>pady_value(-Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much vertical external padding to leave on each side of the slaves.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Files</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5265"></A>
-<A NAME="IDX5266"></A>
+<A NAME="IDX5829"></A>
+<A NAME="IDX5830"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>row_value/1:</B>
-<DD><A NAME="IDX5267"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/1:</B>
+<DD><A NAME="IDX5831"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>row_value(+Row)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(Libs)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Row</CODE> in which the widget should be allocated.
+<LI><EM>Description:</EM> <CODE>Libs</CODE> is the (list of) external library(es) needed to link the C files. Only the short name of the library (i.e., what would follow the <CODE>-l</CODE> in the linker is needed.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>row_value(-Row)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Row</CODE> in which the widget is allocated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Libs</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5268"></A>
-<A NAME="IDX5269"></A>
+<A NAME="IDX5832"></A>
+<A NAME="IDX5833"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>rowspan_value/1:</B>
-<DD><A NAME="IDX5270"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/2:</B>
+<DD><A NAME="IDX5834"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>rowspan_value(+Row)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(OsArch, Libs)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Indicates the number of <CODE>Row</CODE> which are going to be occupied in the grid.
+<LI><EM>Description:</EM> <CODE>Libs</CODE> are the OS and architecture dependant libraries.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>rowspan_value(-Row)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the number of <CODE>Row</CODE> which are occupied by the widget in the grid.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Libs</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5271"></A>
-<A NAME="IDX5272"></A>
+<A NAME="IDX5835"></A>
+<A NAME="IDX5836"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>column_value/1:</B>
-<DD><A NAME="IDX5273"></A>
+<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/1:</B>
+<DD><A NAME="IDX5837"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>column_value(+Column)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(Opts)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Column</CODE> in which the widget should be allocated.
+<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional compiler options (e.g., optimization options) that will be used during the compilation.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>column_value(-Column)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Column</CODE> in which the widget is allocated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5274"></A>
-<A NAME="IDX5275"></A>
+<A NAME="IDX5838"></A>
+<A NAME="IDX5839"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>columnspan_value/1:</B>
-<DD><A NAME="IDX5276"></A>
+<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/2:</B>
+<DD><A NAME="IDX5840"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>columnspan_value(+Column)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(OsArch, Opts)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Indicates the number of <CODE>Column</CODE> which are going to be occupied in the grid.
+<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional compiler options.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>columnspan_value(-Column)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the number of <CODE>Column</CODE> which are occupied by the widget in the grid.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5277"></A>
-<A NAME="IDX5278"></A>
+<A NAME="IDX5841"></A>
+<A NAME="IDX5842"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>event_type_widget/1:</B>
-<DD><A NAME="IDX5279"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_compiler/1:</B>
+<DD><A NAME="IDX5843"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>event_type_widget(+EventType)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_compiler(Compiler)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> The event <CODE>EventType</CODE> is going to be manage by the interface.
+<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file. When this option is used, the default (Ciao-provided) compiler options are not used; those specified in
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX5844"></A>
+<CODE>extra_compiler_options</CODE> are used instead. 
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+EventType</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>event_type_widget(-EventType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the event <CODE>EventType</CODE> which is going to be manage by the interface.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-EventType</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>Compiler</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5280"></A>
-<A NAME="IDX5281"></A>
+<A NAME="IDX5845"></A>
+<A NAME="IDX5846"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>action_widget/3:</B>
-<DD><A NAME="IDX5282"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_compiler/2:</B>
+<DD><A NAME="IDX5847"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>action_widget(+Input,+Output,+Term)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_compiler(OsArch, Compiler)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Executes <CODE>Term</CODE> with <CODE>Input</CODE> value and <CODE>Output</CODE> variable.
+<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX5848"></A>
+<CODE>use_compiler/2</CODE>. 
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+Input</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+Output</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>action_widget(+Input,+Output,-Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Term</CODE> is associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Input</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+Output</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>-Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>Compiler</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5283"></A>
-<A NAME="IDX5284"></A>
+<A NAME="IDX5849"></A>
+<A NAME="IDX5850"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>action_widget/1:</B>
-<DD><A NAME="IDX5285"></A>
+<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/1:</B>
+<DD><A NAME="IDX5851"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>action_widget(+Term)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(Opts)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Term</CODE> is going to be associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
+<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional linker options that will be used during the linkage.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>+Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>action_widget(-Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Term</CODE> is associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5286"></A>
-<A NAME="IDX5287"></A>
+<A NAME="IDX5852"></A>
+<A NAME="IDX5853"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_options/1:</B>
-<DD><A NAME="IDX5288"></A>
+<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/2:</B>
+<DD><A NAME="IDX5854"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>creation_options(-OptionsList)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(OsArch, Opts)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Creates a list with the options supported by the widget.
+<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional linker options.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>-OptionsList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5289"></A>
-<A NAME="IDX5290"></A>
+<A NAME="IDX5855"></A>
+<A NAME="IDX5856"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_position/1:</B>
-<DD><A NAME="IDX5291"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_linker/1:</B>
+<DD><A NAME="IDX5857"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>creation_position(-OptionsList)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_linker(Linker)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Creates a list with the options supported by the pack command.
+<LI><EM>Description:</EM> <CODE>Linker</CODE> is the linker to use in this file. When this option is used, the default (Ciao-provided) linker options are not used; those specified in
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX5858"></A>
+<CODE>extra_linker_options/1</CODE> are used instead. 
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>-OptionsList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>Linker</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5292"></A>
-<A NAME="IDX5293"></A>
+<A NAME="IDX5859"></A>
+<A NAME="IDX5860"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_position_grid/1:</B>
-<DD><A NAME="IDX5294"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_linker/2:</B>
+<DD><A NAME="IDX5861"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>creation_position_grid(-OptionsList)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>use_linker(OsArch, Linker)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Creates a list with the options supported by the grid command.
+<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the linker to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX5862"></A>
+<CODE>use_compiler/2</CODE>. 
+<LI><EM>The following properties hold at call time:</EM>
 
-<CODE>-OptionsList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Linker</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX5295"></A>
-<A NAME="IDX5296"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_bind/1:</B>
-<DD><A NAME="IDX5297"></A>
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>creation_bind(-BindList)</CODE>
+<H2><A NAME="SEC527" HREF="ciao_toc.html#TOC527">Known bugs and planned improvements (<CODE>foreign_interface_properties</CODE>)</A></H2>
+
 
 <UL>
-<LI><EM>Description:</EM> Creates a list with the event to be manage and the action associated to this event.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>
 
-<CODE>-BindList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+The <CODE>size_of/3</CODE> property has an empty definition
 </UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_120.html">previous</A>, <A HREF="ciao_122.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_120.html">previous</A>, <A HREF="ciao_122.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

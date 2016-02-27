@@ -1,4 +1,3 @@
-
 :- module(idlists,
 	[ member_0/2, memberchk/2,
 	  list_insert/2, add_after/4, add_before/4, delete/3,
@@ -18,6 +17,8 @@
 	"Checks that @var{X} is an element of (list) @var{Xs}.").
 
 memberchk(X, Ys) :- member_0(X, Ys).
+
+:- comment(member_0(X,Xs),"True iff memberchk/2 is true.").
 
 member_0(X, [Y|_]) :- X == Y, !.
 member_0(X, [_|L]) :- member_0(X, L).
@@ -95,6 +96,9 @@ union_idlists([X|Xs],Ys,Zs) :-
         ),
 	union_idlists(Xs,Ys,Ws).
 
+
+:- comment(version(1*9+266,2004/01/01,14:01*07+'CET'), "Added comment
+   for pred member_0/2.  (Edison Mera)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

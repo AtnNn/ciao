@@ -14,7 +14,6 @@
    Using pred(1):
 
 @begin{verbatim}
-  list(L, between(1,6))
   list(L, functor(_,2))
   list(L, >(0))
 @end{verbatim}

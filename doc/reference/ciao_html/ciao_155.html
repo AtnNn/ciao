@@ -1,22 +1,404 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART IX - Abstract data types</TITLE>
+<TITLE>The Ciao Prolog System               - sqltypes (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC645" HREF="ciao_toc.html#TOC645">PART IX - Abstract data types</A></H1>
+<H1><A NAME="SEC652" HREF="ciao_toc.html#TOC652">sqltypes (library)</A></H1>
+<P>
+<A NAME="IDX7305"></A>
+
 
 <P>
-This part includes libraries which implement some generic data structures (abstract data types) that are used frequently in programs or in the Ciao system itself. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#127 (2001/10/26, 14:52:5 CEST)
+
+
+
+<UL>
+<LI><A HREF="ciao_155.html#SEC653">Usage and interface (sqltypes)</A>
+<LI><A HREF="ciao_155.html#SEC654">Documentation on exports (sqltypes)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC653" HREF="ciao_toc.html#TOC653">Usage and interface (<CODE>sqltypes</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(sqltypes)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7306"></A>
+<CODE>accepted_type/2</CODE>, 
+<A NAME="IDX7307"></A>
+<CODE>get_type/2</CODE>, 
+<A NAME="IDX7308"></A>
+<CODE>type_compatible/2</CODE>, 
+<A NAME="IDX7309"></A>
+<CODE>type_union/3</CODE>, 
+<A NAME="IDX7310"></A>
+<CODE>sybase2sqltypes_list/2</CODE>, 
+<A NAME="IDX7311"></A>
+<CODE>sybase2sqltype/2</CODE>, 
+<A NAME="IDX7312"></A>
+<CODE>postgres2sqltypes_list/2</CODE>, 
+<A NAME="IDX7313"></A>
+<CODE>postgres2sqltype/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7314"></A>
+<CODE>sqltype/1</CODE>, 
+<A NAME="IDX7315"></A>
+<CODE>sybasetype/1</CODE>, 
+<A NAME="IDX7316"></A>
+<CODE>postgrestype/1</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC654" HREF="ciao_toc.html#TOC654">Documentation on exports (<CODE>sqltypes</CODE>)</A></H2>
+<P>
+<A NAME="IDX7317"></A>
+<A NAME="IDX7318"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>sqltype/1:</B>
+<DD><A NAME="IDX7319"></A>
+
+
+
+<PRE>
+sqltype(int).
+sqltype(flt).
+sqltype(num).
+sqltype(string).
+sqltype(date).
+sqltype(time).
+sqltype(datetime).
+</PRE>
+
+<P>
+These types have the same meaning as the corresponding standard types in the 
+<A NAME="IDX7320"></A>
+<CODE>basictypes</CODE> library.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sqltype(Type)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by the translator.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7321"></A>
+<A NAME="IDX7322"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>accepted_type/2:</B>
+<DD><A NAME="IDX7323"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>accepted_type(SystemType, NativeType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> For the moment, tests wether the <CODE>SystemType</CODE> received is a sybase or a postgres type (in the future other systems should be supported) and obtains its equivalent <CODE>NativeType</CODE> sqltype.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>SystemType</CODE> is an SQL data type supported by Sybase.
+ (<CODE>sqltypes:sybasetype/1</CODE>)
+
+<CODE>NativeType</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7324"></A>
+<A NAME="IDX7325"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_type/2:</B>
+<DD><A NAME="IDX7326"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_type(+Constant, Type)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Prolog implementation-specific definition of type retrievals. CIAO Prolog version given here (ISO).
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Constant</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Type</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7327"></A>
+<A NAME="IDX7328"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>type_compatible/2:</B>
+<DD><A NAME="IDX7329"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>type_compatible(TypeA, TypeB)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Checks if <CODE>TypeA</CODE> and <CODE>TypeB</CODE> are compatible types, i.e., they are the same or one is a subtype of the other.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>TypeA</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+
+<CODE>TypeB</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7330"></A>
+<A NAME="IDX7331"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>type_union/3:</B>
+<DD><A NAME="IDX7332"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>type_union(TypeA, TypeB, Union)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Union</CODE> is the union type of <CODE>TypeA</CODE> and <CODE>TypeB</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>TypeA</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+
+<CODE>TypeB</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+
+<CODE>Union</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7333"></A>
+<A NAME="IDX7334"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>sybasetype/1:</B>
+<DD><A NAME="IDX7335"></A>
+
+
+<P>
+SQL datatypes supported by Sybase for which a translation is defined: 
+
+
+
+<PRE>
+sybasetype(integer).
+sybasetype(numeric).
+sybasetype(float).
+sybasetype(double).
+sybasetype(date).
+sybasetype(char).
+sybasetype(varchar).
+sybasetype('long varchar').
+sybasetype(binary).
+sybasetype('long binary').
+sybasetype(timestamp).
+sybasetype(time).
+sybasetype(tinyint).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sybasetype(Type)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by Sybase.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7336"></A>
+<A NAME="IDX7337"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sybase2sqltypes_list/2:</B>
+<DD><A NAME="IDX7338"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sybase2sqltypes_list(SybaseTypesList, SQLTypesList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>SybaseTypesList</CODE> is a list of Sybase SQL types. <CODE>PrologTypesList</CODE> contains their equivalent SQL-type names in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>SybaseTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>SQLTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7339"></A>
+<A NAME="IDX7340"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sybase2sqltype/2:</B>
+<DD><A NAME="IDX7341"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sybase2sqltype(SybaseType, SQLType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>SybaseType</CODE> is a Sybase SQL type name, and <CODE>SQLType</CODE> is its equivalent SQL-type name in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>SybaseType</CODE> is an SQL data type supported by Sybase.
+ (<CODE>sqltypes:sybasetype/1</CODE>)
+
+<CODE>SQLType</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7342"></A>
+<A NAME="IDX7343"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>postgrestype/1:</B>
+<DD><A NAME="IDX7344"></A>
+
+
+<P>
+SQL datatypes supported by postgreSQL for which a translation is defined: 
+
+
+
+<PRE>
+postgrestype(int2).
+postgrestype(int4).
+postgrestype(int8).
+postgrestype(float4).
+postgrestype(float8).
+postgrestype(date).
+postgrestype(timestamp).
+postgrestype(time).
+postgrestype(char).
+postgrestype(varchar).
+postgrestype(text).
+postgrestype(bool).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>postgrestype(Type)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by postgres.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7345"></A>
+<A NAME="IDX7346"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>postgres2sqltypes_list/2:</B>
+<DD><A NAME="IDX7347"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>postgres2sqltypes_list(PostgresTypesList, SQLTypesList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>PostgresTypesList</CODE> is a list of postgres SQL types. <CODE>PrologTypesList</CODE> contains their equivalent SQL-type names in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PostgresTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>SQLTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7348"></A>
+<A NAME="IDX7349"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>postgres2sqltype/2:</B>
+<DD><A NAME="IDX7350"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>postgres2sqltype(PostgresType, SQLType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>PostgresType</CODE> is a postgres SQL type name, and <CODE>SQLType</CODE> is its equivalent SQL-type name in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PostgresType</CODE> is an SQL data type supported by postgres.
+ (<CODE>sqltypes:postgrestype/1</CODE>)
+
+<CODE>SQLType</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

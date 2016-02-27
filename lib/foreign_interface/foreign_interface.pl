@@ -1,4 +1,4 @@
-:- use_package([assertions,regtypes]).
+:- use_package([assertions,basicmodes,regtypes]).
 
 :- use_module(library('foreign_interface/foreign_interface_properties')).
 
@@ -24,4 +24,7 @@
 :- new_declaration(ttr_match/2,on).
 
 :- use_package(library('foreign_interface/foreign_interface_ttrs')).
+
+:- load_compilation_module(library('foreign_interface/foreign_interface_tr')).
+:- add_sentence_trans(foreign_interface_tr/3).
 

@@ -10,6 +10,11 @@
 
 :- comment(title,"Definite clause grammars (expansion)").
 
+:- comment(author, "Daniel Cabeza").
+
+:- comment(module, "This module implements the Definite clause
+   grammars (expansion).").
+
 % Should be something special
 :- meta_predicate
         phrase(goal,?),
@@ -100,6 +105,9 @@ dcg_translate_dcg(if(X,Y,Z), if(X1,Y1,Z1), S, S0, S) :- !,
 dcg_translate_dcg((X;Y), (X1;Y1), S, S0, S) :- !,
 	dcg_translate_dcg(X, X1, S0, S),
 	dcg_translate_dcg(Y, Y1, S0, S).
+dcg_translate_dcg('|'(X,Y), (X1;Y1), S, S0, S) :- !,
+	dcg_translate_dcg(X, X1, S0, S),
+	dcg_translate_dcg(Y, Y1, S0, S).
 dcg_translate_dcg(!, !, S0, S0, _) :- !.
 dcg_translate_dcg({G}, call(G), S0, S0, _) :- var(G), !.
 dcg_translate_dcg({G}, G, S0, S0, _) :- !.
@@ -120,6 +128,11 @@ dcg_translate_dcg_atom(X, X1, S0, S) :-
 	copy_args(A, X, X1).
 
 
+:- comment(version(1*9+302,2004/02/16,18:48*01+'CET'), "Brought back the
+   use of '|' in DCG rules.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+211,2003/12/21,02:16*23+'CET'), "Added comment
+   author and module.  (Edison Mera)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

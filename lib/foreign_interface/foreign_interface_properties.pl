@@ -18,14 +18,19 @@
 
 :- comment(title, "Foreign Language Interface Properties").
 
+:- comment(module, "The foreign language interface uses some
+   properties to specify linking regimes, foreign files to be
+   compiled, types of data available, memory allocation policies,
+   etc.").
+
 :- comment(summary, "The foreign language interface uses some
-properties to specify linking regimes, foreign files to be compiled,
-types of data available, memory allocation policies, etc.  These are
-all the properties avaialable and a brief explanation of their
-meaning.  Some of them can depend on the operating system and
-architecture, and can be selected stating it with an atom which
-represents that.  See @ref{Foreign Language Interface Guidelines and
-Usage} for a longer explanation and some examples.").
+   properties to specify linking regimes, foreign files to be
+   compiled, types of data available, memory allocation policies, etc.
+   These are all the properties available and a brief explanation of
+   their meaning.  Some of them can depend on the operating system and
+   architecture, and can be selected stating it with an atom which
+   represents that.  See @ref{Foreign Language Interface Guidelines
+   and Usage} for a longer explanation and some examples.").
 
 :- comment(author,"Jose Morales").
 :- comment(author,"Manuel Carro").
@@ -193,7 +198,7 @@ native(_).
 
 :- prop native(PrologName,ForeignName) # "The Prolog predicate
 @pred{PrologName} is implemented using the function
-prolog_@tt{ForeignName}.  The same considerations as above example
+@tt{ForeignName}.  The same considerations as above example
 are to be applied.".
 
 native(_,_).
@@ -212,11 +217,14 @@ native(_,_).
 %% Subsequent version comments will be placed above the last one
 %% inserted.
 
+:- comment(version(1*9+229,2003/12/22,17:34*59+'CET'), "Added comment
+   module. (Edison Mera)").
+
 :- comment(version(1*7+77,2001/03/26,18:45*31+'CEST'), "Improved
-documentation (MCL)").
+   documentation (MCL)").
 
 :- comment(version(1*7+64,2001/03/05,12:54*14+'MET'), "Added title and
-summary.  (Manuel Carro)").
+   summary. (Manuel Carro)").
 
 :- comment(version(1*5+137,2000/05/10,11:29*26+'CEST'), "Added
    int_list as external type.  (jfran)").

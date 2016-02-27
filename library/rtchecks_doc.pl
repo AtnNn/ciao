@@ -1,7 +1,6 @@
-
-:- use_package([assertions,metaprops]).
+:- use_package([assertions,regtypes]).
 :- comment(nodoc,assertions).
-:- comment(nodoc,metaprops).
+:- comment(nodoc,regtypes).
 
 :- comment(filetype,package).
 
@@ -55,11 +54,26 @@
      Otherwise, a warning message is issued.
      It corresponds to a program-point @concept{check assertion}
      (see @ref{The Ciao assertion package}).").
-:- pred check(Property) : regtype((^((list;list))|list)).
+:- pred check(Property) : expr.
 
 /*
 :- prop check(Property) : regtype(Property,
              (Property :- (Property=(X;Y),list(X),list(Y) ; list(Property)) )
 				 ).
 */
+
+:- comment(doinclude,expr/1).
+:- regtype expr/1 # "A property formula.".
+
+expr((A;B)):- list(A), list(B).
+expr(E):- list(E).
+
+
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+283,2004/02/13,15:39*33+'CET'), "Taken out
+   metaprops.  (Francisco Bueno Carrillo)").
+
+:- comment(version(1*9+206,2003/12/20,14:49*50+'CET'), "First
+   revision.  (Edison Mera)").
 

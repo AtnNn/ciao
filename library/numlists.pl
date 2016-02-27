@@ -1,4 +1,3 @@
-
 :- module(numlists,
 	[ get_primes/2,
 	  intlist/1,
@@ -14,6 +13,11 @@
 :- use_module(library(lists),[ reverse/2 ]).
 
 :- comment(title,"Lists of numbers").
+
+:- comment(author,"The CLIP Group").
+
+:- comment(module,"This module implements some kinds of lists of
+   numbers.").
 
 :- regtype numlist(X)    # "@var{X} is a list of numbers.".
 
@@ -86,6 +90,9 @@ prime([X|Primes],Num):-
 	Mod > 0,
 	prime(Primes,Num).
 
+
+:- comment(version(1*9+237,2003/12/22,18:23*36+'CET'), "Added comment
+   author and module.  (Edison Mera)").
 
 :- comment(version(0*9+99,1999/05/26,11:33*15+'MEST'), "Documented
    exported predicates.  (Francisco Bueno Carrillo)").

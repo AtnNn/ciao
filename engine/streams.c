@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -74,28 +75,54 @@ BOOL prolog_open(Arg)
 {
   struct stat statbuf;
   FILE *fileptr;
-  char modespec[2];
+  char *modecodif, modespec[2];
   extern int errno;
 
   DEREF(X(0),X(0));
   DEREF(X(1),X(1));
-  modespec[0] = GetString(X(1))[0];
+  modecodif = GetString(X(1));
+
+  modespec[0] = modecodif[0];
   modespec[1] = 0;
+
   fileptr = (TagIsATM(X(0)) ? fopen(GetString(X(0)),modespec) :
 	     TagIsSmall(X(0)) ? fdopen(GetSmall(X(0)),modespec) :
 	     NULL);
+
   if (fileptr==NULL)
     goto bomb1;
   else if ( fstat(fileno(fileptr), &statbuf)
            || (statbuf.st_mode & S_IFMT) == S_IFDIR )
-    goto bomb2;
+    {
+      fclose(fileptr);
+      errno = EINVAL;
+      goto bomb1;
+    }
   else
-    return
-    cunify(Arg, ptr_to_stream(Arg,new_stream(X(0),modespec,fileptr)),X(2));
+    {
+      char locking = modecodif[1];
 
- bomb2:
-  fclose(fileptr);
-  errno = EINVAL;
+      if (locking == 'l' || locking == 'b') /* file locking */
+	{
+	  struct flock sflo;
+	  int cmd = (locking == 'l' ? F_SETLK : F_SETLKW);
+
+	  sflo.l_whence = 0; sflo.l_start = 0; sflo.l_len = 0;
+	  sflo.l_type = 
+	    (modecodif[2] == 'r'
+	     || (modecodif[2] =='\0' && modecodif[0] == 'r') ? F_RDLCK
+                                                             : F_WRLCK);
+
+	  if (fcntl(fileno(fileptr), cmd, &sflo) < 0)
+	    {
+	      fclose(fileptr);
+	      return FALSE;
+	    }
+	}
+
+      return
+	cunify(Arg, ptr_to_stream(Arg,new_stream(X(0),modespec,fileptr)),X(2));
+    }
  bomb1:
   if (current_ferror_flag==atom_on)
     {
@@ -138,7 +165,7 @@ BOOL prolog_close(Arg)
       (stream!=stream_user_error))
     {
       if (stream->streammode != 's')        /* Not a socket -- has FILE * */
-        fclose(stream->streamfile);
+        fclose(stream->streamfile);  /* Releases file locks automatically */
       else
         close(GetInteger(stream->label));            /* Needs a lock here */
 

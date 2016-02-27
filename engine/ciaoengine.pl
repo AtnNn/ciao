@@ -1,5 +1,3 @@
-
- 
 %% Since Ciao Version 0.8, changes are unified with the GlobalChangeLog 
 %% in $(SRC)/version.
 
@@ -24,6 +22,144 @@ main.
 
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+330,2004/03/25,16:54*55+'CET'), "Solved some
+problems in shell/n and exec/3,4} in windows.  shell/n now call
+directly the command in the SHELL environment variable using
+execlp. If $SHELL is does not exist (usual in Windows), one is created
+at startup filling it in with the sh.exe provided with Ciao.  This is
+potentially wrong, as the user may have given a value to SHELL withing
+Windows, and the calling procedure may be different from that of
+Unix/Cygwin (i.e., /C instead of -c) (MCL)").
+
+:- comment(version(1*9+327,2004/03/24,16:39*18+'CET'), "A complaint
+message is returned if there is no SHELL environment variable (no
+exceptions are thrown because 1.9 did not have all the ISO exceptions,
+which were introduced in 1.11) (MCL)").
+
+:- comment(version(1*9+324,2004/03/10,01:40*39+'CET'), "Changed
+   float_*.c /.h and term_support.c, to improve the conversion between
+   float numbers and strings.  Now the exponent symbol is e for bases
+   less than 10, p for bases less or equals than 25 (25=p), and _ for
+   bases less or equals than 36.  (Edison Mera)").
+
+:- comment(version(1*9+319,2004/02/26,23:59*45+'CET'), "Solved a bug
+   that formatted incorrectly numbers nears to 1, before this patch
+   format(\"~1f~N\",0.99). showed 010. (Edison Mera)").
+
+:- comment(version(1*9+301,2004/02/16,17:26*09+'CET'), "In
+   engine/unix_utils.c, changed prolog_c_del_env to be compatible with
+   Solaris. (Edison Mera)").
+
+:- comment(version(1*9+298,2004/02/16,17:13*26+'CET'), "number_codes/3
+   now is reversible, also for floating point numbers in other bases
+   than 10.  (Edison Mera)").
+
+:- comment(version(1*9+296,2004/02/16,17:04*20+'CET'), "Now
+   number_codes/3 is defined in the engine.  These change also implies
+   modifications to number_codes/2.  (Edison Mera)").
+
+:- comment(version(1*9+295,2004/02/16,17:01*45+'CET'), "In
+   float_const.c, float_const.h. Improved powl_int to use directly the
+   power tables.  Added fillchardigit, and char_digit, required to
+   convert a char in its value. (Edison Mera)").
+
+:- comment(version(1*9+294,2004/02/16,16:57*21+'CET'), "In
+   engine/bignum.c, engine/bignum_defs.h, engine/ciao_prolog.c,
+   engine/inout.c, engine/qget.c, engine/qinsert.c. Changed
+   bn_from_string to support different numeric bases
+   correctly. (Edison Mera)").
+
+:- comment(version(1*9+293,2004/02/16,16:55*37+'CET'), "Added
+   float_tostr.c .h and float_const.c .h to solve some bugs when
+   printing floating point numbers (correction ported from ciao-1.11),
+   and changed related files: Makefile, format.c, term_support.c.
+   (Edison Mera)").
+
+:- comment(version(1*9+284,2004/02/13,17:32*26+'CET'), "Changed handling
+   of end-of-lines to understand unix, mac and win styles.  Added
+   support for skip_line/[0,1]. (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+274,2004/01/09,16:01*17+'CET'), "Runtime
+   reported by statistics/0 now matches that returned by
+   statistics(runtime, _).  (Manuel Carro)").
+
+:- comment(version(1*9+244,2003/12/22,23:35*15+'CET'), "Fixed a nasty
+   C gluecode bug that inserted stack references into the heap (Jose
+   Morales)").
+
+:- comment(version(1*9+83,2003/06/05,01:13*41+'CEST'), "Fixed a trail
+   overflow bug. Added upper bound checks in memory allocation
+   routines to ensure that (re)allocated blocks fit in addressable
+   memory. Fixed a bug that made the engine forget the wam pointer
+   after wam() execution when the wam structure was reallocated. Search
+   'segfault patch -- jf' comments to see the modified code.  (Jose
+   Morales)").
+
+:- comment(version(1*9+64,2003/03/06,12:52*22+'CET'), "Updated
+   makefile-sysdep to compile again on Darwin (some options, yet
+   unsupported by the Darwin C Compiler, sneaked in).  (MCL)").
+
+:- comment(version(1*9+62,2003/02/26,19:12*32+'CET'), "Solved a
+   segmentation violation problem which appeared when backtracking
+   over concurrent predicates.  The solution was substituting
+
+   TopConcChpt = (struct node *)X(PrevDynChpt);
+
+   by
+
+   TopConcChpt = (struct node *)TermToPointerOrNull(X(PrevDynChpt));
+
+   in shdisp_r.c (the pointer was encoded when storing it to the
+   choicepoint stack and it was not being uncoded when reading it
+   back). (MCL)").
+
+:- comment(version(1*9+50,2003/01/09,17:47*46+'CET'), "Changed
+   configure.c to correctly compute the number of significant decimals
+   that can be printed.  So now 5.347 is displayed as-is, and X = 1/3
+   has all decimals as 3. (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+49,2003/01/09,14:21*59+'CET'), "Added
+   ciao_free() and ciao_malloc(), now only interfaces to free and
+   malloc (MCL)").
+
+:- comment(version(1*9+48,2003/01/07,14:27*09+'CET'), "Added support
+   to test conversion of a Ciao integer into a machine int, and to
+   make numeric conversions through character strings.
+
+Files changed:
+
+term_support_defs.h
+term_support.c
+configure.c
+ciao_prolog.h
+ciao_prolog.c
+bignum_defs.h
+bignum.c
+
+Public functions added (plus their state aware counterparts):
+
+ciao_bool ciao_fits_in_int(ciao_term term);
+ciao_bool ciao_to_integer_check(ciao_term term, int *res);
+char *ciao_get_number_chars(ciao_term term);
+ciao_term ciao_put_number_chars(char *number_string);
+
+    (MCL)").
+
+:- comment(version(1*9+45,2003/01/07,13:01*02+'CET'), "Changed
+   optimization level from -O3 to -O2 (-O3 gave, in general, worst
+   results) (MCL)").
+
+:- comment(version(1*9+41,2002/12/12,21:51*40+'CET'), "Unbound length
+   atoms can now appear in source (and in .po) files; also, checks for
+   expansion of atom lengths made more uniform.  (MCL)").
+
+:- comment(version(1*9+23,2002/11/18,14:28*24+'CET'), "Added #ifdef's
+   suggested by Roberto Bagnara to the ciao_prolog.h file.  (MCL)").
+
+:- comment(version(1*9+8,2002/05/27,16:57*51+'CEST'), "Added entries
+   in makefile-sysdep to deal with gcc 3.1 different command line
+   options (some -m to -f).  (MCL)").
 
 :- comment(version(1*7+207,2002/04/23,18:58*09+'CEST'), "Makefiles
    changed to be more resilient to errors.  (MCL)").

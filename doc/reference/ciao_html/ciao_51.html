@@ -1,79 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Formatted output</TITLE>
+<TITLE>The Ciao Prolog System               - Enumeration of integers inside a range</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_50.html">previous</A>, <A HREF="ciao_52.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_50.html">previous</A>, <A HREF="ciao_52.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC239" HREF="ciao_toc.html#TOC239">Formatted output</A></H1>
+<H1><A NAME="SEC241" HREF="ciao_toc.html#TOC241">Enumeration of integers inside a range</A></H1>
 <P>
-<A NAME="IDX2732"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX3283"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#27 (1999/7/9, 20:25:50 MEST)
+<STRONG>Author(s):</STRONG> The CLIP Group..
 
 
 <P>
-The <CODE>format</CODE> family of predicates is due to Quintus Prolog. They act as a Prolog interface to the C <CODE>stdio</CODE> function <CODE>printf()</CODE>, allowing formatted output. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-Output is formatted according to an output pattern which can have either a format control sequence or any other character, which will appear verbatim in the output. Control sequences act as place-holders for the actual terms that will be output. Thus 
-
-<PRE>
-        ?- format("Hello ~q!",world).
-</PRE>
-
-<P>
-will print <CODE>Hello world!</CODE>. 
+<STRONG>Version of last change:</STRONG> 1.9#276 (2004/1/9, 16:37:11 CET)
 
 
 <P>
-If there is only one item to print it may be supplied alone. If there are more they have to be given as a list. If there are none then an empty list should be supplied. There has to be as many items as control characters. 
-
-
-<P>
-The character <CODE>~</CODE> introduces a control sequence. To print a <CODE>~</CODE> verbatim just repeat it: 
-
-<PRE>
-        ?- format("Hello ~~world!", []).
-</PRE>
-
-<P>
-will result in <CODE>Hello ~world!</CODE>. 
-
-
-<P>
-A format may be spread over several lines. The control sequence <CODE>\c</CODE> followed by a <KBD>LFD</KBD> will translate to the empty string: 
-
-<PRE>
-        ?- format("Hello \c
-        world!", []).
-</PRE>
-
-<P>
-will result in <CODE>Hello world!</CODE>.
+This modules enumerates integers between two numbers, or checks that an integer lies within a range
 
 
 
 <UL>
-<LI><A HREF="ciao_51.html#SEC240">Usage and interface (format)</A>
-<LI><A HREF="ciao_51.html#SEC241">Documentation on exports (format)</A>
+<LI><A HREF="ciao_51.html#SEC242">Usage and interface (between)</A>
+<LI><A HREF="ciao_51.html#SEC243">Documentation on exports (between)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC240" HREF="ciao_toc.html#TOC240">Usage and interface (<CODE>format</CODE>)</A></H2>
+<H2><A NAME="SEC242" HREF="ciao_toc.html#TOC242">Usage and interface (<CODE>between</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -81,7 +47,7 @@ will result in <CODE>Hello world!</CODE>.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(format)).</CODE>
+<CODE>:- use_module(library(between)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -90,29 +56,8 @@ will result in <CODE>Hello world!</CODE>.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2733"></A>
-<CODE>format/2</CODE>, 
-<A NAME="IDX2734"></A>
-<CODE>format/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX2735"></A>
-<CODE>format_control/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX2736"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX2737"></A>
-<CODE>assertions/doc_props</CODE>.
+<A NAME="IDX3284"></A>
+<CODE>between/3</CODE>.
 
 </UL>
 
@@ -122,340 +67,36 @@ will result in <CODE>Hello world!</CODE>.
 
 
 
-<H2><A NAME="SEC241" HREF="ciao_toc.html#TOC241">Documentation on exports (<CODE>format</CODE>)</A></H2>
+<H2><A NAME="SEC243" HREF="ciao_toc.html#TOC243">Documentation on exports (<CODE>between</CODE>)</A></H2>
 <P>
-<A NAME="IDX2738"></A>
-<A NAME="IDX2739"></A>
+<A NAME="IDX3285"></A>
+<A NAME="IDX3286"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>format/2:</B>
-<DD><A NAME="IDX2740"></A>
+<DT><span class="define">PREDICATE:</span> <B>between/3:</B>
+<DD><A NAME="IDX3287"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>format(Format,Arguments)</CODE>
+<STRONG>Usage:</STRONG> <CODE>between(+Min, +Max, ?N)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Print <CODE>Arguments</CODE> onto current output stream according to format <CODE>Format</CODE>.
+<LI><EM>Description:</EM> <CODE>N</CODE> is an integer which is greater than or equal to <CODE>Min</CODE> and smaller than or equal to <CODE>Max</CODE>. Both <CODE>Min</CODE> and <CODE>Max</CODE> can be either integer or real numbers.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Format</CODE> is an atom or string describing how the arguments should be formatted. If it is an atom it will be converted into a string with <CODE>name/2</CODE>.
- (<CODE>format:format_control/1</CODE>)
-</UL>
+<CODE>+Min</CODE> is currently instantiated to a number.
+ (<CODE>term_typing:number/1</CODE>)
 
-</DL>
+<CODE>+Max</CODE> is currently instantiated to a number.
+ (<CODE>term_typing:number/1</CODE>)
 
-<P>
-<A NAME="IDX2741"></A>
-<A NAME="IDX2742"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>format/3:</B>
-<DD><A NAME="IDX2743"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>format(+Stream,Format,Arguments)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Print <CODE>Arguments</CODE> onto <CODE>Stream</CODE> according to format <CODE>Format</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Format</CODE> is an atom or string describing how the arguments should be formatted. If it is an atom it will be converted into a string with <CODE>name/2</CODE>.
- (<CODE>format:format_control/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2744"></A>
-<A NAME="IDX2745"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>format_control/1:</B>
-<DD><A NAME="IDX2746"></A>
-
-
-<P>
- The general format of a control sequence is <CODE>~<CODE>N</CODE><CODE>C</CODE></CODE>. The character <CODE>C</CODE> determines the type of the control sequence. <CODE>N</CODE> is an optional numeric argument. An alternative form of <CODE>N</CODE> is <CODE>*</CODE>. <CODE>*</CODE> implies that the next argument in <CODE>Arguments</CODE> should be used as a numeric argument in the control sequence. Example: 
-
-
-
-<PRE>
-?- format("Hello~4cworld!", [0'x]).
-</PRE>
-
-<P>
-and 
-
-
-
-<PRE>
-?- format("Hello~*cworld!", [4,0'x]).
-</PRE>
-
-<P>
-both produce 
-
-
-
-<PRE>
-Helloxxxxworld!
-</PRE>
-
-<P>
-The following control sequences are available. 
-
-
-
-<UL>
-
-<LI>~a The argument is an atom. The atom is printed without quoting.
-
-<LI>~<CODE>N</CODE>c (Print character.) The argument is a number that will be interpreted as an ASCII code. <CODE>N</CODE> defaults to one and is interpreted as the number of times to print the character.
-
-<LI>~<CODE>N</CODE>e
-
-<LI>~<CODE>N</CODE>E
-
-<LI>~<CODE>N</CODE>f
-
-<LI>~<CODE>N</CODE>g
-
-<LI>~<CODE>N</CODE>G (Print float). The argument is a float. The float and <CODE>N</CODE> will be passed to the C <CODE>printf()</CODE> function as
-
-
-<PRE>
-printf("%.<CODE>N</CODE>e", <CODE>Arg</CODE>)
-printf("%.<CODE>N</CODE>E", <CODE>Arg</CODE>)
-printf("%.<CODE>N</CODE>f", <CODE>Arg</CODE>)
-printf("%.<CODE>N</CODE>g", <CODE>Arg</CODE>)
-printf("%.<CODE>N</CODE>G", <CODE>Arg</CODE>)
-</PRE>
-
-If <CODE>N</CODE> is not supplied the action defaults to 
-
-
-<PRE>
-printf("%e", <CODE>Arg</CODE>)
-printf("%E", <CODE>Arg</CODE>)
-printf("%f", <CODE>Arg</CODE>)
-printf("%g", <CODE>Arg</CODE>)
-printf("%G", <CODE>Arg</CODE>)
-</PRE>
-
-<LI>~<CODE>N</CODE>d (Print decimal.) The argument is an integer. <CODE>N</CODE> is interpreted as the number of digits after the decimal point. If <CODE>N</CODE> is 0 or missing, no decimal point will be printed. Example:
-
-
-<PRE>
-?- format("Hello ~1d world!", [42]).
-?- format("Hello ~d world!", [42]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello 4.2 world!
-Hello 42 world!
-</PRE>
-
-respectively. 
-
-<LI>~<CODE>N</CODE>D (Print decimal.) The argument is an integer. Identical to <CODE>~<CODE>N</CODE>d</CODE> except that <CODE>,</CODE> will separate groups of three digits to the left of the decimal point. Example:
-
-
-<PRE>
-?- format("Hello ~1D world!", [12345]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello 1,234.5 world!
-</PRE>
-
-<LI>~<CODE>N</CODE>r (Print radix.) The argument is an integer. <CODE>N</CODE> is interpreted as a radix. <CODE>N</CODE> should be &#62;= 2 and &#60;= 36. If <CODE>N</CODE> is missing the radix defaults to 8. The letters <CODE>a-z</CODE> will denote digits larger than 9. Example:
-
-
-<PRE>
-?- format("Hello ~2r world!", [15]).
-?- format("Hello ~16r world!", [15]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello 1111 world!
-Hello f world!
-</PRE>
-
-respectively. 
-
-<LI>~<CODE>N</CODE>R (Print radix.) The argument is an integer. Identical to <CODE>~<CODE>N</CODE>r</CODE> except that the letters <CODE>A-Z</CODE> will denote digits larger than 9. Example:
-
-
-<PRE>
-?- format("Hello ~16R world!", [15]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello F world!
-</PRE>
-
-<LI>~<CODE>N</CODE>s (Print string.) The argument is a list of ASCII codes. Exactly <CODE>N</CODE> characters will be printed. <CODE>N</CODE> defaults to the length of the string. Example:
-
-
-<PRE>
-?- format("Hello ~4s ~4s!", ["new","world"]).
-?- format("Hello ~s world!", ["new"]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello new  worl!
-Hello new world!
-</PRE>
-
-respectively. 
-
-<LI>~i (Ignore argument.) The argument may be of any type. The argument will be ignored. Example:
-
-
-<PRE>
-?- format("Hello ~i~s world!", ["old","new"]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello new world!
-</PRE>
-
-<LI>~k (Print canonical.) The argument may be of any type. The argument will be passed to <CODE>write_canonical/2</CODE> (section <A HREF="ciao_38.html#SEC201">Term output</A>). Example:
-
-
-<PRE>
-?- format("Hello ~k world!", [[a,b,c]]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello .(a,.(b,.(c,[]))) world!
-</PRE>
-
-<LI>~p (print.) The argument may be of any type. The argument will be passed to <CODE>print/2</CODE> (section <A HREF="ciao_38.html#SEC201">Term output</A>). Example:
-
-suposing the user has defined the predicate 
-
-
-<PRE>
-:- multifile portray/1.
-portray([X|Y]) :- print(cons(X,Y)).
-</PRE>
-
-then 
-
-
-<PRE>
-?- format("Hello ~p world!", [[a,b,c]]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello cons(a,cons(b,cons(c,[]))) world!
-</PRE>
-
-<LI>~q (Print quoted.) The argument may be of any type. The argument will be passed to <CODE>writeq/2</CODE> (section <A HREF="ciao_38.html#SEC201">Term output</A>). Example:
-
-
-<PRE>
-?- format("Hello ~q world!", [['A','B']]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello ['A','B'] world!
-</PRE>
-
-<LI>~w (write.) The argument may be of any type. The argument will be passed to <CODE>write/2</CODE> (section <A HREF="ciao_38.html#SEC201">Term output</A>). Example:
-
-
-<PRE>
-?- format("Hello ~w world!", [['A','B']]).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello [A,B] world!
-</PRE>
-
-<LI>~<CODE>N</CODE>n (Print newline.) Print <CODE>N</CODE> newlines. <CODE>N</CODE> defaults to 1. Example:
-
-
-<PRE>
-?- format("Hello ~n world!", []).
-</PRE>
-
-will print as 
-
-
-<PRE>
-Hello
- world!
-</PRE>
-
-<LI>~N (Fresh line.) Print a newline, if not already at the beginning of a line.
-
-<LI>~~ (Print tilde.) Prints <CODE>~</CODE>
-
-</UL>
-
-<P>
- 
-The following control sequences are also available for compatibility, but do not perform any useful functions. 
-
-
-
-<UL>
-<LI>~<CODE>N</CODE>| (Set tab.) Set a tab stop at position <CODE>N</CODE>, where <CODE>N</CODE> defaults to the current position, and advance the current position there.
-
-<LI>~<CODE>N</CODE>+ (Advance tab.) Set a tab stop at <CODE>N</CODE> positions past the current position, where <CODE>N</CODE> defaults to 8, and advance the current position there.
-
-<LI>~<CODE>N</CODE>t (Set fill character.) Set the fill character to be used in the next position movement to <CODE>N</CODE>, where <CODE>N</CODE> defaults to <KBD>SPC</KBD>.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>format_control(C)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>C</CODE> is an atom or string describing how the arguments should be formatted. If it is an atom it will be converted into a string with <CODE>name/2</CODE>.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>format_control(C)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<CODE>?N</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_50.html">previous</A>, <A HREF="ciao_52.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_50.html">previous</A>, <A HREF="ciao_52.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

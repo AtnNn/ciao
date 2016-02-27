@@ -1,70 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Ciao library browser</TITLE>
+<TITLE>The Ciao Prolog System               - A simple pretty-printer for Ciao programs</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_82.html">previous</A>, <A HREF="ciao_84.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_82.html">previous</A>, <A HREF="ciao_84.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC348" HREF="ciao_toc.html#TOC348">The Ciao library browser</A></H1>
+<H1><A NAME="SEC352" HREF="ciao_toc.html#TOC352">A simple pretty-printer for Ciao programs</A></H1>
 <P>
-<A NAME="IDX4018"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<A NAME="IDX4597"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> The CLIP Group.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#21 (2000/9/26, 13:37:17 CEST)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-<A NAME="IDX4019"></A>
-<CODE>librowser</CODE> library provides a set of predicates wich enables the user to interactively find Ciao/Prolog libraries and/or any predicate exported by them. 
+<STRONG>Version of last change:</STRONG> 1.9#248 (2003/12/30, 21:52:0 CET)
 
 
 <P>
-This is a simple example: 
-
-
-
-<PRE>
-?- apropos('*find*').
-persdbrt_sql: dbfindall/4
-persdbrtsql: dbfindall/4
-conc_aggregates: findall/3
-linda: rd_findall/3
-vndict: find_name/4
-internals: $find_file/8
-aggregates: findall/4,findall/3
-
-yes
-?-
-</PRE>
-
-<P>
-Librowser is specially usefull when using inside GNU Emacs, just place the cursor over a librowser response and press C-cTAB in order to get help on the related predicate. Refer to the <STRONG>"Using Ciao inside GNU Emacs"</STRONG> chapter for further information. 
+This library module writes out to standard output a clause or a list of clauses.
 
 
 
 <UL>
-<LI><A HREF="ciao_83.html#SEC349">Usage and interface (librowser)</A>
-<LI><A HREF="ciao_83.html#SEC350">Documentation on exports (librowser)</A>
-<LI><A HREF="ciao_83.html#SEC351">Documentation on internals (librowser)</A>
+<LI><A HREF="ciao_83.html#SEC353">Usage and interface (pretty_print)</A>
+<LI><A HREF="ciao_83.html#SEC354">Documentation on exports (pretty_print)</A>
+<LI><A HREF="ciao_83.html#SEC355">Documentation on internals (pretty_print)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC349" HREF="ciao_toc.html#TOC349">Usage and interface (<CODE>librowser</CODE>)</A></H2>
+<H2><A NAME="SEC353" HREF="ciao_toc.html#TOC353">Usage and interface (<CODE>pretty_print</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -72,29 +48,7 @@ Librowser is specially usefull when using inside GNU Emacs, just place the curso
 
 <LI><STRONG>Library usage:</STRONG>
 
-It is not necesary to use this library at user programs. It was designed to be used at the Ciao <EM>toplevel</EM> shell: 
-<A NAME="IDX4020"></A>
-<CODE>ciaosh</CODE>. In order to do so, just make use of 
-<A NAME="IDX4021"></A>
-<CODE>use_module/1</CODE> as follows: 
-
-<CODE>use_module(library(librowser))</CODE>. 
-
-Then, the library interface must be read. This is automatically done when calling any predicate at librowser, and the entire process will take a little moment.So, you should want to perform such a process after loading the Ciao toplevel: 
-
-
-<PRE>
-Ciao 0.9 #75: Fri Apr 30 19:04:24 MEST 1999
-?- use_module(library(librowser)).
-
-yes
-?- update.
-
-</PRE>
-
-Whether you want this process to be automatically performed when loading 
-<A NAME="IDX4022"></A>
-<CODE>ciaosh</CODE>, you may include those lines in your <EM>.ciaorc</EM> personal initialization file. 
+<CODE>:- use_module(library(pretty_print)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -103,18 +57,10 @@ Whether you want this process to be automatically performed when loading
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4023"></A>
-<CODE>update/0</CODE>, 
-<A NAME="IDX4024"></A>
-<CODE>browse/2</CODE>, 
-<A NAME="IDX4025"></A>
-<CODE>where/1</CODE>, 
-<A NAME="IDX4026"></A>
-<CODE>describe/1</CODE>, 
-<A NAME="IDX4027"></A>
-<CODE>system_lib/1</CODE>, 
-<A NAME="IDX4028"></A>
-<CODE>apropos/1</CODE>.
+<A NAME="IDX4598"></A>
+<CODE>pretty_print/2</CODE>, 
+<A NAME="IDX4599"></A>
+<CODE>pretty_print/3</CODE>.
 
 </UL>
 
@@ -125,20 +71,12 @@ Whether you want this process to be automatically performed when loading
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4029"></A>
-<CODE>filenames</CODE>, 
-<A NAME="IDX4030"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX4031"></A>
-<CODE>fastrw</CODE>, 
-<A NAME="IDX4032"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX4033"></A>
-<CODE>streams</CODE>, 
-<A NAME="IDX4034"></A>
-<CODE>patterns</CODE>, 
-<A NAME="IDX4035"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX4600"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX4601"></A>
+<CODE>vndict</CODE>, 
+<A NAME="IDX4602"></A>
+<CODE>write</CODE>.
 
 </UL>
 
@@ -148,257 +86,189 @@ Whether you want this process to be automatically performed when loading
 
 
 
-<H2><A NAME="SEC350" HREF="ciao_toc.html#TOC350">Documentation on exports (<CODE>librowser</CODE>)</A></H2>
+<H2><A NAME="SEC354" HREF="ciao_toc.html#TOC354">Documentation on exports (<CODE>pretty_print</CODE>)</A></H2>
 <P>
-<A NAME="IDX4036"></A>
-<A NAME="IDX4037"></A>
+<A NAME="IDX4603"></A>
+<A NAME="IDX4604"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>update/0:</B>
-<DD><A NAME="IDX4038"></A>
+<DT><span class="define">PREDICATE:</span> <B>pretty_print/2:</B>
+<DD><A NAME="IDX4605"></A>
 
 
 <P>
-This predicate will scan the Ciao 
-<A NAME="IDX4039"></A>
-system libraries for predicate definitions. This may be done once time before calling any other predicate at this library. 
-
-
-<P>
-update/0 will also be automatically called (once) when calling any other predicate at librowser.
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>pretty_print(Cls, Flags)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Creates an internal database of modules at Ciao
-
-<A NAME="IDX4040"></A>
-system libraries. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4041"></A>
-<A NAME="IDX4042"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>browse/2:</B>
-<DD><A NAME="IDX4043"></A>
-
-
-<P>
-This predicate is fully reversible, and is provided to inspect concrete predicate specifications. For example: 
-
-<PRE>
-?- browse(M,findall/A).
-
-A = 3,
-M = conc_aggregates ? ;
-
-A = 4,
-M = aggregates ? ;
-
-A = 3,
-M = aggregates ? ;
-
-no
-?-
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>browse(Module,Spec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Asocciates the given <CODE>Spec</CODE> predicate specification with the <CODE>Module</CODE> which exports it.
+<LI><EM>Description:</EM> Prints each clause in the list <CODE>Cls</CODE> after numbering its variables.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Module</CODE> is a module name (an atom)
- (<CODE>librowser:module_name/1</CODE>)
+<CODE>pretty_print:clauses(Cls)</CODE>
+ (<CODE>pretty_print:clauses/1</CODE>)
 
-<CODE>Spec</CODE> is a <STRONG>Functor/Arity</STRONG> predicate specification
- (<CODE>librowser:pred_spec/1</CODE>)
+<CODE>Flags</CODE> is a list of <CODE>flag</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4044"></A>
-<A NAME="IDX4045"></A>
+<A NAME="IDX4606"></A>
+<A NAME="IDX4607"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>where/1:</B>
-<DD><A NAME="IDX4046"></A>
+<DT><span class="define">PREDICATE:</span> <B>pretty_print/3:</B>
+<DD><A NAME="IDX4608"></A>
 
 
 <P>
-This predicate will print at the screen the module needed in order to import a given predicate specification. For example: 
-
-<PRE>
-?- where(findall/A).
-findall/3 exported at module conc_aggregates
-findall/4 exported at module aggregates
-findall/3 exported at module aggregates
-
-yes
-?-
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>where(Spec)</CODE>
+<STRONG>Usage:</STRONG> <CODE>pretty_print(Cls, Flags, Ds)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Display what module to load in order to import the given <CODE>Spec</CODE>.
+<LI><EM>Description:</EM> Prints each clause in the list <CODE>Cls</CODE> after using the corresponding variable names dictionary in <CODE>Ds</CODE> to name its variables.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Spec</CODE> is a <STRONG>Functor/Arity</STRONG> predicate specification
- (<CODE>librowser:pred_spec/1</CODE>)
+<CODE>pretty_print:clauses(Cls)</CODE>
+ (<CODE>pretty_print:clauses/1</CODE>)
+
+<CODE>Flags</CODE> is a list of <CODE>flag</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>Ds</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC355" HREF="ciao_toc.html#TOC355">Documentation on internals (<CODE>pretty_print</CODE>)</A></H2>
 <P>
-<A NAME="IDX4047"></A>
-<A NAME="IDX4048"></A>
+<A NAME="IDX4609"></A>
+<A NAME="IDX4610"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>describe/1:</B>
-<DD><A NAME="IDX4049"></A>
+<DT><span class="define">REGTYPE:</span> <B>clauses/1:</B>
+<DD><A NAME="IDX4611"></A>
 
 
 <P>
-This one is used to find out which predicates were exported by a given module. Very usefull when you know the library, but not the concrete predicate. For example: 
+A regular type, defined as follows:
 
 <PRE>
-?- describe(librowser).
-Predicates at library librowser :
-
-apropos/1
-system_lib/1
-describe/1
-where/1
-browse/2
-update/0
-
-yes
-?-
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>describe(Module)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Display a list of exported predicates at the given <CODE>Module</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Module</CODE> is a module name (an atom)
- (<CODE>librowser:module_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4050"></A>
-<A NAME="IDX4051"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>system_lib/1:</B>
-<DD><A NAME="IDX4052"></A>
-
-
-<P>
-It retrieves on backtracking all Ciao system libraries stored in the internal database. Certainly, those which were scanned at 
-<A NAME="IDX4053"></A>
-<CODE>update/0</CODE> calling. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>system_lib(Module)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Module</CODE> variable will be successively instantiated to the system libaries stored in the internal database.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Module</CODE> is a module name (an atom)
- (<CODE>librowser:module_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4054"></A>
-<A NAME="IDX4055"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>apropos/1:</B>
-<DD><A NAME="IDX4056"></A>
-
-
-<P>
-This tool makes use of 
-<A NAME="IDX4057"></A>
-regular expresions in order to find predicate specifications. It is very usefull whether you can't remember the full name of a predicate. Regular expresions take the same format as described in library 
-<A NAME="IDX4058"></A>
-<CODE>patterns</CODE>. Example: 
 
 <PRE>
-?- apropos('atom_*').
-
-terms: atom_concat/2
-concurrency: atom_lock_state/2
-atomic_basic: atom_concat/3,atom_length/2,atom_codes/2
-iso_byte_char: atom_chars/2
-
-yes
-?-
+clauses([]).
+clauses([_1|_2]) :-
+        clause(_1),
+        clauses(_2).
+clauses(_1) :-
+        clause(_1).
 </PRE>
 
+</PRE>
+
+</DL>
+
 <P>
-<STRONG>Usage:</STRONG> <CODE>apropos(RegSpec)</CODE>
+<A NAME="IDX4612"></A>
+<A NAME="IDX4613"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>clause/1:</B>
+<DD><A NAME="IDX4614"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+clause(_1) :-
+        clterm(_1).
+clause((_1,_2)) :-
+        clterm(_1),
+        term(_2).
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX4615"></A>
+<A NAME="IDX4616"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>clterm/1:</B>
+<DD><A NAME="IDX4617"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+clterm(clause(_1,_2)) :-
+        callable(_1),
+        body(_2).
+clterm(directive(_1)) :-
+        body(_1).
+clterm((_1:-_2)) :-
+        callable(_1),
+        body(_2).
+clterm(_1) :-
+        callable(_1).
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX4618"></A>
+<A NAME="IDX4619"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>body/1:</B>
+<DD><A NAME="IDX4620"></A>
+
+
+<P>
+A well formed body, including cge expressions and &#38;-concurrent expressions. The atomic goals may or may not have a key in the form <CODE>^(goal:any)</CODE>, and may or may not be module qualified, but if they are it has to be in the form <CODE>^(^(moddesc:goal):any)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>body(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This will search any predicate specification <CODE>Spec</CODE> which matches the given <CODE>RegSpec</CODE> incomplete predicate specification.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a printable body.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>RegSpec</CODE> is a Pattern/Arity specification.
- (<CODE>librowser:apropos_spec/1</CODE>)
 </UL>
 
 </DL>
 
-
-
-<H2><A NAME="SEC351" HREF="ciao_toc.html#TOC351">Documentation on internals (<CODE>librowser</CODE>)</A></H2>
 <P>
-<A NAME="IDX4059"></A>
-<A NAME="IDX4060"></A>
+<A NAME="IDX4621"></A>
+<A NAME="IDX4622"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>apropos_spec/1:</B>
-<DD><A NAME="IDX4061"></A>
+<DT><span class="define">REGTYPE:</span> <B>flag/1:</B>
+<DD><A NAME="IDX4623"></A>
 
 
 <P>
-Defined as: 
+A keyword <CODE>ask/1</CODE> flags whether to output <EM>asks</EM> or <EM>whens</EM> and <CODE>nl/1</CODE> whether to separate clauses with a blank line or not.
 
-<PRE>
-apropos_spec(_1).
-apropos_spec(Pattern/Arity) :-
-        pattern(Pattern),
-        int(Arity).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>apropos_spec(S)</CODE>
+<STRONG>Usage:</STRONG> <CODE>flag(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a Pattern/Arity specification.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a flag for the pretty-printer.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_82.html">previous</A>, <A HREF="ciao_84.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_82.html">previous</A>, <A HREF="ciao_84.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

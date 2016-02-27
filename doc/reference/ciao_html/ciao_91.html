@@ -1,58 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Higher-order predicates</TITLE>
+<TITLE>The Ciao Prolog System               - The Ciao Make Package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC375" HREF="ciao_toc.html#TOC375">Higher-order predicates</A></H1>
+<H1><A NAME="SEC382" HREF="ciao_toc.html#TOC382">The Ciao Make Package</A></H1>
 <P>
-<A NAME="IDX4268"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
+<A NAME="IDX4874"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#208 (2002/4/23, 19:9:14 CEST)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-This library implements a few basic higher-order predicates. These add functionality to the basic higher-order functionality of Ciao. Examples of the latter are: 
- 
-Using pred(1): 
+<STRONG>Version of last change:</STRONG> 1.9#222 (2003/12/21, 20:8:53 CET)
 
-
-
-<PRE>
-  list(L, between(1,6))
-  list(L, functor(_,2))
-  list(L, &#62;(0))
-</PRE>
 
 <P>
-Using pred(2): 
+This package is used mainly in two main ways: 
 
 
 
 <UL>
-<LI><A HREF="ciao_91.html#SEC376">Usage and interface (hiordlib)</A>
-<LI><A HREF="ciao_91.html#SEC377">Documentation on exports (hiordlib)</A>
+
+<LI>When writing
+
+<A NAME="IDX4875"></A>
+<CODE>Makefile</CODE>s for 
+<A NAME="IDX4876"></A>
+<CODE>lpmake</CODE>. 
+
+<LI>When writing <EM>applications</EM> which use the
+
+<A NAME="IDX4877"></A>
+<CODE>make</CODE> library. 
+
+</UL>
+
+<P>
+In both cases, this is the package that defines the syntax and meaning of the dependency rules used. 
+
+
+
+<UL>
+<LI><A HREF="ciao_91.html#SEC383">Usage and interface (make)</A>
+<LI><A HREF="ciao_91.html#SEC384">Other information (make)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC376" HREF="ciao_toc.html#TOC376">Usage and interface (<CODE>hiordlib</CODE>)</A></H2>
+<H2><A NAME="SEC383" HREF="ciao_toc.html#TOC383">Usage and interface (<CODE>make</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -60,21 +68,77 @@ Using pred(2):
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(hiordlib)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
+ 
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI>When writing
 
-<A NAME="IDX4269"></A>
-<CODE>map/3</CODE>, 
-<A NAME="IDX4270"></A>
-<CODE>foldl/4</CODE>, 
-<A NAME="IDX4271"></A>
-<CODE>minimum/3</CODE>.
+<A NAME="IDX4878"></A>
+<CODE>Makefile</CODE>s for 
+<A NAME="IDX4879"></A>
+<CODE>lpmake</CODE>, such makefiles start with: 
+
+
+<PRE>
+:- module(_,_,[make]).
+</PRE>
+
+or 
+
+
+<PRE>
+:- make(_,_).
+</PRE>
+
+(The latter uses the feature that an undefined declaration at the beginning of a file is interpreted by Ciao as a 
+<A NAME="IDX4880"></A>
+<CODE>use_module/3</CODE> including as third argument a package with the same name, in this case <CODE>make</CODE>.) 
+
+<LI>When writing <EM>applications</EM> which use the
+
+<A NAME="IDX4881"></A>
+<CODE>make</CODE> package, then it is loaded as any other package within the application. 
+
+</UL>
+
+<STRONG>Note:</STRONG> it is often useful to use the 
+<A NAME="IDX4882"></A>
+<CODE>functions</CODE> package inside a 
+<A NAME="IDX4883"></A>
+<CODE>Makefile</CODE> (or when when using the 
+<A NAME="IDX4884"></A>
+<CODE>make</CODE> library in other applications). If both 
+<A NAME="IDX4885"></A>
+<CODE>make</CODE> and 
+<A NAME="IDX4886"></A>
+<CODE>functions</CODE> are used, then 
+<A NAME="IDX4887"></A>
+<CODE>make</CODE> should appear <STRONG>before</STRONG> 
+<A NAME="IDX4888"></A>
+<CODE>functions</CODE> in the list of packages. 
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4889"></A>
+<CODE>::/2</CODE> [1050,xfy], 
+<A NAME="IDX4890"></A>
+<CODE>&#60;=/2</CODE> [1050,xfy], 
+<A NAME="IDX4891"></A>
+<CODE>&#60;-/2</CODE> [1050,xfy], 
+<A NAME="IDX4892"></A>
+<CODE>&#60;-/1</CODE> [1050,yf].
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4893"></A>
+<CODE>make/make_rt</CODE>.
 
 </UL>
 
@@ -84,103 +148,321 @@ Using pred(2):
 
 
 
-<H2><A NAME="SEC377" HREF="ciao_toc.html#TOC377">Documentation on exports (<CODE>hiordlib</CODE>)</A></H2>
-<P>
-<A NAME="IDX4272"></A>
-<A NAME="IDX4273"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>map/3:</B>
-<DD><A NAME="IDX4274"></A>
-
+<H2><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Other information (<CODE>make</CODE>)</A></H2>
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>map(?,pred(2),?)</CODE>.
+ 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>map(LList,Op,RList)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Examples of use:
+<LI><A HREF="ciao_91.html#SEC385">The Dependency Rules</A>
+<LI><A HREF="ciao_91.html#SEC386">Specifying Paths</A>
+<LI><A HREF="ciao_91.html#SEC387">Documenting Rules</A>
+<LI><A HREF="ciao_91.html#SEC388">An Example of a Makefile</A>
+</UL>
+
+
+
+<H3><A NAME="SEC385" HREF="ciao_toc.html#TOC385">The Dependency Rules</A></H3>
+
+<P>
+The package allows defining the following types of rules: 
+
+
+<DL COMPACT>
+
+<DT><CODE><EM>TargetSuffix</EM> &#60;= <EM>SourceSuffix</EM> :: <EM>SourceRoot</EM> :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form declares that in order to produce the file with suffix <EM>TargetSuffix</EM> from a source file with the suffix <EM>SourceSuffix</EM> and root name <EM>SourceRoot</EM> the commands in <EM>BodyLiterals</EM> must be executed. <EM>BodyLiterals</EM> is a standard Ciao Prolog clause body, i.e., a comma-separated conjunction of literals. When writing the script, <EM>SourceRoot</EM> is typically left as a variable, to be instantiated by 
+<A NAME="IDX4894"></A>
+<CODE>lpmake</CODE> when the script is run to the root of name of the file to be processed. This allows using the value of <EM>SourceRoot</EM> in <EM>BodyLiterals</EM>. For example, the following rule: 
 
 
 <PRE>
-  map([1,3,2], arg(f(a,b,c,d)), [a,c,b]) or
-  map([1,3,2], nth([a,b,c,d]), [a,c,b])
-  map(["D","C"], append("."), ["D.","C."])
+:- use_module(library(terms),[atom_concat/2]).
+
+dvi &#60;= tex :: FileRoot :-
+        atom_concat(['latex ',FileRoot,'.tex'],Command),
+        system(Command).
 </PRE>
 
- 
-</UL>
+states that we can generate a file <EM>File</EM><CODE>.dvi</CODE> if we have a file named <EM>File</EM><CODE>.tex</CODE> and that the command to do so is <CODE>latex </CODE><EM>File</EM><CODE>.tex</CODE>. Thus, if this rule appears in file 
+<A NAME="IDX4895"></A>
+<CODE>Makefile.pl</CODE> and we issue the command <CODE>lpmake paper.dvi</CODE> the following occurs: 
 
-</DL>
-
-<P>
-<A NAME="IDX4275"></A>
-<A NAME="IDX4276"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>foldl/4:</B>
-<DD><A NAME="IDX4277"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>foldl(?,?,pred(3),?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>foldl(List,Seed,Op,Result)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Example of use:
+
+<LI>If <CODE>paper.dvi</CODE> does not exist and <CODE>paper.tex</CODE> exists, then <CODE>paper.dvi</CODE> is generated from <CODE>paper.tex</CODE> by issuing the system command <CODE>latex paper.tex</CODE>.
+
+<LI>If <CODE>paper.dvi</CODE> already exists, nothing is done.
+
+<LI>If <CODE>paper.tex</CODE> does not exist, an error is reported.
+
+</UL>
+
+<DT><CODE><EM>Target</EM> &#60;- :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form declares that in order to produce the file <EM>Target</EM> the commands in <EM>BodyLiterals</EM> must be executed. <EM>Target</EM> need not be a real file: it can also be simply the name of the rule, which is used to invoke it (as a procedure name). For example, the following rule, when the command <CODE>lpmake realclean</CODE> is issued, deletes temporary files in the LaTeX application: 
 
 
 <PRE>
-?- foldl(["daniel","cabeza","gras"], "", 
-         (''(X,Y,Z) :- append(X, " "||Y, Z)), R).
+:- use_module(library('make/system_extra')).
 
-R = "daniel cabeza gras " ? 
+clean &#60;- :-
+        ls('*aux|*log|*~',Files)
+        delete_files(Files).
 </PRE>
 
- 
-</UL>
+<DT><CODE><EM>Target</EM> &#60;- <EM>Deps</EM> :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form declares that in order to produce the file <EM>Target</EM>, first targets <EM>Deps</EM> will be called (i.e., the elements of <EM>Deps</EM> are either other targets with rules defined for them, or a file or files which are already present or which can --and will be-- generated from other available files using other rules). Then, the commands in <EM>BodyLiterals</EM> will be executed. <EM>Deps</EM> may be one target or a list of targets. For example, the following rule, when the command <CODE>lpmake realclean</CODE> is issued, cleans all the temporary files in the LaTeX application (including <CODE>.dvi</CODE> and <CODE>.ps</CODE> files). It requires that clean be executed first: 
+
+
+<PRE>
+:- use_package(functions).
+:- use_module(library('make/system_extra')).
+
+realclean &#60;- clean :-
+        delete_files(~ls('*dvi|*ps')).
+</PRE>
+
+The following rule states that in order to meet the target <CODE>view</CODE>, target <CODE>paper.ps</CODE> must be available or generated. For example, <CODE>lpmake view</CODE> can be used to call the 
+<A NAME="IDX4896"></A>
+<CODE>ghostview</CODE> visualizer on <CODE>paper.ps</CODE>. Note the use of a globally defined <EM>predicate</EM> <CODE>main</CODE> which is called in two places in the rule, and could be used in other rules in the same file (<CODE>main := paper.</CODE> is equivalent to the fact <CODE>main(paper).</CODE> --see the 
+<A NAME="IDX4897"></A>
+<CODE>functions</CODE> library): 
+
+
+<PRE>
+:- use_package(functions).
+:- use_module(library('make/system_extra')).
+:- use_module(library(terms),[atom_concat/2]).
+
+main := paper.
+
+view &#60;- ~atom_concat([~main,'.ps']) :-
+        system(~atom_concat(['ghostview ',~main,'.ps'])).
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX4278"></A>
-<A NAME="IDX4279"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>minimum/3:</B>
-<DD><A NAME="IDX4280"></A>
+In addition to these rules, the configuration file can define normal predicates in the usual way, or import predicates from other modules, all of which can be called from the bodies of the dependency rules. For example, the 
+<A NAME="IDX4898"></A>
+<CODE>system_extra</CODE> library (an extension of the 
+<A NAME="IDX4899"></A>
+<CODE>system</CODE> library) defines many system predicates in a form which makes them very useful inside 
+<A NAME="IDX4900"></A>
+<CODE>Makefile</CODE>s, specially if the 
+<A NAME="IDX4901"></A>
+<CODE>functions</CODE> package is used (see the examples below). 
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>minimum(?,pred(2),?)</CODE>.
+If 
+<A NAME="IDX4902"></A>
+<CODE>lpmake</CODE> is called without an explicit target as argument, then the first target rule in the Makefile is used. This is useful in that the first rule can be seen as the default rule. 
 
+
+
+
+<H3><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Specifying Paths</A></H3>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>minimum(?List,+SmallerThan,?Minimum)</CODE>
+Using the 
+<A NAME="IDX4903"></A>
+<CODE>vpath/1</CODE> predicate it is possible in configuration files to define several paths in which files related to the rules can be located. In this way, not all files need to be in the same directory as the configuration file. For example: 
+
+
+
+<PRE>
+:- use_package(functions).
+
+vpath := '/home/clip/Systems/ciao/lib'.
+vpath := '/home/clip/Systems/ciao/library'.
+vpath := '/home/clip/Systems/lpdoc/lib'.
+</PRE>
+
+
+
+<H3><A NAME="SEC387" HREF="ciao_toc.html#TOC387">Documenting Rules</A></H3>
+
+<P>
+It is also possible to define documentation for the rules: 
+
+
+<DL COMPACT>
+
+<DT><CODE>target_comment(<EM>Target</EM>) :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form allows documenting the actions related to the target. The body (<EM>BodyLiterals</EM>) will be called in two circumstances: 
+
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Minimum</CODE> is the smaller in the nonempty list <CODE>List</CODE> according to the relation <CODE>SmallerThan</CODE>:
 
-<A NAME="IDX4281"></A>
-<CODE>SmallerThan(X, Y)</CODE> succeeds iff X is smaller than Y. 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI>If <EM>Target</EM> is called during execution of '<CODE>lpmake</CODE> <EM>commands</EM>'.
 
-<CODE>?List</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<LI>When calling '<CODE>lpmake -h</CODE>'.
 
-<CODE>+SmallerThan</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>?Minimum</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
 </UL>
 
+Using noun forms (<EM>generation of foo</EM> instead of <EM>generating foo</EM>) in comments helps this dual purpose. For example, the following rule: 
+
+
+<PRE>
+target_comment(realclean) :- 
+        display('Cleanup of all generated files.').
+</PRE>
+
+will produce output in the two cases pointed out above. 
+
+<DT><CODE>dependency_comment(<EM>SourceSuffix</EM>,<EM>TargetSuffix</EM>,<EM>SourceRoot</EM>) :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+Same as the previous rule, but for suffix rules. See, for example, the following generic rule: 
+
+
+<PRE>
+:- use_module(library(terms),[atom_concat/2]).
+
+dependency_comment(SSuffix,TSuffix,FileBase) :- 
+        display(~atom_concat(['Generation of ',FileBase,'.',TSuffix,
+                              ' from ',FileBase,'.',SSuffix])).
+</PRE>
+
 </DL>
+
+
+
+<H3><A NAME="SEC388" HREF="ciao_toc.html#TOC388">An Example of a Makefile</A></H3>
+
+<P>
+The following is a simple example of a Makefile showing some basic functionality (this is <CODE>MakefileExample.pl</CODE> in the <CODE>example_simple</CODE> directory in the 
+<A NAME="IDX4904"></A>
+<CODE>make</CODE> library.): 
+
+
+
+<PRE>
+%% -------------------------------------------------------------------------
+:- module(_,_,[make,functions]).
+:- use_module(library('make/system_extra')).
+:- use_module(library(lists),[append/3,list_concat/2]).
+:- use_module(library(terms),[atom_concat/2]).
+
+:- discontiguous(comment/2).
+
+%% -------------------------------------------------------------------------
+%% A simple target. Defines how to produce file 'hw'.
+
+hw &#60;-  []    :-
+         writef("Hello world", hw).
+
+%% A comment describing this target (see below):
+comment(hw,['Generation of file hw']).
+
+%% -------------------------------------------------------------------------
+%% A target with a dependency. 'hwhw' requires 'hw'.
+
+hwhw &#60;- [hw] :-
+        readf(hw,Content),
+        append(Content,[0'\n|Content],DoubleContent),
+        writef(DoubleContent,hwhw).
+
+comment(hwhw,['Generation of file hwhw']).
+
+%% -------------------------------------------------------------------------
+%% A simple target. Defines how to produce file 'datafile.simple'.
+
+'datafile.simple' &#60;-  :-
+        writef("Hello world", 'datafile.simple').
+
+comment('datafile.simple',['Generation of file datafile.simple']).
+
+%% -------------------------------------------------------------------------
+%% A dependency based on suffixes: 
+%% &#60;file&#62;.double is generated always from &#60;file&#62;.simple
+
+double &#60;= simple :: Name :-
+        readf(~atom_concat([Name,'.simple']),Content),
+        append(Content,[0'\n|Content],DoubleContent),
+        writef(DoubleContent,~atom_concat([Name,'.double'])).
+
+%% -------------------------------------------------------------------------
+%% A dependency based on suffixes with a precondition.
+%% &#60;file&#62;.double is generated always from &#60;file&#62;.simple, once precond is done
+
+boo &#60;- :-
+        display((double &#60;= simple :: name &#60;- precond :- body1, body2)).
+
+%% -------------------------------------------------------------------------
+%% Example using library predicates
+
+clean &#60;-    :-
+        delete_files(~ls('*~|*.asr|*.itf|*.po')).
+
+comment(clean,['Cleanup of temporary files']).
+
+realclean &#60;- clean :-
+        delete_files(~ls('hw|hwhw|*simple|*double')).
+
+comment(realclean,['Cleanup of all generated files']).
+
+%% -------------------------------------------------------------------------
+%% Reporting progress and documenting commands: 
+%% If target_comment/1 is defined it can be used to produce user-defined 
+%% output when targets are processed and/or documentation on what each 
+%% target does (used for example when lpmake is called with -h). Using 
+%% 'generation of foo' instead of 'generating foo' in comments helps in this 
+%% dual purpose.
+%% -------------------------------------------------------------------------
+
+%% Make calls target_comment/1 for simple targets:
+target_comment(Target) :- 
+        comment(Target,Comment),
+        display(~atom_concat([~atom_concat(Comment), '\n'])).
+
+%% Similarly, make calls dependency_comment/3 for dependencies (only 
+%% during execution, not when documenting -h).
+dependency_comment(SSuffix,TSuffix,FileBase) :- 
+        display(~atom_concat(['Generation of ',FileBase,'.',TSuffix,
+                              ' from ',FileBase,'.',SSuffix])).
+
+%% -------------------------------------------------------------------------
+
+</PRE>
+
+<P>
+The following are a few commands that can be used on the previous file (see file <CODE>CommandsToTry</CODE> in the <CODE>example_simple</CODE> directory in the 
+<A NAME="IDX4905"></A>
+<CODE>make</CODE> library): 
+
+
+
+<PRE>
+
+lpmake -m MakefileExample.pl hwhw
+(Generate file hwhw --needs to generate file hw first)
+
+lpmake -m MakefileExample.pl datafile.double
+(Generate file datafile.double --needs to generate file datafile.simple first)
+
+lpmake -m MakefileExample.pl realclean
+(Cleanup)
+
+lpmake -h -m MakefileExample.pl
+(Help on general use of lpmake and commands available in MakefileExample.pl)
+
+</PRE>
+
+<P>
+See also the LaTeX example in the <CODE>example_latex</CODE> directory in the 
+<A NAME="IDX4906"></A>
+<CODE>make</CODE> library. 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

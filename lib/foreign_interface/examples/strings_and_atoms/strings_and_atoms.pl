@@ -1,15 +1,11 @@
 :- module(strings_and_atoms,
-	[lookup_string/2,
-	 lookup_atom/2,
-	 a_string/1,
-	 show_string/1,
-	 show_atom/1
+	[ lookup_string/2,
+	  lookup_atom/2,
+	  a_string/1,
+	  show_string/1,
+	  show_atom/1
 	],
-	[assertions,
-	 basicmodes,
-	 regtypes,
-	 foreign_interface
-	]).
+	[foreign_interface]).
 
 :- true pred a_string(go(S)) ::
 	string + (foreign(get_static_str),returns(S),do_not_free(S)).
@@ -24,8 +20,7 @@
 
 :- use_foreign_source(str_op).
 
-:- impl_defined([lookup_string/2,lookup_atom/2,show_string/1,show_atom/1,
-                 a_string/1]).
+
 
 
 

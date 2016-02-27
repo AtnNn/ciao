@@ -1,66 +1,51 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Meta-properties</TITLE>
+<TITLE>The Ciao Prolog System               - Properties which are native to analyzers</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC273" HREF="ciao_toc.html#TOC273">Meta-properties</A></H1>
+<H1><A NAME="SEC279" HREF="ciao_toc.html#TOC279">Properties which are native to analyzers</A></H1>
 <P>
-<A NAME="IDX3363"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX3989"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno, Manuel Hermenegildo, Pedro Lopez.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#167 (2002/1/3, 17:43:50 CET)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-This library allows the use of some meta-constructs which provide for specifying properties of terms which are unknown at the time of the specification, or expressed with a shorthand for the property definition, i.e., without really defining it. 
+<STRONG>Version of last change:</STRONG> 1.9#86 (2003/7/17, 16:59:29 CEST)
 
 
 <P>
-An example of such use is an assertion which specifies that any property holding upon call will also hold upon exit: 
-
-<PRE>
-         :- pred p(X) : Prop(X) =&#62; Prop(X).
-</PRE>
-
-<P>
-Another example is using shorthands for properties when documenting: 
-
-<PRE>
-         :- pred p(X) : regtype(X,(^(list;list);list)).
-</PRE>
-
-<P>
-(See below for an explanation of such a regular type.) 
+<A NAME="IDX3990"></A>
+<A NAME="IDX3991"></A>
+This library contains a set of properties which are natively understood by the different program analyzers of 
+<A NAME="IDX3992"></A>
+<CODE>ciaopp</CODE>. They are used by 
+<A NAME="IDX3993"></A>
+<CODE>ciaopp</CODE> on output and they can also be used as properties in assertions.
 
 
 
 <UL>
-<LI><A HREF="ciao_62.html#SEC274">Usage and interface (meta_props)</A>
-<LI><A HREF="ciao_62.html#SEC275">Documentation on exports (meta_props)</A>
-<LI><A HREF="ciao_62.html#SEC276">Documentation on multifiles (meta_props)</A>
-<LI><A HREF="ciao_62.html#SEC277">Documentation on internals (meta_props)</A>
-<LI><A HREF="ciao_62.html#SEC278">Known bugs and planned improvements (meta_props)</A>
+<LI><A HREF="ciao_62.html#SEC280">Usage and interface (native_props)</A>
+<LI><A HREF="ciao_62.html#SEC281">Documentation on exports (native_props)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC274" HREF="ciao_toc.html#TOC274">Usage and interface (<CODE>meta_props</CODE>)</A></H2>
+<H2><A NAME="SEC280" HREF="ciao_toc.html#TOC280">Usage and interface (<CODE>native_props</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -68,9 +53,9 @@ Another example is using shorthands for properties when documenting:
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library('assertions/meta_props'))</CODE> 
+<CODE>:- use_module(library('assertions/native_props'))</CODE> 
 
-or also as a package <CODE>:- use_package(metaprops)</CODE>. 
+or also as a package <CODE>:- use_package(nativeprops)</CODE>. 
 
 Note the different names of the library and the package.
 
@@ -81,17 +66,68 @@ Note the different names of the library and the package.
 
 <LI><EM>Properties:</EM>
 
-<A NAME="IDX3364"></A>
-<CODE>call/2</CODE>, 
-<A NAME="IDX3365"></A>
-<CODE>prop/2</CODE>, 
-<A NAME="IDX3366"></A>
-<CODE>regtype/2</CODE>.
+<A NAME="IDX3994"></A>
+<CODE>covered/2</CODE>, 
+<A NAME="IDX3995"></A>
+<CODE>linear/1</CODE>, 
+<A NAME="IDX3996"></A>
+<CODE>mshare/1</CODE>, 
+<A NAME="IDX3997"></A>
+<CODE>nonground/1</CODE>, 
+<A NAME="IDX3998"></A>
+<CODE>fails/1</CODE>, 
+<A NAME="IDX3999"></A>
+<CODE>not_fails/1</CODE>, 
+<A NAME="IDX4000"></A>
+<CODE>possibly_fails/1</CODE>, 
+<A NAME="IDX4001"></A>
+<CODE>covered/1</CODE>, 
+<A NAME="IDX4002"></A>
+<CODE>not_covered/1</CODE>, 
+<A NAME="IDX4003"></A>
+<CODE>is_det/1</CODE>, 
+<A NAME="IDX4004"></A>
+<CODE>non_det/1</CODE>, 
+<A NAME="IDX4005"></A>
+<CODE>possibly_nondet/1</CODE>, 
+<A NAME="IDX4006"></A>
+<CODE>mut_exclusive/1</CODE>, 
+<A NAME="IDX4007"></A>
+<CODE>not_mut_exclusive/1</CODE>, 
+<A NAME="IDX4008"></A>
+<CODE>size_lb/2</CODE>, 
+<A NAME="IDX4009"></A>
+<CODE>size_ub/2</CODE>, 
+<A NAME="IDX4010"></A>
+<CODE>steps_lb/2</CODE>, 
+<A NAME="IDX4011"></A>
+<CODE>steps_ub/2</CODE>, 
+<A NAME="IDX4012"></A>
+<CODE>steps/2</CODE>, 
+<A NAME="IDX4013"></A>
+<CODE>finite_solutions/1</CODE>, 
+<A NAME="IDX4014"></A>
+<CODE>terminates/1</CODE>.
 
-<LI><EM>Multifiles:</EM>
+</UL>
 
-<A NAME="IDX3367"></A>
-<CODE>callme/2</CODE>.
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4015"></A>
+<CODE>andprolog/andprolog_rt</CODE>, 
+<A NAME="IDX4016"></A>
+<CODE>terms_check</CODE>, 
+<A NAME="IDX4017"></A>
+<CODE>terms_vars</CODE>, 
+<A NAME="IDX4018"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX4019"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -101,178 +137,920 @@ Note the different names of the library and the package.
 
 
 
-<H2><A NAME="SEC275" HREF="ciao_toc.html#TOC275">Documentation on exports (<CODE>meta_props</CODE>)</A></H2>
+<H2><A NAME="SEC281" HREF="ciao_toc.html#TOC281">Documentation on exports (<CODE>native_props</CODE>)</A></H2>
 <P>
-<A NAME="IDX3368"></A>
-<A NAME="IDX3369"></A>
+<A NAME="IDX4020"></A>
+<A NAME="IDX4021"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>call/2:</B>
-<DD><A NAME="IDX3370"></A>
+<DT><span class="define">PROPERTY:</span> <B>covered/2:</B>
+<DD><A NAME="IDX4022"></A>
 
 
 <P>
-<CODE>call(P,A)</CODE>
+<CODE>covered(X, Y)</CODE>
 
 
 <P>
-<CODE>A</CODE> has property <CODE>P</CODE> (provided that <CODE>P</CODE> is a property). Equivalent to <CODE>P(A)</CODE>.
+All variables occuring in <CODE>X</CODE> occur also in <CODE>Y</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>call(P,A)</CODE>
+<STRONG>Usage:</STRONG> <CODE>covered(X, Y)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>A</CODE> has property <CODE>P</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is covered by <CODE>Y</CODE>.
 
-<LI><EM>If the following properties hold at call time:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3371"></A>
-<A NAME="IDX3372"></A>
+<A NAME="IDX4023"></A>
+<A NAME="IDX4024"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>prop/2:</B>
-<DD><A NAME="IDX3373"></A>
+<DT><span class="define">PROPERTY:</span> <B>linear/1:</B>
+<DD><A NAME="IDX4025"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>prop(A,P)</CODE>
+<CODE>linear(X)</CODE>
+
+
+<P>
+<CODE>X</CODE> is bound to a term which is linear, i.e., if it contains any variables, such variables appear only once in the term. For example, <CODE>[1,2,3]</CODE> and <CODE>f(A,B)</CODE> are linear terms, while <CODE>f(A,A)</CODE> is not.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>linear(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>A</CODE> has property <CODE>P</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is instantiated to a linear term.
 
-<LI><EM>If the following properties hold at call time:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>P</CODE> has property <CODE>^ (callable;prop_abs)</CODE>.
- (<CODE>meta_props:prop/2</CODE>)
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3374"></A>
-<A NAME="IDX3375"></A>
+<A NAME="IDX4026"></A>
+<A NAME="IDX4027"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>regtype/2:</B>
-<DD><A NAME="IDX3376"></A>
+<DT><span class="define">PROPERTY:</span> <B>mshare/1:</B>
+<DD><A NAME="IDX4028"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>regtype(A,T)</CODE>
+<CODE>mshare(X)</CODE>
+
+
+<P>
+<CODE>X</CODE> contains all 
+<A NAME="IDX4029"></A>
+<A NAME="IDX4030"></A>
+<EM>sharing sets</EM> [JL88,MH89] which specify the possible variable occurrences in the terms to which the variables involved in the clause may be bound. Sharing sets are a compact way of representing groundness of variables and dependencies between variables. This representation is however generally difficult to read for humans. For this reason, this information is often translated to 
+<A NAME="IDX4031"></A>
+<CODE>ground/1</CODE>, 
+<A NAME="IDX4032"></A>
+<CODE>indep/1</CODE> and 
+<A NAME="IDX4033"></A>
+<CODE>indep/2</CODE> properties, which are easier to read.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>mshare(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>A</CODE> is of type <CODE>T</CODE>.
+<LI><EM>Description:</EM> The sharing pattern is <CODE><CODE>X</CODE></CODE>.
 
-<LI><EM>If the following properties hold at call time:</EM>
+<LI><EM>The following properties should hold globally:</EM>
 
-<CODE>T</CODE> has property <CODE>^ (regtype;prop_abs)</CODE>.
- (<CODE>meta_props:prop/2</CODE>)
+This predicate is understood natively by CiaoPP as <CODE>sharing(X)</CODE>.
+ (<CODE>basic_props:native/2</CODE>)
 </UL>
 
 </DL>
 
-
-
-<H2><A NAME="SEC276" HREF="ciao_toc.html#TOC276">Documentation on multifiles (<CODE>meta_props</CODE>)</A></H2>
 <P>
-<A NAME="IDX3377"></A>
-<A NAME="IDX3378"></A>
+<A NAME="IDX4034"></A>
+<A NAME="IDX4035"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>callme/2:</B>
-<DD><A NAME="IDX3379"></A>
+<DT><span class="define">PROPERTY:</span> <B>nonground/1:</B>
+<DD><A NAME="IDX4036"></A>
 
 
 <P>
-(User defined.) A hook predicate you have to define as <CODE>callme(P,X):- P(X), !.</CODE> in the program that uses this library. This is done automatically if the package is used instead of the library module (but then you <EM>should not</EM> define <CODE>callme/2</CODE> in your program).
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC277" HREF="ciao_toc.html#TOC277">Documentation on internals (<CODE>meta_props</CODE>)</A></H2>
-<P>
-<A NAME="IDX3380"></A>
-<A NAME="IDX3381"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>prop_abs/1:</B>
-<DD><A NAME="IDX3382"></A>
-
-
-<P>
-<CODE>prop_abs(Prop)</CODE>
-
-
-<P>
-<CODE>Prop</CODE> is a 
-<A NAME="IDX3383"></A>
-<A NAME="IDX3384"></A>
-<EM>property abstraction</EM>, i.e., a 
-<A NAME="IDX3385"></A>
-<A NAME="IDX3386"></A>
-<EM>parametric property</EM>, or a term formed of property abstractions, where the functors used in the term are escaped by <CODE>^</CODE>. 
-
-
-<P>
-One particular case of property abstractions are 
-<A NAME="IDX3387"></A>
-<A NAME="IDX3388"></A>
-<EM>parametric regular type abstractions</EM>, i.e., a parametric type functor or a <CODE>^</CODE>-escaped term formed of regular type abstractions. 
-
-
-<P>
-Such abstractions are a short-hand for a corresponding regular type (correspondingly, property). For example, the following abstraction: 
-
-<PRE>
-         ^(list;list);list
-</PRE>
-
-<P>
-denotes terms of the form <CODE>(X;Y)</CODE> where <CODE>list(X)</CODE> and <CODE>list(Y)</CODE> hold and also terms <CODE>T</CODE> such that <CODE>list(T)</CODE> holds. It is equivalent to the regular type: 
-
-<PRE>
-         abstract_type((X;Y)):- list(X), list(Y).
-         abstract_type(T):- list(T).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prop_abs(Prop)</CODE>
+<STRONG>Usage:</STRONG> <CODE>nonground(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Prop</CODE> is a
+<LI><EM>Description:</EM> <CODE><CODE>X</CODE></CODE> is not ground.
 
-<A NAME="IDX3389"></A>
-property abstraction. 
+<LI><EM>The following properties should hold globally:</EM>
+
+This predicate is understood natively by CiaoPP as <CODE>not_ground(X)</CODE>.
+ (<CODE>basic_props:native/2</CODE>)
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX4037"></A>
+<A NAME="IDX4038"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>fails/1:</B>
+<DD><A NAME="IDX4039"></A>
 
 
-<H2><A NAME="SEC278" HREF="ciao_toc.html#TOC278">Known bugs and planned improvements (<CODE>meta_props</CODE>)</A></H2>
+<P>
+<CODE>fails(X)</CODE>
 
+
+<P>
+Calls of the form <CODE>X</CODE> fail.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fails(X)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Calls of the form <CODE>X</CODE> fail.
 
-<LI>
+<LI><EM>The following properties hold globally:</EM>
 
-Using a hook predicate is not very elegant. Need something else.
-
-<LI>
-
-The cut in the hook prevents backtracking (enough for most uses of properties but not quite ok).
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4040"></A>
+<A NAME="IDX4041"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>not_fails/1:</B>
+<DD><A NAME="IDX4042"></A>
+
+
+<P>
+<CODE>not_fails(X)</CODE>
+
+
+<P>
+Calls of the form <CODE>X</CODE> produce at least one solution, or not terminate [DLGH97].
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>not_fails(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> All the calls of the form <CODE>X</CODE> do not fail.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4043"></A>
+<A NAME="IDX4044"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>possibly_fails/1:</B>
+<DD><A NAME="IDX4045"></A>
+
+
+<P>
+<CODE>possibly_fails(X)</CODE>
+
+
+<P>
+Non-failure is not ensured for any call of the form <CODE>X</CODE> [DLGH97]. In other words, nothing can be ensured about non-failure nor termination of such calls.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>possibly_fails(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Non-failure is not ensured for calls of the form <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4046"></A>
+<A NAME="IDX4047"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>covered/1:</B>
+<DD><A NAME="IDX4048"></A>
+
+
+<P>
+<CODE>covered(X)</CODE>
+
+
+<P>
+For any call of the form <CODE>X</CODE> there is at least one clause whose test succeeds (i.e. all the calls of the form <CODE>X</CODE> are covered.) [DLGH97].
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>covered(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> All the calls of the form <CODE>X</CODE> are covered.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4049"></A>
+<A NAME="IDX4050"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>not_covered/1:</B>
+<DD><A NAME="IDX4051"></A>
+
+
+<P>
+<CODE>not_covered(X)</CODE>
+
+
+<P>
+There is some call of the form <CODE>X</CODE> for which there is not any clause whose test succeeds [DLGH97].
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>not_covered(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Not all of the calls of the form <CODE>X</CODE> are covered.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4052"></A>
+<A NAME="IDX4053"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>is_det/1:</B>
+<DD><A NAME="IDX4054"></A>
+
+
+<P>
+<CODE>is_det(X)</CODE>
+
+
+<P>
+All calls of the form <CODE>X</CODE> are deterministic, i.e. produce at most one solution, or not terminate.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>is_det(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> All calls of the form <CODE>X</CODE> are deterministic.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4055"></A>
+<A NAME="IDX4056"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>non_det/1:</B>
+<DD><A NAME="IDX4057"></A>
+
+
+<P>
+<CODE>non_det(X)</CODE>
+
+
+<P>
+All calls of the form <CODE>X</CODE> are not deterministic, i.e., produce several solutions.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>non_det(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> All calls of the form <CODE>X</CODE> are not deterministic.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4058"></A>
+<A NAME="IDX4059"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>possibly_nondet/1:</B>
+<DD><A NAME="IDX4060"></A>
+
+
+<P>
+<CODE>possibly_nondet(X)</CODE>
+
+
+<P>
+Non-determinism is not ensured for all calls of the form <CODE>X</CODE>. In other words, nothing can be ensured about determinacy nor termination of such calls.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>possibly_nondet(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Non-determinism is not ensured for calls of the form <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4061"></A>
+<A NAME="IDX4062"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>mut_exclusive/1:</B>
+<DD><A NAME="IDX4063"></A>
+
+
+<P>
+<CODE>mut_exclusive(X)</CODE>
+
+
+<P>
+For any call of the form <CODE>X</CODE> at most one clause succeeds, i.e. clauses are pairwise exclusive.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>mut_exclusive(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> For any call of the form <CODE>X</CODE> at most one clause succeeds.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4064"></A>
+<A NAME="IDX4065"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>not_mut_exclusive/1:</B>
+<DD><A NAME="IDX4066"></A>
+
+
+<P>
+<CODE>not_mut_exclusive(X)</CODE>
+
+
+<P>
+Not for all calls of the form <CODE>X</CODE> at most one clause succeeds. I.e. clauses are not disjoint for some call.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>not_mut_exclusive(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Not for all calls of the form <CODE>X</CODE> at most one clause succeeds.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4067"></A>
+<A NAME="IDX4068"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>size_lb/2:</B>
+<DD><A NAME="IDX4069"></A>
+
+
+<P>
+<CODE>size_lb(X, Y)</CODE>
+
+
+<P>
+The minimum size of the terms to which the argument <CODE>Y</CODE> is bound to is given by the expression <CODE>Y</CODE>. Various measures can be used to determine the size of an argument, e.g., list-length, term-size, term-depth, integer-value, etc. [DL93].
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>size_lb(X, Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Y</CODE> is a lower bound on the size of argument <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4070"></A>
+<A NAME="IDX4071"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>size_ub/2:</B>
+<DD><A NAME="IDX4072"></A>
+
+
+<P>
+<CODE>size_ub(X, Y)</CODE>
+
+
+<P>
+The maximum size of the terms to which the argument <CODE>Y</CODE> is bound to is given by the expression <CODE>Y</CODE>. Various measures can be used to determine the size of an argument, e.g., list-length, term-size, term-depth, integer-value, etc. [DL93].
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>size_ub(X, Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Y</CODE> is a upper bound on the size of argument <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4073"></A>
+<A NAME="IDX4074"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>steps_lb/2:</B>
+<DD><A NAME="IDX4075"></A>
+
+
+<P>
+<CODE>steps_lb(X, Y)</CODE>
+
+
+<P>
+The minimum computation time (in resolution steps) spent by any call of the form <CODE>X</CODE> is given by the expression <CODE>Y</CODE> [DLGHL97,LGHD96]
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>steps_lb(X, Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Y</CODE> is a lower bound on the cost of any call of the form <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4076"></A>
+<A NAME="IDX4077"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>steps_ub/2:</B>
+<DD><A NAME="IDX4078"></A>
+
+
+<P>
+<CODE>steps_ub(X, Y)</CODE>
+
+
+<P>
+The maximum computation time (in resolution steps) spent by any call of the form <CODE>X</CODE> is given by the expression <CODE>Y</CODE> [DL93,LGHD96]
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>steps_ub(X, Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Y</CODE> is a upper bound on the cost of any call of the form <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4079"></A>
+<A NAME="IDX4080"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>steps/2:</B>
+<DD><A NAME="IDX4081"></A>
+
+
+<P>
+<CODE>steps(X, Y)</CODE>
+
+
+<P>
+The time (in resolution steps) spent by any call of the form <CODE>X</CODE> is given by the expression <CODE>Y</CODE>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>steps(X, Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Y</CODE> is the cost (number of resolution steps) of any call of the form <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4082"></A>
+<A NAME="IDX4083"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>finite_solutions/1:</B>
+<DD><A NAME="IDX4084"></A>
+
+
+<P>
+<CODE>finite_solutions(X)</CODE>
+
+
+<P>
+Calls of the form <CODE>X</CODE> produce a finite number of solutions [DLGH97].
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>finite_solutions(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> All the calls of the form <CODE>X</CODE> have a finite number of solutions.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4085"></A>
+<A NAME="IDX4086"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>terminates/1:</B>
+<DD><A NAME="IDX4087"></A>
+
+
+<P>
+<CODE>terminates(X)</CODE>
+
+
+<P>
+Calls of the form <CODE>X</CODE> always terminate [DLGH97].
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>terminates(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> All the calls of the form <CODE>X</CODE> terminate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4088"></A>
+<A NAME="IDX4089"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>indep/1:</B>
+<DD><A NAME="IDX4090"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>indep(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The variables in pairs in <CODE><CODE>X</CODE></CODE> are pairwise independent.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP as <CODE>indep(X)</CODE>.
+ (<CODE>basic_props:native/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4091"></A>
+<A NAME="IDX4092"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>indep/2:</B>
+<DD><A NAME="IDX4093"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>indep(X, Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> do not have variables in common.
+
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP as <CODE>indep([[X,Y]])</CODE>.
+ (<CODE>basic_props:native/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4094"></A>
+<A NAME="IDX4095"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>ground/1:</B>
+<DD><A NAME="IDX4096"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ground(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently ground (it contains no variables).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>X</CODE> is ground.
+ (<CODE>basic_props:gnd/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4097"></A>
+<A NAME="IDX4098"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>nonvar/1:</B>
+<DD><A NAME="IDX4099"></A>
+
+
+<P>
+<STRONG>General properties:</STRONG> <CODE>nonvar(X)</CODE>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+
+This predicate is understood natively by CiaoPP as <CODE>not_free(X)</CODE>.
+ (<CODE>basic_props:native/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nonvar(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently a term which is not a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4100"></A>
+<A NAME="IDX4101"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>var/1:</B>
+<DD><A NAME="IDX4102"></A>
+
+
+<P>
+<STRONG>General properties:</STRONG> <CODE>var(X)</CODE>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+
+This predicate is understood natively by CiaoPP as <CODE>free(X)</CODE>.
+ (<CODE>basic_props:native/2</CODE>)
+
+<CODE>var(X)</CODE> is side-effect <CODE>hard</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>var(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4103"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>regtype/1:</B>
+<DD><A NAME="IDX4104"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4105"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4106"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>native/2:</B>
+<DD><A NAME="IDX4107"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4108"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4109"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>native/1:</B>
+<DD><A NAME="IDX4110"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4111"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4112"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sideff/2:</B>
+<DD><A NAME="IDX4113"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4114"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4115"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>term/1:</B>
+<DD><A NAME="IDX4116"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4117"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4118"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>int/1:</B>
+<DD><A NAME="IDX4119"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4120"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4121"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>nnegint/1:</B>
+<DD><A NAME="IDX4122"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4123"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4124"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>flt/1:</B>
+<DD><A NAME="IDX4125"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4126"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4127"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>num/1:</B>
+<DD><A NAME="IDX4128"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4129"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4130"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>atm/1:</B>
+<DD><A NAME="IDX4131"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4132"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4133"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>struct/1:</B>
+<DD><A NAME="IDX4134"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4135"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4136"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>gnd/1:</B>
+<DD><A NAME="IDX4137"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4138"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4139"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>instance/2:</B>
+<DD><A NAME="IDX4140"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4141"></A>
+<CODE>terms_check</CODE> (see the corresponding documentation for details).
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -22,13 +22,29 @@
    reading.  In any case, access to program area should be locked, and so we
    do not loose anything. */
 
-/* I am not really sure about the length of the strings which can appear in
-   a .po file.  If they are longer than STATICMAXATOM, the emulator will for
-   sure break.  I will add DEBUG options to check this. */
-
 #define WORKSTRINGLEN (STATICMAXATOM)
 
-char workstring[WORKSTRINGLEN]; 
+/* Called just once at the beginning of the execution */
+/* static int workstringlen;*/
+
+static char workstring[WORKSTRINGLEN]; 
+
+/*
+void init_workstring()
+{
+  workstringlen = STATICMAXATOM;    
+  workstring    = malloc(workstringlen+1); 
+} 
+*/  
+
+/* Increase the size of the (temporary) string which holds the .po code */
+/*
+static void expand_workstring()
+{
+  workstringlen *= 2;
+  workstring     = realloc(workstring, workstringlen+1);
+}
+*/
 
 int getshort(f)
      FILE *f;
@@ -37,34 +53,29 @@ int getshort(f)
 #if defined(DEBUG)
   REGISTER int used_length = 0;
 #endif
-  
-  for(ws = workstring; (*ws++ = GETC(f));)
+
+  for(ws = workstring; (*ws++ = GETC(f)); )
 #if defined(DEBUG)
     if (++used_length > WORKSTRINGLEN)
       SERIOUS_FAULT("workstring length exceeded in getshort()")
 #else
     ;
 #endif
-
   return atoi(workstring);
 }
 
 ENG_INT getlong(f)
      FILE *f;
 {
-  REGISTER char *ws;
-#if defined(DEBUG)
-  REGISTER int used_length = 0;
-#endif
-  
-  for(ws = workstring; (*ws++ = GETC(f));)
-#if defined(DEBUG)
-    if (++used_length > WORKSTRINGLEN)
-      SERIOUS_FAULT("workstring length exceeded in getlong()")
-#else
-    ;
-#endif
+  REGISTER char *ws = workstring;
 
+  while ((*ws++ = GETC(f)))
+#if defined(DEBUG)
+    if ((ws - workstring) > WORKSTRINGLEN)
+      SERIOUS_FAULT("workstring length exceeded in getlong()")
+#endif
+    ;
+    
   return atol(workstring);
 }
 
@@ -72,31 +83,25 @@ TAGGED getlarge(Arg,f)
      Argdecl;
      FILE *f;
 {
-  REGISTER int i;
-  REGISTER char *ws;
+  REGISTER int used_length = 0;
+  REGISTER char *ws = Atom_Buffer;
 
-  for (i=0; TRUE;)  {
-    ws = Atom_Buffer;
-    while (i<Atom_Buffer_Length)
-      if (!(ws[i++] = GETC(f)))
-        goto out;
-    Atom_Buffer = (char *)checkrealloc((TAGGED *)ws,
-                                       i, Atom_Buffer_Length<<=1);
-  }
- out:
-  if (bn_from_string(ws,w->global_top,Heap_End))
-    {
-      SERIOUS_FAULT("$qload: miscalculated heap usage");
+
+  while ((ws[used_length++] = GETC(f)))
+    if (used_length == Atom_Buffer_Length){
+      EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
+      ws = Atom_Buffer; /* New buffer */
     }
-  else
-    {
+
+  if (bn_from_string(ws,w->global_top,Heap_End,GetSmall(current_radix))) {
+      SERIOUS_FAULT("$qload: miscalculated heap usage");
+  } else {
       TAGGED *h = w->global_top;
       int ar = LargeArity(h[0]);
       
       if (ar==2 && IntIsSmall((int)h[1]))
 	return MakeSmall(h[1]);
-      else
-	{
+      else {
 	  w->global_top += ar+1;
 	  h[ar] = h[0];
 	  return Tag(STR,h);
@@ -104,42 +109,34 @@ TAGGED getlarge(Arg,f)
     }
 }
 
+
 ENG_FLT getdouble(f)
      FILE *f;
 {
-  REGISTER char *ws;
-#if defined(DEBUG)
-  REGISTER int used_length = 0;
-#endif
-  
-  for(ws = workstring; (*ws++ = GETC(f));)
-#if defined(DEBUG)
-    if (++used_length > WORKSTRINGLEN)
-      SERIOUS_FAULT("workstring length exceeded in getdouble()")
-#else
-    ;
-#endif
+  REGISTER char *ws = workstring;
 
+  while((*ws++ = GETC(f)))
+#if defined(DEBUG)
+    if ((ws - workstring) > WORKSTRINGLEN)
+      SERIOUS_FAULT("workstring length exceeded in getdouble()")
+#endif
+    ;
   return atof(workstring);
 }
 
-char *getstring(f)
+char *getstring(Arg, f)
+     Argdecl;
      FILE *f;
 {
-  REGISTER char *ws;
-#if defined(DEBUG)
   REGISTER int used_length = 0;
-#endif
-  
-  for(ws = workstring; (*ws++ = GETC(f));)
-#if defined(DEBUG)
-    if (++used_length > WORKSTRINGLEN)
-      SERIOUS_FAULT("workstring length exceeded in getstring()")
-#else
-    ;
-#endif
+  REGISTER char *ws = Atom_Buffer;   /* Try to avoid indirection through WAM */
 
-  return workstring;
+  while ((ws[used_length++] = GETC(f)))
+    if (used_length == Atom_Buffer_Length){
+      EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
+      ws = Atom_Buffer;
+    }
+  return ws;
 }
 
 
@@ -150,28 +147,23 @@ void getbytecode(Arg,f,insn_p,length)
      int length;
 {
   REGISTER char c;
-  /*extern ENG_INT atol PROTO((char *str)); */
-  /*extern ENG_FLT atof PROTO((char *str));*/
 
   while ((c=GETC(f))) {
     switch (c) {
     case 'G': {
-      REGISTER int i;
-      REGISTER char *ws;
+      REGISTER int i = 0;
+      REGISTER char *ws = Atom_Buffer;
       BOOL floatp = FALSE;
       TAGGED *wp = (TAGGED *)insn_p;
       
-      for (i=0; TRUE;) {
-        ws = Atom_Buffer;
-        while (i<Atom_Buffer_Length)
-          if (!(ws[i++] = c = GETC(f)))
-            goto out;
-          else if (c == '.')
-            floatp = TRUE;
-        Atom_Buffer = (char *)checkrealloc((TAGGED *)ws,
-                                           i, Atom_Buffer_Length<<=1);
-      } 
-    out:
+      while ((c = ws[i++] = GETC(f))) {
+        if (c == '.') floatp = TRUE;
+        if (i == Atom_Buffer_Length) {
+            EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
+            ws = Atom_Buffer;
+        }
+    }
+
       if (floatp) {
         ENG_FLT f = atof(ws);
         TAGGED *fp = (TAGGED *)(&f);
@@ -181,7 +173,7 @@ void getbytecode(Arg,f,insn_p,length)
         *wp++ = fp[1];
         insn_p += 6;
       } else {
-        bn_from_string(ws,(Bignum *)insn_p,(Bignum *)((char *)insn_p+length));
+        bn_from_string(ws,(Bignum *)insn_p,(Bignum *)((char *)insn_p+length), GetSmall(current_radix));
         insn_p += LargeArity(*wp)<<1;
       }
       break;
@@ -189,17 +181,13 @@ void getbytecode(Arg,f,insn_p,length)
       
     case '+': {
       REGISTER char *ws = workstring;
-#if defined(DEBUG)
-      REGISTER int used_length = 0;
-#endif
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > WORKSTRINGLEN)
-          SERIOUS_FAULT("workstring length exceeded in getbytecode()")
-#else
-        ;
+        if ((ws - workstring) > WORKSTRINGLEN)
+          SERIOUS_FAULT("workstring length exceeded in getbytecode() [+]")
 #endif
+        ;
 
       *(ENG_INT *)insn_p = atol(workstring);
       insn_p += BPL;
@@ -208,17 +196,13 @@ void getbytecode(Arg,f,insn_p,length)
       
     case 'C': {
       REGISTER char *ws = workstring;
-#if defined(DEBUG)
-      REGISTER int used_length = 0;
-#endif
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > WORKSTRINGLEN)
-          SERIOUS_FAULT("workstring length exceeded in getbytecode()")
-#else
-        ;
+        if ((ws - workstring) > WORKSTRINGLEN)
+          SERIOUS_FAULT("workstring length exceeded in getbytecode() [C]")
 #endif
+        ;
 
       *(CInfo *)insn_p = builtintab[atoi(workstring)];
       insn_p += BPTP;
@@ -227,17 +211,13 @@ void getbytecode(Arg,f,insn_p,length)
       
     case 'F': {
       REGISTER char *ws = workstring;
-#if defined(DEBUG)
-      REGISTER int used_length = 0;
-#endif
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > WORKSTRINGLEN)
-          SERIOUS_FAULT("workstring length exceeded in getbytecode()")
-#else
-        ;
+        if ((ws - workstring) > WORKSTRINGLEN)
+          SERIOUS_FAULT("workstring length exceeded in getbytecode() [F]" )
 #endif
+        ;
 
       /* Was:
        *insn_p++ = (INSN)builtintab[atoi(workstring)]);
@@ -248,32 +228,24 @@ void getbytecode(Arg,f,insn_p,length)
     }
     case 'D': {
       REGISTER char *ws = workstring;
-#if defined(DEBUG)
-      REGISTER int used_length = 0;
-#endif
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > WORKSTRINGLEN)
-          SERIOUS_FAULT("workstring length exceeded in getbytecode()")
-#else
-        ;
+        if ((ws - workstring) > WORKSTRINGLEN)
+          SERIOUS_FAULT("workstring length exceeded in getbytecode() [D]")
 #endif
+        ;
 
       *(CInfo *)insn_p = builtintab[atoi(workstring)];
 
       ws = workstring;
-#if defined(DEBUG)
-      used_length = 0;
-#endif
 
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > WORKSTRINGLEN)
-          SERIOUS_FAULT("workstring length exceeded in getbytecode()")
-#else
-        ;
+        if ((ws - workstring) > WORKSTRINGLEN)
+          SERIOUS_FAULT("workstring length exceeded in getbytecode() [D+]")
 #endif
+        ;
 
       *(long *)insn_p += atol(workstring);
       insn_p += BPTP;
@@ -282,39 +254,30 @@ void getbytecode(Arg,f,insn_p,length)
       
     case 'E': {
       REGISTER char *ws = workstring;
-#if defined(DEBUG)
-      REGISTER int used_length = 0;
-#endif
       
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > WORKSTRINGLEN)
-          SERIOUS_FAULT("workstring length exceeded in getbytecode()")
-#else
-        ;
+        if ((ws - workstring) > WORKSTRINGLEN)
+          SERIOUS_FAULT("workstring length exceeded in getbytecode() [E]")
 #endif
+        ;
 
       *(unsigned long *)insn_p =
-        (unsigned long)builtintab[atoi(workstring)] 
-          - (unsigned long)insn_p;
+        (unsigned long)builtintab[atoi(workstring)] - (unsigned long)insn_p;
       insn_p += BPTP;
       break;
     }
       
     default: {
       REGISTER char *ws = workstring;
-#if defined(DEBUG)
-      REGISTER int used_length = 0;
-#endif
       
       *ws++ = c;
       while ((*ws++ = GETC(f)))
 #if defined(DEBUG)
-        if (++used_length > WORKSTRINGLEN)
-          SERIOUS_FAULT("workstring length exceeded in getbytecode()")
-#else
-        ;
+        if ((ws - workstring) > WORKSTRINGLEN)
+         SERIOUS_FAULT("workstring length exceeded in getbytecode() [default]")
 #endif
+        ;
 
       *insn_p++ = atoi(workstring);
     }

@@ -19,15 +19,21 @@
 	    remove_comments/4
 	],[dcg,assertions,isomodes]).
 
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
+
+
 %:- use_module(engine(basic_props)).
-:- use_module(library('provrml/error'),
-        [error_vrml/1]).
-:- use_module(library(lists),
-        [append/3]).
-:- use_module(library('provrml/io'),
-        [out/3]).
-:- use_module(library('provrml/field_value_check'),
-        [mfstringValue/7]).
+:- use_module(library('provrml/error'), [error_vrml/1]).
+
+:- use_module(library(lists), [append/3]).
+
+:- use_module(library('provrml/io'), [out/3]).
+
+:- use_module(library('provrml/field_value'), [parse/1]).
+:- use_module(library('provrml/field_value_check'), [
+        mfstringValue/7
+                                                    ]).
+
 :- use_module(library('provrml/lookup'),
         [lookup_get_fieldType/4,
          lookup_check_node/4,
@@ -38,6 +44,7 @@
          lookup_check_interface_fieldValue/8,
          lookup_set_prototype/4,
          lookup_set_def/3]).
+
 :- use_module(library('provrml/parser_util'),
         [look_first_parsed/2,
          get_first_parsed/3,
@@ -73,7 +80,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+empty,+ParseIn,-ParseOut)
+:- pred reading(+Empty,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "This predicate check if we have ran out of input and is ready to 
    terminate the reading.".
@@ -86,7 +93,7 @@ reading(empty,In,In) -->
 	}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+header,+ParseIn,-ParseOut)
+:- pred reading(+Header,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "This predicate read the header and after the header we can have
    more information, that is comments.".
@@ -100,9 +107,9 @@ reading(header,In,Out) -->
 	out([Comment,'\n\n']).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'NULL',+ParseIn,-ParseOut)
+:- pred reading(+NULL,+ParseIn,-ParseOut)
 :: atm * parse * parse
-# "This predicate accepts the special key word and will output that.".
+# "This predicate accepts the special key word 'NULL' and will output that.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 reading('NULL',In,Out) -->
@@ -111,7 +118,7 @@ reading('NULL',In,Out) -->
 	},
 	out(['NULL\n']).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+comment,+ParseIn,-ParseOut)
+:- pred reading(+Comment,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "This predicate will read a comment.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,7 +134,7 @@ reading(comment,In,Out) -->
 	out([Comment]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'DEF',+Parse)
+:- pred reading(+DEF,+Parse)
 :: atm * parse
 # "This predicate will check if we have the special key word.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -138,7 +145,7 @@ reading('DEF',In) -->
 	  'DEF' == Name
 	}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'USE',+ParseIn,-ParseOut)
+:- pred reading(+USE,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "This predicate will read the 'USE' key word. ".
 %  A complete check of the key word should be done, but isn't.
@@ -155,7 +162,7 @@ reading('USE',In,Out) -->
 	%checkup the NodeName and write when done
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'IS',+NodeTypeId,+ParseIn,-ParseOut)
+:- pred reading(+IS,+NodeTypeId,+ParseIn,-ParseOut)
 :: atm * atm * parse * parse
 # "This predicate will refer to a formerly introduced interface.
    We do a checkup of the access type and output the values.".
@@ -176,7 +183,7 @@ reading('IS',NodeTypeId,In,Out) -->
 	out([First0,' IS ',First2,'\n']).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+node,+Parse)
+:- pred reading(+Node,+Parse)
 :: atm * parse 
 # "This predicate will read a node so we will check the properties of 
    that one and then continue the progress in the generation.".  
@@ -189,7 +196,7 @@ reading(node,In) -->
 	lookup_check_node(In,Name).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'Script',+Parse)
+:- pred reading(+Script,+Parse)
 :: atm * parse 
 # "This predicate read a script and will then continue the generation.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,7 +208,7 @@ reading('Script',In) -->
 	}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+nodeGut,+NodeName,+ParseIn,-ParseOut)
+:- pred reading(+NodeGut,+NodeName,+ParseIn,-ParseOut)
 :: atm * atm * parse * parse
 # "This predicate will read a node gut and will check the field 
    according to the name.".
@@ -214,7 +221,7 @@ reading(nodeGut,Name,In,Out) -->
 	out(['\n']).	  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'PROTO',+Parse)
+:- pred reading(+PROTO,+Parse)
 :: atm * parse 
 # "This predicate will read a prototype, check that the term name is the 
    one, 'PROTO'.".
@@ -227,7 +234,7 @@ reading('PROTO',In) -->
 	}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'EXTERNPROTO',+Parse)
+:- pred reading(+EXTERNPROTO,+Parse)
 :: atm * parse 
 # "This predicate read a term with the name given as the first argument.". 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -239,7 +246,7 @@ reading('EXTERNPROTO',In) -->
 	}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+mfstringValue,+ParseIn,-ParseOut)
+:- pred reading(+MfstringValue,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "This predicate will read the term multi field string value. Then
    it will continue the generation in the field_value_check module.
@@ -255,7 +262,7 @@ reading(mfstringValue,In,Out) -->
 	mfstringValue(MFStringValue,In,Out,_,[]).
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+exposedField,+ParseIn,-ParseOut)
+:- pred reading(+ExposedField,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "This predicate will read an exposedField and do the checkup for 
    the interface with all its components.".
@@ -270,7 +277,7 @@ reading(exposedField,In,Out) -->
 	lookup_check_interface_fieldValue(In0,Out,Acc,Type,Id,Value).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+restrictedInterfaceDeclaration,+ParseIn,-ParseOut)
+:- pred reading(+RestrictedInterfaceDeclaration,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "This predicate will read the declaration for a restricted field
    and do the checkup accordingly if necessary.".
@@ -298,7 +305,7 @@ reading(restrictedInterfaceDeclaration,In,Out) -->
 	).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+externInterfaceDeclaration,+ParseIn,-ParseOut)
+:- pred reading(+ExternInterfaceDeclaration,+ParseIn,-ParseOut)
 :: atm * parse * parse
 # "For reading an external interface declaration we see that we have
    three arguments in the term and that we have special access key word.
@@ -319,7 +326,7 @@ reading(externInterfaceDeclaration,In,Out) -->
 	out([Acc,' ',Type,' ',Id,'\n']).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+'ROUTE',+ParseIn,-ParseOut)
+:- pred reading(+ROUTE,+ParseIn,-ParseOut)
 :: atm * parse * parse 
  # "Reading a ROUTE and we split the term into its parts. There might be comments
     in the different fields and therefore we have to strip_clean the fields to 
@@ -342,8 +349,8 @@ reading('ROUTE',In,Out) -->
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred reading(+error_X,+ParseIn,-ParseOut)
-:: atm * parse * parse
+:- pred reading(+Error_X,+ParseIn,-ParseOut)
+:: struct * parse * parse
 # "The predicate will call a proper error message after fetching
    some values like name.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

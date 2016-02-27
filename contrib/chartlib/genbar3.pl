@@ -1,5 +1,8 @@
 :- module(genbar3,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
+
 :- export(barchart3/7).
 :- export(barchart3/9).
 :- export(percentbarchart3/7).
@@ -14,6 +17,8 @@
 :- use_module(library('chartlib/install_utils')).
 :- use_module(library(lists)).
 :- use_module(library(random)).
+
+:- comment(title,"Depict barchart widgets - 3").
 
 :- comment(module,"This module defines predicates which depict barchart
 	widgets. The three predicates exported by this module plot
@@ -480,4 +485,15 @@ xbarelement3([XValue,ForegColor,BackgColor,StipplePattern]):-
 
 ").
 
+
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+267,2004/01/01,14:09*07+'CET'), "Added comment
+   title.  (Edison Mera)").
+
+:- comment(version(1*9+159,2003/12/04,17:39*24+'CET'), "Added author
+   info (Manuel Carro)").
 

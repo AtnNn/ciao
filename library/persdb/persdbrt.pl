@@ -2,9 +2,11 @@
         [passerta_fact/1, 
          passertz_fact/1, 
 	 pretract_fact/1, 
+	 pretractall_fact/1,
          asserta_fact/1, 
          assertz_fact/1, 
-	 retract_fact/1, 
+	 retract_fact/1,
+	 retractall_fact/1,
          init_persdb/0, 
 	 initialize_db/0,
 	 make_persistent/2,
@@ -13,14 +15,14 @@
         [assertions,regtypes]).
 
 :- use_module(engine(internals), [term_to_meta/2]).
-:- use_module(library(terms), [atom_concat/2]).
-:- use_module(library(lists)).
+:- use_module(library(lists), [select/3, delete_non_ground/3]).
 :- use_module(library(streams)).
 :- use_module(library(read)).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(system)).
 :- use_module(library(file_locks)).
 %:- use_module(engine(basic_props)).
+:- use_module(library('persdb/persdbcache')).
 
 % Not sure about this (DCG)
 % :- comment(bug,"make_persistent/2 should really be persistent/2 (since
@@ -258,7 +260,7 @@ persistent_dir(dbdir, '/home/clip/public_html/db').
    and @pred{retract_fact/1} are replaced by new versions which handle
    persistent data predicates, behaving as usual for normal data
    predicates.  In the second package, predicates with names starting
-   with @tt{p} are defined, so that there is not overhead in calling the
+   with @tt{p} are defined, so that there is no overhead in calling the
    standard builtins.  In any case, each package is used as usual:
    including it in the package list of the module, or using the
    @decl{use_package/1} declaration.").
@@ -272,9 +274,6 @@ persistent_dir(dbdir, '/home/clip/public_html/db').
    the @pred{persistent_dir} predicate, which must contain a fact in
    which the first argument unifies with @var{Keyword}.".
 %% This declaration is expanded in persdbtr 
-
-:- data persistent/5. % F/A (modulo expanded) is persistent and uses files
-                      % FILE_OPS, FILE and FILE_BAK
 
 :- pred persistent_dir(Keyword,Location_Path) :  keyword * directoryname
 
@@ -378,8 +377,9 @@ assertz_fact(MPred):-
 
 :- meta_predicate pretract_fact(fact).
 
-% pretract_fact(P) retracts a predicate in both, the dynamic and the 
-% persistent databases.
+:- comment(pretract_fact(P), "Retracts a predicate in both, the
+   dynamic and the persistent databases.").
+
 pretract_fact(MPred):-
         term_to_meta(Pred, MPred),
         functor(Pred, F, N),
@@ -402,11 +402,33 @@ retract_fact(MPred):-
         term_to_meta(Pred, MPred),
         functor(Pred, F, N),
         ( current_fact(persistent(F, N, File_ops, _, File_bak)) ->
-            delete_bak_if_no_ops(File_ops, File_bak),
+	    delete_bak_if_no_ops(File_ops, File_bak),
             data_facts:retract_fact(MPred),
-            add_term_to_file(r(Pred), File_ops)
+	    add_term_to_file(r(Pred), File_ops)
         ; data_facts:retract_fact(MPred)
         ).
+
+:- meta_predicate pretractall_fact(fact).
+
+:- comment(pretract_all_fact(P),"Retracts all the instances of a
+   predicate in both, the dynamic and the persistent databases.").
+
+pretractall_fact(MPred):-
+	pretract_fact(MPred),
+	fail.
+pretractall_fact(_).
+
+:- pred retractall_fact(Fact) : callable
+# "Same as @pred{pretractall_fact/1}, but if the predicate concerned is not
+   persistent then behaves as the builtin of the same name.  Defined in the
+   @lib{persdb} package.".
+
+:- meta_predicate retractall_fact(fact).
+
+retractall_fact(MPred):-
+	persdbrt:retract_fact(MPred),
+	fail.
+retractall_fact(_).
 
 :- data db_initialized/0.
 
@@ -423,10 +445,11 @@ init_persdb :-
         initialize_db,
         data_facts:assertz_fact(db_initialized).
 
-:- comment(hide, '$is_persistent'/2).
-
 :- multifile '$is_persistent'/2.
 :- data '$is_persistent'/2.
+:- comment('$is_persistent'(Spec,Key), "Predicate @var{Spec} persists
+   within database @var{Key}. Programmers should not define this predicate
+   directly in the program.").
 
 :- pred initialize_db # "@cindex{database initialization} Initializes
    the whole database, updating the state of the declared persistent
@@ -447,12 +470,14 @@ initialize_db.
 :- meta_predicate make_persistent(spec, ?).
 
 make_persistent(Spec, Key) :-
-        persistent_dir(Key, Dir),
+        persistent_dir(Key, Dir), !,
         term_to_meta(F/A, Spec),
         get_pred_files(Dir, F, A, File, File_ops, File_bak),
         data_facts:assertz_fact(persistent(F, A, File_ops, File, File_bak)),
         functor(P, F, A),
         ini_persistent(P, File_ops, File, File_bak).
+make_persistent(Spec, _Key) :-
+        throw(error(undefined_for(Spec), persistent_dir/2)).
 
 ini_persistent(P, File_ops, File, File_bak):- 
         term_to_meta(P, Pred),
@@ -470,11 +495,11 @@ ini_persistent(P, File_ops, File, File_bak):-
                 )
             ; secure_update(File, File_ops, File_bak, NewTerms)
             ),
-            retractall_fact(Pred)
+            data_facts:retractall_fact(Pred)
         ; file_exists(File_bak) -> % System crash
             mv(File_bak, File),
             secure_update(File, File_ops, File_bak, NewTerms),
-            retractall_fact(Pred)
+            data_facts:retractall_fact(Pred)
         ; % Files not created yet
           findall(P, current_fact(Pred), Facts),
           term_list_to_file(Facts, File),
@@ -604,56 +629,12 @@ display_term_list([T|Ts]) :-
         display_term(T),
         display_term_list(Ts).
 
-% This ensure that we not create an operations file in a transient state
-delete_bak_if_no_ops(File_ops, File_bak) :-
-        ( file_exists(File_ops) -> true
-	; file_exists(File_bak) -> delete_file1(File_bak)
-	; true).
-
-% add_term_to_file(Term,File) adds the term Term to a file File
-add_term_to_file(Term,File) :-
-        current_output(OldOutput),
-        lock_file(File, FD, _),
-        open(File,append,Stream),
-        set_output(Stream),
-        display_term(Term),
-        close(Stream),
-        unlock_file(FD, _),
-        set_output(OldOutput).        
-
-get_pred_files(Dir, Name, Arity, File, File_ops, File_bak):-
-        add_final_slash(Dir, DIR),
-        atom_codes(Name, NameString),
-        append(Module,":"||PredName,NameString),
-        atom_codes(Mod, Module),
-        atom_concat(DIR, Mod, DirMod),
-        create_dir(DirMod),
-        number_codes(Arity, AS),
-        append("/"||PredName, "_"||AS, FilePrefS),
-        atom_codes(FilePref, FilePrefS),
-        atom_concat(DirMod, FilePref, PathName),
-        atom_concat(PathName, '.pl', File),
-        atom_concat(PathName, '_ops.pl', File_ops),
-        atom_concat(PathName, '_bak.pl', File_bak).
-
-create_dir(Dir) :-
-        file_exists(Dir), !.  % Assuming it's a directory
-create_dir(Dir) :-
-        make_dirpath(Dir, 0xfff).
-
-delete_file1(File):-
-	(file_exists(File)->
-	 delete_file(File)
-	;
-	 true).
-
 % :- pred mv(Path1, Path2) ; "Rename a file, or create target.".
 mv(Source, Target):-
         file_exists(Source), !,
         rename_file(Source, Target).
 mv(_Source, Target):-
         create(Target).
-
 
 % :- pred create(Path) ; "Creates a file.".
 create(Path):-
@@ -662,20 +643,13 @@ create(Path):-
         close(S),
         umask(_, OldUmask).
 
-add_final_slash(Dir, DIR) :-
-        atom_concat(_,'/',Dir) -> DIR = Dir ; atom_concat(Dir, '/', DIR).
-
 :- comment(doinclude, keyword/1).
-
 :- comment(keyword/1,"An atom which identifies a fact of the
    @pred{persistent_dir/2} relation. This fact relates this atom to a
    directory in which the persistent storage for one or more
-   persistent predicates is kept.").
-
-:- prop keyword(X) + regtype 
-# "@var{X} is an atom corresponding to a directory identifier.".
-
-keyword(X) :- atm(X).
+   persistent predicates is kept. Storage is expected under a
+   subdirectory by the name of the module and in a file by the name of
+   the predicate.").
 
 :- comment(doinclude, directoryname/1).
 
@@ -686,6 +660,24 @@ directoryname(X) :- atm(X).
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+328,2004/03/24,16:40*57+'CET'),
+   "pretractall_fact/1 and retractall_fact/1 reimplemented using
+   pretract_fact/1 and retract_fact/1 as basic primitives for
+   reliability reasons.  (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+321,2004/03/04,11:52*26+'CET'), "Fixed a bug in
+   make_operation/5 which raised incorrect process of retractall_fact
+   directives.  (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+254,2003/12/30,23:15*32+'CET'), "Added comment
+   for predicates pretractall_fact/1 and retractall_fact/1. (Edison
+   Mera)").
+
+:- comment(version(1*9+52,2003/01/10,18:45*24+'CET'), "Added
+   pretractall_fact/1 and retractall_fact/1 as persdb native capabilities,
+   not depending on pretract_fact/1 or retract_fact/1 anymore.  (Jose
+   Manuel Gomez Perez)").
 
 :- comment(version(1*7+96,2001/05/02,12:29*31+'CEST'), "Documentation
    on the @dec{persistent/2} declaration now appears in manuals.

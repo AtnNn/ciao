@@ -1,4 +1,3 @@
-
 :- module(aggregates, [
         setof/3,
         bagof/3,
@@ -106,6 +105,7 @@ no
 ?- 
 @end{verbatim}").
 
+:- true comp setof(X, Y, Z) + native(findall(X,Y,Z)).
 :- true pred setof(@term, +callable, ?list) + iso.
 
 %% This predicate is defined on p51 of the Dec-10 Prolog manual.
@@ -123,6 +123,7 @@ setof(Template, Filter, Set) :-
    avoided by using existential quantifiers on the free variables in
    front of the @var{Generator}, using @pred{^/2}.").
 
+:- true comp bagof(X, Y, Z) + native(findall(X,Y,Z)).
 :- true pred bagof(@term, +callable, ?list) + iso.
 
 %   bagof records three things under the key '.':
@@ -159,7 +160,7 @@ bagof(Template, Generator, Bag) :-
      existentially quantified. Faster than the other aggregation
      predicates.").
 
-:- pred findall(@term, +callable, ?list) + iso.
+:- true pred findall(@term, +callable, ?list) + (iso, native).
 
 %%  It is described in Clocksin & Mellish on p152.  The code they give has
 %%  a bug (which the Dec-10 bagof and setof predicates share) which
@@ -184,7 +185,7 @@ findall(Template, Generator, List, Tail) :-
      list.  This predicate is especially useful if @var{Generator} may
      have an infinite number of solutions.").
 
-:- pred findnsols(+int,@term,+callable,?list).
+:- true pred findnsols(+int,@term,+callable,?list).
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -197,7 +198,7 @@ findnsols(_,_,_,[]).
      "As @pred{findnsols/4}, but returning in @var{Tail} the tail of
      @var{List}.").
 
-:- pred findnsols(+int,@term,+callable,?,?).
+:- true pred findnsols(+int,@term,+callable,?,?).
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -419,10 +420,13 @@ list_is_free_of([Head|Tail], Var) :-
    existentially quantified.  Used only within @concept{aggregation
    predicates}. In all other contexts, simply, execute the procedure
    call @var{P}.".
+:- true comp (_X^Y) + native(call(Y)).
 
 %% %%% Was as follows when in builtin.pl:
 %% (X^Y) :- undefined_goal((X^Y)).
 (_X^Y) :- call(Y).
+
+% -----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
 

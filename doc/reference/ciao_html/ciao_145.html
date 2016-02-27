@@ -1,45 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
+<TITLE>The Ciao Prolog System               - HTML/XML/CGI programming</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC608" HREF="ciao_toc.html#TOC608">Low-level socket interface to SQL/ODBC databases</A></H1>
+<H1><A NAME="SEC599" HREF="ciao_toc.html#TOC599">HTML/XML/CGI programming</A></H1>
 <P>
-<A NAME="IDX6197"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jose Morales.
+<A NAME="IDX6553"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo, Sacha Varma.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#209 (2002/4/24, 14:50:46 CEST)
+<STRONG>Version:</STRONG> 1.9#335 (2004/4/16, 16:18:8 CEST)
 
 
 <P>
-This library provides a low-level interface to MySQL using the MySQL C API and the Ciao foreign interface to C.
+This module implements the predicates of the PiLLoW package related to 
+<A NAME="IDX6554"></A>
+HTML/
+<A NAME="IDX6555"></A>
+XML generation and parsing, 
+<A NAME="IDX6556"></A>
+CGI and form handlers programming, and in general all the predicates which do not imply the use of the HTTP protocol.
 
 
 
 <UL>
-<LI><A HREF="ciao_145.html#SEC609">Usage and interface (mysql_client)</A>
-<LI><A HREF="ciao_145.html#SEC610">Documentation on exports (mysql_client)</A>
+<LI><A HREF="ciao_145.html#SEC600">Usage and interface (html)</A>
+<LI><A HREF="ciao_145.html#SEC601">Documentation on exports (html)</A>
+<LI><A HREF="ciao_145.html#SEC602">Documentation on multifiles (html)</A>
+<LI><A HREF="ciao_145.html#SEC603">Other information (html)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC609" HREF="ciao_toc.html#TOC609">Usage and interface (<CODE>mysql_client</CODE>)</A></H2>
+<H2><A NAME="SEC600" HREF="ciao_toc.html#TOC600">Usage and interface (<CODE>html</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +51,7 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(mysql_client)).</CODE>
+<CODE>:- use_module(library(html)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,29 +60,53 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6198"></A>
-<CODE>mysql_connect/5</CODE>, 
-<A NAME="IDX6199"></A>
-<CODE>mysql_query/3</CODE>, 
-<A NAME="IDX6200"></A>
-<CODE>mysql_query_one_tuple/3</CODE>, 
-<A NAME="IDX6201"></A>
-<CODE>mysql_free_query_connection/1</CODE>, 
-<A NAME="IDX6202"></A>
-<CODE>mysql_fetch/2</CODE>, 
-<A NAME="IDX6203"></A>
-<CODE>mysql_get_tables/2</CODE>, 
-<A NAME="IDX6204"></A>
-<CODE>mysql_table_types/3</CODE>, 
-<A NAME="IDX6205"></A>
-<CODE>mysql_disconnect/1</CODE>.
+<A NAME="IDX6557"></A>
+<CODE>output_html/1</CODE>, 
+<A NAME="IDX6558"></A>
+<CODE>html2terms/2</CODE>, 
+<A NAME="IDX6559"></A>
+<CODE>xml2terms/2</CODE>, 
+<A NAME="IDX6560"></A>
+<CODE>html_template/3</CODE>, 
+<A NAME="IDX6561"></A>
+<CODE>html_report_error/1</CODE>, 
+<A NAME="IDX6562"></A>
+<CODE>get_form_input/1</CODE>, 
+<A NAME="IDX6563"></A>
+<CODE>get_form_value/3</CODE>, 
+<A NAME="IDX6564"></A>
+<CODE>form_empty_value/1</CODE>, 
+<A NAME="IDX6565"></A>
+<CODE>form_default/3</CODE>, 
+<A NAME="IDX6566"></A>
+<CODE>set_cookie/2</CODE>, 
+<A NAME="IDX6567"></A>
+<CODE>get_cookies/1</CODE>, 
+<A NAME="IDX6568"></A>
+<CODE>url_query/2</CODE>, 
+<A NAME="IDX6569"></A>
+<CODE>url_query_values/2</CODE>, 
+<A NAME="IDX6570"></A>
+<CODE>my_url/1</CODE>, 
+<A NAME="IDX6571"></A>
+<CODE>url_info/2</CODE>, 
+<A NAME="IDX6572"></A>
+<CODE>url_info_relative/3</CODE>, 
+<A NAME="IDX6573"></A>
+<CODE>form_request_method/1</CODE>, 
+<A NAME="IDX6574"></A>
+<CODE>icon_address/2</CODE>, 
+<A NAME="IDX6575"></A>
+<CODE>html_protect/1</CODE>, 
+<A NAME="IDX6576"></A>
+<CODE>http_lines/3</CODE>.
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Multifiles:</EM>
 
-<A NAME="IDX6206"></A>
-<CODE>dbconnection/1</CODE>, 
-<A NAME="IDX6207"></A>
-<CODE>dbqueryconnection/1</CODE>.
+<A NAME="IDX6577"></A>
+<CODE>define_flag/3</CODE>, 
+<A NAME="IDX6578"></A>
+<CODE>html_expansion/2</CODE>.
 
 </UL>
 
@@ -89,10 +117,16 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6208"></A>
-<CODE>foreign_interface/foreign_interface_properties</CODE>, 
-<A NAME="IDX6209"></A>
-<CODE>persdb_mysql/db_client_types</CODE>.
+<A NAME="IDX6579"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX6580"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6581"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX6582"></A>
+<CODE>pillow/pillow_aux</CODE>, 
+<A NAME="IDX6583"></A>
+<CODE>pillow/pillow_types</CODE>.
 
 </UL>
 
@@ -102,168 +136,563 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 
 
-<H2><A NAME="SEC610" HREF="ciao_toc.html#TOC610">Documentation on exports (<CODE>mysql_client</CODE>)</A></H2>
+<H2><A NAME="SEC601" HREF="ciao_toc.html#TOC601">Documentation on exports (<CODE>html</CODE>)</A></H2>
 <P>
-<A NAME="IDX6210"></A>
-<A NAME="IDX6211"></A>
+<A NAME="IDX6584"></A>
+<A NAME="IDX6585"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_connect/5:</B>
-<DD><A NAME="IDX6212"></A>
+<DT><span class="define">PREDICATE:</span> <B>output_html/1:</B>
+<DD><A NAME="IDX6586"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>output_html(HTMLTerm)</CODE>
+
+
+<P>
+Outputs <CODE>HTMLTerm</CODE>, interpreted as an 
+<A NAME="IDX6587"></A>
+<CODE>html_term/1</CODE>, to current output stream.
 
 
 </DL>
 
 <P>
-<A NAME="IDX6213"></A>
-<A NAME="IDX6214"></A>
+<A NAME="IDX6588"></A>
+<A NAME="IDX6589"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX6215"></A>
+<DT><span class="define">PREDICATE:</span> <B>html2terms/2:</B>
+<DD><A NAME="IDX6590"></A>
 
-
-
-<PRE>
-dbconnection(_1) :-
-        address(_1).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
+<CODE>html2terms(String, Terms)</CODE>
+
+
+<P>
+<CODE>String</CODE> is a character list containing HTML code and <CODE>Terms</CODE> is its prolog structured representation.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>html2terms(-string, +html_term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
+<LI><EM>Description:</EM> Translates an HTML-term into the HTML code it represents.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>html2terms(+string, ?canonic_html_term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates HTML code into a structured HTML-term.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6216"></A>
-<A NAME="IDX6217"></A>
+<A NAME="IDX6591"></A>
+<A NAME="IDX6592"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_query/3:</B>
-<DD><A NAME="IDX6218"></A>
+<DT><span class="define">PREDICATE:</span> <B>xml2terms/2:</B>
+<DD><A NAME="IDX6593"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6219"></A>
-<A NAME="IDX6220"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_query_one_tuple/3:</B>
-<DD><A NAME="IDX6221"></A>
+<CODE>xml2terms(String, Terms)</CODE>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>String</CODE> is a character list containing XML code and <CODE>Terms</CODE> is its prolog structured representation.
 
-
-</DL>
 
 <P>
-<A NAME="IDX6222"></A>
-<A NAME="IDX6223"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
-<DD><A NAME="IDX6224"></A>
-
-
-
-<PRE>
-dbqueryconnection(_1) :-
-        address(_1).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>xml2terms(-string, +html_term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
+<LI><EM>Description:</EM> Translates a XML-term into the XML code it represents.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>xml2terms(+string, ?canonic_xml_term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates XML code into a structured XML-term.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6225"></A>
-<A NAME="IDX6226"></A>
+<A NAME="IDX6594"></A>
+<A NAME="IDX6595"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_free_query_connection/1:</B>
-<DD><A NAME="IDX6227"></A>
+<DT><span class="define">PREDICATE:</span> <B>html_template/3:</B>
+<DD><A NAME="IDX6596"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>html_template(Chars, Terms, Dict)</CODE>
+
+
+<P>
+Interprets <CODE>Chars</CODE> as an HTML template returning in <CODE>Terms</CODE> the corresponding structured HTML-term, which includes variables, and unifying <CODE>Dict</CODE> with a dictionary of those variables (an incomplete list of <EM>name</EM><CODE>=</CODE><EM>Var</EM> pairs). An HTML template is standard HTML code, but in which "slots" can be defined and given an identifier. These slots represent parts of the HTML code in which other HTML code can be inserted, and are represented in the HTML-term as free variables. There are two kinds of variables in templates: 
+
+<UL>
+
+<LI>Variables representing page contents. A variable with name <EM>name</EM> is defined with the special tag <CODE>&#60;V&#62;</CODE><EM>name</EM><CODE>&#60;/V&#62;</CODE>.
+
+<LI>Variables representing tag attributes. They occur as an attribute or an attribute value starting with <CODE>_</CODE>, followed by its name, which must be formed by alphabetic characters.
+
+</UL>
+
+<P>
+As an example, suposse the following HTML template: 
+
+<PRE>
+&#60;html&#62;
+&#60;body bgcolor=_bgcolor&#62;
+&#60;v&#62;content&#60;/v&#62;
+&#60;/body&#62;
+&#60;/html&#62;
+
+</PRE>
+
+<P>
+The following query in the Ciao toplevel shows how the template is parsed, and the dictionary returned: 
+
+<PRE>
+?- file_to_string('template.html',_S), html_template(_S,Terms,Dict). 
+
+Dict = [bgcolor=_A,content=_B|_],
+Terms = [env(html,[],["
+",env(body,[bgcolor=_A],["
+",_B,"
+"]),"
+"]),"
+"] ? 
+
+yes
+</PRE>
+
+<P>
+If a dictionary with values is supplied at call time, then variables are unified accordingly inside the template: 
+
+<PRE>
+?- file_to_string('template.html',_S),
+   html_template(_S,Terms,[content=b("hello world!"),bgcolor="white"]). 
+
+Terms = [env(html,[],["
+",env(body,[bgcolor="white"],["
+",b("hello world!"),"
+"]),"
+"]),"
+"] ? 
+
+yes
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX6597"></A>
+<A NAME="IDX6598"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>html_report_error/1:</B>
+<DD><A NAME="IDX6599"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>html_report_error(Error)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Outputs error <CODE>Error</CODE> as a standard HTML page.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6600"></A>
+<A NAME="IDX6601"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_form_input/1:</B>
+<DD><A NAME="IDX6602"></A>
+
+
+<P>
+<CODE>get_form_input(Dict)</CODE>
+
+
+<P>
+Translates input from the form (with either the POST or GET methods, and even with CONTENT_TYPE multipart/form-data) to a dictionary <CODE>Dict</CODE> of <EM>attribute</EM>=<EM>value</EM> pairs. If the flag <CODE>raw_form_values</CODE> is <CODE>off</CODE> (which is the default state), it translates empty values (which indicate only the presence of an attribute) to the atom <CODE>'$empty'</CODE>, values with more than one line (from text areas or files) to a list of lines as strings, the rest to atoms or numbers (using 
+<A NAME="IDX6603"></A>
+<CODE>name/2</CODE>). If the flag <CODE>on</CODE>, it gives all values as atoms, without translations.
 
 
 </DL>
 
 <P>
-<A NAME="IDX6228"></A>
-<A NAME="IDX6229"></A>
+<A NAME="IDX6604"></A>
+<A NAME="IDX6605"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_fetch/2:</B>
-<DD><A NAME="IDX6230"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_form_value/3:</B>
+<DD><A NAME="IDX6606"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>get_form_value(Dict, Var, Val)</CODE>
+
+
+<P>
+Unifies <CODE>Val</CODE> with the value for attribute <CODE>Var</CODE> in dictionary <CODE>Dict</CODE>. Does not fail: value is <CODE>"</CODE> if not found (this simplifies the programming of form handlers when they can be accessed directly).
 
 
 </DL>
 
 <P>
-<A NAME="IDX6231"></A>
-<A NAME="IDX6232"></A>
+<A NAME="IDX6607"></A>
+<A NAME="IDX6608"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_get_tables/2:</B>
-<DD><A NAME="IDX6233"></A>
+<DT><span class="define">PREDICATE:</span> <B>form_empty_value/1:</B>
+<DD><A NAME="IDX6609"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>form_empty_value(Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Checks that <CODE>Term</CODE>, a value comming from a text area is empty (can have spaces, newlines and linefeeds).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6610"></A>
+<A NAME="IDX6611"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>form_default/3:</B>
+<DD><A NAME="IDX6612"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>form_default(+Val, +Default, -NewVal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Useful when a form is only partially filled, or when the executable can be invoked either by a link or by a form, to set form defaults. If the value of <CODE>Val</CODE> is empty then <CODE>NewVal</CODE>=<CODE>Default</CODE>, else <CODE>NewVal</CODE>=<CODE>Val</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6613"></A>
+<A NAME="IDX6614"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_cookie/2:</B>
+<DD><A NAME="IDX6615"></A>
+
+
+<P>
+<CODE>set_cookie(Name, Value)</CODE>
+
+
+<P>
+Sets a cookie of name <CODE>Name</CODE> and value <CODE>Value</CODE>. Must be invoked before outputting any data, including the <CODE>cgi_reply</CODE> html-term.
 
 
 </DL>
 
 <P>
-<A NAME="IDX6234"></A>
-<A NAME="IDX6235"></A>
+<A NAME="IDX6616"></A>
+<A NAME="IDX6617"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_table_types/3:</B>
-<DD><A NAME="IDX6236"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_cookies/1:</B>
+<DD><A NAME="IDX6618"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>get_cookies(Cookies)</CODE>
+
+
+<P>
+Unifies <CODE>Cookies</CODE> with a dictionary of <EM>attribute</EM>=<EM>value</EM> pairs of the active cookies for this URL. If the flag <CODE>raw_form_values</CODE> is <CODE>on</CODE>, <EM>value</EM>s are always atoms even if they could be interpreted as numbers.
 
 
 </DL>
 
 <P>
-<A NAME="IDX6237"></A>
-<A NAME="IDX6238"></A>
+<A NAME="IDX6619"></A>
+<A NAME="IDX6620"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_disconnect/1:</B>
-<DD><A NAME="IDX6239"></A>
+<DT><span class="define">PREDICATE:</span> <B>url_query/2:</B>
+<DD><A NAME="IDX6621"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>url_query(Dict, URLArgs)</CODE>
+
+
+<P>
+(Deprecated, see 
+<A NAME="IDX6622"></A>
+<CODE>url_query_values/2</CODE>) Translates a dictionary <CODE>Dict</CODE> of parameter values into a string <CODE>URLArgs</CODE> for appending to a URL pointing to a form handler.
 
 
 </DL>
+
+<P>
+<A NAME="IDX6623"></A>
+<A NAME="IDX6624"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>url_query_values/2:</B>
+<DD><A NAME="IDX6625"></A>
+
+
+<P>
+<CODE>url_query_values(Dict, URLArgs)</CODE>
+
+
+<P>
+<CODE>Dict</CODE> is a dictionary of parameter values and <CODE>URLArgs</CODE> is the URL-encoded string of those assignments, which may appear after an URL pointing to a CGI script preceded by a '?'. <CODE>Dict</CODE> is computed according to the <CODE>raw_form_values</CODE> flag. The use of this predicate is reversible.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6626"></A>
+<A NAME="IDX6627"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>my_url/1:</B>
+<DD><A NAME="IDX6628"></A>
+
+
+<P>
+<CODE>my_url(URL)</CODE>
+
+
+<P>
+Unifies <CODE>URL</CODE> with the Uniform Resource Locator (WWW address) of this cgi executable.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6629"></A>
+<A NAME="IDX6630"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>url_info/2:</B>
+<DD><A NAME="IDX6631"></A>
+
+
+<P>
+<CODE>url_info(URL, URLTerm)</CODE>
+
+
+<P>
+Translates a URL <CODE>URL</CODE> to a Prolog structure <CODE>URLTerm</CODE> which details its various components, and vice-versa. For now non-HTTP URLs make the predicate fail.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6632"></A>
+<A NAME="IDX6633"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>url_info_relative/3:</B>
+<DD><A NAME="IDX6634"></A>
+
+
+<P>
+<CODE>url_info_relative(URL, BaseURLTerm, URLTerm)</CODE>
+
+
+<P>
+Translates a relative URL <CODE>URL</CODE> which appears in the HTML page refered to by <CODE>BaseURLTerm</CODE> into <CODE>URLTerm</CODE>, a Prolog structure containing its absolute parameters. Absolute URLs are translated as with 
+<A NAME="IDX6635"></A>
+<CODE>url_info/2</CODE>. E.g. 
+
+<PRE>
+url_info_relative("dadu.html",
+                  http('www.foo.com',80,"/bar/scoob.html"), Info)
+</PRE>
+
+<P>
+gives <CODE>Info = http('www.foo.com',80,"/bar/dadu.html")</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6636"></A>
+<A NAME="IDX6637"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>form_request_method/1:</B>
+<DD><A NAME="IDX6638"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>form_request_method(Method)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Method</CODE> with the method of invocation of the form handler (<CODE>GET</CODE> or <CODE>POST</CODE>).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Method</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6639"></A>
+<A NAME="IDX6640"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>icon_address/2:</B>
+<DD><A NAME="IDX6641"></A>
+
+
+<P>
+<CODE>icon_address(Img, IAddress)</CODE>
+
+
+<P>
+The PiLLoW image <CODE>Img</CODE> has URL <CODE>IAddress</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6642"></A>
+<A NAME="IDX6643"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>html_protect/1:</B>
+<DD><A NAME="IDX6644"></A>
+
+
+<P>
+<CODE>html_protect(Goal)</CODE>
+
+
+<P>
+Calls <CODE>Goal</CODE>. If an error occurs during its execution, or it fails, an HTML page is output informing about the incident. Normaly the whole execution of a CGI is protected thus.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>html_protect(goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6645"></A>
+<A NAME="IDX6646"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>http_lines/3:</B>
+<DD><A NAME="IDX6647"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>http_lines(Lines, String, Tail)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Lines</CODE> is a list of the lines with occur in <CODE>String</CODE> until <CODE>Tail</CODE>. The lines may end UNIX-style or DOS-style in <CODE>String</CODE>, in <CODE>Lines</CODE> they have not end of line characters. Suitable to be used in DCGs.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>Lines</CODE> is a list of <CODE>string</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>Tail</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC602" HREF="ciao_toc.html#TOC602">Documentation on multifiles (<CODE>html</CODE>)</A></H2>
+<P>
+<A NAME="IDX6648"></A>
+<A NAME="IDX6649"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
+<DD><A NAME="IDX6650"></A>
+
+
+<P>
+Defines a flag as follows: 
+
+<PRE>
+define_flag(raw_form_values,[on,off],off).
+</PRE>
+
+<P>
+(See section <A HREF="ciao_27.html#SEC163">Changing system behaviour and various flags</A>). 
+
+
+<P>
+If flag is <CODE>on</CODE>, values returned by 
+<A NAME="IDX6651"></A>
+<CODE>get_form_input/1</CODE> are always atoms, unchanged from its original value.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6652"></A>
+<A NAME="IDX6653"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>html_expansion/2:</B>
+<DD><A NAME="IDX6654"></A>
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>html_expansion(Term, Expansion)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Hook predicate to define macros. Expand occurrences of <CODE>Term</CODE> into <CODE>Expansion</CODE>, in
+
+<A NAME="IDX6655"></A>
+<CODE>output_html/1</CODE>. Take care to not transform something into itself! 
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC603" HREF="ciao_toc.html#TOC603">Other information (<CODE>html</CODE>)</A></H2>
+
+<P>
+The code uses input from from L. Naish's forms and F. Bueno's previous Chat interface. Other people who have contributed is (please inform us if we leave out anybody): Markus Fromherz, Samir Genaim.
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

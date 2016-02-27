@@ -1,5 +1,2 @@
-
-
-:- use_module('/home/clip/Systems/ciao/lib/foreign_interface/examples/math/math.pl').
-
+:- use_module(library('foreign_interface/examples/math')).
 sine(X, Y) :- sin(X, Y).

@@ -115,7 +115,7 @@ void explicit_heap_overflow(Arg,pad,arity)
 
 #if defined(DEBUG)
   if (debug_gc)
-    printf("Thread %d is performing explicit_heap_overflow\n", (int)Thread_Id);
+    printf("Thread %d calling explicit_heap_overflow\n", (int)Thread_Id);
 #endif
 
   
@@ -184,7 +184,7 @@ void choice_overflow(Arg,pad)
 
 #if defined(DEBUG)
   if (debug_gc)
-    printf("Thread %d is performing choice overflow\n", (int)Thread_Id);
+    printf("Thread %d calling choice overflow\n", (int)Thread_Id);
 #endif
 
   time0 = usertime();
@@ -256,18 +256,18 @@ void choice_overflow(Arg,pad)
 
         while(concchpt != InitialNode) {
 #if defined(DEBUG)
-          if (debug_conc || debug_gc)
+          if (debug_concchoicepoints || debug_gc)
             printf("*** %d(%d) Changing dynamic chpt@%x\n",
                    (int)Thread_Id, (int)GET_INC_COUNTER, 
                    (unsigned int)concchpt);
 #endif
-          concchpt->term[8] =
+          concchpt->term[PrevDynChpt] =
             PointerToTermOrZero(
-                (struct node *)((char *)TermToPointerOrNull(concchpt->term[8])
+                (struct node *)((char *)TermToPointerOrNull(concchpt->term[PrevDynChpt])
                                 + reloc_factor 
                                 + (newcount-oldcount)*sizeof(TAGGED))
                 );
-          concchpt = (struct node *)TermToPointerOrNull(concchpt->term[8]);
+          concchpt = (struct node *)TermToPointerOrNull(concchpt->term[PrevDynChpt]);
         }
 #endif
       }
@@ -305,8 +305,7 @@ void stack_overflow(Arg)
   ENG_FLT time0 = usertime();
   
 #if defined(DEBUG)
-  if (debug_gc)
-    printf("Thread %d is performing stack overflow\n", (int)Thread_Id);
+  if (debug_gc) printf("Thread %d calling stack overflow\n", (int)Thread_Id);
 #endif
 
   ComputeA(w->local_top,w->node);
@@ -413,6 +412,10 @@ void heap_overflow(Arg,pad)
   BOOL gc = gcexplicit;
   /*extern long gc_total_grey;*//*Now in a register*/
 
+#if defined(DEBUG)
+  if (debug_gc) printf("Thread %d calling heap_overflow\n", (int)Thread_Id);
+#endif
+
   gcexplicit = FALSE;
   calculate_segment_node(Arg);
   if (gc ||
@@ -476,6 +479,7 @@ void heap_overflow(Arg,pad)
 	  aux_node->frame = w->frame;
 	  aux_node->next_insn = w->next_insn;
 	  aux_node->global_top = w->global_top;
+	  aux_node->local_top = w->local_top; /* segfault patch -- jf */
 	  
 				/* relocate pointers in global stk */
 	  pt1 = newh;

@@ -11,21 +11,27 @@ ASRGEN=gen_asr
 
 compiler:
 	cp -f $(CIAOCNAME) $(CIAOCSTA)
+	-chmod $(EXECMODE) $(CIAOCSTA)
 	$(SETLOCALCIAO) $(CIAOCSTA) -s -x $(CIAOCNAME)
 	$(SETLOCALCIAO) $(CIAOC) -s -x $(ASRGEN)
-	rm $(ASRGEN)
+	rm -f $(ASRGEN) $(ASRGEN).cpx
 
 install:
 	-mkdir -p $(BINDIR)
 	-cp $(CIAOCNAME) $(BINDIR)/$(CIAOCNAME)-$(VERSION)
 	-chmod $(EXECMODE) $(BINDIR)/$(CIAOCNAME)-$(VERSION)
-	-rm $(BINDIR)/$(CIAOCNAME) 
-	-ln -s $(BINDIR)/$(CIAOCNAME)-$(VERSION) $(BINDIR)/$(CIAOCNAME) 
+	-rm -f $(BINDIR)/$(CIAOCNAME) 
+	-ln -s $(CIAOCNAME)-$(VERSION) $(BINDIR)/$(CIAOCNAME) 
 
 uninstall:
-	/bin/rm -f $(BINDIR)/$(CIAOCNAME) $(BINDIR)/$(CIAOCNAME)-$(VERSION) 
+	@/bin/rm -f $(BINDIR)/$(CIAOCNAME)-$(VERSION) 
+	@if [ ! -f $(BINDIR)/$(CIAOCNAME) ] ; then \
+		/bin/rm -f $(BINDIR)/$(CIAOCNAME) ; \
+	fi
 
 distclean: cleantmpfiles cleanexecs
+
+realclean: cleantmpfiles
 
 cleanbackups:
 	/bin/rm -f *~ *bak
@@ -40,3 +46,4 @@ cleanexecs:
 # Include also any stray .cpx compiler (sometimes not executable!)
 	find . -name 'ciaoc.cpx' -exec /bin/rm {} \;
 	/bin/mv temp-$(STATICCOMPNAME) $(STATICCOMPNAME)
+	rm -f $(ASRGEN) $(ASRGEN).cpx

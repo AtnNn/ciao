@@ -11,6 +11,7 @@
 #include "debug.h"
 #include "initial.h"
 #include "task_areas.h"
+#include "float_consts.h"
 
 /* declarations for global functions accessed here */
 
@@ -161,6 +162,7 @@ int start(argc, argv)
   char *raw_source_path = NULL;
   FILE *qfile = NULL;
 
+  fillchardigit();                               /* prepares the char digit table */
   init_locks();                                  /* global, first of all! */
 
 #if defined(DEBUG)
@@ -216,6 +218,10 @@ int start(argc, argv)
           if (strcmp(argv[i], "-tp") == SAME)        /* Trace predicates */
             predtrace = TRUE;
 #if defined(DBG) || defined(DEBUG)
+      else if (strcmp(argv[i], "-dcp") == SAME)  /*debug regular choicepoints*/
+        debug_choicepoints = TRUE;
+      else if (strcmp(argv[i], "-dconccp") == SAME) /*conc. choicepoints*/
+        debug_concchoicepoints = TRUE;
       else if (strcmp(argv[i], "-dt") == SAME)           /* debug threads */
         debug_threads = TRUE;
       else if (strcmp(argv[i], "-dgc") == SAME)      /* debug garb. coll. */
@@ -349,7 +355,7 @@ int start(argc, argv)
       }
 
       /* Check now if the SHELL variable has been defined --- the
-         shell/{0,3} calls depend on it. */
+         shell/{0,1,2} calls depend on it. */
       if (!getenv("SHELL")){
         strcat(temp_path, "/sh.exe");  /* CygWin shell --- MUST be here */
         setenv("SHELL", temp_path, 1);

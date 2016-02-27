@@ -39,25 +39,25 @@ extern int prolog_argc;
 */
 
 #define X2_CHN 2
-#define Clock 4
+#define ClockSlot 4
 #define X5_CHN 5
 #define RootArg 6
 #define InvocationAttr 7
 #define PrevDynChpt 8
-#define DynamicPreserved 9
+#define DynamicPreserved 9 
 
-#define BLOCKIDX 0x1
-#define EXECIDX 0x2
+#define BLOCKIDX (1<<0)
+#define EXECIDX  (1<<1)
 
-#define SET_BLOCKING(arg) arg = arg | BLOCKIDX
-#define SET_NONBLOCKING(arg) arg = arg & ~BLOCKIDX
-#define IS_BLOCKING(arg) arg & BLOCKIDX
-#define IS_NONBLOCKING(arg) !(arg & BLOCKIDX)
+#define SET_BLOCKING(arg) (arg) = ((arg) | BLOCKIDX)
+#define SET_NONBLOCKING(arg) (arg) = ((arg) & ~BLOCKIDX)
+#define IS_BLOCKING(arg) ((arg) & BLOCKIDX)
+#define IS_NONBLOCKING(arg) !((arg) & BLOCKIDX)
 
-#define SET_EXECUTING(arg) arg = arg | EXECIDX
-#define SET_NONEXECUTING(arg) arg = arg & ~EXECIDX
-#define EXECUTING(arg) arg & EXECIDX
-#define NONEXECUTING(arg) !(arg & EXECIDX)
+#define SET_EXECUTING(arg) (arg) = ((arg) | EXECIDX)
+#define SET_NONEXECUTING(arg) (arg) = ((arg) & ~EXECIDX)
+#define EXECUTING(arg) ((arg) & EXECIDX)
+#define NONEXECUTING(arg) !((arg) & EXECIDX)
 
 
 /* initial choicepoint */

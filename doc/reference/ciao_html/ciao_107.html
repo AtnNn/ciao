@@ -1,350 +1,253 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Object oriented programming</TITLE>
+<TITLE>The Ciao Prolog System               - Delaying predicates (when)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC442" HREF="ciao_toc.html#TOC442">Object oriented programming</A></H1>
-
+<H1><A NAME="SEC442" HREF="ciao_toc.html#TOC442">Delaying predicates (when)</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX5370"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#63 (1999/9/29, 19:54:17 MEST)
+<STRONG>Author(s):</STRONG> Manuel Carro.
 
 
 <P>
-O'Ciao is a set of libraries which allows object-oriented programming in Ciao Prolog. It extends the Ciao Prolog module system by introducing two new concepts: 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#3 (2000/7/21, 11:54:59 CEST)
+
+
+<P>
+ 
+
+
+<P>
+<A NAME="IDX5371"></A>
+<CODE>when/2</CODE> delays a predicate until some condition in its variable is met. For example, we may want to find out the maximum of two numbers, but we are not sure when they will be instantiated. We can write the standard 
+<A NAME="IDX5372"></A>
+<CODE>max/3</CODE> predicate (but changing its name to 
+<A NAME="IDX5373"></A>
+<CODE>gmax/3</CODE> to denote that the first and second arguments must be ground) as 
+
+
+
+<PRE>
+gmax(X, Y, X):- X &#62; Y, !.
+gmax(X, Y, Y):- X =&#60; Y.
+</PRE>
+
+<P>
+and then define a 'safe' 
+<A NAME="IDX5374"></A>
+<CODE>max/3</CODE> as 
+ 
+
+<PRE>
+max(X, Y, Z):-
+        when((ground(X),ground(Y)), gmax(X, Y, Z)).
+</PRE>
+
+<P>
+which can be called as follows: 
+
+
+
+<PRE>
+?- max(X, Y, Z) , Y = 0, X = 8.
+
+X = 8,
+Y = 0,
+Z = 8 ? 
+
+yes
+</PRE>
+
+<P>
+Alternatively, 
+<A NAME="IDX5375"></A>
+<CODE>max/3</CODE> could have been defined as 
+
+
+
+<PRE>
+max(X, Y, Z):-
+        when(ground((X, Y)), gmax(X, Y, Z)).
+</PRE>
+
+<P>
+with the same effects as above. More complex implementations are possible. Look, for example, at the <CODE>max.pl</CODE> implementation under the <CODE>when</CODE> library directory, where a 
+<A NAME="IDX5376"></A>
+<CODE>max/3</CODE> predicate is implemented which waits on all the arguments until there is enough information to determine their values: 
+
+
+
+<PRE>
+?- use_module(library('when/max')).
+
+yes
+?- max(X, Y, Z), Z = 5, Y = 4.
+
+X = 5,
+Y = 4,
+Z = 5 ? 
+
+yes
+</PRE>
 
 
 <UL>
-<LI>Inheritance.
-
-<LI>Instantiation.
-
-</UL>
-
-<P>
-<A NAME="IDX4530"></A>
-<A NAME="IDX4531"></A>
-<EM>Polymorphism</EM> is the third fundamental concept provided by object oriented programming. This concept is not mentioned here since <STRONG>traditional PROLOG systems are polymorphic by nature</STRONG>. 
-
-
-<P>
-Classes are declared in the same way as modules. However, they may be enriched with inheritance declarations and other object-oriented constructs. For an overview of the fundamentals of O'Ciao, see <A HREF="http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz">http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz</A>. However, we will introduce the concepts in a tutorial way via examples. 
-
-
-
-<UL>
-<LI><A HREF="ciao_107.html#SEC443">Early examples</A>
-<LI><A HREF="ciao_107.html#SEC444">Recommendations on when to use objects</A>
-<LI><A HREF="ciao_107.html#SEC445">Limitations on object usage</A>
-</UL>
-
-
-
-<H2><A NAME="SEC443" HREF="ciao_toc.html#TOC443">Early examples</A></H2>
-
-<P>
-The following one is a very simple example which declares a class -- a simple stack. Note that if you replace <EM>class/1</EM> declaration with a <EM>module/1</EM> declaration, it will compile correctly, and can be used as a normal Prolog module. 
-
-
-
-<PRE>
-%%----------------------------------------------%%
-%% A class for stacks.                          %%
-%%----------------------------------------------%%
-
-%% Class declaration: the current source defines a class.
-:- class(stack,[],[]).
-
-% State declaration: storage/1 is an attribute.
-:- dynamic storage/1.
-
-% Interface declaration: the following predicates will
-% be available at run-time.
-:- export(push/1).
-:- export(pop/1).
-:- export(top/1).
-:- export(is_empty/0).
-
-% Methods
-
-push(Item) :-
-        nonvar(Item), 
-        asserta_fact(storage(Item)).
-
-pop(Item) :-
-        var(Item),
-        retract_fact(storage(Item)).
-
-top(Top) :-
-        storage(Top), !.
-
-is_empty :-
-        storage(_), !, fail.
-is_empty.
-
-</PRE>
-
-<P>
-If we load this code at the Ciao toplevel shell: 
-
-
-
-<PRE>
-        ?- use_package(objects).
-
-        yes
-        ?- use_class(library('class/examples/stack')).
-
-        yes
-        ?-
-</PRE>
-
-<P>
-we can create two stack <EM>instances</EM> : 
-
-
-
-<PRE>
-        ?- St1 new stack,St2 new stack.
-
-        St1 = stack('9254074093385163'),
-        St2 = stack('9254074091') ? ,
-</PRE>
-
-<P>
-and then, we can operate on them separately: 
-
-
-
-<PRE>
-        1 ?- St1:push(8),St2:push(9).
-
-        St1 = stack('9254074093385163'),
-        St2 = stack('9254074091') ? 
-
-        yes
-        1 ?- St1:top(I),St2:top(K).
-
-        I = 8,
-        K = 9,
-        St1 = stack('9254074093385163'),
-        St2 = stack('9254074091') ? 
-
-        yes
-        1 ?-
-</PRE>
-
-<P>
-The interesting point is that there are two stacks. If the previous example had been a normal module, we would have a stack , but <STRONG>only one</STRONG> stack. 
-
-
-<P>
-The next example introduces the concepts of <EM>inheritable</EM> predicate, <EM>constructor</EM>, <EM>destructor</EM> and <EM>virtual method</EM>. Refer to the following sections for further explanation. 
-
-
-
-<PRE>
-%%----------------------------------------------%%
-%% A generic class for item storage.            %%
-%%----------------------------------------------%%
-:- class(generic).
-
-% Public interface declaration:
-:- export([set/1,get/1,callme/0]).
-
-% An attribute
-:- data datum/1.
-
-% Inheritance declaration: datum/1 will be available to 
-% descendant classes (if any).
-:- inheritable(datum/1).
-
-% Attribute initialization: attributes are easily initialized
-% by writing clauses for them.
-datum(none).
-
-% Methods
-
-set(X) :-
-        type_check(X),
-        set_fact(datum(X)).
-
-get(X) :-
-        datum(X).
-
-callme :-
-        a_virtual(IMPL),
-        display(IMPL),
-        display(' implementation of a_virtual/0 '),
-        nl.
-
-% Constructor: in this case, every time an instance
-% of this class is created, it will display a message.
-generic :-
-        display(' generic class constructor '),
-        nl.
-
-% Destructor: analogous to the previous constructor,
-% it will display a message every time an instance
-% of this class is eliminated.
-destructor :-
-        display(' generic class destructor '),
-        nl.
-
-% Predicates:
-% cannot be called as messages (X:method)
-
-% Virtual declaration: tells the system to use the most
-% descendant implementation of a_virtual/1 when calling
-% it from inside this code (see callme/0).
-% If there is no descendant implementation for it, 
-% the one defined bellow will be used.
-:- virtual a_virtual/1.
-
-a_virtual(generic).
-
-:- virtual type_check/1.
-
-type_check(X) :-
-        nonvar(X).
-
-</PRE>
-
-<P>
-And the following example, is an extension of previous class. This is performed by establishing an inheritance relationship: 
-
-
-
-<PRE>
-%%----------------------------------------------%%
-%% This class provides additional functionality %%
-%% to the "generic" class.                      %%
-%%----------------------------------------------%%
-:- class(specific).
-
-% Establish an inheritance relationship with class "generic".
-:- inherit_class(library('class/examples/generic')).
-
-% Override inherited datum/1.
-% datum/1 is said to be overriden because there are both an
-% inherited definition (from class "generic") and a local one,
-% which overrides the one inherited.
-:- data datum/1. 
-:- inheritable datum/1.
-
-% Extend the public interface inherited from "generic".
-% note that set/1 and a_virtual/0 are also overriden. 
-% undo/0 is a new functionality added.
-:- export([set/1,undo/0]).
-
-% Methods
-
-set(Value) :-
-        inherited datum(OldValue),
-        !,
-        inherited set(Value),
-        asserta_fact(datum(OldValue)).
-set(Value) :-
-        inherited set(Value).
-
-undo :-
-        retract_fact(datum(Last)), !,
-        asserta_fact(inherited(datum(Last))).
-undo :-
-        retractall_fact(inherited(datum(_))).
-
-% Constructor
-specific :-
-        generic,
-        retractall_fact(inherited(datum(_))),
-        display(' specific class constructor '),
-        nl.
-
-% Destructor
-destructor :-
-        display(' specific class destructor '),
-        nl.
-
-% Predicates
-
-% New implementation of a_virtual/1. 
-% Since this predicate was declared virtual, the
-% implementation below will be called from the inherited 
-% method callme/0 instead of the version defined at "generic".
-a_virtual(specific).
-
-</PRE>
-
-<P>
-<STRONG>Additional examples</STRONG> may be found on the <EM>library/class/examples</EM> directory relative to your Ciao Prolog instalation. 
-
-
-
-
-<H2><A NAME="SEC444" HREF="ciao_toc.html#TOC444">Recommendations on when to use objects</A></H2>
-
-<P>
-We would like to give some advice in the use of object oriented programming, in conjunction with the declarative paradigm. 
-
-
-<P>
-You should reconsider using O'Ciao in the following cases: 
-
-
-
-<UL>
-
-<LI>The pretended "objects" have no state,i.e., no data or dynamic predicates. In this case, a normal module will suffice.
-
-<LI>There is state, but there will be only one instance of a pretended class. Again, a module suffices.
-
-<LI>The "objects" are data structures (list,trees,etc) already supported by Prolog. However, it does make sense to model, using objects, data structures whose change implies a side-effect such as drawing a particular window on the screen.
-
-</UL>
-
-<P>
-We recommend the usage of O'Ciao in the following cases: 
-
-
-
-<UL>
-
-<LI>You feel you will need to have several copies of a "module".
-
-<LI>Local copies of a module are needed instead of a global module beeing modified by several ones.
-
-<LI>The "classes" are a representation of external entities to Prolog. For example: the X-Window system.
-
-<LI>There is state or code outside the Prolog system which needs to be manipulated. For example: interfaces to Java or Tcl/Tk code.
-
-<LI>You are not familiar with Prolog, but you know about object oriented programming. O'Ciao may be used as a learning tool to introduce yourself on the declarative programming paradigm.
-
+<LI><A HREF="ciao_107.html#SEC443">Usage and interface (when)</A>
+<LI><A HREF="ciao_107.html#SEC444">Documentation on exports (when)</A>
+<LI><A HREF="ciao_107.html#SEC445">Known bugs and planned improvements (when)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC445" HREF="ciao_toc.html#TOC445">Limitations on object usage</A></H2>
+<H2><A NAME="SEC443" HREF="ciao_toc.html#TOC443">Usage and interface (<CODE>when</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(when)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX5377"></A>
+<CODE>when/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX5378"></A>
+<CODE>wakeup_exp/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5379"></A>
+<CODE>terms_vars</CODE>, 
+<A NAME="IDX5380"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX5381"></A>
+<CODE>sets</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC444" HREF="ciao_toc.html#TOC444">Documentation on exports (<CODE>when</CODE>)</A></H2>
+<P>
+<A NAME="IDX5382"></A>
+<A NAME="IDX5383"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>when/2:</B>
+<DD><A NAME="IDX5384"></A>
+
 
 <P>
-O'Ciao run-time speed is limited by the usage of meta-programming structures, for instance: <CODE>X = (Object:mymethod(25)), call(X)</CODE>. O'Ciao will optimize static manipulation of objects (those that can be determined at compile time). 
+<EM>Meta-predicate</EM> with arguments: <CODE>when(?,goal)</CODE>.
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>when(WakeupCond, Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Delays / executes <CODE>Goal</CODE> according to <CODE>WakeupCond</CODE> given. The <CODE>WakeupCond</CODE>s now acceptable are <CODE>ground(T)</CODE> (
+
+<A NAME="IDX5385"></A>
+<CODE>Goal</CODE> is delayed until <CODE>T</CODE> is ground), <CODE>nonvar(T)</CODE> (
+<A NAME="IDX5386"></A>
+<CODE>Goal</CODE> is delayed until <CODE>T</CODE> is not a variable), and conjunctions and disjunctions of conditions: 
+
+
+<PRE>
+wakeup_exp(ground(_1)).
+wakeup_exp(nonvar(_1)).
+wakeup_exp((C1,C2)) :-
+        wakeup_exp(C1),
+        wakeup_exp(C2).
+wakeup_exp((C1;C2)) :-
+        wakeup_exp(C1),
+        wakeup_exp(C2).
+</PRE>
+
+<A NAME="IDX5387"></A>
+<CODE>when/2</CODE> only fails it the <CODE>WakeupCond</CODE> is not legally formed. If <CODE>WakeupCond</CODE> is met at the time of the call no delay mechanism is involved -- but there exists a time penalty in the condition checking. 
+
+In case that an instantiation fires the execution of several predicates, the order in which these are executed is not defined. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>WakeupCond</CODE> is a legal expression for delaying goals.
+ (<CODE>when:wakeup_exp/1</CODE>)
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5388"></A>
+<A NAME="IDX5389"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>wakeup_exp/1:</B>
+<DD><A NAME="IDX5390"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>wakeup_exp(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a legal expression for delaying goals.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC445" HREF="ciao_toc.html#TOC445">Known bugs and planned improvements (<CODE>when</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Redundant conditions are not removed.
+
+<LI>
+
+Floundered goals are not appropriately printed.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

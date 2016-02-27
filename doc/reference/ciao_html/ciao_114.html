@@ -1,654 +1,350 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Foreign Language Interface Properties</TITLE>
+<TITLE>The Ciao Prolog System               - Object oriented programming</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC490" HREF="ciao_toc.html#TOC490">Foreign Language Interface Properties</A></H1>
-<P>
-<A NAME="IDX4808"></A>
-
+<H1><A NAME="SEC473" HREF="ciao_toc.html#TOC473">Object oriented programming</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Jose Morales, Manuel Carro.
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#77 (2001/3/26, 18:45:31 CEST)
+<STRONG>Version of last change:</STRONG> 1.3#63 (1999/9/29, 19:54:17 MEST)
+
+
+<P>
+O'Ciao is a set of libraries which allows object-oriented programming in Ciao Prolog. It extends the Ciao Prolog module system by introducing two new concepts: 
 
 
 
 <UL>
-<LI><A HREF="ciao_114.html#SEC491">Usage and interface (foreign_interface_properties)</A>
-<LI><A HREF="ciao_114.html#SEC492">Documentation on exports (foreign_interface_properties)</A>
-<LI><A HREF="ciao_114.html#SEC493">Documentation on internals (foreign_interface_properties)</A>
-<LI><A HREF="ciao_114.html#SEC494">Known bugs and planned improvements (foreign_interface_properties)</A>
+<LI>Inheritance.
+
+<LI>Instantiation.
+
 </UL>
 
+<P>
+<A NAME="IDX5478"></A>
+<A NAME="IDX5479"></A>
+<EM>Polymorphism</EM> is the third fundamental concept provided by object oriented programming. This concept is not mentioned here since <STRONG>traditional PROLOG systems are polymorphic by nature</STRONG>. 
 
 
-<H2><A NAME="SEC491" HREF="ciao_toc.html#TOC491">Usage and interface (<CODE>foreign_interface_properties</CODE>)</A></H2>
+<P>
+Classes are declared in the same way as modules. However, they may be enriched with inheritance declarations and other object-oriented constructs. For an overview of the fundamentals of O'Ciao, see <A HREF="http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz">http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz</A>. However, we will introduce the concepts in a tutorial way via examples. 
 
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(foreign_interface_properties)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
-
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX4809"></A>
-<CODE>native/1</CODE>, 
-<A NAME="IDX4810"></A>
-<CODE>native/2</CODE>, 
-<A NAME="IDX4811"></A>
-<CODE>size_of/3</CODE>, 
-<A NAME="IDX4812"></A>
-<CODE>foreign/1</CODE>, 
-<A NAME="IDX4813"></A>
-<CODE>foreign/2</CODE>, 
-<A NAME="IDX4814"></A>
-<CODE>returns/2</CODE>, 
-<A NAME="IDX4815"></A>
-<CODE>do_not_free/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX4816"></A>
-<CODE>int_list/1</CODE>, 
-<A NAME="IDX4817"></A>
-<CODE>byte_list/1</CODE>, 
-<A NAME="IDX4818"></A>
-<CODE>byte/1</CODE>, 
-<A NAME="IDX4819"></A>
-<CODE>null/1</CODE>, 
-<A NAME="IDX4820"></A>
-<CODE>address/1</CODE>, 
-<A NAME="IDX4821"></A>
-<CODE>any_term/1</CODE>.
-
+<LI><A HREF="ciao_114.html#SEC474">Early examples</A>
+<LI><A HREF="ciao_114.html#SEC475">Recommendations on when to use objects</A>
+<LI><A HREF="ciao_114.html#SEC476">Limitations on object usage</A>
 </UL>
 
-</UL>
-
-</div class="cartouche">
 
 
-
-<H2><A NAME="SEC492" HREF="ciao_toc.html#TOC492">Documentation on exports (<CODE>foreign_interface_properties</CODE>)</A></H2>
-<P>
-<A NAME="IDX4822"></A>
-<A NAME="IDX4823"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>int_list/1:</B>
-<DD><A NAME="IDX4824"></A>
-
+<H2><A NAME="SEC474" HREF="ciao_toc.html#TOC474">Early examples</A></H2>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>int_list(List)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> is a list of integers.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4825"></A>
-<A NAME="IDX4826"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>byte_list/1:</B>
-<DD><A NAME="IDX4827"></A>
+The following one is a very simple example which declares a class -- a simple stack. Note that if you replace <EM>class/1</EM> declaration with a <EM>module/1</EM> declaration, it will compile correctly, and can be used as a normal Prolog module. 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>byte_list(List)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> is a list of bytes.
+<PRE>
+%%----------------------------------------------%%
+%% A class for stacks.                          %%
+%%----------------------------------------------%%
 
-</UL>
+%% Class declaration: the current source defines a class.
+:- class(stack,[],[]).
 
-</DL>
+% State declaration: storage/1 is an attribute.
+:- dynamic storage/1.
 
-<P>
-<A NAME="IDX4828"></A>
-<A NAME="IDX4829"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>byte/1:</B>
-<DD><A NAME="IDX4830"></A>
+% Interface declaration: the following predicates will
+% be available at run-time.
+:- export(push/1).
+:- export(pop/1).
+:- export(top/1).
+:- export(is_empty/0).
 
+% Methods
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>byte(Byte)</CODE>
+push(Item) :-
+        nonvar(Item), 
+        asserta_fact(storage(Item)).
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Byte</CODE> is a byte.
+pop(Item) :-
+        var(Item),
+        retract_fact(storage(Item)).
 
-</UL>
+top(Top) :-
+        storage(Top), !.
 
-</DL>
+is_empty :-
+        storage(_), !, fail.
+is_empty.
+
+</PRE>
 
 <P>
-<A NAME="IDX4831"></A>
-<A NAME="IDX4832"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>null/1:</B>
-<DD><A NAME="IDX4833"></A>
+If we load this code at the Ciao toplevel shell: 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>null(Address)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Address</CODE> is a null adress.
+<PRE>
+        ?- use_package(objects).
 
-</UL>
+        yes
+        ?- use_class(library('class/examples/stack')).
 
-</DL>
+        yes
+        ?-
+</PRE>
 
 <P>
-<A NAME="IDX4834"></A>
-<A NAME="IDX4835"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>address/1:</B>
-<DD><A NAME="IDX4836"></A>
+we can create two stack <EM>instances</EM> : 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>address(Address)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Address</CODE> is a memory address.
+<PRE>
+        ?- St1 new stack,St2 new stack.
 
-</UL>
-
-</DL>
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? ,
+</PRE>
 
 <P>
-<A NAME="IDX4837"></A>
-<A NAME="IDX4838"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>any_term/1:</B>
-<DD><A NAME="IDX4839"></A>
+and then, we can operate on them separately: 
+
+
+
+<PRE>
+        1 ?- St1:push(8),St2:push(9).
+
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
+
+        yes
+        1 ?- St1:top(I),St2:top(K).
+
+        I = 8,
+        K = 9,
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
+
+        yes
+        1 ?-
+</PRE>
+
+<P>
+The interesting point is that there are two stacks. If the previous example had been a normal module, we would have a stack , but <STRONG>only one</STRONG> stack. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>any_term(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is any term. The foreign interface passes it to C functions as a general term.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4840"></A>
-<A NAME="IDX4841"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>native/1:</B>
-<DD><A NAME="IDX4842"></A>
+The next example introduces the concepts of <EM>inheritable</EM> predicate, <EM>constructor</EM>, <EM>destructor</EM> and <EM>virtual method</EM>. Refer to the following sections for further explanation. 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>native(Name)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
+<PRE>
+%%----------------------------------------------%%
+%% A generic class for item storage.            %%
+%%----------------------------------------------%%
+:- class(generic).
 
-<A NAME="IDX4843"></A>
-<CODE>Name</CODE> is implemented using the function <CODE>Name</CODE>. The implementation is not a common C one, but it accesses directly the internal Ciao Prolog data structures and functions, and therefore no glue code is generated for it. 
-</UL>
+% Public interface declaration:
+:- export([set/1,get/1,callme/0]).
 
-</DL>
+% An attribute
+:- data datum/1.
 
-<P>
-<A NAME="IDX4844"></A>
-<A NAME="IDX4845"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>native/2:</B>
-<DD><A NAME="IDX4846"></A>
+% Inheritance declaration: datum/1 will be available to 
+% descendant classes (if any).
+:- inheritable(datum/1).
 
+% Attribute initialization: attributes are easily initialized
+% by writing clauses for them.
+datum(none).
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>native(PrologName,ForeignName)</CODE>
+% Methods
 
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
+set(X) :-
+        type_check(X),
+        set_fact(datum(X)).
 
-<A NAME="IDX4847"></A>
-<CODE>PrologName</CODE> is implemented using the function prolog_<CODE>ForeignName</CODE>. The same considerations as above example are to be applied. 
-</UL>
+get(X) :-
+        datum(X).
 
-</DL>
+callme :-
+        a_virtual(IMPL),
+        display(IMPL),
+        display(' implementation of a_virtual/0 '),
+        nl.
 
-<P>
-<A NAME="IDX4848"></A>
-<A NAME="IDX4849"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>size_of/3:</B>
-<DD><A NAME="IDX4850"></A>
+% Constructor: in this case, every time an instance
+% of this class is created, it will display a message.
+generic :-
+        display(' generic class constructor '),
+        nl.
 
+% Destructor: analogous to the previous constructor,
+% it will display a message every time an instance
+% of this class is eliminated.
+destructor :-
+        display(' generic class destructor '),
+        nl.
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>size_of(Name,ListVar,SizeVar)</CODE>
+% Predicates:
+% cannot be called as messages (X:method)
 
-<UL>
-<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the size of the argument of type
+% Virtual declaration: tells the system to use the most
+% descendant implementation of a_virtual/1 when calling
+% it from inside this code (see callme/0).
+% If there is no descendant implementation for it, 
+% the one defined bellow will be used.
+:- virtual a_virtual/1.
 
-<A NAME="IDX4851"></A>
-<CODE>byte_list/1</CODE>, <CODE>ListVar</CODE>, is given by the argument of type integer <CODE>SizeVar</CODE>. 
-</UL>
+a_virtual(generic).
 
-</DL>
+:- virtual type_check/1.
 
-<P>
-<A NAME="IDX4852"></A>
-<A NAME="IDX4853"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>foreign/1:</B>
-<DD><A NAME="IDX4854"></A>
+type_check(X) :-
+        nonvar(X).
 
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>foreign(Name)</CODE>
+And the following example, is an extension of previous class. This is performed by establishing an inheritance relationship: 
 
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
 
-<A NAME="IDX4855"></A>
-<CODE>Name</CODE> is implemented using the foreign function <CODE>Name</CODE>. 
-</UL>
 
-</DL>
+<PRE>
+%%----------------------------------------------%%
+%% This class provides additional functionality %%
+%% to the "generic" class.                      %%
+%%----------------------------------------------%%
+:- class(specific).
+
+% Establish an inheritance relationship with class "generic".
+:- inherit_class(library('class/examples/generic')).
+
+% Override inherited datum/1.
+% datum/1 is said to be overriden because there are both an
+% inherited definition (from class "generic") and a local one,
+% which overrides the one inherited.
+:- data datum/1. 
+:- inheritable datum/1.
+
+% Extend the public interface inherited from "generic".
+% note that set/1 and a_virtual/0 are also overriden. 
+% undo/0 is a new functionality added.
+:- export([set/1,undo/0]).
+
+% Methods
+
+set(Value) :-
+        inherited datum(OldValue),
+        !,
+        inherited set(Value),
+        asserta_fact(datum(OldValue)).
+set(Value) :-
+        inherited set(Value).
+
+undo :-
+        retract_fact(datum(Last)), !,
+        asserta_fact(inherited(datum(Last))).
+undo :-
+        retractall_fact(inherited(datum(_))).
+
+% Constructor
+specific :-
+        generic,
+        retractall_fact(inherited(datum(_))),
+        display(' specific class constructor '),
+        nl.
+
+% Destructor
+destructor :-
+        display(' specific class destructor '),
+        nl.
+
+% Predicates
+
+% New implementation of a_virtual/1. 
+% Since this predicate was declared virtual, the
+% implementation below will be called from the inherited 
+% method callme/0 instead of the version defined at "generic".
+a_virtual(specific).
+
+</PRE>
 
 <P>
-<A NAME="IDX4856"></A>
-<A NAME="IDX4857"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>foreign/2:</B>
-<DD><A NAME="IDX4858"></A>
+<STRONG>Additional examples</STRONG> may be found on the <EM>library/class/examples</EM> directory relative to your Ciao Prolog instalation. 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>foreign(PrologName,ForeignName)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> The Prolog predicate
 
-<A NAME="IDX4859"></A>
-<CODE>PrologName</CODE> is implemented using the foreign function <CODE>ForeignName</CODE>. 
-</UL>
-
-</DL>
+<H2><A NAME="SEC475" HREF="ciao_toc.html#TOC475">Recommendations on when to use objects</A></H2>
 
 <P>
-<A NAME="IDX4860"></A>
-<A NAME="IDX4861"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>returns/2:</B>
-<DD><A NAME="IDX4862"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>returns(Name,Var)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The result of the foreign function that implements the Prolog predicate
-
-<A NAME="IDX4863"></A>
-<CODE>Name</CODE> is unified with the Prolog variable <CODE>Var</CODE>. Cannot be used without 
-<A NAME="IDX4864"></A>
-<CODE>foreign/1</CODE> or 
-<A NAME="IDX4865"></A>
-<CODE>foreign/2</CODE>. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4866"></A>
-<A NAME="IDX4867"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>do_not_free/2:</B>
-<DD><A NAME="IDX4868"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>do_not_free(Name,Var)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the C argument passed to (returned from) the foreign function will not be freed after calling the foreign function.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC493" HREF="ciao_toc.html#TOC493">Documentation on internals (<CODE>foreign_interface_properties</CODE>)</A></H2>
-<P>
-<A NAME="IDX4869"></A>
-<A NAME="IDX4870"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/1:</B>
-<DD><A NAME="IDX4871"></A>
+We would like to give some advice in the use of object oriented programming, in conjunction with the declarative paradigm. 
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(Files)</CODE>.
+You should reconsider using O'Ciao in the following cases: 
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Files</CODE> is the (list of) foreign file(s) that will be linked with the glue-code file.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Files</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4872"></A>
-<A NAME="IDX4873"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/2:</B>
-<DD><A NAME="IDX4874"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(OsArch,Files)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Files</CODE> are the OS and architecture dependant foreign files. This allows compiling and linking different files depending on the O.S. and architecture.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Files</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4875"></A>
-<A NAME="IDX4876"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/1:</B>
-<DD><A NAME="IDX4877"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(Libs)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Libs</CODE> is the (list of) external library(es) needed to link the C files. Only the short name of the library (i.e., what would follow the <CODE>-l</CODE> in the linker is needed.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Libs</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4878"></A>
-<A NAME="IDX4879"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/2:</B>
-<DD><A NAME="IDX4880"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(OsArch,Libs)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Libs</CODE> are the OS and architecture dependant libraries.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Libs</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4881"></A>
-<A NAME="IDX4882"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/1:</B>
-<DD><A NAME="IDX4883"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional compiler options (e.g., optimization options) that will be used during the compilation.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4884"></A>
-<A NAME="IDX4885"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/2:</B>
-<DD><A NAME="IDX4886"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(OsArch,Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional compiler options.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4887"></A>
-<A NAME="IDX4888"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_compiler/1:</B>
-<DD><A NAME="IDX4889"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_compiler(Compiler)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file. When this option is used, the default (Ciao-provided) compiler options are not used; those specified in
-
-<A NAME="IDX4890"></A>
-<CODE>extra_compiler_options</CODE> are used instead. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Compiler</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4891"></A>
-<A NAME="IDX4892"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_compiler/2:</B>
-<DD><A NAME="IDX4893"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_compiler(OsArch,Compiler)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the compiler to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
-
-<A NAME="IDX4894"></A>
-<CODE>use_compiler/2</CODE>. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Compiler</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4895"></A>
-<A NAME="IDX4896"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/1:</B>
-<DD><A NAME="IDX4897"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional linker options that will be used during the linkage.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4898"></A>
-<A NAME="IDX4899"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/2:</B>
-<DD><A NAME="IDX4900"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(OsArch,Opts)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional linker options.
-
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Opts</CODE> is an atom or a list of atoms.
- (<CODE>basic_props:atm_or_atm_list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4901"></A>
-<A NAME="IDX4902"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_linker/1:</B>
-<DD><A NAME="IDX4903"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_linker(Linker)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Linker</CODE> is the linker to use in this file. When this option is used, the default (Ciao-provided) linker options are not used; those specified in
-
-<A NAME="IDX4904"></A>
-<CODE>extra_linker_options/1</CODE> are used instead. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Linker</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4905"></A>
-<A NAME="IDX4906"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_linker/2:</B>
-<DD><A NAME="IDX4907"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>use_linker(OsArch,Linker)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Compiler</CODE> is the linker to use in this file when compiling for the architecture <CODE>OsArch</CODE>. The option management is the same as in
-
-<A NAME="IDX4908"></A>
-<CODE>use_compiler/2</CODE>. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>OsArch</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Linker</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC494" HREF="ciao_toc.html#TOC494">Known bugs and planned improvements (<CODE>foreign_interface_properties</CODE>)</A></H2>
 
 
 <UL>
 
-<LI>
+<LI>The pretended "objects" have no state,i.e., no data or dynamic predicates. In this case, a normal module will suffice.
 
-The <CODE>size_of/3</CODE> property has an empty definition
+<LI>There is state, but there will be only one instance of a pretended class. Again, a module suffices.
+
+<LI>The "objects" are data structures (list,trees,etc) already supported by Prolog. However, it does make sense to model, using objects, data structures whose change implies a side-effect such as drawing a particular window on the screen.
+
 </UL>
+
+<P>
+We recommend the usage of O'Ciao in the following cases: 
+
+
+
+<UL>
+
+<LI>You feel you will need to have several copies of a "module".
+
+<LI>Local copies of a module are needed instead of a global module beeing modified by several ones.
+
+<LI>The "classes" are a representation of external entities to Prolog. For example: the X-Window system.
+
+<LI>There is state or code outside the Prolog system which needs to be manipulated. For example: interfaces to Java or Tcl/Tk code.
+
+<LI>You are not familiar with Prolog, but you know about object oriented programming. O'Ciao may be used as a learning tool to introduce yourself on the declarative programming paradigm.
+
+</UL>
+
+
+
+<H2><A NAME="SEC476" HREF="ciao_toc.html#TOC476">Limitations on object usage</A></H2>
+
+<P>
+O'Ciao run-time speed is limited by the usage of meta-programming structures, for instance: <CODE>X = (Object:mymethod(25)), call(X)</CODE>. O'Ciao will optimize static manipulation of objects (those that can be determined at compile time). 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

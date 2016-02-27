@@ -1,41 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - error (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Depict barchart widgets - 4</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC782" HREF="ciao_toc.html#TOC782">error (library)</A></H1>
+<H1><A NAME="SEC792" HREF="ciao_toc.html#TOC792">Depict barchart widgets - 4</A></H1>
 <P>
-<A NAME="IDX7834"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+<A NAME="IDX8657"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1#3 (1998/12/14, 19:14:44 MET)
+<STRONG>Author(s):</STRONG> Isabel Martín.
 
 
 <P>
-This file implements error predicates of different types.
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#268 (2004/1/1, 14:15:51 CET)
+
+
+<P>
+This module defines predicates which depict barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window and are similar to those exported in genbar2 module except in that those defined in this module doesn't display a legend. Thus, the user does not have to define legend element names. 
+
+
+<P>
+The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes . 
 
 
 
 <UL>
-<LI><A HREF="ciao_199.html#SEC783">Usage and interface (error)</A>
-<LI><A HREF="ciao_199.html#SEC784">Documentation on exports (error)</A>
+<LI><A HREF="ciao_199.html#SEC793">Usage and interface (genbar4)</A>
+<LI><A HREF="ciao_199.html#SEC794">Documentation on exports (genbar4)</A>
+<LI><A HREF="ciao_199.html#SEC795">Documentation on internals (genbar4)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Usage and interface (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC793" HREF="ciao_toc.html#TOC793">Usage and interface (<CODE>genbar4</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +52,7 @@ This file implements error predicates of different types.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(error)).</CODE>
+<CODE>:- use_module(library(genbar4)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,10 +61,36 @@ This file implements error predicates of different types.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7835"></A>
-<CODE>error_vrml/1</CODE>, 
-<A NAME="IDX7836"></A>
-<CODE>output_error/1</CODE>.
+<A NAME="IDX8658"></A>
+<CODE>barchart4/7</CODE>, 
+<A NAME="IDX8659"></A>
+<CODE>barchart4/11</CODE>, 
+<A NAME="IDX8660"></A>
+<CODE>percentbarchart4/7</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX8661"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX8662"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX8663"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX8664"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX8665"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX8666"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX8667"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -65,52 +100,157 @@ This file implements error predicates of different types.
 
 
 
-<H2><A NAME="SEC784" HREF="ciao_toc.html#TOC784">Documentation on exports (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC794" HREF="ciao_toc.html#TOC794">Documentation on exports (<CODE>genbar4</CODE>)</A></H2>
 <P>
-<A NAME="IDX7837"></A>
-<A NAME="IDX7838"></A>
+<A NAME="IDX8668"></A>
+<A NAME="IDX8669"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
-<DD><A NAME="IDX7839"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart4/7:</B>
+<DD><A NAME="IDX8670"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>error_vrml(+Structure)</CODE>
+<CODE>barchart4(Header, BarchartTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+As we mentioned in the above paragraph, this predicate is comparable to 
+<A NAME="IDX8671"></A>
+<CODE>barchart2/8</CODE> except in the <CODE>XVector</CODE> argument type. 
 
-<CODE>+Structure</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
+
+<P>
+Example: 
+
+<PRE>
+barchart4('This is the header text',
+  'Barchart without legend',
+  'My xaxistitle',
+  [[2],[5],[6]],
+  'My yaxixtitle',
+  [20,10,59],
+  'Numeric values in the xaxis').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7840"></A>
-<A NAME="IDX7841"></A>
+<A NAME="IDX8672"></A>
+<A NAME="IDX8673"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
-<DD><A NAME="IDX7842"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart4/11:</B>
+<DD><A NAME="IDX8674"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>output_error(+Message)</CODE>
+<CODE>barchart4(Hder, BT, XT, XVector, XMax, XMin, YT, YVector, YMax, YMin, Fter)</CODE>
+
+
+<P>
+As we stated before, this predicate is quite similar to 
+<A NAME="IDX8675"></A>
+<CODE>barchart2/10</CODE> except in the following aspects: 
+
+
 
 <UL>
-<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>The <CODE>XVector</CODE> argument type, because the yielded bar chart lacks the legend.
 
-<CODE>+Message</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<LI>The user can set limits for both <CODE>x</CODE> axis and <CODE>y</CODE> axis.
+
 </UL>
+
+<P>
+Example: 
+
+<PRE>
+barchart4('This is the header text, you can write a graph description',
+  'Barchart without legend',
+  'My xaxistitle',
+  [[2,'Blue','Yellow','pattern1'],
+       [20,'MediumTurquoise','Plum','pattern5'],
+       [30,'MediumTurquoise','Green','pattern5']],
+  50,
+  -10,
+  'My yaxixtitle',
+  [20,10,59],
+  100,
+  -10,
+  'Numeric values in the xaxis').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX8676"></A>
+<A NAME="IDX8677"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart4/7:</B>
+<DD><A NAME="IDX8678"></A>
+
+
+<P>
+<CODE>percentbarchart4(Header, BTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
+
+
+<P>
+The y axis maximum coordinate value is 100. The x axis limits are automatically worked out. This predicate is useful when the bar height represents percentages. 
+
+
+<P>
+Example: 
+
+
+
+<PRE>
+percentbarchart4('This is the header text',
+  'Barchart without legend',
+  'My xaxistitle',
+  [[2,'Blue','Yellow','pattern1'],[5,'Yellow','Plum','pattern5'],
+       [6,'MediumTurquoise','Green','pattern5']],
+  'My yaxixtitle',
+  [20,10,59],
+  'Numeric values in the xaxis').
+</PRE>
+
+</DL>
+
+
+
+<H2><A NAME="SEC795" HREF="ciao_toc.html#TOC795">Documentation on internals (<CODE>genbar4</CODE>)</A></H2>
+<P>
+<A NAME="IDX8679"></A>
+<A NAME="IDX8680"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>xbarelement4/1:</B>
+<DD><A NAME="IDX8681"></A>
+
+
+<P>
+Defines the attributes of the bar. 
+<DL COMPACT>
+
+<DT><CODE>XValue</CODE>
+<DD>
+x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
+
+<DT><CODE>ForegColor</CODE>
+<DD>
+It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>BackgColor</CODE>
+<DD>
+It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>SPattern</CODE>
+<DD>
+It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+</DL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

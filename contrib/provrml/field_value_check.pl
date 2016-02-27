@@ -5,6 +5,7 @@
           assertions,
           isomodes]).
 
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
 
 :- include(library(assertions)).
 :- use_module(library(lists)).
@@ -33,6 +34,9 @@
 %:- discontiguous([token_read/3]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+:- comment(version(1*9+176,2003/12/04,17:47*53+'CET'), "Added author
+info.  (Manuel Carro)").
+
 :- comment(version(0*1+0,1998/12/09,14:36*55+'MET'), "Adding comments.
    (Goran Smedback)").
 
@@ -510,6 +514,6 @@ count_numbers([_Number|Rest],In) :-
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
-%% update-version-comments: "../../version"
 %% End:
 
+:- comment(version_maintenance,dir('../../version')).

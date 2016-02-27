@@ -1,48 +1,47 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 12 December 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Call on determinate</TITLE>
+<TITLE>The Ciao Prolog System               - Higher-order</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC399" HREF="ciao_toc.html#TOC399">Call on determinate</A></H1>
+<H1><A NAME="SEC402" HREF="ciao_toc.html#TOC402">Higher-order</A></H1>
 <P>
-<A NAME="IDX4376"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jos&eacute; Morales, Manuel Carro.
+<A NAME="IDX5234"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#149 (2001/11/19, 19:17:51 CET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza Gras.
 
 
 <P>
-Offers an enriched variant of call and cut <CODE>!!/0</CODE> which executes pending goals when the computation has no more alternatives. 
+<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
 
 
 <P>
-This library is useful to, for example, get rid of external connections once the necessary data has been obtained.
+<STRONG>Version of last change:</STRONG> 1.9#226 (2003/12/22, 16:47:31 CET)
+
+
+<P>
+This module is a wrapper to the implementation defined predicate 
+<A NAME="IDX5235"></A>
+<CODE>call/2</CODE>
 
 
 
 <UL>
-<LI><A HREF="ciao_97.html#SEC400">Usage and interface (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC401">Documentation on exports (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC402">Documentation on internals (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC403">Other information (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC404">Known bugs and planned improvements (det_hook_rt)</A>
+<LI><A HREF="ciao_97.html#SEC403">Usage and interface (hiord_rt)</A>
+<LI><A HREF="ciao_97.html#SEC404">Documentation on exports (hiord_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC400" HREF="ciao_toc.html#TOC400">Usage and interface (<CODE>det_hook_rt</CODE>)</A></H2>
+<H2><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Usage and interface (<CODE>hiord_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -50,18 +49,7 @@ This library is useful to, for example, get rid of external connections once the
 
 <LI><STRONG>Library usage:</STRONG>
 
-
-<PRE>
-:- use_module(library(det_hook_rt)).
-</PRE>
-
-in which case, <CODE>!!/0</CODE> is not available. 
-
-Typically, this library is used as a package: 
-
-<PRE>
-:- use_package(det_hook).
-</PRE>
+<CODE>:- use_module(library(hiord_rt)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -70,8 +58,8 @@ Typically, this library is used as a package:
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4377"></A>
-<CODE>det_try/3</CODE>.
+<A NAME="IDX5236"></A>
+<CODE>call/2</CODE>.
 
 </UL>
 
@@ -81,135 +69,38 @@ Typically, this library is used as a package:
 
 
 
-<H2><A NAME="SEC401" HREF="ciao_toc.html#TOC401">Documentation on exports (<CODE>det_hook_rt</CODE>)</A></H2>
+<H2><A NAME="SEC404" HREF="ciao_toc.html#TOC404">Documentation on exports (<CODE>hiord_rt</CODE>)</A></H2>
 <P>
-<A NAME="IDX4378"></A>
-<A NAME="IDX4379"></A>
+<A NAME="IDX5237"></A>
+<A NAME="IDX5238"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>det_try/3:</B>
-<DD><A NAME="IDX4380"></A>
+<DT><span class="define">PREDICATE:</span> <B>call/2:</B>
+<DD><A NAME="IDX5239"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>det_try(goal,goal,goal)</CODE>.
+<CODE>call(Pred, Arg1)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>det_try(Goal,OnCut,OnFail)</CODE>
+There exists a set of builtin predicates of the form 
+<A NAME="IDX5240"></A>
+<CODE>call/N</CODE> with <CODE>N &#62; 1</CODE> which execute predicate <CODE>Pred</CODE> given arguments <CODE>Arg1</CODE> ... <CODE>ArgX</CODE>. If <CODE>Pred</CODE> has already arguments <CODE>Arg1</CODE> is added to the start, the rest to the end. This predicate, when <CODE>Pred</CODE> is a variable, can be written using the special Ciao syntax <CODE>Pred(Arg1,...,ArgX)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Action</CODE> is called, and <CODE>OnCut</CODE> and <CODE>OnFail</CODE> are goals to be executed when <CODE>Goal</CODE> is cut or when it finitely fails, respectively. In order for this to work, cutting must be performed in a special way, by usin the
-
-<A NAME="IDX4381"></A>
-<CODE>!!/0</CODE> predicate, also provided by this module. 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>OnCut</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>OnFail</CODE> is a term which represents a goal, i.e., an atom or a structure.
+<CODE>Pred</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
-
-
-
-<H2><A NAME="SEC402" HREF="ciao_toc.html#TOC402">Documentation on internals (<CODE>det_hook_rt</CODE>)</A></H2>
-<P>
-<A NAME="IDX4382"></A>
-<A NAME="IDX4383"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>!!/0:</B>
-<DD><A NAME="IDX4384"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Performs a special cut which prunes alternatives away, as the usual cut, but which also executes the goals specified as <CODE>OnCut</CODE> for any call in the scope of the cut.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Other information (<CODE>det_hook_rt</CODE>)</A></H2>
-
-<P>
-As an example, the program 
-
-
-
-<PRE>
-:- module(_, _, [det_hook]).
-
-enumerate(X):-
-        display(enumerating), nl,
-        OnCut = (display('goal cut'), nl),
-        OnFail = (display('goal failed'), nl),
-        det_try(enum(X), OnCut, OnFail).
-
-enum(1).
-enum(2).
-enum(3).
-</PRE>
-
-<P>
-behaves as follows: 
-
-
-
-<PRE>
-?- enumerate(X).
-enumerating
-
-X = 1 ? ;
-
-X = 2 ? ;
-
-X = 3 ? ;
-goal failed
-</PRE>
-
-<P>
-(note the message inserted on failure). The execution can be cut as follows: 
-
-
-
-<PRE>
-?- use_package(det_hook).
-{Including /home/clip/lib/ciao/ciao-1.7/library/det_hook/det_hook.pl
-}
-
-yes
-?- enumerate(X), '!!'.
-enumerating
-goal cut
-
-X = 1 ? ;
-
-no
-</PRE>
-
-
-
-<H2><A NAME="SEC404" HREF="ciao_toc.html#TOC404">Known bugs and planned improvements (<CODE>det_hook_rt</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-If the started goals do not exhaust their solutions, and '!!'/0 is not used, the database will populate with facts which will be consulted the next time a '!!'/0 is used. This could cause incorrect executions.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

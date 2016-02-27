@@ -7,6 +7,9 @@
 
 /* SIMPLE TYPES  & various CONSTANTS    -------------------------------   */
 
+#if !defined(__TERM_DEFS__H__)
+#define __TERM_DEFS__H__
+
 #define ANY 1                /* ?? or 0  - for dynamic arrays in bytecode */
 #define SAME 0
 
@@ -22,6 +25,11 @@ typedef int BOOL;		/* Win32 includes this definition */
 
 typedef long ENG_INT;
 typedef double ENG_FLT;
+#if defined(ppc)
+typedef double ENG_LFLT;
+#else
+typedef long double ENG_LFLT;
+#endif
 
 /*** TAGGED DATATYPES --------------------------------***/
 
@@ -156,7 +164,7 @@ typedef double ENG_FLT;
 #define GetSmall(X)	((ENG_INT)(((X)>>SmallShift)-(TaggedZero>>SmallShift)))
 #define GetString(X)	(TagToAtom(X)->name)
 
-/* #define USE_ATOM_LEN */                                       /* MCL */
+#define USE_ATOM_LEN
 
 #if defined(USE_ATOM_LEN)
 #define GetAtomLen(X)   (TagToAtom(X)->atom_len)
@@ -512,3 +520,4 @@ typedef unsigned long Bignum;
 /* Deposit Source into Mask:ed portion of Dest */
 #define Deposit(Source,Mask,Dest) (((Source)&(Mask))|((Dest)& ~(Mask)))
 
+#endif

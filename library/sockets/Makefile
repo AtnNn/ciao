@@ -1,5 +1,5 @@
 MODULE=sockets_c
-ADDITIONAL_FILES=sockets
+ADDITIONAL_FILES=sockets sockets_io
 
 include ../../SETTINGS
 include ../../SHARED
@@ -28,14 +28,14 @@ $(LIBNAME): headers $(OBJNAME)
 
 $(OBJNAME): headers $(SRCNAME)
 	$(CC) $(CFLAGS) $(CCSHARED) -c $(SRCNAME) -o $(OBJNAME)
-	-chmod $(DATAMODE) *.o
+	-chmod $(DATAMODE) $(OBJNAME)
 
 headers:
 	/bin/rm -f  $(HEADERS)
-	echo \#include \"$(SRC)/bin/$(CIAOARCH)/datadefs.h\" > $(HEADERS)
-	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support.h\" >> $(HEADERS)
-	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support_defs.h\" >> $(HEADERS)
-	echo \#include \"$(SRC)/bin/$(CIAOARCH)/stacks_defs.h\" >> $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)$(CIAODEBUG)/datadefs.h\" > $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)$(CIAODEBUG)/support.h\" >> $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)$(CIAODEBUG)/support_defs.h\" >> $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)$(CIAODEBUG)/stacks_defs.h\" >> $(HEADERS)
 	-chmod $(DATAMODE) $(HEADERS)
 
 clean:
@@ -53,5 +53,5 @@ allarchs:
 		echo -------------------------------------------- ; \
 		echo ; \
 		echo Making in $$machine; \
-		echo "unsetenv CIAODEBUG; cd $(SRC)/library/sockets; gmake" | rsh $$machine csh; \
+		echo "unsetenv CIAODEBUG; cd $(SRC)/library/sockets; $(MAKE)" | rsh $$machine csh; \
 	done
