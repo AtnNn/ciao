@@ -1,0 +1,69 @@
+# Misc. options, depending on the SETTINGS file
+
+ifeq ($(DEBUG_LEVEL),profile)
+    DEBUG_FLAGS=-pg -DPROFILE -DDEBUG
+    PROFILE_LD_FLAGS=-pg
+endif
+
+
+# Optimizations for LINUX 386
+
+ifeq ($(OPTIM_LEVEL),optimized)
+    OPTIM_FLAGS=-O2 -fomit-frame-pointer -malign-loops=2 -malign-jumps=2 -malign-functions=2
+endif
+
+
+# Threads and locks in LINUX
+ifeq ($(USE_THREADS),yes)
+    LD_THREAD_LIB=-lpthread
+    LD_LOCK_LIB=
+ifeq ($(USE_POSIX_LOCKS),yes)
+    THREAD_FLAG=-D_REENTRANT -DTHREADS -DUSE_POSIX_THREADS -DPOSIX_LOCKS
+else
+    THREAD_FLAG=-D_REENTRANT -DTHREADS -DUSE_POSIX_THREADS
+endif
+else
+    LD_THREAD_LIB=
+    THREAD_FLAG=
+endif
+
+FOREIGN_FILES_FLAG=-DFOREIGN_FILES
+
+# C compiler
+CC=gcc
+
+# Linker
+LD=gcc
+
+# C compiler options for generating shared libraries code
+CCSHARED=-fPIC
+
+# Linker options for shared objects
+LDSHARED=-shared
+
+# Name of the standard ciao library
+CIAOLIBNAME=libciao.a
+
+LIBS=-ldl -lm $(LD_THREAD_LIB) $(LD_LOCK_LIB) $(DEBUG_LIBS)
+
+# LINUX linker specific options
+# "-rdynamic" allows the dynamic libraries symbols to be resolved against
+# those defined in ciaoengine
+
+LDFLAGS=-rdynamic $(PROFILE_LD_FLAGS)
+
+STAT_LIBS=
+
+ARCHNAME=i86
+
+# Operating system version
+OSNAME=LINUX
+
+# How to install an make directories
+MKDIR="mkdir -p"
+INSTALL=install
+
+# Making etags
+ETAGS=etags -t *.[ch]
+
+DEFAULTYPE=dyn

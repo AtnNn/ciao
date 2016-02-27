@@ -1,0 +1,377 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Control constructs/predicates</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_14.html">previous</A>, <A HREF="ciao_16.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC73" HREF="ciao_toc.html#TOC73">Control constructs/predicates</A></H1>
+<P>
+<A NAME="IDX741"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#99 (1999/11/12, 16:28:6 MET)
+
+
+<P>
+This module contains the set of basic control predicates, except the predicates dealing with exceptions, which are in section <A HREF="ciao_25.html#SEC105">Exception handling</A>.
+
+
+
+<UL>
+<LI><A HREF="ciao_15.html#SEC74">Usage and interface (basiccontrol)</A>
+<LI><A HREF="ciao_15.html#SEC75">Documentation on exports (basiccontrol)</A>
+<LI><A HREF="ciao_15.html#SEC76">Documentation on internals (basiccontrol)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC74" HREF="ciao_toc.html#TOC74">Usage and interface (<CODE>basiccontrol</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+These predicates/constructs are builtin in CIAO, so nothing special has to be done to use them. In fact, as they are hardwired in some parts of the system, most of them cannot be redefined.
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX742"></A>
+<CODE>,/2</CODE>, 
+<A NAME="IDX743"></A>
+<CODE>;/2</CODE>, 
+<A NAME="IDX744"></A>
+<CODE>-&#62;/2</CODE>, 
+<A NAME="IDX745"></A>
+<CODE>!/0</CODE>, 
+<A NAME="IDX746"></A>
+<CODE>\+/1</CODE>, 
+<A NAME="IDX747"></A>
+<CODE>if/3</CODE>, 
+<A NAME="IDX748"></A>
+<CODE>true/0</CODE>, 
+<A NAME="IDX749"></A>
+<CODE>fail/0</CODE>, 
+<A NAME="IDX750"></A>
+<CODE>repeat/0</CODE>, 
+<A NAME="IDX751"></A>
+<CODE>call/1</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC75" HREF="ciao_toc.html#TOC75">Documentation on exports (<CODE>basiccontrol</CODE>)</A></H2>
+<P>
+<A NAME="IDX752"></A>
+<A NAME="IDX753"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>,/2:</B>
+<DD><A NAME="IDX754"></A>
+
+
+<P>
+<CODE>P , Q</CODE>
+
+
+<P>
+Conjunction (<CODE>P</CODE> <EM>and</EM> <CODE>Q</CODE>).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>+callable , +callable</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX755"></A>
+<A NAME="IDX756"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>;/2:</B>
+<DD><A NAME="IDX757"></A>
+
+
+<P>
+<CODE>P ; Q</CODE>
+
+
+<P>
+Disjunction (<CODE>P</CODE> <EM>or</EM> <CODE>Q</CODE>).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>+callable ; +callable</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX758"></A>
+<A NAME="IDX759"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>-&#62;/2:</B>
+<DD><A NAME="IDX760"></A>
+
+
+<P>
+<CODE>P -&#62; Q</CODE>
+
+
+<P>
+If <CODE>P</CODE> then <CODE>Q</CODE> else fail, using first solution of <CODE>P</CODE> only. Also, <CODE>(</CODE><CODE>P</CODE> <CODE>-&#62;</CODE> <CODE>Q</CODE> <CODE>;</CODE> <CODE>R</CODE><CODE>)</CODE>, if <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, using first solution of <CODE>P</CODE> only. No cuts are allowed in <CODE>P</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>+callable -&#62; +callable</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX761"></A>
+<A NAME="IDX762"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>!/0:</B>
+<DD><A NAME="IDX763"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Commit to any choices taken in the current predicate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX764"></A>
+<A NAME="IDX765"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>\+/1:</B>
+<DD><A NAME="IDX766"></A>
+
+
+<P>
+<CODE>\+ P</CODE>
+
+
+<P>
+Goal <CODE>P</CODE> is not provable (negation by failure). Fails if <CODE>P</CODE> has a solution, and succeeds otherwise. No cuts are allowed in <CODE>P</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>\+ +callable</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX767"></A>
+<A NAME="IDX768"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>if/3:</B>
+<DD><A NAME="IDX769"></A>
+
+
+<P>
+<CODE>if(P,Q,R)</CODE>
+
+
+<P>
+If <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, exploring all solutions of <CODE>P</CODE>. No cuts are allowed in <CODE>P</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>if(+callable,+callable,+callable)</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX770"></A>
+<A NAME="IDX771"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>true/0:</B>
+<DD><A NAME="IDX772"></A>
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Succeed (noop).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX773"></A>
+<A NAME="IDX774"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fail/0:</B>
+<DD><A NAME="IDX775"></A>
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Fail, backtrack immediately.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX776"></A>
+<A NAME="IDX777"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>repeat/0:</B>
+<DD><A NAME="IDX778"></A>
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Generates an infinite sequence of backtracking choices.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX779"></A>
+<A NAME="IDX780"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call/1:</B>
+<DD><A NAME="IDX781"></A>
+
+
+<P>
+<CODE>call(G)</CODE>
+
+
+<P>
+Executes goal <CODE>G</CODE>, restricting the scope of the cuts to the execution of <CODE>G</CODE>. Writing a variable <CODE>G</CODE> in a goal position is equivalent.
+
+
+<P>
+<EM>Meta-predicate</EM> of type <EM>implicit</EM> with arguments: <CODE>call(goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>call(+callable)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC76" HREF="ciao_toc.html#TOC76">Documentation on internals (<CODE>basiccontrol</CODE>)</A></H2>
+<P>
+<A NAME="IDX782"></A>
+<A NAME="IDX783"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>|/2:</B>
+<DD><A NAME="IDX784"></A>
+
+
+<P>
+An alias for disjunction (when appearing outside a list). The alias is performed when terms are read in.
+
+
+</DL>
+
+<P>
+<A NAME="IDX785"></A>
+<A NAME="IDX786"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call/2:</B>
+<DD><A NAME="IDX787"></A>
+
+
+<P>
+<CODE>call(Pred,Arg1)</CODE>
+
+
+<P>
+There exists a set of builtin predicates of the form 
+<A NAME="IDX788"></A>
+<CODE>call/N</CODE> such that execute predicate <CODE>Pred</CODE> given arguments <CODE>Arg1</CODE> ... <CODE>ArgX</CODE>, if <CODE>Pred</CODE> has already arguments the new ones are added to the start. This predicate can be written using the special Ciao syntax <CODE>Pred(Arg1,...,ArgX)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>call(+callable,?)</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_14.html">previous</A>, <A HREF="ciao_16.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

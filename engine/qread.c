@@ -1,0 +1,332 @@
+/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+
+#include "datadefs.h"
+#include "support.h"
+#include "qinstrdefs.h"
+
+/* declarations for global functions accessed here */
+
+#include "qread_defs.h"
+#include "alloc_defs.h"
+#include "qget_defs.h"
+#include "stacks_defs.h"
+
+/* local declarations */
+
+static void load_dbnode(Argdecl, int Li, FILE *f, int codelength, int counter_cnt);
+
+
+#define QL(I)	qlarray[I]
+#define QLCHECK(I) \
+{ if ((I)+qloffset >= qllimit) expand_qload(); }
+
+struct qlinfo {
+    struct qlinfo *next;
+    TAGGED *qlarray;
+    int qloffset;
+    int qllimit;
+};
+
+#define GETC(f) getc(f)
+
+extern int getshort PROTO((FILE *file));
+extern TAGGED getlarge PROTO((Argdecl, FILE *file));
+extern ENG_INT getlong PROTO((FILE *file));
+extern ENG_FLT getdouble PROTO((FILE *file));
+extern char *getstring PROTO((FILE *file));
+
+TAGGED *qlarray=NULL;                   /* Shared, but with locked access */
+int qloffset=0, qllimit=0;                       /* Shared, locked access */
+struct qlinfo *qlstack=NULL;                     /* Shared, locked access */
+
+BOOL push_qlinfo(Arg)
+     Argdecl;
+{
+  struct qlinfo *p = (struct qlinfo *)checkalloc(sizeof(struct qlinfo));
+  
+  p->next = qlstack;
+  qlstack = p;
+  p->qllimit = qllimit;
+  p->qloffset = qloffset;
+  p->qlarray = qlarray;
+  qllimit = QLOADSIZE;
+  qloffset = qllimit>>1;
+  qlarray = checkalloc(qllimit*sizeof(TAGGED))+qloffset;
+  
+  return TRUE;
+}
+
+BOOL pop_qlinfo(Arg)
+    Argdecl;
+{
+    struct qlinfo *p = qlstack;
+
+    qlstack = p->next;
+    checkdealloc(qlarray-qloffset, qllimit*sizeof(TAGGED));
+    qlarray = p->qlarray;
+    qllimit = p->qllimit;
+    qloffset = p->qloffset;
+    checkdealloc((TAGGED *)p, sizeof(struct qlinfo));
+
+    return TRUE;    
+}
+
+void expand_qload()
+{
+  REGISTER int i;
+  REGISTER int o = qloffset;
+  /*ENG_INT prog_mem = mem_prog_count;*/ /* preserve over reallocs */
+  
+  qlarray = checkrealloc(qlarray-o,
+			 qllimit*sizeof(TAGGED),
+			 qllimit*2*sizeof(TAGGED));
+  for (i=qllimit; i>0;)
+    --i, qlarray[i+o]=qlarray[i];
+  qllimit<<=1;
+  qloffset<<=1;
+  qlarray+=qloffset;
+  /*mem_prog_count = prog_mem;*/
+}
+
+struct emul_info *latest_bytecode;               /* Shared, locked access */
+int latest_bytecode_size;                        /* Shared, locked access */
+
+static void load_dbnode(Arg,Li,f,codelength,counter_cnt)
+     Argdecl;
+     int Li,codelength,counter_cnt;
+     FILE *f;
+{
+#if defined(GAUGE)
+  int lsize = (sizeof(struct emul_info)-sizeof(INSN)+
+	       codelength+
+	       counter_cnt*sizeof(ENG_INT)+3) & ~3;
+#else
+  int lsize = sizeof(struct emul_info)-sizeof(INSN)+codelength;
+#endif
+  struct emul_info *db;
+  /*int i;*/
+  
+  db = (struct emul_info *)checkalloc(lsize);
+
+  getbytecode(Arg,f,db->emulcode,codelength);
+  latest_bytecode = db;  
+  latest_bytecode_size = codelength;
+  db->next = NULL;
+  db->objsize = lsize;
+  db->subdefs = NULL;
+#if defined(GAUGE)
+  db->counters = (ENG_INT *)((char *)db+lsize)-counter_cnt;
+  for (i=0; i<counter_cnt; i++)
+    db->counters[i] = 0;
+#endif
+  QL(Li) = PointerToTerm(db);
+}
+
+void reloc_pointer(Li,Label)
+     int Li;
+     ENG_INT Label; 
+{
+  REGISTER char *pos;
+  
+  do
+    {
+      pos = (char *)latest_bytecode->emulcode + Label;
+      Label = *(ENG_INT *)pos;
+      *(ENG_INT *)pos = QL(Li);
+    }
+  while(Label != 0);
+}
+
+/* Patch up the counter indexes in the BUMP_COUNTER instructions. */
+void reloc_counter(Label)
+     ENG_INT Label;
+{
+#if GAUGE
+  REGISTER char *position;
+  int counter_cnt = NumberOfCounters(latest_bytecode);
+  REGISTER ENG_INT *current_counter = latest_bytecode->counters + counter_cnt;
+
+  /*  
+    Counters are linked together in REVERSE order.  Since
+    make_bytecode_object assigns counters in order of occurrence,
+    we must do the same here.
+   */
+  while (Label)
+    {
+      position = (char *)&latest_bytecode->emulcode[0] + Label;
+      Label = *(ENG_INT *)position;
+      *(ENG_INT **)position = --current_counter;
+      --counter_cnt;
+    }
+  if (counter_cnt != 2)
+    SERIOUS_FAULT("$qload: counter counts don't match");
+#endif
+}
+
+void reloc_emul_entry(Li,Label)
+     int Li;
+     ENG_INT Label;
+{
+  REGISTER char *pos;
+  short *addr = &parse_definition(QL(Li))->enter_instr;
+
+  do {
+    pos = (char *)latest_bytecode->emulcode + Label;
+    Label = *(ENG_INT *)pos;
+    *(short **)pos = addr;
+  }
+  while(Label != 0);
+}
+
+
+BOOL qread1(Arg,qfile,rungoal)
+     Argdecl;
+     FILE *qfile;
+     TAGGED *rungoal;
+{
+  register int Li = 0, Lj = 0;
+  register TAGGED *h = w->global_top;
+  long pad;
+  int c = GETC(qfile);
+  
+  while (c!=EOF)
+    {
+      switch (c)
+	{
+	case ENSURE_SPACE:
+	  if (HeapDifference(h,Heap_End) < (pad=getlong(qfile)))
+	    w->global_top = h,
+	    explicit_heap_overflow(Arg,pad,2),
+	    h = w->global_top;
+	  break;
+	case LOAD_ATOM:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  QL(Li) = init_atom_check(getstring(qfile));
+	  break;
+	case LOAD_FUNCTOR:
+	  Li = getshort(qfile);
+	  Lj = getshort(qfile);
+	  QLCHECK(Li);
+	  QLCHECK(Lj);
+	  QL(Li) = SetArity(QL(Lj),getshort(qfile));
+	  break;
+	case LOAD_NUMBER_S:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  QL(Li) = MakeSmall(getshort(qfile));
+	  break;
+	case LOAD_NUMBER_L:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  w->global_top = h;
+	  QL(Li) = getlarge(Arg,qfile);
+	  h = w->global_top;
+	  break;
+	case LOAD_NUMBER_F:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  w->global_top = h;
+	  QL(Li) = MakeFloat(Arg,getdouble(qfile));
+	  h = w->global_top;
+	  break;
+	case LOAD_VARIABLE:
+	  Li = getshort(qfile);
+	  QLCHECK(Li); 
+	  LoadHVA(QL(Li),h);
+	  break;
+	case LOAD_NIL:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  QL(Li) = atom_nil;
+	  break;
+	case LOAD_LIST:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  QL(Li) = Tag(LST,h);
+	  break;
+	case LOAD_TUPLE:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  QL(Li) = Tag(STR,h);
+	  break;
+	case LOAD_ARGUMENT:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  HeapPush(h,QL(Li));
+	  break;
+	case LOAD_DBNODE:
+	  Li = getshort(qfile);
+	  QLCHECK(Li);
+	  Lj = getshort(qfile);
+	  load_dbnode(Arg,Li,qfile,Lj,getshort(qfile));
+	  break;
+	case RETURN:
+	  Li = getshort(qfile);
+	  *rungoal = QL(Li);
+	  w->global_top = h;
+	  return TRUE;
+	case RELOC_POINTER:
+	  Li = getshort(qfile);
+	  reloc_pointer(Li,getlong(qfile));
+	  break;
+	case RELOC_EMUL_ENTRY:
+	  Li = getshort(qfile);
+	  reloc_emul_entry(Li,getlong(qfile));
+	  break;
+      case RELOC_COUNTER:
+          reloc_counter(getlong(qfile));
+          break;
+	}
+      c=getc(qfile);
+      }
+  w->global_top = h;
+  return FALSE;
+}
+
+
+int is_a_script(file)
+     FILE *file;
+{
+  int chr;
+  
+  if ((chr = getc(file)) == '#')
+    return TRUE;
+  else {
+    ungetc(chr, file);
+    return FALSE;
+  }
+}
+
+void skip_to_ctrl_l(file)
+     FILE *file;
+{
+  int chr;
+
+  do
+    chr = getc(file);
+  while ((chr != EOF) && (chr != 12));            /* ASCII 12 is ctrl-L */
+}
+
+
+BOOL prolog_qread(Arg)
+     Argdecl;
+{
+  struct stream_node *s;
+  TAGGED goal;
+  FILE *qfile;
+
+  if ((s = stream_to_ptr(X(0), 'r')) != NULL) {
+    qfile = s->streamfile;
+  if (is_a_script(qfile)) 
+    skip_to_ctrl_l(qfile);
+  if (qread1(Arg,qfile, &goal))
+    return cunify(Arg,goal,X(1));
+  }
+
+  Unify_constant(MakeSmall(-1),X(1));
+  return TRUE;
+
+}
+
+

@@ -1,0 +1,129 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Quintus-like internal database</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_47.html">previous</A>, <A HREF="ciao_49.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC174" HREF="ciao_toc.html#TOC174">Quintus-like internal database</A></H1>
+<P>
+<A NAME="IDX2055"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+
+
+<P>
+ The predicates described in this section were introduced in early implementations of Prolog to provide efficient means of performing operations on large quantities of data. The introduction of indexed dynamic predicates have rendered these predicates obsolete, and the sole purpose of providing them is to support existing code. There is no reason whatsoever to use them in new code. 
+
+
+<P>
+These predicates store arbitrary terms in the database without interfering with the clauses which make up the program. The terms which are stored in this way can subsequently be retrieved via the key on which they were stored. Many terms may be stored on the same key, and they can be individually accessed by pattern matching. Alternatively, access can be achieved via a special identifier which uniquely identifies each recorded term and which is returned when the term is stored. 
+
+
+
+<UL>
+<LI><A HREF="ciao_48.html#SEC175">Usage and interface (old_database)</A>
+<LI><A HREF="ciao_48.html#SEC176">Documentation on exports (old_database)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC175" HREF="ciao_toc.html#TOC175">Usage and interface (<CODE>old_database</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(old_database)).</CODE>
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC176" HREF="ciao_toc.html#TOC176">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
+<P>
+<A NAME="IDX2056"></A>
+<A NAME="IDX2057"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>recorda/3:</B>
+<DD><A NAME="IDX2058"></A>
+
+
+<P>
+<CODE>recorda(+Key,?(Term),-(Ref))</CODE>
+
+
+<P>
+The term <CODE>Term</CODE> is recorded in the internal database as the first item for the key <CODE>Key</CODE>, where <CODE>Ref</CODE> is its implementation-defined identifier. The key must be given, and only its principal functor is significant. Any uninstantiated variables in the <CODE>Term</CODE> will be replaced by new private variables, along with copies of any subgoals blocked on these variables.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2059"></A>
+<A NAME="IDX2060"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>recordz/3:</B>
+<DD><A NAME="IDX2061"></A>
+
+
+<P>
+<CODE>recordz(+Key,?(Term),-(Ref))</CODE>
+
+
+<P>
+Like <CODE>recorda/3</CODE>, except that the new term becomes the <EM>last</EM> item for the key <CODE>Key</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2062"></A>
+<A NAME="IDX2063"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>recorded/3:</B>
+<DD><A NAME="IDX2064"></A>
+
+
+<P>
+<CODE>recorded(?(Key),?(Term),?(Ref))</CODE>
+
+
+<P>
+The internal database is searched for terms recorded under the key <CODE>Key</CODE>. These terms are successively unified with <CODE>Term</CODE> in the order they occur in the database. At the same time, <CODE>Ref</CODE> is unified with the implementation-defined identifier uniquely identifying the recorded item. If the key is instantiated to a compound term, only its principal functor is significant. If the key is uninstantiated, all terms in the database are successively unified with <CODE>Term</CODE> in the order they occur.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2065"></A>
+<A NAME="IDX2066"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_key/2:</B>
+<DD><A NAME="IDX2067"></A>
+
+
+<P>
+<CODE>current_key(?(KeyName),?(KeyTerm))</CODE>
+
+
+<P>
+<CODE>KeyTerm</CODE> is the most general form of the key for a currently recorded term, and <CODE>KeyName</CODE> is the name of that key. This predicate can be used to enumerate in undefined order all keys for currently recorded terms through backtracking.
+
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_47.html">previous</A>, <A HREF="ciao_49.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

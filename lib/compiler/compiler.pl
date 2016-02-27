@@ -1,0 +1,100 @@
+:- module(compiler, [make_po/1, ensure_loaded/1,
+                     use_module/1, use_module/2, use_module/3, unload/1,
+                     set_debug_mode/1, set_nodebug_mode/1,
+                     set_debug_module/1, set_nodebug_module/1,
+                     mode_of_module/2, module_of/2
+                     ], [assertions]).
+
+
+:- comment(version_maintenance,off).
+
+:- comment(version(0*6+6,1998/07/27,15:40*12+'MET DST'), "Changed
+   set_debug_module/1 to make it work with 'user' module.  (Daniel
+   Cabeza Gras)").
+
+:- comment(version(0*6+4,1998/07/21,16:21*26+'MET DST'), "Added
+   mode_of_module/2 to be used by the shell (Daniel Cabeza Gras)").
+
+:- comment(version(0*6+2,1998/07/20,18:44*34+'MET DST'), "Added
+   set_debug_module/1 and set_nodebug_module/1 to be used by the shell
+   (Daniel Cabeza Gras)").
+
+:- comment(version(0*5+33,1998/06/30,19:00*22+'MET DST'), "Disabled head
+   meta-expansion in the case of addmodule (predicate arity changes)
+   (Daniel Cabeza Gras)").
+
+:- comment(version(0*5+31,1998/06/30,14:37*08+'MET DST'), "Fixed bug
+   which deleted imports/4 data when reloading files (Daniel Cabeza
+   Gras)").
+
+:- comment(version(0*5+18,1998/06/19,13:41*22+'MET DST'), "Added
+   predicate multifile/1 to be used in the CIAO shell to define
+   multifile predicates to be able to invoke them.  (Daniel Cabeza
+   Gras)").
+
+:- comment(version(0*5+6,1998/04/17,21:13*03+'MET DST'), "Added support
+   for lazy loading (Daniel Cabeza Gras)").
+
+:- use_module(library('compiler/c_itf')).
+
+
+make_po([]) :- !.
+make_po([File|Files]) :- !,
+        catch(make_po1(File), Error, handle_exc(Error)),
+        make_po(Files).
+make_po(File) :-
+        catch(make_po1(File), Error, handle_exc(Error)).
+
+make_po1(File) :-
+        process_file(File, po, any, make_po_file, false, false,
+                     old_file_extension('.po')).
+
+:- meta_predicate use_module(addmodule).
+
+use_module(Mod,This) :- use_module(Mod,all,This).
+
+:- meta_predicate use_module(+,addmodule).
+
+use_module(File, Imports, ByThisModule) :-
+        cleanup_c_itf_data,
+        use_mod(File, Imports, ByThisModule),
+        check_static_module(File).
+
+ensure_loaded(File) :-
+        process_files_from(File, in, any, load_compile, static_base,
+                           false, needs_reload),
+        check_static_module(File).
+
+check_static_module(File) :-
+        base_name(File, Base),
+        static_base(Base), !,
+        message(note, 'module already in executable').
+check_static_module(_).
+
+unload(File) :-
+        absolute_file_name(File, '_opt', '.pl', '.', _, Base, _),
+        retract_fact(module_loaded(Module, Base, _, _)),
+        abolish_module(Module).
+
+set_debug_mode(File) :-
+        absolute_file_name(File, Source),
+        (interpret_file(Source), ! ; assertz_fact(interpret_file(Source))).
+
+set_nodebug_mode(File) :-
+        absolute_file_name(File, Source),
+        retractall_fact(interpret_file(Source)).
+
+set_debug_module(Mod) :- 
+        module_pattern(Mod, MPat),
+        (interpret_module(MPat), ! ; assertz_fact(interpret_module(MPat))).
+
+set_nodebug_module(Mod) :-
+        module_pattern(Mod, MPat),
+        retract_fact(interpret_module(MPat)).
+
+module_pattern(user, user(_)) :- !.
+module_pattern(Module, Module) :- atom(Module).
+
+module_of(H, M) :- pred_module(H, M).
+
+mode_of_module(Module, Mode) :- module_loaded(Module, _, _, Mode).

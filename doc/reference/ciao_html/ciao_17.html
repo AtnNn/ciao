@@ -1,0 +1,763 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Basic data types and properties</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_16.html">previous</A>, <A HREF="ciao_18.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC80" HREF="ciao_toc.html#TOC80">Basic data types and properties</A></H1>
+<P>
+<A NAME="IDX817"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#100 (1999/11/12, 17:14:25 MET)
+
+
+<P>
+<A NAME="IDX818"></A>
+<A NAME="IDX819"></A>
+This library contains the set of basic properties used by the builtin predicates, and which constitute the basic data types and properties of the language. They can be used both as type testing builtins within programs (by calling them explicitly) and as properties in assertions.
+
+
+
+<UL>
+<LI><A HREF="ciao_17.html#SEC81">Usage and interface (basic_props)</A>
+<LI><A HREF="ciao_17.html#SEC82">Documentation on exports (basic_props)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC81" HREF="ciao_toc.html#TOC81">Usage and interface (<CODE>basic_props</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(basic_props)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX820"></A>
+<CODE>member/2</CODE>, 
+<A NAME="IDX821"></A>
+<CODE>compat/2</CODE>, 
+<A NAME="IDX822"></A>
+<CODE>iso/1</CODE>, 
+<A NAME="IDX823"></A>
+<CODE>not_further_inst/2</CODE>, 
+<A NAME="IDX824"></A>
+<CODE>regtype/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX825"></A>
+<CODE>term/1</CODE>, 
+<A NAME="IDX826"></A>
+<CODE>int/1</CODE>, 
+<A NAME="IDX827"></A>
+<CODE>nnegint/1</CODE>, 
+<A NAME="IDX828"></A>
+<CODE>flt/1</CODE>, 
+<A NAME="IDX829"></A>
+<CODE>num/1</CODE>, 
+<A NAME="IDX830"></A>
+<CODE>atm/1</CODE>, 
+<A NAME="IDX831"></A>
+<CODE>struct/1</CODE>, 
+<A NAME="IDX832"></A>
+<CODE>gnd/1</CODE>, 
+<A NAME="IDX833"></A>
+<CODE>constant/1</CODE>, 
+<A NAME="IDX834"></A>
+<CODE>callable/1</CODE>, 
+<A NAME="IDX835"></A>
+<CODE>operator_specifier/1</CODE>, 
+<A NAME="IDX836"></A>
+<CODE>list/1</CODE>, 
+<A NAME="IDX837"></A>
+<CODE>list/2</CODE>, 
+<A NAME="IDX838"></A>
+<CODE>sequence/2</CODE>, 
+<A NAME="IDX839"></A>
+<CODE>sequence_or_list/2</CODE>, 
+<A NAME="IDX840"></A>
+<CODE>character_code/1</CODE>, 
+<A NAME="IDX841"></A>
+<CODE>string/1</CODE>, 
+<A NAME="IDX842"></A>
+<CODE>predname/1</CODE>, 
+<A NAME="IDX843"></A>
+<CODE>atm_or_atm_list/1</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC82" HREF="ciao_toc.html#TOC82">Documentation on exports (<CODE>basic_props</CODE>)</A></H2>
+<P>
+<A NAME="IDX844"></A>
+<A NAME="IDX845"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>term/1:</B>
+<DD><A NAME="IDX846"></A>
+
+
+<P>
+The most general type (includes all possible terms).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>term(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is any term.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX847"></A>
+<A NAME="IDX848"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>int/1:</B>
+<DD><A NAME="IDX849"></A>
+
+
+<P>
+The type of integers. The range of integers is <CODE>[-2^2147483616, 2^2147483616)</CODE>. Thus for all practical purposes, the range of integers can be considered infinite.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>int(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is an integer.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX850"></A>
+<A NAME="IDX851"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>nnegint/1:</B>
+<DD><A NAME="IDX852"></A>
+
+
+<P>
+The type of non-negative integers, i.e., natural numbers.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nnegint(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a non-negative integer.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX853"></A>
+<A NAME="IDX854"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>flt/1:</B>
+<DD><A NAME="IDX855"></A>
+
+
+<P>
+The type of floating-point numbers. The range of floats is the one provided by the C <CODE>double</CODE> type, typically <CODE>[4.9e-324, 1.8e+308]</CODE> (plus or minus).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>flt(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a float.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX856"></A>
+<A NAME="IDX857"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>num/1:</B>
+<DD><A NAME="IDX858"></A>
+
+
+<P>
+The type of numbers, that is, integer or floating-point.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>num(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a number.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX859"></A>
+<A NAME="IDX860"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>atm/1:</B>
+<DD><A NAME="IDX861"></A>
+
+
+<P>
+The type of atoms, or non-numeric constants. The name of an atom must be of less than 512 characters.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>atm(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is an atom.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX862"></A>
+<A NAME="IDX863"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>struct/1:</B>
+<DD><A NAME="IDX864"></A>
+
+
+<P>
+The type of compound terms, or terms with non-zeroary functors.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>struct(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a compound term.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX865"></A>
+<A NAME="IDX866"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>gnd/1:</B>
+<DD><A NAME="IDX867"></A>
+
+
+<P>
+The type of all terms without variables.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>gnd(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is ground.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX868"></A>
+<A NAME="IDX869"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>constant/1:</B>
+<DD><A NAME="IDX870"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>constant(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is an atomic term (an atom or a number).
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX871"></A>
+<A NAME="IDX872"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>callable/1:</B>
+<DD><A NAME="IDX873"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>callable(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a term which represents a goal, i.e., an atom or a structure.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX874"></A>
+<A NAME="IDX875"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>operator_specifier/1:</B>
+<DD><A NAME="IDX876"></A>
+
+
+<P>
+The type and associativity of an operator is described by the following mnemonic atoms: 
+
+
+<DL COMPACT>
+
+<DT><CODE>xfx</CODE>
+<DD>
+Infix, non-associative: it is a requirement that both of the two subexpressions which are the arguments of the operator must be of <EM>lower</EM> precedence than the operator itself. 
+
+<DT><CODE>xfy</CODE>
+<DD>
+Infix, right-associative: only the first (left-hand) subexpression must be of lower precedence; the right-hand subexpression can be of the <EM>same</EM> precedence as the main operator. 
+
+<DT><CODE>xfx</CODE>
+<DD>
+Infix, left-associative: same as above, but the other way around. 
+
+<DT><CODE>fx</CODE>
+<DD>
+Prefix, non-associative: the subexpression must be of <EM>lower</EM> precedence than the operator. 
+
+<DT><CODE>fy</CODE>
+<DD>
+Prefix, associative: the subexpression can be of the <EM>same</EM> precedence as the operator. 
+
+<DT><CODE>xf</CODE>
+<DD>
+Postfix, non-associative: the subexpression must be of <EM>lower</EM> precedence than the operator. 
+
+<DT><CODE>yf</CODE>
+<DD>
+Postfix, associative: the subexpression can be of the <EM>same</EM> precedence as the operator. 
+
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>operator_specifier(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> specifies the type and associativity of an operator.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX877"></A>
+<A NAME="IDX878"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>list/1:</B>
+<DD><A NAME="IDX879"></A>
+
+
+<P>
+A list is formed with successive applications of the functor <CODE>'.'/2</CODE>, and its end is the atom <CODE>[]</CODE>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list(L)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>L</CODE> is a list.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX880"></A>
+<A NAME="IDX881"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>list/2:</B>
+<DD><A NAME="IDX882"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>list(?,pred(1))</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list(L,T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>L</CODE> is a list of <CODE>T</CODE>s.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX883"></A>
+<A NAME="IDX884"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>member/2:</B>
+<DD><A NAME="IDX885"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>member(X,L)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is an element of <CODE>L</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX886"></A>
+<A NAME="IDX887"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>sequence/2:</B>
+<DD><A NAME="IDX888"></A>
+
+
+<P>
+A sequence is formed with zero, one or more occurrences of the operator 
+<A NAME="IDX889"></A>
+<CODE>','/2</CODE>. For example, <CODE>a, b, c</CODE> is a sequence of three atoms, <CODE>a</CODE> is a sequence of one atom.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>sequence(?,pred(1))</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sequence(S,T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S</CODE> is a sequence of <CODE>T</CODE>s.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX890"></A>
+<A NAME="IDX891"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>sequence_or_list/2:</B>
+<DD><A NAME="IDX892"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>sequence_or_list(?,pred(1))</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sequence_or_list(S,T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S</CODE> is a sequence or list of <CODE>T</CODE>s.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX893"></A>
+<A NAME="IDX894"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>character_code/1:</B>
+<DD><A NAME="IDX895"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>character_code(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is an integer which is a character code.
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>T</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX896"></A>
+<A NAME="IDX897"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>string/1:</B>
+<DD><A NAME="IDX898"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>string(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a string (a list of character codes).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>T</CODE> is a list of <CODE>character_code</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX899"></A>
+<A NAME="IDX900"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>predname/1:</B>
+<DD><A NAME="IDX901"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>predname(P)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a Name/Arity structure denoting a predicate name:
+
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        int(A).
+</PRE>
+
+ 
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX902"></A>
+<A NAME="IDX903"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>atm_or_atm_list/1:</B>
+<DD><A NAME="IDX904"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>atm_or_atm_list(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is an atom or a list of atoms.
+
+<LI><EM>The following properties hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX905"></A>
+<A NAME="IDX906"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>compat/2:</B>
+<DD><A NAME="IDX907"></A>
+
+
+<P>
+This property captures the notion of type or 
+<A NAME="IDX908"></A>
+property compatibility. The instantiation or constraint state of the term is compatible with the given property, in the sense that assuming that imposing that property on the term does not render the store inconsistent. For example, terms <CODE>X</CODE> (i.e., a free variable), <CODE>[Y|Z]</CODE>, and <CODE>[Y,Z]</CODE> are all compatible with the regular type 
+<A NAME="IDX909"></A>
+<CODE>list/1</CODE>, whereas the terms <CODE>f(a)</CODE> and <CODE>[1|2]</CODE> are not.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>compat(?,pred(1))</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>compat(Term,Prop)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Term</CODE> is <EM>compatible</EM> with <CODE>Prop</CODE>
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX910"></A>
+<A NAME="IDX911"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>iso/1:</B>
+<DD><A NAME="IDX912"></A>
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>iso(G)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <EM>Complies with the ISO-Prolog standard.</EM>
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX913"></A>
+<A NAME="IDX914"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>not_further_inst/2:</B>
+<DD><A NAME="IDX915"></A>
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>not_further_inst(G,V)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>V</CODE> is not further instantiated.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX916"></A>
+<A NAME="IDX917"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>regtype/1:</B>
+<DD><A NAME="IDX918"></A>
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>regtype(G)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines a regular type.
+
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_16.html">previous</A>, <A HREF="ciao_18.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

@@ -1,0 +1,48 @@
+SHELL=/bin/sh
+SYSDEP_FILES=$(SRC)/makefile-sysdep
+CIAOARCH=$(shell $(SRC)/etc/ciao_get_arch)
+
+# Number of processors: use the real number
+PROCESSORS=$(shell $(SYSDEP_FILES)/available_processors $(CIAOARCH))
+
+ARCHOS=$(CIAOARCH)
+OBJDIR=$(SRC)/bin/$(CIAOARCH)$(CIAODEBUG)
+
+# General optimization flags; can be overriden in specific architectures
+ifeq ($(CIAODEBUG),-debug)
+     OPTIM_LEVEL=normal
+ifeq ($(DEBUG_LEVEL),nodebug)
+     DEBUG_LEVEL=debug
+endif
+endif
+
+ifeq ($(OPTIM_LEVEL),optimized)
+     OPTIM_FLAGS=-O3
+else
+ifeq ($(OPTIM_LEVEL),normal)
+    OPTIM_FLAGS=
+endif
+endif
+
+ifeq ($(DEBUG_LEVEL),paranoid-debug)
+    DEBUG_FLAGS=-g -Wall -W -Wtraditional -Wshadow -Wpointer-arith -Wbad-function-cast -Wcast-qual -Wcast-align -Wconversion -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -Wnested-externs -Winline -DDEBUG
+else
+ifeq ($(DEBUG_LEVEL),debug)
+    DEBUG_FLAGS=-g -Wall -DDEBUG -DATOMGC -DGLOBVARS -DINTERNAL_CALLING 
+else
+ifeq ($(DEBUG_LEVEL),nodebug)
+    DEBUG_FLAGS=-DATOMGC
+else
+ifeq ($(DEBUG_LEVEL),profile)
+    DEBUG_FLAGS=-DDEBUG -pg -DPROFILE
+endif
+endif
+endif
+endif
+
+
+
+INSTALLIBARCHDIR=$(INSTALLIBDIR)/$(CIAOARCH)$(CIAODEBUG)
+
+CFLAGS= $(OPTIM_FLAGS) $(DEBUG_FLAGS) $(THREAD_FLAG) $(FOREIGN_FILES_FLAG) -D$(OSNAME) -D$(ARCHNAME) $(ARCHFLAGS)
+

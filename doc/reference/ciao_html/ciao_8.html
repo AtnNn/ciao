@@ -1,0 +1,429 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Predicates controlling the interactive debugger</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC37" HREF="ciao_toc.html#TOC37">Predicates controlling the interactive debugger</A></H1>
+<P>
+<A NAME="IDX373"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> A. Ciepielewski, M. Carlsson, T. Chikayama, K. Shen, D. Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#104 (1999/11/17, 22:5:53 MET)
+
+
+<P>
+This library implements predicates which are normally used in the interactive top-level shell to debug programs.
+
+
+
+<UL>
+<LI><A HREF="ciao_8.html#SEC38">Usage and interface (debugger)</A>
+<LI><A HREF="ciao_8.html#SEC39">Documentation on exports (debugger)</A>
+<LI><A HREF="ciao_8.html#SEC40">Documentation on internals (debugger)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC38" HREF="ciao_toc.html#TOC38">Usage and interface (<CODE>debugger</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(debugger)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX374"></A>
+<CODE>debug_module/1</CODE>, 
+<A NAME="IDX375"></A>
+<CODE>nodebug_module/1</CODE>, 
+<A NAME="IDX376"></A>
+<CODE>debug/0</CODE>, 
+<A NAME="IDX377"></A>
+<CODE>nodebug/0</CODE>, 
+<A NAME="IDX378"></A>
+<CODE>trace/0</CODE>, 
+<A NAME="IDX379"></A>
+<CODE>notrace/0</CODE>, 
+<A NAME="IDX380"></A>
+<CODE>spy/1</CODE>, 
+<A NAME="IDX381"></A>
+<CODE>nospy/1</CODE>, 
+<A NAME="IDX382"></A>
+<CODE>nospyall/0</CODE>, 
+<A NAME="IDX383"></A>
+<CODE>debugging/0</CODE>, 
+<A NAME="IDX384"></A>
+<CODE>leash/1</CODE>, 
+<A NAME="IDX385"></A>
+<CODE>maxdepth/1</CODE>, 
+<A NAME="IDX386"></A>
+<CODE>call_in_module/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX387"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX388"></A>
+<CODE>ttyout</CODE>, 
+<A NAME="IDX389"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX390"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX391"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX392"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX393"></A>
+<CODE>prolog_sys</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC39" HREF="ciao_toc.html#TOC39">Documentation on exports (<CODE>debugger</CODE>)</A></H2>
+<P>
+<A NAME="IDX394"></A>
+<A NAME="IDX395"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debug_module/1:</B>
+<DD><A NAME="IDX396"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>debug_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The debugger will take into acount module <CODE>Module</CODE> (assuming it is is loaded in consult mode). When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>consult</EM> the loading mode of files defining that module.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX397"></A>
+<A NAME="IDX398"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nodebug_module/1:</B>
+<DD><A NAME="IDX399"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nodebug_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The debugger will not take into acount module <CODE>Module</CODE>. When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>compile</EM> the loding mode of files defining that module.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX400"></A>
+<A NAME="IDX401"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debug/0:</B>
+<DD><A NAME="IDX402"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Switches the debugger on. The interpreter will stop at all ports of procedure boxes of spied predicates.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX403"></A>
+<A NAME="IDX404"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nodebug/0:</B>
+<DD><A NAME="IDX405"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Switches the debugger off. If there are any spy-points set then they will be kept but disabled.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX406"></A>
+<A NAME="IDX407"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>trace/0:</B>
+<DD><A NAME="IDX408"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Start tracing, switching the debugger on if needed. The interpreter will stop at all leashed ports of procedure boxes of predicates either belonging to debugged modules or called from clauses of debugged modules. A message is printed at each stop point, expecting input from the user (write <CODE>h</CODE> to see the available options).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX409"></A>
+<A NAME="IDX410"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>notrace/0:</B>
+<DD><A NAME="IDX411"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Equivalent to
+
+<A NAME="IDX412"></A>
+<CODE>nodebug/0</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX413"></A>
+<A NAME="IDX414"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>spy/1:</B>
+<DD><A NAME="IDX415"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>spy(PredSpec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set spy-points on predicates belonging to debugged modules which match <CODE>PredSpec</CODE>, switching the debugger on if needed. This predicate is defined as a prefix operator by the toplevel.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredSpec</CODE> is a sequence of <CODE>multpredspec</CODE>s.
+ (<CODE>basic_props:sequence/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX416"></A>
+<A NAME="IDX417"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nospy/1:</B>
+<DD><A NAME="IDX418"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nospy(PredSpec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Remove spy-points on predicates belonging to debugged modules which match <CODE>PredSpec</CODE>. This predicate is defined as a prefix operator by the toplevel.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredSpec</CODE> is a sequence of <CODE>multpredspec</CODE>s.
+ (<CODE>basic_props:sequence/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX419"></A>
+<A NAME="IDX420"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nospyall/0:</B>
+<DD><A NAME="IDX421"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Remove all spy-points.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX422"></A>
+<A NAME="IDX423"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debugging/0:</B>
+<DD><A NAME="IDX424"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Display debugger state.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX425"></A>
+<A NAME="IDX426"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>leash/1:</B>
+<DD><A NAME="IDX427"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>leash(Ports)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Leash on ports <CODE>Ports</CODE>, some of <CODE>call</CODE>, <CODE>exit</CODE>, <CODE>redo</CODE>, <CODE>fail</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Ports</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX428"></A>
+<A NAME="IDX429"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>maxdepth/1:</B>
+<DD><A NAME="IDX430"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>maxdepth(MaxDepth)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set maximum invocation depth in debugging to <CODE>MaxDepth</CODE>. Calls to compiled predicates are not included in the computation of the depth.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>MaxDepth</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX431"></A>
+<A NAME="IDX432"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call_in_module/2:</B>
+<DD><A NAME="IDX433"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>call_in_module(Module,Predicate)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Calls predicate <CODE>Predicate</CODE> belonging to module <CODE>Module</CODE>, even if that module does not export the predicate.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC40" HREF="ciao_toc.html#TOC40">Documentation on internals (<CODE>debugger</CODE>)</A></H2>
+<P>
+<A NAME="IDX434"></A>
+<A NAME="IDX435"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>multpredspec/1:</B>
+<DD><A NAME="IDX436"></A>
+
+
+<P>
+A property, defined as follows:
+
+<PRE>
+
+<PRE>
+multpredspec(Mod:Spec) :-
+        atm(Mod),
+        multpredspec(Spec).
+multpredspec(Name/Low-High) :-
+        atm(Name),
+        int(Low),
+        int(High).
+multpredspec(Name/(Low-High)) :-
+        atm(Name),
+        int(Low),
+        int(High).
+multpredspec(Name/Arity) :-
+        atm(Name),
+        int(Arity).
+multpredspec(Name) :-
+        atm(Name).
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

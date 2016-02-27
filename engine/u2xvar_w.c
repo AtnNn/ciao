@@ -1,0 +1,43 @@
+/* Copyright (C) 1996,1997,1998, UPM-CLIP */
+
+	case U2_XVAR_VOID:
+		U1_XVAR_W(P1);
+		U1_VOID_W(SP2);
+		DISPATCH_W(2);
+
+	case U2_XVAR_XVAR:
+		U1_XVAR_W(P1);
+		U1_XVAR_W(P2);
+		DISPATCH_W(2);
+
+	case U2_XVAR_YFVAR:
+		ComputeE;
+	case U2_XVAR_YVAR:
+		U1_XVAR_W(P1);
+		U1_YVAR_W(P2);
+		DISPATCH_W(2);
+
+	case U2_XVAR_XVAL:
+		U1_XVAR_W(P1);
+		U1_XVAL_W(P2);
+		DISPATCH_W(2);
+
+	case U2_XVAR_XLVAL:
+		U1_XVAR_W(P1);
+		U1_XLVAL_W(P2);
+		DISPATCH_W(2);
+
+	case U2_XVAR_YFVAL:
+		U1_XVAR_W(P1);
+		U1_YFVAL_W(P2);
+		DISPATCH_W(2);
+
+	case U2_XVAR_YVAL:
+		U1_XVAR_W(P1);
+		U1_YVAL_W(P2);
+		DISPATCH_W(2);
+
+	case U2_XVAR_YLVAL:
+		U1_XVAR_W(P1);
+		U1_YLVAL_W(P2);
+		DISPATCH_W(2);

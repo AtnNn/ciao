@@ -1,0 +1,213 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Basic term manipulation</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC86" HREF="ciao_toc.html#TOC86">Basic term manipulation</A></H1>
+<P>
+<A NAME="IDX956"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+
+<UL>
+<LI><A HREF="ciao_19.html#SEC87">Usage and interface (term_basic)</A>
+<LI><A HREF="ciao_19.html#SEC88">Documentation on exports (term_basic)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC87" HREF="ciao_toc.html#TOC87">Usage and interface (<CODE>term_basic</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+These predicates are builtin in CIAO, so nothing special has to be done to use them.
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX957"></A>
+<CODE>arg/3</CODE>, 
+<A NAME="IDX958"></A>
+<CODE>functor/3</CODE>, 
+<A NAME="IDX959"></A>
+<CODE>=../2</CODE>, 
+<A NAME="IDX960"></A>
+<CODE>copy_term/2</CODE>, 
+<A NAME="IDX961"></A>
+<CODE>C/3</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX962"></A>
+<CODE>=/2</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC88" HREF="ciao_toc.html#TOC88">Documentation on exports (<CODE>term_basic</CODE>)</A></H2>
+<P>
+<A NAME="IDX963"></A>
+<A NAME="IDX964"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>=/2:</B>
+<DD><A NAME="IDX965"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>X = Y</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Unify <CODE>X</CODE> and <CODE>Y</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX966"></A>
+<A NAME="IDX967"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arg/3:</B>
+<DD><A NAME="IDX968"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>arg(+ArgNo,+Term,?(Arg))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Argument <CODE>ArgNo</CODE> of the term <CODE>Term</CODE> is <CODE>Arg</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ArgNo</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX969"></A>
+<A NAME="IDX970"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>functor/3:</B>
+<DD><A NAME="IDX971"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>functor(?(Term),?(Name),?(Arity))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The principal functor of the term <CODE>Term</CODE> has name <CODE>Name</CODE> and arity <CODE>Arity</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX972"></A>
+<A NAME="IDX973"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>=../2:</B>
+<DD><A NAME="IDX974"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>?(Term) =.. ?(List)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The functor and arguments of the term <CODE>Term</CODE> comprise the list <CODE>List</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX975"></A>
+<A NAME="IDX976"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_term/2:</B>
+<DD><A NAME="IDX977"></A>
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>copy_term(Term,Copy)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Copy</CODE> is a renaming of <CODE>Term</CODE>, such that brand new variables have been substituted for all variables in <CODE>Term</CODE>. If any of the variables of <CODE>Term</CODE> have
+
+<A NAME="IDX978"></A>
+attributes, the copied variables will have copies of the attributes as well. It behaves as if defined by: 
+
+
+<PRE>
+:- data 'copy of'/1.
+
+copy_term(X, Y) :-
+        asserta_fact('copy of'(X)),
+        retract_fact('copy of'(Y)).
+</PRE>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX979"></A>
+<A NAME="IDX980"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>C/3:</B>
+<DD><A NAME="IDX981"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>C(?(S1),?(Terminal),?(S2))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S1</CODE> is connected by the terminal <CODE>Terminal</CODE> to <CODE>S2</CODE>. Used in <EM>DCG grammar rules</EM>. Defined as if by the single clause: <CODE>'C'([X|S], X, S).</CODE>
+
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

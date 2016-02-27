@@ -1,0 +1,243 @@
+# -*- mode: Makefile; -*-
+# ----------------------------------------------------------------------------
+include ../../SETTINGS
+include ../../COMMON
+include ../SETTINGS.COMMON
+# ----------------------------------------------------------------------------
+# Uncomment for using the development version of lpdoc when testing...
+# LIBDIR     = /home/clip/Systems/lpdoc/lib
+# LPDOC      = /home/clip/Systems/lpdoc/src/lpdoc
+# ----------------------------------------------------------------------------
+
+FILEPATHS := $(SRC)/doc/reference $(SRC)/shell $(SRC)/ciaoc $(SRC)/engine \
+             $(SRC)/emacs $(SRC)/etc \
+	     $(FILEPATHS)
+# Useful for debugging...
+#MAINOPTS  := -v $(MAINOPTS)
+#COMPOPTS  := -v $(COMPOPTS)
+MAIN       = ciao.pl
+# Mini manual for testing. The order is very important!
+#COMPONENTS = $(INSTALLATION) 
+# The order is very important!
+COMPONENTS = \
+	GetStart.pl \
+    DevEnv.pl \
+	$(DEVENV) \
+    Builtins.pl \
+	$(REFCOMPONENTS) \
+    IsoProlog.pl \
+	$(ISOPROLOG) \
+    ClassicProlog.pl \
+	$(CLASSICPROLOG) \
+    AnnotatedProlog.pl \
+	$(ANNOTATEDPROLOG) \
+    MiscProlog.pl \
+	$(MISCPROLOG) \
+    ExtendProlog.pl \
+	$(EXTENDPROLOG) \
+    Interfaces.pl \
+	$(INTERFACES) \
+    ADTs.pl \
+	$(ADTS) \
+    ciao-utilities.pl \
+	$(UTILCOMPONENTS) \
+    Append.pl \
+	$(INSTALLATION) 
+
+INSTALLATION = \
+    Install.pl
+
+DEVENV = \
+    ciaoc.pl \
+    ciaosh_doc.pl \
+    debugger_doc.pl \
+        debugger.pl \
+    ciao-shell.pl \
+    libpaths.pl \
+    CiaoMode.pl
+
+#	toplev.pl \
+
+REFCOMPONENTS = \
+    modules.pl \
+    loading_code.pl \
+    basiccontrol.pl \
+    builtin_directives.pl \
+    basic_props.pl \
+    term_typing.pl \
+    term_basic.pl \
+    term_compare.pl \
+    atomic_basic.pl \
+    arithmetic.pl \
+    io_basic.pl \
+    streams_basic.pl \
+    exceptions.pl \
+    data_facts.pl \
+    prolog_flags.pl \
+    concurrency.pl \
+    syntax_extensions.pl \
+    io_aux.pl \
+    attributes.pl \
+    system_info.pl 
+
+#              prolog.src \
+#              examples.src 
+
+# Should not be used, so we do not document them
+# 	internals.pl \
+
+# Other
+# 	mexpand.pl \
+
+# Taken out
+#	ciaoengine.pl
+
+ISOPROLOG = \
+    iso_doc.pl \
+    operators.pl \
+    aggregates.pl \
+    dynamic.pl \
+    iso_byte_char.pl \
+    iso_incomplete.pl \
+    iso_misc.pl \
+    read.pl \
+    streams.pl \
+    write.pl
+
+CLASSICPROLOG = \
+    classic_doc.pl \
+    dcg_doc.pl \
+	dcg_expansion.pl \
+    old_database.pl \
+    lists.pl \
+    sort.pl \
+    dict.pl \
+    strings.pl \
+    dec10_io.pl \
+    format.pl \
+    ttyout.pl \
+    dynmods.pl \
+    runtime_ops.pl
+
+ANNOTATEDPROLOG = \
+    assertions_doc.pl \
+	assertions_props.pl \
+    regtypes_doc.pl \
+	native_props.pl \
+	meta_props.pl \
+    isomodes_doc.pl \
+    basicmodes_doc.pl \
+    rtchecks_doc.pl
+
+# fdtypes
+#	metatypes.pl \
+
+MISCPROLOG = \
+    system.pl \
+    prolog_sys.pl \
+    ctrlcclean.pl \
+    errhandle.pl \
+    fastrw.pl \
+    filenames.pl \
+    file_utils.pl \
+    file_locks.pl \
+    terms.pl \
+    tokenize.pl \
+    messages.pl \
+    pretty_print.pl \
+    assrt_write.pl \
+    librowser.pl \
+    expansion_tools.pl \
+    conc_aggregates.pl
+
+#     assrt_lib.pl \
+#     byrd.pl \
+# 	traces.pl \
+#     conc_aggregates.pl \
+#     events.pl \
+#     fly.pl \
+#     listing.pl \
+#     loops.pl \
+#     parse_spec.pl \
+#     prompt.pl
+
+EXTENDPROLOG = \
+    pure_doc.pl \
+    argnames.pl \
+    andprolog.pl \
+    functions.pl \
+    global.pl \
+    odd.pl \
+    actmods.pl \
+    bf_doc.pl \
+    clpq_doc.pl \
+    clpr_doc.pl \
+    ociao_doc.pl \
+	class_doc.pl \
+	class_error_doc.pl \
+	objects_doc.pl \
+	objects_error_doc.pl \
+        objects_rt.pl \
+	dynclasses.pl
+
+# Driven by ociao_doc
+#	ociao.pl \
+#	objects.pl \
+#	ociao.pl \
+
+# Loop?
+# 	class.pl \
+#
+#     cges.pl \
+
+INTERFACES = \
+    foreign_interface.pl \
+    foreign_compilation.pl \
+    sockets.pl \
+    tcltk.pl \
+    pillow_doc.pl \
+	html.pl \
+	http.pl \
+    persdbrt.pl \
+	Examples.pl \
+    persdbrtsql.pl \
+	pl2sql.pl \
+	db_client.pl \
+    javart.pl \
+	jtopl.pl \
+	javasock.pl \
+    linda.pl
+
+ADTS = \
+    atom2term.pl \
+    counters.pl \
+    idlists.pl \
+    metaterms.pl \
+    numlists.pl \
+    patterns.pl \
+    queues.pl \
+    random.pl \
+    sets.pl \
+    vndict.pl
+
+#     arrays.pl \
+#     bitcodesets.pl \
+#     formulae.pl \
+#     graphs.pl \
+#     keys.pl \
+#     llists.pl \
+#     lsets.pl \
+#     ugraphs.pl \
+#     wgraphs.pl
+
+UTILCOMPONENTS = \
+	fileinfo.pl \
+	viewpo.pl \
+	get_deps.pl \
+	pldiff.pl \
+	lpmake.pl \
+	ciao_get_arch_doc.pl
+
+#	collect_modules_doc.pl
+
+# ----------------------------------------------------------------------------

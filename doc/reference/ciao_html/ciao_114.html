@@ -1,0 +1,872 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC410" HREF="ciao_toc.html#TOC410">Low-level socket interface to SQL/ODBC databases</A></H1>
+<P>
+<A NAME="IDX4365"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> D. Cabeza, M. Carro, I. Caballero, and M. Hermenegildo..
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#53 (1999/9/15, 23:37:55 MEST)
+
+
+<P>
+This library provides a socket-based interface to 
+<A NAME="IDX4366"></A>
+SQL Databases, using the 
+<A NAME="IDX4367"></A>
+database mediator server ODBC interface developed by C. Taboch and I. Caballero. The interface currently works for databases running in 
+<A NAME="IDX4368"></A>
+Win95/NT machines via 
+<A NAME="IDX4369"></A>
+ODBC. This low-level interface was defined with two goals in mind: 
+
+
+
+<UL>
+
+<LI>To simplify the communication between the Prolog system and the relational database engines as much as possible.
+
+<LI>To give as much flexibility to the overall system. This includes supporting simultaneous access to several databases, and also allowing both the databases and clients to reside on the same or different physical Win95/NT machines. The clients can reside also in
+
+<A NAME="IDX4370"></A>
+Unix/Linux machines. It is also possible to access database selections in either 
+<A NAME="IDX4371"></A>
+tuple at a time or 
+<A NAME="IDX4372"></A>
+set at a time fashion, as needed. 
+
+</UL>
+
+<P>
+In order to allow the flexibility mentioned above, a socket (TCP/IP) client-server architecture was chosen. The interface has two main components: 
+
+
+
+<UL>
+
+<LI>At the server side, a <EM>database mediator server</EM> connects on one side to the databases using the ODBC interface and on the other to a fixed port number (service), on which the mediator server listens for requests. The source code (and executables) for this server (slightly modified versions of C. Taboch original code) are in the same directory as this library. This executable must be running on the Windows (NT/95) machine where the databas(es) is(are) also running.<A NAME="DOCF3" HREF="ciao_foot.html#FOOT3">(3)</A>
+
+<LI>At the client side a Prolog client can connect to the database by loading this library and calling the appropriate predicates. The Prolog client can run on either Windows or Unix/Linux systems, locally at the server machine or remotely in different machines. The mediator server port number (service) used is currently fixed to 2020. After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the response data will return in the opposite direction. These messages include login on and off from the database, sending
+
+<A NAME="IDX4373"></A>
+SQL queries, and receiving the responses. 
+
+</UL>
+
+<P>
+<STRONG>Example:</STRONG> 
+
+<PRE>
+:- use_module(library('persdb_sql/db_client')).
+:- use_module(library(format)).
+:- use_module(library(lists)).
+
+:- multifile issue_debug_messages/1.
+:- data issue_debug_messages/1.
+issue_debug_messages('db_client').
+
+main0:- %% getting the tables existing in a database
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+        db_login(Stream,'DaletDemo',dalet_admin,dalet_admin,
+%%        db_login(Stream,'ASA 6.0 Sample',dba,sql,
+                 dbconnection(Stream,DbHandle)),
+%%        db_get_tables(dbconnection(Stream,DbHandle),TablesList),
+        db_table_types(dbconnection(Stream,DbHandle),'Titles',AttList),
+        db_logoff(dbconnection(Stream,DbHandle)),
+        odbc_disconnect(Stream),
+        format("Results: ~w \n",AttList).
+
+main1 :- %% accessing the whole table in one go
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream), 
+        db_login(Stream,'ASA 6.0 Sample',dba,sql,Conn),
+        db_eval_sql(Conn,"SELECT fname,lname,address from ""DBA"".customer 
+                   WHERE ((Id&#62;100) AND (Id&#60;105))",Term), 
+        write(Term), nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,
+        functor(Term,X,_Y),
+        write(X),nl,
+        Term=..[_|L],
+        write('That is L'),nl,        
+        write(L),nl,L=[M],length(M,N),write(N),
+%        db_eval_sql(Conn,"SELECT id,name,description,color from 
+%                    ""DBA"".product WHERE size='One size fits all' 
+%                    OR size='Large'",Term2), 
+%        write(Term2), nl,
+        db_logoff(Conn),
+        odbc_disconnect(Stream).
+
+main2:- %% accessing tuples one by one
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+        db_login(Stream,'ASA 6.0 Sample',dba,sql,Conn),
+        db_stmt_handle(Conn,
+              "SELECT fname,lname,address from ""DBA"".customer 
+               WHERE ((Id&#62;100) AND (Id&#60;105))",QueryConn),
+        db_one_tuple(QueryConn,Answer),
+        format("First Tuple: ~w \n",Answer),
+        db_one_tuple(QueryConn,Answer2),
+        format("Second Tuple: ~w \n",Answer2),
+        db_logoff(Conn),
+        odbc_disconnect(Stream).
+        
+main3:- %% bringing tuples (one to one) from Literature Database
+        %% TO SEE : check it
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+        db_login(Stream,'Literature',dba,sql,Conn),
+        db_stmt_handle(Conn,"SELECT * FROM AUTHORS ORDER BY ID",QueryConn),
+        print_all_one_by_one(QueryConn),
+        db_logoff(Conn),
+        odbc_disconnect(Stream).
+
+print_all_one_by_one(QueryConn):-
+        db_one_tuple(QueryConn,Answer), 
+        Answer\=[],
+        !,
+        format(" ~w \n",Answer),
+        print_all_one_by_one(QueryConn).
+print_all_one_by_one(_QueryConn):-
+        write(' Finished fetching query statement.'),
+        nl.
+
+main4:- %% inserting a tuple into the Literature database
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+        db_login(Stream,'Literature',dba,sql,Conn),
+        db_stmt_handle(Conn, 
+               "INSERT INTO AUTHORS values ('Martin Gaite',
+                'Carmen',10,'1910-7-10 00:00:00:000')",_QueryConn),
+        db_logoff(Conn),
+        odbc_disconnect(Stream).
+        
+main5:- %% creating a view
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+        db_login(Stream,'Literature',dba,sql,Conn),
+        db_stmt_handle(Conn,
+               "CREATE VIEW AntoniosDateOfBirth AS SELECT 
+                LastName,Date_of_birth FROM 
+                AUTHORS where FirstName='Antonio';",_QueryConn),
+        db_logoff(Conn),
+        odbc_disconnect(Stream).        
+
+main6:- %% printing the view
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+        db_login(Stream,'Literature',dba,sql,Conn),
+        db_eval_sql(Conn,"select * from AntoniosDateOfBirth",Term),
+        write(Term),
+        db_logoff(Conn),
+        odbc_disconnect(Stream).
+
+main7:- %% dropping a view
+        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+        db_login(Stream,'Literature',dba,sql,Conn),
+        db_eval_sql(Conn,"DROP VIEW AntoniosDateOfBirth",Term),
+        write(Term),
+        db_logoff(Conn),
+        odbc_disconnect(Stream).
+
+</PRE>
+
+
+<UL>
+<LI><A HREF="ciao_114.html#SEC411">Usage and interface (db_client)</A>
+<LI><A HREF="ciao_114.html#SEC412">Documentation on exports (db_client)</A>
+<LI><A HREF="ciao_114.html#SEC413">Documentation on internals (db_client)</A>
+<LI><A HREF="ciao_114.html#SEC414">Known bugs and planned improvements (db_client)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Usage and interface (<CODE>db_client</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(db_client)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4374"></A>
+<CODE>odbc_connect/2</CODE>, 
+<A NAME="IDX4375"></A>
+<CODE>db_login/5</CODE>, 
+<A NAME="IDX4376"></A>
+<CODE>db_eval_sql/3</CODE>, 
+<A NAME="IDX4377"></A>
+<CODE>db_stmt_handle/3</CODE>, 
+<A NAME="IDX4378"></A>
+<CODE>db_one_tuple/2</CODE>, 
+<A NAME="IDX4379"></A>
+<CODE>db_get_tables/2</CODE>, 
+<A NAME="IDX4380"></A>
+<CODE>db_table_types/3</CODE>, 
+<A NAME="IDX4381"></A>
+<CODE>db_logoff/1</CODE>, 
+<A NAME="IDX4382"></A>
+<CODE>odbc_disconnect/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4383"></A>
+<CODE>socketname/1</CODE>, 
+<A NAME="IDX4384"></A>
+<CODE>dbname/1</CODE>, 
+<A NAME="IDX4385"></A>
+<CODE>user/1</CODE>, 
+<A NAME="IDX4386"></A>
+<CODE>passwd/1</CODE>, 
+<A NAME="IDX4387"></A>
+<CODE>dbconnection/1</CODE>, 
+<A NAME="IDX4388"></A>
+<CODE>answertableterm/1</CODE>, 
+<A NAME="IDX4389"></A>
+<CODE>tuple/1</CODE>, 
+<A NAME="IDX4390"></A>
+<CODE>dbqueryconnection/1</CODE>, 
+<A NAME="IDX4391"></A>
+<CODE>answertupleterm/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4392"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX4393"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX4394"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX4395"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX4396"></A>
+<CODE>persdb_sql/string2term</CODE>, 
+<A NAME="IDX4397"></A>
+<CODE>messages</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC412" HREF="ciao_toc.html#TOC412">Documentation on exports (<CODE>db_client</CODE>)</A></H2>
+<P>
+<A NAME="IDX4398"></A>
+<A NAME="IDX4399"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>odbc_connect/2:</B>
+<DD><A NAME="IDX4400"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>odbc_connect(+DbAddress,-(Stream))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Opens a socket connection to port <CODE>DbAddress</CODE>, which should be the address of a
+
+<A NAME="IDX4401"></A>
+database mediator server. <CODE>Stream</CODE> is the identifier of the corresponding Prolog stream. It is simply a call to 
+<A NAME="IDX4402"></A>
+<CODE>connect_to_socket/3</CODE> 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbAddress</CODE> is a structure describing a complete TCP/IP port address.
+ (<CODE>db_client:socketname/1</CODE>)
+
+<CODE>-(Stream)</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4403"></A>
+<A NAME="IDX4404"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_login/5:</B>
+<DD><A NAME="IDX4405"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_login(+Stream,+DbName,+User,+Passwd,-(DbConnection))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Logs on to the database <CODE>DbName</CODE> with user <CODE>User</CODE> and password <CODE>Passwd</CODE> via connection <CODE>Stream</CODE>. <CODE>DbConnection</CODE> contains the identifier of the session, to be used in the calls to other predicates defining the interface. It fails and display an error message if the login is not succesfully completed.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>+DbName</CODE> is the identifier of an ODBC database.
+ (<CODE>db_client:dbname/1</CODE>)
+
+<CODE>+User</CODE> is a user name in the ODBC database.
+ (<CODE>db_client:user/1</CODE>)
+
+<CODE>+Passwd</CODE> is the password for the user name in the ODBC database.
+ (<CODE>db_client:passwd/1</CODE>)
+
+<CODE>-(DbConnection)</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4406"></A>
+<A NAME="IDX4407"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
+<DD><A NAME="IDX4408"></A>
+
+
+
+<PRE>
+socketname(IPAddress:PortNumber) :-
+        atm(IPAddress),
+        int(PortNumber).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4409"></A>
+<A NAME="IDX4410"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
+<DD><A NAME="IDX4411"></A>
+
+
+
+<PRE>
+dbname(DBId) :-
+        atm(DBId).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an ODBC database.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4412"></A>
+<A NAME="IDX4413"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
+<DD><A NAME="IDX4414"></A>
+
+
+
+<PRE>
+user(User) :-
+        atm(User).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the ODBC database.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4415"></A>
+<A NAME="IDX4416"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
+<DD><A NAME="IDX4417"></A>
+
+
+
+<PRE>
+passwd(Passwd) :-
+        atm(Passwd).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the ODBC database.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4418"></A>
+<A NAME="IDX4419"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX4420"></A>
+
+
+
+<PRE>
+dbconnection(dbconnection(DbStream,DbHandle)) :-
+        stream(DbStream),
+        dbhandle(DbHandle).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4421"></A>
+<A NAME="IDX4422"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_eval_sql/3:</B>
+<DD><A NAME="IDX4423"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_eval_sql(+DbConnection,+Sentence,-(AnswerTableTerm))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Evaluates the SQL code in <CODE>Sentence</CODE> in database session <CODE>DbConnection</CODE>. <CODE>AnswerTableTerm</CODE> is the response. If a wrong answer is obtained, <CODE>AnswerTableTerm</CODE> will indicate the error (see
+
+<A NAME="IDX4424"></A>
+<CODE>answertableterm</CODE> for details). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+Sentence</CODE> is a string of SQL code.
+ (<CODE>db_client:sqlstring/1</CODE>)
+
+<CODE>-(AnswerTableTerm)</CODE> is a response from the ODBC database interface.
+ (<CODE>db_client:answertableterm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4425"></A>
+<A NAME="IDX4426"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>answertableterm/1:</B>
+<DD><A NAME="IDX4427"></A>
+
+
+<P>
+Represents the types of responses that will be returned from the ODBC database interface. These can be a set of answer tuples, or the atom <CODE>ok</CODE> in case of a successful addition or deletion.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>answertableterm(AT)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AT</CODE> is a response from the ODBC database interface.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4428"></A>
+<A NAME="IDX4429"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
+<DD><A NAME="IDX4430"></A>
+
+
+
+<PRE>
+tuple(T) :-
+        list(T,atm).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4431"></A>
+<A NAME="IDX4432"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_stmt_handle/3:</B>
+<DD><A NAME="IDX4433"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_stmt_handle(+DbConnection,+Sentence,-(DbQueryConnection))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Evaluates the SQL code in <CODE>Sentence</CODE> in database session <CODE>DbConnection</CODE>. If <CODE>Sentence</CODE> is a succesfull selection, <CODE>DbQueryConnection</CODE> is a <EM>handle</EM> to the set of tuples produced by this selection. The individual members of this set can then be accessed via <CODE>DbQueryConnection</CODE> using the
+
+<A NAME="IDX4434"></A>
+<CODE>db_one_tuple/2</CODE> predicate. If <CODE>Sentence</CODE> is not succesfull or is not a selection, <CODE>DbQueryConnection</CODE> will contain the answer received. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+Sentence</CODE> is a string of SQL code.
+ (<CODE>db_client:sqlstring/1</CODE>)
+
+<CODE>-(DbQueryConnection)</CODE> is a unique identifier of a query answer in a database session connection.
+ (<CODE>db_client:dbqueryconnection/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4435"></A>
+<A NAME="IDX4436"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
+<DD><A NAME="IDX4437"></A>
+
+
+
+<PRE>
+dbqueryconnection(dbqueryconnection(DbStream,DbHandle,StmtHandle)) :-
+        stream(DbStream),
+        dbhandle(DbHandle),
+        stmthandle(StmtHandle).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4438"></A>
+<A NAME="IDX4439"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_one_tuple/2:</B>
+<DD><A NAME="IDX4440"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_one_tuple(+DbQueryConnection,-(TupleTerm))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>TupleTerm</CODE> represents the last tuple read from handle <CODE>DbQueryConnection</CODE>. Will be an empty list if all the answers have already been read. It displays an error if any unformatted string is fetched.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbQueryConnection</CODE> is a unique identifier of a query answer in a database session connection.
+ (<CODE>db_client:dbqueryconnection/1</CODE>)
+
+<CODE>-(TupleTerm)</CODE> is a predicate containing a tuple.
+ (<CODE>db_client:answertupleterm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4441"></A>
+<A NAME="IDX4442"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>answertupleterm/1:</B>
+<DD><A NAME="IDX4443"></A>
+
+
+
+<PRE>
+answertupleterm([]).
+answertupleterm(tup(T)) :-
+        tuple(T).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>answertupleterm(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a predicate containing a tuple.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4444"></A>
+<A NAME="IDX4445"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_get_tables/2:</B>
+<DD><A NAME="IDX4446"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_get_tables(+DbConnection,-(Tables))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>DbConnection</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>-(Tables)</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4447"></A>
+<A NAME="IDX4448"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_table_types/3:</B>
+<DD><A NAME="IDX4449"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_table_types(+DbConnection,+Table,-(AttrTypes))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>DbConnection</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-(AttrTypes)</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4450"></A>
+<A NAME="IDX4451"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_logoff/1:</B>
+<DD><A NAME="IDX4452"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_logoff(+DbConnection)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Logs off from the database identified by <CODE>DbConnection</CODE>. It fails and display an error message if the login is not succesfully completed.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4453"></A>
+<A NAME="IDX4454"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>odbc_disconnect/1:</B>
+<DD><A NAME="IDX4455"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>odbc_disconnect(+Stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Closes the socket connection to <CODE>Stream</CODE>. It is simply a call to
+
+<A NAME="IDX4456"></A>
+<CODE>close/1</CODE>. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4457"></A>
+<A NAME="IDX4458"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>match_string/3:</B>
+<DD><A NAME="IDX4459"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Documentation on internals (<CODE>db_client</CODE>)</A></H2>
+<P>
+<A NAME="IDX4460"></A>
+<A NAME="IDX4461"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbhandle/1:</B>
+<DD><A NAME="IDX4462"></A>
+
+
+
+<PRE>
+dbhandle(H) :-
+        string(H).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbhandle(H)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> is the internal database identifier (handle) of a database session.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4463"></A>
+<A NAME="IDX4464"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>stmthandle/1:</B>
+<DD><A NAME="IDX4465"></A>
+
+
+
+<PRE>
+stmthandle(H) :-
+        string(H).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>stmthandle(H)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> is the internal statement identifier (handle) of a query answer in a database session connection.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Known bugs and planned improvements (<CODE>db_client</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Need to fix the problem with parametric types being meta_predicates ... list(_,tuple/1).
+</UL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

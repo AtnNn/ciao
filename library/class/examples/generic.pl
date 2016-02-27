@@ -1,0 +1,66 @@
+%%----------------------------------%%
+%% A generic class to perform       %%
+%% item storage.                    %%
+%%----------------------------------%%
+:- class(generic).
+
+% Public interface declaration:
+:- export([set/1,get/1,callme/0]).
+
+% An attribute
+:- data datum/1.
+
+% inheritable/1 is used for datum/1
+% to become available to descendant
+% classes (if any).
+:- inheritable(datum/1).
+
+% Attribute initialization. Attributes
+% are easily initialized by writing clauses
+% for them.
+
+datum(none).
+
+% Code
+
+set(X) :-
+        type_check(X),
+        set_fact(datum(X)).
+
+get(X) :-
+        datum(X).
+
+:- virtual type_check/1.
+
+type_check(X) :-
+	nonvar(X).
+
+callme :-
+	a_virtual(IMPL),
+	display(IMPL),
+	display(' implementation of a_virtual/0 '),
+	nl.
+
+% virtual/1 will tell the compiler to use the most
+% descendant implementation of a_virtual/1 when calling
+% it from inside this code (for example,see callme/0).
+% If there is no descendant implementation for it, 
+% the one defined bellow will be used.
+
+:- virtual a_virtual/1.
+a_virtual(generic).
+
+% Constructor: in this case, every time an instance
+% of this class is created, it will display a message.
+
+generic :-
+	display(' generic class constructor '),
+	nl.
+
+% Destructor: analogous to the previous constructor,
+% it will display a message every time an instance
+% of this class is eliminated.
+
+destructor :-
+	display(' generic class destructor '),
+	nl.

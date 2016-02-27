@@ -1,0 +1,193 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Using classes from the CIAO toplevel shell</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC349" HREF="ciao_toc.html#TOC349">Using classes from the CIAO toplevel shell</A></H1>
+<P>
+<A NAME="IDX3753"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#21 (1999/7/7, 10:27:51 MEST)
+
+
+<P>
+The CIAO toplevel shell will be a usefull tool in order to compile and test O'CIAO classes. Those classes may be dynamically loaded, so some instances of them may be created to perform any needed test.
+
+
+
+<UL>
+<LI><A HREF="ciao_101.html#SEC350">Usage and interface (dynclasses)</A>
+<LI><A HREF="ciao_101.html#SEC351">Documentation on exports (dynclasses)</A>
+<LI><A HREF="ciao_101.html#SEC352">Known bugs and planned improvements (dynclasses)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC350" HREF="ciao_toc.html#TOC350">Usage and interface (<CODE>dynclasses</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+This library will be automatically loaded when using the <EM>objects</EM> package from the toplevel shell: 
+
+<PRE>
+	?- use_package(objects).
+</PRE>
+
+It may be usefull for you to put a <CODE>:- use_package(objects)</CODE> declaration on your <EM>.cshrc</EM> initialization file. In such case, absolutely nothing is needed to load this library. 
+
+The Emacs ciao-mode will also automatically load this library when a <EM>Load buffer</EM> command is issued (<CODE>C-c l</CODE>). 
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3754"></A>
+<CODE>use_class/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3755"></A>
+<CODE>dynmods</CODE>, 
+<A NAME="IDX3756"></A>
+<CODE>filenames</CODE>, 
+<A NAME="IDX3757"></A>
+<CODE>objects/objects_rt</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC351" HREF="ciao_toc.html#TOC351">Documentation on exports (<CODE>dynclasses</CODE>)</A></H2>
+<P>
+<A NAME="IDX3758"></A>
+<A NAME="IDX3759"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
+<DD><A NAME="IDX3760"></A>
+
+
+<P>
+This predicate is something very similar to 
+<A NAME="IDX3761"></A>
+<CODE>use_module/1</CODE>. 
+
+
+<P>
+It will (re)compile and/or (re)load a class source file from the CIAO shell so instances of that class can be now created. 
+
+
+<P>
+There is an implicit usage relationship between the CIAO shell and <STRONG>any and all loaded</STRONG> classes. This seems that user is allowed to create (
+<A NAME="IDX3762"></A>
+<CODE>new/1</CODE>) and call any public predicate even when the involved class was not specifically loaded using the use_class/1 predicate.For example: 
+
+<PRE>
+   :- module(test,[example/1],[objects]).
+
+   :- use_class(test_class).
+
+    example(Obj) :-
+        Obj new test_class,
+        Obj:do_something.
+</PRE>
+
+<P>
+Whenever this code is loaded: 
+
+
+
+<PRE>
+	?- use_module(test).
+</PRE>
+
+<P>
+user is allowed to handle instances of <EM>test_class</EM> (and ascendants): 
+
+
+
+<PRE>
+	?- test:example(SomeObj), SomeObj:test_something.
+</PRE>
+
+<P>
+Note that <EM>test_class</EM> was not loaded using use_class/1 predicate, but public predicate <EM>test_something/0</EM> may be called. 
+
+
+<P>
+Some other usefull notes: 
+
+
+
+<UL>
+
+<LI>Every time a class is reloaded using use_class/1, all previously created instances of that class will be automatically destroyed.
+
+<LI>Predicate use_class/1 will fail if called from user programs.
+
+<LI>use_class/1 will have no effect whether given source is not a class.
+
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>use_class(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Compile and load <CODE>Source</CODE> class
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC352" HREF="ciao_toc.html#TOC352">Known bugs and planned improvements (<CODE>dynclasses</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Not really a bug: when loading code which declares static instances (
+<A NAME="IDX3763"></A>
+<CODE>use_module/1</CODE>), those instances may be not correctly created, and predicates will fail whenever they are not supposed to do. This may be avoided by reloading again the involved module, but make sure it is modified and saved to disk before doing so. 
+</UL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

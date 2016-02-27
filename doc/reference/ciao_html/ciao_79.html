@@ -1,0 +1,306 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - A simple pretty-printer for Ciao programs</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_78.html">previous</A>, <A HREF="ciao_80.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC277" HREF="ciao_toc.html#TOC277">A simple pretty-printer for Ciao programs</A></H1>
+<P>
+<A NAME="IDX3285"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#100 (1999/5/26, 12:36:46 MEST)
+
+
+<P>
+This library module writes out to standard output a clause or a list of clauses.
+
+
+
+<UL>
+<LI><A HREF="ciao_79.html#SEC278">Usage and interface (pretty_print)</A>
+<LI><A HREF="ciao_79.html#SEC279">Documentation on exports (pretty_print)</A>
+<LI><A HREF="ciao_79.html#SEC280">Documentation on internals (pretty_print)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC278" HREF="ciao_toc.html#TOC278">Usage and interface (<CODE>pretty_print</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(pretty_print)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3286"></A>
+<CODE>pretty_print/2</CODE>, 
+<A NAME="IDX3287"></A>
+<CODE>pretty_print/3</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3288"></A>
+<CODE>vndict</CODE>, 
+<A NAME="IDX3289"></A>
+<CODE>write</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC279" HREF="ciao_toc.html#TOC279">Documentation on exports (<CODE>pretty_print</CODE>)</A></H2>
+<P>
+<A NAME="IDX3290"></A>
+<A NAME="IDX3291"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pretty_print/2:</B>
+<DD><A NAME="IDX3292"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pretty_print(Cls,Flags)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Prints each clause in the list <CODE>Cls</CODE> after numbering its variables.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>pretty_print:clauses(Cls)</CODE>
+ (<CODE>pretty_print:clauses/1</CODE>)
+
+<CODE>Flags</CODE> is a list of <CODE>flag</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3293"></A>
+<A NAME="IDX3294"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pretty_print/3:</B>
+<DD><A NAME="IDX3295"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pretty_print(Cls,Flags,Ds)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Prints each clause in the list <CODE>Cls</CODE> after using the corresponding variable names dictionary in <CODE>Ds</CODE> to name its variables.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>pretty_print:clauses(Cls)</CODE>
+ (<CODE>pretty_print:clauses/1</CODE>)
+
+<CODE>Flags</CODE> is a list of <CODE>flag</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>Ds</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC280" HREF="ciao_toc.html#TOC280">Documentation on internals (<CODE>pretty_print</CODE>)</A></H2>
+<P>
+<A NAME="IDX3296"></A>
+<A NAME="IDX3297"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>clauses/1:</B>
+<DD><A NAME="IDX3298"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+clauses([]).
+clauses([_1|_2]) :-
+        clause(_1),
+        clauses(_2).
+clauses(_1) :-
+        clause(_1).
+</PRE>
+
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3299"></A>
+<A NAME="IDX3300"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>clause/1:</B>
+<DD><A NAME="IDX3301"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+clause(_1) :-
+        clterm(_1).
+clause((_1,_2)) :-
+        clterm(_1),
+        term(_2).
+</PRE>
+
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3302"></A>
+<A NAME="IDX3303"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>clterm/1:</B>
+<DD><A NAME="IDX3304"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+clterm(clause(_1,_2)) :-
+        callable(_1),
+        body(_2).
+clterm(directive(_1)) :-
+        body(_1).
+clterm((_1:-_2)) :-
+        callable(_1),
+        body(_2).
+clterm(_1) :-
+        callable(_1).
+</PRE>
+
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3305"></A>
+<A NAME="IDX3306"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>body/1:</B>
+<DD><A NAME="IDX3307"></A>
+
+
+<P>
+A well formed body, including cge expressions and &#38;-concurrent expressions. The atomic goals may or may not have a key in the form <CODE>^(goal:any)</CODE>, and may or may not be module qualified, but if they are it has to be in the form <CODE>^(^(moddesc:goal):any)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>body(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a printable body.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3308"></A>
+<A NAME="IDX3309"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>flag/1:</B>
+<DD><A NAME="IDX3310"></A>
+
+
+<P>
+A keyword <CODE>ask/1</CODE> flags whether to output <EM>asks</EM> or <EM>whens</EM> and <CODE>nl/1</CODE> whether to separate clauses with a blank line or not.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>flag(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a flag for the pretty-printer.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_78.html">previous</A>, <A HREF="ciao_80.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

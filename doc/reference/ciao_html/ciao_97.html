@@ -1,0 +1,373 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Error reporting when compiling classes and interfaces</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC332" HREF="ciao_toc.html#TOC332">Error reporting when compiling classes and interfaces</A></H1>
+<P>
+<A NAME="IDX3615"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#66 (1999/9/30, 13:19:4 MEST)
+
+
+<P>
+ This chapter will explain error reporting when declaring a class. The first section will explain compile-time errors, this is, any semantic error which may be determined at compile time. The second section will explain run-time errors, this is, any exception that may be raisen by the incorrect usage of O'CIAO. Some of those errors may be not reported at compile time, due to the use of meta-programational structures. For example: 
+
+
+<P>
+<CODE>functor(X,my_method,0),call(X).</CODE> 
+
+
+<P>
+O'CIAO is not able to check whether my_method/0 is a valid method or not. So, this kind of checking is left to run time. 
+
+
+
+<UL>
+<LI><A HREF="ciao_97.html#SEC333">Error reporting at compile time</A>
+<LI><A HREF="ciao_97.html#SEC334">Error reporting at run time</A>
+<LI><A HREF="ciao_97.html#SEC335">Normal Prolog module system interaction</A>
+<LI><A HREF="ciao_97.html#SEC336">Usage and interface (class_error)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC333" HREF="ciao_toc.html#TOC333">Error reporting at compile time</A></H2>
+<P>
+ 
+
+<UL>
+
+<LI><STRONG>ERROR : multiple inheritance not allowed.</STRONG>
+
+There are two or more inherit_class/1 declarations found at your code. Only one declaration is allowed, since there is no multiple code inheritance support. 
+
+<LI><STRONG>ERROR : invalid inheritance declaration.</STRONG>
+
+The given parameter to inherit_class/1 declaration is not a valid path to a Prolog source. 
+
+<LI><STRONG>ERROR : sorry, addmodule meta-arg is not allowed at <EM>F/A</EM>. </STRONG>
+
+You are trying to declare <EM>F/A</EM> as meta-predicate, and one of the meta-arguments is <EM>addmodule</EM>. This is not allowed in O'CIAO due to implementation restrictions. For example: 
+
+<CODE>:- meta_predicate example(addmodule).</CODE> 
+
+<CODE>example(X,FromModule) :- call(FromModule:X).</CODE> 
+
+<LI><STRONG>ERROR : invalid attribute declaration for <EM>Arg</EM>. </STRONG>
+
+Argument to data/1 or dynamic/1 declaration is not a valid predicate specification of the form <EM>Functor/Arity</EM>. For example: 
+
+<CODE>:- data attr.</CODE> 
+
+<CODE>:- dynamic attr(_).</CODE> 
+
+<CODE>:- data attr/m.</CODE> 
+
+etc,etc... 
+
+<LI><STRONG>ERROR : pretended attribute <EM>F/A</EM> was assumed to be a method.</STRONG>
+
+You put some clauses of <EM>F/A</EM> before the corresponding data/1 or dynamic/1 declaration. For example: 
+
+<CODE>attr(initial_value).</CODE> 
+
+<CODE>:- data attr/1.</CODE> 
+
+It is a must to declare attributes before any clause of the given predicate. 
+
+<LI><STRONG>ERROR : destructor/0 is not allowed to be an attribute.</STRONG>
+
+There is a :- data(destructor/0) or :- dynamic(destructor/0). declaration in your code. This is not allowed since destructor/0 is a reserved predicate, and must be allways a method. 
+
+<LI><STRONG>ERROR : <EM>Constructor</EM> is not allowed to be an attribute.</STRONG>
+
+As the previos error, you are trying to declare a constructor as an attribute. A constructor must be allways a method. 
+
+<LI><STRONG>ERROR : invalid multifile: destructor/0 is a reserved predicate.</STRONG>
+
+There is a :- multifile(destructor/0). declaration in your code. This is not allowed since destructor/0 is a reserved predicate, and must be allways a method. 
+
+<LI><STRONG>ERROR : invalid multifile: <EM>Constructor</EM> is a reserved predicate.</STRONG>
+
+As the previos error, you are trying to declare a constructor as a multifile. Any constructor must allways be a method. 
+
+<LI><STRONG>ERROR : multifile declaration of <EM>F/A</EM> ignored: it was assumed to be a method.</STRONG>
+
+You put some clauses of <EM>F/A</EM> before the corresponding multifile/1 declaration. For example: 
+
+example(a,b). 
+
+<CODE>:- multifile example/2.</CODE> 
+
+Multifile predicates must be declared before any clause of the given predicate. 
+
+<LI><STRONG>ERROR : invalid multifile declaration: multifile(<EM>Arg</EM>). </STRONG>
+
+Given argument to multifile/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
+
+<LI><STRONG>ERROR : invalid public declaration: <EM>Arg</EM>. </STRONG>
+
+Given argument <EM>Arg</EM> to public/1 or export/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
+
+<LI><STRONG>ERROR : invalid inheritable declaration: inheritable(<EM>Arg</EM>). </STRONG>
+
+Given argument <EM>Arg</EM> to inheritable/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
+
+<LI><STRONG>ERROR : destructor/0 is not allowed to be virtual.</STRONG>
+
+There is a :- virtual(destructor/0) declaration present at your code. Destructors and/or constructors are not allowed to be virtual. 
+
+<LI><STRONG>ERROR : <EM>Constructor</EM> is not allowed to be virtual.</STRONG>
+
+As the previous error, you are trying to declare a constructor as virtual. This is not allowed. 
+
+<LI><STRONG>ERROR : invalid virtual declaration: virtual(<EM>Arg</EM>). </STRONG>
+
+Given argument to virtual/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
+
+<LI><STRONG>ERROR : clause of <EM>F/A</EM> ignored : only facts are allowed as initial state.</STRONG>
+
+You declared <EM>F/A</EM> as an attribute, then you put some clauses of that predicate in the form <EM>Head :- Body</EM>. For example: 
+
+<CODE>:- data my_attribute/1.</CODE> 
+
+<CODE>my_attribute(X) :- X&#62;=0 , X&#60;=2.</CODE> 
+
+This is not allowed since attributes are assumed to hold simple facts. The correct usage for those <EM>initialization clauses</EM> is: 
+
+<CODE>:- data my_attribute/1.</CODE> 
+
+<CODE>my_attribute(0).</CODE> 
+
+<CODE>my_attribute(1).</CODE> 
+
+<CODE>my_attribute(2).</CODE> 
+
+<LI><STRONG>ERROR : multifile <EM>F/A</EM> is not allowed to be public.</STRONG>
+
+The given <EM>F/A</EM> predicate is both present at multifile/1 and public/1 declarations. For example: 
+
+<CODE>:- public(p/1).</CODE> 
+
+<CODE>:- multifile(p/1).</CODE> 
+
+This is not allowed since multifile predicates are not related to Object Oriented Programming. 
+
+<LI><STRONG>ERROR : multifile <EM>F/A</EM> is not allowed to be inheritable.</STRONG>
+
+Analogous to previous error. 
+
+<LI><STRONG>ERROR : multifile <EM>F/A</EM> is not allowed to be virtual.</STRONG>
+
+Analogous to previous error. 
+
+<LI><STRONG>ERROR : virtual <EM>F/A</EM> must be a method or attribute defined at this class.</STRONG>
+
+There is a virtual/1 declaration for <EM>F/A</EM>, but there is not any clause of that predicate nor a 
+<A NAME="IDX3616"></A>
+<CODE>data/1</CODE> declaration. You must declare at least one clause for every virtual method. Virtual attributes does not require any clause but a 
+<A NAME="IDX3617"></A>
+<CODE>data/1</CODE> declaration must be present. 
+
+<LI><STRONG>ERROR : implemented interface <EM>Module</EM> is not a valid interface.</STRONG>
+
+There is an 
+<A NAME="IDX3618"></A>
+<CODE>implements/1</CODE> declaration present at your code where given <EM>Module</EM> is not declared as class nor interface. 
+
+<LI><STRONG>ERROR : predicate <EM>F/A</EM> is required both as method (at <EM>Itf1</EM> interface) and attribute (at <EM>Itf2</EM> interface).</STRONG>
+
+There is no chance to give a correct implementation for <EM>F/A</EM> predicate since <EM>Itf1</EM> and <EM>Itf2</EM> interfaces require different definitions. To avoid this error, you must remove one of the related 
+<A NAME="IDX3619"></A>
+<CODE>implements/1</CODE> declaration. 
+
+<LI><STRONG>ERROR : inherited <EM>Source</EM> must be a class.</STRONG>
+
+There is an :- inherit_class(<EM>Source</EM>) declaration, but that source was not declared as a class. 
+
+<LI><STRONG>ERROR : circular inheritance: <EM>Source</EM> is not a valid super-class.</STRONG>
+
+Establishing an inheritance relationship with <EM>Source</EM> will cause current class to be present twice in the inheritance line. This is not allowed. The cause of this is error is simple : There is some inherited class from <EM>Source</EM> which also establishes an inheritance relationship with current source. 
+
+<LI><STRONG>ERROR : method/attribute <EM>F/A</EM> must be implemented.</STRONG>
+
+Some of the implemented interfaces requires <EM>F/A</EM> to be defined, but there is no definition for such predicate, even an inherited one. 
+
+<LI><STRONG>ERROR : local implementation of <EM>F/A</EM> hides inheritable/public definition.</STRONG>
+
+There is an inherited definition for <EM>F/A</EM> which is been redefined at current class, but there is no valid inheritable/public declaration for the last one. Overriden public predicates must be also declared as public. Overriden inheritable predicates must be declared either as public or inheritable. 
+
+<LI><STRONG>ERROR : public predicate <EM>F/A</EM> was not defined nor inherited.</STRONG>
+
+There is a 
+<A NAME="IDX3620"></A>
+<CODE>public/1</CODE> declaration for <EM>F/A</EM>, but there is no definition for it at current class nor an inherited one. 
+
+<LI><STRONG>ERROR : argument to self/1 must be a free variable.</STRONG>
+
+Argument to self/1 is not a variable, for example: <CODE>self(abc)</CODE>. 
+
+<LI><STRONG>ERROR : unknown inherited attribute in <EM>Goal</EM>.</STRONG>
+
+<EM>Goal</EM> belongs to assert/retract family of predicates, and given argument is not a valid inherited attribute. The most probable causes of this error are: 
+
+
+<UL>
+
+<LI>The given predicate is defined at super-class, but you forgot to mark it as inheritable (or public), at such class.
+
+<LI>The given predicate was not defined (at super-class) as an attribute, just as a method.
+
+</UL>
+
+<LI><STRONG>ERROR : unknown inherited goal: <EM>Goal</EM>.</STRONG>
+
+The given <EM>Goal</EM> was not found at super-class, or it is not accessible. Check whether <EM>Goal</EM> was marked as inheritable (or public) at super-class. 
+
+<LI><STRONG>ERROR : invalid argument: <EM>F/A</EM> is not an attribute.</STRONG>
+
+You are trying to pass a method as an argument to any predicate which expect a <EM>fact</EM> predicate. 
+
+<LI><STRONG>ERROR : unknown inherited fact: <EM>Fact</EM>.</STRONG>
+
+There is a call to any predicate which expects a <EM>fact</EM> argument (those declared as data or dynamic),but the actual argument is not an inherited attribute.For example: 
+
+<CODE>asserta_fact(inherited(not_an_attribute(8)))</CODE> 
+
+where not_an_attribute/1 was not declared as data or dynamic by the super-class (or corresponding ascendant). 
+
+<LI><STRONG>ERROR : unknown inherited spec: <EM>F/A</EM>.</STRONG>
+
+There is a reference to an inherited predicate specification, but the involved predicate has not been inherited. 
+
+<LI><STRONG>WARNING : meta-predicate specification of <EM>F/A</EM> ignored since this is an attribute.</STRONG>
+
+You declared <EM>F/A</EM> both as an attribute and a meta-predicate. For example: 
+
+<CODE>:- meta_predicate attr(goal).</CODE> 
+
+<CODE>:- data attr/1.</CODE> 
+
+There is no sense in declaring an attribute as meta-predicate. 
+
+<LI><STRONG>WARNING : class destructor is public</STRONG>
+
+There is a :- public(destructor/0) declaration present at your code. Marking a destructor as public is a very bad idea since anybody may destroy or corrupt an instance before the proper time. 
+
+<LI><STRONG>WARNING : class destructor is inheritable</STRONG>
+
+Analogous to previous error. 
+
+<LI><STRONG>WARNING : There is no call to inherited constructor/s</STRONG>
+
+You have not declared any constructor at your class, but there is any inherited constructor that should be called. Whenever you do not need constructors, but there is an inheritance relationship (where super-class declares a constructor), you should write a simple constructor as the following example: 
+
+<PRE>
+   :- class(myclass).
+   :- inherit_class(other_class).
+
+   myclass :-
+           other_class.
+</PRE>
+
+<LI><STRONG>WARNING : multifile <EM>F/A</EM> hides inherited predicate.</STRONG>
+
+You declared as multifle a predicate which matches an inherited predicate name. Any reference to the inherited predicate must be done by the ways of the inherited/1 qualificator. 
+
+</UL>
+
+<P>
+ 
+
+
+
+
+<H2><A NAME="SEC334" HREF="ciao_toc.html#TOC334">Error reporting at run time</A></H2>
+<P>
+ 
+
+
+
+<UL>
+ 
+<LI><STRONG>EXCEPTION : error(existence_error(object_goal,<EM>Goal</EM>),<EM>Mod</EM>).</STRONG>
+
+Called <EM>Goal</EM> from module (or class) <EM>Mod</EM> is unknown or has not been published. 
+
+
+
+<H2><A NAME="SEC335" HREF="ciao_toc.html#TOC335">Normal Prolog module system interaction</A></H2>
+
+<P>
+O'CIAO works in conjunction with the habitual CIAO Prolog module system, which also reports its own error messages. This will cause CIAO to report a little criptic error messages due to the general mechanism of source-to-source expansion. Those are some tips you must consider when compiling a class: 
+
+
+
+<UL>
+
+<LI>Any error relative to method 'm' with arity A will be reported for predicate 'obj$m'/A+1. For example :
+
+ 
+<CODE>WARNING: (lns 28-30) [Item,Itema] - singleton variables in obj$remove/2</CODE> 
+ 
+This error is relative to method remove/1. 
+
+<LI>
+
+<A NAME="IDX3621"></A>
+<CODE>set_prolog_flag/1</CODE> declaration will be usefull when declaring multiple constructors. It will avoid some awful warnings. Example: 
+
+
+<PRE>
+   :- class(myclass).
+
+   %% Use this declaration whenever several constructors are needed.
+
+   :- set_prolog_flag(multi_arity_warnings,off).
+
+   myclass(_).
+
+   myclass(_,_).
+
+   :- set_prolog_flag(multi_arity_warnings,on).
+</PRE>
+
+</UL>
+
+
+
+<H2><A NAME="SEC336" HREF="ciao_toc.html#TOC336">Usage and interface (<CODE>class_error</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(class_error)).</CODE>
+</UL>
+
+</div class="cartouche">
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

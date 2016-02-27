@@ -1,0 +1,335 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Basic predicates handling names of constants</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC92" HREF="ciao_toc.html#TOC92">Basic predicates handling names of constants</A></H1>
+<P>
+<A NAME="IDX1013"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+The CIAO system provides builtin predicates which allow dealing with names of constants (atoms or numbers). As an atom name must be of less than 512 characters, to handle sequences of more characters, strings (character code lists) must be used.
+
+
+
+<UL>
+<LI><A HREF="ciao_21.html#SEC93">Usage and interface (atomic_basic)</A>
+<LI><A HREF="ciao_21.html#SEC94">Documentation on exports (atomic_basic)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC93" HREF="ciao_toc.html#TOC93">Usage and interface (<CODE>atomic_basic</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+These predicates are builtin in CIAO, so nothing special has to be done to use them.
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX1014"></A>
+<CODE>name/2</CODE>, 
+<A NAME="IDX1015"></A>
+<CODE>atom_codes/2</CODE>, 
+<A NAME="IDX1016"></A>
+<CODE>number_codes/2</CODE>, 
+<A NAME="IDX1017"></A>
+<CODE>number_codes/3</CODE>, 
+<A NAME="IDX1018"></A>
+<CODE>atom_length/2</CODE>, 
+<A NAME="IDX1019"></A>
+<CODE>atom_concat/3</CODE>, 
+<A NAME="IDX1020"></A>
+<CODE>sub_atom/4</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC94" HREF="ciao_toc.html#TOC94">Documentation on exports (<CODE>atomic_basic</CODE>)</A></H2>
+<P>
+<A NAME="IDX1021"></A>
+<A NAME="IDX1022"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>name/2:</B>
+<DD><A NAME="IDX1023"></A>
+
+
+<P>
+<CODE>name(Const,String)</CODE>
+
+
+<P>
+<CODE>String</CODE> is the list of the ASCII codes of the characters comprising the name of <CODE>Const</CODE>. Note that if <CODE>Const</CODE> is an atom whose name can be interpreted as a number (e.g. '96'), the predicate is not reversible, as that atom will not be constructed when <CODE>Const</CODE> is uninstantiated. Thus it is recommended that new programs use the ISO-compliant predicates 
+<A NAME="IDX1024"></A>
+<CODE>atom_codes/2</CODE> or 
+<A NAME="IDX1025"></A>
+<CODE>number_codes/2</CODE>, as these predicates do not have this inconsistency.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>name(+constant,?(string))</CODE>
+
+<UL>
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>name(-(constant),+string)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> If <CODE>String</CODE> can be interpreted as a number, <CODE>Const</CODE> is unified with that number, otherwise with the atom whose name is <CODE>String</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1026"></A>
+<A NAME="IDX1027"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>atom_codes/2:</B>
+<DD><A NAME="IDX1028"></A>
+
+
+<P>
+<CODE>atom_codes(Atom,String)</CODE>
+
+
+<P>
+<CODE>String</CODE> is the list of the ASCII codes of the characters comprising the name of <CODE>Atom</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>atom_codes(+atm,?(string))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>atom_codes(-(atm),+string)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1029"></A>
+<A NAME="IDX1030"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>number_codes/2:</B>
+<DD><A NAME="IDX1031"></A>
+
+
+<P>
+<CODE>number_codes(Number,String)</CODE>
+
+
+<P>
+<CODE>String</CODE> is the list of the ASCII codes of the characters comprising a representation of <CODE>Number</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>number_codes(+num,?(string))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>number_codes(-(num),+string)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1032"></A>
+<A NAME="IDX1033"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>number_codes/3:</B>
+<DD><A NAME="IDX1034"></A>
+
+
+<P>
+<CODE>number_codes(Number,String,Base)</CODE>
+
+
+<P>
+<CODE>String</CODE> is the list of the ASCII codes of the characters comprising a representation of <CODE>Number</CODE> in base <CODE>Base</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>number_codes(+num,?(string),+int)</CODE>
+
+<UL>
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>number_codes(-(num),+string,+int)</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1035"></A>
+<A NAME="IDX1036"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>atom_length/2:</B>
+<DD><A NAME="IDX1037"></A>
+
+
+<P>
+<CODE>atom_length(Atom,Length)</CODE>
+
+
+<P>
+<CODE>Length</CODE> is the number of characters forming the name of <CODE>Atom</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>atom_length(+atm,?(int))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1038"></A>
+<A NAME="IDX1039"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>atom_concat/3:</B>
+<DD><A NAME="IDX1040"></A>
+
+
+<P>
+<CODE>atom_concat(Atom_1,Atom_2,Atom_12)</CODE>
+
+
+<P>
+<CODE>Atom_12</CODE> is the result of concatenating <CODE>Atom_1</CODE> followed by <CODE>Atom_2</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>atom_concat(+atom,+atom,?(atom))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Concatenate two atoms.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>atom_concat(-(atom),-(atom),+atom)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Non-deterministically split an atom.
+
+</UL>
+
+<P>
+<STRONG>Usage 3:</STRONG> <CODE>atom_concat(-(atom),+atom,+atom)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Take out of an atom a certain suffix (or fail if it cannot be done).
+
+</UL>
+
+<P>
+<STRONG>Usage 4:</STRONG> <CODE>atom_concat(+atom,-(atom),+atom)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Take out of an atom a certain prefix (or fail if it cannot be done).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1041"></A>
+<A NAME="IDX1042"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sub_atom/4:</B>
+<DD><A NAME="IDX1043"></A>
+
+
+<P>
+<CODE>sub_atom(Atom,Before,Length,Sub_atom)</CODE>
+
+
+<P>
+<CODE>Sub_atom</CODE> is formed with <CODE>Length</CODE> consecutive characters of <CODE>Atom</CODE> after the <CODE>Before</CODE> character.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sub_atom(+atm,+integer,+integer,?(atm))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

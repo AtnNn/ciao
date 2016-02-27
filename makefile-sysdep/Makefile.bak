@@ -1,0 +1,39 @@
+
+include $(MKF-OSARCH)
+
+SHELL=/bin/sh
+
+ifdef CCSHARED
+	CCFORCOMP="['$(CCSHARED)']"
+else
+	CCFORCOMP="[]"
+endif
+
+ifdef LDSHARED
+	LDFORCOMP="['$(LDSHARED)']"
+else
+	LDFORCOMP="[]"
+endif
+
+output_options:
+	@(echo -n  "foreign_compiler_options(" >> $(OUTFILE) ; \
+	  echo -n  "'$(OSNAME)'" >> $(OUTFILE) ; \
+	  echo -n  ", " >> $(OUTFILE) ; \
+	  echo -n  "'$(ARCHNAME)'" >> $(OUTFILE) ; \
+	  echo -n  ", " >> $(OUTFILE) ; \
+	  echo -n  "'$(CC)'" >> $(OUTFILE) ; \
+	  echo -n  ", " >> $(OUTFILE) ; \
+	  echo -n  $(CCFORCOMP) >> $(OUTFILE) ; \
+	  echo     ")." >> $(OUTFILE) ; \
+	  echo -n  "foreign_linker_options(" >> $(OUTFILE) ; \
+	  echo -n  "'$(OSNAME)'" >> $(OUTFILE) ; \
+	  echo -n  ", " >> $(OUTFILE) ; \
+	  echo -n  "'$(ARCHNAME)'" >> $(OUTFILE) ; \
+	  echo -n  ", " >> $(OUTFILE) ; \
+	  echo -n  "'$(LD)'" >> $(OUTFILE) ; \
+	  echo -n  ", " >> $(OUTFILE) ; \
+	  echo -n  $(LDFORCOMP) >> $(OUTFILE) ; \
+	  echo     ")." >> $(OUTFILE) ; \
+	)
+
+ 

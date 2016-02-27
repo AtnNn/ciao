@@ -1,0 +1,466 @@
+:- module(toplev,[displayversion/0, version/1,
+                  shell_start/0, shell_abort/0,
+                  shell_module/1,
+                  new_declaration/1, new_declaration/2,
+                  load_compilation_module/1, add_sentence_trans/1,
+                  add_term_trans/1, add_goal_trans/1,
+                  % up/0 & top/0 checked explicitly
+                  use_module/1, use_module/2, ensure_loaded/1,
+                  make_exec/2,
+                  include/1, use_package/1,
+                  consult/1, compile/1, '.'/2,
+                  debug_module/1, nodebug_module/1
+		 ],
+                 [dcg]).
+
+:- use_module(user, [call_user/1]).
+:- use_module(library('compiler/exemaker'),
+        [make_exec/2]).
+:- use_module(library(compiler),
+        [use_module/3, ensure_loaded/1,
+         set_debug_mode/1, set_nodebug_mode/1, mode_of_module/2,
+         set_debug_module/1, set_nodebug_module/1]).
+:- use_module(library(system), [file_exists/1]).
+:- use_module(library(errhandle)).
+:- use_module(library(ttyout)).
+:- use_module(library(write), [write/1, write_term/3]).
+:- use_module(library(read), [read_top_level/3, read_term/3]).
+:- use_module(library(operators), [op/3]).
+:- use_module(library(sort), [sort/2, keysort/2]).
+:- use_module(library(attrdump), [copy_extract_attr/3]).
+:- use_module(library(debugger)).
+:- use_module(library('compiler/translation')).
+:- use_module(library('compiler/c_itf'), [expand_list/2]).
+:- use_module(engine(internals),
+        ['$bootversion'/0, '$nodebug_call'/1, '$setarg'/4, '$open'/3,
+         '$abolish'/1]).
+
+:- redefining(make_exec/2).
+:- redefining(debug_module/1).
+:- redefining(nodebug_module/1).
+:- redefining(ensure_loaded/1).
+
+:- multifile exit_hook/0, after_query_hook/0, after_solution_hook/0.
+
+:- data shell_module/1. % Module where queries are called
+
+shell_start :-
+        initialize_debugger,
+        '$abolish'('user:main'),
+	current_prolog_flag(argv, Args),
+	interpret_args(Args),
+        displayversion,
+        op(900,fy,[(spy),(nospy)]),
+        shell_body,
+	( '$nodebug_call'(exit_hook), fail ; true).
+
+interpret_args([]) :- !,
+        include_if_exists('~/.ciaorc').
+interpret_args(['-f']) :- !. % fast start
+interpret_args(['-l',File]) :- !,
+        include_if_exists(File).
+interpret_args([_WinMesh]) :-
+        get_os('Win32'), !. % For windows shortcuts
+interpret_args(_Args) :-
+        display('Bad options, use either none, -f or -l <File>'), nl,
+        fail.
+
+include_if_exists(File) :-
+        ( file_exists(File) ->
+            include(File)
+        ; prolog_flag(quiet, QF, warning),
+          use_package(iso),
+          prolog_flag(quiet, _, QF) 
+        ).
+
+shell_abort :-
+        initialize_debugger,
+	message('{ Execution aborted }'),
+	shell_body,
+	( '$nodebug_call'(exit_hook), fail ; true).
+
+shell_body :-
+        intercept(error_protect(top_shell_env),
+                  control_c,
+                  do_interrupt_command(0'\n)).
+
+top_shell_env :-
+        reset_query_level,
+        catch(shell_env(_Vars), go_top, top_shell_env).
+
+shell_env(Vars) :-
+        repeat,
+        adjust_debugger,
+        shell_query(Vars, Query),
+	( '$nodebug_call'(after_query_hook), fail ; true ),
+	Query == end_of_file,
+	!.
+
+:- data top_prompt/1.
+
+shell_query(Variables, Query) :-
+        current_fact(top_prompt(TP)),
+        prompt(Prompt, TP),
+	( true ; prompt(_, Prompt), fail),
+	catch(get_query(Query, Variables),
+              error(syntax_error(L0,L1,Msg,ErrorLoc), _),
+              (Query = fail, handle_syntax_error(L0,L1,Msg,ErrorLoc))),
+        prompt(_, Prompt),
+        !,
+        ( Query == top ->
+            ttynl, throw(go_top)
+        ; valid_solution(Query, Variables) ->
+            ttynl, ttydisplay(yes)
+        ;   ttynl, ttydisplay(no)
+        ),
+        ttynl.
+shell_query(_Variables, end_of_file).
+
+get_query(Query, Variables) :-
+        read_top_level(user, RawQuery, Variables),
+        shell_expand(RawQuery, Query),
+        Query\==end_of_file,
+        Query\== up.
+
+handle_syntax_error(L0,L1,Msg,ErrorLoc) :-
+        display(user_error, '{SYNTAX '),
+        message_lns(error, L0, L1,
+                    [[](Msg),'\n',[](ErrorLoc),'\n}']).
+
+valid_solution(Query, Variables) :-
+        call_user(Query),
+        ( '$nodebug_call'(after_solution_hook), fail ; true ),
+        answer_constraints(Variables, Dict, Constraints),
+        solution_vars(Dict, Eqs, []),
+        prettyvars([Eqs|Constraints]),
+        display_solution(Eqs, Constraints, Variables).
+
+display_solution(Eqs, Constraints, Variables) :-
+        display_bindings(Eqs, '', Sep0),
+        display_constraints(Constraints, Sep0, Sep),
+        ok_solution(Sep, Eqs, Constraints, Variables).
+
+:- multifile dump/3. /* For clp[qr] .DCG. */
+
+answer_constraints(Variables, Dict, Constraints) :-
+        dump(Variables, Dict, Constraints), !.
+answer_constraints(Variables, Dict, Constraints) :-
+        copy_extract_attr(Variables, Dict, Constraints).
+
+solution_vars(D) --> {var(D)}, !.
+solution_vars(dic(Var,[Val|_],L,R)) -->
+ 	solution_vars(L),
+        solution_var(Var, Val),
+	solution_vars(R).
+
+solution_var([0'_|_], _) --> !.  % Do not display vars starting with "_"
+solution_var(Var, Val) --> {var(Val)}, !,
+        {atom_codes(AtomVar, Var), Val='$VAR'(AtomVar)}.
+solution_var(Var, Val) -->
+        [Var = Val].
+
+display_bindings([], Sep, Sep).
+display_bindings([Var=Val|Eqs], Sep0, Sep) :-
+        ttydisplay(Sep0), ttynl,
+        display_string(Var),
+        ttydisplay(' = '),
+        write_term(user, Val, [quoted(true), portrayed(true),
+                               numbervars(true), priority(699)]),
+        display_bindings(Eqs, ',', Sep).
+
+
+display_constraints([], Sep, Sep).
+display_constraints([Goal|Gs], Sep0, Sep) :-
+        display_goal(Goal, Sep0, Sep1),
+        display_constraints(Gs, Sep1, Sep).
+
+display_goal(true, Sep, Sep) :- !.
+display_goal((G1,G2), Sep0, Sep) :- !,
+	display_goal(G1, Sep0, Sep1),
+ 	display_goal(G2, Sep1, Sep).
+display_goal(G, Sep, ',') :-
+	ttydisplay(Sep), ttynl,
+        write_term(user, G, [quoted(true), portrayed(true),
+                             numbervars(true)]).
+
+ok_solution('', _, _, _).
+ok_solution(',', Eqs, Constraints, Variables) :-
+        ttyput(0' ), ttyput(0'?), ttyput(0' ),
+        ttyflush,
+        ttyget(C),
+        ( C = 10                            % end of line
+        ; C = 0'y, ttyskip(10)              % y(es)
+        ; C = 0', ->                        % add another question
+            ttyskip(10),
+            ttynl,
+            inc_query_level,
+            shell_env(Variables),
+            dec_query_level,
+            display_solution(Eqs, Constraints, Variables)
+        ; ttyskip(10), fail                 % another solution
+        ).
+
+
+% This is alike the one in library(write), except that variable names
+% start with "_"
+
+prettyvars(Term) :-
+	collect_vars(Term, Vars0, []),
+	keysort(Vars0, Vars),
+	pretty_vars(Vars, 0).
+
+collect_vars(Var) -->
+	{var(Var)}, !, [Var-[]].
+collect_vars([X|Xs]) --> !,
+	collect_vars(X),
+	collect_vars(Xs).
+collect_vars(X) -->
+	{functor(X, _, A)},
+	collect_vars_(0, A, X).
+
+collect_vars_(A, A, _) --> !.
+collect_vars_(A0, A, X) -->
+	{A1 is A0+1},
+	{arg(A1, X, X1)},
+	collect_vars(X1),
+	collect_vars_(A1, A, X).
+
+pretty_vars([], _).
+pretty_vars([X,Y|Xs], N0) :-
+	X==Y, !,
+        name_var(X, N0),
+	N is N0+1,
+	pretty_vars_(Xs, X, N).
+pretty_vars(['$VAR'('_')-[]|Xs], N0) :-
+	pretty_vars(Xs, N0).
+
+pretty_vars_([X|Xs], Y, N0) :-
+	X==Y, !,
+	pretty_vars_(Xs, Y, N0).
+pretty_vars_(Xs, _, N0) :-
+	pretty_vars(Xs, N0).
+
+name_var('$VAR'(Name)-[], N) :-
+        Letter is N mod 26 + 0'A,
+        ( N>=26 ->
+            Rest is N//26,
+            number_codes(Rest, Index)
+        ; Index = ""
+        ),
+        atom_codes(Name, [0'_ , Letter | Index]).
+
+:- data querylevel/1.
+
+reset_query_level :-
+        retractall_fact(querylevel(_)),
+        asserta_fact(querylevel(0)),
+        set_top_prompt(0).
+
+inc_query_level :-
+        retract_fact(querylevel(N)),
+        N1 is N+1,
+        asserta_fact(querylevel(N1)),
+        set_top_prompt(N1).
+
+dec_query_level :-
+        retract_fact(querylevel(N)),
+        N1 is N-1,
+        asserta_fact(querylevel(N1)),
+        set_top_prompt(N1).
+
+set_top_prompt(0) :- !,
+        retractall_fact(top_prompt(_)),
+        asserta_fact(top_prompt('?- ')).
+set_top_prompt(N) :-
+        number_codes(N, NS),
+        atom_codes(NA, NS),
+        atom_concat(NA, ' ?- ', TP),
+        retractall_fact(top_prompt(_)),
+        asserta_fact(top_prompt(TP)).
+
+:- data '$current version'/1.
+
+displayversion :-              % shall use current output
+	(   '$bootversion', 
+	    current_fact('$current version'(Msg)),
+	    nl, write(Msg), nl,
+	    fail
+	;   true
+	).
+
+version(A) :-
+        nonvar(A), !,
+	assertz_fact('$current version'(A)).
+version(_) :- throw(error(instantiation_error,version/1-1)).
+
+shell_expand(V, Query) :- var(V), !, Query = call(V).
+shell_expand((:- Decl), Query) :-
+        current_fact(shell_module(ShMod)),
+        expand_term((:- Decl), ShMod, Query),
+        ( Query = true -> true ; true). % unify Query if a var
+shell_expand(RawQuery, Query) :-
+        current_fact(shell_module(ShMod)),
+        expand_term(('SHELL':-RawQuery), ShMod, Expansion),
+        ( Expansion = ('SHELL':-Query0) ->
+            expand_goal(Query0, ShMod, Query)
+        ; Query = fail,
+          message(error, ['unexpected answer from expansion: ',Expansion])
+        ).
+
+
+/* Including files in shell */
+
+:- data new_decl/1.
+
+include(File) :-
+        absolute_file_name(File, '_opt', '.pl', '.', SourceFile, _, _),
+        message(['{Including ',SourceFile]),
+        '$open'(SourceFile, read, Stream),
+        include_st(Stream),
+        close(Stream),
+        message('}').
+
+include_st(Stream) :-
+        current_fact(shell_module(ShMod)),
+        repeat,
+	  read_term(Stream, RawData, [lines(L0,L1)]),
+          expand_term(RawData, ShMod, Data0),
+	  expand_list(Data0, Data1),
+        ( Data1 = end_of_file, !
+        ; interpret_data(Data1, L0, L1),
+          fail).
+
+interpret_data((?- Goal), _, _) :- !,
+        call_user(Goal), !.
+interpret_data((:- Decl), L0, L1) :- !,
+        ( current_fact(new_decl(Decl)) ->
+            true
+        ; shell_directive(Decl) ->
+            call_user(Decl)
+        ; bad_shell_directive(Decl, L0, L1)
+        ).
+interpret_data((H :- B0), _, _) :- !,
+        shell_module(ShMod),
+        expand_goal(B0, ShMod, B),
+        call_user(assertz((H :- B))).
+interpret_data(Fact, _, _) :-
+        call_user(assertz(Fact)).
+
+bad_shell_directive(Decl, L0, L1) :-
+        functor(Decl,F,A),
+        message_lns(error, L0, L1,[~~(F/A),' directive not allowed in shell']).
+
+shell_directive(use_module(_)).
+shell_directive(use_module(_,_)).
+shell_directive(ensure_loaded(_)).
+shell_directive(include(_)).
+shell_directive(use_package(_)).
+shell_directive(set_prolog_flag(_,_)).
+shell_directive(push_prolog_flag(_,_)).
+shell_directive(pop_prolog_flag(_)).
+shell_directive(op(_,_,_)).
+shell_directive(new_declaration(_,_)).
+shell_directive(new_declaration(_)).
+shell_directive(load_compilation_module(_)).
+shell_directive(add_sentence_trans(_)).
+shell_directive(add_term_trans(_)).
+shell_directive(add_goal_trans(_)).
+shell_directive(multifile(_)).
+
+use_module(M) :-
+        use_module(M, all).
+
+use_module(M, Imports) :-
+        shell_module(Module),
+        use_module(M, Imports, Module).
+
+ensure_loaded([]) :- !.
+ensure_loaded([File|Files]) :- !,
+        compiler:ensure_loaded(File),
+        ensure_loaded(Files).
+ensure_loaded(File) :- compiler:ensure_loaded(File).
+
+[File|Files] :-
+        ( Files = [] -> AllFiles = File ; AllFiles = [File|Files] ),
+        message(note,[[File|Files],' is obsolete, use ',
+                     ensure_loaded(AllFiles),' instead']),
+        compiler:ensure_loaded(File),
+        ensure_loaded(Files).
+
+consult([]) :- !.
+consult([File|Files]) :- !,
+        consult(File),
+        consult(Files).
+consult(File) :-
+        set_debug_mode(File),
+        compiler:ensure_loaded(File).
+
+compile([]) :- !.
+compile([File|Files]) :- !,
+        compile(File),
+        compile(Files).
+compile(File) :-
+        set_nodebug_mode(File),
+        compiler:ensure_loaded(File).
+
+make_exec(Files, ExecName) :-
+        ( Files = [_|_] ->
+            exemaker:make_exec(Files, ExecName)
+        ; exemaker:make_exec([Files], ExecName)
+        ).
+
+use_package([]) :- !.
+use_package([F|Fs]) :- !,
+        use_package(F),
+        use_package(Fs).
+use_package(F) :- atom(F), !,
+        include(library(F)).
+use_package(F) :- functor(F,_,1), !,
+        include(F).
+use_package(F) :-
+        message(error, ['Bad package file ',~~(F)]).
+
+new_declaration(S, _) :- new_declaration(S).
+
+new_declaration(S) :-
+        ( S = F/A, functor(D, F, A) ->
+          ( current_fact(new_decl(D)) -> true
+          ; asserta_fact(new_decl(D))
+          )
+        ; message(error, ['Bad predicate specifier ',S,
+                          'in new_declaration directive'])
+        ).
+
+load_compilation_module(File) :-
+        this_module(M),
+        use_module(File, all, M).
+
+add_sentence_trans(P) :-
+        current_fact(shell_module(ShMod)),
+        add_sentence_trans(ShMod, P), !.
+add_sentence_trans(P) :-
+        message(warning, [add_sentence_trans(P),' - declaration failed']).
+
+add_term_trans(P) :-
+        current_fact(shell_module(ShMod)),
+        add_term_trans(ShMod, P), !.
+add_term_trans(P) :-
+        message(warning, [add_term_trans(P),' - declaration failed']).
+
+add_goal_trans(P) :-
+        current_fact(shell_module(ShMod)),
+        add_goal_trans(ShMod, P), !.
+add_goal_trans(P) :-
+        message(warning, [add_goal_trans(P),' - declaration failed']).
+
+debug_module(M):-
+        set_debug_module(M),
+        debugger:debug_module(M),
+        ( mode_of_module(M, Mode), Mode \== interpreted ->
+            message(['{Consider reloading module ',M,'}'])
+        ; true
+        ).
+
+nodebug_module(M):-
+        set_nodebug_module(M),
+        debugger:nodebug_module(M).

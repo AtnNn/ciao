@@ -1,0 +1,394 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Message printing primitives</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_29.html">previous</A>, <A HREF="ciao_31.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC123" HREF="ciao_toc.html#TOC123">Message printing primitives</A></H1>
+<P>
+<A NAME="IDX1605"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+This module provides predicates for printing in a unified way informational messages, and also for printing some terms in a specific way.
+
+
+
+<UL>
+<LI><A HREF="ciao_30.html#SEC124">Usage and interface (io_aux)</A>
+<LI><A HREF="ciao_30.html#SEC125">Documentation on exports (io_aux)</A>
+<LI><A HREF="ciao_30.html#SEC126">Known bugs and planned improvements (io_aux)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC124" HREF="ciao_toc.html#TOC124">Usage and interface (<CODE>io_aux</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+These predicates are builtin in CIAO, so nothing special has to be done to use them.
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX1606"></A>
+<CODE>message/2</CODE>, 
+<A NAME="IDX1607"></A>
+<CODE>message_lns/4</CODE>, 
+<A NAME="IDX1608"></A>
+<CODE>display_string/1</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC125" HREF="ciao_toc.html#TOC125">Documentation on exports (<CODE>io_aux</CODE>)</A></H2>
+<P>
+<A NAME="IDX1609"></A>
+<A NAME="IDX1610"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>message/2:</B>
+<DD><A NAME="IDX1611"></A>
+
+
+<P>
+<CODE>message(Type,Message)</CODE>
+
+
+<P>
+Output to standard error <CODE>Message</CODE>, which is of type <CODE>Type</CODE>. The <CODE>quiet</CODE> 
+<A NAME="IDX1612"></A>
+<A NAME="IDX1613"></A>
+<EM>prolog flag</EM> (see section <A HREF="ciao_27.html#SEC112">Changing system behaviour and various flags</A>) controls which messages are actually output, depending on its type. Also, for 'error', 'warning' and 'note' messages, a prefix is output which denotes the severity of the message. <CODE>Message</CODE> is an item or a list of items from this list: 
+<DL COMPACT>
+
+<DT><CODE>$$(String)</CODE>
+<DD>
+<CODE>String</CODE> is a string, which is output with 
+<A NAME="IDX1614"></A>
+<CODE>display_string/1</CODE>. 
+
+<DT><CODE>"(Term)</CODE>
+<DD>
+<CODE>Term</CODE> is output quoted. If the module 
+<A NAME="IDX1615"></A>
+<CODE>write</CODE> is loaded, the term is output with 
+<A NAME="IDX1616"></A>
+<CODE>writeq/1</CODE>, else with 
+<A NAME="IDX1617"></A>
+<CODE>displayq/1</CODE>. 
+
+<DT><CODE>~~(Term)</CODE>
+<DD>
+<CODE>Term</CODE> is output unquoted. If the module 
+<A NAME="IDX1618"></A>
+<CODE>write</CODE> is loaded, the term is output with 
+<A NAME="IDX1619"></A>
+<CODE>write/1</CODE>, else with 
+<A NAME="IDX1620"></A>
+<CODE>display/1</CODE>. 
+
+<DT><CODE>[](Term)</CODE>
+<DD>
+<CODE>Term</CODE> is output as a message, can be an item or a list of items from this list. 
+
+<DT><CODE>Term</CODE>
+<DD>
+Any other term is output with 
+<A NAME="IDX1621"></A>
+<CODE>display/1</CODE>. 
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>message(Type,Message)</CODE>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Type</CODE> is an element of <CODE>[error,warning,note,message,debug]</CODE>.
+ (<CODE>basic_props:member/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1622"></A>
+<A NAME="IDX1623"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>message_lns/4:</B>
+<DD><A NAME="IDX1624"></A>
+
+
+<P>
+<CODE>message_lns(Type,L0,L1,Message)</CODE>
+
+
+<P>
+Output to standard error <CODE>Message</CODE>, which is of type <CODE>Type</CODE>, and occurs between lines <CODE>L0</CODE> and <CODE>L1</CODE>. This is the same as 
+<A NAME="IDX1625"></A>
+<CODE>message/2</CODE>, but printing the lines where the message occurs in a unified way.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>message_lns(Type,L0,L1,Message)</CODE>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Type</CODE> is an element of <CODE>[error,warning,note,message,debug]</CODE>.
+ (<CODE>basic_props:member/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1626"></A>
+<A NAME="IDX1627"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>error/1:</B>
+<DD><A NAME="IDX1628"></A>
+
+
+<P>
+Defined as 
+
+<PRE>
+error(Message) :-
+        message(error,Message).
+</PRE>
+
+<P>
+.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1629"></A>
+<A NAME="IDX1630"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>warning/1:</B>
+<DD><A NAME="IDX1631"></A>
+
+
+<P>
+Defined as 
+
+<PRE>
+warning(Message) :-
+        message(warning,Message).
+</PRE>
+
+<P>
+.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1632"></A>
+<A NAME="IDX1633"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>note/1:</B>
+<DD><A NAME="IDX1634"></A>
+
+
+<P>
+Defined as 
+
+<PRE>
+note(Message) :-
+        message(note,Message).
+</PRE>
+
+<P>
+.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1635"></A>
+<A NAME="IDX1636"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>message/1:</B>
+<DD><A NAME="IDX1637"></A>
+
+
+<P>
+Defined as 
+
+<PRE>
+message(Message) :-
+        message(message,Message).
+</PRE>
+
+<P>
+.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1638"></A>
+<A NAME="IDX1639"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debug/1:</B>
+<DD><A NAME="IDX1640"></A>
+
+
+<P>
+Defined as 
+
+<PRE>
+debug(Message) :-
+        message(debug,Message).
+</PRE>
+
+<P>
+.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1641"></A>
+<A NAME="IDX1642"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>inform_user/1:</B>
+<DD><A NAME="IDX1643"></A>
+
+
+<P>
+<CODE>inform_user(Message)</CODE>
+
+
+<P>
+Similar to 
+<A NAME="IDX1644"></A>
+<CODE>message/1</CODE>, but <CODE>Message</CODE> is output with 
+<A NAME="IDX1645"></A>
+<CODE>display_list/1</CODE>. This predicate is obsolete, and may disappear in future versions.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1646"></A>
+<A NAME="IDX1647"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>display_string/1:</B>
+<DD><A NAME="IDX1648"></A>
+
+
+<P>
+<CODE>display_string(String)</CODE>
+
+
+<P>
+Output <CODE>String</CODE> as the sequence of characters it represents.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>display_string(String)</CODE>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1649"></A>
+<A NAME="IDX1650"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>display_list/1:</B>
+<DD><A NAME="IDX1651"></A>
+
+
+<P>
+<CODE>display_list(List)</CODE>
+
+
+<P>
+Outputs <CODE>List</CODE>. If <CODE>List</CODE> is a list, do 
+<A NAME="IDX1652"></A>
+<CODE>display/1</CODE> on each of its elements, else do 
+<A NAME="IDX1653"></A>
+<CODE>display/1</CODE> on <CODE>List</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1654"></A>
+<A NAME="IDX1655"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>display_term/1:</B>
+<DD><A NAME="IDX1656"></A>
+
+
+<P>
+<CODE>display_term(Term)</CODE>
+
+
+<P>
+Output <CODE>Term</CODE> in a way that a 
+<A NAME="IDX1657"></A>
+<CODE>read/1</CODE> will be able to read it back, even if operators change.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC126" HREF="ciao_toc.html#TOC126">Known bugs and planned improvements (<CODE>io_aux</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+<A NAME="IDX1658"></A>
+<CODE>message/2</CODE> assumes that a module with name 'write' is library(write).
+</UL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_29.html">previous</A>, <A HREF="ciao_31.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

@@ -1,0 +1,438 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Classical Prolog modes</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC230" HREF="ciao_toc.html#TOC230">Classical Prolog modes</A></H1>
+<P>
+<A NAME="IDX2857"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.8#43 (1999/3/6, 18:39:38 CET)
+
+
+<P>
+This file defines a number of very simple "
+<A NAME="IDX2858"></A>
+modes" which are frequently useful in programs. These correspond to the modes used in classical Prolog texts with some simple addtions. Note that some of these modes use the same symbol as one of the ISO-modes (see section <A HREF="ciao_64.html#SEC227">ISO-Prolog modes</A>) but with subtly different meaning.
+
+
+
+<UL>
+<LI><A HREF="ciao_65.html#SEC231">Usage and interface (basicmodes)</A>
+<LI><A HREF="ciao_65.html#SEC232">Documentation on new modes (basicmodes)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC231" HREF="ciao_toc.html#TOC231">Usage and interface (<CODE>basicmodes</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+:- use_package([assertions,basicmodes]).
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX2859"></A>
+<CODE>?/1</CODE> [500,fx], 
+<A NAME="IDX2860"></A>
+<CODE>@/1</CODE> [500,fx].
+
+<LI><STRONG>New modes defined:</STRONG>
+
+<A NAME="IDX2861"></A>
+<CODE>+/1</CODE>, 
+<A NAME="IDX2862"></A>
+<CODE>-/1</CODE>, 
+<A NAME="IDX2863"></A>
+<CODE>?/1</CODE>, 
+<A NAME="IDX2864"></A>
+<CODE>@/1</CODE>, 
+<A NAME="IDX2865"></A>
+<CODE>in/1</CODE>, 
+<A NAME="IDX2866"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX2867"></A>
+<CODE>go/1</CODE>, 
+<A NAME="IDX2868"></A>
+<CODE>+/2</CODE>, 
+<A NAME="IDX2869"></A>
+<CODE>-/2</CODE>, 
+<A NAME="IDX2870"></A>
+<CODE>?/2</CODE>, 
+<A NAME="IDX2871"></A>
+<CODE>@/2</CODE>, 
+<A NAME="IDX2872"></A>
+<CODE>in/2</CODE>, 
+<A NAME="IDX2873"></A>
+<CODE>out/2</CODE>, 
+<A NAME="IDX2874"></A>
+<CODE>go/2</CODE>.
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX2875"></A>
+<CODE>assertions/meta_props</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC232" HREF="ciao_toc.html#TOC232">Documentation on new modes (<CODE>basicmodes</CODE>)</A></H2>
+<P>
+<A NAME="IDX2876"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>+/1:</B>
+<DD><A NAME="IDX2877"></A>
+
+
+<P>
+Input value in argument.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>+ A</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2878"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>-/1:</B>
+<DD><A NAME="IDX2879"></A>
+
+
+<P>
+No input value in argument.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>- A</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2880"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>?/1:</B>
+<DD><A NAME="IDX2881"></A>
+
+
+<P>
+Unspecified argument.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2882"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>@/1:</B>
+<DD><A NAME="IDX2883"></A>
+
+
+<P>
+No output value in argument.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>@(A)</CODE>
+
+<UL>
+<LI><EM>The following properties are added globally:</EM>
+
+<CODE>A</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2884"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>in/1:</B>
+<DD><A NAME="IDX2885"></A>
+
+
+<P>
+Input argument.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>in(A)</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2886"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>out/1:</B>
+<DD><A NAME="IDX2887"></A>
+
+
+<P>
+Output argument.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>out(A)</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2888"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>go/1:</B>
+<DD><A NAME="IDX2889"></A>
+
+
+<P>
+Ground output (input/output argument).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>go(A)</CODE>
+
+<UL>
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2890"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>+/2:</B>
+<DD><A NAME="IDX2891"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>A + X</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2892"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>-/2:</B>
+<DD><A NAME="IDX2893"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>A - X</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2894"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>?/2:</B>
+<DD><A NAME="IDX2895"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>?(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2896"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>@/2:</B>
+<DD><A NAME="IDX2897"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>@(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added globally:</EM>
+
+<CODE>A</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2898"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>in/2:</B>
+<DD><A NAME="IDX2899"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>in(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2900"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>out/2:</B>
+<DD><A NAME="IDX2901"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>out(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2902"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>go/2:</B>
+<DD><A NAME="IDX2903"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>go(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

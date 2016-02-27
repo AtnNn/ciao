@@ -1,0 +1,74 @@
+:- module(string2term,[string2term/2]).
+
+:- include(library(assertions)).
+:- use_module(library(dec10_io)).
+:- use_module(library(strings)).
+:- use_module(library(messages),[error_message/2,debug_message/2]).
+:- use_module(library(system), [delete_file/1, mktemp/2, file_exists/1]).
+
+:- comment(module,"A very simple implementation of string to term
+   using a temporary file to write the string into and read the term
+   from.").
+
+%% Urrgh, we need to change this...
+temp_file(File):-
+	mktemp('/tmp/sqlresponseXXXXXX',File).
+
+string2term(String,Term):-
+	temp_file(File),
+	telling(OldO),
+	tell(File),
+	debug_message(
+            "Ready to write in the File ~w the string ~s",[File,String]),
+	write_string(String),
+	write_string(".\n"),
+	told,
+	debug_message("Closing the file ~w",[File]),
+	tell(OldO),
+	seeing(OldI),
+	see(File),
+	do_the_read(String,OldI,Term,File).
+
+do_the_read(_String,OldI,Term,File)  :-
+	debug_message("About to read term into ~w~n", [Term]),
+	read(Term),
+	debug_message("Term read~n", []),
+	seen,
+	see(OldI),
+	debug_message("Closing and restoring IO~n", []),
+	!,
+	delete_file_aux(File).
+do_the_read(String,OldI,_Term,File)  :-
+	delete_file_aux(File),
+	error_message("could not convert string ~s",[String]),
+	seen,
+	see(OldI),
+	fail.
+
+delete_file_aux(File):-
+	file_exists(File), !,
+	delete_file(File).
+delete_file_aux(_).
+% ----------------------------------------------------------------------------
+:- comment(version_maintenance,on).
+
+:- comment(version(0*1+2,1998/11/18,14:10*09+'MET'), "Updated calls to
+   predicates in @lib{messages} library to use new names. (Ignacio
+   Caballero Blanco)").
+
+:- comment(version(0*1+1,1998/06/22,19:00*40+'MET DST'), "Moved tmp
+   file to /tmp. Still a serious kludge, though. Therefore, versions
+   kept local until we write a real read_from_string. (Manuel
+   Hermenegildo)").
+
+:- comment(version(0*1+0,1998/06/08,19:22*43+'MET DST'), "A very
+   simple implementation of string to term using a temporary file to
+   write the string into and read the term from.  (Ignacio Caballero
+   Blanco)").
+
+% ----------------------------------------------------------------------------
+
+
+
+
+

@@ -1,0 +1,300 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - ISO-Prolog modes</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_63.html">previous</A>, <A HREF="ciao_65.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC227" HREF="ciao_toc.html#TOC227">ISO-Prolog modes</A></H1>
+<P>
+<A NAME="IDX2822"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#112 (1999/11/23, 1:8:50 MET)
+
+
+<P>
+This file defines the "
+<A NAME="IDX2823"></A>
+modes" used in the documentation of the ISO-Prolog standard. See also section <A HREF="ciao_65.html#SEC230">Classical Prolog modes</A> for an alternative set of modes.
+
+
+
+<UL>
+<LI><A HREF="ciao_64.html#SEC228">Usage and interface (isomodes)</A>
+<LI><A HREF="ciao_64.html#SEC229">Documentation on new modes (isomodes)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC228" HREF="ciao_toc.html#TOC228">Usage and interface (<CODE>isomodes</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_package([assertions,isomodes]).</CODE>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX2824"></A>
+<CODE>?/1</CODE> [200,fy], 
+<A NAME="IDX2825"></A>
+<CODE>@/1</CODE> [200,fy].
+
+<LI><STRONG>New modes defined:</STRONG>
+
+<A NAME="IDX2826"></A>
+<CODE>+/1</CODE>, 
+<A NAME="IDX2827"></A>
+<CODE>@/1</CODE>, 
+<A NAME="IDX2828"></A>
+<CODE>-/1</CODE>, 
+<A NAME="IDX2829"></A>
+<CODE>?/1</CODE>, 
+<A NAME="IDX2830"></A>
+<CODE>*/1</CODE>, 
+<A NAME="IDX2831"></A>
+<CODE>+/2</CODE>, 
+<A NAME="IDX2832"></A>
+<CODE>@/2</CODE>, 
+<A NAME="IDX2833"></A>
+<CODE>-/2</CODE>, 
+<A NAME="IDX2834"></A>
+<CODE>?/2</CODE>, 
+<A NAME="IDX2835"></A>
+<CODE>*/2</CODE>.
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX2836"></A>
+<CODE>assertions/meta_props</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC229" HREF="ciao_toc.html#TOC229">Documentation on new modes (<CODE>isomodes</CODE>)</A></H2>
+<P>
+<A NAME="IDX2837"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>+/1:</B>
+<DD><A NAME="IDX2838"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>+ A</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2839"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>@/1:</B>
+<DD><A NAME="IDX2840"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>@(A)</CODE>
+
+<UL>
+<LI><EM>The following properties are added globally:</EM>
+
+<CODE>A</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2841"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>-/1:</B>
+<DD><A NAME="IDX2842"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>- A</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2843"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>?/1:</B>
+<DD><A NAME="IDX2844"></A>
+
+
+<P>
+Unspecified argument.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2845"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>*/1:</B>
+<DD><A NAME="IDX2846"></A>
+
+
+<P>
+Unspecified argument.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2847"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>+/2:</B>
+<DD><A NAME="IDX2848"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>A + X</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2849"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>@/2:</B>
+<DD><A NAME="IDX2850"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>@(A,X)</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added globally:</EM>
+
+<CODE>A</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2851"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>-/2:</B>
+<DD><A NAME="IDX2852"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>A - X</CODE>
+
+<UL>
+<LI><EM>The following properties are added at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2853"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>?/2:</B>
+<DD><A NAME="IDX2854"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>?(A,X)</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+<LI><EM>The following properties are added upon exit:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2855"></A>
+<DL>
+<DT><span class="define">MODE:</span> <B>*/2:</B>
+<DD><A NAME="IDX2856"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>A * X</CODE>
+
+<UL>
+<LI><EM>Call and exit are <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> has property <CODE>X</CODE>.
+ (<CODE>meta_props:call/2</CODE>)
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_63.html">previous</A>, <A HREF="ciao_65.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

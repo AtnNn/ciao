@@ -1,0 +1,271 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Error reporting when using objects</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC341" HREF="ciao_toc.html#TOC341">Error reporting when using objects</A></H1>
+<P>
+<A NAME="IDX3669"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#79 (1999/10/13, 18:48:0 MEST)
+
+
+<P>
+ Compile-time errors are restricted to some local analysis. Since there is no type declaration in the Prolog language, there is no posibility to determine whenever a given variable will hold an instance of any class. 
+
+
+<P>
+However, little semantic analysis is performed. User may aid to perform such an analysis by the usage of run time checks (which are also detected at compile time), or static declarations. For example: 
+
+
+<P>
+<CODE>clause(Obj) :- Obj:a_method(334).</CODE> 
+
+
+<P>
+O'CIAO may be not able to determine whenever a_method/1 is a valid method for instance Obj, unless some help is provided: 
+
+
+<P>
+<CODE>clause(Obj) :- Obj instance_of myclass,Obj:a_method(334).</CODE> 
+
+
+<P>
+In such case, O'CIAO will report any semantic error at compile-time. 
+ 
+Most of the run-time errors are related to normal CIAO Prolog module system. Since objects are treated as normal Prolog modules at run time, there is no further documentation here about that stuff. 
+ 
+
+
+
+<UL>
+<LI><A HREF="ciao_99.html#SEC342">Error reporting at compile time (objects)</A>
+<LI><A HREF="ciao_99.html#SEC343">Error reporting at run time (objects)</A>
+<LI><A HREF="ciao_99.html#SEC344">Usage and interface (objects_error)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC342" HREF="ciao_toc.html#TOC342">Error reporting at compile time (objects)</A></H2>
+<P>
+ 
+
+
+
+<UL>
+
+<LI><STRONG>ERROR : invalid instance identifier <EM>ID</EM>: must be an atom</STRONG>
+
+There is a 
+<A NAME="IDX3670"></A>
+<CODE>instance_of/2</CODE> or 
+<A NAME="IDX3671"></A>
+<CODE>new/2</CODE> declaration where first argument <EM>ID</EM> must be an unique atom, but currently it is not. Statically declared instances needs an identifier to be provided by the user. 
+
+<LI><STRONG>ERROR : instance identifier <EM>ID</EM> already in use</STRONG>
+
+There are two or more 
+<A NAME="IDX3672"></A>
+<CODE>instance_of/2</CODE> declarations with the same first argument <EM>ID</EM>. Instance identifiers must be unique. 
+
+<LI><STRONG>ERROR : invalid use_class/1 declaration: <EM>SourceFile</EM> is not a class</STRONG>
+
+Those are the causes for this error: 
+
+
+<UL>
+
+<LI>The given <EM>SourceFile</EM> does not exist, or is not accesible.
+
+<LI>The given <EM>SourceFile</EM> is not a Prolog source.
+
+<LI>The given <EM>SourceFile</EM> is a valid Prolog source, but it does not declare a class.
+
+</UL>
+
+<LI><STRONG>ERROR : unknown class on <EM>ID</EM> instance declaration</STRONG>
+
+The class defined on the 
+<A NAME="IDX3673"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> instance has not been loaded by a 
+<A NAME="IDX3674"></A>
+<CODE>use_class/1</CODE> declaration. 
+
+<LI><STRONG>ERROR : instance identifier <EM>ID</EM> is an exisisting Prolog module</STRONG>
+
+There is an statically declared instance whose identifier may cause interference with the CIAO Prolog module system. Use another instance identifier. 
+
+<LI><STRONG>ERROR : unknown constructor on <EM>ID</EM> instance declaration</STRONG>
+
+The given constructor on the 
+<A NAME="IDX3675"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> has not been defined at the corresponding class. 
+
+<LI><STRONG>ERROR : constructor is needed on <EM>ID</EM> instance declaration</STRONG>
+
+No constructor was defined on the 
+<A NAME="IDX3676"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> and default constructor is not allowed. You must provide a constructor. 
+
+<LI><STRONG>ERROR : static instance <EM>ID</EM> was derived from a different constructor at <EM>AnotherModule</EM></STRONG>
+
+<EM>ID</EM> has been declared to be an static instance both on <EM>AnotherModule</EM> and current source, but different constructors were used. The most probable causes for this error are: 
+
+
+<UL>
+
+<LI>Occasionally, there is another module using the same instance identifier and it was not noticed by you. Another different identifier may be used instead.
+
+<LI>It was you intention to use the same object as declared by the other module. In this case, the same constructor must be used.
+
+</UL>
+
+<LI><STRONG>ERROR : invalid first argument in call to new(<EM>Arg</EM>,_)</STRONG>
+
+There is a new/1 goal in your code where first argument is not a free variable. For example: 
+
+<CODE>myobj new myclass</CODE> 
+
+First argument must be a variable in order to receive a run-time generated object identifier. 
+
+<LI><STRONG>ERROR : unknown class in call to new(?,<EM>Constructor</EM>) </STRONG>
+
+The given <EM>Constructor</EM> in call to new/2 does not correspond to any used class at current code. The most probable cause of this may be: 
+
+
+<UL>
+
+<LI>You forgot to include a
+
+<A NAME="IDX3677"></A>
+<CODE>use_class/1</CODE> declaration in your code. 
+
+<LI>There is a spelling mistake in the constructor.For example:
+
+:- use_class(myclass). 
+
+foo(X) :- X new mclass. 
+
+</UL>
+
+<LI><STRONG>ERROR : can not create an instance from an interface: new(?,<EM>Constructor</EM>) </STRONG>
+
+Given <EM>Constructor</EM> references an interface rather than a class. Instances can not be derived from interface-expanded code. 
+
+<LI><STRONG>ERROR : unknown constructor in call to new(?,<EM>Constructor</EM>) </STRONG>
+
+As the previous error, there is a mistake in the given <EM>Constructor</EM>. This error is reported when you are trying to call a constructor which was not defined at the corresponding class. Check the class definition to find what is going on. 
+
+Another cause for this error is the incorrect usage of the 
+<A NAME="IDX3678"></A>
+default constructor. Whenever there are one or more constructors defined at the involved class, you are restricted to chose one of them. This seems that default constructor will be available, if and only if, there are no constructors defined at the involved class. 
+
+<LI><STRONG>ERROR : call to non-public <EM>ID:Goal</EM></STRONG>
+
+You are trying to call a method which was not declared as public by the class specified in 
+<A NAME="IDX3679"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM>. 
+
+<LI><STRONG>ERROR : call to inaccessible predicate at instance <EM>ID:Goal</EM></STRONG>
+
+There is a call to <EM>Goal</EM> at statically declared instance <EM>ID</EM> which is unknown or was not declared as public. 
+
+<LI><STRONG>ERROR : unknown instance <EM>ID</EM> of class <EM>Class</EM> at <EM>Goal</EM></STRONG>
+
+There is a call to <EM>Goal</EM> where involved statically declared instance <EM>ID</EM> is unknown or is not derived from <EM>Class</EM>. Check whether it was declared by a 
+<A NAME="IDX3680"></A>
+<CODE>instance_of/2</CODE> declaration. 
+
+<LI><STRONG>ERROR : inaccessible attribute <EM>Fact</EM> at instance <EM>ID</EM></STRONG>
+
+There is an attempt to use <EM>ID:Fact</EM> but it was not declared as public. 
+
+<LI><STRONG>ERROR : unknown attribute <EM>Fact</EM> at instance <EM>ID</EM></STRONG>
+
+There is an attempt to use <EM>ID:Fact</EM> but it is unknown or it is not an attribute (may be a method). 
+
+<LI><STRONG>WARNING : invalid call to new(?,_)</STRONG>
+
+There is a call to new/2 in you code where first argument variable has been determined to hold any other instance. For example: 
+
+<CODE>foo :- X new myclass,X new otherclass.</CODE> 
+
+or 
+
+<CODE>foo(X) :- X instance_of myclass, X new myclass.</CODE> 
+
+The related call to new/2 will allways fail. 
+
+<LI><STRONG>WARNING : called <EM>Goal</EM> is not public at any used class</STRONG>
+
+There is a call to <EM>Var</EM>:<EM>Goal</EM> where <EM>Var</EM> has not been determined to be compatible with any class. However, <EM>Goal</EM> is not public at any class specified by the 
+<A NAME="IDX3681"></A>
+<CODE>use_class/1</CODE> declaration. 
+
+This is a warning (not an error) since <EM>Var</EM>:<EM>Goal</EM> may be not related to Object Oriented Programing. 
+ 
+
+
+
+<H2><A NAME="SEC343" HREF="ciao_toc.html#TOC343">Error reporting at run time (objects)</A></H2>
+<P>
+ 
+
+<UL>
+
+<LI><STRONG>EXCEPTION : instantiation_error( '1st argument must be free variable')</STRONG>
+
+Calling to new/1 requieres first argument to be a free variable. For example: 
+
+<CODE>X = this_will_raise_an_exception,X new myclass.</CODE> 
+
+<LI><STRONG>EXCEPTION : instantiation_error('class not given')</STRONG>
+
+You called new/2 using a free variable as second argument. 
+
+<LI><STRONG>EXCEPTION : instantiation_error(inaccesible_class(<EM>Class</EM>), from(<EM>Module</EM>)) </STRONG>
+
+<EM>Module</EM> tried to create an instance of <EM>Class</EM> by the ways of new/2, but there is no usage relationship between <EM>Module</EM> and <EM>Class</EM>. 
+
+<LI><STRONG>EXCEPTION : instantiation_error(invalid_constructor( <EM>Constructor</EM>)) </STRONG>
+
+<EM>Constructor</EM> was not defined by the corresponding class. 
+
+</UL>
+
+
+
+<H2><A NAME="SEC344" HREF="ciao_toc.html#TOC344">Usage and interface (<CODE>objects_error</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(objects_error)).</CODE>
+</UL>
+
+</div class="cartouche">
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

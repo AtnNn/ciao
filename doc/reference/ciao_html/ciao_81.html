@@ -1,0 +1,406 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - The Ciao library browser</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC284" HREF="ciao_toc.html#TOC284">The Ciao library browser</A></H1>
+<P>
+<A NAME="IDX3324"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#39 (1999/7/21, 12:8:4 MEST)
+
+
+<P>
+<A NAME="IDX3325"></A>
+<CODE>librowser</CODE> library provides a set of predicates wich enables the user to interactively find CIAO/Prolog libraries and/or any predicate exported by them. 
+
+
+<P>
+This is a simple example: 
+
+
+
+<PRE>
+?- apropos('*find*').
+persdbrt_sql: dbfindall/4
+persdbrtsql: dbfindall/4
+conc_aggregates: findall/3
+linda: rd_findall/3
+vndict: find_name/4
+internals: $find_file/8
+aggregates: findall/4,findall/3
+
+yes
+?- 
+</PRE>
+
+<P>
+Librowser is specially usefull when using inside GNU Emacs, just place the cursor over a librowser response and press C-cTAB in order to get help on the related predicate. Refer to the <STRONG>"Using CIAO inside GNU Emacs"</STRONG> chapter for further information. 
+
+
+
+<UL>
+<LI><A HREF="ciao_81.html#SEC285">Usage and interface (librowser)</A>
+<LI><A HREF="ciao_81.html#SEC286">Documentation on exports (librowser)</A>
+<LI><A HREF="ciao_81.html#SEC287">Documentation on internals (librowser)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC285" HREF="ciao_toc.html#TOC285">Usage and interface (<CODE>librowser</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+It is not necesary to use this library at user programs. It was designed to be used at the CIAO <EM>toplevel</EM> shell: 
+<A NAME="IDX3326"></A>
+<CODE>ciaosh</CODE>. In order to do so, just make use of 
+<A NAME="IDX3327"></A>
+<CODE>use_module/1</CODE> as follows: 
+
+<CODE>use_module(library(librowser))</CODE>. 
+
+Then, the library interface must be read. This is automatically done when calling any predicate at librowser, and the entire process will take a little moment.So, you should want to perform such a process after loading the CIAO toplevel: 
+
+
+<PRE>
+CIAO 0.9 #75: Fri Apr 30 19:04:24 MEST 1999
+?- use_module(library(librowser)).
+
+yes
+?- update.
+
+</PRE>
+
+Whether you want this process to be automatically performed when loading 
+<A NAME="IDX3328"></A>
+<CODE>ciaosh</CODE>, you may include those lines in your <EM>.ciaorc</EM> personal initialization file. 
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3329"></A>
+<CODE>update/0</CODE>, 
+<A NAME="IDX3330"></A>
+<CODE>browse/2</CODE>, 
+<A NAME="IDX3331"></A>
+<CODE>where/1</CODE>, 
+<A NAME="IDX3332"></A>
+<CODE>describe/1</CODE>, 
+<A NAME="IDX3333"></A>
+<CODE>system_lib/1</CODE>, 
+<A NAME="IDX3334"></A>
+<CODE>apropos/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3335"></A>
+<CODE>filenames</CODE>, 
+<A NAME="IDX3336"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX3337"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX3338"></A>
+<CODE>streams</CODE>, 
+<A NAME="IDX3339"></A>
+<CODE>patterns</CODE>, 
+<A NAME="IDX3340"></A>
+<CODE>lists</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC286" HREF="ciao_toc.html#TOC286">Documentation on exports (<CODE>librowser</CODE>)</A></H2>
+<P>
+<A NAME="IDX3341"></A>
+<A NAME="IDX3342"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>update/0:</B>
+<DD><A NAME="IDX3343"></A>
+
+
+<P>
+This predicate will scan the CIAO 
+<A NAME="IDX3344"></A>
+system libraries for predicate definitions. This may be done once time before calling any other predicate at this library. 
+
+
+<P>
+update/0 will also be automatically called (once) when calling any other predicate at librowser.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Creates an internal database of modules at CIAO
+
+<A NAME="IDX3345"></A>
+system libraries. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3346"></A>
+<A NAME="IDX3347"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>browse/2:</B>
+<DD><A NAME="IDX3348"></A>
+
+
+<P>
+This predicate is fully reversible, and is provided to inspect concrete predicate specifications. For example: 
+
+<PRE>
+?- browse(M,findall/A).
+
+A = 3,
+M = conc_aggregates ? ;
+
+A = 4,
+M = aggregates ? ;
+
+A = 3,
+M = aggregates ? ;
+
+no
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>browse(Module,Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Asocciates the given <CODE>Spec</CODE> predicate specification with the <CODE>Module</CODE> which exports it.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is a module name (an atom)
+ (<CODE>librowser:module_name/1</CODE>)
+
+<CODE>Spec</CODE> is a <STRONG>Functor/Arity</STRONG> predicate specification
+ (<CODE>librowser:pred_spec/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3349"></A>
+<A NAME="IDX3350"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>where/1:</B>
+<DD><A NAME="IDX3351"></A>
+
+
+<P>
+This predicate will print at the screen the module needed in order to import a given predicate specification. For example: 
+
+<PRE>
+?- where(findall/A).
+findall/3 exported at module conc_aggregates
+findall/4 exported at module aggregates
+findall/3 exported at module aggregates
+
+yes
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>where(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Display what module to load in order to import the given <CODE>Spec</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Spec</CODE> is a <STRONG>Functor/Arity</STRONG> predicate specification
+ (<CODE>librowser:pred_spec/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3352"></A>
+<A NAME="IDX3353"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>describe/1:</B>
+<DD><A NAME="IDX3354"></A>
+
+
+<P>
+This one is used to find out which predicates were exported by a given module. Very usefull when you know the library, but not the concrete predicate. For example: 
+
+<PRE>
+?- describe(librowser).
+Predicates at library librowser : 
+
+apropos/1 
+system_lib/1 
+describe/1 
+where/1 
+browse/2 
+update/0 
+
+yes
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>describe(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Display a list of exported predicates at the given <CODE>Module</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is a module name (an atom)
+ (<CODE>librowser:module_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3355"></A>
+<A NAME="IDX3356"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>system_lib/1:</B>
+<DD><A NAME="IDX3357"></A>
+
+
+<P>
+It retrieves on backtracking all CIAO system libraries stored in the internal database. Certainly, those which were scanned at 
+<A NAME="IDX3358"></A>
+<CODE>update/0</CODE> calling. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>system_lib(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Module</CODE> variable will be successively instantiated to the system libaries stored in the internal database.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is a module name (an atom)
+ (<CODE>librowser:module_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3359"></A>
+<A NAME="IDX3360"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>apropos/1:</B>
+<DD><A NAME="IDX3361"></A>
+
+
+<P>
+This tool makes use of 
+<A NAME="IDX3362"></A>
+regular expresions in order to find predicate specifications. It is very usefull whether you can't renember the full name of a predicate. Regular expresions take the same format as described in library 
+<A NAME="IDX3363"></A>
+<CODE>patterns</CODE>. Example: 
+
+<PRE>
+?- apropos('atom_*').
+
+metaterms: atom_concat/2
+concurrency: atom_lock_state/2
+atomic_basic: atom_concat/3,atom_length/2,atom_codes/2
+iso_byte_char: atom_chars/2
+
+yes
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>apropos(RegSpec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This will search any predicate specification <CODE>Spec</CODE> which matches the given <CODE>RegSpec</CODE> incomplete predicate specification.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>RegSpec</CODE> is a Pattern/Arity specification.
+ (<CODE>librowser:apropos_spec/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC287" HREF="ciao_toc.html#TOC287">Documentation on internals (<CODE>librowser</CODE>)</A></H2>
+<P>
+<A NAME="IDX3364"></A>
+<A NAME="IDX3365"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>apropos_spec/1:</B>
+<DD><A NAME="IDX3366"></A>
+
+
+<P>
+Defined as: 
+
+<PRE>
+apropos_spec(_1).
+apropos_spec(Pattern/Arity) :-
+        pattern(Pattern),
+        int(Arity).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>apropos_spec(S)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S</CODE> is a Pattern/Arity specification.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

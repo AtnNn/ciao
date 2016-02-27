@@ -1,0 +1,60 @@
+# SUNMP use Solaris. Solaris on monoprocessors is returned as SUN4SOL2
+
+# Threads and locks in Solaris
+ifeq ($(USE_THREADS),yes)
+    LD_THREAD_LIB=-lpthread
+ifeq ($(USE_POSIX_LOCKS),yes)
+    THREAD_FLAG=-D_REENTRANT -DTHREADS -DUSE_POSIX_THREADS -DPOSIX_LOCKS
+    LD_LOCK_LIB=-lposix4
+else
+    THREAD_FLAG=-D_REENTRANT -DTHREADS -DUSE_POSIX_THREADS
+    LD_LOCK_LIB=
+endif
+else
+    LD_THREAD_LIB=
+    THREAD_FLAG=
+    LD_LOCK_LIB=
+endif
+
+FOREIGN_FILES_FLAG=-DFOREIGN_FILES
+
+# C compiler
+CC=gcc
+
+# Linker
+LD=ld
+
+# C compiler options for generating shared libraries code
+CCSHARED=
+
+# Linker specific options
+ifeq ($(DEBUG_LEVEL),profile)
+    LDFLAGS=-pg
+else
+    LDFLAGS=
+endif
+
+# Linker options for shared objects
+LDSHARED=-G
+
+# Name of the standard ciao library
+CIAOLIBNAME=libciao.so
+
+## Changed these (DCG)
+# This is (hopefully) for a modular system using POSIX threads
+LIBS=-ldl -lm -lnsl $(LD_THREAD_LIB) $(LD_LOCK_LIB) $(DEBUG_LIBS)
+
+STAT_LIBS=-lsocket
+
+ARCHNAME=Sparc
+
+# Operating system version
+OSNAME=Solaris
+
+# How to install an make directories
+MKDIR="mkdir -p"
+INSTALL=/usr/bin/cp
+
+# Making etags
+ETAGS=etags -t *.[ch]
+DEFAULTYPE=dyn

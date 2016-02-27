@@ -1,0 +1,89 @@
+<BODY>
+
+<P>
+This package includes all of the classes needed to use both java-to-prolog
+and prolog-to-java interfaces. These interfaces are designed to work in a
+client/server mode, so one side process (java or prolog) listens requests
+from the other side. However, because these interfaces use sockets to
+connect java and prolog, phisically only the java side works as socket
+server, until the communication with prolog is established. After this, the
+interface works as an usual client/server system, where the server is
+basically a endless loop until receives a termination request.
+
+Is under development the integration between the two interfaces so the
+processes will be listening each other.
+
+<P>
+
+The package is composed of several types of classes: prolog data types
+representation classes (<code>PLAtom</code>, <code>PLFloat</code>,
+<code>PLInteger</code>, <code>PLList</code>, <code>PLString</code>,
+<code>PLStructure</code>, <code>PLVariable</code>, and the abstract class
+<code>PLTerm</code>); prolog execution model classes
+(<code>PLConnection</code> and <code>PLGoal</code>); java interface
+exceptions (<code>PLException</code> and <code>PLGoalException</code>); and
+other classes (<code>PLEventListener</code> for java event handling,
+<code>PLJavaServer</code> to implement the java object server in the prolog-to-java interface).
+
+<P>
+
+Using the <b>prolog-to-java</b> interface, should not be necessary to know
+anything about this implementation classes, except
+<code>PLJavaServer</code>, to launch the java object server. This class
+includes itself a <code>main()</code> method to be launched in standalone
+mode. This method can be called also from initialization code to do the
+startup work before the java object server can process prolog requests.
+
+<P>
+
+In the other hand, with the <b>java-to-prolog</b> interface, prolog data
+representation classes and prolog execution model classes must be known in
+order to handle the data and execution structures related to the prolog
+side of the interface. Specifically, before any prolog processing can be
+done, a <code>PLConnection</code> object must be created, using the
+appropriate constructor ({@link
+CiaoJava.PLConnection#PLConnection(java.lang.String)}). Once a prolog
+connection has been established, prolog goals can be created and launched
+using the {@link CiaoJava.PLConnection#query(CiaoJava.PLTerm)} method, or
+creating a new <code>PLGoal</code> object. 
+
+</BODY>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

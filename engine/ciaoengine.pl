@@ -1,0 +1,1025 @@
+ 
+%% Since Ciao Version 0.8, changes are unified with the GlobalChangeLog 
+%% in $(SRC)/version.
+
+:- use_package(assertions).
+
+:- comment(title,"The Ciao engine"). 
+
+:- comment(module,"
+
+   Currently, this contains the ChangeLog for the Ciao engine. Since
+   Ciao Version 0.8, changes to the engine are unified with the
+   GlobalChangeLog in @tt{$(SRC)/version}.  Previous changes do not
+   have a version explicitly associated with it.  Eventually, this
+   should contain a description of the engine, as a chapter of the
+   Reference Manual.
+
+   ").
+
+%% This is so that lpdoc documents this as an application instead 
+%% of as a library:
+main.
+
+% ---------------------------------------------------------------------------
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*3+111,1999/11/22,13:00*41+'MET'),
+"backtrack_goal/1 now seems to work correctly.  Changing the low level
+primitives, anyway.  (MCL)").
+
+:- comment(version(1*3+93,1999/11/07,19:05*33+'MET'), "Added a line in
+init_interpreted() to make interpreted predicates not concurrent by
+default; set_property() may change this behavior later.  (MCL)").
+
+:- comment(version(1*3+86,1999/10/21,19:11*21+'MEST'), "Added in
+   unix_utils.c the special prefix '$' for filenames which represents
+   the Ciao library directory (same output by ciaolibdir/1).  (Daniel
+   Cabeza Gras)").
+
+:- comment(version(1*3+74,1999/10/07,10:58*02+'MEST'), "Removed
+   warnings in the compilation of qinsert.c and qget.c.  (MCL)").
+
+:- comment(version(1*3+61,1999/09/27,16:09*04+'MEST'), "Number of
+   existent predicates is now counted more properly (look for
+   'num_of_predicates').  (MCL)").
+
+:- comment(version(1*3+47,1999/08/18,11:34*44+'MEST'), "Changed
+   RTLD_NOW to RTLD_LAZY to avoid link-time error messages when
+   loading .so files which depend on one another.  (MCL)").
+
+:- comment(version(1*3+46,1999/08/07,13:44*00+'MEST'), "Solved some
+   configuration problems in IRIX.  (MCL)").
+
+:- comment(version(1*3+40,1999/07/25,19:41*01+'MEST'), "Changes mainly
+   in Win32, such that the ciao library directory is located using the
+   path to the ciaoengine, not the environment variable CIAOROOT.  Also,
+   if no HOME env. var. is found, directory ~/ is the ciao library
+   directory (Daniel Cabeza Gras)").
+
+:- comment(version(1*3+25,1999/07/08,17:33*53+'MEST'), "NT changed to
+   Win32 (Daniel Cabeza Gras)").
+
+:- comment(version(1*3+24,1999/07/07,20:17*10+'MEST'), "CIAOLIB and
+   CIAOROOT are now recognized by the engine in order to look for the
+   libraries.  (MCL & DCG)").
+
+:- comment(version(1*3+12,1999/07/02,17:39*30+'MEST'), "Culprit and
+   ErrArgNo now private per thread.  (MCL)").
+
+:- comment(version(1*3+9,1999/07/01,16:57*12+'MEST'),
+   "reclassify_atoms commented out; it was not used anywhere.
+   (MCL)").
+
+:- comment(version(1*1+5,1999/06/10,18:20*45+'MEST'), "Fixed bug in
+   prolog_file_properties regarding accepting an instantiated
+   modification time (Daniel Cabeza Gras)").
+
+:- comment(version(1*1+4,1999/06/10,17:52*01+'MEST'), "changed
+   abolish() to return TRUE in the case of an undefined predicate.
+   (MCL)").
+
+:- comment(version(1*1+3,1999/06/09,16:59*32+'MEST'), "Memory
+   accounting totally revamped.  Added a count of the number of
+   symbols and definition of predicates.  (MCL)").
+
+:- comment(version(0*9+102,1999/05/27,19:29*59+'MEST'), "Improved
+   account of memory used in database (dynamic+compiled predicates),
+   including indexing and concurency data structures.  Explicit
+   accounting is made upon every [de]allocation of program
+   memory. (MCL)").
+
+:- comment(version(0*9+101,1999/05/26,13:33*03+'MEST'), "Changed some
+   compilation flags and options: THREADS implies USE_LOCKS, so the
+   latter has disappeared.  FOREIGN_FILES is disabled but in Sun4 (it
+   will be soon replaced by the embedded glue code generator).
+   O.S. and architecture naming convention has changed to be more
+   uniform (although more verbose).  makfile-sysdep files have changed
+   name to follow the new naming scheme of ciao_get_arch.  (MCL)").
+
+:- comment(version(0*9+97,1999/05/21,20:37*22+'MEST'), "Changes mainly
+   to the way filenames are processed in Win32 (but also affect UNIX).
+   (Daniel Cabeza Gras)").
+
+:- comment(version(0*9+72,1999/04/30,11:53*40+'MEST'), "added
+   get_os/1.  (MCL)").
+
+:- comment(version(0*9+69,1999/04/29,15:50*55+'MEST'), "Changed some
+   #defines to compile without warning on several architectures
+   (unix_utils.c) (MCL).").
+
+:- comment(version(0*9+29,1999/03/30,19:37*24+'MEST'), "Added
+   'volatile' to lock counter on atoms; was needed by Sparc
+   architectures.  (MCL)").
+
+:- comment(version(0*9+28,1999/03/27,15:02*07+'MET'), "Corrected
+   problems in Windows 32 concerning drive numbers.  Touched main.c
+   (for library_directory), unix_utils.c (for current_directory),
+   foreign.c (for filename expansion).  (MCL)").
+
+:- comment(version(0*8+44,1999/03/12,17:17*19+'MET'), "Changed
+   definition of SETJMP for Solaris Sparc: sigsetjmp() was overwriting
+   a (fundamental) global variable!  (MCL)").
+
+:- comment(version(0*8+43,1999/01/19,18:58*32+'MET'), "Moved lock on
+   predicate to current_clauses in order to debug concurrency
+   problems.  Will be set at a lower level afterwards. (MCL)").
+
+:- comment(version(0*8+42,1999/01/03,18:11*24+'MST'), "Added a lock on
+   predicate root to make_undefined() so that concurrent (and, in
+   general, all...) predicates are correctly erased when reloading new
+   code, esp. from the toplevel.  (Manuel Carro)").
+
+:- comment(version(0*8+41,1999/01/03,17:51*21+'MST'), "Profiling (-C
+   -prof[t]) is only turned on when the engine is compiled with
+   -DPROFILE.  This macro is defined when ""profiled"" or ""debug"" is
+   chosen in the SETTINGS file.  (Manuel Carro)").
+
+:- comment(version(0*8+40,1999/01/02,17:20*20+'MST'), "Handles to
+   concurrent goals added to the release_goal/1 call and to the
+   kill_goal call (actually, anything clearing a goal state will clear
+   the handles as well).  (Manuel Carro)").
+
+:- comment(version(0*8+39,1999/01/02,17:02*15+'MST'), "handles for
+   suspended calls to concurrent facts are also cleared at the end of
+   a launch_goal call which does allow further interactions (i.e.,
+   without an associated GoalId).  (Manuel Carro)").
+
+:- comment(version(0*8+38,1999/01/02,16:34*30+'MST'), "Added support
+   for relocation of concurrent dynamic choicepoints when doing
+   choicepoint stack shifting.  Seems to work just right!  (Manuel
+   Carro)").
+
+:- comment(version(0*8+37,1999/01/02,16:33*41+'MST'), "Pending
+   concurrent calls cleaned up in all CUT* instructions; could not
+   test all of them (I simply could not find code which generates
+   those low-level instructions!).  (Manuel Carro)").
+
+:- comment(version(0*8+36,1999/01/02,12:59*45+'MST'), "Handles to
+   concurrent invokations were not being deleted upon cut & failure
+   (but they were upon explicit failure in next_instance_conc,
+   though).  Code in CUT_Y (file shdisp_r.c) was added to deallocate
+   wuch handles when an alternative is cut.  (Manuel Carro)").
+
+:- comment(version(0*8+35,1998/12/29,10:53*05+'MST'), "Moved code from
+   make_undefined_predicate() to set_property(): the behavior of
+   concurrent predicates was not being set corectly when code was bein
+   compiled and loaded into the interpreter.  It was right, though,
+   when code was just loaded.  (Manuel Carro)").
+
+:- comment(version(0*8+33,1998/12/26,12:11*43+'MST'), "Detected some
+   problems in the garbage collection: even if the concurrent goals
+   were totally independent and there were no sharing of variables,
+   the engine was breaking in some cases.  This was due to some static
+   variables, related to gc, which were wrongly shared among goals.
+   These are now private to each worker.  Still testing, though.
+   (Manuel Carro)").
+
+:- comment(version(0*8+32,1998/12/23,16:56*53+'MST'), "Solaris i86 has
+   a problem in the setjmp library function: some global variables get
+   clobbered (even if declared as volatile), which causes SIGSEG and
+   falling into an infinite loop.  Temporarily (?) solved by renaming
+   the macros SETJMP and LONGJMP when Solaris && i86.  (Manuel
+   Carro)").
+
+:- comment(version(0*8+31,1998/12/23,16:54*32+'MST'), "Made separate
+   entries for Solaris in sparc and i86.  The same for Linux and NT in
+   alpha and i86.  ARCHFLAG defined separately as sparc, mips, and i86
+   (used in the assembler lock primitives).  (Manuel Carro)").
+
+:- comment(version(0*8+1,1998/11/05,12:13*47+'MET'), "Unified engine
+   changelog with global changelog.  (Manuel Hermenegildo)").
+
+:- comment(version(0*0+0,1998/10/12), "
+
+	* engine/startgoal.c (startgoal): Put provision for worker
+	backtracking.  All wams() are started with a NULL pointer now.
+	State is saved and recovered, and set in the state according to
+	the actions passed.  Releasing worker implemented.  Backtracking
+	still to be worked out.  
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/02/23), "
+
+	* Makefile (eng): generation of configure.h is now enforced from
+	the toplevel Makefile, to avoid races in the engine Makefile.
+	Dependencies in the engine Makefile are however retained, to force
+	possible recompilation of other dependent files.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/02/17), "
+
+	* engine/prolog_tasks.c (prolog_launch_goal): launch_goal/[1,2]
+	seem to accept goals with arguments, now.  These arguments must be
+	copied to the local heap; this is not done right now.
+
+	* lib/engine/builtin.pl: added (temporary) '$ciaolibdir'.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/02/05,12:14*27+'MET'), "
+
+        * bin/SUNSOL/main.c (main): Added C option ""-dconc"" to set
+        concurrency debugging flag.
+
+        * Concurrent access to database partially working.  A big mess of
+        data structures; needs rethinking.  Also, work on space recovery
+        on backtracking.
+
+        * bin/SUNSOL/prolog_tasks.c (prolog_launch_goal_2): Introduced
+        launch_goal/2, which also returns the thread Id of the new goal.
+        For some misterious reason, it seems to break in some cases!
+
+        (Manuel Carro Linares  @tt{<mcarro@@orion.ctp.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/02/03), "
+
+	* Library/data.pl: retract_fact/1 made blocking; a non-blocking
+	version (retract_fact_nb/1) added.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/02/03), "
+
+	* Library/data.pl: '$unlock_predicate'/1 added after every call to
+	'$current_instance'/1, which should leave a lock on the predicate
+	(to be later changed to the clause) when the predicate is being
+	executed.
+
+	* bin/SUNSOL/prolog_tasks.c (prolog_unlock_pred): unlocks the
+	possible lock left in a predicate.  Accessed through
+	'$unlock_predicate'/1, which receives the root pointer.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/02/02), "
+
+	* Library/data.pl: retract_fact/1 is non-blocking (which I assume
+	is what is usually wanted): when there are no [more] instances of
+	a concurrent predicate, the call fails.  Blocking can be performed
+	using a current_fact/1 before.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/02/01,23:24*21+'MET'), "
+
+	* bin/LINUX/configure.c (turn_point): take into account building a
+	LINUX system without the built-in memory manager.
+
+        (Manuel Carro  @tt{<boris@@clip2.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/19), "
+
+	* bin/SUNSOL/objareas.c (prolog_erase): erasing locked --- but is
+	this taking care properly of concurrent predicates?
+	(inserta): clause lock used here.
+	(insertz): clause lock used here.
+
+	* bin/SUNSOL/indexing.c (init_interpreted): clause lock created
+	and inited.
+
+	* bin/SUNSOL/objareas.h: added a per-clause lock.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/16), "
+
+	* bin/SUNSOL/nondet.c (current_instance): current_fact_nb seems to
+	work.  Still to be extensively tested.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/16), "
+
+	* bin/SUNSOL/nondet.c (current_instance_nt): Made a kludge to have
+	a non-blocking current_instance_nt.  Same for next_instance_nt.
+	Pass on an extra argument to skip busy waiting for concurrent
+	predicates.   Used to implement current_fact_nb/1.  Still
+	incomplete: need to save it somewhere!
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/14), "
+
+	* Library/data.pl: added close_fact/1 and open_fact/1.  The former
+	closes an open concurrent predicate, and the latter opens a closed
+	concurrent predicate.
+
+	* bin/SUNSOL/nondet.c (close_predicate): added a predicate to
+	""close"" a predicate (signal that clauses should not be waited on
+	any more).
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/14), "
+
+	* bin/SUNSOL/registers.h (DynamicPreserved): incremented to 7.
+	X(6) in dynamic chpt now holds the root for the dynamic predicate,
+	where its openness is held.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/13), "
+
+	* bin/SUNSOL/indexing.c (init_interpreted): openness of predicate
+	inited acording to its concurrent/not concurrent type.
+
+	* bin/SUNSOL/objareas.c (active_instance_nt): Made a version which
+	does not look at time creation and waits instead of failing when
+	predicates are still open.
+
+	* bin/SUNSOL/objareas.h: added field to interpreter indexing data
+	to denote that a predicate should be waited on insted of failed
+	(in fact, this is changing the indexing behavior!).
+
+	* Library/data.pl: Changed order of literals in several
+	predicates: put '$current_clauses'/2 before, because it is most
+	likely to fail ('$compile_term'/2 will always compile, even if a
+	non dynamic fact name is passed on).
+
+	* bin/SUNSOL/indexing.c (set_property): '$set_property'
+	understands ""concurrent"".  A concurrent ""predicate"" is also
+	dynamic.  This information is stored as a bit in the predicate's
+	definition.
+
+	* bin/SUNSOL/nondet.c (predicate_property_bits):
+	predicate_property/2 understands ""concurrent"".
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/12), "
+
+	* Added several ""concurrent"" at several places in Compiler and
+	Library.  The compiler seems to recognize the ""concurrent""
+	declaration both in incore compiling and in file-to-file
+	compiling; however, some pitfall makes it load the .ql files twice!
+
+	* bin/SUNSOL/indexing.c (set_property): Added code and
+	declarations to set the ""concurrent"" property to predicates.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/09), "
+
+	* bin/SUNSOL/prolog_tasks.c (prolog_lock_atom): lock_term/1 and
+	unlock_term/1 are now called *_atom/1, and can only lock atoms.
+
+	* Emulator/configure.c: Changed ""configure"" program to deal with
+	Linux (and probably other OS's?) strange malloc beheavior
+	exceeding the addressable (due to pointer encoding in tagged
+	words) range of memory. See turn_point() in configure.c.
+
+	* bin/SUNSOL/alloc.c (mem_prog_reset): Deleted.  It was just
+	setting a variable to zero, and was called only once.
+
+	* bin/SUNSOL/support.h: mem_start not used any more (replaced by
+	total_mem_count, and was probably wrong whenever MallocBase <> 0).
+
+	* bin/SUNSOL/main.c (create_and_init_wam): save Prolog program
+	space usage and restore it after wam creation.
+	(main): init program space counter after allocating shared space.
+
+	* bin/SUNSOL/alloc.c: added a counter for total memory usage
+	(Linux sbrk() does not behave as Solaris').
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/08), "
+
+	* bin/SUNSOL/alloc.c: Added locks to the top-level calls of the
+	memory manager (checkalloc/checkrealloc/checkdealloc).
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1998/01/08), "
+
+	* Emulator/own_malloc.c: seems to work both in Linux and Soalris.
+	There were problems with Linux malloc allocating in zones of the
+	memory very far away, depending on the size of the requested
+	memory.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/11/27,18:14*38+'MET'), "
+
+	* Emulator/prolog_tasks.c: this file now has the implementation of
+	the Prolog interface to the management of tasks.
+
+        (Manuel Carro  @tt{<boris@@clip2.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/11/25,13:41*15+'MET'), "
+
+        * makefile-sysdep/mkf-SUNSOL (THREAD_FLAGS): There is now the
+	possibility of choosing between Solaris and POSIX threads.  POSIX
+	seems to behave better now; I have made threads system-wide
+	scheduled.  Thread killing using Solaris threads seems to kill the
+	whole process.
+
+        * bin/SUNSOL/threads.h: updated Solaris part to conform to use
+        POSIX threads.  Great havoc.  Wrong implementation of POSIX
+        threads?
+
+        * bin/SUNSOL/tasks.c (allow_thread_cancellation): added primitives
+        to allow/disallow thread cancellation.  Also for cancelling a new
+        thread.
+
+        * bin/SUNSOL/misc.c (prolog_lock_term): now working with atoms and
+        functors *which are predicate definitions*.  Extending them to
+        arbitrary functors (and variables) will be a little more
+        expensive.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/11/19,20:41*44+'MET'), "
+
+        * bin/SUNSOL/misc.c (prolog_lock_term): lock_term/1 locks the lock
+        associated with a term.  Only atoms by now.  Similarly,
+        unlock_term/1 does the opposite.
+
+        * bin/SUNSOL/locks.c (create_dynamic_lock): Created a pool of
+        storage for dynamic locks, to be generated as needed.  Still to be
+        tested.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/11/18,20:48*24+'MET'), "
+
+        * Emulator/initial.c (new_atom_check): Added lock and
+        initialization of lock to atoms.  Important: need to change lock
+        addresses when reallocing atom table (or make locks point to
+        somewhere else --- probably a best solution).
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/11/12,16:37*03+'MET'), "
+
+        * bin/SUNSOL/objareas.c (prolog_erase): added locks (same as for
+        clause insertion) to clause deletion.  It is quite simple-minded:
+        I simply lock all the process...
+
+        * bin/SUNSOL/misc.c (prolog_tasks_status): Added predicate
+        tasks_status/0, which prints in the user stream the current status
+        of the tasks.
+
+        * bin/SUNSOL/objareas.c (inserta / insertz): added lock to clause
+        insertion.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/10/28,18:37*38+'MET'), "
+
+        * bin/SUNSOL/term_support.c (compile_term): made reentrant by
+        adding lots of parameters which avoid the use of global
+        variables.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/10/17,14:08*37+'MET'), "
+
+        * bin/SUNSOL/initial.c (define_c_mod_predicate): Added lock to
+        prolog_predicates_l
+
+        * bin/SUNSOL/support.c (insert_definition): Added lock to
+        prolog_predicates_l 
+        
+        * bin/SUNSOL/initial.c (init_once): Added initialization of
+        predicate locks.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/10/16,16:28*30+'MET'), "
+
+        * bin/SUNSOL/wam.c (wam): Changed all `&prolog_predicates' to
+        `predicates_location'. 
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/10/15,14:15*24+'MET'), "
+
+        * bin/SUNSOL/termdefs.h: current_debugger_state and
+        current_debugger_mode are now private to threads: since they point
+        to heap-allocated structures, they where relocated upon GC and
+        stack shifting --- but they might not point to the heap of the
+        thread performing the reallocation!
+
+        atom_buffer and atom_buffer_length are private to each thread;
+        they can be accessed and expanded concurrently.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/09/24,13:29*34+'MET'), "
+
+        * bin/SUNSOL/main.c (main): X(0) initialization moved to startwam.
+
+        * bin/SUNSOL/initial.c (local_init_each_time): Redistributed
+        start/reboot initializations between global and local to the WAM.
+        
+        * bin/SUNSOL/term_support.c (compile_term): changed compile_term
+        and compile_term_aux to return in a new argument either NULL or
+        the new WRB, if it has been expanded.
+
+        * Emulator/tasks.c: added functions to create, search, etc. tasks
+        to the task list.
+
+        * Deleted lots of unused local variables.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/09/22,16:21*16+'MET'), "
+
+        * Emulator: Added locks.h and threads.h file from Kish
+        implementation.  Seems to work (in sample toy programs, at
+        least).
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/08/29,19:54*18+'MET'), "
+
+        * Emulator/initial.c: input_stream_ptr and output_stream_ptr moved
+        to WRB and replaced by macros.
+
+        * Emulator/support.c: the variables which (I believe) delimit the
+        stack for bignums have been moved to WRB and replaced by macros;
+        new args added where needed.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/08/28,17:26*38+'MET'), "
+
+        * Emulator/wamfunction.c: split bn_div_mod and
+        bn_quotient_remainder into two functions each, dealing with the
+        case in which a remainder is wanted or not (there was a global
+        parameter goberning that).
+
+        * Emulator/bignum.c: (Slightly) Changed the implementation of
+        rshift and lshift for the bignums case, in order to ged rid of the
+        annoyin global bn_shift_dist which was used to pass a parameter,
+        and should either be made global or locked when using threads.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/08/27,18:27*02+'MET'), "
+
+        * Emulator/wambuiltin.c: added Arg to all bu2_* builtins; needed
+        because of NDEREF, which calls evaluate(). Will ned to do the same
+        for other builtins (because of WAMENV macros scattered accross all
+        the code).
+
+        * Emulator/wamfunction.c: All functions have been added a WRB
+        argument, in order to be able to call them from within wam() using
+        the provided C[2,3,4,5] macros.  The same applies to fu1_type()
+        and fu1_get_attribute().
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/08/22,20:24*27+'MET'), "
+
+        * Stack boundaries now moved into Wam Register Bank structure.
+        Macros provided for its access.  Code changed to have the WRB
+        accessible from everywhere it is needed.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/05/27,20:36*35+'MET'), "
+
+        * flag '-f' (fast_load: do not load users's .ciaorc) now handled
+        at Prolog level.  '-f' is respected when in interactive or in
+        script mode.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/05/08,14:33*49+'MET'), "
+
+        * Emulator/interrupt.c: Eliminated exitmsg(rc), changed calls to
+        it to exit(rc).
+
+        * Emulator/initial.c (init_each_time): Initialize debugger
+        variables address_apply and address_interpret_c_goal (so that no
+        reset_debugger(_) is needed at startup.
+
+        * Emulator/wam.c (startwam): Changed in order to enable returning
+        exit status with halt/1. Eliminated reinitialize/0 exit status, so
+        that when booting does not enter and then reinitialize. On
+        aborting, reboot/0 is called. Added ""wam_initialized = TRUE"" which
+        eliminates '$context_switch' in boot.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/04/29,16:33*50+'MET'), "
+
+        * Emulator/main.c (main): added argument ""-q"" which sets
+        current_quiet_flag (and ""-v"" which resets it), also in misc.c
+        (quiet_flag) to change it. This flag is intended to be checked
+        when writting informational messages.
+
+        * Emulator/indexing.c (define_predicate): changed so that a
+        multifile predicate is not erased when redefining it.  After a
+        predicate is declared as multifile, the only way of delete it is
+        by abolish.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/04/22,16:33*50+'MET'), "
+
+        * Emulator/misc.c (prolog_interpreted_clause): $interpreted_clause
+        written in C because dynamic predicates in ql_execs.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/04/21,12:59*50+'MET'), "
+
+	* Library/Makefile (min_boot_done): Changed boot dependencies not
+	to recompile uit unnecesarily.
+
+        (Manuel Carro  @tt{<boris@@clip2.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/04/18,17:42*46+'MET'), "
+
+	* Library/toplev.pl: Added calls to after_solution_hook,
+ 	after_query_hook and exit_prolog_hook.
+
+        (El Bardo Leopardo  @tt{<bardo@@clip2.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/04/16,14:29*45+'MET'), "
+
+        * Emulator/main_exec.c (ciao_kick_start): libciao now jumps to the
+        boot/0 predicate, instead of main/0.  A minimal file, with error
+        handling, etc., should be always included.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/04/15,20:25*10+'MET'), "
+
+        * Emulator/main.c (main): Boot code for ql files in main checks
+        for ql scripts.
+        (main): Changed boot code to load several qls from one file (now
+        it exits when EOF is found).
+
+        * Emulator/qread.c (prolog_qread): Now it checks for ql scripts;
+        if so, we skip until next crtl-L.
+
+        * Emulator/initial.c (initialize_intrinsics): All C defined
+        predicates are now public (to avoid allowing C predicates to be
+        abolished by the user).
+
+        * Emulator/objareas.c (context_switch): Changed predicate storage
+        to use only one list (user_predicates dropped). 
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/02/25,19:35*06+'MET'), "
+
+        * Emulator/interrupt.c: Added ""interactive"" variable, which should
+        control the printing of several messages.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/02/13,18:07*56+'MET'), "
+
+        * Emulator/unix_utils.c (prolog_getarch): added the built-in
+        get_arch/1, which returns an atom representing the architecture
+        for which the emulator has been compiled.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/02/13,12:45*50+'MET'), "
+
+        * Library/toplev.pl: shell_files/2: added a rule to link a
+        .so file. For now, the module name is obtained from the name of
+        the file. It should be explicitly passed in a future.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/02/12,16:21*04+'MET'), "
+
+        * Library/toplev.pl: Added rules to search and load a .so file,
+        respecting the following rules:
+
+            - .ql and .pl files are preferred over .so files
+
+            - between .ql and .pl, the most recently changed is preferred
+
+            - no file is loaded if it has not been changed since last loaded.
+
+        * Emulator/foreign.c (prolog_find_file): Only regular (not
+        directory) names are returned by absolute_file_name.
+
+        * Emulator/misc.c (compare_aux): Changed standard term order to
+        agree with the Prolog standard.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/02/10,16:21*32+'MET'), "
+
+        * Emulator/dynlink.c (prolog_dynlink): dynlink/2 predicate
+        working: dynlink(+File, +Module) dynamically loads the File.so
+        shared object, and installs the Prolog-accesible predicates
+        accesible in Module
+
+        * lib/sockets/Makefile: shared libraries creation working for
+        Solaris, SunOS and Linux.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/01/24,19:14*51+'MET'), "
+
+        * Implemented atom_concat(+,+,?) builtin in term_support.c.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/01/24,11:28*19+'MET'), "
+
+        * Emulator/initial.c (define_c_mod_predicate): Allows defining new
+        C predicates (at the level of those which use Argdecl) _after_ the
+        system is already running. This would allow dynamically linking
+        .so files which define new predicates written in C.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1997/01/20,21:08*11+'MET'), "
+
+        * Added unix(popen/3) command, changed dummy.pl, initial.c,
+        streams.c (perhaps it should go in unix_utils.c?)
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/11/15,21:17*09+'MET'), "
+
+        * bin/SUNSOL/wam.c (wam): w->insn is now used to store the pc when
+        not in wam(). ""p"" it is (re)loaded at entry and after succesful
+        completion of C predicates.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/11/15,13:33*24+'MET'), "
+
+        * Changed ""echo"" for ""write0"" through all the code.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/11/13,19:36*31+'MET'), "
+
+        * Added predicate write0/1 which calls wr_tagged_rec in builtin.c.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/11/07,20:00*28+'MET'), "
+
+        * Added ++, -- as functions and postfix operators, e.g., Y is X++ .
+
+        (Manuel Carro & Daniel Cabeza @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/11/04,20:20*00+'MET'), "
+
+        * Added pause/1, get_pid/1, walltime/1.
+
+        (Manuel Carro  @tt{<boris@@pizarro.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/10/23,13:45*09+'MET'), "
+
+        * Library/toplev.pl: Ciao now reads the ~/.ciaorc initialization file.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/10/22,19:12*38+'MET'), "
+
+        * Emulator/sockets.c (prolog_select_socket): Done -- seems to work.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/10/21,19:29*45+'MET'), "
+
+        * Emulator/sockets.c (prolog_connect_to_socket): opens a stream
+        connected to a given port and host.
+
+        (prolog_bind_socket): creates a socket bound to a (local) port;
+        returns the socket id.
+
+        (prolog_socket_accept): waits for a new connection on a socket and
+        returns a stream to this connection
+
+        (new_socket_stream): makes a stream from a socket number (a file
+        descriptor). The stream has mode 's' (special, since a socket is
+        readable/writeable at a time).
+
+        (Manuel Carro  & Daniel Cabeza)").
+
+:- comment(version(0*0+0,1996/09/27,11:44*30+'MET'), "
+
+        * Emulator/Makefile: changed to create a script which loads ql
+        files. I was unable to produce a working saved state in Solaris.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/09/11,14:32*13+'MET'), "
+
+        * Made separate directories for different architectures under 'bin'.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/09/09,15:50*48+'MET'), "
+
+        * Makefile (setup): Added 'setup' which creates links to hold the
+        objects and binaries in different directories for the
+        architectures.
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/08/01,19:45*26+'MET'), "
+
+        * Emulator/compat.h: added compatibility macros for signal
+        handling
+
+        (Manuel Carro  @tt{<boris@@mayor.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/07/31,18:47*13+'MET'), "
+
+        * lib/attrdecl.pl: multifile declarations for attribute handling
+        predicates. This file must be loaded before any file declaring
+        verify_attributes/2 or combine_attributes/2. All files using these
+        predicates must be loaded either compiled or interpreted.
+        (See file lib/freeze.pl and lib/clpr/clpq.pl).
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/07/30,17:30*16+'MET'), "
+
+        * lib/clpr/clpq.pl: Renamed clpr's freeze/2 to clpr_freeze to
+        avoid name clashes with the standard freeze/2. The
+        attributes-based version of freeze/2 (in Library) cannot be used,
+        because clp[qr] puts more information in the attributes.
+
+        * Library/freeze.pl: Added freeze/2 and frozen/2 based on
+        attributed variables. Debugger still not tested, though.
+
+        * Library/toplev.pl (break_body): Changed toplevel to take into
+        account attributed variables: attributes are displayed, and not
+        simply taken as frozen goals.
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/07/26,14:08*43+'MET'), "
+
+        * Emulator/attr.c (fu1_type): changed ""cva"" atom to ""attv"" atom
+        through all the code (note: this changes type/2 behavior).
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/07/25,19:32*48+'MET'), "
+
+        * Added clpq in ciao/lib/clpr. Loaded with [clpq].
+
+        * Added attributed variables based on SICStus 2.1 patch.
+        Seems to work. Debugger not tested.
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/07/11,16:43*41+'MET'), "
+
+        * Makefile (version-CK): Created the directory Emulator-CK and
+        fixed Makefiles, names, etc. to use the name Ciao instead of
+        SICStus.
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/06/12,19:39*00+'MET'), "
+
+        * lib/exec/Emulator/main_exec.c (ciao_init): flag -b <file.ql>
+        allows loading a ql file
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/06/11,16:36*50+'MET'), "
+
+        * lib/exec/Emulator/qinsert.c (qinsert): created qinsert.c to handle
+        C generated qlfiles.
+
+        * Emulator/main.c (main): Moved some initialization code to first
+        block of main().
+
+        * lib/exec/Emulator/Makefile (libciao): Added libciao target
+
+        * lib/exec/Makefile: changed to include libciao target and
+        position independent code flags.
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/05/13,22:23*45+'MET'), "
+
+        * Changed Library/rdtok.pl for Library/tokenize.pl (changed inout.c),
+        added prolog flag ""character_escapes"" (changed Emulator/initial.c,
+        Library/intrinsics1.pl).  Added get_class/2, get0_class/2 to
+        Library/intrinsics1.pl.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/05/08,19:27*20+'MET'), "
+
+        * Code related to native code support eliminated from Emulator and
+        Compiler. In Emulator original files renamed as <file>_nc.
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/05/08,01:05*12+'MET'), "
+
+        * lib/proTcXl2.1/foreign.pl: tcl/[1,2,3] now support strings.
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/05/03,20:08*49+'MET'), "
+
+        * lib/proTcXl2.1/Makefile (PROTCL_SOURCE): SETTINGS is now
+        consulted to find out the source directory.
+
+        * Makefile: SRC is now set in settings
+
+        * TO_SOLVE: write here the problems you find, just to make sure
+        they are eventually dealt with.
+
+        * lib/proTcXl2.1/tcl.pl: Tcl interface is partially working. Still
+        to be tested. Most of the original (Micha's) code, dealing with
+        variables substitution, rewritten. 
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/04/30,12:48*46+'MET'), "
+
+        * lib/proTcXl2.1/misc_eclipse.pl: Added miscellaneous Prolog
+        predicates not found in SICStus 0.7.
+
+        * lib/proTcXl2.1/Makefile: Added 'tags' rule to make tags entry
+        for Prolog and C files.
+
+        * lib/proTcXl2.1/xlib.pl: Removed module declarations.
+
+        * Emulator/inout.c: Defined macros SAVE_XREGS and RESTORE_XREGS to
+        save/restore X registers when SP_read_hook is called (C could call
+        prolog again).
+        (readchar): Added call to (*SP_read_hook)() if defined. A warning
+        is printed the first time it is called if we are debugging.
+
+        * mkf-* files, available_processors and getarch moved to directory
+        makefile-sysdep
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/04/29,21:53*06+'MET'), "
+
+        * lib/proTcXl2.1/tk_common.pl: Commented module declaration.
+        Changed 
+
+        * lib/proTcXl2.1/protcl.c (_FileCmdProc): this function is only
+        used when the host prolog is Eclipse; #ifdef'ed
+
+        * Emulator/sicstus.c: skeletons for C functions accessing SICStus
+        internal stuff. By now, tcl/tk cannot call Prolog.
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/04/29,20:06*43+'MET'), "
+
+        * Compiler/plwam.p4: extracted dict.pl, listutil.pl
+
+        (Daniel Cabeza Gras  @tt{<bardo@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/04/29,19:39*29+'MET'), "
+
+        * Emulator/sicstus.h: Created sicstus.h to put definitions used by
+        C programs.
+
+        * Emulator/inout.c (readchar): Added *(SP_read_hook)() to compile
+        proTcXl -- but not yet working!
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/04/24,14:54*25+'MET'), "
+
+        * Emulator/foreign.c (prolog_prepare_foreign_files): some
+        functions used in other parts of the emulator have been moved to
+        unix_utils.c
+        
+        Added #ifdef's to avoid compiling functions used only when loading
+        foreign files. Added dummy functions which print errors if
+        one tries to link a foreign file and the emulator has not been
+        compiled with that capability.
+
+        * Makefile: Added some configuration files from former &-Prolog
+        versions to help porting
+
+        * SETTINGS has a FOREIGN_FILES flag to enable/disable linking of
+        foreign files
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+
+:- comment(version(0*0+0,1996/04/17,17:36*00+'MET'), "
+
+        * Changed name of RCS directories to _RCS_ to prevent gmake from using
+        the RCS stored files
+
+        * Changed toplevel Makefile and some C sources to use gcc and gmake
+
+        (Manuel Carro  @tt{<boris@@aguirre.dia.fi.upm.es>})").
+% ---------------------------------------------------------------------------
+

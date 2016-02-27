@@ -1,0 +1,323 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - The interactive debugger</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_6.html">previous</A>, <A HREF="ciao_8.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC31" HREF="ciao_toc.html#TOC31">The interactive debugger</A></H1>
+
+<P>
+ 
+
+
+<P>
+The Ciao program development environment includes a number of advanced debugging tools, such as the 
+<A NAME="IDX329"></A>
+<CODE>ciaopp</CODE> preprocessor and some execution visualizers. Herein we discuss the interactive debugger available in the standard top-level, which allows to trace the control flow of programs, similar to other popular Prolog systems. This is a classical Byrd 'box-type' 
+<A NAME="IDX330"></A>
+<A NAME="IDX331"></A>
+<EM>debugger</EM> [Byr80,BBP81], with some enhancements. 
+
+
+<P>
+Byrd's 
+<A NAME="IDX332"></A>
+Procedure Box model of debugging execution provides a simple way of visualising control flow, especially during backtracking. Control flow is viewed at the predicate level, rather than at the level of individual clauses. The Ciao debugger has the ability to mark selected modules and/or files for debugging, rather than having to exhaustively trace your program. It also allows to selectively set 
+<A NAME="IDX333"></A>
+spy-points. Spy-points allow the programmer to nominate interesting predicates at which program execution is to pause so that the programmer can interact with the debugger. There is a wide choice of control and information options available during debugging interaction. 
+
+
+
+<UL>
+<LI><A HREF="ciao_7.html#SEC32">Marking modules and files for debugging</A>
+<LI><A HREF="ciao_7.html#SEC33">The debugging process</A>
+<LI><A HREF="ciao_7.html#SEC34">The procedure box control flow model</A>
+<LI><A HREF="ciao_7.html#SEC35">Format of debugging messages</A>
+<LI><A HREF="ciao_7.html#SEC36">Options available during debugging</A>
+</UL>
+
+
+
+<H2><A NAME="SEC32" HREF="ciao_toc.html#TOC32">Marking modules and files for debugging</A></H2>
+
+<P>
+Usually, when a program is not working properly, the programmer has a feeling of which are the modules where the fault may be. Since full-fledged debugging is only available on <EM>consulted</EM> (interpreted) modules, which are executed much slower than compiled modules, there is the posibility of telling the top level which particular modules are wanted to be loaded in 
+<A NAME="IDX334"></A>
+<A NAME="IDX335"></A>
+<EM>consult mode</EM>, with the aim of debugging them. The most simple way of achieving this (appart from using the Ciao 
+<A NAME="IDX336"></A>
+<CODE>emacs</CODE> mode, which includes special support for debugging) is executing in the Ciao shell prompt, for each suspicious module <CODE>Module</CODE> in the program, a command like this: 
+
+
+
+<PRE>
+?- debug_module(Module).
+</PRE>
+
+<P>
+Note that files without module declaration belong to the module user, so the command to be issued for debugging a user file, say 'foo.pl', would be <CODE>debug_module(user)</CODE>, and not <CODE>debug_module(foo)</CODE>. 
+
+
+<P>
+The above command performs in fact two related things: on the one hand, it instructs the compiler to load any file containing a module of this name in consult mode; on the other, it instructs the debugger to actually prepare for debugging the code belonging to that module. After that, the modules which are to be debugged have to be (re)loaded in any appropriate form. The nice thing is that, if the modules are part of a bigger application, a command to load the main application file will automatically force loading the dependent modules which have changed, including those whose loading mode has changed, thus allowing the debugging of required files. 
+
+
+<P>
+Later, as the bug location is isolated, one would want to restrict more and more the modules where debugging takes place. To this end, and without the need of reloading, one can tell the debugger to not consider a module for debugging issuing a 
+<A NAME="IDX337"></A>
+<CODE>nodebug_module/1</CODE> command, which counteracts a 
+<A NAME="IDX338"></A>
+<CODE>debug_module/1</CODE> command with the same module name. 
+
+
+<P>
+There exist also the top-level commands 
+<A NAME="IDX339"></A>
+<CODE>set_debug_mode/1</CODE> and 
+<A NAME="IDX340"></A>
+<CODE>set_nodebug_mode/1</CODE>, which accept as argument a file spec (i.e., <CODE>library(foo)</CODE> or <CODE>foo</CODE>, even if it is a user file) to be able to load a file in consult mode without changing the set of modules the debugger will try to spy. 
+
+
+
+
+<H2><A NAME="SEC33" HREF="ciao_toc.html#TOC33">The debugging process</A></H2>
+
+<P>
+Once modules or user files are marked for debugging and reloaded, the traditional debugging shell commands can be used (the 
+<A NAME="IDX341"></A>
+<CODE>debugger</CODE> library following this section contains all the commands and their description), with the same meaning as in other Prolog systems such as 
+<A NAME="IDX342"></A>
+SICStus. The difference in their behavior is that in Ciao debugging takes place only in the modules in which it was activated, and that 
+<A NAME="IDX343"></A>
+<CODE>nospy/1</CODE> and 
+<A NAME="IDX344"></A>
+<CODE>spy/1</CODE> accept sequences of predicate specs, and they will search for those predicates only in the debugging-marked modules. 
+
+
+
+
+<H2><A NAME="SEC34" HREF="ciao_toc.html#TOC34">The procedure box control flow model</A></H2>
+
+<P>
+During debugging the interpreter prints out a sequence of goals in various states of instantiation in order to show the state the program has reached in its execution. However, in order to understand what is occurring it is necessary to understand when and why the interpreter prints out goals. As in other programming languages, key points of interest are procedure entry and return, but in Prolog there is the additional complexity of backtracking. One of the major confusions that novice Prolog programmers have to face is the question of what actually happens when a goal fails and the system suddenly starts backtracking. The Procedure Box model of Prolog execution views program control flow in terms of movement about the program text. This model provides a basis for the debugging mechanism in the interpreter, and enables the user to view the behaviour of the program in a consistent way. 
+
+
+<P>
+Let us look at an example Prolog procedure: 
+
+
+<P>
+<IMG SRC="autofigbyrdbox.jpg" ALT="Image:autofigbyrdbox.jpg"> 
+
+
+<P>
+The first clause states that <CODE>Y</CODE> is a descendant of <CODE>X</CODE> if <CODE>Y</CODE> is an offspring of <CODE>X</CODE>, and the second clause states that <CODE>Z</CODE> is a descendant of <CODE>X</CODE> if <CODE>Y</CODE> is an offspring of <CODE>X</CODE> and if <CODE>Z</CODE> is a descendant of <CODE>Y</CODE>. In the diagram a box has been drawn around the whole procedure and labelled arrows indicate the control flow in and out of this box. There are four such arrows which we shall look at in turn. 
+
+
+
+<UL>
+
+<LI>Call
+
+This arrow represents initial invocation of the procedure. When a goal of the form <CODE>descendant(X,Y)</CODE> is required to be satisfied, control passes through the Call port of the descendant box with the intention of matching a component clause and then satisfying any subgoals in the body of that clause. Note that this is independent of whether such a match is possible; i.e. first the box is called, and then the attempt to match takes place. Textually we can imagine moving to the code for descendant when meeting a call to descendant in some other part of the code. 
+
+<LI>Exit
+
+This arrow represents a successful return from the procedure. This occurs when the initial goal has been unified with one of the component clauses and any subgoals have been satisfied. Control now passes out of the Exit port of the descendant box. Textually we stop following the code for descendant and go back to the place we came from. 
+
+<LI>Redo
+
+This arrow indicates that a subsequent goal has failed and that the system is backtracking in an attempt to find alternatives to previous solutions. Control passes through the Redo port of the descendant box. An attempt will now be made to resatisfy one of the component subgoals in the body of the clause that last succeeded; or, if that fails, to completely rematch the original goal with an alternative clause and then try to satisfy any subgoals in the body of this new clause. Textually we follow the code backwards up the way we came looking for new ways of succeeding, possibly dropping down on to another clause and following that if necessary. 
+
+<LI>Fail
+
+This arrow represents a failure of the initial goal, which might occur if no clause is matched, or if subgoals are never satisfied, or if any solution produced is always rejected by later processing. Control now passes out of the Fail port of the descendant box and the system continues to backtrack. Textually we move back to the code which called this procedure and keep moving backwards up the code looking for choice points. 
+</UL>
+
+<P>
+In terms of this model, the information we get about the procedure box is only the control flow through these four ports. This means that at this level we are not concerned with which clause matches, and how any subgoals are satisfied, but rather we only wish to know the initial goal and the final outcome. However, it can be seen that whenever we are trying to satisfy subgoals, what we are actually doing is passing through the ports of <EM>their</EM> respective boxes. If we were to follow this, then we would have complete information about the control flow inside the procedure box. 
+
+
+<P>
+Note that the box we have drawn around the procedure should really be seen as an invocation box. That is, there will be a different box for each different invocation of the procedure. Obviously, with something like a recursive procedure, there will be many different Calls and Exits in the control flow, but these will be for different invocations. Since this might get confusing each invocation box is given a unique integer identifier. 
+
+
+
+
+<H2><A NAME="SEC35" HREF="ciao_toc.html#TOC35">Format of debugging messages</A></H2>
+
+<P>
+This section explains the exact format of the message output by the debugger at a port. All trace messages are output to the terminal regardless of where the current output stream is directed (which allows tracing programs while they are performing file IO). The basic format is as follows: 
+
+
+
+<PRE>
+S  13  7  Call: T user:descendant(dani,_123) ?
+</PRE>
+
+<P>
+<CODE>S</CODE> is a spy-point indicator. It is printed as '<CODE>+</CODE>', indicating that there is a spy-point on <CODE>descendant/2</CODE> in module <CODE>user</CODE>, or as ' ', denoting no spy-point. 
+
+
+<P>
+<CODE>T</CODE> is a subterm trace. This is used in conjunction with the <CODE>^</CODE> command (set subterm), described below. If a subterm has been selected, <CODE>T</CODE> is printed as the sequence of commands used to select the subterm. Normally, however, <CODE>T</CODE> is printed as ' ', indicating that no subterm has been selected. 
+
+
+<P>
+The first number is the unique invocation identifier. It is always nondecreasing (provided that the debugger is switched on) regardless of whether or not the invocations are being actually seen. This number can be used to cross correlate the trace messages for the various ports, since it is unique for every invocation. It will also give an indication of the number of procedure calls made since the start of the execution. The invocation counter starts again for every fresh execution of a command, and it is also reset when retries (see later) are performed. 
+
+
+<P>
+The number following this is the <EM>current depth</EM>; i.e., the number of direct <EM>ancestors</EM> this goal has. The next word specifies the particular port (<CODE>Call</CODE>, <CODE>Exit</CODE>, <CODE>Redo</CODE> or <CODE>Fail</CODE>). The goal is then printed so that its current instantiation state can be inspected. The final <CODE>?</CODE> is the prompt indicating that the debugger is waiting for user interaction. One of the option codes allowed (see below) can be input at this point. 
+
+
+<P>
+Ports can be unleashed. This means that the debugger will not stop for interaction at the messages for an unleashed port. Obviously, the <CODE>?</CODE> prompt will not be shown in such messages, since the user has specified to not wish to interact at this point. 
+
+
+<P>
+Note that not all procedure calls are traced; there are a few basic predicates which have been made invisible since it is more convenient not to trace them. These include debugging directives, basic control structures, and some builtins. This means that messages will never be printed concerning these predicates during debugging. 
+
+
+
+
+<H2><A NAME="SEC36" HREF="ciao_toc.html#TOC36">Options available during debugging</A></H2>
+<P>
+<A NAME="IDX345"></A>
+<A NAME="IDX346"></A>
+
+
+<P>
+This section describes the particular options that are available when the debugger prompts after printing out a debugging message. All the options are one letter mnemonics, some of which can be optionally followed by a decimal integer. They are read from the terminal with any blanks being completely ignored up to the next terminator (carriage-return, line-feed, or escape). Some options only actually require the terminator; e.g., the creep option, only requires <KBD>RET</KBD>. 
+
+
+<P>
+The only option which do really needs to be remembered is '<CODE>h</CODE>' (followed by <KBD>RET</KBD>). This provides help in the form of the following list of available options. 
+
+
+
+<PRE>
+&#60;cr&#62;   creep            c      creep
+ l     leap             s      skip
+ r     retry            r &#60;i&#62;  retry i
+ f     fail             f &#60;i&#62;  fail i
+ d     display          p      print
+ w     write
+ g     ancestors        g &#60;n&#62;  ancestors n
+ n     nodebug          =      debugging
+ +     spy this         -      nospy this
+ a     abort            b      break
+ @     command          u      unify
+ &#60;     reset printdepth &#60; &#60;n&#62;  set printdepth
+ ^     reset subterm    ^ &#60;n&#62;  set subterm
+ ?     help             h      help
+</PRE>
+
+
+<UL>
+<LI><CODE>c</CODE>
+
+<A NAME="IDX347"></A>
+<A NAME="IDX348"></A>
+<EM>creep</EM> causes the debugger to single-step to the very next port and print a message. Then if the port is leashed the user is prompted for further interaction. Otherwise it continues creeping. If leashing is off, creep is the same as leap (see below) except that a complete trace is printed on the terminal. 
+
+<LI><CODE>l</CODE>
+
+<A NAME="IDX349"></A>
+<A NAME="IDX350"></A>
+<EM>leap</EM> causes the interpreter to resume running the program, only stopping when a spy-point is reached (or when the program terminates). Leaping can thus be used to follow the execution at a higher level than exhaustive tracing. All that is needed to do is to set spy-points on an evenly spread set of pertinent predicates, and then follow the control flow through these by leaping from one to the other. 
+
+<LI><CODE>s</CODE>
+
+<A NAME="IDX351"></A>
+<A NAME="IDX352"></A>
+<EM>skip</EM> is only valid for Call and Redo ports. It skips over the entire execution of the predicate. That is, no message will be seen until control comes back to this predicate (at either the Exit port or the Fail port). Skip is particularly useful while creeping since it guarantees that control will be returned after the (possibly complex) execution within the box. With skip then no message at all will appear until control returns. This includes calls to predicates with spy-points set; they will be masked out during the skip. There is a way of overriding this: the <CODE>t</CODE> option after a <KBD>^C</KBD> interrupt will disable the masking. Normally, however, this masking is just what is required! 
+
+<LI><CODE>r</CODE>
+
+<A NAME="IDX353"></A>
+<A NAME="IDX354"></A>
+<EM>retry</EM> can be used at any of the four ports (although at the Call port it has no effect). It transfers control back to the Call port of the box. This allows restarting an invocation when, for example, it has left the programmer with some weird result. The state of execution is exactly the same as in the original call, (unless the invocation has performed side effects, which will not be undone). When a retry is performed the invocation counter is reset so that counting will continue from the current invocation number regardless of what happened before the retry. This is in accord with the fact that execution has, in operational terms, returned to the state before anything else was called. 
+
+If an integer is supplied after the retry command, then this is taken as specifying an invocation number and the system tries to get to the Call port, not of the current box, but of the invocation box specified. It does this by continuously failing until it reaches the right place. Unfortunately this process cannot be guaranteed: it may be the case that the invocation then programmer is looking for has been cut out of the search space by cuts in the program. In this case the system fails to the latest surviving Call port before the correct one. 
+
+<LI><CODE>f</CODE>
+
+<A NAME="IDX355"></A>
+<A NAME="IDX356"></A>
+<EM>fail</EM> can be used at any of the four ports (although at the Fail port it has no effect). It transfers control to the Fail port of the box, forcing the invocation to fail prematurely. If an integer is supplied after the command, then this is taken as specifying an invocation number and the system tries to get to the Fail port of the invocation box specified. It does this by continuously failing until it reaches the right place. Unfortunately, as before, this process cannot be guaranteed. 
+
+<LI><CODE>d</CODE> displays the current goal using <CODE>display/1</CODE>. See write (below).
+
+<LI><CODE>p</CODE> re-prints the current goal using <CODE>print/1</CODE>. Nested structures will be printed to the specified <EM>printdepth</EM> (below).
+
+<LI><CODE>w</CODE> writes the current goal on the terminal using <CODE>write/1</CODE>.
+
+<LI><CODE>g</CODE> provides a list of ancestors to the current goal, i.e., all goals that are hierarchically above the current goal in the calling sequence. It is always possible to jump to any goal in the ancestor list (by using retry, etc.). If an integer <CODE>n</CODE> is supplied, then only <CODE>n</CODE> ancestors will be printed. That is to say, the last <CODE>n</CODE> ancestors will be printed counting back from the current goal. Each entry in the list is preceded by the invocation number followed by the depth number (as would be given in a trace message).
+
+<LI><CODE>n</CODE> switches the debugger off. Note that this is the correct way to switch debugging off at a trace point. The <CODE>@</CODE> or <CODE>b</CODE> options cannot be used because they always return to the debugger.
+
+<LI><CODE>=</CODE> outputs information concerning the status of the current debugging session.
+
+<LI><CODE>+</CODE>
+
+<A NAME="IDX357"></A>
+<A NAME="IDX358"></A>
+<EM>spy</EM> sets a spy-point on the current goal. 
+
+<LI><CODE>-</CODE>
+
+<A NAME="IDX359"></A>
+<A NAME="IDX360"></A>
+<EM>nospy</EM> removes the spy-point from the current goal. 
+
+<LI><CODE>a</CODE>
+
+<A NAME="IDX361"></A>
+<A NAME="IDX362"></A>
+<EM>abort</EM> causes an abort of the current execution. All the execution states built so far are destroyed and the system is put right back at the top-level of the interpreter. (This is the same as the built-in predicate <CODE>abort/0</CODE>.) 
+
+<LI><CODE>b</CODE>
+
+<A NAME="IDX363"></A>
+<A NAME="IDX364"></A>
+<EM>break</EM> introduces an interpreter break-point: current execution flow is suspended, and a new interpreter top-level started 'on top' of the previous execution, which is 'sitting underneath' it. When the break-point is ended (with <KBD>^D</KBD>) previous execution is resumed, and the user will be reprompted at the port at which execution broke. The new execution is completely separate from the suspended one; the invocation numbers will start again from 1 during the break. The debugger is temporarily switched off as the break-point is called and will be re-switched on when the break is finished. However, any changes to the leashing or to spy-points will remain in effect. (This option might not be temporarily available.) 
+
+<LI><CODE>@</CODE>
+
+<A NAME="IDX365"></A>
+<A NAME="IDX366"></A>
+<EM>command</EM> allows calling arbitrary goals. It is effectively a one-off break (see above). The initial message <CODE>| :- </CODE> will be output on the terminal, and a command is then read from the terminal and executed as if it was at top-level. 
+
+<LI><CODE>u</CODE>
+
+<A NAME="IDX367"></A>
+<A NAME="IDX368"></A>
+<EM>unify</EM> is available at the Call port and gives the option of providing a solution to the goal from the terminal rather than executing the goal. This is convenient, e.g., for providing a "stub" for a predicate that has not yet been written. A prompt <CODE>|: </CODE> will be output on the terminal, and the solution is then read from the terminal and unified with the goal. (This option might not be temporarily available.) 
+
+<LI><CODE>&#60;</CODE>
+
+<A NAME="IDX369"></A>
+<A NAME="IDX370"></A>
+<EM>printdepth</EM> sets a limit for the subterm nesting level that is printed in messages. While in the debugger, a printdepth is in effect for limiting the subterm nesting level when printing the current goal. When displaying or writing the current goal, all nesting levels are shown. The limit is initially 10. This command, without arguments, resets the limit to 10. With an argument of <CODE>n</CODE> the limit is set to <CODE>n</CODE>. 
+
+<LI><CODE>^</CODE>
+
+<A NAME="IDX371"></A>
+<A NAME="IDX372"></A>
+<EM>subterm</EM> sets the subterm to be printed in messages. While at a particular port, a current subterm of the current goal is maintained. It is the current subterm which is displayed, printed, or written when prompting for a debugger command. Used in combination with the printdepth, this provides a means for navigating in the current goal for focusing on the part which is of interest. The current subterm is set to the current goal when arriving at a new port. This command, without arguments, resets the current subterm to the current goal. With an argument of <CODE>n</CODE> (greater than 0 and less or equal to the number of subterms of the current subterm), the current subterm is replaced by its <CODE>n</CODE>'th subterm. With an argument of <CODE>0</CODE>, the current subterm is replaced by its parent term. 
+
+<LI><CODE>?</CODE> or <CODE>h</CODE> displays the table of options given above.
+
+</UL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_6.html">previous</A>, <A HREF="ciao_8.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

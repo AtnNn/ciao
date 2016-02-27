@@ -1,0 +1,221 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Basic builtin directives</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, <A HREF="ciao_17.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC77" HREF="ciao_toc.html#TOC77">Basic builtin directives</A></H1>
+<P>
+<A NAME="IDX789"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#11 (1999/3/18, 21:28:24 MET)
+
+
+<P>
+This chapter documents the basic 
+<A NAME="IDX790"></A>
+builtin directives in CIAO, additional to the documented in other chapters. These 
+<A NAME="IDX791"></A>
+directives are natively interpreted by the CIAO compiler (
+<A NAME="IDX792"></A>
+<CODE>ciaoc</CODE>). 
+
+
+<P>
+Unlike in other Prolog systems, directives in CIAO are not goals to be <EM>executed</EM> by the compiler or top level. Instead, they are <EM>read</EM> and acted upon by these programs. The advantage of this is that the effect of the directives is consistent for executables, code loaded in the top level, code analyzed by the preprocessor, etc. 
+
+
+<P>
+As a result, by default only the builtin directives or declarations defined in this manual can be used in user programs. However, it is possible to define new declarations 
+<A NAME="IDX793"></A>
+<A NAME="IDX794"></A>
+by using the 
+<A NAME="IDX795"></A>
+<CODE>new_declaration/1</CODE> and 
+<A NAME="IDX796"></A>
+<CODE>new_declaration/2</CODE> directives documented in section <A HREF="ciao_29.html#SEC120">Extending the syntax</A>.
+
+
+
+<UL>
+<LI><A HREF="ciao_16.html#SEC78">Usage and interface (builtin_directives)</A>
+<LI><A HREF="ciao_16.html#SEC79">Documentation on internals (builtin_directives)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC78" HREF="ciao_toc.html#TOC78">Usage and interface (<CODE>builtin_directives</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+These directives are builtin in CIAO, so nothing special has to be done to use them.
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC79" HREF="ciao_toc.html#TOC79">Documentation on internals (<CODE>builtin_directives</CODE>)</A></H2>
+<P>
+<A NAME="IDX797"></A>
+<A NAME="IDX798"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>multifile/1:</B>
+<DD><A NAME="IDX799"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>multifile Predicates</CODE>.
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Specifies that each predicate in <CODE>Predicates</CODE> may have clauses in more than one file. Each file that contains clauses for a
+
+<A NAME="IDX800"></A>
+multifile predicate must contain a directive multifile for the predicate. The directive should precede all clauses of the affected predicates. This directive is defined as a prefix operator in the compiler. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Predicates</CODE> is a sequence or list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:sequence_or_list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX801"></A>
+<A NAME="IDX802"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>discontiguous/1:</B>
+<DD><A NAME="IDX803"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>discontiguous Predicates</CODE>.
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Specifies that each predicate in <CODE>Predicates</CODE> may be defined in this file by clauses which are not in consecutive order. Otherwise, a warning is signaled by the compiler when clauses of a predicate are not consecutive (this behavior is controllable by the
+
+<A NAME="IDX804"></A>
+prolog flag <EM>discontiguous_warnings</EM>). The directive should precede all clauses of the affected predicates. This directive is defined as a prefix operator in the compiler. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Predicates</CODE> is a sequence or list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:sequence_or_list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX805"></A>
+<A NAME="IDX806"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>impl_defined/1:</B>
+<DD><A NAME="IDX807"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>impl_defined(Predicates)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Specifies that each predicate in <CODE>Predicates</CODE> is <EM>impl</EM>icitly <EM>defined</EM> in the current prolog source, either because it is a builtin predicate or because it is defined in a C file. Otherwise, a warning is signaled by the compiler when an exported predicate is not defined in the module or imported from other module.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Predicates</CODE> is a sequence or list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:sequence_or_list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX808"></A>
+<A NAME="IDX809"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>redefining/1:</B>
+<DD><A NAME="IDX810"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>redefining(Predicate)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Specifies that this module redefines predicate <CODE>Predicate</CODE>, also imported from other module, or imports it from more than one module. This prevents the compiler giving warnings about redefinitions of that predicate. <CODE>Predicate</CODE> can be partially (or totally) uninstantiated, to allow disabling those warnings for several (or all) predicates at once.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Predicate</CODE> is <EM>compatible</EM> with <CODE>predname</CODE>
+ (<CODE>basic_props:compat/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX811"></A>
+<A NAME="IDX812"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>initialization/1:</B>
+<DD><A NAME="IDX813"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>initialization(Goal)</CODE>.
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Goal</CODE> will be executed at the start of the execution of any program containing the current code.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX814"></A>
+<A NAME="IDX815"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>on_abort/1:</B>
+<DD><A NAME="IDX816"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>on_abort(Goal)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Goal</CODE> will be executed after an abort of the execution of any program containing the current code.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, <A HREF="ciao_17.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

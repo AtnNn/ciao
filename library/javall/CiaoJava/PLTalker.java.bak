@@ -1,0 +1,71 @@
+package PLToJava;
+
+import java.io.*;
+import java.net.*;
+
+/**
+ * Class PLTalker. Performs the low-level tasks related to sockets. 
+ * Includes socket managing (with TCPServer) and the reading-
+ * interpreting-writing loop.
+ */
+public class PLTalker {
+
+  /* Starts the java server providing an 'object run space' for
+   * prolog to java requests.
+   */
+  public void Talk() throws Exception {
+
+    // Starting data socket.
+    TCPServer dataSocket = new TCPServer();
+    dataSocket.openSocket();
+    BufferedReader dataIn = dataSocket.getReader();
+    PrintWriter dataOut = dataSocket.getWriter();
+    ServerSocket sock = dataSocket.getSocket();
+
+    // Synchronizing data socket.
+    System.err.println("Socket started");
+    String s = dataIn.readLine();
+    dataOut.println((new PLAtom("data")).fastWrite());
+    dataOut.flush();
+    
+    // Starting event socket.
+    TCPServer eventSocket = new TCPServer(sock);
+    eventSocket.openSocket();
+    BufferedReader eventIn = eventSocket.getReader();
+    PrintWriter eventOut =  eventSocket.getWriter();
+    
+    // Synchronizing event socket.
+    s = eventIn.readLine();
+    eventOut.println((new PLAtom("event")).fastWrite());
+    eventOut.flush();
+
+    // Talking to client.
+    PLInterpreter vi = new PLInterpreter(eventOut);
+    TalkClient(vi, dataIn, dataOut);
+
+    dataSocket.closeSocket();
+    eventSocket.closeSocket();
+  }
+
+  private void TalkClient(PLInterpreter vi,
+                          BufferedReader in, 
+                          PrintWriter out) throws Exception {
+    boolean done = false;
+    String str;
+    String ret;
+    
+    while (!done && ((str = in.readLine()) != null)) {
+      ret = vi.interpret(PLTerm.fastRead(str)).fastWrite();
+      if (ret.equals("$quit"))
+        done = true;
+      else {
+        out.println(ret);
+      }
+      
+      out.flush();
+    }
+  }
+}
+
+
+

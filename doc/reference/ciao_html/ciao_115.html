@@ -1,0 +1,516 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java interface</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_114.html">previous</A>, <A HREF="ciao_116.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC415" HREF="ciao_toc.html#TOC415">Low-level Prolog to Java interface</A></H1>
+<P>
+<A NAME="IDX4466"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+
+
+<P>
+This module defines a low level Prolog to Java interface.
+
+
+
+<UL>
+<LI><A HREF="ciao_115.html#SEC416">Usage and interface (javart)</A>
+<LI><A HREF="ciao_115.html#SEC417">Documentation on exports (javart)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Usage and interface (<CODE>javart</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(javart)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4467"></A>
+<CODE>java_create_object/2</CODE>, 
+<A NAME="IDX4468"></A>
+<CODE>java_delete_object/1</CODE>, 
+<A NAME="IDX4469"></A>
+<CODE>java_invoke_method/2</CODE>, 
+<A NAME="IDX4470"></A>
+<CODE>java_get_value/2</CODE>, 
+<A NAME="IDX4471"></A>
+<CODE>java_set_value/2</CODE>, 
+<A NAME="IDX4472"></A>
+<CODE>java_connection/0</CODE>, 
+<A NAME="IDX4473"></A>
+<CODE>java_remote_connection/1</CODE>, 
+<A NAME="IDX4474"></A>
+<CODE>java_disconnection/0</CODE>, 
+<A NAME="IDX4475"></A>
+<CODE>java_add_listener/3</CODE>, 
+<A NAME="IDX4476"></A>
+<CODE>java_remove_listener/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4477"></A>
+<CODE>machine_name/1</CODE>, 
+<A NAME="IDX4478"></A>
+<CODE>java_constructor/1</CODE>, 
+<A NAME="IDX4479"></A>
+<CODE>java_object/1</CODE>, 
+<A NAME="IDX4480"></A>
+<CODE>java_method/1</CODE>, 
+<A NAME="IDX4481"></A>
+<CODE>java_field/1</CODE>, 
+<A NAME="IDX4482"></A>
+<CODE>java_event/1</CODE>, 
+<A NAME="IDX4483"></A>
+<CODE>prolog_predicate/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>Application modules:</EM>
+
+<A NAME="IDX4484"></A>
+<CODE>javasock</CODE>.
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4485"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX4486"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX4487"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX4488"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX4489"></A>
+<CODE>system</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC417" HREF="ciao_toc.html#TOC417">Documentation on exports (<CODE>javart</CODE>)</A></H2>
+<P>
+<A NAME="IDX4490"></A>
+<A NAME="IDX4491"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_create_object/2:</B>
+<DD><A NAME="IDX4492"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_create_object(+java_constructor,-(java_object))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> New java object creation. The constructor must be built by the full class name as main functor, and the parameters passed to the constructor as arguments of the structure.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_constructor</CODE> is a java constructor (structure with functor as constructor name (full package specification), and arguments as constructor ones).
+ (<CODE>javart:java_constructor/1</CODE>)
+
+<CODE>-(java_object)</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+ (<CODE>javart:java_object/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4493"></A>
+<A NAME="IDX4494"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>machine_name/1:</B>
+<DD><A NAME="IDX4495"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>machine_name(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is the Internet name of a machine.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4496"></A>
+<A NAME="IDX4497"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_constructor/1:</B>
+<DD><A NAME="IDX4498"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_constructor(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java constructor (structure with functor as constructor name (full package specification), and arguments as constructor ones).
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4499"></A>
+<A NAME="IDX4500"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_object/1:</B>
+<DD><A NAME="IDX4501"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_object(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4502"></A>
+<A NAME="IDX4503"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_delete_object/1:</B>
+<DD><A NAME="IDX4504"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_delete_object(+java_object)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Java objects deletion.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+ (<CODE>javart:java_object/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4505"></A>
+<A NAME="IDX4506"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_invoke_method/2:</B>
+<DD><A NAME="IDX4507"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_invoke_method(+java_object,+java_method)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Invokes a java method on an object.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_method</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
+ (<CODE>javart:java_method/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4508"></A>
+<A NAME="IDX4509"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_method/1:</B>
+<DD><A NAME="IDX4510"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_method(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4511"></A>
+<A NAME="IDX4512"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_get_value/2:</B>
+<DD><A NAME="IDX4513"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_get_value(+java_object,+java_field)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Get the value of a field. The field value in the Java_field functor must be uninstantiated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_field</CODE> is a java field (structure with functor as field name, and argument as value).
+ (<CODE>javart:java_field/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4514"></A>
+<A NAME="IDX4515"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_set_value/2:</B>
+<DD><A NAME="IDX4516"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_set_value(+java_object,+java_field)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set the value of a field. The field value in the Java_field functor must be instantiated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_field</CODE> is a java field (structure with functor as field name, and argument as value).
+ (<CODE>javart:java_field/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4517"></A>
+<A NAME="IDX4518"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_field/1:</B>
+<DD><A NAME="IDX4519"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_field(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java field (structure with functor as field name, and argument as value).
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4520"></A>
+<A NAME="IDX4521"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_connection/0:</B>
+<DD><A NAME="IDX4522"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Starts java server and connects it through data and event sockets.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4523"></A>
+<A NAME="IDX4524"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_remote_connection/1:</B>
+<DD><A NAME="IDX4525"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_remote_connection(+machine_name)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Starts java server in machine_name and connects it through data and event sockets.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4526"></A>
+<A NAME="IDX4527"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_disconnection/0:</B>
+<DD><A NAME="IDX4528"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Closes the connection with the java process.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4529"></A>
+<A NAME="IDX4530"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_add_listener/3:</B>
+<DD><A NAME="IDX4531"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>java_add_listener(?,?,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_add_listener(+java_object,+java_event,+prolog_predicate)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds a listener to an event on an object.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_event</CODE> is a java event represented as an atom with the basic event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>+prolog_predicate</CODE> is a prolog predicate. Prolog term that represents the predicate that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate will be called.
+ (<CODE>javart:prolog_predicate/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4532"></A>
+<A NAME="IDX4533"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_event/1:</B>
+<DD><A NAME="IDX4534"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_event(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java event represented as an atom with the basic event constructor name (e.g., 'java.awt.event.ActionListener').
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4535"></A>
+<A NAME="IDX4536"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>prolog_predicate/1:</B>
+<DD><A NAME="IDX4537"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_predicate(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a prolog predicate. Prolog term that represents the predicate that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate will be called.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4538"></A>
+<A NAME="IDX4539"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_remove_listener/3:</B>
+<DD><A NAME="IDX4540"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_remove_listener(+java_object,+java_event,+prolog_predicate)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Removes a listener from an object event queue.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+java_object</CODE> is a java object (structure with functor '$java_object', and argument an integer given by java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>+java_event</CODE> is a java event represented as an atom with the basic event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>+prolog_predicate</CODE> is a prolog predicate. Prolog term that represents the predicate that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate will be called.
+ (<CODE>javart:prolog_predicate/1</CODE>)
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_114.html">previous</A>, <A HREF="ciao_116.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

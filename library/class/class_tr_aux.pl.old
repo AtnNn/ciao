@@ -1,0 +1,522 @@
+%%------------------------------------------------------------------------
+%%
+%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%%
+%% AUXILIARY FILE FOR
+%% SOURCE-TO-SOURCE EXPANSION FOR CLASS DECLARATION
+%%
+%% USAGE:
+%% :- include(library('class/class_tr_aux')).
+%%
+%% AUTHOR : Angel Fernandez Pineda
+%% DATE   : April 1999
+%%
+%%------------------------------------------------------------------------
+%% This file is used by class_tr.pl in order to expand method clauses.
+%%
+%% THE FOLLOWING LIBRARIES ARE ASSUMED TO BE IMPORTED
+%%
+%% c_itf
+%%
+%%------------------------------------------------------------------------
+%%
+%% method_expansion/4 is assumed to be called at second pass,
+%% when all module dependences has been solved.
+%% 
+%%------------------------------------------------------------------------
+
+method_expansion(Body,InstVar,Exp) :-
+	functor(Body,F,2),
+	( F = ',' ; F= '->' ; F = ';' ),
+	!,
+	arg(1,Body,Left),
+	arg(2,Body,Right),
+	method_expansion(Left,InstVar,LeftBody),
+	method_expansion(Right,InstVar,RightBody),
+	functor(Exp,F,2),
+	arg(1,Exp,LeftBody),
+	arg(2,Exp,RightBody).
+
+method_expansion(if(C,T,E),InstVar,if(NC,NT,NE)) :-
+	!,
+	method_expansion(C,InstVar,NC),
+	method_expansion(T,InstVar,NT),
+	method_expansion(E,InstVar,NE).
+
+method_expansion(Goal,InstVar,NewGoals) :-
+	goal_expansion(Goal,InstVar,ExpGoals),
+	perform_arg_expansion(ExpGoals,InstVar,NewGoals),
+	!.
+
+method_expansion(Goal,InstVar,NewGoals) :-
+	!,
+	perform_arg_expansion(Goal,InstVar,NewGoals).
+
+method_expansion(Goal,_InstVar,Goal).
+
+%%------------------------------------------------------------------------
+%%
+%% PERFORM META-ARGUMENT EXPANSION
+%% 
+%%------------------------------------------------------------------------
+
+perform_arg_expansion((class_rt:RTExp,Goal),_,(class_rt:RTExp,Goal)) :-
+	!.
+
+perform_arg_expansion(Body,InstVar,Exp) :-
+	functor(Body,F,2),
+	( F = ',' ; F= '->' ; F = ';' ),
+	!,
+	arg(1,Body,Left),
+	arg(2,Body,Right),
+	perform_arg_expansion(Left,InstVar,LeftBody),
+	perform_arg_expansion(Right,InstVar,RightBody),
+	functor(Exp,F,2),
+	arg(1,Exp,LeftBody),
+	arg(2,Exp,RightBody).
+
+perform_arg_expansion(if(C,T,E),InstVar,if(NC,NT,NE)) :-
+	!,
+	perform_arg_expansion(C,InstVar,NC),
+	perform_arg_expansion(T,InstVar,NT),
+	perform_arg_expansion(E,InstVar,NE).
+
+perform_arg_expansion(Module:Goal,InstVar,NewGoals) :-
+	atom(Module),
+	functor(Goal,Functor,Arity),
+	functor(Meta,Functor,Arity),
+	meta_args(Module,Meta),
+	!,
+	Goal =.. [_|Args],
+	Meta =.. [_|MetaSpec],
+	arg_exp_aux(MetaSpec,Args,InstVar,ExpArgs,RTExp),
+	NewGoal =.. [Functor|ExpArgs],
+	( RTExp = true ->
+	  NewGoals = Module:NewGoal
+	;
+	  NewGoals = (RTExp,Module:NewGoal)
+	).
+
+perform_arg_expansion(Goal,InstVar,NewGoals) :-
+	functor(Goal,Functor,Arity),
+	functor(Meta,Functor,Arity),
+	module(Module),
+	defines_module(Base,Module),
+	imports_pred(Base,_,Functor,Arity,Meta,_),
+	Meta \== 0,
+	!,
+	Goal =.. [_|Args],
+	Meta =.. [_|MetaSpec],
+	arg_exp_aux(MetaSpec,Args,InstVar,ExpArgs,RTExp),
+	NewGoal =.. [Functor|ExpArgs],
+	( RTExp = true ->
+	  NewGoals = NewGoal
+	;
+	  NewGoals = (RTExp,NewGoal)
+	).
+
+perform_arg_expansion(Goal,_,Goal).
+
+%%------------------------------------------------------------------------
+
+arg_exp_aux([],[],_,[],true).
+
+arg_exp_aux([goal|Ns],[Arg|Na],Inst,[NewGoals|Nea],RuntimeExpander) :-
+	goal_expansion(Arg,Inst,ExpArg),
+	( perform_arg_expansion(ExpArg,Inst,NewGoals) ->
+	  true ;
+	  NewGoals = ExpArg 
+	),
+	!,
+	arg_exp_aux(Ns,Na,Inst,Nea,RuntimeExpander).
+	
+arg_exp_aux([goal|Ns],[Arg|Na],Inst,[Arg|Nea],RuntimeExpander) :-
+	!,
+	arg_exp_aux(Ns,Na,Inst,Nea,RuntimeExpander).
+
+arg_exp_aux([spec|Ns],[Arg|Na],Inst,[NewArg|Nea],Expansion) :-
+	spec_expansion(Arg,Inst,NewArg,RTExpander),
+	( RTExpander = [RTExpGoal] -> 
+	  Expansion  = (RTExpGoal,NRt)
+	;
+	  Expansion = NRt
+	),
+	!,
+	arg_exp_aux(Ns,Na,Inst,Nea,NRt).
+
+arg_exp_aux([fact|Ns],[Arg|Na],Inst,[NewArg|Nea],Expansion) :-
+	fact_expansion(Arg,Inst,NewArg,RTExpander),
+	( RTExpander = [RTExpGoal] -> 
+	  Expansion  = (RTExpGoal,NRt)
+	;
+	  Expansion = NRt
+	),
+	!,
+	arg_exp_aux(Ns,Na,Inst,Nea,NRt).
+	
+arg_exp_aux([_|Ns],[Arg|Na],Inst,[Arg|Nea],NRt) :-
+	!,
+	arg_exp_aux(Ns,Na,Inst,Nea,NRt).
+
+%%------------------------------------------------------------------------
+%%
+%% EXPAND ONE GOAL
+%%
+%%------------------------------------------------------------------------
+
+%% Variable (unknown) Goal, i.e.: call(Something)
+
+goal_expansion(Goal,InstVar,
+	(
+	    class_rt:class_goal_exp(Goal,InstVar,ExpGoal),
+	    ExpGoal
+	) ) :-
+        var(Goal),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+goal_expansion(Goal,InstVar,
+	(
+	    class_rt:class_goal_exp(Goal,InstVar,ExpGoal),
+	    ExpGoal
+	) ) :-
+        functor(Goal,F,_),
+	var(F),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+%% Variable (unknown) inherited Goal, i.e.: call(inherited Method)
+
+goal_expansion(inherited(Goal),InstVar,
+	(
+	    class_rt:class_goal_exp(inherited(Goal),InstVar,ExpGoal),
+	    ExpGoal
+	) ) :-
+        var(Goal),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+goal_expansion(inherited(Goal),InstVar,
+	(
+	    class_rt:class_goal_exp(inherited(Goal),InstVar,ExpGoal),
+	    ExpGoal
+	) ) :-
+        functor(Goal,F,_),
+	var(F),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+%% Avoid invalid calls to class as a module.
+
+goal_expansion((Module:Call),Inst,Exp) :-
+	nonvar(Module),
+	module(Module),
+	!,
+	goal_expansion(Call,Inst,Exp).
+
+%% retrieving self instance ID 
+
+goal_expansion(self(Var),_,_) :-
+	nonvar(Var),
+	!,
+	message(error,
+	 ['argument to self/1 must be a free variable']),
+	fail.
+
+goal_expansion(self(Var),InstVar,( Var = InstVar )) :-
+	var(Var),
+	!.
+
+%% Goal belongs to assert/retract family and involves 
+%% explicitly inherited attr,i.e.: asserta_fact(inherited attr(88)).
+
+goal_expansion(Goal,InstVar,class_rt:NewGoal) :-
+	fact2attr(Goal,FactArg,NewGoal),
+	nonvar(FactArg),
+	FactArg = inherited(Fact),
+	functor(Fact,F,A),
+	inherited_attribute_from(AtClass,F/A),
+	!,
+	attribute_head(AtClass,Fact,NewFact),
+	arg(1,NewGoal,NewFact),
+	arg(2,NewGoal,InstVar).
+
+goal_expansion(Goal,_,fail) :-
+	fact2attr(Goal,FactArg,_),
+	nonvar(FactArg),
+	FactArg = inherited(Fact),
+	functor(Fact,_,_),
+	!,
+	message(error,['unknown inherited attribute in ',Goal]).
+
+%% Goal belongs to assert/retract family and involves supposed attr,
+%% i.e.: retract(attr(_)).
+
+goal_expansion(Goal,InstVar,class_rt:NewGoal) :-
+	fact2attr(Goal,Fact,NewGoal),
+	nonvar(Fact),
+	functor(Fact,F,A),
+	module(Module),
+	attribute_from(Module,AtClass,F/A),
+	!,
+	attribute_head(AtClass,Fact,NewFact),
+	arg(1,NewGoal,NewFact),
+	arg(2,NewGoal,InstVar).
+
+%% Goal is a virtual method declared at this class,i.e.:
+%% :- virtual v/1.
+%% p(X) :- v(X).
+
+goal_expansion(Goal,InstVar,InstVar:Goal) :-
+	functor(Goal,F,A),
+	module(Module),
+	defines_module(Base,Module),
+	c_itf:decl(Base,virtual(F/A)),
+	!.
+
+%% Goal is an explicitly inherited attribute,i.e: inherited attr(I)
+
+goal_expansion(inherited(Goal),Inst,class_rt:current_attr(NewGoal,Inst)) :-
+	functor(Goal,F,A),
+	inherited_attribute_from(AtClass,F/A),
+	!,
+	attribute_head(AtClass,Goal,NewGoal).
+	
+%% Goal is an explicitly inherited method, i.e: inherited method(K)
+
+goal_expansion(inherited(Goal),InstVar,SuperClass:NewGoal) :-
+	functor(Goal,F,A),
+	module(Module),
+	inherited_method_from(Module,_,F/A),
+	defines_module(Base,Module),
+	c_itf:decl(Base,super(SuperClass)),
+	!,
+	method_head(Goal,NewGoal,InstVar).
+
+%% Invalid inherited goal
+
+goal_expansion(inherited(Goal),_,_) :-
+	!,
+	message(error,['unknown inherited goal: ',Goal]),
+	fail.
+
+%% Goal is an attribute, i.e.: attr(I)
+
+goal_expansion(Goal,Inst,class_rt:current_attr(NewGoal,Inst)) :-
+	functor(Goal,F,A),
+	module(Module),
+	attribute_from(Module,AtClass,F/A),
+	!,
+	attribute_head(AtClass,Goal,NewGoal).
+
+%% Goal is a method, i.e.: mymethod(8,7)
+
+goal_expansion(Goal,InstVar,At:NewGoal) :-
+	functor(Goal,F,A),
+	module(Module),
+	method_from(Module,AtClass,F/A),
+	( (AtClass = Module) -> 
+	  At = Module 
+	;
+	  (defines_module(Base,Module),
+	   c_itf:decl(Base,super(At)))
+	),
+	!,
+	method_head(Goal,NewGoal,InstVar).
+
+%%------------------------------------------------------------------------
+%%
+%% EXPAND ONE FACT
+%%
+%% NOTICE: las argument is a runtime goal in order to perform a runtime
+%% expansion. This goal will be executed before the predicate 
+%% containing current fact.
+%%------------------------------------------------------------------------
+
+% 1st case : fact is unknown at compile time.
+
+fact_expansion(Fact,InstVar,Exp,
+	[class_rt:class_fact_exp(Fact,InstVar,Exp)]):-
+        var(Fact),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+fact_expansion(Fact,InstVar,Exp,
+	[class_rt:class_fact_exp(Fact,InstVar,Exp)]):-
+        functor(Fact,F,_),
+	var(F),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+fact_expansion(inherited(Fact),InstVar,Exp,
+	[class_rt:class_fact_exp(inherited(Fact),InstVar,Exp)]):-
+        var(Fact),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+fact_expansion(inherited(Fact),InstVar,Exp,
+	[class_rt:class_fact_exp(inherited(Fact),InstVar,Exp)]):-
+        functor(Fact,F,_),
+	var(F),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+% 2nd case : fact is explicitly inherited.
+
+fact_expansion(inherited(Fact),Inst,(Inst:NewFact),[]) :-
+	functor(Fact,F,A),
+	inherited_attribute_from(AtClass,F/A),
+	!,
+	attribute_head(AtClass,Fact,NewFact).
+
+fact_expansion(inherited(Fact),_,inherited(Fact),[]) :-
+	functor(Fact,F,A),
+	inherited_method_from(_,F/A),
+	!,
+	message(error,
+	 ['invalid argument: inherited ', F,'/',A,' is not an attribute']).
+
+fact_expansion(inherited(Fact),_,inherited(Fact),[]) :-
+	!,
+	message(error,['unknown inherited fact: ',Fact]).
+
+% 3rd case : fact is an attribute
+
+fact_expansion(Fact,InstVar,(InstVar:NewFact),[]) :-
+	functor(Fact,F,A),
+	module(Module),
+	attribute_from(Module,AtClass,F/A),
+	!,
+	attribute_head(AtClass,Fact,NewFact).
+
+% 4th case : invalid fact, actually, it is a method
+
+fact_expansion(Fact,_,Fact,[]) :-
+	functor(Fact,F,A),
+	module(Module),
+	method_from(Module,_,F/A),
+	!,
+	message(error,
+	 ['invalid argument: ', F,'/',A,' is not an attribute']).
+
+%%------------------------------------------------------------------------
+%%
+%% EXPAND PREDICATE SPECIFICATION
+%%
+%% NOTICE: las argument is a runtime goal in order to perform a runtime
+%% expansion. This goal will be executed before the predicate 
+%% containing current fact.
+%%------------------------------------------------------------------------
+
+% 1st case : spec is unknown at compile time.
+
+spec_expansion(Spec,InstVar,Exp,
+	[class_rt:class_spec_exp(Spec,InstVar,Exp)]):-
+        var(Spec),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+spec_expansion(Spec,InstVar,Exp,
+	[class_rt:class_spec_exp(Spec,InstVar,Exp)]):-
+        Spec = F/A,
+	( var(F) ; var(A) ),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+spec_expansion(inherited(Spec),InstVar,Exp,
+	[class_rt:class_spec_exp(inherited(Spec),InstVar,Exp)]):-
+        var(Spec),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+spec_expansion(inherited(Spec),InstVar,Exp,
+	[class_rt:class_spec_exp(inherited(Spec),InstVar,Exp)]):-
+        Spec = F/A,
+	( var(F) ; var(A) ),
+	!,
+	module(Module),
+	generate_runtime_info(Module).
+
+% 2nd case : spec is explicitly inherited.
+
+spec_expansion(inherited(F/A),Inst,(Inst:NewSpec),[]) :-
+	inherited_attribute_from(AtClass,F/A),
+	functor(Check,F,A),
+	!,
+	attribute_head(AtClass,Check,Result),
+	functor(Result,NewF,NewA),
+	NewSpec = NewF/NewA.
+
+spec_expansion(inherited(F/A),Inst,(SuperClass:NewF/NewA),[]) :-
+	inherited_method_from(Module,_,F/A),
+	module(Module),
+	defines_module(Base,Module),
+	c_itf:decl(Base,super(SuperClass)),
+	!,
+	functor(Spec,F,A),
+	method_head(Spec,NewSpec,Inst),
+	functor(NewSpec,NewF,NewA).
+
+spec_expansion(inherited(Spec),_,Spec,[]) :-
+	!,
+	message(error,['unknown inherited Spec: ',Spec]).
+
+% 3rd case : spec is an attribute
+
+spec_expansion(F/A,Inst,(Inst:NewSpec),[]) :-
+	module(Module),
+	attribute_from(Module,AtClass,F/A),
+	functor(Check,F,A),
+	!,
+	attribute_head(AtClass,Check,Result),
+	functor(Result,NewF,NewA),
+	NewSpec = NewF/NewA.
+
+spec_expansion(F/A,Inst,(At:NewF/NewA),[]) :-
+	method_from(Module,AtClass,F/A),
+	module(Module),
+	( (AtClass = Module) -> 
+	  At = Module 
+	;
+	  (defines_module(Base,Module),
+	   c_itf:decl(Base,super(At)))
+	),
+	!,
+	functor(Spec,F,A),
+	method_head(Spec,NewSpec,Inst),
+	functor(NewSpec,NewF,NewA).
+
+%%------------------------------------------------------------------------
+%%
+%% MAP ASSERT/RETRACT PREDICATES TO ASSERT_ATTR/RETRACT_ATTR PREDICATES
+%%
+%%------------------------------------------------------------------------
+
+fact2attr(asserta(Fact),        Fact, asserta_attr(_,_)   ).
+fact2attr(assertz(Fact),        Fact, assertz_attr(_,_)   ).
+fact2attr(assert(Fact),         Fact, assert_attr(_,_)    ).
+fact2attr(retract(Fact),        Fact, retract_attr(_,_)   ).
+fact2attr(retractall(Fact),     Fact, retractall_attr(_,_)).
+fact2attr(abolish(Fact),        Fact, retractall_attr(_,_)).
+fact2attr(set_fact(Fact),       Fact, set_attr(_,_)       ).
+fact2attr(assertz_fact(Fact),   Fact, assertz_attr(_)     ).
+fact2attr(asserta_fact(Fact),   Fact, asserta_attr(_,_)   ).
+fact2attr(retract_fact(Fact),   Fact, retract_attr(_,_)   ).
+fact2attr(retract_fact_nb(Fact),Fact, retract_attr_nb(_,_)).
+fact2attr(retractall_fact(Fact),Fact, retractall_attr(_,_)).
+fact2attr(erase(Fact),          Fact, retractall_attr(_,_)).
+fact2attr(current_fact(Fact),   Fact, current_attr(_,_)   ).
+fact2attr(current_fact_nb(Fact),Fact, current_attr_nb(_,_)).
+
+%%------------------------------------------------------------------------

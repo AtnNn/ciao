@@ -1,0 +1,431 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Using OCIAO objects</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC337" HREF="ciao_toc.html#TOC337">Using OCIAO objects</A></H1>
+<P>
+<A NAME="IDX3622"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#124 (1999/11/27, 4:4:5 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#78 (1999/10/13, 18:31:8 MEST)
+
+
+<P>
+This package is required to enable user code to create objects and manipulate them, as well as loading any needed class. 
+
+
+
+<UL>
+<LI><A HREF="ciao_98.html#SEC338">Usage and interface (objects)</A>
+<LI><A HREF="ciao_98.html#SEC339">Documentation on new declarations (objects)</A>
+<LI><A HREF="ciao_98.html#SEC340">Documentation on exports (objects)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC338" HREF="ciao_toc.html#TOC338">Usage and interface (<CODE>objects</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+Any code which needs to use objects must include the objects package: 
+
+<PRE>
+    :- module(<EM>ModuleName</EM>,<EM>Exports</EM>,[objects]).
+</PRE>
+
+You can use objects even if your code is a class. Note that declaring a class does not automatically enables the code to create instances. 
+
+<PRE>
+    :- class(<EM>ModuleName</EM>,[],[objects]).
+</PRE>
+
+This package enables both static and dynamic usage of objects. 
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX3623"></A>
+<CODE>class_source/1</CODE>, 
+<A NAME="IDX3624"></A>
+<CODE>constructor/1</CODE>, 
+<A NAME="IDX3625"></A>
+<CODE>instance_id/1</CODE>, 
+<A NAME="IDX3626"></A>
+<CODE>class_name/1</CODE>.
+
+</UL>
+
+<LI><STRONG>New declarations defined:</STRONG>
+
+<A NAME="IDX3627"></A>
+<CODE>use_class/1</CODE>, 
+<A NAME="IDX3628"></A>
+<CODE>instance_of/2</CODE>, 
+<A NAME="IDX3629"></A>
+<CODE>new/2</CODE>.
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC339" HREF="ciao_toc.html#TOC339">Documentation on new declarations (<CODE>objects</CODE>)</A></H2>
+<P>
+<A NAME="IDX3630"></A>
+<A NAME="IDX3631"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_class/1:</B>
+<DD><A NAME="IDX3632"></A>
+
+
+<P>
+It establishes an 
+<A NAME="IDX3633"></A>
+usage relationship between the given file (which is supposed to declare a class) and current source. Usage relationships are needed in order to enable code to create instances of the given class, and to make calls to instances derived from such class. 
+
+
+<P>
+Since an interface is some kind of class, they may be used within this declaration but only for semantic checking porpouses. Instances will not be derived from interfaces. 
+
+
+<P>
+use_class/1 is used in the same way as 
+<A NAME="IDX3634"></A>
+<CODE>use_module/1</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_class(ClassSource)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Establish usage relationship with <CODE>ClassSource</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ClassSource</CODE> is path to a file declaring a class.
+ (<CODE>user(... /objects_doc):class_source/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3635"></A>
+<A NAME="IDX3636"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>instance_of/2:</B>
+<DD><A NAME="IDX3637"></A>
+
+
+<P>
+Statically declares an identifier to be an instance of a given class. 
+
+
+<P>
+It may be used as 
+<A NAME="IDX3638"></A>
+<CODE>new/2</CODE> predicate except for: 
+
+<UL>
+
+<LI>The instance identifier will not be a variable, it must be provided by the user, and must be unique.
+
+<LI>Instance creation will never fail, even if the constructor fails.
+
+</UL>
+
+<P>
+For every statically declared object the given constructor will be called at program startup. Those instances may be destroyed manually, but it is not recommended. 
+
+
+<P>
+When reloading the involved class from the CIAO toplevel shell. It may destroy statically declared instances, and create them again. 
+
+
+<P>
+Statically declared instances must be called using a specifically designed module-qualification: <CODE>ClassName(Object):Goal</CODE>. For example: 
+
+<PRE>
+    :- module(example,[main/0],[objects]).
+    :- use_class(library(counter)).
+    :- cnt instance_of counter(10).
+
+    main :-
+         counter(cnt):decrease(1),
+         counter(cnt):current_value(X),
+         display(X).
+</PRE>
+
+<P>
+But <STRONG>statically written code</STRONG> (only) is allowed to use module-style qualifications as a macro: 
+
+<PRE>
+    main :-
+         cnt:decrease(1),
+         cnt:current_value(X),
+         display(X).
+</PRE>
+
+<P>
+Notice that dynamically expanded goals such as <CODE>X=cnt,X:decrease(1)</CODE> will not work, use <CODE>X=counter(cnt),X:decrease(1)</CODE> instead. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>instance_of(Object,Constructor)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares <CODE>Object</CODE> to be an instance of the class denoted by <CODE>Constructor</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Object</CODE> is an unique atom which identifies an object.
+ (<CODE>user(... /objects_doc):instance_id/1</CODE>)
+
+<CODE>Constructor</CODE> is a term whose functor matches a class name.
+ (<CODE>user(... /objects_doc):constructor/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3639"></A>
+<A NAME="IDX3640"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>new/2:</B>
+<DD><A NAME="IDX3641"></A>
+
+
+<P>
+This declaration has the same effect as 
+<A NAME="IDX3642"></A>
+<CODE>instance_of/2</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>new(Object,Constructor)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Just an alias for
+
+<A NAME="IDX3643"></A>
+<CODE>instance_of/2</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Object</CODE> is an unique atom which identifies an object.
+ (<CODE>user(... /objects_doc):instance_id/1</CODE>)
+
+<CODE>Constructor</CODE> is a term whose functor matches a class name.
+ (<CODE>user(... /objects_doc):constructor/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC340" HREF="ciao_toc.html#TOC340">Documentation on exports (<CODE>objects</CODE>)</A></H2>
+<P>
+<A NAME="IDX3644"></A>
+<A NAME="IDX3645"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_source/1:</B>
+<DD><A NAME="IDX3646"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_source(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Source</CODE> is path to a file declaring a class.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3647"></A>
+<A NAME="IDX3648"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>constructor/1:</B>
+<DD><A NAME="IDX3649"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>constructor(Cons)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Cons</CODE> is a term whose functor matches a class name.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3650"></A>
+<A NAME="IDX3651"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>instance_id/1:</B>
+<DD><A NAME="IDX3652"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>instance_id(ID)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ID</CODE> is an unique atom which identifies an object.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3653"></A>
+<A NAME="IDX3654"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_name/1:</B>
+<DD><A NAME="IDX3655"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_name(ClassName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ClassName</CODE> is an atom denoting a class.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3656"></A>
+<A NAME="IDX3657"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
+<DD><A NAME="IDX3658"></A>
+
+
+<P>
+It establishes an 
+<A NAME="IDX3659"></A>
+usage relationship between the given file (which is supposed to declare a class) and current source. Usage relationships are needed in order to enable code to create instances of the given class, and to make calls to instances derived from such class. 
+
+
+<P>
+Since an interface is some kind of class, they may be used within this declaration but only for semantic checking porpouses. Instances will not be derived from interfaces. 
+
+
+<P>
+use_class/1 is used in the same way as 
+<A NAME="IDX3660"></A>
+<CODE>use_module/1</CODE>. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX3661"></A>
+<A NAME="IDX3662"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>instance_of/2:</B>
+<DD><A NAME="IDX3663"></A>
+
+
+<P>
+Statically declares an identifier to be an instance of a given class. 
+
+
+<P>
+It may be used as 
+<A NAME="IDX3664"></A>
+<CODE>new/2</CODE> predicate except for: 
+
+<UL>
+
+<LI>The instance identifier will not be a variable, it must be provided by the user, and must be unique.
+
+<LI>Instance creation will never fail, even if the constructor fails.
+
+</UL>
+
+<P>
+For every statically declared object the given constructor will be called at program startup. Those instances may be destroyed manually, but it is not recommended. 
+
+
+<P>
+When reloading the involved class from the CIAO toplevel shell. It may destroy statically declared instances, and create them again. 
+
+
+<P>
+Statically declared instances must be called using a specifically designed module-qualification: <CODE>ClassName(Object):Goal</CODE>. For example: 
+
+<PRE>
+    :- module(example,[main/0],[objects]).
+    :- use_class(library(counter)).
+    :- cnt instance_of counter(10).
+
+    main :-
+         counter(cnt):decrease(1),
+         counter(cnt):current_value(X),
+         display(X).
+</PRE>
+
+<P>
+But <STRONG>statically written code</STRONG> (only) is allowed to use module-style qualifications as a macro: 
+
+<PRE>
+    main :-
+         cnt:decrease(1),
+         cnt:current_value(X),
+         display(X).
+</PRE>
+
+<P>
+Notice that dynamically expanded goals such as <CODE>X=cnt,X:decrease(1)</CODE> will not work, use <CODE>X=counter(cnt),X:decrease(1)</CODE> instead. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX3665"></A>
+<A NAME="IDX3666"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>new/2:</B>
+<DD><A NAME="IDX3667"></A>
+
+
+<P>
+This declaration has the same effect as 
+<A NAME="IDX3668"></A>
+<CODE>instance_of/2</CODE>.
+
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

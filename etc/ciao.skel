@@ -1,0 +1,21 @@
+#!/bin/sh
+CIAOVERSION=
+if [ ${CIAODOCDIR:-0} = 0 ] ; then
+  cat <<EOF
+Welcome to the Ciao Prolog Development System!
+
+** WARNING **: your shell initialization scripts have not been
+properly modified for locating the Ciao on-line documentation. Please
+refer to the instructions in the file <CIAOLIBDIR>/NewUser. 
+
+EOF
+#  exit 1
+fi
+
+if test $# = 0 ; then
+  exec ciaosh$CIAOVERSION
+elif test $1 = -c; then
+  shift ; exec ciaoc$CIAOVERSION "$@"
+else
+  exec ciao-shell$CIAOVERSION "$@"
+fi

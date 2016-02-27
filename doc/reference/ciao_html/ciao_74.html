@@ -1,0 +1,196 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - file_utils (library)</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, <A HREF="ciao_75.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC259" HREF="ciao_toc.html#TOC259">file_utils (library)</A></H1>
+<P>
+<A NAME="IDX3159"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 0.5#17 (1998/6/11, 21:5:3 MET DST)
+
+
+
+<UL>
+<LI><A HREF="ciao_74.html#SEC260">Usage and interface (file_utils)</A>
+<LI><A HREF="ciao_74.html#SEC261">Documentation on exports (file_utils)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC260" HREF="ciao_toc.html#TOC260">Usage and interface (<CODE>file_utils</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(file_utils)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3160"></A>
+<CODE>file_terms/2</CODE>, 
+<A NAME="IDX3161"></A>
+<CODE>copy_stdout/1</CODE>, 
+<A NAME="IDX3162"></A>
+<CODE>file_to_string/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3163"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX3164"></A>
+<CODE>streams</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC261" HREF="ciao_toc.html#TOC261">Documentation on exports (<CODE>file_utils</CODE>)</A></H2>
+<P>
+<A NAME="IDX3165"></A>
+<A NAME="IDX3166"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_terms/2:</B>
+<DD><A NAME="IDX3167"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>file_terms(@(File),?(Terms))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Transform a file <CODE>File</CODE> to/from a list of terms <CODE>Terms</CODE>.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>@(File)</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>?(Terms)</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>file_terms(File,Terms)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Terms</CODE> with the list of all terms in <CODE>File</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 3:</STRONG> <CODE>file_terms(File,Terms)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Writes the terms in list <CODE>Terms</CODE> (including the ending '.') onto file <CODE>File</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Terms</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3168"></A>
+<A NAME="IDX3169"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_stdout/1:</B>
+<DD><A NAME="IDX3170"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>copy_stdout(+File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Copies file <CODE>File</CODE> to standard output.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3171"></A>
+<A NAME="IDX3172"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_to_string/2:</B>
+<DD><A NAME="IDX3173"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>file_to_string(+FileName,-(String))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reads all the characters from the file <CODE>FileName</CODE> and returns them in <CODE>String</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>-(String)</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, <A HREF="ciao_75.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

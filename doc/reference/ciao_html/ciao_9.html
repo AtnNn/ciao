@@ -1,0 +1,168 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - The script interpreter</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC41" HREF="ciao_toc.html#TOC41">The script interpreter</A></H1>
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#106 (1999/11/18, 12:48:54 MET)
+
+
+<P>
+<A NAME="IDX437"></A>
+<CODE>ciao-shell</CODE> is the Ciao script interpreter. It can be used to write 
+<A NAME="IDX438"></A>
+<A NAME="IDX439"></A>
+<EM>Prolog shell scripts</EM> (see [Her96,CHV96b]), that is, executable files containing source code, which are compiled on demand. 
+
+
+<P>
+Writing Prolog scripts can sometimes be advantageous with respect to creating binary executables for small- to medium-sized programs that are modified often and perform relatively simple tasks. The advantage is that no compilation is necessary, and thus changes and updates to the program imply only editing the source file. The disadvantage is that startup of the script (the first time after it is modified) is slower than for an application that has been compiled previously. 
+
+
+<P>
+An area of application is, for example, writing 
+<A NAME="IDX440"></A>
+<A NAME="IDX441"></A>
+<EM>CGI executables</EM>: the slow speed of the network connection in comparison with that of executing a program makes program execution speed less important has made scripting languages very popular for writing these scripts. Logic languages are, a priori, excellent candidates to be used as scripting languages. For example, the built-in grammars and databases can sometimes greatly simplify many typical script-based applications. 
+
+
+
+<UL>
+<LI><A HREF="ciao_9.html#SEC42">How it works</A>
+<LI><A HREF="ciao_9.html#SEC43">Command line arguments in scripts</A>
+</UL>
+
+
+
+<H2><A NAME="SEC42" HREF="ciao_toc.html#TOC42">How it works</A></H2>
+
+<P>
+Essentially, <CODE>ciao-shell</CODE> is a smaller version of the Ciao top-level, which starts by loading the file given to it as the first argument and then starts execution at 
+<A NAME="IDX442"></A>
+<CODE>main/1</CODE> (the argument is instantiated to a list containing the command line options, in the usual way). However, while doing this, <CODE>ciao-shell</CODE> changes the 
+<A NAME="IDX443"></A>
+prolog flag <CODE>quiet</CODE> so that no informational or warning messages are printed (error messages will be reported to <CODE>user_error</CODE>, however). The operation of <CODE>ciao-shell</CODE> in Unix-like systems is based in a special compiler feature: when the first character of a file is '<CODE>#</CODE>', the compiler skips the first lines until an empty line is found. 
+
+
+<P>
+For example, in a Linux/Unix system, assume a file called 
+<A NAME="IDX444"></A>
+<CODE>hello</CODE> contains the following program: 
+
+
+
+<PRE>
+#!/bin/sh 
+exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
+
+main(_) :-
+     write('Hello world'), nl.
+</PRE>
+
+<P>
+Then, the file 
+<A NAME="IDX445"></A>
+<CODE>hello</CODE> can be <EM>run</EM> by simply making it executable and invoking it from the command line: 
+
+
+
+<PRE>
+/herme@clip:/tmp
+[86]&#62; chmod +x hello
+
+/herme@clip:/tmp
+[87]&#62; hello
+Hello world
+</PRE>
+
+<P>
+The line: 
+
+<PRE>
+#!/bin/sh 
+</PRE>
+
+<P>
+invokes the <CODE>/bin/sh</CODE> shell which will interpret the following line: 
+
+<PRE>
+exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
+</PRE>
+
+<P>
+and invoke 
+<A NAME="IDX446"></A>
+<CODE>ciao-shell</CODE>, instructing it to read this same file (<CODE>$0</CODE>), passing it the rest of the arguments to <CODE>hello</CODE> as arguments to the prolog program. The second part of the line <CODE># -*- mode: ciao; -*-</CODE> is simply a comment which is seen by 
+<A NAME="IDX447"></A>
+<CODE>emacs</CODE> and instructs it to edit this file in Ciao mode (this is needed because these script files typically do not have a <CODE>.pl</CODE> ending). When 
+<A NAME="IDX448"></A>
+<CODE>ciao-shell</CODE> starts, if it is the first time, it compiles the program (skipping the first lines, as explained above), or else at successive runs loads the <CODE>.po</CODE> object file, and then calls 
+<A NAME="IDX449"></A>
+<CODE>main/1</CODE>. 
+
+
+<P>
+Note that the process of creating Prolog scripts is made very simple by the Ciao 
+<A NAME="IDX450"></A>
+emacs mode, which automatically inserts the header and makes the file executable (See section <A HREF="ciao_11.html#SEC48">Using Ciao inside GNU emacs</A>). 
+
+
+
+
+<H2><A NAME="SEC43" HREF="ciao_toc.html#TOC43">Command line arguments in scripts</A></H2>
+
+<P>
+The following example illustrates the use of command-line arguments in scripts. Assume that a file called <CODE>say</CODE> contains the following lines: 
+
+
+
+<PRE>
+#!/bin/sh 
+exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
+
+main(Argv) :-
+     write_list(Argv), nl.
+
+write_list([]).
+write_list([Arg|Args]) :- 
+     write(Arg),
+     write(' '),
+     write_list(Args).
+</PRE>
+
+<P>
+An example of use is: 
+
+
+
+<PRE>
+/herme@clip:/tmp
+[91]&#62; say hello dolly
+hello dolly 
+</PRE>
+
+<P>
+ 
+
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

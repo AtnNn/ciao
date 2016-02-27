@@ -1,0 +1,738 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Basic input/output</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, <A HREF="ciao_24.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC98" HREF="ciao_toc.html#TOC98">Basic input/output</A></H1>
+<P>
+<A NAME="IDX1122"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Mats Carlsson.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+This module provides predicates for character input/output and for canonical term output. From the 
+<A NAME="IDX1123"></A>
+ISO-Prolog predicates for character input/output, only the <CODE>_code</CODE> versions are provided, the rest are given by 
+<A NAME="IDX1124"></A>
+<CODE>library(iso_byte_char)</CODE>, using these. Most predicates are provided in two versions: one that specifies the input or output stream as the first argument and a second which omits this argument and uses the current input or output stream.
+
+
+
+<UL>
+<LI><A HREF="ciao_23.html#SEC99">Usage and interface (io_basic)</A>
+<LI><A HREF="ciao_23.html#SEC100">Documentation on exports (io_basic)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC99" HREF="ciao_toc.html#TOC99">Usage and interface (<CODE>io_basic</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+These predicates are builtin in CIAO, so nothing special has to be done to use them.
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX1125"></A>
+<CODE>get_code/2</CODE>, 
+<A NAME="IDX1126"></A>
+<CODE>get_code/1</CODE>, 
+<A NAME="IDX1127"></A>
+<CODE>get1_code/2</CODE>, 
+<A NAME="IDX1128"></A>
+<CODE>get1_code/1</CODE>, 
+<A NAME="IDX1129"></A>
+<CODE>peek_code/2</CODE>, 
+<A NAME="IDX1130"></A>
+<CODE>peek_code/1</CODE>, 
+<A NAME="IDX1131"></A>
+<CODE>skip_code/2</CODE>, 
+<A NAME="IDX1132"></A>
+<CODE>skip_code/1</CODE>, 
+<A NAME="IDX1133"></A>
+<CODE>put_code/2</CODE>, 
+<A NAME="IDX1134"></A>
+<CODE>put_code/1</CODE>, 
+<A NAME="IDX1135"></A>
+<CODE>nl/1</CODE>, 
+<A NAME="IDX1136"></A>
+<CODE>nl/0</CODE>, 
+<A NAME="IDX1137"></A>
+<CODE>tab/2</CODE>, 
+<A NAME="IDX1138"></A>
+<CODE>tab/1</CODE>, 
+<A NAME="IDX1139"></A>
+<CODE>code_class/2</CODE>, 
+<A NAME="IDX1140"></A>
+<CODE>getct/2</CODE>, 
+<A NAME="IDX1141"></A>
+<CODE>getct1/2</CODE>, 
+<A NAME="IDX1142"></A>
+<CODE>display/2</CODE>, 
+<A NAME="IDX1143"></A>
+<CODE>display/1</CODE>, 
+<A NAME="IDX1144"></A>
+<CODE>displayq/2</CODE>, 
+<A NAME="IDX1145"></A>
+<CODE>displayq/1</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC100" HREF="ciao_toc.html#TOC100">Documentation on exports (<CODE>io_basic</CODE>)</A></H2>
+<P>
+<A NAME="IDX1146"></A>
+<A NAME="IDX1147"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_code/2:</B>
+<DD><A NAME="IDX1148"></A>
+
+
+<P>
+<CODE>get_code(Stream,Code)</CODE>
+
+
+<P>
+Reads from <CODE>Stream</CODE> the next character and unifies <CODE>Code</CODE> with its character code. At end of stream, unifies <CODE>Code</CODE> with the integer -1.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_code(+stream,?(int))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1149"></A>
+<A NAME="IDX1150"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_code/1:</B>
+<DD><A NAME="IDX1151"></A>
+
+
+<P>
+<CODE>get_code(Code)</CODE>
+
+
+<P>
+Behaves like <CODE>current_input(S), get_code(S,Code)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_code(?(int))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1152"></A>
+<A NAME="IDX1153"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get1_code/2:</B>
+<DD><A NAME="IDX1154"></A>
+
+
+<P>
+<CODE>get1_code(Stream,Code)</CODE>
+
+
+<P>
+Reads from <CODE>Stream</CODE> the next non-layout character (see 
+<A NAME="IDX1155"></A>
+<CODE>code_class/2</CODE>) and unifies <CODE>Code</CODE> with its character code. At end of stream, unifies <CODE>Code</CODE> with the integer -1.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get1_code(+stream,?(int))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1156"></A>
+<A NAME="IDX1157"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get1_code/1:</B>
+<DD><A NAME="IDX1158"></A>
+
+
+<P>
+<CODE>get1_code(Code)</CODE>
+
+
+<P>
+Behaves like <CODE>current_input(S), get1_code(S,Code)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get1_code(?(int))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1159"></A>
+<A NAME="IDX1160"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>peek_code/2:</B>
+<DD><A NAME="IDX1161"></A>
+
+
+<P>
+<CODE>peek_code(Stream,Code)</CODE>
+
+
+<P>
+Unifies <CODE>Code</CODE> with the character code of the next character of <CODE>Stream</CODE>, leaving the stream position unaltered. At end of stream, unifies <CODE>Code</CODE> with the integer -1.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>peek_code(+stream,?(int))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1162"></A>
+<A NAME="IDX1163"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>peek_code/1:</B>
+<DD><A NAME="IDX1164"></A>
+
+
+<P>
+<CODE>peek_code(Code)</CODE>
+
+
+<P>
+Behaves like <CODE>current_input(S), peek_code(S,Code)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>peek_code(?(int))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1165"></A>
+<A NAME="IDX1166"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>skip_code/2:</B>
+<DD><A NAME="IDX1167"></A>
+
+
+<P>
+<CODE>skip_code(Stream,Code)</CODE>
+
+
+<P>
+Skips just past the next character code <CODE>Code</CODE> from <CODE>Stream</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>skip_code(+stream,+int)</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1168"></A>
+<A NAME="IDX1169"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>skip_code/1:</B>
+<DD><A NAME="IDX1170"></A>
+
+
+<P>
+<CODE>skip_code(Code)</CODE>
+
+
+<P>
+Behaves like <CODE>current_input(S), skip_code(S,Code)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>skip_code(+int)</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1171"></A>
+<A NAME="IDX1172"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>put_code/2:</B>
+<DD><A NAME="IDX1173"></A>
+
+
+<P>
+<CODE>put_code(Stream,Code)</CODE>
+
+
+<P>
+Outputs to <CODE>Stream</CODE> the character corresponding to character code <CODE>Code</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>put_code(+stream,+int)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1174"></A>
+<A NAME="IDX1175"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>put_code/1:</B>
+<DD><A NAME="IDX1176"></A>
+
+
+<P>
+<CODE>put_code(Code)</CODE>
+
+
+<P>
+Behaves like <CODE>current_output(S), put_code(S,Code)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>put_code(+int)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1177"></A>
+<A NAME="IDX1178"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nl/1:</B>
+<DD><A NAME="IDX1179"></A>
+
+
+<P>
+<CODE>nl(Stream)</CODE>
+
+
+<P>
+Outputs a newline character to <CODE>Stream</CODE>. Equivalent to <CODE>put_code(Stream, 0'\n)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nl(+stream)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1180"></A>
+<A NAME="IDX1181"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nl/0:</B>
+<DD><A NAME="IDX1182"></A>
+
+
+<P>
+<CODE>nl</CODE>
+
+
+<P>
+Behaves like <CODE>current_output(S), nl(S)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1183"></A>
+<A NAME="IDX1184"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tab/2:</B>
+<DD><A NAME="IDX1185"></A>
+
+
+<P>
+<CODE>tab(Stream,Num)</CODE>
+
+
+<P>
+Outputs <CODE>Num</CODE> spaces to <CODE>Stream</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tab(+stream,+int)</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1186"></A>
+<A NAME="IDX1187"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tab/1:</B>
+<DD><A NAME="IDX1188"></A>
+
+
+<P>
+<CODE>tab(Num)</CODE>
+
+
+<P>
+Behaves like <CODE>current_output(S), tab(S,Num)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tab(+int)</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1189"></A>
+<A NAME="IDX1190"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>code_class/2:</B>
+<DD><A NAME="IDX1191"></A>
+
+
+<P>
+<CODE>code_class(Code,Class)</CODE>
+
+
+<P>
+Unifies <CODE>Class</CODE> with an integer corresponding to the lexical class of the character whose code is <CODE>Code</CODE>, with the following correspondence: 
+
+<PRE>
+    0 - layout (includes space, newline, tab)
+    1 - small letter
+    2 - capital letter (including '_')
+    3 - digit
+    4 - graphic (includes #$&#38;*+-./:&#60;=&#62;?@^\`~ )
+    5 - punctuation (includes !;"'%(),[]{|} )
+</PRE>
+
+<P>
+Note that in 
+<A NAME="IDX1192"></A>
+ISO-Prolog the back quote <CODE>`</CODE> is a punctuation character, whereas in CIAO it is a graphic character. Thus, if compatibility with 
+<A NAME="IDX1193"></A>
+ISO-Prolog is desired, the programmer should not use this character in unquoted names.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>code_class(+int,?(int))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1194"></A>
+<A NAME="IDX1195"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>getct/2:</B>
+<DD><A NAME="IDX1196"></A>
+
+
+<P>
+<CODE>getct(Code,Type)</CODE>
+
+
+<P>
+Reads from the current input stream the next character, unifying <CODE>Code</CODE> with its character code, and <CODE>Type</CODE> with its lexical class. At end of stream, unifies both <CODE>Code</CODE> and <CODE>Type</CODE> with the integer -1. Equivalent to 
+
+<PRE>
+   get(Code), (Code = -1 -&#62; Type = -1 ; code_class(Code,Type))
+</PRE>
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>getct(?(int),?(int))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1197"></A>
+<A NAME="IDX1198"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>getct1/2:</B>
+<DD><A NAME="IDX1199"></A>
+
+
+<P>
+<CODE>getct1(Code,Type)</CODE>
+
+
+<P>
+Reads from the current input stream the next non-layout character, unifying <CODE>Code</CODE> with its character code, and <CODE>Type</CODE> with its lexical class (which will be nonzero). At end of stream, unifies both <CODE>Code</CODE> and <CODE>Type</CODE> with the integer -1. Equivalent to 
+
+<PRE>
+   get1(Code), (Code = -1 -&#62; Type = -1 ; code_class(Code,Type))
+</PRE>
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>getct1(?(int),?(int))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1200"></A>
+<A NAME="IDX1201"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>display/2:</B>
+<DD><A NAME="IDX1202"></A>
+
+
+<P>
+<CODE>display(Stream,Term)</CODE>
+
+
+<P>
+Displays <CODE>Term</CODE> onto <CODE>Stream</CODE>. Lists are output using list notation, the other compound terms are output in functional notation. Similar to <CODE>write_term(Stream, Term, [ignore_ops(ops)])</CODE>, except that curly bracketed notation is not used with <CODE>{}/1</CODE>, and the <CODE>write_strings</CODE> flag is not honored.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>display(+stream,@(term))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1203"></A>
+<A NAME="IDX1204"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>display/1:</B>
+<DD><A NAME="IDX1205"></A>
+
+
+<P>
+<CODE>display(Term)</CODE>
+
+
+<P>
+Behaves like <CODE>current_output(S), display(S,Term)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>display(@(term))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1206"></A>
+<A NAME="IDX1207"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>displayq/2:</B>
+<DD><A NAME="IDX1208"></A>
+
+
+<P>
+<CODE>displayq(Stream,Term)</CODE>
+
+
+<P>
+Similar to <CODE>display(Stream, Term)</CODE>, but atoms and functors that can't be read back by 
+<A NAME="IDX1209"></A>
+<CODE>read_term/3</CODE> are quoted. Thus, similar to <CODE>write_term(Stream, Term, [quoted(true), ignore_ops(ops)])</CODE>, with the same exceptions as 
+<A NAME="IDX1210"></A>
+<CODE>display/2</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>displayq(+stream,@(term))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1211"></A>
+<A NAME="IDX1212"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>displayq/1:</B>
+<DD><A NAME="IDX1213"></A>
+
+
+<P>
+<CODE>displayq(Term)</CODE>
+
+
+<P>
+Behaves like <CODE>current_output(S), displayq(S,Term)</CODE>.
+
+
+<P>
+The predicate is of type <EM>implicit</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>displayq(@(term))</CODE>
+
+<UL>
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, <A HREF="ciao_24.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

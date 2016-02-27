@@ -1,0 +1,95 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Breadth-first execution</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC316" HREF="ciao_toc.html#TOC316">Breadth-first execution</A></H1>
+<P>
+<A NAME="IDX3495"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
+
+
+<P>
+This package implements breadth-first execution of predicates. Predicates written with operators 
+<A NAME="IDX3496"></A>
+<CODE>'&#60;-'/1</CODE> (facts) and 
+<A NAME="IDX3497"></A>
+<CODE>'&#60;-'/2</CODE> (clauses) are executed using breadth-first search. An example of code would be: 
+
+<PRE>
+:- module(bf_example, _, [bf]).
+
+test(bf) :- bfchain(a,d).
+test(df) :- chain(a,d).   % loops!
+
+bfchain(X,X) &#60;- .
+bfchain(X,Y) &#60;- arc(X,Z), bfchain(Z,Y).
+
+chain(X,X).
+chain(X,Y) :- arc(X,Z), chain(Z,Y).
+
+arc(a,b).
+arc(a,d).
+arc(b,c).
+arc(c,a).
+
+</PRE>
+
+
+<UL>
+<LI><A HREF="ciao_92.html#SEC317">Usage and interface (bf)</A>
+<LI><A HREF="ciao_92.html#SEC318">Known bugs and planned improvements (bf)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC317" HREF="ciao_toc.html#TOC317">Usage and interface (<CODE>bf</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_package(bf).</CODE>
+
+or
+
+<CODE>:- module(...,...,[bf]).</CODE>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX3498"></A>
+<CODE>&#60;-/2</CODE> [1200,xfx], 
+<A NAME="IDX3499"></A>
+<CODE>&#60;-/1</CODE> [1200,xf].
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC318" HREF="ciao_toc.html#TOC318">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Does not correctly work in user files.
+</UL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

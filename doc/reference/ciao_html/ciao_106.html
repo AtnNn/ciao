@@ -1,0 +1,376 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - The tcl/tk interface</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC370" HREF="ciao_toc.html#TOC370">The tcl/tk interface</A></H1>
+<P>
+<A NAME="IDX3866"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Montse Iglesias.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#85 (1999/5/7, 19:55:11 MEST)
+
+
+<P>
+The 
+<A NAME="IDX3867"></A>
+<CODE>tcltk</CODE> library package is a bidirectional to the <EM>Tcl</EM> (pronounced Tickle) language and <EM>Tk</EM> toolkit. Tcl is an interpreter scripting language with many extensions packages, in particular the graphical interface toolkit Tk
+
+
+
+<UL>
+<LI><A HREF="ciao_106.html#SEC371">Usage and interface (tcltk)</A>
+<LI><A HREF="ciao_106.html#SEC372">Documentation on exports (tcltk)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC371" HREF="ciao_toc.html#TOC371">Usage and interface (<CODE>tcltk</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(tcltk)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3868"></A>
+<CODE>tcl_new/1</CODE>, 
+<A NAME="IDX3869"></A>
+<CODE>tcl_eval/3</CODE>, 
+<A NAME="IDX3870"></A>
+<CODE>tcl_delete/1</CODE>, 
+<A NAME="IDX3871"></A>
+<CODE>tcl_event/3</CODE>, 
+<A NAME="IDX3872"></A>
+<CODE>tk_new/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX3873"></A>
+<CODE>tclInterpreter/1</CODE>, 
+<A NAME="IDX3874"></A>
+<CODE>tclCommand/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3875"></A>
+<CODE>tcltk/tcltk_low_level</CODE>, 
+<A NAME="IDX3876"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX3877"></A>
+<CODE>strings</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC372" HREF="ciao_toc.html#TOC372">Documentation on exports (<CODE>tcltk</CODE>)</A></H2>
+<P>
+<A NAME="IDX3878"></A>
+<A NAME="IDX3879"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>tclInterpreter/1:</B>
+<DD><A NAME="IDX3880"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tclInterpreter(I)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>I</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3881"></A>
+<A NAME="IDX3882"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>tclCommand/1:</B>
+<DD><A NAME="IDX3883"></A>
+
+
+<P>
+ A <EM>Tcl</EM> command is specified as follows: 
+
+<PRE>
+      Command         --&#62; Atom  { other than [] }
+                        | Number
+                        | chars(PrologString)
+                        | write(Term)
+                        | format(Fmt,Args)
+                        | dq(Command)
+                        | br(Command)
+                        | sqb(Command)
+                        | min(Command)
+                        | ListOfCommands
+      ListOfCommands  --&#62; []
+                        |[Command|ListOfCommands]
+</PRE>
+
+<P>
+where: 
+
+
+<DL COMPACT>
+
+<DT>Atom
+<DD>
+<DT>Number
+<DD>
+denote their printed representations. 
+
+<DT>chars(PrologString)
+<DD>
+denotes the string represented by <EM>PrologString</EM> (a list of character codes). 
+
+<DT>write(Term)
+<DD>
+denotes the string that is printed by the corresponding built-in pridicate. 
+
+<DT>format(Term)
+<DD>
+denotes the string that is printed by the corresponding built-in pridicate. 
+
+<DT>dq(Command)
+<DD>
+denotes the string specified by <EM>Command</EM>, enclosed in double quotes. 
+
+<DT>br(Command)
+<DD>
+denotes the string specified by <EM>Command</EM>, enclosed in braces. 
+
+<DT>sqb(Command)
+<DD>
+denotes the string specified by <EM>Command</EM>, enclosed in square brackets. 
+
+<DT>min(Command)
+<DD>
+denotes the string specified by <EM>Command</EM>, immediately preceded by a hyphen. 
+
+<DT>ListOfCommands
+<DD>
+denotes the strings denoted by each element, separated by spaces. 
+
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tclCommand(C)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>C</CODE> is a <EM>Tcl</EM> command.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3884"></A>
+<A NAME="IDX3885"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcl_new/1:</B>
+<DD><A NAME="IDX3886"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcl_new(-(TclInterpreter))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a new interpreter, initializes it, and returns a reference to it in <CODE>TclInterpreter</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-(TclInterpreter)</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3887"></A>
+<A NAME="IDX3888"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcl_eval/3:</B>
+<DD><A NAME="IDX3889"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcl_eval(+TclInterpreter,+Command,-(Result))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Evaluates the commands and the result will be stored as a string in <EM>Result</EM>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
+
+<CODE>+Command</CODE> is a <EM>Tcl</EM> command.
+ (<CODE>tcltk:tclCommand/1</CODE>)
+
+<CODE>-(Result)</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3890"></A>
+<A NAME="IDX3891"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcl_delete/1:</B>
+<DD><A NAME="IDX3892"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcl_delete(+TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Deletes the interpreter in <CODE>TclInterpreter</CODE> and the memory used by it
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3893"></A>
+<A NAME="IDX3894"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcl_event/3:</B>
+<DD><A NAME="IDX3895"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcl_event(+TclInterpreter,+Command,-(Events))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Do the receive non blocking of the event and terms will be stored from Tcl by the <EM>prolog_event</EM> command as a list of terms in <EM>Events</EM>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
+
+<CODE>+Command</CODE> is a <EM>Tcl</EM> command.
+ (<CODE>tcltk:tclCommand/1</CODE>)
+
+<CODE>-(Events)</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3896"></A>
+<A NAME="IDX3897"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tk_event_loop/1:</B>
+<DD><A NAME="IDX3898"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3899"></A>
+<A NAME="IDX3900"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tk_new/2:</B>
+<DD><A NAME="IDX3901"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tk_new(+Options,-(TclInterpreter))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Performs basic Tcl and Tk initialization and creates the main window of a Tk application.<EM>Options</EM> is a list of optional elements according to :
+
+<DL COMPACT>
+
+<DT>name
+<DD>
+Sets the Tk application name. The application name will be displayed in the main window and is also used for communicating between applications in Tk. Default name is an empty string. 
+
+<DT>display
+<DD>
+Gives the name of the screen on which to create the main window. Default is normally determined by the DISPLAY environment variable. 
+
+<DT>file
+<DD>
+Open the sript file, commands will not be read from standard input and the execution returns back to Prolog only after all windows (and the interpreter) have been deleted. 
+
+ 
+<DT><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<DD>
+<CODE>+Options</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>-(TclInterpreter)</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tk_new/4:</B>
+<DD>
+No further documentation available for this predicate.
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

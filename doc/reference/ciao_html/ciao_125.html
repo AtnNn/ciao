@@ -1,0 +1,248 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC443" HREF="ciao_toc.html#TOC443">Pattern (regular expression) matching</A></H1>
+<P>
+<A NAME="IDX4737"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#49 (1999/9/8, 21:8:9 MEST)
+
+
+<P>
+This library provides facilities for matching strings and terms against 
+<A NAME="IDX4738"></A>
+<A NAME="IDX4739"></A>
+<EM>patterns</EM> (i.e., 
+<A NAME="IDX4740"></A>
+<A NAME="IDX4741"></A>
+<EM>regular expressions</EM>).
+
+
+
+<UL>
+<LI><A HREF="ciao_125.html#SEC444">Usage and interface (patterns)</A>
+<LI><A HREF="ciao_125.html#SEC445">Documentation on exports (patterns)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC444" HREF="ciao_toc.html#TOC444">Usage and interface (<CODE>patterns</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(patterns)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4742"></A>
+<CODE>match_pattern/2</CODE>, 
+<A NAME="IDX4743"></A>
+<CODE>match_pattern/3</CODE>, 
+<A NAME="IDX4744"></A>
+<CODE>case_insensitive_match/2</CODE>, 
+<A NAME="IDX4745"></A>
+<CODE>match_pattern_pred/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4746"></A>
+<CODE>pattern/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4747"></A>
+<CODE>lists</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC445" HREF="ciao_toc.html#TOC445">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
+<P>
+<A NAME="IDX4748"></A>
+<A NAME="IDX4749"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
+<DD><A NAME="IDX4750"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4751"></A>
+<A NAME="IDX4752"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
+<DD><A NAME="IDX4753"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String,Tail)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>Tail</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4754"></A>
+<A NAME="IDX4755"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
+<DD><A NAME="IDX4756"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1,Pred2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4757"></A>
+<A NAME="IDX4758"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
+<DD><A NAME="IDX4759"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4760"></A>
+<A NAME="IDX4761"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX4762"></A>
+
+
+<P>
+Special characters for <CODE>Pattern</CODE> are: 
+<DL COMPACT>
+
+<DT>*
+<DD>
+Matches any string, including the null string. 
+<DT>?
+<DD>
+Matches any single character. 
+<DT>[...]
+<DD>
+Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
+<DT>|
+<DD>
+specifies an alternative. Two regular expressions A and B with | in between form an expression that matches anything that either A or B will match. 
+<DT>{...}
+<DD>
+groups alternatives inside larger patterns. 
+<DT>\
+<DD>
+Quotes a special character (including itself). 
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4763"></A>
+<A NAME="IDX4764"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
+<DD><A NAME="IDX4765"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1,Pred2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
+
+</UL>
+
+</DL>
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>
