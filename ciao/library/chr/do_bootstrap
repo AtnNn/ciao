@@ -1,0 +1,29 @@
+#!/bin/bash
+
+CIAOSH=${CIAOSH:-ciaosh -f}
+
+echo "Doing 1st step"
+
+echo -e "use_module( .(chr_ciao_bootstrap) ).\ndo_bootstrap1.\ndo_bootstrap2.\ndo_bootstrap2.\ndo_bootstrap3.\nhalt." | ${CIAOSH} 
+
+echo "Doing 2st step"
+
+echo -e "use_module( .(chr_ciao_bootstrap) ).\ndo_bootstrap4.\nhalt.\n" | ${CIAOSH} &&
+
+echo "Doing 3rd step"
+
+echo -e "use_module( .(chr_ciao_bootstrap) ).\ndo_bootstrap42.\nhalt.\n" | ${CIAOSH} &&
+
+echo "Doing 4th step"
+
+echo -e "use_module( .(chr_ciao_bootstrap) ).\ndo_bootstrap43.\nhalt.\n" | ${CIAOSH}
+
+echo "Checking if there is a fixpoint in the compiler"
+
+cp chr_translate.pl chr_translate.pl.cmp
+
+echo -e "use_module( .(chr_ciao_bootstrap) ).\ndo_bootstrap43.\nhalt.\n" | ${CIAOSH}
+
+echo "If no differences appear here... then we got it!"
+
+diff chr_translate.pl chr_translate.pl.cmp

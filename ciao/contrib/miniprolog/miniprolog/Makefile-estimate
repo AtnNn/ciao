@@ -1,0 +1,51 @@
+# -*- mode: Makefile; -*-
+##
+## Makefile
+##  
+## Made by Edison Mera
+## Login   <edison@clip.dia.fi.upm.es>
+##
+## Started on  Fri Feb 15 21:42:41 2008 Edison Mera
+## Last update Fri Feb 15 21:42:41 2008 Edison Mera
+
+include $(SRCDIR)/SHARED-bench
+
+BENCHTOTS= $(addsuffix .tot, $(BENCHSRC))
+BENCHTXTS= $(addsuffix .txt, $(BENCHSRC))
+BENCHESTS= $(addsuffix .est, $(BENCHSRC))
+
+VPATH +=:$(SRCDIR)/estimatecommon/_all:$(TESTSRCDIR):$(BENCHDIR)
+
+.PHONY: estimate calibrate calib2eq
+
+.SUFFIXES: .prf .cnt .tot .tm _tm.pl .tex .est .ttc
+
+estimate:: calibrate $(BENCHTOTS) $(BENCHTXTS) $(BENCHESTS)
+
+calibrate:: $(CALIBRATOR)_tm.pl
+
+PROFREPORTOPTS=-ti
+
+$(CALIBRATOR)_tm.pl: calibs $(CALIBRATORS2_TIME)
+	$< prolog $(SRCDIR)/bench/$(TARGET)/ > $@
+
+$(CALIBRATOR).tm: calibs $(CALIBRATORS2_TIME)
+	$< text $(SRCDIR)/bench/$(TARGET)/ > $@
+
+%.est: %.tot $(CALIBRATOR).tm $(PROFREPORT)
+	$(PROFREPORT) -f text -ti -e $< $(CALIBRATOR).tm > $@
+
+%.ttc: %.prf %.cnt $(PROFREPORT)
+	$(PROFREPORT) -f text -ti $< $(<:.prf=.cnt) > $@
+
+%.tot: %.prf %.cnt   $(PROFREPORT) $(CALIBRATOR_TUN)
+	$(PROFREPORT) $(PROFREPORTOPTS) \
+	   -f text          $< $(<:.prf=.cnt) > $@
+
+%.txt: %.prf %.cnt   $(PROFREPORT) $(CALIBRATOR_TUN)
+	$(PROFREPORT) $(PROFREPORTOPTS) \
+	   -f textfmt       $< $(<:.prf=.cnt) > $@
+
+%.tex: %.prf %.cnt   $(PROFREPORT) $(CALIBRATOR_TUN)
+	$(PROFREPORT) $(PROFREPORTOPTS) \
+	   -f latex   -i 10 $< $(<:.prf=.cnt) > $@

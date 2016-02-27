@@ -4,7 +4,7 @@
   :type 'boolean
   :group 'ciao)
 
-(defcustom ciao-toolbar-icon-directory "/home/clip/Systems/ciao/emacs-mode/"
+(defcustom ciao-toolbar-icon-directory "/home/herme/MySVN/Systems/CiaoDE/emacs-mode/"
   "Directory for icons....."
   :type 'string
   :group 'ciao)

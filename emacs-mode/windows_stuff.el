@@ -1,3 +1,7 @@
+
+;; See also:
+;; http://www.khngai.com/emacs/cygwin.php
+
 ;; 
 ;; This contains a series of definitions which may be useful when
 ;; running under MS-Windows (depends on the version of emacs)

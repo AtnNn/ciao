@@ -1,0 +1,987 @@
+%
+% by pts@fazekas.hu at Tue Feb 14 12:19:42 CET 2006
+%
+% Dat: conference home page: http://www.cs.uky.edu/iclp06/
+% Dat: submission web page: http://www.easychair.org/ICLP06/  pts  2cB2fgzlSm
+% Dat: standardization workgroup: http://www.sju.edu/~jhodgson/wg17/
+% Dat: there is no public mailing list -- e-mail addresses are CC:ed
+% Dat: LNCS LaTeX class: ftp://ftp.springer.de/pub/tex/latex/llncs/latex2e/llncs2e.zip
+% Dat: no \section{Results}
+% Dat: skipped == irrelevant
+% Dat: cites all Prologs in 1993: http://citeseer.ist.psu.edu/vanroy93wonder.html
+% Dat: new notion: implementation aspect declaration
+% Dat: (std) predicate indicator == functor
+% !! web site /stdprolog !! web site CVS + .bib !! aprolog
+% OK : spellcheck
+%
+% !! update test result count
+%
+
+\documentclass[draft]{llncs}% !! not draft in final
+%\documentclass{llncs}
+
+% \usepackage[latin2]{inputenc}
+\usepackage{makeidx}
+\usepackage{url}
+\iffalse\usepackage[american]{babel}\fi
+
+% vvv !! add back page numbers
+%\newif\ifDraft \Drafttrue
+%  \ifdim\overfullrule=0pt \Draftfalse \fi
+\newif\ifDraft \Draftfalse
+
+\begin{document}
+
+\title{Improving the ISO Prolog standard\\
+by analyzing compliance test results}
+%
+\titlerunning{Improving the ISO Prolog standard}
+% abbreviated title (for running head)
+% also used for the TOC unless
+% \toctitle is used
+%
+\author{P\'eter Szab\'o\inst{1} \and P\'eter Szeredi\inst{2}}
+%
+\authorrunning{P\'eter Szab\'o and P\'eter Szeredi}   % abbreviated author list (for running head)
+%
+%%%% modified list of authors for the TOC (add the affiliations)
+\tocauthor{P\'eter Szabo\'o (Budapest University of Technology and Economics),
+P\'eter Szeredi (Budapest University of Technology and Economics)}
+%
+\institute{
+Budapest University of Technology and Economics,\\
+Department of Computer Science and Information Theory,\\
+H-1117 Hungary, Budapest, Magyar tud\'osok k\"or\'utja 2,\\
+\email{pts@szit.bme.hu}, WWW home page:
+\texttt{http://www.inf.bme.hu/\homedir pts/}
+\and
+Budapest University of Technology and Economics,\\
+Department of Computer Science and Information Theory,\\
+H-1117 Hungary, Budapest, Magyar tud\'osok k\"or\'utja 2,\\
+\email{szeredi@szit.bme.hu}, WWW home page:
+\texttt{http://www.cs.bme.hu/\homedir szeredi/}
+}
+
+\maketitle
+
+\ifDraft
+  \pagestyle{plain}
+  \special{\string!\expandafter\expandafter\csname @gobble\endcsname
+    \string\%xdvi.dvo: -expert
+    -s 5 -xoffset -1.8cm -yoffset -1.6cm -paper 13cmx20.8cm}
+\else % Dat: the reviewers usually ask for the page numbers
+  \pagestyle{plain}
+\fi
+
+\def\wproduct#1{\textsf{#1}}
+
+%** @param #1 e.g. stream_property/2
+\def\functor#1{\textsl{%
+  %\def\textunderscore{\string_}%
+  #1%
+}}%
+
+%** @param #1 e.g. existence_error etc.
+\def\errorname#1{\textsl{%
+  %\def\textunderscore{\string_}%
+  #1%
+}}%
+
+\def\texttx#1{\texttt{%
+  \def\textunderscore{\string_}%
+  #1%
+}}%
+
+\begin{abstract}
+
+\ifdim\parindent=0pt \parindent1em \fi
+
+%The abstract should summarize the contents of the paper
+%using at least 70 and at most 150 words. It will be set in 9-point
+%font size and be inset 1.0 cm from the right and left margins.
+%There will be two blank lines before and after the Abstract. \dots
+
+%Most Prolog implementations today offer an ISO mode in which they operate
+%according to ISO Prolog standard (ISO/IEC 13211) published in 1995. However
+%there are no formal tools for validation or supporting a claim that a particular
+%implementation is standards-compliant.
+
+Part 1 of the ISO Prolog standard (ISO/IEC 13211) published in 1995 covers
+the  core of Prolog, including syntax, operational semantics,
+streams and some built-in predicates. Libraries, DCGs, and global
+mutables are current standardization topics. Most Prolog implementations
+provide an ISO mode in which they adhere to the standard.
+
+Our goal is to improve parts of the Prolog standard already published by
+finding and fixing ambiguities and missing details. To do so, we have
+compiled a suite of more than 1000 test cases covering part 1, and ran it
+on several free and commercial Prolog implementations. In this study we
+summarize the reasons of the test case failures, and discuss which of these
+indicate possible flaws in the standard.
+
+We also discuss test framework and test case development issues specific to
+Prolog, as well as some portability issues encountered.
+
+\end{abstract}
+
+\section{Introduction}
+
+% Dat: the introduction extends the abstract
+
+This paper describes work on testing standards compliance of several Prolog
+implementations. Part 1 of the Prolog standard \cite{isoprolog95} and a
+related textbook \cite{isoprologbook} have been available for about ten
+years. By now all major implementations declare that they are standards
+compliant. In spite of this we have found that there are lots of minor and
+medium importance details that are interpreted differently by the
+implementations tested. In a few cases this is due to ambiguities in the
+standard, in lots of other cases there is a clear deviation from the
+standard. We believe that even minor discrepancies can make porting Prolog
+programs very difficult, and to advocate full adherence we have developed an
+appropriate test framework, described in this paper.
+
+%!! interoperability, interchangeability =
+%   standardization + compatibility layers + interfaces +
+%   ...
+
+The main goal of this work is to improve interoperability of Prolog code, by
+clarifying standards compliance of major implementations and pinpointing
+sources of non-conformance. Even if the implementations remain unchanged,
+these results can help in developing compatibility layers to support
+interoperability. In long term we hope that our test framework will
+contribute to the wider and more precise acceptance of the standard.
+
+The paper is structured as follows. Section 2 gives an overview of the
+Prolog implementations used and tested in this work. Section 3 describes the
+architecture of the test framework. In section 4 we present the results of the
+testing, including some basic statistics, a brief analysis of common failures
+and proposals for standard improvement. Section 5 discusses related work,
+while in Section 6 we present some conclusions and plans for future work.
+
+% Running validation tests can help (1) improving the Prolog standard and
+% (2) improving the compliance of individual implementations.
+
+\section{Implementations tested}
+
+It was our goal to test many different implementations, in order to identify
+as many problems as possible. Although we focused on free implementations, we
+included a commercial one (SICStus) as well. All the implementations are in
+active use today (and most of them are under active development), save
+aprolog. We did not want to test new or experimental implementations, the
+first versions of all of those we tested appeared at least 9 years ago. 
+
+These are the implementations we have run the tests on:
+
+\begin{description}
+
+\item[SICStus 3.12.3] % also 3.12.0
+The original test suite and framework was developed
+at SICS in an effort to make SICStus \cite{sicstus-manual}
+ISO-compliant, so it was natural to keep
+it included as well. We have run the tests in
+the ISO mode of SICStus -- the other, legacy mode is going to be dropped in
+version 4, anyway. Development of SICStus started in 1984, more than 10 years
+before the Prolog standard was published.
+
+\item[SWI-Prolog 5.4.7]
+SWI-Prolog \cite{Wielemaker:03b,swipl-manual}
+is one of most popular, actively developed, free Prolog
+implementations. It also has an ISO and a legacy mode -- the tests have been
+run in ISO mode. We had to turn garbage collection off, because otherwise the
+application aborted because of a failed assertion in the middle of the tests.
+SWI-Prolog exists since about 1990.
+
+\item[YAP 5.0.1]
+YAP \cite{yap-manual}
+is also an actively developed free implementation. It also has an ISO
+mode, but we rather disabled it, because the application crashes when we try
+to consult a new source file in ISO mode. YAP has been available since 1989.
+
+\item[gprolog 1.2.16]
+GNU Prolog \cite{diaz00gnu,DBLP:conf_sac_DiazC00} is also a free, WAM-based implementation with a native code
+compiler. Although the latest release is from September 2002, there is still
+activity on the mailing list. GNU Prolog appeared in 1996, one year after the
+standard.
+
+\item[Ciao-Prolog 1.10p6]
+Ciao \cite{ciao-manual}
+is a free implementation actively developed by researchers, with a lot
+of advanced static analysis tools (e.g.\ type checking, instantiation
+analysis and partial evaluation) integrated. Ciao-Prolog was released in
+1995.
+
+\item[aprolog 1.22]
+aprolog is an unpublished,
+minimalistic, very slow standard Prolog implementation by Mikl\'os
+Szeredi for educational purposes only. It lacks a module system, a WAM
+implementation, a garbage collector, cyclic term unification, line number
+reporting for exceptions and unbounded integer arithmetics. The reason we use
+it is that it has been developed with standards in mind -- only
+ISO Prolog, nothing more. And it is also a demonstration that even simple
+implementations can be standards compliant. Although aprolog was written in
+1997, some of the built-in predicate implementations date back to as far as
+1984 -- 11 years before the standard came out.
+
+\end{description}
+
+When we tried to port the framework to XSB (version 2.7.1), we faced the
+\emph{need too many registers} error when trying to assert a fact with too
+complicated arguments (i.e. try
+\texttx{asserta(t([a(b),a(b),...,a(b)]))}
+with a list of more than 260 elements). A major rewrite might
+thus be necessary for an XSB port.
+% !! XSB-re \cite?
+
+We are not planning to port the framework to other implementations by hand,
+but we are designing a generic approach, that autodetects as much as possible
+about the new Prolog system, thus adding the correct port to a new
+implementation (or a new version) will be easier and faster.
+
+\section{Test suite and framework}
+
+This section describes the structure of the software. We first deal with the
+test cases and then give an outline of the framework.
+
+\subsection{Test suite design}\label{suite}
+
+Our test suite consists of 1012 test cases, each corresponding to a
+section in the standard. Each test
+case has the following properties:
+%
+\begin{description}
+
+\item[meta-information]
+identifier ($\textrm{series}:\textrm{number}$), author, relevant
+section number of the ISO standard, dangerousness indication, irrelevancy
+conditions;
+
+\item[goal]
+to be executed;
+
+\item[environment]
+in which the goal is executed: files to create, Prolog source files to load,
+Prolog flags to alter, cleanup code after running goal;
+
+\item[expectations]
+which determine whether the test run is OK or not. The following outcomes can
+be expected: success (with possible constraints on variable substitutions of
+each solution), failure, exception (with possible constraints on the
+exception term). There is a macro expansion facility in the expectations, so
+they can be written to be more compact and consistent.
+
+\end{description}
+
+\noindent
+Here is an example test case:
+%
+\begin{verbatim}
+test_case(strprop:2, iso_doc, %8.11.8.4         % meta-information
+  stream_property(S, output),                               % goal
+  {[S <-- FOut ], [S <-- COut], ...},               % expectations
+  [ pre((open(bar, write, FOut),                        % environ-
+    current_output(COut))), clean(bar)]).               %     ment
+\end{verbatim}
+%
+The meaning of test case \emph{strprop:2} is the following. This
+is a test case whose goal is taken from the ISO standard section 8.11.8.4. 
+The test case verifies that if we open an output stream (\texttx{FOut}), then
+\functor{stream\textunderscore property/2} has to
+enumerate it as well as the current
+output stream. The curly braces signify that the enumeration order is not 
+significant, and \texttx{...} signifies that there might be more solutions.
+It is possible to prescribe an order using square brackets instead of curly
+braces.
+
+Some of the tests are dangerous: they hang the process (i.e. they cause
+segmentation violation, infinite loop or infinite memory allocation)
+in some implementations, but work fine in others. The reason of the hanging
+is clear in some cases (e.g.\ the unification
+\texttx{X=f(X)} can hang a Prolog implementation if it does not support
+unification of STO (``subject to occurs-check'') terms), but sometimes there is
+a bug in the Prolog implementation, and the process hangs for no apparent
+reason. (Testing \functor{halt/1} is also dangerous, because \functor{halt/1}
+aborts the whole Prolog process, including the framework.)
+When the standards allows a hang in a particular case,
+we call the test case \emph{irrelevant}, otherwise we call the test
+case \emph{dangerous}. The test case can also be \emph{irrelevant} if it
+does not hang the process, but it can be skipped for other reasons;
+for example,
+integers are bounded in some implementations, but unbounded in others, and
+tests that check for an \errorname{int\textunderscore overflow} error must be skipped in
+unbounded implementations.
+
+The framework accepts \emph{implementation aspect declarations},
+based on which the framework can decide whether a test is
+\emph{irrelevant} with respect to an implementation. And even when a test is
+relevant, its expectations can be made dependent on the declarations.
+Currently
+declarations are not used as much as they could be: for example, a lot of
+tests fail, because predicate indicators in exceptions are not module
+qualified the same way in all Prolog implementations -- and the test suite
+expects the SICStus way. The solution would be to introduce a new
+declaration for this aspect, and make the corresponding test cases use it.
+Declarations could also be used to have \emph{dangerous} tests skipped;
+currently they have to be commented out by hand in the test suite.
+
+The test contains tests from various sources:
+
+\begin{description}
+
+\item[iso\textunderscore doc]
+These test cases come directly from the
+standard \cite{isoprolog95}. The description of each built-in predicate
+contains an \emph{Examples} section with goals and a natural language
+expectation for each goal, which describes what should happen when the goal
+is called. We kept the original goals, and formalized the expectations so the
+test case can be automatically validated.  In addition to these, the informal
+examples and tables in the chapters about syntax and control constructs were
+also converted to test cases.
+
+\item[eddbali]
+The executable specification of Prolog (\cite{executable}, see below) has
+some test cases included. We have added them in our test suite, except
+for those having equivalent counterparts in the \emph{iso\textunderscore doc}
+part.
+
+\item[sics]
+The test cases here were added by the authors during the development of
+the ISO mode of SICStus Prolog.
+% P\'eter Szeredi
+
+\item[pts]
+We added these recently, after we have run the test suite on 6 Prolog
+implementations.
+
+\end{description}
+
+\subsection{Test framework architecture}
+
+The test framework, which runs in the same Prolog process as the tests
+themselves, considers test cases in the test suite in the order
+they are defined, and computes the test result for each of them. Possible test
+results are \emph{dangerous,} \emph{irrelevant,} \emph{failed} and
+\emph{OK.} Test results are logged, and the log file is later processed by a
+Perl script for statistics generation and validation of whether all test cases
+were considered. If some of the test cases were \emph{missing,} this could be
+a sign that the Prolog process crashed in the middle.
+
+Tests declared \emph{dangerous} are ignored. If the irrelevancy condition of
+the test case with respect to the Prolog implementation is met, the test is
+considered \emph{irrelevant} and it is skipped.
+Otherwise, the environment of the test is prepared, the test goal is run, the
+expectations are checked, the cleanup code is run. The test is considered
+\emph{OK} if the expectations are fulfilled, otherwise it has \emph{failed}.
+For \emph{failed} tests, the outcome expected and the outcome
+received are also logged.
+
+The test cases, the contents of all files and Prolog programs needed by the
+tests and the macro definitions are collected in a single Prolog source file
+as facts. The implementation language of the test framework is also Prolog:
+there is a big system-independent part (in standard Prolog),
+and there are helper files
+for each system: the \emph{main} file, which loads all other files,
+contains the implementation aspect declarations, and provides some
+nonstandard functionality (such as \functor{abolish\textunderscore static/1})
+using implementation-specific predicates; and the \emph{utils} file, which
+implements a compatibility layer providing some utility predicates (such as
+\functor{append/3} and \functor{term\textunderscore variables/2}). If
+possible, the utility predicates are loaded from a built-in module.
+%activates ISO mode, defines  or loads
+%them .
+Other software components are the Perl
+script that creates the statistics from the log files, and a Makefile
+that invokes the implementations with the appropriate arguments to run the
+tests.
+
+The software, including our test framework and test suite can be obtained
+from \texttt{http://www.\allowbreak inf\allowbreak .\allowbreak
+bme.hu/\homedir pts/stdprolog/}\,. Currently it needs a UNIX system with
+\wproduct{Perl}, \wproduct{GNU Make} and the Prolog implementations installed.
+
+\section{Test results}
+
+We have run the test suite on the implementations, getting a log file for
+each run. The log files contained detailed information about each test case,
+including the description of the failures. In this chapter we present the
+statistics resulting from the log file, and the conclusions we made from from
+the failures, including improvement possibilities for the both the standard
+and its implementations.
+
+\subsection{Statistics and evaluation concerns}
+
+The statistics depicted on Table \ref{tab:isoteststat}
+were generated by a script from the test results log file. The number of
+failed tests, however, should not be used as a quantitative measure for the
+standards conformance of the implementation. That is because multiple failures
+can be caused by a single reason. It is also obvious why SICStus passes
+almost all the tests: the ISO mode of SICStus
+and the original version of the test suite have been developed by the same team.
+It is also not a surprise that aprolog fails in a few cases only: aprolog has
+been written from the ground up to be ISO compliant. The other
+implementations have quite a lot of failed test cases. That's quite
+reasonable, because they have not been designed with the standard in mind,
+but they have been patched after the standard came out.
+
+\begin{table}
+\caption{ISO compliance test statistics of 1012 test cases}\label{tab:isoteststat}
+%\small
+\centering\tabcolsep=.5em
+\begin{tabular}{@{}llrrrr@{}}%
+
+\hline\noalign{\vskip3pt}
+system       &version &\#OK &\#failed &\#dangerous &\#irrelevant\\[2pt]\hline\noalign{\vskip3pt}
+SICStus      &3.12.3  &1010 &1        &0           &1\\%
+aprolog      &1.22    &996  &7        &0           &9\\%
+gprolog      &1.2.16  &929  &67       &7           &9\\%        
+SWI-Prolog   &5.4.7   &816  &158      &8           &30\\%
+YAP          &5.0.1   &632  &363      &7           &10\\%
+Ciao-Prolog  &1.10p6  &541  &454      &7           &10\\%
+[2pt]\hline
+\end{tabular}
+\end{table}
+
+%%%% pts %%%%
+Many implementations (SICStus, SWI-Prolog, YAP, gprolog and
+Ciao-Pro\-log) have two modes: an ISO mode and a backwards compatible mode. In
+the ISO mode, they try to follow the ISO standard as much as possible, while
+backwards compatible mode violates the ISO standard if necessary in order to
+run legacy Prolog programs. We ran our test suite with ISO mode enabled, if
+possible. gprolog has ISO mode only.
+
+We do not know of any Prolog implementations that provide a strict ISO mode in
+which they disable non-ISO built-in predicates, and refuse all extensions,
+i.e.\ constructs forbidden by the standard. For example \cite{seriously},
+the standard
+requires that an operator atom can be operand only if enclosed in
+parentheses, e.g.\ ``\texttx{X= \string<}'' should be changed to
+``\texttx{X=(\string<)}''. Many Prolog implementations, including
+\hbox{SICStus} and
+aprolog allow both constructs. This can be considered a syntactical extension
+to the standard. We accept both in our test cases.
+% !! where is this really forbidden in our standard?!
+Another example: section 6.3.4.3 of the standard forbids an infix and
+a postfix operator to have the same name.
+On the other hand, some Prolog implementations allow
+this, which can also be considered as an extension.
+However, when the standard explicitly says that a specific error must be
+thrown in a specific case, implementations must respect this, and
+our test cases validate each of these error conditions.
+
+There is an \emph{Errors} section for each built-in predicate in the
+standard. The standard does not specify the order in which these are checked
+(see section 7.12), so our test cases accept any error if more than one is appropriate.
+
+
+\subsection{Errors and other flaws found in the standard}
+
+We will present typos and inconsistencies and ambiguity in
+the standard, revealed by the failed test cases.
+
+Sometimes the standard itself is inconsistent. For example, the expression
+evaluation \emph{Examples} in 9.1.7 have error terms which are missing from
+section 7.9.2c (which enumerates all possible errors during expression
+evaluation). Our test cases respect 7.9.2c and expect
+\texttx{type\textunderscore error(evaluable, F/N)}.
+
+The \emph{Examples} in 9.1.7 contain several other errors and typos, for
+example they expect \texttx{0 is 7/35} to be true -- which is presumably a
+typo, and the intended call is \texttx{0 is 7//35}. We have fixed those test
+cases in our test suite.
+
+Section 7.8.3.4 has a bad example, too. It expects
+\texttx{call((write(3),3))} to emit a \texttx{3}, which contradicts the
+specification of \functor{call/1}, which clearly states that an error should
+be thrown because \texttx{(write(3),3)} is not callable.
+
+Section 8.14.2.4 is not clear enough whether
+\texttx{write\string_canonical(.)} and
+\texttx{write\allowbreak\string_\allowbreak canonical([1])}
+must put single quotes around their dots (currently some implementations do,
+others do not). The
+general rule states that the output must be able to be read back
+unambiguously, but in this case the ambiguity depends on the context, i.e.
+the the writing of layout characters after the dot in the future.
+% The standard should clarify the issue.
+
+The standard does not specify what to do
+with non-ASCII characters in the Prolog
+code. For example, should it be possible to load a Prolog source file
+containing \texttx{X = \'a}\,? A straightforward solution would be to adopt
+Unicode, and to make the byte $\leftrightarrow$ character
+transformation of a text stream specifiable in Prolog (e.g.\
+using stream flags).
+
+
+\subsection{Suggested additions to the standard}
+
+Part 1 of the standard \cite{isoprolog95} leaves a lot of features open,
+while part 2 deals with modules.  The standardization of libraries,
+DCGs, and global mutables is underway. There are other features in existing
+Prolog implementations to be considered, for example tabling and coroutines
+using call blocking/freezing. Most Prolog systems today, however, provide an
+implementation of these features, but since there is no definitive standard
+to do them in a uniform way, each system implements them differently. In this
+subsection we will present the nonstandard features we used in our test
+framework.
+
+%Although most of our test framework is written in Prolog, it could not be pure
+%ISO Prolog, because some essential functionality (built-in predicates)
+%is missing from the
+%standard (e.g \functor{delete\textunderscore file/2}) and predicates related
+%to the database, see later).
+%Most Prolog implementations provide all these functionalities anyway, but
+%with a different call syntax.
+
+We believe that
+more power should be granted to the programmer when querying and
+manipulating the predicate database. This includes a decent
+\functor{predicate\textunderscore property/2} built-in, which can report
+whether a predicate is built-in, static, private etc. There should also be a
+way to unload a Prolog source file, including the ability to
+abolish the static predicates defined in it
+(\functor{abolish\textunderscore static/1}).
+
+There should also be a set of standard modules
+(such as \emph{lists} and \emph{terms}). As of now, many Prolog
+systems already have these, but with a different syntax.
+
+Although modules are documented in part 2 of the standard,
+most implementations ignore that.
+When a predicate indicator is reported in an error
+(e.g.  \errorname{type\textunderscore error}), its module qualification is not
+consistent. This should be clarified in the new standard.
+% The new standard sould be perfectly clear about when and how to
+%module-qualify predicate indicators in errors.
+
+The standard should also specify how to assert, query and retract predicates
+in modules other than the current one.
+
+If the behaviour of the toplevel had been specified in the standard, testing
+would have been much easier and safer, because we could treat the Prolog
+implementation as a black box, and implement the testing framework in a
+different process, or we could have run the tests and the framework in a
+different Prolog implementation.
+
+%%%% pts %%%%
+As of now, most Prolog systems provide an ISO mode in which they
+follow the ISO standard more precisely, but there is no standard way to
+activate this mode with a single call. Moreover, some implementations crash
+soon after ISO mode has been activated. Others just change the set of visible
+predicates, but they do not adjust the semantics of the predicates to make
+them ISO conforming. In some implementations, Prolog flags must be adjusted
+one-by-one to make the implementation more ISO-compatible.
+As a solution to this, a new Prolog flag should be defined which
+controls whether the system runs in ISO mode or not. For example, the
+\textsl{iso} flag with the \texttx{true} value, or the \textsl{language} flag
+with the \texttx{iso} value. If the standard introduced a strict ISO mode, a
+flag should be defined for this, too. For the Prolog implementations with a
+command line interface, the standard should prescribe a command line option
+(such as \texttx{--iso}) which enables ISO mode at startup. Activating ISO
+mode would have the following effects: all ISO predicates would be made
+visible, the semantics of some predicates would be changed to be ISO
+conforming, existing predicates would be forced to detect error conditions
+according to ISO, and to throw ISO conforming exception terms, Prolog
+flags would be reset to their ISO default values etc.
+
+Section 7.8.9.4 could clarify what to do when an uncaught exception is
+encountered and thus a ``\functor{system\textunderscore error}'' happens.
+We suggest printing the original exception to
+\functor{user\textunderscore error}, and then
+%%%% pts %%%%
+returning control to the toplevel, or -- if no interactive toplevel exists --
+exiting from the Prolog process.
+
+%%%% pts %%%%
+Since the primary goal of Prolog standardization is to make Prolog programs
+more portable across implementations, a standard library should be defined.
+There are many features (such as the \textsf{lists} and \textsf{terms}
+modules, predicates for manipulating the file system, predicates for TCP/IP
+communication, capturing stream output to a string, timeouts,
+blackboard\slash flag predicates, predicate mode and/or type declarations,
+suspended execution with coroutines and CLP(FD))
+already present in multiple Prolog implementations, but because of the small
+differences in the load and invocation syntaxes and in the semantics, it not
+possible to write a portable Prolog program using these widely available
+features, without inserting implementation-specific code for each
+supported implementation.
+
+%%%% pts %%%%
+In order to help the work of adding these common features
+to the standard (and also to help Prolog programmers write portable code), a
+compatibility library could be developed, which provides an
+implementation-independent interface for these features, and maps all its
+publicly available predicates to implementation-specific calls.
+
+\subsection{Common failures in implementations}
+
+We will discuss the typical reasons that made multiple test cases fail. The
+discussion covers the areas in which implementations should be
+improved, without going into details
+about which test case failed in which implementation. These details can be
+found in the test results log available
+from the web page of our software.
+
+Some Prolog implementations still use the old, Edinburgh semantics of the
+caret, i.e., they look for the caret in the middle of the 2nd argument of
+\functor{setof/3} and \functor{bagof/3}.
+
+There are problems with stream properties returned by
+\functor{stream\textunderscore proper\allowbreak ty/2}.
+It is common that standard properties are
+missing or the default values for \texttx{user\textunderscore output} etc.\ are not
+compliant.
+
+Some implementations do not make a proper distinction between the
+end-of-stream and past-end-of-stream states. Some of them even
+allow reading the EOF indicator after the past-end-of-stream.
+
+There are also some typos in error terms, e.g.\
+\texttx{type\textunderscore error(atom,...)} is reported instead of
+\texttx{type\textunderscore error(atomic,...)}.
+
+It is a common mistake in some implementations that they mix throwing
+\hbox{\errorname{existence\textunderscore error}} and
+\errorname{domain\textunderscore error} when an
+invalid stream term is passed to them. Sometimes \textsl{stream} and
+\textsl{stream\textunderscore or\textunderscore alias} are confused in the
+error term.
+The standard is always clear, however, about what and when should be thrown.
+
+In some implementations it is possible to open 
+inherently unrepositionable files
+(such as UNIX character devices) with \texttx{reposition(true)}.
+
+In some implementations \functor{stream\textunderscore property/2} returns
+the alias
+\textsl{user\textunderscore input}, which is not a stream-term, in
+its first argument. A similar problem is that
+\hbox{\functor{current\textunderscore\allowbreak predicate/1}} returns built-in predicates.
+
+When a stream error is reported, the stream term associated with the call is
+not copied properly, e.g. \texttx{42} is indicated instead of
+\texttx{'\$stream'(42)}.
+
+Some implementations confuse character code lists (codes) and character atom
+lists (chars), e.g. \functor{atom\textunderscore codes/2} returns an atom
+list instead of a code list.
+
+The standard is always clear about what culprit should be reported in
+\errorname{type\textunderscore\allowbreak error} messages. For example,
+\texttx{call((true,3))} must report
+\texttx{type\textunderscore\allowbreak error(callab\allowbreak le, (true,3))} instead of
+\texttx{type\textunderscore error(callable, 3)}. But some implementations
+prefer to report the latter, more specific culprit. Our test suite has an
+implementation aspect declaration for this. There is a similar problem of
+reporting a \errorname{type\textunderscore\allowbreak error} when the tail
+of the 2nd argument of \functor{write\textunderscore term/2} is not a list.
+Another similar case is that \texttx{myop} should not be part of the error
+triggered by \texttx{op(100,xfx,[myop,','])}.
+
+Some Prolog flags or flag values are missing in some implementations, e.g.\
+the flag \textsl{unknown} cannot have value \textsl{warning}. Sometimes the
+default value of the flag does not match the defaults prescribed in section
+7.11 of the standard.
+Sometimes they have \textsl{false} instead of \textsl{off} etc.
+
+There are a lot of problems in arithmetic error reporting. Some implementations
+make \texttx{+inf is 1/0}, \texttx{nan is sqrt(-1)} or \texttt{-inf is
+log(0)} true -- all of which must have thrown an
+\errorname{evaluation\textunderscore error} according to the standard.
+Sometimes an implementation fails to report an
+\errorname{int\textunderscore overflow}, and the addition of two large
+integers succeed.
+
+The result of \texttx{X is 7//-3} depends on the rounding function
+used (see in section 9.1.3.1) and thus it is implementation-specific: $X$
+becomes either $-2$ or $-4$. On the contrary, the
+semantics of the operations \textsl{mod} and \textsl{rem} are unambiguous, 
+but some implementations get the sign of the result wrong.
+
+All integer operations must throw an error if they do not receive integer
+arguments (e.g.\ \texttx{X is 1.0>>2}). However, sometimes they just convert
+the float they receive to an integer.
+
+Most arithmetic operations can return either an integer or a float -- but
+rounding operations such as \textsf{float} and \textsf{truncate} have a
+specific return type (defined in section 9.1.6). Some implementations,
+however, do not respect this, and have \texttx{7.0 is floor(7.4)} instead of
+\texttx{7 is floor(7.4)}.
+
+Although this is not a validity but a reliability issue, we have to mention
+the dangerous tests here: those that hang particular Prolog implementations.
+We have found segmentation violations, infinite loops and infinite memory
+allocations, none of which should ever happen when running Prolog code.
+Sometimes we could not even identify a specific test case or set of test cases
+which created the danger, for example when the Prolog process died with a
+failed assertion in the middle of the garbage collection. But most of the
+time, the problem was caused by a single test case, which we found and
+declared dangerous in that implementation. For example,
+\texttx{atom\textunderscore concat(A,A,AA)} triggered a bug
+in the native-language code of \functor{atom\textunderscore concat/3} in
+% a specific implementation
+one of the implementations
+when $A$ was an atom already of maximum length, and the bug
+caused the process to emit a segmentation violation. In another case, we
+could identify that testing \functor{abolish/1} causes instability, but none
+of the individual test cases made the process crash.
+
+We have found many similar fundamental flaws (dangerous or not) in the
+error handling code of the built-in predicates in many implementations.
+Section 7.12.1 is perfectly clear about what to do when an error happens: the
+call has to be replaced by an appropriate call to \functor{throw/1}.
+%There are many deviations from the standard when built-in predicates receive
+%invalid arguments.
+On the contrary implementations tend to throw the wrong error, just fail,
+print an error message and then fail, or even crash -- none of which is
+conforming.
+
+Although full stop (\texttx{.})
+marks the end of a term only if it is followed by a
+layout character, the layout character must not be consumed by
+\functor{read/1} (see section 8.14.1.4). Some implementations do consume it,
+however.
+
+There are many problems with \functor{read/1}, e.g. some implementations
+cannot read \texttx{write(0'\string\')} or quoted atoms as structure names
+such as \texttx{'is'(1,2)}\,.
+Some implementations have problems reading terms when
+\functor{char\textunderscore conversion\allowbreak/2} is in effect.
+
+The standard expects \functor{read/1} to throw a
+\errorname{representation\textunderscore error} when a
+limit (such as maximum atom length) is exceeded.
+However, some implementations throw
+\errorname{syntax\textunderscore error} instead.
+
+Some implementations allow an atom to contain zero-coded characters
+(e.g. \texttx{'\string\000\string\'}), and they can even read those from text
+streams.
+
+\functor{number\textunderscore chars/2} in some implementations has problems
+ignoring whitespace in the beginning of the number.
+
+\functor{clause/2} in some implementations returns a preprocessed predicate
+body for dynamic predicates.
+%%%% pts %%%%
+Not only calls get module qualification, but calls to built-in predicates
+are also replaced to calls to implementation-specific, hidden predicates.
+
+
+\section{Related work}
+
+We have gathered tests from various sources when compiling our test suite,
+see Subsection \ref{suite} for the details.
+The ISO working group X3J17 dedicated to improve the Prolog standard has
+also published a test suite \cite{validation} of 570 test cases. Most of
+them are directly copied from the standard, similarly as our 675
+\emph{iso\textunderscore doc} test cases.
+
+\cite{seriously} suggested that the ISO Prolog standard was not taken
+seriously, and most implementations were not compliant. We believe that a
+test suite like ours, which works in multiple Prolog implementations can
+reveal many specific problems, which implementors can focus on if
+they strive for standards compliance. We are planning to publish a detailed
+technical report and notify the implementors about the failures we have
+found.
+
+The standard has a formal semantics in its appendix. This semantics is
+formalized such a way that the specification can be executed -- thus we can
+get a completely compliant implementation. The text of the appendix, the
+executable specification and an executor implementation in Prolog is
+available separately \cite{executable}. The executable specification, as
+it is now, is very inefficient, and it also has some limitations and bugs,
+see section 2.5 of \cite{executable}.
+
+
+\section{Conclusion and future work}
+
+A good programming language standard makes writing portable programs
+possible -- provided that the standard covers
+ all the features used by the
+program, and that implementations conform to the standard.
+Validation tests can reveal weak spots of the standard and also problems
+in the implementations.
+% for same program to work the same way in many different implementations
+% of the language.
+We have written a test framework and compiled a test suite in order to
+explore the areas in which the Prolog standard and its implementations can
+be improved.
+We have analyzed the test results, classified the reasons why some cases
+failed, identified common problems and even some
+weaknesses of the Prolog standard. It was not our goal to fix the problems,
+but to attract attention of the implementors and the creators of the standard
+to them.
+%We have demonstrated that testing can help
+%developers improve the Prolog standard, improve standard compliance of the
+%implementations, and design portable Prolog applications.
+
+Our test suite covers most other test collections available
+(\cite{isoprolog95,executable,validation}),
+and our test framework has been ported to several Prolog implementations,
+thus it can be considered general.
+%We are planning to extend the software in both directions: adding new test
+%cases and porting it to more implementations.
+
+%We have ported a SICStus-only Prolog test suite and framework to many other
+%Prolog implementations.
+%We have analyzed the test
+%results and
+
+It is our primary goal to cooperate with the standard designers and Prolog
+implementors. We are planning to improve and extend the test suite, and port
+the test framework to as many implementations as possible. But in order to
+get others involved into our work, first we have to polish the framework and
+document it properly. First we are planning to publish a technical report for
+the implementors, with the failed tests documented in detail, so they can
+start fixing the problems.
+
+Currently it is hard to port the framework to a new Prolog implementation:
+the programmer has to adjust a lot of settings and write helper predicates
+after a careful study of the Prolog implementation -- and they do not get
+proper feedback if they do it wrong. To help this, we are working on an
+autodetection mechanism similar to \wproduct{GNU autoconf}, and we're also
+writing a porting tutorial.
+
+More \emph{implementation aspect declarations} should be added instead of
+commenting out test cases. It is important to have as many declarations as
+possible, because they can eliminate a lot of false non-compliance messages at
+once, and they can also reduce the risk of dangerous test cases.
+Most declarations should be auto-detected instead of being specified manually.
+
+The handling of dangerous tests should be improved. It should be possible to
+declare an implementation-specific danger level for
+each test case, and the framework would skip that test or run it in a
+separated process time- and memory-constrained if necessary.
+%%%% pts %%%%
+(This would also
+make the effect of an uncaught exception testable.)
+Semi-automatic tools should be developed to help the programmer find the
+dangerous test cases.
+
+%%%% pts %%%%
+The test framework ignores module qualification when it
+validates dynamic clause bodies or error culprits. However, in some cases
+this is not precise enough, for example in the example of section 8.9.3.4,
+the call to \texttx{retract((foo(A) :- A,call(A)))} might have to
+be replaced by \texttx{retract((foo(A) :- A,call(user:\allowbreak A)))} in order to
+succeed when the clause \texttx{foo(X) :- call(X), call(X)} is asserted.
+That's because asserting involves module qualification, which transforms the
+clause to \texttx{foo(X) :- call(user:X), call(user:X)} .
+
+The effects of
+some tests are hard to describe in the current framework (e.g. when both
+cyclic terms and module qualification is involved). This should be improved.
+
+Some Prolog implementations have problems parsing the test suite, even when
+it is in functional notation, e.g.\ some of them cannot parse
+\verb+0'\'+ as an integer constant. To help this, the framework should have
+its own, standard compliant reimplementation of \verb+read/2+, and it should
+use this to read the test case clauses.
+
+As the standard develops, and possibly new parts get added, the test suite
+has to be extended correspondingly. It would be useful if the standard itself
+had a formal test suite in its appendix, in addition to the informal
+\emph{Examples} for each built-in predicate.
+
+% Dat: nothing about aprolog
+
+\nocite{isoprolog95}
+\nocite{isoprologbook}
+\nocite{sicstus-manual}
+\nocite{diaz00gnu}
+\nocite{DBLP:conf_sac_DiazC00}
+\nocite{Wielemaker:03b}
+\nocite{swipl-manual}
+\nocite{ciao-manual}
+\nocite{yap-manual}
+\nocite{seriously}
+\nocite{validation} % cited
+\nocite{executable}
+
+\ifDraft
+  %\newpage
+  \bibliographystyle{plain}
+  \bibliography{stdprolog_paper}
+\else
+
+\begin{thebibliography}{10}
+
+\bibitem{seriously}
+Roberto Bagnara.
+\newblock Is the {ISO Prolog} standard taken seriously?
+\newblock {\em The Association for Logic Programming Newsletter}, 12(1):10--12,
+  February 1999.
+\newblock URL \url{http://www.cs.unipr.it/~bagnara/Papers/Abstracts/ALPN99a}.
+
+\bibitem{ciao-manual}
+F.~Bueno, D.~Cabeza, M.~Carro, M.~Hermenegildo, P.~L{\'o}pez-Garc{\'i}a, and
+  G.~Puebla.
+\newblock {\em The {Ciao} System. Reference Manual (V1.10)}.
+\newblock School of Computer Science, Technical University of Madrid (UPM),
+  2004.
+\newblock URL \url{http://clip.dia.fi.upm.es/Software/Ciao/}.
+
+\bibitem{isoprologbook}
+Laurent Cervoni, Abdelali Ed-Dbali, and Pierre Deransart.
+\newblock {\em {Prolog:} Reference Manual}.
+\newblock Springer, 1996.
+
+\bibitem{executable}
+Pierre Deransart and AbdelAli Ed-Dbali.
+\newblock Executable specification for {Standard Prolog}.
+\newblock URL \url{http://www.uc.pt/logtalk/links.html}, Download URL
+  \url{ftp://ftp-lifo.univ-orleans.fr/pub/Users/eddbali/SdProlog}, 5~July 1996.
+
+\bibitem{diaz00gnu}
+Daniel Diaz and Philippe Codognet.
+\newblock {GNU Prolog}: Beyond compiling {Prolog} to {C}.
+\newblock {\em Lecture Notes in Computer Science}, 1753:81--92, 2000.
+
+\bibitem{DBLP:conf_sac_DiazC00}
+Daniel Diaz and Philippe Codognet.
+\newblock The {GNU Prolog} system and its implementation.
+\newblock In {\em ACM Symposium on Applied Computing (2)}, volume~1, pages
+  728--732, 19--21~March 2000.
+
+\bibitem{validation}
+Jonathan Hodgson.
+\newblock Validation test suite for {ISO} standard conformance.
+\newblock URL \url{http://www.sju.edu/~jhodgson/x3j17.html}, 2~October 1998.
+
+\bibitem{sicstus-manual}
+Intelligent Systems Laboratory, SICS, PO Box 1263, S-164 28 Kista, Sweden.
+\newblock {\em {SICStus} {Prolog} User's Manual (for version 3.12.3)}, October
+  2005.
+\newblock URL \url{http://www.sics.se/sicstus/docs/3.12.3/html/sicstus.html/}.
+
+\bibitem{isoprolog95}
+ISO.
+\newblock {\em {ISO/IEC} 13211-1. International Standard, Invormation
+  technology -- Programming languages -- {Prolog} -- Part 1: General core}, 1
+  edition, 1995.
+
+\bibitem{yap-manual}
+V.~Santos-Costa, L.~Damas, R.~Reis, and R.~Azevedo.
+\newblock {\em The {Yap Prolog} User's Manual}.
+\newblock Universidade do Porto and COPPE Sistemas, 2006.
+\newblock URL \url{http://www.ncc.up.pt/~vsc/Yap/}.
+
+\bibitem{Wielemaker:03b}
+Jan Wielemaker.
+\newblock An overview of the {SWI-Prolog} programming environment.
+\newblock In Fred Mesnard and Alexander Serebenik, editors, {\em Proceedings of
+  the 13th International Workshop on Logic Programming Environments}, pages
+  1--16, Heverlee, Belgium, December 2003. Katholieke Universiteit Leuven.
+\newblock CW 371.
+
+\bibitem{swipl-manual}
+Jan Wielemaker.
+\newblock {\em {SWI-Prolog} 5.6.4 Reference Manual}.
+\newblock Human-Computer Studies, 2006.
+\newblock URL \url{http://gollem.science.uva.nl/SWI-Prolog/Manual/}.
+
+\end{thebibliography}
+
+\fi
+
+\end{document}

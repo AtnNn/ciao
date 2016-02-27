@@ -1,0 +1,73 @@
+# -*- mode: Makefile; -*-
+
+include $(SRCDIR)/SHARED-bench
+
+# This section is for the architecture-specific target directory (bench)
+
+CALIBRATORS1_PRFS=$(addsuffix .prf, $(CALIBRATOREX))
+CALIBRATORS1_OTIS=$(addsuffix .oti, $(CALIBRATOREX))
+
+BENCHPRFS=$(addsuffix .prf, $(BENCHSRC))
+
+.PHONY: bench showinfo calib2
+
+.SUFFIXES: .tmpl .pin .prf .cnt .log _l.pl _u.pl _c.pl .oin .oti .pl
+
+VPATH +=:$(COMMONDIR):$(TESTSRCDIR):$(BENCHCOMMONDIR)
+
+# bench:: calib2 $(BENCHPRFS) $(BENCHOTIS)
+
+ifeq ($(PROFILE_EXAMPLES),1)
+BENCHOTIS=$(addsuffix .oti, $(BENCHSRC))
+else
+BENCHOTIS=
+endif
+
+bench:: calib $(BENCHPRFS) $(BENCHOTIS)
+
+calib:: $(CALIBRATORS2_PROF) $(CALIBRATORS2_TIME)
+
+# $(addsuffix .prf, $(CALIBRATORS2_NP))
+
+calib1:: $(CALIBRATORS1_PRFS) $(CALIBRATORS1_OTIS)
+
+%_c.prf %_c.oti: %_c.pl config.pl calibcommon.pl calibs1.pl
+	printf c
+	( echo "consult(config).";echo "consult(calibcommon).";echo "consult(calibs1).";\
+	  echo "consult('`$(CMDPATH) $<`').";echo "gen_measure($*,$*_c).";echo "halt.") | \
+	  $(WAMTESTCMD) > $(LOGFILE)
+
+%_l.pl: %.pl
+	$(RM) $@
+	ln -s $< $@
+
+%_u.pl: %.pl
+	$(RM) $@
+	ln -s $< $@
+
+$(addsuffix .tmpl, $(CALIBRATOREX)): $(CALIBRATOR).tmpl
+	$(RM) $@
+	ln -s $< $@
+
+$(addsuffix .pl, $(CALIBRATOREX)): $(CALIBRATOR).pl
+	$(RM) $@
+	ln -s $< $@
+
+%.prf %.cnt: %.pin %.pl $(WAM)
+	printf p
+	$(WAMTESTCMD) < $< > $(LOGFILE)
+
+%.oti: %.oin %.pl $(WAM)
+	printf o
+	$(WAMTESTCMD) < $< > $(LOGFILE)
+
+showinfo::
+	@echo CURDIR=$(CURDIR)
+	@echo BENCHSRC=$(BENCHSRC)
+	@echo BENCHPRFS=$(BENCHPRFS)
+	@echo VPATH=$(VPATH)
+	@echo CALIBRATOREX=$(CALIBRATOREX)
+	@echo CALIBRATOR=$(CALIBRATOR)
+	@echo BENCHOTIS=$(BENCHOTIS)
+	@echo $(CALIBRATORS2_0) $(CALIBRATORS2_N)
+	echo $(addsuffix .prf, $(CALIBRATOREX))

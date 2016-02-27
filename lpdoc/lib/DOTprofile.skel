@@ -1,0 +1,54 @@
+# --------------------------------------------------------------------
+# Warning: this file has been edited automatically during installation
+# This file is meant for inclusion in user initialization scripts
+# --------------------------------------------------------------------
+#
+# Setting paths for the executables:
+#
+LPDOCBINDIR=binary_directory
+
+if [ ${PATH:-0} = 0 ]
+then
+    PATH=${LPDOCBINDIR} ; export PATH
+else
+    case ${PATH} in
+	${LPDOCBINDIR}:* | *:${LPDOCBINDIR} | *:${LPDOCBINDIR}:* ) ;;
+        * )
+            PATH=${LPDOCBINDIR}:${PATH} ;;
+    esac
+fi
+
+#
+# Setting documentation-related paths:
+#
+# Setting this variable makes the manuals accessible to emacs (via M-x
+# info), the GNU info standalone manuals browser (type info at the
+# command line), the unix man command, etc.
+# 
+LPDOCDOCDIR=documentation_directory
+# Set MANPATH (checking that we do not add it twice)
+if [ ${MANPATH:-0} = 0 ]
+then
+        MANPATH=${LPDOCDOCDIR} ; export MANPATH
+else
+    case ${MANPATH} in
+	${LPDOCDOCDIR}:* | *:${LPDOCDOCDIR} | *:${LPDOCDOCDIR}:* ) ;;
+	* )
+	    MANPATH=${LPDOCDOCDIR}:${MANPATH} ;;
+    esac
+fi
+
+# Set INFOPATH (checking that we do not add it twice)
+if [ ${INFOPATH:-0} = 0 ]
+then
+    INFOPATH=/usr/info:/usr/share/info:/usr/local/info:${LPDOCDOCDIR} ; export INFOPATH
+else
+    case ${INFOPATH} in
+	${LPDOCDOCDIR}:* | *:${LPDOCDOCDIR} | *:${LPDOCDOCDIR}:* ) ;;
+	* )
+	    INFOPATH=${INFOPATH}:${LPDOCDOCDIR} ;;
+    esac
+fi
+# 
+# --------------------------------------------------------------------
+

@@ -1,0 +1,1702 @@
+%\documentstyle[palatino,cmrtt,ph]{book}   % In this order!
+\documentstyle[fullpage]{book}
+\appendix
+\def\chapabbr{Appx.}
+\setcounter{chapter}{0}% for Appendix A
+
+\def\revisiondate{July 1, 1993}
+
+% NEEDED IF YOU DON'T HAVE PH.STY
+\newcommand{\hlyne}{\makebox[\textwidth]{\hrulefill}}
+
+% Revamp the "description" environment in order to use it
+% to document Prolog predicates
+\renewenvironment{description}%
+{\begin{list}{}%
+{\setlength{\parsep}{\parskip}%
+\setlength{\labelwidth}{0pt}%
+\setlength{\labelsep}{\leftmargin}%
+\setlength{\listparindent}{\parindent}%
+%\raggedright%
+}}%
+{\end{list}}
+
+\begin{document}
+\thispagestyle{empty}
+\hyphenation{white-space}
+\begin{center}
+\Huge ISO Prolog:\\
+\LARGE A Summary of the Draft Proposed Standard\\
+~\\
+\Large Michael A.\ Covington\\
+Artificial Intelligence Programs\\
+The University of Georgia\\
+Athens, Georgia 30602--7415 U.S.A.\\
+{\tt mcovingt@ai.uga.edu}\\
+~\\
+Copyright \copyright 1993 Michael A.\ Covington \\
+~\\
+Preprint of Appendix A of:\\
+{\em Prolog Programming in Depth}\\
+by Michael A.\ Covington,
+Donald Nute, and Andr\'e Vellino \\
+(Prentice--Hall, in preparation)\\
+~\\
+\revisiondate
+\end{center}
+\tableofcontents
+\chapter{Summary of Draft ISO Prolog}
+\setcounter{page}{1}  % revise this!
+
+This appendix is a summary of the March 1993 draft ISO standard for the 
+Prolog language, ISO/IEC JTC1 SC22 WG17 N110 (``Prolog: Part 1, General 
+core''). As this is written (June 1993), the proposed standard is still
+subject to change, and standard--conforming Prolog 
+implementations have not yet appeared.%
+\footnote{A rough draft of this appendix was circulated by Internet;
+I want to thank Jan Burse,
+Jo Calder, Klaus Daessler,
+Markus Fromherz, Fergus Henderson, Andreas Kagedal, and
+especially Roger Scowen for pointing out errors.}
+Section \ref{modulesec} summarizes the June 1993 proposal for a module
+system, ISO/IEC JTC1 SC22 WG17 N111 (``Prolog: Part 2, Modules''),
+which is much farther from final form than N110.
+
+The information given here is only a sketch; anyone needing definitive 
+details is urged to consult the ISO documents themselves.
+
+The draft ISO standard does not include definite clause grammars (DCGs),
+nor the Edinburgh file--handling predicates (\verb"see", \verb"seen", 
+\verb"tell", \verb"told", etc.).  Implementors are, however, free to 
+keep these for compatibility, and nothing that conflicts with them has 
+been introduced.
+
+%The March 1993 draft standard does not provide any mechanism for
+%preventing {\sc name conflicts} between like--named predicates in
+%different parts of a program, or user--defined predicates with the same
+%names as built--in ones.  This lack will be remedied by Part 2 of the
+%draft standard, ``Modules,'' which is not yet near final form.
+
+The proposed standard does not presume that you are using the ASCII
+character set.  The numeric codes for characters can be whatever your 
+computer uses.
+
+\section{Syntax of Terms}
+
+\subsection{Comments and Whitespace}
+
+Whitespace (``layout text'') consists of blanks, end--of--line marks,
+and comments.  (Implementations commonly treat tabs and formfeeds
+as equivalent to blanks.)
+
+You can put whitespace before or after any term, operator, bracket, or 
+argument separator, as long as you do not break up an atom or number and 
+do not separate a functor from the opening parenthesis that introduces 
+its argument list.  Thus \verb"f(a,b,c)" can be written
+\verb"f( a , b , c )", but there
+cannot be whitespace between \verb"f" and \verb"(".
+
+Whitespace is sometimes required, e.g., between two graphic tokens.
+For example, \verb.* *. is two occurrences of the atom \verb'*', but
+\verb'**' is one atom.
+
+There are two types of comments. One type
+begins with \verb"/*" and ends with
+\verb"*/"; the other type begins with \verb"%" and ends at the end of 
+the line.  Comments can be of zero length (e.g., \verb"/**/").
+
+It is not possible to nest comments of the same type (for example,
+\verb"/* /* */" is a complete, valid comment).  But a comment of one 
+type can occur in a comment of the other type (\verb"/* % thus */").
+
+{\sc Style note:} Because nesting is not permitted, we
+recommend using \verb"%" for ordinary comments
+and using \verb"/* */" only to comment out sections of code.
+
+\subsection{Variables}
+
+A variable name begins with a capital letter or the underscore mark 
+(\verb"_") and consists of letters, digits, and/or underscores.
+A single underscore mark denotes an anonymous variable.
+
+\subsection{Atoms (Constants)}
+
+There are four types of atoms:
+\begin{itemize}
+\item A series of letters, digits, and/or underscores, beginning with a 
+lower--case letter;
+\item A series of 1 or more characters from the set
+\begin{center}
+\verb"# $ & * + - . / : < = > ? @ ^ ~ \"
+\end{center}
+provided it does not begin with `\verb"/*"'
+(such atoms are called {\sc graphic tokens});
+\item The special atoms \verb"[]" and \verb"{}"
+(see section \ref{lists} below);
+\item A series of arbitrary characters in single quotes.
+\end{itemize}
+
+Within single quotes, a single quote is written double (e.g.,
+\verb"'don''t panic'").
+A backslash at the very end of the line denotes continuation to
+the next line, so that
+\begin{verbatim}
+'this is \
+ an atom'
+\end{verbatim}
+is equivalent to \verb.'this is an atom'.
+(that is, the line break is ignored).
+Note however that when used 
+this way, the backslash must be at the physical end of the line, not 
+followed by blanks or comments.  (In practice, some implementations are 
+going to have to permit blanks because it is hard or impossible to get 
+rid of them.)%
+\footnote{A line break written as such
+cannot be part of the atom; for example,
+\hfill \\
+{\tt 'this and \hfill \\
+that'} \hfill \\
+is not a valid atom.  Instead, use the escape sequence {\tt \char92 n}.
+}
+
+Another use of the backslash within a quoted atom is to
+denote special characters, \label{backsl}
+as follows: \hfill \\
+~\hfill\\
+\begin{tabular}{ll}
+\verb"\a" & alert character (usually the beep code, ASCII 7) \\
+\verb"\b" & backspace character \\
+\verb"\f" & formfeed character \\
+\verb"\n" & newline character or code (implementation dependent) \\
+\verb"\r" & return without newline \\
+\verb"\t" & (horizontal) tab character \\
+\verb"\v" & vertical tab character (if any) \\
+\verb"\x23\" & character whose code is hexadecimal 23 (likewise for any
+number of hex digits) \\
+\verb"\23\" & character whose code is octal 23 (likewise for any 
+number of octal digits) \\
+\verb"\\" & backslash \\
+\verb"\'" & single quote \\
+\verb'\"' & double quote \\
+\verb'\`' & backquote \\
+\end{tabular} \hfill \\
+~\hfill\\
+The last two of these will never be needed in a quoted atom.
+They are used in other types of strings that take these same escape 
+sequences, but are delimited by
+double quotes or backquotes.
+
+
+\subsection{Numbers}
+
+Integers are written in any of the following ways:
+\begin{itemize}
+\item As a series of decimal digits, e.g., \verb"012345";
+\item As a series of octal digits preceded by \verb"0o", e.g., 
+\verb"0o567";
+\item As a series of hexadecimal digits preceded by \verb"0x", e.g., 
+\verb"0x89ABC";
+\item As a series of binary digits preceded by \verb"0b", e.g., 
+\verb"0b10110101";
+\item As a character preceded by \verb"0'", e.g., \verb"0'a", which 
+denotes the numeric code for the character \verb"a".
+(The character is written exactly as if it were in single quotes;
+that is, if it is a single quote it must be written twice, and
+an escape sequence such as \verb.\n. is treated as a single
+character.)
+\end{itemize}
+Floating--point numbers are written only in decimal.  They consist of at 
+least one digit, then (optionally) a decimal point and more digits, then 
+(optionally) \verb"E", an optional plus or minus, and still more digits.
+For example:
+\begin{verbatim}
+234   2.34   2.34E5   2.34E+5   2.34E-10
+\end{verbatim}
+Note that \verb".234" and \verb"2." are not valid numbers.
+
+A minus sign can be written before any number to make it negative
+(e.g., \verb"-3.4").  Notice that this minus sign is part of the number 
+itself; hence \verb"-3.4" is a number, not an expression.
+
+
+\subsection{Character Strings}
+
+The ISO standard provides four ways of representing character--string 
+data:
+\begin{itemize}
+\item As atoms (\verb"'like this'").  Unfortunately, atoms take up space 
+in the symbol table, and some implementations limit the size of each 
+atom, or the total number of atoms, or both.  The standard itself does 
+not recognize any such limits.
+
+\item As lists of one--character atoms (\verb"[l,i,k,e,' ',t,h,i,s]").
+
+\item As Edinburgh--style strings \verb."like this"., where a string is a
+list of numeric codes (e.g., \verb."abc". = \verb"[97,98,99]").
+
+Actually, \verb."abc". = \verb"[97,98,99]"  only on computers that use 
+the ASCII character codes.  But the equivalence \verb."abc". =
+\verb"[0'a,0'b,0'c]" holds on all computers, because \verb"0'a" 
+represents the numeric code for \verb"a".
+
+\item As strings delimited by backquotes (\verb"`like this`") {\em if} 
+the implementor wants to implement them.  No operations are defined on 
+this type of string, and they are not required to be implemented at all.
+\end{itemize}
+As you might guess, these four options reflect considerable disagreement 
+among the standardizers.  For a long time, Edinburgh strings 
+weren't going to be included at all, but they were finally added to the 
+March 1993 draft.
+
+
+The quotes that delimit a string or atom, whichever kind they may be,
+are written double if they occur within
+the string (\verb.'it''s'., \verb'"it""s"', \verb'`it``s`').  Double quoted
+strings and backquoted strings recognize the same backslash escape 
+sequences as are used in quoted atoms (Section \ref{backsl}).
+
+Table \ref{stringtab} shows all the built--in predicates that relate to
+character string operations.  Most perform operations on atoms or lists of
+characters rather than lists of numeric codes.
+
+\begin{table}\raggedright
+\caption{Built--in predicates for character--string operations.}
+\label{stringtab}
+\hlyne
+\begin{description}
+\item[\tt atom\_length(Atom,Integer)] ~\\
+Length (in characters) of \verb"Atom" is \verb"Integer".
+
+\item[\tt atom\_concat(Atom1,Atom2,Atom3)] ~\\
+Concatenating \verb"Atom1" and \verb"Atom2" gives \verb"Atom3".
+(Either \verb"Atom3", or both \verb"Atom1" and \verb"Atom2", must
+be instantiated.)
+
+\item[\tt sub\_atom(Atom,N,L,Sub)] ~\\
+The substring of \verb"Atom" beginning at the \verb"N"th character and
+\verb"L" characters long is \verb"Sub".  (\verb"Atom" must be 
+instantiated.)  A query such as \verb"sub_atom(abcabc,N,L,ab)" produces 
+multiple solutions upon backtracking.
+
+\item[\tt char\_code(Char,Code)] ~\\
+Relates a character (i.e., a one--character atom) to its
+numeric code (ASCII, or whatever the computer uses).
+(Either \verb"Char" or \verb"Code", or both, must be instantiated.)
+
+\item[\tt atom\_chars(Atom,Chars)] ~\\
+Interconverts atoms with lists of the characters that represent them,
+e.g., \verb"atom_chars(abc,[a,b,c])."
+(Either \verb"Atom" or \verb"Chars", or both, must be instantiated.)
+
+\item[\tt atom\_codes(Atom,String)] ~\\
+Like \verb"atom_chars", but uses a list of numeric codes, i.e.,
+a string.
+
+\item[\tt number\_chars(Num,Chars)] ~\\
+Interconverts numbers with lists of the characters that represent them,
+e.g., \verb"number_chars(23.4,['2','3','.','4'])".
+(Either \verb"Num" or \verb"Chars", or both, must be instantiated.)
+
+\item[\tt number\_codes(Num,String)] ~\\
+Like \verb"number_chars", but uses a list of numeric codes,
+i.e., a string.
+\end{description}
+{\footnotesize These predicates raise error conditions if an argument is
+the wrong type. Note that {\tt name/2} is not included in
+the standard.} \hfill \\
+\hlyne
+\end{table}
+
+
+\subsection{Structures}
+
+The ordinary way to write a structure is to write the functor, an
+opening parenthesis, a series of terms separated by commas, and a
+closing parenthesis: \verb"f(a,b,c)".  We call this {\sc functor
+notation,} and it can be used even with functors that are normally
+written as operators (e.g., \verb.2+2. = \verb.+(2,2).).
+
+Lists are defined as rightward--nested
+structures using the operator `\verb"."'
+(which is not an infix operator).  For example, \label{lists}
+\begin{flushleft}
+\verb"[a]        =  .(a, [])"  \smallskip \\
+\verb"[a, b]     =  .(a, .(b, []))"  \smallskip \\
+\verb"[a, b | c] =  .(a, .(b, c))"
+\end{flushleft}
+There can be only one \verb"|" in a list, and no commas after it.
+
+Curly brackets have a special syntax that is used in implementing 
+definite clause grammars, but can also be used for other purposes.
+Any term enclosed in \verb"{ }" is treated as the
+argument of the special functor `\verb"{}"':
+\begin{verbatim}
+{one}  =  {}(one)
+\end{verbatim}
+Recall that commas can act as infix operators; thus,
+\begin{verbatim}
+{one,two,three} = {}(','(one,','(two,three)))
+\end{verbatim}
+and likewise for any number of terms.
+
+The standard does not include definite clause grammars, but does include 
+this syntactic ``hook'' for implementing them.  You are, of course, free 
+to use curly brackets for any other purpose.
+
+
+\subsection{Operators}
+
+\label{op2section}
+The predefined operators of Draft ISO Prolog are shown in Table \ref{optable}.
+\begin{table}\raggedright
+\caption{Predefined operators of Draft ISO Prolog.}\label{optable}
+\hlyne \\
+\begin{tabular}{rrl}
+%\hline
+\em Priority & \em Specifier & \em Operators \\
+1200 & \verb"xfx" & \verb":-  -->" \\
+1200 & \verb"fx"  & \verb":-  ?-"\\
+1100 & \verb"xfy" & \verb";"\\
+1050 & \verb"xfy" & \verb"->"\\
+1000 & \verb"xfy" & \verb","\\
+700  & \verb"xfx" & \verb"= \= == \== @< @=< @> @>= is =:= =\= < =< > >= =.."\\
+500  & \verb"yfx" & \verb"+   -    /\   \/"\\
+400  & \verb"yfx" & \verb"*   /    //   rem  mod  <<  >>"\\
+200  & \verb"xfx" & \verb"**"\\
+200  & \verb"xfy" & \verb"^"\\
+200  & \verb"fy"  & \verb"\   -"\\
+100  & \verb"xfx" & \verb"@"\\
+50   & \verb"xfx" & \verb":"\\
+%\hline
+\end{tabular}  \hfill \medskip \\
+{\footnotesize Many of the standardizers want to add
+\verb"\+", presumably with priority 900 and specifier
+\verb"fy".} \hfill \\
+\hlyne
+\end{table}
+The meanings of the operators will be explained elsewhere in this 
+appendix as they come up; \verb"@" and \verb":" are to be used in the 
+module system (Part 2 of the draft, not yet released).
+Some operators, such as \verb"?-" and \verb"-->",
+are not given a meaning in the
+standard, but are preserved for compatibility reasons.
+
+The {\sc specifier} of an operator, such as \verb"xfy", gives both its
+{\sc class} (infix, prefix, or postfix) and its {\sc associativity}.
+Associativity determines what happens if there are two infix operators of
+equal priority on either side of an argument.
+For
+example, in \verb"2+3+4", \verb"3" could be an argument of either the
+first or the second \verb"+", and the associativity
+\verb"yfx" specifies that the grouping on the left should be formed 
+first, treating \verb"2+3+4" as equivalent to \verb"(2+3)+4".
+The Prolog system parses an expression by attaching operators to their
+arguments, starting with the operators of the lowest priority, thus:
+\begin{flushleft}
+\verb"2 + 3 * 4 =:= X     " (original expression) \\
+\verb"2 + *(3,4) =:= X    " (after attaching \verb"*", priority 400) \\
+\verb"+(2,*(3,4)) =:= X   " (after attaching \verb"+", priority 500) \\
+\verb"=:=(+(2,*(3,4)),X)  " (after attaching \verb"=:=", priority 700)
+\end{flushleft}
+Terms that are not operators are considered to have priority 0.
+
+The same atom can be an operator in more than one class (such as the 
+infix and prefix minus signs).  To avoid the need for unlimited 
+lookahead when parsing, the same atom cannot be both an infix operator 
+and a postfix operator.
+
+\subsection{Commas}
+
+The comma has three functions: it separates arguments of functors, it 
+separates elements of lists, and it is an infix operator of priority 
+1000.  Thus \verb"(a,b)" (without a functor in front) is a structure, 
+equivalent to \verb"','(a,b)".
+
+\subsection{Parentheses}
+
+Parentheses are allowed around any term.  The
+effect of parentheses is to override any grouping that may otherwise be 
+imposed by operator priorities.  Operators enclosed in parentheses do 
+not function as operators; thus \verb"2(+)2" is a syntax error.
+
+\section{Program Structure}
+
+\subsection{Programs}
+
+The draft standard does not define ``programs'' per se, because Prolog
+is not a (wholly) procedural language.  Rather, the standard defines
+{\sc Prolog text,} which consists of a series of clauses and/or
+directives, each followed by `\verb"."' and then whitespace.
+
+The standard does not define \verb"consult" or \verb"reconsult"; 
+instead, the mechanism for loading and querying a Prolog text 
+is left up to the implementor.
+
+\subsection{Directives}
+
+The draft standard defines 
+the following set of directives, which is somewhat tentative:
+\begin{description}
+\item[\tt :- dynamic(Pred/Arity).] ~\\
+The specified predicate is to be dynamic (modifiable at run time).
+(See also section \ref{modulesec}.)
+
+\item[\tt:- multifile(Pred/Arity).] ~\\
+The specified predicate can contain
+clauses loaded from more than one file.
+(The \verb"multifile" declaration must appear in each of the files, and 
+if the predicate is declared dynamic in any of the files, it must be 
+declared dynamic in all of them.)
+
+\item[\tt:- discontiguous(Pred/Arity).] ~\\
+The clauses of the specified predicate are not necessarily
+together in the file.
+(If this declaration is not given, the clauses of each predicate
+are required to be contiguous.)
+
+\item[\tt :- op(Priority,Associativity,Atom).] ~\\
+The atom is to be treated syntactically as
+an operator with the specified priority and
+associativity (e.g., \verb"xfy").
+
+\label{op1section}
+{\sc Caution:} An \verb"op" directive in the program file affects the 
+syntax while the program is being loaded; the standard does not require 
+that its effect persist after the loading is complete.
+Traditionally, an \verb"op" declaration permanently
+changes the syntax used by the Prolog system (until the end of the 
+session), thus affecting all further \verb"read"s, \verb"write"s, and 
+\verb"consult"s; the standard permits but does not require this 
+behavior.  See also section \ref{modulesec}.
+
+However, \verb"op" can also be called as a built--in predicate while the 
+program is running, thereby determining how \verb"read" and
+\verb"write" will behave at run time.
+
+An operator can be deprived of its operator status by
+declaring it to have priority 0 (in which case its class and
+associativity have no effect, but must still be declared as
+valid values).
+
+\item[\tt:- char\_conversion(Char1,Char2).] ~\\
+This specifies that if character conversion is enabled (see ``Flags,''
+Section \ref{Flagsection}),
+all occurrences of \verb"Char1" that are not in quotes
+should be read as \verb"Char2".  Note that, to avoid painting yourself
+into a corner, you should normally put the arguments of \verb"char_conversion"
+in quotes so that they won't be subject to conversion.
+\label{charsection}
+
+The situation with \verb"char_conversion" is analogous to \verb"op" --- 
+the standard does not require its effect to persist after the program 
+finishes loading.  However, you can also call \verb"char_conversion" as 
+a built--in predicate at execution time, to determine how characters 
+will be converted at run time.
+
+\item[\tt :- initialization(Goal).] ~\\
+This specifies that as soon as the program is loaded, the goal \verb"Goal" is
+to be executed.  There can be more than one \verb"initialization" 
+directive, in which case all of the goals in all of them are to be 
+executed, in an order that is up to the implementor.
+
+\item[\tt :- include(File).] ~\\
+Specifies that another file is to be read at this point exactly as if 
+its contents were in the main file.  (Apparently, a predicate split 
+across two files using \verb"include" does not require a \verb"multifile"
+declaration, since the loading is all done at once.)
+
+\item[\tt :- ensure\_loaded(File).] ~\\
+Specifies that in addition to the main file, the specified file is to be 
+loaded.  If there are multiple \verb"ensure_loaded" directives referring
+to the same file, it is only loaded once.
+
+\end{description}
+Note that {\em directives are not queries} --- the standard does not say
+you can embed arbitrary queries in your program, nor that you can 
+execute directives as queries at run time (except for \verb"op" and
+\verb"char_conversion", which are, explicitly, also built--in 
+predicates).  Traditionally, 
+directives have been treated as a kind of query, but the standard, with 
+advancing compiler technology in mind, does not require them to be.
+
+\section{Control Structures}
+
+\subsection{Conjunction, disjunction, {\tt fail}, and {\tt true}}
+
+As in virtually all Prologs, the comma (\verb",") means ``and,'' the 
+semicolon (\verb";") means ``or,'' \verb"fail" always fails, and 
+\verb"true" always succeeds with no other action.
+
+
+\subsection{Cuts}
+
+The cut (\verb"!") works in the traditional way.  When executed, it 
+succeeds and throws away all backtrack points between itself and its 
+{\sc cutparent}.  Normally, the cutparent is the query that caused 
+execution to enter the current clause.  However, if the cut is in an
+environment that is {\sc opaque to cuts,} the cutparent is the beginning 
+of that environment.  Examples of environments that are opaque to cuts 
+are:
+\begin{itemize}
+\item
+The argument of the negation predicate (\verb"fail_if", traditionally
+written \verb"not" or \verb"\+").
+\item
+The argument of \verb"call",
+which can of course be a compound goal, such as
+\verb"call((this,!,that))".
+\item
+The left--hand argument of `\verb"->"' (see below).
+\item
+The goals that are arguments of \verb.once., \verb"catch", \verb.findall.,
+\verb.bagof., and \verb.setof. (and, in general, any other
+goals that are arguments of predicates).
+\end{itemize}
+
+\subsection{If--then--else}
+
+The ``if--then--else'' construct (\verb"Goal1 -> Goal2 ; Goal3") tries 
+to execute \verb"Goal1", and, if successful, proceeds to \verb"Goal2"; 
+otherwise, it proceeds to \verb"Goal3".  The semicolon and \verb"Goal3" 
+can be omitted.  Note that:
+\begin{itemize}
+\item Only the first solution to \verb"Goal1" is found; any backtrack 
+points generated while executing \verb"Goal1" are thrown away.
+
+\item If \verb"Goal1" succeeds, execution proceeds to \verb"Goal2", and 
+then:
+\begin{itemize}
+\item If \verb"Goal2" fails, the whole construct fails.
+\item If \verb"Goal2" succeeds, the whole construct succeeds.
+\item If \verb"Goal2" has multiple solutions, the whole construct has 
+multiple solutions.
+\end{itemize}
+
+\item If \verb"Goal1" fails, execution proceeds to \verb"Goal3", and 
+then:
+\begin{itemize}
+\item If \verb"Goal3" fails, the whole construct fails.
+\item If \verb"Goal3" succeeds, the whole construct succeeds.
+\item If \verb"Goal3" has multiple solutions, the whole construct has
+multiple solutions.
+\end{itemize}
+
+\item If \verb"Goal1" fails and there is no \verb"Goal3", the whole 
+construct fails.
+
+\item Either \verb"Goal2" or \verb"Goal3" will be executed, but not both 
+(not even upon backtracking).
+
+\item If \verb"Goal1" contains a cut, that cut only has scope over 
+\verb"Goal1", not the whole clause.  That is, \verb"Goal1" is opaque to 
+cuts.
+
+\item The whole if--then--else structure has multiple solutions if
+\verb"Goal1" succeeds and \verb"Goal2" has multiple solutions,
+or if \verb"Goal1" fails and \verb"Goal3" has multiple solutions.
+That is, backtrack points in \verb"Goal2" and \verb"Goal3" behave 
+normally.
+\item Cuts in \verb"Goal2" and \verb"Goal3" have scope over the entire 
+clause (i.e., behave normally).
+\end{itemize}
+Note that the semicolon in \verb"Goal1 -> Goal2 ; Goal3" is not
+the ordinary disjunction operator; if it were, you would be able to
+get solutions to
+\verb"Goal1 -> Goal2" and then, upon backtracking, also get
+solutions to \verb"Goal3".  But this never happens.
+Rather,
+\verb"->" and \verb";" have
+to be interpreted as a unit.
+
+{\sc Style note:} We do not recommend mixing cuts with if--then or 
+if--then--else structures.
+
+
+\subsection{Variable goals, {\tt call}}
+
+Variables can be used as goals.  A term \verb"G" which is a variable
+occurring in place of a goal is converted to the goal
+\verb"call(G)".  Note that \verb"call" is opaque to cuts.
+
+
+\subsection{{\tt repeat}}
+
+The predicate \verb"repeat" works in the traditional way, i.e., whenever 
+backtracking reaches it, execution proceeds forward again through the 
+same clauses as if another alternative had been found.
+
+\subsection{{\tt once}}
+
+The query \verb"once(Goal)" finds exactly one solution to \verb"Goal".
+It is equivalent to \verb"call((Goal,!))" and is opaque to cuts.
+
+\subsection{Negation ({\tt fail\_if})}
+
+The negation predicate is called \verb"fail_if"
+and is opaque to cuts.  That is,
+\verb"fail_if(Goal)" is like \verb"call(Goal)" except that its success 
+or failure is the opposite.  Note that \verb"fail_if" is not an 
+operator, and that extra parentheses are required around compound goals
+(e.g., \verb"fail_if((this,that))").
+
+As this is written (mid--1993), there is strong sentiment in favor of
+reintroducing \verb"\+" into the standard as a prefix operator with the
+same meaning as \verb"fail_if".
+
+
+\section{Error Handling}
+
+\subsection{{\tt catch} and {\tt throw}}
+
+The control structures \verb"catch" and \verb"throw" are provided for 
+handling errors and other explicitly programmed exceptions.
+They make it possible to jump out of multiple levels of
+procedure calls in a single step.
+
+The query \verb"catch(Goal1,Arg,Goal2)" is like
+\verb"call(Goal1)" except that if, at any stage during the execution of
+\verb"Goal1", there is a call to \verb"throw(Arg)", then execution will 
+immediately jump back to the \verb"catch" and proceed to \verb"Goal2".
+Here \verb"Arg" can be a variable or only partly instantiated; the only 
+requirement is that the \verb"Arg" in the \verb"catch" must match the 
+one in the \verb"throw".  Thus, \verb"Arg" can include information to
+tell \verb"catch" what happened.
+
+In \verb"catch", \verb"Goal1" and \verb"Goal2" are opaque to cuts.
+
+
+\subsection{Errors detected by the system}
+
+When the system detects a runtime error, it executes a 
+\verb"throw(error(Type,Info))", where \verb"Type" is the type of error 
+and \verb"Info" contains other information that is up to the 
+implementor.
+
+If the user's program has executed a matching \verb"catch", execution 
+jumps back to there; otherwise, the system prints out an error message 
+and stops.  Thus, you can use \verb"catch" to catch system--detected 
+errors, not just your own calls to \verb"throw".
+
+The possible values of \verb"Type" are:
+\begin{description}
+\item[{\tt instantiation\_error}] ~\\
+An argument was uninstantiated in a place where uninstantiated arguments 
+are not permitted.
+
+\item[{\tt type\_error(Type,Term)}] ~\\
+An argument should have been of type \verb"Type" ({\tt atom}, {\tt body}
+(of clause), {\tt callable} (goal), {\tt character}, {\tt compound} (= 
+structure), {\tt constant}, {\tt integer}, {\tt list}, {\tt number}, or 
+{\tt variable}), but \verb"Term" is what was actually found.
+
+\item[{\tt domain\_error(Domain,Term)}] ~\\
+Like \verb"type_error", except that a {\sc domain} is a set of possible 
+values, rather than a basic data type.  Examples are 
+\verb"character_list" and \verb"stream_or_alias".
+Again, \verb"Term" is the argument that caused the error.
+
+\item[{\tt existence\_error(ObjType,Term)}] ~\\
+Something does not exist that is necessary for what the program is 
+trying to do.  Examples are {\tt operator}, {\tt procedure}, and
+{\tt past\_end\_of\_stream}
+(when you read past the end of a file).
+Here, again, \verb"Term" is the argument that caused the error.
+
+\item[{\tt permission\_error(Operation,ObjType,Term)}] ~\\
+The program attempted something that is not permissible (such as 
+repositioning a non--repositionable file).  \verb"Term" and 
+\verb"ObjType" are as in the previous example, and \verb"Operation" is 
+{\tt access\_clause}, {\tt create}, {\tt input}, {\tt modify}, or the 
+like.
+
+\item[{\tt representation\_error(ErrorType)}] ~\\
+An implementation--defined limit has been violated, for example by 
+trying to handle \verb"'ab'" as a single character.
+Values of \verb"ErrorType" are {\tt character}, {\tt character\_code},
+{\tt exceeded\_max\_arity}, and {\tt flag}.
+
+\item[{\tt calculation\_error(ErrorType)}] ~\\
+An arithmetic error has occurred.  Types are {\tt overflow},
+{\tt underflow}, {\tt zero\_divide}, and {\tt undefined}.
+
+\item[{\tt resource\_error(Resource)}] ~\\
+The system has run out of some resource (such as memory or disk space).
+
+\item[{\tt syntax\_error}] ~\\
+The system has attempted to read a term that violates Prolog syntax.
+This can occur during program loading, or at run time (executing
+\verb"read" or \verb"read_term").
+
+\item[{\tt system\_error}] ~\\
+This is the catch--all category for other implementation--dependent 
+errors.
+\end{description}
+For further details see the latest ISO documents.
+
+\section{Flags}
+\label{Flagsection}
+
+A {\sc flag} is a parameter of the implementation that the program may
+need to know about.
+The built--in predicates \verb"current_prolog_flag(Flag,Value)"
+and \verb"set_prolog_flag(Flag,Value)" allow the program to obtain and, 
+where applicable, change the values of flags.
+
+Table \ref{flagtable} lists the flags defined in the draft standard.
+Any specific implementation is likely to have many more.
+
+\begin{table}\raggedright
+\caption{Flags defined in the Draft ISO Prolog Standard.}\label{flagtable}
+\hlyne \\
+\begin{description}
+\item[\rm {\tt bounded} ({\tt true} or {\tt false})] ~\\
+True if integer arithmetic gives erroneous results outside a particular 
+range (as when you add $32767 + 1$ on a 16--bit computer and get 
+$-32768$).  False if the range of available integers is unlimited
+(as with Lisp ``bignums'').
+
+\item[\rm {\tt max\_integer} (an integer)] ~ \\
+The greatest integer on which arithmetic works correctly.
+Defined only if \verb"bounded" is true.
+
+\item[\rm {\tt min\_integer} (an integer)] ~ \\
+The least integer on which arithmetic works correctly.
+Defined only if \verb"bounded" is true.
+
+\item[\rm {\tt integer\_rounding\_function} ({\tt down}
+or {\tt toward\_zero})] ~\\
+The direction in which negative numbers are rounded by \verb"//" and
+\verb"rem".
+
+\item[\rm {\tt char\_conversion} ({\tt on} or {\tt off})] ~\\
+Controls whether character conversion is enabled. \label{charconv1}
+Can be set by the program.
+
+\item[\rm {\tt debug} ({\tt on} or {\tt off})] ~ \\
+Controls whether the debugger is in use (if so, various predicates may behave
+nonstandardly).  Can be set by the program.
+
+\item[\rm {\tt max\_arity} (an integer or {\tt unbounded})] ~\\
+The maximum permissible arity for functors.
+
+\item[\rm {\tt undefined\_predicate} ({\tt error}, {\tt fail}, or
+{\tt warning})] ~\\
+Controls what happens if an undefined predicate is called.
+Can be set by the program.
+\end{description}
+\hlyne
+\end{table}
+
+\section{Arithmetic} \label{arithsection}
+
+\subsection{Where expressions are evaluated}
+
+Arithmetic expressions are evaluated in the following contexts:
+\begin{itemize}
+\item The right--hand argument of \verb"is" (e.g., \verb"X is 2+3").
+\item Both arguments of the comparison predicates
+\verb"=:= =\= < > =< >=".
+\end{itemize}
+
+\subsection{Functors allowed in expressions}
+
+The {\sc evaluable functors} that are permitted in expressions are 
+listed in Table \ref{Evaltable}.
+
+\begin{table}\raggedright
+\caption{Functors that can be used in arithmetic 
+expressions.}\label{Evaltable}
+\hlyne
+\begin{flushleft}
+\begin{tabular}{ll}
+\verb"N + N" & Addition \\
+\verb"N - N" & Subtraction \\
+\verb"N * N" & Multiplication \\
+\verb"N / N" & Floating--point division \\
+\verb"I // I" & Integer division\\
+\verb"I rem I" & Remainder \\
+\verb"I mod I" & Modulo \\
+\verb"N ** N" & Exponentiation (result is floating--point) \\
+\verb"-N" & Sign reversal \\
+\verb"abs(N)" & Absolute value\\
+\verb"atan(N)" & Arctangent (in radians)\\
+\verb"ceiling(N)" & Smallest integer not smaller than \verb"N" \\
+\verb"cos(N)" & Cosine (argument in radians)\\
+\verb"exp(N)" & Natural antilogarithm, $e^N$\\
+\verb"sqrt(N)" & Square root \\
+\verb"sign(N)" & Sign (-1, 0, or 1 for negative, zero, or positive \verb"N")\\
+%\verb"float_truncate(X,I)" & Truncate \verb"X" to \verb"I" significant digits ***? binary???*** \\
+%\verb"float_round(X,I)" & Round \verb"X" to \verb"I" significant digits ***?\\
+%\verb"float_integer_part(X)" & Integer part of \verb"X" (result is floating--point) \\
+%\verb"float_fractional_part(X)" & Fractional part of \verb"X" \\
+\verb"float(N)" & Convert to floating--point \\
+\verb"floor(X)" & Largest integer not greater than \verb"X" \\
+\verb"log(N)" & Natural logarithm, $\log_e N$ \\
+\verb"sin(N)" & Sine (argument in radians) \\
+\verb"truncate(X)" & Integer equal to the integer part of \verb"X" \\
+\verb"round(X)" & Integer nearest to \verb"X" \\
+\verb"I >> J" & Bit--shift \verb"I" rightward \verb"J" bits \\
+\verb"I << J" & Bit--shift \verb"I" leftward \verb"J" bits \\
+\verb"I /\ J" & Bitwise {\bf and} function \\
+\verb"I \/ J" & Bitwise {\bf or} function \\
+\verb"\ I" & Bitwise complement (reverse all bits of \verb"I") \\
+\end{tabular}
+\end{flushleft}
+{\footnotesize Here \verb"I" and \verb"J" denote integers,
+\verb"X" denotes floating--point numbers,
+and \verb"N" denotes numbers of either type.} \hfill \\
+\hlyne
+\end{table}
+
+%Note that \verb"**" is undefined if the
+% first argument is negative and the second arg. is not an integer.
+%
+The arithmetic system of the draft ISO standard is based on other ISO
+standards for computer arithmetic; see the draft standard itself for
+full details.  The draft Prolog standard requires all arithmetical
+operations to give computationally reasonable results or raise error
+conditions.
+
+\section{Input and Output}
+
+\subsection{Overview}
+
+Except for \verb"read", \verb"write", \verb"writeq", and \verb"nl",
+the traditional Edinburgh
+input--output predicates are not included in the standard.  Instead, a 
+new, very versatile i--o system is proposed.  Here is a simple example 
+of file output:
+\begin{verbatim}
+test :- open('/usr/mcovingt/myfile.txt',write,MyStream,[type(text)]),
+        write_term(MyStream,'Hello, world',[quoted(true)]),
+        close(MyStream,[force(false)]).
+\end{verbatim}
+Notice that each input--output operation can name a {\sc stream} (an 
+open file) and can give an {\sc option list}.
+To take the defaults, the option lists can be empty, and in some cases
+even omitted:
+\begin{verbatim}
+test :- open('/usr/mcovingt/myfile.txt',write,MyStream,[]),
+        write_term(MyStream,'Hello, world',[]),
+        close(MyStream).
+\end{verbatim}
+
+\subsection{Opening a stream}
+
+A {\sc stream} is an open file (or other file--like object)
+that can be read or written sequentially.
+You can refer to a stream either by its {\sc handle} (an 
+implementation--dependent term that gets instantiated when you open 
+the stream) or its {\sc alias} (a name that you give to the stream).
+
+By default, the streams \verb"user_input" and \verb"user_output" are 
+already open, referring to the keyboard and the screen respectively,
+and are the current input and output streams.  But current input and 
+output can be redirected.
+
+To open a stream, use the predicate
+\verb"open(Filename,Mode,Stream,Options)", where:
+\begin{itemize}
+\item
+\verb"Filename" is an implementation--dependent file designator 
+(normally a Prolog atom);
+
+\item
+\verb"Mode" is \verb"read", \verb"write", or \verb"append";
+
+\item
+\verb"Stream" is a variable that will be instantiated to an 
+implementation--dependent ``handle'';
+
+\item
+\verb"Options" is an option list, possibly empty.
+\end{itemize}
+The contents of the option list can include:
+\begin{itemize}
+\item
+\verb"type(text)" (the default) or \verb"type(binary)".
+A text file consists of printable characters arranged into lines;
+a binary file contains any data whatsoever, and is read byte by byte.
+\item
+\verb"reposition(true)" or \verb"reposition(false)" (the default).
+A repositionable stream (e.g., a disk file) is one in which it is 
+possible to skip forward or backward to specific positions.
+\item
+\verb"alias(Atom)" to give the stream a name.
+For example, if you specify \verb"alias(accounts_receivable)", you can 
+write \verb"accounts_receivable" as the \verb"Stream" argument of 
+subsequent operations on this stream.
+\item
+A specification of what to do upon repeated attempts to read past end of 
+file:
+\begin{itemize}
+\item \verb"eof_action(error)" to raise an error condition;
+\item \verb"eof_action(eof_code)" to make each attempt return the same 
+code that the first one did (e.g., \verb"-1" or \verb"end_of_file"); or
+\item \verb"eof_action(reset)", to examine the file again and see if it 
+is now possible to read past what used to be the end (e.g., because of 
+data written by another concurrent process).
+\end{itemize}
+Rather surprisingly, the draft standard specifies no default for this 
+option.
+\end{itemize}
+Implementors are free to add other options.
+
+\subsection{Closing a stream}
+
+The predicate \verb"close(Stream,Options)" closes a stream.
+It can be written \verb"close(Stream)" if the option list is empty.
+
+The option list can include \verb"force(false)" (the default) or 
+\verb"force(true)"; the latter of these says that if there is an error 
+upon closing the stream (e.g., a diskette not in the drive), the system 
+shall assume that the stream was successfully closed anyway, without 
+raising an error condition.
+
+\subsection{Stream properties}
+
+The predicate \verb"stream_property(Stream,Property)" lets you determine
+the properties of any currently open stream, like this:
+\begin{verbatim}
+?- stream_property(user_input,mode(What)).
+What = read
+\end{verbatim}
+Properties include the following:
+\begin{itemize}
+\item
+\verb"file_name("{\rm ...}\verb")", the file name;
+\item
+\verb"mode(M)", where \verb"M" is \verb"input" or \verb"output";
+\item
+\verb"alias(A)", where \verb"A" is the stream's alias, if any;
+\item
+\verb"position(P)", where \verb"P" is an implementation--dependent term 
+giving the current position of the stream;
+\item
+\verb"end_of_stream(E)", where \verb"E" is \verb"at", \verb"past", or 
+\verb"no", to indicate whether reading has just reached end of file,
+has gone past it, or has not reached it.
+\item
+\verb"eof_action(A)", where \verb"A" is as in the options for 
+\verb"open".
+\item
+\verb"reposition(B)", where \verb"B" is \verb"true" or \verb"false" to 
+indicate repositionability.
+\item
+\verb"type(T)", where \verb"T" is \verb"text" or \verb"binary".
+\end{itemize}
+Implementations are free to define other properties.
+
+\subsection{Reading and writing characters}
+
+Table \ref{readchartab} summarizes the input--output predicates that 
+deal with single characters.  They are usable on both text and binary 
+files; on a binary file, they treat bytes as characters.
+
+\begin{table}\raggedright
+\caption{Single--character input and output predicates.}\label{readchartab}
+\hlyne
+\begin{description}
+\item[\tt get\_char(Stream,Char)] ~\\
+Reads a character (as a one--character atom).
+Returns {\tt end\_of\_file} at end of file.
+
+\item[\tt get\_char(Char)] ~\\
+Same, using the current input stream.
+
+\item[\tt get\_code(Stream,Code)] ~\\
+Reads a byte as a numeric code.
+Returns {\tt -1} at end of file.
+
+\item[\tt get\_code(Code)] ~\\
+Same, using the current input stream.
+
+\item[\tt put\_char(Stream,Char)] ~\\
+Writes \verb"Char", which must be a one--character atom.
+(Equivalent to \verb"write(Char)", but presumably faster.)
+
+\item[\tt put\_char(Char)] ~\\
+Same, using the current output stream.
+
+\item[\tt put\_code(Stream,Code)] ~\\
+Writes a byte given its numeric value.
+
+\item[\tt put\_code(Code)] ~\\
+Same, using the current output stream.
+\end{description}
+\hlyne
+\end{table}
+
+The standard {\em does not specify whether keyboard input is buffered or 
+unbuffered;} that is considered to be an implementation--dependent 
+matter.
+
+\subsection{Reading terms}
+
+\begin{table}\raggedright
+\caption{Predicates for reading terms.}\label{readtermtab}
+\hlyne
+\begin{description}
+\item[\tt read\_term(Stream,Term,Options)] ~\\
+Reads a term from \verb"Stream" using options in list.
+
+\item[\tt read\_term(Term,Options)] ~\\
+Same, using current input stream.
+
+\item[\tt read(Stream,Term)] ~\\
+Like \verb"read_term(Stream,Term,[])".
+
+\item[\tt read(Term)] ~\\
+Like \verb"read_term(Term,[])".
+\end{description}
+{\footnotesize All of these return the atom {\tt end\_of\_file} at end 
+of file.} \hfill \\
+\hlyne
+\end{table}
+
+Table \ref{readtermtab} shows the predicates for reading terms.
+Each of them reads a term from a text stream; the term must be followed 
+by a period and then by whitespace, and must conform to Prolog syntax.
+
+A new feature in the draft standard gives you some access to the 
+variables in the input.  Traditionally, if you \verb"read" a term with 
+variables in it, such as \verb"f(X,Y,X)", then you get a term in which 
+the relative positions of the variables are preserved, but the names are 
+not, such as \verb"f(_0001,_0002,_0001)".
+
+Now, however, by specifying the option \verb"variable_names(List)", you
+can also get a list that pairs up the variables with their names, like 
+this:
+\begin{flushleft}
+\verb"?- read_term(Term,[variable_names(Vars)])."\\
+\verb"f(X,Y,X). " {\em (typed by user)}\\
+\verb"Term = f(_0001,_0002,_0001)"\\
+\verb"Vars = [_0001='X',_0002='Y']"
+\end{flushleft}
+The import of this is that it lets you write your own user interface for 
+the Prolog system (or any Prolog--like query processor).
+You can accept a query, store a list that gives the
+names of its variables, and then eventually print out the names 
+alongside the values.
+
+There are also two less elaborate options.  The option
+\verb"singletons(List)" gives you a list, in the same format,
+of just the variables that
+occurred only once in the term --- useful if you're reading Prolog 
+clauses and want to detect misspelled variable names.  And 
+\verb"variables(List)" gives you a list of just the variables, without 
+their names (such as \verb"[_0001,_0002]").
+
+
+\subsection{Writing terms}
+
+\begin{table}\raggedright
+\caption{Predicates for writing terms.}\label{writetermtab}
+\hlyne
+\begin{description}
+\item[\tt write\_term(Stream,Term,Options)] ~\\
+Outputs a term onto a text stream using the option list.
+
+\item[\tt write\_term(Term,Options)] ~\\
+Same, using the current output stream.
+
+\item[\tt write(Stream,Term)] ~\\
+Like \verb"write_term(Stream,Term,[numbervars(true)]".
+
+\item[\tt write(Term)] ~\\
+Same, using the current output stream.
+
+\item[\tt write\_canonical(Stream,Term)] ~\\
+Like \verb"write_term" with the options {\tt [quoted(true), 
+ignore\_ops(true)]}.
+
+\item[\tt write\_canonical(Term)] ~\\
+Same, using current output stream.
+
+\item[\tt writeq(Stream,Term)] ~\\
+Like \verb"write_term" with the options {\tt [quoted(true), 
+numbervars(true)]}.
+
+\item[\tt writeq(Term)] ~\\
+Same, using current output stream.
+\end{description}
+\hlyne
+\end{table}
+
+Table \ref{writetermtab} lists the predicates for writing terms.
+The following options are available:
+\begin{itemize}
+\item
+\verb"quoted(true)" puts quotes around all atoms and functors that would 
+require them in order to be read by \verb"read/1".
+\item
+\verb"ignore_ops(true)" writes all functors in functor notation, not as 
+operators (e.g., \verb"+(2,2)" in place of \verb"2+2").
+\item
+\verb"numbervars(true)" looks for terms of the form \verb"'$VAR'(1)",
+\verb"'$VAR'(2)", \verb"'$VAR'(3)", etc., and outputs them as \verb"A", 
+\verb"B", etc.
+
+The significance of this is that \verb"'$VAR'"--terms are often used to 
+replace variables when there is a need to instantiate all the variables 
+in a term.  By printing the term out with this option, its variables can 
+be made to look like variables again.
+\end{itemize}
+
+\subsection{Other input--output predicates}
+
+Table \ref{miscio} lists some additional input--output predicates.
+
+\begin{table}\raggedright
+\caption{Miscellaneous input--output predicates.}\label{miscio}
+\hlyne
+\begin{description}
+\item[\tt current\_input(Stream)] ~\\ Unifies \verb"Stream" with the handle of
+the current input stream.
+
+\item[\tt current\_output(Stream)] ~\\ Unifies \verb"Stream" with the handle of
+the current output stream.
+
+\item[\tt set\_input(Stream)] ~\\ Redirects current input to \verb"Stream".
+
+\item[\tt set\_output(Stream)] ~\\ Redirects current output to \verb"Stream".
+
+\item[\tt flush\_output(Stream)] ~\\ Causes all output that is buffered for \verb"Stream"
+to actually be written.
+
+\item[\tt flush\_output] ~\\ Same, but uses current output stream.
+
+\item[\tt at\_end\_of\_stream(Stream)] ~\\ True if the stream is at or past end of file
+(i.e., the last character or term has been read).  (Presumably, a
+\verb"read" or \verb"read_term" consumes all the whitespace following
+the term that it has read; but the standard does not make this clear.)
+
+\item[\tt set\_stream\_position(Stream,Pos)] ~\\ Repositions a stream
+(use \verb"stream_property" to obtain a term that represents a position).
+
+\item[\tt nl(Stream)] ~\\ Starts a new line on \verb"Stream" (which should be
+text).
+
+\item[\tt nl] ~\\ Same, using current output stream.
+
+\item[\tt op(Priority,Specifier,Term)] ~\\ Alters the set of operators during
+execution.  See sections \ref{op2section}, \ref{op1section}.
+
+\item[\tt current\_op(Priority,Specifier,Term)] ~\\ Determines the
+operator definitions that are currently in effect.  Any of the 
+arguments, or none, can be instantiated.  Gives multiple solutions upon 
+backtracking as appropriate.
+
+\item[\tt char\_conversion(Char1,Char2)] ~\\ Alters the set of character
+conversions during execution.  See sections \ref{charsection},
+\ref{Flagsection}.
+
+\item[\tt current\_char\_conversion(Char1,Char2)] ~\\ True if
+\verb"char_conversion(Char1,Char2)" is in effect
+(see sections \ref{charsection}, \ref{Flagsection}).
+Either argument, or none, may be instantiated.
+Gives multiple solutions upon backtracking.
+\end{description}
+\hlyne
+\end{table}
+
+\section{Other Built--In Predicates}
+
+This section briefly describes all the other built--in predicates 
+described in the draft ISO standard.
+
+\subsection{Unification}
+
+\begin{description}
+\item[\tt Arg1 = Arg2] ~\\
+Succeeds by unifying \verb"Arg1" with \verb"Arg2" in the normal manner
+(i.e., the same way as when arguments are matched in procedure calls).
+Results are undefined if you try to unify a term with another term
+that contains it (e.g., \verb"X = f(X)", or \verb"f(X,g(X)) = f(Y,Y)").  
+(Commonly, such a situation produces cyclic pointers that cause endless
+loops when another procedure later tries to follow them.)
+
+\item[\tt unify\_with\_occurs\_check(Arg1,Arg2)] ~\\
+Succeeds by unifying \verb"Arg1" with \verb"Arg2", but explicitly checks 
+whether this will attempt to unify any term with a term that contains it,
+and if so, fails:
+\begin{verbatim}
+?- unify_with_occurs_check(X,f(X)).
+no
+\end{verbatim}
+This version of unification is often assumed in work on the theory
+of logic programming. 
+
+\item[\tt Arg1 {\char92}= Arg2] ~\\
+Succeeds if the two arguments cannot be unified (using the normal 
+unification process).
+\end{description}
+
+\subsection{Comparison}
+
+(See also the arithmetic comparision predicates \verb"<" \verb"=<" 
+\verb">" \verb">=" \verb"=:=" in section \ref{arithsection}.)
+
+\begin{description}
+\item[\tt Arg1 == Arg2] ~\\
+Succeeds if \verb"Arg1" and \verb"Arg2" are the same term.
+Does not unify them and does not attempt to instantiate variables in 
+them.
+
+\item[\tt Arg1 {\char92}== Arg2] ~\\
+Succeeds if \verb"Arg1" and \verb"Arg2" are not the same term.
+Does not unify them and does not attempt to instantiate variables in 
+them.
+
+\item[\tt Arg1 @< Arg2] ~\\
+Succeeds if \verb"Arg1" precedes \verb"Arg2" in alphabetical order.
+All variables precede all floating--point numbers, which precede all 
+integers, which precede all atoms, which precede all structures.
+Within terms of the same type, the alphabetical order is the collating 
+sequence used by the computer, and shorter terms precede longer ones.
+
+\item[\tt Arg1 @=< Arg2] ~\\
+Succeeds if \verb"Arg1 @< Arg2" or \verb"Arg1 == Arg2".
+Does not perform unification or instantiate variables.
+
+\item[\tt Arg1 @> Arg2] ~\\
+Like \verb"@<" with the order of arguments reversed.
+
+\item[\tt Arg1 @>= Arg2] ~\\
+Like \verb"@=<" with the order of arguments reversed.
+\end{description}
+
+\subsection{Type tests}
+
+\begin{description}
+\item[\tt var(Arg)] ~\\
+Succeeds if \verb"Arg" is uninstantiated.
+
+\item[\tt nonvar(Arg)] ~\\
+Succeeds if \verb"Arg" is at least partly instantiated.
+
+\item[\tt atomic(Arg)] ~\\
+Succeeds if \verb"Arg" is an atom or a number.
+
+\item[\tt compound(Arg)] ~\\
+Succeeds if \verb"Arg" is a compound term (a structure, including lists 
+but not \verb"[]").
+
+\item[\tt atom(Arg)] ~\\
+Succeeds if \verb"Arg" is an atom.
+
+\item[\tt number(Arg)] ~\\
+Succeeds if \verb"Arg" is a number (integer or floating--point).
+
+\item[\tt integer(Arg)] ~\\
+Succeeds if \verb"Arg" is an integer.  Note that this tests its data 
+type, not its value.  Thus \verb"integer(3)" succeeds but
+\verb"integer(3.0)" fails.
+
+\item[\tt real(Arg)] ~\\
+Succeeds if \verb"Arg" is a floating--point number.
+Thus \verb"real(3.3)" succeeds but \verb"real(3)" fails.
+\end{description}
+
+\subsection{Creating and decomposing terms}
+
+\begin{description}
+\item[\tt functor(Term,F,A)] ~\\
+Succeeds if \verb"Term" is a compound term, \verb"F" is its functor, and 
+\verb"A" (an integer) is its arity; or if \verb"Term" is an atom or 
+number equal to \verb"F" and \verb"A" is zero.
+(Either \verb"Term", or both \verb"F" and \verb"A", must be 
+instantiated.)
+Some examples:
+\begin{verbatim}
+?- functor(f(a,b),F,A).
+F = f
+A = 2
+
+?- functor(What,f,2).
+What = f(_0001,_0002)
+
+?- functor(What,f,0).
+What = f
+
+?- functor(What,3.1416,0).
+What = 3.1416
+\end{verbatim}
+
+\item[\tt arg(N,Term,Arg)] ~\\
+Succeeds if \verb"Arg" is the \verb"N"th argument of \verb"Term" 
+(counting from 1):
+\begin{verbatim}
+?- arg(1,f(a,b,c),What).
+What = a
+\end{verbatim}
+Both \verb"N" and \verb"Term" must be instantiated.
+
+\item[\tt Term =.. List] ~\\
+Succeeds if \verb"List" is a list consisting of the functor and all 
+arguments of \verb"Term", in order.
+\verb"Term" or \verb"List", or both, must be at least partly 
+instantiated.
+\begin{verbatim}
+?- f(a,b) =.. What.
+What = [f,a,b]
+
+?- What =.. [f,a,b]
+What = f(a,b)
+\end{verbatim}
+
+\item[\tt copy\_term(Term1,Term2)] ~\\
+Makes a copy of \verb"Term1" replacing all occurrences of each variable 
+with a fresh variable (like changing \verb"f(A,B,A)" to
+\verb"f(W,Z,W)").  Then unifies that copy with \verb"Term2".
+\begin{verbatim}
+?- copy_term(f(A,B,A),What).
+A = _0001
+B = _0002
+What = f(_0003,_0004,_0003)
+\end{verbatim}
+
+\end{description}
+
+\subsection{Manipulating the knowledge base}
+
+Note that {\sc only dynamic predicates can be manipulated.}
+Static predicates are compiled into a form that is inaccessible to some 
+or all of the built--in predicates described here.  Nonetheless, some 
+implementations may treat static predicates as dynamic.
+
+\begin{description}
+\item[\tt clause(Head,Body)] ~\\
+Succeeds if \verb"Head" matches the head of a dynamic predicate, and 
+\verb"Body" matches its body.   The body of a fact is considered to be 
+\verb"true".  \verb"Head" must be at least partly instantiated.
+Thus, given
+\begin{verbatim}
+green(X) :- moldy(X).
+green(kermit).
+\end{verbatim}
+we get:
+\begin{verbatim}
+?- clause(green(What),Body).
+What = _0001,  Body = moldy(_0001)  ;
+What = kermit, Body = true
+\end{verbatim}
+
+\item[\tt current\_predicate(Functor/Arity)] ~\\
+Succeeds if \verb"Functor/Arity" gives the functor and arity of a 
+currently defined non--built--in predicate, whether static or dynamic:
+\begin{verbatim}
+?- current_predicate(What).
+What = green/1
+\end{verbatim}
+Gives multiple solutions upon backtracking.
+
+Note that \verb"current_predicate(Functor/Arity)"
+succeeds even if all the clauses of the predicate have been
+retracted (or if the predicate was declared dynamic but no clauses were 
+ever asserted), but not if the predicate has been abolished.
+
+\item[\tt asserta(Clause)] ~\\
+Adds \verb"Clause" at the beginning of the clauses for its predicate.
+If there are no clauses for that predicate, the predicate is created and 
+declared to be dynamic.  If the predicate already has some clauses and 
+is static, an error condition is raised.
+
+\item[\tt assertz(Clause)] ~\\
+Like \verb"asserta", but adds the clause at the end of the other clauses
+for its predicate.
+
+\noindent {\sc Note:} \verb"assert" (without \verb"a" or \verb"z")
+is not included in the standard.
+
+\item[\tt retract(Clause)] ~\\
+Removes from the knowledge base a dynamic clause that matches
+\verb"Clause" (which must be at least partly instantiated).
+Gives multiple solutions upon backtracking.
+
+Note that the fact \verb"green(kermit)" could be retracted by any of
+the following queries:
+\begin{verbatim}
+?- retract(green(kermit)).
+?- retract((green(kermit) :- true)).
+?- retract((green(_) :- _)).
+\end{verbatim}
+
+\noindent {\sc Note:} {\tt retractall} is not included in the standard.
+
+\item[\tt abolish(Functor/Arity)] ~\\
+Completely wipes out the dynamic
+predicate designated by \verb"Functor/Arity", as if it had never
+existed.  Its dynamic declaration is forgotten, too, and
+\verb"current_predicate" no longer recognizes it.
+
+This is a more powerful move than simply retracting all the clauses, 
+which would leave the dynamic declaration in place and leave
+\verb"current_predicate" still aware of the predicate.
+
+\end{description}
+
+\subsection{Finding all solutions to a query}
+
+\begin{description}
+
+\item[\tt findall(Term,Goal,List)] ~\\
+Finds each solution to \verb"Goal"; instantiates variables to
+\verb"Term" to the values that they have in that solution; and adds that 
+instantiation of \verb"Term" to \verb"List".  Thus, given
+\begin{verbatim}
+green(kermit).
+green(crabgrass).
+\end{verbatim}
+we get the following results:
+\begin{verbatim}
+?- findall(X,green(X),L).
+L = [kermit,crabgrass]
+
+?- findall(f(X),green(X),L).
+L = [f(kermit),f(crabgrass)]
+\end{verbatim}
+This is the simplest way to get a list of the solutions to a query.
+The solutions found by \verb"findall" are given in the order in which 
+the normal searching--and--backtracking process finds them.
+
+
+\item[\tt bagof(Term,Goal,List)] ~\\
+Like \verb"findall(Term,Goal,List)" except for its treatment of the
+{\sc free variables} of \verb"Goal" (those that do not occur in 
+\verb"Term").
+\label{setofsection}
+
+Whereas \verb"findall" would try all possible values of all variables, 
+\verb"bagof" will pick the first set of values for the free variables 
+that succeeds,
+and use only that set of values when finding the solutions in 
+\verb"List".
+
+Then, if you ask for an alternative solution to \verb"bagof", you'll get 
+the results of trying another set of values for the free variables.
+An example:
+\begin{verbatim}
+parent(michael,cathy).
+parent(melody,cathy).
+parent(greg,stephanie).
+parent(crystal,stephanie).
+
+?- findall(Who,parent(Who,Child),L).
+L = [michael,melody,greg,crystal]
+
+?- bagof(Who,parent(Who,Child),L).   % Child is free variable
+L = [michael,melody] ;               % with Child = cathy
+L = [greg,crystal]                   % with Child = stephanie
+\end{verbatim}
+If in place of \verb"Goal" you write \verb"Term^Goal", any variables 
+that occur in \verb"Term" will not be considered free variables.
+Thus:
+\begin{verbatim}
+?- bagof(Who,Child^parent(Who,Child),L).
+L = [michael,melody,greg,crystal]
+\end{verbatim}
+The order of solutions obtained by \verb"bagof" is up to the 
+implementor.
+
+\item[\tt setof(Term,Goal,List)] ~\\
+Like \verb"bagof(Term,Goal,List)", but the elements of \verb"List" are
+sorted into alphabetical order (see \verb"@<" under ``Comparisons'' 
+above) and duplicates are removed.
+
+\end{description}
+
+\subsection{Terminating execution}
+
+\begin{description}
+\item[\tt halt]  ~\\
+Exits from the Prolog system (or from a compiled program).
+
+\item[\tt halt(N)]  ~\\
+Exits from the Prolog system (or from a compiled program),
+passing the integer \verb"N" to the operating system as a return code.
+(The significance of the return code depends on the operating system.
+For example, in MS--DOS and UNIX, return code 0 is the usual way of
+indicating normal termination.)
+\end{description}
+
+\section{Modules} \label{modulesec}
+
+\subsection{Preventing name conflicts}
+
+Ordinarily, in a Prolog program, there cannot be two different 
+predicates with the same name and arity.  This can pose a problem when 
+two programmers, writing different parts of the same program, 
+inadvertently choose the same name and arity for different predicates.
+
+The solution is to divide large programs into {\sc modules}, or 
+sections, each of which has its own namespace.  Names defined in one 
+module are not recognized in other modules unless explicitly made 
+visible there.  Thus, like--named predicates in different modules do not 
+conflict.
+
+\subsection{Example of a module}
+
+Some Prolog vendors have had module systems for several years, but none 
+is quite like the proposed ISO system.
+
+In the proposed system, there are, by default, two modules, {\tt system} 
+(for built--in predicates) and {\tt user} (for user--defined 
+predicates).  The predicates in {\tt system} are visible
+in {\tt user} and all other modules.
+
+The user can create more modules
+ad libitum; Figure \ref{modfig} shows an example.
+The module consists of
+two parts: an {\sc interface}, specifying what is
+to be made callable from other modules, and a {\sc body}, giving the actual
+predicate definitions.
+
+This module is named \verb"my_list_stuff" and, crucially,
+\verb"last/2" and \verb"reverse/2" are callable from other modules
+but \verb"reverse_aux/3" is not.  Thus, \verb"reverse_aux" will not 
+conflict with anything that happens to have the same name elsewhere.
+
+To use a predicate in one module which is defined in another,
+the defining module must {\sc export} it and the calling module must
+{\sc import} it.  Thus, any module that wants to call {\tt reverse}
+(as defined here) must import \verb"my_list_stuff".
+
+Note that importing a module is not the same thing as loading it into 
+memory (using {\tt compile}, {\tt consult}, or the like).
+In order to have access to a module, you must do both.
+
+\begin{figure}
+\begin{verbatim}
+:- module(my_list_stuff).
+:- export([last/2,reverse/2]).
+
+:- begin_module(my_list_stuff).
+
+last([E],E).
+last([_|E],Last) :- last(E,Last).
+
+reverse(List1,List2) :- reverse_aux(List1,[],List2).
+
+reverse_aux([H|T],Stack,Result) :-  reverse_aux(T,[H|Stack],Result).
+reverse_aux([],Result,Result).
+
+:- end_module.
+\end{verbatim}
+\caption{Example of a module.} \label{modfig}
+\end{figure}
+
+
+\subsection{Module syntax}
+
+Basically, exporting is done in the module interface, while defining and
+importing are done in the module body.  The syntax is:
+\begin{flushleft}
+\verb":- module(" {\em name} \verb")." \smallskip \\
+Various {\tt export}, {\tt reexport}, and {\tt meta} directives \smallskip \\
+\verb":- end_module."  (optional if \verb"begin_module" is the next 
+directive) \smallskip \\
+\verb":- begin_module(" {\em name} \verb")." \smallskip \\
+Predicate definitions and {\tt import}, {\tt meta}, {\tt op}, and {\tt 
+dynamic} declarations \smallskip \\
+\verb":- end_module."
+\end{flushleft}
+
+Here {\tt op} and {\tt dynamic} work the same way as if you aren't using 
+the module system, except that they have scope only over one module.
+The other declarations work as follows:
+\begin{description}
+\item[{\tt :- export([Pred/Arity,Pred/Arity{\rm ...}]).}] ~\\
+The listed predicates (defined in this module) are made callable from
+other modules that import them.  (Used in interface.)
+
+\item[\tt :- import(Module).] ~\\
+All the predicates that exported by {\tt Module} are to be imported into
+(and hence usable in) the current module.  (Used in module body.)
+
+\item[{\tt :- import(Module,[Pred/Arity,Pred/Arity{\rm ...}]).}] ~\\
+Same, but only the specified predicates are imported.
+
+\item[\tt :- reexport(Module).] ~\\
+Combination of {\tt import} and {\tt export}.  All the predicates that
+are exported by {\tt Module} are imported into the current module and 
+are also exported by it.  (Used in interface.)
+
+\item[{\tt :- reexport(Module,[Pred/Arity,Pred/Arity{\rm ...}]).}] ~\\
+Same, but only the specified predicates are reexported.
+
+\item[{\tt :- meta([Pred/Arity,Pred/Arity{\rm ...}]).}] ~\\
+The specified predicates are defined to be {\sc metapredicates} (see 
+next section).  This declaration can be used in either the interface or 
+the body.  If it is used in the interface, the predicates are also
+exported.
+\end{description}
+
+\subsection{Metapredicates}
+
+A {\sc metapredicate} is a predicate that needs to know what module it 
+is called from.  Built--in metapredicates include {\tt abolish}, {\tt
+asserta}, {\tt assertz}, {\tt clause}, {\tt current\_predicate}, {\tt 
+current\_visible}, and {\tt retract}, all of which manipulate the 
+predicates in the module that they are called from (not the module they 
+are defined in); and {\tt bagof}, {\tt setof}, {\tt findall}, {\tt 
+catch}, {\tt call}, and {\tt once},
+all of which take goals as arguments and need to
+be able to execute them in the module they are called from.
+
+%Document N111 is not entirely clear, but, apparently, {\tt read}, {\tt
+%write}, and their kin are also metapredicates, because they use the
+%{\tt op} declarations that are in effect in the module they are called
+%from.
+
+Users can also define their own metapredicates by declaring them {\tt 
+meta} (see previous section).  Within a metapredicate, the goal
+\verb"calling_context(Module)" will retrieve the name of the module from 
+which the predicate was called.
+
+
+\subsection{Explicit module qualifiers}
+
+If, instead of {\tt Goal}, you write {\tt Module:Goal}, you gain the 
+ability to call any predicate of {\tt Module}, whether or not that 
+module has exported it or the current module has imported it.
+In the example in Figure A.1, the query
+\begin{verbatim}
+?- my_list_stuff:reverse_aux([a,b,c],X,Y).
+\end{verbatim}
+would work from any module, even though \verb"reverse_aux" is not 
+exported by the module that defines it.
+
+By writing {\tt Goal@Module}, you can specify what module a 
+metapredicate should {\em think} it was called from.
+For example,
+\begin{verbatim}
+?- current_predicate(What) @ my_module.
+\end{verbatim}
+would retrieve the predicates that are defined in \verb"my_module"
+rather than in the current module.  (Note that \verb"current_predicate" 
+is {\em defined in} {\tt system}; you would be making it think it was 
+{\em executing in} \verb"my_module".)
+
+\subsection{Additional built--in predicates}
+\begin{description}
+\item[\tt calling\_context(Module)] ~\\
+Instantiates its argument to the module from which the current clause 
+was called.  For use in metapredicates.
+
+\item[\tt current\_module(Module)] ~\\
+Succeeds if its argument is the name of any currently existing module.
+Arguments need not be instantiated.
+
+\item[\tt current\_visible(Pred/Arity,Module)] ~\\
+Succeeds if {\tt Pred/Arity} describes a predicate that is defined
+in {\tt Module} and is visible (callable) from the module in which this
+query is taking place.  Arguments need not be instantiated.
+\end{description}
+
+\subsection{A word of caution}
+
+The module system is much farther from final form than the rest of the 
+proposed ISO standard.  Substantial changes are still quite possible.
+
+\end{document}

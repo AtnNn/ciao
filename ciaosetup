@@ -1,0 +1,50 @@
+#!/bin/sh
+#
+# CiaoDE command-line setup tool
+#
+# Authors: Edison Mera, Jose F. Morales
+# ---------------------------------------------------------------------------
+# 
+# NOTE: Do not add commands here directly. Instead, create a command
+# group and register the commands and help
+#
+# NOTE: This command is too complicated to be efficiently programmed
+#       in 'sh'. It will be eventually ported to Prolog.
+
+# Obtain the directory where this script is located
+old_dir=`pwd`; cd `dirname $0`; self=`pwd`; cd ${old_dir}; old_dir=
+
+# Exit immediately if a simple command exits with a non-zero status
+set -e
+
+# Import modules for ciaosetup
+. "${self}/ciaosetup_modules/terminal_io.sh"
+. "${self}/ciaosetup_modules/common.sh"
+
+# Register all commands
+. "${self}/ciaosetup_modules/command_registry.sh"
+command_group_dir="${self}/ciaosetup_modules"
+load_command_groups \
+    "help" \
+    "all_in_one" \
+    "config" \
+    "compilation" \
+    "installation" \
+    "lpdoc" \
+    "ciaopp" \
+    "chr" \
+    "javall" \
+    "emacs" \
+    "maintenance" \
+    "documentation" \
+    "testing" \
+    "benchmarking" \
+    "miniprolog" \
+    "profiler" \
+    "packager" \
+    "runtime_checks"
+build_command_case
+
+# Setup vars and execute command_case
+setup_vars
+command_case "$@"

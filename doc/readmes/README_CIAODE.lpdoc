@@ -1,0 +1,195 @@
+This describes the installation procedure for the Ciao Development
+Environment, including libraries and manuals, from a @em{source}
+distribution.  This applies primarily to Unix-type systems (Linux, Mac
+OS X, Solaris, SunOS, etc.), and with some limitations to Windows
+(using the Cygnus Win32 development libraries).
+
+It is recommended that you read the @tt{INSTALLATION} file that comes with
+each component of CiaoDE.  However, in many cases it suffices to
+follow this summary:
+
+@section{Software Requirements (ciaode)}
+
+For users of Linux distributions, you should install some packages
+required by Ciao that do not come installed by default. Using the
+corresponding automatic software management tool, those are:
+
+@begin{verbatim}
+Debian/Ubuntu:
+	sudo apt-get install emacs build-essential \
+	    texi2html texlive texinfo imagemagick
+Fedora:
+        su
+	yum install gcc kernel-headers kernel-devel emacs texi2html \
+	texinfo ImageMagick
+@end{verbatim}
+
+Some advanced libraries and components, like the cost analysis,
+require an additional set of packages:
+
+@begin{verbatim}
+Debian/Ubuntu:
+	sudo apt-get install libgsl0-dev libgsl0ldbl ant ant-optional \
+            sun-java6-jdk g++
+	sudo update-java-alternatives --set java-6-sun
+@end{verbatim}
+
+Fedora:
+@begin{verbatim}
+	su
+	yum install gsl gsl-devel ant gnu-g++
+@end{verbatim}
+
+Debian/Ubuntu users for 64-bit systems would also need libraries for 32-bit
+compatibility: 
+@begin{verbatim}
+        sudo apt-get install gcc-multilib libc6-i386 \
+             lib6-dev-i386 ia32-libs
+        # Optionally, for the Parma Polyhedra Library
+        sudo apt-get install g++-multilib
+@end{verbatim}
+
+To install Java JDK on Fedora, please visit Sun Java website
+(@tt{http://java.sun.com/javase/downloads/index.jsp}) and follow the
+installation instructions there.
+
+If you are a Ciao developer, it is highly recommended to install
+Subversion to access the latest source code in our repositories:
+
+@begin{verbatim}
+Debian/Ubuntu:
+	sudo apt-get install subversion
+Fedora:
+	su
+	yum install subversion
+@end{verbatim}
+
+Users of other Linux variants or operating systems should use similar
+tools to add the required packages.  In Windows, doing a full
+installation of CygWin ensures that you have all the required
+packages.
+
+@section{Obtaining the Sources (ciaode)}
+
+@begin{enumerate}
+
+@item If you have obtained your copy of Ciao from a compressed source
+      package, uncompress and unpackage it (using @apl{gunzip} or
+      @apl{bzip2} and @tt{tar -xpf}). This will put everything in a
+      new directory whose name reflects the Ciao version.
+
+@item Other method to get the sources is from the subversion
+      repository (available for ciao developers).
+
+@end{enumerate}
+
+@section{Quick Installation from Source (ciaode)}
+
+The main command to build and install CiaoDE, located at the root of
+the source tree, is called @tt{ciaosetup}. It provides useful commands
+to do quick installations from the sources with just one line:
+
+@begin{enumerate}
+
+@item System-wide installation (e.g. as administrator or @tt{root} user):
+
+@begin{verbatim}
+./ciaosetup system-install
+@end{verbatim}
+
+@item User-local installation (that will be accessible just for your user)
+
+@begin{verbatim}
+./ciaosetup user-install
+@end{verbatim}
+
+@end{enumerate}
+
+If you need a more advanced control of configuration read the
+following section.
+
+@section{Custom Installations (ciaode)}
+
+More advanced uses of CiaoDE will require some customization of the
+default build and installation options. Follow the next steps:
+
+@begin{enumerate}
+
+@item Once you have placed the source files in an installation
+      directory, run:
+
+@begin{verbatim}
+./ciaosetup configure
+@end{verbatim}
+
+      This will generate some configuration files.  Note that by
+      default the system will be configured to be installed in
+      @tt{/usr/local}, with some reasonable installation options, and
+      @bf{for all users} (for which you will need to run the
+      installation as root).  In case you want to change the
+      installation choices (there are quite a few options!), install
+      elsewhere, or make a personal installation, you can use a
+      menu-driven procedure, as will be explained below.
+
+      The configure command accepts several options. If you want to
+      see a brief description use the @tt{--help} argument (or check
+      the next section bellow on configuration options):
+
+@begin{verbatim}
+$ ./ciaosetup configure --help
+@end{verbatim}
+
+      The @tt{--menu} option shows a menu with configuration options.
+      You must follow the instructions that appear on it.  When asked
+      for the configuration level, if you are happy with the default
+      options, select the first option and no questions will be made.
+      If you need a higher level of customization, select the last
+      option.  Note that for CiaoDE development is recommended to use
+      the option @tt{--instype=src} and @tt{--sysavail=user}, which
+      prepares the CiaoDE to run from the sources directly, and
+      configured in the user's home directory.
+
+      Note that the @concept{GNU} implementation of the @concept{make}
+      Un*x command is used internally in some specific parts. It is
+      available in many systems (including all Linux systems and Mac
+      OS X) simply as @apl{make}. If this or next steps stop right
+      away with @apl{make} error messages it is probably an older
+      version and you need to install @tt{gmake}.
+
+@item Once the configuration process has finished, run:
+
+@begin{verbatim}
+ @tt{./ciaosetup build}
+@end{verbatim}
+
+      This will build executables and compile libraries.
+
+@item If you have obtained the CiaoDE source from the cvs repository,
+      you need to generate the documentation.  This can be done using:
+
+@begin{verbatim}
+ @tt{./ciaosetup docs}
+@end{verbatim}
+
+@item After the compilation completes successfully, run:
+
+@begin{verbatim}
+ @tt{./ciaosetup install}
+@end{verbatim}
+
+      This will install everything in the specified directories.
+
+      If you want to see the other available options, run
+      @tt{./ciaosetup help}
+@end{enumerate}
+
+@section{Configuration Options (ciaode)}
+
+This is the list of available configuration options for
+@tt{./ciaosetup configure}, useful to customize your CiaoDE
+installation:
+
+@begin{verbatim}
+@includeverbatim{configure_help.tmp}
+@end{verbatim}
+

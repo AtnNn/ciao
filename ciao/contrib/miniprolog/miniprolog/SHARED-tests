@@ -1,0 +1,67 @@
+# -*- mode: Makefile; -*-
+
+BENCHDIR=$(SRCDIR)/bench/$(TARGET)
+
+BENCHCOMMONDIR=$(SRCDIR)/benchcommon/_all
+
+TUNEPROF=tuneprof.dat
+
+
+CALIBRATOR=calibrator
+CALS=01 02
+# 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+NUMCAL=02
+#25
+
+CALIBRATOREX=$(addprefix $(CALIBRATOR)_,$(CALS))
+
+BENCHSRC=append fib hanoi nreverse powset polynom palindro zebra color	\
+	 subst_l subst_u list_inters_u list_inters_l deriv_l deriv_u	\
+	 flatten_u list_diff_l list_diff_u
+
+CALIBRATORS2=c_arith_add_0 c_arith_div_0 c_arith_mod_0 c_arith_mul_0	\
+	     c_arith_sub_0 c_cut_0 c_equal_0 c_equal_1 c_execute_0	\
+	     c_get_constant_atom_0 c_get_constant_atom_1		\
+	     c_get_constant_int_0 c_get_constant_int_1 c_get_level_0	\
+	     c_get_list_0 c_get_variable_0 c_get_value_0 c_get_value_1	\
+	     c_put_a_constant_atom_0 c_put_a_constant_int_0		\
+	     c_put_constant_atom_0 c_put_constant_int_0 c_put_value_0	\
+	     c_set_constant_atom_0 c_set_constant_int_0			\
+	     c_set_variable_0 c_smaller_0 c_smaller_1 c_smaller_eq_0	\
+	     c_smaller_eq_1 c_unequal_0 c_unequal_1			\
+	     c_unify_variable_atm_atm_0 c_unify_variable_atm_atm_1	\
+	     c_unify_variable_cn1_cn2_1 c_unify_variable_int_int_0	\
+	     c_unify_variable_int_int_1 c_unify_variable_var_gnd_0	\
+	     c_unify_variable_gnd_var_0 c_unify_variable_lst_lst_0	\
+	     c_unify_variable_lst_lst_1 c_unify_variable_str_str_0	\
+	     c_unify_variable_str_str_1 c_unify_variable_list_100_0	\
+	     c_try_me_else_0 c_call_0 c_allocate_0 c_deallocate_0	\
+	     c_retry_me_else_0 c_trust_me_0 c_fail_1 c_get_struct_0
+
+# 	     
+# 	     c_unify_variable_var_gnd_1
+
+CALIB2_NPROF=5
+CALIB2_NTIME=1000
+CALIB2_NTRUE=1000
+CALIB2_NREPS=20
+CALIBRATORS2_0=$(addsuffix _0, $(CALIBRATORS2))
+
+
+CALIBRATORS2_NPROF=$(addsuffix _$(CALIB2_NPROF)_prof, $(CALIBRATORS2))
+CALIBRATORS2_NTIME=$(addsuffix _$(CALIB2_NTIME)_time, $(CALIBRATORS2))
+CALIBRATORS2_0PROF=$(addsuffix _0_prof, $(CALIBRATORS2))
+CALIBRATORS2_0TIME=$(addsuffix _0_time, $(CALIBRATORS2))
+
+CALIBRATORS2_ALL=$(CALIBRATORS2_NPROF) $(CALIBRATORS2_NTIME)	\
+	$(CALIBRATORS2_0PROF) $(CALIBRATORS2_0TIME)
+
+CALIBRATORS2_PROF=$(addsuffix _c.prf, $(CALIBRATORS2_NPROF) $(CALIBRATORS2_0PROF))
+CALIBRATORS2_TIME=$(addsuffix _c.oti, $(CALIBRATORS2_NTIME) $(CALIBRATORS2_0TIME))
+
+# Use the next option when debugging to include profile information.
+# That will generate .prf files for each examples that are used to be
+# compared with the results of the static analyzer:
+PROFILE_EXAMPLES=1
+
+WAMTESTCMD=$(WAMCMD) -C `$(CMDPATH) $(BENCHCOMMONDIR)/`

@@ -1,0 +1,29 @@
+# -*- mode: Makefile; -*-
+
+include $(SRCDIR)/SHARED-bench
+
+.PHONY: estimatecommon
+
+VPATH+=:$(COMMONDIR):$(SRCDIR)/bench/_$(MPARCH):$(SRCDIR)/benchcommon/_all:$(TESTSRCDIR)
+
+estimatecommon:: calibs calib2eq.pl solution.pl
+
+calib2eq.pl: $(CALIBRATORS2_PROF) $(PROFREPORT)
+	$(RM) $@
+	@$(foreach C,$(CALIBRATORS2),$(PROFREPORT) -ti -C $(C)		\
+	  $(CALIB2_NPROF) $(SRCDIR)/bench/_$(MPARCH)/$(C)_0_prof_c.prf	\
+	  $(SRCDIR)/bench/_$(MPARCH)/$(C)_0_prof_c.cnt			\
+	  $(SRCDIR)/bench/_$(MPARCH)/$(C)_$(CALIB2_NPROF)_prof_c.prf	\
+	  $(SRCDIR)/bench/_$(MPARCH)/$(C)_$(CALIB2_NPROF)_prof_c.cnt	\
+	  >> $@;)
+
+calibs: calibs2.pl solution.pl
+	$(CIAOC) -o $@ $<
+
+solve_eq: solve_eq.pl calib2eq.pl
+	$(CIAOC) -o $@ $<
+
+solution.pl: solve_eq
+	( echo "solution(" ; ./solve_eq|ssh clip.dia.fi.upm.es maxima --very-quiet|sed -e \
+	  s:'\([0-9]\) \([a-z]\)':'\1 \* \2':g -e s:'%':'':g ; \
+	  echo " )." ; echo ) > solution.pl

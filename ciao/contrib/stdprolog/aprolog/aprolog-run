@@ -1,0 +1,67 @@
+#! /bin/bash --
+#
+# aprolog-run
+# by pts@fazekas.hu at Fri Jan 13 15:24:16 CET 2006
+#
+# !!
+
+MY0="$0"
+MY1="`ls -l "$MY0"`"
+MY2="${MY1#* -> }"
+[ "$MY2" = "$MY1" ] || MY0="$MY2" # Dat: resolve 1 level of symlink
+MYDIR="${MY0%/*}"
+[ "$MYDIR" == "$MY0" ] && MYDIR=.
+
+APROLOG_BIN="$MYDIR/aprolog.bin";
+
+if [ -x "$APROLOG_BIN" ]; then :; else
+  echo "$0: missing aprolog runtime: $APROLOG_BIN" >&2
+  exit 23
+fi
+
+if [ "$1" == --help ]; then # || [ $# = 0 ]
+  echo "Usage: $0 [<option>] ... { <filename.pl> | <filename.apl> }" >&2
+  echo "Options are for $APROLOG_BIN\n" >&2
+  exit 24
+fi
+
+#** Imp: don't split on space
+OPT_R=""
+OPTS=""
+SRCFN=""
+BUILTIN_APL="$MYDIR/bootlib/builtin.apl"
+CONV_APL="$MYDIR/bootlib/conv.apl"
+for OPT in "$@"; do
+  case "$OPT" in
+   -*) OPTS="$OPTS $OPT" ;;
+   *)
+    if [ "$SRCFN" ]; then
+      echo "$0: ambigious source file: $SRCN and $OPT" >&2
+      exit 25
+    fi
+    SRCFN="$OPT"
+    X="${SRCFN#*/}"
+    X="${X#*.}"
+    [ "$SRCFN" = "$X" ] && SRCFN="$MYDIR/progs/$SRCFN.pl"
+  esac
+done
+[ -z "$SRCFN" ] && SRCFN="$MYDIR/progs/toplevel.pl"
+
+if read LINE1 >/dev/null 2>&1 <"$SRCFN"; then
+  : # Dat: redirection order matters
+else
+  echo "$0: missing or unreadable file: $SRCFN" >&2
+  exit 26
+fi
+
+if [ "${LINE1#CLS }" = "$LINE1" ]; then
+  # Dat: non .apl file -- assume .pl and convert/compile it
+  TMP_APL="$MYDIR/tmp-$HOSTNAME-$$.apl" # Imp: better concurrency
+  true 2>/dev/null >"$TMP_APL" || TMP_APL="/tmp/aprolog-$HOSTNAME-$$.apl"
+  "$APROLOG_BIN" "$BUILTIN_APL" "$CONV_APL" <"$SRCFN" >"$TMP_APL" || exit "$?"
+  SRCFN="$TMP_APL"
+  OPT_R="-r" # Dat: remove $SRCFN after reading it
+fi
+
+# exec valgrind ...
+exec "$APROLOG_BIN" $OPT_R $OPTS "$BUILTIN_APL" "$SRCFN"

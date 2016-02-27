@@ -18,7 +18,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; along with GNU Emacs; see the file GPL.  If not, write to the
 ;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
 
@@ -833,7 +833,7 @@ Case-insensitive if IGNORE-CASE is non-nil."
     (message "Processing \"%s\" in %s..." indexname filename)
     (save-window-excursion
       (Info-goto-node (concat "(" filename ")" indexname))
-      (end-of-buffer)
+      (goto-char (point-max))
       (while (re-search-backward "\\* \\([^\n:]+\\):" nil t)
 	(setq topic (buffer-substring (match-beginning 1) (match-end 1)))
 	(setq keyword (word-help-map-index-entries topic index-map))

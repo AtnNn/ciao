@@ -1,0 +1,151 @@
+This file provides some random, useful notes for developers who may
+wish to contribute to the Ciao library code base. 
+
+@section{The Installation Process}
+
+The entry point of all the install process is the shell utility
+@code{./ciaosetup}.  This file is a wrapper for the @code{lpmake}
+utility.  The installation options are implemented in the
+@code{installer*.pl} files that are in the subdirectories
+@code{installer/}. @apl{Lpmake} looks for targets in this file instead of
+@file{Makefile.pl}.
+
+Inside the @code{installer/} directories there is a CONFIG.pl file,
+which contains the description of the CiaoDE component, and the alias
+path definitions used when compiling and installing the system.
+
+@section{Automatically Generated Modules}
+
+The name of modules that are generated automatically should end in
+@code{_auto.pl}. Those modules will be removed when a @tt{realclean}
+is done. There are two special cases that should be considered:
+
+@begin{itemize}
+
+ @item If the automatically generated file contains information about
+       absolute paths, and needs to be recreated when the CiaoDE
+       sources are relocated, then the file should finish in
+       @code{_src_auto.pl}.  The generation of such files must be in
+       the lpmake environment option of the file @code{installer*.pl}.
+
+ @item If the auto generated file contains information about absolute
+       paths, and needs to be recreated when CiaoDE is relocated, then
+       the file should finish in @code{_ins_auto.pl}.  This kind of
+       files are generated in the @tt{lpmake} reconfigure option of
+       the file @code{installer*.pl}.
+
+@end{itemize}
+
+@section{Avoid Module Pre-compilation}
+
+The installation process will find all modules recursivelly and
+precompile them. To skip the compilation of the modules in a directory
+(and subdirectories) you should create an empty file called
+@tt{NOCOMPILE} in such directory. If you need a more refined control
+of the compilation, you should create a file @tt{NOCOMPILEFILES}
+containing the file patterns that must not be compiled.
+
+@section{Avoid Module Distribution}
+
+To indicate that some directory must not be included in a
+@em{distribution package}, you should create an empty file called
+@tt{NODISTRIBUTE} in such directory.
+
+@section{Avoid Module Installation}
+
+To indicate that some directory must not be copied during installation
+(i.e., during the execution of the @tt{./ciaosetup install} option),
+you should create the empty file @tt{NOINSTALL} in such directory.
+
+@section{Source Cleaning}
+
+@code{./ciaosetup} provides several options to cleanning the sources.
+The strongest is realclean, which leaves the source code as obtained
+from svn.
+
+@code{./ciaosetup recursiveclean} can be invoked inside any
+subdirectory to clean all the auto generated files.
+
+Remember that if @tt{instype} is @tt{src}, uninstallation does not
+delete any files, it only removes the configuration settings in shell
+scripts and emacs initialization files.
+
+@section{Customization of Installation Output}
+
+Sometimes when you are creating binary packages, or simply testing
+installation, you require to simulate the installation in a directory
+other than root, but without to change the links and file references,
+considering that such precompiled package should work well when be
+moved to the root of the machine.  To do that, before to call the
+@tt{./ciaosetup install} tool you should export the variable
+@tt{BUILD_ROOT} pointing to the directory where the fake installation
+will be done.
+
+@section{Building Distribution Packages}
+
+@tt{./ciaosetup} offers some commands to build distribution packages
+for several platforms:
+
+@begin{itemize}
+
+@item @code{installer_win32}. Creates a Windows installer.
+
+@item @code{installer_rpm [--option=value...]}. Creates an @tt{RPM} package.
+	One or more options may be added; main ones are:
+
+	@begin{description}
+
+	@item{subpackages=yes} Creates separate packages, one for each
+		component, plus a CiaoDE metapackage that depends on all
+		of them. If disabled only a single CiaoDE package is created
+		with the whole bundle.
+
+	@item{versionp=yes} Creates versioned packages instead of
+		regular ones.  Versioned packages are meant to coexist
+		with older or newer ones.  Each package gets labeled
+		with the component's main version (e.g. -v1.14) and
+		can be installed together with the regular package or
+		other versioned packages, provided they are all
+		different versions.  This needs @tt{subpackages=yes}.
+
+	@item{vendor_independent=yes} Creates packages that should
+		work in all mainstream @tt{RPM} Linux distributions.
+		This is the default.  If disabled, packages are only
+		guaranteed to work in the same distribution (vendor)
+		they were generated for.
+
+	@item{svn_sources=yes} Builds CiaoDE straight from subversion
+		repository sources instead of a distribution tarball.
+
+	@end{description}
+
+	For more details please read the documentation for the
+	@code{installer_rpm} module
+	(@file{installer/installer_rpm.pl}.)
+
+@item @code{installer_bin}. Creates the binary packages (using @tt{gz}
+	and @tt{bzip2}).
+
+@item @code{installer_bin_tgz}. Creates the binary package compressed
+	using @tt{gz}.
+
+@item @code{installer_bin_tbz}. Creates the binary package compressed
+	using @tt{bzip2}.
+
+@item @code{installer_src}. Creates the @tt{tar} packages in @tt{gz} and @tt{bzip2}
+	compressed formats.
+
+@item @code{installer_tgz}. Creates the @tt{tar} packages in @tt{gz}
+	compressed format.
+
+@item @code{installer_tbz}. Creates the @tt{tar} packages in
+	@tt{bzip2} compressed format.
+
+@end{itemize}
+
+@section{Adding new Java Examples to the Cost Analysis}
+
+The new examples must be in the directory
+@file{ciaopp/ilciao/examples/Resources}, and if at this point, such
+examples are located in subdirectories, is necessary to update the
+target @code{clean} in the @file{build.xml} file.

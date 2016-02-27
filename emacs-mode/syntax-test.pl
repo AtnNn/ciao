@@ -28,7 +28,7 @@ exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
 
 % library directives
 
-:- function(foo/2).
+:- fun_eval(foo/2).
 
 % user-defined directives
 
@@ -40,17 +40,17 @@ foo.                % More comments, not first line
 % LPdoc comments
 % bugs:
 
-:- comment(bug,"A bug").  
+:- doc(bug,"A bug").  
 
 % version comments:
 
-:- comment(version_maintenance,off).
+:- doc(version_maintenance,off).
 
-:- comment(nodoc,foo/2).
+:- doc(nodoc,foo/2).
 
-:- comment(hide,bar/2).
+:- doc(hide,bar/2).
 
-:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+:- doc(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written
    this way, though). (Daniel Cabeza Gras)").
 
@@ -75,13 +75,15 @@ write_option(priority('Prio')) --> integer(Prio), Prio >= 1, Prio =< 1200.
 % other comments and
 % lpdoc commands in comments
 
-:- comment(title, "Term output" ).
+:- doc(title, "Term output" ).
 
-:- comment(author,"Adapted from shared code written by Richard
-   A. O'Keefe. :- Changes by Mats Carlsson, Daniel Cabeza, Manuel
-   Hermenegildo, and Manuel Carro.").
+:- doc(author,"Richard A. O'Keefe").
+:- doc(author,"Mats Carlsson").
+:- doc(author,"Daniel Cabeza").
+:- doc(author,"Manuel Hermenegildo").
+:- doc(author,"Manuel Carro").
 
-:- comment(define_flag/3,"Defines flags :- as follows:
+:- doc(define_flag/3,"Defines flags :- as follows:
 	@includedef{define_flag/3} (See @ref{Changing system behaviour
 	and various flags}).
 
@@ -98,7 +100,7 @@ write_option(priority('Prio')) --> integer(Prio), Prio >= 1, Prio =< 1200.
    versions: one that uses the current output stream and other in
          ").
 
-:- comment(write_option/1, "@var{Opt} is a valid write option which
+:- doc(write_option/1, "@var{Opt} is a valid write option which
    affects the predicate @tt{write_term/3} and similar ones. Possible
    write_options are: @begin{itemize} @item
    @bf{quoted(}@em{bool}@bf{):} If @em{bool} is @tt{true}, atoms and
@@ -188,45 +190,79 @@ main :-
 
 :- impl_defined(mshare/1).
 
-:- comment(fails(X), "Calls of the form @var{X} fail.").
+:- doc(fails(X), "Calls of the form @var{X} fail.").
 
 :- prop fails(X) 
 	# "Calls of the form @var{X} fail.".
 
 :- impl_defined(fails/1).
 
-:- comment(possibly_fails(X), "Non-failure is not ensured for any call
+:- doc(possibly_fails(X), "Non-failure is not ensured for any call
 of the form @var{X} @cite{non-failure-iclp97}. In other words, nothing
 can be ensured about non-failure nor termination of such calls.").
 
 :- prop possibly_fails(X) # 
 	"Non-failure is not ensured for calls of the form @var{X}.".
 
-:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+:- doc(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written
    this way, though). (Daniel Cabeza Gras)").
 
-:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+:- doc(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written
    this way, though). (Daniel Cabeza Gras)").
 
-:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+:- doc(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written
    this way, though). (Daniel Cabeza Gras)").
 
-:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+:- doc(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written
    this way, though). (Daniel Cabeza Gras)").
 
-:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+:- doc(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written
    this way, though). (Daniel Cabeza Gras)").
 
-:- comment(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
+:- doc(version(1*5+144,2000/05/17,21:08*21+'CEST'), "Changed write
    predicates so that term -a is written as is (-(2) is still written
    this way, though). (Daniel Cabeza Gras)").
+
+% Atoms
 
 trans_info(eapp026, 'Webmergers 120').
 trans_info(eapp030, 'QSP''s ASP business').
 trans_info(tech055, 'AiSoftw@re SpA').
 trans_info(eser002, 'ISP Europeo, la participacion del 49,5 % poseida').
+
+% Strings, variables, atoms, and functional notation
+
+foo("Var write foo ()").
+
+foo("0'Var write foo ()").
+
+foo("Var write @cite{foo} ()").
+
+foo("Var write ~foo ()").
+
+foo("Var write foo () % comment").
+
+foo("Var write
+foo ()").
+
+foo("Var write
+var
+foo ()").
+
+foo := bar.
+foo := ~bar(foo, ~bar).
+foo := 'foo Var ~var'.
+foo := 'foo Var ~var % comment'.
+foo := 'foo Var ~var' % comment'.
+    .
+foo := 'foo Var ~var'. % comment.
+foo := "foo Var".
+foo := "foo Var ~var".
+foo := "foo ~var".
+foo := 'foo @re ~var'.
+

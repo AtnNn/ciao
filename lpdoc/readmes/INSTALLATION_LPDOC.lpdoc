@@ -1,0 +1,194 @@
+@begin{alert}
+This documentation is outdated.
+@end{alert}
+
+@comment{ @apl{lpdoc} can be obtained as either a source or binary
+          distribution. }
+
+The source distribution contains all the source code and libraries and
+can be compiled on a supported @concept{Prolog} system (@apl{lpdoc} is
+developed using @apl{Ciao} Prolog). The latest publically distributed
+version of @apl{lpdoc} is available from
+@uref{http:://www.clip.dia.fi.upm.es/Software/Ciao}. A newer version
+in Beta test is often available in
+@uref{http:://www.clip.dia.fi.upm.es/Software/Beta/Ciao}.
+
+@section{Installing the source distribution (lpdoc)}
+
+@begin{itemize}
+
+@item Before installing @apl{lpdoc}, you may want to read 
+      @ref{Other software packages required (lpdoc)}. 
+      Make sure that @apl{emacs} is installed in your system
+
+@item Uncompress (using @apl{gunzip}) and unpackage (using @apl{tar}
+      @tt{-xpf}) the distribution in a suitable directory. This will
+      create a new directory called @apl{lpdoc} as well as a link
+      @tt{lpdoc-X.Y} to this directory, where @tt{X.Y} is the
+      version number of the distribution.  The @tt{-p} option in the
+      @apl{tar} command ensures that the relative dates of the files
+      in the package are preserved, which is needed for correct
+      operation of the Makefiles.
+
+@item Enter the newly created directory and if needed edit the file
+      @tt{LPDOCSETTINGS.pl} in a text editor, but in general the
+      default options works well (edit the one in that directory, not
+      the ones in the subdirectories).
+
+      @begin{itemize}
+
+      @item Decide which Prolog/CLP system you will use for compiling
+            @apl{lpdoc} (actually, currently only Ciao is supported --
+            but porting to, e.g., SICStus Prolog should not be too
+            difficult) and modify the first part of the
+            @tt{LPDOCSETTINGS.pl} file accordingly. The @tt{DOCDIR}
+            directory should not be an existing @apl{info} directory,
+            since this will overwrite the @file{dir} file in that
+            directory.
+
+     @item Select the directories in which you want the @apl{lpdoc}
+           binaries, libraries, and documents installed, by setting
+           the corresponding variables in @tt{LPDOCSETTINGS.pl}.
+
+     @end{itemize}
+
+@item Type @tt{lpmake all}. This should create the @apl{lpdoc}
+      executable and compile related libraries.
+
+@item Type @tt{lpmake install}. This should install it in the
+      @tt{BINDIR} directory, install the @apl{lpdoc} library in a
+      separate directory in the @tt{LIBDIR} directory, and install the
+      @apl{lpdoc} documentation in the @tt{DOCDIR} directory.
+
+@item In order for the @apl{lpdoc} documentation to be available to
+      users automatically, certain @concept{environment variables}
+      have to be set. The installation leaves files suitable for
+      inclusion in initialization scripts (e.g., @file{DOTcshrc} for
+      @apl{csh}) in the @apl{lpdoc} library.
+
+@end{itemize}
+
+@comment{
+
+@section{Installing the binary distribution (lpdoc)}
+
+If you do not have one of the Prolog systems recommended for compiling
+@apl{lpdoc} (or you simply prefer to use a pre-compiled version) you
+can still install the binary distribution as follows:
+
+@begin{itemize}
+
+@item If you have not already done so, download from the same
+      distribution site as @apl{lpdoc} (e.g.,
+      @uref{http://www.clip.dia.fi.upm.es/Software}) the Ciao engine
+      executable for your architecture/OS (e.g., SPARC/SunOS,
+      SPARC/Solaris, x86/Linux, x86/Windows, etc.). Install it and set
+      the appropriate environment variables as indicated in the
+      installation instructions.
+
+@item Follow the same steps for @apl{lpdoc} installation as above,
+      up to but not including @tt{lpmake install}, and skipping the
+      step related to selecting under which Prolog system to compile.
+
+@item Download from the @apl{lpdoc} distribution site the
+      @apl{lpdoc} Ciao binary, and place it in the @tt{lpdoc/src}
+      directory. Change the date (e.g., type ``@apl{touch}
+      @tt{lpdoc}'') so that it will not be recompiled.
+
+@item Go back one level to the root @apl{lpdoc} directory and type
+      @tt{lpmake install}.
+
+@item Continue with the installation as above.
+
+@end{itemize}
+
+}
+
+@section{Other software packages required (lpdoc)}
+
+The most basic functionality of @apl{lpdoc} (generating manuals in
+@tt{.texi} format, short manual entries in @tt{.manl} format,
+generating @em{index} files) is essentially self contained.  However,
+using the full capabilities of @apl{lpdoc} requires having several
+other software packages installed in the system. Fortunately, all of
+these packages are public domain software and they will normally be
+already installed in, e.g., a standard @apl{Linux} distribution. It
+should be relatively easy to get and install the required packages in
+other Unix-like packages or even in Windows, under the Cygwin
+environment.
+
+@begin{itemize} 
+
+@item @bf{Basic requirements:} the @file{Makefile}s @cindex{Makefile}
+      used by @apl{lpdoc} require @concept{GNU Make} (@apl{gmake}),
+      and for now have only been designed for UN*X-like operating
+      systems. 
+
+@item @bf{Generating} @tt{.dvi} @bf{files:} @apl{lpdoc} normally
+      generates @tt{.texi} files (actually, a number of @tt{.texic}
+      files). From the @tt{.texi} files, @tt{.dvi} files are generated
+      using the standard @apl{tex} package directly. The @tt{.dvi}
+      files can also be generated with the GNU @apl{Texinfo} package,
+      which provides, among others, the @apl{texi2dvi}
+      command. However, @apl{Texinfo} itself requires the standard
+      @apl{tex} document processing package.  In order to use
+      @apl{texi2dvi} instead of @apl{tex} when processing documents
+      you should change the variable @tt{TEX} in the
+      @tt{Makefile.skel} file in the @tt{lib} directory before
+      installing @apl{lpdoc}. Generating the @tt{.dvi} file requires
+      that the @tt{texinfo.tex} file (containing the relevant macros)
+      be available to @apl{tex}. This file is normally included with
+      modern @apl{tex} distributions, although it may be obsolete. An
+      appropriate and up-to-date one for @apl{lpdoc} is provided with
+      the @tt{lpdoc} distribution, stored in the @tt{lpdoc} library
+      during installation, and used automatically when @apl{lpdoc}
+      runs @apl{tex}. The @apl{texindex} package is required in order
+      to process the indices. If you use @concept{references} in your
+      manual, then the @apl{bibtex} package is also
+      needed. @apl{texindex} and @apl{bibtex} are included with most
+      @apl{tex} distributions.
+
+@item @bf{Generating} @tt{.ps} @bf{files:} @tt{.ps} files are
+      generated from the @tt{.dvi} files using the @apl{dvips} command
+      (this, again, can be changed in the @tt{Makefile.skel} file in the
+      @tt{lib} directory).  This command is included with standard
+      @apl{tex} distributions.
+
+@item @bf{Generating} @tt{.pdf} @bf{files:} @tt{.pdf} files are
+      currently generated from the @tt{.texi} file using the
+      @apl{pdftex} command (this, again, can be changed in the
+      @tt{Makefile.skel} file in the @tt{lib} directory).  This
+      command is included in current @apl{Linux} distributions.
+
+@item @bf{Generating} @tt{.html} @bf{files:} @tt{.html} files are
+      generated directly from the @tt{.texi} file using the
+      @apl{texi2html} command (this, again, can be changed in the
+      @tt{Makefile.skel} file in the @tt{lib} directory).  This
+      command is a @apl{perl} script and is included with the
+      @apl{lpdoc} distribution, and installed in the library (so
+      that it does not overwrite other existing versions). It is also
+      typically included in the @apl{Texinfo} distribution.  A
+      required intermediate step is to resolve the link references
+      which appear in the @tt{.texi} file (the @tt{.texi} file
+      includes all the @tt{.texic} files and has all references
+      resolved). This is done using the @apl{emacs} editor in batch
+      mode, calling functions in the @file{emacs-library.el} file
+      included in the @tt{lib} directory of the @apl{lpdoc}
+      distribution. Thus, a recent version of @apl{emacs} is required
+      for this purpose.
+
+@item @bf{Generating} @tt{.info} @bf{files:} @tt{.info} files are also
+      generated directly from the @tt{.texi} file using the
+      @apl{makeinfo} command (this, again, can be changed in the
+      @tt{Makefile.skel} file in the @tt{lib} directory).  This
+      command is included in the @apl{Texinfo} distribution.
+      Resolving the link references in the @tt{.texi} file is also
+      required as above.
+
+@item If pictures are used in the manual, and @tt{html} output is
+      selected, the commands @apl{pstogif} and @apl{cjpeg} are also
+      required, in order to convert the figures from @tt{.eps} to
+      @tt{.jpg} format.
+
+@end{itemize}
+
