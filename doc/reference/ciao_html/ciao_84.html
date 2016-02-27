@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Code translation utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
 <H1><A NAME="SEC346" HREF="ciao_toc.html#TOC346">Code translation utilities</A></H1>
 <P>
-<A NAME="IDX3951"></A>
+<A NAME="IDX4002"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#195 (2002/4/12, 14:21:57 CEST)
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
@@ -29,7 +29,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, 
 
 <P>
 This library offers a general way to perform clause body expansions. Goal, fact and spec translation predicates are authomatically called when needed, while this utility navigates through the meta-argument specification of the body itself. All predicates within this library must be called at <EM>second-pass expansions</EM>, since it uses information stored at 
-<A NAME="IDX3952"></A>
+<A NAME="IDX4003"></A>
 <CODE>c_itf</CODE> library.
 
 
@@ -52,7 +52,7 @@ This library offers a general way to perform clause body expansions. Goal, fact 
 <LI><STRONG>Library usage:</STRONG>
 
 This library is provided as a tool for those modules which performs source-to-source code translation, usually known as <EM>code expanders</EM>. It may be loaded as other modules using a 
-<A NAME="IDX3953"></A>
+<A NAME="IDX4004"></A>
 <CODE>use_module/1</CODE>. Nothing special needs to be done.
 
 <LI><STRONG>Exports:</STRONG>
@@ -62,11 +62,11 @@ This library is provided as a tool for those modules which performs source-to-so
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3954"></A>
+<A NAME="IDX4005"></A>
 <CODE>imports_meta_pred/3</CODE>, 
-<A NAME="IDX3955"></A>
+<A NAME="IDX4006"></A>
 <CODE>body_expander/6</CODE>, 
-<A NAME="IDX3956"></A>
+<A NAME="IDX4007"></A>
 <CODE>arg_expander/6</CODE>.
 
 </UL>
@@ -78,7 +78,7 @@ This library is provided as a tool for those modules which performs source-to-so
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3957"></A>
+<A NAME="IDX4008"></A>
 <CODE>compiler/c_itf</CODE>.
 
 </UL>
@@ -91,11 +91,11 @@ This library is provided as a tool for those modules which performs source-to-so
 
 <H2><A NAME="SEC348" HREF="ciao_toc.html#TOC348">Documentation on exports (<CODE>expansion_tools</CODE>)</A></H2>
 <P>
-<A NAME="IDX3958"></A>
-<A NAME="IDX3959"></A>
+<A NAME="IDX4009"></A>
+<A NAME="IDX4010"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>imports_meta_pred/3:</B>
-<DD><A NAME="IDX3960"></A>
+<DD><A NAME="IDX4011"></A>
 
 
 <P>
@@ -123,16 +123,16 @@ Macro provided in order to know meta-predicate specifications accessible from a 
 </DL>
 
 <P>
-<A NAME="IDX3961"></A>
-<A NAME="IDX3962"></A>
+<A NAME="IDX4012"></A>
+<A NAME="IDX4013"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>body_expander/6:</B>
-<DD><A NAME="IDX3963"></A>
+<DD><A NAME="IDX4014"></A>
 
 
 <P>
 This predicate is the main translation tool. It navigates through a clause body, when a single <EM>goal</EM> appears, user-code is called in order to perform a translation. Whether user-code fails to translate the involved goal, it remains the same. Regardless that goal is translated or not, an argument expansion will be performed over all goals if applicable (see 
-<A NAME="IDX3964"></A>
+<A NAME="IDX4015"></A>
 <CODE>arg_expander/6</CODE> predicate). 
 
 
@@ -174,18 +174,18 @@ Variable (unknown at compile time) goals will also be attempt to translate.
 </DL>
 
 <P>
-<A NAME="IDX3965"></A>
-<A NAME="IDX3966"></A>
+<A NAME="IDX4016"></A>
+<A NAME="IDX4017"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>arg_expander/6:</B>
-<DD><A NAME="IDX3967"></A>
+<DD><A NAME="IDX4018"></A>
 
 
 <P>
 This predicate is an auxiliary translation tool, which is used by 
-<A NAME="IDX3968"></A>
+<A NAME="IDX4019"></A>
 <CODE>body_expander/6</CODE> predicate. It remains exported as a macro. The predicate navigates through the <EM>meta-argument specification</EM> of a goal. Whether a <EM>goal,fact or spec</EM> argument appears, user-code is called in order to perform a translation. Whether user-code fails to translate the involved argument, it remains the same. Builtins as ','/2 or ';'/2 are treated as meta-predicates defining <EM>goal</EM> meta-arguments. When a <EM>goal</EM> meta-argument is located, 
-<A NAME="IDX3969"></A>
+<A NAME="IDX4020"></A>
 <CODE>body_expander/6</CODE> will be called in order to navigate through it. Notice that a <EM>goal</EM> meta-argument may be unified with another goal defining another meta-argument, so navigation is required. If arguments are not known to arg_expander/6, translation will not occur. This is posible whether goal or qualifing module are variables. 
 
 
@@ -226,11 +226,11 @@ This predicate is an auxiliary translation tool, which is used by
 
 <H2><A NAME="SEC349" HREF="ciao_toc.html#TOC349">Documentation on internals (<CODE>expansion_tools</CODE>)</A></H2>
 <P>
-<A NAME="IDX3970"></A>
-<A NAME="IDX3971"></A>
+<A NAME="IDX4021"></A>
+<A NAME="IDX4022"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>expander_pred/1:</B>
-<DD><A NAME="IDX3972"></A>
+<DD><A NAME="IDX4023"></A>
 
 
 <P>
@@ -256,6 +256,6 @@ This predicate is an auxiliary translation tool, which is used by
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

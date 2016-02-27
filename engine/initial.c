@@ -299,6 +299,7 @@ extern BOOL prolog_pause PROTO((struct worker *w));                /* MCL */
 extern BOOL prolog_getpid PROTO((struct worker *w));               /* MCL */
 extern BOOL prolog_getarch PROTO((struct worker *w));               /* MCL */
 extern BOOL prolog_getos PROTO((struct worker *w));               /* MCL */
+extern BOOL prolog_version PROTO((struct worker *w));              /* DCG */
 
 extern BOOL prolog_dynlink PROTO((struct worker *w));              /* MCL */
 extern BOOL prolog_dynunlink PROTO((struct worker *w));            /* JFMC */
@@ -1047,6 +1048,7 @@ static void initialize_intrinsics()
   define_c_mod_predicate("system","get_pid", prolog_getpid, 1);
   define_c_predicate("get_arch", prolog_getarch, 1);
   define_c_predicate("get_os", prolog_getos, 1);
+  define_c_predicate("$ciao_version", prolog_version, 2);
 
   define_c_predicate("$find_file",prolog_find_file,8); 
 

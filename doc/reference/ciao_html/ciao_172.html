@@ -1,34 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - chartlib_errhandle (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Low level Interface between Prolog and blt</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC681" HREF="ciao_toc.html#TOC681">chartlib_errhandle (library)</A></H1>
+<H1><A NAME="SEC674" HREF="ciao_toc.html#TOC674">Low level Interface between Prolog and blt</A></H1>
 <P>
-<A NAME="IDX6701"></A>
+<A NAME="IDX6627"></A>
 
 
 <P>
-This module is an error handler. If the format of the arguments is not correct in a call to a chartlib predicate an exception will be thrown . You can wrap the chartlib predicates with the predicates exported by this module to handle automatically the errors if any. 
+This module exports some predicates to interact with Tcl-tk, particularly with the bltwish program. Bltwish is a windowing shell consisting of the Tcl command languaje, the Tk toolkit plus the additional commands that comes with the BLT library and a main program that reads commands. It creates a main window and then processes Tcl commands. 
 
 
 
 <UL>
-<LI><A HREF="ciao_172.html#SEC682">Usage and interface (chartlib_errhandle)</A>
-<LI><A HREF="ciao_172.html#SEC683">Documentation on exports (chartlib_errhandle)</A>
-<LI><A HREF="ciao_172.html#SEC684">Documentation on internals (chartlib_errhandle)</A>
+<LI><A HREF="ciao_172.html#SEC675">Usage and interface (bltclass)</A>
+<LI><A HREF="ciao_172.html#SEC676">Documentation on exports (bltclass)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Usage and interface (<CODE>chartlib_errhandle</CODE>)</A></H2>
+<H2><A NAME="SEC675" HREF="ciao_toc.html#TOC675">Usage and interface (<CODE>bltclass</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -36,7 +35,7 @@ This module is an error handler. If the format of the arguments is not correct i
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(chartlib_errhandle)).</CODE>
+<CODE>:- use_module(library(bltclass)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -45,10 +44,17 @@ This module is an error handler. If the format of the arguments is not correct i
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6702"></A>
-<CODE>chartlib_text_error_protect/1</CODE>, 
-<A NAME="IDX6703"></A>
-<CODE>chartlib_visual_error_protect/1</CODE>.
+<A NAME="IDX6628"></A>
+<CODE>new_interp/1</CODE>, 
+<A NAME="IDX6629"></A>
+<CODE>tcltk_raw_code/2</CODE>, 
+<A NAME="IDX6630"></A>
+<CODE>interp_file/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6631"></A>
+<CODE>bltwish_interp/1</CODE>.
 
 </UL>
 
@@ -59,10 +65,20 @@ This module is an error handler. If the format of the arguments is not correct i
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6704"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6705"></A>
-<CODE>chartlib/install_utils</CODE>.
+<A NAME="IDX6632"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX6633"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX6634"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX6635"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6636"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX6637"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX6638"></A>
+<CODE>terms</CODE>.
 
 </UL>
 
@@ -72,113 +88,84 @@ This module is an error handler. If the format of the arguments is not correct i
 
 
 
-<H2><A NAME="SEC683" HREF="ciao_toc.html#TOC683">Documentation on exports (<CODE>chartlib_errhandle</CODE>)</A></H2>
+<H2><A NAME="SEC676" HREF="ciao_toc.html#TOC676">Documentation on exports (<CODE>bltclass</CODE>)</A></H2>
 <P>
-<A NAME="IDX6706"></A>
-<A NAME="IDX6707"></A>
+<A NAME="IDX6639"></A>
+<A NAME="IDX6640"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>chartlib_text_error_protect/1:</B>
-<DD><A NAME="IDX6708"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
+<DD><A NAME="IDX6641"></A>
 
 
 <P>
-<CODE>chartlib_text_error_protect(G)</CODE>
+<CODE>new_interp(Interp)</CODE>
 
 
 <P>
-This predicate catches the thrown exception and sends it to the appropiate handler. The handler will show the error message in the standard output. 
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_text_error_protect(goal)</CODE>.
+Creates a bltwish interprter and returns a socket. The socket allows the comunication between Prolog and Tcl-tk. Thus, bltwish receives the commands through the socket. 
 
 
 </DL>
 
 <P>
-<A NAME="IDX6709"></A>
-<A NAME="IDX6710"></A>
+<A NAME="IDX6642"></A>
+<A NAME="IDX6643"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>chartlib_visual_error_protect/1:</B>
-<DD><A NAME="IDX6711"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
+<DD><A NAME="IDX6644"></A>
 
 
 <P>
-<CODE>chartlib_visual_error_protect(G)</CODE>
+<CODE>tcltk_raw_code(Command_Line,Interp)</CODE>
 
 
 <P>
-This predicate catches the thrown exception and sends it to the appropiate handler. The handler will pop up a message box. 
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_visual_error_protect(goal)</CODE>.
+Sends a command line to the interpreter. Tcl-tk parses and executes it. 
 
 
 </DL>
 
-
-
-<H2><A NAME="SEC684" HREF="ciao_toc.html#TOC684">Documentation on internals (<CODE>chartlib_errhandle</CODE>)</A></H2>
 <P>
-<A NAME="IDX6712"></A>
-<A NAME="IDX6713"></A>
+<A NAME="IDX6645"></A>
+<A NAME="IDX6646"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>handler_type/1:</B>
-<DD><A NAME="IDX6714"></A>
+<DT><span class="define">REGTYPE:</span> <B>bltwish_interp/1:</B>
+<DD><A NAME="IDX6647"></A>
 
 
 <P>
-<CODE>handler_type(X)</CODE>
+<CODE>bltwish_interp(Interp)</CODE>
 
 
 <P>
-The library chartlib includes two error handlers already programmed. 
+This type defines a bltwish interpreter. In fact, the bltwish interpreter receives the commands through the socket created. 
 
 <PRE>
-handler_type(text).
-handler_type(visual).
+bltwish_interp(Interp) :-
+        stream(Interp).
 </PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX6715"></A>
-<A NAME="IDX6716"></A>
+<A NAME="IDX6648"></A>
+<A NAME="IDX6649"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>error_message/2:</B>
-<DD><A NAME="IDX6717"></A>
+<DT><span class="define">PREDICATE:</span> <B>interp_file/2:</B>
+<DD><A NAME="IDX6650"></A>
 
 
 <P>
-<CODE>error_message(ErrorCode,ErrorMessage)</CODE>
+<CODE>interp_file(File,Interp)</CODE>
 
 
 <P>
-Binds the error code with its corresponding text message. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6718"></A>
-<A NAME="IDX6719"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>error_file/2:</B>
-<DD><A NAME="IDX6720"></A>
-
-
-<P>
-<CODE>error_file(ErrorCode,ErrorFile)</CODE>
-
-
-<P>
-Binds the error code with its corresponding script error file. 
+Sends the script file (File) to the interpreter through the socket. A script file is a file that contains commands that Tcl-tk can execute. 
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -204,7 +204,7 @@ below the prototypes of the primitives in order of complexity.
 @item @tt{ciao_term ciao_integer(int i);}
 
 	   Creates a term, representing an integer from the Prolog
-point of vieew, from a C integer.
+point of view, from a C integer.
 
 @item @tt{ciao_term ciao_float(double i);}
 

@@ -6,7 +6,7 @@
         proc_declaration/4,
         proc_declaration_in_mode/5,
         cleanup_compilation_data/0
-                 ], dcg).
+                 ], [assertions,dcg]).
 
 :- use_module(library(sort)).
 :- use_module(library(dict)).
@@ -1161,19 +1161,30 @@ top_put(V, X, Dic) -->
 % Treat explicit unif. of two variables as a special case, because it's
 % faster and because of the dangling pointer problem: 'get_variable Yn, Xm'
 % may place a dangling pointer in 'Yn'.
+
 c_eq_vars(U, V, Du, Dv, Dic) -->
-	(   {var(Du), U=V, Du=Dv} -> =		% avoid DCG bug
-	;   {var(Dv), U=V, Du=Dv} -> =
-	;   {var(Du), var(Dv)} ->
-	    c_eq_var_var(U, V, Du, Dv)
-	;   {var(Du)}, {cached_ref(V, Dv, V1, Dv1, Dic)} ->
-	    c_eq_var_value(U, V1, Du, Dv1)
-	;   {var(Dv)}, {cached_ref(U, Du, U1, Du1, Dic)} ->
-	    c_eq_var_value(V, U1, Dv, Du1)
-	;   {cached_ref(U, Du, U1, Du1, Dic),
-	     cached_ref(V, Dv, V1, Dv1, Dic)},
-	    c_eq_value_value(U1, V1)
-	).
+%%% BEGIN OF BUGGY CODE
+%%%     (   {var(Du), U=V, Du=Dv} -> =          % avoid DCG bug
+%%%     ;   {var(Dv), U=V, Du=Dv} -> =
+%%% END OF BUGGY CODE
+
+%%% BEGIN OF FIXED CODE
+        (   {var(Du)}, {cached_ref(V, Dv, V1, Dv1, Dic), U=V1, Du=Dv1} -> =
+        ;   {var(Du), U=V, Du=Dv} -> =          % avoid DCG bug
+        ;   {var(Dv)}, {cached_ref(U, Du, U1, Du1, Dic), U1=V, Du1=Dv} -> =
+        ;   {var(Dv), U=V, Du=Dv} -> =
+%%% END OF FIXED CODE
+
+        ;   {var(Du), var(Dv)} ->
+            c_eq_var_var(U, V, Du, Dv)
+        ;   {var(Du)}, {cached_ref(V, Dv, V1, Dv1, Dic)} ->
+            c_eq_var_value(U, V1, Du, Dv1)
+        ;   {var(Dv)}, {cached_ref(U, Du, U1, Du1, Dic)} ->
+            c_eq_var_value(V, U1, Dv, Du1)
+        ;   {cached_ref(U, Du, U1, Du1, Dic),
+             cached_ref(V, Dv, V1, Dv1, Dic)},
+            c_eq_value_value(U1, V1)
+        ).
 
 c_eq_var_var('x'(I), 'y'(J), J, J) --> !,
 	[put_y_variable(J,I)].
@@ -2106,3 +2117,9 @@ name_of_function(X<<Y, 16, X, Y).
 name_of_function(X>>Y, 17, X, Y).
 name_of_function(X mod Y, 18, X, Y).
 name_of_function(X**Y, 55, X, Y).
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+220,2002/05/16,16:13*52+'CEST'), "Corrected a
+bug which caused wrong code generation for some cases.  (jfran)").
+

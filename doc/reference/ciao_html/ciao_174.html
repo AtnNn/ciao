@@ -1,61 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - genbar1 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Color and Pattern Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC688" HREF="ciao_toc.html#TOC688">genbar1 (library)</A></H1>
+<H1><A NAME="SEC681" HREF="ciao_toc.html#TOC681">Color and Pattern Library</A></H1>
 <P>
-<A NAME="IDX6756"></A>
+<A NAME="IDX6671"></A>
 
 
 <P>
-This module defines predicates to show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
+This module contains predicates to access and check conformance to the available colors and patterns.
 
 
 
 <UL>
-
-<LI>No numeric values for the <CODE>x</CODE> axis are needed because they will be interpreted as labels. See
-
-<A NAME="IDX6757"></A>
-<CODE>xbarelement1/1</CODE> definition type. 
-
-<LI>The bars will be displayed at uniform intervals.
-
-<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
-
-<A NAME="IDX6758"></A>
-<CODE>xbarelement1</CODE> type definition. Thus, the user can call each predicate in two ways. 
-
-<LI>The bar chart has a legend. One entry (symbol and label) per bar.
-
-<LI>If you don't want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
-
-</UL>
-
-<P>
-Particular features will be pointed out in the corresponding predicate. 
-
-
-
-<UL>
-<LI><A HREF="ciao_174.html#SEC689">Usage and interface (genbar1)</A>
-<LI><A HREF="ciao_174.html#SEC690">Documentation on exports (genbar1)</A>
-<LI><A HREF="ciao_174.html#SEC691">Documentation on internals (genbar1)</A>
+<LI><A HREF="ciao_174.html#SEC682">Usage and interface (color_pattern)</A>
+<LI><A HREF="ciao_174.html#SEC683">Documentation on exports (color_pattern)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC689" HREF="ciao_toc.html#TOC689">Usage and interface (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Usage and interface (<CODE>color_pattern</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -63,7 +35,7 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(genbar1)).</CODE>
+<CODE>:- use_module(library(color_pattern)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -72,25 +44,25 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6759"></A>
-<CODE>barchart1/7</CODE>, 
-<A NAME="IDX6760"></A>
-<CODE>barchart1/9</CODE>, 
-<A NAME="IDX6761"></A>
-<CODE>percentbarchart1/7</CODE>.
+<A NAME="IDX6672"></A>
+<CODE>color/2</CODE>, 
+<A NAME="IDX6673"></A>
+<CODE>pattern/2</CODE>, 
+<A NAME="IDX6674"></A>
+<CODE>random_color/1</CODE>, 
+<A NAME="IDX6675"></A>
+<CODE>random_lightcolor/1</CODE>, 
+<A NAME="IDX6676"></A>
+<CODE>random_darkcolor/1</CODE>, 
+<A NAME="IDX6677"></A>
+<CODE>random_pattern/1</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6762"></A>
-<CODE>yelement/1</CODE>, 
-<A NAME="IDX6763"></A>
-<CODE>axis_limit/1</CODE>, 
-<A NAME="IDX6764"></A>
-<CODE>header/1</CODE>, 
-<A NAME="IDX6765"></A>
-<CODE>title/1</CODE>, 
-<A NAME="IDX6766"></A>
-<CODE>footer/1</CODE>.
+<A NAME="IDX6678"></A>
+<CODE>color/1</CODE>, 
+<A NAME="IDX6679"></A>
+<CODE>pattern/1</CODE>.
 
 </UL>
 
@@ -101,17 +73,9 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6767"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6768"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX6769"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX6770"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX6771"></A>
+<A NAME="IDX6680"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX6772"></A>
+<A NAME="IDX6681"></A>
 <CODE>random/random</CODE>.
 
 </UL>
@@ -122,345 +86,249 @@ Particular features will be pointed out in the corresponding predicate.
 
 
 
-<H2><A NAME="SEC690" HREF="ciao_toc.html#TOC690">Documentation on exports (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC683" HREF="ciao_toc.html#TOC683">Documentation on exports (<CODE>color_pattern</CODE>)</A></H2>
 <P>
-<A NAME="IDX6773"></A>
-<A NAME="IDX6774"></A>
+<A NAME="IDX6682"></A>
+<A NAME="IDX6683"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart1/7:</B>
-<DD><A NAME="IDX6775"></A>
+<DT><span class="define">REGTYPE:</span> <B>color/1:</B>
+<DD><A NAME="IDX6684"></A>
 
 
 <P>
-<CODE>barchart1(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-The <CODE>y</CODE> axis range is determined from the limits of the data. Two examples are given to demonstrate clearly how to call the predicates. In the first example the user sets the bar appearance, in the second one the appearance features will be chosen by the system and the colors that have been assigned to the variables Color1, Color2 and Pattern will be shown also. 
-
-
-<P>
-Example 1: 
+<CODE>color(Color)</CODE>
 
 
 
 <PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['bar1','legend_element1','Blue','Yellow','pattern1'],
-           ['bar2','legend_element2','Plum','SeaGreen','pattern2'],
-           ['bar3','legend_element3','Turquoise','Yellow','pattern5'] ],
-  'yaxixtitle',
-  [20,10,59],
-  'footer').
+color('GreenYellow').
+color('Yellow').
+color('White').
+color('Wheat').
+color('BlueViolet').
+color('Violet').
+color('MediumTurquoise').
+color('DarkTurquoise').
+color('Turquoise').
+color('Thistle').
+color('Tan').
+color('Sienna').
+color('Salmon').
+color('VioletRed').
+color('OrangeRed').
+color('MediumVioletRed').
+color('IndianRed').
+color('Red').
+color('Plum').
+color('Pink').
+color('MediumOrchid').
+color('DarkOrchid').
+color('Orchid').
+color('Orange').
+color('Maroon').
+color('Magenta').
+color('Khaki').
+color('Grey').
+color('LightGray').
+color('DimGray').
+color('DarkSlateGray').
+color('YellowGreen').
+color('SpringGreen').
+color('SeaGreen').
+color('PaleGreen').
+color('MediumSpringGreen').
+color('MediumSeaGreen').
+color('LimeGreen').
+color('ForestGreen').
+color('DarkOliveGreen').
+color('DarkGreen').
+color('Green').
+color('Goldenrod').
+color('Gold').
+color('Brown').
+color('Firebrick').
+color('Cyan').
+color('Coral').
+color('SteelBlue').
+color('SlateBlue').
+color('SkyBlue').
+color('Navy').
+color('MidnightBlue').
+color('MediumSlateBlue').
+color('MediumBlue').
+color('LightSteelBlue').
+color('LightBlue').
+color('DarkSlateBlue').
+color('CornflowerBlue').
+color('CadetBlue').
+color('Blue').
+color('Black').
+color('MediumAquamarine').
+color('Aquamarine').
 </PRE>
 
 <P>
-Example 2: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['element1','legend_element1',Color1,Color2,Pattern],
-            ['element2','legend_element2'],
-            ['element3','legend_element3'] ],
-  'yaxixtitle',
-  [20,10,59],
-  'footer').
-</PRE>
-
-<P>
- 
- 
+Defines available colors for elements such as points, lines or bars. 
 
 
 </DL>
 
 <P>
-<A NAME="IDX6776"></A>
-<A NAME="IDX6777"></A>
+<A NAME="IDX6685"></A>
+<A NAME="IDX6686"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart1/9:</B>
-<DD><A NAME="IDX6778"></A>
+<DT><span class="define">PREDICATE:</span> <B>color/2:</B>
+<DD><A NAME="IDX6687"></A>
 
 
 <P>
-<CODE>barchart1(Header,BTitle,XTitle,XVector,YTitle,YVector,YMax,YMin,Footer)</CODE>
-
-
-<P>
-You can set the minimum and maximum limits of the <CODE>y</CODE> axis. Data outside the limits will not be plotted. Each limit, as you can check by looking at the 
-<A NAME="IDX6779"></A>
-<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['element1','e1','Blue','Yellow','pattern1'],
-      ['element2','e2','Turquoise','Plum','pattern5'],
-      ['element3','e3','Turquoise','Green','pattern5'] ],
-  'yaxixtitle',
-  [20,10,59],
-  70,
-  _,
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX6780"></A>
-<A NAME="IDX6781"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart1/7:</B>
-<DD><A NAME="IDX6782"></A>
-
-
-<P>
-<CODE>percentbarchart1(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-The y axis maximum coordinate value is 100. The <CODE>x</CODE> axis limits are automatically worked out. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-percentbarchart1('This is a special barchart to represent percentages',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1','Blue','Yellow','pattern1'],
-       [8,'bar2','MediumTurquoise','Plum','pattern5'] ],
-  'My yaxixtitle',
-  [80,10],
-  'This is the footer text').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX6783"></A>
-<A NAME="IDX6784"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>yelement/1:</B>
-<DD><A NAME="IDX6785"></A>
-
-
-<P>
- 
-
-
-
-<PRE>
-yelement(Y) :-
-        number(Y).
-</PRE>
-
-<P>
-Y is the bar lenght, so it must be a numeric value. 
-
-
-<P>
-Both Prolog and Tcl-Tk support integers and floats. Integers are usually specified in decimal, but if the first character is 0 the number is read in octal (base 8), and if the first two characters are 0x, the number is read in hexadecimal (base16). Float numbers may be specified using most of the forms defined for ANSI C, including the following examples: 
-
-
+<STRONG>Usage:</STRONG> <CODE>color(C1,C2)</CODE>
 
 <UL>
-<LI>9.56
+<LI><EM>Description:</EM> Test whether the color <CODE>C1</CODE> is a valid color or not. If <CODE>C1</CODE> is a variable the predicate will choose a valid color randomly. If <CODE>C1</CODE> is a ground term that is not a valid color an exception (error9) will be thrown
 
-<LI>5.88e-2
+<LI><EM>The following properties should hold at call time:</EM>
 
-<LI>5.1E2
+<CODE>color_pattern:color(C1)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
 
-</UL>
-
-<P>
-Note: Be careful when using floats. While 8. or 7.e4 is interpreted by Tcl-tk as 8.0 and 7.0e4, Prolog will not read them as float numbers. Example: 
-
-<PRE>
-        ?- number(8.e+5).
-        {SYNTAX ERROR: (lns 130-130) , or ) expected in arguments
-        number ( 8 
-        ** here **
-        . e + 5 ) . 
-        }
-
-        no
-        ?- number(8.).
-        {SYNTAX ERROR: (lns 138-138) , or ) expected in arguments
-        number ( 8 
-        ** here **
-        . ) . 
-        }
-
-        no
-
-        ?- number(8.0e+5).
-
-        yes
-        ?- number(8.0).
-
-        yes
-</PRE>
-
-<P>
-Precision: Tcl-tk internally represents integers with the C type <CODE>int</CODE>, which provides at least 32 bits of precision on most machines. Since Prolog integers can (in some implementations) exceed 32 bits but the precision in Tcl-tk depends on the machine, it is up to the progammer to ensure that the values fit into the maximum precision of the machine for integers. Real numbers are represented with the C type <CODE>double</CODE>, which is usually represented with 64-bit values (about 15 decimal digits of precision) using the IEEE Floating Point Standard. 
-
-
-<P>
-Conversion: If the list is composed by integers and floats, Tcl-tk will convert integers to floats. 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6786"></A>
-<A NAME="IDX6787"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>axis_limit/1:</B>
-<DD><A NAME="IDX6788"></A>
-
-
-
-<PRE>
-axis_limit(X) :-
-        number(X).
-axis_limit(_1).
-</PRE>
-
-<P>
-This type is defined in order to set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, is a number or a variable. If the argument is not a number the limit will be calculated from the data (i.e., if YMax value is <CODE>Var</CODE> the maximum y axis limit will be calculated using the largest data value). 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6789"></A>
-<A NAME="IDX6790"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>header/1:</B>
-<DD><A NAME="IDX6791"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>header(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the header of the graph.
-
+<CODE>color_pattern:color(C2)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6792"></A>
-<A NAME="IDX6793"></A>
+<A NAME="IDX6688"></A>
+<A NAME="IDX6689"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>title/1:</B>
-<DD><A NAME="IDX6794"></A>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX6690"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>title(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) to be used as label, usually not very long.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6795"></A>
-<A NAME="IDX6796"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>footer/1:</B>
-<DD><A NAME="IDX6797"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>footer(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the footer of the graph.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC691" HREF="ciao_toc.html#TOC691">Documentation on internals (<CODE>genbar1</CODE>)</A></H2>
-<P>
-<A NAME="IDX6798"></A>
-<A NAME="IDX6799"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement1/1:</B>
-<DD><A NAME="IDX6800"></A>
+<CODE>pattern(Pattern)</CODE>
 
 
 
 <PRE>
-xbarelement1([XValue,LegendElement]) :-
-        atomic(XValue),
-        atomic(LegendElement).
-xbarelement1([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
-        atomic(XValue),
-        atomic(LegendElement),
-        color(ForegColor),
-        color(BackgColor),
-        pattern(SPattern).
+pattern(pattern1).
+pattern(pattern2).
+pattern(pattern3).
+pattern(pattern4).
+pattern(pattern5).
+pattern(pattern6).
+pattern(pattern7).
+pattern(pattern8).
+pattern(pattern9).
 </PRE>
 
 <P>
-Defines the attributes of the bar. 
-<DL COMPACT>
+Defines valid patterns used in the stipple style bar attribute. 
 
-<DT><CODE>XValue</CODE>
-<DD>
-bar label. Although <CODE>XValue</CODE> values may be numbers, the will be treated as labels. Different elements with the same label will produce different bars. 
-
-<DT><CODE>LegendElement</CODE>
-<DD>
-Legend element name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
-
-<DT><CODE>ForegColor</CODE>
-<DD>
-It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>BackgColor</CODE>
-<DD>
-It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>SPattern</CODE>
-<DD>
-It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
 
 </DL>
+
 <P>
- 
+<A NAME="IDX6691"></A>
+<A NAME="IDX6692"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pattern/2:</B>
+<DD><A NAME="IDX6693"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P1,P2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether the pattern <CODE>P1</CODE> is a valid pattern or not. If <CODE>P1</CODE> is a variable the predicate will choose a valid pattern randomly. If <CODE>P1</CODE> is a ground term that is not a valid pattern an exception (error10) will be thrown.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>color_pattern:pattern(P1)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>color_pattern:pattern(P2)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6694"></A>
+<A NAME="IDX6695"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_color/1:</B>
+<DD><A NAME="IDX6696"></A>
+
+
+<P>
+<CODE>random_color(Color)</CODE>
+
+
+<P>
+This predicate choose a valid color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6697"></A>
+<A NAME="IDX6698"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_lightcolor/1:</B>
+<DD><A NAME="IDX6699"></A>
+
+
+<P>
+<CODE>random_lightcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid light color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6700"></A>
+<A NAME="IDX6701"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_darkcolor/1:</B>
+<DD><A NAME="IDX6702"></A>
+
+
+<P>
+<CODE>random_darkcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid dark color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6703"></A>
+<A NAME="IDX6704"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_pattern/1:</B>
+<DD><A NAME="IDX6705"></A>
+
+
+<P>
+<CODE>random_pattern(Pattern)</CODE>
+
+
+<P>
+This predicate choose a valid pattern among the availables randomly. 
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

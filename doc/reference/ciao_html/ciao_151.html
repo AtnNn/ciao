@@ -1,42 +1,47 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Graphs</TITLE>
+<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC618" HREF="ciao_toc.html#TOC618">Graphs</A></H1>
+<H1><A NAME="SEC611" HREF="ciao_toc.html#TOC611">Pattern (regular expression) matching</A></H1>
 <P>
-<A NAME="IDX6222"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> F. Bueno.
+<A NAME="IDX6142"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#195 (2002/4/12, 14:21:57 CEST)
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
+<STRONG>Version of last change:</STRONG> 1.3#49 (1999/9/8, 21:8:9 MEST)
+
+
+<P>
+This library provides facilities for matching strings and terms against 
+<A NAME="IDX6143"></A>
+<A NAME="IDX6144"></A>
+<EM>patterns</EM> (i.e., 
+<A NAME="IDX6145"></A>
+<A NAME="IDX6146"></A>
+<EM>regular expressions</EM>).
 
 
 
 <UL>
-<LI><A HREF="ciao_151.html#SEC619">Usage and interface (graphs)</A>
-<LI><A HREF="ciao_151.html#SEC620">Documentation on exports (graphs)</A>
-<LI><A HREF="ciao_151.html#SEC621">Documentation on internals (graphs)</A>
+<LI><A HREF="ciao_151.html#SEC612">Usage and interface (patterns)</A>
+<LI><A HREF="ciao_151.html#SEC613">Documentation on exports (patterns)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC619" HREF="ciao_toc.html#TOC619">Usage and interface (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC612" HREF="ciao_toc.html#TOC612">Usage and interface (<CODE>patterns</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -44,7 +49,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(graphs)).</CODE>
+<CODE>:- use_module(library(patterns)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -53,21 +58,21 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6223"></A>
-<CODE>dgraph_to_ugraph/2</CODE>, 
-<A NAME="IDX6224"></A>
-<CODE>dlgraph_to_lgraph/2</CODE>, 
-<A NAME="IDX6225"></A>
-<CODE>edges_to_ugraph/2</CODE>, 
-<A NAME="IDX6226"></A>
-<CODE>edges_to_lgraph/2</CODE>.
+<A NAME="IDX6147"></A>
+<CODE>match_pattern/2</CODE>, 
+<A NAME="IDX6148"></A>
+<CODE>match_pattern/3</CODE>, 
+<A NAME="IDX6149"></A>
+<CODE>case_insensitive_match/2</CODE>, 
+<A NAME="IDX6150"></A>
+<CODE>letter_match/2</CODE>, 
+<A NAME="IDX6151"></A>
+<CODE>match_pattern_pred/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6227"></A>
-<CODE>dgraph/1</CODE>, 
-<A NAME="IDX6228"></A>
-<CODE>dlgraph/1</CODE>.
+<A NAME="IDX6152"></A>
+<CODE>pattern/1</CODE>.
 
 </UL>
 
@@ -78,12 +83,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6229"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX6230"></A>
-<CODE>graphs/ugraphs</CODE>, 
-<A NAME="IDX6231"></A>
-<CODE>graphs/lgraphs</CODE>.
+<A NAME="IDX6153"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -93,227 +94,153 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>,
 
 
 
-<H2><A NAME="SEC620" HREF="ciao_toc.html#TOC620">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC613" HREF="ciao_toc.html#TOC613">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
 <P>
-<A NAME="IDX6232"></A>
-<A NAME="IDX6233"></A>
+<A NAME="IDX6154"></A>
+<A NAME="IDX6155"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
-<DD><A NAME="IDX6234"></A>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
+<DD><A NAME="IDX6156"></A>
 
 
 <P>
-<CODE>dgraph(Graph)</CODE>
-
-
-<P>
-A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6235"></A>
-<A NAME="IDX6236"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
-<DD><A NAME="IDX6237"></A>
-
-
-<P>
-<CODE>dlgraph(Graph)</CODE>
-
-
-<P>
-A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6238"></A>
-<A NAME="IDX6239"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
-<DD><A NAME="IDX6240"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
 
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
-
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6241"></A>
-<A NAME="IDX6242"></A>
+<A NAME="IDX6157"></A>
+<A NAME="IDX6158"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
-<DD><A NAME="IDX6243"></A>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
+<DD><A NAME="IDX6159"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String,Tail)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
 
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
-
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
+<CODE>Tail</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6244"></A>
-<A NAME="IDX6245"></A>
+<A NAME="IDX6160"></A>
+<A NAME="IDX6161"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
-<DD><A NAME="IDX6246"></A>
+<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
+<DD><A NAME="IDX6162"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1,Pred2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6247"></A>
-<A NAME="IDX6248"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
-<DD><A NAME="IDX6249"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC621" HREF="ciao_toc.html#TOC621">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
-<P>
-<A NAME="IDX6250"></A>
-<A NAME="IDX6251"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
-<DD><A NAME="IDX6252"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6253"></A>
-<A NAME="IDX6254"></A>
+<A NAME="IDX6163"></A>
+<A NAME="IDX6164"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
-<DD><A NAME="IDX6255"></A>
+<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
+<DD><A NAME="IDX6165"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6166"></A>
+<A NAME="IDX6167"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX6168"></A>
+
+
+<P>
+Special characters for <CODE>Pattern</CODE> are: 
+<DL COMPACT>
+
+<DT>*
+<DD>
+Matches any string, including the null string. 
+<DT>?
+<DD>
+Matches any single character. 
+<DT>[...]
+<DD>
+Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
+<DT>|
+<DD>
+specifies an alternative. Two regular expressions A and B with | in between form an expression that matches anything that either A or B will match. 
+<DT>{...}
+<DD>
+groups alternatives inside larger patterns. 
+<DT>\
+<DD>
+Quotes a special character (including itself). 
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6169"></A>
+<A NAME="IDX6170"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
+<DD><A NAME="IDX6171"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1,Pred2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,37 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC739" HREF="ciao_toc.html#TOC739">dictionary_tree (library)</A></H1>
+<H1><A NAME="SEC732" HREF="ciao_toc.html#TOC732">dictionary (library)</A></H1>
 <P>
-<A NAME="IDX7235"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1 (1999/1/14, 15:57:36 MET)
+<A NAME="IDX7170"></A>
 
 
 <P>
-This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
+<STRONG>Version:</STRONG> 0.1 (1998/12/7, 15:57:36 MET)
+
+
+<P>
+This module contains the fixed dictionary. All the nodes in VRML with their associated fields.
 
 
 
 <UL>
-<LI><A HREF="ciao_189.html#SEC740">Usage and interface (dictionary_tree)</A>
-<LI><A HREF="ciao_189.html#SEC741">Documentation on exports (dictionary_tree)</A>
+<LI><A HREF="ciao_189.html#SEC733">Usage and interface (dictionary)</A>
+<LI><A HREF="ciao_189.html#SEC734">Documentation on exports (dictionary)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC740" HREF="ciao_toc.html#TOC740">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
+<H2><A NAME="SEC733" HREF="ciao_toc.html#TOC733">Usage and interface (<CODE>dictionary</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +39,7 @@ This module offers a dynamic tree structured dictionary a bit combined with pred
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(dictionary_tree)).</CODE>
+<CODE>:- use_module(library(dictionary)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,20 +48,8 @@ This module offers a dynamic tree structured dictionary a bit combined with pred
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7236"></A>
-<CODE>create_dictionaries/1</CODE>, 
-<A NAME="IDX7237"></A>
-<CODE>is_dictionaries/1</CODE>, 
-<A NAME="IDX7238"></A>
-<CODE>get_definition_dictionary/2</CODE>, 
-<A NAME="IDX7239"></A>
-<CODE>get_prototype_dictionary/2</CODE>, 
-<A NAME="IDX7240"></A>
-<CODE>dictionary_insert/5</CODE>, 
-<A NAME="IDX7241"></A>
-<CODE>dictionary_lookup/5</CODE>, 
-<A NAME="IDX7242"></A>
-<CODE>merge_tree/2</CODE>.
+<A NAME="IDX7171"></A>
+<CODE>dictionary/6</CODE>.
 
 </UL>
 
@@ -72,25 +60,25 @@ This module offers a dynamic tree structured dictionary a bit combined with pred
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7243"></A>
+<A NAME="IDX7172"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX7244"></A>
+<A NAME="IDX7173"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX7245"></A>
+<A NAME="IDX7174"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX7246"></A>
+<A NAME="IDX7175"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7247"></A>
+<A NAME="IDX7176"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7248"></A>
+<A NAME="IDX7177"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX7249"></A>
+<A NAME="IDX7178"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX7250"></A>
+<A NAME="IDX7179"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX7251"></A>
+<A NAME="IDX7180"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7252"></A>
+<A NAME="IDX7181"></A>
 <CODE>provrml/internal_types</CODE>.
 
 </UL>
@@ -101,195 +89,72 @@ This module offers a dynamic tree structured dictionary a bit combined with pred
 
 
 
-<H2><A NAME="SEC741" HREF="ciao_toc.html#TOC741">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
+<H2><A NAME="SEC734" HREF="ciao_toc.html#TOC734">Documentation on exports (<CODE>dictionary</CODE>)</A></H2>
 <P>
-<A NAME="IDX7253"></A>
-<A NAME="IDX7254"></A>
+<A NAME="IDX7182"></A>
+<A NAME="IDX7183"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
-<DD><A NAME="IDX7255"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary/6:</B>
+<DD><A NAME="IDX7184"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
+<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7256"></A>
-<A NAME="IDX7257"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
-<DD><A NAME="IDX7258"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>?Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7259"></A>
-<A NAME="IDX7260"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
-<DD><A NAME="IDX7261"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary,-Tree)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-
-<CODE>-Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7262"></A>
-<A NAME="IDX7263"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
-<DD><A NAME="IDX7264"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary,-Tree)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-
-<CODE>-Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7265"></A>
-<A NAME="IDX7266"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
-<DD><A NAME="IDX7267"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key,+Type,+Field,+Dictionary,?Info)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Key</CODE> is an atom.
+<CODE>?NodeTypeId</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+Type</CODE> is an atom.
+<CODE>?AccessType</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+Field</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Dictionary</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
-
-<CODE>?Info</CODE> is an atom.
+<CODE>?FieldTypeId</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-Boundary</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX7268"></A>
-<A NAME="IDX7269"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
-<DD><A NAME="IDX7270"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key,?Type,?Field,+Dictionary,-Info)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
+<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Key</CODE> is an atom.
+<CODE>?NodeTypeId</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>?Type</CODE> is an atom.
+<CODE>?AccessType</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>?Field</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Dictionary</CODE> is a dictionary.
- (<CODE>internal_types:dictionary/1</CODE>)
-
-<CODE>-Info</CODE> is an atom.
+<CODE>?FieldTypeId</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
-</UL>
 
-</DL>
+<CODE>?FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<P>
-<A NAME="IDX7271"></A>
-<A NAME="IDX7272"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
-<DD><A NAME="IDX7273"></A>
+<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree,+Tree)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
-
-<CODE>+Tree</CODE> is a tree structure.
- (<CODE>internal_types:tree/1</CODE>)
+<CODE>-Boundary</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

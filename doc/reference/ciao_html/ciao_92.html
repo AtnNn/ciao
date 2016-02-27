@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Terms with named arguments -records/feature terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
 <H1><A NAME="SEC372" HREF="ciao_toc.html#TOC372">Terms with named arguments -records/feature terms</A></H1>
 <P>
-<A NAME="IDX4171"></A>
+<A NAME="IDX4222"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#195 (2002/4/12, 14:21:57 CEST)
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
@@ -28,14 +28,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, 
 
 
 <P>
-<A NAME="IDX4172"></A>
-<A NAME="IDX4173"></A>
+<A NAME="IDX4223"></A>
+<A NAME="IDX4224"></A>
 This library package provides syntax which allows accessing term arguments by name (these terms are sometimes also referred to as 
-<A NAME="IDX4174"></A>
-<A NAME="IDX4175"></A>
+<A NAME="IDX4225"></A>
+<A NAME="IDX4226"></A>
 <EM>records</EM>, and are also similar to 
-<A NAME="IDX4176"></A>
-<A NAME="IDX4177"></A>
+<A NAME="IDX4227"></A>
+<A NAME="IDX4228"></A>
 <EM>feature terms</EM> [AKPS92]).
 
 
@@ -65,16 +65,16 @@ or
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX4178"></A>
+<A NAME="IDX4229"></A>
 <CODE>$/2</CODE> [150,xfx], 
-<A NAME="IDX4179"></A>
+<A NAME="IDX4230"></A>
 <CODE>=&#62;/2</CODE> [950,xfx], 
-<A NAME="IDX4180"></A>
+<A NAME="IDX4231"></A>
 <CODE>argnames/1</CODE> [1150,fx].
 
 <LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX4181"></A>
+<A NAME="IDX4232"></A>
 <CODE>argnames/1</CODE>.
 
 </UL>
@@ -85,11 +85,11 @@ or
 
 <H2><A NAME="SEC374" HREF="ciao_toc.html#TOC374">Documentation on new declarations (<CODE>argnames</CODE>)</A></H2>
 <P>
-<A NAME="IDX4182"></A>
-<A NAME="IDX4183"></A>
+<A NAME="IDX4233"></A>
+<A NAME="IDX4234"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>argnames/1:</B>
-<DD><A NAME="IDX4184"></A>
+<DD><A NAME="IDX4235"></A>
 
 
 <P>
@@ -98,11 +98,11 @@ or
 <UL>
 <LI><EM>Description:</EM> An
 
-<A NAME="IDX4185"></A>
+<A NAME="IDX4236"></A>
 <CODE>argnames/1</CODE> declaration assigns names to the argument positions of terms (or literal/goals) which use a certain functor/arity. This allows referring to these arguments by their name rather than by their argument position. Sometimes, argument names may be clearer and easier to remember than argument positions, specially for predicates with many arguments. Also, in some cases this may allow adding arguments to certain predicates without having to change the code that uses them. These terms with named arguments are sometimes also referred to as 
-<A NAME="IDX4186"></A>
+<A NAME="IDX4237"></A>
 records, and are also similar to 
-<A NAME="IDX4187"></A>
+<A NAME="IDX4238"></A>
 feature terms [AKPS92]. For example, in order to write a program for the <EM>zebra</EM> puzzle we might declare: 
 
 
@@ -115,9 +115,9 @@ feature terms [AKPS92]. For example, in order to write a program for the <EM>zeb
 which first includes the package and then assigns a name to each of the arguments of any term (or literal/goal) with <CODE>house/5</CODE> as the main functor. 
 
 Once an 
-<A NAME="IDX4188"></A>
+<A NAME="IDX4239"></A>
 <CODE>argnames/1</CODE> is given, is possible to use the names to refer to the arguments of any term (or literal/goal) which has the same main functor as that of the term which appears in the 
-<A NAME="IDX4189"></A>
+<A NAME="IDX4240"></A>
 <CODE>argnames/1</CODE> declaration. This is done by first writing the functor name, then the infix operator <CODE>$</CODE>, and then, between curly brackets, zero, one, or more pairs <EM>argument-name</EM><CODE>=&#62;</CODE><EM>argument-value</EM>, separated by commas (i.e., the infix operator <CODE>=&#62;</CODE> is used between the name and the value). Again, argument names must be atomic. Argument values can be any term. Arguments which are not specified are assumed to have a value of "<CODE>_</CODE>" (i.e., they are left unconstrained). 
 
 Thus, after the declaration for <CODE>house/5</CODE> in the example above, any ocurrence in that code of, for example, <CODE>house${nation=&#62;Owns_zebra,pet=&#62;zebra}</CODE> is exactly equivalent to <CODE>house(_,Owns_zebra,zebra,_,_)</CODE>. Also, <CODE>house${}</CODE> is equivalent to <CODE>house(_,_,_,_,_)</CODE>. The actual zebra puzzle specification might include a clause such as: 
@@ -136,13 +136,13 @@ zebra(Owns_zebra, Drinks_water, Street) :-
 </PRE>
 
 Any number of 
-<A NAME="IDX4190"></A>
+<A NAME="IDX4241"></A>
 <CODE>argnames/1</CODE> declarations can appear in a file, one for each functor whose arguments are to be accessed by name. As with other packages, argument name declarations are <EM>local to the file</EM> in which they appear. The 
-<A NAME="IDX4191"></A>
+<A NAME="IDX4242"></A>
 <CODE>argnames/1</CODE> declarations affect only program text which appears after the declaration. It is easy to make a set of declarations affect several files for example by putting such declarations in a sepatate file which is included by all such files. 
 
 An 
-<A NAME="IDX4192"></A>
+<A NAME="IDX4243"></A>
 <CODE>argnames/1</CODE> declaration does not change in any way the internal representation of the associated terms and does not affect run-time efficiency. It is simply syntactic sugar. 
 
  
@@ -288,6 +288,6 @@ It would be nice to add a mechanism to portray terms with named arguments in a s
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

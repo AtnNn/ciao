@@ -188,6 +188,8 @@ version-ciao:
 	echo 'char *emulator_version = "Ciao-Prolog '$(VERSION)' #'$(PATCH)': '`date`'";' >  $(OBJDIR)/version.c; \
 	echo 'char *emulator_architecture = "$(ARCHNAME)";' >> $(OBJDIR)/version.c;\
 	echo 'char *emulator_os = "$(OSNAME)";' >> $(OBJDIR)/version.c;\
+	echo 'double ciao_version = $(VERSION);' >> $(OBJDIR)/version.c;\
+	echo 'int ciao_patch = $(PATCH);' >> $(OBJDIR)/version.c;\
 	echo 'char *installibdir = "$(REALLIBDIR)";' >> $(OBJDIR)/version.c )
 
 installeng: eng installincludes justinstalleng

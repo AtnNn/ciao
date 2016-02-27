@@ -1,33 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - field_type (library)</TITLE>
+<TITLE>The Ciao Prolog System               - error (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC745" HREF="ciao_toc.html#TOC745">field_type (library)</A></H1>
+<H1><A NAME="SEC738" HREF="ciao_toc.html#TOC738">error (library)</A></H1>
 <P>
-<A NAME="IDX7283"></A>
+<A NAME="IDX7224"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/9, 13:30:46 MET)
+<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+
+
+<P>
+<STRONG>Version:</STRONG> 0.1#3 (1998/12/14, 19:14:44 MET)
+
+
+<P>
+This file implements error predicates of different types.
 
 
 
 <UL>
-<LI><A HREF="ciao_191.html#SEC746">Usage and interface (field_type)</A>
-<LI><A HREF="ciao_191.html#SEC747">Documentation on exports (field_type)</A>
+<LI><A HREF="ciao_191.html#SEC739">Usage and interface (error)</A>
+<LI><A HREF="ciao_191.html#SEC740">Documentation on exports (error)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC746" HREF="ciao_toc.html#TOC746">Usage and interface (<CODE>field_type</CODE>)</A></H2>
+<H2><A NAME="SEC739" HREF="ciao_toc.html#TOC739">Usage and interface (<CODE>error</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(field_type)).</CODE>
+<CODE>:- use_module(library(error)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,8 +52,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7284"></A>
-<CODE>fieldType/1</CODE>.
+<A NAME="IDX7225"></A>
+<CODE>error_vrml/1</CODE>, 
+<A NAME="IDX7226"></A>
+<CODE>output_error/1</CODE>.
 
 </UL>
 
@@ -55,30 +65,52 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>,
 
 
 
-<H2><A NAME="SEC747" HREF="ciao_toc.html#TOC747">Documentation on exports (<CODE>field_type</CODE>)</A></H2>
+<H2><A NAME="SEC740" HREF="ciao_toc.html#TOC740">Documentation on exports (<CODE>error</CODE>)</A></H2>
 <P>
-<A NAME="IDX7285"></A>
-<A NAME="IDX7286"></A>
+<A NAME="IDX7227"></A>
+<A NAME="IDX7228"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fieldType/1:</B>
-<DD><A NAME="IDX7287"></A>
+<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
+<DD><A NAME="IDX7229"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>fieldType(+FieldTypeId)</CODE>
+<STRONG>Usage:</STRONG> <CODE>error_vrml(+Structure)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Boolean predicate used to check the fieldTypeId with the defiened.
+<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+FieldTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>+Structure</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7230"></A>
+<A NAME="IDX7231"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
+<DD><A NAME="IDX7232"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>output_error(+Message)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Message</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

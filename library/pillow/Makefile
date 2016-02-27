@@ -13,6 +13,9 @@ pillow: icon_address.pl
 icon_address.pl: ../../SETTINGS
 	echo "icon_base_address('$(WEB_IMAGES_URL)')." > icon_address.pl
 
+# Called from the main Makefile
+all: pillow
+
 install:
 	@-if test ! -d $(WEB_IMAGES_PATH) ; then \
           echo 'Warning: The value of WEB_IMAGES_PATH=$(WEB_IMAGES_PATH) is not properly set, Pillow will not be correctly configured'; \

@@ -1,325 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - A Chart Library</TITLE>
+<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC670" HREF="ciao_toc.html#TOC670">A Chart Library</A></H1>
+<H1><A NAME="SEC662" HREF="ciao_toc.html#TOC662">Programming MYCIN rules</A></H1>
 <P>
-<A NAME="IDX6544"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Isabel Mart&iacute;n Garc&iacute;a.
+<A NAME="IDX6486"></A>
 
 
 <P>
-This library is intended to eaose the task of displaying some graphical results. This library allows the programmer to visualize different graphs and tables without knowing anything about specific graphical packages. 
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
-You need to install the BLT package in your computer. BLT is an extension to the Tk toolkit and it does not require any patching of the Tcl or Tk source files. You can find it in <A HREF="http://www.tcltk.com/blt/index.html">http://www.tcltk.com/blt/index.html</A> 
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
-Basically, when the user invokes a predicate, the library (internally) creates a bltwish interpreter and passes the information through a socket to display the required widget. The interpreter parses the received commands and executes them. 
+<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
 
 
 <P>
-The predicates exported by this library can be classified in four main groups, according to the types of representation they provide. 
-
-
+MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
+<A NAME="IDX6487"></A>
+<A NAME="IDX6488"></A>
+<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
 
 <UL>
 
-<LI>bar charts
+<LI>A value of -1 stands for <EM>surely not</EM>.
 
-<LI>line graphs
+<LI>A value of 1 stands for <EM>certainly</EM>.
 
-<LI>scatter graphs
-
-<LI>tables
+<LI>A value of 0 stands for <EM>I don't know</EM>.
 
 </UL>
 
 <P>
-To represent graphs, the Cartesian coordinate system is used. I have tried to show simple samples for every library exported predicate in order to indicate how to call them. 
+Intermediate values are allowed. 
+
+
+<P>
+Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
 
 
 
 <UL>
-<LI><A HREF="ciao_170.html#SEC671">Bar charts</A>
-<LI><A HREF="ciao_170.html#SEC672">Line graphs</A>
-<LI><A HREF="ciao_170.html#SEC673">Scatter graphs</A>
-<LI><A HREF="ciao_170.html#SEC674">Tables</A>
-<LI><A HREF="ciao_170.html#SEC675">Overview of widgets</A>
-<LI><A HREF="ciao_170.html#SEC676">Usage and interface (chartlib)</A>
-<LI><A HREF="ciao_170.html#SEC677">Documentation on exports (chartlib)</A>
+<LI><A HREF="ciao_170.html#SEC663">Usage and interface (mycin)</A>
+<LI><A HREF="ciao_170.html#SEC664">Documentation on new declarations (mycin)</A>
+<LI><A HREF="ciao_170.html#SEC665">Known bugs and planned improvements (mycin)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC671" HREF="ciao_toc.html#TOC671">Bar charts</A></H2>
-
-<P>
-In this section we shall introduce the general issues about the set of barchart predicates. By calling the predicates that pertain to this group a bar chart for plotting two-dimensional data (X-Y coordinates) can be created. A bar chart is a graphic means of comparing numbers by displaying bars of lengths proportional to the y-coordinates they represented. The barchart widget has many configurable options such as title, header text, legend and so on. You can configure the appearance of the bars as well. The bar chart widget has the following components: 
-
-
-<DL COMPACT>
-
-<DT>Header text
-<DD>
-The text displayed at the top of the window. If it is <CODE>"</CODE> no text will be displayed. 
-
-<DT>Save button
-<DD>
-The button placed below the header text. Pops up a dialog box for the user to select a file to save the graphic in PostScript format.<A NAME="DOCF4" HREF="ciao_foot.html#FOOT4">(4)</A> 
-
-<DT>Bar chart title
-<DD>
-The title of the graph. It is displayed at the top of the bar chart graph. If text is <CODE>"</CODE> no title will be displayed. 
-
-<DT>X axis title
-<DD>
-X axis title. If text is <CODE>"</CODE> no x axis title will be displayed. 
-
-<DT>Y axis title
-<DD>
-Y axis title. If text is <CODE>"</CODE> no y axis title will be displayed. 
-
-<DT>X axis
-<DD>
-X coordinate axis. The x axis is drawn at the bottom margin of the bar chart graph. The x axis consists of the axis line, ticks and tick labels. Tick labels can be numbers or plain text. If the labels are numbers, they could be displayed at uniform intervals (the numbers are treated as normal text) or depending on its x-coodinate value. You can also set limits (maximum and minimum) for the x axis, but only if the tick labels are numeric. 
-
-<DT>Y axis
-<DD>
-Y coordinate axis. You can set limits (maximum and minimum) for the y axis. The y axis is drawn at the right margin of the bar chart graph.The y axis consists of the axis line, ticks and tick labels. The tick labels are numeric values determined from the data and are drawn at uniform intervals. 
-
-<DT>Bar chart graph
-<DD>
-This is the plotting area, placed in the center of the window and surrounded by the axes, the axis titles and the legend (if any). The range of the axes controls what region of the data is plotted. By default, the minimum and maximum limits are determined from the data, but you can set them (as mentioned before). Data points outside the minimum and maximum value of the axes are not plotted. 
-
-<DT>Legend
-<DD>
-The legend displays the name and symbol of each bar. The legend is placed in the right margin of the Bar chart graph. 
-
-<DT>Footer text
-<DD>
-Text displayed at the lower part of the window. If text is <CODE>"</CODE> no header text will be displayed. 
-
-<DT>Quit button
-<DD>
-Button placed below the footer text. Click it to close the window. 
-
-</DL>
-
-<P>
-All of them are arranged in a window. However you can, for example, show a bar chart window without legend or header text. Other configuration options will be explained later. 
-
-
-<P>
-In addition to the window appearance there is another important issue about the bar chart window, namely its behaviour in response to user actions. The association user actions to response is called <EM>bindings</EM>. The main bindings currently specified are the following: 
-
-
-<DL COMPACT>
-
-<DT>Default bindings
-<DD>
-Those are well known by most users. They are related to the frame displayed around the window. As you know, you can interactively move, resize, close, iconify, deiconify, send to another desktop etc. a window. 
-
-<DT>Bindings related to bar chart graph and its legend
-<DD>
-Clicking the left mouse key over a legend element, the corresponding bar turns out into red. After clicking again, the bar toggles to its original look. In addition, you can do zoom-in by pressing the left mouse key over the bar chart graph and dragging to select an area. To zoom out simply press the right mouse button. 
-
-When the pointer passes over the plotting area the cross hairs are drawn. The cross hairs consists of two intersecting lines (one vertical and one horizontal). Besides, if the pointer is over a legend element, its background changes. 
-
-<DT>Bindings related to buttons
-<DD>
-There are two buttons in the main widget. Clicking the mouse on the Save button a "Save as" dialog box is popped up. The user can select a file to save the graph. If the user choose a file that already exists, the dialog box prompts the user for confirmation on whether the existing file should be overwritten or not. Furthermore, you can close the widget by clicking on the Quit button. 
-
-When the pointer passes over a button the button color changes. 
-
-</DL>
-
-<P>
-The predicates that belong to this group are those whose names begin with <STRONG>barchart</STRONG> and <STRONG>genmultibar</STRONG>. If you take a look at the predicate names that pertain to this group, you will notice that they are not self-explanatory. It would have been better to name the predicates in a way that allows the user to identify the predicate features by its name, but it would bring about very long names (i.e barchart_WithoutLegend_BarsAtUniformIntervals_RandomBarsColors). For this reason I decided to simply add a number after barchart to name them. 
-
-
-
-
-<H2><A NAME="SEC672" HREF="ciao_toc.html#TOC672">Line graphs</A></H2>
-
-<P>
-It is frequently the case that several datasets need to be displayed on the same plot. If so, you may wish to distinguish the points in different datasets by joining them by lines of different color, or by plotting with symbols of different types. This set of predicates allows the programmer to represent two-dimensional data (X-Y coordinates). Each dataset contains x and y vectors containing the coordinates of the data. You can configure the appearance of the points and the lines which the points are connected with. The configurable line graph components are: 
-
-
-<DL COMPACT>
-
-<DT>line graph
-<DD>
-This is the plotting area, placed in the center of the window and surrounded by the axes, the axes titles and the legend (if any). The range of the axes controls what region of the data is plotted. By default, the minimum and maximum limits are determined from the data, but you can set them. Data points outside the minimum and maximum value of the axes are not plotted. You can specify how connecting line segments joining successive datapoints are drawn by setting the <CODE>Smooth</CODE> argument. Smooth can be either linear, step, natural and quadratic. Furthermore, you can select the appearance of the points and lines. 
-
-<DT>Legend
-<DD>
-The legend displays the name and symbol of each line. The legend is placed in the right margin of the graph. 
- 
-</DL>
-
-<P>
-The elements header, footer, quit and save buttons, the titles and the axes are quite similar to those in barchart graphs, except in that the tick labels will be numbers. All of them are arranged in a window by the geometry manager. However you can, as we mentioned in the above paragraphs, show a line graph window without any titles or footer text. Other configuration options will be explained later in this section or in the corresponding modules. 
-
-
-<P>
-Related to the behaviour of the widgets in response to user actions (bindings) we will remark the following features: 
-
-
-<DL COMPACT>
-
-<DT>Bindings related to line graph and its legend
-<DD>
-Clicking the left mouse key over a legend element, the corresponding line turns out into blue. Repeating the action reverts the line to its original color. Moreover, you can do zoom-in by clicking the left mouse key over the bar chart graph and dragging a rectangle defining the area you want to zoom in. To zoom out simply press the right mouse button. 
-
-When the pointer passes over the plotting area the cross hairs are drawn. The cross hairs consists of two intersecting lines (one vertical and one horizontal). Besides, if the pointer is over a legend element, its background changes. 
-
-<DT>Other bindings
-<DD>
-The default bindings and the bindings related to the save and quit buttons are similar to those in the bar chart graphs. 
- 
-</DL>
-
-<P>
-The predicates that belong to this group are those whose names begin with <STRONG>graph_</STRONG>. 
- 
-
-
-
-
-<H2><A NAME="SEC673" HREF="ciao_toc.html#TOC673">Scatter graphs</A></H2>
-
-<P>
-The challenge of this section is to introduce some general aspects about the scatter graph predicates group. By invoking the scatter graph predicates the user can represent two-dimensional point datasets. Often you need to display one or several point datasets on the same plot. If so, you may wish to distinguish the points that pertain to different datasets by using plotting symbols of different types, or by displaying them in different colors. This set of predicates allows you to represent two-dimensional data (X-Y coordinates). Each dataset contains x and y vectors containing the coordinates of the data. You can configure the appearance of the points. The configurable scatter graph components are: 
-
-
-<DL COMPACT>
-
-<DT>scatter graph
-<DD>
-This is the plotting area, placed in the center of the window and surrounded by the axes, the axes titles and the legend (if any). The range of the axes controls what region of the data is plotted. By default, the minimum and maximum limits are determined from the data, but you can set them (as we mentioned before). Data points outside the minimum and maximum value of the axes are not plotted. The user can select the appearance of the points. 
-
-<DT>Legend
-<DD>
-The legend displays the name and symbol of each point dataset. The legend is drawn in the right margin of the graph. 
- 
-</DL>
-
-<P>
-The elements header, footer, quit and save buttons, the titles and the axes are similar to those in barchart graphs except for that, as in line graphs, the tick labels will be numbers. All of them are arranged in a window by the geometry manager. However you can, for example, show a scatter graph window without titles or footer text, as we mentioned before. Other configuration options will be explained later, in the corresponding modules. 
-
-
-<P>
-Related to the behaviour of the widgets in response to user actions (bindings) the following features are: 
-
-
-<DL COMPACT>
-
- 
-<DT>Bindings related to scatter graph and its legend
-<DD>
-Clicking the left mouse key over a legend element, the points which belong to the corresponding dataset turn out into blue. Repeating the action toggles the point dataset to its original color. Moreover, you can do zoom-in by clicking the left mouse key over the bar chart graph and dragging a rectangle defining the area you want to zoom-in on. To do zoom-out simply press the right mouse button. 
-
-When the pointer passes over the plotting area the cross hairs are drawn. The cross hairs consists of two intersecting lines (one vertical and one horizontal). Besides, if the pointer is over a legend element, its background changes. 
-
-<DT>Other bindings
-<DD>
-The default bindings and the bindings related to the save and quit buttons are similar to those in the bar chart graphs. 
-
-</DL>
-<P>
- 
-The predicates that belong to this group are those whose names began with <STRONG>scattergraph_</STRONG>. 
-
-
-
-
-<H2><A NAME="SEC674" HREF="ciao_toc.html#TOC674">Tables</A></H2>
-
-<P>
-The purpose of this section is to allow the user to display results in a table. A table is a regular structure in which: 
-
-
-
-<UL>
-
-<LI>Every row has the same number of columns, or
-
-<LI>Every column has the same number of rows.
-
-</UL>
-
-<P>
-The widget configurable components are as follows: 
-
-
-<DL COMPACT>
-
-<DT>Title
-<DD>
-Title of the widget, it is displayed centered at the top of the canvas. If text is <CODE>"</CODE> no title will be displayed. 
-
-<DT>Header text
-<DD>
-Left centered text displayed bellow the title. If text is <CODE>"</CODE> no header text will be displayed. 
-
-<DT>Table
-<DD>
-Is placed in the center of the window. The table is composed by cells ordered in rows and columns. The cell values can be either any kind of text or numbers and they can be empty as well (see the type definition in the corresponding chapter module). A table is a list of lists. Each sublist is a row, so every sublist in the table must contain the same number of alements. 
-
-<DT>Footer text
-<DD>
-Left centered text displayed at the lower part of the window. If text is <CODE>"</CODE> no header text will be displayed. 
-
-<DT>Quit button
-<DD>
-Button placed below the footer text. You can click it to close the window. 
-
-</DL>
-
-<P>
-If the arguments are not in a correct format an exception will be thrown. Moreover, these widgets have the default bindings and the binding related to the quit button: 
- 
-The set of predicates that belongs to this group are those which names begin with <STRONG>table_widget</STRONG>. 
- 
-
-
-
-
-<H2><A NAME="SEC675" HREF="ciao_toc.html#TOC675">Overview of widgets</A></H2>
-<P>
- 
-Although you don't have to worry about how to arrange the widgets, here is an overview of how Tcl-tk, the underlying graphical system currently used by chartlib, performs this task. Quoting from the book <EM>Tcl and Tk toolkit</EM>, John K. Ousterhout. 
-
-
-<P>
-The X Window System provides many facilities for manipulating windows in displays. The root window may have any number of child windows, each of wich is called a top-level window. Top-level windows may have children of their own, wich may have also children, and so on. The descendants of top-level windows are called internal windows. Internal windows are usedfor individual controls such as buttons, text entries, and for grouping controls together. An X-application tipically manages several top-level windows. Tk uses X to implement a set of controls with the Motif look and feel. These controls are called widgets. Each widget is implemented using one X window, and the terms "window" and "widget" will be used interchangeably in this document. As with windows, widgets are nested in hierarchical structures. In this library top-level widgets (nonleaf or main) are just containers for organizing and arranging the leaf widgets (components). Thereby, the barchart widget is a top-level window wich contains some widget components. 
-
-
-<P>
-Probably the most painstaking aspect of building a graphical application is getting the placement and size of the widgets just right. It usually takes many iterations to align widgets and adjust their spacing. That's because managing the geometry of widgets is simply not a packing problem, but also graphical design problem. Attributes such as alignment, symmetry, and balance are more important than minimizing the amount of space used for packing. Tk is similar to other X toolkits in that it does not allow widgets to determine their own geometries. A widget will not even appeared unless it is managed by a geometry manager. This separation of geometry management from internal widget behaviour allows multiple geometry managers to exist simultaneously and permits any widget to be used with any geometry manager. A geometry manager's job is to arrange one or more <EM>slave</EM> widgets relative to a <EM>master</EM> widgets. There are some geometry managers in Tk such as pack, place and canvas widget. We will use another one call table.
-
-
-<P>
-The table geometry manager arranges widgets in a table. It's easy to align widgets (horizontally and vertically) or to create empty space to balance the arrangement of the widgets. Widgets (called slaves in the Tk parlance) are arranged inside a containing widget (called the master). Widgets are positioned at row,column locations and may span any number of rows or columns. More than one widget can occupy a single location. The placement of widget windows determines both the size and arrangement of the table. The table queries the requested size of each widget. The requested size of a widget is the natural size of the widget (before the widget is shrunk or expanded). The height of each row and the width of each column is the largest widget spanning that row or column. The size of the table is in turn the sum of the row and column sizes. This is the table's normal size. The total number of rows and columns in a table is determined from the indices specified. The table grows dynamically as windows are added at larger indices. 
-
-
-
-
-<H2><A NAME="SEC676" HREF="ciao_toc.html#TOC676">Usage and interface (<CODE>chartlib</CODE>)</A></H2>
+<H2><A NAME="SEC663" HREF="ciao_toc.html#TOC663">Usage and interface (<CODE>mycin</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -327,41 +68,16 @@ The table geometry manager arranges widgets in a table. It's easy to align widge
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(chartlib)).</CODE>
+In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
-<LI><STRONG>Other modules used:</STRONG>
+<PRE>
+           :- mycin(MycinDataBaseName).
+</PRE>
 
+<LI><STRONG>New declarations defined:</STRONG>
 
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6545"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX6546"></A>
-<CODE>chartlib/genbar2</CODE>, 
-<A NAME="IDX6547"></A>
-<CODE>chartlib/genbar3</CODE>, 
-<A NAME="IDX6548"></A>
-<CODE>chartlib/genbar4</CODE>, 
-<A NAME="IDX6549"></A>
-<CODE>chartlib/genmultibar</CODE>, 
-<A NAME="IDX6550"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX6551"></A>
-<CODE>chartlib/table_widget2</CODE>, 
-<A NAME="IDX6552"></A>
-<CODE>chartlib/table_widget3</CODE>, 
-<A NAME="IDX6553"></A>
-<CODE>chartlib/table_widget4</CODE>, 
-<A NAME="IDX6554"></A>
-<CODE>chartlib/gengraph1</CODE>, 
-<A NAME="IDX6555"></A>
-<CODE>chartlib/gengraph2</CODE>, 
-<A NAME="IDX6556"></A>
-<CODE>chartlib/chartlib_errhandle</CODE>.
-
-</UL>
+<A NAME="IDX6489"></A>
+<CODE>export/1</CODE>.
 
 </UL>
 
@@ -369,608 +85,59 @@ The table geometry manager arranges widgets in a table. It's easy to align widge
 
 
 
-<H2><A NAME="SEC677" HREF="ciao_toc.html#TOC677">Documentation on exports (<CODE>chartlib</CODE>)</A></H2>
+<H2><A NAME="SEC664" HREF="ciao_toc.html#TOC664">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
 <P>
-<A NAME="IDX6557"></A>
+<A NAME="IDX6490"></A>
+<A NAME="IDX6491"></A>
 <DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart1/7:</B>
-<DD><A NAME="IDX6558"></A>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX6492"></A>
 
 
 <P>
- Imported from 
-<A NAME="IDX6559"></A>
-<CODE>genbar1</CODE> (see the corresponding documentation for details).
+This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
 
+<PRE>
+:- export p/1.
+</PRE>
+
+<P>
+must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
+<A NAME="IDX6493"></A>
+certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
+
+</UL>
 
 </DL>
 
-<P>
-<A NAME="IDX6560"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart1/9:</B>
-<DD><A NAME="IDX6561"></A>
 
 
-<P>
- Imported from 
-<A NAME="IDX6562"></A>
-<CODE>genbar1</CODE> (see the corresponding documentation for details).
+<H2><A NAME="SEC665" HREF="ciao_toc.html#TOC665">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
 
 
-</DL>
+<UL>
 
-<P>
-<A NAME="IDX6563"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart1/7:</B>
-<DD><A NAME="IDX6564"></A>
+<LI>
 
+Not fully implemented.
 
-<P>
- Imported from 
-<A NAME="IDX6565"></A>
-<CODE>genbar1</CODE> (see the corresponding documentation for details).
+<LI>
 
+Dynamic mycin predicates not implemented: open question.
 
-</DL>
+<LI>
 
-<P>
-<A NAME="IDX6566"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart2/7:</B>
-<DD><A NAME="IDX6567"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6568"></A>
-<CODE>genbar2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6569"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart2/11:</B>
-<DD><A NAME="IDX6570"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6571"></A>
-<CODE>genbar2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6572"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart2/7:</B>
-<DD><A NAME="IDX6573"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6574"></A>
-<CODE>genbar2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6575"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart3/7:</B>
-<DD><A NAME="IDX6576"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6577"></A>
-<CODE>genbar3</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6578"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart3/9:</B>
-<DD><A NAME="IDX6579"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6580"></A>
-<CODE>genbar3</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6581"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart3/7:</B>
-<DD><A NAME="IDX6582"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6583"></A>
-<CODE>genbar3</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6584"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart4/7:</B>
-<DD><A NAME="IDX6585"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6586"></A>
-<CODE>genbar4</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6587"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart4/11:</B>
-<DD><A NAME="IDX6588"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6589"></A>
-<CODE>genbar4</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6590"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart4/7:</B>
-<DD><A NAME="IDX6591"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6592"></A>
-<CODE>genbar4</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6593"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>multibarchart/8:</B>
-<DD><A NAME="IDX6594"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6595"></A>
-<CODE>genmultibar</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6596"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>multibarchart/10:</B>
-<DD><A NAME="IDX6597"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6598"></A>
-<CODE>genmultibar</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6599"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget1/4:</B>
-<DD><A NAME="IDX6600"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6601"></A>
-<CODE>table_widget1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6602"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget1/5:</B>
-<DD><A NAME="IDX6603"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6604"></A>
-<CODE>table_widget1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6605"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget2/4:</B>
-<DD><A NAME="IDX6606"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6607"></A>
-<CODE>table_widget2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6608"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget2/5:</B>
-<DD><A NAME="IDX6609"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6610"></A>
-<CODE>table_widget2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6611"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget3/4:</B>
-<DD><A NAME="IDX6612"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6613"></A>
-<CODE>table_widget3</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6614"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget3/5:</B>
-<DD><A NAME="IDX6615"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6616"></A>
-<CODE>table_widget3</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6617"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget4/4:</B>
-<DD><A NAME="IDX6618"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6619"></A>
-<CODE>table_widget4</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6620"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget4/5:</B>
-<DD><A NAME="IDX6621"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6622"></A>
-<CODE>table_widget4</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6623"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b1/9:</B>
-<DD><A NAME="IDX6624"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6625"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6626"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b1/13:</B>
-<DD><A NAME="IDX6627"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6628"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6629"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w1/9:</B>
-<DD><A NAME="IDX6630"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6631"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6632"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w1/13:</B>
-<DD><A NAME="IDX6633"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6634"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6635"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b1/8:</B>
-<DD><A NAME="IDX6636"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6637"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6638"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b1/12:</B>
-<DD><A NAME="IDX6639"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6640"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6641"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w1/8:</B>
-<DD><A NAME="IDX6642"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6643"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6644"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w1/12:</B>
-<DD><A NAME="IDX6645"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6646"></A>
-<CODE>gengraph1</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6647"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b2/9:</B>
-<DD><A NAME="IDX6648"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6649"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6650"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b2/13:</B>
-<DD><A NAME="IDX6651"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6652"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6653"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w2/9:</B>
-<DD><A NAME="IDX6654"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6655"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6656"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w2/13:</B>
-<DD><A NAME="IDX6657"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6658"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6659"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b2/8:</B>
-<DD><A NAME="IDX6660"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6661"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6662"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b2/12:</B>
-<DD><A NAME="IDX6663"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6664"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6665"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w2/8:</B>
-<DD><A NAME="IDX6666"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6667"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6668"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w2/12:</B>
-<DD><A NAME="IDX6669"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6670"></A>
-<CODE>gengraph2</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6671"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chartlib_text_error_protect/1:</B>
-<DD><A NAME="IDX6672"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6673"></A>
-<CODE>chartlib_errhandle</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX6674"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chartlib_visual_error_protect/1:</B>
-<DD><A NAME="IDX6675"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6676"></A>
-<CODE>chartlib_errhandle</CODE> (see the corresponding documentation for details).
-
-
-</DL>
+Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

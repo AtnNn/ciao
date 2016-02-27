@@ -20,6 +20,10 @@
 
 @begin{description}
 
+@item{@tt{version}} The Ciao version, as a term
+      @tt{ciao}(@var{Version},@var{Patch}).  @var{Version} is a floating
+      point number, @var{Patch} is an integer.  Unchangeable.
+
 @item{@tt{argv}} Its value is a list of atoms representing the program
       arguments supplied when the current executable was invoked.  This
       is the value to which is instantiated the argument of the
@@ -95,7 +99,7 @@
 :- use_module(engine(internals), [
          '$unknown'/2, '$ferror_flag'/2, '$prompt'/2, '$unix_argv'/1,
         '$quiet_flag'/2, '$gc_trace'/2, '$gc_margin'/2, '$gc_mode'/2,
-        '$compiling'/2]).
+        '$compiling'/2, '$ciao_version'/2 ]).
 
 %% doinclude's below commented out because LPdoc does not allow yet a 
 %% declaration and a predicate to have the same name.
@@ -200,6 +204,9 @@ prolog_flag(unknown, Old, New) :-
 prolog_flag(quiet, Old, New) :-
         flag_value(Old, New, [on,error,warning,debug,off]),
         '$quiet_flag'(Old, New).
+prolog_flag(version, Version_Term, Version_Term) :-
+        '$ciao_version'(Version, Patch),
+        Version_Term = ciao(Version, Patch).
 prolog_flag(argv, Args, Args) :-
         '$unix_argv'(Args).
 prolog_flag(bounded, false, false). /* ISO */
@@ -288,4 +295,7 @@ gc :- '$gc_mode'(_, on).
 nogc :- '$gc_mode'(_, off).
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+213,2002/05/14,18:11*29+'CEST'), "Added prolog
+   flags version and patch.  (Daniel Cabeza Gras)").
 

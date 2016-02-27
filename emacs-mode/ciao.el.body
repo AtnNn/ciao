@@ -1,6 +1,8 @@
 ; -*- mode: emacs-lisp; -*-
 
-;; **** Fixed some additional xemacs compatibility issues (searches)
+;; **** Need to fix the deleted buffer problem
+;; **** Need to fix error location in shell buffers, clean up
+;;      definition of prompts
 
 ;; --------------------------------------------------------------------------
 ;; The actual code of the mode starts here.
@@ -364,6 +366,7 @@ process."
   :type 'integer)
 
 (defvar ciao-temp-file-name "ciao")
+(defvar ciao-last-temp-file nil)
 
 (defvar ciao-previous-error nil
   "Stores where the last error was.")
@@ -379,30 +382,39 @@ process."
   "Contains which is the last process buffer (preprocessor, toplevel,
    ...) used.")
 
-(defcustom ciao-main-buffer ""
-  "Name of main module in a multiple module program. It is very useful
-when reloading from an inferior module because reload is performed from the
-main module, thus also reloading all dependent modules."
+(defvar ciao-last-source-buffer-used nil
+  "Used to contain sometimes the last source buffer used (useful for
+returning to it after processing).")
+
+(defcustom ciao-main-filename ""
+  "Name of main file in a multiple module program. Setting thsi is
+very useful when working on a multi-module program because it allows 
+issuing a load command after working on an inferior module which will 
+reload from the main module, thus also reloading automatically all
+dependent modules." 
   :group 'ciao
   :type 'string)
 
-(defun ciao-set-main-buffer ()
-  "Set the current buffer as the principal module in a multiple module
+(defun ciao-set-main-filename ()
+  "Set the current buffer as the principal file in a multiple module
 programming environment."
   (interactive)
-  (setq ciao-main-buffer
-	(read-file-name "Change Ciao/Prolog main module? " 
-			"" (ciao-get-module-name) nil (ciao-get-module-name))))
+  (setq ciao-main-filename
+	(read-file-name "Change Ciao/Prolog main file? " 
+			"" (buffer-file-name) nil (buffer-file-name))))
+;;   (setq ciao-main-filename 
+;; 	(read-file-name "Change Ciao/Prolog main module? " 
+;; 			"" (ciao-get-module-name) nil (ciao-get-module-name))))
 
 (defvar ciao-prompt-emacs-hook nil
-  "Things to do in emacs ones the prompt is found in the Ciao/Prolog buffer.")
+  "Things to do in emacs once the prompt is found in the Ciao/Prolog buffer.")
 
 (defvar ciao-prompt-inferior-hook nil
-  "Things to do in Ciao ones the prompt is found in the Ciao/Prolog buffer.")
+  "Things to do in Ciao once the prompt is found in the Ciao/Prolog buffer.")
 
 (defvar ciao-prompt-marker-acc ""
   "Keep the last line written in ciao inferior buffer. It is used to search
-for the prompt due than prompt should be after a newline.")
+for the prompt since prompt should be after a newline.")
 (make-variable-buffer-local 'ciao-prompt-marker-acc)
 
 (defcustom ciao-query ""
@@ -659,14 +671,14 @@ is defined. @cindex{preprocessor command args, setting}"
   :type 'string) 
 
 (defvar ciao-ciaopp-prompt-emacs-hook nil
-  "Things to do in emacs ones the prompt is found in the Ciao/Prolog buffer.")
+  "Things to do in emacs once the prompt is found in the Ciao-Preprocessor buffer.")
 
 (defvar ciao-ciaopp-prompt-inferior-hook nil
-  "Things to do in CiaoPP ones the prompt is found in the Ciao/Prolog buffer.")
+  "Things to do in CiaoPP once the prompt is found in the Ciao/Prolog buffer.")
 
 (defvar ciao-ciaopp-prompt-marker-acc ""
   "Keep the last line written in ciao inferior buffer. It is used to search
-for the prompt due than prompt should be after a newline.")
+for the prompt since prompt should be after a newline.")
 (make-variable-buffer-local 'ciao-ciaopp-prompt-marker-acc)
 
 ;; ---------------------------------------------------------------------------
@@ -836,10 +848,20 @@ for the prompt due than prompt should be after a newline.")
 
 ;; MH Changed to do it in current dir (so that slaves can see it, etc.!)
 (defvar ciao-temp-file-counter 0)
+
+(defun ciao-last-temp-code-file ()
+  "Returns the name of a the last created temporary file in the
+current dir (or creates one)."
+  (if (eq ciao-last-temp-file nil)
+      (setq ciao-last-temp-file (ciao-temp-code-file))
+    ciao-last-temp-file))
+
 (defun ciao-temp-code-file ()
   "Returns the name of a temporary file in the current dir."
   (concat (expand-file-name "./") "." ciao-temp-file-name 
 	  (int-to-string ciao-temp-file-counter) "_" (make-temp-name "")))
+
+;; Not really needed?
 (defun ciao-new-temp-code-file ()
   "Builds new temporary file names in the current dir."
   (setq ciao-temp-file-counter (+ ciao-temp-file-counter 1))
@@ -1291,7 +1313,7 @@ the communication with the Ciao/Prolog top level:
   (ciao-define-key map "\C-co" 'ciao-make-po)
   (ciao-define-key map "\C-ca" 'ciao-make-activemod)
 
-  (ciao-define-key map "\C-cs" 'ciao-set-main-buffer)
+  (ciao-define-key map "\C-cs" 'ciao-set-main-filename)
   (ciao-define-key map "\C-cL" 'ciao-load-from-main-module)
 
   (ciao-define-key map "\C-cq" 'ciao-set-query)
@@ -1435,6 +1457,9 @@ implement the communication with the Ciao preprocessor:
   (ciao-define-key map "\C-cM" 'ciao-preprocess-buffer-menu)
   (ciao-define-key map "\C-cP" 'ciao-preprocess-buffer)
   (ciao-define-key map "\C-cT" 'ciao-check-types-modes)
+  (ciao-define-key map "\C-c\C-p" 'ciao-set-ciaopp-output-pred)
+  (ciao-define-key map "\C-c\C-f" 'ciao-set-ciaopp-output-full)
+  (ciao-define-key map "\C-c\C-x" 'ciao-set-ciaopp-output-none)
   (ciao-define-key map "\C-c\C-v" 'ciao-show-preprocessor-output)
   (ciao-define-key map "\C-cV" 'ciao-preprocess-buffer-and-show-output)
   (ciao-define-key map "\C-c\C-r" 'run-ciao-preprocessor)
@@ -1645,14 +1670,14 @@ how things are set up in your @tt{.emacs} file).")
      "TOP-LEVEL/COMPILER"
      ["(Re)Start ciao top level"                 run-ciao-toplevel t]
      ["(Re)Load buffer into top level"           ciao-load-buffer  t]
-     ["(Re)Load all modules as necessary"        ciao-load-from-main-module t]
+     ["(Re)Load main and related modules"        ciao-load-from-main-module t]
      ["Locate (next) preproc/compiler error msg" ciao-find-last-run-errors t]
      ["Remove error marks in buffers"            ciao-unmark-last-run-errors t]
      (list "Query and main file"
 	   ["Set default query"                  ciao-set-query t]
 	   ["Call default query"                 ciao-load-query t]            
 	   ["Clear default query"                ciao-clear-query t]
-	   ["(Un)Set main module"                ciao-set-main-buffer t]
+	   ["(Un)Set main module"                ciao-set-main-filename t]
 	   )
      ["Check buffer syntax (incl. assertions)"   ciao-check-buffer-syntax t]
      ["Make executable from buffer"              ciao-make-exec t]
@@ -1801,6 +1826,9 @@ how things are set up in your @tt{.emacs} file).")
      ["Show last preprocessor output file"     ciao-show-preprocessor-output t]
      ["Preprocess buffer and show output"  
                                       ciao-preprocess-buffer-and-show-output t]
+     ["Output only predicate-level analysis info" ciao-set-ciaopp-output-pred t]
+     ["Output literal- and pred-level analysis info" ciao-set-ciaopp-output-full t]
+     ["Do not output analysis info" ciao-set-ciaopp-output-none t]
      ["Start ciao preprocessor"                run-ciao-preprocessor t]
      "----"
      (list "SET MODE DEFAULTS"
@@ -2966,17 +2994,20 @@ ciao-mode-hook is called after comint-mode-hook.
 	((string-match "\\`[rf] *[0-9]*\\'" str) nil) ;r(edo) or f(ail)
 	(t t)))
 
-(defun ciao ()
-  "Like \\[run-ciao-toplevel], but starts with a single window with logo."
-  (interactive)
-  (run-ciao-toplevel)
-  (switch-to-buffer (concat "*" ciao-toplevel-buffer-name "*"))
+(defun ciao-insert-splash-toplevel ()
+  (ciao-insert-splash ciao-toplevel-buffer-name))
+
+(defun ciao-insert-splash-ciaopp ()
+  (ciao-insert-splash ciao-ciaopp-buffer-name))
+
+(defun ciao-insert-splash (buffer-name)
+  "Insert a splash screen for the Ciao program development system at
+the beginning of the current buffer."
    ;; *** Checking for emacs-21 (has tool-bar-mode defined)
    ;; *** then, setup nice logo (only if started explicitely)
+  (set-buffer (concat "*" buffer-name "*"))
   (if  (fboundp 'tool-bar-mode)
       (let ((beg 0) (end 0))
-	(ciao-wait-for-prompt ciao-toplevel-buffer-name 
-			      "Starting Ciao toplevel")
  	(goto-char (point-min))
  	(setq beg (point))
  	(open-line 3)
@@ -2988,19 +3019,27 @@ ciao-mode-hook is called after comint-mode-hook.
 	 (find-image (list (list :type 'xpm :file ciao-logo))))
  	(setq end (point))
  	;; (put-text-property beg end 'face 'Info-title-1-face)
-       
- 	))
+	(goto-char (point-max))
+ 	)
+    (goto-char (point-max))))
+
+(defun ciao ()
+  "Like \\[run-ciao-toplevel], but starts with a single window. Useful
+as splash screen for the Ciao program development system, for example
+when launching from a desktop (launch emacs, calling this function)."
+  (interactive)
+  (run-ciao-toplevel)
+  (switch-to-buffer (concat "*" ciao-toplevel-buffer-name "*"))
   (delete-other-windows)
-  (goto-char (point-max))
-  (message "Starting Ciao toplevel... done.")
   )
 
 (defun prolog ()
-  "Like \\[run-ciao-toplevel], but starts with a single window with logo."
+  "Start up Ciao Prolog."
   (interactive)
   (ciao))
 
 (defun run-ciao-toplevel ()
+
   "Ensure that an inferior Ciao/Prolog top-level process is
 running. 
 
@@ -3022,15 +3061,23 @@ toplevel and preprocessor buffers}).
 any of the other functions related to the top level (e.g., loading
 buffers into the top level) ensures that a top level is started
 (starting one if required)."
+
   (interactive)
-  (ciao-ensure-inferior-process ciao-toplevel-buffer-name))
+  (message "Starting Ciao toplevel... ")
+  (ciao-ensure-inferior-process ciao-toplevel-buffer-name)
+  (add-hook 'ciao-prompt-inferior-hook 
+	    'ciao-insert-splash-toplevel t)
+  (message "Starting Ciao toplevel... done."))
 
 (defun ciaopp ()
-  "Same as \\[run-ciao-preprocessor]. Starts with a single window."
+  "Same as \\[run-ciao-preprocessor], but starts with a single window.
+Useful as splash screen for the Ciao preprocessor, for example when
+launching it from a desktop (launch emacs, calling this function)."
   (interactive)
   (run-ciao-preprocessor)
   (switch-to-buffer (concat "*" ciao-ciaopp-buffer-name "*")) 
-  (delete-other-windows))
+  (delete-other-windows)
+  )
 
 (defun run-ciao-preprocessor ()
   "Ensure that an inferior Ciao preprocessor process is running. 
@@ -3054,7 +3101,11 @@ any of the other functions related to the top level (e.g., loading
 buffers into the top level) ensures that a top level is started
 (starting one if required)."
   (interactive)
-  (ciao-ensure-inferior-process ciao-ciaopp-buffer-name))
+  (message "Starting Ciao preprocessor... ")
+  (ciao-ensure-inferior-process ciao-ciaopp-buffer-name)
+  (add-hook 'ciao-ciaopp-prompt-inferior-hook 
+	    'ciao-insert-splash-ciaopp t)
+  (message "Starting Ciao preprocessor... done."))
 
 ;; MH Made it recenter, and then the functions below are trivial
 (defun ciao-ensure-inferior-process (buffname)
@@ -3158,14 +3209,11 @@ buffers into the top level) ensures that a top level is started
    (comint-send-input)
    (switch-to-buffer-other-window ciao-tmp-calling-buff))
 
-;; MH Alternative?
+;; MH Alternative (but doesn't work?)
 ;; (defun ciao-send-command (buffername command)
 ;;   (comint-proc-query buffername command))
 
-;; (defun ciao-wait-for-prompt (buffername)
-;;   t)
-
-;; ;; MH This works, but you do not see the progress (only the dots) :-(
+;; MH This works, but you do not see the progress (only the dots) :-(
 (defun ciao-wait-for-prompt (buffername action)
   (setq original-buffer (current-buffer))
   (setq prompt-buffer (concat "*" buffername "*"))
@@ -3199,6 +3247,30 @@ buffers into the top level) ensures that a top level is started
 ;;------------------------------------------------------------
 ;; Locating errors
 ;;------------------------------------------------------------
+
+(defun ciao-any-errors ()
+  "True if there were any errors in the previous run."
+  (save-excursion
+    (let (process-buffer)
+      (setq process-buffer (concat "*" ciao-last-process-buffer-used "*"))
+      (if (and ciao-last-process-buffer-used 
+	       (get-buffer-process process-buffer))
+	  (progn
+	    ;; Go to process buffer
+	    (set-buffer process-buffer)
+	    (end-of-buffer)
+	    (move-to-column 0) ;; skip prompt if at prompt
+	    ;; Go back to previous prompt or beginning of buffer
+	    (search-backward-regexp "^\\(\\?-\\|ciaopp \\?-\\)" nil t)
+	    (end-of-line)
+	    (not (or (not (search-forward-regexp 
+	        "^\\({?WARNING.*:\\|{?ERROR.*:\\|{?NOTE.*:\\|\\?-\\|ciaopp \\?-\\)" 
+		nil t))
+		(string=  (buffer-substring-no-properties (- (point) 2) (point))
+			  "?-")
+		(string=  (buffer-substring-no-properties (- (point) 9) (point))
+			  "ciaopp ?-"))))
+    ))))
 
 (defun ciao-find-last-run-errors ()
   "Go to the location in the source file containing the next error reported by
@@ -3256,7 +3328,8 @@ the last Ciao/Prolog subprocess (preprocessor or toplevel) which was run."
 	  (goto-char (point-max)) ;; goto end of process buffer
 	  ;; Return to original buffer
 	  (switch-to-buffer-other-window ciao-finding-errors)
-	  (delete-other-windows)
+	  ;; MH Put this back in to return to single original window 
+	  ;; ********** (delete-other-windows) *******
 	  (setq ciao-finding-errors nil)
 	  (message "There are no (more) errors."))
       ;; Error located, get info, go to file, if known.
@@ -3282,20 +3355,7 @@ the last Ciao/Prolog subprocess (preprocessor or toplevel) which was run."
 	  (backward-char 1)
 	  (message "Mark set")
 	  )
-	;; If started from process buffer, return to it
-	;; (if started-from-inferior-buffer
-	;;    (switch-to-buffer-other-window ciao-finding-errors))
 	))))
-
-;; (defun ciao-being-in-inferior-buffer (processbuff)
-;;   "Checking that we are in an inferior process buffer"
-;;   (or (eq processbuff nil)
-;;       (string= (buffer-name) 
-;; 	       (concat "*" ciao-toplevel-buffer-name "*"))
-;;       (string= (buffer-name) 
-;; 	       (concat "*" ciao-ciaopp-buffer-name "*"))
-;;       (string= (buffer-name) 
-;; 	       (concat "*" ciao-lpdoc-buffer-name "*"))))
 
 (defun ciao-get-next-error-data ()
   "Locates next error, and highlights it. Returns:
@@ -3436,28 +3496,25 @@ the preprocessor to be installed). Note that full (semantic) assertion
 checking must be done with the preprocessor."
 
   (interactive)
+  (setq ciao-last-source-buffer-used (current-buffer))
+  (ciao-unmark-last-run-errors)
   (if (and ciao-assrt-lib-loaded ;; if lib loaded and process still running...
 	   (comint-check-proc 
 	    (get-buffer-create (concat "*" ciao-toplevel-buffer-name "*"))))
       (ciao-do-check-buffer-syntax)
-;;    (sleep-for 0.5) ;; Allow for input to arrive at comint
-;;     (ciao-wait-for-prompt ciao-toplevel-buffer-name 
-;; 			  "Loading assertion checking library")
-    (ciao-ensure-inferior-process (concat "*" ciao-toplevel-buffer-name "*"))
+    (ciao-ensure-inferior-process ciao-toplevel-buffer-name)
     (add-hook 'ciao-prompt-inferior-hook 'ciao-load-assrt-lib t)
     (add-hook 'ciao-prompt-inferior-hook 'ciao-do-check-buffer-syntax t)
     )
-;;   (ciao-wait-for-prompt ciao-toplevel-buffer-name 
-;; 			"Checking assertion syntax")
-  ;; (ciao-find-last-run-errors)
- )
+  (add-hook 'ciao-prompt-inferior-hook 
+	    'ciao-launch-find-last-run-errors-from-orig-buffer t))
 
 (defun ciao-load-assrt-lib ()
-    (ciao-send-command 
-     ciao-toplevel-buffer-name 
-     "use_module(library('assertions/assrt_lib'))."
-     t)
-    (setq ciao-assrt-lib-loaded t))
+  (ciao-send-command 
+   ciao-toplevel-buffer-name 
+   "use_module(library('assertions/assrt_lib'))."
+   t)
+  (setq ciao-assrt-lib-loaded t))
 
 (defun ciao-do-check-buffer-syntax ()
   (ciao-send-command 
@@ -3511,16 +3568,48 @@ used."
    ciao-ciaopp-buffer-name (ciao-build-ciaopp-command nil) t))
 
 (defun ciao-check-types-modes ()
-  "Perform compile-time checking with both types (pptypesfd) and modes
- (shfr) analyses."
+  "Uses the preprocessor to perform compile-time checking of types and modes
+   (pptypesfd and shfr analyses). "
   (interactive)
+  (message "Checking types and modes... ")
+  (setq ciao-last-source-buffer-used (current-buffer))
+  (ciao-unmark-last-run-errors)
   (ciao-send-command 
-    ciao-ciaopp-buffer-name (ciao-build-ciaopp-specific-command "ctcheck") t)
-  (ciao-wait-for-prompt ciao-ciaopp-buffer-name
-			"Checking types and modes")
-  (message "Checking types and modes... done.")
-  (ciao-find-last-run-errors)
-  )
+   ciao-ciaopp-buffer-name (ciao-build-ciaopp-specific-command "ctcheck") t)
+  (add-hook 'ciao-ciaopp-prompt-inferior-hook 
+	    'ciao-launch-find-last-run-errors-from-orig-buffer t))
+
+(defun ciao-launch-find-last-run-errors-from-orig-buffer ()
+  (switch-to-buffer ciao-last-source-buffer-used)
+  (ciao-find-last-run-errors))
+
+;; ;; Version using ciao-wait-for-prompt...
+;; (defun ciao-check-types-modes ()
+;;   "Uses the preprocessor to perform compile-time checking of types and modes
+;; (pptypesfd and shfr analyses)."
+;;   (interactive)
+;;   (ciao-send-command 
+;;     ciao-ciaopp-buffer-name (ciao-build-ciaopp-specific-command "ctcheck") t)
+;;   (ciao-wait-for-prompt ciao-ciaopp-buffer-name
+;; 			"Checking types and modes")
+;;   (message "Checking types and modes... done.")
+;;   (ciao-find-last-run-errors)
+;;   )
+
+(defun ciao-set-ciaopp-output-pred ()
+  "Make ciaopp output only predicate-level analysis information."
+  (interactive)
+  (ciao-send-command ciao-ciaopp-buffer-name "dump_ai(pred)." t))
+
+(defun ciao-set-ciaopp-output-full ()
+  "Make ciaopp output both literal- and predicate-level analysis information."
+  (interactive)
+  (ciao-send-command ciao-ciaopp-buffer-name "dump_ai(yes)." t))
+
+(defun ciao-set-ciaopp-output-none ()
+  "Make ciaopp output no analysis information."
+  (interactive)
+  (ciao-send-command ciao-ciaopp-buffer-name "dump_ai(no)." t))
 
 (defun ciao-build-ciaopp-command (options)
   (concat "precompile('" (buffer-file-name)
@@ -3566,7 +3655,6 @@ buffer in which the processor is running."
 	(find-file file)
 	)
     )))
-;; (global-set-key "\C-c\C-f" 'ciao-show-file)
 ;; (define-key comint-mode-map "\C-c\C-v" 'ciao-show-file)
 (define-key ciao-inferior-mode-map "\C-c\C-v" 'ciao-show-file)
 
@@ -3703,10 +3791,34 @@ to load a file while in the middle of the debugging process the debugger is
 first aborted and then the buffer is loaded. Also, if there is a defined
 query, the user is asked whether it should be called."
   (interactive)
+  (ciao-load-buffer-current-or-main nil))
+
+
+(defun ciao-load-from-main-module ()
+  "Load the module designated as @index{main module} (and all related files
+that it uses) into the top level. If no main module is defined it will load
+the current buffer. 
+
+The type of compilation performed (@index{compiling} or
+@index{interpreting}) is selected automatically depending on whether
+the buffer has been marked for debugging or not -- see below. In case
+you try to load a file while in the middle of the debugging process
+the debugger is first aborted and then the buffer is loaded. Also, if
+there is a defined query, the user is asked whether is should be 
+called."
+  (interactive)
+  ;; Load current if main buffer undefined
+  (if (string= ciao-main-filename "")
+      (ciao-load-buffer-current-or-main nil)
+    ;; Else, load main
+    (ciao-load-buffer-current-or-main t)))
+
+(defun ciao-load-buffer-current-or-main (main)
+  (setq ciao-last-source-buffer-used (current-buffer))
   (if (eq (comint-check-proc (get-buffer 
 			      (concat "*" ciao-toplevel-buffer-name "*"))) nil)
-      ;; If Ciao/Prolog buffer doesn't exist then do the normal load
-      (ciao-real-load-buffer)
+      ;; If Ciao/Prolog buffer doesn't exist then go directly to load
+      (ciao-real-load-buffer-current-or-main main)
     ;; Abort while debugging and then continue the normal process
     (let ((column
            (save-excursion
@@ -3714,15 +3826,25 @@ query, the user is asked whether it should be called."
              (end-of-buffer)
              (current-column))))
       (if (< column 10)
-	  (ciao-real-load-buffer)
+	  (ciao-real-load-buffer-current-or-main main)
 	(add-hook 'ciao-prompt-inferior-hook 'ciao-enable-trace t)
-	(add-hook 'ciao-prompt-inferior-hook 'ciao-real-load-buffer t)
+	(if main
+	    (add-hook 'ciao-prompt-inferior-hook 
+		      'ciao-real-load-from-main-module t)
+	  (add-hook 'ciao-prompt-inferior-hook 'ciao-real-load-buffer t))
 	(ciao-send-command ciao-toplevel-buffer-name "a" t)))))
 
 (defun ciao-real-load-buffer ()
   "This function really loads the buffer. And in case a default query has been
 defined it asks the user if this query should be called."
   (interactive)
+  (ciao-real-load-buffer-current-or-main nil))
+
+(defun ciao-real-load-from-main-module ()
+  (interactive)
+  (ciao-real-load-buffer-current-or-main t))
+
+(defun ciao-real-load-buffer-current-or-main (main)
   ;; Uncolor previous error if there was any
   (if ciao-previous-error
       (progn
@@ -3739,45 +3861,20 @@ defined it asks the user if this query should be called."
 		      ciao-inferior-error
 		      'ciao-error)
 	(setq ciao-inferior-error nil)))
+  (if main
+      (ciao-send-command ciao-toplevel-buffer-name
+		       (ciao-load-command ciao-main-filename nil) t)
+    ;;                 (concat "use_module('" ciao-main-filename "').") t)
+    (ciao-send-command ciao-toplevel-buffer-name 
+		       (ciao-load-command (buffer-file-name) nil) t))
+  (add-hook 'ciao-prompt-inferior-hook 'ciao-errors-or-load-query t))
 
-  (ciao-send-command ciao-toplevel-buffer-name 
-		     (ciao-load-command (buffer-file-name) nil) t)
-  (if (string= ciao-query "")
+(defun ciao-errors-or-load-query ()
+  (ciao-launch-find-last-run-errors-from-orig-buffer)
+  (if (or (string= ciao-query "") (ciao-any-errors))
       t
-    ;; MH (add-hook 'ciao-prompt-inferior-hook 'ciao-load-query-ask t)
-    (add-hook 'ciao-prompt-inferior-hook 'ciao-load-query t)
-    ))
-
-
-(defun ciao-load-from-main-module ()
-  "Load the module designated as @index{main module} (and all related files
-that it uses) into the top level. If no main module is defined it will load
-the current buffer. The type of compilation performed
-(@index{compiling} or @index{interpreting}) is selected automatically
-depending on whether the buffer has been marked for debugging or not -- see
-below. In case you try to load a file while in the middle of the debugging
-process the debugger is first aborted and then the buffer is loaded. Also,
-if there is a defined query, the user is asked whether is should be called."
-  (interactive)
-  ;; Abort while debugging and then continue the normal process
-  (let ((column
-         (save-excursion
-           (set-buffer (concat "*" ciao-toplevel-buffer-name "*"))
-           (end-of-buffer)
-           (current-column))))
-    (if (< column 10)
-	(ciao-real-load-from-main-module)
-      (add-hook 'ciao-prompt-inferior-hook 'ciao-enable-trace t)
-      (add-hook 'ciao-prompt-inferior-hook 'ciao-real-load-from-main-module t)
-      (ciao-send-command ciao-toplevel-buffer-name "a" t))))
-
-(defun ciao-real-load-from-main-module ()
-  (interactive)
-  (if (string= ciao-main-buffer "")
-      (ciao-load-buffer)
-    (ciao-send-command ciao-toplevel-buffer-name
-		       (concat "use_module('" ciao-main-buffer "').") t)))
-
+    (ciao-load-query)))
+  
 (defun ciao-load-query ()
   "Issue predefined query."
   (interactive)
@@ -3792,19 +3889,14 @@ if there is a defined query, the user is asked whether is should be called."
 
 (defun ciao-load-region (start end)
   "Load the current region (between the cursor and a previous mark)
-into the top level for debugging. Since loading a 
-region of a file is typically done for debugging and/or testing purposes,
-this command always loads the region in debugging mode (interpreted)."
+into the top level. Since loading a region of a file is typically done
+for debugging and/or testing purposes, this command always loads the
+region in debugging mode (interpreted)." 
   (interactive "r")
-  (message "Loading Ciao/Prolog code... ")
-  (setq temp-file (ciao-new-temp-code-file))
-  (ciao-write-region start end temp-file)
+  (ciao-write-region start end (ciao-last-temp-code-file))
   (ciao-send-command ciao-toplevel-buffer-name 
-   (concat "debug_module(user), ensure_loaded('" temp-file "')." ) t)
-  (ciao-wait-for-prompt ciao-toplevel-buffer-name
-			"Loading Ciao/Prolog code")
-  (ciao-del-temp-files temp-file)
-  (message "Loading Ciao/Prolog code... done"))
+   (concat "debug_module(user), ensure_loaded('" ciao-last-temp-file "')." ) t)
+  (add-hook 'ciao-prompt-inferior-hook 'ciao-del-temp-files t))
 
 (defun ciao-load-predicate ()
   "Load the predicate around the cursor into the top level. Since loading a 
@@ -4041,10 +4133,10 @@ buffers selected for source debug."
 (defun ciao-consult-region (start end)
   "Consult a given region."
    (interactive "r")
-  (setq temp-file (ciao-temp-code-file))
-  (ciao-write-region start end temp-file)
+  (ciao-write-region start end (ciao-last-temp-code-file))
   (ciao-send-command ciao-toplevel-buffer-name 
-   (concat "consult('" temp-file "')." ) t))
+   (concat "consult('" ciao-last-temp-file "')." ) t)
+  (add-hook 'ciao-prompt-inferior-hook 'ciao-del-temp-files t))
 
 (defun ciao-consult-predicate ()
   "Consult the predicate around point."
@@ -4066,10 +4158,10 @@ buffers selected for source debug."
 (defun ciao-compile-region (start end)
   "Compile a given region."
    (interactive "r")
-  (setq temp-file (ciao-temp-code-file))
-  (ciao-write-region start end temp-file)
+  (ciao-write-region start end (ciao-last-temp-code-file))
   (ciao-send-command ciao-toplevel-buffer-name 
-   (concat "compile('" temp-file "')." ) t))
+   (concat "compile('" ciao-last-temp-file "')." ) t)
+  (add-hook 'ciao-prompt-inferior-hook 'ciao-del-temp-files t))
 
 ;; PO 890606
 (defun ciao-compile-predicate ()
@@ -4120,11 +4212,13 @@ buffers selected for source debug."
   (kill-buffer temp-buffer)
   (set-buffer original-buffer))
 
-(defun ciao-del-temp-files (temp-file) 
-  (delete-file-if-possible temp-file)
-  (delete-file-if-possible (concat temp-file ".dep"))
-  (delete-file-if-possible (concat temp-file ".itf"))
-  (delete-file-if-possible (concat temp-file ".po")))
+(defun ciao-del-temp-files () 
+  (delete-file-if-possible ciao-last-temp-file)
+  (delete-file-if-possible (concat ciao-last-temp-file ".dep"))
+  (delete-file-if-possible (concat ciao-last-temp-file ".err"))
+  (delete-file-if-possible (concat ciao-last-temp-file ".asr"))
+  (delete-file-if-possible (concat ciao-last-temp-file ".itf"))
+  (delete-file-if-possible (concat ciao-last-temp-file ".po")))
 
 (defun delete-file-if-possible (file)
   (if (and (file-exists-p file) (file-writable-p file))

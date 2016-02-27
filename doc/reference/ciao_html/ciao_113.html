@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Foreign Language Interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_112.html">previous</A>, <A HREF="ciao_114.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_112.html">previous</A>, <A HREF="ciao_114.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
 <H1><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Foreign Language Interface</A></H1>
 <P>
-<A NAME="IDX4689"></A>
+<A NAME="IDX4740"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_112.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#209 (2002/4/24, 14:50:46 CEST)
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
@@ -74,7 +74,7 @@ Each predicate implemented as a foreign C function must have accompanying declar
 
 <P>
 where <CODE>m1</CODE>, ..., <CODE>mN</CODE> and <CODE>type1</CODE>, ..., <CODE>typeN</CODE> are respectively the modes and types of the arguments. <CODE>foreign_function_name</CODE> is the name of the C function implementing 
-<A NAME="IDX4690"></A>
+<A NAME="IDX4741"></A>
 <CODE>prolog_predicate/N</CODE>, and the result of this function is unified with <CODE>ArgR</CODE>, which must be one of <CODE>Arg1</CODE> ... <CODE>ArgN</CODE>. 
 
 
@@ -116,18 +116,18 @@ The automatic translation between Ciao Prolog and C types is defined (at the mom
 
 <P>
 Strings, atoms, and lists of bytes are passed to (and from) C as dynamically (<CODE>malloc</CODE>) created arrays of characters (bytes). Those arrays are freed by Ciao Prolog upon return of the foreign function unless the property 
-<A NAME="IDX4691"></A>
+<A NAME="IDX4742"></A>
 <CODE>do_not_free/2</CODE> is specified (see examples below). This caters for the case in which the C files save in a private state (either by themselves, or by a library function being called by them) the values passed on from Prolog. The type 
-<A NAME="IDX4692"></A>
+<A NAME="IDX4743"></A>
 <CODE>byte_list/1</CODE> requires an additional property, 
-<A NAME="IDX4693"></A>
+<A NAME="IDX4744"></A>
 <CODE>size_of/2</CODE>, to indicate which argument represents its size. 
  
 Empty lists of bytes and integers are converted into C <CODE>NULL</CODE> pointers, and vice versa. Empty strings (<CODE>[]</CODE>) and null atoms (") are converted into zero-length, zero-ended C strings (<EM>""</EM>). C <CODE>NULL</CODE> strings and empty buffers (i.e., buffers with zero length) are transformed into the empty list or the null atom (<CODE>"</CODE>). 
 
 
 <P>
-Most of the work is performed by the predicates in the @xref{Foreign Language Interface Builder}, which can be called explicitly by the user. Doing that is not usually needed, since the Ciao Prolog Compiler takes care of building glue code files an of compiling and linking whatever is necessary. 
+Most of the work is performed by the predicates in the section <A HREF="ciao_116.html#SEC492">Foreign Language Interface Builder</A>, which can be called explicitly by the user. Doing that is not usually needed, since the Ciao Prolog Compiler takes care of building glue code files an of compiling and linking whatever is necessary. 
  
 
 
@@ -175,7 +175,7 @@ Note the type of the (single) argument of the function. Besides, the return valu
 
 <P>
 Automatic type conversions does not cover all the possible cases. When the automatic type conversion is not enough (or if the user, for any reason, does not want to go through the automatic conversion), it is possible to instruct Ciao Prolog not to make implicit type conversion. The strategy in that case is to pass the relevant argument(s) with a special type (a <CODE>ciao_term</CODE>) which can represent any term which can be built in Prolog. Operations to construct, traverse, and test this data abstraction from C are provided. The prototypes of these operations are placed on the <CODE>"ciao_prolog.h"</CODE> file, under the <CODE>include</CODE> subdirectory of the installation directory (the Ciao Prolog compiler knowns where it has been installed, and gives the C compiler the appropriate flags). This <EM>non direct correspondence</EM> mode is activated whenever a Ciao Prolog type unknown to the foreign interface (i.e., none of these in section <A HREF="ciao_114.html#SEC484">Foreign Language Interface Properties</A>) or the type <CODE>any_term</CODE> (which is explicitly recognised by the foreign language interface) is found. The latter is preferred, as it is much more informative, and external tools, as the the 
-<A NAME="IDX4694"></A>
+<A NAME="IDX4745"></A>
 CiaoPP preprocessor, can take advantage of them. 
 
 
@@ -205,7 +205,7 @@ Returns a fresh, unbound variable.
 
 <LI><CODE>ciao_term ciao_integer(int i);</CODE>
 
-Creates a term, representing an integer from the Prolog point of vieew, from a C integer. 
+Creates a term, representing an integer from the Prolog point of view, from a C integer. 
 
 <LI><CODE>ciao_term ciao_float(double i);</CODE>
 
@@ -384,7 +384,7 @@ Performs equality testing of terms, and returns true if the test was successful.
 
 <P>
 The following functions offers a way of throwing 
-<A NAME="IDX4695"></A>
+<A NAME="IDX4746"></A>
 exceptions from C that can be caught in Prolog with <CODE>catch/3</CODE>. The term that reaches Prolog is exactly the same which was thrown by C. The execution flow is broken at the point where <CODE>ciao_raise_exception()</CODE> is executed, and it returns to Prolog. 
 
 
@@ -717,7 +717,7 @@ A C string can be seen as a buffer whose end is denoted by the trailing zero, an
 
 <P>
 Note how the <CODE>do_not_free/1</CODE> property is specified in the 
-<A NAME="IDX4696"></A>
+<A NAME="IDX4747"></A>
 <CODE>a_string/1</CODE> predicate: the string returned by C is static, and therefore it should not be freed by Prolog. 
  
 <STRONG>File</STRONG> <EM>strings_and_atoms.pl</EM>: 
@@ -941,6 +941,6 @@ The foreign interface is used by including <CODE>foreign_interface</CODE> in the
 </div class="cartouche">
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_112.html">previous</A>, <A HREF="ciao_114.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_112.html">previous</A>, <A HREF="ciao_114.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

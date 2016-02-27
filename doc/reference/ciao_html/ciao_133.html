@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - poly_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - oval_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC546" HREF="ciao_toc.html#TOC546">poly_class (library)</A></H1>
+<H1><A NAME="SEC546" HREF="ciao_toc.html#TOC546">oval_class (library)</A></H1>
 <P>
-<A NAME="IDX5388"></A>
+<A NAME="IDX5463"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_133.html#SEC547">Usage and interface (poly_class)</A>
-<LI><A HREF="ciao_133.html#SEC548">Documentation on exports (poly_class)</A>
+<LI><A HREF="ciao_133.html#SEC547">Usage and interface (oval_class)</A>
+<LI><A HREF="ciao_133.html#SEC548">Documentation on exports (oval_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC547" HREF="ciao_toc.html#TOC547">Usage and interface (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC547" HREF="ciao_toc.html#TOC547">Usage and interface (<CODE>oval_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(poly_class)).</CODE>
+<CODE>:- use_module(library(oval_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,9 +40,15 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5389"></A>
-<CODE>vertices/1</CODE>, 
-<A NAME="IDX5390"></A>
+<A NAME="IDX5464"></A>
+<CODE>coord/4</CODE>, 
+<A NAME="IDX5465"></A>
+<CODE>width/1</CODE>, 
+<A NAME="IDX5466"></A>
+<CODE>height/1</CODE>, 
+<A NAME="IDX5467"></A>
+<CODE>center/2</CODE>, 
+<A NAME="IDX5468"></A>
 <CODE>outline_color/1</CODE>.
 
 </UL>
@@ -54,10 +60,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5391"></A>
-<CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX5392"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX5469"></A>
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -67,54 +71,159 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 
 
-<H2><A NAME="SEC548" HREF="ciao_toc.html#TOC548">Documentation on exports (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC548" HREF="ciao_toc.html#TOC548">Documentation on exports (<CODE>oval_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5393"></A>
-<A NAME="IDX5394"></A>
+<A NAME="IDX5470"></A>
+<A NAME="IDX5471"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
-<DD><A NAME="IDX5395"></A>
+<DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
+<DD><A NAME="IDX5472"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X1,+Y1,+X2,+Y2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The arguments of the list specify the coordinates for three or more points that define a closed polygon. The first and last points may be the same. After the coordinates there may be any number of option-value pairs, each of which sets one of the configu- ration options for the item.
+<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
+<CODE>+X1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
+<CODE>+Y1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<UL>
-<LI><EM>Description:</EM> Gets the list of vertices of the polygon.
+<CODE>+X2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+Y2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5396"></A>
-<A NAME="IDX5397"></A>
+<A NAME="IDX5473"></A>
+<A NAME="IDX5474"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>width/1:</B>
+<DD><A NAME="IDX5475"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5476"></A>
+<A NAME="IDX5477"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>height/1:</B>
+<DD><A NAME="IDX5478"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Heigh</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5479"></A>
+<A NAME="IDX5480"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>center/2:</B>
+<DD><A NAME="IDX5481"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>center(+X,+Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>center(-X,-Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5482"></A>
+<A NAME="IDX5483"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
-<DD><A NAME="IDX5398"></A>
+<DD><A NAME="IDX5484"></A>
 
 
 <P>
 <STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the polygon's outline. This option defaults to black.
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the oval's outline. This option defaults to black.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -126,7 +235,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 <STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets poly's outline <CODE>Color</CODE>.
+<LI><EM>Description:</EM> Gets oval's outline <CODE>Color</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -137,6 +246,6 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

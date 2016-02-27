@@ -1,175 +1,544 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Installing Ciao from a Win32 binary distribution</TITLE>
+<TITLE>The Ciao Prolog System               - Installing Ciao from the source distribution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC791" HREF="ciao_toc.html#TOC791">Installing Ciao from a Win32 binary distribution</A></H1>
+<H1><A NAME="SEC778" HREF="ciao_toc.html#TOC778">Installing Ciao from the source distribution</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro, Manuel Hermenegildo.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#195 (2002/4/12, 14:21:57 CEST)
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#92 (2000/3/28, 17:41:25 CEST)
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
- 
-<A NAME="IDX7982"></A>
-<A NAME="IDX7983"></A>
+<STRONG>Version of last change:</STRONG> 1.7#130 (2001/10/28, 17:6:47 CET)
 
 
 <P>
-This describes the installation of Ciao after downloading the Windows <EM>binary</EM> (i.e., <EM>precompiled</EM>) distribution. It includes the installation of libraries and manuals and applies to Windows NT/95/98 systems. This is the simplest Windows installation, since it requires no compilation and is highly recommended. However, it is also possible to compile Ciao from the source distribution on these systems (please refer to section <A HREF="ciao_204.html#SEC782">Installing Ciao from the source distribution</A> for details). 
+This describes the installation procedure for the Ciao Prolog system, including libraries and manuals, from a <EM>source</EM> distribution. This applies primarily to Unix-type systems (Linux, Mac OS X, Solaris, SunOS, etc.). However, the sources can also be compiled on Windows NT/95/98 systems -- see section <A HREF="ciao_205.html#SEC784">Installation and compilation under Windows</A> for details. 
 
 
 <P>
-If you find any problems during installation, please refer to section <A HREF="ciao_204.html#SEC790">Troubleshooting (nasty messages and nifty workarounds)</A>. 
-<A NAME="IDX7984"></A>
-<A NAME="IDX7985"></A>
-See also section <A HREF="ciao_206.html#SEC801">Downloading new versions</A> and section <A HREF="ciao_206.html#SEC802">Reporting bugs</A>. 
+If you find any problems during installation, please refer to section <A HREF="ciao_205.html#SEC786">Troubleshooting (nasty messages and nifty workarounds)</A>. 
+<A NAME="IDX7752"></A>
+<A NAME="IDX7753"></A>
+See also section <A HREF="ciao_207.html#SEC797">Downloading new versions</A> and section <A HREF="ciao_207.html#SEC798">Reporting bugs</A>. 
 
 
 
 <UL>
-<LI><A HREF="ciao_205.html#SEC792">Win32 binary installation summary</A>
-<LI><A HREF="ciao_205.html#SEC793">Checking for correct installation on Win32</A>
-<LI><A HREF="ciao_205.html#SEC794">Compiling the miscellaneous utilities under Windows</A>
-<LI><A HREF="ciao_205.html#SEC795">Server installation under Windows</A>
-<LI><A HREF="ciao_205.html#SEC796">CGI execution under IIS</A>
-<LI><A HREF="ciao_205.html#SEC797">Uninstallation under Windows</A>
+<LI><A HREF="ciao_205.html#SEC779">Un*x installation summary</A>
+<LI><A HREF="ciao_205.html#SEC780">Un*x full installation instructions</A>
+<LI><A HREF="ciao_205.html#SEC781">Checking for correct installation on Un*x</A>
+<LI><A HREF="ciao_205.html#SEC782">Cleaning up the source directory</A>
+<LI><A HREF="ciao_205.html#SEC783">Multiarchitecture support</A>
+<LI><A HREF="ciao_205.html#SEC784">Installation and compilation under Windows</A>
+<LI><A HREF="ciao_205.html#SEC785">Porting to currently unsupported operating systems</A>
+<LI><A HREF="ciao_205.html#SEC786">Troubleshooting (nasty messages and nifty workarounds)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC792" HREF="ciao_toc.html#TOC792">Win32 binary installation summary</A></H2>
+<H2><A NAME="SEC779" HREF="ciao_toc.html#TOC779">Un*x installation summary</A></H2>
+<P>
+<A NAME="IDX7754"></A>
+<A NAME="IDX7755"></A>
+<A NAME="IDX7756"></A>
+<A NAME="IDX7757"></A>
+
 
 <P>
-Please follow these steps (below we use the terms <EM>folder</EM> and <EM>directory</EM> interchangeably): 
+<STRONG>Note:</STRONG> it is recommended that you read the full installation instructions (specially if the installation will be shared by different architectures). However, in many cases it suffices to follow this summary: 
 
 
 
 <OL>
 
-<LI>Download the precompiled distribution and unpack it into any suitable folder, such as, e.g., <CODE>C:\Program Files</CODE>.
+<LI>Uncompress and unpackage (using
 
-This will create there a folder whose name reflects the Ciao version. Due to limitations of Windows related to file associations, do not put Ciao too deep in the folder hierarchy. For unpacking you will need a recent version of a zip archive manager -- there are many freely available such as 
-<A NAME="IDX7986"></A>
-<CODE>WinZip</CODE>, 
-<A NAME="IDX7987"></A>
-<CODE>unzip</CODE>, 
-<A NAME="IDX7988"></A>
-<CODE>pkunzip</CODE>, etc. (see for example <CODE>www.winzip.com</CODE>). Some users have reported some problems with version 6.2 of WinZip, but no problems with, e.g., version 7. With WinZip, simply click on "Extract" and select the extraction folder as indicated above. 
+<A NAME="IDX7758"></A>
+<CODE>gunzip</CODE> and <CODE>tar -xpf</CODE>) the distribution. This will put everything in a new directory whose name reflects the Ciao version. 
 
-<LI>Stop any Ciao-related applications.
+<LI>Enter the newly created directory (<CODE>SRC</CODE>). Edit
 
-If you have a previous version of Ciao installed, make sure you do not have any Ciao applications (including, e.g., a toplevel shell) running, or the extraction process may not be able to complete. You may also want to delete the entire folder of the previous installation to save space. 
+<A NAME="IDX7759"></A>
+<CODE>SETTINGS</CODE> and check/set the variables <CODE>SRC</CODE>, <CODE>BINROOT</CODE> (where the executables will go), <CODE>LIBROOT</CODE> (where the libraries will go), and <CODE>DOCROOT</CODE> (where the documentation will go, preferably a directory <EM>accessible via</EM> 
+<A NAME="IDX7760"></A>
+WWW). 
 
-<LI>Open the Ciao source directory created during extraction and run (e.g. by double-clicking on it) the <CODE>install</CODE>(<CODE>.bat</CODE>) script. Answer "yes" to the dialog that pops up and type any type any character in the installation window to finish the process. You may need to reboot for the changes in the registry to take effect.
+<LI>Type <CODE>gmake install</CODE>. This will build executables, compile libraries, and install everything in a directory <CODE>LIBROOT/ciao</CODE> and in <CODE>BINROOT</CODE>.
 
-This will update the windows registry (the file <CODE>ciao</CODE>(<CODE>.reg</CODE>) lists the additions) and also create some <CODE>.bat</CODE> files which may be useful for running Ciao executables from the command line. It also creates initialization scripts for the 
-<A NAME="IDX7989"></A>
-<CODE>emacs</CODE> editor. The actions performed by the installation script are reported in the installation window. 
+Note that <CODE>gmake</CODE> refers to the 
+<A NAME="IDX7761"></A>
+GNU implementation of the 
+<A NAME="IDX7762"></A>
+make Un*x command, which is available in many systems (including all Linux systems and Mac OS X) simply as 
+<A NAME="IDX7763"></A>
+<CODE>make</CODE>. I.e., you can try simply typing <CODE>make install</CODE> if <CODE>gmake install</CODE> does not work. If typing <CODE>make</CODE> stops right away with error messages it is probably an older version and you need to install <CODE>gmake</CODE>. 
 
-<LI>You may want to add a
+<LI>Make the following modifications in your startup scripts. This will make the documentation accessible, set the correct mode when opening Ciao source files in
 
-<A NAME="IDX7990"></A>
-<A NAME="IDX7991"></A>
-<EM>windows shortcut</EM> 
-<A NAME="IDX7992"></A>
-<A NAME="IDX7993"></A>
-in a convenient place, such as the desktop, to 
-<A NAME="IDX7994"></A>
-<CODE>ciaosh.cpx</CODE>, the standard interactive toplevel shell. It is located inside the <CODE>shell</CODE> folder (e.g., click on the file 
-<A NAME="IDX7995"></A>
-<CODE>ciaosh.cpx</CODE> with the right mouse button and select the appropriate option, <CODE>Send to-&#62;Desktop as shortcut</CODE>). 
-
-<LI>You may also want to add another shortcut to the file
-
-<A NAME="IDX7996"></A>
-<CODE>ciao</CODE>(<CODE>.html</CODE>) located inside <CODE>doc\reference\ciao_html</CODE> so that you can open the Ciao manual by simply double-clicking on this shortcut. 
-
-<LI>Finally, if the (freely available)
-
-<A NAME="IDX7997"></A>
-<CODE>emacs</CODE> editor/environment is not installed in your system, we <EM>highly recommend</EM> that you also install it at this point. While it is easy to use Ciao with any editor of your choice, the Ciao distribution includes a very powerful 
-<A NAME="IDX7998"></A>
-<A NAME="IDX7999"></A>
-<EM>application development environment</EM> which is based on 
-<A NAME="IDX8000"></A>
-<CODE>emacs</CODE> and which enables, e.g., source-level debugging, syntax coloring, context-sensitive on-line help, etc. If you are not convinced, consider that many programmers inside Micros*ft use <CODE>emacs</CODE> for developing their programs. 
+<A NAME="IDX7764"></A>
+<CODE>emacs</CODE>, etc. Note that <CODE>&#60;LIBROOT&#62;</CODE> must be replaced with the appropriate value: 
+<A NAME="IDX7765"></A>
+<A NAME="IDX7766"></A>
 
  
-<A NAME="IDX8001"></A>
-<A NAME="IDX8002"></A>
-<A NAME="IDX8003"></A>
-<A NAME="IDX8004"></A>
-
-The emacs editor (in all its versions: Un*x, Windows, etc.) can be downloaded from, for example, <A HREF="http://www.emacs.org/">http://www.emacs.org/</A>, and also from the many GNU mirror sites worldwide (See <A HREF="http://www.gnu.org/">http://www.gnu.org/</A> for a list), in the <CODE>gnu/emacs</CODE> and <CODE>gnu/windows/emacs</CODE> directories. For example, at UPM it can be found at <A HREF="ftp://ftp.fi.upm.es/pub/mirrors/gnu/emacs">ftp://ftp.fi.upm.es/pub/mirrors/gnu/emacs</A> and <A HREF="ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs">ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs</A>. You can find answers to frequently asked questions (FAQ) about 
-<A NAME="IDX8005"></A>
-<CODE>emacs</CODE> in general at <A HREF="http://www.gnu.org/software/emacs/emacs-faq.text">http://www.gnu.org/software/emacs/emacs-faq.text</A> and about the Windows version at <A HREF="http://www.gnu.org/software/emacs/windows/ntemacs.html">http://www.gnu.org/software/emacs/windows/ntemacs.html</A> (despite the 
-<A NAME="IDX8006"></A>
-<CODE>ntemacs</CODE> name it runs fine also as is on Win9X and Win2000 machines). 
-
-<A NAME="IDX8007"></A>
-<A NAME="IDX8008"></A>
-You need to tell 
-<A NAME="IDX8009"></A>
-<CODE>emacs</CODE> how to load the Ciao mode automatically when editing and how to access the on-line documentation: 
-
 
 <UL>
 
-<LI>Start
+<LI>For users a
 
-<A NAME="IDX8010"></A>
-<CODE>emacs</CODE> (double click on the icon or from the <CODE>Start</CODE> menu). Open (menu <CODE>Files-&#62;Open File</CODE> or simply <KBD>^X</KBD><KBD>^F</KBD>) the file 
-<A NAME="IDX8011"></A>
-<CODE>ForEmacs.txt</CODE> that the installation script has created in directory where you installed the Ciao distribution. 
+<A NAME="IDX7767"></A>
+<A NAME="IDX7768"></A>
+<EM>csh-compatible shell</EM> (
+<A NAME="IDX7769"></A>
+<CODE>csh</CODE>, 
+<A NAME="IDX7770"></A>
+<CODE>tcsh</CODE>, ...), add to 
+<A NAME="IDX7771"></A>
+<CODE>~/.cshrc</CODE>: 
 
-<LI>Copy the lines in the file (select with the mouse and then menu <CODE>Edit-&#62;Copy</CODE>). Open/Create using
 
-<A NAME="IDX8012"></A>
-<CODE>emacs</CODE> (menu <CODE>Files-&#62;Open File</CODE> or simply <KBD>^X</KBD><KBD>^F</KBD>) the file 
-<A NAME="IDX8013"></A>
-<CODE>~/.emacs</CODE> (or, if this fails, 
-<A NAME="IDX8014"></A>
-<CODE>c:/.emacs</CODE>). 
+<PRE>
+        if ( -e &#60;LIBROOT&#62;/ciao/DOTcshrc ) then
+           source &#60;LIBROOT&#62;/ciao/DOTcshrc
+        endif
+</PRE>
 
-<LI>Paste the two lines (menu <CODE>Edit-&#62;Paste</CODE> or simply <KBD>^X</KBD><KBD>^Y</KBD>) into the file and save (menu <CODE>Files-&#62;Save Buffer</CODE> or simply <KBD>^X</KBD><KBD>^S</KBD>).
+<A NAME="IDX7772"></A>
+<CODE>Mac OS X</CODE> users should add (or modify) the 
+<A NAME="IDX7773"></A>
+<CODE>path</CODE> file in the directory <CODE>~/Library/init/tcsh</CODE>, adding the lines shown above. <STRONG>Note:</STRONG> while this is recognized by the terminal shell, and therefore by the text-mode Emacs which comes with Mac OS X, the Aqua native Emacs 21 does not recognize that initialization. It is thus necessary, at this moment, to set manually the Ciao shell (ciaosh) and Ciao library location by hand. This can be done from the Ciao menu within Emacs after a Ciao Prolog file has been loaded. We suppose that the reason is that Mac OS X does not actually consult the per-user initialization files on startup. It should also be possible to put the right initializations in the .emacs file using the <CODE>setenv</CODE> function of Emacs-lisp, as in 
 
-<LI>Exit
 
-<A NAME="IDX8015"></A>
-<CODE>emacs</CODE> and start it again. 
+<PRE>
+(setenv "CIAOLIB" "&#60;LIBROOT&#62;/ciao")
+</PRE>
+
+The same can be done for the rest of the variables initialized in <CODE>&#60;LIBROOT&#62;/ciao/DOTcshrc</CODE> 
+ 
+
+<LI>For users of an
+
+<A NAME="IDX7774"></A>
+<A NAME="IDX7775"></A>
+<EM>sh-compatible shell</EM> (
+<A NAME="IDX7776"></A>
+<CODE>sh</CODE>, 
+<A NAME="IDX7777"></A>
+<CODE>bash</CODE>, ...), add to 
+<A NAME="IDX7778"></A>
+<CODE>~/.profile</CODE>: 
+
+
+<PRE>
+        if [ -f &#60;LIBROOT&#62;/ciao/DOTprofile ]; then
+           . &#60;LIBROOT&#62;/ciao/DOTprofile
+        fi
+</PRE>
+
+This will set up things so that the Ciao executables are found and you can access the Ciao system manuals using the 
+<A NAME="IDX7779"></A>
+<CODE>info</CODE> command. Note that, depending on your shell, <EM>you may have to log out and back in</EM> for the changes to take effect. 
+
+<LI>Also, if you use
+
+<A NAME="IDX7780"></A>
+<CODE>emacs</CODE> (highly recommended) add this line to your 
+<A NAME="IDX7781"></A>
+<CODE>~/.emacs</CODE> file: 
+
+
+<PRE>
+        (load-file "&#60;LIBROOT&#62;/ciao/DOTemacs.el")
+</PRE>
 
 </UL>
 
+ 
 
-<A NAME="IDX8016"></A>
-<CODE>emacs</CODE> should not report any errors (at least related to Ciao) on startup. At this point the 
-<A NAME="IDX8017"></A>
-<CODE>emacs</CODE> checks in the following section should work. 
+If you are installing Ciao globally in a multi-user machine, make sure that you instruct all users to do the same. If you are the system administrator, the previous steps can be done once and for all, and globally for all users by including the lines above in the central startup scripts (e.g., in Linux 
+<A NAME="IDX7782"></A>
+<CODE>/etc/bashrc</CODE>, 
+<A NAME="IDX7783"></A>
+<CODE>/etc/csh.login</CODE>, 
+<A NAME="IDX7784"></A>
+<CODE>/etc/csh.cshrc</CODE>, 
+<A NAME="IDX7785"></A>
+<CODE>/etc/skel</CODE>, 
+<A NAME="IDX7786"></A>
+<CODE>/usr/share/emacs/.../lisp/site-init.pl</CODE>, etc.). 
+
+<LI>Finally, if the (freely available)
+
+<A NAME="IDX7787"></A>
+<CODE>emacs</CODE> editor/environment is not installed in your system, we <EM>highly recommend</EM> that you also install it at this point (see section <A HREF="ciao_205.html#SEC780">Un*x full installation instructions</A> for instructions). While it is easy to use Ciao with any editor of your choice, the Ciao distribution includes a very powerful 
+<A NAME="IDX7788"></A>
+<A NAME="IDX7789"></A>
+<EM>application development environment</EM> which is based on 
+<A NAME="IDX7790"></A>
+<CODE>emacs</CODE> and which enables, e.g., source-level debugging, syntax coloring, context-sensitive on-line help, etc. 
+
+<LI>You may want now want to check your installation (see section <A HREF="ciao_205.html#SEC781">Checking for correct installation on Un*x</A>) and read the documentation, which is stored in <CODE>DOCROOT</CODE> (copied from <CODE>SRC/doc/reference</CODE>) and can be easily accessed as explained in that same section. There are special "getting started" sections at the beginning of the manual.
+
+<LI>If you have any problems you may want to check the rest of the instructions. The system can be <EM>uninstalled</EM> by typing <CODE>gmake uninstall</CODE>.
+
+<A NAME="IDX7791"></A>
+<A NAME="IDX7792"></A>
 
 </OL>
 
+<P>
+ 
 
 
-<H2><A NAME="SEC793" HREF="ciao_toc.html#TOC793">Checking for correct installation on Win32</A></H2>
+
+
+<H2><A NAME="SEC780" HREF="ciao_toc.html#TOC780">Un*x full installation instructions</A></H2>
+<P>
+<A NAME="IDX7793"></A>
+<A NAME="IDX7794"></A>
+<A NAME="IDX7795"></A>
+<A NAME="IDX7796"></A>
+
+
+
+<OL>
+
+<LI><STRONG>Uncompress and unpackage:</STRONG> (using
+
+<A NAME="IDX7797"></A>
+<CODE>gunzip</CODE> and <CODE>tar -xpf</CODE>) 
+<A NAME="IDX7798"></A>
+<A NAME="IDX7799"></A>
+the distribution in a suitable directory. This will create a new directory called <CODE>ciao-X.Y</CODE>, where <CODE>X.Y</CODE> is the version number of the distribution. The <CODE>-p</CODE> option in the 
+<A NAME="IDX7800"></A>
+<CODE>tar</CODE> command ensures that the relative dates of the files in the package are preserved, which is needed for correct operation of the Makefiles. 
+
+<LI><STRONG>Select installation options:</STRONG> Edit the file
+
+<A NAME="IDX7801"></A>
+<CODE>SETTINGS</CODE> and set the following variables: 
+
+
+<UL>
+
+<LI><CODE>SRC</CODE>: directory where the sources are stored.
+
+<A NAME="IDX7802"></A>
+<A NAME="IDX7803"></A>
+
+<LI><CODE>BINROOT</CODE>: directory where the Ciao executables will go. For example, if <CODE>BINROOT=/usr/local/bin</CODE>, then the Ciao
+
+<A NAME="IDX7804"></A>
+compiler (
+<A NAME="IDX7805"></A>
+<CODE>ciaoc</CODE>) will be stored at <CODE>/usr/local/bin/ciaoc</CODE>. Actually, it will be a link to <CODE>ciaoc-</CODE><EM>VersionNumber</EM>. This applies also to other executables below and is done so that several versions of Ciao can coexist on the same machine. Note that the <EM>version installed latest</EM> will be the one started by default when typing <CODE>ciao</CODE>, <CODE>ciaoc</CODE>, etc. 
+<A NAME="IDX7806"></A>
+<A NAME="IDX7807"></A>
+
+<LI><CODE>LIBROOT</CODE>: directory where the
+
+<A NAME="IDX7808"></A>
+run-time libraries will be installed. 
+<A NAME="IDX7809"></A>
+<A NAME="IDX7810"></A>
+The Ciao installation procedure will create a new subdirectory <CODE>ciao</CODE> below <CODE>LIBROOT</CODE> and a subdirectory below this one for each Ciao version installed. For example, if <CODE>LIBROOT=/usr/local/lib</CODE> and you have Ciao version <CODE>x.y</CODE>, then the libraries will be installed under <CODE>/usr/local/lib/ciao/ciao-x.y</CODE>. This allows you to install 
+<A NAME="IDX7811"></A>
+site-specific programs under <CODE>/usr/local/lib/ciao</CODE> and they will not be overwritten if a new version of Ciao is installed. It also again allows having several Ciao versions installed simultaneously. 
+
+<LI><CODE>DOCROOT</CODE>: directory where the
+
+<A NAME="IDX7812"></A>
+manuals will be installed. It is often convenient if this directory is accessible via 
+<A NAME="IDX7813"></A>
+WWW (<CODE>DOCROOT=/home/httpd/html/ciao</CODE>, or something like that). 
+
+</UL>
+
+For network-based installations, 
+<A NAME="IDX7814"></A>
+<A NAME="IDX7815"></A>
+it is of <EM>utmost importance</EM> that the paths given be reachable in all the networked machines. Different machines with different architectures can share the same physical <CODE>SRC</CODE> directory during installation, since compilations for different architectures take place in dedicated subdirectories. Also, different machines/architectures can share the same <CODE>LIBROOT</CODE> directory. This saves space since the architecture-independent libraries will be shared. See section <A HREF="ciao_205.html#SEC783">Multiarchitecture support</A> below. 
+
+<LI><STRONG>Compile Ciao:</STRONG> At the ciao top level directory type <CODE>gmake all</CODE>.
+
+<EM>Important:</EM> use 
+<A NAME="IDX7816"></A>
+GNU make (
+<A NAME="IDX7817"></A>
+<CODE>gmake</CODE>), not the standard 
+<A NAME="IDX7818"></A>
+UNIX make, as the latter does not support some features used during the compilation. It does not matter if the name of the executable is 
+<A NAME="IDX7819"></A>
+<CODE>make</CODE> or 
+<A NAME="IDX7820"></A>
+<CODE>gmake</CODE>: only make sure that it is GNU make. 
+
+This will: 
+
+
+<UL>
+
+<LI>Build an
+
+<A NAME="IDX7821"></A>
+engine in <CODE>$(SRC)/bin/$(CIAOARCH)</CODE>, where <CODE>$(CIAOARCH)</CODE> depends on the architecture. The engine is the actual interpreter of the low level code into which Ciao Prolog programs are compiled. 
+
+<LI>Build a new Ciao
+
+<A NAME="IDX7822"></A>
+standalone compiler (
+<A NAME="IDX7823"></A>
+<CODE>ciaoc</CODE>), with the default paths set for your local configuration (nonetheless, these can be overridden by environment variables, as described below). 
+
+<LI>Precompile all the libraries under <CODE>$(SRC)/lib</CODE> and <CODE>$(SRC)/library</CODE> using this compiler.
+
+<LI>Compile a toplevel
+
+<A NAME="IDX7824"></A>
+Prolog shell and a shell for 
+<A NAME="IDX7825"></A>
+Prolog scripts, 
+<A NAME="IDX7826"></A>
+<A NAME="IDX7827"></A>
+under the <CODE>$(SRC)/shell</CODE> directory. 
+
+<LI>Compile some small, auxiliary applications (contained in the
+
+<A NAME="IDX7828"></A>
+<CODE>etc</CODE> directory, and documented in the part of the manual on 'Miscellaneous Standalone Utilities'). 
+
+</UL>
+
+This step can be repeated successively for several architectures in the same source directory. Only the engine and some small parts of the libraries (those written in 
+<A NAME="IDX7829"></A>
+C) differ from one architecture to the other. Standard Ciao Prolog code compiles into 
+<A NAME="IDX7830"></A>
+bytecode object files (<CODE>.po</CODE>) and/or 
+<A NAME="IDX7831"></A>
+executables which are portable among machines of different architecture, provided there is an executable engine accessible in every such machine. See more details below under section <A HREF="ciao_205.html#SEC783">Multiarchitecture support</A>. 
+ 
+<LI><STRONG>Check compilation:</STRONG> If the above steps have been satisfactorily finished, the compiler has compiled itself and all the distribution modules, and very probably everything is fine.
+
+<LI><STRONG>Install Ciao:</STRONG> To install Ciao in the directories selected in the file
+
+<A NAME="IDX7832"></A>
+<CODE>SETTINGS</CODE> during step 2 above, type <CODE>gmake justinstall</CODE>. This will: 
+
+
+<UL>
+
+<LI>Install the executables of the Ciao
+
+<A NAME="IDX7833"></A>
+program development tools (i.e., the general driver/top-level 
+<A NAME="IDX7834"></A>
+<CODE>ciao</CODE>, the standalone compiler 
+<A NAME="IDX7835"></A>
+<CODE>ciaoc</CODE>, the script interpreter 
+<A NAME="IDX7836"></A>
+<CODE>ciao-shell</CODE>, miscellaneous utilities, etc.) in <CODE>BINROOT</CODE> (see below). In order to use these tools, the <CODE>PATH</CODE> 
+<A NAME="IDX7837"></A>
+<A NAME="IDX7838"></A>
+<A NAME="IDX7839"></A>
+environment variable of users needs to contain the path <CODE>BINROOT</CODE>. 
+
+<LI>Install the Ciao libraries under <CODE>LIBROOT/ciao</CODE> (these will be automatically found).
+
+<LI>Install under <CODE>DOCROOT</CODE> the Ciao manuals in several formats (such as GNU <CODE>info</CODE>, <CODE>html</CODE>, <CODE>postscript</CODE>, etc.), depending on the distribution. In order for these manuals to be found when typing <CODE>M-x info</CODE> within
+
+<A NAME="IDX7840"></A>
+<CODE>emacs</CODE>, or by the standalone 
+<A NAME="IDX7841"></A>
+<CODE>info</CODE> and 
+<A NAME="IDX7842"></A>
+<CODE>man</CODE> commands, the <CODE>MANPATH</CODE> 
+<A NAME="IDX7843"></A>
+<A NAME="IDX7844"></A>
+and <CODE>INFOPATH</CODE> 
+<A NAME="IDX7845"></A>
+<A NAME="IDX7846"></A>
+<A NAME="IDX7847"></A>
+environment variables of users both need to contain the path <CODE>DOCROOT</CODE>. 
+
+<LI>Install under <CODE>LIBROOT/ciao</CODE> the Ciao GNU
+
+<A NAME="IDX7848"></A>
+<CODE>emacs</CODE> interface (
+<A NAME="IDX7849"></A>
+<CODE>ciao.el</CODE>, which provides an interactive interface to the Ciao program development tools, as well as some other auxiliary files) and a file 
+<A NAME="IDX7850"></A>
+<CODE>DOTemacs</CODE> containing the 
+<A NAME="IDX7851"></A>
+<CODE>emacs</CODE> initialization commands which are needed in order to use the Ciao 
+<A NAME="IDX7852"></A>
+<CODE>emacs</CODE> interface. 
+
+</UL>
+
+<LI><STRONG>Set up user environments:</STRONG> In order to automate the process of setting the variables above, the installation process leaves the files <CODE>LIBROOT/ciao/DOTcshrc</CODE> (for
+
+<A NAME="IDX7853"></A>
+<CODE>csh</CODE>-like shells), <CODE>LIBROOT/ciao/DOTprofile</CODE> (for 
+<A NAME="IDX7854"></A>
+<CODE>sh</CODE>-like shells), and <CODE>LIBROOT/ciao/DOTemacs</CODE> (for emacs) with appropriate definitions which will take care of all needed 
+<A NAME="IDX7855"></A>
+environment variable definitions and 
+<A NAME="IDX7856"></A>
+emacs mode setup. Make the following modifications in your startup scripts, so that these files are used (<CODE>&#60;LIBROOT&#62;</CODE> must be replaced with the appropriate value): 
+
+ 
+
+<UL>
+
+<LI>For users a
+
+<A NAME="IDX7857"></A>
+<A NAME="IDX7858"></A>
+<EM>csh-compatible shell</EM> (
+<A NAME="IDX7859"></A>
+<CODE>csh</CODE>, 
+<A NAME="IDX7860"></A>
+<CODE>tcsh</CODE>, ...), add to 
+<A NAME="IDX7861"></A>
+<CODE>~/.cshrc</CODE>: 
+
+
+<PRE>
+        if ( -e &#60;LIBROOT&#62;/ciao/DOTcshrc ) then
+           source &#60;LIBROOT&#62;/ciao/DOTcshrc
+        endif
+</PRE>
+
+<A NAME="IDX7862"></A>
+<CODE>Mac OS X</CODE> users should add (or modify) the 
+<A NAME="IDX7863"></A>
+<CODE>path</CODE> file in the directory <CODE>~/Library/init/tcsh</CODE>, adding the lines shown above. <STRONG>Note:</STRONG> while this is recognized by the terminal shell, and therefore by the text-mode Emacs which comes with Mac OS X, the Aqua native Emacs 21 does not recognize that initialization. It is thus necessary, at this moment, to set manually the Ciao shell (ciaosh) and Ciao library location by hand. This can be done from the Ciao menu within Emacs after a Ciao Prolog file has been loaded. We suppose that the reason is that Mac OS X does not actually consult the per-user initialization files on startup. It should also be possible to put the right initializations in the .emacs file using the <CODE>setenv</CODE> function of Emacs-lisp, as in 
+
+
+<PRE>
+(setenv "CIAOLIB" "&#60;LIBROOT&#62;/ciao")
+</PRE>
+
+The same can be done for the rest of the variables initialized in <CODE>&#60;LIBROOT&#62;/ciao/DOTcshrc</CODE> 
+ 
+
+<LI>For users of an
+
+<A NAME="IDX7864"></A>
+<A NAME="IDX7865"></A>
+<EM>sh-compatible shell</EM> (
+<A NAME="IDX7866"></A>
+<CODE>sh</CODE>, 
+<A NAME="IDX7867"></A>
+<CODE>bash</CODE>, ...), add to 
+<A NAME="IDX7868"></A>
+<CODE>~/.profile</CODE>: 
+
+
+<PRE>
+        if [ -f &#60;LIBROOT&#62;/ciao/DOTprofile ]; then
+           . &#60;LIBROOT&#62;/ciao/DOTprofile
+        fi
+</PRE>
+
+This will set up things so that the Ciao executables are found and you can access the Ciao system manuals using the 
+<A NAME="IDX7869"></A>
+<CODE>info</CODE> command. Note that, depending on your shell, <EM>you may have to log out and back in</EM> for the changes to take effect. 
+
+<LI>Also, if you use
+
+<A NAME="IDX7870"></A>
+<CODE>emacs</CODE> (highly recommended) add this line to your 
+<A NAME="IDX7871"></A>
+<CODE>~/.emacs</CODE> file: 
+
+
+<PRE>
+        (load-file "&#60;LIBROOT&#62;/ciao/DOTemacs.el")
+</PRE>
+
+</UL>
+
+ 
+
+If you are installing Ciao globally in a multi-user machine, make sure that you instruct all users to do the same. If you are the system administrator, the previous steps can be done once and for all, and globally for all users by including the lines above in the central startup scripts (e.g., in Linux 
+<A NAME="IDX7872"></A>
+<CODE>/etc/bashrc</CODE>, 
+<A NAME="IDX7873"></A>
+<CODE>/etc/csh.login</CODE>, 
+<A NAME="IDX7874"></A>
+<CODE>/etc/csh.cshrc</CODE>, 
+<A NAME="IDX7875"></A>
+<CODE>/etc/skel</CODE>, 
+<A NAME="IDX7876"></A>
+<CODE>/usr/share/emacs/.../lisp/site-init.pl</CODE>, etc.). 
+
+<LI><STRONG>Download and install Emacs (highly recommended):</STRONG> If the (freely available)
+
+<A NAME="IDX7877"></A>
+<CODE>emacs</CODE> editor is not installed in your system, its installation is <EM>highly recommended</EM> (if you are installing in a multi-user machine, you may want to do it in a general area so that it is available for other users, even if you do not use it yourself). While it is easy to use Ciao with any editor of your choice, the Ciao distribution includes a very powerful 
+<A NAME="IDX7878"></A>
+<A NAME="IDX7879"></A>
+<EM>application development environment</EM> which is based on 
+<A NAME="IDX7880"></A>
+<CODE>emacs</CODE> and which enables, e.g., source-level debugging, syntax coloring, context-sensitive on-line help, etc. 
+
+ 
+<A NAME="IDX7881"></A>
+<A NAME="IDX7882"></A>
+<A NAME="IDX7883"></A>
+<A NAME="IDX7884"></A>
+
+The emacs editor (in all its versions: Un*x, Windows, etc.) can be downloaded from, for example, <A HREF="http://www.emacs.org/">http://www.emacs.org/</A>, and also from the many GNU mirror sites worldwide (See <A HREF="http://www.gnu.org/">http://www.gnu.org/</A> for a list), in the <CODE>gnu/emacs</CODE> and <CODE>gnu/windows/emacs</CODE> directories. You can find answers to frequently asked questions (FAQ) about 
+<A NAME="IDX7885"></A>
+<CODE>emacs</CODE> in general at <A HREF="http://www.gnu.org/software/emacs/emacs-faq.text">http://www.gnu.org/software/emacs/emacs-faq.text</A> and about the Windows version at <A HREF="http://www.gnu.org/software/emacs/windows/ntemacs.html">http://www.gnu.org/software/emacs/windows/ntemacs.html</A> (despite the 
+<A NAME="IDX7886"></A>
+<CODE>ntemacs</CODE> name it runs fine also as is on Win9X and Win2000 machines). 
+
+<LI><STRONG>Check installation / read documentation:</STRONG> You may now want to check your installation (see section <A HREF="ciao_205.html#SEC781">Checking for correct installation on Un*x</A>) and read the documentation, which is stored in <CODE>DOCROOT</CODE> (copied from <CODE>SRC/doc/reference</CODE>) and can be easily accessed as explained that same section. There are special "getting started" sections at the beginning of the manual.
+
+</OL>
 
 <P>
-After the actions and registry changes performed by the installation procedure, you should check that the following should work correctly: 
+Other useful <CODE>make</CODE> targets are listed at the beginning of <CODE>$(SRC)/Makefile</CODE>. 
+
+
+<P>
+If you have any problems you may want to check section <A HREF="ciao_205.html#SEC786">Troubleshooting (nasty messages and nifty workarounds)</A>. 
+
+
+<P>
+The system can be <EM>uninstalled</EM> by typing <CODE>gmake uninstall</CODE> in the top directory (the variables in 
+<A NAME="IDX7887"></A>
+<CODE>SETTINGS</CODE> should have the same value as when the install was performed, so that the same directories are cleaned). 
+<A NAME="IDX7888"></A>
+<A NAME="IDX7889"></A>
+ 
+
+
+
+
+<H2><A NAME="SEC781" HREF="ciao_toc.html#TOC781">Checking for correct installation on Un*x</A></H2>
+<P>
+<A NAME="IDX7890"></A>
+<A NAME="IDX7891"></A>
+
+
+<P>
+If everything has gone well, several applications and tools should be available to a normal user. Try the following while logged in as a <EM>normal user</EM> (important in order to check that permissions are set up correctly): 
 
 
 <P>
@@ -177,18 +546,30 @@ After the actions and registry changes performed by the installation procedure, 
 
 <UL>
 
-<LI>Ciao-related file types (<CODE>.pl</CODE> source files, <CODE>.cpx</CODE> executables, <CODE>.itf,.po,.asr</CODE> interface files, <CODE>.pls</CODE> scripts, etc.) should have specific icons associated with them (you can look at the files in the folders in the Ciao distribution to check).
+<LI>Typing
 
-<LI>Double-clicking on the shortcut to
+<A NAME="IDX7892"></A>
+<CODE>ciao</CODE> (or 
+<A NAME="IDX7893"></A>
+<CODE>ciaosh</CODE>) should start the typical Prolog top-level shell. 
 
-<A NAME="IDX8018"></A>
-<CODE>ciaosh</CODE>(<CODE>.cpx</CODE>) on the desktop should start the typical Prolog top-level shell in a window. If this shortcut has not been created on the desktop, then double-clicking on the 
-<A NAME="IDX8019"></A>
-<CODE>ciaosh</CODE>(<CODE>.cpx</CODE>) icon inside the <CODE>shell</CODE> folder within the Ciao source folder should have the same effect. 
+<LI>In the top-level shell, Prolog library modules should load correctly. Type for example <CODE>use_module(library(dec10_io))</CODE> --you should get back a prompt with no errors reported.
 
-<LI>In the top-level shell, Prolog library modules should load correctly. Type for example <CODE>use_module(library(dec10_io))</CODE> at the Ciao top-level prompt --you should get back a prompt with no errors reported.
+<LI>To exit the top level shell, type <CODE>halt.</CODE> as usual, or <KBD>^D</KBD>.
 
-<LI>To exit the top level shell, type <CODE>halt.</CODE> as usual, or <KBD>^Z</KBD>.
+<LI>Typing
+
+<A NAME="IDX7894"></A>
+<CODE>ciaoc</CODE> should produce the help message from the Ciao 
+<A NAME="IDX7895"></A>
+standalone compiler. 
+
+<LI>Typing
+
+<A NAME="IDX7896"></A>
+<CODE>ciao-shell</CODE> should produce a message saying that no code was found. This is a Ciao application which can be used to write 
+<A NAME="IDX7897"></A>
+scripts written in Prolog, i.e., files which do not need any explicit compilation to be run. 
 
 </UL>
 
@@ -199,32 +580,31 @@ Also, the following documentation-related actions should work:
 
 <UL>
 
-<LI>Double-clicking on the shortcut to <CODE>ciao</CODE>(<CODE>.html</CODE>) which appears on the desktop should show the Ciao manual in your default WWW browser. If this shortcut has not been created you can double-click on the <CODE>ciao</CODE>(<CODE>.html</CODE>) file in the <CODE>doc\reference\ciao_html</CODE> folder inside the Ciao source folder. Make sure you configure your browser to use
+<LI>If the
 
-<A NAME="IDX8020"></A>
-<A NAME="IDX8021"></A>
-<EM>style sheets</EM> for correct formatting of the manual (note, however, that some older versions of 
-<A NAME="IDX8022"></A>
-Explorer did not support style sheets well and will give better results turning them off). 
+<A NAME="IDX7898"></A>
+<CODE>info</CODE> program is installed, typing <CODE>info</CODE> should produce a list of manuals which <EM>should include Ciao manual(s) in a separate area</EM> (you may need to log out and back in so that your shell variables are reinitialized for this to work). 
 
-<A NAME="IDX8023"></A>
-<A NAME="IDX8024"></A>
-<A NAME="IDX8025"></A>
-<A NAME="IDX8026"></A>
-<A NAME="IDX8027"></A>
-<A NAME="IDX8028"></A>
+<LI>Opening with a
 
-<LI>The <CODE>doc\reference</CODE> folder contains the manual also in the other formats present in the distribution, such as <CODE>info</CODE> (very convenient for users of the
+<A NAME="IDX7899"></A>
+WWW browser (e.g., 
+<A NAME="IDX7900"></A>
+<CODE>netscape</CODE>) the directory or <CODE>URL</CODE> corresponding to the <CODE>DOCROOT</CODE> setting should show a series of Ciao-related manuals. Note that 
+<A NAME="IDX7901"></A>
+<A NAME="IDX7902"></A>
+<EM>style sheets</EM> should be activated for correct formatting of the manual. 
 
-<A NAME="IDX8029"></A>
-<CODE>emacs</CODE> editor/program development system) and <CODE>postscript</CODE> or <CODE>pdf</CODE>, which are specially useful for printing. See section <A HREF="ciao_4.html#SEC53">Printing manuals (Win32)</A> for instructions. 
+<LI>Typing <CODE>man ciao</CODE> should produce a man page with some very basic general information on Ciao (and pointing to the on-line manuals).
+
+<LI>The <CODE>DOCROOT</CODE> directory should contain the manual also in the other formats such as <CODE>postscript</CODE> or <CODE>pdf</CODE> which specially useful for printing. See section <A HREF="ciao_3.html#SEC41">Printing manuals (Un*x)</A> for instructions.
 
 </UL>
 
 <P>
 Finally, if 
-<A NAME="IDX8030"></A>
-<CODE>emacs</CODE> is installed, after starting it (double-clicking on the <CODE>emacs</CODE> icon or from the <CODE>Start</CODE> menu) the following should work: 
+<A NAME="IDX7903"></A>
+<CODE>emacs</CODE> is installed, after starting it (typing <CODE>emacs</CODE>) the following should work: 
 
 
 <P>
@@ -236,100 +616,328 @@ Finally, if
 
 <LI>When opening a Prolog file, i.e., a file with <CODE>.pl</CODE> or <CODE>.pls</CODE> ending, using <KBD>^X</KBD><KBD>^F</KBD><CODE>filename</CODE> (or using the menus) the code should appear highlighted according to syntax (e.g., comments in red), and <CODE>Ciao/Prolog</CODE> menus should appear in the menu bar on top of the
 
-<A NAME="IDX8031"></A>
+<A NAME="IDX7904"></A>
 <CODE>emacs</CODE> window. 
 
 <LI>Loading the file using the <CODE>Ciao/Prolog</CODE> menu (or typing <KBD>^C</KBD> <KBD>l</KBD>) should start in another emacs buffer the Ciao toplevel shell and load the file. You should now be able to switch the the toplevel shell and make queries from within
 
-<A NAME="IDX8032"></A>
+<A NAME="IDX7905"></A>
 <CODE>emacs</CODE>. 
 
 </UL>
 
 <P>
 <STRONG>Note:</STRONG> when using 
-<A NAME="IDX8033"></A>
+<A NAME="IDX7906"></A>
 <CODE>emacs</CODE> it is <EM>very convenient</EM> to swap the locations of the (normally not very useful) <KBD>Caps Lock</KBD> key and the (very useful in 
-<A NAME="IDX8034"></A>
+<A NAME="IDX7907"></A>
 <CODE>emacs</CODE>) <KBD>Ctrl</KBD> key on the keyboard. How to do this is explained in the 
-<A NAME="IDX8035"></A>
+<A NAME="IDX7908"></A>
 <CODE>emacs</CODE> frequently asked questions FAQs (see the 
-<A NAME="IDX8036"></A>
+<A NAME="IDX7909"></A>
 <CODE>emacs</CODE> download instructions for their location). 
 
 
-<P>
-If you find that everything works but <CODE>emacs</CODE> cannot start the Ciao toplevel you may want to check if you can open a normal Windows shell within <CODE>emacs</CODE> (just do <KBD>M-x</KBD> <CODE>shell</CODE>). If you cannot, it is possible that you are using some anti-virus software which is causing problems. See <A HREF="http://www.gnu.org/software/emacs/windows/faq3.html#anti-virus for a">http://www.gnu.org/software/emacs/windows/faq3.html#anti-virus for a</A> workaround. 
 
 
-<P>
-In some Windows versions it is possible that you had to change the <EM>first</EM> backslashes in the DOTemaces.el file in the Ciao Directory. E.g., assuming you have installed in drive <CODE>c:</CODE>, instances of <CODE>c:\</CODE> need to be changed to <CODE>c:/</CODE>. For example: <CODE>c:\prolog/ciao-1.7p30Win32/shell/ciaosh.bat</CODE> should be changed to <CODE>c:/prolog/ciao-1.7p30Win32/shell/ciaosh.bat</CODE>. 
- 
-
-
-
-
-<H2><A NAME="SEC794" HREF="ciao_toc.html#TOC794">Compiling the miscellaneous utilities under Windows</A></H2>
+<H2><A NAME="SEC782" HREF="ciao_toc.html#TOC782">Cleaning up the source directory</A></H2>
 
 <P>
-The 
-<A NAME="IDX8037"></A>
-<CODE>etc</CODE> folder contains a number of utilities, documented in the manual in <EM>PART V - Miscellaneous Standalone Utilities</EM>. In the Win32 distribution these utilities are not compiled by the installation process. You can create the executable for each of them when needed by compiling the corresponding <CODE>.pl</CODE> file. 
-
-
-
-
-<H2><A NAME="SEC795" HREF="ciao_toc.html#TOC795">Server installation under Windows</A></H2>
-
-<P>
-<A NAME="IDX8038"></A>
-<A NAME="IDX8039"></A>
-<A NAME="IDX8040"></A>
-<A NAME="IDX8041"></A>
-
-
-<P>
-If you would like to install Ciao on a server machine, used by several clients, the following steps are recommended: 
+After installation, the source directory can be cleaned up in several ways: 
 
 
 
 <UL>
 
-<LI>Follow the standard installation procedure on the server. When selecting the folder in which Ciao is installed make sure you select a folder that is visible by the client machines. Also make sure that the functionality specified in the previous sections is now available on the server.
+<LI><CODE>gmake uninstall</CODE> removes the installation but does not touch the source directories.
 
-<LI>Perform a
-
-<A NAME="IDX8042"></A>
-<A NAME="IDX8043"></A>
-<EM>client installation</EM> on each client, by running (e.g., double-click on it) the 
-<A NAME="IDX8044"></A>
-<CODE>client.bat</CODE> script. This should update the registry of each client. At this point all the functionality should also be available on the clients. 
+<LI><CODE>gmake totalclean</CODE> leaves the distribution is its original form, throwing away any intermediate files (as well as any unneeded files left behind by the Ciao developers), while still allowing recompilation.
 
 </UL>
 
+<P>
+Other useful <CODE>make</CODE> targets are listed at the beginning of <CODE>$(SRC)/Makefile</CODE>. 
 
 
-<H2><A NAME="SEC796" HREF="ciao_toc.html#TOC796">CGI execution under IIS</A></H2>
+
+
+<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Multiarchitecture support</A></H2>
 
 <P>
-The standard installation procedure updates the windows registry so that Ciao executables (ending in <CODE>.cpx</CODE>) are directly executable as CGIs under Microsoft's IIS. In the event you re-install IIS, you probably would lose the entries in the registry which allows this. In that case, processing the file 
-<A NAME="IDX8045"></A>
-<CODE>ciao.reg</CODE> produced during the installation (or simply reinstalling Ciao) will add again those entries. 
+<A NAME="IDX7910"></A>
+<A NAME="IDX7911"></A>
 
-
-
-
-<H2><A NAME="SEC797" HREF="ciao_toc.html#TOC797">Uninstallation under Windows</A></H2>
 
 <P>
-To uninstall Ciao under Windows, simply delete the directory in which you put the Ciao distribution. If you also want to delete the registry entries created by the Ciao installation (not strictly needed) this must currently be done by hand. The installation leaves a list of these entries in the file 
-<A NAME="IDX8046"></A>
-<CODE>ciao.reg</CODE> to aid in this task. Also, all the register entries contain the word <EM>ciao</EM>. Thus, to delete all Ciao entries, run the application 
-<A NAME="IDX8047"></A>
-<CODE>regedit</CODE> (for example, by selecting <CODE>Run</CODE> from the Windows <CODE>Start</CODE> menu), search (<KBD>^F</KBD>) for <EM>ciao</EM> in all registry entries (i.e., select all of <CODE>Keys</CODE>, <CODE>Values</CODE>, and <CODE>Data</CODE> in the <CODE>Edit-&#62;Find</CODE> dialog), and delete each matching key (click on the left window to find the matching key for each entry found). 
+As mentioned before, Ciao applications (including the compiler and the top level) can run on several machines with different architectures without any need for recompiling, provided there is one Ciao engine (compiled for the corresponding architecture) accessible in each machine. Also, the Ciao libraries (installed in <CODE>LIBROOT</CODE>, which contain also the engines) and the actual binaries (installed in <CODE>BINROOT</CODE>) can themselves be shared on several machines with different architectures, saving disk space. 
 
+
+<P>
+For example, assume that the compiler is installed as: 
+
+
+<P>
+<CODE>/usr/local/share/bin/ciaoc</CODE> 
+
+
+<P>
+and the libraries are installed under 
+
+
+<P>
+<CODE>/usr/local/share/lib</CODE> 
+
+
+<P>
+Assume also that the <CODE>/usr/local/share</CODE> directory is mounted on, say, a number of 
+<A NAME="IDX7912"></A>
+Linux and a number of 
+<A NAME="IDX7913"></A>
+Solaris boxes. In order for <CODE>ciaoc</CODE> to run correctly on both types of machines, the following is needed: 
+
+
+
+<OL>
+
+<LI>Make sure you that have done <CODE>gmake install</CODE> on one machine of each architecture (once for Linux and once for Solaris in our example). This recompiles and installs a new engine and any architecture-dependent parts of the libraries for each architecture. The engines will have names such as <CODE>ciaoengine.LINUXi86</CODE>, <CODE>ciaoengine.SolarisSparc</CODE>, and so on.
+
+<LI>In multi-architecture environments it is even more important to make sure that users make the modifications to their startup scripts using
+
+<A NAME="IDX7914"></A>
+<CODE>&#60;LIBROOT&#62;/ciao/DOTcshrc</CODE> etc. The selection of the engine (and architecture-dependent parts of libraries) is done in these scripts by setting the environment variable <CODE>CIAOARCH</CODE>, using the <CODE>ciao_get_arch</CODE> command, which is installed automatically when installing Ciao. This will set <CODE>CIAOARCH</CODE> to, say, <CODE>LINUXi86</CODE>, <CODE>SolarisSparc</CODE>, respectively, and <CODE>CIAOENGINE</CODE> will be set to <CODE>ciaoengine.</CODE><EM>CIAOARCH</EM>. 
+
+However, note that this is not strictly necessary if running on only one architecture: if <CODE>CIAOARCH</CODE> is not set (i.e., undefined), the Ciao executables will look simply for <CODE>ciaoengine</CODE>, which is always a link to the latest engine installed in the libraries. But including the initialization files provided has the advantage of setting also paths for the manuals, etc. 
+
+</OL>
+
+
+
+<H2><A NAME="SEC784" HREF="ciao_toc.html#TOC784">Installation and compilation under Windows</A></H2>
+
+<P>
+There are two possibilities in order to install Ciao Prolog on Windows NT/95/98 machines: 
+
+
+
+<UL>
+
+<LI>Installing from the Windows <EM>precompiled</EM> distribution. This is the easiest since it requires no compilation and is highly recommended. This is described in section <A HREF="ciao_206.html#SEC787">Installing Ciao from a Win32 binary distribution</A>.
+
+<LI>Installing the standard Ciao Prolog (Un*x) system source distribution and compiling it under Windows. This is somewhat more complex and currently requires the (freely available) Cygnus Win32 development libraries --described below.
+
+</UL>
+
+<P>
+<A NAME="IDX7915"></A>
+<A NAME="IDX7916"></A>
+<A NAME="IDX7917"></A>
+<A NAME="IDX7918"></A>
+In order to compile Ciao Prolog for Win32 environments you need to have the (public domain) 
+<A NAME="IDX7919"></A>
+<A NAME="IDX7920"></A>
+<EM>Cygnus Win32</EM> and development libraries installed in your system. Compilation should be performed preferably under Windows NT. 
+
+
+
+<UL>
+
+<LI>Thus, the first step, if Cygnus Win32 is not installed in your system, is to download it (from, e.g., <A HREF="http://www.cygnus.com/misc/gnu-win32">http://www.cygnus.com/misc/gnu-win32</A>) and install it. The compilation process also requires that the executables <CODE>rm.exe</CODE>, <CODE>sh.exe</CODE>, and <CODE>uname.exe</CODE> from the Cygnus distribution be copied under <CODE>/bin</CODE> prior to starting the process (if these executables are not available under <CODE>/bin</CODE> the compilation process will produce a number of errors and eventually stop prematurely).
+
+<LI>Assuming all of the above is installed, type <CODE>make allwin32</CODE>. This will compile both the engine and the Prolog libraries. In this process, system libraries that are normally linked dynamically under Un*x (i.e., those for which <CODE>.so</CODE> dynamically loadable files are generated) are linked statically into the engine (this is done instead of generating <CODE>.dll</CODE>s because of a limitation in the current version of the Cygnus Win32 environment). No actual installation is made at this point, i.e., this process leaves things in a similar state as if you had just downloaded and uncompressed the precompiled distribution. Thus, in order to complete the installation you should now:
+
+<LI>Follow now the instructions in section <A HREF="ciao_206.html#SEC787">Installing Ciao from a Win32 binary distribution</A>.
+
+</UL>
+
+<P>
+A further note regarding the executables generated by the Ciao compiler and top-level: the same considerations given in section <A HREF="ciao_206.html#SEC787">Installing Ciao from a Win32 binary distribution</A> apply regarding <CODE>.bat</CODE> files, etc. However, in a system in which Cygnus Win32 is installed these executables can also be used in a very simple way. In fact, the executables can be run as in Un*x by simply typing their name at the 
+<A NAME="IDX7921"></A>
+<CODE>bash</CODE> shell command line without any associated <CODE>.bat</CODE> files. This only requires that the 
+<A NAME="IDX7922"></A>
+<CODE>bash</CODE> shell which comes with Cygnus Win32 be installed and accessible: simply, make sure that 
+<A NAME="IDX7923"></A>
+<CODE>/bin/sh.exe</CODE> exists. 
+
+
+
+
+<H2><A NAME="SEC785" HREF="ciao_toc.html#TOC785">Porting to currently unsupported operating systems</A></H2>
+
+<P>
+If you would like to port Ciao to a currently unsupported platform, there are several issues to take into account. The main one is to get the <EM>engine</EM> to compile in that platform, i.e., the C code under the <CODE>engine</CODE> directory. The procedure currently followed by Ciao to decide the various flags needed to compile is as follows: 
+
+
+
+<UL>
+
+<LI>The shell script <CODE>$(SRC)/etc/ciao_get_arch</CODE> is executed; it returns a string describing the operating system and the processor architecture (e.g., LINUXi86, SolarisSparc, SolarisAlpha, etc.). You should make sure it returns a correct (and meaningful) string for your setup. This string is used trhoughout the compilation to create several architecture-dependant flags.
+
+<LI>In the directory <CODE>$(SRC)/makefile-sysdep</CODE> there are files called mkf-&#60;OS&#62;&#60;ARCH&#62; for every combination of operating system and architecture in which Ciao is know to (and how to) compile. They set several flags regarding, for example, whether to use or not threads, which threads library to use, the optimization flags to use, the compiler, linker, and it also sets separately the architecture name (ARCHNAME variable) and the operating system (OSNAME). You should create a new mkf file for your machine, starting from the one which is closest to you.
+
+<LI>Most times the porting problems happen in the use of locks and threads. You can either disable them, or have a look at the files <CODE>$(SRC)/engine/locks.h</CODE> and <CODE>$(SRC)/engine/threads.h</CODE>. If you know how to implement native (assembler) locks for your architecture, enable HAVE_NATIVE_SLOCKS for your architecture and add the definitions. Otherwise, if you have library-based locks, enable them. The mechanism in <CODE>threads.h</CODE> is similar.
+
+</UL>
+
+<P>
+ 
+Once a working engine is achieved, it should be possible to continue with the standard installation procedure, which will try to use a completely static version of the standalone compiler (<CODE>ciaoc.sta</CODE> in the <CODE>ciaoc</CODE> directory) to compile the interactive top-level (
+<A NAME="IDX7924"></A>
+<CODE>ciaosh</CODE>) and a new version of the standalone compiler (
+<A NAME="IDX7925"></A>
+<CODE>ciaoc</CODE>). These in turn should be able to compile the Prolog libraries. You may also need to look at some libraries (such as, for example, 
+<A NAME="IDX7926"></A>
+<CODE>sockets</CODE>) which contain C code. If you do succeed in porting to a platform that is currently unsupported please send the 
+<A NAME="IDX7927"></A>
+<CODE>mkf-CIAOARCH</CODE> and any patches to <A HREF="mailto:ciao@clip.dia.fi.upm.es">ciao@clip.dia.fi.upm.es</A>, and we will include them (with due credit, of course) in the next distribution. 
+ 
+
+
+
+
+<H2><A NAME="SEC786" HREF="ciao_toc.html#TOC786">Troubleshooting (nasty messages and nifty workarounds)</A></H2>
+<P>
+<A NAME="IDX7928"></A>
+<A NAME="IDX7929"></A>
+
+
+<P>
+The following a list of common installation problems reported by users: 
+
+
+
+<UL>
+ 
+<LI><STRONG>Problem:</STRONG> Compilation errors appear when trying a new installation/compilation after the previous one was aborted (e.g., because of errors).
+
+<STRONG>Possible reason and solution:</STRONG> It is a good idea to clean up any leftovers from the previous compilation using <CODE>make engclean</CODE> before restarting the installation or compilation process. 
+
+<LI><STRONG>Problem:</STRONG>
+
+During engine compilation, messages such as the following appear: <CODE>tasks.c:102:PTHREAD_CANCEL_ASYNCHRONOUS undeclared (first use of this function)</CODE>. 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+Your (Linux?) system does not have (yet) the 
+<A NAME="IDX7930"></A>
+Posix threads library installed. You can upgrade to one which does have it, or download the library from 
+
+<A HREF="http://pauillac.inria.fr/~xleroy/linuxthreads/index.html">http://pauillac.inria.fr/~xleroy/linuxthreads/index.html</A> 
+
+and install it, or disable the use of threads in Linux: for this, edit the 
+<A NAME="IDX7931"></A>
+<CODE>SETTINGS</CODE> file and specify <CODE>USE_THREADS=no</CODE>, which will avoid linking against thread libraries (it will disable the use of thread-related primitives as well). Clean the engine with <CODE>make engclean</CODE> and restart compilation. 
+
+If you have any alternative threads library available, you can tinker with <CODE>engine/threads.h</CODE> and the files under <CODE>makefile-sysdep</CODE> in order to get the task managing macros right for your system. Be sure to link the right library. If you succeed, we (<A HREF="mailto:ciao@clip.dia.fi.upm.es">ciao@clip.dia.fi.upm.es</A>) will be happy of knowing about what you have done. 
+ 
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>-lpthread: library not found</CODE> (or similar) 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+Your (Linux?) system seems to have Posix threads installed, but there is no threads library in the system. In newer releases (e.g., 
+<A NAME="IDX7932"></A>
+RedHat 5.0), the Posix threads system calls have been included in <CODE>glibc.so</CODE>, so specifying <CODE>-lpthread</CODE> in <CODE>makefile-sysdep/mkf-LINUX</CODE> is not needed; remove it. <CODE>make engclean</CODE> and restart installation. 
+
+Alternatively, you may have made a custom installation of Posix threads in a non-standard location: be sure to include the flag <CODE>-L/this/is/where/the/posix/libraries/are</CODE> <STRONG>before</STRONG> <CODE>-lpthread</CODE>, and to update <CODE>/etc/ld.so.conf</CODE> (see <CODE>man ldconfig</CODE>). 
+ 
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>Segmentation Violation</CODE> (when starting the first executable) 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+This has been observed with certain older versions of 
+<A NAME="IDX7933"></A>
+<CODE>gcc</CODE> which generated erroneous code under full optimization. The best solution is to upgrade to a newer version of 
+<A NAME="IDX7934"></A>
+<CODE>gcc</CODE>. Alternatively, lowering the level of optimization (by editing the 
+<A NAME="IDX7935"></A>
+<CODE>SETTINGS</CODE> file in the main directory of the distribution) normally solves the problem, at the cost of reduced execution speed. 
+ 
+<LI><STRONG>Problem:</STRONG> <CODE>ciaoc: /home/clip/lib/ciao/ciao-X.Y/engine/ciaoengine: not found</CODE>
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+
+<UL>
+
+<LI>The system was not fully installed and the variable <CODE>CIAOENGINE</CODE> was not set.
+
+<LI>The system was installed, the variable <CODE>CIAOENGINE</CODE> is set, but it is does not point to a valid ciaoengine.
+
+</UL>
+
+See the file <CODE>LIBROOT/ciao/DOTcshrc</CODE> for user settings for environment variables. 
+
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>ERROR: File library(compiler) not found - aborting...</CODE> (or any other library is not found) 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+
+<UL>
+
+<LI>The system was not installed and the variable <CODE>CIAOLIB</CODE> was not set.
+
+<LI>The system is installed and the variable <CODE>CIAOLIB</CODE> is wrong.
+
+</UL>
+
+See the file <CODE>LIBROOT/ciao/DOTcshrc</CODE> for user settings for environment variables. 
+
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>ERROR: File &#60;some_directory&#62;/&#60;some_file&#62;.itf not found - aborting...</CODE> 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+Can appear when compiling <CODE>.pl</CODE> files. The file to compile (&#60;some_file&#62;.pl) is not in the directory &#60;some_directory&#62;. You gave a wrong file name or you are in the wrong directory. 
+ 
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>*ERROR*: /(write_option,1) is not a regular type</CODE> (and similar ones) 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+This is not a problem, but rather the type checker catching some minor inconsistencies which may appear while compiling the libraries. Bug us to remove it, but ignore it for now. 
+
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>WARNING: Predicate &#60;some_predicate&#62;/&#60;N&#62; undefined in module &#60;some_module&#62;</CODE> 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+It can appear when the compiler is compiling Ciao library modules. If so, ignore it (we will fix it). If it appears when compiling user programs or modules, you may want to check your program for those undefined predicates. 
+
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>gmake[1]: execve: /home/clip/mcarro/ciao-0.7p2/etc/collect_modules: No such file or directory</CODE> 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+Check if collect_modules is in $(SRC)/etc and is executable. If it is not here, your distribution is incorrect: please let us know. 
+
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>make: Fatal error in reader: SHARED, line 12: Unexpected end of line seen</CODE> 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+You are using standard Un*x make, not GNU's make implementation (gmake). 
+ 
+<LI><STRONG>Problem:</STRONG>
+
+<CODE>WARNING</CODE>s or <CODE>ERROR</CODE>s while compiling the Ciao libraries during installation. 
+
+<STRONG>Possible reason and solution:</STRONG> 
+
+It is possible that you will see some such errors while compiling the Ciao libraries during installation. This is specially the case if you are installing a Beta or Alpha release of Ciao. These releases (which have "odd" version numbers such as 1.5 or 2.1) are typically snapshots of the development directories, on which many developers are working simultaneously, which may include libraries which have typically not been tested yet as much as the "official" distributions (those with "even" version numbers such as 1.6 or 2.8). Thus, minor warnings may not have been eliminated yet or even errors can sneak in. These warnings and errors should not affect the overall operation of the system (e.g., if you do not use the affected library). 
+
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_204.html">previous</A>, <A HREF="ciao_206.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

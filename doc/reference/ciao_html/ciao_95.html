@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Independent and-parallel execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
 <H1><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Independent and-parallel execution</A></H1>
 <P>
-<A NAME="IDX4227"></A>
+<A NAME="IDX4278"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#195 (2002/4/12, 14:21:57 CEST)
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
@@ -60,7 +60,7 @@ or
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX4228"></A>
+<A NAME="IDX4279"></A>
 <CODE>@&#38;/2</CODE> [950,xfy].
 </UL>
 
@@ -70,11 +70,11 @@ or
 
 <H2><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Documentation on internals (<CODE>andprolog</CODE>)</A></H2>
 <P>
-<A NAME="IDX4229"></A>
-<A NAME="IDX4230"></A>
+<A NAME="IDX4280"></A>
+<A NAME="IDX4281"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>@&#38;/2:</B>
-<DD><A NAME="IDX4231"></A>
+<DD><A NAME="IDX4282"></A>
 
 
 <P>
@@ -92,18 +92,18 @@ q:- a &#38; b.
 
 <P>
 which would start <CODE>a</CODE> and <CODE>b</CODE> in separate threads (possibly in parallalel, if the machine architecture and operating system allows that), and continue when <STRONG>both</STRONG> have finished. This type of execution is safe only when <CODE>a</CODE> and <CODE>b</CODE> are independent in the sense of variable sharing. This condition can be tested with the 
-<A NAME="IDX4232"></A>
+<A NAME="IDX4283"></A>
 <CODE>indep/2</CODE> predicate. 
 
 
 </DL>
 
 <P>
-<A NAME="IDX4233"></A>
-<A NAME="IDX4234"></A>
+<A NAME="IDX4284"></A>
+<A NAME="IDX4285"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>active_agents/1:</B>
-<DD><A NAME="IDX4235"></A>
+<DD><A NAME="IDX4286"></A>
 
 
 <P>
@@ -117,11 +117,11 @@ Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to
 </DL>
 
 <P>
-<A NAME="IDX4236"></A>
-<A NAME="IDX4237"></A>
+<A NAME="IDX4287"></A>
+<A NAME="IDX4288"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>indep/2:</B>
-<DD><A NAME="IDX4238"></A>
+<DD><A NAME="IDX4289"></A>
 
 
 <P>
@@ -130,19 +130,19 @@ Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to
 
 <P>
 <CODE>X</CODE> and <CODE>Y</CODE> are 
-<A NAME="IDX4239"></A>
-<A NAME="IDX4240"></A>
+<A NAME="IDX4290"></A>
+<A NAME="IDX4291"></A>
 <EM>independent</EM>, i.e., they are bound to terms which have no variables in common. For example, <CODE>indep(X,Y)</CODE> holds for <CODE>X=f(Z),Y=g(K)</CODE> and also for <CODE>X=f(a),Y=X</CODE> (since both <CODE>X</CODE> and <CODE>Y</CODE> are bound to ground terms). It does not hold for <CODE>X=f(Z),Y=g(Z)</CODE> and for <CODE>X=Y</CODE>.
 
 
 </DL>
 
 <P>
-<A NAME="IDX4241"></A>
-<A NAME="IDX4242"></A>
+<A NAME="IDX4292"></A>
+<A NAME="IDX4293"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>indep/1:</B>
-<DD><A NAME="IDX4243"></A>
+<DD><A NAME="IDX4294"></A>
 
 
 <P>
@@ -151,7 +151,7 @@ Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to
 
 <P>
 <CODE>X</CODE> is a list of lists of length two, i.e., a list of the form <CODE>[[T1, T2], [T3, T4], ...]</CODE>. The variables in each pair of the list <CODE><CODE>X</CODE></CODE> are tested for independence using 
-<A NAME="IDX4244"></A>
+<A NAME="IDX4295"></A>
 <CODE>indep/2</CODE>. This list-of-pairs format is the output of several independdnce analyzers for pair sharing.
 
 
@@ -179,15 +179,15 @@ CGEs (i.e., <CODE>=&#62;</CODE>) are not supported.
 <LI>
 
 The 
-<A NAME="IDX4245"></A>
+<A NAME="IDX4296"></A>
 <CODE>indep/1</CODE>, 
-<A NAME="IDX4246"></A>
+<A NAME="IDX4297"></A>
 <CODE>indep/2</CODE>, and 
-<A NAME="IDX4247"></A>
+<A NAME="IDX4298"></A>
 <CODE>ground/1</CODE> tests are not very efficient; they will be replaced by native versions (taken from the &#38;-Prolog code) in the future.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

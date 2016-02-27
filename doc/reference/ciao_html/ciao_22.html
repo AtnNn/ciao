@@ -1,22 +1,22 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Basic predicates handling names of constants</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
 <H1><A NAME="SEC140" HREF="ciao_toc.html#TOC140">Basic predicates handling names of constants</A></H1>
 <P>
-<A NAME="IDX1343"></A>
+<A NAME="IDX1385"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#195 (2002/4/12, 14:21:57 CEST)
+<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
 
 
 <P>
@@ -48,19 +48,19 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1344"></A>
+<A NAME="IDX1386"></A>
 <CODE>name/2</CODE>, 
-<A NAME="IDX1345"></A>
+<A NAME="IDX1387"></A>
 <CODE>atom_codes/2</CODE>, 
-<A NAME="IDX1346"></A>
+<A NAME="IDX1388"></A>
 <CODE>number_codes/2</CODE>, 
-<A NAME="IDX1347"></A>
+<A NAME="IDX1389"></A>
 <CODE>number_codes/3</CODE>, 
-<A NAME="IDX1348"></A>
+<A NAME="IDX1390"></A>
 <CODE>atom_length/2</CODE>, 
-<A NAME="IDX1349"></A>
+<A NAME="IDX1391"></A>
 <CODE>atom_concat/3</CODE>, 
-<A NAME="IDX1350"></A>
+<A NAME="IDX1392"></A>
 <CODE>sub_atom/4</CODE>.
 
 </UL>
@@ -73,11 +73,11 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <H2><A NAME="SEC142" HREF="ciao_toc.html#TOC142">Documentation on exports (<CODE>atomic_basic</CODE>)</A></H2>
 <P>
-<A NAME="IDX1351"></A>
-<A NAME="IDX1352"></A>
+<A NAME="IDX1393"></A>
+<A NAME="IDX1394"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>name/2:</B>
-<DD><A NAME="IDX1353"></A>
+<DD><A NAME="IDX1395"></A>
 
 
 <P>
@@ -86,9 +86,9 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <P>
 <CODE>String</CODE> is the list of the ASCII codes of the characters comprising the name of <CODE>Const</CODE>. Note that if <CODE>Const</CODE> is an atom whose name can be interpreted as a number (e.g. '96'), the predicate is not reversible, as that atom will not be constructed when <CODE>Const</CODE> is uninstantiated. Thus it is recommended that new programs use the ISO-compliant predicates 
-<A NAME="IDX1354"></A>
+<A NAME="IDX1396"></A>
 <CODE>atom_codes/2</CODE> or 
-<A NAME="IDX1355"></A>
+<A NAME="IDX1397"></A>
 <CODE>number_codes/2</CODE>, as these predicates do not have this inconsistency.
 
 
@@ -100,51 +100,14 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 </UL>
 
-<P>
-<STRONG>Usage 3:</STRONG> 
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Const</CODE> is an atomic term (an atom or a number).
- (<CODE>basic_props:constant/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> If <CODE>String</CODE> can be interpreted as a number, <CODE>Const</CODE> is unified with that number, otherwise with the atom whose name is <CODE>String</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Const</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Const</CODE> is an atomic term (an atom or a number).
- (<CODE>basic_props:constant/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX1356"></A>
-<A NAME="IDX1357"></A>
+<A NAME="IDX1398"></A>
+<A NAME="IDX1399"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_codes/2:</B>
-<DD><A NAME="IDX1358"></A>
+<DD><A NAME="IDX1400"></A>
 
 
 <P>
@@ -155,51 +118,14 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 <CODE>String</CODE> is the list of the ASCII codes of the characters comprising the name of <CODE>Atom</CODE>.
 
 
-<P>
-<STRONG>Usage 3:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX1359"></A>
-<A NAME="IDX1360"></A>
+<A NAME="IDX1401"></A>
+<A NAME="IDX1402"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>number_codes/2:</B>
-<DD><A NAME="IDX1361"></A>
+<DD><A NAME="IDX1403"></A>
 
 
 <P>
@@ -210,51 +136,14 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 <CODE>String</CODE> is the list of the ASCII codes of the characters comprising a representation of <CODE>Number</CODE>.
 
 
-<P>
-<STRONG>Usage 3:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX1362"></A>
-<A NAME="IDX1363"></A>
+<A NAME="IDX1404"></A>
+<A NAME="IDX1405"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>number_codes/3:</B>
-<DD><A NAME="IDX1364"></A>
+<DD><A NAME="IDX1406"></A>
 
 
 <P>
@@ -265,55 +154,14 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 <CODE>String</CODE> is the list of the ASCII codes of the characters comprising a representation of <CODE>Number</CODE> in base <CODE>Base</CODE>.
 
 
-<P>
-<STRONG>Usage 3:</STRONG> 
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-
-<CODE>Base</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Base</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX1365"></A>
-<A NAME="IDX1366"></A>
+<A NAME="IDX1407"></A>
+<A NAME="IDX1408"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_length/2:</B>
-<DD><A NAME="IDX1367"></A>
+<DD><A NAME="IDX1409"></A>
 
 
 <P>
@@ -324,33 +172,14 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 <CODE>Length</CODE> is the number of characters forming the name of <CODE>Atom</CODE>.
 
 
-<P>
-<STRONG>Usage 2:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>Length</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Length</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX1368"></A>
-<A NAME="IDX1369"></A>
+<A NAME="IDX1410"></A>
+<A NAME="IDX1411"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_concat/3:</B>
-<DD><A NAME="IDX1370"></A>
+<DD><A NAME="IDX1412"></A>
 
 
 <P>
@@ -397,110 +226,14 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 </UL>
 
-<P>
-<STRONG>Usage 5:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Concatenate two atoms.
-
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 6:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Non-deterministically split an atom.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_2</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 7:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain suffix (or fail if it cannot be done).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 8:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain prefix (or fail if it cannot be done).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_2</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
-<A NAME="IDX1371"></A>
-<A NAME="IDX1372"></A>
+<A NAME="IDX1413"></A>
+<A NAME="IDX1414"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sub_atom/4:</B>
-<DD><A NAME="IDX1373"></A>
+<DD><A NAME="IDX1415"></A>
 
 
 <P>
@@ -511,33 +244,9 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 <CODE>Sub_atom</CODE> is formed with <CODE>Length</CODE> consecutive characters of <CODE>Atom</CODE> after the <CODE>Before</CODE> character. For example, the goal <CODE>sub_atom(summer,1,4,umme)</CODE> succeeds.
 
 
-<P>
-<STRONG>Usage 2:</STRONG> 
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>Sub_atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Before</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-
-<CODE>Length</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Sub_atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

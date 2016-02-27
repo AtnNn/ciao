@@ -25,3 +25,5 @@ BOOL prolog_getpid(Argdecl);
 BOOL prolog_find_file(Argdecl);
 BOOL prolog_getarch(Argdecl);
 BOOL prolog_getos(Argdecl);
+BOOL prolog_version(Argdecl);
+

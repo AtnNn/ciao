@@ -40,6 +40,29 @@ main.
 
 :- comment(version_maintenance,dir('../version/')).
 
+:- comment(version(1*7+219,2002/05/15,22:46*11+'CEST'), "Errors (if
+   any) are now located automatically in source after coad loading and
+   similar commands. (Manuel Hermenegildo)").
+
+:- comment(version(1*7+218,2002/05/15,22:46*02+'CEST'), "Improved
+   ciao-check-types-modes (preprocessor progress now visible).
+   (Manuel Hermenegildo)").
+
+:- comment(version(1*7+217,2002/05/15,22:41*45+'CEST'), "Fixed loading
+   regions repeatedly (no more predicate redefinition warnings), by
+   using same temp file name (Manuel Hermenegildo)").
+
+:- comment(version(1*7+216,2002/05/15,22:40*16+'CEST'), "Added entries
+   in @apl{ciaopp} menu to set verbosity of output. (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*7+215,2002/05/15,22:40*05+'CEST'), "Fixed timing
+   problem with ciao-check-buffer-syntax. (Manuel Hermenegildo)").
+
+:- comment(version(1*7+214,2002/05/15,22:36*31+'CEST'), "Fixed some
+   additional xemacs compatibility issues (related to searches).
+   (Manuel Hermenegildo)").
+
 :- comment(version(1*7+188,2002/02/08,20:06*47+'CET'), "Set
    comint-highlight-prompt to nil because otherwise coloring is not
    correctly done.  (Daniel Cabeza Gras)").
@@ -517,7 +540,7 @@ main.
 
 :- comment(version(0*1+8,1993/01/27,00:0*00+'CET'), "Change log updated.").
 
-:- comment(version(0*1+7,1992/10/07,00:0*00+'CET'), "add prolog-version
+:- comment(version(0*1+7,1992/10/07,00:0*00+'CET'), "Add prolog-version
    don't treat where specially in indent-for-new-clause.").
 
 :- comment(version(0*1+6,1992/08/28,00:0*00+'CET'), "Fix broken input

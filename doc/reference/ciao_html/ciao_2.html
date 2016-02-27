@@ -1,12 +1,12 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 6 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Introduction</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_1.html">previous</A>, <A HREF="ciao_3.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_1.html">previous</A>, <A HREF="ciao_3.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
@@ -901,6 +901,240 @@ If you feel you have contributed to the development of Ciao and we have forgotte
 
 <DL COMPACT>
 
+<DT><STRONG>Version 1.8 (2002/5/16, 21:20:27 CEST)</STRONG>
+<DD>
+ 
+
+<UL>
+<LI>Improvements related to supported platforms:
+
+
+<UL>
+<LI>Support for Mac OS X 10.1, based on the Darwin kernel.
+
+<LI>Initial support for compilation on Linux for Power PC (contributed by
+
+<A NAME="IDX241"></A>
+<A NAME="IDX242"></A>
+<EM>Paulo Moura</EM>). 
+<LI>Workaround for incorrect C compilation while using newer (&#62; 2.95) gcc compilers.
+
+<LI>.bat files generated in Windows.
+
+</UL>
+
+<LI>Changes in compiler behavior and user interface:
+
+
+<UL>
+<LI>Corrected a bug which caused wrong code generation in some cases.
+
+<LI>Changed execution of initialization directives. Now the initialization of a module/file never runs before the initializations of the modules from which the module/file imports (excluding circular dependences).
+
+<LI>The engine is more intelligent when looking for an engine to execute bytecode; this caters for a variety of situations when setting explicitly the CIAOLIB environment variable.
+
+<LI>Fixed bugs in the toplevel: behaviour of <CODE>module:main</CODE> calls and initialization of a module (now happens after related modules are loaded).
+
+<LI>Layout char not needed any more to end Prolog files.
+
+<LI>Syntax errors now disable .itf creation, so that they show next time the code is used without change.
+
+<LI>Redefinition warnings now issued only when an unqualified call is seen.
+
+<LI>Context menu in Windows can now load a file into the toplevel.
+
+<LI>Updated Windows installation in order to run CGI executables under Windows: a new information item is added to the registry.
+
+<LI>Added new directories found in recent Linux distributions to INFOPATH.
+
+<LI>Emacs-based environment and debugger improved:
+
+
+<UL>
+<LI>Errors located immediataly after code loading.
+
+<LI>Improved ciao-check-types-modes (preprocessor progress now visible).
+
+<LI>Fixed loading regions repeatedly (no more predicate redefinition warnings).
+
+<LI>Added entries in
+
+<A NAME="IDX243"></A>
+<CODE>ciaopp</CODE> menu to set verbosity of output. 
+<LI>Fixed some additional xemacs compatibility issues (related to searches).
+
+<LI>Errors reported by inferior processes are now explored in forward order (i.e., the first error rewported is the first one highlighted). Improved tracking of errors.
+
+<LI>Specific tool bar now available, with icons for main fuctions (works from emacs 21.1 on). Also, other minor adaptations for working with emacs 21.1 and later.
+
+<LI>Debugger faces are now locally defined (and better customization). This also improves comtability with xemacs (which has different faces).
+
+<LI>Direct access to a common use of the preprocessor (checking modes/types and locating errors) from toolbar.
+
+<LI>Inferior modes for Ciao and CiaoPP improved: contextual help turned on by default.
+
+<LI>Fixes to set-query. Also, previous query now appears in prompt.
+
+<LI>Improved behaviour of stored query.
+
+<LI>Improved behaviour of recentering, finding errors, etc.
+
+<LI>Wait for prompt has better termination characteristics.
+
+<LI>Added new interactive entry points (M-x): ciao, prolog, ciaopp.
+
+<LI>Better tracking of last inferior buffer used.
+
+<LI>Miscellanous bugs removed; some colors changed to adapt to different Emacs versions.
+
+<LI>Fixed some remaining incompatibilities with xemacs.
+
+<LI><CODE>:- doc</CODE> now also supported and highlighted.
+
+<LI>Eliminated need for calendar.el
+
+<LI>Added some missing library directives to fontlock list, organized this better.
+
+</UL>
+
+</UL>
+
+<LI>New libraries added to the system:
+
+
+<UL>
+<LI>hiord: new library which needs to be loaded in order to use higher-order call/N and P(X) syntax. Improved model for predicate abstractions.
+
+<LI>fuzzy: allows representing fuzzy information in the form or Prolog rules.
+
+<LI>use_url: allows loading a module remotely by using a WWW address of the module source code
+
+<LI>andorra: alternative search method where goals which become deterministic at run time are executed before others.
+
+<LI>iterative deepening (id): alternative search method which makes a depth-first search until a predetermined depth is reached. Complete but in general cheaper than breadth first.
+
+<LI>det_hook: allows making actions when a deterministic situation is reached.
+
+<LI>ProVRML: read VRML code and translate it into Prolog terms, and the other way around.
+
+<LI>io_alias_redirection: change where stdin/stdout/stderr point to from within Ciao Prolog programs.
+
+<LI>tcl_tk: an interface to Tcl/Tk programs.
+
+<LI>tcl_tk_obj: object-based interface to Tcl/Tk graphical objects.
+
+<LI>CiaoPP: options to interface with the CiaoPP Prolog preprocessor.
+
+</UL>
+
+<LI>Some libraries greatly improved:
+
+
+<UL>
+<LI>WebDB: utilities to create WWW-based database interfaces.
+
+<LI>Improved java interface implementation (this forced renaming some interface primitives).
+
+<LI>User-transparent persistent predicate database revamped:
+
+
+<UL>
+<LI>Implemented passerta_fact/1 (asserta_fact/1).
+
+<LI>Now it is never necessary to explicitly call init_persdb, a call to initialize_db is only needed after dynamically defining facts of persistent_dir/2. Thus, pcurrent_fact/1 predicate eliminated.
+
+<LI>Facts of persistent predicates included in the program code are now included in the persistent database when it is created. They are ignored in successive executions.
+
+<LI>Files where persistent predicates reside are now created inside a directory named as the module where the persistent predicates are defined, and are named as F_A* for predicate F/A.
+
+<LI>Now there are two packages: persdb and 'persdb/ll' (for low level). In the first, the standard builtins asserta_fact/1, assertz_fact/1, and retract_fact/1 are replaced by new versions which handle persistent data predicates, behaving as usual for normal data predicates. In the second package, predicates with names starting with 'p' are defined, so that there is not overhead in calling the standard builtins.
+
+<LI>Needed declarations for persistent_dir/2 are now included in the packages.
+
+</UL>
+
+<LI>SQL now works with mysql.
+
+<LI>system: expanded to contain more predicates which act as interface to the underlying system / operating system.
+
+</UL>
+
+<LI>Other libraries improved:
+
+
+<UL>
+<LI>xref: creates cross-references among Prolog files.
+
+<LI>concurrency: new predicates to create new concurrent predicates on-the-fly.
+
+<LI>sockets: bugs corrected.
+
+<LI>objects: concurrent facts now properly recognized.
+
+<LI>fast read/write: bugs corrected.
+
+<LI>Added 'webbased' protocol for active modules: publication of active module address can now be made through WWW.
+
+<LI>Predicates in library(dynmods) moved to library(compiler).
+
+<LI>Expansion and meta predicates improved.
+
+<LI>Pretty printing.
+
+<LI>Assertion processing.
+
+<LI>Module-qualified function calls expansion improved.
+
+<LI>Module expansion calls goal expansion even at runtime.
+
+</UL>
+
+<LI>Updates to builtins (there are a few more; these are the most relevant):
+
+
+<UL>
+<LI>Added a prolog_flag to retrieve the version and patch.
+
+<LI>current_predicate/1 in library(dynamic) now enumerates non-engine modules, prolog_sys:current_predicate/2 no longer exists.
+
+<LI>exec/* bug fixed.
+
+<LI>srandom/1 bug fixed.
+
+</UL>
+
+<LI>Updates for C interface:
+
+
+<UL>
+<LI>Fixed bugs in already existing code.
+
+<LI>Added support for creation and traversing of Prolog data structures from C predicates.
+
+<LI>Added support for raising Prolog exceptions from C predicates.
+
+<LI>Preliminary support for calling Prolog from C.
+
+</UL>
+
+<LI>Miscellaneous updates:
+
+
+<UL>
+<LI>Installation made more robust.
+
+<LI>Some pending documentation added.
+
+<LI>'ciao' script now adds (locally) to path the place where it has been installed, so that other programs can be located without being explicitly in the $PATH.
+
+<LI>Loading programs is somewhat faster now.
+
+<LI>Some improvement in printing path names in Windows.
+
+</UL>
+
+</UL>
+
 <DT><STRONG>Version 1.7 (2000/7/12, 19:1:20 CEST)</STRONG>
 <DD>
 Development version following even 1.6 distribution.
@@ -1191,6 +1425,6 @@ First fully integrated, standalone Ciao distribution. Based on integrating into 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_1.html">previous</A>, <A HREF="ciao_3.html">next</A>, <A HREF="ciao_214.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_1.html">previous</A>, <A HREF="ciao_3.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

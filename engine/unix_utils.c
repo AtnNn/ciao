@@ -1017,6 +1017,21 @@ BOOL prolog_getos(Arg)
   return cunify(Arg, MakeString(emulator_os), X(0));
 }
 
+extern double ciao_version;
+extern int ciao_patch;
+
+/*
+ *  $ciao_version(?Version,?Patch) for current_prolog_flag(version,?V).
+ */
+BOOL prolog_version(Arg)
+     Argdecl;
+{
+  DEREF(X(0),X(0));
+  DEREF(X(1),X(1));
+  return cunify(Arg, MakeFloat(Arg,ciao_version), X(0))
+         & cunify(Arg, MakeSmall(ciao_patch), X(1));
+}
+
 
 /*
  * exec(+Process, -StdIn, -StdOut, -StdErr): connect to an external process
