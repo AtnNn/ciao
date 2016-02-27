@@ -400,6 +400,7 @@ def_hook(shell) :=
 % 'environment' is required by runwin32.bat 
 environment <- [] :-
 	build_item(emacs_mode),
+	install_item(emacs_mode), % (put ciao-mode-init.el in place)
 	build_item(header_for_win32).
 
 :- doc(subsection, "Wrappers for Executables").
@@ -1285,7 +1286,11 @@ unregister_emacs(EmacsKind) :-
 	).
 
 emacs_config(S) :-
-	Lib = ~ciaolibemacs, emacs_config_(Lib, S, []).
+	Lib = ~ciaolibemacs,
+	emacs_type(EmacsType),
+	Lib2S = ~emacsstylepath(EmacsType, Lib),
+	atom_codes(Lib2, Lib2S),
+	emacs_config_(Lib2, S, []).
 
 emacs_config_(Lib) -->
 	"(if (file-exists-p \"", emit_atom(Lib), "\")\n"||
@@ -1474,9 +1479,13 @@ distclean_emacs_mode <- :-
 % Invoke the Emacs 'batch-update-autoloads' function to generate the
 % autoload file AutoloadEL.
 emacs_update_autoloads(Dir, Log, AutoloadEL) :-
+	emacs_type(EmacsType),
+	AutoloadEL2S = ~emacsstylepath(EmacsType, AutoloadEL),
+	atom_codes(AutoloadEL2, AutoloadEL2S),
+	%
 	emacs_batch_call(Dir, Log,
 	                 ~atom_concat([
-		           '--eval \'(setq generated-autoload-file "', AutoloadEL, '")\'',
+		           '--eval \'(setq generated-autoload-file "', AutoloadEL2, '")\'',
 			   ' -f batch-update-autoloads "."'])).
 
 % Invoke the Emacs 'batch-byte-compile' function to byte compile the

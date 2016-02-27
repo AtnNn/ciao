@@ -17,18 +17,18 @@
 :- true pred ciao_stack_top(in(_Stack), go(Value)) ::  (address * int)  
 	+ (foreign, returns(Value)).
 
-cc_stack_new(ciao_stack(X)) :-
+cc_stack_new(cc_stack(X)) :-
 	ciao_stack_new(X), 
-	% stack are deallocate on backtrack.
+	% stack are deallocated on backtrack.
 	undo(ciao_stack_delete(X)).
 
-cc_stack_size(ciao_stack(X), Size):-
+cc_stack_size(cc_stack(X), Size):-
 	ciao_stack_size(X, Size).
 
-cc_stack_push(ciao_stack(X), I):-
+cc_stack_push(cc_stack(X), I):-
 	ciao_stack_push(X, I).
 
-cc_stack_pop(ciao_stack(X)):-
+cc_stack_pop(cc_stack(X)):-
 	(
 	    ciao_stack_size(X, Size), Size > 0  ->
 	    ciao_stack_pop(X)
@@ -36,16 +36,16 @@ cc_stack_pop(ciao_stack(X)):-
 	    throw(error(empty_cc_stack, cc_stack_pop/1-1))
 	).
 
-cc_stack_top(ciao_stack(X), Int):-
+cc_stack_top(cc_stack(X), Int):-
 	(
 	    ciao_stack_size(X, Size), Size > 0  ->
 	    ciao_stack_top(X, Int)
 	;
-	    throw(error(empty_cc_stack, cc_stack_pop/1-1))
+	    throw(error(empty_cc_stack, cc_stack_top/1-1))
 	).
 
 	
 :- use_foreign_library('stdc++').
-:- use_foreign_source('cc_example.cc').
+:- use_foreign_source('cc_stack.cc').
 
 

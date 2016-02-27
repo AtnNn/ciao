@@ -93,7 +93,7 @@ start(_) :-
 
 %% ----------------------------------------------------------------------------
 
-:- use_module(ciaobot(ciaobot), [showlpv/1]).
+:- use_module(ciaobot(ciaobot), [showlpv/2]).
 :- use_module(library(system_extra), [do_str_without_nl/3]).
 
 % TODO: Rewrite ciaobot in Prolog (at least the interface). 
@@ -106,7 +106,7 @@ query_latest_rev(Latest) :-
 	% Querying latest pbundle revision
 	format(user_error, "Connecting to the Ciao Bot...~n", []),
 	% TODO: fix directory
-	ciaobot:showlpv(String),
+	ciaobot:showlpv(ciao_ci, String),
 	format(user_error, "Latest pbundle revision is '~s'~n", [String]),
 	atom_codes(Latest, String).
 
@@ -123,8 +123,8 @@ query_latest_rev(Latest) :-
 %       instead.
 pbundle_fetch(Branch, RevAtom) :-
 	( Branch = '' -> throw(bad_branch) ; true ),
-	check_var_exists(pbundle_repository),
-	RepoDir = ~get_value(pbundle_repository),
+	check_var_exists(pbundledb_userhostdir),
+	RepoDir = ~get_value(pbundledb_userhostdir),
 	atom_concat([RepoDir, '/', Branch, '/', RevAtom], BDir),
 	%
 	pbundle_fetch_(BDir, Branch, RevAtom).

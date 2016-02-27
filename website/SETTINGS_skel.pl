@@ -102,15 +102,11 @@ group := '<v>DistGroup</v>'.
 % ---------------------------------------------------------------------------
 % The source of the pbundles
 
-%:- pred pbundle_repository/1 # "Specifies the repository with
+%:- pred pbundledb_userhostdir/1 # "Specifies the repository with
 %	precompiled packages to use.".
-% TODO: Share this (or part of this) definition with the ciaobot
-%       (duplicated in ciaobot/SETTINGS_1)
-% TODO: Rename ciaopacks by ciao_bundles too?
-%       That would require changes in ciaobot/apache2-ciaotester-site,
-%       and manual changes in the ciaobot hosts.
+% TODO: Duplicated in ciaobot/ 
 
-pbundle_repository := 'ciaobot@cliptest1.dia.fi.upm.es:/shared/ciaopacks'.
+pbundledb_userhostdir := 'ciaobot@cliptest1.dia.fi.upm.es:/shared/pbundledb'.
 
 % ---------------------------------------------------------------------------
 % The local storage of packaged bundles (pbundle)

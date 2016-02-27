@@ -376,23 +376,24 @@ bool_t prolog_open(Arg)
 
   if (fileptr==NULL) {
     what_happened = SYS_ERROR;                            /* Just in case */
-    if (errno==ENOENT || errno==ENOTDIR || errno==ENXIO ||errno==EBADF)
+    if (errno==ENOENT || errno==ENOTDIR || errno==ENXIO ||errno==EBADF)   {
       what_happened = INEXISTENT_SOURCE_SINK;
-    else if (errno==EEXIST || errno==EISDIR || 
-               errno==EBADF || errno==EROFS)
+    } else if (errno==EEXIST || errno==EISDIR || 
+               errno==EBADF || errno==EROFS) {
       what_happened = CANNOT_OPEN;
-    else if (errno==ENOMEM || errno==EMFILE || errno==ENFILE)
+    } else if (errno==ENOMEM || errno==EMFILE || errno==ENFILE) {
       what_happened = FINISHED_RESOURCES;
-    goto bombit;
-    } else {
-        if (fstat(fileno(fileptr), &statbuf) || 
-            (statbuf.st_mode & S_IFMT) == S_IFDIR) {
-          fclose(fileptr);
-          what_happened = CANNOT_OPEN;
-          goto bombit;
-        }
     }
-
+    goto bombit;
+  } else {
+    if (fstat(fileno(fileptr), &statbuf) || 
+	(statbuf.st_mode & S_IFMT) == S_IFDIR) {
+      fclose(fileptr);
+      what_happened = CANNOT_OPEN;
+      goto bombit;
+    }
+  }
+  
   {
     char locking = modecodif[1];
 
@@ -416,7 +417,7 @@ bool_t prolog_open(Arg)
     cunify(Arg, ptr_to_stream(Arg,new_stream(X(0),modespec,fileptr)),X(2));
 
  bombit:
-  if (current_ferror_flag == atom_on)
+  if (current_ferror_flag == atom_on) {
     switch (what_happened) {
     case STRANGE_SOURCE_SINK:
       BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1); break;
@@ -424,13 +425,15 @@ bool_t prolog_open(Arg)
       BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(0), 1); break;
     case CANNOT_OPEN:
       BUILTIN_ERROR(PERMISSION_ERROR(OPEN, SOURCE_SINK),X(0),1); break;
-    case SYS_ERROR:
-      BUILTIN_ERROR(SYSTEM_ERROR,X(0),1); break;
-    case FINISHED_RESOURCES:
+   case FINISHED_RESOURCES:
       BUILTIN_ERROR(RESOURCE_ERROR(R_UNDEFINED),X(0),1); break;
+    case SYS_ERROR:
     default:
-      return FALSE;
-    } else return FALSE;
+      BUILTIN_ERROR(SYSTEM_ERROR,X(0),1); break;
+    } 
+  } else {
+    return FALSE;
+  }
 }
 
 

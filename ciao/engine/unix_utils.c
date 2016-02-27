@@ -105,7 +105,7 @@ bool_t expand_file_name(name, target)
   while ((*dest = (*src == '\\') ? '/' : *src))
     ++src, ++dest;
 #else
-  strcpy(src_buff,name);
+  strcpy(src_buff, name);
 #endif
 
   /* contract // to / (non-initial in Win32) */
@@ -131,13 +131,13 @@ bool_t expand_file_name(name, target)
     case '/':
       --src, --dest, dest[0] = (char)0;
       if (dest == target) {
-        strcpy(target,library_directory);
+        strcpy(target, library_directory);
         dest = target+strlen(target);
       } else {
         if (!(dest = getenv(target)))
           USAGE_FAULT("file name: undefined variable")
         target[0] = (char)0;
-        strcpy(target,dest);
+        strcpy(target, dest);
         dest = target+strlen(target);
       }
       goto st1;
@@ -158,13 +158,13 @@ bool_t expand_file_name(name, target)
             /* fprintf(stderr, "library_directory = %s\n", library_directory); */
             dest = library_directory;
           }
-          strcpy(target,dest);
+          strcpy(target, dest);
           dest = target+strlen(target);
         } else {
           struct passwd *pw;
           if (!(pw = getpwnam(target)))
             USAGE_FAULT("file name: no such user")
-              strcpy(target,(char *)pw->pw_dir);
+              strcpy(target, (char *)pw->pw_dir);
           dest = target+strlen(target);
         }
         goto st1;
@@ -179,7 +179,7 @@ bool_t expand_file_name(name, target)
   default:
 #if defined(Win32)
     if (DriveSelector(src)) {    /* c:/ */
-      strcpy(dest,"/cygdrive/");
+      strcpy(dest, "/cygdrive/");
       dest[10] = tolower(src[0]);
       dest += 11;
       src += 2;
@@ -187,7 +187,7 @@ bool_t expand_file_name(name, target)
     } else
 #endif
       {
-        strcpy(target,cwd);
+        strcpy(target, cwd);
         dest = target+strlen(target);
         if (dest[-1] != '/')
           *dest++ = '/';
@@ -250,9 +250,9 @@ int fix_path(path)
       if (*from != *p1) {break;}; /* "path" does not start with "from" */
     }
     if (! *from) { /* "path" starts with "from" */
-      strcpy(buf,p1);
-      strcpy(path,rp->to);
-      strcat(path,buf);
+      strcpy(buf, p1);
+      strcpy(path, rp->to);
+      strcat(path, buf);
       return TRUE;
     }
   }
@@ -264,7 +264,7 @@ int fix_path(path)
 
 void compute_cwd()
 {
-  getcwd(cwd,MAXPATHLEN+1);
+  getcwd(cwd, MAXPATHLEN+1);
 
 #if defined(FIX_PATHS)
   fix_path(cwd);
@@ -278,43 +278,41 @@ bool_t prolog_unix_cd(Arg)
   ERR__FUNCTOR("system:working_directory", 2);
   char pathBuf[MAXPATHLEN+1];
 /*   struct stat statbuf; */
-  Unify_constant(MakeString(cwd),X(0));
+  Unify_constant(MakeString(cwd), X(0));
   DEREF(X(0), X(0));
 
   DEREF(X(1), X(1));
-  if (IsVar(X(1))){
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(1),2);
+  if (IsVar(X(1))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(1), 2);
   }
 
-  /* OGRAMA: check type argument*/
-  if (!IsAtom(X(1)))
-    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(1),2);
-  /* ORGAMA: check argument domain error */
-  if (!expand_file_name(GetString(X(1)),pathBuf))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(1),2);
-
-  /* OGRAMA: check file exists */
-  /*
-  if (stat(pathBuf, &statbuf))
-    if (current_ferror_flag==atom_on)
-      BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(1), 2);
-  */
-  /* OGRAMA: If there is another problem ...*/
+  /* check type argument*/
+  if (!IsAtom(X(1))) {
+    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM), X(1), 2);
+  }
+  /* check argument domain error */
+  if (!expand_file_name(GetString(X(1)), pathBuf)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(1), 2);
+  }
+  /* If there is another problem ...*/
   if (chdir(pathBuf)) {
-      if (current_ferror_flag==atom_on)
+    if (current_ferror_flag==atom_on) {
 	switch (errno) {
 	  case ENOENT: /* File does not exists */ 
-	    BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM), X(1), 2);
+	    BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(1), 2);
 	    break ;
 	  case EACCES: /* We dont have permissions in the directory */
-	    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(1), 2);
+	    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(1), 2);
 	    break ;
 	  default: /* Who knows */
+	    BUILTIN_ERROR(SYSTEM_ERROR, X(1), 2);
 	    break ;
-	  }
-      
-      BUILTIN_ERROR(SYSTEM_ERROR, X(1), 2);
+	}
+    } else {
+      /* Silently fails */
+      return FALSE;
     }
+  }
 
   compute_cwd();
   return TRUE;
@@ -381,21 +379,21 @@ bool_t prolog_unix_shell2(Arg)
   char cbuf[2*MAXATOM+MAXPATHLEN+20];
 #endif
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 
-  /* OGRAMA: check argument instantiation error */
+  /* check argument instantiation error */
   if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  /* check type argument*/
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
 
   system_result = ciao_shell_start(GetString(X(0)));
 
 #if defined(USE_DYNAMIC_ATOM_SIZE)
     checkdealloc((tagged_t *)cbuf, 2*MAXATOM+MAXPATHLEN+20);
 #endif
-    return cunify(Arg,MakeSmall(system_result),X(1));
+    return cunify(Arg, MakeSmall(system_result), X(1));
 }
 
 extern char ** environ;
@@ -430,15 +428,15 @@ bool_t prolog_unix_system2(Arg)
      Argdecl;
 {
   ERR__FUNCTOR("system:system", 2);
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 
-  /* OGRAMA: check argument instantiation error */
+  /* check argument instantiation error */
   if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  /* check type argument*/
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-  return cunify(Arg,MakeSmall(fixed_system(GetString(X(0)))),X(1));
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  return cunify(Arg, MakeSmall(fixed_system(GetString(X(0)))), X(1));
 }
 
 /* Return the arguments with which the current prolog was invoked */
@@ -452,16 +450,16 @@ bool_t prolog_unix_argv(Arg)
   CIAO_REGISTER int i;
 
   for (i=prolog_argc; i>1;) {
-    MakeLST(list,MakeString(p1[--i]),list);
+    MakeLST(list, MakeString(p1[--i]), list);
   }
-  return cunify(Arg,list,X(0));
+  return cunify(Arg, list, X(0));
 }
 
 /* //) ( (+
    bool_t prolog_unix_exit(Arg)
    Argdecl;
    {
-   DEREF(X(0),X(0));
+   DEREF(X(0), X(0));
 
    exit(GetSmall(X(0)));
    return TRUE;
@@ -477,32 +475,34 @@ bool_t check_errno(Argdecl, int index)
    */
   ERR__FUNCTOR("system:$throw_errno", 1);
   switch(errno) {
-  case EISDIR:
+  case EISDIR: 
   case ENAMETOOLONG:
-  case ENOTDIR:
+  case ENOTDIR: 
   case EFAULT:
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(index),index + 1);
+    /* TODO: This is not a domain error error, leave it such as until
+             we find a better solution */
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(index), index + 1);
     break;
   case EPERM:
   case EACCES:
   case EROFS:
-    BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM),X(index),index + 1);
+    BUILTIN_ERROR(PERMISSION_ERROR(OPEN, SOURCE_SINK), X(index), index + 1);
     break;
   case ENOENT:
-    BUILTIN_ERROR(EXISTENCE_ERROR(STREAM),X(index),index + 1);
+    BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(index), index + 1);
     break;
   case EMFILE:
   case ENFILE:
   case ENOMEM:
   case ELOOP:
   case ENOSPC:
-    BUILTIN_ERROR(RESOURCE_ERROR(R_UNDEFINED),X(index),index + 1);
+    BUILTIN_ERROR(RESOURCE_ERROR(R_UNDEFINED), X(index), index + 1);
     break;
   case EEXIST:
-    BUILTIN_ERROR(SYSTEM_ERROR,X(index),index + 1);
+    BUILTIN_ERROR(SYSTEM_ERROR, X(index), index + 1);
     break;
   default:
-    BUILTIN_ERROR(SYSTEM_ERROR,X(index),index + 1);
+    BUILTIN_ERROR(SYSTEM_ERROR, X(index), index + 1);
     break;
   }
 }
@@ -516,19 +516,19 @@ bool_t prolog_unix_mktemp(Arg)
 
   //  extern char *mktemp PROTO((char *));  // Not used any longer
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 
-  /* OGRAMA: check argument instantiation error */
+  /* check argument instantiation error */
   if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
 
-  /* OGRAMA: check type argument*/
+  /* check type argument*/
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
 
   strcpy(template, GetString(X(0)));
 
-  /* OGRAMA: if mkstemp fails, give a system error */
+  /* if mkstemp fails, give a system error */
   if ((fildes = mkstemp(template)) <  0) {
     return check_errno(Arg, 0);
   } else {
@@ -545,24 +545,24 @@ bool_t prolog_unix_access(Arg)
   char pathBuf[MAXPATHLEN+1];
   int mode;
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 
-  /* OGRAMA: check argument instantiation error */
+  /* check argument instantiation error */
   if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  /* check type argument*/
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
 
-  DEREF(X(1),X(1));
+  DEREF(X(1), X(1));
 
   if (!TagIsSmall(X(1)) || (mode = GetSmall(X(1))) & ~255) /* Not a byte */
-    ERROR_IN_ARG(X(1),2,BYTE);
+    ERROR_IN_ARG(X(1), 2, BYTE);
 
-  if (!expand_file_name(GetString(X(0)),pathBuf))
+  if (!expand_file_name(GetString(X(0)), pathBuf))
     return FALSE;
 
-  if (access(pathBuf,mode))
+  if (access(pathBuf, mode))
     {
 /*       perror("% access in file_exists/2"); /\* --this must be quiet. *\/ */
       /*  MINOR_FAULT("access() failed");  */
@@ -585,56 +585,61 @@ bool_t prolog_directory_files(Arg)
 
   /* Using X(2) to build the result - DCG */
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 
-  /* OGRAMA: check argument instantiation error */
-  if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-
-  /* OGRAMA: check type argument*/
-  if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-
-  /* OGRAMA: check domain argument */
-  if (!expand_file_name(GetString(X(0)),pathBuf))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(0),1);
-
-  /* OGRAMA: Raise an execetion if can't open the directory */
+  /* check argument instantiation error */
+  if (IsVar(X(0))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  }
+  /* check type argument*/
+  if (!TagIsATM(X(0))) {
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  }
+  /* check domain argument */
+  if (!expand_file_name(GetString(X(0)), pathBuf)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1);
+  }
+  
+  /* Check for system errors */
   if (! (dir = opendir(pathBuf))) {
-    /* By Edison Mera: */
-    /* First, identifying the error type: */
-    switch(errno) {
-    case EACCES:
-      BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM),X(0),1);
-      break;
-    case ENOENT:
-      BUILTIN_ERROR(EXISTENCE_ERROR(STREAM),X(0),1);
-      break;
-    case ENOTDIR:
-      BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(0),1);
-      break;
-    case EMFILE:
-    case ENFILE:
-    case ENOMEM:
-      BUILTIN_ERROR(RESOURCE_ERROR(R_UNDEFINED),X(0),1);
-      break;
-    default:
-      BUILTIN_ERROR(SYSTEM_ERROR,X(0),1);
-      break;
+    if (current_ferror_flag==atom_on) {
+      /* First, identifying the error type: */
+      switch(errno) {
+      case EACCES:
+	BUILTIN_ERROR(PERMISSION_ERROR(OPEN, SOURCE_SINK), X(0), 1);
+	break;
+      case ENOENT:
+	BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(0), 1);
+	break;
+      case ENOTDIR:
+	BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1);
+	break;
+      case EMFILE:
+      case ENFILE:
+      case ENOMEM:
+	BUILTIN_ERROR(RESOURCE_ERROR(R_UNDEFINED), X(0), 1);
+	break;
+      default:
+	BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1);
+	break;
+      }
+    } else {
+      /* Silently fails */
+      return FALSE;
     }
   } else {
     X(2) = atom_nil;
-    gap = HeapDifference(w->global_top,Heap_End)-CONTPAD;
+    gap = HeapDifference(w->global_top, Heap_End)-CONTPAD;
     while ((direntry = readdir(dir))) {
       if ((gap -= 2) < 0) {
-	explicit_heap_overflow(Arg,CONTPAD+32,3);
+	explicit_heap_overflow(Arg, CONTPAD+32, 3);
 	gap += 32;
       }
-      MakeLST(X(2),MakeString(direntry->d_name),X(2));
+      MakeLST(X(2), MakeString(direntry->d_name), X(2));
     }
     closedir(dir);
   }
-  return cunify(Arg,X(2),X(1));
+  return cunify(Arg, X(2), X(1));
 }
 
 /* file_properties(+File, Type, Linkto, ModTime, Protection, Size)
@@ -652,28 +657,32 @@ bool_t prolog_file_properties(Arg)
   char symlinkName[STATICMAXATOM+1];
   int len;
 
-  DEREF(X(0),X(0));
-  /* OGRAMA: check argument instantiation error */
-  if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
-  if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-  /* OGRAMA: check argument domain error */
-  if (!expand_file_name(GetString(X(0)),pathBuf))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(0),1);
-  DEREF(X(2),X(2));
-  if (X(2)!=atom_nil) { /* Link wanted */
+  DEREF(X(0), X(0));
+  /* check argument instantiation error */
+  if (IsVar(X(0))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  }
+  /* check type argument*/
+  if (!TagIsATM(X(0))) {
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  }
+  /* check argument domain error */
+  if (!expand_file_name(GetString(X(0)), pathBuf)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1);
+  }
+  DEREF(X(2), X(2));
+  if (X(2) != atom_nil) { /* Link wanted */
     symlinkName[0] = (char) 0;
-    if ((len=readlink(pathBuf, symlinkName, STATICMAXATOM)) > 0)
+    if ((len=readlink(pathBuf, symlinkName, STATICMAXATOM)) > 0) {
       symlinkName[len] = (char) 0;
-    Unify_constant(MakeString(symlinkName),X(2));
+    }
+    Unify_constant(MakeString(symlinkName), X(2));
   }
 
-  DEREF(X(1),X(1));
-  DEREF(X(3),X(3));
-  DEREF(X(4),X(4));
-  DEREF(X(5),X(5));
+  DEREF(X(1), X(1));
+  DEREF(X(3), X(3));
+  DEREF(X(4), X(4));
+  DEREF(X(5), X(5));
   if (   (X(1)!=atom_nil)
          || (X(3)!=atom_nil)
          || (X(4)!=atom_nil)
@@ -683,16 +692,19 @@ bool_t prolog_file_properties(Arg)
       if (current_ferror_flag==atom_on) {
 	switch (errno) {
 	  case ENOENT: /* File does not exists */ 
-	    BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM), X(0), 1);
+	    BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(0), 1);
 	    break ;
 	  case EACCES: /* We dont have permissions in the directory */
-	    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(0), 1);
+	    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(0), 1);
 	    break ;
 	  default: /* Who knows */
+	    BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1);		    
 	    break ;
 	  }
-      } else
+      } else {
+	/* Silently fails */
 	return FALSE;
+      }
     }
 
     if (X(1)!=atom_nil) {
@@ -706,14 +718,13 @@ bool_t prolog_file_properties(Arg)
 
     if (X(3)!=atom_nil) {
       /* Cannot be Unify_constant because it is a large integer */
-      if (!cunify(Arg,MakeInteger(Arg,statbuf.st_mtime),X(3)))
-        return FALSE;
+      if (!cunify(Arg, MakeInteger(Arg, statbuf.st_mtime), X(3))) {
+	return FALSE;
+      }
     }
-
     if (X(4)!=atom_nil) {
-      Unify_constant(MakeSmall(statbuf.st_mode&0xfff),X(4));
+      Unify_constant(MakeSmall(statbuf.st_mode&0xfff), X(4));
     }
-
     if (X(5)!=atom_nil) {
       Unify_constant(MakeSmall(statbuf.st_size), X(5));
     }
@@ -733,16 +744,16 @@ bool_t prolog_touch(Arg)
   int fd = -1;
   int open_errno = 0;
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 
   /* check argument instantiation error */
   if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
   /* check type argument */
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
 
-  if (!expand_file_name(GetString(X(0)),file))
+  if (!expand_file_name(GetString(X(0)), file))
     return FALSE;
 
   /* Try to open the file, create it if necessary. */
@@ -751,7 +762,7 @@ bool_t prolog_touch(Arg)
   if (fd == -1) open_errno = errno;
 
   if (fd != -1 && close(fd) < 0) {
-    BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM),X(0),1);
+    BUILTIN_ERROR(PERMISSION_ERROR(OPEN, SOURCE_SINK), X(0), 1);
   }
 
   /* If we have write access to the file, but do not own it, we will
@@ -762,10 +773,10 @@ bool_t prolog_touch(Arg)
   if (status) {
     if (open_errno) {
       /* TODO: open_errno is not used */
-      BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM),X(0),1);
+      BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(0), 1);
     } else {
       /* TODO: errno is not used */
-      BUILTIN_ERROR(PERMISSION_ERROR(MODIFY,STREAM),X(0),1);
+      BUILTIN_ERROR(PERMISSION_ERROR(MODIFY, SOURCE_SINK), X(0), 1);
     }
   }
 
@@ -778,43 +789,48 @@ bool_t prolog_unix_chmod(Arg)
   ERR__FUNCTOR("system:chmod", 2);
   char pathBuf[MAXPATHLEN+1];
 /*   struct stat statbuf; */
-  DEREF(X(0),X(0));
-  /* OGRAMA: check argument instantiation error */
-  if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
-  if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-  /* OGRAMA: check domain argument */
-  if (!expand_file_name(GetString(X(0)),pathBuf))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(0),1);
-  DEREF(X(1),X(1));
-  /* OGRAMA: check instatiation error to the other argument*/
-  if (IsVar(X(1)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(1),2);
-  /* OGRAMA: and check type argument again */
-  if (!TagIsSmall(X(1)))
-    BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);
+  DEREF(X(0), X(0));
+  /* check argument instantiation error */
+  if (IsVar(X(0))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  }
+  /* check type argument*/
+  if (!TagIsATM(X(0))) {
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  }
+  /* check domain argument */
+  if (!expand_file_name(GetString(X(0)), pathBuf)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1);
+  }
+  DEREF(X(1), X(1));
+  /* check instatiation error to the other argument*/
+  if (IsVar(X(1))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(1), 2);
+  }
+  /* and check type argument again */
+  if (!TagIsSmall(X(1))) {
+    BUILTIN_ERROR(TYPE_ERROR(INTEGER), X(1), 2);
+  }
 
-  /* OGRAMA: check file exists */
-  /*  if (stat(pathBuf, &statbuf))
-    if (current_ferror_flag==atom_on)
-    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(0), 1);*/
   /* make call to chmod, if there is any proble, raise a system error */
-  if (chmod(pathBuf, GetSmall(X(1))))
-    if (current_ferror_flag==atom_on)
+  if (chmod(pathBuf, GetSmall(X(1)))) {
+    if (current_ferror_flag==atom_on) {
 	switch (errno) {
-	  case ENOENT: /* File does not exists */ 
-	    BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM), X(1), 2);
-	    break ;
-	  case EACCES: /* We dont have permissions in the directory */
-	    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(1), 2);
-	    break ;
-	  default: /* Who knows */
-	    BUILTIN_ERROR(SYSTEM_ERROR,X(1),2);
-	    break ;
-	  }
-  
+	case ENOENT: /* File does not exists */ 
+	  BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(1), 2);
+	  break ;
+	case EACCES: /* We dont have permissions in the directory */
+	  BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(1), 2);
+	  break ;
+	default: /* Who knows */
+	  BUILTIN_ERROR(SYSTEM_ERROR, X(1), 2);
+	  break ;
+	}
+    } else {
+      return FALSE;
+    }   
+  }
+ 
   return TRUE;
 }
 
@@ -824,20 +840,20 @@ bool_t prolog_unix_umask(Arg)
   ERR__FUNCTOR("system:umask", 2);
   int i;
 
-  DEREF(X(1),X(1));
-  /* OGRAMA: check argument instantiation error */
+  DEREF(X(1), X(1));
+  /* check argument instantiation error */
   if (IsVar(X(1))) {
     if (X(1)==X(0)) {
       i = umask(0);
       (void)umask(i);
-      return cunify(Arg,MakeSmall(i),X(0));
+      return cunify(Arg, MakeSmall(i), X(0));
     } else
-      BUILTIN_ERROR(INSTANTIATION_ERROR,X(1),2);
+      BUILTIN_ERROR(INSTANTIATION_ERROR, X(1), 2);
   } else {
-    /* OGRAMA: check type argument*/
+    /* check type argument*/
     if (!TagIsSmall(X(1)))
-      BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);
-    return cunify(Arg,MakeSmall(umask(GetSmall(X(1)))),X(0));
+      BUILTIN_ERROR(TYPE_ERROR(INTEGER), X(1), 2);
+    return cunify(Arg, MakeSmall(umask(GetSmall(X(1)))), X(0));
   }
 }
 
@@ -849,35 +865,40 @@ bool_t prolog_unix_delete(Arg)
 {
   ERR__FUNCTOR("system:delete_file", 1);
   char pathBuf[MAXPATHLEN+1];
-  struct stat statbuf;
-  DEREF(X(0),X(0));
-  /* OGRAMA: check argument instantiation error */
-  if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
-  if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-  /* OGRAMA: check argument domain error */
-  if (!expand_file_name(GetString(X(0)),pathBuf))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(1),2);
-  /* OGRAMA: verify that the file exists */
-  if (lstat(pathBuf, &statbuf)) {
-    if ( current_ferror_flag==atom_on)
+
+  DEREF(X(0), X(0));
+  /* check argument instantiation error */
+  if (IsVar(X(0))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  }
+  /* check type argument*/
+  if (!TagIsATM(X(0))) {
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  }
+  /* check argument domain error */
+  if (!expand_file_name(GetString(X(0)), pathBuf)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(1), 2);
+  }
+  /* Try to unlink, if anything go wrong, raise an error */
+  if (unlink(pathBuf)) {
+    if ( current_ferror_flag==atom_on) {
       switch (errno) {
       case ENOENT: /* File does not exists */ 
-	BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM), X(0), 1); 
+	BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(0), 1); 
 	break ;
       case EACCES: /* We dont have permissions in the directory */
-	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(0), 1);
+	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(0), 1);
 	break ;
       default: /* Who knows */
-	BUILTIN_ERROR(SYSTEM_ERROR,X(0),1);
+	BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1);
 	break ;
+      }
+    } else {
+      /* Silently fails */
+      return FALSE;
     }
   }
-  /* Try to unlink, if anything go wrong, raise a system error */
-  if (unlink(pathBuf))
-    BUILTIN_ERROR(SYSTEM_ERROR,X(0),1);
+    
   return TRUE;
 }
 
@@ -889,59 +910,52 @@ bool_t prolog_unix_rename(Arg)
   char
     orig_name[MAXPATHLEN+1],
     new_name[MAXPATHLEN+1];
-  struct stat statbuf;
 
-  DEREF(X(0),X(0));
-  /* OGRAMA: check instantiation error */
-  if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
-  if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-
-  DEREF(X(1),X(1));
-  /* OGRAMA: check instantiation error to the other argument */
-  if (IsVar(X(1)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(1),2);
-  /* OGRAMA: check type the other argument*/
-  if (!TagIsATM(X(1)))
-    ERROR_IN_ARG(X(1),2,STRICT_ATOM);
+  DEREF(X(0), X(0));
+  /* check instantiation error */
+  if (IsVar(X(0))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  }
+  /* check type argument*/
+  if (!TagIsATM(X(0))) {
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  }
+  DEREF(X(1), X(1));
+  /* check instantiation error to the other argument */
+  if (IsVar(X(1))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(1), 2);
+  }
+  /* check type the other argument*/
+  if (!TagIsATM(X(1))) {
+    ERROR_IN_ARG(X(1), 2, STRICT_ATOM);
+  }
   /* check domain of the two arguments */
-  if (!expand_file_name(GetString(X(0)),orig_name))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(0),1);
-  if (!expand_file_name(GetString(X(1)),new_name))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(1),2);
-  /* OGRAMA: check file exists */
-  if (stat(orig_name, &statbuf))
-    if ( current_ferror_flag==atom_on)
-      switch (errno) {
-      case ENOENT: /* File does not exists */ 
-	BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM), X(0), 1); 
-	break ;
-      case EACCES: /* We dont have permissions in the directory */
-	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(0), 1);
-	break ;
-      default: /* Who knows */
-	BUILTIN_ERROR(SYSTEM_ERROR,X(0),1);
-	break ;
-    }
-  /*    if (current_ferror_flag==atom_on)
-      BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(0), 1);*/
+  if (!expand_file_name(GetString(X(0)), orig_name)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1);
+  }
+  if (!expand_file_name(GetString(X(1)), new_name)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(1), 2);
+  }
   /* if anything fails, raise and exception */
-  if (rename(orig_name, new_name))
-    if ( current_ferror_flag==atom_on)
+  if (rename(orig_name, new_name)) {
+    if ( current_ferror_flag==atom_on) {
       switch (errno) {
       case ENOENT: /* File does not exists */ 
-	BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM), X(1), 2); 
+	BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(1), 2); 
 	break ;
       case EACCES: /* We dont have permissions in the directory */
-	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(1), 2);
+	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(1), 2);
 	break ;
       default: /* Who knows */
-	BUILTIN_ERROR(SYSTEM_ERROR,X(1),2);
+	BUILTIN_ERROR(SYSTEM_ERROR, X(1), 2);
 	break ;
+      }
+    } else {
+      /* Silently fails */
+      return FALSE;
     }
-  /*    BUILTIN_ERROR(SYSTEM_ERROR,X(1),2);*/
+  }
+
   return TRUE;
 }
 
@@ -953,28 +967,50 @@ bool_t prolog_unix_mkdir(Arg)
   char dirname[MAXPATHLEN+1];
   int mode;
 
-  DEREF(X(0),X(0));
-  /* OGRAMA: check instantiation error */
-  if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
-  if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-  /* OGRAMA: check domain argument */
-  if (!expand_file_name(GetString(X(0)),dirname))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(0),1);
-  DEREF(X(1),X(1));
-  /* OGRAMA: check instantiation error */
-  if (IsVar(X(1)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(1),2);
-  /* OGRAMA: check type argument*/
-  if (!TagIsSmall(X(1)))
-    BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);
-
+  DEREF(X(0), X(0));
+  /* check instantiation error */
+  if (IsVar(X(0))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  }
+  /* check type argument*/
+  if (!TagIsATM(X(0))) {
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  }
+  /* check domain argument */
+  if (!expand_file_name(GetString(X(0)), dirname)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1);
+  }
+  DEREF(X(1), X(1));
+  /* check instantiation error */
+  if (IsVar(X(1))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(1), 2);
+  }
+  /* check type argument*/
+  if (!TagIsSmall(X(1))) {
+    BUILTIN_ERROR(TYPE_ERROR(INTEGER), X(1), 2);
+  }
   mode = GetSmall(X(1));
+  
   /* call to mkdir, if there is a problem, raise a system error */
-  if (mkdir(dirname, mode))
-    BUILTIN_ERROR(SYSTEM_ERROR,X(1),2);
+  if (mkdir(dirname, mode)) {
+    if ( current_ferror_flag==atom_on) {
+      switch (errno) {
+      case EACCES: /* We dont have permissions in the directory */
+	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(0), 1);
+	break ;
+      case ENOENT: /* Path does not exists */ 
+	BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(0), 1); 
+	break ;
+      default: /* Who knows */
+	BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1);
+	break ;
+      }
+    } else {
+      /* Silently fails */
+      return FALSE;
+    }
+  }
+       
   return TRUE;
 }
 
@@ -984,38 +1020,40 @@ bool_t prolog_unix_rmdir(Arg)
 {
   ERR__FUNCTOR("system:delete_directory", 1);
   char dirname[MAXPATHLEN+1];
-/*   struct stat statbuf; */
-  DEREF(X(0),X(0));
-  /* OGRAMA: check instantiation error */
-  if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
-  if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
-  /* OGRAMA: Check domain error */
-  if (!expand_file_name(GetString(X(0)),dirname))
-    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(0),1);
-  /* OGRAMA: check that file exists */
-  /*
-  if (stat(dirname, &statbuf))
-    if (current_ferror_flag==atom_on)
-      BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(0), 1);
-*/
-  /* OGRAMA: and try to make rmdir, else, system_error */
-  if (rmdir(dirname))
-    if ( current_ferror_flag==atom_on)
+  /*   struct stat statbuf; */
+  DEREF(X(0), X(0));
+  /* check instantiation error */
+  if (IsVar(X(0))) {
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  }
+  /* check type argument*/
+  if (!TagIsATM(X(0))) {
+    ERROR_IN_ARG(X(0), 1, STRICT_ATOM);
+  }
+  /* Check domain error */
+  if (!expand_file_name(GetString(X(0)), dirname)) {
+    BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK), X(0), 1);
+  }
+  /* check that file exists */
+
+  /* try to make rmdir, else, system_error */
+  if (rmdir(dirname)) {
+    if ( current_ferror_flag==atom_on) {
       switch (errno) {
       case ENOENT: /* File does not exists */ 
-	BUILTIN_ERROR(PERMISSION_ERROR(OPEN,STREAM), X(0), 1); 
+	BUILTIN_ERROR(EXISTENCE_ERROR(SOURCE_SINK), X(0), 1); 
 	break ;
       case EACCES: /* We dont have permissions in the directory */
-	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS,STREAM), X(0), 1);
+	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, SOURCE_SINK), X(0), 1);
 	break ;
       default: /* Who knows */
-	BUILTIN_ERROR(SYSTEM_ERROR,X(0),1);
+	BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1);
 	break ;
+      }
+    } else {
+      return FALSE;
     }
-
+  }
   return TRUE;
 }
 
@@ -1039,7 +1077,7 @@ bool_t prolog_current_host(Arg)
 
     /* If the name is not qualified, then pass the name through the name
        server to try get it fully qualified */
-    /* OGRAMA: if null, its a system error */
+    /* if null, its a system error */
     if ((host_entry = gethostbyname(hostname)) == NULL)
       BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1);
     strcpy(hostname, host_entry->h_name);
@@ -1061,7 +1099,7 @@ bool_t prolog_current_host(Arg)
       char domain[MAXHOSTNAMELEN*3];
 
       if (getdomainname(domain, sizeof(domain)) < 0)
-	BUILTIN_ERROR(SYSTEM_ERROR,Arg,1);
+	BUILTIN_ERROR(SYSTEM_ERROR, Arg, 1);
       strcat(hostname, ".");
       strcat(hostname, domain);
     }
@@ -1069,11 +1107,11 @@ bool_t prolog_current_host(Arg)
     /*free(host_entry);*/
   }
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(hostname), X(0));
 }
 
-/* internal_getenvstr(+Name,-Value) */
+/* internal_getenvstr(+Name, -Value) */
 
 /* bool_t prolog_c_getenvstr(Arg) */
 /*      Argdecl; */
@@ -1082,35 +1120,35 @@ bool_t prolog_current_host(Arg)
 /*   int i; */
 /*   tagged_t cdr; */
 
-/*   DEREF(X(0),X(0)); */
-/*   DEREF(X(1),X(1)); */
-/*   /\* OGRAMA: check instantiation error *\/ */
+/*   DEREF(X(0), X(0)); */
+/*   DEREF(X(1), X(1)); */
+/*   /\* check instantiation error *\/ */
 /*   /\* */
 /*   if (IsVar(X(0))) */
-/*     BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1); */
+/*     BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1); */
 /*   *\/ */
-/*   /\* OGRAMA: check type argument*\/ */
+/*   /\* check type argument*\/ */
 /*   /\* */
 /*   if (!TagIsATM(X(0))) */
-/*     ERROR_IN_ARG(X(0),1,STRICT_ATOM); */
+/*     ERROR_IN_ARG(X(0), 1, STRICT_ATOM); */
 /*   *\/ */
 /*   if ((s = getenv(GetString(X(0)))) == NULL) return FALSE; */
 
 /*   s += (i = strlen(s)); */
 
-/*   if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i<<1)) */
-/*     explicit_heap_overflow(Arg,CONTPAD+(i<<1),2); */
+/*   if (HeapDifference(w->global_top, Heap_End)<CONTPAD+(i<<1)) */
+/*     explicit_heap_overflow(Arg, CONTPAD+(i<<1), 2); */
 
 /*   cdr = atom_nil; */
 /*   while (i>0) { */
 /*     i--; */
-/*     MakeLST(cdr,MakeSmall(*(--s)),cdr); */
+/*     MakeLST(cdr, MakeSmall(*(--s)), cdr); */
 /*   } */
-/*   return cunify(Arg,cdr,X(1)); */
+/*   return cunify(Arg, cdr, X(1)); */
 /* } */
 
 
-/* setenvstr(+Name,+Value) */
+/* setenvstr(+Name, +Value) */
 
 #if defined(Solaris)
 /* emulate setenv in terms of putenv (from rpm 2.0.9) */
@@ -1132,7 +1170,7 @@ int setenv(const char *name, const char *value, int overwrite)
     strcat(buf, "=");
     strcat(buf, value);
     ret = putenv(buf);
-    checkdealloc((tagged_t *)buf,len);
+    checkdealloc((tagged_t *)buf, len);
     return ret;
   }
 }
@@ -1150,17 +1188,17 @@ int setenv(const char *name, const char *value, int overwrite)
 /*   tagged_t value;                                   /\* To traverse the list *\/ */
 /*   int carvalue;                          /\* Value of the head of the list *\/ */
 
-/*   DEREF(X(0),X(0)); */
-/*   DEREF(X(1),X(1)); */
+/*   DEREF(X(0), X(0)); */
+/*   DEREF(X(1), X(1)); */
 
 /*   /\* Minimal check: variable name as atom, value as string (why this */
 /*      difference?) *\/  */
 /*   /\* */
 /*   if (!TagIsATM(X(0))) */
-/*     BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1); */
+/*     BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM), X(0), 1); */
 
 /*   if (!TagIsLST(X(1))) */
-/*     BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2); */
+/*     BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST), X(1), 2); */
 /*   *\/ */
 /*   variable = GetString(X(0)); */
 /*   value = X(1); */
@@ -1172,7 +1210,7 @@ int setenv(const char *name, const char *value, int overwrite)
 /*     if (!TagIsSmall(car) ||  */
 /*         ((carvalue = GetSmall(car)) > 255) || */
 /*         carvalue < 0){ */
-/*       BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2); */
+/*       BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST), X(1), 2); */
 /*     } else s[i++] = (char)carvalue; */
 
 /*     if (i == len){ /\* Length exceeded! *\/ */
@@ -1193,17 +1231,17 @@ int setenv(const char *name, const char *value, int overwrite)
 bool_t prolog_c_winpath(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 #if defined(Win32)
   {
     char *posixpath;
     char winpath[MAX_PATH + 1];
     posixpath = GetString(X(0));
-    cygwin32_conv_to_full_win32_path(posixpath,winpath);
-    return cunify(Arg, MakeString(winpath),X(1));
+    cygwin32_conv_to_full_win32_path(posixpath, winpath);
+    return cunify(Arg, MakeString(winpath), X(1));
   }
 #else
-  return cunify(Arg, X(0),X(1));
+  return cunify(Arg, X(0), X(1));
 #endif
 }
 
@@ -1215,60 +1253,60 @@ bool_t prolog_c_winfile(Arg)
     char *posixpath;
     char winpath[MAX_PATH + 1];
     posixpath = GetString(X(0));
-    cygwin32_conv_to_win32_path(posixpath,winpath);
-    return cunify(Arg, MakeString(winpath),X(1));
+    cygwin32_conv_to_win32_path(posixpath, winpath);
+    return cunify(Arg, MakeString(winpath), X(1));
   }
 #else
-  return cunify(Arg, X(0),X(1));
+  return cunify(Arg, X(0), X(1));
 #endif
 }
 
 bool_t prolog_c_posixpath(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 #if defined(Win32)
   {
     char *winpath;
     char posixpath[MAX_PATH + 1];
     winpath = GetString(X(0));
-    cygwin32_conv_to_full_posix_path(winpath,posixpath);
-    return cunify(Arg, MakeString(posixpath),X(1));
+    cygwin32_conv_to_full_posix_path(winpath, posixpath);
+    return cunify(Arg, MakeString(posixpath), X(1));
   }
 #else
-  return cunify(Arg, X(0),X(1));
+  return cunify(Arg, X(0), X(1));
 #endif
 }
 
 bool_t prolog_c_posixfile(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
 #if defined(Win32)
   {
     char *winpath;
     char posixpath[MAX_PATH + 1];
     winpath = GetString(X(0));
-    cygwin32_conv_to_posix_path(winpath,posixpath);
-    return cunify(Arg, MakeString(posixpath),X(1));
+    cygwin32_conv_to_posix_path(winpath, posixpath);
+    return cunify(Arg, MakeString(posixpath), X(1));
   }
 #else
-  return cunify(Arg, X(0),X(1));
+  return cunify(Arg, X(0), X(1));
 #endif
 }
 
 bool_t prolog_c_errno(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
-  return cunify(Arg, MakeSmall(errno),X(0));
+  DEREF(X(0), X(0));
+  return cunify(Arg, MakeSmall(errno), X(0));
 }
 
 bool_t prolog_c_strerror(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
-  return cunify(Arg, MakeString(strerror(errno)),X(0));
+  DEREF(X(0), X(0));
+  return cunify(Arg, MakeString(strerror(errno)), X(0));
 }
 
 #define BUF_MAX 65536
@@ -1284,11 +1322,11 @@ bool_t prolog_c_copy_file(Arg)
   struct stat stat_buf;
   char buffer[BUF_MAX];
   errno = 0;
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   source = GetString(X(0));
-  DEREF(X(1),X(1));
+  DEREF(X(1), X(1));
   destination = GetString(X(1));
-  DEREF(X(2),X(2));
+  DEREF(X(2), X(2));
   copy_flag = GetInteger(X(2));
   if (copy_flag & COPY_FLAG_SYMLINK) {
     if (copy_flag & COPY_FLAG_OVERWRITE) {
@@ -1333,18 +1371,18 @@ bool_t prolog_c_copy_file(Arg)
       /* Identifying the error type: */
       return check_errno(Arg, 1);
     }
-    while((s=read(fd_source,buffer,BUF_MAX))!=0){
+    while((s=read(fd_source, buffer, BUF_MAX))!=0){
       if(s==-1){
 	close(fd_source);
 	close(fd_destination);
-	BUILTIN_ERROR(SYSTEM_ERROR,X(0),1);
+	BUILTIN_ERROR(SYSTEM_ERROR, X(0), 1);
       }
       else
 	{
-	  if(write(fd_destination,buffer,s)==-1){
+	  if(write(fd_destination, buffer, s)==-1){
 	    close(fd_source);
 	    close(fd_destination);
-	    BUILTIN_ERROR(SYSTEM_ERROR,X(1),2);
+	    BUILTIN_ERROR(SYSTEM_ERROR, X(1), 2);
 	  }
 	}
     }
@@ -1364,8 +1402,8 @@ bool_t prolog_c_get_env(Arg)
      Argdecl;
 {
   char *name, *value;
-  DEREF(X(0),X(0));
-  DEREF(X(1),X(1));
+  DEREF(X(0), X(0));
+  DEREF(X(1), X(1));
   name = GetString(X(0));
   value = getenv(name);
   if(value==NULL)
@@ -1379,12 +1417,12 @@ bool_t prolog_c_set_env(Arg)
 {
   ERR__FUNCTOR("system:set_env", 2);
   char *name, *value;
-  DEREF(X(0),X(0));
-  DEREF(X(1),X(1));
+  DEREF(X(0), X(0));
+  DEREF(X(1), X(1));
   name = GetString(X(0));
   value = GetString(X(1));
-  if(setenv(name,value,1)) {
-    BUILTIN_ERROR(RESOURCE_ERROR(R_UNDEFINED),X(0),1);
+  if(setenv(name, value, 1)) {
+    BUILTIN_ERROR(RESOURCE_ERROR(R_UNDEFINED), X(0), 1);
   } else {
     return TRUE;
   }
@@ -1394,7 +1432,7 @@ bool_t prolog_c_del_env(Arg)
      Argdecl;
 {
   char *name;
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   name = GetString(X(0));
 #if defined(Solaris)
   putenv(name);
@@ -1409,23 +1447,23 @@ bool_t prolog_c_current_env(Arg)
 {
   int n, index, r_val;
   char *name, *value;
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   index = GetInteger(X(0));
   name = environ[index];
   if(name!=NULL)
     {
-      DEREF(X(1),X(1));
-      DEREF(X(2),X(2));
-      value = strchr(environ[index],'=');
+      DEREF(X(1), X(1));
+      DEREF(X(2), X(2));
+      value = strchr(environ[index], '=');
       n = (int)(value-name);
       value++;
       name = memcpy(
-		    (char *)checkalloc((int)(n+1)*sizeof(char)),
-		    name,(int)(n+1)*sizeof(char));
+		    (char *)checkalloc((int)(n+1)*sizeof(char)), 
+		    name, (int)(n+1)*sizeof(char));
       name[n] = '\0';
-      r_val = cunify(Arg, MakeString(name),X(1)) &
-	cunify(Arg, MakeString(value),X(2));
-      checkdealloc((tagged_t *)name,(int)(n+1)*sizeof(char));
+      r_val = cunify(Arg, MakeString(name), X(1)) &
+	cunify(Arg, MakeString(value), X(2));
+      checkdealloc((tagged_t *)name, (int)(n+1)*sizeof(char));
       return r_val;
     }
   else
@@ -1447,12 +1485,12 @@ bool_t prolog_pause(Arg)
   long time;
 
   DEREF(x0, X(0));
-  /* OGRAMA: check instantiation_error */
+  /* check instantiation_error */
   if (IsVar(X(0)))
-    BUILTIN_ERROR(INSTANTIATION_ERROR,X(0),1);
-  /* OGRAMA: check type argument*/
+    BUILTIN_ERROR(INSTANTIATION_ERROR, X(0), 1);
+  /* check type argument*/
   if (!TagIsSmall(x0))
-    BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(0),1);
+    BUILTIN_ERROR(TYPE_ERROR(INTEGER), X(0), 1);
   time = GetSmall(x0);
 
   sleep(time);
@@ -1521,7 +1559,7 @@ bool_t prolog_getpwnam(Arg)
 }
 
 
-/* $find_file(+LibDir,+Path,+Opt,+Suffix,?Found,-AbsPath,-AbsBase,-AbsDir)
+/* $find_file(+LibDir, +Path, +Opt, +Suffix, ?Found, -AbsPath, -AbsBase, -AbsDir)
  * string LibDir	a library in which to search for Path
  * string Path		a path, may be absolute or relative. If LibDir
  *			is specified then Path must be relative to LibDir.
@@ -1563,13 +1601,13 @@ bool_t prolog_find_file(Arg)
   struct stat file_status;
   time_t t_opt, t_pri;
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   libDir = GetString(X(0));
-  DEREF(X(1),X(1));
+  DEREF(X(1), X(1));
   path = GetString(X(1));
-  DEREF(X(2),X(2));
+  DEREF(X(2), X(2));
   opt = GetString(X(2));
-  DEREF(X(3),X(3));
+  DEREF(X(3), X(3));
   suffix = GetString(X(3));
 
   if (path[0] == '/' || path[0] == '$' || path[0] == '~'
@@ -1577,16 +1615,16 @@ bool_t prolog_find_file(Arg)
       || path[0] == '\\' || DriveSelector(path)
 #endif
       ) {
-    strcpy(relBuf,path);
+    strcpy(relBuf, path);
   } else {
-    strcpy(relBuf,libDir);
+    strcpy(relBuf, libDir);
     if (relBuf[strlen(relBuf)-1]!='/')
-      strcat(relBuf,"/");
-    strcat(relBuf,path);
+      strcat(relBuf, "/");
+    strcat(relBuf, path);
   }
 
-  if (!expand_file_name(relBuf,pathBuf)){
-    checkdealloc((tagged_t *)relBuf,relBufSize);
+  if (!expand_file_name(relBuf, pathBuf)){
+    checkdealloc((tagged_t *)relBuf, relBufSize);
     return FALSE;
   }
 
@@ -1601,10 +1639,10 @@ bool_t prolog_find_file(Arg)
  searchPath:
 
   if (*opt) {
-    strcpy(cp,opt);
+    strcpy(cp, opt);
     bp = cp + strlen(cp);
-    strcpy(bp,suffix);
-    if(!access(pathBuf,F_OK)) {
+    strcpy(bp, suffix);
+    if(!access(pathBuf, F_OK)) {
       stat(pathBuf, &file_status);
       if (!S_ISDIR(file_status.st_mode))
         t_opt = file_status.st_mtime;    /* found path+opt+suffix */
@@ -1614,8 +1652,8 @@ bool_t prolog_find_file(Arg)
   bp = cp;
 
   if (*suffix) {
-    strcpy(bp,suffix);
-    if(!access(pathBuf,F_OK)) {
+    strcpy(bp, suffix);
+    if(!access(pathBuf, F_OK)) {
       stat(pathBuf, &file_status);
       if (!S_ISDIR(file_status.st_mode))
         t_pri = file_status.st_mtime;    /* found path+suffix */
@@ -1623,20 +1661,20 @@ bool_t prolog_find_file(Arg)
   }
 
   if (t_pri > t_opt) { /* path+suffix exists, path+opt+suffix older|absent */
-    Unify_constant(atom_true,X(4));
+    Unify_constant(atom_true, X(4));
     goto giveVals;
   } else if (t_opt > 0) { /* newer path+opt+suffix exists */
     /* recreate opt+suffix */
-    strcpy(cp,opt);
+    strcpy(cp, opt);
     bp = cp + strlen(cp);
-    strcpy(bp,suffix);
-    Unify_constant(atom_true,X(4));
+    strcpy(bp, suffix);
+    Unify_constant(atom_true, X(4));
     goto giveVals;
   }
 
   *bp = 0;
 
-  if(!access(pathBuf,F_OK)){
+  if(!access(pathBuf, F_OK)){
     stat(pathBuf, &file_status);
     if (S_ISDIR(file_status.st_mode)) {    /* directory */
       while (*bp!='/') --bp;               /* duplicate dir name */
@@ -1646,7 +1684,7 @@ bool_t prolog_find_file(Arg)
       *cp = 0;
       goto searchPath;                     /* search inside */
     } else {
-      Unify_constant(atom_true,X(4));      /* found path */
+      Unify_constant(atom_true, X(4));      /* found path */
       if (*suffix && strcmp(bp -= strlen(suffix), suffix))
         /* does not end in suffix */
         bp = cp;
@@ -1654,23 +1692,23 @@ bool_t prolog_find_file(Arg)
     }
   }
 
-  Unify_constant(atom_fail,X(4));
+  Unify_constant(atom_fail, X(4));
 
  giveVals:
 
-  Unify_constant(MakeString(pathBuf),X(5));
+  Unify_constant(MakeString(pathBuf), X(5));
 
   *bp = 0;
 
-  Unify_constant(MakeString(pathBuf),X(6));
+  Unify_constant(MakeString(pathBuf), X(6));
 
   while (*bp!='/')
     --bp;
   *bp = 0;
 
-  Unify_constant(MakeString(pathBuf),X(7));
+  Unify_constant(MakeString(pathBuf), X(7));
 
-  checkdealloc((tagged_t *)relBuf,relBufSize);
+  checkdealloc((tagged_t *)relBuf, relBufSize);
   return TRUE;
 }
 
@@ -1679,7 +1717,7 @@ bool_t prolog_path_is_absolute(Arg)
 {
   char *path;
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   path = GetString(X(0));
 
   if (path[0] == '/' || path[0] == '$' || path[0] == '~'
@@ -1701,11 +1739,11 @@ bool_t prolog_expand_file_name(Arg)
   long relBufSize =2*MAXATOM+2;
   char *relBuf = (char *)checkalloc(relBufSize);
 
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   path = GetString(X(0));
 
-  if (!expand_file_name(path,relBuf)){
-    checkdealloc((tagged_t *)relBuf,relBufSize);
+  if (!expand_file_name(path, relBuf)){
+    checkdealloc((tagged_t *)relBuf, relBufSize);
     return FALSE;
   }
 
@@ -1713,8 +1751,8 @@ bool_t prolog_expand_file_name(Arg)
   fix_path(relBuf);
 #endif
 
-  Unify_constant(MakeString(relBuf),X(1));
-  checkdealloc((tagged_t *)relBuf,relBufSize);
+  Unify_constant(MakeString(relBuf), X(1));
+  checkdealloc((tagged_t *)relBuf, relBufSize);
   return TRUE;
 }
 
@@ -1726,7 +1764,7 @@ extern char *emulator_architecture;
 bool_t prolog_getarch(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(emulator_architecture), X(0));
 }
 
@@ -1739,7 +1777,7 @@ extern char *emulator_os;
 bool_t prolog_getos(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(emulator_os), X(0));
 }
 
@@ -1751,7 +1789,7 @@ extern char *emulator_debug;
 bool_t prolog_getdebug(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(emulator_debug), X(0));
 }
 
@@ -1760,7 +1798,7 @@ extern char *emulator_location;
 bool_t prolog_get_eng_location(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(emulator_location), X(0));
 }
 
@@ -1772,18 +1810,18 @@ extern char *ciao_commit_date;
 extern char *ciao_commit_desc;
 
 /*
- *  $ciao_version(?Version,?Patch,?CommitBranch,?CommitId,?CommitDate,?CommitDesc) 
- *    for current_prolog_flag(version,?V).
+ *  $ciao_version(?Version, ?Patch, ?CommitBranch, ?CommitId, ?CommitDate, ?CommitDesc) 
+ *    for current_prolog_flag(version, ?V).
  */
 bool_t prolog_version(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
-  DEREF(X(1),X(1));
-  DEREF(X(2),X(2));
-  DEREF(X(3),X(3));
-  DEREF(X(4),X(4));
-  DEREF(X(5),X(5));
+  DEREF(X(0), X(0));
+  DEREF(X(1), X(1));
+  DEREF(X(2), X(2));
+  DEREF(X(3), X(3));
+  DEREF(X(4), X(4));
+  DEREF(X(5), X(5));
   return (cunify(Arg, MakeString(ciao_version),  X(0)) &&
 	  cunify(Arg, MakeString(ciao_patch),    X(1)) &&
 	  cunify(Arg, MakeString(ciao_commit_branch), X(2)) &&
@@ -1799,21 +1837,21 @@ extern char *so_suffix;
 bool_t prolog_get_ciao_ext(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(ciao_suffix), X(0));
 }
 
 bool_t prolog_get_exec_ext(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(exec_suffix), X(0));
 }
 
 bool_t prolog_get_so_ext(Arg)
      Argdecl;
 {
-  DEREF(X(0),X(0));
+  DEREF(X(0), X(0));
   return cunify(Arg, MakeString(so_suffix), X(0));
 }
 
@@ -1825,7 +1863,7 @@ bool_t prolog_wait(Arg)
 
   DEREF(X(0), X(0));
   if (!TagIsSmall(X(0))) {
-    BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(0),1);
+    BUILTIN_ERROR(TYPE_ERROR(INTEGER), X(0), 1);
   }
 
   retcode = waitpid(GetSmall(X(0)), &status, 0);
@@ -1895,7 +1933,7 @@ bool_t prolog_exec(Arg)
 
   DEREF(X(0), X(0));
   if (!IsAtom(X(0))) {
-    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1);
+    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM), X(0), 1);
   }
 
   dup_stdin  = check_pipe(Arg, 2, pipe_in);
@@ -1911,8 +1949,8 @@ bool_t prolog_exec(Arg)
   while(!IsVar(list) && TagIsLST(list)) {
     DEREF(head, CTagToCar(list));
     if (!TagIsATM(head)) {  /* We only allow atoms */
-      checkdealloc((tagged_t *)arguments,MAXARGS*sizeof(char *));
-      BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),head,2);
+      checkdealloc((tagged_t *)arguments, MAXARGS*sizeof(char *));
+      BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM), head, 2);
     }
     arguments[nargs++] = GetString(head);
     list = CTagToCdr(list);
@@ -1922,7 +1960,7 @@ bool_t prolog_exec(Arg)
 
  /* Make sure we had a real list */
   if (!(!IsVar(list) && TagIsATM(list) && (list == atom_nil))) {
-    checkdealloc((tagged_t *)arguments,MAXARGS*sizeof(char *));
+    checkdealloc((tagged_t *)arguments, MAXARGS*sizeof(char *));
     BUILTIN_ERROR(TYPE_ERROR(LIST), X(1), 2);
   }
 
@@ -1936,7 +1974,7 @@ bool_t prolog_exec(Arg)
   else if (X(5) == atom_false)
     wait_for_completion = TRUE;
   else {
-    checkdealloc((tagged_t *)arguments,MAXARGS*sizeof(char *));
+    checkdealloc((tagged_t *)arguments, MAXARGS*sizeof(char *));
     ERROR_IN_ARG(X(5), 6, STRICT_ATOM);
   }
   /* Empty buffers before launching child */
@@ -1945,7 +1983,7 @@ bool_t prolog_exec(Arg)
   pid = vfork();
 
   if (pid == -1) {
-    checkdealloc((tagged_t *)arguments,MAXARGS*sizeof(char *));
+    checkdealloc((tagged_t *)arguments, MAXARGS*sizeof(char *));
     SERIOUS_FAULT("exec/4 could not vfork() new process");
   } else
     if (pid == 0) {
@@ -1953,22 +1991,22 @@ bool_t prolog_exec(Arg)
       /* This is the code of the child */
       if (dup_stdin) {
 	close(pipe_in[Write]);
-	dup2(pipe_in[Read],STDIN);
+	dup2(pipe_in[Read], STDIN);
       }
       if (dup_stdout) {
 	close(pipe_out[Read]);
-	dup2(pipe_out[Write],STDOUT);
+	dup2(pipe_out[Write], STDOUT);
       }
       if (dup_stderr) {
 	close(pipe_err[Read]);
-	dup2(pipe_err[Write],STDERR);
+	dup2(pipe_err[Write], STDERR);
       }
 
  // If there is any error while exec'ing, we have to give an error and then
  // abort completely. Unfortunately, if we have redirected the standard
  // error output, the error message will be lost!
       execstat = execvp(command, arguments);
-      checkdealloc((tagged_t *)arguments,MAXARGS*sizeof(char *));
+      checkdealloc((tagged_t *)arguments, MAXARGS*sizeof(char *));
       if (execstat < 0) {
         _EXIT("Execution of command failed!");   // Should never return!
       }
