@@ -192,6 +192,7 @@ docstr_miscprolog :=
 %     'parse_spec',
 %     'prompt'
 
+% TODO: Document: those libraries may change the 'theory'
 docstr_extendprolog :=
 	['pure/pure_doc',
 	 'indexer/indexer_doc',
@@ -209,6 +210,8 @@ docstr_extendprolog :=
 	 'det_hook/det_hook_rt',
          %
 	 'odd',
+	 'mutables',
+	 'block/block_doc',
 	 'freeze/freeze',
 	 'when/when',
 	 'actmods/actmods_doc',
