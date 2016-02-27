@@ -1,5 +1,3 @@
-%%---------------------------------------------------------------------
-
 :- module(system_info, [
         get_arch/1,
         get_os/1,
@@ -17,30 +15,25 @@
 
 %%---------------------------------------------------------------------
 
-:- doc(title,"Gathering some basic internal info").
+:- doc(title,"Internal Runtime Information").
 
 :- doc(author,"Daniel Cabeza").
 :- doc(author,"Manuel Carro").
+:- doc(author,"Jose F. Morales").
 
 :- doc(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
-:- doc(module,"This module provides predicates which return basic
-   internal info.").
+:- doc(module, "This module provides internal information about the
+   current running engine and enviroment. That information includes
+   the architecture, platform, operating system, location of
+   libraries, and C header files. That information is mainly used in
+   parts of the Ciao dynamic compilation (location of source,
+   generation of gluecode for the foreign interface, etc.).").
+
+% TODO: GCC compilation options should appear here too.
 
 %%---------------------------------------------------------------------
-
-:- impl_defined([
-        get_arch/1,
-        get_os/1,
-	get_debug/1,
-	get_eng_location/1,
-	get_ciao_ext/1,
-	get_exec_ext/1,
-	get_so_ext/1,
-        this_module/1,
-	ciao_c_headers_dir/1,
-        ciao_lib_dir/1]).
 
 %%---------------------------------------------------------------------
 
@@ -52,11 +45,11 @@
 	"This predicate will describe the computer architecture wich
          is currently executing the predicate.
 
-         Computer architectures are identified by a simple atom.
-         This atom is implementation-defined, and may suffer any change
-         from one Ciao Prolog version to another.
+         Computer architectures are identified by a simple atom.  This
+         atom is implementation-defined, and may suffer any change
+         from one Ciao version to another.
 
-         For example,Ciao Prolog running on an Intel-based machine 
+         For example, Ciao running on an Intel-based machine 
          will retrieve:
 @begin{verbatim}
 ?- get_arch(I).
@@ -68,21 +61,27 @@ no
 @end{verbatim}
 	").
 
+:- impl_defined(get_arch/1).
+
 %%---------------------------------------------------------------------
 
 :- trust pred get_os(?OsDescriptor) => atm #
 	"Unifies @var{OsDescriptor} with a simple atom which describes
-         the running Operating System when predicate was called.".
+         the running operating system when predicate was called.".
+:- impl_defined(get_os/1).
+
+% TODO: This would be the perfect place to enumerate all supported OS,
+%       platforms, etc.
 
 :- doc(get_os/1,
-	"This predicate will describe the Operating System which 
+	"This predicate will describe the operating system which 
          is running on the machine currently executing the Prolog program.
 
-         Operating Systems are identified by a simple atom.
-         This atom is implementation-defined, and may suffer any change
-         from one Ciao Prolog version to another.
+         Operating systems are identified by a simple atom.  This atom
+         is implementation-defined, and may suffer changes from one
+         Ciao version to another.
 
-         For example,Ciao Prolog running on Linux will retrieve:
+         For example, Ciao running on Linux will retrieve:
 @begin{verbatim}
 ?- get_os(I).
 
@@ -93,10 +92,9 @@ no
 @end{verbatim}
 	").
 
-:- trust pred get_platform(?Platform) => atm # "Unifies @var{Platform}
-	with an atom that describes the Operating System and the
-	computer architecture which is currently executing the
-	predicate.".
+:- trust pred get_platform(?Platform) => atm # "@var{Platform} is the
+	atom describing the current operating system and computer
+	architecture.".
 
 get_platform(Platform) :-
 	get_os(Os),
@@ -106,23 +104,29 @@ get_platform(Platform) :-
 :- trust pred get_debug(?Debug) => atm # "Unifies @var{Debug} with an
 	atom that indicates if the emulator has been compiled with
 	debug information".
+:- impl_defined(get_debug/1).
 
-:- trust pred get_ciao_ext(?Ext) => atm # "Unifies @var{Ext} with an
-	atom that indicates the default extension for the executable
-	prolog programs.".
+% TODO: What is extension when there is no extension?
+:- trust pred get_ciao_ext(?Ext) => atm # "@var{Ext} is the
+	default extension for the executable Ciao programs.".
+:- impl_defined(get_ciao_ext/1).
 
-:- trust pred get_exec_ext(?Ext) => atm # "Unifies @var{Ext} with an
-	atom that indicates the default extension for the binary
-	executables.".
+% TODO: What is extension when there is no extension?
+:- trust pred get_exec_ext(?Ext) => atm # "@var{Ext} is the extension
+        for executables.".
+:- impl_defined(get_exec_ext/1).
 
-:- true pred get_so_ext(?Ext) :: atm # "Unifies @var{Ext} with an atom
-	that indicates the default extension for the shared libraries.
-	For example, .dll in windows and .so in most unix systems.".
+:- true pred get_so_ext(?Ext) :: atm # "@var{Ext} is the default
+	extension for the shared libraries. For example, @tt{.dll} in
+	Windows and @tt{.so} in most Unix systems.".
+:- impl_defined(get_so_ext/1).
 
-:- true pred get_eng_location(?Ext) :: atm # "Unifies @var{Ext} with
-	an atom that indicates if the engine is located in a library
-	(dyn) or in an executable (empty).".
+% TODO: Add a regular type for this
+:- true pred get_eng_location(?Ext) :: atm # "@var{Ext} indicates if
+	the engine is located in a library (@tt{dyn}) or in an
+	executable (@tt{empty}).".
 
+:- impl_defined(get_eng_location/1).
 
 %%---------------------------------------------------------------------
 
@@ -152,15 +156,19 @@ current_module(Module) :- '$current_module'(Module).
 	"@var{CiaoPath} is the path to the root of the Ciao
 	libraries. Inside this directory, there are the directories
 	'lib', 'library' and 'contrib', which contain library modules.".
+:- impl_defined(ciao_lib_dir/1).
 
 :- trust pred ciao_c_headers_dir(CiaoPath) => atm(CiaoPath) #
 	"@var{CiaoPath} is the path to the root of the installed Ciao
 	header C files (.h), typically used for interfacing Ciao and
 	C.".
+:- impl_defined(ciao_c_headers_dir/1).
 
 %%---------------------------------------------------------------------
+% TODO: This is not the right module to place this predicate
 
 :- meta_predicate this_module(addmodule).
+:- impl_defined(this_module/1). % TODO: avoid problems with addmodule and export
 
 this_module(M, M).
 
@@ -168,6 +176,7 @@ this_module(M, M).
 	"@var{Module} is the internal module identifier for current module.".
 
 %%---------------------------------------------------------------------
+% TODO: This is not the right module to place this predicate
 
 :- doc(doinclude,internal_module_id/1).
 
