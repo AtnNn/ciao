@@ -139,7 +139,7 @@
 %:- use_module(hprolog).
 %:- include(chr_op).
 
-:- use_module(library(attr(attr_rt)), [get_attr/3, put_attr/3]).
+:- use_module(library(attr(attr_rt)), [get_attr/3, put_attr/3, del_attr/2]).
 :- use_module(library(chr(hprolog))).
 :- include( library( 'chr/chr_op') ).
 :- use_module(library(write), [print/1]).

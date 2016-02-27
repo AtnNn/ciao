@@ -1,7 +1,7 @@
 :- module(pbundle_gen_src, _, [make, fsyntax]).
 % TODO: Export list?
 
-:- doc(title,  "pbundle Generation as (Universal) Source Package").
+:- doc(title,  "pbundle Generation as Source Tar").
 :- doc(author, "Edison Mera").
 :- doc(module, "This file is part of the CiaoDE installation system.").
 
@@ -12,26 +12,28 @@
 
 gen_pbundle__src <- [] :- gen_pbundle__src.
 gen_pbundle__src :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(src, [tgz, tbz]).
 
 gen_pbundle__tgz <- [] :- gen_pbundle__tgz.
 gen_pbundle__tgz :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(src, [tgz]).
 
 gen_pbundle__tbz <- [] :- gen_pbundle__tbz.
 gen_pbundle__tbz :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(src, [tbz]).
 
 % TODO: used from pbundle_gen_mac too
-pbundle_name(tgz) :=
- 	~fsR(concat_k(ext('.tar.gz'), build/pbundle/(~bundle_packname_version_patch_rev(~bundle_wholesystem)))).
+pbundle_packname_absfile(tgz) := F :-
+	Bundle = ~bundle_wholesystem,
+	F = ~fsR(concat_k(ext('.tar.gz'), build/pbundle/(~bundle_versioned_packname(Bundle)))).
 
-pbundle_name(tbz) :=
- 	~fsR(concat_k(ext('.tar.bz2'), build/pbundle/(~bundle_packname_version_patch_rev(~bundle_wholesystem)))).
+pbundle_packname_absfile(tbz) := F :-
+	Bundle = ~bundle_wholesystem,
+	F = ~fsR(concat_k(ext('.tar.bz2'), build/pbundle/(~bundle_versioned_packname(Bundle)))).
 
 % The next options will work only if the package not exist yet:
-~pbundle_name(tgz) <- [] :- gen_pbundle__tgz.
-~pbundle_name(tbz) <- [] :- gen_pbundle__tbz.
+~pbundle_packname_absfile(tgz) <- [] :- gen_pbundle__tgz.
+~pbundle_packname_absfile(tbz) <- [] :- gen_pbundle__tbz.

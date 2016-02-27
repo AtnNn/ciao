@@ -27,20 +27,42 @@
 :- use_module(library(system_extra)).
 :- use_module(library(lpdist(distutils)), [enum_pbundle_codeitem_contents/6]).
 :- use_module(library(lpdist(skip_settings))).
+:- use_module(library(lpdist(ciao_bundle_db))).
 
 % ---------------------------------------------------------------------------
 
-:- export(pbundle_generate_meta/7).
-:- meta_predicate pbundle_generate_meta(?, ?, ?, ?, ?, pred(1), pred(1)).
-pbundle_generate_meta(PBundleName, PBundleNameVersion,
-	    PBundleVersion, PBundleVersionNice, Time, PFormat, DocFormat) :-
-	findall(F, enum_pbundle_code_items(PBundleNameVersion, PFormat, F), Fs),
-	findall(D, enum_pbundle_doc_items(PBundleNameVersion, DocFormat, D), Ds),
-	Desc = [pbundle_name = PBundleName,
-	        pbundle_name_version = PBundleNameVersion, % TODO: avoid?
-		pbundle_version = PBundleVersion,
-		pbundle_version_nice = PBundleVersionNice, % TODO: necessary?
-		pbundle_date = Time, % TODO: rename by 'build_date' or component_date?
+% TODO: Add as external options
+pbundle_codeitem_kind := tgz|rpm_x86|deb_x86|win|dmg.
+% TODO: Simplify, extract from sub-bundles, etc.
+% TODO: Missing some internal manuals, add them.
+pbundle_docitem_kind := 
+    docpart("Ciao Manual", ciao, [html, pdf])|
+    docpart("CiaoPP Manual", ciaopp, [html, pdf])|
+    docpart("LPdoc Manual", lpdoc, [html, pdf]).
+
+:- use_module(library(file_utils), [output_to_file/2]).
+
+:- export(pbundle_generate_meta/2).
+% Generate the metadata file which contains all the produced output of
+% the bundle build process.
+pbundle_generate_meta(Bundle, DescFile) :-
+	output_to_file(pbundle_generate_meta_(Bundle, pbundle_codeitem_kind, pbundle_docitem_kind), DescFile).
+
+:- meta_predicate pbundle_generate_meta_(?, pred(1), pred(1)).
+pbundle_generate_meta_(Bundle, PFormat, DocFormat) :-
+	findall(F, enum_pbundle_code_items(Bundle, PFormat, F), Fs),
+	findall(D, enum_pbundle_doc_items(Bundle, DocFormat, D), Ds),
+	Desc = [% Bundle information (from manifest or source)
+                name = ~bundle_name(Bundle),
+                packname = ~bundle_packname(Bundle),
+		version = ~bundle_version(Bundle),
+		patch = ~bundle_patch(Bundle),
+		% Commit information
+		commit_branch = ~bundle_commit_info(Bundle, branch),
+		commit_id = ~bundle_commit_info(Bundle, id),
+		commit_date = ~bundle_commit_info(Bundle, date),
+		commit_desc = ~bundle_commit_info(Bundle, desc),
+		% Items in this packaged bundle (after bundle build)
 		docs = Ds,
 		code = Fs],
 	%
@@ -50,10 +72,11 @@ pbundle_generate_meta(PBundleName, PBundleNameVersion,
 
 :- meta_predicate enum_pbundle_code_items(?, pred(1), ?).
 % Enumerate the pbundle items for code files
-enum_pbundle_code_items(PBundleNameVersion, PFormat, Item) :-
+enum_pbundle_code_items(Bundle, PFormat, Item) :-
+	VersionedPackName = ~bundle_versioned_packname(Bundle),
 	PFormat(X),
 	pbundle_codeitem_kind_info(X, Ext0),
-	atom_concat([PBundleNameVersion, Ext0], PFile),
+	atom_concat([VersionedPackName, Ext0], PFile),
 	( pbundle_file_kind_ext(PFileKind, Ext),
 	  atom_concat([_, '.', Ext], PFile) ->
 	    true
@@ -70,11 +93,12 @@ pbundle_file_kind_ext(macosx, 'dmg').
 
 :- meta_predicate enum_pbundle_doc_items(?, pred(1), ?).
 % Enumerate the pbundle items for documentation
-enum_pbundle_doc_items(PBundleNameVersion, DocFormat, Item) :-
+enum_pbundle_doc_items(Bundle, DocFormat, Item) :-
+	VersionedPackName = ~bundle_versioned_packname(Bundle),
 	DocFormat(X),
 	X = docpart(PDocTitle, Name, Exts),
 	member(Ext, Exts),
-	atom_concat([PBundleNameVersion, '_', Name, '.', Ext], PDoc),
+	atom_concat([VersionedPackName, '_', Name, '.', Ext], PDoc),
 	atom_concat('manual_', Ext, PDocKind),
 	%
 	Item = pbundle_item(PDocKind, PDocTitle, PDoc).
@@ -121,10 +145,10 @@ pbundle_codeitem_type_suffix(raw) := ~atom_concat(['-raw-', ~get_os, ~get_arch])
 % ---------------------------------------------------------------------------
 
 :- export(build_pbundle_codeitem/6).
-build_pbundle_codeitem(Name, SourceDir, TargetDir, PBundleNameVersion,
+build_pbundle_codeitem(Name, SourceDir, TargetDir, VersionedPackName,
 	    PBundleType, FileList) :-
 	pbundle_codeitem_kind_info(Name, PBundleExtension),
-	build_package(PBundleExtension, PBundleNameVersion,
+	build_package(PBundleExtension, VersionedPackName,
 	    ~pbundle_codeitem_type_suffix(PBundleType), SourceDir, TargetDir,
 	    FileList).
 
@@ -168,21 +192,21 @@ prepare_files([F|Fs], [A, ' '|As]) :-
 	split_path_and_name(F, _, A),
 	prepare_files(Fs, As).
 
-build_package(PBundleExtension, PBundleNameVersion,
+build_package(PBundleExtension, VersionedPackName,
 	    PBundleTypeSuffix, SourceDir, TargetDir, FileList) :-
-	atom_concat([TargetDir, PBundleNameVersion, PBundleTypeSuffix,
+	atom_concat([TargetDir, VersionedPackName, PBundleTypeSuffix,
 		PBundleExtension], CompressedPBundle),
 	atom_concat(CompressedPBundle, '.tmp', TmpCompressedPBundle),
 	% TODO: Check that bugs/Pending/exec/exec.pl does not affect this code
 	compress_command(PBundleExtension, SourceDir, FileList,
 	    TmpCompressedPBundle, Command),
 	(
-	    atom_concat([_, PBundleNameVersion, '/'], SourceDir) ->
+	    atom_concat([_, VersionedPackName, '/'], SourceDir) ->
 	    % Link not required:
 	    do(Command, nofail)
 	;
 	    % Link required:
-	    atom_concat([SourceDir, '../', PBundleNameVersion],
+	    atom_concat([SourceDir, '../', VersionedPackName],
 		SourceDirNameVersion),
 	    del_file_nofail(SourceDirNameVersion),
 	    copy_file(SourceDir, SourceDirNameVersion, [overwrite, symlink]),
@@ -195,10 +219,10 @@ build_package(PBundleExtension, PBundleNameVersion,
 :- export(build_pbundle_codeitem_contents/6).
 % Write the contents of a 'codeitem' of a 'packaged bundle' (which is a set of files)
 build_pbundle_codeitem_contents(PBundleType, SourceDir, TargetDir,
-	    PBundleNameVersion, ExcludeFileList, FileList) :-
-	atom_concat([TargetDir, PBundleNameVersion,
+	    VersionedPackName, ExcludeFileList, FileList) :-
+	atom_concat([TargetDir, VersionedPackName,
 		~pbundle_codeitem_type_suffix(PBundleType), '.list'], FileList),
-	atom_concat(PBundleNameVersion, '/', BaseDir),
+	atom_concat(VersionedPackName, '/', BaseDir),
 	%
 	open_output(FileList, Output),
 	display_file_list(PBundleType, SourceDir, BaseDir, ExcludeFileList),

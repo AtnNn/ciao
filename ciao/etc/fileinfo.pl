@@ -1,5 +1,5 @@
-%% #!/bin/sh
-%% exec ciao-shell $0 "$@"
+%% #!/usr/bin/env ciao-shell 
+% -*- mode: ciao; -*-
 
 %% Ciao syntax
 :- use_package([assertions]).  

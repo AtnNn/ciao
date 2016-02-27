@@ -20,12 +20,13 @@
 
 % Load the latest metadata for the given branch
 load_latest_meta(Branch, PMeta) :-
-	( PDir = ~pbundle_root(meta),
-	  AllPMetas = ~load_pbundle_metas(Branch, PDir),
+	PDir = ~pbundle_root(meta),
+	( AllPMetas = ~load_pbundle_metas(Branch, PDir),
 	  PMeta = ~newest_pbundle_meta(AllPMetas) ->
 	    true
-	; % TODO: this should be a normal user error, not a bug
-	  throw(error(pkgmeta_not_found(Branch), load_latest_meta/2))
+	; % TODO: This should be a normal user error, not a bug.
+	  % TODO: This is a bug if pbundle_meta is corrupted.
+	  throw(error(pkgmeta_not_found(PDir, Branch), load_latest_meta/2))
 	).
 
 % ---------------------------------------------------------------------------
@@ -44,14 +45,17 @@ fmt_pbundle_download_(PMeta, View, R) :-
 	SrcR = ~gen_source_list(PMeta),
 	DocR = ~gen_manual_list(PMeta),
 	%
-	PName = ~pbundle_meta_attr(PMeta, pbundle_name),
-	PDate = ~pbundle_meta_attr(PMeta, pbundle_date),
-	PVerNice = ~pbundle_meta_attr(PMeta, pbundle_version_nice),
+	PName = ~pbundle_meta_attr(PMeta, packname),
+	Version = ~pbundle_meta_attr(PMeta, version),
+	Patch = ~pbundle_meta_attr(PMeta, patch),
+	CommitId = ~pbundle_meta_attr(PMeta, commit_id),
+	CommitDate = ~pbundle_meta_attr(PMeta, commit_date),
+	PrettyCommitDesc = ~atom_concat([Version, '.', Patch, ' (', CommitId, ')']),
 	Params = [src_formats = SrcR,
 	       	  manuals = DocR,
-	       	  pbundle_name = string_esc(~atom_codes(PName)),
-	       	  pbundle_date = string_esc(~atom_codes(PDate)),
-	       	  pbundle_version_nice = string_esc(~atom_codes(PVerNice))],
+	       	  packname = string_esc(~atom_codes(PName)),
+	       	  commit_date = string_esc(~atom_codes(CommitDate)),
+	       	  pretty_commit_desc = string_esc(~atom_codes(PrettyCommitDesc))],
 	% TODO: generate Params lazily
 	( View = docs -> Tmpl = 'download_docs.html'
 	; View = code -> Tmpl = 'download_code.html'
@@ -259,11 +263,11 @@ formatted_size(Size, FmtSize) :-
 	(
 	    Size > 2** 20 * 0.1 ->
 	    Size2 is Size / 2** 20,
-	    sformat(FmtSize, "~2f Mb", [Size2])
+	    sformat(FmtSize, "~2f MB", [Size2])
 	;
 	    Size > 2** 10 * 0.7 ->
 	    Size2 is Size / 2** 10,
-	    sformat(FmtSize, "~1f kb", [Size2])
+	    sformat(FmtSize, "~1f KB", [Size2])
 	;
 	    sformat(FmtSize, "~0f bytes", [Size])
 	).

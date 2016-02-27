@@ -259,7 +259,7 @@ concat_dir(Dir, FinalBase, FinalAbsBase) :-
 
 % TODO: See makedir_aux:fsR/2
 :- use_module(library(lpdist(makedir_aux)), [fsR/2]).
-:- use_module(library(lpdist(bundle_versions))).
+:- use_module(library(lpdist(ciao_bundle_db))).
 
 % Note: I cannot obtain the version from version_maintenance at this
 %       point, since main_output_name needs to be calculated before
@@ -284,13 +284,12 @@ main_output_name(Backend, NV) :-
 	),
 	% TODO: do fsR(bundle_src) on bundle_obtain_version
 	% Include the version (if required)
-	( setting_value(parent_bundle, Bundle),
-	  fsR(bundle_src(Bundle), Dir),
-	  \+ setting_value(doc_mainopts, no_versioned_output) ->
+	( \+ setting_value(doc_mainopts, no_versioned_output),
+	  setting_value(parent_bundle, Bundle),
+	  V = ~bundle_version_patch(Bundle),
+	  atom_concat([OutputBase1, '-', V], NV0) ->
 	    % Use the bundle version for the output name
-	    atom_concat(Dir, '/', Dir1),
-	    bundle_obtain_version(Dir1, V),
-	    atom_concat([OutputBase1, '-', V], NV)
+	    NV = NV0
 	; % Do not use the version for the output name
 	  NV = OutputBase1
 	),

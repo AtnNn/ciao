@@ -25,21 +25,6 @@
 
 % ===========================================================================
 
-:- export(show_bundles/0).
-:- pred show_bundles # "Display the registered bundles".
-show_bundles :-
-	format("Name\tPack\tType\tPath\n", []),
-	format("-------\t-------\t-------\t-------\n", []),
-	(
-	    bundle_description(Name, Pack, Type, Path),
-	    format("~w\t~w\t~w\t~w\n", [Name, Pack, Type, Path]),
-	    fail
-	;
-	    true
-	).
-
-% ===========================================================================
-
 :- doc(section, "Hooks for File Search Path and Library Alias").
 
 :- multifile file_search_path/2.

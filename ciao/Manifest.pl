@@ -1,7 +1,7 @@
 % Manifest file for Ciao (engine, compiler, basic libraries, extra
 % libraries, and contributed code)
 bundle_name(ciao).
-bundle_pack('Ciao').
+bundle_packname('Ciao').
 bundle_type(basic).
 src_alias_paths([ciaosrc = '.']).
 ins_alias_paths([

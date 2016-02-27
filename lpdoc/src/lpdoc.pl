@@ -88,7 +88,8 @@ cooperation with lpmake
 % of this file.
 
 % The application name
-app_name(lpdoc).
+app_name('LPdoc'). % TODO: like packname in Manifest
+%app_name(lpdoc).
 % Version atom
 %% version(_)
 % Copyright

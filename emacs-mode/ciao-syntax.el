@@ -231,8 +231,8 @@ details."
   (interactive)
   (goto-char (point-min))
   (insert 
-   (concat "#!/bin/sh\n"
-	   "exec ciao-shell $0 \"$@\" # -*- mode: ciao; -*-\n"
+   (concat "#!/usr/bin/env ciao-shell\n"
+           "% -*- mode: ciao; -*-\n"
 	   "\n"))
   (set-file-modes (buffer-file-name) 448))
 

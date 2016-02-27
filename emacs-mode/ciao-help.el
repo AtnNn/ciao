@@ -86,9 +86,9 @@
 ;; TODO: Reevaluate if bundles change
 (defvar ciao-manuals
   (ciao-help-existing-manuals
-   '(:ciaosys-name-version
-     :lpdoc-name-version
-     :ciaopp-name-version
+   '(:ciao-manual-base
+     :lpdoc-manual-base
+     :ciaopp-manual-base
      )))
 
 ;; Then associate Ciao manuals with each Ciao mode

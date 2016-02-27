@@ -278,7 +278,6 @@ relreallib_dir := ~relreallib_dir_(~instype).
 
 relreallib_dir_('global') := ~fsR(concat_ver(ciao, 'ciao')).
 relreallib_dir_('local') := ''.
-% ~bundle_name_version(ciao).
 
 % ---------------------------------------------------------------------------
 
@@ -313,8 +312,6 @@ ciao_config_entry('CIAOHDIRROOT',
 % TODO: if ~instype=local, this is SRCINCLUDEDIR, use a single definition!
 get_ciaohdir_root('global', Prefix) := ~fsR(concat_ver(ciao, Prefix/'lib'/'ciao'/'ciao')/'include').
 get_ciaohdir_root('local', Prefix) := ~fsR(Prefix/'include').
-% TODO: It was:
-% 	~path_list_concat([Prefix, 'lib', 'ciao', ~bundle_name_version(ciao), 'include']).
 
 % ---------------------------------------------------------------------------
 
@@ -330,7 +327,6 @@ ciao_config_entry('ENGINEDIR',
 % ENGINEDIR -- ~enginedir
 get_enginedir('global', Prefix) := ~fsR(concat_ver(ciao, Prefix/'lib'/'ciao'/'ciao')/'engine').
 get_enginedir('local', Prefix) := ~fsR(Prefix/'objs').
-%	~path_list_concat([Prefix, 'lib', 'ciao', ~bundle_name_version(ciao), 'engine']).
 
 % ---------------------------------------------------------------------------
 
@@ -1147,7 +1143,7 @@ verify_ppl(Value) :-
 
 :- export(ppl_version/1).
 ppl_version(Version) :-
-	foreign_config_var(ppl, '--version', Str),
+	foreign_config_var(ppl, 'version', Str),
 	parse_ppl_version(Str, Version).
 
 % from "Major.Minor" string to [Major,Minor]
@@ -1660,25 +1656,6 @@ get_make(MakeDir, MakeName) :-
 	    fail
 	).
 
-% ---------------------------------------------------------------------------
-
-% TODO: Improve notation
-ciao_config_entry('HAVE_SVNVERSION',
-	    [
-		default(verify_svnversion(HaveSvnVersion), HaveSvnVersion),
-		show_option("svnversion available"),
-		valid_values([yes, no])
-	    ]).
-
-verify_svnversion(Value) :-
-	( have_svnversion -> Value = yes ; Value = no ).
-
-svnversion_base := svnversion.
-svnversion_exec := ~exec_names(~svnversion_base).
-find_svnversion(File) :- find_paths_file(~svnversion_exec, File).
-
-have_svnversion :- find_svnversion(_).
-
 % ============================================================================
 
 :- doc(section, "Auxiliary Definitions").
@@ -1822,6 +1799,7 @@ bootstrap_ciaoc := ~fsR(bundle_src(ciao)/'bootstrap'/'ciaoc.sta').
 
 :- export(home_url_str/1).
 home_url_str := "http://www.ciaohome.org/".
+% TODO: Wrong
 :- export(packages_dir_str/1).
-packages_dir_str := "Software/Ciao/packages/trunk/".
+packages_dir_str := "packages/master/".
 

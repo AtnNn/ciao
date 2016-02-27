@@ -1,13 +1,12 @@
 #!/bin/sh
 #
-# Sets up a non-root RPM building environment and builds a CiaoDE package
-
+# Sets up a non-root RPM building environment and builds a Ciao package
 
 set -e
 
 if [ $# -lt 3 ]
     then
-    echo "Usage: $0 PackageDir TarName SpecFile [RpmbuildExtraOpt...]"
+    echo "Usage: $0 PackDir TarName SpecFile [RpmbuildExtraOpt...]"
     exit 1
 fi
 

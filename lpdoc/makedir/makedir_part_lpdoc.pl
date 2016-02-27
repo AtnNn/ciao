@@ -58,8 +58,9 @@ prebuild_libraries :-
 'src/version_auto.pl' <- [] :: File # "Generation of version_auto.pl file" :-
 	open(File, write, O),
 	format(O, "%% Do not edit - automatically generated!\n", []),
-	format(O, "version('~w.~w of ~s (compiled with ~w)').\n",
-	    [~bundle_version(lpdoc), ~bundle_patch(lpdoc), ~datime_string, ~bundle_name_version_patch(ciao)]),
+	format(O, "version('~w.~w: ~s (compiled with ~w ~w.~w)').\n",
+	    [~bundle_version(lpdoc), ~bundle_patch(lpdoc), ~datime_string,
+	     ~bundle_packname(ciao), ~bundle_version(ciao), ~bundle_patch(ciao)]),
 	close(O),
 	-set_perms(File, ~perms).
 
@@ -175,8 +176,6 @@ gen_lpdoc_lib_link :-
 	% TODO: when is this link used? is this link repeated?
 	--copy_file(~fsR(concat_verk(lpdoc, plexe, 'lpdoc')),
 	            ~fsR(rootprefix(concat_k(plexe, ~ciaolib_root/'lpdoc'))),
-%	--copy_file(~bundle_name_version(lpdoc),
-%	            ~fsR(rootprefix((~ciaolib_root)/'lpdoc')),
 		    [overwrite, symlink]).
 
 bundle_uninstall_lib :- uninstall_lib_(~instype).

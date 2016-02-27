@@ -60,69 +60,24 @@ pbundle_meta_has_name(PMeta, Name) :- atom(Name), !,
 
 :- use_module(library(sort)).
 :- use_module(library(format)).
+:- use_module(library(lpdist(datetime))).
 
-% Sort a list of PMeta by its version number (decreasing)
-:- export(sort_pbundle_metas_by_version/2).
-sort_pbundle_metas_by_version(PMetas) := SortedPMetas :-
-	KTs = ~add_version_key(PMetas),
+% Sort a list of PMeta by its timestamp (decreasing)
+:- export(sort_pbundle_metas_by_timestamp/2).
+sort_pbundle_metas_by_timestamp(PMetas) := SortedPMetas :-
+	KTs = ~add_timestamp_key(PMetas),
 	KTs2 = ~sort(KTs),
 	KTs3 = ~reverse(KTs2),
-	SortedPMetas = ~seconds(KTs3).
+	SortedPMetas = ~map_second(KTs3).
 
-add_version_key([], []).
-add_version_key([T|Ts], [(K,T)|KTs]) :-
-	K = ~pkgmeta_version_key(T),
-	add_version_key(Ts, KTs).
+add_timestamp_key([], []).
+add_timestamp_key([T|Ts], [(Timestamp,T)|KTs]) :-
+	PackDate = ~pbundle_meta_attr(T, commit_date),
+	date_iso8601_to_timestamp(PackDate, Timestamp),
+	add_timestamp_key(Ts, KTs).
 
-seconds([], []).
-seconds([(_,X)|Xs], [X|Ys]) :- seconds(Xs, Ys).
-
-pkgmeta_version_key(T) := K :-
-	K = ~version_to_key(~pbundle_meta_attr(T, pbundle_version)).
-
-% Decompose a version atom to obtain a 'key' string
-% TODO: This key is only used to sort the packages. But I can sort in simpler ways!
-version_to_key(Version) := Key :-
-	( G='-' ; G='' ),
-	( atom_concat([G, P, '.', SV, '.', Pa, '#', SVN], Version)
-	; atom_concat([G, P, '.', SV, '.', Pa, '-', SVN], Version)
-	; atom_concat([G, P, '.', SV, '.', Pa], Version), SVN = 0
-	; atom_concat([G, P, '.', SV, 'p', Pa], Version), SVN = 0
-	),
-	!,
-	fill_with_zero(P,  1, PS),
-	fill_with_zero(SV, 3, SVS),
-	fill_with_zero(Pa, 3, PaS),
-	fill_with_zero(SVN, 6, SVNS),
-	sformat(Str, "~s~s~s~s", [PS, SVS, PaS, SVNS]),
-	number_codes(Key, Str).
-
-fill_with_zero(V, Z, Key) :-
-	sformat(Str, "~w", [V]),
-	length(Str, L),
-	M is Z - L,
-	( M > 0 -> sformat(Key, "~*c~s", [M, 0'0, Str])
-	; Key = Str
-	).
-
-% ---------------------------------------------------------------------------
-
-:- use_module(library(system)).
-
-% Time of the pbundle in days (since 'year zero')
-:- export(pbundle_meta_time/2).
-pbundle_meta_time(PMeta) := Time :-	
-	PackageDate = ~pbundle_meta_attr(PMeta, pbundle_date),
-	atom_concat([AYear, '-', AMonth, '-', ADay, ' ',
-		AHour, ':', AMinute, ':', ASeconds], PackageDate),
-	atom_number(AYear,    Year),
-	atom_number(AMonth,   Month),
-	atom_number(ADay,     Day),
-	atom_number(AHour,    Hour),
-	atom_number(AMinute,  Minute),
-	atom_number(ASeconds, Seconds),
-	datime(Time0, Year, Month, Day, Hour, Minute, Seconds, _, _),
-	Time is Time0 // 86400. % seconds in a day
+map_second([], []).
+map_second([(_,X)|Xs], [X|Ys]) :- map_second(Xs, Ys).
 
 % ---------------------------------------------------------------------------
 
@@ -135,8 +90,8 @@ pbundle_meta_time(PMeta) := Time :-
 % @var{PDir} for a branch @var{Branch}
 load_pbundle_metas(Branch, PDir0) := AllPMetas :-
 	PDir = ~atom_concat([PDir0, '/', Branch]),
-	AllPackageF = ~matching_files(~atom_concat(PDir, '/*/desc.tmpl')),
-	AllPMetas = ~load_pbundle_metas_(AllPackageF, Branch).
+	AllPackF = ~matching_files(~atom_concat(PDir, '/*/desc.tmpl')),
+	AllPMetas = ~load_pbundle_metas_(AllPackF, Branch).
 
 load_pbundle_metas_([], _Branch, []).
 load_pbundle_metas_([F|Fs], Branch, [V|Vs]) :-
@@ -166,7 +121,7 @@ enum_matching_file(FileC, RealFile) :-
 
 :- export(newest_pbundle_meta/2).
 newest_pbundle_meta(AllPMetas) := PMeta :-
-	SortedPMetas = ~sort_pbundle_metas_by_version(AllPMetas),
+	SortedPMetas = ~sort_pbundle_metas_by_timestamp(AllPMetas),
 	SortedPMetas = [PMeta|_].
 
 % ---------------------------------------------------------------------------

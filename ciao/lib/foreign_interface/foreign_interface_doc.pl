@@ -705,7 +705,8 @@ lazy and simpler -and probably slower.
 @begin{verbatim}
 @includeverbatim{foreign_interface/examples/bignums/bigints_c.c}
 @end{verbatim}
-").
+
+" 
 
  %% :- doc(doinclude,"ciao_term ciao_var();").
  %% :- doc("ciao_term ciao_var();", "Returns a fresh, unbound variable.").
@@ -730,3 +731,28 @@ lazy and simpler -and probably slower.
  %% 	   Creates an atom whose printable name is given as a C string.
  %% 
  %% @item @tt{ciao_term ciao_structure_a(char *name, int arity, ciao_term *args);}
+
+|| "
+@subsection{Interfacing with C++}
+
+
+Ciao code can be interfaced easily with C++ using this interface. The
+basic idea is to write C functions (functions prefixed by 'extern
+\"C\"') within the C++ code to make the bridge between calls from
+prolog to C++. Then, c++ objects can be cast as addresses.  Because
+the foreign interface assumes that the foreign source is classical C,
+C++ source files should be declared with their extension.
+
+
+@bf{File} @em{cc_stack.pl}:
+
+@begin{verbatim}
+@includeverbatim{foreign_interface/examples/c++/cc_stack.pl}
+@end{verbatim}
+
+@bf{File} @em{cc_stack.cc}:
+
+@begin{verbatim}
+@includeverbatim{foreign_interface/examples/c++/cc_stack.cc}
+@end{verbatim}
+").

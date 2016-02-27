@@ -30,7 +30,7 @@ CIAOBUILDDIR="${ciaode}/build"
 
 # TODO: Share with 'optim_comp/ciaotool_modules/config.sh'
 
-regression_name="CiaoRegressionData"
+regression_name="regr-db"
 regression_dir="${ciaode}/${regression_name}"
 regression_repo="ssh://clip.dia.fi.upm.es/home/clip/Systems/${regression_name}"
 

@@ -53,9 +53,9 @@ bundle_ins_reg :- fail. % TODO: document (register the bundle on ins?)
 
 % ============================================================================
 
-:- use_module(library(lpdist(ciao_bundle_db)), [gen_bundle_revision/0]).
-% TODO: Used from the Ciao Bot (SHARED file)
-gen_bundle_revision <- [] :- gen_bundle_revision.
+:- use_module(library(lpdist(ciao_bundle_db)), [gen_bundle_commit_info/0]).
+% TODO: Used from ciaobot
+gen_bundle_commit_info <- [] :- gen_bundle_commit_info.
 
 % ============================================================================
 
@@ -170,7 +170,7 @@ unregister_all :-
 
 % ---------------------------------------------------------------------------
 
-:- use_module(library(bundle_registry(bundle_registry_load)), [show_bundles/0]).
+:- use_module(library(lpdist(ciao_bundle_db)), [show_bundles/0]).
 
 % (available from the command line)
 show_bundles <- :-

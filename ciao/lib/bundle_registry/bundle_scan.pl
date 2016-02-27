@@ -90,7 +90,7 @@ install_src_bundle_cfg(BundlePath, DbDir) :-
 	loop_read_file(ManifestFile, ManifestList),
 	%
 	member_chk(bundle_name(BundleName), ManifestList),
-	member_chk(bundle_pack(BundlePack), ManifestList),
+	member_chk(bundle_packname(BundlePack), ManifestList),
 	member_chk(bundle_type(BundleType), ManifestList),
 	member_chk(src_alias_paths(SrcRelAliasPaths), ManifestList),
 	abs_alias_paths(SrcRelAliasPaths, BundlePath, SrcAliasPaths),

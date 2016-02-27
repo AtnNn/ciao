@@ -79,8 +79,11 @@ val_to_str(true) --> !, "true".
 val_to_str(false) --> !, "false".
 val_to_str(null) --> !, "null".
 
-list_to_str([]) --> [].
-list_to_str([X|Xs]) --> val_to_str(X), list_to_str(Xs).
+list_to_str(Xs) --> "[", list_to_str_(Xs), "]".
+
+list_to_str_([]) --> [].
+list_to_str_([X]) --> !, val_to_str(X).
+list_to_str_([X|Xs]) --> val_to_str(X), ",", list_to_str_(Xs).
 
 :- export(string_to_json/2).
 :- pred string_to_json(+String, ?Term) :: string * json # "Decode
@@ -89,20 +92,33 @@ string_to_json(String, X) :-
 	str_to_obj(X, String, Rest),
 	blanks(Rest, []).
 
-str_to_obj(json(Attrs)) --> solo(0'{), str_to_attrs_(Attrs).
+% (accept leading blanks)
+str_to_obj(json(Attrs)) -->
+	blanks, "{",
+	blanks, str_to_attrs_(Attrs).
 
-str_to_attrs_([]) --> solo(0'}), !.
-str_to_attrs_([X|Xs]) --> str_to_attr(X), str_to_attrs__(Xs).
+% (no leading blanks)
+str_to_attrs_([]) --> "}", !.
+str_to_attrs_([X|Xs]) -->
+	str_to_attr(X),
+	blanks, str_to_attrs__(Xs).
 
-str_to_attrs__([]) --> solo(0'}), !.
-str_to_attrs__([X|Xs]) --> solo(0',), str_to_attr(X), str_to_attrs__(Xs).
+% (no leading blanks)
+str_to_attrs__([]) --> "}", !.
+str_to_attrs__([X|Xs]) -->
+	",",
+	blanks, str_to_attr(X),
+	blanks, str_to_attrs__(Xs).
 
+% (no leading blanks)
 str_to_attr(Id=Val) -->
 	quoted_string(Id0),
 	{ atom_codes(Id, Id0) },
-	solo(0':), str_to_val(Val).
+	blanks, ":",
+	blanks, str_to_val(Val).
 
-quoted_string(Cs) --> solo(0'"), quoted_string_(Cs).
+% (no leading blanks)
+quoted_string(Cs) --> "\"", quoted_string_(Cs).
 
 quoted_string_([]) --> "\"", !.
 quoted_string_("\""||Cs) --> "\\\"", !, quoted_string_(Cs).
@@ -116,21 +132,26 @@ quoted_string_("\t"||Cs) --> "\\t", !, quoted_string_(Cs).
 % TODO: Missing unicode
 quoted_string_([C|Cs]) --> [C], quoted_string_(Cs).
 
-str_to_val(string(Xs)) --> solo(0'"), !, quoted_string_(Xs).
-str_to_val(json(Attrs)) --> solo(0'{), !, str_to_attrs_(Attrs).
-str_to_val(X) --> solo(0'[), !, str_to_list_(X).
+% (no leading blanks)
+str_to_val(string(Xs)) --> "\"", !, quoted_string_(Xs).
+str_to_val(json(Attrs)) --> "{", !, blanks, str_to_attrs_(Attrs).
+str_to_val(X) --> "[", !, blanks, str_to_list_(X).
 str_to_val(true) --> "true", !.
 str_to_val(false) --> "false", !.
 str_to_val(null) --> "null", !.
 str_to_val(X) --> number_string(Cs), !, { number_codes(X, Cs) }.
 
-str_to_list_([]) --> solo(0']), !.
-str_to_list_([X|Xs]) --> str_to_val(X), str_to_list__(Xs).
+% (no leading blanks)
+str_to_list_([]) --> "]", !.
+str_to_list_([X|Xs]) -->
+	str_to_val(X),
+	blanks, str_to_list__(Xs).
 
-str_to_list__([]) --> solo(0']), !.
-str_to_list__([X|Xs]) --> solo(0',), str_to_val(X), str_to_list__(Xs).
-
-solo(C) --> blanks, [C].
+% (no leading blanks)
+str_to_list__([]) --> "]", !.
+str_to_list__([X|Xs]) --> ",",
+	blanks, str_to_val(X),
+	blanks, str_to_list__(Xs).
 
 blanks --> blank, !, blanks.
 blanks --> [].

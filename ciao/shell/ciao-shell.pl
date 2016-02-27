@@ -55,8 +55,8 @@ Copyright @copyright{} 1996-2002 The CLIP Group.
   @file{hello} contains the following program:
 
 @begin{verbatim}
-#!/bin/sh 
-exec ciao-shell $0 ""$@@"" # -*- mode: ciao; -*-
+#!/usr/bin/env ciao-shell
+% -*- mode: ciao; -*-
 
 main(_) :-
      write('Hello world'), nl.
@@ -66,34 +66,26 @@ main(_) :-
   executable and invoking it from the command line:
 
 @begin{verbatim}
-/herme@@clip:/tmp
-[86]> chmod +x hello
-
-/herme@@clip:/tmp
-[87]> hello
+$ chmod +x hello
+$ ./hello
 Hello world
 @end{verbatim}
   
-  The line:
+  The lines:
 @begin{verbatim}
-#!/bin/sh 
+#!/usr/bin/env ciao-shell
+% -*- mode: ciao; -*-
 @end{verbatim}
-@noindent
-invokes the @tt{/bin/sh} shell which will interpret the following line:
-@begin{verbatim}
-exec ciao-shell $0 ""$@@"" # -*- mode: ciao; -*-
-@end{verbatim}
-
-@noindent and invoke @apl{ciao-shell}, instructing it to read this same
-file (@tt{$0}), passing it the rest of the arguments to @tt{hello} as
-arguments to the prolog program. The second part of the line @tt{# -*-
-mode: ciao; -*-} is simply a comment which is seen by @apl{emacs} and
-instructs it to edit this file in Ciao mode (this is needed because
-these script files typically do not have a @tt{.pl} ending). When
-@apl{ciao-shell} starts, if it is the first time, it compiles the
-program (skipping the first lines, as explained above), or else at
-successive runs loads the @tt{.po} object file, and then calls
-@pred{main/1}.
+@noindent invokes @apl{ciao-shell} through @tt{/usr/bin/env} (POSIX.2
+compliant), instructing it to read this same file, and passing it the
+rest of the arguments to @tt{hello} as arguments to the Prolog
+program. The second line @tt{% -*- mode: ciao; -*-} is simply a
+comment which is seen by @apl{emacs} and instructs it to edit this
+file in Ciao mode (this is needed because these script files typically
+do not have a @tt{.pl} ending). When @apl{ciao-shell} starts, if it is
+the first time, it compiles the program (skipping the first lines, as
+explained above), or else at successive runs loads the @tt{.po} object
+file, and then calls @pred{main/1}.
 
 Note that the process of creating Prolog scripts is made very simple
 by the Ciao @concept{emacs mode}, which automatically inserts the
@@ -107,8 +99,8 @@ arguments in scripts. Assume that a file called @tt{say} contains the
 following lines:
 
 @begin{verbatim}
-#!/bin/sh 
-exec ciao-shell $0 ""$@@"" # -*- mode: ciao; -*-
+#!/usr/bin/env ciao-shell
+% -*- mode: ciao; -*-
 
 main(Argv) :-
      write_list(Argv), nl.
@@ -124,13 +116,9 @@ write_list([Arg|Args]) :-
 An example of use is:
 
 @begin{verbatim}
-/herme@@clip:/tmp
-[91]> say hello dolly
+$ say hello dolly
 hello dolly 
 @end{verbatim}
-
-
-
 ").
 
 :- use_module(library(libpaths), [get_alias_path/0]).

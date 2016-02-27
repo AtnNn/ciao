@@ -100,12 +100,30 @@
 :- use_module(library(odd), [setarg/3]).
 :- use_module(engine(attributes), [get_attribute/2, attach_attribute/2]).
 
+:- data next_id/1.
+
+next_id(0).
+
 :- pred create_mutable(Datum, Mutable) # "Unifies @var{Datum} with a
 freshly created mutable term with initial value @var{Datum}.".
- 
+
+% Currently a mutable is a compound term of main functor '$mutable'/2.
+% The first argument of the mutable contains the data (following ideas
+% decribed above).
+% The second argument is an identifier different for
+% each freshly created mutable.  
+
+% The mutables respect the following properties (This properties are
+% maintain for compatibility reasons):
+% - They are not variable terms (i.e. var/1 fails on a mutable),
+% - Two different mutables do not unify.
+% Such properties are not specified explicilty in the documentation,
+% because, we judge it is a bad practive to rely on them.
+
 create_mutable(Datum, X):-
-        ( var(X), \+ get_attribute(X, _) -> 
-             attach_attribute(X, '$mutable'('$'(Datum))) 
+        ( var(X)  -> 
+	     retract_fact(next_id(I)), J is I + 1, assertz_fact(next_id(J)),
+             X = '$mutable'('$'(Datum), I) 
         ; throw(error(uninstantiation_error(X), create_mutable/2-1))
         ). 
 
@@ -114,8 +132,8 @@ create_mutable(Datum, X):-
         must be a mutable term.".
 
 get_mutable(Datum, Mutable):-
-	( mutable_(Mutable, Datum_) ->
-	    Datum_ = '$mutable'('$'(Datum))
+	( mutable(Mutable) ->
+	    Mutable = '$mutable'('$'(Datum), _)
 	; throw(error(instanciation_error, get_mutable/2-2))
 	). 
 
@@ -124,8 +142,8 @@ get_mutable(Datum, Mutable):-
 	 @var{Mutable} must be a mutable term.".
 
 update_mutable(Datum, Mutable):-
-	( mutable_(Mutable, Datum_) ->
-            setarg(1, Datum_, '$'(Datum))
+	( mutable(Mutable) ->
+            setarg(1, Mutable, '$'(Datum))
 	; throw(error(instantiation_error, update_mutable/2-2))
 	). 
 
@@ -133,8 +151,4 @@ update_mutable(Datum, Mutable):-
 instantiated to a mutable term.".
 
 mutable(Term) :-
-	mutable_(Term, _).
-
-mutable_(Term, Attr):-
-	get_attribute(Term, Attr),
-	functor(Attr, '$mutable', 1).
+	functor(Term, '$mutable', 2).

@@ -54,11 +54,7 @@ the Ciao distribution, where the installation process leaves a
 @file{ciaoc.bat} file):
 
 @begin{verbatim}
-/herme@@clip:/tmp
-[60]> ciaoc hello
-
-/herme@@clip:/tmp
-[61]> 
+$ ciaoc hello
 @end{verbatim}
 
 @noindent This produces an executable called @tt{hello} in Un*x-like
@@ -69,10 +65,8 @@ command line} for how to run executables from the command line in
 Win32):
 
 @begin{verbatim}
-/herme@@clip:/tmp
-[61]> hello
+$ ./hello
 Hello world
-
 @end{verbatim}
 
 If the application is composed of several files the process is
@@ -100,13 +94,9 @@ p('Hello world').
 compiler as before:
 
 @begin{verbatim}
-/herme@@clip:/tmp
-[60]> ciaoc hello
-
-/herme@@clip:/tmp
-[61]> hello
+$ ciaoc hello
+$ ./hello
 Hello world
-
 @end{verbatim}
 
 @noindent The invocation of @tt{ciaoc hello} compiles the file
@@ -143,11 +133,8 @@ write_list([Arg|Args]) :-
 following output:
 
 @begin{verbatim}
-/herme@@clip:/tmp
-[91]> ciaoc say
-
-/herme@@clip:/tmp
-[91]> say hello dolly
+$ ciaoc say
+$ ./say hello dolly
 hello dolly 
 @end{verbatim}
 

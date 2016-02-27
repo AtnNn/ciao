@@ -13,31 +13,31 @@
 %       arguments, reflecting the new options for ciaosetup)
 
 gen_pbundle__bin <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(bin, [tgz, tbz]).
 gen_pbundle__bin_tgz <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(bin, [tgz]).
 gen_pbundle__bin_tbz <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(bin, [tbz]).
 
 gen_pbundle__noa <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(noa, [tgz, tbz]).
 gen_pbundle__noa_tgz <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(noa, [tgz]).
 gen_pbundle__noa_tbz <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(noa, [tbz]).
 
 gen_pbundle__raw <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(raw, [tgz, tbz]).
 gen_pbundle__raw_tgz <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(raw, [tgz]).
 gen_pbundle__raw_tbz <- [] :-
-	gen_bundle_revision,
+	gen_bundle_commit_info,
 	gen_pbundle__common(raw, [tbz]).

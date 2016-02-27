@@ -1,5 +1,5 @@
-% #!/bin/sh
-% exec /usr/local/bin/ciao_shell $0 $*
+% #!/usr/bin/env ciao-shell
+% -*- mode: ciao; -*-
 
 :- use_package(pillow).
 

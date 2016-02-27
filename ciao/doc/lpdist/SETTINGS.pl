@@ -21,7 +21,6 @@ filepath := ~ciaofilepath_common.
 
 doc_structure := 
         'lpdist_reference'-[
-          'lpdist/bundle_versions',
           'lpdist/ciao_config_db',
           'lpdist/ciao_config_options',
           'lpdist/ciao_configure',

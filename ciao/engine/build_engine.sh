@@ -264,7 +264,7 @@ update_file() { # FILE
 # TODO: take the REALLIBDIR as a environment parameter, so that its
 # definition is not necessary
 gen_engine_build_info() {
-    get_revision # get REVISION
+    get_commit_info # get COMMIT_*
 
     if test x"${DEBUG_LEVEL}" = x"nodebug"; then
 	SHOW_DEBUG_LEVEL=""
@@ -279,19 +279,25 @@ gen_engine_build_info() {
 #define CIAO_MAJOR_VERSION ${MAJORVER}
 #define CIAO_MINOR_VERSION ${MINORVER}
 #define CIAO_PATCH_VERSION ${PATCH}
-#define CIAO_SVNREV ${REVISION}
+#define CIAO_COMMIT_BRANCH "${COMMIT_BRANCH}"
+#define CIAO_COMMIT_ID "${COMMIT_ID}"
+#define CIAO_COMMIT_DATE "${COMMIT_DATE}"
+#define CIAO_COMMIT_DESC "${COMMIT_DESC}"
 EOF
 
     # version.c:
     update_file ${OBJDIR}/version.c <<EOF
-char *emulator_version = "Ciao ${VERSION}.${PATCH}-${REVISION}: `date`${SHOW_DEBUG_LEVEL}";
+char *emulator_version = "Ciao ${COMMIT_DESC}: `date`${SHOW_DEBUG_LEVEL}";
 char *emulator_architecture = "${ARCHNAME}";
 char *emulator_os =    "${OSNAME}";
 char *emulator_debug = "${CIAODEBUG}";
 char *emulator_location = "${ENGLOCATION}";
 char *ciao_version =   "${VERSION}";
 char *ciao_patch =     "${PATCH}";
-char *ciao_revision =  "${REVISION}";
+char *ciao_commit_branch = "${COMMIT_BRANCH}";
+char *ciao_commit_id = "${COMMIT_ID}";
+char *ciao_commit_date = "${COMMIT_DATE}";
+char *ciao_commit_desc = "${COMMIT_DESC}";
 char *ciao_suffix =    "${CIAOSUFFIX}";
 char *exec_suffix =    "${EXECSUFFIX}";
 char *so_suffix =      "${SOSUFFIX}";
@@ -301,37 +307,127 @@ EOF
 }
 
 # ===========================================================================
-# Control Version System 
+# Get commit information from the control version system (Git or SVN) 
 
-# Sets REVISION to the SVN revision, the contents of the REVISION
-# file, or 0 if everything else fails.
-get_revision() {
-    if test x"${REVISION}" != x""; then
-	return # already set, exit
-    fi
-	
-    # TODO: Move to the configuration part
-    if test x"${HAVE_SVNVERSION}" = x"yes"; then
-	SVNVERSION="svnversion"
-	set +e # allow errors here... svnversion may fail
-	REVISIONBASE0="`${SVNVERSION} ${CIAODESRC}/makedir 2>/dev/null`"
-	set -e
-    fi
+# TODO: Combine with 'ciaobot' and 'lpdist' code (probably remove from
+# this part).
+# TODO: 'branch, id, and date' definitions for SVN are missing
 
-    if test x"${REVISIONBASE0}" = x""; then
-	REVISIONBASE="exported"
+get_commit_info() {
+    if `which git > /dev/null 2>&1` && \
+       [ -d ${CIAODESRC}/.git ] ; then
+	REPO_KIND=git
+    elif `which svnversion > /dev/null 2>&1` && \
+       [ -d ${CIAODESRC}/.svn ] ; then
+	REPO_KIND=svn
     else
-	REVISIONBASE="${REVISIONBASE0}"
+	REPO_KIND=none
     fi
 
-    if test x"${REVISIONBASE}" = x"exported"; then
-	if test -f "${CIAOBUILDDIR}/REVISION"; then \
-	    REVISION=`cat "${CIAOBUILDDIR}/REVISION"`
-	else
-	    REVISION="0"
+    set +e # allow errors here since 'git' or 'svnversion' may fail
+
+    # COMMIT_ID: Git commit id or SVN revision number (0 if everything else fails)
+    # COMMIT_BRANCH: branch name (ignored in SVN at this moment)
+    # COMMIT_DATE: Git commit date (ignored for SVN)
+    # COMMIT_DESC: human-readable description of the commit (including
+    #   version, patch, branch, etc. if available)
+    if [ x"${REPO_KIND}" = x"svn" ]; then
+	COMMIT_BRANCH=""
+	COMMIT_ID="`svnversion ${CIAODESRC}/makedir 2>/dev/null`"
+	if test x"${COMMIT_ID}" = x"exported"; then
+	    COMMIT_ID=""
 	fi
+	COMMIT_DATE=""
+	if [ x"${COMMIT_ID}" = x"" ] ; then
+	    COMMIT_DESC="${VERSION}.${PATCH}"
+	else
+	    COMMIT_DESC="${VERSION}.${PATCH}-${COMMIT_ID}"
+	fi
+    elif [ x"${REPO_KIND}" = x"git" ]; then
+	COMMIT_BRANCH="`cd ${CIAODESRC}; git rev-parse --abbrev-ref HEAD 2>/dev/null`"
+	if [ x"${COMMIT_BRANCH}" = x"HEAD" ] ; then
+	    COMMIT_BRANCH="" # Detached HEAD!
+	fi
+	COMMIT_ID="`cd ${CIAODESRC}; git log -1 --format='%H' 2>/dev/null`"
+	COMMIT_DATE="`cd ${CIAODESRC}; git log -1 --format='%ci' 2>/dev/null`"
+	COMMIT_DESC="`cd ${CIAODESRC}; git describe --tags 2>/dev/null`"
+	if [ x"${COMMIT_DESC}" = x"" ] ; then
+	    # Create our own human-readable commit description using the
+	    # branch name (this should not be needed if we have proper
+	    # tags in our commit graph).
+	    COMMIT_ID_SHORT="`cd ${CIAODESRC}; git log -1 --format='%h' 2>/dev/null`"
+	    COMMIT_DESC="${COMMIT_BRANCH}-g${COMMIT_ID_SHORT}"
+	fi
+        # Fix COMMIT_DESC (this assumes that we may include version and
+        # patch in tag and branch names, and removes redundant
+        # information)
+	case ${COMMIT_DESC} in
+	    # Version and patch in COMMIT_DESC, let us assume that is a
+	    # particular code release (a commit with a tag, not a branch).
+	    v${VERSION}${PATCH}*) COMMIT_DESC="${VERSION}${PATCH}" ;;
+	    ${VERSION}${PATCH}*)  COMMIT_DESC="${VERSION}${PATCH}" ;;
+	    # Version but not patch in COMMIT_DESC, just use it (it is a
+	    # develoment release).
+	    v${VERSION}*)
+		# (remove 'v' from the string)
+		COMMIT_DESC="`portable_substr "${COMMIT_DESC}" 1 ${#COMMIT_DESC}`"
+		;;
+	    ${VERSION}*)  true ;;
+	    # No version info in commit desc, just append it (also a
+	    # development release).
+	    *) COMMIT_DESC="${VERSION}-${COMMIT_DESC}" ;;
+	esac
     else
-	REVISION="${REVISIONBASE}"
+	COMMIT_BRANCH=""
+	COMMIT_ID=""
+	COMMIT_DATE=""
+	COMMIT_DESC=""
+    fi
+
+    # Finally, get from file if empty
+    if test x"${COMMIT_BRANCH}" = x""; then
+	if test -f "${CIAOBUILDDIR}/COMMIT_BRANCH"; then \
+	    COMMIT_BRANCH=`cat "${CIAOBUILDDIR}/COMMIT_BRANCH"`
+	else
+	    COMMIT_BRANCH="0"
+	fi
+    fi
+    if test x"${COMMIT_ID}" = x""; then
+	if test -f "${CIAOBUILDDIR}/COMMIT_ID"; then \
+	    COMMIT_ID=`cat "${CIAOBUILDDIR}/COMMIT_ID"`
+	else
+	    COMMIT_ID="0"
+	fi
+    fi
+    if test x"${COMMIT_DATE}" = x""; then
+	if test -f "${CIAOBUILDDIR}/COMMIT_DATE"; then \
+	    COMMIT_DATE=`cat "${CIAOBUILDDIR}/COMMIT_DATE"`
+	else
+	    COMMIT_DATE="0"
+	fi
+    fi
+    if test x"${COMMIT_DESC}" = x""; then
+	if test -f "${CIAOBUILDDIR}/COMMIT_DESC"; then \
+	    COMMIT_DESC=`cat "${CIAOBUILDDIR}/COMMIT_DESC"`
+	else
+	    COMMIT_DESC="0"
+	fi
+    fi
+    set -e
+}
+
+# The expression ${V:Offset:Len} is a bashism. Try 'awk' when available.
+portable_substr() { # STRING OFFSET LEN
+    local STRING
+    local OFFSET
+    local LEN
+    STRING="${1}"
+    OFFSET=${2}
+    LEN=${3}
+    if which awk > /dev/null 2>&1; then
+	echo ${STRING} | awk -v offset=${OFFSET} -v len=${LEN} '{ string=substr($0, offset+1, len); print string; }'
+    else
+	echo "${STRING:${OFFSET}:${LEN}}"
     fi
 }
 

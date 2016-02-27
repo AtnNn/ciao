@@ -320,7 +320,7 @@ rpm_options := ~append([
 % need to list here the ones that the user explicitly sets. If the same option
 % appears more than once, the first occurence will take precedence.
 
-gen_pbundle__rpm <- [] # % [~pbundle_name(tgz)] #
+gen_pbundle__rpm <- [] # % [~pbundle_packname_absfile(tgz)] #
 	"Generate RPM packages. A source distribution is generated if missing."
 	:-
 	gen_pbundle__rpm(~rpm_options).
@@ -337,14 +337,15 @@ svn_rpm <- [] #
 % TODO: necessary target?
 gen_pbundle__rpm_spec <- [] #
 	"Generate a RPM specification for regular packages." :-
-	create_ciaode_spec.
+	Bundle = ~bundle_wholesystem,
+	create_rpm_spec(Bundle).
 
-:- pred versioned_packagename(BundleName, PackageName) #
-   "@var{PackageName}, is the versioned RPM package name for
+:- pred versioned_packagename(BundleName, PackName) #
+   "@var{PackName}, is the versioned RPM package name for
    @apl{Ciao}'s bundle @var{BundleName}.".
 
 versioned_packagename(BundleName, PName) :-
-	atom_concat([BundleName, '-v', ~bundle_version(BundleName)], PName).
+	atom_concat([~bundle_packname(BundleName), '-v', ~bundle_version(BundleName)], PName).
 
 :- doc(bug, "To speed up the process, we create the rpm from a
 	precompiled bin distribution.").
@@ -359,40 +360,26 @@ versioned_packagename(BundleName, PName) :-
 %	option(@var{Macro},@var{Value})).
 
 gen_pbundle__rpm(GenerationOptions) :-
-	create_ciaode_spec,
+	Bundle = ~bundle_wholesystem,
+	create_rpm_spec(Bundle),
 	%
 	SpecFileName = 'CiaoDE.spec',
 	%
-	PackageNameVersion = ~bundle_packname_version_patch_rev(~bundle_wholesystem),
-	bold_message("Creating RPM package ~w, please be patient ...", [PackageNameVersion]),
+	VersionedPackName = ~bundle_versioned_packname(Bundle),
+	bold_message("Creating RPM package for ~w, please be patient ...", [VersionedPackName]),
 	pbundle_output_dir(OutputDirName),
 	rpm_prevailingoptions(GenerationOptions, RpmbuildOptions),
 	rpmbuild_setoptions(RpmbuildOptions, RpmbuildSuffix),
 	do([~fsR(~lpdist_dir/'rpm'/'RPM-CiaoDE.sh'), ' ', OutputDirName, '/ ',
-		~bundle_packname_version_patch_rev(~bundle_wholesystem), '-bin-', ~get_platform, ' ',
+		~bundle_versioned_packname(Bundle), '-bin-', ~get_platform, ' ',
 		SpecFileName, RpmbuildSuffix], [nofail]),
 	create_pbundle_output_dir,
 	rpm_macrovalue('_arch',   Arch),
 	rpm_macrovalue('_rpmdir', RpmDir),
  	% TODO: generalize, use fsR
-	atom_concat([RpmDir, '/', Arch, '/', 'CiaoDE', '-',
-		~bundle_version_patch(ciaode), '-', ~bundle_svn_revatm,
-		'.', Arch, '.rpm'], CiaoDERpmFileName),
-	bundle_svn_revatm(SvnRevisionAtom),
+	atom_concat([RpmDir, '/', Arch, '/', ~rpm_file_name(Bundle, ~bundle_packname(Bundle), Arch)], CiaoDERpmFileName),
 	%
-	findall(BundleRpmFileName,
-	    (
-		registered_bundle(Bundle),
-		( member(option('versionp', 'yes'), RpmbuildOptions) ->
-		    versioned_packagename(Bundle, Ciaoname)
-		; Ciaoname = Bundle
-		),
-		bundle_version_patch(Bundle, BundleVersion),
- 		% TODO: refactor
-		atom_concat([RpmDir, '/', Arch, '/', Ciaoname, '-',
-			BundleVersion, '-', SvnRevisionAtom,
-			'.', Arch, '.rpm'], BundleRpmFileName)
-	    ), RpmFileNames),
+	findall(BundleRpmFileName, bundle_rpm_file_names(RpmDir, Arch, RpmbuildOptions, BundleRpmFileName), RpmFileNames),
 	%
 	( member(option('subpackages', 'no'), RpmbuildOptions) ->
 	    copy_file(CiaoDERpmFileName, OutputDirName, [overwrite])
@@ -404,32 +391,42 @@ gen_pbundle__rpm(GenerationOptions) :-
 	;
 	    true
 	),
- 	del_file_nofail(~fsR(concat_k(ext('.tar.gz'), OutputDirName/PackageNameVersion))),
+ 	del_file_nofail(~fsR(concat_k(ext('.tar.gz'), OutputDirName/VersionedPackName))),
 	del_file_nofail(CiaoDERpmFileName),
 	( member(option('subpackages', 'yes'), RpmbuildOptions) ->
 	    del_files_nofail(RpmFileNames)
 	; true
 	).
 
+% (nondet)
+bundle_rpm_file_names(RpmDir, Arch, RpmbuildOptions, BundleRpmFileName) :-
+	registered_bundle(Bundle),
+	( member(option('versionp', 'yes'), RpmbuildOptions) ->
+	    versioned_packagename(Bundle, Ciaoname) % TODO: Probably wrong
+	; Ciaoname = ~bundle_packname(Bundle)
+	),
+	% TODO: refactor
+	atom_concat([RpmDir, '/', Arch, '/', ~rpm_file_name(Bundle, Ciaoname, Arch)], BundleRpmFileName).
+
 :- doc(bug, "For now, release is equal to the svn revision number,
 	that is done only to allow generating the rpm now, but when 
 	version numbers are clarified, this should be reconsidered.").
 
-bundle_version_names :=
-	~flatten(~findall(S, bundle_version_name(S))).
+bundle_versioned_names :=
+	~flatten(~findall(S, bundle_versioned_name(S))).
 
-bundle_version_name(BundleVersionName) :-
+bundle_versioned_name(BundleVersionName) :-
 	registered_bundle(Bundle),
-	atom_codes(Bundle,        BundleS),
+	atom_codes(Bundle, BundleS),
 	atom_codes(~bundle_version(Bundle), BundleVersion),
 	BundleVersionName = [
           "%define "||BundleS,"name "||
           BundleS, "-v"||BundleVersion,"\n"
         ].
 
-bundle_names := ~flatten(~findall(S, bundle_name(S))).
+bundle_name_defs := ~flatten(~findall(S, bundle_name_def(S))).
 
-bundle_name(BundleName) :-
+bundle_name_def(BundleName) :-
 	registered_bundle(Bundle),
 	atom_codes(Bundle, BundleS),
 	BundleName = [
@@ -482,21 +479,23 @@ bundle_file(BundleFile) :-
 	  "%{_libdir}/"||BundleS,"/"||BundleS,"-"||BundlePathVersion,"\n",
           "%{ciaodocdir}/"||BundleS,"-"||BundleVersion,".pdf\n"].
 
-:- pred create_ciaode_spec # "Generate RPM specification file.".
-create_ciaode_spec :-
+:- pred create_rpm_spec/1 # "Generate RPM specification file.".
+create_rpm_spec(Bundle) :-
+	% TODO: CiaoDE.spec is hardwired
+        get_rpm_version_and_release(Bundle, Version, Release),
 	wr_template(cwd, ~lpdist_dir/'rpm', 'CiaoDE.spec', [
-	    'Version' = ~bundle_version_patch(ciaode),
-	    'Release' = ~bundle_svn_revatm,
-	    'PackageNameVersion' = ~bundle_packname_version_patch_rev(~bundle_wholesystem),
+	    'Version' = Version,
+	    'Release' = Release,
+	    'VersionedPackName' = ~bundle_versioned_packname(Bundle),
 	    'OsArch' = ~get_platform,
 	    'BundleMoveManVersions' = ~bundle_move_man_versions,
 	    'BundleMoveMans' = ~bundle_move_mans,
 	    'BundleIntegrateInfoindexes' = "",
 	    'BundleInstallInfoCmds' = ~bundle_install_info_cmds(""),
 	    'BundleInstallInfoCmdsRemove' = ~bundle_install_info_cmds("--remove"),
-	    'BundleVersionNames' = ~bundle_version_names,
+	    'BundleVersionedNames' = ~bundle_versioned_names,
 	    'BundleFiles' = ~bundle_files,
-	    'BundleNames' = ~bundle_names
+	    'BundleNames' = ~bundle_name_defs
 	|~bundle_vars]).
 
 % Other keys to be filled in CiaoDE.spec
@@ -617,6 +616,32 @@ ciaorpm_mapvalue('rpm_expression', 'no',  '0').
 rpm_option_or_default(OptName, _, option(OptName, OptValue)) :-
 	name_value(OptName, OptValue), !.
 rpm_option_or_default(OptName, DefValue, option(OptName, DefValue)).
+
+% ===========================================================================
+% Naming conventions for RPM files
+
+rpm_file_name(Bundle, Packname, Arch) := RpmFileName :-
+	get_rpm_version_and_release(Bundle, Version, Release),
+	RpmFileName = ~atom_concat([Packname, '-', Version, '-', Release, '.', Arch, '.rpm']).
+
+% Extract the version and release numbers from commit desc
+% (usually version and patch)
+% TODO: Move as part of bundle info!
+get_rpm_version_and_release(Bundle, Version, Release) :-
+        Version = ~bundle_version(Bundle),
+        Desc = ~bundle_commit_info(Bundle, desc),
+        ( atom_concat([Version, '-', Release0], Desc) ->
+            % Replace '-' in release number (necessary for RPM)
+            atom_codes(Release0, Release1),
+            replace_char(Release1, 0'-, 0'., Release2),
+            atom_codes(Release, Release2)
+        ; % just in case the previous fails (it should not)
+          Release = ~bundle_patch(Bundle)
+        ).
+
+replace_char([], _, _, []).
+replace_char([A|As], A, B, [B|Bs]) :- !, replace_char(As, A, B, Bs).
+replace_char([X|As], A, B, [X|Bs]) :- replace_char(As, A, B, Bs).
 
 % ===========================================================================
 

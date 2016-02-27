@@ -151,7 +151,8 @@ package_pkg(DestPath, TmpDir, PPath, WorkPath, Name, Version, PName) :-
 %	DescriptionFile = ~atom_concat(WorkPath, '/Description.plist'),
 	ResourcesPath = ~fsR(TmpDir/'pkg_resources'/'English.lproj'),
 	ScriptsDir = ~fsR(TmpDir/'Scripts'),
- 	PName = ~fsR(concat_k(ext('.pkg'), PPath/(~bundle_packname_version_patch_rev(~bundle_wholesystem)))),
+	Bundle = ~bundle_wholesystem,
+ 	PName = ~fsR(concat_k(ext('.pkg'), PPath/(~bundle_versioned_packname(Bundle)))),
 	%
 	mkdir_perm(ResourcesPath, ~perms),
 	write_welcome_html(ResourcesPath, Name, Version),
@@ -178,12 +179,12 @@ package_pkg(DestPath, TmpDir, PPath, WorkPath, Name, Version, PName) :-
 	    ], []).
 
 package_dmg(PPath, List) :-
+	Bundle = ~bundle_wholesystem,
 	bold_message("Generating the dmg image"),
- 	DmgName = ~fsR(concat_k(ext('.dmg'), PPath/(~bundle_packname_version_patch_rev(~bundle_wholesystem)))),
+ 	DmgName = ~fsR(concat_k(ext('.dmg'), PPath/(~bundle_versioned_packname(Bundle)))),
 	bold_message("Wrapping the package into a dmg image"),
 	process_list_for_src(List, Tail),
-	do([~hdiutil, ' create ', DmgName, ' -volname ', ~bundle_packname_version_patch_rev(~bundle_wholesystem)
-		|Tail], []).
+	do([~hdiutil, ' create ', DmgName, ' -volname ', ~bundle_versioned_packname(Bundle)|Tail], []).
 
 process_list_for_src([],     []).
 process_list_for_src([H|T1], [' -srcfolder "', H, '"'|T2]) :-
@@ -193,16 +194,15 @@ generate_uninstaller(DestDir, Path) :-
 	bold_message("Generating bash script for uninstallation"),
 	reallib_dir(RealLibDir),
 	lib_dir(LibDir),
-
+	%
  	Path = ~fsR(LibDir/'uninstall_ciao'),
- 
-
+	%
 	do_str(['(cd ', DestDir, ' ; ', 'find */* | sort -r)'], fail, StrFiles),
 	add_prefix_suffix(StrFiles, "rm -fd ", " || true", StrFiles_),
-
+	%
 	do_str(['(cd ', DestDir, ' ; ', 'find ', ~infodir_local, ' -name \'*.info\')'], StrInfo ="", StrInfo),
 	add_prefix_suffix(StrInfo, "my_uninstall_info ", "", StrInfo_),
-
+	%
 	generate_bash_script(DestDir, Path, "
 my_uninstall_info () {
 	 install-info --delete --info-dir=`dirname $1` $1 || true		   
@@ -289,24 +289,30 @@ applescript_editor(X) :-
 	    X = "Script Editor"
 	).
 
-gen_pbundle__macport <- [~pbundle_name(tgz)] #
+gen_pbundle__macport <- [~pbundle_packname_absfile(tgz)] #
   "Generate MacPorts @tt{Portfile}. The source distribution is generated if missing."
 	:-
 	generate_portfile.
 
 :- pred generate_portfile # "Generates MacPorts @tt{Portfile}".
 generate_portfile :-
-	PackageNameVersion = ~atom_codes(~bundle_packname_version_patch_rev(~bundle_wholesystem)),
-	Rev = ~atom_codes(~bundle_svn_revatm),
- 	% TODO: Define a predicate pbundle_url for this
-	MasterURL = ~append([~home_url_str, ~packages_dir_str, Rev, "/", PackageNameVersion]),
+	Bundle = ~bundle_wholesystem,
 	wr_template(at(~pbundle_output_dir), ~lpdist_dir/'mac', 'Portfile', [
             'Version' = ~bundle_version_patch(ciaode),
-            'PackageNameVersion' = PackageNameVersion,
+            'VersionedPackName' = ~atom_codes(~bundle_versioned_packname(Bundle)),
             'HomeURL' = ~home_url_str,
-            'MasterURL' = MasterURL,
-	    'MD5CheckSum' = ~md5sum(~pbundle_name(tgz))
+            'MasterURL' = ~master_url_str,
+	    'MD5CheckSum' = ~md5sum(~pbundle_packname_absfile(tgz))
         ]).
+
+% TODO: See macports documentation for explanation (check that this is correct)
+% TODO: Define a predicate pbundle_url for this, connect with ciaobot code
+master_url_str := MasterURL :-
+	Bundle = ~bundle_wholesystem,
+	VersionedPackName = ~atom_codes(~bundle_versioned_packname(Bundle)),
+	Rev = ~atom_codes(~bundle_commit_info(Bundle, id)),
+ 	% TODO: Define a predicate pbundle_url for this, connect with ciaobot code
+	MasterURL = ~append([~home_url_str, ~packages_dir_str, Rev, "/", VersionedPackName]).
 
 write_xml_header(Str) :-
 	format(Str, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -504,6 +510,8 @@ gen_pbundle__app <- [gen_pbundle__descfile] :-
 	gen_pbundle__app.
 
 gen_pbundle__app :-
+	Bundle = ~bundle_wholesystem,
+	% Note: MacOS bundle IS NOT a Ciao bundle
 	bolder_message("creating MacOS bundle"),
 	%
 	Domain = "es.upm.fi.dia.clip.ciaode",
@@ -513,8 +521,8 @@ gen_pbundle__app :-
 	PackDir = ~pbundle_output_dir,
 	TmpDir = ~make_temp_dir,
 	%
-	BundlePath = ~fsR(TmpDir/'CiaoDE.app'),
-	ResourcesDir = ~fsR(BundlePath/'Contents'/'Resources'),
+	AppBundlePath = ~fsR(TmpDir/'CiaoDE.app'),
+	ResourcesDir = ~fsR(AppBundlePath/'Contents'/'Resources'),
 	%
 	set_name_value(emacs_type, 'MacOSBundle'),
  	% TODO: the emacs mode could be a bundle on its own in the future
@@ -522,7 +530,7 @@ gen_pbundle__app :-
 	del_name_value(emacs_type),
 	%
 	wr_template(origin, ~lpdist_dir/'mac', 'CiaoDE.applescript', [
-	    'VERSION' = ~bundle_packname_version_patch_rev(~bundle_wholesystem),
+	    'VERSION' = ~bundle_versioned_packname(Bundle),
 	    'REALLIBDIR' = RealLibDir,
 	    'CIAOENGINE' = CiaoEngine,
 	    'BINDIR' = BinDir,
@@ -530,12 +538,12 @@ gen_pbundle__app :-
         ]),
 	%
 	do([~osacompile, ' -ai386',
-	    ' -o "', BundlePath, '"',
+	    ' -o "', AppBundlePath, '"',
 	    ' "', ~fsR(~lpdist_dir/'mac'/'CiaoDE.applescript'), '"'
 	   ], []),
 	%
 	wr_template(at(TmpDir/'CiaoDE.app'/'Contents'), ~lpdist_dir/'mac', 'Info.plist', [
-	    'VERSION' = ~bundle_packname_version_patch_rev(~bundle_wholesystem),
+	    'VERSION' = ~bundle_versioned_packname(Bundle),
 	    'DOMAIN' = Domain
 	]),
 	%
@@ -563,8 +571,8 @@ gen_pbundle__app :-
 	sample_program_text(Str),
 	close_output(OStr),
 	%
-	package_dmg(PackDir, [BundlePath]),
-	do(['mv "', BundlePath, '" ', PackDir], []),
+	package_dmg(PackDir, [AppBundlePath]),
+	do(['mv "', AppBundlePath, '" ', PackDir], []),
 %	do(['rm -rf ', TmpDir],                 []), 
 	true.
 

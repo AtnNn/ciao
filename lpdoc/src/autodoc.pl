@@ -425,7 +425,7 @@ infodir_version(Version, VersionR) :-
 % ---------------------------------------------------------------------------
 
 :- doc(subsection, "Version Extraction").
-% TODO: Merge with library/lpdist/bundle_versions.pl
+% TODO: Merge with library/lpdist/ciao_bundle_db.pl
 % TODO: This could be extended to extract version info other revision
 %       control system (such as SVN, GIT, Hg)
 

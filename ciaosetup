@@ -334,7 +334,7 @@ Querying Bundles:
 
   show_bundles          Show all available bundles
 
-  gen_bundle_revision   Generates the REVISION file (from SVN)
+  gen_bundle_commit_info [internal]
 
 Generation of Packaged Bundles (pbundle):
 
@@ -925,10 +925,11 @@ do__gen_pbundle() {
     esac
 }
 
-register_command "gen_bundle_revision"
-do__gen_bundle_revision() {
+register_command "gen_bundle_commit_info"
+do__gen_bundle_commit_info() {
     ensure_bootstrap_settings
-    bootlpmake gen_bundle_revision
+    get_install_options "$@"
+    bootlpmake gen_bundle_commit_info
 }
 
 register_command "gen_pbundle__descfile"
@@ -1004,8 +1005,6 @@ EXECMODE=775
 DATAMODE=664
 DEBUG_LEVEL=install
 INSTALLGROUP=
-# Assume that svnversion is not available
-HAVE_SVNVERSION=no
 #
 CIAODESRC=${CIAODESRC}
 REALLIBDIR=${CIAODESRC}/ciao

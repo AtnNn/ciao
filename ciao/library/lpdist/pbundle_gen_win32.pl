@@ -34,7 +34,9 @@
 
 iscc := '/cygdrive/c/Program\\ Files/Inno\\ Setup\\ 5/iscc.exe'.
 
-default_dir_name := ~atom_codes(~bundle_packname(~bundle_wholesystem)).
+default_dir_name := D :-
+	Bundle = ~bundle_wholesystem,
+	D = ~atom_codes(~bundle_packname(Bundle)).
 
 gen_pbundle__win32 <- :- gen_pbundle__win32.
 
@@ -46,23 +48,24 @@ gen_pbundle__win32 :-
 	gen_pbundle__win32_.
 
 gen_pbundle__win32_ :-
+	Bundle = ~bundle_wholesystem,
 	FileIss = 'CiaoDE.iss',
-	simple_message("Creating Windows installer ~w, please be patient... ",
-	    [~bundle_packname_version_patch_rev(~bundle_wholesystem)]),
+	simple_message("Creating Windows installer for ~w, please be patient... ",
+	    [~bundle_versioned_packname(Bundle)]),
 	do([~iscc, ' ', FileIss], ~command_option),
 	create_pbundle_output_dir.
 
 % TODO: too many definitions here are hardwired
 create_iss_file(FileListName) :-
-	OutputBaseFileName = ~atom_codes(~bundle_packname_version_patch_rev(~bundle_wholesystem)),
-	%
-	BundleVersion = ~atom_codes(~bundle_version_patch(~bundle_wholesystem)),
-	RevStr = ~bundle_svn_revstr,
-	Version = ~flatten([BundleVersion, " (r" || RevStr, ")"]),
+	Bundle = ~bundle_wholesystem,
+	OutputBaseFileName = ~atom_codes(~bundle_versioned_packname(Bundle)),
+	% TODO: see PrettyCommitDesc in pbundle_download.pl
+	CommitId = ~bundle_commit_info(Bundle, id),
+	AppVerName = ~atom_codes(~atom_concat(['Ciao-', ~bundle_version_patch(Bundle), ' (', CommitId, ')'])),
 	%
 	wr_template(cwd, ~lpdist_dir/'win32', 'CiaoDE.iss', [
 	    'MyAppName' = "Ciao",
-	    'MyAppVerName' = "Ciao"||Version,
+	    'MyAppVerName' = AppVerName,
 	    'OutputBaseFileName' = OutputBaseFileName,
 	    'MyAppPublisher' = "The CLIP Laboratory",
 	    'LicenseFile' = ~license_file,
@@ -77,14 +80,18 @@ create_iss_file(FileListName) :-
 	]).
 
 get_manual_icons(S) :-
-	findall(["Name: {group}\\" || SPackName,
-		 " Manual in PDF; Filename: {app}\\build\\doc\\" || SVersionMain,
-		 ".pdf; WorkingDir: {app}\\build\\doc\n"],
-	    ( registered_bundle(Bundle), bundle_name_version_patch(Bundle, VersionMain),
-		bundle_packname(Bundle, PackName),
-		atom_codes(PackName,    SPackName),
-		atom_codes(VersionMain, SVersionMain) ), L),
+	findall(Str, get_manual_icons_(Str), L),
 	flatten(L, S).
+
+get_manual_icons_(Str) :-
+	registered_bundle(Bundle),
+	%
+	DocFormat = pdf,
+	PackName = ~bundle_packname(Bundle),
+	FileMain = ~atom_concat([~bundle_manual_base(Bundle), '.', DocFormat]),
+	Str = ["Name: {group}\\" || (~atom_codes(PackName)), " Manual in PDF; ",
+	       "Filename: {app}\\build\\doc\\" || (~atom_codes(FileMain)), "; ",
+	       "WorkingDir: {app}\\build\\doc\n"].
 
 % Compute the list of files that will be included in the ISS file
 file_list_iss(FileName) :-
@@ -197,17 +204,17 @@ extract_filepath(FullName, PathSeparator, Path) :-
 % % TODO: this target is probably not necessary
 % gen_pbundle__win32_test <- :-
 % 	ciaode_iss('CiaoDE_test.iss', 'file_list_test.iss',
-% 	    ~atom_codes(~bundle_packname_version_patch_rev(~bundle_wholesystem))),
+% 	    ~atom_codes(~bundle_versioned_packname(~bundle_wholesystem))),
 % 	file_list_test_iss('file_list_test.iss'),
 % 	gen_pbundle__win32_test.
 
 % TODO: targets that are not necessary
 % 'CiaoDE.iss' <- ['makedir/CiaoDE.iss.skel'] :: FileName :-
-% 	OutputBaseFileName = ~atom_codes(~bundle_packname_version_patch_rev(~bundle_wholesystem)),
+% 	OutputBaseFileName = ~atom_codes(~bundle_versioned_packname(~bundle_wholesystem)),
 % 	ciaode_iss(FileName, 'file_list.iss', OutputBaseFileName).
 % 
 % 'CiaoDE_test.iss' <- ['makedir/CiaoDE.iss.skel'] :: FileName :-
-% 	OutputBaseFileName = ~append(~atom_codes(~bundle_packname_version_patch_rev(~bundle_wholesystem)),
+% 	OutputBaseFileName = ~append(~atom_codes(~bundle_versioned_packname(~bundle_wholesystem)),
 % 	    "-test"),
 % 	ciaode_iss(FileName, 'file_list_test.iss', OutputBaseFileName).
 % 

@@ -1764,13 +1764,16 @@ bool_t prolog_get_eng_location(Arg)
   return cunify(Arg, MakeString(emulator_location), X(0));
 }
 
-
-extern char * ciao_version;
-extern char * ciao_patch;
-extern char * ciao_revision;
+extern char *ciao_version;
+extern char *ciao_patch;
+extern char *ciao_commit_branch;
+extern char *ciao_commit_id;
+extern char *ciao_commit_date;
+extern char *ciao_commit_desc;
 
 /*
- *  $ciao_version(?Version,?Patch,?Revision) for current_prolog_flag(version,?V).
+ *  $ciao_version(?Version,?Patch,?CommitBranch,?CommitId,?CommitDate,?CommitDesc) 
+ *    for current_prolog_flag(version,?V).
  */
 bool_t prolog_version(Arg)
      Argdecl;
@@ -1778,10 +1781,15 @@ bool_t prolog_version(Arg)
   DEREF(X(0),X(0));
   DEREF(X(1),X(1));
   DEREF(X(2),X(2));
-  return
-      cunify(Arg, MakeString(ciao_version),  X(0))
-    & cunify(Arg, MakeString(ciao_patch),    X(1))
-    & cunify(Arg, MakeString(ciao_revision), X(2));
+  DEREF(X(3),X(3));
+  DEREF(X(4),X(4));
+  DEREF(X(5),X(5));
+  return (cunify(Arg, MakeString(ciao_version),  X(0)) &&
+	  cunify(Arg, MakeString(ciao_patch),    X(1)) &&
+	  cunify(Arg, MakeString(ciao_commit_branch), X(2)) &&
+	  cunify(Arg, MakeString(ciao_commit_id), X(3)) &&
+	  cunify(Arg, MakeString(ciao_commit_date), X(4)) &&
+	  cunify(Arg, MakeString(ciao_commit_desc), X(5)));
 }
 
 extern char *ciao_suffix;

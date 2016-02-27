@@ -206,13 +206,12 @@ quiet_mode(warning).
 quiet_mode(debug).
 quiet_mode(off).
 
-:- export('$ciao_version'/3).
-:- trust pred '$ciao_version'(Version, Patch, Revision) =>
-	(atm(Version), atm(Patch), atm(Revision)).
-:- impl_defined('$ciao_version'/3).
-
-:- export('$ciao_revision'/1).
-:- impl_defined('$ciao_revision'/1).
+:- export('$ciao_version'/6).
+:- trust pred '$ciao_version'(Version, Patch,
+	                      CommitBranch, CommitId, CommitDate, CommitDesc) =>
+	(atm(Version), atm(Patch),
+	 atm(CommitBranch), atm(CommitId), atm(CommitDate), atm(CommitDesc)).
+:- impl_defined('$ciao_version'/6).
 
 % :- export('$prolog_radix'/2).
 % :- impl_defined('$prolog_radix'/2).

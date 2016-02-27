@@ -1170,11 +1170,11 @@ get_app_for_emacs_(EmacsType, App, Bundle, Kind, AppShell) :-
 	AppShell = ~flatten(["(concat ciao-bin-dir \"/", ~atom_codes(App2), "\")"]).
 
 % Avoid failure if the bundle is not there
-get_bundle_name_version_patch_for_emacs(Bundle, NameVersion):-
+get_bundle_manual_base_for_emacs(Bundle, NameVersion):-
 	registered_bundle(Bundle),
-	bundle_name_version_patch(Bundle, NameVersion), 
+	bundle_manual_base(Bundle, NameVersion), 
 	!.
-get_bundle_name_version_patch_for_emacs(Bundle, Bundle).
+get_bundle_manual_base_for_emacs(Bundle, Bundle).
 
 % ---------------------------------------------------------------------------
 % Generate ciao-config.el from ciao-config.el.skel
@@ -1196,9 +1196,9 @@ generate_emacs_config :-
 	    'LPDOCDIR' = ~get_dir_for_emacs(EmacsType, ~docdir),
 	    'LPDOCLIBDIR' = ~get_dir_for_emacs(EmacsType, ~my_lpdoclib_dir),
 	    % Manuals
-            'CIAO_NAME_VERSION' = ~get_bundle_name_version_patch_for_emacs('ciao'),
-            'CIAOPP_NAME_VERSION' = ~get_bundle_name_version_patch_for_emacs('ciaopp'),
-            'LPDOC_NAME_VERSION' = ~get_bundle_name_version_patch_for_emacs('lpdoc'),
+            'CIAO_MANUAL_BASE' = ~get_bundle_manual_base_for_emacs('ciao'),
+            'CIAOPP_MANUAL_BASE' = ~get_bundle_manual_base_for_emacs('ciaopp'),
+            'LPDOC_MANUAL_BASE' = ~get_bundle_manual_base_for_emacs('lpdoc'),
 	    % Binaries
 	    'PLINDENT' = ~get_app_for_emacs(EmacsType, 'plindent', ciao, plexe),
 	    'CIAOSHELL' = ~get_app_for_emacs(EmacsType, 'ciao', ciao, script),

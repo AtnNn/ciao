@@ -2,6 +2,7 @@
 
 :- doc(title,  "Common Definitions for Installer Generation").
 :- doc(author, "Edison Mera").
+:- doc(author, "Jose F. Morales").
 :- doc(module, "This file is part of the CiaoDE installation system.").
 
 :- use_module(library(aggregates)).
@@ -10,10 +11,8 @@
 :- use_module(library(system)).
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(system_extra)).
-:- use_module(library(file_utils), [output_to_file/2]).
 
 :- use_module(library(lpdist(pbundle_generator))).
-:- use_module(library(lpdist(svn_tools))).
 :- use_module(library(lpdist(ciao_bundle_db))).
 :- use_module(library(lpdist(ciao_config_db))).
 :- use_module(library(lpdist(ciao_config_options)), [perms/1]).
@@ -29,23 +28,7 @@ lpdist_dir := bundle_src(ciao)/'library'/'lpdist'.
 
 % TODO: Generalize this part for any bundle
 
-% TODO: See library/lpdist/pbundle_versions.pl
-pbundle_name := ~bundle_packname(~bundle_wholesystem).
-pbundle_name_version := ~bundle_packname_version_patch_rev(~bundle_wholesystem).
-pbundle_version := ~atom_concat('-', ~bundle_version_patch_rev(~bundle_wholesystem)).
-pbundle_version_nice :=
-	~atom_concat([~bundle_version_patch(~bundle_wholesystem),
-	              ' (r', ~bundle_svn_revatm, ')']).
-
 :- include(ciaosrc(makedir(platdep_modules))).
-
-pbundle_codeitem_kind := tgz|rpm_x86|deb_x86|win|dmg.
-% TODO: Extract from the sub-bundles!
-pbundle_docitem_kind := 
-    docpart("Ciao Manual", ciao, [html, pdf])|
-    docpart("CiaoPP Manual", ciaopp, [html, pdf])|
-    docpart("LPdoc Manual", lpdoc, [html, pdf]).
-% TODO: Missing some internal manuals, add them.
 
 % ===========================================================================
 
@@ -66,19 +49,20 @@ create_pbundle_output_dir :-
 	string_to_file("", ~fsR(TargetDir/'NODISTRIBUTE')).
 
 :- export(gen_pbundle__common/2).
-gen_pbundle__common(PackageType, Descs) :-
-	SourceDir = ~atom_concat(~fsR(bundle_src(ciaode)), '/'),
+gen_pbundle__common(PackType, Descs) :-
+	Bundle = ~bundle_wholesystem,
+	SourceDir = ~atom_concat(~fsR(bundle_src(Bundle)), '/'),
 	create_pbundle_output_dir,
 	TargetDir = ~pbundle_output_dir,
-	pbundle_name_version(PackageNameVersion),
-	exclude_files(PackageType, ExcludeFiles),
-	bold_message("Creating ~w tarball ~w ~w, please be patient ...",
-	    [PackageType, PackageNameVersion, Descs]),
+	VersionedPackName = ~bundle_versioned_packname(Bundle),
+	exclude_files(PackType, ExcludeFiles),
+	bold_message("Creating ~w tarball for ~w ~w, please be patient ...",
+	    [PackType, VersionedPackName, Descs]),
 	TargetDir2 = ~atom_concat(TargetDir, '/'), % TODO: remove '/'
-	build_pbundle_codeitem_contents(PackageType, SourceDir, TargetDir2,
-	    PackageNameVersion, ExcludeFiles, FileList),
+	build_pbundle_codeitem_contents(PackType, SourceDir, TargetDir2,
+	    VersionedPackName, ExcludeFiles, FileList),
 	list(Descs, build_pbundle_codeitem(SourceDir, TargetDir2,
-		PackageNameVersion, PackageType, FileList)).
+		VersionedPackName, PackType, FileList)).
 
 % Note: 'build' directory is not fully excluded (see skip_dist_dirs/2)
 % TODO: obtain this list from other place, or write those files in build/config?
@@ -95,7 +79,7 @@ exclude_file(noa, File) :-
 % TODO: query the compiler for that
 exclude_ext := '.po'|'.itf'|'.asr'|'.ast'.
 
-exclude_files(PackageType) := ~findall(File, exclude_file(PackageType, File)).
+exclude_files(PackType) := ~findall(File, exclude_file(PackType, File)).
 
 % TODO: Used from the compile farm (SHARED file)
 gen_pbundle__descfile <- :- gen_pbundle__descfile.
@@ -103,19 +87,9 @@ gen_pbundle__descfile <- :- gen_pbundle__descfile.
 :- export(gen_pbundle__descfile/0).
 % Generate the desc.tmpl file (see pbundle_meta)
 gen_pbundle__descfile :-
-	pbundle_name(PackageName),
-	pbundle_name_version(PackageNameVersion),
-	pbundle_version(PackageVersion),
-	pbundle_version_nice(PackageVersionNice),
-	bundle_svn_repository(SvnRepository),
-	bundle_svn_revstr(PackageRevision),
-	svn_revision_time(SvnRepository, PackageRevision, PackageSvnTime),
-	%
+	Bundle = ~bundle_wholesystem,
 	TargetDir = ~pbundle_output_dir,
 	mkdir_perm(TargetDir, ~perms),
 	DescFile = ~fsR(TargetDir/'desc.tmpl'),
-	output_to_file(pbundle_generate_meta(PackageName,
-		PackageNameVersion, PackageVersion, PackageVersionNice,
-		PackageSvnTime, pbundle_codeitem_kind, pbundle_docitem_kind),
-	    DescFile).
+	pbundle_generate_meta(Bundle, DescFile).
 

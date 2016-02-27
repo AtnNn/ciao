@@ -1,5 +1,5 @@
-#!/bin/sh
-exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
+#!/usr/bin/env ciao-shell
+% -*- mode: ciao; -*-
 
 main(_) :- 
 	write('Hello world!'), nl, nl,

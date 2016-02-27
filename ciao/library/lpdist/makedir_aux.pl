@@ -203,11 +203,10 @@ prepare_doc_dirs :-
 
 :- export(bundle_install_docs/1).
 bundle_install_docs(Bundle) :-
-	bundle_name_version_patch(Bundle, VPBundle),
 	( % (failure-driven loop)
 	  docformat(DocFormat),
 	    docformatdir(DocFormat, TargetDir),
-	    FileName = ~atom_concat([VPBundle, '.', DocFormat]),
+	    FileName = ~atom_concat([~bundle_manual_base(Bundle), '.', DocFormat]),
 	    Source = ~fsR(~build_doc_dir/(FileName)),
 	    ( file_exists(Source) ->
 		Target = ~atom_concat(TargetDir, FileName),
@@ -226,11 +225,10 @@ bundle_install_docs(Bundle) :-
 
 :- export(bundle_uninstall_docs/1).
 bundle_uninstall_docs(Bundle) :-
-	bundle_name_version_patch(Bundle, VPBundle),
 	( % (failure-driven loop)
 	  docformat(DocFormat),
 	    docformatdir(DocFormat, TargetDir),
-	    FileName = ~atom_concat([VPBundle, '.', DocFormat]),
+	    FileName = ~atom_concat([~bundle_manual_base(Bundle), '.', DocFormat]),
 	    Target = ~atom_concat(TargetDir, FileName),
 	    bundle_uninstall_docs_hook(DocFormat, Target),
 	    delete_dir_rec(Target),

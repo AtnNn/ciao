@@ -24,8 +24,10 @@
 @begin{description}
 
 @item{@tt{version}} The Ciao version, as a term
-      @tt{ciao}(@var{Version},@var{Patch}).  @var{Version} is a floating
-      point number, @var{Patch} is an integer.  Unchangeable.
+      @tt{ciao}(@var{Version},@var{Patch},@var{CommitInfo}).
+      @var{Version} and @var{Patch} are atoms.  @var{CommitInfo} is a
+      structure describing the commit information (branch, id, date,
+      description).  Unchangeable.
 
 @item{@tt{dialect}} Value set to @tt{ciao}.  Used for compatibility
       with other systems when in Prolog mode.  Unchangeable.
@@ -105,7 +107,7 @@
 :- use_module(engine(internals), [
 		'$unknown'/2, '$ferror_flag'/2, '$prompt'/2, '$unix_argv'/1,
 		'$quiet_flag'/2, '$gc_trace'/2, '$gc_margin'/2, '$gc_mode'/2,
-		'$compiling'/2, '$ciao_version'/3]).
+		'$compiling'/2, '$ciao_version'/6]).
 
 %doinclude's below commented out because LPdoc does not allow yet a 
 %declaration and a predicate to have the same name.
@@ -242,8 +244,10 @@ prolog_flag_2(quiet, Old, New) :-
 	flag_value(Old, New, [on, error, warning, debug, off]),
 	'$quiet_flag'(Old, New).
 prolog_flag_2(version, Version_Term, Version_Term) :-
-	'$ciao_version'(Version, Patch, Revision),
-	Version_Term = ciao(Version, Patch, Revision).
+	'$ciao_version'(Version, Patch,
+	                CommitBranch, CommitId, CommitDate, CommitDesc),
+	CommitInfo = commit_info(CommitBranch, CommitId, CommitDate, CommitDesc),
+	Version_Term = ciao(Version, Patch, CommitInfo).
 prolog_flag_2(dialect, ciao, ciao).
 prolog_flag_2(argv,    Args, Args) :-
 	'$unix_argv'(Args).

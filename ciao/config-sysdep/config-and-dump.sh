@@ -323,7 +323,6 @@ RTCHECKS_CALLLOC=${Q}${RTCHECKS_CALLLOC}${Q}
 RTCHECKS_NAMEFMT=${Q}${RTCHECKS_NAMEFMT}${Q}
 SET_FLAG_OPTIONS=${Q}${SET_FLAG_OPTIONS}${Q}
 CIAOSH_COMMANDS=${Q}${CIAOSH_COMMANDS}${Q}
-HAVE_SVNVERSION=${Q}${HAVE_SVNVERSION}${Q}
 # (previously named SHARED)
 # Define this to be the main file name (with suffix if there is one).
 MAIN=${Q}${MAIN}${Q}

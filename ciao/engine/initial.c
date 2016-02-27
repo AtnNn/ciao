@@ -1548,7 +1548,7 @@ void init_once()
   define_c_mod_predicate("system_info","get_ciao_ext", 1, prolog_get_ciao_ext);
   define_c_mod_predicate("system_info","get_exec_ext", 1, prolog_get_exec_ext);
   define_c_mod_predicate("system_info","get_so_ext", 1, prolog_get_so_ext);
-  define_c_mod_predicate("internals","$ciao_version", 3, prolog_version);
+  define_c_mod_predicate("internals","$ciao_version", 6, prolog_version);
 
   define_c_mod_predicate("internals","$find_file",8,prolog_find_file); 
   define_c_mod_predicate("internals","$path_is_absolute",1,prolog_path_is_absolute); 
