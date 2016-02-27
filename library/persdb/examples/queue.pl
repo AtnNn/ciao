@@ -17,24 +17,29 @@ main:-
      write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
      read(A),
      (  handle_action(A)
-     -> main
-     ;  write('Unknown command.'), nl, main ).
+     -> true
+     ;  write('Unknown command.'), nl ),
+     main.
 
 handle_action(end_of_file) :-
      halt.
 handle_action(halt) :-
      halt.
 handle_action(in(Term)) :-
-     assertz_fact(queue(Term)).
+     assertz_fact(queue(Term)),
+     main.
 handle_action(slip(Term)) :-
-     asserta_fact(queue(Term)).
+     asserta_fact(queue(Term)),
+     main.
 handle_action(out) :-
      (  retract_fact(queue(Term))
      -> write('Out '), write(Term)
      ;  write('FIFO empty.') ),
-     nl.
+     nl,
+     main.
 handle_action(list) :-
      findall(Term,queue(Term),Terms),
-     write('Contents: '), write(Terms), nl.
+     write('Contents: '), write(Terms), nl,
+     main.
      
 

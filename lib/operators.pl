@@ -157,5 +157,3 @@ standard_ops :-
    global CIAO version.  (Manuel Hermenegildo)").
 
 
-
-

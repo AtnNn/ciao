@@ -1,3 +1,4 @@
+# -*- mode: Makefile; -*-
 # Misc. options, depending on the SETTINGS file
 
 ifeq ($(DEBUG_LEVEL),profile)
@@ -14,7 +15,7 @@ endif
 # modern, versions of GCC have.
 
 ifeq ($(OPTIM_LEVEL),optimized)
-    OPTIM_FLAGS=-O2 -Wall -fno-strict-aliasing
+    OPTIM_FLAGS=-O2 -Wall 
 endif
 
 
@@ -62,6 +63,10 @@ ARCHNAME=ppc
 
 # Operating system version
 OSNAME=DARWIN
+
+# Memory management primitives
+# See engine/configure.c: HAS_MMAP includes USE_OWN_MALLOC
+MEM_MNG_FLAG=-DHAS_MMAP -DANONYMOUS_MMAP
 
 # How to install an make directories
 MKDIR="mkdir -p"

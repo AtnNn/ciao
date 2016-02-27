@@ -1,311 +1,58 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Tcl/Tk interface</TITLE>
+<TITLE>The Ciao Prolog System               - Interface to daVinci</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC509" HREF="ciao_toc.html#TOC509">The Tcl/Tk interface</A></H1>
+<H1><A NAME="SEC534" HREF="ciao_toc.html#TOC534">Interface to daVinci</A></H1>
 <P>
-<A NAME="IDX5845"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Montse Iglesias Urraca, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+<A NAME="IDX5948"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#314 (2004/2/25, 18:27:47 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-The 
-<A NAME="IDX5846"></A>
-<CODE>tcltk</CODE> library package is a bidirectional interface to the <EM>Tcl</EM> language and the <EM>Tk</EM> toolkit. Tcl is an interpreted scripting language with many extension packages, particularly the graphical interface toolkit, Tk. The interaction between both languages is expressed in terms of an interface between the Tcl/Tk process and the Prolog process. This approach allows the development of mixed applications where both sides, Tcl/Tk and Prolog, can be combined in order to exploit their respective capabilities. 
+<STRONG>Version of last change:</STRONG> 1.9#76 (2003/4/14, 18:31:46 CEST)
 
 
 <P>
-This library uses two sockets to connect both the Tcl and the Prolog processes: <EM>event_socket</EM> and <EM>term_socket</EM>. There are also two Tcl global variables: <EM>prolog_variables</EM> and <EM>terms</EM>. The value of any of the bound variables in a goal will be stored in the array <CODE>prolog_variables</CODE> with the variable name as index. <EM>Terms</EM> is the string which contains the printed representation of prolog <EM>terms</EM>. 
- 
+This library allows connecting a Ciao Prolog application with daVinci V2.X. 
 
 
 <P>
-<STRONG>Prolog to Tcl</STRONG> 
+The communication is based on a two-way channel: after daVinci is started, messages are sent in to it and read in from it on demand by different Prolog predicates. Messages are sent via writing the term as text; messages are received by reading text and returning an atom. Commands sent and answers received are treated as terms from the Prolog side, since for daVinci they are text but have term syntax; the only difficulty lies in strings, for which special Prolog syntax is provided. 
 
 
 <P>
-The Tcl/Tk side waits for requests from the Prolog side, and executes the Tcl/Tk code received. Also, the Tcl/Tk side handles the events and exceptions which may be raised on its side, passing on control to the Prolog side in case it is necessary. 
+See accompanying file <CODE>library('davinci/commands')</CODE> for examples on the use of this library. 
 
 
 <P>
-To use Tcl, you must create a <EM>Tcl interpreter</EM> object and send commands to it. A <EM>Tcl</EM> command is specified as follows: 
+daVinci is developed by U. of Bremen, Germany.
 
-
-
-<PRE>
-      Command         --&#62; Atom  { other than [] }
-                        | Number
-                        | chars(PrologString)
-                        | write(Term)
-                        | format(Fmt,Args)
-                        | dq(Command)
-                        | br(Command)
-                        | sqb(Command)
-                        | min(Command)
-                        | ListOfCommands
-      ListOfCommands  --&#62; []
-                        |[Command|ListOfCommands]
-</PRE>
-
-<P>
-where: 
-
-
-<DL COMPACT>
-
-<DT><CODE>Atom</CODE>
-<DD>
-denotes the printed representation of the atom. 
-
-<DT><CODE>Number</CODE>
-<DD>
-denotes their printed representations. 
-
-<DT><CODE>chars(PrologString)</CODE>
-<DD>
-denotes the string represented by <EM>PrologString</EM> (a list of character codes). 
-
-<DT><CODE>write(Term)</CODE>
-<DD>
-denotes the string that is printed by the corresponding built-in predicate. 
-
-<DT><CODE>format(Term)</CODE>
-<DD>
-denotes the string that is printed by the corresponding built-in predicate. 
-
-<DT><CODE>dq(Command)</CODE>
-<DD>
-denotes the string specified by <EM>Command</EM>, enclosed in double quotes. 
-
-<DT><CODE>br(Command)</CODE>
-<DD>
-denotes the string specified by <EM>Command</EM>, enclosed in braces. 
-
-<DT><CODE>sqb(Command)</CODE>
-<DD>
-denotes the string specified by <EM>Command</EM>, enclosed in square brackets. 
-
-<DT><CODE>min(Command)</CODE>
-<DD>
-denotes the string specified by <EM>Command</EM>, immediately preceded by a hyphen. 
-
-<DT><CODE>ListOfCommands</CODE>
-<DD>
-denotes the strings denoted by each element, separated by spaces. 
-
-</DL>
-
-<P>
-The predicates to use Tcl from Prolog are 
-<A NAME="IDX5847"></A>
-<CODE>tcl_new/1</CODE>, 
-<A NAME="IDX5848"></A>
-<CODE>tcl_delete/1</CODE>, 
-<A NAME="IDX5849"></A>
-<CODE>tcl_eval/3</CODE>, and 
-<A NAME="IDX5850"></A>
-<CODE>tcl_event/3</CODE>. 
-
-
-<P>
-An example of use with Prolog as master and Tcl as slave, consisting of a GUI to a program which calculates the factorial of a number: 
-
-
-<P>
-
-
-
-<PRE>
-:- use_module(library(tcltk)).
-
-go :-
-        tcl_new(X),
-        tcl_eval(X,[button,'.b',min(text),dq('Compute!')],_),
-        tcl_eval(X,[button,'.c','-text',dq('Quit')],_),
-        tcl_eval(X,[entry,'.e1',min(textvariable),'inputval'],_),
-        tcl_eval(X,[label,'.l1',min(text),dq('The factorial of ')],_),
-        tcl_eval(X,[pack, '.l1','.e1'],_),
-        tcl_eval(X,[entry,'.e2',min(textvariable),'outputval'],_),
-        tcl_eval(X,[label,'.l2',min(text),dq('is  ')],_),
-        tcl_eval(X,[pack, '.l2','.e2'],_),
-        tcl_eval(X,[pack,'.b','.c',min(side),'left'],_),
-        tcl_eval(X,[bind,'.b','&#60;ButtonPress-1&#62;',
-                    br([set,'inputval','$inputval','\n',
-                    prolog_one_event,dq(write(execute(tk_test_aux:factorial('$inputval','Outputval')))),'\n',
-                    set, 'outputval','$prolog_variables(Outputval)'])],_),
-        tcl_eval(X,[bind,'.c','&#60;ButtonPress-1&#62;',
-                    br([prolog_one_event,dq(write(execute(exit_tk_event_loop)))])],_),
-        tk_event_loop(X).
-
-</PRE>
-
-<P>
- 
-<STRONG>Tcl to Prolog</STRONG> 
-
-
-<P>
-This is the usual way to build a GUI application. The slave, Prolog, behaves as a server that fulfills eventual requests from the master side, Tcl. At some point, during the user interaction with the GUI, an action may take place that triggers the execution of some procedure on the slave side (a form submit, for example). Thus, the slave is invoked, performs a service, and returns the result to the GUI through the socket connection. 
-
-
-<P>
-This library includes two main specific Tcl commands: 
-
-
-<DL COMPACT>
-
-<DT><CODE>prolog</CODE> <EM>Goal</EM>
-<DD>
-<EM>Goal</EM> is a string containing the printed representation of a Prolog goal. The goal will be called in the user module unless it is prefixed with another module name. The call is always deterministic and its can be either of the following: 
-
-<DL COMPACT>
-
-<DT><EM>1</EM>, in case of success
-<DD>
-The value of any of the variables in the goal that is bound to a term will be returned to Tcl in the array prolog_variables with the variable name as index. 
-
-<DT><EM>0</EM>, if the execution fails
-<DD>
-The Prolog exception Tcl exception is raised. The error message will be "Prolog Exception: " appended with a string representation of such exception. 
-
-</DL>
-
-<DT><CODE>prolog_event</CODE> <EM>Term</EM>
-<DD>
-Adds the new <EM>term</EM> to the <EM>terms</EM> queue. These can be later retrieved through predicates 
-<A NAME="IDX5851"></A>
-<CODE>tcl_event/3</CODE> and 
-<A NAME="IDX5852"></A>
-<CODE>tk_next_event/2</CODE>. 
-
-</DL>
-
-<P>
-Additionally, seven extra Tcl commands are defined. 
-
-
-<DL COMPACT>
-
-<DT><CODE>prolog_delete_event</CODE>
-<DD>
-Deletes the first <EM>term</EM> of the <EM>terms</EM> queue. 
-
-<DT><CODE>prolog_list_events</CODE>
-<DD>
-Sends all the <EM>terms</EM> of the <EM>terms</EM> queue through the <EM>event_socket</EM>. The last element is <EM>end_of_event_list</EM>. 
-
-<DT><CODE>prolog_cmd</CODE> <EM>Command</EM>
-<DD>
-Receives as an argument the Tcl/Tk code, evaluates it and returns through the <EM>term_socket</EM> the term <EM>tcl_error</EM> in case of error or the term <EM>tcl_result</EM> with the result of the command executed. If the command is <EM>prolog</EM>, upon return, the goal run on the prolog side is received. In order to get the value of the variables, predicates are compared using the <EM>unify_term</EM> command. Returns 0 when the sript runs without errors, and 1 if there is an error. 
-
-<DT><CODE>prolog_one_event</CODE> <EM>Term</EM>
-<DD>
-Receives as an argument the <EM>term</EM> associated to one of the Tk events. Sends the <EM>term</EM> through the <EM>event_socket</EM> and waits for its unification. Then <EM>unify_term</EM> command is called to update the <EM>prolog_variables</EM> array. 
-
-<DT><CODE>prolog_thread_event</CODE> <EM>Term</EM>
-<DD>
-Receives as an argument the <EM>term</EM> associated to one of the Tk events. Sends the <EM>term</EM> through the <EM>event_socket</EM> and waits for its unification. Then <EM>unify_term</EM> command is called to update the <EM>prolog_variables</EM> array. In this case the <EM>term_socket</EM> is non blocking. 
-
-<DT><CODE>convert_variables</CODE> <EM>String</EM>
-<DD>
-Its argument is a string containing symbols that can not be sent through the sockets. This procedure deletes them from the input string and returns the new string. 
-
-<DT><CODE>unify_term</CODE> <EM>Term1</EM> <EM>Term2</EM>
-<DD>
-Unifies <EM>Term1</EM> and <EM>Term2</EM> and updates the the <EM>prolog_variables</EM> array. 
-
-</DL>
-
-<P>
-The predicates to use Prolog from Tcl are 
-<A NAME="IDX5853"></A>
-<CODE>tk_event_loop/1</CODE>, 
-<A NAME="IDX5854"></A>
-<CODE>tk_main_loop/1</CODE>, 
-<A NAME="IDX5855"></A>
-<CODE>tk_new/2</CODE>, and 
-<A NAME="IDX5856"></A>
-<CODE>tk_next_event/2</CODE>. 
-
-
-<P>
-An example of use with Tcl as master and Prolog as slave, implementing the well known "Hello, world!" dummy program (more can be seen in directory examples): 
-
-
-<P>
-Prolog side: 
-
-
-<P>
-
-
-
-<PRE>
-:- use_module(library(tcltk)).
-:- use_package(classic).
-     
-hello('Hello, world!').
-     
-go :-
-        tk_new([name('Simple')], Tcl),
-        tcl_eval(Tcl, 'source simple.tcl', _),
-        tk_main_loop(Tcl),
-        tcl_delete(Tcl).
-
-</PRE>
-
-<P>
-Tcl side (simple.tcl): 
-
-
-<P>
-
-
-
-<PRE>
-label .l -textvariable tvar
-button .b -text "Go!" -command {run}
-pack .l .b -side top
-
-proc run {} {
-
-    global prolog_variables
-    global tvar 
-
-    prolog hello(X)
-    set tvar $prolog_variables(X)
-}
-
-</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_124.html#SEC510">Usage and interface (tcltk)</A>
-<LI><A HREF="ciao_124.html#SEC511">Documentation on exports (tcltk)</A>
+<LI><A HREF="ciao_124.html#SEC535">Usage and interface (davinci)</A>
+<LI><A HREF="ciao_124.html#SEC536">Documentation on exports (davinci)</A>
+<LI><A HREF="ciao_124.html#SEC537">Documentation on internals (davinci)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC510" HREF="ciao_toc.html#TOC510">Usage and interface (<CODE>tcltk</CODE>)</A></H2>
+<H2><A NAME="SEC535" HREF="ciao_toc.html#TOC535">Usage and interface (<CODE>davinci</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -313,7 +60,7 @@ proc run {} {
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tcltk)).</CODE>
+<CODE>:- use_module(library(davinci)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -322,29 +69,26 @@ proc run {} {
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5857"></A>
-<CODE>tcl_new/1</CODE>, 
-<A NAME="IDX5858"></A>
-<CODE>tcl_eval/3</CODE>, 
-<A NAME="IDX5859"></A>
-<CODE>tcl_delete/1</CODE>, 
-<A NAME="IDX5860"></A>
-<CODE>tcl_event/3</CODE>, 
-<A NAME="IDX5861"></A>
-<CODE>tk_event_loop/1</CODE>, 
-<A NAME="IDX5862"></A>
-<CODE>tk_main_loop/1</CODE>, 
-<A NAME="IDX5863"></A>
-<CODE>tk_new/2</CODE>, 
-<A NAME="IDX5864"></A>
-<CODE>tk_next_event/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5865"></A>
-<CODE>tclInterpreter/1</CODE>, 
-<A NAME="IDX5866"></A>
-<CODE>tclCommand/1</CODE>.
+<A NAME="IDX5949"></A>
+<CODE>davinci/0</CODE>, 
+<A NAME="IDX5950"></A>
+<CODE>topd/0</CODE>, 
+<A NAME="IDX5951"></A>
+<CODE>davinci_get/1</CODE>, 
+<A NAME="IDX5952"></A>
+<CODE>davinci_get_all/1</CODE>, 
+<A NAME="IDX5953"></A>
+<CODE>davinci_put/1</CODE>, 
+<A NAME="IDX5954"></A>
+<CODE>davinci_quit/0</CODE>, 
+<A NAME="IDX5955"></A>
+<CODE>davinci_ugraph/1</CODE>, 
+<A NAME="IDX5956"></A>
+<CODE>davinci_lgraph/1</CODE>, 
+<A NAME="IDX5957"></A>
+<CODE>ugraph2term/2</CODE>, 
+<A NAME="IDX5958"></A>
+<CODE>formatting/2</CODE>.
 
 </UL>
 
@@ -355,16 +99,26 @@ proc run {} {
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5867"></A>
-<CODE>tcltk/tcltk_low_level</CODE>, 
-<A NAME="IDX5868"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX5869"></A>
+<A NAME="IDX5959"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX5960"></A>
+<CODE>prompt</CODE>, 
+<A NAME="IDX5961"></A>
+<CODE>errhandle</CODE>, 
+<A NAME="IDX5962"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX5963"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX5964"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX5965"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX5870"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX5871"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX5966"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX5967"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX5968"></A>
+<CODE>sort</CODE>.
 
 </UL>
 
@@ -374,309 +128,237 @@ proc run {} {
 
 
 
-<H2><A NAME="SEC511" HREF="ciao_toc.html#TOC511">Documentation on exports (<CODE>tcltk</CODE>)</A></H2>
+<H2><A NAME="SEC536" HREF="ciao_toc.html#TOC536">Documentation on exports (<CODE>davinci</CODE>)</A></H2>
 <P>
-<A NAME="IDX5872"></A>
-<A NAME="IDX5873"></A>
+<A NAME="IDX5969"></A>
+<A NAME="IDX5970"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_new/1:</B>
-<DD><A NAME="IDX5874"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci/0:</B>
+<DD><A NAME="IDX5971"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tcl_new(TclInterpreter)</CODE>
+Start up a daVinci process.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5972"></A>
+<A NAME="IDX5973"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>topd/0:</B>
+<DD><A NAME="IDX5974"></A>
+
+
+<P>
+A toplevel to send to daVinci commands from standard input.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5975"></A>
+<A NAME="IDX5976"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_get/1:</B>
+<DD><A NAME="IDX5977"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>davinci_get(Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Creates a new interpreter, initializes it, and returns a handle to it in <CODE>TclInterpreter</CODE>.
+<LI><EM>Description:</EM> Get a message from daVinci. <CODE>Term</CODE> is a term corresponding to daVinci's message.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>TclInterpreter</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5875"></A>
-<A NAME="IDX5876"></A>
+<A NAME="IDX5978"></A>
+<A NAME="IDX5979"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_eval/3:</B>
-<DD><A NAME="IDX5877"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_get_all/1:</B>
+<DD><A NAME="IDX5980"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>tcl_eval(?,?,addmodule)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tcl_eval(TclInterpreter, Command, Result)</CODE>
+<STRONG>Usage:</STRONG> <CODE>davinci_get_all(List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Evaluates the commands given in <CODE>Command</CODE> in the Tcl interpreter <CODE>TclInterpreter</CODE>. The result will be stored as a string in <CODE>Result</CODE>. If there is an error in <EM>Command</EM> an exception is raised. The error messages will be <EM>Tcl Exception:</EM> if the error is in the syntax of the Tcl/Tk code or <EM>Prolog Exception:</EM>, if the error is in the prolog term.
+<LI><EM>Description:</EM> Get all pending messages. <CODE>List</CODE> is a list of terms as in <CODE>davinci_get/1</CODE>.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-
-<CODE>Command</CODE> is a <EM>Tcl</EM> command.
- (<CODE>tcltk:tclCommand/1</CODE>)
-
-<CODE>Result</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>TclInterpreter</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Command</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Result</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5878"></A>
-<A NAME="IDX5879"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_delete/1:</B>
-<DD><A NAME="IDX5880"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tcl_delete(TclInterpreter)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a handle to a Tcl interpreter in variable <CODE>TclInterpreter</CODE>, it deletes the interpreter from the system.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>TclInterpreter</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5881"></A>
-<A NAME="IDX5882"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_event/3:</B>
-<DD><A NAME="IDX5883"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tcl_event(TclInterpreter, Command, Events)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Evaluates the commands given in <CODE>Command</CODE> in the Tcl interpreter whose handle is provided in <CODE>TclInterpreter</CODE>. <CODE>Events</CODE> is a list of terms stored from Tcl by <EM>prolog_event</EM>. Blocks until there is something on the event queue
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-
-<CODE>Command</CODE> is a <EM>Tcl</EM> command.
- (<CODE>tcltk:tclCommand/1</CODE>)
-
-<CODE>Events</CODE> is a list.
+<CODE>List</CODE> is a list.
  (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5981"></A>
+<A NAME="IDX5982"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_put/1:</B>
+<DD><A NAME="IDX5983"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>davinci_put(Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Send a command to daVinci.
+
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>TclInterpreter</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Command</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Events</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<CODE>davinci:davinci_command(Term)</CODE>
+ (<CODE>davinci:davinci_command/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5884"></A>
-<A NAME="IDX5885"></A>
+<A NAME="IDX5984"></A>
+<A NAME="IDX5985"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>tclInterpreter/1:</B>
-<DD><A NAME="IDX5886"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_quit/0:</B>
+<DD><A NAME="IDX5986"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tclInterpreter(I)</CODE>
+Exit daVinci process. All pending answers are lost!
 
-<UL>
-<LI><EM>Description:</EM> <CODE>I</CODE> is a reference to a <EM>Tcl</EM> interpreter.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5887"></A>
-<A NAME="IDX5888"></A>
+<A NAME="IDX5987"></A>
+<A NAME="IDX5988"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>tclCommand/1:</B>
-<DD><A NAME="IDX5889"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_ugraph/1:</B>
+<DD><A NAME="IDX5989"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tclCommand(C)</CODE>
+<STRONG>Usage:</STRONG> <CODE>davinci_ugraph(Graph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>C</CODE> is a <EM>Tcl</EM> command.
+<LI><EM>Description:</EM> Send a graph to daVinci.
 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5890"></A>
-<A NAME="IDX5891"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tk_event_loop/1:</B>
-<DD><A NAME="IDX5892"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tk_event_loop(TclInterpreter)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Waits for an event and executes the goal associated to it. Events are stored from Tcl with the <EM>prolog</EM> command. The unified term is sent to the Tcl interpreter in order to obtain the value of the tcl array of <EM>prolog_variables</EM>. If the term received does not have the form <CODE>execute(Goal)</CODE>, the predicate silently exits. If the execution of <CODE>Goal</CODE> raises a Prolog error, the interpreter is deleted and an error message is given.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>TclInterpreter</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>davinci:ugraph(Graph)</CODE>
+ (<CODE>davinci:ugraph/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5893"></A>
-<A NAME="IDX5894"></A>
+<A NAME="IDX5990"></A>
+<A NAME="IDX5991"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tk_main_loop/1:</B>
-<DD><A NAME="IDX5895"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_lgraph/1:</B>
+<DD><A NAME="IDX5992"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tk_main_loop(TclInterpreter)</CODE>
+<STRONG>Usage:</STRONG> <CODE>davinci_lgraph(Graph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Passes control to Tk until all windows are gone.
+<LI><EM>Description:</EM> Send a labeled graph to daVinci.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>TclInterpreter</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>davinci:lgraph(Graph)</CODE>
+ (<CODE>davinci:lgraph/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5896"></A>
-<A NAME="IDX5897"></A>
+<A NAME="IDX5993"></A>
+<A NAME="IDX5994"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tk_new/2:</B>
-<DD><A NAME="IDX5898"></A>
+<DT><span class="define">PREDICATE:</span> <B>ugraph2term/2:</B>
+<DD><A NAME="IDX5995"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tk_new(Options, TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Performs basic Tcl and Tk initialization and creates the main window of a Tk application.<CODE>Options</CODE> is a list of optional elements according to:
-
-<DL COMPACT>
-
-<DT><CODE>name(+ApplicationName)</CODE>
-<DD>
-Sets the Tk main window title to <CODE>ApplicationName</CODE>. It is also used for communicating between Tcl/Tk applications via the Tcl <EM>send</EM> command. Default name is an empty string. 
-
-<DT><CODE>display(+Display)</CODE>
-<DD>
-Gives the name of the screen on which to create the main window. Default is normally determined by the <CODE>DISPLAY</CODE> environment variable. 
-
-<DT><CODE>file</CODE>
-<DD>
-Opens the sript <CODE>file</CODE>. Commands will not be read from standard input and the execution returns back to Prolog only after all windows (and the interpreter) have been deleted. 
-
-</DL>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Options</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Options</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>TclInterpreter</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5899"></A>
-<A NAME="IDX5900"></A>
+<A NAME="IDX5996"></A>
+<A NAME="IDX5997"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tk_next_event/2:</B>
-<DD><A NAME="IDX5901"></A>
+<DT><span class="define">PREDICATE:</span> <B>formatting/2:</B>
+<DD><A NAME="IDX5998"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tk_next_event(TclInterpreter, Event)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Processes events until there is at least one Prolog event associated with <CODE>TclInterpreter</CODE>. <CODE>Event</CODE> is the term correspondig to the head of a queue of events stored from Tcl with the <EM>prolog_event</EM> command.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+</DL>
 
-<CODE>TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
 
-<CODE>Event</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>TclInterpreter</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<H2><A NAME="SEC537" HREF="ciao_toc.html#TOC537">Documentation on internals (<CODE>davinci</CODE>)</A></H2>
+<P>
+<A NAME="IDX5999"></A>
+<A NAME="IDX6000"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>davinci_command/1:</B>
+<DD><A NAME="IDX6001"></A>
 
-<CODE>Event</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
+
+<P>
+Syntactically, a command is a term. Semantically, it has to correspond to a command understood by daVinci. Two terms are interpreted in a special way: <CODE>string/1</CODE> and <CODE>text/1</CODE>: <CODE>string(Term)</CODE> is given to daVinci as <CODE>"Term"</CODE>; <CODE>text(List)</CODE> is given as <CODE>"Term1 Term2 ...Term "</CODE> for each <CODE>Term</CODE> in <CODE>List</CODE>. If your term has functors <CODE>string/1</CODE> and <CODE>text/1</CODE> that you don't want to be interpreted this way, use it twice, i.e., <CODE>string(string(Term))</CODE> is given to daVinci as <CODE>string(Term')</CODE> where <CODE>Term'</CODE> is the interpretation of <CODE>Term</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6002"></A>
+<A NAME="IDX6003"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>ugraph/1:</B>
+<DD><A NAME="IDX6004"></A>
+
+
+<P>
+<CODE>ugraph(Graph)</CODE>
+
+
+<P>
+<CODE>Graph</CODE> is a term which denotes an ugraph as in <CODE>library(ugraphs)</CODE>. Vertices of the form <CODE>node/2</CODE> are interpreted in a special way: <CODE>node(Term,List)</CODE> is interpreted as a vertex <CODE>Term</CODE> with attributes <CODE>List</CODE>. <CODE>List</CODE> is a list of terms conforming the syntax of <CODE>davinci_put/1</CODE> and corresponding to daVinci's graph nodes attributes. If your vertex has functor <CODE>node/2</CODE> and you don't want it to be interpreted this way, use it twice, i.e., <CODE>node(node(T1,T2),[])</CODE> is given to daVinci as vertex <CODE>node(T1,T2)</CODE>. A vertex is used both as label and name of daVinci's graph node. daVinci's graph edges have label <CODE>V1-V2</CODE> where <CODE>V1</CODE> is the source and <CODE>V2</CODE> the sink of the edge. There is no support for multiple edges between the same two vertices.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6005"></A>
+<A NAME="IDX6006"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>lgraph/1:</B>
+<DD><A NAME="IDX6007"></A>
+
+
+<P>
+<CODE>lgraph(Graph)</CODE>
+
+
+<P>
+<CODE>Graph</CODE> is a term which denotes a wgraph as in <CODE>library('graphs/wgraphs')</CODE>, except that the weights are labels, i.e., they do not need to be integers. Vertices of the form <CODE>node/2</CODE> are interpreted in a special way. Edge labels are converted into special intermediate vertices. Duplicated labels are solved by adding dummy atoms <CODE>"</CODE>. There is no support for multiple edges between the same two vertices.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_123.html">previous</A>, <A HREF="ciao_125.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

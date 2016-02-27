@@ -1,7 +1,8 @@
+# -*- mode: Makefile; -*-
 # Misc. options, depending on the SETTINGS file
 
 ifeq ($(DEBUG_LEVEL),profile)
-    DEBUG_FLAGS=-pg -DPROFILE -DDEBUG
+    DEBUG_FLAGS=-DPROFILE -DDEBUG
     PROFILE_LD_FLAGS=-pg
     OPTIM_LEVEL=debug
     CIAODEBUG=-debug
@@ -69,11 +70,15 @@ ARCHNAME=i86
 # Operating system version
 OSNAME=LINUX
 
+# Memory management primitives
+# See engine/configure.c: HAS_MMAP includes USE_OWN_MALLOC
+MEM_MNG_FLAG=-DHAS_MMAP -DANONYMOUS_MMAP
+
 # How to install an make directories
 MKDIR="mkdir -p"
 INSTALL=install
 
 # Making etags
-ETAGS=etags --ignore-indentation *.[ch]
+ETAGS=etags -t *.[ch]
 
 DEFAULTYPE=dyn

@@ -39,7 +39,6 @@ Makefile: it tries to chmod only the files just created (permission
 errors were being given; same for the sockets Makefile) (Manuel
 Carro)").
 
-
 :- comment(version(1*7+194,2002/04/04,21:08*41+'CEST'), "Corrected an
 error in srandom/1 which made it to cause a segmentation violation.
 (MCL)").

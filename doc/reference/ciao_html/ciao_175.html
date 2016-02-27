@@ -1,41 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Variable name dictionaries</TITLE>
+<TITLE>The Ciao Prolog System               - Set Operations</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC692" HREF="ciao_toc.html#TOC692">Variable name dictionaries</A></H1>
+<H1><A NAME="SEC717" HREF="ciao_toc.html#TOC717">Set Operations</A></H1>
 <P>
-<A NAME="IDX8008"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX8003"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Lena Flood.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#35 (2003/8/28, 16:15:20 CEST)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#239 (2003/12/22, 18:32:52 CET)
+
+
+<P>
+This module implements set operations. Sets are just ordered lists.
 
 
 
 <UL>
-<LI><A HREF="ciao_175.html#SEC693">Usage and interface (vndict)</A>
-<LI><A HREF="ciao_175.html#SEC694">Documentation on exports (vndict)</A>
+<LI><A HREF="ciao_175.html#SEC718">Usage and interface (sets)</A>
+<LI><A HREF="ciao_175.html#SEC719">Documentation on exports (sets)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC693" HREF="ciao_toc.html#TOC693">Usage and interface (<CODE>vndict</CODE>)</A></H2>
+<H2><A NAME="SEC718" HREF="ciao_toc.html#TOC718">Usage and interface (<CODE>sets</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(vndict)).</CODE>
+<CODE>:- use_module(library(sets)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,37 +56,40 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
+<A NAME="IDX8004"></A>
+<CODE>insert/3</CODE>, 
+<A NAME="IDX8005"></A>
+<CODE>ord_delete/3</CODE>, 
+<A NAME="IDX8006"></A>
+<CODE>ord_member/2</CODE>, 
+<A NAME="IDX8007"></A>
+<CODE>ord_test_member/3</CODE>, 
+<A NAME="IDX8008"></A>
+<CODE>ord_subtract/3</CODE>, 
 <A NAME="IDX8009"></A>
-<CODE>create_dict/2</CODE>, 
+<CODE>ord_intersection/3</CODE>, 
 <A NAME="IDX8010"></A>
-<CODE>complete_dict/3</CODE>, 
+<CODE>ord_intersection_diff/4</CODE>, 
 <A NAME="IDX8011"></A>
-<CODE>complete_vars_dict/3</CODE>, 
+<CODE>ord_intersect/2</CODE>, 
 <A NAME="IDX8012"></A>
-<CODE>prune_dict/3</CODE>, 
+<CODE>ord_subset/2</CODE>, 
 <A NAME="IDX8013"></A>
-<CODE>sort_dict/2</CODE>, 
+<CODE>ord_subset_diff/3</CODE>, 
 <A NAME="IDX8014"></A>
-<CODE>dict2varnamesl/2</CODE>, 
+<CODE>ord_union/3</CODE>, 
 <A NAME="IDX8015"></A>
-<CODE>varnamesl2dict/2</CODE>, 
+<CODE>ord_union_diff/4</CODE>, 
 <A NAME="IDX8016"></A>
-<CODE>find_name/4</CODE>, 
+<CODE>ord_union_symdiff/4</CODE>, 
 <A NAME="IDX8017"></A>
-<CODE>rename/2</CODE>, 
+<CODE>ord_union_change/3</CODE>, 
 <A NAME="IDX8018"></A>
-<CODE>vars_names_dict/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
+<CODE>merge/3</CODE>, 
 <A NAME="IDX8019"></A>
-<CODE>null_dict/1</CODE>, 
+<CODE>ord_disjoint/2</CODE>, 
 <A NAME="IDX8020"></A>
-<CODE>varname/1</CODE>, 
-<A NAME="IDX8021"></A>
-<CODE>varnamesl/1</CODE>, 
-<A NAME="IDX8022"></A>
-<CODE>varnamedict/1</CODE>.
+<CODE>setproduct/3</CODE>.
 
 </UL>
 
@@ -93,13 +100,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8023"></A>
-<CODE>idlists</CODE>, 
-<A NAME="IDX8024"></A>
-<CODE>terms_vars</CODE>, 
-<A NAME="IDX8025"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX8026"></A>
+<A NAME="IDX8021"></A>
 <CODE>sort</CODE>.
 
 </UL>
@@ -110,326 +111,314 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>,
 
 
 
-<H2><A NAME="SEC694" HREF="ciao_toc.html#TOC694">Documentation on exports (<CODE>vndict</CODE>)</A></H2>
+<H2><A NAME="SEC719" HREF="ciao_toc.html#TOC719">Documentation on exports (<CODE>sets</CODE>)</A></H2>
 <P>
-<A NAME="IDX8027"></A>
+<A NAME="IDX8022"></A>
+<A NAME="IDX8023"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
+<DD><A NAME="IDX8024"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>insert(+Set1, +Element, -Set2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Set2</CODE> is <CODE>Set1</CODE> with <CODE>Element</CODE> inserted in it, preserving the order.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8025"></A>
+<A NAME="IDX8026"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_delete/3:</B>
+<DD><A NAME="IDX8027"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_delete(+Set0, +X, -Set)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds if <CODE>Set</CODE> is <CODE>Set0</CODE> without element <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX8028"></A>
+<A NAME="IDX8029"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>null_dict/1:</B>
-<DD><A NAME="IDX8029"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_member/2:</B>
+<DD><A NAME="IDX8030"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>null_dict(D)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_member(+X, +Set)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>D</CODE> is an empty dictionary.
+<LI><EM>Description:</EM> It succeeds if <CODE>X</CODE> is member of <CODE>Set</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8030"></A>
 <A NAME="IDX8031"></A>
+<A NAME="IDX8032"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>create_dict/2:</B>
-<DD><A NAME="IDX8032"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_test_member/3:</B>
+<DD><A NAME="IDX8033"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>create_dict(Term, Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_test_member(+Set, +X, -Result)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Dict</CODE> has names for all variables in <CODE>Term</CODE>.
+<LI><EM>Description:</EM> If <CODE>X</CODE> is member of <CODE>Set</CODE> then <CODE>Result</CODE>=<CODE>yes</CODE>. Otherwise <CODE>Result</CODE>=<CODE>no</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8033"></A>
 <A NAME="IDX8034"></A>
+<A NAME="IDX8035"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>complete_dict/3:</B>
-<DD><A NAME="IDX8035"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_subtract/3:</B>
+<DD><A NAME="IDX8036"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>complete_dict(Dict, Term, NewDict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_subtract(+Set1, +Set2, ?Difference)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of <CODE>Term</CODE> not yet in <CODE>Dict</CODE>.
+<LI><EM>Description:</EM> It is true when <CODE>Difference</CODE> contains all and only the elements of <CODE>Set1</CODE> which are not also in <CODE>Set2</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Dict</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Term</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>NewDict</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8036"></A>
 <A NAME="IDX8037"></A>
+<A NAME="IDX8038"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>complete_vars_dict/3:</B>
-<DD><A NAME="IDX8038"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersection/3:</B>
+<DD><A NAME="IDX8039"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>complete_vars_dict(Dict, Vars, NewDict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_intersection(+Set1, +Set2, ?Intersection)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of the list <CODE>Vars</CODE> not yet in <CODE>Dict</CODE>.
+<LI><EM>Description:</EM> It is true when <CODE>Intersection</CODE> is the ordered representation of <CODE>Set1</CODE> and <CODE>Set2</CODE>, provided that <CODE>Set1</CODE> and <CODE>Set2</CODE> are ordered lists.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Dict</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Vars</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>NewDict</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8039"></A>
 <A NAME="IDX8040"></A>
+<A NAME="IDX8041"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prune_dict/3:</B>
-<DD><A NAME="IDX8041"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersection_diff/4:</B>
+<DD><A NAME="IDX8042"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>prune_dict(Term, Dict, NewDict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_intersection_diff(+Set1, +Set2, -Intersect, -NotIntersect)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> reduced to just the variables of <CODE>Term</CODE>.
+<LI><EM>Description:</EM> <CODE>Intersect</CODE> contains those elements which are both in <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>NotIntersect</CODE> those which are in <CODE>Set1</CODE> but not in <CODE>Set2</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Term</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Dict</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>NewDict</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8042"></A>
 <A NAME="IDX8043"></A>
+<A NAME="IDX8044"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sort_dict/2:</B>
-<DD><A NAME="IDX8044"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersect/2:</B>
+<DD><A NAME="IDX8045"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sort_dict(D, Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_intersect(+Xs, +Ys)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>D</CODE> is sorted into <CODE>Dict</CODE>.
+<LI><EM>Description:</EM> Succeeds when the two ordered lists have at least one element in common.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>D</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8045"></A>
 <A NAME="IDX8046"></A>
+<A NAME="IDX8047"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dict2varnamesl/2:</B>
-<DD><A NAME="IDX8047"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_subset/2:</B>
+<DD><A NAME="IDX8048"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dict2varnamesl(Dict, VNs)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_subset(+Xs, +Ys)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Translates <CODE>Dict</CODE> to <CODE>VNs</CODE>.
+<LI><EM>Description:</EM> Succeeds when every element of <CODE>Xs</CODE> appears in <CODE>Ys</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
- (<CODE>vndict:varnamesl/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8048"></A>
 <A NAME="IDX8049"></A>
+<A NAME="IDX8050"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>varnamesl2dict/2:</B>
-<DD><A NAME="IDX8050"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_subset_diff/3:</B>
+<DD><A NAME="IDX8051"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varnamesl2dict(VNs, Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_subset_diff(+Set1, +Set2, -Difference)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Translates <CODE>VNs</CODE> to <CODE>Dict</CODE>.
+<LI><EM>Description:</EM> It succeeds when every element of <CODE>Set1</CODE> appears in <CODE>Set2</CODE> and <CODE>Difference</CODE> has the elements of <CODE>Set2</CODE> which are not in <CODE>Set1</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
- (<CODE>vndict:varnamesl/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8051"></A>
 <A NAME="IDX8052"></A>
+<A NAME="IDX8053"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>find_name/4:</B>
-<DD><A NAME="IDX8053"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_union/3:</B>
+<DD><A NAME="IDX8054"></A>
 
 
 <P>
-<CODE>find_name(Vars, Names, V, Name)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_union(+Set1, +Set2, ?Union)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>. When some element occurs in both sets, <CODE>Union</CODE> retains only one copy.
 
-<P>
-Given that <CODE>vars_names_dict(Dict,Vars,Names)</CODE> holds, it acts as <CODE>rename(X,Dict)</CODE>, but the name of <CODE>X</CODE> is given as <CODE>Name</CODE> instead of unified with it.
-
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8054"></A>
 <A NAME="IDX8055"></A>
+<A NAME="IDX8056"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>rename/2:</B>
-<DD><A NAME="IDX8056"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_diff/4:</B>
+<DD><A NAME="IDX8057"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>rename(Term, Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_union_diff(+Set1, +Set2, -Union, -Difference)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Unifies each variable in <CODE>Term</CODE> with its name in <CODE>Dict</CODE>. If no name is found, a new name is created.
+<LI><EM>Description:</EM> It succeeds when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>Difference</CODE> is <CODE>Set2</CODE> set-minus <CODE>Set1</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8057"></A>
 <A NAME="IDX8058"></A>
+<A NAME="IDX8059"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>varname/1:</B>
-<DD><A NAME="IDX8059"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_symdiff/4:</B>
+<DD><A NAME="IDX8060"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varname(N)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_union_symdiff(+Set1, +Set2, -Union, -Diff)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is term representing a variable name.
+<LI><EM>Description:</EM> It is true when Diff is the symmetric difference of Set1 and Set2, and Union is the union of Set1 and Set2.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8060"></A>
 <A NAME="IDX8061"></A>
+<A NAME="IDX8062"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>varnamesl/1:</B>
-<DD><A NAME="IDX8062"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_change/3:</B>
+<DD><A NAME="IDX8063"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varnamesl(D)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_union_change(+Set1, +Set2, -Union)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>D</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+<LI><EM>Description:</EM> <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE> and <CODE>Union</CODE> is different from <CODE>Set2</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8063"></A>
 <A NAME="IDX8064"></A>
+<A NAME="IDX8065"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>varnamedict/1:</B>
-<DD><A NAME="IDX8065"></A>
+<DT><span class="define">PREDICATE:</span> <B>merge/3:</B>
+<DD><A NAME="IDX8066"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varnamedict(D)</CODE>
+<STRONG>Usage:</STRONG> <CODE>merge(+Set1, +Set2, ?Union)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary of variable names.
+<LI><EM>Description:</EM> See <CODE>ord_union/3</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8066"></A>
 <A NAME="IDX8067"></A>
+<A NAME="IDX8068"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vars_names_dict/3:</B>
-<DD><A NAME="IDX8068"></A>
+<DT><span class="define">PREDICATE:</span> <B>ord_disjoint/2:</B>
+<DD><A NAME="IDX8069"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>vars_names_dict(varnamedict(Dict), list(Vars), list(Names))</CODE>
+<STRONG>Usage:</STRONG> <CODE>ord_disjoint(+Set1, +Set2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Varss</CODE> is a sorted list of variables, and <CODE>Names</CODE> is a list of their names, which correspond in the same order.
+<LI><EM>Description:</EM> <CODE>Set1</CODE> and <CODE>Set2</CODE> have no element in common.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8070"></A>
+<A NAME="IDX8071"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>setproduct/3:</B>
+<DD><A NAME="IDX8072"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>setproduct(+Set1, +Set2, -Product)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Product</CODE> has all two element sets such that one element is in <CODE>Set1</CODE> and the other in <CODE>set2</CODE>, except that if the same element belongs to both, then the corresponding one element set is in <CODE>Product</CODE>.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_174.html">previous</A>, <A HREF="ciao_176.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

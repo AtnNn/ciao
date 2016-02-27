@@ -5,7 +5,7 @@
         ],[assertions]).
 
 
-:- true pred ttyput(X) : nnegint + native.
+:- true comp ttyput(X) + native.
 
 ttyput(X) :- put_code(user, X).
 
@@ -13,11 +13,9 @@ ttytab(X) :- tab(user, X).
 
 ttyskip(X) :- skip_code(user, X).
 
-:- true comp ttyflush + native.
+:- true comp ttyflush(X) + native.
 
 ttyflush :- flush_output(user).
-
-:- true pred ttyget(X) => nnegint + native.
 
 ttyget(N) :- get_code(user, N).
 

@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
+<TITLE>The Ciao Prolog System               - Java to Prolog interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC645" HREF="ciao_toc.html#TOC645">Low-level Prolog to Java socket connection</A></H1>
+<H1><A NAME="SEC670" HREF="ciao_toc.html#TOC670">Java to Prolog interface</A></H1>
 <P>
-<A NAME="IDX7498"></A>
+<A NAME="IDX7522"></A>
 
 
 <P>
@@ -20,36 +20,45 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#66 (2003/3/14, 12:48:24 CET)
+<STRONG>Version of last change:</STRONG> 1.9#65 (2003/3/14, 12:48:10 CET)
 
 
 <P>
  
+<A NAME="IDX7523"></A>
+<A NAME="IDX7524"></A>
+This module defines the Prolog side of the Java to Prolog interface. This side of the interface only has one public predicate: a server that listens at the socket connection with Java, and executes the commands received from the Java side. 
 
 
 <P>
-<A NAME="IDX7499"></A>
-<A NAME="IDX7500"></A>
-This module defines a low-level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
-<A NAME="IDX7501"></A>
-<CODE>javart</CODE> (Prolog to Java interface) or 
-<A NAME="IDX7502"></A>
-<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
+In order to evaluate the goals received from the Java side, this module can work in two ways: executing them in the same engine, or starting a thread for each goal. The easiest way is to launch them in the same engine, but the goals must be evaluated sequentially: once a goal provides the first solution, all the subsequent goals must be finished before this goal can backtrack to provide another solution. The Prolog side of this interface works as a top-level, and the goals partially evaluated are not independent. 
+
+
+<P>
+The solution of this goal dependence is to evaluate the goals in a different prolog engine. Although Ciao includes a mechanism to evaluate goals in different engines, the approach used in this interface is to launch each goal in a different thread. 
+
+
+<P>
+The decision of what kind of goal evaluation is selected is done by the Java side. Each evaluation type has its own command terms, so the Java side can choose the type it needs. 
+
+
+<P>
+A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or by calling <CODE>prolog_server/1</CODE> predicate and providing the port number as argument. The user predicates and libraries to be called from Java must be included in the executable file, or be accesible using the built-in predicates dealing with code loading. 
 
 
 
 <UL>
-<LI><A HREF="ciao_159.html#SEC646">Usage and interface (javasock)</A>
-<LI><A HREF="ciao_159.html#SEC647">Documentation on exports (javasock)</A>
+<LI><A HREF="ciao_159.html#SEC671">Usage and interface (jtopl)</A>
+<LI><A HREF="ciao_159.html#SEC672">Documentation on exports (jtopl)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC646" HREF="ciao_toc.html#TOC646">Usage and interface (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC671" HREF="ciao_toc.html#TOC671">Usage and interface (<CODE>jtopl</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -57,7 +66,7 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(javasock)).</CODE>
+<CODE>:- use_module(library(jtopl)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -66,30 +75,20 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7503"></A>
-<CODE>bind_socket_interface/1</CODE>, 
-<A NAME="IDX7504"></A>
-<CODE>start_socket_interface/2</CODE>, 
-<A NAME="IDX7505"></A>
-<CODE>stop_socket_interface/0</CODE>, 
-<A NAME="IDX7506"></A>
-<CODE>join_socket_interface/0</CODE>, 
-<A NAME="IDX7507"></A>
-<CODE>java_query/2</CODE>, 
-<A NAME="IDX7508"></A>
-<CODE>java_response/2</CODE>, 
-<A NAME="IDX7509"></A>
-<CODE>prolog_query/2</CODE>, 
-<A NAME="IDX7510"></A>
-<CODE>prolog_response/2</CODE>, 
-<A NAME="IDX7511"></A>
-<CODE>is_connected_to_java/0</CODE>, 
-<A NAME="IDX7512"></A>
-<CODE>java_debug/1</CODE>, 
-<A NAME="IDX7513"></A>
-<CODE>java_debug_redo/1</CODE>, 
-<A NAME="IDX7514"></A>
-<CODE>start_threads/0</CODE>.
+<A NAME="IDX7525"></A>
+<CODE>prolog_server/0</CODE>, 
+<A NAME="IDX7526"></A>
+<CODE>prolog_server/1</CODE>, 
+<A NAME="IDX7527"></A>
+<CODE>prolog_server/2</CODE>, 
+<A NAME="IDX7528"></A>
+<CODE>shell_s/0</CODE>, 
+<A NAME="IDX7529"></A>
+<CODE>query_solutions/2</CODE>, 
+<A NAME="IDX7530"></A>
+<CODE>query_requests/2</CODE>, 
+<A NAME="IDX7531"></A>
+<CODE>running_queries/2</CODE>.
 
 </UL>
 
@@ -100,22 +99,28 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7515"></A>
-<CODE>fastrw</CODE>, 
-<A NAME="IDX7516"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7517"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX7518"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7519"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX7520"></A>
+<A NAME="IDX7532"></A>
 <CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX7521"></A>
-<CODE>javall/jtopl</CODE>, 
-<A NAME="IDX7522"></A>
-<CODE>sockets/sockets_io</CODE>.
+<A NAME="IDX7533"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX7534"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7535"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7536"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7537"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7538"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX7539"></A>
+<CODE>compiler/compiler</CODE>, 
+<A NAME="IDX7540"></A>
+<CODE>atom2term</CODE>, 
+<A NAME="IDX7541"></A>
+<CODE>javall/javasock</CODE>, 
+<A NAME="IDX7542"></A>
+<CODE>prolog_sys</CODE>.
 
 </UL>
 
@@ -125,246 +130,53 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 
 
-<H2><A NAME="SEC647" HREF="ciao_toc.html#TOC647">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC672" HREF="ciao_toc.html#TOC672">Documentation on exports (<CODE>jtopl</CODE>)</A></H2>
 <P>
-<A NAME="IDX7523"></A>
-<A NAME="IDX7524"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>bind_socket_interface/1:</B>
-<DD><A NAME="IDX7525"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>bind_socket_interface(Port)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given an port number, waits for a connection request from the Java side, creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Port</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Port</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7526"></A>
-<A NAME="IDX7527"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/2:</B>
-<DD><A NAME="IDX7528"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>start_socket_interface(Address, Stream)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Address</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Address</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Stream</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7529"></A>
-<A NAME="IDX7530"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
-<DD><A NAME="IDX7531"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7532"></A>
-<A NAME="IDX7533"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
-<DD><A NAME="IDX7534"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7535"></A>
-<A NAME="IDX7536"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
-<DD><A NAME="IDX7537"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_query(ThreadId, Query)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>ThreadId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7538"></A>
-<A NAME="IDX7539"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
-<DD><A NAME="IDX7540"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_response(Id, Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7541"></A>
-<A NAME="IDX7542"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
-<DD><A NAME="IDX7543"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_query(Id, Query)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
+<A NAME="IDX7543"></A>
 <A NAME="IDX7544"></A>
-<A NAME="IDX7545"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
-<DD><A NAME="IDX7546"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_response(Id, Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7547"></A>
-<A NAME="IDX7548"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>is_connected_to_java/0:</B>
-<DD><A NAME="IDX7549"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_server/0:</B>
+<DD><A NAME="IDX7545"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Checks if the connection to Java is established.
+<LI><EM>Description:</EM> Prolog server entry point. Reads from the standard input the node name and port number where the java client resides, and starts the prolog server listening at the jp socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
 
+However, from the low-level communication point of view, this Prolog server actually works as a client of the Java side. This means that Java side waits at the given port to a Prolog server trying to create a socket; Prolog side connects to that port, and then waits for Java requests (acting as a 'logical' server). To use this Prolog server as a real server waiting for connections at a given port, use <CODE>prolog_server/1</CODE>. 
+
+<A NAME="IDX7546"></A>
+<A NAME="IDX7547"></A>
+ 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7550"></A>
-<A NAME="IDX7551"></A>
+<A NAME="IDX7548"></A>
+<A NAME="IDX7549"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
-<DD><A NAME="IDX7552"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_server/1:</B>
+<DD><A NAME="IDX7550"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Waits for incoming Java connections to act as a Prolog goal server for Java requests.This is the only <CODE>prolog_server/*</CODE> predicate that works as a true server: given a port number, waits for a connection from Java and then serves Java requests. When a termination request is received, finishes the connection to Java and waits next Java connection request. This behaviour is different with respect to previous versions of this library. To work as before, use <CODE>prolog_server/2</CODE>.
+
+Although it currently does not support simultaneous Java connections, some work is being done in that direction. 
+<A NAME="IDX7551"></A>
+<A NAME="IDX7552"></A>
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
 
@@ -372,35 +184,104 @@ No further documentation available for this predicate.
 <A NAME="IDX7553"></A>
 <A NAME="IDX7554"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_debug_redo/1:</B>
+<DT><span class="define">PREDICATE:</span> <B>prolog_server/2:</B>
 <DD><A NAME="IDX7555"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7556"></A>
-<A NAME="IDX7557"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>start_threads/0:</B>
-<DD><A NAME="IDX7558"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Starts the threads that will handle the connection to Java. This predicate is declared public for internal purposes, and it is not intended to be used by a user program.
+<LI><EM>Description:</EM> Prolog server entry point. Given a network <CODE>node</CODE> and a <CODE>port</CODE> number, starts the prolog server trying to connect to Java side at that <CODE>node:port</CODE> address, and then waits for Java requests. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
+
+However, from the low-level communication point of view, this Prolog server actually works as a client of the Java side. This means that Java side waits at the given port to a Prolog server trying to create a socket; Prolog side connects to that port, and then waits for Java requests (acting as a 'logical' server). To use this Prolog server as a real server waiting for connections at a given port, use <CODE>prolog_server/1</CODE>. 
+<A NAME="IDX7556"></A>
+<A NAME="IDX7557"></A>
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Arg2</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7558"></A>
+<A NAME="IDX7559"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>shell_s/0:</B>
+<DD><A NAME="IDX7560"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Command execution loop. This predicate is called when the connection to Java is established, and performs an endless loop processing the commands received. This predicate is only intended to be used by the Prolog to Java interface and it should not be used by a user program.
 
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX7561"></A>
+<A NAME="IDX7562"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>query_solutions/2:</B>
+<DD><A NAME="IDX7563"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7564"></A>
+<A NAME="IDX7565"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>query_requests/2:</B>
+<DD><A NAME="IDX7566"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7567"></A>
+<A NAME="IDX7568"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>running_queries/2:</B>
+<DD><A NAME="IDX7569"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

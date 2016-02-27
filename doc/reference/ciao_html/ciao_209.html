@@ -1,64 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - test_format (library)</TITLE>
+<TITLE>The Ciao Prolog System               - boundary (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_208.html">previous</A>, <A HREF="ciao_210.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_208.html">previous</A>, <A HREF="ciao_210.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC800" HREF="ciao_toc.html#TOC800">test_format (library)</A></H1>
+<H1><A NAME="SEC826" HREF="ciao_toc.html#TOC826">boundary (library)</A></H1>
 <P>
-<A NAME="IDX8877"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Isabel Mart&iacute;n Garc&iacute;a.
+<A NAME="IDX9022"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#170 (2003/12/4, 17:39:57 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-Most of the predicates exported by this module perform some checks to determine whether the arguments attain some conditions or not. In the second case an exception will be thrown. To catch the exceptions you can use the following metapredicates when invoking chartlib exported predicates: 
+<STRONG>Version of last change:</STRONG> 1.9#171 (2003/12/4, 17:46:50 CET)
+
+
+<P>
+This module offers predicate to check values according to their boundaries and offers lists of possible node ascendents.
 
 
 
 <UL>
-
-<LI>
-
-<A NAME="IDX8878"></A>
-<CODE>chartlib_text_error_protect/1</CODE> 
-
-<LI>
-
-<A NAME="IDX8879"></A>
-<CODE>chartlib_text_error_protect/1</CODE> 
-
-</UL>
-
-<P>
-Both metapredicates are defined in the chartlib_errhandle module that comes with this library. Some of the predicates have a <CODE>Predicate</CODE> argument which will be used in case of error to show which chartlib predicate causes the error. 
-
-
-
-<UL>
-<LI><A HREF="ciao_209.html#SEC801">Usage and interface (test_format)</A>
-<LI><A HREF="ciao_209.html#SEC802">Documentation on exports (test_format)</A>
+<LI><A HREF="ciao_209.html#SEC827">Usage and interface (boundary)</A>
+<LI><A HREF="ciao_209.html#SEC828">Documentation on exports (boundary)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC801" HREF="ciao_toc.html#TOC801">Usage and interface (<CODE>test_format</CODE>)</A></H2>
+<H2><A NAME="SEC827" HREF="ciao_toc.html#TOC827">Usage and interface (<CODE>boundary</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -66,7 +47,7 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(test_format)).</CODE>
+<CODE>:- use_module(library(boundary)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -75,24 +56,16 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8880"></A>
-<CODE>equalnumber/3</CODE>, 
-<A NAME="IDX8881"></A>
-<CODE>not_empty/4</CODE>, 
-<A NAME="IDX8882"></A>
-<CODE>not_empty/3</CODE>, 
-<A NAME="IDX8883"></A>
-<CODE>check_sublist/4</CODE>, 
-<A NAME="IDX8884"></A>
-<CODE>valid_format/4</CODE>, 
-<A NAME="IDX8885"></A>
-<CODE>vectors_format/4</CODE>, 
-<A NAME="IDX8886"></A>
-<CODE>valid_vectors/4</CODE>, 
-<A NAME="IDX8887"></A>
-<CODE>valid_attributes/2</CODE>, 
-<A NAME="IDX8888"></A>
-<CODE>valid_table/2</CODE>.
+<A NAME="IDX9023"></A>
+<CODE>boundary_check/3</CODE>, 
+<A NAME="IDX9024"></A>
+<CODE>boundary_rotation_first/2</CODE>, 
+<A NAME="IDX9025"></A>
+<CODE>boundary_rotation_last/2</CODE>, 
+<A NAME="IDX9026"></A>
+<CODE>reserved_words/1</CODE>, 
+<A NAME="IDX9027"></A>
+<CODE>children_nodes/1</CODE>.
 
 </UL>
 
@@ -103,10 +76,26 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8889"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8890"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX9028"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX9029"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX9030"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX9031"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX9032"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX9033"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX9034"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX9035"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX9036"></A>
+<CODE>provrml/internal_types</CODE>, 
+<A NAME="IDX9037"></A>
+<CODE>provrml/error</CODE>.
 
 </UL>
 
@@ -116,352 +105,130 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 
 
 
-<H2><A NAME="SEC802" HREF="ciao_toc.html#TOC802">Documentation on exports (<CODE>test_format</CODE>)</A></H2>
+<H2><A NAME="SEC828" HREF="ciao_toc.html#TOC828">Documentation on exports (<CODE>boundary</CODE>)</A></H2>
 <P>
-<A NAME="IDX8891"></A>
-<A NAME="IDX8892"></A>
+<A NAME="IDX9038"></A>
+<A NAME="IDX9039"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>equalnumber/3:</B>
-<DD><A NAME="IDX8893"></A>
+<DT><span class="define">PREDICATE:</span> <B>boundary_check/3:</B>
+<DD><A NAME="IDX9040"></A>
 
 
 <P>
-<CODE>equalnumber(X, Y, Predicate)</CODE>
-
-
-<P>
-Test whether the list <CODE>X</CODE> and the list <CODE>Y</CODE> contain the same number of elements. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>boundary_check(+Value_to_check, +Init_value, +Bound)</CODE>
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Description:</EM> This predicate check the boundaries of the given value according to the boudary values. If the value is wrong according to the boundaries, the value is checked according to the initial value given. If the value continues to be wrong, an error will be raised accordingly.
 
-<CODE>X</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Y</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8894"></A>
-<A NAME="IDX8895"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>not_empty/4:</B>
-<DD><A NAME="IDX8896"></A>
-
-
-<P>
-<CODE>not_empty(X, Y, Z, Predicate)</CODE>
-
-
-<P>
-Tests whether at least one the lists <CODE>X</CODE>, <CODE>Y</CODE> or <CODE>Z</CODE> are empty. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>X</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Y</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Z</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8897"></A>
-<A NAME="IDX8898"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>not_empty/3:</B>
-<DD><A NAME="IDX8899"></A>
-
-
-<P>
-<CODE>not_empty(X, Y, Predicate)</CODE>
-
-
-<P>
-Tests whether the lists <CODE>X</CODE> or <CODE>Y</CODE> are empty. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>X</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Y</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8900"></A>
-<A NAME="IDX8901"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>check_sublist/4:</B>
-<DD><A NAME="IDX8902"></A>
-
-
-<P>
-<CODE>check_sublist(List, Number, Number, Predicate)</CODE>
-
-
-<P>
-Tests if the number of elements in each sublist of <CODE>List</CODE> is <CODE>Number1</CODE> or <CODE>Number2</CODE>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Number</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-
-<CODE>Number</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-
-<CODE>Predicate</CODE> is an atom.
+<CODE>+Value_to_check</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Init_value</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>+Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8903"></A>
-<A NAME="IDX8904"></A>
+<A NAME="IDX9041"></A>
+<A NAME="IDX9042"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_format/4:</B>
-<DD><A NAME="IDX8905"></A>
+<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_first/2:</B>
+<DD><A NAME="IDX9043"></A>
 
 
 <P>
-<CODE>valid_format(XVector, YVector, BarsAttributes, Predicate)</CODE>
-
-
-<P>
-Tests the following restrictions: 
-
-
+<STRONG>Usage:</STRONG> <CODE>boundary_rotation_first(+Bound_double, -Bound)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The predicate will extract the first bounds from a double bound.
 
-<LI>The <CODE>XVector</CODE> number of elements is the same as each <CODE>YVector</CODE> sublist number of elements.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI>The <CODE>YVector</CODE> length is equal to <CODE>BarsAttributes</CODE> length.
+<CODE>+Bound_double</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
 
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>XVector</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>YVector</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>BarsAttributes</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<CODE>-Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8906"></A>
-<A NAME="IDX8907"></A>
+<A NAME="IDX9044"></A>
+<A NAME="IDX9045"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vectors_format/4:</B>
-<DD><A NAME="IDX8908"></A>
+<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_last/2:</B>
+<DD><A NAME="IDX9046"></A>
 
 
 <P>
-<CODE>vectors_format(XVector, YVectors, LinesAttributes, Predicate)</CODE>
-
-
-<P>
-Tests the following conditions: 
-
-
+<STRONG>Usage:</STRONG> <CODE>boundary_rotation_last(+Bound_double, -Bound)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The predicate will extract the last bounds from a double bound.
 
-<LI><CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI><CODE>XVector</CODE> list and each <CODE>YVectors</CODE> element have the same number of elements.
+<CODE>+Bound_double</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
 
-<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 elements.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>XVector</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>YVectors</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>LinesAttributes</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<CODE>-Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8909"></A>
-<A NAME="IDX8910"></A>
+<A NAME="IDX9047"></A>
+<A NAME="IDX9048"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_vectors/4:</B>
-<DD><A NAME="IDX8911"></A>
+<DT><span class="define">PREDICATE:</span> <B>reserved_words/1:</B>
+<DD><A NAME="IDX9049"></A>
 
 
 <P>
-<CODE>valid_vectors(XVector, YVectors, LinesAttributes, Predicate)</CODE>
-
-
-<P>
-Tests the following conditions: 
-
-
+<STRONG>Usage:</STRONG> <CODE>reserved_words(-List)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Returns a list with the reserved words, words prohibited to use in cases not appropiated.
 
-<LI><CODE>XVector</CODE> list, <CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 element.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>XVector</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>YVectors</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>LinesAttributes</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8912"></A>
-<A NAME="IDX8913"></A>
+<A NAME="IDX9050"></A>
+<A NAME="IDX9051"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_attributes/2:</B>
-<DD><A NAME="IDX8914"></A>
+<DT><span class="define">PREDICATE:</span> <B>children_nodes/1:</B>
+<DD><A NAME="IDX9052"></A>
 
 
 <P>
-<CODE>valid_attributes(BarsAttibuttes, Predicate)</CODE>
-
-
-<P>
-Check if each <CODE>BarsAttibuttes</CODE> element is a list composed of one or four elements. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>children_nodes(-List)</CODE>
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Description:</EM> Returns a list of all nodes possible as children nodes.
 
-<CODE>BarsAttibuttes</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8915"></A>
-<A NAME="IDX8916"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_table/2:</B>
-<DD><A NAME="IDX8917"></A>
-
-
-<P>
-<CODE>valid_table(ElementTable, Predicate)</CODE>
-
-
-<P>
-All of the <CODE>ElementTable</CODE> sublists have the same number of elements and are not empty. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>ElementTable</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_208.html">previous</A>, <A HREF="ciao_210.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_208.html">previous</A>, <A HREF="ciao_210.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

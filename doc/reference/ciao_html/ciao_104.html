@@ -1,45 +1,48 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Miscellaneous predicates</TITLE>
+<TITLE>The Ciao Prolog System               - Call on determinate</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC405" HREF="ciao_toc.html#TOC405">Miscellaneous predicates</A></H1>
+<H1><A NAME="SEC430" HREF="ciao_toc.html#TOC430">Call on determinate</A></H1>
 <P>
-<A NAME="IDX5210"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
+<A NAME="IDX5381"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Jos&eacute; Morales, Manuel Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#95 (1999/11/8, 18:37:30 MET)
+<STRONG>Version:</STRONG> 1.7#149 (2001/11/19, 19:17:51 CET)
 
 
 <P>
-This module implements some miscellaneous non-logical (but sometimes very useful) predicates.
+Offers an enriched variant of call and cut <CODE>!!/0</CODE> which executes pending goals when the computation has no more alternatives. 
+
+
+<P>
+This library is useful to, for example, get rid of external connections once the necessary data has been obtained.
 
 
 
 <UL>
-<LI><A HREF="ciao_104.html#SEC406">Usage and interface (odd)</A>
-<LI><A HREF="ciao_104.html#SEC407">Documentation on exports (odd)</A>
+<LI><A HREF="ciao_104.html#SEC431">Usage and interface (det_hook_rt)</A>
+<LI><A HREF="ciao_104.html#SEC432">Documentation on exports (det_hook_rt)</A>
+<LI><A HREF="ciao_104.html#SEC433">Documentation on internals (det_hook_rt)</A>
+<LI><A HREF="ciao_104.html#SEC434">Other information (det_hook_rt)</A>
+<LI><A HREF="ciao_104.html#SEC435">Known bugs and planned improvements (det_hook_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC406" HREF="ciao_toc.html#TOC406">Usage and interface (<CODE>odd</CODE>)</A></H2>
+<H2><A NAME="SEC431" HREF="ciao_toc.html#TOC431">Usage and interface (<CODE>det_hook_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +50,18 @@ This module implements some miscellaneous non-logical (but sometimes very useful
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(odd)).</CODE>
+
+<PRE>
+:- use_module(library(det_hook_rt)).
+</PRE>
+
+in which case, <CODE>!!/0</CODE> is not available. 
+
+Typically, this library is used as a package: 
+
+<PRE>
+:- use_package(det_hook).
+</PRE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,10 +70,8 @@ This module implements some miscellaneous non-logical (but sometimes very useful
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5211"></A>
-<CODE>setarg/3</CODE>, 
-<A NAME="IDX5212"></A>
-<CODE>undo/1</CODE>.
+<A NAME="IDX5382"></A>
+<CODE>det_try/3</CODE>.
 
 </UL>
 
@@ -69,78 +81,135 @@ This module implements some miscellaneous non-logical (but sometimes very useful
 
 
 
-<H2><A NAME="SEC407" HREF="ciao_toc.html#TOC407">Documentation on exports (<CODE>odd</CODE>)</A></H2>
+<H2><A NAME="SEC432" HREF="ciao_toc.html#TOC432">Documentation on exports (<CODE>det_hook_rt</CODE>)</A></H2>
 <P>
-<A NAME="IDX5213"></A>
-<A NAME="IDX5214"></A>
+<A NAME="IDX5383"></A>
+<A NAME="IDX5384"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>setarg/3:</B>
-<DD><A NAME="IDX5215"></A>
+<DT><span class="define">PREDICATE:</span> <B>det_try/3:</B>
+<DD><A NAME="IDX5385"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>setarg(Index, Term, NewArg)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>det_try(goal,goal,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>det_try(Goal, OnCut, OnFail)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Replace destructively argument <CODE>Index</CODE> in <CODE>Term</CODE> by <CODE>NewArg</CODE>. The assignment is undone on backtracking. This is a major change to the normal behavior of data assignment in Ciao Prolog.
+<LI><EM>Description:</EM> <CODE>Action</CODE> is called, and <CODE>OnCut</CODE> and <CODE>OnFail</CODE> are goals to be executed when <CODE>Goal</CODE> is cut or when it finitely fails, respectively. In order for this to work, cutting must be performed in a special way, by using the
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Index</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-
-<CODE>Term</CODE> is a compound term.
- (<CODE>basic_props:struct/1</CODE>)
-
-<CODE>NewArg</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Index</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-
-<CODE>Term</CODE> is a compound term.
- (<CODE>basic_props:struct/1</CODE>)
-
-<CODE>NewArg</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5216"></A>
-<A NAME="IDX5217"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>undo/1:</B>
-<DD><A NAME="IDX5218"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>undo(goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>undo(Goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM>  <CODE>call(<CODE>Goal</CODE>)</CODE> is executed on backtracking. This is a major change to the normal
-
-<A NAME="IDX5219"></A>
-control of Ciao Prolog execution. 
+<A NAME="IDX5386"></A>
+<CODE>!!/0</CODE> predicate, also provided by this module. 
 <LI><EM>The following properties should hold at call time:</EM>
 
 <CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
 
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+<CODE>OnCut</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>OnFail</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
+
+
+
+<H2><A NAME="SEC433" HREF="ciao_toc.html#TOC433">Documentation on internals (<CODE>det_hook_rt</CODE>)</A></H2>
+<P>
+<A NAME="IDX5387"></A>
+<A NAME="IDX5388"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>!!/0:</B>
+<DD><A NAME="IDX5389"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Performs a special cut which prunes alternatives away, as the usual cut, but which also executes the goals specified as <CODE>OnCut</CODE> for any call in the scope of the cut.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC434" HREF="ciao_toc.html#TOC434">Other information (<CODE>det_hook_rt</CODE>)</A></H2>
+
+<P>
+As an example, the program 
+
+
+
+<PRE>
+:- module(_, _, [det_hook]).
+
+enumerate(X):-
+        display(enumerating), nl,
+        OnCut = (display('goal cut'), nl),
+        OnFail = (display('goal failed'), nl),
+        det_try(enum(X), OnCut, OnFail).
+
+enum(1).
+enum(2).
+enum(3).
+</PRE>
+
+<P>
+behaves as follows: 
+
+
+
+<PRE>
+?- enumerate(X).
+enumerating
+
+X = 1 ? ;
+
+X = 2 ? ;
+
+X = 3 ? ;
+goal failed
+</PRE>
+
+<P>
+(note the message inserted on failure). The execution can be cut as follows: 
+
+
+
+<PRE>
+?- use_package(det_hook).
+{Including /home/clip/lib/ciao/ciao-1.7/library/det_hook/det_hook.pl
+}
+
+yes
+?- enumerate(X), '!!'.
+enumerating
+goal cut
+
+X = 1 ? ;
+
+no
+</PRE>
+
+
+
+<H2><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Known bugs and planned improvements (<CODE>det_hook_rt</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+If the started goals do not exhaust their solutions, and '!!'/0 is not used, the database will populate with facts which will be consulted the next time a '!!'/0 is used. This could cause incorrect executions.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

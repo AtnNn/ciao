@@ -130,43 +130,28 @@ assrt_body((Pr)):-               n_assrt_body(nabody(Pr,true,true,true,true)).
    in comments. Thus, @tt{p(Input,Parameter,Output)} is a valid head
    pattern.
 
-   @item A variable, as
+   @item A ground term. In this case this term determines a property
+   of the corresponding argument. The actual property referred to is
+   that given by the term but with one more argument added at the
+   beginning, which is a new variable which, in a rewriting of the
+   head pattern, appears at the argument position occupied by the
+   term. Unless otherwise stated (see below), the property built this
+   way is understood to hold for both calls and answers.  For example,
+   the head pattern @tt{p(Input,list(integer),Output)} is valid and
+   equivalent for example to having the head pattern
+   @tt{p(Input,A,Output)} and stating that the property
+   @tt{list(A,integer)} holds for the calls and successes of the
+   predicate.
+
+   @item Finally, it can also be a variable or a ground term, as
    above, but preceded by a ``@concept{mode}.'' This mode determines
    in a compact way certain call or answer properties. For example,
-   the head pattern @tt{p(Input,+Parameter,Output)} is valid,
+   the head pattern @tt{p(Input,+list(integer),Output)} is valid,
    as long as @pred{+/1} is declared as a mode.
 
    Acceptable modes @cindex{acceptable modes} are documented in 
-   @lib{library(basicmodes)} and @lib{library(isomodes)}. User defined
-   modes are documented in @pred{modedef/1}.
-
-   @item Any term. In this case this term determines the instantiation
-   state of the corresponding argument position of the predicate calls
-   to which the assertion applies.
-
-   @item A ground term preceded by a ``@concept{mode}.'' The ground
-   term determines a property of the corresponding argument. The mode
-   determines if it applies to the calls and/or the successes.
-   The actual property referred to is
-   that given by the term but with one more argument added at the
-   beginning, which is a new variable which, in a rewriting of the
-   head pattern, appears at the argument position occupied by the term.
-   For example, the head pattern @tt{p(Input,+list(int),Output)} is
-   valid for mode @pred{+/1} defined in @lib{library(isomodes)}, and
-   equivalent in this case to having the head pattern
-   @tt{p(Input,A,Output)} and stating that the property
-   @tt{list(A,int)} holds for the calls of the  predicate.
-
-   @item Any term preceded by a ``@concept{mode}.'' In this case, only
-   one variable is admitted, it has to be the first argument of the mode,
-   and it represents the argument position.
-   I.e., it plays the role of the new variable mentioned above. Thus,
-   no rewriting of the head pattern is performed in this case.
-   For example, the head pattern @tt{p(Input,+(Parameter,list(int)),Output)}
-   is valid for mode @pred{+/2} defined in @lib{library(isomodes)}, and
-   equivalent in this case to having the head pattern
-   @tt{p(Input,Parameter,Output)} and stating that the property
-   @tt{list(Parameter,int)} holds for the calls of the  predicate.
+   @lib{library(modes)}. User defined modes are documented in
+   @pred{modedef/1}.
 
    @end{itemize} 
 

@@ -36,62 +36,54 @@ yes
 %:- true pred is(?term,+arithexpression) + iso.
 %:- true pred is(X,Y) : arithexpression(Y) => num(X) + iso.
 
-:- true pred is(X,+arithexpression) => num(X) + eval.
-:- true comp is/2 + (iso, native, sideff(free)).
+:- true pred is(X,+arithexpression) => num(X) + (iso, native).
 
 X is Y :- X is +Y.
 
 :- comment((Exp1 < Exp2), "The numeric value of @var{Exp1} is less than
    the numeric value of @var{Exp2} when both are evaluated as arithmetic
    expressions.").
-:- true pred <(+arithexpression,+arithexpression) + eval.
-:- true comp (<)/2 + (iso, native, sideff(free)).
+:- true pred <(+arithexpression,+arithexpression) + (iso, native).
 
 X<Y :- X<Y.
 
 :- comment((Exp1 =< Exp2), "The numeric value of @var{Exp1} is less than
    or equal to the numeric value of @var{Exp2} when both are evaluated as
    arithmetic expressions.").
-:- true pred =<(+arithexpression,+arithexpression) + eval.
-:- true comp (=<)/2 + (iso, native, sideff(free)).
+:- true pred =<(+arithexpression,+arithexpression) + (iso, native).
 
 X=<Y :- X=<Y.
 
 :- comment((Exp1 > Exp2), "The numeric value of @var{Exp1} is greater than
    the numeric value of @var{Exp2} when both are evaluated as arithmetic
    expressions.").
-:- true pred >(+arithexpression,+arithexpression) + eval.
-:- true comp (>)/2 + (iso, native, sideff(free)).
+:- true pred >(+arithexpression,+arithexpression) + (iso, native).
 
 X>Y :- X>Y.
 
 :- comment((Exp1 >= Exp2), "The numeric value of @var{Exp1} is greater than
    or equal to the numeric value of @var{Exp2} when both are evaluated as
    arithmetic expressions.").
-:- true pred >=(+arithexpression,+arithexpression) + eval.
-:- true comp (>=)/2 + (iso, native, sideff(free)).
+:- true pred >=(+arithexpression,+arithexpression) + (iso, native).
 
 X>=Y :- X>=Y.
 
 :- comment((Exp1 =:= Exp2), "The numeric values of @var{Exp1} and
    @var{Exp2} are equal when both are evaluated as arithmetic expressions.").
-:- true pred =:=(+arithexpression,+arithexpression) + eval.
-:- true comp (=:=)/2 + (iso, native, sideff(free)).
+:- true pred =:=(+arithexpression,+arithexpression) + (iso, native).
 
 X=:=Y :- X=:=Y.
 
 :- comment((Exp1 =\= Exp2), "The numeric values of @var{Exp1} and
    @var{Exp2} are not equal when both are evaluated as arithmetic
    expressions.").
-:- true pred =\=(+arithexpression,+arithexpression) + eval.
-:- true comp (=\=)/2 + (iso, native, sideff(free)).
+:- true pred =\=(+arithexpression,+arithexpression) + (iso, native).
 
 X=\=Y :- X=\=Y.
 
 % :- comment(doinclude, arithexpression/1).
 
 :- prop arithexpression(E) + regtype # "@var{E} is an arithmetic expression.".
-:- true comp arithexpression/1 + sideff(free).
 
 :- comment(arithexpression/1, "An arithmetic expression is a term built
    from numbers and @concept{evaluable functors} that represent
@@ -240,9 +232,6 @@ arithexpression([X]) :- num(X).
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+168,2004/02/03,21:28*52+'CET'), "Added sideff
-   declarations.  (Francisco Bueno Carrillo)").
 
 :- comment(version(0*9+18,1999/03/23,21:06*13+'MET'), "Changed doc to
    use the new @@iso command.  (Manuel Hermenegildo)").

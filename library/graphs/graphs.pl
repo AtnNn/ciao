@@ -1,3 +1,4 @@
+
 :- module(graphs,
 	[ dgraph/1,
 	  dlgraph/1,
@@ -120,7 +121,7 @@ direct_ledges_v([],[],[]).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+114,2003/12/22,18:25*48+'CET'), "Added comment
+:- comment(version(1*9+238,2003/12/22,18:25*58+'CET'), "Added comment
    module.  (Edison Mera)").
 
 :- comment(version(1*5+83,2000/03/23,19:23*58+'CET'), "Added

@@ -9,11 +9,9 @@
 # make justinstall      just install the whole Ciao system (must have been
 #                       compiled before)
 #
-# make installeng	Compile and Install (or only
-# make engine           compile) the Ciao engine for this particular arch.
+# make engine           compile the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
 #                       executables in several architectures at once.
-# 
 # make cleanbackups     delete backup files
 # make distclean        delete all files which can be automatically generated
 # make engclean		delete all engines created
@@ -28,7 +26,6 @@
 # 
 # make installdoc       a subset of 'make install', which only installs the 
 #                       documentation. Useful after 'make doc'. 
-
 
 #------- You should not change ANYTHING in this file -------------
 #------- All customizable options are in the file SETTINGS -------
@@ -57,11 +54,10 @@ all:
 	@echo "*** ========================================================="
 	@echo "*** Compiling ciao"
 	@echo "*** ========================================================="
-	$(MAKE) engine compiler applications libraries
+	$(MAKE) engine compiler applications libraries environment
 	@echo "*** ========================================================="
 	@echo "*** Ciao compilation completed"
 	@echo "*** ========================================================="
-
 
 allwin32: 
 	@echo "*** ========================================================="
@@ -91,15 +87,16 @@ engine: doengine$(ALT)
 
 dowindowsbat:
 	$(SETLOCALCIAO) $(CIAOC) Win32/setup_bat
-	Win32/setup_bat \"$(OBJDIR)/ciaoengine.exe\"
+	$(SETLOCALCIAO) Win32/setup_bat \"$(OBJDIR)/ciaoengine.exe\"
 
-doengine: bin/$(CIAOARCH)$(CIAODEBUG) include/$(CIAOARCH)$(CIAODEBUG) $(DEFAULTYPE)eng exe_header
+doengine: bin/$(CIAOARCH)$(CIAODEBUG) include/$(CIAOARCH)$(CIAODEBUG) $(DEFAULTYPE)eng exe_header # dowindowsbat
+
 
 doenginewin32: copysrcfiles doengine dowindowsbat
 	rm -f $(SRC)/Win32/bin/$(ENGINENAME)
 	cp $(OBJDIR)/$(ENGINENAME) $(SRC)/Win32/bin
 
-dyneng: commoneng stateng # libciao
+dyneng: commoneng stateng libciao
 	(umask 002; cd $(OBJDIR) &&  \
 	 $(MAKE) configure.h && \
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) CURRLIBS='$(LIBS)')
@@ -126,7 +123,7 @@ dostateng:
 	CURRLIBS='$(LIBS) $(STAT_LIBS)')
 	cp $(OBJDIR)/$(ENGINENAME) $(OBJDIR)/$(ENGINENAME).sta
 	@-chmod $(EXECMODE) $(OBJDIR)/$(ENGINENAME).sta
-
+	@-chgrp $(INSTALLGROUP) $(OBJDIR)/$(ENGINENAME).sta
 
 commoneng:
 	@echo "*** ---------------------------------------------------------"
@@ -180,7 +177,7 @@ libraries:
 	cd contrib && $(MAKE) all
 
 copysrcfiles: createsrcdir
-	cd engine && for File in *.[ch] *.pl Makefile ; \
+	cd engine && for File in *.[ch] Makefile ; \
 	do if [ ! -f $(OBJDIR)/$${File} -o $${File} -nt $(OBJDIR)/$${File} ]; \
              then rm -f $(OBJDIR)/$${File} ; cp $${File} $(OBJDIR)/$${File} ; \
 	   fi ; \
@@ -193,7 +190,6 @@ bin/$(CIAOARCH)$(CIAODEBUG):
 	$(MAKE) createsrcdir
 	cd $(OBJDIR) &&	                   \
 	   ln -s ../../engine/*.[ch] . &&   \
-	   ln -s ../../engine/*.pl . &&   \
 	   ln -s ../../engine/Makefile . && \
 	   rm -f configure.h
 
@@ -224,6 +220,12 @@ version-ciao:
 	echo 'double ciao_version = $(VERSION);' >> $(OBJDIR)/version.c;\
 	echo 'int ciao_patch = $(PATCH);' >> $(OBJDIR)/version.c;\
 	echo 'char *installibdir = "$(REALLIBDIR)";' >> $(OBJDIR)/version.c )
+	chmod $(DATAMODE) $(OBJDIR)/version.c
+# Groups do not exist in Windows machines!
+#	chgrp $(INSTALLGROUP) $(OBJDIR)/version.c
+
+environment:
+	cd emacs-mode && $(MAKE) compile
 
 installeng: engine installincludes justinstalleng
 
@@ -257,6 +259,7 @@ installincludes:
 	-cp $(NODEBUGSRCINCLUDEDIR)/* $(INSTALLEDINCLUDEDIR)
 	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
 	-mkdir -p $(INCLUDEROOT)
+	-rm -f $(INCLUDEROOT)/ciao_prolog.h
 	-ln -s $(INSTALLEDINCLUDEDIR)/ciao_prolog.h $(INCLUDEROOT)/ciao_prolog.h
 
 uninstallincludes:
@@ -329,7 +332,7 @@ test:
 
 
 clean: engclean
-#	cd ciaoc &&          $(MAKE) clean
+	cd ciaoc &&          $(MAKE) clean
 	cd lib &&            $(MAKE) clean
 	cd shell &&          $(MAKE) clean
 #	cd emacs &&          $(MAKE) clean
@@ -349,7 +352,7 @@ tar:
 
 
 
-totalclean: cleanbackups cleangmon distclean
+totalclean: cleanbackups distclean
 
 engrealclean engclean:
 	@echo "*** ---------------------------------------------------------"
@@ -361,9 +364,6 @@ engrealclean engclean:
 cleanbackups:
 	(cd $(SRC) && find . -name '*~' -exec /bin/rm {} \;)
 	(cd $(SRC) && find $(SRC) -name '#*' -exec /bin/rm {} \;)
-
-cleangmon:
-	(cd $(SRC) && find . -name gmon.out -exec /bin/rm {} \;)
 
 cleanasrs:
 	(cd $(SRC) && find . -name '*.asr' -exec /bin/rm {} \;)
@@ -379,15 +379,17 @@ distclean: engclean
 	cd Win32 && $(MAKE) distclean
 #	cd tests && $(MAKE) distclean
 	cd examples && $(MAKE) distclean
+	cd version && $(MAKE) distclean
+
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/doc $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/lib $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/library $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/contrib $(MAKE) distclean
-	rm -rf TAGS *.po *.itf *.asr
 
 cflow:
 	cd ${OBJDIR} && cflow -i -D${CIAOARCH} *.c > ${SRC}/etc/cflow.out
 
 cxref:
 	cd $(OBJDIR) && cxref -xref-function -D$(ARCHNAME) -D$(OSNAME) $(THREAD_FLAG) $(FOREIGN_FILES_FLAG) *.[ch] -O$(SRC)/etc/cxref
+
 

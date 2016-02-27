@@ -1,7 +1,7 @@
 
 :- module(agent1,[agent1/2],[persdb]).
 
-:- use_module(send, [send/2]).
+:- use_module(library('actmods/examples/agents/send'), [send/2]).
 
 :- use_module(library(numlists),[ sum_list/2 ]).
 

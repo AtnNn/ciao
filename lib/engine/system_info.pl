@@ -26,6 +26,7 @@
         get_arch/1,
         get_os/1,
         this_module/1,
+        current_module/1,
         ciaolibdir/1]).
 
 %%---------------------------------------------------------------------
@@ -99,8 +100,6 @@ no
          from user programs.
         ").
 
-current_module(Module) :- '$current_module'(Module).
-
 %%---------------------------------------------------------------------
 
 :- pred ciaolibdir(CiaoPath) :: atm(CiaoPath) #
@@ -134,10 +133,6 @@ internal_module_id(M) :-
 	atm(M).
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*11+9,2003/04/07,14:01*46+'CEST'), "
-   Define current_module/1 as a rename of '$current_module'/1.  (Jose
-   Morales)").
 
 :- comment(version(1*3+13,1999/07/02,18:49*49+'MEST'), "Updated
    documentation (Daniel Cabeza Gras)").

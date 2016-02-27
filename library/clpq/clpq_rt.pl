@@ -7,10 +7,18 @@
         solve_generic_3/8,
         solve_generic_4/10,
         solve_generic_5/12,
-        solve_generic_n/4], ['clpq/clpq_src']).
+        solve_generic_n/4], ['clpq/clpq_src',assertions]).
 
 :- use_module(library('clpq/solver_q')).
 :- use_module(library('clpq/clpq_dump')). % For the toplevel hook dump/3
 :- use_module(library('clpq/clpq_attr')).
 
 :- include('../clpqr-common/clp_rt').
+
+
+:- comment(version_maintenance,dir('../../version/')).
+
+:- comment(version(1*10+4,2004/08/04,12:14*22+'CEST'), "Added
+[assertions] to use versioning in this file and the files included by
+this one (MCL)").
+

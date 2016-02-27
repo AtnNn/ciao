@@ -81,3 +81,10 @@ solve_generic(lt,        H, I) :- solve_ineq_lt(H, I).
 solve_generic(nz(V),     H, I) :- var_with_def(New, nz, 1, I, H), New=V.
 solve_generic(eq_nbs(V), H, I) :- solve_eq_nbs(H, I, V, v).
 
+
+:- comment(version_maintenance,dir('../../version/')).
+
+:- comment(version(1*10+1,2004/07/29,19:29*40+'CEST'), "Solved a
+compilation problem: an existing Makefile (which apperas in the
+distribution) can prevent correct compilation.  ()").
+

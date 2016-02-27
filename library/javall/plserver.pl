@@ -23,7 +23,7 @@ main(['--java',Node:Port]):-
 main(_):-
 	format("usage:~n",[]),
 	format("plserver ~n",[]),
-	format("     Starts a Prolog server that expect from the standard~n",[]),
+	format("     Starts a Prolog server that expects from the standard~n",[]),
 	format("     input the port number to which it has to connect to.~n",[]),
 	format("plserver --server Port~n",[]),
 	format("     Starts a Prolog server in 'server mode': it waits for~n",[]),

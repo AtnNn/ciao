@@ -16,7 +16,6 @@
 %% *** Will be loaded INTO library also
 :- use_module(library(compiler),[use_module/1]).
 %% :- use_module(library(compiler),[ensure_loaded/1,use_module/1]).
-:- use_module(engine(io_aux)).
 
 :- comment(title,"The Ciao lpmake scripting facility").
 :- comment(subtitle,"A portable make with all the power of Prolog inside").

@@ -1,3 +1,4 @@
+
 :- module(atom2term,
 	[ atom2term/2,
 	  string2term/2,
@@ -100,7 +101,7 @@ parse_string0(C,String,[C|List],String1):-
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+92,2003/12/21,02:27*29+'CET'), "Added comment
+:- comment(version(1*9+215,2003/12/21,02:27*02+'CET'), "Added comment
    module.  (Edison Mera)").
 
 :- comment(version(1*9+19,2002/11/11,12:26*20+'CET'), "Changed

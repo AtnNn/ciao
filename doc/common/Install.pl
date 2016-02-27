@@ -14,6 +14,10 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*10+2,2004/08/02,19:25*49+'CEST'), "Installation
+   instructions were not correct.  They asked the user to edit the wrong
+   variables in the SETTINGS file.  (MCL)").
+
 :- comment(version(1*7+130,2001/10/28,17:06*47+'CET'), "Mac OS X
    installation instructions now merged into common instructions for
    all other Un*x-like systems.  (Manuel Hermenegildo)").

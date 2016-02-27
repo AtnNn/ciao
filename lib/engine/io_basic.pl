@@ -187,6 +187,5 @@
    @pred{skip_line/0} and @pred{skip_line/1} (which understand unix,
    mac and win end-of-lines). (Daniel Cabeza Gras)").
 
-:- comment(version(1*11+70,2003/12/19,16:49*37+'CET'), "Documentation
+:- comment(version(1*9+192,2003/12/19,16:49*52+'CET'), "Documentation
    revised.  (Edison Mera)").
-

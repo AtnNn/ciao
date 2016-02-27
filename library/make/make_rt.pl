@@ -1,7 +1,6 @@
 :- module(make_rt,[make/1,target/1,make_option/1,
 	           verbose_message/2,
-                  call_unknown/1,
-
+                   call_unknown/1,
 %                   fancy_display/1,
 %% Not used any more
 %%		   dyn_load_cfg_file_into_make/1,
@@ -209,8 +208,7 @@ dyn_load_cfg_module_into_make(ConfigFile) :-
       options. Default is no options (i.e., the predicate is undefined). The 
       following values are supported:
 @begin{verbatim}
-make_option('-v'). % Verbose: prints progress messages (for
-                   % debugging rules).
+make_option('-v'). % Verbose: prints progress messages (for debugging rules).
 @end{verbatim}
   ".
 
@@ -265,10 +263,10 @@ call_unknown(G) :-
  
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+129,2003/12/30,22:08*24+'CET'), "Added comment
+:- comment(version(1*9+251,2003/12/30,22:08*03+'CET'), "Added comment
    for call_unknown/2. (Edison Mera)").
 
-:- comment(version(1*11+128,2003/12/30,22:04*03+'CET'), "Added comment
+:- comment(version(1*9+250,2003/12/30,22:03*43+'CET'), "Added comment
    author. (Edison Mera)").
 
 :- comment(version(1*9+26,2002/11/20,12:57*08+'CET'), "Major

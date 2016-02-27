@@ -288,7 +288,7 @@ char *sha1_c(char* word) //, unsigned char digest[20])
     SHA1Update(&context, word, i);
     SHA1Final(buffer, &context);
     size = 20*sizeof(char);
-    digest = (char *) malloc(size);
+    digest = (char *) malloc(size+1);
     for (i = 0; i < 5; i++) {
         for (j = 0; j < 4; j++) {
             sprintf(&digest[i*4+j], "%02u", buffer[i*4+j]);

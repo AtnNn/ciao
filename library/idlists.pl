@@ -97,7 +97,7 @@ union_idlists([X|Xs],Ys,Zs) :-
 	union_idlists(Xs,Ys,Ws).
 
 
-:- comment(version(1*11+145,2004/01/01,14:01*41+'CET'), "Added comment
+:- comment(version(1*9+266,2004/01/01,14:01*07+'CET'), "Added comment
    for pred member_0/2.  (Edison Mera)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with

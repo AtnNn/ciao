@@ -1,148 +1,114 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - callgraph (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_180.html">previous</A>, <A HREF="ciao_182.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_180.html">previous</A>, <A HREF="ciao_182.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC705" HREF="ciao_toc.html#TOC705">callgraph (library)</A></H1>
-<P>
-<A NAME="IDX8086"></A>
-
+<H1><A NAME="SEC732" HREF="ciao_toc.html#TOC732">Crossed-references of a program</A></H1>
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#65 (2003/12/10, 1:19:38 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#257 (2003/12/30, 23:49:22 CET)
+
+
+<P>
+The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+
+
+<P>
+The libraries involved are as follows: 
 
 <UL>
-<LI><A HREF="ciao_181.html#SEC706">Usage and interface (callgraph)</A>
-<LI><A HREF="ciao_181.html#SEC707">Documentation on exports (callgraph)</A>
+<LI>
+
+<A NAME="IDX8145"></A>
+<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
+<LI>
+
+<A NAME="IDX8146"></A>
+<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
+<LI>
+
+<A NAME="IDX8147"></A>
+<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
+<LI>
+
+<A NAME="IDX8148"></A>
+<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
+<LI>
+
+<A NAME="IDX8149"></A>
+<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
 </UL>
 
-
-
-<H2><A NAME="SEC706" HREF="ciao_toc.html#TOC706">Usage and interface (<CODE>callgraph</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(callgraph)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX8087"></A>
-<CODE>call_graph/2</CODE>, 
-<A NAME="IDX8088"></A>
-<CODE>reachability/4</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX8089"></A>
-<CODE>assertions/c_itf_props</CODE>, 
-<A NAME="IDX8090"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX8091"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX8092"></A>
-<CODE>graphs/ugraphs</CODE>, 
-<A NAME="IDX8093"></A>
-<CODE>xrefs/xrefsread</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC707" HREF="ciao_toc.html#TOC707">Documentation on exports (<CODE>callgraph</CODE>)</A></H2>
 <P>
-<A NAME="IDX8094"></A>
-<A NAME="IDX8095"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>call_graph/2:</B>
-<DD><A NAME="IDX8096"></A>
+The first two are intended to be used by loading in 
+<A NAME="IDX8150"></A>
+<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>call_graph(File, Graph)</CODE>
+The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is the call-graph of the code in <CODE>File</CODE>.
+<PRE>
+[ciao/etc]&#62; ciaosh
+Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
+?- use_module(xmrefs).
 
-<LI><EM>The following properties should hold at call time:</EM>
+yes
+?- set_flag(X).
 
-<CODE>File</CODE> is an atom describing the name of a file.
- (<CODE>c_itf_props:filename/1</CODE>)
+X = 3 ? 
 
-<CODE>Graph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
+yes
+?- set_files([xfrefs, xmrefs,
+              library(xrefs),
+              library('xrefs/mrefs'),
+              library('xrefs/pxrefs'),
+              library('xrefs/xrefs2graph'),
+              library('xrefs/xrefsbuild'),
+              library('xrefs/xrefsread')
+	     ]).
 
-<CODE>Graph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
-</UL>
+yes
+?- xmrefs.
 
-</DL>
+</PRE>
 
 <P>
-<A NAME="IDX8097"></A>
-<A NAME="IDX8098"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>reachability/4:</B>
-<DD><A NAME="IDX8099"></A>
+so that it is displayed by daVinci as: 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>reachability(Graph, Sources, Reached, UnReached)</CODE>
+<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Reached</CODE> are the vertices in <CODE>Graph</CODE> reachable from <CODE>Sources</CODE>, <CODE>UnReached</CODE> are the rest.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
 
-<CODE>Graph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
 
-<CODE>Sources</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<P>
+<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
 
-<CODE>Reached</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 
-<CODE>UnReached</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
+<P>
+For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
 
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_180.html">previous</A>, <A HREF="ciao_182.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_180.html">previous</A>, <A HREF="ciao_182.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

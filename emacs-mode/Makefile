@@ -37,79 +37,99 @@ SUBSTITUTE_STRING=../etc/substitute_string
 #include /home/clip/Systems/ciao/SHARED
 #SUBSTITUTE_STRING = /home/clip/Systems/ciao/etc/substitute_string
 #-----------------------------------------------------------------------------
-ICONS = checkassertions.xpm ciao.xpm ciaoanalysis.xpm ciaoasr.xpm \
-        ciaoclearquery.xpm ciaocustomize.xpm ciaodebug.xpm ciaoexeout.xpm \
-	ciaoitf.xpm ciaoload.xpm ciaopeval.xpm ciaopl.xpm ciaopo.xpm \
-	ciaopreproc.xpm ciaopreprocask.xpm ciaopreprocsee.xpm \
-	ciaoprompt.xpm ciaorehighlight.xpm ciaoscrt.xpm ciaostorequery.xpm \
-	clear.xpm clip.xpm complete.xpm find_error.xpm lpdoc.xpm \
-	lpdocview.xpm  manuals.xpm stop.xpm wordhelp.xpm
+ICONS = ciaopl.xpm ciao.xpm ciaoload.xpm find_error.xpm \
+	   clear.xpm ciaoasr.xpm checkassertions.xpm ciaodebug.xpm \
+           lpdoc.xpm lpdocview.xpm ciaoexeout.xpm ciaoitf.xpm \
+	   ciaopo.xpm ciaopreprocask.xpm ciaopreproc.xpm ciaopreprocsee.xpm \
+           ciaoscrt.xpm manuals.xpm wordhelp.xpm complete.xpm ciaoprompt.xpm \
+           ciaorehighlight.xpm ciaostorequery.xpm stop.xpm \
+           ciaoclearquery.xpm clip.xpm 
 REALLIBDIR = $(LIBDIR)/$(VERSIONMAIN)
 ICONDIR = $(LIBDIR)/$(VERSIONMAIN)/icons
 #-----------------------------------------------------------------------------
+
+compile:
+	@echo "*** ---------------------------------------------------------"
+	@echo "*** Compiling emacs library files"
+	@echo "*** ---------------------------------------------------------"
+# Generate DOTemacs
+	$(SUBSTITUTE_STRING) "<CIAOLIBDIR>" $(LIBDIR) \
+                             "<LPDOCDIR>"   $(DOCDIR) \
+	     DOTemacs.skel DOTemacs.el
+	-chmod $(DATAMODE) DOTemacs.el
+	-chgrp $(INSTALLGROUP) DOTemacs.el
+# Generate commented DOTemacs, CiaoMode
+	$(SUBSTITUTE_STRING) '^' ';;' DOTemacs.el DOTemacs.tmp
+	$(SUBSTITUTE_STRING) '^' ';;' CiaoMode.pl CiaoMode.pl.tmp
+	-chmod $(DATAMODE) DOTemacs.tmp
+	-chgrp $(INSTALLGROUP) DOTemacs.tmp
+	-chmod $(DATAMODE) CiaoMode.pl.tmp
+	-chgrp $(INSTALLGROUP) CiaoMode.pl.tmp
+# Generate ciao.el by collating the body and the commented versions
+	$(SUBSTITUTE_STRING) \
+	     'ciao-mode-version "Development Version"' \
+	            'ciao-mode-version "$(VERSION)p$(PATCH)"' \
+	     ciao.el.body ciao.el.body.tmp
+	cat ciao.el.header DOTemacs.tmp CiaoMode.pl.tmp ciao.el.body.tmp \
+	    > ciao.el.tmp
+	-chmod $(DATAMODE) ciao.el.tmp
+	-chgrp $(INSTALLGROUP) ciao.el.tmp
+	$(SUBSTITUTE_STRING) \
+	    '<CIAOREALLIBDIR>' $(REALLIBDIR) \
+	    '<LPDOCDIR>' $(DOCDIR) \
+	     ciao.el.tmp ciao.el
+	-chmod $(DATAMODE) ciao.el
+	-chgrp $(INSTALLGROUP) ciao.el
+	-rm -rf word-help.elc ciao.elc
+	emacs -batch -l word-help.el -l ciao.el -f compile-ciao-mode
+	-chmod $(DATAMODE) ciao.elc 
+	-chgrp $(INSTALLGROUP) ciao.elc 
+	-chmod $(DATAMODE) word-help.elc 
+	-chgrp $(INSTALLGROUP) word-help.elc 
+
+
 install: 
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Installing emacs library files in $(REALLIBDIR)..."
 	@echo "*** ---------------------------------------------------------"
+# Make directories
 	-mkdir -p $(REALLIBDIR) $(ICONDIR)
 	-chmod $(EXECMODE) $(REALLIBDIR) $(ICONDIR)
 	-chgrp $(INSTALLGROUP) $(REALLIBDIR) $(ICONDIR)
+# Copy icons
 	-cd $(ICONDIR) && 'rm' -f $(ICONS)
 	cd icons && cp $(ICONS) $(ICONDIR)
 	-cd $(ICONDIR) && chmod $(DATAMODE) $(ICONS) && \
             chgrp $(INSTALLGROUP) $(ICONS) && 'rm' -f *~
-	$(SUBSTITUTE_STRING) "<CIAOLIBDIR>" $(LIBDIR) \
-                             "<LPDOCDIR>"   $(DOCDIR) \
-	     DOTemacs.skel $(REALLIBDIR)/DOTemacs.el
+# Copy DOTemacs.el, set mode and owner
+	-cp DOTemacs.el $(REALLIBDIR)/DOTemacs.el
 	-chmod $(DATAMODE) $(REALLIBDIR)/DOTemacs.el
 	-chgrp $(INSTALLGROUP) $(REALLIBDIR)/DOTemacs.el
-	$(SUBSTITUTE_STRING) '^' ';;' \
-	     $(REALLIBDIR)/DOTemacs.el \
-	     $(REALLIBDIR)/DOTemacs.tmp
-	$(SUBSTITUTE_STRING) '^' ';;' \
-	     CiaoMode.pl \
-	     $(REALLIBDIR)/CiaoMode.pl.tmp
-	$(SUBSTITUTE_STRING) \
-	     'ciao-mode-version "Development Version"' \
-	            'ciao-mode-version "$(VERSION)p$(PATCH)"' \
-	     ciao.el.body $(REALLIBDIR)/ciao.el.body.tmp
-	cat ciao.el.header $(REALLIBDIR)/DOTemacs.tmp \
-	    $(REALLIBDIR)/CiaoMode.pl.tmp \
-	    $(REALLIBDIR)/ciao.el.body.tmp > $(REALLIBDIR)/ciao.el.tmp
-	-rm -f $(REALLIBDIR)/DOTemacs.tmp
-	-rm -f $(REALLIBDIR)/CiaoMode.pl.tmp
-	-rm -f $(REALLIBDIR)/ciao.el.body.tmp
-	$(SUBSTITUTE_STRING) \
-	    '<CIAOREALLIBDIR>' $(REALLIBDIR) \
-	    '<LPDOCDIR>' $(DOCDIR) \
-	     $(REALLIBDIR)/ciao.el.tmp \
-	     $(REALLIBDIR)/ciao.el
-	-rm -f $(REALLIBDIR)/ciao.el.tmp
+# Copy ciao.el, set mode and owner
+	-cp ciao.el $(REALLIBDIR)/ciao.el
 	-chmod $(DATAMODE) $(REALLIBDIR)/ciao.el
 	-chgrp $(INSTALLGROUP) $(REALLIBDIR)/ciao.el
-	cp word-help.el $(REALLIBDIR)/word-help.el
-	-chmod $(DATAMODE) $(REALLIBDIR)/word-help.el
-	-chgrp $(INSTALLGROUP) $(REALLIBDIR)/word-help.el
-	-cd $(REALLIBDIR) && emacs -batch -l ciao.el -f compile-ciao-mode
+# Copy ciao.elc, set mode and owner
+	-cp ciao.elc $(REALLIBDIR)/ciao.elc
 	-chmod $(DATAMODE) $(REALLIBDIR)/ciao.elc
 	-chgrp $(INSTALLGROUP) $(REALLIBDIR)/ciao.elc
+# Copy word-help.el, set mode and owner
+	-cp word-help.el $(REALLIBDIR)/word-help.el
+	-chmod $(DATAMODE) $(REALLIBDIR)/word-help.el
+	-chgrp $(INSTALLGROUP) $(REALLIBDIR)/word-help.el
+# Copy word-help.elc, set mode and owner
+	-cp word-help.elc $(REALLIBDIR)/word-help.elc
 	-chmod $(DATAMODE) $(REALLIBDIR)/word-help.elc 
 	-chgrp $(INSTALLGROUP) $(REALLIBDIR)/word-help.elc 
-	-cd $(LIBDIR) &&  'rm' -f ciao.el &&  \
-	    ln -s $(REALLIBDIR)/ciao.el
-	-cd $(LIBDIR) &&  'rm' -f ciao.elc &&  \
-	    ln -s $(REALLIBDIR)/ciao.elc
-	-cd $(LIBDIR) &&  'rm' -f word-help.el &&  \
-	    ln -s $(REALLIBDIR)/word-help.el
-	-cd $(LIBDIR) &&  'rm' -f word-help.elc &&  \
-	    ln -s $(REALLIBDIR)/word-help.elc
-	-cd $(LIBDIR) &&  'rm' -f prolog.el &&  \
-            ln -s $(REALLIBDIR)/ciao.el prolog.el
-	-cd $(LIBDIR) &&  'rm' -f prolog.elc &&  \
-            ln -s $(REALLIBDIR)/ciao.elc prolog.elc
-	-cd $(LIBDIR) &&  'rm' -f DOTemacs.el &&  \
-            ln -s $(REALLIBDIR)/DOTemacs.el
-
+# Set up links for all of the above
+	-cd $(LIBDIR) && \
+	'rm' -f ciao.el       && ln -s $(REALLIBDIR)/ciao.el             && \
+	'rm' -f ciao.elc      && ln -s $(REALLIBDIR)/ciao.elc            && \
+	'rm' -f word-help.el  && ln -s $(REALLIBDIR)/word-help.el        && \
+	'rm' -f word-help.elc && ln -s $(REALLIBDIR)/word-help.elc       && \
+	'rm' -f prolog.el     && ln -s $(REALLIBDIR)/ciao.el prolog.el   && \
+	'rm' -f prolog.elc    && ln -s $(REALLIBDIR)/ciao.elc prolog.elc && \
+	'rm' -f DOTemacs.el   && ln -s $(REALLIBDIR)/DOTemacs.el
 
 .PHONY: doc dvi info
 
@@ -152,6 +172,7 @@ clean:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning up $(BASEMAIN) emacs directory..."
 	@echo "*** ---------------------------------------------------------"
+	-rm -f DOTemacs.tmp CiaoMode.pl.tmp ciao.el.body.tmp ciao.el.tmp
 	'rm' -f *~
 
 realclean distclean: clean

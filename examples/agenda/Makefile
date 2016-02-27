@@ -1,7 +1,6 @@
-include /home/clip/Systems/ciao/SETTINGS
-include $(SRC)/SHARED
+include ../../SETTINGS
+include ../../SHARED
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
-
 # Known suffixes.  This allos make to take care of time dependencies.
 .SUFFIXES: .java .class
 

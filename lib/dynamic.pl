@@ -8,20 +8,21 @@
 :- use_module(engine(internals)).
 :- use_module(library(prolog_sys), [new_atom/1]).
 
-:- meta_predicate asserta(clause).
-:- meta_predicate asserta(clause, ?).
-:- meta_predicate assertz(clause).
-:- meta_predicate assertz(clause, ?).
-:- meta_predicate assert(clause).
-:- meta_predicate assert(clause, ?).
-:- meta_predicate retract(clause).
-:- meta_predicate retractall(fact).
-:- meta_predicate abolish(spec).
-:- meta_predicate dynamic(addmodule).
-:- meta_predicate data(addmodule).
-:- meta_predicate clause(fact,?).
-:- meta_predicate clause(fact,?,?).
-:- meta_predicate current_predicate(addmodule).
+:- meta_predicate
+        asserta(clause),
+        asserta(clause, ?),
+        assertz(clause),
+        assertz(clause, ?),
+        assert(clause),
+        assert(clause, ?),
+        retract(clause),
+        retractall(fact),
+        abolish(spec),
+	dynamic(addmodule),
+        data(addmodule),
+        clause(fact,?),
+        clause(fact,?,?),
+        current_predicate(addmodule).
 
 :- comment(title,"Dynamic predicates").
 
@@ -119,7 +120,7 @@ dynamic_clauses(Clause, Root, Ptr0, Goal) :-
 canonical_clause((H :- B), H, B) :- !,
 	functor(H, F, _),
 	atom(F).
-canonical_clause(H, H, 'basiccontrol:true') :-
+canonical_clause(H, H, true) :-
 	functor(H, F, _),
 	atom(F).
 
@@ -165,7 +166,7 @@ dynamic(F/A, Mod) :-
         atom(F), !,
         module_concat(Mod, F, MF),
         functor(Head, MF, A), !,
-        asserta_fact('$imports'(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
+        asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
 	dynamic1(Head, dynamic/2).
 
 dynamic(F/A, Mod) :-
@@ -190,7 +191,7 @@ data(F/A, Mod) :-
         atom(F), !,
         module_concat(Mod, F, MF),
         functor(Head, MF, A), !,
-        asserta_fact('$imports'(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
+        asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
 	dynamic1(Head, data/2).
 data(F/A, Mod) :-
         var(F), !,
@@ -323,10 +324,10 @@ clause(HEAD, Body) :-
 :- comment(clause(Head,Body,Ref),"Like @tt{clause(Head,Body)}, plus the
    clause is uniquely identified by @var{Ref}.").
 
-:- true comp clause/3 + native.
-:- true pred clause(+Head,?Body,?Ref)
+:- true pred clause(+Head,?Body,?Ref) + native
 # "@var{Head} must be instantiated to an atom or a compound term.".
-:- true pred clause(?Head,?Body,+Ref)
+
+:- true pred clause(?Head,?Body,+Ref) + native
 # "@var{Ref} must be instantiated to a valid identifier.".
 
 clause(HEAD, Body, Ref) :-
@@ -352,20 +353,21 @@ clause(HEAD, Body, Ref) :-
 
 current_predicate(F/A,M) :-
         current_module(M),
+        \+ internal_module(M),
         module_concat(M,'',MPref),
         '$predicate_property'(P, _, _),
         functor(P, MF, A),
         atom_concat(MPref,F,MF).
 
+internal_module(internals).
+internal_module(M) :- builtin_module(M).
+
 % ----------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+75,2003/12/19,17:04*51+'CET'), "Added comment
+:- comment(version(1*9+197,2003/12/19,17:04*32+'CET'), "Added comment
    author.  (Edison Mera)").
-
-:- comment(version(1*11+15,2003/04/07,21:10*47+'CEST'), "Replace
-   imports/5 by '$imports'/5 (Jose Morales)").
 
 :- comment(version(1*7+93,2001/04/24,19:02*53+'CEST'),
    "current_predicate/2 now enumerates non-engine modules (Daniel Cabeza
@@ -397,3 +399,4 @@ documentation.  (MCL)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").
+

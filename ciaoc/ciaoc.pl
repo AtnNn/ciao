@@ -7,8 +7,7 @@
 :- use_module(engine(internals), ['$bootversion'/0]).
 
 :- comment(title,"The stand-alone command-line compiler").
-:- comment(author, "Daniel Cabeza").
-:- comment(author, "The CLIP Group").
+:- comment(author, "Daniel Cabeza and the CLIP Group").
 
 :- comment(copyright,"
 Copyright @copyright{} 1996-2002 Daniel Cabeza/The CLIP Group.
@@ -314,7 +313,12 @@ startup time @cite{ciaoc-entcs}:
   some of them are used in a given session. An executable with lazy
   load has the advantage that it starts fast, loading a minimal
   functionality on startup, and then loads the different modules
-  automatically as needed.
+  automatically as needed.  Please beware that initialization directives
+  appearing in a module which is lazily loaded currently are not
+  executed until the module is effectively loaded.  Since this happens
+  when the module is first required at runtime, the compiler cannot
+  guarantee the exact time and order in which these directives are
+  executed.
 
 @item{Self-contained executables:} @cindex{executables, self-contained} 
 
@@ -440,7 +444,7 @@ handle_args_('-x', Args) :- !,
         set_prolog_flag(check_libraries, on),
         handle_args(Args).
 handle_args_('-u', [CFile|Args]) :- !,
-        use_module(CFile, all, c_itf_internal),
+        use_module(CFile, all, c_itf),
         handle_args(Args).
 handle_args_('-u', []) :-
         usage.

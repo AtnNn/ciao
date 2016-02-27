@@ -21,10 +21,15 @@
 :- multifile persistent_dir/2.
 :- data persistent_dir/2.
 
+:- multifile persistent_dir/4.
+:- data persistent_dir/4.
+
 :- initialization(init_persdb).
 
 :- load_compilation_module(library('persdb/persdbtr')).
 :- add_sentence_trans(persistent_tr/2).
+:- add_term_trans(persistent_term_tr/3).
+
 
 %% Version comment prompting control for this file.
 %% Local Variables: 

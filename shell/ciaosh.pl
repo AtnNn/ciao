@@ -37,12 +37,11 @@
 :- use_module(library('compiler/translation'),
         [expand_term/4, add_sentence_trans/2, add_term_trans/2]).
 :- use_module(library('compiler/c_itf'),
-	[interpret_srcdbg/1,multifile/1, default_shell_package/1]).
+	[expand_list/2,interpret_srcdbg/1,multifile/1, 
+	 default_shell_package/1]).
 :- use_module(engine(internals),
-        ['$bootversion'/0, '$setarg'/4,
+        [imports/5, '$bootversion'/0, '$nodebug_call'/1, '$setarg'/4,
          '$open'/3, '$abolish'/1,'$empty_gcdef_bin'/0]).
-:- use_module(engine(hiord_rt),
-	[call/1, '$nodebug_call'/1]).
 :- use_module(library(lists),[difference/3]).
 :- use_module(library(format),[format/3]).
 :- use_module(library(aggregates), [findall/3]).
@@ -52,6 +51,7 @@
 :- redefining(debug_module/1).
 :- redefining(debug_module_source/1).
 :- redefining(nodebug_module/1).
+:- redefining(ensure_loaded/1).
 
 :- multifile exit_hook/0, after_query_hook/0, after_solution_hook/0.
 
@@ -66,7 +66,7 @@ main :-
         '$shell_module'(Module),
         asserta_fact(shell_module(Module)),
         '$abolish'('user:main'),
-        retract_fact('$imports'(user(_),ciaosh,main,0,_)),
+        retract_fact(imports(user(_),ciaosh,main,0,_)),
 	current_prolog_flag(argv, Args),
 	interpret_args(Args, true),
         displayversion,
@@ -333,15 +333,20 @@ dec_query_level :-
 
 set_top_prompt(0) :- !,
         retractall_fact(top_prompt(_)),
+% MH
 	top_prompt_base(P),
         asserta_fact(top_prompt(P)).
-
+% Was:
+%        asserta_fact(top_prompt('?- ')).
 set_top_prompt(N) :-
         number_codes(N, NS),
         atom_codes(NA, NS),
+% MH
 	top_prompt_base(P),
         atom_concat(NA, ' ', NS1),
         atom_concat(NS1, P, TP),
+% Was:
+%       atom_concat(NA, ' ?- ', TP),
         retractall_fact(top_prompt(_)),
         asserta_fact(top_prompt(TP)).
 
@@ -391,11 +396,7 @@ include_st(Stream) :-
         repeat,
 	  read_term(Stream, RawData, [variable_names(VarNames),lines(L0,L1)]),
           expand_term(RawData, ShMod, VarNames, Data0),
-	  nonvar(Data0),
-	  ( Data0 = [_|_] ->
-	      member(Data1, Data0)
-	  ; Data1 = Data0
-	  ),
+	  expand_list(Data0, Data1),
         ( Data1 = end_of_file, !
         ; interpret_data(Data1, L0, L1),
           fail).
@@ -440,35 +441,46 @@ use_module(M, Imports) :-
         shell_module(Module),
         use_module(M, Imports, Module).
 
-ensure_loaded([]) :- !.
-ensure_loaded([File|Files]) :- !,
-        shell_module(Module), % JF[] added module
-        compiler:ensure_loaded(File, Module), % JF[] added module
-        ensure_loaded(Files).
-ensure_loaded(File) :-
-        shell_module(Module), % JF[] added module
-        compiler:ensure_loaded(File, Module). % JF[] added module
+ensure_loaded(Files) :-
+        shell_module(Module),
+        ensure_loaded_(Files, Module).
+
+ensure_loaded_([], _) :- !.
+ensure_loaded_([File|Files], ShellMod) :- !,
+        compiler:ensure_loaded(File, ShellMod),
+        ensure_loaded_(Files, ShellMod).
+ensure_loaded_(File, ShellMod) :-
+        compiler:ensure_loaded(File, ShellMod).
 
 [File|Files] :-
         ( Files = [] -> AllFiles = File ; AllFiles = [File|Files] ),
-	%% JF[] removed obsolete message
-        %message(note,[[File|Files],' is obsolete, use ',
-        %             ensure_loaded(AllFiles),' instead']),
-        ensure_loaded([File|Files]).
+        message(note,[[File|Files],' deprecated, use ',
+                     ensure_loaded(AllFiles),' instead']),
+        ensure_loaded(AllFiles).
 
-consult([]) :- !.
-consult([File|Files]) :- !,
-        consult(File),
-        consult(Files).
-consult(File) :-
+consult(Files) :-
+        message(note,['consult/1',' deprecated, using ',
+                      'set_debug_mode/1 and ensure_loaded/1 instead']),
+        consult_(Files).
+
+consult_([]) :- !.
+consult_([File|Files]) :- !,
+        consult_(File),
+        consult_(Files).
+consult_(File) :-
         set_debug_mode(File),
         ensure_loaded(File).
 
-compile([]) :- !.
-compile([File|Files]) :- !,
-        compile(File),
-        compile(Files).
-compile(File) :-
+compile(Files) :-
+        message(note,['compile/1',' deprecated, using ',
+                      'set_nodebug_mode/1 and ensure_loaded/1 instead']),
+        compile_(Files).
+
+compile_([]) :- !.
+compile_([File|Files]) :- !,
+        compile_(File),
+        compile_(Files).
+compile_(File) :-
         set_nodebug_mode(File),
         ensure_loaded(File).
 
@@ -566,15 +578,19 @@ current_source_debugged(Ss) :-
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+160,2004/01/09,18:06*15+'CET'), "Fixed
-   problems related to argument handling.  Changed package loaded by
-   default to match the one defined in the compiler. (Daniel Cabeza &
-   Jose Morales)").
+:- comment(version(1*9+363,2004/07/17,20:47*32+'CEST'), "Changed
+   @pred{ensure_loaded/1} command so that if used with a module its
+   exported predicates are imported. Added obsolete warnings in
+   @pred{consult/1} and @pred{compile/1}. (Daniel Cabeza Gras)").
 
 :- comment(version(1*9+325,2004/03/15,17:44*11+'CET'), "Added
    prompt_alternatives_no_bindings prolog_flag so that, even when the
    query has no variables to report bindings for, backtracking can be
    asked.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+277,2004/01/09,17:45*58+'CET'), "Fixed problems
+   related to argument handling.  Changed package loaded by default to
+   match the one defined in the compiler. (Daniel Cabeza & Jose Morales)").
 
 :- comment(version(1*9+97,2003/08/05,19:43*37+'CEST'), "Mode prompt
    modification more standard (prompt/2).  (Manuel Hermenegildo)").
@@ -596,4 +612,3 @@ current_source_debugged(Ss) :-
 
 :- comment(version(1*7+10,2000/08/16,12:10*56+'CEST'), "Added
     '--version' switch.  (MCL)").
-

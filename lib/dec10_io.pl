@@ -92,4 +92,3 @@ told :- telling(X), close_file(X).
    documentation (partial). (Manuel Hermenegildo)").
 
 %% ---------------------------------------------------------------------------
-

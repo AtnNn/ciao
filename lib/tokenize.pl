@@ -501,7 +501,8 @@ read_after_dot_N(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
         check_singleton(Node, Var),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 
-read_after_dot_Na(0'n, 1, 0.Nan, Dict, Tokens) :- !,
+read_after_dot_Na(0'n, 1, Nan, Dict, Tokens) :- !,
+	Nan is 0.0/0.0,
         getct(Ch, Typ),
         read_tokens(Typ, Ch, Dict, Tokens).
 read_after_dot_Na(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
@@ -523,7 +524,7 @@ read_after_dot_I(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 
 read_after_dot_In(0'f, 1, Inf, Dict, Tokens) :- !,
-        Inf is 1/0,
+        Inf is 1.0/0.0,
         getct(Ch, Typ),
         read_tokens(Typ, Ch, Dict, Tokens).
 read_after_dot_In(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
@@ -606,13 +607,13 @@ atom_token(String, badatom(String)).
 
 skip_code_prot(C) :- catch(skip_code(C), _, fail).
 
-:- comment(version(1*11+196,2004/02/16,17:20*13+'CET'), "Changed to
+:- comment(version(1*9+300,2004/02/16,17:19*40+'CET'), "Changed to
    lets prolog to handle correctly the infinite floating point number.
    Now infinite can be represented as 0.Inf.  This is to avoid the
    previous definition of infinite (1.0E1000), that was very confuse.
    (Edison Mera)").
 
-:- comment(version(1*11+195,2004/02/16,17:16*35+'CET'), "Changed to be
+:- comment(version(1*9+299,2004/02/16,17:15*48+'CET'), "Changed to be
    compatible with the new order of the arguments in number_codes/3.
    (Edison Mera)").
 

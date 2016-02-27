@@ -1,4 +1,4 @@
-:- module(lgraphs,
+:- module(lgraphs, 
         [ lgraph/2,
 	  vertices_edges_to_lgraph/3
         ],
@@ -63,7 +63,6 @@ min(_W1,W,W).
 
 % ----------------------------------------------------------------------------
 
-
-:- comment(version(1*11+134,2003/12/30,23:45*39+'CET'), "Added comment
+:- comment(version(1*9+256,2003/12/30,23:45*01+'CET'), "Added comment
    for vertices_edges_to_lgraph/3.  (Edison Mera)").
 

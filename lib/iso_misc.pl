@@ -108,16 +108,15 @@ noocurrs_(S, V) :-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+199,2004/02/17,17:20*14+'CET'), "Changed
+:- comment(version(1*9+304,2004/02/17,17:20*04+'CET'), "Changed
    documentation.  (Daniel Cabeza Gras)").
 
-:- comment(version(1*11+140,2003/12/31,11:50*14+'CET'), "Added
-   documetation.  (Edison Mera)").
+:- comment(version(1*9+262,2003/12/31,11:46*45+'CET'), "Added
+   documentation.  (Edison Mera)").
 
-:- comment(version(1*11+139,2003/12/31,11:48*35+'CET'), "Changed
+:- comment(version(1*9+186,2003/12/09,17:25*52+'CET'), "Changed
    comment to assertion version control.  (Edison Mera)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").
 
-% -----------------------------------------------------------------------------

@@ -1160,7 +1160,7 @@ check_type_compatible(TypeA, TypeB) :-
 % -----------------------------------------------------------------------------
 :- comment(version_maintenance, dir('../../version')).
 
-:- comment(version(1*11+60,2003/11/27,21:23*00+'CET'), "Names of
+:- comment(version(1*9+112,2003/11/27,20:54*19+'CET'), "Names of
    multifile predicates relation/3 and attribute/4 changed to
    sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
 

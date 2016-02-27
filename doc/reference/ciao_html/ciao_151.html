@@ -1,110 +1,124 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Prolog to SQL translator</TITLE>
+<TITLE>The Ciao Prolog System               - SQL persistent database interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC612" HREF="ciao_toc.html#TOC612">Prolog to SQL translator</A></H1>
+<H1><A NAME="SEC632" HREF="ciao_toc.html#TOC632">SQL persistent database interface</A></H1>
 <P>
-<A NAME="IDX7050"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> C. Draxler. Adapted by M. Hermenegildo and I. Caballero.
+<A NAME="IDX6977"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> I. Caballero, D. Cabeza, J.M. G&oacute;mez, M. Hermenegildo, J. F. Morales, and M. Carro, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#60 (2003/11/27, 21:23:0 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-This library performs translation of Prolog queries into 
-<A NAME="IDX7051"></A>
-SQL. The code is an adaptation for Ciao of the 
-<A NAME="IDX7052"></A>
-Prolog to SQL compiler written by Christoph Draxler, CIS Centre for Information and Speech Processing, Ludwig-Maximilians-University Munich, <CODE>draxler@cis.uni-muenchen.de</CODE>, Version 1.1. Many thanks to Christoph for allowing us to include this adaptation of his code with Ciao. 
+<STRONG>Version of last change:</STRONG> 1.9#113 (2003/11/27, 20:56:6 CET)
 
 
 <P>
-The translator needs to know the correspondence between Prolog predicates and the 
-<A NAME="IDX7053"></A>
-SQL tables in the database. To this end this module exports two multifile predicates, 
-<A NAME="IDX7054"></A>
-<CODE>sql__relation/3</CODE> and 
-<A NAME="IDX7055"></A>
-<CODE>sql__attribute/4</CODE>. See the description of these predicates for details on how such correspondance is specified. 
+The purpose of this library is to implement an instance of the generic concept of 
+<A NAME="IDX6978"></A>
+persistent predicates, where external 
+<A NAME="IDX6979"></A>
+relational databases are used for storage (see the documentation of the 
+<A NAME="IDX6980"></A>
+<CODE>persdb</CODE> library and [CHGT98,Par97] for details). To this end, this library exports SQL persistent versions of the 
+<A NAME="IDX6981"></A>
+<CODE>assertz_fact/1</CODE>, 
+<A NAME="IDX6982"></A>
+<CODE>retract_fact/1</CODE> and 
+<A NAME="IDX6983"></A>
+<CODE>retractall_fact/1</CODE> builtin predicates. Persistent predicates also allow 
+<A NAME="IDX6984"></A>
+concurrent updates from several programs, since each update is atomic. 
 
 
 <P>
-The main entry points to the translator are 
-<A NAME="IDX7056"></A>
-<CODE>pl2sqlstring/3</CODE> and 
-<A NAME="IDX7057"></A>
-<CODE>pl2sqlterm/3</CODE>. Details on the types of queries allowed can be found in the description of these predicates. 
+The notion of persistence provides a very natural and transparent way to access database relations from a Prolog program. Stub definitions are provided for such predicates which access the database when the predicate is called (using the 
+<A NAME="IDX6985"></A>
+<CODE>db_client</CODE> library). A 
+<A NAME="IDX6986"></A>
+Prolog to SQL translator is used to generate the required 
+<A NAME="IDX6987"></A>
+SQL code dynamically (see library 
+<A NAME="IDX6988"></A>
+<CODE>pl2sql</CODE>). 
 
 
 <P>
-<STRONG>Example:</STRONG> the following program would print out a term representing the SQL query corresponding to the given Prolog query: 
-
-
-
-<PRE>
-%jcf%:- use_module(library('persdb_sql/pl2sql')).
-:- use_module(library('persdb_mysql/pl2sql')).
-%jcf%
-:- use_module(library(strings)).
-
-:- multifile [relation/3,attribute/4].
-:- data [relation/3,attribute/4].
-
-relation(product,3,'PRODUCT').
-attribute(1,'PRODUCT','ID',int).
-attribute(2,'PRODUCT','QUANTITY',int).
-attribute(3,'PRODUCT','NAME',string).
-
-main :- 
-     pl2sqlstring( f(L,K), 
-          ((product(L,N,a); product(L,N,b)),
-           \+ product(2,3,b), 
-           L + 2 &#62; avg(Y, Z^product(Z,Y,a)),
-           K is N + max(X, product(X,2,b))
-           ), T),
-     write_string(T).
-     
-%%     printqueries(T).
-
-</PRE>
-
-<P>
-<STRONG>Note:</STRONG> while the translator can be used directly in programs, it is more convenient to use a higher-level abstraction: 
-<A NAME="IDX7058"></A>
-persistent predicates (implemented in the 
-<A NAME="IDX7059"></A>
-<CODE>persdb</CODE> library). The notion of persistent predicates provides a completely transparent interface between Prolog and relational databases. When using this library, the Prolog to SQL translation is called automatically as needed. 
+This library also provides facilities for reflecting more complex 
+<A NAME="IDX6989"></A>
+views of the database relations as Prolog predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations. Also, 
+<A NAME="IDX6990"></A>
+SQL-like 
+<A NAME="IDX6991"></A>
+aggregation operations are supported. 
 
 
 
 <UL>
-<LI><A HREF="ciao_151.html#SEC613">Usage and interface (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC614">Documentation on exports (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC615">Documentation on multifiles (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC616">Documentation on internals (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC617">Known bugs and planned improvements (pl2sql)</A>
+<LI><A HREF="ciao_151.html#SEC633">Implementation of the Database Interface</A>
+<LI><A HREF="ciao_151.html#SEC634">Example(s)</A>
+<LI><A HREF="ciao_151.html#SEC635">Usage and interface (persdbrt_mysql)</A>
+<LI><A HREF="ciao_151.html#SEC636">Documentation on exports (persdbrt_mysql)</A>
+<LI><A HREF="ciao_151.html#SEC637">Documentation on multifiles (persdbrt_mysql)</A>
+<LI><A HREF="ciao_151.html#SEC638">Documentation on internals (persdbrt_mysql)</A>
+<LI><A HREF="ciao_151.html#SEC639">Known bugs and planned improvements (persdbrt_mysql)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC613" HREF="ciao_toc.html#TOC613">Usage and interface (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC633" HREF="ciao_toc.html#TOC633">Implementation of the Database Interface</A></H2>
+
+<P>
+The architecture of the low-level implementation of the database interface was defined with two goals in mind: 
+
+
+
+<UL>
+<LI>to simplify the communication between the Prolog system and the relational database engines as much as possible, and
+
+<LI>to give as much flexibility as possible to the overall system. This includes simultaneous access to several databases, allowing both the databases and clients to reside on the same physical machine or different machines, and allowing the clients to reside in Win95/NT or Unix machines.
+
+</UL>
+
+<P>
+ 
+In order to allow the flexibility mentioned above, a client-sever architecture was chosen. At the server side, a MySQL server connects to the databases using the MySQL. At the client side, a MySQL client interface connects to this server. The server daemon (mysqld) should be running in the server machine; check your MySQL documentation on how to do that. 
+
+
+<P>
+After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the data will traverse in the opposite direction. These messages include logging on and off from the database, sending SQL queries, and receiving the responses. 
+
+
+<P>
+The low level implementation of the current library is accomplished by providing abstraction levels over the MySQL interface library. These layers of abstraction implement the persistent predicate view, build the appropriate commands for the database using a translator of Prolog goals to SQL commands, issue such commands using the mediator send/receive procedures, parse the responses, and present such responses to the Prolog engine via backtracking. 
+
+
+
+
+<H2><A NAME="SEC634" HREF="ciao_toc.html#TOC634">Example(s)</A></H2>
+
+
+<PRE>
+
+</PRE>
+
+
+
+<H2><A NAME="SEC635" HREF="ciao_toc.html#TOC635">Usage and interface (<CODE>persdbrt_mysql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -112,7 +126,40 @@ persistent predicates (implemented in the
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(pl2sql)).</CODE>
+Typically, this library is used including the 'persdb_mysql' package into the package list of the module, or using the 
+<A NAME="IDX6992"></A>
+<CODE>use_package/1</CODE> declaration: 
+<DL COMPACT>
+
+<DT>In a module:
+<DD>
+
+<PRE>
+	:- module(bar, [main/1], [persdb_mysql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- module(bar, [main/1]).
+        :- include(library(persdb_mysql)).
+</PRE>
+
+<DT>In a <EM>user</EM> file:
+<DD>
+
+<PRE>
+	:- use_package([persdb_mysql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- include(library(persdb_mysql)).
+</PRE>
+
+</DL>
+This loads the run-time and compile-time versions of the library (<CODE>persdbtr_mysql.pl</CODE> and <CODE>persdbrt_mysql.pl</CODE>) and includes some needed declarations.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -121,28 +168,33 @@ persistent predicates (implemented in the
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7060"></A>
-<CODE>pl2sqlstring/3</CODE>, 
-<A NAME="IDX7061"></A>
-<CODE>pl2sqlterm/3</CODE>, 
-<A NAME="IDX7062"></A>
-<CODE>sqlterm2string/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7063"></A>
-<CODE>querybody/1</CODE>, 
-<A NAME="IDX7064"></A>
-<CODE>projterm/1</CODE>, 
-<A NAME="IDX7065"></A>
-<CODE>sqlstring/1</CODE>.
+<A NAME="IDX6993"></A>
+<CODE>init_sql_persdb/0</CODE>, 
+<A NAME="IDX6994"></A>
+<CODE>dbassertz_fact/1</CODE>, 
+<A NAME="IDX6995"></A>
+<CODE>dbretract_fact/1</CODE>, 
+<A NAME="IDX6996"></A>
+<CODE>dbcurrent_fact/1</CODE>, 
+<A NAME="IDX6997"></A>
+<CODE>dbretractall_fact/1</CODE>, 
+<A NAME="IDX6998"></A>
+<CODE>make_sql_persistent/3</CODE>, 
+<A NAME="IDX6999"></A>
+<CODE>dbfindall/4</CODE>, 
+<A NAME="IDX7000"></A>
+<CODE>dbcall/2</CODE>, 
+<A NAME="IDX7001"></A>
+<CODE>sql_query/3</CODE>, 
+<A NAME="IDX7002"></A>
+<CODE>sql_get_tables/2</CODE>, 
+<A NAME="IDX7003"></A>
+<CODE>sql_table_types/3</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX7066"></A>
-<CODE>sql__relation/3</CODE>, 
-<A NAME="IDX7067"></A>
-<CODE>sql__attribute/4</CODE>.
+<A NAME="IDX7004"></A>
+<CODE>sql_persistent_location/2</CODE>.
 
 </UL>
 
@@ -153,16 +205,32 @@ persistent predicates (implemented in the
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7068"></A>
+<A NAME="IDX7005"></A>
+<CODE>det_hook/det_hook_rt</CODE>, 
+<A NAME="IDX7006"></A>
+<CODE>persdb_mysql/db_client_types</CODE>, 
+<A NAME="IDX7007"></A>
+<CODE>persdb_mysql/pl2sql</CODE>, 
+<A NAME="IDX7008"></A>
 <CODE>persdb_sql_common/sqltypes</CODE>, 
-<A NAME="IDX7069"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX7070"></A>
+<A NAME="IDX7009"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7010"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX7011"></A>
+<CODE>terms_vars</CODE>, 
+<A NAME="IDX7012"></A>
+<CODE>messages</CODE>, 
+<A NAME="IDX7013"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7071"></A>
+<A NAME="IDX7014"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX7072"></A>
-<CODE>messages</CODE>.
+<A NAME="IDX7015"></A>
+<CODE>persdb_mysql/mysql_client</CODE>, 
+<A NAME="IDX7016"></A>
+<CODE>persdb_sql_common/pl2sqlinsert</CODE>, 
+<A NAME="IDX7017"></A>
+<CODE>persdb_mysql/delete_compiler/pl2sqldelete</CODE>.
 
 </UL>
 
@@ -172,52 +240,421 @@ persistent predicates (implemented in the
 
 
 
-<H2><A NAME="SEC614" HREF="ciao_toc.html#TOC614">Documentation on exports (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC636" HREF="ciao_toc.html#TOC636">Documentation on exports (<CODE>persdbrt_mysql</CODE>)</A></H2>
 <P>
-<A NAME="IDX7073"></A>
-<A NAME="IDX7074"></A>
+<A NAME="IDX7018"></A>
+<A NAME="IDX7019"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlstring/3:</B>
-<DD><A NAME="IDX7075"></A>
+<DT><span class="define">PREDICATE:</span> <B>init_sql_persdb/0:</B>
+<DD><A NAME="IDX7020"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>pl2sqlstring(ProjectionTerm, DatabaseGoal, SQLQueryString)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> This is the top level predicate which translates complex Prolog goals into the corresponding SQL code.
+<LI><EM>Description:</EM> Internal predicate, used to transform predicates statically declared as persistent (see
 
-The query code is prepared in such a way that the result is projected onto the term <CODE>ProjectionTerm</CODE> (also in a similar way to the first argument of 
-<A NAME="IDX7076"></A>
-<CODE>setof/3</CODE>)). See the predicate 
-<A NAME="IDX7077"></A>
-<CODE>translate_projection/3</CODE> for restrictions on this term. 
+<A NAME="IDX7021"></A>
+<CODE>sql_persistent/3</CODE>) into real persistent predicates.  
+</UL>
 
-<CODE>SQLQueryString</CODE> contains the code of the 
-<A NAME="IDX7078"></A>
-SQL query, ready to be sent to an 
-<A NAME="IDX7079"></A>
-SQL server. 
+</DL>
+
+<P>
+<A NAME="IDX7022"></A>
+<A NAME="IDX7023"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbassertz_fact/1:</B>
+<DD><A NAME="IDX7024"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbassertz_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX7025"></A>
+<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added to the end of the definition of the corresponding predicate. If any integrity constraint violation is done (database stored predicates), an error will be displayed. The predicate concerned must be statically (
+<A NAME="IDX7026"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX7027"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. <STRONG>Note:</STRONG> <EM>assertion of facts with uninstantiated variables not implemented at this time.</EM> 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>ProjectionTerm</CODE> is a database projection term.
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7028"></A>
+<A NAME="IDX7029"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbretract_fact/1:</B>
+<DD><A NAME="IDX7030"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbretract_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX7031"></A>
+<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX7032"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX7033"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7034"></A>
+<A NAME="IDX7035"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbcurrent_fact/1:</B>
+<DD><A NAME="IDX7036"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbcurrent_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX7037"></A>
+<CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
+<A NAME="IDX7038"></A>
+<CODE>sql_persistent/3</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7039"></A>
+<A NAME="IDX7040"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbretractall_fact/1:</B>
+<DD><A NAME="IDX7041"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbretractall_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX7042"></A>
+<CODE>retractall_fact/1</CODE>: when called deletes all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX7043"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX7044"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7045"></A>
+<A NAME="IDX7046"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_sql_persistent/3:</B>
+<DD><A NAME="IDX7047"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>make_sql_persistent(addmodule,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_sql_persistent(PrologPredTypes, TableAttributes, Keyword)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamic version of the
+
+<A NAME="IDX7048"></A>
+<CODE>sql_persistent/3</CODE> declaration. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
+ (<CODE>persdbrt_mysql:prologPredTypes/1</CODE>)
+
+<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
+ (<CODE>persdbrt_mysql:tableAttributes/1</CODE>)
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrt_mysql:persLocId/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7049"></A>
+<A NAME="IDX7050"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbfindall/4:</B>
+<DD><A NAME="IDX7051"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>dbfindall(?,?,goal,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbfindall(+DBId, +Pattern, +ComplexGoal, -Results)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Similar to
+
+<A NAME="IDX7052"></A>
+<CODE>findall/3</CODE>, but <CODE>Goal</CODE> is executed in database <CODE>DBId</CODE>. Certain restrictions and extensions apply to both <CODE>Pattern</CODE> and <CODE>ComplexGoal</CODE> stemming from the Prolog to SQL translation involved (see the corresponding type definitions for details). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+Pattern</CODE> is a database projection term.
  (<CODE>pl2sql:projterm/1</CODE>)
 
-<CODE>DatabaseGoal</CODE> is a database query goal.
+<CODE>+ComplexGoal</CODE> is a database query goal.
  (<CODE>pl2sql:querybody/1</CODE>)
 
-<CODE>SQLQueryString</CODE> is a string containing SQL code.
+<CODE>-Results</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7053"></A>
+<A NAME="IDX7054"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbcall/2:</B>
+<DD><A NAME="IDX7055"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbcall(+DBId, +ComplexGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Internal predicate, used by the transformed versions of the persistent predicates. Not meant to be called directly by users. It is exported by the library so that it can be used by the transformed versions of the persistent predicates in the modules in which they reside. Sends <CODE>ComplexGoal</CODE> to database <CODE>DBId</CODE> for evaluation. <CODE>ComplexGoal</CODE> must be a call to a persistent predicate which resides in database <CODE>DBId</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ComplexGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7056"></A>
+<A NAME="IDX7057"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_query/3:</B>
+<DD><A NAME="IDX7058"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_query(+DBId, +SQLString, AnswerTableTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is the response from database <CODE>DBId</CODE> to the
+
+<A NAME="IDX7059"></A>
+SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerTableTerm</CODE> can express a set of tuples, an error answer or a 'ok' response (see 
+<A NAME="IDX7060"></A>
+<CODE>answertableterm/1</CODE> for details). At the moment, 
+<A NAME="IDX7061"></A>
+<CODE>sql_query/3</CODE> log in and out for each query. This should be changed to log in only the first time and log out on exit and/or via a timer in the standard way. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+SQLString</CODE> is a string containing SQL code.
  (<CODE>pl2sql:sqlstring/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>ProjectionTerm</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>AnswerTableTerm</CODE> is a response from the ODBC database interface.
+ (<CODE>persdbrt_mysql:answertableterm/1</CODE>)
+</UL>
 
-<CODE>DatabaseGoal</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+</DL>
 
-<CODE>SQLQueryString</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<P>
+<A NAME="IDX7062"></A>
+<A NAME="IDX7063"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_get_tables/2:</B>
+<DD><A NAME="IDX7064"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>sql_get_tables(+Location, -Tables)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>Location</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Location</CODE> is a structure describing a database.
+ (<CODE>persdbrt_mysql:database_desc/1</CODE>)
+
+<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>sql_get_tables(+DbConnection, -Tables)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>DbConnection</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7065"></A>
+<A NAME="IDX7066"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_table_types/3:</B>
+<DD><A NAME="IDX7067"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>sql_table_types(+Location, +Table, -AttrTypes)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>Location</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Location</CODE> is a structure describing a database.
+ (<CODE>persdbrt_mysql:database_desc/1</CODE>)
+
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-AttrTypes</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>sql_table_types(+DbConnection, +Table, -AttrTypes)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>DbConnection</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-AttrTypes</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7068"></A>
+<A NAME="IDX7069"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
+<DD><A NAME="IDX7070"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7071"></A>
+<A NAME="IDX7072"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
+<DD><A NAME="IDX7073"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7074"></A>
+<A NAME="IDX7075"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
+<DD><A NAME="IDX7076"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7077"></A>
+<A NAME="IDX7078"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
+<DD><A NAME="IDX7079"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
+
 </UL>
 
 </DL>
@@ -226,116 +663,26 @@ SQL server.
 <A NAME="IDX7080"></A>
 <A NAME="IDX7081"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
+<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
 <DD><A NAME="IDX7082"></A>
 
 
 <P>
-<CODE>DBGoal</CODE> is a goal meant to be executed in the external database. It can be a complex term containing 
+<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX7083"></A>
-conjunctions, 
 <A NAME="IDX7084"></A>
-disjunctions, and 
-<A NAME="IDX7085"></A>
-negations, of: 
-
-
-
-<UL>
-
-<LI>
-
-<A NAME="IDX7086"></A>
-Atomic goals, which must have been defined via 
-<A NAME="IDX7087"></A>
-<CODE>sql__relation/3</CODE> and 
-<A NAME="IDX7088"></A>
-<CODE>sql__attribute/4</CODE> and reside in the (same) database. Their arguments must be either ground or free variables. If they are ground, they must be bound to constants of the type declared for that argument. If an argument is a free variable, it may <EM>share</EM> with (i.e., be the same variable as) other free variables in other goal arguments. 
-
-<LI>
-
-<A NAME="IDX7089"></A>
-Database comparison goals, whose main functor must be a 
-<A NAME="IDX7090"></A>
-database comparison operator (see 
-<A NAME="IDX7091"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX7092"></A>
-<CODE>comparison/2</CODE>) and whose arguments must be <EM>database arithmetic expressions</EM>. 
-
-<LI>
-
-<A NAME="IDX7093"></A>
-Database calls to is/2. The left side of such a call may be either unbound, in which case it is bound to the result of evaluating the right side, or bound in which case an equality condition is tested. The right side must be a <EM>database arithmetic expression</EM>. 
-
-</UL>
-
-<P>
-The binding of variables follows Prolog rules: 
-
-
-
-<UL>
-
-<LI>variables are bound by positive base goals and on the left side of the
-
-<A NAME="IDX7094"></A>
-<CODE>is/2</CODE> predicate. 
-
-<LI>Comparison operations, negated goals, and right sides of the
-
-<A NAME="IDX7095"></A>
-<CODE>is/2</CODE> predicate do not return variable bindings and may even require all arguments to be bound for a safe evaluation. 
-
-</UL>
-
-<P>
-<A NAME="IDX7096"></A>
-Database arithmetic expressions may contain: 
-
-
-
-<UL>
-
-<LI>Numeric constants (i.e., integers, reals, etc.).
-
-<LI>Bound variables, i.e., variables which will be bound during execution through occurrence within a positive database goal, or by a preceding arithmetic function.
-
-<LI>
-
-<A NAME="IDX7097"></A>
-Database arithmetic functions, which are a subset of those typically accepted within 
-<A NAME="IDX7098"></A>
-<CODE>is/2</CODE> (see 
-<A NAME="IDX7099"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX7100"></A>
-<CODE>arithmetic_functor/2</CODE>). 
-
-<LI>
-
-<A NAME="IDX7101"></A>
-Database aggregation functions, each of which has two arguments: a variable indicating the argument over which the function is to be computed, and a goal argument which must contain in at least one argument position the variable (e.g. <CODE>avg(Seats, plane(Type, Seats))</CODE>). The goal argument may only be a conjunction of (positive or negative) base goals. See 
-<A NAME="IDX7102"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX7103"></A>
-<CODE>aggregate_functor/2</CODE> for the admissible aggregate functions. 
-
-</UL>
-
-<P>
-In addition, variables 
-<A NAME="IDX7104"></A>
-<A NAME="IDX7105"></A>
-can be existentially quantified using 
-<A NAME="IDX7106"></A>
-<CODE>^/2</CODE> (in a similar way to how it is done in 
-<A NAME="IDX7107"></A>
-<CODE>setof/3</CODE>). 
-
-
-<P>
-Note that it is assumed that the arithmetic operators in Prolog and SQL are the same, i.e., <CODE>+</CODE> is addition in Prolog and in SQL, etc. 
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
+<DD><A NAME="IDX7085"></A>
 
 
 <P>
@@ -349,148 +696,15 @@ Note that it is assumed that the arithmetic operators in Prolog and SQL are the 
 </DL>
 
 <P>
-<A NAME="IDX7108"></A>
-<A NAME="IDX7109"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
-<DD><A NAME="IDX7110"></A>
-
-
-<P>
-<CODE>DBProjTerm</CODE> is a term onto which the result of a database query code is (in a similar way to the first argument of 
-<A NAME="IDX7111"></A>
-<CODE>setof/3</CODE>)). 
-
-
-<P>
-A <CODE>ProjectionTerm</CODE> must meet the following restrictions: 
-
-
-
-<UL>
-
-<LI>The functor of <CODE>ProjectionTerm</CODE> may not be one of the built-in predicates, i.e. ',', ';', etc. are not allowed.
-
-<LI>Only variables and constants are allowed as arguments, i.e., no structured terms may appear.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7112"></A>
-<A NAME="IDX7113"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
-<DD><A NAME="IDX7114"></A>
-
-
-
-<PRE>
-sqlstring(S) :-
-        string(S).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a string containing SQL code.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7115"></A>
-<A NAME="IDX7116"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlterm/3:</B>
-<DD><A NAME="IDX7117"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pl2sqlterm(ProjectionTerm, DatabaseGoal, SQLQueryTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Similar to
-
-<A NAME="IDX7118"></A>
-<CODE>pl2sqlstring/3</CODE> except that <CODE>SQLQueryTerm</CODE> is a representation of the SQL query as a Prolog term. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>ProjectionTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>DatabaseGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>SQLQueryTerm</CODE> is a list of <CODE>sqlterm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>ProjectionTerm</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>DatabaseGoal</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>SQLQueryTerm</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7119"></A>
-<A NAME="IDX7120"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sqlterm2string/2:</B>
-<DD><A NAME="IDX7121"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sqlterm2string(Queries, QueryString)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>QueryString</CODE> is a string representation of the list of queries in Prolog-term format in <CODE>Queries</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Queries</CODE> is a list of <CODE>sqlterm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>QueryString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Queries</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>QueryString</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7122"></A>
+<A NAME="IDX7086"></A>
 <DL>
 <DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX7123"></A>
+<DD><A NAME="IDX7087"></A>
 
 
 <P>
  Imported from 
-<A NAME="IDX7124"></A>
+<A NAME="IDX7088"></A>
 <CODE>sqltypes</CODE> (see the corresponding documentation for details).
 
 
@@ -498,496 +712,283 @@ sqlstring(S) :-
 
 
 
-<H2><A NAME="SEC615" HREF="ciao_toc.html#TOC615">Documentation on multifiles (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC637" HREF="ciao_toc.html#TOC637">Documentation on multifiles (<CODE>persdbrt_mysql</CODE>)</A></H2>
 <P>
+<A NAME="IDX7089"></A>
+<A NAME="IDX7090"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_persistent_location/2:</B>
+<DD><A NAME="IDX7091"></A>
+
+
+<P>
+Relates names of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location</CODE>s).
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>dynamic</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_persistent_location(Keyword, DBLocation)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> In this usage, <CODE>DBLocation</CODE> is a <EM>relational database</EM>, in which case the predicate is stored as tuples in the database.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrt_mysql:persLocId/1</CODE>)
+
+<CODE>DBLocation</CODE> is a structure describing a database.
+ (<CODE>persdbrt_mysql:database_desc/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC638" HREF="ciao_toc.html#TOC638">Documentation on internals (<CODE>persdbrt_mysql</CODE>)</A></H2>
+<P>
+<A NAME="IDX7092"></A>
+<A NAME="IDX7093"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
+<DD><A NAME="IDX7094"></A>
+
+
+
+<PRE>
+tuple(T) :-
+        list(T,atm).
+tuple(T) :-
+        list(T,atm).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7095"></A>
+<A NAME="IDX7096"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX7097"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7098"></A>
+<A NAME="IDX7099"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>sql_persistent/3:</B>
+<DD><A NAME="IDX7100"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>sql_persistent(PrologPredTypes, TableAttributes, Keyword)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares the predicate corresponding to the main functor of <CODE>PrologPredTypes</CODE> as SQL persistent. <CODE>Keyword</CODE> is the
+
+<A NAME="IDX7101"></A>
+name of a location where the 
+<A NAME="IDX7102"></A>
+persistent storage for the predicate is kept, which in this case must be an external relational database. The description of this database is given through the 
+<A NAME="IDX7103"></A>
+<CODE>sql_persistent_location</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. <CODE>TableAttributes</CODE> provides the 
+<A NAME="IDX7104"></A>
+table name and 
+<A NAME="IDX7105"></A>
+attributes in the database corresponding respectively to the predicate name and arguments of the (virtual) Prolog predicate. 
+
+Although a predicate may be persistent, other usual clauses can be defined in the source code. When querying a persistent predicate with non-persistent clauses, persistent and non-persisten clauses will be evaluated in turn; the order of evaluation is the usual Prolog order, considering that persistent clauses are defined in the program point where the 
+<A NAME="IDX7106"></A>
+<CODE>sql_persistent/3</CODE> declaration is. 
+
+<STRONG>Example:</STRONG> 
+
+
+<PRE>
+:- sql_persistent(product( integer,    integer, string, string ),
+              product( quantity,   id,      name,   size   ),
+              radiowebdb).
+
+sql_persistent_location(radiowebdb,
+   db('SQL Anywhere 5.0 Sample', user, pass,
+      'r2d5.dia.fi.upm.es':2020)).
+</PRE>
+
+ 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
+ (<CODE>persdbrt_mysql:prologPredTypes/1</CODE>)
+
+<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
+ (<CODE>persdbrt_mysql:tableAttributes/1</CODE>)
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrt_mysql:persLocId/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7107"></A>
+<A NAME="IDX7108"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_query/4:</B>
+<DD><A NAME="IDX7109"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_query(+DBId, +ProjTerm, +Goal, ResultTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> contains all the
+
+<A NAME="IDX7110"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX7111"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX7112"></A>
+Prolog to SQL translation and 
+<A NAME="IDX7113"></A>
+<CODE>sql_query/3</CODE> for posing the actual query. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>persdbrt_mysql:tuple/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7114"></A>
+<A NAME="IDX7115"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_query_one_tuple/4:</B>
+<DD><A NAME="IDX7116"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_query_one_tuple(+DBId, +ProjTerm, +Goal, ResultTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is one of the
+
+<A NAME="IDX7117"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX7118"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX7119"></A>
+Prolog to SQL translation and 
+<A NAME="IDX7120"></A>
+<CODE>sql_query_one_tuple/3</CODE> for posing the actual query. After last tuple has been reached, a null tuple is unified with ResultTerm, and the connection to the database finishes. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a predicate containing a tuple.
+ (<CODE>persdbrt_mysql:answertupleterm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7121"></A>
+<A NAME="IDX7122"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_query_one_tuple/3:</B>
+<DD><A NAME="IDX7123"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_query_one_tuple(+DBId, +SQLString, ResultTuple)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTuple</CODE> contains an element from the set of tuples which represents the response in <CODE>DBId</CODE> to the
+
+<A NAME="IDX7124"></A>
+SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls return consecutive tuples, until the last tuple is reached. Then a null tuple is unified with <CODE>ResultTuple</CODE> and the connection is finished (calls to 
 <A NAME="IDX7125"></A>
-<A NAME="IDX7126"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql__relation/3:</B>
-<DD><A NAME="IDX7127"></A>
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sql__relation(PredName, Arity, TableName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> This predicate, together with
-
-<A NAME="IDX7128"></A>
-<CODE>sql__attribute/4</CODE>, defines the correspondence between Prolog predicates and the 
-<A NAME="IDX7129"></A>
-SQL tables in the database. These two relations constitute an extensible meta-database which maps 
-<A NAME="IDX7130"></A>
-Prolog predicate names to 
-<A NAME="IDX7131"></A>
-SQL table names, and 
-<A NAME="IDX7132"></A>
-Prolog predicate argument positions to 
-<A NAME="IDX7133"></A>
-SQL attributes. 
-
-<CODE>PredName</CODE> is the chosen Prolog name for an SQL table. <CODE>Arity</CODE> is the number of arguments of the predicate. <CODE>TableName</CODE> is the name of the SQL table in the Database Management System. 
+<CODE>mysql_disconnect/1</CODE>). 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>PredName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
 
-<CODE>Arity</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>+SQLString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
 
-<CODE>TableName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7134"></A>
-<A NAME="IDX7135"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql__attribute/4:</B>
-<DD><A NAME="IDX7136"></A>
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sql__attribute(ANumber, TblName, AName, AType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> This predicate maps the argument positions of a Prolog predicate to the SQL attributes of its corresponding table. The types of the arguments need to be specified, and this information is used for consistency checking during the translation and for output formatting. A minimal type system is provided to this end. The allowable types are given by
-
-<A NAME="IDX7137"></A>
-<CODE>sqltype/1</CODE>. 
-
-<CODE>ANumber</CODE> is the argument number in the Prolog relation. <CODE>TblName</CODE> is the name of the SQL table in the Database Management System. <CODE>AName</CODE> is the name of the corresponding attribute in the table. <CODE>AType</CODE> is the (translator) data type of the attribute. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>ANumber</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>TblName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>AName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>AType</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
+<CODE>ResultTuple</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>persdbrt_mysql:tuple/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC616" HREF="ciao_toc.html#TOC616">Documentation on internals (<CODE>pl2sql</CODE>)</A></H2>
-<P>
-<A NAME="IDX7138"></A>
-<A NAME="IDX7139"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>query_generation/3:</B>
-<DD><A NAME="IDX7140"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>query_generation(ListOfConjunctions, ProjectionTerm, ListOfQueries)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> For each Conjunction in <CODE>ListOfConjunctions</CODE>, translate the pair <CODE>(ProjectionTerm, Conjunction)</CODE> to an SQL query and connect each such query through a
-
-<A NAME="IDX7141"></A>
-UNION-operator to result in the <CODE>ListOfQueries</CODE>. 
-
-A Conjunction consists of positive or negative subgoals. Each subgoal is translated as follows: 
-
-
-<UL>
-
-<LI>the
-
-<A NAME="IDX7142"></A>
-functor of a goal that is not a comparison operation is translated to a 
-<A NAME="IDX7143"></A>
-relation name with a 
-<A NAME="IDX7144"></A>
-range variable, 
-
-<LI>
-
-<A NAME="IDX7145"></A>
-negated goals are translated to 
-<A NAME="IDX7146"></A>
-NOT EXISTS-subqueries with 
-<A NAME="IDX7147"></A>
-* projection, 
-
-<LI>
-
-<A NAME="IDX7148"></A>
-comparison operations are translated to comparison operations in the 
-<A NAME="IDX7149"></A>
-WHERE-clause, 
-
-<LI>
-
-<A NAME="IDX7150"></A>
-aggregate function terms are translated to 
-<A NAME="IDX7151"></A>
-aggregate function (sub)queries. 
-
-</UL>
-
-The arguments of a goal are translated as follows: 
-
-
-<UL>
-
-<LI><CODE>variables of a goal</CODE> are translated to
-
-<A NAME="IDX7152"></A>
-qualified attributes, 
-
-<LI>
-
-<A NAME="IDX7153"></A>
-variables occurring in several goals are translated to equality comparisons (equi join) in the WHERE-clause, 
-<A NAME="IDX7154"></A>
-<A NAME="IDX7155"></A>
-
-<LI>
-
-<A NAME="IDX7156"></A>
-constant arguments are translated to 
-<A NAME="IDX7157"></A>
-equality comparisons in the WHERE-clause. 
-
-</UL>
-
-Arithmetic functions are treated specially (
-<A NAME="IDX7158"></A>
-<CODE>translate_arithmetic_function/5</CODE>). See also 
-<A NAME="IDX7159"></A>
-<CODE>querybody/1</CODE> for details on the syntax accepted and restrictions. 
-
- 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>ListOfConjunctions</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>ProjectionTerm</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>ListOfQueries</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7160"></A>
-<A NAME="IDX7161"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_conjunction/5:</B>
-<DD><A NAME="IDX7162"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_conjunction(Conjunction, SQLFrom, SQLWhere, Dict, NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates a conjunction of goals (represented as a list of goals preceeded by existentially quantified variables) to
-
-<A NAME="IDX7163"></A>
-FROM-clauses and 
-<A NAME="IDX7164"></A>
-WHERE-clauses of an SQL query. A dictionary containing the associated SQL table and attribute names is built up as an accumulator pair (arguments <CODE>Dict</CODE> and <CODE>NewDict</CODE>). 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7165"></A>
-<A NAME="IDX7166"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_goal/5:</B>
-<DD><A NAME="IDX7167"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_goal(Goal, SQLFrom, SQLWhere, Dict, NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates:
-
-
-<UL>
-
-<LI>a
-
-<A NAME="IDX7168"></A>
-positive database goal to the associated FROM- and WHERE clause of an SQL query, 
-
-<LI>a
-
-<A NAME="IDX7169"></A>
-negated database goal to a negated existential subquery, 
-
-<LI>an
-
-<A NAME="IDX7170"></A>
-arithmetic goal to an arithmetic expression or an aggregate function query, 
-
-<LI>a
-
-<A NAME="IDX7171"></A>
-comparison goal to a comparison expression, and 
-
-<LI>a
-
-<A NAME="IDX7172"></A>
-negated comparison goal to a comparison expression with the opposite comparison operator. 
-
-</UL>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7173"></A>
-<A NAME="IDX7174"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_arithmetic_function/5:</B>
-<DD><A NAME="IDX7175"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_arithmetic_function(Result, Expression, SQLWhere, Dict, NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Arithmetic functions (left side of is/2 operator is bound to value of expression on right side) may be called with either:
-
-
-<UL>
-<LI><CODE>Result</CODE> unbound: then <CODE>Result</CODE> is bound to the value of the evaluation of <CODE>Expression</CODE>,
-
-<LI><CODE>Result</CODE> bound: then an equality condition is returned between the value of <CODE>Result</CODE> and the value of the evaluation of <CODE>Expression</CODE>.
-
-Only the equality test shows up in the WHERE clause of an SQLquery. 
-</UL>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7176"></A>
-<A NAME="IDX7177"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_comparison/5:</B>
-<DD><A NAME="IDX7178"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_comparison(LeftArg, RightArg, CompOp, Dict, SQLComparison)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates the left and right arguments of a comparison term into the appropriate comparison operation in SQL. The result type of each argument expression is checked for type compatibility.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7179"></A>
-<A NAME="IDX7180"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>aggregate_function/3:</B>
-<DD><A NAME="IDX7181"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>aggregate_function(AggregateFunctionTerm, Dict, AggregateFunctionQuery)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Supports the Prolog aggregate function terms listed in
-
-<A NAME="IDX7182"></A>
-<CODE>aggregate_functor/2</CODE> within arithmetic expressions. Aggregate functions are translated to the corresponding SQL built-in aggregate functions. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7183"></A>
-<A NAME="IDX7184"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>comparison/2:</B>
-<DD><A NAME="IDX7185"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>comparison(PrologOperator, SQLOperator)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the mapping between Prolog operators and SQL operators:
-
-
-<PRE>
-comparison(=,=).
-comparison(&#60;,&#60;).
-comparison(&#62;,&#62;).
-comparison(@&#60;,&#60;).
-comparison(@&#62;,&#62;).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7186"></A>
-<A NAME="IDX7187"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>negated_comparison/2:</B>
-<DD><A NAME="IDX7188"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>negated_comparison(PrologOperator, SQLOperator)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the mapping between Prolog operators and the complementary SQL operators:
-
-
-<PRE>
-negated_comparison(=,&#60;&#62;).
-negated_comparison(\==,=).
-negated_comparison(&#62;,=&#60;).
-negated_comparison(=&#60;,&#62;).
-negated_comparison(&#60;,&#62;=).
-negated_comparison(&#62;=,&#60;).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7189"></A>
-<A NAME="IDX7190"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>arithmetic_functor/2:</B>
-<DD><A NAME="IDX7191"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>arithmetic_functor(PrologFunctor, SQLFunction)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the admissible arithmetic functions on the Prolog side and their correspondence on the SQL side:
-
-
-<PRE>
-arithmetic_functor(+,+).
-arithmetic_functor(-,-).
-arithmetic_functor(*,*).
-arithmetic_functor(/,/).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologFunctor</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLFunction</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7192"></A>
-<A NAME="IDX7193"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>aggregate_functor/2:</B>
-<DD><A NAME="IDX7194"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>aggregate_functor(PrologFunctor, SQLFunction)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the admissible aggregate functions on the Prolog side and their correspondence on the SQL side:
-
-
-<PRE>
-aggregate_functor(avg,'AVG').
-aggregate_functor(min,'MIN').
-aggregate_functor(max,'MAX').
-aggregate_functor(sum,'SUM').
-aggregate_functor(count,'COUNT').
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologFunctor</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLFunction</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC617" HREF="ciao_toc.html#TOC617">Known bugs and planned improvements (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC639" HREF="ciao_toc.html#TOC639">Known bugs and planned improvements (<CODE>persdbrt_mysql</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-Need to separate db predicate names by module.
+At least in the shell, reloading a file after changing the definition of a persistent predicate does not eliminate the old definition...
+
+<LI>
+
+Functionality missing: some questions need to be debugged.
+
+<LI>
+
+Warning: still using kludgey string2term and still using some non-uniquified temp files.
+
+<LI>
+
+Needs to be unified with the file-based library.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

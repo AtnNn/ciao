@@ -335,7 +335,7 @@ setproduct_([Head|Tail], X, [Set|TailX], Tl) :-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+115,2003/12/22,18:32*34+'CET'), "Added comment
+:- comment(version(1*9+239,2003/12/22,18:32*52+'CET'), "Added comment
    title and author.  (Edison Mera)").
 
 :- comment(version(0*9+17,1999/03/23,20:57*20+'MET'), "Fixed minor

@@ -32,16 +32,16 @@ uninstall:
 	@echo "*** ---------------------------------------------------------"
 	-rm -r $(EXAMPLESDIR)
 
-clean:
-	/bin/rm -rf *.itf *.dep *.po 
-
-realclean: clean
+realclean: distclean
 	/bin/rm -rf hw hw.cpx
 	cd misc && $(MAKE) realclean
+	cd agenda && $(MAKE) realclean
 
-distclean: realclean
+distclean clean:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning up directory."
 	@echo "*** ---------------------------------------------------------"
+	/bin/rm -rf *.itf *.dep *.po 
 	/bin/rm -rf *~
 	cd misc && $(MAKE) distclean
+	cd agenda && $(MAKE) realclean

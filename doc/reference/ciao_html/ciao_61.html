@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Declaring regular types</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_60.html">previous</A>, <A HREF="ciao_62.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_60.html">previous</A>, <A HREF="ciao_62.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC249" HREF="ciao_toc.html#TOC249">Declaring regular types</A></H1>
+<H1><A NAME="SEC275" HREF="ciao_toc.html#TOC275">Declaring regular types</A></H1>
 <P>
-<A NAME="IDX3762"></A>
+<A NAME="IDX3986"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_60.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
@@ -29,11 +29,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_60.html">previous</A>, 
 
 <P>
 This library package adds some new declaration definitions and new operator definitions to user programs. These new declarations and operators provide some very simple syntactic sugar to support 
-<A NAME="IDX3763"></A>
+<A NAME="IDX3987"></A>
 regular type definitions in source code. Regular types are just properties which have the additional characteristic of being 
-<A NAME="IDX3764"></A>
+<A NAME="IDX3988"></A>
 regular types (
-<A NAME="IDX3765"></A>
+<A NAME="IDX3989"></A>
 <CODE>basic_props:regtype/1</CODE>). 
 
 
@@ -57,7 +57,7 @@ Regular types can be used as properties to describe predicates and play an essen
 
 <P>
 In this chapter we explain some general considerations worth taking into account when writing properties in general, not just regular types. The exact 
-<A NAME="IDX3766"></A>
+<A NAME="IDX3990"></A>
 syntax of regular types is also described. 
 
 
@@ -67,22 +67,22 @@ syntax of regular types is also described.
 
 
 <UL>
-<LI><A HREF="ciao_61.html#SEC250">Defining properties</A>
-<LI><A HREF="ciao_61.html#SEC251">Usage and interface (regtypes)</A>
-<LI><A HREF="ciao_61.html#SEC252">Documentation on new declarations (regtypes)</A>
+<LI><A HREF="ciao_61.html#SEC276">Defining properties</A>
+<LI><A HREF="ciao_61.html#SEC277">Usage and interface (regtypes)</A>
+<LI><A HREF="ciao_61.html#SEC278">Documentation on new declarations (regtypes)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC250" HREF="ciao_toc.html#TOC250">Defining properties</A></H2>
+<H2><A NAME="SEC276" HREF="ciao_toc.html#TOC276">Defining properties</A></H2>
 
 <P>
 Given the classes of assertions in the Ciao assertion language, there are two fundamental classes of properties. Properties used in assertions which refer to execution states (i.e., <CODE>calls/1</CODE>, <CODE>success/1</CODE>, and the like) are called 
-<A NAME="IDX3767"></A>
-<A NAME="IDX3768"></A>
+<A NAME="IDX3991"></A>
+<A NAME="IDX3992"></A>
 <EM>properties of execution states</EM>. Properties used in assertions related to computations (i.e., <CODE>comp/1</CODE>) are called 
-<A NAME="IDX3769"></A>
-<A NAME="IDX3770"></A>
+<A NAME="IDX3993"></A>
+<A NAME="IDX3994"></A>
 <EM>properties of computations</EM>. Different considerations apply when writing a property of the former or of the later kind. 
 
 
@@ -96,11 +96,11 @@ string_concat([X|Xs],L,[X|NL]):- string_concat(Xs,L,NL).
 
 <P>
 Assume that we would like to state in an assertion that each argument "is a list of integers." However, we must decide which one of the following two possibilities we mean exactly: "the argument is <EM>instantiated</EM> to a list of integers" (let us call this property <CODE>instantiated_to_intlist/1</CODE>), or "if any part of the argument is instantiated, this instantiation must be compatible with the argument being a list of integers" (we will call this property <CODE>compatible_with_intlist/1</CODE>). For example, <CODE>instantiated_to_intlist/1</CODE> should be true for the terms <CODE>[]</CODE> and <CODE>[1,2]</CODE>, but should not for <CODE>X</CODE>, <CODE>[a,2]</CODE>, and <CODE>[X,2]</CODE>. In turn, <CODE>compatible_with_intlist/1</CODE> should be true for <CODE>[]</CODE>, <CODE>X</CODE>, <CODE>[1,2]</CODE>, and <CODE>[X,2]</CODE>, but should not be for <CODE>[X|1]</CODE>, <CODE>[a,2]</CODE>, and <CODE>1</CODE>. We refer to properties such as <CODE>instantiated_to_intlist/1</CODE> above as 
-<A NAME="IDX3771"></A>
-<A NAME="IDX3772"></A>
+<A NAME="IDX3995"></A>
+<A NAME="IDX3996"></A>
 <EM>instantiation properties</EM> and to those such as <CODE>compatible_with_intlist/1</CODE> as 
-<A NAME="IDX3773"></A>
-<A NAME="IDX3774"></A>
+<A NAME="IDX3997"></A>
+<A NAME="IDX3998"></A>
 <EM>compatibility properties</EM> (corresponding to the traditional notions of "instantiation types" and "compatibility types"). 
 
 
@@ -198,7 +198,7 @@ But note that (independently of the definition of <CODE>int/1</CODE>) the defini
 
 
 <P>
-The run-time support of the Ciao system (see @xref{Run-time checking of assertions}) ensures that the execution of properties is performed in such a way that properties written as above can be used directly as instantiation checks. Thus, writing: 
+The run-time support of the Ciao system (see section <A HREF="ciao_65.html#SEC288">Run-time checking of assertions</A>) ensures that the execution of properties is performed in such a way that properties written as above can be used directly as instantiation checks. Thus, writing: 
 
 
 
@@ -251,7 +251,7 @@ However, it is not so easy to code predicates which check other properties of th
 
 
 
-<H2><A NAME="SEC251" HREF="ciao_toc.html#TOC251">Usage and interface (<CODE>regtypes</CODE>)</A></H2>
+<H2><A NAME="SEC277" HREF="ciao_toc.html#TOC277">Usage and interface (<CODE>regtypes</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -267,16 +267,16 @@ or
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX3775"></A>
+<A NAME="IDX3999"></A>
 <CODE>regtype/1</CODE> [1150,fx], 
-<A NAME="IDX3776"></A>
+<A NAME="IDX4000"></A>
 <CODE>regtype/2</CODE> [1150,xfx].
 
 <LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX3777"></A>
+<A NAME="IDX4001"></A>
 <CODE>regtype/1</CODE>, 
-<A NAME="IDX3778"></A>
+<A NAME="IDX4002"></A>
 <CODE>regtype/2</CODE>.
 
 <LI><STRONG>Other modules used:</STRONG>
@@ -286,7 +286,7 @@ or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3779"></A>
+<A NAME="IDX4003"></A>
 <CODE>assertions/assertions_props</CODE>.
 
 </UL>
@@ -297,20 +297,20 @@ or
 
 
 
-<H2><A NAME="SEC252" HREF="ciao_toc.html#TOC252">Documentation on new declarations (<CODE>regtypes</CODE>)</A></H2>
+<H2><A NAME="SEC278" HREF="ciao_toc.html#TOC278">Documentation on new declarations (<CODE>regtypes</CODE>)</A></H2>
 <P>
-<A NAME="IDX3780"></A>
-<A NAME="IDX3781"></A>
+<A NAME="IDX4004"></A>
+<A NAME="IDX4005"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>regtype/1:</B>
-<DD><A NAME="IDX3782"></A>
+<DD><A NAME="IDX4006"></A>
 
 
 <P>
-<A NAME="IDX3783"></A>
-<A NAME="IDX3784"></A>
+<A NAME="IDX4007"></A>
+<A NAME="IDX4008"></A>
 This assertion is similar to a pred assertion but it flags that the predicate being documented is also a "
-<A NAME="IDX3785"></A>
+<A NAME="IDX4009"></A>
 regular type." This allows for example checking whether it is in the class of types supported by the type checking and inference modules. Currently, types are properties whose definitions are <EM>regular programs</EM>. 
 
 
@@ -333,8 +333,8 @@ For example, <CODE>p(f(X, Y)) :- ...</CODE> is valid, but <CODE>p(f(X, X)) :- ..
 
 <LI><CODE>n</CODE> &#62;= 0 and <CODE>p/n</CODE> is a
 
-<A NAME="IDX3786"></A>
-<A NAME="IDX3787"></A>
+<A NAME="IDX4010"></A>
+<A NAME="IDX4011"></A>
 <EM>parametric type functor</EM> (whereas the predicate defined by the clauses is <CODE>p/n</CODE>+1). 
 
 <LI><CODE>v_1</CODE>, ..., <CODE>v_n</CODE> are unique variables, which are called <EM>parametric variables</EM>.
@@ -356,15 +356,15 @@ For example, <CODE>p(f(X, Y)) :- ...</CODE> is valid, but <CODE>p(f(X, X)) :- ..
 
 <P>
 A 
-<A NAME="IDX3788"></A>
-<A NAME="IDX3789"></A>
+<A NAME="IDX4012"></A>
+<A NAME="IDX4013"></A>
 <EM>regular type expression</EM> is either a parametric variable or a parametric type functor applied to some of the parametric variables (but 
-<A NAME="IDX3790"></A>
+<A NAME="IDX4014"></A>
 regular type abstractions might also be used in some cases, see @xref{Meta-properties}). 
 
 
 <P>
-A parametric type functor is a regular type, defined by a regular program, or a basic type. Basic types are defined in section <A HREF="ciao_18.html#SEC109">Basic data types and properties</A>. 
+A parametric type functor is a regular type, defined by a regular program, or a basic type. Basic types are defined in section <A HREF="ciao_18.html#SEC135">Basic data types and properties</A>. 
 
 
 <P>
@@ -384,20 +384,20 @@ The set of types is thus a well defined subset of the set of properties. Note th
 </DL>
 
 <P>
-<A NAME="IDX3791"></A>
-<A NAME="IDX3792"></A>
+<A NAME="IDX4015"></A>
+<A NAME="IDX4016"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>regtype/2:</B>
-<DD><A NAME="IDX3793"></A>
+<DD><A NAME="IDX4017"></A>
 
 
 <P>
-<A NAME="IDX3794"></A>
-<A NAME="IDX3795"></A>
+<A NAME="IDX4018"></A>
+<A NAME="IDX4019"></A>
 This assertion is similar to a 
-<A NAME="IDX3796"></A>
+<A NAME="IDX4020"></A>
 <CODE>regtype/1</CODE> assertion but it is explicitely qualified. Non-qualified 
-<A NAME="IDX3797"></A>
+<A NAME="IDX4021"></A>
 <CODE>regtype/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. Note that checking regular type definitions should be done with the <CODE>ciaopp</CODE> preprocessor. 
 
 
@@ -417,6 +417,6 @@ This assertion is similar to a
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_60.html">previous</A>, <A HREF="ciao_62.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_60.html">previous</A>, <A HREF="ciao_62.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

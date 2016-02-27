@@ -1,74 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Run time usage of objects</TITLE>
+<TITLE>The Ciao Prolog System               - Compile-time usage of objects</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC463" HREF="ciao_toc.html#TOC463">Run time usage of objects</A></H1>
+<H1><A NAME="SEC486" HREF="ciao_toc.html#TOC486">Compile-time usage of objects</A></H1>
 <P>
-<A NAME="IDX5506"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda, Angel Fernandez Pineda.
+<A NAME="IDX5637"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#51 (2001/1/25, 21:33:0 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-This library provides run-time support for 
-<A NAME="IDX5507"></A>
-object creation and manipulation. Objects are also called 
-<A NAME="IDX5508"></A>
-class instances, or simply 
-<A NAME="IDX5509"></A>
-instances. 
+<STRONG>Version of last change:</STRONG> 1.7#32 (2000/11/14, 13:13:15 CET)
 
 
 <P>
-Objects in Ciao are treated as normal modules. This is, an object is a run-time generated Prolog module, which may be identified by an unique term across the whole application. 
-
-
-<P>
-This is a very simple example of how to create an instance, and how to make calls to it: 
-
-
-
-<PRE>
-            AnObj new myclass,
-            AnObj:mymethod.
-</PRE>
-
-<P>
-In order to make any object accessible from code, an usage relationship must be established between the class (from which instances are derived) and the code itself. Refer to 
-<A NAME="IDX5510"></A>
-<CODE>use_class/1</CODE> predicate or 
-<A NAME="IDX5511"></A>
-<CODE>use_class/1</CODE> declaration in order to do so. 
+This package is required to enable user code to create objects and manipulate them, as well as loading any needed class. 
 
 
 
 <UL>
-<LI><A HREF="ciao_116.html#SEC464">Usage and interface (objects_rt)</A>
-<LI><A HREF="ciao_116.html#SEC465">Documentation on exports (objects_rt)</A>
-<LI><A HREF="ciao_116.html#SEC466">Known bugs and planned improvements (objects_rt)</A>
+<LI><A HREF="ciao_116.html#SEC487">Usage and interface (objects)</A>
+<LI><A HREF="ciao_116.html#SEC488">Documentation on new declarations (objects)</A>
+<LI><A HREF="ciao_116.html#SEC489">Other information (objects)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Usage and interface (<CODE>objects_rt</CODE>)</A></H2>
+<H2><A NAME="SEC487" HREF="ciao_toc.html#TOC487">Usage and interface (<CODE>objects</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -76,56 +48,28 @@ In order to make any object accessible from code, an usage relationship must be 
 
 <LI><STRONG>Library usage:</STRONG>
 
-This library is automatically loaded when using the <EM>objects</EM> package: 
+Any code which needs to use objects must include the objects package: 
 
 <PRE>
     :- module(<EM>ModuleName</EM>,<EM>Exports</EM>,[objects]).
 </PRE>
 
-Nothing special needs to be done. 
+You can use objects even if your code is a class. Note that declaring a class does not automatically enables the code to create instances. 
 
-<LI><STRONG>Exports:</STRONG>
+<PRE>
+    :- class(<EM>ModuleName</EM>,[],[objects]).
+</PRE>
 
+This package enables both static and dynamic usage of objects. 
 
-<UL>
+<LI><STRONG>New declarations defined:</STRONG>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX5512"></A>
-<CODE>new/2</CODE>, 
-<A NAME="IDX5513"></A>
-<CODE>instance_of/2</CODE>, 
-<A NAME="IDX5514"></A>
-<CODE>derived_from/2</CODE>, 
-<A NAME="IDX5515"></A>
-<CODE>interface/2</CODE>, 
-<A NAME="IDX5516"></A>
-<CODE>instance_codes/2</CODE>, 
-<A NAME="IDX5517"></A>
-<CODE>destroy/1</CODE>, 
-<A NAME="IDX5518"></A>
-<CODE>use_class/1</CODE>.
-
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX5519"></A>
-<CODE>constructor/1</CODE>, 
-<A NAME="IDX5520"></A>
-<CODE>class_name/1</CODE>, 
-<A NAME="IDX5521"></A>
-<CODE>interface_name/1</CODE>, 
-<A NAME="IDX5522"></A>
-<CODE>instance_id/1</CODE>, 
-<A NAME="IDX5523"></A>
-<CODE>class_source/1</CODE>, 
-<A NAME="IDX5524"></A>
-<CODE>interface_source/1</CODE>, 
-<A NAME="IDX5525"></A>
-<CODE>method_spec/1</CODE>, 
-<A NAME="IDX5526"></A>
-<CODE>virtual_method_spec/1</CODE>.
-
-</UL>
+<A NAME="IDX5638"></A>
+<CODE> use_class/1</CODE>, 
+<A NAME="IDX5639"></A>
+<CODE> instance_of/2</CODE>, 
+<A NAME="IDX5640"></A>
+<CODE> new/2</CODE>.
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -134,12 +78,8 @@ Nothing special needs to be done.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5527"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX5528"></A>
-<CODE>prolog_sys</CODE>, 
-<A NAME="IDX5529"></A>
-<CODE>system</CODE>.
+<A NAME="IDX5641"></A>
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -149,363 +89,36 @@ Nothing special needs to be done.
 
 
 
-<H2><A NAME="SEC465" HREF="ciao_toc.html#TOC465">Documentation on exports (<CODE>objects_rt</CODE>)</A></H2>
+<H2><A NAME="SEC488" HREF="ciao_toc.html#TOC488">Documentation on new declarations (<CODE>objects</CODE>)</A></H2>
 <P>
-<A NAME="IDX5530"></A>
-<A NAME="IDX5531"></A>
+<A NAME="IDX5642"></A>
+<A NAME="IDX5643"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>new/2:</B>
-<DD><A NAME="IDX5532"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_class/1:</B>
+<DD><A NAME="IDX5644"></A>
 
 
 <P>
-Dynamic instance creation takes place by the ways of this predicate. 
+It establishes an 
+<A NAME="IDX5645"></A>
+usage relationship between the given file (which is supposed to declare a class) and current source. Usage relationships are needed in order to enable code to create instances of the given class, and to make calls to instances derived from such class. 
 
 
 <P>
-It takes a free variable as first argument which will be instantiated to an internal object identifier. 
+Since an interface is some kind of class, they may be used within this declaration but only for semantic checking porpouses. Instances will not be derived from interfaces. 
 
 
 <P>
-Second argument must be instantiated to a 
-<A NAME="IDX5533"></A>
-class constructor. Class constructors are designed to perform an initialization on the new created instance. Notice that instance initialization may involve some kind of computation, not only <EM>state initialization</EM>. 
+use_class/1 is used in the same way as 
+<A NAME="IDX5646"></A>
+<CODE>use_module/1</CODE>. 
 
 
 <P>
-A class constructor is made by a functor, which must match the intended class name, and any number of parameters. For example: 
-
-
-
-<PRE>
-            Obj new myclass(1500,'hello, world!!!')
-</PRE>
-
-<P>
-Those parameters depends (obviously) on the constructors defined at the class source. If no constructors where defined, no parameters are needed. This is called the 
-<A NAME="IDX5534"></A>
-default constructor. An example: 
-
-
-
-<PRE>
-            Obj new myclass
-</PRE>
-
-<P>
-The default constructor can not be called if there is any constructor available at the class source. 
-
-
-<P>
-Instantiation will raise an exception and fail whenever any of this conditions occur: 
+<STRONG>Usage:</STRONG> :- <CODE> use_class(ClassSource)</CODE>.
 
 <UL>
-<LI>First argument is not a free variable.
-
-<LI>Second argument functor is a class, but there is no usage relationship with it.
-
-<LI>Second argument functor is not a class.
-
-<LI>The given constructor is unknown.
-
-<LI>The given constructor fails (notice that default constructor never fails).
-
-</UL>
-
-<P>
-Objects may also be statically declared, refer to 
-<A NAME="IDX5535"></A>
-<CODE>instance_of/2</CODE> declaration. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>new(InstanceVar, Constructor)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Creates a new instance of the class specified by <CODE>Constructor</CODE> returning its identifier in <CODE>InstanceVar</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>InstanceVar</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Constructor</CODE> is a term whose functor matches a class name.
- (<CODE>objects_rt:constructor/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>InstanceVar</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5536"></A>
-<A NAME="IDX5537"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>instance_of/2:</B>
-<DD><A NAME="IDX5538"></A>
-
-
-<P>
-This predicate is used to perform dynamic type checking. You may check whether a particular instance belongs to a particular class or related descendants. 
-
-
-<P>
-instance_of/2 is used to perform static 
-<A NAME="IDX5539"></A>
-semantic analisys over object oriented code constructions. 
-
-
-<P>
-By the use of instance_of/2 you may help to perform such analisys. 
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>instance_of(Instance, Class)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Test whether <CODE>Instance</CODE> was derived from any descendant of <CODE>Class</CODE>, or that class itself
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>instance_of(Instance, Class)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves, on backtracking, the inheritance line of <CODE>Instance</CODE> commencing on the creation class (that specified on call to
-
-<A NAME="IDX5540"></A>
-<CODE>new/2</CODE>) and continuing on the rest of ascendant classes, if any. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Class</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5541"></A>
-<A NAME="IDX5542"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>derived_from/2:</B>
-<DD><A NAME="IDX5543"></A>
-
-
-<P>
-Test whether an object identifier was derived directly from a class, by the usage of 
-<A NAME="IDX5544"></A>
-<CODE>new/2</CODE> or a static instance declaration (
-<A NAME="IDX5545"></A>
-<CODE>instance_of/2</CODE>). 
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>derived_from(Instance, Class)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Test derivation of <CODE>Instance</CODE> from <CODE>Class</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>derived_from(Instance, Class)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves the <CODE>Class</CODE> responsable of the derivation of <CODE>Instance</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Class</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5546"></A>
-<A NAME="IDX5547"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>interface/2:</B>
-<DD><A NAME="IDX5548"></A>
-
-
-<P>
-This predicate is used to ensure a given interface to be implemented by a given instance. 
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>interface(Instance, Interface)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Check whether <CODE>Instance</CODE> implements the given <CODE>Interface</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Interface</CODE> is an unique atom which identifies a public interface.
- (<CODE>objects_rt:interface_name/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>interface(Instance, Interfaces)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves on backtracking all the implemented <CODE>Interfaces</CODE> of <CODE>Instance</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Interfaces</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Interfaces</CODE> is an unique atom which identifies a public interface.
- (<CODE>objects_rt:interface_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5549"></A>
-<A NAME="IDX5550"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>instance_codes/2:</B>
-<DD><A NAME="IDX5551"></A>
-
-
-<P>
-Retrieves a character string representation from an object identifier and vice-versa. 
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>instance_codes(Instance, String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves a <CODE>String</CODE> representation of given <CODE>Instance</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>String</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>instance_codes(Instance, String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Reproduces an <CODE>Instance</CODE> from its <CODE>String</CODE> representation. Such an instance must be alive across the application: this predicate will fail whether the involved instance has been destroyed.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5552"></A>
-<A NAME="IDX5553"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>destroy/1:</B>
-<DD><A NAME="IDX5554"></A>
-
-
-<P>
-As well as instances are created, they must be destroyed when no longer needed in order to release system resources. 
-
-
-<P>
-Unfortunately, current O'Ciao implementation does not support automatic instance destruction, so user must manually call <EM>destroy/1</EM> in order to do so. 
-
-
-<P>
-The programmer <STRONG>must ensure</STRONG> that no other references to the involved object are left in memory when destroy/1 is called. If not, unexpected results may be obtained. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>destroy(Instance)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Destroys the object identified by <CODE>Instance</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5555"></A>
-<A NAME="IDX5556"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
-<DD><A NAME="IDX5557"></A>
-
-
-<P>
-The behaviour of this predicate is identical to that provided by the declaration of the same name 
-<A NAME="IDX5558"></A>
-<CODE>use_class/1</CODE>. It allows user programs to dynamically load classes. Whether the given source is not a class it will perform a 
-<A NAME="IDX5559"></A>
-<CODE>use_module/1</CODE> predicate call.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>use_class(ClassSource)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Dynamically loads the given <CODE>ClassSource</CODE>
+<LI><EM>Description:</EM> Establish usage relationship with <CODE>ClassSource</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -516,172 +129,344 @@ The behaviour of this predicate is identical to that provided by the declaration
 </DL>
 
 <P>
-<A NAME="IDX5560"></A>
-<A NAME="IDX5561"></A>
+<A NAME="IDX5647"></A>
+<A NAME="IDX5648"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>constructor/1:</B>
-<DD><A NAME="IDX5562"></A>
+<DT><span class="define">DECLARATION:</span> <B>instance_of/2:</B>
+<DD><A NAME="IDX5649"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>constructor(Cons)</CODE>
+Statically declares an identifier to be an instance of a given class. 
+
+
+<P>
+It may be used as 
+<A NAME="IDX5650"></A>
+<CODE>new/2</CODE> predicate except for: 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Cons</CODE> is a term whose functor matches a class name.
 
+<LI>The instance identifier will not be a variable, it must be provided by the user, and must be unique.
+
+<LI>Instance creation will never fail, even if the constructor fails.
+
+</UL>
+
+<P>
+For every statically declared object the given constructor will be called at program startup. Those instances may be destroyed manually, but it is not recommended. 
+
+
+<P>
+When reloading the involved class from the Ciao toplevel shell. It may destroy statically declared instances, and create them again. 
+
+
+<P>
+Statically declared instances must be called using a specifically designed module-qualification: <CODE>ClassName(Object):Goal</CODE>. For example: 
+
+<PRE>
+    :- module(example,[main/0],[objects]).
+    :- use_class(library(counter)).
+    :- cnt instance_of counter(10).
+
+    main :-
+         counter(cnt):decrease(1),
+         counter(cnt):current_value(X),
+         display(X).
+</PRE>
+
+<P>
+But <STRONG>statically written code</STRONG> (only) is allowed to use module-style qualifications as a macro: 
+
+<PRE>
+    main :-
+         cnt:decrease(1),
+         cnt:current_value(X),
+         display(X).
+</PRE>
+
+<P>
+Notice that dynamically expanded goals such as <CODE>X=cnt,X:decrease(1)</CODE> will not work, use <CODE>X=counter(cnt),X:decrease(1)</CODE> instead. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE> instance_of(Object, Constructor)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares <CODE>Object</CODE> to be an instance of the class denoted by <CODE>Constructor</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Object</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Constructor</CODE> is a term whose functor matches a class name.
+ (<CODE>objects_rt:constructor/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5563"></A>
-<A NAME="IDX5564"></A>
+<A NAME="IDX5651"></A>
+<A NAME="IDX5652"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>class_name/1:</B>
-<DD><A NAME="IDX5565"></A>
+<DT><span class="define">DECLARATION:</span> <B>new/2:</B>
+<DD><A NAME="IDX5653"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>class_name(ClassName)</CODE>
+This declaration has the same effect as 
+<A NAME="IDX5654"></A>
+<CODE> instance_of/2</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE> new(Object, Constructor)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> <CODE>ClassName</CODE> is an atom denoting a class.
+<LI><EM>Description:</EM> Just an alias for
 
-</UL>
+<A NAME="IDX5655"></A>
+<CODE> instance_of/2</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-</DL>
+<CODE>Object</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
 
-<P>
-<A NAME="IDX5566"></A>
-<A NAME="IDX5567"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>interface_name/1:</B>
-<DD><A NAME="IDX5568"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>interface_name(Interface)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Interface</CODE> is an unique atom which identifies a public interface.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5569"></A>
-<A NAME="IDX5570"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>instance_id/1:</B>
-<DD><A NAME="IDX5571"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>instance_id(ID)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ID</CODE> is an unique term which identifies an object.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5572"></A>
-<A NAME="IDX5573"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>class_source/1:</B>
-<DD><A NAME="IDX5574"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>class_source(Source)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5575"></A>
-<A NAME="IDX5576"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>interface_source/1:</B>
-<DD><A NAME="IDX5577"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>interface_source(Source)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration or an interface declaration (without .pl extension).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5578"></A>
-<A NAME="IDX5579"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>method_spec/1:</B>
-<DD><A NAME="IDX5580"></A>
-
-
-<P>
-There is no difference between method or attribute specifications, and habitual predicate specifications. It is just a Functor/Arity term. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>method_spec(Spec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method or attribute specification.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5581"></A>
-<A NAME="IDX5582"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>virtual_method_spec/1:</B>
-<DD><A NAME="IDX5583"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>virtual_method_spec(Spec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method specification.
-
+<CODE>Constructor</CODE> is a term whose functor matches a class name.
+ (<CODE>objects_rt:constructor/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC466" HREF="ciao_toc.html#TOC466">Known bugs and planned improvements (<CODE>objects_rt</CODE>)</A></H2>
+<H2><A NAME="SEC489" HREF="ciao_toc.html#TOC489">Other information (<CODE>objects</CODE>)</A></H2>
+
+<P>
+ Compile-time errors are restricted to some local analysis. Since there is no type declaration in the Prolog language, there is no posibility to determine whenever a given variable will hold an instance of any class. 
+
+
+<P>
+However, little semantic analysis is performed. User may aid to perform such an analysis by the usage of run time checks (which are also detected at compile time), or static declarations. For example: 
+
+
+<P>
+<CODE>clause(Obj) :- Obj:a_method(334).</CODE> 
+
+
+<P>
+O'Ciao may be not able to determine whenever a_method/1 is a valid method for instance Obj, unless some help is provided: 
+
+
+<P>
+<CODE>clause(Obj) :- Obj instance_of myclass,Obj:a_method(334).</CODE> 
+
+
+<P>
+In such case, O'Ciao will report any semantic error at compile-time. 
+ 
+Most of the run-time errors are related to normal Ciao Prolog module system. Since objects are treated as normal Prolog modules at run time, there is no further documentation here about that stuff. 
+ 
+
+
+
+<UL>
+<LI><A HREF="ciao_116.html#SEC490">Error reporting at compile time (objects)</A>
+<LI><A HREF="ciao_116.html#SEC491">Error reporting at run time (objects)</A>
+</UL>
+
+
+
+<H3><A NAME="SEC490" HREF="ciao_toc.html#TOC490">Error reporting at compile time (objects)</A></H3>
+<P>
+ 
+
 
 
 <UL>
 
-<LI>
+<LI><STRONG>ERROR : invalid instance identifier <EM>ID</EM>: must be an atom</STRONG>
 
-Usage of objects from the <CODE>user</CODE> module does not work properly. It is better to use the <CODE>objects</CODE> package in a (proper) module.
+There is a 
+<A NAME="IDX5656"></A>
+<CODE>instance_of/2</CODE> or 
+<A NAME="IDX5657"></A>
+<CODE>new/2</CODE> declaration where first argument <EM>ID</EM> must be an unique atom, but currently it is not. Statically declared instances needs an identifier to be provided by the user. 
 
-<LI>
+<LI><STRONG>ERROR : instance identifier <EM>ID</EM> already in use</STRONG>
 
-Not really a bug: when loading code which declares static instances from the toplevel shell, predicate 
-<A NAME="IDX5584"></A>
-<CODE>use_module/1</CODE>) will not work properly: those instances may be not correctly created, and predicates will fail whenever they are not supposed to do. This may be avoided by reloading again the involved module, but make sure it is modified and saved to disk before doing so. 
+There are two or more 
+<A NAME="IDX5658"></A>
+<CODE>instance_of/2</CODE> declarations with the same first argument <EM>ID</EM>. Instance identifiers must be unique. 
+
+<LI><STRONG>ERROR : invalid use_class/1 declaration: <EM>SourceFile</EM> is not a class</STRONG>
+
+Those are the causes for this error: 
+
+
+<UL>
+
+<LI>The given <EM>SourceFile</EM> does not exist, or is not accesible.
+
+<LI>The given <EM>SourceFile</EM> is not a Prolog source.
+
+<LI>The given <EM>SourceFile</EM> is a valid Prolog source, but it does not declare a class.
+
+</UL>
+
+<LI><STRONG>ERROR : unknown class on <EM>ID</EM> instance declaration</STRONG>
+
+The class defined on the 
+<A NAME="IDX5659"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> instance has not been loaded by a 
+<A NAME="IDX5660"></A>
+<CODE>use_class/1</CODE> declaration. 
+
+<LI><STRONG>ERROR : instance identifier <EM>ID</EM> is an exisisting Prolog module</STRONG>
+
+There is an statically declared instance whose identifier may cause interference with the Ciao Prolog module system. Use another instance identifier. 
+
+<LI><STRONG>ERROR : unknown constructor on <EM>ID</EM> instance declaration</STRONG>
+
+The given constructor on the 
+<A NAME="IDX5661"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> has not been defined at the corresponding class. 
+
+<LI><STRONG>ERROR : constructor is needed on <EM>ID</EM> instance declaration</STRONG>
+
+No constructor was defined on the 
+<A NAME="IDX5662"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> and default constructor is not allowed. You must provide a constructor. 
+
+<LI><STRONG>ERROR : static instance <EM>ID</EM> was derived from a different constructor at <EM>AnotherModule</EM></STRONG>
+
+<EM>ID</EM> has been declared to be an static instance both on <EM>AnotherModule</EM> and current source, but different constructors were used. The most probable causes for this error are: 
+
+
+<UL>
+
+<LI>Occasionally, there is another module using the same instance identifier and it was not noticed by you. Another different identifier may be used instead.
+
+<LI>It was you intention to use the same object as declared by the other module. In this case, the same constructor must be used.
+
+</UL>
+
+<LI><STRONG>ERROR : invalid first argument in call to new(<EM>Arg</EM>,_)</STRONG>
+
+There is a new/1 goal in your code where first argument is not a free variable. For example: 
+
+<CODE>myobj new myclass</CODE> 
+
+First argument must be a variable in order to receive a run-time generated object identifier. 
+
+<LI><STRONG>ERROR : unknown class in call to new(?,<EM>Constructor</EM>) </STRONG>
+
+The given <EM>Constructor</EM> in call to new/2 does not correspond to any used class at current code. The most probable cause of this may be: 
+
+
+<UL>
+
+<LI>You forgot to include a
+
+<A NAME="IDX5663"></A>
+<CODE>use_class/1</CODE> declaration in your code. 
+
+<LI>There is a spelling mistake in the constructor.For example:
+
+:- use_class(myclass). 
+
+foo(X) :- X new mclass. 
+
+</UL>
+
+<LI><STRONG>ERROR : can not create an instance from an interface: new(?,<EM>Constructor</EM>) </STRONG>
+
+Given <EM>Constructor</EM> references an interface rather than a class. Instances can not be derived from interface-expanded code. 
+
+<LI><STRONG>ERROR : unknown constructor in call to new(?,<EM>Constructor</EM>) </STRONG>
+
+As the previous error, there is a mistake in the given <EM>Constructor</EM>. This error is reported when you are trying to call a constructor which was not defined at the corresponding class. Check the class definition to find what is going on. 
+
+Another cause for this error is the incorrect usage of the 
+<A NAME="IDX5664"></A>
+default constructor. Whenever there are one or more constructors defined at the involved class, you are restricted to chose one of them. This seems that default constructor will be available, if and only if, there are no constructors defined at the involved class. 
+
+<LI><STRONG>ERROR : call to non-public <EM>ID:Goal</EM></STRONG>
+
+You are trying to call a method which was not declared as public by the class specified in 
+<A NAME="IDX5665"></A>
+<CODE>instance_of/2</CODE> declaration for <EM>ID</EM>. 
+
+<LI><STRONG>ERROR : call to inaccessible predicate at instance <EM>ID:Goal</EM></STRONG>
+
+There is a call to <EM>Goal</EM> at statically declared instance <EM>ID</EM> which is unknown or was not declared as public. 
+
+<LI><STRONG>ERROR : unknown instance <EM>ID</EM> of class <EM>Class</EM> at <EM>Goal</EM></STRONG>
+
+There is a call to <EM>Goal</EM> where involved statically declared instance <EM>ID</EM> is unknown or is not derived from <EM>Class</EM>. Check whether it was declared by a 
+<A NAME="IDX5666"></A>
+<CODE>instance_of/2</CODE> declaration. 
+
+<LI><STRONG>ERROR : inaccessible attribute <EM>Fact</EM> at instance <EM>ID</EM></STRONG>
+
+There is an attempt to use <EM>ID:Fact</EM> but it was not declared as public. 
+
+<LI><STRONG>ERROR : unknown attribute <EM>Fact</EM> at instance <EM>ID</EM></STRONG>
+
+There is an attempt to use <EM>ID:Fact</EM> but it is unknown or it is not an attribute (may be a method). 
+
+<LI><STRONG>WARNING : invalid call to new(?,_)</STRONG>
+
+There is a call to new/2 in you code where first argument variable has been determined to hold any other instance. For example: 
+
+<CODE>foo :- X new myclass,X new otherclass.</CODE> 
+
+or 
+
+<CODE>foo(X) :- X instance_of myclass, X new myclass.</CODE> 
+
+The related call to new/2 will allways fail. 
+
+<LI><STRONG>WARNING : called <EM>Goal</EM> is not public at any used class</STRONG>
+
+There is a call to <EM>Var</EM>:<EM>Goal</EM> where <EM>Var</EM> has not been determined to be compatible with any class. However, <EM>Goal</EM> is not public at any class specified by the 
+<A NAME="IDX5667"></A>
+<CODE>use_class/1</CODE> declaration. 
+
+This is a warning (not an error) since <EM>Var</EM>:<EM>Goal</EM> may be not related to Object Oriented Programing. 
+
+</UL>
+
+
+
+<H3><A NAME="SEC491" HREF="ciao_toc.html#TOC491">Error reporting at run time (objects)</A></H3>
+<P>
+ 
+
+<UL>
+
+<LI><STRONG>EXCEPTION : instantiation_error( '1st argument must be free variable')</STRONG>
+
+Calling to new/1 requieres first argument to be a free variable. For example: 
+
+<CODE>X = this_will_raise_an_exception,X new myclass.</CODE> 
+
+<LI><STRONG>EXCEPTION : instantiation_error('class not given')</STRONG>
+
+You called new/2 using a free variable as second argument. 
+
+<LI><STRONG>EXCEPTION : instantiation_error(inaccesible_class(<EM>Class</EM>), from(<EM>Module</EM>)) </STRONG>
+
+<EM>Module</EM> tried to create an instance of <EM>Class</EM> by the ways of new/2, but there is no usage relationship between <EM>Module</EM> and <EM>Class</EM>. 
+
+<LI><STRONG>EXCEPTION : instantiation_error(invalid_constructor( <EM>Constructor</EM>)) </STRONG>
+
+<EM>Constructor</EM> was not defined by the corresponding class. 
+
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

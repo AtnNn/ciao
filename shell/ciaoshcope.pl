@@ -15,7 +15,6 @@
 	breakpt/6,nobreakpt/6,nobreakall/0,list_breakpt/0, 
 	call_in_module/2]).
 :- use_module(library(operators), [op/3]).
-:- use_module(engine(hiord_rt), [call/1]).
 
 '$shell_module'(ThisModule) :-
         this_module(ThisModule).

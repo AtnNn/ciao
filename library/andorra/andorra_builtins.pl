@@ -260,3 +260,9 @@ functor_andorra(X,L,L1,_,Y,Z):-
 
 
 
+
+%% Local Variables: 
+%% mode: CIAO
+%% update-version-comments: "off"
+%% End:
+

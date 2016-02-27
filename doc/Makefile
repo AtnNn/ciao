@@ -11,15 +11,15 @@ default:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Building $(MAIN) documentation ..."
 	@echo "*** ---------------------------------------------------------"
-	-cd ../emacs-mode; $(MAKE) CiaoMode.pl
+	-cd ../emacs-mode; $(MAKE) doc
 	-cd reference; 'rm' $(MAIN).htmlindex
-	-cd reference; $(MAKE) all
+	-cd reference; CIAOLIB=$(SRC) $(MAKE) all
 
 install: 
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Installing $(MAIN) documentation..."
 	@echo "*** ---------------------------------------------------------"
-	cd reference; $(MAKE) install
+	cd reference; CIAOLIB=$(SRC) $(MAKE) install
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Installing $(MAIN) documentation libraries..."
 	@echo "*** ---------------------------------------------------------"

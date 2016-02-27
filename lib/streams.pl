@@ -32,7 +32,7 @@ close_output(o(OldOutput, NewOutput)) :- !,
 close_output(X) :-
         throw(error(domain_error(open_output_handler, X), close_output/1-1)).
 
-:- comment(version(1*11+37,2003/08/29,14:55*55+'CEST'), "Added error
+:- comment(version(1*9+332,2004/03/29,19:20*32+'CEST'), "Added error
    messages when doing close_input of an open_output handler or
    vice versa.  (Daniel Cabeza Gras)").
 

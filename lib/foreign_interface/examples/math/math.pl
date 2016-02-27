@@ -7,10 +7,3 @@
 :- extra_compiler_opts(['-O2']).
 :- extra_compiler_opts('LINUXi86',['-ffast-math']).
 :- use_foreign_library('LINUXi86', m).
-
-
-
-
-
-
-

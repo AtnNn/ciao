@@ -1,99 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - XML query library</TITLE>
+<TITLE>The Ciao Prolog System               - Error Handler for Chartlib</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_193.html">previous</A>, <A HREF="ciao_195.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_193.html">previous</A>, <A HREF="ciao_195.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC748" HREF="ciao_toc.html#TOC748">XML query library</A></H1>
+<H1><A NAME="SEC774" HREF="ciao_toc.html#TOC774">Error Handler for Chartlib</A></H1>
 <P>
-<A NAME="IDX8406"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> José Manuel Gómez Pérez.
+<A NAME="IDX8533"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1 (2003/12/1, 13:24:9 CET)
+<STRONG>Author(s):</STRONG> Isabel Martín.
 
 
 <P>
-This package provides a language suitable for querying XML documents from a Prolog program. Constraint programming expresions can be included in order to prune search as soon as possible, i.e. upon constraint unsatisfability, improving efficiency. Also, facilities are offerd to improve search speed by transforming XML documents into Prolog programs, hence reducing search to just running the program and taking advantage of Prolog's indexing capabilities. 
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-Queries in an XML document have a recursive tree structructure that permits to detail the search on the XML element sought, its attributes, and its children. As a suffix, a constraint programming expression can be added. Queries return value for the free variables included (in case of success), and checks whether the XML document structure matches that depicted by the query itself. 
+<STRONG>Version of last change:</STRONG> 1.9#259 (2003/12/30, 23:55:26 CET)
 
 
 <P>
-The operators introduced are described below: 
+This module is an error handler. If the format of the arguments is not correct in a call to a chartlib predicate an exception will be thrown . You can wrap the chartlib predicates with the predicates exported by this module to handle automatically the errors if any. 
 
 
 
 <UL>
- 
-<LI><EM>@</EM> Delimits a subquery on an elment's attribute, such as <CODE>product@val(product_name, "car")</CODE>, the first argument being the attribute name and the second its value. Any of them can be free variables, being possible to write queries like <CODE>product@val(Name, "car")</CODE>, intended to find the 'Name' of attributes of element product whose value is the string "car".
-
-<LI><EM>::</EM> The right-hand side of the subexpression delimited by this operator is a query on the children elements of the element described on its left-hand side.
-
-<LI><EM>with</EM> Declares the constraints the items sought must satisfy.
-
-</UL>
-
-<P>
-Some examples of this query language (more can be found in the examples directory): 
-
-
-
-<UL>
-<LI>Example A:
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-product@val(product_name,"car")::(quantity(X), 
-                                  'time-left'(Y), 
-                                  negotiation::preference::price(Z)) 
-       with X * Z .&#62;. Y
-
-</PRE>
-
-
-<UL>
-<LI>Example B:
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-nitf::head::docdata::'doc-id'@val('id-string',"020918050")::(Y), 
-                     body::'body.head'::abstract::p(X)
-
-</PRE>
-
-
-<UL>
-<LI><A HREF="ciao_194.html#SEC749">Usage and interface (xml_path)</A>
-<LI><A HREF="ciao_194.html#SEC750">Documentation on exports (xml_path)</A>
-<LI><A HREF="ciao_194.html#SEC751">Documentation on internals (xml_path)</A>
+<LI><A HREF="ciao_194.html#SEC775">Usage and interface (chartlib_errhandle)</A>
+<LI><A HREF="ciao_194.html#SEC776">Documentation on exports (chartlib_errhandle)</A>
+<LI><A HREF="ciao_194.html#SEC777">Documentation on internals (chartlib_errhandle)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC749" HREF="ciao_toc.html#TOC749">Usage and interface (<CODE>xml_path</CODE>)</A></H2>
+<H2><A NAME="SEC775" HREF="ciao_toc.html#TOC775">Usage and interface (<CODE>chartlib_errhandle</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -101,11 +48,7 @@ nitf::head::docdata::'doc-id'@val('id-string',"020918050")::(Y),
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(xml_path).</CODE>
-
-or
-
-<CODE>:- module(...,...,[xml_path]).</CODE>
+<CODE>:- use_module(library(chartlib_errhandle)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -114,33 +57,12 @@ or
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8407"></A>
-<CODE>xml_search/3</CODE>, 
-<A NAME="IDX8408"></A>
-<CODE>xml_parse/3</CODE>, 
-<A NAME="IDX8409"></A>
-<CODE>xml_parse_match/3</CODE>, 
-<A NAME="IDX8410"></A>
-<CODE>xml_search_match/3</CODE>, 
-<A NAME="IDX8411"></A>
-<CODE>xml_index_query/3</CODE>, 
-<A NAME="IDX8412"></A>
-<CODE>xml_index_to_file/2</CODE>, 
-<A NAME="IDX8413"></A>
-<CODE>xml_index/1</CODE>, 
-<A NAME="IDX8414"></A>
-<CODE>xml_query/3</CODE>.
+<A NAME="IDX8534"></A>
+<CODE>chartlib_text_error_protect/1</CODE>, 
+<A NAME="IDX8535"></A>
+<CODE>chartlib_visual_error_protect/1</CODE>.
 
 </UL>
-
-<LI><STRONG>New operators defined:</STRONG>
-
-<A NAME="IDX8415"></A>
-<CODE>@/2</CODE> [200,yfx], 
-<A NAME="IDX8416"></A>
-<CODE>::/2</CODE> [300,xfy], 
-<A NAME="IDX8417"></A>
-<CODE>with/2</CODE> [800,yfx].
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -149,8 +71,10 @@ or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8418"></A>
-<CODE>xml_path/xml_path_types</CODE>.
+<A NAME="IDX8536"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX8537"></A>
+<CODE>chartlib/install_utils</CODE>.
 
 </UL>
 
@@ -160,374 +84,113 @@ or
 
 
 
-<H2><A NAME="SEC750" HREF="ciao_toc.html#TOC750">Documentation on exports (<CODE>xml_path</CODE>)</A></H2>
+<H2><A NAME="SEC776" HREF="ciao_toc.html#TOC776">Documentation on exports (<CODE>chartlib_errhandle</CODE>)</A></H2>
 <P>
-<A NAME="IDX8419"></A>
-<A NAME="IDX8420"></A>
+<A NAME="IDX8538"></A>
+<A NAME="IDX8539"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_search/3:</B>
-<DD><A NAME="IDX8421"></A>
+<DT><span class="define">PREDICATE:</span> <B>chartlib_text_error_protect/1:</B>
+<DD><A NAME="IDX8540"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>xml_search(Query, Source, Doc)</CODE>
+<CODE>chartlib_text_error_protect(G)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Checks a high level query <CODE>Query</CODE> against an XML document <CODE>Source</CODE>. If the query is successful it retuns in <CODE>Doc</CODE> the whole xml element(s) of the document that matched it.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+This predicate catches the thrown exception and sends it to the appropiate handler. The handler will show the error message in the standard output. 
 
-<CODE>Query</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
 
-<CODE>Source</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_text_error_protect(goal)</CODE>.
 
-<CODE>Doc</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Query</CODE> is a primitive XML query.
- (<CODE>xml_path_types:canonic_xml_query/1</CODE>)
-
-<CODE>Source</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-
-<CODE>Doc</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8422"></A>
-<A NAME="IDX8423"></A>
+<A NAME="IDX8541"></A>
+<A NAME="IDX8542"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_parse/3:</B>
-<DD><A NAME="IDX8424"></A>
+<DT><span class="define">PREDICATE:</span> <B>chartlib_visual_error_protect/1:</B>
+<DD><A NAME="IDX8543"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>xml_parse(Query, Source, Doc)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Checks a high level query <CODE>Query</CODE> against an XML document <CODE>Source</CODE>. If the query is successful it retuns in <CODE>Doc</CODE> the whole xml element(s) of the document that matched it. On the contrary as
-
-<A NAME="IDX8425"></A>
-<CODE>xml_search/3</CODE>, the query can start at any level of the XML document, not necessarily at the root node. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Query</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Source</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Doc</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Query</CODE> is a primitive XML query.
- (<CODE>xml_path_types:canonic_xml_query/1</CODE>)
-
-<CODE>Source</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-
-<CODE>Doc</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8426"></A>
-<A NAME="IDX8427"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_parse_match/3:</B>
-<DD><A NAME="IDX8428"></A>
+<CODE>chartlib_visual_error_protect(G)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>xml_parse_match(Query, Source, Match)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Checks a high level query <CODE>Query</CODE> against an XML document <CODE>Source</CODE>. If the query is successful it retuns in <CODE>Doc</CODE> the exact subtree of the xml document that matched it. On the contrary as
-
-<A NAME="IDX8429"></A>
-<CODE>'$xml_search_match/3</CODE>, the query can start at any level of the XML document, not necessarily at the root node. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Query</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Source</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Match</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Query</CODE> is a primitive XML query.
- (<CODE>xml_path_types:canonic_xml_query/1</CODE>)
-
-<CODE>Source</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-
-<CODE>Match</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8430"></A>
-<A NAME="IDX8431"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_search_match/3:</B>
-<DD><A NAME="IDX8432"></A>
+This predicate catches the thrown exception and sends it to the appropiate handler. The handler will pop up a message box. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>xml_search_match(BasicQuery, SourceDoc, Match)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_visual_error_protect(goal)</CODE>.
 
-<UL>
-<LI><EM>Description:</EM> Checks query <CODE>Query</CODE> against an XML document <CODE>Source</CODE>. If the query is successful it retuns in <CODE>Doc</CODE> the exact subtree of the xml document that matched it.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>BasicQuery</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>SourceDoc</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Match</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>BasicQuery</CODE> is a primitive XML query.
- (<CODE>xml_path_types:canonic_xml_query/1</CODE>)
-
-<CODE>SourceDoc</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-
-<CODE>Match</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8433"></A>
-<A NAME="IDX8434"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_index_query/3:</B>
-<DD><A NAME="IDX8435"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xml_index_query(Query, Id, Match)</CODE>
-
-<UL>
-<LI><EM>Description:</EM>  Matches a high level query <CODE>Query</CODE> against an XML document previously transformed into a Prolog program. <CODE>Id</CODE> identifies the resulting document <CODE>Match</CODE>, which is the exact match of the query against the XML document.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Query</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Id</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Match</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Query</CODE> is a primitive XML query.
- (<CODE>xml_path_types:canonic_xml_query/1</CODE>)
-
-<CODE>Id</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Match</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8436"></A>
-<A NAME="IDX8437"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_index_to_file/2:</B>
-<DD><A NAME="IDX8438"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xml_index_to_file(SourceDoc, File)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Transforms the XML document <CODE>SourceDoc</CODE> in a Prolog program which is output to file <CODE>File</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>SourceDoc</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-
-<CODE>File</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8439"></A>
-<A NAME="IDX8440"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_index/1:</B>
-<DD><A NAME="IDX8441"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xml_index(SourceDoc)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Transforms the XML document <CODE>SourceDoc</CODE> in a Prolog program, generating the associated clauses, which are stored dynamically into the current process memory space.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>SourceDoc</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8442"></A>
-<A NAME="IDX8443"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xml_query/3:</B>
-<DD><A NAME="IDX8444"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xml_query(Query, Doc, Match)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Checks that XML document <CODE>Doc</CODE> is compliant with respect to the query <CODE>Query</CODE> expressed in the low level query language. The exact mapping of the query over the document is returned in <CODE>Match</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Query</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Doc</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Match</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Query</CODE> is a primitive XML query.
- (<CODE>xml_path_types:canonic_xml_query/1</CODE>)
-
-<CODE>Doc</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-
-<CODE>Match</CODE> is either a XML attribute, a XML element or a line break.
- (<CODE>xml_path_types:canonic_xml_item/1</CODE>)
-</UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC751" HREF="ciao_toc.html#TOC751">Documentation on internals (<CODE>xml_path</CODE>)</A></H2>
+<H2><A NAME="SEC777" HREF="ciao_toc.html#TOC777">Documentation on internals (<CODE>chartlib_errhandle</CODE>)</A></H2>
 <P>
-<A NAME="IDX8445"></A>
-<A NAME="IDX8446"></A>
+<A NAME="IDX8544"></A>
+<A NAME="IDX8545"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_xml_term/1:</B>
-<DD><A NAME="IDX8447"></A>
+<DT><span class="define">REGTYPE:</span> <B>handler_type/1:</B>
+<DD><A NAME="IDX8546"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>canonic_xml_term(XMLTerm)</CODE>
+<CODE>handler_type(X)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>XMLTerm</CODE> is a term representing XML code in canonical form.
 
-</UL>
+<P>
+The library chartlib includes two error handlers already programmed. 
+
+<PRE>
+handler_type(text).
+handler_type(visual).
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX8448"></A>
-<A NAME="IDX8449"></A>
+<A NAME="IDX8547"></A>
+<A NAME="IDX8548"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_xml_item/1:</B>
-<DD><A NAME="IDX8450"></A>
+<DT><span class="define">PREDICATE:</span> <B>error_message/2:</B>
+<DD><A NAME="IDX8549"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>canonic_xml_item(XMLItem)</CODE>
+<CODE>error_message(ErrorCode, ErrorMessage)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>XMLItem</CODE> is either a XML attribute, a XML element or a line break.
 
-</UL>
+<P>
+Binds the error code with its corresponding text message. 
+
 
 </DL>
 
 <P>
-<A NAME="IDX8451"></A>
-<A NAME="IDX8452"></A>
+<A NAME="IDX8550"></A>
+<A NAME="IDX8551"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>tag_attrib/1:</B>
-<DD><A NAME="IDX8453"></A>
+<DT><span class="define">PREDICATE:</span> <B>error_file/2:</B>
+<DD><A NAME="IDX8552"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tag_attrib(Att)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Att</CODE> is a XML attribute.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8454"></A>
-<A NAME="IDX8455"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_xml_query/1:</B>
-<DD><A NAME="IDX8456"></A>
+<CODE>error_file(ErrorCode, ErrorFile)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>canonic_xml_query(Query)</CODE>
+Binds the error code with its corresponding script error file. 
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Query</CODE> is a primitive XML query.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8457"></A>
-<A NAME="IDX8458"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_xml_subquery/1:</B>
-<DD><A NAME="IDX8459"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>canonic_xml_subquery(SQuery)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>SQuery</CODE> defines a XML subquery.
-
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_193.html">previous</A>, <A HREF="ciao_195.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_193.html">previous</A>, <A HREF="ciao_195.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

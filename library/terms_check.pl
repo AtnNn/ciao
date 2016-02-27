@@ -161,10 +161,10 @@ mgi_each_arg(N,T1,T2,T):-
 %% End:
 %-------------------------------------------------------------------------
 
-:- comment(version(1*11+95,2003/12/21,18:52*02+'CET'), "Added comment
+:- comment(version(1*9+219,2003/12/21,18:51*46+'CET'), "Added comment
    author and module.  (Edison Mera)").
 
-:- comment(version(1*11+40,2003/09/09,18:30*52+'CEST'), "Added
+:- comment(version(1*9+103,2003/09/09,18:29*10+'CEST'), "Added
    most_specific_generalization/3 and most_general_instance/3.
    (Francisco Bueno Carrillo)").
 

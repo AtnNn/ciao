@@ -62,7 +62,7 @@ argnames_args({Args}, Args).
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+34,2003/08/21,17:46*13+'CEST'), "Added treatment
+:- comment(version(1*9+333,2004/03/29,19:29*27+'CEST'), "Added treatment
    of data(functor(argnames)) and the functor$@{/@} syntax.  Eliminated
    use of deprecated inform_user predicate. (Daniel Cabeza Gras)").
 

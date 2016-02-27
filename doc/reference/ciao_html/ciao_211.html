@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - boundary (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC807" HREF="ciao_toc.html#TOC807">boundary (library)</A></H1>
+<H1><A NAME="SEC832" HREF="ciao_toc.html#TOC832">dictionary_tree (library)</A></H1>
 <P>
-<A NAME="IDX8973"></A>
+<A NAME="IDX9068"></A>
 
 
 <P>
@@ -20,26 +20,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#171 (2003/12/4, 17:46:50 CET)
+<STRONG>Version of last change:</STRONG> 1.9#173 (2003/12/4, 17:47:16 CET)
 
 
 <P>
-This module offers predicate to check values according to their boundaries and offers lists of possible node ascendents.
+This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
 
 
 
 <UL>
-<LI><A HREF="ciao_211.html#SEC808">Usage and interface (boundary)</A>
-<LI><A HREF="ciao_211.html#SEC809">Documentation on exports (boundary)</A>
+<LI><A HREF="ciao_211.html#SEC833">Usage and interface (dictionary_tree)</A>
+<LI><A HREF="ciao_211.html#SEC834">Documentation on exports (dictionary_tree)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC808" HREF="ciao_toc.html#TOC808">Usage and interface (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC833" HREF="ciao_toc.html#TOC833">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +47,7 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(boundary)).</CODE>
+<CODE>:- use_module(library(dictionary_tree)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,16 +56,20 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8974"></A>
-<CODE>boundary_check/3</CODE>, 
-<A NAME="IDX8975"></A>
-<CODE>boundary_rotation_first/2</CODE>, 
-<A NAME="IDX8976"></A>
-<CODE>boundary_rotation_last/2</CODE>, 
-<A NAME="IDX8977"></A>
-<CODE>reserved_words/1</CODE>, 
-<A NAME="IDX8978"></A>
-<CODE>children_nodes/1</CODE>.
+<A NAME="IDX9069"></A>
+<CODE>create_dictionaries/1</CODE>, 
+<A NAME="IDX9070"></A>
+<CODE>is_dictionaries/1</CODE>, 
+<A NAME="IDX9071"></A>
+<CODE>get_definition_dictionary/2</CODE>, 
+<A NAME="IDX9072"></A>
+<CODE>get_prototype_dictionary/2</CODE>, 
+<A NAME="IDX9073"></A>
+<CODE>dictionary_insert/5</CODE>, 
+<A NAME="IDX9074"></A>
+<CODE>dictionary_lookup/5</CODE>, 
+<A NAME="IDX9075"></A>
+<CODE>merge_tree/2</CODE>.
 
 </UL>
 
@@ -76,26 +80,26 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8979"></A>
+<A NAME="IDX9076"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX8980"></A>
+<A NAME="IDX9077"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX8981"></A>
+<A NAME="IDX9078"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX8982"></A>
+<A NAME="IDX9079"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX8983"></A>
+<A NAME="IDX9080"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX8984"></A>
+<A NAME="IDX9081"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX8985"></A>
+<A NAME="IDX9082"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX8986"></A>
+<A NAME="IDX9083"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX8987"></A>
-<CODE>provrml/internal_types</CODE>, 
-<A NAME="IDX8988"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX9084"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX9085"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -105,162 +109,195 @@ This module offers predicate to check values according to their boundaries and o
 
 
 
-<H2><A NAME="SEC809" HREF="ciao_toc.html#TOC809">Documentation on exports (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC834" HREF="ciao_toc.html#TOC834">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
 <P>
-<A NAME="IDX8989"></A>
-<A NAME="IDX8990"></A>
+<A NAME="IDX9086"></A>
+<A NAME="IDX9087"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_check/3:</B>
-<DD><A NAME="IDX8991"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
+<DD><A NAME="IDX9088"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_check(Value_to_check, Init_value, Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate check the boundaries of the given value according to the boudary values. If the value is wrong according to the boundaries, the value is checked according to the initial value given. If the value continues to be wrong, an error will be raised accordingly.
+<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Value_to_check</CODE> is an atom.
+<CODE>-Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9089"></A>
+<A NAME="IDX9090"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
+<DD><A NAME="IDX9091"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>?Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9092"></A>
+<A NAME="IDX9093"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
+<DD><A NAME="IDX9094"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary, -Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9095"></A>
+<A NAME="IDX9096"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
+<DD><A NAME="IDX9097"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary, -Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9098"></A>
+<A NAME="IDX9099"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
+<DD><A NAME="IDX9100"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key, +Type, +Field, +Dictionary, ?Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Init_value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
+<CODE>+Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<CODE>Value_to_check</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>+Dictionary</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 
-<CODE>Init_value</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Bound</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>?Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8992"></A>
-<A NAME="IDX8993"></A>
+<A NAME="IDX9101"></A>
+<A NAME="IDX9102"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_first/2:</B>
-<DD><A NAME="IDX8994"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
+<DD><A NAME="IDX9103"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_first(Bound_double, Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key, ?Type, ?Field, +Dictionary, -Info)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the first bounds from a double bound.
+<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
+<CODE>+Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
+<CODE>?Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Bound_double</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>?Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<CODE>Bound</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8995"></A>
-<A NAME="IDX8996"></A>
+<A NAME="IDX9104"></A>
+<A NAME="IDX9105"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_last/2:</B>
-<DD><A NAME="IDX8997"></A>
+<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
+<DD><A NAME="IDX9106"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_last(Bound_double, Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree, +Tree)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the last bounds from a double bound.
+<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 
-<CODE>Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Bound_double</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Bound</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8998"></A>
-<A NAME="IDX8999"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>reserved_words/1:</B>
-<DD><A NAME="IDX9000"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>reserved_words(List)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns a list with the reserved words, words prohibited to use in cases not appropiated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9001"></A>
-<A NAME="IDX9002"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>children_nodes/1:</B>
-<DD><A NAME="IDX9003"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>children_nodes(List)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns a list of all nodes possible as children nodes.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

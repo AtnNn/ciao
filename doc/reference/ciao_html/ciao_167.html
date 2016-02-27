@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
+<TITLE>The Ciao Prolog System               - Lists of numbers</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC667" HREF="ciao_toc.html#TOC667">Pattern (regular expression) matching</A></H1>
+<H1><A NAME="SEC692" HREF="ciao_toc.html#TOC692">Lists of numbers</A></H1>
 <P>
-<A NAME="IDX7776"></A>
+<A NAME="IDX7816"></A>
 
 
 <P>
@@ -20,32 +20,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Version:</STRONG> 1.9#237 (2003/12/22, 18:23:36 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#133 (2003/12/30, 23:32:28 CET)
-
-
-<P>
-This library provides facilities for matching strings and terms against 
-<A NAME="IDX7777"></A>
-<A NAME="IDX7778"></A>
-<EM>patterns</EM> (i.e., 
-<A NAME="IDX7779"></A>
-<A NAME="IDX7780"></A>
-<EM>regular expressions</EM>).
+This module implements some kinds of lists of numbers.
 
 
 
 <UL>
-<LI><A HREF="ciao_167.html#SEC668">Usage and interface (patterns)</A>
-<LI><A HREF="ciao_167.html#SEC669">Documentation on exports (patterns)</A>
+<LI><A HREF="ciao_167.html#SEC693">Usage and interface (numlists)</A>
+<LI><A HREF="ciao_167.html#SEC694">Documentation on exports (numlists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC668" HREF="ciao_toc.html#TOC668">Usage and interface (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC693" HREF="ciao_toc.html#TOC693">Usage and interface (<CODE>numlists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -53,7 +43,7 @@ This library provides facilities for matching strings and terms against
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(patterns)).</CODE>
+<CODE>:- use_module(library(numlists)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -62,21 +52,23 @@ This library provides facilities for matching strings and terms against
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7781"></A>
-<CODE>match_pattern/2</CODE>, 
-<A NAME="IDX7782"></A>
-<CODE>match_pattern/3</CODE>, 
-<A NAME="IDX7783"></A>
-<CODE>case_insensitive_match/2</CODE>, 
-<A NAME="IDX7784"></A>
-<CODE>letter_match/2</CODE>, 
-<A NAME="IDX7785"></A>
-<CODE>match_pattern_pred/2</CODE>.
+<A NAME="IDX7817"></A>
+<CODE>get_primes/2</CODE>, 
+<A NAME="IDX7818"></A>
+<CODE>sum_list/2</CODE>, 
+<A NAME="IDX7819"></A>
+<CODE>sum_list/3</CODE>, 
+<A NAME="IDX7820"></A>
+<CODE>sum_list_of_lists/2</CODE>, 
+<A NAME="IDX7821"></A>
+<CODE>sum_list_of_lists/3</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX7786"></A>
-<CODE>pattern/1</CODE>.
+<A NAME="IDX7822"></A>
+<CODE>intlist/1</CODE>, 
+<A NAME="IDX7823"></A>
+<CODE>numlist/1</CODE>.
 
 </UL>
 
@@ -87,7 +79,7 @@ This library provides facilities for matching strings and terms against
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7787"></A>
+<A NAME="IDX7824"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -98,157 +90,180 @@ This library provides facilities for matching strings and terms against
 
 
 
-<H2><A NAME="SEC669" HREF="ciao_toc.html#TOC669">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC694" HREF="ciao_toc.html#TOC694">Documentation on exports (<CODE>numlists</CODE>)</A></H2>
 <P>
-<A NAME="IDX7788"></A>
-<A NAME="IDX7789"></A>
+<A NAME="IDX7825"></A>
+<A NAME="IDX7826"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
-<DD><A NAME="IDX7790"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_primes/2:</B>
+<DD><A NAME="IDX7827"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern, String)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_primes(N, Primes)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
+<LI><EM>Description:</EM> Computes the <CODE>N</CODE>th first prime numbers in ascending order.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
+<CODE>N</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>Primes</CODE> is a list of integers.
+ (<CODE>numlists:intlist/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7791"></A>
-<A NAME="IDX7792"></A>
+<A NAME="IDX7828"></A>
+<A NAME="IDX7829"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
-<DD><A NAME="IDX7793"></A>
+<DT><span class="define">REGTYPE:</span> <B>intlist/1:</B>
+<DD><A NAME="IDX7830"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern, String, Tail)</CODE>
+<STRONG>Usage:</STRONG> <CODE>intlist(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a list of integers.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7831"></A>
+<A NAME="IDX7832"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>numlist/1:</B>
+<DD><A NAME="IDX7833"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>numlist(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a list of numbers.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7834"></A>
+<A NAME="IDX7835"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sum_list/2:</B>
+<DD><A NAME="IDX7836"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sum_list(List, N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
+<CODE>List</CODE> is a list of numbers.
+ (<CODE>numlists:numlist/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Tail</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7794"></A>
-<A NAME="IDX7795"></A>
+<A NAME="IDX7837"></A>
+<A NAME="IDX7838"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
-<DD><A NAME="IDX7796"></A>
+<DT><span class="define">PREDICATE:</span> <B>sum_list/3:</B>
+<DD><A NAME="IDX7839"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1, Pred2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>sum_list(List, N0, N)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE> plus <CODE>N0</CODE>.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>List</CODE> is a list of numbers.
+ (<CODE>numlists:numlist/1</CODE>)
+
+<CODE>N0</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7797"></A>
-<A NAME="IDX7798"></A>
+<A NAME="IDX7840"></A>
+<A NAME="IDX7841"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
-<DD><A NAME="IDX7799"></A>
+<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/2:</B>
+<DD><A NAME="IDX7842"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>letter_match(X, Y)</CODE>
+<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists, N)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> True iff <CODE>X</CODE> and <CODE>Y</CODE> represents the same letter
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE>.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7800"></A>
-<A NAME="IDX7801"></A>
+<A NAME="IDX7843"></A>
+<A NAME="IDX7844"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
-<DD><A NAME="IDX7802"></A>
+<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/3:</B>
+<DD><A NAME="IDX7845"></A>
 
 
 <P>
-Special characters for <CODE>Pattern</CODE> are: 
-<DL COMPACT>
-
-<DT>*
-<DD>
-Matches any string, including the null string. 
-<DT>?
-<DD>
-Matches any single character. 
-<DT>[...]
-<DD>
-Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
-<DT>|
-<DD>
-Specifies an alternative. Two patterns A and B with | in between form an expression that matches anything that either A or B will match. 
-<DT>{...}
-<DD>
-Groups alternatives inside larger patterns. 
-<DT>\
-<DD>
-Quotes a special character (including itself). 
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
+<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists, N0, N)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE> plus <CODE>N0</CODE>.
 
-</UL>
+<LI><EM>The following properties should hold at call time:</EM>
 
-</DL>
+<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 
-<P>
-<A NAME="IDX7803"></A>
-<A NAME="IDX7804"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
-<DD><A NAME="IDX7805"></A>
+<CODE>N0</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1, Pred2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
-
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_166.html">previous</A>, <A HREF="ciao_168.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -21,9 +21,6 @@ public class PLServerSocket {
    * higher, and prints the port # at the standard output.
    * When the openSocket() method be called, the object will be
    * listening at this port number for connections.
-   *
-   * @param out <code>PrintStream</code> on which prints the
-   *            socket port where the TCP server will work.
    */
   public PLServerSocket() throws IOException {
     boolean done = false;

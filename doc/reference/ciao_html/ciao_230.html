@@ -1,174 +1,36 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Automatic modules caller tester</TITLE>
+<TITLE>The Ciao Prolog System               - PART XII - Appendices</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_229.html">previous</A>, <A HREF="ciao_231.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_229.html">previous</A>, <A HREF="ciao_231.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC867" HREF="ciao_toc.html#TOC867">Automatic modules caller tester</A></H1>
-<P>
-<A NAME="IDX9735"></A>
-
+<H1><A NAME="SEC895" HREF="ciao_toc.html#TOC895">PART XII - Appendices</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> David Trallero Mena.
+<STRONG>Author(s):</STRONG> The CLIP Group.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+These appendices describe the 
+<A NAME="IDX9815"></A>
+installation of the Ciao environment on different systems and some other issues such as 
+<A NAME="IDX9816"></A>
+reporting bugs, signing up on the Ciao user's 
+<A NAME="IDX9817"></A>
+mailing list, 
+<A NAME="IDX9818"></A>
+downloading new versions, 
+<A NAME="IDX9819"></A>
+limitations, etc. 
 
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.0#6 (2004/2/24, 17:12:13 CET)
-
-
-<P>
-This module is intended to agilizy the work of calling several modules as prove cases of some program. Usually when you are developing a program you have several auto-test program cases that you would like to execute whenever you do some modification in your program/system. The predicate 
-<A NAME="IDX9736"></A>
-<CODE>mod_tester/2</CODE> was created with the propouse of execute this test an report to you which of them were correctly executed and which one were not.
-
-
-
-<UL>
-<LI><A HREF="ciao_230.html#SEC868">Usage and interface (modtester)</A>
-<LI><A HREF="ciao_230.html#SEC869">Documentation on exports (modtester)</A>
-</UL>
-
-
-
-<H2><A NAME="SEC868" HREF="ciao_toc.html#TOC868">Usage and interface (<CODE>modtester</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(modtester)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX9737"></A>
-<CODE>tester_func/1</CODE>, 
-<A NAME="IDX9738"></A>
-<CODE>modules_tester/2</CODE>, 
-<A NAME="IDX9739"></A>
-<CODE>pred_tester/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX9740"></A>
-<CODE>tester/tester</CODE>, 
-<A NAME="IDX9741"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX9742"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX9743"></A>
-<CODE>filenames</CODE>, 
-<A NAME="IDX9744"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX9745"></A>
-<CODE>terms_check</CODE>, 
-<A NAME="IDX9746"></A>
-<CODE>conc_aggregates</CODE>, 
-<A NAME="IDX9747"></A>
-<CODE>system</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC869" HREF="ciao_toc.html#TOC869">Documentation on exports (<CODE>modtester</CODE>)</A></H2>
-<P>
-<A NAME="IDX9748"></A>
-<A NAME="IDX9749"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tester_func/1:</B>
-<DD><A NAME="IDX9750"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX9751"></A>
-<A NAME="IDX9752"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>modules_tester/2:</B>
-<DD><A NAME="IDX9753"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>modules_tester(BaseName, ModulesList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> modules_tester accepts an atom as basename of the two generated files. For each module in <CODE>ModulesList</CODE> an output and report is saved in 'basename_test_output.log' and 'basename_test_summary.log' respectevely
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>BaseName</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>ModulesList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>modules_tester(BaseName, PredList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> pred_tester accepts an atom as basename of the two generated files. For each element with the pattern (FindPatter, precidate, [results]), module in <CODE>PredList</CODE> an output and report is saved in 'basename_test_output.log' and 'basename_test_summary.log' respectevely. For example, you can call this predicate as: pred_tester( test , [(X,mypred(X),[1,2,3]),( (X,Y),mypred2( X, aa , Y ), [(1,2),(2,3)])] ).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>BaseName</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>PredList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9754"></A>
-<A NAME="IDX9755"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pred_tester/2:</B>
-<DD><A NAME="IDX9756"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_229.html">previous</A>, <A HREF="ciao_231.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_229.html">previous</A>, <A HREF="ciao_231.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

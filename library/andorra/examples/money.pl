@@ -1,4 +1,4 @@
-:- module(money,[test/0],[andorra]).
+:- module(money,[test/0],_).
 
 :- use_module(library(prolog_sys),[statistics/2]).
 :- use_module(library(write),[write/1]).

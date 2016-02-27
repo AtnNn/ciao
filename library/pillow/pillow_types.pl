@@ -458,6 +458,6 @@ hms_time(T) :- atm(T).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+131,2003/12/30,22:44*12+'CET'), "Added comment
+:- comment(version(1*9+253,2003/12/30,22:44*55+'CET'), "Added comment
    for weekday/1 and month/1.  (Edison Mera)").
 

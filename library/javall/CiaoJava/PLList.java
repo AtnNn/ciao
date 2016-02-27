@@ -197,7 +197,7 @@ public class PLList extends PLTerm {
     /**
      * Appends the list given as argument as the tail of this PLList.
      *
-     * @param term <code>PLList</code> object or 
+     * @param tail <code>PLList</code> object or 
      *             <code>PLTerm.nil</code> to be appended at the  
      *             end of this list.
      */

@@ -46,6 +46,6 @@ the same program, or even within the same toplevel session.").
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+103,2003/12/22,16:56*50+'CET'), "First
+:- comment(version(1*9+227,2003/12/22,16:55*52+'CET'), "First
    revision.  (Edison Mera)").
 

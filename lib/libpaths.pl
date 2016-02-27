@@ -57,6 +57,6 @@ record_alias([LibStr|Paths]) :-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+66,2003/12/19,16:09*45+'CET'), "Control
+:- comment(version(1*9+189,2003/12/19,16:08*47+'CET'), "Control
    version started. (Edison Mera)").
 

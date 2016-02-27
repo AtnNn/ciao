@@ -367,7 +367,7 @@ public class PLConnection {
      * Goal launching. Evaluates the term received as a query and
      * sends it to Prolog for evaluation.
      *
-     * @param	goal	Prolog term that will be evaluated as a Prolog
+     * @param	term	Prolog term that will be evaluated as a Prolog
      *                  goal.
      *
      * @return The <code>PLGoal</code> object created to manage the goal.

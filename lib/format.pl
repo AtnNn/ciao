@@ -580,7 +580,7 @@ putn_list(N, [C|Chars]) :-
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+89,2003/12/21,02:17*58+'CET'), "Added comment
+:- comment(version(1*9+212,2003/12/21,02:18*19+'CET'), "Added comment
    author.  (Edison Mera)").
 
 :- comment(version(1*3+27,1999/07/09,20:25*50+'MEST'), "Changed title,

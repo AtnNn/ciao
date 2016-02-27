@@ -1,42 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - String processing</TITLE>
+<TITLE>The Ciao Prolog System               - Dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC269" HREF="ciao_toc.html#TOC269">String processing</A></H1>
+<H1><A NAME="SEC297" HREF="ciao_toc.html#TOC297">Dictionaries</A></H1>
 <P>
-<A NAME="IDX4038"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX4291"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Author(s):</STRONG> The CLIP Group.
 
 
 <P>
-This module provides predicates for doing input/output with strings (character code lists) and for including in grammars defining strings.
+<STRONG>Version:</STRONG> 1.9#240 (2003/12/22, 18:52:17 CET)
+
+
+<P>
+This module provides predicates for implementing dictionaries. Such dictionaries are currently implemented as ordered binary trees of key-value pairs.
 
 
 
 <UL>
-<LI><A HREF="ciao_68.html#SEC270">Usage and interface (strings)</A>
-<LI><A HREF="ciao_68.html#SEC271">Documentation on exports (strings)</A>
-<LI><A HREF="ciao_68.html#SEC272">Documentation on internals (strings)</A>
+<LI><A HREF="ciao_68.html#SEC298">Usage and interface (dict)</A>
+<LI><A HREF="ciao_68.html#SEC299">Documentation on exports (dict)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC270" HREF="ciao_toc.html#TOC270">Usage and interface (<CODE>strings</CODE>)</A></H2>
+<H2><A NAME="SEC298" HREF="ciao_toc.html#TOC298">Usage and interface (<CODE>dict</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -44,7 +43,7 @@ This module provides predicates for doing input/output with strings (character c
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(strings)).</CODE>
+<CODE>:- use_module(library(dict)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -53,20 +52,23 @@ This module provides predicates for doing input/output with strings (character c
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4039"></A>
-<CODE>get_line/2</CODE>, 
-<A NAME="IDX4040"></A>
-<CODE>get_line/1</CODE>, 
-<A NAME="IDX4041"></A>
-<CODE>write_string/2</CODE>, 
-<A NAME="IDX4042"></A>
-<CODE>write_string/1</CODE>, 
-<A NAME="IDX4043"></A>
-<CODE>whitespace/2</CODE>, 
-<A NAME="IDX4044"></A>
-<CODE>whitespace0/2</CODE>, 
-<A NAME="IDX4045"></A>
-<CODE>string/3</CODE>.
+<A NAME="IDX4292"></A>
+<CODE>dictionary/5</CODE>, 
+<A NAME="IDX4293"></A>
+<CODE>dic_node/2</CODE>, 
+<A NAME="IDX4294"></A>
+<CODE>dic_lookup/3</CODE>, 
+<A NAME="IDX4295"></A>
+<CODE>dic_lookup/4</CODE>, 
+<A NAME="IDX4296"></A>
+<CODE>dic_get/3</CODE>, 
+<A NAME="IDX4297"></A>
+<CODE>dic_replace/4</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX4298"></A>
+<CODE>dictionary/1</CODE>.
 
 </UL>
 
@@ -76,299 +78,160 @@ This module provides predicates for doing input/output with strings (character c
 
 
 
-<H2><A NAME="SEC271" HREF="ciao_toc.html#TOC271">Documentation on exports (<CODE>strings</CODE>)</A></H2>
+<H2><A NAME="SEC299" HREF="ciao_toc.html#TOC299">Documentation on exports (<CODE>dict</CODE>)</A></H2>
 <P>
-<A NAME="IDX4046"></A>
-<A NAME="IDX4047"></A>
+<A NAME="IDX4299"></A>
+<A NAME="IDX4300"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_line/2:</B>
-<DD><A NAME="IDX4048"></A>
+<DT><span class="define">PROPERTY:</span> <B>dictionary/1:</B>
+<DD><A NAME="IDX4301"></A>
 
 
 <P>
-<CODE>get_line(Stream, Line)</CODE>
-
-
-<P>
-Reads from <CODE>Stream</CODE> a line of text and unifies <CODE>Line</CODE> with it. The end of the line can have UNIX [10] or MS-DOS [13 10] termination, which is not included in <CODE>Line</CODE>. At EOF, the term end_of_file is returned.
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>dictionary(D)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4302"></A>
+<A NAME="IDX4303"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary/5:</B>
+<DD><A NAME="IDX4304"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary(D, K, V, L, R)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The dictionary node <CODE>D</CODE> has key <CODE>K</CODE>, value <CODE>V</CODE>, left child <CODE>L</CODE>, and right child <CODE>R</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4305"></A>
+<A NAME="IDX4306"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dic_node/2:</B>
+<DD><A NAME="IDX4307"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dic_node(D, N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is a sub-dictionary of <CODE>D</CODE>.
+
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>strings:line(Line)</CODE>
- (<CODE>strings:line/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 
-<CODE>Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>strings:line(Line)</CODE>
- (<CODE>strings:line/1</CODE>)
+<CODE>N</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4049"></A>
-<A NAME="IDX4050"></A>
+<A NAME="IDX4308"></A>
+<A NAME="IDX4309"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_line/1:</B>
-<DD><A NAME="IDX4051"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/3:</B>
+<DD><A NAME="IDX4310"></A>
 
 
 <P>
-<CODE>get_line(Line)</CODE>
-
-
-<P>
-Behaves like <CODE>current_input(S), get_line(S,Line)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>dic_lookup(D, K, V)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> contains value <CODE>V</CODE> at key <CODE>K</CODE>. If it was not already in <CODE>D</CODE> it is added.
+
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>strings:line(Line)</CODE>
- (<CODE>strings:line/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>strings:line(Line)</CODE>
- (<CODE>strings:line/1</CODE>)
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4052"></A>
-<A NAME="IDX4053"></A>
+<A NAME="IDX4311"></A>
+<A NAME="IDX4312"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_string/2:</B>
-<DD><A NAME="IDX4054"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/4:</B>
+<DD><A NAME="IDX4313"></A>
 
 
 <P>
-<CODE>write_string(Stream, String)</CODE>
-
-
-<P>
-Writes <CODE>String</CODE> onto <CODE>Stream</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>dic_lookup(D, K, V, O)</CODE>
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Description:</EM> Same as <CODE>dic_lookup(D,K,V)</CODE>. <CODE>O</CODE> indicates if it was already in <CODE>D</CODE> (<CODE>old</CODE>) or not (<CODE>new</CODE>).
 
-<CODE>Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4055"></A>
-<A NAME="IDX4056"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write_string/1:</B>
-<DD><A NAME="IDX4057"></A>
-
-
-<P>
-<CODE>write_string(String)</CODE>
-
-
-<P>
-Behaves like <CODE>current_input(S), write_string(S, String)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4058"></A>
-<A NAME="IDX4059"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>whitespace/2:</B>
-<DD><A NAME="IDX4060"></A>
-
-
-<P>
-<CODE>whitespace(String, Rest)</CODE>
-
-
-<P>
-In a grammar rule, as <CODE>whitespace/0</CODE>, represents whitespace (a positive number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
-
-<PRE>
-   attrs([]) --&#62; ""
-   attrs([N|Ns]) --&#62;
-       whitespace,
-       attr(N),
-       attrs(Ns).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>Rest</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Rest</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4061"></A>
-<A NAME="IDX4062"></A>
+<A NAME="IDX4314"></A>
+<A NAME="IDX4315"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>whitespace0/2:</B>
-<DD><A NAME="IDX4063"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_get/3:</B>
+<DD><A NAME="IDX4316"></A>
 
 
 <P>
-<CODE>whitespace0(String, Rest)</CODE>
-
-
-<P>
-In a grammar rule, as <CODE>whitespace0/0</CODE>, represents possible whitespace (any number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is <CODE>String</CODE> or a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
-
-
-
-<PRE>
-   assignment(N,V) --&#62;
-       variable_name(N), whitespace0, "=", whitespace0, value(V).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>dic_get(D, K, V)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> contains value <CODE>V</CODE> at key <CODE>K</CODE>. Fails if it is not already in <CODE>D</CODE>.
+
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>Rest</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Rest</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4064"></A>
-<A NAME="IDX4065"></A>
+<A NAME="IDX4317"></A>
+<A NAME="IDX4318"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>string/3:</B>
-<DD><A NAME="IDX4066"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_replace/4:</B>
+<DD><A NAME="IDX4319"></A>
 
 
 <P>
-<CODE>string(String, Head, Tail)</CODE>
-
-
-<P>
-In a 
-<A NAME="IDX4067"></A>
-grammar rule, as <CODE>string/1</CODE>, represents literally <CODE>String</CODE>. An example of use would be: 
-
-
-
-<PRE>
-double(A) --&#62;
-        string(A),
-        string(A).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>dic_replace(D, K, V, D1)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> and <CODE>D1</CODE> are identical except for the element at key <CODE>K</CODE>, which in <CODE>D1</CODE> contains value <CODE>V</CODE>, whatever has (or whether it is) in <CODE>D</CODE>.
+
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 
-<CODE>Head</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Tail</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Head</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Tail</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>D1</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
 </UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC272" HREF="ciao_toc.html#TOC272">Documentation on internals (<CODE>strings</CODE>)</A></H2>
-<P>
-<A NAME="IDX4068"></A>
-<A NAME="IDX4069"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>line/1:</B>
-<DD><A NAME="IDX4070"></A>
-
-
-<P>
-A property, defined as follows:
-
-<PRE>
-
-<PRE>
-line(L) :-
-        string(L).
-line(end_of_file).
-</PRE>
-
-</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_67.html">previous</A>, <A HREF="ciao_69.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

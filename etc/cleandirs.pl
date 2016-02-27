@@ -27,7 +27,7 @@ existence of a recursive /bin/rm command in your system.").
         get_char/1
                                       ]).
 :- use_module(library(aggregates), [
-        setof/3, (^)/2
+        setof/3
                                    ]).
 :- use_module(library(format), [
         format/2
@@ -126,8 +126,7 @@ Delete options is one of:
 
 Backup options is one of:
  --includebackups: include backup files in the list of files to check.
- --excludebackups: do not include backup files in the list of files
-                   to check.
+ --excludebackups: do not include backup files in the list of files to check.
     --onlybackups: include only backup files in the list of files to check.
 
 Symbolic links are not traversed.  Special files are not checked.

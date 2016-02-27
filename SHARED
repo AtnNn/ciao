@@ -4,30 +4,28 @@
 # but which you should not need to change
 #-----------------------------------------------------------------------------
 # *** This is here so that it can be seen by dist and doc
-TARDOCFORMATS=ps pdf manl info infoindex html htmlindex
+TARDOCFORMATS=pdf manl info infoindex html htmlindex
 # Define this to be the main file name (with suffix if there is one).
-MAIN=ciao-1.11-mattr
+MAIN=ciao
 ACTUALDIR=$(notdir $(SRC))
 BASEMAIN=$(basename $(notdir $(MAIN)))
 VERSIONFILE=version/GlobalVersion
 VERSION:=$(shell cat $(SRC)/$(VERSIONFILE))
 PATCHFILE=version/GlobalPatch
 PATCH:=$(shell cat $(SRC)/$(PATCHFILE))
-VERSIONMAIN=$(BASEMAIN)-$(VERSION)-mattr
+VERSIONMAIN=$(BASEMAIN)-$(VERSION)
 VPMAIN=$(VERSIONMAIN)p$(PATCH)
 WIN32VPMAIN=$(VERSIONMAIN)p$(PATCH)Win32
 REALLIBDIR=$(LIBDIR)/$(VERSIONMAIN)
 SRCLIB=$(SRC)
-BOOTSTRAPDIR=$(SRC)/bootstrap
 SETLOCALCIAO=CIAOALIASPATH="" CIAOENGINE=$(OBJDIR)/ciaoengine CIAOLIB=$(SRCLIB) 
-SETBOOTSTRAPCIAO=CIAOALIASPATH="" CIAOENGINE=$(BOOTSTRAPDIR)/ciaoengine.sta CIAOLIB=$(SRCLIB) 
 #CIAOROOT not user any longer
 #CIAOROOT=$(SRCLIB)
 DISTSTATICCOMP=ciaoc.sta
 STATICCOMPNAME=ciaoc
 CIAOSHELLNAME=ciaosh
 CIAOC=$(SRC)/ciaoc/$(STATICCOMPNAME)
-BOOTSTRAP_CIAOC=$(BOOTSTRAPDIR)/$(DISTSTATICCOMP)
+CIAOCSTA=$(SRC)/ciaoc/$(DISTSTATICCOMP)
 CIAOSHELL=$(SRC)/shell/$(CIAOSHELLNAME)
 ENGINENAME=ciaoengine
 ENGINEDIR=$(REALLIBDIR)/engine

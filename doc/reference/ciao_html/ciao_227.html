@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Double linked list</TITLE>
+<TITLE>The Ciao Prolog System               - Printing graph using gnuplot as auxiliary tool.</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_226.html">previous</A>, <A HREF="ciao_228.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_226.html">previous</A>, <A HREF="ciao_228.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC855" HREF="ciao_toc.html#TOC855">Double linked list</A></H1>
+<H1><A NAME="SEC883" HREF="ciao_toc.html#TOC883">Printing graph using gnuplot as auxiliary tool.</A></H1>
 <P>
-<A NAME="IDX9594"></A>
+<A NAME="IDX9764"></A>
 
 
 <P>
@@ -20,27 +20,34 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_226.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+This library uses <CODE>gnuplot</CODE> for printing graphs. 
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#116 (2003/12/1, 22:4:57 CET)
+User-friendly predicates to generate data plots are provided, as well as predicates to set the general options which govern the generation of such plots. If no options is specified, global ones are used for data plots generation. 
 
 
 <P>
-This library allows the user to work with double linked lists. An index is used for referencing the current element in the list. Such index can be modified by <EM>next</EM> and <EM>prev</EM> predicated. The value of the current index can be obtained with <EM>top</EM> predicate
+Several files can be generated as temporary files. A BaseName is required for generating the temporaries files. Data files name will be created from BaseName + number + .dat. The BaseName + ".plot" will be the name used for <CODE>gnuplot</CODE> tool. 
+
+
+<P>
+A list of pairs of list of pairs of the from (X,Y) and Local Option value is provided to the main predicate as data. In other words DataList = [(CurveDataList,LocalOptions), (CurveDataList1,LocalOptions1) ...]. Additionaly (function( String ) , LocalOptions) can be used for adding a curve to the plot (imagine you want to compare your result with 'x=y'). 
+
+
+<P>
+LocalOptions of the DataList are options that are applied to the curve, as for example, if we print the curve with lines, or the title in the legend, etc. GlobalOptions are referred to the plot options, like title in x or y axis, etc. 
 
 
 
 <UL>
-<LI><A HREF="ciao_227.html#SEC856">Usage and interface (ddlist)</A>
-<LI><A HREF="ciao_227.html#SEC857">Documentation on exports (ddlist)</A>
-<LI><A HREF="ciao_227.html#SEC858">Other information (ddlist)</A>
+<LI><A HREF="ciao_227.html#SEC884">Usage and interface (gnuplot)</A>
+<LI><A HREF="ciao_227.html#SEC885">Documentation on exports (gnuplot)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC856" HREF="ciao_toc.html#TOC856">Usage and interface (<CODE>ddlist</CODE>)</A></H2>
+<H2><A NAME="SEC884" HREF="ciao_toc.html#TOC884">Usage and interface (<CODE>gnuplot</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +55,7 @@ This library allows the user to work with double linked lists. An index is used 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(ddlist)).</CODE>
+<CODE>:- use_module(library(gnuplot)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -57,41 +64,14 @@ This library allows the user to work with double linked lists. An index is used 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX9595"></A>
-<CODE>null_list/1</CODE>, 
-<A NAME="IDX9596"></A>
-<CODE>next/2</CODE>, 
-<A NAME="IDX9597"></A>
-<CODE>prev/2</CODE>, 
-<A NAME="IDX9598"></A>
-<CODE>insert/3</CODE>, 
-<A NAME="IDX9599"></A>
-<CODE>insert_top/3</CODE>, 
-<A NAME="IDX9600"></A>
-<CODE>insert_after/3</CODE>, 
-<A NAME="IDX9601"></A>
-<CODE>delete/2</CODE>, 
-<A NAME="IDX9602"></A>
-<CODE>delete_top/2</CODE>, 
-<A NAME="IDX9603"></A>
-<CODE>delete_after/2</CODE>, 
-<A NAME="IDX9604"></A>
-<CODE>top/2</CODE>, 
-<A NAME="IDX9605"></A>
-<CODE>rewind/2</CODE>, 
-<A NAME="IDX9606"></A>
-<CODE>forward/2</CODE>, 
-<A NAME="IDX9607"></A>
-<CODE>length/2</CODE>, 
-<A NAME="IDX9608"></A>
-<CODE>length_next/2</CODE>, 
-<A NAME="IDX9609"></A>
-<CODE>length_prev/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX9610"></A>
-<CODE>ddlist/1</CODE>.
+<A NAME="IDX9765"></A>
+<CODE>get_general_options/1</CODE>, 
+<A NAME="IDX9766"></A>
+<CODE>set_general_options/1</CODE>, 
+<A NAME="IDX9767"></A>
+<CODE>generate_plot/2</CODE>, 
+<A NAME="IDX9768"></A>
+<CODE>generate_plot/3</CODE>.
 
 </UL>
 
@@ -102,8 +82,12 @@ This library allows the user to work with double linked lists. An index is used 
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX9611"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX9769"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX9770"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX9771"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -113,398 +97,170 @@ This library allows the user to work with double linked lists. An index is used 
 
 
 
-<H2><A NAME="SEC857" HREF="ciao_toc.html#TOC857">Documentation on exports (<CODE>ddlist</CODE>)</A></H2>
+<H2><A NAME="SEC885" HREF="ciao_toc.html#TOC885">Documentation on exports (<CODE>gnuplot</CODE>)</A></H2>
 <P>
-<A NAME="IDX9612"></A>
-<A NAME="IDX9613"></A>
+<A NAME="IDX9772"></A>
+<A NAME="IDX9773"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>null_list/1:</B>
-<DD><A NAME="IDX9614"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_general_options/1:</B>
+<DD><A NAME="IDX9774"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>null_list(NullList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_general_options(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>NullList</CODE> is an empty list
+<LI><EM>Description:</EM> Get the general options of the graphic that will be plotted
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>A</CODE> is a free variable.
+<CODE>X</CODE> is a free variable.
  (<CODE>term_typing:var/1</CODE>)
 <LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>A</CODE> is double linked list
- (<CODE>ddlist:ddlist/1</CODE>)
+<CODE>X</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX9615"></A>
-<A NAME="IDX9616"></A>
+<A NAME="IDX9775"></A>
+<A NAME="IDX9776"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>next/2:</B>
-<DD><A NAME="IDX9617"></A>
+<DT><span class="define">PREDICATE:</span> <B>set_general_options/1:</B>
+<DD><A NAME="IDX9777"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>next(ddlist(OldList), ddlist(NewList))</CODE>
+<STRONG>Usage:</STRONG> <CODE>set_general_options(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> is <CODE>OldList</CODE> but index is set to next element of current element of OldList. It satisfies next(A,B),prev(B,A)
+<LI><EM>Description:</EM> Get the general options of the graphic that will be plotted. Possible options are:
 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9618"></A>
-<A NAME="IDX9619"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prev/2:</B>
-<DD><A NAME="IDX9620"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prev(ddlist(OldList), ddlist(NewList))</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> is <CODE>OldList</CODE> but index is set to previous element of current element of <CODE>OldList</CODE>op) of <CODE>OldList</CODE>
+<LI>format(A) Specify the format of points
+
+<LI>nokey Legend is no represented
+
+<LI>nogrid No grid
+
+<LI>grid An smooth grid is shown
+
+<LI>label(L , (X,Y)) Put Label L at point (X,Y)
+
+<LI>xlabel(A) Label of X-Axis
+
+<LI>ylabel(A) Label of Y-Axis
+
+<LI>xrange(A,B) Define the X range representation
+
+<LI>yrange(A,B) Define the Y range representation
+
+<LI>title(A) Title of the plot
+
+<LI>key(A) define the key (for example [left,box], left is the position, box indicates that a box should be around)
+
+<LI>term_post(A) define the postscript terminal. A is a list of atoms.
+
+<LI>size(A,B) specify the size of the plot (A,B float numbers)
+
+<LI>autoscale autoscale the size of the plot
+
+<LI>autoscale(A) autoscale the argument (for example: autoscale(x))
 
 </UL>
 
-</DL>
-
-<P>
-<A NAME="IDX9621"></A>
-<A NAME="IDX9622"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
-<DD><A NAME="IDX9623"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>insert(ddlist(List), Element, ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> is like <CODE>List</CODE> but with <CODE>Element</CODE> inserted _BEFORE_ the current index It satisfies insert( X , A , Xp ) , delete( Xp , X ).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9624"></A>
-<A NAME="IDX9625"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>insert_top/3:</B>
-<DD><A NAME="IDX9626"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>insert_top(ddlist(List), Element, ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Put <CODE>Element</CODE> as new top of <CODE>NewList</CODE> and push the rest of elements after it. It satisfies top( NewList , element )
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9627"></A>
-<A NAME="IDX9628"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>insert_after/3:</B>
-<DD><A NAME="IDX9629"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>insert_after(ddlist(List), Element, ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> is like <CODE>List</CODE> but with <CODE>Element</CODE> inserted _AFTER_ the current index It satisfies insert_after( X , A , Xp ) , delete_after( Xp , X ).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9630"></A>
-<A NAME="IDX9631"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>delete/2:</B>
-<DD><A NAME="IDX9632"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>delete(ddlist(OldList), ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> does not have the previous element (top(prev)) of <CODE>OldList</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9633"></A>
-<A NAME="IDX9634"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>delete_top/2:</B>
-<DD><A NAME="IDX9635"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>delete_top(ddlist(OldList), ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> does not have the current element (top) of <CODE>OldList</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9636"></A>
-<A NAME="IDX9637"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>delete_after/2:</B>
-<DD><A NAME="IDX9638"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>delete_after(ddlist(OldList), ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> does not have next element to current element (top) of <CODE>OldList</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9639"></A>
-<A NAME="IDX9640"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>top/2:</B>
-<DD><A NAME="IDX9641"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>top(ddlist(List), Element)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Element</CODE> is the element pointed by index
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9642"></A>
-<A NAME="IDX9643"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rewind/2:</B>
-<DD><A NAME="IDX9644"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>rewind(ddlist(OldList), ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> is the <CODE>OldList</CODE> but index is set to 0
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9645"></A>
-<A NAME="IDX9646"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>forward/2:</B>
-<DD><A NAME="IDX9647"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>forward(ddlist(OldList), ddlist(NewList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewList</CODE> is the <CODE>OldList</CODE> but index is set to lentgh of <CODE>NewList</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9648"></A>
-<A NAME="IDX9649"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>length/2:</B>
-<DD><A NAME="IDX9650"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>length(ddlist(List), Len)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Len</CODE> is the length of the <CODE>List</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9651"></A>
-<A NAME="IDX9652"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>length_next/2:</B>
-<DD><A NAME="IDX9653"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>length_next(ddlist(List), Len)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Len</CODE> is the length from the current index till the end
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9654"></A>
-<A NAME="IDX9655"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>length_prev/2:</B>
-<DD><A NAME="IDX9656"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>length_prev(ddlist(List), Len)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Len</CODE> is the length from the beginning till the current index
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9657"></A>
-<A NAME="IDX9658"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>ddlist/1:</B>
-<DD><A NAME="IDX9659"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ddlist(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is double linked list
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC858" HREF="ciao_toc.html#TOC858">Other information (<CODE>ddlist</CODE>)</A></H2>
-
-<P>
  
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>X</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9778"></A>
+<A NAME="IDX9779"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>generate_plot/2:</B>
+<DD><A NAME="IDX9780"></A>
 
 
 <P>
-Two simple examples of the use of the ddlist library package follow. 
+<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, DataList)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> This predicates generate a '<CODE>BaseName</CODE> + .ps' postscript file using each element of <CODE>DataList</CODE> as pair of list of pairs and local options, i.e., ( list((X,Y)), LocalOptions), in which X is the position in X-Axis and Y is the position in Y-Axis. Nevertheless, each element of <CODE>DataList</CODE> can be a list of pairs instead of a pair for commodity. <CODE>gnuplot</CODE> is used as auxiliary tool. Temporary files '<CODE>BaseName</CODE> + N.dat' are generated for for every list of pairs, and '<CODE>BaseName</CODE> + .plot' is de file used by gnuplot. The local options can be:
 
 
 <UL>
-<LI><A HREF="ciao_227.html#SEC859">Using insert_after</A>
-<LI><A HREF="ciao_227.html#SEC860">More Complex example</A>
+<LI>with(Option) Tells how the curve will be represented. Option can b line, dots, boxes, impulses, linespoints. This option HAVE TO BE the last one
+
+<LI>title(T) Put the name of the curve in the legend to T
+
 </UL>
 
-
-
-<H3><A NAME="SEC859" HREF="ciao_toc.html#TOC859">Using insert_after</A></H3>
-
-<P>
-
-
-
-<PRE>
-:- module( ddl1 , _ , [] ).
-
-:- use_module( library(ddlist) ).
-
-main(A,B):-
-        % L = []
-        null_list( L ),
-        % L = [1]
-        insert_after( L  , 1 , L1 ),
-        % L = [1,2]
-        insert_after( L1 , 2 , L2 ),
-        % L = [1,3,2]
-        insert_after( L2 , 3 , L3 ),
-        % L = [1,3,2] =&#62; A = [1]
-        top( L3 , A ),
-        % L = [3,2]
-        next( L3 , PL3 ),
-        % L = [3,2] =&#62; A = [3]
-        top( PL3 , B ).
-
-</PRE>
-
-<P>
  
+<LI><EM>The following properties should hold at call time:</EM>
 
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
 
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 
-<H3><A NAME="SEC860" HREF="ciao_toc.html#TOC860">More Complex example</A></H3>
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
 
 <P>
+<A NAME="IDX9781"></A>
+<A NAME="IDX9782"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>generate_plot/3:</B>
+<DD><A NAME="IDX9783"></A>
 
 
+<P>
+<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, DataList, GeneralOptions)</CODE>
 
-<PRE>
-:- module( ddl2 , _ , [] ).
+<UL>
+<LI><EM>Description:</EM> It is the same as generate_plot/2 but <CODE>GeneralOptions</CODE> are used as the general options of the plot. Look at predicate set_general_options for detailed description of possible options
 
-:- use_module( library(ddlist) ).
+<LI><EM>The following properties should hold at call time:</EM>
 
-main(A,B):-
-        % L = []
-        null_list( L ),
-        % L = [1]
-        insert_after( L  , 1 , L1 ),
-        % L = [1,2]
-        insert_after( L1 , 2 , L2 ),
-        % L = [1,2]
-        insert( L2 , 3 , L3 ),
-        % L = [3,1,2]
-        prev( L3 , PL3 ),
-        % L = [],
-        forward( PL3 , FOR ),
-        % L = [2]
-        prev( FOR , FOR1 ),
-        % L = [2] =&#62; A = 2
-        top( FOR1 , A ),
-        % L = [1,2]
-        prev( FOR1 , FOR2 ),
-        % L = [2]
-        delete_after( FOR2 , FOR3 ),
-        % L = [3,2]
-        prev( FOR3, FOR4 ),
-        % L = [3,2] =&#62; B = 3
-        top( FOR4 , B ).
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 
-</PRE>
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>GeneralOptions</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>GeneralOptions</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_226.html">previous</A>, <A HREF="ciao_228.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_226.html">previous</A>, <A HREF="ciao_228.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

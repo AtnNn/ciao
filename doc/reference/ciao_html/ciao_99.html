@@ -1,108 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Functional notation</TITLE>
+<TITLE>The Ciao Prolog System               - Terms with named arguments -records/feature terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Functional notation</A></H1>
+<H1><A NAME="SEC408" HREF="ciao_toc.html#TOC408">Terms with named arguments -records/feature terms</A></H1>
 <P>
-<A NAME="IDX5138"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX5294"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza and Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#291 (2004/2/13, 20:46:8 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-This library package allows the use of functional notation in a Ciao module/program. 
+<STRONG>Version of last change:</STRONG> 1.7#118 (2001/8/28, 15:7:22 CEST)
 
 
 <P>
-It should be made clear that this package just provides a kind of syntactic sugar for defining and using predicates as if they were functions, and thus any function definition is in fact defining a predicate, and any predicate can be used as a function. The predicate associated to a function has the same name and one more argument, added to the right, to hold the result of the function. 
-
-
-<P>
-Any term preceded by the operator <CODE>~</CODE> is a function application, as in <CODE>write(~arg(1,T))</CODE>, which is equivalent to the sequence <CODE>arg(1,T,A), write(A)</CODE>. Functors can be declared as evaluable by using the declaration 
-<A NAME="IDX5139"></A>
-<CODE>function/1</CODE>, and thus avoiding the need to use the operator <CODE>~</CODE>, as in 
-
-<PRE>
-:- function(arg/2).
-</PRE>
-
-<P>
-Note that this declaration, as is customary in Ciao Prolog, is local to the source code where it is included. In addition, the package defines several functors as evaluable by default, those being: 
-
-<UL>
-<LI>All the functors understood by
-
-<A NAME="IDX5140"></A>
-<CODE>is/2</CODE>. This feature can be disabled by a declaration <CODE>:- function(arith(false))</CODE> (and reverted by using <CODE>true</CODE> instead of <CODE>false</CODE>). 
-<LI>The functors used for disjunctive and conditional expressions, <CODE>(|)/2</CODE> and <CODE>(?)/2</CODE>. A disjunctive expression has the form <CODE>(V1|V2)</CODE>, and its value when first evaluated is <CODE>V1</CODE>, and on re-execution <CODE>V2</CODE>. A conditional expression has the form <CODE>(Cond ? V1)</CODE>, or more commonly <CODE>(Cond ? V1 | V2)</CODE>, and its value, if the execution of <CODE>Cond</CODE> as a goal succeeds, is <CODE>V1</CODE>, otherwise in the first form it causes backtracking, and on the second form its value is <CODE>V2</CODE>. Note that due to the operator precedences, these expressions need normally to be surrounded by parenthesis.
-
-</UL>
-
-<P>
-A functional clause is written using the binary operator <CODE>:=</CODE>, as in 
-
-<PRE>
-opposite(red) := green.
-</PRE>
-
-<P>
-Functional clauses can also have a body, which is executed before the result value is computed. It can serve as a guard for the clause or to provide the equivalent of a where-clause in a functional language: 
-
-<PRE>
-fact(0) := 1.
-fact(N) := N * ~fact(--N) :- N &#62; 0.
-</PRE>
-
-<P>
-Note that often a guard can be better defined using a conditional expression: 
-
-<PRE>
-fact(N) := N = 0 ? 1
-         | N &#62; 0 ? N * ~fact(--N).
-</PRE>
-
-<P>
-In clause heads (either defined as predicates or functions) functors can be prevented from being evaluated by using the <CODE>(^)/1</CODE> prefix operator, as in 
-
-<PRE>
-pair(A,B) := ^(A-B).
-</PRE>
-
-<P>
-Note that this just prevents the evaluation of the principal functor of the enclosed term, not the possible occurrences of other evaluable functors inside. The operator is by now ignored outside clause heads, due to the recurrent nature of the goal translations used. 
-
-
-<P>
-When using function applications inside the goal arguments of meta-predicates, there is an ambiguity as they could be evaluated either in the scope of the outer execution or the in the scope of the inner execution. The chosen behavior is by default to evaluate function applications in the scope of the outer execution, and if they should be evaluated in the inner scope, the goal containing the function application needs to be escaped with the <CODE>(^^)/1</CODE> prefix operator, as in <CODE>findall(X, (d(Y), ^^(X = Y+1)), L)</CODE> (which could also be written as <CODE>findall(X, ^^ (d(Y), X = Y+1), L)</CODE>). 
+<A NAME="IDX5295"></A>
+<A NAME="IDX5296"></A>
+This library package provides syntax which allows accessing term arguments by name (these terms are sometimes also referred to as 
+<A NAME="IDX5297"></A>
+<A NAME="IDX5298"></A>
+<EM>records</EM>, and are also similar to 
+<A NAME="IDX5299"></A>
+<A NAME="IDX5300"></A>
+<EM>feature terms</EM> [AKPS92]).
 
 
 
 <UL>
-<LI><A HREF="ciao_99.html#SEC385">Usage and interface (functions)</A>
-<LI><A HREF="ciao_99.html#SEC386">Known bugs and planned improvements (functions)</A>
+<LI><A HREF="ciao_99.html#SEC409">Usage and interface (argnames)</A>
+<LI><A HREF="ciao_99.html#SEC410">Documentation on new declarations (argnames)</A>
+<LI><A HREF="ciao_99.html#SEC411">Other information (argnames)</A>
+<LI><A HREF="ciao_99.html#SEC414">Known bugs and planned improvements (argnames)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Usage and interface (<CODE>functions</CODE>)</A></H2>
+<H2><A NAME="SEC409" HREF="ciao_toc.html#TOC409">Usage and interface (<CODE>argnames</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -110,34 +57,251 @@ When using function applications inside the goal arguments of meta-predicates, t
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(functions).</CODE>
+<CODE>:- use_package(argnames).</CODE>
 
 or
 
-<CODE>:- module(...,...,[functions]).</CODE>
+<CODE>:- module(...,...,[argnames]).</CODE>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX5301"></A>
+<CODE>$/2</CODE> [150,xfx], 
+<A NAME="IDX5302"></A>
+<CODE>=&#62;/2</CODE> [950,xfx], 
+<A NAME="IDX5303"></A>
+<CODE>argnames/1</CODE> [1150,fx].
+
+<LI><STRONG>New declarations defined:</STRONG>
+
+<A NAME="IDX5304"></A>
+<CODE>argnames/1</CODE>.
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Known bugs and planned improvements (<CODE>functions</CODE>)</A></H2>
+<H2><A NAME="SEC410" HREF="ciao_toc.html#TOC410">Documentation on new declarations (<CODE>argnames</CODE>)</A></H2>
+<P>
+<A NAME="IDX5305"></A>
+<A NAME="IDX5306"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>argnames/1:</B>
+<DD><A NAME="IDX5307"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>argnames(ArgNamedPredSpec)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> An
+
+<A NAME="IDX5308"></A>
+<CODE>argnames/1</CODE> declaration assigns names to the argument positions of terms (or literal/goals) which use a certain functor/arity. This allows referring to these arguments by their name rather than by their argument position. Sometimes, argument names may be clearer and easier to remember than argument positions, specially for predicates with many arguments. Also, in some cases this may allow adding arguments to certain predicates without having to change the code that uses them. These terms with named arguments are sometimes also referred to as 
+<A NAME="IDX5309"></A>
+records, and are also similar to 
+<A NAME="IDX5310"></A>
+feature terms [AKPS92]. For example, in order to write a program for the <EM>zebra</EM> puzzle we might declare: 
+
+
+
+<PRE>
+:- use_package([argnames]).
+:- argnames house(color, nation, pet, drink, car).
+</PRE>
+
+which first includes the package and then assigns a name to each of the arguments of any term (or literal/goal) with <CODE>house/5</CODE> as the main functor. 
+
+For convenience the package extends the built-in 
+<A NAME="IDX5311"></A>
+<CODE>data/1</CODE> declaration so that names to arguments can be asigned as with the 
+<A NAME="IDX5312"></A>
+<CODE>argnames/1</CODE> declaration, as for example: 
+
+
+
+<PRE>
+:- data product(id, description, brand, quantity).
+</PRE>
+
+Once an 
+<A NAME="IDX5313"></A>
+<CODE>argnames/1</CODE> is given, is possible to use the names to refer to the arguments of any term (or literal/goal) which has the same main functor as that of the term which appears in the 
+<A NAME="IDX5314"></A>
+<CODE>argnames/1</CODE> declaration. This is done by first writing the functor name, then the infix operator <CODE>$</CODE>, and then, between curly brackets, zero, one, or more pairs <EM>argument-name</EM><CODE>=&#62;</CODE><EM>argument-value</EM>, separated by commas (i.e., the infix operator <CODE>=&#62;</CODE> is used between the name and the value). Again, argument names must be atomic. Argument values can be any term. Arguments which are not specified are assumed to have a value of "<CODE>_</CODE>" (i.e., they are left unconstrained). 
+
+Thus, after the declaration for <CODE>house/5</CODE> in the example above, any ocurrence in that code of, for example, <CODE>house${nation=&#62;Owns_zebra,pet=&#62;zebra}</CODE> is exactly equivalent to <CODE>house(_,Owns_zebra,zebra,_,_)</CODE>. Also, <CODE>house${}</CODE> is equivalent to <CODE>house(_,_,_,_,_)</CODE>. The actual zebra puzzle specification might include a clause such as: 
+
+
+
+<PRE>
+zebra(Owns_zebra, Drinks_water, Street) :-
+   Street = [house${},house${},house${},house${},house${}],
+   member(house${nation=&#62;Owns_zebra,pet=&#62;zebra}, Street),
+   member(house${nation=&#62;Drinks_water,drink=&#62;water}, Street),
+   member(house${drink=&#62;coffee,color=&#62;green}, Street),
+   left_right(house${color=&#62;ivory}, house${color=&#62;green}, Street),
+   member(house${car=&#62;porsche,pet=&#62;snails}, Street),
+        ...
+</PRE>
+
+Another syntax supported, useful mainly in declarations, to avoid specify the arity is <CODE>house${/}</CODE>, which is equivalent in our example to <CODE>house/5</CODE> (but for data declarations there is a special syntax as we have seen). 
+
+Any number of 
+<A NAME="IDX5315"></A>
+<CODE>argnames/1</CODE> declarations can appear in a file, one for each functor whose arguments are to be accessed by name. As with other packages, argument name declarations are <EM>local to the file</EM> in which they appear. The 
+<A NAME="IDX5316"></A>
+<CODE>argnames/1</CODE> declarations affect only program text which appears after the declaration. It is easy to make a set of declarations affect several files for example by putting such declarations in a sepatate file which is included by all such files. 
+
+An 
+<A NAME="IDX5317"></A>
+<CODE>argnames/1</CODE> declaration does not change in any way the internal representation of the associated terms and does not affect run-time efficiency. It is simply syntactic sugar. 
+
+ 
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Other information (<CODE>argnames</CODE>)</A></H2>
+
+<P>
+ 
+
+
+<P>
+Two simple examples of the use of the argnames library package follow. 
+
+
+
+<UL>
+<LI><A HREF="ciao_99.html#SEC412">Using argument names in a toy database</A>
+<LI><A HREF="ciao_99.html#SEC413">Complete code for the zebra example</A>
+</UL>
+
+
+
+<H3><A NAME="SEC412" HREF="ciao_toc.html#TOC412">Using argument names in a toy database</A></H3>
+
+<P>
+
+
+
+<PRE>
+:- module(simple_db,_,[argnames,assertions,regtypes]).
+:- use_module(library(aggregates)).
+
+:- comment(title,"A simple database application using argument names").
+
+:- pred product/4 :: int * string * string * int.
+
+:- argnames 
+product( id,    description,    brand,          quantity        ).
+%       ----------------------------------------------------------
+product(  1,    "Keyboard",     "Logitech",     6               ).
+product(  2,    "Mouse",        "Logitech",     5               ).
+product(  3,    "Monitor",      "Philips",      3               ).
+product(  4,    "Laptop",       "Dell",         4               ).
+
+% Compute the stock of products from a given brand.
+% Note call to findall is equivalent to: findall(Q,product(_,_,Brand,Q),L).
+brand_stock(Brand,Stock) :-
+        findall(Q,product${brand=&#62;Brand,quantity=&#62;Q},L),
+        sumlist(L,Stock).
+
+sumlist([],0).
+sumlist([X|T],S) :- 
+        sumlist(T,S1),
+        S is X + S1.
+
+</PRE>
+
+
+
+<H3><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Complete code for the zebra example</A></H3>
+
+<P>
+
+
+
+<PRE>
+:- module(_,zebra/3,[argnames]).
+
+/*     There are five consecutive houses, each of a different
+color and inhabited by men of different nationalities. They each
+own a different pet, have a different favorite drink, and drive a
+different car.
+
+1.   The Englishman lives in the red house.
+2.   The Spaniard owns the dog.
+3.   Coffee is drunk in the green house.
+4.   The Ukrainian drinks tea.
+5.   The green house is immediately to the right of the ivory
+     house.
+6.   The Porsche driver owns snails.
+7.   The Masserati is driven by the man who lives in the yellow
+     house.
+8.   Milk is drunk in the middle house.
+9.   The Norwegian lives in the first house on the left.
+10.  The man who drives a Saab lives in the house next to the man
+     with the fox.
+11.  The Masserati is driven by the man in the house next to the
+     house where the horse is kept.
+12.  The Honda driver drinks orange juice.
+13.  The Japanese drives a Jaguar.
+14.  The Norwegian lives next to the blue house.
+
+The problem is: Who owns the Zebra?  Who drinks water?
+*/
+
+:- argnames house(color, nation, pet, drink, car).
+
+zebra(Owns_zebra, Drinks_water, Street) :-
+        Street = [house${},house${},house${},house${},house${}],
+        member(house${nation =&#62; Owns_zebra, pet =&#62; zebra}, Street),
+        member(house${nation =&#62; Drinks_water, drink =&#62; water}, Street),
+        member(house${nation =&#62; englishman, color =&#62; red}, Street),
+        member(house${nation =&#62; spaniard, pet =&#62; dog}, Street),
+        member(house${drink =&#62; coffee, color =&#62; green}, Street),
+        member(house${nation =&#62; ukrainian, drink =&#62; tea}, Street),
+        left_right(house${color =&#62; ivory}, house${color =&#62; green}, Street),
+        member(house${car =&#62; porsche, pet =&#62; snails}, Street),
+        member(house${car =&#62; masserati, color =&#62; yellow}, Street),
+        Street = [_, _, house${drink =&#62; milk}, _, _],
+        Street = [house${nation =&#62; norwegian}|_],
+        next_to(house${car =&#62; saab}, house${pet =&#62; fox}, Street),
+        next_to(house${car =&#62; masserati}, house${pet =&#62; horse}, Street),
+        member(house${car =&#62; honda, drink =&#62; orange_juice}, Street),
+        member(house${nation =&#62; japanese, car =&#62; jaguar}, Street),
+        next_to(house${nation =&#62; norwegian}, house${color =&#62; blue}, Street).
+
+member(X,[X|_]).
+member(X,[_|Y]) :- member(X,Y).
+
+left_right(L,R,[L,R|_]).
+left_right(L,R,[_|T]) :- left_right(L,R,T).
+
+next_to(X,Y,L) :- left_right(X,Y,L).
+next_to(X,Y,L) :- left_right(Y,X,L).
+
+</PRE>
+
+
+
+<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Known bugs and planned improvements (<CODE>argnames</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-The <CODE>(^)/1</CODE> operator only works in clause heads.
-
-<LI>
-
-Assumes that 
-<A NAME="IDX5141"></A>
-<CODE>is/2</CODE> is imported.
+It would be nice to add a mechanism to portray terms with named arguments in a special (user definable) way.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

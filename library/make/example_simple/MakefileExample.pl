@@ -44,8 +44,7 @@ double <= simple :: Name :-
 
 %% -------------------------------------------------------------------------
 %% A dependency based on suffixes with a precondition.
-%% <file>.double is generated always from <file>.simple, once 
-%% precond is done
+%% <file>.double is generated always from <file>.simple, once precond is done
 
 boo <- :-
 	display((double <= simple :: name <- precond :- body1, body2)).

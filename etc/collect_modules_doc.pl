@@ -14,7 +14,7 @@
    Usage: collect_modules module_name
    @end{verbatim}
 
-   @section{More details (collect_modules)}
+   @section{More details}
 
    Look at the Makefiles in lib and library
 

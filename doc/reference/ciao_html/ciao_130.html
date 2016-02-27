@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - button_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - canvas_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC529" HREF="ciao_toc.html#TOC529">button_class (library)</A></H1>
+<H1><A NAME="SEC554" HREF="ciao_toc.html#TOC554">canvas_class (library)</A></H1>
 <P>
-<A NAME="IDX6253"></A>
+<A NAME="IDX6332"></A>
 
 
 <P>
@@ -20,22 +20,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#122 (2003/12/4, 17:32:36 CET)
+<STRONG>Version of last change:</STRONG> 1.9#123 (2003/12/4, 17:32:57 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_130.html#SEC530">Usage and interface (button_class)</A>
-<LI><A HREF="ciao_130.html#SEC531">Documentation on exports (button_class)</A>
+<LI><A HREF="ciao_130.html#SEC555">Usage and interface (canvas_class)</A>
+<LI><A HREF="ciao_130.html#SEC556">Documentation on multifiles (canvas_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC530" HREF="ciao_toc.html#TOC530">Usage and interface (<CODE>button_class</CODE>)</A></H2>
+<H2><A NAME="SEC555" HREF="ciao_toc.html#TOC555">Usage and interface (<CODE>canvas_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,19 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(button_class)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6254"></A>
-<CODE>command_button/1</CODE>.
-
-</UL>
+<CODE>:- use_module(library(canvas_class)).</CODE>
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -64,8 +52,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6255"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX6333"></A>
+<CODE>class/class_rt</CODE>, 
+<A NAME="IDX6334"></A>
+<CODE>class/virtual</CODE>, 
+<A NAME="IDX6335"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX6336"></A>
+<CODE>tcltk_obj/window_class</CODE>, 
+<A NAME="IDX6337"></A>
+<CODE>tcltk_obj/shape_class</CODE>, 
+<A NAME="IDX6338"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX6339"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX6340"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6341"></A>
+<CODE>tcltk/tcltk</CODE>, 
+<A NAME="IDX6342"></A>
+<CODE>tcltk/tcltk_low_level</CODE>.
 
 </UL>
 
@@ -75,50 +81,170 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 
 
-<H2><A NAME="SEC531" HREF="ciao_toc.html#TOC531">Documentation on exports (<CODE>button_class</CODE>)</A></H2>
+<H2><A NAME="SEC556" HREF="ciao_toc.html#TOC556">Documentation on multifiles (<CODE>canvas_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX6256"></A>
-<A NAME="IDX6257"></A>
+<A NAME="IDX6343"></A>
+<A NAME="IDX6344"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>command_button/1:</B>
-<DD><A NAME="IDX6258"></A>
+<DT><span class="define">PREDICATE:</span> <B>$class$/1:</B>
+<DD><A NAME="IDX6345"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>command_button(Command)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Sets a Tcl <CODE>Command</CODE> to be associated with the button. This <CODE>Command</CODE> is typically invoked when mouse button 1 is released over the button window.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Command</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Command</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-</UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>command_button(Command)</CODE>
+The predicate is <EM>multifile</EM>.
 
-<UL>
-<LI><EM>Description:</EM> Gets the Tcl <CODE>Command</CODE> associated with the button.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+</DL>
 
-<CODE>Command</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+<A NAME="IDX6346"></A>
+<A NAME="IDX6347"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$super/2:</B>
+<DD><A NAME="IDX6348"></A>
 
-<CODE>Command</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-</UL>
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6349"></A>
+<A NAME="IDX6350"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$initial_state/3:</B>
+<DD><A NAME="IDX6351"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6352"></A>
+<A NAME="IDX6353"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$virtual/6:</B>
+<DD><A NAME="IDX6354"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6355"></A>
+<A NAME="IDX6356"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$attr_template/4:</B>
+<DD><A NAME="IDX6357"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6358"></A>
+<A NAME="IDX6359"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$default_cons/1:</B>
+<DD><A NAME="IDX6360"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6361"></A>
+<A NAME="IDX6362"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$constructor/4:</B>
+<DD><A NAME="IDX6363"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6364"></A>
+<A NAME="IDX6365"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$destructor/3:</B>
+<DD><A NAME="IDX6366"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6367"></A>
+<A NAME="IDX6368"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>class$implements/2:</B>
+<DD><A NAME="IDX6369"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

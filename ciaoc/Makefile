@@ -7,9 +7,12 @@ include ../SHARED
 CIAOCNAME=ciaoc
 ASRGEN=gen_asr
 
+# Use the latest ciaoc (renamed as ciaoc.sta) to generate a new ciaoc.
+
 compiler:
-#	$(SETBOOTSTRAPCIAO) $(BOOTSTRAP_CIAOC) -s -x $(CIAOCNAME)
-	$(SETLOCALCIAO) $(BOOTSTRAP_CIAOC) -s -x $(CIAOCNAME)
+	cp -f $(CIAOCNAME) $(CIAOCSTA)
+	-chmod $(EXECMODE) $(CIAOCSTA)
+	$(SETLOCALCIAO) $(CIAOCSTA) -s -x $(CIAOCNAME)
 	$(SETLOCALCIAO) $(CIAOC) -s -x $(ASRGEN)
 	rm -f $(ASRGEN) $(ASRGEN).cpx
 

@@ -27,18 +27,19 @@ Herein we discuss the interactive debugger available in the standard
 a similar way to other popular Prolog systems. This is a classical Byrd
 @em{box-type} @index{debugger} @cindex{box-type debugger}
 @cite{Byrd80,BoByPeWa81}, with some enhancements, most notably being able to
-track the execution on the source program. We also discuss the
-@concept{embedded debugger}, which is a version of the debugger which can
-be embedded into executables so that an interactive debugging session can
-be triggered at any time while running that executable without needing the
-top-level shell.
+track the execution on the source program. 
+
+We also discuss the @concept{embedded debugger}, which is a version of
+the debugger which can be embedded into executables. It allows
+triggering an interactive debugging session at any time while running
+an executable, without any need for the top-level shell.
 
 Byrd's @concept{Procedure Box} model of debugging execution provides a
 simple way of visualising control flow, including backtracking.  Control
 flow is in principle viewed at the predicate level, rather than at the
 level of individual clauses. The Ciao debugger has the ability to mark
 selected modules and/or files for debugging (traditional and source
-debugging), rather than having to exhaustively trace your program. It also
+debugging), rather than having to exhaustively trace the program. It also
 allows to selectively set @concept{spy-points} and @concept{breakpoints}.
 Spy-points allow the programmer to nominate interesting predicates at which
 program execution is to pause so that the programmer can interact with the
@@ -48,50 +49,58 @@ a wide choice of control and information options available during debugging
 interaction.
 
 @bf{Note:} While the debugger described herein can be used in a
-standalone way (i.e., from a operating system shell or terminal
+standalone way (i.e., from an operating system shell or terminal
 window) in the same way as other Prolog debuggers, the most convenient
-way of debugging Ciao programs is by using the emacs mode (see
-@ref{Using Ciao inside GNU emacs}), i.e., debugging from within the
-@apl{emacs} editor / programming environment.
+way of debugging Ciao programs is by using the programming environment
+(see @ref{Using Ciao inside GNU emacs}). This environment has many
+debugging-related facilities, including displaying the source code for
+the module(s) corresponding to the procedure being executed, and
+higlighting dynamically the code segments corresponding to the
+different execution steps.
 
 @section{Marking modules and files for debugging in the top-level debugger}
 
-Usually, when a program is not working properly, the programmer has a
-feeling of which are the modules where the fault may be.  Since
-full-fledged debugging is only available on @em{interpreted} (called
-@index{interpreted mode} in traditional Prolog systems) modules, which are
-executed much slower than compiled modules, there is the posibility of
-telling the top level which particular modules are to be loaded in
-@index{interpreted mode}, with the aim of debugging them.  The simplest way
-of achieving this is by executing in the Ciao shell prompt, for each
-suspicious module @tt{Module} in the program, a command like this:
+The Ciao debugger is module-based. This allows skipping during the
+debugging process all files (including system library files) except
+those in which a bug is suspected. This saves having to explictily and
+repetitively skip predicates in unrelated files during the debugging
+process.  Also, there is an efficieny advantage: in order to be able
+to run the debugger on a module, it must be loaded in @index{debug
+(interpreted) mode}, which will execute slower than normal (compiled)
+modules.  Thus, it is interesting to compile in debug mode only those
+modules that need to be traced.  Instead of doing this (loading of
+modules in one mode or another) by hand each time, in Ciao (re)loading
+of modules in the appropriate mode is handled automatically by the
+Ciao compiler.  However, this requires the user to @em{mark
+explicitly} the modules in which debugging is to be performed.  The
+simplest way of achieving this is by executing in the Ciao shell
+prompt, for each suspicious module @tt{Module} in the program, the
+command:
 
 @begin{verbatim}
 ?- debug_module(Module).
 @end{verbatim}
 
-An alternative way of loading a module in interpreted mode exists which
-will instruct the debugger to keep track of the line numbers in the source
-file and to report them during debugging. This feature can be selected for
-a suspicious module @tt{Module} in the program by executing a command such
-as:
+@noindent or, alternatively:
 
 @begin{verbatim}
 ?- debug_module_source(Module).
 @end{verbatim}
 
-@noindent This is most useful when running the top-level inside the
+@noindent which in addition instructs the debugger to keep track of
+the line numbers in the source file and to report them during
+debugging. This is most useful when running the top-level inside the
 @apl{emacs} editor since in that case the Ciao @concept{emacs mode}
 allows performing full @concept{source-level debugging} in each module
 marked as above, i.e., the source lines being executed will be
 highlighted dynamically during debugging in a window showing the
 source code of the module.
 
-@cindex{user modules, debugging} 
-Note that all files with no module declaration belong to the pseudo-module
-@tt{user}, so the command to be issued for debugging a user file, say
-@tt{foo.pl}, would be @tt{debug_module(user)} or
-@tt{debug_module_source(user)}, and not @tt{debug_module(foo)}.
+@cindex{user modules, debugging} Note that, since all files with no
+module declaration belong to the pseudo-module @tt{user}, the command
+to be issued for debugging a user file, say @tt{foo.pl}, is
+@tt{debug_module(user)} or @tt{debug_module_source(user)}, and not
+@tt{debug_module(foo)}.
 
 The two ways of performing @concept{source-level debugging} are fully
 compatible between them, i.e., Ciao allows having some modules loaded with
@@ -162,35 +171,50 @@ predicates will be trace.
 
 @section{Marking modules and files for debugging with the embedded debugger}
 
-The embedded debugger, as the interpreted debugger, has three different
-modes of operation: debug, trace or nodebug. These debuggers modes can be
-set by adding a package declaration in the module, as follows:
+The embedded debugger, as the interpreted debugger, has three
+different modes of operation: debug, trace or nodebug. These debugger
+modes can be set by adding @em{one} of the following package
+declarations to the module:
 
 @begin{verbatim}
-:- use_package(debug).
-:- use_package(trace).
-:- use_package(nodebug).
+:- use_package(debug).    
+:- use_package(trace).    
+:- use_package(nodebug).  
 @end{verbatim}
 
-@noindent and recompiling the application.
+@noindent and recompiling the application.  These declarations
+@em{must} appear the last ones of all @decl{use_package} declarations
+used. Also it is possible, as usual, to add the debugging package(s)
+in the module declaration using the third argument of the
+@pred{module/3} declaration (and they should also be the last ones in
+the list), i.e., using one of:
 
-In order to debug, or trace, correctly the complete code these
-declarations @em{must} appear the last ones of all @decl{use_package}
-declarations used. Also it is possible, as usual, to add the debugging
-package(s) in the module declaration using the predicate
-@pred{module/3} (and they should also be the last ones).
+@begin{verbatim}
+:- module(..., ..., [..., debug]).
+:- module(..., ..., [..., trace]).
+:- module(..., ..., [..., nodebug]).
+@end{verbatim}
 
-The embedded debugger has limitations over the interpreted debugger. The
-most important is that the ``retry'' option is not available. But it is
-possible to add, and remove, @concept{spy-points} and @concept{breakpoins}
-using the predicates @pred{spy/1}, @pred{nospy/1}, @pred{breakpt/6} and
-@pred{nobreakpt/6}, etc. These can be used in a clause declaration or as
-declarations. Also it is possible to add in the code predicates for issuing
-the debugger (i.e., use debug mode, and in a clause add the predicate
-@pred{trace/1}).
+The nodebug mode allows turning off any debugging (and also the
+corresponding overhead) but keeping the spy-points and breakpoints in
+the code. The trace mode will start the debugger for any predicate in
+the file.
 
-The nodebug mode allows keeping the spy-points and breakpoints in the code
-instead of removing them from the code.
+The embedded debugger has limitations over the interpreted
+debugger. The most important is that the ``retry'' option is not
+available. But it is possible to add, and remove, @concept{spy-points}
+and @concept{breakpoins} using the predicates @pred{spy/1},
+@pred{nospy/1}, @pred{breakpt/6} and @pred{nobreakpt/6}, etc. These
+can be used in a clause declaration or as declarations. Also it is
+possible to add in the code predicates for issuing the debugger (i.e.,
+use debug mode, and in a clause add the predicate @pred{trace/1}).
+Finally, if a spy declaration is placed on the entry point of an
+executable (@code{:- spy(main/1)}) the debugger will not start the
+first time @pred{main/1} predicate is called, i.e., at the beginning
+of program execution (however, it will if there are any subsequent
+calls to @pred{main/1}). Starting the embedded debugger at the
+beginning of the execution of a program can be done easily however by
+simply adding the in trace mode.
 
 Note that there is a particularly interesting way of using the
 @concept{embedded debugger}: if an @em{application} is run in a shell
@@ -730,6 +754,14 @@ changes.)
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+67,2003/12/19,16:11*38+'CET'), "Control
+:- comment(version(1*9+357,2004/07/14,12:59*59+'CEST'), "Some
+   corrections and improvements to the documentation.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+356,2004/07/14,09:37*07+'CEST'), "Documented
+   special behaviour of @pred{spy/1} with @pred{main/1}.  (Jesus
+   Correas Fernandez)").
+
+:- comment(version(1*9+188,2003/12/19,16:02*03+'CET'), "Control
    version started.  (Edison Mera)").
 

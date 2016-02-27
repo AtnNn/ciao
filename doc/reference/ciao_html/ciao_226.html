@@ -1,41 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - tokeniser (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Measuring features from predicates (time cost or memory used...)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>, <A HREF="ciao_227.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>, <A HREF="ciao_227.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC852" HREF="ciao_toc.html#TOC852">tokeniser (library)</A></H1>
+<H1><A NAME="SEC880" HREF="ciao_toc.html#TOC880">Measuring features from predicates (time cost or memory used...)</A></H1>
 <P>
-<A NAME="IDX9581"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+<A NAME="IDX9709"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> David Trallero Mena.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#178 (2003/12/4, 17:49:33 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.0#2 (2003/12/3, 0:10:32 CET)
+
+
+<P>
+This library has been done for measuring or compare execution features (currently only time) of predicates. This module relies on gnuplot, an auxiliary module which use the tool <CODE>gnuplot</CODE>, for representing results graphically
 
 
 
 <UL>
-<LI><A HREF="ciao_226.html#SEC853">Usage and interface (tokeniser)</A>
-<LI><A HREF="ciao_226.html#SEC854">Documentation on exports (tokeniser)</A>
+<LI><A HREF="ciao_226.html#SEC881">Usage and interface (time_analyzer)</A>
+<LI><A HREF="ciao_226.html#SEC882">Documentation on exports (time_analyzer)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC853" HREF="ciao_toc.html#TOC853">Usage and interface (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC881" HREF="ciao_toc.html#TOC881">Usage and interface (<CODE>time_analyzer</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tokeniser)).</CODE>
+<CODE>:- use_module(library(time_analyzer)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,10 +56,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX9582"></A>
-<CODE>tokeniser/2</CODE>, 
-<A NAME="IDX9583"></A>
-<CODE>token_read/3</CODE>.
+<A NAME="IDX9710"></A>
+<CODE>performance/3</CODE>, 
+<A NAME="IDX9711"></A>
+<CODE>benchmark/6</CODE>, 
+<A NAME="IDX9712"></A>
+<CODE>compare_benchmark/7</CODE>, 
+<A NAME="IDX9713"></A>
+<CODE>benchmark2/6</CODE>, 
+<A NAME="IDX9714"></A>
+<CODE>compare_benchmark2/7</CODE>, 
+<A NAME="IDX9715"></A>
+<CODE>sub_times/3</CODE>, 
+<A NAME="IDX9716"></A>
+<CODE>div_times/2</CODE>, 
+<A NAME="IDX9717"></A>
+<CODE>cost/3</CODE>.
 
 </UL>
 
@@ -66,14 +82,18 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX9584"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX9585"></A>
+<A NAME="IDX9718"></A>
+<CODE>gnuplot/gnuplot</CODE>, 
+<A NAME="IDX9719"></A>
+<CODE>prolog_sys</CODE>, 
+<A NAME="IDX9720"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX9586"></A>
+<A NAME="IDX9721"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX9587"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX9722"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX9723"></A>
+<CODE>hiordlib</CODE>.
 
 </UL>
 
@@ -83,54 +103,455 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>,
 
 
 
-<H2><A NAME="SEC854" HREF="ciao_toc.html#TOC854">Documentation on exports (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC882" HREF="ciao_toc.html#TOC882">Documentation on exports (<CODE>time_analyzer</CODE>)</A></H2>
 <P>
-<A NAME="IDX9588"></A>
-<A NAME="IDX9589"></A>
+<A NAME="IDX9724"></A>
+<A NAME="IDX9725"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tokeniser/2:</B>
-<DD><A NAME="IDX9590"></A>
+<DT><span class="define">PREDICATE:</span> <B>performance/3:</B>
+<DD><A NAME="IDX9726"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tokeniser(VRML, Tokens)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>performance(goal,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>performance(P, M, Times)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate will perform the parsing of the VRML code. The result will be tokens that will be the source for producing the Prolog terms of the VRML code. This is done in the parser module. From these terms analysis, changing, and any thing that you want to do with VRML code from Prolog programming language. We perform the predicate with a catch call to be able to output error messages if encountered.
+<LI><EM>Description:</EM> performance accepts a goal, <CODE>P</CODE>, as a first argument. The aim of this predicate is to call <CODE>P</CODE> several times and meassure some feature (in this version, only time, that is because no extra parameter has been added). <CODE>M</CODE> defines how many times <CODE>P</CODE> should be called. Usually, calling the predicate in some succesion (10,100,1000) and dividing by the number of times it is executed we can obtain the "execution time" of the predicate (if we are measuring time).
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+The result of executions are returned in the list <CODE>Times</CODE> 
 
-<CODE>VRML</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+The diferent modes are: 
 
-<CODE>Tokens</CODE> is a list of <CODE>term</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<UL>
+<LI>graph( Start , End , Increment ). It defines arithmetic succesion starting in Start and ending in End, by increment of Increment. So <CODE>P</CODE> is called Start times on the first time, Start+Increment on the second, etc.
+
+<LI>graph The same as graph/3 but with default options
+
+<LI>graph_exp( Start , End , Exp ). It defines geometric succesion. Start is multiplied by Exp till it gets End. So <CODE>P</CODE> is called Start times on the first time, Start*Exp on the second, etc.
+
+<LI>graph_exp The same as graph_exp/3 but with default options
+
+</UL>
+
+ 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>VRML</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 
-<CODE>Tokens</CODE> is a free variable.
+<CODE>M</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Times</CODE> is a free variable.
  (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>M</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Times</CODE> is a list of <CODE>num</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX9591"></A>
-<A NAME="IDX9592"></A>
+<A NAME="IDX9727"></A>
+<A NAME="IDX9728"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>token_read/3:</B>
-<DD><A NAME="IDX9593"></A>
+<DT><span class="define">PREDICATE:</span> <B>benchmark/6:</B>
+<DD><A NAME="IDX9729"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>benchmark(P, BenchList, NumTimes, Method, Reserved, OutList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate <CODE>P</CODE>, which accepts ONE argument, is called with the first member of each pair of the <CODE>BenchList</CODE> list <CODE>NumTimes</CODE>. The entry list have pairs because the second member of the pair express the meaning of the first one in the X-Axis. For example, if we are doing a benchmark of qsort function, the first member will be a list for being ordered and the second one will be the length of the unordered list. The output is a list of (X,Y) points where Y means the time needed for its entry of "cost" X. <CODE>OutList</CODE> can be used as TimeList in predicate generate_plot. <CODE>Reserved</CODE> is reserved for future implementations (it will take the value of runtime, memory_used...)
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>BenchList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>Reserved</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>OutList</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>BenchList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>Reserved</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>OutList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9730"></A>
+<A NAME="IDX9731"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>compare_benchmark/7:</B>
+<DD><A NAME="IDX9732"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>compare_benchmark(ListPred, BenchList, Method, NumTimes, BaseName, Reserved, GeneralOptions)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is the generalization of execute predicate
+
+<A NAME="IDX9733"></A>
+<CODE>benchmark/6</CODE> with several predicates. 
+<A NAME="IDX9734"></A>
+<CODE>benchmark/6</CODE> predicate is called with each predicate in <CODE>ListPred</CODE>, and <CODE>BaseName</CODE> is used for the temporaries basename file. <CODE>GeneralOptions</CODE> are aplied to the plot 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ListPred</CODE> is a list of <CODE>pred</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>BenchList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>Reserved</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>GeneralOptions</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>ListPred</CODE> is a list of <CODE>pred</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>BenchList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>Reserved</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>GeneralOptions</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9735"></A>
+<A NAME="IDX9736"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>benchmark2/6:</B>
+<DD><A NAME="IDX9737"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>benchmark2(P, BenchList, Method, NumTimes, What, OutList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate <CODE>P</CODE>, which accepts TWO arguments, is called <CODE>NumTimes</CODE> with the first member of each pair of the <CODE>BenchList</CODE> list and a free variable as the second. The time of execution (in the future, the desired featured for be measured) is expected to be the second argument, that is because it is a variable. The entry list, <CODE>BenchList</CODE> have pairs because the second member of the pair express the cost of the first (in X-Axis). For example, if we are doing a benchmark of qsort function, the first member will be a list for being ordered and the second one will represent the lenght of the unordered list. The output is a list of (X,Y) points where Y express the time needed for they entry of "cost" X. <CODE>OutList</CODE> can be used as TimeList in predicate generate_plot. <CODE>What</CODE> is reserved for future use
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>BenchList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>What</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>OutList</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>BenchList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>What</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>OutList</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9738"></A>
+<A NAME="IDX9739"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>compare_benchmark2/7:</B>
+<DD><A NAME="IDX9740"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>compare_benchmark2(ListPred, BenchList, Method, NumTimes, BaseName, Reserved, GeneralOptions)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is the generalization of execute predicate
+
+<A NAME="IDX9741"></A>
+<CODE>benchmark2/6</CODE> with several predicates. 
+<A NAME="IDX9742"></A>
+<CODE>benchmark2/6</CODE> is called with each predicate in <CODE>ListPred</CODE> and <CODE>BaseName</CODE> is used for the temporaries basename file. <CODE>GeneralOptions</CODE> are applied to the plot ('default' can be used for default General options) 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ListPred</CODE> is a list of <CODE>pred</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>BenchList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>Reserved</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>GeneralOptions</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>ListPred</CODE> is a list of <CODE>pred</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>BenchList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>time_analyzer:average_mode(Method)</CODE>
+ (<CODE>time_analyzer:average_mode/1</CODE>)
+
+<CODE>NumTimes</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>BaseName</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>Reserved</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>GeneralOptions</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9743"></A>
+<A NAME="IDX9744"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sub_times/3:</B>
+<DD><A NAME="IDX9745"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sub_times(A, B, C)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> C is the result of doing A - B, where A, B, C are a list of pairs as (Time,_)
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>B</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>C</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9746"></A>
+<A NAME="IDX9747"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>div_times/2:</B>
+<DD><A NAME="IDX9748"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>div_times(A, B)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>A</CODE> is a list of pairs (P1,P2). <CODE>B</CODE> is a list of pairs with the form (P1,P2/P1) for each (P1,P2) that belongs to <CODE>A</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>B</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9749"></A>
+<A NAME="IDX9750"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>cost/3:</B>
+<DD><A NAME="IDX9751"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>cost(goal,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>cost(A, T, What)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This pred is thought for measuring constant complexity predicates. <CODE>T</CODE> is the expected measured feature. <CODE>What</CODE> is reserved for future implementations, just put 'runtime'
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>A</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>T</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>What</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9752"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>generate_plot/3:</B>
+<DD><A NAME="IDX9753"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX9754"></A>
+<CODE>gnuplot</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX9755"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>generate_plot/2:</B>
+<DD><A NAME="IDX9756"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX9757"></A>
+<CODE>gnuplot</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX9758"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>set_general_options/1:</B>
+<DD><A NAME="IDX9759"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX9760"></A>
+<CODE>gnuplot</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX9761"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>get_general_options/1:</B>
+<DD><A NAME="IDX9762"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX9763"></A>
+<CODE>gnuplot</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>, <A HREF="ciao_227.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_225.html">previous</A>, <A HREF="ciao_227.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

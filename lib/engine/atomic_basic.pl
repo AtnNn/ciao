@@ -32,41 +32,36 @@
    @pred{atom_codes/2} or @pred{number_codes/2}, as these predicates do
    not have this inconsistency.").
 
-:- true pred name(+constant,?string) + eval.
-:- true pred name(-constant,+string) + eval
+:- true pred name(+constant,?string) + native.
+:- true pred name(-constant,+string) + native
    # "If @var{String} can be interpreted as a number, @var{Const} is unified
       with that number, otherwise with the atom whose name is @var{String}.".
-:- true comp name/2 + ( sideff(free), native ).
 
 :- comment(atom_codes(Atom,String), "@var{String} is the list of the ASCII
    codes of the characters comprising the name of @var{Atom}.").
 
-:- true pred atom_codes(+atm,?string) + eval.
-:- true pred atom_codes(-atm,+string) + eval.
-:- true comp atom_codes/2 + ( sideff(free), native, iso ).
+:- true pred atom_codes(+atm,?string) + (iso, native).
+:- true pred atom_codes(-atm,+string) + (iso, native).
 
 :- comment(number_codes(Number,String), "@var{String} is the list of the
    ASCII codes of the characters comprising a representation of
    @var{Number}.").
 
-:- true pred number_codes(+num,?string) + eval.
-:- true pred number_codes(-num,+string) + eval.
-:- true comp number_codes/2 + ( sideff(free), native, iso ).
+:- true pred number_codes(+num,?string) + (iso, native).
+:- true pred number_codes(-num,+string) + (iso, native).
 
-:- comment(number_codes(Number,String,Base), "@var{String} is the list
+:- comment(number_codes(Number,Base,String), "@var{String} is the list
    of the ASCII codes of the characters comprising a representation of
    @var{Number} in base @var{Base}.").
 
-:- true pred number_codes(+num,+int,?string) + eval.
-:- true pred number_codes(-num,+int,+string) + eval.
-:- true comp number_codes/3 + ( sideff(free), native ).
+:- true pred number_codes(+num,+int,?string) + native.
+:- true pred number_codes(-num,+int,+string) + native.
 
 :- comment(atom_number(Atom,Number), "@var{Atom} can be read as a
    representation of @var{Number}.").
 
-:- true pred atom_number(+atm,?num) + eval.
-:- true pred atom_number(-atm,+num) + eval.
-:- true comp atom_number/2 + ( sideff(free), native ).
+:- true pred atom_number(+atm,?num) + native.
+:- true pred atom_number(-atm,+num) + native.
 
 atom_number(A, N) :-
         atom(A), number(N), !,
@@ -95,35 +90,32 @@ atom_number(A, N) :-
 :- comment(atom_length(Atom,Length), "@var{Length} is the number of
    characters forming the name of @var{Atom}.").
 
-:- true pred atom_length(+atm,?int) + eval.
-:- true comp atom_length/2 + ( sideff(free), native, iso ).
+:- true pred atom_length(+atm,?int) + (iso, native).
 
 :- comment(atom_concat(Atom_1,Atom_2,Atom_12), "@var{Atom_12} is the
    result of concatenating @var{Atom_1} followed by @var{Atom_2}.").
 
-:- true pred atom_concat(+atom,+atom,?atom) + eval
+:- true pred atom_concat(+atom,+atom,?atom) + (iso, native)
    # "Concatenate two atoms.".
-:- true pred atom_concat(-atom,-atom,+atom) + eval
+:- true pred atom_concat(-atom,-atom,+atom) + (iso, native)
    # "Non-deterministically split an atom.".
-:- true pred atom_concat(-atom,+atom,+atom) + eval
+:- true pred atom_concat(-atom,+atom,+atom) + (iso, native)
    # "Take out of an atom a certain suffix (or fail if it cannot be done).".
-:- true pred atom_concat(+atom,-atom,+atom) + eval
+:- true pred atom_concat(+atom,-atom,+atom) + (iso, native)
    # "Take out of an atom a certain prefix (or fail if it cannot be done).".
-:- true comp atom_concat/3 + ( sideff(free), native, iso ).
 
 :- comment(sub_atom(Atom,Before,Length,Sub_atom), "@var{Sub_atom} is
    formed with @var{Length} consecutive characters of @var{Atom}
    after the @var{Before} character.  For example, the goal
    @tt{sub_atom(summer,1,4,umme)} succeeds.").
 
-:- true pred sub_atom(+atm,+int,+int,?atm) + eval.
-:- true comp sub_atom/4 + ( sideff(free), native ).
+:- true pred sub_atom(+atm,+int,+int,?atm) + native.
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+169,2004/02/03,21:36*40+'CET'), "Added sideff
-   declarations. Reorganized assertions.  (Francisco Bueno
-   Carrillo)").
+:- comment(version(1*9+334,2004/04/13,13:28*02+'CEST'), "Corrected
+   documentation in number_codes/3.  (Edison Mera)").
 
-:- comment(version(1*11+69,2003/12/19,16:45*58+'CET'), "Added comment
+:- comment(version(1*9+190,2003/12/19,16:46*55+'CET'), "Added comment
    author.  (Edison Mera)").
+

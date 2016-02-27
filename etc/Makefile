@@ -1,4 +1,3 @@
-
 include ../SETTINGS
 include ../SHARED
 
@@ -18,6 +17,23 @@ SHSCRIPTS=ciao_get_arch collect_modules
 	chmod $(EXECMODE) $* ; 
 
 all: comp_message $(PLUTILITIES)
+# Generate shell initialization files
+	@./substitute_string documentation_directory $(DOCDIR) \
+		binary_directory $(BINDIR) \
+		DOTcshrc.skel DOTcshrc
+	@./substitute_string documentation_directory $(DOCDIR) \
+		binary_directory $(BINDIR) \
+		DOTprofile.skel DOTprofile
+# Generate startup script
+	@./substitute_string '<CIAOLIBDIR>' $(LIBDIR) \
+			'CIAOVERSION=' 'CIAOVERSION=-$(VERSION)' \
+			'<CIAODOCDIR>' $(DOCDIR) \
+			binary_directory $(BINDIR) \
+			./ciao.skel ciao-$(VERSION)
+# Generate initial user message
+	@./substitute_string '<LIBROOT>' $(LIBROOT) \
+                             '<LPDOCDIR>' $(DOCROOT) \
+	      $(SRC)/NewUser NewUser-install
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Finished compiling utilities in etc directory."
 	@echo "*** ---------------------------------------------------------"
@@ -31,37 +47,35 @@ install:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Installing user shell initialization skeletons..."
 	@echo "*** ---------------------------------------------------------"
-	@if [ ! -d $(BINDIR) ]; \
-             then echo "Creating $(BINDIR)..." ; \
-	          mkdir -p $(BINDIR); \
-	          chmod $(EXECMODE) $(BINDIR); \
-	fi
-	@-for File in DOTcshrc DOTprofile ; \
-	 do echo "Installing $${File} (load ciao-$(VERSION) libs/docs)..." ; \
-            ./substitute_string documentation_directory $(DOCDIR) \
-                                binary_directory $(BINDIR) \
-	                        ./$${File}.skel $(REALLIBDIR)/$${File} ; \
-            chmod $(DATAMODE) $(REALLIBDIR)/$${File} ; \
-	    rm -f $(LIBDIR)/$${File} ; \
-	    ln -s $(REALLIBDIR)/$${File} $(LIBDIR)/$${File} ; \
-	 done
-	@echo "Installing ciao startup script pointing to ciao-$(VERSION)..."
-	@./substitute_string '<CIAOLIBDIR>' $(LIBDIR) \
-	                     'CIAOVERSION=' 'CIAOVERSION=-$(VERSION)' \
-	                     '<CIAODOCDIR>' $(DOCDIR) \
-				binary_directory $(BINDIR) \
-	     ./ciao.skel $(BINDIR)/ciao-$(VERSION)
+	@-mkdir -p $(BINDIR)
+	@-chmod $(EXECMODE) $(BINDIR)
+# Copy shell initialization files
+	@-cp DOTprofile $(REALLIBDIR)/DOTprofile
+	@-chmod $(DATAMODE) $(REALLIBDIR)/DOTprofile
+	@-rm -f $(LIBDIR)/DOTprofile
+	@-ln -s $(REALLIBDIR)/DOTprofile $(LIBDIR)/DOTprofile
+	@-cp DOTcshrc $(REALLIBDIR)/DOTcshrc
+	@-chmod $(DATAMODE) $(REALLIBDIR)/DOTcshrc
+	@-rm -f $(LIBDIR)/DOTcshrc
+	@-ln -s $(REALLIBDIR)/DOTcshrc $(LIBDIR)/DOTcshrc
+# Copy startup script
+	@echo "*** ---------------------------------------------------------" 
+	@echo "*** Installing ciao startup script pointing to ciao-$(VERSION)..."
+	@echo "*** ---------------------------------------------------------" 
+	@-rm -f $(BINDIR)/ciao-$(VERSION)
+	@-cp ciao-$(VERSION) $(BINDIR)
 	@-chmod $(EXECMODE) $(BINDIR)/ciao-$(VERSION)
 	@-rm -f $(BINDIR)/ciao
 	@-ln -s $(BINDIR)/ciao-$(VERSION) $(BINDIR)/ciao
-	@./substitute_string '<LIBROOT>' $(LIBROOT) \
-                             '<LPDOCDIR>' $(DOCROOT) \
-	      $(SRC)/NewUser $(REALLIBDIR)/NewUser
+# Copy message to new users
+	@-cp NewUser-install $(REALLIBDIR)/NewUser
 	@-chmod $(DATAMODE) $(REALLIBDIR)/NewUser
 	@-rm -f $(LIBDIR)/NewUser
 	@-ln -s $(REALLIBDIR)/NewUser $(LIBDIR)/NewUser
 ifeq ($(INSTALL_PROLOG_NAME),yes)
-	@echo "Making 'prolog' point to ciao-$(VERSION)..."
+	@echo "*** ---------------------------------------------------------" 
+	@echo "*** Making 'prolog' point to ciao-$(VERSION)..."
+	@echo "*** ---------------------------------------------------------" 
 	@-rm -f $(BINDIR)/prolog
 	@-ln -s $(BINDIR)/ciao-$(VERSION) $(BINDIR)/prolog
 endif
@@ -93,8 +107,8 @@ endif
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Removing utilities from etc directory..."
 	@echo "*** ---------------------------------------------------------"
-	# Remove the files themselves and the possible dangling symbolic links 
-	@for File in $(PLUTILITIES) $(SHSCRIPTS) ; do \
+# Remove the files themselves and the possible dangling symbolic links 
+	@-for File in $(PLUTILITIES) $(SHSCRIPTS) ; do \
 	     if [ -f $(BINDIR)/$${File}-$(VERSION) ]; \
                 then echo "Removing $${File}-$(VERSION)..."; \
                   rm -f $(BINDIR)/$${File}-$(VERSION) ; \
@@ -116,6 +130,7 @@ clean:
 	-'rm' -f *.po
 	-'rm' -f *.itf
 	-'rm' -f *.asr
+	rm -f NewUser-install ciao-$(VERSION) DOTprofile DOTcshrc
 
 distclean realclean: clean
 	@echo "*** ---------------------------------------------------------"

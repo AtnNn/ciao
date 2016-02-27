@@ -155,7 +155,7 @@ decide_on_call(_Call,conj).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+206,2004/03/03,18:25*25+'CET'), "BUG:printing
+:- comment(version(1*9+320,2004/03/03,18:29*59+'CET'), "BUG:printing
    comas in comment is fixed up (David Trallero Mena)").
 
 :- comment(version(1*5+2,1999/11/29,18:02*53+'MET'), "assrt_props is

@@ -27,14 +27,17 @@
 
 crypta(L) :-
 	statistics(runtime,_),
-	do_crypta(L),
+	(do_crypta(L) ->
+	 display(success), nl
+	;
+	 display(fail),nl),
 	statistics(runtime,[_, Time]),
 	format("Used ~d milliseconds~n", Time).
 
 do_crypta(LD):-
 	LD=[A,B,C,D,E,F,G,H,I,J],
 
-	LD in 0..9,
+	LD in 0..9, 
 	[Sr1,Sr2] in 0..1,
 	[B,D,G] in 1..9,
 

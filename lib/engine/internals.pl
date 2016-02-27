@@ -1,11 +1,14 @@
 :- module(internals, [
-        load_lib/2, load_so/2, load_po/1, dynlink/2, dynunlink/1,
+        builtin_module/1,
+        load_lib/2, load_so/2, dynlink/2, dynunlink/1,
         initialize_module/1, initialized/1,
         term_to_meta/2,
         module_concat/3,
         last_module_exp/5,
         goal_trans/2,
         '$atom_mode'/2, /* write.pl */
+        '$nodebug_call'/1,
+        '$meta_call'/1, % This is transformed by mexpand to call/1
 %        '$eng_call'/6,  % Concurrency hook
         '$bootversion'/0, '$open'/3,
         '$purge'/1, '$erase'/1, '$ptr_ref'/2, '$inserta'/2,
@@ -15,26 +18,26 @@
         '$compiled_clause'/4, '$empty_gcdef_bin'/0, '$set_property'/2,
         '$ddt'/1, '$qread'/2, '$push_qlinfo'/0, '$pop_qlinfo'/0,
         '$prompt'/2, '$frozen'/2, '$defrost'/2, '$setarg'/4,
-        '$undo_goal'/1, 
+        '$undo_goal'/1, '$metachoice'/1, '$metacut'/1, '$retry_cut'/2,
         '$exit'/1,
         '$unknown'/2,
         '$compiling'/2,
         '$ferror_flag'/2,
         '$quiet_flag'/2,
         '$ciao_version'/2,
+        '$spypoint'/3, '$debugger_state'/2, '$debugger_mode'/0,
 %        '$prolog_radix'/2,
-	'$constraint_list'/2, '$eq'/2,
+        '$constraint_list'/2, '$eq'/2,
         '$large_data'/3, '$interpreted_clause'/2,
         '$set_global_logical_var'/2, '$get_global_logical_var'/2,
         '$erase_atom'/1,
         /* system.pl */
-        '$unix_popen'/3, '$exec'/4,
+        '$unix_popen'/3, '$exec'/8,
         '$unix_argv'/1,
-        '$find_file'/8,
+        '$load_foreign_files'/4, '$prepare_foreign_files'/3,
+        '$foreign_base'/1, '$find_file'/8,
         '$format_print_float'/3, '$format_print_integer'/3, /* format.pl */
-        '$runtime'/1,  '$usertime'/1,  '$systemtime'/1,  '$walltime'/1,
-	'$runclick'/1, '$userclick'/1, '$systemclick'/1, '$wallclick'/1,
-        '$userclockfreq'/1, '$systemclockfreq'/1, '$wallclockfreq'/1,
+        '$runtime'/1, '$walltime'/1, 
         '$termheap_usage'/1, '$envstack_usage'/1,
         '$trail_usage'/1, '$choice_usage'/1, '$stack_shift_usage'/1,
         '$internal_symbol_usage'/1, '$program_usage'/1, '$total_usage'/1,
@@ -43,24 +46,15 @@
         '$current_clauses'/2, '$first_instance'/2, '$current_instance'/5,
         '$emulated_clause_counters'/4, '$counter_values'/3,
         '$close_predicate'/1, '$open_predicate'/1, '$unlock_predicate'/1,
-        '$reset_counters'/2, poversion/1,
-	initialization/1,
-         % JF: will be moved to a different module when possible...
-	 filetype/3,
-	 po_filename/2,
-	 itf_filename/2,
-	 so_filename/2,
-	 asr_filename/2,
-	 product_filename/3,
-	 find_po_filename/2,
-	 find_so_filename/2,
-	 find_pl_filename/4,
-	 find_c_filename/4,
-	 opt_suff/1
+        '$reset_counters'/2, poversion/1, undefined_goal/1,
+        initialization/1, u/2, on_abort/1,             % implicit
+        imports/5, meta_args/2, multifile/3, defines/3 %
         ],
-	[assertions]).
+	[assertions, .(metadefs)]).
 
 :- use_module(user, [main/0, main/1, aborting/0]).
+
+:- import(debugger, [debug_trace/1]).
 
 :- comment(title,"Engine Internal Predicates").  
 
@@ -72,10 +66,8 @@ provides handles for the module system into the internal definitions.
 
 ").
 
-:- use_module(engine(hiord_rt), ['SYSCALL'/1, '$nodebug_call'/1, '$meta_call'/1]).
-
 :- impl_defined([dynlink/2, dynunlink/1,
-        '$atom_mode'/2, 
+        '$atom_mode'/2, '$nodebug_call'/1, '$meta_call'/1, 
         % '$eng_call'/6,
         '$bootversion'/0, '$open'/3, '$purge'/1, '$erase'/1, '$ptr_ref'/2,
         '$inserta'/2, '$insertz'/2, '$make_bytecode_object'/4, '$abolish'/1,
@@ -83,20 +75,20 @@ provides handles for the module system into the internal definitions.
         '$erase_clause'/1, '$clause_number'/2, '$compiled_clause'/4,
         '$empty_gcdef_bin'/0, '$set_property'/2, '$ddt'/1, '$qread'/2,
         '$push_qlinfo'/0, '$pop_qlinfo'/0, '$prompt'/2, '$frozen'/2,
-        '$defrost'/2, '$setarg'/4, '$undo_goal'/1, 
-	'$exit'/1, '$unknown'/2, '$compiling'/2,
+        '$defrost'/2, '$setarg'/4, '$undo_goal'/1, '$metachoice'/1,
+        '$metacut'/1, '$retry_cut'/2, '$exit'/1, '$unknown'/2, '$compiling'/2,
         '$ferror_flag'/2, '$quiet_flag'/2, '$ciao_version'/2,
-%	'$prolog_radix'/2,
-	'$constraint_list'/2, '$eq'/2,
+        '$spypoint'/3, '$debugger_state'/2,
+        '$debugger_mode'/0,
+%       '$prolog_radix'/2,
+        '$constraint_list'/2, '$eq'/2,
         '$large_data'/3, '$interpreted_clause'/2, '$unix_popen'/3,
-        '$exec'/4, '$unix_argv'/1, '$find_file'/8,
-	'$path_is_absolute'/1, '$expand_file_name'/2,
+        '$exec'/8, '$unix_argv'/1, '$load_foreign_files'/4,
+        '$prepare_foreign_files'/3, '$foreign_base'/1, '$find_file'/8,
         '$format_print_float'/3, '$format_print_integer'/3, 
         '$set_global_logical_var'/2, '$get_global_logical_var'/2,
         '$erase_atom'/1,
-        '$runtime'/1,  '$usertime'/1,  '$systemtime'/1,  '$walltime'/1,
-	'$runclick'/1, '$userclick'/1, '$systemclick'/1, '$wallclick'/1,
-        '$userclockfreq'/1, '$systemclockfreq'/1, '$wallclockfreq'/1,
+        '$runtime'/1, '$walltime'/1,
         '$termheap_usage'/1, '$envstack_usage'/1, '$trail_usage'/1,
         '$choice_usage'/1, '$stack_shift_usage'/1, '$program_usage'/1,
         '$internal_symbol_usage'/1, '$total_usage'/1,
@@ -105,25 +97,32 @@ provides handles for the module system into the internal definitions.
         '$first_instance'/2, '$current_instance'/5,
         '$emulated_clause_counters'/4, '$counter_values'/3,
         '$close_predicate'/1, '$open_predicate'/1, '$unlock_predicate'/1,
-        '$reset_counters'/2, main_module/1]).
+        '$reset_counters'/2, main_module/1, initialization/1, u/2, on_abort/1,
+        imports/5, meta_args/2, multifile/3, defines/3, ldlibs/1, 'SYSCALL'/1,
+        'CHOICE IDIOM'/1, 'CUT IDIOM'/1]).
 
+:- primitive_meta_predicate('$nodebug_call'(goal)).
 %:- primitive_meta_predicate('$eng_call'(goal, ?, ?, ?, ?, ?)).
+
+:- multifile load_libs/0.
 
 :- data all_loaded/0.
 
-:- use_module(engine(debugger_support), ['$debugger_mode'/0, '$debugger_state'/2]).
-%:- use_module(library('debugger/debugger'), ['$debugger_mode'/0, '$debugger_state'/2]).
-
 boot:-
+        initialize_debugger_state,
         setup_paths,
-        ( '$load_libs' ; true ),
-	initialize_debugger_state,
+        ( load_libs ; true),
 	initialize,
         asserta_fact(all_loaded),
         gomain.
 boot:-
         message(error,'Predicates user:main/0 and user:main/1 undefined, exiting...'),
         halt(1).
+
+% This has to be done before any choicepoint
+initialize_debugger_state :-
+	'$debugger_state'(_, s(off,off,1000000,0,[])),
+	'$debugger_mode'.
 
 gomain :-
         '$predicate_property'('user:main',_,_), !,
@@ -139,26 +138,15 @@ global_failure :-
 
 reboot:-
         all_loaded,
-	initialize_debugger_state,
+        initialize_debugger_state,
 	reinitialize,
 	'$nodebug_call'(aborting), !.
 
-initialize :-
-	initialize_debugger_state,
-	initialize_2.
-
-initialize_2 :-
+initialize:-
 	main_module(M),
         initialize_module(M),
 	fail.
-initialize_2.
-
-% hack: since '$debugger_state' loads a global variable with a reference
-% to a heap term, once executed you should not fail...
-initialize_debugger_state :-
-	'$current_module'(debugger), !,
-	'SYSCALL'('debugger:initialize_debugger_state').
-initialize_debugger_state.
+initialize.
 
 :- data initialized/1.
 
@@ -167,21 +155,18 @@ initialize_module(M) :- asserta_fact(initialized(M)),
                         do_initialize_module(M).
 
 do_initialize_module(M) :-
-        '$u'(M, N),
+        u(M, N),
         initialize_module(N),
         fail.
 do_initialize_module(M) :-
-        '$initialization'(M),
+        initialization(M),
         fail.
 do_initialize_module(_).
 
 reinitialize:-
-	'$on_abort'(_),
+	on_abort(_),
 	fail.
 reinitialize.
-
-% warp internal predicate, as requested by Jose Manuel
-initialization(M) :- '$initialization'(M). 
 
 :- initialization(fail).
 :- on_abort(fail).
@@ -197,20 +182,13 @@ ciaopp_expansion :- fail.
 :- data goal_trans/2.
 
 :- include(mexpand).
-mexpand_meta_args(M, P, Primitive) :-
-	'$meta_args'(M, P),
-	( '$primitive_meta_predicate'(P, M) ->
-	    Primitive = true
-	; Primitive = fail
-	).
-mexpand_imports(M, IM, F, N, EM) :-
-	'$imports'(M, IM, F, N, EM).
-mexpand_defines(M, F, N) :-
-	'$defines'(M, F, N).
-mexpand_multifile(M, F, N) :-
-	'$multifile'(M, F, N).
 
 redefining(_,_,_). % Avoid imported_needs_qual warnings
+
+% Called from within mexpand
+dic_get(D, _, _) :-
+	nonvar(D),
+	message(error, ['Dictionary ',D,' appeared in internals']).
 
 module_warning(not_defined(F, N, M)) :- !,
         ( '$unknown'(fail,fail) -> true
@@ -229,6 +207,8 @@ module_warning(big_pred_abs(PA, N)) :- !,
 module_warning(short_pred_abs(PA, N)) :- !,
         message(error, ['Predicate abstraction ',~~(PA),
                           ' has too few arguments: should be ',N]).
+%%% Not needed, no dictionaries from here
+% module_warning(meta_mismatch(HType, Type)) :- !,
 
 :- pred term_to_meta/2 # "Transforms a normal term to a meta-term.".
 
@@ -241,15 +221,13 @@ last_module_exp(T, Type, M, QM, NT) :-
 mid_module_exp(T, Type, M, QM, NT) :-
         rt_module_exp(T, Type, M, QM, fail, NT).
 
-
-
 rt_module_exp(V, _Type, _M, _QM, _Pr, V) :- var(V), !.
 rt_module_exp(T, _Type, _M, _QM,  Pr, NT) :-
         T = '$:'(Tx), !, % already expanded
         ( Pr = true -> NT = Tx ; NT = T).
 rt_module_exp(QM:T, Type, M,_QM, Pr, NT) :- !,
         ( var(QM) ->
-            meta_expansion_type(Type, T, M, _, Pr, NT, no, no)
+            meta_expansion_type(Type, T, M, _, _, Pr, NT, no, no)
         ; rt_module_exp(T, Type, M, QM, Pr, NT)
         ).
 rt_module_exp(T, Type, M, QM, Pr, NT) :-
@@ -272,17 +250,39 @@ do_module_exp(QM, T, M, Primitive, Type, NT) :-
         '$meta_call'(GEXP),
         term_to_meta_or_primitive(Primitive, XT, NT).
 do_module_exp(QM, T, M, Primitive, Type, NT) :-
-	meta_expansion_type(Type, T, M, QM, Primitive, NT, no, no).
+        meta_expansion_type(Type, T, M, QM, _, Primitive, NT, no, no).
 
-module_concat(user(_), X0, X) :- !,
-        module_concat(user, X0, X).
-module_concat(Module, X0, X) :-
-	X0 =.. [F0|Args],
-        atom(F0), !,
-	atom_concat(Module, ':', Mc),
-	atom_concat(Mc, F0, F),
-	X =.. [F|Args].
-module_concat(_, X, X). % If a number, do not change to complain later
+:- include(builtin_modules).
+
+module_concat(internals, A, A) :- !.
+module_concat(user(_), A, NA) :- !,
+        module_concat(user, A, NA).
+module_concat(BTIN, A, NA) :-
+        builtin_module(BTIN), !,
+        NA = A.
+module_concat(M, A, NA) :-
+	A=..[F|Args],
+        atom(F), !,
+	atom_concat(M, ':', Mc),
+	atom_concat(Mc, F, NF),
+	NA=..[NF|Args].
+module_concat(_, A, A). % If a number, do not change to complain later
+
+% Support for call/n, see mexpand, hiord_rt & read
+
+call(V, _) :- var(V), !, throw(error(instantiation_error, call/n-1)).
+call(Pred, Args) :-
+        Pred = 'PA'(Sh,_H,_B),
+        copy_term(Pred, 'PA'(Sh,Args,Goal)), !,
+        '$meta_call'(Goal).
+call(Pred, Args) :-
+        Pred = 'PA'(_Sh,H,_B),
+        functor(H,'',N),
+        functor(Args,_,N), !, % Predicate abstraction OK, argument unif. failed
+        fail.
+call(Pred, Args) :-
+        functor(Args,_,N),
+        throw(error(type_error(pred(N),Pred), call/n-1)).
 
 %------ call with continuations -----%
 % Called from within the emulator, as possible boot goal for a wam
@@ -293,22 +293,43 @@ call_with_cont([](Goal, OnSuccess, _OnFailure)):-
 call_with_cont([](_Goal_, _OnSuccess, OnFailure)):-
         'SYSCALL'(OnFailure).
 
+%------ paths ------%
+
+:- multifile file_search_path/2, library_directory/1.
+
+:- dynamic file_search_path/2, library_directory/1.
+
+file_search_path(library, Lib) :- library_directory(Lib).
+file_search_path(.,.).
+
+setup_paths :-
+        ciaolibdir(Path),
+        atom_concat(Path,'/lib',LibPath),
+        assertz_fact(library_directory(LibPath)),
+        atom_concat(Path,'/library',LibraryPath),
+        assertz_fact(library_directory(LibraryPath)),
+        atom_concat(Path,'/contrib',ContribPath),
+        assertz_fact(library_directory(ContribPath)),
+        atom_concat(LibPath, '/engine', Engine),
+        assertz_fact(file_search_path(engine, Engine)).
+
 %------ load_lib ------%
 
 load_lib(Module,_File) :-
-        '$current_module'(Module), !.
+        current_module(Module), !.
 load_lib(Module, File) :- % loads both .so and .po - JFMC
         prolog_flag(fileerrors, OldFE, off),
-        ( find_pl_filename(File, _, Base, _),
-	  so_filename(Base, SoName),
-	  file_exists(SoName, 0),
-	    dynlink(SoName, Module),
+        ( getOsArchSuf(OsArchSuff),
+          absolute_file_name(File, OsArchSuff, '.so', '.', Abs, Base, _),
+          Abs \== Base, % Has .so extension
+	    dynlink(Abs, Module),
 %            assertz_fact(current_module(Module)),
 	    fail
 	; true
 	),
-        ( find_po_filename(File, PoName),
-            poload(PoName),
+        ( absolute_file_name(File, '_opt', '.po', '.', Abs, Base, _),
+          Abs \== Base, % Has .po extension
+            poload(Abs),
             ldlibs(Module),
 	    fail
         ; true
@@ -316,22 +337,23 @@ load_lib(Module, File) :- % loads both .so and .po - JFMC
         set_prolog_flag(fileerrors, OldFE),
         check_module_loaded(Module, File).
 
-ldlibs(X) :- '$ldlibs'(X).
-
 %------ load_lib for lazy load ------%
 
 load_lib_lazy(Module,_File) :-
-        '$current_module'(Module), !.
+        current_module(Module), !.
 load_lib_lazy(Module, File) :- % loads both .so and .po - JFMC
         del_stumps(Module),
         prolog_flag(fileerrors, OldFE, off),
-        ( find_po_filename(File, PoName),
-            poload(PoName),
+        ( absolute_file_name(File, '_opt', '.po', '.', Abs, Base, _),
+          Abs \== Base, % Has .po extension
+            poload(Abs),
 	    fail
         ; true
 	),
-	( find_so_filename(File, SoName),
-	    dynlink(SoName, Module),
+	( getOsArchSuf(OsArchSuff),
+          absolute_file_name(File, OsArchSuff, '.so', '.', Abs, Base, _),
+          Abs \== Base, % Has .so extension
+	    dynlink(Abs, Module),
 %            assertz_fact(current_module(Module)),
 	    fail
         ; true
@@ -341,7 +363,13 @@ load_lib_lazy(Module, File) :- % loads both .so and .po - JFMC
         initialize_module(Module),
         check_module_loaded(Module, File).
 
-check_module_loaded(Module,_File) :- '$current_module'(Module), !.
+getOsArchSuf(OsArchSuff) :-
+        get_os(Os),
+        get_arch(Arch),
+        atom_concat(Os, Arch, OsArch),
+        atom_concat('_', OsArch, OsArchSuff).
+
+check_module_loaded(Module,_File) :- current_module(Module), !.
 check_module_loaded(_Module,File) :-
         message(error,['library ',File,' not found, exiting...']),
         halt(1).
@@ -374,371 +402,89 @@ poload(AbsName) :-
         halt(1).
 
 load_so(Module, File) :-
-	find_so_filename(File, SoName),
-        dynlink(SoName, Module).
+        get_arch(A),
+        get_os(O),
+        atom_concat(O, A, OsArch),
+        atom_concat('_', OsArch, OsArchSuff),
+        absolute_file_name(File, OsArchSuff, '.so', '.', Abs, _, _),
+        dynlink(Abs, Module).
 
 load_po(File) :-
-	find_po_filename(File, PoName),
-        poload(PoName).
+        absolute_file_name(File, '_opt', '.po', '.', Abs, _, _),
+        poload(Abs).
 
 poversion(version(67)).
 
-% ---------------------------------------------------------------------------
-% JF: New absolute file name library. I need it to fix some pending issues
-% of the foreign interface and future problems with the compilation to C
-
-% A product is any output of a compilation 
-% A source is the input of a compilation
-
-%------ paths ------%
-
-:- multifile file_search_path/2.
-:- multifile library_directory/1.
-
-:- dynamic file_search_path/2.
-:- dynamic library_directory/1.
-
-file_search_path(library, Lib) :- library_directory(Lib).
-file_search_path(.,.).
-
-setup_paths :-
-        ciaolibdir(Path),
-        atom_concat(Path,'/lib',LibPath),
-        assertz_fact(library_directory(LibPath)),
-        atom_concat(Path,'/library',LibraryPath),
-        assertz_fact(library_directory(LibraryPath)),
-        atom_concat(Path,'/contrib',ContribPath),
-        assertz_fact(library_directory(ContribPath)),
-        atom_concat(LibPath, '/engine', Engine),
-        assertz_fact(file_search_path(engine, Engine)).
-
-%JF: filename for some type of files
-po_filename(Base, Name) :-
-	product_filename(prolog_object, Base, Name).
-itf_filename(Base, Name) :-
-	product_filename(prolog_itf, Base, Name).
-asr_filename(Base, Name) :-
-	product_filename(prolog_assertion, Base, Name).
-so_filename(Base, Name) :-
-	product_filename(gluecode_so, Base, Name).
-
-% JF: Name of a file
-product_filename(Type, Base0, Name) :-
-%	( Type = prolog_object -> display(po_filename(Base0)), nl ; true ),
-	filetype(Type, Ext, ArchDep),
-	( ArchDep = noarch ->
-	    Suffix = Ext
-	; get_os_arch_suffix(OsArchSuffix),
-	  atom_concat(OsArchSuffix, '_glue', Suffix0),
-	  atom_concat(Suffix0, Ext, Suffix)
-	),
-	translate_base(Base0, Base),
-	atom_concat(Base, Suffix, Name),
-%	( Type = prolog_object -> display(po_filename_2(Name)), nl ; true ).
-	true.
-
-% %TO DEACTIVATE
-translate_base(Base, Base) :- !.
-% %TO ACTIVATE
-translate_base(Base, Base2) :-
-	atom_codes(Base, Codes),
-	translate_base_2(Codes, Codes2),
-	Codes3 = "/tmp/ciaobin/"||Codes2,
-	atom_codes(Base2, Codes3),
-	display(user_error, Base), nl(user_error),
-	display(user_error, Base2), nl(user_error).
-
-translate_base_2("/"||Xs0, "D_"||Xs) :- !,
-	translate_base_2(Xs0, Xs).
-translate_base_2([X|Xs0], [X|Xs]) :- !,
-	translate_base_2(Xs0, Xs).
-translate_base_2([], []).
-
-find_so_filename(File, Abs) :-
-        get_os_arch_suffix(OsArchSuffix),
-        my_absolute_file_name(File, OsArchSuffix, '.so', '.', Abs, Base, _),
-        Abs \== Base. % Has .so extension
-
-get_os_arch_suffix(OsArchSuffix) :-
-        get_os(Os),
-        get_arch(Arch),
-        atom_concat(Os, Arch, OsArch),
-        atom_concat('_', OsArch, OsArchSuffix).
-
-find_po_filename(File, Abs) :-
-	opt_suff(Opt),
-        my_absolute_file_name(File, Opt, '.po', '.', Abs, Base, _),
-	Abs \== Base. % Has .po extension
-
-find_pl_filename(File, PlName, Base, Dir) :-
-% jf-TODO: if file is a path, ok... but if file is a module desc,
-% this is not correct (= in ciao 1.9)
-	atom(File), !,
-        opt_suff(Opt),
-	( my_find_file('.', File, Opt, '.pl', true, PlName, Base, Dir) ->
-	    true
-	; my_find_file('.', File, Opt, '', true, PlName, Base, Dir)
-	).
-find_pl_filename(File, PlName, Base, Dir) :- 
-        opt_suff(Opt),
-	my_absolute_file_name(File, Opt, '.pl', '.', PlName, Base, Dir).
-
-find_c_filename(File, CName, Base, Dir) :- 
-	my_absolute_file_name(File, [], '.c', '.', CName, Base, Dir).
-
-%:- true pred absolute_file_name(+sourcename,+atm,+atm,+atm,-atm,-atm,-atm).
-
-my_absolute_file_name(Spec, Opt, Suffix, _CurrDir, AbsFile, AbsBase, AbsDir) :-
-        nonvar(Spec),
-        functor(Spec, Alias, 1),
-        arg(1,Spec,Name),
-        atom(Name), !,
-        (
-            file_search_path(Alias, Dir),
-            atom(Dir),
-            my_find_file(Dir, Name, Opt, Suffix, true, AbsFile, AbsBase, AbsDir) ->
-                true
-        ;
-            (
-                '$ferror_flag'(on, on) ->
-                throw(error(existence_error(source_sink,Spec),
-                            absolute_file_name/7-1))
-            ;
-                fail
-            )
-        ).
-my_absolute_file_name(Name, Opt, Suffix, CurrDir, AbsFile, AbsBase, AbsDir) :-
-        atom(Name), !,
-        my_find_file(CurrDir, Name, Opt, Suffix, _, AbsFile, AbsBase, AbsDir).
-my_absolute_file_name(X, _, _, _, _, _, _) :-
-        throw(error(domain_error(source_sink, X), absolute_file_name/7-1)).
-
-remove_last_slash(Path0, Path) :-
-	atom_concat(Path, '/', Path0), !.
-remove_last_slash(Path, Path).
-
-% TOpt is 0 if Path does not exists or is a directory,
-% else, it is the modification time
-modif_time0_nodir(Path, Time) :-
-	( my_modif_time0(Path, Time),
-	  \+ Time = 0,
-	  \+ is_dir(Path) ->
-	    true
-	; Time = 0
-	).
-
-my_modif_time0(Path, Time) :-
-        prolog_flag(fileerrors, OldFE, off),
-        ( file_properties(Path, [], [], T, [], []), !
-        ; T = 0
-        ),
-        set_prolog_flag(fileerrors, OldFE),
-        Time = T.
-
-:- use_module(library(system)).
-
-is_dir(Path) :- !,
-        prolog_flag(fileerrors, OldFE, off),
-        file_properties(Path, directory, [], [], [], []),
-        set_prolog_flag(fileerrors, OldFE).
-
-my_find_file(LibDir0, Path0, Opt, Suffix, Exists, AbsFile, AbsBase, AbsDir) :-
-	( atom_concat(Path1, Suffix, Path0) -> % remove the extension
-	    true
-	; Path1 = Path0
-	),
-	compose_paths(LibDir0, Path1, Path2),
-	'$expand_file_name'(Path2, Path),
-	( my_find_file_exists(Path, Opt, Suffix, AbsFile) ->
-	    Exists = true,
-	    atom_concat(AbsBase, Suffix, AbsFile) % without extension
-	; my_find_file_no_exists(Path, AbsFile) ->
-	    Exists = false,
-	    AbsBase = AbsFile
-	; fail
-	),
-	split_dir_name(AbsFile, AbsDir, _). % without last filename
-
-compose_paths(Path0, Rel, Path) :-
-        ( '$path_is_absolute'(Rel) ->
-	    Path = Rel
-	; remove_last_slash(Path0, Path1),
-	  atom_concat(Path1, '/', Path2),
-	  atom_concat(Path2, Rel, Path)
-	).
-
-% 1) newer non-directory of {path+opt+suffix, path+suffix}
-% 2) path, if path does not exists
-% 3) path, if a non-directory
-% 4) recursive call with duplicated file name in path, if path is a directory
-
-my_find_file_exists(Path, Opt, Suffix, AbsFile) :-
-	( my_find_file_3(Path, Opt, Suffix, AbsFile) ->
-	    true
-	; is_dir(Path) ->
-	    duplicate_dir_name(Path, DupPath), % search inside
-	    my_find_file_3(DupPath, Opt, Suffix, AbsFile)
-	; fail
-	).
-
-my_find_file_no_exists(Path, AbsFile) :-
-	( is_dir(Path) ->
-	    duplicate_dir_name(Path, DupPath), % search inside
-	    \+ file_exists(DupPath, 0),
-	    AbsFile = DupPath
-	; \+ file_exists(Path, 0),
-	  AbsFile = Path
-	).
-
-% newer non-directory of {path+opt+suffix, path+suffix}
-my_find_file_3(Path, Opt, Suffix, AbsFile) :-
-	( \+ Opt = '', atom_concat(Path, Opt, PathOpt),
-	  atom_concat(PathOpt, Suffix, PathOptSuffix) ->
-	    my_modif_time0(PathOptSuffix, TOpt)
-        ; TOpt = 0
-	),
-	( /*\+ Suffix = '',*/ atom_concat(Path, Suffix, PathSuffix) ->
-	    my_modif_time0(PathSuffix, TPri)
-        ; TPri = 0
-	),
-	( TPri > TOpt -> % path+suffix exists, path+opt+suffix older|absent
-	    AbsFile = PathSuffix
-	; TOpt > 0 -> % newer path+opt+suffix exists
-	    AbsFile = PathOptSuffix
-	; fail
-	).
-
-duplicate_dir_name(Path, Path2) :-
-	split_dir_name(Path, _, Name),
-	atom_concat(Path, '/', Path1),
-	atom_concat(Path1, Name, Path2).
-
-split_dir_name(Path, Dir, Name) :-
-	atom_codes(Path, Codes),
-	reverse(Codes, RCodes),
-	split_dir_name_2(RCodes, RDirCodes, RNameCodes),
-	reverse(RDirCodes, DirCodes),
-	reverse(RNameCodes, NameCodes),
-	atom_codes(Dir, DirCodes),
-	atom_codes(Name, NameCodes).
-
-reverse(Xs,Ys):- reverse_2(Xs,[],Ys).
-
-reverse_2([], L, L).
-reverse_2([E|Es],L,R) :- reverse_2(Es,[E|L],R).
-
-split_dir_name_2("/"||Dir, Dir, []) :- !.
-split_dir_name_2([X|Path], Dir, [X|Name]) :- !,
-	split_dir_name_2(Path, Dir, Name).
-split_dir_name_2([], [], []).
-
-% JF: Information about file types involved in compilation
-% - THIS IS NOT A MIME-like LIST: 
-filetype(prolog_object, '.po', noarch).
-filetype(prolog_itf, '.itf', noarch).
-filetype(prolog_assertion, '.asr', noarch).
-filetype(gluecode_so, '.so', arch).
-filetype(gluecode_c, '.c', arch).
-filetype(gluecode_o, '.o', arch).
-filetype(gluecode_unique_o, '.o', arch).
-
-:- data opt_suff/1.
-
-opt_suff('_opt').
-
 %------ attributed variables ------%
-:- include( attributed_variables ).
 
+:- multifile 
+        verify_attribute/2,
+        combine_attributes/2.
+
+%
+% called from the emulator
+% if there is just one single pending unification
+%
+uvc(A, B) :- verify_attribute(A, B).
+ucc(A, B) :- combine_attributes(A, B). 
+
+% there are more pending unifications (relatively rare)
+%
+pending_unifications([]).
+pending_unifications([ [Var|Val] |Cs]) :-
+  pending_unification(Var, Val),
+  pending_unifications(Cs).
+
+pending_unification(A, B) :-
+  get_attribute(A, Ac),
+  get_attribute(B, Bc),
+  !,
+  combine_attributes(Ac, Bc). 
+pending_unification(A, B) :-
+  get_attribute(A, Ac),
+  !,
+  verify_attribute(Ac, B). 
+pending_unification(A, B) :-
+  get_attribute(B, Bc),
+  !,
+  verify_attribute(Bc, A).
+%
+pending_unification(A, A).		% reduced to syntactic unification
 
 %------ internal builtin errors ------%
 
 % Called from within the emulator
+error(7, _PredName, _PredArity, _Arg, Culprit) :- !, % user_exception 
+	throw(Culprit).
 error(Type, PredName, PredArity, Arg, Culprit) :-
-%        display('In Error'(Type, Culprit)), nl,
         error_term(Type, Culprit, Error_Term),
-%        display(error_term_is(Error_Term)), nl,
         where_term(Arg, PredName, PredArity, Where_Error),
         throw(error(Error_Term, Where_Error)).
 
-in_range(Type, Code, WhichWithinType):-
-        range_per_error(Range),
-        error_start(Type, Section),
-        Start is Section * Range,
-        Code >= Start,
-        Code < Start + Range,
-        WhichWithinType is Code - Start.
+/* Error codes <-> error terms, xref support.h */
+error_term(1, _, instantiation_error) :- !.
+error_term(2, C, permission_error(input,past_end_of_stream,S)) :- !,
+        culprit_stream(C,S).
+error_term(3, S, permission_error(input,stream,S)) :- !.
+error_term(4, S, permission_error(output,stream,S)) :- !.
+error_term(5, S, existence_error(source_sink, S)) :- !.
+error_term(6, S, permission_error(open, source_sink, S)) :- !.
+error_term(N, Culprit, T) :-
+        Code is N-32,
+        (
+            type_code(Code, Type) ->
+                T = type_error(Type, Culprit)
+        ;   domain_code(Code, Domain) ->
+                T = domain_error(Domain, Culprit)
+        ).
 
-error_term(  1, _, instantiation_error) :- !.
-error_term(Code, _, system_error) :-   in_range(system, Code, _), !.
-error_term(Code, _, syntax_error) :-   in_range(syntax, Code, _), !.
-error_term(Code, _, resource_error) :- in_range(res,    Code, _), !.
-error_term(Code, _, user_error) :-     in_range(user,   Code, _), !.
-error_term(N, Culprit, evaluation_error(Type, Culprit)) :-
-        in_range(eval, N, Code), !,
-        evaluation_code(Code, Type).
-error_term(N, Culprit, representation_error(Type, Culprit)) :-
-        in_range(repres, N, Code), !,
-        representation_code(Code, Type).
-error_term(N, Culprit, type_error(Type, Culprit)) :-
-        in_range(type, N, Code),
-        type_code(Code, Type).
-error_term(N, Culprit, domain_error(Type, Culprit)) :-
-        in_range(dom, N, Code),
-        domain_code(Code, Type).
-error_term(N, Culprit, existence_error(Type, Culprit)) :-
-        in_range(exist, N, Code),
-        existence_code(Code, Type).
-error_term(N, Culprit, permission_error(Object, Permission, Culprit)) :-
-        in_range(perm, N, Code),
-        get_obj_perm(Code,Obj,Per),
-        permission_type_code(Per, Permission),
-        permission_object_code(Obj, Object).
-
-
-%% Check error type and return get Code for every class of error.  This should
-%% be made more modularly (i.e., with an C interface - but is it worth?)
-
- %% is_evaluation_error(N,Code) :-     N>120, N<126, Code is N-121.
- %% 
- %% is_representation_error(N,Code) :- N>114, N<121, Code is N-115.
- %% 
- %% is_type_error(N,Code) :-           N>1, N<15, Code is N-2.
- %% 
- %% is_domain_error(N,Code) :-         N>14, N<32, Code is N-15.
- %% 
- %% is_existence_error(N,Code) :-      N>31, N<35, Code is N-32.
- %% 
- %% is_permission_error(N,Code) :-     N>34, N<115, Code is N-35.
-
-get_obj_perm(Code, Obj, Perm) :-
-        Obj is Code mod 10,
-        Perm is Code // 10.
-             
-
- %% culprit_stream([], S) :- !, current_input(S).
- %% culprit_stream(S,S).
-
-%% This is the Prolog counterpart of the definitions in support.h.  Please 
-%% have a look there!
-
-range_per_error(100).
-
-error_start(inst,   0).
-error_start(type,   1).
-error_start(dom,    2).
-error_start(exist,  3).
-error_start(perm,   4).
-error_start(repres, 5).
-error_start(eval,   6).
-error_start(res,    7).
-error_start(syntax, 8).
-error_start(system, 9).
-error_start(user,   10).
+culprit_stream([], S) :- !, current_input(S).
+culprit_stream(S,S).
 
 type_code(0, atom).
 type_code(1, atomic).
 type_code(2, byte).
-type_code(3, character).
+type_code(3, callable).
 type_code(4, compound).
 type_code(5, evaluable).
 type_code(6, in_byte).
@@ -747,114 +493,84 @@ type_code(8, list).
 type_code(9, number).
 type_code(10, predicate_indicator).
 type_code(11, variable).
-type_code(12, callable).
 
-
-domain_code(0, character_code_list).
-domain_code(1, source_sink).
-domain_code(2, stream).
-domain_code(3, io_mode).
-domain_code(4, not_empty_list).
-domain_code(5, not_less_than_zero).
-domain_code(6, operator_priority).
-domain_code(7, prolog_flag).
-domain_code(8, read_option).
-domain_code(9, flag_value).
-domain_code(10, close_option).
-domain_code(11, stream_option).
-domain_code(12, stream_or_alias).
-domain_code(13, stream_position).
-domain_code(14, stream_property).
-domain_code(15, write_option).
-domain_code(16, operator_specifier).
-
-
-
-existence_code(0, procedure).
-existence_code(1, source_sink).
-existence_code(2, stream).
-
-
-
-
-
-
-
-
-permission_type_code(0, access).
-permission_type_code(1, creation).
-permission_type_code(2, input).
-permission_type_code(3, modification).
-permission_type_code(4, opening).
-permission_type_code(5, output).
-permission_type_code(6, reposition).
-
-
-
-
-
-permission_object_code(0, binary_stream).
-permission_object_code(1, source_sink).
-permission_object_code(2, stream).
-permission_object_code(3, text_stream).
-permission_object_code(4, flag).
-permission_object_code(5, operator).
-permission_object_code(6, past_end_of_stream).
-permission_object_code(7, private_procedure).
-permission_object_code(8, static_procedure).
-
-representation_code(0, character_code_list).
-representation_code(1, in_character_code).
-representation_code(2, max_arity).
-representation_code(3, character).
-representation_code(4, max_integer).
-representation_code(5, min_integer).
-representation_code(6, character_code).
-
-
-evaluation_code(0, float_overflow).
-evaluation_code(1, int_overflow).
-evaluation_code(2, undefined).
-evaluation_code(3, underflow).
-evaluation_code(4, zero_divisor).
+domain_code(32, character_code_list).
+domain_code(33, stream_or_alias).
 
 where_term(0, PredName, PredArity, PredName/PredArity) :- !.
 where_term(Arg, PredName, PredArity, PredName/PredArity-Arg).
 
+%------ interpreter ------%
+
+% called from within the emulator
+
+interpret_goal(Head, Root) :-
+	'CHOICE IDIOM'(Cut),
+	'$current_instance'(Head, Body, Root, _, no_block),
+        '$unlock_predicate'(Root),
+	metacall(Body, Cut, interpret).
+
+interpret_compiled_goal(Head, _) :- debug_trace(Head).
+
+undefined_goal(X) :- 'CHOICE IDIOM'(Cut), metacall(X, Cut, undefined).
+
+debug_goal(X) :- 'CHOICE IDIOM'(Cut), metacall(X, Cut, debug).
+
+metacall(X, _, _) :-
+	var(X), !,
+        throw(error(instantiation_error, call/1-1)).
+metacall(true, _, _) :- !.
+metacall(!, ?, _) :- !,
+        message(warning, '! illegal in \\+ or if-parts of ->, if; ignored').
+metacall(!, Cut, _) :- !,
+	'CUT IDIOM'(Cut).
+metacall((X, Y), Cut, _) :- !,
+	metacall(X, Cut, interpret),
+	metacall(Y, Cut, interpret).
+metacall((X->Y;Z), Cut, _) :- !,
+	(   metacall(X, ?, interpret) ->
+	    metacall(Y, Cut, interpret)
+	;   metacall(Z, Cut, interpret)
+	).
+metacall((X->Y), Cut, _) :- !,
+	(   metacall(X, ?, interpret) ->
+	    metacall(Y, Cut, interpret)
+	).
+metacall((X;Y), Cut, _) :- !,
+	(   metacall(X, Cut, interpret)
+	;   metacall(Y, Cut, interpret)
+	).
+metacall((\+ X), _, _) :- !,
+	\+ metacall(X, ?, interpret).
+metacall(if(P,Q,R), Cut, _) :- !,
+	if(metacall(P, ?, interpret),
+	   metacall(Q, Cut, interpret),
+	   metacall(R, Cut, interpret)).
+metacall((_^G), Cut, _) :- !,
+	metacall(G, Cut, interpret).
+metacall(X, _, _) :-
+	number(X), !,
+	throw(error(type_error(callable,X), 'in metacall')).
+metacall(X, _, Mode) :-
+	metacall2(Mode, X).
+
+metacall2(interpret, X) :- '$meta_call'(X).
+metacall2(undefined, X) :- '$unknown'(F, F), do_undefined(F, X).
+metacall2(debug, X) :- debug_trace(X).
+
+do_undefined(error, X) :-
+        functor(X, F, A),
+        throw(error(existence_error(procedure, F/A), F/A)).
+do_undefined(warning, X) :-
+        message(warning, ['The predicate ', X, ' is undefined']),
+        fail.
+% do_undefined(fail, X) :- fail.
+
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+193,2004/02/16,17:10*43+'CET'),
-   "prolog_radix/2 is not required now, due to changes in
-   number_codes/3.  (Edison Mera)").
-
-:- comment(version(1*11+58,2003/11/24,18:48*20+'CET'), "Added
-   $runclick, $userclick, $systemclick and $wallclick for use in
-   statistics/2.  (Edison Mera Menéndez)").
-
-:- comment(version(1*11+52,2003/10/27,14:41*44+'CET'), "modified for allow
-   _GLOBAL_ multiatributes. Old code is in
-   'attributed_variables.pl.old'. New one is in 'attributed_variables.pl'.
-   (David Trallero Mena)").
-
-:- comment(version(1*11+44,2003/09/23,12:57*07+'CEST'), "Added a
-   (required) predicate to disable custom ciaopp expansions in
-   mexpand.  (Jose Morales)").
-
-:- comment(version(1*11+25,2003/05/31,13:10*45+'CEST'), "Added user
-exception (generated by the glue code) ()").
-
-:- comment(version(1*11+18,2003/05/27,20:53*03+'CEST'), "Added
-definitions for a more expanded set of ISO Prolog exceptions (MCL)").
-
-:- comment(version(1*11+8,2003/04/07,13:59*25+'CEST'), "Low-level
-   debugger predicates moved to debugger module.  (Jose Morales)").
-
-:- comment(version(1*11+7,2003/04/07,13:57*48+'CEST'), "Some low-level
-   predicates moved to basiccontrol and hiord_rt.  (Jose Morales)").
-
-:- comment(version(1*11+6,2003/04/07,13:56*48+'CEST'), "Removed
-   explicit debugger state initialization, recoded as a module
-   initialization.  (Jose Morales)").
+:- comment(version(1*9+297,2004/02/16,17:10*29+'CET'), "prolog_radix/2
+   is not required now, due to changes in number_codes/3.  (Edison
+   Mera)").
 
 :- comment(version(1*9+272,2004/01/05,19:40*06+'CET'), "Changed
    handling of bad qualification: now it is not ignored, but changed to

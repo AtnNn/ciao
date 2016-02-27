@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Term checking utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Term manipulation utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC314" HREF="ciao_toc.html#TOC314">Term checking utilities</A></H1>
+<H1><A NAME="SEC342" HREF="ciao_toc.html#TOC342">Term manipulation utilities</A></H1>
 <P>
-<A NAME="IDX4314"></A>
+<A NAME="IDX4581"></A>
 
 
 <P>
@@ -20,23 +20,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#95 (2003/12/21, 18:52:2 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-This module implements the term checking utilities.
+<STRONG>Version of last change:</STRONG> 1.9#218 (2003/12/21, 18:44:51 CET)
+
+
+<P>
+This module implements some utils to do term manipulation.
 
 
 
 <UL>
-<LI><A HREF="ciao_80.html#SEC315">Usage and interface (terms_check)</A>
-<LI><A HREF="ciao_80.html#SEC316">Documentation on exports (terms_check)</A>
-<LI><A HREF="ciao_80.html#SEC317">Other information (terms_check)</A>
+<LI><A HREF="ciao_80.html#SEC343">Usage and interface (terms)</A>
+<LI><A HREF="ciao_80.html#SEC344">Documentation on exports (terms)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC315" HREF="ciao_toc.html#TOC315">Usage and interface (<CODE>terms_check</CODE>)</A></H2>
+<H2><A NAME="SEC343" HREF="ciao_toc.html#TOC343">Usage and interface (<CODE>terms</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -44,7 +47,7 @@ This module implements the term checking utilities.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(terms_check)).</CODE>
+<CODE>:- use_module(library(terms)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -53,19 +56,12 @@ This module implements the term checking utilities.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4315"></A>
-<CODE>ask/2</CODE>, 
-<A NAME="IDX4316"></A>
-<CODE>variant/2</CODE>, 
-<A NAME="IDX4317"></A>
-<CODE>most_general_instance/3</CODE>, 
-<A NAME="IDX4318"></A>
-<CODE>most_specific_generalization/3</CODE>.
-
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX4319"></A>
-<CODE>instance/2</CODE>.
+<A NAME="IDX4582"></A>
+<CODE>copy_args/3</CODE>, 
+<A NAME="IDX4583"></A>
+<CODE>arg/2</CODE>, 
+<A NAME="IDX4584"></A>
+<CODE>atom_concat/2</CODE>.
 
 </UL>
 
@@ -75,116 +71,66 @@ This module implements the term checking utilities.
 
 
 
-<H2><A NAME="SEC316" HREF="ciao_toc.html#TOC316">Documentation on exports (<CODE>terms_check</CODE>)</A></H2>
+<H2><A NAME="SEC344" HREF="ciao_toc.html#TOC344">Documentation on exports (<CODE>terms</CODE>)</A></H2>
 <P>
-<A NAME="IDX4320"></A>
-<A NAME="IDX4321"></A>
+<A NAME="IDX4585"></A>
+<A NAME="IDX4586"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ask/2:</B>
-<DD><A NAME="IDX4322"></A>
+<DT><span class="define">PREDICATE:</span> <B>copy_args/3:</B>
+<DD><A NAME="IDX4587"></A>
 
 
 <P>
-<CODE>ask(Term1, Term2)</CODE>
-
-
-<P>
-<CODE>Term1</CODE> and <CODE>Term2</CODE> unify without producing bindings for the variables of <CODE>Term1</CODE>. I.e., <CODE>instance(<CODE>Term1</CODE>,<CODE>Term2</CODE>)</CODE> holds.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4323"></A>
-<A NAME="IDX4324"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>instance/2:</B>
-<DD><A NAME="IDX4325"></A>
-
-
-<P>
-<CODE>instance(Term1, Term2)</CODE>
-
-
-<P>
-<CODE>Term1</CODE> is an instance of <CODE>Term2</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>instance(A, B)</CODE>
+<STRONG>Usage:</STRONG> <CODE>copy_args(N, Term, Copy)</CODE>
 
 <UL>
-<LI><EM>The following properties hold globally:</EM>
+<LI><EM>Description:</EM> <CODE>Term</CODE> and <CODE>Copy</CODE> have the same first <CODE>N</CODE> arguments.
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>N</CODE> is a non-negative integer.
+ (<CODE>basic_props:nnegint/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4326"></A>
-<A NAME="IDX4327"></A>
+<A NAME="IDX4588"></A>
+<A NAME="IDX4589"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>variant/2:</B>
-<DD><A NAME="IDX4328"></A>
+<DT><span class="define">PREDICATE:</span> <B>arg/2:</B>
+<DD><A NAME="IDX4590"></A>
 
 
 <P>
-<CODE>variant(Term1, Term2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>arg(Term, Arg)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Arg</CODE> is an argument of <CODE>Term</CODE>. Gives each of the arguments on backtracking.
 
-<P>
-<CODE>Term1</CODE> and <CODE>Term2</CODE> are identical up to renaming.
-
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4329"></A>
-<A NAME="IDX4330"></A>
+<A NAME="IDX4591"></A>
+<A NAME="IDX4592"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>most_general_instance/3:</B>
-<DD><A NAME="IDX4331"></A>
+<DT><span class="define">PREDICATE:</span> <B>atom_concat/2:</B>
+<DD><A NAME="IDX4593"></A>
 
 
 <P>
-<CODE>most_general_instance(Term1, Term2, Term)</CODE>
+<CODE>atom_concat(Atms, Atm)</CODE>
 
 
 <P>
-<CODE>Term</CODE> satisfies <CODE>instance(<CODE>Term</CODE>,<CODE>Term1</CODE>)</CODE> and <CODE>instance(<CODE>Term</CODE>,<CODE>Term2</CODE>)</CODE> and there is no term more general than <CODE>Term</CODE> (modulo variants) that satisfies it.
+<CODE>Atm</CODE> is the atom resulting from concatenating all atoms in the list <CODE>Atms</CODE> in the order in which they appear.
 
 
 </DL>
-
-<P>
-<A NAME="IDX4332"></A>
-<A NAME="IDX4333"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>most_specific_generalization/3:</B>
-<DD><A NAME="IDX4334"></A>
-
-
-<P>
-<CODE>most_specific_generalization(Term1, Term2, Term)</CODE>
-
-
-<P>
-<CODE>Term</CODE> satisfies <CODE>instance(<CODE>Term1</CODE>,<CODE>Term</CODE>)</CODE> and <CODE>instance(<CODE>Term2</CODE>,<CODE>Term</CODE>)</CODE> and there is no term less general than <CODE>Term</CODE> (modulo variants) that satisfies it.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC317" HREF="ciao_toc.html#TOC317">Other information (<CODE>terms_check</CODE>)</A></H2>
-
-<P>
-Currently, <CODE>ask/2</CODE> and <CODE>instance/2</CODE> are exactly the same. However, <CODE>ask/2</CODE> is more general, since it is also applicable to constraint domains (although not yet implemented): for the particular case of Herbrand terms, it is just <CODE>instance/2</CODE> (which is the only ask check currently implemented).
-
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - oval_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - arc_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC556" HREF="ciao_toc.html#TOC556">oval_class (library)</A></H1>
+<H1><A NAME="SEC581" HREF="ciao_toc.html#TOC581">arc_class (library)</A></H1>
 <P>
-<A NAME="IDX6387"></A>
+<A NAME="IDX6461"></A>
 
 
 <P>
@@ -20,22 +20,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#139 (2003/12/4, 17:34:21 CET)
+<STRONG>Version of last change:</STRONG> 1.9#120 (2003/12/4, 17:32:15 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_139.html#SEC557">Usage and interface (oval_class)</A>
-<LI><A HREF="ciao_139.html#SEC558">Documentation on exports (oval_class)</A>
+<LI><A HREF="ciao_139.html#SEC582">Usage and interface (arc_class)</A>
+<LI><A HREF="ciao_139.html#SEC583">Documentation on exports (arc_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC557" HREF="ciao_toc.html#TOC557">Usage and interface (<CODE>oval_class</CODE>)</A></H2>
+<H2><A NAME="SEC582" HREF="ciao_toc.html#TOC582">Usage and interface (<CODE>arc_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(oval_class)).</CODE>
+<CODE>:- use_module(library(arc_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,15 +52,19 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6388"></A>
+<A NAME="IDX6462"></A>
 <CODE>coord/4</CODE>, 
-<A NAME="IDX6389"></A>
+<A NAME="IDX6463"></A>
 <CODE>width/1</CODE>, 
-<A NAME="IDX6390"></A>
+<A NAME="IDX6464"></A>
 <CODE>height/1</CODE>, 
-<A NAME="IDX6391"></A>
+<A NAME="IDX6465"></A>
 <CODE>center/2</CODE>, 
-<A NAME="IDX6392"></A>
+<A NAME="IDX6466"></A>
+<CODE>angle_start/1</CODE>, 
+<A NAME="IDX6467"></A>
+<CODE>style_type/1</CODE>, 
+<A NAME="IDX6468"></A>
 <CODE>outline_color/1</CODE>.
 
 </UL>
@@ -72,7 +76,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6393"></A>
+<A NAME="IDX6469"></A>
 <CODE>objects/objects_rt</CODE>.
 
 </UL>
@@ -83,232 +87,249 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>,
 
 
 
-<H2><A NAME="SEC558" HREF="ciao_toc.html#TOC558">Documentation on exports (<CODE>oval_class</CODE>)</A></H2>
+<H2><A NAME="SEC583" HREF="ciao_toc.html#TOC583">Documentation on exports (<CODE>arc_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX6394"></A>
-<A NAME="IDX6395"></A>
+<A NAME="IDX6470"></A>
+<A NAME="IDX6471"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
-<DD><A NAME="IDX6396"></A>
+<DD><A NAME="IDX6472"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>coord(X1, Y1, X2, Y2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X1, +Y1, +X2, +Y2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval.
+<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval that defines the arc.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>X1</CODE> is an integer.
+<CODE>+X1</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Y1</CODE> is an integer.
+<CODE>+Y1</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 
-<CODE>X2</CODE> is an integer.
+<CODE>+X2</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Y2</CODE> is an integer.
+<CODE>+Y2</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>X1</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Y1</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>X2</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Y2</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6397"></A>
-<A NAME="IDX6398"></A>
+<A NAME="IDX6473"></A>
+<A NAME="IDX6474"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>width/1:</B>
-<DD><A NAME="IDX6399"></A>
+<DD><A NAME="IDX6475"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>width(Width)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Width</CODE> is an integer.
+<CODE>+Width</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Width</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>width(Width)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Width</CODE> is an integer.
+<CODE>-Width</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Width</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6400"></A>
-<A NAME="IDX6401"></A>
+<A NAME="IDX6476"></A>
+<A NAME="IDX6477"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>height/1:</B>
-<DD><A NAME="IDX6402"></A>
+<DD><A NAME="IDX6478"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>height(Height)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies shape's <CODE>Heigh</CODE>.
+<LI><EM>Description:</EM> Specifies shape's <CODE>Height</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Height</CODE> is an integer.
+<CODE>+Height</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Height</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>height(Height)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Height</CODE> is an integer.
+<CODE>-Height</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Height</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6403"></A>
-<A NAME="IDX6404"></A>
+<A NAME="IDX6479"></A>
+<A NAME="IDX6480"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>center/2:</B>
-<DD><A NAME="IDX6405"></A>
+<DD><A NAME="IDX6481"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>center(X, Y)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>center(+X, +Y)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>X</CODE> is an integer.
+<CODE>+X</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Y</CODE> is an integer.
+<CODE>+Y</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>X</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Y</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>center(X, Y)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>center(-X, -Y)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>X</CODE> is an integer.
+<CODE>-X</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Y</CODE> is an integer.
+<CODE>-Y</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>X</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Y</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6406"></A>
-<A NAME="IDX6407"></A>
+<A NAME="IDX6482"></A>
+<A NAME="IDX6483"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
-<DD><A NAME="IDX6408"></A>
+<DT><span class="define">PREDICATE:</span> <B>angle_start/1:</B>
+<DD><A NAME="IDX6484"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>outline_color(Color)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>angle_start(+Angle)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the oval's outline. This option defaults to black.
+<LI><EM>Description:</EM> <CODE>Angle</CODE> specifies the beginning of the angular range occupied by the arc. Degrees are given in units of degrees measured counter-clockwise from the 3-o'clock position; it may be either positive or negative.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Color</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
+<CODE>+Angle</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>outline_color(Color)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>angle_start(-Angle)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets oval's outline <CODE>Color</CODE>.
+<LI><EM>Description:</EM> Gets the value of the <CODE>Angle</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
+<CODE>-Angle</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
 
-<CODE>Color</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+</DL>
+
+<P>
+<A NAME="IDX6485"></A>
+<A NAME="IDX6486"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>style_type/1:</B>
+<DD><A NAME="IDX6487"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>style_type(+Style)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Style</CODE> specifies how to draw the arc. If type is pieslice (the default) then the arc's region is defined by a section of the oval's perimeter plus two line segments, one between the center of the oval and each end of the perimeter section. If type is chord then the arc's region is defined by a section of the oval's perimeter plus a single line segment connecting the two end points of the perimeter section. If type is arc then the arc's region consists of a section of the perimeter alone. In this last case the -fill option is ignored.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Style</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>style_type(-Style)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Style</CODE> of the arc.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Style</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6488"></A>
+<A NAME="IDX6489"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
+<DD><A NAME="IDX6490"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color used for drawing the arc's outline. This option defaults to black.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It gets arc's outline <CODE>Color</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

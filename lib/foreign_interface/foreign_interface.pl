@@ -23,12 +23,8 @@
 :- new_declaration(ttr_def/2,on).
 :- new_declaration(ttr_match/2,on).
 
-:- new_declaration(foreign_inline/2,on).
-
 :- use_package(library('foreign_interface/foreign_interface_ttrs')).
 
-:- load_compilation_module(library('foreign_interface/foreign_inliner_tr')).
 :- load_compilation_module(library('foreign_interface/foreign_interface_tr')).
-
-:- add_sentence_trans(foreign_inliner_tr/3).
 :- add_sentence_trans(foreign_interface_tr/3).
+

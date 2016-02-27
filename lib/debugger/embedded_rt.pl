@@ -3,11 +3,11 @@
 		      ],
 	              [dcg, assertions]).
 
+:- use_module(library(debugger), []).
+
 :- use_module(engine(internals),['$predicate_property'/3,
-	term_to_meta/2,'$setarg'/4]).
-:- use_module(engine(debugger_support), ['$spypoint'/3,'$debugger_state'/2,
-	'$debugger_mode'/0]).
-:- use_module(engine(hiord_rt), ['$nodebug_call'/1]).
+	'$nodebug_call'/1,term_to_meta/2,'$spypoint'/3,'$debugger_state'/2,
+	'$setarg'/4,'$debugger_mode'/0]).
 :- use_module(library(format),[format/3]).
 :- use_module(library(write),[writeq/1, write_term/2]).
 :- use_module(library(ttyout),[ttydisplay/1,ttyflush/0,ttyget/1]).
@@ -256,4 +256,25 @@ lastof([X0|Xs], _, X) :- lastof(Xs, X0, X).
 %%%%%	ttydisplay('    @     command          u      unify'), ttynl,
 %%%%%	ttydisplay('    ^     reset subterm    ^ <n>  set subterm'), ttynl,
 
+
+
+%% *** Delete this comment after reading: it is only a reminder! ***
+%% 
+%% The "assertions" library needs to be included in order to support
+%% ":- comment(...,...)." declarations such as below, i.e., insert: 
+%% 
+%% :- module(_,_,[assertions]).
+%% 
+%% At the beginning of the file:
+%% The following version comment(s) can be moved elsewhere in the 
+%% file. Subsequent version comments will always be placed above 
+%% the last one inserted.
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+359,2004/07/14,16:06*38+'CEST'), "Imported
+   missing library(debugger) to include that code in stand-alone
+   applications which use the embedded debugger (fixes a bug). (Jose
+   Morales)").
 

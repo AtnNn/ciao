@@ -7,12 +7,19 @@
         findnsols/5,
  	(^)/2
         ],
-	[assertions,isomodes,hiord]).
+	[assertions,isomodes]).
 
 :- use_module(library(sort)).
 :- use_module(library(lists),[length/2]).
-%:- use_module(engine(hiord_rt),[call/1]).
 :- use_module(engine(internals),['$setarg'/4]).
+
+:- meta_predicate
+        bagof(?,goal,?),
+        setof(?,goal,?),
+        findall(?,goal,?),
+        findall(?,goal,?,?),
+        findnsols(?,?,goal,?),
+        findnsols(?,?,goal,?,?).
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
@@ -100,7 +107,6 @@ no
 
 :- true comp setof(X, Y, Z) + native(findall(X,Y,Z)).
 :- true pred setof(@term, +callable, ?list) + iso.
-:- meta_predicate setof(?,goal,?).
 
 %% This predicate is defined on p51 of the Dec-10 Prolog manual.
 
@@ -119,7 +125,6 @@ setof(Template, Filter, Set) :-
 
 :- true comp bagof(X, Y, Z) + native(findall(X,Y,Z)).
 :- true pred bagof(@term, +callable, ?list) + iso.
-:- meta_predicate bagof(?,goal,?).
 
 %   bagof records three things under the key '.':
 %       the end-of-bag marker          -
@@ -156,7 +161,6 @@ bagof(Template, Generator, Bag) :-
      predicates.").
 
 :- true pred findall(@term, +callable, ?list) + (iso, native).
-:- meta_predicate findall(?,goal,?).
 
 %%  It is described in Clocksin & Mellish on p152.  The code they give has
 %%  a bug (which the Dec-10 bagof and setof predicates share) which
@@ -169,7 +173,6 @@ findall(Template, Generator, List) :-
 :- pred findall(Template, Generator, List, Tail)
    # "As @pred{findall/3}, but returning in @var{Tail} the tail of
      @var{List}.".
-:- meta_predicate findall(?,goal,?,?).
 
 findall(Template, Generator, List, Tail) :-
         save_solutions(-Template, Generator),
@@ -183,7 +186,6 @@ findall(Template, Generator, List, Tail) :-
      have an infinite number of solutions.").
 
 :- true pred findnsols(+int,@term,+callable,?list).
-:- meta_predicate findnsols(?,?,goal,?).
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -197,7 +199,6 @@ findnsols(_,_,_,[]).
      @var{List}.").
 
 :- true pred findnsols(+int,@term,+callable,?,?).
-:- meta_predicate findnsols(?,?,goal,?,?).
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -213,7 +214,6 @@ findnsols(N,E,P,L,T) :-
         list_solutions(L,T).
 findnsols(_,_,_,T,T).
 
-:- meta_predicate save_n_solutions(?,?,?,goal).
 save_n_solutions(NSol, N, Template, Generator) :-
         asserta_fact(solution('-')),
         call(Generator),
@@ -229,7 +229,6 @@ save_n_solutions(_,_,_,_).
    # "Enumerates all provable instances of the @var{Generator} and
      records the associated @var{Template} instances.  Neither
      argument ends up changed.".
-:- meta_predicate save_solutions(?,goal).
 
 save_solutions(Template, Generator) :-
         asserta_fact(solution('-')),
@@ -386,8 +385,8 @@ free_variables(N, Term, Bound, OldList, NewList) :-
       common.".
 
 explicit_binding(X, _, _, _) :- var(X), !, fail. % space saver
-explicit_binding('basiccontrol:\\+'(_), Bound,     fail,     Bound    ).
-explicit_binding('aggregates:^'(Var,Goal), Bound, Goal,	    Bound+Var).
+explicit_binding(\+ _, Bound,     fail,     Bound    ).
+explicit_binding(Var^Goal, Bound, Goal,	    Bound+Var).
 explicit_binding('aggregates:setof'(Var,Goal,Set), Bound,
                                   Goal-Set, Bound+Var).
 explicit_binding('aggregates:bagof'(Var,Goal,Bag), Bound,
@@ -421,12 +420,13 @@ list_is_free_of([Head|Tail], Var) :-
    existentially quantified.  Used only within @concept{aggregation
    predicates}. In all other contexts, simply, execute the procedure
    call @var{P}.".
-
-:- meta_predicate('^'(?, goal)).
 :- true comp (_X^Y) + native(call(Y)).
+
 %% %%% Was as follows when in builtin.pl:
 %% (X^Y) :- undefined_goal((X^Y)).
 (_X^Y) :- call(Y).
+
+% -----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
 

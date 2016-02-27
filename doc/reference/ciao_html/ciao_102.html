@@ -1,62 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Andorra execution</TITLE>
+<TITLE>The Ciao Prolog System               - Independent and-parallel execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_101.html">previous</A>, <A HREF="ciao_103.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_101.html">previous</A>, <A HREF="ciao_103.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Andorra execution</A></H1>
+<H1><A NAME="SEC421" HREF="ciao_toc.html#TOC421">Independent and-parallel execution</A></H1>
 <P>
-<A NAME="IDX5184"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Claudio Vaucheret, Francisco Bueno.
+<A NAME="IDX5343"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Manuel Carro, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#144 (2001/11/12, 17:57:47 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-This package allows the execution under the Basic Andorra Model [War88]. The model classifies goals as a 
-<A NAME="IDX5185"></A>
-<A NAME="IDX5186"></A>
-<EM>determinate goal</EM>, if at most one clause matches the goal, or nondeterminate goal, otherwise. In this model a goal is delayed until either it becomes determinate or it becomes the leftmost goal and no determinate goal is available. The implementation of this selection rule is based on the use of attributed variables [Hol92,Hol90]. 
+<STRONG>Version of last change:</STRONG> 1.7#160 (2001/11/27, 12:35:53 CET)
 
 
 <P>
-In order to test determinacy we verify only the heads of clauses and builtins in the bodies of clauses before the first cut, if any. By default, determinacy of a goal is detected dynamically: when called, if at most one clause matches, it is executed; otherwise, it is delayed. For goals delayed the test is repeated each time a variable appearing in the goal is instantiated. In addition, efficiency can be improved by using declarations that specify the determinacy conditions. These will be considered for testing instead of the generic test on all clauses that can match. 
+<STRONG>Note:</STRONG> This is just a partial first shot. The real library still needs to be written. Not difficult, just no time... 
 
 
 <P>
-As with any other Ciao package, the andorra computation rule affects only the module that uses the package. If execution passes across two modules that use the computation rule, determinate goals are run in advance <EM>within</EM> one module and also within the other module. But determinate goals of one module do not run ahead of goals of the other module. 
-
-
-<P>
-It is however possible to preserve the computation rule for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will only be called when they became the leftmost goal. 
+This library will eventually allow and-parallel execution of goals in (Herbrand-)independent fashion. It resembles the execution rules of &#38;-Prolog [HG90]. Basically, goals are run in and-parallel <EM>provided that their arguments do not share bindings</EM>, i.e., are not bound to terms which contain a common variable.
 
 
 
 <UL>
-<LI><A HREF="ciao_102.html#SEC395">Usage and interface (andorra)</A>
-<LI><A HREF="ciao_102.html#SEC396">Documentation on new declarations (andorra)</A>
-<LI><A HREF="ciao_102.html#SEC397">Documentation on exports (andorra)</A>
-<LI><A HREF="ciao_102.html#SEC398">Other information (andorra)</A>
+<LI><A HREF="ciao_102.html#SEC422">Usage and interface (andprolog)</A>
+<LI><A HREF="ciao_102.html#SEC423">Documentation on internals (andprolog)</A>
+<LI><A HREF="ciao_102.html#SEC424">Known bugs and planned improvements (andprolog)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Usage and interface (<CODE>andorra</CODE>)</A></H2>
+<H2><A NAME="SEC422" HREF="ciao_toc.html#TOC422">Usage and interface (<CODE>andprolog</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -64,196 +52,142 @@ It is however possible to preserve the computation rule for calls to predicates 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(andorra).</CODE>
+<CODE>:- use_package(andprolog).</CODE>
 
 or
 
-<CODE>:- module(...,...,[andorra]).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5187"></A>
-<CODE>detcond/1</CODE>, 
-<A NAME="IDX5188"></A>
-<CODE>path/1</CODE>.
-
-</UL>
+<CODE>:- module(...,...,[andprolog]).</CODE>
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX5189"></A>
-<CODE>?\=/2</CODE> [700,xfx], 
-<A NAME="IDX5190"></A>
-<CODE>?=/2</CODE> [700,xfx].
-
-<LI><STRONG>New declarations defined:</STRONG>
-
-<A NAME="IDX5191"></A>
-<CODE>determinate/2</CODE>.
-
+<A NAME="IDX5344"></A>
+<CODE>@&#38;/2</CODE> [950,xfy].
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Documentation on new declarations (<CODE>andorra</CODE>)</A></H2>
+<H2><A NAME="SEC423" HREF="ciao_toc.html#TOC423">Documentation on internals (<CODE>andprolog</CODE>)</A></H2>
 <P>
-<A NAME="IDX5192"></A>
-<A NAME="IDX5193"></A>
+<A NAME="IDX5345"></A>
+<A NAME="IDX5346"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>determinate/2:</B>
-<DD><A NAME="IDX5194"></A>
+<DT><span class="define">PREDICATE:</span> <B>@&#38;/2:</B>
+<DD><A NAME="IDX5347"></A>
 
 
 <P>
-:- <CODE>determinate(Pred, Cond)</CODE>.
+<CODE>@&#38;(GoalA, GoalB)</CODE>
 
 
 <P>
-Declares determinacy conditions for a predicate. Conditions <CODE>Cond</CODE> are on variables of arguments of <CODE>Pred</CODE>. For example, in: 
+<CODE>GoalA</CODE> and <CODE>GoalB</CODE> are run in independent and-parallel fashion. This is just a first sketch, and valid only for deterministic independent goals. The use is as 
+
+
 
 <PRE>
-:- determinate(member(A,B,C), ( A ?= term(B,[1])  ; C?=[_|_]) ).
-
-member(A,[A|B],B).
-member(A,[B|C],[B|D]) :-
-        A==B,
-        member(A,C,D).
+q:- a &#38; b.
 </PRE>
 
 <P>
-the declaration states that a call <CODE>member(A,B,C)</CODE> is determinate when either <CODE>A</CODE> doesn't unify with the first argument of <CODE>B</CODE> or <CODE>C</CODE> doesn't unify with <CODE>[_|_]</CODE>.
+which would start <CODE>a</CODE> and <CODE>b</CODE> in separate threads (possibly in parallalel, if the machine architecture and operating system allows that), and continue when <STRONG>both</STRONG> have finished. This type of execution is safe only when <CODE>a</CODE> and <CODE>b</CODE> are independent in the sense of variable sharing. This condition can be tested with the 
+<A NAME="IDX5348"></A>
+<CODE>indep/2</CODE> predicate. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX5349"></A>
+<A NAME="IDX5350"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>active_agents/1:</B>
+<DD><A NAME="IDX5351"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>determinate(Pred, Cond)</CODE>.
+<CODE>active_agents(NumberOfAgents)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> States that the predicate <CODE>Pred</CODE> is determinate when <CODE>Cond</CODE> holds.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to execute. As for now, those agents are resource-consuming, even when they are just looking for work, and not executing any user goals.
 
-<CODE>Pred</CODE> is a Name/Arity structure denoting a predicate name: 
 
-<PRE>
-predname(P/A) :-
-        atm(P),
-        nnegint(A).
-</PRE>
+</DL>
 
- (<CODE>basic_props:predname/1</CODE>)
+<P>
+<A NAME="IDX5352"></A>
+<A NAME="IDX5353"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>indep/2:</B>
+<DD><A NAME="IDX5354"></A>
 
-<CODE>Cond</CODE> is a determinacy condition.
- (<CODE>user(... /andorra_doc):detcond/1</CODE>)
-</UL>
+
+<P>
+<CODE>indep(X, Y)</CODE>
+
+
+<P>
+<CODE>X</CODE> and <CODE>Y</CODE> are 
+<A NAME="IDX5355"></A>
+<A NAME="IDX5356"></A>
+<EM>independent</EM>, i.e., they are bound to terms which have no variables in common. For example, <CODE>indep(X,Y)</CODE> holds for <CODE>X=f(Z),Y=g(K)</CODE> and also for <CODE>X=f(a),Y=X</CODE> (since both <CODE>X</CODE> and <CODE>Y</CODE> are bound to ground terms). It does not hold for <CODE>X=f(Z),Y=g(Z)</CODE> and for <CODE>X=Y</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5357"></A>
+<A NAME="IDX5358"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>indep/1:</B>
+<DD><A NAME="IDX5359"></A>
+
+
+<P>
+<CODE>indep(X)</CODE>
+
+
+<P>
+<CODE>X</CODE> is a list of lists of length two, i.e., a list of the form <CODE>[[T1, T2], [T3, T4], ...]</CODE>. The variables in each pair of the list <CODE><CODE>X</CODE></CODE> are tested for independence using 
+<A NAME="IDX5360"></A>
+<CODE>indep/2</CODE>. This list-of-pairs format is the output of several independdnce analyzers for pair sharing.
+
 
 </DL>
 
 
 
-<H2><A NAME="SEC397" HREF="ciao_toc.html#TOC397">Documentation on exports (<CODE>andorra</CODE>)</A></H2>
-<P>
-<A NAME="IDX5195"></A>
-<A NAME="IDX5196"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>detcond/1:</B>
-<DD><A NAME="IDX5197"></A>
-
-
-<P>
-Defined by: 
-
-<PRE>
-detcond(ground(X)) :-
-        var(X).
-detcond(nonvar(X)) :-
-        var(X).
-detcond(instatiated(A,Path)) :-
-        var(A),
-        list(Path,int).
-detcond(?\=(Term1,Term2)) :-
-        path(Term1),
-        path(Term2).
-detcond(?=(Term1,Term2)) :-
-        path(Term1),
-        path(Term2).
-detcond(Test) :-
-        test(Test).
-</PRE>
+<H2><A NAME="SEC424" HREF="ciao_toc.html#TOC424">Known bugs and planned improvements (<CODE>andprolog</CODE>)</A></H2>
 
 
 <UL>
-<LI><CODE>ground/1</CODE> and <CODE>nonvar/1</CODE> have the usual meaning.
 
-<LI><CODE>instatiated(A,Path)</CODE> means that the subterm of <CODE>A</CODE> addressed by <CODE>Path</CODE> is not a variable. <CODE>Path</CODE> is a list of integer numbers describing a path to the subterm regarding the whole term A as a tree. For example, <CODE>instantiated(f(g(X),h(i(Z),Y)),[2,1])</CODE> tests whether <CODE>i(Z)</CODE> is not a variable.
+<LI>
 
-<LI><CODE>Term1 ?\= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> do not unify (when instantiated)". <CODE>Term1</CODE> and <CODE>Term2</CODE> can be either an argument of the predicate or a term <CODE>term(V,Path)</CODE>, which refers to the subterm of <CODE>V</CODE> addressed by <CODE>Path</CODE>.
+<STRONG>Beware:</STRONG> the current code is just a partial first shot. It is provided for the sole purpose of experimentation and development.
 
-<LI><CODE>Term1 ?= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> unify (when instantiated)". The same considerations above apply to <CODE>Term1</CODE> and <CODE>Term2</CODE>.
+<LI>
 
-<LI>any other test that does not unify variables can also be used ( <CODE>==/2</CODE>, <CODE>\==/2</CODE>, <CODE>atomic/1</CODE>).
+The fact that only the first solution is returned for the conjunction is due to performance issues (and lack of time), and we expect to remove it in a near future.
 
-</UL>
+<LI>
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>detcond(X)</CODE>
+CGEs (i.e., <CODE>=&#62;</CODE>) are not supported.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a determinacy condition.
+<LI>
 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5198"></A>
-<A NAME="IDX5199"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>path/1:</B>
-<DD><A NAME="IDX5200"></A>
-
-
-<P>
-Defined by: 
-
-<PRE>
-path(X) :-
-        var(X).
-path(X) :-
-        list(X,int).
-</PRE>
-
-</DL>
-
-
-
-<H2><A NAME="SEC398" HREF="ciao_toc.html#TOC398">Other information (<CODE>andorra</CODE>)</A></H2>
-
-<P>
-The andorra transformation will include the following predicates into the code of the module that uses the package. Be careful not to define predicates by these names: 
-
-<UL>
-<LI><CODE>detcond_andorra/4</CODE>
-
-<LI><CODE>path_andorra/4</CODE>
-
-<LI><CODE>detcond_susp/4</CODE>
-
-<LI><CODE>path_susp/4</CODE>
-
-<LI><CODE>list_andorra2/5</CODE>
-
-<LI><CODE>test_andorra2/4</CODE>
-
+The 
+<A NAME="IDX5361"></A>
+<CODE>indep/1</CODE>, 
+<A NAME="IDX5362"></A>
+<CODE>indep/2</CODE>, and 
+<A NAME="IDX5363"></A>
+<CODE>ground/1</CODE> tests are not very efficient; they will be replaced by native versions (taken from the &#38;-Prolog code) in the future.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_101.html">previous</A>, <A HREF="ciao_103.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_101.html">previous</A>, <A HREF="ciao_103.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

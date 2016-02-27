@@ -82,9 +82,11 @@ indexspec(Spec) :- Spec=..[_F|Args], list(Args,argspec).
 
 :- regtype argspec(Spec)
    # "@var{Spec} is an argument hash specification.".
+
 :- comment(argspec/1,
   "An argument hash specification is defined as follows:
    @includedef{argspec/1}").
+
 :- comment(doinclude,argspec/1).
 
 argspec(+).
@@ -103,6 +105,6 @@ argspec(?).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+101,2003/12/21,20:21*31+'CET'), "Control
+:- comment(version(1*9+225,2003/12/21,20:20*39+'CET'), "Control
    version started.  (Edison Mera)").
 

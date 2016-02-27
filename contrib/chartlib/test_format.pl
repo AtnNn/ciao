@@ -1,7 +1,6 @@
 :- module(test_format,[],[assertions,regtypes,isomodes]).
 
-:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
-
+:- comment(author, "Isabel Martín").
 
 :- export(equalnumber/3).
 :- export(not_empty/4).

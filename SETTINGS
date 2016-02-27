@@ -2,10 +2,15 @@
 # ----------------------------------------------------------------------------
 # Ciao Global Compilation/Installation SETTINGS
 # ----------------------------------------------------------------------------
-# Define this to be a directory where the sources are reachable system-wide 
+# Define this to be a directory where the sources are reachable
+# system-wide
+
 # SRC=/usr/local/src/ciao
-#
-SRC=/usr/local/src/ciao-1-1.11-mattrp222
+#   or
+# SRC=/usr/src/ciao
+
+SRC=/usr/local/src/ciao-1.10p7
+
 #-----------------------------------------------------------------------------
 # Define the following to be the places under which the installation
 # will be performed:
@@ -14,6 +19,8 @@ SRC=/usr/local/src/ciao-1-1.11-mattrp222
 #   or
 # CIAOROOT=/usr
 #   or
+#CIAOROOT=/tmp
+
 CIAOROOT=/usr/local
 
 # Executables will go here:
@@ -29,7 +36,6 @@ INCLUDEROOT=$(CIAOROOT)/include
 # installed.  Ideally, this directory should be accessible via WWW,
 # emacs info, and man:
 # DOCROOT=/usr/local/etc/httpd/htdocs
-# 
 #   or
 # DOCROOT=/var/www/html/ciao
 
@@ -47,8 +53,9 @@ DOCROOT=/var/www/html/ciao
 WEB_IMAGES_PATH=/var/www/icons
 WEB_IMAGES_URL=/icons/
 
-# Set to "no" if you do not want to create a link to Ciao named "prolog",
-# for example because there are more prolog's in the system
+
+# Set to "no" if you do not want to create a link to Ciao named
+# "prolog", for example because there are more prolog's in the system
 INSTALL_PROLOG_NAME=yes
 
 # Set to "no" if you do not want to install the Ciao emacs libraries,
@@ -61,10 +68,10 @@ INSTALL_EMACS_SUPPORT=yes
 # If you choose to have the MySQL interfafe, you should have the MySQL
 # client part installed in the machine where you are compiling and
 # using it.  The MySQL daemon should also be up and running when using
-# the interface.  You should also know where the MySQL client
-# library is installed.  In a Linux machine you can do that by looking at
-# the output of the command "locate mysqlclient.a".  The directory
-# part of the path is what is relevant here.
+# the interface.  You should also know where the MySQL client library
+# is installed.  In a Linux machine you can do that by looking at the
+# output of the command "locate mysqlclient.a".  The directory part of
+# the path is what is relevant here.
 WITH_MYSQL=yes
 MYSQL_CLIENT_DIRECTORY=/usr/lib/mysql
 
@@ -97,8 +104,10 @@ USE_THREADS=yes
 USE_POSIX_LOCKS=no
 
 # Optimization level used when compiling the bytecode emulator. Choose one of:
+
 #    optimized       -- Turn on optimization flags
 #    normal          -- Normal emulator (non-optimized code)
+
 # For normal use, we recommend leaving it as "optimized".  But if you
 # suspect that your compiler performs buggy optimizations (which
 # should not be the case), turn optimization off.  This can be happen
@@ -113,11 +122,17 @@ OPTIM_LEVEL=optimized
 # as when employed to create an executable.
 COMPRESS_LIBS=no
 
+# Define this to be the permissions for installed execs/dirs and data
+# files:
+EXECMODE=775
+DATAMODE=664
+INSTALLGROUP=clip
+
 # ----------------------------------------------------------------------------
 # You should not need to touch anything below this line.  However,
 # these are user-definable settings, so changing them should not be
-# critical (it may create some minor discrepancies with the installation 
-# documentation).
+# critical (it may create some minor discrepancies with the
+# installation documentation).
 # ----------------------------------------------------------------------------
 
 # This is quite standard: put executables right in their directory.
@@ -128,20 +143,17 @@ BINDIR=$(BINROOT)
 # LIBDIR=$(SRC)/lib
 LIBDIR=$(LIBROOT)/ciao
 
-# Define this to be the dir in which you want the documentation installed. 
-# Ideally, this dir should be accessible via WWW, emacs info, and man:
+# Define this to be the dir in which you want the documentation
+# installed.  Ideally, this dir should be accessible via WWW, emacs
+# info, and man:
 DOCDIR=$(DOCROOT)
-
-# Define this to be the permissions for installed execs/dirs and data files:
-EXECMODE=775
-DATAMODE=664
-INSTALLGROUP=clip
 
 # You only want to change this if you are a developer.  Additionally,
 # setting the environment variable CIAODEBUG to the value '-debug' at
 # the time of compiling the engine will override the OPTIM_LEVEL and
 # DEBUG_LEVEL flags, and produce non optimized emulator code with
 # debugging information.
+
 # Level of debugging built into the bytecode emulator. Choose one of:
 #    nodebug         -- Do not include debug information or messages
 #    debug           -- Emulator with C level debugging info available
@@ -152,26 +164,30 @@ INSTALLGROUP=clip
 # DEBUG_LEVEL=nodebug
 DEBUG_LEVEL=nodebug
 
+
 # This is to compile locally the engine in cygwin across a Samba share
-#SAMBASRCDIR=//clip/clip/Systems/ciao-1.11
 
+# SAMBASRCDIR=//clip/clip/Systems/ciao-1.9
+# 
 ifeq (CYGWIN,$(findstring CYGWIN,$(shell uname)))
-# SRC=$(SAMBASRCDIR)
- ALT=win32
- EXECSUFFIX=.exe
-endif
-
-ifeq ($(OSTYPE),cygwin)
 #  SRC=$(SAMBASRCDIR)
   ALT=win32
   EXECSUFFIX=.exe
 endif
-
-ifeq ($(OSTYPE),cygwin32)
+# 
+ifeq ($(OSTYPE),cygwin)
 #   SRC=$(SAMBASRCDIR)
+  ALT=win32
+  EXECSUFFIX=.exe
+endif
+# 
+ifeq ($(OSTYPE),cygwin32)
+#    SRC=$(SAMBASRCDIR)
    ALT=win32
    EXECSUFFIX=.exe
 endif
+
+
 
 # ----------------------------------------------------------------------------
 # Happy compilation!

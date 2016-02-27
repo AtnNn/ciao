@@ -1,33 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - counters (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Extendable arrays with logarithmic access time</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC658" HREF="ciao_toc.html#TOC658">counters (library)</A></H1>
+<H1><A NAME="SEC683" HREF="ciao_toc.html#TOC683">Extendable arrays with logarithmic access time</A></H1>
 <P>
-<A NAME="IDX7700"></A>
+<A NAME="IDX7741"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Author(s):</STRONG> Lena Flood.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#236 (2003/12/22, 18:18:14 CET)
+
+
+<P>
+This module implements extendable arrays with logarithmic access time. It has been adapted from shared code written by David Warren and Fernando Pereira.
 
 
 
 <UL>
-<LI><A HREF="ciao_164.html#SEC659">Usage and interface (counters)</A>
-<LI><A HREF="ciao_164.html#SEC660">Documentation on exports (counters)</A>
+<LI><A HREF="ciao_164.html#SEC684">Usage and interface (arrays)</A>
+<LI><A HREF="ciao_164.html#SEC685">Documentation on exports (arrays)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC659" HREF="ciao_toc.html#TOC659">Usage and interface (<CODE>counters</CODE>)</A></H2>
+<H2><A NAME="SEC684" HREF="ciao_toc.html#TOC684">Usage and interface (<CODE>arrays</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(counters)).</CODE>
+<CODE>:- use_module(library(arrays)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,12 +56,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7701"></A>
-<CODE>setcounter/2</CODE>, 
-<A NAME="IDX7702"></A>
-<CODE>getcounter/2</CODE>, 
-<A NAME="IDX7703"></A>
-<CODE>inccounter/2</CODE>.
+<A NAME="IDX7742"></A>
+<CODE>new_array/1</CODE>, 
+<A NAME="IDX7743"></A>
+<CODE>is_array/1</CODE>, 
+<A NAME="IDX7744"></A>
+<CODE>aref/3</CODE>, 
+<A NAME="IDX7745"></A>
+<CODE>arefa/3</CODE>, 
+<A NAME="IDX7746"></A>
+<CODE>arefl/3</CODE>, 
+<A NAME="IDX7747"></A>
+<CODE>aset/4</CODE>, 
+<A NAME="IDX7748"></A>
+<CODE>array_to_list/2</CODE>.
 
 </UL>
 
@@ -59,50 +79,134 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>,
 
 
 
-<H2><A NAME="SEC660" HREF="ciao_toc.html#TOC660">Documentation on exports (<CODE>counters</CODE>)</A></H2>
+<H2><A NAME="SEC685" HREF="ciao_toc.html#TOC685">Documentation on exports (<CODE>arrays</CODE>)</A></H2>
 <P>
-<A NAME="IDX7704"></A>
-<A NAME="IDX7705"></A>
+<A NAME="IDX7749"></A>
+<A NAME="IDX7750"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>setcounter/2:</B>
-<DD><A NAME="IDX7706"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_array/1:</B>
+<DD><A NAME="IDX7751"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>new_array(-Array)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> returns an empty new array <CODE>Array</CODE>.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7707"></A>
-<A NAME="IDX7708"></A>
+<A NAME="IDX7752"></A>
+<A NAME="IDX7753"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>getcounter/2:</B>
-<DD><A NAME="IDX7709"></A>
+<DT><span class="define">PREDICATE:</span> <B>is_array/1:</B>
+<DD><A NAME="IDX7754"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>is_array(+Array)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Array</CODE> actually is an array.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7710"></A>
-<A NAME="IDX7711"></A>
+<A NAME="IDX7755"></A>
+<A NAME="IDX7756"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>inccounter/2:</B>
-<DD><A NAME="IDX7712"></A>
+<DT><span class="define">PREDICATE:</span> <B>aref/3:</B>
+<DD><A NAME="IDX7757"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>aref(+Index, +Array, ?Element)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> unifies <CODE>Element</CODE> to <CODE>Array</CODE>[<CODE>Index</CODE>], or fails if <CODE>Array</CODE>[<CODE>Index</CODE>] has not been set.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7758"></A>
+<A NAME="IDX7759"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arefa/3:</B>
+<DD><A NAME="IDX7760"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>arefa(+Index, +Array, ?Element)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that it unifies <CODE>Element</CODE> with a new array if <CODE>Array</CODE>[<CODE>Index</CODE>] is undefined. This is useful for multidimensional arrays implemented as arrays of arrays.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7761"></A>
+<A NAME="IDX7762"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arefl/3:</B>
+<DD><A NAME="IDX7763"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>arefl(+Index, +Array, ?Element)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that <CODE>Element</CODE> appears as <CODE>[]</CODE> for undefined cells. Thus, <CODE>arefl(_,_,[])</CODE> always succeeds no matter what you give in the first or second args.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7764"></A>
+<A NAME="IDX7765"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>aset/4:</B>
+<DD><A NAME="IDX7766"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>aset(+Index, +Array, Element, -NewArray)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> unifies <CODE>NewArray</CODE> with the result of setting <CODE>Array</CODE>[<CODE>Index</CODE>] to <CODE>Element</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7767"></A>
+<A NAME="IDX7768"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>array_to_list/2:</B>
+<DD><A NAME="IDX7769"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>array_to_list(+Array, -List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> returns a <CODE>List</CODE> of pairs Index-Element of all the elements of <CODE>Array</CODE> that have been set.
+
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

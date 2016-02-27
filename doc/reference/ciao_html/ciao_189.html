@@ -1,28 +1,636 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART XI - Contributed libraries</TITLE>
+<TITLE>The Ciao Prolog System               - Constraint programming over finite domains</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC729" HREF="ciao_toc.html#TOC729">PART XI - Contributed libraries</A></H1>
+<H1><A NAME="SEC753" HREF="ciao_toc.html#TOC753">Constraint programming over finite domains</A></H1>
+<P>
+<A NAME="IDX8204"></A>
+
 
 <P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<STRONG>Author(s):</STRONG> J.M. Gomez, M. Carro.
 
 
 <P>
-<A NAME="IDX8145"></A>
-<A NAME="IDX8146"></A>
-This part includes a number of libraries which have contributed by users of the Ciao system. Over time, some of these libraries are moved to the main library directories of the system. 
+This package allows to write and evaluate constraint programming expressions over finite domains in a Ciao program. It is based upon the indexicals concept. 
 
+
+<P>
+The syntax of this constraint system is described below: 
+
+
+
+<UL>
+
+<LI><EM>c ::= X in r</EM> (<EM>r</EM> is the range of variable <EM>X</EM>).
+
+<LI><EM>c ::= E1 .=. E2</EM> (eventual value of expression <EM>E1</EM> equals <EM>E2</EM>)
+
+<LI><EM>c ::= E1 .&#60;&#62;. E2</EM> (<EM>E1</EM> differs from <EM>E2</EM>)
+
+<LI><EM>c ::= E1 .&#60;. E2</EM> (<EM>E1</EM> is lower than <EM>E2</EM>)
+
+<LI><EM>c ::= E1 .&#62;. E2</EM> (<EM>E1</EM> is greater than <EM>E2</EM>)
+
+<LI><EM>c ::= E1 .=&#60;. E2</EM> (<EM>E1</EM> is lower or equal than <EM>E2</EM>)
+
+<LI><EM>c ::= E1 .&#62;=. E2</EM> (<EM>E1</EM> is greater or equal than <EM>E2</EM>)
+
+<LI><EM>r ::= r1</EM> (one interval range).
+
+<LI><EM>r ::= r1 .&#38;. r</EM> (multi interval range).
+
+<LI><EM>r1 ::= t..t</EM> (interval range).
+
+<LI><EM>r1 ::= dom(X)</EM> (indexical domain, e.g., <EM>X in dom(Y)</EM> means <EM>"X in the domain of Y"</EM>).
+
+<LI><EM>t::= n</EM> (integer).
+
+<LI><EM>t::= min(X)</EM> (indexical min).
+
+<LI><EM>t::= max(X)</EM> (indexical max).
+
+</UL>
+
+<P>
+Some examples of this constraints package (more can be found in the source and library directories): 
+
+
+
+<UL>
+<LI>SEND + MORE = MONEY:
+
+</UL>
+
+<P>
+
+
+
+<PRE>
+:- use_package(fd).
+:- use_module(library(prolog_sys), [statistics/2]).
+:- use_module(library(format)).
+
+smm(SMM) :-
+        statistics(runtime,_),
+        do_smm(SMM),
+        statistics(runtime,[_, Time]),
+        format("Used ~d milliseconds~n", Time).
+
+do_smm(X) :-
+        X = [S,E,N,D,M,O,R,Y],
+        X in 0 .. 9,
+        all_different(X),
+        M .&#62;. 0,
+        S .&#62;. 0,
+        1000*S + 100*E + 10*N + D + 1000*M + 100*O + 10*R + E .=. 10000*M + 1000*O + 100*N + 10*E + Y,
+       labeling(X).
+
+</PRE>
+
+
+<UL>
+<LI>Queens:
+
+</UL>
+
+<P>
+
+
+
+<PRE>
+:- use_package(fd).
+:- use_module(library(prolog_sys), [statistics/2]).
+:- use_module(library(format)).
+:- use_module(library(aggregates)).
+:- use_module(library(lists),[length/2]).
+
+queens(N, Qs) :-
+        statistics(runtime,_),
+        do_queens(N, Qs),
+        statistics(runtime,[_, Time]),
+        format("Used ~d milliseconds~n", Time).
+
+do_queens(N, Qs):- 
+        constrain_values(N, N, Qs),
+        all_different(Qs),!,
+        labeling(Qs).
+
+constrain_values(0, _N, []).
+constrain_values(N, Range, [X|Xs]):-
+        N &#62; 0, 
+        X in 1 .. Range,
+        N1 is N - 1,
+        constrain_values(N1, Range, Xs),
+        no_attack(Xs, X, 1).
+
+no_attack([], _Queen, _Nb).
+no_attack([Y|Ys], Queen, Nb):-
+        Nb1 is Nb + 1,
+        no_attack(Ys, Queen, Nb1),
+        Queen .&#60;&#62;. Y + Nb,
+        Queen .&#60;&#62;. Y - Nb.        
+
+</PRE>
+
+
+<UL>
+<LI><A HREF="ciao_189.html#SEC754">Usage and interface (fd)</A>
+<LI><A HREF="ciao_189.html#SEC755">Documentation on exports (fd)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC754" HREF="ciao_toc.html#TOC754">Usage and interface (<CODE>fd</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_package(fd).</CODE>
+
+or
+
+<CODE>:- module(...,...,[fd]).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX8205"></A>
+<CODE>labeling/1</CODE>, 
+<A NAME="IDX8206"></A>
+<CODE>pitm/2</CODE>, 
+<A NAME="IDX8207"></A>
+<CODE>choose_var/3</CODE>, 
+<A NAME="IDX8208"></A>
+<CODE>choose_free_var/2</CODE>, 
+<A NAME="IDX8209"></A>
+<CODE>choose_var_nd/2</CODE>, 
+<A NAME="IDX8210"></A>
+<CODE>choose_value/2</CODE>, 
+<A NAME="IDX8211"></A>
+<CODE>retrieve_range/2</CODE>, 
+<A NAME="IDX8212"></A>
+<CODE>retrieve_store/2</CODE>, 
+<A NAME="IDX8213"></A>
+<CODE>glb/2</CODE>, 
+<A NAME="IDX8214"></A>
+<CODE>lub/2</CODE>, 
+<A NAME="IDX8215"></A>
+<CODE>bounds/3</CODE>, 
+<A NAME="IDX8216"></A>
+<CODE>retrieve_list_of_values/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX8217"></A>
+<CODE>fd_item/1</CODE>, 
+<A NAME="IDX8218"></A>
+<CODE>fd_range/1</CODE>, 
+<A NAME="IDX8219"></A>
+<CODE>fd_subrange/1</CODE>, 
+<A NAME="IDX8220"></A>
+<CODE>fd_store/1</CODE>, 
+<A NAME="IDX8221"></A>
+<CODE>fd_store_entity/1</CODE>.
+
+</UL>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX8222"></A>
+<CODE>.=./2</CODE> [700,xfx], 
+<A NAME="IDX8223"></A>
+<CODE>.&#60;&#62;./2</CODE> [700,xfx], 
+<A NAME="IDX8224"></A>
+<CODE>.&#60;./2</CODE> [700,xfx], 
+<A NAME="IDX8225"></A>
+<CODE>.=&#60;./2</CODE> [700,xfx], 
+<A NAME="IDX8226"></A>
+<CODE>.&#62;./2</CODE> [700,xfx], 
+<A NAME="IDX8227"></A>
+<CODE>.&#62;=./2</CODE> [700,xfx], 
+<A NAME="IDX8228"></A>
+<CODE>../2</CODE> [500,yfx], 
+<A NAME="IDX8229"></A>
+<CODE>.@&#38;./2</CODE> [600,xfy], 
+<A NAME="IDX8230"></A>
+<CODE>in/2</CODE> [700,xfy].
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC755" HREF="ciao_toc.html#TOC755">Documentation on exports (<CODE>fd</CODE>)</A></H2>
+<P>
+<A NAME="IDX8231"></A>
+<A NAME="IDX8232"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>fd_item/1:</B>
+<DD><A NAME="IDX8233"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fd_item(FD_item)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>FD_item</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8234"></A>
+<A NAME="IDX8235"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>fd_range/1:</B>
+<DD><A NAME="IDX8236"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fd_range(FD_range)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>FD_range</CODE> is the range of a finite domain entity.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8237"></A>
+<A NAME="IDX8238"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>fd_subrange/1:</B>
+<DD><A NAME="IDX8239"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> A subrange is a pair representing a single interval.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8240"></A>
+<A NAME="IDX8241"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>fd_store/1:</B>
+<DD><A NAME="IDX8242"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fd_store(FD_store)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>FD_store</CODE> is a representation of the constraint store of a finite domain entity.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8243"></A>
+<A NAME="IDX8244"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>fd_store_entity/1:</B>
+<DD><A NAME="IDX8245"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Representation of primitive constraints.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8246"></A>
+<A NAME="IDX8247"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>labeling/1:</B>
+<DD><A NAME="IDX8248"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>labeling(Vars)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Implements the labeling process. Assigns values to the input variables <CODE>Vars</CODE>. On exit all variables are instantiated to a consistent value. On backtracking, the predicate returns all possible assignments. No labeling heuristics implemented so far, i.e. variables are instantiated in their order of appearance.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Vars</CODE> is a list of <CODE>fd_item</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8249"></A>
+<A NAME="IDX8250"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pitm/2:</B>
+<DD><A NAME="IDX8251"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pitm(+V, -MiddlePoint)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns in <CODE>MiddlePoint</CODE> the intermediate value of the range of <CODE>V</CODE>. In case <CODE>V</CODE> is a ground integer value the returned value is <CODE>V</CODE> itself.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+V</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+
+<CODE>-MiddlePoint</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8252"></A>
+<A NAME="IDX8253"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>choose_var/3:</B>
+<DD><A NAME="IDX8254"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>choose_var(+ListOfVars, -Var, -RestOfVars)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns a finite domain item <CODE>Var</CODE> from a list of fd items <CODE>ListOfVars</CODE> and the rest of the list <CODE>RestOfVars</CODE>in a deterministic way. Currently it always returns the first item of the list.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+ListOfVars</CODE> is a list of <CODE>fd_item</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-Var</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+
+<CODE>-RestOfVars</CODE> is a list of <CODE>fd_item</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8255"></A>
+<A NAME="IDX8256"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>choose_free_var/2:</B>
+<DD><A NAME="IDX8257"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>choose_free_var(+ListOfVars, -Var)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns a free variable <CODE>Var</CODE> from a list of fd items <CODE>ListOfVars</CODE>. Currently it always returns the first free variable of the list.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+ListOfVars</CODE> is a list of <CODE>fd_item</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-Var</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8258"></A>
+<A NAME="IDX8259"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>choose_var_nd/2:</B>
+<DD><A NAME="IDX8260"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>choose_var_nd(+ListOfVars, -Var)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns non deterministically an fd item <CODE>Var</CODE> from a list of fd items <CODE>ListOfVars</CODE> .
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+ListOfVars</CODE> is a list of <CODE>fd_item</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-Var</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8261"></A>
+<A NAME="IDX8262"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>choose_value/2:</B>
+<DD><A NAME="IDX8263"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>choose_value(+Var, -Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Produces an integer value <CODE>Value</CODE> from the domain of <CODE>Var</CODE>. On backtracking returns all possible values for <CODE>Var</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Var</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+
+<CODE>-Value</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8264"></A>
+<A NAME="IDX8265"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retrieve_range/2:</B>
+<DD><A NAME="IDX8266"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retrieve_range(+Var, -Range)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns in <CODE>Range</CODE> the range of an fd item <CODE>Var</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Var</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>-Range</CODE> is the range of a finite domain entity.
+ (<CODE>user(... /fd_doc):fd_range/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8267"></A>
+<A NAME="IDX8268"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retrieve_store/2:</B>
+<DD><A NAME="IDX8269"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retrieve_store(+Var, -Store)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns in <CODE>Store</CODE> a representation of the constraint store of an fd item <CODE>Var</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Var</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>-Store</CODE> is a representation of the constraint store of a finite domain entity.
+ (<CODE>user(... /fd_doc):fd_store/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8270"></A>
+<A NAME="IDX8271"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>glb/2:</B>
+<DD><A NAME="IDX8272"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>glb(+Var, -LowerBound)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns in <CODE>LowerBound</CODE> the lower bound of the range of <CODE>Var</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Var</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+
+<CODE>-LowerBound</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8273"></A>
+<A NAME="IDX8274"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lub/2:</B>
+<DD><A NAME="IDX8275"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lub(+Var, -UpperBound)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns in <CODE>UpperBound</CODE> the upper bound of the range of <CODE>Var</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Var</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+
+<CODE>-UpperBound</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8276"></A>
+<A NAME="IDX8277"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>bounds/3:</B>
+<DD><A NAME="IDX8278"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>bounds(+Var, -LowerBound, -UpperBound)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns in <CODE>LowerBound</CODE> and <CODE>UpperBound</CODE> the lower and upper bounds of the range of <CODE>Var</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Var</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+
+<CODE>-LowerBound</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-UpperBound</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8279"></A>
+<A NAME="IDX8280"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retrieve_list_of_values/2:</B>
+<DD><A NAME="IDX8281"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retrieve_list_of_values(+Var, -ListOfValues)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns in <CODE>ListOfValues</CODE> an enumeration of al the values in the range of <CODE>Var</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Var</CODE> is a finite domain entity, i.e. either a finite domains variable or an integer.
+ (<CODE>user(... /fd_doc):fd_item/1</CODE>)
+
+<CODE>-ListOfValues</CODE> is a list of <CODE>int</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

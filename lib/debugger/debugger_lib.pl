@@ -19,8 +19,6 @@
 
 :- use_module(library(ttyout)).
 :- use_module(engine(internals)).
-:- use_module(engine(hiord_rt), ['$nodebug_call'/1]).
-:- use_module(engine(debugger_support), ['$debugger_state'/2,'$debugger_mode'/0,'$spypoint'/3]).
 :- use_module(library(format)).
 :- use_module(library(write)).
 :- use_module(library(sort)).

@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Printing graph using gnuplot as auxiliary tool.</TITLE>
+<TITLE>The Ciao Prolog System               - Automatic tester</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_228.html">previous</A>, <A HREF="ciao_230.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_228.html">previous</A>, <A HREF="ciao_230.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC864" HREF="ciao_toc.html#TOC864">Printing graph using gnuplot as auxiliary tool.</A></H1>
+<H1><A NAME="SEC889" HREF="ciao_toc.html#TOC889">Automatic tester</A></H1>
 <P>
-<A NAME="IDX9715"></A>
+<A NAME="IDX9806"></A>
 
 
 <P>
@@ -20,33 +20,29 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_228.html">previous</A>,
 
 
 <P>
-This library uses <CODE>gnuplot</CODE> for printing graphs. 
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-Two predicates are provided: 
+<STRONG>Version of last change:</STRONG> 1.0 (2003/10/16, 11:52:43 CEST)
 
 
-<LI>genarate_plot( BaseName , DataList )
+<P>
+This module have been created to automatizate the test that a predicate should pass hopefully. With that intention we have to provide a set of test and its correct answers. The predicate 
+<A NAME="IDX9807"></A>
+<CODE>run_tester/10</CODE> will execute every test and compare it with its answer, generating two traces, one with detailed information, and another with the summary of executions of the tests.
 
-<LI>genarate_plot( BaseName , DataList , GlobalOptions )
-
- 
-Several files can be generated as temporary files. A BaseName is requiered for generating the tempoaries files.Data files name will be created from BaseName + number + .dat. The BaseName + ".plot" will be the name used for <CODE>gnuplot</CODE> tool. 
-
-A list of pairs of list of pairs of the from (X,Y) and Local Option value is provided to the main predicate as data. In other words DataList = [(CurveDataList,LocalOptions), (CurveDataList1,LocalOptions1) ...]. Additionaly (function( String ) , LocalOptions) can be used for adding a curve to the plot (imagine you want to compare your result with x=y). 
-
-LocalOptions of the DataList are options that are applied to the curve, as for example, if we print the curve with lines, or the title in the leyend, etc. GlobalOptions are referred to the plot options, like title in x or y axis, etc. 
 
 
 <UL>
-<LI><A HREF="ciao_229.html#SEC865">Usage and interface (gnuplot)</A>
-<LI><A HREF="ciao_229.html#SEC866">Documentation on exports (gnuplot)</A>
+<LI><A HREF="ciao_229.html#SEC890">Usage and interface (tester)</A>
+<LI><A HREF="ciao_229.html#SEC891">Documentation on exports (tester)</A>
+<LI><A HREF="ciao_229.html#SEC892">Other information (tester)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC865" HREF="ciao_toc.html#TOC865">Usage and interface (<CODE>gnuplot</CODE>)</A></H2>
+<H2><A NAME="SEC890" HREF="ciao_toc.html#TOC890">Usage and interface (<CODE>tester</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -54,7 +50,7 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gnuplot)).</CODE>
+<CODE>:- use_module(library(tester)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -63,14 +59,8 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX9716"></A>
-<CODE>get_general_options/1</CODE>, 
-<A NAME="IDX9717"></A>
-<CODE>set_general_options/1</CODE>, 
-<A NAME="IDX9718"></A>
-<CODE>generate_plot/2</CODE>, 
-<A NAME="IDX9719"></A>
-<CODE>generate_plot/3</CODE>.
+<A NAME="IDX9808"></A>
+<CODE>run_tester/10</CODE>.
 
 </UL>
 
@@ -81,12 +71,12 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX9720"></A>
+<A NAME="IDX9809"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX9721"></A>
+<A NAME="IDX9810"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX9722"></A>
-<CODE>system</CODE>.
+<A NAME="IDX9811"></A>
+<CODE>io_alias_redirection</CODE>.
 
 </UL>
 
@@ -96,156 +86,254 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 
 
-<H2><A NAME="SEC866" HREF="ciao_toc.html#TOC866">Documentation on exports (<CODE>gnuplot</CODE>)</A></H2>
+<H2><A NAME="SEC891" HREF="ciao_toc.html#TOC891">Documentation on exports (<CODE>tester</CODE>)</A></H2>
 <P>
-<A NAME="IDX9723"></A>
-<A NAME="IDX9724"></A>
+<A NAME="IDX9812"></A>
+<A NAME="IDX9813"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_general_options/1:</B>
-<DD><A NAME="IDX9725"></A>
+<DT><span class="define">PREDICATE:</span> <B>run_tester/10:</B>
+<DD><A NAME="IDX9814"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>get_general_options(X)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>run_tester(?,?,pred(0),pred(1),?,pred(1),?,pred(0),?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>run_tester(LogFile, ResultFile, Begin, Test, TestList, Check, CheckList, End, GoodExamples, Slider)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Get the general options of the graphic that will be plotted
+<LI><EM>Description:</EM> run_tester is a predicate for automatizate testers. It get 2 file names as entry (<CODE>LogFile</CODE> and <CODE>ResultFile</CODE>) for saving the trace and the short result scheme respectevely. <CODE>Being</CODE> and <CODE>End</CODE> are called at the beginning and at the end of the test. <CODE>Test</CODE> is called which each element of <CODE>TestList</CODE> and after, <CODE>Check</CODE> is called with the corresponding element in <CODE>CheckList</CODE> for checking the results of <CODE>Test</CODE> predicate. <CODE>GoodExample</CODE> is ground(int) at the exit and tells the number of examples that passed the test correctly. <CODE>Slider</CODE> can take the values slider(no) or slider(Title) and slider will be shown everytime a new test is called
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>X</CODE> is a free variable.
+<CODE>LogFile</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>ResultFile</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>Begin</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Test</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>TestList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>Check</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>CheckList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>End</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>GoodExamples</CODE> is a free variable.
  (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>X</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>Slider</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC892" HREF="ciao_toc.html#TOC892">Other information (<CODE>tester</CODE>)</A></H2>
+
 <P>
-<A NAME="IDX9726"></A>
-<A NAME="IDX9727"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>set_general_options/1:</B>
-<DD><A NAME="IDX9728"></A>
+ 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>set_general_options(list(X))</CODE>
+Two simple examples of the use of the run_tester are provided. 
+
+
 
 <UL>
-<LI><EM>Description:</EM> Get the general options of the graphic that will be plotted. Posible options are:
-
-<LI>format(A) Specify the format of points
-
-<LI>nokey Leyend is no represented
-
-<LI>nogrid No grid
-
-<LI>grid An smooth grid is shown
-
-<LI>label(L , (X,Y)) Put Label L at point (X,Y)
-
-<LI>xlabel(A) Label of X-Axis
-
-<LI>ylabel(A) Lavel of Y-Axis
-
-<LI>xrange(A,B) Define the X range representation
-
-<LI>yrange(A,B) Define the Y range representation
-
-<LI>title(A) Title of the plot
-
-<LI>key(A) define the key (for example [left,box], left is the position, box indicates that a box should be around)
-
-<LI>term_post(A) define the postcript terminal. A is a list of atoms.
-
-<LI>size(A,B) specify the size of the plot (A,B float numbers)
-
-<LI>autoscale autoscale the size of the plot
-
-<LI>autoscale(A) autoscale the argument (for example: autoscale(x))
-
+<LI><A HREF="ciao_229.html#SEC893">Understanding run_test predicate</A>
+<LI><A HREF="ciao_229.html#SEC894">More complex example</A>
 </UL>
 
-</DL>
+
+
+<H3><A NAME="SEC893" HREF="ciao_toc.html#TOC893">Understanding run_test predicate</A></H3>
 
 <P>
-<A NAME="IDX9729"></A>
-<A NAME="IDX9730"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>generate_plot/2:</B>
-<DD><A NAME="IDX9731"></A>
+
+
+
+<PRE>
+:- module( tester_test2 , _ , _ ).
+
+:- use_module( '../tester' ).
+%:- use_module( library(tester) ).
+:- use_module( library(lists) ).
+:- use_module( library(write) ).
+
+init_func :-
+        write( 'Starting the test\n' ).
+
+tester_func( (X,X,_) ) :-
+        write( 'The argument is correct ' ),
+        write( X ) , nl.
+
+checker_func( (_,X,X) ) :-
+        write( 'check is fine\n\n' ).
+        
+
+end_func :-
+        write( 'Test ended\n' ).
+
+main :-
+        L = [ (1,1,1),   % CORRECT
+              (2,2,1),   % Test CORRECT , CHECK FALSE
+              (1,2,2)    % Test FALSE
+            ],
+              
+         run_tester(
+                      'test.log',
+                      'result.log',
+                      init_func ,
+                      tester_func ,
+                      L,
+                      checker_func,
+                      L,
+                      end_func,
+                      Res,
+                      slider( 'Tester2: ' )
+                  ),
+
+         length( L , LL ),
+         Op is (Res / LL) * 100,
+         message( note , [ 'Analysis result: ' , Op , '%' ] ).
+
+</PRE>
+
+
+
+<H3><A NAME="SEC894" HREF="ciao_toc.html#TOC894">More complex example</A></H3>
+
+<P>
+In this example we just want to test if the output of Ciaopp is readable by CIAO. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, TimeList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> This predicates generate a '<CODE>BaseName</CODE> + .ps' postcript file using each element of <CODE>TimeList</CODE> as pair of list of pairs and local options, i.e., ( list((X,Y)), LocalOptions), in which X is the position in X-Axis and Y is the position in Y-Axis. Nevertheless, each element of <CODE>TimeList</CODE> can be a list of pairs instead of a pair for comodity. <CODE>gnuplot</CODE> is used as ausiliary tool. Temporary files '<CODE>BaseName</CODE> + N.dat' are generated for for every list of pairs, and '<CODE>BaseName</CODE> + .plot' is de file used by gnuplot. The local options can be:
-
-<LI>with(Option) Tells how the curve will be represented. Option can b line, dots, boxes, impulses, linespoints. This option HAVE TO BE the last one
-
-<LI>title(T) Put the name of the curve in the leyend to T
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>BaseName</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>BaseName</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX9732"></A>
-<A NAME="IDX9733"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>generate_plot/3:</B>
-<DD><A NAME="IDX9734"></A>
+Tester function succeds if it is able to write the output file. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, TimeList, GeneralOptions)</CODE>
+Checker function succeds if it is able to load the written file. 
 
-<UL>
-<LI><EM>Description:</EM> It is the same as generate_plot/2 but <CODE>GeneralOptions</CODE> are used as the general options of the plot. Look at predicate set_general_options for detailed description of posible options
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
 
-<CODE>BaseName</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
 
-<CODE>GeneralOptions</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<PRE>
+:- module( tester_test1 , _ , [] ).
 
-<CODE>BaseName</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+%:- use_module( library(tester) , [run_tester/10] ).
+:- use_module( '../tester' , [run_tester/10] ).
 
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+:- use_module( library(ciaopp) ).
+:- use_module( library(compiler) ).
 
-<CODE>GeneralOptions</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
+:- use_module(library(filenames)).
 
-</DL>
+:- use_module( library( write ) ).
+
+:- use_module( library( lists ) ).
+
+init_func.
+        
+
+test_files( '/home/dtm/Ciaopp/Benchmarks/ciaopp/modes/' ).
+
+tester_func( FileArg ) :-
+        test_files( Path ),
+        atom_concat( Path , FileArg , File0 ),
+
+        message( note ,
+         [ '+++++++++++++++++++++++++++++++++++++++++++++++\n' ] ),
+        (unload( File0 )-&#62;true;true),
+        module( File0 ),
+
+        atom_concat( TFile , '.pl', File0 ),
+        atom_concat( TFile , '_test.pl' , TestFile ),
+
+        output( TestFile ).
+
+get_module( Path , Module ) :-
+        no_path_file_name( Path , File ),
+        (atom_concat( Module , '.pl' , File )
+        -&#62; true ; Module = File ).
+
+checker_func( FileArg ) :-
+        get_module( FileArg , Module ),
+        (unload( Module )-&#62;true;true),
+
+        atom_concat(RawFile, '.pl'     , FileArg ),         
+        atom_concat(RawFile, '_test.pl' , OptFile ),
+
+        test_files( Path ),
+        atom_concat( Path , OptFile, OptFilePath ),
+
+        message( note , [ 'Cargando ' , OptFilePath ] ),
+        use_module( OptFilePath ).
+
+end_func.
+
+main :-
+        L = [
+                'aiakl.pl',
+                'query.pl',
+                'mmatrix.pl',
+                'ann.pl',
+                'bid.pl',
+                'rdtok.pl',
+                'myread.pl',
+                'boyer.pl',
+                'read.pl',
+                'occur.pl',
+                'serialize.pl',
+                'browse.pl',
+                'peephole.pl',
+                'tak.pl',
+                'deriv.pl',
+                'progeom.pl',
+                'warplan.pl',
+                'fib.pl',
+                'qplan.pl',
+                'witt.pl',
+                'grammar.pl',
+                'zebra.pl',
+                'qsortapp.pl',
+                'hanoiapp.pl'
+              ],
+
+        run_tester(
+                      'test.log',
+                      'result.log',
+                      init_func ,
+                      tester_func ,
+                      L,
+                      checker_func,
+                      L,
+                      end_func,
+                      Res,
+                      slider( 'Tester1: ' )
+                  ),
+         length( L , LL ),
+         Op is (Res / LL) * 100,
+         message( note , [ 'Analysis result: ' , Op , '%' ] ).
+
+</PRE>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_228.html">previous</A>, <A HREF="ciao_230.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_228.html">previous</A>, <A HREF="ciao_230.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

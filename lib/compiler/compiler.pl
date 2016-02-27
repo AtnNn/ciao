@@ -7,7 +7,7 @@
                      ], [assertions]).
 
 
-:- use_module(library('compiler/c_itf_internal')).
+:- use_module(library('compiler/c_itf')).
 
 
 make_po([]) :- !.
@@ -17,6 +17,10 @@ make_po([File|Files]) :- !,
 make_po(File) :-
         catch(make_po1(File), Error, handle_exc(Error)).
 
+make_po1(File) :-
+        process_file(File, po, any, make_po_file, false, false,
+                     old_file_extension('.po')).
+
 :- meta_predicate use_module(addmodule).
 
 use_module(Mod,This) :- use_module(Mod,all,This).
@@ -25,16 +29,31 @@ use_module(Mod,This) :- use_module(Mod,all,This).
 
 use_module(File, Imports, ByThisModule) :-
         cleanup_c_itf_data,
-        use_mod(File, Imports, ByThisModule),
+        use_mod(File, Imports, ByThisModule, module),
         check_static_module(File).
 
-:- meta_predicate ensure_loaded(addmodule).
-%JF[] ensure_loaded(File) :-
 ensure_loaded(File, ByThisModule) :-
         cleanup_c_itf_data,
-%JF[]	use_mod_user(File),
-	use_mod_user(File, ByThisModule),
+        use_mod(File, all, ByThisModule, user),
         check_static_module(File).
+
+ensure_loaded(File) :-
+        process_files_from(File, in, user, load_compile, static_base,
+                           false, needs_reload),
+	( make_delayed_dynlinks -> true % JFMC
+	; message(['{Dynamic link failed}']),
+	  fail
+	), !,
+        do_file_initialization(File),
+        check_static_module(File).
+ensure_loaded(_) :- !, % JFMC
+	discard_delayed_dynlinks,
+	fail.
+
+do_file_initialization(File) :-
+        base_name(File, Base),
+        defines_module(Base, Module),
+        do_initialization(Module).
 
 check_static_module(File) :-
         base_name(File, Base),
@@ -45,7 +64,10 @@ check_static_module(File) :-
 check_static_module(_).
 
 unload(File) :-
-	unload_mod(File).
+        opt_suffix(Opt, Opt),
+        absolute_file_name(File, Opt, '.pl', '.', _, Base, _),
+        retract_fact(module_loaded(Module, Base, _, _)),
+        abolish_module(Module).
 
 set_debug_mode(File) :-
         absolute_file_name(File, Source),
@@ -87,6 +109,11 @@ mode_of_module(Module, Mode) :- module_loaded(Module, _, _, Mode).
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+362,2004/07/17,20:41*30+'CEST'), "Added
+   @pred{ensure_loaded/2} for the shell to be able to make that
+   @tt{ensure_loaded/1} imports exported predicates of a module. (Daniel
+   Cabeza Gras)").
 
 :- comment(version(1*7+176,2002/01/14,17:27*00+'CET'), "changed 'module
    already in executable' message.  (Daniel Cabeza Gras)").

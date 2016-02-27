@@ -28,7 +28,7 @@
 	# "@var{X} is an atom or a string".
 
 atom_or_str(X) :- string(X).
-atom_or_str(X) :- atm(X).
+atom_or_str(X) :- atom(X).
 
 %%-------------------------------------------------------------------------
 

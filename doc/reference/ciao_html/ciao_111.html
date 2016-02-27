@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Constraint programming over reals</TITLE>
+<TITLE>The Ciao Prolog System               - Constraint programming over rationals</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC433" HREF="ciao_toc.html#TOC433">Constraint programming over reals</A></H1>
+<H1><A NAME="SEC457" HREF="ciao_toc.html#TOC457">Constraint programming over rationals</A></H1>
 <P>
-<A NAME="IDX5305"></A>
+<A NAME="IDX5466"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#103 (2003/12/22, 16:56:50 CET)
+<STRONG>Version of last change:</STRONG> 1.9#184 (2003/12/5, 14:7:53 CET)
 
 
 <P>
@@ -32,19 +32,19 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>,
 
 
 <P>
-<STRONG>Note:</STRONG> This package is currently being adapted to the new characteristics of the Ciao module system. This new version now works right now to some extent, but it under further development at the moment. Use with (lots of) caution. 
+<STRONG>Note:</STRONG> This package is currently being adapted to the new characteristics of the Ciao module system. This new version now works right now to some extent, but it is under further development at the moment. Use with (lots of) caution. 
 
 
 
 <UL>
-<LI><A HREF="ciao_111.html#SEC434">Usage and interface (clpr)</A>
-<LI><A HREF="ciao_111.html#SEC435">Other information (clpr)</A>
-<LI><A HREF="ciao_111.html#SEC437">Known bugs and planned improvements (clpr)</A>
+<LI><A HREF="ciao_111.html#SEC458">Usage and interface (clpq)</A>
+<LI><A HREF="ciao_111.html#SEC459">Other information (clpq)</A>
+<LI><A HREF="ciao_111.html#SEC461">Known bugs and planned improvements (clpq)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC434" HREF="ciao_toc.html#TOC434">Usage and interface (<CODE>clpr</CODE>)</A></H2>
+<H2><A NAME="SEC458" HREF="ciao_toc.html#TOC458">Usage and interface (<CODE>clpq</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,18 +52,18 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(clpr).</CODE>
+<CODE>:- use_package(clpq).</CODE>
 
 or
 
-<CODE>:- module(...,...,[clpr]).</CODE>
+<CODE>:- module(...,...,[clpq]).</CODE>
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Other information (<CODE>clpr</CODE>)</A></H2>
+<H2><A NAME="SEC459" HREF="ciao_toc.html#TOC459">Other information (<CODE>clpq</CODE>)</A></H2>
 
 <P>
  
@@ -71,12 +71,12 @@ or
 
 
 <UL>
-<LI><A HREF="ciao_111.html#SEC436">Some CLP(R) examples</A>
+<LI><A HREF="ciao_111.html#SEC460">Some CLP(Q) examples</A>
 </UL>
 
 
 
-<H3><A NAME="SEC436" HREF="ciao_toc.html#TOC436">Some CLP(R) examples</A></H3>
+<H3><A NAME="SEC460" HREF="ciao_toc.html#TOC460">Some CLP(Q) examples</A></H3>
 
 <P>
 (Other examples can be found in the source and library directories.) 
@@ -84,7 +84,7 @@ or
 
 
 <UL>
-<LI>'Reversible' Fibonacci (clpr):
+<LI>'Reversible' Fibonacci (clpq):
 
 </UL>
 
@@ -94,7 +94,7 @@ or
 
 <PRE>
 :- module(_, [fib/2], []).
-:- use_package(clpr).
+:- use_package(clpq).
 
 fib(X,Y):- X .=. 0, Y .=. 0.
 fib(X,Y):- X .=. 1, Y .=. 1.
@@ -108,9 +108,11 @@ fib(N,F) :-
 
 </PRE>
 
+<P>
+ 
 
 <UL>
-<LI>Dirichlet problem for Laplace's equation (clpr):
+<LI>Matrix multiplication (clpq):
 
 </UL>
 
@@ -119,95 +121,79 @@ fib(N,F) :-
 
 
 <PRE>
-
-%
-% Solve the Dirichlet problem for Laplace's equation using
-% Leibman's five-point finit-differenc approximation. 
-% The goal ?- go1 is a normal example, while the goal ?- go2
-% shows output constraints for a small region where the boundary conditions
-% are not specified.
-%
 :- use_package(clpq).
-:- use_module(library(format)).
+:- use_module(library(write)).
 
-laplace([_, _]).
-laplace([H1, H2, H3|T]):-
-        laplace_vec(H1, H2, H3), 
-        laplace([H2, H3|T]).
+mmultiply([],_,[]).
+mmultiply([V0|Rest], V1, [Result|Others]):-  
+            mmultiply(Rest, V1, Others),
+                multiply(V1,V0,Result).
 
-laplace_vec([_, _], [_, _], [_, _]).
-laplace_vec([_TL, T, TR|T1], [ML, M, MR|T2], [_BL, B, BR|T3]):-
-        B + T + ML + MR - 4 * M .=. 0, 
-        laplace_vec([T, TR|T1], [M, MR|T2], [B, BR|T3]).
+multiply([],_,[]).
+multiply([V0|Rest], V1, [Result|Others]):-  
+            multiply(Rest, V1, Others),
+                vmul(V0,V1,Result).
 
-printmat([]).
-printmat([H|T]):-
-        printvec(H), 
-        printmat(T).
+vmul([],[],0).
+vmul([H1|T1], [H2|T2], Result):- 
+        vmul(T1,T2, Newresult), 
+        Result .=. H1*H2+Newresult.
 
-printvec([]):- nl.
-printvec([H|T]):-
-        printrat(H), 
-        printvec(T).
+matrix(1,[[1,2,3,4,5],[4,0,-1,5,6],[7,1,-2,8,9],[-1,0,1,3,2],[1,5,-3,2,4]]).
+matrix(2,[[3,2,1,0,-1],[-2,1,3,0,2],[1,2,0,-1,5],[1,3,2,4,5],[-5,1,4,2,2]]).
 
-printrat(rat(N,D)) :- !,
-        X is N/D,
-        format(" ~2f",X).
-printrat(N) :-
-        X is N*100,
-        format(" ~2d",X).
+%% Call with: ?- go(M).
 
-go1:-
-        X =  [
-      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, _, _, _, _, _, _, _, _, _, 100], 
-    [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-    ], 
-        laplace(X),
-        printmat(X).
-
-% Answer:
-% 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-% 100.00 51.11 32.52 24.56 21.11 20.12 21.11 24.56 32.52 51.11 100.00
-% 100.00 71.91 54.41 44.63 39.74 38.26 39.74 44.63 54.41 71.91 100.00
-% 100.00 82.12 68.59 59.80 54.97 53.44 54.97 59.80 68.59 82.12 100.00
-% 100.00 87.97 78.03 71.00 66.90 65.56 66.90 71.00 78.03 87.97 100.00
-% 100.00 91.71 84.58 79.28 76.07 75.00 76.07 79.28 84.58 91.71 100.00
-% 100.00 94.30 89.29 85.47 83.10 82.30 83.10 85.47 89.29 94.30 100.00
-% 100.00 96.20 92.82 90.20 88.56 88.00 88.56 90.20 92.82 96.20 100.00
-% 100.00 97.67 95.59 93.96 92.93 92.58 92.93 93.96 95.59 97.67 100.00
-% 100.00 98.89 97.90 97.12 96.63 96.46 96.63 97.12 97.90 98.89 100.00
-% 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0 100.0
-
-go2([B31, M32, M33, B34, B42, B43, B12, B13, B21, M22, M23, B24]) :-
-        laplace([
-            [_B11, B12, B13, _B14], 
-            [B21, M22, M23, B24], 
-            [B31, M32, M33, B34], 
-            [_B41, B42, B43, _B44]
-    ]).
-              
-
-% Answer:
-% 
-% B34.=. -4*M22+B12+B21+4*M33-B43,
-% M23.=.4*M22-M32-B12-B21,
-% B31.=. -M22+4*M32-M33-B42,
-% B24.=.15*M22-4*M32-4*B12-4*B21-M33-B13 ? 
+go(M):-
+        matrix(1,M1),
+        matrix(2,M2), 
+        mmultiply(M1, M, M2).
 
 </PRE>
 
+<P>
+ 
+
+<UL>
+<LI>Queens (clpq):
+
+</UL>
+
+<P>
 
 
-<H2><A NAME="SEC437" HREF="ciao_toc.html#TOC437">Known bugs and planned improvements (<CODE>clpr</CODE>)</A></H2>
+
+<PRE>
+:- use_package(clpq).
+
+queens(N, Qs) :- constrain_values(N, N, Qs), place_queens(N, Qs).
+
+constrain_values(0, _N, []).
+constrain_values(N, Range, [X|Xs]) :-
+        N .&#62;. 0, X .&#62;. 0, X .=&#60;. Range, 
+        N1 .=. N - 1,
+        constrain_values(N1, Range, Xs), no_attack(Xs, X, 1).
+
+no_attack([], _Queen, _Nb).
+no_attack([Y|Ys], Queen, Nb) :-
+        Queen .&#60;&#62;. Y+Nb,
+        Queen .&#60;&#62;. Y-Nb,
+        Nb1 .=. Nb + 1,
+        no_attack(Ys, Queen, Nb1).
+
+place_queens(0, _).
+place_queens(N, Q) :- 
+        N &#62; 0, member(N, Q), N1 is N-1, place_queens(N1, Q).
+
+</PRE>
+
+<P>
+ 
+
+
+
+
+<H2><A NAME="SEC461" HREF="ciao_toc.html#TOC461">Known bugs and planned improvements (<CODE>clpq</CODE>)</A></H2>
 
 
 <UL>
@@ -218,6 +204,6 @@ clp(Q) and clp(R) cannot be used simultaneously in the same program, or even wit
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

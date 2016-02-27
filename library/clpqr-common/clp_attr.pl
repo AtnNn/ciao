@@ -1,4 +1,4 @@
-:- use_module(engine(hiord_rt), ['$meta_call'/1]).
+:- use_module(engine(internals), ['$meta_call'/1]).
 
 :- multifile 
         verify_attribute/2,

@@ -29,7 +29,6 @@
 % Other libraries
 :- use_module(library(lists)).
 :- use_module(library(filenames),[no_path_file_name/2]).
-:- use_module( library( strings ) , [write_string/1] ).
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
@@ -160,7 +159,7 @@ note_message(Message,A,Module) :-
      formatting commands embedded in @var{Text}, and reporting error
      location @var{Lc} (file and line numbers).".
 
-- impl_defined(note_message/3).
+:- impl_defined(note_message/3).
 :- meta_predicate note_message(?,?,addmodule).
 
 note_message(Loc,Message,A,Module) :-
@@ -303,13 +302,9 @@ debug_goal(Goal,Message,A,Module) :-
 compose(Type,Module,Mess) :-
 	append("{~s (~q): ",Mess,T1),
 	append(T1,"}~n",CMess),
-%       NEW METHOD
-%	sformat( S ,CMess,[Type,Module]),
-%	display_long_string( S , user_error ).
 	prolog_flag(write_strings, Old, on),
 	format(user_error,CMess,[Type,Module]),
 	set_prolog_flag(write_strings, Old).
-
 
 :- pred compose(Type,Module,Mess,Args) 
    : string * atm * format_control * list
@@ -321,14 +316,10 @@ compose(Type,Module,Mess) :-
 compose(Type,Module,Mess,Args) :-
 	append("{~s (~q): ",Mess,T1),
 	append(T1,"}~n",CMess),
-	simplify_module(Module,SimplifiedModule),
-%       NEW METHOD
-%	sformat( S , CMess,[Type,SimplifiedModule|Args]),
-%	display_long_string( S , user_error ).
 	prolog_flag(write_strings, Old, on),
+	simplify_module(Module,SimplifiedModule),
 	format(user_error,CMess,[Type,SimplifiedModule|Args]),
 	set_prolog_flag(write_strings, Old).
-
 
 simplify_module(user(Path),SimplifiedModule) :-
 	no_path_file_name(Path,SimplifiedModule),
@@ -350,210 +341,20 @@ simplify_module(Module,Module).
 compose(Type,Module,File,LB,LE,Mess,Args) :-
 	append("{In ~w~n~s (~q): (lns ~w-~w) ",Mess,T1),
 	append(T1,"~n}~n",CMess),
-%       NEW METHOD
-%	sformat( S , CMess,[File,Type,Module,LB,LE|Args]),
-%	display_long_string( S , user_error ).
+%	append("~w: ~w-~w: ~s: (~q): ",Mess,T1),
+%	append(T1,"~n",CMess),
 	prolog_flag(write_strings, Old, on),
+%	format(user_error,CMess,[File,LB,LE,Type,Module|Args]),
 	format(user_error,CMess,[File,Type,Module,LB,LE|Args]),
 	set_prolog_flag(write_strings, Old).
-
-
-%% ---------------------------------------------------------------------------
-:- pred space( N ) : num( N )
-# "prints @var{N} spaces.".
-
-
-space( 0 ) :- !.
-
-space( N ) :-
-	N > 0,
-	!,
-	N1 is N - 1,
-	display( ' ' ),
-	space( N1 ).
-
-space( _ ).
-
-
-
-
-display_long_string( X , S ) :-
-	line_position( user_output , NInit ),
-	display_long_string_n( X , S , NInit , [79] ).
-
-display_long_string_n( X , S , I , Max ) :-
-	append( WORD_WO_S  , [SEP|XE] , X ),
- 	member( SEP , " ,[]()" ),
-	!,
-	append( WORD_WO_S , [SEP] , WORD ),
-	nl_if_necessary( WORD , XE , S , I , Max , Current ),
-	display__compute_next_space( WORD , Current , I , FI  ),
-	write_string( WORD ),
-	display_long_string_n( XE , S , FI , Max ).
-
-display_long_string_n( WORD , S , I , Max ) :-
-	nl_if_necessary( WORD , "" , S , I , Max , Current ) , 
-	display__compute_next_space( WORD , Current , I ,  _ ),
-	write_string( WORD ).
-
-
-
-
-% nil
-display__compute_next_space( [] , _ , I , I ) :- 
-	!.
-
-% push
-display__compute_next_space( [SEP|R] , Current , I , FI ) :-
-	member( SEP , "[({" ) ,
-	!,
-	NCurrent is Current + 1,
-        NSpace   is Current + 1,
-	display__compute_next_space( R , NCurrent , [ NSpace | I ] , FI ).
-	
-% pop
-display__compute_next_space( [SEP|R] , Current , [ _ | NI ] , FI ) :-
-	member( SEP , "])}" ) ,
-	!,
-	NCurrent is Current + 1,
-	display__compute_next_space( R , NCurrent , NI , FI ).
-
-% normal char	
-display__compute_next_space( [_|R] , Current , I , FI ) :-
-	NCurrent is Current + 1,
-	display__compute_next_space( R , NCurrent , I , FI ),
-	!.
-
-% if it fails (?)
-display__compute_next_space( _ , _ , I , I ).
-
-
-:- use_module( library( write ) ).
-
-nl_if_necessary( WORD , REST , S , I , Max , C ) :-
-	line_position( S , Current ),
-	word_length( WORD , REST , Current , Max , WL ) , 
-	(
-	    WL + Current + 1 > Max
-	->
-	    nl, 
-	    I = [ C | _ ] ,
-	    space( C )
-	;
-	    C = Current
-	).
-
-nl_if_necessary( _ , _ , S , _ , C ) :- 
-	line_position( S , C ).
-
-
-
-
-% The lenght of a "word" is:
-% * if it a list -> sumatory of the length of its members
-% * lenght( word )
-%
-% Optimization: We can stop counting if
-%  Current + CurrentComputedLen > Max
-word_length( [ 0'[ | WORD ] , REST , Current , Max , WL2 ) :-
-	!,
-	word__count( WORD , REST , 1 , 0 , Current , Max , WL ),
-	WL2 is WL - Current + 1.
-
-word_length( [ 0'( | WORD ] , REST , Current , Max , WL2 ) :-
-	!,
-	word__count( WORD , REST , 0 , 1 , Current , Max , WL ),
-	WL2 is WL - Current + 1.
-
-word_length( WORD , REST , Current , Max , WL2 ) :-
-	word__count( WORD , REST , 0 , 0 , Current , Max , WL ),
-	WL2 is WL - Current.
-%word_length( WORD , _ , _ , _ , WL ) :-
-%	length( WORD , WL ).
-
-
-
-
-:- pred word__count( _ , _ , _ , _ , Current , Max , Current ) :
-	ground * ground * num * num * num * num * var.
-
-% Start counting till balanced separator is reached
-% S = number of [ ] (square parentheris) not yet balanced
-% P = number of ( ) (parentheris) not yet balanced
-word__count( [] , _ , 0 , 0 , WL , _ , WL ) :-
-	!.
-
-word__count( _ , [] , 0 , 0 , WL , _ , WL ) :-
-	!.
-
-
-word__count( _ , _ , _ , _ , Current , Max , WL ) :-
-	Current > Max,
-	WL = Current,
-	!.
-
-word__count( [ 0'[ | WORD ] , REST , S , P , Current , Max , WL ) :-
-	!,
-	S1 is S + 1,
-	C1 is Current + 1,
-	word__count( WORD , REST , S1 , P , C1 , Max , WL ).
-
-word__count( [ 0'( | WORD ] , REST , S , P , Current , Max , WL ) :-
-	!,
-	P1 is P + 1,
-	C1 is Current + 1,
-	word__count( WORD , REST , S , P1 , C1 , Max , WL ).
-
-word__count( [ 0'] | WORD ] , REST , S , P , Current , Max , WL ) :-
-	!,
-	S1 is S - 1,
-	C1 is Current + 1,
-	( 
-	    S1 >= 0
-	->
-	    word__count( WORD , REST , S1 , P , C1 , Max , WL )
-	;
-	    C1 = WL
-	).
-
-word__count( [ 0') | WORD ] , REST , S , P , Current , Max , WL ) :-
-	!,
-	P1 is P - 1,
-	C1 is Current + 1,
-	(
-	    P1 >= 0
-	->
-	    word__count( WORD , REST , S , P1 , C1 , Max , WL )
-	;
-	    C1 = WL
-	).
-
-word__count( [ _ | WORD ] , REST , S , P , Current , Max , WL ) :-
-	!,
-	C1 is Current + 1,
-	word__count( WORD , REST , S , P , C1 , Max , WL ).
-
-word__count( [] , [] , _ , _ , WL , _ , WL ) :-
-	!.
-	
-word__count( [] , REST , S , P , Current , Max , WL ) :-
-	!,
-	word__count( REST , [] , S , P , Current , Max , WL ).
-
-word__count( [] , _ , 0 , 0 , WL , _ , WL ) :-
-	!.
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+233,2004/05/27,17:43*49+'CEST'), "Used
-   sformat/3 to print messages in 83 characters-wide format (David
-   Trallero Mena)").
-
-:- comment(version(1*11+185,2004/02/13,15:27*40+'CET'), "Taken out
+:- comment(version(1*9+282,2004/02/13,15:20*28+'CET'), "Taken out
    metaprops.  (Francisco Bueno Carrillo)").
 
-:- comment(version(1*11+127,2003/12/30,22:01*35+'CET'), "Added comment
+:- comment(version(1*9+249,2003/12/30,22:00*50+'CET'), "Added comment
    author.  (Edison Mera)").
 
 :- comment(version(1*3+108,1999/11/18,13:48*03+'MET'), "Imported

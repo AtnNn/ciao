@@ -102,7 +102,7 @@ cached_call(H,File,T,D):-
 	term_to_meta(T,H),
 	functor(T,F,A),
 	( ( persistent_dir(Sym,Dir) ; file_alias(Sym,Dir) )
-	-> get_pred_files(Dir,F,A,File,_ops,_bak)
+	-> get_pred_files(Dir, default, F, A, File, _ops, _bak)
 	 ; throw(error(unknown_symbolic_name(Sym),'factsbd_rt:call'/1))
 	),
 	functor(D,N,A),
@@ -198,7 +198,7 @@ asserta_fact(H):-
 
 assertz_fact(H):-
 	cached_call(H,_File,T,D), !,
-	add_term_to_file_db(z(D),T),
+	add_term_to_file_db(z(D),T,defaul),
 	data_facts:assertz_fact(assertz_ed(T)).
 assertz_fact(H):-
 	data_facts:assertz_fact(H).
@@ -228,12 +228,20 @@ retract_cached_fact(F):-
 retract_cached_fact(F):-
 	data_facts:retract_fact(assertz_ed(F,_)).
 
+add_term_to_file_db(X,T):-
+	add_term_to_file_db(X,T,default).
+
 % ------------------------------------------------------------------------
 
 % 1021 files opened!
 % time(ffib(15,X),T). from T=10 to T=1100 (1360 with memoization, NO! 10)
 
 :- comment(version_maintenance,dir('../../version/')).
+
+:- comment(version(1*10+3,2004/08/04,11:52*38+'CEST'), "Added
+   'default' for Perms in get_pred_files/7 and add_term_to_file_db/3
+   which were arity /6 and /2 previously (MCL)
+   (Francisco Bueno Carrillo)").
 
 :- comment(version(1*9+10,2002/05/30,19:46*08+'CEST'), "Added package
    factsdb.  (Francisco Bueno Carrillo)").

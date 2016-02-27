@@ -98,7 +98,7 @@ add_to_each([Ls|Lss],E,[NewLs|NewLss],Tail):-
 	add_to_each(Lss,E,NewLss,Tail).
 */
 
-:- comment(version(1*11+27,2003/07/16,18:07*31+'CEST'), "Added
+:- comment(version(1*9+85,2003/07/16,18:32*55+'CEST'), "Added
    transpose/2 and changed append/2 implementation with a much more
    efficient code.  (Daniel Cabeza Gras)").
 

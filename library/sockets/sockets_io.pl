@@ -80,7 +80,7 @@ socket(S):- int(S).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+117,2003/12/22,18:58*12+'CET'), "Added comment
+:- comment(version(1*9+241,2003/12/22,18:56*07+'CET'), "Added comment
    title and author.  (Edison Mera)").
 
 :- comment(version(1*9+15,2002/10/09,08:58*38+'CEST'), "Added this

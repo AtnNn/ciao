@@ -2,8 +2,7 @@
 	[chartlib_text_error_protect/1, chartlib_visual_error_protect/1],
 	[assertions,regtypes,isomodes]).
 
-%:- comment(author, "Isabel Martín").
-:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
+:- comment(author,"Isabel Martín").
 
 :- comment(title,"Error Handler for Chartlib").
 
@@ -140,6 +139,9 @@ error_file(error10,'err_pattern').
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*9+259,2003/12/30,23:55*26+'CET'), "Added comment
+   title.  (Edison Mera)").
+
 :- comment(version(1*9+155,2003/12/04,17:39*09+'CET'), "Added author
-info (Manuel Carro)").
+   info (Manuel Carro)").
 

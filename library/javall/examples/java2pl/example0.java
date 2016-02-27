@@ -3,8 +3,8 @@
  * Java to ciao interface example with no graphical interface. 
  */
 import CiaoJava.*;
-// import java.awt.*;
-// import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.*;
 
 public class example0 {
 

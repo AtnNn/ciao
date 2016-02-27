@@ -178,7 +178,7 @@ myaggr(X,Y,Z):- Z .=. X*Y.
 
 :- comment(version_maintenance,dir('../../version/')).
 
-:- comment(version(1*11+201,2004/02/26,15:42*27+'CET'), "added default
+:- comment(version(1*9+339,2004/04/22,07:49*09+'CEST'), "added default
    behavior for each fuzzy predicate, fail (CWA) unknown (OWA) or user
    defined (Claudio Vaucheret)").
 

@@ -1,7 +1,6 @@
 :- module(genmultibar,[],[assertions,regtypes,isomodes]).
 
-:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
-
+:- comment(author, "Isabel Martín").
 
 :- export(multibarchart/8).
 :- export(multibarchart/10).
@@ -602,8 +601,8 @@ table(Interp):-
 multibar_attribute([LegendElement]):-
 	atomic(LegendElement).
 
-multibar_attribute(
-	[LegendElement,ForegroundColor,BackgroundColor,StipplePattern]):-
+multibar_attribute([LegendElement,ForegroundColor,BackgroundColor,
+	StipplePattern]):-
 	atom(LegendElement),
 	color(ForegroundColor),
 	color(BackgroundColor),
@@ -611,28 +610,27 @@ multibar_attribute(
 
 :- comment(multibar_attribute/1,"@includedef{multibar_attribute/1}
 
-   Defines the attributes of each feature bar along the different
-   datasets.
+   Defines the attributes of each feature bar along the different datasets.
 
    @begin{description}
 
    @item{LegendElement} Legend element name. It may be a number or an
    atom. Every @var{LegendElement} value of the list must be unique.
 
-   @item{@var{ForegroundColor}} It sets the Foreground color of the
-   bar. Its value must be a valid color, otherwise the system will
-   throw an exception. If the argument value is a variable, it gets
-   instantiated to a color chosen by the library.
+   @item{@var{ForegColor}} It sets the Foreground color of the bar. Its
+   value must be a valid color, otherwise the system will throw an
+   exception. If the argument value is a variable, it gets instantiated to
+   a color chosen by the library.
 
-   @item{@var{BackgroundColor}} It sets the Background color of the
-   bar. Its value must be a valid color, otherwise the system will
-   throw an exception. If the argument value is a variable, it gets
-   instantiated to a color chosen by the library.
+   @item{@var{BackgColor}} It sets the Background color of the bar. Its
+   value must be a valid color, otherwise the system will throw an
+   exception. If the argument value is a variable, it gets instantiated to
+   a color chosen by the library.
 
-   @item{@var{StipplePattern}} It sets the stipple of the bar. Its
-   value must be a valid pattern, otherwise the system will throw an
-   exception. If the argument value is a variable, it gets
-   instantiated to a pattern chosen by the library.
+   @item{@var{SPattern}} It sets the stipple of the bar. Its value must be
+   a valid pattern, otherwise the system will throw an exception. If the
+   argument value is a variable, it gets instantiated to a pattern chosen
+   by the library.  
 
    @end{description}
 
@@ -654,13 +652,13 @@ xelement(Label):-
 ").
 
 
+
+
+
+
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+154,2004/01/07,15:44*30+'CET'), "Minor changes
-   in documentation.  Predicate multibar_attribute/1.  (Edison
-   Mera)").
-
-:- comment(version(1*11+150,2004/01/01,14:21*58+'CET'), "Added comment
+:- comment(version(1*9+271,2004/01/01,14:21*46+'CET'), "Added comment
    title.  (Edison Mera)").
 
 :- comment(version(1*9+163,2003/12/04,17:39*35+'CET'), "Added author

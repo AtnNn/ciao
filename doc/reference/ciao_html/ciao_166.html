@@ -1,41 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Lists of numbers</TITLE>
+<TITLE>The Ciao Prolog System               - Identity lists</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC664" HREF="ciao_toc.html#TOC664">Lists of numbers</A></H1>
+<H1><A NAME="SEC689" HREF="ciao_toc.html#TOC689">Identity lists</A></H1>
 <P>
-<A NAME="IDX7746"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<A NAME="IDX7783"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#113 (2003/12/22, 18:22:36 CET)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-This module implements some kinds of lists of numbers.
+<STRONG>Version:</STRONG> 1.9#266 (2004/1/1, 14:1:7 CET)
+
+
+<P>
+The operations in this module handle lists by performing equality checks via identity instead of unification.
 
 
 
 <UL>
-<LI><A HREF="ciao_166.html#SEC665">Usage and interface (numlists)</A>
-<LI><A HREF="ciao_166.html#SEC666">Documentation on exports (numlists)</A>
+<LI><A HREF="ciao_166.html#SEC690">Usage and interface (idlists)</A>
+<LI><A HREF="ciao_166.html#SEC691">Documentation on exports (idlists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC665" HREF="ciao_toc.html#TOC665">Usage and interface (<CODE>numlists</CODE>)</A></H2>
+<H2><A NAME="SEC690" HREF="ciao_toc.html#TOC690">Usage and interface (<CODE>idlists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +43,7 @@ This module implements some kinds of lists of numbers.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(numlists)).</CODE>
+<CODE>:- use_module(library(idlists)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,35 +52,22 @@ This module implements some kinds of lists of numbers.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7747"></A>
-<CODE>get_primes/2</CODE>, 
-<A NAME="IDX7748"></A>
-<CODE>sum_list/2</CODE>, 
-<A NAME="IDX7749"></A>
-<CODE>sum_list/3</CODE>, 
-<A NAME="IDX7750"></A>
-<CODE>sum_list_of_lists/2</CODE>, 
-<A NAME="IDX7751"></A>
-<CODE>sum_list_of_lists/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7752"></A>
-<CODE>intlist/1</CODE>, 
-<A NAME="IDX7753"></A>
-<CODE>numlist/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7754"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX7784"></A>
+<CODE>member_0/2</CODE>, 
+<A NAME="IDX7785"></A>
+<CODE>memberchk/2</CODE>, 
+<A NAME="IDX7786"></A>
+<CODE>list_insert/2</CODE>, 
+<A NAME="IDX7787"></A>
+<CODE>add_after/4</CODE>, 
+<A NAME="IDX7788"></A>
+<CODE>add_before/4</CODE>, 
+<A NAME="IDX7789"></A>
+<CODE>delete/3</CODE>, 
+<A NAME="IDX7790"></A>
+<CODE>subtract/3</CODE>, 
+<A NAME="IDX7791"></A>
+<CODE>union_idlists/3</CODE>.
 
 </UL>
 
@@ -90,180 +77,152 @@ This module implements some kinds of lists of numbers.
 
 
 
-<H2><A NAME="SEC666" HREF="ciao_toc.html#TOC666">Documentation on exports (<CODE>numlists</CODE>)</A></H2>
+<H2><A NAME="SEC691" HREF="ciao_toc.html#TOC691">Documentation on exports (<CODE>idlists</CODE>)</A></H2>
 <P>
-<A NAME="IDX7755"></A>
-<A NAME="IDX7756"></A>
+<A NAME="IDX7792"></A>
+<A NAME="IDX7793"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_primes/2:</B>
-<DD><A NAME="IDX7757"></A>
+<DT><span class="define">PREDICATE:</span> <B>member_0/2:</B>
+<DD><A NAME="IDX7794"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>get_primes(N, Primes)</CODE>
+<CODE>member_0(X, Xs)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Computes the <CODE>N</CODE>th first prime numbers in ascending order.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+True iff memberchk/2 is true.
 
-<CODE>N</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Primes</CODE> is a list of integers.
- (<CODE>numlists:intlist/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7758"></A>
-<A NAME="IDX7759"></A>
+<A NAME="IDX7795"></A>
+<A NAME="IDX7796"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>intlist/1:</B>
-<DD><A NAME="IDX7760"></A>
+<DT><span class="define">PREDICATE:</span> <B>memberchk/2:</B>
+<DD><A NAME="IDX7797"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>intlist(X)</CODE>
+<CODE>memberchk(X, Xs)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a list of integers.
 
-</UL>
+<P>
+Checks that <CODE>X</CODE> is an element of (list) <CODE>Xs</CODE>.
+
 
 </DL>
 
 <P>
-<A NAME="IDX7761"></A>
-<A NAME="IDX7762"></A>
+<A NAME="IDX7798"></A>
+<A NAME="IDX7799"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>numlist/1:</B>
-<DD><A NAME="IDX7763"></A>
+<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
+<DD><A NAME="IDX7800"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>numlist(X)</CODE>
+<STRONG>Usage:</STRONG> <CODE>list_insert(-List, +Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a list of numbers.
+<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of (tail-opened) <CODE>List</CODE> if there is not an element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7764"></A>
-<A NAME="IDX7765"></A>
+<A NAME="IDX7801"></A>
+<A NAME="IDX7802"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list/2:</B>
-<DD><A NAME="IDX7766"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
+<DD><A NAME="IDX7803"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sum_list(List, N)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_after(+L0, +E0, +E, -L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE>.
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after the first element identical to <CODE>E0</CODE> (or at end) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of numbers.
- (<CODE>numlists:numlist/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7767"></A>
-<A NAME="IDX7768"></A>
+<A NAME="IDX7804"></A>
+<A NAME="IDX7805"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list/3:</B>
-<DD><A NAME="IDX7769"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
+<DD><A NAME="IDX7806"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sum_list(List, N0, N)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_before(+L0, +E0, +E, -L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE> plus <CODE>N0</CODE>.
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> before the first element identical to <CODE>E0</CODE> (or at start) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of numbers.
- (<CODE>numlists:numlist/1</CODE>)
-
-<CODE>N0</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7770"></A>
-<A NAME="IDX7771"></A>
+<A NAME="IDX7807"></A>
+<A NAME="IDX7808"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/2:</B>
-<DD><A NAME="IDX7772"></A>
+<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
+<DD><A NAME="IDX7809"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists, N)</CODE>
+<STRONG>Usage:</STRONG> <CODE>delete(+List, +Element, -Rest)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE>.
+<LI><EM>Description:</EM> <CODE>Rest</CODE> has the same elements of <CODE>List</CODE> except for all the occurrences of elements identical to <CODE>Element</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7773"></A>
-<A NAME="IDX7774"></A>
+<A NAME="IDX7810"></A>
+<A NAME="IDX7811"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/3:</B>
-<DD><A NAME="IDX7775"></A>
+<DT><span class="define">PREDICATE:</span> <B>subtract/3:</B>
+<DD><A NAME="IDX7812"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists, N0, N)</CODE>
+<STRONG>Usage:</STRONG> <CODE>subtract(+Set, +Set0, -Difference)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE> plus <CODE>N0</CODE>.
+<LI><EM>Description:</EM> <CODE>Difference</CODE> has the same elements of <CODE>Set</CODE> except those which have an identical occurrence in <CODE>Set0</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
+</UL>
 
-<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+</DL>
 
-<CODE>N0</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<P>
+<A NAME="IDX7813"></A>
+<A NAME="IDX7814"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>union_idlists/3:</B>
+<DD><A NAME="IDX7815"></A>
 
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>union_idlists(+List1, +List2, -List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but are not identical to an element in <CODE>List2</CODE> followed by the elements in <CODE>List2</CODE>.
+
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_165.html">previous</A>, <A HREF="ciao_167.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,6 +1,6 @@
 :- module(genbar3,[],[assertions,regtypes,isomodes]).
 
-:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
+:- comment(author, "Isabel Martín").
 
 
 :- export(barchart3/7).
@@ -491,7 +491,7 @@ xbarelement3([XValue,ForegColor,BackgColor,StipplePattern]):-
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+146,2004/01/01,14:09*17+'CET'), "Added comment
+:- comment(version(1*9+267,2004/01/01,14:09*07+'CET'), "Added comment
    title.  (Edison Mera)").
 
 :- comment(version(1*9+159,2003/12/04,17:39*24+'CET'), "Added author

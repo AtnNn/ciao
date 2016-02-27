@@ -14,6 +14,6 @@ main.
 :- comment(version_maintenance,dir('../../version')).
 %% --------------------------------------------------------------------------- 
 
-:- comment(version(1*11+119,2003/12/22,19:28*15+'CET'), "Added comment
+:- comment(version(1*9+243,2003/12/22,19:28*24+'CET'), "Added comment
    author.  (Edison Mera)").
 

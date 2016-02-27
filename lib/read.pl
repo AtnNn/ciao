@@ -448,22 +448,22 @@ second_prompt(Old, New) :-
           current_fact(second_prompt(Old))
         ), !.
 
-:- comment(bug, "The comma cannot be redefined as an operator, it is
-   defined in any case as op(1000, xfy,[',']).").
-
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+78,2003/12/20,01:52*48+'CET'), "Added comment
-   to read_top_level. (Edison Mera)").
-
-:- comment(version(1*11+77,2003/12/19,18:22*48+'CET'), "Changed
-   comment summary to comment module. (Edison Mera)").
+:- comment(bug, "The comma cannot be redefined as an operator, it is
+   defined in any case as op(1000, xfy,[',']).").
 
 :- comment(version(1*9+289,2004/02/13,19:46*27+'CET'), "Changed handling
    of '|': except when marking the end of a list, \"a | b\" is read as
    '|'(a,b), if '|' is defined as an infix operator.  In any other case,
    the name '|' cannot be written without quotes (similarly to ',').
    (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+201,2003/12/20,01:44*07+'CET'), "Added comment
+   to read_top_level. (Edison Mera)").
+
+:- comment(version(1*9+200,2003/12/19,18:23*05+'CET'), "Changed
+   comment summary to comment module.  (Edison Mera)").
 
 :- comment(version(1*9+57,2003/02/03,19:45*33+'CET'), "Changed report of
    syntax errors so that no space is put before the open parenthesis of
@@ -473,35 +473,37 @@ second_prompt(Old, New) :-
    comments. (MCL)").
 
 :- comment(version(1*7+43,2001/01/15,17:34*58+'CET'), "Changes to not
-   require a layout char ending in prolog files. (Daniel Cabeza
+   require a layout char ending in prolog files.  (Daniel Cabeza
    Gras)").
 
-:- comment(version(1*7+36,2000/12/31,18:35*26+'CET'), "Added
-   read_hiord flag to disable higher order special syntax. (Daniel
-   Cabeza Gras)").
+:- comment(version(1*7+36,2000/12/31,18:35*26+'CET'), "Added read_hiord
+   flag to disable higher order special syntax.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+100,2000/03/30,18:01*28+'CEST'), "Added option
    dictionary(Dict) to read_term to get the variables dictionary (as
    returned by read_top_level/3). (Daniel Cabeza Gras)").
 
-:- comment(version(1*5+74,2000/03/20,16:49*45+'CET'), "Syntax _(Args)
-   is now read as ''(Args). (Daniel Cabeza Gras)").
+:- comment(version(1*5+74,2000/03/20,16:49*45+'CET'), "Syntax _(Args) is
+   now read as ''(Args).  (Daniel Cabeza Gras)").
 
 :- comment(version(0*8+10,1998/11/24,17:52*05+'MET'), "Fixed bug when
-   the last term of a file had syntax error (EOF was lost). (Daniel
+   the last term of a file had syntax error (EOF was lost).  (Daniel
    Cabeza Gras)").
 
 :- comment(version(0*8+4,1998/11/11,18:14*26+'MET'), "Changed read
    predicates to throw an error instead of outputing a message and
-   repeating the read.  Added a read_option lines(Ln0, Ln1) to
-   read_term/2-3. (Daniel Cabeza Gras)").
+   repeating the read.  Added a read_option lines(Ln0, Ln1) to read_term/2-3
+   (Daniel Cabeza Gras)").
 
 :- comment(version(0*7+12,1998/09/25,16:12*18+'MEST'), "Changed the
    translation of X(Args) to put Args in a structure instead of in a
-   list. (Daniel Cabeza Gras)").
+   list (Daniel Cabeza Gras)").
 
 :- comment(version(0*5+14,1998/06/05,17:10*30+'MET DST'), "Changed
    syntax error messages (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
-   global CIAO version. (Manuel Hermenegildo)").
+   global CIAO version.  (Manuel Hermenegildo)").
+
+
+

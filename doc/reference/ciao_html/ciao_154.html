@@ -1,37 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - sqltypes (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Types for the Low-level interface to SQL databases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC624" HREF="ciao_toc.html#TOC624">sqltypes (library)</A></H1>
+<H1><A NAME="SEC649" HREF="ciao_toc.html#TOC649">Types for the Low-level interface to SQL databases</A></H1>
 <P>
-<A NAME="IDX7271"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<A NAME="IDX7314"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#127 (2001/10/26, 14:52:5 CEST)
+<STRONG>Author(s):</STRONG> D. Cabeza, M. Carro, I. Caballero, and M. Hermenegildo..
+
+
+<P>
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#233 (2003/12/22, 18:8:26 CET)
+
+
+<P>
+This module implement the types for the low level interface to SQL databases
 
 
 
 <UL>
-<LI><A HREF="ciao_154.html#SEC625">Usage and interface (sqltypes)</A>
-<LI><A HREF="ciao_154.html#SEC626">Documentation on exports (sqltypes)</A>
+<LI><A HREF="ciao_154.html#SEC650">Usage and interface (db_client_types)</A>
+<LI><A HREF="ciao_154.html#SEC651">Documentation on exports (db_client_types)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC625" HREF="ciao_toc.html#TOC625">Usage and interface (<CODE>sqltypes</CODE>)</A></H2>
+<H2><A NAME="SEC650" HREF="ciao_toc.html#TOC650">Usage and interface (<CODE>db_client_types</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,40 +47,31 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(sqltypes)).</CODE>
+<CODE>:- use_module(library(db_client_types)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX7272"></A>
-<CODE>accepted_type/2</CODE>, 
-<A NAME="IDX7273"></A>
-<CODE>get_type/2</CODE>, 
-<A NAME="IDX7274"></A>
-<CODE>type_compatible/2</CODE>, 
-<A NAME="IDX7275"></A>
-<CODE>type_union/3</CODE>, 
-<A NAME="IDX7276"></A>
-<CODE>sybase2sqltypes_list/2</CODE>, 
-<A NAME="IDX7277"></A>
-<CODE>sybase2sqltype/2</CODE>, 
-<A NAME="IDX7278"></A>
-<CODE>postgres2sqltypes_list/2</CODE>, 
-<A NAME="IDX7279"></A>
-<CODE>postgres2sqltype/2</CODE>.
-
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX7280"></A>
-<CODE>sqltype/1</CODE>, 
-<A NAME="IDX7281"></A>
-<CODE>sybasetype/1</CODE>, 
-<A NAME="IDX7282"></A>
-<CODE>postgrestype/1</CODE>.
+<A NAME="IDX7315"></A>
+<CODE>socketname/1</CODE>, 
+<A NAME="IDX7316"></A>
+<CODE>dbname/1</CODE>, 
+<A NAME="IDX7317"></A>
+<CODE>user/1</CODE>, 
+<A NAME="IDX7318"></A>
+<CODE>passwd/1</CODE>, 
+<A NAME="IDX7319"></A>
+<CODE>answertableterm/1</CODE>, 
+<A NAME="IDX7320"></A>
+<CODE>tuple/1</CODE>, 
+<A NAME="IDX7321"></A>
+<CODE>answertupleterm/1</CODE>, 
+<A NAME="IDX7322"></A>
+<CODE>sqlstring/1</CODE>.
 
 </UL>
 
@@ -82,327 +81,200 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 
 
-<H2><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Documentation on exports (<CODE>sqltypes</CODE>)</A></H2>
+<H2><A NAME="SEC651" HREF="ciao_toc.html#TOC651">Documentation on exports (<CODE>db_client_types</CODE>)</A></H2>
 <P>
-<A NAME="IDX7283"></A>
-<A NAME="IDX7284"></A>
+<A NAME="IDX7323"></A>
+<A NAME="IDX7324"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX7285"></A>
+<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
+<DD><A NAME="IDX7325"></A>
 
 
 
 <PRE>
-sqltype(int).
-sqltype(flt).
-sqltype(num).
-sqltype(string).
-sqltype(date).
-sqltype(time).
-sqltype(datetime).
+socketname(IPAddress:PortNumber) :-
+        atm(IPAddress),
+        int(PortNumber).
 </PRE>
 
 <P>
-These types have the same meaning as the corresponding standard types in the 
-<A NAME="IDX7286"></A>
-<CODE>basictypes</CODE> library.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sqltype(Type)</CODE>
+<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by the translator.
+<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7287"></A>
-<A NAME="IDX7288"></A>
+<A NAME="IDX7326"></A>
+<A NAME="IDX7327"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>accepted_type/2:</B>
-<DD><A NAME="IDX7289"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>accepted_type(SystemType, NativeType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> For the moment, tests wether the <CODE>SystemType</CODE> received is a sybase or a postgres type (in the future other systems should be supported) and obtains its equivalent <CODE>NativeType</CODE> sqltype.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>SystemType</CODE> is an SQL data type supported by Sybase.
- (<CODE>sqltypes:sybasetype/1</CODE>)
-
-<CODE>NativeType</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7290"></A>
-<A NAME="IDX7291"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_type/2:</B>
-<DD><A NAME="IDX7292"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>get_type(Constant, Type)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Prolog implementation-specific definition of type retrievals. CIAO Prolog version given here (ISO).
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Constant</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>Type</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Constant</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7293"></A>
-<A NAME="IDX7294"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>type_compatible/2:</B>
-<DD><A NAME="IDX7295"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>type_compatible(TypeA, TypeB)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Checks if <CODE>TypeA</CODE> and <CODE>TypeB</CODE> are compatible types, i.e., they are the same or one is a subtype of the other.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>TypeA</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-
-<CODE>TypeB</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7296"></A>
-<A NAME="IDX7297"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>type_union/3:</B>
-<DD><A NAME="IDX7298"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>type_union(TypeA, TypeB, Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Union</CODE> is the union type of <CODE>TypeA</CODE> and <CODE>TypeB</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>TypeA</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-
-<CODE>TypeB</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-
-<CODE>Union</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7299"></A>
-<A NAME="IDX7300"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>sybasetype/1:</B>
-<DD><A NAME="IDX7301"></A>
-
-
-<P>
-SQL datatypes supported by Sybase for which a translation is defined: 
+<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
+<DD><A NAME="IDX7328"></A>
 
 
 
 <PRE>
-sybasetype(integer).
-sybasetype(numeric).
-sybasetype(float).
-sybasetype(double).
-sybasetype(date).
-sybasetype(char).
-sybasetype(varchar).
-sybasetype('long varchar').
-sybasetype(binary).
-sybasetype('long binary').
-sybasetype(timestamp).
-sybasetype(time).
-sybasetype(tinyint).
+dbname(DBId) :-
+        atm(DBId).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sybasetype(Type)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by Sybase.
+<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7302"></A>
-<A NAME="IDX7303"></A>
+<A NAME="IDX7329"></A>
+<A NAME="IDX7330"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sybase2sqltypes_list/2:</B>
-<DD><A NAME="IDX7304"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sybase2sqltypes_list(SybaseTypesList, SQLTypesList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM>  <CODE>SybaseTypesList</CODE> is a list of Sybase SQL types. <CODE>PrologTypesList</CODE> contains their equivalent SQL-type names in CIAO.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>SybaseTypesList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>SQLTypesList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7305"></A>
-<A NAME="IDX7306"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sybase2sqltype/2:</B>
-<DD><A NAME="IDX7307"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sybase2sqltype(SybaseType, SQLType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM>  <CODE>SybaseType</CODE> is a Sybase SQL type name, and <CODE>SQLType</CODE> is its equivalent SQL-type name in CIAO.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>SybaseType</CODE> is an SQL data type supported by Sybase.
- (<CODE>sqltypes:sybasetype/1</CODE>)
-
-<CODE>SQLType</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7308"></A>
-<A NAME="IDX7309"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>postgrestype/1:</B>
-<DD><A NAME="IDX7310"></A>
-
-
-<P>
-SQL datatypes supported by postgreSQL for which a translation is defined: 
+<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
+<DD><A NAME="IDX7331"></A>
 
 
 
 <PRE>
-postgrestype(int2).
-postgrestype(int4).
-postgrestype(int8).
-postgrestype(float4).
-postgrestype(float8).
-postgrestype(date).
-postgrestype(timestamp).
-postgrestype(time).
-postgrestype(char).
-postgrestype(varchar).
-postgrestype(text).
-postgrestype(bool).
+user(User) :-
+        atm(User).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>postgrestype(Type)</CODE>
+<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by postgres.
+<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7311"></A>
-<A NAME="IDX7312"></A>
+<A NAME="IDX7332"></A>
+<A NAME="IDX7333"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>postgres2sqltypes_list/2:</B>
-<DD><A NAME="IDX7313"></A>
+<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
+<DD><A NAME="IDX7334"></A>
 
+
+
+<PRE>
+passwd(Passwd) :-
+        atm(Passwd).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>postgres2sqltypes_list(PostgresTypesList, SQLTypesList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
 
 <UL>
-<LI><EM>Description:</EM>  <CODE>PostgresTypesList</CODE> is a list of postgres SQL types. <CODE>PrologTypesList</CODE> contains their equivalent SQL-type names in CIAO.
+<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>PostgresTypesList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>SQLTypesList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7314"></A>
-<A NAME="IDX7315"></A>
+<A NAME="IDX7335"></A>
+<A NAME="IDX7336"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>postgres2sqltype/2:</B>
-<DD><A NAME="IDX7316"></A>
+<DT><span class="define">REGTYPE:</span> <B>answertableterm/1:</B>
+<DD><A NAME="IDX7337"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>postgres2sqltype(PostgresType, SQLType)</CODE>
+Represents the types of responses that will be returned from the database interface. These can be a set of answer tuples, or the atom <CODE>ok</CODE> in case of a successful addition or deletion.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>answertableterm(AT)</CODE>
 
 <UL>
-<LI><EM>Description:</EM>  <CODE>PostgresType</CODE> is a postgres SQL type name, and <CODE>SQLType</CODE> is its equivalent SQL-type name in CIAO.
+<LI><EM>Description:</EM> <CODE>AT</CODE> is a response from the database interface.
 
-<LI><EM>The following properties should hold upon exit:</EM>
+</UL>
 
-<CODE>PostgresType</CODE> is an SQL data type supported by postgres.
- (<CODE>sqltypes:postgrestype/1</CODE>)
+</DL>
 
-<CODE>SQLType</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
+<P>
+<A NAME="IDX7338"></A>
+<A NAME="IDX7339"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
+<DD><A NAME="IDX7340"></A>
+
+
+
+<PRE>
+tuple(T) :-
+        list(T,atm).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the database interface.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7341"></A>
+<A NAME="IDX7342"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>answertupleterm/1:</B>
+<DD><A NAME="IDX7343"></A>
+
+
+
+<PRE>
+answertupleterm([]).
+answertupleterm(tup(T)) :-
+        tuple(T).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>answertupleterm(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a predicate containing a tuple.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7344"></A>
+<A NAME="IDX7345"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
+<DD><A NAME="IDX7346"></A>
+
+
+
+<PRE>
+sqlstring(S) :-
+        string(S).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S</CODE> is a string of SQL code.
+
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

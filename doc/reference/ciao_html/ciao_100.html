@@ -1,33 +1,108 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - global (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Functional notation</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC387" HREF="ciao_toc.html#TOC387">global (library)</A></H1>
+<H1><A NAME="SEC415" HREF="ciao_toc.html#TOC415">Functional notation</A></H1>
 <P>
-<A NAME="IDX5142"></A>
+<A NAME="IDX5318"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#291 (2004/2/13, 20:46:8 CET)
+
+
+<P>
+This library package allows the use of functional notation in a Ciao module/program. 
+
+
+<P>
+It should be made clear that this package just provides a kind of syntactic sugar for defining and using predicates as if they were functions, and thus any function definition is in fact defining a predicate, and any predicate can be used as a function. The predicate associated to a function has the same name and one more argument, added to the right, to hold the result of the function. 
+
+
+<P>
+Any term preceded by the operator <CODE>~</CODE> is a function application, as in <CODE>write(~arg(1,T))</CODE>, which is equivalent to the sequence <CODE>arg(1,T,A), write(A)</CODE>. Functors can be declared as evaluable by using the declaration 
+<A NAME="IDX5319"></A>
+<CODE>function/1</CODE>, and thus avoiding the need to use the operator <CODE>~</CODE>, as in 
+
+<PRE>
+:- function(arg/2).
+</PRE>
+
+<P>
+Note that this declaration, as is customary in Ciao Prolog, is local to the source code where it is included. In addition, the package defines several functors as evaluable by default, those being: 
+
+<UL>
+<LI>All the functors understood by
+
+<A NAME="IDX5320"></A>
+<CODE>is/2</CODE>. This feature can be disabled by a declaration <CODE>:- function(arith(false))</CODE> (and reverted by using <CODE>true</CODE> instead of <CODE>false</CODE>). 
+<LI>The functors used for disjunctive and conditional expressions, <CODE>(|)/2</CODE> and <CODE>(?)/2</CODE>. A disjunctive expression has the form <CODE>(V1|V2)</CODE>, and its value when first evaluated is <CODE>V1</CODE>, and on re-execution <CODE>V2</CODE>. A conditional expression has the form <CODE>(Cond ? V1)</CODE>, or more commonly <CODE>(Cond ? V1 | V2)</CODE>, and its value, if the execution of <CODE>Cond</CODE> as a goal succeeds, is <CODE>V1</CODE>, otherwise in the first form it causes backtracking, and on the second form its value is <CODE>V2</CODE>. Note that due to the operator precedences, these expressions need normally to be surrounded by parenthesis.
+
+</UL>
+
+<P>
+A functional clause is written using the binary operator <CODE>:=</CODE>, as in 
+
+<PRE>
+opposite(red) := green.
+</PRE>
+
+<P>
+Functional clauses can also have a body, which is executed before the result value is computed. It can serve as a guard for the clause or to provide the equivalent of a where-clause in a functional language: 
+
+<PRE>
+fact(0) := 1.
+fact(N) := N * ~fact(--N) :- N &#62; 0.
+</PRE>
+
+<P>
+Note that often a guard can be better defined using a conditional expression: 
+
+<PRE>
+fact(N) := N = 0 ? 1
+         | N &#62; 0 ? N * ~fact(--N).
+</PRE>
+
+<P>
+In clause heads (either defined as predicates or functions) functors can be prevented from being evaluated by using the <CODE>(^)/1</CODE> prefix operator, as in 
+
+<PRE>
+pair(A,B) := ^(A-B).
+</PRE>
+
+<P>
+Note that this just prevents the evaluation of the principal functor of the enclosed term, not the possible occurrences of other evaluable functors inside. The operator is by now ignored outside clause heads, due to the recurrent nature of the goal translations used. 
+
+
+<P>
+When using function applications inside the goal arguments of meta-predicates, there is an ambiguity as they could be evaluated either in the scope of the outer execution or the in the scope of the inner execution. The chosen behavior is by default to evaluate function applications in the scope of the outer execution, and if they should be evaluated in the inner scope, the goal containing the function application needs to be escaped with the <CODE>(^^)/1</CODE> prefix operator, as in <CODE>findall(X, (d(Y), ^^(X = Y+1)), L)</CODE> (which could also be written as <CODE>findall(X, ^^ (d(Y), X = Y+1), L)</CODE>). 
 
 
 
 <UL>
-<LI><A HREF="ciao_100.html#SEC388">Usage and interface (global)</A>
-<LI><A HREF="ciao_100.html#SEC389">Documentation on exports (global)</A>
+<LI><A HREF="ciao_100.html#SEC416">Usage and interface (functions)</A>
+<LI><A HREF="ciao_100.html#SEC417">Known bugs and planned improvements (functions)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Usage and interface (<CODE>global</CODE>)</A></H2>
+<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Usage and interface (<CODE>functions</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,106 +110,34 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(global)).</CODE>
+<CODE>:- use_package(functions).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX5143"></A>
-<CODE>set_global/2</CODE>, 
-<A NAME="IDX5144"></A>
-<CODE>get_global/2</CODE>, 
-<A NAME="IDX5145"></A>
-<CODE>push_global/2</CODE>, 
-<A NAME="IDX5146"></A>
-<CODE>pop_global/2</CODE>, 
-<A NAME="IDX5147"></A>
-<CODE>del_global/1</CODE>.
-
-</UL>
-
+<CODE>:- module(...,...,[functions]).</CODE>
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Documentation on exports (<CODE>global</CODE>)</A></H2>
-<P>
-<A NAME="IDX5148"></A>
-<A NAME="IDX5149"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>set_global/2:</B>
-<DD><A NAME="IDX5150"></A>
+<H2><A NAME="SEC417" HREF="ciao_toc.html#TOC417">Known bugs and planned improvements (<CODE>functions</CODE>)</A></H2>
 
 
-<P>
-No further documentation available for this predicate.
+<UL>
 
+<LI>
 
-</DL>
+The <CODE>(^)/1</CODE> operator only works in clause heads.
 
-<P>
-<A NAME="IDX5151"></A>
-<A NAME="IDX5152"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_global/2:</B>
-<DD><A NAME="IDX5153"></A>
+<LI>
 
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5154"></A>
-<A NAME="IDX5155"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>push_global/2:</B>
-<DD><A NAME="IDX5156"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5157"></A>
-<A NAME="IDX5158"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pop_global/2:</B>
-<DD><A NAME="IDX5159"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5160"></A>
-<A NAME="IDX5161"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>del_global/1:</B>
-<DD><A NAME="IDX5162"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
+Assumes that 
+<A NAME="IDX5321"></A>
+<CODE>is/2</CODE> is imported.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_99.html">previous</A>, <A HREF="ciao_101.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

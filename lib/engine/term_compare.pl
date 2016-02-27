@@ -46,39 +46,33 @@ For example, here is a list of terms in standard order:
 
 % Compiled inline -- these are hooks for the interpreter.
 
-
-:- prop (Term1 == Term2)
-	# "The terms @var{Term1} and @var{Term2} are strictly identical.".
-:- true comp (@Term1 == @Term2) + ( sideff(free), native ).
+:- prop (@Term1 == @Term2) + native # "The terms @var{Term1} and @var{Term2} are
+   strictly identical.".
 
 X==Y :- X==Y.
 
-:- true pred (@Term1 \== @Term2) + ( sideff(free), native )
-	# "The terms @var{Term1} and @var{Term2} are not strictly identical.".
+:- prop (@Term1 \== @Term2) + native # "The terms @var{Term1} and @var{Term2} are
+   not strictly identical.".
 
 X\==Y :- X\==Y.
 
-:- true pred (@Term1 @< @Term2) + ( sideff(free), native )
-	# "The term @var{Term1} precedes the term @var{Term2} in the 
-           standard order.".
+:- prop (@Term1 @< @Term2) + native # "The term @var{Term1} precedes the term
+   @var{Term2} in the standard order.".
 
 X@<Y :- X@<Y.
 
-:- true pred (@Term1 @=< @Term2) + ( sideff(free), native )
-	# "The term @var{Term1} precedes or is identical to the term
-           @var{Term2} in the standard order.".
+:- prop (@Term1 @=< @Term2) + native # "The term @var{Term1} precedes or is
+   identical to the term @var{Term2} in the standard order.".
 
 X@=<Y :- X@=<Y.
 
-:- true pred (@Term1 @> @Term2) + ( sideff(free), native )
-	# "The term @var{Term1} follows the term @var{Term2} in the 
-           standard order.".
+:- prop (@Term1 @> @Term2) + native # "The term @var{Term1} follows the term
+   @var{Term2} in the standard order.".
 
 X@>Y :- X@>Y.
 
-:- true pred (@Term1 @>= @Term2) + ( sideff(free), native )
-	# "The term @var{Term1} follows or is identical to the term
-           @var{Term2} in the standard order.".
+:- prop (@Term1 @>= @Term2) + native # "The term @var{Term1} follows or is
+   identical to the term @var{Term2} in the standard order.".
 
 X@>=Y :- X@>=Y.
 
@@ -86,14 +80,12 @@ X@>=Y :- X@>=Y.
            comparing the terms @var{Term1} and @var{Term2}.").
 
 :- true pred compare(?atm,@term,@term)
-	=> member([(=),(>),(<)]) * term * term + ( sideff(free), native ).
+	=> member([(=),(>),(<)]) * term * term + native.
 
 compare(X, Y, Z) :- compare(X, Y, Z).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+171,2004/02/03,21:45*08+'CET'), "Added sideff
-   declarations.  (Francisco Bueno Carrillo)").
+:- comment(version(1*9+199,2003/12/19,18:18*33+'CET'), "First
+revision.  (Edison Mera)").
 
-:- comment(version(1*11+76,2003/12/19,18:19*01+'CET'), "First
-   revision.  (Edison Mera)").

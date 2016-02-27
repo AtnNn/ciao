@@ -41,8 +41,7 @@ change to the normal @concept{control} of Ciao Prolog execution.".
 :- meta_predicate undo(goal).
 
 undo('$:'(Goal)):-
-        '$undo_goal'('hiord_rt:call'(Goal)).
-
+        '$undo_goal'('call'(Goal)).
 
 % call_residue_top_list(Limit, Res) :-		% for debugger/toplevel
 % 	 '$constraint_list'(Limit, Vars),

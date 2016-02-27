@@ -98,6 +98,6 @@ tuple(T) :-
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+109,2003/12/22,18:08*09+'CET'), "Added comment
+:- comment(version(1*9+233,2003/12/22,18:08*26+'CET'), "Added comment
    module.  (Edison Mera)").
 

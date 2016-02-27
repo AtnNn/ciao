@@ -1,8 +1,9 @@
+include ../../../SETTINGS
+include ../../../SHARED
 JAVASOURCES=*.java
 JAVACLASSES=*.class
 JAVAC=javac
 JAVAFLAGS=
-include ../../../SETTINGS
 
 all: classes
 

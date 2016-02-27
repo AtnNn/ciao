@@ -246,8 +246,8 @@ following generic rule:
 :- use_module(library(terms),[atom_concat/2]).
 
 dependency_comment(SSuffix,TSuffix,FileBase) :- 
-        display(~atom_concat(['Generation of ',FileBase,'.',
-	        TSuffix, ' from ',FileBase,'.',SSuffix])).
+        display(~atom_concat(['Generation of ',FileBase,'.',TSuffix,
+                              ' from ',FileBase,'.',SSuffix])).
 @end{verbatim}
 
 @end{description}
@@ -277,6 +277,6 @@ See also the LaTeX example in the @tt{example_latex} directory in the
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+98,2003/12/21,20:10*12+'CET'), "Added comment
+:- comment(version(1*9+222,2003/12/21,20:08*53+'CET'), "Added comment
    version_maintenance.  (Edison Mera)").
 

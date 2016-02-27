@@ -52,11 +52,28 @@ valuesList2stringEnumeration([Val1|Rest],NewStr):-
 	append(Str1_Comma,Str,NewStr).
 
 betweenBrackets(Str,BrackStr):-
-	append("(",Str,OpenStr),
-	append(OpenStr,")",BrackStr).
+%	append("(",Str,OpenStr),
+	append([0'(|Str],")",BrackStr).
 betweenApostrophes(Str,ApStr):-
-	append("'",Str,Str1),
-	append(Str1,"'",ApStr).
+	replaceEscapeSeqs(Str,Str0),
+%	append("'",Str0,Str1),
+	append([0''|Str0],"'",ApStr).
+
+replaceEscapeSeqs([],[]).
+replaceEscapeSeqs([0'\\,0''|Xs],[0'\\,0''|Ys]):- % Do not escape it if it is
+	replaceEscapeSeqs(Xs,Ys), !.           % already escaped.
+replaceEscapeSeqs([0'\\,0'"|Xs],[0'\\,0'"|Ys]):- % Do not escape it if it is
+	replaceEscapeSeqs(Xs,Ys), !.           % already escaped.
+replaceEscapeSeqs([0'\\,0'\\|Xs],[0'\\,0'\\|Ys]):- % Do not escape it if it is
+	replaceEscapeSeqs(Xs,Ys), !.           % already escaped.
+replaceEscapeSeqs([0''|Xs],[0'\\,0''|Ys]):-
+	replaceEscapeSeqs(Xs,Ys), !.
+replaceEscapeSeqs([0'"|Xs],[0'\\,0'"|Ys]):-
+	replaceEscapeSeqs(Xs,Ys), !.
+replaceEscapeSeqs([0'\\|Xs],[0'\\,0'\\|Ys]):-
+	replaceEscapeSeqs(Xs,Ys), !.
+replaceEscapeSeqs([X|Xs],[X|Ys]):-
+	replaceEscapeSeqs(Xs,Ys).
 
 constants_list([],[]).
 constants_list([Head|Tail],[Head|CLTail]):-
@@ -83,7 +100,11 @@ attrs_list(TableName,Location,Arity,[AttStringName|List]) :-
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+63,2003/11/29,02:26*35+'CET'), "Names of
+:- comment(version(1*9+345,2004/05/04,15:31*00+'CEST'), "Added checks
+   for apostrophes/quotes in string values (they must be \'ed).
+   (Jesus Correas Fernandez)").
+
+:- comment(version(1*9+115,2003/11/27,23:50*45+'CET'), "Names of
    multifile predicates relation/3 and attribute/4 changed to
    sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
 

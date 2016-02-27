@@ -5,7 +5,7 @@
 
 :- use_package(assertions).
 
-:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
+:- comment(author, "Isabel Martín").
 
 
 error_dir(Dir):-

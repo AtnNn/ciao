@@ -47,13 +47,10 @@ create_people_db :-
         mysql_host_and_port(HP),
 	mysql_connect(HP, '', User, Password, DbConnection),
         
-	write(~mysql_query(DbConnection,
-	        "drop database if exists people")), nl,
+	write(~mysql_query(DbConnection, "drop database if exists people")), nl,
 	write(~mysql_query(DbConnection, "create database people")), nl,
 	write(~mysql_query(DbConnection, "use people")), nl,
-	write(~mysql_query(DbConnection,
-	        "create table people(name char(16) not null, 
-sex text, age int, primary key(name))")), nl,
+	write(~mysql_query(DbConnection, "create table people(name char(16) not null, sex text, age int, primary key(name))")), nl,
 	mysql_disconnect(DbConnection).
 
 % Inserts people into the 'people' table.

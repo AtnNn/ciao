@@ -263,17 +263,17 @@ intset_insert([D|Ds], A, [D|Bs]) :- intset_insert(Ds, A, Bs).
 intset_delete([D|Ds], D, Set) :- !, Set=Ds.
 intset_delete([D|Ds], A, [D|Ds1]) :- A>D, intset_delete(Ds, A, Ds1).
 
-:- pred intset_in(E, Set) # "Succeds iff @var{E} is element of @var{Set}".
-
 intset_in(O, [O1|Os]) :-
 	(   O1<O -> intset_in(O, Os)
 	;   O=O1
 	).
 
+:- pred intset_in(E, Set) # "Succeds iff @var{E} is element of @var{Set}".
+
 :- pred intset_sequence(N,L1,L2) # "Generates an ordered set of
    numbers from 0 to @var{N}-1, and append it to @var{L1}.".
 
-intset_sequence(0, L0, L) :- !, L=L0.  
+intset_sequence(0, L0, L) :- !, L=L0.
 intset_sequence(N, L0, L) :- M is N-1, intset_sequence(M, [M|L0], L).
 
 %------------------------------------------------------------------------------
@@ -384,13 +384,14 @@ add_elem([L|Ls], X, [[X|L]|XLs], Lds_) :-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*11+142,2003/12/31,12:29*49+'CET'), "Added
-   documentation for reverse/3, add_before/4, list_lookup/3,
-   intset_... .  (Edison Mera)").
-
 :- comment(version(1*9+318,2004/02/26,15:46*54+'CET'), "Changed definition
    of @pred{last/2} because its semantics was not standard. (Daniel
    Cabeza Gras)").
+
+:- comment(version(1*9+111,2003/09/26,13:34*45+'CEST'), "Added
+   append/2 commented predicate that takes a list and unifies it with
+   the concatenation of all elements, but commented due to is equals
+   to list_concat/2.  (Edison Mera)").
 
 :- comment(version(1*9+53,2003/01/10,19:19*44+'CET'), " Added 
    delete_non_ground(L1,E,L2), L2 is L1 without the ocurrences of E. E can be 

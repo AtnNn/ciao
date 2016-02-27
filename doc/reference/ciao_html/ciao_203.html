@@ -1,67 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 April 2006 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Line graph widgets</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget1 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC780" HREF="ciao_toc.html#TOC780">Line graph widgets</A></H1>
+<H1><A NAME="SEC806" HREF="ciao_toc.html#TOC806">table_widget1 (library)</A></H1>
 <P>
-<A NAME="IDX8727"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Isabel Mart&iacute;n Garc&iacute;a.
+<A NAME="IDX8845"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+<STRONG>Author(s):</STRONG> Isabel Martín.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.11#149 (2004/1/1, 14:19:37 CET)
+<STRONG>Version:</STRONG> 1.10#6 (2004/8/7, 21:46:39 CEST)
 
 
 <P>
-This module defines predicates which show line graph widgets. All eight predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. Every predicate share the following features: 
+<STRONG>Version of last change:</STRONG> 1.9#166 (2003/12/4, 17:39:45 CET)
+
+
+<P>
+In addition to the features explained in the introduction, the predicates exported by this module depict tables in which the font weight for the table elements is bold. 
+
+
+<P>
+If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
 
 
 
 <UL>
-
-<LI>A dataset is defined by three lists xvector, yvector and attributes. The arguments named <CODE>XVectors</CODE> (or <CODE>XVs</CODE>), <CODE>YVectors</CODE> (or <CODE>YVs</CODE>) and <CODE>LAtts</CODE><A NAME="DOCF6" HREF="ciao_foot.html#FOOT6">(6)</A> contain this information. Those arguments must be lists whose elements are also lists. The first dataset is defined by the firts element of the three lists, the second dataset is defined by the second element of the three lists and so on.
-
-<LI>Numeric values for the vector elements are needed. We will use two vectors to represent the X-Y coordinates of each set of data plotted. In these predicates the vectors can have different number of points. However, the number of elements in xvector and yvector that pertain to a certain dataset must be, obviously, equal.
-
-<LI>The active line color is blue, which means that when you select a legend element, the corresponding line turns into navyblue.
-
-<LI>The user can either select the appearance for the lines and the points or not. See the
-
-<A NAME="IDX8728"></A>
-<CODE>attributes/1</CODE> type definition. Thus, the user can call each predicate in different ways ways. 
-
-<LI>The graph has a legend and one entry (symbol and label) per dataset.
-
-<LI>If you do not want to display text in the elements header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
-
-</UL>
-
-
-<UL>
-<LI><A HREF="ciao_203.html#SEC781">Usage and interface (gengraph2)</A>
-<LI><A HREF="ciao_203.html#SEC782">Documentation on exports (gengraph2)</A>
+<LI><A HREF="ciao_203.html#SEC807">Usage and interface (table_widget1)</A>
+<LI><A HREF="ciao_203.html#SEC808">Documentation on exports (table_widget1)</A>
+<LI><A HREF="ciao_203.html#SEC809">Documentation on internals (table_widget1)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC781" HREF="ciao_toc.html#TOC781">Usage and interface (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC807" HREF="ciao_toc.html#TOC807">Usage and interface (<CODE>table_widget1</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -69,7 +52,7 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gengraph2)).</CODE>
+<CODE>:- use_module(library(table_widget1)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -78,22 +61,17 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8729"></A>
-<CODE>graph_b2/9</CODE>, 
-<A NAME="IDX8730"></A>
-<CODE>graph_b2/13</CODE>, 
-<A NAME="IDX8731"></A>
-<CODE>graph_w2/9</CODE>, 
-<A NAME="IDX8732"></A>
-<CODE>graph_w2/13</CODE>, 
-<A NAME="IDX8733"></A>
-<CODE>scattergraph_b2/8</CODE>, 
-<A NAME="IDX8734"></A>
-<CODE>scattergraph_b2/12</CODE>, 
-<A NAME="IDX8735"></A>
-<CODE>scattergraph_w2/8</CODE>, 
-<A NAME="IDX8736"></A>
-<CODE>scattergraph_w2/12</CODE>.
+<A NAME="IDX8846"></A>
+<CODE>tablewidget1/4</CODE>, 
+<A NAME="IDX8847"></A>
+<CODE>tablewidget1/5</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX8848"></A>
+<CODE>table/1</CODE>, 
+<A NAME="IDX8849"></A>
+<CODE>image/1</CODE>.
 
 </UL>
 
@@ -104,22 +82,16 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8737"></A>
-<CODE>chartlib/gengraph1</CODE>, 
-<A NAME="IDX8738"></A>
+<A NAME="IDX8850"></A>
 <CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX8739"></A>
+<A NAME="IDX8851"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8740"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX8741"></A>
+<A NAME="IDX8852"></A>
 <CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX8742"></A>
+<A NAME="IDX8853"></A>
 <CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX8743"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8744"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX8854"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -129,684 +101,184 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 
 
-<H2><A NAME="SEC782" HREF="ciao_toc.html#TOC782">Documentation on exports (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC808" HREF="ciao_toc.html#TOC808">Documentation on exports (<CODE>table_widget1</CODE>)</A></H2>
 <P>
-<A NAME="IDX8745"></A>
-<A NAME="IDX8746"></A>
+<A NAME="IDX8855"></A>
+<A NAME="IDX8856"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/9:</B>
-<DD><A NAME="IDX8747"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget1/4:</B>
+<DD><A NAME="IDX8857"></A>
 
 
 <P>
-<CODE>graph_b2(Header, GTitle, XTitle, XVectors, YTitle, YVectors, LAtts, Footer, Sm)</CODE>
+<CODE>tablewidget1(Title, Header, ElementTable, Footer)</CODE>
 
 
 <P>
-Besides the features mentioned at the begining of the module chapter, the displayed graph generated calling this predicate has the following distinguish characteristics: 
+Shows a regular table in a window. The user does not choose a background image. 
 
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
 
 <P>
 Example: 
 
-
-
 <PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,50]],
-  [['line1','Blue','Yellow'],['line2']],
-  'footer',
-  'natural').
+tablewidget1('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	         ['Average Tasks per fork','7.5']],
+	     'Footer text').
 </PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
-
-<CODE>GTitle</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XTitle</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XVectors</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>YTitle</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVectors</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>LAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-
-<CODE>gengraph1:smooth(Sm)</CODE>
- (<CODE>gengraph1:smooth/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8748"></A>
-<A NAME="IDX8749"></A>
+<A NAME="IDX8858"></A>
+<A NAME="IDX8859"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/13:</B>
-<DD><A NAME="IDX8750"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget1/5:</B>
+<DD><A NAME="IDX8860"></A>
 
 
 <P>
-<CODE>graph_b2(Header, GT, XT, XVs, XMax, XMin, YT, YVs, YMax, YMin, LAtts, Footer, Smooth)</CODE>
+<CODE>tablewidget1(Title, Header, ElementTable, Footer, BackgroundImage)</CODE>
 
 
 <P>
-In addition to the features brought up at the begining of the module chapter, this graph has the following: 
+Shows a regular table in a window. The user must set a background image. See the 
+<A NAME="IDX8861"></A>
+<CODE>image/1</CODE> type definition. 
 
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the maximum and minimum values for the graph axes.
-
-</UL>
 
 <P>
 Example: 
 
-
-
 <PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,35]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50.5,
-  _,
-  [['line1','Blue','Yellow'],['line','MediumTurquoise','Plum']],
-  'footer',
-  'step').
+tablewidget1('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	         ['Average Tasks per fork','7.5']],
+	     'Footer text',
+	     './images/rain.gif')
 </PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
-
-<CODE>GT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(XMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(XMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>YT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(YMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(YMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>LAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-
-<CODE>gengraph1:smooth(Smooth)</CODE>
- (<CODE>gengraph1:smooth/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8751"></A>
-<A NAME="IDX8752"></A>
+<A NAME="IDX8862"></A>
+<A NAME="IDX8863"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/9:</B>
-<DD><A NAME="IDX8753"></A>
+<DT><span class="define">REGTYPE:</span> <B>table/1:</B>
+<DD><A NAME="IDX8864"></A>
 
 
 <P>
-<CODE>graph_w2(Header, GT, XT, XVectors, YTitle, YVectors, LAtts, Footer, Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8754"></A>
-<CODE>graph_b2/9</CODE>. The difference lies in the graph appearance, as you can see below. 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-
+A table is a list of rows, each row must contain the same number of elements, otherwise the table wouldn't be regular and an exception will be thrown by the library. The rows list may not be empty. 
 
 <PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,40]],
-  [['element1','Blue','DarkOrchid'],['element2','DarkOliveGreen',
-    'Firebrick']],
-  'footer',
-  'natural').
+table([X]) :-
+        row(X).
+table([X|Xs]) :-
+        row(X),
+        table(Xs).
 </PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
-
-<CODE>GT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XVectors</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>YTitle</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVectors</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>LAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-
-<CODE>gengraph1:smooth(Smooth)</CODE>
- (<CODE>gengraph1:smooth/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8755"></A>
-<A NAME="IDX8756"></A>
+<A NAME="IDX8865"></A>
+<A NAME="IDX8866"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/13:</B>
-<DD><A NAME="IDX8757"></A>
+<DT><span class="define">REGTYPE:</span> <B>image/1:</B>
+<DD><A NAME="IDX8867"></A>
 
 
 <P>
-<CODE>graph_w2(Header, GT, XT, XV, XMax, XMin, YT, YVs, YMax, YMin, LAtts, Footer, Smooth)</CODE>
+Some predicates allow the user to set the widget background image, whose is what this type is intended for. The user has to take into account the following restrictions: 
 
 
-<P>
-This predicate is comparable to 
-<A NAME="IDX8758"></A>
-<CODE>graph_b2/13</CODE>. The differences lie in the plot background color and in the cross hairs color, wich are white and black respectively. 
-
-
-<P>
-Example: 
-
-<PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[10,35,40]],
-  80,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['element1','Blue','Green'],['element2','Turquoise','Black']],
-  'footer',
-  'linear').
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
+<LI>The image must be in gif format.
 
-<CODE>GT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
+<LI>The file path must be absolute.
 
-<CODE>XT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XV</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(XMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(XMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>YT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(YMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(YMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>LAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-
-<CODE>gengraph1:smooth(Smooth)</CODE>
- (<CODE>gengraph1:smooth/1</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC809" HREF="ciao_toc.html#TOC809">Documentation on internals (<CODE>table_widget1</CODE>)</A></H2>
 <P>
-<A NAME="IDX8759"></A>
-<A NAME="IDX8760"></A>
+<A NAME="IDX8868"></A>
+<A NAME="IDX8869"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/8:</B>
-<DD><A NAME="IDX8761"></A>
+<DT><span class="define">REGTYPE:</span> <B>row/1:</B>
+<DD><A NAME="IDX8870"></A>
 
 
-<P>
-<CODE>scattergraph_b2(Header, GT, XT, XVectors, YT, YVectors, PAtts, Footer)</CODE>
-
-
-<P>
-Apart from the features brought up at the beginning of the chapter, the scatter graph displayed when invoking this predicate has the following features: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
 
 <PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,15,20],[8,30,40]],
-  'yaxixtitle',
-  [[10,35,20],[15,11,21]],
-  [['element1','Blue','Yellow'],['element2','MediumTurquoise','Plum']],
-  'footer').
+row([X]) :-
+        cell_value(X).
+row([X|Xs]) :-
+        cell_value(X),
+        row(Xs).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> 
+Each row is a list of elements whose type is 
+<A NAME="IDX8871"></A>
+<CODE>cell_value/1</CODE>. A row cannot be an empty list, as you can see in the definition type. 
 
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
-
-<CODE>GT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XVectors</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>YT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVectors</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>PAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8762"></A>
-<A NAME="IDX8763"></A>
+<A NAME="IDX8872"></A>
+<A NAME="IDX8873"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/12:</B>
-<DD><A NAME="IDX8764"></A>
+<DT><span class="define">REGTYPE:</span> <B>row/1:</B>
+<DD><A NAME="IDX8874"></A>
 
 
-<P>
-<CODE>scattergraph_b2(Header, GT, XT, XVs, XMax, XMin, YT, YVs, YMax, YMin, PAtts, Footer)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
 
 <PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,50],[18,40,59]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['point dataset1'],['point dataset2']],
-  'footer').
+row([X]) :-
+        cell_value(X).
+row([X|Xs]) :-
+        cell_value(X),
+        row(Xs).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> 
+Each row is a list of elements whose type is 
+<A NAME="IDX8875"></A>
+<CODE>cell_value/1</CODE>. A row cannot be an empty list, as you can see in the definition type. 
 
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
-
-<CODE>GT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(XMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(XMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>YT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(YMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(YMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>PAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8765"></A>
-<A NAME="IDX8766"></A>
+<A NAME="IDX8876"></A>
+<A NAME="IDX8877"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/8:</B>
-<DD><A NAME="IDX8767"></A>
+<DT><span class="define">REGTYPE:</span> <B>cell_value/1:</B>
+<DD><A NAME="IDX8878"></A>
 
 
 <P>
-<CODE>scattergraph_w2(Header, GTitle, XTitle, XVs, YTitle, YVs, PAtts, Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8768"></A>
-<CODE>scattergraph_w1/8</CODE> except in the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>If the user do not provide the colors of the points, they will be chosen among the lighter ones.
-
-</UL>
-
-<P>
-Example: 
+This type defines the possible values that a table element have. If any cell value is <CODE>"</CODE>, the cell will be displayed empty. 
 
 <PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,40,15,30,35,20,30]],
-  'yaxixtitle',
-  [[10,30,40,25,20,25,20,25]],
-  [['set1','cross',4]],
-  'footer').
+cell_value(X) :-
+        atomic(X).
 </PRE>
-
-<P>
- 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
-
-<CODE>GTitle</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XTitle</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>gengraph1:vector(XVs)</CODE>
- (<CODE>gengraph1:vector/1</CODE>)
-
-<CODE>YTitle</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>PAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8769"></A>
-<A NAME="IDX8770"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/12:</B>
-<DD><A NAME="IDX8771"></A>
-
-
-<P>
-<CODE>scattergraph_w2(Header, GT, XT, XVs, XMax, XMin, YT, YVs, YMax, YMin, PAtts, Footer)</CODE>
-
-
-<P>
-This predicate is comparable to 
-<A NAME="IDX8772"></A>
-<CODE>scattergraph_w2/13</CODE>, the differences between them are listed below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,50]],
-  150,
-  5,
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  -10,
-  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Header</CODE> is a text (an atom) describing the header of the graph.
- (<CODE>genbar1:header/1</CODE>)
-
-<CODE>GT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>XVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(XMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(XMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>YT</CODE> is a text (an atom) to be used as label, usually not very long.
- (<CODE>genbar1:title/1</CODE>)
-
-<CODE>YVs</CODE> is a list of <CODE>vector</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>genbar1:axis_limit(YMax)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>genbar1:axis_limit(YMin)</CODE>
- (<CODE>genbar1:axis_limit/1</CODE>)
-
-<CODE>PAtts</CODE> is a list of <CODE>attributes</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>Footer</CODE> is a text (an atom) describing the footer of the graph.
- (<CODE>genbar1:footer/1</CODE>)
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

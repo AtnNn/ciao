@@ -1,7 +1,6 @@
 :- module(genbar1,[],[assertions,regtypes,isomodes]).
 
-:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
-
+:- comment(author, "Isabel Martín").
 
 :- export(barchart1/7).
 :- export(barchart1/9).
@@ -21,7 +20,7 @@
 :- use_module(library(lists)).
 :- use_module(library(random)).
 
-%%
+%%:- comment(author,"Isabel Mart@'{i}n").
 
 :- comment(title,"Barchart widgets - 1").
 
@@ -110,8 +109,7 @@ barchart1('This is the header text',
   'xaxistitle',
   [ ['bar1','legend_element1','Blue','Yellow','pattern1'],
            ['bar2','legend_element2','Plum','SeaGreen','pattern2'],
-           ['bar3','legend_element3','Turquoise','Yellow',
-	    'pattern5'] ],
+           ['bar3','legend_element3','Turquoise','Yellow','pattern5'] ],
   'yaxixtitle',
   [20,10,59],
   'footer').
@@ -729,7 +727,7 @@ axis_limit(_).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+137,2003/12/31,00:14*02+'CET'), "Added comment
+:- comment(version(1*9+260,2003/12/31,00:13*52+'CET'), "Added comment
    title.  (Edison Mera)").
 
 :- comment(version(1*9+157,2003/12/04,17:39*18+'CET'), "Added author

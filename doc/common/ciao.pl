@@ -3,13 +3,15 @@
 
 :- comment(title,"The Ciao Prolog System").
 
-:- comment(subtitle,"@em{A Next Generation Logic Programming Environment}").
+:- comment(subtitle,"@em{A Next Generation Multi-Paradigm Programming Environment}").
 :- comment(subtitle,"REFERENCE MANUAL").
 :- comment(subtitle,"@bf{The Ciao System Documentation Series}").
-:- comment(subtitle,"Technical Report CLIP 3/97.1").
+:- comment(subtitle, "@uref{http://www.ciaohome.org/}").
 :- comment(subtitle,"@em{Generated/Printed on:} @today{}").
 %% :- comment(subtitle,"@em{Preliminary version printed on:} @today{}").
+:- comment(subtitle,"Technical Report CLIP 3/97-@em{<version below>}").
 
+:- comment(author, "@em{Edited by:}").
 :- comment(author, "F. Bueno").
 :- comment(author, "D. Cabeza").
 :- comment(author, "M. Carro").
@@ -154,12 +156,172 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+1,2003/04/04,18:30*31+'CEST'), "New
-   development version to begin the builtin modularization (Jose
-   Morales)").
+:- comment(version(1*10+0,2004/07/29,16:12*03+'CEST'), "
+@begin{itemize}
+@item Classical prolog mode as default behavior.
+@item Emacs-based environment improved.
+    @begin{itemize}
+          @item Improved emacs inferior (interaction) mode for Ciao and CiaoPP.
+          @item Xemacs compatibility improved (thanks to A. Rigo).
+          @item New icons and modifications in the environment for the 
+                preprocessor.
+          @item Icons now installed in a separate dir.          
+          @item Compatibility with newer versions of @apl{Cygwin}.
+          @item Changes to programming environment:
+                @begin{itemize}
+                @item Double-click startup of programming environment. 
+                @item Reorganized menus: help and customization grouped in 
+                      separate menus.
+                @item Error location extended.
+                @item Automatic/Manual location of errors produced when 
+                      running Ciao tools now customizable.
+                @item Presentation of CiaoPP preprocessor output improved.
+                @end{itemize}
+          @item Faces and coloring improved:
+                @begin{itemize}
+                @item Faces for syntax-based highlighting more customizable.
+                @item Syntax-based coloring greatly improved. Literal-level assertions 
+                      also correctly colored now.
+                @item Syntax-based coloring now also working on ASCII terminals (for 
+                      newer versions of emacs). 
+                @item Listing user-defined directives allowed to be colored in
+                      special face.
+                @item Syntax errors now colored also in inferior buffers.
+                @item Customizable faces now appear in the documentation.
+                @item Added new tool bar button (and binding) to refontify
+                      block/buffer.
+                @item Error marks now cleared automatically also when 
+                      generating docs.
+                @item Added some fixes to hooks in lpdoc buffer.
+                @end{itemize}  
+    @end{itemize}
+@item Bug fixes in compiler.
+    @begin{itemize}
+          @item Replication of clauses in some cases (thanks to S. Craig).
+    @end{itemize} 
 
-:- comment(version(1*10+1,2003/04/04,18:29*07+'CEST'), "Version
-   skipped (Jose Morales)").
+@item Improvements related to supported platforms
+    @begin{itemize}
+          @item Compilation and installation in different palatforms have been 
+                improved.
+          @item New Mac OS X kernels supported.
+    @end{itemize}
+
+@item Improvement and bugs fixes in the engine:
+      @begin{itemize}
+      @item Got rid of several segmentation violation problems.
+      @item Number of significant decimal digits to be printed now computed 
+            accurately.
+      @item Added support to test conversion of a Ciao integer into a machine 
+            int.
+      @item Unbound length atoms now always working.
+      @item C interface .h files reachable through a more standard location 
+            (thanks to R. Bagnara).
+      @item Compatibility with newer versions of gcc.
+      @end{itemize}
+
+@item New libraries and utilities added to the system:
+    @begin{itemize}
+    @item Factsdb: facts defined in external files can now be automatically 
+          cached on-demand.
+    @item Symfnames: File aliasing to internal streams added.
+    @end{itemize}
+
+@item New libraries added (in beta state):
+    @begin{itemize}
+    @item fd: clp(FD)
+    @item xml_path: XML querying and transformation to Prolog.
+    @item xdr_handle: XDR schema to HTML forms utility.
+    @item ddlist: Two-way traversal list library.
+    @item gnuplot: Interface to GnuPlot.
+    @item time_analyzer: Execution time profiling.
+    @end{itemize}
+
+@item Some libraries greatly improved:
+    @begin{itemize}
+    @item Interface to Tcl/Tk very improved. 
+          @begin{itemize}
+          @item Corrected many bugs in both interaction Prolog to Tcl/Tk and viceversa. 
+          @item Execution of Prolog goals from TclTk revamped.
+          @item Treatment of Tcl events corrected.
+          @item Predicate  @pred{tcl_eval/3} now allows the execution of Tcl 
+                procedures running multiple Prolog goals.
+          @item Documentation heavily reworked.
+          @item Fixed unification of prolog goals run from the Tcl side.
+    @end{itemize}
+    @item Pillow library improved in many senses.
+          @begin{itemize}
+          @item HTTP media type parameter values returned are always strings 
+                now, not atoms. 
+          @item Changed verbatim() pillow term so that newlines are translated 
+                to <br>.
+          @item Changed management of cookies so that special characters in 
+                values are correctly handled. 
+          @item Added predicate @pred{url_query_values/2}, reversible. 
+                Predicate @pred{url_query/2} now obsolete.
+          @item Now attribute values in tags are escaped to handle values 
+                which have double quotes.
+          @item Improved @pred{get_form_input/1} and @pred{url_query/2} so 
+                that names of parameters having unusual characters are always 
+                correctly handled.
+          @end{itemize}
+    @item Fixed bug in tokenizer regarding non-terminated single or 
+          multiple-line comments.  When the last line of a file has a 
+          single-line comment and does not end in a newline, it is accepted 
+          as correct.  When an open-comment /* sequence is not terminated in 
+          a file, a syntax error exception is thrown.
+    @end{itemize}
+
+@item Other libraries improved:
+    @begin{itemize}
+    @item Added native_props to assertions package and included
+          @pred{nonground/1}.
+    @item In atom2terms, changed interpretation of double quoted strings so 
+          that they are not parsed to terms.
+    @item Control on exceptions improved.
+    @item Added @pred{native/1,2} to basic_props.
+    @item Davinci error processing improved.
+    @item Foreign predicates are now automatically declared as 
+          implementation-defined.
+    @item In lists, added @pred{cross_product/2} to compute the cartesian 
+          product of a list of lists. Also added 
+          @pred{delete_non_ground/3}, enabling deletion of nonground terms 
+          from a list. 
+    @item In llists added @pred{transpose/2} and changed @pred{append/2} 
+          implementation with a much more efficient code. 
+    @item The make library has been improved.
+    @item In persdb, added @pred{pretractall_fact/1} and 
+          @pred{retractall_fact/1} as persdb native capabilities. 
+    @item Improved behavior with user environment from persdb.
+    @item In persdb, added support for @pred{persistent_dir/4}, which includes 
+          arguments to specify permission modes for persistent directory and files.
+    @item Some minor updates in persdb_sql.
+    @item Added treatment of operators and module:pred calls to pretty-printer.
+    @item Updated report of read of syntax errors.
+    @item File locking capabilities included in @pred{open/3}.
+    @item Several improvements in library system.
+    @item New input/output facilities added to sockets.
+    @item Added @pred{most_specific_generalization/3} and 
+          @pred{most_general_instance/3} to terms_check.
+    @item Added @pred{sort_dict/2} to library vndict.
+    @item The xref library now treats also empty references.
+    @end{itemize}
+
+@item Miscellaneous updates:
+      @begin{itemize}
+      @item Extended documentation in libraries actmods, arrays, 
+            foreign_interface, javall, persdb_mysql, prolog_sys, old_database, 
+            and terms_vars.
+      @end{itemize}
+@end{itemize}
+").
+
+
+:- comment(version(1*9+355,2004/07/02,13:28*02+'CEST'), "Improved
+   front cover (old authors are now listed as editors, mention UNM,
+   new TR number including system version, pointer to
+   @tt{www.ciaohome.org}, mention multi-paradigm, etc.). Also changed
+   mention of GPL in summary to LGPL.  (Manuel Hermenegildo)").
 
 :- comment(version(1*9+38,2002/12/12,20:06*26+'CET'), "Manual now
    posted in pdf format (since lpdoc now generates much better pdf).
@@ -214,6 +376,7 @@ development version after stable 1.8p0 (MCL, DCG)").
 
     @item Emacs-based environment and debugger improved:
 	@begin{itemize}
+        @item Fixed some errors in embedded debugger.
         @item Errors located immediataly after code loading.
         @item Improved ciao-check-types-modes (preprocessor progress
               now visible). 

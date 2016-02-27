@@ -83,15 +83,15 @@ copy_functor(From, To) :-
 	functor(From, N, A),
 	functor(To, N, A).
 
-:- comment(version(1*11+90,2003/12/21,02:20*48+'CET'), "Added comment
+:- comment(version(1*9+213,2003/12/21,02:20*13+'CET'), "Added comment
    author.  (Edison Mera)").
-
-:- comment(version(1*11+36,2003/08/28,21:07*51+'CEST'), "added
-   assertions for mode analysis (German Puebla)").
 
 :- comment(version(1*9+110,2003/09/25,21:32*13+'CEST'), "Changed comp
    to pred, moved modes there from the comment directives.  (Francisco
    Bueno Carrillo)").
+
+:- comment(version(1*9+100,2003/08/28,20:45*58+'CEST'), "Added
+   assertions for analysis. (German Puebla)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

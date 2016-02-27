@@ -50,16 +50,6 @@ library @lib{compiler/c_itf}.
    arguments for import/export also (and should probably look at the
    meta-predicate declarations for these)?").
 
-:- comment(bug, "Abridged syntax is incompatible with option -modes.
-   E.g.:
-   ERROR (assrt_lib): (lns 87-89) arity mismatch in declaration for 
-                      compare(?atm,@term,@term) in term_compare
-   with:
-          :- true pred compare(?atm,@term,@term)
-                    => member([(=),(>),(<)]) * term * term.
-   ").
-
-
 % ISO-Prolog compatibility libraries
 :- use_module(library(aggregates),[findall/3]).
 :- use_module(library(dynamic)).  
@@ -1068,8 +1058,24 @@ get_arg_props(PDA,NPDA,NDP,NCP,NAP,NGP,NPD,_F,_A,M,Opts,AType,S,LB,LE) :-
 	   resolve_applications(NGoalProps,AGoalProps,S,LB,LE),
 	   diff_append_props(AGoalProps,NGP)
 	).
-%% Else, argument is assumed to be simply a term
-get_arg_props(PDA,PDA,D-D,C-C,A-A,G-G,_NPD,_F,_A,_M,_Opts,_AType,_S,_LB,_LE).
+%% Else, argument is assumed to be a (possibly parametric) property
+%% If '-headprops' is on, leave as is:
+get_arg_props(PDA,PDA,D-D,C-C,A-A,G-G,_NPD,_F,_A,_M,Opts,AType,_S,_LB,_LE) :-
+	member('-headprops',Opts), 
+	\+ propfunctor(AType),
+	!.
+%% Else, properties are added to compatibility field!
+get_arg_props(PDA,NPDA,NDP,NCP,NAP,NGP,_NPD,_F,_A,_M,_Opts,_AType,_S,_LB,_LE):-
+	with_or_without_arg(PDA,NPDA,Prop),
+	!,
+	diff_append_props([Prop],NDP),
+	diff_append_props([],NCP),
+	diff_append_props([],NAP),
+	diff_append_props([],NGP).
+get_arg_props(PDA,PDA,DP-DP,CP-CP,AP-AP,G-G,_NPD,F,A,M,_Opts,_AType,S,LB,LE) :-
+	error_message(loc(S,LB,LE),
+             "syntax of argument '~w' in assertion for ~w/~w in module ~w",
+	              [PDA,F,A,M] ).
 
 %% with no argument variable, e.g., p(+), p(in(foo))
 with_or_without_arg(PDA,NPDA,Prop) :-
@@ -1155,7 +1161,7 @@ norm_arg_props(Props,PropExp,PD,Arity,M,S,LB,LE) :-
 	%% The last two are the two unary base cases (hardest to detect)
 	( Props = _R * _L ; Props = '{}'(_) ; ground(Props) ),
  	!,
-	norm_abridged_props(Props,PropExp,PD,Arity,M,S,LB,LE).
+ 	norm_abridged_props(Props,PropExp,PD,Arity,M,S,LB,LE).
 % Normal props (conjucntion)
 norm_arg_props(Props,PropExp,_PD,_Arity,_M,_S,_LB,_LE) :-
  	norm_normal_props(Props,PropExp).
@@ -1167,45 +1173,37 @@ norm_normal_props((Prop,Rest),[Prop|NRest]) :-
 norm_normal_props(FinalProp,[FinalProp]).
 
 norm_abridged_props(Ps * P,NPs,PD,Arg,M,S,LB,LE) :-
-	add_argvars(P,Arg,NArg0,PD,NP),
-	NArg is NArg0 - 1,
-	norm_abridged_props(Ps,NLs,PD,NArg,M,S,LB,LE), !,
+	!,
+	add_argvars(P,Arg,PD,NP),
+	NArg is Arg - 1,
+	norm_abridged_props(Ps,NLs,PD,NArg,M,S,LB,LE),
 	append(NLs,NP,NPs).
 norm_abridged_props(P,NP,PD,Arg,_M,_S,_LB,_LE) :-
-	add_argvars(P,Arg,NArg0,PD,NP),
-	% check the rest of args are nonvar:
-	NArg is NArg0 - 1,
-	\+ add_argvars(P,NArg,_,PD,NP), !.
+	Arg = 1,
+	add_argvars(P,Arg,PD,NP).
 norm_abridged_props(_P,_NP,PD,_Arg,M,S,LB,LE) :-
 	error_message(loc(S,LB,LE),
 	   "arity mismatch in declaration for ~w in ~w",[PD,M]).
 
-add_argvars('{}'(P),Arg,NArg,PD,NPs) :- 
+add_argvars('{}'(P),Arg,PD,NPs) :- 
 	!,
-	add_tuple_argvars(P,Arg,NArg,PD,NPs).
-add_argvars(P,Arg,NArg,PD,[NP]) :- 
-	add_argvar(P,Arg,NArg,PD,NP).
+	add_tuple_argvars(P,Arg,PD,NPs).
+add_argvars(P,Arg,PD,[NP]) :- 
+	add_argvar(P,Arg,PD,NP).
 
-add_tuple_argvars(','(P,PR),Arg,NArg,PD,[NP|NPs]) :-
+add_tuple_argvars(','(P,PR),Arg,PD,[NP|NPs]) :-
 	!,
-	add_argvar(P,Arg,NArg,PD,NP),
-	% all refered to the same NArg:
-	add_tuple_argvars(PR,NArg,NArg,PD,NPs).
-add_tuple_argvars(P,Arg,NArg,PD,[NP]) :-
-	add_argvar(P,Arg,NArg,PD,NP).
+	add_argvar(P,Arg,PD,NP),
+	add_tuple_argvars(PR,Arg,PD,NPs).
+add_tuple_argvars(P,Arg,PD,[NP]) :-
+	add_argvar(P,Arg,PD,NP).
 
-add_argvar(M:P,Arg,NArg,PD,M:NP) :- !,
-	add_argvar(P,Arg,NArg,PD,NP).
-add_argvar(P,Arg,NArg,PD,NP) :-
-	arg(Arg,PD,Var),
-	var(Var), !,
-	NArg = Arg,
+add_argvar(M:P,Arg,PD,M:NP) :- !,
+	add_argvar(P,Arg,PD,NP).
+add_argvar(P,Arg,PD,NP) :-
 	P =.. [F|Vars],
+	arg(Arg,PD,Var),
 	NP =.. [F,Var|Vars].
-add_argvar(P,Arg,NArg,PD,NP) :-
-	NArg1 is Arg-1,
-	NArg1 > 0,
-	add_argvar(P,NArg1,NArg,PD,NP).
 
 %% ---------------------------------------------------------------------------
 :- comment(norm_goal_props(Props,PropList,NPr), "@var{Props} is a
@@ -1328,18 +1326,10 @@ check_property(Prop,F,A,M,S,LB,LE) :-
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*11+174,2004/02/04,16:56*33+'CET'), "Solved
-   problem with the assertion syntax warning.  (Francisco Bueno
-   Carrillo)").
-
-:- comment(version(1*11+164,2004/02/03,11:25*03+'CET'), "Assertion
-   heads now accept terms. Declarative properties must go with ? mode.
-   (Francisco Bueno Carrillo)").
-
-:- comment(version(1*11+123,2003/12/24,17:02*07+'CET'), "Handle
+:- comment(version(1*9+246,2003/12/24,17:03*06+'CET'), "Handle
    module-name qualified properties.  (Francisco Bueno Carrillo)").
 
-:- comment(version(1*11+121,2003/12/24,16:25*05+'CET'), "Added apply/3
+:- comment(version(1*9+245,2003/12/24,16:27*05+'CET'), "Added apply/3
    because p(+list(character_code)) was wrongly nomalized as p(X)
    with list(character_code,X).  (Francisco Bueno Carrillo)").
 

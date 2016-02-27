@@ -142,8 +142,9 @@ two_or_three(3).
 switch(on).
 switch(off).
 
+
 :- comment(version_maintenance,dir('../../version')).
 
-
-:- comment(version(1*11+71,2003/12/19,16:54*53+'CET'), "Control
+:- comment(version(1*9+193,2003/12/19,16:54*06+'CET'), "Control
    version started.  (Edison Mera)").
+
