@@ -10,6 +10,21 @@
 	profiler.").
 
 /*
+
+To get the runtime errors, just run the following commands in the Ciao shell:
+
+?- use_module(library(profiler(profiler_utils))).
+?- set_prolog_flag(runtime_checks,yes).
+?- use_module(library(resdefs(examples(rtcheck_cc_2)))).
+?- profile(qsort([1,2,3,4,5],X)).
+
+useful commands:
+profile_reset
+profile_dump
+
+*/
+
+/*
 %:- use_module(library(resdefs(rtr_ticks)), []).
 
 :- pred qsort1/2 + cost(ub, exectime, 0).

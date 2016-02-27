@@ -1,9 +1,9 @@
 :- module(_, _, [ciaopaths, assertions, regtypes, fsyntax]).
 
 :- include(lpdocsrc(lib('SETTINGS_schema'))).
-% ***************************************************************************
-% This is a LPdoc configuration file. See SETTINGS_schema for documentation *
-% ***************************************************************************
+% ****************************************************************************
+% This is an LPdoc configuration file. See SETTINGS_schema for documentation *
+% ****************************************************************************
 
 :- use_module(library(system)).
 :- use_module(library(terms),                   [atom_concat/2]).

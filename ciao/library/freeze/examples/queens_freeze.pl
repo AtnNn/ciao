@@ -46,7 +46,7 @@ range(M,N,[M|Ns]) :-
 	M1 is M+1,
 	range(M1,N,Ns).
 
-label([],D).
+label([],_D).
 label([V|Vs],D):-
     myselect(D,Rest,V),
     label(Vs,Rest).

@@ -15,13 +15,19 @@
 :- export(fmt_distpkg_download/2).
 fmt_distpkg_download(Which, R) :-
 	% Load metadata of all the packages
-	PkgDir = ~distpkg_root,
-	AllPkgMetas = ~distpkg_load_metas_at(PkgDir),
-	%
 	( Which = latest ->
+	    Branch = 'trunk', % TODO: hardwired
+	    PkgDir = ~distpkg_root,
+	    AllPkgMetas = ~distpkg_load_metas_at(Branch, PkgDir),
 	    PkgMeta = ~newest_pkgmeta(AllPkgMetas)
 	; Which = stable ->
+	    % TODO: add branch here...
+	    Branch = 'trunk', % TODO: hardwired
 	    StableRev = ~setting_value(stable_revision),
+	    PkgDir = ~distpkg_root,
+	    AllPkgMetas = ~distpkg_load_metas_at(Branch, PkgDir),
+	    % TODO: we could simply use newest_pkgmeta here (add a richer language
+	    %   for stable_revision)
 	    ( PkgMeta = ~lookup_pkgmeta(StableRev, AllPkgMetas) ->
 	        true
 	    ; throw(pkgmeta_revision_not_found(StableRev))
@@ -184,9 +190,10 @@ distpkg_url := Url :-
 % ---------------------------------------------------------------------------
 % Load all the package metadata found in a given directory
 
-distpkg_load_metas_at(PkgDir) := AllPkgMetas :-
+distpkg_load_metas_at(Branch, PkgDir0) := AllPkgMetas :-
+	PkgDir = ~atom_concat([PkgDir0, '/', Branch]),
 	AllPackageF = ~matching_files(~atom_concat(PkgDir, '/*/desc.tmpl')),
-	AllPkgMetas = ~distpkg_load_metas(AllPackageF).
+	AllPkgMetas = ~distpkg_load_metas(AllPackageF, Branch).
 
 matching_files(Pattern) := Files :-
 	findall(File, enum_matching_file(Pattern, File), Files).
@@ -204,10 +211,13 @@ enum_matching_file(FileC, RealFile) :-
 
 % ---------------------------------------------------------------------------
 
-distpkg_load_metas([], []).
-distpkg_load_metas([F|Fs], [V|Vs]) :-
-	V = ~distpkg_load_meta(F),
-	distpkg_load_metas(Fs, Vs).
+:- use_module(library(lists), [append/3]).
+
+distpkg_load_metas([], _Branch, []).
+distpkg_load_metas([F|Fs], Branch, [V|Vs]) :-
+	% TODO: add branch metadata... nicer way of doing it?
+	V = ~append(~distpkg_load_meta(F), [branch = Branch]), % TODO: used?
+	distpkg_load_metas(Fs, Branch, Vs).
 
 % ---------------------------------------------------------------------------
 

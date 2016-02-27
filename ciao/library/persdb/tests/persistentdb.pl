@@ -4,7 +4,7 @@
 :- use_module(library(system)).
 :- use_module(library(terms)).
 
-:- load_test_module(library(autoconfig)).
+:- load_test_module(library(component_registry), []).
 
 :- use_module(ciaodesrc(makedir('ConfigValues')), [setlocalciao/1, ciaoc/1]).
 :- use_module(library(make(system_extra)), [do/2]).

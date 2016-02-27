@@ -48,9 +48,11 @@
 
 :- comment(subtitle, "Access to the basic ZMQ functionality from Ciao Prolog").
 
-:- comment(author, "Dragan Ivanovic, idragan@@clip.dia.fi.upm.es").
+:- comment(author, "Dragan Ivanovic (idragan@@clip.dia.fi.upm.es)").
 
-:- comment(module, "Access to the basic ZMQ functionality from Ciao Prolog").
+:- comment(module, "Access to the basic
+   @uref{ZMQ}{http://www.zeromq.org/} functionality from Ciao
+   Prolog").
 
 :- comment(summary, "This module provides Ciao Prolog bindings for the
 	ZeroMQ (ZMQ) in-process/inter-process/networked messaging

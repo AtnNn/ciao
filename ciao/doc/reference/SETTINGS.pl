@@ -1,9 +1,9 @@
 :- module(_, _, [ciaopaths, regtypes, fsyntax, assertions]).
 
 :- include(lpdocsrc(lib('SETTINGS_schema'))).
-% ***************************************************************************
-% This is a LPdoc configuration file. See SETTINGS_schema for documentation *
-% ***************************************************************************
+% ****************************************************************************
+% This is an LPdoc configuration file. See SETTINGS_schema for documentation *
+% ****************************************************************************
 
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(component_registry), [component_src/2]).
@@ -354,8 +354,7 @@ docstr_utilcomponents :=
 	 'collect_modules_doc'].
 
 docstr_contrib :=
-	['block/block_doc',
-	 'chartlib/chartlib'-[
+	['chartlib/chartlib'-[
 	   'chartlib/bltclass',
 	   'chartlib/chartlib_errhandle',
 	   'chartlib/color_pattern',
@@ -374,6 +373,8 @@ docstr_contrib :=
          ],
 	 'ddlist/ddlist',
 %        'debugpred',
+	 %
+	 'zeromq/zeromq',
 	 %
          'dht/dht_doc'-[
 	   'dht/dht_client',
@@ -420,7 +421,7 @@ docstr_contrib :=
          ],
          %
 	 'regexp/regexp_doc'-['regexp/regexp_code'],
-
+	 %
 	 'tester/tester',
 	 'time_analyzer/time_analyzer',
 	 'xdr_handle/xdr_handle',

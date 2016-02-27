@@ -570,12 +570,26 @@ create_module_wrapper(TmpDir, Module, Src, WrapperFile) :-
 	module_test_entry(Module, TestEntry, ARef),
 	unittest_print_clause((:- push_prolog_flag(single_var_warnings, off)),
 	    IO, []),
+	warning_rtchecks_recompile_required(Src, Module, Messages, Messages0),
 	findall(Message, print_each_test_entry(TmpDir, Module, Src, IO,
-		TestEntry, ARef, Message), Messages),
+		TestEntry, ARef, Message), Messages0),
 	unittest_print_clause((:- pop_prolog_flag(single_var_warnings)),
 	    IO, []),
 	close(IO),
 	pretty_messages(Messages).
+
+warning_rtchecks_recompile_required(Src, Module, Messages, Messages0) :-
+	clause_read(Src, 1, nortchecked, _, _, _, _) ->
+	Messages = Messages0
+    ;
+	\+ clause_read(Src, 1, rtchecked, _, _, _, _),
+	current_prolog_flag(runtime_checks, yes) ->
+	atom_concat(Src, '.pl', Pl),
+	Messages = [message_lns(Pl, 1, 1, warning,
+		['Run-time checks enabled, but module ', Module,
+		    ' needs to be recompiled'])|Messages0]
+    ;
+	Messages = Messages0.
 
 comp_prop_to_name(C0, C) :- C0 =.. [F, _|A], C =.. [F|A].
 
@@ -637,7 +651,11 @@ print_each_test_entry(TmpDir, Module, Src, IO, TestEntry, ARef, Message) :-
 			    throw(postcondition(Ex)))
 		    )
 		),
-		( clause_read(Src, 1, rtchecked, _, _, _, _) ->
+		(
+		    clause_read(Src, 1, rtchecked, _, _, _, _) ->
+		    RTCheck = Goal3
+		;
+		    current_prolog_flag(runtime_checks, no) ->
 		    RTCheck = Goal3
 		;
 		    collect_assertions(Pred, Module, Assertions),

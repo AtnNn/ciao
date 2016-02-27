@@ -8,7 +8,7 @@
 
 top:-
     mklist(100,L),
-    nrev(L,L1).
+    nrev(L,_).
 
 go:- 
     mklist(500,L),

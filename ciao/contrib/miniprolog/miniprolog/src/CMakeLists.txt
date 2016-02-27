@@ -1,6 +1,0 @@
-PROJECT(MiniProlog)
-
-ADD_SUBDIRECTORY(configure)
-ADD_SUBDIRECTORY(wam)
-ADD_SUBDIRECTORY(profview)
-ADD_SUBDIRECTORY(profreport)

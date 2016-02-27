@@ -341,12 +341,19 @@ tabling :-
 :- doc(section, "Extra for miniprolog").
 
 miniprolog :-
-	proc_if_dir_exists(~atom_concat(~component_src(ciao), '/contrib/miniprolog'), do_miniprolog),
-	% TODO: is this call necessary? (do_miniprolog does it)
+	MiniprologDir = ~atom_concat(~component_src(ciao), '/contrib/miniprolog'),
+	( file_exists(MiniprologDir) ->
+	    proc_if_dir_exists(MiniprologDir, do_miniprolog)
+	;
+	    true
+	),
+ 	% TODO: is this call necessary? (do_miniprolog does it)
 	copy_mp_auto.
 
 % TODO: Why is this target necessary?
-miniprolog <- :- do_miniprolog.
+miniprolog <- :-
+	MiniprologDir = ~atom_concat(~component_src(ciao), '/contrib/miniprolog'),
+	file_exists(MiniprologDir) -> do_miniprolog ; true.
 
 miniprolog_cmd := all|bench|estimate.
 
@@ -360,8 +367,7 @@ do_miniprolog :-
 	; true
 	),
 	copy_file('contrib/miniprolog/miniprolog/bin/miniprolog_auto.pl',
-	    'contrib/miniprolog/miniprolog_pre.pl', [overwrite]),
-	copy_mp_auto.
+	    'contrib/miniprolog/miniprolog_pre.pl', [overwrite]).
 
 invoke_gmake_miniprolog(Cmd) :-
 	invoke_gmake('contrib/miniprolog/miniprolog', ~atom_concat(['-s -j1 MPARCH=', ~get_platform, ' ', Cmd])).
@@ -369,8 +375,11 @@ invoke_gmake_miniprolog(Cmd) :-
 % This extra step is to ensure the generation of miniprolog_auto.pl
 % even if miniprolog has not been configured
 copy_mp_auto :-
+	file_exists('contrib/miniprolog/miniprolog_pre.pl') ->
 	copy_file('contrib/miniprolog/miniprolog_pre.pl',
-	    'contrib/miniprolog/miniprolog_auto.pl', [overwrite]).
+	    'contrib/miniprolog/miniprolog_auto.pl', [overwrite])
+    ;
+	true.
 
 % TODO: Document entry point?
 benchmp <- :- benchmp.
@@ -1051,4 +1060,3 @@ tags := ~atom_concat(~component_src(ciao), '/TAGS').
 
 deltags <- [] # "Deletion of TAGS file" :-
 	del_file_nofail(~tags).
-

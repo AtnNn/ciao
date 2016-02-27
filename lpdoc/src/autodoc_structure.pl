@@ -66,8 +66,16 @@ parse_structure_(S0, Parent) :-
 	% TODO: This could be simplified (I have repeated that code in some places)
 	get_name(Base, Mod), % just the name (i.e., ../<name>)
 %	display(user_error, docstr_node(Mod, Base, Parent, Mode)), nl(user_error),
-	assertz_fact(docstr_node(Mod, Base, Parent, Mode)),
+	add_docstr_node(Mod, Base, Parent, Mode),
 	parse_structure_(Ss, Mod).
+
+add_docstr_node(Mod, Base, Parent, Mode) :-
+	( current_fact(docstr_node(Mod, Base, _, _)) ->
+	    % TODO: This condition should change if a hierarchical module system is implemented
+	    % TODO: Fix error reporting (this code is tried several times before exiting lpdoc)
+	    throw(make_error("Duplicated ~w module in doc_structure/1 in SETTINGS file.", [Base]))
+	; assertz_fact(docstr_node(Mod, Base, Parent, Mode))
+	).
 
 parse_structure_list([], _) :- !.
 parse_structure_list([S|Ss], Parent) :- !,

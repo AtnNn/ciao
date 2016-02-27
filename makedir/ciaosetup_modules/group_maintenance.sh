@@ -10,7 +10,7 @@ command_help <<EOF
   braveclean   Clean CiaoDE auto-generated files, including documentation,
                but keep configuration choices.
 
-  realclean    Clean all CiaoDE  auto-generated files, and also 
+  realclean    Clean all CiaoDE auto-generated files, and also 
                configuration choices. 
 
   bootclean    Remove binary files.

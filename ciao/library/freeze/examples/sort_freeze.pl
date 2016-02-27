@@ -18,7 +18,7 @@ go:-
 
 psort(X,Y):-sorted(Y),permutation(X,Y).
 
-sorted([X]):-!.
+sorted([_]):-!.
 sorted([X,Y|L]):-
     freeze(X,freeze(Y,X=<Y)),
     sorted([Y|L]).

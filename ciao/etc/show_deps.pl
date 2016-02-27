@@ -20,7 +20,7 @@
 :- doc(bug, "Integrate with @lib{library(xrefs)}").
 
 :- doc(bug, "Move part of this application a library. E.g., it can be
-   useful to invoke it from a LPdoc plug-in.").
+   useful to invoke it from an LPdoc plug-in.").
 
 :- doc(bug, "Move this and other tools (like plindent) to a lint-like
    tool for Ciao").

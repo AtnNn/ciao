@@ -1,9 +1,9 @@
 :- module(_, _, [ciaopaths, regtypes, fsyntax, assertions]).
 
 :- include(lpdocsrc(lib('SETTINGS_schema'))).
-% ***************************************************************************
-% This is a LPdoc configuration file. See SETTINGS_schema for documentation *
-% ***************************************************************************
+% ****************************************************************************
+% This is an LPdoc configuration file. See SETTINGS_schema for documentation *
+% ****************************************************************************
 
 % TODO: lpdoc all is not working for this file. The .lpdoc file is
 %       ignored unless lpdoc singlelpdoc.texic is put as target.

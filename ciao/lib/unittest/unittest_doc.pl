@@ -91,8 +91,9 @@
          tests.
 
    @item The Ciao system includes a good (and growing) number of unit
-   tests. To run all the tests among the other standard tests within
-   the CiaoDE run the following (at the top level of the source tree):
+         tests. To run all the tests among the other standard tests
+         within the CiaoDE run the following (at the top level of the
+         source tree):
 
 @begin{verbatim}
 ./ciaosetup runtests
@@ -107,3 +108,16 @@
 %          regression testing (in cliptest1), and if a change is
 %          detected, a message is sent to the authors.
 
+:- doc(bug, "load_compilation_module, load_test_module and
+	load_resource_module directives have similar behavior").
+
+:- decl load_test_module(Module) : sourcename # "Specifies a module
+	that must be loaded in order to execute the tests.".
+
+:- decl load_test_module(Module, PredNames) : ( sourcename(Module),
+	    list(PredNames, predname) ) # "Specifies a module and the list
+	of predicates that must be loaded in order to execute the
+	tests".
+
+:- decl load_package_module(Module) : sourcename # "Specifies a
+	package that must be used in order to execute the tests.".
