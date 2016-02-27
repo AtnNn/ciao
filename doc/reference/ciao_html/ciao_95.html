@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Active modules (high-level distributed execution)</TITLE>
@@ -10,9 +10,9 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, 
 <P><HR><P>
 
 
-<H1><A NAME="SEC354" HREF="ciao_toc.html#TOC354">Active modules (high-level distributed execution)</A></H1>
+<H1><A NAME="SEC380" HREF="ciao_toc.html#TOC380">Active modules (high-level distributed execution)</A></H1>
 <P>
-<A NAME="IDX3939"></A>
+<A NAME="IDX4196"></A>
 
 
 <P>
@@ -33,23 +33,23 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, 
 
 <P>
 Active modules [CH95] provide a high-level model of 
-<A NAME="IDX3940"></A>
+<A NAME="IDX4197"></A>
 inter-process communication and 
-<A NAME="IDX3941"></A>
+<A NAME="IDX4198"></A>
 distributed execution (note that using Ciao's communication and concurrency primitives, such as sockets, concurrent predicates, etc.). An 
-<A NAME="IDX3942"></A>
-<A NAME="IDX3943"></A>
+<A NAME="IDX4199"></A>
+<A NAME="IDX4200"></A>
 <EM>active module</EM> (or an 
-<A NAME="IDX3944"></A>
-<A NAME="IDX3945"></A>
+<A NAME="IDX4201"></A>
+<A NAME="IDX4202"></A>
 <EM>active object</EM>) is an ordinary module to which computational resources are attached, and which resides at a given location on the network. Compiling an active module produces an executable which, when running, acts as a server for a number of predicates, the predicates exported by the module. Predicates exported by an active module can be accessed by a program on the network by simply "using" the module, which then imports such "remote predicates." The process of loading an active module does not involve transferring any code, but rather setting up things so that calls in the module using the active module are executed as remote procedure calls to the active module. This occurs in the same way independently of whether the active module and the using module are in the same machine or in different machines across the network. 
 
 
 <P>
 Except for having compiling it in a special way (see below), an active module is identical from the programmer point of view to an ordinary module. A program using an active module imports it and uses it in the same way as any other module, except that it uses "
-<A NAME="IDX3946"></A>
+<A NAME="IDX4203"></A>
 <CODE>use_active_module</CODE>" rather than "
-<A NAME="IDX3947"></A>
+<A NAME="IDX4204"></A>
 <CODE>use_module</CODE>" (see below). Also, an active module has an address (network address) which must be known in order to use it. In order to use an active module it is necessary to know its address. 
  
 <A NAME="DOCF3" HREF="ciao_foot.html#FOOT3">(3)</A> 
@@ -78,7 +78,7 @@ These rendezvous methods are encoded in two modules: a first one, called <CODE>.
 
 <P>
 Active modules are compiled using the <CODE>-a</CODE> option of the Ciao compiler (this can also be done from the interactive top-level shell using 
-<A NAME="IDX3948"></A>
+<A NAME="IDX4205"></A>
 <CODE>make_actmod/2</CODE>). For example, issuing the following command: 
 
 
@@ -102,13 +102,13 @@ Now, if the server is running (e.g., <CODE>simple_server &#38;</CODE> in Un*x or
 
 <P>
 A simpler even client 
-<A NAME="IDX3949"></A>
+<A NAME="IDX4206"></A>
 <CODE>simple_client.pl</CODE> can be loaded into the top level and its predicates called as usual (and they will connect with the server if it is running). 
 
 
 <P>
 The architecture of the active modules model in Ciao allows defining other methods for this communication to happen. For example, one can implement a 
-<A NAME="IDX3950"></A>
+<A NAME="IDX4207"></A>
 name server. This can itself be an active module which resides at a fixed and known machine and port number (this is known as a <EM>service</EM> and is defined in <CODE>/etc/services</CODE> in a Un*x machine). In order the best way is to mimick the code of the redezvous methods provided in the Ciao distribution. 
  
 Security: in the access method (?). 
@@ -116,13 +116,13 @@ Security: in the access method (?).
 
 
 <UL>
-<LI><A HREF="ciao_95.html#SEC355">Usage and interface (actmods)</A>
-<LI><A HREF="ciao_95.html#SEC356">Documentation on new declarations (actmods)</A>
+<LI><A HREF="ciao_95.html#SEC381">Usage and interface (actmods)</A>
+<LI><A HREF="ciao_95.html#SEC382">Documentation on new declarations (actmods)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC355" HREF="ciao_toc.html#TOC355">Usage and interface (<CODE>actmods</CODE>)</A></H2>
+<H2><A NAME="SEC381" HREF="ciao_toc.html#TOC381">Usage and interface (<CODE>actmods</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -138,7 +138,7 @@ or
 
 <LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX3951"></A>
+<A NAME="IDX4208"></A>
 <CODE>use_active_module/2</CODE>.
 
 </UL>
@@ -147,13 +147,13 @@ or
 
 
 
-<H2><A NAME="SEC356" HREF="ciao_toc.html#TOC356">Documentation on new declarations (<CODE>actmods</CODE>)</A></H2>
+<H2><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Documentation on new declarations (<CODE>actmods</CODE>)</A></H2>
 <P>
-<A NAME="IDX3952"></A>
-<A NAME="IDX3953"></A>
+<A NAME="IDX4209"></A>
+<A NAME="IDX4210"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>use_active_module/2:</B>
-<DD><A NAME="IDX3954"></A>
+<DD><A NAME="IDX4211"></A>
 
 
 <P>

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 13 July 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Low-level Prolog to Java interface</TITLE>
@@ -10,9 +10,9 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_117.html">previous</A>,
 <P><HR><P>
 
 
-<H1><A NAME="SEC454" HREF="ciao_toc.html#TOC454">Low-level Prolog to Java interface</A></H1>
+<H1><A NAME="SEC480" HREF="ciao_toc.html#TOC480">Low-level Prolog to Java interface</A></H1>
 <P>
-<A NAME="IDX5060"></A>
+<A NAME="IDX5317"></A>
 
 
 <P>
@@ -33,19 +33,19 @@ Although the Java side interface is explained in Javadoc format, the general int
 
 
 <UL>
-<LI><A HREF="ciao_118.html#SEC455">Low-Level Prolog to Java Interface Structure</A>
-<LI><A HREF="ciao_118.html#SEC458">Java event handling from Prolog</A>
-<LI><A HREF="ciao_118.html#SEC459">Java exception handling from Prolog</A>
-<LI><A HREF="ciao_118.html#SEC460">Usage and interface (javart)</A>
-<LI><A HREF="ciao_118.html#SEC461">Documentation on exports (javart)</A>
+<LI><A HREF="ciao_118.html#SEC481">Low-Level Prolog to Java Interface Structure</A>
+<LI><A HREF="ciao_118.html#SEC484">Java event handling from Prolog</A>
+<LI><A HREF="ciao_118.html#SEC485">Java exception handling from Prolog</A>
+<LI><A HREF="ciao_118.html#SEC486">Usage and interface (javart)</A>
+<LI><A HREF="ciao_118.html#SEC487">Documentation on exports (javart)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC455" HREF="ciao_toc.html#TOC455">Low-Level Prolog to Java Interface Structure</A></H2>
+<H2><A NAME="SEC481" HREF="ciao_toc.html#TOC481">Low-Level Prolog to Java Interface Structure</A></H2>
 <P>
-<A NAME="IDX5061"></A>
-<A NAME="IDX5062"></A>
+<A NAME="IDX5318"></A>
+<A NAME="IDX5319"></A>
 This low-level prolog to java interface is made up of two parts: a Prolog part and a Java part. The Prolog part receives requests from a Prolog program and sends them to the Java part through a socket. The Java part receives requests from the socket and performs the actions included in the requests. 
 
 
@@ -59,16 +59,16 @@ In the java side the threads are automatically created by the context of the obj
 
 
 <UL>
-<LI><A HREF="ciao_118.html#SEC456">Prolog side</A>
-<LI><A HREF="ciao_118.html#SEC457">Java side</A>
+<LI><A HREF="ciao_118.html#SEC482">Prolog side</A>
+<LI><A HREF="ciao_118.html#SEC483">Java side</A>
 </UL>
 
 
 
-<H3><A NAME="SEC456" HREF="ciao_toc.html#TOC456">Prolog side</A></H3>
+<H3><A NAME="SEC482" HREF="ciao_toc.html#TOC482">Prolog side</A></H3>
 <P>
-<A NAME="IDX5063"></A>
-<A NAME="IDX5064"></A>
+<A NAME="IDX5320"></A>
+<A NAME="IDX5321"></A>
 The prolog side receives the actions to do in the java side from the user program, and sends them to the java side through the socket connection. When the action is done in the java side, the result is returned to the user program, or the action fails if any problem in the java side is found. 
 
 
@@ -82,10 +82,10 @@ Prolog data representation of java elements is very simple in this low-level int
 
 
 
-<H3><A NAME="SEC457" HREF="ciao_toc.html#TOC457">Java side</A></H3>
+<H3><A NAME="SEC483" HREF="ciao_toc.html#TOC483">Java side</A></H3>
 <P>
-<A NAME="IDX5065"></A>
-<A NAME="IDX5066"></A>
+<A NAME="IDX5322"></A>
+<A NAME="IDX5323"></A>
 The java side of this layer is more complex than the prolog side. The tasks this part have to deal to are the following: 
 
 
@@ -120,10 +120,10 @@ On the other hand, the java representation of prolog terms is made using the inh
 
 
 
-<H2><A NAME="SEC458" HREF="ciao_toc.html#TOC458">Java event handling from Prolog</A></H2>
+<H2><A NAME="SEC484" HREF="ciao_toc.html#TOC484">Java event handling from Prolog</A></H2>
 <P>
-<A NAME="IDX5067"></A>
-<A NAME="IDX5068"></A>
+<A NAME="IDX5324"></A>
+<A NAME="IDX5325"></A>
 Java event handling is based on a delegation model since version 1.1.x. This approach to event handling is very powerful and elegant, but a user program cannot handle all the events that can raise on a given object: for each kind of event, a listener must be implemented and added specifically. However, the Java 2 API includes a special listener (<CODE>AWTEventListener</CODE>) that can manage the internal java event queue. 
 
 
@@ -154,10 +154,10 @@ When an event raises, the low-level Prolog to Java interface have to send to the
 
 
 
-<H2><A NAME="SEC459" HREF="ciao_toc.html#TOC459">Java exception handling from Prolog</A></H2>
+<H2><A NAME="SEC485" HREF="ciao_toc.html#TOC485">Java exception handling from Prolog</A></H2>
 <P>
-<A NAME="IDX5069"></A>
-<A NAME="IDX5070"></A>
+<A NAME="IDX5326"></A>
+<A NAME="IDX5327"></A>
 Java exception handling is very similar to the peer prolog handling: it includes some specific statements to trap exceptions from user code. In the java side, the exceptions can be originated from an incorrect request, or can be originated in the code called from the request. Both exception types will be sent to prolog using the main socket stream, leaving the prolog program manage the exception. However, the first kind of exceptions are prefixed, so the user program can distinguish from the second type of exceptions. 
 
 
@@ -167,7 +167,7 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 
 
-<H2><A NAME="SEC460" HREF="ciao_toc.html#TOC460">Usage and interface (<CODE>javart</CODE>)</A></H2>
+<H2><A NAME="SEC486" HREF="ciao_toc.html#TOC486">Usage and interface (<CODE>javart</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -184,42 +184,42 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5071"></A>
+<A NAME="IDX5328"></A>
 <CODE>java_create_object/2</CODE>, 
-<A NAME="IDX5072"></A>
+<A NAME="IDX5329"></A>
 <CODE>java_delete_object/1</CODE>, 
-<A NAME="IDX5073"></A>
+<A NAME="IDX5330"></A>
 <CODE>java_invoke_method/2</CODE>, 
-<A NAME="IDX5074"></A>
+<A NAME="IDX5331"></A>
 <CODE>java_get_value/2</CODE>, 
-<A NAME="IDX5075"></A>
+<A NAME="IDX5332"></A>
 <CODE>java_set_value/2</CODE>, 
-<A NAME="IDX5076"></A>
+<A NAME="IDX5333"></A>
 <CODE>java_connection/0</CODE>, 
-<A NAME="IDX5077"></A>
+<A NAME="IDX5334"></A>
 <CODE>java_remote_connection/1</CODE>, 
-<A NAME="IDX5078"></A>
+<A NAME="IDX5335"></A>
 <CODE>java_disconnection/0</CODE>, 
-<A NAME="IDX5079"></A>
+<A NAME="IDX5336"></A>
 <CODE>java_add_listener/3</CODE>, 
-<A NAME="IDX5080"></A>
+<A NAME="IDX5337"></A>
 <CODE>java_remove_listener/3</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX5081"></A>
+<A NAME="IDX5338"></A>
 <CODE>machine_name/1</CODE>, 
-<A NAME="IDX5082"></A>
+<A NAME="IDX5339"></A>
 <CODE>java_constructor/1</CODE>, 
-<A NAME="IDX5083"></A>
+<A NAME="IDX5340"></A>
 <CODE>java_object/1</CODE>, 
-<A NAME="IDX5084"></A>
+<A NAME="IDX5341"></A>
 <CODE>java_method/1</CODE>, 
-<A NAME="IDX5085"></A>
+<A NAME="IDX5342"></A>
 <CODE>java_field/1</CODE>, 
-<A NAME="IDX5086"></A>
+<A NAME="IDX5343"></A>
 <CODE>java_event/1</CODE>, 
-<A NAME="IDX5087"></A>
+<A NAME="IDX5344"></A>
 <CODE>prolog_goal/1</CODE>.
 
 </UL>
@@ -231,19 +231,19 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5088"></A>
+<A NAME="IDX5345"></A>
 <CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX5089"></A>
+<A NAME="IDX5346"></A>
 <CODE>format</CODE>, 
-<A NAME="IDX5090"></A>
+<A NAME="IDX5347"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX5091"></A>
+<A NAME="IDX5348"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX5092"></A>
+<A NAME="IDX5349"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX5093"></A>
+<A NAME="IDX5350"></A>
 <CODE>javall/javasock</CODE>, 
-<A NAME="IDX5094"></A>
+<A NAME="IDX5351"></A>
 <CODE>system</CODE>.
 
 </UL>
@@ -254,13 +254,13 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 
 
-<H2><A NAME="SEC461" HREF="ciao_toc.html#TOC461">Documentation on exports (<CODE>javart</CODE>)</A></H2>
+<H2><A NAME="SEC487" HREF="ciao_toc.html#TOC487">Documentation on exports (<CODE>javart</CODE>)</A></H2>
 <P>
-<A NAME="IDX5095"></A>
-<A NAME="IDX5096"></A>
+<A NAME="IDX5352"></A>
+<A NAME="IDX5353"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_create_object/2:</B>
-<DD><A NAME="IDX5097"></A>
+<DD><A NAME="IDX5354"></A>
 
 
 <P>
@@ -281,11 +281,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5098"></A>
-<A NAME="IDX5099"></A>
+<A NAME="IDX5355"></A>
+<A NAME="IDX5356"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>machine_name/1:</B>
-<DD><A NAME="IDX5100"></A>
+<DD><A NAME="IDX5357"></A>
 
 
 <P>
@@ -299,11 +299,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5101"></A>
-<A NAME="IDX5102"></A>
+<A NAME="IDX5358"></A>
+<A NAME="IDX5359"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>java_constructor/1:</B>
-<DD><A NAME="IDX5103"></A>
+<DD><A NAME="IDX5360"></A>
 
 
 <P>
@@ -317,11 +317,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5104"></A>
-<A NAME="IDX5105"></A>
+<A NAME="IDX5361"></A>
+<A NAME="IDX5362"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>java_object/1:</B>
-<DD><A NAME="IDX5106"></A>
+<DD><A NAME="IDX5363"></A>
 
 
 <P>
@@ -335,11 +335,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5107"></A>
-<A NAME="IDX5108"></A>
+<A NAME="IDX5364"></A>
+<A NAME="IDX5365"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_delete_object/1:</B>
-<DD><A NAME="IDX5109"></A>
+<DD><A NAME="IDX5366"></A>
 
 
 <P>
@@ -357,11 +357,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5110"></A>
-<A NAME="IDX5111"></A>
+<A NAME="IDX5367"></A>
+<A NAME="IDX5368"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_invoke_method/2:</B>
-<DD><A NAME="IDX5112"></A>
+<DD><A NAME="IDX5369"></A>
 
 
 <P>
@@ -382,11 +382,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5113"></A>
-<A NAME="IDX5114"></A>
+<A NAME="IDX5370"></A>
+<A NAME="IDX5371"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>java_method/1:</B>
-<DD><A NAME="IDX5115"></A>
+<DD><A NAME="IDX5372"></A>
 
 
 <P>
@@ -400,11 +400,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5116"></A>
-<A NAME="IDX5117"></A>
+<A NAME="IDX5373"></A>
+<A NAME="IDX5374"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_get_value/2:</B>
-<DD><A NAME="IDX5118"></A>
+<DD><A NAME="IDX5375"></A>
 
 
 <P>
@@ -425,11 +425,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5119"></A>
-<A NAME="IDX5120"></A>
+<A NAME="IDX5376"></A>
+<A NAME="IDX5377"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_set_value/2:</B>
-<DD><A NAME="IDX5121"></A>
+<DD><A NAME="IDX5378"></A>
 
 
 <P>
@@ -450,11 +450,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5122"></A>
-<A NAME="IDX5123"></A>
+<A NAME="IDX5379"></A>
+<A NAME="IDX5380"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>java_field/1:</B>
-<DD><A NAME="IDX5124"></A>
+<DD><A NAME="IDX5381"></A>
 
 
 <P>
@@ -468,11 +468,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5125"></A>
-<A NAME="IDX5126"></A>
+<A NAME="IDX5382"></A>
+<A NAME="IDX5383"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_connection/0:</B>
-<DD><A NAME="IDX5127"></A>
+<DD><A NAME="IDX5384"></A>
 
 
 <P>
@@ -486,11 +486,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5128"></A>
-<A NAME="IDX5129"></A>
+<A NAME="IDX5385"></A>
+<A NAME="IDX5386"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_remote_connection/1:</B>
-<DD><A NAME="IDX5130"></A>
+<DD><A NAME="IDX5387"></A>
 
 
 <P>
@@ -504,11 +504,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5131"></A>
-<A NAME="IDX5132"></A>
+<A NAME="IDX5388"></A>
+<A NAME="IDX5389"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_disconnection/0:</B>
-<DD><A NAME="IDX5133"></A>
+<DD><A NAME="IDX5390"></A>
 
 
 <P>
@@ -522,11 +522,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5134"></A>
-<A NAME="IDX5135"></A>
+<A NAME="IDX5391"></A>
+<A NAME="IDX5392"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_add_listener/3:</B>
-<DD><A NAME="IDX5136"></A>
+<DD><A NAME="IDX5393"></A>
 
 
 <P>
@@ -554,11 +554,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5137"></A>
-<A NAME="IDX5138"></A>
+<A NAME="IDX5394"></A>
+<A NAME="IDX5395"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>java_event/1:</B>
-<DD><A NAME="IDX5139"></A>
+<DD><A NAME="IDX5396"></A>
 
 
 <P>
@@ -572,11 +572,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5140"></A>
-<A NAME="IDX5141"></A>
+<A NAME="IDX5397"></A>
+<A NAME="IDX5398"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>prolog_goal/1:</B>
-<DD><A NAME="IDX5142"></A>
+<DD><A NAME="IDX5399"></A>
 
 
 <P>
@@ -590,11 +590,11 @@ In order to handle exceptions properly using the prolog to java and java to prol
 </DL>
 
 <P>
-<A NAME="IDX5143"></A>
-<A NAME="IDX5144"></A>
+<A NAME="IDX5400"></A>
+<A NAME="IDX5401"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>java_remove_listener/3:</B>
-<DD><A NAME="IDX5145"></A>
+<DD><A NAME="IDX5402"></A>
 
 
 <P>

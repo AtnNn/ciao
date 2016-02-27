@@ -154,6 +154,9 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*6+3,2000/08/23,11:27*29+'CEST'), "Solved a bug in
+the installation of the .sta version.  (MCL)").
+
 :- comment(version(1*6+0,2000/07/12,18:55*50+'CEST'), "
 @begin{itemize}
 @item Source-level debugger in emacs, breakpts.

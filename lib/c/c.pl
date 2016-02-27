@@ -758,19 +758,8 @@ zero_sum(X+Y) :- !,
 zero_sum(0).
 
 
-
-
-
-
 :- comment(version_maintenance,dir('../../version')).
 
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
-
 :- comment(version(1*6+1,2000/07/13,11:36*00+'CEST'), "Removed
-NODISTRIBUTE from distribution.  (MCL)").
+   NODISTRIBUTE from distribution.  (MCL)").
 

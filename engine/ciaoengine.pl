@@ -25,6 +25,9 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*6+2,2000/07/18,15:45*13+'CEST'), "Some warnings fixed
+   (Oscar Portela Arjona)").
+
 :- comment(version(1*5+172,2000/07/12,16:45*31+'CEST'), "Partially
 solved undetected heap overflows in fast_read: no enough checks were
 made when constructing terms.  Workaround: ensuring enough heap space

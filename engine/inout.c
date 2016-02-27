@@ -1008,9 +1008,9 @@ BOOL compressLZ(Arg)
         Vault[i] = i % 256; }
   First = &Vault[256];
 
-  while((First[PrefixSize] = getc(s->streamfile)) != EOF) {
-     if (First[PrefixSize++] < -1)
-      BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+  while((i = getc(s->streamfile)) != EOF) {
+    if (i < -1) BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    First[PrefixSize++] = i;
     for (i = Entry; Entry <= Last; Entry++) 
       if ((Size[Entry] == PrefixSize) && (Dict[Entry][0] == First[0])
           && !(memcmp(&Dict[Entry][1],&First[1],PrefixSize-1))) break;
