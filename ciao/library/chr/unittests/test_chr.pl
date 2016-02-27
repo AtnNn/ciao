@@ -18,7 +18,7 @@ test_chr(Base-Name, _) :-
 
 main:-
 	map([fibonacci-'Fibonacci', leq-'Less or Equal',
-		primes-'Primes', zebra-'Zebra', typesmodes-'Typesmodes',
+		primes-'Primes', zebra-'Zebra', %typesmodes-'Typesmodes',
 		passive_check-'Passive Check', passive_check2-'Passive Check2',
-		trigger_no_active_occurrence-'Trigger'], test_chr, _)
+		trigger_no_active_occurrence-'Trigger'], test_chr, _),
 	!.

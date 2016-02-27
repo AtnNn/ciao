@@ -106,13 +106,13 @@ invoke_gmake_localciao(Dir, Target) :-
 :- use_module(library(lpdist(ciao_config_options)), [gmake/1, build_log/1, ciaosh/1]).
 :- use_module(library(system_extra), [do/2]).
 
-% custom shell command with environment predefined for ciaosh execution
-% TODO: for CHR bootstrap, really necessary?
-:- export(invoke_customsh/2).
-invoke_customsh(Dir, Cmd) :-
-	do(['cd ', Dir, '; ',
-	    ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ',
-	    './', Cmd, ' >> ', ~build_log], ~command_option).
+% % custom shell command with environment predefined for ciaosh execution
+% % TODO: for CHR bootstrap, really necessary?
+% :- export(invoke_customsh/2).
+% invoke_customsh(Dir, Cmd) :-
+% 	do(['cd ', Dir, '; ',
+% 	    ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ',
+% 	    './', Cmd, ' >> ', ~build_log], ~command_option).
 
 :- export(invoke_ciaosh/1).
 invoke_ciaosh(Input) :-

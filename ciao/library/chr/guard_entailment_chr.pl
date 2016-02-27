@@ -4,15 +4,18 @@
 % Copyright:	K.U.Leuven 2004
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(guard_entailment,
-	[
-		entails_guard/2,
-		simplify_guards/5
-	]).
+%:- module(guard_entailment,
+%	[
+%		entails_guard/2,
+%		simplify_guards/5
+%	]).
+
+:- export(entails_guard/2).
+:- export(simplify_guards/5).
 
 % :- use_module(library(chr)).
 :- include(library( 'chr/chr_op')).
-:- use_module(library(lists),[append/3]).
+:- use_module(library(lists),[append/3, length/2]).
 :- use_module(library( 'chr/hprolog' )).
 :- use_module(library( 'chr/builtins' )).
 :- use_module(library( 'chr/chr_compiler_errors')).

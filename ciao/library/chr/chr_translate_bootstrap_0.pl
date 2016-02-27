@@ -117,20 +117,24 @@
 %%	* unique inference for simplification rules
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Ciao begin
-:- module(chr_translate_bootstrap,
-%% Ciao end
-	  [ chr_translate/2		% +Decls, -TranslatedDecls
-	  ]).
+
+%:- module(chr_translate_bootstrap,
+%	  [ chr_translate/2		% +Decls, -TranslatedDecls
+%	  ]).
 
 %% Ciao begin
 %% SWI begin
 %% :- use_module(library(lists),[member/2,append/3,permutation/2,reverse/2]).
 %% SWI end
-:- use_module(library(lists), [nth/3, append/3, reverse/2]).
+:- use_module(library(lists), [nth/3, append/3, reverse/2, length/2, select/3]).
+:- use_module(library(format), [format/2]).
+:- use_module(library(write), [write/1]).
+:- use_module(library(iso_misc), [compound/1, once/1] ).
 %% Ciao end
 :- use_module(hprolog).
 :- use_module(pairlist).
+
+:- op(1100, xfy, ('|')).
 %% Ciao begin
 
 % :- initialization ().

@@ -119,23 +119,20 @@
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module( 
-%% Ciao begin
-	chr_translate_bootstrap1,
-%% Ciao end
-	  [ chr_translate/2		% +Decls, -TranslatedDecls
-	  ]
-%% Ciao begin
-%	  , ['chr/ciao/chr1']
-%% Ciao end
-	).
+%:- module( 
+%	_
+%	  [ chr_translate/2		% +Decls, -TranslatedDecls
+%	  ]
+%	).
+
+
 
 %% Ciao begin
 %:- use_module(library(lists),[append/3,member/2,permutation/2,reverse/2]).
 :- use_module(library(lists),[length/2,append/3,reverse/2,select/3]).
 :- use_module(library(format)).
 :- use_module(library(write)).
-:- use_module(library(aggregates)).
+%:- use_module(library(aggregates)).
 :- use_module(library(iso_misc), [once/1] ).
 %% Ciao end
 %% SICStus begin

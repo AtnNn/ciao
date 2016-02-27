@@ -130,15 +130,16 @@
 %%	  merged
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- module(chr_translate,
-	  [ chr_translate/2		% +Decls, -TranslatedDecls
-	  , type_definition/2
-	  , constraint_type/2
-	  , store_type/2
-	  , constraint_mode/2
-	  , functional_dependency_analysis/1
-	  ]).
-% :- use_module(library(lists),[member/2, append/3,reverse/2,permutation/2,last/2]).
+%:- module(chr_translate,
+%	  [ chr_translate/2		% +Decls, -TranslatedDecls
+%	  , type_definition/2
+%	  , constraint_type/2
+%	  , store_type/2
+%	  , constraint_mode/2
+%	  , functional_dependency_analysis/1
+%	  ]).
+
+
 
 %% SICStus begin
 %% :- use_module(library(lists),[memberchk/2,is_list/1]).
@@ -158,12 +159,16 @@
 :- use_module(library('chr/clean_code')).
 :- use_module(library('chr/builtins')).
 :- use_module(library('chr/chr_find')).
-:- use_module(library('chr/guard_entailment')).
-:- use_module(library('chr/chr_compiler_options')).
+%:- use_module(library('chr/guard_entailment')).
+%:- use_module(library('chr/chr_compiler_options')).
 :- use_module(library('chr/chr_compiler_utility')).
 :- use_module(library('chr/chr_compiler_errors')).
 :- push_prolog_flag( multi_arity_warnings , off ).
 :- include(library('chr/chr_op')).
+
+:- use_module(library(lists),[append/3,reverse/2, length/2, last/2]).
+:- use_module(library(write), [write/1]).
+:- use_module(library(iso_misc), [once/1]).
 
 :- multifile initial_gv_value/2.
 %% Ciao end
@@ -2994,7 +2999,8 @@ compute_derived_info(Matchings,[Renaming1|RR],UniqueVarsHeads,Heads,G2,M,H,GH,De
 
 simplify_guard(G,B,Info,SG,NB) :-
     conj2list(G,LG),
-    guard_entailment:simplify_guards(Info,B,LG,SGL,NB),
+%    guard_entailment:simplify_guards(Info,B,LG,SGL,NB),
+    simplify_guards(Info,B,LG,SGL,NB),
     list2conj(SGL,SG).
 
 
@@ -3154,7 +3160,8 @@ rule(RuleNb,Rule) \ prev_guard_list(RuleNb,0,H,G,GuardList,M,[]) <=>
     chr_pp_flag(check_impossible_rules,on),
     Rule = pragma(rule(Head1,Head2,G,B),Ids,Pragmas,Name,RuleNb),
     append(M,GuardList,Info),
-    guard_entailment:entails_guard(Info,fail) |
+%    guard_entailment:entails_guard(Info,fail) |
+    entails_guard(Info,fail) |
     chr_warning(weird_program,'Heads will never match in ~@.\n\tThis rule will never fire!\n',[format_rule(Rule)]),
     set_all_passive(RuleNb).
 
@@ -3261,7 +3268,8 @@ simplify_heads([],_GuardList,_G,_Body,[],[]).
 simplify_heads([M|RM],GuardList,G,Body,NewM,NewB) :-
     M = (A = B),
     ( (nonvar(B) ; vars_occur_in(B,RM-GuardList)),
-	guard_entailment:entails_guard(GuardList,(A=B)) ->
+%	guard_entailment:entails_guard(GuardList,(A=B)) ->
+	entails_guard(GuardList,(A=B)) ->
 	( vars_occur_in(B,G-RM-GuardList) ->
 	    NewB = NextB,
 	    NewM = NextM
@@ -3275,7 +3283,8 @@ simplify_heads([M|RM],GuardList,G,Body,NewM,NewB) :-
 	)
     ;
 	( nonvar(B), functor(B,BFu,BAr),
-	  guard_entailment:entails_guard([functor(A,BFu,BAr)|GuardList],(A=B)) ->
+%	  guard_entailment:entails_guard([functor(A,BFu,BAr)|GuardList],(A=B)) ->
+	  entails_guard([functor(A,BFu,BAr)|GuardList],(A=B)) ->
 	    NewB = NextB,
 	    ( vars_occur_in(B,G-RM-GuardList) ->
 	        NewM = NextM
@@ -3307,7 +3316,8 @@ prev_guard_list(RuleNb,0,H,G,GuardList,M,[]),rule(RuleNb,Rule) ==>
     chr_pp_flag(check_impossible_rules,on),
     Rule = pragma(rule(_,_,G,_),_Ids,_Pragmas,_Name,RuleNb),
     conj2list(G,GL),
-    guard_entailment:entails_guard(GL,fail) |
+%    guard_entailment:entails_guard(GL,fail) |
+    entails_guard(GL,fail) |
     chr_warning(weird_program,'Guard will always fail in ~@.\n\tThis rule will never fire!\n',[format_rule(Rule)]),
     set_all_passive(RuleNb).
 
@@ -3384,7 +3394,8 @@ next_occ_in_rule(RuleNb,C,O,ID_o1,Cond,FH) <=>
 	flatten_stuff(OccSubsum2,OccSubsum3),
 	( OccSubsum \= chr_pp_void_info, 
 	unify_stuff(InfoVars,Info3,OccSubsum3), !,
-	( guard_entailment:entails_guard(Info2,OccSubsum2) ->
+%	( guard_entailment:entails_guard(Info2,OccSubsum2) ->
+	( entails_guard(Info2,OccSubsum2) ->
 %	( prolog_flag(verbose,V), V == yes ->
 %	    format('            * Occurrence subsumption detected in ~@\n',[format_rule(Rule)]),
 %	    format('     	      passive: constraint ~w, occurrence number ~w (id ~w)\n',[C,O2,ID_o2]),
@@ -3812,7 +3823,8 @@ check_storage_head1(Head,O,H1,H2,G) :-
 	C = F/A,
 	( H1 == [Head],
 	  H2 == [],
-	  guard_entailment:entails_guard([chr_pp_headvariables(Head)],G),
+%	  guard_entailment:entails_guard([chr_pp_headvariables(Head)],G),
+	  entails_guard([chr_pp_headvariables(Head)],G),
 	  Head =.. [_|L],
 	  no_matching(L,[]) ->
 	  	stored(C,O,no)
@@ -6423,7 +6435,8 @@ unconditional_occurrence(C,O) :-
 	PRule = pragma(ORule,_,_,_,_),
 	copy_term_nat(ORule,Rule),
 	Rule = rule(H1,H2,Guard,_),
-	guard_entailment:entails_guard([chr_pp_headvariables(H1,H2)],Guard),
+%	guard_entailment:entails_guard([chr_pp_headvariables(H1,H2)],Guard),
+	entails_guard([chr_pp_headvariables(H1,H2)],Guard),
 	once((
 		H1 = [Head], H2 == []
 	     ;

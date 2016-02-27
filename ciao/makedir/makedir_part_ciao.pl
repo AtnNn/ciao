@@ -559,14 +559,14 @@ build_library :-
 build_profiler <- [] :- build_profiler.
 build_profiler :- build_mods('contrib/profiler').
 
-build_chr <- :- build_chr.
-build_chr :-
-	( with_chr(yes) ->
-	    bold_message("Compiling CHR Libraries"),
-	    invoke_customsh('library/chr', 'do_bootstrap')
-%	do(['cd library/chr ; ', ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ./do_bootstrap >> ', ~build_log], ~command_option).
-	; true
-        ).
+% build_chr <- :- build_chr.
+% build_chr :-
+% 	( with_chr(yes) ->
+% 	    bold_message("Compiling CHR Libraries"),
+% 	    invoke_customsh('library/chr', 'do_bootstrap')
+% %	do(['cd library/chr ; ', ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ./do_bootstrap >> ', ~build_log], ~command_option).
+% 	; true
+%         ).
 
 build_javalibs :-
 	( with_java_interface(yes) ->

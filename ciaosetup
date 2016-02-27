@@ -222,7 +222,6 @@ Build:
       ciao            	Perform 'build' command on 'ciao' bundle
       lpdoc           	Perform 'build' command on 'lpdoc' bundle
       ciaopp          	Perform 'build' command on 'ciaopp' bundle
-      chr 		Perform 'build' action on CHR bundle
       extra  		Perform 'build' command on all bundles, except 'ciao'
 
     For convenience, the following are subtargets of 'ciao' are also
@@ -263,7 +262,6 @@ Maintenance:
   clean        		Clean Ciao auto-generated files, excluding documentation
                		and additional files such as logs, temporary files, etc.
 
-  clean_chr 		[not documented]
   clean_engine 		[not documented]
   clean_etc 		[not documented]
   clean_bin 		[not documented]
@@ -381,6 +379,10 @@ Testing:
 EOF
 }
 
+# TODO: previously in 'build' options, remove if everything works
+#       chr 		Perform 'build' action on CHR bundle
+#  clean_chr 		[not documented]
+
 # ===========================================================================
 
 register_command "promote"
@@ -438,8 +440,8 @@ do__build() {
 	    do__build_lpdoc ;;
 	ciaopp)
 	    do__build_ciaopp ;;
-	chr)
-	    do__build_chr ;;
+#	chr)
+#	    do__build_chr ;;
 	ciaoc) # (already included in 'ciao' target)
 	    do__build_ciaoc ;;
 	emacs_mode) # (already included in 'ciao' target)
@@ -469,7 +471,7 @@ do__build_default() {
         # Kludge because 'bootlpmake build' breaks installer in Windows:
         # TODO: Why?
     	do__build_ciao
-    	do__build_chr
+#    	do__build_chr
 	do__build_extra
         # do__build_static_engine
     fi
@@ -489,7 +491,7 @@ do__build_static_engine() {
 
 do__build_libraries() {
     ( cd ${CIAODESRC}/ciao; bootlpmake build_libraries ) || return 1
-    ( cd ${CIAODESRC}/ciao; bootlpmake build_chr ) || return 1
+#    ( cd ${CIAODESRC}/ciao; bootlpmake build_chr ) || return 1
     bootlpmake build_extra_libraries
 }
 do__build_platdep() {
@@ -562,20 +564,20 @@ do__calibrateciaopp() {
     ( cd ${CIAODESRC}/ciaopp; bootlpmake calibrate ) || return 1
 }
 
-do__build_chr() {
-    ( cd ${CIAODESRC}/ciao; bootlpmake build_chr ) || return 1 # TODO: It is still not a separated component (and it should be)
-}
-# TODO: Move inside CHR bundle
-register_command "clean_chr"
-# Clean automatically generated files for CHR 
-do__clean_chr() {
-    rm -rf \
-	${CIAODESRC}/ciao/library/chr/chr_translate_bootstrap1.pl \
-	${CIAODESRC}/ciao/library/chr/chr_translate_bootstrap2.pl \
-	${CIAODESRC}/ciao/library/chr/chr_translate.pl.cmp \
-	${CIAODESRC}/ciao/library/chr/guard_entailment.pl \
-	${CIAODESRC}/ciao/library/chr/chr_translate.pl
-}
+# do__build_chr() {
+#     ( cd ${CIAODESRC}/ciao; bootlpmake build_chr ) || return 1 # TODO: It is still not a separated component (and it should be)
+# }
+# # TODO: Move inside CHR bundle
+# register_command "clean_chr"
+# # Clean automatically generated files for CHR 
+# do__clean_chr() {
+#     rm -rf \
+# 	${CIAODESRC}/ciao/library/chr/chr_translate_bootstrap1.pl \
+# 	${CIAODESRC}/ciao/library/chr/chr_translate_bootstrap2.pl \
+# 	${CIAODESRC}/ciao/library/chr/chr_translate.pl.cmp \
+# 	${CIAODESRC}/ciao/library/chr/guard_entailment.pl \
+# 	${CIAODESRC}/ciao/library/chr/chr_translate.pl
+# }
 
 register_command "clean_java"
 do__clean_java() {
@@ -610,7 +612,7 @@ do__clean() {
     # TODO: tidy and garnish the output (clean_engine shows a message,
     #       clean_java shows commands, while the rest is just silent)
     do__clean_bin
-    do__clean_chr
+#    do__clean_chr
     do__clean_etc
     do__clean_recursive
     do_engine clean

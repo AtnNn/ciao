@@ -67,7 +67,7 @@ function is unified with @tt{ArgR}, which must be one of @tt{Arg1}
 This notation can be simplified in several ways.  If the name of the
 foreign function is the same as the name of the Ciao Prolog predicate,
 @tt{foreign(foreign_function_name)} can be replaced by
-@tt{foreign/0}. @tt{returns(ArgR)} specifies that the result of the
+@tt{foreign}. @tt{returns(ArgR)} specifies that the result of the
 function corresponds to the @tt{ArgR} argument of the Ciao Prolog
 predicate. If the foreign function does not return anything (or if its
 value is ignored), then @tt{returns(ArgR)} must be removed. Note that

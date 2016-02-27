@@ -1475,22 +1475,22 @@ ciao_config_entry('DEBUG_LEVEL',
 		    [extended])
 	    ]).
 
-% ---------------------------------------------------------------------------
+% % ---------------------------------------------------------------------------
 
-:- doc(section, "Options for CHR").
+% :- doc(section, "Options for CHR").
 
-:- export(with_chr/1).
-with_chr := ~get_config_val('WITH_CHR').
-ciao_config_entry('WITH_CHR',
-	    [
-		default(no),
-		valid_values([yes, no]),
-		query(
-"Please specify if you would like to compile Constraint Handling Rules\n"||
-"(CHR). This adds significant time to compilation.",
-		    [extended]),
-		show("Compile CHR", [default, minimum])
-	    ]).
+% :- export(with_chr/1).
+% with_chr := ~get_config_val('WITH_CHR').
+% ciao_config_entry('WITH_CHR',
+% 	    [
+% 		default(no),
+% 		valid_values([yes, no]),
+% 		query(
+% "Please specify if you would like to compile Constraint Handling Rules\n"||
+% "(CHR). This adds significant time to compilation.",
+% 		    [extended]),
+% 		show("Compile CHR", [default, minimum])
+% 	    ]).
 
 % ---------------------------------------------------------------------------
 

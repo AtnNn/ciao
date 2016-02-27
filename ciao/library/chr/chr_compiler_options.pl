@@ -28,11 +28,11 @@
     invalidate any other reasons why the executable file might be covered by
     the GNU General Public License.
 */
-:- module(chr_compiler_options,
-	[ handle_option/2
-	, init_chr_pp_flags/0
-	, chr_pp_flag/2
-	]).
+%:- module(chr_compiler_options,
+%	[ handle_option/2
+%	, init_chr_pp_flags/0
+%	, chr_pp_flag/2
+%	]).
 	
 %% SICStus begin
 %% :- use_module(hprolog).
@@ -45,7 +45,7 @@ local_current_prolog_flag(X,Y) :- current_prolog_flag(X,Y).
 
 
 :- use_module(library(chr(chr_compiler_errors))).
-:- use_module(library(chr(chr_translate))).
+%:- use_module(library(chr(chr_translate))).
 :- use_module(library(chr(hprolog))).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,23 +175,27 @@ option_definition(late_allocation,off,Flags) :-
 option_definition(type_definition,TypeDef,[]) :-
 	( nonvar(TypeDef) ->
 	TypeDef = type(T,D),
-	chr_translate:type_definition(T,D)
+%	chr_translate:type_definition(T,D)
+	type_definition(T,D)
 	; true).
 option_definition(type_declaration,TypeDecl,[]) :-
 	( nonvar(TypeDecl) ->
 	functor(TypeDecl,F,A),
 	TypeDecl =.. [_|ArgTypes],
-	chr_translate:constraint_type(F/A,ArgTypes)
+%	chr_translate:constraint_type(F/A,ArgTypes)
+	constraint_type(F/A,ArgTypes)
 	; true).
 	
 option_definition(mode,ModeDecl,[]) :-
 	( nonvar(ModeDecl) ->
 	functor(ModeDecl,F,A),
 	ModeDecl =.. [_|ArgModes],
-	chr_translate:constraint_mode(F/A,ArgModes)
+%	chr_translate:constraint_mode(F/A,ArgModes)
+	constraint_mode(F/A,ArgModes)
 	; true).
 option_definition(store,FA-Store,[]) :-
-	chr_translate:store_type(FA,Store).
+%	chr_translate:store_type(FA,Store).
+	store_type(FA,Store).
 
 option_definition(debug,off,Flags) :-
         option_definition(optimize,full,Flags2),

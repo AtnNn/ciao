@@ -1,12 +1,9 @@
-:- module( _chr_tr , [ chr_compile_module/3 ] , [] ).
-
-:- use_module(library(chr(chr_translate))).
-
 :- data module_cls/2.
 
-:- use_module(library(aggregates)).
+:- use_module(library(chr(aggregates_nat))).
 :- use_module(library(pretty_print)).
-:- use_module(library(lists)).
+:- use_module(library(lists), [append/3]).
+:- use_module(library(messages), [note_message/1]).
 
 chr_compile_module( 0 , _ , M ) :-
 	retractall_fact( module_cls( M , _ ) ),
@@ -16,6 +13,9 @@ chr_compile_module( end_of_file , CodeWithEnd , M ) :-
 	findall( A , retract_fact( module_cls( M , A ) ) , Code ),
 	chr_translate( [(:-module(M))|Code] , [_|CodeT] ),
 	append( CodeT , [end_of_file] , CodeWithEnd ).
+chr_compile_module((:- chr_compiler_message(_Message)), [], _):-!,
+%	note_message(Message).
+	true.
 % To see the generated CHR code
 %	display( 'CHR code goes here:\n' ),
 %	pretty_print( CodeT , []  ), nl, nl,

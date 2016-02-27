@@ -123,7 +123,7 @@
 %	    , chr_leash/1
 
 	  ]
-          , [attr, expander]
+          , [attr]
 %% Ciao end
 	).
 

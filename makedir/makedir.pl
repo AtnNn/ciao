@@ -59,7 +59,8 @@ gen_bundle_commit_info <- [] :- gen_bundle_commit_info.
 
 % ============================================================================
 
-bundle_build <- [build_ciao, build_chr, build_extra] :- true.
+%bundle_build <- [build_ciao, build_chr, build_extra] :- true.
+bundle_build <- [build_ciao, build_extra] :- true.
 
 % TODO: Invoking this by hand everytime that configuration options
 %       have changed is really unpleasant...
@@ -68,7 +69,7 @@ bundle_build <- [build_ciao, build_chr, build_extra] :- true.
 
 build_ciao <- :- bundle_invoke_lpmake(ciao, build).
 
-build_chr <- :- bundle_invoke_lpmake(ciao, build_chr). % TODO: CHR should be a sub-bundle of libs or contrib
+%build_chr <- :- bundle_invoke_lpmake(ciao, build_chr). % TODO: CHR should be a sub-bundle of libs or contrib
 
 build_extra <- :-
 	extra_bundles_make(build).

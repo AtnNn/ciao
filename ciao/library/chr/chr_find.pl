@@ -34,9 +34,11 @@
 		find_with_var_identity/4,
 		forall/3,
 		forsome/3
-	]).
+	], []).
 
 :- use_module(library(lists)).
+:- use_module(library(chr(aggregates_nat))).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Ciao begin

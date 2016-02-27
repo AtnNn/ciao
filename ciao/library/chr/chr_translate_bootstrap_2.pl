@@ -109,17 +109,16 @@
 %%	* (set semantics + functional dependency) declaration + resolution
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- module( %chr_translate, 
-          chr_translate_bootstrap2,
-	  [ chr_translate/2		% +Decls, -TranslatedDecls
-	  ]).
+%:- module( chr_translate, 
+%          	  [ chr_translate/2		% +Decls, -TranslatedDecls
+%	  ]).
 %% SWI begin
 %% Ciao begin
 %:- use_module(library(lists),[append/3,member/2,permutation/2,reverse/2]).
-:- use_module(library(lists),[length/2,append/3,reverse/2,select/3]).
+:- use_module(library(lists),[length/2,append/3,reverse/2,select/3, delete/3]).
 :- use_module(library(format)).
 :- use_module(library(write)).
-:- use_module(library(aggregates)).
+%:- use_module(library(aggregates)).
 :- use_module(library(iso_misc), [once/1] ).
 %% Ciao end
 %% SWI end

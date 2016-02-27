@@ -1,3 +1,5 @@
+%:- use_package(expander).
+
 :- set_prolog_flag( multi_arity_warnings   , off ).
 :- set_prolog_flag( discontiguous_warnings , off ).
 
@@ -7,6 +9,7 @@
 :- new_declaration( chr_constraint/1 ).
 :- new_declaration( handler/1        ).
 :- new_declaration( rules/1          ).
+
 :- new_declaration( chr_option/2     ).
 :- new_declaration( chr_type/1       ).
 
@@ -17,7 +20,7 @@
 :- use_module(library(chr(hprolog))). % , [ term_variables/2 ] ).
 
 :- use_package(attr).
-:- use_module(library(attr(attr_rt)), [get_attr/3, put_attr/3]).
+:- use_module(library(attr(attr_rt)), [get_attr/3, put_attr/3, del_attr/2]).
 
 :- use_module(library(odd), [setarg/3]).
 :- use_module(library(sort), [sort/2]).
@@ -27,3 +30,4 @@
 
 :- set_prolog_flag( check_cycles, on ).
 'chr debug_event'(_).
+
