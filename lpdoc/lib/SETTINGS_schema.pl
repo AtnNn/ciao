@@ -80,7 +80,7 @@ filename(P) :- atm(P).
      the document structure @pred{doc_structure/1}.
 
      If @pred{parent_component/1} is defined and
-     @tt{--no-versioned-output} is not specified in
+     the @tt{no_versioned_output} option is not specified in
      @pred{doc_mainopts/1}, the component version number is appended
      to the output name".
 
@@ -115,30 +115,30 @@ filename(P) :- atm(P).
 :- doc(supported_option/1, "In general, selecting none of these
 	options generates the most verbose manuals, i.e., each option
 	generally supresses the production of a certain kind of output
-	(on the other hand, @tt{'-v'} selects verbose output from
-	ciaoc when processing the file).").
+	(on the other hand, @tt{'verbose'} selects verbose output from
+	@apl{ciaoc} when processing the file).").
 
 % TODO: Duplicated in lpdoc/src/autodoc_state.pl
-supported_option := '-v'.
-supported_option := '-nobugs'.
-supported_option := '-noauthors'.
-supported_option := '-noversion'.
-supported_option := '--no-versioned-output'.
-supported_option := '-nochangelog'.
-supported_option := '-nopatches'.
-supported_option := '-modes'.
-supported_option := '-headprops'.
-supported_option := '-literalprops'.
-supported_option := '-nopropnames'.
-supported_option := '-noundefined'.
-supported_option := '-nopropsepln'.
-supported_option := '-nobiblio'.
-supported_option := '-nobullet'.
-supported_option := '-nosysmods'.
-supported_option := '-noengmods'.
-supported_option := '-noisoline'.
-supported_option := '-propmods'.
-supported_option := '-shorttoc'.
+supported_option := verbose.
+supported_option := no_bugs.
+supported_option := no_authors.
+supported_option := no_version.
+supported_option := no_versioned_output.
+supported_option := no_changelog.
+supported_option := no_patches.
+supported_option := modes.
+supported_option := head_props.
+supported_option := literal_props.
+supported_option := no_prop_names.
+supported_option := no_undefined.
+supported_option := no_propsepln.
+supported_option := no_biblio.
+supported_option := no_bullet.
+supported_option := no_sysmods.
+supported_option := no_engmods.
+supported_option := no_isoline.
+supported_option := propmods.
+supported_option := shorttoc.
 
 % ----------------------------------------------------------------------------
 % Default document formats

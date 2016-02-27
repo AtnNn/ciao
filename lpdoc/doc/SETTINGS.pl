@@ -96,7 +96,7 @@ doc_structure :=
           ]
         ].
 
-commonopts := '-nobugs'|'-nopatches'.
+commonopts := no_bugs|no_patches.
 doc_mainopts := ~commonopts.
 doc_compopts := ~commonopts.
 

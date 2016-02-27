@@ -23,13 +23,13 @@
 :- export(compute_refs_and_biblio/1).
 compute_refs_and_biblio(DocSt) :-
 	docst_gdata_restore(DocSt),
-	( \+ docst_opt('-nobiblio', DocSt) ->
+	( \+ docst_opt(no_biblio, DocSt) ->
 	    % Keep the doctree for the bibliography in the state
 	    % so that it can be used anywhere.
 	    resolve_bibliography(DocSt)
 	; true
 	),
-	( \+ docst_opt('-nobiblio', DocSt) ->
+	( \+ docst_opt(no_biblio, DocSt) ->
 	    % Save the bibliography
 	    MVars = [biblio_pairs, biblio_doctree]
 	; MVars = []
@@ -51,13 +51,13 @@ prepare_current_refs(DocSt) :-
           docst_backend(DocSt, Backend),
 	  ( Backend = html ; Backend = texinfo ) -> % TODO: formats hardwired
 	    % TODO: it should be more automatic
-	    ( \+ docst_opt('-nobiblio', DocSt) ->
+	    ( \+ docst_opt(no_biblio, DocSt) ->
 	        % Load the bibliography
 	        MVars = [biblio_pairs, biblio_doctree]
 	    ; MVars = []
 	    ),
 	    docst_gvar_restore(DocSt, MVars),
-	    ( \+ docst_opt('-nobiblio', DocSt) ->
+	    ( \+ docst_opt(no_biblio, DocSt) ->
 	        true
 	    ; % Fill bibliography with empty data
 	      docst_mvar_lookup(DocSt, biblio_pairs, []),

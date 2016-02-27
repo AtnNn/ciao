@@ -35,15 +35,15 @@ infodir_headfile := ~atom_concat([~component_ins(ciao),
 infodir_tailfile := ~atom_concat([~component_ins(ciao),
 		'/doc/common/CiaoTail.info']).
 
-% commonopts     := '-v'.
-% commonopts     := '-nobugs'.
+% commonopts     := verbose.
+% commonopts     := no_bugs.
 commonopts :=
-	'-modes'|
-	'-nopatches'|
-	'-noisoline'|
-	'-noengmods'|
-	'-propmods'|
-	'-nochangelog'.
+	modes|
+	no_patches|
+	no_isoline|
+	no_engmods|
+	propmods|
+	no_changelog.
 doc_mainopts := ~commonopts.
 doc_compopts := ~commonopts.
 

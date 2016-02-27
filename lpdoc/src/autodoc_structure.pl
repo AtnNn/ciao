@@ -79,7 +79,7 @@ is_list([_|_]).
 
 % ---------------------------------------------------------------------------
 
-% docstr for a standalone target (passed with '-c')
+% docstr for a standalone target (passed with '-c' option to LPdoc)
 :- export(standalone_docstr/1).
 standalone_docstr(Base) :-
 	clean_docstr,

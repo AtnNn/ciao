@@ -80,7 +80,7 @@ get_command_option([C]) :-
 	stop_command_option(V, C),
 	!.
 get_command_option([nofail, silent, show_error_on_error|A]) :-
-	( current_fact(make_option('-v')) ->
+	( current_fact(make_option(verbose)) ->
 	    A = [verbose]
 	; A = []
 	).

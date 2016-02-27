@@ -286,7 +286,7 @@ main_output_name(Backend, NV) :-
 	% Include the version (if required)
 	( setting_value(parent_component, Component),
 	  component_src(Component, Dir),
-	  \+ setting_value(doc_mainopts, '--no-versioned-output') ->
+	  \+ setting_value(doc_mainopts, no_versioned_output) ->
 	    % Use the component version for the output name
 	    atom_concat(Dir, '/', Dir1),
 	    component_obtain_version(Dir1, V),

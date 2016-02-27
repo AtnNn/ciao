@@ -158,7 +158,7 @@ prepare_auxfiles(Backend, Opts) :- Backend = html, !,
 	    prepare_web_skel(SkelDir)
 	; true
 	),
-	( member('-nomath', Opts) ->
+	( member(no_math, Opts) ->
 	    true
 	; prepare_mathjax
 	),
@@ -201,9 +201,9 @@ get_autodoc_opts(_Backend, Mod, Opts) :-
 	    warn_if_empty(PathAliasF, "no pathsfile variable was found")
 	; Opts0 = ~all_setting_values(doc_compopts)
 	),
-	Opts = ['-indices'(Indices),
-	        '-lib-opts'(Libs, SysLibs, PathAliasF),
-	        '-paper-opts'(StartPage, PaperType)|Opts0].
+	Opts = [indices(Indices),
+	        lib_opts(Libs, SysLibs, PathAliasF),
+	        paper_opts(StartPage, PaperType)|Opts0].
 
 warn_if_empty(X, Msg) :-
 	( X == [] ->
@@ -228,9 +228,9 @@ warn_if_empty(X, Msg) :-
    supported are given by @pred{backend_id/1}. @cindex{supported
    documentation formats}".
 
-% '-indices'(Indices)
-% '-lib-opts'(LibPaths, SysLibPaths, PathAliasF)
-% '-paper-opts'(StartPage, PaperType)
+% indices(Indices)
+% lib_opts(LibPaths, SysLibPaths, PathAliasF)
+% paper_opts(StartPage, PaperType)
 %
 %      @var{LibPaths} is a list of @concept{library paths} where files
 %      used by the module being documented may be
@@ -322,7 +322,7 @@ compose_main_title(Version, DocSt, MainTitleR) :-
 :- doc(subsection, "Format Authors").
 
 get_authors(DocSt, AuthorRs) :-
-	( docst_opt('-noauthors', DocSt) ->
+	( docst_opt(no_authors, DocSt) ->
 	    AuthorRs=[]
 	; get_doc(author, warning, DocSt, AuthorRs0),
 	  ( docst_currmod_is_main(DocSt) ->
@@ -366,7 +366,7 @@ fmt_infodir_entry(DocSt, Version, Mod) :-
 	verbose_message("{Generating info index", []),
 	docst_backend(DocSt, Backend),
 	main_output_name(Backend, InfoBase),
-	( docst_opt('-noversion', DocSt) ->
+	( docst_opt(no_version, DocSt) ->
 	    docst_modname(DocSt, NDName),
 	    InfodirName = NDName
 	; InfodirName = InfoBase % TODO: Not very nice...
@@ -418,7 +418,7 @@ infodir_version(Version, VersionR) :-
 %       control system (such as SVN, GIT, Hg)
 
 get_last_version(Version, GlobalVers, DocSt) :-
-	( docst_opt('-noversion', DocSt) ->
+	( docst_opt(no_version, DocSt) ->
 	    Version = [], GlobalVers = []
 	; docst_modtype(DocSt, ModuleType),
 	  ( ModuleType = part ; ModuleType = plain ) ->
@@ -653,7 +653,7 @@ fmt_file_top_section(SecProps0, DocR, DocSt, ModR) :-
         ( docst_currmod_is_main(DocSt) ->
 	    SectLabel = global_label(_),
 	    %
-	    docst_opt('-paper-opts'(StartPage, PaperType), DocSt),
+	    docst_opt(paper_opts(StartPage, PaperType), DocSt),
 	    SecProps2 = [paper_opts(StartPage, PaperType)|SecProps0]
 	; % not main file
 	  SecProps1 = [level(1)|SecProps0],
@@ -834,7 +834,7 @@ gen_opt_version_field(Text, Version, R) :-
 :- doc(subsection, "References/Bibliography Section").
 
 fmt_biblio(DocSt, BiblioR) :-
-	( docst_opt('-nobiblio', DocSt) ->
+	( docst_opt(no_biblio, DocSt) ->
 	    BiblioR = []
 	; gen_biblio_section(DocSt, BiblioR)  
 	).
@@ -986,7 +986,7 @@ fmt_acknowledges(DocSt, AckR) :-
 % TODO: Add identifiers to bugs
 
 fmt_bugs(Special, DocSt, BugsR) :-
-	( docst_opt('-nobugs', DocSt) ->
+	( docst_opt(no_bugs, DocSt) ->
 	    BugRs=[]
 	; get_doc(bug, ignore, DocSt, BugRs)
 	),
@@ -1011,9 +1011,9 @@ gen_bugs_([BugR|BugRs], [C|Cs]) :-
 
 % The changelog.
 fmt_changes(Special, DocSt, ChangesR) :-
-	( docst_opt('-nochangelog', DocSt) ->
+	( docst_opt(no_changelog, DocSt) ->
 	    Changes = []
-	; ( docst_opt('-nopatches', DocSt) ->
+	; ( docst_opt(no_patches, DocSt) ->
 	      VPatch = 0
 	  ; true
 	  ),
@@ -1537,7 +1537,7 @@ special_prop(regtype(_), regtype).
    they are System, Engine, User, etc.".
 
 classify_files(IFiles, UFiles, SysFiles, EngFiles, DocSt) :-
-        docst_opt('-lib-opts'(LibPaths, SysLibPaths, _PathAliasF), DocSt),
+        docst_opt(lib_opts(LibPaths, SysLibPaths, _PathAliasF), DocSt),
 	classify_files_(IFiles, LibPaths, SysLibPaths, UFiles, SysFiles, EngFiles, DocSt).
 
 classify_files_([],           _LibPaths, _SysLibPaths, [],     [],     [],
@@ -1546,7 +1546,7 @@ classify_files_([File|Files], LibPaths,  SysLibPaths,  UFiles, SFiles, OEFiles,
 	    DocSt) :-
 	File =.. [engine, EFile],
 	!,
-	( docst_opt('-noengmods', DocSt) ->
+	( docst_opt(no_engmods, DocSt) ->
 	    OEFiles = EFiles
 	; OEFiles = [EFile|EFiles]
 	),
@@ -1557,7 +1557,7 @@ classify_files_([RFile|Files], LibPaths, SysLibPaths, UFiles, OSFiles, EFiles, D
 	atom_concat(Path, LongFileName, Base),
 	atom_concat('/',  FullFile,     LongFileName), % Eliminate leading /
 	!,
-	( docst_opt('-nosysmods', DocSt) ->
+	( docst_opt(no_sysmods, DocSt) ->
 	    OSFiles = NSM
 	; OSFiles = [FullFile|NSM]
 	),
@@ -1931,12 +1931,12 @@ doc_usage(Assrt, N, Multiple, Type, DocSt, UsageR) :-
 	    Standard=iso
 	; Standard=non_iso
 	),
-	( docst_opt('-noisoline', DocSt),
+	( docst_opt(no_isoline, DocSt),
 	  select(iso(_), GP, NNGP) ->
 	    true
 	; NNGP = GP
 	),
-	( (\+ docst_opt('-regtypeprops', DocSt)),
+	( (\+ docst_opt(regtype_props, DocSt)),
 	  select(regtype(_), NNGP, NGP)	->
 	    true
 	; NNGP = NGP
@@ -2114,7 +2114,7 @@ doc_property(true, _Loc, _P, _DocSt, PropR) :- !,
 	PropR = nop.
 doc_property(Prop, Loc, P, DocSt, PropR) :-
 	( prop_format(DocSt, Prop, Loc, PM, BasicFormat, VarDict) ->
-	    ( docst_opt('-literalprops', DocSt) ->
+	    ( docst_opt(literal_props, DocSt) ->
 	        empty_doctree(DocR)
 	    ; DocR = BasicFormat
 	    ),
@@ -2134,7 +2134,7 @@ doc_property(Prop, Loc, P, DocSt, PropR) :-
 %% -literalprops -nopropnames -noundefined -nopropsepln
 
 fmt_property(DocSt, Prop, PM, DocString, VarDict, PropR) :-
-	( ( docst_opt('-literalprops', DocSt)
+	( ( docst_opt(literal_props, DocSt)
 	  ; doctree_is_empty(DocString)
 	  ; DocString == undefined
 	  ) ->
@@ -2143,14 +2143,14 @@ fmt_property(DocSt, Prop, PM, DocString, VarDict, PropR) :-
 	  PropLitR = DocString
 	),
 	( ( DocString\==undefined
-	  ; docst_opt('-noundefined', DocSt)
+	  ; docst_opt(no_undefined, DocSt)
 	  ) ->
 	    UndefR = []
 	; UndefR = string_esc(" (undefined property)")
 	),
 	( ( DocString==undefined
-	  ; docst_opt('-nopropnames', DocSt)
-	  ; docst_opt('-literalprops', DocSt)
+	  ; docst_opt(no_propnames, DocSt)
+	  ; docst_opt(literal_props, DocSt)
 	  ) ->
 	    DescR = []
 	; functor(Prop, F, A),
@@ -2159,7 +2159,7 @@ fmt_property(DocSt, Prop, PM, DocString, VarDict, PropR) :-
 	  DescR = [string_esc(" ("), Desc2, string_esc(")")]
 	),
 	!,
-	( docst_opt('-nopropsepln', DocSt) ->
+	( docst_opt(no_propsepln, DocSt) ->
 	    PropR = [string_esc(" "), PropLitR, UndefR, DescR, string_esc(".")]
 	; PropR = [linebreak, left_and_right([PropLitR, raw_nl], [UndefR, DescR])]
 	).
@@ -2170,11 +2170,11 @@ fmt_property(_DocSt, Prop, PM, _DocString, _VarDict, PropR) :-
 fmt_propcode(PM, Prop, DocSt, R) :-
 	% TODO: the module is ignored for indexing; wrong
 	format_to_string("~w", [Prop], Ref),
-	( docst_opt('-propmods', DocSt) ->
+	( docst_opt(propmods, DocSt) ->
 	    format_to_string("~w:~w", [PM, Prop], S)
 	; S = Ref
 	),
-	( docst_opt('-nopropuses', DocSt) ->
+	( docst_opt(no_propuses, DocSt) ->
 	    R = [string_esc(S)]
 	; R = [idx_env(use, prop, localnum_label(_), string_esc(Ref), string_esc(S))]
 	).
@@ -2235,7 +2235,7 @@ prop_format(DocSt, Prop, Loc, PM, BasicFormat, VarDict) :-
 	doctree_putvars(Comment3, DocSt, PDict, VarDict, BasicFormat).
 
 maybe_remove_full_stop(DocSt, DocString, DocString2) :-
-	( ( docst_opt('-nopropsepln', DocSt),
+	( ( docst_opt(no_propsepln, DocSt),
 	    list_concat([NewDocString, "."], DocString)
 	  ) -> %% Just to make it nicer: get rid of final full stop.
 	    DocString2 = NewDocString
@@ -2614,7 +2614,7 @@ Específicos de lpdoc:
 :- doc(bug, "usage,nil or something like that so no usage section
    is generated.").
 
-:- doc(bug, "List of local opts: :- doc(localopts,['-nochangelog']).").
+:- doc(bug, "List of local opts: :- doc(localopts,[no_changelog]).").
 
 :- doc(bug, "if an imported predicate is redefined, the local
    version should always be the one documented!!!!").

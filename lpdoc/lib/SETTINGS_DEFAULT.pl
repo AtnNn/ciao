@@ -32,7 +32,7 @@ output_name := 'manual_name'.
 
 doc_structure := 'main_module'.
 
-commonopts := '-nobugs'|'-nopatches'.
+commonopts := no_bugs|no_patches.
 doc_mainopts := ~commonopts.
 doc_compopts := ~commonopts.
 

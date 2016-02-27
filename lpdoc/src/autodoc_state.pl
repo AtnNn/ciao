@@ -58,30 +58,30 @@
 	# "@tt{Option} is a supported documentation option.".
 
 % TODO: Duplicated in lpdoc/lib/SETTINGS_schema.pl
-supported_option('-v').
-supported_option('-nobugs').
-supported_option('-noauthors').
-supported_option('-nostability').
-supported_option('-noversion').
-supported_option('--no-versioned-output').
-supported_option('-nochangelog').
-supported_option('-nopatches').
-supported_option('-modes').
-supported_option('-headprops').
-supported_option('-literalprops').
-supported_option('-nopropnames').
-supported_option('-noundefined').
-supported_option('-nopropsepln').
-supported_option('-nobiblio').
-supported_option('-nosysmods').
-supported_option('-noengmods').
-supported_option('-noisoline').
-supported_option('-propmods').
-supported_option('-nopropuses').
-supported_option('-shorttoc').
-supported_option('-regtypeprops').
-supported_option('-onesided').
-supported_option('-nomath').
+supported_option(verbose).
+supported_option(no_bugs).
+supported_option(no_authors).
+supported_option(no_stability).
+supported_option(no_version).
+supported_option(no_versioned_output).
+supported_option(no_changelog).
+supported_option(no_patches).
+supported_option(modes).
+supported_option(head_props).
+supported_option(literal_props).
+supported_option(no_propnames).
+supported_option(no_undefined).
+supported_option(no_propsepln).
+supported_option(no_biblio).
+supported_option(no_sysmods).
+supported_option(no_engmods).
+supported_option(no_isoline).
+supported_option(propmods).
+supported_option(no_propuses).
+supported_option(shorttoc).
+supported_option(regtype_props).
+supported_option(onesided).
+supported_option(no_math).
 
 :- export(option_comment/2).
 :- pred option_comment(Option,Text) 
@@ -95,40 +95,40 @@ supported_option('-nomath').
 @includedef{option_comment/2}          
           ".
 
-option_comment('-v',           "Verbose output (good for debugging).        ").
-option_comment('-nobugs',      "Do not include information on bugs.         ").
-option_comment('-noauthors',   "Do not include author names.                ").
-option_comment('-nostability', "Do not include stability comment.           ").
-option_comment('-noversion',   "Do not include version information.         ").
-option_comment('--no-versioned-output',
+option_comment(verbose,        "Verbose output (good for debugging).        ").
+option_comment(no_bugs,      "Do not include information on bugs.         ").
+option_comment(no_authors,   "Do not include author names.                ").
+option_comment(no_stability, "Do not include stability comment.           ").
+option_comment(no_version,   "Do not include version information.         ").
+option_comment(no_versioned_output,
                                "Do not include version in the output name.  ").
-option_comment('-nochangelog', "Do not include change log.                  ").
-option_comment('-nopatches',   "Do not include comments for patches.        ").
-%% -modes and -headprops are used by normalizer!
-option_comment('-modes',       "Do not translate modes and their arguments
+option_comment(no_changelog, "Do not include change log.                  ").
+option_comment(no_patches,   "Do not include comments for patches.        ").
+%% @tt{modes} and @tt{headprops} are used by normalizer!
+option_comment(modes,        "Do not translate modes and their arguments
 	                        (except for properties)                     ").
-option_comment('-headprops',   "Do not move head properties to body.        ").
+option_comment(head_props,   "Do not move head properties to body.        ").
 
-option_comment('-literalprops',"Do not use text to document properties.     ").
-option_comment('-nopropnames', "Do not include property names in prop text. ").
-option_comment('-noundefined', "Do not signal undefined properties in text. ").
-option_comment('-nopropsepln', "Do not put each property in a separate line.").
+option_comment(literal_props,"Do not use text to document properties.     ").
+option_comment(no_propnames, "Do not include property names in prop text. ").
+option_comment(no_undefined, "Do not signal undefined properties in text. ").
+option_comment(no_propsepln, "Do not put each property in a separate line.").
 
-option_comment('-nobiblio',    "Do not include a bibliographical 'References' appendix.").
-option_comment('-nosysmods',   "Do not include system modules in list of 
+option_comment(no_biblio,    "Do not include a bibliographical 'References' appendix.").
+option_comment(no_sysmods,   "Do not include system modules in list of 
                                 libraries used.").
-option_comment('-noengmods',   "Do not include system engine modules in list 
+option_comment(no_engmods,   "Do not include system engine modules in list 
                                 of libraries used.").
-option_comment('-noisoline',   "Do not include *textual* description that a 
+option_comment(no_isoline,   "Do not include *textual* description that a 
                                 given usage conforms to the ISO standard.").
-option_comment('-propmods',    "Include module name to which props belong.").
-option_comment('-nopropuses', "Do not Include property uses (from assertions) in indices.").
-option_comment('-shorttoc',    "Produce shorter table of contents (no entries
+option_comment(propmods,    "Include module name to which props belong.").
+option_comment(no_propuses, "Do not Include property uses (from assertions) in indices.").
+option_comment(shorttoc,    "Produce shorter table of contents (no entries
                                 for individual defs of preds, props, etc.).").
-option_comment('-regtypeprops',"Include in the doc for regtypes the global
+option_comment(regtype_props,"Include in the doc for regtypes the global
                                 prop stating that they are indeed regtypes.").
-option_comment('-onesided',    "For printing on one side (default is two).").
-option_comment('-nomath',      "Disable mathematical environments.").
+option_comment(onesided,    "For printing on one side (default is two).").
+option_comment(no_math,      "Disable mathematical environments.").
 
 % ===========================================================================
 
@@ -358,7 +358,7 @@ load_source_pl_assrt(Main, Opts,
 
 % TODO: many callers of this predicate do not restore the paths later
 setup_libpaths(DocSt, OldLibPaths) :-
-	docst_opt('-lib-opts'(LibPaths, SysLibPaths, PathAliasF), DocSt),
+	docst_opt(lib_opts(LibPaths, SysLibPaths, PathAliasF), DocSt),
 	append(LibPaths, SysLibPaths, TheLibPaths),
 	set_libs(OldLibPaths, TheLibPaths),
 	( PathAliasF = [ThePathAliasFile] ->
@@ -619,7 +619,7 @@ restore_mvar_entry(Var, DocSt, IS) :-
 
 :- export(docst_has_index/2).
 docst_has_index(Index, DocSt) :-
-        docst_opt('-indices'(Indices), DocSt),
+        docst_opt(indices(Indices), DocSt),
 	( member(Index, Indices) -> true
 	; Indices=[all]
 	).

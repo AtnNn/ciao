@@ -423,9 +423,9 @@ docstr_contrib :=
 	 'xdr_handle/xdr_handle',
 	 'xml_path/doc/xml_path_doc'].
 
-doc_mainopts := '-nopatches'.
-% TODO: Added '-nopropuses' because texindex breaks with very large
+doc_mainopts := no_patches.
+% TODO: Added no_propuses because texindex breaks with very large
 %       indices (due to internal, maybe arbitrary, limitations) --JF.
-doc_compopts := '-noisoline'|'-noengmods'|'-propmods'|'-nochangelog'|'-nopropuses'.
+doc_compopts := no_isoline|no_engmods|propmods|no_changelog|no_propuses.
 
 

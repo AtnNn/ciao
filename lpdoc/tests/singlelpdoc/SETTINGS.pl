@@ -28,8 +28,8 @@ filepathref := '/lpdoc/tests/singlelpdoc'.
 
 doc_structure := 'singlelpdoc'.
 
-doc_mainopts := '-nopatches'.
-doc_compopts := '-noisoline'|'-noengmods'|'-propmods'|'-nochangelog'.
+doc_mainopts := no_patches.
+doc_compopts := no_isoline|no_engmods|propmods|no_changelog.
 
 %docformat := texi. % html or others are not working
 docformat := texi|ps|pdf|manl|info|html.

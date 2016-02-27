@@ -273,7 +273,7 @@ rw_command(left_and_right(Left, Right), _DocSt, R) :- !,
 	R = [Left, hfill, Right].
 rw_command(navigation_env(_, _), _DocSt, R) :- !, R = [].
 rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
-	( docst_opt('-shorttoc', DocSt) ->
+	( docst_opt(shorttoc, DocSt) ->
 	    % Do not put the predicates in the table of contents
 	    R1 = []
 	; R1 = pred_in_toc(PN, Type)
@@ -453,7 +453,7 @@ fmt_header_and_cover(TitleR, PaperType, DocSt, R) :-
 	atom_codes(Name, NameS),
 	%
 	atom_codes(PaperType, PaperTypeS),
-	( docst_opt('-onesided', DocSt) ->
+	( docst_opt(onesided, DocSt) ->
 	    NewPage = "on"
 	; NewPage = "odd"
 	),
