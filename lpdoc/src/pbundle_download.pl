@@ -46,16 +46,13 @@ fmt_pbundle_download_(PMeta, View, R) :-
 	DocR = ~gen_manual_list(PMeta),
 	%
 	PName = ~pbundle_meta_attr(PMeta, packname),
-	Version = ~pbundle_meta_attr(PMeta, version),
-	Patch = ~pbundle_meta_attr(PMeta, patch),
-	CommitId = ~pbundle_meta_attr(PMeta, commit_id),
 	CommitDate = ~pbundle_meta_attr(PMeta, commit_date),
-	PrettyCommitDesc = ~atom_concat([Version, '.', Patch, ' (', CommitId, ')']),
+	CommitDesc = ~pbundle_meta_attr(PMeta, commit_desc),
 	Params = [src_formats = SrcR,
 	       	  manuals = DocR,
 	       	  packname = string_esc(~atom_codes(PName)),
 	       	  commit_date = string_esc(~atom_codes(CommitDate)),
-	       	  pretty_commit_desc = string_esc(~atom_codes(PrettyCommitDesc))],
+	       	  commit_desc = string_esc(~atom_codes(CommitDesc))],
 	% TODO: generate Params lazily
 	( View = docs -> Tmpl = 'download_docs.html'
 	; View = code -> Tmpl = 'download_code.html'
