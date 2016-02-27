@@ -52,7 +52,6 @@ pbundle_generate_meta(Bundle, DescFile) :-
 	pbundle_generate_meta_(Bundle, Desc),
 	clauses_to_file(Desc, DescFile).
 
-:- export(pbundle_generate_meta_/2).
 pbundle_generate_meta_(Bundle, Desc) :-
 	findall(F, enum_pbundle_code_items(Bundle, F), Fs),
 	findall(D, enum_pbundle_doc_items(Bundle, D), Ds),
@@ -112,10 +111,12 @@ pbundle_code_item(Bundle, CodeKind, Item) :-
 % Take a commit desc TAG-N-HASH and generate TAG-N.HASH, where N.HASH
 % will be the release number for RPM (no '-' is allowed there).
 fix_commit_desc_for_rpm(Desc) := RPMDesc :-
-	append(Tag, "-"||NHash, Desc), append(N, "-"||Hash, NHash),
+	atom_codes(Desc, Desc1),
+	append(Tag, "-"||NHash, Desc1), append(N, "-"||Hash, NHash),
 	!,
 	append(N, "."||Hash, NHash2),
-	append(Tag, "-"||NHash2, RPMDesc).
+	append(Tag, "-"||NHash2, RPMDesc1),
+	atom_codes(RPMDesc, RPMDesc1).
 fix_commit_desc_for_rpm(Desc) := Desc.
 
 % TODO: share implementation

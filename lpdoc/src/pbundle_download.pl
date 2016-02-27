@@ -237,7 +237,6 @@ pbundle_file_kind_info(i386_deb, "Debian-based Linux (Ubuntu, XUbuntu, Knoppix)"
 pbundle_file_kind_info(windows, "Windows 2000/XP/Vista/7", 'download_windows.png').
 pbundle_file_kind_info(macosx, "Mac OS X (Leopard, Snow Leopard, Lion)", 'download_mac.png').
 %
-pbundle_file_kind_info(manual_ps, "PS", 'download_manual.png'). % TODO: deprecate
 pbundle_file_kind_info(manual_pdf, "PDF", 'download_pdf.png').
 pbundle_file_kind_info(manual_html, "online HTML", 'download_manual.png').
 
@@ -304,7 +303,6 @@ pbundle_url(Kind) := Url :-
 % TODO: Move to some pbundle module
 pbundle_kind_is_doc(manual_html).
 pbundle_kind_is_doc(manual_pdf).
-pbundle_kind_is_doc(manual_ps).
 
 % ---------------------------------------------------------------------------
 % Obtain the resolved files (usable for a download list) of a PMeta
