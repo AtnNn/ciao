@@ -12,7 +12,7 @@
 :- dynamic constant/2.
 :- dynamic print_value/1.
 
-constant(url,'http://www.ciaohome.org/').
+constant(url,'http://ciao-lang.org/').
 constant(foot,'For more information please contact <a href=\"webmaster\@clip.dia.fi.upm.es\">webmaster\@clip.dia.fi.upm.es</a>').
 
 anchor_string("<!MARK!MARK!MARK!>"). % The string that we will find to cut the head or footer.

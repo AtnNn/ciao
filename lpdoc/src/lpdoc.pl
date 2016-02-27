@@ -8,7 +8,7 @@
 
 :- doc(subtitle_extra, "REFERENCE MANUAL").
 :- doc(subtitle_extra, "@bf{The Ciao Documentation Series}").
-:- doc(subtitle_extra, "@href{http://www.ciaohome.org/}").
+:- doc(subtitle_extra, "@href{http://ciao-lang.org/}").
 :- doc(subtitle_extra, "@em{Generated/Printed on:} @today{}").
 :- doc(subtitle_extra, "Technical Report CLIP 5/97.1-@version{}").
 

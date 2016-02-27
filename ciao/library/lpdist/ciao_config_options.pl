@@ -1798,7 +1798,7 @@ bootstrap_ciaoc := ~fsR(bundle_src(ciao)/'bootstrap'/'ciaoc.sta').
 % (Not configurable)
 
 :- export(home_url_str/1).
-home_url_str := "http://www.ciaohome.org/".
+home_url_str := "http://ciao-lang.org/".
 % TODO: Wrong
 :- export(packages_dir_str/1).
 packages_dir_str := "packages/master/".

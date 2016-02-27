@@ -1,6 +1,6 @@
 DIR_MAILMAN = /var/lib/mailman
 LIST = ciao-users
-INDEX_FILE = "http://www.ciaohome.org/index.html"
+INDEX_FILE = "http://ciao-lang.org/index.html"
 TMP_DIR = tmp
 INDEX = index.html
 

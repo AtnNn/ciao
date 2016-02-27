@@ -151,11 +151,11 @@
 %
 % * Links
 %
-% A link to [[http://ciaohome.org]] showing its URL.
+% A link to [[http://ciao-lang.org]] showing its URL.
 %
-% A link to [[http://ciaohome.org][Ciao]] hiding its URL.
+% A link to [[http://ciao-lang.org][Ciao]] hiding its URL.
 %
-% A link to [[http://ciaohome.org][The *Ciao* System]] hiding its URL
+% A link to [[http://ciao-lang.org][The *Ciao* System]] hiding its URL
 % with a complex string.
 %
 % * Anchors, labels, references, bibliographical citations

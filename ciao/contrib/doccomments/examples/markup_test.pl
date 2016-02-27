@@ -123,11 +123,11 @@ Text for the subsubsection.
 
 @section{Links}
 
-A link to @href{http://ciaohome.org} showing its URL.
+A link to @href{http://ciao-lang.org} showing its URL.
 
-A link to @href{http://ciaohome.org}{Ciao} hiding its URL.
+A link to @href{http://ciao-lang.org}{Ciao} hiding its URL.
 
-A link to @href{http://ciaohome.org}{The @bf{Ciao} System} hiding its
+A link to @href{http://ciao-lang.org}{The @bf{Ciao} System} hiding its
 URL with a complex string.
 
 @section{Anchors, labels, references, bibliographical citations}
