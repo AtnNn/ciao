@@ -1,38 +1,28 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - genbar4 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - mycin (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC775" HREF="ciao_toc.html#TOC775">genbar4 (library)</A></H1>
+<H1><A NAME="SEC771" HREF="ciao_toc.html#TOC771">mycin (library)</A></H1>
 <P>
-<A NAME="IDX7985"></A>
-
-
-<P>
-This module defines predicates which depict barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window and are similar to those exported in genbar2 module except in that those defined in this module doesn't display a legend. Thus, the user does not have to define legend element names. 
-
-
-<P>
-The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes . 
+<A NAME="IDX7884"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_195.html#SEC776">Usage and interface (genbar4)</A>
-<LI><A HREF="ciao_195.html#SEC777">Documentation on exports (genbar4)</A>
-<LI><A HREF="ciao_195.html#SEC778">Documentation on internals (genbar4)</A>
+<LI><A HREF="ciao_195.html#SEC772">Usage and interface (mycin)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC776" HREF="ciao_toc.html#TOC776">Usage and interface (<CODE>genbar4</CODE>)</A></H2>
+<H2><A NAME="SEC772" HREF="ciao_toc.html#TOC772">Usage and interface (<CODE>mycin</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -40,23 +30,11 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(genbar4)).</CODE>
+<CODE>:- use_package(mycin).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX7986"></A>
-<CODE>barchart4/7</CODE>, 
-<A NAME="IDX7987"></A>
-<CODE>barchart4/11</CODE>, 
-<A NAME="IDX7988"></A>
-<CODE>percentbarchart4/7</CODE>.
-
-</UL>
+<CODE>:- module(...,...,[mycin]).</CODE>
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -65,20 +43,22 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7989"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7990"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7991"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX7992"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7993"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7994"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7995"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX7885"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7886"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7887"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7888"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7889"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7890"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7891"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7892"></A>
+<CODE>write</CODE>.
 
 </UL>
 
@@ -86,159 +66,7 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 </div class="cartouche">
 
-
-
-<H2><A NAME="SEC777" HREF="ciao_toc.html#TOC777">Documentation on exports (<CODE>genbar4</CODE>)</A></H2>
-<P>
-<A NAME="IDX7996"></A>
-<A NAME="IDX7997"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart4/7:</B>
-<DD><A NAME="IDX7998"></A>
-
-
-<P>
-<CODE>barchart4(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-As we mentioned in the above paragraph, this predicate is comparable to 
-<A NAME="IDX7999"></A>
-<CODE>barchart2/8</CODE> except in the <CODE>XVector</CODE> argument type. 
-
-
-<P>
-Example: 
-
-<PRE>
-barchart4('This is the header text',
-  'Barchart without legend',
-  'My xaxistitle',
-  [[2],[5],[6]],
-  'My yaxixtitle',
-  [20,10,59],
-  'Numeric values in the xaxis').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8000"></A>
-<A NAME="IDX8001"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart4/11:</B>
-<DD><A NAME="IDX8002"></A>
-
-
-<P>
-<CODE>barchart4(Hder,BT,XT,XVector,XMax,XMin,YT,YVector,YMax,YMin,Fter)</CODE>
-
-
-<P>
-As we stated before, this predicate is quite similar to 
-<A NAME="IDX8003"></A>
-<CODE>barchart2/10</CODE> except in the following aspects: 
-
-
-
-<UL>
-
-<LI>The <CODE>XVector</CODE> argument type, because the yielded bar chart lacks the legend.
-
-<LI>The user can set limits for both <CODE>x</CODE> axis and <CODE>y</CODE> axis.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-barchart4('This is the header text, you can write a graph description',
-  'Barchart without legend',
-  'My xaxistitle',
-  [[2,'Blue','Yellow','pattern1'],
-       [20,'MediumTurquoise','Plum','pattern5'],
-       [30,'MediumTurquoise','Green','pattern5']],
-  50,
-  -10,
-  'My yaxixtitle',
-  [20,10,59],
-  100,
-  -10,
-  'Numeric values in the xaxis').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8004"></A>
-<A NAME="IDX8005"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart4/7:</B>
-<DD><A NAME="IDX8006"></A>
-
-
-<P>
-<CODE>percentbarchart4(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-The y axis maximum coordinate value is 100. The x axis limits are automatically worked out. This predicate is useful when the bar height represents percentages. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-percentbarchart4('This is the header text',
-  'Barchart without legend',
-  'My xaxistitle',
-  [[2,'Blue','Yellow','pattern1'],[5,'Yellow','Plum','pattern5'],
-       [6,'MediumTurquoise','Green','pattern5']],
-  'My yaxixtitle',
-  [20,10,59],
-  'Numeric values in the xaxis').
-</PRE>
-
-</DL>
-
-
-
-<H2><A NAME="SEC778" HREF="ciao_toc.html#TOC778">Documentation on internals (<CODE>genbar4</CODE>)</A></H2>
-<P>
-<A NAME="IDX8007"></A>
-<A NAME="IDX8008"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement4/1:</B>
-<DD><A NAME="IDX8009"></A>
-
-
-<P>
-Defines the attributes of the bar. 
-<DL COMPACT>
-
-<DT><CODE>XValue</CODE>
-<DD>
-x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
-
-<DT><CODE>ForegColor</CODE>
-<DD>
-It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>BackgColor</CODE>
-<DD>
-It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>SPattern</CODE>
-<DD>
-It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
-</DL>
-
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

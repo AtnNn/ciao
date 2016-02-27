@@ -79,9 +79,13 @@ X@>=Y :- X@>=Y.
 :- comment(compare(Op,Term1,Term2) , "@var{Op} is the result of
            comparing the terms @var{Term1} and @var{Term2}.").
 
-:- true pred compare(?atm,@term,@term) => member([(=),(>),(<)]) * term * term + native.
+:- true pred compare(?atm,@term,@term)
+	=> member([(=),(>),(<)]) * term * term + native.
 
 compare(X, Y, Z) :- compare(X, Y, Z).
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+76,2003/12/19,18:19*01+'CET'), "First
+   revision.  (Edison Mera)").
 

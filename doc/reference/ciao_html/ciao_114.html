@@ -1,61 +1,64 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Declaring classes and interfaces</TITLE>
+<TITLE>The Ciao Prolog System               - Fuzzy Prolog</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC469" HREF="ciao_toc.html#TOC469">Declaring classes and interfaces</A></H1>
+<H1><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Fuzzy Prolog</A></H1>
 <P>
-<A NAME="IDX4982"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<A NAME="IDX4988"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> Claudio Vaucheret, Sergio Guadarrama, Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#162 (2001/12/4, 16:2:58 CET)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-O'Ciao classes are declared in the same way as traditional prolog modules. The general mechanism of <EM>source expansion</EM> will translate object-oriented declarations to normal prolog code. This is done transparently to the user. 
+<STRONG>Version of last change:</STRONG> 1.7#199 (2002/4/18, 18:5:46 CEST)
 
 
 <P>
-Abstract 
-<A NAME="IDX4983"></A>
-<A NAME="IDX4984"></A>
-<EM>interfaces</EM> are restricted classes which declare exported predicates with no implementation. The implementation itselt will be provided by some class using an 
-<A NAME="IDX4985"></A>
-<CODE>implements/1</CODE> declaration. Only 
-<A NAME="IDX4986"></A>
-<CODE>export/1</CODE> and 
-<A NAME="IDX4987"></A>
-<CODE>data/1</CODE> declarations are allowed when declaring an interface. Normal classes may treated as interfaces just ignoring all exported predicate implementations. 
+This package impements an extension of prolog to deal with uncertainty. We implement a fuzzy prolog that models interval-valued fuzzy logic. This approach is more general than other fuzzy prologs in two aspects: 
+
+
+
+<OL>
+<LI>Truth values are sub-intervals on [0,1]. In fact, it could be a finite union of sub-intervals, as we will see below. Having a unique truth value is a particular case modeled with a unitary interval.
+
+<LI>Truth values are propagated through the rules by means of a set of <EM>aggregation operators</EM>. The definition of an <EM>aggregation operator</EM> is a generalization that subsumes conjunctive operators (triangular norms as min, prod, etc.), disjunctive operators (triangular co-norms as max, sum, etc.), average operators (averages as arithmetic average, cuasi-linear average, etc.) and hybrid operators (combinations of previous operators).
+
+</OL>
+
+<P>
+We add uncertainty using CLP(R) instead of implementing a new fuzzy resolution as other fuzzy prologs. In this way, we use the original inference mechanism of Prolog, and we use the constraints and its operations provided by CLP(R) to handle the concept of partial truth. We represent intervals as constrains over real numbers and <EM>aggregation operators</EM> as operations with constraints. 
+
+
+<P>
+Each fuzzy predicate has an additional argument which represents its truth value. We use ":~" instead of ":-" to distinguish fuzzy clauses from prolog clauses. In fuzzy clauses, truth values are obtained via an aggregation operator. There is also some syntactic sugar for defining fuzzy predicates with certain membership functions, the fuzzy counterparts of crisp predicates, and the fuzzy negation of a fuzzy predicate. 
 
 
 
 <UL>
-<LI><A HREF="ciao_114.html#SEC470">Usage and interface (class)</A>
-<LI><A HREF="ciao_114.html#SEC471">Documentation on new declarations (class)</A>
-<LI><A HREF="ciao_114.html#SEC472">Documentation on exports (class)</A>
-<LI><A HREF="ciao_114.html#SEC473">Other information (class)</A>
-<LI><A HREF="ciao_114.html#SEC477">Known bugs and planned improvements (class)</A>
+<LI><A HREF="ciao_114.html#SEC465">Usage and interface (fuzzy)</A>
+<LI><A HREF="ciao_114.html#SEC466">Documentation on new declarations (fuzzy)</A>
+<LI><A HREF="ciao_114.html#SEC467">Documentation on exports (fuzzy)</A>
+<LI><A HREF="ciao_114.html#SEC468">Other information (fuzzy)</A>
+<LI><A HREF="ciao_114.html#SEC469">Known bugs and planned improvements (fuzzy)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC470" HREF="ciao_toc.html#TOC470">Usage and interface (<CODE>class</CODE>)</A></H2>
+<H2><A NAME="SEC465" HREF="ciao_toc.html#TOC465">Usage and interface (<CODE>fuzzy</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -63,57 +66,11 @@ Abstract
 
 <LI><STRONG>Library usage:</STRONG>
 
-To declare a class the compiler must be told to use the <CODE>class</CODE> <EM>source expansion</EM>. To do so, source code must start with a module declaration which loads the class package: 
+<CODE>:- use_package(fuzzy).</CODE>
 
-<PRE>
-           :- class(ClassName).
-</PRE>
+or
 
-or a 
-<A NAME="IDX4988"></A>
-<CODE>module/3</CODE> declaration, as follows: 
-
-<PRE>
-           :- module(ClassName,[],[class]).
-</PRE>
-
-
-<A NAME="IDX4989"></A>
-interfaces are declared in a similar way: 
-
-<PRE>
-           :- interface(InterfaceName).
-</PRE>
-
-Please, do not use SICStus-like module declaration, with a non-empty export list. In other case, some non-sense errors will be reported by normal Ciao module system. 
-
-Most of the regular Ciao declarations may be used when defining a class, such as 
-<A NAME="IDX4990"></A>
-<CODE>concurrent/1</CODE>,
-<A NAME="IDX4991"></A>
-<CODE>dynamic/1</CODE>, 
-<A NAME="IDX4992"></A>
-<CODE>discontiguous/1</CODE>,
-<A NAME="IDX4993"></A>
-<CODE>multifile/1</CODE>, and so on. 
-
-However, there are some restrictions wich apply to those declarations: 
-
-<UL>
-<LI>
-
-<A NAME="IDX4994"></A>
-<CODE>meta_predicate/1</CODE> declaration is not allowed to hold 
-<A NAME="IDX4995"></A>
-<A NAME="IDX4996"></A>
-<EM>addmodule and pred(N) meta-arguments</EM>, except for previously declared multifiles. 
-<LI>Attribute and multifile predicates must be declared before any clause of the related predicate.
-
-<LI>There is no sense in declaring an attribute as meta_predicate.
-
-</UL>
-
-It is a good practique to put all your declarations at the very begining of the file, just before the code itself. 
+<CODE>:- module(...,...,[fuzzy]).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -122,49 +79,66 @@ It is a good practique to put all your declarations at the very begining of the 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4997"></A>
-<CODE>inherited/1</CODE>, 
-<A NAME="IDX4998"></A>
-<CODE>self/1</CODE>, 
-<A NAME="IDX4999"></A>
-<CODE>constructor/0</CODE>, 
-<A NAME="IDX5000"></A>
-<CODE>destructor/0</CODE>.
+<A NAME="IDX4989"></A>
+<CODE>:#/2</CODE>, 
+<A NAME="IDX4990"></A>
+<CODE>fuzzy_predicate/1</CODE>, 
+<A NAME="IDX4991"></A>
+<CODE>fuzzy/1</CODE>, 
+<A NAME="IDX4992"></A>
+<CODE>fnot/1</CODE>, 
+<A NAME="IDX4993"></A>
+<CODE>:~/2</CODE>, 
+<A NAME="IDX4994"></A>
+<CODE>=&#62;/4</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX4995"></A>
+<CODE>fuzzybody/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4996"></A>
+<CODE>faggregator/1</CODE>.
 
 </UL>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4997"></A>
+<CODE>:~/2</CODE> [1200,xfx], 
+<A NAME="IDX4998"></A>
+<CODE>:~/1</CODE> [1200,xf], 
+<A NAME="IDX4999"></A>
+<CODE>:=/2</CODE> [1200,xfx], 
+<A NAME="IDX5000"></A>
+<CODE>:=/1</CODE> [1200,xf], 
+<A NAME="IDX5001"></A>
+<CODE>:#/2</CODE> [1200,xfx], 
+<A NAME="IDX5002"></A>
+<CODE>=&#62;/1</CODE> [1175,fx], 
+<A NAME="IDX5003"></A>
+<CODE>fnot/1</CODE> [1150,fx], 
+<A NAME="IDX5004"></A>
+<CODE>aggr/1</CODE> [1150,fx], 
+<A NAME="IDX5005"></A>
+<CODE>##/2</CODE> [1120,xfy], 
+<A NAME="IDX5006"></A>
+<CODE>&#60;#/2</CODE> [1120,xfy], 
+<A NAME="IDX5007"></A>
+<CODE>#&#62;/2</CODE> [1120,xfy], 
+<A NAME="IDX5008"></A>
+<CODE>fuzzy/1</CODE> [1150,fx], 
+<A NAME="IDX5009"></A>
+<CODE>fuzzy_predicate/1</CODE> [1190,fx], 
+<A NAME="IDX5010"></A>
+<CODE>fuzzy_discrete/1</CODE> [1190,fx].
 
 <LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX5001"></A>
-<CODE>export/1</CODE>, 
-<A NAME="IDX5002"></A>
-<CODE>public/1</CODE>, 
-<A NAME="IDX5003"></A>
-<CODE>inheritable/1</CODE>, 
-<A NAME="IDX5004"></A>
-<CODE>data/1</CODE>, 
-<A NAME="IDX5005"></A>
-<CODE>dynamic/1</CODE>, 
-<A NAME="IDX5006"></A>
-<CODE>concurrent/1</CODE>, 
-<A NAME="IDX5007"></A>
-<CODE>inherit_class/1</CODE>, 
-<A NAME="IDX5008"></A>
-<CODE>implements/1</CODE>, 
-<A NAME="IDX5009"></A>
-<CODE>virtual/1</CODE>.
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX5010"></A>
-<CODE>objects/objects_rt</CODE>.
-
-</UL>
+<A NAME="IDX5011"></A>
+<CODE>aggr/1</CODE>.
 
 </UL>
 
@@ -172,52 +146,75 @@ It is a good practique to put all your declarations at the very begining of the 
 
 
 
-<H2><A NAME="SEC471" HREF="ciao_toc.html#TOC471">Documentation on new declarations (<CODE>class</CODE>)</A></H2>
+<H2><A NAME="SEC466" HREF="ciao_toc.html#TOC466">Documentation on new declarations (<CODE>fuzzy</CODE>)</A></H2>
 <P>
-<A NAME="IDX5011"></A>
 <A NAME="IDX5012"></A>
+<A NAME="IDX5013"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
-<DD><A NAME="IDX5013"></A>
+<DT><span class="define">DECLARATION:</span> <B>aggr/1:</B>
+<DD><A NAME="IDX5014"></A>
 
 
 <P>
-Declares a method or attribute to be part of the 
-<A NAME="IDX5014"></A>
-<A NAME="IDX5015"></A>
-<EM>public interface</EM>. 
-
-
-<P>
-The public interface is the set of predicates wich will be accesible from any code establishing an usage relationship with this class (see 
-<A NAME="IDX5016"></A>
-<CODE>use_class/1</CODE> for further information). 
-
-
-<P>
-Publishing an attribute or method is very similar to <EM>exporting</EM> a predicate in a Prolog module. 
-
-
-<P>
-Whether an inherited and exported predicate is 
-<A NAME="IDX5017"></A>
-overriden, it must be explicitly exported again. 
-
-
-<P>
-An inherited (but not exported) predicate may become exported, without overriding it by the usage of this declaration. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
+<STRONG>Usage:</STRONG> :- <CODE>aggr(Name)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> will be part of the public (exported) interface.
+<LI><EM>Description:</EM> Declares <CODE>Name</CODE> an aggregator. Its binary definition has to be provided. For example:
 
-<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Spec</CODE> is a method or attribute specification.
- (<CODE>objects_rt:method_spec/1</CODE>)
+<PRE>
+:- aggr myaggr.
+
+myaggr(X,Y,Z):- Z .=. X*Y.
+</PRE>
+
+defines an aggregator identical to <CODE>prod</CODE>. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Name</CODE> is an atomic term (an atom or a number).
+ (<CODE>basic_props:constant/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC467" HREF="ciao_toc.html#TOC467">Documentation on exports (<CODE>fuzzy</CODE>)</A></H2>
+<P>
+<A NAME="IDX5015"></A>
+<A NAME="IDX5016"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>:#/2:</B>
+<DD><A NAME="IDX5017"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>:#(Name, Decl)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines fuzzy predicate <CODE>Name</CODE> from the declaration <CODE>Decl</CODE>.
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Decl</CODE> is one of the following three: 
+
+<PRE>
+fuzzydecl(fuzzy_predicate(_1)).
+fuzzydecl(fuzzy(_1)).
+fuzzydecl(fnot(_1)).
+</PRE>
+
+ (<CODE>user(... /fuzzy_doc):fuzzydecl/1</CODE>)
 </UL>
 
 </DL>
@@ -226,68 +223,163 @@ An inherited (but not exported) predicate may become exported, without overridin
 <A NAME="IDX5018"></A>
 <A NAME="IDX5019"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>public/1:</B>
+<DT><span class="define">PREDICATE:</span> <B>fuzzy_predicate/1:</B>
 <DD><A NAME="IDX5020"></A>
 
 
 <P>
-Just an alias for 
-<A NAME="IDX5021"></A>
-<CODE>export/1</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>public(Spec)</CODE>.
+<STRONG>Usage:</STRONG> <CODE>fuzzy_predicate(Domain)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This declaration may be used instead of
+<LI><EM>Description:</EM> Defines a fuzzy predicate with piecewise linear continuous membership function. This is given by <CODE>Domain</CODE>, which is a list of pairs of domain-truth values, in increasing order and exhaustive. For example:
 
-<A NAME="IDX5022"></A>
-<CODE>export/1</CODE>. 
+
+<PRE>
+young :# fuzzy_predicate([(0,1),(35,1),(45,0),(120,0)]).
+</PRE>
+
+defines the predicate: 
+
+<PRE>
+young(X,1):- X .&#62;=. 0, X .&#60;. 35.
+young(X,M):- X .&#62;=. 35, X .&#60;. 45, 10*M .=. 45-X.
+young(X,0):- X .&#62;=. 45, X .=&#60;. 120. 
+</PRE>
+
+ 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Spec</CODE> is a method or attribute specification.
- (<CODE>objects_rt:method_spec/1</CODE>)
+<CODE>Domain</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5023"></A>
-<A NAME="IDX5024"></A>
+<A NAME="IDX5021"></A>
+<A NAME="IDX5022"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>inheritable/1:</B>
-<DD><A NAME="IDX5025"></A>
+<DT><span class="define">PREDICATE:</span> <B>fuzzy/1:</B>
+<DD><A NAME="IDX5023"></A>
 
 
 <P>
-Declares a method or attribute to be inherited by descendant classes. Notice that all <STRONG>public predicates are inheritable by default</STRONG>. There is no need to mark them as inheritable. 
-
-
-<P>
-Traditionaly, object oriented languages makes use of the 
-<A NAME="IDX5026"></A>
-<A NAME="IDX5027"></A>
-<EM>protected</EM> concept. Inheritable/1 may be used as the same concept. 
-
-
-<P>
-The set of inheritable predicates is called the 
-<A NAME="IDX5028"></A>
-<A NAME="IDX5029"></A>
-<EM>inheritable interface</EM>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>inheritable(MethodSpec)</CODE>.
+<STRONG>Usage:</STRONG> <CODE>fuzzy(Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>MethodSpec</CODE> is accessible to descendant classes.
+<LI><EM>Description:</EM> Defines a fuzzy predicate as the fuzzy counterpart of a crisp predicate <CODE>Name</CODE>. For example,
 
+
+<PRE>
+p_f :# fuzzy p/2
+</PRE>
+
+defines a new fuzzy predicate <CODE>p_f/3</CODE> (the last argument is the truth value) with truth value equal to 0 if <CODE>p/2</CODE> fails and 1 otherwise. 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>MethodSpec</CODE> is a method or attribute specification.
- (<CODE>objects_rt:method_spec/1</CODE>)
+<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5024"></A>
+<A NAME="IDX5025"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fnot/1:</B>
+<DD><A NAME="IDX5026"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fnot(Name)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines a fuzzy predicate as the fuzzy negation of another fuzzy predicate <CODE>Name</CODE>. For example,
+
+
+<PRE>
+notp_f :# fnot p_f/3
+</PRE>
+
+defines the predicate: 
+
+<PRE>
+notp_f(X,Y,M) :-
+        p_f(X,Y,Mp),
+        M .=. 1 - Mp.
+</PRE>
+
+ 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5027"></A>
+<A NAME="IDX5028"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>:~/2:</B>
+<DD><A NAME="IDX5029"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>:~(Head, Body)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines a fuzzy clause for a fuzzy predicate. The clause contains calls to either fuzzy or crisp predicates. Calls to crisp predicates are automatically fuzzified. The last argument of <CODE>Head</CODE> is the truth value of the clause, which is obtained as the aggregation of the truth values of the body goals. An example:
+
+
+<PRE>
+:- module(young2,_,[fuzzy]).
+
+young_couple(X,Y,Mu) :~ min
+        age(X,X1),
+        age(Y,Y1),
+        young(X1,MuX),
+        young(Y1,MuY).
+
+age(john,37).
+age(rose,39).
+
+young :# fuzzy_predicate([(0,1),(35,1),(45,0),(120,0)]).
+
+</PRE>
+
+so that: 
+
+<PRE>
+?- young_couple(john,rose,M).
+
+M .=. 0.6 ? 
+</PRE>
+
+ 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Head</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Body</CODE> is a clause body plus an optional aggregation operator.
+ (<CODE>user(... /fuzzy_doc):fuzzybody/1</CODE>)
 </UL>
 
 </DL>
@@ -296,846 +388,152 @@ The set of inheritable predicates is called the
 <A NAME="IDX5030"></A>
 <A NAME="IDX5031"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>data/1:</B>
+<DT><span class="define">PROPERTY:</span> <B>fuzzybody/1:</B>
 <DD><A NAME="IDX5032"></A>
 
 
 <P>
-Declares an 
+A clause body, optionally prefixed by the name of an aggregation operator. The agregators currently provided are listed under <CODE>faggregator/1</CODE>. By default, the aggregator used is <CODE>min</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fuzzybody(B)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>B</CODE> is a clause body plus an optional aggregation operator.
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX5033"></A>
 <A NAME="IDX5034"></A>
-<EM>attribute</EM> at current class. Attributes are used to build the internal state of instances. So, each instance will own a particular copy of those attribute definitions. In this way, one instance may have different state from another. 
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>faggregator/1:</B>
+<DD><A NAME="IDX5035"></A>
 
 
 <P>
-O'Ciao attributes are restricted to hold simple facts. It is not possible to hold a Head :- Body clause at an instance attribute. 
+The first three are, respectively, the T-norms: minimum, product, and Lukasiewicz's. The last three are their corresponding T-conorms. Aggregators can be defined by the user, see <CODE>aggr/1</CODE>. 
 
+<PRE>
+faggregator(min).
+faggregator(prod).
+faggregator(luka).
+faggregator(max).
+faggregator(dprod).
+faggregator(dluka).
+</PRE>
 
 <P>
-Notice that attributes are 
-<A NAME="IDX5035"></A>
+<STRONG>Usage:</STRONG> <CODE>faggregator(Aggr)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Aggr</CODE> is an aggregator which is cumulative, i.e., its application to several values by iterating pairwise the binary operation is safe.
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX5036"></A>
-<EM>multi-evaluated</EM> by nature, and may be manipulated by the habitual <STRONG>assert/retract</STRONG> family of predicates. 
-
-
-<P>
-Attributes may also be initialized. In order to do so, simply put some clauses after the attribute definition. Each time an instance is created, its initial state will be built from those 
 <A NAME="IDX5037"></A>
-<A NAME="IDX5038"></A>
-<EM>initialization clauses</EM>. 
-
-
-<P>
-Note: whether a data/1 declaration appears inside an interface, it will be automatically exported. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>data Spec</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> is an attribute.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Spec</CODE> is a method or attribute specification.
- (<CODE>objects_rt:method_spec/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5039"></A>
-<A NAME="IDX5040"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>dynamic/1:</B>
-<DD><A NAME="IDX5041"></A>
+<DT><span class="define">PREDICATE:</span> <B>=&#62;/4:</B>
+<DD><A NAME="IDX5038"></A>
 
 
 <P>
-Just an alias for 
-<A NAME="IDX5042"></A>
-<CODE>data/1</CODE>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>dynamic Spec</CODE>.
+<STRONG>Usage:</STRONG> <CODE>=&#62;(Aggr, A, B, Truth)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> You may use this declaration instead of
-
-<A NAME="IDX5043"></A>
-<CODE>data/1</CODE>. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Spec</CODE> is a method or attribute specification.
- (<CODE>objects_rt:method_spec/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5044"></A>
-<A NAME="IDX5045"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>concurrent/1:</B>
-<DD><A NAME="IDX5046"></A>
-
-
-<P>
-Declares a 
-<A NAME="IDX5047"></A>
-<A NAME="IDX5048"></A>
-<EM>concurrent attribute</EM> at current class. Concurrent attributes are just the same as normal attributes, those declared using 
-<A NAME="IDX5049"></A>
-<CODE>data/1</CODE>, except for they may freeze the calling thread instead of failing when no more choice points are remaining on the concurrent attribute. 
-
-
-<P>
-In order to get more information about concurrent behavior take a look to the concurrent/1 built-in declaration on Ciao Prolog module system. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>concurrent Spec</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Declares <CODE>Spec</CODE> to be a concurrent attribute.
+<LI><EM>Description:</EM> The fuzzy implication <CODE>A =&#62; B</CODE> defined by aggregator <CODE>Aggr</CODE>, resulting in the truth value <CODE>Truth</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Spec</CODE> is a method or attribute specification.
- (<CODE>objects_rt:method_spec/1</CODE>)
-</UL>
+<CODE>Aggr</CODE> is an aggregator which is cumulative, i.e., its application to several values by iterating pairwise the binary operation is safe.
+ (<CODE>user(... /fuzzy_doc):faggregator/1</CODE>)
 
-</DL>
-
-<P>
-<A NAME="IDX5050"></A>
-<A NAME="IDX5051"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>inherit_class/1:</B>
-<DD><A NAME="IDX5052"></A>
-
-
-<P>
-Makes any public and/or inheritable predicate at inherited class to become accesible by any instance derived from current class. 
-
-
-<P>
-Inherited class is also called the 
-<A NAME="IDX5053"></A>
-<A NAME="IDX5054"></A>
-<EM>super class</EM>. 
-
-
-<P>
-Only one inherit_class/1 declaration is allowed to be present at current source. 
-
-
-<P>
-Notice that inheritance is 
-<A NAME="IDX5055"></A>
-public by default. Any public and/or inheritable declaration will remain the same to descendant classes. However, any inherited predicate may be <EM>overriden</EM> (redefined). 
-
-
-<P>
-A predicate is said to be 
-<A NAME="IDX5056"></A>
-<A NAME="IDX5057"></A>
-<EM>overriden</EM> when it has been inherited from super class, but there are clauses (or a 
-<A NAME="IDX5058"></A>
-<CODE>data/1</CODE> declaration) present at current class for such a predicate. 
-
-
-<P>
-Whether a <STRONG>public</STRONG> predicate is overriden, the local definition must also be exported, otherwise an error is reported. 
-
-
-<P>
-Whether an <STRONG>inheritable</STRONG> predicate (not public) is overriden, the local definition must also be marked as inheritable or exported, otherwise an error is also reported. 
-
-
-<P>
-Note: whether inherit_class/1 appears inside an interface, it will be used as an 
-<A NAME="IDX5059"></A>
-<CODE>implements/1</CODE> declaration. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>inherit_class(Source)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Establish an
-
-<A NAME="IDX5060"></A>
-<A NAME="IDX5061"></A>
-<EM>inheritance relationship</EM> between current class and the class defined at <CODE>Source</CODE> file. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Source</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
- (<CODE>objects_rt:class_source/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5062"></A>
-<A NAME="IDX5063"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>implements/1:</B>
-<DD><A NAME="IDX5064"></A>
-
-
-<P>
-Forces current source to provide an implementation for the given interface file. Such interface file may declare another class or a specific interface. 
-
-
-<P>
-Every public predicate present at given interface file will be automatically declared as public at current source, so you <STRONG>must</STRONG> provide an implementation for such predicates. 
-
-
-<P>
-The effect of this declaration is called 
-<A NAME="IDX5065"></A>
-<A NAME="IDX5066"></A>
-<EM>interface inheritance</EM>,and there is no restriction on the number of implements/1 declarations present at current code. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>implements(Interface)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Current source is supposed to provide an implementation for <CODE>Interface</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Interface</CODE> is a valid path to a prolog file containing a class declaration or an interface declaration (without .pl extension).
- (<CODE>objects_rt:interface_source/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5067"></A>
-<A NAME="IDX5068"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>virtual/1:</B>
-<DD><A NAME="IDX5069"></A>
-
-
-<P>
-This declaration may be used whenever descendant classes are to implement different versions of a given predicate. 
-
-
-<P>
-<A NAME="IDX5070"></A>
-<A NAME="IDX5071"></A>
-<EM>virtual</EM> predicates give a chance to handle, in an uniform way, different implementations of the same functionality. 
-
-
-<P>
-Whether a virtual predicate is declared as a method, there must be at least one clause of it present at current source. Whenever no special implementation is needed at current class, a never-fail/allways-fail clause may be defined (depending on your needs). For example: 
-
-
-
-<PRE>
-   :- virtual([ test1/1 , test2/2 ]).
-   test1(_).
-   test2(_,_) :- fail.
-</PRE>
-
-<P>
-This kind of virtual methods are also known as 
-<A NAME="IDX5072"></A>
-<A NAME="IDX5073"></A>
-<EM>abstract methods</EM>, since implementation is fully delegated to descendant classes. 
-
-
-<P>
-An attribute may be also declared as a virtual one, but there is no need to write clauses for it. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>virtual(VirtualMethodSpec)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> All calls to <CODE>VirtualMethodSpec</CODE> predicate in current source will use the most descendant implementation of it.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>VirtualMethodSpec</CODE> is a method specification.
- (<CODE>objects_rt:virtual_method_spec/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC472" HREF="ciao_toc.html#TOC472">Documentation on exports (<CODE>class</CODE>)</A></H2>
-<P>
-<A NAME="IDX5074"></A>
-<A NAME="IDX5075"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>inherited/1:</B>
-<DD><A NAME="IDX5076"></A>
-
-
-<P>
-This predicate qualificator may be used whenever you need to reference an attribute or method on the super class. 
-
-
-<P>
-Since methods and attributes may be 
-<A NAME="IDX5077"></A>
-redefined, this qualificator is need to distinguish between a locally declared predicate and the inherited one, which has the same name. 
-
-
-<P>
-There is no need to use inherited/1 if a particular inherited predicate has not been redefined at current class. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>inherited(Goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> References a given <CODE>Goal</CODE> at the super class
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+<CODE>A</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
-</UL>
 
-</DL>
+<CODE>B</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 
-<P>
-<A NAME="IDX5078"></A>
-<A NAME="IDX5079"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>self/1:</B>
-<DD><A NAME="IDX5080"></A>
-
-
-<P>
-Determines which instance is currently executing self/1 goal. 
-
-
-<P>
-Predicate will fail if argument is not a free variable. Otherwise, it will allways succeed, retrieving the instance identifier which is executing current code. 
-
-
-<P>
-This functionality is very usefull since an object must have knowledge of other object's identifier in order to send messages to it.For example: 
-
-
-<P>
-:- concurrent ack/0. 
-
-
-<P>
-send_data_to_object(Data,Obj) :- self(X), Obj:take_this(Data,X), current_fact(ack). 
-
-
-<P>
-acknowledge :- asserta_fact(ack). 
-
-
-<P>
-take_this(Data,Sender) :- validate_data(Data), Sender:acknowledge. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>self(Variable)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves current instance identifier in <CODE>Variable</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Variable</CODE> is a free variable.
+<CODE>Truth</CODE> is a free variable.
  (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Variable</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5081"></A>
-<A NAME="IDX5082"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>constructor/0:</B>
-<DD><A NAME="IDX5083"></A>
-
-
-<P>
-A 
-<A NAME="IDX5084"></A>
-<A NAME="IDX5085"></A>
-<EM>constructor</EM> is a special case of method which complains the following conditions: 
-
-
-
-<UL>
-<LI>The constructor functor matches the current class name.
-
-<LI>A constructor may hold any number of arguments.
-
-<LI>If an inheritance relationship was defined, an inherited constructor must be manually called (see below).
-
-<LI>When instance creation takes place, any of the declared constructors are implicitly called. The actual constructor called depends on the
-
-<A NAME="IDX5086"></A>
-<CODE>new/2</CODE> goal specified by the user. 
-</UL>
-
-<P>
-This is a simple example of constructor declaration for the foo class: 
-
-
-
-<PRE>
-           foo :- 
-               display('an instance was born').
-</PRE>
-
-<P>
-Constructor declaration is not mandatory, and there may be more than one constructor declarations (with different arity) at the source code. 
-
-
-<P>
-This functionality is usefull when some computation is needed at instance creation. For example: opening a socket, clearing the screen, etc. 
-
-
-<P>
-Whenever an inheritance relationship is established, and there is any constructor defined at the super class, you must call manually an inherited constructor. Here is an example: 
-
-
-
-<PRE>
-           :- class(foo).
-           :- inherit_class(myclass).
-
-           foo :-
-               myclass(0),
-               display('an instance was born').
-
-           foo(N) :- myclass(N).
-</PRE>
-
-<P>
-Consequences may be unpredictable, if you forget to call an inherited constructor. You should also take care not to call an inherited constructor twice. 
-
-
-<P>
-All defined constructors are inheritable by default. A constructor may also be declared as public (by the user), but it is not mandatory. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Constructors are implicitly declared
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5087"></A>
-<A NAME="IDX5088"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>destructor/0:</B>
-<DD><A NAME="IDX5089"></A>
-
-
-<P>
-A 
-<A NAME="IDX5090"></A>
-<A NAME="IDX5091"></A>
-<EM>destructor</EM> is a special case of method which will be automatically called when instance destruction takes place. 
-
-
-<P>
-A destructor will never be wanted to be part of the public interface, and there is no need to mark them as inheritable, since all inherited destructors are called by O'Ciao just before yours. 
-
-
-<P>
-This is a simple example of destructor declaration: 
-
-
-
-<PRE>
-           destructor :- 
-               display('goodbye, cruel world!!!').
-</PRE>
-
-<P>
-Destructor declaration is not mandatory. Failure or sucess of destructors will be ignored by O'Ciao, and they will be called only once. 
-
-
-<P>
-This functionality is useful when some computation is need at instance destruction. For example: closing an open file. 
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Destructors are implicitly declared
-
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC473" HREF="ciao_toc.html#TOC473">Other information (<CODE>class</CODE>)</A></H2>
+<H2><A NAME="SEC468" HREF="ciao_toc.html#TOC468">Other information (<CODE>fuzzy</CODE>)</A></H2>
 
 <P>
- 
-
-
-<P>
-This describes the errors reported when declaring a class or an interface. The first section will explain compile-time errors, this is, any semantic error which may be determined at compile time. The second section will explain run-time errors, this is, any exception that may be raisen by the incorrect usage of O'Ciao. Some of those errors may be not reported at compile time, due to the use of meta-programational structures. For example: 
-
-
-<P>
-<CODE>functor(X,my_method,0),call(X).</CODE> 
-
-
-<P>
-O'Ciao is not able to check whether my_method/0 is a valid method or not. So, this kind of checking is left to run time. 
-
-
-
-<UL>
-<LI><A HREF="ciao_114.html#SEC474">Class and Interface error reporting at compile time</A>
-<LI><A HREF="ciao_114.html#SEC475">Class and Interface error reporting at run time</A>
-<LI><A HREF="ciao_114.html#SEC476">Normal Prolog module system interaction</A>
-</UL>
-
-
-
-<H3><A NAME="SEC474" HREF="ciao_toc.html#TOC474">Class and Interface error reporting at compile time</A></H3>
-<P>
- 
-
-<UL>
-
-<LI><STRONG>ERROR : multiple inheritance not allowed.</STRONG>
-
-There are two or more inherit_class/1 declarations found at your code. Only one declaration is allowed, since there is no multiple code inheritance support. 
-
-<LI><STRONG>ERROR : invalid inheritance declaration.</STRONG>
-
-The given parameter to inherit_class/1 declaration is not a valid path to a Prolog source. 
-
-<LI><STRONG>ERROR : sorry, addmodule meta-arg is not allowed at <EM>F/A</EM>. </STRONG>
-
-You are trying to declare <EM>F/A</EM> as meta-predicate, and one of the meta-arguments is <EM>addmodule</EM>. This is not allowed in O'Ciao due to implementation restrictions. For example: 
-
-<CODE>:- meta_predicate example(addmodule).</CODE> 
-
-<CODE>example(X,FromModule) :- call(FromModule:X).</CODE> 
-
-<LI><STRONG>ERROR : invalid attribute declaration for <EM>Arg</EM>. </STRONG>
-
-Argument to data/1 or dynamic/1 declaration is not a valid predicate specification of the form <EM>Functor/Arity</EM>. For example: 
-
-<CODE>:- data attr.</CODE> 
-
-<CODE>:- dynamic attr(_).</CODE> 
-
-<CODE>:- data attr/m.</CODE> 
-
-etc,etc... 
-
-<LI><STRONG>ERROR : pretended attribute <EM>F/A</EM> was assumed to be a method.</STRONG>
-
-You put some clauses of <EM>F/A</EM> before the corresponding data/1 or dynamic/1 declaration. For example: 
-
-<CODE>attr(initial_value).</CODE> 
-
-<CODE>:- data attr/1.</CODE> 
-
-It is a must to declare attributes before any clause of the given predicate. 
-
-<LI><STRONG>ERROR : destructor/0 is not allowed to be an attribute.</STRONG>
-
-There is a :- data(destructor/0) or :- dynamic(destructor/0). declaration in your code. This is not allowed since destructor/0 is a reserved predicate, and must be allways a method. 
-
-<LI><STRONG>ERROR : <EM>Constructor</EM> is not allowed to be an attribute.</STRONG>
-
-As the previos error, you are trying to declare a constructor as an attribute. A constructor must be allways a method. 
-
-<LI><STRONG>ERROR : invalid multifile: destructor/0 is a reserved predicate.</STRONG>
-
-There is a :- multifile(destructor/0). declaration in your code. This is not allowed since destructor/0 is a reserved predicate, and must be allways a method. 
-
-<LI><STRONG>ERROR : invalid multifile: <EM>Constructor</EM> is a reserved predicate.</STRONG>
-
-As the previos error, you are trying to declare a constructor as a multifile. Any constructor must allways be a method. 
-
-<LI><STRONG>ERROR : multifile declaration of <EM>F/A</EM> ignored: it was assumed to be a method.</STRONG>
-
-You put some clauses of <EM>F/A</EM> before the corresponding multifile/1 declaration. For example: 
-
-example(a,b). 
-
-<CODE>:- multifile example/2.</CODE> 
-
-Multifile predicates must be declared before any clause of the given predicate. 
-
-<LI><STRONG>ERROR : invalid multifile declaration: multifile(<EM>Arg</EM>). </STRONG>
-
-Given argument to multifile/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
-
-<LI><STRONG>ERROR : invalid public declaration: <EM>Arg</EM>. </STRONG>
-
-Given argument <EM>Arg</EM> to public/1 or export/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
-
-<LI><STRONG>ERROR : invalid inheritable declaration: inheritable(<EM>Arg</EM>). </STRONG>
-
-Given argument <EM>Arg</EM> to inheritable/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
-
-<LI><STRONG>ERROR : destructor/0 is not allowed to be virtual.</STRONG>
-
-There is a :- virtual(destructor/0) declaration present at your code. Destructors and/or constructors are not allowed to be virtual. 
-
-<LI><STRONG>ERROR : <EM>Constructor</EM> is not allowed to be virtual.</STRONG>
-
-As the previous error, you are trying to declare a constructor as virtual. This is not allowed. 
-
-<LI><STRONG>ERROR : invalid virtual declaration: virtual(<EM>Arg</EM>). </STRONG>
-
-Given argument to virtual/1 declaration is not a valid predicate specification, of the form <EM>Functor/Arity</EM>. 
-
-<LI><STRONG>ERROR : clause of <EM>F/A</EM> ignored : only facts are allowed as initial state.</STRONG>
-
-You declared <EM>F/A</EM> as an attribute, then you put some clauses of that predicate in the form <EM>Head :- Body</EM>. For example: 
-
-<CODE>:- data my_attribute/1.</CODE> 
-
-<CODE>my_attribute(X) :- X&#62;=0 , X&#60;=2.</CODE> 
-
-This is not allowed since attributes are assumed to hold simple facts. The correct usage for those <EM>initialization clauses</EM> is: 
-
-<CODE>:- data my_attribute/1.</CODE> 
-
-<CODE>my_attribute(0).</CODE> 
-
-<CODE>my_attribute(1).</CODE> 
-
-<CODE>my_attribute(2).</CODE> 
-
-<LI><STRONG>ERROR : multifile <EM>F/A</EM> is not allowed to be public.</STRONG>
-
-The given <EM>F/A</EM> predicate is both present at multifile/1 and public/1 declarations. For example: 
-
-<CODE>:- public(p/1).</CODE> 
-
-<CODE>:- multifile(p/1).</CODE> 
-
-This is not allowed since multifile predicates are not related to Object Oriented Programming. 
-
-<LI><STRONG>ERROR : multifile <EM>F/A</EM> is not allowed to be inheritable.</STRONG>
-
-Analogous to previous error. 
-
-<LI><STRONG>ERROR : multifile <EM>F/A</EM> is not allowed to be virtual.</STRONG>
-
-Analogous to previous error. 
-
-<LI><STRONG>ERROR : virtual <EM>F/A</EM> must be a method or attribute defined at this class.</STRONG>
-
-There is a virtual/1 declaration for <EM>F/A</EM>, but there is not any clause of that predicate nor a 
-<A NAME="IDX5092"></A>
-<CODE>data/1</CODE> declaration. You must declare at least one clause for every virtual method. Virtual attributes does not require any clause but a 
-<A NAME="IDX5093"></A>
-<CODE>data/1</CODE> declaration must be present. 
-
-<LI><STRONG>ERROR : implemented interface <EM>Module</EM> is not a valid interface.</STRONG>
-
-There is an 
-<A NAME="IDX5094"></A>
-<CODE>implements/1</CODE> declaration present at your code where given <EM>Module</EM> is not declared as class nor interface. 
-
-<LI><STRONG>ERROR : predicate <EM>F/A</EM> is required both as method (at <EM>Itf1</EM> interface) and attribute (at <EM>Itf2</EM> interface).</STRONG>
-
-There is no chance to give a correct implementation for <EM>F/A</EM> predicate since <EM>Itf1</EM> and <EM>Itf2</EM> interfaces require different definitions. To avoid this error, you must remove one of the related 
-<A NAME="IDX5095"></A>
-<CODE>implements/1</CODE> declaration. 
-
-<LI><STRONG>ERROR : inherited <EM>Source</EM> must be a class.</STRONG>
-
-There is an :- inherit_class(<EM>Source</EM>) declaration, but that source was not declared as a class. 
-
-<LI><STRONG>ERROR : circular inheritance: <EM>Source</EM> is not a valid super-class.</STRONG>
-
-Establishing an inheritance relationship with <EM>Source</EM> will cause current class to be present twice in the inheritance line. This is not allowed. The cause of this is error is simple : There is some inherited class from <EM>Source</EM> which also establishes an inheritance relationship with current source. 
-
-<LI><STRONG>ERROR : method/attribute <EM>F/A</EM> must be implemented.</STRONG>
-
-Some of the implemented interfaces requires <EM>F/A</EM> to be defined, but there is no definition for such predicate, even an inherited one. 
-
-<LI><STRONG>ERROR : local implementation of <EM>F/A</EM> hides inheritable/public definition.</STRONG>
-
-There is an inherited definition for <EM>F/A</EM> which is been redefined at current class, but there is no valid inheritable/public declaration for the last one. Overriden public predicates must be also declared as public. Overriden inheritable predicates must be declared either as public or inheritable. 
-
-<LI><STRONG>ERROR : public predicate <EM>F/A</EM> was not defined nor inherited.</STRONG>
-
-There is a 
-<A NAME="IDX5096"></A>
-<CODE>public/1</CODE> declaration for <EM>F/A</EM>, but there is no definition for it at current class nor an inherited one. 
-
-<LI><STRONG>ERROR : argument to self/1 must be a free variable.</STRONG>
-
-Argument to self/1 is not a variable, for example: <CODE>self(abc)</CODE>. 
-
-<LI><STRONG>ERROR : unknown inherited attribute in <EM>Goal</EM>.</STRONG>
-
-<EM>Goal</EM> belongs to assert/retract family of predicates, and given argument is not a valid inherited attribute. The most probable causes of this error are: 
-
-
-<UL>
-
-<LI>The given predicate is defined at super-class, but you forgot to mark it as inheritable (or public), at such class.
-
-<LI>The given predicate was not defined (at super-class) as an attribute, just as a method.
-
-</UL>
-
-<LI><STRONG>ERROR : unknown inherited goal: <EM>Goal</EM>.</STRONG>
-
-The given <EM>Goal</EM> was not found at super-class, or it is not accessible. Check whether <EM>Goal</EM> was marked as inheritable (or public) at super-class. 
-
-<LI><STRONG>ERROR : invalid argument: <EM>F/A</EM> is not an attribute.</STRONG>
-
-You are trying to pass a method as an argument to any predicate which expect a <EM>fact</EM> predicate. 
-
-<LI><STRONG>ERROR : unknown inherited fact: <EM>Fact</EM>.</STRONG>
-
-There is a call to any predicate which expects a <EM>fact</EM> argument (those declared as data or dynamic),but the actual argument is not an inherited attribute.For example: 
-
-<CODE>asserta_fact(inherited(not_an_attribute(8)))</CODE> 
-
-where not_an_attribute/1 was not declared as data or dynamic by the super-class (or corresponding ascendant). 
-
-<LI><STRONG>ERROR : unknown inherited spec: <EM>F/A</EM>.</STRONG>
-
-There is a reference to an inherited predicate specification, but the involved predicate has not been inherited. 
-
-<LI><STRONG>WARNING : meta-predicate specification of <EM>F/A</EM> ignored since this is an attribute.</STRONG>
-
-You declared <EM>F/A</EM> both as an attribute and a meta-predicate. For example: 
-
-<CODE>:- meta_predicate attr(goal).</CODE> 
-
-<CODE>:- data attr/1.</CODE> 
-
-There is no sense in declaring an attribute as meta-predicate. 
-
-<LI><STRONG>WARNING : class destructor is public</STRONG>
-
-There is a :- public(destructor/0) declaration present at your code. Marking a destructor as public is a very bad idea since anybody may destroy or corrupt an instance before the proper time. 
-
-<LI><STRONG>WARNING : class destructor is inheritable</STRONG>
-
-Analogous to previous error. 
-
-<LI><STRONG>WARNING : There is no call to inherited constructor/s</STRONG>
-
-You have not declared any constructor at your class, but there is any inherited constructor that should be called. Whenever you do not need constructors, but there is an inheritance relationship (where super-class declares a constructor), you should write a simple constructor as the following example: 
+An example program: 
 
 <PRE>
-   :- class(myclass).
-   :- inherit_class(other_class).
+:- module(dicesum5,_,[fuzzy]).
 
-   myclass :-
-           other_class.
+% this example tries to measure which is the possibility
+% that a couple of values, obtained throwing two loaded dice, sum 5. Let
+% us suppose we only know that one die is loaded to obtain a small value
+% and the other is loaded to obtain a large value. 
+%
+% the query is  ? sum(5,M)
+%
+
+small :# fuzzy_predicate([(1,1),(2,1),(3,0.7),(4,0.3),(5,0),(6,0)]).
+large :# fuzzy_predicate([(1,0),(2,0),(3,0.3),(4,0.7),(5,1),(6,1)]).
+
+die1(X,M) :~
+        small(X,M).
+
+die2(X,M) :~
+        large(X,M).
+
+two_dice(X,Y,M):~ prod
+        die1(X,M1),
+        die2(Y,M2).
+
+sum(2,M) :~  
+        two_dice(1,1,M1).
+
+sum(5,M) :~ dprod
+        two_dice(4,1,M1),
+        two_dice(1,4,M2),
+        two_dice(3,2,M3),
+        two_dice(2,3,M4).
+
 </PRE>
 
-<LI><STRONG>WARNING : multifile <EM>F/A</EM> hides inherited predicate.</STRONG>
-
-You declared as multifle a predicate which matches an inherited predicate name. Any reference to the inherited predicate must be done by the ways of the inherited/1 qualificator. 
-
-</UL>
-
 <P>
- 
+There are more examples in the subdirectory <CODE>fuzzy/examples</CODE> of the distribution. 
 
 
 
 
-<H3><A NAME="SEC475" HREF="ciao_toc.html#TOC475">Class and Interface error reporting at run time</A></H3>
-<P>
- 
-
-
-
-<UL>
- 
-<LI><STRONG>EXCEPTION : error(existence_error(object_goal,<EM>Goal</EM>),<EM>Mod</EM>).</STRONG>
-
-Called <EM>Goal</EM> from module (or class) <EM>Mod</EM> is unknown or has not been published. 
-
-</UL>
-
-
-
-<H3><A NAME="SEC476" HREF="ciao_toc.html#TOC476">Normal Prolog module system interaction</A></H3>
-
-<P>
-O'Ciao works in conjunction with the Ciao Prolog module system, which also reports its own error messages. This will cause Ciao to report a little criptic error messages due to the general mechanism of source-to-source expansion. Those are some tips you must consider when compiling a class: 
-
-
-
-<UL>
-
-<LI>Any error relative to method 'm' with arity A will be reported for predicate 'obj$m'/A+1. For example :
-
- 
-<CODE>WARNING: (lns 28-30) [Item,Itema] - singleton variables in obj$remove/2</CODE> 
- 
-This error is relative to method remove/1. 
-
-<LI>
-
-<A NAME="IDX5097"></A>
-<CODE>set_prolog_flag/1</CODE> declaration will be usefull when declaring multiple constructors. It will avoid some awful warnings. Example: 
-
-
-<PRE>
-   :- class(myclass).
-
-   %% Use this declaration whenever several constructors are needed.
-
-   :- set_prolog_flag(multi_arity_warnings,off).
-
-   myclass(_).
-
-   myclass(_,_).
-
-   :- set_prolog_flag(multi_arity_warnings,on).
-</PRE>
-
-</UL>
-
-
-
-<H2><A NAME="SEC477" HREF="ciao_toc.html#TOC477">Known bugs and planned improvements (<CODE>class</CODE>)</A></H2>
+<H2><A NAME="SEC469" HREF="ciao_toc.html#TOC469">Known bugs and planned improvements (<CODE>fuzzy</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-addmodule and pred(N) meta-arguments are not allowed on meta-predicates. 
+General aggregations defined by users.
+
+<LI>
+
+Inconsistent behaviour of meta-calls in fuzzy clauses.
+
+<LI>
+
+Some meta-predicate constructions need be added, specially for 'disjunctive' fuzzy clauses, e.g., <CODE>sum/2</CODE> in the dice example.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

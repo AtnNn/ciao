@@ -13,7 +13,7 @@
 
 %%----------------------------------------------------------------------
 
-:- use_module(library('mycin_rulebase/mycin_rt')).
+:- use_module(mycin_rulebase_rt).
 :- use_module(library('mycin/mycin_support')).
 :- use_module(library(hiordlib),[map/3]). %% Needed to compute \+/1 goals.
 

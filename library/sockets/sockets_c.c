@@ -592,23 +592,20 @@ BOOL prolog_hostname_address(Arg)
 void sockets_c_init(module)
      char *module;
 {
-  define_c_mod_predicate(module, 
-                         "connect_to_socket_type", 
-                         prolog_connect_to_socket, 
-                         4);
-  define_c_mod_predicate(module, "bind_socket", prolog_bind_socket, 3);
-  define_c_mod_predicate(module, "socket_accept", prolog_socket_accept, 2);
-  define_c_mod_predicate(module, "select_socket", prolog_select_socket, 5);
-  define_c_mod_predicate(module, "socket_send", prolog_socket_send, 2);
-  define_c_mod_predicate(module, "socket_recv_code", prolog_socket_receive, 3);
-  define_c_mod_predicate(module, "socket_shutdown", prolog_socket_shutdown, 2);
+  define_c_mod_predicate(module, "connect_to_socket_type", 4, prolog_connect_to_socket);
+  define_c_mod_predicate(module, "bind_socket", 3, prolog_bind_socket);
+  define_c_mod_predicate(module, "socket_accept", 2, prolog_socket_accept);
+  define_c_mod_predicate(module, "select_socket", 5, prolog_select_socket);
+  define_c_mod_predicate(module, "socket_send", 2, prolog_socket_send);
+  define_c_mod_predicate(module, "socket_recv_code", 3, prolog_socket_receive);
+  define_c_mod_predicate(module, "socket_shutdown", 2, prolog_socket_shutdown);
   /*
   define_c_mod_predicate(module, 
                          "socket_buffering",
                          prolog_socket_buffering, 
                          4);
   */
-  define_c_mod_predicate(module ,"hostname_address",prolog_hostname_address,2);
+  define_c_mod_predicate(module ,"hostname_address",2,prolog_hostname_address);
 
   atom_stream = init_atom_check("stream");
   atom_dgram = init_atom_check("dgram");

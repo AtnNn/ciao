@@ -1144,7 +1144,7 @@ int ciao_firstgoal(ciao_state state, ciao_term goal) {
 
 int ciao_boot(ciao_state state) {
   int exit_code;
-  exit_code = ciao_firstgoal(state, ciao_structure_s(state, "boot", 0));
+  exit_code = ciao_firstgoal(state, ciao_structure_s(state, "internals:boot", 0));
   return exit_code;
 }
 
@@ -1380,7 +1380,16 @@ ciao_term ciao_ref(ciao_state state, TAGGED x) {
   E = w->frame;
 
   next = GetSmall(Y(0));
-  *TagToArg(Y(2), next) = x;
+  {
+    TAGGED t0, t1, ta;
+    ta = *TagToArg(Y(2), next);
+    CUNIFY(ta, x);
+    goto ok;
+  }
+ fail:
+    /* fatal error */
+    SERIOUS_FAULT("Error registering term");
+ ok:
   term = next;
   next++;
   if ((next & (REF_TABLE_CHUNK_SIZE - 1)) == (REF_TABLE_CHUNK_SIZE - 1)) 

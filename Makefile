@@ -9,9 +9,11 @@
 # make justinstall      just install the whole Ciao system (must have been
 #                       compiled before)
 #
-# make eng              compile the Ciao engine for this particular arch.
+# make installeng	Compile and Install (or only
+# make eng              compile) the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
 #                       executables in several architectures at once.
+# 
 # make cleanbackups     delete backup files
 # make distclean        delete all files which can be automatically generated
 # make engclean		delete all engines created
@@ -152,7 +154,7 @@ libraries:
 	cd library && $(MAKE) all$(DEFAULTYPE)
 
 copysrcfiles: createsrcdir
-	cd engine && for File in *.[ch] Makefile ; \
+	cd engine && for File in *.[ch] *.pl Makefile ; \
 	do if [ ! -f $(OBJDIR)/$${File} -o $${File} -nt $(OBJDIR)/$${File} ]; \
              then rm -f $(OBJDIR)/$${File} ; cp $${File} $(OBJDIR)/$${File} ; \
 	   fi ; \
@@ -165,6 +167,7 @@ bin/$(CIAOARCH)$(CIAODEBUG):
 	$(MAKE) createsrcdir
 	cd $(OBJDIR) &&	                   \
 	   ln -s ../../engine/*.[ch] . &&   \
+	   ln -s ../../engine/*.pl . &&   \
 	   ln -s ../../engine/Makefile . && \
 	   rm -f configure.h
 
@@ -320,7 +323,7 @@ tar:
 
 
 
-totalclean: cleanbackups distclean
+totalclean: cleanbackups cleangmon distclean
 
 engrealclean engclean:
 	@echo "*** ---------------------------------------------------------"
@@ -332,6 +335,9 @@ engrealclean engclean:
 cleanbackups:
 	(cd $(SRC) && find . -name '*~' -exec /bin/rm {} \;)
 	(cd $(SRC) && find $(SRC) -name '#*' -exec /bin/rm {} \;)
+
+cleangmon:
+	(cd $(SRC) && find . -name gmon.out -exec /bin/rm {} \;)
 
 cleanasrs:
 	(cd $(SRC) && find . -name '*.asr' -exec /bin/rm {} \;)

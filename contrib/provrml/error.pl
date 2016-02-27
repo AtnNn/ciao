@@ -1,12 +1,17 @@
 :- module(error,[error_vrml/1,output_error/1], [assertions,isomodes]).
 
+:- use_module(library(write)).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- comment(module,"This file implements error predicates of different types.").
 :- comment(author, "G@..{o}ran Smedb@..{a}ck").
 
+:- comment(version(1*9+179,2003/12/04,19:25*17+'CET'), "Added
+importation of library(write) (Manuel Carro)").
+
 :- comment(version(0*1+3,1998/12/14,19:14*44+'MET'), "Changing error to
-   warning for bound check errors.  (Goran Smedback)").
+   warning for bound check errors.  (Goran Smedb@..{a}ck)").
 
 :- comment(version(0*1+2,1998/11/05), "Created.  (G@..{o}ran Smedb@..{a}ck)").
 
@@ -253,6 +258,7 @@ output_rest([Message|Rest]) :-
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
-%% update-version-comments: "../../version"
 %% End:
+
+:- comment(version_maintenance,dir('../../version')).
 

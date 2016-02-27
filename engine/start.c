@@ -161,6 +161,7 @@ int start(argc, argv)
   char *raw_source_path = NULL;
   FILE *qfile = NULL;
 
+  init_statistics();                             /* init the statistics related info */
   init_locks();                                  /* global, first of all! */
 
 #if defined(DEBUG)
@@ -423,8 +424,8 @@ int start(argc, argv)
     fclose(qfile);
     /* wam->next_insn set to boot code in local_init_each_time */
     /*w->node->global_top = w->global_top;*/     /* Isn't this unnecessary? */
-    /* w->node->term[0] = X(0) = init_atom_check("boot");*/
-    firstgoal(first_goal, "boot");              /*  Fills in worker_entry */
+    /* w->node->term[0] = X(0) = init_atom_check("internals:boot");*/
+    firstgoal(first_goal, "internals:boot");              /*  Fills in worker_entry */
   }
   
   return 0;

@@ -1,33 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Sets of variables in terms</TITLE>
+<TITLE>The Ciao Prolog System               - Term manipulation utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC339" HREF="ciao_toc.html#TOC339">Sets of variables in terms</A></H1>
+<H1><A NAME="SEC335" HREF="ciao_toc.html#TOC335">Term manipulation utilities</A></H1>
 <P>
-<A NAME="IDX4002"></A>
+<A NAME="IDX4004"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#142 (2001/11/12, 17:49:44 CET)
+<STRONG>Author(s):</STRONG> The CLIP Group.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.11#94 (2003/12/21, 18:44:37 CET)
+
+
+<P>
+This module implements some utils to do term manipulation.
 
 
 
 <UL>
-<LI><A HREF="ciao_80.html#SEC340">Usage and interface (terms_vars)</A>
-<LI><A HREF="ciao_80.html#SEC341">Documentation on exports (terms_vars)</A>
+<LI><A HREF="ciao_80.html#SEC336">Usage and interface (terms)</A>
+<LI><A HREF="ciao_80.html#SEC337">Documentation on exports (terms)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC340" HREF="ciao_toc.html#TOC340">Usage and interface (<CODE>terms_vars</CODE>)</A></H2>
+<H2><A NAME="SEC336" HREF="ciao_toc.html#TOC336">Usage and interface (<CODE>terms</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(terms_vars)).</CODE>
+<CODE>:- use_module(library(terms)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,26 +56,12 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4003"></A>
-<CODE>varset/2</CODE>, 
-<A NAME="IDX4004"></A>
-<CODE>varsbag/3</CODE>, 
 <A NAME="IDX4005"></A>
-<CODE>varset_in_args/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
+<CODE>copy_args/3</CODE>, 
 <A NAME="IDX4006"></A>
-<CODE>idlists</CODE>, 
+<CODE>arg/2</CODE>, 
 <A NAME="IDX4007"></A>
-<CODE>sort</CODE>.
+<CODE>atom_concat/2</CODE>.
 
 </UL>
 
@@ -73,22 +71,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC341" HREF="ciao_toc.html#TOC341">Documentation on exports (<CODE>terms_vars</CODE>)</A></H2>
+<H2><A NAME="SEC337" HREF="ciao_toc.html#TOC337">Documentation on exports (<CODE>terms</CODE>)</A></H2>
 <P>
 <A NAME="IDX4008"></A>
 <A NAME="IDX4009"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>varset/2:</B>
+<DT><span class="define">PREDICATE:</span> <B>copy_args/3:</B>
 <DD><A NAME="IDX4010"></A>
 
 
 <P>
-<CODE>varset(Term,Xs)</CODE>
+<STRONG>Usage:</STRONG> <CODE>copy_args(N, Term, Copy)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Term</CODE> and <CODE>Copy</CODE> have the same first <CODE>N</CODE> arguments.
 
-<P>
-<CODE>Xs</CODE> is the sorted list of all the variables in <CODE>Term</CODE>.
+<LI><EM>The following properties should hold at call time:</EM>
 
+<CODE>N</CODE> is a non-negative integer.
+ (<CODE>basic_props:nnegint/1</CODE>)
+</UL>
 
 </DL>
 
@@ -96,17 +98,17 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, 
 <A NAME="IDX4011"></A>
 <A NAME="IDX4012"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>varsbag/3:</B>
+<DT><span class="define">PREDICATE:</span> <B>arg/2:</B>
 <DD><A NAME="IDX4013"></A>
 
 
 <P>
-<CODE>varsbag(Term,Vs,Xs)</CODE>
+<STRONG>Usage:</STRONG> <CODE>arg(Term, Arg)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Arg</CODE> is an argument of <CODE>Term</CODE>. Gives each of the arguments on backtracking.
 
-<P>
-<CODE>Vs</CODE> is the list of all the variables in <CODE>Term</CODE> ordered as they appear in <CODE>Term</CODE> left-to-right depth-first (including duplicates) plus <CODE>Xs</CODE>.
-
+</UL>
 
 </DL>
 
@@ -114,29 +116,21 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, 
 <A NAME="IDX4014"></A>
 <A NAME="IDX4015"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>varset_in_args/2:</B>
+<DT><span class="define">PREDICATE:</span> <B>atom_concat/2:</B>
 <DD><A NAME="IDX4016"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varset_in_args(T,LL)</CODE>
+<CODE>atom_concat(Atms, Atm)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Each list of <CODE>LL</CODE> contains the variables of an argument of <CODE>T</CODE>, for each argument, and in left to right order.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+<CODE>Atm</CODE> is the atom resulting from concatenating all atoms in the list <CODE>Atms</CODE> in the order in which they appear.
 
-<CODE>T</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>LL</CODE> is a list of <CODE>list(var)</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

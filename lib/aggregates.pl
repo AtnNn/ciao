@@ -1,4 +1,3 @@
-
 :- module(aggregates, [
         setof/3,
         bagof/3,
@@ -8,19 +7,12 @@
         findnsols/5,
  	(^)/2
         ],
-	[assertions,isomodes]).
+	[assertions,isomodes,hiord]).
 
 :- use_module(library(sort)).
 :- use_module(library(lists),[length/2]).
+%:- use_module(engine(hiord_rt),[call/1]).
 :- use_module(engine(internals),['$setarg'/4]).
-
-:- meta_predicate
-        bagof(?,goal,?),
-        setof(?,goal,?),
-        findall(?,goal,?),
-        findall(?,goal,?,?),
-        findnsols(?,?,goal,?),
-        findnsols(?,?,goal,?,?).
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
@@ -106,7 +98,9 @@ no
 ?- 
 @end{verbatim}").
 
-:- true pred setof(@term, +callable, ?list) + (iso, native).
+:- true comp setof(X, Y, Z) + native(findall(X,Y,Z)).
+:- true pred setof(@term, +callable, ?list) + iso.
+:- meta_predicate setof(?,goal,?).
 
 %% This predicate is defined on p51 of the Dec-10 Prolog manual.
 
@@ -123,7 +117,9 @@ setof(Template, Filter, Set) :-
    avoided by using existential quantifiers on the free variables in
    front of the @var{Generator}, using @pred{^/2}.").
 
-:- true pred bagof(@term, +callable, ?list) + (iso, native).
+:- true comp bagof(X, Y, Z) + native(findall(X,Y,Z)).
+:- true pred bagof(@term, +callable, ?list) + iso.
+:- meta_predicate bagof(?,goal,?).
 
 %   bagof records three things under the key '.':
 %       the end-of-bag marker          -
@@ -160,6 +156,7 @@ bagof(Template, Generator, Bag) :-
      predicates.").
 
 :- true pred findall(@term, +callable, ?list) + (iso, native).
+:- meta_predicate findall(?,goal,?).
 
 %%  It is described in Clocksin & Mellish on p152.  The code they give has
 %%  a bug (which the Dec-10 bagof and setof predicates share) which
@@ -172,6 +169,7 @@ findall(Template, Generator, List) :-
 :- pred findall(Template, Generator, List, Tail)
    # "As @pred{findall/3}, but returning in @var{Tail} the tail of
      @var{List}.".
+:- meta_predicate findall(?,goal,?,?).
 
 findall(Template, Generator, List, Tail) :-
         save_solutions(-Template, Generator),
@@ -184,7 +182,8 @@ findall(Template, Generator, List, Tail) :-
      list.  This predicate is especially useful if @var{Generator} may
      have an infinite number of solutions.").
 
-:- pred findnsols(+int,@term,+callable,?list) + native.
+:- true pred findnsols(+int,@term,+callable,?list).
+:- meta_predicate findnsols(?,?,goal,?).
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -197,7 +196,8 @@ findnsols(_,_,_,[]).
      "As @pred{findnsols/4}, but returning in @var{Tail} the tail of
      @var{List}.").
 
-:- pred findnsols(+int,@term,+callable,?,?) + native.
+:- true pred findnsols(+int,@term,+callable,?,?).
+:- meta_predicate findnsols(?,?,goal,?,?).
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -213,6 +213,7 @@ findnsols(N,E,P,L,T) :-
         list_solutions(L,T).
 findnsols(_,_,_,T,T).
 
+:- meta_predicate save_n_solutions(?,?,?,goal).
 save_n_solutions(NSol, N, Template, Generator) :-
         asserta_fact(solution('-')),
         call(Generator),
@@ -223,11 +224,12 @@ save_n_solutions(NSol, N, Template, Generator) :-
         M1 = N -> fail.
 save_n_solutions(_,_,_,_).
 
-:- pred save_solutions(Template, Generator) + native
+:- pred save_solutions(Template, Generator)
 
    # "Enumerates all provable instances of the @var{Generator} and
      records the associated @var{Template} instances.  Neither
      argument ends up changed.".
+:- meta_predicate save_solutions(?,goal).
 
 save_solutions(Template, Generator) :-
         asserta_fact(solution('-')),
@@ -236,7 +238,7 @@ save_solutions(Template, Generator) :-
         fail.
 save_solutions(_,_).
 
-:- pred list_solutions(List) + native
+:- pred list_solutions(List)
 
    # "Pulls all the @var{Template} instances out of the data base into
       @var{List}".
@@ -250,7 +252,7 @@ list_solutions(-Term,Sofar,List) :-
         retract_fact(solution(NewTerm)), !,
         list_solutions(NewTerm, [Term|Sofar],List).
 
-:- pred list_key_solutions(List) + native
+:- pred list_key_solutions(List)
 
    # "Pulls all the Key-Term instances out of the data base into
      @var{List}".
@@ -384,8 +386,8 @@ free_variables(N, Term, Bound, OldList, NewList) :-
       common.".
 
 explicit_binding(X, _, _, _) :- var(X), !, fail. % space saver
-explicit_binding(\+ _, Bound,     fail,     Bound    ).
-explicit_binding(Var^Goal, Bound, Goal,	    Bound+Var).
+explicit_binding('basiccontrol:\\+'(_), Bound,     fail,     Bound    ).
+explicit_binding('aggregates:^'(Var,Goal), Bound, Goal,	    Bound+Var).
 explicit_binding('aggregates:setof'(Var,Goal,Set), Bound,
                                   Goal-Set, Bound+Var).
 explicit_binding('aggregates:bagof'(Var,Goal,Bag), Bound,
@@ -420,6 +422,8 @@ list_is_free_of([Head|Tail], Var) :-
    predicates}. In all other contexts, simply, execute the procedure
    call @var{P}.".
 
+:- meta_predicate('^'(?, goal)).
+:- true comp (_X^Y) + native(call(Y)).
 %% %%% Was as follows when in builtin.pl:
 %% (X^Y) :- undefined_goal((X^Y)).
 (_X^Y) :- call(Y).

@@ -1,119 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Delaying predicates (when)</TITLE>
+<TITLE>The Ciao Prolog System               - Miscellaneous predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC436" HREF="ciao_toc.html#TOC436">Delaying predicates (when)</A></H1>
+<H1><A NAME="SEC433" HREF="ciao_toc.html#TOC433">Miscellaneous predicates</A></H1>
 <P>
-<A NAME="IDX4872"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro.
+<A NAME="IDX4910"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#3 (2000/7/21, 11:54:59 CEST)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
- 
+<STRONG>Version of last change:</STRONG> 1.3#95 (1999/11/8, 18:37:30 MET)
 
 
 <P>
-<A NAME="IDX4873"></A>
-<CODE>when/2</CODE> delays a predicate until some condition in its variable is met. For example, we may want to find out the maximum of two numbers, but we are not sure when they will be instantiated. We can write the standard 
-<A NAME="IDX4874"></A>
-<CODE>max/3</CODE> predicate (but changing its name to 
-<A NAME="IDX4875"></A>
-<CODE>gmax/3</CODE> to denote that the first and second arguments must be ground) as 
+This module implements some miscellaneous non-logical (but sometimes very useful) predicates.
 
-
-
-<PRE>
-gmax(X, Y, X):- X &#62; Y, !.
-gmax(X, Y, Y):- X =&#60; Y.
-</PRE>
-
-<P>
-and then define a 'safe' 
-<A NAME="IDX4876"></A>
-<CODE>max/3</CODE> as 
- 
-
-<PRE>
-max(X, Y, Z):-
-        when((ground(X),ground(Y)), gmax(X, Y, Z)).
-</PRE>
-
-<P>
-which can be called as follows: 
-
-
-
-<PRE>
-?- max(X, Y, Z) , Y = 0, X = 8.
-
-X = 8,
-Y = 0,
-Z = 8 ? 
-
-yes
-</PRE>
-
-<P>
-Alternatively, 
-<A NAME="IDX4877"></A>
-<CODE>max/3</CODE> could have been defined as 
-
-
-
-<PRE>
-max(X, Y, Z):-
-        when(ground((X, Y)), gmax(X, Y, Z)).
-</PRE>
-
-<P>
-with the same effects as above. More complex implementations are possible. Look, for example, at the <CODE>max.pl</CODE> implementation under the <CODE>when</CODE> library directory, where a 
-<A NAME="IDX4878"></A>
-<CODE>max/3</CODE> predicate is implemented which waits on all the arguments until there is enough information to determine their values: 
-
-
-
-<PRE>
-?- use_module(library('when/max')).
-
-yes
-?- max(X, Y, Z), Z = 5, Y = 4.
-
-X = 5,
-Y = 4,
-Z = 5 ? 
-
-yes
-</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_106.html#SEC437">Usage and interface (when)</A>
-<LI><A HREF="ciao_106.html#SEC438">Documentation on exports (when)</A>
-<LI><A HREF="ciao_106.html#SEC439">Known bugs and planned improvements (when)</A>
+<LI><A HREF="ciao_106.html#SEC434">Usage and interface (odd)</A>
+<LI><A HREF="ciao_106.html#SEC435">Documentation on exports (odd)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC437" HREF="ciao_toc.html#TOC437">Usage and interface (<CODE>when</CODE>)</A></H2>
+<H2><A NAME="SEC434" HREF="ciao_toc.html#TOC434">Usage and interface (<CODE>odd</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -121,7 +47,7 @@ yes
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(when)).</CODE>
+<CODE>:- use_module(library(odd)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -130,29 +56,10 @@ yes
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4879"></A>
-<CODE>when/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX4880"></A>
-<CODE>wakeup_exp/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4881"></A>
-<CODE>terms_vars</CODE>, 
-<A NAME="IDX4882"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX4883"></A>
-<CODE>sets</CODE>.
+<A NAME="IDX4911"></A>
+<CODE>setarg/3</CODE>, 
+<A NAME="IDX4912"></A>
+<CODE>undo/1</CODE>.
 
 </UL>
 
@@ -162,50 +69,70 @@ yes
 
 
 
-<H2><A NAME="SEC438" HREF="ciao_toc.html#TOC438">Documentation on exports (<CODE>when</CODE>)</A></H2>
+<H2><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Documentation on exports (<CODE>odd</CODE>)</A></H2>
 <P>
-<A NAME="IDX4884"></A>
-<A NAME="IDX4885"></A>
+<A NAME="IDX4913"></A>
+<A NAME="IDX4914"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>when/2:</B>
-<DD><A NAME="IDX4886"></A>
+<DT><span class="define">PREDICATE:</span> <B>setarg/3:</B>
+<DD><A NAME="IDX4915"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>when(?,goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>when(WakeupCond,Goal)</CODE>
+<STRONG>Usage:</STRONG> <CODE>setarg(Index, Term, NewArg)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Delays / executes <CODE>Goal</CODE> according to <CODE>WakeupCond</CODE> given. The <CODE>WakeupCond</CODE>s now acceptable are <CODE>ground(T)</CODE> (
+<LI><EM>Description:</EM> Replace destructively argument <CODE>Index</CODE> in <CODE>Term</CODE> by <CODE>NewArg</CODE>. The assignment is undone on backtracking. This is a major change to the normal behavior of data assignment in Ciao Prolog.
 
-<A NAME="IDX4887"></A>
-<CODE>Goal</CODE> is delayed until <CODE>T</CODE> is ground), <CODE>nonvar(T)</CODE> (
-<A NAME="IDX4888"></A>
-<CODE>Goal</CODE> is delayed until <CODE>T</CODE> is not a variable), and conjunctions and disjunctions of conditions: 
-
-
-<PRE>
-wakeup_exp(ground(_1)).
-wakeup_exp(nonvar(_1)).
-wakeup_exp((C1,C2)) :-
-        wakeup_exp(C1),
-        wakeup_exp(C2).
-wakeup_exp((C1;C2)) :-
-        wakeup_exp(C1),
-        wakeup_exp(C2).
-</PRE>
-
-<A NAME="IDX4889"></A>
-<CODE>when/2</CODE> only fails it the <CODE>WakeupCond</CODE> is not legally formed. If <CODE>WakeupCond</CODE> is met at the time of the call no delay mechanism is involved -- but there exists a time penalty in the condition checking. 
-
-In case that an instantiation fires the execution of several predicates, the order in which these are executed is not defined. 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>WakeupCond</CODE> is a legal expression for delaying goals.
- (<CODE>when:wakeup_exp/1</CODE>)
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4916"></A>
+<A NAME="IDX4917"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>undo/1:</B>
+<DD><A NAME="IDX4918"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>undo(goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>undo(Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>call(<CODE>Goal</CODE>)</CODE> is executed on backtracking. This is a major change to the normal
+
+<A NAME="IDX4919"></A>
+control of Ciao Prolog execution. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
 
 <CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
@@ -213,41 +140,7 @@ In case that an instantiation fires the execution of several predicates, the ord
 
 </DL>
 
-<P>
-<A NAME="IDX4890"></A>
-<A NAME="IDX4891"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>wakeup_exp/1:</B>
-<DD><A NAME="IDX4892"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>wakeup_exp(T)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a legal expression for delaying goals.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC439" HREF="ciao_toc.html#TOC439">Known bugs and planned improvements (<CODE>when</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-Redundant conditions are not removed.
-
-<LI>
-
-Floundered goals are not appropriately printed.
-</UL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

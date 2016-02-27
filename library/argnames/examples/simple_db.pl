@@ -3,15 +3,15 @@
 
 :- comment(title,"A simple database application using argument names").
 
-:- pred product/4 :: int * string * string * int.
-
-:- argnames 
+:- data
 product( id,    description,    brand,          quantity        ).
 %       ----------------------------------------------------------
 product(  1,    "Keyboard",     "Logitech",     6               ).
 product(  2,    "Mouse",        "Logitech",     5               ).
 product(  3,    "Monitor",      "Philips",      3               ).
 product(  4,    "Laptop",       "Dell",         4               ).
+
+:- pred product${/} :: int * string * string * int.
 
 % Compute the stock of products from a given brand.
 % Note call to findall is equivalent to: findall(Q,product(_,_,Brand,Q),L).

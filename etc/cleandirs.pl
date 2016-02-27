@@ -27,7 +27,7 @@ existence of a recursive /bin/rm command in your system.").
         get_char/1
                                       ]).
 :- use_module(library(aggregates), [
-        setof/3
+        setof/3, (^)/2
                                    ]).
 :- use_module(library(format), [
         format/2

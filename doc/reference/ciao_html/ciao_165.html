@@ -1,41 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Identity lists</TITLE>
+<TITLE>The Ciao Prolog System               - linda (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Identity lists</A></H1>
+<H1><A NAME="SEC686" HREF="ciao_toc.html#TOC686">linda (library)</A></H1>
 <P>
-<A NAME="IDX7259"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX7295"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Version:</STRONG> 0.9#66 (1999/4/29, 12:28:0 MEST)
 
 
 <P>
-The operations in this module handle lists by performing equality checks via identity instead of unification.
+This is a SICStus-like linda package. Note that this is essentially quite obsolete, and provided mostly in case it is needed for compatibility, since Ciao now supports all Linda functionality (and more) through the concurrent fact database.
 
 
 
 <UL>
-<LI><A HREF="ciao_165.html#SEC683">Usage and interface (idlists)</A>
-<LI><A HREF="ciao_165.html#SEC684">Documentation on exports (idlists)</A>
+<LI><A HREF="ciao_165.html#SEC687">Usage and interface (linda)</A>
+<LI><A HREF="ciao_165.html#SEC688">Documentation on exports (linda)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC683" HREF="ciao_toc.html#TOC683">Usage and interface (<CODE>idlists</CODE>)</A></H2>
+<H2><A NAME="SEC687" HREF="ciao_toc.html#TOC687">Usage and interface (<CODE>linda</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +39,7 @@ The operations in this module handle lists by performing equality checks via ide
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(idlists)).</CODE>
+<CODE>:- use_module(library(linda)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,22 +48,52 @@ The operations in this module handle lists by performing equality checks via ide
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7260"></A>
-<CODE>member_0/2</CODE>, 
-<A NAME="IDX7261"></A>
-<CODE>memberchk/2</CODE>, 
-<A NAME="IDX7262"></A>
-<CODE>list_insert/2</CODE>, 
-<A NAME="IDX7263"></A>
-<CODE>add_after/4</CODE>, 
-<A NAME="IDX7264"></A>
-<CODE>add_before/4</CODE>, 
-<A NAME="IDX7265"></A>
-<CODE>delete/3</CODE>, 
-<A NAME="IDX7266"></A>
-<CODE>subtract/3</CODE>, 
-<A NAME="IDX7267"></A>
-<CODE>union_idlists/3</CODE>.
+<A NAME="IDX7296"></A>
+<CODE>linda_client/1</CODE>, 
+<A NAME="IDX7297"></A>
+<CODE>close_client/0</CODE>, 
+<A NAME="IDX7298"></A>
+<CODE>in/1</CODE>, 
+<A NAME="IDX7299"></A>
+<CODE>in/2</CODE>, 
+<A NAME="IDX7300"></A>
+<CODE>in_noblock/1</CODE>, 
+<A NAME="IDX7301"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX7302"></A>
+<CODE>rd/1</CODE>, 
+<A NAME="IDX7303"></A>
+<CODE>rd/2</CODE>, 
+<A NAME="IDX7304"></A>
+<CODE>rd_noblock/1</CODE>, 
+<A NAME="IDX7305"></A>
+<CODE>rd_findall/3</CODE>, 
+<A NAME="IDX7306"></A>
+<CODE>linda_timeout/2</CODE>, 
+<A NAME="IDX7307"></A>
+<CODE>halt_server/0</CODE>, 
+<A NAME="IDX7308"></A>
+<CODE>open_client/2</CODE>, 
+<A NAME="IDX7309"></A>
+<CODE>in_stream/2</CODE>, 
+<A NAME="IDX7310"></A>
+<CODE>out_stream/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7311"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7312"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX7313"></A>
+<CODE>sockets/sockets</CODE>.
 
 </UL>
 
@@ -77,13 +103,13 @@ The operations in this module handle lists by performing equality checks via ide
 
 
 
-<H2><A NAME="SEC684" HREF="ciao_toc.html#TOC684">Documentation on exports (<CODE>idlists</CODE>)</A></H2>
+<H2><A NAME="SEC688" HREF="ciao_toc.html#TOC688">Documentation on exports (<CODE>linda</CODE>)</A></H2>
 <P>
-<A NAME="IDX7268"></A>
-<A NAME="IDX7269"></A>
+<A NAME="IDX7314"></A>
+<A NAME="IDX7315"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>member_0/2:</B>
-<DD><A NAME="IDX7270"></A>
+<DT><span class="define">PREDICATE:</span> <B>linda_client/1:</B>
+<DD><A NAME="IDX7316"></A>
 
 
 <P>
@@ -93,132 +119,202 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX7271"></A>
-<A NAME="IDX7272"></A>
+<A NAME="IDX7317"></A>
+<A NAME="IDX7318"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>memberchk/2:</B>
-<DD><A NAME="IDX7273"></A>
+<DT><span class="define">PREDICATE:</span> <B>close_client/0:</B>
+<DD><A NAME="IDX7319"></A>
 
 
 <P>
-<CODE>memberchk(X,Xs)</CODE>
-
-
-<P>
-Checks that <CODE>X</CODE> is an element of (list) <CODE>Xs</CODE>.
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX7274"></A>
-<A NAME="IDX7275"></A>
+<A NAME="IDX7320"></A>
+<A NAME="IDX7321"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
-<DD><A NAME="IDX7276"></A>
+<DT><span class="define">PREDICATE:</span> <B>in/1:</B>
+<DD><A NAME="IDX7322"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>list_insert(-List,+Term)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of (tail-opened) <CODE>List</CODE> if there is not an element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7277"></A>
-<A NAME="IDX7278"></A>
+<A NAME="IDX7323"></A>
+<A NAME="IDX7324"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
-<DD><A NAME="IDX7279"></A>
+<DT><span class="define">PREDICATE:</span> <B>in/2:</B>
+<DD><A NAME="IDX7325"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>add_after(+L0,+E0,+E,-L)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after the first element identical to <CODE>E0</CODE> (or at end) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7280"></A>
-<A NAME="IDX7281"></A>
+<A NAME="IDX7326"></A>
+<A NAME="IDX7327"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
-<DD><A NAME="IDX7282"></A>
+<DT><span class="define">PREDICATE:</span> <B>in_noblock/1:</B>
+<DD><A NAME="IDX7328"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>add_before(+L0,+E0,+E,-L)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Adds element <CODE>E</CODE> before the first element identical to <CODE>E0</CODE> (or at start) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7283"></A>
-<A NAME="IDX7284"></A>
+<A NAME="IDX7329"></A>
+<A NAME="IDX7330"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
-<DD><A NAME="IDX7285"></A>
+<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
+<DD><A NAME="IDX7331"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>delete(+List,+Element,-Rest)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Rest</CODE> has the same elements of <CODE>List</CODE> except for all the occurrences of elements identical to <CODE>Element</CODE>.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7286"></A>
-<A NAME="IDX7287"></A>
+<A NAME="IDX7332"></A>
+<A NAME="IDX7333"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>subtract/3:</B>
-<DD><A NAME="IDX7288"></A>
+<DT><span class="define">PREDICATE:</span> <B>rd/1:</B>
+<DD><A NAME="IDX7334"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>subtract(+Set,+Set0,-Difference)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Difference</CODE> has the same elements of <CODE>Set</CODE> except those which have an identical occurrence in <CODE>Set0</CODE>.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7289"></A>
-<A NAME="IDX7290"></A>
+<A NAME="IDX7335"></A>
+<A NAME="IDX7336"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>union_idlists/3:</B>
-<DD><A NAME="IDX7291"></A>
+<DT><span class="define">PREDICATE:</span> <B>rd/2:</B>
+<DD><A NAME="IDX7337"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>union_idlists(+List1,+List2,-List)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but are not identical to an element in <CODE>List2</CODE> followed by the elements in <CODE>List2</CODE>.
 
-</UL>
+</DL>
+
+<P>
+<A NAME="IDX7338"></A>
+<A NAME="IDX7339"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd_noblock/1:</B>
+<DD><A NAME="IDX7340"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7341"></A>
+<A NAME="IDX7342"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd_findall/3:</B>
+<DD><A NAME="IDX7343"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7344"></A>
+<A NAME="IDX7345"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>linda_timeout/2:</B>
+<DD><A NAME="IDX7346"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7347"></A>
+<A NAME="IDX7348"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>halt_server/0:</B>
+<DD><A NAME="IDX7349"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7350"></A>
+<A NAME="IDX7351"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_client/2:</B>
+<DD><A NAME="IDX7352"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7353"></A>
+<A NAME="IDX7354"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in_stream/2:</B>
+<DD><A NAME="IDX7355"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7356"></A>
+<A NAME="IDX7357"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>out_stream/2:</B>
+<DD><A NAME="IDX7358"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

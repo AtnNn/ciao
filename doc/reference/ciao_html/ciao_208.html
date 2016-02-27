@@ -1,41 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - error (library)</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget2 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC818" HREF="ciao_toc.html#TOC818">error (library)</A></H1>
+<H1><A NAME="SEC820" HREF="ciao_toc.html#TOC820">table_widget2 (library)</A></H1>
 <P>
-<A NAME="IDX8406"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+<A NAME="IDX8396"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1#3 (1998/12/14, 19:14:44 MET)
+<STRONG>Author(s):</STRONG> Isabel Martín.
 
 
 <P>
-This file implements error predicates of different types.
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#167 (2003/12/4, 17:39:48 CET)
+
+
+<P>
+In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row is bold. The remaining elements are in medium weight font. 
+
+
+<P>
+If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
 
 
 
 <UL>
-<LI><A HREF="ciao_208.html#SEC819">Usage and interface (error)</A>
-<LI><A HREF="ciao_208.html#SEC820">Documentation on exports (error)</A>
+<LI><A HREF="ciao_208.html#SEC821">Usage and interface (table_widget2)</A>
+<LI><A HREF="ciao_208.html#SEC822">Documentation on exports (table_widget2)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC819" HREF="ciao_toc.html#TOC819">Usage and interface (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC821" HREF="ciao_toc.html#TOC821">Usage and interface (<CODE>table_widget2</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +51,7 @@ This file implements error predicates of different types.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(error)).</CODE>
+<CODE>:- use_module(library(table_widget2)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,10 +60,32 @@ This file implements error predicates of different types.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8407"></A>
-<CODE>error_vrml/1</CODE>, 
-<A NAME="IDX8408"></A>
-<CODE>output_error/1</CODE>.
+<A NAME="IDX8397"></A>
+<CODE>tablewidget2/4</CODE>, 
+<A NAME="IDX8398"></A>
+<CODE>tablewidget2/5</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX8399"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX8400"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX8401"></A>
+<CODE>chartlib/table_widget1</CODE>, 
+<A NAME="IDX8402"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX8403"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX8404"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -65,52 +95,73 @@ This file implements error predicates of different types.
 
 
 
-<H2><A NAME="SEC820" HREF="ciao_toc.html#TOC820">Documentation on exports (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC822" HREF="ciao_toc.html#TOC822">Documentation on exports (<CODE>table_widget2</CODE>)</A></H2>
 <P>
-<A NAME="IDX8409"></A>
-<A NAME="IDX8410"></A>
+<A NAME="IDX8405"></A>
+<A NAME="IDX8406"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
-<DD><A NAME="IDX8411"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget2/4:</B>
+<DD><A NAME="IDX8407"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>error_vrml(+Structure)</CODE>
+<CODE>tablewidget2(Title, Header, ElementTable, Footer)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+Shows a regular table in a window. The system sets a default background image for the widget. 
 
-<CODE>+Structure</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
+
+<P>
+Example: 
+
+<PRE>
+tablewidget2('COM Features',
+	     'Extracted from "Inside COM" book ',
+	     [['Feature','Rich people','Bean Plants','C++','COM'],
+	       ['Edible','Yes','Yes','No','No'],
+	       ['Supports inheritance','Yes','Yes','Yes','Yes and No'],
+	       ['Can run for President','Yes','No','No','No']],
+	     'What do you think about COM?').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX8412"></A>
-<A NAME="IDX8413"></A>
+<A NAME="IDX8408"></A>
+<A NAME="IDX8409"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
-<DD><A NAME="IDX8414"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget2/5:</B>
+<DD><A NAME="IDX8410"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>output_error(+Message)</CODE>
+<CODE>tablewidget2(Title, Header, ElementTable, Footer, BackgroundImage)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+This predicate and 
+<A NAME="IDX8411"></A>
+<CODE>tablewidget2/4</CODE> are quite similar, except that in the already one defined you must set the background image. 
 
-<CODE>+Message</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
+
+<P>
+Example: 
+
+<PRE>
+tablewidget2('COM Features',
+	     'Extracted from "Inside COM" book ',
+	     [['Feature','Rich people','Bean Plants','C++','COM'],
+	       ['Edible','Yes','Yes','No','No'],
+	       ['Supports inheritance','Yes','Yes','Yes','Yes and No'],
+	       ['Can run for President','Yes','No','No','No']],
+	     'What do you think about COM?',
+	     './images/rain.gif').
+</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

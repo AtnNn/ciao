@@ -1,11 +1,14 @@
 :- module(exceptions, [
         catch/3, intercept/3, throw/1, halt/0, halt/1, abort/0],
-        [assertions, isomodes, .(metadefs)]).
+        [assertions, isomodes]).
 
-:- use_module(engine(internals),
-        ['$exit'/1,'$metachoice'/1,'$meta_call'/1,'$metacut'/1]).
+:- use_module(engine(internals), ['$exit'/1]).
+:- use_module(engine(basiccontrol), ['$metachoice'/1,'$metacut'/1]).
+:- use_module(engine(hiord_rt), ['$meta_call'/1]).
 
 :- comment(title, "Exception handling").
+
+:- comment(author, "The CLIP Group").
 
 :- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
@@ -39,7 +42,7 @@ abort :- '$exit'(-32768).
 
 :- concurrent catching/3, thrown/1.
 
-:- true pred catch(+callable,?term,+callable) + iso.
+:- true pred catch(+callable,?term,+callable) + (iso, native).
 
 :- comment(catch(Goal, Error, Handler), "Executes @var{Goal}.  If an
    exception is raised during its execution, @var{Error} is unified with
@@ -57,8 +60,20 @@ p(X) :- display(X).
 catch(Goal, Error, _) :-
         '$metachoice'(Choice),
         asserta_catching(Choice, Error, []),
+        '$metachoice'(BeforeChoice),
         '$meta_call'(Goal),
-        retract_catching(Choice, Error, []).
+	'$metachoice'(AfterChoice),
+        ( BeforeChoice = AfterChoice -> % no more solutions
+            HasChoice = false
+        ;
+            HasChoice = true
+        ),
+        retract_catching(Choice, Error, []),
+        ( HasChoice = false ->
+            ! % remove the unnecessary exception choice point
+        ;
+            true
+        ).
 catch(_, Error, Handler) :-
         retract_fact_nb(thrown(Error)), !,
         '$meta_call'(Handler).
@@ -120,6 +135,11 @@ retract_catching(Ch, Er, Ha) :- retract_fact_nb(catching(Ch, Er, Ha)).
 retract_catching(Ch, Er, Ha) :- asserta_fact(catching(Ch, Er, Ha)), fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+4,2003/04/07,13:52*50+'CEST'),
+   "'$metachoice'/1, '$metacut'/1 imported from
+   basiccontrol. '$meta_call'/1 imported from hiord_rt.  (Jose
+   Morales)").
 
 :- comment(version(1*7+107,2001/05/31,14:12*58+'CEST'), "Changed data
 to be concurrent; changed retract_fact/1 to retract_fact_nb/1 (MCL)").

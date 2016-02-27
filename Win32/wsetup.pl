@@ -131,8 +131,8 @@ make_DOTemacs(SDir,IDir,EDir) :-
 	setup_mess(['Building ',SDir,'/DOTemacs.el (emacs setup).\n']),
 	atom_codes(EDir,EDirS),
 	atom_codes(IDir,IDirS),
-	replace_strings_in_file([ "<CIAOLIBDIR>" - EDirS, 
-                                  "<LPDOCDIR>" - IDirS],
+	replace_strings_in_file([["<CIAOLIBDIR>", EDirS], 
+                                 ["<LPDOCDIR>",   IDirS]],
                                 'DOTemacs.skel','../DOTemacs.el'),
         atom_codes(SDir,SDirS),
 	%% This was specific to Win, but note that now being done in general 
@@ -177,12 +177,12 @@ make_ciaomode(SDir,IDir,EDir) :-
 	setup_mess(['Building ',EDir,'/ciao.el (emacs mode).\n']),
 	atom_codes(EDir,EDirS),
 	atom_codes(IDir,IDirS),
-	replace_strings_in_file([ "\n" - "\n;" ],
+	replace_strings_in_file([[ "\n", "\n;" ]],
                                 '../DOTemacs.el','DOTemacs.tmp'),
 	cat(['ciao.el.header','DOTemacs.tmp','ciao.el.body'],'ciao.el.tmp'),
 	delete_file('DOTemacs.tmp'),
-	replace_strings_in_file([ "<CIAOREALLIBDIR>" - EDirS,
-                                  "<LPDOCDIR>" - IDirS ],
+	replace_strings_in_file([[ "<CIAOREALLIBDIR>", EDirS],
+                                 ["<LPDOCDIR>", IDirS]],
                                 'ciao.el.tmp','ciao.el'),
         delete_file('ciao.el.tmp'),
 	cd(SDir).
@@ -351,6 +351,10 @@ line :-
 
 % --------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+46,2003/09/23,15:44*27+'CEST'), "First
+   argument in replace_strings_in_file changed to be consistent with
+   the new format of the input of this predicate.  (Edison Mera)").
 
 :- comment(version(1*9+55,2003/01/18,00:08*21+'CET'), "Now passing
    LPDOCDIR value to variable in emacs.el (for xemacs) (Manuel

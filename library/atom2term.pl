@@ -1,4 +1,3 @@
-
 :- module(atom2term,
 	[ atom2term/2,
 	  string2term/2,
@@ -9,8 +8,13 @@
 	]).
 
 :- comment(title,"Atom to term conversion").
+
 :- comment(author,"Francisco Bueno").
 :- comment(author,"Daniel Cabeza").
+
+:- comment(module, "This module implements the predicates involved in
+   the atom to term conversion.").
+
 :- comment(bug,"This is just a quick hack written mainly for parsing 
    daVinci's messages. There should be a call to the standard reader
    to do this!").
@@ -95,6 +99,9 @@ parse_string0(C,String,[C|List],String1):-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+92,2003/12/21,02:27*29+'CET'), "Added comment
+   module.  (Edison Mera)").
 
 :- comment(version(1*9+19,2002/11/11,12:26*20+'CET'), "Changed
    interpretation of double quoted strings so that they are not parsed

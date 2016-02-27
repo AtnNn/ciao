@@ -377,8 +377,9 @@ assertz_fact(MPred):-
 
 :- meta_predicate pretract_fact(fact).
 
-% pretract_fact(P) retracts a predicate in both, the dynamic and the 
-% persistent databases.
+:- comment(pretract_fact(P), "Retracts a predicate in both, the
+   dynamic and the persistent databases.").
+
 pretract_fact(MPred):-
         term_to_meta(Pred, MPred),
         functor(Pred, F, N),
@@ -409,8 +410,9 @@ retract_fact(MPred):-
 
 :- meta_predicate pretractall_fact(fact).
 
-% pretractall(P) retracts all the instances of a predicate in both, the 
-% dynamic and the persistent databases.
+:- comment(pretractall_fact(P),"Retracts all the instances of a
+   predicate in both, the dynamic and the persistent databases.").
+
 pretractall_fact(MPred):-
         term_to_meta(Pred, MPred),
         functor(Pred, F, N),
@@ -671,6 +673,10 @@ directoryname(X) :- atm(X).
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+132,2003/12/30,23:15*54+'CET'), "Added comment
+   for predicates pretractall_fact/1 and retractall_fact/1. (Edison
+   Mera)").
 
 :- comment(version(1*9+52,2003/01/10,18:45*24+'CET'), "Added
    pretractall_fact/1 and retractall_fact/1 as persdb native capabilities,

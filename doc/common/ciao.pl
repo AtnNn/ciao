@@ -154,6 +154,13 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*11+1,2003/04/04,18:30*31+'CEST'), "New
+   development version to begin the builtin modularization (Jose
+   Morales)").
+
+:- comment(version(1*10+1,2003/04/04,18:29*07+'CEST'), "Version
+   skipped (Jose Morales)").
+
 :- comment(version(1*9+38,2002/12/12,20:06*26+'CET'), "Manual now
    posted in pdf format (since lpdoc now generates much better pdf).
    (Manuel Hermenegildo)").

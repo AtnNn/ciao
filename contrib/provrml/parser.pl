@@ -1,5 +1,9 @@
-:- module(parser, [parser/2,nodeDeclaration/4], 
+:- module(parser, [parser/2,nodeDeclaration/4,field_Id/1], 
 	[assertions,isomodes,dcg,regtypes]).
+
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
+
+
 
 :- include(library(iso)).
 :- use_module(library(iso_byte_char)).
@@ -800,6 +804,9 @@ eventOutId(Id) -->
 id(Id) -->
 	[id(Id)].
 
+
+:- true prop field_Id/1.
+field_Id(_).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- comment(version_maintenance,off).

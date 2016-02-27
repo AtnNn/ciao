@@ -1,41 +1,63 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - sets (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC710" HREF="ciao_toc.html#TOC710">sets (library)</A></H1>
+<H1><A NAME="SEC715" HREF="ciao_toc.html#TOC715">Unweighted graph-processing utilities</A></H1>
 <P>
-<A NAME="IDX7479"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<A NAME="IDX7578"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#17 (1999/3/23, 20:57:20 MET)
+<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
 
 
 <P>
-This module implements set operations. Sets are just ordered lists.
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.11#64 (2003/12/9, 7:11:15 CET)
+
+
+<P>
+An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
+
+
+<P>
+An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
+
+
+<P>
+An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
+
+
+<P>
+A vertex can be any term. Two vertices are distinct iff they are not identical (
+<A NAME="IDX7579"></A>
+<CODE>==/2</CODE>). 
+
+
+<P>
+A path is represented as a list of vertices. No vertex can appear twice in a path. 
 
 
 
 <UL>
-<LI><A HREF="ciao_174.html#SEC711">Usage and interface (sets)</A>
-<LI><A HREF="ciao_174.html#SEC712">Documentation on exports (sets)</A>
+<LI><A HREF="ciao_174.html#SEC716">Usage and interface (ugraphs)</A>
+<LI><A HREF="ciao_174.html#SEC717">Documentation on exports (ugraphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC711" HREF="ciao_toc.html#TOC711">Usage and interface (<CODE>sets</CODE>)</A></H2>
+<H2><A NAME="SEC716" HREF="ciao_toc.html#TOC716">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +65,7 @@ This module implements set operations. Sets are just ordered lists.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(sets)).</CODE>
+<CODE>:- use_module(library(ugraphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,40 +74,31 @@ This module implements set operations. Sets are just ordered lists.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7480"></A>
-<CODE>insert/3</CODE>, 
-<A NAME="IDX7481"></A>
-<CODE>ord_delete/3</CODE>, 
-<A NAME="IDX7482"></A>
-<CODE>ord_member/2</CODE>, 
-<A NAME="IDX7483"></A>
-<CODE>ord_test_member/3</CODE>, 
-<A NAME="IDX7484"></A>
-<CODE>ord_subtract/3</CODE>, 
-<A NAME="IDX7485"></A>
-<CODE>ord_intersection/3</CODE>, 
-<A NAME="IDX7486"></A>
-<CODE>ord_intersection_diff/4</CODE>, 
-<A NAME="IDX7487"></A>
-<CODE>ord_intersect/2</CODE>, 
-<A NAME="IDX7488"></A>
-<CODE>ord_subset/2</CODE>, 
-<A NAME="IDX7489"></A>
-<CODE>ord_subset_diff/3</CODE>, 
-<A NAME="IDX7490"></A>
-<CODE>ord_union/3</CODE>, 
-<A NAME="IDX7491"></A>
-<CODE>ord_union_diff/4</CODE>, 
-<A NAME="IDX7492"></A>
-<CODE>ord_union_symdiff/4</CODE>, 
-<A NAME="IDX7493"></A>
-<CODE>ord_union_change/3</CODE>, 
-<A NAME="IDX7494"></A>
-<CODE>merge/3</CODE>, 
-<A NAME="IDX7495"></A>
-<CODE>ord_disjoint/2</CODE>, 
-<A NAME="IDX7496"></A>
-<CODE>setproduct/3</CODE>.
+<A NAME="IDX7580"></A>
+<CODE>vertices_edges_to_ugraph/3</CODE>, 
+<A NAME="IDX7581"></A>
+<CODE>neighbors/3</CODE>, 
+<A NAME="IDX7582"></A>
+<CODE>edges/2</CODE>, 
+<A NAME="IDX7583"></A>
+<CODE>del_vertices/3</CODE>, 
+<A NAME="IDX7584"></A>
+<CODE>vertices/2</CODE>, 
+<A NAME="IDX7585"></A>
+<CODE>add_vertices/3</CODE>, 
+<A NAME="IDX7586"></A>
+<CODE>add_edges/3</CODE>, 
+<A NAME="IDX7587"></A>
+<CODE>transpose/2</CODE>, 
+<A NAME="IDX7588"></A>
+<CODE>rooted_subgraph/3</CODE>, 
+<A NAME="IDX7589"></A>
+<CODE>point_to/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7590"></A>
+<CODE>ugraph/1</CODE>.
 
 </UL>
 
@@ -96,7 +109,11 @@ This module implements set operations. Sets are just ordered lists.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7497"></A>
+<A NAME="IDX7591"></A>
+<CODE>dict</CODE>, 
+<A NAME="IDX7592"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX7593"></A>
 <CODE>sort</CODE>.
 
 </UL>
@@ -107,314 +124,216 @@ This module implements set operations. Sets are just ordered lists.
 
 
 
-<H2><A NAME="SEC712" HREF="ciao_toc.html#TOC712">Documentation on exports (<CODE>sets</CODE>)</A></H2>
+<H2><A NAME="SEC717" HREF="ciao_toc.html#TOC717">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX7498"></A>
-<A NAME="IDX7499"></A>
+<A NAME="IDX7594"></A>
+<A NAME="IDX7595"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
-<DD><A NAME="IDX7500"></A>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
+<DD><A NAME="IDX7596"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>insert(+Set1,+Element,-Set2)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7597"></A>
+<A NAME="IDX7598"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
+<DD><A NAME="IDX7599"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex, +Graph, -Neighbors)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It is true when <CODE>Set2</CODE> is <CODE>Set1</CODE> with <CODE>Element</CODE> inserted in it, preserving the order.
+<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7501"></A>
-<A NAME="IDX7502"></A>
+<A NAME="IDX7600"></A>
+<A NAME="IDX7601"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_delete/3:</B>
-<DD><A NAME="IDX7503"></A>
+<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
+<DD><A NAME="IDX7602"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_delete(+Set0,+X,-Set)</CODE>
+<STRONG>Usage:</STRONG> <CODE>edges(+Graph, -Edges)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It succeeds if <CODE>Set</CODE> is <CODE>Set0</CODE> without element <CODE>X</CODE>.
+<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7504"></A>
-<A NAME="IDX7505"></A>
+<A NAME="IDX7603"></A>
+<A NAME="IDX7604"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_member/2:</B>
-<DD><A NAME="IDX7506"></A>
+<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
+<DD><A NAME="IDX7605"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_member(+X,+Set)</CODE>
+<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1, +Vertices, -Graph2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It succeeds if <CODE>X</CODE> is member of <CODE>Set</CODE>.
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7507"></A>
-<A NAME="IDX7508"></A>
+<A NAME="IDX7606"></A>
+<A NAME="IDX7607"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_test_member/3:</B>
-<DD><A NAME="IDX7509"></A>
+<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
+<DD><A NAME="IDX7608"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_test_member(+Set,+X,-Result)</CODE>
+<STRONG>Usage:</STRONG> <CODE>vertices(+Graph, -Vertices)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>X</CODE> is member of <CODE>Set</CODE> then <CODE>Result</CODE>=<CODE>yes</CODE>. Otherwise <CODE>Result</CODE>=<CODE>no</CODE>.
+<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7510"></A>
-<A NAME="IDX7511"></A>
+<A NAME="IDX7609"></A>
+<A NAME="IDX7610"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subtract/3:</B>
-<DD><A NAME="IDX7512"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
+<DD><A NAME="IDX7611"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_subtract(+Set1,+Set2,?Difference)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1, +Vertices, -Graph2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It is true when <CODE>Difference</CODE> contains all and only the elements of <CODE>Set1</CODE> which are not also in <CODE>Set2</CODE>.
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7513"></A>
-<A NAME="IDX7514"></A>
+<A NAME="IDX7612"></A>
+<A NAME="IDX7613"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersection/3:</B>
-<DD><A NAME="IDX7515"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
+<DD><A NAME="IDX7614"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersection(+Set1,+Set2,?Intersection)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1, +Edges, -Graph2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It is true when <CODE>Intersection</CODE> is the ordered representation of <CODE>Set1</CODE> and <CODE>Set2</CODE>, provided that <CODE>Set1</CODE> and <CODE>Set2</CODE> are ordered lists.
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7516"></A>
-<A NAME="IDX7517"></A>
+<A NAME="IDX7615"></A>
+<A NAME="IDX7616"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersection_diff/4:</B>
-<DD><A NAME="IDX7518"></A>
+<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
+<DD><A NAME="IDX7617"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersection_diff(+Set1,+Set2,-Intersect,-NotIntersect)</CODE>
+<STRONG>Usage:</STRONG> <CODE>transpose(+Graph, -Transpose)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Intersect</CODE> contains those elements which are both in <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>NotIntersect</CODE> those which are in <CODE>Set1</CODE> but not in <CODE>Set2</CODE>.
+<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7519"></A>
-<A NAME="IDX7520"></A>
+<A NAME="IDX7618"></A>
+<A NAME="IDX7619"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersect/2:</B>
-<DD><A NAME="IDX7521"></A>
+<DT><span class="define">PREDICATE:</span> <B>rooted_subgraph/3:</B>
+<DD><A NAME="IDX7620"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersect(+Xs,+Ys)</CODE>
+<STRONG>Usage:</STRONG> <CODE>rooted_subgraph(Graph, Sources, SubGraph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Succeeds when the two ordered lists have at least one element in common.
+<LI><EM>Description:</EM> <CODE>SubGraph</CODE> is the subgraph of <CODE>Graph</CODE> which is reachable from <CODE>Sources</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Graph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+
+<CODE>Sources</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>SubGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>SubGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7621"></A>
+<A NAME="IDX7622"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
+<DD><A NAME="IDX7623"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex, +Graph, -Point_to)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7522"></A>
-<A NAME="IDX7523"></A>
+<A NAME="IDX7624"></A>
+<A NAME="IDX7625"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subset/2:</B>
-<DD><A NAME="IDX7524"></A>
+<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
+<DD><A NAME="IDX7626"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ord_subset(+Xs,+Ys)</CODE>
+<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Succeeds when every element of <CODE>Xs</CODE> appears in <CODE>Ys</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7525"></A>
-<A NAME="IDX7526"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subset_diff/3:</B>
-<DD><A NAME="IDX7527"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_subset_diff(+Set1,+Set2,-Difference)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds when every element of <CODE>Set1</CODE> appears in <CODE>Set2</CODE> and <CODE>Difference</CODE> has the elements of <CODE>Set2</CODE> which are not in <CODE>Set1</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7528"></A>
-<A NAME="IDX7529"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union/3:</B>
-<DD><A NAME="IDX7530"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union(+Set1,+Set2,?Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>. When some element occurs in both sets, <CODE>Union</CODE> retains only one copy.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7531"></A>
-<A NAME="IDX7532"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_diff/4:</B>
-<DD><A NAME="IDX7533"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_diff(+Set1,+Set2,-Union,-Difference)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>Difference</CODE> is <CODE>Set2</CODE> set-minus <CODE>Set1</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7534"></A>
-<A NAME="IDX7535"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_symdiff/4:</B>
-<DD><A NAME="IDX7536"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_symdiff(+Set1,+Set2,-Union,-Diff)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when Diff is the symmetric difference of Set1 and Set2, and Union is the union of Set1 and Set2.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7537"></A>
-<A NAME="IDX7538"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_change/3:</B>
-<DD><A NAME="IDX7539"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_change(+Set1,+Set2,-Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE> and <CODE>Union</CODE> is different from <CODE>Set2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7540"></A>
-<A NAME="IDX7541"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>merge/3:</B>
-<DD><A NAME="IDX7542"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>merge(+Set1,+Set2,?Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> See <CODE>ord_union/3</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7543"></A>
-<A NAME="IDX7544"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_disjoint/2:</B>
-<DD><A NAME="IDX7545"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_disjoint(+Set1,+Set2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Set1</CODE> and <CODE>Set2</CODE> have no element in common.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7546"></A>
-<A NAME="IDX7547"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>setproduct/3:</B>
-<DD><A NAME="IDX7548"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>setproduct(+Set1,+Set2,-Product)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Product</CODE> has all two element sets such that one element is in <CODE>Set1</CODE> and the other in <CODE>set2</CODE>, except that if the same element belongs to both, then the corresponding one element set is in <CODE>Product</CODE>.
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

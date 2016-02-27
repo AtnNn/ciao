@@ -1,55 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
+<TITLE>The Ciao Prolog System               - persdbtr_sql (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC666" HREF="ciao_toc.html#TOC666">Low-level Prolog to Java socket connection</A></H1>
+<H1><A NAME="SEC662" HREF="ciao_toc.html#TOC662">persdbtr_sql (library)</A></H1>
 <P>
-<A NAME="IDX7046"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX7001"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#66 (2003/3/14, 12:48:24 CET)
-
-
-<P>
- 
-
-
-<P>
-<A NAME="IDX7047"></A>
-<A NAME="IDX7048"></A>
-This module defines a low-level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
-<A NAME="IDX7049"></A>
-<CODE>javart</CODE> (Prolog to Java interface) or 
-<A NAME="IDX7050"></A>
-<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
+<STRONG>Version of last change:</STRONG> 1.9#42 (2002/12/13, 17:55:42 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_159.html#SEC667">Usage and interface (javasock)</A>
-<LI><A HREF="ciao_159.html#SEC668">Documentation on exports (javasock)</A>
+<LI><A HREF="ciao_159.html#SEC663">Usage and interface (persdbtr_sql)</A>
+<LI><A HREF="ciao_159.html#SEC664">Documentation on exports (persdbtr_sql)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC667" HREF="ciao_toc.html#TOC667">Usage and interface (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC663" HREF="ciao_toc.html#TOC663">Usage and interface (<CODE>persdbtr_sql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -57,7 +39,7 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(javasock)).</CODE>
+<CODE>:- use_module(library(persdbtr_sql)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -66,30 +48,12 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7051"></A>
-<CODE>bind_socket_interface/1</CODE>, 
-<A NAME="IDX7052"></A>
-<CODE>start_socket_interface/2</CODE>, 
-<A NAME="IDX7053"></A>
-<CODE>stop_socket_interface/0</CODE>, 
-<A NAME="IDX7054"></A>
-<CODE>join_socket_interface/0</CODE>, 
-<A NAME="IDX7055"></A>
-<CODE>java_query/2</CODE>, 
-<A NAME="IDX7056"></A>
-<CODE>java_response/2</CODE>, 
-<A NAME="IDX7057"></A>
-<CODE>prolog_query/2</CODE>, 
-<A NAME="IDX7058"></A>
-<CODE>prolog_response/2</CODE>, 
-<A NAME="IDX7059"></A>
-<CODE>is_connected_to_java/0</CODE>, 
-<A NAME="IDX7060"></A>
-<CODE>java_debug/1</CODE>, 
-<A NAME="IDX7061"></A>
-<CODE>java_debug_redo/1</CODE>, 
-<A NAME="IDX7062"></A>
-<CODE>start_threads/0</CODE>.
+<A NAME="IDX7002"></A>
+<CODE>sql_persistent_tr/2</CODE>, 
+<A NAME="IDX7003"></A>
+<CODE>sql_goal_tr/2</CODE>, 
+<A NAME="IDX7004"></A>
+<CODE>dbId/2</CODE>.
 
 </UL>
 
@@ -100,22 +64,8 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7063"></A>
-<CODE>fastrw</CODE>, 
-<A NAME="IDX7064"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7065"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX7066"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7067"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX7068"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX7069"></A>
-<CODE>javall/jtopl</CODE>, 
-<A NAME="IDX7070"></A>
-<CODE>sockets/sockets_io</CODE>.
+<A NAME="IDX7005"></A>
+<CODE>dynamic</CODE>.
 
 </UL>
 
@@ -125,230 +75,13 @@ This module defines a low-level socket interface, to be used by javart and jtopl
 
 
 
-<H2><A NAME="SEC668" HREF="ciao_toc.html#TOC668">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC664" HREF="ciao_toc.html#TOC664">Documentation on exports (<CODE>persdbtr_sql</CODE>)</A></H2>
 <P>
-<A NAME="IDX7071"></A>
-<A NAME="IDX7072"></A>
+<A NAME="IDX7006"></A>
+<A NAME="IDX7007"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>bind_socket_interface/1:</B>
-<DD><A NAME="IDX7073"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>bind_socket_interface(+Port)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given an port number, waits for a connection request from the Java side, creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Port</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7074"></A>
-<A NAME="IDX7075"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/2:</B>
-<DD><A NAME="IDX7076"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address,+Stream)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Address</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7077"></A>
-<A NAME="IDX7078"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
-<DD><A NAME="IDX7079"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7080"></A>
-<A NAME="IDX7081"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
-<DD><A NAME="IDX7082"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7083"></A>
-<A NAME="IDX7084"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
-<DD><A NAME="IDX7085"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_query(ThreadId,Query)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>ThreadId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7086"></A>
-<A NAME="IDX7087"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
-<DD><A NAME="IDX7088"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_response(Id,Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7089"></A>
-<A NAME="IDX7090"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
-<DD><A NAME="IDX7091"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_query(Id,Query)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7092"></A>
-<A NAME="IDX7093"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
-<DD><A NAME="IDX7094"></A>
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_response(Id,Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7095"></A>
-<A NAME="IDX7096"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>is_connected_to_java/0:</B>
-<DD><A NAME="IDX7097"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Checks if the connection to Java is established.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7098"></A>
-<A NAME="IDX7099"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
-<DD><A NAME="IDX7100"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_persistent_tr/2:</B>
+<DD><A NAME="IDX7008"></A>
 
 
 <P>
@@ -358,11 +91,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX7101"></A>
-<A NAME="IDX7102"></A>
+<A NAME="IDX7009"></A>
+<A NAME="IDX7010"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_debug_redo/1:</B>
-<DD><A NAME="IDX7103"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_goal_tr/2:</B>
+<DD><A NAME="IDX7011"></A>
 
 
 <P>
@@ -372,24 +105,24 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX7104"></A>
-<A NAME="IDX7105"></A>
+<A NAME="IDX7012"></A>
+<A NAME="IDX7013"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>start_threads/0:</B>
-<DD><A NAME="IDX7106"></A>
+<DT><span class="define">PREDICATE:</span> <B>dbId/2:</B>
+<DD><A NAME="IDX7014"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Starts the threads that will handle the connection to Java. This predicate is declared public for internal purposes, and it is not intended to be used by a user program.
 
-</UL>
+<P>
+The predicate is of type <EM>data</EM>.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

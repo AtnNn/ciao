@@ -1,57 +1,333 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - gengraph1 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - A Chart Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC779" HREF="ciao_toc.html#TOC779">gengraph1 (library)</A></H1>
+<H1><A NAME="SEC773" HREF="ciao_toc.html#TOC773">A Chart Library</A></H1>
 <P>
-<A NAME="IDX8010"></A>
+<A NAME="IDX7893"></A>
 
 
 <P>
-This module defines predicates which depict line graph and scatter graph widgets. All eigth predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. A dataset is defined by two lists xvector and yvector, which contain the points coordinates. As you might guess, the values placed in the the same position in both lists are the coordinates of a point. They both share the following features: 
+<STRONG>Author(s):</STRONG> Isabel Martín, Isabel Mart&iacute;n Garc&iacute;a.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#154 (2003/12/4, 17:39:3 CET)
+
+
+<P>
+This library is intended to eaose the task of displaying some graphical results. This library allows the programmer to visualize different graphs and tables without knowing anything about specific graphical packages. 
+
+
+<P>
+You need to install the BLT package in your computer. BLT is an extension to the Tk toolkit and it does not require any patching of the Tcl or Tk source files. You can find it in <A HREF="http://www.tcltk.com/blt/index.html">http://www.tcltk.com/blt/index.html</A> 
+
+
+<P>
+Basically, when the user invokes a predicate, the library (internally) creates a bltwish interpreter and passes the information through a socket to display the required widget. The interpreter parses the received commands and executes them. 
+
+
+<P>
+The predicates exported by this library can be classified in four main groups, according to the types of representation they provide. 
 
 
 
 <UL>
 
-<LI>Numeric values for vector elements are needed. We'll use two vectors to represent the X-Y coordinates of each set of plotted data, but in this case every dataset shares the X-vector, i.e., x-coordinate of points with the same index <A NAME="DOCF5" HREF="ciao_foot.html#FOOT5">(5)</A> in different datasets is the same. Thus, the numbers of points in each yvector must be equal to the number of points in the xvector.
+<LI>bar charts
 
-<LI>The active element color is navyblue, which means that when you select a legend element, the corresponding line or point dataset turns into navyblue.
+<LI>line graphs
 
-<LI>The user can either select the appearance of the lines and/or points of each dataset or not. If not, the system will choose the colors for the lines and the points among the available ones in accordance with the plot background color and it will also set the points size and symbol to the default. If the plot background color is black, the system will choose a lighter color, and the system will select a darker color when the plot background color is white. Thus, the user can define the appearanse attributes of each dataset in four different ways. Take a look at the
+<LI>scatter graphs
 
-<A NAME="IDX8011"></A>
-<CODE>attributes/1</CODE> type definition and see the examples to understand it clearly. 
-
-<LI>The graph has a legend and one entry (symbol and label) per dataset.
-
-<LI>If you do not want to display text in the element header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
+<LI>tables
 
 </UL>
 
 <P>
-The names of the line graph predicates begin with <STRONG>graph_</STRONG> and those corresponding to the scatter graph group begin with <STRONG>scattergraph_</STRONG>. 
+To represent graphs, the Cartesian coordinate system is used. I have tried to show simple samples for every library exported predicate in order to indicate how to call them. 
 
 
 
 <UL>
-<LI><A HREF="ciao_196.html#SEC780">Usage and interface (gengraph1)</A>
-<LI><A HREF="ciao_196.html#SEC781">Documentation on exports (gengraph1)</A>
+<LI><A HREF="ciao_196.html#SEC774">Bar charts</A>
+<LI><A HREF="ciao_196.html#SEC775">Line graphs</A>
+<LI><A HREF="ciao_196.html#SEC776">Scatter graphs</A>
+<LI><A HREF="ciao_196.html#SEC777">Tables</A>
+<LI><A HREF="ciao_196.html#SEC778">Overview of widgets</A>
+<LI><A HREF="ciao_196.html#SEC779">Usage and interface (chartlib)</A>
+<LI><A HREF="ciao_196.html#SEC780">Documentation on exports (chartlib)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC780" HREF="ciao_toc.html#TOC780">Usage and interface (<CODE>gengraph1</CODE>)</A></H2>
+<H2><A NAME="SEC774" HREF="ciao_toc.html#TOC774">Bar charts</A></H2>
+
+<P>
+In this section we shall introduce the general issues about the set of barchart predicates. By calling the predicates that pertain to this group a bar chart for plotting two-dimensional data (X-Y coordinates) can be created. A bar chart is a graphic means of comparing numbers by displaying bars of lengths proportional to the y-coordinates they represented. The barchart widget has many configurable options such as title, header text, legend and so on. You can configure the appearance of the bars as well. The bar chart widget has the following components: 
+
+
+<DL COMPACT>
+
+<DT>Header text
+<DD>
+The text displayed at the top of the window. If it is <CODE>"</CODE> no text will be displayed. 
+
+<DT>Save button
+<DD>
+The button placed below the header text. Pops up a dialog box for the user to select a file to save the graphic in PostScript format.<A NAME="DOCF4" HREF="ciao_foot.html#FOOT4">(4)</A> 
+
+<DT>Bar chart title
+<DD>
+The title of the graph. It is displayed at the top of the bar chart graph. If text is <CODE>"</CODE> no title will be displayed. 
+
+<DT>X axis title
+<DD>
+X axis title. If text is <CODE>"</CODE> no x axis title will be displayed. 
+
+<DT>Y axis title
+<DD>
+Y axis title. If text is <CODE>"</CODE> no y axis title will be displayed. 
+
+<DT>X axis
+<DD>
+X coordinate axis. The x axis is drawn at the bottom margin of the bar chart graph. The x axis consists of the axis line, ticks and tick labels. Tick labels can be numbers or plain text. If the labels are numbers, they could be displayed at uniform intervals (the numbers are treated as normal text) or depending on its x-coodinate value. You can also set limits (maximum and minimum) for the x axis, but only if the tick labels are numeric. 
+
+<DT>Y axis
+<DD>
+Y coordinate axis. You can set limits (maximum and minimum) for the y axis. The y axis is drawn at the right margin of the bar chart graph.The y axis consists of the axis line, ticks and tick labels. The tick labels are numeric values determined from the data and are drawn at uniform intervals. 
+
+<DT>Bar chart graph
+<DD>
+This is the plotting area, placed in the center of the window and surrounded by the axes, the axis titles and the legend (if any). The range of the axes controls what region of the data is plotted. By default, the minimum and maximum limits are determined from the data, but you can set them (as mentioned before). Data points outside the minimum and maximum value of the axes are not plotted. 
+
+<DT>Legend
+<DD>
+The legend displays the name and symbol of each bar. The legend is placed in the right margin of the Bar chart graph. 
+
+<DT>Footer text
+<DD>
+Text displayed at the lower part of the window. If text is <CODE>"</CODE> no header text will be displayed. 
+
+<DT>Quit button
+<DD>
+Button placed below the footer text. Click it to close the window. 
+
+</DL>
+
+<P>
+All of them are arranged in a window. However you can, for example, show a bar chart window without legend or header text. Other configuration options will be explained later. 
+
+
+<P>
+In addition to the window appearance there is another important issue about the bar chart window, namely its behaviour in response to user actions. The association user actions to response is called <EM>bindings</EM>. The main bindings currently specified are the following: 
+
+
+<DL COMPACT>
+
+<DT>Default bindings
+<DD>
+Those are well known by most users. They are related to the frame displayed around the window. As you know, you can interactively move, resize, close, iconify, deiconify, send to another desktop etc. a window. 
+
+<DT>Bindings related to bar chart graph and its legend
+<DD>
+Clicking the left mouse key over a legend element, the corresponding bar turns out into red. After clicking again, the bar toggles to its original look. In addition, you can do zoom-in by pressing the left mouse key over the bar chart graph and dragging to select an area. To zoom out simply press the right mouse button. 
+
+When the pointer passes over the plotting area the cross hairs are drawn. The cross hairs consists of two intersecting lines (one vertical and one horizontal). Besides, if the pointer is over a legend element, its background changes. 
+
+<DT>Bindings related to buttons
+<DD>
+There are two buttons in the main widget. Clicking the mouse on the Save button a "Save as" dialog box is popped up. The user can select a file to save the graph. If the user choose a file that already exists, the dialog box prompts the user for confirmation on whether the existing file should be overwritten or not. Furthermore, you can close the widget by clicking on the Quit button. 
+
+When the pointer passes over a button the button color changes. 
+
+</DL>
+
+<P>
+The predicates that belong to this group are those whose names begin with <STRONG>barchart</STRONG> and <STRONG>genmultibar</STRONG>. If you take a look at the predicate names that pertain to this group, you will notice that they are not self-explanatory. It would have been better to name the predicates in a way that allows the user to identify the predicate features by its name, but it would bring about very long names (i.e barchart_WithoutLegend_BarsAtUniformIntervals_RandomBarsColors). For this reason I decided to simply add a number after barchart to name them. 
+
+
+
+
+<H2><A NAME="SEC775" HREF="ciao_toc.html#TOC775">Line graphs</A></H2>
+
+<P>
+It is frequently the case that several datasets need to be displayed on the same plot. If so, you may wish to distinguish the points in different datasets by joining them by lines of different color, or by plotting with symbols of different types. This set of predicates allows the programmer to represent two-dimensional data (X-Y coordinates). Each dataset contains x and y vectors containing the coordinates of the data. You can configure the appearance of the points and the lines which the points are connected with. The configurable line graph components are: 
+
+
+<DL COMPACT>
+
+<DT>line graph
+<DD>
+This is the plotting area, placed in the center of the window and surrounded by the axes, the axes titles and the legend (if any). The range of the axes controls what region of the data is plotted. By default, the minimum and maximum limits are determined from the data, but you can set them. Data points outside the minimum and maximum value of the axes are not plotted. You can specify how connecting line segments joining successive datapoints are drawn by setting the <CODE>Smooth</CODE> argument. Smooth can be either linear, step, natural and quadratic. Furthermore, you can select the appearance of the points and lines. 
+
+<DT>Legend
+<DD>
+The legend displays the name and symbol of each line. The legend is placed in the right margin of the graph. 
+ 
+</DL>
+
+<P>
+The elements header, footer, quit and save buttons, the titles and the axes are quite similar to those in barchart graphs, except in that the tick labels will be numbers. All of them are arranged in a window by the geometry manager. However you can, as we mentioned in the above paragraphs, show a line graph window without any titles or footer text. Other configuration options will be explained later in this section or in the corresponding modules. 
+
+
+<P>
+Related to the behaviour of the widgets in response to user actions (bindings) we will remark the following features: 
+
+
+<DL COMPACT>
+
+<DT>Bindings related to line graph and its legend
+<DD>
+Clicking the left mouse key over a legend element, the corresponding line turns out into blue. Repeating the action reverts the line to its original color. Moreover, you can do zoom-in by clicking the left mouse key over the bar chart graph and dragging a rectangle defining the area you want to zoom in. To zoom out simply press the right mouse button. 
+
+When the pointer passes over the plotting area the cross hairs are drawn. The cross hairs consists of two intersecting lines (one vertical and one horizontal). Besides, if the pointer is over a legend element, its background changes. 
+
+<DT>Other bindings
+<DD>
+The default bindings and the bindings related to the save and quit buttons are similar to those in the bar chart graphs. 
+ 
+</DL>
+
+<P>
+The predicates that belong to this group are those whose names begin with <STRONG>graph_</STRONG>. 
+ 
+
+
+
+
+<H2><A NAME="SEC776" HREF="ciao_toc.html#TOC776">Scatter graphs</A></H2>
+
+<P>
+The challenge of this section is to introduce some general aspects about the scatter graph predicates group. By invoking the scatter graph predicates the user can represent two-dimensional point datasets. Often you need to display one or several point datasets on the same plot. If so, you may wish to distinguish the points that pertain to different datasets by using plotting symbols of different types, or by displaying them in different colors. This set of predicates allows you to represent two-dimensional data (X-Y coordinates). Each dataset contains x and y vectors containing the coordinates of the data. You can configure the appearance of the points. The configurable scatter graph components are: 
+
+
+<DL COMPACT>
+
+<DT>scatter graph
+<DD>
+This is the plotting area, placed in the center of the window and surrounded by the axes, the axes titles and the legend (if any). The range of the axes controls what region of the data is plotted. By default, the minimum and maximum limits are determined from the data, but you can set them (as we mentioned before). Data points outside the minimum and maximum value of the axes are not plotted. The user can select the appearance of the points. 
+
+<DT>Legend
+<DD>
+The legend displays the name and symbol of each point dataset. The legend is drawn in the right margin of the graph. 
+ 
+</DL>
+
+<P>
+The elements header, footer, quit and save buttons, the titles and the axes are similar to those in barchart graphs except for that, as in line graphs, the tick labels will be numbers. All of them are arranged in a window by the geometry manager. However you can, for example, show a scatter graph window without titles or footer text, as we mentioned before. Other configuration options will be explained later, in the corresponding modules. 
+
+
+<P>
+Related to the behaviour of the widgets in response to user actions (bindings) the following features are: 
+
+
+<DL COMPACT>
+
+ 
+<DT>Bindings related to scatter graph and its legend
+<DD>
+Clicking the left mouse key over a legend element, the points which belong to the corresponding dataset turn out into blue. Repeating the action toggles the point dataset to its original color. Moreover, you can do zoom-in by clicking the left mouse key over the bar chart graph and dragging a rectangle defining the area you want to zoom-in on. To do zoom-out simply press the right mouse button. 
+
+When the pointer passes over the plotting area the cross hairs are drawn. The cross hairs consists of two intersecting lines (one vertical and one horizontal). Besides, if the pointer is over a legend element, its background changes. 
+
+<DT>Other bindings
+<DD>
+The default bindings and the bindings related to the save and quit buttons are similar to those in the bar chart graphs. 
+
+</DL>
+<P>
+ 
+The predicates that belong to this group are those whose names began with <STRONG>scattergraph_</STRONG>. 
+
+
+
+
+<H2><A NAME="SEC777" HREF="ciao_toc.html#TOC777">Tables</A></H2>
+
+<P>
+The purpose of this section is to allow the user to display results in a table. A table is a regular structure in which: 
+
+
+
+<UL>
+
+<LI>Every row has the same number of columns, or
+
+<LI>Every column has the same number of rows.
+
+</UL>
+
+<P>
+The widget configurable components are as follows: 
+
+
+<DL COMPACT>
+
+<DT>Title
+<DD>
+Title of the widget, it is displayed centered at the top of the canvas. If text is <CODE>"</CODE> no title will be displayed. 
+
+<DT>Header text
+<DD>
+Left centered text displayed bellow the title. If text is <CODE>"</CODE> no header text will be displayed. 
+
+<DT>Table
+<DD>
+Is placed in the center of the window. The table is composed by cells ordered in rows and columns. The cell values can be either any kind of text or numbers and they can be empty as well (see the type definition in the corresponding chapter module). A table is a list of lists. Each sublist is a row, so every sublist in the table must contain the same number of alements. 
+
+<DT>Footer text
+<DD>
+Left centered text displayed at the lower part of the window. If text is <CODE>"</CODE> no header text will be displayed. 
+
+<DT>Quit button
+<DD>
+Button placed below the footer text. You can click it to close the window. 
+
+</DL>
+
+<P>
+If the arguments are not in a correct format an exception will be thrown. Moreover, these widgets have the default bindings and the binding related to the quit button: 
+ 
+The set of predicates that belongs to this group are those which names begin with <STRONG>table_widget</STRONG>. 
+ 
+
+
+
+
+<H2><A NAME="SEC778" HREF="ciao_toc.html#TOC778">Overview of widgets</A></H2>
+<P>
+ 
+Although you don't have to worry about how to arrange the widgets, here is an overview of how Tcl-tk, the underlying graphical system currently used by chartlib, performs this task. Quoting from the book <EM>Tcl and Tk toolkit</EM>, John K. Ousterhout. 
+
+
+<P>
+The X Window System provides many facilities for manipulating windows in displays. The root window may have any number of child windows, each of wich is called a top-level window. Top-level windows may have children of their own, wich may have also children, and so on. The descendants of top-level windows are called internal windows. Internal windows are usedfor individual controls such as buttons, text entries, and for grouping controls together. An X-application tipically manages several top-level windows. Tk uses X to implement a set of controls with the Motif look and feel. These controls are called widgets. Each widget is implemented using one X window, and the terms "window" and "widget" will be used interchangeably in this document. As with windows, widgets are nested in hierarchical structures. In this library top-level widgets (nonleaf or main) are just containers for organizing and arranging the leaf widgets (components). Thereby, the barchart widget is a top-level window wich contains some widget components. 
+
+
+<P>
+Probably the most painstaking aspect of building a graphical application is getting the placement and size of the widgets just right. It usually takes many iterations to align widgets and adjust their spacing. That's because managing the geometry of widgets is simply not a packing problem, but also graphical design problem. Attributes such as alignment, symmetry, and balance are more important than minimizing the amount of space used for packing. Tk is similar to other X toolkits in that it does not allow widgets to determine their own geometries. A widget will not even appeared unless it is managed by a geometry manager. This separation of geometry management from internal widget behaviour allows multiple geometry managers to exist simultaneously and permits any widget to be used with any geometry manager. A geometry manager's job is to arrange one or more <EM>slave</EM> widgets relative to a <EM>master</EM> widgets. There are some geometry managers in Tk such as pack, place and canvas widget. We will use another one call table.
+
+
+<P>
+The table geometry manager arranges widgets in a table. It's easy to align widgets (horizontally and vertically) or to create empty space to balance the arrangement of the widgets. Widgets (called slaves in the Tk parlance) are arranged inside a containing widget (called the master). Widgets are positioned at row,column locations and may span any number of rows or columns. More than one widget can occupy a single location. The placement of widget windows determines both the size and arrangement of the table. The table queries the requested size of each widget. The requested size of a widget is the natural size of the widget (before the widget is shrunk or expanded). The height of each row and the width of each column is the largest widget spanning that row or column. The size of the table is in turn the sum of the row and column sizes. This is the table's normal size. The total number of rows and columns in a table is determined from the indices specified. The table grows dynamically as windows are added at larger indices. 
+
+
+
+
+<H2><A NAME="SEC779" HREF="ciao_toc.html#TOC779">Usage and interface (<CODE>chartlib</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -59,46 +335,7 @@ The names of the line graph predicates begin with <STRONG>graph_</STRONG> and th
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gengraph1)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX8012"></A>
-<CODE>graph_b1/9</CODE>, 
-<A NAME="IDX8013"></A>
-<CODE>graph_b1/13</CODE>, 
-<A NAME="IDX8014"></A>
-<CODE>graph_w1/9</CODE>, 
-<A NAME="IDX8015"></A>
-<CODE>graph_w1/13</CODE>, 
-<A NAME="IDX8016"></A>
-<CODE>scattergraph_b1/8</CODE>, 
-<A NAME="IDX8017"></A>
-<CODE>scattergraph_b1/12</CODE>, 
-<A NAME="IDX8018"></A>
-<CODE>scattergraph_w1/8</CODE>, 
-<A NAME="IDX8019"></A>
-<CODE>scattergraph_w1/12</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX8020"></A>
-<CODE>vector/1</CODE>, 
-<A NAME="IDX8021"></A>
-<CODE>smooth/1</CODE>, 
-<A NAME="IDX8022"></A>
-<CODE>attributes/1</CODE>, 
-<A NAME="IDX8023"></A>
-<CODE>symbol/1</CODE>, 
-<A NAME="IDX8024"></A>
-<CODE>size/1</CODE>.
-
-</UL>
+<CODE>:- use_module(library(chartlib)).</CODE>
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -107,20 +344,30 @@ The names of the line graph predicates begin with <STRONG>graph_</STRONG> and th
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8025"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8026"></A>
+<A NAME="IDX7894"></A>
 <CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX8027"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX8028"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX8029"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX8030"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8031"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX7895"></A>
+<CODE>chartlib/genbar2</CODE>, 
+<A NAME="IDX7896"></A>
+<CODE>chartlib/genbar3</CODE>, 
+<A NAME="IDX7897"></A>
+<CODE>chartlib/genbar4</CODE>, 
+<A NAME="IDX7898"></A>
+<CODE>chartlib/genmultibar</CODE>, 
+<A NAME="IDX7899"></A>
+<CODE>chartlib/table_widget1</CODE>, 
+<A NAME="IDX7900"></A>
+<CODE>chartlib/table_widget2</CODE>, 
+<A NAME="IDX7901"></A>
+<CODE>chartlib/table_widget3</CODE>, 
+<A NAME="IDX7902"></A>
+<CODE>chartlib/table_widget4</CODE>, 
+<A NAME="IDX7903"></A>
+<CODE>chartlib/gengraph1</CODE>, 
+<A NAME="IDX7904"></A>
+<CODE>chartlib/gengraph2</CODE>, 
+<A NAME="IDX7905"></A>
+<CODE>chartlib/chartlib_errhandle</CODE>.
 
 </UL>
 
@@ -130,518 +377,608 @@ The names of the line graph predicates begin with <STRONG>graph_</STRONG> and th
 
 
 
-<H2><A NAME="SEC781" HREF="ciao_toc.html#TOC781">Documentation on exports (<CODE>gengraph1</CODE>)</A></H2>
+<H2><A NAME="SEC780" HREF="ciao_toc.html#TOC780">Documentation on exports (<CODE>chartlib</CODE>)</A></H2>
 <P>
-<A NAME="IDX8032"></A>
-<A NAME="IDX8033"></A>
+<A NAME="IDX7906"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b1/9:</B>
-<DD><A NAME="IDX8034"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart1/7:</B>
+<DD><A NAME="IDX7907"></A>
 
 
 <P>
-<CODE>graph_b1(Header,GTitle,XTitle,XVector,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-Besides the features mentioned at the begining of the chapter, the displayed graph generated when calling this predicate has the following distinguishing characteristics: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axes limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  'yaxixtitle',
-  [ [10,35,40],[25,50,60] ],
-  [ ['element1','Blue','Yellow','plus',6],['element2',Outline,Color] ],
-  'footer',
-  'linear').
-</PRE>
-
-<P>
- 
+ Imported from 
+<A NAME="IDX7908"></A>
+<CODE>genbar1</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P>
-<A NAME="IDX8035"></A>
-<A NAME="IDX8036"></A>
+<A NAME="IDX7909"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b1/13:</B>
-<DD><A NAME="IDX8037"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart1/9:</B>
+<DD><A NAME="IDX7910"></A>
 
 
 <P>
-<CODE>graph_b1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-graph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['line1','circle',4],['line2',OutlineColor,Color]],
-  'footer',
-  'step').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8038"></A>
-<A NAME="IDX8039"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w1/9:</B>
-<DD><A NAME="IDX8040"></A>
-
-
-<P>
-<CODE>graph_w1(Header,GTitle,XTitle,XVector,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8041"></A>
-<CODE>graph_b1/9</CODE>. The differences lies in the plot background color and in the cross hairs color, which are white and black respectively. 
-
-
-<P>
-Example: 
-
-<PRE>
-graph_w1('This is the header text', 
-  'Graph_title', 
-  'xaxistitle',
-  [20,10,40,50], 
-  'yaxixtitle', 
-  [ [10,35,40,50],[25,20,60,40] ],
-  [['line1','Blue','DarkOrchid'],['line2','circle',3]],
-  'footer', 
-  'quadratic').  
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8042"></A>
-<A NAME="IDX8043"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w1/13:</B>
-<DD><A NAME="IDX8044"></A>
-
-
-<P>
-<CODE>graph_w1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8045"></A>
-<CODE>graph_b1/13</CODE>, the differences between them are listed below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-graph_w1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  100,
-  10,      
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  _,
-  [['element1','Blue','Yellow'],['element2','Turquoise','Plum']],
-  'footer',
-  'quadratic').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8046"></A>
-<A NAME="IDX8047"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b1/8:</B>
-<DD><A NAME="IDX8048"></A>
-
-
-<P>
-<CODE>scattergraph_b1(Header,GTitle,XTitle,XVector,YTitle,YVectors,PAtts,Footer)</CODE>
-
-
-<P>
-Apart from the features brought up at the beginning of the chapter, the scatter graph displayed invoking this predicate has the following characteristics: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axes limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [10,15,20],
-  'yaxixtitle',
-  [[10,35,20],[15,11,21]],
-  [['element1','Blue','Yellow'],['element2','Turquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8049"></A>
-<A NAME="IDX8050"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b1/12:</B>
-<DD><A NAME="IDX8051"></A>
-
-
-<P>
-<CODE>scattergraph_b1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['point dataset1','Blue','Yellow'],['point dataset2']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8052"></A>
-<A NAME="IDX8053"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w1/8:</B>
-<DD><A NAME="IDX8054"></A>
-
-
-<P>
-<CODE>scattergraph_w1(Header,GT,XT,XVector,YT,YVectors,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8055"></A>
-<CODE>scattergraph_b1/8</CODE> except in the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>If the user does not fix the points colors, they will be chosen among the lighter ones.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  [['e1','Blue','Green'],['e2','MediumVioletRed','Plum']],
-  'footer').
-</PRE>
-
-<P>
- 
+ Imported from 
+<A NAME="IDX7911"></A>
+<CODE>genbar1</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P>
-<A NAME="IDX8056"></A>
-<A NAME="IDX8057"></A>
+<A NAME="IDX7912"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w1/12:</B>
-<DD><A NAME="IDX8058"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart1/7:</B>
+<DD><A NAME="IDX7913"></A>
 
 
 <P>
-<CODE>scattergraph_w1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8059"></A>
-<CODE>scattergraph1_b1/13</CODE>, the differences between them are listed below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  150,
-  5,
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  -10,
-  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8060"></A>
-<A NAME="IDX8061"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>vector/1:</B>
-<DD><A NAME="IDX8062"></A>
-
-
-
-<PRE>
-vector(X) :-
-        list(X,number).
-</PRE>
-
-<P>
-The type vector defines a list of numbers (integers or floats). 
- 
+ Imported from 
+<A NAME="IDX7914"></A>
+<CODE>genbar1</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P>
-<A NAME="IDX8063"></A>
-<A NAME="IDX8064"></A>
+<A NAME="IDX7915"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>smooth/1:</B>
-<DD><A NAME="IDX8065"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart2/7:</B>
+<DD><A NAME="IDX7916"></A>
 
 
 <P>
-<CODE>smooth(Smooth)</CODE>
-
-
-<P>
- 
-
-<PRE>
-smooth(linear).
-smooth(cubic).
-smooth(quadratic).
-smooth(step).
-</PRE>
-
-<P>
-Specifies how connecting segments are drawn between data points. If <CODE>Smooth</CODE> is <CODE>linear</CODE>, a single line segment is drawn, connecting both data points. When <CODE>Smooth</CODE> is <CODE>step</CODE>, two line segments will be drawn, the first line is a horizontal line segment that steps the next X-coordinate and the second one is a vertical line, moving to the next Y-coordinate. Both <CODE>cubic</CODE> and <CODE>quadratic</CODE> generate multiple segments between data points. If <CODE>cubic</CODE>is used, the segments are generated using a cubic spline. If <CODE>quadratic</CODE>, a quadratic spline is used. The default is linear. 
+ Imported from 
+<A NAME="IDX7917"></A>
+<CODE>genbar2</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P>
-<A NAME="IDX8066"></A>
-<A NAME="IDX8067"></A>
+<A NAME="IDX7918"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>attributes/1:</B>
-<DD><A NAME="IDX8068"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart2/11:</B>
+<DD><A NAME="IDX7919"></A>
 
-
-
-<PRE>
-attributes([ElementName]) :-
-        atomic(ElementName).
-attributes([ElementName,OutLine,Color]) :-
-        atomic(ElementName),
-        color(OutLine),
-        color(Color).
-attributes([ElementName,Symbol,Size]) :-
-        atomic(ElementName),
-        symbol(Symbol),
-        size(Size).
-attributes([ElementName,OutLine,Color,Symbol,Size]) :-
-        atomic(ElementName),
-        color(OutLine),
-        color(Color),
-        symbol(Symbol),
-        size(Size).
-</PRE>
 
 <P>
-Each line or point dataset in the graph has its own attributes, which are defined by this type. The name of the dataset, specified in the <CODE>ElementName</CODE> argument, may be either a number or an atom. The second argument is the color of a thin line around each point in the dataset and the Color argument is the points and lines color. Both <CODE>OutLine</CODE> and <CODE>Color</CODE> must be a valid color (see available values in 
-<A NAME="IDX8069"></A>
-<CODE>color/1</CODE>), otherwise a random color according to the plot background color will be selected. The <CODE>Symbol</CODE> must be a valid symbol and the <CODE>Size</CODE> must be a number. Be careful if you want to especify the <CODE>Symbol</CODE> and the <CODE>Size</CODE>, otherwise the predicate will not work as you expect. If you don't select a symbol and a size for a dataset the default values will be square and 1 pixel. 
+ Imported from 
+<A NAME="IDX7920"></A>
+<CODE>genbar2</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P>
-<A NAME="IDX8070"></A>
-<A NAME="IDX8071"></A>
+<A NAME="IDX7921"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>symbol/1:</B>
-<DD><A NAME="IDX8072"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart2/7:</B>
+<DD><A NAME="IDX7922"></A>
 
 
 <P>
-<CODE>symbol(Symbol)</CODE>
-
-
-<P>
- 
-
-<PRE>
-symbol(square).
-symbol(circle).
-symbol(diamond).
-symbol(plus).
-symbol(cross).
-symbol(splus).
-symbol(scross).
-symbol(triangle).
-</PRE>
-
-<P>
-<CODE>Symbol</CODE> stands for the shape of the points whether in scatter graphs or in line graphs. 
+ Imported from 
+<A NAME="IDX7923"></A>
+<CODE>genbar2</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P>
-<A NAME="IDX8073"></A>
-<A NAME="IDX8074"></A>
+<A NAME="IDX7924"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>size/1:</B>
-<DD><A NAME="IDX8075"></A>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart3/7:</B>
+<DD><A NAME="IDX7925"></A>
 
 
 <P>
-<CODE>size(Size)</CODE>
+ Imported from 
+<A NAME="IDX7926"></A>
+<CODE>genbar3</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7927"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart3/9:</B>
+<DD><A NAME="IDX7928"></A>
 
 
 <P>
- 
+ Imported from 
+<A NAME="IDX7929"></A>
+<CODE>genbar3</CODE> (see the corresponding documentation for details).
 
-<PRE>
-size(Size) :-
-        number(Size).
-</PRE>
+
+</DL>
 
 <P>
-<CODE>Size</CODE> stands for the size in pixels of the points whether in scatter graphs or in line graphs. 
+<A NAME="IDX7930"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart3/7:</B>
+<DD><A NAME="IDX7931"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7932"></A>
+<CODE>genbar3</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7933"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart4/7:</B>
+<DD><A NAME="IDX7934"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7935"></A>
+<CODE>genbar4</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7936"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>barchart4/11:</B>
+<DD><A NAME="IDX7937"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7938"></A>
+<CODE>genbar4</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7939"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>percentbarchart4/7:</B>
+<DD><A NAME="IDX7940"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7941"></A>
+<CODE>genbar4</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7942"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>multibarchart/8:</B>
+<DD><A NAME="IDX7943"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7944"></A>
+<CODE>genmultibar</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7945"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>multibarchart/10:</B>
+<DD><A NAME="IDX7946"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7947"></A>
+<CODE>genmultibar</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7948"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget1/4:</B>
+<DD><A NAME="IDX7949"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7950"></A>
+<CODE>table_widget1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7951"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget1/5:</B>
+<DD><A NAME="IDX7952"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7953"></A>
+<CODE>table_widget1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7954"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget2/4:</B>
+<DD><A NAME="IDX7955"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7956"></A>
+<CODE>table_widget2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7957"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget2/5:</B>
+<DD><A NAME="IDX7958"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7959"></A>
+<CODE>table_widget2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7960"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget3/4:</B>
+<DD><A NAME="IDX7961"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7962"></A>
+<CODE>table_widget3</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7963"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget3/5:</B>
+<DD><A NAME="IDX7964"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7965"></A>
+<CODE>table_widget3</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7966"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget4/4:</B>
+<DD><A NAME="IDX7967"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7968"></A>
+<CODE>table_widget4</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7969"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>tablewidget4/5:</B>
+<DD><A NAME="IDX7970"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7971"></A>
+<CODE>table_widget4</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7972"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b1/9:</B>
+<DD><A NAME="IDX7973"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7974"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7975"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b1/13:</B>
+<DD><A NAME="IDX7976"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7977"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7978"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w1/9:</B>
+<DD><A NAME="IDX7979"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7980"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7981"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w1/13:</B>
+<DD><A NAME="IDX7982"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7983"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7984"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b1/8:</B>
+<DD><A NAME="IDX7985"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7986"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7987"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b1/12:</B>
+<DD><A NAME="IDX7988"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7989"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7990"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w1/8:</B>
+<DD><A NAME="IDX7991"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7992"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7993"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w1/12:</B>
+<DD><A NAME="IDX7994"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7995"></A>
+<CODE>gengraph1</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7996"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b2/9:</B>
+<DD><A NAME="IDX7997"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX7998"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX7999"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_b2/13:</B>
+<DD><A NAME="IDX8000"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8001"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8002"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w2/9:</B>
+<DD><A NAME="IDX8003"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8004"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8005"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>graph_w2/13:</B>
+<DD><A NAME="IDX8006"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8007"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8008"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b2/8:</B>
+<DD><A NAME="IDX8009"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8010"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8011"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_b2/12:</B>
+<DD><A NAME="IDX8012"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8013"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8014"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w2/8:</B>
+<DD><A NAME="IDX8015"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8016"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8017"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>scattergraph_w2/12:</B>
+<DD><A NAME="IDX8018"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8019"></A>
+<CODE>gengraph2</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8020"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chartlib_text_error_protect/1:</B>
+<DD><A NAME="IDX8021"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8022"></A>
+<CODE>chartlib_errhandle</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX8023"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chartlib_visual_error_protect/1:</B>
+<DD><A NAME="IDX8024"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX8025"></A>
+<CODE>chartlib_errhandle</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

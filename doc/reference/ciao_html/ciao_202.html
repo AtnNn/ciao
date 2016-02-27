@@ -1,37 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget4 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - genbar3 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_201.html">previous</A>, <A HREF="ciao_203.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_201.html">previous</A>, <A HREF="ciao_203.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC799" HREF="ciao_toc.html#TOC799">table_widget4 (library)</A></H1>
+<H1><A NAME="SEC798" HREF="ciao_toc.html#TOC798">genbar3 (library)</A></H1>
 <P>
-<A NAME="IDX8209"></A>
-
-
-<P>
-In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row and column is bold. The remaining elements are in medium weight font. 
+<A NAME="IDX8177"></A>
 
 
 <P>
-If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
+<STRONG>Author(s):</STRONG> Isabel Martín.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#159 (2003/12/4, 17:39:24 CET)
+
+
+<P>
+This module defines predicates which depict barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window and are similar to those exported in the genbar1 module except in that these defined in this module do not display a legend. Thus, not all the argument types are equal. 
+
+
+<P>
+The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contain elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes . 
 
 
 
 <UL>
-<LI><A HREF="ciao_202.html#SEC800">Usage and interface (table_widget4)</A>
-<LI><A HREF="ciao_202.html#SEC801">Documentation on exports (table_widget4)</A>
+<LI><A HREF="ciao_202.html#SEC799">Usage and interface (genbar3)</A>
+<LI><A HREF="ciao_202.html#SEC800">Documentation on exports (genbar3)</A>
+<LI><A HREF="ciao_202.html#SEC801">Documentation on internals (genbar3)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC800" HREF="ciao_toc.html#TOC800">Usage and interface (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC799" HREF="ciao_toc.html#TOC799">Usage and interface (<CODE>genbar3</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +52,7 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(table_widget4)).</CODE>
+<CODE>:- use_module(library(genbar3)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,10 +61,12 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8210"></A>
-<CODE>tablewidget4/4</CODE>, 
-<A NAME="IDX8211"></A>
-<CODE>tablewidget4/5</CODE>.
+<A NAME="IDX8178"></A>
+<CODE>barchart3/7</CODE>, 
+<A NAME="IDX8179"></A>
+<CODE>barchart3/9</CODE>, 
+<A NAME="IDX8180"></A>
+<CODE>percentbarchart3/7</CODE>.
 
 </UL>
 
@@ -62,18 +77,20 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8212"></A>
+<A NAME="IDX8181"></A>
 <CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX8213"></A>
+<A NAME="IDX8182"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8214"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX8215"></A>
+<A NAME="IDX8183"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX8184"></A>
 <CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX8216"></A>
+<A NAME="IDX8185"></A>
 <CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX8217"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX8186"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX8187"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -83,77 +100,159 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 
-<H2><A NAME="SEC801" HREF="ciao_toc.html#TOC801">Documentation on exports (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC800" HREF="ciao_toc.html#TOC800">Documentation on exports (<CODE>genbar3</CODE>)</A></H2>
 <P>
-<A NAME="IDX8218"></A>
-<A NAME="IDX8219"></A>
+<A NAME="IDX8188"></A>
+<A NAME="IDX8189"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/4:</B>
-<DD><A NAME="IDX8220"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart3/7:</B>
+<DD><A NAME="IDX8190"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer)</CODE>
+<CODE>barchart3(Header, BarchartTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
 
 
 <P>
-Shows a regular table in a window. The system sets a default background image for the widget. 
+As we mentioned in the above paragraph, this predicate is comparable to 
+<A NAME="IDX8191"></A>
+<CODE>barchart1/8</CODE> except in the <CODE>XVector</CODE> argument type. 
 
 
 <P>
 Example: 
 
 <PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-             'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table').
+barchart3('This is the header text',
+  'Barchart without legend',
+  'My xaxistitle',
+  [['bar1'],['bar2']],
+  'My yaxixtitle',
+  [20,10],
+  'This is the footer text').
 </PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX8221"></A>
-<A NAME="IDX8222"></A>
+<A NAME="IDX8192"></A>
+<A NAME="IDX8193"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/5:</B>
-<DD><A NAME="IDX8223"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart3/9:</B>
+<DD><A NAME="IDX8194"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+<CODE>barchart3(Header, BTitle, XTitle, XVector, YTitle, YVector, YMax, YMin, Footer)</CODE>
 
 
 <P>
-This predicate and 
-<A NAME="IDX8224"></A>
-<CODE>tablewidget4/4</CODE> are comparable, except that in the already defined you must set the background image. 
+As we mentioned, this predicate is quite similar to the 
+<A NAME="IDX8195"></A>
+<CODE>barchart1/10</CODE> except in the <CODE>XVector</CODE> argument type, because the yielded bar chart lacks of legend. 
 
 
 <P>
 Example: 
 
 <PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-           'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table',
-  './images/rain.gif').
+barchart3('This is the header text',
+  'Barchart without legend',
+  'My xaxistitle',
+  [['bar1'],['bar2']],
+  'My yaxixtitle',
+  30,
+  5,
+  [20,10],
+  'This is the footer text').
 </PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX8196"></A>
+<A NAME="IDX8197"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart3/7:</B>
+<DD><A NAME="IDX8198"></A>
+
+
+<P>
+<CODE>percentbarchart3(Header, BTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
+
+
+<P>
+The <CODE>y</CODE> axis maximum coordinate value is 100. The x axis limits are autoarrange. 
+
+
+<P>
+Example: 
+
+
+
+<PRE>
+percentbarchart3('This is a special barchart to represent percentages',
+          'Barchart without legend',
+          'My xaxistitle',
+          [ ['pr1','Blue','Yellow','pattern1'],
+            ['pr2','MediumTurquoise','Plum','pattern5'] ],
+          'My yaxixtitle',
+          [80,10],
+          'This is the footer text').
+</PRE>
+
+</DL>
+
+
+
+<H2><A NAME="SEC801" HREF="ciao_toc.html#TOC801">Documentation on internals (<CODE>genbar3</CODE>)</A></H2>
+<P>
+<A NAME="IDX8199"></A>
+<A NAME="IDX8200"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>xbarelement3/1:</B>
+<DD><A NAME="IDX8201"></A>
+
+
+
+<PRE>
+xbarelement3([XValue]) :-
+        atomic(XValue).
+xbarelement3([XValue,ForegColor,BackgColor,StipplePattern]) :-
+        atomic(XValue),
+        color(ForegColor),
+        color(BackgColor),
+        pattern(StipplePattern).
+</PRE>
+
+<P>
+Defines the attributes of the bar. 
+<DL COMPACT>
+
+<DT><CODE>XValue</CODE>
+<DD>
+bar label. Although <CODE>XValue</CODE> values may be numbers, the will be treated as labels. Different elements with the same label will produce different bars. 
+
+<DT><CODE>ForegColor</CODE>
+<DD>
+It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>BackgColor</CODE>
+<DD>
+It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>SPattern</CODE>
+<DD>
+It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+
+</DL>
+<P>
+ 
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_201.html">previous</A>, <A HREF="ciao_203.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_201.html">previous</A>, <A HREF="ciao_203.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

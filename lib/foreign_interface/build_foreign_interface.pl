@@ -17,7 +17,7 @@
 
 :- comment(title, "Foreign Language Interface Builder").
 
-:- comment(summary, "Low-level utilities for building foreign
+:- comment(module, "Low-level utilities for building foreign
 interfaces.  End-users should not need to use them, as the Ciao Prolog
 Compiler reads the user assertions and calls appropriately the
 predicates in this module.").
@@ -47,6 +47,19 @@ predicates in this module.").
 :- use_module(library('compiler/c_itf')).
 :- use_module(library(ctrlcclean),[ctrlc_clean/1]).
 :- use_module(library(errhandle)).  
+:- use_module(engine(internals), [
+	filetype/3,
+	po_filename/2,
+	itf_filename/2,
+	so_filename/2,
+	asr_filename/2,
+	product_filename/3,
+	find_po_filename/2,
+	find_so_filename/2,
+	find_pl_filename/4,
+	find_c_filename/4,
+	opt_suff/1
+	]).
 
 % --------------------------------------------------------------------------- %
 
@@ -61,7 +74,7 @@ build_foreign_interface(File) :-
 
 % --------------------------------------------------------------------------- %
 
-:- pred build_foreign_interface(in(File)) :: sourcename
+:- pred rebuild_foreign_interface(in(File)) :: sourcename
  # "Like @pred{build_foreign_interface/1}, but it does not check the 
     modification time of any file.".
 rebuild_foreign_interface(File) :-
@@ -90,9 +103,9 @@ rebuild_foreign_interface_explicit_decls(File, Decls) :-
 
 build_foreign_interface_explicit_decls_2(Rebuild, File, Decls) :-
 	( do_interface(Decls) ->
-	    absolute_file_name(File, [], '.pl', '.', PrologFile, Base, Dir),
+	    find_pl_filename(File, PlName, Base, Dir),
 	    load_all_ttr(Decls),
-	    gluecode(Rebuild, Base, PrologFile), 
+	    gluecode(Rebuild, Base, PlName), 
 	    compile_and_link(Rebuild, Dir, Base, Decls),
 	    clean_all_ttr
 	; true
@@ -116,9 +129,9 @@ do_interface(Decls) :-
 % -----------------------------------------------------------------------------
 
 get_decls(File, Decls) :-
-	absolute_file_name(File, [], '.pl', '.', PrologFile, Base, _), 
+	find_pl_filename(File, PlName, Base, _),
         error_protect(ctrlc_clean(
-		process_files_from(PrologFile, in, module, get_decls_2(Decls),  
+		process_files_from(PlName, in, module, get_decls_2(Decls),  
                                    false, false, '='(Base)))).
 
 get_decls_2(Base, Decls) :-
@@ -127,7 +140,7 @@ get_decls_2(Base, Decls) :-
 % -----------------------------------------------------------------------------
 
 gluecode(Rebuild, Base, PrologFile) :-
-	CFile = ~atom_concat(~get_gluecode_base(Base), '.c'), 
+	CFile = ~product_filename(gluecode_c, Base),
 	( Rebuild = no -> has_changed(PrologFile, CFile) ; true ), !,
 	( Rebuild = yes -> delete_files([CFile]) ; true ), 
 	gluecode_2(PrologFile, CFile).
@@ -160,10 +173,6 @@ write_c_to_file(CFile, Program, Module) :-
 	; close_output(Stream),
 	  fail
 	).
-
-% -----------------------------------------------------------------------------
-
-get_gluecode_base(Base) := ~atom_concat([Base, '_', ~get_os_arch, '_glue']).
 
 % -----------------------------------------------------------------------------
 
@@ -659,7 +668,7 @@ define_c_mod_predicates([P|Ps]) -->
 	; P = native(PrologName/Arity, GluecodeName)
 	},
 	{ atom_codes(PrologName, PrologNameString) },  
-	[call(define_c_mod_predicate, [module, PrologNameString, GluecodeName, Arity])],
+	[call(define_c_mod_predicate, [module, PrologNameString, Arity, GluecodeName])],
 	define_c_mod_predicates(Ps).
 
 % -----------------------------------------------------------------------------
@@ -717,24 +726,21 @@ compile_and_link_2(_, _, OFiles, SOFile) :-
 get_foreign_files(Dir, Base, Decls, CFiles, OFiles, SOFile, UniqueOFile) :-
 	get_options(Decls, use_foreign_source, Files), 
 	absolute_base_names(Dir, Files, AbsFiles), 
-	CFileBase = ~get_gluecode_base(Base), 
-	OsArchSuffix = ~atom_concat('_', ~get_os_arch), 
-	CFile = ~atom_concat(CFileBase, '.c'), 
+	CFile = ~product_filename(gluecode_c, Base),
 	append_suffix(AbsFiles, '.c', CFiles0), 
 	CFiles = [CFile|CFiles0], 
-	OFile = ~atom_concat(CFileBase, '.o'), 
-	OSuffix = ~atom_concat(OsArchSuffix, '.o'), 
+	OFile = ~product_filename(gluecode_o, Base),
+	OSuffix = ~atom_concat(~atom_concat('_', ~get_os_arch), '.o'), 
 	append_suffix(AbsFiles, OSuffix, OFiles0), 
 	OFiles = [OFile|OFiles0], 
-	SOSuffix = ~atom_concat(OsArchSuffix, '.so'), 
-	SOFile = ~atom_concat(Base, SOSuffix), 
-	UniqueOFile = ~atom_concat(Base, OSuffix).
+	SOFile = ~product_filename(gluecode_so, Base),
+	UniqueOFile = ~product_filename(gluecode_unique_o, Base).
 
 % -----------------------------------------------------------------------------
 
 absolute_base_names(_, [], []) :- !.
 absolute_base_names(Dir, [File|Files], [AbsBase|AbsBases]) :-
-	absolute_file_name(File, [], '.c', Dir, _, AbsBase, _), 
+	find_c_filename(File, _, AbsBase, _),
 	absolute_base_names(Dir, Files, AbsBases).
 
 % -----------------------------------------------------------------------------
@@ -816,8 +822,8 @@ rebuild_foreign_interface_object(File) :-
 build_foreign_interface_object_2(Rebuild, File) :-
 	get_decls(File, Decls), 
 	( do_interface(Decls) ->
-	    absolute_file_name(File, [], '.pl', '.', PrologFile, Base, Dir), 
-	    gluecode(Rebuild, Base, PrologFile), 
+	    find_pl_filename(File, PlName, Base, Dir),
+	    gluecode(Rebuild, Base, PlName), 
 	    compile_unique_object(Rebuild, Dir, Base, Decls)
 	; true
 	).
@@ -877,11 +883,18 @@ linker_to_use(Decls, Linker, Opts):-
 % -----------------------------------------------------------------------------
 :- comment(version_maintenance, dir('../../version')).
 
+:- comment(version(1*11+130,2003/12/30,22:15*22+'CET'), "Corrected
+   assertion for pred rebuild_foreign_interface/1.  (Edison Mera)").
+
+:- comment(version(1*11+106,2003/12/22,17:46*22+'CET'), "Changed
+   comment summary to comment module.  (Edison Mera)").
+
 :- comment(version(1*7+212,2002/05/06,01:12*02+'CEST'), "Added
- declarations to choose the compiler and linker to use.  (Manuel Carro)").
+   declarations to choose the compiler and linker to use.  (Manuel
+   Carro)").
 
 :- comment(version(1*7+75,2001/03/26,17:08*47+'CEST'), "Documentation
-updated (MCL)").
+   updated (MCL)").
 
 :- comment(version(1*3+123, 1999/11/27, 03:03*55+'MET'), "Minor changes
    to documentation. Incorporated into reference manual.  (Manuel

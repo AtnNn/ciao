@@ -1,29 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - poly_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - menu_entry_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC580" HREF="ciao_toc.html#TOC580">poly_class (library)</A></H1>
+<H1><A NAME="SEC582" HREF="ciao_toc.html#TOC582">menu_entry_class (library)</A></H1>
 <P>
-<A NAME="IDX5997"></A>
+<A NAME="IDX6044"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Montserrat Urraca.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#135 (2003/12/4, 17:33:57 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_140.html#SEC581">Usage and interface (poly_class)</A>
-<LI><A HREF="ciao_140.html#SEC582">Documentation on exports (poly_class)</A>
+<LI><A HREF="ciao_140.html#SEC583">Usage and interface (menu_entry_class)</A>
+<LI><A HREF="ciao_140.html#SEC584">Documentation on exports (menu_entry_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC581" HREF="ciao_toc.html#TOC581">Usage and interface (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC583" HREF="ciao_toc.html#TOC583">Usage and interface (<CODE>menu_entry_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(poly_class)).</CODE>
+<CODE>:- use_module(library(menu_entry_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,10 +52,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5998"></A>
-<CODE>vertices/1</CODE>, 
-<A NAME="IDX5999"></A>
-<CODE>outline_color/1</CODE>.
+<A NAME="IDX6045"></A>
+<CODE>set_name/1</CODE>, 
+<A NAME="IDX6046"></A>
+<CODE>set_action/1</CODE>, 
+<A NAME="IDX6047"></A>
+<CODE>label_value/1</CODE>, 
+<A NAME="IDX6048"></A>
+<CODE>menu_name/1</CODE>.
 
 </UL>
 
@@ -54,9 +70,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6000"></A>
+<A NAME="IDX6049"></A>
 <CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX6001"></A>
+<A NAME="IDX6050"></A>
+<CODE>tcltk_obj/menu_class</CODE>, 
+<A NAME="IDX6051"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -67,76 +85,120 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>,
 
 
 
-<H2><A NAME="SEC582" HREF="ciao_toc.html#TOC582">Documentation on exports (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC584" HREF="ciao_toc.html#TOC584">Documentation on exports (<CODE>menu_entry_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX6002"></A>
-<A NAME="IDX6003"></A>
+<A NAME="IDX6052"></A>
+<A NAME="IDX6053"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
-<DD><A NAME="IDX6004"></A>
+<DT><span class="define">PREDICATE:</span> <B>set_name/1:</B>
+<DD><A NAME="IDX6054"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
+<STRONG>Usage:</STRONG> <CODE>set_name(+Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The arguments of the list specify the coordinates for three or more points that define a closed polygon. The first and last points may be the same. After the coordinates there may be any number of option-value pairs, each of which sets one of the configu- ration options for the item.
+<LI><EM>Description:</EM> <CODE>Name</CODE> of the menubutton associated.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the list of vertices of the polygon.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+Name</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6005"></A>
-<A NAME="IDX6006"></A>
+<A NAME="IDX6055"></A>
+<A NAME="IDX6056"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
-<DD><A NAME="IDX6007"></A>
+<DT><span class="define">PREDICATE:</span> <B>set_action/1:</B>
+<DD><A NAME="IDX6057"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
+<STRONG>Usage:</STRONG> <CODE>set_action(+Predicate)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the polygon's outline. This option defaults to black.
+<LI><EM>Description:</EM> Specifies <CODE>Predicate</CODE> asociated to the menu entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Color</CODE> is currently instantiated to an atom.
+<CODE>+Predicate</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6058"></A>
+<A NAME="IDX6059"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>label_value/1:</B>
+<DD><A NAME="IDX6060"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>label_value(+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> specifies a value to be displayed as an identifying label in the menu entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>label_value(-Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets poly's outline <CODE>Color</CODE>.
+<LI><EM>Description:</EM> Gets the string which identify label in the menu entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Color</CODE> is currently instantiated to an atom.
+<CODE>-Value</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6061"></A>
+<A NAME="IDX6062"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>menu_name/1:</B>
+<DD><A NAME="IDX6063"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>menu_name(+Menu)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when cascade entry is invoked.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Menu</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>menu_name(-Menu)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Menu</CODE> asociated to the cascade entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Menu</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

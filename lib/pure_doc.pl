@@ -1,8 +1,9 @@
-
 :- use_package(assertions).
 :- comment(nodoc,assertions).
 
 :- comment(title,"Pure Prolog package").
+
+:- comment(author,"The CLIP Group").
  
 :- comment(module,"This library package allows the use of 
    @index{pure Prolog} in a Ciao module/program.
@@ -72,3 +73,9 @@
 :- comment(bug,"Currently, the following builtin predicates/program
 	constructs cannot be redefined, in addition to @tt{true/0}:
         @tt{(->)/2} @tt{(,)/2} @tt{(\+)/1} @tt{if/3}").
+
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+100,2003/12/21,20:16*33+'CET'), "Added comment
+   author.  (Edison Mera)").
+

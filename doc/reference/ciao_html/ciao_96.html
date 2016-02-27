@@ -1,37 +1,106 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Higher-order</TITLE>
+<TITLE>The Ciao Prolog System               - Pure Prolog package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC397" HREF="ciao_toc.html#TOC397">Higher-order</A></H1>
+<H1><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Pure Prolog package</A></H1>
 <P>
-<A NAME="IDX4738"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<A NAME="IDX4752"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#146 (2001/11/15, 19:32:38 CET)
+<STRONG>Author(s):</STRONG> The CLIP Group.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.11#100 (2003/12/21, 20:16:33 CET)
+
+
+<P>
+This library package allows the use of 
+<A NAME="IDX4753"></A>
+<A NAME="IDX4754"></A>
+<EM>pure Prolog</EM> in a Ciao module/program. It is based on the fact that if an 
+<A NAME="IDX4755"></A>
+<A NAME="IDX4756"></A>
+<EM>engine module</EM> is imported explicitly then all of them have to be imported explicitly. The engine modules are: 
+
+<UL>
+<LI><CODE>engine(arithmetic)</CODE>
+
+section <A HREF="ciao_23.html#SEC147">Arithmetic</A>. 
+<LI><CODE>engine(atomic_basic)</CODE>
+
+section <A HREF="ciao_22.html#SEC144">Basic predicates handling names of constants</A>. 
+<LI><CODE>engine(attributes)</CODE>
+
+section <A HREF="ciao_31.html#SEC175">Attributed variables</A>. 
+<LI><CODE>engine(basic_props)</CODE>
+
+section <A HREF="ciao_18.html#SEC132">Basic data types and properties</A>. 
+<LI><CODE>engine(basiccontrol)</CODE>
+
+@xref{Control constructs/predicates}. 
+<LI><CODE>engine(data_facts)</CODE>
+
+section <A HREF="ciao_28.html#SEC164">Fast/concurrent update of facts</A>. 
+<LI><CODE>engine(exceptions)</CODE>
+
+@xref{Exception handling}. 
+<LI><CODE>engine(io_aux)</CODE>
+
+section <A HREF="ciao_30.html#SEC171">Message printing primitives</A>. 
+<LI><CODE>engine(io_basic)</CODE>
+
+section <A HREF="ciao_25.html#SEC154">Basic input/output</A>. 
+<LI><CODE>engine(prolog_flags)</CODE>
+
+section <A HREF="ciao_27.html#SEC160">Changing system behaviour and various flags</A>. 
+<LI><CODE>engine(streams_basic)</CODE>
+
+section <A HREF="ciao_24.html#SEC150">Basic file/stream handling</A>. 
+<LI><CODE>engine(system_info)</CODE>
+
+section <A HREF="ciao_32.html#SEC180">Gathering some basic internal info</A>. 
+<LI><CODE>engine(term_basic)</CODE>
+
+section <A HREF="ciao_20.html#SEC138">Basic term manipulation</A>. 
+<LI><CODE>engine(term_compare)</CODE>
+
+section <A HREF="ciao_21.html#SEC141">Comparing terms</A>. 
+<LI><CODE>engine(term_typing)</CODE>
+
+section <A HREF="ciao_19.html#SEC135">Extra-logical properties for typing</A>. 
+</UL>
+
+<P>
+Note that if any of these modules is explicitely imported in a program then the language defaults to Pure Prolog, plus the functionality added by the modules explicitely imported. 
+
+
+<P>
+It is recommended that if you explicitely import an engine module you also use this package, which will guarantee that the predicate <CODE>true/0</CODE> is defined (note that this is the only Ciao builtin which cannot be redefined). 
 
 
 
 <UL>
-<LI><A HREF="ciao_96.html#SEC398">Usage and interface (hiord_rt)</A>
-<LI><A HREF="ciao_96.html#SEC399">Documentation on exports (hiord_rt)</A>
+<LI><A HREF="ciao_96.html#SEC395">Usage and interface (pure)</A>
+<LI><A HREF="ciao_96.html#SEC396">Known bugs and planned improvements (pure)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC398" HREF="ciao_toc.html#TOC398">Usage and interface (<CODE>hiord_rt</CODE>)</A></H2>
+<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Usage and interface (<CODE>pure</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,58 +108,28 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(hiord_rt)).</CODE>
+<CODE>:- use_package(pure).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4739"></A>
-<CODE>call/2</CODE>.
-
-</UL>
-
+<CODE>:- module(...,...,[pure]).</CODE>
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC399" HREF="ciao_toc.html#TOC399">Documentation on exports (<CODE>hiord_rt</CODE>)</A></H2>
-<P>
-<A NAME="IDX4740"></A>
-<A NAME="IDX4741"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>call/2:</B>
-<DD><A NAME="IDX4742"></A>
+<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Known bugs and planned improvements (<CODE>pure</CODE>)</A></H2>
 
-
-<P>
-<CODE>call(Pred,Arg1)</CODE>
-
-
-<P>
-There exists a set of builtin predicates of the form 
-<A NAME="IDX4743"></A>
-<CODE>call/N</CODE> with <CODE>N &#62; 1</CODE> which execute predicate <CODE>Pred</CODE> given arguments <CODE>Arg1</CODE> ... <CODE>ArgX</CODE>. If <CODE>Pred</CODE> has already arguments <CODE>Arg1</CODE> is added to the start, the rest to the end. This predicate, when <CODE>Pred</CODE> is a variable, can be written using the special Ciao syntax <CODE>Pred(Arg1,...,ArgX)</CODE>.
-
-
-<P>
-<STRONG>Usage 2:</STRONG> 
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Pred</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<LI>
+
+Currently, the following builtin predicates/program constructs cannot be redefined, in addition to <CODE>true/0</CODE>: <CODE>(-&#62;)/2</CODE> <CODE>(,)/2</CODE> <CODE>(+)/1</CODE> <CODE>if/3</CODE>
 </UL>
 
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

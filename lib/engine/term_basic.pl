@@ -10,6 +10,8 @@
 :- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
+:- comment(module,"This module provides basic term manipulation.").
+
 :- true pred copy_term(Term, Copy) + (iso, native)
 
         # "@var{Copy} is a renaming of @var{Term}, such that brand new
@@ -58,4 +60,7 @@ X=..Y :- X=..Y.
 'C'(X, Y, Z) :- 'C'(X, Y, Z).
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+68,2003/12/19,16:34*14+'CET'), "Added comment
+   module.  (Edison Mera)").
 

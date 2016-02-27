@@ -1,4 +1,3 @@
-
 :- module(pretty_print,
 	[ pretty_print/2,
 	  pretty_print/3
@@ -8,11 +7,14 @@
 	  functions
 	]).
 
+:- use_module(library(operators)).
 :- use_module(library(vndict)).
 :- use_module(library(write)).
 
 %% -----------------------------------------------------------------------
 :- comment(title,"A simple pretty-printer for Ciao programs").
+
+:- comment(author, "The CLIP Group").
 
 :- comment(module,"This library module writes out to standard output a 
 	clause or a list of clauses.").
@@ -228,6 +230,13 @@ ppg(ask(A,B),Tab,yes) :- !,
 	write(' & ').
 % simple or qualified atomic goal
 ppg(A,Tab,_K) :-
+	functor(A,F,_),
+	current_op(X,_,F),
+	current_op(Y,_,','),
+	X >= Y, !,
+	tab(Tab),
+	write('( '), writeq(A), write(' )').
+ppg(A,Tab,_K) :-
 	tab(Tab),
 	writeq(A).
 
@@ -235,9 +244,12 @@ ppg(A,Tab,_K) :-
 %% -----------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+89,2003/07/21,19:43*48+'CEST'), "Taken out
-   special care for Goal:Key (was not working in CiaoPP).  (Francisco
-   Bueno Carrillo)").
+:- comment(version(1*11+126,2003/12/30,21:52*16+'CET'), "Added comment
+   author.  (Edison Mera)").
+
+:- comment(version(1*11+41,2003/09/17,17:38*14+'CEST'), "Take
+   operators into account. Taken out special care for Goal:Key (was not 
+   working in CiaoPP).  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+112,2001/06/25,17:34*09+'CEST'), "Changed
    non-default operator usages (A&).  (Daniel Cabeza Gras)").

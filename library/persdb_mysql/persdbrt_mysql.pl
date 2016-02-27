@@ -61,7 +61,7 @@
    case the predicate is stored as tuples in the database.".
 
 :- multifile sql_persistent_location/2.
-:- dynamic sql_persistent_location/2.
+:- data sql_persistent_location/2.
 
 %% -----------------------------------------
 :- comment(hide,'$is_sql_persistent'/3).
@@ -70,10 +70,10 @@
 :- data sql_persistent/2.
 
 %% -----------------------------------------
-:- comment(hide,relation/3).
-:- comment(hide,attribute/4).
-:- multifile([relation/3,attribute/4]).
-:- data([relation/3,attribute/4]).
+:- comment(hide,sql__relation/3).
+:- comment(hide,sql__attribute/4).
+:- multifile([sql__relation/3,sql__attribute/4]).
+:- data([sql__relation/3,sql__attribute/4]).
 
 
 %% ---------------------------------------------------------------------------
@@ -412,7 +412,7 @@ make_sql_persistent(PrologDef, Mod, SQLDef, DBId) :-
 	PrologDef =.. [PrologName | Types],
 	SQLDef    =.. [TableName  | ArgNames],
 	functor(PrologDef, PrologName, Arity),
-	assertz_fact(relation(PrologName,Arity,TableName)),
+	assertz_fact(sql__relation(PrologName,Arity,TableName)),
 	assert_args(Types,ArgNames,1,TableName),
 	assertz_fact(sql_persistent(PrologName/Arity,DBId)),
 	module_concat(Mod, PrologName, ModPrologName),
@@ -437,7 +437,7 @@ assert_args([], [], _, _) :-
 assert_args([Type|Ts], [ArgName|As], N, TableName) :-
 	sqltype(Type),
 	!,
-	assertz_fact(attribute(N, TableName, ArgName, Type)),
+	assertz_fact(sql__attribute(N, TableName, ArgName, Type)),
 	N1 is N+1,
 	assert_args(Ts, As, N1, TableName).
 assert_args([T|_], [_|_], _, TableName) :-
@@ -875,6 +875,10 @@ filter_types([[NativeId, NativeType]|NativeRest],[[NativeId,Type]|Rest]):-
 	
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+61,2003/11/27,21:23*22+'CET'), "Names of
+   multifile predicates relation/3 and attribute/4 changed to
+   sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
 
 :- comment(version(1*9+58,2003/02/05,10:44*19+'CET'), "Modified
    documentation regarding sql_persistent_location/2 multifile

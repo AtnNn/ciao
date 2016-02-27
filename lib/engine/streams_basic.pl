@@ -34,14 +34,14 @@
    @var{Mode} and return in @var{Stream} the stream associated with the
    file.  No extension is implicit in @var{File}.").
 
-:- true pred open(+sourcename, +io_mode, ?stream) + (iso, native)
+:- true comp open/3 + native.
+:- true pred open(+sourcename, +io_mode, ?stream) + iso
         # "Normal use.".
-:- true pred open(+int, +io_mode, ?stream) + native 
-        # "In the special case that @var{File} is an integer, it is
-        assumed to be a file descriptor passed to Prolog from a
-        foreign function call. The file descriptor is connected to a
-        Prolog stream (invoking the UNIX function @tt{fdopen}) which
-        is unified with @var{Stream}.".
+:- true pred open(+int, +io_mode, ?stream) # "In the special case that
+        @var{File} is an integer, it is assumed to be a file descriptor
+        passed to Prolog from a foreign function call. The file
+        descriptor is connected to a Prolog stream (invoking the UNIX
+        function @tt{fdopen}) which is unified with @var{Stream}.".
 
 :- comment(open(File, Mode, Stream, Options), "Same as
    @tt{open(@var{File}, @var{Mode}, @var{Stream})} with options @var{Options}.
@@ -56,6 +56,8 @@ open(FileName, Mode, S, Opts) :-
         open_internal(FileName, Mode, S, Opts, 4).
 
 open_internal(FileName, Mode, S, Opts, N) :-
+        var(S),
+        atom(FileName),
         nonvar(Mode),
         io_mode(Mode), !,
         ( var(Opts) ->
@@ -70,10 +72,18 @@ open_internal(FileName, Mode, S, Opts, N) :-
 	;
 	  throw(error(domain_error(open_option_list, Opts), open/N-4))
 	).
+open_internal(_, _, S, _, N) :- nonvar(S), !,
+        throw(error(type_error(variable), open/N-3)).
+open_internal(FileName, _, _, _, N) :- var(FileName), !,
+        throw(error(instantiation_error, open/N-1)).
+open_internal(FileName, _, _, _, N) :- nonvar(FileName), !,
+        throw(error(domain_error(source_sink, FileName), open/N-1)).
 open_internal(_, Mode, _, _, N) :- var(Mode), !,
         throw(error(instantiation_error, open/N-2)).
-open_internal(_, Mode, _, _, N) :-
+open_internal(_, Mode, _, _, N) :- atom(Mode), !,
         throw(error(domain_error(io_mode, Mode), open/N-2)).
+open_internal(_, Mode, _, _, N) :- nonvar(Mode), \+ atom(Mode), !,
+        throw(error(type_error(atom, Mode), open/N-2)).
 
 codif_opts([], Codif, Codif).
 codif_opts([Opt|Opts], InCodif, OutCodif):-
@@ -132,7 +142,9 @@ io_mode(append).
 :- true pred set_input(+stream) + (iso, native).
 
 :- comment(current_input(Stream), "Unify @var{Stream} with the
-   @concept{current input stream}.").
+@concept{current input stream}.  In addition to the ISO behavior,
+stream aliases are allowed.  This is useful for most applications
+checking whether a stream is the standard input or output.").
 
 :- true pred current_input(?stream) + (iso, native).
 
@@ -145,7 +157,8 @@ io_mode(append).
 :- true pred set_output(+stream) + (iso, native).
 
 :- comment(current_output(Stream), "Unify @var{Stream} with the
-   @concept{current output stream}.").
+@concept{current output stream}.  The same comment as for
+@pred{current_input/1} applies.").
 
 :- true pred current_output(?stream) + (iso, native).
 
@@ -172,12 +185,12 @@ io_mode(append).
 :- comment(flush_output, "Behaves like @tt{current_output(S),
    flush_output(S)}").
 
-:- true pred flush_output + (iso, native).
+:- true pred flush_output + iso.
 
 :- comment(clearerr(Stream), "Clear the end-of-file and error indicators
            for input stream @var{Stream}.").
 
-:- true pred clearerr(+stream) + native.
+:- true pred clearerr(+stream).
 
 :- comment(current_stream(Filename,Mode,Stream), "@var{Stream} is a
    stream which was opened in mode @var{Mode} and which is connected to
@@ -185,15 +198,16 @@ io_mode(append).
    descriptor @var{Filename} (an integer).  This predicate can be used
    for enumerating all currently open streams through backtracking.").
 
-:- true pred current_stream(?atm,?io_mode,?stream) + native.
-:- true pred current_stream(?int,?io_mode,?stream) + native.
+:- true comp current_stream/3 + native.
+:- true pred current_stream(?atm,?io_mode,?stream).
+:- true pred current_stream(?int,?io_mode,?stream).
 
 :- comment(stream_code(Stream,StreamCode), "@var{StreamCode} is the file
    descriptor (an integer) corresponding to the Prolog stream
    @var{Stream}.").
 
-:- true pred stream_code(+stream,?int) + native.
-:- true pred stream_code(-stream,+int) + native.
+:- true pred stream_code(+stream,?int).
+:- true pred stream_code(-stream,+int).
 
 :- comment(file_search_path(Alias, Path), "The @concept{path alias}
    @var{Alias} is linked to path @var{Path}.  Both arguments must be
@@ -259,9 +273,28 @@ absolute_file_name(File, Abs) :-
    @var{Opt}=@tt{'_opt'} and @var{Suffix}=@tt{'.pl'} when searching
    source files.").
 
-:- true pred absolute_file_name(+sourcename,+atm,+atm,+atm,-atm,-atm,-atm) + native.
+:- true pred absolute_file_name(+sourcename,+atm,+atm,+atm,-atm,-atm,-atm)
+	+ native.
 
-absolute_file_name(Spec, Opt, Suffix, _CurrDir, AbsFile, AbsBase, AbsDir) :-
+% Error catching for three arguments predicates of absolute_file_name/7
+abs_file_name_check_atom(Arg, Number):-
+        (
+            atom(Arg) -> 
+            true 
+        ; 
+            throw(error(type_error(atom, Arg), absolute_file_name/7-Number))
+        ).
+
+absolute_file_name(Spec, Opt, Suffix, CurrDir, AbsFile, AbsBase, AbsDir) :-
+        abs_file_name_check_atom(Opt, 2),
+        abs_file_name_check_atom(Suffix, 3),
+        abs_file_name_check_atom(CurrDir, 4),
+        absolute_file_name_checked(Spec, Opt, Suffix, CurrDir, 
+                                   AbsFile, AbsBase, AbsDir).
+
+absolute_file_name_checked(Spec, Opt, Suffix, _CurrDir, 
+                           AbsFile, AbsBase, AbsDir) :-
+        % Test Spec to be an alias (e.g., library(Module) or similar).
         nonvar(Spec),
         functor(Spec, Alias, 1),
         arg(1,Spec,Name),
@@ -281,10 +314,11 @@ absolute_file_name(Spec, Opt, Suffix, _CurrDir, AbsFile, AbsBase, AbsDir) :-
                 fail
             )
         ).
-absolute_file_name(Name, Opt, Suffix, CurrDir, AbsFile, AbsBase, AbsDir) :-
+absolute_file_name_checked(Name, Opt, Suffix, CurrDir, 
+                           AbsFile, AbsBase, AbsDir) :-
         atom(Name), !,
         '$find_file'(CurrDir, Name, Opt, Suffix, _, AbsFile, AbsBase, AbsDir).
-absolute_file_name(X, _, _, _, _, _, _) :-
+absolute_file_name_checked(X, _, _, _, _, _, _) :-
         throw(error(domain_error(source_sink, X), absolute_file_name/7-1)).
 
 :- comment(stream/1, "Streams correspond to the file pointers used at
@@ -416,6 +450,17 @@ sourcename(S) :- struct(S).
 open_option_list(_). % Should be better defined.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+125,2003/12/29,18:52*30+'CET'), "An error is
+now given when absolute_file_name/7 is called with the 2nd, 3rd, or
+4th argument instantiated to something other than an atom.  (Manuel
+Carro)").
+
+:- comment(version(1*11+24,2003/05/28,21:22*09+'CEST'), "Added check
+and exceptio for Filename being a variable (MCL)").
+
+:- comment(version(1*11+21,2003/05/28,17:57*39+'CEST'), "Added
+exceptions to current_input/1 (MCL)").
 
 :- comment(version(1*9+51,2003/01/09,17:57*00+'CET'), "Added open/4,
    which by now just implements file locking.  (Daniel Cabeza Gras)").

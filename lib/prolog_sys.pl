@@ -2,7 +2,7 @@
         statistics/0, statistics/2, predicate_property/2,
         current_atom/1, garbage_collect/0,
         new_atom/1],
-        [assertions, isomodes]). %  engine(metadefs)
+        [assertions, isomodes]). 
 
 :- impl_defined([
         statistics/0,
@@ -26,34 +26,45 @@ process data, code, and stack also take up memory.  The memory
 reported for atoms is not what is actually used, but the space used up
 by the hash table (which is enlarged as needed).").
 
-:- true pred statistics + native # "Prints statistics about the system.".
+:- true pred statistics # "Prints statistics about the system.".
 
 :- true pred statistics(Time_option, Time_result) : time_option * term =>
-time_option * time_result + native # "Gather information about time (either
+time_option * time_result # "Gather information about time (either
 process time or wall time) since last consult or since start of
 program.  Results are returned in milliseconds.".
 
+:- true pred statistics(Click_option, Click_result) : click_option *
+term => click_option * click_result # "Gather information about clock
+clicks (either run, user, system or wall click) since last consult or
+since start of program.".
+
+:- true pred statistics(Clockfreq_option, Clockfreq_result) :
+clockfreq_option * term => clockfreq_option * clockfreq_result #
+"Gather information about frequency of the clocks used to measure the
+clicks (either run-user, system or wall clock).  Results are returned
+in hertzios.".
+
 :- true pred statistics(Memory_option, Memory_result) : memory_option * term =>
-memory_option * memory_result + native # "Gather information about memory
+memory_option * memory_result # "Gather information about memory
 consumption.".
 
 :- true pred statistics(Garbage_collection_option, Gc_result) : garbage_collection_option *
-term => garbage_collection_option * gc_result + native # "Gather information
+term => garbage_collection_option * gc_result # "Gather information
 about garbage collection.".
 
 :- true pred statistics(Symbol_option, Symbol_result) :symbol_option * term =>
-symbol_option * symbol_result + native # "Gather information about number of
+symbol_option * symbol_result # "Gather information about number of
 symbols and predicates.".
 
-:- true pred statistics(Option, ?term) + native # "If @var{Option} is unbound,
+:- true pred statistics(Option, ?term) # "If @var{Option} is unbound,
 it is bound to the values on the other cases.".
 
-:- true pred garbage_collect + native # "Forces garbage collection when called.".
+:- true pred garbage_collect # "Forces garbage collection when called.".
 
-:- true pred current_atom(Atom) : var => atm + native # "Enumerates on
+:- true pred current_atom(Atom) : var => atm # "Enumerates on
 backtracking all the existing atoms in the system.".
 
-:- true pred new_atom(Atom) : var => atm + native # "Returns, on success, a new
+:- true pred new_atom(Atom) : var => atm # "Returns, on success, a new
 atom, not existing before in the system.  The entry argument must be a
 variable.  The idea behind this atom generation is to provide a fast
 source of identifiers for new objects, concurrent predicates, etc. on
@@ -61,12 +72,29 @@ the fly.".
 
 :- comment(doinclude, time_option/1).  
 
-:- true prop time_option(M) + regtype # "Options to get information about
-execution time.  @var{M} must be one of @tt{runtime}, @tt{walltime}.".
+:- true prop time_option(M) + regtype # "Options to get information
+about execution time.  @var{M} must be one of @tt{runtime},
+@tt{usertime}, @tt{systemtime} or @tt{walltime}.".
 
 time_option(runtime).
+time_option(usertime).
+time_option(systemtime).
 time_option(walltime).
 
+:- true prop click_option(M) + regtype # "Options to get information about
+   execution clicks.".
+
+click_option(runclick).
+click_option(userclick).
+click_option(systemclick).
+click_option(wallclick).  
+
+:- true prop clockfreq_option(M) + regtype # "Options to get information about
+   the frequency of clocks used to get the clicks.".
+
+clockfreq_option(userclockfreq).
+clockfreq_option(systemclockfreq).
+clockfreq_option(wallclockfreq).
 
 :- comment(doinclude, memory_option/1).
 
@@ -102,12 +130,28 @@ symbol_option(symbols).
 :- comment(doinclude, time_result/1).
 
 :- true prop time_result(Result) + regtype # "@var{Result} is a
-two-element list of integers.  The first integer is the time since the
-start of the execution; the second integer is the time since the
+two-element list of numbers.  The first number is the time since the
+start of the execution; the second number is the time since the
 previous consult to time.".
 
-time_result([A, B]):- int(A), int(B).
+time_result([A, B]):- num(A), num(B).
 
+:- comment(doinclude, click_result/1).
+
+:- true prop click_result(Result) + regtype # "@var{Result} is a
+two-element list of numbers.  The first number is the number of clicks
+since the start of the execution; the second number is the number of
+clicks since the previous consult to click.".
+
+click_result([A, B]):- num(A), num(B).
+
+:- comment(doinclude, clockfreq_result/1).
+
+:- true prop clockfreq_result(Result) + regtype # "@var{Result} is a
+number.  It gives the frequency in hertzios used by the clock used to
+get the clicks.".
+
+clockfreq_result(A):- num(A).
 
 :- comment(doinclude, memory_result/1).
 
@@ -149,7 +193,18 @@ symbol_result([A, B]):- int(A), int(B).
  %% memory_option(heap).
 
 statistics(runtime, L) :- '$runtime'(L).
+statistics(usertime, L) :- '$usertime'(L).
+statistics(systemtime, L) :- '$systemtime'(L).
 statistics(walltime, L) :- '$walltime'(L).
+
+statistics(runclick, L) :- '$runclick'(L).
+statistics(userclick, L) :- '$userclick'(L).
+statistics(systemclick, L) :- '$systemclick'(L).
+statistics(wallclick, L) :- '$wallclick'(L).
+
+statistics(userclockfreq, L) :- '$userclockfreq'(L).
+statistics(systemclockfreq, L) :- '$systemclockfreq'(L).
+statistics(wallclockfreq, L) :- '$wallclockfreq'(L).
 
 statistics(memory, L) :- '$total_usage'(L).
 statistics(symbols, L) :- '$internal_symbol_usage'(L).
@@ -165,7 +220,7 @@ statistics(garbage_collection, L) :- '$gc_usage'(L).
 statistics(stack_shifts, L) :- '$stack_shift_usage'(L).
 
 :- true pred predicate_property(Head, Property)
-   : term * term => callable * atm + native
+   : term * term => callable * atm
    # "The predicate with clause @var{Head} is @var{Property}.".
 
 % :- primitive_meta_predicate(predicate_property(fact,?)).
@@ -190,20 +245,24 @@ bit_decl(2, (dynamic)).
 bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
 
-:- comment(version(1*9+92,2003/07/24,08:04*39+'CEST'), "Changed
+:- comment(version(1*11+57,2003/11/24,18:03*15+'CET'), "Added click
+   options to the statistics.  This is for improve the medition of
+   time.  (Edison Mera Menéndez)").
+
+:- comment(version(1*11+48,2003/09/25,18:47*37+'CEST'), "Changed
    integer by int in regtype definitions.  (Francisco Bueno
    Carrillo)").
 
 :- comment(version(1*5+153,2000/05/29,10:24*35+'CEST'), "Added some
-declarations for builtins.  (MCL)").
+   declarations for builtins.  (MCL)").
 
 :- comment(version(1*5+27,1999/12/29,15:09*45+'CET'), " new_atom/1
-improved: no repeated atoms and much better behavior with the hash
-function of the atom table.  Now using a in house-developed
-quasi-linear congruential method.  (MCL)").
+   improved: no repeated atoms and much better behavior with the hash
+   function of the atom table.  Now using a in house-developed
+   quasi-linear congruential method.  (MCL)").
 
 :- comment(version(1*5+7,1999/12/09,09:46*03+'MET'), "Added
-new_atom/1.  (MCL)").
+   new_atom/1.  (MCL)").
 
 :- comment(version(1*3+94,1999/11/08,18:36*07+'MET'), "Moved
    statistics/2 and predicate_property/2 to prolog_sys library (Daniel

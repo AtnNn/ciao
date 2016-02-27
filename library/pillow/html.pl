@@ -332,7 +332,7 @@ html_atts([A|As]) -->
         html_atts(As).
 
 html_att(A=V) --> {atom_codes(A,AS)}, !,
-        string(AS),"=""",html_quoted(V),"""".
+        string(AS),"=""",html_quoted_quote(V),"""".
 html_att(A) -->  {atom_codes(A,AS)},
         string(AS).
 
@@ -347,6 +347,7 @@ html_quoted_quote_chars([C|T]) -->
 
 html_quoted_quote_char(0'") --> !, "&quot;".
 html_quoted_quote_char(C)   --> [C].
+
 
 html_env(E,I) -->
         "<",string(E),">",
@@ -1342,11 +1343,11 @@ mappend([S|Ss], R) :-
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+84,2003/07/15,19:03*44+'CEST'), "Patch 1*9+20
+:- comment(version(1*11+26,2003/07/15,19:02*36+'CEST'), "Patch 1*9+20
 caused ampersands in hrefs to be incorrectly expanded to the HTML
 entities when outputting HTML terms.  (MCL)").
 
-:- comment(version(1*9+81,2003/05/21,19:10*15+'CEST'), "Changed HTTP
+:- comment(version(1*11+17,2003/05/21,19:11*58+'CEST'), "Changed HTTP
    media type parameter values returned so that they are always strings,
    not atoms. (Daniel Cabeza Gras)").
 

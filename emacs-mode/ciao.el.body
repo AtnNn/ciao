@@ -39,20 +39,6 @@
 ;; **** Coloring:
 ;; %-type comments after a use_module declaration.
 ;; 
-;; When the first argument of a predicate is a quoted atom, the open
-;; parenthesis is also colored red: 
-;; separator('(' , _, '') :- !.
-;; 
-;; incorrectly_colored('Atom ending in 0').
-;; 
-;;  trans_info(eapp026, 'Webmergers 120').
-;;  trans_info(eapp030, 'QSP''s ASP business').
-;;  trans_info(tech055, 'AiSoftw@re SpA').
-;;  trans_info(eser002, 'ISP Europeo, la participacion del 49,5 % poseida').
-;;  
-;;  I think that at least the two first can (and should) be easily
-;;  corrected.
-;; 
 ;; Should also color variables, etc. in toplevel?
 ;;
 ;; Cannot reproduce? (in linux)
@@ -1107,16 +1093,11 @@ has been loaded or not (see ciao-check-buffer-syntax).")
      ,(if ciao-faces-use-variable-pitch-in-comments
 	  'ciao-face-comment-variable-pitch
 	'ciao-face-comment))
-    ;; % comments 
+    ;; % comments starting a line
     ("^[ \t]*%.*$" . 
      ,(if ciao-faces-use-variable-pitch-in-comments
 	  'ciao-face-comment-variable-pitch
 	'ciao-face-comment))
-    ;; comments not starting a line (do maybe later?)
-    ("[ \t]%.*$" . 
-      ,(if ciao-faces-use-variable-pitch-in-comments
-	   'ciao-face-comment-variable-pitch
-	 'ciao-face-comment))
     ;; LPdoc comments
     ;; lpdoc bug comments
     ((lambda (limit) 
@@ -1153,8 +1134,6 @@ has been loaded or not (see ciao-check-buffer-syntax).")
      ,(if ciao-faces-use-variable-pitch-in-comments
 	  'ciao-face-lpdoc-comment-variable-pitch
 	'ciao-face-lpdoc-comment))
-    ;; Characters 0'...
-    ("0'\\(\\\\.\\|.\\)" . ciao-face-string)
     ;; comment strings in assertions
     ("#[ \n]+\\(\"\\([^\\\"]\\|\\\\\\(.\\|\n\\)\\)*\"\\)" 
      1 
@@ -1272,9 +1251,19 @@ has been loaded or not (see ciao-check-buffer-syntax).")
     ("^[a-z][a-zA-Z0-9_]*" . ciao-face-clauseheadname)
     ("^'\\([^']\\|''\\)*'" . ciao-face-clauseheadname) 
     ;; Strings
-    ("\"\\([^\\\"]\\|\\\\\\(.\\|\n\\)\\)*\"" . ciao-face-string)
-    ;; Variables and quoted atoms (do not change order)
-    ("\\(^\\|[^0-9]\\)\\('\\([^\n']\\|\\\\'\\)*'\\)" . ciao-face-quoted-atom)
+    ("\\(^\\|[^']\\)\\(\"\\([^\\\"]\\|\"\"\\|\\\\\\(.\\|\n\\)\\)*\"\\)"
+     2 ciao-face-string)
+    ;; quoted atoms
+    ("\\(^\\|[^0-9]\\)\\('\\([^\n\\']\\|\\\\.\\|''\\)*'\\)"
+     2 ciao-face-quoted-atom)
+    ;; comments not starting a line
+    ("[ \t]%.*$" . 
+      ,(if ciao-faces-use-variable-pitch-in-comments
+	   'ciao-face-comment-variable-pitch
+	 'ciao-face-comment))
+    ;; Characters 0'...
+    ("0'\\(\\\\.\\|.\\)" . ciao-face-string)
+    ;; Variables
     ("\\<\\([A-Z_][a-zA-Z0-9_]*\\)" 1 ciao-face-variable)
     ;; Concurrency ops
     ("\\([ \t]&&\\|[ \t]&>\\|[ \t]<&\\|[ \t]&\\|[ \t]@[ \t]\\)"
@@ -4195,7 +4184,6 @@ buffers into the top level) ensures that a top level is started
 		system-args
 		)
 	 (progn 
-	   (message (concat "*** system= " system " buffname= " buffname))
 	   (make-comint buffname 
 		      ;; Done differently because of filenames with blanks...
 		      ;; (ciao-get-string-before-blank system)

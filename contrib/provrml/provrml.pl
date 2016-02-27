@@ -268,6 +268,6 @@ read_page(File, Content) :-
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
-%% update-version-comments: "../../version"
 %% End:
 
+:- comment(version_maintenance,dir('../../version')).

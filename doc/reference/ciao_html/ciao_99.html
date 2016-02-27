@@ -1,59 +1,58 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Functional notation</TITLE>
+<TITLE>The Ciao Prolog System               - Higher-order predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC410" HREF="ciao_toc.html#TOC410">Functional notation</A></H1>
+<H1><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Higher-order predicates</A></H1>
 <P>
-<A NAME="IDX4780"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<A NAME="IDX4799"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#186 (2002/2/4, 19:11:45 CET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
 
 
 <P>
-This library package allows the use of functional notation in a Ciao module/program. 
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-All function applications (definitions) are translated to goals (predicate definitions) where another argument to hold the result of the function is added to the right. Function applications need to be preceded by the operator <CODE>~</CODE>, or the functor be declared as such by using the declaration 
-<A NAME="IDX4781"></A>
-<CODE>function/1</CODE>. There is an exception: all functions understood by 
-<A NAME="IDX4782"></A>
-<CODE>is/2</CODE> are considered as functions by default. This feature can be disabled by a declaration <CODE>:- function(arith(false))</CODE> (and reverted by using <CODE>true</CODE> instead of <CODE>false</CODE>). A functor normally considered as a function call can be escaped using the prefix operator <CODE>^</CODE>. Function definitions can be written by using the binary operator <CODE>:=</CODE>, and can have also body. Example of use: 
+<STRONG>Version of last change:</STRONG> 1.7#208 (2002/4/23, 19:9:14 CEST)
+
+
+<P>
+This library implements a few basic higher-order predicates. These add functionality to the basic higher-order functionality of Ciao. Examples of the latter are: 
+ 
+Using pred(1): 
+
+
 
 <PRE>
-:- use_package(functions).
-
-fib(0) := 0.
-fib(1) := 1.
-fib(N) := ~fib(N-1) + ~fib(N-2) :- integer(N), N &#62; 1.
-
-write_fib(N):-
-        message(['The ',N,'. Fibonacci number is: ',~fib(N),'.']).
-
+  list(L, between(1,6))
+  list(L, functor(_,2))
+  list(L, &#62;(0))
 </PRE>
+
+<P>
+Using pred(2): 
+
 
 
 <UL>
-<LI><A HREF="ciao_99.html#SEC411">Usage and interface (functions)</A>
+<LI><A HREF="ciao_99.html#SEC404">Usage and interface (hiordlib)</A>
+<LI><A HREF="ciao_99.html#SEC405">Documentation on exports (hiordlib)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Usage and interface (<CODE>functions</CODE>)</A></H2>
+<H2><A NAME="SEC404" HREF="ciao_toc.html#TOC404">Usage and interface (<CODE>hiordlib</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -61,16 +60,127 @@ write_fib(N):-
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(functions).</CODE>
+<CODE>:- use_module(library(hiordlib)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[functions]).</CODE>
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4800"></A>
+<CODE>map/3</CODE>, 
+<A NAME="IDX4801"></A>
+<CODE>foldl/4</CODE>, 
+<A NAME="IDX4802"></A>
+<CODE>minimum/3</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC405" HREF="ciao_toc.html#TOC405">Documentation on exports (<CODE>hiordlib</CODE>)</A></H2>
+<P>
+<A NAME="IDX4803"></A>
+<A NAME="IDX4804"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>map/3:</B>
+<DD><A NAME="IDX4805"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>map(?,pred(2),?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>map(LList, Op, RList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Examples of use:
+
+
+<PRE>
+  map([1,3,2], arg(f(a,b,c,d)), [a,c,b]) or
+  map([1,3,2], nth([a,b,c,d]), [a,c,b])
+  map(["D","C"], append("."), ["D.","C."])
+</PRE>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4806"></A>
+<A NAME="IDX4807"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>foldl/4:</B>
+<DD><A NAME="IDX4808"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>foldl(?,?,pred(3),?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>foldl(List, Seed, Op, Result)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Example of use:
+
+
+<PRE>
+?- foldl(["daniel","cabeza","gras"], "", 
+         (''(X,Y,Z) :- append(X, " "||Y, Z)), R).
+
+R = "daniel cabeza gras " ? 
+</PRE>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4809"></A>
+<A NAME="IDX4810"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>minimum/3:</B>
+<DD><A NAME="IDX4811"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>minimum(?,pred(2),?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>minimum(?List, +SmallerThan, ?Minimum)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Minimum</CODE> is the smaller in the nonempty list <CODE>List</CODE> according to the relation <CODE>SmallerThan</CODE>:
+
+<A NAME="IDX4812"></A>
+<CODE>SmallerThan(X, Y)</CODE> succeeds iff X is smaller than Y. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>?List</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>+SmallerThan</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>?Minimum</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -7,6 +7,8 @@
 
 :- comment(title, "Basic predicates handling names of constants").
 
+:- comment(author, "The CLIP Group").
+
 :- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
@@ -119,4 +121,7 @@ atom_number(A, N) :-
 :- true pred sub_atom(+atm,+int,+int,?atm) + native.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+69,2003/12/19,16:45*58+'CET'), "Added comment
+   author.  (Edison Mera)").
 

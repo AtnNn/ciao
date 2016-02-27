@@ -23,17 +23,52 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+83,2003/06/05,01:13*41+'CEST'), "Fixed a trail
-   overflow bug. Added upper bound checks in memory allocation
-   routines to ensure that (re)allocated blocks fit in addressable
-   memory. Fixed a bug that made the engine forget the wam pointer
-   after wam() execution when the wam structure was reallocated. Search
-   'segfault patch -- jf' comments to see the modified code.  (Jose
+:- comment(version(1*11+120,2003/12/22,23:35*35+'CET'), "Fixed a nasty
+   C gluecode bug that inserted stack references into the heap (Jose
    Morales)").
 
-:- comment(version(1*9+64,2003/03/06,12:52*22+'CET'), "Updated
-   makefile-sysdep to compile again on Darwin (some options, yet
-   unsupported by the Darwin C Compiler, sneaked in).  (MCL)").
+:- comment(version(1*11+55,2003/10/30,20:13*21+'CET'), "file_exists/2
+returned errors in the first argument when they were really in the
+second argument.  (Manuel Carro)").
+
+:- comment(version(1*11+54,2003/10/28,16:58*58+'CET'), "Now the
+   predicate statistics/0 show walltime with 6 decimal digits, to
+   reflect the fact that the precision is up to 1 microsecond.
+   (Edison Mera)").
+
+:- comment(version(1*11+53,2003/10/28,16:57*00+'CET'), "Corrected a
+   problem with the statistics(walltime,_) predicate that truncates
+   the precision to milliseconds.  Now the predicate returns the time
+   with a precision up to 1 microsecond.  (Edison Mera)").
+
+:- comment(version(1*11+51,2003/10/21,19:39*52+'CEST'), "Corrected a
+   problem with float_to_string when try to print 0.0 and erased
+   irrelevants zeros at right in the digit generation function. The
+   modified file is float_tostr.c.  (Edison Mera)").
+
+:- comment(version(1*11+39,2003/09/04,18:01*37+'CEST'), "Corrected a
+   problem with prolog_directory_files in the file unix_utils.c.  Now
+   the system show a correct error when the system could not open the
+   given directory.  (Edison Mera)").
+
+:- comment(version(1*11+32,2003/07/28,13:10*09+'CEST'), "Corrected a
+   problem with powl.  The powl function is not present in some old C
+   compilers, due to this, now the system uses your own power funtion
+   called powl_int, in the file float_const.c .  (Edison Mera)").
+
+:- comment(version(1*11+31,2003/07/24,14:26*06+'CEST'), "Changed long
+   constants in floating point routines to suffix LL (long long), as
+   new versions of gcc complain about the L suffix.  (MCL)").
+
+:- comment(version(1*11+23,2003/05/28,17:59*31+'CEST'), "Added
+   exceptions to current_output/1 (MCL)").
+
+:- comment(version(1*11+22,2003/05/28,17:58*05+'CEST'), "Added
+exceptions to current_input/1 (MCL)").
+
+:- comment(version(1*11+20,2003/05/27,20:54*51+'CEST'), "Changed C
+   macros related to exceptions.  A richer set of exceptions are
+   available now.  (MCL)").
 
 :- comment(version(1*9+62,2003/02/26,19:12*32+'CET'), "Solved a
    segmentation violation problem which appeared when backtracking
@@ -82,19 +117,19 @@ ciao_term ciao_put_number_chars(char *number_string);
     (MCL)").
 
 :- comment(version(1*9+45,2003/01/07,13:01*02+'CET'), "Changed
-   optimization level from -O3 to -O2 (-O3 gave, in general, worst
-   results) (MCL)").
+optimization level from -O3 to -O2 (-O3 gave, in general, worst
+results) (MCL)").
 
 :- comment(version(1*9+41,2002/12/12,21:51*40+'CET'), "Unbound length
-   atoms can now appear in source (and in .po) files; also, checks for
-   expansion of atom lengths made more uniform.  (MCL)").
+atoms can now appear in source (and in .po) files; also, checks for
+expansion of atom lengths made more uniform.  (MCL)").
 
 :- comment(version(1*9+23,2002/11/18,14:28*24+'CET'), "Added #ifdef's
-   suggested by Roberto Bagnara to the ciao_prolog.h file.  (MCL)").
+suggested by Roberto Bagnara to the ciao_prolog.h file.  (MCL)").
 
 :- comment(version(1*9+8,2002/05/27,16:57*51+'CEST'), "Added entries
-   in makefile-sysdep to deal with gcc 3.1 different command line
-   options (some -m to -f).  (MCL)").
+in makefile-sysdep to deal with gcc 3.1 different command line options
+(some -m to -f).  (MCL)").
 
 :- comment(version(1*7+207,2002/04/23,18:58*09+'CEST'), "Makefiles
    changed to be more resilient to errors.  (MCL)").

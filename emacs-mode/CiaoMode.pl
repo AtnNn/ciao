@@ -40,21 +40,8 @@ main.
 
 :- comment(version_maintenance,dir('../version/')).
 
-:- comment(version(1*9+95,2003/08/04,18:59*47+'CEST'), "Minor mod to
-   allow C-cC-v to work with ciaopp-1.0, which uses Ciao prompt.
-   (Manuel Hermenegildo)").
-
-:- comment(version(1*9+94,2003/08/04,17:53*02+'CEST'), "Fixed minor
-   bug when recognizing that inferior mode should be used.  (Manuel
-   Hermenegildo)").
-
-:- comment(version(1*9+88,2003/07/18,15:58*24+'CEST'), "Added warning
-   if attempting to put a process buffer in ciao-mode (recommending to
-   use ciao-inferior-mode instead(.  (Manuel Hermenegildo)").
-
-:- comment(version(1*9+82,2003/05/27,01:07*11+'CEST'), "Minor changes
-   to improve xemacs compatibility (some thanks to @index{Armin
-   Rigo}).  (Manuel Hermenegildo)").
+:- comment(version(1*11+49,2003/09/26,18:05*44+'CEST'), "Greatly
+   improved syntax-based coloring. (Daniel Cabeza Gras)").
 
 :- comment(version(1*9+73,2003/04/04,14:11*41+'CEST'), "Added new
    icons in environment for preprocessor. Also, when showing output
@@ -96,6 +83,9 @@ main.
 
    @item LPdoc error location now starts correctly the first time
          around (was bug). Systems files now located properly.
+
+   @item Better compatibility with @apl{xemacs} (thanks to
+         @index{Armin Rigo} for some related patches).
 
    @item Eliminated almost all emacs compilation warnings (useful for
          detecting bugs when making code changes).

@@ -1,5 +1,7 @@
 :- module(gengraph1,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
 :- export(graph_b1/9).
 :- export(graph_b1/13).
 :- export(graph_w1/9).
@@ -1612,4 +1614,12 @@ smooth('step').
 
 
 
+
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+161,2003/12/04,17:39*30+'CET'), "Added author
+info (Manuel Carro)").
 

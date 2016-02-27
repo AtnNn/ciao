@@ -4,7 +4,11 @@
 
 :- comment(title,"Sorting lists").  
 
-:- comment(author,"Richard A. O'Keefe. All changes by UPM CLIP Group.").
+:- comment(author,"Richard A. O'Keefe. All changes by UPM CLIP
+   Group.").
+
+:- comment(module,"This module implements some sorting list
+   predicates.").
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
@@ -184,6 +188,9 @@ keylist([_-_|KL]) :- keylist(KL).
       where @tt{K} is considered the @em{key}.".
 
 keypair(_-_).
+
+:- comment(version(1*11+88,2003/12/21,02:13*47+'CET'), "Added comment
+   module.  (Edison Mera)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

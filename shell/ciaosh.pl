@@ -36,10 +36,12 @@
 :- use_module(library(debugger)).
 :- use_module(library('compiler/translation'),
         [expand_term/4, add_sentence_trans/2, add_term_trans/2]).
-:- use_module(library('compiler/c_itf'), [expand_list/2,interpret_srcdbg/1,multifile/1]).
+:- use_module(library('compiler/c_itf'), [interpret_srcdbg/1,multifile/1]).
 :- use_module(engine(internals),
-        [imports/5, '$bootversion'/0, '$nodebug_call'/1, '$setarg'/4,
+        ['$bootversion'/0, '$setarg'/4,
          '$open'/3, '$abolish'/1,'$empty_gcdef_bin'/0]).
+:- use_module(engine(hiord_rt),
+	[call/1, '$nodebug_call'/1]).
 :- use_module(library(lists),[difference/3]).
 :- use_module(library(format),[format/3]).
 :- use_module(library(aggregates), [findall/3]).
@@ -60,7 +62,7 @@ main :-
         '$shell_module'(Module),
         asserta_fact(shell_module(Module)),
         '$abolish'('user:main'),
-        retract_fact(imports(user(_),ciaosh,main,0,_)),
+        retract_fact('$imports'(user(_),ciaosh,main,0,_)),
 	current_prolog_flag(argv, Args),
 	interpret_args(Args),
         displayversion,
@@ -340,20 +342,15 @@ dec_query_level :-
 
 set_top_prompt(0) :- !,
         retractall_fact(top_prompt(_)),
-% MH
 	top_prompt_base(P),
         asserta_fact(top_prompt(P)).
-% Was:
-%        asserta_fact(top_prompt('?- ')).
+
 set_top_prompt(N) :-
         number_codes(N, NS),
         atom_codes(NA, NS),
-% MH
 	top_prompt_base(P),
         atom_concat(NA, ' ', NS1),
         atom_concat(NS1, P, TP),
-% Was:
-%       atom_concat(NA, ' ?- ', TP),
         retractall_fact(top_prompt(_)),
         asserta_fact(top_prompt(TP)).
 
@@ -403,7 +400,11 @@ include_st(Stream) :-
         repeat,
 	  read_term(Stream, RawData, [variable_names(VarNames),lines(L0,L1)]),
           expand_term(RawData, ShMod, VarNames, Data0),
-	  expand_list(Data0, Data1),
+	  nonvar(Data0),
+	  ( Data0 = [_|_] ->
+	      member(Data1, Data0)
+	  ; Data1 = Data0
+	  ),
         ( Data1 = end_of_file, !
         ; interpret_data(Data1, L0, L1),
           fail).

@@ -1,29 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - canvas_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Low level interface library to Tcl/Tk</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC547" HREF="ciao_toc.html#TOC547">canvas_class (library)</A></H1>
+<H1><A NAME="SEC547" HREF="ciao_toc.html#TOC547">Low level interface library to Tcl/Tk</A></H1>
 <P>
-<A NAME="IDX5789"></A>
+<A NAME="IDX5659"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Montse Iglesias Urraca.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#124 (2001/9/2, 14:14:25 CEST)
+
+
+<P>
+The 
+<A NAME="IDX5660"></A>
+<CODE>tcltk_low_level</CODE> library defines the low level interface used by the 
+<A NAME="IDX5661"></A>
+<CODE>tcltk</CODE> library. Essentially it includes all the code related directly to the handling of sockets and processes. This library should normally not be used directly by user programs, which use 
+<A NAME="IDX5662"></A>
+<CODE>tcltk</CODE> instead. On the other hand in some cases it may be useful to undertand how this library works in order to understand possible problems in programs that use the 
+<A NAME="IDX5663"></A>
+<CODE>tcltk</CODE> library.
 
 
 
 <UL>
-<LI><A HREF="ciao_129.html#SEC548">Usage and interface (canvas_class)</A>
-<LI><A HREF="ciao_129.html#SEC549">Documentation on exports (canvas_class)</A>
+<LI><A HREF="ciao_129.html#SEC548">Usage and interface (tcltk_low_level)</A>
+<LI><A HREF="ciao_129.html#SEC549">Documentation on exports (tcltk_low_level)</A>
+<LI><A HREF="ciao_129.html#SEC550">Documentation on internals (tcltk_low_level)</A>
+<LI><A HREF="ciao_129.html#SEC551">Other information (tcltk_low_level)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC548" HREF="ciao_toc.html#TOC548">Usage and interface (<CODE>canvas_class</CODE>)</A></H2>
+<H2><A NAME="SEC548" HREF="ciao_toc.html#TOC548">Usage and interface (<CODE>tcltk_low_level</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +57,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(canvas_class)).</CODE>
+<CODE>:- use_module(library(tcltk_low_level)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,37 +66,28 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5790"></A>
-<CODE>canvas_class/0</CODE>, 
-<A NAME="IDX5791"></A>
-<CODE>canvas_class/1</CODE>, 
-<A NAME="IDX5792"></A>
-<CODE>destructor/0</CODE>, 
-<A NAME="IDX5793"></A>
-<CODE>show/0</CODE>, 
-<A NAME="IDX5794"></A>
-<CODE>hide_/0</CODE>, 
-<A NAME="IDX5795"></A>
-<CODE>width_value/1</CODE>, 
-<A NAME="IDX5796"></A>
-<CODE>height_value/1</CODE>, 
-<A NAME="IDX5797"></A>
-<CODE>side_type/1</CODE>, 
-<A NAME="IDX5798"></A>
-<CODE>expand_value/1</CODE>, 
-<A NAME="IDX5799"></A>
-<CODE>fill_type/1</CODE>, 
-<A NAME="IDX5800"></A>
-<CODE>padx_value/1</CODE>, 
-<A NAME="IDX5801"></A>
-<CODE>pady_value/1</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5802"></A>
-<CODE>shape/1</CODE>, 
-<A NAME="IDX5803"></A>
-<CODE>option/1</CODE>.
+<A NAME="IDX5664"></A>
+<CODE>new_interp/1</CODE>, 
+<A NAME="IDX5665"></A>
+<CODE>new_interp/2</CODE>, 
+<A NAME="IDX5666"></A>
+<CODE>new_interp_file/2</CODE>, 
+<A NAME="IDX5667"></A>
+<CODE>tcltk/2</CODE>, 
+<A NAME="IDX5668"></A>
+<CODE>tcltk_raw_code/2</CODE>, 
+<A NAME="IDX5669"></A>
+<CODE>receive_result/2</CODE>, 
+<A NAME="IDX5670"></A>
+<CODE>send_term/2</CODE>, 
+<A NAME="IDX5671"></A>
+<CODE>receive_event/2</CODE>, 
+<A NAME="IDX5672"></A>
+<CODE>receive_list/2</CODE>, 
+<A NAME="IDX5673"></A>
+<CODE>receive_confirm/2</CODE>, 
+<A NAME="IDX5674"></A>
+<CODE>delete/1</CODE>.
 
 </UL>
 
@@ -81,22 +98,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5804"></A>
-<CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX5805"></A>
-<CODE>tcltk_obj/window_class</CODE>, 
-<A NAME="IDX5806"></A>
-<CODE>tcltk_obj/shape_class</CODE>, 
-<A NAME="IDX5807"></A>
+<A NAME="IDX5675"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX5676"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX5677"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX5808"></A>
+<A NAME="IDX5678"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX5679"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX5680"></A>
 <CODE>strings</CODE>, 
-<A NAME="IDX5809"></A>
+<A NAME="IDX5681"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX5810"></A>
-<CODE>tcltk/tcltk</CODE>, 
-<A NAME="IDX5811"></A>
-<CODE>tcltk/tcltk_low_level</CODE>.
+<A NAME="IDX5682"></A>
+<CODE>format</CODE>.
 
 </UL>
 
@@ -106,380 +123,358 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 
 
-<H2><A NAME="SEC549" HREF="ciao_toc.html#TOC549">Documentation on exports (<CODE>canvas_class</CODE>)</A></H2>
+<H2><A NAME="SEC549" HREF="ciao_toc.html#TOC549">Documentation on exports (<CODE>tcltk_low_level</CODE>)</A></H2>
 <P>
-<A NAME="IDX5812"></A>
-<A NAME="IDX5813"></A>
+<A NAME="IDX5683"></A>
+<A NAME="IDX5684"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>shape/1:</B>
-<DD><A NAME="IDX5814"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
+<DD><A NAME="IDX5685"></A>
 
 
 <P>
-Each item type is characterized in two ways: first, the form of the create command used to create instances of the type; and second, a set of configuration options for items of that type, which may be used in the create and itemconfigure widget commands.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>shape(S)</CODE>
+<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a reference to one type of the items supported by canvas widgets.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5815"></A>
-<A NAME="IDX5816"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>option/1:</B>
-<DD><A NAME="IDX5817"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>option(O)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>O</CODE> is <EM>hidden</EM> if the Shape is not visible or <EM>shown</EM> if its visible.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5818"></A>
-<A NAME="IDX5819"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>canvas_class/0:</B>
-<DD><A NAME="IDX5820"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM>  Creates a new interpreter, asserting the predicate <EM>interp(I)</EM> and the canvas object.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5821"></A>
-<A NAME="IDX5822"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>canvas_class/1:</B>
-<DD><A NAME="IDX5823"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>canvas_class(+ItemsList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Adds items of the list to the canvas object.
+<LI><EM>Description:</EM> Creates two sockets to connect to the <EM>wish</EM> process, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ItemsList</CODE> is a list.
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5686"></A>
+<A NAME="IDX5687"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/2:</B>
+<DD><A NAME="IDX5688"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter, +Options)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with the <CODE>Options</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+
+<CODE>+Options</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5689"></A>
+<A NAME="IDX5690"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>new_interp_file/2:</B>
+<DD><A NAME="IDX5691"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>new_interp_file(+FileName, -TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with a <CODE>FileName</CODE>. <CODE>FileName</CODE> is treated as a name of a sript file
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5692"></A>
+<A NAME="IDX5693"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcltk/2:</B>
+<DD><A NAME="IDX5694"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcltk(+Code, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sends the <CODE>Code</CODE> converted to string to the <CODE>TclInterpreter</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Code</CODE> is a <EM>Tcl</EM> command.
+ (<CODE>tcltk_low_level:tclCommand/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5695"></A>
+<A NAME="IDX5696"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
+<DD><A NAME="IDX5697"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tcltk_raw_code(+String, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sends the tcltk code items of the <CODE>Stream</CODE> to the <CODE>TclInterpreter</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5698"></A>
+<A NAME="IDX5699"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>receive_result/2:</B>
+<DD><A NAME="IDX5700"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>receive_result(-Result, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Receives the <CODE>Result</CODE> of the last <EM>TclCommand</EM> into the <CODE>TclInterpreter</CODE>. If the <EM>TclCommand</EM> is not correct the <EM>wish</EM> process is terminated and a message appears showing the error
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Result</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5701"></A>
+<A NAME="IDX5702"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>send_term/2:</B>
+<DD><A NAME="IDX5703"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>send_term(+String, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sends the goal executed to the <CODE>TclInterpreter</CODE>. <CODE>String</CODE> has the predicate with unified variables
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5704"></A>
+<A NAME="IDX5705"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>receive_event/2:</B>
+<DD><A NAME="IDX5706"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>receive_event(-Event, +TclInterpreter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Receives the <CODE>Event</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Event</CODE> is a list.
  (<CODE>basic_props:list/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5824"></A>
-<A NAME="IDX5825"></A>
+<A NAME="IDX5707"></A>
+<A NAME="IDX5708"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>destructor/0:</B>
-<DD><A NAME="IDX5826"></A>
+<DT><span class="define">PREDICATE:</span> <B>receive_list/2:</B>
+<DD><A NAME="IDX5709"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>receive_list(-List, +TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Deletes the shapes of the canvas object and the object.
+<LI><EM>Description:</EM> Receives the <CODE>List</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.The <CODE>List</CODE> has all the predicates that have been inserted from Tcl/Tk with the command prolog_event. It is a list of terms.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-List</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5827"></A>
-<A NAME="IDX5828"></A>
+<A NAME="IDX5710"></A>
+<A NAME="IDX5711"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>show/0:</B>
-<DD><A NAME="IDX5829"></A>
+<DT><span class="define">PREDICATE:</span> <B>receive_confirm/2:</B>
+<DD><A NAME="IDX5712"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>receive_confirm(-String, +TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Adds shapes to the canvas object.
+<LI><EM>Description:</EM> Receives the <CODE>String</CODE> from the event socket of the <CODE>TclInterpreter</CODE> when a term inserted into the event queue is managed.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5830"></A>
-<A NAME="IDX5831"></A>
+<A NAME="IDX5713"></A>
+<A NAME="IDX5714"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>hide_/0:</B>
-<DD><A NAME="IDX5832"></A>
+<DT><span class="define">PREDICATE:</span> <B>delete/1:</B>
+<DD><A NAME="IDX5715"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>delete(+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Hides shapes from the canvas object.
+<LI><EM>Description:</EM> Terminates the <EM>wish</EM> process and closes the pipe, term socket and event socket. Deletes the interpreter <CODE>TclInterpreter</CODE> from the system
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC550" HREF="ciao_toc.html#TOC550">Documentation on internals (<CODE>tcltk_low_level</CODE>)</A></H2>
 <P>
-<A NAME="IDX5833"></A>
-<A NAME="IDX5834"></A>
+<A NAME="IDX5716"></A>
+<A NAME="IDX5717"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>width_value/1:</B>
-<DD><A NAME="IDX5835"></A>
+<DT><span class="define">PREDICATE:</span> <B>core/1:</B>
+<DD><A NAME="IDX5718"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>width_value(+Width)</CODE>
+<STRONG>Usage:</STRONG> <CODE>core(+String)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Sets the <CODE>Width</CODE> of the canvas. Default 100.
+<LI><EM>Description:</EM>
 
+<A NAME="IDX5719"></A>
+<CODE>core/1</CODE> is a set of facts which contain <CODE>String</CODE>s to be sent to the Tcl/Tk interpreter on startup. They implement miscelaneous Tcl/Tk procedures which are used by the Tcl/Tk interface. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Width</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>width_value(-Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Width</CODE> of the canvas.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Width</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX5836"></A>
-<A NAME="IDX5837"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>height_value/1:</B>
-<DD><A NAME="IDX5838"></A>
 
+
+<H2><A NAME="SEC551" HREF="ciao_toc.html#TOC551">Other information (<CODE>tcltk_low_level</CODE>)</A></H2>
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>height_value(+Height)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Sets the <CODE>Height</CODE> of the canvas. Default 50.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Height</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>height_value(-Height)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Height</CODE> of the canvas.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Height</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5839"></A>
-<A NAME="IDX5840"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>side_type/1:</B>
-<DD><A NAME="IDX5841"></A>
+ 
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>side_type(+Side)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies which <CODE>Side</CODE> of the master, the slave(s) will be packed against. Must be left, right, top or bottom. Defaults to top.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Side</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>side_type(-Side)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Side</CODE> of the canvas.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Side</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5842"></A>
-<A NAME="IDX5843"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>expand_value/1:</B>
-<DD><A NAME="IDX5844"></A>
+Two sockets are created to connect the <EM>TclInterpreter</EM> and the prolog process: the <EM>event_socket</EM> and the <EM>term_socket</EM>. There are two global variables: <EM>prolog_variables</EM> and <EM>terms</EM>. The value of any of the variables in the goal that is bound to a term will be stored in the array <CODE>prolog_variables</CODE> with the variable name as index. The string which contains the printed representation of prolog <EM>terms</EM> is <EM>Terms</EM>. These are the Tcl/Tk procedures which implement the interface (the code is inside the 
+<A NAME="IDX5720"></A>
+<CODE>tcltk_low_level</CODE> library): 
 
 
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>expand_value(+Value)</CODE>
+<DL COMPACT>
 
-<UL>
-<LI><EM>Description:</EM> Specifies whether the slaves should be expanded to consume extra space in their master. <CODE>Value</CODE> may have any proper boolean value, such as 1 or no. Defaults to 0
+<DT><CODE>prolog</CODE>
+<DD>
+Sends to <EM>term_socket</EM> the predicate tcl_result which contains the goal to execute. Returns the string executes and the goal. 
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<DT><CODE>prolog_event</CODE>
+<DD>
+Adds the new <EM>term</EM> to the <EM>terms</EM> queue. 
 
-<CODE>+Value</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
+<DT><CODE>prolog_delete_event</CODE>
+<DD>
+Deletes the first <EM>term</EM> of the <EM>terms</EM> queue. 
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>expand_value(-Value)</CODE>
+<DT><CODE>prolog_list_events</CODE>
+<DD>
+Sends all the <EM>terms</EM> of the <EM>terms</EM> queue by the <EM>event_socket</EM>. The last element will be <EM>end_of_event_list</EM>. 
 
-<UL>
-<LI><EM>Description:</EM> Gets the boolean <CODE>Value</CODE> which indicates if the slaves should be expanded or no.
+<DT><CODE>prolog_cmd</CODE>
+<DD>
+Receives as an argument the tcltk code. Evaluates the code and returns through the <EM>term_socket</EM> the term <EM>tcl_error</EM> if there was a mistake in the code or the predicate <EM>tcl_result</EM> with the result of the command executed. If the argument is <EM>prolog</EM> with a goal to execute, before finishing, the predicate evaluated by prolog is received. In order to get the value of the variables, predicates are compared using the <EM>unify_term</EM> procedure. Returs 0 when the sript runs without errors, and 1 if there is an error. 
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<DT><CODE>prolog_one_event</CODE>
+<DD>
+Receives as an argument the <EM>term</EM> which is associated with one of the tk events. Sends through the <EM>event_socket</EM> the <EM>term</EM> and waits the unificated <EM>term</EM> by prolog. After that it calls the <EM>unify_term</EM> procedure to obtain the value of the <EM>prolog_variables</EM>. 
 
-<CODE>-Value</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
+<DT><CODE>prolog_thread_event</CODE>
+<DD>
+Receives as an argument the <EM>term</EM> which is associated with one of the tk events. Sends through the <EM>event_socket</EM> the <EM>term</EM> and waits for the <EM>term</EM> unified by prolog. After that the <EM>unify_term</EM> procedure is called to obtain the value of the <EM>prolog_variables</EM>. In this case the <EM>term_socket</EM> is non blocking. 
 
-</DL>
+<DT><CODE>convert_variables</CODE>
+<DD>
+Receives as an argument a string which contains symbols that can't be sent by the sockets. This procedure deletes them from the input string and returns the new string. 
 
-<P>
-<A NAME="IDX5845"></A>
-<A NAME="IDX5846"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fill_type/1:</B>
-<DD><A NAME="IDX5847"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>fill_type(+Option)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If a slave's parcel is larger than its requested dimensions, this option may be used to stretch the slave. Style must have one of the following values: none ( this is the default), x, y, both
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Option</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>fill_type(-Option)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the fill value of the canvas
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Option</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5848"></A>
-<A NAME="IDX5849"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>padx_value/1:</B>
-<DD><A NAME="IDX5850"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>padx_value(+Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much horizontal external padding to leave on each side of the slave(s). Amount defaults to 0.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Amount</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>padx_value(-Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much horizontal external padding to leave on each side of the slaves.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Amount</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5851"></A>
-<A NAME="IDX5852"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pady_value/1:</B>
-<DD><A NAME="IDX5853"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>pady_value(+Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much vertical external padding to leave on each side of the slave(s). Amount defaults to 0.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Amount</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>pady_value(-Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much vertical external padding to leave on each side of the slaves.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Amount</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
+<DT><CODE>unify_term</CODE>
+<DD>
+Receives as argument a prolog term. 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

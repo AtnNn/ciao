@@ -170,3 +170,6 @@
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*11+70,2003/12/19,16:49*37+'CET'), "Documentation
+   revised.  (Edison Mera)").
+

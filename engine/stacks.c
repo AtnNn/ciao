@@ -32,7 +32,7 @@ BOOL stack_shift_usage(Arg)
      Argdecl;
 {
   TAGGED x;
-  ENG_INT time = stats.ss_time*1000;
+  ENG_LINT time = (stats.ss_click*1000)/stats.userclockfreq;
   
   MakeLST(x,MakeInteger(Arg,time),atom_nil);
   time = stats.ss_local+stats.ss_control;
@@ -178,7 +178,7 @@ void choice_overflow(Arg,pad)
      Argdecl;
      int pad;
 {
-  ENG_FLT time0;
+  ENG_LINT click0;
   TAGGED *choice_top;
   struct try_node *next_alt;
 
@@ -187,7 +187,7 @@ void choice_overflow(Arg,pad)
     printf("Thread %d calling choice overflow\n", (int)Thread_Id);
 #endif
 
-  time0 = usertime();
+  click0 = userclick();
 
   if (!(next_alt = w->node->next_alt)) /* ensure A', P' exist */
     w->node->next_alt = w->next_alt,
@@ -261,13 +261,13 @@ void choice_overflow(Arg,pad)
                    (int)Thread_Id, (int)GET_INC_COUNTER, 
                    (unsigned int)concchpt);
 #endif
-          concchpt->term[8] =
+          concchpt->term[PrevDynChpt] =
             PointerToTermOrZero(
-                (struct node *)((char *)TermToPointerOrNull(concchpt->term[8])
+                (struct node *)((char *)TermToPointerOrNull(concchpt->term[PrevDynChpt])
                                 + reloc_factor 
                                 + (newcount-oldcount)*sizeof(TAGGED))
                 );
-          concchpt = (struct node *)TermToPointerOrNull(concchpt->term[8]);
+          concchpt = (struct node *)TermToPointerOrNull(concchpt->term[PrevDynChpt]);
         }
 #endif
       }
@@ -286,10 +286,10 @@ void choice_overflow(Arg,pad)
   w->node->next_alt = next_alt;
 
   stats.ss_control++;
-  time0 = usertime()-time0;
-  stats.starttime += time0;
-  stats.lasttime += time0;
-  stats.ss_time += time0;
+  click0 = userclick()-click0;
+  stats.startclick += click0;
+  stats.lastclick += click0;
+  stats.ss_click += click0;
 }
 
 
@@ -302,7 +302,7 @@ void stack_overflow(Arg)
   REGISTER TAGGED t1 /* , t2 */ ; /* unused */
   REGISTER TAGGED *pt1;
   REGISTER struct node *n, *n2;
-  ENG_FLT time0 = usertime();
+  ENG_FLT click0 = userclick();
   
 #if defined(DEBUG)
   if (debug_gc) printf("Thread %d calling stack overflow\n", (int)Thread_Id);
@@ -382,10 +382,10 @@ void stack_overflow(Arg)
   Stack_End = newh+count;	/* new high bound */
   Stack_Warn = StackOffset(Stack_End,-STACKPAD);
   stats.ss_local++;
-  time0 = usertime()-time0;
-  stats.starttime += time0;
-  stats.lasttime += time0;
-  stats.ss_time += time0;
+  click0 = userclick()-click0;
+  stats.startclick += click0;
+  stats.lastclick += click0;
+  stats.ss_click += click0;
 }
 
 
@@ -444,7 +444,7 @@ void heap_overflow(Arg,pad)
     REGISTER TAGGED *pt1;
     REGISTER struct node *n, *n2;
     TAGGED *newh;
-    ENG_FLT time0 = usertime();
+    ENG_FLT click0 = userclick();
     
     int wake_count = HeapCharDifference(Heap_Warn_Soft,Heap_Start);
     
@@ -547,10 +547,10 @@ void heap_overflow(Arg,pad)
       else
 	Heap_Warn_Soft = Int_Heap_Warn;
       stats.ss_global++;
-      time0 = usertime()-time0;
-      stats.starttime += time0;
-      stats.lasttime += time0;
-      stats.ss_time += time0;
+      click0 = userclick()-click0;
+      stats.startclick += click0;
+      stats.lastclick += click0;
+      stats.ss_click += click0;
     }
 }
 

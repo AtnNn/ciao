@@ -1,171 +1,195 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low level Interface between Prolog and blt</TITLE>
+<TITLE>The Ciao Prolog System               - The Ciao lpmake scripting facility</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC754" HREF="ciao_toc.html#TOC754">Low level Interface between Prolog and blt</A></H1>
+<H1><A NAME="SEC754" HREF="ciao_toc.html#TOC754">The Ciao lpmake scripting facility</A></H1>
+
 <P>
-<A NAME="IDX7809"></A>
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-This module exports some predicates to interact with Tcl-tk, particularly with the bltwish program. Bltwish is a windowing shell consisting of the Tcl command languaje, the Tk toolkit plus the additional commands that comes with the BLT library and a main program that reads commands. It creates a main window and then processes Tcl commands. 
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#27 (2002/11/20, 13:4:12 CET)
+
+
+<P>
+ 
+
+
+<P>
+<A NAME="IDX7840"></A>
+<A NAME="IDX7841"></A>
+<A NAME="IDX7842"></A>
+<A NAME="IDX7843"></A>
+
+
+<P>
+<STRONG>Note:</STRONG> 
+<A NAME="IDX7844"></A>
+<CODE>lpmake</CODE> and the 
+<A NAME="IDX7845"></A>
+<CODE>make</CODE> library are still under development, and they may change in future releases. 
+
+
+<P>
+<A NAME="IDX7846"></A>
+<CODE>lpmake</CODE> is a Ciao application which uses the Ciao 
+<A NAME="IDX7847"></A>
+<CODE>make</CODE> library to implement a dependency-driven scripts in a similar way to the Un*x 
+<A NAME="IDX7848"></A>
+<CODE>make</CODE> facility. 
+
+
+<P>
+The original purpose of the Un*x 
+<A NAME="IDX7849"></A>
+<CODE>make</CODE> utility is to determine automatically which pieces of a large program needed to be recompiled, and issue the commands to recompile them. In practice, 
+<A NAME="IDX7850"></A>
+<CODE>make</CODE> is often used for many other purposes: it can be used to describe any task where some files must be updated automatically from others whenever these change. 
+<A NAME="IDX7851"></A>
+<CODE>lpmake</CODE> can be used for the same types of applications as 
+<A NAME="IDX7852"></A>
+<CODE>make</CODE>, and also for some new ones, and, while being simpler, it offers a number of advantages over 
+<A NAME="IDX7853"></A>
+<CODE>make</CODE>. The first one is <EM>portability</EM>. When compiled to a bytecode executable 
+<A NAME="IDX7854"></A>
+<CODE>lpmake</CODE> runs on any platform where a Ciao engine is available. Also, the fact that typically many of the operations are programmed in Prolog within the makefile, not needing external applications, improves portability further. The second advantage of 
+<A NAME="IDX7855"></A>
+<CODE>lpmake</CODE> is <EM>improved programming capabilities</EM>. While 
+<A NAME="IDX7856"></A>
+<CODE>lpmake</CODE> is simpler than 
+<A NAME="IDX7857"></A>
+<CODE>make</CODE>, 
+<A NAME="IDX7858"></A>
+<CODE>lpmake</CODE> allows using the Ciao Prolog language within the scripts. This allows establising more complex dependencies and programming powerful operations within the make file, and without resorting to external packages (e.g., operating system commands), which also helps portability. A final advantage of 
+<A NAME="IDX7859"></A>
+<CODE>lpmake</CODE> is that it supports a form of <EM>autodocumentation</EM>: 
+<A NAME="IDX7860"></A>
+<A NAME="IDX7861"></A>
+comments associated to targets can be included in the configuration files. Calling 
+<A NAME="IDX7862"></A>
+<CODE>lpmake</CODE> in a directory which has such a configuration file explains what commands the configuration file support and what these commands will do. 
 
 
 
 <UL>
-<LI><A HREF="ciao_189.html#SEC755">Usage and interface (bltclass)</A>
-<LI><A HREF="ciao_189.html#SEC756">Documentation on exports (bltclass)</A>
+<LI><A HREF="ciao_189.html#SEC755">General operation</A>
+<LI><A HREF="ciao_189.html#SEC756">Format of the Configuration File</A>
+<LI><A HREF="ciao_189.html#SEC757">lpmake usage</A>
+<LI><A HREF="ciao_189.html#SEC758">Acknowledgments (lpmake)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC755" HREF="ciao_toc.html#TOC755">Usage and interface (<CODE>bltclass</CODE>)</A></H2>
+<H2><A NAME="SEC755" HREF="ciao_toc.html#TOC755">General operation</A></H2>
 
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(bltclass)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX7810"></A>
-<CODE>new_interp/1</CODE>, 
-<A NAME="IDX7811"></A>
-<CODE>tcltk_raw_code/2</CODE>, 
-<A NAME="IDX7812"></A>
-<CODE>interp_file/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7813"></A>
-<CODE>bltwish_interp/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7814"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX7815"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX7816"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7817"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7818"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX7819"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX7820"></A>
-<CODE>terms</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC756" HREF="ciao_toc.html#TOC756">Documentation on exports (<CODE>bltclass</CODE>)</A></H2>
 <P>
-<A NAME="IDX7821"></A>
-<A NAME="IDX7822"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
-<DD><A NAME="IDX7823"></A>
+To prepare to use 
+<A NAME="IDX7863"></A>
+<CODE>lpmake</CODE>, and in a similar way to 
+<A NAME="IDX7864"></A>
+<CODE>make</CODE>, you must write a 
+<A NAME="IDX7865"></A>
+<A NAME="IDX7866"></A>
+<EM>configuration file</EM>: a module (typically called 
+<A NAME="IDX7867"></A>
+<CODE>Makefile.pl</CODE>) that describes the relationships among files in your program or application, and states the commands for updating each file. In a program, typically the executable file is updated from object files, which are in turn made by compiling source files. Another example is running 
+<A NAME="IDX7868"></A>
+<CODE>latex</CODE> and 
+<A NAME="IDX7869"></A>
+<CODE>dvips</CODE> on a set of source <CODE>.tex</CODE> files to generate a document in <CODE>dvi</CODE> and <CODE>postscript</CODE> formats. Once a suitable makefile exists, each time you change some source files, simply typing <CODE>lpmake</CODE> suffices to perform all necessary operations (recompilations, processing text files, etc.). The 
+<A NAME="IDX7870"></A>
+<CODE>lpmake</CODE> program uses the dependency rules in the makefile and the last modification times of the files to decide which of the files need to be updated. For each of those files, it issues the commands recorded in the makefile. For example, in the 
+<A NAME="IDX7871"></A>
+<CODE>latex</CODE>/
+<A NAME="IDX7872"></A>
+<CODE>dvips</CODE> case one rule states that the <CODE>.dvi</CODE> file whould be updated from the <CODE>.tex</CODE> files whenever one of them changes and another rule states that the <CODE>.ps</CODE> file needs to be updated from a <CODE>.dvi</CODE> file every time it changes. The rules also describe the commands to be issued to update the files. 
 
 
 <P>
-<CODE>new_interp(Interp)</CODE>
+So, the general process is as follows: 
+<A NAME="IDX7873"></A>
+<CODE>lpmake</CODE> executes commands in the configuration file to update one or more target <EM>names</EM>, where <EM>name</EM> is often a program, but can also be a file to be generated or even a "virtual" target. 
+<A NAME="IDX7874"></A>
+<CODE>lpmake</CODE> updates a target if it depends on prerequisite files that have been modified since the target was last modified, or if the target does not exist. You can provide command line arguments to 
+<A NAME="IDX7875"></A>
+<CODE>lpmake</CODE> to control which files should be regenerated, or how. 
 
 
-<P>
-Creates a bltwish interprter and returns a socket. The socket allows the comunication between Prolog and Tcl-tk. Thus, bltwish receives the commands through the socket. 
 
 
-</DL>
-
-<P>
-<A NAME="IDX7824"></A>
-<A NAME="IDX7825"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
-<DD><A NAME="IDX7826"></A>
-
+<H2><A NAME="SEC756" HREF="ciao_toc.html#TOC756">Format of the Configuration File</A></H2>
 
 <P>
-<CODE>tcltk_raw_code(Command_Line,Interp)</CODE>
+<A NAME="IDX7876"></A>
+<CODE>lpmake</CODE> uses as default configuration file the file 
+<A NAME="IDX7877"></A>
+<CODE>Makefile.pl</CODE>, if it is present in the current directory. This can be overridden and another file used by means of the <CODE>-m</CODE> option. The configuration file must a <EM>module</EM> that uses the 
+<A NAME="IDX7878"></A>
+<CODE>make</CODE> package. This package provides syntax for defining the dependency rules and functionality for correctly interpreting these rules. The configuration files can contain such rules and also arbitrary Ciao Prolog predicates. The syntax of the rules is described in section <A HREF="ciao_92.html#SEC380">The Ciao Make Package</A>, together with some examples. 
 
 
-<P>
-Sends a command line to the interpreter. Tcl-tk parses and executes it. 
 
 
-</DL>
+<H2><A NAME="SEC757" HREF="ciao_toc.html#TOC757">lpmake usage</A></H2>
 
-<P>
-<A NAME="IDX7827"></A>
-<A NAME="IDX7828"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>bltwish_interp/1:</B>
-<DD><A NAME="IDX7829"></A>
-
-
-<P>
-<CODE>bltwish_interp(Interp)</CODE>
-
-
-<P>
-This type defines a bltwish interpreter. In fact, the bltwish interpreter receives the commands through the socket created. 
 
 <PRE>
-bltwish_interp(Interp) :-
-        stream(Interp).
+
+Supported command line options:
+
+lpmake [-v] &#60;command1&#62; ... &#60;commandn&#62;
+
+  Process commands &#60;command1&#62; ... &#60;commandn&#62;, using 
+  file 'Makefile.pl' in the current directory as 
+  configuration file. The configuration file must 
+  be a module. This is useful to implement 
+  inherintance across diferent configuration files, 
+  i.e., the values declared in a configuration file 
+  can be easily made to override those defined in 
+  another.
+
+  The optional argument '-v' produces verbose output, 
+  reporting on the processing of the dependency rules. 
+  Very useful for debugging Makefiles.
+
+lpmake [-v] [-m &#60;.../Configfile.pl&#62;] &#60;command1&#62; ... &#60;commandn&#62;
+
+  Same as above, but using file &#60;.../Configfile.pl&#62; 
+  as configuration file. 
+
+lpmake -h     [ -m &#60;.../Configfile.pl&#62; ]
+lpmake -help  [ -m &#60;.../Configfile.pl&#62; ]
+
+  Print this help message. If a configuration file is given, 
+  and the commands in it are commented, then information on 
+  these commands is also printed.
+
 </PRE>
 
-</DL>
+
+
+<H2><A NAME="SEC758" HREF="ciao_toc.html#TOC758">Acknowledgments (<CODE>lpmake</CODE>)</A></H2>
 
 <P>
-<A NAME="IDX7830"></A>
-<A NAME="IDX7831"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>interp_file/2:</B>
-<DD><A NAME="IDX7832"></A>
+Some parts of the documentation are taken from the documentation of GNU's 
+<A NAME="IDX7879"></A>
+<CODE>gmake</CODE>.
 
-
-<P>
-<CODE>interp_file(File,Interp)</CODE>
-
-
-<P>
-Sends the script file (File) to the interpreter through the socket. A script file is a file that contains commands that Tcl-tk can execute. 
-
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

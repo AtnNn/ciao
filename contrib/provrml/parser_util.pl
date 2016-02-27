@@ -48,6 +48,10 @@
 	],[dcg]).
 
 :- include(library(assertions)).
+
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
+
+
 :- include(library(isomodes)).
 %:- include(library(types)).
 
@@ -241,7 +245,7 @@ create_whitespace_environment(env(_,_,Ws)) :-
 create_whitespace(ws(0,0)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred create_whitespace(+whitespaces,+Indentations,-WhitespaceStructure)
+:- pred create_whitespace(+Whitespaces,+Indentations,-WhitespaceStructure)
 :: num * num * whitespace
 # "Will create a whitespace structure with the given whitespace and 
    the given indentation.".
@@ -408,7 +412,7 @@ set_whitespace_row(R,ws(R,_Ind)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- pred set_whitespace_row(+Row,+Whitespace,-Whitespace)
-:: row * whitespace * whitespace
+:: integer * whitespace * whitespace
 # "The predicate will from a row number and a whitespace structure
    return a new structure with the content.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -602,7 +606,7 @@ inside_proto(In) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- pred correct_commenting(+Place,+Comment,+ParsedIn,-ParsedOut)
-:: atm * str * term * term
+:: atm * struct * term * term
 # "The predicate places the comment 'before' or 'after' the parsed
    term. This results in a list with the term and the comment or in 
    just returning the term.".
@@ -729,7 +733,7 @@ insert_parsed(Parsed,In,Out) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- pred insert_comments_in_beginning(+Comment,+ParseIn,-ParseOut)
-:: str * parse * parse
+:: struct * parse * parse
 # "We add the comment in the beginneing of the parsed, to get the 
    proper look.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

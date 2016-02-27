@@ -120,7 +120,7 @@ print_tail_disj([Prop|Props]):-
 
 print_conjunction([]).
 print_conjunction([Prop]):- !,
-	format("~q",[Prop]).
+	might_be_qualified(Prop).
 print_conjunction([Prop|Props]):-
 	format("( ~q",[Prop]),
 	print_tail_conj(Props).
@@ -130,6 +130,11 @@ print_tail_conj([]):-
 print_tail_conj([Prop|Props]):-
 	format(", ~q",[Prop]),
 	print_tail_conj(Props).
+
+might_be_qualified(M:Prop):- !,
+	format("( ~q )",[M:Prop]).
+might_be_qualified(Prop):- !,
+	format("~q",[Prop]).
 
 unify_vars([]).
 unify_vars([N=V|Dict]):-
@@ -143,6 +148,10 @@ decide_on_call(_Call,conj).
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+122,2003/12/24,16:37*14+'CET'), "Correctly
+   print qualified properties in assertions.  (Francisco Bueno
+   Carrillo)").
 
 :- comment(version(1*5+2,1999/11/29,18:02*53+'MET'), "assrt_props is
    now assertions_props. (Francisco Bueno Carrillo)").
@@ -161,4 +170,3 @@ decide_on_call(_Call,conj).
 :- comment(version(0*5+0,1998/2/2), "Created. (Francisco Bueno)").
 
 %% ---------------------------------------------------------------------------
-

@@ -10,6 +10,7 @@
 	ls/3,ls/2,
 	filter_alist_pattern/3,
 	'-'/1, do/2,
+%	finally/2,
 	set_perms/2,
 	readf/2,
 	datime_string/1,
@@ -259,20 +260,20 @@ symbolic_link(Source,Dir,NewName) :-
 
 :- push_prolog_flag(multi_arity_warnings,off).
 
-:- comment(ls(Dir,Pattern,FileList), "@var{FileList} is
+:- comment(ls(Directory,Pattern,FileList), "@var{FileList} is
         the unordered list of entries (files, directories, etc.) in
         @var{Directory} whose names match @var{Pattern}.If
         @var{Directory} does not exist @var{FileList} is empty.").
 
 :- true pred ls(+atm,+pattern,-list(atm)).
 
-ls(Dir,Pattern,SFileList) :-
-	file_exists(Dir),
+ls(Directory,Pattern,SFileList) :-
+	file_exists(Directory),
 	!,
-	directory_files(Dir,Files),
+	directory_files(Directory,Files),
 	filter_alist_pattern(Files,Pattern,FileList),
 	sort(FileList,SFileList).
-ls(_Dir,_Pattern,[]).
+ls(_Directory,_Pattern,[]).
 
 
 :- comment(ls(Pattern,FileList), 
@@ -310,6 +311,14 @@ filter_alist_pattern([_T|Ts],Pattern,NTs) :-
 -(G) :- G, !.
 -(G) :- warning_message("in -/1, could not complete goal ~w",[G]).
 
+:- pred finally(Goal,Finally) # "Try with the Goal @var{Goal}, but always
+   continues with the evaluation of @var{Finally}, then fail if @var{Goal} fail.".
+
+finally(Goal, Finally) :-
+	(Goal -> Ok = 1; Ok = 0),
+	Finally,
+	Ok = 1.
+
 set_perms(Files,perm(User,Group,Others)) :-
 	convert_permissions(User,Group,Others,Perms),
 	!,
@@ -334,8 +343,9 @@ set_perms_(File,P) :-
 	   -> chmod(File,P)
 	   ;  working_directory(WD,WD),
 	      cd(Path),
-	      chmod(FileName,P),
-	      cd(WD) )
+	      finally(
+		chmod(FileName,P),
+	        cd(WD)) )
 	;  error_message("file '~w' not found",[File]) ).
 
 convert_permissions(U,G,O,P) :-
@@ -524,7 +534,7 @@ writef(Codes,File) :-
 	writef(Codes,write,File).
 
 writef(Codes,_Mode,_File) :- 
-	( \+ Codes = [_|_] ),
+	( \+ ( Codes = [_|_] ; Codes = [] ) ),
 	!,
 	throw(error(domain_error(string,Codes),writef/3-1)).
 writef(_Codes,Mode,_File) :- 
@@ -548,7 +558,11 @@ codes_to_stream([H|T],O) :-
 	codes_to_stream(T,O).
 
 replace_strings([],O,O).
-replace_strings([S1-S2|Ss],I,O) :-
+%replace_strings([S1-S2|Ss],I,O) :-
+%	replace_string(I,S1,S2,TO),
+%	replace_strings(Ss,TO,O).
+
+replace_strings([[S1,S2]|Ss],I,O) :-
 	replace_string(I,S1,S2,TO),
 	replace_strings(Ss,TO,O).
 
@@ -556,6 +570,8 @@ replace_string(_I,S1,_S2,_TO) :-
 	atom(S1),
 	!,
 	throw(error(domain_error(string,atom),replace_string/4-2)).
+replace_string(I,S1,"",TO) :-
+	do_replace_string(I,S1,"",TO).
 replace_string(_I,_S1,S2,_TO) :-
 	atom(S2),
 	!,
@@ -584,7 +600,21 @@ match([H|T],[H|IT],RI) :-
  
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+90,2003/07/22,16:53*40+'CEST'), "Better error
+:- comment(version(1*11+43,2003/09/19,18:35*22+'CEST'), "Now the
+   writef predicate can receive empty strings.  (Edison Mera)").
+
+:- comment(version(1*11+42,2003/09/19,17:33*43+'CEST'), "Corrected a
+   malfunction with replace_strings_in_file predicate.  Now lets to
+   change a string by an empty string.  Also the separator - has been
+   changed by a list of 2 elements [,].  (Edison Mera)").
+
+:- comment(version(1*11+33,2003/07/29,17:32*51+'CEST'), "Corrected a
+   minor inconsistency in the documentation of ls/3. (Edison Mera)").
+
+:- comment(version(1*11+30,2003/07/23,12:34*03+'CEST'), "Corrected a
+   bug in @pred{set_perms}.  @pred{finally} added.  (Edison Mera)").
+
+:- comment(version(1*11+29,2003/07/22,16:53*59+'CEST'), "Better error
    handling in @pred{set_perms}.  (Manuel Hermenegildo)").
 
 :- comment(version(1*9+24,2002/11/20,12:52*12+'CET'), "Improvements to

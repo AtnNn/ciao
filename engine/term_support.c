@@ -12,6 +12,7 @@
 
 /* declarations for global functions accessed here */
 
+#include "float_tostr.h"
 #include "term_support_defs.h"
 #include "start_defs.h"
 #include "alloc_defs.h"
@@ -909,7 +910,7 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
       if (IsVar(cdr))
         BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,2)
         else if (!TagIsLST(cdr))
-          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2)
+          BUILTIN_ERROR(DOMAIN_ERROR(CHARACTER_CODE_LIST),X(1),2)
             else if (i == Atom_Buffer_Length){
               /*
                  Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
@@ -922,7 +923,7 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
       if (IsVar(car))
         BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,2)
         if (!TagIsSmall(car) || (car<=TaggedZero) || (car>=MakeSmall(256)))
-          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2)
+          BUILTIN_ERROR(DOMAIN_ERROR(CHARACTER_CODE_LIST),X(1),2)
 	  *s++ = GetSmall(car);
       DerefCdr(cdr,cdr);
     }
@@ -1266,15 +1267,29 @@ void number_to_string(Arg, term, base)
     }
   else if (IsFloat(term))
     {
+
       ENG_FLT f;
-      ENG_INT li;
       unsigned int *fp = (unsigned int *)(&f);
-      int exp = 8;
-      REGISTER char *c, *c1;
       char *cbuf = Atom_Buffer;
+      int eng_flt_signif = (int)((SHR_EXP+1) * invlog2[base] - 0.5);
 
       fp[0] = CTagToArg(term,1); /* f = GetFloat(term); */
       fp[1] = CTagToArg(term,2);
+
+      /* Print using the default precision.  'p' is a new 'prolog' :-)
+         format not considered by, e.g., the printf family, to implement the
+         expected Prolog behavior */
+
+      cbuf = float_to_string(cbuf, eng_flt_signif, 'p', f, base);
+
+      /* This piece of code was used before Edison's code for printing
+         floating point numbers.  To be removed. */
+
+#if defined(UNDEFINED)
+      ENG_INT li;
+      int exp = 8;
+      REGISTER char *c, *c1;
+
 
       if (f != f) { /* NaN */
         *cbuf++ = '0';
@@ -1371,6 +1386,7 @@ void number_to_string(Arg, term, base)
 	  c[1-exp] = 0;
 	}
       }
+#endif
     }
   else
     bn_to_string(Arg,TagToSTR(term),base);

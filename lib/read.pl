@@ -13,11 +13,11 @@
 
 :- comment(title,"Term input").  
 
-:- comment(summary,"This module provides falicities to read terms in
-Prolog syntax.  This is very convenient in many cases (and not only if you are
-writing a Prolog compiler), because Prolog terms are easy to write and
-        can convey a lot of information in a human-readable
- fashion.").
+:- comment(module,"This module provides falicities to read terms in
+   Prolog syntax.  This is very convenient in many cases (and not only
+   if you are writing a Prolog compiler), because Prolog terms are
+   easy to write and can convey a lot of information in a
+   human-readable fashion.").
 
 :- comment(author, "First versions from SICStus 0.6 code; additional
         changes and documentation by Daniel Cabeza and Manuel Carro").
@@ -44,14 +44,14 @@ define_flag(read_hiord, [on,off], off).
 :- comment(read(Term), "Like @tt{read(Stream,Term)} with @var{Stream}
         associated to the current input stream.").
 
-:- pred read(?Term) + (iso, native).
+:- true pred read(?Term) + iso.
 
 read(X) :-
         current_input(Stream),
         read_internal(X, Stream, Stream, _, _, _, read/1).
 
 
-:- pred read(+Stream,?Term) => stream * term + (iso, native)
+:- true pred read(+Stream,?Term) => stream * term + iso
 # "The next term, delimited by a full-stop (i.e., a @tt{.} followed by
    either a space or a control character), is read from @var{Stream}
    and is unified with @var{Term}. The syntax of the term must agree
@@ -67,15 +67,15 @@ read(Stream, X) :-
 
 
 
-:- pred read_term(+Stream,?Term,+Options) => 
-        stream * term * list(read_option) + (iso, native) # 
+:- true pred read_term(+Stream,?Term,+Options) => 
+        stream * term * list(read_option) + iso # 
 "Reads a @var{Term} from @var{Stream} with the ISO-Prolog
 @var{Options}.  These options can control the behavior of read term (see @pred{read_option/1}).".
 
 read_term(Stream, X, Options) :-
         read_term_aux(Options, Stream, 3, X).
 
-:- pred read_term(?Term,+Options) => term * list(read_option) + (iso, native) 
+:- true pred read_term(?Term,+Options) => term * list(read_option) + iso
 # "Like @pred{read_term/3}, but reading from the @concept{current input}".
 
 read_term(X, Options) :-
@@ -88,6 +88,8 @@ read_term_aux(Options, Stream, N, X) :-
         read_internal(X, Stream, CurIn, VarDict, Tokens, Lns, read_term/N),
         extract_vars(Vs, Tokens),
         extract_names(Ns, Ss, VarDict).
+
+:-comment(read_top_level(Stream,Data,Variables),"Read from the Top Level.").
 
 read_top_level(Stream, Data, Variables) :-
         current_input(CurIn),
@@ -447,6 +449,12 @@ second_prompt(Old, New) :-
 
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*11+78,2003/12/20,01:52*48+'CET'), "Added comment
+   to read_top_level. (Edison Mera)").
+
+:- comment(version(1*11+77,2003/12/19,18:22*48+'CET'), "Changed
+   comment summary to comment module. (Edison Mera)").
+
 :- comment(version(1*9+57,2003/02/03,19:45*33+'CET'), "Changed report of
    syntax errors so that no space is put before the open parenthesis of
    a functor. (Daniel Cabeza Gras)").
@@ -455,37 +463,35 @@ second_prompt(Old, New) :-
    comments. (MCL)").
 
 :- comment(version(1*7+43,2001/01/15,17:34*58+'CET'), "Changes to not
-   require a layout char ending in prolog files.  (Daniel Cabeza
+   require a layout char ending in prolog files. (Daniel Cabeza
    Gras)").
 
-:- comment(version(1*7+36,2000/12/31,18:35*26+'CET'), "Added read_hiord
-   flag to disable higher order special syntax.  (Daniel Cabeza Gras)").
+:- comment(version(1*7+36,2000/12/31,18:35*26+'CET'), "Added
+   read_hiord flag to disable higher order special syntax. (Daniel
+   Cabeza Gras)").
 
 :- comment(version(1*5+100,2000/03/30,18:01*28+'CEST'), "Added option
    dictionary(Dict) to read_term to get the variables dictionary (as
    returned by read_top_level/3). (Daniel Cabeza Gras)").
 
-:- comment(version(1*5+74,2000/03/20,16:49*45+'CET'), "Syntax _(Args) is
-   now read as ''(Args).  (Daniel Cabeza Gras)").
+:- comment(version(1*5+74,2000/03/20,16:49*45+'CET'), "Syntax _(Args)
+   is now read as ''(Args). (Daniel Cabeza Gras)").
 
 :- comment(version(0*8+10,1998/11/24,17:52*05+'MET'), "Fixed bug when
-   the last term of a file had syntax error (EOF was lost).  (Daniel
+   the last term of a file had syntax error (EOF was lost). (Daniel
    Cabeza Gras)").
 
 :- comment(version(0*8+4,1998/11/11,18:14*26+'MET'), "Changed read
    predicates to throw an error instead of outputing a message and
-   repeating the read.  Added a read_option lines(Ln0, Ln1) to read_term/2-3
-   (Daniel Cabeza Gras)").
+   repeating the read.  Added a read_option lines(Ln0, Ln1) to
+   read_term/2-3. (Daniel Cabeza Gras)").
 
 :- comment(version(0*7+12,1998/09/25,16:12*18+'MEST'), "Changed the
    translation of X(Args) to put Args in a structure instead of in a
-   list (Daniel Cabeza Gras)").
+   list. (Daniel Cabeza Gras)").
 
 :- comment(version(0*5+14,1998/06/05,17:10*30+'MET DST'), "Changed
    syntax error messages (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
-   global CIAO version.  (Manuel Hermenegildo)").
-
-
-
+   global CIAO version. (Manuel Hermenegildo)").

@@ -259,7 +259,7 @@ functionality (this is @tt{MakefileExample.pl} in the
 @tt{example_simple} directory in the @lib{make} library.):
 
 @begin{verbatim}
-@includeverbatim{MakefileExample.pl}
+@includeverbatim{example_simple/MakefileExample.pl}
 @end{verbatim}
 
 The following are a few commands that can be used on the previous file 
@@ -267,7 +267,7 @@ The following are a few commands that can be used on the previous file
 directory in the @lib{make} library):
 
 @begin{verbatim}
-@includeverbatim{CommandsToTry}
+@includeverbatim{example_simple/CommandsToTry}
 @end{verbatim}
 
 See also the LaTeX example in the @tt{example_latex} directory in the
@@ -275,5 +275,8 @@ See also the LaTeX example in the @tt{example_latex} directory in the
 
 ").
 
+:- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*11+98,2003/12/21,20:10*12+'CET'), "Added comment
+   version_maintenance.  (Edison Mera)").
 

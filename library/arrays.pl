@@ -44,10 +44,13 @@
 	update_subarray(+, +, -, -, -).
 */
 
-:- comment(module,"This module implements extendable arrays with logarithmic 
-	access time. It has been adapted from shared code written by
-	David Warren and Fernando Pereira.").
+:- comment(title,"Extendable arrays with logarithmic access time").
+
 :- comment(author,"Lena Flood").
+
+:- comment(module,"This module implements extendable arrays with
+   logarithmic access time. It has been adapted from shared code
+   written by David Warren and Fernando Pereira.").
 
 :- pred new_array(-Array) # "returns an empty new array @var{Array}.".
  
@@ -174,6 +177,9 @@ update_subarray(3, $(W,X,Y,Z), Z, Z1, $(W,X,Y,Z1)).
 
 %-------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+112,2003/12/22,18:18*22+'CET'), "Added comment
+   title.  (Edison Mera)").
 
 :- comment(version(1*9+3,2002/05/23,21:32*30+'CEST'), "Turn comments
    into assertions for documentation.  (Francisco Bueno Carrillo)").

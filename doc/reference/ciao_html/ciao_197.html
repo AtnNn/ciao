@@ -1,55 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - gengraph2 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Low level Interface between Prolog and blt</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC782" HREF="ciao_toc.html#TOC782">gengraph2 (library)</A></H1>
+<H1><A NAME="SEC781" HREF="ciao_toc.html#TOC781">Low level Interface between Prolog and blt</A></H1>
 <P>
-<A NAME="IDX8076"></A>
+<A NAME="IDX8026"></A>
 
 
 <P>
-This module defines predicates which show line graph widgets. All eight predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. Every predicate share the following features: 
+<STRONG>Author(s):</STRONG> Isabel Martín.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#153 (2003/12/4, 17:38:53 CET)
+
+
+<P>
+This module exports some predicates to interact with Tcl-tk, particularly with the bltwish program. Bltwish is a windowing shell consisting of the Tcl command languaje, the Tk toolkit plus the additional commands that comes with the BLT library and a main program that reads commands. It creates a main window and then processes Tcl commands. 
 
 
 
 <UL>
-
-<LI>A dataset is defined by three lists xvector, yvector and attributes. The arguments named <CODE>XVectors</CODE> (or <CODE>XVs</CODE>), <CODE>YVectors</CODE> (or <CODE>YVs</CODE>) and <CODE>LAtts</CODE><A NAME="DOCF6" HREF="ciao_foot.html#FOOT6">(6)</A> contain this information. Those arguments must be lists whose elements are also lists. The first dataset is defined by the firts element of the three lists, the second dataset is defined by the second element of the three lists and so on.
-
-<LI>Numeric values for the vector elements are needed. We will use two vectors to represent the X-Y coordinates of each set of data plotted. In these predicates the vectors can have different number of points. However, the number of elements in xvector and yvector that pertain to a certain dataset must be, obviously, equal.
-
-<LI>The active line color is blue, which means that when you select a legend element, the corresponding line turns into navyblue.
-
-<LI>The user can either select the appearance for the lines and the points or not. See the
-
-<A NAME="IDX8077"></A>
-<CODE>attributes/1</CODE> type definition. Thus, the user can call each predicate in different ways ways. 
-
-<LI>The graph has a legend and one entry (symbol and label) per dataset.
-
-<LI>If you do not want to display text in the elements header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
-
-</UL>
-
-
-<UL>
-<LI><A HREF="ciao_197.html#SEC783">Usage and interface (gengraph2)</A>
-<LI><A HREF="ciao_197.html#SEC784">Documentation on exports (gengraph2)</A>
+<LI><A HREF="ciao_197.html#SEC782">Usage and interface (bltclass)</A>
+<LI><A HREF="ciao_197.html#SEC783">Documentation on exports (bltclass)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Usage and interface (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC782" HREF="ciao_toc.html#TOC782">Usage and interface (<CODE>bltclass</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -57,7 +47,7 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gengraph2)).</CODE>
+<CODE>:- use_module(library(bltclass)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -66,22 +56,17 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8078"></A>
-<CODE>graph_b2/9</CODE>, 
-<A NAME="IDX8079"></A>
-<CODE>graph_b2/13</CODE>, 
-<A NAME="IDX8080"></A>
-<CODE>graph_w2/9</CODE>, 
-<A NAME="IDX8081"></A>
-<CODE>graph_w2/13</CODE>, 
-<A NAME="IDX8082"></A>
-<CODE>scattergraph_b2/8</CODE>, 
-<A NAME="IDX8083"></A>
-<CODE>scattergraph_b2/12</CODE>, 
-<A NAME="IDX8084"></A>
-<CODE>scattergraph_w2/8</CODE>, 
-<A NAME="IDX8085"></A>
-<CODE>scattergraph_w2/12</CODE>.
+<A NAME="IDX8027"></A>
+<CODE>new_interp/1</CODE>, 
+<A NAME="IDX8028"></A>
+<CODE>tcltk_raw_code/2</CODE>, 
+<A NAME="IDX8029"></A>
+<CODE>interp_file/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX8030"></A>
+<CODE>bltwish_interp/1</CODE>.
 
 </UL>
 
@@ -92,20 +77,20 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8086"></A>
-<CODE>chartlib/gengraph1</CODE>, 
-<A NAME="IDX8087"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX8088"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8089"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX8090"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX8091"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8092"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX8031"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX8032"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX8033"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX8034"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX8035"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX8036"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX8037"></A>
+<CODE>terms</CODE>.
 
 </UL>
 
@@ -115,376 +100,84 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 
 
-<H2><A NAME="SEC784" HREF="ciao_toc.html#TOC784">Documentation on exports (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Documentation on exports (<CODE>bltclass</CODE>)</A></H2>
 <P>
-<A NAME="IDX8093"></A>
-<A NAME="IDX8094"></A>
+<A NAME="IDX8038"></A>
+<A NAME="IDX8039"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/9:</B>
-<DD><A NAME="IDX8095"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
+<DD><A NAME="IDX8040"></A>
 
 
 <P>
-<CODE>graph_b2(Header,GTitle,XTitle,XVectors,YTitle,YVectors,LAtts,Footer,Sm)</CODE>
+<CODE>new_interp(Interp)</CODE>
 
 
 <P>
-Besides the features mentioned at the begining of the module chapter, the displayed graph generated calling this predicate has the following distinguish characteristics: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,50]],
-  [['line1','Blue','Yellow'],['line2']],
-  'footer',
-  'natural').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8096"></A>
-<A NAME="IDX8097"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/13:</B>
-<DD><A NAME="IDX8098"></A>
-
-
-<P>
-<CODE>graph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-In addition to the features brought up at the begining of the module chapter, this graph has the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the maximum and minimum values for the graph axes.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,35]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50.5,
-  _,
-  [['line1','Blue','Yellow'],['line','MediumTurquoise','Plum']],
-  'footer',
-  'step').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8099"></A>
-<A NAME="IDX8100"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/9:</B>
-<DD><A NAME="IDX8101"></A>
-
-
-<P>
-<CODE>graph_w2(Header,GT,XT,XVectors,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8102"></A>
-<CODE>graph_b2/9</CODE>. The difference lies in the graph appearance, as you can see below. 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,40]],
-  [['element1','Blue','DarkOrchid'],['element2','DarkOliveGreen',
-    'Firebrick']],
-  'footer',
-  'natural').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8103"></A>
-<A NAME="IDX8104"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/13:</B>
-<DD><A NAME="IDX8105"></A>
-
-
-<P>
-<CODE>graph_w2(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is comparable to 
-<A NAME="IDX8106"></A>
-<CODE>graph_b2/13</CODE>. The differences lie in the plot background color and in the cross hairs color, wich are white and black respectively. 
-
-
-<P>
-Example: 
-
-<PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[10,35,40]],
-  80,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['element1','Blue','Green'],['element2','Turquoise','Black']],
-  'footer',
-  'linear').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8107"></A>
-<A NAME="IDX8108"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/8:</B>
-<DD><A NAME="IDX8109"></A>
-
-
-<P>
-<CODE>scattergraph_b2(Header,GT,XT,XVectors,YT,YVectors,PAtts,Footer)</CODE>
-
-
-<P>
-Apart from the features brought up at the beginning of the chapter, the scatter graph displayed when invoking this predicate has the following features: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,15,20],[8,30,40]],
-  'yaxixtitle',
-  [[10,35,20],[15,11,21]],
-  [['element1','Blue','Yellow'],['element2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8110"></A>
-<A NAME="IDX8111"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/12:</B>
-<DD><A NAME="IDX8112"></A>
-
-
-<P>
-<CODE>scattergraph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,50],[18,40,59]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['point dataset1'],['point dataset2']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8113"></A>
-<A NAME="IDX8114"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/8:</B>
-<DD><A NAME="IDX8115"></A>
-
-
-<P>
-<CODE>scattergraph_w2(Header,GTitle,XTitle,XVs,YTitle,YVs,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX8116"></A>
-<CODE>scattergraph_w1/8</CODE> except in the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>If the user do not provide the colors of the points, they will be chosen among the lighter ones.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,40,15,30,35,20,30]],
-  'yaxixtitle',
-  [[10,30,40,25,20,25,20,25]],
-  [['set1','cross',4]],
-  'footer').
-</PRE>
-
-<P>
- 
+Creates a bltwish interprter and returns a socket. The socket allows the comunication between Prolog and Tcl-tk. Thus, bltwish receives the commands through the socket. 
 
 
 </DL>
 
 <P>
-<A NAME="IDX8117"></A>
-<A NAME="IDX8118"></A>
+<A NAME="IDX8041"></A>
+<A NAME="IDX8042"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/12:</B>
-<DD><A NAME="IDX8119"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
+<DD><A NAME="IDX8043"></A>
 
 
 <P>
-<CODE>scattergraph_w2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
+<CODE>tcltk_raw_code(Command_Line, Interp)</CODE>
 
 
 <P>
-This predicate is comparable to 
-<A NAME="IDX8120"></A>
-<CODE>scattergraph_w2/13</CODE>, the differences between them are listed below: 
+Sends a command line to the interpreter. Tcl-tk parses and executes it. 
 
 
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
+</DL>
 
 <P>
-Example: 
+<A NAME="IDX8044"></A>
+<A NAME="IDX8045"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>bltwish_interp/1:</B>
+<DD><A NAME="IDX8046"></A>
+
+
+<P>
+<CODE>bltwish_interp(Interp)</CODE>
+
+
+<P>
+This type defines a bltwish interpreter. In fact, the bltwish interpreter receives the commands through the socket created. 
 
 <PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,50]],
-  150,
-  5,
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  -10,
-  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
-  'footer').
+bltwish_interp(Interp) :-
+        stream(Interp).
 </PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX8047"></A>
+<A NAME="IDX8048"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>interp_file/2:</B>
+<DD><A NAME="IDX8049"></A>
+
+
+<P>
+<CODE>interp_file(File, Interp)</CODE>
+
+
+<P>
+Sends the script file (File) to the interpreter through the socket. A script file is a file that contains commands that Tcl-tk can execute. 
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_196.html">previous</A>, <A HREF="ciao_198.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

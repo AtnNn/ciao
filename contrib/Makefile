@@ -7,57 +7,33 @@ include ../SHARED
 #---------------------------------------------------------------------------
 STDLIBDIR = $(REALLIBDIR)/contrib
 ALLFILES = *
-#---------------------------------------------------------------------------
-# Local compilation of all libraries: since the CIAO compiler takes
-# care of dependencies, an easy way is to compile a fake program which
-# includes all loadable modules.  The library directory must be
-# patched (hence -C -L) to point to the not-yet-installed libraries.
-# We also make it to use the locally installed engine, since
-# installation has not been made yet.
-#---------------------------------------------------------------------------
 
-alldyn:  message ciao_so_libs ciao_regular_libs autolibs
-
-allstat: message ciao_regular_libs autolibs
-
-message:
-	@echo "*** ---------------------------------------------------------"
-	@echo "*** Building $(BASEMAIN) 'contrib' libraries..."
-	@echo "*** (this may take a while and is silent; please be patient)"
-	@echo "*** ---------------------------------------------------------"
-
-ciao_so_libs:
-
-ciao_regular_libs:
-
-autolibs: 
+all:  
+	cd $(SRC)/contrib/chat80 && \
+	$(SETLOCALCIAO) $(SRC)/etc/lpmake 
 	'rm' -f all_modules all_module_messages
+	-touch all_modules all_module_messages
+	-chmod $(DATAMODE) all_modules all_module_messages
 	echo "set_prolog_flag(compress_lib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
 	$(SETLOCALCIAO) $(CIAOSHELL) < all_modules > all_module_messages
 	'rm' -f all_module_messages
 
-# .pos, etc, not made now; they are copied from the distribution
-# 	$(SETLOCALCIAO); $(CIAOC) all_modules
-# 	/bin/rm -f all_modules.itf all_modules.po all_modules.dep all_modules
-
-
-# May copy far more than what is needed
-install:
+install: 
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Installing $(BASEMAIN) 'contrib' libraries..."
+	@echo "*** Installing $(BASEMAIN) contributed libraries..."
 	@echo "*** (in $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
 	mkdir -p $(STDLIBDIR)
 	-chmod $(EXECMODE) $(STDLIBDIR)
-	-cp -pR $(ALLFILES) $(STDLIBDIR)
-	-@(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
-	-@(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
-	-@(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
+	-cp -pr $(ALLFILES) $(STDLIBDIR)
+	-(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
+	-(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
+	-(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
 
 uninstall:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Uninstalling $(BASEMAIN) 'contrib' libraries..."
+	@echo "*** Uninstalling $(BASEMAIN) 'library' libraries..."
 	@echo "*** (deleting $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(STDLIBDIR)
@@ -68,7 +44,15 @@ distclean:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning $(STDLIBDIR)/library..."
 	@echo "*** ---------------------------------------------------------"
+	cd $(SRC)/contrib/chat80 && \
+	$(SETLOCALCIAO) $(SRC)/etc/lpmake distclean
 	find . -name '*.itf' -exec 'rm' -f {} \;
 	find . -name '*.po'  -exec 'rm' -f {} \;
+	find . -name '*.o' -exec 'rm' -f {} \;
+	find . -name '*.so' -exec 'rm' -f {} \;
+	find . -name '*.dll' -exec 'rm' -f {} \;
+	find . -name '*_glue.c' -exec 'rm' -f {} \;
 	find . -name '*.asr' -exec 'rm' -f {} \;
+	find . -name '*.ass' -exec 'rm' -f {} \;
+	find . -name '*.ast' -exec 'rm' -f {} \;
 

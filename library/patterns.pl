@@ -10,6 +10,8 @@
 
 :- comment(title,"Pattern (regular expression) matching").
 
+:- comment(author,"The CLIP Group").
+
 :- comment(module,"This library provides facilities for matching
    strings and terms against @index{patterns} (i.e., @index{regular
    expressions}).").
@@ -165,9 +167,12 @@ list_match([M1|Ms], [W1|Ws]):-
 	letter_match(M1, W1),
 	list_match(Ms, Ws).
 
+:- pred letter_match(X,Y) # "True iff @var{X} and @var{Y} represents
+   the same letter".
+
 letter_match(X, Y):- X==Y, !.
-letter_match(X, Y):- X is Y + 32, !.
-letter_match(X, Y):- Y is X + 32, !.
+letter_match(X, Y):- X is Y + (0'a-0'A), !.
+letter_match(X, Y):- Y is X + (0'a-0'A), !.
 
 :- pred match_pattern_pred(Pred1, Pred2) # "Tests if two predicates
    @var{Pred1} and @var{Pred2} match using regular expressions.".
@@ -194,6 +199,9 @@ match_pattern_pred1([A1|A1s], [A2|A2s]):-
 	match_pattern_pred1(A1s, A2s).
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+133,2003/12/30,23:32*28+'CET'), "Added comment
+   author, and comment for letter_match/2.  (Edison Mera)").
 
 :- comment(version(1*3+49,1999/09/08,21:08*09+'MEST'), "Improved the
    comments a bit.  (Manuel Hermenegildo)").

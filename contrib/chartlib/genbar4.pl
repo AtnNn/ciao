@@ -1,5 +1,8 @@
 :- module(genbar4,[],[assertions,regtypes,isomodes]).
 
+:- comment(author, "Isabel Martín").
+
+
 :- export(barchart4/7).
 :- export(barchart4/11).
 :- export(percentbarchart4/7).
@@ -471,4 +474,12 @@ xbarelement4([XValue,ForegColor,BackgColor,SPattern]):-
 
 
 
+
+
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+160,2003/12/04,17:39*27+'CET'), "Added author
+info (Manuel Carro)").
 

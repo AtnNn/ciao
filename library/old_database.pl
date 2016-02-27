@@ -4,6 +4,8 @@
 
 :- comment(title,"Quintus-like internal database").
 
+:- comment(author,"The CLIP Group").
+
 :- comment(module," The predicates described in this section were
    introduced in early implementations of Prolog to provide efficient
    means of performing operations on large quantities of data.  The
@@ -23,7 +25,7 @@
 
 :- data '$current instance'/2.
 
-:- comment(recorda(+Key,?Term,-Ref), "The term @var{Term} is recorded
+:- comment(recorda(Key,Term,Ref), "The term @var{Term} is recorded
 	in the internal database as the first item for the key
 	@var{Key}, where @var{Ref} is its implementation-defined
 	identifier.  The key must be given, and only its principal
@@ -32,20 +34,24 @@
 	with copies of any subgoals blocked on these
 	variables.").
 
+:- true pred recorda(+Key,?Term,-Ref) + native.
+
 recorda(Key, Term, Ref) :-
         nonvar(Key),
 	copy_functor(Key, Key0),
 	asserta_fact('$current instance'(Key0, Term), Ref).
 	
-:- comment(recordz(+Key,?Term,-Ref),"Like @tt{recorda/3}, except that
+:- comment(recordz(Key,Term,Ref),"Like @tt{recorda/3}, except that
         the new term becomes the @em{last} item for the key @var{Key}.").
+
+:- true pred recordz(+Key,?Term,-Ref) + native.
 
 recordz(Key, Term, Ref) :-
         nonvar(Key),
 	copy_functor(Key, Key0),
 	assertz_fact('$current instance'(Key0, Term), Ref).
 
-:- comment(recorded(?Key,?Term,?Ref), "The internal database is
+:- comment(recorded(Key,Term,Ref), "The internal database is
 	searched for terms recorded under the key @var{Key}.  These
 	terms are successively unified with @var{Term} in the order
 	they occur in the database.  At the same time, @var{Ref} is
@@ -56,14 +62,18 @@ recordz(Key, Term, Ref) :-
 	successively unified with @var{Term} in the order they
 	occur.").
 
+:- true pred recorded(?Key,?Term,?Ref) + native.
+
 recorded(Key, Term, Ref) :-
         current_fact('$current instance'(Key, Term), Ref).
 
-:- comment(current_key(?KeyName,?KeyTerm),"@var{KeyTerm} is the most
+:- comment(current_key(KeyName,KeyTerm),"@var{KeyTerm} is the most
 	general form of the key for a currently recorded term, and
 	@var{KeyName} is the name of that key.  This predicate can be
 	used to enumerate in undefined order all keys for currently
 	recorded terms through backtracking.").
+
+:- true pred current_key(?Name,?Key) + native.
 
 current_key(Name, Key) :-
         current_fact('$current instance'(Key, _)),
@@ -72,6 +82,12 @@ current_key(Name, Key) :-
 copy_functor(From, To) :-
 	functor(From, N, A),
 	functor(To, N, A).
+
+:- comment(version(1*11+90,2003/12/21,02:20*48+'CET'), "Added comment
+   author.  (Edison Mera)").
+
+:- comment(version(1*11+36,2003/08/28,21:07*51+'CEST'), "added
+   assertions for mode analysis (German Puebla)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

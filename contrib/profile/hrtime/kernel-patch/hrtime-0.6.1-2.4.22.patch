@@ -1,0 +1,779 @@
+diff -ruN linux-2.4.22/arch/i386/config.in linux-2.4.22-hrtime/arch/i386/config.in
+--- linux-2.4.22/arch/i386/config.in	2003-08-25 13:44:39.000000000 +0200
++++ linux-2.4.22-hrtime/arch/i386/config.in	2003-10-16 23:53:13.000000000 +0200
+@@ -47,6 +47,7 @@
+ #
+ # Define implied options from the CPU selection here
+ #
++unset CONFIG_X86_TSC
+ 
+ if [ "$CONFIG_M386" = "y" ]; then
+    define_bool CONFIG_X86_CMPXCHG n
+@@ -256,6 +257,14 @@
+ if [ "$CONFIG_SMP" = "y" -a "$CONFIG_X86_CMPXCHG" = "y" ]; then
+    define_bool CONFIG_HAVE_DEC_LOCK y
+ fi
++
++if [ "$CONFIG_X86_TSC" = "y" -a "$CONFIG_EXPERIMENTAL" = "y" ]; then
++  bool 'High-resolution process virtual time support' CONFIG_HRTIME
++  if [ "$CONFIG_HRTIME" = "y" ]; then
++    bool 'High-resolution process utime/stime support' CONFIG_HRUSTIME
++  fi
++fi
++
+ endmenu
+ 
+ mainmenu_option next_comment
+diff -ruN linux-2.4.22/arch/i386/defconfig linux-2.4.22-hrtime/arch/i386/defconfig
+--- linux-2.4.22/arch/i386/defconfig	2002-11-29 00:53:09.000000000 +0100
++++ linux-2.4.22-hrtime/arch/i386/defconfig	2003-10-16 23:53:13.000000000 +0200
+@@ -64,6 +64,8 @@
+ CONFIG_SMP=y
+ # CONFIG_MULTIQUAD is not set
+ CONFIG_HAVE_DEC_LOCK=y
++# CONFIG_HRTIME is not set
++# CONFIG_HRUSTIME is not set
+ 
+ #
+ # General setup
+diff -ruN linux-2.4.22/arch/i386/kernel/entry.S linux-2.4.22-hrtime/arch/i386/kernel/entry.S
+--- linux-2.4.22/arch/i386/kernel/entry.S	2003-06-13 16:51:29.000000000 +0200
++++ linux-2.4.22-hrtime/arch/i386/kernel/entry.S	2003-10-17 00:01:11.000000000 +0200
+@@ -43,6 +43,7 @@
+ #include <linux/config.h>
+ #include <linux/sys.h>
+ #include <linux/linkage.h>
++#include <linux/config.h>
+ #include <asm/segment.h>
+ #include <asm/smp.h>
+ 
+@@ -80,6 +81,16 @@
+ need_resched	= 20
+ tsk_ptrace	= 24
+ processor	= 52
++hrtime		= 28
++
++/* The following are offsets into the hrtime_struct, not the task_struct */
++last_us_dispatch_low	= 0
++last_us_dispatch_high	= 4
++utime_low		= 8
++utime_high		= 12
++stime_low		= 16
++stime_high		= 20
++in_system		= 24
+ 
+ ENOSYS = 38
+ 
+@@ -207,6 +218,20 @@
+ 	jne tracesys
+ 	cmpl $(NR_syscalls),%eax
+ 	jae badsys
++#ifdef CONFIG_HRUSTIME
++	pushl %eax
++	rdtsc				# edx:eax has current timespamp value
++	movl hrtime(%ebx), %ebx		# ebx now points to the htrime_struct
++	subl last_us_dispatch_low(%ebx), %eax
++	sbbl last_us_dispatch_high(%ebx), %edx	# edx:eax has number of tics since last dispatch
++	addl %eax, utime_low(%ebx)
++	adcl %edx, utime_high(%ebx)
++	addl %eax, last_us_dispatch_low(%ebx)
++	adcl %edx, last_us_dispatch_high(%ebx)
++	addl $1, in_system(%ebx)
++	GET_CURRENT(%ebx)		# ebx is now pointing back at task_struct
++	popl %eax			# reload the system call number
++#endif	
+ 	call *SYMBOL_NAME(sys_call_table)(,%eax,4)
+ 	movl %eax,EAX(%esp)		# save the return value
+ ENTRY(ret_from_sys_call)
+diff -ruN linux-2.4.22/arch/i386/kernel/init_task.c linux-2.4.22-hrtime/arch/i386/kernel/init_task.c
+--- linux-2.4.22/arch/i386/kernel/init_task.c	2001-09-18 00:29:09.000000000 +0200
++++ linux-2.4.22-hrtime/arch/i386/kernel/init_task.c	2003-10-16 23:53:13.000000000 +0200
+@@ -1,6 +1,10 @@
+ #include <linux/mm.h>
+ #include <linux/sched.h>
+ #include <linux/init.h>
++#include <linux/config.h>
++#ifdef CONFIG_HRTIME
++#include <linux/hrtime.h>
++#endif
+ 
+ #include <asm/uaccess.h>
+ #include <asm/pgtable.h>
+@@ -10,6 +14,9 @@
+ static struct files_struct init_files = INIT_FILES;
+ static struct signal_struct init_signals = INIT_SIGNALS;
+ struct mm_struct init_mm = INIT_MM(init_mm);
++#ifdef CONFIG_HRTIME
++static struct hrtime_struct init_hrtime = INIT_HRTIME;
++#endif
+ 
+ /*
+  * Initial task structure.
+diff -ruN linux-2.4.22/Documentation/Configure.help linux-2.4.22-hrtime/Documentation/Configure.help
+--- linux-2.4.22/Documentation/Configure.help	2003-08-25 13:44:39.000000000 +0200
++++ linux-2.4.22-hrtime/Documentation/Configure.help	2003-10-16 23:53:13.000000000 +0200
+@@ -287,6 +287,23 @@
+   If you have a system with several CPUs, you do not need to say Y
+   here: the local APIC will be used automatically.
+ 
++High-resolution process virtual time
++CONFIG_HRTIME
++  This enables cycle-counter precision for process virtual time.
++  A timing page per task is allocated where the values are kept.
++  /proc/PID/hrtime can then be mmapped to access these values from
++  user space without having to do a syscall.
++
++  If you don't know what to do here, say N.
++
++High-resolution process user and system time
++CONFIG_HRUSTIME
++  This enables cycle-counter precision for virtualized user and system
++  time.  Warning: Turning this option on will add code to the system
++  call path.
++  
++  If you don't know what to do here, say N.
++
+ Kernel math emulation
+ CONFIG_MATH_EMULATION
+   Linux can emulate a math coprocessor (used for floating point
+diff -ruN linux-2.4.22/fs/proc/base.c linux-2.4.22-hrtime/fs/proc/base.c
+--- linux-2.4.22/fs/proc/base.c	2003-08-25 13:44:43.000000000 +0200
++++ linux-2.4.22-hrtime/fs/proc/base.c	2003-10-17 00:52:06.000000000 +0200
+@@ -577,6 +577,9 @@
+ 	PROC_PID_MAPS,
+ 	PROC_PID_CPU,
+ 	PROC_PID_MOUNTS,
++#ifdef CONFIG_HRTIME
++	PROC_PID_HRTIME,
++#endif
+ 	PROC_PID_FD_DIR = 0x8000,	/* 0x8000-0xffff */
+ };
+ 
+@@ -591,6 +594,9 @@
+ #ifdef CONFIG_SMP
+   E(PROC_PID_CPU,	"cpu",		S_IFREG|S_IRUGO),
+ #endif
++#ifdef CONFIG_HRTIME
++  E(PROC_PID_HRTIME,	"hrtime",	S_IFREG|S_IRUSR),
++#endif
+   E(PROC_PID_MAPS,	"maps",		S_IFREG|S_IRUGO),
+   E(PROC_PID_MEM,	"mem",		S_IFREG|S_IRUSR|S_IWUSR),
+   E(PROC_PID_CWD,	"cwd",		S_IFLNK|S_IRWXUGO),
+@@ -958,6 +964,11 @@
+ 			inode->u.proc_i.op.proc_read = proc_pid_cpu;
+ 			break;
+ #endif
++#ifdef CONFIG_HRTIME
++		case PROC_PID_HRTIME:
++			inode->i_fop = &proc_hrtime_operations;
++			break;
++#endif
+ 		case PROC_PID_MEM:
+ 			inode->i_op = &proc_mem_inode_operations;
+ 			inode->i_fop = &proc_mem_operations;
+diff -ruN linux-2.4.22/fs/proc/hrtime.c linux-2.4.22-hrtime/fs/proc/hrtime.c
+--- linux-2.4.22/fs/proc/hrtime.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-2.4.22-hrtime/fs/proc/hrtime.c	2003-10-16 23:53:13.000000000 +0200
+@@ -0,0 +1,138 @@
++/*
++ *  linux/fs/proc/hrtime.c
++ *
++ *  Copyright (C) 1999, Nick Rasmussen <nick@jive.org>
++ */
++
++#include <linux/types.h>
++#include <linux/errno.h>
++#include <linux/sched.h>
++#include <linux/kernel.h>
++#include <linux/mm.h>
++#include <linux/proc_fs.h>
++#include <linux/hrtime.h>
++#include <linux/config.h>
++
++#include <asm/page.h>
++#include <asm/mman.h>
++#include <asm/uaccess.h>
++#include <asm/io.h>
++#include <asm/pgtable.h>
++
++#define PROC_BLOCK_SIZE (3*1024)
++
++static void hrtime_vm_open(struct vm_area_struct *area)
++{
++	ref_hrtime_struct((struct hrtime_struct *) area->vm_file->private_data);
++}
++
++static void hrtime_vm_close(struct vm_area_struct *area)
++{
++	unref_hrtime_struct((struct hrtime_struct *) area->vm_file->private_data);
++}
++
++static struct vm_operations_struct hrtime_vm_ops = {
++	open:	hrtime_vm_open,
++	close:	hrtime_vm_close,
++};
++
++/*
++ * hrtime_mmap will map another (or your own) process' hrtime_struct
++ * into your address space.
++ */
++int hrtime_mmap(struct file *file, struct vm_area_struct * vma)
++{
++	int error = 0;
++
++	vma->vm_ops = &hrtime_vm_ops;
++
++	read_lock(&tasklist_lock);
++
++	/* The timing page can only be mapped readonly */
++	if ((pgprot_val(vma->vm_page_prot) & PROT_WRITE) != 0) {
++		error = -EPERM;
++		goto exit_with_unlock;
++	}
++
++	/* We only allow mapping exactly one page -- the hrtime page */
++	if (vma->vm_end - vma->vm_start != PAGE_SIZE) {
++		error = -EINVAL;
++		goto exit_with_unlock;
++	}
++
++	error = remap_page_range(vma->vm_start,
++				 virt_to_phys(file->private_data),
++				 PAGE_SIZE, vma->vm_page_prot);
++
++	if (error == 0)
++		ref_hrtime_struct((struct hrtime_struct *) file->private_data);
++
++exit_with_unlock:
++
++	read_unlock(&tasklist_lock);
++
++	return error;
++}
++
++static int hrtime_open(struct inode *inode, struct file *file)
++{
++	unsigned int pid;
++	int error = 0;
++	struct task_struct * tsk;
++	
++	pid = inode->i_ino >> 16;
++
++	if (!pid) {
++		return -EBADF;
++	}
++
++	file->private_data = 0;
++
++	read_lock(&tasklist_lock);
++
++	tsk = current;
++
++	if (pid != tsk->pid)
++		tsk = find_task_by_pid(pid);
++
++	if (tsk == NULL)
++	{
++		error = -ESRCH;
++		goto exit_with_unlock;
++	}
++
++	file->private_data = tsk->hrtime;
++
++	ref_hrtime_struct(file->private_data);
++
++exit_with_unlock:
++
++	read_unlock(&tasklist_lock);	
++	return error;
++}
++
++/*
++ * When closing /proc/PID/hrtime, unref the respective processes hrtime field
++ */
++static int hrtime_release(struct inode *inode, struct file *file)
++{
++	/* Do I really need to grab the tasklist lock here?  I am changing
++	 * fields inside a potential task.
++	 */
++	read_lock(&tasklist_lock);
++
++	if (file->private_data != 0) {
++		unref_hrtime_struct(file->private_data);
++	}
++
++	read_unlock(&tasklist_lock);
++
++	return 0;
++}
++
++struct file_operations proc_hrtime_operations = {
++	mmap:		hrtime_mmap,
++	open:		hrtime_open,
++	release:	hrtime_release,
++};
++
+diff -ruN linux-2.4.22/fs/proc/Makefile linux-2.4.22-hrtime/fs/proc/Makefile
+--- linux-2.4.22/fs/proc/Makefile	2001-05-09 01:41:32.000000000 +0200
++++ linux-2.4.22-hrtime/fs/proc/Makefile	2003-10-16 23:53:13.000000000 +0200
+@@ -18,4 +18,6 @@
+ obj-y += proc_devtree.o
+ endif
+ 
++obj-$(CONFIG_HRTIME) += hrtime.o
++
+ include $(TOPDIR)/Rules.make
+diff -ruN linux-2.4.22/include/asm-i386/hrtime.h linux-2.4.22-hrtime/include/asm-i386/hrtime.h
+--- linux-2.4.22/include/asm-i386/hrtime.h	1970-01-01 01:00:00.000000000 +0100
++++ linux-2.4.22-hrtime/include/asm-i386/hrtime.h	2003-10-16 23:53:13.000000000 +0200
+@@ -0,0 +1,23 @@
++#ifndef _ASM_HRTIME_H
++#define _ASM_HRTIME_H
++/*
++ *  linux/include/asm-i386/hrtime.h
++ *
++ *  Copyright (C) 1999, Nick Rasmussen <nick@jive.org>
++ */
++
++#include <linux/config.h>
++
++#include <asm/msr.h>
++
++typedef unsigned long long hrtime_t;
++
++static inline void get_current_hrtime(volatile hrtime_t *t)
++{
++	volatile unsigned long *parts = (volatile unsigned long *) t;
++
++	rdtsc(parts[0], parts[1]);
++	return;
++}
++
++#endif
+diff -ruN linux-2.4.22/include/linux/hrtime.h linux-2.4.22-hrtime/include/linux/hrtime.h
+--- linux-2.4.22/include/linux/hrtime.h	1970-01-01 01:00:00.000000000 +0100
++++ linux-2.4.22-hrtime/include/linux/hrtime.h	2003-10-16 23:53:13.000000000 +0200
+@@ -0,0 +1,91 @@
++#ifndef _LINUX_HRTIME_H
++#define _LINUX_HRTIME_H
++/*
++ * include/linux/hrtime.h
++ *
++ * High-resolution process timing
++ *
++ * Copyright (C) 1999,  Nick Rasmussen <nick@jive.org>
++ */
++
++#include <linux/config.h>
++
++#include <linux/spinlock.h>
++#include <asm/hrtime.h>
++
++/* Will be 1 once the cpu-cpu offset code for smp boxes is written */
++#define HRTIME_HAS_OFFSETS 0
++
++/*
++ * Careful if you add fields to this struct - the offsets to utime and
++ * stime are hard-coded in arch/i386/kernel/entry.S
++ */
++struct hrtime_struct
++{
++	/* These fields are only used if CONFIG_USTIME is enabled */
++	/* dispatch times are non-zero only when the process is executing */
++	volatile hrtime_t last_us_dispatch;
++	volatile hrtime_t utime;
++	volatile hrtime_t stime;
++	volatile long in_system;
++
++	/* A flag as to wether CONFIG_USTIME is enabled.  This is so that
++	 * the hrtime interface can be binary compatible between kernels
++	 * compiled with and without CONFIG_USTIME
++	 */
++	long has_ustime;
++
++	/* start_time's value is with reference to cpu0 */
++	hrtime_t start_time;
++
++	/* dispatch times are non-zero only when the process is executing */
++	volatile hrtime_t last_dispatch;
++	volatile hrtime_t vtime;
++
++	volatile long     offset_to_cpu0;
++
++	long              refcount;
++	spinlock_t        reflock;
++};
++
++#ifdef __KERNEL__
++
++#ifdef CONFIG_HRTIME
++
++# ifdef CONFIG_HRUSTIME
++#  define HRTIME_HAS_USTIME 1
++# else
++#  define HRTIME_HAS_USTIME 0
++# endif
++
++#define INIT_HRTIME { \
++/* last_us_dispatch	*/ 0, \
++/* utime		*/ 0, \
++/* stime		*/ 0, \
++/* in_system		*/ 1, \
++/* has_ustime		*/ HRTIME_HAS_USTIME, \
++/* start_time		*/ 0, \
++/* last_dispatch	*/ 0, \
++/* vtime		*/ 0, \
++/* offset_to_cpu0	*/ 0, \
++/* refcount		*/ 1, \
++/* reflock		*/ SPIN_LOCK_UNLOCKED }
++
++extern struct hrtime_struct init_hrtime;
++#define INIT_HRTIME_ADDR &init_hrtime
++
++#else /* CONFIG_HRTIME */
++
++#define INIT_HRTIME_ADDR NULL
++
++#endif /* CONFIG_HRTIME */
++
++
++extern struct hrtime_struct *alloc_hrtime_struct(void);
++extern void init_hrtime_struct(struct hrtime_struct *s);
++extern void ref_hrtime_struct(struct hrtime_struct *s);
++extern void unref_hrtime_struct(struct hrtime_struct *s);
++
++#endif /* __KERNEL__ */
++
++#endif
+diff -ruN linux-2.4.22/include/linux/proc_fs.h linux-2.4.22-hrtime/include/linux/proc_fs.h
+--- linux-2.4.22/include/linux/proc_fs.h	2002-08-03 02:39:45.000000000 +0200
++++ linux-2.4.22-hrtime/include/linux/proc_fs.h	2003-10-16 23:53:13.000000000 +0200
+@@ -113,6 +113,9 @@
+ extern struct file_operations proc_kcore_operations;
+ extern struct file_operations proc_kmsg_operations;
+ extern struct file_operations ppc_htab_operations;
++#ifdef CONFIG_HRTIME
++extern struct file_operations proc_hrtime_operations;
++#endif
+ 
+ /*
+  * proc_tty.c
+diff -ruN linux-2.4.22/include/linux/sched.h linux-2.4.22-hrtime/include/linux/sched.h
+--- linux-2.4.22/include/linux/sched.h	2003-06-13 16:51:39.000000000 +0200
++++ linux-2.4.22-hrtime/include/linux/sched.h	2003-10-16 23:53:13.000000000 +0200
+@@ -26,6 +26,7 @@
+ #include <linux/signal.h>
+ #include <linux/securebits.h>
+ #include <linux/fs_struct.h>
++#include <linux/hrtime.h>
+ 
+ struct exec_domain;
+ 
+@@ -295,7 +296,7 @@
+ 	volatile long need_resched;
+ 	unsigned long ptrace;
+ 
+-	int lock_depth;		/* Lock depth */
++	struct hrtime_struct *hrtime;
+ 
+ /*
+  * offset 32 begins here on 32-bit platforms. We keep
+@@ -328,6 +329,8 @@
+ 	struct list_head local_pages;
+ 	unsigned int allocation_order, nr_local_pages;
+ 
++	int lock_depth;		/* Lock depth */	
++
+ /* task state */
+ 	struct linux_binfmt *binfmt;
+ 	int exit_code, exit_signal;
+@@ -475,7 +478,7 @@
+     sigpending:		0,						\
+     addr_limit:		KERNEL_DS,					\
+     exec_domain:	&default_exec_domain,				\
+-    lock_depth:		-1,						\
++    hrtime:		INIT_HRTIME_ADDR,				\
+     counter:		DEF_COUNTER,					\
+     nice:		DEF_NICE,					\
+     policy:		SCHED_OTHER,					\
+@@ -486,6 +489,7 @@
+     run_list:		LIST_HEAD_INIT(tsk.run_list),			\
+     next_task:		&tsk,						\
+     prev_task:		&tsk,						\
++    lock_depth:		-1,						\
+     p_opptr:		&tsk,						\
+     p_pptr:		&tsk,						\
+     thread_group:	LIST_HEAD_INIT(tsk.thread_group),		\
+diff -ruN linux-2.4.22/kernel/exit.c linux-2.4.22-hrtime/kernel/exit.c
+--- linux-2.4.22/kernel/exit.c	2002-11-29 00:53:15.000000000 +0100
++++ linux-2.4.22-hrtime/kernel/exit.c	2003-10-16 23:53:13.000000000 +0200
+@@ -16,6 +16,9 @@
+ #ifdef CONFIG_BSD_PROCESS_ACCT
+ #include <linux/acct.h>
+ #endif
++#ifdef CONFIG_HRTIME
++#include <linux/hrtime.h>
++#endif
+ 
+ #include <asm/uaccess.h>
+ #include <asm/pgtable.h>
+@@ -68,6 +71,10 @@
+ 			current->counter = MAX_COUNTER;
+ 		p->pid = 0;
+ 		free_task_struct(p);
++#ifdef CONFIG_HRTIME
++		unref_hrtime_struct(p->hrtime);
++		p->hrtime = 0;
++#endif
+ 	} else {
+ 		printk("task releasing itself\n");
+ 	}
+diff -ruN linux-2.4.22/kernel/fork.c linux-2.4.22-hrtime/kernel/fork.c
+--- linux-2.4.22/kernel/fork.c	2003-08-25 13:44:44.000000000 +0200
++++ linux-2.4.22-hrtime/kernel/fork.c	2003-10-16 23:53:13.000000000 +0200
+@@ -637,6 +637,9 @@
+ {
+ 	int retval;
+ 	struct task_struct *p;
++#ifdef CONFIG_HRTIME
++	struct hrtime_struct *h;
++#endif
+ 	struct completion vfork;
+ 
+ 	if ((clone_flags & (CLONE_NEWNS|CLONE_FS)) == (CLONE_NEWNS|CLONE_FS))
+@@ -658,6 +661,15 @@
+ 	if (!p)
+ 		goto fork_out;
+ 
++#ifdef CONFIG_HRTIME
++	h = alloc_hrtime_struct();
++	if (!h)
++	{
++		free_task_struct(p);
++		goto fork_out;
++	}
++#endif
++
+ 	*p = *current;
+ 
+ 	retval = -EAGAIN;
+@@ -720,6 +732,14 @@
+ 	p->tty_old_pgrp = 0;
+ 	p->times.tms_utime = p->times.tms_stime = 0;
+ 	p->times.tms_cutime = p->times.tms_cstime = 0;
++
++#ifdef CONFIG_HRTIME
++	p->hrtime = h;
++	/* re-zero on fork - is this the semantic that we want? */
++	init_hrtime_struct(p->hrtime);
++	ref_hrtime_struct(p->hrtime);
++#endif
++
+ #ifdef CONFIG_SMP
+ 	{
+ 		int i;
+diff -ruN linux-2.4.22/kernel/hrtime.c linux-2.4.22-hrtime/kernel/hrtime.c
+--- linux-2.4.22/kernel/hrtime.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-2.4.22-hrtime/kernel/hrtime.c	2003-10-16 23:53:13.000000000 +0200
+@@ -0,0 +1,123 @@
++/*
++ *  linux/kernel/hrtime.c
++ *
++ *  Copyright (C) 1999, Nick Rasmussen <nick@jive.org>
++ */
++
++#include <linux/hrtime.h>
++#include <linux/sched.h>
++#include <linux/linkage.h>
++#include <linux/mm.h>
++#include <linux/wrapper.h>
++#include <linux/spinlock.h>
++
++#include <asm/hrtime.h>
++#include <asm/io.h>
++#include <asm/uaccess.h>
++#include <asm/atomic.h>
++
++#ifndef virt_to_page
++#define virt_to_page(x) MAP_NR(x)
++#endif
++
++#define HRTIME_DEBUG_ALLOC 0
++
++#if HRTIME_DEBUG_ALLOC
++static volatile atomic_t num_hrtime_structs = ATOMIC_INIT(1); /* due to init_hrtime */
++#endif
++
++struct hrtime_struct *alloc_hrtime_struct()
++{
++	unsigned long page;
++
++	/* Should this be using vmalloc etc. as does drivers/char/bttv.c? */
++	struct hrtime_struct *hr = (struct hrtime_struct *) __get_free_page(GFP_KERNEL);
++	if (hr != 0)
++	{
++		page = virt_to_phys(hr);
++		mem_map_reserve(virt_to_page(__va(page)));
++#if HRTIME_DEBUG_ALLOC
++		atomic_inc(&num_hrtime_structs);
++		printk("alloc_hrtime_struct: num_hrtime_structs are %d\n", atomic_read(&num_hrtime_structs));
++#endif
++	}
++	return hr;
++}
++
++static void free_hrtime_struct(struct hrtime_struct *s)
++{
++	unsigned long page;
++	if (s == 0)
++		return;
++
++	page = virt_to_phys(s);
++	mem_map_unreserve(virt_to_page(__va(page)));
++	free_page((unsigned long) s);
++
++#if HRTIME_DEBUG_ALLOC
++	atomic_dec(&num_hrtime_structs);
++	printk("free_hrtime_struct: num_hrtime_structs are %d\n", atomic_read(&num_hrtime_structs));
++#endif
++}
++
++void init_hrtime_struct(struct hrtime_struct *s)
++{
++	get_current_hrtime(&s->start_time);
++
++	/* These are meaningless when CONFIG_HRUSTIME is not defined */
++	s->last_us_dispatch = s->start_time;
++	s->utime = 0;
++	s->stime = 0;
++
++	/* in_system starts out as zero since processes exiting from fork
++	 * do not leave on the system call return path. */
++	s->in_system = 0;
++
++#ifdef CONFIG_HRUSTIME
++	s->has_ustime = 1;
++#else
++	s->has_ustime = 0;
++#endif
++
++	s->last_dispatch = s->start_time;
++	s->vtime = 0;
++
++	/* XXX - FIXME when we do the cpu offset timings */
++	s->offset_to_cpu0 = 0;
++
++	s->refcount = 0;
++	s->reflock = SPIN_LOCK_UNLOCKED;
++}
++
++void ref_hrtime_struct(struct hrtime_struct *s)
++{
++	unsigned long flags;
++
++	if (s == 0)
++		return;
++
++	spin_lock_irqsave(&s->reflock, flags);
++	s->refcount += 1;
++	spin_unlock_irqrestore(&s->reflock, flags);
++}
++
++void unref_hrtime_struct(struct hrtime_struct *s)
++{
++	unsigned long flags;
++
++	if (s == 0)
++		return;
++
++	spin_lock_irqsave(&s->reflock, flags);
++	s->refcount -= 1;
++
++	if (s->refcount == 0)
++		free_hrtime_struct(s);
++	
++	if (s->refcount < 0)
++		printk("unref_hrtime_struct: unreffing s@0x%08lx, "
++		       "refcount %ld is now negative\n",
++		       (unsigned long) s, s->refcount);
++
++	spin_unlock_irqrestore(&s->reflock, flags);
++}
+diff -ruN linux-2.4.22/kernel/Makefile linux-2.4.22-hrtime/kernel/Makefile
+--- linux-2.4.22/kernel/Makefile	2001-09-17 06:22:40.000000000 +0200
++++ linux-2.4.22-hrtime/kernel/Makefile	2003-10-16 23:53:13.000000000 +0200
+@@ -18,6 +18,7 @@
+ 
+ obj-$(CONFIG_UID16) += uid16.o
+ obj-$(CONFIG_MODULES) += ksyms.o
++obj-$(CONFIG_HRTIME) += hrtime.o
+ obj-$(CONFIG_PM) += pm.o
+ 
+ ifneq ($(CONFIG_IA64),y)
+diff -ruN linux-2.4.22/kernel/sched.c linux-2.4.22-hrtime/kernel/sched.c
+--- linux-2.4.22/kernel/sched.c	2003-08-25 13:44:44.000000000 +0200
++++ linux-2.4.22-hrtime/kernel/sched.c	2003-10-16 23:53:13.000000000 +0200
+@@ -32,6 +32,9 @@
+ 
+ #include <asm/uaccess.h>
+ #include <asm/mmu_context.h>
++#ifdef CONFIG_HRTIME
++#include <asm/hrtime.h>
++#endif
+ 
+ extern void timer_bh(void);
+ extern void tqueue_bh(void);
+@@ -658,6 +661,36 @@
+ 
+ #endif /* CONFIG_SMP */
+ 
++#ifdef CONFIG_HRTIME
++	{
++		hrtime_t t;
++		get_current_hrtime(&t);
++
++		prev->hrtime->vtime += t - prev->hrtime->last_dispatch;
++
++		/* A poor man's interprocess synchronization - by overloading
++		 * last_dispatch to also indicate that the process is currently
++		 * executing, the spin-loop in the get_hr[usv]time to make sure
++		 * that this process' hrtime_struct is self-consistent is
++		 * simplified a bit.  With no good way of doing atomic operations
++		 * between the two processes, having last_dispatch change both
++		 * when the process is swapped out and swapped in is an almost
++		 * foolproof way of doing this.
++		 */
++		prev->hrtime->last_dispatch = 0;
++#ifdef CONFIG_HRUSTIME
++		t -= prev->hrtime->last_us_dispatch;
++		if (prev->hrtime->in_system)
++			prev->hrtime->stime += t;
++		else
++			prev->hrtime->utime += t;
++
++		/* ditto for last_us_dispatch */
++		prev->hrtime->last_us_dispatch = 0;
++#endif
++	}
++#endif
++
+ 	kstat.context_swtch++;
+ 	/*
+ 	 * there are 3 processes which are affected by a context switch:
+@@ -695,6 +728,16 @@
+ 	switch_to(prev, next, prev);
+ 	__schedule_tail(prev);
+ 
++#ifdef CONFIG_HRTIME
++#if HRTIME_HAS_OFFSETS
++	/* XXX - FIXME - find CPU and insert offset */
++#endif
++	get_current_hrtime(&current->hrtime->last_dispatch);
++#ifdef CONFIG_HRUSTIME
++	get_current_hrtime(&current->hrtime->last_us_dispatch);
++#endif
++#endif
++
+ same_process:
+ 	reacquire_kernel_lock(current);
+ 	if (current->need_resched)

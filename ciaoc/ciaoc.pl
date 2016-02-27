@@ -439,7 +439,7 @@ handle_args_('-x', Args) :- !,
         set_prolog_flag(check_libraries, on),
         handle_args(Args).
 handle_args_('-u', [CFile|Args]) :- !,
-        use_module(CFile, all, c_itf),
+        use_module(CFile, all, c_itf_internal),
         handle_args(Args).
 handle_args_('-u', []) :-
         usage.
@@ -566,9 +566,6 @@ default extension for files is '.pl'
 
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
-
-:- comment(version(1*9+98,2003/08/27,12:39*15+'CEST'), "Makefile
-corrected to leave right permissions in ciaoc.sta (MCL)").
 
 :- comment(version(1*7+30,2000/11/03,16:42*01+'CET'), "Flags homogeneized
    with _ as requested by the Ciao style guide.  (Oscar Portela Arjona)").

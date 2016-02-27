@@ -42,9 +42,9 @@ the general interface structure is detailed here.
 @section{Prolog to Java Interface Structure}
 @cindex{Prolog to Java Interface Structure}
 This interface is made up of two parts: a Prolog
-side and a Java side, running in separate processes. The Prolog side 
-receives requests from a Prolog program and sends them to the Java side
-through a socket. The Java side receives requests from the socket and
+part and a Java part, running in separate processes. The Prolog part 
+receives requests from a Prolog program and sends them to the Java part
+through a socket. The Java part receives requests from the socket and
 performs the actions included in the requests.
 
 If an event is thrown in the Java side, an asynchronous message must
@@ -78,7 +78,7 @@ do not have to deal with the complexity of this tasks.
 @subsection{Java side}
 @cindex{Prolog to Java Interface Structure. Java side}
 The Java side of this layer is more complex than the Prolog side. The tasks
-this part has to deal to are the following:
+this part have to deal to are the following:
 
 @begin{itemize}
   
@@ -161,13 +161,13 @@ like the requests sent directly from a prolog program.
 The internal process of register a Prolog event handler to a Java event is
 shown in the next figure:
 
-@image{ip2jbn-events-pl-reg}
+@image{Figs/ip2jbn-events-pl-reg}
 
 When an event raises, the Prolog to Java interface has to send to
 the Prolog user program the goal to evaluate. Graphically, the complete
 process takes the tasks involved in the following figure: 
 
-@image{ip2jbn-events-pl-fire}
+@image{Figs/ip2jbn-events-pl-fire}
 
 
 @section{Java exception handling from Prolog}

@@ -1,19 +1,22 @@
-
 :- module(indexer_doc,[ ],[ assertions, regtypes ]).
 
 :- use_module(library('assertions/native_props'),[nonground/1]).
 
 :- comment(title, "Multiple Argument Indexing").
+
 :- comment(author, "Tom Howland (http://home.pacbell.net/tomjdnh/pd.html)").
+
 :- comment(author, "derived from work by Anil Nair").
+
 :- comment(author, "F. Bueno (for the Ciao package)").
+
 :- comment(module,"This package is an extension of the idea of Prolog
-   indexing, usually performed, in a limited way, on the first argument.
-   This package provides more powerful indexing schemes.
+   indexing, usually performed, in a limited way, on the first
+   argument.  This package provides more powerful indexing schemes.
    It lets you pick different arguments to index on, and provides for
-   different combinations of arguments to index on.
-   E.g., it will let you index on the first and third argument or 
-   the second and the third argument of a predicate.").
+   different combinations of arguments to index on.  E.g., it will let
+   you index on the first and third argument or the second and the
+   third argument of a predicate.").
 
 /*
 "library(indexer)" generates index tables of the form Nth_arg-1st_arg
@@ -27,10 +30,10 @@ contains files for static rules (indexer.pl), dynamic facts
 (module_indexer.pl).
 */
 
-:- comment(usage,"This facility is used as a package, thus either including 
-   @lib{indexer} in the package list of the module, or by using the
-   @decl{use_package/1} declaration. The facility predicate 
-   @pred{hash_term/2}, documented here, is defined in library module 
+:- comment(usage,"This facility is used as a package, thus either
+   including @lib{indexer} in the package list of the module, or by
+   using the @decl{use_package/1} declaration. The facility predicate
+   @pred{hash_term/2}, documented here, is defined in library module
    @lib{hash}.").
 
 :- comment(doinclude,index/1).
@@ -97,3 +100,9 @@ argspec(?).
   "Provides an efficient way to calculate an integer @var{HashValue} for a
    ground @var{Term}.").
 :- comment(doinclude,hash_term/2).
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+101,2003/12/21,20:21*31+'CET'), "First
+   revision.  (Edison Mera)").
+

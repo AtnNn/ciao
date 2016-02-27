@@ -8,8 +8,12 @@
 :- use_module(library(file_utils), [stream_to_string/2]).
 :- use_module(library(sockets),[select_socket/5]). 
 
-:- comment(module,"This module provides two useful predicates for 
-	programming with sockets.").
+:- comment(title,"Sockets I/O").
+
+:- comment(author,"Francisco Bueno").
+
+:- comment(module,"This module provides two useful predicates for
+   programming with sockets.").
 
 :- true pred serve_socket(Socket,Server,Handler)
 	: socket * callable * callable
@@ -75,6 +79,9 @@ safe_write(Stream,Term):-
 socket(S):- int(S).
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+117,2003/12/22,18:58*12+'CET'), "Added comment
+   title and author.  (Edison Mera)").
 
 :- comment(version(1*9+15,2002/10/09,08:58*38+'CEST'), "Added this
    library module.  (Francisco Bueno Carrillo)").

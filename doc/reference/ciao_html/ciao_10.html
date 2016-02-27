@@ -1,23 +1,23 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The script interpreter</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC86" HREF="ciao_toc.html#TOC86">The script interpreter</A></H1>
+<H1><A NAME="SEC84" HREF="ciao_toc.html#TOC84">The script interpreter</A></H1>
 
 <P>
 <STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
@@ -25,10 +25,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <
 
 
 <P>
-<A NAME="IDX825"></A>
+<A NAME="IDX860"></A>
 <CODE>ciao-shell</CODE> is the Ciao script interpreter. It can be used to write 
-<A NAME="IDX826"></A>
-<A NAME="IDX827"></A>
+<A NAME="IDX861"></A>
+<A NAME="IDX862"></A>
 <EM>Prolog shell scripts</EM> (see [Her96,CHV96b]), that is, executable files containing source code, which are compiled on demand. 
 
 
@@ -38,32 +38,32 @@ Writing Prolog scripts can sometimes be advantageous with respect to creating bi
 
 <P>
 An area of application is, for example, writing 
-<A NAME="IDX828"></A>
-<A NAME="IDX829"></A>
+<A NAME="IDX863"></A>
+<A NAME="IDX864"></A>
 <EM>CGI executables</EM>: the slow speed of the network connection in comparison with that of executing a program makes program execution speed less important and has made scripting languages very popular for writing these applications. Logic languages are, a priori, excellent candidates to be used as scripting languages. For example, the built-in grammars and databases can sometimes greatly simplify many typical script-based applications. 
 
 
 
 <UL>
-<LI><A HREF="ciao_10.html#SEC87">How it works</A>
-<LI><A HREF="ciao_10.html#SEC88">Command line arguments in scripts</A>
+<LI><A HREF="ciao_10.html#SEC85">How it works</A>
+<LI><A HREF="ciao_10.html#SEC86">Command line arguments in scripts</A>
 </UL>
 
 
 
-<H2><A NAME="SEC87" HREF="ciao_toc.html#TOC87">How it works</A></H2>
+<H2><A NAME="SEC85" HREF="ciao_toc.html#TOC85">How it works</A></H2>
 
 <P>
 Essentially, <CODE>ciao-shell</CODE> is a smaller version of the Ciao top-level, which starts by loading the file given to it as the first argument and then starts execution at 
-<A NAME="IDX830"></A>
+<A NAME="IDX865"></A>
 <CODE>main/1</CODE> (the argument is instantiated to a list containing the command line options, in the usual way). Note that the Prolog script cannot have a <CODE>module</CODE> declaration for this to work. While loading the file, <CODE>ciao-shell</CODE> changes the 
-<A NAME="IDX831"></A>
+<A NAME="IDX866"></A>
 prolog flag <CODE>quiet</CODE> so that no informational or warning messages are printed (error messages will be reported to <CODE>user_error</CODE>, however). The operation of <CODE>ciao-shell</CODE> in Unix-like systems is based in a special compiler feature: when the first character of a file is '<CODE>#</CODE>', the compiler skips the first lines until an empty line is found. In Windows, its use is as easy as naming the file with a <CODE>.pls</CODE> extension, which will launch <CODE>ciao-shell</CODE> appropriately. 
 
 
 <P>
 For example, in a Linux/Unix system, assume a file called 
-<A NAME="IDX832"></A>
+<A NAME="IDX867"></A>
 <CODE>hello</CODE> contains the following program: 
 
 
@@ -78,7 +78,7 @@ main(_) :-
 
 <P>
 Then, the file 
-<A NAME="IDX833"></A>
+<A NAME="IDX868"></A>
 <CODE>hello</CODE> can be <EM>run</EM> by simply making it executable and invoking it from the command line: 
 
 
@@ -108,25 +108,25 @@ exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
 
 <P>
 and invoke 
-<A NAME="IDX834"></A>
+<A NAME="IDX869"></A>
 <CODE>ciao-shell</CODE>, instructing it to read this same file (<CODE>$0</CODE>), passing it the rest of the arguments to <CODE>hello</CODE> as arguments to the prolog program. The second part of the line <CODE># -*- mode: ciao; -*-</CODE> is simply a comment which is seen by 
-<A NAME="IDX835"></A>
+<A NAME="IDX870"></A>
 <CODE>emacs</CODE> and instructs it to edit this file in Ciao mode (this is needed because these script files typically do not have a <CODE>.pl</CODE> ending). When 
-<A NAME="IDX836"></A>
+<A NAME="IDX871"></A>
 <CODE>ciao-shell</CODE> starts, if it is the first time, it compiles the program (skipping the first lines, as explained above), or else at successive runs loads the <CODE>.po</CODE> object file, and then calls 
-<A NAME="IDX837"></A>
+<A NAME="IDX872"></A>
 <CODE>main/1</CODE>. 
 
 
 <P>
 Note that the process of creating Prolog scripts is made very simple by the Ciao 
-<A NAME="IDX838"></A>
-emacs mode, which automatically inserts the header and makes the file executable (See section <A HREF="ciao_12.html#SEC93">Using Ciao inside GNU emacs</A>). 
+<A NAME="IDX873"></A>
+emacs mode, which automatically inserts the header and makes the file executable (See section <A HREF="ciao_12.html#SEC91">Using Ciao inside GNU emacs</A>). 
 
 
 
 
-<H2><A NAME="SEC88" HREF="ciao_toc.html#TOC88">Command line arguments in scripts</A></H2>
+<H2><A NAME="SEC86" HREF="ciao_toc.html#TOC86">Command line arguments in scripts</A></H2>
 
 <P>
 The following example illustrates the use of command-line arguments in scripts. Assume that a file called <CODE>say</CODE> contains the following lines: 
@@ -163,6 +163,6 @@ hello dolly
 
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

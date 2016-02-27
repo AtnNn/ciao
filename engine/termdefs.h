@@ -5,6 +5,9 @@
   term to pointer conversion must know where object are in virtual memory */
 
 
+#ifndef _TERMDEFS_H
+#define _TERMDEFS_H
+
 /* SIMPLE TYPES  & various CONSTANTS    -------------------------------   */
 
 #define ANY 1                /* ?? or 0  - for dynamic arrays in bytecode */
@@ -21,6 +24,7 @@ typedef int BOOL;		/* Win32 includes this definition */
 #endif
 
 typedef long ENG_INT;
+typedef long long ENG_LINT;
 typedef double ENG_FLT;
 
 /*** TAGGED DATATYPES --------------------------------***/
@@ -512,3 +516,4 @@ typedef unsigned long Bignum;
 /* Deposit Source into Mask:ed portion of Dest */
 #define Deposit(Source,Mask,Dest) (((Source)&(Mask))|((Dest)& ~(Mask)))
 
+#endif /* _TERMDEFS_H */

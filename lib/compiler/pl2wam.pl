@@ -126,7 +126,7 @@ E_GAUGE ***/
 
 %-----------------------------------------------------------------------------
 
-:- data compiler_out/1,   % Stream to which is written the .po
+:- data compiler_out/1,   % Stream to which is written the po
         compiler_mode/1,  % Compiling in MODE, one of:
                           % {wam, ql(Profiling), incore(Profiling),
                           %  incoreql(Profiling)} with Profiling one of
@@ -246,6 +246,25 @@ compile_one_proc(Profiled, Head, Body, Choice, ClName, Data) :-
 	profile_struct(Profiled, ProfileData, _, _, _),
 	trans_clause(ProfileData, Body1, FinalCode, TypeKey0, TypeKey),
 	compile_file_emit(clause(ClName,FinalCode,ProfileData,TypeKey,Data)),
+	emit_models(ProfileData, ClName), !.
+% JF: the clause bellow is debug code... remove 
+compile_one_proc(Profiled, Head, Body, Choice, ClName, Data) :-
+	display(compile_one_proc_failed), nl,
+%	display(u), nl,
+	transform_clause(Head, Body, Choice, TypeKey0, Body1, ClName, Internals, []),
+%	display(v), nl,
+	compile_internals(Internals, Profiled, InternalData),
+	(   doing_wam ->
+	    index_internals(InternalData)
+	;   true
+	),
+%	display(w), nl,
+	profile_struct(Profiled, ProfileData, _, _, _),
+%	display(x(Body1)), nl,
+	trans_clause(ProfileData, Body1, FinalCode, TypeKey0, TypeKey),
+%	display(y), nl,
+	compile_file_emit(clause(ClName,FinalCode,ProfileData,TypeKey,Data)),
+%	display(z), nl,
 	emit_models(ProfileData, ClName).
 
 doing_wam :-
@@ -285,59 +304,59 @@ E_GAUGE ***/
 	),
 	trans_args(1, H, Args, Dic),
 	trans_term(Ch, Ch1, Dic),
-	trans_goal(B2, Pbody, 'CUT IDIOM'(Ch), Dic).
+	trans_goal(B2, Pbody, 'basiccontrol:CUT IDIOM'(Ch), Dic).
 
-parse_body(Var, _, Goal) :- var(Var), !, Goal=call(Var).
-parse_body(V^P0, _, V^P) :- !,
-	parse_body(P0, outer, P).
-parse_body(false, _, fail) :- !.
-parse_body(otherwise, _, true) :- !.
-parse_body((P0 ; Q0), _, (P ; Q)) :- !,
+parse_body(P, _, 'hiord_rt:call'(P)) :- var(P), !.
+%parse_body('aggregates:^'(V,P0), _, 'aggregates:^'(V,P)) :- !,
+%	parse_body(P0, outer, P).
+parse_body('basiccontrol:false', _, 'basiccontrol:fail') :- !.
+parse_body('basiccontrol:otherwise', _, 'basiccontrol:true') :- !.
+parse_body('basiccontrol:;'(P0,Q0), _, 'basiccontrol:;'(P,Q)) :- !,
 	parse_body(P0, inner, P),
 	parse_body(Q0, inner, Q).
-parse_body((P0 -> Q0), outer, (P -> Q ; fail)) :- !,
+parse_body('basiccontrol:->'(P0, Q0), outer, 'basiccontrol:;'('basiccontrol:->'(P, Q), 'basiccontrol:fail')) :- !,
 	parse_body(P0, outer, P),
 	parse_body(Q0, outer, Q).
-parse_body((P0 -> Q0), inner, (P -> Q)) :- !,
+parse_body('basiccontrol:->'(P0, Q0), inner, 'basiccontrol:->'(P, Q)) :- !,
 	parse_body(P0, outer, P),
 	parse_body(Q0, outer, Q).
-parse_body(\+ P0, _, P) :- !,
+parse_body('basiccontrol:\\+'(P0), _, P) :- !,
 	parse_body(P0, outer, P1),
 	parse_negate_goal(P1, P).
-parse_body((P0,Q0), _, (P,Q)) :- !,
+parse_body('basiccontrol:,'(P0,Q0), _, 'basiccontrol:,'(P,Q)) :- !,
 	parse_body(P0, outer, P),
 	parse_body(Q0, outer, Q).
-parse_body(if(P0,Q0,R0), _,
-	   (Flag=[no], (P, 'IF BUILTIN'(Flag), Q ; Flag=[no], R))) :- !,
+parse_body('basiccontrol:if'(P0,Q0,R0), _,
+	   'basiccontrol:,'(Flag=[no], 'basiccontrol:;'('basiccontrol:,'(P, 'basiccontrol:,'('IF BUILTIN'(Flag), Q)), 'basiccontrol:,'(Flag=[no], R)))) :- !,
 	parse_body(P0, outer, P),
 	parse_body(Q0, outer, Q),
 	parse_body(R0, outer, R).
 parse_body(P, _, P).
 
-parse_negate_goal(var(X), nonvar(X)) :- !.
-parse_negate_goal(nonvar(X), var(X)) :- !.
-parse_negate_goal(X==Y, X\==Y) :- !.
-parse_negate_goal(X\==Y, X==Y) :- !.
-parse_negate_goal(X@<Y, X@>=Y) :- !.
-parse_negate_goal(X@>=Y, X@<Y) :- !.
-parse_negate_goal(X@>Y, X@=<Y) :- !.
-parse_negate_goal(X@=<Y, X@>Y) :- !.
-parse_negate_goal(P, (P -> fail ; true)).
+parse_negate_goal('term_typing:var'(X), 'term_typing:nonvar'(X)) :- !.
+parse_negate_goal('term_typing:nonvar'(X), 'term_typing:var'(X)) :- !.
+parse_negate_goal('term_compare:=='(X,Y), 'term_compare:\\=='(X,Y)) :- !.
+parse_negate_goal('term_compare:\\=='(X,Y), 'term_compare:=='(X,Y)) :- !.
+parse_negate_goal('term_compare:@<'(X,Y), 'term_compare:@>='(X,Y)) :- !.
+parse_negate_goal('term_compare:@>='(X,Y), 'term_compare:@<'(X,Y)) :- !.
+parse_negate_goal('term_compare:@>'(X,Y), 'term_compare:@=<'(X,Y)) :- !.
+parse_negate_goal('term_compare:@=<'(X,Y), 'term_compare:@>'(X,Y)) :- !.
+parse_negate_goal(P, 'basiccontrol:;'('basiccontrol:->'(P, 'basiccontrol:fail'), 'basiccontrol:true')).
 
-trans_goal(_^Goal, S, Cut, Dic) :- !,
-	trans_goal(Goal, S, Cut, Dic).
-trans_goal(!, Tran, Cut, Dic) :- !,
+%trans_goal('aggregates:^'(_,Goal), S, Cut, Dic) :- !,
+%	trans_goal(Goal, S, Cut, Dic).
+trans_goal('basiccontrol:!', Tran, Cut, Dic) :- !,
 	trans_term(Cut, Tran, Dic).
-trans_goal((X;Y), S, Cut, Dic) :- !,
-	structure(S, (X1;Y1)),
+trans_goal('basiccontrol:;'(X,Y), S, Cut, Dic) :- !,
+	structure(S, 'basiccontrol:;'(X1,Y1)),
 	trans_goal(X, X1, Cut, Dic),
 	trans_goal(Y, Y1, Cut, Dic).
-trans_goal((X->Y), S, Cut, Dic) :- !,
-	structure(S, (X1->Y1)),
+trans_goal('basiccontrol:->'(X,Y), S, Cut, Dic) :- !,
+	structure(S, 'basiccontrol:->'(X1,Y1)),
 	trans_goal(X, X1, Cut, Dic),
 	trans_goal(Y, Y1, Cut, Dic).
-trans_goal((X,Y), S, Cut, Dic) :- !,
-	structure(S, (X1,Y1)),
+trans_goal('basiccontrol:,'(X,Y), S, Cut, Dic) :- !,
+	structure(S, 'basiccontrol:,'(X1,Y1)),
 	trans_goal(X, X1, Cut, Dic),
 	trans_goal(Y, Y1, Cut, Dic).
 trans_goal(X, structure(Fu,Args), _, Dic) :-
@@ -392,15 +411,15 @@ simple_body([Goal|Body0], [Goal|Body]) :-
 simple_body(Body0, Body) :-
     	Body0 = [pcall(S,_)],
 	structure(S, Fu),
-	(   Fu = true -> Body = []
-	;   Fu = (_ ; _) -> fail
+	(   Fu = 'basiccontrol:true' -> Body = []
+	;   Fu = 'basiccontrol:;'(_, _) -> fail
 	;   Body = Body0
 	).
 
-straight_goal((X1, X2), _, Flag, Head, TK0, TK) --> !,
+straight_goal('basiccontrol:,'(X1, X2), _, Flag, Head, TK0, TK) --> !,
         straight_goal(X1, Flag, Head, TK0, TK1),
 	straight_goal(X2, Flag, Head, TK1, TK).
-straight_goal('CUT IDIOM'(X), S, Flag, structure(_, Args), TK0, TK) -->
+straight_goal('basiccontrol:CUT IDIOM'(X), S, Flag, structure(_, Args), TK0, TK) -->
         {var(Flag),
 	 trivial_head(Args, []),
 	 TK0 = type_key(Type0, Key),
@@ -440,13 +459,13 @@ straight_goal(S, Flag, Head, TK0, TK) -->
 
 straight_goal(flag, Item) --> [Item].
 
-type_ck(var(X), [Y|_], 2'1, 1) :- X==Y.
-type_ck(get_attribute(X,_), [Y|_], 2'1, 0) :- X==Y.     % DMCAI -- ATTRVARS
-type_ck(nonvar(X), [Y|_], 2'11110, 1) :- X==Y.
-type_ck(atom(X), [Y|_], 2'100, 0) :- X==Y.
-type_ck(atomic(X), [Y|_], 2'110, 0) :- X==Y.
-type_ck(number(X), [Y|_], 2'10, 0) :- X==Y.
-type_ck((S0,S1), Args, Code, Auto) :-
+type_ck('term_typing:var'(X), [Y|_], 2'1, 1) :- X==Y.
+type_ck('attributes:get_attribute'(X,_), [Y|_], 2'1, 0) :- X==Y.     % DMCAI -- ATTRVARS
+type_ck('term_typing:nonvar'(X), [Y|_], 2'11110, 1) :- X==Y.
+type_ck('term_typing:atom'(X), [Y|_], 2'100, 0) :- X==Y.
+type_ck('term_typing:atomic'(X), [Y|_], 2'110, 0) :- X==Y.
+type_ck('term_typing:number'(X), [Y|_], 2'10, 0) :- X==Y.
+type_ck('basiccontrol:,'(S0,S1), Args, Code, Auto) :-
 	structure(S0, F0), structure(S1, F1),
 	type_ck(F0, Args, Code0, Auto0),
 	type_ck(F1, Args, Code1, Auto1),
@@ -454,7 +473,7 @@ type_ck((S0,S1), Args, Code, Auto) :-
 	Auto is Auto0/\Auto1.
 /*** I_GAUGE
 S_GAUGE ***/
-type_ck((S0 ; S1), Args, Code, Auto) :-
+type_ck('basiccontrol:;'(S0, S1), Args, Code, Auto) :-
 	structure(S0, F0), structure(S1, F1),
 	type_ck(F0, Args, Code0, Auto0),
 	type_ck(F1, Args, Code1, Auto1),
@@ -475,7 +494,7 @@ straight_body([inline(Fu)|Gs], List,
 	straight_body(Gs, List, Gs1, ClName, Chn, Gn1, SubNo).
 straight_body([pcall(S, Size)|Gs], List,
 	      [pcall(S1, Size)|Gs1], ClName, Chn, Gn, SubNo) -->
-	{structure(S, (G1 ; G2)), !,
+	{structure(S, 'basiccontrol:;'(G1,G2)), !,
 	 internal_predicate(List, Chn-Gn, S1, ClName-SubNo),
 	 structure(G1, F1),
 	 structure(G2, F2)},
@@ -499,18 +518,18 @@ linking_vars([V-Occs|List], Gn) -->
 linking_vars([_|List], Gn) -->
 	linking_vars(List, Gn).
 
-straight_body(fail, right, _, No, No) --> !.
-straight_body((G1 ; G2), right, Head, No0, No) --> !,
+straight_body('basiccontrol:fail', right, _, No, No) --> !.
+straight_body('basiccontrol:;'(G1,G2), right, Head, No0, No) --> !,
 	{structure(G1, F1),
 	 structure(G2, F2)},
 	straight_body(F1, left, Head, No0, No1),
 	straight_body(F2, right, Head, No1, No).
-straight_body((If -> Then), _, Head, No0, No) --> !,
+straight_body('basiccontrol:->'(If, Then), _, Head, No0, No) --> !,
 	{No is No0+1},
-	{copy_goal_and_head((If -> Then), Head, (If1 -> Then1), Head1),
-	 structure(B1, 'CUT IDIOM'(var(C1,C2))),
-	 structure(B2, (B1,Then1)),
-	 structure(S2, (If1,B2))},
+	{copy_goal_and_head('basiccontrol:->'(If, Then), Head, 'basiccontrol:->'(If1, Then1), Head1),
+	 structure(B1, 'basiccontrol:CUT IDIOM'(var(C1,C2))),
+	 structure(B2, 'basiccontrol:,'(B1,Then1)),
+	 structure(S2, 'basiccontrol:,'(If1,B2))},
 	[parsed_clause(Head1, S2, var(C1,C2), No)].
 straight_body(Goal, _, Head, No0, No) -->
 	{No is No0+1},
@@ -1040,26 +1059,26 @@ open_code('PROFILE POINT'(P), _) -->
 	{structure(P,body_goal(constant(N),constant(W)))},
 	[profile_point(body_goal(N,W)),bump_counter].
 E_GAUGE ***/
-open_code('CHOICE IDIOM'(var(D,Arg)), _) --> !,
+open_code('basiccontrol:CHOICE IDIOM'(var(D,Arg)), _) --> !,
 	get_variable(Arg, -1, D).
-open_code('CUT IDIOM'(var(D,Arg)), Dic) --> !,
+open_code('basiccontrol:CUT IDIOM'(var(D,Arg)), Dic) --> !,
 	{cached_ref(Arg, D, Arg1, _, Dic)},
 	cut(Arg1).
-open_code(X = Y, Dic) --> !,
+open_code('term_basic:='(X,Y), Dic) --> !,
 	c_equal(X, Y, Dic).
-open_code('C'(X,Y,Z), Dic) --> !,
+open_code('term_basic:C'(X,Y,Z), Dic) --> !,
 	c_equal(X, list(Y,Z), Dic).
-open_code(Value is Expr, Dic) --> !,
+open_code('arithmetic:is'(Value,Expr), Dic) --> !,
 	c_expr_top(Expr, Dest, Dic),
 	c_equal(Dest, Value, Dic).
 open_code(Builtin, Dic) --> 				% DMCAI --- ATTRVARS
-  	{Builtin=type(_,_);Builtin=get_attribute(_,_)}, !,
+  	{Builtin='term_typing:type'(_,_);Builtin='attributes:get_attribute'(_,_)}, !,
   	{name_of_builtin(Builtin, Name, X, Value)},
   	c_put_arg(X, Xreg, 1000, Dic, _),
   	[function_1( Name, Vreg, Xreg, _, _)],
   	c_equal(var(g,'x'(Vreg)), Value, Dic).
 open_code(Builtin, Dic) -->
-	{Builtin=arg(_,_,_); Builtin=compare(_,_,_)},
+	{Builtin='term_basic:arg'(_,_,_); Builtin='term_compare:compare'(_,_,_)},
 	{name_of_builtin(Builtin, Name, X, Y, Value)}, !,
 	c_put_arg(X, Xreg, 1000, Dic, _),
 	c_put_arg(Y, Yreg, 1000, Dic, _),
@@ -1250,7 +1269,7 @@ c_profiled_guards(Fu, Kind, Gs, N0, N, Dic) -->
 	c_profiled_guards(Kind, Gs, N0, N, Dic).
 E_GAUGE ***/
 
-builtin_uses_heap(_ is _).
+builtin_uses_heap('arithmetic:is'(_,_)).
 builtin_uses_heap(Fu) :-
 	eval_builtin(Fu),
 	arg(1, Fu, structure(_,_)).
@@ -1260,7 +1279,7 @@ builtin_uses_heap(Fu) :-
 
 % Compile a tail of the body.
 c_goals([], 0, _) --> 
-	[execute(true/0)].
+	[execute('basiccontrol:true'/0)].
 c_goals([inline(G)|Gs], N, Dic) --> !,
 	{structure(G, Fu)},
 	open_code(Fu, Dic),
@@ -1297,7 +1316,7 @@ c_profiled_head_args(S, Dic, N) -->
 E_GAUGE ***/
 
 c_head_args_c([], _) --> [].
-c_head_args_c([X=Y|Xs], Dic) -->
+c_head_args_c(['term_basic:='(X,Y)|Xs], Dic) -->
 	c_get_arg(X, Y, Dic),
 	c_head_args_c(Xs, Dic).
 
@@ -1309,7 +1328,7 @@ head_arguments([var(D,V)|As], I, N, S0, S, Dic0) -->
 	{I1 is I+1},
 	head_arguments(As, I1, N, S0, S, Dic),
 	c(G0, G).
-head_arguments([A|As], I, N, [A=I|S0], S, Dic) -->
+head_arguments([A|As], I, N, ['term_basic:='(A,I)|S0], S, Dic) -->
 	{I1 is I+1},
 	head_arguments(As, I1, N, S0, S, Dic).
 
@@ -1347,17 +1366,17 @@ flat(constant(K), S1, GP, 0, _, 1) -->
 	{large_heap_usage(K, _), !,
 	 (GP=put -> G=g; true),
 	 S1 = var(G,'x'(T))},
-	[T=constant(K)].	
+	['term_basic:='(T,constant(K))].	
 flat(constant(K), constant(K), _, _, C, C) --> !.
 flat(nil, nil, _, _, C, C) --> !.
 flat(S, S1, get, 0, _, 1) --> !,
 	{S1 = var(_,'x'(T))},
-	[T=S2],
+	['term_basic:='(T,S2)],
 	flat(S, S2, get).
 flat(S, S1, put, 0, _, 1) --> !,
 	{S1 = var(g,'x'(T))},
 	flat(S, S2, put),
-	[T=S2].
+	['term_basic:='(T,S2)].
 flat(list(A,B), list(A1,B1), GP, N, C0, C) -->
 	{N1 is N-1},
 	flat(A, A1, GP, N1, 0, C1),
@@ -1381,16 +1400,16 @@ flat_args([X|Xs], [X1|Xs1], GP, N, C0, C1, C) -->
 % First linearize goal argument.
 c_get_arg(list(A,B), V, Dic) --> !,
 	{flat(list(A,B), S1, get, S, [])},
-	c_get([V=S1|S], Dic).
+	c_get(['term_basic:='(V,S1)|S], Dic).
 c_get_arg(structure(A,L), V, Dic) --> !,
 	{flat(structure(A,L), S1, get, S, [])},
-	c_get([V=S1|S], Dic).
+	c_get(['term_basic:='(V,S1)|S], Dic).
 c_get_arg(X, V, Dic) -->
 	c_get(X, V, Dic).
 
 % Using X registers as a cache for Y values and constants.
 c_get([], _) --> [].
-c_get([V=X|R], Dic) -->
+c_get(['term_basic:='(V,X)|R], Dic) -->
 	c_get(X, V, Dic),
 	c_get(R, Dic).
 
@@ -1422,16 +1441,16 @@ c_get(structure(F,Args), V, Dic) -->
 % Compile loading a goal argument.
 % First linearize goal argument.
 c_put_arg(list(A,B), V, Size, Dic0, Dic) --> !,
-	{flat(list(A,B), S1, put, S, [V=S1])},
+	{flat(list(A,B), S1, put, S, ['term_basic:='(V,S1)])},
 	c_put(S, Size, Dic0, Dic).
 c_put_arg(structure(A,L), V, Size, Dic0, Dic) --> !,
-	{flat(structure(A,L), S1, put, S, [V=S1])},
+	{flat(structure(A,L), S1, put, S, ['term_basic:='(V,S1)])},
 	c_put(S, Size, Dic0, Dic).
 c_put_arg(X, V, Size, Dic0, Dic) -->
 	c_put(X, V, Size, Dic0, Dic).
 
 c_put([], _, Dic, Dic) --> [].
-c_put([V=X|R], Size, Dic0, Dic) -->
+c_put(['term_basic:='(V,X)|R], Size, Dic0, Dic) -->
 	c_put(X, V, Size, Dic0, Dic1),
 	c_put(R, Size, Dic1, Dic).
 
@@ -1703,7 +1722,7 @@ body_lifetime(_, []) --> [].
 body_lifetime(put_x_value(U,U), InArity, Live, Kind, Heap) --> !,
 	[I1],
 	body_lifetime(I1, InArity, Live, Kind, Heap).
-body_lifetime(execute(true/0), _, [], unit, 128) --> !.
+body_lifetime(execute('basiccontrol:true'/0), _, [], unit, 128) --> !.
 body_lifetime(I, _, Live, _, 0) -->
 	{xfer_insn(I, A), !,
 	 intset_sequence(A, [], Live)}.
@@ -1907,8 +1926,8 @@ peep_clause(_, Code) --> peep(Code).
 peep([]) --> [].
 peep([Insn|Insns]) --> peep_1(Insn), peep(Insns).
 
-peep_1(execute(true/0)) --> !, [proceed].
-peep_1(execute(fail/0)) --> !, [fail].
+peep_1(execute('basiccontrol:true'/0)) --> !, [proceed].
+peep_1(execute('basiccontrol:fail'/0)) --> !, [fail].
 peep_1(cut_x(-1)) --> !, [cutb].
 peep_1(cut_x(X)) --> !, [cutb_x(X)].
 peep_1(get_x_variable(U,U)) --> !, [].
@@ -1952,9 +1971,9 @@ peep_1(call(U,A), Env, Env1, Dic) --> !,
 peep_1(true(A), Env, Env1, Dic) --> !,
 	ensure_call(Env, Env1, A, Dic),
 	[true(A)].
-peep_1(execute(true/0), noenv, noenv, _) --> !, 
+peep_1(execute('basiccontrol:true'/0), noenv, noenv, _) --> !, 
 	[proceed].
-peep_1(execute(fail/0), noenv, noenv, _) --> !, 
+peep_1(execute('basiccontrol:fail'/0), noenv, noenv, _) --> !, 
 	[fail].
 peep_1(execute(U), Env, Env1, _) --> !,
 	ensure_no_env(Env, Env1),
@@ -2030,61 +2049,60 @@ c(S0, S, S0, S).
 /*** B_GAUGE
 inline_codable('PROFILE POINT'(_)) :- !.
 E_GAUGE ***/
-inline_codable('CHOICE IDIOM'(_)) :- !.
-inline_codable('CUT IDIOM'(_)) :- !.
-inline_codable(_ is _) :- !.
-inline_codable(_ = _) :- !.
-inline_codable('C'(_, _, _)) :- !.
+inline_codable('basiccontrol:CHOICE IDIOM'(_)) :- !.
+inline_codable('basiccontrol:CUT IDIOM'(_)) :- !.
+inline_codable('arithmetic:is'(_,_)) :- !.
+inline_codable('term_basic:='(_,_)) :- !.
+inline_codable('term_basic:C'(_, _, _)) :- !.
 inline_codable(X) :- name_of_builtin(X, _, _), !.
 inline_codable(X) :- name_of_builtin(X, _, _, _), !.
 inline_codable(X) :- name_of_builtin(X, _, _, _, _), !.
 
 % The following predicates are trusted to preserve all arguments.
-name_of_builtin(atom(X), 20, X).
-name_of_builtin(atomic(X), 21, X).
-name_of_builtin(float(X), 22, X).
-name_of_builtin(integer(X), 23, X).
-name_of_builtin(nonvar(X), 24, X).
-name_of_builtin(number(X), 25, X).
-name_of_builtin(var(X), 26, X).
+name_of_builtin('term_typing:atom'(X), 20, X).
+name_of_builtin('term_typing:atomic'(X), 21, X).
+name_of_builtin('term_typing:float'(X), 22, X).
+name_of_builtin('term_typing:integer'(X), 23, X).
+name_of_builtin('term_typing:nonvar'(X), 24, X).
+name_of_builtin('term_typing:number'(X), 25, X).
+name_of_builtin('term_typing:var'(X), 26, X).
 name_of_builtin('IF BUILTIN'(X), 39, X).
 
-name_of_builtin(detach_attribute(X), 48, X).	% DMCAI -- ATTRVARS
+name_of_builtin('attributes:detach_attribute'(X), 48, X).	% DMCAI -- ATTRVARS
 
-name_of_builtin(X==Y, 27, X, Y).
-name_of_builtin(X\==Y, 28, X, Y).
-name_of_builtin(X@<Y, 29, X, Y).
-name_of_builtin(X@>=Y, 30, X, Y).
-name_of_builtin(X@>Y, 31, X, Y).
-name_of_builtin(X@=<Y, 32, X, Y).
-name_of_builtin(X=:=Y, 33, X, Y).
-name_of_builtin(X=\=Y, 34, X, Y).
-name_of_builtin(X<Y, 35, X, Y).
-name_of_builtin(X>=Y, 36, X, Y).
-name_of_builtin(X>Y, 37, X, Y).
-name_of_builtin(X=<Y, 38, X, Y).
-name_of_builtin(X=..Y, 40, X, Y).	
+name_of_builtin('term_compare:=='(X,Y), 27, X, Y).
+name_of_builtin('term_compare:\\=='(X,Y), 28, X, Y).
+name_of_builtin('term_compare:@<'(X,Y), 29, X, Y).
+name_of_builtin('term_compare:@>='(X,Y), 30, X, Y).
+name_of_builtin('term_compare:@>'(X,Y), 31, X, Y).
+name_of_builtin('term_compare:@=<'(X,Y), 32, X, Y).
+name_of_builtin('arithmetic:=:='(X,Y), 33, X, Y).
+name_of_builtin('arithmetic:=\\='(X,Y), 34, X, Y).
+name_of_builtin('arithmetic:<'(X,Y), 35, X, Y).
+name_of_builtin('arithmetic:>='(X,Y), 36, X, Y).
+name_of_builtin('arithmetic:>'(X,Y), 37, X, Y).
+name_of_builtin('arithmetic:=<'(X,Y), 38, X, Y).
+name_of_builtin('term_basic:=..'(X,Y), 40, X, Y).	
 
-name_of_builtin(type(X,Y), 44, X, Y).		     % DMCAI -- ATTRVARS
-name_of_builtin(get_attribute(X,Y), 45, X, Y).       % DMCAI -- ATTRVARS
-name_of_builtin(attach_attribute(X,Y), 46, X, Y).    % DMCAI -- ATTRVARS
-name_of_builtin(update_attribute(X,Y), 47, X, Y).    % DMCAI -- ATTRVARS
+name_of_builtin('term_typing:type'(X,Y), 44, X, Y).		     % DMCAI -- ATTRVARS
+name_of_builtin('attributes:get_attribute'(X,Y), 45, X, Y).       % DMCAI -- ATTRVARS
+name_of_builtin('attributes:attach_attribute'(X,Y), 46, X, Y).    % DMCAI -- ATTRVARS
+name_of_builtin('attributes:update_attribute'(X,Y), 47, X, Y).    % DMCAI -- ATTRVARS
 
-
-name_of_builtin(arg(X,Y,Value), 41, X, Y, Value).
-name_of_builtin(compare(Value,X,Y), 42, X, Y, Value).
-name_of_builtin(functor(X,Y,Z), 43, X, Y, Z).
+name_of_builtin('term_basic:arg'(X,Y,Value), 41, X, Y, Value).
+name_of_builtin('term_compare:compare'(Value,X,Y), 42, X, Y, Value).
+name_of_builtin('term_basic:functor'(X,Y,Z), 43, X, Y, Z).
 
 builtin_heap_usage(40, H) :- !, H=512.		% max arity is 255
 builtin_heap_usage(43, H) :- !, H=256.		% max arity is 255
 builtin_heap_usage(_, 0).
 
-eval_builtin(_=:=_).
-eval_builtin(_=\=_).
-eval_builtin(_<_).
-eval_builtin(_>=_).
-eval_builtin(_>_).
-eval_builtin(_=<_).
+eval_builtin('arithmetic:=:='(_,_)).
+eval_builtin('arithmetic:=\\='(_,_)).
+eval_builtin('arithmetic:<'(_,_)).
+eval_builtin('arithmetic:>='(_,_)).
+eval_builtin('arithmetic:>'(_,_)).
+eval_builtin('arithmetic:=<'(_,_)).
 
 
 name_of_function(-(X), 0, X).
@@ -2118,6 +2136,10 @@ name_of_function(X**Y, 55, X, Y).
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*11+12,2003/04/07,19:08*17+'CEST'), "Added module
+   qualification to predicates previously unqualified.  (Jose
+   Morales)").
+
 :- comment(version(1*7+220,2002/05/16,16:13*52+'CEST'), "Corrected a
-bug which caused wrong code generation for some cases.  (jfran)").
+   bug which caused wrong code generation for some cases.  (jfran)").
 

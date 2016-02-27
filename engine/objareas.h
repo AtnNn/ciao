@@ -319,17 +319,24 @@ extern struct sw_on_key *prolog_atoms;
 extern CInfo builtintab[];
 
 struct statistics {
-  ENG_FLT ss_time;		             /* time spent stack_shifting */
+  ENG_LINT ss_click;		             /* time spent stack_shifting */
   ENG_INT ss_global;		                       /* # global shifts */
   ENG_INT ss_local;		                       /* # local shifts  */
   ENG_INT ss_control;	                        /* # control/trail shifts */
-  ENG_FLT gc_time;		                   /* Total GC time (sec) */
+  ENG_LINT gc_click;		                 /* Total GC clicks (sec) */
   ENG_INT gc_count;		                 /* # garbage collections */
   ENG_INT gc_acc;		            /* Total reclaimed heap space */
-  ENG_FLT starttime;
-  ENG_FLT lasttime;
-  ENG_FLT startwalltime;
-  ENG_FLT lastwalltime;
+  ENG_LINT startclick;
+  ENG_LINT lastclick;
+  ENG_LINT startwallclick;
+  ENG_LINT lastwallclick;
+  ENG_LINT startuserclick;
+  ENG_LINT lastuserclick;
+  ENG_LINT startsystemclick;
+  ENG_LINT lastsystemclick;
+  ENG_LINT wallclockfreq;
+  ENG_LINT userclockfreq;
+  ENG_LINT systemclockfreq;
 };
 
 extern struct statistics stats;                        /* Shared, I guess */

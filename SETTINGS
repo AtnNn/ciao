@@ -3,9 +3,9 @@
 # Ciao Global Compilation/Installation SETTINGS
 # ----------------------------------------------------------------------------
 # Define this to be a directory where the sources are reachable system-wide 
-# SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
+# SRC=/usr/local/src/ciao
 #
-SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
+SRC=/usr/local/src/ciao-1.11
 #-----------------------------------------------------------------------------
 # Define the following to be the places under which the installation
 # will be performed:
@@ -14,8 +14,7 @@ SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
 #   or
 # CIAOROOT=/usr
 #   or
-CIAOROOT=/home/clip
-#CIAOROOT=/tmp
+CIAOROOT=/usr/local
 
 # Executables will go here:
 BINROOT=$(CIAOROOT)/bin
@@ -31,7 +30,10 @@ INCLUDEROOT=$(CIAOROOT)/include
 # emacs info, and man:
 # DOCROOT=/usr/local/etc/httpd/htdocs
 # 
-DOCROOT=/home/clip/public_html/Local/lpdoc_docs/Ciao
+#   or
+# DOCROOT=/var/www/html/ciao
+
+DOCROOT=/var/www/html/ciao
 #-----------------------------------------------------------------------------
 # Misc installation options:
 
@@ -42,8 +44,8 @@ DOCROOT=/home/clip/public_html/Local/lpdoc_docs/Ciao
 # WEB_IMAGES_PATH=/usr/local/etc/httpd/htdocs/images/
 # WEB_IMAGES_URL=http:/my.host.here/images/
 #
-WEB_IMAGES_PATH=/home/clip/public_html/images
-WEB_IMAGES_URL=/images/
+WEB_IMAGES_PATH=/var/www/icons
+WEB_IMAGES_URL=/icons/
 
 # Set to "no" if you do not want to create a link to Ciao named "prolog",
 # for example because there are more prolog's in the system
@@ -150,22 +152,28 @@ INSTALLGROUP=clip
 # DEBUG_LEVEL=nodebug
 DEBUG_LEVEL=nodebug
 
+SAMBASRC=//clip/clip/Systems/ciao-1.11
+
 # This is for locally compiling the engine in NT under Samba, ignore it
-
-ifeq ($(OSTYPE),cygwin)
-#  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
-  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
+ifeq (CYGWIN,$(findstring $(shell uname),CYGWIN))
+  SRC=$(SAMBASRC)
   ALT=win32
   EXECSUFFIX=.exe
+else
+   ifeq ($(OSTYPE),cygwin)
+     SRC=$(SAMBASRC)
+     ALT=win32
+     EXECSUFFIX=.exe
+   else
+      # Same as above, old cygwin versions
+      ifeq ($(OSTYPE),cygwin32)
+        SRC=$(SAMBASRC)
+        ALT=win32
+        EXECSUFFIX=.exe
+      endif
+   endif
 endif
 
-# Same as above, old cygwin versions
-ifeq ($(OSTYPE),cygwin32)
-#  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
-  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
-  ALT=win32
-  EXECSUFFIX=.exe
-endif
 
 # ----------------------------------------------------------------------------
 # Happy compilation!

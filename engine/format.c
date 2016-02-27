@@ -8,6 +8,8 @@
 
 /* declarations for global functions accessed here */
 
+
+#include "float_tostr.h"
 #include "format_defs.h"
 #include "wamfunction_defs.h"
 #include "term_support_defs.h"
@@ -32,24 +34,52 @@ extern void number_to_string();
  * total number of digits for some FORMATS.
  */
 
+#define MAX_OUTPUT_DIGITS 1023
+#define BUFF_SIZE         2048
+
 BOOL prolog_format_print_float(Arg)
      Argdecl;
 {
   ENG_INT precision;
-  char buf[10], fbuf[40], formatChar;
-  
+  char buf[BUFF_SIZE], formatChar;
+  double f;
+
+  /*
+  f = GetFloat(X(1));
+  if(formatChar=='f' && precision > 1023)
+    precision = 1023;
+  else if(precision<0)
+    precision = 6;
+  float_to_string(buf, precision, formatChar, f, 10)
+  */  
+
   DEREF(X(0),X(0));
   formatChar = GetInteger(X(0));
   DEREF(X(1),X(1));
   DEREF(X(2),X(2));
   precision = GetInteger(X(2));
   
+  /* New code (Edison): */
+
+  f = GetFloat(X(1));
+
+  if(formatChar=='f' && precision > 1023)
+    precision = 1023;
+  else if(precision<0)
+    precision = 6;
+  float_to_string(buf, precision, formatChar, f, 10);
+  print_string(Output_Stream_Ptr, buf);
+
+
+    /* Older code: */
+    /*
   if(precision >= 0)
     sprintf(buf,"%%.%d%c", (int)precision, formatChar);
   else
     sprintf(buf,"%%%c", formatChar);
   sprintf(fbuf,buf,GetFloat(X(1)));
-  print_string(Output_Stream_Ptr, fbuf);
+    */
+
   return TRUE;
 }
 

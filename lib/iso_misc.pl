@@ -4,16 +4,53 @@
 
 :- use_module(library(between)).
 
+:- comment(title, "Miscelaneus ISO Prolog predicates").
+
+:- comment(author, "The CLIP Group").
+:- comment(author, "Documentation by Edison Mera, based on ISO Prolog standar").
+
+:- comment(module, "This module implements some miscelaneous ISO
+   Prolog predicates.").
+
+:- comment(X \= Y,"If @var{X} and @var{Y} are NSTO (Not subject to
+   occurs-check), then this is true iff @var{X} and @var{Y} are not
+   unifiable.").
+
 X \= X :- !, fail.
 _ \= _.
 
 :- meta_predicate(once(goal)).
 
+:- comment(once(G),"@pred{once/1} is true iff @pred{call/1} is true.
+   Take in mind that @pred{once/1} behaves as @pred{call/1}, but is
+   not re-executable.").
+
 once(G) :- call(G), !.
+
+:- comment(compound(T),"Is true iff @var{T} is a member of the set CT.
+
+   CT is a set where an element of CT is defined for each compound
+   term, and c is defined as F(X1, ..., Xn) where:
+
+   1) F is the functor name of the compound term, and
+
+   2) n is the arity of the compound term, and
+
+   3) X1, ..., Xn for all n > 0, are the arguments of the compund
+      term.
+
+").
 
 compound(T) :-
         nonvar(T),
         functor(T, _, A), A > 0.
+
+:- comment(sub_atom(Atom, Before, Length, After, Sub_atom), "Is true
+   iff atom @var{Atom} can be broken into three pieces, @var{AtomL},
+   @var{Sub_atom} and @var{AtomR} such that @var{Before} is the number
+   of characters of the name of @var{Atom} & @var{Length} is the
+   number of characters of the name of @var{Sub_atom} and @var{After}
+   is the number of characters of the name of @var{AtomR}").
 
 sub_atom(Atom, Before, Lenght, After, Sub_atom) :-
         ( atom(Atom) ->
@@ -38,6 +75,10 @@ sub_atom(Atom, Before, Lenght, After, Sub_atom) :-
           throw(error(instantiation_error, sub_atom/5-1))
         ; throw(error(type_error(atom,Atom), sub_atom/5-1))
         ).
+
+:- comment(unify_with_occurs_check(X, Y), "Attempts to compute and
+   apply a most general unifier of the two terms @var{X} and @var{Y}.
+   Is true iff @var{X} and @var{Y} are unifiable.").
 
 unify_with_occurs_check(X,Y) :- var(X), !, uwoc_var(Y, X).
 unify_with_occurs_check(X,Y) :- atomic(X), !, X=Y.
@@ -79,13 +120,13 @@ noocurrs_(S, V) :-
         functor(S, _, A),
         noocurrs_args(A, S, V).
 
-% -----------------------------------------------------------------------------
-%% Version comment prompting control for this file.
-%% Local Variables: 
-%% mode: CIAO
-%% update-version-comments: "../version"
-%% End:
-% -----------------------------------------------------------------------------
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+140,2003/12/31,11:50*14+'CET'), "Added
+   documetation.  (Edison Mera)").
+
+:- comment(version(1*11+139,2003/12/31,11:48*35+'CET'), "Changed
+   comment to assertion version control.  (Edison Mera)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

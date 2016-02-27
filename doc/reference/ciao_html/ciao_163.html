@@ -1,45 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - arrays (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC676" HREF="ciao_toc.html#TOC676">arrays (library)</A></H1>
+<H1><A NAME="SEC680" HREF="ciao_toc.html#TOC680">Low-level Prolog to Java socket connection</A></H1>
 <P>
-<A NAME="IDX7217"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Lena Flood.
+<A NAME="IDX7188"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#3 (2002/5/23, 21:32:30 CEST)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-This module implements extendable arrays with logarithmic access time. It has been adapted from shared code written by David Warren and Fernando Pereira.
+<STRONG>Version of last change:</STRONG> 1.9#66 (2003/3/14, 12:48:24 CET)
+
+
+<P>
+ 
+
+
+<P>
+<A NAME="IDX7189"></A>
+<A NAME="IDX7190"></A>
+This module defines a low-level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
+<A NAME="IDX7191"></A>
+<CODE>javart</CODE> (Prolog to Java interface) or 
+<A NAME="IDX7192"></A>
+<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
 
 
 
 <UL>
-<LI><A HREF="ciao_163.html#SEC677">Usage and interface (arrays)</A>
-<LI><A HREF="ciao_163.html#SEC678">Documentation on exports (arrays)</A>
+<LI><A HREF="ciao_163.html#SEC681">Usage and interface (javasock)</A>
+<LI><A HREF="ciao_163.html#SEC682">Documentation on exports (javasock)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC677" HREF="ciao_toc.html#TOC677">Usage and interface (<CODE>arrays</CODE>)</A></H2>
+<H2><A NAME="SEC681" HREF="ciao_toc.html#TOC681">Usage and interface (<CODE>javasock</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +57,7 @@ This module implements extendable arrays with logarithmic access time. It has be
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(arrays)).</CODE>
+<CODE>:- use_module(library(javasock)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,20 +66,56 @@ This module implements extendable arrays with logarithmic access time. It has be
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7218"></A>
-<CODE>new_array/1</CODE>, 
-<A NAME="IDX7219"></A>
-<CODE>is_array/1</CODE>, 
-<A NAME="IDX7220"></A>
-<CODE>aref/3</CODE>, 
-<A NAME="IDX7221"></A>
-<CODE>arefa/3</CODE>, 
-<A NAME="IDX7222"></A>
-<CODE>arefl/3</CODE>, 
-<A NAME="IDX7223"></A>
-<CODE>aset/4</CODE>, 
-<A NAME="IDX7224"></A>
-<CODE>array_to_list/2</CODE>.
+<A NAME="IDX7193"></A>
+<CODE>bind_socket_interface/1</CODE>, 
+<A NAME="IDX7194"></A>
+<CODE>start_socket_interface/2</CODE>, 
+<A NAME="IDX7195"></A>
+<CODE>stop_socket_interface/0</CODE>, 
+<A NAME="IDX7196"></A>
+<CODE>join_socket_interface/0</CODE>, 
+<A NAME="IDX7197"></A>
+<CODE>java_query/2</CODE>, 
+<A NAME="IDX7198"></A>
+<CODE>java_response/2</CODE>, 
+<A NAME="IDX7199"></A>
+<CODE>prolog_query/2</CODE>, 
+<A NAME="IDX7200"></A>
+<CODE>prolog_response/2</CODE>, 
+<A NAME="IDX7201"></A>
+<CODE>is_connected_to_java/0</CODE>, 
+<A NAME="IDX7202"></A>
+<CODE>java_debug/1</CODE>, 
+<A NAME="IDX7203"></A>
+<CODE>java_debug_redo/1</CODE>, 
+<A NAME="IDX7204"></A>
+<CODE>start_threads/0</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7205"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX7206"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7207"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX7208"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7209"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX7210"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX7211"></A>
+<CODE>javall/jtopl</CODE>, 
+<A NAME="IDX7212"></A>
+<CODE>sockets/sockets_io</CODE>.
 
 </UL>
 
@@ -79,21 +125,115 @@ This module implements extendable arrays with logarithmic access time. It has be
 
 
 
-<H2><A NAME="SEC678" HREF="ciao_toc.html#TOC678">Documentation on exports (<CODE>arrays</CODE>)</A></H2>
+<H2><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<P>
+<A NAME="IDX7213"></A>
+<A NAME="IDX7214"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>bind_socket_interface/1:</B>
+<DD><A NAME="IDX7215"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>bind_socket_interface(+Port)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given an port number, waits for a connection request from the Java side, creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Port</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7216"></A>
+<A NAME="IDX7217"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/2:</B>
+<DD><A NAME="IDX7218"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address, +Stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Address</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7219"></A>
+<A NAME="IDX7220"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
+<DD><A NAME="IDX7221"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7222"></A>
+<A NAME="IDX7223"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
+<DD><A NAME="IDX7224"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
+
+</UL>
+
+</DL>
+
 <P>
 <A NAME="IDX7225"></A>
 <A NAME="IDX7226"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>new_array/1:</B>
+<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
 <DD><A NAME="IDX7227"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>new_array(-Array)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_query(ThreadId, Query)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> returns an empty new array <CODE>Array</CODE>.
+<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>ThreadId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Query</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
@@ -102,16 +242,27 @@ This module implements extendable arrays with logarithmic access time. It has be
 <A NAME="IDX7228"></A>
 <A NAME="IDX7229"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>is_array/1:</B>
+<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
 <DD><A NAME="IDX7230"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>is_array(+Array)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_response(Id, Response)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Array</CODE> actually is an array.
+<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Id</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Response</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
@@ -120,16 +271,27 @@ This module implements extendable arrays with logarithmic access time. It has be
 <A NAME="IDX7231"></A>
 <A NAME="IDX7232"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>aref/3:</B>
+<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
 <DD><A NAME="IDX7233"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>aref(+Index,+Array,?Element)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_query(Id, Query)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> unifies <CODE>Element</CODE> to <CODE>Array</CODE>[<CODE>Index</CODE>], or fails if <CODE>Array</CODE>[<CODE>Index</CODE>] has not been set.
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Id</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Query</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
@@ -138,16 +300,27 @@ This module implements extendable arrays with logarithmic access time. It has be
 <A NAME="IDX7234"></A>
 <A NAME="IDX7235"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arefa/3:</B>
+<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
 <DD><A NAME="IDX7236"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>arefa(+Index,+Array,?Element)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_response(Id, Response)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that it unifies <CODE>Element</CODE> with a new array if <CODE>Array</CODE>[<CODE>Index</CODE>] is undefined. This is useful for multidimensional arrays implemented as arrays of arrays.
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Id</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Response</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
@@ -156,15 +329,15 @@ This module implements extendable arrays with logarithmic access time. It has be
 <A NAME="IDX7237"></A>
 <A NAME="IDX7238"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arefl/3:</B>
+<DT><span class="define">PREDICATE:</span> <B>is_connected_to_java/0:</B>
 <DD><A NAME="IDX7239"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>arefl(+Index,+Array,?Element)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that <CODE>Element</CODE> appears as <CODE>[]</CODE> for undefined cells. Thus, <CODE>arefl(_,_,[])</CODE> always succeeds no matter what you give in the first or second args.
+<LI><EM>Description:</EM> Checks if the connection to Java is established.
 
 </UL>
 
@@ -174,17 +347,13 @@ This module implements extendable arrays with logarithmic access time. It has be
 <A NAME="IDX7240"></A>
 <A NAME="IDX7241"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>aset/4:</B>
+<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
 <DD><A NAME="IDX7242"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>aset(+Index,+Array,Element,-NewArray)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> unifies <CODE>NewArray</CODE> with the result of setting <CODE>Array</CODE>[<CODE>Index</CODE>] to <CODE>Element</CODE>.
-
-</UL>
 
 </DL>
 
@@ -192,21 +361,35 @@ This module implements extendable arrays with logarithmic access time. It has be
 <A NAME="IDX7243"></A>
 <A NAME="IDX7244"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>array_to_list/2:</B>
+<DT><span class="define">PREDICATE:</span> <B>java_debug_redo/1:</B>
 <DD><A NAME="IDX7245"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>array_to_list(+Array,-List)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7246"></A>
+<A NAME="IDX7247"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>start_threads/0:</B>
+<DD><A NAME="IDX7248"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> returns a <CODE>List</CODE> of pairs Index-Element of all the elements of <CODE>Array</CODE> that have been set.
+<LI><EM>Description:</EM> Starts the threads that will handle the connection to Java. This predicate is declared public for internal purposes, and it is not intended to be used by a user program.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

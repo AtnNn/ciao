@@ -1,7 +1,10 @@
 :- module(field_value,
         [fieldValue/6,
-         mfstringValue/5], 
+         mfstringValue/5,
+         parse/1], 
          [dcg,assertions,isomodes]).
+
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
 
 
 %:- include(library(assertions)).
@@ -20,6 +23,9 @@
 %:- discontiguous([token_read/3]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+:- comment(version(1*9+175,2003/12/04,17:47*48+'CET'), "Added author
+info.  (Manuel Carro)").
+
 :- comment(version(0*1+0,1998/12/09,13:51*13+'MET'), "Documentation added.
    (Goran Smedback)").
 
@@ -653,8 +659,9 @@ read_image(In,Out,[Im]) -->
 %% Version comment prompting control for this file.
 %% Local Variables: 
 %% mode: CIAO
-%% update-version-comments: "../../version"
 %% End:
+
+:- comment(version_maintenance,dir('../../version')).
 
 
 

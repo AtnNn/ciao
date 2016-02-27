@@ -31,5 +31,5 @@
 ;; in the Ciao library directory 'DOTcshrc' and 'DOTprofile' files with
 ;; the right paths which can be included directly in your startup scripts):
 ;; 
-;; setenv INFOPATH /usr/local/info:/usr/info:/tmp/doc
+;; setenv INFOPATH /usr/local/info:/usr/info:/home/clip/public_html/Local/lpdoc_docs/Ciao
 ;; ------------------------------------------------------------------------

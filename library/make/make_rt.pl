@@ -12,6 +12,8 @@
 
 :- comment(title,"Predicates Available When Using The Make Package").
 
+:- comment(author, "Manuel Hermenegildo").
+
 :- comment(usage,"This module is loaded automatically when the
    @lib{make} library package is used.").
 
@@ -237,8 +239,10 @@ call_unknown_nofail(_G).
 
 %% :- meta_predicate call_unknown(goal).
 
-% This is a local copy, to make package independent.
-% Complication is so that flags are left as they were also upon failure.
+:- comment(call_unknown(G),"This is a local copy, to make package
+   independent.  Complication is so that flags are left as they were
+   also upon failure.").
+
 call_unknown(G) :-
 	prolog_flag(unknown,Old,fail),
 	prolog_flag(quiet,QOld,error),
@@ -259,16 +263,22 @@ call_unknown(G) :-
  
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*11+129,2003/12/30,22:08*24+'CET'), "Added comment
+   for call_unknown/2. (Edison Mera)").
+
+:- comment(version(1*11+128,2003/12/30,22:04*03+'CET'), "Added comment
+   author. (Edison Mera)").
+
 :- comment(version(1*9+26,2002/11/20,12:57*08+'CET'), "Major
    improvement to @lib{make} library, and adaptation to Ciao
    1.9. Added new examples. Improved documentation of dependency
-   rules.  (Manuel Hermenegildo)").
+   rules. (Manuel Hermenegildo)").
 
 :- comment(version(1*9+25,2002/11/20,12:55*34+'CET'), "In @lib{make}
    lib: not supporting the use of 'user' makefiles any more (too hard
    to adapt everything to their scoping rules), i.e., at the moment
    makefiles must be modules. May add support for user files again in
-   the future.  (Manuel Hermenegildo)").
+   the future. (Manuel Hermenegildo)").
 
 %%------------------------------------------------------------------------
 

@@ -1,106 +1,415 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
+<TITLE>The Ciao Prolog System               - Variable name dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC725" HREF="ciao_toc.html#TOC725">Crossed-references of a program</A></H1>
+<H1><A NAME="SEC733" HREF="ciao_toc.html#TOC733">Variable name dictionaries</A></H1>
+<P>
+<A NAME="IDX7746"></A>
+
 
 <P>
 <STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-The libraries involved are as follows: 
+<STRONG>Version of last change:</STRONG> 1.11#35 (2003/8/28, 16:15:20 CEST)
+
+
 
 <UL>
-<LI>
-
-<A NAME="IDX7617"></A>
-<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
-<LI>
-
-<A NAME="IDX7618"></A>
-<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
-<LI>
-
-<A NAME="IDX7619"></A>
-<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
-<LI>
-
-<A NAME="IDX7620"></A>
-<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
-<LI>
-
-<A NAME="IDX7621"></A>
-<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
+<LI><A HREF="ciao_180.html#SEC734">Usage and interface (vndict)</A>
+<LI><A HREF="ciao_180.html#SEC735">Documentation on exports (vndict)</A>
 </UL>
 
+
+
+<H2><A NAME="SEC734" HREF="ciao_toc.html#TOC734">Usage and interface (<CODE>vndict</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(vndict)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7747"></A>
+<CODE>create_dict/2</CODE>, 
+<A NAME="IDX7748"></A>
+<CODE>complete_dict/3</CODE>, 
+<A NAME="IDX7749"></A>
+<CODE>complete_vars_dict/3</CODE>, 
+<A NAME="IDX7750"></A>
+<CODE>prune_dict/3</CODE>, 
+<A NAME="IDX7751"></A>
+<CODE>sort_dict/2</CODE>, 
+<A NAME="IDX7752"></A>
+<CODE>dict2varnamesl/2</CODE>, 
+<A NAME="IDX7753"></A>
+<CODE>varnamesl2dict/2</CODE>, 
+<A NAME="IDX7754"></A>
+<CODE>find_name/4</CODE>, 
+<A NAME="IDX7755"></A>
+<CODE>rename/2</CODE>, 
+<A NAME="IDX7756"></A>
+<CODE>vars_names_dict/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7757"></A>
+<CODE>null_dict/1</CODE>, 
+<A NAME="IDX7758"></A>
+<CODE>varname/1</CODE>, 
+<A NAME="IDX7759"></A>
+<CODE>varnamesl/1</CODE>, 
+<A NAME="IDX7760"></A>
+<CODE>varnamedict/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7761"></A>
+<CODE>idlists</CODE>, 
+<A NAME="IDX7762"></A>
+<CODE>terms_vars</CODE>, 
+<A NAME="IDX7763"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX7764"></A>
+<CODE>sort</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC735" HREF="ciao_toc.html#TOC735">Documentation on exports (<CODE>vndict</CODE>)</A></H2>
 <P>
-The first two are intended to be used by loading in 
-<A NAME="IDX7622"></A>
-<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
+<A NAME="IDX7765"></A>
+<A NAME="IDX7766"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>null_dict/1:</B>
+<DD><A NAME="IDX7767"></A>
 
 
 <P>
-The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
+<STRONG>Usage:</STRONG> <CODE>null_dict(D)</CODE>
 
-<PRE>
-[ciao/etc]&#62; ciaosh
-Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
-?- use_module(xmrefs).
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is an empty dictionary.
 
-yes
-?- set_flag(X).
+</UL>
 
-X = 3 ? 
-
-yes
-?- set_files([xfrefs, xmrefs,
-              library(xrefs),
-              library('xrefs/mrefs'),
-              library('xrefs/pxrefs'),
-              library('xrefs/xrefs2graph'),
-              library('xrefs/xrefsbuild'),
-              library('xrefs/xrefsread')
-	     ]).
-
-yes
-?- xmrefs.
-
-</PRE>
+</DL>
 
 <P>
-so that it is displayed by daVinci as: 
+<A NAME="IDX7768"></A>
+<A NAME="IDX7769"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>create_dict/2:</B>
+<DD><A NAME="IDX7770"></A>
 
 
 <P>
-<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
+<STRONG>Usage:</STRONG> <CODE>create_dict(Term, Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Dict</CODE> has names for all variables in <CODE>Term</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7771"></A>
+<A NAME="IDX7772"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>complete_dict/3:</B>
+<DD><A NAME="IDX7773"></A>
 
 
 <P>
-The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
+<STRONG>Usage:</STRONG> <CODE>complete_dict(+Dict, +Term, -NewDict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of <CODE>Term</CODE> not yet in <CODE>Dict</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7774"></A>
+<A NAME="IDX7775"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>complete_vars_dict/3:</B>
+<DD><A NAME="IDX7776"></A>
 
 
 <P>
-<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
+<STRONG>Usage:</STRONG> <CODE>complete_vars_dict(+Dict, +Vars, -NewDict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of the list <CODE>Vars</CODE> not yet in <CODE>Dict</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7777"></A>
+<A NAME="IDX7778"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prune_dict/3:</B>
+<DD><A NAME="IDX7779"></A>
 
 
 <P>
-For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
+<STRONG>Usage:</STRONG> <CODE>prune_dict(+Term, +Dict, -NewDict)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> reduced to just the variables of <CODE>Term</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7780"></A>
+<A NAME="IDX7781"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sort_dict/2:</B>
+<DD><A NAME="IDX7782"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sort_dict(D, Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is sorted into <CODE>Dict</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>D</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7783"></A>
+<A NAME="IDX7784"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dict2varnamesl/2:</B>
+<DD><A NAME="IDX7785"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dict2varnamesl(Dict, VNs)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates <CODE>Dict</CODE> to <CODE>VNs</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+ (<CODE>vndict:varnamesl/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7786"></A>
+<A NAME="IDX7787"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>varnamesl2dict/2:</B>
+<DD><A NAME="IDX7788"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varnamesl2dict(VNs, Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates <CODE>VNs</CODE> to <CODE>Dict</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+ (<CODE>vndict:varnamesl/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7789"></A>
+<A NAME="IDX7790"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>find_name/4:</B>
+<DD><A NAME="IDX7791"></A>
+
+
+<P>
+<CODE>find_name(Vars, Names, V, Name)</CODE>
+
+
+<P>
+Given that <CODE>vars_names_dict(Dict,Vars,Names)</CODE> holds, it acts as <CODE>rename(X,Dict)</CODE>, but the name of <CODE>X</CODE> is given as <CODE>Name</CODE> instead of unified with it.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7792"></A>
+<A NAME="IDX7793"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rename/2:</B>
+<DD><A NAME="IDX7794"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>rename(Term, Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies each variable in <CODE>Term</CODE> with its name in <CODE>Dict</CODE>. If no name is found, a new name is created.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7795"></A>
+<A NAME="IDX7796"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>varname/1:</B>
+<DD><A NAME="IDX7797"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varname(N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is term representing a variable name.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7798"></A>
+<A NAME="IDX7799"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>varnamesl/1:</B>
+<DD><A NAME="IDX7800"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varnamesl(D)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7801"></A>
+<A NAME="IDX7802"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>varnamedict/1:</B>
+<DD><A NAME="IDX7803"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varnamedict(D)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary of variable names.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7804"></A>
+<A NAME="IDX7805"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vars_names_dict/3:</B>
+<DD><A NAME="IDX7806"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vars_names_dict(Dict, Vars, Names)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Varss</CODE> is a sorted list of variables, and <CODE>Names</CODE> is a list of their names, which correspond in the same order.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+
+<CODE>Vars</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>Names</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,50 +1,67 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Independent and-parallel execution</TITLE>
+<TITLE>The Ciao Prolog System               - Functional notation</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC415" HREF="ciao_toc.html#TOC415">Independent and-parallel execution</A></H1>
+<H1><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Functional notation</A></H1>
 <P>
-<A NAME="IDX4804"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Manuel Hermenegildo.
+<A NAME="IDX4837"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> The CLIP Group.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#160 (2001/11/27, 12:35:53 CET)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-<STRONG>Note:</STRONG> This is just a partial first shot. The real library still needs to be written. Not difficult, just no time... 
+<STRONG>Version of last change:</STRONG> 1.11#118 (2003/12/22, 19:23:1 CET)
 
 
 <P>
-This library will eventually allow and-parallel execution of goals in (Herbrand-)independent fashion. It resembles the execution rules of &#38;-Prolog [HG90]. Basically, goals are run in and-parallel <EM>provided that their arguments do not share bindings</EM>, i.e., are not bound to terms which contain a common variable.
+This library package allows the use of functional notation in a Ciao module/program. 
 
+
+<P>
+All function applications (definitions) are translated to goals (predicate definitions) where another argument to hold the result of the function is added to the right. Function applications need to be preceded by the operator <CODE>~</CODE>, or the functor be declared as such by using the declaration 
+<A NAME="IDX4838"></A>
+<CODE>function/1</CODE>. There is an exception: all functions understood by 
+<A NAME="IDX4839"></A>
+<CODE>is/2</CODE> are considered as functions by default. This feature can be disabled by a declaration <CODE>:- function(arith(false))</CODE> (and reverted by using <CODE>true</CODE> instead of <CODE>false</CODE>). When interpreting arithmetic functors as functions, function uses inside 
+<A NAME="IDX4840"></A>
+<CODE>is/2</CODE> are not handled to avoid loops, so it is recommended to use 
+<A NAME="IDX4841"></A>
+<CODE>(=)/2</CODE> instead. A functor normally considered as a function call can be escaped using the prefix operator <CODE>^</CODE>. Function definitions can be written by using the binary operator <CODE>:=</CODE>, and can have also body. Example of use: 
+
+<PRE>
+:- use_package(functions).
+
+fib(0) := 0.
+fib(1) := 1.
+fib(N) := ~fib(N-1) + ~fib(N-2) :- integer(N), N &#62; 1.
+
+write_fib(N):-
+        message(['The ',N,'. Fibonacci number is: ',~fib(N),'.']).
+
+</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_101.html#SEC416">Usage and interface (andprolog)</A>
-<LI><A HREF="ciao_101.html#SEC417">Documentation on internals (andprolog)</A>
-<LI><A HREF="ciao_101.html#SEC418">Known bugs and planned improvements (andprolog)</A>
+<LI><A HREF="ciao_101.html#SEC414">Usage and interface (functions)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Usage and interface (<CODE>andprolog</CODE>)</A></H2>
+<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Usage and interface (<CODE>functions</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,142 +69,16 @@ This library will eventually allow and-parallel execution of goals in (Herbrand-
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(andprolog).</CODE>
+<CODE>:- use_package(functions).</CODE>
 
 or
 
-<CODE>:- module(...,...,[andprolog]).</CODE>
-
-<LI><STRONG>New operators defined:</STRONG>
-
-<A NAME="IDX4805"></A>
-<CODE>@&#38;/2</CODE> [950,xfy].
+<CODE>:- module(...,...,[functions]).</CODE>
 </UL>
 
 </div class="cartouche">
 
-
-
-<H2><A NAME="SEC417" HREF="ciao_toc.html#TOC417">Documentation on internals (<CODE>andprolog</CODE>)</A></H2>
-<P>
-<A NAME="IDX4806"></A>
-<A NAME="IDX4807"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>@&#38;/2:</B>
-<DD><A NAME="IDX4808"></A>
-
-
-<P>
-<CODE>@&#38;(GoalA,GoalB)</CODE>
-
-
-<P>
-<CODE>GoalA</CODE> and <CODE>GoalB</CODE> are run in independent and-parallel fashion. This is just a first sketch, and valid only for deterministic independent goals. The use is as 
-
-
-
-<PRE>
-q:- a &#38; b.
-</PRE>
-
-<P>
-which would start <CODE>a</CODE> and <CODE>b</CODE> in separate threads (possibly in parallalel, if the machine architecture and operating system allows that), and continue when <STRONG>both</STRONG> have finished. This type of execution is safe only when <CODE>a</CODE> and <CODE>b</CODE> are independent in the sense of variable sharing. This condition can be tested with the 
-<A NAME="IDX4809"></A>
-<CODE>indep/2</CODE> predicate. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX4810"></A>
-<A NAME="IDX4811"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>active_agents/1:</B>
-<DD><A NAME="IDX4812"></A>
-
-
-<P>
-<CODE>active_agents(NumberOfAgents)</CODE>
-
-
-<P>
-Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to execute. As for now, those agents are resource-consuming, even when they are just looking for work, and not executing any user goals.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4813"></A>
-<A NAME="IDX4814"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>indep/2:</B>
-<DD><A NAME="IDX4815"></A>
-
-
-<P>
-<CODE>indep(X,Y)</CODE>
-
-
-<P>
-<CODE>X</CODE> and <CODE>Y</CODE> are 
-<A NAME="IDX4816"></A>
-<A NAME="IDX4817"></A>
-<EM>independent</EM>, i.e., they are bound to terms which have no variables in common. For example, <CODE>indep(X,Y)</CODE> holds for <CODE>X=f(Z),Y=g(K)</CODE> and also for <CODE>X=f(a),Y=X</CODE> (since both <CODE>X</CODE> and <CODE>Y</CODE> are bound to ground terms). It does not hold for <CODE>X=f(Z),Y=g(Z)</CODE> and for <CODE>X=Y</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4818"></A>
-<A NAME="IDX4819"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>indep/1:</B>
-<DD><A NAME="IDX4820"></A>
-
-
-<P>
-<CODE>indep(X)</CODE>
-
-
-<P>
-<CODE>X</CODE> is a list of lists of length two, i.e., a list of the form <CODE>[[T1, T2], [T3, T4], ...]</CODE>. The variables in each pair of the list <CODE><CODE>X</CODE></CODE> are tested for independence using 
-<A NAME="IDX4821"></A>
-<CODE>indep/2</CODE>. This list-of-pairs format is the output of several independdnce analyzers for pair sharing.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC418" HREF="ciao_toc.html#TOC418">Known bugs and planned improvements (<CODE>andprolog</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-<STRONG>Beware:</STRONG> the current code is just a partial first shot. It is provided for the sole purpose of experimentation and development.
-
-<LI>
-
-The fact that only the first solution is returned for the conjunction is due to performance issues (and lack of time), and we expect to remove it in a near future.
-
-<LI>
-
-CGEs (i.e., <CODE>=&#62;</CODE>) are not supported.
-
-<LI>
-
-The 
-<A NAME="IDX4822"></A>
-<CODE>indep/1</CODE>, 
-<A NAME="IDX4823"></A>
-<CODE>indep/2</CODE>, and 
-<A NAME="IDX4824"></A>
-<CODE>ground/1</CODE> tests are not very efficient; they will be replaced by native versions (taken from the &#38;-Prolog code) in the future.
-</UL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

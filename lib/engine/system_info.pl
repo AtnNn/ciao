@@ -26,12 +26,11 @@
         get_arch/1,
         get_os/1,
         this_module/1,
-        current_module/1,
         ciaolibdir/1]).
 
 %%---------------------------------------------------------------------
 
-:- true pred get_arch(?ArchDescriptor) :: atm + native #
+:- true pred get_arch(?ArchDescriptor) :: atm #
 	"Unifies @var{ArchDescriptor} with a simple atom which describes
          the computer architecture currently executing the predicate.".
 
@@ -58,7 +57,7 @@ no
 
 %%---------------------------------------------------------------------
 
-:- true pred get_os(?OsDescriptor) :: atm + native #
+:- true pred get_os(?OsDescriptor) :: atm #
 	"Unifies @var{OsDescriptor} with a simple atom which describes
          the running Operating System when predicate was called.".
 
@@ -100,9 +99,11 @@ no
          from user programs.
         ").
 
+current_module(Module) :- '$current_module'(Module).
+
 %%---------------------------------------------------------------------
 
-:- pred ciaolibdir(CiaoPath) :: atm(CiaoPath) + native #
+:- pred ciaolibdir(CiaoPath) :: atm(CiaoPath) #
 	"@var{CiaoPath} is the path to the root of the Ciao
 	libraries. Inside this directory, there are the directories
 	'lib', 'library' and 'contrib', which contain library modules.".
@@ -113,7 +114,7 @@ no
 
 this_module(M, M).
 
-:- pred this_module(Module) :: internal_module_id + native #
+:- pred this_module(Module) :: internal_module_id #
 	"@var{Module} is the internal module identifier for current module.".
 
 %%---------------------------------------------------------------------
@@ -124,7 +125,7 @@ this_module(M, M).
 	with an argument different for each user file, for
 	other modules is just the name of the module (as an atom).").
 
-:- prop internal_module_id(M) + native #
+:- prop internal_module_id(M) #
 	"@var{M} is an internal module identifier".
 
 internal_module_id(user(M)) :-
@@ -133,6 +134,10 @@ internal_module_id(M) :-
 	atm(M).
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+9,2003/04/07,14:01*46+'CEST'), "
+   Define current_module/1 as a rename of '$current_module'/1.  (Jose
+   Morales)").
 
 :- comment(version(1*3+13,1999/07/02,18:49*49+'MEST'), "Updated
    documentation (Daniel Cabeza Gras)").

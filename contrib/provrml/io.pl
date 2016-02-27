@@ -12,6 +12,8 @@
 		iso,
 		regtypes]).
 
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
+
 :- use_module(library(lists),[append/3]).
 %:- use_module(library(basicprops)).
 :- use_module(library(format)).

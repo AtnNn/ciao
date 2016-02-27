@@ -141,3 +141,22 @@ two_or_three(3).
 
 switch(on).
 switch(off).
+
+%% *** Delete this comment after reading: it is only a reminder! ***
+%% 
+%% The "assertions" library needs to be included in order to support
+%% ":- comment(...,...)." declarations such as below, i.e., insert: 
+%% 
+%% :- module(_,_,[assertions]).
+%% 
+%% At the beginning of the file:
+%% The following version comment(s) can be moved elsewhere in the 
+%% file. Subsequent version comments will always be placed above 
+%% the last one inserted.
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+71,2003/12/19,16:54*53+'CET'), "Documentation
+   revised.  (Edison Mera)").
+

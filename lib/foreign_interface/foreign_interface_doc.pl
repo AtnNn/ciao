@@ -194,7 +194,7 @@ versions of these operations which can be freely intermixed.  Using
 one version or another is a matter of taste and convenience.  We list
 below the prototypes of the primitives in order of complexity.
 
-Throughout this section, @b{true}, when referred to a boolean value,
+Throughout this section, @bf{true}, when referred to a boolean value,
 correspond to the integer value @tt{1}, and @bf{false} correspond to
 the integer value @tt{0}, as is customary in C boolean expressions.
 These values also available as the (predefined) constants

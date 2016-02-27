@@ -14,6 +14,8 @@
                        assertions,regtypes
                      ]).
 
+:- use_module(engine(hiord_rt), [call/1]).
+
 %% Please keep in alphabetical order!
 
 %% These definitions should be

@@ -1,43 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Labeled graph-processing utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Double linked list</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC701" HREF="ciao_toc.html#TOC701">Labeled graph-processing utilities</A></H1>
+<H1><A NAME="SEC702" HREF="ciao_toc.html#TOC702">Double linked list</A></H1>
 <P>
-<A NAME="IDX7437"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> F. Bueno.
+<A NAME="IDX7464"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> David Trallero Mena.
 
 
 <P>
-See the comments for the 
-<A NAME="IDX7438"></A>
-<CODE>ugraphs</CODE> library.
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#116 (2003/12/1, 22:4:57 CET)
+
+
+<P>
+This library allows the user to work with double linked lists. An index is used for referencing the current element in the list. Such index can be modified by <EM>next</EM> and <EM>prev</EM> predicated. The value of the current index can be obtained with <EM>top</EM> predicate
 
 
 
 <UL>
-<LI><A HREF="ciao_171.html#SEC702">Usage and interface (lgraphs)</A>
-<LI><A HREF="ciao_171.html#SEC703">Documentation on exports (lgraphs)</A>
+<LI><A HREF="ciao_171.html#SEC703">Usage and interface (ddlist)</A>
+<LI><A HREF="ciao_171.html#SEC704">Documentation on exports (ddlist)</A>
+<LI><A HREF="ciao_171.html#SEC705">Other information (ddlist)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC702" HREF="ciao_toc.html#TOC702">Usage and interface (<CODE>lgraphs</CODE>)</A></H2>
+<H2><A NAME="SEC703" HREF="ciao_toc.html#TOC703">Usage and interface (<CODE>ddlist</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -45,7 +48,7 @@ See the comments for the
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(lgraphs)).</CODE>
+<CODE>:- use_module(library(ddlist)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -54,13 +57,33 @@ See the comments for the
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7439"></A>
-<CODE>vertices_edges_to_lgraph/3</CODE>.
+<A NAME="IDX7465"></A>
+<CODE>null_list/1</CODE>, 
+<A NAME="IDX7466"></A>
+<CODE>next/2</CODE>, 
+<A NAME="IDX7467"></A>
+<CODE>prev/2</CODE>, 
+<A NAME="IDX7468"></A>
+<CODE>insert/3</CODE>, 
+<A NAME="IDX7469"></A>
+<CODE>insert_after/3</CODE>, 
+<A NAME="IDX7470"></A>
+<CODE>delete/2</CODE>, 
+<A NAME="IDX7471"></A>
+<CODE>delete_after/2</CODE>, 
+<A NAME="IDX7472"></A>
+<CODE>top/2</CODE>, 
+<A NAME="IDX7473"></A>
+<CODE>rewind/2</CODE>, 
+<A NAME="IDX7474"></A>
+<CODE>forward/2</CODE>, 
+<A NAME="IDX7475"></A>
+<CODE>length/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX7440"></A>
-<CODE>lgraph/2</CODE>.
+<A NAME="IDX7476"></A>
+<CODE>ddlist/1</CODE>.
 
 </UL>
 
@@ -71,10 +94,8 @@ See the comments for the
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7441"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX7442"></A>
-<CODE>sets</CODE>.
+<A NAME="IDX7477"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -84,40 +105,393 @@ See the comments for the
 
 
 
-<H2><A NAME="SEC703" HREF="ciao_toc.html#TOC703">Documentation on exports (<CODE>lgraphs</CODE>)</A></H2>
+<H2><A NAME="SEC704" HREF="ciao_toc.html#TOC704">Documentation on exports (<CODE>ddlist</CODE>)</A></H2>
 <P>
-<A NAME="IDX7443"></A>
-<A NAME="IDX7444"></A>
+<A NAME="IDX7478"></A>
+<A NAME="IDX7479"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>lgraph/2:</B>
-<DD><A NAME="IDX7445"></A>
+<DT><span class="define">PREDICATE:</span> <B>null_list/1:</B>
+<DD><A NAME="IDX7480"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>lgraph(Graph,Type)</CODE>
+<STRONG>Usage:</STRONG> <CODE>null_list(?NullList)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a labeled graph of <CODE>Type</CODE> terms.
+<LI><EM>Description:</EM> <CODE>NullList</CODE> is an empty list
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>A</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>A</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7446"></A>
-<A NAME="IDX7447"></A>
+<A NAME="IDX7481"></A>
+<A NAME="IDX7482"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_lgraph/3:</B>
-<DD><A NAME="IDX7448"></A>
+<DT><span class="define">PREDICATE:</span> <B>next/2:</B>
+<DD><A NAME="IDX7483"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>next(OldList, NewList)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> is <CODE>OldList</CODE> but index is set to next element of current element of OldList.
+
+It satisfies next(A,B),prev(B,A) 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>OldList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
 
 </DL>
 
+<P>
+<A NAME="IDX7484"></A>
+<A NAME="IDX7485"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prev/2:</B>
+<DD><A NAME="IDX7486"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prev(OldList, NewList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> is <CODE>OldList</CODE> but index is set to previous element of current element of <CODE>OldList</CODE>op) of <CODE>OldList</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>OldList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7487"></A>
+<A NAME="IDX7488"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
+<DD><A NAME="IDX7489"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>insert(List, Element, NewList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> is like <CODE>List</CODE> but with <CODE>Element</CODE> inserted _BEFORE_ the current index
+
+It satisfies insert( X , A , Xp ) , delete( Xp , X ). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>List</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7490"></A>
+<A NAME="IDX7491"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>insert_after/3:</B>
+<DD><A NAME="IDX7492"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>insert_after(List, Element, NewList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> is like <CODE>List</CODE> but with <CODE>Element</CODE> inserted _AFTER_ the current index
+
+It satisfies insert_after( X , A , Xp ) , delete_after( Xp , X ). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>List</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7493"></A>
+<A NAME="IDX7494"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete/2:</B>
+<DD><A NAME="IDX7495"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>delete(OldList, NewList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> does not have the previous element (top(prev)) of <CODE>OldList</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>OldList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7496"></A>
+<A NAME="IDX7497"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete_after/2:</B>
+<DD><A NAME="IDX7498"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>delete_after(OldList, NewList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> does not have the current element (top) of <CODE>OldList</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>OldList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7499"></A>
+<A NAME="IDX7500"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>top/2:</B>
+<DD><A NAME="IDX7501"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>top(List, Element)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Element</CODE> is the element pointed by index
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>List</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7502"></A>
+<A NAME="IDX7503"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rewind/2:</B>
+<DD><A NAME="IDX7504"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>rewind(OldList, NewList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> is the <CODE>OldList</CODE> but index is set to 0
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>OldList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7505"></A>
+<A NAME="IDX7506"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>forward/2:</B>
+<DD><A NAME="IDX7507"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>forward(OldList, NewList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewList</CODE> is the <CODE>OldList</CODE> but index is set to lentgh of <CODE>NewList</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>OldList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+
+<CODE>NewList</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7508"></A>
+<A NAME="IDX7509"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>length/2:</B>
+<DD><A NAME="IDX7510"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>length(List, Len)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Len</CODE> is the length of the <CODE>List</CODE>
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>List</CODE> is double linked list
+ (<CODE>ddlist:ddlist/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7511"></A>
+<A NAME="IDX7512"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>ddlist/1:</B>
+<DD><A NAME="IDX7513"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ddlist(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is double linked list
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC705" HREF="ciao_toc.html#TOC705">Other information (<CODE>ddlist</CODE>)</A></H2>
+
+<P>
+ 
+
+
+<P>
+Two simple examples of the use of the ddlist library package follow. 
+
+
+
+<UL>
+<LI><A HREF="ciao_171.html#SEC706">Using insert_after</A>
+<LI><A HREF="ciao_171.html#SEC707">More Complex example</A>
+</UL>
+
+
+
+<H3><A NAME="SEC706" HREF="ciao_toc.html#TOC706">Using insert_after</A></H3>
+
+<P>
+
+
+
+<PRE>
+:- module( ddl1 , _ , [] ).
+
+:- use_module( library(ddlist) ).
+
+main(A,B):-
+        % L = []
+        null_list( L ),
+        % L = [1]
+        insert_after( L  , 1 , L1 ),
+        % L = [1,2]
+        insert_after( L1 , 2 , L2 ),
+        % L = [1,3,2]
+        insert_after( L2 , 3 , L3 ),
+        % L = [1,3,2] =&#62; A = [1]
+        top( L3 , A ),
+        % L = [3,2]
+        next( L3 , PL3 ),
+        % L = [3,2] =&#62; A = [3]
+        top( PL3 , B ).
+
+</PRE>
+
+<P>
+ 
+
+
+
+
+<H3><A NAME="SEC707" HREF="ciao_toc.html#TOC707">More Complex example</A></H3>
+
+<P>
+
+
+
+<PRE>
+:- module( ddl2 , _ , [] ).
+
+:- use_module( library(ddlist) ).
+
+main(A,B):-
+        % L = []
+        null_list( L ),
+        % L = [1]
+        insert_after( L  , 1 , L1 ),
+        % L = [1,2]
+        insert_after( L1 , 2 , L2 ),
+        % L = [1,2]
+        insert( L2 , 3 , L3 ),
+        % L = [3,1,2]
+        prev( L3 , PL3 ),
+        % L = [],
+        forward( PL3 , FOR ),
+        % L = [2]
+        prev( FOR , FOR1 ),
+        % L = [2] =&#62; A = 2
+        top( FOR1 , A ),
+        % L = [1,2]
+        prev( FOR1 , FOR2 ),
+        % L = [2]
+        delete_after( FOR2 , FOR3 ),
+        % L = [3,2]
+        prev( FOR3, FOR4 ),
+        % L = [3,2] =&#62; B = 3
+        top( FOR4 , B ).
+
+</PRE>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -2,6 +2,8 @@
 
 :- comment(title,"Using the persdb library").
 
+:- comment(author,"The CLIP Group").
+
 :- comment(module,"Through the following examples we will try to
 	illustrate the two mains ways of declaring and using
 	persistent predicates: statically (the preferred method) and
@@ -48,3 +50,22 @@
 ").
 
 main.
+
+%% *** Delete this comment after reading: it is only a reminder! ***
+%% 
+%% The "assertions" library needs to be included in order to support
+%% ":- comment(...,...)." declarations such as below, i.e., insert: 
+%% 
+%% :- module(_,_,[assertions]).
+%% 
+%% At the beginning of the file:
+%% The following version comment(s) can be moved elsewhere in the 
+%% file. Subsequent version comments will always be placed above 
+%% the last one inserted.
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+108,2003/12/22,18:03*39+'CET'), "Added comment
+   author.  (Edison Mera)").
+

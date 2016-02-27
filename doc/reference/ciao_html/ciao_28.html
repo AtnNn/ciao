@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Fast/concurrent update of facts</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_27.html">previous</A>, <A HREF="ciao_29.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_27.html">previous</A>, <A HREF="ciao_29.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC167" HREF="ciao_toc.html#TOC167">Fast/concurrent update of facts</A></H1>
+<H1><A NAME="SEC164" HREF="ciao_toc.html#TOC164">Fast/concurrent update of facts</A></H1>
 <P>
-<A NAME="IDX1881"></A>
+<A NAME="IDX1929"></A>
 
 
 <P>
@@ -20,50 +20,50 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_27.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#95 (2001/5/2, 12:18:6 CEST)
+<STRONG>Version of last change:</STRONG> 1.11#3 (2003/4/7, 13:48:19 CEST)
 
 
 <P>
-<A NAME="IDX1882"></A>
-<A NAME="IDX1883"></A>
+<A NAME="IDX1930"></A>
+<A NAME="IDX1931"></A>
 Prolog implementations traditionally implement the concept of 
-<A NAME="IDX1884"></A>
+<A NAME="IDX1932"></A>
 dynamic predicates: predicates which can be inspected or modified at run-time, adding or deleting individual clauses. The power of this feature comes at a cost: as new clause bodies can be arbitrarily added to the program, new predicate calls can arise which are not 'visible' at compile-time, thus complicating global analysis and optimization of the code. But it is the case that most of the time what the programmer wants is simply to store data, with the purpose of sharing it between search branches, predicates, or even execution threads. In Ciao the concept of data predicate serves this purpose: a data predicate is a predicate composed exclusively by facts, which can be inspected, and dynamically added or deleted, at run-time. Using data predicates instead of normal dynamic predicates brings benefits in terms of speed, but above all makes the code much easier to analyze automatically and thus allows better optimization.
-<A NAME="IDX1885"></A>
-<A NAME="IDX1886"></A>
-<A NAME="IDX1887"></A>
-<A NAME="IDX1888"></A>
+<A NAME="IDX1933"></A>
+<A NAME="IDX1934"></A>
+<A NAME="IDX1935"></A>
+<A NAME="IDX1936"></A>
 
 
 <P>
 Also, a special kind of data predicates exists, 
-<A NAME="IDX1889"></A>
-<A NAME="IDX1890"></A>
-<EM>concurrent predicates</EM>, which can be used to communicate/synchronize among different execution threads (see section <A HREF="ciao_86.html#SEC363">Low-level concurrency/multithreading primitives</A>). 
+<A NAME="IDX1937"></A>
+<A NAME="IDX1938"></A>
+<EM>concurrent predicates</EM>, which can be used to communicate/synchronize among different execution threads (see section <A HREF="ciao_88.html#SEC366">Low-level concurrency/multithreading primitives</A>). 
 
 
 <P>
 Data predicates must be declared through a 
-<A NAME="IDX1891"></A>
+<A NAME="IDX1939"></A>
 <CODE>data/1</CODE> declaration. Concurrent data predicates must be declared through a 
-<A NAME="IDX1892"></A>
+<A NAME="IDX1940"></A>
 <CODE>concurrent/1</CODE> declaration. 
 
 
 
 <UL>
-<LI><A HREF="ciao_28.html#SEC168">Usage and interface (data_facts)</A>
-<LI><A HREF="ciao_28.html#SEC169">Documentation on exports (data_facts)</A>
-<LI><A HREF="ciao_28.html#SEC170">Documentation on internals (data_facts)</A>
+<LI><A HREF="ciao_28.html#SEC165">Usage and interface (data_facts)</A>
+<LI><A HREF="ciao_28.html#SEC166">Documentation on exports (data_facts)</A>
+<LI><A HREF="ciao_28.html#SEC167">Documentation on internals (data_facts)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC168" HREF="ciao_toc.html#TOC168">Usage and interface (<CODE>data_facts</CODE>)</A></H2>
+<H2><A NAME="SEC165" HREF="ciao_toc.html#TOC165">Usage and interface (<CODE>data_facts</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -80,33 +80,33 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1893"></A>
+<A NAME="IDX1941"></A>
 <CODE>asserta_fact/1</CODE>, 
-<A NAME="IDX1894"></A>
+<A NAME="IDX1942"></A>
 <CODE>asserta_fact/2</CODE>, 
-<A NAME="IDX1895"></A>
+<A NAME="IDX1943"></A>
 <CODE>assertz_fact/1</CODE>, 
-<A NAME="IDX1896"></A>
+<A NAME="IDX1944"></A>
 <CODE>assertz_fact/2</CODE>, 
-<A NAME="IDX1897"></A>
+<A NAME="IDX1945"></A>
 <CODE>current_fact/1</CODE>, 
-<A NAME="IDX1898"></A>
+<A NAME="IDX1946"></A>
 <CODE>current_fact/2</CODE>, 
-<A NAME="IDX1899"></A>
+<A NAME="IDX1947"></A>
 <CODE>retract_fact/1</CODE>, 
-<A NAME="IDX1900"></A>
+<A NAME="IDX1948"></A>
 <CODE>retractall_fact/1</CODE>, 
-<A NAME="IDX1901"></A>
+<A NAME="IDX1949"></A>
 <CODE>current_fact_nb/1</CODE>, 
-<A NAME="IDX1902"></A>
+<A NAME="IDX1950"></A>
 <CODE>retract_fact_nb/1</CODE>, 
-<A NAME="IDX1903"></A>
+<A NAME="IDX1951"></A>
 <CODE>close_predicate/1</CODE>, 
-<A NAME="IDX1904"></A>
+<A NAME="IDX1952"></A>
 <CODE>open_predicate/1</CODE>, 
-<A NAME="IDX1905"></A>
+<A NAME="IDX1953"></A>
 <CODE>set_fact/1</CODE>, 
-<A NAME="IDX1906"></A>
+<A NAME="IDX1954"></A>
 <CODE>erase/1</CODE>.
 
 </UL>
@@ -117,13 +117,13 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC169" HREF="ciao_toc.html#TOC169">Documentation on exports (<CODE>data_facts</CODE>)</A></H2>
+<H2><A NAME="SEC166" HREF="ciao_toc.html#TOC166">Documentation on exports (<CODE>data_facts</CODE>)</A></H2>
 <P>
-<A NAME="IDX1907"></A>
-<A NAME="IDX1908"></A>
+<A NAME="IDX1955"></A>
+<A NAME="IDX1956"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>asserta_fact/1:</B>
-<DD><A NAME="IDX1909"></A>
+<DD><A NAME="IDX1957"></A>
 
 
 <P>
@@ -132,12 +132,8 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <P>
 <CODE>Fact</CODE> is added to the corresponding 
-<A NAME="IDX1910"></A>
+<A NAME="IDX1958"></A>
 data predicate. The fact becomes the first clause of the predicate concerned.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact)</CODE>.
 
 
 <P>
@@ -153,25 +149,21 @@ data predicate. The fact becomes the first clause of the predicate concerned.
 </DL>
 
 <P>
-<A NAME="IDX1911"></A>
-<A NAME="IDX1912"></A>
+<A NAME="IDX1959"></A>
+<A NAME="IDX1960"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>asserta_fact/2:</B>
-<DD><A NAME="IDX1913"></A>
+<DD><A NAME="IDX1961"></A>
 
 
 <P>
-<CODE>asserta_fact(Fact,Ref)</CODE>
+<CODE>asserta_fact(Fact, Ref)</CODE>
 
 
 <P>
 Same as 
-<A NAME="IDX1914"></A>
+<A NAME="IDX1962"></A>
 <CODE>asserta_fact/1</CODE>, instantiating <CODE>Ref</CODE> to a unique identifier of the asserted fact.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact,?)</CODE>.
 
 
 <P>
@@ -194,11 +186,11 @@ Same as
 </DL>
 
 <P>
-<A NAME="IDX1915"></A>
-<A NAME="IDX1916"></A>
+<A NAME="IDX1963"></A>
+<A NAME="IDX1964"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>assertz_fact/1:</B>
-<DD><A NAME="IDX1917"></A>
+<DD><A NAME="IDX1965"></A>
 
 
 <P>
@@ -207,12 +199,8 @@ Same as
 
 <P>
 <CODE>Fact</CODE> is added to the corresponding 
-<A NAME="IDX1918"></A>
+<A NAME="IDX1966"></A>
 data predicate. The fact becomes the last clause of the predicate concerned.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact)</CODE>.
 
 
 <P>
@@ -228,25 +216,21 @@ data predicate. The fact becomes the last clause of the predicate concerned.
 </DL>
 
 <P>
-<A NAME="IDX1919"></A>
-<A NAME="IDX1920"></A>
+<A NAME="IDX1967"></A>
+<A NAME="IDX1968"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>assertz_fact/2:</B>
-<DD><A NAME="IDX1921"></A>
+<DD><A NAME="IDX1969"></A>
 
 
 <P>
-<CODE>assertz_fact(Fact,Ref)</CODE>
+<CODE>assertz_fact(Fact, Ref)</CODE>
 
 
 <P>
 Same as 
-<A NAME="IDX1922"></A>
+<A NAME="IDX1970"></A>
 <CODE>assertz_fact/1</CODE>, instantiating <CODE>Ref</CODE> to a unique identifier of the asserted fact.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact,?)</CODE>.
 
 
 <P>
@@ -269,11 +253,11 @@ Same as
 </DL>
 
 <P>
-<A NAME="IDX1923"></A>
-<A NAME="IDX1924"></A>
+<A NAME="IDX1971"></A>
+<A NAME="IDX1972"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_fact/1:</B>
-<DD><A NAME="IDX1925"></A>
+<DD><A NAME="IDX1973"></A>
 
 
 <P>
@@ -282,14 +266,10 @@ Same as
 
 <P>
 Gives on backtracking all the facts defined as data or concurrent which unify with <CODE>Fact</CODE>. It is faster than calling the predicate explicitly, which do invoke the meta-interpreter. If the <CODE>Fact</CODE> has been defined as concurrent and has not been 
-<A NAME="IDX1926"></A>
+<A NAME="IDX1974"></A>
 closed, 
-<A NAME="IDX1927"></A>
+<A NAME="IDX1975"></A>
 <CODE>current_fact/1</CODE> will wait (instead of failing) for more clauses to appear after the last clause of <CODE>Fact</CODE> is returned.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>current_fact(fact)</CODE>.
 
 
 <P>
@@ -305,29 +285,25 @@ closed,
 </DL>
 
 <P>
-<A NAME="IDX1928"></A>
-<A NAME="IDX1929"></A>
+<A NAME="IDX1976"></A>
+<A NAME="IDX1977"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_fact/2:</B>
-<DD><A NAME="IDX1930"></A>
+<DD><A NAME="IDX1978"></A>
 
 
 <P>
-<CODE>current_fact(Fact,Ref)</CODE>
+<CODE>current_fact(Fact, Ref)</CODE>
 
 
 <P>
 <CODE>Fact</CODE> is a fact of a 
-<A NAME="IDX1931"></A>
+<A NAME="IDX1979"></A>
 data predicate and <CODE>Ref</CODE> is its reference identifying it uniquely.
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>current_fact(fact,?)</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>current_fact(+callable,-reference)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>current_fact(+callable, -reference)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> Gives on backtracking all the facts defined as data which unify with <CODE>Fact</CODE>, instantiating <CODE>Ref</CODE> to a unique identifier for each fact.
@@ -335,7 +311,7 @@ data predicate and <CODE>Ref</CODE> is its reference identifying it uniquely.
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>current_fact(?callable,+reference)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>current_fact(?callable, +reference)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> Given <CODE>Ref</CODE>, unifies <CODE>Fact</CODE> with the fact identified by it.
@@ -384,11 +360,11 @@ data predicate and <CODE>Ref</CODE> is its reference identifying it uniquely.
 </DL>
 
 <P>
-<A NAME="IDX1932"></A>
-<A NAME="IDX1933"></A>
+<A NAME="IDX1980"></A>
+<A NAME="IDX1981"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>retract_fact/1:</B>
-<DD><A NAME="IDX1934"></A>
+<DD><A NAME="IDX1982"></A>
 
 
 <P>
@@ -397,18 +373,14 @@ data predicate and <CODE>Ref</CODE> is its reference identifying it uniquely.
 
 <P>
 Unifies <CODE>Fact</CODE> with the first matching fact of a 
-<A NAME="IDX1935"></A>
+<A NAME="IDX1983"></A>
 data predicate, and then erases it. On backtracking successively unifies with and erases new matching facts. If <CODE>Fact</CODE> is declared as 
-<A NAME="IDX1936"></A>
+<A NAME="IDX1984"></A>
 concurrent and is non-
-<A NAME="IDX1937"></A>
+<A NAME="IDX1985"></A>
 closed, 
-<A NAME="IDX1938"></A>
+<A NAME="IDX1986"></A>
 <CODE>retract_fact/1</CODE> will wait for more clauses or for the closing of the predicate after the last matching clause has been removed.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact(fact)</CODE>.
 
 
 <P>
@@ -424,11 +396,11 @@ closed,
 </DL>
 
 <P>
-<A NAME="IDX1939"></A>
-<A NAME="IDX1940"></A>
+<A NAME="IDX1987"></A>
+<A NAME="IDX1988"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>retractall_fact/1:</B>
-<DD><A NAME="IDX1941"></A>
+<DD><A NAME="IDX1989"></A>
 
 
 <P>
@@ -437,12 +409,8 @@ closed,
 
 <P>
 Erase all the facts of a 
-<A NAME="IDX1942"></A>
+<A NAME="IDX1990"></A>
 data predicate unifying with <CODE>Fact</CODE>. Even if all facts are removed, the predicate continues to exist.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retractall_fact(fact)</CODE>.
 
 
 <P>
@@ -458,11 +426,11 @@ data predicate unifying with <CODE>Fact</CODE>. Even if all facts are removed, t
 </DL>
 
 <P>
-<A NAME="IDX1943"></A>
-<A NAME="IDX1944"></A>
+<A NAME="IDX1991"></A>
+<A NAME="IDX1992"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_fact_nb/1:</B>
-<DD><A NAME="IDX1945"></A>
+<DD><A NAME="IDX1993"></A>
 
 
 <P>
@@ -471,14 +439,10 @@ data predicate unifying with <CODE>Fact</CODE>. Even if all facts are removed, t
 
 <P>
 Behaves as 
-<A NAME="IDX1946"></A>
+<A NAME="IDX1994"></A>
 <CODE>current_fact/1</CODE> but a fact is never waited on even if it is 
-<A NAME="IDX1947"></A>
+<A NAME="IDX1995"></A>
 concurrent and non-closed.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>current_fact_nb(fact)</CODE>.
 
 
 <P>
@@ -494,11 +458,11 @@ concurrent and non-closed.
 </DL>
 
 <P>
-<A NAME="IDX1948"></A>
-<A NAME="IDX1949"></A>
+<A NAME="IDX1996"></A>
+<A NAME="IDX1997"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>retract_fact_nb/1:</B>
-<DD><A NAME="IDX1950"></A>
+<DD><A NAME="IDX1998"></A>
 
 
 <P>
@@ -507,16 +471,12 @@ concurrent and non-closed.
 
 <P>
 Behaves as 
-<A NAME="IDX1951"></A>
+<A NAME="IDX1999"></A>
 <CODE>retract_fact/1</CODE>, but never waits on a fact, even if it has been declared as 
-<A NAME="IDX1952"></A>
+<A NAME="IDX2000"></A>
 concurrent and is non-
-<A NAME="IDX1953"></A>
+<A NAME="IDX2001"></A>
 closed.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact_nb(fact)</CODE>.
 
 
 <P>
@@ -532,11 +492,11 @@ closed.
 </DL>
 
 <P>
-<A NAME="IDX1954"></A>
-<A NAME="IDX1955"></A>
+<A NAME="IDX2002"></A>
+<A NAME="IDX2003"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>close_predicate/1:</B>
-<DD><A NAME="IDX1956"></A>
+<DD><A NAME="IDX2004"></A>
 
 
 <P>
@@ -544,15 +504,11 @@ closed.
 
 
 <P>
-<A NAME="IDX1957"></A>
-<A NAME="IDX1958"></A>
+<A NAME="IDX2005"></A>
+<A NAME="IDX2006"></A>
 Changes the behavior of the predicate <CODE>Pred</CODE> if it has been declared as a 
-<A NAME="IDX1959"></A>
+<A NAME="IDX2007"></A>
 concurrent predicate: calls to this predicate will fail (instead of wait) if no more clauses of <CODE>Pred</CODE> are available.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>close_predicate(fact)</CODE>.
 
 
 <P>
@@ -568,11 +524,11 @@ concurrent predicate: calls to this predicate will fail (instead of wait) if no 
 </DL>
 
 <P>
-<A NAME="IDX1960"></A>
-<A NAME="IDX1961"></A>
+<A NAME="IDX2008"></A>
+<A NAME="IDX2009"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>open_predicate/1:</B>
-<DD><A NAME="IDX1962"></A>
+<DD><A NAME="IDX2010"></A>
 
 
 <P>
@@ -581,12 +537,8 @@ concurrent predicate: calls to this predicate will fail (instead of wait) if no 
 
 <P>
 Reverts the behavior of 
-<A NAME="IDX1963"></A>
+<A NAME="IDX2011"></A>
 concurrent predicate <CODE>Pred</CODE> to waiting instead of failing if no more clauses of <CODE>Pred</CODE> are available.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>open_predicate(fact)</CODE>.
 
 
 <P>
@@ -602,11 +554,11 @@ concurrent predicate <CODE>Pred</CODE> to waiting instead of failing if no more 
 </DL>
 
 <P>
-<A NAME="IDX1964"></A>
-<A NAME="IDX1965"></A>
+<A NAME="IDX2012"></A>
+<A NAME="IDX2013"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>set_fact/1:</B>
-<DD><A NAME="IDX1966"></A>
+<DD><A NAME="IDX2014"></A>
 
 
 <P>
@@ -615,7 +567,7 @@ concurrent predicate <CODE>Pred</CODE> to waiting instead of failing if no more 
 
 <P>
 Sets <CODE>Fact</CODE> as the unique fact of the corresponding 
-<A NAME="IDX1967"></A>
+<A NAME="IDX2015"></A>
 data predicate.
 
 
@@ -636,11 +588,11 @@ data predicate.
 </DL>
 
 <P>
-<A NAME="IDX1968"></A>
-<A NAME="IDX1969"></A>
+<A NAME="IDX2016"></A>
+<A NAME="IDX2017"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>erase/1:</B>
-<DD><A NAME="IDX1970"></A>
+<DD><A NAME="IDX2018"></A>
 
 
 <P>
@@ -665,13 +617,13 @@ Deletes the clause referenced by <CODE>Ref</CODE>.
 
 
 
-<H2><A NAME="SEC170" HREF="ciao_toc.html#TOC170">Documentation on internals (<CODE>data_facts</CODE>)</A></H2>
+<H2><A NAME="SEC167" HREF="ciao_toc.html#TOC167">Documentation on internals (<CODE>data_facts</CODE>)</A></H2>
 <P>
-<A NAME="IDX1971"></A>
-<A NAME="IDX1972"></A>
+<A NAME="IDX2019"></A>
+<A NAME="IDX2020"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>data/1:</B>
-<DD><A NAME="IDX1973"></A>
+<DD><A NAME="IDX2021"></A>
 
 
 <P>
@@ -680,7 +632,7 @@ Deletes the clause referenced by <CODE>Ref</CODE>.
 <UL>
 <LI><EM>Description:</EM> Defines each predicate in <CODE>Predicates</CODE> as a
 
-<A NAME="IDX1974"></A>
+<A NAME="IDX2022"></A>
 data predicate. If a predicate is defined data in a file, it must be defined data in every file containing clauses for that predicate. The directive should precede all clauses of the affected predicates. This directive is defined as a prefix operator in the compiler. 
 <LI><EM>The following properties hold at call time:</EM>
 
@@ -691,11 +643,11 @@ data predicate. If a predicate is defined data in a file, it must be defined dat
 </DL>
 
 <P>
-<A NAME="IDX1975"></A>
-<A NAME="IDX1976"></A>
+<A NAME="IDX2023"></A>
+<A NAME="IDX2024"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>concurrent/1:</B>
-<DD><A NAME="IDX1977"></A>
+<DD><A NAME="IDX2025"></A>
 
 
 <P>
@@ -704,7 +656,7 @@ data predicate. If a predicate is defined data in a file, it must be defined dat
 <UL>
 <LI><EM>Description:</EM> Defines each predicate in <CODE>Predicates</CODE> as a
 
-<A NAME="IDX1978"></A>
+<A NAME="IDX2026"></A>
 concurrent predicate. If a predicate is defined concurrent in a file, it must be defined concurrent in every file containing clauses for that predicate. The directive should precede all clauses of the affected predicates. This directive is defined as a prefix operator in the compiler. 
 <LI><EM>The following properties hold at call time:</EM>
 
@@ -715,11 +667,11 @@ concurrent predicate. If a predicate is defined concurrent in a file, it must be
 </DL>
 
 <P>
-<A NAME="IDX1979"></A>
-<A NAME="IDX1980"></A>
+<A NAME="IDX2027"></A>
+<A NAME="IDX2028"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>reference/1:</B>
-<DD><A NAME="IDX1981"></A>
+<DD><A NAME="IDX2029"></A>
 
 
 <P>
@@ -733,6 +685,6 @@ concurrent predicate. If a predicate is defined concurrent in a file, it must be
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_27.html">previous</A>, <A HREF="ciao_29.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_27.html">previous</A>, <A HREF="ciao_29.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

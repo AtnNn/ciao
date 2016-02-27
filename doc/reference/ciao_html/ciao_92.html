@@ -1,51 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - system_extra (library)</TITLE>
+<TITLE>The Ciao Prolog System               - The Ciao Make Package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC387" HREF="ciao_toc.html#TOC387">system_extra (library)</A></H1>
+<H1><A NAME="SEC380" HREF="ciao_toc.html#TOC380">The Ciao Make Package</A></H1>
 <P>
-<A NAME="IDX4446"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> M. Hermenegildo.
+<A NAME="IDX4415"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#90 (2003/7/22, 16:53:40 CEST)
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
 
 
 <P>
-This is a (temporary) extension to library 
-<A NAME="IDX4447"></A>
-<CODE>system</CODE> (which it reexports). It implements functionality that is often convenient in 
-<A NAME="IDX4448"></A>
-<CODE>Makefile</CODE>s. Much of this should probably end up eventually in 
-<A NAME="IDX4449"></A>
-<CODE>system</CODE>, but once we have worked out the best interface and, in some cases, the proper implementation (the implementations in here are in some cases just calls to Un*x shell primitives or commands).
+<STRONG>Version of last change:</STRONG> 1.11#98 (2003/12/21, 20:10:12 CET)
+
+
+<P>
+This package is used mainly in two main ways: 
 
 
 
 <UL>
-<LI><A HREF="ciao_92.html#SEC388">Usage and interface (system_extra)</A>
-<LI><A HREF="ciao_92.html#SEC389">Documentation on exports (system_extra)</A>
+
+<LI>When writing
+
+<A NAME="IDX4416"></A>
+<CODE>Makefile</CODE>s for 
+<A NAME="IDX4417"></A>
+<CODE>lpmake</CODE>. 
+
+<LI>When writing <EM>applications</EM> which use the
+
+<A NAME="IDX4418"></A>
+<CODE>make</CODE> library. 
+
+</UL>
+
+<P>
+In both cases, this is the package that defines the syntax and meaning of the dependency rules used. 
+
+
+
+<UL>
+<LI><A HREF="ciao_92.html#SEC381">Usage and interface (make)</A>
+<LI><A HREF="ciao_92.html#SEC382">Other information (make)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Usage and interface (<CODE>system_extra</CODE>)</A></H2>
+<H2><A NAME="SEC381" HREF="ciao_toc.html#TOC381">Usage and interface (<CODE>make</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -53,73 +68,67 @@ This is a (temporary) extension to library
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(system_extra)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
+ 
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI>When writing
 
-<A NAME="IDX4450"></A>
-<CODE>del_dir_if_empty/1</CODE>, 
-<A NAME="IDX4451"></A>
-<CODE>move_files/2</CODE>, 
-<A NAME="IDX4452"></A>
-<CODE>move_file/2</CODE>, 
-<A NAME="IDX4453"></A>
-<CODE>copy_files/2</CODE>, 
-<A NAME="IDX4454"></A>
-<CODE>copy_file/2</CODE>, 
-<A NAME="IDX4455"></A>
-<CODE>cat/2</CODE>, 
-<A NAME="IDX4456"></A>
-<CODE>cat_append/2</CODE>, 
-<A NAME="IDX4457"></A>
-<CODE>convert_permissions/4</CODE>, 
-<A NAME="IDX4458"></A>
-<CODE>symbolic_link/2</CODE>, 
-<A NAME="IDX4459"></A>
-<CODE>symbolic_link/3</CODE>, 
-<A NAME="IDX4460"></A>
-<CODE>delete_files/1</CODE>, 
-<A NAME="IDX4461"></A>
-<CODE>del_file_nofail/1</CODE>, 
-<A NAME="IDX4462"></A>
-<CODE>del_file_nofail/2</CODE>, 
-<A NAME="IDX4463"></A>
-<CODE>del_endings_nofail/2</CODE>, 
-<A NAME="IDX4464"></A>
-<CODE>ls/3</CODE>, 
-<A NAME="IDX4465"></A>
-<CODE>ls/2</CODE>, 
-<A NAME="IDX4466"></A>
-<CODE>filter_alist_pattern/3</CODE>, 
-<A NAME="IDX4467"></A>
-<CODE>do/2</CODE>, 
-<A NAME="IDX4468"></A>
-<CODE>set_perms/2</CODE>, 
-<A NAME="IDX4469"></A>
-<CODE>readf/2</CODE>, 
-<A NAME="IDX4470"></A>
-<CODE>datime_string/1</CODE>, 
-<A NAME="IDX4471"></A>
-<CODE>datime_string/2</CODE>, 
-<A NAME="IDX4472"></A>
-<CODE>all_values/2</CODE>, 
-<A NAME="IDX4473"></A>
-<CODE>no_tr_nl/2</CODE>, 
-<A NAME="IDX4474"></A>
-<CODE>call_unknown/1</CODE>, 
-<A NAME="IDX4475"></A>
-<CODE>replace_strings_in_file/3</CODE>, 
-<A NAME="IDX4476"></A>
-<CODE>writef/3</CODE>, 
-<A NAME="IDX4477"></A>
-<CODE>writef/2</CODE>.
+<A NAME="IDX4419"></A>
+<CODE>Makefile</CODE>s for 
+<A NAME="IDX4420"></A>
+<CODE>lpmake</CODE>, such makefiles start with: 
+
+
+<PRE>
+:- module(_,_,[make]).
+</PRE>
+
+or 
+
+
+<PRE>
+:- make(_,_).
+</PRE>
+
+(The latter uses the feature that an undefined declaration at the beginning of a file is interpreted by Ciao as a 
+<A NAME="IDX4421"></A>
+<CODE>use_module/3</CODE> including as third argument a package with the same name, in this case <CODE>make</CODE>.) 
+
+<LI>When writing <EM>applications</EM> which use the
+
+<A NAME="IDX4422"></A>
+<CODE>make</CODE> package, then it is loaded as any other package within the application. 
 
 </UL>
+
+<STRONG>Note:</STRONG> it is often useful to use the 
+<A NAME="IDX4423"></A>
+<CODE>functions</CODE> package inside a 
+<A NAME="IDX4424"></A>
+<CODE>Makefile</CODE> (or when when using the 
+<A NAME="IDX4425"></A>
+<CODE>make</CODE> library in other applications). If both 
+<A NAME="IDX4426"></A>
+<CODE>make</CODE> and 
+<A NAME="IDX4427"></A>
+<CODE>functions</CODE> are used, then 
+<A NAME="IDX4428"></A>
+<CODE>make</CODE> should appear <STRONG>before</STRONG> 
+<A NAME="IDX4429"></A>
+<CODE>functions</CODE> in the list of packages. 
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4430"></A>
+<CODE>::/2</CODE> [1050,xfy], 
+<A NAME="IDX4431"></A>
+<CODE>&#60;=/2</CODE> [1050,xfy], 
+<A NAME="IDX4432"></A>
+<CODE>&#60;-/2</CODE> [1050,xfy], 
+<A NAME="IDX4433"></A>
+<CODE>&#60;-/1</CODE> [1050,yf].
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -128,22 +137,8 @@ This is a (temporary) extension to library
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4478"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX4479"></A>
-<CODE>patterns</CODE>, 
-<A NAME="IDX4480"></A>
-<CODE>filenames</CODE>, 
-<A NAME="IDX4481"></A>
-<CODE>messages</CODE>, 
-<A NAME="IDX4482"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX4483"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX4484"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX4485"></A>
-<CODE>aggregates</CODE>.
+<A NAME="IDX4434"></A>
+<CODE>make/make_rt</CODE>.
 
 </UL>
 
@@ -153,1088 +148,321 @@ This is a (temporary) extension to library
 
 
 
-<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Documentation on exports (<CODE>system_extra</CODE>)</A></H2>
-<P>
-<A NAME="IDX4486"></A>
-<A NAME="IDX4487"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>del_dir_if_empty/1:</B>
-<DD><A NAME="IDX4488"></A>
-
+<H2><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Other information (<CODE>make</CODE>)</A></H2>
 
 <P>
-No further documentation available for this predicate.
+ 
 
 
-</DL>
-
-<P>
-<A NAME="IDX4489"></A>
-<A NAME="IDX4490"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>move_files/2:</B>
-<DD><A NAME="IDX4491"></A>
-
-
-<P>
-<CODE>move_files(Files,Dir)</CODE>
-
-
-<P>
-Move <CODE>Files</CODE> to directory <CODE>Dir</CODE> (note that to move only one file to a directory, 
-<A NAME="IDX4492"></A>
-<CODE>rename_file/2</CODE> can be used).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4493"></A>
-<A NAME="IDX4494"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>move_file/2:</B>
-<DD><A NAME="IDX4495"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4496"></A>
-<A NAME="IDX4497"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_files/2:</B>
-<DD><A NAME="IDX4498"></A>
-
-
-<P>
-<CODE>copy_files(Files,Dir)</CODE>
-
-
-<P>
-Copy <CODE>Files</CODE> to directory <CODE>Dir</CODE> (note that to move only one file to a directory, 
-<A NAME="IDX4499"></A>
-<CODE>rename_file/2</CODE> can be used).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4500"></A>
-<A NAME="IDX4501"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_file/2:</B>
-<DD><A NAME="IDX4502"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4503"></A>
-<A NAME="IDX4504"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>cat/2:</B>
-<DD><A NAME="IDX4505"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4506"></A>
-<A NAME="IDX4507"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>cat_append/2:</B>
-<DD><A NAME="IDX4508"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4509"></A>
-<A NAME="IDX4510"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>convert_permissions/4:</B>
-<DD><A NAME="IDX4511"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4512"></A>
-<A NAME="IDX4513"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>symbolic_link/2:</B>
-<DD><A NAME="IDX4514"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>symbolic_link(Source,Dir)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Create a symbolic link in <CODE>Dir</CODE> pointing to file or directory <CODE>Source</CODE> (performs a copy in Windows).
+<LI><A HREF="ciao_92.html#SEC383">The Dependency Rules</A>
+<LI><A HREF="ciao_92.html#SEC384">Specifying Paths</A>
+<LI><A HREF="ciao_92.html#SEC385">Documenting Rules</A>
+<LI><A HREF="ciao_92.html#SEC386">An Example of a Makefile</A>
+</UL>
+
+
+
+<H3><A NAME="SEC383" HREF="ciao_toc.html#TOC383">The Dependency Rules</A></H3>
+
+<P>
+The package allows defining the following types of rules: 
+
+
+<DL COMPACT>
+
+<DT><CODE><EM>TargetSuffix</EM> &#60;= <EM>SourceSuffix</EM> :: <EM>SourceRoot</EM> :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form declares that in order to produce the file with suffix <EM>TargetSuffix</EM> from a source file with the suffix <EM>SourceSuffix</EM> and root name <EM>SourceRoot</EM> the commands in <EM>BodyLiterals</EM> must be executed. <EM>BodyLiterals</EM> is a standard Ciao Prolog clause body, i.e., a comma-separated conjunction of literals. When writing the script, <EM>SourceRoot</EM> is typically left as a variable, to be instantiated by 
+<A NAME="IDX4435"></A>
+<CODE>lpmake</CODE> when the script is run to the root of name of the file to be processed. This allows using the value of <EM>SourceRoot</EM> in <EM>BodyLiterals</EM>. For example, the following rule: 
+
+
+<PRE>
+:- use_module(library(terms),[atom_concat/2]).
+
+dvi &#60;= tex :: FileRoot :-
+        atom_concat(['latex ',FileRoot,'.tex'],Command),
+        system(Command).
+</PRE>
+
+states that we can generate a file <EM>File</EM><CODE>.dvi</CODE> if we have a file named <EM>File</EM><CODE>.tex</CODE> and that the command to do so is <CODE>latex </CODE><EM>File</EM><CODE>.tex</CODE>. Thus, if this rule appears in file 
+<A NAME="IDX4436"></A>
+<CODE>Makefile.pl</CODE> and we issue the command <CODE>lpmake paper.dvi</CODE> the following occurs: 
+
+
+<UL>
+
+<LI>If <CODE>paper.dvi</CODE> does not exist and <CODE>paper.tex</CODE> exists, then <CODE>paper.dvi</CODE> is generated from <CODE>paper.tex</CODE> by issuing the system command <CODE>latex paper.tex</CODE>.
+
+<LI>If <CODE>paper.dvi</CODE> already exists, nothing is done.
+
+<LI>If <CODE>paper.tex</CODE> does not exist, an error is reported.
 
 </UL>
 
+<DT><CODE><EM>Target</EM> &#60;- :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form declares that in order to produce the file <EM>Target</EM> the commands in <EM>BodyLiterals</EM> must be executed. <EM>Target</EM> need not be a real file: it can also be simply the name of the rule, which is used to invoke it (as a procedure name). For example, the following rule, when the command <CODE>lpmake realclean</CODE> is issued, deletes temporary files in the LaTeX application: 
+
+
+<PRE>
+:- use_module(library('make/system_extra')).
+
+clean &#60;- :-
+        ls('*aux|*log|*~',Files)
+        delete_files(Files).
+</PRE>
+
+<DT><CODE><EM>Target</EM> &#60;- <EM>Deps</EM> :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form declares that in order to produce the file <EM>Target</EM>, first targets <EM>Deps</EM> will be called (i.e., the elements of <EM>Deps</EM> are either other targets with rules defined for them, or a file or files which are already present or which can --and will be-- generated from other available files using other rules). Then, the commands in <EM>BodyLiterals</EM> will be executed. <EM>Deps</EM> may be one target or a list of targets. For example, the following rule, when the command <CODE>lpmake realclean</CODE> is issued, cleans all the temporary files in the LaTeX application (including <CODE>.dvi</CODE> and <CODE>.ps</CODE> files). It requires that clean be executed first: 
+
+
+<PRE>
+:- use_package(functions).
+:- use_module(library('make/system_extra')).
+
+realclean &#60;- clean :-
+        delete_files(~ls('*dvi|*ps')).
+</PRE>
+
+The following rule states that in order to meet the target <CODE>view</CODE>, target <CODE>paper.ps</CODE> must be available or generated. For example, <CODE>lpmake view</CODE> can be used to call the 
+<A NAME="IDX4437"></A>
+<CODE>ghostview</CODE> visualizer on <CODE>paper.ps</CODE>. Note the use of a globally defined <EM>predicate</EM> <CODE>main</CODE> which is called in two places in the rule, and could be used in other rules in the same file (<CODE>main := paper.</CODE> is equivalent to the fact <CODE>main(paper).</CODE> --see the 
+<A NAME="IDX4438"></A>
+<CODE>functions</CODE> library): 
+
+
+<PRE>
+:- use_package(functions).
+:- use_module(library('make/system_extra')).
+:- use_module(library(terms),[atom_concat/2]).
+
+main := paper.
+
+view &#60;- ~atom_concat([~main,'.ps']) :-
+        system(~atom_concat(['ghostview ',~main,'.ps'])).
+</PRE>
+
 </DL>
 
 <P>
-<A NAME="IDX4515"></A>
-<A NAME="IDX4516"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>symbolic_link/3:</B>
-<DD><A NAME="IDX4517"></A>
+In addition to these rules, the configuration file can define normal predicates in the usual way, or import predicates from other modules, all of which can be called from the bodies of the dependency rules. For example, the 
+<A NAME="IDX4439"></A>
+<CODE>system_extra</CODE> library (an extension of the 
+<A NAME="IDX4440"></A>
+<CODE>system</CODE> library) defines many system predicates in a form which makes them very useful inside 
+<A NAME="IDX4441"></A>
+<CODE>Makefile</CODE>s, specially if the 
+<A NAME="IDX4442"></A>
+<CODE>functions</CODE> package is used (see the examples below). 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>symbolic_link(Source,Dir,NewName)</CODE>
+If 
+<A NAME="IDX4443"></A>
+<CODE>lpmake</CODE> is called without an explicit target as argument, then the first target rule in the Makefile is used. This is useful in that the first rule can be seen as the default rule. 
+
+
+
+
+<H3><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Specifying Paths</A></H3>
+
+<P>
+Using the 
+<A NAME="IDX4444"></A>
+<CODE>vpath/1</CODE> predicate it is possible in configuration files to define several paths in which files related to the rules can be located. In this way, not all files need to be in the same directory as the configuration file. For example: 
+
+
+
+<PRE>
+:- use_package(functions).
+
+vpath := '/home/clip/Systems/ciao/lib'.
+vpath := '/home/clip/Systems/ciao/library'.
+vpath := '/home/clip/Systems/lpdoc/lib'.
+</PRE>
+
+
+
+<H3><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Documenting Rules</A></H3>
+
+<P>
+It is also possible to define documentation for the rules: 
+
+
+<DL COMPACT>
+
+<DT><CODE>target_comment(<EM>Target</EM>) :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+A rule of this form allows documenting the actions related to the target. The body (<EM>BodyLiterals</EM>) will be called in two circumstances: 
+
 
 <UL>
-<LI><EM>Description:</EM> Create a symbolic link in <CODE>Dir</CODE> pointing to file or directory <CODE>Source</CODE> and give it name <CODE>NewName</CODE> (performs a copy in Windows).
+
+<LI>If <EM>Target</EM> is called during execution of '<CODE>lpmake</CODE> <EM>commands</EM>'.
+
+<LI>When calling '<CODE>lpmake -h</CODE>'.
 
 </UL>
 
-</DL>
-
-<P>
-<A NAME="IDX4518"></A>
-<A NAME="IDX4519"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>delete_files/1:</B>
-<DD><A NAME="IDX4520"></A>
+Using noun forms (<EM>generation of foo</EM> instead of <EM>generating foo</EM>) in comments helps this dual purpose. For example, the following rule: 
 
 
-<P>
-No further documentation available for this predicate.
+<PRE>
+target_comment(realclean) :- 
+        display('Cleanup of all generated files.').
+</PRE>
+
+will produce output in the two cases pointed out above. 
+
+<DT><CODE>dependency_comment(<EM>SourceSuffix</EM>,<EM>TargetSuffix</EM>,<EM>SourceRoot</EM>) :- <EM>BodyLiterals</EM>.</CODE>
+<DD>
+Same as the previous rule, but for suffix rules. See, for example, the following generic rule: 
 
 
-</DL>
+<PRE>
+:- use_module(library(terms),[atom_concat/2]).
 
-<P>
-<A NAME="IDX4521"></A>
-<A NAME="IDX4522"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>del_file_nofail/1:</B>
-<DD><A NAME="IDX4523"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
+dependency_comment(SSuffix,TSuffix,FileBase) :- 
+        display(~atom_concat(['Generation of ',FileBase,'.',TSuffix,
+                              ' from ',FileBase,'.',SSuffix])).
+</PRE>
 
 </DL>
 
-<P>
-<A NAME="IDX4524"></A>
-<A NAME="IDX4525"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>del_file_nofail/2:</B>
-<DD><A NAME="IDX4526"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4527"></A>
-<A NAME="IDX4528"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>del_endings_nofail/2:</B>
-<DD><A NAME="IDX4529"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4530"></A>
-<A NAME="IDX4531"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ls/3:</B>
-<DD><A NAME="IDX4532"></A>
-
-
-<P>
-<CODE>ls(Dir,Pattern,FileList)</CODE>
-
-
-<P>
-<CODE>FileList</CODE> is the unordered list of entries (files, directories, etc.) in <CODE>Directory</CODE> whose names match <CODE>Pattern</CODE>.If <CODE>Directory</CODE> does not exist <CODE>FileList</CODE> is empty.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4533"></A>
-<A NAME="IDX4534"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ls/2:</B>
-<DD><A NAME="IDX4535"></A>
-
-
-<P>
-<CODE>ls(Pattern,FileList)</CODE>
-
-
-<P>
-<CODE>FileList</CODE> is the unordered list of entries (files, directories, etc.) in the current directory whose names match <CODE>Pattern</CODE> (same as <CODE>ls('.',Pattern,FileList)</CODE>).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4536"></A>
-<A NAME="IDX4537"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>filter_alist_pattern/3:</B>
-<DD><A NAME="IDX4538"></A>
-
-
-<P>
-<CODE>filter_alist_pattern(UnFiltered,Pattern,Filtered)</CODE>
-
-
-<P>
-<CODE>Filtered</CODE> contains the elements of <CODE>UnFiltered</CODE> which match with <CODE>Pattern</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4539"></A>
-<A NAME="IDX4540"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>-/1:</B>
-<DD><A NAME="IDX4541"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>-goal</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4542"></A>
-<A NAME="IDX4543"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>do/2:</B>
-<DD><A NAME="IDX4544"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4545"></A>
-<A NAME="IDX4546"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>set_perms/2:</B>
-<DD><A NAME="IDX4547"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4548"></A>
-<A NAME="IDX4549"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>readf/2:</B>
-<DD><A NAME="IDX4550"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4551"></A>
-<A NAME="IDX4552"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>datime_string/1:</B>
-<DD><A NAME="IDX4553"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4554"></A>
-<A NAME="IDX4555"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>datime_string/2:</B>
-<DD><A NAME="IDX4556"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4557"></A>
-<A NAME="IDX4558"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>all_values/2:</B>
-<DD><A NAME="IDX4559"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>all_values(pred(1),?)</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4560"></A>
-<A NAME="IDX4561"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>no_tr_nl/2:</B>
-<DD><A NAME="IDX4562"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4563"></A>
-<A NAME="IDX4564"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>call_unknown/1:</B>
-<DD><A NAME="IDX4565"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>call_unknown(goal)</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4566"></A>
-<A NAME="IDX4567"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>replace_strings_in_file/3:</B>
-<DD><A NAME="IDX4568"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4569"></A>
-<A NAME="IDX4570"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>writef/3:</B>
-<DD><A NAME="IDX4571"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4572"></A>
-<A NAME="IDX4573"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>writef/2:</B>
-<DD><A NAME="IDX4574"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4575"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>cyg2win/3:</B>
-<DD><A NAME="IDX4576"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4577"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4578"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>rename_file/2:</B>
-<DD><A NAME="IDX4579"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4580"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4581"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>delete_directory/1:</B>
-<DD><A NAME="IDX4582"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4583"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4584"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>delete_file/1:</B>
-<DD><A NAME="IDX4585"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4586"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4587"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chmod/3:</B>
-<DD><A NAME="IDX4588"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4589"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4590"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chmod/2:</B>
-<DD><A NAME="IDX4591"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4592"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4593"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>fmode/2:</B>
-<DD><A NAME="IDX4594"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4595"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4596"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>modif_time0/2:</B>
-<DD><A NAME="IDX4597"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4598"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4599"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>modif_time/2:</B>
-<DD><A NAME="IDX4600"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4601"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4602"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_properties/6:</B>
-<DD><A NAME="IDX4603"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4604"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4605"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_property/2:</B>
-<DD><A NAME="IDX4606"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4607"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4608"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_exists/2:</B>
-<DD><A NAME="IDX4609"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4610"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4611"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_exists/1:</B>
-<DD><A NAME="IDX4612"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4613"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4614"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>mktemp/2:</B>
-<DD><A NAME="IDX4615"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4616"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4617"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>directory_files/2:</B>
-<DD><A NAME="IDX4618"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4619"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4620"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>exec/3:</B>
-<DD><A NAME="IDX4621"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4622"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4623"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>exec/4:</B>
-<DD><A NAME="IDX4624"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4625"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4626"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>popen_mode/1:</B>
-<DD><A NAME="IDX4627"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4628"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4629"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>popen/3:</B>
-<DD><A NAME="IDX4630"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4631"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4632"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>system/2:</B>
-<DD><A NAME="IDX4633"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4634"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4635"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>system/1:</B>
-<DD><A NAME="IDX4636"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4637"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4638"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/2:</B>
-<DD><A NAME="IDX4639"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4640"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
 
-</DL>
 
-<P>
-<A NAME="IDX4641"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/1:</B>
-<DD><A NAME="IDX4642"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4643"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4644"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/0:</B>
-<DD><A NAME="IDX4645"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4646"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4647"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>cd/1:</B>
-<DD><A NAME="IDX4648"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4649"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4650"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>working_directory/2:</B>
-<DD><A NAME="IDX4651"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4652"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4653"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_dirpath/1:</B>
-<DD><A NAME="IDX4654"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4655"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4656"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_dirpath/2:</B>
-<DD><A NAME="IDX4657"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4658"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4659"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_directory/1:</B>
-<DD><A NAME="IDX4660"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4661"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
+<H3><A NAME="SEC386" HREF="ciao_toc.html#TOC386">An Example of a Makefile</A></H3>
 
 <P>
-<A NAME="IDX4662"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_directory/2:</B>
-<DD><A NAME="IDX4663"></A>
+The following is a simple example of a Makefile showing some basic functionality (this is <CODE>MakefileExample.pl</CODE> in the <CODE>example_simple</CODE> directory in the 
+<A NAME="IDX4445"></A>
+<CODE>make</CODE> library.): 
 
 
-<P>
- Imported from 
-<A NAME="IDX4664"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4665"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>umask/2:</B>
-<DD><A NAME="IDX4666"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4667"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4668"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>current_executable/1:</B>
-<DD><A NAME="IDX4669"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4670"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-<P>
-<A NAME="IDX4671"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>current_host/1:</B>
-<DD><A NAME="IDX4672"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4673"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
 
-<P>
-<A NAME="IDX4674"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>get_pid/1:</B>
-<DD><A NAME="IDX4675"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4676"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
-
-</DL>
+<PRE>
+%% -------------------------------------------------------------------------
+:- module(_,_,[make,functions]).
+:- use_module(library('make/system_extra')).
+:- use_module(library(lists),[append/3,list_concat/2]).
+:- use_module(library(terms),[atom_concat/2]).
 
-<P>
-<A NAME="IDX4677"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>extract_paths/2:</B>
-<DD><A NAME="IDX4678"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4679"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
+:- discontiguous(comment/2).
 
+%% -------------------------------------------------------------------------
+%% A simple target. Defines how to produce file 'hw'.
 
-</DL>
-
-<P>
-<A NAME="IDX4680"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>setenvstr/2:</B>
-<DD><A NAME="IDX4681"></A>
+hw &#60;-  []    :-
+         writef("Hello world", hw).
 
+%% A comment describing this target (see below):
+comment(hw,['Generation of file hw']).
 
-<P>
- Imported from 
-<A NAME="IDX4682"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
+%% -------------------------------------------------------------------------
+%% A target with a dependency. 'hwhw' requires 'hw'.
 
+hwhw &#60;- [hw] :-
+        readf(hw,Content),
+        append(Content,[0'\n|Content],DoubleContent),
+        writef(DoubleContent,hwhw).
 
-</DL>
+comment(hwhw,['Generation of file hwhw']).
 
-<P>
-<A NAME="IDX4683"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>getenvstr/2:</B>
-<DD><A NAME="IDX4684"></A>
+%% -------------------------------------------------------------------------
+%% A simple target. Defines how to produce file 'datafile.simple'.
 
+'datafile.simple' &#60;-  :-
+        writef("Hello world", 'datafile.simple').
 
-<P>
- Imported from 
-<A NAME="IDX4685"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
+comment('datafile.simple',['Generation of file datafile.simple']).
 
+%% -------------------------------------------------------------------------
+%% A dependency based on suffixes: 
+%% &#60;file&#62;.double is generated always from &#60;file&#62;.simple
 
-</DL>
+double &#60;= simple :: Name :-
+        readf(~atom_concat([Name,'.simple']),Content),
+        append(Content,[0'\n|Content],DoubleContent),
+        writef(DoubleContent,~atom_concat([Name,'.double'])).
 
-<P>
-<A NAME="IDX4686"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime_struct/1:</B>
-<DD><A NAME="IDX4687"></A>
+%% -------------------------------------------------------------------------
+%% A dependency based on suffixes with a precondition.
+%% &#60;file&#62;.double is generated always from &#60;file&#62;.simple, once precond is done
 
+boo &#60;- :-
+        display((double &#60;= simple :: name &#60;- precond :- body1, body2)).
 
-<P>
- Imported from 
-<A NAME="IDX4688"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
+%% -------------------------------------------------------------------------
+%% Example using library predicates
 
+clean &#60;-    :-
+        delete_files(~ls('*~|*.asr|*.itf|*.po')).
 
-</DL>
+comment(clean,['Cleanup of temporary files']).
 
-<P>
-<A NAME="IDX4689"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime/9:</B>
-<DD><A NAME="IDX4690"></A>
+realclean &#60;- clean :-
+        delete_files(~ls('hw|hwhw|*simple|*double')).
 
+comment(realclean,['Cleanup of all generated files']).
 
-<P>
- Imported from 
-<A NAME="IDX4691"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
+%% -------------------------------------------------------------------------
+%% Reporting progress and documenting commands: 
+%% If target_comment/1 is defined it can be used to produce user-defined 
+%% output when targets are processed and/or documentation on what each 
+%% target does (used for example when lpmake is called with -h). Using 
+%% 'generation of foo' instead of 'generating foo' in comments helps in this 
+%% dual purpose.
+%% -------------------------------------------------------------------------
 
+%% Make calls target_comment/1 for simple targets:
+target_comment(Target) :- 
+        comment(Target,Comment),
+        display(~atom_concat([~atom_concat(Comment), '\n'])).
 
-</DL>
+%% Similarly, make calls dependency_comment/3 for dependencies (only 
+%% during execution, not when documenting -h).
+dependency_comment(SSuffix,TSuffix,FileBase) :- 
+        display(~atom_concat(['Generation of ',FileBase,'.',TSuffix,
+                              ' from ',FileBase,'.',SSuffix])).
 
-<P>
-<A NAME="IDX4692"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime/1:</B>
-<DD><A NAME="IDX4693"></A>
+%% -------------------------------------------------------------------------
 
+</PRE>
 
 <P>
- Imported from 
-<A NAME="IDX4694"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
+The following are a few commands that can be used on the previous file (see file <CODE>CommandsToTry</CODE> in the <CODE>example_simple</CODE> directory in the 
+<A NAME="IDX4446"></A>
+<CODE>make</CODE> library): 
 
-</DL>
 
-<P>
-<A NAME="IDX4695"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>time/1:</B>
-<DD><A NAME="IDX4696"></A>
 
+<PRE>
 
-<P>
- Imported from 
-<A NAME="IDX4697"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
+lpmake -m MakefileExample.pl hwhw
+(Generate file hwhw --needs to generate file hw first)
 
+lpmake -m MakefileExample.pl datafile.double
+(Generate file datafile.double --needs to generate file datafile.simple first)
 
-</DL>
+lpmake -m MakefileExample.pl realclean
+(Cleanup)
 
-<P>
-<A NAME="IDX4698"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>pause/1:</B>
-<DD><A NAME="IDX4699"></A>
+lpmake -h -m MakefileExample.pl
+(Help on general use of lpmake and commands available in MakefileExample.pl)
 
+</PRE>
 
 <P>
- Imported from 
-<A NAME="IDX4700"></A>
-<CODE>system</CODE> (see the corresponding documentation for details).
-
+See also the LaTeX example in the <CODE>example_latex</CODE> directory in the 
+<A NAME="IDX4447"></A>
+<CODE>make</CODE> library. 
 
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

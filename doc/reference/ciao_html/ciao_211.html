@@ -1,33 +1,64 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - field_value_check (library)</TITLE>
+<TITLE>The Ciao Prolog System               - test_format (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC827" HREF="ciao_toc.html#TOC827">field_value_check (library)</A></H1>
+<H1><A NAME="SEC829" HREF="ciao_toc.html#TOC829">test_format (library)</A></H1>
 <P>
-<A NAME="IDX8433"></A>
+<A NAME="IDX8443"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/9, 14:36:55 MET)
+<STRONG>Author(s):</STRONG> Isabel Martín.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#120 (2003/12/22, 23:35:35 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#170 (2003/12/4, 17:39:57 CET)
+
+
+<P>
+Most of the predicates exported by this module perform some checks to determine whether the arguments attain some conditions or not. In the second case an exception will be thrown. To catch the exceptions you can use the following metapredicates when invoking chartlib exported predicates: 
 
 
 
 <UL>
-<LI><A HREF="ciao_211.html#SEC828">Usage and interface (field_value_check)</A>
-<LI><A HREF="ciao_211.html#SEC829">Documentation on exports (field_value_check)</A>
+
+<LI>
+
+<A NAME="IDX8444"></A>
+<CODE>chartlib_text_error_protect/1</CODE> 
+
+<LI>
+
+<A NAME="IDX8445"></A>
+<CODE>chartlib_text_error_protect/1</CODE> 
+
+</UL>
+
+<P>
+Both metapredicates are defined in the chartlib_errhandle module that comes with this library. Some of the predicates have a <CODE>Predicate</CODE> argument which will be used in case of error to show which chartlib predicate causes the error. 
+
+
+
+<UL>
+<LI><A HREF="ciao_211.html#SEC830">Usage and interface (test_format)</A>
+<LI><A HREF="ciao_211.html#SEC831">Documentation on exports (test_format)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC828" HREF="ciao_toc.html#TOC828">Usage and interface (<CODE>field_value_check</CODE>)</A></H2>
+<H2><A NAME="SEC830" HREF="ciao_toc.html#TOC830">Usage and interface (<CODE>test_format</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +66,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(field_value_check)).</CODE>
+<CODE>:- use_module(library(test_format)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,10 +75,24 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8434"></A>
-<CODE>fieldValue_check/8</CODE>, 
-<A NAME="IDX8435"></A>
-<CODE>mfstringValue/7</CODE>.
+<A NAME="IDX8446"></A>
+<CODE>equalnumber/3</CODE>, 
+<A NAME="IDX8447"></A>
+<CODE>not_empty/4</CODE>, 
+<A NAME="IDX8448"></A>
+<CODE>not_empty/3</CODE>, 
+<A NAME="IDX8449"></A>
+<CODE>check_sublist/4</CODE>, 
+<A NAME="IDX8450"></A>
+<CODE>valid_format/4</CODE>, 
+<A NAME="IDX8451"></A>
+<CODE>vectors_format/4</CODE>, 
+<A NAME="IDX8452"></A>
+<CODE>valid_vectors/4</CODE>, 
+<A NAME="IDX8453"></A>
+<CODE>valid_attributes/2</CODE>, 
+<A NAME="IDX8454"></A>
+<CODE>valid_table/2</CODE>.
 
 </UL>
 
@@ -58,20 +103,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8436"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8437"></A>
-<CODE>provrml/io</CODE>, 
-<A NAME="IDX8438"></A>
-<CODE>provrml/generator_util</CODE>, 
-<A NAME="IDX8439"></A>
-<CODE>provrml/boundary</CODE>, 
-<A NAME="IDX8440"></A>
-<CODE>provrml/tokeniser</CODE>, 
-<A NAME="IDX8441"></A>
-<CODE>provrml/generator</CODE>, 
-<A NAME="IDX8442"></A>
-<CODE>provrml/parser_util</CODE>.
+<A NAME="IDX8455"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX8456"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -81,36 +116,199 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 
 
-<H2><A NAME="SEC829" HREF="ciao_toc.html#TOC829">Documentation on exports (<CODE>field_value_check</CODE>)</A></H2>
+<H2><A NAME="SEC831" HREF="ciao_toc.html#TOC831">Documentation on exports (<CODE>test_format</CODE>)</A></H2>
 <P>
-<A NAME="IDX8443"></A>
-<A NAME="IDX8444"></A>
+<A NAME="IDX8457"></A>
+<A NAME="IDX8458"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fieldValue_check/8:</B>
-<DD><A NAME="IDX8445"></A>
+<DT><span class="define">PREDICATE:</span> <B>equalnumber/3:</B>
+<DD><A NAME="IDX8459"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>equalnumber(X, Y, Predicate)</CODE>
+
+
+<P>
+Test whether the list <CODE>X</CODE> and the list <CODE>Y</CODE> contain the same number of elements. 
 
 
 </DL>
 
 <P>
-<A NAME="IDX8446"></A>
-<A NAME="IDX8447"></A>
+<A NAME="IDX8460"></A>
+<A NAME="IDX8461"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mfstringValue/7:</B>
-<DD><A NAME="IDX8448"></A>
+<DT><span class="define">PREDICATE:</span> <B>not_empty/4:</B>
+<DD><A NAME="IDX8462"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>not_empty(X, Y, Z, Predicate)</CODE>
+
+
+<P>
+Tests whether at least one the lists <CODE>X</CODE>, <CODE>Y</CODE> or <CODE>Z</CODE> are empty. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8463"></A>
+<A NAME="IDX8464"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>not_empty/3:</B>
+<DD><A NAME="IDX8465"></A>
+
+
+<P>
+<CODE>not_empty(X, Y, Predicate)</CODE>
+
+
+<P>
+Tests whether the lists <CODE>X</CODE> or <CODE>Y</CODE> are empty. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8466"></A>
+<A NAME="IDX8467"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>check_sublist/4:</B>
+<DD><A NAME="IDX8468"></A>
+
+
+<P>
+<CODE>check_sublist(List, Number, Number, Predicate)</CODE>
+
+
+<P>
+Tests if the number of elements in each sublist of <CODE>List</CODE> is <CODE>Number1</CODE> or <CODE>Number2</CODE>. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8469"></A>
+<A NAME="IDX8470"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_format/4:</B>
+<DD><A NAME="IDX8471"></A>
+
+
+<P>
+<CODE>valid_format(XVector, YVector, BarsAttributes, Predicate)</CODE>
+
+
+<P>
+Tests the following restrictions: 
+
+
+
+<UL>
+
+<LI>The <CODE>XVector</CODE> number of elements is the same as each <CODE>YVector</CODE> sublist number of elements.
+
+<LI>The <CODE>YVector</CODE> length is equal to <CODE>BarsAttributes</CODE> length.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8472"></A>
+<A NAME="IDX8473"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vectors_format/4:</B>
+<DD><A NAME="IDX8474"></A>
+
+
+<P>
+<CODE>vectors_format(XVector, YVectors, LinesAttributes, Predicate)</CODE>
+
+
+<P>
+Tests the following conditions: 
+
+
+
+<UL>
+
+<LI><CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
+
+<LI><CODE>XVector</CODE> list and each <CODE>YVectors</CODE> element have the same number of elements.
+
+<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 elements.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8475"></A>
+<A NAME="IDX8476"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_vectors/4:</B>
+<DD><A NAME="IDX8477"></A>
+
+
+<P>
+<CODE>valid_vectors(XVector, YVectors, LinesAttributes, Predicate)</CODE>
+
+
+<P>
+Tests the following conditions: 
+
+
+
+<UL>
+
+<LI><CODE>XVector</CODE> list, <CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
+
+<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 element.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8478"></A>
+<A NAME="IDX8479"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_attributes/2:</B>
+<DD><A NAME="IDX8480"></A>
+
+
+<P>
+<CODE>valid_attributes(BarsAttibuttes, Predicate)</CODE>
+
+
+<P>
+Check if each <CODE>BarsAttibuttes</CODE> element is a list composed of one or four elements. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX8481"></A>
+<A NAME="IDX8482"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_table/2:</B>
+<DD><A NAME="IDX8483"></A>
+
+
+<P>
+<CODE>valid_table(ElementTable, Predicate)</CODE>
+
+
+<P>
+All of the <CODE>ElementTable</CODE> sublists have the same number of elements and are not empty. 
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

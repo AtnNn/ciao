@@ -17,10 +17,12 @@
 
 :- comment(title, "List processing").
 
-:- pred nonsingle(X) # "@var{X} is not a singleton.".
+:- comment(author, "The CLIP Group").
 
 :- comment(module,"This module provides a set of predicates for list
            processing.").
+
+:- pred nonsingle(X) # "@var{X} is not a singleton.".
 
 nonsingle([_]) :- !, fail.
 nonsingle(_).
@@ -31,6 +33,15 @@ nonsingle(_).
 % member(X, [X|_]).
 % member(X, [_Y|Xs]):- member(X, Xs).
 
+%:- pred append(Xs, Ys)    # "@var{Ys} is the elements of @var{Xs} appended.".
+%append([], []).
+%append([L|Ls], R) :-
+%	appends(Ls, L, R).
+%appends([], L, L).
+%appends([L|Ls], L2, R) :-
+%	append(L2, L, L3),
+%	appends(Ls, L3, R).
+
 :- pred append(Xs,Ys,Zs)  # "@var{Zs} is @var{Ys} appended to @var{Xs}.".
 
 append([], L, L).
@@ -40,6 +51,9 @@ append([E|Es], L, [E|R]) :- append(Es, L, R).
    # "Reverses the order of elements in @var{Xs}.".
 
 reverse(Xs,Ys):- reverse(Xs,[],Ys).
+
+:- pred reverse(A,B,C) # "Reverse the order of elements in @var{A},
+   and append it with @var{B}.".
 
 reverse([], L, L).
 reverse([E|Es],L,R) :- reverse(Es,[E|L],R).
@@ -73,13 +87,12 @@ eq(A, B):- \+ \+ A = B.
 select(E, [E|Es], Es).
 select(E, [X|Es], [X|L]) :- select(E, Es, L).
 
-:- true comp length(A,B) + native(length(A,B)).
-
-:- pred length(L,N) : list * var => list * integer
+:- true comp length(A,B) + native.
+:- true pred length(L,N) : list * var => list * int
 	# "Computes the length of @var{L}.".
-:- pred length(L,N) : var * integer => list * integer
+:- true pred length(L,N) : var * int => list * int
 	# "Outputs @var{L} of length @var{N}.".
-:- pred length(L,N) : list * integer => list * integer
+:- true pred length(L,N) : list * int => list * int
 	# "Checks that @var{L} is of length @var{N}.".
 
 length(L, N) :- var(N), !, llength(L, 0, N).
@@ -129,8 +142,9 @@ add_after([E|Es], E0, E1, NEs) :-
 add_after([E|Es], E0, E1, [E|NEs]) :-
         add_after(Es, E0, E1, NEs).
 
-%% add_before(+L0, +E0, +E, -L): adds element E before element E0 (or at
-%%     start) to list L0 returning in L the new list (uses term comparison)
+:- pred add_before(+L0, +E0, +E, -L) # "Adds element E before element
+   E0 (or at start) to list L0 returning in L the new list (uses term
+   comparison).".
 
 add_before(L, E0, E, NL) :-
         add_before_existing(L, E0, E, NL), !.
@@ -206,9 +220,9 @@ last(L, X) :- var(L), !, L = [X|_].
 last([_|L], X) :- last(L, X).
 last([X], X) .
 
-:- pred list_lookup(List, Functor, Key, Value)
-        # "Look up @var{Functor}(@var{Key},@var{Value}) pair in variable
-   ended key-value pair list @var{L} or else add it at the end.".
+:- pred list_lookup(List, Functor, Key, Value) # "Look up
+@var{Functor}(@var{Key},@var{Value}) pair in variable ended key-value
+pair list @var{L} or else add it at the end.".
 
 list_lookup(List, Functor, Key, Value) :-
 	var(List), !,
@@ -224,25 +238,39 @@ list_lookup([Pair|_], Functor, Key, Value) :-
 list_lookup([_|List], Functor, Key, Value) :-
 	list_lookup(List, Functor, Key, Value).
 
+:- pred list_lookup(List, Key, Value) # "Same as @pred{list_lookup/4},
+   but use @pred{-/2} as functor.".
+
 list_lookup(List, Key, Value) :- list_lookup(List, (-), Key, Value).
 
 % intset_... deal with ordered lists of numbers
+
+:- pred intset_insert(A,B,Set) # "Insert the element @var{B} in the
+   ordered set of numbers @var{A}.".
 
 intset_insert([], A, Set) :- !, Set=[A].
 intset_insert(Set0, A, Set) :- Set0=[D|_], A<D, !, Set=[A|Set0].
 intset_insert(Set0, D, Set) :- Set0=[D|_], !, Set=Set0.
 intset_insert([D|Ds], A, [D|Bs]) :- intset_insert(Ds, A, Bs).
 
+:- pred intset_delete(A,B,Set) # "Delete from the ordered set @var{A}
+   the element @var{B}.".
+
 intset_delete([D|Ds], D, Set) :- !, Set=Ds.
 intset_delete([D|Ds], A, [D|Ds1]) :- A>D, intset_delete(Ds, A, Ds1).
+
+:- pred intset_in(E, Set) # "Succeds iff @var{E} is element of @var{Set}".
 
 intset_in(O, [O1|Os]) :-
 	(   O1<O -> intset_in(O, Os)
 	;   O=O1
 	).
 
-intset_sequence(0, L0, L) :- !, L=L0.
-intset_sequence(N, L0, L) :- M is N-1, intset_sequence(M, [M|L0], L).
+:- pred intset_sequence(N,L1,L2) # "Generates an ordered set of
+   numbers from 0 to @var{N}-1, and append it to @var{L1}.".
+
+intset_sequence(0, L0, L) :- !, L=L0.  intset_sequence(N, L0, L) :- M
+is N-1, intset_sequence(M, [M|L0], L).
 
 %------------------------------------------------------------------------------
 % operations on two lists:
@@ -351,6 +379,10 @@ add_elem([L|Ls], X, [[X|L]|XLs], Lds_) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+142,2003/12/31,12:29*49+'CET'), "Added
+   documentation for reverse/3, add_before/4, list_lookup/3,
+   intset_... .  (Edison Mera)").
 
 :- comment(version(1*9+53,2003/01/10,19:19*44+'CET'), " Added 
    delete_non_ground(L1,E,L2), L2 is L1 without the ocurrences of E. E can be 

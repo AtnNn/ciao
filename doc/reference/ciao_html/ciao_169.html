@@ -1,63 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Identity lists</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_168.html">previous</A>, <A HREF="ciao_170.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_168.html">previous</A>, <A HREF="ciao_170.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC695" HREF="ciao_toc.html#TOC695">Unweighted graph-processing utilities</A></H1>
+<H1><A NAME="SEC696" HREF="ciao_toc.html#TOC696">Identity lists</A></H1>
 <P>
-<A NAME="IDX7386"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
+<A NAME="IDX7401"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#105 (1999/6/4, 12:24:49 MEST)
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 <P>
-An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
-
-
-<P>
-An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
-
-
-<P>
-An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
-
-
-<P>
-A vertex can be any term. Two vertices are distinct iff they are not identical (
-<A NAME="IDX7387"></A>
-<CODE>==/2</CODE>). 
-
-
-<P>
-A path is represented as a list of vertices. No vertex can appear twice in a path. 
+The operations in this module handle lists by performing equality checks via identity instead of unification.
 
 
 
 <UL>
-<LI><A HREF="ciao_169.html#SEC696">Usage and interface (ugraphs)</A>
-<LI><A HREF="ciao_169.html#SEC697">Documentation on exports (ugraphs)</A>
+<LI><A HREF="ciao_169.html#SEC697">Usage and interface (idlists)</A>
+<LI><A HREF="ciao_169.html#SEC698">Documentation on exports (idlists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC696" HREF="ciao_toc.html#TOC696">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
+<H2><A NAME="SEC697" HREF="ciao_toc.html#TOC697">Usage and interface (<CODE>idlists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -65,7 +43,7 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(ugraphs)).</CODE>
+<CODE>:- use_module(library(idlists)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -74,43 +52,22 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7388"></A>
-<CODE>vertices_edges_to_ugraph/3</CODE>, 
-<A NAME="IDX7389"></A>
-<CODE>neighbors/3</CODE>, 
-<A NAME="IDX7390"></A>
-<CODE>edges/2</CODE>, 
-<A NAME="IDX7391"></A>
-<CODE>del_vertices/3</CODE>, 
-<A NAME="IDX7392"></A>
-<CODE>vertices/2</CODE>, 
-<A NAME="IDX7393"></A>
-<CODE>add_vertices/3</CODE>, 
-<A NAME="IDX7394"></A>
-<CODE>add_edges/3</CODE>, 
-<A NAME="IDX7395"></A>
-<CODE>transpose/2</CODE>, 
-<A NAME="IDX7396"></A>
-<CODE>point_to/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7397"></A>
-<CODE>ugraph/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7398"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX7399"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX7402"></A>
+<CODE>member_0/2</CODE>, 
+<A NAME="IDX7403"></A>
+<CODE>memberchk/2</CODE>, 
+<A NAME="IDX7404"></A>
+<CODE>list_insert/2</CODE>, 
+<A NAME="IDX7405"></A>
+<CODE>add_after/4</CODE>, 
+<A NAME="IDX7406"></A>
+<CODE>add_before/4</CODE>, 
+<A NAME="IDX7407"></A>
+<CODE>delete/3</CODE>, 
+<A NAME="IDX7408"></A>
+<CODE>subtract/3</CODE>, 
+<A NAME="IDX7409"></A>
+<CODE>union_idlists/3</CODE>.
 
 </UL>
 
@@ -120,13 +77,13 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 
 
-<H2><A NAME="SEC697" HREF="ciao_toc.html#TOC697">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
+<H2><A NAME="SEC698" HREF="ciao_toc.html#TOC698">Documentation on exports (<CODE>idlists</CODE>)</A></H2>
 <P>
-<A NAME="IDX7400"></A>
-<A NAME="IDX7401"></A>
+<A NAME="IDX7410"></A>
+<A NAME="IDX7411"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
-<DD><A NAME="IDX7402"></A>
+<DT><span class="define">PREDICATE:</span> <B>member_0/2:</B>
+<DD><A NAME="IDX7412"></A>
 
 
 <P>
@@ -136,168 +93,132 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX7403"></A>
-<A NAME="IDX7404"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
-<DD><A NAME="IDX7405"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex,+Graph,-Neighbors)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7406"></A>
-<A NAME="IDX7407"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
-<DD><A NAME="IDX7408"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>edges(+Graph,-Edges)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7409"></A>
-<A NAME="IDX7410"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
-<DD><A NAME="IDX7411"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1,+Vertices,-Graph2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7412"></A>
 <A NAME="IDX7413"></A>
+<A NAME="IDX7414"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
-<DD><A NAME="IDX7414"></A>
+<DT><span class="define">PREDICATE:</span> <B>memberchk/2:</B>
+<DD><A NAME="IDX7415"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>vertices(+Graph,-Vertices)</CODE>
+<CODE>memberchk(X, Xs)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
 
-</UL>
+<P>
+Checks that <CODE>X</CODE> is an element of (list) <CODE>Xs</CODE>.
+
 
 </DL>
 
 <P>
-<A NAME="IDX7415"></A>
 <A NAME="IDX7416"></A>
+<A NAME="IDX7417"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
-<DD><A NAME="IDX7417"></A>
+<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
+<DD><A NAME="IDX7418"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1,+Vertices,-Graph2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>list_insert(-List, +Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
+<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of (tail-opened) <CODE>List</CODE> if there is not an element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7418"></A>
 <A NAME="IDX7419"></A>
+<A NAME="IDX7420"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
-<DD><A NAME="IDX7420"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
+<DD><A NAME="IDX7421"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1,+Edges,-Graph2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_after(+L0, +E0, +E, -L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after the first element identical to <CODE>E0</CODE> (or at end) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7421"></A>
 <A NAME="IDX7422"></A>
+<A NAME="IDX7423"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
-<DD><A NAME="IDX7423"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
+<DD><A NAME="IDX7424"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>transpose(+Graph,-Transpose)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_before(+L0, +E0, +E, -L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> before the first element identical to <CODE>E0</CODE> (or at start) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7424"></A>
 <A NAME="IDX7425"></A>
+<A NAME="IDX7426"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
-<DD><A NAME="IDX7426"></A>
+<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
+<DD><A NAME="IDX7427"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex,+Graph,-Point_to)</CODE>
+<STRONG>Usage:</STRONG> <CODE>delete(+List, +Element, -Rest)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
+<LI><EM>Description:</EM> <CODE>Rest</CODE> has the same elements of <CODE>List</CODE> except for all the occurrences of elements identical to <CODE>Element</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7427"></A>
 <A NAME="IDX7428"></A>
+<A NAME="IDX7429"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
-<DD><A NAME="IDX7429"></A>
+<DT><span class="define">PREDICATE:</span> <B>subtract/3:</B>
+<DD><A NAME="IDX7430"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>subtract(+Set, +Set0, -Difference)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
+<LI><EM>Description:</EM> <CODE>Difference</CODE> has the same elements of <CODE>Set</CODE> except those which have an identical occurrence in <CODE>Set0</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7431"></A>
+<A NAME="IDX7432"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>union_idlists/3:</B>
+<DD><A NAME="IDX7433"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>union_idlists(+List1, +List2, -List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but are not identical to an element in <CODE>List2</CODE> followed by the elements in <CODE>List2</CODE>.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_168.html">previous</A>, <A HREF="ciao_170.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_168.html">previous</A>, <A HREF="ciao_170.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

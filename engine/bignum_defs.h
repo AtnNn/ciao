@@ -1,6 +1,10 @@
 /*
 
  */
+ 
+#include "threads.h"
+#include "datadefs.h"
+#include "support.h"
 
 BOOL bn_positive(register Bignum *x);
 int bn_add(register Bignum *x, register Bignum *y, register Bignum *z, Bignum *zmax);

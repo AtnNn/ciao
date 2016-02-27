@@ -1,110 +1,216 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Prolog to SQL translator</TITLE>
+<TITLE>The Ciao Prolog System               - Persistent predicate database</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC633" HREF="ciao_toc.html#TOC633">Prolog to SQL translator</A></H1>
+<H1><A NAME="SEC617" HREF="ciao_toc.html#TOC617">Persistent predicate database</A></H1>
 <P>
-<A NAME="IDX6596"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> C. Draxler. Adapted by M. Hermenegildo and I. Caballero.
+<A NAME="IDX6385"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<STRONG>Author(s):</STRONG> J.M. Gomez, D. Cabeza, and M. Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#96 (1999/5/21, 19:53:48 MEST)
+<STRONG>Version:</STRONG> 1.11#143 (2003/12/31, 16:44:44 CET)
 
 
 <P>
-This library performs translation of Prolog queries into 
-<A NAME="IDX6597"></A>
-SQL. The code is an adaptation for Ciao of the 
-<A NAME="IDX6598"></A>
-Prolog to SQL compiler written by Christoph Draxler, CIS Centre for Information and Speech Processing, Ludwig-Maximilians-University Munich, <CODE>draxler@cis.uni-muenchen.de</CODE>, Version 1.1. Many thanks to Christoph for allowing us to include this adaptation of his code with Ciao. 
+<STRONG>Version of last change:</STRONG> 1.11#132 (2003/12/30, 23:15:54 CET)
 
 
 <P>
-The translator needs to know the correspondence between Prolog predicates and the 
-<A NAME="IDX6599"></A>
-SQL tables in the database. To this end this module exports two multifile predicates, 
-<A NAME="IDX6600"></A>
-<CODE>relation/3</CODE> and 
-<A NAME="IDX6601"></A>
-<CODE>attribute/4</CODE>. See the description of these predicates for details on how such correspondance is specified. 
-
-
-<P>
-The main entry points to the translator are 
-<A NAME="IDX6602"></A>
-<CODE>pl2sqlstring/3</CODE> and 
-<A NAME="IDX6603"></A>
-<CODE>pl2sqlterm/3</CODE>. Details on the types of queries allowed can be found in the description of these predicates. 
-
-
-<P>
-<STRONG>Example:</STRONG> the following program would print out a term representing the SQL query corresponding to the given Prolog query: 
-
-
-
-<PRE>
-%jcf%:- use_module(library('persdb_sql/pl2sql')).
-:- use_module(library('persdb_mysql/pl2sql')).
-%jcf%
-:- use_module(library(strings)).
-
-:- multifile [relation/3,attribute/4].
-:- data [relation/3,attribute/4].
-
-relation(product,3,'PRODUCT').
-attribute(1,'PRODUCT','ID',int).
-attribute(2,'PRODUCT','QUANTITY',int).
-attribute(3,'PRODUCT','NAME',string).
-
-main :- 
-     pl2sqlstring( f(L,K), 
-          ((product(L,N,a); product(L,N,b)),
-           \+ product(2,3,b), 
-           L + 2 &#62; avg(Y, Z^product(Z,Y,a)),
-           K is N + max(X, product(X,2,b))
-           ), T),
-     write_string(T).
-     
-%%     printqueries(T).
-
-</PRE>
-
-<P>
-<STRONG>Note:</STRONG> while the translator can be used directly in programs, it is more convenient to use a higher-level abstraction: 
-<A NAME="IDX6604"></A>
-persistent predicates (implemented in the 
-<A NAME="IDX6605"></A>
-<CODE>persdb</CODE> library). The notion of persistent predicates provides a completely transparent interface between Prolog and relational databases. When using this library, the Prolog to SQL translation is called automatically as needed. 
+ 
 
 
 
 <UL>
-<LI><A HREF="ciao_151.html#SEC634">Usage and interface (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC635">Documentation on exports (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC636">Documentation on multifiles (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC637">Documentation on internals (pl2sql)</A>
-<LI><A HREF="ciao_151.html#SEC638">Known bugs and planned improvements (pl2sql)</A>
+<LI><A HREF="ciao_151.html#SEC618">Introduction to persistent predicates</A>
+<LI><A HREF="ciao_151.html#SEC619">Persistent predicates</A>
+<LI><A HREF="ciao_151.html#SEC620">Using file-based persistent predicates</A>
+<LI><A HREF="ciao_151.html#SEC621">Implementation Issues</A>
+<LI><A HREF="ciao_151.html#SEC622">Defining an initial database</A>
+<LI><A HREF="ciao_151.html#SEC623">Using persistent predicates from the top level</A>
+<LI><A HREF="ciao_151.html#SEC624">Usage and interface (persdbrt)</A>
+<LI><A HREF="ciao_151.html#SEC625">Documentation on exports (persdbrt)</A>
+<LI><A HREF="ciao_151.html#SEC626">Documentation on multifiles (persdbrt)</A>
+<LI><A HREF="ciao_151.html#SEC627">Documentation on internals (persdbrt)</A>
+<LI><A HREF="ciao_151.html#SEC628">Known bugs and planned improvements (persdbrt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC634" HREF="ciao_toc.html#TOC634">Usage and interface (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC618" HREF="ciao_toc.html#TOC618">Introduction to persistent predicates</A></H2>
+
+<P>
+This library implements a <EM>generic persistent predicate database</EM>. The basic notion implemented by the library is that of a 
+<A NAME="IDX6386"></A>
+persistent predicate. The persistent predicate concept provides a simple, yet powerful generic persistent data access method [CHGT98,Par97]. A persistent predicate is a special kind of dynamic, data predicate that "resides" in some persistent medium (such as a set of files, a database, etc.) that is typically external to the program using such predicates. The main effect is that any changes made to to a persistent predicate from a program "survive" across executions. I.e., if the program is halted and restarted the predicate that the new process sees is in precisely the same state as it was when the old process was halted (provided no change was made in the meantime to the storage by other processes or the user). 
+
+
+<P>
+Persistent predicates appear to a program as ordinary predicates, and calls to these predicates can appear in clause bodies in the usual way. However, the definitions of these predicates do not appear in the program. Instead, the library maintains automatically the definitions of predicates which have been declared as persistent in the persistent storage. 
+
+
+<P>
+<A NAME="IDX6387"></A>
+Updates to persistent predicates can be made using enhanced versions of 
+<A NAME="IDX6388"></A>
+<CODE>asserta_fact/1</CODE>, 
+<A NAME="IDX6389"></A>
+<CODE>assertz_fact/1</CODE> and 
+<A NAME="IDX6390"></A>
+<CODE>retract_fact/1</CODE>. The library makes sure that each update is a 
+<A NAME="IDX6391"></A>
+transactional update, in the sense that if the update terminates, then the permanent storage has definitely been modified. For example, if the program making the updates is halted just after the update and then restarted, then the updated state of the predicate will be seen. This provides security against possible data loss due to, for example, a system crash. Also, due to the atomicity of the transactions, persistent predicates allow 
+<A NAME="IDX6392"></A>
+concurrent updates from several programs. 
+
+
+
+
+<H2><A NAME="SEC619" HREF="ciao_toc.html#TOC619">Persistent predicates, files, and relational databases</A></H2>
+
+<P>
+The concept of persistent predicates provided by this library essentially implements a light-weight, simple, and at the same time powerful form of relational database (a 
+<A NAME="IDX6393"></A>
+deductive database), and which is standalone, in the sense that it does not require external support, other than the file management capabilities provided by the operating system. This is due to the fact that the persistent predicates are in fact stored in one or more auxiliary files below a given directory. 
+
+
+<P>
+This type of database is specially useful when building small to medium-sized standalone applications in Prolog which require persistent storage. In many cases it provides a much easier way of implementing such storage than using files under direct program control. For example, interactive applications can use persistent predicates to represent their internal state in a way that is close to the application. The persistence of such predicates then allows automatically restoring the state to that at the end of a previous session. Using persistent predicates amounts to simply declaring some predicates as such and eliminates having to worry about opening files, closing them, recovering from system crashes, etc. 
+
+
+<P>
+In other cases, however, it may be convenient to use a relational database as persistent storage. This may be the case, for example, when the data already resides in such a database (where it is perhaps accessed also by other applications) or the volume of data is very large. 
+<A NAME="IDX6394"></A>
+<CODE>persdb_sql</CODE> [CCG98] is a companion library which implements the same notion of persistent predicates used herein, but keeping the storage in a relational database. This provides a very natural and transparent way to access SQL database relations from a Prolog program. In that library, facilities are also provided for reflecting more complex <EM>views</EM> of the database relations as predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations, and may include SQL-like aggregation operations. 
+
+
+<P>
+A nice characteristic of the notion of persistent predicates used in both of these libraries is that it abstracts away how the predicate is actually stored. Thus, a program can use persistent predicates stored in files or in external relational databases interchangeably, and the type of storage used for a given predicate can be changed without having to modify the program (except for replacing the corresponding 
+<A NAME="IDX6395"></A>
+<CODE>persistent/2</CODE> declarations). 
+
+
+<P>
+An example application of the 
+<A NAME="IDX6396"></A>
+<CODE>persdb</CODE> and 
+<A NAME="IDX6397"></A>
+<CODE>persdb_sql</CODE> libraries (and also the 
+<A NAME="IDX6398"></A>
+<CODE>pillow</CODE> library [CH97]), is 
+<A NAME="IDX6399"></A>
+<CODE>WebDB</CODE> [GCH98]. 
+<A NAME="IDX6400"></A>
+<CODE>WebDB</CODE> is a generic, highly customizable <EM>deductive database engine</EM> with an <EM>html interface</EM>. 
+<A NAME="IDX6401"></A>
+<CODE>WebDB</CODE> allows creating and maintaining Prolog-based databases as well as relational databases (residing in conventional relational database engines) using any standard WWW browser. 
+
+
+
+
+<H2><A NAME="SEC620" HREF="ciao_toc.html#TOC620">Using file-based persistent predicates</A></H2>
+
+<P>
+Persistent predicates can be declared statically, using 
+<A NAME="IDX6402"></A>
+<CODE>persistent/2</CODE> declarations (which is the preferred method, when possible), or dynamically via calls to 
+<A NAME="IDX6403"></A>
+<CODE>make_persistent/2</CODE>. Currently, persistent predicates may only contain facts, i.e., they are <EM>dynamic</EM> predicates of type 
+<A NAME="IDX6404"></A>
+<CODE>data/1</CODE>. 
+
+
+<P>
+Predicates declared as persistent are linked to directory, and the persistent state of the predicate will be kept in several files below that directory. The files in which the persistent predicates are stored are in readable, plain ASCII format, and in Prolog syntax. One advantage of this approach is that such files can also be created or edited by hand, in a text editor, or even by other applications. 
+
+
+<P>
+An example definition of a persistent predicate implemented by files follows: 
+
+
+
+<PRE>
+:- persistent(p/3,dbdir).
+
+persistent_dir(dbdir, '/home/clip/public_html/db').
+</PRE>
+
+<P>
+The first line declares the predicate <CODE>p/3</CODE> persistent. The argument <CODE>dbdir</CODE> is a key used to index into a fact of the relation 
+<A NAME="IDX6405"></A>
+<CODE>persistent_dir/2</CODE>, which specifies the directory where the corresponding files will be kept. The effect of the declaration, together with the 
+<A NAME="IDX6406"></A>
+<CODE>persistent_dir/2</CODE> fact, is that, although the predicate is handled in the same way as a normal data predicate, in addition the system will create and maintain efficiently a persistent version of <CODE>p/3</CODE> via files in the directory <CODE>/home/clip/public_html/db</CODE>. 
+
+
+<P>
+The level of indirection provided by the <CODE>dbdir</CODE> argument makes it easy to place the storage of several persistent predicates in a common directory, by specifying the same key for all of them. It also allows changing the directory for several such persistent predicates by modifying only one fact in the program. Furthermore, the 
+<A NAME="IDX6407"></A>
+<CODE>persistent_dir/2</CODE> predicate can even be dynamic and specified at run-time. 
+
+
+
+
+<H2><A NAME="SEC621" HREF="ciao_toc.html#TOC621">Implementation Issues</A></H2>
+
+<P>
+We outline the current implementation approach. This implementation attempts to provide at the same time efficiency and security. To this end, up to three files are used for each predicate (the 
+<A NAME="IDX6408"></A>
+persistence set): the 
+<A NAME="IDX6409"></A>
+data file, the 
+<A NAME="IDX6410"></A>
+operations file, and the 
+<A NAME="IDX6411"></A>
+backup file. In the 
+<A NAME="IDX6412"></A>
+updated state the facts (tuples) that define the predicate are stored in the data file and the operations file is empty (the backup file, which contains a security copy of the data file, may or may not exist). 
+
+
+<P>
+While a program using a persistent predicate is running, any insertion (assert) or deletion (retract) operations on the predicate are performed on both the program memory and on the persistence set. However, in order to incurr only a small overhead in the execution, rather than changing the data file directly, a record of each of the insertion and deletion operations is <EM>appended</EM> to the operations file. The predicate is then in a 
+<A NAME="IDX6413"></A>
+transient state, in that the contents of the data file do not reflect exactly the current state of the corresponding predicate. However, the complete persistence set does. 
+
+
+<P>
+When a program starts, all pending operations in the operations file are performed on the data file. A backup of the data file is created first to prevent data loss if the system crashes during this operation. The order in which this updating of files is done ensures that, if at any point the process dies, on restart the data will be completely recovered. This process of updating the persistence set can also be triggered at any point in the execution of the program (for example, when halting) by calling 
+<A NAME="IDX6414"></A>
+<CODE>update_files</CODE>. 
+
+
+
+
+<H2><A NAME="SEC622" HREF="ciao_toc.html#TOC622">Defining an initial database</A></H2>
+
+<P>
+It is possible to define an initial database by simply including in the program code facts of persistent predicates. They will be included in the persistent database when it is created. They are ignored in successive executions. 
+
+
+
+
+<H2><A NAME="SEC623" HREF="ciao_toc.html#TOC623">Using persistent predicates from the top level</A></H2>
+
+<P>
+Special care must be taken when loading into the top level modules or user files which use persistent predicates. Beforehand, a goal <CODE>use_module(library('persdb/persdbrt'))</CODE> must be issued. Furthermore, since persistent predicates defined by the loaded files are in this way defined dynamically, a call to 
+<A NAME="IDX6415"></A>
+<CODE>initialize_db/0</CODE> is commonly needed after loading and before calling predicates of these files. 
+
+
+
+
+<H2><A NAME="SEC624" HREF="ciao_toc.html#TOC624">Usage and interface (<CODE>persdbrt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -112,7 +218,19 @@ persistent predicates (implemented in the
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(pl2sql)).</CODE>
+There are two packages which implement persistence: 
+<A NAME="IDX6416"></A>
+<CODE>persdb</CODE> and 
+<A NAME="IDX6417"></A>
+<CODE>'persdb/ll'</CODE> (for low level). In the first, the standard builtins 
+<A NAME="IDX6418"></A>
+<CODE>asserta_fact/1</CODE>, 
+<A NAME="IDX6419"></A>
+<CODE>assertz_fact/1</CODE>, and 
+<A NAME="IDX6420"></A>
+<CODE>retract_fact/1</CODE> are replaced by new versions which handle persistent data predicates, behaving as usual for normal data predicates. In the second package, predicates with names starting with <CODE>p</CODE> are defined, so that there is no overhead in calling the standard builtins. In any case, each package is used as usual: including it in the package list of the module, or using the 
+<A NAME="IDX6421"></A>
+<CODE>use_package/1</CODE> declaration.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -121,28 +239,35 @@ persistent predicates (implemented in the
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6606"></A>
-<CODE>pl2sqlstring/3</CODE>, 
-<A NAME="IDX6607"></A>
-<CODE>pl2sqlterm/3</CODE>, 
-<A NAME="IDX6608"></A>
-<CODE>sqlterm2string/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6609"></A>
-<CODE>querybody/1</CODE>, 
-<A NAME="IDX6610"></A>
-<CODE>projterm/1</CODE>, 
-<A NAME="IDX6611"></A>
-<CODE>sqlstring/1</CODE>.
+<A NAME="IDX6422"></A>
+<CODE>passerta_fact/1</CODE>, 
+<A NAME="IDX6423"></A>
+<CODE>passertz_fact/1</CODE>, 
+<A NAME="IDX6424"></A>
+<CODE>pretract_fact/1</CODE>, 
+<A NAME="IDX6425"></A>
+<CODE>pretractall_fact/1</CODE>, 
+<A NAME="IDX6426"></A>
+<CODE>asserta_fact/1</CODE>, 
+<A NAME="IDX6427"></A>
+<CODE>assertz_fact/1</CODE>, 
+<A NAME="IDX6428"></A>
+<CODE>retract_fact/1</CODE>, 
+<A NAME="IDX6429"></A>
+<CODE>initialize_db/0</CODE>, 
+<A NAME="IDX6430"></A>
+<CODE>make_persistent/2</CODE>, 
+<A NAME="IDX6431"></A>
+<CODE>update_files/0</CODE>, 
+<A NAME="IDX6432"></A>
+<CODE>update_files/1</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX6612"></A>
-<CODE>relation/3</CODE>, 
-<A NAME="IDX6613"></A>
-<CODE>attribute/4</CODE>.
+<A NAME="IDX6433"></A>
+<CODE>persistent_dir/2</CODE>, 
+<A NAME="IDX6434"></A>
+<CODE>$is_persistent/2</CODE>.
 
 </UL>
 
@@ -153,16 +278,20 @@ persistent predicates (implemented in the
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6614"></A>
-<CODE>persdb_sql_common/sqltypes</CODE>, 
-<A NAME="IDX6615"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX6616"></A>
+<A NAME="IDX6435"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX6617"></A>
+<A NAME="IDX6436"></A>
+<CODE>streams</CODE>, 
+<A NAME="IDX6437"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6438"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX6618"></A>
-<CODE>messages</CODE>.
+<A NAME="IDX6439"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX6440"></A>
+<CODE>file_locks/file_locks</CODE>, 
+<A NAME="IDX6441"></A>
+<CODE>persdb/persdbcache</CODE>.
 
 </UL>
 
@@ -172,312 +301,371 @@ persistent predicates (implemented in the
 
 
 
-<H2><A NAME="SEC635" HREF="ciao_toc.html#TOC635">Documentation on exports (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC625" HREF="ciao_toc.html#TOC625">Documentation on exports (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX6619"></A>
-<A NAME="IDX6620"></A>
+<A NAME="IDX6442"></A>
+<A NAME="IDX6443"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlstring/3:</B>
-<DD><A NAME="IDX6621"></A>
+<DT><span class="define">PREDICATE:</span> <B>passerta_fact/1:</B>
+<DD><A NAME="IDX6444"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>pl2sqlstring(+ProjectionTerm,+DatabaseGoal,-SQLQueryString)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>passerta_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>passerta_fact(Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This is the top level predicate which translates complex Prolog goals into the corresponding SQL code.
+<LI><EM>Description:</EM> Persistent version of
 
-The query code is prepared in such a way that the result is projected onto the term <CODE>ProjectionTerm</CODE> (also in a similar way to the first argument of 
-<A NAME="IDX6622"></A>
-<CODE>setof/3</CODE>)). See the predicate 
-<A NAME="IDX6623"></A>
-<CODE>translate_projection/3</CODE> for restrictions on this term. 
+<A NAME="IDX6445"></A>
+<CODE>asserta_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added at the beginning of the definition of the corresponding predicate. The predicate concerned must be declared 
+<A NAME="IDX6446"></A>
+<CODE>persistent</CODE>. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. Defined in the 
+<A NAME="IDX6447"></A>
+<CODE>'persdb/ll'</CODE> package. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>SQLQueryString</CODE> contains the code of the 
-<A NAME="IDX6624"></A>
-SQL query, ready to be sent to an 
-<A NAME="IDX6625"></A>
-SQL server. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+ProjectionTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+DatabaseGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>-SQLQueryString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6626"></A>
-<A NAME="IDX6627"></A>
+<A NAME="IDX6448"></A>
+<A NAME="IDX6449"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
-<DD><A NAME="IDX6628"></A>
+<DT><span class="define">PREDICATE:</span> <B>passertz_fact/1:</B>
+<DD><A NAME="IDX6450"></A>
 
 
 <P>
-<CODE>DBGoal</CODE> is a goal meant to be executed in the external database. It can be a complex term containing 
-<A NAME="IDX6629"></A>
-conjunctions, 
-<A NAME="IDX6630"></A>
-disjunctions, and 
-<A NAME="IDX6631"></A>
-negations, of: 
+<EM>Meta-predicate</EM> with arguments: <CODE>passertz_fact(fact)</CODE>.
 
 
+<P>
+<STRONG>Usage:</STRONG> <CODE>passertz_fact(Fact)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Persistent version of
 
-<LI>
+<A NAME="IDX6451"></A>
+<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added at the end of the definition of the corresponding predicate. The predicate concerned must be declared 
+<A NAME="IDX6452"></A>
+<CODE>persistent</CODE>. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. Defined in the 
+<A NAME="IDX6453"></A>
+<CODE>'persdb/ll'</CODE> package. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-<A NAME="IDX6632"></A>
-Atomic goals, which must have been defined via 
-<A NAME="IDX6633"></A>
-<CODE>relation/3</CODE> and 
-<A NAME="IDX6634"></A>
-<CODE>attribute/4</CODE> and reside in the (same) database. Their arguments must be either ground or free variables. If they are ground, they must be bound to constants of the type declared for that argument. If an argument is a free variable, it may <EM>share</EM> with (i.e., be the same variable as) other free variables in other goal arguments. 
-
-<LI>
-
-<A NAME="IDX6635"></A>
-Database comparison goals, whose main functor must be a 
-<A NAME="IDX6636"></A>
-database comparison operator (see 
-<A NAME="IDX6637"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX6638"></A>
-<CODE>comparison/2</CODE>) and whose arguments must be <EM>database arithmetic expressions</EM>. 
-
-<LI>
-
-<A NAME="IDX6639"></A>
-Database calls to is/2. The left side of such a call may be either unbound, in which case it is bound to the result of evaluating the right side, or bound in which case an equality condition is tested. The right side must be a <EM>database arithmetic expression</EM>. 
-
-</UL>
-
-<P>
-The binding of variables follows Prolog rules: 
-
-
-
-<UL>
-
-<LI>variables are bound by positive base goals and on the left side of the
-
-<A NAME="IDX6640"></A>
-<CODE>is/2</CODE> predicate. 
-
-<LI>Comparison operations, negated goals, and right sides of the
-
-<A NAME="IDX6641"></A>
-<CODE>is/2</CODE> predicate do not return variable bindings and may even require all arguments to be bound for a safe evaluation. 
-
-</UL>
-
-<P>
-<A NAME="IDX6642"></A>
-Database arithmetic expressions may contain: 
-
-
-
-<UL>
-
-<LI>Numeric constants (i.e., integers, reals, etc.).
-
-<LI>Bound variables, i.e., variables which will be bound during execution through occurrence within a positive database goal, or by a preceding arithmetic function.
-
-<LI>
-
-<A NAME="IDX6643"></A>
-Database arithmetic functions, which are a subset of those typically accepted within 
-<A NAME="IDX6644"></A>
-<CODE>is/2</CODE> (see 
-<A NAME="IDX6645"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX6646"></A>
-<CODE>arithmetic_functor/2</CODE>). 
-
-<LI>
-
-<A NAME="IDX6647"></A>
-Database aggregation functions, each of which has two arguments: a variable indicating the argument over which the function is to be computed, and a goal argument which must contain in at least one argument position the variable (e.g. <CODE>avg(Seats, plane(Type, Seats))</CODE>). The goal argument may only be a conjunction of (positive or negative) base goals. See 
-<A NAME="IDX6648"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX6649"></A>
-<CODE>aggregate_functor/2</CODE> for the admissible aggregate functions. 
-
-</UL>
-
-<P>
-In addition, variables 
-<A NAME="IDX6650"></A>
-<A NAME="IDX6651"></A>
-can be existentially quantified using 
-<A NAME="IDX6652"></A>
-<CODE>^/2</CODE> (in a similar way to how it is done in 
-<A NAME="IDX6653"></A>
-<CODE>setof/3</CODE>). 
-
-
-<P>
-Note that it is assumed that the arithmetic operators in Prolog and SQL are the same, i.e., <CODE>+</CODE> is addition in Prolog and in SQL, etc. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
-
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6654"></A>
-<A NAME="IDX6655"></A>
+<A NAME="IDX6454"></A>
+<A NAME="IDX6455"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
-<DD><A NAME="IDX6656"></A>
+<DT><span class="define">PREDICATE:</span> <B>pretract_fact/1:</B>
+<DD><A NAME="IDX6456"></A>
 
 
 <P>
-<CODE>DBProjTerm</CODE> is a term onto which the result of a database query code is (in a similar way to the first argument of 
-<A NAME="IDX6657"></A>
-<CODE>setof/3</CODE>)). 
+<CODE>pretract_fact(P)</CODE>
 
 
 <P>
-A <CODE>ProjectionTerm</CODE> must meet the following restrictions: 
+Retracts a predicate in both, the dynamic and the persistent databases.
 
 
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>pretract_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pretract_fact(Fact)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Persistent version of
 
-<LI>The functor of <CODE>ProjectionTerm</CODE> may not be one of the built-in predicates, i.e. ',', ';', etc. are not allowed.
+<A NAME="IDX6457"></A>
+<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be declared 
+<A NAME="IDX6458"></A>
+<CODE>persistent</CODE>. Defined in the 
+<A NAME="IDX6459"></A>
+<CODE>'persdb/ll'</CODE> package. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-<LI>Only variables and constants are allowed as arguments, i.e., no structured terms may appear.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
-
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6658"></A>
-<A NAME="IDX6659"></A>
+<A NAME="IDX6460"></A>
+<A NAME="IDX6461"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
-<DD><A NAME="IDX6660"></A>
+<DT><span class="define">PREDICATE:</span> <B>pretractall_fact/1:</B>
+<DD><A NAME="IDX6462"></A>
 
 
+<P>
+<CODE>pretractall_fact(P)</CODE>
+
+
+<P>
+Retracts all the instances of a predicate in both, the dynamic and the persistent databases.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>pretractall_fact(fact)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6463"></A>
+<A NAME="IDX6464"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>asserta_fact/1:</B>
+<DD><A NAME="IDX6465"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>asserta_fact(Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Same as
+
+<A NAME="IDX6466"></A>
+<CODE>passerta_fact/1</CODE>, but if the predicate concerned is not persistent then behaves as the builtin of the same name. Defined in the 
+<A NAME="IDX6467"></A>
+<CODE>persdb</CODE> package. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6468"></A>
+<A NAME="IDX6469"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assertz_fact/1:</B>
+<DD><A NAME="IDX6470"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz_fact(Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Same as
+
+<A NAME="IDX6471"></A>
+<CODE>passertz_fact/1</CODE>, but if the predicate concerned is not persistent then behaves as the builtin of the same name. Defined in the 
+<A NAME="IDX6472"></A>
+<CODE>persdb</CODE> package. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6473"></A>
+<A NAME="IDX6474"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retract_fact/1:</B>
+<DD><A NAME="IDX6475"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>retract_fact(Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Same as
+
+<A NAME="IDX6476"></A>
+<CODE>pretract_fact/1</CODE>, but if the predicate concerned is not persistent then behaves as the builtin of the same name. Defined in the 
+<A NAME="IDX6477"></A>
+<CODE>persdb</CODE> package. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>retract_fact(Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Same as
+
+<A NAME="IDX6478"></A>
+<CODE>pretractall/1</CODE>, but if the predicate concerned is not persistent then behaves as the builtin of the same name. Defined in the 
+<A NAME="IDX6479"></A>
+<CODE>persdb</CODE> package. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6480"></A>
+<A NAME="IDX6481"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retractall_fact/1:</B>
+<DD><A NAME="IDX6482"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retractall_fact(fact)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6483"></A>
+<A NAME="IDX6484"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>initialize_db/0:</B>
+<DD><A NAME="IDX6485"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX6486"></A>
+<A NAME="IDX6487"></A>
+Initializes the whole database, updating the state of the declared persistent predicates. Must be called explicitly after dynamically defining clauses for 
+<A NAME="IDX6488"></A>
+<CODE>persistent_dir/2</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6489"></A>
+<A NAME="IDX6490"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_persistent/2:</B>
+<DD><A NAME="IDX6491"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>make_persistent(spec,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_persistent(PredDesc, Keyword)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamic version of the
+
+<A NAME="IDX6492"></A>
+<CODE>persistent</CODE> declaration. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
 
 <PRE>
-sqlstring(S) :-
-        string(S).
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
 </PRE>
 
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
+ (<CODE>persdbcache:keyword/1</CODE>)
+</UL>
+
+</DL>
+
 <P>
-<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
+<A NAME="IDX6493"></A>
+<A NAME="IDX6494"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>update_files/0:</B>
+<DD><A NAME="IDX6495"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a string containing SQL code.
+<LI><EM>Description:</EM> Updates the files comprising the persistence set of all persistent predicates defined in the application.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6661"></A>
-<A NAME="IDX6662"></A>
+<A NAME="IDX6496"></A>
+<A NAME="IDX6497"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlterm/3:</B>
-<DD><A NAME="IDX6663"></A>
+<DT><span class="define">PREDICATE:</span> <B>update_files/1:</B>
+<DD><A NAME="IDX6498"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>pl2sqlterm(+ProjectionTerm,+DatabaseGoal,-SQLQueryTerm)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>update_files(list(spec))</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>update_files(PredSpecList)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Similar to
+<LI><EM>Description:</EM> Updates the files comprising the persistence set of the persistent predicates in <CODE>PredSpecList</CODE>.
 
-<A NAME="IDX6664"></A>
-<CODE>pl2sqlstring/3</CODE> except that <CODE>SQLQueryTerm</CODE> is a representation of the SQL query as a Prolog term. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ProjectionTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+DatabaseGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>-SQLQueryTerm</CODE> is a list of <CODE>sqlterm</CODE>s.
+<CODE>PredSpecList</CODE> is a list of <CODE>predname</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Documentation on multifiles (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX6665"></A>
-<A NAME="IDX6666"></A>
+<A NAME="IDX6499"></A>
+<A NAME="IDX6500"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sqlterm2string/2:</B>
-<DD><A NAME="IDX6667"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sqlterm2string(+Queries,-QueryString)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>QueryString</CODE> is a string representation of the list of queries in Prolog-term format in <CODE>Queries</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Queries</CODE> is a list of <CODE>sqlterm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-QueryString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6668"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX6669"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX6670"></A>
-<CODE>sqltypes</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC636" HREF="ciao_toc.html#TOC636">Documentation on multifiles (<CODE>pl2sql</CODE>)</A></H2>
-<P>
-<A NAME="IDX6671"></A>
-<A NAME="IDX6672"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>relation/3:</B>
-<DD><A NAME="IDX6673"></A>
+<DT><span class="define">PREDICATE:</span> <B>persistent_dir/2:</B>
+<DD><A NAME="IDX6501"></A>
 
 
 <P>
@@ -489,45 +677,36 @@ The predicate is of type <EM>data</EM>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>relation(PredName,Arity,TableName)</CODE>
+<STRONG>Usage:</STRONG> <CODE>persistent_dir(Keyword, Location_Path)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate, together with
+<LI><EM>Description:</EM> Relates identifiers of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location_Path</CODE>s). <CODE>Location_Path</CODE> is <STRONG>a directory</STRONG> and it means that the definition for the persistent predicates associated with <CODE>Keyword</CODE> is kept in files below that directory (which must previously exist). These files, in the updated state, contain the actual definition of the predicate in Prolog syntax (but with module names resolved).
 
-<A NAME="IDX6674"></A>
-<CODE>attribute/4</CODE>, defines the correspondence between Prolog predicates and the 
-<A NAME="IDX6675"></A>
-SQL tables in the database. These two relations constitute an extensible meta-database which maps 
-<A NAME="IDX6676"></A>
-Prolog predicate names to 
-<A NAME="IDX6677"></A>
-SQL table names, and 
-<A NAME="IDX6678"></A>
-Prolog predicate argument positions to 
-<A NAME="IDX6679"></A>
-SQL attributes. 
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>PredName</CODE> is the chosen Prolog name for an SQL table. <CODE>Arity</CODE> is the number of arguments of the predicate. <CODE>TableName</CODE> is the name of the SQL table in the Database Management System. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
+ (<CODE>persdbcache:keyword/1</CODE>)
 
-<CODE>PredName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Arity</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>TableName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Location_Path</CODE> is an atom, the name of a directory.
+ (<CODE>persdbrt:directoryname/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6680"></A>
-<A NAME="IDX6681"></A>
+<A NAME="IDX6502"></A>
+<A NAME="IDX6503"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>attribute/4:</B>
-<DD><A NAME="IDX6682"></A>
+<DT><span class="define">PREDICATE:</span> <B>$is_persistent/2:</B>
+<DD><A NAME="IDX6504"></A>
+
+
+<P>
+<CODE>$is_persistent(Spec, Key)</CODE>
+
+
+<P>
+Predicate <CODE>Spec</CODE> persists within database <CODE>Key</CODE>. Programmers should not define this predicate directly in the program.
 
 
 <P>
@@ -538,419 +717,94 @@ The predicate is <EM>multifile</EM>.
 The predicate is of type <EM>data</EM>.
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>attribute(ANumber,TblName,AName,AType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> This predicate maps the argument positions of a Prolog predicate to the SQL attributes of its corresponding table. The types of the arguments need to be specified, and this information is used for consistency checking during the translation and for output formatting. A minimal type system is provided to this end. The allowable types are given by
-
-<A NAME="IDX6683"></A>
-<CODE>sqltype/1</CODE>. 
-
-<CODE>ANumber</CODE> is the argument number in the Prolog relation. <CODE>TblName</CODE> is the name of the SQL table in the Database Management System. <CODE>AName</CODE> is the name of the corresponding attribute in the table. <CODE>AType</CODE> is the (translator) data type of the attribute. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>ANumber</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>TblName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>AName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>AType</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
-</UL>
-
 </DL>
 
 
 
-<H2><A NAME="SEC637" HREF="ciao_toc.html#TOC637">Documentation on internals (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC627" HREF="ciao_toc.html#TOC627">Documentation on internals (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX6684"></A>
-<A NAME="IDX6685"></A>
+<A NAME="IDX6505"></A>
+<A NAME="IDX6506"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>query_generation/3:</B>
-<DD><A NAME="IDX6686"></A>
+<DT><span class="define">DECLARATION:</span> <B>persistent/2:</B>
+<DD><A NAME="IDX6507"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>query_generation(+ListOfConjunctions,+ProjectionTerm,-ListOfQueries)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>persistent(PredDesc, Keyword)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> For each Conjunction in <CODE>ListOfConjunctions</CODE>, translate the pair <CODE>(ProjectionTerm, Conjunction)</CODE> to an SQL query and connect each such query through a
-
-<A NAME="IDX6687"></A>
-UNION-operator to result in the <CODE>ListOfQueries</CODE>. 
-
-A Conjunction consists of positive or negative subgoals. Each subgoal is translated as follows: 
-
-
-<UL>
-
-<LI>the
-
-<A NAME="IDX6688"></A>
-functor of a goal that is not a comparison operation is translated to a 
-<A NAME="IDX6689"></A>
-relation name with a 
-<A NAME="IDX6690"></A>
-range variable, 
-
-<LI>
-
-<A NAME="IDX6691"></A>
-negated goals are translated to 
-<A NAME="IDX6692"></A>
-NOT EXISTS-subqueries with 
-<A NAME="IDX6693"></A>
-* projection, 
-
-<LI>
-
-<A NAME="IDX6694"></A>
-comparison operations are translated to comparison operations in the 
-<A NAME="IDX6695"></A>
-WHERE-clause, 
-
-<LI>
-
-<A NAME="IDX6696"></A>
-aggregate function terms are translated to 
-<A NAME="IDX6697"></A>
-aggregate function (sub)queries. 
-
-</UL>
-
-The arguments of a goal are translated as follows: 
-
-
-<UL>
-
-<LI><CODE>variables of a goal</CODE> are translated to
-
-<A NAME="IDX6698"></A>
-qualified attributes, 
-
-<LI>
-
-<A NAME="IDX6699"></A>
-variables occurring in several goals are translated to equality comparisons (equi join) in the WHERE-clause, 
-<A NAME="IDX6700"></A>
-<A NAME="IDX6701"></A>
-
-<LI>
-
-<A NAME="IDX6702"></A>
-constant arguments are translated to 
-<A NAME="IDX6703"></A>
-equality comparisons in the WHERE-clause. 
-
-</UL>
-
-Arithmetic functions are treated specially (
-<A NAME="IDX6704"></A>
-<CODE>translate_arithmetic_function/5</CODE>). See also 
-<A NAME="IDX6705"></A>
-<CODE>querybody/1</CODE> for details on the syntax accepted and restrictions. 
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6706"></A>
-<A NAME="IDX6707"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_conjunction/5:</B>
-<DD><A NAME="IDX6708"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_conjunction(Conjunction,SQLFrom,SQLWhere,Dict,NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates a conjunction of goals (represented as a list of goals preceeded by existentially quantified variables) to
-
-<A NAME="IDX6709"></A>
-FROM-clauses and 
-<A NAME="IDX6710"></A>
-WHERE-clauses of an SQL query. A dictionary containing the associated SQL table and attribute names is built up as an accumulator pair (arguments <CODE>Dict</CODE> and <CODE>NewDict</CODE>). 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6711"></A>
-<A NAME="IDX6712"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_goal/5:</B>
-<DD><A NAME="IDX6713"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_goal(Goal,SQLFrom,SQLWhere,Dict,NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates:
-
-
-<UL>
-
-<LI>a
-
-<A NAME="IDX6714"></A>
-positive database goal to the associated FROM- and WHERE clause of an SQL query, 
-
-<LI>a
-
-<A NAME="IDX6715"></A>
-negated database goal to a negated existential subquery, 
-
-<LI>an
-
-<A NAME="IDX6716"></A>
-arithmetic goal to an arithmetic expression or an aggregate function query, 
-
-<LI>a
-
-<A NAME="IDX6717"></A>
-comparison goal to a comparison expression, and 
-
-<LI>a
-
-<A NAME="IDX6718"></A>
-negated comparison goal to a comparison expression with the opposite comparison operator. 
-
-</UL>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6719"></A>
-<A NAME="IDX6720"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_arithmetic_function/5:</B>
-<DD><A NAME="IDX6721"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_arithmetic_function(Result,Expression,SQLWhere,Dict,NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Arithmetic functions (left side of is/2 operator is bound to value of expression on right side) may be called with either:
-
-
-<UL>
-<LI><CODE>Result</CODE> unbound: then <CODE>Result</CODE> is bound to the value of the evaluation of <CODE>Expression</CODE>,
-
-<LI><CODE>Result</CODE> bound: then an equality condition is returned between the value of <CODE>Result</CODE> and the value of the evaluation of <CODE>Expression</CODE>.
-
-Only the equality test shows up in the WHERE clause of an SQLquery. 
-</UL>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6722"></A>
-<A NAME="IDX6723"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_comparison/5:</B>
-<DD><A NAME="IDX6724"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_comparison(LeftArg,RightArg,CompOp,Dict,SQLComparison)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates the left and right arguments of a comparison term into the appropriate comparison operation in SQL. The result type of each argument expression is checked for type compatibility.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6725"></A>
-<A NAME="IDX6726"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>aggregate_function/3:</B>
-<DD><A NAME="IDX6727"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>aggregate_function(AggregateFunctionTerm,Dict,AggregateFunctionQuery)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Supports the Prolog aggregate function terms listed in
-
-<A NAME="IDX6728"></A>
-<CODE>aggregate_functor/2</CODE> within arithmetic expressions. Aggregate functions are translated to the corresponding SQL built-in aggregate functions. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6729"></A>
-<A NAME="IDX6730"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>comparison/2:</B>
-<DD><A NAME="IDX6731"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>comparison(PrologOperator,SQLOperator)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the mapping between Prolog operators and SQL operators:
-
+<LI><EM>Description:</EM> Declares the predicate <CODE>PredDesc</CODE> as persistent. <CODE>Keyword</CODE> is the
+
+<A NAME="IDX6508"></A>
+identifier of a location where the persistent storage for the predicate is kept. The location <CODE>Keyword</CODE> is described in the 
+<A NAME="IDX6509"></A>
+<CODE>persistent_dir</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
 
 <PRE>
-comparison(=,=).
-comparison(&#60;,&#60;).
-comparison(&#62;,&#62;).
-comparison(@&#60;,&#60;).
-comparison(@&#62;,&#62;).
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
 </PRE>
 
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+ (<CODE>basic_props:predname/1</CODE>)
 
-<CODE>PrologOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
+ (<CODE>persdbcache:keyword/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6732"></A>
-<A NAME="IDX6733"></A>
+<A NAME="IDX6510"></A>
+<A NAME="IDX6511"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>negated_comparison/2:</B>
-<DD><A NAME="IDX6734"></A>
+<DT><span class="define">PREDICATE:</span> <B>keyword/1:</B>
+<DD><A NAME="IDX6512"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>negated_comparison(PrologOperator,SQLOperator)</CODE>
+An atom which identifies a fact of the 
+<A NAME="IDX6513"></A>
+<CODE>persistent_dir/2</CODE> relation. This fact relates this atom to a directory in which the persistent storage for one or more persistent predicates is kept. Storage is expected under a subdirectory by the name of the module and in a file by the name of the predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6514"></A>
+<A NAME="IDX6515"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>directoryname/1:</B>
+<DD><A NAME="IDX6516"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>directoryname(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Defines the mapping between Prolog operators and the complementary SQL operators:
+<LI><EM>Description:</EM> <CODE>X</CODE> is an atom, the name of a directory.
 
-
-<PRE>
-negated_comparison(=,&#60;&#62;).
-negated_comparison(\==,=).
-negated_comparison(&#62;,=&#60;).
-negated_comparison(=&#60;,&#62;).
-negated_comparison(&#60;,&#62;=).
-negated_comparison(&#62;=,&#60;).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6735"></A>
-<A NAME="IDX6736"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>arithmetic_functor/2:</B>
-<DD><A NAME="IDX6737"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>arithmetic_functor(PrologFunctor,SQLFunction)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the admissible arithmetic functions on the Prolog side and their correspondence on the SQL side:
-
-
-<PRE>
-arithmetic_functor(+,+).
-arithmetic_functor(-,-).
-arithmetic_functor(*,*).
-arithmetic_functor(/,/).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologFunctor</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLFunction</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6738"></A>
-<A NAME="IDX6739"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>aggregate_functor/2:</B>
-<DD><A NAME="IDX6740"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>aggregate_functor(PrologFunctor,SQLFunction)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the admissible aggregate functions on the Prolog side and their correspondence on the SQL side:
-
-
-<PRE>
-aggregate_functor(avg,'AVG').
-aggregate_functor(min,'MIN').
-aggregate_functor(max,'MAX').
-aggregate_functor(sum,'SUM').
-aggregate_functor(count,'COUNT').
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologFunctor</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLFunction</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC638" HREF="ciao_toc.html#TOC638">Known bugs and planned improvements (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC628" HREF="ciao_toc.html#TOC628">Known bugs and planned improvements (<CODE>persdbrt</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-Need to separate db predicate names by module.
+To load in the toplevel a file which uses this package, module <CODE>library('persdb/persdbrt')</CODE> has to be previously loaded.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

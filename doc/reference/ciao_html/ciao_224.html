@@ -1,151 +1,532 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 31 December 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Beyond installation</TITLE>
+<TITLE>The Ciao Prolog System               - lookup (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_223.html">previous</A>, <A HREF="ciao_225.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_223.html">previous</A>, <A HREF="ciao_225.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC874" HREF="ciao_toc.html#TOC874">Beyond installation</A></H1>
-
+<H1><A NAME="SEC869" HREF="ciao_toc.html#TOC869">lookup (library)</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza, Manuel Hermenegildo.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+<A NAME="IDX8843"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#55 (2001/1/26, 17:36:30 CET)
+<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
 
 
 <P>
- 
+<STRONG>Version:</STRONG> 0.1 (1999/1/14, 13:30:46 MET)
 
 
 
 <UL>
-<LI><A HREF="ciao_224.html#SEC875">Architecture-specific notes and limitations</A>
-<LI><A HREF="ciao_224.html#SEC876">Keeping up to date with the Ciao users mailing list</A>
-<LI><A HREF="ciao_224.html#SEC877">Downloading new versions</A>
-<LI><A HREF="ciao_224.html#SEC878">Reporting bugs</A>
+<LI><A HREF="ciao_224.html#SEC870">Usage and interface (lookup)</A>
+<LI><A HREF="ciao_224.html#SEC871">Documentation on exports (lookup)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC875" HREF="ciao_toc.html#TOC875">Architecture-specific notes and limitations</A></H2>
+<H2><A NAME="SEC870" HREF="ciao_toc.html#TOC870">Usage and interface (<CODE>lookup</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(lookup)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX8844"></A>
+<CODE>create_proto_element/3</CODE>, 
+<A NAME="IDX8845"></A>
+<CODE>get_prototype_interface/2</CODE>, 
+<A NAME="IDX8846"></A>
+<CODE>get_prototype_definition/2</CODE>, 
+<A NAME="IDX8847"></A>
+<CODE>lookup_check_node/4</CODE>, 
+<A NAME="IDX8848"></A>
+<CODE>lookup_check_field/6</CODE>, 
+<A NAME="IDX8849"></A>
+<CODE>lookup_check_interface_fieldValue/8</CODE>, 
+<A NAME="IDX8850"></A>
+<CODE>lookup_field/4</CODE>, 
+<A NAME="IDX8851"></A>
+<CODE>lookup_route/5</CODE>, 
+<A NAME="IDX8852"></A>
+<CODE>lookup_fieldTypeId/1</CODE>, 
+<A NAME="IDX8853"></A>
+<CODE>lookup_get_fieldType/4</CODE>, 
+<A NAME="IDX8854"></A>
+<CODE>lookup_field_access/4</CODE>, 
+<A NAME="IDX8855"></A>
+<CODE>lookup_set_def/3</CODE>, 
+<A NAME="IDX8856"></A>
+<CODE>lookup_set_prototype/4</CODE>, 
+<A NAME="IDX8857"></A>
+<CODE>lookup_set_extern_prototype/4</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX8858"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX8859"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX8860"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX8861"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX8862"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX8863"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX8864"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX8865"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX8866"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX8867"></A>
+<CODE>provrml/error</CODE>, 
+<A NAME="IDX8868"></A>
+<CODE>provrml/internal_types</CODE>, 
+<A NAME="IDX8869"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX8870"></A>
+<CODE>provrml/parser_util</CODE>, 
+<A NAME="IDX8871"></A>
+<CODE>provrml/parser</CODE>, 
+<A NAME="IDX8872"></A>
+<CODE>provrml/dictionary</CODE>, 
+<A NAME="IDX8873"></A>
+<CODE>provrml/dictionary_tree</CODE>, 
+<A NAME="IDX8874"></A>
+<CODE>provrml/field_value_check</CODE>, 
+<A NAME="IDX8875"></A>
+<CODE>provrml/boundary</CODE>, 
+<A NAME="IDX8876"></A>
+<CODE>provrml/generator_util</CODE>, 
+<A NAME="IDX8877"></A>
+<CODE>provrml/field_type</CODE>, 
+<A NAME="IDX8878"></A>
+<CODE>provrml/field_value</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC871" HREF="ciao_toc.html#TOC871">Documentation on exports (<CODE>lookup</CODE>)</A></H2>
+<P>
+<A NAME="IDX8879"></A>
+<A NAME="IDX8880"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>create_proto_element/3:</B>
+<DD><A NAME="IDX8881"></A>
+
 
 <P>
-<A NAME="IDX9185"></A>
-<A NAME="IDX9186"></A>
-Ciao makes use of advanced characteristics of modern architectures and operating systems such as multithreading, shared memory, sockets, locks, dynamic load libraries, etc., some of which are sometimes not present in a given system and others may be implemented in very different ways across the different systems. As a result, currently not all Ciao features are available in all supported operating systems. Sometimes this is because not all the required features are present in all the OS flavors supported and sometimes because we simply have not had the time to port them yet. 
+<STRONG>Usage:</STRONG> <CODE>create_proto_element(+Interface, +Definition, -Proto)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The predicate will construct a proto structure containing the interface and the definition.
 
-<P>
-The current state of matters is as follows: 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
+<CODE>+Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<DL COMPACT>
+<CODE>+Definition</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<DT>LINUX:
-<DD>
-multithreading, shared DB access, and locking working. 
-<DT>Solaris:
-<DD>
-multithreading, shared DB access, and locking working. 
-<DT>IRIX:
-<DD>
-multithreading, shared DB access, and locking working. 
-<DT>SunOS 4:
-<DD>
-multithreading, shared DB access, and locking NOT working. 
-<DT>Win 95/98/NT/2000/XP:
-<DD>
-multithreading, shared DB access, and locking working. Dynamic linking of object code (C) libraries NOT working. 
-<DT>Mac OS X (Darwin):
-<DD>
-multithreading, shared DB access, and locking working. 
+<CODE>-Proto</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
-The features that do not work are disabled at compile time. 
-
-
-
-
-<H2><A NAME="SEC876" HREF="ciao_toc.html#TOC876">Keeping up to date with the Ciao users mailing list</A></H2>
-
-<P>
-We recommend that you join the 
-<A NAME="IDX9187"></A>
-<A NAME="IDX9188"></A>
-<A NAME="IDX9189"></A>
-<A NAME="IDX9190"></A>
-Ciao 
-<A NAME="IDX9191"></A>
-<A NAME="IDX9192"></A>
-<EM>users mailing list</EM> (<CODE>ciao-users@clip.dia.fi.upm.es</CODE>), in order to receive information on new versions and solutions to problems. Simply send a message to <A HREF="mailto:ciao-users-request@clip.dia.fi.upm.es">ciao-users-request@clip.dia.fi.upm.es</A>, containing in the body only the word: 
+<A NAME="IDX8882"></A>
+<A NAME="IDX8883"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_interface/2:</B>
+<DD><A NAME="IDX8884"></A>
 
 
 <P>
-<CODE>subscribe</CODE> 
-
-
-<P>
-alone in one line. Messages in the list are strictly limited to issues directly related to Ciao Prolog and your email address will of course be kept strictly confidential. You mail also want to subscribe to the <CODE>comp.lang.prolog</CODE> newsgroup. 
-
-
-<P>
-There is additional info available on the Ciao system, other CLIP group software, publications on the technology underlying these systems, etc. in the CLIP group's WWW site <A HREF="http://clip.dia.fi.upm.es">http://clip.dia.fi.upm.es</A>. 
-
-
-
-
-<H2><A NAME="SEC877" HREF="ciao_toc.html#TOC877">Downloading new versions</A></H2>
-
-<P>
-Ciao and its related libraries and utilities are under constant improvement, so you should make sure that you have the latest versions of the different components, which can be dowloaded from: 
-<A NAME="IDX9193"></A>
-<A NAME="IDX9194"></A>
-
-
-<P>
-<A HREF="http://clip.dia.fi.upm.es/Software">http://clip.dia.fi.upm.es/Software</A> 
-
-
-
-
-<H2><A NAME="SEC878" HREF="ciao_toc.html#TOC878">Reporting bugs</A></H2>
-<P>
-<A NAME="IDX9195"></A>
-<A NAME="IDX9196"></A>
-<A NAME="IDX9197"></A>
-<A NAME="IDX9198"></A>
-
-
-<P>
-If you still have problems after downloading the latest version and reading the installation instructions you can send a message to <A HREF="mailto:ciao-bug@clip.dia.fi.upm.es">ciao-bug@clip.dia.fi.upm.es</A>. Please be as informative as possible in your messages, so that we can reproduce the bug. 
-
-
+<STRONG>Usage:</STRONG> <CODE>get_prototype_interface(+Proto, -Interface)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The predicate will return the interface from a proto structure.
 
-<LI>For <EM>installation problems</EM> we typically need to have the version and patch number of the Ciao package (e.g., the name of the file downloaded), the output produced by the installation process (you can capture it by redirecting the output into a file or cutting and pasting with the mouse), and the exact version of the Operating System you are using (as well as the C compiler, if you took a source distribution).
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI>For <EM>problems during use</EM> we also need the Ciao and OS versions and a small example of code which we can run to reproduce the bug.
+<CODE>+Proto</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
+<CODE>-Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
-<P>
- 
+</DL>
 
+<P>
+<A NAME="IDX8885"></A>
+<A NAME="IDX8886"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_definition/2:</B>
+<DD><A NAME="IDX8887"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_definition(+Proto, -Definition)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will return the definition from a proto structure.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Proto</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>-Definition</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8888"></A>
+<A NAME="IDX8889"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_check_node/4:</B>
+<DD><A NAME="IDX8890"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX8891"></A>
+<A NAME="IDX8892"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_check_field/6:</B>
+<DD><A NAME="IDX8893"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX8894"></A>
+<A NAME="IDX8895"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_check_interface_fieldValue/8:</B>
+<DD><A NAME="IDX8896"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_check_interface_fieldValue(+ParseIn, -ParseOut, +AccessType, +FieldType, +Id, +FieldValue, DCGIn, DCGOut)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate formats the output for the interface part of the prototype. It also checks the values for the fields.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+ParseIn)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>field_value:parse(-ParseOut)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+AccessType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldType</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Id</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldValue</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>DCGIn</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>DCGOut</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8897"></A>
+<A NAME="IDX8898"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_field/4:</B>
+<DD><A NAME="IDX8899"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_field(+Parse, +FieldTypeId, +FieldId0, +FieldId1)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will control that the two connected Fields are of the same type, e.g., SFColor - SFColor, MFVec3f - MFVec3f.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+Parse)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId0</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8900"></A>
+<A NAME="IDX8901"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_route/5:</B>
+<DD><A NAME="IDX8902"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_route(+Parse, +NodeTypeId0, +FieldId0, +NodeTypeId1, +FieldId1)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will check the routing behaviour for two given fields. They will be checked according to the binding rules, like name changes access proporties. The node types for the field must of course be given for the identification.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+Parse)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+NodeTypeId0</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId0</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+NodeTypeId1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8903"></A>
+<A NAME="IDX8904"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_fieldTypeId/1:</B>
+<DD><A NAME="IDX8905"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_fieldTypeId(+FieldTypeId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate just make a check to see if the given FieldType id is among the allowed. You can not construct own ones and the check is mearly a spellcheck.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8906"></A>
+<A NAME="IDX8907"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_get_fieldType/4:</B>
+<DD><A NAME="IDX8908"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_get_fieldType(+Parse, +NodeTypeId, +field_Id, -FieldType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will return the given field's type. It will start the search in the ordinar dictionary and then to the personal dictionary sarting off with 'PROTO'. After it will go for 'DEF' and 'EXTERNPROTO'.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+Parse)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+field_Id</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-FieldType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8909"></A>
+<A NAME="IDX8910"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_field_access/4:</B>
+<DD><A NAME="IDX8911"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_field_access(+Parse, +NodenameId, +FieldId, +FieldId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will control that the access proporties are correct according to the certain rules that we have. It makes a check to see if the fields are of the same access type or if one of them is an exposedField. It is not doing a route check up to control that behaviour entirely.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+Parse)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+NodenameId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8912"></A>
+<A NAME="IDX8913"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_set_def/3:</B>
+<DD><A NAME="IDX8914"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_set_def(+Parse, +Name, +Node)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will enter a new post in the personal dictionary for the node definition.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+Parse)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+Name</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Node</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8915"></A>
+<A NAME="IDX8916"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_set_prototype/4:</B>
+<DD><A NAME="IDX8917"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_set_prototype(+Parse, +Name, +Interface, +Definition)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will insert the prototype definition in the personal dictionary and will give a warning if there is a multiple name given.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+Parse)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+Name</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Definition</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX8918"></A>
+<A NAME="IDX8919"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lookup_set_extern_prototype/4:</B>
+<DD><A NAME="IDX8920"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>lookup_set_extern_prototype(+Parse, +Name, +Interface, +Strings)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will insert the external prototype definition in the personal dictionary and will give a warning if there is a multiple name given.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>field_value:parse(+Parse)</CODE>
+ (<CODE>field_value:parse/1</CODE>)
+
+<CODE>+Name</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Interface</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Strings</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_223.html">previous</A>, <A HREF="ciao_225.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_223.html">previous</A>, <A HREF="ciao_225.html">next</A>, <A HREF="ciao_240.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

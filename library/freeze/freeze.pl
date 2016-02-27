@@ -23,9 +23,8 @@
 # "If @var{X} is free delay @var{Goal} until @var{X} is
    non-variable.".
 
-:- meta_predicate
-        freeze(?, goal),
-        frozen(?, goal).
+:- meta_predicate freeze(?, goal).
+:- meta_predicate frozen(?, goal).
 
 freeze(X, Goal) :-
         attach_attribute( V, '$frozen_goals'(V,Goal)),

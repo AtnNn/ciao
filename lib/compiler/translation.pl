@@ -12,13 +12,12 @@
         del_goal_trans/1
         ], [assertions]).
 
-:- meta_predicate
-        add_sentence_trans(+, spec),
-        add_term_trans(+, spec),
-%       add_goal_trans(+, spec), % Already in included  add_goal_trans.pl
-        add_clause_trans(+, spec).
+:- meta_predicate add_sentence_trans(+, spec).
+:- meta_predicate add_term_trans(+, spec).
+:- meta_predicate add_clause_trans(+, spec).
 
-:- use_module(engine(internals), ['$meta_call'/1, term_to_meta/2]).
+:- use_module(engine(hiord_rt), ['$meta_call'/1]).
+:- use_module(engine(internals), [term_to_meta/2]).
 :- use_module(library(lists), [append/3]).
 
 expand_term(X0, M, Dict, X2) :-

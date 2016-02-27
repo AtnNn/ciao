@@ -1,4 +1,3 @@
-
 :- module(terms_vars,[ varset/2, varsbag/3, varset0/2, varset_in_args/2 ],
 	  [assertions]).
 
@@ -7,17 +6,23 @@
 
 :- comment(title,"Sets of variables in terms").
 
-%-------------------------------------------------------------------------
-:- comment(varset(Term,Xs),"@var{Xs} is the sorted list of all the 
-	variables in @var{Term}.").
+:- comment(author,"The CLIP Group").
 
-:- comment(varsbag(Term,Vs,Xs),"@var{Vs} is the list of all the variables
-	in @var{Term} ordered as they appear in @var{Term} left-to-right
-	depth-first (including duplicates) plus @var{Xs}.").
+:- comment(module,"This module implements predicates to handle sets of
+   variables in terms.").
+
+%-------------------------------------------------------------------------
+
+:- comment(varset(Term,Xs),"@var{Xs} is the sorted list of all the
+   variables in @var{Term}.").
 
 varset(X,Xs) :- 
 	varsbag(X,Xs_uns,[]),
 	sort(Xs_uns,Xs).
+
+:- comment(varsbag(Term,Vs,Xs),"@var{Vs} is the list of all the
+   variables in @var{Term} ordered as they appear in @var{Term}
+   right-to-left depth-first (including duplicates) plus @var{Xs}.").
 
 varsbag(X,Vars,Tail) :- 
 	var(X),!,
@@ -61,9 +66,10 @@ extract_vartype(N,Term,Bag) :-
 	).
 
 %-------------------------------------------------------------------------
-:- pred varset_in_args(T,LL) : nonvar(T) => list(LL,list(var))
-      # "Each list of @var{LL} contains the variables of an argument of
-         @var{T}, for each argument, and in left to right order.".
+
+:- pred varset_in_args(T,LL) : nonvar(T) => list(LL,list(var)) # "Each
+   list of @var{LL} contains the variables of an argument of @var{T},
+   for each argument, and in left to right order.".
 
 varset_in_args(Term,Xss) :-
 	Term =.. [_|Args],
@@ -81,6 +87,12 @@ vars_in_args([Arg|Rest],[Arg_list|Rest_list]) :-
 %% update-version-comments: "../version"
 %% End:
 %-------------------------------------------------------------------------
+:- comment(version(1*11+96,2003/12/21,18:58*37+'CET'), "Added comment
+author and module.  (Edison Mera)").
+
+:- comment(version(1*11+38,2003/09/04,16:00*33+'CEST'), "Updated
+	comment for varsbag/3.  (Francisco Bueno Carrillo)").
+
 :- comment(version(1*7+142,2001/11/12,17:49*44+'CET'), "Split
    metaterms into terms_check and terms_vars. 
    (Francisco Bueno Carrillo)").

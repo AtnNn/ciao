@@ -423,7 +423,8 @@ http_date(date(WeekDay,Day,Month,Year,Time)) :-
         int(Year),
         hms_time(Time).
 
-:- true prop weekday(WeekDay) + regtype. %".
+:- true prop weekday(WeekDay) + regtype # "@var{WeekDay} is a term
+   denoting a weekday.".
 
 weekday('Monday').
 weekday('Tuesday').
@@ -433,7 +434,8 @@ weekday('Friday').
 weekday('Saturday').
 weekday('Sunday').
 
-:- true prop month(Month) + regtype. %".
+:- true prop month(Month) + regtype # "@var{Month} is a term denoting
+   a month.".
 
 month('January').
 month('February').
@@ -452,4 +454,10 @@ month('December').
    @tt{hh:mm:ss}".
 
 hms_time(T) :- atm(T).
+
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+131,2003/12/30,22:44*12+'CET'), "Added comment
+   for weekday/1 and month/1.  (Edison Mera)").
 

@@ -451,16 +451,28 @@ BOOL statistics(Arg)
               used+free, used, free);
 
   ENG_PRINTF4(s,
-              "%10.3f sec. for %ld global, %ld local, and %ld control space overflows\n",
-              stats.ss_time, stats.ss_global, stats.ss_local, stats.ss_control);
+              " %10.6f sec. for %ld global, %ld local, and %ld control space overflows\n",
+              ((ENG_FLT)stats.ss_click)/stats.userclockfreq, stats.ss_global, stats.ss_local, stats.ss_control);
   ENG_PRINTF3(s,
-              "%10.3f sec. for %ld garbage collections which collected %ld bytes\n",
-              stats.gc_time, stats.gc_count, stats.gc_acc*sizeof(TAGGED));
+              " %10.6f sec. for %ld garbage collections which collected %ld bytes\n\n",
+              ((ENG_FLT)stats.gc_click)/stats.userclockfreq, stats.gc_count, stats.gc_acc*sizeof(TAGGED));
 
-  ENG_PRINTF2(s,
-              "%10.3f sec. runtime, %10.3f sec. walltime\n\n",
-              (usertime() - stats.starttime)/1000,
-              (walltime() - stats.startwalltime)/1000);
-
+  ENG_PRINTF4(s,
+              "time in seconds:\n  %10.6f run, %10.6f user, %10.6f system, %10.6lf wall\n\n",
+              (ENG_FLT)(userclick()-stats.startclick)/stats.userclockfreq,
+	      (ENG_FLT)(userclick()-stats.startuserclick)/stats.userclockfreq,
+	      (ENG_FLT)(systemclick()-stats.startsystemclick)/stats.systemclockfreq,
+	      (ENG_FLT)(wallclick()-stats.startwallclick)/stats.wallclockfreq);
+  ENG_PRINTF4(s,
+	      "clock clicks:\n   %lld run, %lld user, %lld system, %lld wall\n\n",
+              userclick()-stats.startclick,
+	      userclick()-stats.startuserclick,
+	      systemclick()-stats.startsystemclick,
+	      wallclick()-stats.startwallclick);
+  ENG_PRINTF3(s,
+	      "clock frequency in Hz:\n   %lld run-user %lld Hz system %lld Hz wall\n\n",
+	      stats.userclockfreq,
+	      stats.systemclockfreq,
+	      stats.wallclockfreq);
   return TRUE;
 }

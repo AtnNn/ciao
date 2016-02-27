@@ -1,6 +1,6 @@
 :- module(srcdbg, [srcdbg_expand/5], [assertions]).
 
-:- use_module(library('compiler/c_itf'), [location/3]).
+:- use_module(library('compiler/c_itf_internal'), [location/3]).
 :- use_module(library(lists),[delete/3,length/2]).
 :- use_module(library(sets),[insert/3]).
 :- use_module(library(write),[printable_char/1]).

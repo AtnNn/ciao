@@ -246,7 +246,7 @@ BOOL getct(Arg)
   i = readchar(Input_Stream_Ptr,GET,address_getct);
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
 
   return cunify(Arg,X(0),MakeSmall(i)) 
          && cunify(Arg,X(1),MakeSmall(i == -1 ? -1 : symbolchar[i]));
@@ -263,7 +263,7 @@ BOOL getct1(Arg)
   i = readchar(Input_Stream_Ptr,GET1,address_getct1); /* skip whitespace */
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
 
   return cunify(Arg,X(0),MakeSmall(i)) 
          && cunify(Arg,X(1),MakeSmall(i == -1 ? -1 : symbolchar[i]));
@@ -280,7 +280,7 @@ BOOL get(Arg)
   i = readchar(Input_Stream_Ptr,GET,address_get);
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
 
   return cunify(Arg,X(0),MakeSmall(i));
 }
@@ -300,7 +300,7 @@ BOOL get2(Arg)
   i = readchar(s,GET,address_get2);
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,X(0),1)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),X(0),1)
 
   return cunify(Arg,X(1),MakeSmall(i));
 }
@@ -315,7 +315,7 @@ BOOL get1(Arg)
   i = readchar(Input_Stream_Ptr,GET1,address_get1); /* skip whitespace */
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
 
   return cunify(Arg,X(0),MakeSmall(i));
 }
@@ -337,7 +337,7 @@ BOOL get12(Arg)
   i = readchar(s,GET1,address_get12); /* skip whitespace */
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,X(0),1)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),X(0),1)
 
   return cunify(Arg,X(1),MakeSmall(i));
 }
@@ -353,7 +353,7 @@ BOOL peek(Arg)
   i = readchar(Input_Stream_Ptr,PEEK,address_peek);
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
 
   return cunify(Arg,X(0),MakeSmall(i));
 }
@@ -373,7 +373,7 @@ BOOL peek2(Arg)
   i = readchar(s,PEEK,address_peek2);
 
   if (i < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,X(0),1)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),X(0),1)
 
   return cunify(Arg,X(1),MakeSmall(i));
 }
@@ -489,7 +489,7 @@ BOOL skip(Arg)
     ch = readchar(Input_Stream_Ptr,i,address_skip);
 
   if (ch < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
 
   return TRUE;
 }
@@ -515,7 +515,7 @@ BOOL skip2(Arg)
     ch = readchar(s,i,address_skip2);
 
   if (ch < -1)
-    BUILTIN_ERROR(READ_PAST_EOS_ERROR,X(0),1)
+    BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),X(0),1)
 
   return TRUE;
 }
@@ -771,7 +771,7 @@ BOOL prolog_fast_read_in_c(Arg)		/* OPA */
  /* NULL as predaddress (really did not bother to find out what to put)  */
 
   if ((i = readchar(Input_Stream_Ptr, GET, NULL)) < -1)  
-     BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+     BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
   if (i != FASTRW_VERSION) return FALSE;
 
   if (HeapDifference(w->global_top,Heap_End) < CONTPAD+SPACE_FACTOR*kCells)
@@ -800,7 +800,7 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
   TAGGED *h = w->global_top;
 
   if ((k = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
-     BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+     BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
 
 
   switch(k) {
@@ -832,7 +832,7 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
 	s = (unsigned char *)Atom_Buffer+i;
       }
       if ((j = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
-	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
       *s++ = j;
     }
     switch (k) {
@@ -881,7 +881,7 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
       return TRUE;
     case 'S':
       if ((i = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
-	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
           /*
       if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i+1))
         explicit_heap_overflow(Arg,CONTPAD+(i+1),1);
@@ -1039,7 +1039,7 @@ BOOL compressLZ(Arg)
   First = &Vault[256];
 
   while((i = getc(s->streamfile)) != EOF) {
-    if (i < -1) BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+    if (i < -1) BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
     First[PrefixSize++] = i;
     for (i = Entry; Entry <= Last; Entry++) 
       if ((Size[Entry] == PrefixSize) && (Dict[Entry][0] == First[0])
@@ -1070,7 +1070,7 @@ BOOL inLZ(Arg,s,Buffer,BufferSize,Code,size)
  
  for (; BufferSize[0] < size; BufferSize[0] += 8) {
    if ((i = getc(s->streamfile)) < -1)
-     BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+     BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
    Buffer[0] += ((unsigned char) i)*(1<<BufferSize[0]);}
  Code[0] = Buffer[0] % (1<<size);
  Buffer[0] /= (1<<size);
@@ -1094,13 +1094,13 @@ BOOL copyLZ(Arg)
   if (!s) BUILTIN_ERROR(i,X(0),1);
 
   if ((i = getc(s->streamfile)) < -1)
-	 BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+	 BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)
   
   if (i != 12) {
     while (i != EOF) {
       writechar(i,1,Output_Stream_Ptr);
       if ((i = getc(s->streamfile)) < -1)
-	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)}
+	BUILTIN_ERROR(PERMISSION_ERROR(ACCESS, PAST_END_OF_STREAM),atom_nil,0)}
     return TRUE;}
   else {
     for (i = 0; i < 257; Size[i++] = 1) {

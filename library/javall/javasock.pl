@@ -159,10 +159,10 @@ join_socket_interface:-
 	eng_wait(JpIn),
 	eng_wait(JpOut),
 	eng_wait(PlServer),
-	!,
-	retract_fact(java_stream(DataStream,EventStream,_,_)),
+%	!,
+	retract_fact_nb(java_stream(DataStream,EventStream,_,_)),
         close(DataStream),
-        close(EventStream),
+        close(EventStream).
 
 join_socket_interface.
 
@@ -294,7 +294,7 @@ bind_socket_interface(Port):-
 
 %% -----------------------------------------------------------------------
 :- pred java_server(+Port)
-	:: int 
+	:: int
         # "Given a @var{Port}, waits for a connection request from a
 	  Java client and synchronizes the sockets to the java
 	  process.".

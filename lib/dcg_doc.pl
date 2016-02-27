@@ -1,8 +1,9 @@
-
 :- use_package(assertions).
 :- comment(nodoc,assertions).
 
 :- comment(title,"Definite clause grammars").
+
+:- comment(author, "The CLIP Group").
 
 %% see @cite{Les Grammaires de Metamorphos} by A.Colmerauer,
 %% Technical Report, Groupe d'Intelligence Artificielle,
@@ -210,4 +211,9 @@ args(X, Y, S0, S) :-
 @end{verbatim}
 
 ").
+
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*11+86,2003/12/21,02:03*40+'CET'), "Added comment
+   author.  (Edison Mera)").
 
