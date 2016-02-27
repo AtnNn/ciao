@@ -12,7 +12,7 @@ import java.io.*;
  * will be evaluated when the event raises, so the arguments of the
  * listeners will be updated correctly in the Prolog side.
  */
-public class PLEventListener implements AWTEventListener {
+class PLEventListener implements AWTEventListener {
 
   /**
    * Internal constants.
@@ -49,7 +49,7 @@ public class PLEventListener implements AWTEventListener {
    * @param interpreter The <code>PLInterpreter</code> object to be
    *                    used for the goal argument calculation.
    */
-  public PLEventListener(PLConnection pl, PLInterpreter interpreter) {
+  PLEventListener(PLConnection pl, PLInterpreter interpreter) {
 
     Toolkit.getDefaultToolkit().addAWTEventListener(this, Long.MAX_VALUE);
 
@@ -72,7 +72,7 @@ public class PLEventListener implements AWTEventListener {
    * @param goal Prolog goal that will be evaluated when the
    *             event raises.
    */
-  public void addListener(Object obj, Class ec, PLTerm goal) {
+  void addListener(Object obj, Class ec, PLTerm goal) {
 
     PLEvents events = null;
     if ((events = (PLEvents)objTable.get(obj)) == null) {
@@ -94,7 +94,7 @@ public class PLEventListener implements AWTEventListener {
    * @param goal Prolog goal that will be evaluated when the
    *             event raises.
    */
-  public void removeListener(Object obj, Class ec, PLTerm goal) {
+  void removeListener(Object obj, Class ec, PLTerm goal) {
     PLEvents events = null;
     if ((events = (PLEvents)objTable.get(obj)) != null) {
       events.removeEvent(ec, goal);
@@ -145,7 +145,7 @@ class PLEvents {
    * @param ec   Event class that will be listened.
    * @param goal Prolog goal to be launched when the event raises.
    */
-  public PLEvents(Class ec, PLTerm goal) {
+  PLEvents(Class ec, PLTerm goal) {
     events = new Hashtable(STARTING_CAPACITY, FACTOR);
     addEvent(ec, goal);
   }
@@ -156,7 +156,7 @@ class PLEvents {
    * @param ec   Event class that will be listened.
    * @param goal Prolog goal to be launched when the event raises.
    */
-  public void addEvent(Class ec, PLTerm goal) {
+  void addEvent(Class ec, PLTerm goal) {
     PLGoals pl = null;
     if ((pl = (PLGoals)events.get(ec)) == null) {
       pl = new PLGoals(goal);
@@ -172,7 +172,7 @@ class PLEvents {
    * @param ec   Event class that is being listened.
    * @param goal Prolog goal to be launched when the event raises.
    */
-  public void removeEvent(Class ec, PLTerm goal) {
+  void removeEvent(Class ec, PLTerm goal) {
     PLGoals pl = null;
     if ((pl = (PLGoals)events.get(ec)) != null) {
       pl.removeGoal(goal);
@@ -184,7 +184,7 @@ class PLEvents {
   /**
    * Returns true if this PLEvent object is empty (has no events).
    */
-  public boolean isEmpty() {
+  boolean isEmpty() {
     return events.isEmpty();
   }
 
@@ -197,7 +197,7 @@ class PLEvents {
    * @param pl          Prolog process on which evaluate the
    *                    Prolog event handlers.
    */
-  public void eventDispatched(Class ec,
+  void eventDispatched(Class ec,
                           PLInterpreter interpreter,
                           PLConnection pl) {
 
@@ -223,7 +223,7 @@ class PLGoals {
   /**
    * Creates a new empty goal set.
    */
-  public PLGoals() {
+  PLGoals() {
     goals = new Vector(STARTING_CAPACITY, INCREMENT);
   }
 
@@ -232,7 +232,7 @@ class PLGoals {
    *
    * @param goal Prolog goal to be evaluated.
    */
-  public PLGoals(PLTerm goal) {
+  PLGoals(PLTerm goal) {
     goals = new Vector(STARTING_CAPACITY, INCREMENT);
     goals.addElement(goal);
   }
@@ -242,7 +242,7 @@ class PLGoals {
    *
    * @param goal Prolog goal to be added.
    */
-  public void addGoal(PLTerm goal) {
+  void addGoal(PLTerm goal) {
     if (goals.indexOf(goal) == -1)
       goals.addElement(goal);
   }
@@ -259,7 +259,7 @@ class PLGoals {
   /**
    * Returns true if this PLGoals object is empty (has no goals).
    */
-  public boolean isEmpty() {
+  boolean isEmpty() {
 
     return goals.isEmpty();
 
@@ -269,7 +269,7 @@ class PLGoals {
    * Launches the goals of this set, based on the interpreter
    * given as argument.
    */
-  public void launchGoals(PLInterpreter interpreter,
+  void launchGoals(PLInterpreter interpreter,
 			  PLConnection pl) {
 
     PLStructure el;
@@ -279,4 +279,5 @@ class PLGoals {
     }
   }
 }
+
 

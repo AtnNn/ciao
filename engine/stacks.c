@@ -12,7 +12,7 @@
 
 #include "stacks_defs.h"
 #include "heapgc_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "timing_defs.h"
 #if defined(DEBUG)
 #include "locks_defs.h"

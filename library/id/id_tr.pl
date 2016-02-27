@@ -49,7 +49,7 @@ idclause((:- iterative(Call,Init,Formul,MaxDepth)),
 idclause((:- D),(:- D),_):- 
 	    !.	
 
-idclause((start_of_file(_)),[],_):-
+idclause(0,[],_):-
 	    !.
 
 idclause((H :- B),Tr,_):- 

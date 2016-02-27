@@ -1,66 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
+<TITLE>The Ciao Prolog System               - counters (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_146.html">previous</A>, <A HREF="ciao_148.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_146.html">previous</A>, <A HREF="ciao_148.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC562" HREF="ciao_toc.html#TOC562">Programming MYCIN rules</A></H1>
+<H1><A NAME="SEC590" HREF="ciao_toc.html#TOC590">counters (library)</A></H1>
 <P>
-<A NAME="IDX6037"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<A NAME="IDX6388"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#172 (2000/7/12, 16:45:31 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
-
-
-<P>
-MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
-<A NAME="IDX6038"></A>
-<A NAME="IDX6039"></A>
-<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
-
-<UL>
-
-<LI>A value of -1 stands for <EM>surely not</EM>.
-
-<LI>A value of 1 stands for <EM>certainly</EM>.
-
-<LI>A value of 0 stands for <EM>I don't know</EM>.
-
-</UL>
-
-<P>
-Intermediate values are allowed. 
-
-
-<P>
-Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 
 <UL>
-<LI><A HREF="ciao_147.html#SEC563">Usage and interface (mycin)</A>
-<LI><A HREF="ciao_147.html#SEC564">Documentation on new declarations (mycin)</A>
-<LI><A HREF="ciao_147.html#SEC565">Known bugs and planned improvements (mycin)</A>
+<LI><A HREF="ciao_147.html#SEC591">Usage and interface (counters)</A>
+<LI><A HREF="ciao_147.html#SEC592">Documentation on exports (counters)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC563" HREF="ciao_toc.html#TOC563">Usage and interface (<CODE>mycin</CODE>)</A></H2>
+<H2><A NAME="SEC591" HREF="ciao_toc.html#TOC591">Usage and interface (<CODE>counters</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -68,16 +35,23 @@ Mycin rules work on a different way as Prolog clauses: a rule will never fail (i
 
 <LI><STRONG>Library usage:</STRONG>
 
-In order to declare a mycin database you must include the following declaration as the first one in your file: 
+<CODE>:- use_module(library(counters)).</CODE>
 
-<PRE>
-           :- mycin(MycinDataBaseName).
-</PRE>
+<LI><STRONG>Exports:</STRONG>
 
-<LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX6040"></A>
-<CODE>export/1</CODE>.
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX6389"></A>
+<CODE>setcounter/2</CODE>, 
+<A NAME="IDX6390"></A>
+<CODE>getcounter/2</CODE>, 
+<A NAME="IDX6391"></A>
+<CODE>inccounter/2</CODE>.
+
+</UL>
 
 </UL>
 
@@ -85,59 +59,50 @@ In order to declare a mycin database you must include the following declaration 
 
 
 
-<H2><A NAME="SEC564" HREF="ciao_toc.html#TOC564">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
+<H2><A NAME="SEC592" HREF="ciao_toc.html#TOC592">Documentation on exports (<CODE>counters</CODE>)</A></H2>
 <P>
-<A NAME="IDX6041"></A>
-<A NAME="IDX6042"></A>
+<A NAME="IDX6392"></A>
+<A NAME="IDX6393"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
-<DD><A NAME="IDX6043"></A>
+<DT><span class="define">PREDICATE:</span> <B>setcounter/2:</B>
+<DD><A NAME="IDX6394"></A>
 
 
 <P>
-This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
+No further documentation available for this predicate.
 
-<PRE>
-:- export p/1.
-</PRE>
-
-<P>
-must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
-<A NAME="IDX6044"></A>
-certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
-
-</UL>
 
 </DL>
 
+<P>
+<A NAME="IDX6395"></A>
+<A NAME="IDX6396"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>getcounter/2:</B>
+<DD><A NAME="IDX6397"></A>
 
 
-<H2><A NAME="SEC565" HREF="ciao_toc.html#TOC565">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
+<P>
+No further documentation available for this predicate.
 
 
-<UL>
+</DL>
 
-<LI>
+<P>
+<A NAME="IDX6398"></A>
+<A NAME="IDX6399"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>inccounter/2:</B>
+<DD><A NAME="IDX6400"></A>
 
-Not fully implemented.
 
-<LI>
+<P>
+No further documentation available for this predicate.
 
-Dynamic mycin predicates not implemented: open question.
 
-<LI>
-
-Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
-</UL>
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_146.html">previous</A>, <A HREF="ciao_148.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_146.html">previous</A>, <A HREF="ciao_148.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

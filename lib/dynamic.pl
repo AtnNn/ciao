@@ -6,6 +6,7 @@
         ],[assertions,isomodes]).
 
 :- use_module(engine(internals)).
+:- use_module(library(prolog_sys), [new_atom/1]).
 
 :- meta_predicate
         asserta(clause),
@@ -150,18 +151,49 @@ wellformed_body(Goal, _, Goal) :-
 	functor(Goal, F, _),
 	atom(F).
 
+:- comment(dynamic(F/A), "The predicate named @var{F} with arity
+@var{A} is made @concept{dynamic} in the current module at runtime
+(useful for predicate names generated on-the-fly).  If the predicate
+functor name @var{F} is uninstatiated, a new, unique, predicate name
+is generated at runtime.").
+
+:- pred dynamic(+Spec).
+
 dynamic(F/A, Mod) :-
+        atom(F), !,
         module_concat(Mod, F, MF),
         functor(Head, MF, A), !,
         asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
 	dynamic1(Head, dynamic/2).
 
+dynamic(F/A, Mod) :-
+        var(F), !,
+        new_atom(F),
+        dynamic(F/A, Mod).
+
+
+:- comment(doinclude, data/1).
+
+:- pred data(+Spec).
+
+:- comment(data(F/A), "The predicate named @var{F} with arity @var{A}
+is made @concept{data} in the current module at runtime (useful for
+predicate names generated on-the-fly).  If the predicate functor name
+@var{F} is uninstatiated, a new, unique, predicate name is generated
+at runtime. ").
+
 % By now identical to dynamic
 data(F/A, Mod) :-
+        atom(F), !,
         module_concat(Mod, F, MF),
         functor(Head, MF, A), !,
         asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
 	dynamic1(Head, data/2).
+data(F/A, Mod) :-
+        var(F), !,
+        new_atom(F),
+        data(F/A, Mod).
+
 
 dynamic1(F, Goal) :-
 	'$predicate_property'(F, _, Prop), !,
@@ -173,6 +205,41 @@ dynamic1(F, _) :-
 	functor(F, Name, Ar),
 	'$define_predicate'(Name/Ar, consult),
 	'$set_property'(F, (dynamic)).		% xref indexing.c
+
+
+ %% Now in library(concurrency)
+ %% :- pred concurrent(+Spec).
+ %% 
+ %% :- comment(concurrent(F/A), "The predicate named @var{F} with arity
+ %% @var{A} is made @concept{concurrent} in the current module at runtime
+ %% (useful for predicate names generated on-the-fly).  If the predicate
+ %% functor name @var{F} is uninstatiated, a new, unique, predicate name
+ %% is generated at runtime. ").
+ %% 
+ %% 
+ %% concurrent(F/A, Mod) :-
+ %%         atom(F), !,
+ %%         module_concat(Mod, F, MF),
+ %%         functor(Head, MF, A), !,
+ %%         asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
+ %% 	concurrent1(Head, data/2).
+ %% concurrent(F/A, Mod) :-
+ %%         var(F), !,
+ %%         new_atom(F),
+ %%         concurrent(F/A, Mod).
+ %% 
+ %% 
+ %% concurrent1(F, Goal) :-
+ %% 	'$predicate_property'(F, _, Prop), !,
+ %% 	(   Prop/\2 =:= 2 -> true		% dynamic, xref nondet.c
+ %%         ;   functor(F, N, A),
+ %%             throw(error(permision_error(modify, static_procedure, N/A), Goal))
+ %% 	).
+ %% concurrent1(F, _) :-
+ %% 	functor(F, Name, Ar),
+ %% 	'$define_predicate'(Name/Ar, consult),
+ %% 	'$set_property'(F, (concurrent)).		% xref indexing.c
+
 
 
 :- pred retract(+Clause) + iso
@@ -276,25 +343,48 @@ clause(HEAD, Body, Ref) :-
 :- pred current_predicate(?Spec) + iso
         # "A predicate in the current module is named @var{Spec}.".
 
-:- pred current_predicate(?Spec,+Module)
-        # "A predicate in @var{Module} is named @var{Spec}.".
+:- pred current_predicate(?Spec,?Module)
+        # "A predicate in @var{Module} is named @var{Spec}. @var{Module}
+           never is an engine module.".
 
 current_predicate(F/A,M) :-
+        current_module(M),
+        \+ internal_module(M),
         module_concat(M,'',MPref),
         '$predicate_property'(P, _, _),
         functor(P, MF, A),
         atom_concat(MPref,F,MF).
 
+internal_module(internals).
+internal_module(M) :- builtin_module(M).
+
 % ----------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+93,2001/04/24,19:02*53+'CEST'),
+   "current_predicate/2 now enumerates non-engine modules (Daniel Cabeza
+   Gras)").
+
+:- comment(version(1*7+24,2000/10/13,12:43*39+'CEST'), "concurrent/1
+now in library(concurrency).  (MCL)").
+
+:- comment(version(1*7+23,2000/10/05,13:45*26+'CEST'), "Added
+concurrent/1 as callable from code.  It generates names if needed. (MCL)").
+
+:- comment(version(1*7+22,2000/10/05,13:30*16+'CEST'), "data/1 and
+dynamic/1 now generate predicate names if the name is uninstantaited.
+(MCL)").
+
+:- comment(version(1*7+8,2000/08/16,11:45*04+'CEST'), "Added some
+documentation.  (MCL)").
 
 :- comment(version(1*5+146,2000/05/19,21:01*42+'CEST'), "Implemented
    current_predicate/1 better.  Added current_predicate/2. (Daniel
    Cabeza Gras)").
 
 :- comment(version(0*5+30,1998/06/30,14:23*37+'MET DST'), "Fixed bug in
-   retract/1 -- unlocking before erasing (Daniel Cabeza Gras)").
+   retract/1 -- unlocking before erasing (Daniel Cabeza Gras, Manuel Carro)").
 
 :- comment(version(0*5+11,1998/05/23,19:30*30+'MET DST'), "Added
    dynamic/2 which use the new 'module' meta argument type (Daniel

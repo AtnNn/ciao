@@ -53,7 +53,7 @@ typedef char LOCK;
    try it, actually.  This is heavily influenced by Kish Shen and Roland
    Karlsson (thanks to both). */
 
-#if (defined(i86) || defined(Sparc) || defined(Sequent)) && defined(__GNUC__)
+#if (defined(i86) || defined(Sparc) || defined(Sparc64) || defined(Sequent)) && defined(__GNUC__)
 #define HAVE_NATIVE_SLOCKS
 
 /*
@@ -79,7 +79,7 @@ typedef volatile struct {
 
 /***************************************************************************/
 
-# if defined(Sparc)                        /* Macro definition for sparc */
+# if defined(Sparc) || defined(Sparc64)     /* Macro definition for sparc */
 #   define aswap(addr,reg)                                      \
 ({ int _ret;                                                    \
    asm volatile ("swap %1,%0"                                   \
@@ -184,7 +184,7 @@ do { if (mips_try_lock(p)) break;			        \
 
 /***************************************************************************/
 
-#if defined(LINUX) || defined(IRIX) || defined (Solaris)
+#if defined(LINUX) || defined(IRIX) || defined (Solaris) || defined (DARWIN)
 #define HAVE_LIB_LOCKS
 
 
@@ -361,10 +361,12 @@ execution continues when pred() is false.
                        Cond_Var_Wait(Cond.cond_var, Cond.cond_lock); \
                    }                                                       \
                 }
+/*
 #define Signal_Cond(Cond) {                             \
                      Cond_Var_Signal(Cond.cond_var);   \
                      Release_Cond_lock(Cond);      \
                  }
+*/
 #define Broadcast_Cond(Cond) {                             \
                      Cond_Var_Broadcast(Cond.cond_var);   \
                      Release_Cond_lock(Cond);      \
@@ -383,7 +385,7 @@ execution continues when pred() is false.
                          pred_is_signaled = (Predicate);           \
                        }                                           \
                      }
-#define Signal_Cond(Cond) Release_Cond_lock(Cond)
+/*#define Signal_Cond(Cond) Release_Cond_lock(Cond)*/
 #define Broadcast_Cond(Cond) Release_Cond_lock(Cond)
 
 #endif

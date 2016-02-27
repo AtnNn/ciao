@@ -15,7 +15,7 @@
 
 :- extra_compiler_opts(['-O2']).
 :- extra_compiler_opts('LINUXi86',['-ffast-math']).
-:- use_foreign_library(m).
+:- use_foreign_library('LINUXi86', m).
 
 :- impl_defined([sin/2,cos/2,fabs/2]).
 

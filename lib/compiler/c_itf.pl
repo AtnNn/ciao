@@ -17,8 +17,9 @@
          use_mod/3, static_base/1, module_loaded/4, make_po_file/1,
          false/1, old_file_extension/2, load_compile/1, needs_reload/1,
          abolish_module/1, interpret_file/1, interpret_module/1,
-         interpret_srcdbg/1,pred_module/2, addmodule_inc/3
-         ], [assertions]).
+         interpret_srcdbg/1,pred_module/2, addmodule_inc/3,
+	 make_delayed_dynlinks/0, discard_delayed_dynlinks/0
+         ], [assertions,hiord]).
 
 :- use_module(library('compiler/translation')).
 :- use_module(library('compiler/pl2wam')).
@@ -61,7 +62,7 @@ define_flag(discontiguous_warnings, [on,off], on).
 define_flag(multi_arity_warnings, [on,off], on).
 define_flag(verbose_compilation, [on,off], off).
 define_flag(itf_format, [f,r], f). % f=fast{read,write}, r=prolog terms.
-define_flag(compresslib,[yes,no],no).
+define_flag(compress_lib,[yes,no],no).
 
 :- data opt_suff/1.
 
@@ -558,7 +559,8 @@ cleanup_c_itf_data :-
         retractall_fact(multifile_pred(_,_,_)),
         retractall_fact(reading_from(_)),
         retractall_fact(module_error),
-        retractall_fact(module_error(_)).
+        retractall_fact(module_error(_)),
+        retractall_fact(syntax_error_in(_)).
 
 cleanup_itf_cache :- delete_itf_data(_).
 
@@ -634,7 +636,7 @@ read_record_file(PlName, Base, Dir, Type) :-
         asserta_fact(reading_from(Base)),
         intercept(read_record_file_(PlName, Base, Type),
                   error(syntax_error(L0,L1,Msg,ErrorLoc), _),
-                  handle_syntax_error(L0,L1,Msg,ErrorLoc)),
+                  handle_syntax_error(Base,L0,L1,Msg,ErrorLoc)),
         retract_fact(reading_from(Base)),
         import_builtins(Base),
         gen_exports(Base),
@@ -652,9 +654,9 @@ read_record_file_(PlName, Base, Type) :-
             M = user(Base),
             assertz_fact(defines_module(Base, M))
         ; process_first_term(Data, Base, M, VNs, Sings, PlName, Ln0, Ln1),
-          ( M=user(_) ->
-              (Type==module -> compiler_error(Ln0, Ln1, module_missing) ; true)
-          ; expand_term(start_of_file(Base), M, _, _) % For initialization
+          ( M=user(_), Type==module ->
+              compiler_error(Ln0, Ln1, module_missing)
+          ; true
           ),
           read_record_next(Stream, Base, PlName, M, main)
         ),
@@ -1044,15 +1046,17 @@ normalize_meta_args(N, A, Spec, NSpec):-
 normalize_meta_arg('?', '?'). % A variable is valid also!
 normalize_meta_arg('-', '?').
 normalize_meta_arg('+', '?').
-normalize_meta_arg(clause, clause).
-normalize_meta_arg(fact, fact).
-normalize_meta_arg(spec, spec).
-normalize_meta_arg(pred(N), pred(N)) :-
-        integer(N), N>=0, N=<255.
-normalize_meta_arg(goal, goal).
-normalize_meta_arg(':',  goal).
+normalize_meta_arg(':', goal).
 normalize_meta_arg(addmodule, addmodule).
+normalize_meta_arg(X, X) :- real_meta_arg(X).
 
+real_meta_arg(goal).
+real_meta_arg(clause).
+real_meta_arg(fact).
+real_meta_arg(spec).
+real_meta_arg(pred(N)) :- integer(N), N>=0, N=<255.
+real_meta_arg(list(X)) :-
+        real_meta_arg(X).
 
 do_multifile(Spec, Base, Ln0, Ln1) :-
         sequence_contains(Spec, bad_spec_error(multifile, Ln0, Ln1), F, A),
@@ -1181,7 +1185,8 @@ do_pop_pl_flag(Flag, Base, Ln0, Ln1) :-
 do_add_sentence_trans(M, P, Base, Ln0, Ln1) :-
         ( add_sentence_trans(M, P) ->
             asserta_fact(undo_decl(Base, add_sentence_trans(M, P),
-                                         del_sentence_trans(M)))
+                                         del_sentence_trans(M))),
+            expand_term(0, M, _, _) % For initialization
         ; warning_failed_decl(Ln0, Ln1, add_sentence_trans(P))
         ).
 
@@ -1292,12 +1297,13 @@ check_itf_data(Base, PlName) :-
         check_multifile(Base),
         do_expansion_checks(Base),
         \+ current_fact(module_error),
+        \+ current_fact(syntax_error_in(Base)),
         end_doing.
 check_itf_data(Base, _) :-
         retractall_fact(module_error),
         assertz_fact(module_error(Base)),
-        message(['(aborted)']),
         end_doing,
+        message(['(Compilation aborted)']),
         fail.
 
 :- data imports_builtin_pred/4.
@@ -1721,7 +1727,7 @@ make_po_file(Base) :-
         end_doing.
 
 make_po_file2(PoName, Base, Dir, Module, Source) :-
-	current_prolog_flag(compresslib,no),
+	current_prolog_flag(compress_lib,no),
         stream_of_file(PoName, Dir, Out, Ref), !, % May fail
         Mode = ql(unprofiled),
         set_compiler_mode(Mode),
@@ -1733,7 +1739,7 @@ make_po_file2(PoName, Base, Dir, Module, Source) :-
         chmod(PoName, FMode),
         erase(Ref).
 make_po_file2(PoName, Base, Dir, Module, Source) :- %OPA
-	current_prolog_flag(compresslib,yes),      
+	current_prolog_flag(compress_lib,yes),      
         open(PoName,write,Out),
 	mktemp('tmpciaoXXXXXX', TmpFile),
 	stream_of_file(TmpFile, Dir, OutTmp, Ref), !, % May fail
@@ -2104,7 +2110,7 @@ module_warning_mess(not_imported(F, N,_M, QM), error,
          ' ignored, predicate not imported from module ',QM]).
 module_warning_mess(bad_pred_abs(PA), error,
         ['Bad predicate abstraction ',~~(PA),
-         ' : head functor should be ''\\:''']).
+         ' : head functor should be ''''']).
 module_warning_mess(big_pred_abs(PA,N), error,
         ['Predicate abstraction ',~~(PA),
          ' has too many arguments: should be ',N]).
@@ -2200,7 +2206,7 @@ use_mod(File, Imports, ByThisModule) :-
             message(['{Compilation aborted}']),
             retractall_fact(module_error),
             retractall_fact(imports_pred_1(Fake_Base, _, _, _, _, _, _)),
-            retractall_fact(delayed_dynlink(_, _, _)) % JFMC
+	    discard_delayed_dynlinks
         ; base_name(File, Base),
           defines_module(Base, Module),
           include_dyn_imports(ByThisModule, Module, Fake_Base),
@@ -2291,6 +2297,9 @@ make_delayed_dynlinks :-
         fail.
 make_delayed_dynlinks :-
         \+ retract_fact(dynlink_error).
+
+discard_delayed_dynlinks :-
+	retractall_fact(delayed_dynlink(_, _, _)).
 
 :- data foreign_library/2.
 
@@ -2578,7 +2587,10 @@ error_in_lns(L0, L1, Type, Msg) :-
         ; message_lns(Type, L0, L1, Msg)
         ).
 
-handle_syntax_error(L0,L1,Msg,ErrorLoc) :-
+:- data syntax_error_in/1.
+
+handle_syntax_error(Base,L0,L1,Msg,ErrorLoc) :-
+        assertz_fact(syntax_error_in(Base)),
         error_in_lns(L0, L1, error, ['syntax error: ',[](Msg),'\n'| ErrorLoc]),
         fail.
 
@@ -2601,6 +2613,27 @@ retract_clause(Head, Body) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+104,2001/05/24,20:42*02+'CEST'), "Now the
+   initialization of sentence translations is done by translating a 0,
+   instead of start_of_file(Base).  This because as was done the later
+   could work wrong when a package included another package.  (Daniel
+   Cabeza Gras)").
+
+:- comment(version(1*7+84,2001/04/05,11:07*12+'CEST'), "Exported
+   make_delayed_dynlinks/0 and discard_delayed_dynlinks/0 (Jose Morales)").
+
+:- comment(version(1*7+56,2001/02/01,15:59*48+'CET'), "Added
+   list(Metaspec) to meta_predicate specifications.  (Daniel Cabeza
+   Gras)").
+
+:- comment(version(1*7+44,2001/01/17,19:41*30+'CET'), "Now syntax errors
+   disable .itf generation and compilation.  This way, the next time the
+   file is treated, errors will appear again. (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+7,2000/08/04,18:50*42+'CEST'), "Fixed an error
+   message which stated that the head functor for predicate abstractions
+   should be \\:, instead of '' (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+167,2000/06/29,16:19*20+'CEST'), "Again module
    name duplicates are detected.  (Daniel Cabeza Gras)").

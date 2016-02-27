@@ -634,7 +634,7 @@ TAGGED fu2_gcd(Arg,X0,X1,p)
 
 #include <math.h>
 
-#if defined(Solaris) || defined(LINUX) || defined(Win32) || defined(IRIX)
+#if defined(Solaris) || defined(LINUX) || defined(DARWIN) || defined(Win32) || defined(IRIX)
 # define aint(f) (f>=0.0 ? floor(f) : ceil(f))
 #endif
 

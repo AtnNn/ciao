@@ -12,7 +12,12 @@
 	 dcg
 	]).
 
-:- comment(title, "Foreign language interface builder").
+:- comment(title, "Foreign Language Interface Builder").
+
+:- comment(summary, "Low-level utilities for building foreign
+interfaces.  End-users should not need to use them, as the Ciao Prolog
+Compiler reads the user assertions and calls appropriately the
+predicates in this module.").
 
 :- comment(author, "Jose Morales").
 :- comment(author, "Manuel Carro").
@@ -891,6 +896,9 @@ compile_unique_object_2(_, _, UniqueOFile) :-
 
 % -----------------------------------------------------------------------------
 :- comment(version_maintenance, dir('../../version')).
+
+:- comment(version(1*7+75,2001/03/26,17:08*47+'CEST'), "Documentation
+updated (MCL)").
 
 :- comment(version(1*3+123, 1999/11/27, 03:03*55+'MET'), "Minor changes
    to documentation. Incorporated into reference manual.  (Manuel

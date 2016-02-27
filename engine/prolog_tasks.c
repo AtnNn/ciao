@@ -13,7 +13,7 @@
 #include "tasks_defs.h"
 #include "startgoal_defs.h"
 #include "nondet_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "alloc_defs.h"
 #include "term_support_defs.h"
 
@@ -165,7 +165,13 @@ BOOL prolog_eng_self(Arg)
      Argdecl;
 {
   DEREF(X(0), X(0));
-  return cunify(Arg, X(0), GoalDescToTerm((Arg->misc->goal_desc_ptr)));
+  DEREF(X(1), X(1));
+  return
+    cunify(Arg, X(0), GoalDescToTerm(Arg->misc->goal_desc_ptr)) &&
+    cunify(Arg,
+           X(1), 
+           MakeInteger(Arg, Arg->misc->goal_desc_ptr->goal_number)
+           );
 }
 
 
@@ -237,8 +243,8 @@ BOOL prolog_eng_call(Arg)
   else 
     if (X(2) != atom_self) return FALSE;
   
-  DEREF(X(4), X(4));
-  if (X(4) == atom_true) keep_stacks = KEEP_STACKS;
+  DEREF(X(5), X(5));
+  if (X(5) == atom_true) keep_stacks = KEEP_STACKS;
 
   gd = gimme_a_new_gd();	/* In a future we will wait for a free wam */
 
@@ -270,7 +276,10 @@ BOOL prolog_eng_call(Arg)
   if (debug_threads) printf("Goal %x created, continuing\n", (int)gd);
 #endif
 
-  return cunify(Arg, X(3), GoalDescToTerm(gd)) && exec_result;
+  return 
+    cunify(Arg, X(3), GoalDescToTerm(gd)) &&
+    cunify(Arg, X(4), MakeInteger(Arg, gd->goal_number)) && 
+    exec_result;
 }
 
 

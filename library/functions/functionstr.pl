@@ -9,7 +9,10 @@
 % command equivalent to FuncItem but without functions.
 % To be called as a sentence translation
 
-
+defunc(0, _, Mod) :- !,
+        retractall_fact(function(_,Mod)),
+        retractall_fact(ignore_arith(Mod)).        
+defunc(end_of_file, end_of_file, _) :- !.
 defunc((?- _), _, _) :- !, fail.
 defunc((:- function(Spec)), _, Mod) :- !,
         ( Spec = F/A, functor(P, F, A) ->
@@ -21,9 +24,6 @@ defunc((:- function(Spec)), _, Mod) :- !,
         ; inform_user(['Invalid function specification: ',Spec])
         ).
 defunc((:- _), _, _) :- !, fail.
-defunc(end_of_file, end_of_file, Mod) :- !,
-        retractall_fact(function(_,Mod)),
-        retractall_fact(ignore_arith(Mod)).
 defunc((FuncHead := FuncValue), (Head :- Body), Mod) :- !,
         arith_flag(Mod, Arith_Flag),
         defunc_head(FuncHead, Mod, Arith_Flag, NewFuncHead, AddBody, RestBody),
@@ -102,8 +102,8 @@ new_arith(false, false).
 new_arith(tempfalse, true).
 new_arith(true, true).
 
-% defunc_goal(Goal, NewGoal) :- NewGoal is a goal equivalent to Goal but
-% without functions.
+% defunc_goal(Goal, NewGoal, Module) :-
+%   NewGoal is a goal equivalent to Goal (in Module) but without functions.
 % To be called as a goal translation
 defunc_goal((U1 = U2), NewGoal, Mod) :-
         (V = U1, Fun = U2 ; V = U2, Fun = U1),

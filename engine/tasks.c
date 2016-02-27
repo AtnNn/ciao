@@ -17,7 +17,7 @@
 #include "tasks_defs.h"
 #include "alloc_defs.h"
 #include "nondet_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "initial_defs.h"
 
 
@@ -33,6 +33,8 @@ goal_descriptor_p goal_desc_list = NULL;
 SLOCK thread_to_free_l;
 THREAD_T thread_to_free = (THREAD_T)NULL;
 
+
+unsigned int global_goal_number = 0;                 /* Last number taken */
 
 
 /* The initial list has a single goal descriptor with no WAM and in
@@ -101,7 +103,6 @@ void disallow_thread_cancellation()
   Disallow_Thread_Cancel;
 }
 
-unsigned int global_goal_number = 0;                 /* Last number taken */
 
 /* Should be called after the list is inited */
 goal_descriptor_p init_first_gd_entry()
@@ -109,7 +110,7 @@ goal_descriptor_p init_first_gd_entry()
   goal_descriptor_p first_gd;
 
   first_gd = gimme_a_new_gd();
-  first_gd->goal_number = global_goal_number++;
+
   first_gd->thread_id = Thread_Id;
   first_gd->thread_handle = (THREAD_T)NULL; /* Special case? */
   first_gd->action = NO_ACTION;
@@ -131,7 +132,6 @@ goal_descriptor_p gimme_a_new_gd()
     if (!(gd_to_run->worker_registers))
       associate_wam_goal(free_wam(), gd_to_run);
   } else gd_to_run = attach_me_to_goal_desc_list(free_wam());
-
   return gd_to_run;
 }
 
@@ -146,7 +146,7 @@ goal_descriptor_p attach_me_to_goal_desc_list(Arg)
 
   goal_desc_p = (goal_descriptor_p)checkalloc(sizeof(goal_descriptor));
   goal_desc_p->state = WORKING;
-  goal_desc_p->goal_number = global_goal_number++;
+  goal_desc_p->goal_number = ++global_goal_number;
   Init_slock(goal_desc_p->goal_lock_l);
   associate_wam_goal(Arg, goal_desc_p);
 
@@ -191,18 +191,18 @@ void print_task_status(Arg)
       break;
     case WORKING:
       fprintf(u_o, "Active: GoalDesc %lx", (long int)current_goal);
-      fprintf(u_o, "\tGoal Id %u", current_goal->goal_number);
+      fprintf(u_o, "\tGoal Id %lu", current_goal->goal_number);
       fprintf(u_o, "\tWam %lx\n", (long int)current_goal->worker_registers);
       break;
     case PENDING_SOLS:
       fprintf(u_o, "Pending solutions: GoalDesc %lx",
               (long int)current_goal);
-      fprintf(u_o, "\tGoal Id %u", current_goal->goal_number);
+      fprintf(u_o, "\tGoal Id %lu", current_goal->goal_number);
       fprintf(u_o, "\tWam %lx\n", (long int)current_goal->worker_registers);
       break;
     case FAILED:
       fprintf(u_o, "Failed: GoalDesc %lx", (long int)current_goal);
-      fprintf(u_o, "\tGoal Id %u\n", current_goal->goal_number);
+      fprintf(u_o, "\tGoal Id %lu\n", current_goal->goal_number);
       break;
     default:
       fprintf(u_o, "Unknown status: GoalDesc %lx!\n", (long int)current_goal);
@@ -356,7 +356,7 @@ goal_descriptor_p look_for_a_free_goal_desc()
     free_goal_desc = goal_desc_list;
     goal_desc_list = goal_desc_list->forward; 
     free_goal_desc->state = WORKING;
-    free_goal_desc->goal_number = global_goal_number++;
+    free_goal_desc->goal_number = ++global_goal_number;
     /* Init_slock(free_goal_desc->goal_lock_l); */
   } else free_goal_desc = NULL;
   Release_slock(goal_desc_list_l);

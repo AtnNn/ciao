@@ -3069,15 +3069,14 @@ buffer. An active module is a remote procedure call server (see the
 (defun ciao-get-module-name ()
   (save-excursion 
     (beginning-of-buffer)
-    (let ((module-name ""))
-      (setq module-name 
- 	    (if (eq (search-forward-regexp "^ *:- *\\(module\\|class\\)( *" 
- 					   10000 t) nil)
- 		"user"
-  	      (set-mark (point))
- 	      (search-forward-regexp " *\\(,\\|)\\)")
- 	      (goto-char (match-beginning 0))
- 	      (buffer-substring-no-properties (mark) (point))))
+    (let ((module-name
+           (if (eq (search-forward-regexp "^ *:- *\\(module\\|class\\)( *" 
+                                          10000 t) nil)
+               "user"
+             (set-mark (point))
+             (search-forward-regexp " *\\(,\\|)\\)")
+             (goto-char (match-beginning 0))
+             (buffer-substring-no-properties (mark) (point)))))
       (if (eq (string-match "_" module-name) 0)
 	  (file-name-nondirectory 
 	   (file-name-sans-extension
@@ -3234,7 +3233,7 @@ traditional debug."
 (defun ciao-real-select-debug-mode (&optional list)
   (let ((end 0) 
 	(buffers-debug)
-	(module (ciao-get-module-name))
+	(module (ciao-module-name))
 	(actually "N")
 	(string)
 	(default)
@@ -3280,7 +3279,7 @@ traditional debug."
   "Mark a module for source debug."
   (interactive)
   (ciao-send-command ciao-toplevel-buffer-name 
-   (concat "debug_module_source('" (ciao-get-module-name)"').")
+   (concat "debug_module_source('" (ciao-module-name)"').")
    t))
 
 (defun ciao-un-mark-buffer-debug ()
@@ -3329,7 +3328,7 @@ and sets the debugger to non-debug mode."
   (interactive)
   (let ((end 0) 
 	(buffers-debug)
-	(module (ciao-get-module-name))
+	(module (ciao-module-name))
 	(actually "N"))
     (setq buffers-debug (cdr (ciao-how-debugged)))
     (if (string-match (concat "\\<" module "\\>") buffers-debug)
@@ -3346,12 +3345,13 @@ and sets the debugger to non-debug mode."
 	   (add-hook 'ciao-prompt-inferior-hook 'ciao-load-buffer t)
 	   (ciao-mark-buffer-source-debug)))))
 
-;; (defun ciao-module-name ()
-;;   (interactive)
-;;   (let ((module-name (ciao-get-module-name)))
-;;     (if (string= (substring module-name -3) ".pl")
-;; 	(setq module-name (file-name-sans-extension module-name)))
-;;     module-name))
+(defun ciao-module-name ()
+  (interactive)
+  (let ((module-name (ciao-get-module-name)))
+    (if (and (> (length module-name) 3)
+             (string= (substring module-name -3) ".pl"))
+	(file-name-sans-extension module-name)
+      module-name)))
 
 (defun ciao-select-buffers-for-debug ()
   "Visits all Ciao/Prolog files which are currently open in a buffer

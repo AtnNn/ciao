@@ -4,7 +4,7 @@
 typedef enum {
   IDLE,      /* The memory areas are available for being used by a thread */
   WORKING,                 /* The memory areas are being used by a thread */
-  PENDING_SOLS,                /* Frozen --  backtracking can be requested */
+  PENDING_SOLS,               /* Frozen --  backtracking can be requested */
   FAILED	             /* Frozen -- but no more solutions available */
 } Thread_State;
 
@@ -42,7 +42,7 @@ struct wam_private {
 struct goal_str {
 /* Pointer to the WAM registers.  
    If NULL, no WAM has been associated to the goal.  */
-  unsigned int goal_number;
+  ENG_INT goal_number;
   struct worker *worker_registers;
   struct wam_private wam_private_state;
   /* This defines the state of the WAM (if any) associated to the goal */
@@ -53,7 +53,7 @@ struct goal_str {
   THREAD_T  thread_handle;	/* Different from thread_id in Win32 */
   int      action;		/* Defines the behavior of the goal */
   TAGGED goal;			/* The pointer to the goal to execute */
-  SLOCK goal_lock_l;		/* Still to be used */
+  SLOCK goal_lock_l;
   struct goal_str *forward, *backward;
 };
 

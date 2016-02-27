@@ -10,7 +10,7 @@
 
 /***************************************************************************/
 
-#if defined(LINUX) || defined(IRIX) || defined(Solaris)
+#if defined(DARWIN) || defined(LINUX) || defined(IRIX) || defined(Solaris)
 #define USE_POSIX_THREADS
 #endif
 
@@ -29,10 +29,12 @@ typedef void *    THREAD_ARG;
 typedef void *    THREAD_RES_T;
 typedef void *(*THREAD_START)(void *);
 
+/*
 #define Thread_Create_NoGoalId(Process, Arg, Id, Handle) { \
     pthread_create(&(Id), &detached_thread, Process, Arg); \
     Handle = Id; \
 }
+*/
 
 #define Thread_Create_GoalId(Process, Arg, Id, Handle) { \
     pthread_create(&(Id), &joinable_thread, Process, Arg); \
@@ -72,8 +74,10 @@ typedef LPTHREAD_START_ROUTINE  THREAD_START; /* The type of the routine */
    wrapping it inside the Thread_Dispose() macro.
 */
 
+/*
 #define Thread_Create_NoGoalId(Process, Arg, Id, Handle) \
         Handle = CreateThread(NULL, 0, Process, Arg, 0, Id)
+*/
 
 #define Thread_Create_GoalId(Process, Arg, Id, Handle) \
         Handle = CreateThread(NULL, 0, Process, Arg, 0, &(Id))

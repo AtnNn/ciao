@@ -22,7 +22,7 @@ extern int errno;
 #include "inout_defs.h"
 #include "streams_defs.h"
 #include "tasks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "alloc_defs.h"
 #include "bignum_defs.h"
 #include "stacks_defs.h"
@@ -30,7 +30,7 @@ extern int errno;
 /* local declarations */
 
 static int readchar(register struct stream_node *s, int type, struct definition *pred_address);
-static void display_term(Argdecl, TAGGED term, struct stream_node *stream, BOOL quoted);
+void display_term(Argdecl, TAGGED term, struct stream_node *stream, BOOL quoted);
 BOOL code_class(Argdecl);
 BOOL peek(Argdecl);
 BOOL peek2(Argdecl);
@@ -108,7 +108,7 @@ int (*ENG_read_hook)() = NULL;
   (op<GET1 || i==EOF || (op==GET1 && symbolchar[i]>0) || op==i)
 
 /* Returns -2 when attempting to read past end of file //) */
-static int readchar(s,op_type,pred_address)
+static int readchar(s, op_type, pred_address)
      struct stream_node *s;
      int op_type;  /* PEEK = -100, GET = -10, GET1 = -1, SKIP >= 0 */
      struct definition *pred_address;
@@ -121,9 +121,10 @@ static int readchar(s,op_type,pred_address)
   if (s->isatty) {
     int_address = pred_address;
     while (TRUE) {
-      if (root_stream_ptr->char_count==root_stream_ptr->last_nl_pos)
-        print_string(stream_user_output,GetString(current_prompt)),
-        fflush(stdout);
+      if (root_stream_ptr->char_count==root_stream_ptr->last_nl_pos){
+        print_string(stream_user_output,GetString(current_prompt));
+          /* fflush(stdout); into print_string() MCL */
+      }
                                                      /* MCL: ENG_read_hook */
       if (ENG_read_hook != NULL){
         SAVE_XREGS(saved_regs, REGS_TO_SAVE);
@@ -527,8 +528,8 @@ BOOL skip2(Arg)
    fputs() starts paying off at string lengths above 50 or so.
  */
 void print_string(stream,p)
-     REGISTER char *p;
      REGISTER struct stream_node *stream;
+     REGISTER char *p;
 {
   REGISTER FILE *fileptr = stream->streamfile;
   REGISTER int i;
@@ -551,6 +552,7 @@ void print_string(stream,p)
     }
     write(GetInteger(stream->label), p, size);
   }
+  fflush(fileptr);
 }
 
 
@@ -621,7 +623,7 @@ void print_atom(Arg, stream,term)
 
 /*   --------------------------------------------------------------  */	 
 
-static void display_term(Arg, term, stream, quoted)
+void display_term(Arg, term, stream, quoted)
      Argdecl;
      TAGGED term;
      struct stream_node *stream;
@@ -748,6 +750,8 @@ BOOL prolog_clearerr(Arg)
 #define FASTRW_VERSION  'C'
 #define FASTRW_MAX_VARS 1024
 
+#define SPACE_FACTOR 64  /* kludge to ensure more heap space before reading */
+
 BOOL prolog_fast_read_in_c_aux(Argdecl,
                                TAGGED *out,
                                TAGGED *vars,
@@ -760,17 +764,31 @@ BOOL prolog_fast_read_in_c(Arg)		/* OPA */
   int i,lastvar = 0;
   TAGGED term, vars[FASTRW_MAX_VARS];
 
-  if ((i = getc(Input_Stream_Ptr->streamfile)) < -1)
+
+/* MCL, JC: Changed getc() to readchar() because of wrong assumptions when
+   using sockets (i.e., streamfile = NULL.  */
+
+ /* NULL as predaddress (really did not bother to find out what to put)  */
+
+  if ((i = readchar(Input_Stream_Ptr, GET, NULL)) < -1)  
      BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
   if (i != FASTRW_VERSION) return FALSE;
 
-  if (HeapDifference(w->global_top,Heap_End) < CONTPAD+16*kCells)
-        explicit_heap_overflow(Arg,CONTPAD+16*kCells,1);
+  if (HeapDifference(w->global_top,Heap_End) < CONTPAD+SPACE_FACTOR*kCells)
+        explicit_heap_overflow(Arg,CONTPAD+SPACE_FACTOR*kCells,1);
 
   if (!prolog_fast_read_in_c_aux(Arg,&term,vars,&lastvar)) return FALSE;
 
   return cunify(Arg,X(0),term);
 }
+
+#if defined(DEBUG)
+#define CHECK_HEAP_SPACE \
+  if (HeapDifference(w->global_top,Heap_End) < CONTPAD) \
+     fprintf(stderr, "Out of heap space in fast_read()\n")
+#else
+#define CHECK_HEAP_SPACE
+#endif
 
 BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
      Argdecl;
@@ -781,18 +799,21 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
   unsigned char *s = (unsigned char *) Atom_Buffer;
   TAGGED *h = w->global_top;
 
-  if ((k = getc(Input_Stream_Ptr->streamfile)) < -1)
+  if ((k = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
      BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+
 
   switch(k) {
   case ']':
     *out = atom_nil;
+    CHECK_HEAP_SPACE;
     return TRUE;
   case '[':
     w->global_top += 2;
     if (!prolog_fast_read_in_c_aux(Arg,h,vars,lastvar)) return FALSE;
     if (!prolog_fast_read_in_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
     *out = Tag(LST,h);
+    CHECK_HEAP_SPACE;
     return TRUE;
   case '_':
   case 'I':
@@ -807,7 +828,7 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
 					   i, Atom_Buffer_Length<<=1);
 	s = (unsigned char *)Atom_Buffer+i;
       }
-      if ((j = getc(Input_Stream_Ptr->streamfile)) < -1)
+      if ((j = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
 	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
       *s++ = j;
     }
@@ -816,6 +837,7 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
       if ((i = atoi(Atom_Buffer)) == *lastvar)
 	*h = vars[(*lastvar)++] = TagHVA(w->global_top++);
       *out = vars[i];
+      CHECK_HEAP_SPACE;
       return TRUE;
     case 'I':
       if((i = bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD))) {
@@ -831,12 +853,15 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
 	w->global_top += i+1;
 	h[i] = h[0];
       }	
+      CHECK_HEAP_SPACE;
       return TRUE;
     case 'F':
       *out = MakeFloat(Arg,atof(Atom_Buffer));
+      CHECK_HEAP_SPACE;
       return TRUE;
     case 'A':
       *out = MakeString(Atom_Buffer);
+      CHECK_HEAP_SPACE;
       return TRUE;
     case '"':
       i--;
@@ -847,13 +872,13 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
         explicit_heap_overflow(Arg,CONTPAD+(i<<1),1);
       }
       */
-      while (i--) MakeLST(*out,MakeSmall(Atom_Buffer[i]),*out);
+      while (i--) MakeLST(*out,MakeSmall(((unsigned char *) Atom_Buffer)[i]),*out);
       if (!prolog_fast_read_in_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
+      CHECK_HEAP_SPACE;
       return TRUE;
     case 'S':
-      if ((i = getc(Input_Stream_Ptr->streamfile)) < -1)
+      if ((i = readchar(Input_Stream_Ptr, GET, NULL)) < -1)
 	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
-
           /*
       if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i+1))
         explicit_heap_overflow(Arg,CONTPAD+(i+1),1);
@@ -863,6 +888,7 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
       w->global_top += i+1;
       while(i--)
 	if (!prolog_fast_read_in_c_aux(Arg,h++,vars,lastvar)) return FALSE;
+      CHECK_HEAP_SPACE;
       return TRUE;
     }
   default:
@@ -900,23 +926,24 @@ void prolog_fast_write_in_c_aux(Arg,in,vars,lastvar)
     case LST:
       DerefCar(term,in);
       DerefCdr(in,in);
-      if (TagIsSmall(term) && GetSmall(term) && ((i = GetSmall(term)) < 256)){
-	for(writechar('"',1,Output_Stream_Ptr);i && (i < 256);) {
-	  writechar(i,1,Output_Stream_Ptr);
-	  if (TagOf(in) == LST) {
-	    DerefCar(term,in);
-	    DerefCdr(in,in);
-	    if (!TagIsSmall(term)) break;
-	    else i = GetSmall(term);
+      if (TagIsSmall(term) && (i = GetSmall(term)))
+	if ((i > 0) && (i < 256)) {
+	  for(writechar('"',1,Output_Stream_Ptr);i && (i < 256);) {
+	    writechar(i,1,Output_Stream_Ptr);
+	    if (TagOf(in) == LST) {
+	      DerefCar(term,in);
+	      DerefCdr(in,in);
+	      if (!TagIsSmall(term)) break;
+	      else i = GetSmall(term);
+	    }
+	    else {
+	      writechar(0,1,Output_Stream_Ptr);
+	      prolog_fast_write_in_c_aux(Arg,in,vars,lastvar);
+	      return;
+	    }	  
 	  }
-	  else {
-	    writechar(0,1,Output_Stream_Ptr);
-	    prolog_fast_write_in_c_aux(Arg,in,vars,lastvar);
-	    return;
-	  }	  
+	  writechar(0,1,Output_Stream_Ptr);
 	}
-	writechar(0,1,Output_Stream_Ptr);
-      }
       writechar('[',1,Output_Stream_Ptr);
       prolog_fast_write_in_c_aux(Arg,term,vars,lastvar);
       prolog_fast_write_in_c_aux(Arg,in,vars,lastvar);

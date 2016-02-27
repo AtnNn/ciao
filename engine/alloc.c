@@ -1,7 +1,7 @@
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 
 
-#if defined(Solaris) || defined(LINUX)
+#if defined(Solaris) || defined(LINUX) || defined(DARWIN)
 #include <string.h>
 #else
 #include <memory.h>
@@ -17,7 +17,7 @@
 /* declarations for global functions accessed here */
 
 #include "own_malloc_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "alloc_defs.h"
 #include "support_defs.h"
 #include "streams_defs.h"
@@ -304,7 +304,7 @@ void create_wam_areas(Arg)
   GETENV(j,cp,"TRAILSTKSIZE",TRAILSTKSIZE);
   i += j;
   Choice_End = Trail_Start = checkalloc(i*sizeof(TAGGED));
-  Choice_Start =  Trail_End = TrailOffset(Trail_Start,i);
+  Choice_Start =  Trail_End = TrailOffset(Trail_Start, i);
 
 
  /*  Do not touch the (TAGGED) type casting! Or the emulator will break! */

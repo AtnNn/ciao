@@ -1,5 +1,5 @@
 include ../../SETTINGS
-include ../../COMMON
+include ../../SHARED
 
 include $(SRC)/makefile-sysindep
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
@@ -8,9 +8,9 @@ phony:
 
 all:
 	'rm' -f all_modules
-	echo "set_prolog_flag(compresslib," $(COMPRESS_LIBS) ")." >> all_modules
+	echo "set_prolog_flag(compress_lib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
-	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
+	$(SETLOCALCIAO) $(CIAOSHELL) < all_modules > all_module_messages
 	-chmod $(DATAMODE) all_modules
 	'rm' -f all_module_messages
 

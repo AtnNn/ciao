@@ -18,16 +18,18 @@
 :- export(tcltk/2).
 :- export(tcltk_raw_code/2).
 %:- export(copy_stdin/1).
-:- export(receive_term/3).
-:- export(receive_term/2).
+%:- export(receive_term/3).
+%:- export(receive_term/2).
 :- export(receive_result/2).
 :- export(send_term/2). 
 
-:- export(delete/1).
 :- export(receive_event/2).
 :- export(receive_list/2).
+:- export(receive_confirm/2).
 %:- export(tcl_error/1).
 %:- export(tcl_result/1).
+%:- export(delete_item_queue/1).
+:- export(delete/1).
 
 
 :- use_module(library(sockets)).
@@ -35,17 +37,72 @@
 :- use_module(library(write)).
 :- use_module(library(read)).
 :- use_module(library(strings)).
+:- use_module(library(lists)).
 :- use_module(library(format),[format/3]).
+
+:- set_prolog_flag(multi_arity_warnings, off).
 
 %%-----------------------------------------------------------------------
 :- comment(module,"The @lib{tcltk low level} library permit obtain the results of the 
-   @lib{tcltk}").
+   @lib{tcltk}. This module defines a low level interface to be used by the library Tcl/Tk. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a low-level connection to Tcl/Tk.
+
+    @section{How the Tcl/Tk interface works}
+        Two sockets are created in Tcl/Tk to connect the @em{TclInterpreter} and the 
+      prolog process, the @em{event_socket} and the @em{term_socket}. 
+        There are two global variables: @em{prolog_variables} and 
+          @em{terms}. The value  
+          of any of the variables in the goal that is bound to a term will be 
+          stored in the array prolog_variables with the variable name as index. 
+          The string which contains the printed representation of prolog @em{terms}
+          is @em{Terms}.
+        There are Tcl/Tk procedures used to develop the interface:
+          @begin{description}
+
+          @item{@tt{prolog}} Sends to @em{term_socket} the predicate tcl_result
+          which contains the goal to execute. Returns the string execute and 
+          the goal.
+          @item{@tt{prolog_event}} Adds the new @em{term} to the @em{terms} queue.
+          @item{@tt{prolog_delete_event}} Deletes the first @em{term} of the 
+          @em{terms} queue.
+          @item{@tt{prolog_list_events}} Sends all the @em{terms} of the @em{terms} 
+          queue by the @em{event_socket}. The last element will be 
+          @em{end_of_event_list}.
+          @item{@tt{prolog_cmd}} Receives as an argument the tcltk 
+          code. Evaluates the code and returns throught the @em{term_socket} the 
+          predicate @em{tcl_error} if there was a mistake in the code or the 
+          predicate @em{tcl_result} with the result of the command executed. If the 
+          argument is @em{prolog} with a goal to execute,
+          before finishing, the predicate evaluated by prolog is received. In order to
+          get the value of the 
+          variables, predicates are compared using the @em{unify_term} procedure. 
+          Returs 0 when the sripts runs without
+          errors, and 1 if there is an error.
+          @item{@tt{prolog_one_event}} Receives as an argument the @em{term}
+          which is associated with one of the tk events. Sends through the 
+          @em{event_socket} the @em{term} and waits the unificated @em{term} by 
+          prolog. After that to obtain the value of the @em{prolog_variables}, 
+          calls the @em{unify_term} procedure.
+          @item{@tt{prolog_thread_event}} Receives as an argument the @em{term}
+          which is associated with one of the tk events. Sends through the 
+          @em{event_socket} the @em{term} and waits the unificated @em{term} by 
+          prolog. After that to obtain 
+          the value of the @em{prolog_variables}, calls the @em{unify_term} 
+          procedure.
+          In this case the @em{term_socket} is non blocking.
+          @item{@tt{convert_variables}} Receives as an argument, a string
+          which  contains symbols that can't be sends by the sockets. This procedure
+          deletes them from the input string and returns the new string.
+          @item{@tt{unify_term}} Receives as arguments, a prolog term.").
 %%------------------------------------------------------------------------
 
 :- regtype tclInterpreter(I) # "@var{I} is a reference to a @em{Tcl}
    interpreter.".
 
 tclInterpreter(_).
+
+:- regtype tclCommand(C) # "@var{C} is a @em{Tcl} command.".
+
+tclCommand(_).
 
 %%------------------------------------------------------------------------
 
@@ -57,22 +114,22 @@ tclInterpreter(_).
 %%------------------------------------------------------------------------
 :- pred new_interp(-TclInterpreter) :: tclInterpreter 
 
-        # "Creates two sockets to connect to the wish process, the term socket 
+        # "Creates two sockets to connect to the @em{wish} process, the term socket 
           and the event socket and opens a pipe to process @em{wish} in a 
           new shell.".
 
 :- pred new_interp_file(+FileName,-TclInterpreter) :: string * tclInterpreter
 
-        # "Creates two sockets, the term socket and the event socket and 
-          opens a pipe to process @em{wish} in a new shell, invoked with a
-          @em{fileName}, then @em{fileName} is treated as a name of a sript
+        # "Creates two sockets, the term socket and the event socket, and 
+          opens a pipe to process @em{wish} in a new shell invoked with a
+          @var{FileName}. @var{FileName} is treated as a name of a sript
           file".
 
 :- pred new_interp(-TclInterpreter,+Options) :: tclInterpreter * atom
 
-        # "Creates two sockets, the term socket and the event socket and 
-          opens a pipe to process @em{wish} in a new shell, invoked with 
-          the @em{Options}.".
+        # "Creates two sockets, the term socket and the event socket, and 
+          opens a pipe to process @em{wish} in a new shell invoked with 
+          the @var{Options}.".
 
 %%------------------------------------------------------------------------
 
@@ -152,8 +209,8 @@ new_interp('$wish$'(Strm,TermStream,EventStream),Options) :-
 %%------------------------------------------------------------------------
 :- pred delete(+TclInterpreter) :: tclInterpreter 
 
-        # "Terminates the @em{wish} process, and closes pipe, term socket
-          and event socket.".
+        # "Terminates the @em{wish} process and closes pipe, term socket
+          and event socket. Deletes the interpreter @var{TclInterpreter} from the system".
 %%------------------------------------------------------------------------
 
 delete('$wish$'(Strm,TermStrm,EventStrm)) :-
@@ -165,6 +222,22 @@ delete('$wish$'(Strm,TermStrm,EventStrm)) :-
         close(TermStrm),
         close(Strm),
         close(EventStrm).
+
+%%------------------------------------------------------------------------
+%:- pred delete_item_queue(+TclInterpreter) :: tclInterpreter 
+%
+%       # "".
+%%------------------------------------------------------------------------
+
+%delete_item_queue('$wish$'(Strm1,Strm2,Strm3)) :-
+%       display('En el delete'),nl,
+%       write_string(Strm1,"prolog_delete_event "),
+%       nl(Strm1),
+%       flush_output(Strm1),
+%%      display('En el delete enviado'),nl,
+%%      tcltk_raw_code("prolog_delete_event ",'$wish$'(Strm1,Strm2,Strm3)),
+%       read_term(Strm3,Term,[]),
+%       display(Term).
 
 %%------------------------------------------------------------------------
 send_initial_code(Strm) :-
@@ -180,10 +253,10 @@ send_initial_code(_).
 %% SEND BASIC TCLTK CODE ITEMS TO WISH
 %%------------------------------------------------------------------------
 %%------------------------------------------------------------------------
-:- pred tcltk_raw_code(+Stream,+TclInterpreter) :: stream * tclInterpreter 
+:- pred tcltk_raw_code(+String,+TclInterpreter) :: string * tclInterpreter 
 
-        # "Sends the tcltk code items of the @em{stream} to the 
-          @em{tclInterpreter}".
+        # "Sends the tcltk code items of the @var{Stream} to the 
+          @var{TclInterpreter}".
 %%------------------------------------------------------------------------
 
 tcltk_raw_code(Str,'$wish$'(Strm,_,_)) :-
@@ -211,12 +284,9 @@ copy_stdin_aux(_).
 %% MACRO IN ORDER TO SEND TCL/TK CODE TO WISH
 %%------------------------------------------------------------------------
 %%------------------------------------------------------------------------
-
-tclCommand(X):- atom(X).
-
 :- pred tcltk(+Code,+TclInterpreter) :: tclCommand * tclInterpreter 
 
-        # "Sends the @em{Code} converted to string, to the @em{tclInterpreter}".
+        # "Sends the @var{Code} converted to string to the @var{TclInterpreter}".
 %%------------------------------------------------------------------------
 
 tcltk(Code,'$wish$'(Strm,_,_)) :-
@@ -259,7 +329,9 @@ send_code([sqb(Code)|Nc],Strm) :-
 
 send_code([br(Code)|Nc],Strm) :-
         write(Strm,'{'),
+%       display('en el send code'),nl,
         send_code(Code,Strm),
+%       display('fin send code'),nl,
         write(Strm,'} '),
         !,
         send_code(Nc,Strm).
@@ -314,6 +386,13 @@ send_code(Not_a_list,Strm) :-
 %%------------------------------------------------------------------------
 %% SEND A PROLOG TERM TO TCL/TK
 %%------------------------------------------------------------------------
+%%------------------------------------------------------------------------
+:- pred send_term(+String,+TclInterpreter) :: string * tclInterpreter 
+
+        # "Sends the goal executed to 
+          the @var{TclInterpreter}. @var{String} has the predicate with 
+          unified variables".
+%%------------------------------------------------------------------------
 
 send_term(Term,'$wish$'(_,Stream,_)) :-
         write_term(Stream,Term,[]),
@@ -326,9 +405,9 @@ send_term(Term,'$wish$'(_,Stream,_)) :-
 %%------------------------------------------------------------------------
 :- pred receive_result(-Result,+TclInterpreter) :: string * tclInterpreter 
 
-        # "Receives the @em{result} of the last @em{tclCommand} into 
-          the @em{tclInterpreter}. If the @em{tclCommand} is not correct, the 
-          wish process is terminated and a messages appears showing the 
+        # "Receives the @var{Result} of the last @em{TclCommand} into 
+          the @var{TclInterpreter}. If the @em{TclCommand} is not correct the 
+          @em{wish} process is terminated and a message appears showing the 
           error".
 %%------------------------------------------------------------------------
 receive_result(Result,I) :-
@@ -376,7 +455,7 @@ tcl_result(_).
 %%------------------------------------------------------------------------
 :- pred receive_event(-Event,+TclInterpreter) :: list * tclInterpreter 
 
-        # "Receives the @em{event} from the event socket".
+        # "Receives the @var{Event} from the event socket of the @var{TclInterpreter}.".
 %%------------------------------------------------------------------------
 
 receive_event([Term],'$wish$'(_,_,Stream)) :-
@@ -387,17 +466,53 @@ receive_event([Term],'$wish$'(_,_,Stream)) :-
 
 %%------------------------------------------------------------------------
 
+%receive_list([],_,end_of_event_list).
 
+%receive_list(Nt,'$wish$'(_,_,Stream),_) :-
+%       display('Antes de llamar a receive__list'),nl,
+%       receive_list(Nt,'$wish$'(_,_,Stream)).
+
+
+%receive_list([Term|Nt],'$wish$'(_,_,Stream)) :-
+%       display('En el receive list '),
+%       read_term(Stream,Term,[]),
+%       display(Term),nl,
+%       display('Antes de receive list3'),nl,
+%       receive_list(Nt,'$wish$'(_,_,Stream),Term),
+%       display('En el fin receive list'),nl.
+
+%receive_list([Term|Nt],'$wish$'(_,_,Stream)) :-
+%%      display('En el receive list '),
+%       read_term(Stream,Term,[]),
+%%      display(Term),nl,
+%       ( Term = end_of_event_list -> Nt = [] 
+%       ; receive_list(Nt,'$wish$'(_,_,Stream))).
+%%      display('fin receive list ').
+
+%%------------------------------------------------------------------------
+:- pred receive_list(-List,+TclInterpreter) :: list * tclInterpreter 
+
+        # "Receives the @var{List} from the event socket of the 
+          @var{TclInterpreter}.The @var{List} has all the predicates that 
+          have been inserted from Tcl/Tk with the command prolog_event. 
+          It is a list of terms.".
+%%------------------------------------------------------------------------
 receive_list([Term|Nt],'$wish$'(_,_,Stream)) :-
         read_term(Stream,Term,[]),
-        receive_list3(Nt,'$wish$'(_,_,Stream),Term).
-
-receive_list3([],_,end_of_event_list).
-
-receive_list3(Nt,'$wish$'(_,_,Stream),_) :-
+        Term \== end_of_event_list,!,
         receive_list(Nt,'$wish$'(_,_,Stream)).
+receive_list([end_of_event_list],_).
 
+%%------------------------------------------------------------------------
+:- pred receive_confirm(-String,+TclInterpreter) :: string * tclInterpreter 
 
+        # "Receives the @var{String} from the event socket of the 
+          @var{TclInterpreter} when a term inserted into the event queue 
+          is managed.".
+%%------------------------------------------------------------------------
+receive_confirm(Term,'$wish$'(_,_,Stream)) :-
+%       display('En el confirm'),nl,
+        read_term(Stream,Term,[]).
 %%------------------------------------------------------------------------
 %% EVALUATE IF AN ERROR OCCURS IN THE TCLTK SCRIPT
 %%------------------------------------------------------------------------
@@ -411,9 +526,11 @@ receive_list3(Nt,'$wish$'(_,_,Stream),_) :-
 %core("wm withdraw .").
 
 %%------------------------------------------------------------------------
-:- comment(tclsockets,"
-        To use Tcl, you have to  create two sockets, the event_socket and
-          term_socket.").
+:- comment(doinclude, core/1).
+
+:- pred core(+String) :: string  
+        # "@pred{core/1} is a set of facts which contain @var{String}s to be sent to the  Tcl/Tk interpreter on startup.  They implement miscelaneous Tcl/Tk procedures which are used by the Tcl/Tk interface.". 
+
 %%------------------------------------------------------------------------
 
 core("set event_socket [socket $prolog_host $event_port]").
@@ -424,16 +541,8 @@ core("set term_socket [socket $prolog_host $prolog_port]").
 %core("puts $prolog_port").
 %core("puts $term_socket").
 
-%core("[fconfigure event_socket -blocking true]").
+%core("[fconfigure $event_socket -blocking false]").
 
-%%------------------------------------------------------------------------
-:- comment(tclvariables,"
-        There are two global variables, prolog_variables and terms. The value 
-          of any of the variables in the goal that is bound to a term will be 
-          stored in the array prolog_variables with the variable name as index. 
-          The string which contains the printed representation of Prolog terms 
-          is Terms.").
-%%------------------------------------------------------------------------
 %core(" global prolog_variables").
 core("set prolog_variables(X) 1").
 core("set terms [list] ").
@@ -444,12 +553,6 @@ core(" puts  $event_socket $term. ").
 core(" flush $event_socket ").
 core("} ").
 
-%%------------------------------------------------------------------------
-:- comment(prolog,"
-          The procedure prolog sends for the term_socket the predicate tcl_result
-          which contains the goal to execute. Returns the string execute and 
-          the goal.").
-%%------------------------------------------------------------------------
 core("proc prolog {agoal} {").
 %core(" prolog_term goal($agoal) ").
 %core(" prolog_term execute($agoal) ").
@@ -467,32 +570,22 @@ core("  return execute($agoal) ").
 %core("  return execute ").
 core("} ").
 
-%%------------------------------------------------------------------------
-:- comment(prolog_event,"
-          The procedure prolog_event adds the new term to the terms queue.").
-%%------------------------------------------------------------------------
 core("proc prolog_event {term} {").
 core("global terms").
 core(" set terms [concat $terms $term] ").
 core(" return 0 ").
 core("} ").
 
-%%------------------------------------------------------------------------
-:- comment(prolog_delete_event,"
-          The procedure prolog_delete_event deletes the first term of the 
-          terms queue.").
-%%------------------------------------------------------------------------
 core("proc prolog_delete_event { } {").
 core("global terms").
+core("global event_socket").
 core(" set terms [lreplace $terms 0 0 ] ").
+core(" puts  $event_socket \"end_of_event_list.\" ").
+core(" flush $event_socket ").
+%core(" puts  finprologdelete ").
 core(" return 0 ").
 core("} ").
 
-%%------------------------------------------------------------------------
-:- comment(prolog_list_events,"
-          The procedure prolog_list_events sends all the terms, by the event_socket,
-          of the terms queue. The last element will be end_of_event_list").
-%%------------------------------------------------------------------------
 core("proc prolog_list_events { } {").
 core("global event_socket").
 core("global terms").
@@ -508,17 +601,6 @@ core(" flush $event_socket ").
 core(" return 0 ").
 core("} ").
 
-%%------------------------------------------------------------------------
-:- comment(prolog_cmd,"
-          The procedure prolog_list_events receives, like an argument, the tcltk 
-          code. Evaluates the code and returs, by the term_socket, the predicate
-          tcl_error, if there was a mistake in the code, or the predicate tcl_result
-          which contains the result of the command. If the command was prolog,
-          before finish the procedure, will has to obtain the result of execution
-          of the prolog predicate and the unify this terms to obtain the value of 
-          the prolog_variables. Returs o when the sripts runs without errors, and 
-          1 if there is an error.").
-%%------------------------------------------------------------------------
 % Execute command and sendresults back to prolog
 % This is internally used by tcl_eval/3.
 % return 0 when the scripts runs without errors, and 1 if there is an error
@@ -526,9 +608,9 @@ core("} ").
 core("proc prolog_cmd {command} {").
 core(" global term_socket").
 %core("   set result [catch {uplevel $command} var]").
-%% MCL %% core(" puts $command ").
+%core(" puts $command ").
 core("   set error [catch {set result [uplevel $command]} var]").
-%% MCL %% core("   puts $command").
+%core("   puts $command").
 %core("   puts $error").
 %core("   if {$result} {").
 core("   if {$error} {").
@@ -544,7 +626,7 @@ core("          puts  $term_socket tcltk_low_level:tcl_result(\\""$result\\"")."
 core("          flush $term_socket").
 core("       } else { ").
 core("          gets  $term_socket term ").
-%% MCL %% %core("          puts ahora_me_fijo").
+%core("          puts ahora_me_fijo").
 %core("          puts $result ").
 %core("          puts $term").
 core("          set ret [unify_term $result $term]").
@@ -556,13 +638,6 @@ core("   } ").
 core("} ").
 
 
-%%------------------------------------------------------------------------
-:- comment(prolog_one_event,"
-          The procedure prolog_one_event receives, like an argument, the term
-          which is associated with one of the tk events. Sends, by the event_socket
-          the term and waits the unificated term by prolog. After that to obtain 
-          the value of the prolog_variables, calls the unify_term procedure.").
-%%------------------------------------------------------------------------
 % Execute command and send results back to prolog
 
 core("proc prolog_one_event {a_term} {").
@@ -577,21 +652,32 @@ core("   set result_var 0 ").
 
 core("   puts  $event_socket $a_term.").
 core("   flush $event_socket").
-%% MCL %% core(" puts antesdegets ").
+%core(" puts antesdegets ").
 core("   gets  $term_socket result").
-%% MCL %% core(" puts despuesdegets ").
+%core(" puts despuesdegets ").
 core("   set ret [unify_term $a_term $result]").
-%% MCL %% core(" puts despuesdeunify ").
+%core(" puts despuesdeunify ").
 %core("   gets  $event_socket $result_var").
 %core("   puts $result_var").
 core("} ").
 
-%%------------------------------------------------------------------------
-:- comment(convert_variables,"
-          The procedure convert_variables receives, like an argument, a string
-          which  contains simbols that cant be sends by the sockets. This procedure
-          deletes them from the input string and returs the new string").
-%%------------------------------------------------------------------------
+% Execute command and send results back to prolog
+
+core("proc prolog_thread_event {a_term} {").
+core(" global event_socket").
+core(" global term_socket").
+
+%% new global variable prolog_variable, wich contain the result of the unification
+core(" global prolog_variables").
+core("   fconfigure $term_socket -blocking false").
+core("   set result 0").
+core("   set result_var 0 ").
+core("   puts  $event_socket $a_term.").
+core("   flush $event_socket").
+core("   gets  $term_socket result").
+core("   set ret [unify_term $a_term $result]").
+core("} ").
+
 core("proc convert_variable {var} {").
 core("   set result \" \" ").
 core("   while (1) { ").
@@ -609,13 +695,6 @@ core("      set result ${result}${new}'' ").
 core("  } ").
 core("} ").
 
-%%------------------------------------------------------------------------
-:- comment(unify_term,"
-          The procedure unify_term receives, like arguments, a prolog term
-          which  contains prolog variables and a prolog term with the result
-          of the prolog unification. This procedure stored in the array
-          prolog_variables the value and the index will be the variable name.").
-%%------------------------------------------------------------------------
 % the value of the unification have to be introduced in the global array 
 % prolog_variables with the variable name as index
 core("proc unify_term {term result} {").
@@ -636,6 +715,8 @@ core("} ").
 
 core("proc unify_term_aux {term result} {").
 core(" global prolog_variables").
+%core("   puts  $term] ").
+%core("   puts $result] ").
 core("   set pos_t [string first \"(\" $term] ").
 core("   set pos_r [string first \"(\" $result] ").
 % the name of the predicate has to be the same
@@ -646,8 +727,9 @@ core("         set comp [string compare $term $result] ").
 % compare returns 0 if the strings are equal
 core("         if { $comp == 0 } { ").
 core("            return 1 }").
-core("         else { ").
-core("            return 0 }").
+%core("         else { ").
+%core("            return 0 }").
+core("            return 0 ").
 core("         }").
 core("      }").
 
@@ -688,10 +770,6 @@ core("} ").
 
 
 :- comment(version_maintenance,dir('../../version')).
-
-:- comment(version(1*5+154,2000/05/29,18:57*52+'CEST'), "Commented out
-some clauses parts of the core/1 predicate which were issuing
-debugging messages.  (MCL)").
 
 :- comment(version(0*9+79,1999/05/04,20:18*41+'MEST'), "module first
    created (Montse Urraca)").

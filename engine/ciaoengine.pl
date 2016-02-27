@@ -25,7 +25,90 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*6+2,2000/07/18,15:45*13+'CEST'), "Some warnings fixed
+:- comment(version(1*7+115,2001/07/09,19:10*00+'CEST'), "Solved a
+   problem with '$/' in Windows.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+113,2001/07/05,17:10*06+'CEST'), "exec/3 was
+giving segmentation fault due to a unitialized variable.  Solved.
+(MCL)").
+
+:- comment(version(1*7+68,2001/03/22,17:28*29+'CET'), "Solved a bug
+(which only showed up in Mac OS X): in the wam() label "fail:" four X
+regs were popped be it necessary or not (in case less registers were
+needed, the WAM just discarded those recovered).  This caused the
+first choicepoint of a concurrent goal to be accessed out of the
+bounds of the allocated memory in case of failure of the computation,
+and a OS signal was raised.  I have conducted some experiments, and
+the original code did not seem to bring any advantage in terms of
+execution time, so I have simplified it (the original code is still in
+place and commented).  (MCL)").
+
+:- comment(version(1*7+67,2001/03/21,12:28*26+'CET'), "
+ThreadCreateNoGoalId not called anywhere --- removed.  (MCL)").
+
+:- comment(version(1*7+65,2001/03/05,16:21*45+'CET'), "Added support
+for threads in DARWIN; some problems still pending, but most of it
+works.  (MCL)").
+
+:- comment(version(1*7+60,2001/02/12,18:09*03+'CET'), "Added patches
+for a concurrency problem which appeared in nonindexed accesses to
+predicates: when post-indexing unification failed the lock was not
+unset, and backtracking to retry_instance blocked.  Solved by keeping
+a bit in the choicepoint reflecting whether the backtracking worker
+had locked the predicate, and unlocking before entering
+next_instance_conc.  (MCL)").
+
+:- comment(version(1*7+53,2001/01/26,15:34*44+'CET'), "Changed name
+for alias redirection module .  (MCL)").
+
+:- comment(version(1*7+48,2001/01/22,12:21*43+'CET'), "Added
+prolog_{replace,get}_stream(), aimed at replacing the file pointed to
+by the Prolog stream aliases.  (MCL)").
+
+:- comment(version(1*7+46,2001/01/19,19:43*48+'CET'), "Fixed another bug on
+   self-contained executables when called from certain web servers.  (Oscar
+   Portela Arjona)").
+
+:- comment(version(1*7+45,2001/01/18,16:38*51+'CET'), "Fixed small bug on
+   self-contained executables when running without the PATH environment
+   variable.  (Oscar Portela Arjona)").
+
+:- comment(version(1*7+38,2001/01/05,18:30*05+'CET'), "Added Sparc64
+options to locks.h (MCL)").
+
+:- comment(version(1*7+34,2000/12/23,16:42*52+'CET'), "Added patches
+   to compile in Darwin (MacOS X). The new DARWINppc architecture is
+   now recognized by ciao_get_arch and dynlink.c uses the
+   mach-o/dydl.h interface whenever DARWIN is defined.  (Jose
+   Morales)").
+
+:- comment(version(1*7+29,2000/11/03,15:07*41+'CET'), "Added suport
+for Linux in Sparc.  (MCL)").
+
+:- comment(version(1*7+28,2000/11/03,10:45*01+'CET'), "Improved
+behavior in non-blocking calls to concurrent facts, and solved a bug:
+a NB call which does not have matching fact at indexing level does not
+push a choicepoint.  (MCL)").
+
+:- comment(version(1*7+27,2000/10/30,19:22*49+'CET'), "nonblocking
+calls to predicates were not protected by a lock.  Fixed.  (MCL)").
+
+:- comment(version(1*7+26,2000/10/24,18:24*26+'CEST'), ""Fixed bug in
+   fastwrite/fastread when writing/reading lists of small integers (between 1
+   and 255).  (Oscar Portela Arjona)").
+
+:- comment(version(1*7+19,2000/09/11,21:27*01+'CEST'), "Added several
+system predicates (rm,mv,mkdir,rmdir) to the Ciao Prolog libraries.
+Not removed from the 'make' library: will unify them.  (MCL)").
+
+:- comment(version(1*7+13,2000/08/24,18:41*05+'CEST'), "Changed getc()
+in fastreading to readchar(); fastreading was not working with
+sockets!  (MCL)").
+
+:- comment(version(1*7+2,2000/07/19,14:15*15+'CEST'), "Added patches
+to compile in Power PC contributed by Paulo Moura.  (MCL)").
+
+:- comment(version(1*7+1,2000/07/18,15:47*04+'CEST'), "Some warnings fixed
    (Oscar Portela Arjona)").
 
 :- comment(version(1*5+172,2000/07/12,16:45*31+'CEST'), "Partially

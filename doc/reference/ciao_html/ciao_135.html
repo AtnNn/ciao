@@ -1,420 +1,125 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - sets (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC536" HREF="ciao_toc.html#TOC536">sets (library)</A></H1>
-<P>
-<A NAME="IDX5868"></A>
-
+<H1><A NAME="SEC541" HREF="ciao_toc.html#TOC541">Using the persdb library</A></H1>
 
 <P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 0.9#17 (1999/3/23, 20:57:20 MET)
-
-
-<P>
-This module implements set operations. Sets are just ordered lists.
+Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
 
 
 
 <UL>
-<LI><A HREF="ciao_135.html#SEC537">Usage and interface (sets)</A>
-<LI><A HREF="ciao_135.html#SEC538">Documentation on exports (sets)</A>
+<LI><A HREF="ciao_135.html#SEC542">An example of persistent predicates (static version)</A>
+<LI><A HREF="ciao_135.html#SEC543">An example of persistent predicates (dynamic version)</A>
+<LI><A HREF="ciao_135.html#SEC544">A simple application / a persistent queue</A>
 </UL>
 
 
 
-<H2><A NAME="SEC537" HREF="ciao_toc.html#TOC537">Usage and interface (<CODE>sets</CODE>)</A></H2>
+<H2><A NAME="SEC542" HREF="ciao_toc.html#TOC542">An example of persistent predicates (static version)</A></H2>
 
-<div class="cartouche">
 
-<UL>
+<PRE>
+:- include(library(persdb)).
 
-<LI><STRONG>Library usage:</STRONG>
+%% Declare the directory associated to the key "db" where the
+%% persistence sets of the persistent predicates are stored:
+persistent_dir(db,'./').
 
-<CODE>:- use_module(library(sets)).</CODE>
+%% Declare a persistent predicate:
+:- persistent(bar/1, db).
 
-<LI><STRONG>Exports:</STRONG>
+%% Read a term, storing it in a new fact of the persistent predicate
+%% and list all the current facts of that predicate
+main:-
+     read(X),
+     assertz_fact(bar(X)),
+     findall(Y,bar(Y),L),
+     write(L).
 
+</PRE>
 
-<UL>
 
-<LI><EM>Predicates:</EM>
 
-<A NAME="IDX5869"></A>
-<CODE>insert/3</CODE>, 
-<A NAME="IDX5870"></A>
-<CODE>ord_delete/3</CODE>, 
-<A NAME="IDX5871"></A>
-<CODE>ord_member/2</CODE>, 
-<A NAME="IDX5872"></A>
-<CODE>ord_test_member/3</CODE>, 
-<A NAME="IDX5873"></A>
-<CODE>ord_subtract/3</CODE>, 
-<A NAME="IDX5874"></A>
-<CODE>ord_intersection/3</CODE>, 
-<A NAME="IDX5875"></A>
-<CODE>ord_intersection_diff/4</CODE>, 
-<A NAME="IDX5876"></A>
-<CODE>ord_intersect/2</CODE>, 
-<A NAME="IDX5877"></A>
-<CODE>ord_subset/2</CODE>, 
-<A NAME="IDX5878"></A>
-<CODE>ord_subset_diff/3</CODE>, 
-<A NAME="IDX5879"></A>
-<CODE>ord_union/3</CODE>, 
-<A NAME="IDX5880"></A>
-<CODE>ord_union_diff/4</CODE>, 
-<A NAME="IDX5881"></A>
-<CODE>ord_union_symdiff/4</CODE>, 
-<A NAME="IDX5882"></A>
-<CODE>ord_union_change/3</CODE>, 
-<A NAME="IDX5883"></A>
-<CODE>merge/3</CODE>, 
-<A NAME="IDX5884"></A>
-<CODE>ord_disjoint/2</CODE>, 
-<A NAME="IDX5885"></A>
-<CODE>setproduct/3</CODE>.
+<H2><A NAME="SEC543" HREF="ciao_toc.html#TOC543">An example of persistent predicates (dynamic version)</A></H2>
 
-</UL>
 
-<LI><STRONG>Other modules used:</STRONG>
+<PRE>
+:- include(library(persdb)).
 
+main([X]):-
+%%   Declare the directory associated to the key "db" 
+     asserta_fact(persistent_dir(db,'./')),
+%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
+     data(bar/1),
+%%   Declare the predicate bar/1 as persistent at run-time  
+     make_persistent(bar/1, db),
+     assertz_fact(bar(X)),
+     findall(Y, bar(Y), L),
+     write(L).    
 
-<UL>
+</PRE>
 
-<LI><EM>System library modules:</EM>
 
-<A NAME="IDX5886"></A>
-<CODE>sort</CODE>.
 
-</UL>
+<H2><A NAME="SEC544" HREF="ciao_toc.html#TOC544">A simple application / a persistent queue</A></H2>
 
-</UL>
+<PRE>
+:- module(queue, [main/0],[persdb]).
 
-</div class="cartouche">
+:- use_module(library(read)).
+:- use_module(library(write)).
+:- use_module(library(aggregates)).
 
+persistent_dir(queue_dir,'./pers').
 
+:- persistent(queue/1, queue_dir).
 
-<H2><A NAME="SEC538" HREF="ciao_toc.html#TOC538">Documentation on exports (<CODE>sets</CODE>)</A></H2>
-<P>
-<A NAME="IDX5887"></A>
-<A NAME="IDX5888"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
-<DD><A NAME="IDX5889"></A>
+queue(first).
+queue(second).
 
+main:-
+     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
+     read(A),
+     (  handle_action(A)
+     -&#62; true
+     ;  write('Unknown command.'), nl ),
+     main.
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>insert(+Set1,+Element,-Set2)</CODE>
+handle_action(end_of_file) :-
+     halt.
+handle_action(halt) :-
+     halt.
+handle_action(in(Term)) :-
+     assertz_fact(queue(Term)),
+     main.
+handle_action(slip(Term)) :-
+     asserta_fact(queue(Term)),
+     main.
+handle_action(out) :-
+     (  retract_fact(queue(Term))
+     -&#62; write('Out '), write(Term)
+     ;  write('FIFO empty.') ),
+     nl,
+     main.
+handle_action(list) :-
+     findall(Term,queue(Term),Terms),
+     write('Contents: '), write(Terms), nl,
+     main.
+     
 
-<UL>
-<LI><EM>Description:</EM> It is true when <CODE>Set2</CODE> is <CODE>Set1</CODE> with <CODE>Element</CODE> inserted in it, preserving the order.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5890"></A>
-<A NAME="IDX5891"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_delete/3:</B>
-<DD><A NAME="IDX5892"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_delete(+Set0,+X,-Set)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds if <CODE>Set</CODE> is <CODE>Set0</CODE> without element <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5893"></A>
-<A NAME="IDX5894"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_member/2:</B>
-<DD><A NAME="IDX5895"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_member(+X,+Set)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds if <CODE>X</CODE> is member of <CODE>Set</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5896"></A>
-<A NAME="IDX5897"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_test_member/3:</B>
-<DD><A NAME="IDX5898"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_test_member(+Set,+X,-Result)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If <CODE>X</CODE> is member of <CODE>Set</CODE> then <CODE>Result</CODE>=<CODE>yes</CODE>. Otherwise <CODE>Result</CODE>=<CODE>no</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5899"></A>
-<A NAME="IDX5900"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subtract/3:</B>
-<DD><A NAME="IDX5901"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_subtract(+Set1,+Set2,?(Difference))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when <CODE>Difference</CODE> contains all and only the elements of <CODE>Set1</CODE> which are not also in <CODE>Set2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5902"></A>
-<A NAME="IDX5903"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersection/3:</B>
-<DD><A NAME="IDX5904"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersection(+Set1,+Set2,?(Intersection))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when <CODE>Intersection</CODE> is the ordered representation of <CODE>Set1</CODE> and <CODE>Set2</CODE>, provided that <CODE>Set1</CODE> and <CODE>Set2</CODE> are ordered lists.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5905"></A>
-<A NAME="IDX5906"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersection_diff/4:</B>
-<DD><A NAME="IDX5907"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersection_diff(+Set1,+Set2,-Intersect,-NotIntersect)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Intersect</CODE> contains those elements which are both in <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>NotIntersect</CODE> those which are in <CODE>Set1</CODE> but not in <CODE>Set2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5908"></A>
-<A NAME="IDX5909"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_intersect/2:</B>
-<DD><A NAME="IDX5910"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_intersect(+Xs,+Ys)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Succeeds when the two ordered lists have at least one element in common.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5911"></A>
-<A NAME="IDX5912"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subset/2:</B>
-<DD><A NAME="IDX5913"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_subset(+Xs,+Ys)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Succeeds when every element of <CODE>Xs</CODE> appears in <CODE>Ys</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5914"></A>
-<A NAME="IDX5915"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_subset_diff/3:</B>
-<DD><A NAME="IDX5916"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_subset_diff(+Set1,+Set2,-Difference)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds when every element of <CODE>Set1</CODE> appears in <CODE>Set2</CODE> and <CODE>Difference</CODE> has the elements of <CODE>Set2</CODE> which are not in <CODE>Set1</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5917"></A>
-<A NAME="IDX5918"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union/3:</B>
-<DD><A NAME="IDX5919"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union(+Set1,+Set2,?(Union))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>. When some element occurs in both sets, <CODE>Union</CODE> retains only one copy.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5920"></A>
-<A NAME="IDX5921"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_diff/4:</B>
-<DD><A NAME="IDX5922"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_diff(+Set1,+Set2,-Union,-Difference)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It succeeds when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>Difference</CODE> is <CODE>Set2</CODE> set-minus <CODE>Set1</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5923"></A>
-<A NAME="IDX5924"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_symdiff/4:</B>
-<DD><A NAME="IDX5925"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_symdiff(+Set1,+Set2,-Union,-Diff)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> It is true when Diff is the symmetric difference of Set1 and Set2, and Union is the union of Set1 and Set2.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5926"></A>
-<A NAME="IDX5927"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_union_change/3:</B>
-<DD><A NAME="IDX5928"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_union_change(+Set1,+Set2,-Union)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE> and <CODE>Union</CODE> is different from <CODE>Set2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5929"></A>
-<A NAME="IDX5930"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>merge/3:</B>
-<DD><A NAME="IDX5931"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>merge(+Set1,+Set2,?(Union))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> See <CODE>ord_union/3</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5932"></A>
-<A NAME="IDX5933"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ord_disjoint/2:</B>
-<DD><A NAME="IDX5934"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ord_disjoint(+Set1,+Set2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Set1</CODE> and <CODE>Set2</CODE> have no element in common.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5935"></A>
-<A NAME="IDX5936"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>setproduct/3:</B>
-<DD><A NAME="IDX5937"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>setproduct(+Set1,+Set2,-Product)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Product</CODE> has all two element sets such that one element is in <CODE>Set1</CODE> and the other in <CODE>set2</CODE>, except that if the same element belongs to both, then the corresponding one element set is in <CODE>Product</CODE>.
-
-</UL>
-
-</DL>
+</PRE>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

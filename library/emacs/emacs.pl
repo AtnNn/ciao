@@ -2,7 +2,7 @@
 :- module(emacs,[emacs_edit/1,emacs_edit_nowait/1,
 	         emacs_eval/1,emacs_eval_nowait/1,
 		 elisp_string/1],
-  	        [assertions,regtypes,isomodes,functions]).
+  	        [assertions,regtypes,isomodes,functions,hiord]).
 
 %% For checking below...
 :- use_module(library(metaterms), [ instance/2 ]).

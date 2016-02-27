@@ -1,46 +1,38 @@
 :- module(persdbrt,
-        [passertz_fact/1, 
+        [passerta_fact/1, 
+         passertz_fact/1, 
 	 pretract_fact/1, 
-	 pcurrent_fact/1,
+         asserta_fact/1, 
+         assertz_fact/1, 
+	 retract_fact/1, 
          init_persdb/0, 
-	 initialize_db/0, 
-	 make_persistent/2, 
-	 update_files/2],
+	 initialize_db/0,
+	 make_persistent/2,
+	 update_files/0,
+	 update_files/1],
         [assertions,regtypes]).
 
 :- use_module(engine(internals), [term_to_meta/2]).
 :- use_module(library(lists)).
 :- use_module(library(streams)).
 :- use_module(library(read)).
+:- use_module(library(aggregates), [findall/3]).
 :- use_module(library(system)).
 :- use_module(library(file_locks)).
 %:- use_module(engine(basic_props)).
 
-:- comment(bug,"Shouldn't the declarations for persistent_dir/2 be
-   inside persdb.pl? (would save a lot of writing).").
+% Not sure about this (DCG)
+% :- comment(bug,"make_persistent/2 should really be persistent/2 (since
+%    it doesn't really make a predicate persistent but rather declares
+%    it as such, i.e., we do not use make_data/1, we use data/1) ?").
 
-:- comment(bug,"make_persistent/2 should really be persistent/2 (since
-   it doesn't really make a predicate persistent but rather declares
-   it as such, i.e., we do not use make_data/1, we use data/1) ?").
-
-:- comment(bug,"having to use pcurrent_fact is not so nice").
-
-:- comment(bug,"passert, pretract, etc. should really be overloaded
-   versions of assert, retract etc., i.e., it should be possible to
-   use assertz_fact directly").
-
-:- comment(bug,"we need also asserta_fact, right? Otherwise isn't it
-   difficult to do many things?").
+:- comment(bug,"To load in the toplevel a file which uses this package,
+   module @tt{library('persdb/persdbrt')} has to be previously loaded.").
 
 %% ---------------------------------------------------------------------------
 :- comment(title, "Persistent predicate database").
 
 :- comment(subtitle,"A Generic Database Interface").
-:- comment(subtitle,"Technical Report CLIP 9/98.0").
-:- comment(subtitle,"RadioWeb (ESPRIT Project 25562) Report D3.1.M1-A1").
-:- comment(subtitle,"ECCOSIC (Fulbright Project 98059)").
-%% :- comment(subtitle,"@em{Draft printed on:} @today{}").
-:- comment(subtitle,"December 26, 1998").
 
 :- comment(author, "J.M. Gomez, D. Cabeza, and M. Hermenegildo").
 :- comment(author, "@tt{clip@@dia.fi.upm.es}").
@@ -50,7 +42,7 @@
 :- comment(author, "Universidad Polit@'{e}cnica de Madrid").
 
 :- comment(copyright,"
-Copyright @copyright{} 1997-98 The Clip Group.
+Copyright @copyright{} 1997-2000 The Clip Group.
 
 @include{Copyright.Manuals}
 ").
@@ -98,17 +90,17 @@ Copyright @copyright{} 1997-98 The Clip Group.
    the definitions of predicates which have been declared as
    persistent in the persistent storage. 
 
-   @concept{Updates to persistent predicates} can be made by calling
-   predicates similar to @pred{assertz_fact/1} and
-   @pred{retract_fact/1}. The library makes sure that each update is a
+   @concept{Updates to persistent predicates} can be made using enhanced
+   versions of @pred{asserta_fact/1}, @pred{assertz_fact/1} and
+   @pred{retract_fact/1}.  The library makes sure that each update is a
    @concept{transactional update}, in the sense that if the update
-   terminates, then the permanent storage has definitely been
-   modified.  For example, if the program making the updates is halted
-   just after the update and then restarted, then the updated state of
-   the predicate will be seen. This provides security against possible
-   data loss due to, for example, a system crash.  Also, due to the
-   atomicity of the transactions, persistent predicates allow
-   @concept{concurrent updates} from several programs.
+   terminates, then the permanent storage has definitely been modified.
+   For example, if the program making the updates is halted just after
+   the update and then restarted, then the updated state of the
+   predicate will be seen. This provides security against possible data
+   loss due to, for example, a system crash.  Also, due to the atomicity
+   of the transactions, persistent predicates allow @concept{concurrent
+   updates} from several programs.
 
    @section{Persistent predicates, files, and relational databases}
 
@@ -119,7 +111,7 @@ Copyright @copyright{} 1997-98 The Clip Group.
    require external support, other than the file management
    capabilities provided by the operating system.  This is due to the
    fact that the persistent predicates are in fact stored in one or
-   more auxiliary files in a given directory.
+   more auxiliary files below a given directory.
 
    This type of database is specially useful when building small to
    medium-sized standalone applications in Prolog which require
@@ -173,11 +165,11 @@ Copyright @copyright{} 1997-98 The Clip Group.
    when possible), or dynamically via calls to
    @pred{make_persistent/2}.  Currently, persistent predicates may
    only contain facts, i.e., they are @em{dynamic} predicates of type
-   @pred{data/1}, and @em{should be declared as such}.
+   @pred{data/1}.
 
    Predicates declared as persistent are linked to a directory, and
    the persistent state of the predicate will be kept in several files
-   in that directory.  The files in which the persistent predicates
+   below that directory.  The files in which the persistent predicates
    are stored are in readable, plain ASCII format, and in Prolog
    syntax. One advantage of this approach is that such files can also
    be created or edited by hand, in a text editor, or even by other
@@ -188,9 +180,6 @@ Copyright @copyright{} 1997-98 The Clip Group.
 
 @begin{verbatim}
 :- persistent(p/3,dbdir).
-
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
 
 persistent_dir(dbdir, '/home/clip/public_html/db').
 @end{verbatim}
@@ -236,78 +225,54 @@ persistent_dir(dbdir, '/home/clip/public_html/db').
    not reflect exactly the current state of the corresponding
    predicate. However, the complete persistence set does.
 
-   When a program starts, when it is halted, or, periodically, when it
-   is idle for some time, all pending operations in the operations
-   file are performed on the data file. A backup of the data file is
-   created first to prevent data loss if the system crashes during
-   this operation.  The order in which this updating of files is done
-   ensures that, if at any point the process dies, on restart data
-   will be completely recovered. This process of updating the
-   persistence set can also be triggered at any point in the execution
-   of a program by calling @pred{update_files/2}.
+   When a program starts, all pending operations in the operations file
+   are performed on the data file. A backup of the data file is created
+   first to prevent data loss if the system crashes during this
+   operation.  The order in which this updating of files is done ensures
+   that, if at any point the process dies, on restart the data will be
+   completely recovered. This process of updating the persistence set
+   can also be triggered at any point in the execution of the program
+   (for example, when halting) by calling @pred{update_files}.
+
+   @section{Defining an initial database}
+
+   It is possible to define an initial database by simply including in
+   the program code facts of persistent predicates.  They will be
+   included in the persistent database when it is created.  They are
+   ignored in successive executions.
 
    @section{Using persistent predicates from the top level}
 
-   Special care must be taken when using persistent predicates from
-   the top level. This includes not only defining persistent
-   predicates on the fly from de top level (which is not really very
-   useful in practice) but also the more frequent case of loading into
-   the top level modules or user files which use persistent
-   predicates. As mentioned before, the persistence set is updated
-   automatically each time a program using the corresponding
-   persistent predicates is run or halted. However, since the top
-   level itself is also a standard program, persistent predicates
-   would only be updated whenever the top level is started, when they
-   are typically still not loaded. 
-
-   If a program launched from a top level needs to update the
-   persistence sets of any persistent predicate it must be done by
-   calling the @pred{update_files/2} method explicitly.
-
-   @comment{In fact, this is the most logical way to do it because as
-   long as there is a top level holding the state of the persistent
-   predicates, there is no need to waste machine resources making
-   updates.}
-
+   Special care must be taken when loading into the top level modules or
+   user files which use persistent predicates.  Beforehand, a goal
+   @tt{use_module(library('persdb/persdbrt'))} must be issued.
+   Furthermore, since persistent predicates defined by the loaded files
+   are in this way defined dynamically, a call to @pred{initialize_db/0}
+   is commonly needed after loading and before calling predicates of
+   these files.
 ").
 
-:- comment(usage, "Typically, this library is used including the
-   'persdb' package into the syntax list of the module, or using the
-   @decl{syntax/1} declaration:
-@begin{description}
-@item{In a module:}
-@begin{verbatim}
-        :- module(bar, [main/1], [persdb]).
-@end{verbatim}
-        or
-@begin{verbatim}
-        :- module(bar, [main/1]).
-        :- include(library(persdb)).
-@end{verbatim}
-@item{In a @em{user} file:}
-@begin{verbatim}
-        :- syntax([persdb]).
-@end{verbatim}
-        or
-@begin{verbatim}
-        :- include(library(persdb)).
-@end{verbatim}
-@end{description}
-   This syntax file loads the run-time and compile-time versions 
-   of the library (@tt{persdbtr.pl} and @tt{persdbrt.pl}) and includes some
-   needed declarations.").
+:- comment(usage, "There are two packages which implement persistence:
+   @lib{persdb} and @lib{'persdb/ll'} (for low level).  In the first,
+   the standard builtins @pred{asserta_fact/1}, @pred{assertz_fact/1},
+   and @pred{retract_fact/1} are replaced by new versions which handle
+   persistent data predicates, behaving as usual for normal data
+   predicates.  In the second package, predicates with names starting
+   with @tt{p} are defined, so that there is not overhead in calling the
+   standard builtins.  In any case, each package is used as usual:
+   including it in the package list of the module, or using the
+   @decl{use_package/1} declaration.").
 
+:- comment(doinclude,persistent/2).
 :- decl persistent(PredDesc,Keyword) => predname * keyword
 
-# "Declares the predicate @var{PredDesc} as persistent. @var{Keyword}
-   is the @concept{identifier of a location} where the persistent
-   storage for the predicate is kept. In this case it will be the
-   persistence set, located in a directory, which must exist. The
-   location @var{Keyword} is described in the @pred{persistent_dir}
-   predicate, which must contain a fact in which the first argument
-   unifies with @var{Keyword}.".
-
+# "Declares the predicate @var{PredDesc} as persistent. @var{Keyword} is
+   the @concept{identifier of a location} where the persistent storage
+   for the predicate is kept. The location @var{Keyword} is described in
+   the @pred{persistent_dir} predicate, which must contain a fact in
+   which the first argument unifies with @var{Keyword}.".
 %% This declaration is expanded in persdbtr 
+
 :- data persistent/5. % F/A (modulo expanded) is persistent and uses files
                       % FILE_OPS, FILE and FILE_BAK
 
@@ -317,94 +282,162 @@ persistent_dir(dbdir, '/home/clip/public_html/db').
    descriptions of such locations (@var{Location_Path}s).
    @var{Location_Path} is @bf{a directory} and it means that the
    definition for the persistent predicates associated with
-   @var{Keyword} is kept in files in that directory. These files, in
-   the updated state, contain the actual definition of the predicate
-   in Prolog syntax (but with module names resolved).".
+   @var{Keyword} is kept in files below that directory (which must
+   exist). These files, in the updated state, contain the actual
+   definition of the predicate in Prolog syntax (but with module names
+   resolved).".
 
-   %% Note: it has to be declared as multifile and data
-
+%% Note: declared by package persdb as multifile and data
 :- multifile persistent_dir/2.
 :- data persistent_dir/2.
+
+:- meta_predicate passerta_fact(fact).
+
+% passerta_fact(P, D) asserts a predicate in both the dynamic and the
+% persistent databases.  
+:- pred passerta_fact(Fact) : callable
+# "Persistent version of @pred{asserta_fact/1}: the current instance of
+   @var{Fact} is interpreted as a fact (i.e., a relation tuple) and is
+   added at the beginning of the definition of the corresponding
+   predicate.  The predicate concerned must be declared
+   @decl{persistent}.  Any uninstantiated variables in the @var{Fact}
+   will be replaced by new, private variables.  Defined in the
+   @lib{'persdb/ll'} package.".
+
+passerta_fact(MPred):-
+        term_to_meta(Pred, MPred),
+        functor(Pred, F, N),
+        current_fact(persistent(F, N, File_ops, _, File_bak)), !,
+        delete_bak_if_no_ops(File_ops, File_bak),
+        add_term_to_file(a(Pred), File_ops),
+        data_facts:asserta_fact(MPred).
+passerta_fact(MPred):-
+        term_to_meta(Pred, MPred),
+        throw(error(type_error(persistent_data,Pred), passerta_fact/2-1)).
+
+:- meta_predicate asserta_fact(fact).
+
+:- pred asserta_fact(Fact) : callable
+# "Same as @pred{passerta_fact/1}, but if the predicate concerned is not
+   persistent then behaves as the builtin of the same name.  Defined in the
+   @lib{persdb} package.".
+
+asserta_fact(MPred):-
+        term_to_meta(Pred, MPred),
+        functor(Pred, F, N),
+        ( current_fact(persistent(F, N, File_ops, _, File_bak)) ->
+            delete_bak_if_no_ops(File_ops, File_bak),
+            add_term_to_file(a(Pred), File_ops)
+        ; true),
+        data_facts:asserta_fact(MPred).
 
 :- meta_predicate passertz_fact(fact).
 
 % passertz_fact(P, D) asserts a predicate in both the dynamic and the
 % persistent databases.  
 :- pred passertz_fact(Fact) : callable
-# "Persistent version of @pred{assertz_fact/1}: the current instance
-   of @var{Fact} is interpreted as a fact (i.e., a relation tuple) and
-   is added at the end of the definition of the corresponding
-   predicate.  The predicate concerned must be declared
-   @decl{persistent}.  Any uninstantiated variables in the @var{Fact}
-   will be replaced by new, private variables.".
+# "Persistent version of @pred{assertz_fact/1}: the current instance of
+   @var{Fact} is interpreted as a fact (i.e., a relation tuple) and is
+   added at the end of the definition of the corresponding predicate.
+   The predicate concerned must be declared @decl{persistent}.  Any
+   uninstantiated variables in the @var{Fact} will be replaced by new,
+   private variables.  Defined in the @lib{'persdb/ll'} package.".
 
 passertz_fact(MPred):-
-        init_persdb,
         term_to_meta(Pred, MPred),
         functor(Pred, F, N),
         current_fact(persistent(F, N, File_ops, _, File_bak)), !,
         delete_bak_if_no_ops(File_ops, File_bak),
-        add_term_to_file(a(Pred), File_ops),
-        assertz_fact(MPred).
+        add_term_to_file(z(Pred), File_ops),
+        data_facts:assertz_fact(MPred).
 passertz_fact(MPred):-
         term_to_meta(Pred, MPred),
         throw(error(type_error(persistent_data,Pred), passertz_fact/2-1)).
 
+:- meta_predicate assertz_fact(fact).
+
+:- pred assertz_fact(Fact) : callable
+# "Same as @pred{passertz_fact/1}, but if the predicate concerned is not
+   persistent then behaves as the builtin of the same name.  Defined in the
+   @lib{persdb} package.".
+
+assertz_fact(MPred):-
+        term_to_meta(Pred, MPred),
+        functor(Pred, F, N),
+        ( current_fact(persistent(F, N, File_ops, _, File_bak)) ->
+            delete_bak_if_no_ops(File_ops, File_bak),
+            add_term_to_file(z(Pred), File_ops)
+        ; true),
+        data_facts:assertz_fact(MPred).
+
 :- pred pretract_fact(Fact) : callable
-# "Persistent version of @pred{retract_fact/1}: deletes on
-   backtracking all the facts which unify with @var{Fact}.  The
-   predicate concerned must be declared @decl{persistent}.".
+# "Persistent version of @pred{retract_fact/1}: deletes on backtracking
+   all the facts which unify with @var{Fact}.  The predicate concerned
+   must be declared @decl{persistent}.  Defined in the @lib{'persdb/ll'}
+   package.".
 
 :- meta_predicate pretract_fact(fact).
 
 % pretract_fact(P) retracts a predicate in both, the dynamic and the 
 % persistent databases.
 pretract_fact(MPred):-
-        init_persdb,
         term_to_meta(Pred, MPred),
         functor(Pred, F, N),
         current_fact(persistent(F, N, File_ops, _, File_bak)), !,
-        retract_fact(MPred),
         delete_bak_if_no_ops(File_ops, File_bak),
+        data_facts:retract_fact(MPred),
         add_term_to_file(r(Pred), File_ops).
 pretract_fact(MPred):-
         term_to_meta(Pred, MPred),
         throw(error(type_error(persistent_data,Pred), pretract_fact/2-1)).
 
-:- pred pcurrent_fact(Fact) : callable
-# "Persistent version of @pred{current_fact/1}: the fact @var{Fact}
-   exists in the current database.  The predicate concerned must be
-   declared @decl{persistent}.  Provides on backtracking all the facts
-   (tuples) which unify with @var{Fact}.".
+:- pred retract_fact(Fact) : callable
+# "Same as @pred{pretract_fact/1}, but if the predicate concerned is not
+   persistent then behaves as the builtin of the same name.  Defined in the
+   @lib{persdb} package.".
 
-:- meta_predicate pcurrent_fact(fact).
+:- meta_predicate retract_fact(fact).
 
-pcurrent_fact(Mpred) :-
-        init_persdb,
-        current_fact(Mpred).
+retract_fact(MPred):-
+        term_to_meta(Pred, MPred),
+        functor(Pred, F, N),
+        ( current_fact(persistent(F, N, File_ops, _, File_bak)) ->
+            delete_bak_if_no_ops(File_ops, File_bak),
+            data_facts:retract_fact(MPred),
+            add_term_to_file(r(Pred), File_ops)
+        ; data_facts:retract_fact(MPred)
+        ).
 
 :- data db_initialized/0.
 
+:- comment(hide, init_persdb/0).
+
 :- pred init_persdb # "Executes @pred{initialize_db/0} if no
-   initialization has been done yet.  Needed when accesing persistent
-   predicates before doing any of @pred{passertz_fact/1},
-   @pred{pretract_fact/1}, or @pred{pcurrent_fact/1}.".
+   initialization has been done yet.  Invoked by a @tt{initialization/1}
+   directive in the package code.  Not meant to be explicitly used in
+   user code.".
 
 init_persdb :-
         current_fact(db_initialized), !.
 init_persdb :-
         initialize_db,
-        assertz_fact(db_initialized).
+        data_facts:assertz_fact(db_initialized).
+
+:- comment(hide, '$is_persistent'/2).
 
 :- multifile '$is_persistent'/2.
+:- data '$is_persistent'/2.
 
 :- pred initialize_db # "@cindex{database initialization} Initializes
    the whole database, updating the state of the declared persistent
-   predicates.".
+   predicates.  Must be called explicitly after dynamically defining
+   clauses for @pred{persistent_dir/2}.".
 
+% Note: not using current_fact/2 and erase/1 because does not work in toplevel
 initialize_db :-
         '$is_persistent'(Spec, Key),
         make_persistent(Spec, Key),
+        data_facts:retract_fact('$is_persistent'(Spec, Key)),
         fail.
 initialize_db.
 
@@ -414,14 +447,15 @@ initialize_db.
 :- meta_predicate make_persistent(spec, ?).
 
 make_persistent(Spec, Key) :-
-        term_to_meta(F/A, Spec),
         persistent_dir(Key, Dir),
-        add_final_slash(Dir, DIR),
-        get_pred_files(DIR, F, A, File, File_ops, File_bak),
-        assertz_fact(persistent(F, A, File_ops, File, File_bak)),
-        ini_persistent(File_ops, File, File_bak).
+        term_to_meta(F/A, Spec),
+        get_pred_files(Dir, F, A, File, File_ops, File_bak),
+        data_facts:assertz_fact(persistent(F, A, File_ops, File, File_bak)),
+        functor(P, F, A),
+        ini_persistent(P, File_ops, File, File_bak).
 
-ini_persistent(File_ops, File, File_bak):- 
+ini_persistent(P, File_ops, File, File_bak):- 
+        term_to_meta(P, Pred),
         lock_file(File, Fd1, _),        
         lock_file(File_ops, Fd2, _),    
         lock_file(File_bak, Fd3, _),
@@ -435,9 +469,16 @@ ini_persistent(File_ops, File, File_bak):-
                   file_to_term_list(File, NewTerms, [])
                 )
             ; secure_update(File, File_ops, File_bak, NewTerms)
-            )
-        ; mv(File_bak, File), % System crash
-          secure_update(File, File_ops, File_bak, NewTerms)
+            ),
+            retractall_fact(Pred)
+        ; file_exists(File_bak) -> % System crash
+            mv(File_bak, File),
+            secure_update(File, File_ops, File_bak, NewTerms),
+            retractall_fact(Pred)
+        ; % Files not created yet
+          findall(P, current_fact(Pred), Facts),
+          term_list_to_file(Facts, File),
+          NewTerms = []
         ),
         unlock_file(Fd1, _),
         unlock_file(Fd2, _),
@@ -469,8 +510,10 @@ make_operations([Operation|Operations], Terms, Terms_, NewTerms):-
         make_operation(Operation, Terms, Terms_, NTerms, NTerms_),
         make_operations(Operations, NTerms, NTerms_, NewTerms).
 
+% Adds a fact to the head of the list
+make_operation(a(Pred), Terms, Terms_, [Pred|Terms], Terms_).
 % Adds a fact to the tail of the list
-make_operation(a(Pred), Terms, [Pred|Terms_], Terms, Terms_).
+make_operation(z(Pred), Terms, [Pred|Terms_], Terms, Terms_).
 % Removes the first fact which unify (exists)
 make_operation(r(Pred), Terms, Terms_, NTerms, Terms_) :-
         select(Pred, Terms, NTerms), !.
@@ -481,14 +524,29 @@ make_operation(r(Pred), Terms, Terms_, NTerms, Terms_) :-
 process_terms([]).
 process_terms([Fact|Facts]) :-
         term_to_meta(Fact, MFact),
-        assertz_fact(MFact),
+        data_facts:assertz_fact(MFact),
         process_terms(Facts).
 
-:- pred update_files(PredDesc, Arity) => predname * int
-# "Updates the state of the given persistent predicate and its
-   corresponding persistence set.".
+:- pred update_files # "Updates the files comprising the persistence set
+   of all persistent predicates defined in the application.".
 
-update_files(Pred, Arity) :-
+update_files :- update_files_of(_, _).
+
+:- pred update_files(PredSpecList) :: list(predname)
+# "Updates the files comprising the persistence set of the persistent
+   predicates in @var{PredSpecList}.".
+
+:- meta_predicate update_files(list(spec)).
+
+update_files([]) :- !.
+update_files([Spec|SpecL]) :-
+        term_to_meta(F/A, Spec),
+        update_files_of(F, A), !,
+        update_files(SpecL).
+update_files(Bad) :-
+        throw(error(type_error(list(predname), Bad), update_files/1-1)).
+
+update_files_of(Pred, Arity) :-
         current_fact(persistent(Pred, Arity, File_ops, File, File_bak)),
         lock_file(File, Fd1, _),        
         lock_file(File_ops, Fd2, _),    
@@ -510,7 +568,7 @@ update_files(Pred, Arity) :-
         unlock_file(Fd2, _),
         unlock_file(Fd3, _),
         fail.
-update_files(_, _).
+update_files_of(_, _).
        
 
 % file_to_term_list(File, Terms, Terms_) reads a list of terms Terms from a
@@ -564,13 +622,24 @@ add_term_to_file(Term,File) :-
         set_output(OldOutput).        
 
 get_pred_files(Dir, Name, Arity, File, File_ops, File_bak):-
+        add_final_slash(Dir, DIR),
+        atom_codes(Name, NameString),
+        append(Module,":"||PredName,NameString),
+        atom_codes(Mod, Module),
+        atom_concat(DIR, Mod, DirMod),
+        create_dir(DirMod),
         number_codes(Arity, AS),
-        atom_codes(A, [0'-|AS]),
-        atom_concat(Name, A, NameA),
-        atom_concat(Dir, NameA, PathName),
+        append("/"||PredName, "_"||AS, FilePrefS),
+        atom_codes(FilePref, FilePrefS),
+        atom_concat(DirMod, FilePref, PathName),
         atom_concat(PathName, '.pl', File),
         atom_concat(PathName, '_ops.pl', File_ops),
         atom_concat(PathName, '_bak.pl', File_bak).
+
+create_dir(Dir) :-
+        file_exists(Dir), !.  % Supposing it's a directory
+create_dir(Dir) :-
+        make_directory(Dir, 0xfff).
 
 delete_file1(File):-
 	(file_exists(File)->
@@ -581,11 +650,7 @@ delete_file1(File):-
 % :- pred mv(Path1, Path2) ; "Rename a file, or create target.".
 mv(Source, Target):-
         file_exists(Source), !,
-        atom_codes(Source, Lso),
-        atom_codes(Target, Lta),
-        append("/bin/mv "||Lso, " "||Lta, Lcommand),
-        atom_codes(Command, Lcommand),
-        system(Command).
+        rename_file(Source, Target).
 mv(_Source, Target):-
         create(Target).
 
@@ -615,16 +680,56 @@ keyword(X) :- atm(X).
 :- comment(doinclude, directoryname/1).
 
 :- prop directoryname(X) + regtype 
-# "@var{X} is an atom which is the name of a directory.".
+# "@var{X} is an atom, the name of a directory.".
 
 directoryname(X) :- atm(X).
 
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+96,2001/05/02,12:29*31+'CEST'), "Documentation
+   on the @dec{persistent/2} declaration now appears in manuals.
+   (Manuel Hermenegildo)").
+
+:- comment(version(1*7+62,2001/03/02,23:00*48+'CET'), "Replaced
+   update_files/2 with update_files/1, which handles lists of specs, and
+   update_files/0.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+31,2000/11/10,17:33*31+'CET'), "Eliminated direct
+   uses of UNIX shell commands in /bin (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+20,2000/09/13,17:28*41+'CEST'), "Many improvements:
+   @begin{itemize}
+
+   @item Implemented passerta_fact/1 (asserta_fact/1).
+
+   @item Now it is never necessary to explicitly call init_persdb, a call
+         to initialize_db is only needed after dynamically defining facts
+         of persistent_dir/2.  Thus, pcurrent_fact/1 predicate eliminated.
+
+   @item Facts of persistent predicates included in the program code are
+         now included in the persistent database when it is created.
+         They are ignored in successive executions.
+
+   @item Files where persistent predicates reside are now created inside
+         a directory named as the module where the persistent predicates
+         are defined, and are named as F_A* for predicate F/A.
+
+   @item Now there are two packages: persdb and 'persdb/ll' (for low
+         level).  In the first, the standard builtins asserta_fact/1,
+         assertz_fact/1, and retract_fact/1 are replaced by new versions
+         which handle persistent data predicates, behaving as usual for
+         normal data predicates.  In the second package, predicates with
+         names starting with 'p' are defined, so that there is not
+         overhead in calling the standard builtins.
+
+   @item Needed declarations for persistent_dir/2 are now included in
+         the packages.
+
+   @end{itemize}
+   (Daniel Cabeza Gras)").
+
 :- comment(version(0*8+31,1998/12/27,19:17*20+'MET'), "Localized most
    of the documentation in this file. Updated documentation.  (Manuel
    Hermenegildo)").
 %% ---------------------------------------------------------------------------
-
- 

@@ -30,13 +30,15 @@ if [ ${CIAOARCH:-0} = 0 ]
 then
     CIAOARCH=`ciao_get_arch` ; export CIAOARCH
 fi
+#
 # This is just to be able to run older versions of Ciao which looked
 # at ARCH instead of CIAOARCH:
-if [ ${ARCH:-0} = 0 ]
-then
-    ARCH=`ciao_get_arch` ; export ARCH
-fi
-
+#
+#if [ ${ARCH:-0} = 0 ]
+#then
+#    ARCH=`ciao_get_arch` ; export ARCH
+#fi
+#
 #
 # Documentation-related paths:
 #
@@ -61,7 +63,7 @@ fi
 # Set INFOPATH (checking that we do not add it twice)
 if [ ${INFOPATH:-0} = 0 ]
 then
-    INFOPATH=/usr/info:/usr/local/info:${CIAODOCDIR} ; export INFOPATH
+    INFOPATH=/usr/info:/usr/share/info:/usr/local/info:${CIAODOCDIR} ; export INFOPATH
 else
     case ${INFOPATH} in
 	${CIAODOCDIR}:* | *:${CIAODOCDIR} | *:${CIAODOCDIR}:* ) ;;

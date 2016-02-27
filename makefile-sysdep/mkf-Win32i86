@@ -44,11 +44,20 @@ CCSHARED=
 # those defined in ciaoengine
 LDFLAGS=-static
 
+# Hack not to show a default console in Windows: used by the engine
+# Makefile when compiling a static engine.
+#NOCONSOLEFLAG=-mwindows
+# Hack not to use Cygwin's but Microsoft libraries
+NOCONSOLEFLAG=-mno-cygwin
+
 # Linker options for shared objects (Just to avoid compiler complaints)
 LDSHARED=-c
 
+# Linker options to combine objects
+LDCOMBINE=-r
+
 # Name of the standard ciao library
-CIAOLIBNAME=libciao.a
+CIAOLIBNAME=libciao.dll
 
 # Standard libraries
 LIBS=

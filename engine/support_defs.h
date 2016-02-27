@@ -11,6 +11,7 @@ TAGGED make_integer(Argdecl, ENG_INT i);
 TAGGED make_integer_check(Argdecl, ENG_INT i, INSN *op);
 TAGGED make_large(Argdecl, register TAGGED *ptr);
 TAGGED make_structure(Argdecl, register TAGGED functor);
+TAGGED ptr_to_stream_noalias(Argdecl, register struct stream_node *n);
 TAGGED ptr_to_stream(Argdecl, register struct stream_node *n);
 struct definition *find_definition(struct sw_on_key **swp, TAGGED term, TAGGED **argl, BOOL insertp);
 struct definition *insert_definition(struct sw_on_key **swp, TAGGED tagpname, int arity, BOOL insertp);

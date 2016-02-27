@@ -1,41 +1,160 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Constraint programming over reals</TITLE>
+<TITLE>The Ciao Prolog System               - Iterative-deepening execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC392" HREF="ciao_toc.html#TOC392">Constraint programming over reals</A></H1>
+<H1><A NAME="SEC397" HREF="ciao_toc.html#TOC397">Iterative-deepening execution</A></H1>
 <P>
-<A NAME="IDX4230"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Christian Holzbaur, Daniel Cabeza.
+<A NAME="IDX4365"></A>
 
 
 <P>
- 
+<STRONG>Author(s):</STRONG> Claudio Vaucheret, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Note:</STRONG> This package is currently being adapted to the new characteristics of the Ciao module system. This new version now works right now to some extent, but it under further development at the moment. Use with (lots of) caution. 
+This package applies a <EM>compiling control</EM> technique to implement 
+<A NAME="IDX4366"></A>
+<A NAME="IDX4367"></A>
+<EM>depth first iterative deepening</EM> execution [BibRef: iterative-deepening]. It changes the usual <EM>depth-first</EM> computation rule by 
+<A NAME="IDX4368"></A>
+<A NAME="IDX4369"></A>
+<EM>iterative-deepening</EM> on those predicates specifically marked. This is very useful in search problems when a 
+<A NAME="IDX4370"></A>
+complete proof procedure is needed. 
+
+
+<P>
+When this computation rule is used, first all goals are expanded only up to a given depth. If no solution is found or more solutions are needed by backtracking, the depth limit is incremented and the whole goal is repeated. Although it might seem that this approach is very inefficient because all higher levels are repeated for the deeper ones, it has been shown that is performs only about b/(b - 1) times as many operations than the corresponding breadth-first search, (where b is the branching factor of the proof tree) while the waste of memory is the same as depth first. 
+
+
+<P>
+The usage is by means of the following directive: 
+
+
+<P>
+<CODE>:- iterative(Name, FirstCut, Formula).</CODE> 
+
+
+<P>
+which states than the predicate 'Name' given in functor/arity form will be executed using iterative deepening rule starting at the depth 'FirstCut' with depth being incremented by the predicate 'Formula'. This predicate compute the new depth using the previous one. It must implement a dilating function i.e. the new depth must be greater. For example, to start with depth 5 and increment by 10 you can write: 
+
+
+<P>
+<CODE>:- iterative(p/1,5,f).</CODE> 
+
+
+<P>
+<CODE>f(X,Y) :- Y is X + 10.</CODE> 
+
+
+<P>
+or if you prefer, 
+
+
+<P>
+<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10)).</CODE> 
+
+
+<P>
+<A NAME="IDX4371"></A>
+<A NAME="IDX4372"></A>
+You can also use a fourth parameter to set a limiting depth. All goals below the given depth limit simply fail. Thus, with the following directive: 
+
+
+<P>
+<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10),100).</CODE> 
+
+
+<P>
+all goals deeper than 100 will fail. 
+
+
+<P>
+An example of code using this package would be: 
+
+
+
+<PRE>
+:- module(example_id, _,[id]).
+
+test(id) :- 
+        idchain(a,d).
+test(df) :- 
+        chain(a,d).   % loops!
+
+:- iterative(idchain/2, 3, ( _(X,Z) :- Z is X + 1) ).
+
+idchain(X,X).
+idchain(X,Y) :- 
+        arc(X,Z), 
+        idchain(Z,Y).
+
+chain(X,X).
+chain(X,Y) :- 
+        arc(X,Z), 
+        chain(Z,Y).
+
+arc(a,b).
+arc(a,d).
+arc(b,c).
+arc(c,a).
+
+</PRE>
+
+<P>
+The order of solutions are first the shallower and then the deeper. Solutions which are between two cutoff are given in the usual left to right order. For example, 
+
+
+
+<PRE>
+:- module(_,_,[id]).
+
+:- iterative(p/1,0,(_(X,Z) :- Z is X + 1),2). % all goals deeper than 2 will fail
+
+%:- iterative(p/1,1,(_(X,Z) :- Z is X + 3)). % change the solutions' order 
+                                             % to goal p(X). 
+
+p(X) :- q(X).
+p(a).
+
+q(X) :- r(X).
+q(b).
+
+r(X) :- s(X).
+r(c).
+
+s(d).
+
+</PRE>
+
+<P>
+It is possible to preserve the iterative-deepening behavior for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will be treated in the usual way i.e. by depth-first computation. 
+
+
+<P>
+Another complete proof procedure implemented is the 
+<A NAME="IDX4373"></A>
+<CODE>bf</CODE> package (
+<A NAME="IDX4374"></A>
+breadth first execution). 
 
 
 
 <UL>
-<LI><A HREF="ciao_99.html#SEC393">Usage and interface (clpr)</A>
-<LI><A HREF="ciao_99.html#SEC394">Other information (clpr)</A>
+<LI><A HREF="ciao_99.html#SEC398">Usage and interface (id)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC393" HREF="ciao_toc.html#TOC393">Usage and interface (<CODE>clpr</CODE>)</A></H2>
+<H2><A NAME="SEC398" HREF="ciao_toc.html#TOC398">Usage and interface (<CODE>id</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,77 +162,16 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(clpr).</CODE>
+<CODE>:- use_package(id).</CODE>
 
 or
 
-<CODE>:- module(...,...,[clpr]).</CODE>
+<CODE>:- module(...,...,[id]).</CODE>
 </UL>
 
 </div class="cartouche">
 
-
-
-<H2><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Other information (<CODE>clpr</CODE>)</A></H2>
-
-<P>
- 
-
-
-
-<UL>
-<LI><A HREF="ciao_99.html#SEC395">Some CLP(R) examples</A>
-</UL>
-
-
-
-<H3><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Some CLP(R) examples</A></H3>
-
-<P>
-(Other examples can be found in the source and library directories.) 
-
-
-
-<UL>
-<LI>'Reversible' Fibonacci (clpr):
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-:- module(_, [fib/2], []).
-:- use_package(clpr).
-
-fib(X,Y):- X .=. 0, Y .=. 0.
-fib(X,Y):- X .=. 1, Y .=. 1.
-fib(N,F) :-
-        N .&#62;. 1,
-        N1 .=. N - 1,
-        N2 .=. N - 2,
-        fib(N1, F1),
-        fib(N2, F2),
-        F .=. F1+F2.
-
-</PRE>
-
-
-<UL>
-<LI>Dirichlet problem for Laplace's equation (clpr):
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-
-</PRE>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

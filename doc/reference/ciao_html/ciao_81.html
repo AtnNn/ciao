@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Code translation utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC335" HREF="ciao_toc.html#TOC335">Code translation utilities</A></H1>
+<H1><A NAME="SEC337" HREF="ciao_toc.html#TOC337">Code translation utilities</A></H1>
 <P>
-<A NAME="IDX3885"></A>
+<A NAME="IDX3981"></A>
 
 
 <P>
@@ -20,30 +20,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.3#110 (1999/11/22, 11:52:54 MET)
+<STRONG>Version:</STRONG> 1.7#40 (2001/1/5, 19:7:40 CET)
 
 
 <P>
 This library offers a general way to perform clause body expansions. Goal, fact and spec translation predicates are authomatically called when needed, while this utility navigates through the meta-argument specification of the body itself. All predicates within this library must be called at <EM>second-pass expansions</EM>, since it uses information stored at 
-<A NAME="IDX3886"></A>
+<A NAME="IDX3982"></A>
 <CODE>c_itf</CODE> library.
 
 
 
 <UL>
-<LI><A HREF="ciao_81.html#SEC336">Usage and interface (expansion_tools)</A>
-<LI><A HREF="ciao_81.html#SEC337">Documentation on exports (expansion_tools)</A>
-<LI><A HREF="ciao_81.html#SEC338">Documentation on internals (expansion_tools)</A>
-<LI><A HREF="ciao_81.html#SEC339">Known bugs and planned improvements (expansion_tools)</A>
+<LI><A HREF="ciao_81.html#SEC338">Usage and interface (expansion_tools)</A>
+<LI><A HREF="ciao_81.html#SEC339">Documentation on exports (expansion_tools)</A>
+<LI><A HREF="ciao_81.html#SEC340">Documentation on internals (expansion_tools)</A>
+<LI><A HREF="ciao_81.html#SEC341">Known bugs and planned improvements (expansion_tools)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC336" HREF="ciao_toc.html#TOC336">Usage and interface (<CODE>expansion_tools</CODE>)</A></H2>
+<H2><A NAME="SEC338" HREF="ciao_toc.html#TOC338">Usage and interface (<CODE>expansion_tools</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,7 +48,7 @@ This library offers a general way to perform clause body expansions. Goal, fact 
 <LI><STRONG>Library usage:</STRONG>
 
 This library is provided as a tool for those modules which performs source-to-source code translation, usually known as <EM>code expanders</EM>. It may be loaded as other modules using a 
-<A NAME="IDX3887"></A>
+<A NAME="IDX3983"></A>
 <CODE>use_module/1</CODE>. Nothing special needs to be done.
 
 <LI><STRONG>Exports:</STRONG>
@@ -62,11 +58,11 @@ This library is provided as a tool for those modules which performs source-to-so
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3888"></A>
+<A NAME="IDX3984"></A>
 <CODE>imports_meta_pred/3</CODE>, 
-<A NAME="IDX3889"></A>
+<A NAME="IDX3985"></A>
 <CODE>body_expander/6</CODE>, 
-<A NAME="IDX3890"></A>
+<A NAME="IDX3986"></A>
 <CODE>arg_expander/6</CODE>.
 
 </UL>
@@ -78,7 +74,9 @@ This library is provided as a tool for those modules which performs source-to-so
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3891"></A>
+<A NAME="IDX3987"></A>
+<CODE>hiord_rt</CODE>, 
+<A NAME="IDX3988"></A>
 <CODE>compiler/c_itf</CODE>.
 
 </UL>
@@ -89,13 +87,13 @@ This library is provided as a tool for those modules which performs source-to-so
 
 
 
-<H2><A NAME="SEC337" HREF="ciao_toc.html#TOC337">Documentation on exports (<CODE>expansion_tools</CODE>)</A></H2>
+<H2><A NAME="SEC339" HREF="ciao_toc.html#TOC339">Documentation on exports (<CODE>expansion_tools</CODE>)</A></H2>
 <P>
-<A NAME="IDX3892"></A>
-<A NAME="IDX3893"></A>
+<A NAME="IDX3989"></A>
+<A NAME="IDX3990"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>imports_meta_pred/3:</B>
-<DD><A NAME="IDX3894"></A>
+<DD><A NAME="IDX3991"></A>
 
 
 <P>
@@ -123,16 +121,16 @@ Macro provided in order to know meta-predicate specifications accessible from a 
 </DL>
 
 <P>
-<A NAME="IDX3895"></A>
-<A NAME="IDX3896"></A>
+<A NAME="IDX3992"></A>
+<A NAME="IDX3993"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>body_expander/6:</B>
-<DD><A NAME="IDX3897"></A>
+<DD><A NAME="IDX3994"></A>
 
 
 <P>
 This predicate is the main translation tool. It navigates through a clause body, when a single <EM>goal</EM> appears, user-code is called in order to perform a translation. Whether user-code fails to translate the involved goal, it remains the same. Regardless that goal is translated or not, an argument expansion will be performed over all goals if applicable (see 
-<A NAME="IDX3898"></A>
+<A NAME="IDX3995"></A>
 <CODE>arg_expander/6</CODE> predicate). 
 
 
@@ -174,18 +172,18 @@ Variable (unknown at compile time) goals will also be attempt to translate.
 </DL>
 
 <P>
-<A NAME="IDX3899"></A>
-<A NAME="IDX3900"></A>
+<A NAME="IDX3996"></A>
+<A NAME="IDX3997"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>arg_expander/6:</B>
-<DD><A NAME="IDX3901"></A>
+<DD><A NAME="IDX3998"></A>
 
 
 <P>
 This predicate is an auxiliary translation tool, which is used by 
-<A NAME="IDX3902"></A>
+<A NAME="IDX3999"></A>
 <CODE>body_expander/6</CODE> predicate. It remains exported as a macro. The predicate navigates through the <EM>meta-argument specification</EM> of a goal. Whether a <EM>goal,fact or spec</EM> argument appears, user-code is called in order to perform a translation. Whether user-code fails to translate the involved argument, it remains the same. Builtins as ','/2 or ';'/2 are treated as meta-predicates defining <EM>goal</EM> meta-arguments. When a <EM>goal</EM> meta-argument is located, 
-<A NAME="IDX3903"></A>
+<A NAME="IDX4000"></A>
 <CODE>body_expander/6</CODE> will be called in order to navigate through it. Notice that a <EM>goal</EM> meta-argument may be unified with another goal defining another meta-argument, so navigation is required. If arguments are not known to arg_expander/6, translation will not occur. This is posible whether goal or qualifing module are variables. 
 
 
@@ -224,13 +222,13 @@ This predicate is an auxiliary translation tool, which is used by
 
 
 
-<H2><A NAME="SEC338" HREF="ciao_toc.html#TOC338">Documentation on internals (<CODE>expansion_tools</CODE>)</A></H2>
+<H2><A NAME="SEC340" HREF="ciao_toc.html#TOC340">Documentation on internals (<CODE>expansion_tools</CODE>)</A></H2>
 <P>
-<A NAME="IDX3904"></A>
-<A NAME="IDX3905"></A>
+<A NAME="IDX4001"></A>
+<A NAME="IDX4002"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>expander_pred/1:</B>
-<DD><A NAME="IDX3906"></A>
+<DD><A NAME="IDX4003"></A>
 
 
 <P>
@@ -245,7 +243,7 @@ This predicate is an auxiliary translation tool, which is used by
 
 
 
-<H2><A NAME="SEC339" HREF="ciao_toc.html#TOC339">Known bugs and planned improvements (<CODE>expansion_tools</CODE>)</A></H2>
+<H2><A NAME="SEC341" HREF="ciao_toc.html#TOC341">Known bugs and planned improvements (<CODE>expansion_tools</CODE>)</A></H2>
 
 
 <UL>
@@ -256,6 +254,6 @@ This predicate is an auxiliary translation tool, which is used by
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_80.html">previous</A>, <A HREF="ciao_82.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

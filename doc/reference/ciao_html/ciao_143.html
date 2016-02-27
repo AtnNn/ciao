@@ -1,68 +1,355 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Finding differences between two Prolog files</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC554" HREF="ciao_toc.html#TOC554">Finding differences between two Prolog files</A></H1>
+<H1><A NAME="SEC580" HREF="ciao_toc.html#TOC580">Low-level Prolog to Java socket connection</A></H1>
+<P>
+<A NAME="IDX6233"></A>
+
 
 <P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
 
 
 <P>
-This simple program works like the good old diff but for files that contain Prolog code. It prints out the clauses that it finds are different in the files. Its use avoids textual differences such as different variable names and different formatting of the code in the files. 
+<STRONG>Version:</STRONG> 1.7#109 (2001/6/3, 17:8:19 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#82 (2001/3/30, 13:16:44 CEST)
+
+
+<P>
+ 
+<A NAME="IDX6234"></A>
+<A NAME="IDX6235"></A>
+This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
+<A NAME="IDX6236"></A>
+<CODE>javart</CODE> (Prolog to Java low-level interface) or 
+<A NAME="IDX6237"></A>
+<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
 
 
 
 <UL>
-<LI><A HREF="ciao_143.html#SEC555">Usage (pldiff)</A>
-<LI><A HREF="ciao_143.html#SEC556">Known bugs and planned improvements (pldiff)</A>
+<LI><A HREF="ciao_143.html#SEC581">Usage and interface (javasock)</A>
+<LI><A HREF="ciao_143.html#SEC582">Documentation on exports (javasock)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC555" HREF="ciao_toc.html#TOC555">Usage (pldiff)</A></H2>
+<H2><A NAME="SEC581" HREF="ciao_toc.html#TOC581">Usage and interface (<CODE>javasock</CODE>)</A></H2>
 
+<div class="cartouche">
 
-<PRE>
-   
-	pldiff &#60;file1&#62; &#60;file2&#62;
-	   : find differences 
+<UL>
 
-	pldiff -h
-	   : print this information
+<LI><STRONG>Library usage:</STRONG>
 
-</PRE>
+<CODE>:- use_module(library(javasock)).</CODE>
 
-<P>
-but you can also use the program as a library and invoke the predicate: 
-
-
-
-<PRE>
-   pldiff( &#60;filename&#62; , &#60;filename&#62; )
-</PRE>
-
-
-
-<H2><A NAME="SEC556" HREF="ciao_toc.html#TOC556">Known bugs and planned improvements (<CODE>pldiff</CODE>)</A></H2>
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI>
+<LI><EM>Predicates:</EM>
 
-Currently uses variant/2 to compare clauses. This is useful, but there should be an option to select the way clauses are compared, e.g., some form of equivalence defined by the user.
+<A NAME="IDX6238"></A>
+<CODE>start_socket_interface/1</CODE>, 
+<A NAME="IDX6239"></A>
+<CODE>stop_socket_interface/0</CODE>, 
+<A NAME="IDX6240"></A>
+<CODE>join_socket_interface/0</CODE>, 
+<A NAME="IDX6241"></A>
+<CODE>java_query/2</CODE>, 
+<A NAME="IDX6242"></A>
+<CODE>java_response/2</CODE>, 
+<A NAME="IDX6243"></A>
+<CODE>prolog_query/2</CODE>, 
+<A NAME="IDX6244"></A>
+<CODE>prolog_response/2</CODE>, 
+<A NAME="IDX6245"></A>
+<CODE>java_stream/3</CODE>.
+
 </UL>
 
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6246"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX6247"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6248"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX6249"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX6250"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX6251"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX6252"></A>
+<CODE>javall/jtopl</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC582" HREF="ciao_toc.html#TOC582">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<P>
+<A NAME="IDX6253"></A>
+<A NAME="IDX6254"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/1:</B>
+<DD><A NAME="IDX6255"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Address</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6256"></A>
+<A NAME="IDX6257"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
+<DD><A NAME="IDX6258"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6259"></A>
+<A NAME="IDX6260"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
+<DD><A NAME="IDX6261"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6262"></A>
+<A NAME="IDX6263"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
+<DD><A NAME="IDX6264"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:threadId(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:query(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6265"></A>
+<A NAME="IDX6266"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
+<DD><A NAME="IDX6267"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:id(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:response(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6268"></A>
+<A NAME="IDX6269"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
+<DD><A NAME="IDX6270"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:id(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:query(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6271"></A>
+<A NAME="IDX6272"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
+<DD><A NAME="IDX6273"></A>
+
+
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:id(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:response(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6274"></A>
+<A NAME="IDX6275"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_stream/3:</B>
+<DD><A NAME="IDX6276"></A>
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_stream(Arg1,Arg2,Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains prolog-to-java and java-to-prolog streams, and the network address where the Java process is running.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:pjStream(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:jpStream(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>Arg2</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>Address</CODE> is a valid host name.
+ (<CODE>javasock:machine_name/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_142.html">previous</A>, <A HREF="ciao_144.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

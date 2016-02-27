@@ -1,7 +1,7 @@
 # -*- mode: Makefile; -*-
 # ----------------------------------------------------------------------------
 include ../../SETTINGS
-include ../../COMMON
+include ../../SHARED
 include ../SETTINGS.COMMON
 # ----------------------------------------------------------------------------
 # Uncomment for using the development version of lpdoc when testing...
@@ -9,9 +9,9 @@ include ../SETTINGS.COMMON
 # LPDOC      = /home/clip/Systems/lpdoc/src/lpdoc
 # ----------------------------------------------------------------------------
 
-FILEPATHS := $(SRC)/doc/reference $(SRC)/shell $(SRC)/ciaoc $(SRC)/engine \
+FILEPATHS := $(FILEPATHS) \
+             $(SRC)/doc/reference $(SRC)/shell $(SRC)/ciaoc $(SRC)/engine \
              $(SRC)/emacs-mode $(SRC)/etc $(SRC)/library/pillow/dist/doc \
-	     $(FILEPATHS)
 # Useful for debugging...
 #MAINOPTS  := -v $(MAINOPTS)
 #COMPOPTS  := -v $(COMPOPTS)
@@ -55,6 +55,7 @@ GETSTARTED = \
 
 INSTALLATION = \
     Install.pl \
+    InstallMacOSX.pl \
     InstallWin32bin.pl \
     BeyondInstall.pl
 
@@ -124,7 +125,7 @@ CLASSICPROLOG = \
     format.pl \
     dec10_io.pl \
     ttyout.pl \
-    dynmods.pl \
+    compiler.pl \
     old_database.pl \
     runtime_ops.pl
 
@@ -174,11 +175,13 @@ MISCPROLOG = \
 #     prompt.pl
 
 EXTENDPROLOG = \
+    det_hook_rt.pl \
     pure_doc.pl \
+    hiord_rt.pl \
+    hiordlib.pl \
     argnames.pl \
     andprolog.pl \
     functions.pl \
-    hiord.pl \
     global.pl \
     odd.pl \
     freeze.pl \
@@ -203,25 +206,51 @@ EXTENDPROLOG = \
 #
 #     cges.pl \
 
+
+
 INTERFACES = \
-    foreign_interface.pl \
+    foreign_interface_doc.pl \
+    foreign_interface_properties.pl \
     foreign_compilation.pl \
     davinci.pl \
     tcltk.pl \
+	tcltk_low_level.pl	\
+    window_class_doc.pl \
+	widget_class_doc.pl \
+		menu_class_doc.pl \
+		canvas_class_doc.pl \
+		button_class_doc.pl \
+		checkbutton_class_doc.pl \
+		radiobutton_class_doc.pl \
+		entry_class_doc.pl \
+		label_class_doc.pl \
+		menubutton_class_doc.pl \
+		menu_entry_class_doc.pl \
+	shape_class_doc.pl \
+		arc_class_doc.pl \
+		oval_class_doc.pl \
+		poly_class_doc.pl \
+		line_class_doc.pl \
+		text_class_doc.pl  \
     pillow_doc.pl \
 	html.pl \
 	http.pl \
 	pillow_types.pl \
     persdbrt.pl \
 	Examples.pl \
-    persdbrtsql.pl \
+    persdbrtmysql.pl \
 	pl2sql.pl \
-	db_client.pl \
+	mysql_client.pl \
+	sqltypes.pl \
+	db_client_types.pl \
     javart.pl \
 	jtopl.pl \
 	javasock.pl \
     emacs.pl \
     linda.pl
+
+#	db_client.pl \
+
 
 ADTS = \
     counters.pl \
@@ -260,20 +289,37 @@ UTILCOMPONENTS = \
 CONTRIB = \
 	mycin_doc.pl \
 	chartlib.pl \
-	bltclass.pl \
-	chartlib_errhandle.pl \
-	color_pattern.pl \
-	genbar1.pl \
-	genbar2.pl \
-	genbar3.pl \
-	genbar4.pl \
-	gengraph1.pl \
-	gengraph2.pl \
-	genmultibar.pl \
-	table_widget1.pl \
-	table_widget2.pl \
-	table_widget3.pl \
-	table_widget4.pl \
-	test_format.pl
+		bltclass.pl \
+		chartlib_errhandle.pl \
+		color_pattern.pl \
+		genbar1.pl \
+		genbar2.pl \
+		genbar3.pl \
+		genbar4.pl \
+		gengraph1.pl \
+		gengraph2.pl \
+		genmultibar.pl \
+		table_widget1.pl \
+		table_widget2.pl \
+		table_widget3.pl \
+		table_widget4.pl \
+		test_format.pl \
+	provrml.pl \
+		boundary.pl \
+		dictionary.pl \
+		dictionary_tree.pl \
+		error.pl \
+		field_type.pl \
+		field_value.pl \
+		field_value_check.pl \
+		generator.pl \
+		generator_util.pl \
+		internal_types.pl \
+		io.pl \
+		lookup.pl \
+		parser.pl \
+		parser_util.pl \
+		possible.pl \
+		tokeniser.pl 
 
 # ----------------------------------------------------------------------------

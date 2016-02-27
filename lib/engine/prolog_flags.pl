@@ -97,14 +97,23 @@
         '$quiet_flag'/2, '$gc_trace'/2, '$gc_margin'/2, '$gc_mode'/2,
         '$compiling'/2]).
 
+%% doinclude's below commented out because LPdoc does not allow yet a 
+%% declaration and a predicate to have the same name.
+
+%% :- comment(doinclude,set_prolog_flag/1).
+
 :- true decl set_prolog_flag(Flag, Value) : atm * term + iso
         # "Sets the @concept{prolog flag} of name @var{Flag} to value
           @var{Value} in the rest of the current text (its scope is local).".
+
+%% :- comment(doinclude,push_prolog_flag/1).
 
 :- true decl push_prolog_flag(Flag, Value) : atm * term
         # "Sets the @concept{prolog flag} of name @var{Flag} to value
           @var{Value}, but storing current value of @var{Flag} to
           restore it with @decl{pop_prolog_flag/1} (its scope is local).".
+
+%% :- comment(doinclude,pop_prolog_flag/1).
 
 :- true decl pop_prolog_flag(Flag) : atm
         # "Restores the value of @var{Flag} previous to the last

@@ -22,6 +22,7 @@ i.e., are not bound to terms which contain a common variable.").
 %% FOR TEMPORARILY PARTIALLY DOCUMENTING:
 :- use_module(library('assertions/doc_props')).
 :- use_module(library(concurrency)).
+:- use_module(library(prolog_sys)).
 
 :- op(950,xfy,[(&)]).
 :- op(975,xfx,[(=>)]).
@@ -122,14 +123,14 @@ kill_agents(N):-
 %% it as to wait for the next ticket to be available, and retract it
 %% atomically.  Then, no choicepoint should be left.
 
-:- concurrent goal_id/1.
-
-goal_id(0).
-
-next_id(N):-
-        retract_fact(goal_id(N)), !,
-        N1 is N + 1,
-        asserta_fact(goal_id(N1)).
+ %% :- concurrent goal_id/1.
+ %% 
+ %% goal_id(0).
+ %% 
+ %% next_id(N):-
+ %%         retract_fact(goal_id(N)), !,
+ %%         N1 is N + 1,
+ %%         asserta_fact(goal_id(N1)).
  
 
 
@@ -140,7 +141,7 @@ next_id(N):-
 :- concurrent solution/3.         %% (Id, Sols, Result)
 
 leave_goal(Goal, Id):-
-        next_id(Id),
+        new_atom(Id),
         assertz_fact(goal_to_execute(Id, Goal)).
 
 get_goal(Goal, Id):-
@@ -269,6 +270,9 @@ it in a near future.").
 native versions in a future.").
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+94,2001/04/27,08:37*49+'CEST'), "Changed
+next_id/1 to new_atom/1 in order to avoid name clashes.  (MCL)").
 
 :- comment(version(1*3+120,1999/11/26,12:05*17+'MET'), "Added code for
 ground and indep.  (MCL)").

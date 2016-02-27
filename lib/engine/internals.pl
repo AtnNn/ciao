@@ -8,7 +8,7 @@
         '$atom_mode'/2, /* write.pl */
         '$nodebug_call'/1,
         '$meta_call'/1, % This is transformed by mexpand to call/1
-        '$eng_call'/5,  % Concurrency hook
+%        '$eng_call'/6,  % Concurrency hook
         '$bootversion'/0, '$open'/3,
         '$purge'/1, '$erase'/1, '$ptr_ref'/2, '$inserta'/2,
         '$insertz'/2, '$make_bytecode_object'/4, '$abolish'/1,
@@ -37,9 +37,9 @@
         '$runtime'/1, '$walltime'/1, 
         '$termheap_usage'/1, '$envstack_usage'/1,
         '$trail_usage'/1, '$choice_usage'/1, '$stack_shift_usage'/1,
-        '$internal_symbol_usage'/1,
-        '$program_usage'/1, '$total_usage'/1, '$gc_mode'/2, '$gc_trace'/2,
-        '$gc_margin'/2, '$gc_usage'/1, '$predicate_property'/3,
+        '$internal_symbol_usage'/1, '$program_usage'/1, '$total_usage'/1,
+        '$gc_mode'/2, '$gc_trace'/2, '$gc_margin'/2, '$gc_usage'/1,
+        '$current_predicate'/2, '$predicate_property'/3,
         '$current_clauses'/2, '$first_instance'/2, '$current_instance'/5,
         '$emulated_clause_counters'/4, '$counter_values'/3,
         '$close_predicate'/1, '$open_predicate'/1, '$unlock_predicate'/1,
@@ -64,7 +64,8 @@ provides handles for the module system into the internal definitions.
 ").
 
 :- impl_defined([dynlink/2, dynunlink/1,
-        '$atom_mode'/2, '$nodebug_call'/1, '$meta_call'/1, '$eng_call'/5,
+        '$atom_mode'/2, '$nodebug_call'/1, '$meta_call'/1, 
+        % '$eng_call'/6,
         '$bootversion'/0, '$open'/3, '$purge'/1, '$erase'/1, '$ptr_ref'/2,
         '$inserta'/2, '$insertz'/2, '$make_bytecode_object'/4, '$abolish'/1,
         '$compile_term'/2, '$instance'/3, '$define_predicate'/2,
@@ -84,9 +85,9 @@ provides handles for the module system into the internal definitions.
         '$runtime'/1, '$walltime'/1,
         '$termheap_usage'/1, '$envstack_usage'/1, '$trail_usage'/1,
         '$choice_usage'/1, '$stack_shift_usage'/1, '$program_usage'/1,
-        '$internal_symbol_usage'/1,
-        '$total_usage'/1, '$gc_mode'/2, '$gc_trace'/2, '$gc_margin'/2,
-        '$gc_usage'/1, '$predicate_property'/3, '$current_clauses'/2,
+        '$internal_symbol_usage'/1, '$total_usage'/1,
+        '$gc_mode'/2, '$gc_trace'/2, '$gc_margin'/2, '$gc_usage'/1,
+        '$current_predicate'/2, '$predicate_property'/3, '$current_clauses'/2,
         '$first_instance'/2, '$current_instance'/5,
         '$emulated_clause_counters'/4, '$counter_values'/3,
         '$close_predicate'/1, '$open_predicate'/1, '$unlock_predicate'/1,
@@ -95,7 +96,7 @@ provides handles for the module system into the internal definitions.
         'CHOICE IDIOM'/1, 'CUT IDIOM'/1]).
 
 :- primitive_meta_predicate('$nodebug_call'(goal)).
-:- primitive_meta_predicate('$eng_call'(goal, ?, ?, ?, ?)).
+%:- primitive_meta_predicate('$eng_call'(goal, ?, ?, ?, ?, ?)).
 
 :- multifile load_libs/0.
 
@@ -158,7 +159,9 @@ uses_runtime_module_expansion.
 :- include(mexpand).
 
 module_warning(not_defined(F, N, M)) :- !,
-        message(warning, ['Predicate ',~~(F/N),' undefined in module ',M]).
+        ( '$unknown'(fail,fail) -> true
+        ; message(warning, ['Predicate ',~~(F/N),' undefined in module ',M])
+        ).
 module_warning(not_imported(F, N, M, QM)) :- !,
         message(warning, ['Module qualification of ',~~(F/N),
                           ' ignored, module ',M,
@@ -177,27 +180,27 @@ module_warning(short_pred_abs(PA, N)) :- !,
 
 term_to_meta(X, '$:'(X)).
 
-last_module_exp(V, _Type, _M, _QM, V) :- var(V), !.
-last_module_exp(QM:T, Type, M,_QM, NT) :- !,
-        ( var(QM) -> expand_meta(T, Type, M, QM, NT)
-        ; last_module_exp(T, Type, M, QM, NT)
-        ).
-last_module_exp('$:'(T), _Type, _M, _QM, T) :- !. % already expanded
+% These two backwards compatibility
 last_module_exp(T, Type, M, QM, NT) :-
-        do_module_exp(QM, T, M, Type, NT), !.
-last_module_exp(T, _Type, _M, _QM, T).
+        rt_module_exp(T, Type, M, QM, true, NT).
 
-mid_module_exp(V, _Type, _M, _QM, V) :- var(V), !.
-mid_module_exp(QM:T, Type, M,_QM, NT) :- nonvar(QM), !,
-        mid_module_exp(T, Type, M, QM, NT).
-mid_module_exp(T, _Type, _M, _QM, T) :-
-        T = '$:'(_), !. % already expanded
 mid_module_exp(T, Type, M, QM, NT) :-
-        do_module_exp(QM, T, M, Type, T1), !,
-        term_to_meta(T1, NT).
-mid_module_exp(T, _Type, _M, _QM, T).
+        rt_module_exp(T, Type, M, QM, fail, NT).
 
-do_module_exp(QM, T, M, Type, NT) :-
+rt_module_exp(V, _Type, _M, _QM, _Pr, V) :- var(V), !.
+rt_module_exp(T, _Type, _M, _QM,  Pr, NT) :-
+        T = '$:'(Tx), !, % already expanded
+        ( Pr = true -> NT = Tx ; NT = T).
+rt_module_exp(QM:T, Type, M,_QM, Pr, NT) :- !,
+        ( var(QM) ->
+            meta_expansion_type(Type, T, M, _, Pr, NT, no, no)
+        ; rt_module_exp(T, Type, M, QM, Pr, NT)
+        ).
+rt_module_exp(T, Type, M, QM, Pr, NT) :-
+        do_module_exp(QM, T, M, Pr, Type, NT), !.
+rt_module_exp(T,_Type,_M,_QM,_Pr, T).
+
+do_module_exp(QM, T, M, Primitive, Type, NT) :-
         nonvar(QM),
         functor(QM, XM, 1), !,
 %        accessible_in(M, XM, mod_exp, 5),
@@ -209,14 +212,11 @@ do_module_exp(QM, T, M, Type, NT) :-
         arg(2,GEXP,T),
         arg(3,GEXP,M),
         arg(4,GEXP,XQM),
-        arg(5,GEXP,NT),
-        '$meta_call'(GEXP).
-do_module_exp(QM, T, M, Type, NT) :-
-        expand_meta(T, Type, M, QM, NT). %,
-%        \+ recursive(NT).
-
-% recursive((last_module_exp(_,_,_,_,_),_)).
-% recursive((mid_module_exp(_,_,_,_,_),_)).
+        arg(5,GEXP,XT),
+        '$meta_call'(GEXP),
+        term_to_meta_or_primitive(Primitive, XT, NT).
+do_module_exp(QM, T, M, Primitive, Type, NT) :-
+         meta_expansion_type(Type, T, M, QM, Primitive, NT, no, no).
 
 :- include(builtin_modules).
 
@@ -234,15 +234,20 @@ module_concat(M, A, NA) :-
 	NA=..[NF|Args].
 module_concat(_, A, A). % If a number, do not change to complain later
 
-% Support for call/n, see mexpand & read
+% Support for call/n, see mexpand, hiord_rt & read
 
 call(V, _) :- var(V), !, throw(error(instantiation_error, call/n-1)).
 call(Pred, Args) :-
         Pred = 'PA'(Sh,_H,_B),
         copy_term(Pred, 'PA'(Sh,Args,Goal)), !,
         '$meta_call'(Goal).
-call(Pred, A) :-
-        functor(A,_,N),
+call(Pred, Args) :-
+        Pred = 'PA'(_Sh,H,_B),
+        functor(H,'',N),
+        functor(Args,_,N), !, % Predicate abstraction OK, argument unif. failed
+        fail.
+call(Pred, Args) :-
+        functor(Args,_,N),
         throw(error(type_error(pred(N),Pred), call/n-1)).
 
 %------ call with continuations -----%
@@ -530,6 +535,24 @@ do_undefined(warning, X) :-
 % do_undefined(fail, X) :- fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+98,2001/05/10,20:57*09+'CEST'), "Fixed a bug in
+   predicate abstractions, when unification of the head failed an
+   incorrect error were generated.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+90,2001/04/20,21:08*01+'CEST'), "Added
+   '$current_predicate'/2, which was prolog_sys:current_predicate/2.
+   (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+79,2001/03/28,12:52*17+'CEST'), "$eng_call has
+   now 6 arguments; the last but one is an integer which expresses the #
+   of concurrent goals launched so far; it is used to generate unique
+   goal identifiers.  (MCL)").
+
+% This change added to mid_module_exp the var(QM) option
+:- comment(version(1*7+41,2001/01/12,22:30*28+'CET'), "Changed expansion
+   to allow using variables as goal qualifications in arguments of
+   user-defined meta_predicates (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+117,2000/04/12,18:35*57+'CEST'), "Changed
    predicate abstractions to have the head with functor '', and to mark

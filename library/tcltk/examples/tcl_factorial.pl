@@ -1,6 +1,6 @@
 :- module(tcl_factorial,[test/0]).
 
-:- use_module(tk_test_aux).
+:- use_module(library('tcltk/examples/tk_test_aux')).
 
 :- use_module(library(tcltk)).
 
@@ -23,9 +23,12 @@ test_aux(X) :-
                     prolog_one_event,dq(write(execute(tk_test_aux:factorial('$inputval','Outputval')))),'\n',
                     set, 'outputval','$prolog_variables(Outputval)'])],_),
         tcl_eval(X,[bind,'.c','<ButtonPress-1>',
-                    br([prolog_one_event,dq(write(exit))])],_),
-        tk_event_loop(X),
-	tcl_delete(X).
+                    br([prolog_one_event,dq(write(execute(exit_tk_event_loop)))])],_),
+        tk_event_loop(X).
+%	tcl_delete(X).
+%        tk_event_loop(X).
+
+
 
 %test_aux(X) :-
 %       tcl_delete(X).

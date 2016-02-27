@@ -1,7 +1,13 @@
 :- module(actmodtr, [actmodtr/2], [assertions]).
 
+:- include(library('class/remote_preds')).
+
 actmodtr((:- use_active_module(M, Imports)), LocalDefs) :-
         define_remote_predicates(Imports, M, LocalDefs).
+actmodtr((:- use_active_class(M)), LocalDefs) :-
+	class_remote_predicates(Specs),
+	atom_concat(M, '_remote', RemoteM),
+        define_remote_predicates(Specs, RemoteM, LocalDefs).
 
 define_remote_predicates([],_M, []).
 define_remote_predicates([F/A|Ps], M, [Def|Defs]) :-

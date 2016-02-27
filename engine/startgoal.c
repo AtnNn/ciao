@@ -16,7 +16,7 @@
 
 #include "initial_defs.h"
 #include "inout_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "prolog_tasks_defs.h"
 #include "startgoal_defs.h"
 #include "tasks_defs.h"
@@ -72,6 +72,8 @@ void firstgoal(goal_desc, goal_name)
 }
 
 
+/* Here with wam and goal */
+
 THREAD_RES_T startgoal(wo)
      THREAD_ARG wo;
 {
@@ -82,23 +84,29 @@ THREAD_RES_T startgoal(wo)
 
   Arg = goal_desc->worker_registers;
   Arg->next_insn = startgoalcode;
-  Arg->node->term[0] = X(0);
+  Arg->next_alt = NULL;  /* Force backtracking after alts. exahusted */
+  Arg->node->term[0] = X(0);    /* Will be the arg. of a call/1 */
 
 #if defined(DEBUG) && defined(THREADS)
-  if (debug_threads) printf("Goal %x entering wam()\n", (int)goal_desc);
+  if (debug_threads)
+    printf("%d (%d) Goal %x entering wam()\n",
+           (int)Thread_Id, (int)GET_INC_COUNTER, (int)goal_desc);
 #endif
+
   if ((wam_result = wam(Arg, goal_desc)) == WAM_ABORT) 
     MAJOR_FAULT("Wam aborted!")
   
 #if defined(DEBUG) && defined(THREADS)
-  if (debug_threads) printf("Goal %x exited wam()\n", (int)goal_desc);
+      if (debug_threads)
+        printf("%d (%d) Goal %x exited wam()\n", 
+               (int)Thread_Id, (int)GET_INC_COUNTER, (int)goal_desc);
 #endif
 
   flush_output(Arg);
 
   /* eng_wait() may change NEEDS_FREEING and consults the state of the
      thread; therefore we lock until it is settled down */
-
+  
   Wait_Acquire_slock(goal_desc->goal_lock_l);
   if (goal_desc->worker_registers->next_alt == termcode){
     unlink_wam(goal_desc);	/* We can make the WAM available right now */

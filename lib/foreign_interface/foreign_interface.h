@@ -1,7 +1,11 @@
 /* Macros and auxiliar functions needed by compile_c.pl for the glue-code
    generation. */
 
+#if defined(DARWIN)
+#include <stdlib.h>
+#else
 #include <malloc.h>
+#endif
 #include <string.h>
 
 /* Functors */

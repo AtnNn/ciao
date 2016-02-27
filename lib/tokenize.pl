@@ -37,12 +37,14 @@ define_flag(character_escapes, [iso, sicstus, off], iso).
 %  4 - graphic                        
 %  5 - punctuation
 
-% type token === atom(atom) ;
-%                badatom(string) ;
-%                number(number) ;
-%                string(string) ;
-%                var(term,string) ;
-%                ',' ; '(' ; ' (' ; ')' ; '[' ; ']' ; '|' ; '{' ; '}' .
+% Existing tokens:
+%    atom(atom)
+%    badatom(string)
+%    number(number)
+%    string(string)
+%    var(term,string)
+%    ',' | '(' | ' (' | ')' | '[' | ']' | '|' | '{' | '}'
+%    '.' % end of term 
 
 read_tokens(TokenList, Dictionary) :-
         getct1(Ch, Type),
@@ -197,21 +199,11 @@ read_end_comment(_, _, Dict, Tokens) :-
         read_end_comment(Typ, Ch, Dict, Tokens).
 
 % read_fullstop(Typ, Char, Dict, Tokens)
-% looks at the next character after a full stop.  There are
-% three cases:
-%     (a) the next character is an end of file.  We treat this
-%         as an unexpected end of file.  The reason for this is
-%         that we HAVE to handle end of file characters in this
-%         module or they are gone forever; if we failed to check
-%         for end of file here and just accepted .<EOF> like .<NL>
-%         the caller would have no way of detecting an end of file
-%         and the next call would abort.
-%     (b) the next character is a layout character or %.  This is a
-%         clause terminator.
-%     (c) the next character is anything else.  This is just an
-%         ordinary symbol and we call read_symbol to process it.
+% looks at the next character after a full stop.  If the next character is
+% an end of file, a layout character or %, this is a clause terminator, else
+% this is just an ordinary symbol and we call read_symbol to process it.
 
-read_fullstop(-1, _, _, [atom(.)]) :- !.        % unexpected end of file
+read_fullstop(-1, _, _, [.]) :- !.              % end of file
 read_fullstop(0, _, _, [.]) :- !.               % END OF CLAUSE
 read_fullstop(5, 0'%, _, [.]) :- !,             % END OF CLAUSE,
         skip_code(10).                          % skip newline
@@ -541,6 +533,10 @@ check_singleton([Var|[]], Var). % The [] marks it is not singleton
 atom_token(String, atom(Atom)) :-
         atom_codes(Atom, String), !.
 atom_token(String, badatom(String)).
+
+:- comment(bug, "When the last line of a file has a single-line comment
+           and does not end with a newline, an attempt to read past end
+           of stream will be produced.").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

@@ -37,7 +37,7 @@ abort :- '$exit'(-32768).
 
 %------ errors ------%
 
-:- data catching/3, thrown/1.
+:- concurrent catching/3, thrown/1.
 
 :- true pred catch(+callable,?term,+callable) + iso.
 
@@ -60,7 +60,7 @@ catch(Goal, Error, _) :-
         '$meta_call'(Goal),
         retract_catching(Choice, Error, []).
 catch(_, Error, Handler) :-
-        retract_fact(thrown(Error)), !,
+        retract_fact_nb(thrown(Error)), !,
         '$meta_call'(Handler).
 
 :- true pred intercept(+callable,?term,+callable).
@@ -109,15 +109,25 @@ throw_action(Handler, _, _) :-
         '$meta_call'(Handler).
 
 cut_to(Choice) :-
-        retract_fact(catching(C,_,_)),
+        retract_fact_nb(catching(C,_,_)),
         C = Choice,
         '$metacut'(Choice).
 
 asserta_catching(Ch, Er, Ha) :- asserta_fact(catching(Ch, Er, Ha)).
-asserta_catching(Ch, Er, Ha) :- retract_fact(catching(Ch, Er, Ha)), fail.
+asserta_catching(Ch, Er, Ha) :- retract_fact_nb(catching(Ch, Er, Ha)), fail.
 
-retract_catching(Ch, Er, Ha) :- retract_fact(catching(Ch, Er, Ha)).
+retract_catching(Ch, Er, Ha) :- retract_fact_nb(catching(Ch, Er, Ha)).
 retract_catching(Ch, Er, Ha) :- asserta_fact(catching(Ch, Er, Ha)), fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
+
+:- comment(version(1*7+107,2001/05/31,14:12*58+'CEST'), "Changed data
+to be concurrent; changed retract_fact/1 to retract_fact_nb/1 (MCL)").
 

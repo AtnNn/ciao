@@ -12,4 +12,4 @@
 :- use_module(library(dec10_io)).
 :- use_module(library(format)).
 :- use_module(library(ttyout)).
-:- use_module(library(dynmods)).
+:- use_module(library(compiler)).

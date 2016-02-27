@@ -21,7 +21,7 @@ int start_of_savedump = 0;                    /* Must be the first symbol */
 #include "initial_defs.h"
 #include "inout_defs.h"
 #include "interrupt_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "misc_defs.h"
 #include "nondet_defs.h"
 #include "objareas_defs.h"
@@ -294,25 +294,50 @@ int wam(Arg, worker)
 
   RestoreGtop(B);
 
-  if ((P = (INSN *)w->next_alt)==NULL) {    /* deep backtracking */
-                                            /* 7-8 contiguous moves */
+  if ((P = (INSN *)w->next_alt) == NULL) {           /* deep backtracking */
+
+                                                  /* 7-8 contiguous moves */
     P = (INSN *)B->next_alt;
     w->frame = B->frame;
     w->next_insn = B->next_insn;
     RestoreLtop(B);
+
+    /* Dirty hack: always pop n registers (heuristic measure, I guess) and
+       see later if we need to reload more; had we needed less, we simply do
+       not use the additional ones.  I have simplified the code (see below),
+       in part because it was giving problems in some architectures: the
+       initial choicepoint of a concurrent goal was being accessed out of
+       the scope of the memory allocated for the choicepoint stack.  MCL. */
+
+
+    /*
     X(0) = B->term[0];
     X(1) = B->term[1];
     X(2) = B->term[2];
     X(3) = B->term[3];
     i = ((struct try_node *)P)->node_offset;
     w->next_node = ChoiceCharOffset(B,-i);
-    if (i>ArityToOffset(4)){
+    if (i>ArityToOffset(3)){
       S = (TAGGED *)w->next_node;
-      i = OffsetToArity(i)-4;
+      i = OffsetToArity(i)-3;
       do
-        (w->term+3)[i] = ChoiceNext(S);
+        (w->term+2)[i] = ChoiceNext(S);
       while (--i);
+      }
+    */
+
+
+    i = ((struct try_node *)P)->node_offset;
+    w->next_node = ChoiceCharOffset(B,-i);
+    if (i>ArityToOffset(0)){
+      TAGGED *wt = w->term;
+
+      S = (TAGGED *)w->next_node;
+      i = OffsetToArity(i) - 1;
+      while(i >= 0)
+        wt[i--] = ChoiceNext(S);
     }
+
   }
 
   if ((w->next_alt = ((struct try_node *)P)->next)==NULL) {
@@ -705,14 +730,21 @@ int wam(Arg, worker)
     switch (OPCODE)
 #endif
       {
+
 #include "shdisp_r.c"
+
 #include "u1disp_r.c"
       
 #include "u2void_r.c"
+
 #include "u2xvar_r.c"
+
 #include "u2yvar_r.c"
+
 #include "u2xval_r.c"
+
 #include "u2yval_r.c"
+
 #include "wamgauge_r.c"
 
     case FAIL:

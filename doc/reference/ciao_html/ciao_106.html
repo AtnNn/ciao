@@ -1,142 +1,56 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Utilities for on-demand compilation of foreign files</TITLE>
+<TITLE>The Ciao Prolog System               - PART VIII - Interfaces to other languages and systems</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC423" HREF="ciao_toc.html#TOC423">Utilities for on-demand compilation of foreign files</A></H1>
-<P>
-<A NAME="IDX4528"></A>
-
+<H1><A NAME="SEC430" HREF="ciao_toc.html#TOC430">PART VIII - Interfaces to other languages and systems</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Jose Morales.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.3#36 (1999/7/20, 10:37:31 MEST)
-
-
-<P>
-This module provides two predicates which give the user information regarding how to compile external (C) files in order to link them with the Ciao Prolog engine at runtime. 
-
-
-<P>
-These predicates are not intended to be called directly by the end-user. Instead, a tool or module whose aim is generating dynamically loadable files from source files should use the predicates in this file in order to find out what are the proper compiler and linker to use, and which options must be passed to them in the current architecture.
-
-
+The following interfaces to/from Ciao Prolog are documented in this part: 
 
 <UL>
-<LI><A HREF="ciao_106.html#SEC424">Usage and interface (foreign_compilation)</A>
-<LI><A HREF="ciao_106.html#SEC425">Documentation on exports (foreign_compilation)</A>
+<LI>
+
+<A NAME="IDX4613"></A>
+External interface (e.g., to C). 
+<LI>
+
+<A NAME="IDX4614"></A>
+Socket interface. 
+<LI>
+
+<A NAME="IDX4615"></A>
+Tcl/tk interface. 
+<LI>
+
+<A NAME="IDX4616"></A>
+Web interface (http, html, xml, etc.); 
+<LI>
+
+<A NAME="IDX4617"></A>
+Persistent predicate databases (interface between the Prolog internal database and the external file system). 
+<LI>
+
+<A NAME="IDX4618"></A>
+SQL-like database interface (interface between the Prolog internal database and external SQL/ODBC systems). 
+<LI>
+
+<A NAME="IDX4619"></A>
+Java interface. 
+<LI>
+
+<A NAME="IDX4620"></A>
+Calling emacs from Prolog. 
 </UL>
-
-
-
-<H2><A NAME="SEC424" HREF="ciao_toc.html#TOC424">Usage and interface (<CODE>foreign_compilation</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(foreign_compilation)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4529"></A>
-<CODE>compiler_and_opts/2</CODE>, 
-<A NAME="IDX4530"></A>
-<CODE>linker_and_opts/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4531"></A>
-<CODE>system</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC425" HREF="ciao_toc.html#TOC425">Documentation on exports (<CODE>foreign_compilation</CODE>)</A></H2>
-<P>
-<A NAME="IDX4532"></A>
-<A NAME="IDX4533"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>compiler_and_opts/2:</B>
-<DD><A NAME="IDX4534"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>compiler_and_opts(?Compiler,?Opts)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If you want to compile a foreign language file for dynamic linking in the current operating system and architecture, you have to use the compiler <CODE>Compiler</CODE> and gite it the options <CODE>Opts</CODE>. A variable in <CODE>Opts</CODE> means that no special option is needed.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>?Compiler</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>?Opts</CODE> is a list of <CODE>atom</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4535"></A>
-<A NAME="IDX4536"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>linker_and_opts/2:</B>
-<DD><A NAME="IDX4537"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>linker_and_opts(?Linker,?Options)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If you want to link a foreign language file for dynamic linking in the current operating system and architecture, you have to use the linker <CODE>Compiler</CODE> and gite it the options <CODE>Opts</CODE>. A variable in <CODE>Opts</CODE> means that no special option is needed.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>?Linker</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>?Options</CODE> is a list of <CODE>atom</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

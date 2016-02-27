@@ -13,6 +13,8 @@
 :- modedef out(A) : var(A)    => ground(A).
 :- modedef go(A)              => ground(A).
 
+:- push_prolog_flag(read_hiord,on).
+
 %% Parametric versions of above
 :- modedef '+'(A,X) :: X(A) : nonvar(A).
 :- modedef '-'(A,X) :: X(A) : var(A).
@@ -21,6 +23,8 @@
 :- modedef in(A,X)  :: X(A) : ground(A) => ground(A).
 :- modedef out(A,X) :: X(A) : var(A)    => ground(A).
 :- modedef go(A,X)  :: X(A)             => ground(A).
+
+:- pop_prolog_flag(read_hiord).
 
 %% :- comment(version_maintenance,off)).
 

@@ -2,7 +2,7 @@
 # This makefile is used to build/install all the ciao manuals
 #-----------------------------------------------------------------------------
 include ../SETTINGS
-include ../COMMON
+include ../SHARED
 #-----------------------------------------------------------------------------
 
 MAIN=ciao

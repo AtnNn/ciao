@@ -20,7 +20,6 @@
 :- use_module(library(ttyout)).
 :- use_module(engine(internals)).
 :- use_module(library(format)).
-:- use_module(library(prolog_sys), [current_predicate/2]).
 :- use_module(library(write)).
 :- use_module(library(sort)).
 
@@ -235,7 +234,7 @@ remove_spypoint(_, N, A) :-
 	format(user, '{Cannot spy built-in predicate ~q}~n', [N/A]).
 
 spypoint(X) :-
-	current_predicate(_, X),
+	'$current_predicate'(_, X),
 	'$spypoint'(X, on, on).
 
 :- meta_predicate parse_functor_spec(?,?,goal).
@@ -251,7 +250,7 @@ parse_functor_spec(S, GoalArg, Goal) :-
 	(   functor_spec(S, Name, Low, High, M),
             current_fact(debug_mod(M,Mc)),
             atom_concat(Mc, Name, PredName),
-	    current_predicate(PredName, GoalArg), % don't work
+	    '$current_predicate'(PredName, GoalArg), % don't work
 	    functor(GoalArg, _, N),
 	    N >= Low, N =< High,
 	    '$setarg'(1, Flag, 1, true),

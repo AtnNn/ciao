@@ -14,7 +14,7 @@
 #include "indexing_defs.h"
 #include "alloc_defs.h"
 #include "locks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 
 /* local declarations */
 

@@ -369,12 +369,12 @@ extern void failc(char *mesg);
 #define ENG_PRINTF4(S,FMT,A1,A2,A3,A4) \
 { char m_buf[2048]; sprintf(m_buf,FMT,A1,A2,A3,A4); print_string(S, m_buf); }
 
-#define ENG_TTYPRINTF0(FMT) print_string(stream_user_error,FMT) 
+#define ENG_TTYPRINTF0(FMT) print_string(Error_Stream_Ptr,FMT) 
 
-#define ENG_TTYPRINTF1(FMT,A1) ENG_PRINTF1(stream_user_error,FMT,A1) 
+#define ENG_TTYPRINTF1(FMT,A1) ENG_PRINTF1(Error_Stream_Ptr,FMT,A1) 
 
-#define ENG_TTYPRINTF2(FMT,A1,A2) ENG_PRINTF2(stream_user_error,FMT,A1,A2) 
+#define ENG_TTYPRINTF2(FMT,A1,A2) ENG_PRINTF2(Error_Stream_Ptr,FMT,A1,A2) 
 
-#define ENG_TTYPRINTF3(FMT,A1,A2,A3) ENG_PRINTF3(stream_user_error,FMT,A1,A2,A3) 
+#define ENG_TTYPRINTF3(FMT,A1,A2,A3) ENG_PRINTF3(Error_Stream_Ptr,FMT,A1,A2,A3) 
 
-#define ENG_TTYPRINTF4(FMT,A1,A2,A3,A4) ENG_PRINTF4(stream_user_error,FMT,A1,A2,A3,A4) 
+#define ENG_TTYPRINTF4(FMT,A1,A2,A3,A4) ENG_PRINTF4(Error_Stream_Ptr,FMT,A1,A2,A3,A4) 

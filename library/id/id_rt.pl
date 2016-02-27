@@ -1,5 +1,6 @@
-:- multifile '$more_sol'/1.
+:- use_package(hiord).
 
+:- multifile '$more_sol'/1.
 
 :- data '$more_sol'/1.
 

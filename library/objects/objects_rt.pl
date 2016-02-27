@@ -39,7 +39,7 @@
 %%------------------------------------------------------------------------
 
 :- use_module(engine(internals)).
-:- use_module(library(dynmods),[use_module/1]).
+:- use_module(library(compiler),[use_module/1]).
 :- use_module(library(prolog_sys),[statistics/2,new_atom/1]).
 :- use_module(library(system),[time/1,current_host/1,get_pid/1,mktemp/2]).
 
@@ -653,6 +653,7 @@ instance_codes(Object,Codes) :-
 static_new(ID,Cons,_) :-
 	functor(Cons,Class,_),
 	'id$fromclass'(ID,OtherClass),
+        %display('NORRRL'),
 	!,
 	( Class = OtherClass -> true
 	;
@@ -694,6 +695,9 @@ static_new_aux(_).
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+:- comment(version(1*7+51,2001/01/25,21:33*00+'CET'), "Changed obsolete
+   library(dynmods) to library(compiler).  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+4,1999/11/29,19:11*21+'MET'), "use_class/1 predicate 
    has been moved to this module (Angel Fernandez Pineda).").

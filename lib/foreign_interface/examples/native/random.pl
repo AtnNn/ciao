@@ -28,7 +28,7 @@
         numbers generated can be duplicated by calling the predicate
         with @var{Seed} unbound (the sequence depends on the OS).").
 
-:- true pred srandom(?int) + native.
+:- true pred srandom(+int) + native.
 
 :- use_foreign_source(random).
 

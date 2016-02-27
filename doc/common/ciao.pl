@@ -59,7 +59,7 @@
    @cindex{why the name Ciao}
    @cindex{Ciao, why this name}
 
-      @include{Compliance.lpdoc}
+      @include{AboutName.lpdoc}
 
    @section{Referring to Ciao}
    @cindex{referring to Ciao}
@@ -154,8 +154,33 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*6+3,2000/08/23,11:27*29+'CEST'), "Solved a bug in
-the installation of the .sta version.  (MCL)").
+:- comment(version(1*7+108,2001/06/02,12:17*18+'CEST'), "Minor bug in
+   main Makefile during uninstallation fixed: added rm -f of engine
+   Makefile before linking.  (Manuel Hermenegildo)").
+
+:- comment(version(1*7+101,2001/05/15,17:34*09+'CEST'), "Minor error
+   in manual fixed: the section explaining the Ciao name did not
+   appear.  (Manuel Hermenegildo)").
+
+:- comment(version(1*7+100,2001/05/13,15:48*57+'CEST'), "Added
+   @tt{/usr/share/info} to default @tt{INFOPATH} paths.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*7+87,2001/04/08,15:15*18+'CEST'), "Added @tt{doc}
+   and @tt{installdoc} targets to top level installation @{Makefile}
+   (can be used to regenerate and reinstall documentation if
+   @apl{lpdoc} is available.  (Manuel Hermenegildo)").
+
+:- comment(version(1*7+14,2000/08/29,12:16*12+'CEST'), "Updated COMMON
+   to include makefile-sysindep; changed SETLOCAL{CIAOC,CIAOSHELL} to
+   SETLOCALCIAO (MCL)").
+
+:- comment(version(1*7+12,2000/08/22,18:16*33+'CEST'), "Changed a bug
+   in the installation: the .sta engine was not being copied!
+   (MCL)").
+
+:- comment(version(1*7+0,2000/07/12,19:01*20+'CEST'), "Development
+   version following even 1.6 distribution.").
 
 :- comment(version(1*6+0,2000/07/12,18:55*50+'CEST'), "
 @begin{itemize}

@@ -1,11 +1,13 @@
 # Copyright (C) 1997, UPM-CLIP
 
+include ../../SETTINGS
+include ../../SHARED
 
 suite:
-	ciaoc suite
+	$(SETLOCALCIAO) $(CIAOC) suite
 
 exec_suite: suite
-	./suite
+	$(SETLOCALCIAO) ./suite
 
 clean:
 	/bin/rm -rf *.itf *.dep *.po 

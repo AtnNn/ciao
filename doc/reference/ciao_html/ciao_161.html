@@ -1,149 +1,84 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget3 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - A Program to Help Cleaning your Directories</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC616" HREF="ciao_toc.html#TOC616">table_widget3 (library)</A></H1>
-<P>
-<A NAME="IDX6563"></A>
-
+<H1><A NAME="SEC631" HREF="ciao_toc.html#TOC631">A Program to Help Cleaning your Directories</A></H1>
 
 <P>
-The predicates exported by this module display data in a regular table, as we brought up in the introduction. Both predicates have in common that the font weight for the elements placed in the first column is bold and the remaining elements are in medium font weight. 
+<STRONG>Author(s):</STRONG> Manuel Carro.
 
 
 <P>
-If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
+<STRONG>Version:</STRONG> 0.1#2 (2000/6/1, 17:57:19 CEST)
+
+
+<P>
+A simple program for traversing a directory tree and deciding which files may be deleted in order to save space and not to loose information. 
 
 
 
 <UL>
-<LI><A HREF="ciao_161.html#SEC617">Usage and interface (table_widget3)</A>
-<LI><A HREF="ciao_161.html#SEC618">Documentation on exports (table_widget3)</A>
+<LI><A HREF="ciao_161.html#SEC632">Usage (cleandirs)</A>
+<LI><A HREF="ciao_161.html#SEC633">Known bugs and planned improvements (cleandirs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC617" HREF="ciao_toc.html#TOC617">Usage and interface (<CODE>table_widget3</CODE>)</A></H2>
+<H2><A NAME="SEC632" HREF="ciao_toc.html#TOC632">Usage (cleandirs)</A></H2>
 
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(table_widget3)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6564"></A>
-<CODE>tablewidget3/4</CODE>, 
-<A NAME="IDX6565"></A>
-<CODE>tablewidget3/5</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6566"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX6567"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6568"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX6569"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX6570"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX6571"></A>
-<CODE>lists</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC618" HREF="ciao_toc.html#TOC618">Documentation on exports (<CODE>table_widget3</CODE>)</A></H2>
-<P>
-<A NAME="IDX6572"></A>
-<A NAME="IDX6573"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget3/4:</B>
-<DD><A NAME="IDX6574"></A>
-
-
-<P>
-<CODE>tablewidget3(Title,Header,ElementTable,Footer)</CODE>
-
-
-<P>
-Shows a regular table in a window. The user does not choose a background image. 
-
-
-<P>
-Example: 
 
 <PRE>
-tablewidget3('This is the title',
-	     'Header text',
-	     [['Number of processors','8'],['Average processors','95'],
-	       ['Tasks per fork','7.5']],
-	     'Footer text').
+   
+cleandirs: &#60;initial_dir&#62; &#60;delete_options&#62; &#60;backup_options&#62;
+cleandirs explores &#60;initial_dir&#62; (which should be an absolute path)
+and looks for backup files and files which can be generated from other
+files, using a plausible heuristic aimed at retaining the same amount
+of information while recovering some disk space.  The heuristic is
+based on the extension of the filename.
+
+Delete options is one of:
+   --list: just list the files/directories which are amenable to be deleted,
+           but do not delete them. SAFE.
+    --ask: list the files/directories and ask for deletion. UNSAFE if you
+           make a mistake.
+ --delete: just delete the files/directories without asking.  I envy your
+           brave soul if you choose this option.
+
+Backup options is one of:
+ --includebackups: include backup files in the list of files to check.
+ --excludebackups: do not include backup files in the list of files to check.
+    --onlybackups: include only backup files in the list of files to check.
+
+Symbolic links are not traversed.  Special files are not checked.
+
 </PRE>
 
-</DL>
-
 <P>
-<A NAME="IDX6575"></A>
-<A NAME="IDX6576"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget3/5:</B>
-<DD><A NAME="IDX6577"></A>
+ 
+Invoking the program with no arguments will return an up-to-date information on the options.
 
 
-<P>
-<CODE>tablewidget3(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
 
 
-<P>
-Shows a regular table in a window. The user must set a background image. 
+<H2><A NAME="SEC633" HREF="ciao_toc.html#TOC633">Known bugs and planned improvements (<CODE>cleandirs</CODE>)</A></H2>
 
 
-<P>
-Example: 
+<UL>
 
-<PRE>
-tablewidget3('This is the title',
-	     'Header text',
-	     [['Number of processors','8'],['Average processors','95'],
-	         ['Average Tasks per fork','7.5']],
-	     'Footer text',
-	     './images/rain.gif')
-</PRE>
+<LI>
 
-</DL>
+Recursive removal of subdirectories relies on the existence of a recursive /bin/rm command in your system.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

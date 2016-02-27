@@ -9,7 +9,7 @@ public class PLFloat extends PLTerm {
    * Value of this Prolog float. Must be the largest representation
    * of a float point number in Java, so can be implemented Prolog floats.
    */
-  Double Value;
+  private Double Value;
 
   /**
    * Creates a new <code>PLFloat</code> object
@@ -54,6 +54,18 @@ public class PLFloat extends PLTerm {
 
     return (Object)Value;
   
+  }
+
+  /**
+   * Java representation of a Prolog float. Returns the Java 
+   * <code>Double</code> object that contains the Prolog float.
+   *
+   * @return an <code>Object</code> instance that contains a 
+   *         <code>Double</code> object.
+   *
+   */
+  public Object javaRepr() {
+    return (Object)Value;
   }
 
   /**
@@ -116,7 +128,7 @@ public class PLFloat extends PLTerm {
   /**
    * Not implemented.
    */
-  protected int numberOfCells() {
+  int numberOfCells() {
     // @@@@@ Debe retornar el numero correcto de celdas del heap.
     return 0;
   }

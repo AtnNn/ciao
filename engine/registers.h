@@ -34,13 +34,31 @@ extern int prolog_argc;
    X(5) - x5_next clause pointer / handle.
    ------ The next ones, only meaningful for concurrent predicates.
    X(6) - predicate root (needed in case there are no clause pointers - MCL).
-   X(7) - blocking or non-blocking (MCL).
+   X(7) - blocking/non-blocking and exited/non exited (MCL).
    X(8) - pointer to previous dynamic concurrent choicepoint.
 */
 
-
-
+#define X2_CHN 2
+#define Clock 4
+#define X5_CHN 5
+#define RootArg 6
+#define InvocationAttr 7
+#define PrevDynChpt 8
 #define DynamicPreserved 9
+
+#define BLOCKIDX 0x1
+#define EXECIDX 0x2
+
+#define SET_BLOCKING(arg) arg = arg | BLOCKIDX
+#define SET_NONBLOCKING(arg) arg = arg & ~BLOCKIDX
+#define IS_BLOCKING(arg) arg & BLOCKIDX
+#define IS_NONBLOCKING(arg) !(arg & BLOCKIDX)
+
+#define SET_EXECUTING(arg) arg = arg | EXECIDX
+#define SET_NONEXECUTING(arg) arg = arg & ~EXECIDX
+#define EXECUTING(arg) arg & EXECIDX
+#define NONEXECUTING(arg) !(arg & EXECIDX)
+
 
 /* initial choicepoint */
 #define InitialNode ChoiceCharOffset(Choice_Start,ArityToOffset(1))
@@ -87,6 +105,7 @@ extern int prolog_argc;
 
 #define Input_Stream_Ptr    w->streams->input_stream_ptr
 #define Output_Stream_Ptr   w->streams->output_stream_ptr
+#define Error_Stream_Ptr    w->streams->error_stream_ptr
 
 
 /* These access the private stack for bignum operations */

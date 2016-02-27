@@ -3,7 +3,8 @@
 	],
 	[
 	  dcg,
-	  assertions
+	  assertions,
+          hiord
 	]).
 
 :- use_module(library('c/write_tokens')).
@@ -758,8 +759,6 @@ zero_sum(X+Y) :- !,
 zero_sum(0).
 
 
-:- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*6+1,2000/07/13,11:36*00+'CEST'), "Removed
-   NODISTRIBUTE from distribution.  (MCL)").
+
 

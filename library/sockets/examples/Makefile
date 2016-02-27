@@ -1,6 +1,6 @@
 compile:
-	ciaoc client
-	ciaoc server
+	ciaoc -x client
+	ciaoc -x server
 
 clean:
 	rm -f client.itf client.po client

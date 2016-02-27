@@ -24,6 +24,7 @@ simply have not had the time to port them yet.
 The current state of matters is as follows:
 
 @begin{description}
+@item{Mac OS X (Darwin):}  multithreading, shared DB access, and locking working. 
 @item{LINUX:}     multithreading, shared DB access, and locking working.
 @item{Solaris:}   multithreading, shared DB access, and locking working.
 @item{IRIX:}  multithreading, shared DB access, and locking working.
@@ -40,4 +41,14 @@ The features that do not work are disabled at compile time.
 main.
 
 :- comment(version_maintenance,dir('../../version')).
+
+
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
+
+:- comment(version(1*7+55,2001/01/26,17:36*30+'CET'), "Added Mac OS X
+to list of supported systems.  (MCL)").
 

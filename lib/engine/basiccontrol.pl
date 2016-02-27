@@ -3,7 +3,7 @@
 	% '^'/2, %% Moved to aggregates M.H.
 	(\+)/1, if/3,
         true/0, % This cannot change
-        fail/0, repeat/0, call/1, /* call/N, */
+        fail/0, repeat/0, call/1,
 	srcdbg_spy/6
 	],
         [assertions, isomodes, .(metadefs)]).
@@ -94,19 +94,6 @@ if(P, Q, R) :- undefined_goal(if(P,Q,R)).
 
 :- primitive_meta_predicate(call(goal)).
 
-:- comment(doinclude, call/2).
-
-:- comment(call(Pred,Arg1), "There exists a set of builtin predicates of
-   the form @pred{call/N} with @tt{N > 1} which execute predicate
-   @var{Pred} given arguments @var{Arg1} ... @var{ArgX}. If @var{Pred}
-   has already arguments @var{Arg1} is added to the start, the rest to
-   the end. This predicate, when @var{Pred} is a variable, can be
-   written using the special Ciao syntax @tt{Pred(Arg1,...,ArgX)}.").
-
- :- true pred call(+callable,?). 
-
-% :- primitive_meta_predicate(call(pred(1),?)).
-
 :- pred srcdbg_spy/6 # "Performing source level debugging, all goals
    are expanded to this. This is currenlty done for all interpreted
    code.".
@@ -140,6 +127,10 @@ srcdbg_spy(Goal, _, _, _, _, _) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+37,2001/01/02,16:47*03+'CET'), "Higher-order via
+   the call/N builtins is detached to the hiord package.  (Daniel Cabeza
+   Gras)").
 
 :- comment(version(1*5+66,2000/03/16,17:03*30+'CET'), "Modified 
    srcdbg_spy pred to improve the performance on source-level debugging.

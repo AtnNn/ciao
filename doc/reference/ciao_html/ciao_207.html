@@ -1,0 +1,315 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+
+<LINK rel="stylesheet" href="ciao.css" type="text/css">
+<TITLE>The Ciao Prolog System               - Installing Ciao from a Win32 binary distribution</TITLE>
+</HEAD>
+<BODY> 
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>, <A HREF="ciao_208.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+<P><HR><P>
+
+
+<H1><A NAME="SEC782" HREF="ciao_toc.html#TOC782">Installing Ciao from a Win32 binary distribution</A></H1>
+
+<P>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro, Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#35 (2000/12/28, 18:20:50 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#92 (2000/3/28, 17:41:25 CEST)
+
+
+<P>
+ 
+<A NAME="IDX8435"></A>
+<A NAME="IDX8436"></A>
+
+
+<P>
+This describes the installation of Ciao after downloading the Windows <EM>binary</EM> (i.e., <EM>precompiled</EM>) distribution. It includes the installation of libraries and manuals and applies to Windows NT/95/98 systems. This is the simplest Windows installation, since it requires no compilation and is highly recommended. However, it is also possible to compile Ciao from the source distribution on these systems (please refer to section <A HREF="ciao_205.html#SEC766">Installing Ciao from the source distribution</A> for details). 
+
+
+<P>
+If you find any problems during installation, please refer to section <A HREF="ciao_205.html#SEC774">Troubleshooting (nasty messages and nifty workarounds)</A>. 
+<A NAME="IDX8437"></A>
+<A NAME="IDX8438"></A>
+See also section <A HREF="ciao_208.html#SEC791">Downloading new versions</A> and section <A HREF="ciao_208.html#SEC792">Reporting bugs</A>. 
+
+
+
+<UL>
+<LI><A HREF="ciao_207.html#SEC783">Win32 binary installation summary</A>
+<LI><A HREF="ciao_207.html#SEC784">Checking for correct installation on Win32</A>
+<LI><A HREF="ciao_207.html#SEC785">Compiling the miscellaneous utilities under Windows</A>
+<LI><A HREF="ciao_207.html#SEC786">Server installation under Windows</A>
+<LI><A HREF="ciao_207.html#SEC787">Uninstallation under Windows</A>
+</UL>
+
+
+
+<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Win32 binary installation summary</A></H2>
+
+<P>
+Please follow these steps (below we use the terms <EM>folder</EM> and <EM>directory</EM> interchangeably): 
+
+
+
+<OL>
+
+<LI>Download the precompiled distribution and unpack it into any suitable folder, such as, e.g., <CODE>C:\Program Files</CODE>.
+
+This will create there a folder whose name reflects the Ciao version. Due to limitations of Windows related to file associations, do not put Ciao too deep in the folder hierarchy. For unpacking you will need a recent version of a zip archive manager -- there are many freely available such as 
+<A NAME="IDX8439"></A>
+<CODE>WinZip</CODE>, 
+<A NAME="IDX8440"></A>
+<CODE>unzip</CODE>, 
+<A NAME="IDX8441"></A>
+<CODE>pkunzip</CODE>, etc. (see for example <CODE>www.winzip.com</CODE>). Some users have reported some problems with version 6.2 of WinZip, but no problems with, e.g., version 7. With WinZip, simply click on "Extract" and select the extraction folder as indicated above. 
+
+<LI>Stop any Ciao-related applications.
+
+If you have a previous version of Ciao installed, make sure you do not have any Ciao applications (including, e.g., a toplevel shell) running, or the extraction process may not be able to complete. You may also want to delete the entire folder of the previous installation to save space. 
+
+<LI>Open the Ciao source directory created during extraction and run (e.g. by double-clicking on it) the <CODE>install</CODE>(<CODE>.bat</CODE>) script. Answer "yes" to the dialog that pops up and type any type any character in the installation window to finish the process. You may need to reboot for the changes in the registry to take effect.
+
+This will update the windows registry (the file <CODE>ciao</CODE>(<CODE>.reg</CODE>) lists the additions) and also create some <CODE>.bat</CODE> files which may be useful for running Ciao executables from the command line. It also creates initialization scripts for the 
+<A NAME="IDX8442"></A>
+<CODE>emacs</CODE> editor. The actions performed by the installation script are reported in the installation window. 
+
+<LI>You may want to add a
+
+<A NAME="IDX8443"></A>
+<A NAME="IDX8444"></A>
+<EM>windows shortcut</EM> 
+<A NAME="IDX8445"></A>
+<A NAME="IDX8446"></A>
+in a convenient place, such as the desktop, to 
+<A NAME="IDX8447"></A>
+<CODE>ciaosh.cpx</CODE>, the standard interactive toplevel shell. It is located inside the <CODE>shell</CODE> folder (e.g., click on the file 
+<A NAME="IDX8448"></A>
+<CODE>ciaosh.cpx</CODE> with the right mouse button and select the appropriate option, <CODE>Send to-&#62;Desktop as shortcut</CODE>). 
+
+<LI>You may also want to add another shortcut to the file
+
+<A NAME="IDX8449"></A>
+<CODE>ciao</CODE>(<CODE>.html</CODE>) located inside <CODE>doc\reference\ciao_html</CODE> so that you can open the Ciao manual by simply double-clicking on this shortcut. 
+
+<LI>Finally, if the (freely available)
+
+<A NAME="IDX8450"></A>
+<CODE>emacs</CODE> editor/environment is not installed in your system, we <EM>highly recommend</EM> that you also install it at this point. While it is easy to use Ciao with any editor of your choice, the Ciao distribution includes a very powerful 
+<A NAME="IDX8451"></A>
+<A NAME="IDX8452"></A>
+<EM>application development environment</EM> which is based on 
+<A NAME="IDX8453"></A>
+<CODE>emacs</CODE> and which enables, e.g., source-level debugging, syntax coloring, context-sensitive on-line help, etc. If you are not convinced, consider that many programmers inside Micros*ft use <CODE>emacs</CODE> for developing their programs. 
+
+ 
+<A NAME="IDX8454"></A>
+<A NAME="IDX8455"></A>
+<A NAME="IDX8456"></A>
+<A NAME="IDX8457"></A>
+
+The emacs editor (in all its versions: Un*x, Windows, etc.) can be downloaded from, for example, <A HREF="http://www.emacs.org/">http://www.emacs.org/</A>, and also from the many GNU mirror sites worldwide (See <A HREF="http://www.gnu.org/">http://www.gnu.org/</A> for a list), in the <CODE>gnu/emacs</CODE> and <CODE>gnu/windows/emacs</CODE> directories. For example, at UPM it can be found at <A HREF="ftp://ftp.fi.upm.es/pub/mirrors/gnu/emacs">ftp://ftp.fi.upm.es/pub/mirrors/gnu/emacs</A> and <A HREF="ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs">ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs</A>. You can find answers to frequently asked questions (FAQ) about 
+<A NAME="IDX8458"></A>
+<CODE>emacs</CODE> in general at <A HREF="http://www.gnu.org/software/emacs/emacs-faq.text">http://www.gnu.org/software/emacs/emacs-faq.text</A> and about the Windows version at <A HREF="http://www.gnu.org/software/emacs/windows/ntemacs.html">http://www.gnu.org/software/emacs/windows/ntemacs.html</A> (despite the 
+<A NAME="IDX8459"></A>
+<CODE>ntemacs</CODE> name it runs fine also as is on Win9X and Win2000 machines). 
+
+<A NAME="IDX8460"></A>
+<A NAME="IDX8461"></A>
+You need to tell 
+<A NAME="IDX8462"></A>
+<CODE>emacs</CODE> how to load the Ciao mode automatically when editing and how to access the on-line documentation: 
+
+
+<UL>
+
+<LI>Start
+
+<A NAME="IDX8463"></A>
+<CODE>emacs</CODE> (double click on the icon or from the <CODE>Start</CODE> menu). Open (menu <CODE>Files-&#62;Open File</CODE> or simply <KBD>^X</KBD><KBD>^F</KBD>) the file 
+<A NAME="IDX8464"></A>
+<CODE>ForEmacs.txt</CODE> that the installation script has created in directory where you installed the Ciao distribution. 
+
+<LI>Copy the lines in the file (select with the mouse and then menu <CODE>Edit-&#62;Copy</CODE>). Open/Create using
+
+<A NAME="IDX8465"></A>
+<CODE>emacs</CODE> (menu <CODE>Files-&#62;Open File</CODE> or simply <KBD>^X</KBD><KBD>^F</KBD>) the file 
+<A NAME="IDX8466"></A>
+<CODE>~/.emacs</CODE> (or, if this fails, 
+<A NAME="IDX8467"></A>
+<CODE>c:/.emacs</CODE>). 
+
+<LI>Paste the two lines (menu <CODE>Edit-&#62;Paste</CODE> or simply <KBD>^X</KBD><KBD>^Y</KBD>) into the file and save (menu <CODE>Files-&#62;Save Buffer</CODE> or simply <KBD>^X</KBD><KBD>^S</KBD>).
+
+<LI>Exit
+
+<A NAME="IDX8468"></A>
+<CODE>emacs</CODE> and start it again. 
+
+</UL>
+
+
+<A NAME="IDX8469"></A>
+<CODE>emacs</CODE> should not report any errors (at least related to Ciao) on startup. At this point the 
+<A NAME="IDX8470"></A>
+<CODE>emacs</CODE> checks in the following section should work. 
+
+</OL>
+
+
+
+<H2><A NAME="SEC784" HREF="ciao_toc.html#TOC784">Checking for correct installation on Win32</A></H2>
+
+<P>
+After the actions and registry changes performed by the installation procedure, you should check that the following should work correctly: 
+
+
+<P>
+ 
+
+<UL>
+
+<LI>Ciao-related file types (<CODE>.pl</CODE> source files, <CODE>.cpx</CODE> executables, <CODE>.itf,.po,.asr</CODE> interface files, <CODE>.pls</CODE> scripts, etc.) should have specific icons associated with them (you can look at the files in the folders in the Ciao distribution to check).
+
+<LI>Double-clicking on the shortcut to
+
+<A NAME="IDX8471"></A>
+<CODE>ciaosh</CODE>(<CODE>.cpx</CODE>) on the desktop should start the typical Prolog top-level shell in a window. If this shortcut has not been created on the desktop, then double-clicking on the 
+<A NAME="IDX8472"></A>
+<CODE>ciaosh</CODE>(<CODE>.cpx</CODE>) icon inside the <CODE>shell</CODE> folder within the Ciao source folder should have the same effect. 
+
+<LI>In the top-level shell, Prolog library modules should load correctly. Type for example <CODE>use_module(library(dec10_io))</CODE> at the Ciao top-level prompt --you should get back a prompt with no errors reported.
+
+<LI>To exit the top level shell, type <CODE>halt.</CODE> as usual, or <KBD>^Z</KBD>.
+
+</UL>
+
+<P>
+Also, the following documentation-related actions should work: 
+
+
+
+<UL>
+
+<LI>Double-clicking on the shortcut to <CODE>ciao</CODE>(<CODE>.html</CODE>) which appears on the desktop should show the Ciao manual in your default WWW browser. If this shortcut has not been created you can double-click on the <CODE>ciao</CODE>(<CODE>.html</CODE>) file in the <CODE>doc\reference\ciao_html</CODE> folder inside the Ciao source folder. Make sure you configure your browser to use
+
+<A NAME="IDX8473"></A>
+<A NAME="IDX8474"></A>
+<EM>style sheets</EM> for correct formatting of the manual (note, however, that some older versions of 
+<A NAME="IDX8475"></A>
+Explorer did not support style sheets well and will give better results turning them off). 
+
+<A NAME="IDX8476"></A>
+<A NAME="IDX8477"></A>
+<A NAME="IDX8478"></A>
+<A NAME="IDX8479"></A>
+<A NAME="IDX8480"></A>
+<A NAME="IDX8481"></A>
+
+<LI>The <CODE>doc\reference</CODE> folder contains the manual also in the other formats present in the distribution, such as <CODE>info</CODE> (very convenient for users of the
+
+<A NAME="IDX8482"></A>
+<CODE>emacs</CODE> editor/program development system) and <CODE>postscript</CODE> or <CODE>pdf</CODE>, which are specially useful for printing. See section <A HREF="ciao_4.html#SEC53">Printing manuals (Win32)</A> for instructions. 
+
+</UL>
+
+<P>
+Finally, if 
+<A NAME="IDX8483"></A>
+<CODE>emacs</CODE> is installed, after starting it (double-clicking on the <CODE>emacs</CODE> icon or from the <CODE>Start</CODE> menu) the following should work: 
+
+
+<P>
+ 
+
+<UL>
+
+<LI>Typing <KBD>^H</KBD> <KBD>i</KBD> (or in the menus <CODE>Help-&#62;Manuals-&#62;Browse Manuals with Info</CODE>) should open a list of manuals in info format in which the Ciao manual(s) should appear.
+
+<LI>When opening a Prolog file, i.e., a file with <CODE>.pl</CODE> or <CODE>.pls</CODE> ending, using <KBD>^X</KBD><KBD>^F</KBD><CODE>filename</CODE> (or using the menus) the code should appear highlighted according to syntax (e.g., comments in red), and <CODE>Ciao/Prolog</CODE> menus should appear in the menu bar on top of the
+
+<A NAME="IDX8484"></A>
+<CODE>emacs</CODE> window. 
+
+<LI>Loading the file using the <CODE>Ciao/Prolog</CODE> menu (or typing <KBD>^C</KBD> <KBD>l</KBD>) should start in another emacs buffer the Ciao toplevel shell and load the file. You should now be able to switch the the toplevel shell and make queries from within
+
+<A NAME="IDX8485"></A>
+<CODE>emacs</CODE>. 
+
+</UL>
+
+<P>
+<STRONG>Note:</STRONG> when using 
+<A NAME="IDX8486"></A>
+<CODE>emacs</CODE> it is <EM>very convenient</EM> to swap the locations of the (normally not very useful) <KBD>Caps Lock</KBD> key and the (very useful in 
+<A NAME="IDX8487"></A>
+<CODE>emacs</CODE>) <KBD>Ctrl</KBD> key on the keyboard. How to do this is explained in the 
+<A NAME="IDX8488"></A>
+<CODE>emacs</CODE> frequently asked questions FAQs (see the 
+<A NAME="IDX8489"></A>
+<CODE>emacs</CODE> download instructions for their location). 
+
+
+
+
+<H2><A NAME="SEC785" HREF="ciao_toc.html#TOC785">Compiling the miscellaneous utilities under Windows</A></H2>
+
+<P>
+The 
+<A NAME="IDX8490"></A>
+<CODE>etc</CODE> folder contains a number of utilities, documented in the manual in <EM>PART V - Miscellaneous Standalone Utilities</EM>. In the Win32 distribution these utilities are not compiled by the installation process. You can create the executable for each of them when needed by compiling the corresponding <CODE>.pl</CODE> file. 
+
+
+
+
+<H2><A NAME="SEC786" HREF="ciao_toc.html#TOC786">Server installation under Windows</A></H2>
+
+<P>
+<A NAME="IDX8491"></A>
+<A NAME="IDX8492"></A>
+<A NAME="IDX8493"></A>
+<A NAME="IDX8494"></A>
+
+
+<P>
+If you would like to install Ciao on a server machine, used by several clients, the following steps are recommended: 
+
+
+
+<UL>
+
+<LI>Follow the standard installation procedure on the server. When selecting the folder in which Ciao is installed make sure you select a folder that is visible by the client machines. Also make sure that the functionality specified in the previous sections is now available on the server.
+
+<LI>Perform a
+
+<A NAME="IDX8495"></A>
+<A NAME="IDX8496"></A>
+<EM>client installation</EM> on each client, by running (e.g., double-click on it) the 
+<A NAME="IDX8497"></A>
+<CODE>client.bat</CODE> script. This should update the registry of each client. At this point all the functionality should also be available on the clients. 
+
+</UL>
+
+
+
+<H2><A NAME="SEC787" HREF="ciao_toc.html#TOC787">Uninstallation under Windows</A></H2>
+
+<P>
+To uninstall Ciao under Windows, simply delete the directory in which you put the Ciao distribution. If you also want to delete the registry entries created by the Ciao installation (not strictly needed) this must currently be done by hand. The installation leaves a list of these entries in the file 
+<A NAME="IDX8498"></A>
+<CODE>ciao.reg</CODE> to aid in this task. Also, all the register entries contain the word <EM>ciao</EM>. Thus, to delete all Ciao entries, run the application 
+<A NAME="IDX8499"></A>
+<CODE>regedit</CODE> (for example, by selecting <CODE>Run</CODE> from the Windows <CODE>Start</CODE> menu), search (<KBD>^F</KBD>) for <EM>ciao</EM> in all registry entries (i.e., select all of <CODE>Keys</CODE>, <CODE>Values</CODE>, and <CODE>Data</CODE> in the <CODE>Edit-&#62;Find</CODE> dialog), and delete each matching key (click on the left window to find the matching key for each entry found). 
+
+
+<P><HR><P>
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>, <A HREF="ciao_208.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+</BODY>
+</HTML>

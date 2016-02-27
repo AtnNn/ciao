@@ -17,7 +17,9 @@
 
 /* local declarations */
 
+#if defined(DBG) || defined(DEBUG)
 static TAGGED safe_deref(TAGGED t);
+#endif
 
 BOOL set_predtrace(Arg)
      Argdecl;
@@ -263,6 +265,34 @@ void wr_functor_1(func)
     }
 */
 } 
+
+void display_term(Argdecl, TAGGED term, struct stream_node *stream, BOOL quoted);
+
+void wr_call(Arg,s,func)
+     Argdecl;
+     char *s;
+     struct definition *func;
+{
+  short i;
+
+  printf("%s: ",s);
+
+  if (!(func->printname & 1))
+    {
+      printf(GetString(func->printname));
+      if (func->arity > 0) {
+        putchar('(');
+        DEREF(X(0),X(0));
+        display_term(Arg,X(0),Output_Stream_Ptr, TRUE);
+        for (i = 1; i < func->arity; i++) printf(",_");
+        putchar(')');
+      }
+    }
+  else
+    printf("(?)");
+
+  putchar('\n');
+}
 
 #if defined(DBG) || defined(DEBUG)
 

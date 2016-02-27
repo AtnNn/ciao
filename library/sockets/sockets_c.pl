@@ -5,6 +5,8 @@
          select_socket/5,
          socket_send/2,
          socket_recv_code/3,
+         socket_shutdown/2,
+%         socket_buffering/4,
          hostname_address/2],
          [assertions]).
 
@@ -15,6 +17,8 @@
          select_socket/5,
          socket_send/2,
          socket_recv_code/3,
+         socket_shutdown/2,
+%         socket_buffering/4,
          hostname_address/2]).
 
 

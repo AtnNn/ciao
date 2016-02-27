@@ -1,6 +1,6 @@
 :- module(prolog_sys, [
         statistics/0, statistics/2, predicate_property/2,
-        current_atom/1, current_predicate/2, garbage_collect/0,
+        current_atom/1, garbage_collect/0,
         new_atom/1],
         [assertions, isomodes]). %  engine(metadefs)
 
@@ -8,7 +8,6 @@
         statistics/0,
         current_atom/1,
         new_atom/1,
-        current_predicate/2,
         garbage_collect/0]).
 
 :- use_module(engine(internals)).
@@ -50,9 +49,6 @@ symbols and predicates.".
 it is bound to the values on the other cases.".
 
 :- true pred garbage_collect # "Forces garbage collection when called.".
-
-:- true pred current_predicate(?PredSpec, ?Module) #
-"PredSpec exists in Module.".
 
 :- true pred current_atom(Atom) : var => atm # "Enumerates on
 backtracking all the existing atoms in the system.".

@@ -15,6 +15,21 @@
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
+:- comment(define_flag/3,"Defines flags as follows:
+	@includedef{define_flag/3}
+	(See @ref{Changing system behaviour and various flags}).
+
+        If flag is @tt{on} (it is @tt{off} by default), a variable
+        followed by a parenthesized lists of arguments is read as a
+        @pred{call/N} term, except if the variable is anonymous, in
+        which case it is read as an anonymous predicate abstraction
+        head. For example, @tt{P(X)} is read as @tt{call(P,X)} and
+        @tt{_(X,Y)} as @tt{''(X,Y)}.").
+
+:- multifile define_flag/3.
+
+define_flag(read_hiord, [on,off], off).
+
 :- pred read(+Stream,?Term) + iso
 # "The next term, delimited by a full-stop (i.e., a @tt{.} followed by
    either a space or a control character), is read from @var{Stream}
@@ -120,11 +135,11 @@ read_internal(Answer, Stream, CurIn, Variables, Tokens, lines(Ln0,Ln1)) :-
         line_position(Stream, Pos),
         line_count(Stream, L1), Ln1 is L1+sign(Pos),
         ( Tokens = [] -> Term = end_of_file
-        ; read(Tokens, 1200, Term, LeftOver),
+        ; clearerr(Stream), % Just in case we have reached eof
+          read(Tokens, 1200, Term, LeftOver),
           all_read(LeftOver) ->
             the_syntax_error([], 0, _, _) % erase any leftovers
-        ; syntax_error_data(Tokens, Msg, ErrorLoc, LastToken),
-          ( LastToken = '.' -> true ; clearerr(Stream) ),
+        ; syntax_error_data(Tokens, Msg, ErrorLoc),
           throw(error(syntax_error(Ln0,Ln1,Msg,ErrorLoc),'while reading'))
         ),
         set_input(CurIn),
@@ -193,7 +208,9 @@ read([], _, _, _) :-
 %   read(+Token, +RestTokens, +Precedence, -Term, -LeftOver)
 
 read(X, _, _, _, _) :- var(X), !, fail.		% space saver
-read(var(Variable,Name), ['('|S1], Precedence, Answer, S) :- !,
+read(var(Variable,Name), ['('|S1], Precedence, Answer, S) :-
+        current_prolog_flag(read_hiord, on),
+        !,
 	read(S1, 999, Arg1, S2),
 	read_args(S2, RestArgs, S3), !,
         ( Name = "_" ->
@@ -330,12 +347,12 @@ syntax_error(Message, List) :-
 	asserta_fact('syntax error'(Message,Length)), !,
 	fail.
 
-syntax_error_data(Tokens, Msg, ErrorLoc, LastToken) :-
+syntax_error_data(Tokens, Msg, ErrorLoc) :-
 	the_syntax_error([], 1000000, Msg0, AfterError),
         tokens_items(Msg0, Msg),
 	length(Tokens, Length),
 	BeforeError is Length-AfterError,
-        error_localization(Tokens, BeforeError, '.', LastToken, ErrorLoc).
+        error_localization(Tokens, BeforeError, ErrorLoc).
 
 the_syntax_error(Msg0, AfterError0, Msg, AfterError) :-
 	current_fact('syntax error'(Msg1,AfterError1), Ptr), !,
@@ -347,14 +364,14 @@ the_syntax_error(Msg0, AfterError0, Msg, AfterError) :-
 	).
 the_syntax_error(Msg, AfterError, Msg, AfterError).
 
-error_localization(L, 0, T0, T, Msg) :- !,
+error_localization(L, 0, Msg) :- !,
         Msg = ['\n','** here **','\n'|Msg_],
-        error_localization(L, 999999, T0, T, Msg_).
-error_localization([T|Ts], BeforeError, _, LT, [I,' '|Is]) :-
+        error_localization(L, 999999, Msg_).
+error_localization([T|Ts], BeforeError, [I,' '|Is]) :-
 	token_item(T, I),
 	Left is BeforeError-1,
-	error_localization(Ts, Left, T, LT, Is).
-error_localization([], _, T, T, []).
+	error_localization(Ts, Left, Is).
+error_localization([], _, []).
 
 tokens_items([], []).
 tokens_items([T|Ts], [I|Is]) :-
@@ -383,6 +400,13 @@ second_prompt(Old, New) :-
         ), !.
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+43,2001/01/15,17:34*58+'CET'), "Changes to not
+   require a layout char ending in prolog files.  (Daniel Cabeza
+   Gras)").
+
+:- comment(version(1*7+36,2000/12/31,18:35*26+'CET'), "Added read_hiord
+   flag to disable higher order special syntax.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+100,2000/03/30,18:01*28+'CEST'), "Added option
    dictionary(Dict) to read_term to get the variables dictionary (as

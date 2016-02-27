@@ -1,6 +1,6 @@
 % Adapted from shared code written by Richard A. O'Keefe.
 % All changes by UPM CLIP Group.
-:- module(sort, [sort/2, keysort/2],[assertions,isomodes]).
+:- module(sort, [sort/2, keysort/2, keylist/1],[assertions,isomodes]).
 
 :- comment(title,"Sorting lists").  
 

@@ -1,1 +1,1 @@
-icon_base_address('http://localhost/images/').
+icon_base_address('/images/').

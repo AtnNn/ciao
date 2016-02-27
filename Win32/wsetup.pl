@@ -63,8 +63,10 @@ main([T]) :-
                     '*                                           \n']),
 
         working_directory(SDir,SDir), % SRC
+        display(SDir),nl,
         atom_codes(SDir,SDirStr),
         cyg2win(SDirStr,CiaoPath,swap),
+        display_string(CiaoPath),nl,
         append(CiaoPath,"\\Win32\\bin\\ciaoengine.exe",EnginePath),
         list_concat(["""",EnginePath,""""],EngineQuot),
         cyg2win(SDirStr,SRCS,noswap),
@@ -177,7 +179,9 @@ make_ciaomode(SDir,EDir) :-
 make_header(CiaoPath) :-
 	setup_mess(['Building header to ',CiaoPath,
                     '/Win32/bin/ciaoengine.exe.\n']),
-        open_output('$/lib/compiler/header', Out),
+%        open_output('$/lib/compiler/header', Out),
+        atom_concat(CiaoPath, '/lib/compiler/header', HeaderPath),
+        open_output(HeaderPath, Out),
         display('#!/bin/sh\n'),
         display('INSTENGINE="'),
         display(CiaoPath),
@@ -220,10 +224,12 @@ ciaoreg(CiaoPath, Engine, ExeExt, Reg) :-
         append(CiaoPath, "\\Win32\\ciaoscrt.ico,0", ScrtIco),
         append(Engine, " %2 %3 %4 %5 %6 %7 %8 %9 -C -b ""%1""",
                ExeCommand),
+        append(Engine," -u ""%1"" -C -i -b $\\shell\\ciaosh", LoadFileCmd),
         append(Engine," ""%1"" -C -b $\\ciaoc\\ciaoc", MakeExecCmd),
         append(Engine,
                " ""%1"" %2 %3 %4 %5 %6 %7 %8 %9 -C -b $\\shell\\ciao-shell",
                ExeScrtCmd),
+        append(Engine, " -C -b %s %s",IIS_string),
         ROOT = 'HKEY_CLASSES_ROOT',
         Reg = [
         % .cpx files
@@ -255,6 +261,10 @@ ciaoreg(CiaoPath, Engine, ExeExt, Reg) :-
           'EditFlags'=0x01000000],
         [[ROOT,ciaofile,shell,open,command],
           '@'=""],
+        [[ROOT,ciaofile,shell,load_file],
+          '@'="Load into Toplevel shell"],
+        [[ROOT,ciaofile,shell,load_file,command],
+          '@'=LoadFileCmd],
         [[ROOT,ciaofile,shell,make_executable],
           '@'="Make executable"],
         [[ROOT,ciaofile,shell,make_executable,command],
@@ -302,7 +312,14 @@ ciaoreg(CiaoPath, Engine, ExeExt, Reg) :-
         [[ROOT,ciaoasrfile,'DefaultIcon'],
           '@'=AsrIco],
         [[ROOT,ciaoasrfile,shell],
-          '@'=""]].
+          '@'=""],
+	[['HKEY_LOCAL_MACHINE','SOFTWARE','Ciao Prolog'],
+	 ciao_dir=CiaoPath],
+        % For Microsoft's IIS
+        [['HKEY_LOCAL_MACHINE','SYSTEM','CurrentControlSet',
+          'Services','W3SVC','Parameters','Script Map'],
+          ExeExt=IIS_string]
+        ].
         
 % --------------------------------------------------------------------------
 % Utilities
@@ -320,6 +337,14 @@ line :-
 
 % --------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+111,2001/06/20,18:58*51+'CEST'), "Added an entry
+   to the Windows registry to allow loading a file into a new toplevel
+   by right-clicking on a .pl file.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+66,2001/03/15,20:47*55+'CET'), "The installation
+   program in Windows now adds an entry in the registry for running Ciao
+   executables as CGIs under IIS.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+168,2000/07/05,16:24*21+'CEST'), "ForEmacs.txt
         was not being created; corrected.  (MCL)").

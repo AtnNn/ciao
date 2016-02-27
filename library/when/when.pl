@@ -1,4 +1,7 @@
-:- module(when, [when/2,wakeup_exp/1],[assertions,isomodes]).
+:- module(when, [when/2,wakeup_exp/1],[]).
+
+:- use_package(assertions).
+:- use_package(isomodes).
 
 :- comment(title,"Delaying predicates (when)").
 :- comment(author, "Manuel Carro").
@@ -93,12 +96,7 @@ given.  The @var{WakeupCond}s now acceptable are @tt{ground(T)}
 (@pred{Goal} is delayed until @tt{T} is not a variable), and
 conjunctions and disjunctions of conditions:
 
-@begin{verbatim}
-wakeup_exp(ground(_)).
-wakeup_exp(nonvar(_)).
-wakeup_exp((C1, C2)):- wakeup_exp(C1), wakeup_exp(C2).
-wakeup_exp((C1; C2)):- wakeup_exp(C1), wakeup_exp(C2).
-@end{verbatim}
+@includedef{wakeup_exp/1}
 
 @pred{when/2} only fails it the @var{WakeupCond} is not legally
 formed.  If @var{WakeupCond} is met at the time of the call no delay
@@ -132,7 +130,7 @@ when(Condition, Goal):-
  %% i.e., the list of variables which can possibly trigger the
  %% execution of Goal.
             varset(Simplified, AllVars),
-            NewAttribute = '$when'(Condition, Goal, VarToLink, AllVars),
+            NewAttribute = '$when'(Simplified, Goal, VarToLink, AllVars),
             attach_attribute(VarToLink, NewAttribute),
             add_when_to_var_list(AllVars, VarToLink)
         ).
@@ -289,6 +287,17 @@ simplify(ground(Term), true):- ground(Term), !.
 simplify(ground(Term), NewTerm):-
         varset(Term, AllVars),
         conjunction(AllVars, NewTerm).
+ %%
+ %% The code below seems to be slower.  Test with more benchmarks.
+ %%
+ %% simplify(ground(Term), Simplified):-
+ %%         varset(Term, AllVars),
+ %%         (
+ %%             AllVars = [] ->
+ %%             Simplified = true
+ %%         ;
+ %%             conjunction(AllVars, Simplified)
+ %%         ).
 simplify(nonvar(Term), true):- nonvar(Term), !.
 simplify(nonvar(Term), nonvar(Term)).
 
@@ -333,6 +342,10 @@ or(C1, C2, (C1; C2)):- !.
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+3,2000/07/21,11:54*59+'CEST'), "Condition
+simplification was not being really taken into account when initially
+calling when/2 ; corrected.  (MCL)").
 
 :- comment(version(1*5+165,2000/06/26,17:11*16+'CEST'), "Changed
 implementation of when/2: seems to be correct now --- but more tests

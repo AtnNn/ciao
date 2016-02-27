@@ -1,60 +1,63 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - genbar2 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC588" HREF="ciao_toc.html#TOC588">genbar2 (library)</A></H1>
+<H1><A NAME="SEC609" HREF="ciao_toc.html#TOC609">Unweighted graph-processing utilities</A></H1>
 <P>
-<A NAME="IDX6302"></A>
+<A NAME="IDX6553"></A>
 
 
 <P>
-This module defines predicates which show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
+<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#35 (2000/12/28, 18:20:50 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#105 (1999/6/4, 12:24:49 MEST)
+
+
+<P>
+An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
+
+
+<P>
+An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
+
+
+<P>
+An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
+
+
+<P>
+A vertex can be any term. Two vertices are distinct iff they are not identical (
+<A NAME="IDX6554"></A>
+<CODE>==/2</CODE>). 
+
+
+<P>
+A path is represented as a list of vertices. No vertex can appear twice in a path. 
 
 
 
 <UL>
-
-<LI>Numeric values for the x axis are needed, otherwise it does not work properly. See
-
-<A NAME="IDX6303"></A>
-<CODE>xbarelement2/1</CODE> definition type. 
-
-<LI>The bar position is proportional to the x-coordinate value.
-
-<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
-
-<A NAME="IDX6304"></A>
-<CODE>xbarelement2/1</CODE> type definition. Thus, the user can call each predicate in two ways. 
-
-<LI>The bar chart has a legend and one entry (symbol and label) per bar.
-
-<LI>If you do not want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contain elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> does not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
-
-</UL>
-
-<P>
-Particular features will be pointed out in the corresponding predicate. 
-
-
-
-<UL>
-<LI><A HREF="ciao_153.html#SEC589">Usage and interface (genbar2)</A>
-<LI><A HREF="ciao_153.html#SEC590">Documentation on exports (genbar2)</A>
+<LI><A HREF="ciao_153.html#SEC610">Usage and interface (ugraphs)</A>
+<LI><A HREF="ciao_153.html#SEC611">Documentation on exports (ugraphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC589" HREF="ciao_toc.html#TOC589">Usage and interface (<CODE>genbar2</CODE>)</A></H2>
+<H2><A NAME="SEC610" HREF="ciao_toc.html#TOC610">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -62,7 +65,7 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(genbar2)).</CODE>
+<CODE>:- use_module(library(ugraphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -71,17 +74,29 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6305"></A>
-<CODE>barchart2/7</CODE>, 
-<A NAME="IDX6306"></A>
-<CODE>barchart2/11</CODE>, 
-<A NAME="IDX6307"></A>
-<CODE>percentbarchart2/7</CODE>.
+<A NAME="IDX6555"></A>
+<CODE>vertices_edges_to_ugraph/3</CODE>, 
+<A NAME="IDX6556"></A>
+<CODE>neighbors/3</CODE>, 
+<A NAME="IDX6557"></A>
+<CODE>edges/2</CODE>, 
+<A NAME="IDX6558"></A>
+<CODE>del_vertices/3</CODE>, 
+<A NAME="IDX6559"></A>
+<CODE>vertices/2</CODE>, 
+<A NAME="IDX6560"></A>
+<CODE>add_vertices/3</CODE>, 
+<A NAME="IDX6561"></A>
+<CODE>add_edges/3</CODE>, 
+<A NAME="IDX6562"></A>
+<CODE>transpose/2</CODE>, 
+<A NAME="IDX6563"></A>
+<CODE>point_to/3</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6308"></A>
-<CODE>xbarelement2/1</CODE>.
+<A NAME="IDX6564"></A>
+<CODE>ugraph/1</CODE>.
 
 </UL>
 
@@ -92,20 +107,10 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6309"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX6310"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6311"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX6312"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX6313"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX6314"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6315"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX6565"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX6566"></A>
+<CODE>sort</CODE>.
 
 </UL>
 
@@ -115,165 +120,184 @@ Particular features will be pointed out in the corresponding predicate.
 
 
 
-<H2><A NAME="SEC590" HREF="ciao_toc.html#TOC590">Documentation on exports (<CODE>genbar2</CODE>)</A></H2>
+<H2><A NAME="SEC611" HREF="ciao_toc.html#TOC611">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX6316"></A>
-<A NAME="IDX6317"></A>
+<A NAME="IDX6567"></A>
+<A NAME="IDX6568"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart2/7:</B>
-<DD><A NAME="IDX6318"></A>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
+<DD><A NAME="IDX6569"></A>
 
 
 <P>
-<CODE>barchart2(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-The maximum and minimum limits for axes are determined from the data. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-barchart2('This is the header text',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1','Blue','Yellow','pattern1'],
-       [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
-  'My yaxixtitle',
-  [20,10],
-  'This is the footer text').
-</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX6319"></A>
-<A NAME="IDX6320"></A>
+<A NAME="IDX6570"></A>
+<A NAME="IDX6571"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart2/11:</B>
-<DD><A NAME="IDX6321"></A>
+<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
+<DD><A NAME="IDX6572"></A>
 
 
 <P>
-<CODE>barchart2(Header,BT,XT,XVector,XMax,XMin,YT,YVector,YMax,YMin,Footer)</CODE>
+<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex,+Graph,-Neighbors)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
 
-<P>
-You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, as you can check looking at the 
-<A NAME="IDX6322"></A>
-<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
- 
-Example: 
-
-
-
-<PRE>
-barchart2('This is the header text',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1',Color1,Color2,Pattern1],
-         [2,'bar2',Color3,Color4,Pattern2] ],
-  10,
-  -10,
-  'My yaxixtitle',
-  [20,10],
-  100,
-  -10,
-  'The limits for the axes are set by the user').
-</PRE>
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6323"></A>
-<A NAME="IDX6324"></A>
+<A NAME="IDX6573"></A>
+<A NAME="IDX6574"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart2/7:</B>
-<DD><A NAME="IDX6325"></A>
+<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
+<DD><A NAME="IDX6575"></A>
 
 
 <P>
-<CODE>percentbarchart2(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+<STRONG>Usage:</STRONG> <CODE>edges(+Graph,-Edges)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
 
-<P>
-The y axis maximum coordinate value is 100. The x axis limits are autoarrange. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-percentbarchart2('This is a special barchart to represent percentages',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1','Blue','Yellow','pattern1'],
-          [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
-  'My yaxixtitle',
-  [80,10],
-  'This is the footer text').
-</PRE>
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6326"></A>
-<A NAME="IDX6327"></A>
+<A NAME="IDX6576"></A>
+<A NAME="IDX6577"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement2/1:</B>
-<DD><A NAME="IDX6328"></A>
+<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
+<DD><A NAME="IDX6578"></A>
 
-
-
-<PRE>
-xbarelement2([XValue,LegendElement]) :-
-        number(XValue),
-        atomic(LegendElement).
-xbarelement2([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
-        number(XValue),
-        atomic(LegendElement),
-        color(ForegColor),
-        color(BackgColor),
-        pattern(SPattern).
-</PRE>
 
 <P>
-Defines the attributes of the bar. 
+<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1,+Vertices,-Graph2)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
 
-<DL COMPACT>
-
-<DT><CODE>XValue</CODE>
-<DD>
-x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
-
-<DT><CODE>LegendElement</CODE>
-<DD>
-Element legend name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
-
-<DT><CODE>ForegColor</CODE>
-<DD>
-Is the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>BackgColor</CODE>
-<DD>
-Is the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>SPattern</CODE>
-<DD>
-Is the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+</UL>
 
 </DL>
+
+<P>
+<A NAME="IDX6579"></A>
+<A NAME="IDX6580"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
+<DD><A NAME="IDX6581"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vertices(+Graph,-Vertices)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6582"></A>
+<A NAME="IDX6583"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
+<DD><A NAME="IDX6584"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1,+Vertices,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6585"></A>
+<A NAME="IDX6586"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
+<DD><A NAME="IDX6587"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1,+Edges,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6588"></A>
+<A NAME="IDX6589"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
+<DD><A NAME="IDX6590"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>transpose(+Graph,-Transpose)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6591"></A>
+<A NAME="IDX6592"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
+<DD><A NAME="IDX6593"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex,+Graph,-Point_to)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6594"></A>
+<A NAME="IDX6595"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
+<DD><A NAME="IDX6596"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
+
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

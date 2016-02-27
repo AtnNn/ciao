@@ -7,6 +7,8 @@
 :- use_module(library(format)).
 :- use_module(library(concurrency)).
 
+:- use_module(socket_number).
+
 %% Listens to a socket, reads in two integers (each in a line),
 %% and writes the result of adding them.
 
@@ -43,6 +45,7 @@ main(_):-
 wait_for_connections(Socket):-
         repeat,
         socket_accept(Socket, Stream),
+%        socket_buffering(Stream, read, _Old, unbuf),
         assertz_fact(connection(Stream)),
         fail.
 
@@ -70,6 +73,7 @@ num_of_connections(100).
 get_socket(Socket):-
         num_of_connections(Queue),
         current_host(Host),
+        socket_port(Port),
         bind_socket(Port, Queue, Socket),  %% Already in "listen" state
         display('Bound to port '),
         display(Port),

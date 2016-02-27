@@ -148,77 +148,6 @@ public class PLStructure extends PLTerm {
       return (Object)this;
   }
 
-//   /**
-//    * Java type test on Prolog objects. Returns true if the
-//    * related Prolog term can be evaluated as a Java-type
-//    * Prolog declaration, that is, a structure with one argument
-//    * and specific functor used to inform to Java about the type
-//    * of the argument received from Prolog.
-//    *
-//    * @return <code>true</code> if the term represented by this
-//    *         Prolog structure can be evaluated as a Java-type
-//    *         specification;
-//    *         <code>false</code> otherwise.
-//    */
-//   private boolean isJavaType() {
-    
-//     if (Arity == 1)
-//       if (Name.equals(JAVA_INTEGER) ||
-// 	  Name.equals(JAVA_SHORT) ||
-// 	  Name.equals(JAVA_BYTE) ||
-// 	  Name.equals(JAVA_LONG) ||
-// 	  Name.equals(JAVA_FLOAT) ||
-// 	  Name.equals(JAVA_DOUBLE) ||
-// 	  Name.equals(JAVA_BOOLEAN) ||
-// 	  Name.equals(JAVA_CHARACTER))
-// 	return true;
-    
-//     return false;
-
-//   }
-
-//   /**
-//    * Given a Java-type Prolog specification, returns the Java
-//    * object that represents it.
-//    *
-//    * @return An <code>Object</code> instance with the Java 
-//    *         representation of the Java-type specification;
-//    *         <code>null</code> if there is no possible 
-//    *         Java representation (when isJavaType returns 
-//    *         <code>false</code>).
-//    */
-//   private Object getJavaObject() {
-    
-//     try {
-//       if (Arity == 1)
-// 	if (Name.equals(JAVA_INTEGER))
-// 	  return (Object)(new Integer(Args[0].javaRepr())).intValue();
-// 	else if (Name.equals(JAVA_SHORT))
-// 	  return (Object)(new Short(Args[0].javaRepr())).shortValue();
-// 	else if (Name.equals(JAVA_BYTE))
-// 	  return (Object)(new Byte(Args[0].javaRepr())).byteValue();
-// 	else if (Name.equals(JAVA_LONG))
-// 	  return (Object)(new Long(Args[0].javaRepr())).longValue();
-// 	else if (Name.equals(JAVA_FLOAT))
-// 	  return (Object)(new Float(Args[0].javaRepr())).floatValue();
-// 	else if (Name.equals(JAVA_DOUBLE))
-// 	  return (Object)(new Double(Args[0].javaRepr())).doubleValue();
-// 	else if (Name.equals(JAVA_BOOLEAN)) {
-// 	  String s = (String)(Args[0].javaRepr());
-// 	  return (Object)(new Boolean(s.equals(JAVA_BOOLEAN_YES)));
-// 	}
-// 	else if (Name.equals(JAVA_CHARACTER))
-// 	  //@@@@@ ojojo: todavia no hay manera de implementar esto...
-// 	  //	  return (Object)(new Character(Args[0].javaRepr())).charValue();
-// 	  ;
-//     } catch (Exception e) {
-//       return null;
-//     }
-    
-//     return null;
-
-//   }
-
   /**
    * Execution test on Prolog objects. Returns true if the
    * related Prolog term can be evaluated.
@@ -314,7 +243,7 @@ public class PLStructure extends PLTerm {
    * @param term Prolog term used as pattern for the
    *             backtracking.
    */
-  public void backtrack(PLTerm term) throws PLException {
+  void backtrack(PLTerm term) throws PLException {
 
     if ((Type == term.Type) && (Arity == ((PLStructure)term).Arity)) {
       PLStructure s = (PLStructure)term;
@@ -327,7 +256,7 @@ public class PLStructure extends PLTerm {
 
   }
 
-  protected int numberOfCells() {
+  int numberOfCells() {
     int num = 2 * (Arity + 1);
 
     for (int i = 0; i < Arity; i++)
@@ -348,32 +277,34 @@ public class PLStructure extends PLTerm {
    * @param pl          <code>PLConnection</code> object that represents
    *                    the connection to the Prolog process.
    **/
-  public void launchGoal(PLInterpreter interpreter,
+  void launchGoal(PLInterpreter interpreter,
                          PLConnection pl) {
 
     PLTerm args[] = new PLTerm[Arity];
     for (int i = 0; i < Arity; i++)
-      if (PLInterpreter.isInterpretable(Args[i]))
-        args[i] = interpreter.interpret(Args[i]);
-      else
-        args[i] = Args[i];
+	if (PLInterpreter.isInterpretable(Args[i]))
+	    args[i] = interpreter.interpret(Args[i]);
+	else
+	    args[i] = Args[i];
 
-    PLStructure pred = new PLStructure(Name, Arity, args);
+    PLStructure strGoal = new PLStructure(Name, Arity, args);
 
-    pl.toPrologEvent(this);
+    try {
+	PLGoal goal = new PLGoal(pl, strGoal);
+	goal.query();
+	goal.execute();
+	//	goal.nextSolution();
+	//	goal.terminate();
+    } catch (Exception e) {
+	// Not implemented. Must throw the exception on the
+	// Prolog side.
+	System.err.println("ERROR: Exception thrown while launching goal:" + e);
+    }
   }
-
-  /**
-   * Goal launching. Evaluates this structure as a goal and prints
-   * it to the eventStream to be launched by Prolog.
-   *
-   * @param pl          <code>PLConnection</code> object that represents
-   *                    the connection to the Prolog process.
-   */
-  public void launchGoal(PLConnection pl) {
-
-    pl.toPrologEvent(this);
-
-  }
-
 }
+
+
+
+
+
+

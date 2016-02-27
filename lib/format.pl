@@ -248,6 +248,7 @@ Hello .(a,.(b,.(c,[]))) world!
 suposing the user has defined the predicate
 
 @begin{verbatim}
+:- multifile portray/1.
 portray([X|Y]) :- print(cons(X,Y)).
 @end{verbatim}
 
@@ -313,6 +314,10 @@ Hello
 
 @item ~N
 (Fresh line.) Print a newline, if not already at the beginning of a line.
+
+@item ~~
+(Print tilde.) Prints @tt{~}
+
 @end{itemize}
 
 

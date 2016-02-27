@@ -57,9 +57,14 @@
           terms read by the compiler in the rest of the current text.
           For each subsequent term read by the compiler, the translation
           predicate is called to obtain a new term which will be used by
-          the compiler as if it where the term present in the file.  A
-          list may be returned also, to translate a single term into
-          several terms.  @var{Predicate} must be exported by a module
+          the compiler as if it where the term present in the file.  If
+          the call fails, the term is used as such.  A list may be
+          returned also, to translate a single term into several terms.
+          Before calling the translation predicate with actual program
+          terms, it is called with an input of @tt{0} to give an
+          opportunity of making initializations for the module,
+          discarding the result (note that normally a 0 could not be
+          there).  @var{Predicate} must be exported by a module
           previously loaded with a @decl{load_compilation_module/1}
           declaration.  Normally included in @concept{package file}s.".
 
@@ -97,19 +102,19 @@
 :- comment(doinclude,add_clause_trans/1).
 :- true decl add_clause_trans(Predicate) : translation_predname
         # "Declares a translation, defined by @var{Predicate}, of the
-          clauses of the current text.
-          The translation is performed before @decl{add_goal_trans/1}
-          translations but after @decl{add_sentence_trans/1} and
-          @decl{add_term_trans/1} translations. The usefulness of this
-          translation is that information of the interface of related
-          modules is available when it is performed.  For each
-          clause read by the compiler, the translation
-          predicate is called with the first argument instantiated to a
-          structure @tt{clause(Head,Body)}, and the predicate must
-          return in the second argument a similar structure, without
-          changing the functor in @tt{Head}.  Before executing the
+          clauses of the current text.  The translation is performed
+          before @decl{add_goal_trans/1} translations but after
+          @decl{add_sentence_trans/1} and @decl{add_term_trans/1}
+          translations. The usefulness of this translation is that
+          information of the interface of related modules is available
+          when it is performed.  For each clause read by the compiler,
+          the translation predicate is called with the first argument
+          instantiated to a structure @tt{clause(Head,Body)}, and the
+          predicate must return in the second argument a similar
+          structure, without changing the functor in @tt{Head} (or fail,
+          in which case the clause is used as is).  Before executing the
           translation predicate with actual clauses it is called with an
-          input of @tt{clause(0,0)} (output is discarded).".
+          input of @tt{clause(0,0)}, discarding the result.".
 
 :- comment(doinclude, translation_predname/1).
 

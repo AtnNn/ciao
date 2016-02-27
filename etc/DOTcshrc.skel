@@ -32,11 +32,13 @@ endif
 if ( ${?CIAOARCH} == 0 ) then
    setenv CIAOARCH `ciao_get_arch`
 endif
+#
 # This is just to be able older to run versions of Ciao which looked
 # at ARCH instead of CIAOARCH:
-if ( ${?ARCH} == 0 ) then
-   setenv ARCH `ciao_get_arch`
-endif
+#if ( ${?ARCH} == 0 ) then
+#   setenv ARCH `ciao_get_arch`
+#endif
+#
 #
 # Documentation-related paths:
 #
@@ -64,7 +66,7 @@ else
 endif
 # Set INFOPATH (checking that we do not add it twice)
 if ( ${?INFOPATH} == 0 ) then
-        setenv INFOPATH /usr/info:/usr/local/info:${CIAODOCDIR}
+        setenv INFOPATH /usr/info:/usr/share/info:/usr/local/info:${CIAODOCDIR}
 else
 	switch (${INFOPATH})
 	case ${CIAODOCDIR}:*:      # it is first one

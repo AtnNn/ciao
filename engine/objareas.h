@@ -16,8 +16,7 @@ typedef unsigned short int CLOCK;
    active_instance(ARG,I,TIME,CHAINP))
 
 
- /* This one does not look at time creation of clauses. NT comes from "No
-    Time" (MCL) */
+ /* This one does not look at time creation of clauses. */
 
 #define ACTIVE_INSTANCE_conc(ARG,I,ROOT)  \
      active_instance_conc(ARG,I,ROOT) 
@@ -132,6 +131,7 @@ struct stream_node {
   int pending_char;                                      /* From peek'ing */
   unsigned int isatty:1;
   unsigned int socket_eof:1;
+  unsigned int socket_is_unbuffered:1;
   ENG_INT last_nl_pos;
   ENG_INT nl_count;
   ENG_INT char_count;

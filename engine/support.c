@@ -13,7 +13,7 @@
 #include "stacks_defs.h"
 #include "bignum_defs.h"
 #include "locks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "initial_defs.h"
 
 
@@ -42,7 +42,7 @@ static struct sw_on_key_node *atom_gethash(register struct sw_on_key *sw,
 void failc(mesg)
      char *mesg;
 {
-  ENG_TTYPRINTF1("{ERROR: %s}\n",mesg);
+  ENG_PRINTF1(stream_user_error,"{ERROR: %s}\n",mesg);
   /*if (predicates_location != &user_predicates)*/ /* wam not initialized */
   if (!wam_initialized){
     printf("Wam not initialized, exiting!!!\n");
@@ -1091,19 +1091,14 @@ ENG_FLT get_float(t)
   }
 }
 
+
 /* '$stream'(<address>,<id>) <-- (struct stream_node *) */
-TAGGED ptr_to_stream(Arg,n)
+
+TAGGED ptr_to_stream_noalias(Arg, n)
      Argdecl;
      REGISTER struct stream_node *n;
 {
   REGISTER TAGGED *pt1 = w->global_top;
-
-  if (n==stream_user_input)
-    return atom_user_input;
-  if (n==stream_user_output)
-    return atom_user_output;
-  if (n==stream_user_error)
-    return atom_user_error;
 
   /*
   printf("(int)n is %ud\n", (int)n);
@@ -1115,6 +1110,26 @@ TAGGED ptr_to_stream(Arg,n)
   HeapPush(pt1,n->label);
   return (w->global_top=pt1, Tag(STR,HeapOffset(pt1,-3)));
 }
+
+
+/* '$stream'(<address>,<id>) <-- (struct stream_node *) */
+/* or */
+/* <stream_alias> <-- (struct stream_node *) */
+TAGGED ptr_to_stream(Arg,n)
+     Argdecl;
+     REGISTER struct stream_node *n;
+{
+  if (n==stream_user_input)
+    return atom_user_input;
+  if (n==stream_user_output)
+    return atom_user_output;
+  if (n==stream_user_error)
+    return atom_user_error;
+
+  return ptr_to_stream_noalias(Arg, n);
+}
+
+
 
 /* '$stream'(<address>,<id>) --> (struct stream_node *)
                           --> NULL, if invalid

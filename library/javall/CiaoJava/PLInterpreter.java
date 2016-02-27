@@ -13,122 +13,125 @@ import java.util.*;
  * look up the Java objects referred by the Prolog side.
  */
 class PLInterpreter {
-  private Hashtable objTable;
-  private int objKey = 0;
-  private static final int STARTING_CAPACITY = 16;
-  private static final float FACTOR = 0.2f;
-  //  private PLActionListener javaActionListener;
-  private PLEventListener eventListener;
+    private Hashtable objTable;
+    private int objKey = 0;
+    private static final int STARTING_CAPACITY = 16;
+    private static final float FACTOR = 0.2f;
+    //  private PLActionListener javaActionListener;
+    private PLEventListener eventListener;
 
-  // Functor names accepted from Prolog.
-  private static final String CREATE_OBJECT = "$java_create_object";
-  private static final String DELETE_OBJECT = "$java_delete_object";
-  private static final String GET_VALUE = "$java_get_value";
-  private static final String SET_VALUE = "$java_set_value";
-  private static final String INVOKE_METHOD = "$java_invoke_method";
-  private static final String ADD_LISTENER = "$java_add_listener";
-  private static final String REMOVE_LISTENER = "$java_remove_listener";
-  private static final String QUIT = "$quit";
-  private static final String WAIT_FOR_EVENTS = "$java_wait_for_events";
+    // Functor names accepted from Prolog.
+    private static final String CREATE_OBJECT = "$java_create_object";
+    private static final String DELETE_OBJECT = "$java_delete_object";
+    private static final String GET_VALUE = "$java_get_value";
+    private static final String SET_VALUE = "$java_set_value";
+    private static final String INVOKE_METHOD = "$java_invoke_method";
+    private static final String ADD_LISTENER = "$java_add_listener";
+    private static final String REMOVE_LISTENER = "$java_remove_listener";
+    private static final String TERMINATE = "$terminate";
+    private static final String DISCONNECT = "$disconnect";
+    private static final String WAIT_FOR_EVENTS = "$java_wait_for_events";
 
-  /**
-   * Creates a new interpreter, with the table of objects
-   * managed by Prolog given as argument.
-   *
-   * @param pl Object that represents the connection to the Prolog process.
-   */
-  public PLInterpreter(PLConnection pl) {
-    objTable = new Hashtable(STARTING_CAPACITY, FACTOR);
-    //    javaActionListener = new PLActionListener();
-    eventListener = new PLEventListener(pl, this);
-  }
+    /**
+     * Creates a new interpreter, with the table of objects
+     * managed by Prolog given as argument.
+     *
+     * @param pl Object that represents the connection to the Prolog process.
+    */
+    public PLInterpreter(PLConnection pl) {
+	objTable = new Hashtable(STARTING_CAPACITY, FACTOR);
+	eventListener = new PLEventListener(pl, this);
+    }
 
-  /** 
-   * Interprets the request received as argument in a <code>PLTerm</code>
-   * object. The possible requests are the following (the arguments of 
-   * the Prolog terms described are marked as input or output arguments
-   * with the plus or minus sign; and the output arguments are not
-   * actually included in the terms, only show what requests send
-   * back results to Prolog):
-   *
-   *  $java_create_object(+NAME, +ARGUMENTS, -OBJECT)
-   *                      Creates a new Java instance of the class
-   *                      given as NAME (full class name), using
-   *                      the appropriate constructor to the arguments
-   *                      given in ARGUMENTS, and returns to Prolog an object
-   *                      identifier.
-   *  $java_delete_object(+OBJECT)
-   *                      Deletes the object with identifier equal
-   *                      to OBJECT.
-   *  $java_get_value(+OBJECT, +FIELD, -VALUE)
-   *                      Gets the value of the field FIELD from the
-   *                      object OBJECT, and returns to Prolog its value.
-   *  $java_set_value(+OBJECT, +FIELD, +VALUE)
-   *                      Sets the value of the field FIELD of the
-   *                      object identified with the OBJECT reference to the
-   *                      value received as VALUE.
-   *  $java_invoke_method(+OBJECT, +METHOD, +ARGUMENTS, -RESULT)
-   *                      Invokes the corresponding method of the object
-   *                      referred as OBJECT using the given arguments,
-   *                      and sends back the result to Prolog (if the
-   *                      method returns a result).
-   *  $java_add_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
-   *                      Adds a goal to the list of Prolog listeners for a
-   *                      given object event. The EVENT argument must
-   *                      be the full class name of the Java event object
-   *                      representing the event (e.g., java.awt.event.ActionListener).
-   *  $java_remove_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
-   *                      Removes a Prolog listener from the list
-   *                      of event handlers for a given event and
-   *                      object.
-   *  $quit
-   *                      Closes the connection and terminates the Java process.
-   *
-   * @param t Prolog term to be interpreted. Only Are interpreted the
-   *          Prolog terms related above.
-   *
-   * @return the term to be sent back to Prolog, corresponding
-   *         to the returning value. If there is no return value, the
-   *         success atom is returned. If an error occurs a <code>java_exception</code> is
-   *         returned to be propagated to the Prolog side.
-   */
-  public PLTerm interpret(PLTerm t) {
-      // Only for debug
-      // System.err.println(t.toString());
+    /** 
+    * Interprets the request received as argument in a <code>PLTerm</code>
+    * object. The possible requests are the following (the arguments of 
+    * the Prolog terms described are marked as input or output arguments
+    * with the plus or minus sign; and the output arguments are not
+    * actually included in the terms, only show what requests send
+    * back results to Prolog):
+    *
+    *  $java_create_object(+NAME, +ARGUMENTS, -OBJECT)
+    *                      Creates a new Java instance of the class
+    *                      given as NAME (full class name), using
+    *                      the appropriate constructor to the arguments
+    *                      given in ARGUMENTS, and returns to Prolog an object
+    *                      identifier.
+    *  $java_delete_object(+OBJECT)
+    *                      Deletes the object with identifier equal
+    *                      to OBJECT.
+    *  $java_get_value(+OBJECT, +FIELD, -VALUE)
+    *                      Gets the value of the field FIELD from the
+    *                      object OBJECT, and returns to Prolog its value.
+    *  $java_set_value(+OBJECT, +FIELD, +VALUE)
+    *                      Sets the value of the field FIELD of the
+    *                      object identified with the OBJECT reference to the
+    *                      value received as VALUE.
+    *  $java_invoke_method(+OBJECT, +METHOD, +ARGUMENTS, -RESULT)
+    *                      Invokes the corresponding method of the object
+    *                      referred as OBJECT using the given arguments,
+    *                      and sends back the result to Prolog (if the
+    *                      method returns a result).
+    *  $java_add_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
+    *                      Adds a goal to the list of Prolog listeners for a
+    *                      given object event. The EVENT argument must
+    *                      be the full class name of the Java event object
+    *                      representing the event (e.g., 
+    *                      java.awt.event.ActionListener).
+    *  $java_remove_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
+    *                      Removes a Prolog listener from the list
+    *                      of event handlers for a given event and
+    *                      object.
+    *  $terminate          Closes connection and terminates the Java process.
+    *
+    *  $disconnect         Closes connection, but does not terminate the
+    *                      Java process.
+    *
+    * @param t  Prolog term to be interpreted. Only Are interpreted the
+    *           Prolog terms related above.
+    *
+    * @return the term to be sent back to Prolog, corresponding
+    *         to the returning value. If there is no return value, the
+    *         success atom is returned. If an error occurs a
+    *         <code>java_exception</code> is
+    *         returned to be propagated to the Prolog side.
+    */
+    public PLTerm interpret(PLTerm t) {
+	if (PLConnection.debugging)
+	    System.err.println("PLInterpreter: " + t.toString());
 
     switch (t.Type) {
     case PLTerm.STRUCTURE:
       PLStructure st = (PLStructure)t;
       if (st.Name.equals(CREATE_OBJECT)) {
-        return createObject(st);
+	return createObject(st);
       } else if(st.Name.equals(DELETE_OBJECT)) {
-        return deleteObject(st);
+	return deleteObject(st);
       } else if(st.Name.equals(GET_VALUE)) {
-        return getValue(st);
+	return getValue(st);
       } else if(st.Name.equals(SET_VALUE)) {
-        return setValue(st);
+	return setValue(st);
       } else if(st.Name.equals(INVOKE_METHOD)) {
-        return invokeMethod(st);
+	return invokeMethod(st);
       } else if(st.Name.equals(ADD_LISTENER)) {
-        return addListener(st);
+	return addListener(st);
       } else if(st.Name.equals(REMOVE_LISTENER)) {
-        return removeListener(st);
+	return removeListener(st);
       } else {
-        System.err.println("error: unexpected structure received");
-        return PLAtom.fail;
+	return PLTerm.javaException("Unexpected structure received");
       }
 
     case PLTerm.ATOM:
       PLAtom at = (PLAtom)t;
-      if (at.Value.equals(QUIT)) {
-        return new PLAtom(QUIT);
+      if (at.getName().equals(TERMINATE)) {
+	  return new PLAtom(TERMINATE);
+      } else if (at.getName().equals(DISCONNECT)) {
+        return new PLAtom(DISCONNECT);
       } else {
-        System.err.println("error: unexpected atom received");
-        return PLAtom.fail;
+        return PLTerm.javaException("Unexpected atom received");
       }
     default:
-      System.err.println("error: unexpected term received");
-      return PLAtom.fail;
+      return PLTerm.javaException("Unexpected term received");
     }
   }
 
@@ -148,17 +151,14 @@ class PLInterpreter {
   private PLTerm getValue(PLStructure st) {
     // Input arguments test.
     if (st.Args.length != 2) {
-      System.err.println("error($java_get_value): number of arguments");
-      return PLAtom.fail;
+      return PLTerm.javaException("java_get_value: number of arguments");
     }          
     if ((st.Args[0].Type != PLTerm.STRUCTURE) &&
         (st.Args[0].Type != PLTerm.ATOM)) {
-      System.err.println("error($java_get_value): object reference");
-      return PLAtom.fail;
+      return PLTerm.javaException("java_get_value: object reference");
     }
     if (st.Args[1].Type != PLTerm.ATOM) {
-      System.err.println("error($java_get_value): Field name reference");
-      return PLAtom.fail;
+      return PLTerm.javaException("java_get_value: Field name reference");
     }
 
     Class cl = null;
@@ -169,21 +169,18 @@ class PLInterpreter {
       try {
         cl = Class.forName(st.Args[0].toString());
       } catch(Exception e) {
-        System.err.println("error($java_get_value): class not found");
-        return PLAtom.fail;
+      return PLTerm.javaException("java_get_value: class not found");
       }
     }
     else {
       // Instance field.
       PLStructure str = (PLStructure)st.Args[0];
       if (!str.Name.equals(PLTerm.JAVA_OBJECT) || str.Arity != 1) {
-        System.err.println("error($java_get_value): object structure");
-        return PLAtom.fail;
+	  return PLTerm.javaException("java_get_value: object structure");
       }
       obj = str.javaRepr(this);
       if (obj == null) {
-        System.err.println("error($java_get_value): Object not found");
-        return PLAtom.fail;
+	  return PLTerm.javaException("java_get_value: Object not found");
       }
       cl = obj.getClass();
     }
@@ -193,8 +190,7 @@ class PLInterpreter {
       Field fl = cl.getField((String)st.Args[1].javaRepr(this));
       return prologRepr(fl.get(obj));
     } catch (Exception e) {
-      System.err.println("error($java_get_value): Field value");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_get_value: Field value");
     }
   }
 
@@ -214,26 +210,21 @@ class PLInterpreter {
   private PLTerm setValue(PLStructure st) {
     // Input arguments test.
     if (st.Args.length != 3) {
-      System.err.println("error($java_set_value): number of arguments");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_set_value: number of arguments");
     }          
     if ((st.Args[0].Type != PLTerm.STRUCTURE)) {
-          System.err.println("error($java_set_value): object reference");
-          return PLAtom.fail;
+	return PLTerm.javaException("java_set_value: object reference");
     }
     PLStructure str = (PLStructure)st.Args[0];
     if (!str.Name.equals(PLTerm.JAVA_OBJECT) || str.Arity != 1) {
-      System.err.println("error($java_set_value): object structure");
-      return PLAtom.fail;
-        }
+	return PLTerm.javaException("java_set_value: object structure");
+    }
     if (st.Args[1].Type != PLTerm.ATOM) {
-      System.err.println("error($java_set_value): Field name reference");
-      return PLAtom.fail;
-        }
+	return PLTerm.javaException("java_set_value: Field name reference");
+    }
     Object obj = str.javaRepr(this);
     if (obj == null) {
-      System.err.println("error($java_set_value): Object not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_set_value: Object not found");
     }
     Object val = st.Args[2].javaRepr(this);
     
@@ -244,8 +235,7 @@ class PLInterpreter {
       fl.set(obj,val);
       return PLAtom.success;
     } catch (Exception e) {
-      System.err.println("error($java_get_value): Field value");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_get_value: Field value");
     }
   }
 
@@ -265,17 +255,14 @@ class PLInterpreter {
   private PLTerm deleteObject(PLStructure st) {
     // Input arguments test.
     if (st.Args.length != 1) {
-      System.err.println("error($java_delete_object): number of arguments");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_delete_object: number of arguments");
     }          
     if ((st.Args[0].Type != PLTerm.STRUCTURE)) {
-      System.err.println("error($java_delete_object): object reference");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_delete_object: object reference");
     }
     PLStructure str = (PLStructure)st.Args[0];
     if (!str.Name.equals(PLTerm.JAVA_OBJECT) || str.Arity != 1) {
-      System.err.println("error($java_delete_object): object structure");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_delete_object: object structure");
     }
     
     // Object deletion.
@@ -284,14 +271,12 @@ class PLInterpreter {
     try {
       value = objTable.remove(obj);
     } catch (Exception e) {
-      System.err.println("error($java_delete_object): object not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_delete_object: object not found");
     }
     if (value == null) {
-      System.err.println("error($java_delete_object): object not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_delete_object: object not found");
     } else
-      return PLAtom.success;
+	return PLAtom.success;
   }
 
   /**
@@ -310,16 +295,13 @@ class PLInterpreter {
   private PLTerm createObject(PLStructure st) {
     // Input arguments test.
     if (st.Args.length != 2) {
-      System.err.println("error($java_create_object): number of arguments");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_create_object: number of arguments");
     }          
     if (st.Args[0].Type != PLTerm.ATOM) {
-      System.err.println("error($java_create_object): object name");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_create_object: object name");
     }
     if (!st.Args[1].isList() && !st.Args[1].isNil() && !st.Args[1].isString()){
-      System.err.println("error($java_create_object): no list argument");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_create_object: no list argument");
     }
     
     // Class creation.
@@ -327,8 +309,7 @@ class PLInterpreter {
     try {
       cl = Class.forName(st.Args[0].toString());
     } catch(Exception e) {
-      System.err.println("error($java_create_object): class not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_create_object: class not found");
     }
     
     // Object creation & insertion in the object table.
@@ -368,8 +349,7 @@ class PLInterpreter {
       }
 
     } catch (Exception e) {
-      System.err.println("error($java_create_object): creating object");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_create_object: creating object");
     }
     
     return java_object(newobj.hashCode());
@@ -393,21 +373,17 @@ class PLInterpreter {
   private PLTerm invokeMethod(PLStructure st) {
     // Input arguments test.
     if (st.Args.length != 3) {
-      System.err.println("error($java_invoke_method): number of arguments");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: number of arguments");
     }
     if ((st.Args[0].Type != PLTerm.STRUCTURE) &&
         (st.Args[0].Type != PLTerm.ATOM)) {
-      System.err.println("error($java_invoke_method): object/class reference");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: object/class reference");
     }
     if (st.Args[1].Type != PLTerm.ATOM) {
-      System.err.println("error($java_invoke_method): method name");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: method name");
     }
     if (!st.Args[2].isList() && !st.Args[2].isNil() && !st.Args[2].isString()){
-      System.err.println("error($java_invoke_method): no list argument");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: no list argument");
     }
 
     Class cl = null;
@@ -418,21 +394,18 @@ class PLInterpreter {
       try {
         cl = Class.forName(st.Args[0].toString());
       } catch(Exception e) {
-        System.err.println("error($java_invoke_method): class not found");
-        return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: class not found");
       }
     }
     else {
       // Instance method invocation.
       PLStructure str = (PLStructure)st.Args[0];
       if (!str.Name.equals(PLTerm.JAVA_OBJECT) || str.Arity != 1) {
-        System.err.println("error($java_invoke_method): object structure");
-        return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: object structure");
       }
       obj = str.javaRepr(this);
       if (obj == null) {
-        System.err.println("error($java_invoke_method): java object not found");
-        return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: java object not found");
       }
       cl = obj.getClass();
     }
@@ -476,8 +449,7 @@ class PLInterpreter {
         return prologRepr(result);
 
     } catch(Exception e) {
-      System.err.println("error($java_invoke_method): method not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_invoke_method: method not found");
     }
   }
 
@@ -499,34 +471,28 @@ class PLInterpreter {
   private PLTerm addListener(PLStructure st) {
     // Input arguments test.
     if (st.Args.length != 3) {
-      System.err.println("error($java_add_listener): number of arguments");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_add_listener: number of arguments");
     }
     if ((st.Args[0].Type != PLTerm.STRUCTURE)) {
-      System.err.println("error($java_add_listener): object reference");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_add_listener: object reference");
     }
     PLStructure str = (PLStructure)st.Args[0];
     if (!str.Name.equals(PLTerm.JAVA_OBJECT) || str.Arity != 1) {
-      System.err.println("error($java_add_listener): object structure");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_add_listener: object structure");
     }
     Object obj = str.javaRepr(this);
     if (obj == null) {
-      System.err.println("error($java_add_listener): java object not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_add_listener: java object not found");
     }
     if (st.Args[1].Type != PLTerm.ATOM) {
-      System.err.println("error($java_add_listener): event class");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_add_listener: event class");
     }
 
     Class event = null;
     try {
       event = Class.forName(st.Args[1].toString());
     } catch(Exception e) {
-      System.err.println("error($java_add_listener): event class not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_add_listener: event class not found");
     }
 
     // Assign listener and listen.
@@ -552,34 +518,28 @@ class PLInterpreter {
   private PLTerm removeListener(PLStructure st) {
     // Input arguments test.
     if (st.Args.length != 3) {
-      System.err.println("error($java_remove_listener): number of arguments");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_remove_listener: number of arguments");
     }
     if ((st.Args[0].Type != PLTerm.STRUCTURE)) {
-      System.err.println("error($java_remove_listener): object reference");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_remove_listener: object reference");
     }
     PLStructure str = (PLStructure)st.Args[0];
     if (!str.Name.equals(PLTerm.JAVA_OBJECT) || str.Arity != 1) {
-      System.err.println("error($java_remove_listener): object structure");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_remove_listener: object structure");
     }
     Object obj = str.javaRepr(this);
     if (obj == null) {
-      System.err.println("error($java_remove_listener): java object not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_remove_listener: java object not found");
     }
     if (st.Args[1].Type != PLTerm.ATOM) {
-      System.err.println("error($java_remove_listener): event class");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_remove_listener: event class");
     }
 
     Class event = null;
     try {
       event = Class.forName(st.Args[1].toString());
     } catch(Exception e) {
-      System.err.println("error($java_remove_listener): event class not found");
-      return PLAtom.fail;
+	return PLTerm.javaException("java_remove_listener: event class not found");
     }
 
     // Assign listener and listen.
@@ -604,7 +564,11 @@ class PLInterpreter {
       Object[] va = (Object [])v;
       PLTerm list = PLTerm.nil;
       if (va.length > 0) {
-        list = new PLList(prologRepr(va[0]),PLTerm.nil);
+	try {
+	    list = new PLList(prologRepr(va[0]),PLTerm.nil);
+	} catch (PLException e) {
+	    // Exception not handled: 2nd argument allways is nil.
+	}
         for (int i = 1; i < va.length; i++)
           ((PLList)list).add(prologRepr(va[i]));
       }
@@ -1048,7 +1012,8 @@ class PLInterpreter {
 
     case PLTerm.ATOM:
       PLAtom at = (PLAtom)t;
-      if (at.Value.equals(QUIT))
+      if (at.getName().equals(TERMINATE) ||
+	  at.getName().equals(DISCONNECT))
         return true;
       else
         return false;
@@ -1058,7 +1023,8 @@ class PLInterpreter {
   }
 
   /**
-   * Gets the object from the object table given the hash code.
+   * Gets the object from the object table using the hash code 
+   * received as argument.
    *
    * @param hashCode Hash code that references an object
    *                 in the Java object table.

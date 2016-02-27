@@ -3,8 +3,8 @@
 #------- CAUTION: any change in this directory should be also made in the 
 
 include ../SETTINGS
-include ../COMMON
-include ../makefile-sysindep
+include ../SHARED
+
 
 EXAMPLESDIR = $(REALLIBDIR)/examples
 ALLFILES = *

@@ -157,6 +157,13 @@ void init_internal_calling(b)
 #endif
 
 
+/*
+|CALLQ|0|address_call/1|...padding...|Init. Frame Size|EXIT_TOPLEVEL|
+   ^                                                            ^
+   bootcode                                                     termcode?
+*/
+
+
 void init_startgoalcode(b)
      INSN *b;
 {
@@ -169,14 +176,14 @@ void init_startgoalcode(b)
   *b++ = EXIT_TOPLEVEL;
 
   /*
-  exitcode = b-2;
-  termcode = def_retry_c(NULL,1);
-  b = termcode->emul_p;
-  *b++ = EXIT_TOPLEVEL;
-
-  address_nd_current_instance = def_retry_c(NULL,DynamicPreserved);
-  b = address_nd_current_instance->emul_p;
-  *b++ = RETRY_INSTANCE;
+    exitcode = b-2;
+    termcode = def_retry_c(NULL,1);
+    b = termcode->emul_p;
+    *b++ = EXIT_TOPLEVEL;
+    
+    address_nd_current_instance = def_retry_c(NULL,DynamicPreserved);
+    b = address_nd_current_instance->emul_p;
+    *b++ = RETRY_INSTANCE;
   */
 }
 

@@ -6,8 +6,7 @@
 # make ciao-shell compiles the ciao-script runtime
 
 include ../SETTINGS
-include ../COMMON
-include ../makefile-sysindep
+include ../SHARED
 
 # Interactive Prolog top-level
 TOPLEVELSHELL = ciaosh
@@ -19,9 +18,9 @@ ASRGEN=gen_asr
 # The ciao compiler (ciaoc) takes cares of the dependencies itself. 
 
 all:
-	$(SETLOCALCOMPILER) $(CIAOC) -x $(TOPLEVELSHELL)
-	$(SETLOCALCOMPILER) $(CIAOC) -x -s $(SCRIPTSHELL)
-	$(SETLOCALCOMPILER) $(CIAOC) -s -x $(ASRGEN)
+	$(SETLOCALCIAO) $(CIAOC) -x $(TOPLEVELSHELL)
+	$(SETLOCALCIAO) $(CIAOC) -x -s $(SCRIPTSHELL)
+	$(SETLOCALCIAO) $(CIAOC) -s -x $(ASRGEN)
 	rm $(ASRGEN)
 
 install:

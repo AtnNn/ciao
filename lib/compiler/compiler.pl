@@ -7,35 +7,6 @@
                      ], [assertions]).
 
 
-:- comment(version_maintenance,off).
-
-:- comment(version(0*6+6,1998/07/27,15:40*12+'MET DST'), "Changed
-   set_debug_module/1 to make it work with 'user' module.  (Daniel
-   Cabeza Gras)").
-
-:- comment(version(0*6+4,1998/07/21,16:21*26+'MET DST'), "Added
-   mode_of_module/2 to be used by the shell (Daniel Cabeza Gras)").
-
-:- comment(version(0*6+2,1998/07/20,18:44*34+'MET DST'), "Added
-   set_debug_module/1 and set_nodebug_module/1 to be used by the shell
-   (Daniel Cabeza Gras)").
-
-:- comment(version(0*5+33,1998/06/30,19:00*22+'MET DST'), "Disabled head
-   meta-expansion in the case of addmodule (predicate arity changes)
-   (Daniel Cabeza Gras)").
-
-:- comment(version(0*5+31,1998/06/30,14:37*08+'MET DST'), "Fixed bug
-   which deleted imports/4 data when reloading files (Daniel Cabeza
-   Gras)").
-
-:- comment(version(0*5+18,1998/06/19,13:41*22+'MET DST'), "Added
-   predicate multifile/1 to be used in the CIAO shell to define
-   multifile predicates to be able to invoke them.  (Daniel Cabeza
-   Gras)").
-
-:- comment(version(0*5+6,1998/04/17,21:13*03+'MET DST'), "Added support
-   for lazy loading (Daniel Cabeza Gras)").
-
 :- use_module(library('compiler/c_itf')).
 
 
@@ -64,7 +35,14 @@ use_module(File, Imports, ByThisModule) :-
 ensure_loaded(File) :-
         process_files_from(File, in, any, load_compile, static_base,
                            false, needs_reload),
-        check_static_module(File).
+        check_static_module(File),
+	( make_delayed_dynlinks -> true % JFMC
+	; message(['{Dynamic link failed}']),
+	  fail
+	), !.
+ensure_loaded(_) :- !, % JFMC
+	discard_delayed_dynlinks,
+	fail.
 
 check_static_module(File) :-
         base_name(File, Base),
@@ -113,3 +91,39 @@ module_pattern(Module, Module) :- atom(Module).
 module_of(H, M) :- pred_module(H, M).
 
 mode_of_module(Module, Mode) :- module_loaded(Module, _, _, Mode).
+
+% ----------------------------------------------------------------------------
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+85,2001/04/05,11:16*53+'CEST'), "Fixed the
+   foreign interface bug seen with ensure_loaded/1 (Jose Morales)").
+
+:- comment(version(0*6+6,1998/07/27,15:40*12+'MET DST'), "Changed
+   set_debug_module/1 to make it work with 'user' module.  (Daniel
+   Cabeza Gras)").
+
+:- comment(version(0*6+4,1998/07/21,16:21*26+'MET DST'), "Added
+   mode_of_module/2 to be used by the shell (Daniel Cabeza Gras)").
+
+:- comment(version(0*6+2,1998/07/20,18:44*34+'MET DST'), "Added
+   set_debug_module/1 and set_nodebug_module/1 to be used by the shell
+   (Daniel Cabeza Gras)").
+
+:- comment(version(0*5+33,1998/06/30,19:00*22+'MET DST'), "Disabled head
+   meta-expansion in the case of addmodule (predicate arity changes)
+   (Daniel Cabeza Gras)").
+
+:- comment(version(0*5+31,1998/06/30,14:37*08+'MET DST'), "Fixed bug
+   which deleted imports/4 data when reloading files (Daniel Cabeza
+   Gras)").
+
+:- comment(version(0*5+18,1998/06/19,13:41*22+'MET DST'), "Added
+   predicate multifile/1 to be used in the CIAO shell to define
+   multifile predicates to be able to invoke them.  (Daniel Cabeza
+   Gras)").
+
+:- comment(version(0*5+6,1998/04/17,21:13*03+'MET DST'), "Added support
+   for lazy loading (Daniel Cabeza Gras)").
+
+% ----------------------------------------------------------------------------

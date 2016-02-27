@@ -154,7 +154,7 @@ ppb('&'(A,B),Tab,K) :- !,
 	ppc(A,Tab,K),
 	write(' &'),nl,
 	ppc(B,Tab,K).
-ppb((A'&'),Tab,K) :- !,
+ppb(('&'(A)),Tab,K) :- !,
 	ppb(A,Tab,K),
 	write(' &').
 ppb((A->B;C),Tab,K) :- !,
@@ -225,6 +225,9 @@ ppg(A,Tab,_K) :-
 
 %% -----------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+112,2001/06/25,17:34*09+'CEST'), "Changed
+   non-default operator usages (A&).  (Daniel Cabeza Gras)").
 
 :- comment(version(0*9+100,1999/05/26,12:36*46+'MEST'), "Minor fixes
    to doc.  (Manuel Hermenegildo)").

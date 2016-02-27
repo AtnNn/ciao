@@ -1,0 +1,49 @@
+Improved syntax for higher order
+
+New Java interface
+
+Mac OS X supported
+
+The installation program in Windows now adds an entry in the registry
+   for running Ciao executables as CGIs under IIS
+
+Now syntax errors disable .itf generation and compilation.  This way,
+   the next time the file is treated, errors will appear again
+
+
+Many improvements:
+   @begin{itemize}
+
+   @item Implemented passerta_fact/1 (asserta_fact/1).
+
+   @item Now it is never necessary to explicitly call init_persdb, a call
+         to initialize_db is only needed after dynamically defining facts
+         of persistent_dir/2.  Thus, pcurrent_fact/1 predicate eliminated.
+
+   @item Facts of persistent predicates included in the program code are
+         now included in the persistent database when it is created.
+         They are ignored in successive executions.
+
+   @item Files where persistent predicates reside are now created inside
+         a directory named as the module where the persistent predicates
+         are defined, and are named as F_A* for predicate F/A.
+
+   @item Now there are two packages: persdb and 'persdb/ll' (for low
+         level).  In the first, the standard builtins asserta_fact/1,
+         assertz_fact/1, and retract_fact/1 are replaced by new versions
+         which handle persistent data predicates, behaving as usual for
+         normal data predicates.  In the second package, predicates with
+         names starting with 'p' are defined, so that there is not
+         overhead in calling the standard builtins.
+
+   @item Needed declarations for persistent_dir/2 are now included in
+         the packages.
+
+   @end{itemize}
+   (Daniel Cabeza Gras)").
+
+Added patches
+to compile in Power PC contributed by Paulo Moura
+
+improvements to concurrency
+

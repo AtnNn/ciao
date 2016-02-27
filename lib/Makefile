@@ -3,8 +3,7 @@
 #------- CAUTION: any change in this directory should be also made in the 
 #------- twin Makefile in ../library 
 include ../SETTINGS
-include ../COMMON
-include ../makefile-sysindep
+include ../SHARED
 #---------------------------------------------------------------------------
 STDLIBDIR = $(REALLIBDIR)/lib
 ALLFILES = *
@@ -33,9 +32,9 @@ autolibs:
 	$(SRC)/etc/generate_foreign_compile_options $(MAKE) $(SRC)/makefile-sysdep $(SRC)/lib/auto_compile_options.pl
 	-chmod $(DATAMODE) $(SRC)/lib/auto_compile_options.pl
 	'rm' -f all_modules all_module_messages
-	echo "set_prolog_flag(compresslib," $(COMPRESS_LIBS) ")." >> all_modules
+	echo "set_prolog_flag(compress_lib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
-	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
+	$(SETLOCALCIAO) $(CIAOSHELL) < all_modules > all_module_messages
 	-chmod $(DATAMODE) all_modules
 	'rm' -f all_module_messages
 

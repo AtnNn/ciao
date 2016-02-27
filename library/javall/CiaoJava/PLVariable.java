@@ -79,7 +79,7 @@ public class PLVariable extends PLTerm {
    *
    * @return The internal variable number.
    */
-  public int getNumber() {
+  int getNumber() {
 
     return VarNumber;
 
@@ -109,7 +109,7 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Returns the string representation of this Prolog variable
+   * Returns the string representation of this Prolog variable.
    * If the variable is bound to a Prolog term, this term is
    * also represented enclosed between brackets.
    *
@@ -226,7 +226,7 @@ public class PLVariable extends PLTerm {
   /**
    *
    */
-  protected int numberOfCells() {
+  int numberOfCells() {
     return 0;
   }
 }

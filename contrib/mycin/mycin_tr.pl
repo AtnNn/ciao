@@ -60,7 +60,7 @@ mycin_clause_tr(clause(A,B),clause(C,D),M) :-
 %% START OF FIRST PASS EXPANSION
 %%----------------------------------------------------------------------
 
-sentence_tr(start_of_file(_),_,Module) :-
+sentence_tr(0,_,Module) :-
 	start_of_messages(Module,'Generating mycin interface '),
 	retractall_fact(mycin_goal(Module,_,_)),
 	retractall_fact(mycin_export(Module,_,_)),

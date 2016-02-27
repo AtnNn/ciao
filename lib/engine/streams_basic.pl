@@ -6,7 +6,7 @@
         flush_output/1, flush_output/0, clearerr/1,
         current_stream/3, stream_code/2,
         absolute_file_name/2, absolute_file_name/7,
-        sourcename/1, stream/1, io_mode/1
+        sourcename/1, stream/1, stream_alias/1, io_mode/1
         ],
         [assertions, isomodes]).
 
@@ -261,13 +261,21 @@ absolute_file_name(X, _, _, _, _, _, _) :-
 
 ").
 
+:- true prop stream_alias(S) + regtype # "@var{S} is the alias of an
+open stream, i.e., an atom which represents a stream at Prolog
+level.".
+
+%  This does not capture the "not closed" fact
+stream_alias(user_input).
+stream_alias(user_output).
+stream_alias(user_error).
+
+
 :- true prop stream(S) + regtype # "@var{S} is an open stream.".
 
 %  This does not capture the "not closed" fact
-stream(user_input).
-stream(user_output).
-stream(user_error).
-stream(user).
+stream(S):- stream_alias(S).
+stream(user).    %% 'user' is special: its mode depends on context!
 stream('$stream'(X,Y)) :- 
 	int(X), int(Y).
 
@@ -332,4 +340,14 @@ sourcename(S) :- struct(S).
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
+
+:- comment(version(1*7+47,2001/01/22,10:24*23+'CET'), "Added
+stream_alias to denote the built-in atoms denoting streams.  (MCL)").
 

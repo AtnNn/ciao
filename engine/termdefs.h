@@ -305,6 +305,7 @@ struct numstack {
 struct io_streams {                    /* Speed not critical: I/O, anyway */
   struct stream_node *input_stream_ptr;
   struct stream_node *output_stream_ptr;
+  struct stream_node *error_stream_ptr;
 };
 
 struct debugger_state {                      /* Debugging is made by hand */
@@ -489,6 +490,7 @@ typedef unsigned long Bignum;
 
 #define ChoiceptMarkPure(b) (*(TAGGED *)(&(b)->trail_top) |= 1)
 #define ChoiceptTestPure(b) ((TAGGED)(b)->trail_top & 1)
+
 #define ChoiceptMarkStatic(b) (*(TAGGED *)(&(b)->trail_top) |= 2)
 #define ChoiceptTestStatic(b) ((TAGGED)(b)->trail_top & 2)
 

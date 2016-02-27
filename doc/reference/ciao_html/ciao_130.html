@@ -1,63 +1,87 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
+<TITLE>The Ciao Prolog System               - The PiLLoW Web Programming Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC521" HREF="ciao_toc.html#TOC521">Unweighted graph-processing utilities</A></H1>
+<H1><A NAME="SEC515" HREF="ciao_toc.html#TOC515">The PiLLoW Web Programming Library</A></H1>
 <P>
-<A NAME="IDX5775"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
+<A NAME="IDX5336"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo, <A HREF="mailto:clip@clip.dia.fi.upm.es">clip@clip.dia.fi.upm.es</A>, <A HREF="http://www.clip.dia.fi.upm.es/">http://www.clip.dia.fi.upm.es/</A>, The CLIP Group, School of Computer Science, Technical University of Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#105 (1999/6/4, 12:24:49 MEST)
+<A NAME="IDX5337"></A>
+<A NAME="IDX5338"></A>
+<A NAME="IDX5339"></A>
+<A NAME="IDX5340"></A>
 
 
 <P>
-An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
+<A NAME="IDX5341"></A>
+<A NAME="IDX5342"></A>
 
 
 <P>
-An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
+<A NAME="IDX5343"></A>
+<A NAME="IDX5344"></A>
 
 
 <P>
-An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
-
-
-<P>
-A vertex can be any term. Two vertices are distinct iff they are not identical (
-<A NAME="IDX5776"></A>
-<CODE>==/2</CODE>). 
-
-
-<P>
-A path is represented as a list of vertices. No vertex can appear twice in a path. 
+<A NAME="IDX5345"></A>
+<A NAME="IDX5346"></A>
+This package implements the PiLLoW library [CHV96a]. The following three chapters document, respectively, the predicates for HTML/XML/CGI programming, the predicate for HTTP conectivity, and the types used in the definition of the predicates (key for fully understanding the other predicates). You can find a paper and some additional information in the 
+<A NAME="IDX5347"></A>
+<CODE>library/pillow/doc</CODE> directory of the distribution, and in the WWW at <A HREF="http://clip.dia.fi.upm.es/Software/pillow/pillow.html">http://clip.dia.fi.upm.es/Software/pillow/pillow.html</A>. There is also a 
+<A NAME="IDX5348"></A>
+<A NAME="IDX5349"></A>
+<EM>PiLLoW on-line tutorial</EM> (slides) at <A HREF="http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html">http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html</A> which illustrates the basic features and provides a number of examples of PiLLoW use. 
 
 
 
 <UL>
-<LI><A HREF="ciao_130.html#SEC522">Usage and interface (ugraphs)</A>
-<LI><A HREF="ciao_130.html#SEC523">Documentation on exports (ugraphs)</A>
+<LI><A HREF="ciao_130.html#SEC516">Installing PiLLoW</A>
+<LI><A HREF="ciao_130.html#SEC517">Usage and interface (pillow)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC522" HREF="ciao_toc.html#TOC522">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
+<H2><A NAME="SEC516" HREF="ciao_toc.html#TOC516">Installing PiLLoW</A></H2>
+<P>
+ To correctly install PiLLoW, first, make sure you downloaded the right version of PiLLoW (there are different versions for different LP/CLP systems; the version that comes with Ciao is of course the right one for Ciao). Then, please follow these steps: 
+
+
+
+<OL>
+
+<LI>Copy the files in the <CODE>images</CODE> directory to a WWW accessible directory in your server.
+
+<LI>Edit the file
+
+<A NAME="IDX5350"></A>
+<CODE>icon_address.pl</CODE> and change the fact to point to the URL to be used to access the images above. 
+
+<LI>In the Ciao system the files are in the correct place, in other systems copy the files
+
+<A NAME="IDX5351"></A>
+<CODE>pillow.pl</CODE> and 
+<A NAME="IDX5352"></A>
+<CODE>icon_address.pl</CODE> to a suitable directory so that your Prolog system will find them. 
+
+</OL>
+
+
+
+<H2><A NAME="SEC517" HREF="ciao_toc.html#TOC517">Usage and interface (<CODE>pillow</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -65,40 +89,18 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(ugraphs)).</CODE>
+<CODE>:- use_package(pillow).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
+<CODE>:- module(...,...,[pillow]).</CODE>
 
-<UL>
+<LI><STRONG>New operators defined:</STRONG>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX5777"></A>
-<CODE>vertices_edges_to_ugraph/3</CODE>, 
-<A NAME="IDX5778"></A>
-<CODE>neighbors/3</CODE>, 
-<A NAME="IDX5779"></A>
-<CODE>edges/2</CODE>, 
-<A NAME="IDX5780"></A>
-<CODE>del_vertices/3</CODE>, 
-<A NAME="IDX5781"></A>
-<CODE>vertices/2</CODE>, 
-<A NAME="IDX5782"></A>
-<CODE>add_vertices/3</CODE>, 
-<A NAME="IDX5783"></A>
-<CODE>add_edges/3</CODE>, 
-<A NAME="IDX5784"></A>
-<CODE>transpose/2</CODE>, 
-<A NAME="IDX5785"></A>
-<CODE>point_to/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5786"></A>
-<CODE>ugraph/1</CODE>.
-
-</UL>
+<A NAME="IDX5353"></A>
+<CODE>$/2</CODE> [150,xfx], 
+<A NAME="IDX5354"></A>
+<CODE>$/1</CODE> [150,fx].
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -107,10 +109,10 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5787"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX5788"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX5355"></A>
+<CODE>pillow/http</CODE>, 
+<A NAME="IDX5356"></A>
+<CODE>pillow/html</CODE>.
 
 </UL>
 
@@ -118,186 +120,7 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 </div class="cartouche">
 
-
-
-<H2><A NAME="SEC523" HREF="ciao_toc.html#TOC523">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
-<P>
-<A NAME="IDX5789"></A>
-<A NAME="IDX5790"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
-<DD><A NAME="IDX5791"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5792"></A>
-<A NAME="IDX5793"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
-<DD><A NAME="IDX5794"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex,+Graph,-Neighbors)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5795"></A>
-<A NAME="IDX5796"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
-<DD><A NAME="IDX5797"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>edges(+Graph,-Edges)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5798"></A>
-<A NAME="IDX5799"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
-<DD><A NAME="IDX5800"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1,+Vertices,-Graph2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5801"></A>
-<A NAME="IDX5802"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
-<DD><A NAME="IDX5803"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>vertices(+Graph,-Vertices)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5804"></A>
-<A NAME="IDX5805"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
-<DD><A NAME="IDX5806"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1,+Vertices,-Graph2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5807"></A>
-<A NAME="IDX5808"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
-<DD><A NAME="IDX5809"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1,+Edges,-Graph2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5810"></A>
-<A NAME="IDX5811"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
-<DD><A NAME="IDX5812"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>transpose(+Graph,-Transpose)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5813"></A>
-<A NAME="IDX5814"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
-<DD><A NAME="IDX5815"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex,+Graph,-Point_to)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5816"></A>
-<A NAME="IDX5817"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
-<DD><A NAME="IDX5818"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
-
-</UL>
-
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

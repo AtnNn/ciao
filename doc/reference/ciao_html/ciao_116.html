@@ -1,108 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Prolog to SQL translator</TITLE>
+<TITLE>The Ciao Prolog System               - canvas_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC469" HREF="ciao_toc.html#TOC469">Prolog to SQL translator</A></H1>
+<H1><A NAME="SEC473" HREF="ciao_toc.html#TOC473">canvas_class (library)</A></H1>
 <P>
-<A NAME="IDX5062"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> C. Draxler. Adapted by M. Hermenegildo and I. Caballero.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 0.9#96 (1999/5/21, 19:53:48 MEST)
-
-
-<P>
-This library performs translation of Prolog queries into 
-<A NAME="IDX5063"></A>
-SQL. The code is an adaptation for Ciao of the 
-<A NAME="IDX5064"></A>
-Prolog to SQL compiler written by Christoph Draxler, CIS Centre for Information and Speech Processing, Ludwig-Maximilians-University Munich, <CODE>draxler@cis.uni-muenchen.de</CODE>, Version 1.1. Many thanks to Christoph for allowing us to include this adaptation of his code with Ciao. 
-
-
-<P>
-The translator needs to know the correspondence between Prolog predicates and the 
-<A NAME="IDX5065"></A>
-SQL tables in the database. To this end this module exports two multifile predicates, 
-<A NAME="IDX5066"></A>
-<CODE>relation/3</CODE> and 
-<A NAME="IDX5067"></A>
-<CODE>attribute/4</CODE>. See the description of these predicates for details on how such correspondance is specified. 
-
-
-<P>
-The main entry points to the translator are 
-<A NAME="IDX5068"></A>
-<CODE>pl2sqlstring/3</CODE> and 
-<A NAME="IDX5069"></A>
-<CODE>pl2sqlterm/3</CODE>. Details on the types of queries allowed can be found in the description of these predicates. 
-
-
-<P>
-<STRONG>Example:</STRONG> the following program would print out a term representing the SQL query corresponding to the given Prolog query: 
-
-
-
-<PRE>
-:- use_module(library('persdb_sql/pl2sql')).
-:- use_module(library(strings)).
-
-:- multifile [relation/3,attribute/4].
-:- data [relation/3,attribute/4].
-
-relation(product,3,'PRODUCT').
-attribute(1,'PRODUCT','ID',int).
-attribute(2,'PRODUCT','QUANTITY',int).
-attribute(3,'PRODUCT','NAME',string).
-
-main :- 
-     pl2sqlstring( f(L,K), 
-          ((product(L,N,a); product(L,N,b)),
-           \+ product(2,3,b), 
-           L + 2 &#62; avg(Y, Z^product(Z,Y,a)),
-           K is N + max(X, product(X,2,b))
-           ), T),
-     write_string(T).
-     
-%%     printqueries(T).
-
-</PRE>
-
-<P>
-<STRONG>Note:</STRONG> while the translator can be used directly in programs, it is more convenient to use a higher-level abstraction: 
-<A NAME="IDX5070"></A>
-persistent predicates (implemented in the 
-<A NAME="IDX5071"></A>
-<CODE>persdb</CODE> library). The notion of persistent predicates provides a completely transparent interface between Prolog and relational databases. When using this library, the Prolog to SQL translation is called automatically as needed. 
+<A NAME="IDX5080"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_116.html#SEC470">Usage and interface (pl2sql)</A>
-<LI><A HREF="ciao_116.html#SEC471">Documentation on exports (pl2sql)</A>
-<LI><A HREF="ciao_116.html#SEC472">Documentation on multifiles (pl2sql)</A>
-<LI><A HREF="ciao_116.html#SEC473">Documentation on internals (pl2sql)</A>
-<LI><A HREF="ciao_116.html#SEC474">Known bugs and planned improvements (pl2sql)</A>
+<LI><A HREF="ciao_116.html#SEC474">Usage and interface (canvas_class)</A>
+<LI><A HREF="ciao_116.html#SEC475">Documentation on exports (canvas_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC470" HREF="ciao_toc.html#TOC470">Usage and interface (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC474" HREF="ciao_toc.html#TOC474">Usage and interface (<CODE>canvas_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -110,7 +31,7 @@ persistent predicates (implemented in the
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(pl2sql)).</CODE>
+<CODE>:- use_module(library(canvas_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -119,30 +40,37 @@ persistent predicates (implemented in the
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5072"></A>
-<CODE>pl2sqlstring/3</CODE>, 
-<A NAME="IDX5073"></A>
-<CODE>pl2sqlterm/3</CODE>, 
-<A NAME="IDX5074"></A>
-<CODE>printqueries/1</CODE>, 
-<A NAME="IDX5075"></A>
-<CODE>sqlterm2string/2</CODE>.
+<A NAME="IDX5081"></A>
+<CODE>canvas_class/0</CODE>, 
+<A NAME="IDX5082"></A>
+<CODE>canvas_class/1</CODE>, 
+<A NAME="IDX5083"></A>
+<CODE>destructor/0</CODE>, 
+<A NAME="IDX5084"></A>
+<CODE>show/0</CODE>, 
+<A NAME="IDX5085"></A>
+<CODE>hide_/0</CODE>, 
+<A NAME="IDX5086"></A>
+<CODE>width_value/1</CODE>, 
+<A NAME="IDX5087"></A>
+<CODE>height_value/1</CODE>, 
+<A NAME="IDX5088"></A>
+<CODE>side_type/1</CODE>, 
+<A NAME="IDX5089"></A>
+<CODE>expand_value/1</CODE>, 
+<A NAME="IDX5090"></A>
+<CODE>fill_type/1</CODE>, 
+<A NAME="IDX5091"></A>
+<CODE>padx_value/1</CODE>, 
+<A NAME="IDX5092"></A>
+<CODE>pady_value/1</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX5076"></A>
-<CODE>querybody/1</CODE>, 
-<A NAME="IDX5077"></A>
-<CODE>projterm/1</CODE>, 
-<A NAME="IDX5078"></A>
-<CODE>sqlstring/1</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX5079"></A>
-<CODE>relation/3</CODE>, 
-<A NAME="IDX5080"></A>
-<CODE>attribute/4</CODE>.
+<A NAME="IDX5093"></A>
+<CODE>shape/1</CODE>, 
+<A NAME="IDX5094"></A>
+<CODE>option/1</CODE>.
 
 </UL>
 
@@ -153,24 +81,22 @@ persistent predicates (implemented in the
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5081"></A>
-<CODE>persdb_sql/sqltypes</CODE>, 
-<A NAME="IDX5082"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX5083"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX5084"></A>
-<CODE>dec10_io</CODE>, 
-<A NAME="IDX5085"></A>
+<A NAME="IDX5095"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX5096"></A>
+<CODE>tcltk_obj/window_class</CODE>, 
+<A NAME="IDX5097"></A>
+<CODE>tcltk_obj/shape_class</CODE>, 
+<A NAME="IDX5098"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX5086"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX5087"></A>
+<A NAME="IDX5099"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX5100"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX5088"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX5089"></A>
-<CODE>messages</CODE>.
+<A NAME="IDX5101"></A>
+<CODE>tcltk/tcltk</CODE>, 
+<A NAME="IDX5102"></A>
+<CODE>tcltk/tcltk_low_level</CODE>.
 
 </UL>
 
@@ -180,259 +106,273 @@ persistent predicates (implemented in the
 
 
 
-<H2><A NAME="SEC471" HREF="ciao_toc.html#TOC471">Documentation on exports (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC475" HREF="ciao_toc.html#TOC475">Documentation on exports (<CODE>canvas_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5090"></A>
-<A NAME="IDX5091"></A>
+<A NAME="IDX5103"></A>
+<A NAME="IDX5104"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlstring/3:</B>
-<DD><A NAME="IDX5092"></A>
+<DT><span class="define">REGTYPE:</span> <B>shape/1:</B>
+<DD><A NAME="IDX5105"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>pl2sqlstring(+ProjectionTerm,+DatabaseGoal,-SQLQueryString)</CODE>
+Each item type is characterized in two ways: first, the form of the create command used to create instances of the type; and second, a set of configuration options for items of that type, which may be used in the create and itemconfigure widget commands.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>shape(S)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This is the top level predicate which translates complex Prolog goals into the corresponding SQL code.
+<LI><EM>Description:</EM> <CODE>S</CODE> is a reference to one type of the items supported by canvas widgets.
 
-The query code is prepared in such a way that the result is projected onto the term <CODE>ProjectionTerm</CODE> (also in a similar way to the first argument of 
-<A NAME="IDX5093"></A>
-<CODE>setof/3</CODE>)). See the predicate 
-<A NAME="IDX5094"></A>
-<CODE>translate_projection/3</CODE> for restrictions on this term. 
-
-<CODE>SQLQueryString</CODE> contains the code of the 
-<A NAME="IDX5095"></A>
-SQL query, ready to be sent to an 
-<A NAME="IDX5096"></A>
-SQL server. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+ProjectionTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+DatabaseGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>-SQLQueryString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5097"></A>
-<A NAME="IDX5098"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
-<DD><A NAME="IDX5099"></A>
-
-
-<P>
-<CODE>DBGoal</CODE> is a goal meant to be executed in the external database. It can be a complex term containing 
-<A NAME="IDX5100"></A>
-conjunctions, 
-<A NAME="IDX5101"></A>
-disjunctions, and 
-<A NAME="IDX5102"></A>
-negations, of: 
-
-
-
-<UL>
-
-<LI>
-
-<A NAME="IDX5103"></A>
-Atomic goals, which must have been defined via 
-<A NAME="IDX5104"></A>
-<CODE>relation/3</CODE> and 
-<A NAME="IDX5105"></A>
-<CODE>attribute/4</CODE> and reside in the (same) database. Their arguments must be either ground or free variables. If they are ground, they must be bound to constants of the type declared for that argument. If an argument is a free variable, it may <EM>share</EM> with (i.e., be the same variable as) other free variables in other goal arguments. 
-
-<LI>
-
 <A NAME="IDX5106"></A>
-Database comparison goals, whose main functor must be a 
 <A NAME="IDX5107"></A>
-database comparison operator (see 
-<A NAME="IDX5108"></A>
-<CODE>pl2sql</CODE>:
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>option/1:</B>
+<DD><A NAME="IDX5108"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>option(O)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>O</CODE> is <EM>hidden</EM> if the Shape is not visible or <EM>shown</EM> if its visible.
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX5109"></A>
-<CODE>comparison/2</CODE>) and whose arguments must be <EM>database arithmetic expressions</EM>. 
-
-<LI>
-
 <A NAME="IDX5110"></A>
-Database calls to is/2. The left side of such a call may be either unbound, in which case it is bound to the result of evaluating the right side, or bound in which case an equality condition is tested. The right side must be a <EM>database arithmetic expression</EM>. 
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>canvas_class/0:</B>
+<DD><A NAME="IDX5111"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM>  Creates a new interpreter, asserting the predicate <EM>interp(I)</EM> and the canvas object.
 
 </UL>
 
+</DL>
+
 <P>
-The binding of variables follows Prolog rules: 
-
-
-
-<UL>
-
-<LI>variables are bound by positive base goals and on the left side of the
-
-<A NAME="IDX5111"></A>
-<CODE>is/2</CODE> predicate. 
-
-<LI>Comparison operations, negated goals, and right sides of the
-
 <A NAME="IDX5112"></A>
-<CODE>is/2</CODE> predicate do not return variable bindings and may even require all arguments to be bound for a safe evaluation. 
+<A NAME="IDX5113"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>canvas_class/1:</B>
+<DD><A NAME="IDX5114"></A>
 
-</UL>
 
 <P>
-<A NAME="IDX5113"></A>
-Database arithmetic expressions may contain: 
-
-
+<STRONG>Usage:</STRONG> <CODE>canvas_class(+ItemsList)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Adds items of the list to the canvas object.
 
-<LI>Numeric constants (i.e., integers, reals, etc.).
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI>Bound variables, i.e., variables which will be bound during execution through occurrence within a positive database goal, or by a preceding arithmetic function.
+<CODE>+ItemsList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
 
-<LI>
+</DL>
 
-<A NAME="IDX5114"></A>
-Database arithmetic functions, which are a subset of those typically accepted within 
+<P>
 <A NAME="IDX5115"></A>
-<CODE>is/2</CODE> (see 
 <A NAME="IDX5116"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX5117"></A>
-<CODE>arithmetic_functor/2</CODE>). 
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>destructor/0:</B>
+<DD><A NAME="IDX5117"></A>
 
-<LI>
 
-<A NAME="IDX5118"></A>
-Database aggregation functions, each of which has two arguments: a variable indicating the argument over which the function is to be computed, and a goal argument which must contain in at least one argument position the variable (e.g. <CODE>avg(Seats,plane(Type,Seats))</CODE>). The goal argument may only be a conjunction of (positive or negative) base goals. See 
-<A NAME="IDX5119"></A>
-<CODE>pl2sql</CODE>:
-<A NAME="IDX5120"></A>
-<CODE>aggregate_functor/2</CODE> for the admissible aggregate functions. 
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Deletes the shapes of the canvas object and the object.
 
 </UL>
 
+</DL>
+
 <P>
-In addition, variables 
+<A NAME="IDX5118"></A>
+<A NAME="IDX5119"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>show/0:</B>
+<DD><A NAME="IDX5120"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Adds shapes to the canvas object.
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX5121"></A>
 <A NAME="IDX5122"></A>
-can be existentially quantified using 
-<A NAME="IDX5123"></A>
-<CODE>^/2</CODE> (in a similar way to how it is done in 
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>hide_/0:</B>
+<DD><A NAME="IDX5123"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Hides shapes from the canvas object.
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX5124"></A>
-<CODE>setof/3</CODE>). 
-
-
-<P>
-Note that it is assumed that the arithmetic operators in Prolog and SQL are the same, i.e., <CODE>+</CODE> is addition in Prolog and in SQL, etc. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
-
-</UL>
-
-</DL>
-
-<P>
 <A NAME="IDX5125"></A>
-<A NAME="IDX5126"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
-<DD><A NAME="IDX5127"></A>
+<DT><span class="define">PREDICATE:</span> <B>width_value/1:</B>
+<DD><A NAME="IDX5126"></A>
 
 
 <P>
-<CODE>DBProjTerm</CODE> is a term onto which the result of a database query code is (in a similar way to the first argument of 
-<A NAME="IDX5128"></A>
-<CODE>setof/3</CODE>)). 
-
-
-<P>
-A <CODE>ProjectionTerm</CODE> must meet the following restrictions: 
-
-
+<STRONG>Usage 1:</STRONG> <CODE>width_value(+Width)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Sets the <CODE>Width</CODE> of the canvas. Default 100.
 
-<LI>The functor of <CODE>ProjectionTerm</CODE> may not be one of the built-in predicates, i.e. ',', ';', etc. are not allowed.
-
-<LI>Only variables and constants are allowed as arguments, i.e., no structured terms may appear.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5129"></A>
-<A NAME="IDX5130"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
-<DD><A NAME="IDX5131"></A>
-
-
-
-<PRE>
-sqlstring(S) :-
-        string(S).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a string containing SQL code.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5132"></A>
-<A NAME="IDX5133"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlterm/3:</B>
-<DD><A NAME="IDX5134"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pl2sqlterm(+ProjectionTerm,+DatabaseGoal,-SQLQueryTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Similar to
-
-<A NAME="IDX5135"></A>
-<CODE>pl2sqlstring/3</CODE> except that <CODE>SQLQueryTerm</CODE> is a representation of the SQL query as a Prolog term. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ProjectionTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
+<CODE>+Width</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
 
-<CODE>+DatabaseGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>width_value(-Width)</CODE>
 
-<CODE>-SQLQueryTerm</CODE> is a list of <CODE>sqlterm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Width</CODE> of the canvas.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Width</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5127"></A>
+<A NAME="IDX5128"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>height_value/1:</B>
+<DD><A NAME="IDX5129"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>height_value(+Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sets the <CODE>Height</CODE> of the canvas. Default 50.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Height</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>height_value(-Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Height</CODE> of the canvas.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Height</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5130"></A>
+<A NAME="IDX5131"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>side_type/1:</B>
+<DD><A NAME="IDX5132"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>side_type(+Side)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies which <CODE>Side</CODE> of the master, the slave(s) will be packed against. Must be left, right, top or bottom. Defaults to top.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Side</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>side_type(-Side)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Side</CODE> of the canvas.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Side</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5133"></A>
+<A NAME="IDX5134"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>expand_value/1:</B>
+<DD><A NAME="IDX5135"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>expand_value(+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies whether the slaves should be expanded to consume extra space in their master. <CODE>Value</CODE> may have any proper boolean value, such as 1 or no. Defaults to 0
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>expand_value(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the boolean <CODE>Value</CODE> which indicates if the slaves should be expanded or no.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
@@ -441,20 +381,32 @@ sqlstring(S) :-
 <A NAME="IDX5136"></A>
 <A NAME="IDX5137"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>printqueries/1:</B>
+<DT><span class="define">PREDICATE:</span> <B>fill_type/1:</B>
 <DD><A NAME="IDX5138"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>printqueries(SQLTermList)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>fill_type(+Option)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Print to standard output in SQL the list of SQL term <CODE>SQLTermList</CODE>.
+<LI><EM>Description:</EM> If a slave's parcel is larger than its requested dimensions, this option may be used to stretch the slave. Style must have one of the following values: none ( this is the default), x, y, both
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>SQLTermList</CODE> is a list of <CODE>sqlterm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Option</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>fill_type(-Option)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the fill value of the canvas
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Option</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
@@ -463,528 +415,71 @@ sqlstring(S) :-
 <A NAME="IDX5139"></A>
 <A NAME="IDX5140"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sqlterm2string/2:</B>
+<DT><span class="define">PREDICATE:</span> <B>padx_value/1:</B>
 <DD><A NAME="IDX5141"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sqlterm2string(+Queries,-QueryString)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>padx_value(+Amount)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>QueryString</CODE> is a string representation of the list of queries in Prolog-term format in <CODE>Queries</CODE>.
+<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much horizontal external padding to leave on each side of the slave(s). Amount defaults to 0.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Queries</CODE> is a list of <CODE>sqlterm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Amount</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
 
-<CODE>-QueryString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>padx_value(-Amount)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much horizontal external padding to leave on each side of the slaves.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Amount</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
 <A NAME="IDX5142"></A>
+<A NAME="IDX5143"></A>
 <DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX5143"></A>
+<DT><span class="define">PREDICATE:</span> <B>pady_value/1:</B>
+<DD><A NAME="IDX5144"></A>
 
 
 <P>
- Imported from 
-<A NAME="IDX5144"></A>
-<CODE>sqltypes</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC472" HREF="ciao_toc.html#TOC472">Documentation on multifiles (<CODE>pl2sql</CODE>)</A></H2>
-<P>
-<A NAME="IDX5145"></A>
-<A NAME="IDX5146"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>relation/3:</B>
-<DD><A NAME="IDX5147"></A>
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>relation(PredName,Arity,TableName)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>pady_value(+Amount)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate, together with
+<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much vertical external padding to leave on each side of the slave(s). Amount defaults to 0.
 
-<A NAME="IDX5148"></A>
-<CODE>attribute/4</CODE>, defines the correspondence between Prolog predicates and the 
-<A NAME="IDX5149"></A>
-SQL tables in the database. These two relations constitute an extensible meta-database which maps 
-<A NAME="IDX5150"></A>
-Prolog predicate names to 
-<A NAME="IDX5151"></A>
-SQL table names, and 
-<A NAME="IDX5152"></A>
-Prolog predicate argument positions to 
-<A NAME="IDX5153"></A>
-SQL attributes. 
-
-<CODE>PredName</CODE> is the chosen Prolog name for an SQL table. <CODE>Arity</CODE> is the number of arguments of the predicate. <CODE>TableName</CODE> is the name of the SQL table in the Database Management System. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>PredName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Arity</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>TableName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>+Amount</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX5154"></A>
-<A NAME="IDX5155"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>attribute/4:</B>
-<DD><A NAME="IDX5156"></A>
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>attribute(ANumber,TblName,AName,AType)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>pady_value(-Amount)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate maps the argument positions of a Prolog predicate to the SQL attributes of its corresponding table. The types of the arguments need to be specified, and this information is used for consistency checking during the translation and for output formatting. A minimal type system is provided to this end. The allowable types are given by
+<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much vertical external padding to leave on each side of the slaves.
 
-<A NAME="IDX5157"></A>
-<CODE>sqltype/1</CODE>. 
-
-<CODE>ANumber</CODE> is the argument number in the Prolog relation. <CODE>TblName</CODE> is the name of the SQL table in the Database Management System. <CODE>AName</CODE> is the name of the corresponding attribute in the table. <CODE>AType</CODE> is the (translator) data type of the attribute. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>ANumber</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>TblName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>AName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>AType</CODE> is an SQL data type supported by the translator.
- (<CODE>sqltypes:sqltype/1</CODE>)
+<CODE>-Amount</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
-
-
-
-<H2><A NAME="SEC473" HREF="ciao_toc.html#TOC473">Documentation on internals (<CODE>pl2sql</CODE>)</A></H2>
-<P>
-<A NAME="IDX5158"></A>
-<A NAME="IDX5159"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>query_generation/3:</B>
-<DD><A NAME="IDX5160"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>query_generation(+ListOfConjunctions,+ProjectionTerm,-ListOfQueries)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> For each Conjunction in <CODE>ListOfConjunctions</CODE>, translate the pair <CODE>(ProjectionTerm,Conjunction)</CODE> to an SQL query and connect each such query through a
-
-<A NAME="IDX5161"></A>
-UNION-operator to result in the <CODE>ListOfQueries</CODE>. 
-
-A Conjunction consists of positive or negative subgoals. Each subgoal is translated as follows: 
-
-
-<UL>
-
-<LI>the
-
-<A NAME="IDX5162"></A>
-functor of a goal that is not a comparison operation is translated to a 
-<A NAME="IDX5163"></A>
-relation name with a 
-<A NAME="IDX5164"></A>
-range variable, 
-
-<LI>
-
-<A NAME="IDX5165"></A>
-negated goals are translated to 
-<A NAME="IDX5166"></A>
-NOT EXISTS-subqueries with 
-<A NAME="IDX5167"></A>
-* projection, 
-
-<LI>
-
-<A NAME="IDX5168"></A>
-comparison operations are translated to comparison operations in the 
-<A NAME="IDX5169"></A>
-WHERE-clause, 
-
-<LI>
-
-<A NAME="IDX5170"></A>
-aggregate function terms are translated to 
-<A NAME="IDX5171"></A>
-aggregate function (sub)queries. 
-
-</UL>
-
-The arguments of a goal are translated as follows: 
-
-
-<UL>
-
-<LI><CODE>variables of a goal</CODE> are translated to
-
-<A NAME="IDX5172"></A>
-qualified attributes, 
-
-<LI>
-
-<A NAME="IDX5173"></A>
-variables occurring in several goals are translated to equality comparisons (equi join) in the WHERE-clause, 
-<A NAME="IDX5174"></A>
-<A NAME="IDX5175"></A>
-
-<LI>
-
-<A NAME="IDX5176"></A>
-constant arguments are translated to 
-<A NAME="IDX5177"></A>
-equality comparisons in the WHERE-clause. 
-
-</UL>
-
-Arithmetic functions are treated specially (
-<A NAME="IDX5178"></A>
-<CODE>translate_arithmetic_function/5</CODE>). See also 
-<A NAME="IDX5179"></A>
-<CODE>querybody/1</CODE> for details on the syntax accepted and restrictions. 
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5180"></A>
-<A NAME="IDX5181"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_conjunction/5:</B>
-<DD><A NAME="IDX5182"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_conjunction(Conjunction,SQLFrom,SQLWhere,Dict,NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates a conjunction of goals (represented as a list of goals preceeded by existentially quantified variables) to
-
-<A NAME="IDX5183"></A>
-FROM-clauses and 
-<A NAME="IDX5184"></A>
-WHERE-clauses of an SQL query. A dictionary containing the associated SQL table and attribute names is built up as an accumulator pair (arguments <CODE>Dict</CODE> and <CODE>NewDict</CODE>). 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5185"></A>
-<A NAME="IDX5186"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_goal/5:</B>
-<DD><A NAME="IDX5187"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_goal(Goal,SQLFrom,SQLWhere,Dict,NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates:
-
-
-<UL>
-
-<LI>a
-
-<A NAME="IDX5188"></A>
-positive database goal to the associated FROM- and WHERE clause of an SQL query, 
-
-<LI>a
-
-<A NAME="IDX5189"></A>
-negated database goal to a negated existential subquery, 
-
-<LI>an
-
-<A NAME="IDX5190"></A>
-arithmetic goal to an arithmetic expression or an aggregate function query, 
-
-<LI>a
-
-<A NAME="IDX5191"></A>
-comparison goal to a comparison expression, and 
-
-<LI>a
-
-<A NAME="IDX5192"></A>
-negated comparison goal to a comparison expression with the opposite comparison operator. 
-
-</UL>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5193"></A>
-<A NAME="IDX5194"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_arithmetic_function/5:</B>
-<DD><A NAME="IDX5195"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_arithmetic_function(Result,Expression,SQLWhere,Dict,NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Arithmetic functions (left side of is/2 operator is bound to value of expression on right side) may be called with either:
-
-
-<UL>
-<LI><CODE>Result</CODE> unbound: then <CODE>Result</CODE> is bound to the value of the evaluation of <CODE>Expression</CODE>,
-
-<LI><CODE>Result</CODE> bound: then an equality condition is returned between the value of <CODE>Result</CODE> and the value of the evaluation of <CODE>Expression</CODE>.
-
-Only the equality test shows up in the WHERE clause of an SQLquery. 
-</UL>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5196"></A>
-<A NAME="IDX5197"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>translate_comparison/5:</B>
-<DD><A NAME="IDX5198"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>translate_comparison(LeftArg,RightArg,CompOp,Dict,SQLComparison)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates the left and right arguments of a comparison term into the appropriate comparison operation in SQL. The result type of each argument expression is checked for type compatibility.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5199"></A>
-<A NAME="IDX5200"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>aggregate_function/3:</B>
-<DD><A NAME="IDX5201"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>aggregate_function(AggregateFunctionTerm,Dict,AggregateFunctionQuery)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Supports the Prolog aggregate function terms listed in
-
-<A NAME="IDX5202"></A>
-<CODE>aggregate_functor/2</CODE> within arithmetic expressions. Aggregate functions are translated to the corresponding SQL built-in aggregate functions. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5203"></A>
-<A NAME="IDX5204"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>comparison/2:</B>
-<DD><A NAME="IDX5205"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>comparison(PrologOperator,SQLOperator)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the mapping between Prolog operators and SQL operators:
-
-
-<PRE>
-comparison(=,=).
-comparison(&#60;,&#60;).
-comparison(&#62;,&#62;).
-comparison(@&#60;,&#60;).
-comparison(@&#62;,&#62;).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5206"></A>
-<A NAME="IDX5207"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>negated_comparison/2:</B>
-<DD><A NAME="IDX5208"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>negated_comparison(PrologOperator,SQLOperator)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the mapping between Prolog operators and the complementary SQL operators:
-
-
-<PRE>
-negated_comparison(=,&#60;&#62;).
-negated_comparison(\==,=).
-negated_comparison(&#62;,=&#60;).
-negated_comparison(=&#60;,&#62;).
-negated_comparison(&#60;,&#62;=).
-negated_comparison(&#62;=,&#60;).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLOperator</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5209"></A>
-<A NAME="IDX5210"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>arithmetic_functor/2:</B>
-<DD><A NAME="IDX5211"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>arithmetic_functor(PrologFunctor,SQLFunction)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the admissible arithmetic functions on the Prolog side and their correspondence on the SQL side:
-
-
-<PRE>
-arithmetic_functor(+,+).
-arithmetic_functor(-,-).
-arithmetic_functor(*,*).
-arithmetic_functor(/,/).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologFunctor</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLFunction</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5212"></A>
-<A NAME="IDX5213"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>aggregate_functor/2:</B>
-<DD><A NAME="IDX5214"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>aggregate_functor(PrologFunctor,SQLFunction)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Defines the admissible aggregate functions on the Prolog side and their correspondence on the SQL side:
-
-
-<PRE>
-aggregate_functor(avg,'AVG').
-aggregate_functor(min,'MIN').
-aggregate_functor(max,'MAX').
-aggregate_functor(sum,'SUM').
-aggregate_functor(count,'COUNT').
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PrologFunctor</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>SQLFunction</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC474" HREF="ciao_toc.html#TOC474">Known bugs and planned improvements (<CODE>pl2sql</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-Need to separate db predicate names by module.
-
-<LI>
-
-Warning: using kludgy SQL term to string conversion because of bugs in sqlterm2string/2.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -454,19 +454,19 @@ handle_args_('-S', Args) :- !,
         get_os(Os),
         get_arch(Arch),
         atom_concat(Os,Arch,Target),
-        set_prolog_flag(selfcontained,Target),
+        set_prolog_flag(self_contained,Target),
         handle_args(Args).
 handle_args_('-SS',[Target|Args]) :- !,
         set_prolog_flag(executables, static),
-        set_prolog_flag(selfcontained,Target),
+        set_prolog_flag(self_contained,Target),
         handle_args(Args).
 handle_args_('-SS',[]) :- !,
         usage.
 handle_args_('-z', Args) :- !,
-        set_prolog_flag(compressexec,yes),
+        set_prolog_flag(compress_exec,yes),
         handle_args(Args).
 handle_args_('-zl',Args) :- !,
-        set_prolog_flag(compresslib,yes),
+        set_prolog_flag(compress_lib,yes),
         handle_args(Args).
 handle_args_('-e', Args) :- !,
         set_prolog_flag(executables, eagerload),
@@ -530,7 +530,7 @@ ciaoc <MiscOpts> -c  <file> ...
 
 -v  verbose mode
 
--ri generate readable .itf files
+-ri generate human readable .itf files
 
 -u  use <file> for compilation
 
@@ -566,6 +566,9 @@ default extension for files is '.pl'
 
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+30,2000/11/03,16:42*01+'CET'), "Flags homogeneized
+   with _ as requested by the Ciao style guide.  (Oscar Portela Arjona)").
 
 :- comment(version(1*5+142,2000/05/11,14:11*20+'CEST'), "Added options for
    the generation of self-contained executables (engine and prolog bytecode

@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Extending the syntax</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_28.html">previous</A>, <A HREF="ciao_30.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_28.html">previous</A>, <A HREF="ciao_30.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
 <H1><A NAME="SEC170" HREF="ciao_toc.html#TOC170">Extending the syntax</A></H1>
 <P>
-<A NAME="IDX1924"></A>
+<A NAME="IDX1937"></A>
 
 
 <P>
@@ -21,11 +21,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_28.html">previous</A>, 
 
 <P>
 This chapter documents the 
-<A NAME="IDX1925"></A>
+<A NAME="IDX1938"></A>
 builtin directives in Ciao for extending the syntax of source files. Note that the 
-<A NAME="IDX1926"></A>
+<A NAME="IDX1939"></A>
 ISO-Prolog directive 
-<A NAME="IDX1927"></A>
+<A NAME="IDX1940"></A>
 <CODE>char_conversion/2</CODE> is not implemented, since Ciao does not (yet) have a character conversion table.
 
 
@@ -54,11 +54,11 @@ These directives are builtin in Ciao, so nothing special has to be done to use t
 
 <H2><A NAME="SEC172" HREF="ciao_toc.html#TOC172">Documentation on internals (<CODE>syntax_extensions</CODE>)</A></H2>
 <P>
-<A NAME="IDX1928"></A>
-<A NAME="IDX1929"></A>
+<A NAME="IDX1941"></A>
+<A NAME="IDX1942"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>op/3:</B>
-<DD><A NAME="IDX1930"></A>
+<DD><A NAME="IDX1943"></A>
 
 
 <P>
@@ -68,11 +68,11 @@ These directives are builtin in Ciao, so nothing special has to be done to use t
 <UL>
 <LI><EM>Description:</EM> Updates the
 
-<A NAME="IDX1931"></A>
+<A NAME="IDX1944"></A>
 operator table for reading the terms in the rest of the current text, in the same way as the builtin 
-<A NAME="IDX1932"></A>
+<A NAME="IDX1945"></A>
 <CODE>op/3</CODE> does. Its scope is local to the current text. Usually included in 
-<A NAME="IDX1933"></A>
+<A NAME="IDX1946"></A>
 package files. 
 <LI><EM>The following properties hold at call time:</EM>
 
@@ -89,11 +89,11 @@ package files.
 </DL>
 
 <P>
-<A NAME="IDX1934"></A>
-<A NAME="IDX1935"></A>
+<A NAME="IDX1947"></A>
+<A NAME="IDX1948"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>new_declaration/1:</B>
-<DD><A NAME="IDX1936"></A>
+<DD><A NAME="IDX1949"></A>
 
 
 <P>
@@ -102,11 +102,11 @@ package files.
 <UL>
 <LI><EM>Description:</EM> Declares <CODE>Predicate</CODE> to be a valid declaration in the rest of the current text. Such declarations are simply ignored by the compiler or top level, but can be used by other code processing programs such as an automatic documentator. Also, they can easily translated into standard code (a set of facts and/or rules) by defining a suitable
 
-<A NAME="IDX1937"></A>
+<A NAME="IDX1950"></A>
 expansion (e.g., by 
-<A NAME="IDX1938"></A>
+<A NAME="IDX1951"></A>
 <CODE>add_sentence_trans/1</CODE>, etc.). This is tipically done in 
-<A NAME="IDX1939"></A>
+<A NAME="IDX1952"></A>
 package files. 
 
 Equivalent to <CODE>new_declaration(Predicate, off)</CODE>. 
@@ -117,7 +117,7 @@ Equivalent to <CODE>new_declaration(Predicate, off)</CODE>.
 <PRE>
 predname(P/A) :-
         atm(P),
-        int(A).
+        nnegint(A).
 </PRE>
 
  (<CODE>basic_props:predname/1</CODE>)
@@ -126,11 +126,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1940"></A>
-<A NAME="IDX1941"></A>
+<A NAME="IDX1953"></A>
+<A NAME="IDX1954"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>new_declaration/2:</B>
-<DD><A NAME="IDX1942"></A>
+<DD><A NAME="IDX1955"></A>
 
 
 <P>
@@ -139,7 +139,7 @@ predname(P/A) :-
 <UL>
 <LI><EM>Description:</EM> Declares <CODE>Predicate</CODE> to be a valid declaration in the rest of the current text. Such declarations will be included in the
 
-<A NAME="IDX1943"></A>
+<A NAME="IDX1956"></A>
 interface file for this file if <CODE>In_Itf</CODE> is 'on', not if it is 'off'. Including such declarations in interface files makes them visible while processing other modules which make use of this one. 
 <LI><EM>The following properties hold at call time:</EM>
 
@@ -148,7 +148,7 @@ interface file for this file if <CODE>In_Itf</CODE> is 'on', not if it is 'off'.
 <PRE>
 predname(P/A) :-
         atm(P),
-        int(A).
+        nnegint(A).
 </PRE>
 
  (<CODE>basic_props:predname/1</CODE>)
@@ -160,11 +160,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1944"></A>
-<A NAME="IDX1945"></A>
+<A NAME="IDX1957"></A>
+<A NAME="IDX1958"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>load_compilation_module/1:</B>
-<DD><A NAME="IDX1946"></A>
+<DD><A NAME="IDX1959"></A>
 
 
 <P>
@@ -173,9 +173,9 @@ predname(P/A) :-
 <UL>
 <LI><EM>Description:</EM> Loads code defined in <CODE>File</CODE> into the compiler, usually including predicates which define translations of terms, for use with the declarations
 
-<A NAME="IDX1947"></A>
+<A NAME="IDX1960"></A>
 <CODE>add_sentence_trans/1</CODE> and similar ones. Normally included in 
-<A NAME="IDX1948"></A>
+<A NAME="IDX1961"></A>
 package files. 
 <LI><EM>The following properties hold at call time:</EM>
 
@@ -186,79 +186,21 @@ package files.
 </DL>
 
 <P>
-<A NAME="IDX1949"></A>
-<A NAME="IDX1950"></A>
+<A NAME="IDX1962"></A>
+<A NAME="IDX1963"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>add_sentence_trans/1:</B>
-<DD><A NAME="IDX1951"></A>
+<DD><A NAME="IDX1964"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> :- <CODE>add_sentence_trans(Predicate)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Starts a translation, defined by <CODE>Predicate</CODE>, of the terms read by the compiler in the rest of the current text. For each subsequent term read by the compiler, the translation predicate is called to obtain a new term which will be used by the compiler as if it where the term present in the file. A list may be returned also, to translate a single term into several terms. <CODE>Predicate</CODE> must be exported by a module previously loaded with a
+<LI><EM>Description:</EM> Starts a translation, defined by <CODE>Predicate</CODE>, of the terms read by the compiler in the rest of the current text. For each subsequent term read by the compiler, the translation predicate is called to obtain a new term which will be used by the compiler as if it where the term present in the file. If the call fails, the term is used as such. A list may be returned also, to translate a single term into several terms. Before calling the translation predicate with actual program terms, it is called with an input of <CODE>0</CODE> to give an opportunity of making initializations for the module, discarding the result (note that normally a 0 could not be there). <CODE>Predicate</CODE> must be exported by a module previously loaded with a
 
-<A NAME="IDX1952"></A>
-<CODE>load_compilation_module/1</CODE> declaration. Normally included in 
-<A NAME="IDX1953"></A>
-package files. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>Predicate</CODE> is a translation predicate spec (has arity 2 or 3).
- (<CODE>syntax_extensions:translation_predname/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1954"></A>
-<A NAME="IDX1955"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>add_term_trans/1:</B>
-<DD><A NAME="IDX1956"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>add_term_trans(P)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Starts a translation, defined by <CODE>Predicate</CODE>, of the terms and sub-terms read by the compiler in the rest of the current text. This translation is performed after all translations defined by
-
-<A NAME="IDX1957"></A>
-<CODE>add_sentence_trans/1</CODE> are done. For each subsequent term read by the compiler, and recursively any subterm included, the translation predicate is called to possibly obtain a new term to replace the old one. Care must be taken of not introducing an endless loop of translations. <CODE>Predicate</CODE> must be exported by a module previously loaded with a 
-<A NAME="IDX1958"></A>
-<CODE>load_compilation_module/1</CODE> declaration. Normally included in 
-<A NAME="IDX1959"></A>
-package files. 
-<LI><EM>The following properties hold at call time:</EM>
-
-<CODE>P</CODE> is a translation predicate spec (has arity 2 or 3).
- (<CODE>syntax_extensions:translation_predname/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1960"></A>
-<A NAME="IDX1961"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>add_goal_trans/1:</B>
-<DD><A NAME="IDX1962"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>add_goal_trans(Predicate)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Declares a translation, defined by <CODE>Predicate</CODE>, of the goals present in the clauses of the current text. This translation is performed after all translations defined by
-
-<A NAME="IDX1963"></A>
-<CODE>add_sentence_trans/1</CODE> and 
-<A NAME="IDX1964"></A>
-<CODE>add_term_trans/1</CODE> are done. For each clause read by the compiler, the translation predicate is called with each goal present in the clause to possibly obtain other goal to substitute the original one, and the translation is subsequently applied to the resulting goal. Care must be taken of not introducing an endless loop of translations. <CODE>Predicate</CODE> must be exported by a module previously loaded with a 
 <A NAME="IDX1965"></A>
-<CODE>load_compilation_module/1</CODE> declaration. Bear in mind that this type of translation noticeably slows down compilation. Normally included in 
+<CODE>load_compilation_module/1</CODE> declaration. Normally included in 
 <A NAME="IDX1966"></A>
 package files. 
 <LI><EM>The following properties hold at call time:</EM>
@@ -273,25 +215,25 @@ package files.
 <A NAME="IDX1967"></A>
 <A NAME="IDX1968"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>add_clause_trans/1:</B>
+<DT><span class="define">DECLARATION:</span> <B>add_term_trans/1:</B>
 <DD><A NAME="IDX1969"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>add_clause_trans(Predicate)</CODE>.
+<STRONG>Usage:</STRONG> :- <CODE>add_term_trans(P)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Declares a translation, defined by <CODE>Predicate</CODE>, of the clauses of the current text. The translation is performed before
+<LI><EM>Description:</EM> Starts a translation, defined by <CODE>Predicate</CODE>, of the terms and sub-terms read by the compiler in the rest of the current text. This translation is performed after all translations defined by
 
 <A NAME="IDX1970"></A>
-<CODE>add_goal_trans/1</CODE> translations but after 
+<CODE>add_sentence_trans/1</CODE> are done. For each subsequent term read by the compiler, and recursively any subterm included, the translation predicate is called to possibly obtain a new term to replace the old one. Care must be taken of not introducing an endless loop of translations. <CODE>Predicate</CODE> must be exported by a module previously loaded with a 
 <A NAME="IDX1971"></A>
-<CODE>add_sentence_trans/1</CODE> and 
+<CODE>load_compilation_module/1</CODE> declaration. Normally included in 
 <A NAME="IDX1972"></A>
-<CODE>add_term_trans/1</CODE> translations. The usefulness of this translation is that information of the interface of related modules is available when it is performed. For each clause read by the compiler, the translation predicate is called with the first argument instantiated to a structure <CODE>clause(Head,Body)</CODE>, and the predicate must return in the second argument a similar structure, without changing the functor in <CODE>Head</CODE>. Before executing the translation predicate with actual clauses it is called with an input of <CODE>clause(0,0)</CODE> (output is discarded). 
+package files. 
 <LI><EM>The following properties hold at call time:</EM>
 
-<CODE>Predicate</CODE> is a translation predicate spec (has arity 2 or 3).
+<CODE>P</CODE> is a translation predicate spec (has arity 2 or 3).
  (<CODE>syntax_extensions:translation_predname/1</CODE>)
 </UL>
 
@@ -301,8 +243,66 @@ package files.
 <A NAME="IDX1973"></A>
 <A NAME="IDX1974"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>translation_predname/1:</B>
+<DT><span class="define">DECLARATION:</span> <B>add_goal_trans/1:</B>
 <DD><A NAME="IDX1975"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>add_goal_trans(Predicate)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares a translation, defined by <CODE>Predicate</CODE>, of the goals present in the clauses of the current text. This translation is performed after all translations defined by
+
+<A NAME="IDX1976"></A>
+<CODE>add_sentence_trans/1</CODE> and 
+<A NAME="IDX1977"></A>
+<CODE>add_term_trans/1</CODE> are done. For each clause read by the compiler, the translation predicate is called with each goal present in the clause to possibly obtain other goal to substitute the original one, and the translation is subsequently applied to the resulting goal. Care must be taken of not introducing an endless loop of translations. <CODE>Predicate</CODE> must be exported by a module previously loaded with a 
+<A NAME="IDX1978"></A>
+<CODE>load_compilation_module/1</CODE> declaration. Bear in mind that this type of translation noticeably slows down compilation. Normally included in 
+<A NAME="IDX1979"></A>
+package files. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Predicate</CODE> is a translation predicate spec (has arity 2 or 3).
+ (<CODE>syntax_extensions:translation_predname/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1980"></A>
+<A NAME="IDX1981"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>add_clause_trans/1:</B>
+<DD><A NAME="IDX1982"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>add_clause_trans(Predicate)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares a translation, defined by <CODE>Predicate</CODE>, of the clauses of the current text. The translation is performed before
+
+<A NAME="IDX1983"></A>
+<CODE>add_goal_trans/1</CODE> translations but after 
+<A NAME="IDX1984"></A>
+<CODE>add_sentence_trans/1</CODE> and 
+<A NAME="IDX1985"></A>
+<CODE>add_term_trans/1</CODE> translations. The usefulness of this translation is that information of the interface of related modules is available when it is performed. For each clause read by the compiler, the translation predicate is called with the first argument instantiated to a structure <CODE>clause(Head,Body)</CODE>, and the predicate must return in the second argument a similar structure, without changing the functor in <CODE>Head</CODE> (or fail, in which case the clause is used as is). Before executing the translation predicate with actual clauses it is called with an input of <CODE>clause(0,0)</CODE>, discarding the result. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Predicate</CODE> is a translation predicate spec (has arity 2 or 3).
+ (<CODE>syntax_extensions:translation_predname/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1986"></A>
+<A NAME="IDX1987"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>translation_predname/1:</B>
+<DD><A NAME="IDX1988"></A>
 
 
 <P>
@@ -320,6 +320,6 @@ A translation predicate is a predicate of arity 2 or 3 used to make compile-time
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_28.html">previous</A>, <A HREF="ciao_30.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_28.html">previous</A>, <A HREF="ciao_30.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

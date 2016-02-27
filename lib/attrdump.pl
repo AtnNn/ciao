@@ -1,4 +1,9 @@
-:- module(attrdump, [copy_extract_attr/3, cp_attr/3], [dcg,assertions]).
+:- module(attrdump, 
+        [
+            copy_extract_attr/3, 
+            cp_attr/3,
+            reinstall_attributes/1
+        ], [dcg,assertions]).
 
 :- use_module(library(dict), [dic_lookup/4]).
 
@@ -56,6 +61,12 @@ attrlist(dic(_,Val,L,R)) -->
 
 attr(cva(Copy,Constr)) --> [attach_attribute(Copy, Constr)].
 attr(v(_)            ) --> [].
+
+
+reinstall_attributes([]).
+reinstall_attributes([attach_attribute(Copy, Constr)|Rest]):-
+        attach_attribute(Copy, Constr),
+        reinstall_attributes(Rest).
 
 :- comment(version_maintenance,dir('../version')).
 

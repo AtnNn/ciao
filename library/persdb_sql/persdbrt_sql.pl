@@ -1,7 +1,8 @@
 :- module(_,
         [
 	    init_sql_persdb/0,
-	    sql_persistent/3,
+%% Was just exported to document declaration (for now done with doinclude).
+%	    sql_persistent/3,
 %	    dbname/1,
 %	    user/1,
 %	    passwd/1,
@@ -134,8 +135,11 @@ persLocation(db(Name, User, Password, Machine:Port)) :-
 :- comment(subtitle,"@bf{The CIAO System Documentation Series}").
 :- comment(subtitle,"Technical Report CLIP 10/98.0").
 :- comment(subtitle,"RadioWeb (ESPRIT Project 25562) Report D3.1.M2-A2").
-:- comment(subtitle,"ECCOSIC (Fulbright Project 98059)").
+
+:- comment(subtitle,"ECCOSIC (@em{Comision Conjunta Hispano-Norteamericana}").
+:- comment(subtitle,"@em{de Cooperacion Cientifica y Tecnologica} Project 98059)"). 
 %% :- comment(subtitle,"@em{Draft printed on:} @today{}").
+
 :- comment(subtitle,"December 26, 1998").
 
 :- comment(author,
@@ -154,7 +158,7 @@ Copyright @copyright{} 1996-98 The CLIP Group
 ").
 
 :- comment(summary,"This library implements the SQL-based version of
-   the generic of concept @em{persistent predicates}. As introduced in
+   the generic concept of @em{persistent predicates}. As introduced in
    the filebased version documentation (the @lib{persdb} library), a
    persistent predicate is a relation such that any updates made to it
    from a program remain after the execution of that program
@@ -257,9 +261,7 @@ backtracking.
 
 :- new_declaration(sql_persistent/3,yes).
 
-% This forces documentation (otherwise, it stays undefined!)
-sql_persistent(_,_,_).
-
+:- comment(doinclude,sql_persistent/3).
 :- decl sql_persistent(PrologPredTypes,TableAttributes,Keyword)
    => prologPredTypes * tableAttributes * persLocId
 

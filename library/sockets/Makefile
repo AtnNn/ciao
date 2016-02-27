@@ -2,8 +2,7 @@ MODULE=sockets_c
 ADDITIONAL_FILES=sockets
 
 include ../../SETTINGS
-include ../../COMMON
-include $(SRC)/makefile-sysindep
+include ../../SHARED
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 ifeq ($(OSNAME),Solaris)
@@ -23,8 +22,8 @@ all: $(LIBNAME)
 
 $(LIBNAME): headers $(OBJNAME) 
 	$(LD) $(LDSHARED) -o $(LIBNAME) $(OBJNAME) $(REQLIBS)
-	$(SETLOCALCOMPILER) $(CIAOC) -c $(MODULE)
-	$(SETLOCALCOMPILER) $(CIAOC) -c $(ADDITIONAL_FILES)
+	$(SETLOCALCIAO) $(CIAOC) -c $(MODULE)
+	$(SETLOCALCIAO) $(CIAOC) -c $(ADDITIONAL_FILES)
 	chmod $(EXECMODE) $(LIBNAME)
 
 $(OBJNAME): headers $(SRCNAME)

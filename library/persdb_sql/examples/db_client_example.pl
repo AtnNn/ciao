@@ -48,6 +48,20 @@ main2:- %% accessing tuples one by one
 	format("Second Tuple: ~w \n",Answer2),
 	db_logoff(Conn),
 	odbc_disconnect(Stream).
+
+main22 :-
+	odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
+	db_login(Stream,'Literature',dba,sql,Conn),
+	db_stmt_handle(Conn,
+	      "SELECT fname,lname,address from ""DBA"".customer 
+               WHERE ((Id>100) AND (Id<105))",QueryConn),
+	db_one_tuple(QueryConn,Answer),
+	format("First Tuple: ~w \n",Answer),
+	db_one_tuple(QueryConn,Answer2),
+	format("Second Tuple: ~w \n",Answer2),
+	db_logoff(Conn),
+	odbc_disconnect(Stream).
+
 	
 main3:- %% bringing tuples (one to one) from Literature Database
 	%% TO SEE : check it
@@ -72,8 +86,7 @@ main4:- %% inserting a tuple into the Literature database
 	odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
 	db_login(Stream,'Literature',dba,sql,Conn),
 	db_stmt_handle(Conn, 
-               "INSERT INTO AUTHORS values ('Martin Gaite',
-                'Carmen',10,'1910-7-10 00:00:00:000')",_QueryConn),
+               "INSERT INTO AUTHORS values ('Martin Gaite','Carmen',10)",_QueryConn),
 	db_logoff(Conn),
 	odbc_disconnect(Stream).
 	

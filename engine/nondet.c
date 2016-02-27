@@ -827,7 +827,22 @@ BOOL open_predicate(Arg)
    list with the calls pending on every clause of a predicate.  When the end
    of the list is reached and the predicate is still "open" (i.e., more
    clauses might be added to it), the call does not fail: it is instead
-   enqueued in a list reacheable from the root of the predicate. (MCL) */
+   enqueued in a list reacheable from the root of the predicate. (MCL) 
+
+   The case for non-blocking calls is interesting: there are three
+   possibilities:
+
+   a) There is no clause for the predicate
+   b) There are clauses, but indexing dictates that none of them are 
+      applicable for the current call.
+   c) There are clauses, and at least one of them can match the current call.
+
+   In cases (a) and (b) a non-blocking call does *not* need choicepoint.
+   Case (c) needs a choicepoint, and the clause remains locked while it is
+   being executed.  The lock is removed when execution finishes, or when the
+   choicepoint is deallocated.
+
+*/
 
 static struct instance *current_instance_conc(Arg, block)
      Argdecl;
@@ -839,33 +854,40 @@ static struct instance *current_instance_conc(Arg, block)
   InstanceHandle *x2_next, *x5_next;
   REGISTER struct int_info *root = TagToRoot(X(2));
 
-
 #if defined(DEBUG)
       if (debug_conc) fprintf(stderr, "** Entering current_instance_conc\n");
 #endif
 
   do {
-    try_instance = wait_for_an_instance_pointer(&(root->first), 
-                                                &(root->first),
-                                                root, block);
-    /* No instance at all */
+    try_instance =
+     wait_for_an_instance_pointer(&(root->first), &(root->first), root, block);
+
+ /* That was a non-blocking or concurrent predicate with no instance at all */
     if (!try_instance) {
       Wait_For_Cond_End(root->clause_insertion_cond);
       return NULL;
     }
 
 /* If we are here, we have a lock for the predicate.  Get first possibly
-   matching instance; weak indexing here */
+   matching instance */
 
-    if (!(current_one = first_possible_instance(X(0), root, &x2_n, &x5_n)))
-      /* Release the lock, let others add clauses */
-      Wait_For_Cond_End(root->clause_insertion_cond);
+    current_one = first_possible_instance(X(0), root, &x2_n, &x5_n);
+    if (current_one == NULL)  /* Let others enter and update */
+        Wait_For_Cond_End(root->clause_insertion_cond);
+
   } while (!current_one && block == BLOCK);
 
+  /* Here with (current_one || block == NON_BLOCK).  current_one == NULL
+     implies that we do not have a lock --- but then block == NON_BLOCK, and
+     therefore we can return with a NULL */
+     
+  if (!current_one) return NULL;
+
 #if defined(DEBUG) && defined(THREADS)
-  if (debug_conc && block == BLOCK && 
+  if (debug_conc && 
       Cond_Lock_is_unset(root->clause_insertion_cond))
-    fprintf(stderr, "***%d(%d) current_instance_conc: putting chpt without locks!\n",
+      fprintf(stderr, 
+              "***%d(%d) current_instance_conc: putting chpt without locks!\n",
             (int)Thread_Id, (int)GET_INC_COUNTER);
   if (debug_conc && !root->first)
     fprintf(stderr,"*** current_instance_conc: no first instance!\n");
@@ -878,12 +900,6 @@ static struct instance *current_instance_conc(Arg, block)
     fails, the lock is anyway unset from wam(), right before
     failure. */
 
- /* Do not make choicepoints unnecessarily. */
-
-  /*
-  if (x2_n || x5_n || 
-      (block == BLOCK && root->behavior_on_failure == CONC_OPEN)) {
-  */
 #if defined(DEBUG) && defined(THREADS)
   if (debug_conc)
     fprintf(stderr,
@@ -898,7 +914,12 @@ static struct instance *current_instance_conc(Arg, block)
     X(4) = MakeSmall(use_clock);
     X(5) = PointerToTermOrZero(x5_next);
     X(6) = PointerToTermOrZero(root);  /* pass root to RETRY_INSTANCE (MCL) */
-    X(7) = block == BLOCK ? atom_block : atom_no_block;
+    /*X(7) = block == BLOCK ? atom_block : atom_no_block;*/
+    if (block == BLOCK)
+      SET_BLOCKING(X(InvocationAttr));
+    else
+      SET_NONBLOCKING(X(InvocationAttr));
+    SET_EXECUTING(X(InvocationAttr));
     X(8) = PointerToTermOrZero(TopConcChpt); /* Save last dynamic top */
     w->next_alt = address_nd_current_instance; /* establish skeletal node */
     w->next_node = w->node;
@@ -908,15 +929,16 @@ static struct instance *current_instance_conc(Arg, block)
     w->node->trail_top = w->trail_top;
     SaveGtop(w->node,w->global_top);
     NewShadowregs(w->global_top);
-    /*
-  }
-    */
+
 #if defined(DEBUG)
-  if (debug_conc) fprintf(stderr, "** Exiting current_instance\n");
+    if (debug_conc)
+      fprintf(stderr, "***(%d)(%d) Exiting current_instance\n",
+              (int)Thread_Id, (int)GET_INC_COUNTER);
 #endif
 
   return current_one;
 }
+
 
 
 static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
@@ -929,17 +951,20 @@ static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
 
    /* We have to wait for a new clause only if we are blocking */
 
-
     while(TRUE){  
     /* Wait until a change is signaled, and test that the change affects us */
 
-      if (block == BLOCK)
+      if (block == BLOCK) 
         Wait_For_Cond_Begin( \
                              ((*inst_pptr1 == NULL) && \
                               (*inst_pptr2 == NULL) && \
                               root->behavior_on_failure == CONC_OPEN ), \
-                             root->clause_insertion_cond
+                              root->clause_insertion_cond \
                              )
+      else { /* In any case, leave the predicate locked */
+        Cond_Begin(root->clause_insertion_cond);
+      }
+          
       /* Test again to find out which was the case */
       
     pptr1 = *inst_pptr1;
@@ -948,7 +973,7 @@ static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
       return TRUE;
     else if (block == NO_BLOCK || root->behavior_on_failure == CONC_CLOSED)
       return FALSE;
-    else Wait_For_Cond_End(root->clause_insertion_cond); /* Let others update */
+    else Wait_For_Cond_End(root->clause_insertion_cond); /*Let others update*/
     }
 }
 
@@ -1015,12 +1040,26 @@ BOOL next_instance_conc(Arg,ipp)
     Argdecl;
     struct instance **ipp;
 {
-  REGISTER struct int_info    *root = TagToRoot(X(6));
-  BlockingType                block = X(7) == atom_block ? BLOCK : NO_BLOCK;
+  REGISTER struct int_info *root = TagToRoot(X(6));
+  BlockingType             block;/* = X(7) == atom_block ? BLOCK : NO_BLOCK;*/
   InstanceHandle *x2_ins_h, *x5_ins_h;
   BOOL next_instance_pointer;
   struct instance *x2_insp, *x5_insp;
 
+  block = IS_BLOCKING(X(InvocationAttr)) ? BLOCK : NO_BLOCK; 
+
+  /* When we baktrack after a call which did not finally succeed, the lock
+     is still set. Unlock it before proceeding to the next clause. */
+
+  if (EXECUTING(X(InvocationAttr))){
+#if defined(DEBUG)
+    if (debug_conc)
+      fprintf(stderr, "*** in next_instance_conc changing to nonexecuting\n");
+#endif
+    SET_NONEXECUTING(X(InvocationAttr));
+    Wait_For_Cond_End(root->clause_insertion_cond);
+  }
+  
   x2_ins_h = TagToInstHandle(X(2));
   x5_ins_h = TagToInstHandle(X(5));
 
@@ -1032,18 +1071,13 @@ BOOL next_instance_conc(Arg,ipp)
 #if defined(DEBUG) && defined(THREADS)
   if (debug_conc && !root->first)
     fprintf(stderr, 
-            "*** %d(%d) entering next_instance_conc without first instance.\n",
+            "*** %d(%d) in next_instance_conc without first instance.\n",
             (int)Thread_Id, (int)GET_INC_COUNTER);
   if (debug_conc) {
     fprintf(stderr,
-            "*** %d(%d) entering next_instance_conc with x2 = %x\n",
-            (int)Thread_Id, (int)GET_INC_COUNTER, (int)x2_ins_h->inst_ptr);
-    fprintf(stderr,
-            "*** %d(%d) entering next_instance_conc with x5 = %x\n",
-            (int)Thread_Id, (int)GET_INC_COUNTER, (int)x5_ins_h->inst_ptr);
-    fprintf(stderr,
-            "*** %d(%d) entering next_instance_conc with block = %x\n",
-            (int)Thread_Id, (int)GET_INC_COUNTER, (int)block);
+            "*** %d(%d) in next_instance_conc with x2 = %x, x5 = %x, block = %x\n",
+            (int)Thread_Id, (int)GET_INC_COUNTER, 
+            (int)x2_ins_h->inst_ptr, (int)x5_ins_h->inst_ptr, (int)block);
   }
 #endif
 
@@ -1076,7 +1110,7 @@ BOOL next_instance_conc(Arg,ipp)
               (int)Thread_Id, (int)GET_INC_COUNTER);
 #endif
 
-    if (!*ipp)
+    if (!*ipp) /* Not instance -> release lock, continue in loop */
       Wait_For_Cond_End(root->clause_insertion_cond);
   } while (!*ipp);
 
@@ -1091,10 +1125,13 @@ BOOL next_instance_conc(Arg,ipp)
             (int)Thread_Id, (int)GET_INC_COUNTER, (int)*ipp);
 #endif  
 
-/* Here with a possibly matching instance and a possibly empty next instance.*/
+  /* Here with a possibly matching instance,
+     a possibly empty next instance,
+     and the lock on the instance. */
 
   w->node->term[2] = X(2) = PointerToTermOrZero(x2_ins_h);
   w->node->term[5] = X(5) = PointerToTermOrZero(x5_ins_h);
+  SET_EXECUTING(X(InvocationAttr));
 
   return TRUE;
 }

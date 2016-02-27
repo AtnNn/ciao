@@ -23,16 +23,12 @@
 #include "unix_utils_defs.h"
 #include "streams_defs.h"
 #include "stacks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "alloc_defs.h"
 
 /* local declarations */
 
-#if defined(Win32)
-extern char library_directory[];
-#else
 extern char *library_directory;
-#endif
 
 #if defined(Solaris)
 int gethostname(char *name, int namelen);
@@ -129,8 +125,10 @@ BOOL expand_file_name(name, target)
     case '/':
       --src, --dest, dest[0] = (char)0;
       if (dest == target) {
-        if (!(dest = getenv("HOME")))
+        if (!(dest = getenv("HOME"))) {
+       /* fprintf(stderr, "library_directory = %s\n", library_directory); */
 	  dest = library_directory;
+	}
         strcpy(target,dest);
         dest = target+strlen(target);
       } else {
@@ -152,9 +150,9 @@ BOOL expand_file_name(name, target)
   default:
 #if defined(Win32)
     if (DriveSelector(src)) {    /* c:/ */
-      dest[0] = dest[1] = '/';
-      dest[2] = src[0];
-      dest += 3;
+      strcpy(dest,"/cygdrive/");
+      dest[10] = tolower(src[0]);
+      dest += 11;
       src += 2;
       goto st1;
     } else
@@ -584,6 +582,90 @@ BOOL prolog_unix_delete(Arg)
 }
 
 
+BOOL prolog_unix_rename(Arg)
+     Argdecl;
+{
+  char 
+    orig_name[MAXPATHLEN+1],
+    new_name[MAXPATHLEN+1];
+
+  DEREF(X(0),X(0));
+
+  if (!TagIsATM(X(0)))
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+
+  DEREF(X(1),X(1));
+
+  if (!TagIsATM(X(1)))
+    ERROR_IN_ARG(X(1),2,STRICT_ATOM);
+
+  if (!expand_file_name(GetString(X(0)),orig_name))
+    return FALSE;
+
+  if (!expand_file_name(GetString(X(1)),new_name))
+    return FALSE;
+
+  if (rename(orig_name, new_name)){
+    ENG_perror("rename() in rename_file/2");
+    MINOR_FAULT("rename() failed");
+  }
+
+  return TRUE;
+}
+
+
+BOOL prolog_unix_mkdir(Arg)
+     Argdecl;
+{
+  char dirname[MAXPATHLEN+1];
+  int mode;
+
+  DEREF(X(0),X(0));
+
+  if (!TagIsATM(X(0)))
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+
+  if (!expand_file_name(GetString(X(0)),dirname))
+    return FALSE;
+
+  DEREF(X(1),X(1));
+
+  if (!TagIsSmall(X(1)))
+    BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2)
+
+  mode = GetSmall(X(1));
+
+  if (mkdir(dirname, mode)){
+    ENG_perror("mkdir() in make_directory/2");
+    MINOR_FAULT("mkdir() failed");
+  }
+
+  return TRUE;
+}
+
+
+BOOL prolog_unix_rmdir(Arg)
+     Argdecl;
+{
+  char dirname[MAXPATHLEN+1];
+
+  DEREF(X(0),X(0));
+
+  if (!TagIsATM(X(0)))
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
+
+  if (!expand_file_name(GetString(X(0)),dirname))
+    return FALSE;
+
+  if (rmdir(dirname)){
+    ENG_perror("rmdir() in delete_directory/1");
+    MINOR_FAULT("rmdir() failed");
+  }
+
+  return TRUE;
+}
+
+
 
 /*
  *  current_host(?HostName).
@@ -950,14 +1032,15 @@ BOOL prolog_exec(Arg)
       if (execlp("sh", "sh", "-c", command, NULL) < 0){
         MAJOR_FAULT("exec(): could not start process");
       } else return TRUE;
-    } else {                                                      /* Parent */
+    } else {                                                    /* Parent */
       close(pipe_in[Read]);
       str_in  = new_stream(X(0), "w", fdopen(pipe_in[Write], "w"));
       close(pipe_out[Write]);
       str_out = new_stream(X(0), "r", fdopen(pipe_out[Read], "r"));
-      if (dup_stderr) 
+      if (dup_stderr) {
         close(pipe_err[Write]);
         str_err = new_stream(X(0), "r", fdopen(pipe_err[Read], "r"));
+      }
       return  cunify(Arg, ptr_to_stream(Arg, str_in), X(1))
         &&    cunify(Arg, ptr_to_stream(Arg, str_out), X(2))
         &&   (dup_stderr ? 

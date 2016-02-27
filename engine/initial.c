@@ -28,6 +28,7 @@
 #include "support_defs.h"
 #include "timing_defs.h"
 #include "locks_defs.h"
+#include "streams_defs.h"
 #include "prolog_tasks_defs.h"
 #include "indexing_defs.h"                               /* JFMC: abolish */
 
@@ -228,6 +229,8 @@ extern BOOL prolog_file_properties PROTO((struct worker *w));
 extern BOOL prolog_unix_chmod PROTO((struct worker *w));
 extern BOOL prolog_unix_umask PROTO((struct worker *w));
 extern BOOL prolog_unix_delete PROTO((struct worker *w));
+extern BOOL prolog_unix_rename PROTO((struct worker *w));
+extern BOOL prolog_unix_mkdir PROTO((struct worker *w));
 extern BOOL prolog_current_host PROTO((struct worker *w));
 extern BOOL prolog_getenvstr PROTO((struct worker *w));
 /* extern BOOL prolog_pause PROTO((struct worker *w)); */
@@ -848,13 +851,21 @@ static void initialize_intrinsics()
   define_c_predicate("$open",prolog_open,3);
   define_c_predicate("close",prolog_close,1); 
   define_c_predicate("$unix_popen",prolog_unix_popen,3);
+  define_c_predicate("character_count",character_count,2);
+  define_c_predicate("line_position",line_position,2);
+  define_c_predicate("line_count",line_count,2);
+  /* aliases handling */
   define_c_predicate("current_input",prolog_current_input,1);
   define_c_predicate("set_input",prolog_set_input,1);
   define_c_predicate("current_output",prolog_current_output,1);
   define_c_predicate("set_output",prolog_set_output,1);
-  define_c_predicate("character_count",character_count,2);
-  define_c_predicate("line_position",line_position,2);
-  define_c_predicate("line_count",line_count,2);
+
+  define_c_mod_predicate("io_alias_redirection",
+                         "replace_stream", prolog_replace_stream,2);
+  define_c_mod_predicate("io_alias_redirection", 
+                         "get_stream", prolog_get_stream,2);
+
+
 
 
                               /* objareas.c */
@@ -975,19 +986,18 @@ static void initialize_intrinsics()
   define_c_predicate("launch_goal_cont",prolog_launch_goal_cont,3);
 #endif
   
-
-  define_c_predicate("$eng_call",  prolog_eng_call, 5);
-
   /* In library(concurrency), under library/concurrency */
-  define_c_mod_predicate("concurrency", "eng_backtrack",  prolog_eng_backtrack, 2);
-  define_c_mod_predicate("concurrency", "eng_cut",  prolog_eng_cut, 1);
-  define_c_mod_predicate("concurrency", "eng_release", prolog_eng_release, 1);
-  define_c_mod_predicate("concurrency", "eng_wait", prolog_eng_wait, 1);
-  define_c_mod_predicate("concurrency", "eng_kill",  prolog_eng_kill, 1);
-  define_c_mod_predicate("concurrency", "eng_killothers", prolog_eng_killothers, 0);
-  define_c_mod_predicate("concurrency", "eng_status", prolog_eng_status, 0);
-  define_c_mod_predicate("concurrency", "eng_status1", prolog_eng_status1, 1);
-  define_c_mod_predicate("concurrency", "eng_self", prolog_eng_self, 1);
+  define_c_mod_predicate("concurrency", "$eng_call",  prolog_eng_call, 6);
+  define_c_mod_predicate("concurrency", "$eng_backtrack",  prolog_eng_backtrack, 2);
+  define_c_mod_predicate("concurrency", "$eng_cut",  prolog_eng_cut, 1);
+  define_c_mod_predicate("concurrency", "$eng_release", prolog_eng_release, 1);
+  define_c_mod_predicate("concurrency", "$eng_wait", prolog_eng_wait, 1);
+  define_c_mod_predicate("concurrency", "$eng_kill",  prolog_eng_kill, 1);
+  define_c_mod_predicate("concurrency", "$eng_killothers", prolog_eng_killothers, 0);
+  define_c_mod_predicate("concurrency", "$eng_status", prolog_eng_status, 0);
+  define_c_mod_predicate("concurrency", "$eng_status1", prolog_eng_status1, 1);
+  define_c_mod_predicate("concurrency", "$eng_self", prolog_eng_self, 2);
+
   /* The next one not yet finished */ 
   /*  define_c_predicate("concurrency", "eng_clean"      prolog_eng_clean, 1);*/
 
@@ -1027,6 +1037,9 @@ static void initialize_intrinsics()
   define_c_mod_predicate("system","chmod",prolog_unix_chmod,2);
   define_c_mod_predicate("system","umask",prolog_unix_umask,2);
   define_c_mod_predicate("system","delete_file",prolog_unix_delete,1);
+  define_c_mod_predicate("system","rename_file",prolog_unix_rename,2);
+  define_c_mod_predicate("system","make_directory",prolog_unix_mkdir,2);
+  define_c_mod_predicate("system","delete_directory",prolog_unix_rmdir,1);
   define_c_mod_predicate("system","current_host",prolog_current_host,1);
   define_c_mod_predicate("system","getenvstr",prolog_getenvstr, 2);
   define_c_mod_predicate("system","get_pid", prolog_getpid, 1);
@@ -1089,7 +1102,7 @@ static void initialize_intrinsics()
   define_c_predicate("repeat",prolog_repeat,0);
   define_c_mod_predicate("prolog_sys","current_atom",current_atom,1);
   define_c_predicate("current_stream",current_stream,3);
-  define_c_mod_predicate("prolog_sys","current_predicate",current_predicate,2);
+  define_c_predicate("$current_predicate",current_predicate,2);
   define_c_predicate("$predicate_property",predicate_property,3);
   define_c_predicate("$current_clauses",current_clauses,2);
 
@@ -1277,11 +1290,7 @@ void init_locks(){
 #endif
 }
 
-#if defined(Win32)
-extern char library_directory[];
-#else
 extern char *library_directory;
-#endif
 
 
 
@@ -1580,21 +1589,18 @@ void local_init_each_time(Arg)
 
   Gc_Total_Grey = 0;
 
-  Arg->node = b;		                    /* set up initial choicepoint */
+  Arg->node = b;		            /* set up initial choicepoint */
   b->frame = Arg->frame = (struct frame *)Stack_Start;
 
   TopConcChpt = b;           /* Initialize concurrent topmost choicepoint */
   b->next_insn = exitcode;
   b->next_alt = termcode;
-  /*
-  printf("termcode is %lx\n", termcode);
-  printf("exitcode is %lx\n", exitcode);
-  printf("bootcode is %lx\n", bootcode);
-  */
+
   b->local_top = Arg->local_top = (struct frame *)Offset(Arg->frame,EToY0);
   b->global_top = Arg->global_top = Heap_Start;
   b->trail_top = Arg->trail_top = Trail_Start;
   b->term[0] = atom_nil;
+
   ChoiceptMarkPure(b);
   ChoiceptMarkStatic(b);
   ChoiceptMarkNoCVA(b);
@@ -1610,6 +1616,12 @@ void local_init_each_time(Arg)
   Stop_This_Goal(Arg) = FALSE;
   Heap_Warn_Soft = Heap_Warn;
 
+#if defined(DEBUG)
+  if (debug_threads)
+    printf("%d (%d) Initializing WAM %x: node = %x, trail = %x, frame = %x\n",
+           (int)Thread_Id, (int)GET_INC_COUNTER, (int)Arg,
+           (int)b, (int)Arg->trail_top, (int)Arg->frame);
+#endif
   init_streams_each_time(Arg);       /* set misc. variables, handle signals */
   control_c_normal(Arg);                               /* For threads also? */
 }
@@ -1630,6 +1642,7 @@ void init_streams_each_time(Arg)
 {
   Input_Stream_Ptr = stream_user_input;
   Output_Stream_Ptr = stream_user_output;
+  Error_Stream_Ptr = stream_user_error;
 }
 
 /* Cleanup after abort: shrink stacks to initial sizes. */

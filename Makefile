@@ -14,15 +14,22 @@
 # make distclean        delete all files which can be automatically generated
 # make engclean		delete all engines created
 # make totalclean       cleanbackups + distclean
+# 
+# make doc              regenerate all manuals from the sources. This can 
+#                       only be done if lpdoc has been installed previously. 
+#                       It does need not be done during a normal install, 
+#                       since the distribution comes with up to date 
+#                       documentation.
+# make installdoc       a subset of 'make install', which only installs the 
+#                       documentation. Useful after 'make doc'. 
 
 
 #------- You should not change ANYTHING in this file -------------
 #------- All customizable options are in the file SETTINGS -------
 
 include SETTINGS
-include COMMON
+include SHARED
 
-include $(SRC)/makefile-sysindep
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 MFLAGS=-j$(PROCESSORS)
 
@@ -61,17 +68,33 @@ engwin32: copysrcfiles eng
 	rm -f $(SRC)/Win32/bin/$(ENGINENAME)
 	cp $(OBJDIR)/$(ENGINENAME) $(SRC)/Win32/bin
 
-dyneng: commoneng stateng
-	mv $(OBJDIR)/ciaoengine $(OBJDIR)/ciaoengine.sta
+dyneng: commoneng stateng libciao
 	(umask 002; cd $(OBJDIR) &&  \
 	 $(MAKE) configure.h && \
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) CURRLIBS='$(LIBS)')
 
+libciao:
+	(cd $(OBJDIR) && \
+	 $(MAKE) libciao CURRLIBS='$(LIBS)' && \
+	$(MAKE) ciaoobject CURRLIBS='$(LIBS)' )
+
 stateng: commoneng
-	(umask 002; cd $(OBJDIR) &&  \
-	 $(MAKE) configure.h && \
+# In Windows we need an executable built without console support 
+# ifeq ($(OSNAME),Win32)
+# 	cd $(OBJDIR) &&	$(MAKE) clean
+# 	$(MAKE) $(MFLAGS) CONSOLEFLAG='$(NOCONSOLEFLAG)' dostateng
+# 	/bin/mv $(OBJDIR)/$(ENGINAME).sta $(OBJDIR)/$(ENGINAME)_nc.sta
+# 	cd $(OBJDIR) &&	$(MAKE) clean
+# endif
+	$(MAKE) $(MFLAGS) dostateng
+
+
+dostateng:
+	(umask 002 && cd $(OBJDIR) && $(MAKE) configure.h && \
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) ADDOBJ='$(STATOBJ)' \
 	CURRLIBS='$(LIBS) $(STAT_LIBS)')
+	cp $(OBJDIR)/$(ENGINENAME) $(OBJDIR)/$(ENGINENAME).sta
+
 
 commoneng:
 	@echo "*** ---------------------------------------------------------"
@@ -180,7 +203,12 @@ uninstalleng:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling $(BASEMAIN) engine for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
-	cd $(OBJDIR) && $(MAKE) uninstall
+#       Recreate the compilation directory in case it has been removed
+	$(MAKE) createsrcdir && \
+	cd $(OBJDIR) &&	 \
+	rm -f Makefile && \
+	ln -s ../../engine/Makefile . && \
+	$(MAKE) uninstall
 
 installincludes:
 	@echo "*** ---------------------------------------------------------"
@@ -226,6 +254,14 @@ endif
 	@echo "*** Ciao installation completed"
 	@echo "*** ========================================================="
 
+.PHONY: doc installdoc
+
+doc:
+	cd doc && $(MAKE) 
+
+installdoc:
+	cd doc && $(MAKE) install
+
 uninstall:
 	@echo "*** ========================================================="
 	@echo "*** Uninstalling ciao"
@@ -243,11 +279,14 @@ uninstall:
 	-rm -r $(REALLIBDIR)
 #	-rm -r $(LIBDIR)
 	@echo "*** ========================================================="
-	@echo "*** Ciao deinstallation completed"
+	@echo "*** Ciao uninstallation completed"
 	@echo "*** ========================================================="
 
+uinstalldoc:
+	cd doc && $(MAKE) uninstall
+
 test:
-	cd examples/suite && $(MAKE) distclean suite && $(MAKE) exec_suite
+	cd examples/misc && $(MAKE) distclean suite && $(MAKE) exec_suite
 
 
 clean: engclean

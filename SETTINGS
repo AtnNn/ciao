@@ -3,9 +3,9 @@
 # Ciao Global Compilation/Installation SETTINGS
 # ----------------------------------------------------------------------------
 # Define this to be a directory where the sources are reachable system-wide 
-# SRC=/home/clip/public_html/Software/Ciao/ciao-1.6p3
+# SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p115
 #
-SRC=/home/clip/public_html/Software/Ciao/ciao-1.6p3
+SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p115
 #-----------------------------------------------------------------------------
 # Define the following to be the places under which the installation
 # will be performed:
@@ -29,11 +29,21 @@ DOCROOT=/home/clip/public_html/Local/lpdoc_docs/Ciao
 #-----------------------------------------------------------------------------
 # Misc installation options:
 
-# Set to "no" if you do not want to create a link to CIAO named "prolog",
+# For the PiLLoW Web programming library, define WEB_IMAGES_PATH as the
+# directory (accessible via WWW) where the icons which come with PiLLoW
+# (in library/pillow/images) will go, and define WEB_IMAGES_URL to the
+# corresponding URL for accessing that directory via WWW.
+# WEB_IMAGES_PATH=/usr/local/etc/httpd/htdocs/images/
+# WEB_IMAGES_URL=http:/my.host.here/images/
+#
+WEB_IMAGES_PATH=/home/clip/public_html/images/
+WEB_IMAGES_URL=/images/
+
+# Set to "no" if you do not want to create a link to Ciao named "prolog",
 # for example because there are more prolog's in the system
 INSTALL_PROLOG_NAME=yes
 
-# Set to "no" if you do not want to install the CIAO emacs libraries,
+# Set to "no" if you do not want to install the Ciao emacs libraries,
 # which implement the Ciao Emacs mode (highly recommended).  It should
 # be set to no if emacs is not installed in the system.  It is safe to
 # leave as "yes" otherwise:
@@ -42,18 +52,18 @@ INSTALL_EMACS_SUPPORT=yes
 # If you want to compile an engine with threads capability
 # (concurrency), set the following variable to "yes".  Otherwise, set
 # it to "no".  If the architecture does not support threads (or thread
-# support has not yet been added to CIAO Prolog for this
+# support has not yet been added to Ciao Prolog for this
 # architecture), this will be automatically disabled at compile time.
 # Concurrency support does not cause any appreciable runtime overhead
 # for non-concurrent programs, so it is safe to leave it as "yes".
 USE_THREADS=yes
 
 # When using threads, locks are mandatory, and they do not make any
-# sense if you are not using threads.  So, threads enable locks.  CIAO
+# sense if you are not using threads.  So, threads enable locks.  Ciao
 # Prolog includes native code locks for some architectures, but allows
 # specifying the use of POSIX-compliant locks if posix libraries are
 # available.  POSIX locks will be automatically selected if no native
-# lock implementation is included in CIAO for a given architecture.
+# lock implementation is included in Ciao for a given architecture.
 # We recommend letting this option set to "no" since a primitive lock
 # implementation is usually much faster than then library-based POSIX
 # one.
@@ -70,7 +80,7 @@ USE_POSIX_LOCKS=no
 # Ciao without optimization options first.
 OPTIM_LEVEL=optimized
 
-# If you want to compile the CIAO libraries with their bytecode compressed
+# If you want to compile the Ciao libraries with their bytecode compressed
 # then set the following variable to "yes". Libraries generated this way
 # will be smaller at the sake of a slightly slower usage, both in their load
 # as when employed to create an executable.
@@ -115,8 +125,13 @@ DEBUG_LEVEL=nodebug
 
 # This is for locally compiling the engine in NT under Samba, ignore it
 
+ifeq ($(OSTYPE),cygwin)
+    SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p115
+    ALT=win32
+endif
+# Same as above, old cygwin versions
 ifeq ($(OSTYPE),cygwin32)
-    SRC=/home/clip/public_html/Software/Ciao/ciao-1.6p3
+    SRC=/home/clip/public_html/Software/Ciao/ciao-1.7p115
     ALT=win32
 endif
 

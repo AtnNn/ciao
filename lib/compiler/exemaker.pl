@@ -12,7 +12,7 @@
 :- use_module(library(system),
         [file_exists/1, fmode/2, chmod/2, mktemp/2, delete_file/1]).
 :- use_module(library('compiler/pl2wam')).
-:- use_module(library(aggregates), [findall/3]).
+:- use_module(library(aggregates), [findall/3,findall/4]).
 :- use_module(library(file_utils), [file_terms/2, copy_stdout/1]).
 :- use_module(library(ctrlcclean), [delete_on_ctrlc/2]).
 :- use_module(engine(internals), [module_concat/3]).
@@ -26,8 +26,8 @@
 
 define_flag(executables, [static, eagerload, lazyload], eagerload).
 define_flag(check_libraries, [on, off], off).
-define_flag(selfcontained,atom,none).
-define_flag(compressexec,[yes,no],no).
+define_flag(self_contained,atom,none).
+define_flag(compress_exec,[yes,no],no).
 
 :- data ok_lazy/1.
 
@@ -84,7 +84,9 @@ stopOnlib(Base) :-
 
 skipOnlib(Base) :-
         current_prolog_flag(check_libraries, off),
-        is_lib(Base).
+        is_lib(Base),
+        get_so_name(Base, SoName),
+        ( file_exists(SoName) -> assertz_fact(has_so_file(Base)) ; true ).
 
 is_lib_no_engine(Base) :-
         ciaolibdir(Dir),
@@ -358,7 +360,7 @@ create_exec(ExecName, Base, PoFiles) :-
         delete_on_ctrlc(ExecName, Ref),
 	open(ExecName,write,Stream),
         set_output(Stream),
-        current_prolog_flag(selfcontained,TargetEng),
+        current_prolog_flag(self_contained,TargetEng),
 	copy_header(TargetEng),
 	copy_pos(PoFiles,Stream),
 	close(Stream),
@@ -366,7 +368,7 @@ create_exec(ExecName, Base, PoFiles) :-
         set_input(Si),
         set_output(So),
         fmode(PlName, M0),
-        M1 is M0 \/ ((M0 >> 2) /\ 0o111),
+        M1 is M0 \/ ((M0 >> 2) /\ 0o111), % Copy read permissions to execute
         chmod(ExecName, M1).
 
 copy_header(none) :- !, % OPA
@@ -380,7 +382,7 @@ copy_header(TargetEng) :- !,
 	copy_stdout(Engine).
 
 copy_pos(PoFiles,_) :- % OPA
-	current_prolog_flag(compressexec,no), !,
+	current_prolog_flag(compress_exec,no), !,
 	dump_pos(PoFiles).
 copy_pos(PoFiles,Stream) :-
 	temp_filename(TmpFile),
@@ -397,7 +399,7 @@ copy_pos(PoFiles,Stream) :-
 resolve_execname(ExecName, _, _, _) :- nonvar(ExecName), !.
 resolve_execname(ExecName, B, Pl, Os) :-
 % Pl file has no .pl extension or we are compiling for Win32
-        ( Pl = B ; Os = 'Win32' ; current_prolog_flag(selfcontained,'Win32i86')), !,
+        ( Pl = B ; Os = 'Win32' ; current_prolog_flag(self_contained,'Win32i86')), !,
         exec_ext(EXT),
         atom_concat(B,EXT,ExecName).
 resolve_execname(ExecName, B, _, _) :- ExecName = B.
@@ -418,9 +420,9 @@ dump_pos([]).
 %%% --- Making main file for active modules --- %%%
 
 create_main(Base, PublishMod, MainFile) :-
-        findall(exe(Pred,Pred),
-                (exports(Base, F, A, _, _), functor(Pred, F, A)),
-                 ExeFacts),
+%        findall(:-(multifile(F/A)), def_multifile(Base, F, A, _),
+%                Specific_code, ExeFacts),
+        findall(exe(Pred,Pred), actmod_serves(Base, Pred), ExeFacts),
         temp_filename(MainFile),
         atom_concat(MainFile, '.itf', ItfFile),
         assertz_fact(tmp_file(ItfFile)),
@@ -433,8 +435,14 @@ create_main(Base, PublishMod, MainFile) :-
           :-(use_module(library('actmods/actmod_server'), [actmodmain/0])),
           :-(main, actmodmain),
           :-(meta_predicate(exe(?,fact)))
-          |ExeFacts]).
+          | ExeFacts]).
 
+actmod_serves(Base,Pred) :-
+        exports(Base, F, A, _, _),
+        functor(Pred, F, A).
+actmod_serves(Base,Pred) :-
+        def_multifile(Base, F, A, _),
+        functor(Pred, F, A).        
 
 :- data tmp_file/1.
 
@@ -456,6 +464,17 @@ verbose_message(M) :-
 % ------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+86,2001/04/05,22:10*12+'CEST'), "Fixed a bug
+   which prevented static executables compiled with
+   check_libraries flag off (which is the default) from being able
+   to load .so standard libraries. (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+59,2001/02/12,16:52*47+'CET'), "Active modules do
+   not export multifile predicates anymore.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+33,2000/12/20,18:23*23+'CET'), "Active Modules
+   now also serve multifile predicates.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+51,2000/02/10,18:42*31+'CET'), "Fixed a bug which
    prevented .so libraries to be lazyloaded. (Daniel Cabeza Gras)").

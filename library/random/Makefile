@@ -1,8 +1,7 @@
 MODULE=random
 
 include ../../SETTINGS
-include ../../COMMON
-include $(SRC)/makefile-sysindep
+include ../../SHARED
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 REQLIBS=
@@ -18,7 +17,7 @@ all: $(LIBNAME)
 
 $(LIBNAME): headers $(OBJNAME) 
 	$(LD) $(LDSHARED) -o $(LIBNAME) $(OBJNAME) $(REQLIBS)
-	$(SETLOCALCOMPILER) $(CIAOC) -c $(MODULE)
+	$(SETLOCALCIAO) $(CIAOC) -c $(MODULE)
 	chmod $(EXECMODE) $(LIBNAME)
 
 $(OBJNAME): headers $(SRCNAME)

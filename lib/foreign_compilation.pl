@@ -33,7 +33,7 @@
         atom * list(atom)
  #"If you want to compile a foreign language file for dynamic linking in 
  the current operating system and architecture, you have to use
- the compiler @var{Compiler} and gite it the options @var{Opts}. 
+ the compiler @var{Compiler} and give it the options @var{Opts}. 
 A variable in @var{Opts} means that no special option is needed.".
  
 :- true pred linker_and_opts(?Linker, ?Options) : 

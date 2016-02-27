@@ -1,130 +1,934 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
+<TITLE>The Ciao Prolog System               - widget_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC457" HREF="ciao_toc.html#TOC457">Using the persdb library</A></H1>
-
+<H1><A NAME="SEC467" HREF="ciao_toc.html#TOC467">widget_class (library)</A></H1>
 <P>
-Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
+<A NAME="IDX4938"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_114.html#SEC458">An example of persistent predicates (static version)</A>
-<LI><A HREF="ciao_114.html#SEC459">An example of persistent predicates (dynamic version)</A>
-<LI><A HREF="ciao_114.html#SEC460">A simple application / a persistent queue</A>
+<LI><A HREF="ciao_114.html#SEC468">Usage and interface (widget_class)</A>
+<LI><A HREF="ciao_114.html#SEC469">Documentation on exports (widget_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC458" HREF="ciao_toc.html#TOC458">An example of persistent predicates (static version)</A></H2>
+<H2><A NAME="SEC468" HREF="ciao_toc.html#TOC468">Usage and interface (<CODE>widget_class</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(widget_class)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
-<PRE>
-:- include(library(persdb)).
+<UL>
 
-%% Required declarations for persistent_dir/2.
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
+<LI><EM>Predicates:</EM>
 
-%% Declare the directory associated to the key "db" where the
-%% persistence sets of the persistent predicates are stored:
-persistent_dir(db,'./').
+<A NAME="IDX4939"></A>
+<CODE>text_characters/1</CODE>, 
+<A NAME="IDX4940"></A>
+<CODE>font_type/1</CODE>, 
+<A NAME="IDX4941"></A>
+<CODE>background_color/1</CODE>, 
+<A NAME="IDX4942"></A>
+<CODE>borderwidth_value/1</CODE>, 
+<A NAME="IDX4943"></A>
+<CODE>foreground_color/1</CODE>, 
+<A NAME="IDX4944"></A>
+<CODE>highlightbackground_color/1</CODE>, 
+<A NAME="IDX4945"></A>
+<CODE>highlight_color/1</CODE>, 
+<A NAME="IDX4946"></A>
+<CODE>width_value/1</CODE>, 
+<A NAME="IDX4947"></A>
+<CODE>relief_type/1</CODE>, 
+<A NAME="IDX4948"></A>
+<CODE>side_type/1</CODE>, 
+<A NAME="IDX4949"></A>
+<CODE>expand_value/1</CODE>, 
+<A NAME="IDX4950"></A>
+<CODE>fill_type/1</CODE>, 
+<A NAME="IDX4951"></A>
+<CODE>padx_value/1</CODE>, 
+<A NAME="IDX4952"></A>
+<CODE>pady_value/1</CODE>, 
+<A NAME="IDX4953"></A>
+<CODE>row_value/1</CODE>, 
+<A NAME="IDX4954"></A>
+<CODE>rowspan_value/1</CODE>, 
+<A NAME="IDX4955"></A>
+<CODE>column_value/1</CODE>, 
+<A NAME="IDX4956"></A>
+<CODE>columnspan_value/1</CODE>, 
+<A NAME="IDX4957"></A>
+<CODE>event_type_widget/1</CODE>, 
+<A NAME="IDX4958"></A>
+<CODE>action_widget/3</CODE>, 
+<A NAME="IDX4959"></A>
+<CODE>action_widget/1</CODE>, 
+<A NAME="IDX4960"></A>
+<CODE>creation_options/1</CODE>, 
+<A NAME="IDX4961"></A>
+<CODE>creation_position/1</CODE>, 
+<A NAME="IDX4962"></A>
+<CODE>creation_position_grid/1</CODE>, 
+<A NAME="IDX4963"></A>
+<CODE>creation_bind/1</CODE>.
 
-%% Declare a persistent predicate:
-:- persistent(bar/1, db).
+</UL>
 
-%% Read a term, storing it in a new fact of the persistent predicate
-%% and list all the current facts of that predicate
-main:-
-     read(X),
-     passertz_fact(bar(X)),
-     findall(Y,bar(Y),L),
-     write(L).
-
-</PRE>
+<LI><STRONG>Other modules used:</STRONG>
 
 
+<UL>
 
-<H2><A NAME="SEC459" HREF="ciao_toc.html#TOC459">An example of persistent predicates (dynamic version)</A></H2>
+<LI><EM>System library modules:</EM>
 
+<A NAME="IDX4964"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX4965"></A>
+<CODE>tcltk_obj/window_class</CODE>.
 
-<PRE>
-:- include(library(persdb)).
+</UL>
 
-%% Required declarations for persistent_dir/2.
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
+</UL>
 
-main([X]):-
-%%   Declare the directory associated to the key "db" 
-     asserta_fact(persistent_dir(db,'./')),
-%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
-     data(bar/1),
-%%   Declare the predicate bar/1 as persistent at run-time  
-     make_persistent(bar/1, db),
-     passertz_fact(bar(X)),
-     findall(Y, bar(Y), L),
-     write(L).    
-
-</PRE>
+</div class="cartouche">
 
 
 
-<H2><A NAME="SEC460" HREF="ciao_toc.html#TOC460">A simple application / a persistent queue</A></H2>
+<H2><A NAME="SEC469" HREF="ciao_toc.html#TOC469">Documentation on exports (<CODE>widget_class</CODE>)</A></H2>
+<P>
+<A NAME="IDX4966"></A>
+<A NAME="IDX4967"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
+<DD><A NAME="IDX4968"></A>
 
-<PRE>
-:- module(queue, [main/0],[]).
 
-:- use_module(library(read)).
-:- use_module(library(write)).
-:- use_module(library(aggregates)).
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
 
-:- include(library(persdb)).
+<UL>
+<LI><EM>Description:</EM> Indicates the <CODE>Text</CODE> to be displayed in the widget.
 
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-:- persistent(queue/1, queue_dir).
+<CODE>+Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
 
-persistent_dir(queue_dir,'./pers').
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
 
-main:-
-     write('Action ( in(Term). | out. | list. | halt. ): '),
-     read(A),
-     (  handle_action(A)
-     -&#62; true
-     ;  write('Unknown command.'), nl ),
-     main.
+<UL>
+<LI><EM>Description:</EM> <CODE>Text</CODE> which is displayed in the widget.
 
-handle_action(halt) :-
-     halt.
-handle_action(in(Term)) :-
-     passertz_fact(queue(Term)),
-     main.
-handle_action(out) :-
-     (  pretract_fact(queue(Term))
-     -&#62; write('Out '), write(Term)
-     ;  write('FIFO empty.') ),
-     nl,
-     main.
-handle_action(list) :-
-     findall(Term,pcurrent_fact(queue(Term)),Terms),
-     write('Contents: '), write(Terms), nl,
-     main.
-     
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-</PRE>
+<CODE>-Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4969"></A>
+<A NAME="IDX4970"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
+<DD><A NAME="IDX4971"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the <CODE>Font</CODE> of the widget's text.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Font</CODE> of the widget's text.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4972"></A>
+<A NAME="IDX4973"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>background_color/1:</B>
+<DD><A NAME="IDX4974"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>background_color(+Background)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the <CODE>Background</CODE> color. Default to gray.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Background</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>background_color(-Background)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the <CODE>Background</CODE> color.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Background</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4975"></A>
+<A NAME="IDX4976"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>borderwidth_value/1:</B>
+<DD><A NAME="IDX4977"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>borderwidth_value(+BorderWidth)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the width's border. Default to 2.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+BorderWidth</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>borderwidth_value(-BorderWidth)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the width's border.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-BorderWidth</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4978"></A>
+<A NAME="IDX4979"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>foreground_color/1:</B>
+<DD><A NAME="IDX4980"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>foreground_color(+Foreground)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the <CODE>Foreground</CODE> color. Default to black
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Foreground</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>foreground_color(-Foreground)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Foreground</CODE> color.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Foreground</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4981"></A>
+<A NAME="IDX4982"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>highlightbackground_color/1:</B>
+<DD><A NAME="IDX4983"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>highlightbackground_color(+Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the highlight background color. Default to white
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>highlightbackground_color(-Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Color</CODE> of the highlight background.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4984"></A>
+<A NAME="IDX4985"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>highlight_color/1:</B>
+<DD><A NAME="IDX4986"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>highlight_color(+Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the highlight color. Default to white
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>highlight_color(-Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Color</CODE> of the highlight.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4987"></A>
+<A NAME="IDX4988"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>width_value/1:</B>
+<DD><A NAME="IDX4989"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>width_value(+Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies the <CODE>Width</CODE> for the widget. Default to 0
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>width_value(+Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Width</CODE> specified for the widget.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4990"></A>
+<A NAME="IDX4991"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>relief_type/1:</B>
+<DD><A NAME="IDX4992"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>relief_type(+Relief)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies a desired <CODE>Relief</CODE> for the widget. Default to sunken
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Relief</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>relief_type(-Relief)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Relief</CODE> of the widget.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Relief</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4993"></A>
+<A NAME="IDX4994"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>side_type/1:</B>
+<DD><A NAME="IDX4995"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>side_type(+Side)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies which <CODE>Side</CODE> of the master, the slave(s) will be packed against. Must be left, right, top or bottom. Defaults to top
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Side</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>side_type(-Side)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the position of the canvas.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Side</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4996"></A>
+<A NAME="IDX4997"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>expand_value/1:</B>
+<DD><A NAME="IDX4998"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>expand_value(+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies whether the slaves should be expanded to consume extra space in their master. <CODE>Value</CODE> may have any proper boolean value, such as 1 or 0. Defaults to 0
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>expand_value(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the boolean value which indicates if the slaves should be expanded or no.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4999"></A>
+<A NAME="IDX5000"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fill_type/1:</B>
+<DD><A NAME="IDX5001"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>fill_type(+Option)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> If a slave's parcel is larger than its requested dimensions, this option may be used to stretch the slave. <CODE>Option</CODE> must have one of the following values: none ( this is the default), x, y, both
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Option</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>fill_type(-Option)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the fill value of the canvas
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Option</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5002"></A>
+<A NAME="IDX5003"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>padx_value/1:</B>
+<DD><A NAME="IDX5004"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>padx_value(+Amount)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much horizontal external padding to leave on each side of the slave(s). Amount defaults to 0
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Amount</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>padx_value(-Amount)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much horizontal external padding to leave on each side of the slaves.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Amount</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5005"></A>
+<A NAME="IDX5006"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pady_value/1:</B>
+<DD><A NAME="IDX5007"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>pady_value(+Amount)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much vertical external padding to leave on each side of the slave(s). Amount defaults to 0
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Amount</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>pady_value(-Amount)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much vertical external padding to leave on each side of the slaves.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Amount</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5008"></A>
+<A NAME="IDX5009"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>row_value/1:</B>
+<DD><A NAME="IDX5010"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>row_value(+Row)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the <CODE>Row</CODE> in which the widget should be allocated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Row</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>row_value(-Row)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Row</CODE> in which the widget is allocated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Row</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5011"></A>
+<A NAME="IDX5012"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rowspan_value/1:</B>
+<DD><A NAME="IDX5013"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>rowspan_value(+Row)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the number of <CODE>Row</CODE> which are going to be occupied in the grid.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Row</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>rowspan_value(-Row)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the number of <CODE>Row</CODE> which are occupied by the widget in the grid.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Row</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5014"></A>
+<A NAME="IDX5015"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>column_value/1:</B>
+<DD><A NAME="IDX5016"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>column_value(+Column)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the <CODE>Column</CODE> in which the widget should be allocated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Column</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>column_value(-Column)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Column</CODE> in which the widget is allocated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Column</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5017"></A>
+<A NAME="IDX5018"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>columnspan_value/1:</B>
+<DD><A NAME="IDX5019"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>columnspan_value(+Column)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Indicates the number of <CODE>Column</CODE> which are going to be occupied in the grid.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Column</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>columnspan_value(-Column)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the number of <CODE>Column</CODE> which are occupied by the widget in the grid.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Column</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5020"></A>
+<A NAME="IDX5021"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>event_type_widget/1:</B>
+<DD><A NAME="IDX5022"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>event_type_widget(+EventType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The event <CODE>EventType</CODE> is going to be manage by the interface.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+EventType</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>event_type_widget(-EventType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the event <CODE>EventType</CODE> which is going to be manage by the interface.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-EventType</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5023"></A>
+<A NAME="IDX5024"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>action_widget/3:</B>
+<DD><A NAME="IDX5025"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>action_widget(+Input,+Output,+Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Executes <CODE>Term</CODE> with <CODE>Input</CODE> value and <CODE>Output</CODE> variable.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Input</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+Output</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+Term</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>action_widget(+Input,+Output,-Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Term</CODE> is associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Input</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+Output</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>-Term</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5026"></A>
+<A NAME="IDX5027"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>action_widget/1:</B>
+<DD><A NAME="IDX5028"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>action_widget(+Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Term</CODE> is going to be associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Term</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>action_widget(-Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Term</CODE> is associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Term</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5029"></A>
+<A NAME="IDX5030"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>creation_options/1:</B>
+<DD><A NAME="IDX5031"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>creation_options(-OptionsList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a list with the options supported by the widget.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-OptionsList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5032"></A>
+<A NAME="IDX5033"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>creation_position/1:</B>
+<DD><A NAME="IDX5034"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>creation_position(-OptionsList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a list with the options supported by the pack command.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-OptionsList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5035"></A>
+<A NAME="IDX5036"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>creation_position_grid/1:</B>
+<DD><A NAME="IDX5037"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>creation_position_grid(-OptionsList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a list with the options supported by the grid command.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-OptionsList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5038"></A>
+<A NAME="IDX5039"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>creation_bind/1:</B>
+<DD><A NAME="IDX5040"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>creation_bind(-BindList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a list with the event to be manage and the action associated to this event.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-BindList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -88,7 +88,7 @@ class_clause_translation(X,Y,M) :-
 %%
 %%------------------------------------------------------------------------
 
-class_sentence_trans(start_of_file(Base),_,Module) :-
+class_sentence_trans(0,_,Module) :-
 	cleanup_class_info(Module),
 	retractall_fact(super(Module,_)),
 	retractall_fact(inherit_class(Module,_)),
@@ -104,7 +104,7 @@ class_sentence_trans(start_of_file(Base),_,Module) :-
 	retractall_fact(is_multifile(Module,_,_)),
 	retractall_fact(is_concurrent(Module,_,_)),
 	retractall_fact(runtime_info(Module)),
-	start_of_messages(Module,['Declaring class ',Base,'.pl']),
+	start_of_messages(Module,['Declaring class ',Module]),
 	!,
 	fail.
 

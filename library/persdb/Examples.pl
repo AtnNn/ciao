@@ -26,7 +26,7 @@
 
         Anyway, if a program launched from a top level needs to update 
         the persistence sets of any persistent predicate it can be done 
-        by using the method update_files/2.}
+        by using the methods @pred{update_files/0} and @pred{update_files/1}.}
 
 @section{An example of persistent predicates (static version)}
 

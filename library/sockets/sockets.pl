@@ -1,7 +1,8 @@
 :- module(sockets,
         [connect_to_socket/3,
          socket_recv/2,
-         socket_type/1], 
+         socket_type/1,
+         shutdown_type/1], 
          [assertions,isomodes,regtypes]).
 
 :- reexport(library('sockets/sockets_c')).
@@ -85,8 +86,21 @@ connect_to_socket(Host, Port, Stream):-
 
 %% Automatically reexported
 
-:- pred select_socket(+Socket, -NewStream, +TO_ms, +Streams, -ReadStreams) ::
-        int * stream * int * list(stream) * list(stream).
+:- pred select_socket(+Socket, -NewStream, +TO_ms, +Streams, -ReadStreams) 
+        :: int * stream * int * list(stream) * list(stream) #
+
+"Wait for data available in a list of @var{Streams} and in a
+@var{Socket}. @var{Streams} is a list of Prolog streams which will be
+tested for reading.  @var{Socket} is a socket (i.e., an integer
+denoting the O.S. port number) or a @concept{free variable}.
+@var{TO_ms} is a number denoting a timeout.  Within this timeout the
+@var{Streams} and the @var{Socket} are checked for the availability of
+data to be read.  @var{ReadStreams} is the list of streams belonging
+to @var{Streams} which have data pending to be read.  If @var{Socket}
+was a free variable, it is ignored, and @{NewStream} is not checked.
+If @var{Socket} was instantiated to a port number and there are
+connections pending, a connection is accepted and connected with the
+Prolog stream in @var{NewStream}.".
 
 
 %% Automatically reexported
@@ -114,12 +128,39 @@ connect_to_socket(Host, Port, Stream):-
 
 socket_recv(Stream, String):- socket_recv_code(Stream, String, _).
 
+
+:- pred socket_shutdown(+Stream, +How) :: stream * shutdown_type #
+"Shut down a duplex communication socket with which @var{Stream} is
+associated.  All or part of the communication can be shutdown,
+depending on the value of @var{How}. The atoms @tt{read}, @tt{write},
+or @var{read_write} should be used to denote the type of closing
+required.".
+
+
+:- regtype shutdown_type(T) # "@var{T} is a valid shutdown type.".
+
+shutdown_type(read).
+shutdown_type(write).
+shutdown_type(read_write).
+
 :- pred hostname_address(+Hostname, ?Address) :: atm * atm #
 "@var{Address} is unified with the atom representing the address (in
 AF_INET format) corresponding to @var{Hostname}.".
 
+ %% :- pred socket_buffering(+Stream, +Direction, -OldBuf, +NewBuffer) :: 
+ %%         stream * atm * atm * atm 
+ %%  #"The buffering in @var{Direction} (@tt{read} or @{write}) is changed to be @var{NewBuffer} (@tt{unbuf} or @tt{fulbuf}).  For TCP/IP savvys, this just disables the Nagle algorithm in the TCP layer.".
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+58,2001/02/08,11:46*41+'CET'), "Solved problem
+with reusing address in servers.  (MCL)").
+
+:- comment(version(1*7+54,2001/01/26,15:35*02+'CET'), "Added
+socket_shutdown/2.  (MCL)").
+
+:- comment(version(1*7+11,2000/08/21,13:27*33+'CEST'), "Added #ifdef
+for C constants not defined in all UNIX implementations.  (MCL)").
 
 :- comment(version(1*5+169,2000/07/06,13:27*35+'CEST'),
 "hostname_address added.  (MCL)").

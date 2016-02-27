@@ -1,13 +1,16 @@
 :- module(objects,
 	[object/2,
-	 show_object/1
+	 show_object/1,
+	 null2/1
 	],
 	[assertions,
 	 basicmodes,
 	 regtypes,
 	 foreign_interface
 	]).
-	 
+
+null2(X) :- null(X).
+
 :- true pred object(in(N),go(Object)) ::
 	int * address + (foreign,returns(Object)).
 

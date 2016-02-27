@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Fast Reading and Writing of Terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC307" HREF="ciao_toc.html#TOC307">Fast Reading and Writing of Terms</A></H1>
+<H1><A NAME="SEC308" HREF="ciao_toc.html#TOC308">Fast Reading and Writing of Terms</A></H1>
 <P>
-<A NAME="IDX3652"></A>
+<A NAME="IDX3731"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+<STRONG>Version:</STRONG> 1.7#34 (2000/12/23, 16:42:52 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#81 (2000/3/23, 16:37:17 CET)
+<STRONG>Version of last change:</STRONG> 1.7#16 (2000/8/29, 13:44:18 CEST)
 
 
 <P>
@@ -33,13 +33,14 @@ This library provides predicates to support reading / writing of terms on a form
 
 
 <UL>
-<LI><A HREF="ciao_73.html#SEC308">Usage and interface (fastrw)</A>
-<LI><A HREF="ciao_73.html#SEC309">Documentation on exports (fastrw)</A>
+<LI><A HREF="ciao_73.html#SEC309">Usage and interface (fastrw)</A>
+<LI><A HREF="ciao_73.html#SEC310">Documentation on exports (fastrw)</A>
+<LI><A HREF="ciao_73.html#SEC311">Known bugs and planned improvements (fastrw)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC308" HREF="ciao_toc.html#TOC308">Usage and interface (<CODE>fastrw</CODE>)</A></H2>
+<H2><A NAME="SEC309" HREF="ciao_toc.html#TOC309">Usage and interface (<CODE>fastrw</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -56,11 +57,15 @@ This library provides predicates to support reading / writing of terms on a form
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3653"></A>
+<A NAME="IDX3732"></A>
 <CODE>fast_read/1</CODE>, 
-<A NAME="IDX3654"></A>
+<A NAME="IDX3733"></A>
 <CODE>fast_write/1</CODE>, 
-<A NAME="IDX3655"></A>
+<A NAME="IDX3734"></A>
+<CODE>fast_read/2</CODE>, 
+<A NAME="IDX3735"></A>
+<CODE>fast_write/2</CODE>, 
+<A NAME="IDX3736"></A>
 <CODE>fast_write_to_string/3</CODE>.
 
 </UL>
@@ -72,7 +77,7 @@ This library provides predicates to support reading / writing of terms on a form
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3656"></A>
+<A NAME="IDX3737"></A>
 <CODE>dict</CODE>.
 
 </UL>
@@ -83,13 +88,13 @@ This library provides predicates to support reading / writing of terms on a form
 
 
 
-<H2><A NAME="SEC309" HREF="ciao_toc.html#TOC309">Documentation on exports (<CODE>fastrw</CODE>)</A></H2>
+<H2><A NAME="SEC310" HREF="ciao_toc.html#TOC310">Documentation on exports (<CODE>fastrw</CODE>)</A></H2>
 <P>
-<A NAME="IDX3657"></A>
-<A NAME="IDX3658"></A>
+<A NAME="IDX3738"></A>
+<A NAME="IDX3739"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>fast_read/1:</B>
-<DD><A NAME="IDX3659"></A>
+<DD><A NAME="IDX3740"></A>
 
 
 <P>
@@ -97,19 +102,19 @@ This library provides predicates to support reading / writing of terms on a form
 
 
 <P>
-The next term is read from current standart input and is unified with <CODE>Term</CODE>. The syntax of the term must agree with fast_read / fast_write format. If the end of the input has been reached, <CODE>Term</CODE> is unified with the term 'end_of_file'. Further calls to 
-<A NAME="IDX3660"></A>
+The next term is read from current standard input and is unified with <CODE>Term</CODE>. The syntax of the term must agree with fast_read / fast_write format. If the end of the input has been reached, <CODE>Term</CODE> is unified with the term 'end_of_file'. Further calls to 
+<A NAME="IDX3741"></A>
 <CODE>fast_read/1</CODE> will then cause an error.
 
 
 </DL>
 
 <P>
-<A NAME="IDX3661"></A>
-<A NAME="IDX3662"></A>
+<A NAME="IDX3742"></A>
+<A NAME="IDX3743"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>fast_write/1:</B>
-<DD><A NAME="IDX3663"></A>
+<DD><A NAME="IDX3744"></A>
 
 
 <P>
@@ -118,18 +123,62 @@ The next term is read from current standart input and is unified with <CODE>Term
 
 <P>
 Output <CODE>Term</CODE> in a way that 
-<A NAME="IDX3664"></A>
-<CODE>fast_read/1</CODE> will be able to read it back.
+<A NAME="IDX3745"></A>
+<CODE>fast_read/1</CODE> and 
+<A NAME="IDX3746"></A>
+<CODE>fast_read/2</CODE> will be able to read it back.
 
 
 </DL>
 
 <P>
-<A NAME="IDX3665"></A>
-<A NAME="IDX3666"></A>
+<A NAME="IDX3747"></A>
+<A NAME="IDX3748"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fast_read/2:</B>
+<DD><A NAME="IDX3749"></A>
+
+
+<P>
+<CODE>fast_read(Stream,Term)</CODE>
+
+
+<P>
+The next term is read from <CODE>Stream</CODE> and unified with <CODE>Term</CODE>. The syntax of the term must agree with fast_read / fast_write format. If the end of the input has been reached, <CODE>Term</CODE> is unified with the term 'end_of_file'. Further calls to 
+<A NAME="IDX3750"></A>
+<CODE>fast_read/2</CODE> will then cause an error.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3751"></A>
+<A NAME="IDX3752"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fast_write/2:</B>
+<DD><A NAME="IDX3753"></A>
+
+
+<P>
+<CODE>fast_write(Stream,Term)</CODE>
+
+
+<P>
+Output <CODE>Term</CODE> to <CODE>Stream</CODE> in a way that 
+<A NAME="IDX3754"></A>
+<CODE>fast_read/1</CODE> and 
+<A NAME="IDX3755"></A>
+<CODE>fast_read/2</CODE> will be able to read it back.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3756"></A>
+<A NAME="IDX3757"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>fast_write_to_string/3:</B>
-<DD><A NAME="IDX3667"></A>
+<DD><A NAME="IDX3758"></A>
 
 
 <P>
@@ -138,7 +187,27 @@ No further documentation available for this predicate.
 
 </DL>
 
+
+
+<H2><A NAME="SEC311" HREF="ciao_toc.html#TOC311">Known bugs and planned improvements (<CODE>fastrw</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Both 
+<A NAME="IDX3759"></A>
+<CODE>fast_read/2</CODE> and 
+<A NAME="IDX3760"></A>
+<CODE>fast_write/2</CODE> simply set the current output/input and call 
+<A NAME="IDX3761"></A>
+<CODE>fast_read/1</CODE> and 
+<A NAME="IDX3762"></A>
+<CODE>fast_write/1</CODE>. Therefore, in the event an error hapens during its execution, the current input / output streams may be left pointing to the <CODE>Stream</CODE>
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

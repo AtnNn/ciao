@@ -11,7 +11,7 @@ public class PLInteger extends PLTerm {
   /**
    * Value of the Prolog integer.
    */
-  Integer Value;
+  private Integer Value;
 
   /**
    * Integer constructor. Creates a new <code>PLInteger</code> object
@@ -26,7 +26,7 @@ public class PLInteger extends PLTerm {
     Type = PLTerm.INTEGER;
     Value = new Integer(v);
 
-    }
+  }
 
   /**
    * String representation. Returns the <code>String</code> representation
@@ -57,6 +57,17 @@ public class PLInteger extends PLTerm {
     return (Object)Value;
 
     }
+
+  /**
+   * Gets the Java representation of this Prolog integer as an object.
+   * The object returned will be a Java <code>Integer</code> object.
+   *
+   * @return  An <code>Object</code> representing the Prolog integer.
+   *          This object will be a Java <code>Integer</code> object.
+   */
+  public Object javaRepr() {
+      return (Object)Value;
+  }
 
   /**
    * Gets the integer value of the <code>PLInteger</code> object.
@@ -120,7 +131,7 @@ public class PLInteger extends PLTerm {
    * This will NOT work if the internal Prolog representation of
    * this integer needs a structure (large integer representation).
    */
-  protected int numberOfCells() {
+  int numberOfCells() {
     return 0;
   }
 }

@@ -7,7 +7,7 @@
          iso/1, not_further_inst/2,
 	 regtype/1
         ],
-        [assertions]).
+        [assertions,hiord]).
 
 :- comment(title,"Basic data types and properties").
 
@@ -69,7 +69,7 @@ nnegint(N) :- posint(N).
 
 :- true prop flt(T) + regtype # "@var{T} is a float.".
 
-flt(T) :- float(T), !.
+flt(T) :- nonvar(T), !, float(T).
 flt(T) :- int(N), T is N/10.
 
 :- comment(num/1, "The type of numbers, that is, integer or floating-point.").
@@ -241,7 +241,7 @@ string(T) :- list(T, character_code).
 
 predname(P/A) :-
 	atm(P),
-	int(A).
+	nnegint(A).
 
 :- true prop atm_or_atm_list(T) + regtype
    # "@var{T} is an atom or a list of atoms.".
@@ -283,6 +283,16 @@ compat(T, P) :- \+ \+ P(T).
 
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+97,2001/05/03,16:10*19+'CEST'), "Changed int
+   to nnegint in predname.  (Francisco Bueno Carrillo)").
+
+:- comment(version(1*7+39,2001/01/05,19:04*12+'CET'), "Added package
+hiord in order to understand the T(X) syntax.  (MCL)").
+
+:- comment(version(1*7+25,2000/10/23,15:52*30+'CEST'), "Fixed definition
+   of flt/1, which looped for non-variable non-numeric terms.  (Daniel
+   Cabeza Gras)").
 
 :- comment(version(1*3+100,1999/11/12,17:14*25+'MET'), "Added exported
    property regtype/2.  (Francisco Bueno Carrillo)").

@@ -41,7 +41,7 @@
 #include "termdefs.h"                          /* because of TAGGED (MCL) */
 #include "own_malloc_defs.h"
 
-#if defined(__svr4__)                                          /* Solaris */
+#if defined(__svr4__) || defined(DARWIN)              /* Solaris or Darwin */
 # include <unistd.h>                                            /* sbrk () */
 # if !defined(MALLOC_DEBUG)
 #  include <stdlib.h>                                           /* malloc() */
@@ -63,7 +63,7 @@
 #define TAG_MASK 0xf0000000
 #define ALIGN sizeof(TAGGED)                        /* Minimum block size */
 #define ROUND_CHARS(Chars) Chars%ALIGN == 0 ? Chars/ALIGN : Chars/ALIGN + 1
-#define MIN_MEM_BLOCK (ROUND_CHARS(MIN_MEM_BLOCK_CHARS))
+#define MIN_MEM_BLOCK (unsigned int)(ROUND_CHARS(MIN_MEM_BLOCK_CHARS))
 
 
 int turn_point(TAGGED *base);

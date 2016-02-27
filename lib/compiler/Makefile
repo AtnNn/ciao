@@ -1,6 +1,6 @@
 include ../../SETTINGS
-include ../../COMMON
-include ../../makefile-sysindep
+include ../../SHARED
+
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 TO_CHANGE=substitute_this_text_by_the_installed_engine_path

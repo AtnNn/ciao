@@ -21,7 +21,7 @@ public abstract class PLTerm extends Object {
   /*
    * Term types.
    */
-  public int Type;
+  int Type;
   static final int INTEGER   = 1;
   static final int FLOAT     = 2;
   static final int ATOM      = 3;
@@ -35,7 +35,7 @@ public abstract class PLTerm extends Object {
      */
   private static final String INTERPRETER_ERROR = "No";
   private static final String INTERPRETER_SUCCESS = "Yes";
-  private static final String JAVA_QUIT = "$java_quit";
+  private static final String TERMINATE = "$terminate";
 
     /**
      * Empty list representation. This <code>PLTerm</code> constant
@@ -61,9 +61,10 @@ public abstract class PLTerm extends Object {
      * Termination term. This is the term received when the Prolog
      * side tries to finish the execution of the Java side.
      */
-  static final PLTerm quit = new PLAtom(JAVA_QUIT);
+  static final PLTerm terminate = new PLAtom(TERMINATE);
 
   static final String JAVA_OBJECT = "$java_object";
+  static final String JAVA_EXCEPTION = "$java_exception";
   static final String PROLOG_EXCEPTION = "prolog_exception";
   static final String PROLOG_FAIL = "prolog_fail";
   static final String PROLOG_SUCCESS = "prolog_success";
@@ -82,7 +83,7 @@ public abstract class PLTerm extends Object {
   /*
    * Constants for fast_read/fast_write version 'a'.
    */
-  public static final char VERSION_A = 'a';
+  private static final char VERSION_A = 'a';
   private static final char PFX_LIST_WITH_NIL_TAIL = 'l';
   private static final char PFX_LIST_WITH_NONIL_TAIL = 'L';
   private static final char PFX_SHORT_INT = 'i';
@@ -98,7 +99,7 @@ public abstract class PLTerm extends Object {
   /*
    * Constants for fast_read/fast_write version 'C'.
    */
-  public static final char VERSION_C = 'C';
+  private static final char VERSION_C = 'C';
   private static final char PFXC_LIST = '[';
   private static final char PFXC_STRING = '\"';
   private static final char PFXC_INTEGER = 'I';
@@ -109,6 +110,17 @@ public abstract class PLTerm extends Object {
   private static final char PFXC_NIL = ']';
 
   private static final char currentVersion = VERSION_C;
+
+  /*
+   * Variable table, used to represent the term in 
+   * fast format with fastWrite method. The fast format requires that the
+   * term variables be numbered in an increasing sequential order,
+   * begining from 0. This table will be populated with the variables
+   * found in the term, and will contain as key the variable itself,
+   * and as value the sequential variable number. This variable is
+   * absolutely private, and is cleanst every time this term is 'fastWritten.'
+   */
+  private Hashtable varTable = null;
 
   /****************************************************/
   /* Abstract or overlapped methods                   */
@@ -158,7 +170,7 @@ public abstract class PLTerm extends Object {
    * Number of cells on the Prolog WAM heap for this term.
    * Not used currently.
    */
-  abstract protected int numberOfCells();
+  abstract int numberOfCells();
 
   /**
    * Duplication of Prolog terms.
@@ -173,10 +185,23 @@ public abstract class PLTerm extends Object {
    */
   abstract public PLTerm copy();
 
+    /**
+     * Representation of this <code>PLTerm</code> object to be
+     * used as a Hashtable key. Although any object can be
+     * used as a Hashtable key, PLTerm objects include 
+     * internal information that make two externally identical
+     * terms do not match the <code>equal()</code> method.
+     *
+     * The only way to use <code>PLTerm</code> objects
+     * as Hashtable keys is to use their external representation
+     * (currently, using <code>toString()</code> method).
+     */
+    Object hashKey() {
+	return (Object)this.toString();
+    }
+
   /**
-   * Execution of a Prolog goal. This method is combined
-   * with <tt>nextSolution</tt> to obtain the set of
-   * solutions given by a query on a goal.
+   * Execution of a Prolog goal.
    * Only are executed those terms where <tt>isRunnable</tt>
    * returns <tt>true</tt>.
    *
@@ -190,10 +215,11 @@ public abstract class PLTerm extends Object {
    *
    * @exception PLGoalException if this term cannot be a Prolog goal.
    */
-  public void launchGoal(PrintWriter out) throws PLGoalException {
+  void launchGoal(PLInterpreter i,PLConnection pl)
+      throws PLGoalException {
 
-    throw new PLGoalException("This term cannot be a Prolog goal: " 
-			      + this.toString());
+      throw new PLGoalException("This term cannot be a Prolog goal: " 
+				+ this.toString());
 
   }
 
@@ -240,7 +266,7 @@ public abstract class PLTerm extends Object {
    *
    * @exception PLException if this term cannot be backtracked.
    */
-  public void backtrack(PLTerm term) throws PLException {
+  void backtrack(PLTerm term) throws PLException {
 
     if (!this.equals(term))
       throw new PLException("Object cannot be backtracked: " 
@@ -306,7 +332,7 @@ public abstract class PLTerm extends Object {
    *         Prolog exception;
    *         <code>false</code> otherwise.
    */
-  protected boolean isException() {
+  boolean isException() {
 
     if (Type == STRUCTURE &&
     	((PLStructure)this).getFunctor().equals(PROLOG_EXCEPTION))
@@ -317,13 +343,28 @@ public abstract class PLTerm extends Object {
   }
 
   /**
+   * Java exception generation.
+   *
+   * @param  String containing the exception text.
+   *
+   * @return a <code>PLStructure</code> with the term representing the
+   *         exception.
+   */
+  static PLTerm javaException(String s) {
+
+      PLTerm arg[] = {new PLAtom(s)};
+      return new PLStructure(JAVA_EXCEPTION, arg);
+
+  }
+
+  /**
    * Prolog fail test.
    *
    * @return <code>true</code> if the term represents the valid
    *         Prolog atom used to indicate goal fail;
    *         <code>false</code> otherwise.
    */
-  protected boolean isPrologFail() {
+  boolean isPrologFail() {
 
     if (this.equals(new PLAtom(PROLOG_FAIL)))
       return true;
@@ -339,7 +380,7 @@ public abstract class PLTerm extends Object {
    *         Prolog atom used to indicate Prolog success;
    *         <code>false</code> otherwise.
    */
-  protected boolean isPrologSuccess() {
+  boolean isPrologSuccess() {
 
     if (this.equals(new PLAtom(PROLOG_SUCCESS)))
       return true;
@@ -355,7 +396,7 @@ public abstract class PLTerm extends Object {
    *         Prolog structure used to indicate a query id;
    *         <code>false</code> otherwise.
    */
-  protected boolean isQueryId() {
+  boolean isQueryId() {
 
     if (Type == STRUCTURE &&
     	((PLStructure)this).getFunctor().equals(PROLOG_QUERY_ID) &&
@@ -373,7 +414,7 @@ public abstract class PLTerm extends Object {
    *         Prolog structure used to indicate a query solution;
    *         <code>false</code> otherwise.
    */
-  protected boolean isSolution() {
+  boolean isSolution() {
 
     if (Type == STRUCTURE &&
     	((PLStructure)this).getFunctor().equals(PLGoal.SOLUTION) &&
@@ -396,7 +437,7 @@ public abstract class PLTerm extends Object {
    *
    * @exception PLException if raises any error reading the term.
    */
-  protected static PLTerm fastRead(BufferedReader in) throws PLException {
+  static PLTerm fastRead(BufferedReader in) throws PLException {
 
     String at[] = {};
     AtomTable = at;
@@ -404,13 +445,9 @@ public abstract class PLTerm extends Object {
     VarCounter = 0;
     char v;
 
-    // Version. If a PLException occurs at this point, is assumed that
+    // Version. If a PLException occurs at this point, it is assumed that
     // the socket is closed, and therefore the java server must be finished.
-    try {
-	v = getChar(in);
-    } catch (PLException e) {
-	return PLAtom.quit;
-    }
+    v = getChar(in);
     if (v != currentVersion) {
 	throw new PLException("Wrong fast_write version:");
     }
@@ -677,9 +714,14 @@ public abstract class PLTerm extends Object {
    * @return a string that contains the low level representation of
    *         this Prolog term.
    */
-  public String fastWrite() {
+  String fastWrite() {
 
     StringBuffer s = new StringBuffer(STRING_BUFFER_SIZE);
+    
+    /*
+     * Private variable Hashtable is initialized.
+     */
+    varTable = new Hashtable();
 
     int NumberOfAtoms;
 
@@ -688,7 +730,6 @@ public abstract class PLTerm extends Object {
 
     // Term itself.
     s.append(genTerm(this));
-
     return s.toString();
   }
 
@@ -727,30 +768,31 @@ public abstract class PLTerm extends Object {
   /**
    * Term generation in $fast format.
    *
-   * @param t Prolog term to translate to low level format
+   * @param t        Prolog term to translate to low level format
    *
    * @return  a <code>StringBuffer</code> object that
    *          contains the low level term representation.
    */
   private StringBuffer genTerm(PLTerm t) {
     StringBuffer s = new StringBuffer(10);
+    int varNumber;
 
     switch(currentVersion) {
     case VERSION_A:
       switch(t.Type) {
       case PLTerm.ATOM:
         s.append(PFX_ATOM);
-        s.append(((PLAtom)t).Value + "\0");
+        s.append(((PLAtom)t).getName() + "\0");
         break;
         
       case PLTerm.INTEGER:
         s.append(PFX_LONG_INT);
-        s.append(((PLInteger)t).Value + "\0");
+        s.append(((PLInteger)t).getValue() + "\0");
         break;
 
       case PLTerm.FLOAT:
         s.append(PFX_FLOAT);
-        s.append(((PLFloat)t).Value + "\0");
+        s.append(((PLFloat)t).getValue() + "\0");
         break;
         
         //case PLTerm.NIL:
@@ -770,7 +812,7 @@ public abstract class PLTerm extends Object {
       case PLTerm.STRUCTURE:
         PLTerm[] args = ((PLStructure)t).Args;
         s.append(PFX_STRUCT);
-        s.append(((PLStructure)t).Name);
+        s.append(((PLStructure)t).getFunctor());
         s.append('\0');
         s.append(args.length);
         s.append('\0');
@@ -793,18 +835,18 @@ public abstract class PLTerm extends Object {
           s.append(PFXC_NIL);
         else {
           s.append(PFXC_ATOM);
-          s.append(((PLAtom)t).Value + "\0");
+          s.append(((PLAtom)t).getName() + "\0");
         }
         break;
         
       case PLTerm.INTEGER:
         s.append(PFXC_INTEGER);
-        s.append(((PLInteger)t).Value + "\0");
+        s.append(((PLInteger)t).getValue() + "\0");
         break;
 
       case PLTerm.FLOAT:
         s.append(PFXC_FLOAT);
-        s.append(((PLFloat)t).Value + "\0");
+        s.append(((PLFloat)t).getValue() + "\0");
         break;
         
       case PLTerm.LIST:
@@ -816,7 +858,7 @@ public abstract class PLTerm extends Object {
       case PLTerm.STRUCTURE:
         PLTerm[] args = ((PLStructure)t).Args;
         s.append(PFXC_STRUCT);
-        s.append(((PLStructure)t).Name);
+        s.append(((PLStructure)t).getFunctor());
         s.append('\0');
         byte strArity[] = {(new Byte(new Integer(args.length).byteValue())).byteValue()};
         s.append(new String(strArity));
@@ -827,8 +869,14 @@ public abstract class PLTerm extends Object {
       case PLTerm.VARIABLE:
 
 	if (((PLVariable)t).isFree()) {
+	  if (varTable.containsKey(t))
+	    varNumber = ((Integer)varTable.get(t)).intValue();
+	  else {
+	    varNumber = varTable.size();
+	    varTable.put((Object)t, new Integer(varNumber));
+	  }
 	  s.append(PFXC_VARIABLE);
-	  s.append(((PLVariable)t).getNumber() + "\0");
+	  s.append(varNumber + "\0");
 	}
 	else
 	  s.append(genTerm(((PLVariable)t).getBinding()));

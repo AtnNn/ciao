@@ -1,4 +1,4 @@
-#include <malloc.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 char *get_static_str() {
@@ -23,7 +23,7 @@ char *get_str(int n) {
 
 void put_str(char *s) {
   if (s) {
-    printf("From C: [%s]\n", s);
+    printf("From C: \"%s\"\n", s);
   } else {
     printf("From C: null\n");
   }

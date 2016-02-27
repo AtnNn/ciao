@@ -11,7 +11,7 @@
 	equal_lists/2, list_to_list_of_lists/2, powerset/2
         ],
         [
-	assertions,isomodes,metatypes
+	assertions,isomodes,metatypes,hiord
 	]).
 
 :- comment(title, "List processing").

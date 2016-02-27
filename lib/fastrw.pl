@@ -1,6 +1,8 @@
 :- module(fastrw,
         [fast_read/1,
          fast_write/1,
+         fast_read/2,
+         fast_write/2,
          fast_write_to_string/3],
          [dcg,assertions]).
 
@@ -17,7 +19,7 @@
 	writing of terms on a format designed to be handled on read faster
 	than standart representation.").
 
-:- comment(fast_read(Term), "The next term is read from current standart
+:- comment(fast_read(Term), "The next term is read from current standard
 	input and is unified with @var{Term}. The syntax of the term must
 	agree with fast_read / fast_write format. If the end of the input
 	has been reached, @var{Term} is unified with the term
@@ -25,9 +27,43 @@
 	an error.").
 
 :- comment(fast_write(Term),"Output @var{Term} in a way that
-	@pred{fast_read/1} will be able to read it back.").
+@pred{fast_read/1} and @pred{fast_read/2} will be able to read it
+back.").
+
+
+:- comment(fast_write(Stream, Term),"Output @var{Term} to @var{Stream}
+in a way that @pred{fast_read/1} and @pred{fast_read/2} will be able
+to read it back.").
+
+fast_write(Stream, Term):-
+        current_output(Old),
+        set_output(Stream),
+        fast_write(Term),
+        set_output(Old).
+
+:- comment(fast_read(Stream, Term), "The next term is read from
+@var{Stream} and unified with @var{Term}. The syntax of the term must
+agree with fast_read / fast_write format. If the end of the input has
+been reached, @var{Term} is unified with the term
+'end_of_file'. Further calls to @pred{fast_read/2} will then cause an
+error.").
+
+:- comment(bug, "Both @pred{fast_read/2} and @pred{fast_write/2}
+simply set the current output/input and call @pred{fast_read/1} and
+@pred{fast_write/1}.  Therefore, in the event an error hapens during
+its execution, the current input / output streams may be left pointing
+to the @var{Stream}").
+
+
+fast_read(Stream, Term):-
+        current_input(Old),
+        set_input(Stream),
+        fast_read(Term),
+        set_input(Old).
+
 
 :- use_module(library(dict)).
+
 
 version(0'C).
 
@@ -100,6 +136,12 @@ string([C|Cs]) -->
         string(Cs).
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+16,2000/08/29,13:44*18+'CEST'), "Solved a bug
+in fast_write/1 not writing to sockets.  (MCL)").
+
+:- comment(version(1*7+15,2000/08/29,13:43*34+'CEST'), "Added a first
+shot at fast_{read,write}/2.  (MCL)").
 
 :- comment(version(1*5+81,2000/03/23,16:37*17+'CET'), "C implemented
    fast_write string writing debugged.  (Oscar Portela Arjona)").

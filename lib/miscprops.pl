@@ -1,10 +1,13 @@
 :- module(miscprops,[
-	               cost/2, %% Should be replaced by lower/upper/etc.
+%	               cost/2, %% Should be replaced by lower/upper/etc.
+% the corresponding lower/upper/etc. are now in assertions(native_props)
 		       directoryname/1, %% Not a regular type!
-		       filename/1, %% Not a regular type!
+%		       filename/1, %% Not a regular type!
+% it is now in assertions(c_itf_props)
 		       formatstring/1, %% Not a regular type!
 		       moduletype/1,
-		       no_fail/1,
+%		       no_fail/1,
+% replaced by not_fails/1 in assertions(native_props)
 		       structofstrings/1 %% Not a regular type!
 		     ],
                      [
@@ -48,12 +51,6 @@ cost(_,_).
    # "@var{X} is an atom describing the name of a directory.".
 
 directoryname(X) :- 
-	atm(X).
-
-:- regtype filename(X) 
-   # "@var{X} is an atom describing the name of a file.".
-
-filename(X) :- 
 	atm(X).
 
 :- regtype formatstring(String) 

@@ -99,7 +99,7 @@ BOOL prolog_srandom(Arg)
   if (IsVar(X(0)))
     srandom(1);
   else if (IsInteger(X(0)))
-    srandom((int)CTagToArg(X(0),1));
+    srandom((int)GetInteger(X(0)));
   else
     ERROR_IN_ARG(X(1),1,INTEGER);
 

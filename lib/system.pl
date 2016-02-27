@@ -1,38 +1,44 @@
-:- module(system, [
-        pause/1,
-        time/1,
-        datime/1,
-        datime/9,
-        datime_struct/1,
-        getenvstr/2,
-        extract_paths/2,
-        get_pid/1,
-        current_host/1,
-        current_executable/1,
-        umask/2,
-        working_directory/2,
-        cd/1,
-	shell/0,
-	shell/1,
-	shell/2,
-	system/1,
-	system/2,
-        popen/3,
-	popen_mode/1,
-        exec/4,
-        exec/3,
-        directory_files/2,
-	mktemp/2,
-	file_exists/1,
-	file_exists/2,
-        file_property/2,
-        file_properties/6,
-        modif_time/2,
-        modif_time0/2,
-        fmode/2,
-        chmod/2,
-        chmod/3,
-        delete_file/1],
+:- module(system, 
+        [
+            pause/1,
+            time/1,
+            datime/1,
+            datime/9,
+            datime_struct/1,
+            getenvstr/2,
+            extract_paths/2,
+            get_pid/1,
+            current_host/1,
+            current_executable/1,
+            umask/2,
+            make_directory/2,
+            make_directory/1,
+            working_directory/2,
+            cd/1,
+            shell/0,
+            shell/1,
+            shell/2,
+            system/1,
+            system/2,
+            popen/3,
+            popen_mode/1,
+            exec/4,
+            exec/3,
+            directory_files/2,
+            mktemp/2,
+            file_exists/1,
+            file_exists/2,
+            file_property/2,
+            file_properties/6,
+            modif_time/2,
+            modif_time0/2,
+            fmode/2,
+            chmod/2,
+            chmod/3,
+            delete_file/1,
+            delete_directory/1,
+            rename_file/2
+        ],
 	[assertions, isomodes, regtypes]).
 
 :- comment(title, "Operating system utilities").
@@ -55,7 +61,8 @@
         current_host/1, getenvstr/2, get_pid/1, 
         current_executable/1,
         shell/0, shell/2, system/2, mktemp/2, file_exists/2,
-        file_properties/6, chmod/2, umask/2, delete_file/1]).
+        file_properties/6, chmod/2, umask/2, 
+        delete_file/1, delete_directory/1, rename_file/2, make_directory/2]).
 
 
 :- comment(pause(Seconds), "Make this thread sleep for some @var{Seconds}.").
@@ -438,9 +445,33 @@ chmod(Path, OldMode, NewMode) :-
         fmode(Path, OldMode),
         chmod(Path, NewMode).
 
+
+:- comment(delete_directory(File), "Delete the directory @var{Directory}.").
+
+:- pred delete_directory(+atm).
+
+
 :- comment(delete_file(File), "Delete the file @var{File}.").
 
 :- pred delete_file(+atm).
+
+
+:- comment(rename_file(File1, File2), 
+        "Change the name of  @var{File1} to @var{File2}.").
+
+:- pred rename_file(+atm,+atm).
+
+:- comment(make_directory(DirName, Mode), 
+        "Creates the directory @var{DirName} with a given @var{Mode}.  This is, as usual, operated against the current umask value.").
+
+:- pred make_directory(+atm, +int).
+
+:- comment(make_directory(DirName),
+        "Equivalent to @tt{make_directory(D,0o777)}.").
+
+:- pred make_directory(+atm).
+
+make_directory(D) :- make_directory(D,0o777).
 
 :- comment(version_maintenance,dir('../version')).
 

@@ -11,7 +11,7 @@
 #include "qget_defs.h"
 #include "qread_defs.h"
 #include "bignum_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 
 /* local declarations */
 

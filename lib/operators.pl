@@ -107,8 +107,8 @@ standard_ops :-
 	op(1050, xfy,['->']),
 	op(1000, xfy,[',']),
 %       op(1000, xfy,[(&&)]),  % used in ite2akl.pl
-        op( 950, xfy,[(&),(\&)]),
-        op( 950, xf, [(&)]),
+%        op( 950, xfy,[(&),(\&)]),
+%        op( 950, xf, [(&)]),
 	op( 900,  fy,[(\+)]),
 	op( 700, xfx,[(=),(\=),(==),(\==),(@<),(@>),(@=<),(@>=),
                       (=..),(is),(=:=),(=\=),(<),(=<),(>),(>=)]),
@@ -119,12 +119,14 @@ standard_ops :-
 	op( 200,  fy,[(+),(-),(\)]),
         op( 200, xfx,['**']),
 	op( 200, xfy,[(^)]),
-	op( 200, xfy,[(`)]),
         op(  25,  fy,[(^)]).
 
 :- initialization(standard_ops).
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+106,2001/05/28,20:06*27+'CEST'), "Parallelism
+   operators are not longer predefined. (Daniel Cabeza Gras)").
 
 :- comment(version(0*9+7,1999/03/17,17:29*23+'MET'), "Moved the
    definition of operators for declarations (non-ISO) to c_itf.

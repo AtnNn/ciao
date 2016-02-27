@@ -20,7 +20,7 @@
 :- use_module(library(write)).
 :- use_module(library(aggregates)).
 :- use_module(library(sort)).
-:- use_module(library(prolog_sys), [current_predicate/2]).
+:- use_module(user, ['$shell_call'/1]).
 
 :- comment(title, "Predicates controlling the interactive debugger").
 
@@ -56,6 +56,9 @@
 %------------------ Version Comments ------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+91,2001/04/23,18:19*24+'CEST'), "Fixed @@
+   debugging command (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+148,2000/05/24,11:26*32+'CEST'), "Slight
    changes in source debugger documentation.  (Francisco Bueno
@@ -689,7 +692,7 @@ do_once_command(Prompt) :-
 	reset_debugger(State),
 	read(user, Command),
 	'$prompt'(_, '|: '),
-	( call(Command) -> Y=yes
+	( '$shell_call'(Command) -> Y=yes
         ; Y=no
         ),
 	'$prompt'(_, OldPrompt),
@@ -774,7 +777,7 @@ remove_spypoint(_, N, A) :-
 	format(user, '{Cannot spy built-in predicate ~q}~n', [N/A]).
 
 spypoint(X) :-
-	current_predicate(_, X),
+	'$current_predicate'(_, X),
 	'$spypoint'(X, on, on).
 
 write_goal(T, X, Xs, B, D, Port, Pred, Src, Ln0, Ln1, Number) :-
@@ -962,7 +965,7 @@ parse_functor_spec(S, GoalArg, Goal) :-
 	(   functor_spec(S, Name, Low, High, M),
             current_fact(debug_mod(M,Mc)),
             atom_concat(Mc, Name, PredName),
-	    current_predicate(PredName, GoalArg),
+	    '$current_predicate'(PredName, GoalArg),
 	    functor(GoalArg, _, N),
 	    N >= Low, N =< High,
 	    '$setarg'(1, Flag, 1, true),

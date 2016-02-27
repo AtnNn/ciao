@@ -7,6 +7,8 @@
 :- use_module(library(prolog_sys), [statistics/2]).
 :- use_module(library(concurrency)).
 
+:- use_module(socket_number).
+
 
 %% Write two numbers a socket whose host and port number are passed in
 %% as argument. 
@@ -16,17 +18,16 @@ main(['-help']):- main([]).
 main(['help']):- main([]).
 main([]):-
         format("
-Usage: client <how_many> <host> <port>: write to the socket numbered <port>
+Usage: client <how_many> <host>: write to the server running
 in the machine <host> an amount of <how_many> random pairs of numbers.  In
-the designated <host> an instance of the program rfs should be running;
+the designated <host> an instance of the client program should be running;
 it will read these pairs, add them, and return the result, which is locally 
-checked.  The port number to connect to is written to standard output by
-the server.  
+checked.  The port number to connect is fixed at compile time.  
 ", []).
 
-main([HowMany, Host, Number]):-
+main([HowMany, Host]):-
         atom_and_number(HowMany, N),
-        atom_and_number(Number, Port),
+        socket_port(Port),
         statistics(walltime, _),
         write_lots_of_data(N, Host, Port).
 

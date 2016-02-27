@@ -80,7 +80,8 @@ compute_food(on,on,on,'potatoes and pizza with coke.').
 compute_text(T0,T) :-
   form_empty_value(T0), !,
     T = '{Nothing}'.
-compute_text(T,preformatted(T)).
+compute_text(T,preformatted(T)) :- T = [_|_], !.
+compute_text(T,preformatted([T])).
 
 compute_password(P0,P) :-
   P0 = '$empty' -> P = '{none}'; P = P0.

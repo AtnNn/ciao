@@ -1,42 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Graphs</TITLE>
+<TITLE>The Ciao Prolog System               - text_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC517" HREF="ciao_toc.html#TOC517">Graphs</A></H1>
+<H1><A NAME="SEC512" HREF="ciao_toc.html#TOC512">text_class (library)</A></H1>
 <P>
-<A NAME="IDX5741"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> F. Bueno.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
+<A NAME="IDX5310"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_129.html#SEC518">Usage and interface (graphs)</A>
-<LI><A HREF="ciao_129.html#SEC519">Documentation on exports (graphs)</A>
-<LI><A HREF="ciao_129.html#SEC520">Documentation on internals (graphs)</A>
+<LI><A HREF="ciao_129.html#SEC513">Usage and interface (text_class)</A>
+<LI><A HREF="ciao_129.html#SEC514">Documentation on exports (text_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC518" HREF="ciao_toc.html#TOC518">Usage and interface (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC513" HREF="ciao_toc.html#TOC513">Usage and interface (<CODE>text_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -44,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(graphs)).</CODE>
+<CODE>:- use_module(library(text_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -53,21 +40,18 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5742"></A>
-<CODE>dgraph_to_ugraph/2</CODE>, 
-<A NAME="IDX5743"></A>
-<CODE>dlgraph_to_lgraph/2</CODE>, 
-<A NAME="IDX5744"></A>
-<CODE>edges_to_ugraph/2</CODE>, 
-<A NAME="IDX5745"></A>
-<CODE>edges_to_lgraph/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5746"></A>
-<CODE>dgraph/1</CODE>, 
-<A NAME="IDX5747"></A>
-<CODE>dlgraph/1</CODE>.
+<A NAME="IDX5311"></A>
+<CODE>coord/2</CODE>, 
+<A NAME="IDX5312"></A>
+<CODE>point/2</CODE>, 
+<A NAME="IDX5313"></A>
+<CODE>text_characters/1</CODE>, 
+<A NAME="IDX5314"></A>
+<CODE>anchor/1</CODE>, 
+<A NAME="IDX5315"></A>
+<CODE>font_type/1</CODE>, 
+<A NAME="IDX5316"></A>
+<CODE>justify_text/1</CODE>.
 
 </UL>
 
@@ -78,12 +62,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5748"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX5749"></A>
-<CODE>graphs/ugraphs</CODE>, 
-<A NAME="IDX5750"></A>
-<CODE>graphs/lgraphs</CODE>.
+<A NAME="IDX5317"></A>
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -93,227 +73,194 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 
 
-<H2><A NAME="SEC519" HREF="ciao_toc.html#TOC519">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC514" HREF="ciao_toc.html#TOC514">Documentation on exports (<CODE>text_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5751"></A>
-<A NAME="IDX5752"></A>
+<A NAME="IDX5318"></A>
+<A NAME="IDX5319"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
-<DD><A NAME="IDX5753"></A>
+<DT><span class="define">PREDICATE:</span> <B>coord/2:</B>
+<DD><A NAME="IDX5320"></A>
 
 
 <P>
-<CODE>dgraph(Graph)</CODE>
-
-
-<P>
-A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X,+Y)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> specify the coordinates of a point used to position the text on the display.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5754"></A>
-<A NAME="IDX5755"></A>
+<A NAME="IDX5321"></A>
+<A NAME="IDX5322"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
-<DD><A NAME="IDX5756"></A>
+<DT><span class="define">PREDICATE:</span> <B>point/2:</B>
+<DD><A NAME="IDX5323"></A>
 
 
 <P>
-<CODE>dlgraph(Graph)</CODE>
-
-
-<P>
-A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>point(+X,+Y)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> change the coordinates of a point used to position the text on the display.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5757"></A>
-<A NAME="IDX5758"></A>
+<A NAME="IDX5324"></A>
+<A NAME="IDX5325"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
-<DD><A NAME="IDX5759"></A>
+<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
+<DD><A NAME="IDX5326"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+<LI><EM>Description:</EM> <CODE>Text</CODE> specifies the characters to be displayed in the text item. This option defaults to an empty string.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
+<CODE>+Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
 
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
 
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
+<UL>
+<LI><EM>Description:</EM> Gets the text displayed in the text item.
 
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5760"></A>
-<A NAME="IDX5761"></A>
+<A NAME="IDX5327"></A>
+<A NAME="IDX5328"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
-<DD><A NAME="IDX5762"></A>
+<DT><span class="define">PREDICATE:</span> <B>anchor/1:</B>
+<DD><A NAME="IDX5329"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>anchor(+AnchorPos)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+<LI><EM>Description:</EM> <CODE>AnchorPos</CODE> tells how to position the text relative to the positioning point for the text. This option defaluts to center.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
+<CODE>+AnchorPos</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
 
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>anchor(-AnchorPos)</CODE>
 
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
+<UL>
+<LI><EM>Description:</EM> Gets the position of the text relative to the positioning point.
 
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-AnchorPos</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5763"></A>
-<A NAME="IDX5764"></A>
+<A NAME="IDX5330"></A>
+<A NAME="IDX5331"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
-<DD><A NAME="IDX5765"></A>
+<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
+<DD><A NAME="IDX5332"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+<LI><EM>Description:</EM> <CODE>Font</CODE> specifies the font to use for the text item. This option defaluts to arial.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
 
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
 
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<UL>
+<LI><EM>Description:</EM> Gets the value of the <CODE>Font</CODE> used for the text item.
 
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5766"></A>
-<A NAME="IDX5767"></A>
+<A NAME="IDX5333"></A>
+<A NAME="IDX5334"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
-<DD><A NAME="IDX5768"></A>
+<DT><span class="define">PREDICATE:</span> <B>justify_text/1:</B>
+<DD><A NAME="IDX5335"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>justify_text(+How)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text within its bounding region. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
+<CODE>+How</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
-</DL>
-
-
-
-<H2><A NAME="SEC520" HREF="ciao_toc.html#TOC520">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX5769"></A>
-<A NAME="IDX5770"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
-<DD><A NAME="IDX5771"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>justify_text(-How)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
+<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
 
-</UL>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-</DL>
-
-<P>
-<A NAME="IDX5772"></A>
-<A NAME="IDX5773"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
-<DD><A NAME="IDX5774"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
-
+<CODE>-How</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

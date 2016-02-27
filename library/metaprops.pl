@@ -3,4 +3,4 @@
 
 :- multifile callme/2.
 
-callme(P,X):- P(X), !.
+callme(P,X):- call(P,X), !.

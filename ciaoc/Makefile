@@ -2,16 +2,17 @@
 #------- All customizable options are in the file ../SETTINGS -------
 
 include ../SETTINGS
-include ../COMMON
-include ../makefile-sysindep
+include ../SHARED
 
 CIAOCNAME=ciaoc
 ASRGEN=gen_asr
 
+# Use the latest ciaoc (renamed as ciaoc.sta) to generate a new ciaoc.
+
 compiler:
-	mv -f $(CIAOCNAME) $(CIAOCSTA)
-	$(SETLOCALCOMPILER) $(CIAOCSTA) -s -x $(CIAOCNAME)
-	$(SETLOCALCOMPILER) $(CIAOC) -s -x $(ASRGEN)
+	cp -f $(CIAOCNAME) $(CIAOCSTA)
+	$(SETLOCALCIAO) $(CIAOCSTA) -s -x $(CIAOCNAME)
+	$(SETLOCALCIAO) $(CIAOC) -s -x $(ASRGEN)
 	rm $(ASRGEN)
 
 install:

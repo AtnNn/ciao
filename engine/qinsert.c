@@ -11,7 +11,7 @@
 #include "qinsert_defs.h"
 #include "bignum_defs.h"
 #include "stacks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "alloc_defs.h"
 
 /* local declarations */

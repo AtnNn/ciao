@@ -1,32 +1,106 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART XII - Appendices</TITLE>
+<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC625" HREF="ciao_toc.html#TOC625">PART XII - Appendices</A></H1>
+<H1><A NAME="SEC639" HREF="ciao_toc.html#TOC639">Crossed-references of a program</A></H1>
 
 <P>
-These appendices describe the 
-<A NAME="IDX6635"></A>
-installation of the Ciao environment on different systems and some other issues such as 
-<A NAME="IDX6636"></A>
-reporting bugs, signing up on the Ciao user's 
-<A NAME="IDX6637"></A>
-mailing list, 
-<A NAME="IDX6638"></A>
-downloading new versions, 
-<A NAME="IDX6639"></A>
-limitations, etc. 
+<STRONG>Author(s):</STRONG> Francisco Bueno.
+
+
+<P>
+The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+
+
+<P>
+The libraries involved are as follows: 
+
+<UL>
+<LI>
+
+<A NAME="IDX6784"></A>
+<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
+<LI>
+
+<A NAME="IDX6785"></A>
+<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
+<LI>
+
+<A NAME="IDX6786"></A>
+<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
+<LI>
+
+<A NAME="IDX6787"></A>
+<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
+<LI>
+
+<A NAME="IDX6788"></A>
+<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
+</UL>
+
+<P>
+The first two are intended to be used by loading in 
+<A NAME="IDX6789"></A>
+<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
+
+
+<P>
+The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
+
+<PRE>
+[ciao/etc]&#62; ciaosh
+Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
+?- use_module(xmrefs).
+
+yes
+?- set_flag(X).
+
+X = 3 ? 
+
+yes
+?- set_files([xfrefs, xmrefs,
+              library(xrefs),
+              library('xrefs/mrefs'),
+              library('xrefs/pxrefs'),
+              library('xrefs/xrefs2graph'),
+              library('xrefs/xrefsbuild'),
+              library('xrefs/xrefsread')
+	     ]).
+
+yes
+?- xmrefs.
+
+</PRE>
+
+<P>
+so that it is displayed by daVinci as: 
+
+
+<P>
+<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
+
+
+<P>
+The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
+
+
+<P>
+<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
+
+
+<P>
+For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
 
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_163.html">previous</A>, <A HREF="ciao_165.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

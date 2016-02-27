@@ -40,6 +40,10 @@ main.
 
 :- comment(version_maintenance,dir('../version/')).
 
+:- comment(version(1*7+92,2001/04/23,18:40*54+'CEST'), "Fixed bug which
+   caused errors with short module names.  (Daniel Cabeza
+   Gras)").
+
 :- comment(version(1*5+159,2000/05/31,10:52*49+'CEST'), "Fixed bug in
    source-level debug search.  (Manuel Carlos Rodriguez)").
 

@@ -186,7 +186,7 @@ yes
 @end{verbatim}
 ").
 
-:- reexport(toplev,
+:- reexport(library(ciaosh),
         [use_module/1, use_module/2, ensure_loaded/1,
 	 make_exec/2,
          include/1, use_package/1, 
@@ -304,6 +304,10 @@ sourcenames(Files) :- list(Files, sourcename).
 
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+72,2001/03/25,19:56*27+'CEST'), "Wrapped ciaosh
+   reexport in 'library()' so that lpdoc documenter will find it.
+   (Manuel Hermenegildo)").
 
 :- comment(version(1*5+11,1999/12/14,13:14*36+'MET'), "Exported the
    new preds from @lib{debugger} supporting source level debugging.

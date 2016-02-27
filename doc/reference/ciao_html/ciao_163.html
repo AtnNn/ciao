@@ -1,302 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - test_format (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Printing the contents of a bytecode file</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC622" HREF="ciao_toc.html#TOC622">test_format (library)</A></H1>
+<H1><A NAME="SEC637" HREF="ciao_toc.html#TOC637">Printing the contents of a bytecode file</A></H1>
+
 <P>
-<A NAME="IDX6594"></A>
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
 
 
 <P>
-Most of the predicates exported by this module perform some checks to determine whether the arguments attain some conditions or not. In the second case an exception will be thrown. To catch the exceptions you can use the following metapredicates when invoking chartlib exported predicates: 
+<STRONG>Version:</STRONG> 0.5#2 (1999/11/11, 19:20:50 MET)
+
+
+<P>
+This simple program takes as an argument a bytecode (.po) file and prints out in symbolic form the information contained in the file. It uses compiler and engine builtins to do so, so that it keeps track with changes in bytecode format. 
 
 
 
 <UL>
-
-<LI>
-
-<A NAME="IDX6595"></A>
-<CODE>chartlib_text_error_protect/1</CODE> 
-
-<LI>
-
-<A NAME="IDX6596"></A>
-<CODE>chartlib_text_error_protect/1</CODE> 
-
-</UL>
-
-<P>
-Both metapredicates are defined in the chartlib_errhandle module that comes with this library. Some of the predicates have a <CODE>Predicate</CODE> argument which will be used in case of error to show which chartlib predicate causes the error. 
-
-
-
-<UL>
-<LI><A HREF="ciao_163.html#SEC623">Usage and interface (test_format)</A>
-<LI><A HREF="ciao_163.html#SEC624">Documentation on exports (test_format)</A>
+<LI><A HREF="ciao_163.html#SEC638">Usage (viewpo)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC623" HREF="ciao_toc.html#TOC623">Usage and interface (<CODE>test_format</CODE>)</A></H2>
+<H2><A NAME="SEC638" HREF="ciao_toc.html#TOC638">Usage (viewpo)</A></H2>
 
-<div class="cartouche">
 
-<UL>
+<PRE>
+   
+	viewpo &#60;file1&#62;.po
+	   : print .po contents in symbolic form
 
-<LI><STRONG>Library usage:</STRONG>
+	viewpo -h
+	   : print this information
 
-<CODE>:- use_module(library(test_format)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6597"></A>
-<CODE>equalnumber/3</CODE>, 
-<A NAME="IDX6598"></A>
-<CODE>not_empty/4</CODE>, 
-<A NAME="IDX6599"></A>
-<CODE>not_empty/3</CODE>, 
-<A NAME="IDX6600"></A>
-<CODE>check_sublist/4</CODE>, 
-<A NAME="IDX6601"></A>
-<CODE>valid_format/4</CODE>, 
-<A NAME="IDX6602"></A>
-<CODE>vectors_format/4</CODE>, 
-<A NAME="IDX6603"></A>
-<CODE>valid_vectors/4</CODE>, 
-<A NAME="IDX6604"></A>
-<CODE>valid_attributes/2</CODE>, 
-<A NAME="IDX6605"></A>
-<CODE>valid_table/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6606"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6607"></A>
-<CODE>lists</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC624" HREF="ciao_toc.html#TOC624">Documentation on exports (<CODE>test_format</CODE>)</A></H2>
-<P>
-<A NAME="IDX6608"></A>
-<A NAME="IDX6609"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>equalnumber/3:</B>
-<DD><A NAME="IDX6610"></A>
-
-
-<P>
-<CODE>equalnumber(X,Y,Predicate)</CODE>
-
-
-<P>
-Test whether the list <CODE>X</CODE> and the list <CODE>Y</CODE> contain the same number of elements. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6611"></A>
-<A NAME="IDX6612"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>not_empty/4:</B>
-<DD><A NAME="IDX6613"></A>
-
-
-<P>
-<CODE>not_empty(X,Y,Z,Predicate)</CODE>
-
-
-<P>
-Tests whether at least one the lists <CODE>X</CODE>, <CODE>Y</CODE> or <CODE>Z</CODE> are empty. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6614"></A>
-<A NAME="IDX6615"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>not_empty/3:</B>
-<DD><A NAME="IDX6616"></A>
-
-
-<P>
-<CODE>not_empty(X,Y,Predicate)</CODE>
-
-
-<P>
-Tests whether the lists <CODE>X</CODE> or <CODE>Y</CODE> are empty. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6617"></A>
-<A NAME="IDX6618"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>check_sublist/4:</B>
-<DD><A NAME="IDX6619"></A>
-
-
-<P>
-<CODE>check_sublist(List,Number,Number,Predicate)</CODE>
-
-
-<P>
-Tests if the number of elements in each sublist of <CODE>List</CODE> is <CODE>Number1</CODE> or <CODE>Number2</CODE>. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6620"></A>
-<A NAME="IDX6621"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_format/4:</B>
-<DD><A NAME="IDX6622"></A>
-
-
-<P>
-<CODE>valid_format(XVector,YVector,BarsAttributes,Predicate)</CODE>
-
-
-<P>
-Tests the following restrictions: 
-
-
-
-<UL>
-
-<LI>The <CODE>XVector</CODE> number of elements is the same as each <CODE>YVector</CODE> sublist number of elements.
-
-<LI>The <CODE>YVector</CODE> length is equal to <CODE>BarsAttributes</CODE> length.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6623"></A>
-<A NAME="IDX6624"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vectors_format/4:</B>
-<DD><A NAME="IDX6625"></A>
-
-
-<P>
-<CODE>vectors_format(XVector,YVectors,LinesAttributes,Predicate)</CODE>
-
-
-<P>
-Tests the following conditions: 
-
-
-
-<UL>
-
-<LI><CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
-
-<LI><CODE>XVector</CODE> list and each <CODE>YVectors</CODE> element have the same number of elements.
-
-<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 elements.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6626"></A>
-<A NAME="IDX6627"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_vectors/4:</B>
-<DD><A NAME="IDX6628"></A>
-
-
-<P>
-<CODE>valid_vectors(XVector,YVectors,LinesAttributes,Predicate)</CODE>
-
-
-<P>
-Tests the following conditions: 
-
-
-
-<UL>
-
-<LI><CODE>XVector</CODE> list, <CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
-
-<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 element.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6629"></A>
-<A NAME="IDX6630"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_attributes/2:</B>
-<DD><A NAME="IDX6631"></A>
-
-
-<P>
-<CODE>valid_attributes(BarsAttibuttes,Predicate)</CODE>
-
-
-<P>
-Check if each <CODE>BarsAttibuttes</CODE> element is a list composed of one or four elements. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6632"></A>
-<A NAME="IDX6633"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_table/2:</B>
-<DD><A NAME="IDX6634"></A>
-
-
-<P>
-<CODE>valid_table(ElementTable,Predicate)</CODE>
-
-
-<P>
-All of the <CODE>ElementTable</CODE> sublists have the same number of elements and are not empty. 
-
-
-</DL>
+</PRE>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

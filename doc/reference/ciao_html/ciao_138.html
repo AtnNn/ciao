@@ -1,84 +1,265 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - A Program to Help Cleaning your Directories</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC543" HREF="ciao_toc.html#TOC543">A Program to Help Cleaning your Directories</A></H1>
-
+<H1><A NAME="SEC559" HREF="ciao_toc.html#TOC559">Low-level socket interface to SQL/ODBC databases</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#2 (2000/6/1, 17:57:19 CEST)
+<A NAME="IDX5939"></A>
 
 
 <P>
-A simple program for traversing a directory tree and deciding which files may be deleted in order to save space and not to loose information. 
+<STRONG>Author(s):</STRONG> Jose Morales.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#105 (2001/5/28, 11:16:19 CEST)
+
+
+<P>
+This library provides a low-level interface to MySQL using the MySQL C API and the Ciao foreign interface to C.
 
 
 
 <UL>
-<LI><A HREF="ciao_138.html#SEC544">Usage (cleandirs)</A>
-<LI><A HREF="ciao_138.html#SEC545">Known bugs and planned improvements (cleandirs)</A>
+<LI><A HREF="ciao_138.html#SEC560">Usage and interface (mysql_client)</A>
+<LI><A HREF="ciao_138.html#SEC561">Documentation on exports (mysql_client)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC544" HREF="ciao_toc.html#TOC544">Usage (cleandirs)</A></H2>
+<H2><A NAME="SEC560" HREF="ciao_toc.html#TOC560">Usage and interface (<CODE>mysql_client</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(mysql_client)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX5940"></A>
+<CODE>mysql_connect/5</CODE>, 
+<A NAME="IDX5941"></A>
+<CODE>mysql_query/3</CODE>, 
+<A NAME="IDX5942"></A>
+<CODE>mysql_query_one_tuple/3</CODE>, 
+<A NAME="IDX5943"></A>
+<CODE>mysql_free_query_connection/1</CODE>, 
+<A NAME="IDX5944"></A>
+<CODE>mysql_fetch/2</CODE>, 
+<A NAME="IDX5945"></A>
+<CODE>mysql_get_tables/2</CODE>, 
+<A NAME="IDX5946"></A>
+<CODE>mysql_table_types/3</CODE>, 
+<A NAME="IDX5947"></A>
+<CODE>mysql_disconnect/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX5948"></A>
+<CODE>dbconnection/1</CODE>, 
+<A NAME="IDX5949"></A>
+<CODE>dbqueryconnection/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5950"></A>
+<CODE>foreign_interface/foreign_interface_properties</CODE>, 
+<A NAME="IDX5951"></A>
+<CODE>persdb_mysql/db_client_types</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC561" HREF="ciao_toc.html#TOC561">Documentation on exports (<CODE>mysql_client</CODE>)</A></H2>
+<P>
+<A NAME="IDX5952"></A>
+<A NAME="IDX5953"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_connect/5:</B>
+<DD><A NAME="IDX5954"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5955"></A>
+<A NAME="IDX5956"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX5957"></A>
+
 
 
 <PRE>
-   
-cleandirs: &#60;initial_dir&#62; &#60;delete_options&#62; &#60;backup_options&#62;
-cleandirs explores &#60;initial_dir&#62; (which should be an absolute path)
-and looks for backup files and files which can be generated from other
-files, using a plausible heuristic aimed at retaining the same amount
-of information while recovering some disk space.  The heuristic is
-based on the extension of the filename.
-
-Delete options is one of:
-   --list: just list the files/directories which are amenable to be deleted,
-           but do not delete them. SAFE.
-    --ask: list the files/directories and ask for deletion. UNSAFE if you
-           make a mistake.
- --delete: just delete the files/directories without asking.  I envy your
-           brave soul if you choose this option.
-
-Backup options is one of:
- --includebackups: include backup files in the list of files to check.
- --excludebackups: do not include backup files in the list of files to check.
-    --onlybackups: include only backup files in the list of files to check.
-
-Symbolic links are not traversed.  Special files are not checked.
-
+dbconnection(_1) :-
+        address(_1).
 </PRE>
 
 <P>
- 
-Invoking the program with no arguments will return an up-to-date information on the options.
-
-
-
-
-<H2><A NAME="SEC545" HREF="ciao_toc.html#TOC545">Known bugs and planned improvements (<CODE>cleandirs</CODE>)</A></H2>
-
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
 
-<LI>
-
-Recursive removal of subdirectories relies on the existence of a recursive /bin/rm command in your system.
 </UL>
 
+</DL>
+
+<P>
+<A NAME="IDX5958"></A>
+<A NAME="IDX5959"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query/3:</B>
+<DD><A NAME="IDX5960"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5961"></A>
+<A NAME="IDX5962"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query_one_tuple/3:</B>
+<DD><A NAME="IDX5963"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5964"></A>
+<A NAME="IDX5965"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
+<DD><A NAME="IDX5966"></A>
+
+
+
+<PRE>
+dbqueryconnection(_1) :-
+        address(_1).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5967"></A>
+<A NAME="IDX5968"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_free_query_connection/1:</B>
+<DD><A NAME="IDX5969"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5970"></A>
+<A NAME="IDX5971"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_fetch/2:</B>
+<DD><A NAME="IDX5972"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5973"></A>
+<A NAME="IDX5974"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_get_tables/2:</B>
+<DD><A NAME="IDX5975"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5976"></A>
+<A NAME="IDX5977"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_table_types/3:</B>
+<DD><A NAME="IDX5978"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5979"></A>
+<A NAME="IDX5980"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_disconnect/1:</B>
+<DD><A NAME="IDX5981"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

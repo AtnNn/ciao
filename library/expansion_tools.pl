@@ -6,7 +6,8 @@
 %%
 %%------------------------------------------------------------------------
 
-:- module(expansion_tools,[],[assertions]).
+:- module(expansion_tools,[],[assertions,hiord]).
+
 
 %%------------------------------------------------------------------------
 
@@ -319,6 +320,9 @@ user_goal(_).
 
 :- comment(version_maintenance,dir('../version')).
 
+
+:- comment(version(1*7+40,2001/01/05,19:07*40+'CET'), "Added hiord
+package (MCL)").
 
 :- comment(version(1*3+110,1999/11/22,11:52*54+'MET'), "Shortened the
    names of arguments to improve presentation in the manual.  (Manuel

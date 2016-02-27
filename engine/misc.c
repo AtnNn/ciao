@@ -11,7 +11,7 @@
 
 #include "alloc_defs.h"
 #include "tasks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "misc_defs.h"
 #include "bignum_defs.h"
 #include "stacks_defs.h"
@@ -303,18 +303,25 @@ static int compare_args_aux(Arg,arity,pt1,pt2,x1,x2)
 /* ---------------------------------------------------------------- */
 extern char source_path[];
 
-BOOL prolog_current_executable(Arg)
+#if defined(INTERNAL_CALLING)
+BOOL prolog_internal_call(Arg)
      Argdecl;
 {
-#if defined(INTERNAL_CALLING)
+  
   INSN *next_insn;
+
   printf("In current_executable, internal_calling is %lx\n", 
          (long unsigned int)address_internal_call);  
   next_insn = Arg->next_insn;
   Arg->next_insn = internal_calling;
   wam(Arg, NULL);
   Arg->next_insn = next_insn;
+}
 #endif
+
+BOOL prolog_current_executable(Arg)
+     Argdecl;
+{
   DEREF(X(0),X(0));
   return cunify(Arg, MakeString(source_path), X(0));
 }

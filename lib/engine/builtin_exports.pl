@@ -132,6 +132,7 @@ builtin_export(streams_basic,absolute_file_name,2,0) .
 builtin_export(streams_basic,absolute_file_name,7,0) .
 builtin_export(streams_basic,sourcename,1,0) .
 builtin_export(streams_basic,stream,1,0) .
+builtin_export(streams_basic,stream_alias,1,0) .
 builtin_export(streams_basic,io_mode,1,0) .
 builtin_export(system_info,get_arch,1,0) .
 builtin_export(system_info,get_os,1,0) .

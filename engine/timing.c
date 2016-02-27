@@ -12,7 +12,7 @@
 /* local declarations */
 
 
-#if (defined(Solaris) || defined(SunOS4) || defined(LINUX) || defined(IRIX) || defined(Win32)) && !defined(crossWin32i86)
+#if (defined(Solaris) || defined(SunOS4) || defined(LINUX) || defined(DARWIN) || defined(IRIX) || defined(Win32)) && !defined(crossWin32i86)
 
 #include <sys/time.h>
 #include <sys/resource.h>

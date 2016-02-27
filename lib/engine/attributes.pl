@@ -1,5 +1,7 @@
 :- module(attributes, [
-        attach_attribute/2, get_attribute/2, update_attribute/2,
+        attach_attribute/2, 
+        get_attribute/2,
+        update_attribute/2,
         detach_attribute/1],
         [assertions]).
 

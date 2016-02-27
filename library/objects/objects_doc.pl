@@ -144,6 +144,10 @@
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+32,2000/11/14,13:13*15+'CET'), "Fixed some bug
+   which caused sources not to work when no module/1-3 declaration is
+   present from top-level shell.  (Angel Fernandez Pineda)").
+
 :- comment(version(1*5+90,2000/03/24,14:29*27+'CET'), "Error reporting
    section has been moved to separate appendix (Angel Fernandez
    Pineda)").

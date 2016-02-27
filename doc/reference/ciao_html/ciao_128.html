@@ -1,47 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
+<TITLE>The Ciao Prolog System               - line_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_127.html">previous</A>, <A HREF="ciao_129.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_127.html">previous</A>, <A HREF="ciao_129.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC514" HREF="ciao_toc.html#TOC514">Pattern (regular expression) matching</A></H1>
+<H1><A NAME="SEC509" HREF="ciao_toc.html#TOC509">line_class (library)</A></H1>
 <P>
-<A NAME="IDX5711"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.3#49 (1999/9/8, 21:8:9 MEST)
-
-
-<P>
-This library provides facilities for matching strings and terms against 
-<A NAME="IDX5712"></A>
-<A NAME="IDX5713"></A>
-<EM>patterns</EM> (i.e., 
-<A NAME="IDX5714"></A>
-<A NAME="IDX5715"></A>
-<EM>regular expressions</EM>).
+<A NAME="IDX5299"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_128.html#SEC515">Usage and interface (patterns)</A>
-<LI><A HREF="ciao_128.html#SEC516">Documentation on exports (patterns)</A>
+<LI><A HREF="ciao_128.html#SEC510">Usage and interface (line_class)</A>
+<LI><A HREF="ciao_128.html#SEC511">Documentation on exports (line_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC515" HREF="ciao_toc.html#TOC515">Usage and interface (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC510" HREF="ciao_toc.html#TOC510">Usage and interface (<CODE>line_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,7 +31,7 @@ This library provides facilities for matching strings and terms against
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(patterns)).</CODE>
+<CODE>:- use_module(library(line_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -58,21 +40,10 @@ This library provides facilities for matching strings and terms against
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5716"></A>
-<CODE>match_pattern/2</CODE>, 
-<A NAME="IDX5717"></A>
-<CODE>match_pattern/3</CODE>, 
-<A NAME="IDX5718"></A>
-<CODE>case_insensitive_match/2</CODE>, 
-<A NAME="IDX5719"></A>
-<CODE>letter_match/2</CODE>, 
-<A NAME="IDX5720"></A>
-<CODE>match_pattern_pred/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5721"></A>
-<CODE>pattern/1</CODE>.
+<A NAME="IDX5300"></A>
+<CODE>vertices/1</CODE>, 
+<A NAME="IDX5301"></A>
+<CODE>arrowheads/1</CODE>.
 
 </UL>
 
@@ -83,7 +54,9 @@ This library provides facilities for matching strings and terms against
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5722"></A>
+<A NAME="IDX5302"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX5303"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -94,153 +67,76 @@ This library provides facilities for matching strings and terms against
 
 
 
-<H2><A NAME="SEC516" HREF="ciao_toc.html#TOC516">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC511" HREF="ciao_toc.html#TOC511">Documentation on exports (<CODE>line_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5723"></A>
-<A NAME="IDX5724"></A>
+<A NAME="IDX5304"></A>
+<A NAME="IDX5305"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
-<DD><A NAME="IDX5725"></A>
+<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
+<DD><A NAME="IDX5306"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
+<LI><EM>Description:</EM> The arguments of the list specify the coordinates for two or more points that describe a serie of connected line segments.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
+<CODE>+ListofPoints</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
 
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the list of points of the line.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-ListofPoints</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5726"></A>
-<A NAME="IDX5727"></A>
+<A NAME="IDX5307"></A>
+<A NAME="IDX5308"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
-<DD><A NAME="IDX5728"></A>
+<DT><span class="define">PREDICATE:</span> <B>arrowheads/1:</B>
+<DD><A NAME="IDX5309"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String,Tail)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>arrowheads(+Where)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
+<LI><EM>Description:</EM> <CODE>Where</CODE> indicates whether or not arrowheads are to be drawn at one or both ends of the line. <CODE>Where</CODE> must have one of the next values: none ( for no arrowheads ), first (for an arrowhead at the first point of the line), last (for an arrowhead at the last point of the line), or both (for arrowheads at both ends). This option defaults to none.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Tail</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>+Where</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX5729"></A>
-<A NAME="IDX5730"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
-<DD><A NAME="IDX5731"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1,Pred2)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>arrowheads(-Where)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
+<LI><EM>Description:</EM> Gets position of the arrowheads.
 
-</UL>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-</DL>
-
-<P>
-<A NAME="IDX5732"></A>
-<A NAME="IDX5733"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
-<DD><A NAME="IDX5734"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5735"></A>
-<A NAME="IDX5736"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
-<DD><A NAME="IDX5737"></A>
-
-
-<P>
-Special characters for <CODE>Pattern</CODE> are: 
-<DL COMPACT>
-
-<DT>*
-<DD>
-Matches any string, including the null string. 
-<DT>?
-<DD>
-Matches any single character. 
-<DT>[...]
-<DD>
-Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
-<DT>|
-<DD>
-specifies an alternative. Two regular expressions A and B with | in between form an expression that matches anything that either A or B will match. 
-<DT>{...}
-<DD>
-groups alternatives inside larger patterns. 
-<DT>\
-<DD>
-Quotes a special character (including itself). 
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5738"></A>
-<A NAME="IDX5739"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
-<DD><A NAME="IDX5740"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1,Pred2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
-
+<CODE>-Where</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_127.html">previous</A>, <A HREF="ciao_129.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_127.html">previous</A>, <A HREF="ciao_129.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

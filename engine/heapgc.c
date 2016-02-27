@@ -18,7 +18,7 @@
 
 #include "heapgc_defs.h"
 #include "stacks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "timing_defs.h"
 
 /* local declarations */
@@ -728,8 +728,8 @@ void GarbageCollect(Arg)
     hz= HeapDifference(Heap_Start,w->global_top); /* current heap size */
     if (current_gctrace != atom_off) {
       if (current_gctrace==atom_terse) {
-        print_string(stream_user_error, "{GC}");
-        fflush(stderr);
+        print_string(Error_Stream_Ptr, "{GC}");
+        /* fflush(stderr); Moved into print_string() MCL */
       } else {
         ENG_TTYPRINTF4("\n{GC}  GC start: Heap (%x[%x] - %x) size= %d\n",
                       (unsigned int)Heap_Start,

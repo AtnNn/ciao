@@ -2,8 +2,7 @@ MODULE=file_locks
 REQLIBS=
 
 include ../../SETTINGS
-include ../../COMMON
-include $(SRC)/makefile-sysindep
+include ../../SHARED
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 SRCNAME=$(MODULE).c
@@ -12,7 +11,7 @@ LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).so
 HEADERS=common_headers.h
 
 all:
-	$(SETLOCALCOMPILER) $(CIAOC) -x -c $(MODULE)
+	$(SETLOCALCIAO) $(CIAOC) -x -c $(MODULE)
 
 $(LIBNAME): $(HEADERS) $(OBJNAME) 
 	$(LD) $(LDSHARED) -o $(LIBNAME) $(OBJNAME) $(REQLIBS)

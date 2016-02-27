@@ -12,7 +12,7 @@
 
 #include "interrupt_defs.h"
 #include "tasks_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 
 /* local declarations */
 

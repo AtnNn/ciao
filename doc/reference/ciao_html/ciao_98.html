@@ -1,49 +1,86 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Constraint programming over rationals</TITLE>
+<TITLE>The Ciao Prolog System               - Breadth-first execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Constraint programming over rationals</A></H1>
+<H1><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Breadth-first execution</A></H1>
 <P>
-<A NAME="IDX4229"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Christian Holzbaur, Daniel Cabeza.
+<A NAME="IDX4358"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#156 (2000/5/30, 11:0:51 CEST)
+<STRONG>Version:</STRONG> 1.7#34 (2000/12/23, 16:42:52 CET)
 
 
 <P>
- 
+<STRONG>Version of last change:</STRONG> 1.5#143 (2000/5/12, 13:54:34 CEST)
 
 
 <P>
-<STRONG>Note:</STRONG> This package is currently being adapted to the new characteristics of the Ciao module system. This new version now works right now to some extent, but it is under further development at the moment. Use with (lots of) caution. 
+This package implements breadth-first execution of predicates. Predicates written with operators 
+<A NAME="IDX4359"></A>
+<CODE>'&#60;-'/1</CODE> (facts) and 
+<A NAME="IDX4360"></A>
+<CODE>'&#60;-'/2</CODE> (clauses) are executed using breadth-first search. This may be useful in search problems when a 
+<A NAME="IDX4361"></A>
+complete proof procedure is needed. An example of code would be: 
 
+<PRE>
+:- module(chain, _, [bf]).
+
+test(bf) :- bfchain(a,d).
+test(df) :- chain(a,d).   % loops!
+
+bfchain(X,X) &#60;- .
+bfchain(X,Y) &#60;- arc(X,Z), bfchain(Z,Y).
+
+chain(X,X).
+chain(X,Y) :- arc(X,Z), chain(Z,Y).
+
+arc(a,b).
+arc(a,d).
+arc(b,c).
+arc(c,a).
+
+</PRE>
+
+<P>
+There is another version, called 
+<A NAME="IDX4362"></A>
+<CODE>bf/af</CODE>, which ensures AND-fairness by goal shuffling. This version correctly says "<CODE>no</CODE>" executing the following test: 
+
+<PRE>
+:- module(sublistapp, [test/0,sublistapp/2], ['bf/af']).
+
+test :- sublistapp([a],[b]).
+
+sublistapp(S,L) &#60;- append(_,S,Y), append(Y,_,L).
+
+append([], L, L) &#60;- .
+append([X|Xs], L, [X|Ys]) &#60;- append(Xs, L, Ys).
+
+</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_98.html#SEC389">Usage and interface (clpq)</A>
-<LI><A HREF="ciao_98.html#SEC390">Other information (clpq)</A>
+<LI><A HREF="ciao_98.html#SEC395">Usage and interface (bf)</A>
+<LI><A HREF="ciao_98.html#SEC396">Known bugs and planned improvements (bf)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Usage and interface (<CODE>clpq</CODE>)</A></H2>
+<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Usage and interface (<CODE>bf</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -51,126 +88,35 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(clpq).</CODE>
+<CODE>:- use_package(bf).</CODE>
 
 or
 
-<CODE>:- module(...,...,[clpq]).</CODE>
+<CODE>:- module(...,...,[bf]).</CODE>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4363"></A>
+<CODE>&#60;-/2</CODE> [1200,xfx], 
+<A NAME="IDX4364"></A>
+<CODE>&#60;-/1</CODE> [1200,xf].
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC390" HREF="ciao_toc.html#TOC390">Other information (<CODE>clpq</CODE>)</A></H2>
-
-<P>
- 
-
+<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
 
 
 <UL>
-<LI><A HREF="ciao_98.html#SEC391">Some CLP(Q) examples</A>
+
+<LI>
+
+Does not correctly work in user files.
 </UL>
-
-
-
-<H3><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Some CLP(Q) examples</A></H3>
-
-<P>
-(Other examples can be found in the source and library directories.) 
-
-
-
-<UL>
-<LI>'Reversible' Fibonacci (clpq):
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-:- module(_, [fib/2], []).
-:- use_package(clpq).
-
-fib(X,Y):- X .=. 0, Y .=. 0.
-fib(X,Y):- X .=. 1, Y .=. 1.
-fib(N,F) :-
-        N .&#62;. 1,
-        N1 .=. N - 1,
-        N2 .=. N - 2,
-        fib(N1, F1),
-        fib(N2, F2),
-        F .=. F1+F2.
-
-</PRE>
-
-<P>
- 
-
-<UL>
-<LI>Matrix multiplication (clpq):
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-:- use_package(clpq).
-:- use_module(library(write)).
-
-mmultiply([],_,[]).
-mmultiply([V0|Rest], V1, [Result|Others]):-  
-            mmultiply(Rest, V1, Others),
-                multiply(V1,V0,Result).
-
-multiply([],_,[]).
-multiply([V0|Rest], V1, [Result|Others]):-  
-            multiply(Rest, V1, Others),
-                vmul(V0,V1,Result).
-
-vmul([],[],0).
-vmul([H1|T1], [H2|T2], Result):- 
-        vmul(T1,T2, Newresult), 
-        Result .=. H1*H2+Newresult.
-
-matrix(1,[[1,2,3,4,5],[4,0,-1,5,6],[7,1,-2,8,9],[-1,0,1,3,2],[1,5,-3,2,4]]).
-matrix(2,[[3,2,1,0,-1],[-2,1,3,0,2],[1,2,0,-1,5],[1,3,2,4,5],[-5,1,4,2,2]]).
-
-%% Call with: ?- go(M).
-
-go(M):-
-        matrix(1,M1),
-        matrix(2,M2), 
-        mmultiply(M1, M, M2).
-
-</PRE>
-
-<P>
- 
-
-<UL>
-<LI>Queens (clpq):
-
-</UL>
-
-<P>
-
-
-
-<PRE>
-
-</PRE>
-
-<P>
- 
-
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

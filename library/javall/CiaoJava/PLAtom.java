@@ -10,7 +10,7 @@ import java.io.PrintWriter;
  * PLInteger and PLFloat classes.
  */
 public class PLAtom extends PLTerm {
-  protected String Value;
+  private String Value;
 
   /**
    * Atom constructor. Creates a new atom object with its name given
@@ -47,6 +47,17 @@ public class PLAtom extends PLTerm {
    * @return a Java <code>Object</code> with the name of this Prolog atom.
    */
   public Object javaRepr(PLInterpreter i) {
+    
+    return (Object)Value;
+
+  }
+
+  /**
+   * Gets the Java representation of the atom as an object (a String object).
+   *
+   * @return a Java <code>Object</code> with the name of this Prolog atom.
+   */
+  public Object javaRepr() {
     
     return (Object)Value;
 
@@ -116,16 +127,25 @@ public class PLAtom extends PLTerm {
    * 
    * @return The number of cells used in the internal Prolog representation.
    */
-  protected int numberOfCells() {
+  int numberOfCells() {
     return 0;
   }
 
   /**
-   * this method is under development. Must implement the launching
-   * of a Prolog goal with no arguments.
+   * Launches a Prolog goal with no arguments.
    */
-  public void launchGoal(PrintWriter out) throws PLGoalException {
+  void launchGoal(PLInterpreter i, PLConnection pl)
+      throws PLGoalException {
 
+      try {
+	  PLGoal goal = new PLGoal(pl, this);
+	  goal.query();
+	  goal.execute();
+      } catch (Exception e) {
+	  // Not implemented. Must throw the exception on the
+	  // Prolog side.
+	  System.err.println("ERROR: Exception thrown while launching goal:" + e);
+      }
   }
 
 }

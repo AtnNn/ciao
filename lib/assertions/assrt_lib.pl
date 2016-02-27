@@ -60,6 +60,7 @@ library @lib{compiler/c_itf}.
 :- use_module(library(fastrw)).
 :- use_module(library('assertions/assrt_write'),[write_assertion/6]).
 :- use_module(library('assertions/assertions_props')).
+:- use_module(library('assertions/c_itf_props')).
 :- use_module(library('compiler/c_itf')).
 :- use_module(library(ctrlcclean), 
       [ctrlc_clean/1,delete_on_ctrlc/2,ctrlcclean/0]).
@@ -102,13 +103,6 @@ set_lib_dirs([]).
 set_lib_dirs([H|T]) :- 
 	assertz(library_directory(H)),
 	set_lib_dirs(T).
-
-%% ---------------------------------------------------------------------------
-:- prop moddesc(X) + regtype # "@var{X} is a module descriptor.".
-%% ---------------------------------------------------------------------------
-
-moddesc(X)       :- atom(X).
-moddesc(user(X)) :- atom(X).
 
 %% ---------------------------------------------------------------------------
 :- pred check_code_and_assrt_syntax(in(I)) :: filename

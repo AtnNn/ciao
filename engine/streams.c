@@ -27,6 +27,8 @@
 /* declarations for global functions accessed here */
 
 #include "alloc_defs.h"
+#include "support_defs.h"
+#include "initial_defs.h"
 
 /* local declarations */
 
@@ -128,6 +130,8 @@ BOOL prolog_close(Arg)
     Input_Stream_Ptr = stream_user_input;
   else if (stream==Output_Stream_Ptr)
     Output_Stream_Ptr = stream_user_output;
+  else if (stream==Error_Stream_Ptr)
+    Error_Stream_Ptr = stream_user_error;
 
   if ((stream!=stream_user_input) &&
       (stream!=stream_user_output) &&
@@ -194,13 +198,18 @@ BOOL prolog_unix_popen(Arg)
 void ENG_perror(s)
      char *s;
 {
-#if !defined(LINUX) && !defined(crossWin32i86)
+
+#if defined(Win32)
+#  define sys_errlist _sys_errlist
+#endif
+
+#if !defined(LINUX) && !defined(Win32) && !defined(DARWIN)
   extern char *sys_errlist[];
   extern int errno;
 #endif
 
 #if !defined(crossWin32i86)
-  ENG_TTYPRINTF2("%s: %s\n", s, sys_errlist[errno]);
+  ENG_PRINTF2(stream_user_error, "%s: %s\n", s, sys_errlist[errno]);
 #endif
 }
 
@@ -253,6 +262,74 @@ BOOL prolog_set_output(Arg)
 
   Output_Stream_Ptr = stream;
   return TRUE;
+}
+
+/*   --------------------------------------------------------------  */
+
+/* Replacing the stream aliases pointer */
+
+/* replace_stream(StreamAlias, NewStream) */
+
+BOOL prolog_replace_stream(Arg)
+     Argdecl;
+{
+  TAGGED which_stream;
+  TAGGED which_atom;
+  struct stream_node *node;
+  int errcode;
+
+  DEREF(which_atom, X(0));
+  DEREF(which_stream, X(1));
+
+  if ((which_atom == atom_user_error) ||
+      (which_atom == atom_user_output))
+    node = stream_to_ptr_check(which_stream, 'w', &errcode);    
+  else if (which_atom == atom_user_input) 
+    node = stream_to_ptr_check(which_stream, 'r', &errcode);    
+  else       /* Not exactly: should be "alias"*/
+    BUILTIN_ERROR(TYPE_ERROR(STREAM_OR_ALIAS),X(0),1); 
+  
+  if (node == NULL) BUILTIN_ERROR(errcode,X(0),1);
+
+  if (which_atom == atom_user_input) 
+    stream_user_input = node;
+  else if (which_atom == atom_user_output)
+    stream_user_output = node;
+  else if (which_atom == atom_user_error)
+    stream_user_error = node;
+
+  return TRUE;
+}
+
+
+/* get_stream(StreamAlias, CurrentStream) */
+
+BOOL prolog_get_stream(Arg)
+     Argdecl;
+{
+  TAGGED which_atom;
+  struct stream_node *node;
+
+  DEREF(which_atom, X(0));
+  if (which_atom == atom_user_input) 
+    node = stream_user_input;
+  else if (which_atom == atom_user_output)
+    node = stream_user_output;
+  else if (which_atom == atom_user_error)
+    node = stream_user_error;
+  else BUILTIN_ERROR(TYPE_ERROR(STREAM_OR_ALIAS),X(0),1);
+   
+  return cunify(Arg, X(1), ptr_to_stream_noalias(Arg, node));
+
+}
+
+/*   --------------------------------------------------------------  */
+
+
+BOOL prolog_current_error(Arg)
+     Argdecl;
+{
+  return cunify(Arg,ptr_to_stream(Arg,Error_Stream_Ptr),X(0));
 }
 
 

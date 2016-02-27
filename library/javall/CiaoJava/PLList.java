@@ -24,16 +24,15 @@ public class PLList extends PLTerm {
    * @param t Rest of the list. Must be nil (if the list contains
    *          just one element), or another <code>PLList</code> object.
    */
-  public PLList(PLTerm h, PLTerm t) {
+  public PLList(PLTerm h, PLTerm t) throws PLException {
     Type = PLTerm.LIST;
     if ((t.equals(PLTerm.nil)) || (t.Type == Type)) {
       Head = h;
       Tail = t;
       }
     else {
-      System.err.println("Error: wrong tail type (" + t.Type + ")");
-      System.exit(1);
-      }
+	throw new PLException("Error: wrong tail type (" + t.Type + ")");
+    }
   }
 
   /**
@@ -46,7 +45,7 @@ public class PLList extends PLTerm {
    * @param list Java list that contains the elements that must be
    *             included in the Prolog list.
    */
-  public PLList(PLTerm list[]) {
+  public PLList(PLTerm list[]) throws PLException {
     Type = PLTerm.LIST;
 
     if (list.length > 1) {
@@ -60,7 +59,7 @@ public class PLList extends PLTerm {
       Tail = PLTerm.nil;
     }
     else
-      System.err.println("nil creation as list failure");
+      throw new PLException("Nil cannot be of type PLList");
   }
 
   /**
@@ -73,7 +72,7 @@ public class PLList extends PLTerm {
    * @param s Java string that contains the characters that must be
    *          included in the Prolog list as elements.
    */
-  public PLList(String s) {
+  public PLList(String s) throws PLException {
     Type = PLTerm.LIST;
 
     if (s.length() > 1) {
@@ -85,7 +84,7 @@ public class PLList extends PLTerm {
       Tail = PLTerm.nil;
     }
     else
-      System.err.println("nil creation as list failure");
+      throw new PLException("Nil cannot be of type PLList");
   }
 
   /**
@@ -173,7 +172,7 @@ public class PLList extends PLTerm {
    * @param l <code>PLList</code> object that represents the new
    *          tail.
    */
-  protected void setTail(PLList l) {
+  void setTail(PLList l) {
     Tail = l;
   }
 
@@ -187,7 +186,11 @@ public class PLList extends PLTerm {
 
     while (mytail.getTail().Type == PLTerm.LIST)
       mytail = (PLList)mytail.getTail();
-    mytail.setTail(new PLList(term,PLTerm.nil));
+    try {
+	mytail.setTail(new PLList(term,PLTerm.nil));
+    } catch (PLException e) {
+	// exception not handled: 2nd argument allways is nil.
+    }
   }
 
   /**
@@ -227,8 +230,13 @@ public class PLList extends PLTerm {
 
     PLTerm head = this.getHead().copy();
     PLTerm tail = this.getTail().copy();
-    
-    PLList l = new PLList(head, tail);
+    PLList l = null;
+
+    try {
+	l = new PLList(head, tail);
+    } catch (PLException e) {
+	// Exception not handled: tail allways is a valid tail
+    }
     return (PLTerm)l;
 
   }
@@ -273,7 +281,7 @@ public class PLList extends PLTerm {
    * @param term Prolog term to be used as pattern for 
    *             backtracking.
    */
-  public void backtrack(PLTerm term) throws PLException {
+  void backtrack(PLTerm term) throws PLException {
 
     if (Type == term.Type) {
       PLList l = (PLList)term;
@@ -282,7 +290,7 @@ public class PLList extends PLTerm {
       this.getTail().backtrack(l.getTail());
     }
     else
-      throw new PLException("Object cannot be backtracked" + this.toString());
+      throw new PLException("Object cannot be backtracked: " + this.toString());
 
   }
 
@@ -311,7 +319,7 @@ public class PLList extends PLTerm {
    *
    * @return the number of cells needed.
    */
-  protected int numberOfCells() {
+  int numberOfCells() {
     PLList t;
     int num = 2;
 

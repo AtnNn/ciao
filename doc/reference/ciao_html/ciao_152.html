@@ -1,61 +1,42 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - genbar1 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Graphs</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC584" HREF="ciao_toc.html#TOC584">genbar1 (library)</A></H1>
+<H1><A NAME="SEC605" HREF="ciao_toc.html#TOC605">Graphs</A></H1>
 <P>
-<A NAME="IDX6257"></A>
+<A NAME="IDX6519"></A>
 
 
 <P>
-This module defines predicates to show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
+<STRONG>Author(s):</STRONG> F. Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#35 (2000/12/28, 18:20:50 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
 
 
 
 <UL>
-
-<LI>No numeric values for the <CODE>x</CODE> axis are needed because they will be interpreted as labels. See
-
-<A NAME="IDX6258"></A>
-<CODE>xbarelement1/1</CODE> definition type. 
-
-<LI>The bars will be displayed at uniform intervals.
-
-<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
-
-<A NAME="IDX6259"></A>
-<CODE>xbarelement1</CODE> type definition. Thus, the user can call each predicate in two ways. 
-
-<LI>The bar chart has a legend. One entry (symbol and label) per bar.
-
-<LI>If you don't want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
-
-</UL>
-
-<P>
-Particular features will be pointed out in the corresponding predicate. 
-
-
-
-<UL>
-<LI><A HREF="ciao_152.html#SEC585">Usage and interface (genbar1)</A>
-<LI><A HREF="ciao_152.html#SEC586">Documentation on exports (genbar1)</A>
-<LI><A HREF="ciao_152.html#SEC587">Documentation on internals (genbar1)</A>
+<LI><A HREF="ciao_152.html#SEC606">Usage and interface (graphs)</A>
+<LI><A HREF="ciao_152.html#SEC607">Documentation on exports (graphs)</A>
+<LI><A HREF="ciao_152.html#SEC608">Documentation on internals (graphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC585" HREF="ciao_toc.html#TOC585">Usage and interface (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC606" HREF="ciao_toc.html#TOC606">Usage and interface (<CODE>graphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -63,7 +44,7 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(genbar1)).</CODE>
+<CODE>:- use_module(library(graphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -72,25 +53,21 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6260"></A>
-<CODE>barchart1/7</CODE>, 
-<A NAME="IDX6261"></A>
-<CODE>barchart1/9</CODE>, 
-<A NAME="IDX6262"></A>
-<CODE>percentbarchart1/7</CODE>.
+<A NAME="IDX6520"></A>
+<CODE>dgraph_to_ugraph/2</CODE>, 
+<A NAME="IDX6521"></A>
+<CODE>dlgraph_to_lgraph/2</CODE>, 
+<A NAME="IDX6522"></A>
+<CODE>edges_to_ugraph/2</CODE>, 
+<A NAME="IDX6523"></A>
+<CODE>edges_to_lgraph/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6263"></A>
-<CODE>yelement/1</CODE>, 
-<A NAME="IDX6264"></A>
-<CODE>axis_limit/1</CODE>, 
-<A NAME="IDX6265"></A>
-<CODE>header/1</CODE>, 
-<A NAME="IDX6266"></A>
-<CODE>title/1</CODE>, 
-<A NAME="IDX6267"></A>
-<CODE>footer/1</CODE>.
+<A NAME="IDX6524"></A>
+<CODE>dgraph/1</CODE>, 
+<A NAME="IDX6525"></A>
+<CODE>dlgraph/1</CODE>.
 
 </UL>
 
@@ -101,18 +78,12 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6268"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6269"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX6270"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX6271"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX6272"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6273"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX6526"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX6527"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX6528"></A>
+<CODE>graphs/lgraphs</CODE>.
 
 </UL>
 
@@ -122,345 +93,227 @@ Particular features will be pointed out in the corresponding predicate.
 
 
 
-<H2><A NAME="SEC586" HREF="ciao_toc.html#TOC586">Documentation on exports (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC607" HREF="ciao_toc.html#TOC607">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX6274"></A>
-<A NAME="IDX6275"></A>
+<A NAME="IDX6529"></A>
+<A NAME="IDX6530"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart1/7:</B>
-<DD><A NAME="IDX6276"></A>
+<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
+<DD><A NAME="IDX6531"></A>
 
 
 <P>
-<CODE>barchart1(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+<CODE>dgraph(Graph)</CODE>
 
 
 <P>
-The <CODE>y</CODE> axis range is determined from the limits of the data. Two examples are given to demonstrate clearly how to call the predicates. In the first example the user sets the bar appearance, in the second one the appearance features will be chosen by the system and the colors that have been assigned to the variables Color1, Color2 and Pattern will be shown also. 
+A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
 
 
 <P>
-Example 1: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['bar1','legend_element1','Blue','Yellow','pattern1'],
-           ['bar2','legend_element2','Plum','SeaGreen','pattern2'],
-           ['bar3','legend_element3','Turquoise','Yellow','pattern5'] ],
-  'yaxixtitle',
-  [20,10,59],
-  'footer').
-</PRE>
-
-<P>
-Example 2: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['element1','legend_element1',Color1,Color2,Pattern],
-            ['element2','legend_element2'],
-            ['element3','legend_element3'] ],
-  'yaxixtitle',
-  [20,10,59],
-  'footer').
-</PRE>
-
-<P>
- 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6277"></A>
-<A NAME="IDX6278"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart1/9:</B>
-<DD><A NAME="IDX6279"></A>
-
-
-<P>
-<CODE>barchart1(Header,BTitle,XTitle,XVector,YTitle,YVector,YMax,YMin,Footer)</CODE>
-
-
-<P>
-You can set the minimum and maximum limits of the <CODE>y</CODE> axis. Data outside the limits will not be plotted. Each limit, as you can check by looking at the 
-<A NAME="IDX6280"></A>
-<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['element1','e1','Blue','Yellow','pattern1'],
-      ['element2','e2','Turquoise','Plum','pattern5'],
-      ['element3','e3','Turquoise','Green','pattern5'] ],
-  'yaxixtitle',
-  [20,10,59],
-  70,
-  _,
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX6281"></A>
-<A NAME="IDX6282"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart1/7:</B>
-<DD><A NAME="IDX6283"></A>
-
-
-<P>
-<CODE>percentbarchart1(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-The y axis maximum coordinate value is 100. The <CODE>x</CODE> axis limits are automatically worked out. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-percentbarchart1('This is a special barchart to represent percentages',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1','Blue','Yellow','pattern1'],
-       [8,'bar2','MediumTurquoise','Plum','pattern5'] ],
-  'My yaxixtitle',
-  [80,10],
-  'This is the footer text').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX6284"></A>
-<A NAME="IDX6285"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>yelement/1:</B>
-<DD><A NAME="IDX6286"></A>
-
-
-<P>
- 
-
-
-
-<PRE>
-yelement(Y) :-
-        number(Y).
-</PRE>
-
-<P>
-Y is the bar lenght, so it must be a numeric value. 
-
-
-<P>
-Both Prolog and Tcl-Tk support integers and floats. Integers are usually specified in decimal, but if the first character is 0 the number is read in octal (base 8), and if the first two characters are 0x, the number is read in hexadecimal (base16). Float numbers may be specified using most of the forms defined for ANSI C, including the following examples: 
-
-
+<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
 
 <UL>
-<LI>9.56
-
-<LI>5.88e-2
-
-<LI>5.1E2
-
-</UL>
-
-<P>
-Note: Be careful when using floats. While 8. or 7.e4 is interpreted by Tcl-tk as 8.0 and 7.0e4, Prolog will not read them as float numbers. Example: 
-
-<PRE>
-        ?- number(8.e+5).
-        {SYNTAX ERROR: (lns 130-130) , or ) expected in arguments
-        number ( 8 
-        ** here **
-        . e + 5 ) . 
-        }
-
-        no
-        ?- number(8.).
-        {SYNTAX ERROR: (lns 138-138) , or ) expected in arguments
-        number ( 8 
-        ** here **
-        . ) . 
-        }
-
-        no
-
-        ?- number(8.0e+5).
-
-        yes
-        ?- number(8.0).
-
-        yes
-</PRE>
-
-<P>
-Precision: Tcl-tk internally represents integers with the C type <CODE>int</CODE>, which provides at least 32 bits of precision on most machines. Since Prolog integers can (in some implementations) exceed 32 bits but the precision in Tcl-tk depends on the machine, it is up to the progammer to ensure that the values fit into the maximum precision of the machine for integers. Real numbers are represented with the C type <CODE>double</CODE>, which is usually represented with 64-bit values (about 15 decimal digits of precision) using the IEEE Floating Point Standard. 
-
-
-<P>
-Conversion: If the list is composed by integers and floats, Tcl-tk will convert integers to floats. 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6287"></A>
-<A NAME="IDX6288"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>axis_limit/1:</B>
-<DD><A NAME="IDX6289"></A>
-
-
-
-<PRE>
-axis_limit(X) :-
-        number(X).
-axis_limit(_1).
-</PRE>
-
-<P>
-This type is defined in order to set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, is a number or a variable. If the argument is not a number the limit will be calculated from the data (i.e., if YMax value is <CODE>Var</CODE> the maximum y axis limit will be calculated using the largest data value). 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6290"></A>
-<A NAME="IDX6291"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>header/1:</B>
-<DD><A NAME="IDX6292"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>header(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the header of the graph.
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6293"></A>
-<A NAME="IDX6294"></A>
+<A NAME="IDX6532"></A>
+<A NAME="IDX6533"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>title/1:</B>
-<DD><A NAME="IDX6295"></A>
+<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
+<DD><A NAME="IDX6534"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>title(X)</CODE>
+<CODE>dlgraph(Graph)</CODE>
+
+
+<P>
+A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) to be used as label, usually not very long.
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6296"></A>
-<A NAME="IDX6297"></A>
+<A NAME="IDX6535"></A>
+<A NAME="IDX6536"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>footer/1:</B>
-<DD><A NAME="IDX6298"></A>
+<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
+<DD><A NAME="IDX6537"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>footer(X)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the footer of the graph.
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6538"></A>
+<A NAME="IDX6539"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
+<DD><A NAME="IDX6540"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6541"></A>
+<A NAME="IDX6542"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
+<DD><A NAME="IDX6543"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6544"></A>
+<A NAME="IDX6545"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
+<DD><A NAME="IDX6546"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC587" HREF="ciao_toc.html#TOC587">Documentation on internals (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC608" HREF="ciao_toc.html#TOC608">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX6299"></A>
-<A NAME="IDX6300"></A>
+<A NAME="IDX6547"></A>
+<A NAME="IDX6548"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement1/1:</B>
-<DD><A NAME="IDX6301"></A>
+<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
+<DD><A NAME="IDX6549"></A>
 
-
-
-<PRE>
-xbarelement1([XValue,LegendElement]) :-
-        atomic(XValue),
-        atomic(LegendElement).
-xbarelement1([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
-        atomic(XValue),
-        atomic(LegendElement),
-        color(ForegColor),
-        color(BackgColor),
-        pattern(SPattern).
-</PRE>
 
 <P>
-Defines the attributes of the bar. 
-<DL COMPACT>
+<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
 
-<DT><CODE>XValue</CODE>
-<DD>
-bar label. Although <CODE>XValue</CODE> values may be numbers, the will be treated as labels. Different elements with the same label will produce different bars. 
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
 
-<DT><CODE>LegendElement</CODE>
-<DD>
-Legend element name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
-
-<DT><CODE>ForegColor</CODE>
-<DD>
-It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>BackgColor</CODE>
-<DD>
-It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>SPattern</CODE>
-<DD>
-It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+</UL>
 
 </DL>
-<P>
- 
 
+<P>
+<A NAME="IDX6550"></A>
+<A NAME="IDX6551"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
+<DD><A NAME="IDX6552"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
+
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -15,7 +15,12 @@
 
 #if defined(FOREIGN_FILES)
 
+#if defined(DARWIN)
+#include <mach-o/dyld.h>
+#else
 #include <dlfcn.h>
+#endif
+
 #include <string.h>
 
 #if defined(SunOS4)
@@ -59,6 +64,8 @@ static void add_to_loaded_objects PROTO((char *module_name,
 # endif
 #elif defined(LINUX)
 # define LIB_LOADING_TYPE RTLD_LAZY              /* No RTLD_GLOBAL in Linux */
+#elif defined(DARWIN)
+# define LIB_LOADING_TYPE NSLINKMODULE_OPTION_BINDNOW | NSLINKMODULE_OPTION_PRIVATE
 #elif defined(SunOS4)
 # define LIB_LOADING_TYPE 1                          /* SunOS man pages... */
 #endif
@@ -94,6 +101,9 @@ BOOL prolog_dynlink(Arg)
   void (*init_func)(char *);
   void (*end_func)(char *);
   char errmsg[1024];
+#if defined(DARWIN)
+  NSObjectFileImage image;
+#endif
 
   /* Extract the module name */
 
@@ -127,31 +137,61 @@ BOOL prolog_dynlink(Arg)
 
   unload_if_present(module_name);
 
+#if defined(DARWIN)
+  if (NSCreateObjectFileImageFromFile(lib_name, &image) !=
+      NSObjectFileImageSuccess) {
+    sprintf(errmsg, "dynlink/2: could not load library\n");
+    USAGE_FAULT(errmsg);
+  }
+  lib_handle = (void *)NSLinkModule(image, lib_name, LIB_LOADING_TYPE);
+  if (lib_handle == NULL) {
+    sprintf(errmsg, "dynlink/2: could not load library\n");
+    USAGE_FAULT(errmsg);
+  }
+#else  
   lib_handle = dlopen(lib_name, LIB_LOADING_TYPE); /* Open the .so library */
-  if (lib_handle == NULL){
+  if (lib_handle == NULL) {
     sprintf(errmsg, "dynlink/2: could not load library\n %s)",
             dlerror());
     USAGE_FAULT(errmsg);
   }
-
-  strcpy(libfunction, module_name);                 /* Construct the name */
-  strcat(libfunction, "_init");               /* of the init function */
+#endif  
 
   /* Get the address of init_func */ 
 
+#if defined(DARWIN)
+  sprintf(libfunction, "_%s_init", module_name);
+  init_func = (void (*)(char *))NSAddressOfSymbol(NSLookupSymbolInModule(lib_handle, libfunction));
+#else
+  strcpy(libfunction, module_name);                 /* Construct the name */
+  strcat(libfunction, "_init");               /* of the init function */
   init_func = (void (*)(char *))dlsym(lib_handle, libfunction);
+#endif
   if (init_func == NULL){
+#if defined(DARWIN)
+    NSUnLinkModule((NSModule)lib_handle, NSUNLINKMODULE_OPTION_NONE);
+#else
     dlclose(lib_handle);
+#endif
     USAGE_FAULT("dynlink/2: could not find initialization function");
   }
-  strcpy(libfunction, module_name);             /* Construct the name */
-  strcat(libfunction, "_end");                 /* of the end function */
 
   /* JFMC: Get the address of the end_func */
 
+#if defined(DARWIN)
+  sprintf(libfunction, "_%s_end", module_name);
+  end_func = (void (*)(char *))NSAddressOfSymbol(NSLookupSymbolInModule(lib_handle, libfunction));
+#else
+  strcpy(libfunction, module_name);             /* Construct the name */
+  strcat(libfunction, "_end");                 /* of the end function */
   end_func = (void (*)(char *))dlsym(lib_handle, libfunction);     
+#endif
   if (end_func == NULL) {
+#if defined(DARWIN)
+    NSUnLinkModule((NSModule)lib_handle, NSUNLINKMODULE_OPTION_NONE);
+#else
     dlclose(lib_handle);
+#endif
     USAGE_FAULT("dynlink/2: could not find end function");
   }
 
@@ -228,7 +268,11 @@ void unload_if_present(module_name)
       if (debug_c) fprintf(stderr, "Closing handle for %s\n",module_name);
 #endif
       (*to_remove->end_func)(to_remove->module_name);     /* JFMC / MCL */
+#if defined(DARWIN)
+      NSUnLinkModule((NSModule)to_remove->handle, NSUNLINKMODULE_OPTION_NONE);
+#else
       dlclose(to_remove->handle);
+#endif
       checkdealloc((TAGGED *)to_remove->module_name,
                    strlen(to_remove->module_name)+1);
       checkdealloc((TAGGED *)to_remove, sizeof(loaded_object));

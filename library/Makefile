@@ -3,8 +3,7 @@
 #------- CAUTION: any change in this directory should be also made in the
 #------- twin Makefile in ../lib
 include ../SETTINGS
-include ../COMMON
-include ../makefile-sysindep
+include ../SHARED
 #---------------------------------------------------------------------------
 STDLIBDIR = $(REALLIBDIR)/library
 ALLFILES = *
@@ -31,27 +30,28 @@ ciao_so_libs:
 #	cd distribution; $(MAKE)      # Check it out!
 #	cd file_locks; $(MAKE)
 #	cd math; $(MAKE)
-#	cd pillow; $(MAKE)
 	cd sockets && $(MAKE) all
 	cd random && $(MAKE) all
 
 ciao_regular_libs:
+	cd javall && $(MAKE) all
 #	cd distribution; $(MAKE)      # Check it out!
+	cd pillow && $(MAKE)
 # Make before the links, because clpr uses a file linked into clpq
-	cd clpr && $(MAKE) links 
-	cd clpq && $(MAKE) links 
+	cd clpr && $(MAKE) links
+	cd clpq && $(MAKE) links
 	cd clpr && $(MAKE) all
 	cd clpq && $(MAKE) all
 
-autolibs: 
+autolibs:
 	'rm' -f all_modules all_module_messages
-	echo "set_prolog_flag(compresslib," $(COMPRESS_LIBS) ")." >> all_modules
+	echo "set_prolog_flag(compress_lib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
-	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
+	$(SETLOCALCIAO) $(CIAOSHELL) < all_modules > all_module_messages
 	'rm' -f all_module_messages
 
 # .pos, etc, not made now; they are copied from the distribution
-# 	$(SETLOCALCOMPILER); $(CIAOC) all_modules
+# 	$(SETLOCALCIAO); $(CIAOC) all_modules
 # 	/bin/rm -f all_modules.itf all_modules.po all_modules.dep all_modules
 
 # May copy far more than what is needed
@@ -62,7 +62,9 @@ install:
 	@echo "*** ---------------------------------------------------------"
 	mkdir -p $(STDLIBDIR)
 	-chmod $(EXECMODE) $(STDLIBDIR)
-	-cp -pR $(ALLFILES) $(STDLIBDIR)
+#	-cp -pR $(ALLFILES) $(STDLIBDIR) # R gives problems in Darwin
+	-cp -pr $(ALLFILES) $(STDLIBDIR)
+	cd pillow && $(MAKE) install
 	(cd $(STDLIBDIR) && find . -type d -exec chmod $(EXECMODE) {} \; )
 	(cd $(STDLIBDIR) && find . ! -type d -exec chmod $(DATAMODE) {} \; )
 	(cd $(STDLIBDIR) && find . -name '*~' -exec 'rm' -f {} \; )
@@ -74,9 +76,9 @@ uninstall:
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(STDLIBDIR)
 
-# *.itf *.po *.asr are eliminated recursively so that no Makefiles 
+# *.itf *.po *.asr are eliminated recursively so that no Makefiles
 # underneath are needed for cleaning up prolog-only libraries. MH.
-distclean: 
+distclean:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning $(STDLIBDIR)/library..."
 	@echo "*** ---------------------------------------------------------"

@@ -65,6 +65,16 @@ public class PLString extends PLTerm {
   }
 
   /**
+   * Java representation of a <code>PLString</code>. Creates a copy
+   * of the value of this <code>PLString</code> and returns it.
+   *
+   * @return a Java object representation of this Prolog string.
+   */
+  public Object javaRepr() {
+    return new String(Value);
+  }
+
+  /**
    * Execution test on Prolog objects. Returns true if the
    * related Prolog term can be evaluated. Included here
    * only for compatibility purposes.
@@ -126,7 +136,7 @@ public class PLString extends PLTerm {
    *
    * @return 0 (no cells used).
    */
-  protected int numberOfCells() {
+  int numberOfCells() {
 
     return 0;
 

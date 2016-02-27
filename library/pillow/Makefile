@@ -3,26 +3,25 @@
 #  Copyright (C) 1996-1997-1998-1999-2000 CLIP  #
 #             see file COPYING.LIB              #
 #################################################
-
-# ------- Options -------------------------------
-
-### URL where images will be
-#ICONDIR=http://localhost/images/
-
-# You should not change anything below this line
-# ------- End of Options ------------------------
+include ../../SETTINGS
+include ../../SHARED
 
 pillow: icon_address.pl
-	ciaoc -x aux.pl ; rm -f aux aux.itf aux.po
+	$(SETLOCALCIAO) $(CIAOC) -x aux.pl ; rm -f aux aux.itf aux.po
 
-#icon_address.pl: Makefile
-#	echo "icon_base_address('$(ICONDIR)')." > icon_address.pl
+icon_address.pl: ../../SETTINGS
+	echo "icon_base_address('$(WEB_IMAGES_URL)')." > icon_address.pl
+
+install:
+	@if test ! -d $(WEB_IMAGES_PATH) ; then \
+          echo 'Warning: The value of WEB_IMAGES_PATH=$(WEB_IMAGES_PATH) is not properly set, Pillow will not be correctly configured'; \
+	else \
+          cp -pr images/* $(WEB_IMAGES_PATH); \
+	fi
 
 dist: Makefile \
       html.pl http.pl ops.pl pillow_aux.pl pillow_doc.pl pillow_types.pl
 	cd dist ; $(MAKE)
-	cp -f dist/INSTALL INSTALL
-	cp -f dist/README README
 
 distclean:
 	/bin/rm *.asr *.itf *.po

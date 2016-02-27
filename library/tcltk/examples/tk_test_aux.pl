@@ -17,9 +17,9 @@ show(X) :-
 
 
 factorial(N2,X) :-
-        factorial_aux(N2,X),
-        display(X),
-        nl.
+        factorial_aux(N2,X).
+ %%         display(X),
+ %%         nl.
 
 factorial_aux(0,1).
 
@@ -29,6 +29,6 @@ factorial_aux(N,X1) :-
         factorial_aux(N1,X2),
         X1 is X2 * N.
 
-quit :- halt.
+quit.
 
 

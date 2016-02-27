@@ -1,7 +1,7 @@
 :- module(_,[
 	make_directory/1, make_dirpath/1,
-	delete_directory/1, del_dir_if_empty/1, 
-	rename_file/2,move_files/2,move_file/2,
+	del_dir_if_empty/1, 
+	move_files/2,move_file/2,
 	copy_files/2,copy_file/2,
 	cat/2,cat_append/2,
 	convert_permissions/4,
@@ -20,7 +20,7 @@
 	call_unknown/1,
 	replace_strings_in_file/3,
 	cyg2win/3,
-	writef/3 ],[assertions,isomodes]).
+	writef/3 ],[assertions,isomodes,hiord]).
 
 %% The idea is that it is an extension
 :- reexport(library(system)).
@@ -86,12 +86,6 @@
 %% delete_file_option(recursive).
 %% delete_file_option(ignore).
 
-%% Kludge in the meantime:
-delete_directory(DirName) :- 
-	file_exists(DirName), 
-	!, 
-	do(['rmdir','	',DirName],fail).  
-delete_directory(_DirName).
 
 del_dir_if_empty(Dir) :-
 	working_directory(CD,CD),
@@ -182,17 +176,6 @@ make_dirpath(DirName) :-
 
 %% `kill(+PID, +SIGNAL)'
 %%      Sends the signal SIGNAL to process PID.
-
-:- comment(rename_file(OldName, NewName), "Rename the existing file or
-   directory @var{OldName} to @var{NewName}.").
-
-:- true pred rename_file(+atm,+atm).
-
-%% Need to do this better of course...
-%% (also because of the date change it creates!)
-rename_file(Source,Target) :- 
-	cat(Source,Target),
-	delete_file(Source).  
 
 
 :- comment(move_files(Files, Dir), "Move @var{Files} to directory
@@ -302,7 +285,7 @@ ls(Dir,Pattern,SFileList) :-
 ls(_Dir,_Pattern,[]).
 
 
-:- comment(ls(Dir,Pattern,FileList), 
+:- comment(ls(Pattern,FileList), 
         "@var{FileList} is the unordered list of entries (files,
         directories, etc.) in the current directory whose names match
         @var{Pattern} (same as
@@ -361,7 +344,7 @@ convert_permissions(U,G,O,P) :-
 	valid_mode(U,NU),
 	valid_mode(G,NG),
 	valid_mode(O,NO),
-	P is NU*64 + NG*8 + NO.
+	P is NU << 6 + NG << 3 + NO.
 
 valid_mode( x   , 1 ).
 valid_mode( w   , 2 ).
@@ -588,6 +571,9 @@ match([],I,I).
 match([H|T],[H|IT],RI) :-
 	match(T,IT,RI).
 	
+cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !,
+                                                             % New Drive notat.
+        swapslash(Swap,Dir,Path).
 cyg2win("//"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !, % Drive letter
         swapslash(Swap,Dir,Path).
 cyg2win("//"||Dir, "\\\\"||Path,Swap) :- !,                  % Network drive

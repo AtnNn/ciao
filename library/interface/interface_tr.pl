@@ -33,9 +33,9 @@
 %%
 %%------------------------------------------------------------------------
 
-interface_sentence_trans(start_of_file(Base),_,Module) :-
+interface_sentence_trans(0,_,Module) :-
 	cleanup_class_info(Module),
-	start_of_messages(Module,['Checking interface file ',Base,'.pl']),
+	start_of_messages(Module,['Checking interface file of ',Module]),
 	retractall_fact(implements(Module,_)),
 	retractall_fact(is_public(Module,_,_)),
 	retractall_fact(is_attribute(Module,_,_)),

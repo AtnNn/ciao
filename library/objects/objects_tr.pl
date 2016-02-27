@@ -23,6 +23,7 @@
 :- use_module(library(filenames),[no_path_file_name/2]).
 :- use_module(library('objects/objects_error_reporting')).
 
+% Auxiliary
 :- include(library('objects/objects_tr_aux')).
 :- include(library('objects/static_objects_tr')).
 :- use_module(library(terms),[atom_concat/2]).
@@ -63,9 +64,9 @@ obj_sentence_trans((:- add_clause_trans(obj_clause_trans/3)),[],Module) :-
 	!.
 
 obj_sentence_trans(_,[],Module) :-
-	functor(Module,user,_),
-	!,
-	fail.
+ 	functor(Module,user,_),
+ 	!,
+ 	fail.
 
 %%------------------------------------------------------------------------
 %%
@@ -73,13 +74,13 @@ obj_sentence_trans(_,[],Module) :-
 %%
 %%------------------------------------------------------------------------
 
-obj_sentence_trans(start_of_file(Base),_,Module) :-
+obj_sentence_trans(0,_,Module) :-
 	retractall_fact(used_class(Module,_)),
 	retractall_fact(instance_of(Module,_,_)),
 	retractall_fact(module(_)),
 	set_fact(dynamic_optimization(Module)),
 	set_fact(analyze(Module)),
-	start_of_messages(Module,['Object usage analysis at ',Base]),
+	start_of_messages(Module,['Object usage analysis at ',Module]),
 	!,
 	fail.
 
@@ -90,9 +91,9 @@ obj_sentence_trans(end_of_file,Exp,Module) :-
 		     ('$static_instance_creation$'),
 		     (:- multifile 'class$call'/3),
 	             ('$force$rt$info$'(X) :- call(X))
-					     % Forces Ciao compiler to generate
-                                             % run-time info for this 
-	                                     % module.
+			     % Forces Ciao compiler to generate
+                             % run-time info for this 
+                             % module.
 	         ]
 	;
 	  Init = [
@@ -106,8 +107,7 @@ obj_sentence_trans(end_of_file,Exp,Module) :-
 		StaticIDS
 	),
 	append(StaticIDS,Init,Aux),
-	append(Aux,[end_of_file],Exp),
-	!.
+	append(Aux,[end_of_file],Exp).
 
 %%------------------------------------------------------------------------
 %%
@@ -190,7 +190,7 @@ obj_clause_trans(clause('$static_instance_creation$',_),
 	!,
 	end_of_messages(Module),
 	static_instance_definition(Module,InstCreation),
-	Body = catch(InstCreation,Error,
+	Body = intercept(InstCreation,Error,
 	   inform_user(['Static instances declared on ',Module,
                         'could not be created due to exception: ',Error])),
 	( debug ->

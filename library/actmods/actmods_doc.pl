@@ -7,6 +7,27 @@
 :- comment(author,"Manuel Hermenegildo").
 :- comment(author,"Daniel Cabeza").
 
+:- comment(bug,"The package provides no means for security: the accessing
+	application must take care of this (?).").
+
+:- comment(bug,"It can happen that there is a unique process for an 
+	active module serving calls from several different simultaneous
+	executions of the same application. In this case, there might be
+	unwanted interactions (e.g., if the active module has state).").
+
+:- comment(bug,"Applications may fail if the name server or an active module
+	is restarted during execution of the application (since they
+	restart at a different port than the one cached by the
+        application).").
+
+:- comment(bug,"One may want name servers to reside at a fixed and known
+	machine and port number (this is known as a @em{service} and is
+	defined in @tt{/etc/services} in a Un*x machine). Currently, the
+        port number changes in each invocation of the server.").
+
+:- comment(bug,"One may want to have one name server dedicated to a single
+	application. Currently, there is no easy way to do this.").
+
 :- comment(module,"
 
 Active modules @cite{ciao-dis-impl-parimp-www} provide a high-level
@@ -25,17 +46,18 @@ module does not involve transferring any code, but rather setting up
 things so that calls in the module using the active module are
 executed as remote procedure calls to the active module. This
 occurs in the same way independently of whether the 
-active module and the using module are in the same machine or in different machines across the network.
+active module and the using module are in the same machine or in
+different machines across the network. 
 
-Except for having compiling it in a special way (see below), an active
+Except for having to compile it in a special way (see below), an active
 module is identical from the programmer point of view to an ordinary
 module. A program using an active module imports it and uses it in the
 same way as any other module, except that it uses
 ``@decl{use_active_module}'' rather than ``@decl{use_module}'' (see
 below). Also, an active module has an address (network address) which
 must be known in order to use it.  In order to use an active module it
-is necessary to know its address.
-
+is necessary to know its address: different ``protocols'' are provided for
+this purpose (see below).
 
 @footnote{It is also possible to provide active modules via a WWW
 address.  However, we find it more straightforward to simply use
@@ -58,25 +80,37 @@ alternative answers are precomputed (and cached) upon the first call
 to an active module and thus @em{an active module should not export a
 predicate which has an infinite number of answers}.
 
-
-
   The first thing to do is to select a method whereby the client(s)
   (the module(s) that will use the active module) can find out in
   which machine/port (IP address/socket number) the server (i.e., the
-  active module) will be listening once started.  The easiest way to
-  do this is to use of the redezvous methods which are provided in the
-  Ciao distribution in the @tt{library/actmods} directory, such as
-  @tt{tmpbased...} or @tt{filebased...}. 
+  active module) will be listening once started, i.e., a ``protocol''
+  to communicate with the active module.  The easiest way to
+  do this is to make use of the redezvous methods which are provided in the
+  Ciao distribution in the @tt{library/actmods} directory; currently,
+  @tt{tmpbased...}, @tt{filebased...}, and @tt{webbased...}. 
 
-  The first is based on saving the IP address and socket number of the
+  The first one is based on saving the IP address and socket number of the
   server in a file in a predefined directory (generally @tt{/tmp}, but
   this can be changed by changing @tt{tmpbased_common.pl}).
 
   The second one is similar but saves the info in the directory in
-  which the server is started (as @em{<module_name>}@tt{.addr}). The
-  clients must be started in the same directory. However, they can be
+  which the server is started (as @em{<module_name>}@tt{.addr}), or in the
+  directory that a @tt{.addr} file, if it exists, specifies. The
+  clients must be started in the same directory (or have access to a
+  file @tt{.addr} specifying the same directory). However, they can be
   started in different machines, provided this directory is shared
-  (e.g., by NFS or Samba).
+  (e.g., by NFS or Samba), or the file can be moved to an appropriate
+  directory on a different machine --provided the full path is the same.
+
+  The third one is based on a @concept{name server} for active modules.
+  When an active module is compiled, it communicates its address to the
+  name server. When the client of the active module wants to communicate with
+  it, it asks the name server the active module address. This is all done
+  transparently to the user.
+  The name server must be running when the active module is compiled (and,
+  of course, when the application using it is executed). The location
+  of the name server for an application must be specified in an application
+  file named @tt{webbased_common.pl} (see below).
 
   These rendezvous methods are encoded in two modules: a first one,
   called @tt{...publish.pl}, is used by the server to publish its
@@ -104,6 +138,12 @@ predicate which has an infinite number of answers}.
   ciaoc simple_client_with_main
   @end{verbatim}
 
+  Note that the client uses the @tt{actmods} package, specifies the 
+  rendezvous method by importing @tt{library('actmods/filebased_locate')},
+  and explicitely imports the ``remote'' predicates (@em{implicit imports
+  will not work}). Each module using the @tt{actmods} package @em{should
+  only use one of the rendezvous methods}.
+
   Now, if the server is running (e.g., @tt{simple_server &} in Un*x or
   double-clicking on it in Win32) when the client is executed it will
   connect with the server to access the predicate(s) that it imports
@@ -113,17 +153,36 @@ predicate which has an infinite number of answers}.
   top level and its predicates called as usual (and they will connect
   with the server if it is running).
 
-  The architecture of the active modules model in Ciao allows defining
-  other methods for this communication to happen. For example, one can
-  implement a @concept{name server}. This can itself be an active
-  module which resides at a fixed and known machine and port number
-  (this is known as a @em{service} and is defined in
-  @tt{/etc/services} in a Un*x machine). In order the best way is to
-  mimick the code of the redezvous methods provided in the Ciao
-  distribution.
+  An application using a name server for active modules must have a file
+  named @tt{webbased_common.pl} that specifies where the name server
+  resides. It must have the @tt{URL} and corresponding @tt{PATH/FILE} in the
+  file system of the server machine (the one that hosts the @tt{URL}) 
+  of the @tt{FILE} that holds the name server address.
 
+  The current distribution provides a file @tt{webbased_common.pl} that
+  can be used (after proper setting of its contents) for a server of
+  active modules for a whole instalation. Alternatively, particular 
+  servers for each application can (or could) be set up...
 
-Security: in the access method (?).
+  The name server
+  (the file @file{examples/webbased_server.pl} can be used as server by
+  any application) has to be compiled as an active module itself:
+  @begin{verbatim}
+    ciaoc -a actmods/webserver_publish webbased_server
+  @end{verbatim}
+  and must have access to the same @tt{webbased_common.pl} file as the
+  application that will use it. It has to be started in the server machine
+  before the application and its active modules are compiled.
+
+  Addresses of active modules are saved by the name server in a subdirectory
+  of @tt{PATH} with the same name of the server (e.g.,
+  @tt{PATH/webbased_server} --see @tt{examples/actmods_db}).
+  This allows to restart the server 
+  right away if it dies (since it saves its state).
+  This directory should be cleaned up regularly
+  of addresses of active modules which are no more active. To do this, stop
+  the server --by killing it (its pid is in @tt{PATH/FILE}) and restart it
+  after cleaning up the files in @tt{PATH/webbased_server}. 
 
 ").
 
@@ -136,6 +195,9 @@ Security: in the access method (?).
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+35,2000/12/28,18:20*50+'CET'), "Added the
+   webbased protocol for active modules (Francisco Bueno Carrillo)").
 
 :- comment(version(1*5+141,2000/05/11,13:33*29+'CEST'), "Added file to
    version control, started documentation (was about time).  (Manuel

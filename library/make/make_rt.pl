@@ -296,7 +296,7 @@ verbose_message(Mess,Args) :-
 	;  true ).
 
 
-:- meta_predicate call_unknown_nofail(goal).
+%:- meta_predicate call_unknown_nofail(goal).
 
 call_unknown_nofail(G) :-
 	call_unknown(G),
@@ -304,7 +304,7 @@ call_unknown_nofail(G) :-
 call_unknown_nofail(_G).
 
 
-:- meta_predicate call_unknown(goal).
+%:- meta_predicate call_unknown(goal).
 
 % This is a local copy, with less error checking.
 % Complication is so that flags are left as it was also upon failure.

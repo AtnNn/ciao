@@ -1,39 +1,42 @@
-:- module(queue, [main/0],[]).
+:- module(queue, [main/0],[persdb]).
 
 :- use_module(library(read)).
 :- use_module(library(write)).
 :- use_module(library(aggregates)).
 
-:- include(library(persdb)).
-
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
+persistent_dir(queue_dir,'./pers').
 
 :- persistent(queue/1, queue_dir).
 
-persistent_dir(queue_dir,'./pers').
+queue(first).
+queue(second).
 
 main:-
-     write('Action ( in(Term). | out. | list. | halt. ): '),
+     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
      read(A),
      (  handle_action(A)
      -> true
      ;  write('Unknown command.'), nl ),
      main.
 
+handle_action(end_of_file) :-
+     halt.
 handle_action(halt) :-
      halt.
 handle_action(in(Term)) :-
-     passertz_fact(queue(Term)),
+     assertz_fact(queue(Term)),
+     main.
+handle_action(slip(Term)) :-
+     asserta_fact(queue(Term)),
      main.
 handle_action(out) :-
-     (  pretract_fact(queue(Term))
+     (  retract_fact(queue(Term))
      -> write('Out '), write(Term)
      ;  write('FIFO empty.') ),
      nl,
      main.
 handle_action(list) :-
-     findall(Term,pcurrent_fact(queue(Term)),Terms),
+     findall(Term,queue(Term),Terms),
      write('Contents: '), write(Terms), nl,
      main.
      

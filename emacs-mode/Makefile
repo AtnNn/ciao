@@ -31,7 +31,7 @@
 #
 #-----------------------------------------------------------------------------
 include ../SETTINGS
-include ../COMMON
+include ../SHARED
 #-----------------------------------------------------------------------------
 LIBFILES = word-help.el
 REALLIBDIR = $(LIBDIR)/$(VERSIONMAIN)

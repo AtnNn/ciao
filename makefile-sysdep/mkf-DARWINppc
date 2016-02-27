@@ -1,0 +1,71 @@
+# Misc. options, depending on the SETTINGS file
+
+ifeq ($(DEBUG_LEVEL),profile)
+    DEBUG_FLAGS=-pg -DPROFILE -DDEBUG
+    PROFILE_LD_FLAGS=-pg
+    OPTIM_LEVEL=debug
+    CIAODEBUG=-debug
+    OPTIM_FLAGS=
+endif
+
+
+# Optimizations for DARWIN PowerPC
+
+ifeq ($(OPTIM_LEVEL),optimized)
+    OPTIM_FLAGS=-O3 -Wall
+endif
+
+
+# Threads and locks in DARWIN
+ifeq ($(USE_THREADS),yes)
+    LD_THREAD_LIB=
+    LD_LOCK_LIB=
+ifeq ($(USE_POSIX_LOCKS),yes)
+    THREAD_FLAG=-D_REENTRANT -DTHREADS
+else
+    THREAD_FLAG=-D_REENTRANT -DTHREADS
+endif
+else
+    LD_THREAD_LIB=
+    THREAD_FLAG=
+endif
+
+FOREIGN_FILES_FLAG=-DFOREIGN_FILES
+
+# C compiler
+CC=cc
+
+# Linker
+LD=cc
+
+# C compiler options for generating shared libraries code
+CCSHARED=-fPIC
+
+# Linker options for shared objects
+LDSHARED=-bundle -undefined suppress
+
+# Linker options to combine objects
+LDCOMBINE=-r
+
+# Name of the standard ciao library
+CIAOLIBNAME=libciao.dylib
+
+LIBS=$(LD_THREAD_LIB) $(LD_LOCK_LIB) $(DEBUG_LIBS)
+
+LDFLAGS=$(PROFILE_LD_FLAGS)
+
+STAT_LIBS=
+
+ARCHNAME=ppc
+
+# Operating system version
+OSNAME=DARWIN
+
+# How to install an make directories
+MKDIR="mkdir -p"
+INSTALL=install
+
+# Making etags
+ETAGS=etags -t *.[ch]
+
+DEFAULTYPE=dyn

@@ -3,8 +3,9 @@
 /*#define USE_OWN_MALLOC_IRIX*/
 /*#define USE_OWN_MALLOC_Win32*/
 /*#define USE_OWN_MALLOC_SUNOS*/
+/*#define USE_OWN_MALLOC_DARWIN*/
 
-#if defined(LINUX) || defined(Solaris) || defined(Win32)
+#if defined(LINUX) || defined(Solaris) || defined(Win32) || defined(DARWIN)
 #  include <stdlib.h>
 #endif
 
@@ -12,7 +13,7 @@
 #  include <malloc.h>
 #endif                                                           /* SunOS */
 
-#if (defined(USE_OWN_MALLOC_LINUX) && defined(LINUX)) || (defined (Solaris) && defined(USE_OWN_MALLOC_SOLARIS)) || (defined(SunOS4) && defined(USE_OWN_MALLOC_SUNOS)) || (defined(USE_OWN_MALLOC_IRIX) && defined(IRIX)) || (defined(USE_OWN_MALLOC_Win32) && defined(Win32))
+#if (defined(USE_OWN_MALLOC_LINUX) && defined(LINUX)) || (defined (Solaris) && defined(USE_OWN_MALLOC_SOLARIS)) || (defined(SunOS4) && defined(USE_OWN_MALLOC_SUNOS)) || (defined(USE_OWN_MALLOC_IRIX) && defined(IRIX)) || (defined(USE_OWN_MALLOC_Win32) && defined(Win32)) || (defined(USE_OWN_MALLOC_DARWIN) && defined(DARWIN))
 #  define USE_OWN_MALLOC
 #  define Malloc(p)     own_malloc(p)
 #  define Free(p)       own_free(p)

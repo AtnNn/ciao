@@ -1,10 +1,14 @@
 /* Copyright (C) 1996, UPM-CLIP */
 
 #include "common_headers.h"
+#if defined(DARWIN)
+#include <string.h>
+#endif
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <netdb.h>
 
 
@@ -23,6 +27,16 @@ TAGGED atom_raw;
 TAGGED atom_seqpacket;
 TAGGED atom_rdm;
 
+TAGGED atom_read;
+TAGGED atom_write;
+TAGGED atom_read_write;
+
+
+/*
+TAGGED atom_buff;
+TAGGED atom_unbuff;
+*/
+
 struct stream_node *new_socket_stream(streamname, socket)
      TAGGED streamname;
      int socket;
@@ -36,6 +50,7 @@ struct stream_node *new_socket_stream(streamname, socket)
   s->streamfile = NULL;
   s->isatty = FALSE;
   s->socket_eof = FALSE;
+  s->socket_is_unbuffered = 0;
   s->last_nl_pos = 0;
   s->nl_count = 0;
   s->char_count = 0;
@@ -93,8 +108,8 @@ BOOL prolog_connect_to_socket(Arg)
     socket_type = SOCK_RAW;
   else if (socket_atm == atom_seqpacket)
     socket_type = SOCK_SEQPACKET;
-  else if (socket_atm == atom_stream)
-    socket_type = SOCK_STREAM;
+  else if (socket_atm == atom_rdm)
+    socket_type = SOCK_RDM;
   else USAGE_FAULT("connect_to_socket_type/[3,4]: unrecognized connection type");
 
 
@@ -103,6 +118,13 @@ BOOL prolog_connect_to_socket(Arg)
 
   if ((sock = socket(AF_INET, socket_type, 0)) < 0)
     MAJOR_FAULT("connect_to_socket/[3,4]: socket creation failed");
+
+ /* Specify that we may want to reuse the address  */
+
+  /*
+  if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, NULL, 0))
+    MAJOR_FAULT("connect_to_socket/[3,4]: error setting option");
+  */
 
   server_inet_addr.sin_family = AF_INET;
   memcpy((char *)&(server_inet_addr.sin_addr), 
@@ -135,6 +157,7 @@ BOOL prolog_bind_socket(Arg)
 {
   int sock, port;
   struct sockaddr_in sa;
+  int reuse_address = 1;
 
   DEREF(X(2), X(2));
   if (!IsVar(X(2)))
@@ -156,6 +179,12 @@ BOOL prolog_bind_socket(Arg)
   }
   sa.sin_family = AF_INET;
   sa.sin_addr.s_addr = INADDR_ANY;
+
+ /* Specify that we may want to reuse the address  */
+
+  if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, 
+                 (void *)&reuse_address, sizeof(int)))
+    MAJOR_FAULT("connect_to_socket/[3,4]: error setting option");
 
   if (bind(sock, (struct sockaddr *)&sa, sizeof(sa)) < 0)
     MAJOR_FAULT("bind_socket: cannot bind");
@@ -235,7 +264,9 @@ static TAGGED stream_list(Arg, max_fd, ready_set)
 BOOL prolog_select_socket(Arg)
      Argdecl;
 {
-  int listen_sock, max_fd = 0;
+  int 
+    listen_sock = 0,  /* Avoid compiler complaints */
+    max_fd = 0;
   struct timeval timeout, *timeoutptr;
   fd_set ready;
   BOOL unify_result = TRUE, watch_connections;
@@ -423,6 +454,105 @@ BOOL prolog_socket_receive(Arg)
   return cunify(Arg,cdr,X(1)) && cunify(Arg, MakeSmall(total_bytes), X(2));
 }
 
+
+/* socket_shutdown(+Stream, +Type) */
+
+/* Patch constants apparently not defined in all Linux implementations (at
+   least at the moment) */
+
+#if !defined(SHUT_RD)
+#define SHUT_RD    0
+#define SHUT_WR    1
+#define SHUT_RDWR  2
+#endif
+
+BOOL prolog_socket_shutdown(Arg)
+     Argdecl;
+{
+    struct stream_node *s;
+    int access_required;
+    TAGGED shutdown_type;
+    int error_code;
+    int how;
+    
+    DEREF(X(0), X(0));
+    DEREF(shutdown_type, X(1));
+
+    if (shutdown_type == atom_read) {
+      access_required = 'r';
+      how = SHUT_RD;
+    } else if (shutdown_type == atom_write){
+      access_required = 'w';
+      how = SHUT_WR;
+    } else if (shutdown_type == atom_read_write) {
+      access_required = 'w';
+      how = SHUT_RDWR;
+    }      
+    else USAGE_FAULT("socket_shutdown/2: error in second argument");
+
+    s = stream_to_ptr_check(X(0), access_required, &error_code);
+    if (!s) BUILTIN_ERROR(error_code, X(0), 1);
+
+    if (s->streammode != 's')
+    USAGE_FAULT("socket_shutdown/2: first argument must be a socket stream");
+    
+    if ((error_code = shutdown(GetSmall(s->label), how)))
+      MAJOR_FAULT("socket_shutdown/2: error in call to shutdown()");
+
+    return TRUE;
+}
+
+
+/* socket_buffering(+Stream, +Direction, -OldBuf, +NewBuffer) */
+/*
+BOOL prolog_socket_buffering(Arg)
+     Argdecl;
+{
+    struct stream_node *s;
+    int access_required;
+    int error_code;
+    TAGGED direction;
+    TAGGED oldbuf;
+    TAGGED newbuf;
+    int flag;
+    
+    DEREF(direction, X(1));
+
+    if (direction == atom_read) {
+      access_required = 'r';
+    } else if (direction == atom_write){
+      access_required = 'w';
+    } else USAGE_FAULT("socket_buffering/4: error in second argument");
+
+    DEREF(X(0), X(0));
+    s = stream_to_ptr_check(X(0), access_required, &error_code);
+    if (!s) BUILTIN_ERROR(error_code, X(0), 1);
+
+    if (s->streammode != 's')
+    USAGE_FAULT("socket_buffering/4: first argument must be a socket stream");
+
+    oldbuf = (s->socket_is_unbuffered ? atom_unbuff : atom_buff);
+
+    DEREF(newbuf, X(3));
+    if (newbuf == atom_unbuff)
+      s->socket_is_unbuffered = 1;
+    else if (newbuf == atom_buff)
+      s->socket_is_unbuffered = 0;
+    else USAGE_FAULT("socket_buffering/4: error in fourth argument");
+    
+    flag = s->socket_is_unbuffered;
+
+    if (setsockopt(GetSmall(s->label),
+                   IPPROTO_TCP,
+                   TCP_NODELAY, 
+                   (void *)&flag,
+                   sizeof(int)))
+      MAJOR_FAULT("socket_buffering/4: error setting option");
+
+    return cunify(Arg, X(2), oldbuf);
+}
+*/
+
 /* hostname_address(+Hostname, ?Address) */
 
 #define MAX_BYTES_IN_HOST_ADDRESS 8             /* It is 4 at the present */
@@ -471,6 +601,13 @@ void sockets_c_init(module)
   define_c_mod_predicate(module, "select_socket", prolog_select_socket, 5);
   define_c_mod_predicate(module, "socket_send", prolog_socket_send, 2);
   define_c_mod_predicate(module, "socket_recv_code", prolog_socket_receive, 3);
+  define_c_mod_predicate(module, "socket_shutdown", prolog_socket_shutdown, 2);
+  /*
+  define_c_mod_predicate(module, 
+                         "socket_buffering",
+                         prolog_socket_buffering, 
+                         4);
+  */
   define_c_mod_predicate(module ,"hostname_address",prolog_hostname_address,2);
 
   atom_stream = init_atom_check("stream");
@@ -478,7 +615,16 @@ void sockets_c_init(module)
   atom_raw = init_atom_check("raw");
   atom_seqpacket = init_atom_check("seqpacket");
   atom_rdm = init_atom_check("rdm");
+
+  atom_read = init_atom_check("read");
+  atom_write = init_atom_check("write");
+  atom_read_write = init_atom_check("read_write");
+  /*
+  atom_buff = init_atom_check("fullbuf");
+  atom_unbuff = init_atom_check("unbuf");
+  */
 }
+
 
 void sockets_c_end(module)
      char *module;
@@ -489,4 +635,8 @@ void sockets_c_end(module)
   undefine_c_mod_predicate(module, "select_socket", 5);
   undefine_c_mod_predicate(module, "socket_send", 2);
   undefine_c_mod_predicate(module, "socket_recv_code", 3);
+  undefine_c_mod_predicate(module, "socket_shutdown", 2);
+  /*
+  undefine_c_mod_predicate(module, "socket_buffering", 4);
+  */
 }

@@ -8,7 +8,7 @@ if (stop_on_pred_calls) {  \
      if (predtrace) wr_functor(X,Y); \
      else add_to_profiling(Y); }
 #else /* DEBUG & !PROFILE */
-#define PredTrace(X,Y)	if (predtrace) wr_functor(X,Y)
+#define PredTrace(X,Y)	if (predtrace) wr_call(Arg,X,Y)
 #endif
 #else
 #define PredTrace(X,Y)	

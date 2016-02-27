@@ -1,12 +1,12 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The stand-alone command-line compiler</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_5.html">previous</A>, <A HREF="ciao_7.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_5.html">previous</A>, <A HREF="ciao_7.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
@@ -17,31 +17,31 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_5.html">previous</A>, <
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+<STRONG>Version:</STRONG> 1.7#72 (2001/3/25, 19:56:27 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#142 (2000/5/11, 14:11:20 CEST)
+<STRONG>Version of last change:</STRONG> 1.7#30 (2000/11/3, 16:42:1 CET)
 
 
 <P>
+<A NAME="IDX434"></A>
+<A NAME="IDX435"></A>
 <A NAME="IDX436"></A>
 <A NAME="IDX437"></A>
 <A NAME="IDX438"></A>
-<A NAME="IDX439"></A>
-<A NAME="IDX440"></A>
 <CODE>ciaoc</CODE> [CH00b] is the Ciao stand-alone command-line compiler. 
-<A NAME="IDX441"></A>
+<A NAME="IDX439"></A>
 <CODE>ciaoc</CODE> can be used to create executables or to compile individual files to object code (to be later linked with other files). 
-<A NAME="IDX442"></A>
+<A NAME="IDX440"></A>
 <CODE>ciaoc</CODE> is specially useful when working from the command line. Also, it can be called to compile Ciao programs from other tools such as, e.g., 
-<A NAME="IDX443"></A>
+<A NAME="IDX441"></A>
 shell scripts, 
-<A NAME="IDX444"></A>
+<A NAME="IDX442"></A>
 <CODE>Makefile</CODE>s, or 
-<A NAME="IDX445"></A>
+<A NAME="IDX443"></A>
 project files. All the capabilities of 
-<A NAME="IDX446"></A>
+<A NAME="IDX444"></A>
 <CODE>ciaoc</CODE> are also available from the interactive top-level shell, which uses the ciaoc modules as its components. 
 
 
@@ -62,12 +62,12 @@ project files. All the capabilities of
 
 <P>
 An 
-<A NAME="IDX447"></A>
-<A NAME="IDX448"></A>
+<A NAME="IDX445"></A>
+<A NAME="IDX446"></A>
 <EM>executable</EM> can be built from a single file or from a collection of inter-related files. In the case of only one file, this file must define the predicate 
-<A NAME="IDX449"></A>
+<A NAME="IDX447"></A>
 <CODE>main/0</CODE> or 
-<A NAME="IDX450"></A>
+<A NAME="IDX448"></A>
 <CODE>main/1</CODE>. This predicate is the one which will be called when the executable is started. As an example, consider the following file, called <CODE>hello.pl</CODE>: 
 
 
@@ -80,11 +80,11 @@ main :-
 
 <P>
 To compile it from the command line using the 
-<A NAME="IDX451"></A>
+<A NAME="IDX449"></A>
 <CODE>ciaoc</CODE> standalone compiler it suffices to type "<CODE>ciaoc hello</CODE>" (in Win32 you may have to put the complete path to the 
-<A NAME="IDX452"></A>
+<A NAME="IDX450"></A>
 <CODE>ciaoc</CODE> folder of the Ciao distribution, where the installation process leaves a 
-<A NAME="IDX453"></A>
+<A NAME="IDX451"></A>
 <CODE>ciaoc.bat</CODE> file): 
 
 
@@ -136,7 +136,7 @@ p('Hello world').
 
 <P>
 This can again be compiled using the 
-<A NAME="IDX454"></A>
+<A NAME="IDX452"></A>
 <CODE>ciaoc</CODE> standalone compiler as before: 
 
 
@@ -157,11 +157,11 @@ The invocation of <CODE>ciaoc hello</CODE> compiles the file <CODE>hello.pl</COD
 
 <P>
 If 
-<A NAME="IDX455"></A>
+<A NAME="IDX453"></A>
 <CODE>main/1</CODE> is defined instead of 
-<A NAME="IDX456"></A>
+<A NAME="IDX454"></A>
 <CODE>main/0</CODE> then when the executable is started the argument of 
-<A NAME="IDX457"></A>
+<A NAME="IDX455"></A>
 <CODE>main/1</CODE> will be instantiated to a list of atoms, each one of them corresponding to a command line option. Consider the file <CODE>say.pl</CODE>: 
 
 
@@ -201,13 +201,13 @@ The name of the generated executable can be controlled with the <CODE>-o</CODE> 
 
 <P>
 The compiler will look for files mentioned in commands such as 
-<A NAME="IDX458"></A>
+<A NAME="IDX456"></A>
 <CODE>use_module/1</CODE> or 
-<A NAME="IDX459"></A>
+<A NAME="IDX457"></A>
 <CODE>ensure_loaded/1</CODE> in the current directory. Other paths can be added by including them in a file whose name is given to <CODE>ciaoc</CODE> using the <CODE>-u</CODE> option. This file should contain facts of the predicates 
-<A NAME="IDX460"></A>
+<A NAME="IDX458"></A>
 <CODE>file_search_path/2</CODE> and 
-<A NAME="IDX461"></A>
+<A NAME="IDX459"></A>
 <CODE>library_directory/1</CODE> (see the documentation for these predicates and also section <A HREF="ciao_11.html#SEC89">Customizing library paths and path aliases</A> for details). 
 
 
@@ -215,13 +215,13 @@ The compiler will look for files mentioned in commands such as
 
 <H2><A NAME="SEC60" HREF="ciao_toc.html#TOC60">Running executables from the command line</A></H2>
 <P>
-<A NAME="IDX462"></A>
-<A NAME="IDX463"></A>
+<A NAME="IDX460"></A>
+<A NAME="IDX461"></A>
 
 
 <P>
 As mentioned before, what the <CODE>ciaoc</CODE> compiler generates and how it is started varies somewhat from OS to OS. In general, the product of compiling an application with <CODE>ciaoc</CODE> is a file that contains the bytecode (the product of the compilation) and invokes the 
-<A NAME="IDX464"></A>
+<A NAME="IDX462"></A>
 Ciao engine on it. 
 
 
@@ -230,25 +230,25 @@ Ciao engine on it.
 
 <LI>Un Un*x this is a <EM>script</EM> (see the first lines of the file) which invokes the ciao engine on this file. To run the generated executable from a Un*x shell, or from the
 
-<A NAME="IDX465"></A>
-<CODE>bash</CODE> shell that comes with the Cygwin libraries (see @xref{Installation and compilation under Windows}) it suffices to type its name at the shell command line, as in the examples above. 
+<A NAME="IDX463"></A>
+<CODE>bash</CODE> shell that comes with the Cygwin libraries (see section <A HREF="ciao_205.html#SEC772">Installation and compilation under Windows</A>) it suffices to type its name at the shell command line, as in the examples above. 
 
 <LI>In a Win32 system, the compiler produces a similar file with a <CODE>.cpx</CODE> ending. The Ciao installation process typically makes sure that the Windows registry contains the right entries so that this executable will run upon double-cliking on it.
 
 In you want to run the executable from the command line an additional <CODE>.bat</CODE> file is typically needed. To help in doing this, the Win32 installation process creates a <CODE>.bat</CODE> skeleton file called <CODE>bat_skel</CODE> in the 
-<A NAME="IDX466"></A>
+<A NAME="IDX464"></A>
 <CODE>Win32</CODE> folder of the distribution) which allows running Ciao executables from the command line. If you want to run a Ciao executable <CODE>file.cpx</CODE> from the command line, you normally copy the skeleton file to the folder were the executable is and rename it to <CODE>file.bat</CODE>, then change its contents as explained in a comment inside the file itself. 
 
 Note that this <CODE>.bat</CODE> file is usually not necessary in NT, as its command shell understands file extension associations. I.e., in windows NT it is possible to run the <CODE>file.cpx</CODE> executable directly. Due to limitations of <CODE>.bat</CODE> files in Windows 95/98, in those OSs no more than 9 command line arguments can be passed to the executable (in NT there is no such restriction). 
 
 Finally, in a system in which Cygnus Win32 is installed executables can also be used directly from the 
-<A NAME="IDX467"></A>
+<A NAME="IDX465"></A>
 <CODE>bash</CODE> shell command line, without any associated <CODE>.bat</CODE> files, by simply typing their name at the 
-<A NAME="IDX468"></A>
+<A NAME="IDX466"></A>
 <CODE>bash</CODE> shell command line, in the same way as in Un*x. This only requires that the 
-<A NAME="IDX469"></A>
+<A NAME="IDX467"></A>
 <CODE>bash</CODE> shell which comes with Cygnus Win32 be installed and accessible: simply, make sure that 
-<A NAME="IDX470"></A>
+<A NAME="IDX468"></A>
 <CODE>/bin/sh.exe</CODE> exists. 
 
 </UL>
@@ -262,15 +262,15 @@ Except for a couple of header lines, the contents of executables are almost iden
 <H2><A NAME="SEC61" HREF="ciao_toc.html#TOC61">Types of executables generated</A></H2>
 
 <P>
-<A NAME="IDX471"></A>
-<A NAME="IDX472"></A>
+<A NAME="IDX469"></A>
+<A NAME="IDX470"></A>
 
 
 <P>
 While the default options used by 
-<A NAME="IDX473"></A>
+<A NAME="IDX471"></A>
 <CODE>ciaoc</CODE> are sufficient for normal use, by selecting other options 
-<A NAME="IDX474"></A>
+<A NAME="IDX472"></A>
 <CODE>ciaoc</CODE> can generate several different types of executables, which offer interesting tradeoffs among size of the generated executable, portability, and startup time [CH00b]: 
 
 
@@ -278,77 +278,77 @@ While the default options used by
 
 <DT>Dynamic executables:
 <DD>
-<A NAME="IDX475"></A>
-<A NAME="IDX476"></A>
+<A NAME="IDX473"></A>
+<A NAME="IDX474"></A>
 
-<A NAME="IDX477"></A>
+<A NAME="IDX475"></A>
 <CODE>ciaoc</CODE> produces by default <EM>dynamic</EM> executables. In this case the executable produced is a 
-<A NAME="IDX478"></A>
+<A NAME="IDX476"></A>
 platform-independent file which includes in compiled form all the user defined files. On the other hand, any system libraries used by the application are loaded dynamically at startup. More precisely, any files that appear as <CODE>library(...)</CODE> in 
-<A NAME="IDX479"></A>
+<A NAME="IDX477"></A>
 <CODE>use_module/1</CODE> and 
-<A NAME="IDX480"></A>
+<A NAME="IDX478"></A>
 <CODE>ensure_loaded/1</CODE> declarations will not be included explicitly in the executable and will instead be loaded dynamically. Is is also possible to mark other 
-<A NAME="IDX481"></A>
+<A NAME="IDX479"></A>
 path aliases (see the documentation for 
-<A NAME="IDX482"></A>
+<A NAME="IDX480"></A>
 <CODE>file_search_path/2</CODE>) for dynamic loading by using the <CODE>-d</CODE> option. Files accessed through such aliases will also be loaded dynamically. 
 
 Dynamic loading allows making smaller executables. Such executables may be used directly in the same machine in which they were compiled, since suitable paths to the location of the libraries will be included as default in the executable by 
-<A NAME="IDX483"></A>
+<A NAME="IDX481"></A>
 <CODE>ciaoc</CODE> during compilation. 
 
 The executable can also be used in another machine, even if the architecture and OS are different. The requirement is that the Ciao libraries (which will also include the appropriate 
-<A NAME="IDX484"></A>
+<A NAME="IDX482"></A>
 Ciao engine for that architecture and OS) be installed in the target machine, and that the <CODE>CIAOLIB</CODE> and <CODE>CIAOENGINE</CODE> environment variables are set appropriately for the executable to be able to find them (see section <A HREF="ciao_6.html#SEC62">Environment variables used by Ciao executables</A>). How to do this differs slightly from OS to OS. 
 
 <DT>Static executables:
 <DD>
-<A NAME="IDX485"></A>
-<A NAME="IDX486"></A>
+<A NAME="IDX483"></A>
+<A NAME="IDX484"></A>
 
 Selecting the <CODE>-s</CODE> option <CODE>ciaoc</CODE> produces a <EM>static</EM> executable. In this case the executable produced (again a 
-<A NAME="IDX487"></A>
+<A NAME="IDX485"></A>
 platform-independent file) will include in it all the auxiliary files and any system libraries needed by the application. Thus, such an executable is almost complete, needing in order to run only the 
-<A NAME="IDX488"></A>
+<A NAME="IDX486"></A>
 Ciao engine, which is platform-specific.<A NAME="DOCF1" HREF="ciao_foot.html#FOOT1">(1)</A> Again, if the executable is run in the same machine in which it was compiled then the engine is found automatically. If the executable is moved to another machine, the executable only needs access to a suitable engine (which can be done by setting the <CODE>CIAOENGINE</CODE> environment variable to point to this engine). 
 
-This type of compilation produces larger executables, but has the advantage that these executables can be installed and run in a different machine, with different architecture and OS, even if Ciao is not installed on that machine. To install (or distribute) such an executable, one only needs to copy the executable file itself and the appropriate engine for the target platform (See section <A HREF="ciao_165.html#SEC626">Installing Ciao from the source distribution</A> or section <A HREF="ciao_166.html#SEC627">Installing Ciao from a Win32 binary distribution</A> and @xref{Multiarchitecture support}), and to set things so that the executable can find the engine. <A NAME="DOCF2" HREF="ciao_foot.html#FOOT2">(2)</A> 
+This type of compilation produces larger executables, but has the advantage that these executables can be installed and run in a different machine, with different architecture and OS, even if Ciao is not installed on that machine. To install (or distribute) such an executable, one only needs to copy the executable file itself and the appropriate engine for the target platform (See section <A HREF="ciao_205.html#SEC766">Installing Ciao from the source distribution</A> or section <A HREF="ciao_207.html#SEC782">Installing Ciao from a Win32 binary distribution</A> and section <A HREF="ciao_205.html#SEC771">Multiarchitecture support</A>), and to set things so that the executable can find the engine. <A NAME="DOCF2" HREF="ciao_foot.html#FOOT2">(2)</A> 
 
 <DT>Dynamic executables, with lazy loading:
 <DD>
-<A NAME="IDX489"></A>
-<A NAME="IDX490"></A>
+<A NAME="IDX487"></A>
+<A NAME="IDX488"></A>
 
 Selecting the <CODE>-l</CODE> option is very similar to the case of dynamic executables above, except that the code in the library modules is not loaded when the program is started but rather it is done during execution, the first time a predicate defined in that file is called. This is advantageous if a large application is composed of many parts but is such that typically only some of the parts are used in each invocation. The Ciao preprocessor, 
-<A NAME="IDX491"></A>
+<A NAME="IDX489"></A>
 <CODE>ciaopp</CODE>, is a good example of this: it has many capabilitites but typically only some of them are used in a given session. An executable with lazy load has the advantage that it starts fast, loading a minimal functionality on startup, and then loads the different modules automatically as needed. 
 
 <DT>Self-contained executables:
 <DD>
-<A NAME="IDX492"></A>
-<A NAME="IDX493"></A>
+<A NAME="IDX490"></A>
+<A NAME="IDX491"></A>
 
 <EM>Self-contained</EM> executables are static executables (i.e., this option also implies <EM>static</EM> compilation) which include a Ciao engine along with the bytecode, so they do not depend on an external one for their execution. This is useful to create executables which run even if the machine where the program is to be executed does not have a Ciao engine installed and/or libraries. The disadvantage is that such execuatbles are 
-<A NAME="IDX494"></A>
+<A NAME="IDX492"></A>
 platform-dependent (as well as larger than those that simply use an external library). This type of compilation is selected with the <CODE>-S</CODE> option. Cross-compilation is also possible with the <CODE>-SS</CODE> option, so you can specify the target OS and architecture (e.g. LINUXi86). To be able to use the latter option, it is necessary to have installed a ciaoengine for the target machine in the Ciao library (this requires compiling the engine in that OS/architecture and installing it, so that it is available in the library). 
 
 <DT>Compressed executables:
 <DD>
-<A NAME="IDX495"></A>
-<A NAME="IDX496"></A>
+<A NAME="IDX493"></A>
+<A NAME="IDX494"></A>
 
 In <EM>compressed</EM> executables the bytecode is compressed. This allows producing smaller executables, at the cost of a slightly slower startup time. This is selected with the <CODE>-z</CODE> option. You can also produce compressed libraries if you use <CODE>-zl</CODE> along with the <CODE>-c</CODE> option. If you select <CODE>-zl</CODE> while generating an executable, any library which is compiled to accomplish this will be also compressed. 
 
 <DT>Active modules:
 <DD>
-<A NAME="IDX497"></A>
-<A NAME="IDX498"></A>
+<A NAME="IDX495"></A>
+<A NAME="IDX496"></A>
 
 The compiler can also compile (via the <CODE>-a</CODE> option) a given file into an 
-<A NAME="IDX499"></A>
-<A NAME="IDX500"></A>
-<EM>active module</EM> (see section <A HREF="ciao_95.html#SEC380">Active modules (high-level distributed execution)</A> for a description of this). 
+<A NAME="IDX497"></A>
+<A NAME="IDX498"></A>
+<EM>active module</EM> (see section <A HREF="ciao_97.html#SEC390">Active modules (high-level distributed execution)</A> for a description of this). 
 
 </DL>
 
@@ -357,7 +357,7 @@ The compiler can also compile (via the <CODE>-a</CODE> option) a given file into
 <H2><A NAME="SEC62" HREF="ciao_toc.html#TOC62">Environment variables used by Ciao executables</A></H2>
 
 <P>
-The executables generated by the Ciao compiler (including the ciao development tools themselves) locate automatically where the Ciao engine and libraries have been installed, since those paths are stored as defaults in the engine and compiler at installation time. Thus, there is no need for setting any environment variables in order to <EM>run</EM> Ciao executables (on a single architecture -- see @xref{Multiarchitecture support} for running on multiple architectures). 
+The executables generated by the Ciao compiler (including the ciao development tools themselves) locate automatically where the Ciao engine and libraries have been installed, since those paths are stored as defaults in the engine and compiler at installation time. Thus, there is no need for setting any environment variables in order to <EM>run</EM> Ciao executables (on a single architecture -- see section <A HREF="ciao_205.html#SEC771">Multiarchitecture support</A> for running on multiple architectures). 
 
 
 <P>
@@ -377,7 +377,7 @@ where <CODE>$(CIAOARCH)</CODE> is the string echoed by the command <CODE>SRC/etc
 
 <P>
 This allows 
-<A NAME="IDX501"></A>
+<A NAME="IDX499"></A>
 using alternate engines or libraries, which can be very useful for system development and experimentation. 
 
 
@@ -387,8 +387,8 @@ using alternate engines or libraries, which can be very useful for system develo
 
 <P>
 Compiling an individual source (i.e., <CODE>.pl</CODE>) file produces a <CODE>.itf</CODE> file and a <CODE>.po</CODE> file. The <CODE>.itf</CODE> file contains information of the 
-<A NAME="IDX502"></A>
-<A NAME="IDX503"></A>
+<A NAME="IDX500"></A>
+<A NAME="IDX501"></A>
 <EM>modular interface</EM> of the file, such as information on exported and imported predicates and on the other modules used by this module. This information is used to know if a given file should be recompiled at a given point in time and also to be able to detect more errors statically including undefined predicates, mismatches on predicate charaterictics across modules, etc. The <CODE>.po</CODE> file contains the platform-independent object code for a file, ready for linking (statically or dynamically). 
 
 
@@ -402,7 +402,7 @@ It is also possible to use <CODE>ciaoc</CODE> to explicitly generate the <CODE>.
 
 <P>
 The following provides details on the different command line options available when invoking 
-<A NAME="IDX504"></A>
+<A NAME="IDX502"></A>
 <CODE>ciaoc</CODE>: 
 
 
@@ -428,7 +428,7 @@ ciaoc &#60;MiscOpts&#62; -c  &#60;file&#62; ...
 
 -v  verbose mode
 
--ri generate readable .itf files
+-ri generate human readable .itf files
 
 -u  use &#60;file&#62; for compilation
 
@@ -464,6 +464,6 @@ default extension for files is '.pl'
 </PRE>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_5.html">previous</A>, <A HREF="ciao_7.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_5.html">previous</A>, <A HREF="ciao_7.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

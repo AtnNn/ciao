@@ -1,99 +1,303 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Ciao lpmake scripting facility</TITLE>
+<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC557" HREF="ciao_toc.html#TOC557">The Ciao lpmake scripting facility</A></H1>
-
+<H1><A NAME="SEC583" HREF="ciao_toc.html#TOC583">Calling emacs from Prolog</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
-
-
-<P>
- 
+<A NAME="IDX6277"></A>
 
 
 <P>
-<STRONG>Note:</STRONG> 
-<A NAME="IDX6015"></A>
-<CODE>lpmake</CODE> and the 
-<A NAME="IDX6016"></A>
-<CODE>make</CODE> library are still under active development, and they may change substantially in future releases. 
+<STRONG>Version:</STRONG> 1.7#38 (2001/1/5, 18:30:5 CET)
 
 
 <P>
-<A NAME="IDX6017"></A>
-<CODE>lpmake</CODE> is a Ciao application which uses the Ciao 
-<A NAME="IDX6018"></A>
-<CODE>make</CODE> library to implement a dependency-driven scripts in a similar way to the Unix 
-<A NAME="IDX6019"></A>
-<CODE>make</CODE> facility. 
+<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
 
 
 <P>
-The original purpose of the Unix 
-<A NAME="IDX6020"></A>
-<CODE>make</CODE> utility was to determine automatically which pieces of a large program needed to be recompiled, and issue the commands to recompile them. In fact, 
-<A NAME="IDX6021"></A>
-<CODE>make</CODE> is often used for many other purposes: it can be used to describe any task where some files must be updated automatically from others whenever the others change. 
+This library provides a 
+<A NAME="IDX6278"></A>
+<A NAME="IDX6279"></A>
+<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
+<A NAME="IDX6280"></A>
+emacs mode, which is used to develop programs from within the 
+<A NAME="IDX6281"></A>
+<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
+<A NAME="IDX6282"></A>
+<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
+<A NAME="IDX6283"></A>
+<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
+
+
+
+<UL>
+
+<LI>Visit a file, which can then be edited.
+
+<LI>Execute arbitrary
+
+<A NAME="IDX6284"></A>
+<A NAME="IDX6285"></A>
+<EM>emacs lisp</EM> code, sent from Prolog. 
+
+</UL>
+
+<P>
+In order for this library to work correctly, the following is needed: 
+
+
+
+<UL>
+
+<LI>You should be running the
+
+<A NAME="IDX6286"></A>
+<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
+
+<LI>This
+
+<A NAME="IDX6287"></A>
+<CODE>emacs</CODE> should be running the 
+<A NAME="IDX6288"></A>
+<A NAME="IDX6289"></A>
+<EM>emacs server</EM>. This can be done by including the following line in your 
+<A NAME="IDX6290"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<PRE>
+;; Start a server that emacsclient can connect to.
+(server-start)
+</PRE>
+
+Or typing <CODE>M-x server-start</CODE> within 
+<A NAME="IDX6291"></A>
+<CODE>emacs</CODE>. 
+
+</UL>
+
+<P>
+This suffices for using 
+<A NAME="IDX6292"></A>
+<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
+<A NAME="IDX6293"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<DL COMPACT>
+
+<DT><CODE>(setq enable-local-eval t)</CODE>
+<DD>
+Allows executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval nil)</CODE>
+<DD>
+Does not allow executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
+<DD>
+Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
+
+</DL>
+
+<P>
+<STRONG>Examples:</STRONG> 
 
 
 <P>
-To prepare to use 
-<A NAME="IDX6022"></A>
-<CODE>lpmake</CODE>, you must write a file (typically called 
-<A NAME="IDX6023"></A>
-<CODE>Makefile.pl</CODE>) that describes the relationships among files in your program or application, and states the commands for updating each file. In a program, typically the executable file is updated from object files, which are in turn made by compiling source files. 
+Assuming that a <CODE>.pl</CODE> file loads this library, then: 
+
+
+<DL COMPACT>
+
+<DT><CODE>..., emacs_edit('foo'), ...</CODE>
+<DD>
+Opens file <CODE>foo</CODE> for editing in 
+<A NAME="IDX6294"></A>
+<CODE>emacs</CODE>. 
+
+<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
+<DD>
+Starts execution of a Ciao top-level within 
+<A NAME="IDX6295"></A>
+<CODE>emacs</CODE>. 
+
+</DL>
+
+
+<UL>
+<LI><A HREF="ciao_144.html#SEC584">Usage and interface (emacs)</A>
+<LI><A HREF="ciao_144.html#SEC585">Documentation on exports (emacs)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC584" HREF="ciao_toc.html#TOC584">Usage and interface (<CODE>emacs</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(emacs)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX6296"></A>
+<CODE>emacs_edit/1</CODE>, 
+<A NAME="IDX6297"></A>
+<CODE>emacs_edit_nowait/1</CODE>, 
+<A NAME="IDX6298"></A>
+<CODE>emacs_eval/1</CODE>, 
+<A NAME="IDX6299"></A>
+<CODE>emacs_eval_nowait/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6300"></A>
+<CODE>elisp_string/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6301"></A>
+<CODE>hiord_rt</CODE>, 
+<A NAME="IDX6302"></A>
+<CODE>metaterms</CODE>, 
+<A NAME="IDX6303"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6304"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX6305"></A>
+<CODE>system</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC585" HREF="ciao_toc.html#TOC585">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
+<P>
+<A NAME="IDX6306"></A>
+<A NAME="IDX6307"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
+<DD><A NAME="IDX6308"></A>
 
 
 <P>
-Once a suitable makefile exists, each time you change some source files, simply typing <CODE>lpmake</CODE> suffices to perform all necessary recompilations. The 
-<A NAME="IDX6024"></A>
-<CODE>make</CODE> program uses the makefile data base and the last modification times of the files to decide which of the files need to be updated. For each of those files, it issues the commands recorded in the data base. 
+<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX6309"></A>
+<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6310"></A>
+<A NAME="IDX6311"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
+<DD><A NAME="IDX6312"></A>
 
 
 <P>
-<A NAME="IDX6025"></A>
-<CODE>lpmake</CODE> executes commands in the 
-<A NAME="IDX6026"></A>
-<CODE>Makefile.pl</CODE> to update one or more target <EM>names</EM>, where <EM>name</EM> is typically a program, but can also be a file to be generated or even a "virtual" target. If no <CODE>-l</CODE> or <CODE>-m</CODE> options are present, 
-<A NAME="IDX6027"></A>
-<CODE>lpmake</CODE> will look for the makefile 
-<A NAME="IDX6028"></A>
-<CODE>Makefile.pl</CODE>. 
+<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX6313"></A>
+<CODE>emacs</CODE> and continues without waiting for editing to finish. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6314"></A>
+<A NAME="IDX6315"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
+<DD><A NAME="IDX6316"></A>
 
 
 <P>
-<A NAME="IDX6029"></A>
-<CODE>lpmake</CODE> updates a target if it depends on prerequisite files that have been modified since the target was last modified, or if the target does not exist. 
+<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6317"></A>
+<A NAME="IDX6318"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
+<DD><A NAME="IDX6319"></A>
 
 
 <P>
-You can provide command line arguments to 
-<A NAME="IDX6030"></A>
-<CODE>lpmake</CODE> to control which files should be regenerated, or how. 
+<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6320"></A>
+<A NAME="IDX6321"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
+<DD><A NAME="IDX6322"></A>
 
 
 <P>
-<STRONG>Note:</STRONG> if you use 
-<A NAME="IDX6031"></A>
-<CODE>make</CODE> and 
-<A NAME="IDX6032"></A>
-<CODE>functions</CODE>, then 
-<A NAME="IDX6033"></A>
-<CODE>make</CODE> should appear before 
-<A NAME="IDX6034"></A>
-<CODE>functions</CODE> in the list of packages. 
+<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
+
+<A NAME="IDX6323"></A>
+<CODE>emacs</CODE> lisp code. 
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

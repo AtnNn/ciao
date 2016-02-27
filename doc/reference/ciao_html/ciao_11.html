@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Customizing library paths and path aliases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
 <H1><A NAME="SEC89" HREF="ciao_toc.html#TOC89">Customizing library paths and path aliases</A></H1>
 <P>
-<A NAME="IDX830"></A>
+<A NAME="IDX827"></A>
 
 
 <P>
@@ -21,13 +21,13 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, 
 
 <P>
 This library provides means for customizing, from environment variables, the libraries and 
-<A NAME="IDX831"></A>
+<A NAME="IDX828"></A>
 path aliases known by an executable. Many applications of Ciao, including 
-<A NAME="IDX832"></A>
+<A NAME="IDX829"></A>
 <CODE>ciaoc</CODE>, 
-<A NAME="IDX833"></A>
+<A NAME="IDX830"></A>
 <CODE>ciaosh</CODE>, and 
-<A NAME="IDX834"></A>
+<A NAME="IDX831"></A>
 <CODE>ciao-shell</CODE> make use of this library. Note that if an executable is created dynamic, it will try to load its components at startup, before the procedures of this module can be invoked, so in this case all the components should be in standard locations.
 
 
@@ -57,14 +57,14 @@ path aliases known by an executable. Many applications of Ciao, including
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX835"></A>
+<A NAME="IDX832"></A>
 <CODE>get_alias_path/0</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX836"></A>
+<A NAME="IDX833"></A>
 <CODE>file_search_path/2</CODE>, 
-<A NAME="IDX837"></A>
+<A NAME="IDX834"></A>
 <CODE>library_directory/1</CODE>.
 
 </UL>
@@ -76,9 +76,9 @@ path aliases known by an executable. Many applications of Ciao, including
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX838"></A>
+<A NAME="IDX835"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX839"></A>
+<A NAME="IDX836"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -91,11 +91,11 @@ path aliases known by an executable. Many applications of Ciao, including
 
 <H2><A NAME="SEC91" HREF="ciao_toc.html#TOC91">Documentation on exports (<CODE>libpaths</CODE>)</A></H2>
 <P>
-<A NAME="IDX840"></A>
-<A NAME="IDX841"></A>
+<A NAME="IDX837"></A>
+<A NAME="IDX838"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>get_alias_path/0:</B>
-<DD><A NAME="IDX842"></A>
+<DD><A NAME="IDX839"></A>
 
 
 <P>
@@ -104,11 +104,11 @@ path aliases known by an executable. Many applications of Ciao, including
 
 <P>
 Consult the environment variable 'CIAOALIASPATH' and add facts to predicates 
-<A NAME="IDX843"></A>
+<A NAME="IDX840"></A>
 <CODE>library_directory/1</CODE> and 
-<A NAME="IDX844"></A>
+<A NAME="IDX841"></A>
 <CODE>file_search_path/2</CODE> to define new library paths and 
-<A NAME="IDX845"></A>
+<A NAME="IDX842"></A>
 path aliases. The format of 'CIAOALIASPATH' is a sequence of paths or alias assignments separated by colons, an alias assignment is the name of the alias, an '=' and the path represented by that alias (no blanks allowed). For example, given 
 
 <PRE>
@@ -125,10 +125,32 @@ the predicate will define /home/bardo/ciao as a library path and /usr/local/lib/
 
 <H2><A NAME="SEC92" HREF="ciao_toc.html#TOC92">Documentation on multifiles (<CODE>libpaths</CODE>)</A></H2>
 <P>
+<A NAME="IDX843"></A>
+<A NAME="IDX844"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_search_path/2:</B>
+<DD><A NAME="IDX845"></A>
+
+
+<P>
+See section <A HREF="ciao_24.html#SEC152">Basic file/stream handling</A>.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>dynamic</EM>.
+
+
+</DL>
+
+<P>
 <A NAME="IDX846"></A>
 <A NAME="IDX847"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>file_search_path/2:</B>
+<DT><span class="define">PREDICATE:</span> <B>library_directory/1:</B>
 <DD><A NAME="IDX848"></A>
 
 
@@ -146,29 +168,7 @@ The predicate is of type <EM>dynamic</EM>.
 
 </DL>
 
-<P>
-<A NAME="IDX849"></A>
-<A NAME="IDX850"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>library_directory/1:</B>
-<DD><A NAME="IDX851"></A>
-
-
-<P>
-See section <A HREF="ciao_24.html#SEC152">Basic file/stream handling</A>.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>dynamic</EM>.
-
-
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

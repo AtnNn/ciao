@@ -1,8 +1,7 @@
 
 include ../SETTINGS
-include ../COMMON
+include ../SHARED
 
-include $(SRC)/makefile-sysindep
 include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 # Beware: these must be .pl files: otherwise they may be eliminated on cleanup
@@ -14,7 +13,7 @@ SHSCRIPTS=ciao_get_arch collect_modules
 
 .pl:
 	@echo "Compiling $*.pl..." ; \
-	$(SETLOCALCOMPILER) $(CIAOC) -x $* ; \
+	$(SETLOCALCIAO) $(CIAOC) -x $* ; \
 	chmod $(EXECMODE) $* ; 
 
 all: comp_message $(PLUTILITIES)

@@ -27,13 +27,14 @@
 
         The graph has directed edges between the file names, the meaning 
         of which depends on the selected type of crossed-references. For
-        crossed-references of type @tt{whouses} edges go in the direction
-        of the ""use"" relation of the code, i.e., edge source uses (calls)
-        predicates (in edge label) defined in edge sink. For
-        crossed-references of type @tt{whodefs} edges go in the other 
-        direction, i.e., edge source defines predicates (in edge label)
-        which are used (called) in edge sink. A source sink @tt{0}
-        indicates that the edge has no real sink.
+        crossed-references of type @tt{whouses} edges point to files
+        that ""use"" predicates defined in the edge source, i.e., edge
+        source defines predicates (in edge label) which are used (called)
+        by edge sink. For crossed-references of type @tt{whodefs} edges
+        point to files that define predicates used by the edge source,
+        i.e., edge source uses (calls) predicates which are defined in 
+        edge sink. An edge sink @tt{0} indicates that the edge has no real
+        sink. 
 
         The library works as follows. The files which are
         taken into account to construct the graph are set by the
@@ -70,4 +71,9 @@ xrefs_ugraph(Xrefs,LGraph):-
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+61,2001/02/23,14:27*54+'CET'), "Changed
+   documentation about whodefs and whouses.  (Francisco Bueno Carrillo)").
+
 %-----------------------------------------------------------------------------
+
+

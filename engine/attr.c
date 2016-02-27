@@ -20,7 +20,7 @@
 
 /* declarations for global functions accessed here */
 
-#include "main_defs.h"
+#include "start_defs.h"
 #include "attr_defs.h"
 #include "stacks_defs.h"
 

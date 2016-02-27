@@ -3,8 +3,7 @@
 #------- CAUTION: any change in this directory should be also made in the
 #------- twin Makefile in ../lib
 include ../SETTINGS
-include ../COMMON
-include ../makefile-sysindep
+include ../SHARED
 #---------------------------------------------------------------------------
 STDLIBDIR = $(REALLIBDIR)/contrib
 ALLFILES = *
@@ -33,13 +32,13 @@ ciao_regular_libs:
 
 autolibs: 
 	'rm' -f all_modules all_module_messages
-	echo "set_prolog_flag(compresslib," $(COMPRESS_LIBS) ")." >> all_modules
+	echo "set_prolog_flag(compress_lib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
-	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
+	$(SETLOCALCIAO) $(CIAOSHELL) < all_modules > all_module_messages
 	'rm' -f all_module_messages
 
 # .pos, etc, not made now; they are copied from the distribution
-# 	$(SETLOCALCOMPILER); $(CIAOC) all_modules
+# 	$(SETLOCALCIAO); $(CIAOC) all_modules
 # 	/bin/rm -f all_modules.itf all_modules.po all_modules.dep all_modules
 
 

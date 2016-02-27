@@ -1,37 +1,82 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PiLLoW types</TITLE>
+<TITLE>The Ciao Prolog System               - Low level interface library to Tcl/Tk</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC443" HREF="ciao_toc.html#TOC443">PiLLoW types</A></H1>
+<H1><A NAME="SEC459" HREF="ciao_toc.html#TOC459">Low level interface library to Tcl/Tk</A></H1>
 <P>
-<A NAME="IDX4762"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX4814"></A>
 
 
 <P>
-Here are defined the regular types used in the documentation of the predicates of the PiLLoW package.
+<STRONG>Version:</STRONG> 1.7#74 (2001/3/26, 12:12:29 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#79 (1999/5/4, 20:18:41 MEST)
+
+
+<P>
+The 
+<A NAME="IDX4815"></A>
+<CODE>tcltk low level</CODE> library permit obtain the results of the 
+<A NAME="IDX4816"></A>
+<CODE>tcltk</CODE>. This module defines a low level interface to be used by the library Tcl/Tk. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a low-level connection to Tcl/Tk. 
 
 
 
 <UL>
-<LI><A HREF="ciao_112.html#SEC444">Usage and interface (pillow_types)</A>
-<LI><A HREF="ciao_112.html#SEC445">Documentation on exports (pillow_types)</A>
+<LI><A HREF="ciao_112.html#SEC460">How the Tcl/Tk interface works</A>
+<LI><A HREF="ciao_112.html#SEC461">Usage and interface (tcltk_low_level)</A>
+<LI><A HREF="ciao_112.html#SEC462">Documentation on exports (tcltk_low_level)</A>
+<LI><A HREF="ciao_112.html#SEC463">Documentation on internals (tcltk_low_level)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC444" HREF="ciao_toc.html#TOC444">Usage and interface (<CODE>pillow_types</CODE>)</A></H2>
+<H2><A NAME="SEC460" HREF="ciao_toc.html#TOC460">How the Tcl/Tk interface works</A></H2>
+<P>
+Two sockets are created in Tcl/Tk to connect the <EM>TclInterpreter</EM> and the prolog process, the <EM>event_socket</EM> and the <EM>term_socket</EM>. There are two global variables: <EM>prolog_variables</EM> and <EM>terms</EM>. The value of any of the variables in the goal that is bound to a term will be stored in the array prolog_variables with the variable name as index. The string which contains the printed representation of prolog <EM>terms</EM> is <EM>Terms</EM>. There are Tcl/Tk procedures used to develop the interface: 
+<DL COMPACT>
+
+<DT><CODE>prolog</CODE>
+<DD>
+Sends to <EM>term_socket</EM> the predicate tcl_result which contains the goal to execute. Returns the string execute and the goal. 
+<DT><CODE>prolog_event</CODE>
+<DD>
+Adds the new <EM>term</EM> to the <EM>terms</EM> queue. 
+<DT><CODE>prolog_delete_event</CODE>
+<DD>
+Deletes the first <EM>term</EM> of the <EM>terms</EM> queue. 
+<DT><CODE>prolog_list_events</CODE>
+<DD>
+Sends all the <EM>terms</EM> of the <EM>terms</EM> queue by the <EM>event_socket</EM>. The last element will be <EM>end_of_event_list</EM>. 
+<DT><CODE>prolog_cmd</CODE>
+<DD>
+Receives as an argument the tcltk code. Evaluates the code and returns throught the <EM>term_socket</EM> the predicate <EM>tcl_error</EM> if there was a mistake in the code or the predicate <EM>tcl_result</EM> with the result of the command executed. If the argument is <EM>prolog</EM> with a goal to execute, before finishing, the predicate evaluated by prolog is received. In order to get the value of the variables, predicates are compared using the <EM>unify_term</EM> procedure. Returs 0 when the sripts runs without errors, and 1 if there is an error. 
+<DT><CODE>prolog_one_event</CODE>
+<DD>
+Receives as an argument the <EM>term</EM> which is associated with one of the tk events. Sends through the <EM>event_socket</EM> the <EM>term</EM> and waits the unificated <EM>term</EM> by prolog. After that to obtain the value of the <EM>prolog_variables</EM>, calls the <EM>unify_term</EM> procedure. 
+<DT><CODE>prolog_thread_event</CODE>
+<DD>
+Receives as an argument the <EM>term</EM> which is associated with one of the tk events. Sends through the <EM>event_socket</EM> the <EM>term</EM> and waits the unificated <EM>term</EM> by prolog. After that to obtain the value of the <EM>prolog_variables</EM>, calls the <EM>unify_term</EM> procedure. In this case the <EM>term_socket</EM> is non blocking. 
+<DT><CODE>convert_variables</CODE>
+<DD>
+Receives as an argument, a string which contains symbols that can't be sends by the sockets. This procedure deletes them from the input string and returns the new string. 
+<DT><CODE>unify_term</CODE>
+<DD>
+Receives as arguments, a prolog term.
+
+
+
+<H2><A NAME="SEC461" HREF="ciao_toc.html#TOC461">Usage and interface (<CODE>tcltk_low_level</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,43 +84,63 @@ Here are defined the regular types used in the documentation of the predicates o
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(pillow_types)).</CODE>
+<CODE>:- use_module(library(tcltk_low_level)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX4763"></A>
-<CODE>canonic_html_term/1</CODE>, 
-<A NAME="IDX4764"></A>
-<CODE>canonic_xml_term/1</CODE>, 
-<A NAME="IDX4765"></A>
-<CODE>html_term/1</CODE>, 
-<A NAME="IDX4766"></A>
-<CODE>form_dict/1</CODE>, 
-<A NAME="IDX4767"></A>
-<CODE>form_assignment/1</CODE>, 
-<A NAME="IDX4768"></A>
-<CODE>form_value/1</CODE>, 
-<A NAME="IDX4769"></A>
-<CODE>value_dict/1</CODE>, 
-<A NAME="IDX4770"></A>
-<CODE>url_term/1</CODE>, 
-<A NAME="IDX4771"></A>
-<CODE>http_request_param/1</CODE>, 
-<A NAME="IDX4772"></A>
-<CODE>http_response_param/1</CODE>, 
-<A NAME="IDX4773"></A>
-<CODE>http_date/1</CODE>, 
-<A NAME="IDX4774"></A>
-<CODE>weekday/1</CODE>, 
-<A NAME="IDX4775"></A>
-<CODE>month/1</CODE>, 
-<A NAME="IDX4776"></A>
-<CODE>hms_time/1</CODE>.
+<A NAME="IDX4817"></A>
+<CODE>new_interp/1</CODE>, 
+<A NAME="IDX4818"></A>
+<CODE>new_interp/2</CODE>, 
+<A NAME="IDX4819"></A>
+<CODE>new_interp_file/2</CODE>, 
+<A NAME="IDX4820"></A>
+<CODE>tcltk/2</CODE>, 
+<A NAME="IDX4821"></A>
+<CODE>tcltk_raw_code/2</CODE>, 
+<A NAME="IDX4822"></A>
+<CODE>receive_result/2</CODE>, 
+<A NAME="IDX4823"></A>
+<CODE>send_term/2</CODE>, 
+<A NAME="IDX4824"></A>
+<CODE>receive_event/2</CODE>, 
+<A NAME="IDX4825"></A>
+<CODE>receive_list/2</CODE>, 
+<A NAME="IDX4826"></A>
+<CODE>receive_confirm/2</CODE>, 
+<A NAME="IDX4827"></A>
+<CODE>delete/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4828"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX4829"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX4830"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX4831"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX4832"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX4833"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX4834"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX4835"></A>
+<CODE>format</CODE>.
 
 </UL>
 
@@ -85,683 +150,304 @@ Here are defined the regular types used in the documentation of the predicates o
 
 
 
-<H2><A NAME="SEC445" HREF="ciao_toc.html#TOC445">Documentation on exports (<CODE>pillow_types</CODE>)</A></H2>
+<H2><A NAME="SEC462" HREF="ciao_toc.html#TOC462">Documentation on exports (<CODE>tcltk_low_level</CODE>)</A></H2>
 <P>
-<A NAME="IDX4777"></A>
-<A NAME="IDX4778"></A>
+<A NAME="IDX4836"></A>
+<A NAME="IDX4837"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_html_term/1:</B>
-<DD><A NAME="IDX4779"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
+<DD><A NAME="IDX4838"></A>
 
 
 <P>
-A term representing HTML code in canonical, structured way. It is a list of terms defined by the following predicate: 
-
-<PRE>
-canonic_html_item(comment(S)) :-
-        string(S).
-canonic_html_item(declare(S)) :-
-        string(S).
-canonic_html_item(env(Tag,Atts,Terms)) :-
-        atm(Tag),
-        list(Atts,tag_attrib),
-        canonic_html_term(Terms).
-canonic_html_item($(Tag,Atts)) :-
-        atm(Tag),
-        list(Atts,tag_attrib).
-canonic_html_item(S) :-
-        string(S).
-</PRE>
-
-
-<PRE>
-tag_attrib(Att) :-
-        atm(Att).
-tag_attrib(Att=Val) :-
-        atm(Att),
-        string(Val).
-</PRE>
-
-<P>
-Each structure represents one HTML construction: 
-<DL COMPACT>
-
-<DT><STRONG>env(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>attribs</EM><STRONG>,</STRONG><EM>terms</EM><STRONG>)</STRONG>
-<DD>
-An HTML environment, with name <EM>tag</EM>, list of attributes <EM>attribs</EM> and contents <EM>terms</EM>. 
-
-<DT><STRONG>$(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>attribs</EM><STRONG>)</STRONG>
-<DD>
-An HTML element of name <EM>tag</EM> and list of attributes <EM>attribs</EM>. <CODE>($)/2</CODE> is defined by the pillow package as an infix, binary operator. 
-
-<DT><STRONG>comment(</STRONG><EM>string</EM><STRONG>)</STRONG>
-<DD>
-An HTML comment (translates to/from <CODE>&#60;!--</CODE><EM>string</EM><CODE>--&#62;</CODE>). 
-
-<DT><STRONG>declare(</STRONG><EM>string</EM><STRONG>)</STRONG>
-<DD>
-An HTML declaration, they are used only in the header (translates to/from <CODE>&#60;!</CODE><EM>string</EM><CODE>&#62;</CODE>). 
-
-<DT><EM>string</EM>
-<DD>
-Normal text is represented as a list of character codes. 
-
-</DL>
-
-<P>
-For example, the term 
-
-<PRE>
-env(a,[href="www.therainforestsite.com"],
-      ["Visit ",img$[src="TRFS.gif"]])
-</PRE>
-
-<P>
-is output to (or parsed from): 
-
-<PRE>
-&#60;a href="www.therainforestsite.com"&#62;Visit &#60;img src="TRFS.gif"&#62;&#60;/a&#62;
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>canonic_html_term(HTMLTerm)</CODE>
+<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>HTMLTerm</CODE> is a term representing HTML code in canonical form.
+<LI><EM>Description:</EM> Creates two sockets to connect to the <EM>wish</EM> process, the term socket and the event socket and opens a pipe to process <EM>wish</EM> in a new shell.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4780"></A>
-<A NAME="IDX4781"></A>
+<A NAME="IDX4839"></A>
+<A NAME="IDX4840"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>canonic_xml_term/1:</B>
-<DD><A NAME="IDX4782"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/2:</B>
+<DD><A NAME="IDX4841"></A>
 
 
 <P>
-A term representing XML code in canonical, structured way. It is a list of terms defined by the following predicate (see 
-<A NAME="IDX4783"></A>
-<CODE>tag_attrib/1</CODE> definition in 
-<A NAME="IDX4784"></A>
-<CODE>canonic_html_term/1</CODE>): 
-
-<PRE>
-canonic_xml_item(Term) :-
-        canonic_html_item(Term).
-canonic_xml_item(xmldecl(Atts)) :-
-        list(Atts,tag_attrib).
-canonic_xml_item(env(Tag,Atts,Terms)) :-
-        atm(Tag),
-        list(Atts,tag_attrib),
-        canonic_xml_term(Terms).
-canonic_xml_item(elem(Tag,Atts)) :-
-        atm(Tag),
-        list(Atts,tag_attrib).
-</PRE>
-
-<P>
-In addition to the structures defined by 
-<A NAME="IDX4785"></A>
-<CODE>canonic_html_term/1</CODE> (the <CODE>($)/2</CODE> structure appears only in malformed XML code), the following structures can be used: 
-<DL COMPACT>
-
-<DT><STRONG>elem(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies an XML empty element of name <EM>tag</EM> and list of attributes <EM>atts</EM>. For example, the term 
-
-<PRE>
-elem(arc,[weigh="3",begin="n1",end="n2"])
-</PRE>
-
-is output to (or parsed from): 
-
-<PRE>
-&#60;arc weigh="3" begin="n1" end="n2"/&#62;
-</PRE>
-
-<DT><STRONG>xmldecl(</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies an XML declaration with attributes <EM>atts</EM> (translates to/from <CODE>&#60;?xml </CODE><EM>atts</EM><CODE>?&#62;</CODE>) 
-
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>canonic_xml_term(XMLTerm)</CODE>
+<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter,+Options)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>XMLTerm</CODE> is a term representing XML code in canonical form.
+<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with the <CODE>Options</CODE>.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
+
+<CODE>+Options</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4786"></A>
-<A NAME="IDX4787"></A>
+<A NAME="IDX4842"></A>
+<A NAME="IDX4843"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>html_term/1:</B>
-<DD><A NAME="IDX4788"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp_file/2:</B>
+<DD><A NAME="IDX4844"></A>
 
 
 <P>
-A term which represents HTML or XML code in a structured way. In addition to the structures defined by 
-<A NAME="IDX4789"></A>
-<CODE>canonic_html_term/1</CODE> or 
-<A NAME="IDX4790"></A>
-<CODE>canonic_xml_term/1</CODE>, the following structures can be used: 
-<DL COMPACT>
-
-<DT><STRONG>begin(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-It translates to the start of an HTML environment of name <EM>tag</EM> and attributes <EM>atts</EM>. There exists also a <STRONG>begin(<EM>tag</EM>)</STRONG> structure. Useful, in conjunction with the next structure, when including in a document output generated by an existing piece of code (e.g. <EM>tag</EM> = <CODE>pre</CODE>). Its use is otherwise discouraged. 
-
-<DT><STRONG>end(</STRONG><EM>tag</EM><STRONG>)</STRONG>
-<DD>
-Translates to the end of an HTML environment of name <EM>tag</EM>. 
-
-<DT><STRONG>start</STRONG>
-<DD>
-Used at the beginning of a document (translates to <CODE>&#60;html&#62;</CODE>). 
-
-<DT><STRONG>end</STRONG>
-<DD>
-Used at the end of a document (translates to <CODE>&#60;/html&#62;</CODE>). 
-
-<DT><CODE>--</CODE>
-<DD>
-Produces a horizontal rule (translates to <CODE>&#60;hr&#62;</CODE>). 
-
-<DT><STRONG>\\</STRONG>
-<DD>
-Produces a line break (translates to <CODE>&#60;br&#62;</CODE>). 
-
-<DT><STRONG>$</STRONG>
-<DD>
-Produces a paragraph break (translates to <CODE>&#60;p&#62;</CODE>). 
-
-<DT><STRONG>image(</STRONG><EM>address</EM><STRONG>)</STRONG>
-<DD>
-Used to include an image of address (URL) <EM>address</EM> (equivalent to <CODE>img$[src=</CODE><EM>address</EM><CODE>]</CODE>). 
-
-<DT><STRONG>image(</STRONG><EM>address</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-As above with the list of attributes <EM>atts</EM>. 
-
-<DT><STRONG>ref(</STRONG><EM>address</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Produces a hypertext link, <EM>address</EM> is the URL of the referenced resource, <EM>text</EM> is the text of the reference (equivalent to <CODE>a([href=</CODE><EM>address</EM><CODE>],</CODE><EM>text</EM><CODE>)</CODE>). 
-
-<DT><STRONG>label(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Labels <EM>text</EM> as a target destination with label <EM>name</EM> (equivalent to <CODE>a([name=</CODE><EM>name</EM><CODE>],</CODE><EM>text</EM><CODE>)</CODE>). 
-
-<DT><STRONG>heading(</STRONG><EM>n</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Produces a heading of level <EM>n</EM> (between 1 and 6), <EM>text</EM> is the text to be used as heading. Useful when one wants a heading level relative to another heading (equivalent to <CODE>h</CODE><EM>n</EM><CODE>(</CODE><EM>text</EM><CODE>)</CODE>). 
-
-<DT><STRONG>itemize(</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of bulleted items, <EM>items</EM> is a list of corresponding HTML terms (translates to a <CODE>&#60;ul&#62;</CODE> environment). 
-
-<DT><STRONG>enumerate(</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of numbered items, <EM>items</EM> is a list of corresponding HTML terms (translates to a <CODE>&#60;ol&#62;</CODE> environment). 
-
-<DT><STRONG>description(</STRONG><EM>defs</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of defined items, <EM>defs</EM> is a list whose elements are definitions, each of them being a Prolog sequence (composed by <CODE>','/2</CODE> operators). The last element of the sequence is the definition, the other (if any) are the defined terms (translates to a <CODE>&#60;dl&#62;</CODE> environment). 
-
-<DT><STRONG>nice_itemize(</STRONG><EM>img</EM><STRONG>,</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Produces a list of bulleted items, using the image <EM>img</EM> as bullet. The predicate 
-<A NAME="IDX4791"></A>
-<CODE>icon_address/2</CODE> provides a colored bullet. 
-
-<DT><STRONG>preformatted(</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Used to include preformatted text, <EM>text</EM> is a list of HTML terms, each element of the list being a line of the resulting document (translates to a <CODE>&#60;pre&#62;</CODE> environment). 
-
-<DT><STRONG>verbatim(</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Used to include text verbatim, special HTML characters (<CODE>&#60;,&#62;,&#38;,"</CODE> and space) are translated into its quoted HTML equivalent. 
-
-<DT><STRONG>prolog_term(</STRONG><EM>term</EM><STRONG>)</STRONG>
-<DD>
-Includes any prolog term <EM>term</EM>, represented in functional notation. Variables are output as <CODE>_</CODE>. 
-
-<DT><STRONG>nl</STRONG>
-<DD>
-Used to include a newline in the HTML source (just to improve human readability). 
-
-<DT><STRONG>entity(</STRONG><EM>name</EM><STRONG>)</STRONG>
-<DD>
-Includes the entity of name <EM>name</EM> (ISO-8859-1 special character). 
-
-<DT><STRONG>start_form(</STRONG><EM>addr</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies the beginning of a form. <EM>addr</EM> is the address (URL) of the program that will handle the form, and <EM>atts</EM> other attributes of the form, as the method used to invoke it. If <EM>atts</EM> is not present (there is only one argument) the method defaults to POST. 
-
-<DT><STRONG>start_form</STRONG>
-<DD>
-Specifies the beginning of a form without assigning address to the handler, so that the form handler will be the cgi-bin executable producing the form. 
-
-<DT><STRONG>end_form</STRONG>
-<DD>
-Specifies the end of a form. 
-
-<DT><STRONG>checkbox(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>state</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input of type <CODE>checkbox</CODE> with name <EM>name</EM>, <EM>state</EM> is <CODE>on</CODE> if the checkbox is initially checked. 
-
-<DT><STRONG>radio(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>value</EM><STRONG>,</STRONG><EM>selected</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input of type <CODE>radio</CODE> with name <EM>name</EM> (several radio buttons which are interlocked must share their name), <EM>value</EM> is the the value returned by the button, if <EM>selected</EM>=<EM>value</EM> the button is initially checked. 
-
-<DT><STRONG>input(</STRONG><EM>type</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input of type <EM>type</EM> with a list of attributes <EM>atts</EM>. Possible values of <EM>type</EM> are <CODE>text</CODE>, <CODE>hidden</CODE>, <CODE>submit</CODE>, <CODE>reset</CODE>, ldots 
-
-<DT><STRONG>textinput(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-Specifies an input text area of name <EM>name</EM>. <EM>text</EM> provides the default text to be shown in the area, <EM>atts</EM> a list of attributes. 
-
-<DT><STRONG>option(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>val</EM><STRONG>,</STRONG><EM>options</EM><STRONG>)</STRONG>
-<DD>
-Specifies a simple option selector of name <EM>name</EM>, <EM>options</EM> is the list of available options and <EM>val</EM> is the initial selected option (if <EM>val</EM> is not in <EM>options</EM> the first item is selected by default) (translates to a <CODE>&#60;select&#62;</CODE> environment). 
-
-<DT><STRONG>menu(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>items</EM><STRONG>)</STRONG>
-<DD>
-Specifies a menu of name <EM>name</EM>, list of attributes <EM>atts</EM> and list of options <EM>items</EM>. The elements of the list <EM>items</EM> are marked with the prefix operator <CODE>$</CODE> to indicate that they are selected (translates to a <CODE>&#60;select&#62;</CODE> environment). 
-
-<DT><STRONG>form_reply</STRONG>
-<DD>
-<DT><STRONG>cgi_reply</STRONG>
-<DD>
-This two are equivalent, they do not generate HTML, rather, the CGI protocol requires this content descriptor to be used at the beginning by CGI executables (including form handlers) when replying (translates to <CODE>Content-type: text/html</CODE>). 
-
-<DT><STRONG>pr</STRONG>
-<DD>
-Includes in the page a graphical logo with the message "Developed using the PiLLoW Web programming library", which points to the manual and library source. 
-
-<DT><EM>name</EM><STRONG>(</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-A term with functor <EM>name</EM>/1, different from the special functors defined herein, represents an HTML environment of name <EM>name</EM> and included text <EM>text</EM>. For example, the term 
-
-<PRE>
-   address('clip@clip.dia.fi.upm.es')
-</PRE>
-
-is translated into the HTML source 
-
-<PRE>
-   &#60;address&#62;clip@clip.dia.fi.upm.es&#60;/address&#62;
-</PRE>
-
-<DT><EM>name</EM><STRONG>(</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
-<DD>
-A term with functor <EM>name</EM>/2, different from the special functors defined herein, represents an HTML environment of name <EM>name</EM>, attributes <EM>atts</EM> and included text <EM>text</EM>. For example, the term 
-
-<PRE>
-
-   a([href='http://www.clip.dia.fi.upm.es/'],"Clip home")
-</PRE>
-
-represents the HTML source 
-
-<PRE>
-   &#60;a href="http://www.clip.dia.fi.upm.es/"&#62;Clip home&#60;/a&#62;
-</PRE>
-
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>html_term(HTMLTerm)</CODE>
+<STRONG>Usage:</STRONG> <CODE>new_interp_file(+FileName,-TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>HTMLTerm</CODE> is a term representing HTML code.
+<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with a <CODE>FileName</CODE>. <CODE>FileName</CODE> is treated as a name of a sript file
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4792"></A>
-<A NAME="IDX4793"></A>
+<A NAME="IDX4845"></A>
+<A NAME="IDX4846"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>form_dict/1:</B>
-<DD><A NAME="IDX4794"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcltk/2:</B>
+<DD><A NAME="IDX4847"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>form_dict(Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tcltk(+Code,+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Dict</CODE> is a dictionary of values of the attributes of a form. It is a list of <CODE>form_assignment</CODE>
+<LI><EM>Description:</EM> Sends the <CODE>Code</CODE> converted to string to the <CODE>TclInterpreter</CODE>
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Code</CODE> is a <EM>Tcl</EM> command.
+ (<CODE>tcltk_low_level:tclCommand/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4795"></A>
-<A NAME="IDX4796"></A>
+<A NAME="IDX4848"></A>
+<A NAME="IDX4849"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>form_assignment/1:</B>
-<DD><A NAME="IDX4797"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
+<DD><A NAME="IDX4850"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>form_assignment(Eq)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tcltk_raw_code(+String,+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Eq</CODE> is an assignment of value of an attribute of a form. It is defined by:
+<LI><EM>Description:</EM> Sends the tcltk code items of the <CODE>Stream</CODE> to the <CODE>TclInterpreter</CODE>
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<PRE>
-form_assignment(A=V) :-
-        atm(A),
-        form_value(V).
-</PRE>
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 
-
-<PRE>
-form_value(A) :-
-        atm(A).
-form_value(N) :-
-        num(N).
-form_value(L) :-
-        list(L,string).
-</PRE>
-
- 
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4798"></A>
-<A NAME="IDX4799"></A>
+<A NAME="IDX4851"></A>
+<A NAME="IDX4852"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>form_value/1:</B>
-<DD><A NAME="IDX4800"></A>
+<DT><span class="define">PREDICATE:</span> <B>receive_result/2:</B>
+<DD><A NAME="IDX4853"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>form_value(V)</CODE>
+<STRONG>Usage:</STRONG> <CODE>receive_result(-Result,+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>V</CODE> is a value of an attribute of a form.
+<LI><EM>Description:</EM> Receives the <CODE>Result</CODE> of the last <EM>TclCommand</EM> into the <CODE>TclInterpreter</CODE>. If the <EM>TclCommand</EM> is not correct the <EM>wish</EM> process is terminated and a message appears showing the error
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Result</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4801"></A>
-<A NAME="IDX4802"></A>
+<A NAME="IDX4854"></A>
+<A NAME="IDX4855"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>value_dict/1:</B>
-<DD><A NAME="IDX4803"></A>
+<DT><span class="define">PREDICATE:</span> <B>send_term/2:</B>
+<DD><A NAME="IDX4856"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>value_dict(Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>send_term(+String,+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Dict</CODE> is a dictionary of values. It is a list of pairs <EM>atom</EM>=<EM>constant</EM>.
+<LI><EM>Description:</EM> Sends the goal executed to the <CODE>TclInterpreter</CODE>. <CODE>String</CODE> has the predicate with unified variables
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4804"></A>
-<A NAME="IDX4805"></A>
+<A NAME="IDX4857"></A>
+<A NAME="IDX4858"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>url_term/1:</B>
-<DD><A NAME="IDX4806"></A>
+<DT><span class="define">PREDICATE:</span> <B>receive_event/2:</B>
+<DD><A NAME="IDX4859"></A>
 
 
 <P>
-A term specifying an Internet Uniform Resource Locator. Currently only HTTP URLs are supported. Example: <CODE>http('www.clip.dia.fi.upm.es',80,"/Software/Ciao/")</CODE>. Defined as 
-
-<PRE>
-url_term(http(Host,Port,Document)) :-
-        atm(Host),
-        int(Port),
-        string(Document).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>url_term(URL)</CODE>
+<STRONG>Usage:</STRONG> <CODE>receive_event(-Event,+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>URL</CODE> specifies a URL.
+<LI><EM>Description:</EM> Receives the <CODE>Event</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Event</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4807"></A>
-<A NAME="IDX4808"></A>
+<A NAME="IDX4860"></A>
+<A NAME="IDX4861"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>http_request_param/1:</B>
-<DD><A NAME="IDX4809"></A>
+<DT><span class="define">PREDICATE:</span> <B>receive_list/2:</B>
+<DD><A NAME="IDX4862"></A>
 
 
 <P>
-A parameter of an HTTP request: 
+<STRONG>Usage:</STRONG> <CODE>receive_list(-List,+TclInterpreter)</CODE>
 
 <UL>
-<LI><STRONG>head:</STRONG> Specify that the document content is not wanted.
+<LI><EM>Description:</EM> Receives the <CODE>List</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.The <CODE>List</CODE> has all the predicates that have been inserted from Tcl/Tk with the command prolog_event. It is a list of terms.
 
-<LI><STRONG>timeout(</STRONG><EM>T</EM><STRONG>):</STRONG> <EM>T</EM> specifies the time in seconds to wait for the response. Default is 300 seconds.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI><STRONG>if_modified_since(</STRONG><EM>Date</EM><STRONG>):</STRONG> Get document only if newer than <EM>Date</EM>. <EM>Date</EM> has the format defined by
+<CODE>-List</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 
-<A NAME="IDX4810"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>user_agent(</STRONG><EM>Agent</EM><STRONG>):</STRONG> Provides a user-agent field, <EM>Agent</EM> is an atom. The string <CODE>"PiLLoW/1.1"</CODE> (or whatever version of PiLLoW is used) is appended.
-
-<LI><STRONG>authorization(</STRONG><EM>Scheme</EM>,<EM>Params</EM><STRONG>):</STRONG> To provide credentials. See RFC 1945 for details.
-
-<LI><STRONG><EM>option</EM>(</STRONG><EM>Value</EM><STRONG>):</STRONG> Any unary term, being <EM>Value</EM> an atom, can be used to provide another valid option (e.g. <CODE>from('user@machine')</CODE>).
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>http_request_param(Request)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Request</CODE> is a parameter of an HTTP request.
-
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4811"></A>
-<A NAME="IDX4812"></A>
+<A NAME="IDX4863"></A>
+<A NAME="IDX4864"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>http_response_param/1:</B>
-<DD><A NAME="IDX4813"></A>
+<DT><span class="define">PREDICATE:</span> <B>receive_confirm/2:</B>
+<DD><A NAME="IDX4865"></A>
 
 
 <P>
-A parameter of an HTTP response: 
+<STRONG>Usage:</STRONG> <CODE>receive_confirm(-String,+TclInterpreter)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Receives the <CODE>String</CODE> from the event socket of the <CODE>TclInterpreter</CODE> when a term inserted into the event queue is managed.
 
-<LI><STRONG>content(</STRONG><EM>String</EM><STRONG>):</STRONG> <EM>String</EM> is the document content (list of bytes). If the <CODE>head</CODE> parameter of the HTTP request is used, an empty list is get here.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI><STRONG>status(</STRONG><EM>Type,Code,Reason</EM><STRONG>):</STRONG> <EM>Type</EM> is an atom denoting the response type, <EM>Code</EM> is the status code (an integer), and <EM>Reason</EM> is a string holding the reason phrase.
+<CODE>-String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 
-<LI><STRONG>message_date(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date of the response, with format defined by
-
-<A NAME="IDX4814"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>location(</STRONG><EM>Loc</EM><STRONG>):</STRONG> This parameter appears when the document has moved, <EM>Loc</EM> is an atom holding the new location.
-
-<LI><STRONG>http_server(</STRONG><EM>Server</EM><STRONG>):</STRONG> <EM>Server</EM> is the server responding, as a string.
-
-<LI><STRONG>authenticate(</STRONG><EM>Params</EM><STRONG>):</STRONG> Returned if document is protected, <EM>Params</EM> is a list of chagenges. See RFC 1945 for details.
-
-<LI><STRONG>allow(</STRONG><EM>Methods</EM><STRONG>):</STRONG> <EM>Methods</EM> are the methods allowed by the server, as a list of atoms.
-
-<LI><STRONG>content_encoding(</STRONG><EM>Encoding</EM><STRONG>):</STRONG> <EM>Encoding</EM> is an atom defining the encoding.
-
-<LI><STRONG>content_length(</STRONG><EM>Length</EM><STRONG>):</STRONG> <EM>Length</EM> is the length of the document (an integer).
-
-<LI><STRONG>content_type(</STRONG><EM>Type,Subtype,Params</EM><STRONG>):</STRONG> Specifies the document content type, <EM>Type</EM> and <EM>Subtype</EM> are atoms, <EM>Params</EM> a list of parameters (e.g. <CODE>content_type(text,html,[])</CODE>).
-
-<LI><STRONG>expires(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date after which the entity should be considered stale. Format defined by
-
-<A NAME="IDX4815"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>last_modified(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date at which the sender believes the resource was last modified. Format defined by
-
-<A NAME="IDX4816"></A>
-<CODE>http_date/1</CODE>. 
-
-<LI><STRONG>pragma(</STRONG><EM>String</EM><STRONG>):</STRONG> Miscellaneous data.
-
-<LI><STRONG><EM>header</EM>(</STRONG><EM>String</EM><STRONG>):</STRONG> Any other functor <EM>header</EM>/1 is an extension header.
-
-</UL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>http_response_param(Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Response</CODE> is a parameter of an HTTP response.
-
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4817"></A>
-<A NAME="IDX4818"></A>
+<A NAME="IDX4866"></A>
+<A NAME="IDX4867"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>http_date/1:</B>
-<DD><A NAME="IDX4819"></A>
+<DT><span class="define">PREDICATE:</span> <B>delete/1:</B>
+<DD><A NAME="IDX4868"></A>
 
 
 <P>
-<CODE>http_date(Date)</CODE>
-
-
-<P>
-<CODE>Date</CODE> is a term defined as 
-
-<PRE>
-http_date(date(WeekDay,Day,Month,Year,Time)) :-
-        weekday(WeekDay),
-        int(Day),
-        month(Month),
-        int(Year),
-        hms_time(Time).
-</PRE>
-
-<P>
-.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>http_date(Date)</CODE>
+<STRONG>Usage:</STRONG> <CODE>delete(+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Date</CODE> is a term denoting a date.
+<LI><EM>Description:</EM> Terminates the <EM>wish</EM> process and closes pipe, term socket and event socket. Deletes the interpreter <CODE>TclInterpreter</CODE> from the system
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC463" HREF="ciao_toc.html#TOC463">Documentation on internals (<CODE>tcltk_low_level</CODE>)</A></H2>
 <P>
-<A NAME="IDX4820"></A>
-<A NAME="IDX4821"></A>
+<A NAME="IDX4869"></A>
+<A NAME="IDX4870"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>weekday/1:</B>
-<DD><A NAME="IDX4822"></A>
+<DT><span class="define">PREDICATE:</span> <B>core/1:</B>
+<DD><A NAME="IDX4871"></A>
 
 
 <P>
-A regular type, defined as follows:
-
-<PRE>
-
-<PRE>
-weekday('Monday').
-weekday('Tuesday').
-weekday('Wednesday').
-weekday('Thursday').
-weekday('Friday').
-weekday('Saturday').
-weekday('Sunday').
-</PRE>
-
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX4823"></A>
-<A NAME="IDX4824"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>month/1:</B>
-<DD><A NAME="IDX4825"></A>
-
-
-<P>
-A regular type, defined as follows:
-
-<PRE>
-
-<PRE>
-month('January').
-month('February').
-month('March').
-month('April').
-month('May').
-month('June').
-month('July').
-month('August').
-month('September').
-month('October').
-month('November').
-month('December').
-</PRE>
-
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX4826"></A>
-<A NAME="IDX4827"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>hms_time/1:</B>
-<DD><A NAME="IDX4828"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>hms_time(Time)</CODE>
+<STRONG>Usage:</STRONG> <CODE>core(+String)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Time</CODE> is an atom of the form <CODE>hh:mm:ss</CODE>
+<LI><EM>Description:</EM>
 
+<A NAME="IDX4872"></A>
+<CODE>core/1</CODE> is a set of facts which contain <CODE>String</CODE>s to be sent to the Tcl/Tk interpreter on startup. They implement miscelaneous Tcl/Tk procedures which are used by the Tcl/Tk interface. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

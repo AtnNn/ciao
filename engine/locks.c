@@ -3,14 +3,15 @@
  * Author          : Manuel Carro
  * Created On      : Wed Nov 19 20:03:55 1997
  * Last Modified By: MCL
- * Last Modified On: Tue May 30 19:24:24 2000
- * Update Count    : 214
+ * Last Modified On: Mon Feb 12 14:56:46 2001
+ * Update Count    : 232
  * Status          : Unknown, Use with caution!
  */
 
 
 #include "datadefs.h"                      
 #include "support.h"                      
+#include "threads.h"                      
 
 /* declarations for global functions accessed here */
 
@@ -165,16 +166,26 @@ BOOL prolog_unlock_predicate(Arg)
   struct int_info *root = TagToRoot(X(0));
 
 #if defined(DEBUG)
-  if (debug_conc && 
-      root->behavior_on_failure == CONC_OPEN &&
-      Cond_Lock_is_unset(root->clause_insertion_cond))
-    fprintf(stderr,
-      "WARNING: In unlock_predicate, root is %x, predicate is unlocked!!!!\n", 
-            (unsigned int)root);
-#endif
+  if (debug_conc) {
+    fprintf(stderr, "*** %d(%d) unlocking predicate, root is %x\n",
+            (int)Thread_Id, (int)GET_INC_COUNTER, (unsigned int)root);
 
-  if (root->behavior_on_failure != DYNAMIC)
+    if (root->behavior_on_failure == CONC_OPEN &&
+        Cond_Lock_is_unset(root->clause_insertion_cond))
+      fprintf(stderr,
+      "WARNING: In unlock_predicate, root is %x, predicate is unlocked!!!!\n", 
+              (unsigned int)root);
+  }
+#endif
+  
+  /* We have just finished executing an operation on a locked predicate;
+     unlock the predicate and make sure the choicepoint is not marked as
+     executing. */
+
+  if (root->behavior_on_failure != DYNAMIC){
+    SET_NONEXECUTING(TopConcChpt->term[InvocationAttr]); 
     Wait_For_Cond_End(root->clause_insertion_cond);
+  }
 
   return TRUE;
 }

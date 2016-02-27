@@ -16,13 +16,9 @@ char *pathname=NULL;
 char source_path[MAXPATHLEN] = "";                             /* Shared */
 int prolog_force_interactive = 0;      /* Shared --- not really relevant? */
 
-#if defined(Win32)
-char library_directory[MAXPATHLEN+1] = "";
-#else
 char *library_directory = NULL;
-#endif
 
-#if defined(__svr4__)                                          /* Solaris */
+#if defined(__svr4__) || defined(DARWIN)             /* Solaris or DARWIN */
 #include <unistd.h>                                            /* sbrk () */
 #include <stdlib.h>                                           /* malloc() */
 #else                                                            /* SunOS */

@@ -1,128 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 10 November 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Active modules (high-level distributed execution)</TITLE>
+<TITLE>The Ciao Prolog System               - Delaying predicates (freeze)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC380" HREF="ciao_toc.html#TOC380">Active modules (high-level distributed execution)</A></H1>
+<H1><A NAME="SEC381" HREF="ciao_toc.html#TOC381">Delaying predicates (freeze)</A></H1>
 <P>
-<A NAME="IDX4196"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo, Daniel Cabeza.
+<A NAME="IDX4293"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#171 (2000/7/7, 16:10:17 CEST)
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#141 (2000/5/11, 13:33:29 CEST)
+<STRONG>Version:</STRONG> 1.7#34 (2000/12/23, 16:42:52 CET)
 
 
 <P>
- 
+<STRONG>Version of last change:</STRONG> 1.5#72 (2000/3/19, 19:9:14 CET)
 
 
 <P>
-Active modules [CH95] provide a high-level model of 
-<A NAME="IDX4197"></A>
-inter-process communication and 
-<A NAME="IDX4198"></A>
-distributed execution (note that using Ciao's communication and concurrency primitives, such as sockets, concurrent predicates, etc.). An 
-<A NAME="IDX4199"></A>
-<A NAME="IDX4200"></A>
-<EM>active module</EM> (or an 
-<A NAME="IDX4201"></A>
-<A NAME="IDX4202"></A>
-<EM>active object</EM>) is an ordinary module to which computational resources are attached, and which resides at a given location on the network. Compiling an active module produces an executable which, when running, acts as a server for a number of predicates, the predicates exported by the module. Predicates exported by an active module can be accessed by a program on the network by simply "using" the module, which then imports such "remote predicates." The process of loading an active module does not involve transferring any code, but rather setting up things so that calls in the module using the active module are executed as remote procedure calls to the active module. This occurs in the same way independently of whether the active module and the using module are in the same machine or in different machines across the network. 
-
-
-<P>
-Except for having compiling it in a special way (see below), an active module is identical from the programmer point of view to an ordinary module. A program using an active module imports it and uses it in the same way as any other module, except that it uses "
-<A NAME="IDX4203"></A>
-<CODE>use_active_module</CODE>" rather than "
-<A NAME="IDX4204"></A>
-<CODE>use_module</CODE>" (see below). Also, an active module has an address (network address) which must be known in order to use it. In order to use an active module it is necessary to know its address. 
- 
-<A NAME="DOCF3" HREF="ciao_foot.html#FOOT3">(3)</A> 
-
-
-<P>
-From the implementation point of view, active modules are essentially daemons: executables which are started as independent processes at the operating system level. Communication with active modules is implemented using sockets (thus, the address of an active module is an IP socket address in a particular machine). Requests to execute goals in the module are sent through the socket by remote programs. When such a request arrives, the process running the active module takes it and executes it, returning through the socket the computed answers. These results are then taken and used by the remote processes. Backtracking over such remote calls works as usual and transparently. The only limitation (this may change in the future, but it is currently done for efficiency reasons) is that all alternative answers are precomputed (and cached) upon the first call to an active module and thus <EM>an active module should not export a predicate which has an infinite number of answers</EM>. 
- 
-
-
-<P>
-The first thing to do is to select a method whereby the client(s) (the module(s) that will use the active module) can find out in which machine/port (IP address/socket number) the server (i.e., the active module) will be listening once started. The easiest way to do this is to use of the redezvous methods which are provided in the Ciao distribution in the <CODE>library/actmods</CODE> directory, such as <CODE>tmpbased...</CODE> or <CODE>filebased...</CODE>. 
-
-
-<P>
-The first is based on saving the IP address and socket number of the server in a file in a predefined directory (generally <CODE>/tmp</CODE>, but this can be changed by changing <CODE>tmpbased_common.pl</CODE>). 
-
-
-<P>
-The second one is similar but saves the info in the directory in which the server is started (as <EM>&#60;module_name&#62;</EM><CODE>.addr</CODE>). The clients must be started in the same directory. However, they can be started in different machines, provided this directory is shared (e.g., by NFS or Samba). 
-
-
-<P>
-These rendezvous methods are encoded in two modules: a first one, called <CODE>...publish.pl</CODE>, is used by the server to publish its info. The second one, called <CODE>...locate.pl</CODE>, is used by the client(s) to locate the server info. For efficiency, the client methods maintain a cache of addresses, so that the server information only needs to be read from the file system the first time the active module is accessed. 
-
-
-<P>
-Active modules are compiled using the <CODE>-a</CODE> option of the Ciao compiler (this can also be done from the interactive top-level shell using 
-<A NAME="IDX4205"></A>
-<CODE>make_actmod/2</CODE>). For example, issuing the following command: 
-
-
-
-<PRE>
-  ciaoc -a 'actmods/filebased_publish' simple_server
-</PRE>
-
-<P>
-compiles the simple server example that comes with the distribution (in the <CODE>actmods/example</CODE> directory). The <CODE>simple_client_with_main</CODE> example (in the same directory) can be compiled as usual: 
-
-
-
-<PRE>
-  ciaoc simple_client_with_main
-</PRE>
-
-<P>
-Now, if the server is running (e.g., <CODE>simple_server &#38;</CODE> in Un*x or double-clicking on it in Win32) when the client is executed it will connect with the server to access the predicate(s) that it imports from it. 
-
-
-<P>
-A simpler even client 
-<A NAME="IDX4206"></A>
-<CODE>simple_client.pl</CODE> can be loaded into the top level and its predicates called as usual (and they will connect with the server if it is running). 
-
-
-<P>
-The architecture of the active modules model in Ciao allows defining other methods for this communication to happen. For example, one can implement a 
-<A NAME="IDX4207"></A>
-name server. This can itself be an active module which resides at a fixed and known machine and port number (this is known as a <EM>service</EM> and is defined in <CODE>/etc/services</CODE> in a Un*x machine). In order the best way is to mimick the code of the redezvous methods provided in the Ciao distribution. 
- 
-Security: in the access method (?). 
+This library offers a simple implementation of 
+<A NAME="IDX4294"></A>
+<CODE>freeze/2</CODE>, 
+<A NAME="IDX4295"></A>
+<CODE>frozen/2</CODE>, etc. [Col82,Nai85,Nai91,Car87] based on the use of attributed variables [Hol92,Hol90].
 
 
 
 <UL>
-<LI><A HREF="ciao_95.html#SEC381">Usage and interface (actmods)</A>
-<LI><A HREF="ciao_95.html#SEC382">Documentation on new declarations (actmods)</A>
+<LI><A HREF="ciao_95.html#SEC382">Usage and interface (freeze)</A>
+<LI><A HREF="ciao_95.html#SEC383">Documentation on exports (freeze)</A>
+<LI><A HREF="ciao_95.html#SEC384">Documentation on multifiles (freeze)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC381" HREF="ciao_toc.html#TOC381">Usage and interface (<CODE>actmods</CODE>)</A></H2>
+<H2><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Usage and interface (<CODE>freeze</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -130,16 +52,28 @@ Security: in the access method (?).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(actmods).</CODE>
+<CODE>:- use_module(library(freeze)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[actmods]).</CODE>
 
-<LI><STRONG>New declarations defined:</STRONG>
+<UL>
 
-<A NAME="IDX4208"></A>
-<CODE>use_active_module/2</CODE>.
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4296"></A>
+<CODE>freeze/2</CODE>, 
+<A NAME="IDX4297"></A>
+<CODE>frozen/2</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX4298"></A>
+<CODE>verify_attribute/2</CODE>, 
+<A NAME="IDX4299"></A>
+<CODE>combine_attributes/2</CODE>.
+
+</UL>
 
 </UL>
 
@@ -147,33 +81,99 @@ or
 
 
 
-<H2><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Documentation on new declarations (<CODE>actmods</CODE>)</A></H2>
+<H2><A NAME="SEC383" HREF="ciao_toc.html#TOC383">Documentation on exports (<CODE>freeze</CODE>)</A></H2>
 <P>
-<A NAME="IDX4209"></A>
-<A NAME="IDX4210"></A>
+<A NAME="IDX4300"></A>
+<A NAME="IDX4301"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>use_active_module/2:</B>
-<DD><A NAME="IDX4211"></A>
+<DT><span class="define">PREDICATE:</span> <B>freeze/2:</B>
+<DD><A NAME="IDX4302"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>use_active_module(AModule,Predicates)</CODE>.
+<EM>Meta-predicate</EM> with arguments: <CODE>freeze(?,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>freeze(X,Goal)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies that this code imports from the <EM>active module</EM> defined in <CODE>AModule</CODE> the predicates in <CODE>Imports</CODE>. The imported predicates must be exported by the active module.
+<LI><EM>Description:</EM> If <CODE>X</CODE> is free delay <CODE>Goal</CODE> until <CODE>X</CODE> is non-variable.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>AModule</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Predicates</CODE> is a list of <CODE>predname</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX4303"></A>
+<A NAME="IDX4304"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>frozen/2:</B>
+<DD><A NAME="IDX4305"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>frozen(?,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>frozen(X,Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Goal</CODE> is currently delayed until variable <CODE>X</CODE> becomes bound.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Documentation on multifiles (<CODE>freeze</CODE>)</A></H2>
+<P>
+<A NAME="IDX4306"></A>
+<A NAME="IDX4307"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>verify_attribute/2:</B>
+<DD><A NAME="IDX4308"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4309"></A>
+<A NAME="IDX4310"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>combine_attributes/2:</B>
+<DD><A NAME="IDX4311"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_175.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

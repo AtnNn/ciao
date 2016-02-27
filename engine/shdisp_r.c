@@ -687,19 +687,30 @@ if (!ins) { /*  A conc. predicate has been closed, or
                 non-blocking call was made (MCL) */
 #if defined(DEBUG)                                      /* Extended check */
   if (debug_conc) {
+
     if ((TagToRoot(X(6))->behavior_on_failure != CONC_CLOSED) &&
         (X(7) == atom_block))
       fprintf(stderr, 
               "**wam(): failing on a non concurrent closed pred.\n");
+
     if (TagToRoot(X(6))->x2_pending_on_instance ||
         TagToRoot(X(6))->x5_pending_on_instance)
       fprintf(stderr, 
-              "**wam(): failing with invokations pending from root.\n");
+      "**wam(): failing with invokations pending from root, type = %d.\n",
+              (TagToRoot(X(6))->behavior_on_failure));
+
   }
 #endif
   TopConcChpt = (struct node *)X(8);
   goto fail;                                           /* But fail anyway */
 }
+
+#if defined(DEBUG)
+if(debug_conc && TagToRoot(X(6))->behavior_on_failure != DYNAMIC) 
+    fprintf(stderr, 
+            "*** %d(%d)  backtracking on a concurrent predicate.\n",
+            (int)Thread_Id, (int)GET_INC_COUNTER);
+#endif    
 
 P = ins->emulcode;
 goto ReadMode;

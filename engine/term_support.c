@@ -13,7 +13,7 @@
 /* declarations for global functions accessed here */
 
 #include "term_support_defs.h"
-#include "main_defs.h"
+#include "start_defs.h"
 #include "alloc_defs.h"
 
 /* local declarations */
