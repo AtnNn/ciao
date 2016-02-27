@@ -2,6 +2,27 @@
 #include <stdlib.h>
 
 #include "common_headers.h"
+
+/*
+
+ In Numerical Recipes in C: The Art of Scientific Computing (William H.
+ Press, Brian P. Flannery, Saul A. Teukolsky, William T.  Vetterling; New
+ York: Cambridge University Press, 1990 (1st ed, p. 207)), the following
+ comments are made:
+  
+   "If you want to generate a random integer between 1 and 10, you should
+   always do it by
+
+                  j=1+(int) (10.0*rand()/(RAND_MAX+1.0));
+
+   and never by anything resembling
+                                      
+                     j=1+((int) (1000000.0*rand()) % 10);
+                                      
+   (which uses lower-order bits)."
+
+*/
+ 
  
 
 #if defined(Solaris)
@@ -52,7 +73,16 @@ BOOL prolog_random3(Arg)
   if (IsInteger(X(0)) && IsInteger(X(1))) {
     ENG_INT low = GetInteger(X(0));
     ENG_INT up  = GetInteger(X(1));
+    /* former (uses low order bits, which very often are not that random):
     return(cunify(Arg, MakeInteger(Arg, low+(random() % (up-low+1))), X(2)));
+    */
+    return(cunify(
+                  Arg, 
+                  MakeInteger(
+                              Arg, 
+                              low + (ENG_INT)(RANDOM*(up-low+1))
+                              ), 
+                  X(2)));
   } else{
     ENG_FLT low = GetFloat(X(0));
     ENG_FLT up  = GetFloat(X(1));

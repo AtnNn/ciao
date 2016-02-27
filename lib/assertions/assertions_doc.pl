@@ -124,7 +124,7 @@ Copyright @copyright{} 1989-97 The CLIP Group / UPM
 
      For example, the following assertions describe (all the and the only)
      modes of usage
-     of predicate @tt{length/2} (see @ref{List processing}):
+     of predicate @tt{length/2} (see @lib{lists}):
      @begin{verbatim}
 :- pred length(L,N) : list * var => list * integer
 	# ""Computes the length of @var{L}."".
@@ -154,7 +154,7 @@ Copyright @copyright{} 1989-97 The CLIP Group / UPM
      describe all possible calls to the predicate.
 
      For example, the following assertion describes all possible calls
-     to predicate @tt{is/2} (see @ref{Arithmetic}):
+     to predicate @tt{is/2} (see @lib{arithmetic}):
      @begin{verbatim}
 :- calls is(term,arithexpression).
      @end{verbatim}
@@ -210,7 +210,7 @@ Copyright @copyright{} 1989-97 The CLIP Group / UPM
      of calling the predicate.
 
      For example, the following assertion specifies that the computation of
-     @tt{append/3} (see @ref{List processing}) will not fail @em{if} it is 
+     @tt{append/3} (see @lib{lists}) will not fail @em{if} it is 
      called as described (but does not compel the predicate to be called
      that way):
      @begin{verbatim}
@@ -394,6 +394,9 @@ false(_).
 
 %% --------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+8,1999/12/09,21:01*11+'MET'), "Added this file
+   to version control.  (Manuel Hermenegildo)").
 
 %% --------------------------------------------------------------------------
 

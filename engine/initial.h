@@ -54,6 +54,8 @@ extern LOCK    backtrack_goal_l;
 extern LOCK_ST worker_id_pool_st;
 extern LOCK    worker_id_pool_l;
 
+extern LOCK_ST atom_id_st;
+extern LOCK    atom_id_l;
 
 #if defined(DEBUG)
 extern LOCK_ST ops_counter_st;

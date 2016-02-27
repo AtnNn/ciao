@@ -2,6 +2,7 @@
 %% class/1, at the beginning of the file,     %%
 %% will declare current source to be a class. %%
 %%--------------------------------------------%%
+
 :- class(stack,[],[]).
 
 % State declaration: storage/1 will be an attribute.
@@ -18,7 +19,7 @@
 % Code 
 
 push(Item) :-
-	nonvar(Item),
+	nonvar(Item), 
 	asserta_fact(storage(Item)).
 
 pop(Item) :-

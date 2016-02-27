@@ -154,6 +154,12 @@ typedef double ENG_FLT;
 #define GetSmall(X)	((ENG_INT)(((X)>>SmallShift)-(TaggedZero>>SmallShift)))
 #define GetString(X)	(TagToAtom(X)->name)
 
+/* #define USE_ATOM_LEN */                                       /* MCL */
+
+#if defined(USE_ATOM_LEN)
+#define GetAtomLen(X)   (TagToAtom(X)->atom_len)
+#endif
+
 #define MakeFunctorFix   (TagIndex(ATM,2) + QMask)
 #define MakeFunctorFloat (TagIndex(NUM,3) + QMask)
 #define LargeIsFloat(X)  (!(TagToHeadfunctor(X)&TagBitFunctor))

@@ -51,8 +51,7 @@
 
 :- data toplevel_warning/0.
 
-obj_sentence_trans((:- add_clause_trans(obj_clause_trans/3)),
-	[(:- use_module(library(dynclasses)))] ,Module) :-
+obj_sentence_trans((:- add_clause_trans(obj_clause_trans/3)),[],Module) :-
 	\+ toplevel_warning,
 	functor(Module,user,_),
 	!,
@@ -90,7 +89,7 @@ obj_sentence_trans(end_of_file,Exp,Module) :-
 		     (:- initialization('$static_instance_creation$')),
 		     ('$static_instance_creation$'),
 		     (:- multifile 'class$call'/3),
-	             ('$cha$cha$cha$'(X) :- call(X))
+	             ('$force$rt$info$'(X) :- call(X))
 					     % Forces CIAO compiler to generate
                                              % run-time info for this 
 	                                     % module.
@@ -99,7 +98,7 @@ obj_sentence_trans(end_of_file,Exp,Module) :-
 	  Init = [
 		     ('$static_instance_creation$'),
 		     (:- multifile 'class$call'/3),
-		     ('$cha$cha$cha$'(X) :- call(X))  
+		     ('$force$rt$info$'(X) :- call(X))
 		 ]
 	),
 	findall((:- instance_of(ID,Cons) ),

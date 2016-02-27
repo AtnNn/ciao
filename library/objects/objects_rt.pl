@@ -1,11 +1,14 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO : OBJECT ORIENTED PROGRAMMING IN CIAO/Prolog
+%% O'CIAO: Object Oriented Programming in CIAO/Prolog
 %%
 %% RUNTIME SUPPORT FOR OBJECT MANIPULATION
 %%
 %% AUTHOR : Angel Fernandez Pineda
-%% DATE   : March 1999
+%%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -18,6 +21,7 @@
 	interface/2,
 	instance_codes/2,
 	destroy/1,
+	use_class/1,
 	% -- Properties --
 	constructor/1,
 	class_name/1,
@@ -27,13 +31,16 @@
 	interface_source/1,
 	method_spec/1,
 	virtual_method_spec/1
-        ],[assertions,basicmodes,regtypes]).
+        ]).
+
+:- use_package(assertions).
+:- use_package(basicmodes).
 
 %%------------------------------------------------------------------------
 
 :- use_module(engine(internals)).
-
-:- use_module(library(prolog_sys),[statistics/2]).
+:- use_module(library(dynmods),[use_module/1]).
+:- use_module(library(prolog_sys),[statistics/2,new_atom/1]).
 :- use_module(library(system),[time/1,current_host/1,get_pid/1,mktemp/2]).
 
 %%------------------------------------------------------------------------
@@ -50,7 +57,7 @@
 :- multifile 'class$call'/3.
 
 :- data      'id$fromclass'/2.
-:- data      'id$recycled'/2.
+:- data      'id$recycled'/1.
 
 'class$call'(Module,Goal,From) :-
 	atom(Module),
@@ -189,6 +196,25 @@ virtual_method_spec(Spec) :-
 
 %%------------------------------------------------------------------------
 %%
+%% DYNAMIC CLASS LOADING
+%%
+%%------------------------------------------------------------------------
+
+:- comment(use_class/1,
+	"The behaviour of this predicate is identical to that provided
+         by the declaration of the same name @decl{use_class/1}. It allows
+         user programs to dynamically load classes. Whether the given
+         source is not a class it will perform a @pred{use_module/1} 
+         predicate call.").
+
+:- pred use_class(ClassSource) : class_source(ClassSource) #
+	"Dynamically loads the given @var{ClassSource}".
+
+use_class(Class) :-
+	use_module(Class).
+
+%%------------------------------------------------------------------------
+%%
 %% INSTANCE CREATION 
 %%
 %%------------------------------------------------------------------------
@@ -263,7 +289,7 @@ new(_,Constructor,_) :-
 new(ID,Constructor,FromModule) :-
 	!,
 	functor(Constructor,Class,_),
-	create_unique_id(Instance,Class),
+	create_unique_id(Instance),
 	cons(Instance,Constructor,FromModule),
 	functor(ID,Class,1),
 	arg(1,ID,Instance),
@@ -310,8 +336,8 @@ cons(_,Cons,_) :-
 
 %:- data next_id/2.
 
-create_unique_id(ID,Class) :-
-	retract_fact('id$recycled'(Class,ID)),
+create_unique_id(ID) :-
+	retract_fact('id$recycled'(ID)),
 	!.
 
 %% This one is too slow...
@@ -346,26 +372,32 @@ create_unique_id(ID,Class) :-
 %	'$erase_atom'(WallTime),
 %	true.
 
-create_unique_id(ID,_) :-
-	create_unique_id_aux(AnID),
-	( 'id$fromclass'(AnID,_) -> create_unique_id(ID,_) ; ID = AnID),
-	true.
 
-create_unique_id_aux(ID) :-
-	eng_self(ThreadID),
-	number_codes(ThreadID,TIDCodes),
-	atom_codes(TID,TIDCodes),
-	statistics(walltime, [W,_]),
-	number_codes(W,WCodes),
-	atom_codes(WallTime,WCodes),
-	statistics(symbols,[S,_]),
-	number_codes(S,SCodes),
-	atom_codes(U,SCodes),
-	atom_concat(TID,U,Aux),
-	atom_concat(Aux,WallTime,ID),
-	'$erase_atom'(Aux),
-	'$erase_atom'(WallTime),
-	true.
+% This one is provisional...
+%create_unique_id(ID,_) :-
+%	create_unique_id_aux(AnID),
+%	( 'id$fromclass'(AnID,_) -> create_unique_id(ID,_) ; ID = AnID),
+%	true.
+%create_unique_id_aux(ID) :-
+%	eng_self(ThreadID),
+%	number_codes(ThreadID,TIDCodes),
+%	atom_codes(TID,TIDCodes),
+%	statistics(walltime, [W,_]),
+%	number_codes(W,WCodes),
+%	atom_codes(WallTime,WCodes),
+%	statistics(symbols,[S,_]),
+%	number_codes(S,SCodes),
+%	atom_codes(U,SCodes),
+%	atom_concat(TID,U,Aux),
+%	atom_concat(Aux,WallTime,ID),
+%	'$erase_atom'(Aux),
+%	'$erase_atom'(WallTime),
+%	true.
+
+create_unique_id(ID) :-
+	new_atom(ID).
+	
+	
 
 %%------------------------------------------------------------------------
 %%
@@ -446,7 +478,7 @@ destroy(Object) :-
 	call_destructor_if_any(ID,Class),
 	state_destruction(ID,Class),
 	retract_fact('id$fromclass'(ID,_)),
-	asserta_fact('id$recycled'(Class,ID)),
+	asserta_fact('id$recycled'(ID)),
 %	'$erase_atom'(ID),
 	true.
 
@@ -477,6 +509,8 @@ state_destruction(Obj,Class) :-
 state_destruction(_,_).
 
 %%------------------------------------------------------------------------
+
+:- redefining(abolish/1).
 
 abolish(Head) :-
 	'$current_clauses'(Head, Root), 
@@ -648,10 +682,24 @@ static_new_aux(_).
 :- comment(bug,
    "Rock-and-roll Star ate my hamster :-(").
 
+:- comment(bug,
+	"Not really a bug: when loading code which declares 
+         static instances from the toplevel shell, 
+         predicate @pred{use_module/1}) will not work
+         properly: those instances may be not
+         correctly created, and predicates will fail whenever they are not
+         supposed to do. This may be avoided by reloading again 
+         the involved module, but make sure it is modified and saved to
+         disk before doing so.
+        ").
+
 %%------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+:- comment(version(1*5+4,1999/11/29,19:11*21+'MET'), "use_class/1 predicate 
+   has been moved to this module (Angel Fernandez Pineda).").
 
 :- comment(version(1*3+96,1999/11/10,17:38*35+'MET'), "An imported library
    changed its name (dummy->prolog_sys) (Angel Fernandez Pineda)").
@@ -708,7 +756,7 @@ static_new_aux(_).
 :- comment(version(1*3+1,1999/06/15,15:39*53+'MEST'), "new/2 implementation
    optimized.  (Angel Fernandez Pineda)").
 
-:- comment(version(0*9+61,1999/04/26,15:28*08+'MEST'), " Now, default
+:- comment(version(0*9+61,1999/04/26,15:28*08+'MEST'), "Now, default
    constructor can not be called whenever any other constructor is
    available. (Angel Fernandez Pineda)").
 

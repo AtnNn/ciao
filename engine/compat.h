@@ -42,10 +42,16 @@
 #   define SETJMP(Env)       setjmp(Env)
 #   define LONGJMP(Env, Val) longjmp(Env, Val)
 #  endif
-# else                                                     /* Not Solaris */
+# else 
+#  if defined(crossWin32i86)            
+#  define JMP_BUF           jmp_buf
+#  define SETJMP(Env)       setjmp(Env)
+#  define LONGJMP(Env, Val) longjmp(Env, Val)
+#  else
 #  define JMP_BUF           sigjmp_buf
 #  define SETJMP(Env)       sigsetjmp(Env, 1)
 #  define LONGJMP(Env, Val) siglongjmp(Env, Val)
+#  endif
 # endif
 #endif
 

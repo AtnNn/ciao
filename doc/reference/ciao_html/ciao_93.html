@@ -1,36 +1,59 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Constraint programming over rationals</TITLE>
+<TITLE>The Ciao Prolog System               - Breadth-first execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC319" HREF="ciao_toc.html#TOC319">Constraint programming over rationals</A></H1>
+<H1><A NAME="SEC324" HREF="ciao_toc.html#TOC324">Breadth-first execution</A></H1>
 <P>
-<A NAME="IDX3500"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Christian Holzbaur, Daniel Cabeza.
+<A NAME="IDX3582"></A>
 
 
 <P>
-This package is currently under development.
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
 
+
+<P>
+This package implements breadth-first execution of predicates. Predicates written with operators 
+<A NAME="IDX3583"></A>
+<CODE>'&#60;-'/1</CODE> (facts) and 
+<A NAME="IDX3584"></A>
+<CODE>'&#60;-'/2</CODE> (clauses) are executed using breadth-first search. An example of code would be: 
+
+<PRE>
+:- module(bf_example, _, [bf]).
+
+test(bf) :- bfchain(a,d).
+test(df) :- chain(a,d).   % loops!
+
+bfchain(X,X) &#60;- .
+bfchain(X,Y) &#60;- arc(X,Z), bfchain(Z,Y).
+
+chain(X,X).
+chain(X,Y) :- arc(X,Z), chain(Z,Y).
+
+arc(a,b).
+arc(a,d).
+arc(b,c).
+arc(c,a).
+
+</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_93.html#SEC320">Usage and interface (clpq)</A>
+<LI><A HREF="ciao_93.html#SEC325">Usage and interface (bf)</A>
+<LI><A HREF="ciao_93.html#SEC326">Known bugs and planned improvements (bf)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC320" HREF="ciao_toc.html#TOC320">Usage and interface (<CODE>clpq</CODE>)</A></H2>
+<H2><A NAME="SEC325" HREF="ciao_toc.html#TOC325">Usage and interface (<CODE>bf</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -38,16 +61,35 @@ This package is currently under development.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(clpq).</CODE>
+<CODE>:- use_package(bf).</CODE>
 
 or
 
-<CODE>:- module(...,...,[clpq]).</CODE>
+<CODE>:- module(...,...,[bf]).</CODE>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX3585"></A>
+<CODE>&#60;-/2</CODE> [1200,xfx], 
+<A NAME="IDX3586"></A>
+<CODE>&#60;-/1</CODE> [1200,xf].
 </UL>
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC326" HREF="ciao_toc.html#TOC326">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+Does not correctly work in user files.
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

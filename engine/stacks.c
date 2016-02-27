@@ -233,6 +233,7 @@ void choice_overflow(Arg,pad)
 
       {
         REGISTER TAGGED *x;
+	/* We have to relocate the concurrent topmost choicepoint */
 #if defined(THREADS)
         REGISTER struct node *concchpt;
 #endif

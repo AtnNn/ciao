@@ -89,7 +89,8 @@ void kill_other_threads()
     this_task = wrb_state_list;
     
     while (this_task != NULL) {
-      if (this_task->thread_id != myself && this_task->state == WORKING) {
+      if (!Thread_Equal(this_task->thread_id, myself) &&
+          (this_task->state == WORKING)) {
         kill_thread(this_task);
         this_task->state = IDLE;
         thread_killed = TRUE;
@@ -183,7 +184,7 @@ static wrb_state_p get_my_task_block()
 
   while( (this_task != NULL) &&
          ((this_task->state == IDLE ) ||
-          (this_task->thread_id != thr_id)))
+          !Thread_Equal(this_task->thread_id, thr_id)))
     this_task = this_task->next;
 
   Release_lock(wrb_state_list_l);
@@ -201,7 +202,6 @@ struct worker *get_my_worker()
   return state->worker_registers;
 }
 
-#if defined(THREADS)
 
 /* Search for a free worker in the ring of workers.  Mark it as WORKING as
    soon as we find one free so that no other thread can steal it. */
@@ -211,55 +211,24 @@ wrb_state_p look_for_a_free_worker()
 
   wrb_state_p this_task = wrb_state_list;
 
+#if defined(THREADS)
   Wait_Acquire_lock(wrb_state_list_l);
+#endif
   while ((this_task != NULL) && (this_task->state != IDLE))
     this_task = this_task->next;  
 
   if (this_task != NULL) {
     this_task->state = WORKING;
+#if defined(THREADS)
     Release_lock(wrb_state_list_l);
+#endif
     local_init_each_time(this_task->worker_registers);
-  } else Release_lock(wrb_state_list_l);
+  } else
+#if defined(THREADS)
+    Release_lock(wrb_state_list_l)
+#endif
+    ;
   
   return this_task;
 }
 
-#else                               /* No threads, simplified management. */
-
-/* A wrb state is to be marked as free --- no thread is working on it.  It
-   is not, however, deleted from the state list, for creating areas is a
-   costly process.  Should have exclusive access.  The WAM is not
-   reinitialised: should be done upon acquiring a new goal. */
-
-/* void make_wrb_free(Arg) */
-/*      Argdecl; */
-/* { */
-/*   wrb_state_list->state = IDLE; */
-/* } */
-
-
-
- /* Return wrb state for the wrb ID, or return NULL if not found */
-
-/* static wrb_state_p get_my_task_block() */
-/* { */
-/*   return wrb_state_list; */
-/* } */
-
-
-
- /* Return WAM areas for a given task */
-
-/* struct worker *get_my_worker() */
-/* { */
-/*   return get_my_task_block()->worker_registers; */
-/* } */
-
-
-
-wrb_state_p look_for_a_free_worker()
-{
-  return NULL;
-}
-
-#endif

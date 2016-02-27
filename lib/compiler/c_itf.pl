@@ -21,6 +21,7 @@
 
 :- use_module(library('compiler/translation')).
 :- use_module(library('compiler/pl2wam')).
+:- use_module(library('compiler/srcdbg'),[srcdbg_expand/4]).
 
 :- use_module(engine(internals), [
         '$open'/3, builtin_module/1, initialize_module/1,
@@ -1810,10 +1811,16 @@ compile_clauses(Base, Module, Mode) :-
         retract_fact(clause_of(Base,H,B,_,Src,Ln0,Ln1)),
           \+ number(H),
           asserta_fact(location(Src,Ln0,Ln1), Ref),
-          expand_clause(H, B, Module, H0, B0),
-          head_expansion(H0, Module, H1),
-          module_expand_goal(B0, Module, B1),
-          compile_clause(Mode, H1, B1, Module),
+          expand_clause(H, B, Module, H0, BX),
+          expand_goal(BX, Module, B0),
+          ( Mode = interpreted,
+            current_prolog_flag(trace_lines, on) ->
+              srcdbg_expand(H0,B0,H1,B1)
+          ; H1 = H0, B1 = B0
+          ),
+          head_expansion(H1, Module, H2),
+          body_expansion(B1, Module, -, B2),
+          compile_clause(Mode, H2, B2, Module),
           erase(Ref),
         fail.
 compile_clauses(_, _, _).
@@ -2058,12 +2065,15 @@ module_warning_mess(not_defined(F, N,_M), warning,
 module_warning_mess(not_imported(F, N,_M, QM), error,
         ['Module qualification of ',~~(F/N),
          ' ignored, predicate not imported from module ',QM]).
-module_warning_mess(big_pred_abs(PA,N), warning,
+module_warning_mess(bad_pred_abs(PA), error,
+        ['Bad predicate abstraction ',~~(PA),
+         ' : head functor should be ''\\:''']).
+module_warning_mess(big_pred_abs(PA,N), error,
         ['Predicate abstraction ',~~(PA),
-         ' seems to have too many arguments: expected ',N]).
+         ' has too many arguments: should be ',N]).
 module_warning_mess(short_pred_abs(PA,N), error,
         ['Predicate abstraction ',~~(PA),
-                          ' has too less arguments: should be ',N]).
+         ' has too few arguments: should be ',N]).
 
 :- data compiling_src/1, last_error_in_src/1.
 
@@ -2551,6 +2561,10 @@ retract_clause(Head, Body) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+12,1999/12/14,13:27*49+'MET'), "Incorporated
+   the changes (expansions) by M.Carlos to support source-level
+   debugging.  (Manuel Hermenegildo)").
 
 :- comment(version(1*3+121,1999/11/26,20:23*11+'MET'), "Added automatic
    compilation of foreign files.  (Daniel Cabeza Gras)").

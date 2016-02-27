@@ -10,6 +10,9 @@
 		   property_starterm/1,
 		   complex_goal_property/1,
 
+		   nabody/1,
+		   dictionary/1,
+
                    c_assrt_body/1,
 		   s_assrt_body/1,
 		   g_assrt_body/1,
@@ -144,8 +147,9 @@ assrt_body((Pr)):-               n_assrt_body(nabody(Pr,true,true,true,true)).
 
 ").
 
-%%    @tt{+} (@pred{nonvar/1} at call
-%%    time), @tt{-} (@pred{var/1} at call time), @tt{@@}
+%%    @tt{+} (@pred{nonvar/1} at call time),
+%%    @tt{-} (@pred{var/1} at call time),
+%%    @tt{@@
 %%    (@pred{not_further_inst/1}), and @tt{?}  (no information).
 %% 
 %%    **** The concept of user-definable modes has to be documented ****
@@ -312,6 +316,26 @@ abridged_property(P) :-
 complex_goal_property(CP) :- 
 	property_conjunction(CP).
 
+
+:- prop nabody(ABody)
+	# "@var{ABody} is a normalized assertion body.".
+
+nabody((Pred::Compat:Call=>Succ+Comp#Comm)):-
+	head_pattern(Pred),
+	list(Compat,property),
+	list(Call,property),
+	list(Succ,property),
+	list(Comp,property),
+	docstring(Comm).
+
+:- regtype dictionary(D)
+	# "@var{D} is a dictionary of variable names.".
+
+dictionary([]).
+dictionary([N=V|D]):-
+	string(N),
+	var(V),
+	dictionary(D).
 
 :- prop c_assrt_body(X) + regtype
    # "@var{X} is a call assertion body.".
@@ -540,6 +564,10 @@ docstring(String):- string(String).
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+25,1999/12/29,12:46*08+'CET'), "Added
+   properties @tt{nabody/1} and @tt{dictionary/1}.  (Francisco Bueno
+   Carrillo)").
 
 :- comment(version(0*9+98,1999/05/25,17:01*28+'MEST'), "Comments for
    most of the properties here changed according to last changes in

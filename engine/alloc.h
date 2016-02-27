@@ -6,10 +6,20 @@
 #define kB       1024
 #define kCells   1024
 
-#define MAXATOM  512
+
+#define STATICMAXATOM 512 /* Do not create very long atoms inside the engine */
+
+#define USE_DYNAMIC_ATOM_SIZE
+
+#if defined(USE_DYNAMIC_ATOM_SIZE) 
+# define MAXATOM  Atom_Buffer_Length
+#else
+# define MAXATOM  STATICMAXATOM
+#endif
+
 
 #define CONTPAD 128		/* min. amount of heap at proceed */
-#define CALLPAD (2*MAXATOM + CONTPAD) /* min. amount of heap at call */
+#define CALLPAD (2*(MAXATOM) + CONTPAD) /* min. amount of heap at call */
 
 #define STACKPAD (2*ARITYLIMIT + 16) /* min. amount of stack at allocate */
 

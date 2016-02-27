@@ -1,15 +1,22 @@
 :- module(prolog_sys, [
         statistics/0, statistics/2, predicate_property/2,
-        current_atom/1, current_predicate/2, garbage_collect/0],
+        current_atom/1, current_predicate/2, garbage_collect/0,
+        new_atom/1],
         [assertions, isomodes]). %  engine(metadefs)
 
 :- impl_defined([
-        statistics/0, current_atom/1, current_predicate/2, garbage_collect/0]).
+        statistics/0,
+        current_atom/1,
+        new_atom/1,
+        current_predicate/2,
+        garbage_collect/0]).
 
 :- use_module(engine(internals)).
 
 :- comment(title, "Prolog system internal predicates").
-:- comment(author, "Manuel Carro, Daniel Cabeza, Mats Carlsson").
+:- comment(author, "Manuel Carro").
+:- comment(author, "Daniel Cabeza").
+:- comment(author, "Mats Carlsson").
 
 :- comment(module, "This module implements some miscellaneous predicates
    which provide access to some internal statistics, special properties
@@ -37,6 +44,11 @@ about garbage collection.".
 symbol_option * symbol_result # "Gather information about number of
 symbols and predicates.".
 
+:- true pred new_atom(Atom) : var => atm # "Returns, on success, a new
+atom, not existing before in the system.  The entry argument must be a
+variable.  The idea behind this atom generation is to provide a fast
+source of identifiers for new objects, concurrent predicates, etc. on
+the fly.".
 
 :- comment(doinclude, time_option/1).  
 
@@ -168,6 +180,14 @@ bit_decl(1, (concurrent)).
 bit_decl(2, (dynamic)).
 bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
+
+:- comment(version(1*5+27,1999/12/29,15:09*45+'CET'), " new_atom/1
+improved: no repeated atoms and much better behavior with the hash
+function of the atom table.  Now using a in house-developed
+quasi-linear congruential method.  (MCL)").
+
+:- comment(version(1*5+7,1999/12/09,09:46*03+'MET'), "Added
+new_atom/1.  (MCL)").
 
 :- comment(version(1*3+94,1999/11/08,18:36*07+'MET'), "Moved
    statistics/2 and predicate_property/2 to prolog_sys library (Daniel

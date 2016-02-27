@@ -39,6 +39,18 @@ all:
 	@echo "*** Ciao compilation completed"
 	@echo "*** ========================================================="
 
+
+crossengwin32: 
+	$(MAKE) bin/Win32i86$(CIAODEBUG) CIAOARCH=Win32i86
+	$(MAKE) include/Win32i86 CIAOARCH=Win32i86
+	$(MAKE) commoneng CIAOARCH=Win32i86
+	(umask 002; cd $(SRC)/bin/Win32i86$(CIAODEBUG); \
+	 $(MAKE) configure ; \
+	 $(MAKE) crossconfigure.h CIAORCH=crossWin32i86; \
+	 $(MAKE) $(MFLAGS) ciaoemulator CIAOARCH=crossWin32i86 \
+	 ADDOBJ='$(STATOBJ)' \
+         CURRLIBS='$(LIBS) $(STAT_LIBS)')
+
 allwin32: engwin32 compiler applications libraries
 
 allpl: compiler applications libraries
@@ -60,7 +72,7 @@ stateng: commoneng
 	(umask 002; cd $(OBJDIR);  \
 	 $(MAKE) configure.h; \
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) ADDOBJ='$(STATOBJ)' \
-		                         CURRLIBS='$(LIBS) $(STAT_LIBS)')
+	CURRLIBS='$(LIBS) $(STAT_LIBS)')
 
 commoneng:
 	@echo "*** ---------------------------------------------------------"
@@ -83,7 +95,7 @@ installallengs:
 		echo ; \
 		echo -------------------------------------------- ; \
 		echo ; \
-		echo Making engine in $$machine; \
+		echo Installing engine in $$machine; \
 		echo "unsetenv CIAODEBUG; cd $(SRC); gmake installeng" | rsh $$machine csh; \
 	done
 
@@ -133,16 +145,17 @@ createsrcdir:
 	if test ! -d $(SRC)/bin ; then \
 	  mkdir $(SRC)/bin ; \
 	  touch $(SRC)/bin/.nodistribute ; \
+	  chmod $(EXECMODE) $(SRC)/bin ; \
 	  chmod $(DATAMODE) $(SRC)/bin/.nodistribute ; \
         fi
 	if test ! -d $(OBJDIR) ; then \
-	  mkdir $(OBJDIR) ; chmod ug+rwX $(OBJDIR) ; fi
+	  mkdir $(OBJDIR) ; chmod $(EXECMODE) $(OBJDIR) ; fi
 
 createincludedir:
 	if test ! -d $(SRC)/include ; then \
-	  mkdir $(SRC)/include ; touch $(SRC)/include/.nodistribute ; fi
+	  mkdir $(SRC)/include ; chmod $(EXECMODE) $(SRC)/include ; touch $(SRC)/include/.nodistribute ; fi
 	if test ! -d $(SRCINCLUDEDIR) ; then \
-	  mkdir $(SRCINCLUDEDIR) ; chmod ug+rwX $(SRCINCLUDEDIR) ; fi
+	  mkdir $(SRCINCLUDEDIR) ; chmod $(EXECMODE) $(SRCINCLUDEDIR) ; fi
 
 version-ciao:
 	-rm -f $(OBJDIR)/version.c
@@ -152,7 +165,7 @@ version-ciao:
 	echo 'char *emulator_os = "$(OSNAME)";' >> $(OBJDIR)/version.c;\
 	echo 'char *installibdir = "$(REALLIBDIR)";' >> $(OBJDIR)/version.c )
 
-installeng: eng justinstalleng
+installeng: eng installincludes justinstalleng
 
 justinstalleng:
 	@echo "*** ---------------------------------------------------------"
@@ -196,7 +209,8 @@ justinstall:
 	cd lib;     $(MAKE) install
 	cd library; $(MAKE) install
 ifeq ($(INSTALL_EMACS_SUPPORT),yes)
-	cd emacs;   $(MAKE) install
+#	cd emacs;   $(MAKE) install
+	cd emacs-mode;   $(MAKE) install
 endif
 	find $(REALLIBDIR) -type d -exec chmod $(EXECMODE) {} \;
 	cd doc; $(MAKE) install DOCFORMATS="$(TARDOCFORMATS)"
@@ -216,7 +230,8 @@ uninstall:
 	cd $(OBJDIR); $(MAKE) uninstall
 	cd lib; $(MAKE) uninstall
 	cd library; $(MAKE) uninstall
-	cd emacs; $(MAKE) uninstall
+#	cd emacs; $(MAKE) uninstall
+	cd emacs-mode; $(MAKE) uninstall
 	cd doc; $(MAKE) uninstall DOCFORMATS=$(TARDOCFORMATS)
 	-rm -r $(REALLIBDIR)
 	@echo "*** ========================================================="
@@ -231,14 +246,16 @@ clean: engclean
 	cd ciaoc;          $(MAKE) clean
 	cd lib;            $(MAKE) clean
 	cd shell;          $(MAKE) clean
-	cd emacs;          $(MAKE) clean
-	cd tests; $(MAKE) clean
+#	cd emacs;          $(MAKE) clean
+	cd emacs-mode;     $(MAKE) clean
+	cd tests;          $(MAKE) clean
 
 realclean: engrealclean
 	cd ciaoc; $(MAKE) realclean
 	cd lib; $(MAKE) realclean
 	cd shell; $(MAKE) realclean
-	cd emacs; $(MAKE) realclean
+#	cd emacs; $(MAKE) realclean
+	cd emacs-mode; $(MAKE) realclean
 	cd tests; $(MAKE) realclean
 
 tar:
@@ -255,6 +272,7 @@ engrealclean engclean:
 	@echo "*** Removing $(BASEMAIN) engine for all architectures..."
 	@echo "*** ---------------------------------------------------------"
 	-rm -r $(SRC)/bin
+	-rm -r $(SRC)/include
 
 cleanbackups:
 	(cd $(SRC); find . -name '*~' -exec /bin/rm {} \;)

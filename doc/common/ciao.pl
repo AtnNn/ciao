@@ -61,16 +61,20 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*5+0,1999/11/29,16:16*23+'MEST'),"Development
+   version following even 1.4.").
+
 :- comment(version(1*4+0,1999/11/27,19:00*00+'MEST'),"
 @begin{itemize}
 @item Documentation greatly improved.
 @item Automatic compilation of foreign files.
-@item Concurrency primitives revamped; added multiengine capability.
-@item Windows installation and functioning is now much better.
-@item New version of OO library O'Ciao, with improved performance.
+@item Concurrency primitives revamped; restored &Prolog-like 
+      multiengine capability. 
+@item Windows installation and overall operation greatly improved.
+@item New version of O'Ciao OO library, with improved performance.
 @item Added support for ""predicate abstractions"" in call/N. 
 @item Implemented reexportation through reexport declarations.
-@item Changed precedence of importations, last one is the higher.
+@item Changed precedence of importations, last one is now higher.
 @item Modules can now implicitly export all predicates.
 @item Many minor bugs fixed.
 @end{itemize}").
@@ -79,7 +83,7 @@ main.
    version following even 1.2.").
 
 :- comment(version(1*2+0,1999/06/14,16:54*55+'MEST'), "
-Temporary version.").
+   Temporary version for testing of reexportation.").
 
 :- comment(version(1*1+0,1999/06/04,13:30*37+'MEST'), "Development
    version following even 1.0.").
@@ -95,8 +99,8 @@ Temporary version.").
 @item Changed format of .itf files such that a '+' stands for all the
 standard imports from engine, which are included in c_itf source
 internally (from engine(builtin_exports)).  Further changes in itf data
-handling, so that once read in a session an .itf file, the file is
-cached and next time is needed no access to file system is required.
+handling, so that once an .itf file is read in a session, the file is
+cached and next time it is needed no access to the file system is required.
 @item Many bugs fixed.
 @end{itemize}").
 
@@ -106,7 +110,7 @@ cached and next time is needed no access to file system is required.
 
 :- comment(version(0*9+0,1999/03/10,17:03*49+'CET'), "
 @begin{itemize}
-@item Many bugs fixed.
+@item Test version before 1.0 release. Many bugs fixed.
 @end{itemize}").
 
 :- comment(version(0*8+0,1998/10/27,13:12*36+'MET'), "
@@ -114,7 +118,7 @@ cached and next time is needed no access to file system is required.
 @item Changed compiler so that only one pass is done, eliminated @tt{.dep}
       files.
 @item New concurrency primitives.
-@item Changed assertion comment to #
+@item Changed assertion comment operator to #.
 @item Implemented high-order with call/N.
 @item Integrated sql-interface with persistent predicates.
 @item First implementation of object oriented programming package.
@@ -133,7 +137,7 @@ cached and next time is needed no access to file system is required.
 :- comment(version(0*6+0,1998/07/16,21:12*07+'MET DST'), "
 @begin{itemize}
 @item Defining other path aliases (in addition to 'library') which can
-be loaded dynamically in executables is now possible.
+      be loaded dynamically in executables is now possible.
 @item Added the posibility to define multifile predicates in the shell.
 @item Added the posibility to define dynamic predicates dynamically.
 @item Added addmodule meta-argument type.
@@ -149,14 +153,14 @@ be loaded dynamically in executables is now possible.
 @begin{itemize}
 @item First Windows version.
 @item Integrated debugger in toplevel.
-@item Implemented DCG's.
+@item Implemented DCG's as (Ciao-style) expansions.
 @item Builtins renamed to match ISO-Prolog.
 @item Made ISO the default syntax.
 @end{itemize}").
 
 :- comment(version(0*4+0,1998/2/24), "
 @begin{itemize}
-@item First version with ciao emacs mode.
+@item First version with the new Ciao emacs mode.
 @item Full integration of concurrent engine and compiler/library.
 @item Added new_declaration/1 directive.
 @item Added modular syntax enhancements.
@@ -184,12 +188,12 @@ be loaded dynamically in executables is now possible.
 @item Implemented attributed variables.
 @item First CLPQ/CLPR implementation.
 @item Added the posibility of linking external .so files.
-@item Changes in systax to allow @tt{P(X)} and @tt{""string""||L}.
+@item Changes in syntax to allow @tt{P(X)} and @tt{""string""||L}.
 @item Changed to be more similar to ISO-Prolog.
 @item Implemented Prolog shell scripts.
 @item Implemented data predicates.
 @end{itemize}").
 
 :- comment(version(0*1+0,1997/2/13), "First Ciao version, based on
-   &-prolog system.").
+   &-Prolog system.").
 %% --------------------------------------------------------------------------- 

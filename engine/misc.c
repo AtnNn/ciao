@@ -15,6 +15,9 @@
 #include "bignum_defs.h"
 #include "stacks_defs.h"
 #include "term_support_defs.h"
+#if defined(INTERNAL_CALLING)
+#include "wam_defs.h"
+#endif
 
 /* local declarations */
 
@@ -304,8 +307,8 @@ BOOL prolog_current_executable(Arg)
 {
 #if defined(INTERNAL_CALLING)
   INSN *next_insn;
-  printf("In current_executable, internal_calling is %x\n", 
-         address_internal_call);  
+  printf("In current_executable, internal_calling is %lx\n", 
+         (long unsigned int)address_internal_call);  
   next_insn = Arg->next_insn;
   Arg->next_insn = internal_calling;
   wam(Arg, NULL);
@@ -1072,3 +1075,50 @@ BOOL prolog_erase_atom(Arg)
   return TRUE;
 }
 #endif
+
+
+
+/* 
+   Support for generating new atoms with "funny names", always different.
+   Make sure that the generation works OK with concurrency.  */
+
+/* This seems to be the right size: one character less, and time (at large)
+   doubles; one character more, and comparison in the symbol table takes
+   longer. */
+#define NEW_ATOM_LEN 13
+static char new_atom_str[] = "!!!!!!!!!!!!!";
+#define FIRST_CHAR '!'                   /* Use only printable characters */
+#define LAST_CHAR  'z'
+#define NUM_OF_CHARS (1 + LAST_CHAR - FIRST_CHAR)
+
+unsigned int x = 13*17;
+
+BOOL prolog_new_atom(Arg)
+     Argdecl;
+{
+  int i;
+  int previous_atoms_count;
+  TAGGED new_atom;
+
+  DEREF(X(0), X(0));
+  if (!IsVar(X(0)))
+    ERROR_IN_ARG(X(0), 1, VARIABLE);
+
+  Wait_Acquire_lock(atom_id_l);
+
+  previous_atoms_count = prolog_atoms->count;
+  do {
+    for (i = 0; i < NEW_ATOM_LEN; i++) {
+      x = (((new_atom_str[i] + x - FIRST_CHAR) * 13) + 300031);
+      new_atom_str[i] = (x % NUM_OF_CHARS) + FIRST_CHAR;
+      x = x / NUM_OF_CHARS;
+    }
+    new_atom = init_atom_check(new_atom_str);
+    /* Make sure no smart guy already inserted the atom we have in mind */
+  } while(prolog_atoms->count == previous_atoms_count);
+
+  Release_lock(atom_id_l);
+  return cunify(Arg, X(0), new_atom);
+}
+
+

@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - SQL persistent database interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC396" HREF="ciao_toc.html#TOC396">SQL persistent database interface</A></H1>
+<H1><A NAME="SEC399" HREF="ciao_toc.html#TOC399">SQL persistent database interface</A></H1>
 <P>
-<A NAME="IDX4071"></A>
+<A NAME="IDX4137"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.3#121 (1999/11/26, 20:23:11 MET)
+<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
 
 
 <P>
@@ -29,58 +29,58 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>,
 
 <P>
 The purpose of this library is to implement an instance of the generic concept of 
-<A NAME="IDX4072"></A>
+<A NAME="IDX4138"></A>
 persistent predicates, where external 
-<A NAME="IDX4073"></A>
+<A NAME="IDX4139"></A>
 relational databases are used for storage (see the documentation of the 
-<A NAME="IDX4074"></A>
+<A NAME="IDX4140"></A>
 <CODE>persdb</CODE> library and [CHGT98,Par97] for details). To this end, this library exports SQL persistent versions of the 
-<A NAME="IDX4075"></A>
+<A NAME="IDX4141"></A>
 <CODE>assertz_fact/1</CODE>, 
-<A NAME="IDX4076"></A>
+<A NAME="IDX4142"></A>
 <CODE>retract_fact/1</CODE> and 
-<A NAME="IDX4077"></A>
+<A NAME="IDX4143"></A>
 <CODE>retractall_fact/1</CODE> builtin predicates. Persistent predicates also allow 
-<A NAME="IDX4078"></A>
+<A NAME="IDX4144"></A>
 concurrent updates from several programs, since each update is atomic. 
 
 
 <P>
 The notion of persistence provides a very natural and transparent way to access database relations from a Prolog program. Stub definitions are provided for such predicates which access the database when the predicate is called (using the 
-<A NAME="IDX4079"></A>
+<A NAME="IDX4145"></A>
 <CODE>db_client</CODE> library). A 
-<A NAME="IDX4080"></A>
+<A NAME="IDX4146"></A>
 Prolog to SQL translator is used to generate the required 
-<A NAME="IDX4081"></A>
+<A NAME="IDX4147"></A>
 SQL code dynamically (see library 
-<A NAME="IDX4082"></A>
+<A NAME="IDX4148"></A>
 <CODE>pl2sql</CODE>). 
 
 
 <P>
 This library also provides facilities for reflecting more complex 
-<A NAME="IDX4083"></A>
+<A NAME="IDX4149"></A>
 views of the database relations as Prolog predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations. Also, 
-<A NAME="IDX4084"></A>
+<A NAME="IDX4150"></A>
 SQL-like 
-<A NAME="IDX4085"></A>
+<A NAME="IDX4151"></A>
 aggregation operations are supported. 
 
 
 
 <UL>
-<LI><A HREF="ciao_112.html#SEC397">Implementation of the Database Interface</A>
-<LI><A HREF="ciao_112.html#SEC398">Example(s)</A>
-<LI><A HREF="ciao_112.html#SEC399">Usage and interface (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC400">Documentation on exports (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC401">Documentation on multifiles (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC402">Documentation on internals (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC403">Known bugs and planned improvements (persdbrtsql)</A>
+<LI><A HREF="ciao_112.html#SEC400">Implementation of the Database Interface</A>
+<LI><A HREF="ciao_112.html#SEC401">Example(s)</A>
+<LI><A HREF="ciao_112.html#SEC402">Usage and interface (persdbrtsql)</A>
+<LI><A HREF="ciao_112.html#SEC403">Documentation on exports (persdbrtsql)</A>
+<LI><A HREF="ciao_112.html#SEC404">Documentation on multifiles (persdbrtsql)</A>
+<LI><A HREF="ciao_112.html#SEC405">Documentation on internals (persdbrtsql)</A>
+<LI><A HREF="ciao_112.html#SEC406">Known bugs and planned improvements (persdbrtsql)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC397" HREF="ciao_toc.html#TOC397">Implementation of the Database Interface</A></H2>
+<H2><A NAME="SEC400" HREF="ciao_toc.html#TOC400">Implementation of the Database Interface</A></H2>
 
 <P>
 The architecture of the low-level implementation of the database interface was defined with two goals in mind: 
@@ -121,7 +121,7 @@ The low level implementation of the current library is accomplished by providing
 
 
 
-<H2><A NAME="SEC398" HREF="ciao_toc.html#TOC398">Example(s)</A></H2>
+<H2><A NAME="SEC401" HREF="ciao_toc.html#TOC401">Example(s)</A></H2>
 
 
 <PRE>
@@ -216,7 +216,7 @@ main9:- %% checking if a persistent fact is a current fact
 
 
 
-<H2><A NAME="SEC399" HREF="ciao_toc.html#TOC399">Usage and interface (<CODE>persdbrtsql</CODE>)</A></H2>
+<H2><A NAME="SEC402" HREF="ciao_toc.html#TOC402">Usage and interface (<CODE>persdbrtsql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -225,7 +225,7 @@ main9:- %% checking if a persistent fact is a current fact
 <LI><STRONG>Library usage:</STRONG>
 
 Typically, this library is used including the 'persdb_sql' package into the package list of the module, or using the 
-<A NAME="IDX4086"></A>
+<A NAME="IDX4152"></A>
 <CODE>use_package/1</CODE> declaration: 
 <DL COMPACT>
 
@@ -266,32 +266,32 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4087"></A>
+<A NAME="IDX4153"></A>
 <CODE>init_sql_persdb/0</CODE>, 
-<A NAME="IDX4088"></A>
+<A NAME="IDX4154"></A>
 <CODE>dbassertz_fact/1</CODE>, 
-<A NAME="IDX4089"></A>
+<A NAME="IDX4155"></A>
 <CODE>dbretract_fact/1</CODE>, 
-<A NAME="IDX4090"></A>
+<A NAME="IDX4156"></A>
 <CODE>dbcurrent_fact/1</CODE>, 
-<A NAME="IDX4091"></A>
+<A NAME="IDX4157"></A>
 <CODE>dbretractall_fact/1</CODE>, 
-<A NAME="IDX4092"></A>
+<A NAME="IDX4158"></A>
 <CODE>make_sql_persistent/3</CODE>, 
-<A NAME="IDX4093"></A>
+<A NAME="IDX4159"></A>
 <CODE>dbfindall/4</CODE>, 
-<A NAME="IDX4094"></A>
+<A NAME="IDX4160"></A>
 <CODE>dbcall/2</CODE>, 
-<A NAME="IDX4095"></A>
+<A NAME="IDX4161"></A>
 <CODE>sql_query/3</CODE>, 
-<A NAME="IDX4096"></A>
+<A NAME="IDX4162"></A>
 <CODE>sql_get_tables/2</CODE>, 
-<A NAME="IDX4097"></A>
+<A NAME="IDX4163"></A>
 <CODE>sql_table_types/3</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX4098"></A>
+<A NAME="IDX4164"></A>
 <CODE>sql_persistent_location/2</CODE>.
 
 </UL>
@@ -303,25 +303,25 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4099"></A>
+<A NAME="IDX4165"></A>
 <CODE>persdb_sql/db_client</CODE>, 
-<A NAME="IDX4100"></A>
+<A NAME="IDX4166"></A>
 <CODE>persdb_sql/pl2sql</CODE>, 
-<A NAME="IDX4101"></A>
+<A NAME="IDX4167"></A>
 <CODE>persdb_sql/sqltypes</CODE>, 
-<A NAME="IDX4102"></A>
+<A NAME="IDX4168"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX4103"></A>
+<A NAME="IDX4169"></A>
 <CODE>terms</CODE>, 
-<A NAME="IDX4104"></A>
+<A NAME="IDX4170"></A>
 <CODE>metaterms</CODE>, 
-<A NAME="IDX4105"></A>
+<A NAME="IDX4171"></A>
 <CODE>messages</CODE>, 
-<A NAME="IDX4106"></A>
+<A NAME="IDX4172"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX4107"></A>
+<A NAME="IDX4173"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX4108"></A>
+<A NAME="IDX4174"></A>
 <CODE>persdb_sql/insert_compiler/pl2sqlinsert</CODE>.
 
 </UL>
@@ -332,13 +332,13 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 
 
 
-<H2><A NAME="SEC400" HREF="ciao_toc.html#TOC400">Documentation on exports (<CODE>persdbrtsql</CODE>)</A></H2>
+<H2><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Documentation on exports (<CODE>persdbrtsql</CODE>)</A></H2>
 <P>
-<A NAME="IDX4109"></A>
-<A NAME="IDX4110"></A>
+<A NAME="IDX4175"></A>
+<A NAME="IDX4176"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>init_sql_persdb/0:</B>
-<DD><A NAME="IDX4111"></A>
+<DD><A NAME="IDX4177"></A>
 
 
 <P>
@@ -347,18 +347,18 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 <UL>
 <LI><EM>Description:</EM> Internal predicate, used to transform predicates statically declared as persistent (see
 
-<A NAME="IDX4112"></A>
+<A NAME="IDX4178"></A>
 <CODE>sql_persistent/3</CODE>) into real persistent predicates.  
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4113"></A>
-<A NAME="IDX4114"></A>
+<A NAME="IDX4179"></A>
+<A NAME="IDX4180"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sql_persistent/3:</B>
-<DD><A NAME="IDX4115"></A>
+<DD><A NAME="IDX4181"></A>
 
 
 <P>
@@ -368,11 +368,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX4116"></A>
-<A NAME="IDX4117"></A>
+<A NAME="IDX4182"></A>
+<A NAME="IDX4183"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dbassertz_fact/1:</B>
-<DD><A NAME="IDX4118"></A>
+<DD><A NAME="IDX4184"></A>
 
 
 <P>
@@ -385,11 +385,11 @@ The predicate is of type <EM>implicit</EM>.
 <UL>
 <LI><EM>Description:</EM> Persistent extension of
 
-<A NAME="IDX4119"></A>
+<A NAME="IDX4185"></A>
 <CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added to the end of the definition of the corresponding predicate. If any integrity constraint violation is done (database stored predicates), an error will be displayed. The predicate concerned must be statically (
-<A NAME="IDX4120"></A>
+<A NAME="IDX4186"></A>
 <CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX4121"></A>
+<A NAME="IDX4187"></A>
 <CODE>make_sql_persistent/3</CODE>) declared. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. <STRONG>Note:</STRONG> <EM>assertion of facts with uninstantiated variables not implemented at this time.</EM> 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -400,11 +400,11 @@ The predicate is of type <EM>implicit</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4122"></A>
-<A NAME="IDX4123"></A>
+<A NAME="IDX4188"></A>
+<A NAME="IDX4189"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dbretract_fact/1:</B>
-<DD><A NAME="IDX4124"></A>
+<DD><A NAME="IDX4190"></A>
 
 
 <P>
@@ -417,11 +417,11 @@ The predicate is of type <EM>implicit</EM>.
 <UL>
 <LI><EM>Description:</EM> Persistent extension of
 
-<A NAME="IDX4125"></A>
+<A NAME="IDX4191"></A>
 <CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
-<A NAME="IDX4126"></A>
+<A NAME="IDX4192"></A>
 <CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX4127"></A>
+<A NAME="IDX4193"></A>
 <CODE>make_sql_persistent/3</CODE>) declared. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -432,11 +432,11 @@ The predicate is of type <EM>implicit</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4128"></A>
-<A NAME="IDX4129"></A>
+<A NAME="IDX4194"></A>
+<A NAME="IDX4195"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dbcurrent_fact/1:</B>
-<DD><A NAME="IDX4130"></A>
+<DD><A NAME="IDX4196"></A>
 
 
 <P>
@@ -449,9 +449,9 @@ The predicate is of type <EM>implicit</EM>.
 <UL>
 <LI><EM>Description:</EM> Persistent extension of
 
-<A NAME="IDX4131"></A>
+<A NAME="IDX4197"></A>
 <CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
-<A NAME="IDX4132"></A>
+<A NAME="IDX4198"></A>
 <CODE>sql_persistent/3</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -462,11 +462,11 @@ The predicate is of type <EM>implicit</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4133"></A>
-<A NAME="IDX4134"></A>
+<A NAME="IDX4199"></A>
+<A NAME="IDX4200"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dbretractall_fact/1:</B>
-<DD><A NAME="IDX4135"></A>
+<DD><A NAME="IDX4201"></A>
 
 
 <P>
@@ -479,11 +479,11 @@ The predicate is of type <EM>implicit</EM>.
 <UL>
 <LI><EM>Description:</EM> Persistent extension of
 
-<A NAME="IDX4136"></A>
+<A NAME="IDX4202"></A>
 <CODE>retractall_fact/1</CODE>: when called deletes all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
-<A NAME="IDX4137"></A>
+<A NAME="IDX4203"></A>
 <CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX4138"></A>
+<A NAME="IDX4204"></A>
 <CODE>make_sql_persistent/3</CODE>) declared. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -494,11 +494,11 @@ The predicate is of type <EM>implicit</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4139"></A>
-<A NAME="IDX4140"></A>
+<A NAME="IDX4205"></A>
+<A NAME="IDX4206"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>make_sql_persistent/3:</B>
-<DD><A NAME="IDX4141"></A>
+<DD><A NAME="IDX4207"></A>
 
 
 <P>
@@ -511,7 +511,7 @@ The predicate is of type <EM>implicit</EM>.
 <UL>
 <LI><EM>Description:</EM> Dynamic version of the
 
-<A NAME="IDX4142"></A>
+<A NAME="IDX4208"></A>
 <CODE>sql_persistent/3</CODE> declaration. 
 <LI><EM>The following properties should hold upon exit:</EM>
 
@@ -528,11 +528,11 @@ The predicate is of type <EM>implicit</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4143"></A>
-<A NAME="IDX4144"></A>
+<A NAME="IDX4209"></A>
+<A NAME="IDX4210"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dbfindall/4:</B>
-<DD><A NAME="IDX4145"></A>
+<DD><A NAME="IDX4211"></A>
 
 
 <P>
@@ -541,7 +541,7 @@ The predicate is of type <EM>implicit</EM>.
 <UL>
 <LI><EM>Description:</EM> Similar to
 
-<A NAME="IDX4146"></A>
+<A NAME="IDX4212"></A>
 <CODE>findall/3</CODE>, but <CODE>Goal</CODE> is executed in database <CODE>DBId</CODE>. Certain restrictions and extensions apply to both <CODE>Pattern</CODE> and <CODE>ComplexGoal</CODE> stemming from the Prolog to SQL translation involved (see the corresponding type definitions for details). 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -561,11 +561,11 @@ The predicate is of type <EM>implicit</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4147"></A>
-<A NAME="IDX4148"></A>
+<A NAME="IDX4213"></A>
+<A NAME="IDX4214"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dbcall/2:</B>
-<DD><A NAME="IDX4149"></A>
+<DD><A NAME="IDX4215"></A>
 
 
 <P>
@@ -586,11 +586,11 @@ The predicate is of type <EM>implicit</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4150"></A>
-<A NAME="IDX4151"></A>
+<A NAME="IDX4216"></A>
+<A NAME="IDX4217"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sql_query/3:</B>
-<DD><A NAME="IDX4152"></A>
+<DD><A NAME="IDX4218"></A>
 
 
 <P>
@@ -599,11 +599,11 @@ The predicate is of type <EM>implicit</EM>.
 <UL>
 <LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is the response from database <CODE>DBId</CODE> to the
 
-<A NAME="IDX4153"></A>
+<A NAME="IDX4219"></A>
 SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerTableTerm</CODE> can express a set of tuples, an error answer or a 'ok' response (see 
-<A NAME="IDX4154"></A>
+<A NAME="IDX4220"></A>
 <CODE>answertableterm/1</CODE> for details). At the moment, 
-<A NAME="IDX4155"></A>
+<A NAME="IDX4221"></A>
 <CODE>sql_query/3</CODE> log in and out for each query. This should be changed to log in only the first time and log out on exit and/or via a timer in the standard way. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -620,11 +620,11 @@ SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerT
 </DL>
 
 <P>
-<A NAME="IDX4156"></A>
-<A NAME="IDX4157"></A>
+<A NAME="IDX4222"></A>
+<A NAME="IDX4223"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sql_get_tables/2:</B>
-<DD><A NAME="IDX4158"></A>
+<DD><A NAME="IDX4224"></A>
 
 
 <P>
@@ -660,11 +660,11 @@ SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerT
 </DL>
 
 <P>
-<A NAME="IDX4159"></A>
-<A NAME="IDX4160"></A>
+<A NAME="IDX4225"></A>
+<A NAME="IDX4226"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sql_table_types/3:</B>
-<DD><A NAME="IDX4161"></A>
+<DD><A NAME="IDX4227"></A>
 
 
 <P>
@@ -706,11 +706,11 @@ SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerT
 </DL>
 
 <P>
-<A NAME="IDX4162"></A>
-<A NAME="IDX4163"></A>
+<A NAME="IDX4228"></A>
+<A NAME="IDX4229"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
-<DD><A NAME="IDX4164"></A>
+<DD><A NAME="IDX4230"></A>
 
 
 <P>
@@ -728,11 +728,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4165"></A>
-<A NAME="IDX4166"></A>
+<A NAME="IDX4231"></A>
+<A NAME="IDX4232"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
-<DD><A NAME="IDX4167"></A>
+<DD><A NAME="IDX4233"></A>
 
 
 <P>
@@ -750,11 +750,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4168"></A>
-<A NAME="IDX4169"></A>
+<A NAME="IDX4234"></A>
+<A NAME="IDX4235"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>user/1:</B>
-<DD><A NAME="IDX4170"></A>
+<DD><A NAME="IDX4236"></A>
 
 
 <P>
@@ -772,11 +772,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4171"></A>
-<A NAME="IDX4172"></A>
+<A NAME="IDX4237"></A>
+<A NAME="IDX4238"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
-<DD><A NAME="IDX4173"></A>
+<DD><A NAME="IDX4239"></A>
 
 
 <P>
@@ -794,11 +794,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4174"></A>
-<A NAME="IDX4175"></A>
+<A NAME="IDX4240"></A>
+<A NAME="IDX4241"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
-<DD><A NAME="IDX4176"></A>
+<DD><A NAME="IDX4242"></A>
 
 
 <P>
@@ -816,11 +816,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4177"></A>
-<A NAME="IDX4178"></A>
+<A NAME="IDX4243"></A>
+<A NAME="IDX4244"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
-<DD><A NAME="IDX4179"></A>
+<DD><A NAME="IDX4245"></A>
 
 
 <P>
@@ -838,15 +838,15 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4180"></A>
+<A NAME="IDX4246"></A>
 <DL>
 <DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX4181"></A>
+<DD><A NAME="IDX4247"></A>
 
 
 <P>
  Imported from 
-<A NAME="IDX4182"></A>
+<A NAME="IDX4248"></A>
 <CODE>sqltypes</CODE> (see the corresponding documentation for details).
 
 
@@ -854,13 +854,13 @@ Defines a regular type.
 
 
 
-<H2><A NAME="SEC401" HREF="ciao_toc.html#TOC401">Documentation on multifiles (<CODE>persdbrtsql</CODE>)</A></H2>
+<H2><A NAME="SEC404" HREF="ciao_toc.html#TOC404">Documentation on multifiles (<CODE>persdbrtsql</CODE>)</A></H2>
 <P>
-<A NAME="IDX4183"></A>
-<A NAME="IDX4184"></A>
+<A NAME="IDX4249"></A>
+<A NAME="IDX4250"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sql_persistent_location/2:</B>
-<DD><A NAME="IDX4185"></A>
+<DD><A NAME="IDX4251"></A>
 
 
 <P>
@@ -905,13 +905,13 @@ The predicate is <EM>multifile</EM> and of type <EM>data</EM>.
 
 
 
-<H2><A NAME="SEC402" HREF="ciao_toc.html#TOC402">Documentation on internals (<CODE>persdbrtsql</CODE>)</A></H2>
+<H2><A NAME="SEC405" HREF="ciao_toc.html#TOC405">Documentation on internals (<CODE>persdbrtsql</CODE>)</A></H2>
 <P>
-<A NAME="IDX4186"></A>
-<A NAME="IDX4187"></A>
+<A NAME="IDX4252"></A>
+<A NAME="IDX4253"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_query/4:</B>
-<DD><A NAME="IDX4188"></A>
+<DD><A NAME="IDX4254"></A>
 
 
 <P>
@@ -920,13 +920,13 @@ The predicate is <EM>multifile</EM> and of type <EM>data</EM>.
 <UL>
 <LI><EM>Description:</EM> <CODE>ResultTerm</CODE> contains all the
 
-<A NAME="IDX4189"></A>
+<A NAME="IDX4255"></A>
 tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
-<A NAME="IDX4190"></A>
+<A NAME="IDX4256"></A>
 <CODE>pl2sqlstring/3</CODE> for the 
-<A NAME="IDX4191"></A>
+<A NAME="IDX4257"></A>
 Prolog to SQL translation and 
-<A NAME="IDX4192"></A>
+<A NAME="IDX4258"></A>
 <CODE>sql_query/3</CODE> for posing the actual query. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -946,11 +946,11 @@ Prolog to SQL translation and
 </DL>
 
 <P>
-<A NAME="IDX4193"></A>
-<A NAME="IDX4194"></A>
+<A NAME="IDX4259"></A>
+<A NAME="IDX4260"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_query_one_tuple/4:</B>
-<DD><A NAME="IDX4195"></A>
+<DD><A NAME="IDX4261"></A>
 
 
 <P>
@@ -959,13 +959,13 @@ Prolog to SQL translation and
 <UL>
 <LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is one of the
 
-<A NAME="IDX4196"></A>
+<A NAME="IDX4262"></A>
 tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
-<A NAME="IDX4197"></A>
+<A NAME="IDX4263"></A>
 <CODE>pl2sqlstring/3</CODE> for the 
-<A NAME="IDX4198"></A>
+<A NAME="IDX4264"></A>
 Prolog to SQL translation and 
-<A NAME="IDX4199"></A>
+<A NAME="IDX4265"></A>
 <CODE>sql_query_one_tuple/3</CODE> for posing the actual query. After last tuple has been reached, a null tuple is unified with ResultTerm, and the connection to the database finishes. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -985,11 +985,11 @@ Prolog to SQL translation and
 </DL>
 
 <P>
-<A NAME="IDX4200"></A>
-<A NAME="IDX4201"></A>
+<A NAME="IDX4266"></A>
+<A NAME="IDX4267"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sql_query_one_tuple/3:</B>
-<DD><A NAME="IDX4202"></A>
+<DD><A NAME="IDX4268"></A>
 
 
 <P>
@@ -998,11 +998,11 @@ Prolog to SQL translation and
 <UL>
 <LI><EM>Description:</EM> <CODE>ResultTuple</CODE> contains an element from the set of tuples which represents the response in <CODE>DBId</CODE> to the
 
-<A NAME="IDX4203"></A>
+<A NAME="IDX4269"></A>
 SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls return consecutive tuples, until the last tuple is reached. Then a null tuple is unified with <CODE>ResultTuple</CODE> and the connection is finished (calls to 
-<A NAME="IDX4204"></A>
+<A NAME="IDX4270"></A>
 <CODE>db_logoff/1</CODE> and 
-<A NAME="IDX4205"></A>
+<A NAME="IDX4271"></A>
 <CODE>odbc_disconnect/1</CODE>). 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -1019,11 +1019,11 @@ SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls ret
 </DL>
 
 <P>
-<A NAME="IDX4206"></A>
-<A NAME="IDX4207"></A>
+<A NAME="IDX4272"></A>
+<A NAME="IDX4273"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX4208"></A>
+<DD><A NAME="IDX4274"></A>
 
 
 <P>
@@ -1041,11 +1041,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4209"></A>
-<A NAME="IDX4210"></A>
+<A NAME="IDX4275"></A>
+<A NAME="IDX4276"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
-<DD><A NAME="IDX4211"></A>
+<DD><A NAME="IDX4277"></A>
 
 
 <P>
@@ -1064,7 +1064,7 @@ Defines a regular type.
 
 
 
-<H2><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Known bugs and planned improvements (<CODE>persdbrtsql</CODE>)</A></H2>
+<H2><A NAME="SEC406" HREF="ciao_toc.html#TOC406">Known bugs and planned improvements (<CODE>persdbrtsql</CODE>)</A></H2>
 
 
 <UL>
@@ -1087,6 +1087,6 @@ Needs to be unified with the file-based library.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -770,11 +770,14 @@ BOOL close_predicate(Arg)
 {
   REGISTER struct int_info *root = TagToRoot(X(0));
 
+#if defined(THREADS)
   Wait_Acquire_lock(root->clause_lock_l);
+#endif
   if (root->behavior_on_failure == CONC_OPEN)
     root->behavior_on_failure = CONC_CLOSED;
+#if defined(THREADS)
   Release_lock(root->clause_lock_l);
-
+#endif
   return TRUE;
 }
 
@@ -783,11 +786,14 @@ BOOL open_predicate(Arg)
 {
   REGISTER struct int_info *root = TagToRoot(X(0));
 
+#if defined(THREADS)
   Wait_Acquire_lock(root->clause_lock_l);
+#endif
   if (root->behavior_on_failure == CONC_CLOSED)
     root->behavior_on_failure = CONC_OPEN;
+#if defined(THREADS)
   Release_lock(root->clause_lock_l);
-
+#endif
   return TRUE;
 }
 #else                                                          /* THREADS */

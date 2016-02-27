@@ -811,10 +811,11 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
         BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,2)
         else if (!TagIsLST(cdr))
           BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2)
-               else if (i == Atom_Buffer_Length)
+            else if (i == Atom_Buffer_Length){
                  Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
-                                                    i, Atom_Buffer_Length<<=1),
+                                                    i, Atom_Buffer_Length<<=1);
                       s = (unsigned char *)Atom_Buffer+i;
+            }
       DerefCar(car,cdr);
       if (IsVar(car))
         BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,2)
@@ -823,12 +824,13 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
 	  *s++ = GetSmall(car);
       DerefCdr(cdr,cdr);
     }
-    if (i == Atom_Buffer_Length)
+    if (i == Atom_Buffer_Length) {
       Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
-                                         i, Atom_Buffer_Length<<=1),
+                                         i, Atom_Buffer_Length<<=1);
       s = (unsigned char *)Atom_Buffer+i;
+    }
     *s++ = '\0';
-    if (i>=MAXATOM) atomp = FALSE;
+    if (i>=MAXATOM) atomp = FALSE;  /* Unneded with dynamic atom sizes */
 
     /* INTEGER :== [minus]{digit} */
     /* FLOAT :== [minus]{digit}.{digit}[exp[sign]{digit}] */
@@ -942,8 +944,11 @@ BOOL prolog_atom_length(Arg)
   if (!IsInteger(X(1)) && !IsVar(X(1)))
     BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2)
 
+#if defined(USE_ATOM_LEN)
+  return cunify(Arg,MakeSmall(GetAtomLen(X(0))),X(1));
+#else
   return cunify(Arg,MakeSmall(strlen(GetString(X(0)))),X(1));
-
+#endif
 }
 
 /* sub_atom(Atom, Before, Lenght, Sub_atom) */
@@ -966,7 +971,11 @@ BOOL prolog_sub_atom(Arg)
     ERROR_IN_ARG(X(2),3,INTEGER);
 
   s = (unsigned char *)GetString(X(0));
+#if defined(USE_ATOM_LEN)
+    l = GetAtomLen(X(0));
+#else
   l = strlen(s);
+#endif
 
   b = GetInteger(X(1));
   if (b < 0 || b > l)
@@ -1011,10 +1020,25 @@ BOOL prolog_atom_concat(Arg)
 /* atom_concat(+, +, ?) */
       s2 = (unsigned char *)GetString(X(1));
 
-      if ((new_atom_length = strlen(s1)+strlen(s2)+1) > MAXATOM)
-        return FALSE; /* Should give an error!! */
+#if defined(USE_ATOM_LEN)
+      new_atom_length = GetAtomLen(X(0)) + GetAtomLen(X(1)) + 1;
+#else
+      new_atom_length = strlen(s1) + strlen(s2) + 1;
+#endif
+
+#if defined(USE_DYNAMIC_ATOM_SIZE)
       if (Atom_Buffer_Length < new_atom_length)
         EXPAND_ATOM_BUFFER(new_atom_length);
+#else
+      if (new_atom_length > MAXATOM)
+#if defined(DEBUG)
+        SERIOUS_FAULT("atom length exceeded in prolog_atom_concat()")
+#else
+        return FALSE; 
+#endif
+      if (Atom_Buffer_Length < new_atom_length)
+        EXPAND_ATOM_BUFFER(new_atom_length);
+#endif
 
       /* Append the two strings in atom_buffer */
       s = (unsigned char *)Atom_Buffer;
@@ -1031,8 +1055,13 @@ BOOL prolog_atom_concat(Arg)
 /* atom_concat(+, -, +) */
       s2 = (unsigned char *)GetString(X(2));
 
+#if defined(USE_ATOM_LEN)
+      if ((new_atom_length = GetAtomLen(X(2))+1) > Atom_Buffer_Length)
+        EXPAND_ATOM_BUFFER(new_atom_length);
+#else
       if ((new_atom_length = strlen(s2)+1) > Atom_Buffer_Length)
         EXPAND_ATOM_BUFFER(new_atom_length);
+#endif
 
       for ( ; *s1 && *s2 ; s1++, s2++)
         if (*s1 != *s2) return FALSE;
@@ -1057,8 +1086,13 @@ BOOL prolog_atom_concat(Arg)
       s1 = (unsigned char *)GetString(X(1));
       s2 = (unsigned char *)GetString(X(2));
 
+#if defined(USE_ATOM_LEN)
+      if ((new_atom_length = (GetAtomLen(X(2)) - GetAtomLen(X(1)))) < 0)
+        return FALSE;
+#else
       if ((new_atom_length = strlen(s2)-strlen(s1)) < 0)
         return FALSE;
+#endif
 
       if (new_atom_length+1 > Atom_Buffer_Length)
         EXPAND_ATOM_BUFFER(new_atom_length+1);
@@ -1079,9 +1113,13 @@ BOOL prolog_atom_concat(Arg)
 /* atom_concat(-, -, +) */
 
       s2 = (unsigned char *)GetString(X(2));
+#if defined(USE_ATOM_LEN)
+      if ((new_atom_length = GetAtomLen(X(2))+1) > Atom_Buffer_Length)
+        EXPAND_ATOM_BUFFER(new_atom_length);
+#else
       if ((new_atom_length = strlen(s2)+1) > Atom_Buffer_Length)
         EXPAND_ATOM_BUFFER(new_atom_length);
-
+#endif
       X(3) = TaggedZero;
       push_choicept(Arg,address_nd_atom_concat);
       return nd_atom_concat(Arg);

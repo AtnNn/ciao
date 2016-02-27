@@ -1,6 +1,7 @@
 
 :- use_package([assertions,metaprops]).
 :- comment(nodoc,assertions).
+:- comment(nodoc,metaprops).
 
 :- comment(filetype,package).
 

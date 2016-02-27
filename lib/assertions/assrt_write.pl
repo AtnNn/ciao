@@ -18,7 +18,7 @@
 % Other libraries
 :- use_module(library('assertions/assrt_lib'),[assertion_body/7]).
 :- use_module(library(messages)).
-:- use_module(library('assertions/assrt_props')).
+:- use_module(library('assertions/assertions_props')).
 
 :- regtype status_flag(F) # "@var{F} is @tt{status} or @tt{nostatus}.".
 
@@ -26,8 +26,8 @@ status_flag(status).
 status_flag(nostatus).
 
 :- pred write_assertion(Goal,Status,Type,Body,Dict,Flag)
-	:: ( assertion_status(Status), assrt_type(Type),
-	     assertion(Body), dictionary(Dict),
+	:: ( assrt_status(Status), assrt_type(Type),
+	     nabody(Body), dictionary(Dict),
 	     status_flag(Flag) )
         # "Writes the (normalized) assertion to current output.".
 
@@ -35,8 +35,8 @@ write_assertion(Goal,Status,Type,Body,Dict,Flag):-
 	write_assertion_(Goal,Status,Type,Body,Dict,Flag,no).
 
 :- pred write_assertion_as_comment(Goal,Status,Type,Body,Dict,Flag)
-	:: ( assertion_status(Status), assrt_type(Type),
-	     assertion(Body), dictionary(Dict),
+	:: ( assrt_status(Status), assrt_type(Type),
+	     nabody(Body), dictionary(Dict),
 	     status_flag(Flag) )
         # "Writes the (normalized) assertion to current output as
            a Prolog comment.".
@@ -141,6 +141,9 @@ decide_on_call(_Call,conj).
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+2,1999/11/29,18:02*53+'MET'), "assrt_props is
+   now assertions_props. (Francisco Bueno Carrillo)").
 
 :- comment(version(1*3+45,1999/08/05,14:43*07+'MEST'), "Print
    properties in assertions as disjunctions or conjunctions.

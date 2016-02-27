@@ -1,3 +1,4 @@
+
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 
 case INITTRUE:
@@ -363,11 +364,11 @@ cutb_x:
 
 w->local_top = 0; /* may get hole at top of local stack */
 w->next_node = ChoiceFromInt(Xb(P1));
-
+DOCUT;
+#if defined(THREADS)
 if (ChoiceYounger(TopConcChpt, w->next_node))
      remove_link_chains(&TopConcChpt, w->next_node);
-
-DOCUT;
+#endif
 DISPATCH_R(1);
 
 case CUTB_X_NECK:
@@ -375,12 +376,13 @@ cutb_x_neck:
 w->local_top = 0; /* may get hole at top of local stack */
 w->next_node = ChoiceFromInt(Xb(Pnext));
 
-if (ChoiceYounger(TopConcChpt, w->next_node))
-     remove_link_chains(&TopConcChpt, w->next_node);
-
 case CUTB_NECK:
 cutb_neck:
 DOCUT;
+#if defined(THREADS)
+if (ChoiceYounger(TopConcChpt, w->next_node))
+     remove_link_chains(&TopConcChpt, w->next_node);
+#endif
 if (w->next_alt){
   w->next_alt = NULL;
   if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
@@ -393,14 +395,14 @@ cutb_x_neck_proceed:
 w->next_node = ChoiceFromInt(Xb(P1)); /* P++ */
 /* w->local_top = 0; done by PROCED */
 
-if (ChoiceYounger(TopConcChpt, w->next_node)) 
-     remove_link_chains(&TopConcChpt, w->next_node);
-
 case CUTB_NECK_PROCEED:
 cutb_neck_proceed:
 DOCUT;
-if (w->next_alt)
-{
+#if defined(THREADS)
+if (ChoiceYounger(TopConcChpt, w->next_node)) 
+     remove_link_chains(&TopConcChpt, w->next_node);
+#endif
+if (w->next_alt) {
   w->next_alt = NULL;
   if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
     choice_overflow(Arg,CHOICEPAD);
@@ -411,26 +413,27 @@ case CUTE_X:
 cute_x:
 
 w->next_node = ChoiceFromInt(Xb(P1));
-
-if (ChoiceYounger(TopConcChpt, w->next_node))
-  remove_link_chains(&TopConcChpt, w->next_node);
-
 w->local_top = E; /* w->local_top may be 0 here. */
 DOCUT;
+#if defined(THREADS)
+if (ChoiceYounger(TopConcChpt, w->next_node))
+  remove_link_chains(&TopConcChpt, w->next_node);
+#endif
 SetE(w->local_top);
 DISPATCH_R(1);
 
 case CUTE_X_NECK:
 cute_x_neck:
 w->next_node = ChoiceFromInt(Xb(Pnext));
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node))
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
+
 case CUTE_NECK:
 cute_neck:
 w->local_top = E; /* w->local_top may be 0 here. */
 DOCUT;
+#if defined(THREADS)
+if (ChoiceYounger(TopConcChpt, w->next_node))
+     remove_link_chains(&TopConcChpt, w->next_node);
+#endif
 				/* w->next_alt can't be NULL here */
 w->next_alt = NULL;
 if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
@@ -441,10 +444,6 @@ DISPATCH_R(0);
 case CUTF_X:
 cutf_x:
 w->next_node = ChoiceFromInt(Xb(Pnext));
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node))
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
 
 case CUTF:
 cutf:
@@ -453,6 +452,7 @@ DOCUT;
 if (ChoiceYounger(TopConcChpt, w->next_node))
      remove_link_chains(&TopConcChpt, w->next_node);
 #endif
+
 SetE(w->frame);
 DISPATCH_R(0);
 
@@ -461,19 +461,14 @@ cut_y:
 
 RefStack(t1,&Yb(P1));
 w->next_node = ChoiceFromInt(t1);
-
+DOCUT;
 /* Concurrency: if we cut (therefore discarding intermediate
    choicepoints), make sure we also get rid of the linked chains which
    point to the pending calls to concurrent predicates. (MCL) */
-
-
 #if defined(THREADS)
 if (ChoiceYounger(TopConcChpt, w->next_node)) 
      remove_link_chains(&TopConcChpt, w->next_node);
 #endif
-
-
-DOCUT;
 SetE(w->frame);
 DISPATCH_R(1);
 

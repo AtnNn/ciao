@@ -1,12 +1,12 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Predicates controlling the interactive debugger</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
@@ -16,15 +16,15 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <
 
 
 <P>
-<STRONG>Author(s):</STRONG> A. Ciepielewski, M. Carlsson, T. Chikayama, K. Shen, D. Cabeza.
+<STRONG>Author(s):</STRONG> A. Ciepielewski, M. Carlsson, T. Chikayama, K. Shen, D. Cabeza, M. Rodriguez.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+<STRONG>Version:</STRONG> 1.5#34 (1999/12/31, 18:49:41 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#104 (1999/11/17, 22:5:53 MET)
+<STRONG>Version of last change:</STRONG> 1.5#19 (1999/12/16, 17:55:37 MET)
 
 
 <P>
@@ -35,7 +35,8 @@ This library implements predicates which are normally used in the interactive to
 <UL>
 <LI><A HREF="ciao_8.html#SEC38">Usage and interface (debugger)</A>
 <LI><A HREF="ciao_8.html#SEC39">Documentation on exports (debugger)</A>
-<LI><A HREF="ciao_8.html#SEC40">Documentation on internals (debugger)</A>
+<LI><A HREF="ciao_8.html#SEC40">Documentation on multifiles (debugger)</A>
+<LI><A HREF="ciao_8.html#SEC41">Documentation on internals (debugger)</A>
 </UL>
 
 
@@ -70,19 +71,36 @@ This library implements predicates which are normally used in the interactive to
 <A NAME="IDX379"></A>
 <CODE>notrace/0</CODE>, 
 <A NAME="IDX380"></A>
-<CODE>spy/1</CODE>, 
+<CODE>trace_lines/0</CODE>, 
 <A NAME="IDX381"></A>
-<CODE>nospy/1</CODE>, 
+<CODE>notrace_lines/0</CODE>, 
 <A NAME="IDX382"></A>
-<CODE>nospyall/0</CODE>, 
+<CODE>spy/1</CODE>, 
 <A NAME="IDX383"></A>
-<CODE>debugging/0</CODE>, 
+<CODE>nospy/1</CODE>, 
 <A NAME="IDX384"></A>
-<CODE>leash/1</CODE>, 
+<CODE>nospyall/0</CODE>, 
 <A NAME="IDX385"></A>
-<CODE>maxdepth/1</CODE>, 
+<CODE>breakpt/6</CODE>, 
 <A NAME="IDX386"></A>
+<CODE>nobreakpt/6</CODE>, 
+<A NAME="IDX387"></A>
+<CODE>nobreakall/0</CODE>, 
+<A NAME="IDX388"></A>
+<CODE>list_breakpt/0</CODE>, 
+<A NAME="IDX389"></A>
+<CODE>debugging/0</CODE>, 
+<A NAME="IDX390"></A>
+<CODE>leash/1</CODE>, 
+<A NAME="IDX391"></A>
+<CODE>maxdepth/1</CODE>, 
+<A NAME="IDX392"></A>
 <CODE>call_in_module/2</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX393"></A>
+<CODE>define_flag/3</CODE>.
 
 </UL>
 
@@ -93,19 +111,19 @@ This library implements predicates which are normally used in the interactive to
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX387"></A>
+<A NAME="IDX394"></A>
 <CODE>format</CODE>, 
-<A NAME="IDX388"></A>
+<A NAME="IDX395"></A>
 <CODE>ttyout</CODE>, 
-<A NAME="IDX389"></A>
+<A NAME="IDX396"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX390"></A>
+<A NAME="IDX397"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX391"></A>
+<A NAME="IDX398"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX392"></A>
+<A NAME="IDX399"></A>
 <CODE>sort</CODE>, 
-<A NAME="IDX393"></A>
+<A NAME="IDX400"></A>
 <CODE>prolog_sys</CODE>.
 
 </UL>
@@ -118,11 +136,11 @@ This library implements predicates which are normally used in the interactive to
 
 <H2><A NAME="SEC39" HREF="ciao_toc.html#TOC39">Documentation on exports (<CODE>debugger</CODE>)</A></H2>
 <P>
-<A NAME="IDX394"></A>
-<A NAME="IDX395"></A>
+<A NAME="IDX401"></A>
+<A NAME="IDX402"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>debug_module/1:</B>
-<DD><A NAME="IDX396"></A>
+<DD><A NAME="IDX403"></A>
 
 
 <P>
@@ -140,11 +158,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX397"></A>
-<A NAME="IDX398"></A>
+<A NAME="IDX404"></A>
+<A NAME="IDX405"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nodebug_module/1:</B>
-<DD><A NAME="IDX399"></A>
+<DD><A NAME="IDX406"></A>
 
 
 <P>
@@ -162,11 +180,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX400"></A>
-<A NAME="IDX401"></A>
+<A NAME="IDX407"></A>
+<A NAME="IDX408"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>debug/0:</B>
-<DD><A NAME="IDX402"></A>
+<DD><A NAME="IDX409"></A>
 
 
 <P>
@@ -180,11 +198,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX403"></A>
-<A NAME="IDX404"></A>
+<A NAME="IDX410"></A>
+<A NAME="IDX411"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nodebug/0:</B>
-<DD><A NAME="IDX405"></A>
+<DD><A NAME="IDX412"></A>
 
 
 <P>
@@ -198,11 +216,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX406"></A>
-<A NAME="IDX407"></A>
+<A NAME="IDX413"></A>
+<A NAME="IDX414"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>trace/0:</B>
-<DD><A NAME="IDX408"></A>
+<DD><A NAME="IDX415"></A>
 
 
 <P>
@@ -216,11 +234,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX409"></A>
-<A NAME="IDX410"></A>
+<A NAME="IDX416"></A>
+<A NAME="IDX417"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>notrace/0:</B>
-<DD><A NAME="IDX411"></A>
+<DD><A NAME="IDX418"></A>
 
 
 <P>
@@ -229,18 +247,64 @@ This library implements predicates which are normally used in the interactive to
 <UL>
 <LI><EM>Description:</EM> Equivalent to
 
-<A NAME="IDX412"></A>
+<A NAME="IDX419"></A>
 <CODE>nodebug/0</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX413"></A>
-<A NAME="IDX414"></A>
+<A NAME="IDX420"></A>
+<A NAME="IDX421"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>trace_lines/0:</B>
+<DD><A NAME="IDX422"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Turns on
+
+<A NAME="IDX423"></A>
+<A NAME="IDX424"></A>
+<EM>source line tracing</EM>: the debugger prints out information on file and 
+<A NAME="IDX425"></A>
+line number info, usable by the 
+<A NAME="IDX426"></A>
+<CODE>emacs</CODE> mode. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX427"></A>
+<A NAME="IDX428"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>notrace_lines/0:</B>
+<DD><A NAME="IDX429"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Turns off source line tracing.
+
+<A NAME="IDX430"></A>
+<A NAME="IDX431"></A>
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX432"></A>
+<A NAME="IDX433"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>spy/1:</B>
-<DD><A NAME="IDX415"></A>
+<DD><A NAME="IDX434"></A>
 
 
 <P>
@@ -258,11 +322,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX416"></A>
-<A NAME="IDX417"></A>
+<A NAME="IDX435"></A>
+<A NAME="IDX436"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nospy/1:</B>
-<DD><A NAME="IDX418"></A>
+<DD><A NAME="IDX437"></A>
 
 
 <P>
@@ -280,11 +344,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX419"></A>
-<A NAME="IDX420"></A>
+<A NAME="IDX438"></A>
+<A NAME="IDX439"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>nospyall/0:</B>
-<DD><A NAME="IDX421"></A>
+<DD><A NAME="IDX440"></A>
 
 
 <P>
@@ -298,11 +362,124 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX422"></A>
-<A NAME="IDX423"></A>
+<A NAME="IDX441"></A>
+<A NAME="IDX442"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>breakpt/6:</B>
+<DD><A NAME="IDX443"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>breakpt(Pred,Src,Ln0,Ln1,Number,RealLine)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set a
+
+<A NAME="IDX444"></A>
+<A NAME="IDX445"></A>
+<EM>breakpoint</EM> in file <CODE>Src</CODE> between lines <CODE>Ln0</CODE> and <CODE>Ln1</CODE> at the <CODE>Number</CODE>'th occurence of (predicate) name <CODE>Pred</CODE>. The complication comes from the fact that the reader only gives the start and end line numbers for the predicate. The rest of the arguments provide enough information to be able to locate the exact predicate that the <CODE>RealLine</CODE> line refers to. This is used by the 
+<A NAME="IDX446"></A>
+<CODE>emacs</CODE> mode. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Src</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Ln0</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Ln1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Number</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>RealLine</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX447"></A>
+<A NAME="IDX448"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nobreakpt/6:</B>
+<DD><A NAME="IDX449"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nobreakpt(Pred,Src,Ln0,Ln1,Number,RealLine)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Remove a breakpoint in file <CODE>Src</CODE> between lines <CODE>Ln0</CODE> and <CODE>Ln1</CODE> at the <CODE>Number</CODE>'th occurence of (predicate) name <CODE>Pred</CODE> (see
+
+<A NAME="IDX450"></A>
+<CODE>breakpt/6</CODE>). 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Src</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Ln0</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Ln1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Number</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>RealLine</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX451"></A>
+<A NAME="IDX452"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nobreakall/0:</B>
+<DD><A NAME="IDX453"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Remove all breakpoints.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX454"></A>
+<A NAME="IDX455"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_breakpt/0:</B>
+<DD><A NAME="IDX456"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX457"></A>
+<A NAME="IDX458"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>debugging/0:</B>
-<DD><A NAME="IDX424"></A>
+<DD><A NAME="IDX459"></A>
 
 
 <P>
@@ -316,11 +493,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX425"></A>
-<A NAME="IDX426"></A>
+<A NAME="IDX460"></A>
+<A NAME="IDX461"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>leash/1:</B>
-<DD><A NAME="IDX427"></A>
+<DD><A NAME="IDX462"></A>
 
 
 <P>
@@ -338,11 +515,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX428"></A>
-<A NAME="IDX429"></A>
+<A NAME="IDX463"></A>
+<A NAME="IDX464"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>maxdepth/1:</B>
-<DD><A NAME="IDX430"></A>
+<DD><A NAME="IDX465"></A>
 
 
 <P>
@@ -360,11 +537,11 @@ This library implements predicates which are normally used in the interactive to
 </DL>
 
 <P>
-<A NAME="IDX431"></A>
-<A NAME="IDX432"></A>
+<A NAME="IDX466"></A>
+<A NAME="IDX467"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>call_in_module/2:</B>
-<DD><A NAME="IDX433"></A>
+<DD><A NAME="IDX468"></A>
 
 
 <P>
@@ -386,13 +563,34 @@ This library implements predicates which are normally used in the interactive to
 
 
 
-<H2><A NAME="SEC40" HREF="ciao_toc.html#TOC40">Documentation on internals (<CODE>debugger</CODE>)</A></H2>
+<H2><A NAME="SEC40" HREF="ciao_toc.html#TOC40">Documentation on multifiles (<CODE>debugger</CODE>)</A></H2>
 <P>
-<A NAME="IDX434"></A>
-<A NAME="IDX435"></A>
+<A NAME="IDX469"></A>
+<A NAME="IDX470"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
+<DD><A NAME="IDX471"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC41" HREF="ciao_toc.html#TOC41">Documentation on internals (<CODE>debugger</CODE>)</A></H2>
+<P>
+<A NAME="IDX472"></A>
+<A NAME="IDX473"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>multpredspec/1:</B>
-<DD><A NAME="IDX436"></A>
+<DD><A NAME="IDX474"></A>
 
 
 <P>
@@ -424,6 +622,6 @@ multpredspec(Name) :-
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_7.html">previous</A>, <A HREF="ciao_9.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

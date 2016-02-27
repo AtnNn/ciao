@@ -13,6 +13,7 @@
 
 #include "builtin_defs.h"
 #include "wam_defs.h"
+#include "inout_defs.h"
 
 /* local declarations */
 
@@ -182,7 +183,7 @@ void wr_tagged_rec(Arg,t)
     print_variable(Arg,stream_user_output,t);
     break;
   case ATM:
-    print_atom(stream_user_output,t);
+    print_atom(Arg,stream_user_output,t);
     break;
   case NUM:
   number:

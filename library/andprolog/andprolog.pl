@@ -12,7 +12,7 @@
 
 :- comment(module,"This library allows and-parallel execution of goals
 in (Herbrand-)independent fashion. It resembles the execution rules of
-@&-Prolog @cite{iclp90-performance}. Basically, goals are run in
+&-Prolog @cite{iclp90-performance}. Basically, goals are run in
 and-parallel @em{provided that their arguments do not share bindings},
 i.e., are not bound to terms which contain a common variable.
 
@@ -23,7 +23,7 @@ Beware: it is highly unstable at the moment!").
 %% FOR TEMPORARILY PARTIALLY DOCUMENTING:
 :- use_module(library('assertions/doc_props')).
 
-:- op(950,xf,[(&)]).
+:- op(950,xfy,[(&)]).
 :- op(975,xfx,[(=>)]).
 
 %%***************************************************************************

@@ -110,13 +110,13 @@ goal_expansion(Goal,class_rt:NewGoal,Module,InstVar) :-
 	arg(1,NewGoal,NewFact),
 	arg(2,NewGoal,InstVar).
 
-goal_expansion(Goal,fail,_,_) :-
+goal_expansion(Goal,fail,Module,_) :-
 	fact2attr(Goal,FactArg,_),
 	nonvar(FactArg),
 	FactArg = inherited(Fact),
 	functor(Fact,_,_),
 	!,
-	message(error,['unknown inherited attribute in ',Goal]).
+	message(Module,error,['unknown inherited attribute in ',Goal]).
 
 %% Goal belongs to assert/retract family and involves some attribute,
 %% e.g.: retract(attr(_)).
@@ -163,9 +163,9 @@ goal_expansion(inherited(Goal),AtClass:NewGoal,Module,InstVar) :-
 
 %% Invalid inherited goal
 
-goal_expansion(inherited(Goal),_,_,_) :-
+goal_expansion(inherited(Goal),_,Module,_) :-
 	!,
-	message(error,['unknown inherited goal: ',Goal]),
+	message(Module,error,['unknown inherited goal: ',Goal]),
 	fail.
 
 %% Goal is an attribute, e.g.: attr(I)
@@ -226,24 +226,19 @@ fact_expansion(Fact,Fact,Module,_) :-
 	functor(Fact,F,A),
 	method_from(Module,_,F/A),
 	!,
-	message(error,
+	message(Module,error,
 	 ['invalid argument: ', F,'/',A,' is not an attribute']).
 
 fact_expansion(inherited(Fact),inherited(Fact),Module,_) :-
 	functor(Fact,F,A),
 	inherited_method_from(Module,_,F/A),
 	!,
-	message(error,
+	message(Module,error,
 	 ['invalid argument: inherited ', F,'/',A,' is not an attribute']).
 
-fact_expansion(inherited(Fact),inherited(Fact),_,_) :-
+fact_expansion(inherited(Fact),inherited(Fact),Module,_) :-
 	!,
-	message(error,['unknown inherited fact: ',Fact]).
-
-%% In other case, fact expansion is left to run time.
-
-fact_expansion(Fact,class_rt(InstVar):Fact,_,InstVar):-
-	!.
+	message(Module,error,['unknown inherited fact: ',Fact]).
 
 %%------------------------------------------------------------------------
 %%
@@ -289,9 +284,9 @@ spec_expansion(inherited(F/A),NewF/NewA,Module,_) :-
 	NewA is A+1,
 	!.
 
-spec_expansion(inherited(Fact),inherited(Fact),_,_) :-
+spec_expansion(inherited(Fact),inherited(Fact),Module,_) :-
 	!,
-	message(error,['unknown inherited spec: ',Fact]).
+	message(Module,error,['unknown inherited spec: ',Fact]).
 
 %% Spec is known to involve an attribute
 

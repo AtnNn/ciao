@@ -109,17 +109,19 @@
  @item @bf{ERROR : static instance @em{ID} was derived from a different constructor 
            at @em{AnotherModule}}
 
-     @em{ID} has been declared to be an static instance both on @em{AnotherModule} and
-     current source, but different constructors were used. The most probable causes for
+     @em{ID} has been declared to be an static instance 
+     both on @em{AnotherModule} and  current source, 
+     but different constructors were used. The most probable causes for
      this error are:
      
      @begin{itemize}
 
-       @item Occasionally, there is another module using the same instance identifier 
-             and it was not noticed by you. Another different identifier may 
-             be used instead.
+       @item Occasionally, there is another module using the same 
+             instance identifier and it was not noticed by you. 
+             Another different identifier may be used instead.
 
-       @item It was you intention to use the same object as declared by the other module.
+       @item It was you intention to use the same object as 
+             declared by the other module.
              In this case, the same constructor must be used.
 
      @end{itemize}
@@ -219,7 +221,7 @@
  This is a warning (not an error) since @em{Var}:@em{Goal} may be not related 
  to Object Oriented Programing.
 
-
+ @end{itemize}
 
  @section{Error reporting at run time (objects)}
 
@@ -257,6 +259,9 @@
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+:- comment(version(1*5+14,1999/12/14,15:29*55+'MET'), "Fixed some missing
+   @end{itemize} (Angel Fernandez Pineda)").
 
 :- comment(version(1*3+79,1999/10/13,18:48*00+'MEST'), "Added another error
    message.  (Angel Fernandez Pineda)").

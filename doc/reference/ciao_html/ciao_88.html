@@ -1,28 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - functions (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Independent and-parallel execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC306" HREF="ciao_toc.html#TOC306">functions (library)</A></H1>
+<H1><A NAME="SEC310" HREF="ciao_toc.html#TOC310">Independent and-parallel execution</A></H1>
 <P>
-<A NAME="IDX3445"></A>
+<A NAME="IDX3505"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo, Manuel Carro.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#9 (1999/12/9, 21:57:42 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+
+
+<P>
+This library allows and-parallel execution of goals in (Herbrand-)independent fashion. It resembles the execution rules of &#38;-Prolog [HG90]. Basically, goals are run in and-parallel <EM>provided that their arguments do not share bindings</EM>, i.e., are not bound to terms which contain a common variable. 
+
+
+<P>
+Beware: it is highly unstable at the moment!
 
 
 
 <UL>
-<LI><A HREF="ciao_88.html#SEC307">Usage and interface (functions)</A>
+<LI><A HREF="ciao_88.html#SEC311">Usage and interface (andprolog)</A>
+<LI><A HREF="ciao_88.html#SEC312">Documentation on exports (andprolog)</A>
+<LI><A HREF="ciao_88.html#SEC313">Known bugs and planned improvements (andprolog)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC307" HREF="ciao_toc.html#TOC307">Usage and interface (<CODE>functions</CODE>)</A></H2>
+<H2><A NAME="SEC311" HREF="ciao_toc.html#TOC311">Usage and interface (<CODE>andprolog</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -30,20 +52,30 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(functions).</CODE>
+<CODE>:- use_module(library(andprolog)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[functions]).</CODE>
 
-<LI><STRONG>New operators defined:</STRONG>
+<UL>
 
-<A NAME="IDX3446"></A>
-<CODE>function/1</CODE> [1150,fx], 
-<A NAME="IDX3447"></A>
-<CODE>:=/2</CODE> [800,xfx], 
-<A NAME="IDX3448"></A>
-<CODE>~/1</CODE> [50,fx].
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3506"></A>
+<CODE>@&#38;/2</CODE>, 
+<A NAME="IDX3507"></A>
+<CODE>=&#62;/2</CODE>, 
+<A NAME="IDX3508"></A>
+<CODE>active_agents/1</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX3509"></A>
+<CODE>indep/1</CODE>, 
+<A NAME="IDX3510"></A>
+<CODE>indep/2</CODE>.
+
+</UL>
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -52,24 +84,8 @@ or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3449"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX3450"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX3451"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX3452"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX3453"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX3454"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX3455"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX3456"></A>
-<CODE>streams</CODE>, 
-<A NAME="IDX3457"></A>
-<CODE>write</CODE>.
+<A NAME="IDX3511"></A>
+<CODE>assertions/doc_props</CODE>.
 
 </UL>
 
@@ -77,7 +93,171 @@ or
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC312" HREF="ciao_toc.html#TOC312">Documentation on exports (<CODE>andprolog</CODE>)</A></H2>
+<P>
+<A NAME="IDX3512"></A>
+<A NAME="IDX3513"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>@&#38;/2:</B>
+<DD><A NAME="IDX3514"></A>
+
+
+<P>
+<CODE>@&#38;(GoalA,GoalB)</CODE>
+
+
+<P>
+<CODE>GoalA</CODE> and <CODE>GoalB</CODE> are run in independent and-parallel fashion. This is just a first sketch, and valid only for deterministic independent goals.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>@&#38;(goal,goal)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3515"></A>
+<A NAME="IDX3516"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>=&#62;/2:</B>
+<DD><A NAME="IDX3517"></A>
+
+
+<P>
+<CODE>=&#62;(A,B)</CODE>
+
+
+<P>
+If <CODE>A</CODE> is true <CODE>B</CODE> is run in parallel, otherwise sequentially.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>=&#62;(goal,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>=&#62;(A,B)</CODE>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>B</CODE> is of the form <CODE>goal&#38;goal</CODE>.
+ (<CODE>andprolog:andcallable/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+Documentation is still incomplete: <CODE>=&#62;(A,B)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3518"></A>
+<A NAME="IDX3519"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>indep/1:</B>
+<DD><A NAME="IDX3520"></A>
+
+
+<P>
+<CODE>indep(X)</CODE>
+
+
+<P>
+The variables in each pair of the list <CODE><CODE>X</CODE></CODE> are pairwise independent.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>indep(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The variables in pairs in <CODE><CODE>X</CODE></CODE> are pairwise independent.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3521"></A>
+<A NAME="IDX3522"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>indep/2:</B>
+<DD><A NAME="IDX3523"></A>
+
+
+<P>
+<CODE>indep(X,Y)</CODE>
+
+
+<P>
+<CODE>X</CODE> and <CODE>Y</CODE> are 
+<A NAME="IDX3524"></A>
+<A NAME="IDX3525"></A>
+<EM>independent</EM>, i.e., they are bound to terms which have no variables in common. For example, <CODE>indep(X,Y)</CODE> holds for <CODE>X=f(Z),Y=g(K)</CODE> and also for <CODE>X=f(a),Y=X</CODE> (since both <CODE>X</CODE> and <CODE>Y</CODE> are bound to ground terms). It does not hold for <CODE>X=f(Z),Y=g(Z)</CODE> and for <CODE>X=Y</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>indep(X,Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> do not have variables in common.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3526"></A>
+<A NAME="IDX3527"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>active_agents/1:</B>
+<DD><A NAME="IDX3528"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>active_agents(?(NumberOfAgents))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Tests/sets the number of active agents looking for goals to execute. As for now, those agents are resource-consuming, even when they are just looking for work, and not executing any user goals.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>?(NumberOfAgents)</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC313" HREF="ciao_toc.html#TOC313">Known bugs and planned improvements (<CODE>andprolog</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+The fact that only the first solution is returned for the conjunction is due to performance matters, and we expect to remove it in a near future.
+
+<LI>
+
+CGEs (i.e., <CODE>=&#62;</CODE>) are not supported.
+
+<LI>
+
+The 
+<A NAME="IDX3529"></A>
+<CODE>indep/1</CODE>, 
+<A NAME="IDX3530"></A>
+<CODE>indep/2</CODE>, and 
+<A NAME="IDX3531"></A>
+<CODE>ground/1</CODE> are not very efficient; they might be replaced by native versions in a future.
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

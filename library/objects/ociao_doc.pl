@@ -1,11 +1,14 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO : OBJECT ORIENTED PROGRAMMING IN CIAO/Prolog
+%% O'CIAO: Object Oriented Programming in CIAO/Prolog
 %%
 %% MAIN DOCUMENTATION FILE
 %%
 %% AUTHOR : Angel Fernandez Pineda
-%% DATE   : July 1999
+%%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -94,8 +97,8 @@
 @begin{verbatim}
         ?- St1 new stack,St2 new stack.
 
-        St1 = '9254074093385163',
-        St2 = '9254074091' ? ,
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? ,
 @end{verbatim}
 
         and then, we can operate on them separately: 
@@ -103,16 +106,16 @@
 @begin{verbatim}
         1 ?- St1:push(8),St2:push(9).
 
-        St1 = '9254074093385163',
-        St2 = '9254074091' ? 
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
 
         yes
         1 ?- St1:top(I),St2:top(K).
 
         I = 8,
         K = 9,
-        St1 = '9254074093385163',
-        St2 = '9254074091' ? 
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
 
         yes
         1 ?-

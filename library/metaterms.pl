@@ -132,7 +132,7 @@ copy_Nterm(N,Term,Copy):-
 	producing bindings for the variables of @var{Term1}. I.e.,
 	@tt{instance(@var{Term1},@var{Term2})} holds.").
 
-:- comment(instance(Term1,Term2),"@var{Term2} is an instance of @var{Term1}.").
+:- comment(instance(Term1,Term2),"@var{Term1} is an instance of @var{Term2}.").
 
 ask(Goal1,Goal2) :- 
         \+ \+ (mynumbervars(Goal1,Goal2,0,_N)), !.

@@ -60,7 +60,7 @@ library @lib{compiler/c_itf}.
 % Other libraries
 :- use_module(library(fastrw)).
 :- use_module(library('assertions/assrt_write'),[write_assertion/6]).
-:- use_module(library('assertions/assrt_props')).
+:- use_module(library('assertions/assertions_props')).
 :- use_module(library('compiler/c_itf')).
 :- use_module(library(ctrlcclean), 
       [ctrlc_clean/1,delete_on_ctrlc/2,ctrlcclean/0]).
@@ -1230,7 +1230,7 @@ denorm_goal_prop(NGP,GP,NPD) :-
 %% ---------------------------------------------------------------------------
 :- pred check_body_properties(
    in(CurrentMod,moddesc),in(AssrtMod,moddesc),
-   in(F,atom),in(A,int),in(NAss,assertion),in(S),in(LB),in(LE))
+   in(F,atom),in(A,int),in(NAss,nabody),in(S),in(LB),in(LE))
 
         # "Checks each property in the body of assertion @var{NAss}
           (see @pred{check_property/4}). Checks only assertions in the

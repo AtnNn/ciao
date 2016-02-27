@@ -4,14 +4,18 @@
  * Author          : Manuel Carro
  * Created On      : Mon Dec 15 13:50:46 1997
  * Last Modified By: MCL
- * Last Modified On: Wed Jun 23 13:09:52 1999
- * Update Count    : 861
+ * Last Modified On: Fri Dec 17 17:23:42 1999
+ * Update Count    : 862
  * Status          : Seems to work correctly
  */
 
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
+
+#if !defined(Win32i86)
+# include <strings.h>
+#endif
+
 #if defined(DEBUG)
 #include <stdio.h>
 #endif

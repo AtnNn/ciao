@@ -1,15 +1,25 @@
 /*#include "fix_path.h" */ /* To rename paths like /mounted/... */
 
-#include <strings.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <sys/stat.h>
-#include <sys/param.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <dirent.h>
-#include <pwd.h>
+#if !defined(crossWin32i86)
+# include <string.h>
+# include <sys/types.h>
+# include <sys/socket.h>
+# include <netdb.h>
+# include <sys/stat.h>
+# include <sys/param.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <dirent.h>
+# include <pwd.h>
+#else
+# include <string.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <dirent.h>
+#endif
+
 
 #include "datadefs.h"
 #include "support.h"
@@ -21,6 +31,7 @@
 #include "streams_defs.h"
 #include "stacks_defs.h"
 #include "main_defs.h"
+#include "alloc_defs.h"
 
 /* local declarations */
 
@@ -256,6 +267,7 @@ BOOL prolog_unix_cd(Arg)
   
   if (!expand_file_name(GetString(X(1)),pathBuf))
     return FALSE;
+
   if (chdir(pathBuf))
     {
       ENG_perror("% chdir in working_directory/2");
@@ -279,7 +291,12 @@ BOOL prolog_unix_shell2(Arg)
      Argdecl;
 {
   REGISTER char *p1, *p2;
+  REGISTER int system_result;
+#if defined(USE_DYNAMIC_ATOM_SIZE)
+  char *cbuf = (char *)checkalloc(2*MAXATOM+MAXPATHLEN+20);
+#else
   char cbuf[2*MAXATOM+MAXPATHLEN+20];
+#endif
 
   DEREF(X(0),X(0));
 
@@ -294,7 +311,11 @@ BOOL prolog_unix_shell2(Arg)
     *p1++ = '\\',
     *p1++ = *p2++;
   *p1++ = 0;
-  return cunify(Arg,MakeSmall(system(cbuf)),X(1));
+  system_result = system(cbuf);
+#if defined(USE_DYNAMIC_ATOM_SIZE)
+  checkdealloc((TAGGED *)cbuf, 2*MAXATOM+MAXPATHLEN+20);
+#endif
+  return cunify(Arg,MakeSmall(system_result),X(1));
 }
 
 
@@ -339,7 +360,7 @@ BOOL prolog_unix_exit(Arg)
 BOOL prolog_unix_mktemp(Arg)
      Argdecl;
 {
-  char template[MAXATOM];
+  char template[STATICMAXATOM];
 
   extern char *mktemp PROTO((char *));
   
@@ -432,7 +453,7 @@ BOOL prolog_file_properties(Arg)
 {
   struct stat statbuf;
   char pathBuf[MAXPATHLEN+1];
-  char symlinkName[MAXATOM+1];
+  char symlinkName[STATICMAXATOM+1];
   int len;
 
   DEREF(X(0),X(0));
@@ -446,7 +467,7 @@ BOOL prolog_file_properties(Arg)
   DEREF(X(2),X(2));
   if (X(2)!=atom_nil) { /* Link wanted */
     symlinkName[0] = (char) 0;
-    if ((len=readlink(pathBuf, symlinkName, MAXATOM)) > 0)
+    if ((len=readlink(pathBuf, symlinkName, STATICMAXATOM)) > 0)
       symlinkName[len] = (char) 0;
     Unify_constant(MakeString(symlinkName),X(2));
   }
@@ -632,6 +653,7 @@ BOOL prolog_getenvstr(Arg)
   if ((s = getenv(GetString(X(0)))) == NULL) return FALSE;
 
   s += (i = strlen(s));
+
   if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i<<1))
     explicit_heap_overflow(Arg,CONTPAD+(i<<1),2);
 

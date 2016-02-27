@@ -14,6 +14,7 @@
 #include "bignum_defs.h"
 #include "locks_defs.h"
 #include "main_defs.h"
+#include "initial_defs.h"
 
 
 /* local declarations */
@@ -25,8 +26,16 @@ static int file_is_tty(FILE *file);
 static void numstack_overflow(Argdecl);
 static struct definition **find_subdef_chain(struct definition *f, int clause_no);
 static struct definition *parse_1_definition(TAGGED tagname, TAGGED tagarity);
-static struct sw_on_key_node *atom_gethash(register struct sw_on_key *sw, TAGGED key, char *str);
-
+#if defined(USE_ATOM_LEN)
+static struct sw_on_key_node *atom_gethash(register struct sw_on_key *sw, 
+                                           TAGGED key, 
+                                           char *str,
+                                           unsigned int str_len);
+#else
+static struct sw_on_key_node *atom_gethash(register struct sw_on_key *sw, 
+                                           TAGGED key, 
+                                           char *str);
+#endif
 
 /*-----------------------------------------------------------*/
 
@@ -47,10 +56,18 @@ void failc(mesg)
 /* insert atom in global table */
 /*  MCL: there is an implicit assumption that the table is not full */
 
+#if defined(USE_ATOM_LEN)
+static struct sw_on_key_node *atom_gethash(sw, key, str, str_len)
+     REGISTER struct sw_on_key *sw;
+     TAGGED key;
+     char *str;
+     unsigned int str_len;
+#else
 static struct sw_on_key_node *atom_gethash(sw, key, str)
      REGISTER struct sw_on_key *sw;
      TAGGED key;
      char *str;
+#endif
 {
   REGISTER struct sw_on_key_node *hnode;
 #if defined(ATOMGC)
@@ -64,12 +81,19 @@ static struct sw_on_key_node *atom_gethash(sw, key, str)
        i+=sizeof(struct sw_on_key_node), t0=(t0+i) & sw->mask) {
     hnode = (struct sw_on_key_node *)&sw->tab.aschar[t0];
 #if !defined(ATOMGC)
-    if ((hnode->key==key && strcmp(hnode->value.atomp->name, str)==SAME) ||
+    if ((hnode->key==key 
+#if defined(USE_ATOM_LEN)
+         && hnode->value.atomp->atom_len == str_len
+#endif
+         && strcmp(hnode->value.atomp->name, str)==SAME) ||
         !hnode->key)
       return hnode;
 #else
-    if ((hnode->key == key) &&
-        (strcmp(hnode->value.atomp->name, str) == SAME))
+    if ((hnode->key == key) 
+#if defined(USE_ATOM_LEN)
+        && hnode->value.atomp->atom_len == str_len
+#endif
+        && (strcmp(hnode->value.atomp->name, str) == SAME))
       return hnode;
     else if (!hnode->key)
       return first_erased ? first_erased : hnode;
@@ -80,6 +104,7 @@ static struct sw_on_key_node *atom_gethash(sw, key, str)
 }
 
 
+
 TAGGED init_atom_check(str)
      char *str;
 {
@@ -87,15 +112,21 @@ TAGGED init_atom_check(str)
   unsigned int hashcode = 0;
   int count, size;
   ENG_INT current_mem = total_mem_count;
+  REGISTER unsigned char *c = (unsigned char *)str;
 
-  {
-    REGISTER unsigned char *c = (unsigned char *)str;
-
-    while (*c) hashcode = (hashcode<<1) + *c++;
+#if defined(USE_ATOM_LEN)
+  unsigned int atom_len = 0;
+#endif
+  
+  while (*c) {
+    hashcode = (hashcode<<1) + *c++;
+#if defined(USE_ATOM_LEN)
+    atom_len++;
+#endif
   }
 
   hashcode = (hashcode<<3)+4;	/* low bits are masked away; ensure it is
-				   not 0 --- it can be 1, either, which is
+				   not 0 --- it cannot be 1, either, which is
 				   very important for atom GC */
 /*
   while ((hnode=incore_gethash(prolog_atoms, (TAGGED)hashcode)) &&
@@ -106,13 +137,19 @@ TAGGED init_atom_check(str)
 				   233509&0x00007
 */
 
+#if defined(USE_ATOM_LEN)
+  hnode = atom_gethash(prolog_atoms, (TAGGED)hashcode, str, atom_len);
+#else
   hnode = atom_gethash(prolog_atoms, (TAGGED)hashcode, str);
+#endif
+
 #if defined(ATOMGC)
-  if (hnode->key && hnode->key != 1)
+  if (hnode->key && hnode->key != 1) /* if ATOMGC, '1' marks freed position */
 #else
   if (hnode->key)
 #endif
     return MakeAtom(hnode->value.atomp->index);
+
   if ((count=prolog_atoms->count) > (INDEXMASK>>2)) {
     SERIOUS_FAULT("the atom table is full");
   }
@@ -131,15 +168,29 @@ TAGGED init_atom_check(str)
     for (i=0; i<count; i++){
 #if defined(ATOMGC)   /* Actually, if the table is full, no entry should be
                          null... */
-/* size *= 2; */
+       /* size *= 2; */
       if ((h1 = atmtab[i]) != NULL) { /* There may be holes when doing GC */
+#if defined(USE_ATOM_LEN)
+        atmtab[i] = h2 = atom_gethash(new_table, 
+                                      h1->key, 
+                                      str,
+                                      h1->value.atomp->atom_len);
+#else
         atmtab[i] = h2 = atom_gethash(new_table, h1->key, str);
+#endif
         h2->key = h1->key;
         h2->value.atomp = h1->value.atomp;
       }
 #else
       h1 = atmtab[i];
+#if defined(USE_ATOM_LEN)
+      atmtab[i] = h2 = atom_gethash(new_table, 
+                                    h1->key, 
+                                    str,
+                                    h1->value.atomp->atom_len);
+#else
       atmtab[i] = h2 = atom_gethash(new_table, h1->key, str);
+#endif
       h2->key = h1->key;
       h2->value.atomp = h1->value.atomp;
 #endif
@@ -159,7 +210,11 @@ TAGGED init_atom_check(str)
                  sizeof(struct sw_on_key)+
                  (size-ANY)*sizeof(struct sw_on_key_node));
     new_table->count = count;
+#if defined(USE_ATOM_LEN)
+    hnode = atom_gethash(new_table, (TAGGED)hashcode, str, atom_len);
+#else
     hnode = atom_gethash(new_table, (TAGGED)hashcode, str);
+#endif
     prolog_atoms = new_table;
     size = size << 1;
   }
@@ -175,17 +230,16 @@ TAGGED init_atom_check(str)
     prolog_atoms->next_index = count;
 #endif
 
+#if defined(USE_ATOM_LEN)
+  hnode->value.atomp = new_atom_check((unsigned char *)str, atom_len, count);
+#else
   hnode->value.atomp = new_atom_check((unsigned char *)str, count);
+#endif
   atmtab[count] = hnode;
 
   prolog_atoms->count++;
 
   INC_MEM_PROG((total_mem_count - current_mem));
-
-#if defined(ATOMGC) && defined(DEBUG)
-  /*printf("Atom %s inserted at index %d\n", str, count);*/
-  /*printf("%s\n", str);*/
-#endif
 
   return MakeAtom(count);
 }

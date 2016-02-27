@@ -1,26 +1,33 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO : OBJECT ORIENTED PROGRAMMING IN CIAO/Prolog
+%% O'CIAO: Object Oriented Programming in CIAO/Prolog
 %%
 %% DOCUMENTATION FILE ON OBJECT MANIPULATION
 %%
 %% AUTHOR : Angel Fernandez Pineda
-%% DATE   : July 1999
+%%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
 %%
 %%------------------------------------------------------------------------
-
-%:- module(objects_doc,
-%	[
-%	],[assertions]).
 
 :- use_package(assertions).
 
 :- comment(nodoc,assertions).
 
+:- use_module(library('objects/objects_rt'),
+	[
+	    instance_id/1,
+	    constructor/1,
+	    class_source/1,
+	    class_name/1
+	]).
+
 %%------------------------------------------------------------------------
 
 :- comment(title,
-	"Using OCIAO objects").
+	"Compile-time usage of objects").
 
 :- comment(author,"Angel Fernandez Pineda").
 
@@ -49,29 +56,7 @@
 
 %%------------------------------------------------------------------------
 
-:- prop class_source(Source) #
-	"@var{Source} is path to a file declaring a class.".
-
-class_source(_).
-
-:- prop constructor(Cons) # 
-	"@var{Cons} is a term whose functor matches a class name.".
-
-constructor(_).
-
-:- prop instance_id(ID) #
-	"@var{ID} is an unique atom which identifies an object.".
-
-instance_id(_).
-
-:- prop class_name(ClassName) #
-	"@var{ClassName} is an atom denoting a class.".
-
-class_name(_).
-
-%%------------------------------------------------------------------------
-
-:- comment(use_class/1,
+:- comment(' use_class'/1,
 	"It establishes an @concept{usage relationship} between 
          the given file (which is supposed to
 	 declare a class) and current source. 
@@ -87,14 +72,12 @@ class_name(_).
          use_class/1 is used in the same way as @decl{use_module/1}.
         ").
 
-:- decl use_class(ClassSource) : class_source(ClassSource) #
+:- decl ' use_class'(ClassSource) : class_source(ClassSource) #
 	"Establish usage relationship with @var{ClassSource}.".
-
-use_class(_).
          
 %%------------------------------------------------------------------------
 
-:- comment(instance_of/2,
+:- comment(' instance_of'/2,
 	"Statically declares an identifier to be an instance of
          a given class.
 
@@ -139,30 +122,23 @@ use_class(_).
          will not work, use @tt{X=counter(cnt),X:decrease(1)} instead.
         ").
 
-:- decl instance_of(Object,Constructor) :
+:- decl ' instance_of'(Object,Constructor) :
 	(instance_id(Object),constructor(Constructor)) #
         "Declares @var{Object} to be an instance of the class 
          denoted by @var{Constructor}.".
 
-instance_of(_,_).
-
 %%------------------------------------------------------------------------
 
-:- comment(new/2,
-	"This declaration has the same effect as @decl{instance_of/2}.").
+:- comment(' new'/2,
+	"This declaration has the same effect as @decl{ instance_of/2}.").
 
-:- decl new(Object,Constructor) :
+:- decl ' new'(Object,Constructor) :
 	(instance_id(Object),constructor(Constructor)) #
-	"Just an alias for @decl{instance_of/2}.".
-
-new(_,_).
-
+	"Just an alias for @decl{ instance_of/2}.".
 
 %%------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
-
-%% Changed error reporting style to fit CIAO compiler style.
 
 :- comment(version(1*3+78,1999/10/13,18:31*08+'MEST'), "use_class may
    accept an interface-expanded source.  (Angel Fernandez Pineda)").

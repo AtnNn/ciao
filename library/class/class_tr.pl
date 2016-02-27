@@ -44,7 +44,7 @@
 :- data is_method/3.           % CLASS declared F/A as static (method).
 :- data is_virtual/3.          % CLASS declared F/A as a virtual method.
 :- data is_concurrent/3.       % CLASS declared F/A as a concurrent attribute.
-:- data is_persistent/3.       % CLASS declared F/A as a persistent attribute.
+%:- data is_persistent/3.       % CLASS declared F/A as a persistent attribute.
 :- data is_metapredicate/2.    % CLASS declared SPEC as a 
                                % meta_predicate specification.
 
@@ -100,7 +100,7 @@ class_sentence_trans(start_of_file(Base),_,Module) :-
 	retractall_fact(is_virtual(Module,_,_)),
 	retractall_fact(is_metapredicate(Module,_)),
 	retractall_fact(is_state(Module,_,_)),
-	retractall_fact(is_persistent(Module,_,_)),
+%	retractall_fact(is_persistent(Module,_,_)),
 	retractall_fact(is_multifile(Module,_,_)),
 	retractall_fact(is_concurrent(Module,_,_)),
 	retractall_fact(runtime_info(Module)),
@@ -126,7 +126,7 @@ class_sentence_trans(end_of_file,FinalClauses,Module) :-
 	generate_redefining_clauses(Module,RedefClauses),
 	generate_reexport_clauses(Module,ReexportClauses),
 	generate_implements_decls(Module,ImplementsDecls),
-	generate_persistency_decls(Module,PersDecls),
+%	generate_persistency_decls(Module,PersDecls),
 	end_of_messages(Module),
 	%
 	append(FixedClauses,InitialStateClauses,Aux1),
@@ -135,8 +135,8 @@ class_sentence_trans(end_of_file,FinalClauses,Module) :-
 	append(Aux3,ReexportClauses,Aux4),
 	append(Aux4,RedefClauses,Aux5),
 	append(Aux5,ImplementsDecls,Aux6),
-	append(Aux6,PersDecls,Aux7),
-	append(Aux7,['$end$$of$$expansion$',end_of_file],FinalClauses),
+%	append(Aux6,PersDecls,Aux7),
+	append(Aux6,['$end$$of$$expansion$',end_of_file],FinalClauses),
 	( debug_first_pass ->
 	  (
 	      nl,display('End of expansion clauses: '),nl,
@@ -166,8 +166,8 @@ class_sentence_trans((:- IsDecl),Exp,Module) :-
 	  Decl = multifile ;
 	  Decl = concurrent ;
 	  Decl = discontiguous ;
-	  Decl = virtual ;
-	  Decl = persistent
+	  Decl = virtual 
+%	  Decl = persistent
 	),
 	arg(1,IsDecl,Arg),
 	functor(Arg,',',2),
@@ -262,14 +262,14 @@ class_sentence_trans((:- discontiguous([Spec|Nsp])),Exp,Mod) :-
 	class_sentence_trans((:- discontiguous(Nsp)),NExp,Mod),
 	append(OneDeclExp,NExp,Exp).
 
-class_sentence_trans((:- persistent([])),[],_) :-
-	!.
+%class_sentence_trans((:- persistent([])),[],_) :-
+%	!.
 
-class_sentence_trans((:- persistent([Spec|Nsp])),Exp,Mod) :-
-	!,
-	class_sentence_trans((:- persistent(Spec)),OneDeclExp,Mod),
-	class_sentence_trans((:- persistent(Nsp)),NExp,Mod),
-	append(OneDeclExp,NExp,Exp).
+%class_sentence_trans((:- persistent([Spec|Nsp])),Exp,Mod) :-
+%	!,
+%	class_sentence_trans((:- persistent(Spec)),OneDeclExp,Mod),
+%	class_sentence_trans((:- persistent(Nsp)),NExp,Mod),
+%	append(OneDeclExp,NExp,Exp).
 
 %%------------------------------------------------------------------------
 %% INTERFACE IMPLEMENTATION
@@ -563,30 +563,30 @@ class_sentence_trans((:- virtual(X)),[],Mod) :-
 %% PERSISTENT ATTRIBUTE DECLARATION
 %%------------------------------------------------------------------------
 
-class_sentence_trans((:- persistent(F/A)),[],Mod) :-
-	atom(F),
-	integer(A),
-	is_persistent(Mod,F,A),
-	!.
+%class_sentence_trans((:- persistent(F/A)),[],Mod) :-
+%	atom(F),
+%	integer(A),
+%	is_persistent(Mod,F,A),
+%	!.
 
-class_sentence_trans((:- persistent(F/A)),[],Mod) :-
-	atom(F),
-	integer(A),
-	is_state(Mod,F,A),
-	assertz_fact(is_persistent(Mod,F,A)),
-	!.
+%class_sentence_trans((:- persistent(F/A)),[],Mod) :-
+%	atom(F),
+%	integer(A),
+%	is_state(Mod,F,A),
+%	assertz_fact(is_persistent(Mod,F,A)),
+%	!.
 
-class_sentence_trans((:- persistent(F/A)),Exp,Mod) :-
-	atom(F),
-	integer(A),
-	!,
-	assertz_fact(is_persistent(Mod,F,A)),
-	class_sentence_trans((:- data(F/A)),Exp,Mod).
+%class_sentence_trans((:- persistent(F/A)),Exp,Mod) :-
+%	atom(F),
+%	integer(A),
+%	!,
+%	assertz_fact(is_persistent(Mod,F,A)),
+%	class_sentence_trans((:- data(F/A)),Exp,Mod).
 
-class_sentence_trans((:- persistent(X)),[],Mod) :-
-	!,
-	message(Mod,error,['invalid persistent declaration: ',
-	 persistent(X)]).
+%class_sentence_trans((:- persistent(X)),[],Mod) :-
+%	!,
+%	message(Mod,error,['invalid persistent declaration: ',
+%	 persistent(X)]).
 
 %%------------------------------------------------------------------------
 
@@ -741,7 +741,8 @@ generate_fixed_clauses(Module,FixedClauses) :-
                [last_module_exp/5,'$meta_call'/1])),
 	    (:- redefining(mod_exp/5)),
 	    ('$class$'(Module)),
-	    ('$tachun$tachun$'(X) :- call(X))% Forces CIAO compiler to generate
+	    ('$force$runtime$info$'(X) :- call(X))
+                                             % Forces CIAO compiler to generate
                                              % run-time info for this 
 	                                     % module.
 	],
@@ -887,7 +888,7 @@ check_inheritable_info(Module,F,A) :-
 	\+ is_state(Module,F,A),
 	!,
 	retract_fact(is_inheritable(Module,F,A)),
-	message(Module,note,['inheritable declaration of ',F,'/',A,
+	message(Module,warning,['inheritable declaration of ',F,'/',A,
 	 ' ignored: predicate was not defined at current class']).
 
 check_inheritable_info(_,_,_).
@@ -968,10 +969,10 @@ generate_implements_decls(Module,Decl) :-
 %% (at first-pass expansion)
 %%------------------------------------------------------------------------
 
-generate_persistency_decls(_,
-	[(:- inheritable(persistent_attribute/1)),
-	 (:- virtual(persistent_attribute/1)),
-	 (:- method(persistent_attribute/1))]).
+%generate_persistency_decls(_,
+%	[(:- inheritable(persistent_attribute/1)),
+%	 (:- virtual(persistent_attribute/1)),
+%	 (:- method(persistent_attribute/1))]).
 
 %%------------------------------------------------------------------------
 %%
@@ -1338,19 +1339,19 @@ generate_class_template(Module) :-
 
 % Generate persistent predicate info
 
-generate_class_template(Module) :-
-	is_persistent(Module,F,A),
-	is_state(Module,F,A),
-	atom_concat([':',Module,'::',F],NewF),
-	functor(Attr,NewF,A),
-	add_clause(Module,'obj$persistent_attribute'(Attr,_)),
-	fail.
+%generate_class_template(Module) :-
+%	is_persistent(Module,F,A),
+%	is_state(Module,F,A),
+%	atom_concat([':',Module,'::',F],NewF),
+%	functor(Attr,NewF,A),
+%	add_clause(Module,'obj$persistent_attribute'(Attr,_)),
+%	fail.
 
-generate_class_template(Module) :-
-	inherited_pred(Module,method,_,persistent_attribute,1),
-	add_clause(Module,('obj$persistent_attribute'(Attr,_) :- 
-		  inherited(persistent_attribute(Attr)))),
-	fail.
+%generate_class_template(Module) :-
+%	inherited_pred(Module,method,_,persistent_attribute,1),
+%	add_clause(Module,('obj$persistent_attribute'(Attr,_) :- 
+%		  inherited(persistent_attribute(Attr)))),
+%	fail.
 
 % Do not fail.
 
@@ -1534,12 +1535,12 @@ additional_itf_checking(Module) :-
 
 % There are persistent declarations but there is no persistent support.
 
-additional_itf_checking(Module) :-
-	is_persistent(Module,F,A),
-	\+ impl_interface(Module,persistent),
-	message(Module,warning,
-	 ['attribute ',F,'/',A,' was declared as persistent but there is',
-          ' no persistency support']).
+%additional_itf_checking(Module) :-
+%	is_persistent(Module,F,A),
+%	\+ impl_interface(Module,persistent),
+%	message(Module,warning,
+%	 ['attribute ',F,'/',A,' was declared as persistent but there is',
+%          ' no persistency support']).
 
 additional_itf_checking(_).
 

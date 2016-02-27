@@ -23,7 +23,7 @@ BOOL skip2(Argdecl);
 void print_string(register struct stream_node *stream, register char *p);
 void print_variable(Argdecl, struct stream_node *stream, TAGGED term);
 void print_number(Argdecl, struct stream_node *stream, TAGGED term);
-void print_atom(struct stream_node *stream, TAGGED term);
+void print_atom(Argdecl, struct stream_node *stream, TAGGED term);
 BOOL prolog_display(Argdecl);
 BOOL prolog_display2(Argdecl);
 BOOL prolog_displayq(Argdecl);

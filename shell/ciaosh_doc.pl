@@ -298,6 +298,10 @@ sourcenames(Files) :- list(Files, sourcename).
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*5+11,1999/12/14,13:14*36+'MET'), "Exported the
+   new preds from @lib{debugger} supporting source level debugging.
+   (Manuel Hermenegildo)").
+
 :- comment(version(1*3+105,1999/11/18,12:44*18+'MET'), "Added file to
    version system.  (Manuel Hermenegildo)").
 %----------------------------------------------------------------------------

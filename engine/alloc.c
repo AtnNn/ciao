@@ -231,6 +231,8 @@ void create_wam_areas(Arg)
   int i, j;
   char *cp;
 
+  Atom_Buffer = (char *)checkalloc(Atom_Buffer_Length=STATICMAXATOM);
+
   /* heap pointer is first free cell, grows ++ */
   GETENV(i,cp,"GLOBALSTKSIZE",GLOBALSTKSIZE);
   Heap_Start = checkalloc(i*sizeof(TAGGED));
@@ -255,7 +257,6 @@ void create_wam_areas(Arg)
  /*  Do not touch the (TAGGED) type casting! Or the emulator will break! */
   Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
 
-  Atom_Buffer = (char *)checkalloc(Atom_Buffer_Length=MAXATOM);
 }
 
 

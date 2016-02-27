@@ -79,7 +79,15 @@ newer([File|Files],Target) :-
 
 make_dep_suffix(TSuffix,FileBase,_OTSuffix) :-
 	\+ call_unknown(_:dependency_exists(TSuffix,_SSuffix)),
-	verbose_message("~w.~w has no ancestors",[FileBase,TSuffix]).
+	atom_concat([FileBase,'.',TSuffix],Target),
+	\+ call_unknown(_:target_deps(Target,_Preconds)), 
+	verbose_message("~w has no ancestors",[Target]).
+make_dep_suffix(TSuffix,FileBase,_OTSuffix) :-
+	\+ call_unknown(_:dependency_exists(TSuffix,_SSuffix)),
+	atom_concat([FileBase,'.',TSuffix],Target),
+	call_unknown(_:target_deps(Target,Preconds)), 
+	verbose_message("making conditional target ~w < ~w",[Target,Preconds]),
+        make_dep_target(Target,Preconds).
 make_dep_suffix(TSuffix,FileBase,OTSuffix) :- 
 	call_unknown(_:dependency_exists(TSuffix,SSuffix)),
 	verbose_message("Found that ~w.~w can be generated from ~w.~w",

@@ -21,6 +21,7 @@ extern int errno;
 #include "streams_defs.h"
 #include "tasks_defs.h"
 #include "main_defs.h"
+#include "alloc_defs.h"
 
 /* local declarations */
 
@@ -571,7 +572,8 @@ void print_number(Arg, stream,term)
   print_string(stream, Atom_Buffer);
 }
 
-void print_atom(stream,term)
+void print_atom(Arg, stream,term)
+     Argdecl;
      TAGGED term;
      struct stream_node *stream;
 {
@@ -581,7 +583,11 @@ void print_atom(stream,term)
     print_string(stream, atomptr->name);
   else
     {
-      char buf[2*MAXATOM+3];
+#if defined(USE_DYNAMIC_ATOM_SIZE)
+      char *buf = (char *)checkalloc(2*MAXATOM+3);
+#else
+      char buf[2*MAXATOM+3]; 
+#endif
       REGISTER char *ch = atomptr->name;
       REGISTER char *bp = buf;
       REGISTER int i;
@@ -604,6 +610,9 @@ void print_atom(stream,term)
       *bp++ = '\'';
       *bp++ = 0;
       print_string(stream, buf);
+#if defined(USE_DYNAMIC_ATOM_SIZE)
+      checkdealloc((TAGGED *)buf, 2*MAXATOM+3);
+#endif
     }
 }
 
@@ -663,7 +672,7 @@ static void display_term(Arg, term, stream, quoted)
       }
     case ATM:
       if (quoted)
-        print_atom(stream,term);
+        print_atom(Arg,stream,term);
       else
         print_string(stream,TagToAtom(term)->name);
       break;

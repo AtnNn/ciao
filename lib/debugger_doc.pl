@@ -105,8 +105,8 @@ Let us look at an example Prolog procedure:
 
 The first clause states that @tt{Y} is a descendant of @tt{X} if
 @tt{Y} is an offspring of @tt{X}, and the second clause states that
-@tt{Z} is a descendant of @tt{X} if @tt{Y} is an offspring of @tt{X}
-and if @tt{Z} is a descendant of @tt{Y}.  In the diagram a box has been
+@tt{Y} is a descendant of @tt{X} if @tt{Z} is an offspring of @tt{X}
+and @tt{Y} is a descendant of @tt{Z}.  In the diagram a box has been
 drawn around the whole procedure and labelled arrows indicate the
 control flow in and out of this box.  There are four such arrows which
 we shall look at in turn.

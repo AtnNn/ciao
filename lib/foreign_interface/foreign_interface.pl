@@ -10,7 +10,7 @@
 	 basicmodes
 	]).
 
-:- comment(title,"Foreign interface").
+:- comment(title,"Foreign language interface").
 
 :- comment(author,"Jose Morales").
 :- comment(author,"Manuel Carro").

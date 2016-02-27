@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Extra-logical properties for typing</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_17.html">previous</A>, <A HREF="ciao_19.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_17.html">previous</A>, <A HREF="ciao_19.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC83" HREF="ciao_toc.html#TOC83">Extra-logical properties for typing</A></H1>
+<H1><A NAME="SEC86" HREF="ciao_toc.html#TOC86">Extra-logical properties for typing</A></H1>
 <P>
-<A NAME="IDX919"></A>
+<A NAME="IDX938"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_17.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
 
 
 <P>
@@ -33,13 +33,13 @@ This library contains traditional Prolog predicates for testing types. They depe
 
 
 <UL>
-<LI><A HREF="ciao_18.html#SEC84">Usage and interface (term_typing)</A>
-<LI><A HREF="ciao_18.html#SEC85">Documentation on exports (term_typing)</A>
+<LI><A HREF="ciao_18.html#SEC87">Usage and interface (term_typing)</A>
+<LI><A HREF="ciao_18.html#SEC88">Documentation on exports (term_typing)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC84" HREF="ciao_toc.html#TOC84">Usage and interface (<CODE>term_typing</CODE>)</A></H2>
+<H2><A NAME="SEC87" HREF="ciao_toc.html#TOC87">Usage and interface (<CODE>term_typing</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -56,23 +56,23 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 <LI><EM>Properties:</EM>
 
-<A NAME="IDX920"></A>
+<A NAME="IDX939"></A>
 <CODE>var/1</CODE>, 
-<A NAME="IDX921"></A>
+<A NAME="IDX940"></A>
 <CODE>nonvar/1</CODE>, 
-<A NAME="IDX922"></A>
+<A NAME="IDX941"></A>
 <CODE>atom/1</CODE>, 
-<A NAME="IDX923"></A>
+<A NAME="IDX942"></A>
 <CODE>integer/1</CODE>, 
-<A NAME="IDX924"></A>
+<A NAME="IDX943"></A>
 <CODE>float/1</CODE>, 
-<A NAME="IDX925"></A>
+<A NAME="IDX944"></A>
 <CODE>number/1</CODE>, 
-<A NAME="IDX926"></A>
+<A NAME="IDX945"></A>
 <CODE>atomic/1</CODE>, 
-<A NAME="IDX927"></A>
+<A NAME="IDX946"></A>
 <CODE>ground/1</CODE>, 
-<A NAME="IDX928"></A>
+<A NAME="IDX947"></A>
 <CODE>type/2</CODE>.
 
 </UL>
@@ -83,17 +83,29 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC85" HREF="ciao_toc.html#TOC85">Documentation on exports (<CODE>term_typing</CODE>)</A></H2>
+<H2><A NAME="SEC88" HREF="ciao_toc.html#TOC88">Documentation on exports (<CODE>term_typing</CODE>)</A></H2>
 <P>
-<A NAME="IDX929"></A>
-<A NAME="IDX930"></A>
+<A NAME="IDX948"></A>
+<A NAME="IDX949"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>var/1:</B>
-<DD><A NAME="IDX931"></A>
+<DD><A NAME="IDX950"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>var(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>var(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>var(X)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is a free variable.
@@ -107,15 +119,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX932"></A>
-<A NAME="IDX933"></A>
+<A NAME="IDX951"></A>
+<A NAME="IDX952"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>nonvar/1:</B>
-<DD><A NAME="IDX934"></A>
+<DD><A NAME="IDX953"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>nonvar(T)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>nonvar(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is currently a term which is not a free variable.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>T</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>nonvar(T)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>T</CODE> is currently a term which is not a free variable.
@@ -129,15 +153,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX935"></A>
-<A NAME="IDX936"></A>
+<A NAME="IDX954"></A>
+<A NAME="IDX955"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>atom/1:</B>
-<DD><A NAME="IDX937"></A>
+<DD><A NAME="IDX956"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>atom(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>atom(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>atom(X)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom.
@@ -151,15 +187,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX938"></A>
-<A NAME="IDX939"></A>
+<A NAME="IDX957"></A>
+<A NAME="IDX958"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>integer/1:</B>
-<DD><A NAME="IDX940"></A>
+<DD><A NAME="IDX959"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>integer(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>integer(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an integer.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>integer(X)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an integer.
@@ -173,15 +221,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX941"></A>
-<A NAME="IDX942"></A>
+<A NAME="IDX960"></A>
+<A NAME="IDX961"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>float/1:</B>
-<DD><A NAME="IDX943"></A>
+<DD><A NAME="IDX962"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>float(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>float(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a float.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>float(X)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a float.
@@ -195,15 +255,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX944"></A>
-<A NAME="IDX945"></A>
+<A NAME="IDX963"></A>
+<A NAME="IDX964"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>number/1:</B>
-<DD><A NAME="IDX946"></A>
+<DD><A NAME="IDX965"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>number(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>number(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a number.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>number(X)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a number.
@@ -217,15 +289,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX947"></A>
-<A NAME="IDX948"></A>
+<A NAME="IDX966"></A>
+<A NAME="IDX967"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>atomic/1:</B>
-<DD><A NAME="IDX949"></A>
+<DD><A NAME="IDX968"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>atomic(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>atomic(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom or a number.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>atomic(X)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom or a number.
@@ -239,15 +323,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX950"></A>
-<A NAME="IDX951"></A>
+<A NAME="IDX969"></A>
+<A NAME="IDX970"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>ground/1:</B>
-<DD><A NAME="IDX952"></A>
+<DD><A NAME="IDX971"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>ground(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>ground(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently ground (it contains no variables).
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>ground(X)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is currently ground (it contains no variables).
@@ -261,15 +357,27 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P>
-<A NAME="IDX953"></A>
-<A NAME="IDX954"></A>
+<A NAME="IDX972"></A>
+<A NAME="IDX973"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>type/2:</B>
-<DD><A NAME="IDX955"></A>
+<DD><A NAME="IDX974"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>type(X,Y)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>type(X,Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is internally of type <CODE>Y</CODE> (<CODE>var</CODE>, <CODE>attv</CODE>, <CODE>float</CODE>, <CODE>integer</CODE>, <CODE>structure</CODE>, <CODE>atom</CODE> or <CODE>list</CODE>).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Y</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>type(X,Y)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>X</CODE> is internally of type <CODE>Y</CODE> (<CODE>var</CODE>, <CODE>attv</CODE>, <CODE>float</CODE>, <CODE>integer</CODE>, <CODE>structure</CODE>, <CODE>atom</CODE> or <CODE>list</CODE>).
@@ -283,6 +391,6 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_17.html">previous</A>, <A HREF="ciao_19.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_17.html">previous</A>, <A HREF="ciao_19.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

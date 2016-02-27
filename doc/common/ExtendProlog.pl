@@ -11,7 +11,7 @@
 		as a restriction rather than an extension);
 	@item feature terms or @index{records} (i.e., structures with
 		names for each field);
-	@item parallel (@&-Prolog) programming;
+	@item parallel (&-Prolog) programming;
 	@item functional syntax;
 	@item global variables;
 	@item @tt{setarg} and @tt{undo};

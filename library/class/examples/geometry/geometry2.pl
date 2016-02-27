@@ -21,10 +21,13 @@ main :-
 	right_eye:set_bg_color(lightblue),
 	left_eye:set_fg_color(maroon),
 	right_eye:set_fg_color(maroon),
+
 	lips:set_border_width(5),
 	lips:set_fg_color(red),
 	lips:set_bg_color(black),
+
 	face:show,
+
 	hit_enter,
 	destroy oval_class(face),
 	destroy oval_class(left_eye),

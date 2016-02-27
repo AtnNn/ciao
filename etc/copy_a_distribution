@@ -39,11 +39,20 @@ else
 fi    
 
 dirmode=$execmode
+dirname=${basedir##/*/}
+
 
 if test -f $basedir/.nodistribute \
      -o -f $basedir/NODISTRIBUTE  \
      -o -f $basedir/.NODISTRIBUTE  \
-     -o -f $basedir/NODISTRIBUTE.gz ; then
+     -o -f $basedir/NODISTRIBUTE.gz \
+     -o -z "${dirname##*\.bak}" \
+     -o    $dirname = "old" \
+     -o    $dirname = "Old" \
+     -o    $dirname = "OLD" \
+     -o    $dirname = "bak" \
+     -o    $dirname = "Bak" \
+     -o    $dirname = "BAK" ; then
     echo "** Skipping directory $basedir"
 else
     basename=${basedir##/*/}
@@ -53,34 +62,34 @@ else
     if test -f $basedir/.nocompile ; then
         /bin/cp -p $basedir/.nocompile $destdir
     fi
-    dirname=${basedir##/*/}
-    if test -z "${dirname##*\.bak}" -o $dirname = "bak" -o $dirname = "BAK" ; then
-        echo WARNING: Copying directory $basedir --- Is that what you want??
-    fi
     for f in $basedir/* ; do   
         new_name=${f##/*/}               # Get file name
         if test -d $f ; then             # Recurse
             $myself $f $destdir $execmode $datamode
         else
-            if test -z "${f##*\.bak}" -o -z "${f##*\.old}" -o -z "${f##*\.gz}" -o -z "${f##*\.tar}" ; then
-                echo WARNING: Copying file $f --- Is that what you want??
-            fi
-            if test -z ${f##*#} ; then
-                echo WARNING: Skipping auto-backup $f --- check it!!
-            elif test ${f##*~}; then
+            if test    -z "${f##*\.bak}" \
+                    -o -z "${f##*\.Bak}" \
+                    -o -z "${f##*\.BAK}" \
+                    -o -z "${f##*\.old}" \
+                    -o -z "${f##*\.Old}" \
+                    -o -z "${f##*\.OLD}" \
+                    -o -z "${f##*\.gz}"  \
+                    -o -z "${f##*\.tar}" \
+                    -o -z "${f##*\.aux}" \
+                    -o -z "${f##*\.log}" \
+                    -o -z "${f##*~}" \
+                    -o -z ${f##*#};    then
+                echo "** Skipping file $f"
+            else
                 if test -h $f ; then
-		    if test $copylinks = "yes" ; then
-			echo "** Copying symlink $f"
-			/bin/cp -p $f $destdir/$new_name
+                    if test $copylinks = "yes" ; then
+                        echo "** Copying symlink $f"
+                        /bin/cp -p $f $destdir/$new_name
 		    else
 			echo "** Linking symlink $f"
-#			echo "f is $f"
-#			echo "destdir is $destdir"
-#			echo "new_name is $new_name"
-#			echo "basedir is $basedir"
-#			echo "basename is $basename"
-			(cd $basedir; tar cf  -  $new_name) | (cd $destdir; tar xpf - $new_name)
-#                       /bin/mv $f $destdir/$new_name
+			(cd $basedir; \
+                         tar cf  -  $new_name) | \
+                         (cd $destdir; tar xpf - $new_name)
 		    fi
 		else
 		    /bin/cp -p $f $destdir/$new_name

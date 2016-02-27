@@ -59,6 +59,7 @@ BOOL prolog_erase(Arg)
   REGISTER struct instance *node;
   struct int_info *root;
   ENG_INT current_mem;
+
 #if defined(THREADS)
   InstanceHandle *x2_ins_h, *x5_ins_h;
   struct instance *ipp, *x2_insp, *x5_insp;
@@ -76,6 +77,7 @@ BOOL prolog_erase(Arg)
 #endif
 
 #if defined(THREADS)                                               /* MCL */
+
  /* An instance is about to be deleted.  If the predicate is
     concurrent, and there are calls pointing at that instance, move
     the queue of pending calls to the new available instance.  In

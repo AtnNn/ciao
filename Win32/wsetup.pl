@@ -111,7 +111,7 @@ make_infoindex(SDir,IDir) :-
 	cd(SDir).
 
 make_DOTemacs(SDir,IDir,EDir) :-
-	atom_concat(SDir,'/emacs',EDir),
+	atom_concat(SDir,'/emacs-mode',EDir),
 	cd(EDir),
 	setup_mess(['Building ',SDir,'/DOTemacs.el (emacs setup).\n']),
 	atom_codes(EDir,EDirS),
@@ -129,7 +129,7 @@ make_DOTemacs(SDir,IDir,EDir) :-
 	   "(setq Info-default-directory-list  (cons \n",
 	   "      \"",SDirS,"/doc/reference\" \n",
 	   "      Info-default-directory-list))\n",
-           %%% Should put this in a separate file in SRC/emacs and cat it now:
+           %%% Should put this in a separate file in SRC/emacs-mode and cat it now:
            ";; Make things nicer (but check if you are already doing it)\n",
 	   "(global-font-lock-mode)\n",
 	   "(transient-mark-mode t)\n",

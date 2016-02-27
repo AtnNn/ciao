@@ -33,10 +33,11 @@ static void interrupt_h(signal_number)
 
   /*if (predicates_location != &user_predicates)*/
   
-  Arg = get_my_worker();
-
   if (!wam_initialized)                            /* wam not initialized */
     at_exit(-1);
+
+  Arg = get_my_worker();
+
   Int_Heap_Warn = Heap_Start;
   SetEvent;
 #if defined(LINUX)

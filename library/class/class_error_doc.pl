@@ -1,11 +1,14 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO : OBJECT ORIENTED PROGRAMMING IN CIAO/Prolog
+%% O'CIAO: Object Oriented Programming in CIAO/Prolog
 %%
-%% DOCUMENTATION FILE ON CLASS SYNTAX
+%% DOCUMENTATION FILE ON CLASS ERROR REPORTING
 %%
 %% AUTHOR : Angel Fernandez Pineda
-%% DATE   : July 1999
+%%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -358,6 +361,8 @@
  Called @em{Goal} from module (or class) @em{Mod} is unknown or has not
  been published.
 
+ @end{itemize}
+
  @section{Normal Prolog module system interaction}
 
  O'CIAO works in conjunction with the habitual CIAO Prolog module system,
@@ -400,6 +405,9 @@
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+:- comment(version(1*5+15,1999/12/14,15:30*23+'MET'), "Fixed some missing
+   @end{itemize} (Angel Fernandez Pineda)").
 
 :- comment(version(1*3+66,1999/09/30,13:19*04+'MEST'), "Updated
    documentation. (Angel Fernandez Pineda)").

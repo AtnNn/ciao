@@ -14,11 +14,11 @@ BUILTINS=wam.o kernel.o  format.o inout.o misc.o startgoal.o \
 	 own_malloc_linear.o
 SUPPORTS=alloc.o heapgc.o indexing.o initial.o registers.o  \
 	stacks.o support.o term_support.o wamsupport.o \
-	qread.o qinsert.o qget.o builtin.o interrupt.o gauge.o \
+	qread.o qget.o builtin.o interrupt.o gauge.o \
 	bignum.o profile.o
 CIAOOBJ=ciao.o
 MAIN_FILES=main.o version.o
-MAIN_EXEC=main_exec.o version.o
+MAIN_EXEC=main_exec.o version.o qinsert.o
 DATADEFS=datadefs.h configure.h alloc.h registers.h termdefs.h access.h locks.h objareas.h
 SUPPORT=support.h debug.h initial.h compat.h
 CCOMPILATIONSUPPORT=
@@ -81,6 +81,10 @@ configure.h: configure
 	/bin/rm -f configure.h
 	./configure "$(CFLAGS)" > configure.h
 
+crossconfigure.h: configure
+	/bin/rm -f configure.h
+	./configure " -DSTATICENG -DcrossWin32i86" > configure.h
+
 configure: configure.c compat.h termdefs.h own_malloc_defs.h
 	$(CC) $(CFLAGS) $(LDFLAGS) -o configure configure.c
 
@@ -122,7 +126,7 @@ own_malloc_bin.o: configure.h termdefs.h own_malloc_defs.h
 own_malloc_linear.o: configure.h termdefs.h own_malloc_defs.h
 prolog_tasks.o: $(DATADEFS) $(SUPPORT) threads.h task_areas.h  wam_defs.h prolog_tasks_defs.h tasks_defs.h
 profile.o: $(DATADEFS) initial.h predtyp.h profile_defs.h
-qget.o: $(DATADEFS) $(SUPPORT) threads.h qget_defs.h bignum_defs.h
+qget.o: $(DATADEFS) $(SUPPORT) threads.h qget_defs.h qread_defs.h bignum_defs.h
 qinsert.o: $(DATADEFS) $(SUPPORT) qinstrdefs.h threads.h qinsert_defs.h bignum_defs.h stacks_defs.h
 qinstr2name.o: qinstr2name.h
 qread.o: $(DATADEFS) $(SUPPORT) qinstrdefs.h qread_defs.h alloc_defs.h qget_defs.h stacks_defs.h

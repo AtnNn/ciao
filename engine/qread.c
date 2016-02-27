@@ -27,7 +27,34 @@ struct qlinfo {
     int qllimit;
 };
 
-#define GETC(f) getc(f)
+#if defined(BUFFERED_PO)
+
+#define QLBFSIZE 1024
+int  qlbuffidx, qlbuffend;
+unsigned char qlbuff[QLBFSIZE];
+
+/*
+  Use an internal buffer of QLBFSIZE chars to store the contents of the .po
+  files being read in.  When the buffer is full, we fill it again at once;
+  the previous method was calling getc() once and again.  Preliminary tests
+  show this method to be between 3 times (for dynamic executables, as
+  ciaosh) to 5 times (for static stuff, as ciaoc) faster.  
+*/
+
+int buffered_input(stream)
+     FILE *stream;
+{
+  if (qlbuffidx == qlbuffend) {
+    if (qlbuffend < QLBFSIZE) return EOF;
+    if (!(qlbuffend = 
+          fread(qlbuff, sizeof(unsigned char), QLBFSIZE, stream)))
+        return EOF;                /* Could not read after buffer emptied */
+    qlbuffidx = 0;
+  } 
+  return (int)qlbuff[qlbuffidx++];
+}
+
+#endif
 
 extern int getshort PROTO((FILE *file));
 extern TAGGED getlarge PROTO((Argdecl, FILE *file));
@@ -44,6 +71,11 @@ BOOL push_qlinfo(Arg)
 {
   struct qlinfo *p = (struct qlinfo *)checkalloc(sizeof(struct qlinfo));
   
+#if defined(BUFFERED_PO)
+  qlbuffidx = QLBFSIZE; /* Empty */
+  qlbuffend = QLBFSIZE; 
+#endif  
+
   p->next = qlstack;
   qlstack = p;
   p->qllimit = qllimit;
@@ -194,10 +226,11 @@ BOOL qread1(Arg,qfile,rungoal)
       switch (c)
 	{
 	case ENSURE_SPACE:
-	  if (HeapDifference(h,Heap_End) < (pad=getlong(qfile)))
-	    w->global_top = h,
-	    explicit_heap_overflow(Arg,pad,2),
+	  if (HeapDifference(h,Heap_End) < (pad=getlong(qfile))){
+	    w->global_top = h;
+	    explicit_heap_overflow(Arg,pad,2);
 	    h = w->global_top;
+          }
 	  break;
 	case LOAD_ATOM:
 	  Li = getshort(qfile);
@@ -278,7 +311,7 @@ BOOL qread1(Arg,qfile,rungoal)
           reloc_counter(getlong(qfile));
           break;
 	}
-      c=getc(qfile);
+      c=GETC(qfile);
       }
   w->global_top = h;
   return FALSE;
@@ -290,10 +323,10 @@ int is_a_script(file)
 {
   int chr;
   
-  if ((chr = getc(file)) == '#')
+  if ((chr = GETC(file)) == '#')
     return TRUE;
   else {
-    ungetc(chr, file);
+    UNGETC(chr, file);
     return FALSE;
   }
 }
@@ -304,7 +337,7 @@ void skip_to_ctrl_l(file)
   int chr;
 
   do
-    chr = getc(file);
+    chr = GETC(file);
   while ((chr != EOF) && (chr != 12));            /* ASCII 12 is ctrl-L */
 }
 

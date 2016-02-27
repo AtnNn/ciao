@@ -2,10 +2,15 @@
 %%
 %% O'CIAO: Object Oriented Programming in CIAO/Prolog
 %%
-%% RUN-TIME SUPPORT FOR CLASS CODE
+%% RUN-TIME SUPPORT FOR CLASSES
 %%
 %% AUTHOR : Angel Fernandez Pineda
-%% DATE   : Febrary 1999
+%%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
+%%
+%%------------------------------------------------------------------------
 %%
 %% NOTICE: data_facts module not used because of module system 
 %% expansions inserted at compile time.

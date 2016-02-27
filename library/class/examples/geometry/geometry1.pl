@@ -5,8 +5,6 @@
 :- use_class(library('class/examples/geometry/canvas_class')).
 :- use_class(library('class/examples/geometry/poly_class')).
 
-:- disable_optimization.
-
 main :-
 	Left_eye new oval_class((100,50),50,25),
 	Right_eye new oval_class((190,50),50,25),

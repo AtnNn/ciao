@@ -162,6 +162,7 @@ extern BOOL undo PROTO((struct worker *w));
 extern BOOL prolog_qread PROTO((struct worker *w));
 extern BOOL push_qlinfo PROTO((struct worker *w));
 extern BOOL pop_qlinfo PROTO((struct worker *w));
+extern BOOL prolog_new_atom PROTO((struct worker *w));
 extern BOOL set_glv PROTO((struct worker *w));
 extern BOOL get_glv PROTO((struct worker *w));
 extern BOOL prolog_erase_atom PROTO((struct worker *w));
@@ -367,6 +368,13 @@ LOCK    backtrack_goal_l;
 
 LOCK_ST worker_id_pool_st;
 LOCK    worker_id_pool_l;
+
+
+/* Count for new atom names; if accessed concurrently, we want no repeated
+   identifiers */
+
+LOCK_ST atom_id_st;
+LOCK    atom_id_l;
 
 
 /* Counts mutually exclusive operations */
@@ -588,25 +596,61 @@ static void classify_atom(s)
    the hash table.  The memory for the (struct atom) is taken from a linear
    chunk of memory within which a pointer is advanced to reclaim memory for
    the atoms.  When there is not enough room for a new atom, a new area of
-   memory is allocated.  MCL. */
+   memory is allocated.  MCL.  Unfortunately:
 
-struct atom *new_atom_check(str,index)  
+   a) Some space is probably wasted at the end of the prolog_chars memory
+   area every time more memory is needed, and
+
+   b) I could not find an easy way to give memory back to the memory manager
+   in the event of atom deletion.
+
+   This scheme is supposed to be very fast, because memory is allocated in
+   fixed, but I still have to check if just calling the (general) memory
+   manager is really that much inefficient.  Doing so would solve completely
+   the problem of freeing atom table memory.
+*/
+
+/* MCL: changed to solve problems with fixed amounts of increments and the
+   (new) variable max_atom_size */
+
+#define MIN_MEM_CHUNK_SIZE 4096
+#define MAX(a, b) (a > b ? a : b)
+
+#if defined(USE_ATOM_LEN)
+struct atom *new_atom_check(str, str_len, index)  
+     unsigned char *str;   
+     unsigned int str_len;
+     unsigned int index;
+#else
+struct atom *new_atom_check(str, index)  
      unsigned char *str;   
      unsigned int index;
+#endif
 {
   struct atom *s;
-  int len = sizeof(struct atom)+strlen(str)+1-ANY;
+
+#if defined(USE_ATOM_LEN)
+  int len = sizeof(struct atom) + str_len + 1 - ANY;
+#else
+  int len = sizeof(struct atom) + strlen(str) + 1 - ANY;
+#endif
   
   /* Adjust to a tagged pointer */
   prolog_chars = (char *)((TAGGED)(prolog_chars+3) & ~3); 
-  if (prolog_chars+len > prolog_chars_end)
-    prolog_chars = (char *)checkalloc(2040),
-    prolog_chars_end = prolog_chars+2040;
+  if (prolog_chars+len > prolog_chars_end) {             /* Out of bounds */
+    prolog_chars = (char *)checkalloc(MAX(MIN_MEM_CHUNK_SIZE, len));
+    prolog_chars_end = prolog_chars + MAX(MIN_MEM_CHUNK_SIZE, len);
+  }
   
-  s = (struct atom *)prolog_chars, prolog_chars+=len;
+  s = (struct atom *)prolog_chars;
+  prolog_chars += len;
   s->index = index;
   (void) strcpy(s->name,(char *)str);
+#if defined(USE_ATOM_LEN)
+  s->atom_len = str_len;
+#endif
   classify_atom(s);
+
 #if defined(THREADS)
   s->atom_lock_l = create_dynamic_lock();               /* Already inited */
   /*  Quite amazingly, the latter seems to be faster than just
@@ -729,15 +773,13 @@ struct definition *define_c_mod_predicate(module,pname,procedure,arity)
 {
   struct definition *func;
   REGISTER struct sw_on_key_node *keyval;
-  /*  TAGGED tagpname = MakeString(pname);*/
-  char mod_pname[MAXATOM];   /* Predicate name with module name prepended */
-  /*int mod_pname_len;*/
+  char mod_pname[STATICMAXATOM]; /* Pred. name with module name prepended */
   TAGGED mod_tagpname;    /* Def. of predicate with module name prepended */
   TAGGED key;
   ENG_INT current_mem = total_mem_count;
                
-  if (strlen(module) + strlen(pname) > MAXATOM){           /* Check sizes */
-    char errmsg[MAXATOM+MAXATOM+512];
+  if (strlen(module) + strlen(pname) > STATICMAXATOM){     /* Check sizes */
+    char errmsg[STATICMAXATOM+STATICMAXATOM+512];
 
     strcpy(errmsg, "Predicate ");
     strcat(errmsg, pname);
@@ -780,7 +822,7 @@ struct definition *define_c_mod_predicate(module,pname,procedure,arity)
 /* JFMC: undefine a predicate defined with define_c_mod_predicate */
 void undefine_c_mod_predicate(char *module, char *pname, int arity) {
   struct definition *f;
-  char mod_pname[MAXATOM];   /* Predicate name with module name prepended */
+  char mod_pname[STATICMAXATOM]; /* Pred. name with module name prepended */
   TAGGED mod_tagpname;    /* Def. of predicate with module name prepended */
 
   strcpy(mod_pname, module);/* No need to check length -- already and atom */
@@ -903,6 +945,7 @@ static void initialize_intrinsics()
 
 				/* misc.c */
   
+  define_c_mod_predicate("prolog_sys", "new_atom", prolog_new_atom, 1);
   define_c_predicate("$set_global_logical_var", set_glv, 2);
   define_c_predicate("$get_global_logical_var", get_glv, 2);
 #if defined(ATOMGC)
@@ -1246,6 +1289,9 @@ void init_locks(){
   worker_id_pool_l = &worker_id_pool_st;
   Init_lock(worker_id_pool_l);
 
+  atom_id_l = &atom_id_st;
+  Init_lock(atom_id_l);
+
   backtrack_goal_l = &backtrack_goal_st;
   Init_lock(backtrack_goal_l);
 
@@ -1258,6 +1304,8 @@ extern char library_directory[];
 #else
 extern char *library_directory;
 #endif
+
+
 
 void init_once()
 {
@@ -1550,9 +1598,13 @@ void local_init_each_time(Arg)
   b->frame = w->frame = (struct frame *)Stack_Start;
 
   TopConcChpt = b;           /* Initialize concurrent topmost choicepoint */
-
   b->next_insn = exitcode;
   b->next_alt = termcode;
+  /*
+  printf("termcode is %lx\n", termcode);
+  printf("exitcode is %lx\n", exitcode);
+  printf("bootcode is %lx\n", bootcode);
+  */
   b->local_top = w->local_top = (struct frame *)Offset(w->frame,EToY0);
   b->global_top = w->global_top = Heap_Start;
   b->trail_top = w->trail_top = Trail_Start;
@@ -1595,11 +1647,9 @@ void init_streams_each_time(Arg)
 void reinitialize(Arg)
      Argdecl;
 {
-  /* ENG_INT prog_mem = mem_prog_count; */ /* preserve over reallocs */
   int i, j;
   char *cp;
 
-  /*predicates_location = NULL;*/	
   wam_initialized = FALSE;                    /* disable recursive aborts */
   GETENV(i,cp,"GLOBALSTKSIZE",GLOBALSTKSIZE);
   if ((j=HeapDifference(Heap_Start,Heap_End)) != i)
@@ -1618,15 +1668,14 @@ void reinitialize(Arg)
     Choice_Start = Trail_End = TrailOffset(Trail_Start,i),
     Tagged_Choice_Start = Choice_Start + TaggedZero;
 
-  if (Atom_Buffer_Length != MAXATOM)
+  if (Atom_Buffer_Length != STATICMAXATOM){
     Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
-				       Atom_Buffer_Length, MAXATOM),
-    Atom_Buffer_Length = MAXATOM;
-  /*predicates_location = &user_predicates;*/ /* re-enable aborts */
+				       Atom_Buffer_Length, STATICMAXATOM);
+    Atom_Buffer_Length = STATICMAXATOM;
+  }
 
   Heap_Warn_Soft = Heap_Warn = HeapOffset(Heap_End,-CALLPAD);
   Stack_Warn = StackOffset(Stack_End,-STACKPAD);
-  /*mem_prog_count = prog_mem;*/
   
   empty_gcdef_bin(Arg);
 

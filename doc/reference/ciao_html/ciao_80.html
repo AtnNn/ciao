@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Pretty-printing assertions</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC281" HREF="ciao_toc.html#TOC281">Pretty-printing assertions</A></H1>
+<H1><A NAME="SEC284" HREF="ciao_toc.html#TOC284">Pretty-printing assertions</A></H1>
 <P>
-<A NAME="IDX3311"></A>
+<A NAME="IDX3357"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+<STRONG>Version:</STRONG> 1.5#24 (1999/12/28, 13:18:53 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#45 (1999/8/5, 14:43:7 MEST)
+<STRONG>Version of last change:</STRONG> 1.5#2 (1999/11/29, 18:2:53 MET)
 
 
 <P>
@@ -33,13 +33,13 @@ This module defines some predicates which are useful for writing assertions in a
 
 
 <UL>
-<LI><A HREF="ciao_80.html#SEC282">Usage and interface (assrt_write)</A>
-<LI><A HREF="ciao_80.html#SEC283">Documentation on exports (assrt_write)</A>
+<LI><A HREF="ciao_80.html#SEC285">Usage and interface (assrt_write)</A>
+<LI><A HREF="ciao_80.html#SEC286">Documentation on exports (assrt_write)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC282" HREF="ciao_toc.html#TOC282">Usage and interface (<CODE>assrt_write</CODE>)</A></H2>
+<H2><A NAME="SEC285" HREF="ciao_toc.html#TOC285">Usage and interface (<CODE>assrt_write</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -56,9 +56,9 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3312"></A>
+<A NAME="IDX3358"></A>
 <CODE>write_assertion/6</CODE>, 
-<A NAME="IDX3313"></A>
+<A NAME="IDX3359"></A>
 <CODE>write_assertion_as_comment/6</CODE>.
 
 </UL>
@@ -70,14 +70,14 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3314"></A>
+<A NAME="IDX3360"></A>
 <CODE>format</CODE>, 
-<A NAME="IDX3315"></A>
+<A NAME="IDX3361"></A>
 <CODE>assertions/assrt_lib</CODE>, 
-<A NAME="IDX3316"></A>
+<A NAME="IDX3362"></A>
 <CODE>messages</CODE>, 
-<A NAME="IDX3317"></A>
-<CODE>assertions/assrt_props</CODE>.
+<A NAME="IDX3363"></A>
+<CODE>assertions/assertions_props</CODE>.
 
 </UL>
 
@@ -87,13 +87,13 @@ This module defines some predicates which are useful for writing assertions in a
 
 
 
-<H2><A NAME="SEC283" HREF="ciao_toc.html#TOC283">Documentation on exports (<CODE>assrt_write</CODE>)</A></H2>
+<H2><A NAME="SEC286" HREF="ciao_toc.html#TOC286">Documentation on exports (<CODE>assrt_write</CODE>)</A></H2>
 <P>
-<A NAME="IDX3318"></A>
-<A NAME="IDX3319"></A>
+<A NAME="IDX3364"></A>
+<A NAME="IDX3365"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>write_assertion/6:</B>
-<DD><A NAME="IDX3320"></A>
+<DD><A NAME="IDX3366"></A>
 
 
 <P>
@@ -104,17 +104,17 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>undefined:assertion_status(Status)</CODE>
- (undefined property)
+<CODE>Status</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
 
 <CODE>Type</CODE> is an admissible kind of assertion.
- (<CODE>assrt_props:assrt_type/1</CODE>)
+ (<CODE>assertions_props:assrt_type/1</CODE>)
 
-<CODE>undefined:assertion(Body)</CODE>
- (undefined property)
+<CODE>Body</CODE> is a normalized assertion body.
+ (<CODE>assertions_props:nabody/1</CODE>)
 
-<CODE>undefined:dictionary(Dict)</CODE>
- (undefined property)
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>assertions_props:dictionary/1</CODE>)
 
 <CODE>Flag</CODE> is <CODE>status</CODE> or <CODE>nostatus</CODE>.
  (<CODE>assrt_write:status_flag/1</CODE>)
@@ -123,11 +123,11 @@ This module defines some predicates which are useful for writing assertions in a
 </DL>
 
 <P>
-<A NAME="IDX3321"></A>
-<A NAME="IDX3322"></A>
+<A NAME="IDX3367"></A>
+<A NAME="IDX3368"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>write_assertion_as_comment/6:</B>
-<DD><A NAME="IDX3323"></A>
+<DD><A NAME="IDX3369"></A>
 
 
 <P>
@@ -138,17 +138,17 @@ This module defines some predicates which are useful for writing assertions in a
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>undefined:assertion_status(Status)</CODE>
- (undefined property)
+<CODE>Status</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
 
 <CODE>Type</CODE> is an admissible kind of assertion.
- (<CODE>assrt_props:assrt_type/1</CODE>)
+ (<CODE>assertions_props:assrt_type/1</CODE>)
 
-<CODE>undefined:assertion(Body)</CODE>
- (undefined property)
+<CODE>Body</CODE> is a normalized assertion body.
+ (<CODE>assertions_props:nabody/1</CODE>)
 
-<CODE>undefined:dictionary(Dict)</CODE>
- (undefined property)
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>assertions_props:dictionary/1</CODE>)
 
 <CODE>Flag</CODE> is <CODE>status</CODE> or <CODE>nostatus</CODE>.
  (<CODE>assrt_write:status_flag/1</CODE>)
@@ -157,6 +157,6 @@ This module defines some predicates which are useful for writing assertions in a
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_79.html">previous</A>, <A HREF="ciao_81.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

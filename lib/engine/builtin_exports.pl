@@ -51,6 +51,7 @@ builtin_export(basiccontrol,true,0,0) .
 builtin_export(basiccontrol,fail,0,0) .
 builtin_export(basiccontrol,repeat,0,0) .
 builtin_export(basiccontrol,call,1,call(goal)) .
+builtin_export(basiccontrol,srcdbg_spy,6,srcdbg_spy(goal,?,?,?,?,?)) .
 builtin_export(concurrency,eng_call,4,eng_call(goal,?,?,?)) .
 builtin_export(concurrency,eng_call,3,eng_call(goal,?,?)) .
 builtin_export(concurrency,eng_backtrack,2,0) .

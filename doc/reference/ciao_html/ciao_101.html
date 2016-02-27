@@ -1,46 +1,74 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using classes from the CIAO toplevel shell</TITLE>
+<TITLE>The Ciao Prolog System               - Run time usage of objects</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC349" HREF="ciao_toc.html#TOC349">Using classes from the CIAO toplevel shell</A></H1>
+<H1><A NAME="SEC352" HREF="ciao_toc.html#TOC352">Run time usage of objects</A></H1>
 <P>
-<A NAME="IDX3753"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<A NAME="IDX3740"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda, Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#21 (1999/7/7, 10:27:51 MEST)
+<STRONG>Version:</STRONG> 1.5#9 (1999/12/9, 21:57:42 MET)
 
 
 <P>
-The CIAO toplevel shell will be a usefull tool in order to compile and test O'CIAO classes. Those classes may be dynamically loaded, so some instances of them may be created to perform any needed test.
+<STRONG>Version of last change:</STRONG> 1.5#4 (1999/11/29, 19:11:21 MET)
+
+
+<P>
+This library provides run-time support for 
+<A NAME="IDX3741"></A>
+object creation and manipulation. Objects are also called 
+<A NAME="IDX3742"></A>
+class instances, or simply 
+<A NAME="IDX3743"></A>
+instances. 
+
+
+<P>
+Objects in CIAO are treated as normal modules. This is, an object is a run-time generated Prolog module, which may be identified by an unique term across the whole application. 
+
+
+<P>
+This is a very simple example of how to create an instance, and how to make calls to it: 
+
+
+
+<PRE>
+            AnObj new myclass,
+            AnObj:mymethod.
+</PRE>
+
+<P>
+In order to make any object accessible from code, an usage relationship must be established between the class (from which instances are derived) and the code itself. Refer to 
+<A NAME="IDX3744"></A>
+<CODE>use_class/1</CODE> predicate or 
+<A NAME="IDX3745"></A>
+<CODE>use_class/1</CODE> declaration in order to do so. 
 
 
 
 <UL>
-<LI><A HREF="ciao_101.html#SEC350">Usage and interface (dynclasses)</A>
-<LI><A HREF="ciao_101.html#SEC351">Documentation on exports (dynclasses)</A>
-<LI><A HREF="ciao_101.html#SEC352">Known bugs and planned improvements (dynclasses)</A>
+<LI><A HREF="ciao_101.html#SEC353">Usage and interface (objects_rt)</A>
+<LI><A HREF="ciao_101.html#SEC354">Documentation on exports (objects_rt)</A>
+<LI><A HREF="ciao_101.html#SEC355">Known bugs and planned improvements (objects_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC350" HREF="ciao_toc.html#TOC350">Usage and interface (<CODE>dynclasses</CODE>)</A></H2>
+<H2><A NAME="SEC353" HREF="ciao_toc.html#TOC353">Usage and interface (<CODE>objects_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,15 +76,13 @@ The CIAO toplevel shell will be a usefull tool in order to compile and test O'CI
 
 <LI><STRONG>Library usage:</STRONG>
 
-This library will be automatically loaded when using the <EM>objects</EM> package from the toplevel shell: 
+This library is automatically loaded when using the <EM>objects</EM> package: 
 
 <PRE>
-	?- use_package(objects).
+    :- module(<EM>ModuleName</EM>,<EM>Exports</EM>,[objects]).
 </PRE>
 
-It may be usefull for you to put a <CODE>:- use_package(objects)</CODE> declaration on your <EM>.cshrc</EM> initialization file. In such case, absolutely nothing is needed to load this library. 
-
-The Emacs ciao-mode will also automatically load this library when a <EM>Load buffer</EM> command is issued (<CODE>C-c l</CODE>). 
+Nothing special needs to be done. 
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -65,8 +91,39 @@ The Emacs ciao-mode will also automatically load this library when a <EM>Load bu
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3754"></A>
+<A NAME="IDX3746"></A>
+<CODE>new/2</CODE>, 
+<A NAME="IDX3747"></A>
+<CODE>instance_of/2</CODE>, 
+<A NAME="IDX3748"></A>
+<CODE>derived_from/2</CODE>, 
+<A NAME="IDX3749"></A>
+<CODE>interface/2</CODE>, 
+<A NAME="IDX3750"></A>
+<CODE>instance_codes/2</CODE>, 
+<A NAME="IDX3751"></A>
+<CODE>destroy/1</CODE>, 
+<A NAME="IDX3752"></A>
 <CODE>use_class/1</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX3753"></A>
+<CODE>constructor/1</CODE>, 
+<A NAME="IDX3754"></A>
+<CODE>class_name/1</CODE>, 
+<A NAME="IDX3755"></A>
+<CODE>interface_name/1</CODE>, 
+<A NAME="IDX3756"></A>
+<CODE>instance_id/1</CODE>, 
+<A NAME="IDX3757"></A>
+<CODE>class_source/1</CODE>, 
+<A NAME="IDX3758"></A>
+<CODE>interface_source/1</CODE>, 
+<A NAME="IDX3759"></A>
+<CODE>method_spec/1</CODE>, 
+<A NAME="IDX3760"></A>
+<CODE>virtual_method_spec/1</CODE>.
 
 </UL>
 
@@ -77,12 +134,30 @@ The Emacs ciao-mode will also automatically load this library when a <EM>Load bu
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3755"></A>
+<A NAME="IDX3761"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX3762"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX3763"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX3764"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX3765"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX3766"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX3767"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX3768"></A>
+<CODE>streams</CODE>, 
+<A NAME="IDX3769"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX3770"></A>
 <CODE>dynmods</CODE>, 
-<A NAME="IDX3756"></A>
-<CODE>filenames</CODE>, 
-<A NAME="IDX3757"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX3771"></A>
+<CODE>prolog_sys</CODE>, 
+<A NAME="IDX3772"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -92,82 +167,515 @@ The Emacs ciao-mode will also automatically load this library when a <EM>Load bu
 
 
 
-<H2><A NAME="SEC351" HREF="ciao_toc.html#TOC351">Documentation on exports (<CODE>dynclasses</CODE>)</A></H2>
+<H2><A NAME="SEC354" HREF="ciao_toc.html#TOC354">Documentation on exports (<CODE>objects_rt</CODE>)</A></H2>
 <P>
-<A NAME="IDX3758"></A>
-<A NAME="IDX3759"></A>
+<A NAME="IDX3773"></A>
+<A NAME="IDX3774"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
-<DD><A NAME="IDX3760"></A>
+<DT><span class="define">PREDICATE:</span> <B>new/2:</B>
+<DD><A NAME="IDX3775"></A>
 
 
 <P>
-This predicate is something very similar to 
-<A NAME="IDX3761"></A>
-<CODE>use_module/1</CODE>. 
+Dynamic instance creation takes place by the ways of this predicate. 
 
 
 <P>
-It will (re)compile and/or (re)load a class source file from the CIAO shell so instances of that class can be now created. 
+It takes a free variable as first argument which will be instantiated to an internal object identifier. 
 
 
 <P>
-There is an implicit usage relationship between the CIAO shell and <STRONG>any and all loaded</STRONG> classes. This seems that user is allowed to create (
-<A NAME="IDX3762"></A>
-<CODE>new/1</CODE>) and call any public predicate even when the involved class was not specifically loaded using the use_class/1 predicate.For example: 
+Second argument must be instantiated to a 
+<A NAME="IDX3776"></A>
+class constructor. Class constructors are designed to perform an initialization on the new created instance. Notice that instance initialization may involve some kind of computation, not only <EM>state initialization</EM>. 
 
-<PRE>
-   :- module(test,[example/1],[objects]).
-
-   :- use_class(test_class).
-
-    example(Obj) :-
-        Obj new test_class,
-        Obj:do_something.
-</PRE>
 
 <P>
-Whenever this code is loaded: 
+A class constructor is made by a functor, which must match the intended class name, and any number of parameters. For example: 
 
 
 
 <PRE>
-	?- use_module(test).
+            Obj new myclass(1500,'hello, world!!!')
 </PRE>
 
 <P>
-user is allowed to handle instances of <EM>test_class</EM> (and ascendants): 
+Those parameters depends (obviously) on the constructors defined at the class source. If no constructors where defined, no parameters are needed. This is called the 
+<A NAME="IDX3777"></A>
+default constructor. An example: 
 
 
 
 <PRE>
-	?- test:example(SomeObj), SomeObj:test_something.
+            Obj new myclass
 </PRE>
 
 <P>
-Note that <EM>test_class</EM> was not loaded using use_class/1 predicate, but public predicate <EM>test_something/0</EM> may be called. 
+The default constructor can not be called if there is any constructor available at the class source. 
 
 
 <P>
-Some other usefull notes: 
-
-
+Instantiation will raise an exception and fail whenever any of this conditions occur: 
 
 <UL>
+<LI>First argument is not a free variable.
 
-<LI>Every time a class is reloaded using use_class/1, all previously created instances of that class will be automatically destroyed.
+<LI>Second argument functor is a class, but there is no usage relationship with it.
 
-<LI>Predicate use_class/1 will fail if called from user programs.
+<LI>Second argument functor is not a class.
 
-<LI>use_class/1 will have no effect whether given source is not a class.
+<LI>The given constructor is unknown.
+
+<LI>The given constructor fails (notice that default constructor never fails).
 
 </UL>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>use_class(Source)</CODE>
+Objects may also be statically declared, refer to 
+<A NAME="IDX3778"></A>
+<CODE>instance_of/2</CODE> declaration. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>new(InstanceVar,Constructor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Compile and load <CODE>Source</CODE> class
+<LI><EM>Description:</EM> Creates a new instance of the class specified by <CODE>Constructor</CODE> returning its identifier in <CODE>InstanceVar</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>InstanceVar</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>Constructor</CODE> is a term whose functor matches a class name.
+ (<CODE>objects_rt:constructor/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>InstanceVar</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3779"></A>
+<A NAME="IDX3780"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>instance_of/2:</B>
+<DD><A NAME="IDX3781"></A>
+
+
+<P>
+This predicate is used to perform dynamic type checking. You may check whether a particular instance belongs to a particular class or related descendants. 
+
+
+<P>
+instance_of/2 is used to perform static 
+<A NAME="IDX3782"></A>
+semantic analisys over object oriented code constructions. 
+
+
+<P>
+By the use of instance_of/2 you may help to perform such analisys. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>instance_of(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether <CODE>Instance</CODE> was derived from any descendant of <CODE>Class</CODE>, or that class itself
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>instance_of(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves, on backtracking, the inheritance line of <CODE>Instance</CODE> commencing on the creation class (that specified on call to
+
+<A NAME="IDX3783"></A>
+<CODE>new/2</CODE>) and continuing on the rest of ascendant classes, if any. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3784"></A>
+<A NAME="IDX3785"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>derived_from/2:</B>
+<DD><A NAME="IDX3786"></A>
+
+
+<P>
+Test whether an object identifier was derived directly from a class, by the usage of 
+<A NAME="IDX3787"></A>
+<CODE>new/2</CODE> or a static instance declaration (
+<A NAME="IDX3788"></A>
+<CODE>instance_of/2</CODE>). 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>derived_from(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test derivation of <CODE>Instance</CODE> from <CODE>Class</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>derived_from(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves the <CODE>Class</CODE> responsable of the derivation of <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3789"></A>
+<A NAME="IDX3790"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>interface/2:</B>
+<DD><A NAME="IDX3791"></A>
+
+
+<P>
+This predicate is used to ensure a given interface to be implemented by a given instance. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>interface(Instance,Interface)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Check whether <CODE>Instance</CODE> implements the given <CODE>Interface</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Interface</CODE> is an unique atom which identifies a public interface.
+ (<CODE>objects_rt:interface_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>interface(Instance,Interfaces)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves on backtracking all the implemented <CODE>Interfaces</CODE> of <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Interfaces</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Interfaces</CODE> is an unique atom which identifies a public interface.
+ (<CODE>objects_rt:interface_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3792"></A>
+<A NAME="IDX3793"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>instance_codes/2:</B>
+<DD><A NAME="IDX3794"></A>
+
+
+<P>
+Retrieves a character string representation from an object identifier and vice-versa. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>instance_codes(Instance,String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves a <CODE>String</CODE> representation of given <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>String</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>instance_codes(Instance,String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reproduces an <CODE>Instance</CODE> from its <CODE>String</CODE> representation. Such an instance must be alive across the application: this predicate will fail whether the involved instance has been destroyed.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3795"></A>
+<A NAME="IDX3796"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>destroy/1:</B>
+<DD><A NAME="IDX3797"></A>
+
+
+<P>
+As well as instances are created, they must be destroyed when no longer needed in order to release system resources. 
+
+
+<P>
+Unfortunately, current O'CIAO implementation does not support automatic instance destruction, so user must manually call <EM>destroy/1</EM> in order to do so. 
+
+
+<P>
+The programmer <STRONG>must ensure</STRONG> that no other references to the involved object are left in memory when destroy/1 is called. If not, unexpected results may be obtained. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>destroy(Instance)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Destroys the object identified by <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3798"></A>
+<A NAME="IDX3799"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
+<DD><A NAME="IDX3800"></A>
+
+
+<P>
+The behaviour of this predicate is identical to that provided by the declaration of the same name 
+<A NAME="IDX3801"></A>
+<CODE>use_class/1</CODE>. It allows user programs to dynamically load classes. Whether the given source is not a class it will perform a 
+<A NAME="IDX3802"></A>
+<CODE>use_module/1</CODE> predicate call.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>use_class(ClassSource)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamically loads the given <CODE>ClassSource</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ClassSource</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
+ (<CODE>objects_rt:class_source/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3803"></A>
+<A NAME="IDX3804"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>constructor/1:</B>
+<DD><A NAME="IDX3805"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>constructor(Cons)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Cons</CODE> is a term whose functor matches a class name.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3806"></A>
+<A NAME="IDX3807"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_name/1:</B>
+<DD><A NAME="IDX3808"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_name(ClassName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ClassName</CODE> is an atom denoting a class.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3809"></A>
+<A NAME="IDX3810"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>interface_name/1:</B>
+<DD><A NAME="IDX3811"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>interface_name(Interface)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Interface</CODE> is an unique atom which identifies a public interface.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3812"></A>
+<A NAME="IDX3813"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>instance_id/1:</B>
+<DD><A NAME="IDX3814"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>instance_id(ID)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ID</CODE> is an unique term which identifies an object.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3815"></A>
+<A NAME="IDX3816"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_source/1:</B>
+<DD><A NAME="IDX3817"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_source(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3818"></A>
+<A NAME="IDX3819"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>interface_source/1:</B>
+<DD><A NAME="IDX3820"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>interface_source(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration or an interface declaration (without .pl extension).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3821"></A>
+<A NAME="IDX3822"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>method_spec/1:</B>
+<DD><A NAME="IDX3823"></A>
+
+
+<P>
+There is no difference between method or attribute specifications, and habitual predicate specifications. It is just a Functor/Arity term. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>method_spec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method or attribute specification.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3824"></A>
+<A NAME="IDX3825"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>virtual_method_spec/1:</B>
+<DD><A NAME="IDX3826"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>virtual_method_spec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method specification.
 
 </UL>
 
@@ -175,19 +683,23 @@ Some other usefull notes:
 
 
 
-<H2><A NAME="SEC352" HREF="ciao_toc.html#TOC352">Known bugs and planned improvements (<CODE>dynclasses</CODE>)</A></H2>
+<H2><A NAME="SEC355" HREF="ciao_toc.html#TOC355">Known bugs and planned improvements (<CODE>objects_rt</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-Not really a bug: when loading code which declares static instances (
-<A NAME="IDX3763"></A>
-<CODE>use_module/1</CODE>), those instances may be not correctly created, and predicates will fail whenever they are not supposed to do. This may be avoided by reloading again the involved module, but make sure it is modified and saved to disk before doing so. 
+Rock-and-roll Star ate my hamster :-(
+
+<LI>
+
+Not really a bug: when loading code which declares static instances from the toplevel shell, predicate 
+<A NAME="IDX3827"></A>
+<CODE>use_module/1</CODE>) will not work properly: those instances may be not correctly created, and predicates will fail whenever they are not supposed to do. This may be avoided by reloading again the involved module, but make sure it is modified and saved to disk before doing so. 
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_100.html">previous</A>, <A HREF="ciao_102.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

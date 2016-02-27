@@ -31,3 +31,15 @@
 :- true pred srandom(?int).
 
 
+
+:- comment(version_maintenance,dir('../../version')).
+
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
+
+:- comment(version(1*5+26,1999/12/29,15:07*59+'CET'), "random/3 made
+more random in the case of integer limits. (MCL)").
+

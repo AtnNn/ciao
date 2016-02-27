@@ -1,7 +1,7 @@
 
 /* Disallow threads in selected cases, even if set at the general settings */
 
-#if defined(THREADS)
+#if defined(THREADS) 
 
 /* These macros allows the same macros to be use with the POSIX and Solaris 
    threads packages.  Some code taken from Kish's DASWAM
@@ -9,7 +9,7 @@
 
 #if defined(LINUX) || defined(IRIX) || defined(Win32)
 
-#define _MIT_POSIX_THREADS 1
+/* #define _MIT_POSIX_THREADS 1 */
 #include <pthread.h>
 
 typedef pthread_t THREAD_T;
@@ -30,6 +30,7 @@ typedef pthread_t THREAD_T;
      pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL); \
      pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
 #define Thread_Cancel(Id) pthread_cancel(Id)
+#define Thread_Equal(thr1, thr2) pthread_equal(thr1, thr2)
 #endif                                                       /* __linux__ */
 
 
@@ -71,7 +72,7 @@ typedef thread_t THREAD_T;
 #define Allow_Thread_Cancel 
 #define Disallow_Thread_Cancel 
 #define Thread_Cancel(Id) thr_kill(Id, SIGTERM)
-     
+#define Thread_Equal(thr1, thr2) thr_equal(thr1, thr2)     
 #endif
 
 #if defined(USE_POSIX_THREADS)
@@ -101,6 +102,7 @@ typedef pthread_t THREAD_T;
      pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL); \
      pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
 #define Thread_Cancel(Id) pthread_cancel(Id)
+#define Thread_Equal(thr1, thr2) pthread_equal(thr1, thr2)
 #endif                                                   /* POSIX threads */
 #endif                                                           /* sparc */
 
@@ -134,5 +136,5 @@ typedef int THREAD_T;
 #define Allow_Thread_Cancel 
 #define Disallow_Thread_Cancel 
 #define Thread_Cancel(Id) kill(Thread_Id, SIGTERM)
-
+#define Thread_Equal(thr1, thr2) (thr1 == thr2)
 #endif /* defined(THREADS) */

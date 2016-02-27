@@ -90,7 +90,10 @@ int main(argc, argv)
   if (argc > 0) generate_defines(argv[1]);
 
   SIGNAL(SIGSEGV, handler);
+
+#if !defined(crossWin32i86)
   SIGNAL(SIGBUS, handler);
+#endif
 
   if
 #if defined(multimax) || defined(AIX)

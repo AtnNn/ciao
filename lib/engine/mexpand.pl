@@ -32,7 +32,7 @@ body_expansion(if(A,B,C),M,QM,if(NA,NB,NC)) :- !,
 body_expansion(Call,M,QM,NCall) :-
         functor(Call, call, N), N > 1, !, % call/n
         Call =.. [_, P| LAs],
-        As =.. [[]| LAs],
+        As =.. [(\:)| LAs],
         N1 is N-1,
         meta_expansion_arg1(P, pred(N1), M, QM, true, NP, NCall, call(NP,As)).
 body_expansion(!,_M,_QM,!):- !.
@@ -159,19 +159,22 @@ spec_expansion(F/A, M, QM, NF/A) :-
 	atom_expansion(G, F, A, M, QM, NG, _),
 	functor(NG,NF,A).
 
-pred_expansion(:-(H,B), N, M, QM, :-(NH,NB)) :-
-        sequence_to_list(N, H, HL, Err), !,
-        ( Err == big_pred_abs ->
-            module_warning(big_pred_abs(:-(H,B), N))
-        ; Err == short_pred_abs ->
-            module_warning(short_pred_abs(:-(H,B), N))
-        ; true
-        ),
-        NH =.. [[]|HL],
-        body_expansion(B, M, QM, NB).
-pred_expansion(P, N, M, QM, NP/N) :-
+pred_expansion(PredAbs, N, M, QM, :-(NH,NB)) :-
+        PredAbs = :-(H,_B), !,
+        functor(H,Hf,Ha),
+        ( Hf = (\:), ! ; module_warning(bad_pred_abs(PredAbs)) ),
+        check_pred_arity(Ha,N,PredAbs),
+        copy_term(PredAbs, :-(NH,RB)),
+        body_expansion(RB, M, QM, NB).
+pred_expansion(P, N, M, QM, R) :-
         nonvar(P),
         functor(P, F, A),
+        pred_expansion_(F, A, P, N, M, QM, R).
+
+pred_expansion_((\:), A, P, N,_M,_QM, :-(NH,true)) :- !,
+        check_pred_arity(A, N, P),
+        copy_term(P,NH).
+pred_expansion_(F,   A, P, N, M, QM, NP/N) :-
         atom(F),
         T is N+A,
         functor(G, F, T),
@@ -183,13 +186,14 @@ pred_expansion(P, N, M, QM, NP/N) :-
         functor(NP, NF, NA),
         unify_args(NA, NP, NT, NG).
 
-% Assuming N >= 1
-sequence_to_list(1, E, [E], Err) :- !,
-        ( nonvar(E), E = (_,_) -> Err = big_pred_abs ; true ).
-sequence_to_list(N, S, [E|R], Err) :-
-        ( nonvar(S), S = (E,S1) ->  true ; S = E, Err = short_pred_abs ),
-        N1 is N-1,
-        sequence_to_list(N1, S1, R, Err).
+check_pred_arity(A, N, PredAbs) :-
+        compare(R,A,N),
+        ( R = (=) -> true
+        ; R = (<) ->
+            module_warning(short_pred_abs(PredAbs, N))
+        ;%R = (>) ->
+            module_warning(big_pred_abs(PredAbs, N))
+        ).
 
 unify_args(0,_F,_A,_G) :- !.
 unify_args(N, F, A, G) :- 

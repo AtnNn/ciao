@@ -12,7 +12,11 @@ SGI*)       echo `/usr/sbin/mpadmin -n | tail -1` 1 - p | dc ;;
 SunOS4*)     echo 1 ;;
 Solaris*)    echo `/usr/bin/mpstat | /usr/bin/wc -l` 1 - p | dc ;;
 Win32*)      echo 1 ;;
-LINUXi86)    if test -e /proc/cpuinfo ; then echo `/bin/grep processor /proc/cpuinfo | wc --lines` ; else echo 1; fi ;;
+LINUXi86)    if (test -e /proc/cpuinfo) && (test -e /bin/grep) ;
+	     then echo `/bin/grep processor /proc/cpuinfo | wc --lines` ;
+	     else if (test -e /proc/cpuinfo) && (test -e /usr/bin/grep) ;
+	     then echo `/usr/bin/grep processor /proc/cpuinfo | wc --lines` ;
+	     else echo 1; fi ; fi ;;
 LINUXalpha)  echo 1;;
 *)           echo 1 ;;
 esac

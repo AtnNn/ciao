@@ -5,6 +5,8 @@
 
 #include <stdio.h>                       /* Needed for the FILE structure */
 
+#define CACHE_INCREMENTAL_CLAUSE_INSERTION
+
 typedef unsigned short int CLOCK;
 
 
@@ -94,7 +96,7 @@ struct instance {
 typedef enum {DYNAMIC, CONC_OPEN, CONC_CLOSED} Behavior;
 
 struct int_info {
-  Behavior  behavior_on_failure;         /* behavior if no clauses match. */
+  volatile Behavior  behavior_on_failure;/* behavior if no clauses match. */
 
   LOCK clause_lock_l;
 
@@ -148,6 +150,7 @@ struct atom {
   volatile int atom_lock_counter;               /* For general semaphores */
 #endif
 #endif
+  unsigned int atom_len;
   char name[ANY];
 };
 
@@ -163,7 +166,8 @@ struct try_node {
   INSN *emul_p;                    /* write mode or not first alternative */
   INSN *emul_p2;		          /* read mode, first alternative */
   short node_offset;		       /* offset from choicepoint to next */
-  short number;			    /* clause number for this alternative */
+  /*short number;*/
+  unsigned int number;		    /* clause number for this alternative */
                              /* Gauge specific fields MUST come after this*/
 #if defined(GAUGE)
   ENG_INT *entry_counter;        /* Offset of counter for clause entry */
@@ -256,7 +260,6 @@ struct definition {
   short arity; /*  */
   TAGGED printname;	                        /* or sibling pointer | 1 */
                                                  /* or parent pointer | 3 */
-                               /* support for locking on atom names. MCL. */
 #if defined(PROFILE) 
   unsigned long int no_of_calls;
   unsigned long int time_spent;

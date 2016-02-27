@@ -1,25 +1,16 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO : OBJECT ORIENTED PROGRAMMING IN CIAO/Prolog
+%% O'CIAO: Object Oriented Programming in CIAO/Prolog
 %%
 %% DOCUMENTATION FILE ON CLASS SYNTAX
 %%
 %% AUTHOR : Angel Fernandez Pineda
-%% DATE   : July 1999
+%%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
 %%
 %%------------------------------------------------------------------------
-
-%:- module(
-%	class_doc,
-%	[
-%	    inherited/1,
-%	    self/1,
-%	    constructor/0,
-%	    destructor/0,
-%	    method_spec/1,
-%	    public_list/1,
-%	    class_source/1
-%	],[assertions,regtypes]).
 
 :- use_package(assertions).
 
@@ -330,7 +321,6 @@
 	"Forces current source to provide an implementation for the given 
          interface file. Such interface file may declare another class 
          or a specific interface.
-         Interface files are described at @lib{interface_doc} library.
 
          Every public predicate present at given interface file will
          be automatically declared as public at current source, 
@@ -568,6 +558,11 @@ destructor.
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+:- comment(version(1*5+3,1999/11/29,18:06*27+'MET'), "Fixed minor bug on
+   assert/retract expansion. Documentation on
+   interfaces has been mixed with documentation on classes 
+   (Angel Fernandez Pineda).").
 
 :- comment(version(1*3+76,1999/10/13,18:29*01+'MEST'), "Fixed bug which
    caused virtual methods to crash when called from a destructor.  (Angel

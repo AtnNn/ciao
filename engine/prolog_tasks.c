@@ -85,7 +85,9 @@ void make_worker_entry_free(we)
   Argdecl;
 
   Arg = we->worker->worker_registers;
+#if defined(THREADS)
   remove_link_chains(&TopConcChpt, InitialNode);
+#endif
   make_worker_free(we->worker);
   we->worker = (wrb_state_p)NULL;
 
@@ -97,11 +99,13 @@ static int worker_from_WAM(Arg)
      Argdecl;
 {
   int i = 0;
+
   while ((i < MAXWORKERS) && 
-         (goal_table[i].worker->worker_registers != Arg))
+         ((goal_table[i].worker == NULL) ||
+         (goal_table[i].worker->worker_registers != Arg)))
     i++;
   if (i == MAXWORKERS)
-    MAJOR_FAULT("Thread ID not found")
+    MAJOR_FAULT("Goal ID not found")
   else
     return i;
 }
@@ -151,7 +155,7 @@ BOOL prolog_kill_other_threads(Arg)
     for (i = 0; i < MAXWORKERS; i++) {
       Wait_Acquire_lock(worker_id_pool_l);
       if (goal_table[i].worker &&
-          (goal_table[i].thread_id != myself)) {
+          !Thread_Equal(goal_table[i].thread_id, myself)) {
         if (goal_table[i].worker->state != IDLE)
           kill_thread(goal_table[i].worker);
         goal_table[i].worker->state = IDLE;
@@ -182,7 +186,7 @@ BOOL prolog_join_goal(Arg)
       printf("About to join goal %ld\n", GetSmall(X(0)));
 #endif
   thread_id = goal_table[GetSmall(X(0))].thread_id; 
-  if (thread_id != Thread_Id)      /* Waiting for us makes no sense to me */
+  if (!Thread_Equal(thread_id, Thread_Id))      /* Waiting for us makes no sense to me */
     Thread_Join(thread_id);                            /*Join, remove res.*/ 
 #if defined(DEBUG)
   if (debug_threads)
@@ -349,8 +353,7 @@ BOOL prolog_backtrack_goal(Arg)
 
   worker_entry->action = worker_str->action = BACKTRACKING;
   wam(worker_str->worker_registers, worker_str);
-  if (worker_str->worker_registers->node ==
-      worker_str->node_at_entry){
+  if (worker_str->worker_registers->next_alt == termcode){
     make_worker_entry_free(worker_entry);
     return FALSE;
   } else {
@@ -492,7 +495,7 @@ void *make_backtracking(wo)
   wrb_state_p worker_space = (wrb_state_p)wo;
   worker_space->thread_id = Thread_Id;
   wam(worker_space->worker_registers, worker_space);
-  if (worker_space->worker_registers->node == worker_space->node_at_entry)
+  if (worker_space->worker_registers->next_alt == termcode)
     make_worker_entry_free(&goal_table[worker_space->goal_id]);
   else
     worker_space->state = WAITING;
@@ -564,6 +567,22 @@ BOOL prolog_eng_backtrack(Arg)
                           &(goal_info->thread_id));}
   else {
     wam(worker_space->worker_registers, worker_space);
+#if defined(DEBUG)
+    /*
+    fprintf(stderr,
+            "
+             next_alt = %lx
+             node     = %lx
+             frame    = %lx
+             next_insn= %lx
+",
+            worker_space->worker_registers->next_alt,
+            worker_space->worker_registers->node,
+            worker_space->worker_registers->frame,
+            worker_space->worker_registers->next_insn);
+    */
+#endif
+    /*
     if (worker_space->worker_registers->node ==
         worker_space->node_at_entry){
       make_worker_entry_free(goal_info);
@@ -572,6 +591,15 @@ BOOL prolog_eng_backtrack(Arg)
       worker_space->state = WAITING;
       return TRUE;
     }
+    */
+    if (worker_space->worker_registers->next_alt == termcode){
+      make_worker_entry_free(goal_info);
+      return FALSE;
+    } else {
+      worker_space->state = WAITING;
+      return TRUE;
+    }
+
   }    
   return TRUE;           /* thread-delegated backtracking always suceeds  */
 }
@@ -609,8 +637,10 @@ BOOL prolog_eng_cut(Arg)
     Argdecl = worker_space->worker_registers;
     w->node = InitialNode;            /* DOCUT to the initial choicepoint */
             /* For concurrent goals, erase the concurrent data structures */
+#if defined(THREADS)
     if (ChoiceYounger(TopConcChpt, w->next_node))
       remove_link_chains(&TopConcChpt, w->next_node);
+#endif
   }
 
   wam(worker_space->worker_registers, worker_space);

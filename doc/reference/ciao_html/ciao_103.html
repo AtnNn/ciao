@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Foreign interface</TITLE>
+<TITLE>The Ciao Prolog System               - Foreign language interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC354" HREF="ciao_toc.html#TOC354">Foreign interface</A></H1>
+<H1><A NAME="SEC357" HREF="ciao_toc.html#TOC357">Foreign language interface</A></H1>
 <P>
-<A NAME="IDX3764"></A>
+<A NAME="IDX3828"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.4 (1999/11/27, 19:0:0 MEST)
+<STRONG>Version:</STRONG> 1.5#7 (1999/12/9, 9:46:3 MET)
 
 
 <P>
@@ -29,9 +29,9 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>,
 
 <P>
 This module exports two predicates, 
-<A NAME="IDX3765"></A>
+<A NAME="IDX3829"></A>
 <CODE>build_foreign_interface/1</CODE> and 
-<A NAME="IDX3766"></A>
+<A NAME="IDX3830"></A>
 <CODE>rebuild_foreign_interface/1</CODE>. These predicates know about the correspondence between C types and Ciao Prolog types through the assertions documenting them. 
 
 
@@ -52,7 +52,7 @@ where <CODE>m1</CODE>, ..., <CODE>mN</CODE> and <CODE>type1</CODE>, ..., <CODE>t
 
 
 <P>
-<A NAME="IDX3767"></A>
+<A NAME="IDX3831"></A>
 <CODE>prolog_predicate/N</CODE> is implemented by <CODE>foreign_function_name</CODE>, whose result is unified with <CODE>ArgR</CODE>. 
 
 
@@ -68,16 +68,16 @@ This notation can be simplified if the name of the foreign function is the same 
 
 
 <UL>
-<LI><A HREF="ciao_103.html#SEC355">Equivalence between Ciao Prolog and C modes</A>
-<LI><A HREF="ciao_103.html#SEC356">Equivalence between Ciao Prolog and C types</A>
-<LI><A HREF="ciao_103.html#SEC357">Examples</A>
-<LI><A HREF="ciao_103.html#SEC362">Usage and interface (foreign_interface)</A>
-<LI><A HREF="ciao_103.html#SEC363">Documentation on exports (foreign_interface)</A>
+<LI><A HREF="ciao_103.html#SEC358">Equivalence between Ciao Prolog and C modes</A>
+<LI><A HREF="ciao_103.html#SEC359">Equivalence between Ciao Prolog and C types</A>
+<LI><A HREF="ciao_103.html#SEC360">Examples</A>
+<LI><A HREF="ciao_103.html#SEC365">Usage and interface (foreign_interface)</A>
+<LI><A HREF="ciao_103.html#SEC366">Documentation on exports (foreign_interface)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC355" HREF="ciao_toc.html#TOC355">Equivalence between Ciao Prolog and C modes</A></H2>
+<H2><A NAME="SEC358" HREF="ciao_toc.html#TOC358">Equivalence between Ciao Prolog and C modes</A></H2>
 
 <P>
 (This section has not been written yet) 
@@ -85,7 +85,7 @@ This notation can be simplified if the name of the foreign function is the same 
 
 
 
-<H2><A NAME="SEC356" HREF="ciao_toc.html#TOC356">Equivalence between Ciao Prolog and C types</A></H2>
+<H2><A NAME="SEC359" HREF="ciao_toc.html#TOC359">Equivalence between Ciao Prolog and C types</A></H2>
 
 <P>
 The translation between Ciao Prolog and C types is defined only for some simple types. The translation to be performed is solely defined by types of the arguments in the Ciao Prolog predicate, obeying the table below: 
@@ -109,7 +109,7 @@ The translation between Ciao Prolog and C types is defined only for some simple 
 
 <P>
 Strings, atoms, and lists of bytes are passed to (and from) C as dynamically (malloc) created arrays of characters (bytes). Those arrays are freed by Ciao Prolog upon return of the foreign function unless 
-<A NAME="IDX3768"></A>
+<A NAME="IDX3832"></A>
 <CODE>do_not_free/2</CODE> is specified (see examples below). 
 
 
@@ -123,27 +123,27 @@ Empty lists of bytes are converted into <CODE>NULL</CODE>, and strings <CODE>[]<
 
 <P>
 The type 
-<A NAME="IDX3769"></A>
+<A NAME="IDX3833"></A>
 <CODE>byte_list/1</CODE> requires an additional property, 
-<A NAME="IDX3770"></A>
+<A NAME="IDX3834"></A>
 <CODE>size_of/3</CODE>, to indicate which argument represents its size. 
 
 
 
 
-<H2><A NAME="SEC357" HREF="ciao_toc.html#TOC357">Examples</A></H2>
+<H2><A NAME="SEC360" HREF="ciao_toc.html#TOC360">Examples</A></H2>
 
 
 <UL>
-<LI><A HREF="ciao_103.html#SEC358">Mathematical functions</A>
-<LI><A HREF="ciao_103.html#SEC359">Addresses and C pointers</A>
-<LI><A HREF="ciao_103.html#SEC360">Lists of bytes and buffers</A>
-<LI><A HREF="ciao_103.html#SEC361">Strings and atoms</A>
+<LI><A HREF="ciao_103.html#SEC361">Mathematical functions</A>
+<LI><A HREF="ciao_103.html#SEC362">Addresses and C pointers</A>
+<LI><A HREF="ciao_103.html#SEC363">Lists of bytes and buffers</A>
+<LI><A HREF="ciao_103.html#SEC364">Strings and atoms</A>
 </UL>
 
 
 
-<H3><A NAME="SEC358" HREF="ciao_toc.html#TOC358">Mathematical functions</A></H3>
+<H3><A NAME="SEC361" HREF="ciao_toc.html#TOC361">Mathematical functions</A></H3>
 
 <P>
 <EM>math.pl</EM> 
@@ -175,7 +175,7 @@ The type
 
 
 
-<H3><A NAME="SEC359" HREF="ciao_toc.html#TOC359">Addresses and C pointers</A></H3>
+<H3><A NAME="SEC362" HREF="ciao_toc.html#TOC362">Addresses and C pointers</A></H3>
 
 <P>
 <EM>objects.pl</EM> 
@@ -234,7 +234,7 @@ void show_object(struct object *o) {
 
 
 
-<H3><A NAME="SEC360" HREF="ciao_toc.html#TOC360">Lists of bytes and buffers</A></H3>
+<H3><A NAME="SEC363" HREF="ciao_toc.html#TOC363">Lists of bytes and buffers</A></H3>
 
 <P>
 <EM>byte_lists.pl</EM> 
@@ -298,7 +298,7 @@ void show_list(int l, char *s) {
 
 
 
-<H3><A NAME="SEC361" HREF="ciao_toc.html#TOC361">Strings and atoms</A></H3>
+<H3><A NAME="SEC364" HREF="ciao_toc.html#TOC364">Strings and atoms</A></H3>
 
 <P>
 <EM>strings_and_atoms.pl</EM> 
@@ -376,7 +376,7 @@ void put_str(char *s) {
 
 
 
-<H2><A NAME="SEC362" HREF="ciao_toc.html#TOC362">Usage and interface (<CODE>foreign_interface</CODE>)</A></H2>
+<H2><A NAME="SEC365" HREF="ciao_toc.html#TOC365">Usage and interface (<CODE>foreign_interface</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -393,17 +393,17 @@ void put_str(char *s) {
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3771"></A>
+<A NAME="IDX3835"></A>
 <CODE>build_foreign_interface/1</CODE>, 
-<A NAME="IDX3772"></A>
+<A NAME="IDX3836"></A>
 <CODE>rebuild_foreign_interface/1</CODE>, 
-<A NAME="IDX3773"></A>
+<A NAME="IDX3837"></A>
 <CODE>build_foreign_interface_explicit_decls/2</CODE>, 
-<A NAME="IDX3774"></A>
+<A NAME="IDX3838"></A>
 <CODE>build_foreign_interface_object/1</CODE>, 
-<A NAME="IDX3775"></A>
+<A NAME="IDX3839"></A>
 <CODE>rebuild_foreign_interface_object/1</CODE>, 
-<A NAME="IDX3776"></A>
+<A NAME="IDX3840"></A>
 <CODE>do_interface/1</CODE>.
 
 </UL>
@@ -415,29 +415,29 @@ void put_str(char *s) {
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3777"></A>
+<A NAME="IDX3841"></A>
 <CODE>terms</CODE>, 
-<A NAME="IDX3778"></A>
+<A NAME="IDX3842"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX3779"></A>
+<A NAME="IDX3843"></A>
 <CODE>llists</CODE>, 
-<A NAME="IDX3780"></A>
+<A NAME="IDX3844"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX3781"></A>
+<A NAME="IDX3845"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX3782"></A>
+<A NAME="IDX3846"></A>
 <CODE>format</CODE>, 
-<A NAME="IDX3783"></A>
+<A NAME="IDX3847"></A>
 <CODE>messages</CODE>, 
-<A NAME="IDX3784"></A>
+<A NAME="IDX3848"></A>
 <CODE>assertions/assrt_lib</CODE>, 
-<A NAME="IDX3785"></A>
+<A NAME="IDX3849"></A>
 <CODE>foreign_compilation</CODE>, 
-<A NAME="IDX3786"></A>
+<A NAME="IDX3850"></A>
 <CODE>compiler/c_itf</CODE>, 
-<A NAME="IDX3787"></A>
+<A NAME="IDX3851"></A>
 <CODE>ctrlcclean</CODE>, 
-<A NAME="IDX3788"></A>
+<A NAME="IDX3852"></A>
 <CODE>errhandle</CODE>.
 
 </UL>
@@ -448,13 +448,13 @@ void put_str(char *s) {
 
 
 
-<H2><A NAME="SEC363" HREF="ciao_toc.html#TOC363">Documentation on exports (<CODE>foreign_interface</CODE>)</A></H2>
+<H2><A NAME="SEC366" HREF="ciao_toc.html#TOC366">Documentation on exports (<CODE>foreign_interface</CODE>)</A></H2>
 <P>
-<A NAME="IDX3789"></A>
-<A NAME="IDX3790"></A>
+<A NAME="IDX3853"></A>
+<A NAME="IDX3854"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>build_foreign_interface/1:</B>
-<DD><A NAME="IDX3791"></A>
+<DD><A NAME="IDX3855"></A>
 
 
 <P>
@@ -472,11 +472,11 @@ void put_str(char *s) {
 </DL>
 
 <P>
-<A NAME="IDX3792"></A>
-<A NAME="IDX3793"></A>
+<A NAME="IDX3856"></A>
+<A NAME="IDX3857"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>rebuild_foreign_interface/1:</B>
-<DD><A NAME="IDX3794"></A>
+<DD><A NAME="IDX3858"></A>
 
 
 <P>
@@ -485,7 +485,7 @@ void put_str(char *s) {
 <UL>
 <LI><EM>Description:</EM> Like
 
-<A NAME="IDX3795"></A>
+<A NAME="IDX3859"></A>
 <CODE>build_foreign_interface/1</CODE>, but it does not check the modification time of any file. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -496,11 +496,11 @@ void put_str(char *s) {
 </DL>
 
 <P>
-<A NAME="IDX3796"></A>
-<A NAME="IDX3797"></A>
+<A NAME="IDX3860"></A>
+<A NAME="IDX3861"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>build_foreign_interface_explicit_decls/2:</B>
-<DD><A NAME="IDX3798"></A>
+<DD><A NAME="IDX3862"></A>
 
 
 <P>
@@ -509,7 +509,7 @@ void put_str(char *s) {
 <UL>
 <LI><EM>Description:</EM> Like
 
-<A NAME="IDX3799"></A>
+<A NAME="IDX3863"></A>
 <CODE>build_foreign_interface/1</CODE>, but use declarations in <CODE>Decls</CODE> instead of reading the declarations from <CODE>File</CODE>. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -523,11 +523,11 @@ void put_str(char *s) {
 </DL>
 
 <P>
-<A NAME="IDX3800"></A>
-<A NAME="IDX3801"></A>
+<A NAME="IDX3864"></A>
+<A NAME="IDX3865"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>build_foreign_interface_object/1:</B>
-<DD><A NAME="IDX3802"></A>
+<DD><A NAME="IDX3866"></A>
 
 
 <P>
@@ -545,11 +545,11 @@ void put_str(char *s) {
 </DL>
 
 <P>
-<A NAME="IDX3803"></A>
-<A NAME="IDX3804"></A>
+<A NAME="IDX3867"></A>
+<A NAME="IDX3868"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>rebuild_foreign_interface_object/1:</B>
-<DD><A NAME="IDX3805"></A>
+<DD><A NAME="IDX3869"></A>
 
 
 <P>
@@ -567,11 +567,11 @@ void put_str(char *s) {
 </DL>
 
 <P>
-<A NAME="IDX3806"></A>
-<A NAME="IDX3807"></A>
+<A NAME="IDX3870"></A>
+<A NAME="IDX3871"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>do_interface/1:</B>
-<DD><A NAME="IDX3808"></A>
+<DD><A NAME="IDX3872"></A>
 
 
 <P>
@@ -589,6 +589,6 @@ void put_str(char *s) {
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

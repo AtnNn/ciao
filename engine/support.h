@@ -60,14 +60,13 @@ extern struct instance *current_instance PROTO((struct worker *w));
 extern BOOL next_instance PROTO((struct worker *w, struct instance **ipp));
 extern BOOL next_instance_conc PROTO((struct worker *w, struct instance **ipp));
 extern struct sw_on_key_node *dyn_puthash PROTO((struct sw_on_key **swp, TAGGED k));
-extern struct atom *new_atom_check PROTO((unsigned char *str, unsigned int hcode));
 extern void leave_to_gc PROTO((int type, char *ptr));
 extern void updateChoicepoints PROTO((int decrement));
 extern void compressTrail PROTO((Argdecl, BOOL from_gc));
 extern void print_string PROTO((struct stream_node *stream, char *p));
 extern void print_variable PROTO((struct worker *w, struct stream_node *stream, TAGGED term));
 extern void print_number PROTO((Argdecl, struct stream_node *stream, TAGGED term));
-extern void print_atom PROTO((struct stream_node *stream, TAGGED term));
+/*extern void print_atom PROTO((struct stream_node *stream, TAGGED term));*/
 extern int compile_large PROTO((TAGGED term, INSN *p));
 extern struct instance *compile_term_aux PROTO((struct worker *w, TAGGED head, TAGGED body, struct worker **w_n));
 

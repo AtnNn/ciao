@@ -12,12 +12,13 @@
 
 :- use_module(library(random)).
 :- use_module(library(system)).
+:- use_module(library(aggregates)).
 
 %%---------------------------------------------------------------------
 %% OVERRIDEN ADD_ITEM
 %%---------------------------------------------------------------------
 
-:- data dancing/3.
+:- concurrent dancing/3.
 :- inheritable dancing/3.
 
 :- export(add_item/1).
@@ -29,63 +30,72 @@ add_item(Shape) :-
 wanna_dance(Shape) :-
 	Shape instance_of shape_class,
 	Shape interface mobile,
-	initial_movement(X,Y),
 	( dancing(Shape,_,_) -> true ; 
+            initial_movement(X,Y),
 	    asserta_fact(dancing(Shape,X,Y))
 	),
 	true.
 
 initial_movement(X,Y) :-
-	random(-5,5,X),
-	random(-5,5,Y).
+	random(3,7,Xi),
+	random(3,7,Yi),
+        X is Xi * 2,
+        Y is Yi * 2.
 
-next_movement(C,Inc,NInc) :-
-	( C<0 ; C>200 ),
-	!,
-	NInc is -Inc.
-
-next_movement(_,Inc,Inc).
+next_movements(X,Y,Ix,Iy,Nx,Ny) :-
+	(( X<0 ; X>290 ) -> Change = true, Nx is -Ix ; Nx = Ix),
+	(( Y<0 ; Y>190 ) -> Change = true, Ny is -Iy ; Ny = Iy),
+	\+ Change = false,
+	!.
+next_movements(X,Y,Ix,Iy,NIx,NIy) :-
+	current_fact(dancing(Shape,_,_)),
+%	  \+ Shape = Self,
+	  Shape:get_spot(Sx,Sy),
+	  Nx is X+Ix, Dx is Nx-Sx,
+	  Ny is Y+Iy, Dy is Ny-Sy,
+	  abs(Dx) < 20, abs(Dy) < 20, !,
+	NIx is sign(Dx+0.5)*abs(Ix),
+	NIy is sign(Dy+0.5)*abs(Iy).
+next_movements(_,_,Ix,Iy,Ix,Iy).
 
 
 %%---------------------------------------------------------------------
 %% DANCING CAPABILITIES
 %%---------------------------------------------------------------------
 
-:- export(lets_dance/0).
+:- export(lets_dance/1).
 
-lets_dance :-
+lets_dance(Shape) :-
 	retract_fact(dancing(Shape,IncX,IncY)),
+        my_pause(5000),
 	Shape:move(IncX,IncY),
 	Shape:get_spot(X,Y),
-	next_movement(X,IncX,NX),
-	next_movement(Y,IncY,NY),
-	asserta_fact(dancing(Shape,NX,NY)),
-	fail.
+	next_movements(X,Y,IncX,IncY,NX,NY),
+	assertz_fact(dancing(Shape,NX,NY)),
+        !,
+        lets_dance(Shape).
 
-lets_dance.
-
-:- data dancing/1.
-
+:- concurrent dancing/1.
 :- export(dammed_dance/0).
 
-dammed_dance :-
-	\+ current_fact(dancing(_)),
-	eng_call(dammed_dance_aux, create, create, Goal),
-	asserta_fact(dancing(Goal)).
 
-dammed_dance_aux :-
-	pause(1),
-%	my_pause(10000),
-	lets_dance,
-	dammed_dance_aux.
+dammed_dance:-
+        findall(Shape, dancing(Shape, _, _), Shapes),
+        all_dancing(Shapes).
+
+all_dancing([]).
+all_dancing([S|Ss]):-
+        eng_call(lets_dance(S), create, create),
+        all_dancing(Ss).
+
 
 %%---------------------------------------------------------------------
 
-my_pause(0).
+my_pause(0):- !.
 my_pause(Delay) :- 
 	Delay > 0,
-	NDelay is Delay - 1,
-	my_pause(NDelay).
+ 	NDelay is Delay - 1,
+ 	my_pause(NDelay).
 	
 
 
@@ -111,7 +121,7 @@ disco_class([Item|Next]) :-
 %%---------------------------------------------------------------------
 
 destructor :-
-	dancing(Goal),
-	eng_kill(Goal).
-
+ %% 	dancing(Goal),
+ %% 	eng_kill(Goal).
+ eng_killothers.
 %%---------------------------------------------------------------------

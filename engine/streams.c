@@ -6,15 +6,20 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-
 #include <sys/types.h>
-#include <sys/param.h>
-#include <sys/errno.h>
-
 #include <sys/stat.h>
 
+#if !defined(crossWin32i86)
+# include <sys/param.h>
+# include <sys/errno.h>
+#endif
+
 #if !defined(MAXPATHLEN)
-# define MAXPATHLEN 1024
+# if defined(PATH_MAX)
+#  define MAXPATHLEN PATH_MAX
+# else
+#  define MAXPATHLEN 1024
+# endif
 #endif
 
 #define ENG_NOFILES 20
@@ -186,12 +191,14 @@ BOOL prolog_unix_popen(Arg)
 void ENG_perror(s)
      char *s;
 {
-#if !defined(LINUX)
+#if !defined(LINUX) && !defined(crossWin32i86)
   extern char *sys_errlist[];
   extern int errno;
 #endif
 
+#if !defined(crossWin32i86)
   ENG_TTYPRINTF2("%s: %s\n", s, sys_errlist[errno]);
+#endif
 }
 
 

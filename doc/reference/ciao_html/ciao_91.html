@@ -1,28 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - actmods (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Miscellaneous predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC314" HREF="ciao_toc.html#TOC314">actmods (library)</A></H1>
+<H1><A NAME="SEC319" HREF="ciao_toc.html#TOC319">Miscellaneous predicates</A></H1>
 <P>
-<A NAME="IDX3484"></A>
+<A NAME="IDX3561"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#95 (1999/11/8, 18:37:30 MET)
+
+
+<P>
+This module implements some miscellaneous non-logical (but sometimes very useful) predicates.
 
 
 
 <UL>
-<LI><A HREF="ciao_91.html#SEC315">Usage and interface (actmods)</A>
+<LI><A HREF="ciao_91.html#SEC320">Usage and interface (odd)</A>
+<LI><A HREF="ciao_91.html#SEC321">Documentation on exports (odd)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC315" HREF="ciao_toc.html#TOC315">Usage and interface (<CODE>actmods</CODE>)</A></H2>
+<H2><A NAME="SEC320" HREF="ciao_toc.html#TOC320">Usage and interface (<CODE>odd</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -30,39 +47,19 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(actmods).</CODE>
+<CODE>:- use_module(library(odd)).</CODE>
 
-or
-
-<CODE>:- module(...,...,[actmods]).</CODE>
-
-<LI><STRONG>Other modules used:</STRONG>
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>System library modules:</EM>
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX3485"></A>
-<CODE>actmods/actmodrt</CODE>, 
-<A NAME="IDX3486"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX3487"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX3488"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX3489"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX3490"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX3491"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX3492"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX3493"></A>
-<CODE>streams</CODE>, 
-<A NAME="IDX3494"></A>
-<CODE>write</CODE>.
+<A NAME="IDX3562"></A>
+<CODE>setarg/3</CODE>, 
+<A NAME="IDX3563"></A>
+<CODE>undo/1</CODE>.
 
 </UL>
 
@@ -70,7 +67,76 @@ or
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC321" HREF="ciao_toc.html#TOC321">Documentation on exports (<CODE>odd</CODE>)</A></H2>
+<P>
+<A NAME="IDX3564"></A>
+<A NAME="IDX3565"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>setarg/3:</B>
+<DD><A NAME="IDX3566"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>setarg(Index,Term,NewArg)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Replace destructively argument <CODE>Index</CODE> in <CODE>Term</CODE> by <CODE>NewArg</CODE>. The assignment is undone on backtracking. This is a major change to the normal behavior of data assignment in CIAO Prolog.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3567"></A>
+<A NAME="IDX3568"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>undo/1:</B>
+<DD><A NAME="IDX3569"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>undo(Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>call(<CODE>Goal</CODE>)</CODE> is executed on backtracking. This is a major change to the normal
+
+<A NAME="IDX3570"></A>
+control of CIAO Prolog execution. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, <A HREF="ciao_92.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

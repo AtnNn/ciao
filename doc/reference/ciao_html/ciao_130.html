@@ -1,26 +1,401 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART X - Miscellaneous standalone utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Variable names dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC458" HREF="ciao_toc.html#TOC458">PART X - Miscellaneous standalone utilities</A></H1>
+<H1><A NAME="SEC462" HREF="ciao_toc.html#TOC462">Variable names dictionaries</A></H1>
+<P>
+<A NAME="IDX4967"></A>
+
 
 <P>
-<STRONG>Author(s):</STRONG> F. Bueno, D. Cabeza, M. Carro,, M. Hermenegildo, P. L&oacute;pez, and G. Puebla, <A HREF="mailto:clip@dia.fi.upm.es">clip@dia.fi.upm.es</A>, <A HREF="http://www.clip.dia.fi.upm.es/">http://www.clip.dia.fi.upm.es/</A>, The CLIP Group, School of Computer Science, Technical University of Madrid.
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-This is the documentation for a set of miscellaneous standalone utilities contained in the <CODE>etc</CODE> directory of the CIAO distribution.
+<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
 
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.8#19 (1998/12/3, 12:53:16 MET)
+
+
+
+<UL>
+<LI><A HREF="ciao_130.html#SEC463">Usage and interface (vndict)</A>
+<LI><A HREF="ciao_130.html#SEC464">Documentation on exports (vndict)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC463" HREF="ciao_toc.html#TOC463">Usage and interface (<CODE>vndict</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(vndict)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4968"></A>
+<CODE>create_dict/2</CODE>, 
+<A NAME="IDX4969"></A>
+<CODE>complete_dict/3</CODE>, 
+<A NAME="IDX4970"></A>
+<CODE>complete_vars_dict/3</CODE>, 
+<A NAME="IDX4971"></A>
+<CODE>prune_dict/3</CODE>, 
+<A NAME="IDX4972"></A>
+<CODE>dict2varnamesl/2</CODE>, 
+<A NAME="IDX4973"></A>
+<CODE>varnamesl2dict/2</CODE>, 
+<A NAME="IDX4974"></A>
+<CODE>rename/2</CODE>, 
+<A NAME="IDX4975"></A>
+<CODE>vars_names_dict/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4976"></A>
+<CODE>null_dict/1</CODE>, 
+<A NAME="IDX4977"></A>
+<CODE>varname/1</CODE>, 
+<A NAME="IDX4978"></A>
+<CODE>varnamesl/1</CODE>, 
+<A NAME="IDX4979"></A>
+<CODE>varnamedict/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4980"></A>
+<CODE>idlists</CODE>, 
+<A NAME="IDX4981"></A>
+<CODE>metaterms</CODE>, 
+<A NAME="IDX4982"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX4983"></A>
+<CODE>sort</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Documentation on exports (<CODE>vndict</CODE>)</A></H2>
+<P>
+<A NAME="IDX4984"></A>
+<A NAME="IDX4985"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>null_dict/1:</B>
+<DD><A NAME="IDX4986"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>null_dict(D)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is an empty dictionary.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4987"></A>
+<A NAME="IDX4988"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>create_dict/2:</B>
+<DD><A NAME="IDX4989"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>create_dict(Term,Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Dict</CODE> has names for all variables in <CODE>Term</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4990"></A>
+<A NAME="IDX4991"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>complete_dict/3:</B>
+<DD><A NAME="IDX4992"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>complete_dict(+Dict,+Term,-(NewDict))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of <CODE>Term</CODE> not yet in <CODE>Dict</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4993"></A>
+<A NAME="IDX4994"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>complete_vars_dict/3:</B>
+<DD><A NAME="IDX4995"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>complete_vars_dict(+Dict,+Vars,-(NewDict))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of the list <CODE>Vars</CODE> not yet in <CODE>Dict</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4996"></A>
+<A NAME="IDX4997"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prune_dict/3:</B>
+<DD><A NAME="IDX4998"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prune_dict(+Term,+Dict,-(NewDict))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> reduced to just the variables of <CODE>Term</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4999"></A>
+<A NAME="IDX5000"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dict2varnamesl/2:</B>
+<DD><A NAME="IDX5001"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dict2varnamesl(Dict,VNs)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates <CODE>Dict</CODE> to <CODE>VNs</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+ (<CODE>vndict:varnamesl/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5002"></A>
+<A NAME="IDX5003"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>varnamesl2dict/2:</B>
+<DD><A NAME="IDX5004"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varnamesl2dict(VNs,Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates <CODE>VNs</CODE> to <CODE>Dict</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+ (<CODE>vndict:varnamesl/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5005"></A>
+<A NAME="IDX5006"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>find_name/4:</B>
+<DD><A NAME="IDX5007"></A>
+
+
+<P>
+<CODE>find_name(Vars,Names,V,Name)</CODE>
+
+
+<P>
+Given that <CODE>vars_names_dict(Dict,Vars,Names)</CODE> holds, it acts as <CODE>rename(X,Dict)</CODE>, but the name of <CODE>X</CODE> is given as <CODE>Name</CODE> instead of unified with it.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5008"></A>
+<A NAME="IDX5009"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rename/2:</B>
+<DD><A NAME="IDX5010"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>rename(Term,Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies each variable in <CODE>Term</CODE> with its name in <CODE>Dict</CODE>. If no name is found, a new name is created.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5011"></A>
+<A NAME="IDX5012"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>varname/1:</B>
+<DD><A NAME="IDX5013"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varname(N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is term representing a variable name.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5014"></A>
+<A NAME="IDX5015"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>varnamesl/1:</B>
+<DD><A NAME="IDX5016"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varnamesl(D)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5017"></A>
+<A NAME="IDX5018"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>varnamedict/1:</B>
+<DD><A NAME="IDX5019"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>varnamedict(D)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary of variable names.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Defines a regular type.
+ (<CODE>basic_props:regtype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5020"></A>
+<A NAME="IDX5021"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vars_names_dict/3:</B>
+<DD><A NAME="IDX5022"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vars_names_dict(Dict,Vars,Names)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Varss</CODE> is a sorted list of variables, and <CODE>Names</CODE> is a list of their names, which correspond in the same order.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Dict</CODE> is a dictionary of variable names.
+ (<CODE>vndict:varnamedict/1</CODE>)
+
+<CODE>Vars</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>Names</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

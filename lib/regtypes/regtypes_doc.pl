@@ -80,4 +80,10 @@
 %%    # "Same as @pred{regtype/2}. Deprecated. Included only for
 %%       backwards compatibility.".
 
+%% --------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+9,1999/12/09,21:57*42+'MET'), "Added this file
+   to version control.  (Manuel Hermenegildo)").
+
+%% --------------------------------------------------------------------------

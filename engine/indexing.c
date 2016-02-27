@@ -17,10 +17,19 @@
 /* local declarations */
 
 
-static void set_nondet(register struct try_node *t, struct incore_info *def, BOOL first);
-static void incore_insert(register struct try_node **t0, int effar, struct emul_info *ref, struct incore_info *def);
+static void set_nondet(struct try_node *t,
+                       struct incore_info *def,
+                       BOOL first);
+static void incore_insert(struct try_node  **t0, 
+                          int effar,
+                          struct emul_info *ref,
+                          struct incore_info *def);
+static void incore_puthash(struct sw_on_key **psw, 
+                           int effar, 
+                           struct emul_info *current, 
+                           struct incore_info *def,
+                           TAGGED k);
 static struct try_node *incore_copy(struct try_node *from);
-static void incore_puthash(struct sw_on_key **psw, int effar, struct emul_info *current, struct incore_info *def, TAGGED k);
 static void free_try(struct try_node **t);
 static void free_sw_on_key(struct sw_on_key **sw);
 static void free_emulinfo(register struct emul_info *cl);
@@ -35,18 +44,59 @@ static void init_interpreted(register struct definition *f);
 /* Indexing for the incore compiler. */
 
 
-static void free_info PROTO((int insn, char *info));
+/* If this is activated, we try to speed up insertion of compiled predicates
+  by caching the last insertion peformed, and using the pointers cached not
+  to advance the chain of clauses from the beginning: we try, instead, to
+  start at the point where the last insertion was performed and make less
+  hops. */
+
+
+
+#if defined(CACHE_INCREMENTAL_CLAUSE_INSERTION)
+static struct emul_info *last_def_clauses = NULL;
+static struct emul_info *last_insertion_point = NULL;
+static unsigned int last_number = ~0;
+#endif
+
+/* static void free_info PROTO((int insn, char *info)); */
 
 static void set_nondet(t,def,first)
      REGISTER struct try_node *t;
      struct incore_info *def;
      BOOL first;
 {
-  REGISTER int i;
+  REGISTER unsigned int i;
   REGISTER struct emul_info *cl;
 
+    /* Check if we can use the last cached clause and number to insert */
+
+#if defined(CACHE_INCREMENTAL_CLAUSE_INSERTION)
+
+/* Will only work if we are inserting in the same clause chain, and we try
+   to insert in a position farther than the last we have inserted in.  We
+   should check that the number of clauses has not changed since the last
+   caching operation, but clauses in compiled predicates are added at the
+   end of the list (the "num" field is taken from the "next" field in
+   incore_insert()).  (MCL) */
+
+  if ((last_def_clauses == def->clauses) &&  /* Inserting in the same pred. */
+      (t->number >= last_number)){  /* Inserting farther than the last point */
+    cl = last_insertion_point;
+    i  = 1 + t->number - last_number;
+  } else {
+    i  = t->number;
+    cl = def->clauses;
+  }
+  last_def_clauses = def->clauses;
+  last_number = t->number;
+
+  while(--i)
+    cl = cl->next;
+  last_insertion_point = cl;
+#else
   for (i=t->number, cl=def->clauses; --i;) /* 1-based numbers */
     cl = cl->next;
+#endif
 
   t->emul_p = cl->emulcode+1;
   if (first)			/* maintain emul_p2 optimization */
@@ -64,12 +114,13 @@ static void incore_insert(t0,effar,ref,def)
   REGISTER struct try_node **t1 = t0;
   REGISTER struct try_node *t;
 
+  /* Init the try_node to insert. */
   t = (struct try_node *)checkalloc(sizeof(struct try_node));
-
   t->node_offset = ArityToOffset(effar);
-  t->number = (int)ref->next;
-				                   /* initial p: det case */
-  t->emul_p = (INSN *)(*ref->emulcode + (char *)ref->emulcode);
+ /* Last "next" is num. of clauses: we are inserting at the end of the chain */
+ t->number = (unsigned int)ref->next;
+  t->emul_p = 
+    (INSN *)(*ref->emulcode + (char *)ref->emulcode);/* initial p: det case */
 #if defined(GAUGE)
   t->entry_counter = ref->counters;
 #endif
@@ -150,6 +201,10 @@ struct sw_on_key *new_switch_on_key(size,otherwise)
   return sw;
 }
 
+
+/* I still could not make the "pointer to the last try_node" work with the
+has table try nodes; I am passing a NULL pointer which is checked by
+incore_insert() and not used.  */
 
 static void incore_puthash(psw,effar,current,def,k)
      struct sw_on_key **psw;
@@ -515,8 +570,8 @@ BOOL define_predicate(Arg)
 
   if (f->predtyp!=ENTER_UNDEFINED)
     make_undefined(Arg,f);
-  else
-    num_of_predicates++;
+  
+  num_of_predicates++;      /* Decremented by make_undefined(), if called */
 
   DEREF(X(1),X(1));
   type = (X(1)==atom_unprofiled ?  ENTER_COMPACTCODE :

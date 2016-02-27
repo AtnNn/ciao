@@ -150,9 +150,12 @@ module_warning(not_imported(F, N, M, QM)) :- !,
         message(warning, ['Module qualification of ',~~(F/N),
                           ' ignored, module ',M,
                           ' does not import the predicate from module ',QM]).
+module_warning(bad_pred_abs(PA)) :- !,
+        message(error, ['Bad predicate abstraction ',~~(PA),
+                          ' : head functor should be ''\\:''']).
 module_warning(big_pred_abs(PA, N)) :- !,
-        message(warning, ['Predicate abstraction ',~~(PA),
-                          ' seems to have too many arguments: expected ',N]).
+        message(error, ['Predicate abstraction ',~~(PA),
+                          ' has too many arguments: should be ',N]).
 module_warning(short_pred_abs(PA, N)) :- !,
         message(error, ['Predicate abstraction ',~~(PA),
                           ' has too few arguments: should be ',N]).
@@ -523,6 +526,10 @@ do_undefined(warning, X) :-
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*5+34,1999/12/31,18:49*41+'CET'), "Changed predicate
+   abstractions to have the head with functor '\:', and to have separate
+   name space of variables. (Daniel Cabeza Gras)").
+
 :- comment(version(1*3+90,1999/10/29,20:48*53+'MEST'), "Reverted the
    possibility to call a dynamically loaded predicate as _:pred.  (Daniel
    Cabeza Gras)").
@@ -537,7 +544,7 @@ do_undefined(warning, X) :-
 :- comment(version(1*1+6,1999/06/14,16:49*54+'MEST'), "Changed
    '$current_instance'/5 in interpret_goal/2 to be non-blocking, to
    solve deadlock problems in interpreted code (Daniel Cabeza Gras &
-   Manuel Carrro Liñares)").
+   Manuel Carro Liñares)").
 
 :- comment(version(0*9+70,1999/04/30,11:40*23+'MEST'), "Updated to
    take into account get_arch/1 and get_os/1 (the latter is new).

@@ -9,7 +9,14 @@
 
  */
 
-struct atom *new_atom_check(unsigned char *str, unsigned int index);
+#if defined(USE_ATOM_LEN)
+struct atom *new_atom_check(unsigned char *str, 
+                            unsigned int str_len,
+                            unsigned int index);
+#else
+struct atom *new_atom_check(unsigned char *str, 
+                            unsigned int index);
+#endif
 
 struct definition *define_c_predicate(char *pname, 
                                       BOOL (*procedure)(), 

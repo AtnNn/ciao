@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC410" HREF="ciao_toc.html#TOC410">Low-level socket interface to SQL/ODBC databases</A></H1>
+<H1><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Low-level socket interface to SQL/ODBC databases</A></H1>
 <P>
-<A NAME="IDX4365"></A>
+<A NAME="IDX4431"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
 
 
 <P>
@@ -29,13 +29,13 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>,
 
 <P>
 This library provides a socket-based interface to 
-<A NAME="IDX4366"></A>
+<A NAME="IDX4432"></A>
 SQL Databases, using the 
-<A NAME="IDX4367"></A>
+<A NAME="IDX4433"></A>
 database mediator server ODBC interface developed by C. Taboch and I. Caballero. The interface currently works for databases running in 
-<A NAME="IDX4368"></A>
+<A NAME="IDX4434"></A>
 Win95/NT machines via 
-<A NAME="IDX4369"></A>
+<A NAME="IDX4435"></A>
 ODBC. This low-level interface was defined with two goals in mind: 
 
 
@@ -46,11 +46,11 @@ ODBC. This low-level interface was defined with two goals in mind:
 
 <LI>To give as much flexibility to the overall system. This includes supporting simultaneous access to several databases, and also allowing both the databases and clients to reside on the same or different physical Win95/NT machines. The clients can reside also in
 
-<A NAME="IDX4370"></A>
+<A NAME="IDX4436"></A>
 Unix/Linux machines. It is also possible to access database selections in either 
-<A NAME="IDX4371"></A>
+<A NAME="IDX4437"></A>
 tuple at a time or 
-<A NAME="IDX4372"></A>
+<A NAME="IDX4438"></A>
 set at a time fashion, as needed. 
 
 </UL>
@@ -66,7 +66,7 @@ In order to allow the flexibility mentioned above, a socket (TCP/IP) client-serv
 
 <LI>At the client side a Prolog client can connect to the database by loading this library and calling the appropriate predicates. The Prolog client can run on either Windows or Unix/Linux systems, locally at the server machine or remotely in different machines. The mediator server port number (service) used is currently fixed to 2020. After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the response data will return in the opposite direction. These messages include login on and off from the database, sending
 
-<A NAME="IDX4373"></A>
+<A NAME="IDX4439"></A>
 SQL queries, and receiving the responses. 
 
 </UL>
@@ -183,15 +183,15 @@ main7:- %% dropping a view
 
 
 <UL>
-<LI><A HREF="ciao_114.html#SEC411">Usage and interface (db_client)</A>
-<LI><A HREF="ciao_114.html#SEC412">Documentation on exports (db_client)</A>
-<LI><A HREF="ciao_114.html#SEC413">Documentation on internals (db_client)</A>
-<LI><A HREF="ciao_114.html#SEC414">Known bugs and planned improvements (db_client)</A>
+<LI><A HREF="ciao_114.html#SEC414">Usage and interface (db_client)</A>
+<LI><A HREF="ciao_114.html#SEC415">Documentation on exports (db_client)</A>
+<LI><A HREF="ciao_114.html#SEC416">Documentation on internals (db_client)</A>
+<LI><A HREF="ciao_114.html#SEC417">Known bugs and planned improvements (db_client)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Usage and interface (<CODE>db_client</CODE>)</A></H2>
+<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Usage and interface (<CODE>db_client</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -208,44 +208,44 @@ main7:- %% dropping a view
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4374"></A>
+<A NAME="IDX4440"></A>
 <CODE>odbc_connect/2</CODE>, 
-<A NAME="IDX4375"></A>
+<A NAME="IDX4441"></A>
 <CODE>db_login/5</CODE>, 
-<A NAME="IDX4376"></A>
+<A NAME="IDX4442"></A>
 <CODE>db_eval_sql/3</CODE>, 
-<A NAME="IDX4377"></A>
+<A NAME="IDX4443"></A>
 <CODE>db_stmt_handle/3</CODE>, 
-<A NAME="IDX4378"></A>
+<A NAME="IDX4444"></A>
 <CODE>db_one_tuple/2</CODE>, 
-<A NAME="IDX4379"></A>
+<A NAME="IDX4445"></A>
 <CODE>db_get_tables/2</CODE>, 
-<A NAME="IDX4380"></A>
+<A NAME="IDX4446"></A>
 <CODE>db_table_types/3</CODE>, 
-<A NAME="IDX4381"></A>
+<A NAME="IDX4447"></A>
 <CODE>db_logoff/1</CODE>, 
-<A NAME="IDX4382"></A>
+<A NAME="IDX4448"></A>
 <CODE>odbc_disconnect/1</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX4383"></A>
+<A NAME="IDX4449"></A>
 <CODE>socketname/1</CODE>, 
-<A NAME="IDX4384"></A>
+<A NAME="IDX4450"></A>
 <CODE>dbname/1</CODE>, 
-<A NAME="IDX4385"></A>
+<A NAME="IDX4451"></A>
 <CODE>user/1</CODE>, 
-<A NAME="IDX4386"></A>
+<A NAME="IDX4452"></A>
 <CODE>passwd/1</CODE>, 
-<A NAME="IDX4387"></A>
+<A NAME="IDX4453"></A>
 <CODE>dbconnection/1</CODE>, 
-<A NAME="IDX4388"></A>
+<A NAME="IDX4454"></A>
 <CODE>answertableterm/1</CODE>, 
-<A NAME="IDX4389"></A>
+<A NAME="IDX4455"></A>
 <CODE>tuple/1</CODE>, 
-<A NAME="IDX4390"></A>
+<A NAME="IDX4456"></A>
 <CODE>dbqueryconnection/1</CODE>, 
-<A NAME="IDX4391"></A>
+<A NAME="IDX4457"></A>
 <CODE>answertupleterm/1</CODE>.
 
 </UL>
@@ -257,17 +257,17 @@ main7:- %% dropping a view
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4392"></A>
+<A NAME="IDX4458"></A>
 <CODE>sockets/sockets</CODE>, 
-<A NAME="IDX4393"></A>
+<A NAME="IDX4459"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX4394"></A>
+<A NAME="IDX4460"></A>
 <CODE>strings</CODE>, 
-<A NAME="IDX4395"></A>
+<A NAME="IDX4461"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX4396"></A>
+<A NAME="IDX4462"></A>
 <CODE>persdb_sql/string2term</CODE>, 
-<A NAME="IDX4397"></A>
+<A NAME="IDX4463"></A>
 <CODE>messages</CODE>.
 
 </UL>
@@ -278,13 +278,13 @@ main7:- %% dropping a view
 
 
 
-<H2><A NAME="SEC412" HREF="ciao_toc.html#TOC412">Documentation on exports (<CODE>db_client</CODE>)</A></H2>
+<H2><A NAME="SEC415" HREF="ciao_toc.html#TOC415">Documentation on exports (<CODE>db_client</CODE>)</A></H2>
 <P>
-<A NAME="IDX4398"></A>
-<A NAME="IDX4399"></A>
+<A NAME="IDX4464"></A>
+<A NAME="IDX4465"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>odbc_connect/2:</B>
-<DD><A NAME="IDX4400"></A>
+<DD><A NAME="IDX4466"></A>
 
 
 <P>
@@ -293,9 +293,9 @@ main7:- %% dropping a view
 <UL>
 <LI><EM>Description:</EM> Opens a socket connection to port <CODE>DbAddress</CODE>, which should be the address of a
 
-<A NAME="IDX4401"></A>
+<A NAME="IDX4467"></A>
 database mediator server. <CODE>Stream</CODE> is the identifier of the corresponding Prolog stream. It is simply a call to 
-<A NAME="IDX4402"></A>
+<A NAME="IDX4468"></A>
 <CODE>connect_to_socket/3</CODE> 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -309,11 +309,11 @@ database mediator server. <CODE>Stream</CODE> is the identifier of the correspon
 </DL>
 
 <P>
-<A NAME="IDX4403"></A>
-<A NAME="IDX4404"></A>
+<A NAME="IDX4469"></A>
+<A NAME="IDX4470"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_login/5:</B>
-<DD><A NAME="IDX4405"></A>
+<DD><A NAME="IDX4471"></A>
 
 
 <P>
@@ -343,11 +343,11 @@ database mediator server. <CODE>Stream</CODE> is the identifier of the correspon
 </DL>
 
 <P>
-<A NAME="IDX4406"></A>
-<A NAME="IDX4407"></A>
+<A NAME="IDX4472"></A>
+<A NAME="IDX4473"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
-<DD><A NAME="IDX4408"></A>
+<DD><A NAME="IDX4474"></A>
 
 
 
@@ -372,11 +372,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4409"></A>
-<A NAME="IDX4410"></A>
+<A NAME="IDX4475"></A>
+<A NAME="IDX4476"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
-<DD><A NAME="IDX4411"></A>
+<DD><A NAME="IDX4477"></A>
 
 
 
@@ -400,11 +400,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4412"></A>
-<A NAME="IDX4413"></A>
+<A NAME="IDX4478"></A>
+<A NAME="IDX4479"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>user/1:</B>
-<DD><A NAME="IDX4414"></A>
+<DD><A NAME="IDX4480"></A>
 
 
 
@@ -428,11 +428,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4415"></A>
-<A NAME="IDX4416"></A>
+<A NAME="IDX4481"></A>
+<A NAME="IDX4482"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
-<DD><A NAME="IDX4417"></A>
+<DD><A NAME="IDX4483"></A>
 
 
 
@@ -456,11 +456,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4418"></A>
-<A NAME="IDX4419"></A>
+<A NAME="IDX4484"></A>
+<A NAME="IDX4485"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX4420"></A>
+<DD><A NAME="IDX4486"></A>
 
 
 
@@ -485,11 +485,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4421"></A>
-<A NAME="IDX4422"></A>
+<A NAME="IDX4487"></A>
+<A NAME="IDX4488"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_eval_sql/3:</B>
-<DD><A NAME="IDX4423"></A>
+<DD><A NAME="IDX4489"></A>
 
 
 <P>
@@ -498,7 +498,7 @@ Defines a regular type.
 <UL>
 <LI><EM>Description:</EM> Evaluates the SQL code in <CODE>Sentence</CODE> in database session <CODE>DbConnection</CODE>. <CODE>AnswerTableTerm</CODE> is the response. If a wrong answer is obtained, <CODE>AnswerTableTerm</CODE> will indicate the error (see
 
-<A NAME="IDX4424"></A>
+<A NAME="IDX4490"></A>
 <CODE>answertableterm</CODE> for details). 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -515,11 +515,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4425"></A>
-<A NAME="IDX4426"></A>
+<A NAME="IDX4491"></A>
+<A NAME="IDX4492"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>answertableterm/1:</B>
-<DD><A NAME="IDX4427"></A>
+<DD><A NAME="IDX4493"></A>
 
 
 <P>
@@ -541,11 +541,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4428"></A>
-<A NAME="IDX4429"></A>
+<A NAME="IDX4494"></A>
+<A NAME="IDX4495"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
-<DD><A NAME="IDX4430"></A>
+<DD><A NAME="IDX4496"></A>
 
 
 
@@ -569,11 +569,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4431"></A>
-<A NAME="IDX4432"></A>
+<A NAME="IDX4497"></A>
+<A NAME="IDX4498"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_stmt_handle/3:</B>
-<DD><A NAME="IDX4433"></A>
+<DD><A NAME="IDX4499"></A>
 
 
 <P>
@@ -582,7 +582,7 @@ Defines a regular type.
 <UL>
 <LI><EM>Description:</EM> Evaluates the SQL code in <CODE>Sentence</CODE> in database session <CODE>DbConnection</CODE>. If <CODE>Sentence</CODE> is a succesfull selection, <CODE>DbQueryConnection</CODE> is a <EM>handle</EM> to the set of tuples produced by this selection. The individual members of this set can then be accessed via <CODE>DbQueryConnection</CODE> using the
 
-<A NAME="IDX4434"></A>
+<A NAME="IDX4500"></A>
 <CODE>db_one_tuple/2</CODE> predicate. If <CODE>Sentence</CODE> is not succesfull or is not a selection, <CODE>DbQueryConnection</CODE> will contain the answer received. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -599,11 +599,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4435"></A>
-<A NAME="IDX4436"></A>
+<A NAME="IDX4501"></A>
+<A NAME="IDX4502"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
-<DD><A NAME="IDX4437"></A>
+<DD><A NAME="IDX4503"></A>
 
 
 
@@ -629,11 +629,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4438"></A>
-<A NAME="IDX4439"></A>
+<A NAME="IDX4504"></A>
+<A NAME="IDX4505"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_one_tuple/2:</B>
-<DD><A NAME="IDX4440"></A>
+<DD><A NAME="IDX4506"></A>
 
 
 <P>
@@ -654,11 +654,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4441"></A>
-<A NAME="IDX4442"></A>
+<A NAME="IDX4507"></A>
+<A NAME="IDX4508"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>answertupleterm/1:</B>
-<DD><A NAME="IDX4443"></A>
+<DD><A NAME="IDX4509"></A>
 
 
 
@@ -683,11 +683,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4444"></A>
-<A NAME="IDX4445"></A>
+<A NAME="IDX4510"></A>
+<A NAME="IDX4511"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_get_tables/2:</B>
-<DD><A NAME="IDX4446"></A>
+<DD><A NAME="IDX4512"></A>
 
 
 <P>
@@ -708,11 +708,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4447"></A>
-<A NAME="IDX4448"></A>
+<A NAME="IDX4513"></A>
+<A NAME="IDX4514"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_table_types/3:</B>
-<DD><A NAME="IDX4449"></A>
+<DD><A NAME="IDX4515"></A>
 
 
 <P>
@@ -736,11 +736,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4450"></A>
-<A NAME="IDX4451"></A>
+<A NAME="IDX4516"></A>
+<A NAME="IDX4517"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>db_logoff/1:</B>
-<DD><A NAME="IDX4452"></A>
+<DD><A NAME="IDX4518"></A>
 
 
 <P>
@@ -758,11 +758,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4453"></A>
-<A NAME="IDX4454"></A>
+<A NAME="IDX4519"></A>
+<A NAME="IDX4520"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>odbc_disconnect/1:</B>
-<DD><A NAME="IDX4455"></A>
+<DD><A NAME="IDX4521"></A>
 
 
 <P>
@@ -771,7 +771,7 @@ Defines a regular type.
 <UL>
 <LI><EM>Description:</EM> Closes the socket connection to <CODE>Stream</CODE>. It is simply a call to
 
-<A NAME="IDX4456"></A>
+<A NAME="IDX4522"></A>
 <CODE>close/1</CODE>. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -782,11 +782,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4457"></A>
-<A NAME="IDX4458"></A>
+<A NAME="IDX4523"></A>
+<A NAME="IDX4524"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>match_string/3:</B>
-<DD><A NAME="IDX4459"></A>
+<DD><A NAME="IDX4525"></A>
 
 
 <P>
@@ -797,13 +797,13 @@ No further documentation available for this predicate.
 
 
 
-<H2><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Documentation on internals (<CODE>db_client</CODE>)</A></H2>
+<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Documentation on internals (<CODE>db_client</CODE>)</A></H2>
 <P>
-<A NAME="IDX4460"></A>
-<A NAME="IDX4461"></A>
+<A NAME="IDX4526"></A>
+<A NAME="IDX4527"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>dbhandle/1:</B>
-<DD><A NAME="IDX4462"></A>
+<DD><A NAME="IDX4528"></A>
 
 
 
@@ -827,11 +827,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4463"></A>
-<A NAME="IDX4464"></A>
+<A NAME="IDX4529"></A>
+<A NAME="IDX4530"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>stmthandle/1:</B>
-<DD><A NAME="IDX4465"></A>
+<DD><A NAME="IDX4531"></A>
 
 
 
@@ -856,7 +856,7 @@ Defines a regular type.
 
 
 
-<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Known bugs and planned improvements (<CODE>db_client</CODE>)</A></H2>
+<H2><A NAME="SEC417" HREF="ciao_toc.html#TOC417">Known bugs and planned improvements (<CODE>db_client</CODE>)</A></H2>
 
 
 <UL>
@@ -867,6 +867,6 @@ Need to fix the problem with parametric types being meta_predicates ... list(_,t
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

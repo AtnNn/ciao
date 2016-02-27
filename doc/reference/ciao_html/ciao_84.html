@@ -1,47 +1,349 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART VII - Ciao Prolog extensions</TITLE>
+<TITLE>The Ciao Prolog System               - davinci (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC297" HREF="ciao_toc.html#TOC297">PART VII - Ciao Prolog extensions</A></H1>
+<H1><A NAME="SEC300" HREF="ciao_toc.html#TOC300">davinci (library)</A></H1>
+<P>
+<A NAME="IDX3445"></A>
+
 
 <P>
-The libraries documented in this part extend the Ciao language in several different ways. The extensions include: 
+<STRONG>Author(s):</STRONG> Francisco Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#22 (1999/12/17, 16:59:51 MET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#21 (1999/12/17, 16:28:20 MET)
+
+
+<P>
+This library allows connecting a Ciao Prolog application with daVinci V2.X (daVinci is developed by U. of Bremen, Germany). 
+
+
+<P>
+For the time being, communication is based on a one-way channel: messages are sent to a daVinci process started on demand (i.e., for each Prolog goal a new daVinci process is started). Messages are sent via writing the term as text, but are treated as terms from the Prolog side, since for daVinci they are text but have term syntax; the only difficulty lies in strings, for which special Prolog syntax is provided. 
+
+
+<P>
+Here are two simple examples of use: 
+
+<PRE>
+davinci_ugraph(['A'-['B','C'],'B'-['D'],'C'-['E'],'D'-[],'E'-['D'],'F'-['B']]).
+</PRE>
+
+<P>
+makes daVinci show a graph corresponding to the Prolog term representation of an unlabeled graph. 
+
+
+
+<PRE>
+davinci_lgraph(['A'-['B'-[from,a,to,b],'C'-ac],'B'-['D'-bd],'C'-['E'-ce],
+	        'D'-[],'E'-['D'-ed],'F'-['B'-fb]]).
+</PRE>
+
+<P>
+makes daVinci show a graph corresponding to the Prolog term representation of a labeled graph. This will create the same graph as above, but showing labels in the edges. 
+
+
 
 <UL>
-<LI>pure Prolog programming (although someone might view this as a restriction rather than an extension);
+<LI><A HREF="ciao_84.html#SEC301">Usage and interface (davinci)</A>
+<LI><A HREF="ciao_84.html#SEC302">Documentation on exports (davinci)</A>
+<LI><A HREF="ciao_84.html#SEC303">Documentation on internals (davinci)</A>
+<LI><A HREF="ciao_84.html#SEC304">Known bugs and planned improvements (davinci)</A>
+</UL>
 
-<LI>feature terms or
 
-<A NAME="IDX3399"></A>
-<A NAME="IDX3400"></A>
-<EM>records</EM> (i.e., structures with names for each field); 
-<LI>parallel (@&#38;-Prolog){}programming;
 
-<LI>functional syntax;
+<H2><A NAME="SEC301" HREF="ciao_toc.html#TOC301">Usage and interface (<CODE>davinci</CODE>)</A></H2>
 
-<LI>global variables;
+<div class="cartouche">
 
-<LI><CODE>setarg</CODE> and <CODE>undo</CODE>;
+<UL>
 
-<LI>active modules;
+<LI><STRONG>Library usage:</STRONG>
 
-<LI>breadth-first execution;
+<CODE>:- use_module(library(davinci)).</CODE>
 
-<LI>constraint logic programming;
+<LI><STRONG>Exports:</STRONG>
 
-<LI>object oriented programming.
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3446"></A>
+<CODE>davinci/0</CODE>, 
+<A NAME="IDX3447"></A>
+<CODE>davinci_quit/0</CODE>, 
+<A NAME="IDX3448"></A>
+<CODE>davinci_ugraph/1</CODE>, 
+<A NAME="IDX3449"></A>
+<CODE>davinci_lgraph/1</CODE>, 
+<A NAME="IDX3450"></A>
+<CODE>formatting/2</CODE>, 
+<A NAME="IDX3451"></A>
+<CODE>ugraph2term/2</CODE>.
 
 </UL>
 
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3452"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX3453"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX3454"></A>
+<CODE>graphs/lgraphs</CODE>, 
+<A NAME="IDX3455"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX3456"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX3457"></A>
+<CODE>system</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC302" HREF="ciao_toc.html#TOC302">Documentation on exports (<CODE>davinci</CODE>)</A></H2>
+<P>
+<A NAME="IDX3458"></A>
+<A NAME="IDX3459"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci/0:</B>
+<DD><A NAME="IDX3460"></A>
+
+
+<P>
+Start up a daVinci process.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3461"></A>
+<A NAME="IDX3462"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_quit/0:</B>
+<DD><A NAME="IDX3463"></A>
+
+
+<P>
+Exit daVinci process.
+
+
+</DL>
+
+<P>
+<A NAME="IDX3464"></A>
+<A NAME="IDX3465"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_ugraph/1:</B>
+<DD><A NAME="IDX3466"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>davinci_ugraph(+Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Send <CODE>Graph</CODE> to daVinci.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is an ugraph with special escape functors for daVinci.
+ (<CODE>davinci:specialugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3467"></A>
+<A NAME="IDX3468"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_lgraph/1:</B>
+<DD><A NAME="IDX3469"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>davinci_lgraph(+Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Send <CODE>Graph</CODE> to daVinci.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is an lgraph with special escape functors for daVinci.
+ (<CODE>davinci:speciallgraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3470"></A>
+<A NAME="IDX3471"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>formatting/2:</B>
+<DD><A NAME="IDX3472"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>formatting(+Term,+Out)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Prints <CODE>Term</CODE> to <CODE>Out</CODE> as a daVinci command.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Term</CODE> is a term representing a daVinci command.
+ (<CODE>davinci:commandterm/1</CODE>)
+
+<CODE>+Out</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3473"></A>
+<A NAME="IDX3474"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ugraph2term/2:</B>
+<DD><A NAME="IDX3475"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ugraph2term(+Graph,-(Term))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to daVinci's representation.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Graph</CODE> is an ugraph with special escape functors for daVinci.
+ (<CODE>davinci:specialugraph/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC303" HREF="ciao_toc.html#TOC303">Documentation on internals (<CODE>davinci</CODE>)</A></H2>
+<P>
+<A NAME="IDX3476"></A>
+<A NAME="IDX3477"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>commandterm/1:</B>
+<DD><A NAME="IDX3478"></A>
+
+
+<P>
+<CODE>commandterm(Term)</CODE>
+
+
+<P>
+Syntactically, <CODE>Term</CODE> is a just a term. Semantically, it has to correspond to a command understood by daVinci; otherwise daVinci reports back an error. Two functors within the subterms of <CODE>Term</CODE> are interpreted in a special way: <CODE>string/1</CODE> and <CODE>text/1</CODE>. <CODE>string(Term)</CODE> is given to daVinci as <CODE>"Term"</CODE>; <CODE>text(List)</CODE> is given as <CODE>"Term1 Term2 ...Term "</CODE> for each Term in <CODE>List</CODE>. If your term has functors <CODE>string/1</CODE> and <CODE>text/1</CODE> that you don't want to be interpreted this way, use them twice, i.e., <CODE>string(string(Term))</CODE> is given to daVinci as <CODE>string(Term')</CODE>, where <CODE>Term'</CODE> is the interpretation of <CODE>Term</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>commandterm(Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Term</CODE> is a term representing a daVinci command.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3479"></A>
+<A NAME="IDX3480"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>specialugraph/1:</B>
+<DD><A NAME="IDX3481"></A>
+
+
+<P>
+<CODE>specialugraph(Graph)</CODE>
+
+
+<P>
+<CODE>Graph</CODE> is a term which denotes an ugraph as in <CODE>library(ugraphs)</CODE>. Vertices of the form <CODE>node(Term,List)</CODE> are interpreted as a vertex <CODE>Term</CODE> with attributes <CODE>List</CODE>. <CODE>List</CODE> is a list of terms conforming the syntax of <CODE>commandterm</CODE>, corresponding to daVinci's graph node attributes. If your vertex has functor <CODE>node/2</CODE> and you don't want it to be interpreted this way, use it twice, i.e., <CODE>node(node(T1,T2),[])</CODE> is given to daVinci as vertex <CODE>node(T1,T2)</CODE>. A vertex is used both as label and name of daVinci's graph node; daVinci's graph edges have label <CODE>V1-V2</CODE> where <CODE>V1</CODE> is the source and <CODE>V2</CODE> the sink of the edge. There is no support for multiple edges between the same two vertices.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>specialugraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph with special escape functors for daVinci.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3482"></A>
+<A NAME="IDX3483"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>speciallgraph/1:</B>
+<DD><A NAME="IDX3484"></A>
+
+
+<P>
+<CODE>speciallgraph(Graph)</CODE>
+
+
+<P>
+<CODE>Graph</CODE> is an lgraph as in <CODE>library(lgraphs)</CODE>, except that the weights are labels, i.e., they do not need to be integers. Vertices with functor <CODE>node/2</CODE> are interpreted in a special way, as in <CODE>specialugraph/1</CODE>. Edge labels are converted into special intermediate vertices for daVinci; duplicated labels are solved by adding dummy atoms of the form <CODE>"</CODE>. There is no support for multiple edges between the same two vertices.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>speciallgraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is an lgraph with special escape functors for daVinci.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC304" HREF="ciao_toc.html#TOC304">Known bugs and planned improvements (<CODE>davinci</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+<CODE>davinci/0</CODE> and <CODE>davinci_quit/0</CODE> do nothing: daVinci is started on demand and has to be exited from its own window.
+
+<LI>
+
+Each invocation of daVinci leaves a <CODE>davinciXXXXXX</CODE> file in the directory. Remember to erase them.
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_83.html">previous</A>, <A HREF="ciao_85.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

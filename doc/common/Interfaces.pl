@@ -7,7 +7,7 @@
 :- comment(module,"The following interfaces to/from Ciao Prolog are
 	documented in this part:
 	@begin{itemize}
-	@item external  interface (e.g., to C);
+	@item external interface (e.g., to C);
 	@item socket interface;
 	@item tcl/tk interface;
 	@item Web http-like interface;

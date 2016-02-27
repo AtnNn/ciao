@@ -6,6 +6,10 @@
 %%
 %% AUTHOR : Angel Fernandez Pineda
 %%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
+%%
 %%------------------------------------------------------------------------
 %% WARNING:
 %%   Those predicates are used by O'CIAO class expansion.

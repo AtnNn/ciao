@@ -42,7 +42,6 @@ struct wrb_state_str {
   int      goal_id;                            /* Entry in array (cached) */
   int      action;                                 /* What to do (cached) */
   Thread_State state;                                  /* What I am up to */
-  struct node *node_at_entry;                /* Save node at wam creation */
   struct wam_private wam_private_state;
   struct wrb_state_str *next;
 };

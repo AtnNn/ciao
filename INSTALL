@@ -72,7 +72,7 @@ follow this summary:
         * Also, if you use `emacs' (highly recommended) add this line
           to your `~/.emacs' file:
 
-                       (load-file "<LIBROOT>/ciao/DOTemacs")
+                       (load-file "<LIBROOT>/ciao/DOTemacs.el")
 
      If you are the system administrator, the previous steps can be
      done once and for all, and globally for all users by including
@@ -254,7 +254,7 @@ Un*x full installation instructions
         * Also, if you use `emacs' (highly recommended) add this line
           to your `~/.emacs' file:
 
-                       (load-file "<LIBROOT>/ciao/DOTemacs")
+                       (load-file "<LIBROOT>/ciao/DOTemacs.el")
 
      If you are the system administrator, the previous steps can be
      done once and for all, and globally for all users by including
@@ -274,7 +274,11 @@ Un*x full installation instructions
      `http://www.gnu.org/' for a list), in the `gnu/emacs' and
      `gnu/windows/emacs' directories. For example, at UPM it can be
      found at `ftp://ftp.fi.upm.es/pub/mirrors/gnu/emacs' and
-     `ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs'.
+     `ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs'. You can
+     find answers to frequently asked question about `emacs' in
+     general at `http://www.gnu.org/software/emacs/emacs-faq.text'
+     and about the Windows version at
+     `http://www.gnu.org/software/emacs/windows/ntemacs.html'.
 
   8. *Check installation:* You may want to read now *Note Checking
      for correct installation:: and the documentation, which is
@@ -330,7 +334,7 @@ Installation of the precompiled distribution
      to limitations of Windows related to file associations, do not
      put Ciao too deep in the folder hierarchy. For unpacking you
      will need a recent version of a zip archive manager - there are
-     many freely available such as `unzip', `pkunzip', `WinZip',
+     many freely available such as `WinZip', `unzip', `pkunzip',
      etc.). If you have a previous version of Ciao installed, make
      sure you do not have any Ciao applications (including, e.g., a
      toplevel shell) running, or the extraction process may not be
@@ -352,9 +356,9 @@ Installation of the precompiled distribution
      select the appropriate option, `Send to->Desktop as shortcut').
 
   4. You may also want to add another shortcut to the file
-     `ciao.html' located inside `doc\reference\ciao_html\ciao.html'
-     so that you can open the Ciao manual by simply double-clicking
-     on this shortcut.
+     `ciao.html' located inside `doc\reference\ciao_html' so that you
+     can open the Ciao manual by simply double-clicking on this
+     shortcut.
 
 
 Getting started after Windows installation
@@ -365,14 +369,18 @@ procedure, in addition to setting icons for ciao-related file types,
 make several other things possible:
 
    * Double-clicking on the shortcut made above to `ciao.html' should
-     show the Ciao manual in your default WWW browser. The
-     `doc\reference' folder contains the manual also in the other
-     formats present in the distribution, such as `info' (very
-     convenient for users of the `emacs' editor/program development
-     system) and `postscript' or `pdf', which are specially useful
-     for printing, using an application such as `ghostview' (freely
-     available from `http://www.cs.wisc.edu/~ghost/index.html') or
-     `acrobat reader' (`http://www.adobe.com') respectively.
+     show the Ciao manual in your default WWW browser. Make sure you
+     configure your browser to use *style sheets* for correct
+     formatting of the manual (note, however, some older versions of
+     Explorer did not support style sheets well and will give better
+     results turning them off). The `doc\reference' folder contains
+     the manual also in the other formats present in the
+     distribution, such as `info' (very convenient for users of the
+     `emacs' editor/program development system) and `postscript' or
+     `pdf', which are specially useful for printing, using an
+     application such as `ghostview' (freely available from
+     `http://www.cs.wisc.edu/~ghost/index.html') or `acrobat reader'
+     (`http://www.adobe.com') respectively.
 
    * It is possible to run any Ciao executable (ending in `.cpx') by
      double-clicking on it. For example, you can try starting this
@@ -389,7 +397,7 @@ make several other things possible:
      For example, you may want to type `use_package(iso)' to ensure
      Ciao has loaded all the iso builtins (whether this is done by
      default or not depends on your `.ciaorc' file). Do not worry
-     about any 'module already in executable messages' -these are
+     about any 'module already in executable' messages -these are
      normal and simply mean that a certain module is already
      pre-loaded in the toplevel shell. At this point, typing
      `write(hello).' should work.
@@ -397,12 +405,12 @@ make several other things possible:
    * To change the working directory to, say, the `tests' directory,
      first do:
 
-              :- use_module(library(system)).
+              ?- use_module(library(system)).
 
      (loading the `system' library makes a number of system-related
      predicates such as `cd/1' accessible) and then:
 
-              :- cd('$/tests').
+              ?- cd('$/tests').
 
      (in Ciao the sequence `$/' *at the beginning of a path name* is
      replaced by the path of the Ciao root directory).
@@ -416,7 +424,7 @@ make several other things possible:
 
      For example, within the `tests' directory, you can type:
 
-              :- make_exec(hw,_).
+              ?- make_exec(hw,_).
 
      which should produce an executable. Double-clicking on this
      executable should execute it.
@@ -449,9 +457,7 @@ make several other things possible:
      which will be called upon startup. The two header lines are only
      necessary in Un*x. You can leave them in in Windows (so that the
      script will work also in Un*x without any change) or you can
-     take them out and leave two blank lines (this is necessary
-     because the Ciao script processor skips the first two lines of
-     Ciao scripts!). These two lines can be added automatically in
+     take them out. These two lines can be added automatically in
      `emacs' from the Ciao/Prolog menu or by typing <^C> <I> <S>.
 
 Starting executables from the Windows command line
@@ -490,13 +496,18 @@ the many GNU mirror sites worldwide (See `http://www.gnu.org/' for a
 list), in the `gnu/emacs' and `gnu/windows/emacs' directories. For
 example, at UPM it can be found at
 `ftp://ftp.fi.upm.es/pub/mirrors/gnu/emacs' and
-`ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs'.
+`ftp://ftp.fi.upm.es/pub/mirrors/gnu/windows/emacs'. You can find
+answers to frequently asked question about `emacs' in general at
+`http://www.gnu.org/software/emacs/emacs-faq.text' and about the
+Windows version at
+`http://www.gnu.org/software/emacs/windows/ntemacs.html'.
 
    In order to allow `emacs' to load the Ciao mode automatically when
-editing and to access the documentation, add the following line to
-your `~/.emacs' file:
+editing and to access the documentation, open using `emacs'
+(<^X><^F>)) the file `~/.emacs' (or, perhaps, `c:/.emacs') and add
+the following line to it:
 
-             (load-file "<CIAODIR>/DOTemacs")
+             (load-file "<CIAODIR>/DOTemacs.el")
 
 where you should put in place of `<CIAODIR>' the directory where you
 installed the Ciao distribution. After doing this (and exiting and
@@ -859,11 +870,20 @@ Troubleshooting (nasty messages and nifty workarounds)
    The following a list of common installation problems reported by
 users:
 
+   * *Problem:* Compilation errors appear when trying a new
+     installation/compilation after the previous one was aborted
+     (e.g., because of errors).
+
+     *Possible reason and solution:* It is a good idea to clean up
+     any leftovers from the previous compilation using `make
+     engclean' before restarting the installation or compilation
+     process.
+
    * *Problem:*
 
-     During engine compilation, the following message appears:
-     `tasks.c:102:PTHREAD_CANCEL_ASYNCHRONOUS undeclared (first use
-     of this function)'.
+     During engine compilation, messages such as the following
+     appear: `tasks.c:102:PTHREAD_CANCEL_ASYNCHRONOUS undeclared
+     (first use of this function)'.
 
      *Possible reason and solution:*
 

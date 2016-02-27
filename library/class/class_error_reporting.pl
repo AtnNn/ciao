@@ -5,7 +5,10 @@
 %% ERROR REPORTING
 %%
 %% AUTHOR : Angel Fernandez Pineda
-%% DATE   : July 1999
+%%
+%% CLIP Laboratory - Technical University Of Madrid.
+%%
+%%         - Distributed under the CIAO Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 

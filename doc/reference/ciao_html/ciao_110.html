@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Persistent predicate database</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC381" HREF="ciao_toc.html#TOC381">Persistent predicate database</A></H1>
+<H1><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Persistent predicate database</A></H1>
 <P>
-<A NAME="IDX3979"></A>
+<A NAME="IDX4045"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.3#120 (1999/11/26, 12:5:17 MET)
+<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
 
 
 <P>
@@ -33,25 +33,25 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>,
 
 
 <UL>
-<LI><A HREF="ciao_110.html#SEC382">Introduction to persistent predicates</A>
-<LI><A HREF="ciao_110.html#SEC383">Persistent predicates</A>
-<LI><A HREF="ciao_110.html#SEC384">Using file-based persistent predicates</A>
-<LI><A HREF="ciao_110.html#SEC385">Implementation Issues</A>
-<LI><A HREF="ciao_110.html#SEC386">Using persistent predicates from the top level</A>
-<LI><A HREF="ciao_110.html#SEC387">Usage and interface (persdbrt)</A>
-<LI><A HREF="ciao_110.html#SEC388">Documentation on exports (persdbrt)</A>
-<LI><A HREF="ciao_110.html#SEC389">Documentation on multifiles (persdbrt)</A>
-<LI><A HREF="ciao_110.html#SEC390">Documentation on internals (persdbrt)</A>
-<LI><A HREF="ciao_110.html#SEC391">Known bugs and planned improvements (persdbrt)</A>
+<LI><A HREF="ciao_110.html#SEC385">Introduction to persistent predicates</A>
+<LI><A HREF="ciao_110.html#SEC386">Persistent predicates</A>
+<LI><A HREF="ciao_110.html#SEC387">Using file-based persistent predicates</A>
+<LI><A HREF="ciao_110.html#SEC388">Implementation Issues</A>
+<LI><A HREF="ciao_110.html#SEC389">Using persistent predicates from the top level</A>
+<LI><A HREF="ciao_110.html#SEC390">Usage and interface (persdbrt)</A>
+<LI><A HREF="ciao_110.html#SEC391">Documentation on exports (persdbrt)</A>
+<LI><A HREF="ciao_110.html#SEC392">Documentation on multifiles (persdbrt)</A>
+<LI><A HREF="ciao_110.html#SEC393">Documentation on internals (persdbrt)</A>
+<LI><A HREF="ciao_110.html#SEC394">Known bugs and planned improvements (persdbrt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Introduction to persistent predicates</A></H2>
+<H2><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Introduction to persistent predicates</A></H2>
 
 <P>
 This library implements a <EM>generic persistent predicate database</EM>. The basic notion implemented by the library is that of a 
-<A NAME="IDX3980"></A>
+<A NAME="IDX4046"></A>
 persistent predicate. The persistent predicate concept provides a simple, yet powerful generic persistent data access method [CHGT98,Par97]. A persistent predicate is a special kind of dynamic, data predicate that "resides" in some persistent medium (such as a set of files, a database, etc.) that is typically external to the program using such predicates. The main effect is that any changes made to to a persistent predicate from a program "survive" across executions. I.e., if the program is halted and restarted the predicate that the new process sees is in precisely the same state as it was when the old process was halted (provided no change was made in the meantime to the storage by other processes or the user). 
 
 
@@ -60,25 +60,25 @@ Persistent predicates appear to a program as ordinary predicates, and calls to t
 
 
 <P>
-<A NAME="IDX3981"></A>
+<A NAME="IDX4047"></A>
 Updates to persistent predicates can be made by calling predicates similar to 
-<A NAME="IDX3982"></A>
+<A NAME="IDX4048"></A>
 <CODE>assertz_fact/1</CODE> and 
-<A NAME="IDX3983"></A>
+<A NAME="IDX4049"></A>
 <CODE>retract_fact/1</CODE>. The library makes sure that each update is a 
-<A NAME="IDX3984"></A>
+<A NAME="IDX4050"></A>
 transactional update, in the sense that if the update terminates, then the permanent storage has definitely been modified. For example, if the program making the updates is halted just after the update and then restarted, then the updated state of the predicate will be seen. This provides security against possible data loss due to, for example, a system crash. Also, due to the atomicity of the transactions, persistent predicates allow 
-<A NAME="IDX3985"></A>
+<A NAME="IDX4051"></A>
 concurrent updates from several programs. 
 
 
 
 
-<H2><A NAME="SEC383" HREF="ciao_toc.html#TOC383">Persistent predicates, files, and relational databases</A></H2>
+<H2><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Persistent predicates, files, and relational databases</A></H2>
 
 <P>
 The concept of persistent predicates provided by this library essentially implements a light-weight, simple, and at the same time powerful form of relational database (a 
-<A NAME="IDX3986"></A>
+<A NAME="IDX4052"></A>
 deductive database), and which is standalone, in the sense that it does not require external support, other than the file management capabilities provided by the operating system. This is due to the fact that the persistent predicates are in fact stored in one or more auxiliary files in a given directory. 
 
 
@@ -88,43 +88,43 @@ This type of database is specially useful when building small to medium-sized st
 
 <P>
 In other cases, however, it may be convenient to use a relational database as persistent storage. This may be the case, for example, when the data already resides in such a database (where it is perhaps accessed also by other applications) or the volume of data is very large. 
-<A NAME="IDX3987"></A>
+<A NAME="IDX4053"></A>
 <CODE>persdb_sql</CODE> [CCG98] is a companion library which implements the same notion of persistent predicates used herein, but keeping the storage in a relational database. This provides a very natural and transparent way to access SQL database relations from a Prolog program. In that library, facilities are also provided for reflecting more complex <EM>views</EM> of the database relations as predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations, and may include SQL-like aggregation operations. 
 
 
 <P>
 A nice characteristic of the notion of persistent predicates used in both of these libraries is that it abstracts away how the predicate is actually stored. Thus, a program can use persistent predicates stored in files or in external relational databases interchangeably, and the type of storage used for a given predicate can be changed without having to modify the program (except for replacing the corresponding 
-<A NAME="IDX3988"></A>
+<A NAME="IDX4054"></A>
 <CODE>persistent/2</CODE> declarations). 
 
 
 <P>
 An example application of the 
-<A NAME="IDX3989"></A>
+<A NAME="IDX4055"></A>
 <CODE>persdb</CODE> and 
-<A NAME="IDX3990"></A>
+<A NAME="IDX4056"></A>
 <CODE>persdb_sql</CODE> libraries (and also the 
-<A NAME="IDX3991"></A>
+<A NAME="IDX4057"></A>
 <CODE>pillow</CODE> library [CH97]), is 
-<A NAME="IDX3992"></A>
+<A NAME="IDX4058"></A>
 <CODE>WebDB</CODE> [GCH98]. 
-<A NAME="IDX3993"></A>
+<A NAME="IDX4059"></A>
 <CODE>WebDB</CODE> is a generic, highly customizable <EM>deductive database engine</EM> with an <EM>html interface</EM>. 
-<A NAME="IDX3994"></A>
+<A NAME="IDX4060"></A>
 <CODE>WebDB</CODE> allows creating and maintaining Prolog-based databases as well as relational databases (residing in conventional relational database engines) using any standard WWW browser. 
 
 
 
 
-<H2><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Using file-based persistent predicates</A></H2>
+<H2><A NAME="SEC387" HREF="ciao_toc.html#TOC387">Using file-based persistent predicates</A></H2>
 
 <P>
 Persistent predicates can be declared statically, using 
-<A NAME="IDX3995"></A>
+<A NAME="IDX4061"></A>
 <CODE>persistent/2</CODE> declarations (which is the preferred method, when possible), or dynamically via calls to 
-<A NAME="IDX3996"></A>
+<A NAME="IDX4062"></A>
 <CODE>make_persistent/2</CODE>. Currently, persistent predicates may only contain facts, i.e., they are <EM>dynamic</EM> predicates of type 
-<A NAME="IDX3997"></A>
+<A NAME="IDX4063"></A>
 <CODE>data/1</CODE>, and <EM>should be declared as such</EM>. 
 
 
@@ -148,51 +148,51 @@ persistent_dir(dbdir, '/home/clip/public_html/db').
 
 <P>
 The first line declares the predicate <CODE>p/3</CODE> persistent. The argument <CODE>dbdir</CODE> is a key used to index into a fact of the relation 
-<A NAME="IDX3998"></A>
+<A NAME="IDX4064"></A>
 <CODE>persistent_dir/2</CODE>, which specifies the directory where the corresponding files will be kept. The effect of the declaration, together with the 
-<A NAME="IDX3999"></A>
+<A NAME="IDX4065"></A>
 <CODE>persistent_dir/2</CODE> fact, is that, although the predicate is handled in the same way as a normal data predicate, in addition the system will create and maintain efficiently a persistent version of <CODE>p/3</CODE> via files in the directory <CODE>/home/clip/public_html/db</CODE>. 
 
 
 <P>
 The level of indirection provided by the <CODE>dbdir</CODE> argument makes it easy to place the storage of several persistent predicates in a common directory, by specifying the same key for all of them. It also allows changing the directory for several such persistent predicates by modifying only one fact in the program. Furthermore, the 
-<A NAME="IDX4000"></A>
+<A NAME="IDX4066"></A>
 <CODE>persistent_dir/2</CODE> predicate can even be dynamic and specified at run-time. 
 
 
 
 
-<H2><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Implementation Issues</A></H2>
+<H2><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Implementation Issues</A></H2>
 
 <P>
 We outline the current implementation approach. This implementation attempts to provide at the same time efficiency and security. To this end, up to three files are used for each predicate (the 
-<A NAME="IDX4001"></A>
+<A NAME="IDX4067"></A>
 persistence set): the 
-<A NAME="IDX4002"></A>
+<A NAME="IDX4068"></A>
 data file, the 
-<A NAME="IDX4003"></A>
+<A NAME="IDX4069"></A>
 operations file, and the 
-<A NAME="IDX4004"></A>
+<A NAME="IDX4070"></A>
 backup file. In the 
-<A NAME="IDX4005"></A>
+<A NAME="IDX4071"></A>
 updated state the facts (tuples) that define the predicate are stored in the data file and the operations file is empty (the backup file, which contains a security copy of the data file, may or may not exist). 
 
 
 <P>
 While a program using a persistent predicate is running, any insertion (assert) or deletion (retract) operations on the predicate are performed on both the program memory and on the persistence set. However, in order to incurr only a small overhead in the execution, rather than changing the data file directly, a record of each of the insertion and deletion operations is <EM>appended</EM> to the operations file. The predicate is then in a 
-<A NAME="IDX4006"></A>
+<A NAME="IDX4072"></A>
 transient state, in that the contents of the data file do not reflect exactly the current state of the corresponding predicate. However, the complete persistence set does. 
 
 
 <P>
 When a program starts, when it is halted, or, periodically, when it is idle for some time, all pending operations in the operations file are performed on the data file. A backup of the data file is created first to prevent data loss if the system crashes during this operation. The order in which this updating of files is done ensures that, if at any point the process dies, on restart data will be completely recovered. This process of updating the persistence set can also be triggered at any point in the execution of a program by calling 
-<A NAME="IDX4007"></A>
+<A NAME="IDX4073"></A>
 <CODE>update_files/2</CODE>. 
 
 
 
 
-<H2><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Using persistent predicates from the top level</A></H2>
+<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Using persistent predicates from the top level</A></H2>
 
 <P>
 Special care must be taken when using persistent predicates from the top level. This includes not only defining persistent predicates on the fly from de top level (which is not really very useful in practice) but also the more frequent case of loading into the top level modules or user files which use persistent predicates. As mentioned before, the persistence set is updated automatically each time a program using the corresponding persistent predicates is run or halted. However, since the top level itself is also a standard program, persistent predicates would only be updated whenever the top level is started, when they are typically still not loaded. 
@@ -200,13 +200,13 @@ Special care must be taken when using persistent predicates from the top level. 
 
 <P>
 If a program launched from a top level needs to update the persistence sets of any persistent predicate it must be done by calling the 
-<A NAME="IDX4008"></A>
+<A NAME="IDX4074"></A>
 <CODE>update_files/2</CODE> method explicitly. 
 
 
 
 
-<H2><A NAME="SEC387" HREF="ciao_toc.html#TOC387">Usage and interface (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC390" HREF="ciao_toc.html#TOC390">Usage and interface (<CODE>persdbrt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -215,7 +215,7 @@ If a program launched from a top level needs to update the persistence sets of a
 <LI><STRONG>Library usage:</STRONG>
 
 Typically, this library is used including the 'persdb' package into the syntax list of the module, or using the 
-<A NAME="IDX4009"></A>
+<A NAME="IDX4075"></A>
 <CODE>syntax/1</CODE> declaration: 
 <DL COMPACT>
 
@@ -256,26 +256,26 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4010"></A>
+<A NAME="IDX4076"></A>
 <CODE>passertz_fact/1</CODE>, 
-<A NAME="IDX4011"></A>
+<A NAME="IDX4077"></A>
 <CODE>pretract_fact/1</CODE>, 
-<A NAME="IDX4012"></A>
+<A NAME="IDX4078"></A>
 <CODE>pcurrent_fact/1</CODE>, 
-<A NAME="IDX4013"></A>
+<A NAME="IDX4079"></A>
 <CODE>init_persdb/0</CODE>, 
-<A NAME="IDX4014"></A>
+<A NAME="IDX4080"></A>
 <CODE>initialize_db/0</CODE>, 
-<A NAME="IDX4015"></A>
+<A NAME="IDX4081"></A>
 <CODE>make_persistent/2</CODE>, 
-<A NAME="IDX4016"></A>
+<A NAME="IDX4082"></A>
 <CODE>update_files/2</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX4017"></A>
+<A NAME="IDX4083"></A>
 <CODE>persistent_dir/2</CODE>, 
-<A NAME="IDX4018"></A>
+<A NAME="IDX4084"></A>
 <CODE>$is_persistent/2</CODE>.
 
 </UL>
@@ -287,15 +287,15 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4019"></A>
+<A NAME="IDX4085"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX4020"></A>
+<A NAME="IDX4086"></A>
 <CODE>streams</CODE>, 
-<A NAME="IDX4021"></A>
+<A NAME="IDX4087"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX4022"></A>
+<A NAME="IDX4088"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX4023"></A>
+<A NAME="IDX4089"></A>
 <CODE>file_locks/file_locks</CODE>.
 
 </UL>
@@ -306,13 +306,13 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 
 
 
-<H2><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Documentation on exports (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Documentation on exports (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX4024"></A>
-<A NAME="IDX4025"></A>
+<A NAME="IDX4090"></A>
+<A NAME="IDX4091"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>passertz_fact/1:</B>
-<DD><A NAME="IDX4026"></A>
+<DD><A NAME="IDX4092"></A>
 
 
 <P>
@@ -325,9 +325,9 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 <UL>
 <LI><EM>Description:</EM> Persistent version of
 
-<A NAME="IDX4027"></A>
+<A NAME="IDX4093"></A>
 <CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added at the end of the definition of the corresponding predicate. The predicate concerned must be declared 
-<A NAME="IDX4028"></A>
+<A NAME="IDX4094"></A>
 <CODE>persistent</CODE>. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -338,11 +338,11 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 </DL>
 
 <P>
-<A NAME="IDX4029"></A>
-<A NAME="IDX4030"></A>
+<A NAME="IDX4095"></A>
+<A NAME="IDX4096"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>pretract_fact/1:</B>
-<DD><A NAME="IDX4031"></A>
+<DD><A NAME="IDX4097"></A>
 
 
 <P>
@@ -355,9 +355,9 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 <UL>
 <LI><EM>Description:</EM> Persistent version of
 
-<A NAME="IDX4032"></A>
+<A NAME="IDX4098"></A>
 <CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be declared 
-<A NAME="IDX4033"></A>
+<A NAME="IDX4099"></A>
 <CODE>persistent</CODE>. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -368,11 +368,11 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 </DL>
 
 <P>
-<A NAME="IDX4034"></A>
-<A NAME="IDX4035"></A>
+<A NAME="IDX4100"></A>
+<A NAME="IDX4101"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>pcurrent_fact/1:</B>
-<DD><A NAME="IDX4036"></A>
+<DD><A NAME="IDX4102"></A>
 
 
 <P>
@@ -385,9 +385,9 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 <UL>
 <LI><EM>Description:</EM> Persistent version of
 
-<A NAME="IDX4037"></A>
+<A NAME="IDX4103"></A>
 <CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
-<A NAME="IDX4038"></A>
+<A NAME="IDX4104"></A>
 <CODE>persistent</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -398,11 +398,11 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 </DL>
 
 <P>
-<A NAME="IDX4039"></A>
-<A NAME="IDX4040"></A>
+<A NAME="IDX4105"></A>
+<A NAME="IDX4106"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>init_persdb/0:</B>
-<DD><A NAME="IDX4041"></A>
+<DD><A NAME="IDX4107"></A>
 
 
 <P>
@@ -411,24 +411,24 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 <UL>
 <LI><EM>Description:</EM> Executes
 
-<A NAME="IDX4042"></A>
+<A NAME="IDX4108"></A>
 <CODE>initialize_db/0</CODE> if no initialization has been done yet. Needed when accesing persistent predicates before doing any of 
-<A NAME="IDX4043"></A>
+<A NAME="IDX4109"></A>
 <CODE>passertz_fact/1</CODE>, 
-<A NAME="IDX4044"></A>
+<A NAME="IDX4110"></A>
 <CODE>pretract_fact/1</CODE>, or 
-<A NAME="IDX4045"></A>
+<A NAME="IDX4111"></A>
 <CODE>pcurrent_fact/1</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4046"></A>
-<A NAME="IDX4047"></A>
+<A NAME="IDX4112"></A>
+<A NAME="IDX4113"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>initialize_db/0:</B>
-<DD><A NAME="IDX4048"></A>
+<DD><A NAME="IDX4114"></A>
 
 
 <P>
@@ -437,19 +437,19 @@ This syntax file loads the run-time and compile-time versions of the library (<C
 <UL>
 <LI><EM>Description:</EM>
 
-<A NAME="IDX4049"></A>
-<A NAME="IDX4050"></A>
+<A NAME="IDX4115"></A>
+<A NAME="IDX4116"></A>
 Initializes the whole database, updating the state of the declared persistent predicates. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4051"></A>
-<A NAME="IDX4052"></A>
+<A NAME="IDX4117"></A>
+<A NAME="IDX4118"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>make_persistent/2:</B>
-<DD><A NAME="IDX4053"></A>
+<DD><A NAME="IDX4119"></A>
 
 
 <P>
@@ -462,7 +462,7 @@ Initializes the whole database, updating the state of the declared persistent pr
 <UL>
 <LI><EM>Description:</EM> Dynamic version of the
 
-<A NAME="IDX4054"></A>
+<A NAME="IDX4120"></A>
 <CODE>persistent</CODE> declaration. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -483,11 +483,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX4055"></A>
-<A NAME="IDX4056"></A>
+<A NAME="IDX4121"></A>
+<A NAME="IDX4122"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>update_files/2:</B>
-<DD><A NAME="IDX4057"></A>
+<DD><A NAME="IDX4123"></A>
 
 
 <P>
@@ -516,13 +516,13 @@ predname(P/A) :-
 
 
 
-<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Documentation on multifiles (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC392" HREF="ciao_toc.html#TOC392">Documentation on multifiles (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX4058"></A>
-<A NAME="IDX4059"></A>
+<A NAME="IDX4124"></A>
+<A NAME="IDX4125"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>persistent_dir/2:</B>
-<DD><A NAME="IDX4060"></A>
+<DD><A NAME="IDX4126"></A>
 
 
 <P>
@@ -547,11 +547,11 @@ The predicate is <EM>multifile</EM> and of type <EM>data</EM>.
 </DL>
 
 <P>
-<A NAME="IDX4061"></A>
-<A NAME="IDX4062"></A>
+<A NAME="IDX4127"></A>
+<A NAME="IDX4128"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>$is_persistent/2:</B>
-<DD><A NAME="IDX4063"></A>
+<DD><A NAME="IDX4129"></A>
 
 
 <P>
@@ -566,18 +566,18 @@ The predicate is <EM>multifile</EM>.
 
 
 
-<H2><A NAME="SEC390" HREF="ciao_toc.html#TOC390">Documentation on internals (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC393" HREF="ciao_toc.html#TOC393">Documentation on internals (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX4064"></A>
-<A NAME="IDX4065"></A>
+<A NAME="IDX4130"></A>
+<A NAME="IDX4131"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>keyword/1:</B>
-<DD><A NAME="IDX4066"></A>
+<DD><A NAME="IDX4132"></A>
 
 
 <P>
 An atom which identifies a fact of the 
-<A NAME="IDX4067"></A>
+<A NAME="IDX4133"></A>
 <CODE>persistent_dir/2</CODE> relation. This fact relates this atom to a directory in which the persistent storage for one or more persistent predicates is kept.
 
 
@@ -596,11 +596,11 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4068"></A>
-<A NAME="IDX4069"></A>
+<A NAME="IDX4134"></A>
+<A NAME="IDX4135"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>directoryname/1:</B>
-<DD><A NAME="IDX4070"></A>
+<DD><A NAME="IDX4136"></A>
 
 
 <P>
@@ -619,7 +619,7 @@ Defines a regular type.
 
 
 
-<H2><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Known bugs and planned improvements (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Known bugs and planned improvements (<CODE>persdbrt</CODE>)</A></H2>
 
 
 <UL>
@@ -646,6 +646,6 @@ we need also asserta_fact, right? Otherwise isn't it difficult to do many things
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -387,7 +387,6 @@ endif
 	-@rm -f $(BASEMAIN)_html/$*.html
 	-mv $(BASEMAIN)*.html $(BASEMAIN)_html
 ifdef HTMLSTYLE
-#	-@ln -fs $(HTMLSTYLE) $(BASEMAIN)_html/$*.css
 	-@cp $(HTMLSTYLE) $(BASEMAIN)_html/$*.css
 	-@chmod $(DATAMODE) $(BASEMAIN)_html/$*.css
 else
@@ -884,6 +883,9 @@ braveclean: realclean
 # Some handy viewers:
 view dviview: # $(BASEMAIN).dvi
 	xdvi -s 8 -expert -geometry 623x879-0-0 $(BASEMAIN).dvi &
+
+largedviview: # $(BASEMAIN).dvi
+	xdvi -s 5 -expert -geometry 984x760+30-0 $(BASEMAIN).dvi &
 
 svgaview: # $(BASEMAIN).dvi
 	xdvi -s 8 -expert -geometry 643x590+1280+0 $(BASEMAIN).dvi &

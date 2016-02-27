@@ -111,8 +111,6 @@ void *startgoal(wo)
   disallow_thread_cancellation();     /* I should have my own thread here */
   worker_to_run = gimme_a_new_worker(worker_entry);
   /* This is to check whether backtracking yielded a new solution */
-  worker_to_run->node_at_entry =
-    worker_to_run->worker_registers->node;
 
 #if defined(DEBUG) && defined(THREADS)
   if (debug_threads) printf("New worker for goal %d\n", worker_entry->goal_id);
@@ -183,7 +181,6 @@ void *startgoal_simp(wo)
 
   /* This helps in checking whether backtracking (or the first execution
      itself) yielded a new solution */
-  worker_to_run->node_at_entry = worker_to_run->worker_registers->node;
 
 #if defined(DEBUG) && defined(THREADS)
   if (debug_threads) printf("New worker for goal %d\n", worker_entry->goal_id);

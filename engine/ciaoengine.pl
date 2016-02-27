@@ -1,3 +1,4 @@
+
  
 %% Since Ciao Version 0.8, changes are unified with the GlobalChangeLog 
 %% in $(SRC)/version.
@@ -23,6 +24,70 @@ main.
 
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+
+
+:- comment(version(1*5+37,2000/01/26,13:12*16+'CET'), "Atom length
+added to the atom structure, and used in all the code.  Minor speedups
+in regular applications.  Look for USE_ATOM_LEN. (MCL)").
+
+:- comment(version(1*5+36,2000/01/25,16:37*41+'CET'),
+"new_atom_check() updated to be smarter when reclaiming more atom
+space.  (MCL)").
+
+:- comment(version(1*5+35,2000/01/25,14:16*47+'CET'), "Size of
+user-created atoms is now variable and unbound (look for the macro
+USE_DYNAMIC_ATOM_SIZE).  Some atoms created inside the engine still
+have a fixed, maximum length (STATICMAXATOM).  (MCL)").
+
+:- comment(version(1*5+33,2000/01/03,17:08*17+'MET'), "Changed thread
+primitives to use pthread_equal() instead of == (MCL)").
+
+:- comment(version(1*5+32,2000/01/03,13:37*19+'MET'),
+"unload_if_present() was giving a segmentation violation when loading
+.so files; a wrong variable name was the culprit. Solved.  (MCL)").
+
+:- comment(version(1*5+31,1999/12/29,15:44*18+'CET'), "Added a
+heuristic to the loading of incore clauses which avoids traversing a
+list of choices: the last try chain, the number of node inserted, and
+the point of insertion is cached, and used later if possible (look for
+CACHE_INCREMENTAL_CLAUSE_INSERTION); this speeds up things quite a
+lot. Unfortunately, the whole method is still O(N^2). Looking into
+that.  (MCL)").
+
+:- comment(version(1*5+30,1999/12/29,15:41*00+'CET'), "The engine now
+accepts a lot of clauses per predicate (as many as the maximum value
+of an unsigned long int).  Unfortunately inserting N compiled clauses
+is still O(N^2).  (MCL)").
+
+:- comment(version(1*5+29,1999/12/29,15:40*48+'CET'), "Use an internal
+buffer of QLBFSIZE chars to store the contents of the .po files being
+read in.  When the buffer is full, we fill it again at once; the
+previous method was calling getc() once and again.  Preliminary tests
+show this method to be between 3 times (for dynamic executables, as
+ciaosh) to 5 times (for static stuff, as ciaoc) faster. Look for 
+#defined BUFFERED_PO (MCL)").
+
+:- comment(version(1*5+28,1999/12/29,15:40*30+'CET'),
+"prolog_new_atom() redesigned to use an atom size and a quasi-linear
+congruential method which behave well with the hash function in the
+atom table routines.  (MCL)").
+
+:- comment(version(1*5+22,1999/12/17,16:59*51+'MET'), "Solved yet
+another problem with remote backtrackig (finally, it seems to work);
+additionally, stacks were not being reused in the case of not
+compiling with threads!  (MCL)").
+
+:- comment(version(1*5+20,1999/12/16,18:23*29+'MET'), "Ciao was
+breaking in Windows after long queries, due to the lack of
+defined(THREADS) in critical parts of the code.  Seems to be solved
+now.  (MCL)").
+
+:- comment(version(1*5+6,1999/12/06,14:50*37+'MET'), "'behavior' added
+to the Behavior field of 'int_info'.  (MCL)").
+
+:- comment(version(1*5+5,1999/12/06,14:47*35+'MET'), "Goal# could not
+be deduced from wam; corrected.  (MCL)").
 
 :- comment(version(1*3+111,1999/11/22,13:00*41+'MET'),
 "backtrack_goal/1 now seems to work correctly.  Changing the low level

@@ -89,8 +89,7 @@ BOOL prolog_dynlink(Arg)
   char *lib_name;
   char *module_name;
   int strindx;
-  /*TAGGED car, cdr;*/ /* unused */
-  char libfunction[MAXATOM];
+  char libfunction[STATICMAXATOM];
   void *lib_handle;
   void (*init_func)(char *);
   void (*end_func)(char *);
@@ -116,8 +115,13 @@ BOOL prolog_dynlink(Arg)
 #endif
 
 
+#if defined(USE_ATOM_LEN)
+  if ((strindx = GetAtomLen(X(0))) > MAX_FILENAME)
+    USAGE_FAULT("dynlink/2: full filename too long");
+#else
   if ((strindx = strlen(lib_name)) > MAX_FILENAME)
     USAGE_FAULT("dynlink/2: full filename too long");
+#endif
 
  /* If already loaded, unload it before. */
 
@@ -223,7 +227,7 @@ void unload_if_present(module_name)
 #if defined(DEBUG)
       if (debug_c) fprintf(stderr, "Closing handle for %s\n",module_name);
 #endif
-      (*to_remove->end_func)(all_loaded_objects->module_name);     /* JFMC */
+      (*to_remove->end_func)(to_remove->module_name);     /* JFMC / MCL */
       dlclose(to_remove->handle);
       checkdealloc((TAGGED *)to_remove->module_name,
                    strlen(to_remove->module_name)+1);

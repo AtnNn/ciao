@@ -1,68 +1,106 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 28 November 1999 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Finding differences between two Prolog files</TITLE>
+<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC466" HREF="ciao_toc.html#TOC466">Finding differences between two Prolog files</A></H1>
+<H1><A NAME="SEC471" HREF="ciao_toc.html#TOC471">Crossed-references of a program</A></H1>
 
 <P>
 <STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-This simple program works like the good old diff but for files that contain Prolog code. It prints out the clauses that it finds are different in the files. Its use avoids textual differences such as different variable names and different formatting of the code in the files. 
+The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
 
 
+<P>
+The libraries involved are as follows: 
 
 <UL>
-<LI><A HREF="ciao_134.html#SEC467">Usage (pldiff)</A>
-<LI><A HREF="ciao_134.html#SEC468">Known bugs and planned improvements (pldiff)</A>
+<LI>
+
+<A NAME="IDX5033"></A>
+<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
+<LI>
+
+<A NAME="IDX5034"></A>
+<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
+<LI>
+
+<A NAME="IDX5035"></A>
+<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
+<LI>
+
+<A NAME="IDX5036"></A>
+<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
+<LI>
+
+<A NAME="IDX5037"></A>
+<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
 </UL>
 
+<P>
+The first two are intended to be used by loading in 
+<A NAME="IDX5038"></A>
+<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
 
 
-<H2><A NAME="SEC467" HREF="ciao_toc.html#TOC467">Usage (pldiff)</A></H2>
-
+<P>
+The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
 
 <PRE>
-   
-	pldiff &#60;file1&#62; &#60;file2&#62;
-	   : find differences 
+[ciao/etc]&#62; ciaosh
+Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
+?- use_module(xmrefs).
 
-	pldiff -h
-	   : print this information
+yes
+?- set_flag(X).
+
+X = 3 ? 
+
+yes
+?- set_files([xfrefs, xmrefs,
+              library(xrefs),
+              library('xrefs/mrefs'),
+              library('xrefs/pxrefs'),
+              library('xrefs/xrefs2graph'),
+              library('xrefs/xrefsbuild'),
+              library('xrefs/xrefsread')
+	     ]).
+
+yes
+?- xmrefs.
 
 </PRE>
 
 <P>
-but you can also use the program as a library and invoke the predicate: 
+so that it is displayed by daVinci as: 
 
 
-
-<PRE>
-   pldiff( &#60;filename&#62; , &#60;filename&#62; )
-</PRE>
+<P>
+<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
 
 
+<P>
+The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
 
-<H2><A NAME="SEC468" HREF="ciao_toc.html#TOC468">Known bugs and planned improvements (<CODE>pldiff</CODE>)</A></H2>
+
+<P>
+<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
 
 
-<UL>
+<P>
+For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
 
-<LI>
-
-Currently uses variant/2 to compare clauses. This is useful, but there should be an option to select the way clauses are compared, e.g., some form of equivalence defined by the user.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_146.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

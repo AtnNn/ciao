@@ -33,7 +33,7 @@
 :- use_module(library('compiler/c_itf'), [expand_list/2]).
 :- use_module(engine(internals),
         ['$bootversion'/0, '$nodebug_call'/1, '$setarg'/4, '$open'/3,
-         '$abolish'/1]).
+         '$abolish'/1,'$empty_gcdef_bin'/0]).
 
 :- redefining(make_exec/2).
 :- redefining(debug_module/1).
@@ -90,7 +90,6 @@ top_shell_env :-
 
 shell_env(Vars) :-
         repeat,
-        adjust_debugger,
         shell_query(Vars, Query),
 	( '$nodebug_call'(after_query_hook), fail ; true ),
 	Query == end_of_file,
@@ -99,6 +98,8 @@ shell_env(Vars) :-
 :- data top_prompt/1.
 
 shell_query(Variables, Query) :-
+        '$empty_gcdef_bin', % Really get rid of abolished predicates
+        debugger_info,
         current_fact(top_prompt(TP)),
         prompt(Prompt, TP),
 	( true ; prompt(_, Prompt), fail),
@@ -116,6 +117,13 @@ shell_query(Variables, Query) :-
         ttynl.
 shell_query(_Variables, end_of_file).
 
+debugger_info :- 
+        get_debugger_state(State),
+	arg(1, State, T),
+        ( T = off, ! 
+        ; ttydisplay('{'),ttydisplay(T),ttydisplay('}\n')
+        ).
+
 get_query(Query, Variables) :-
         read_top_level(user, RawQuery, Variables),
         shell_expand(RawQuery, Query),
@@ -128,7 +136,9 @@ handle_syntax_error(L0,L1,Msg,ErrorLoc) :-
                     [[](Msg),'\n',[](ErrorLoc),'\n}']).
 
 valid_solution(Query, Variables) :-
+        ( adjust_debugger ; switch_off_debugger, fail),
         call_user(Query),
+        ( switch_off_debugger ; adjust_debugger, fail),
         ( '$nodebug_call'(after_solution_hook), fail ; true ),
         answer_constraints(Variables, Dict, Constraints),
         solution_vars(Dict, Eqs, []),
