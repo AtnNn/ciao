@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 29 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The Ciao Make Package</TITLE>
@@ -12,7 +12,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, 
 
 <H1><A NAME="SEC382" HREF="ciao_toc.html#TOC382">The Ciao Make Package</A></H1>
 <P>
-<A NAME="IDX4899"></A>
+<A NAME="IDX4893"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_90.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#342 (2004/4/24, 20:30:39 CEST)
+<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
 
 
 <P>
@@ -36,14 +36,14 @@ This package is used mainly in two main ways:
 
 <LI>When writing
 
-<A NAME="IDX4900"></A>
+<A NAME="IDX4894"></A>
 <CODE>Makefile</CODE>s for 
-<A NAME="IDX4901"></A>
+<A NAME="IDX4895"></A>
 <CODE>lpmake</CODE>. 
 
 <LI>When writing <EM>applications</EM> which use the
 
-<A NAME="IDX4902"></A>
+<A NAME="IDX4896"></A>
 <CODE>make</CODE> library. 
 
 </UL>
@@ -75,9 +75,9 @@ In both cases, this is the package that defines the syntax and meaning of the de
 
 <LI>When writing
 
-<A NAME="IDX4903"></A>
+<A NAME="IDX4897"></A>
 <CODE>Makefile</CODE>s for 
-<A NAME="IDX4904"></A>
+<A NAME="IDX4898"></A>
 <CODE>lpmake</CODE>, such makefiles start with: 
 
 
@@ -93,41 +93,41 @@ or
 </PRE>
 
 (The latter uses the feature that an undefined declaration at the beginning of a file is interpreted by Ciao as a 
-<A NAME="IDX4905"></A>
+<A NAME="IDX4899"></A>
 <CODE>use_module/3</CODE> including as third argument a package with the same name, in this case <CODE>make</CODE>.) 
 
 <LI>When writing <EM>applications</EM> which use the
 
-<A NAME="IDX4906"></A>
+<A NAME="IDX4900"></A>
 <CODE>make</CODE> package, then it is loaded as any other package within the application. 
 
 </UL>
 
 <STRONG>Note:</STRONG> it is often useful to use the 
-<A NAME="IDX4907"></A>
+<A NAME="IDX4901"></A>
 <CODE>functions</CODE> package inside a 
-<A NAME="IDX4908"></A>
+<A NAME="IDX4902"></A>
 <CODE>Makefile</CODE> (or when when using the 
-<A NAME="IDX4909"></A>
+<A NAME="IDX4903"></A>
 <CODE>make</CODE> library in other applications). If both 
-<A NAME="IDX4910"></A>
+<A NAME="IDX4904"></A>
 <CODE>make</CODE> and 
-<A NAME="IDX4911"></A>
+<A NAME="IDX4905"></A>
 <CODE>functions</CODE> are used, then 
-<A NAME="IDX4912"></A>
+<A NAME="IDX4906"></A>
 <CODE>make</CODE> should appear <STRONG>before</STRONG> 
-<A NAME="IDX4913"></A>
+<A NAME="IDX4907"></A>
 <CODE>functions</CODE> in the list of packages. 
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX4914"></A>
+<A NAME="IDX4908"></A>
 <CODE>::/2</CODE> [1050,xfy], 
-<A NAME="IDX4915"></A>
+<A NAME="IDX4909"></A>
 <CODE>&#60;=/2</CODE> [1050,xfy], 
-<A NAME="IDX4916"></A>
+<A NAME="IDX4910"></A>
 <CODE>&#60;-/2</CODE> [1050,xfy], 
-<A NAME="IDX4917"></A>
+<A NAME="IDX4911"></A>
 <CODE>&#60;-/1</CODE> [1050,yf].
 
 <LI><STRONG>Other modules used:</STRONG>
@@ -137,7 +137,7 @@ or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4918"></A>
+<A NAME="IDX4912"></A>
 <CODE>make/make_rt</CODE>.
 
 </UL>
@@ -175,7 +175,7 @@ The package allows defining the following types of rules:
 <DT><CODE><EM>TargetSuffix</EM> &#60;= <EM>SourceSuffix</EM> :: <EM>SourceRoot</EM> :- <EM>BodyLiterals</EM>.</CODE>
 <DD>
 A rule of this form declares that in order to produce the file with suffix <EM>TargetSuffix</EM> from a source file with the suffix <EM>SourceSuffix</EM> and root name <EM>SourceRoot</EM> the commands in <EM>BodyLiterals</EM> must be executed. <EM>BodyLiterals</EM> is a standard Ciao Prolog clause body, i.e., a comma-separated conjunction of literals. When writing the script, <EM>SourceRoot</EM> is typically left as a variable, to be instantiated by 
-<A NAME="IDX4919"></A>
+<A NAME="IDX4913"></A>
 <CODE>lpmake</CODE> when the script is run to the root of name of the file to be processed. This allows using the value of <EM>SourceRoot</EM> in <EM>BodyLiterals</EM>. For example, the following rule: 
 
 
@@ -188,7 +188,7 @@ dvi &#60;= tex :: FileRoot :-
 </PRE>
 
 states that we can generate a file <EM>File</EM><CODE>.dvi</CODE> if we have a file named <EM>File</EM><CODE>.tex</CODE> and that the command to do so is <CODE>latex </CODE><EM>File</EM><CODE>.tex</CODE>. Thus, if this rule appears in file 
-<A NAME="IDX4920"></A>
+<A NAME="IDX4914"></A>
 <CODE>Makefile.pl</CODE> and we issue the command <CODE>lpmake paper.dvi</CODE> the following occurs: 
 
 
@@ -229,9 +229,9 @@ realclean &#60;- clean :-
 </PRE>
 
 The following rule states that in order to meet the target <CODE>view</CODE>, target <CODE>paper.ps</CODE> must be available or generated. For example, <CODE>lpmake view</CODE> can be used to call the 
-<A NAME="IDX4921"></A>
+<A NAME="IDX4915"></A>
 <CODE>ghostview</CODE> visualizer on <CODE>paper.ps</CODE>. Note the use of a globally defined <EM>predicate</EM> <CODE>main</CODE> which is called in two places in the rule, and could be used in other rules in the same file (<CODE>main := paper.</CODE> is equivalent to the fact <CODE>main(paper).</CODE> --see the 
-<A NAME="IDX4922"></A>
+<A NAME="IDX4916"></A>
 <CODE>functions</CODE> library): 
 
 
@@ -250,19 +250,19 @@ view &#60;- ~atom_concat([~main,'.ps']) :-
 
 <P>
 In addition to these rules, the configuration file can define normal predicates in the usual way, or import predicates from other modules, all of which can be called from the bodies of the dependency rules. For example, the 
-<A NAME="IDX4923"></A>
+<A NAME="IDX4917"></A>
 <CODE>system_extra</CODE> library (an extension of the 
-<A NAME="IDX4924"></A>
+<A NAME="IDX4918"></A>
 <CODE>system</CODE> library) defines many system predicates in a form which makes them very useful inside 
-<A NAME="IDX4925"></A>
+<A NAME="IDX4919"></A>
 <CODE>Makefile</CODE>s, specially if the 
-<A NAME="IDX4926"></A>
+<A NAME="IDX4920"></A>
 <CODE>functions</CODE> package is used (see the examples below). 
 
 
 <P>
 If 
-<A NAME="IDX4927"></A>
+<A NAME="IDX4921"></A>
 <CODE>lpmake</CODE> is called without an explicit target as argument, then the first target rule in the Makefile is used. This is useful in that the first rule can be seen as the default rule. 
 
 
@@ -272,7 +272,7 @@ If
 
 <P>
 Using the 
-<A NAME="IDX4928"></A>
+<A NAME="IDX4922"></A>
 <CODE>vpath/1</CODE> predicate it is possible in configuration files to define several paths in which files related to the rules can be located. In this way, not all files need to be in the same directory as the configuration file. For example: 
 
 
@@ -339,7 +339,7 @@ dependency_comment(SSuffix,TSuffix,FileBase) :-
 
 <P>
 The following is a simple example of a Makefile showing some basic functionality (this is <CODE>MakefileExample.pl</CODE> in the <CODE>example_simple</CODE> directory in the 
-<A NAME="IDX4929"></A>
+<A NAME="IDX4923"></A>
 <CODE>make</CODE> library.): 
 
 
@@ -435,7 +435,7 @@ dependency_comment(SSuffix,TSuffix,FileBase) :-
 
 <P>
 The following are a few commands that can be used on the previous file (see file <CODE>CommandsToTry</CODE> in the <CODE>example_simple</CODE> directory in the 
-<A NAME="IDX4930"></A>
+<A NAME="IDX4924"></A>
 <CODE>make</CODE> library): 
 
 
@@ -458,7 +458,7 @@ lpmake -h -m MakefileExample.pl
 
 <P>
 See also the LaTeX example in the <CODE>example_latex</CODE> directory in the 
-<A NAME="IDX4931"></A>
+<A NAME="IDX4925"></A>
 <CODE>make</CODE> library. 
 
 

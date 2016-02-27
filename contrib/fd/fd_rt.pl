@@ -109,9 +109,11 @@ number_list([[A|B]|Rs]) :-
 
 '$in_dom'(X, Y) :-
 	attach_to_dom_of(X, Y),
-	get_attribute(X, '$fd'(X, XBounds, _)), !,
-	check_if_solution(XBounds, X, _).
-'$in_dom'(_,_).
+	(var(X) ->	 
+	 get_attribute(X, '$fd'(X, XBounds, _)), !,
+	 check_if_solution(XBounds, X, _)
+	;
+	 true).
 
 attach_to_dom_of(X, Y) :-
 	number(Y), !,

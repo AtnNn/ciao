@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 29 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The Ciao lpmake scripting facility</TITLE>
@@ -10,14 +10,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>,
 <P><HR><P>
 
 
-<H1><A NAME="SEC738" HREF="ciao_toc.html#TOC738">The Ciao lpmake scripting facility</A></H1>
+<H1><A NAME="SEC737" HREF="ciao_toc.html#TOC737">The Ciao lpmake scripting facility</A></H1>
 
 <P>
 <STRONG>Author(s):</STRONG> Manuel Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#342 (2004/4/24, 20:30:39 CEST)
+<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
 
 
 <P>
@@ -29,121 +29,121 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>,
 
 
 <P>
+<A NAME="IDX8157"></A>
+<A NAME="IDX8158"></A>
 <A NAME="IDX8159"></A>
 <A NAME="IDX8160"></A>
-<A NAME="IDX8161"></A>
-<A NAME="IDX8162"></A>
 
 
 <P>
 <STRONG>Note:</STRONG> 
-<A NAME="IDX8163"></A>
+<A NAME="IDX8161"></A>
 <CODE>lpmake</CODE> and the 
-<A NAME="IDX8164"></A>
+<A NAME="IDX8162"></A>
 <CODE>make</CODE> library are still under development, and they may change in future releases. 
 
 
 <P>
-<A NAME="IDX8165"></A>
+<A NAME="IDX8163"></A>
 <CODE>lpmake</CODE> is a Ciao application which uses the Ciao 
-<A NAME="IDX8166"></A>
+<A NAME="IDX8164"></A>
 <CODE>make</CODE> library to implement a dependency-driven scripts in a similar way to the Un*x 
-<A NAME="IDX8167"></A>
+<A NAME="IDX8165"></A>
 <CODE>make</CODE> facility. 
 
 
 <P>
 The original purpose of the Un*x 
-<A NAME="IDX8168"></A>
+<A NAME="IDX8166"></A>
 <CODE>make</CODE> utility is to determine automatically which pieces of a large program needed to be recompiled, and issue the commands to recompile them. In practice, 
-<A NAME="IDX8169"></A>
+<A NAME="IDX8167"></A>
 <CODE>make</CODE> is often used for many other purposes: it can be used to describe any task where some files must be updated automatically from others whenever these change. 
-<A NAME="IDX8170"></A>
+<A NAME="IDX8168"></A>
 <CODE>lpmake</CODE> can be used for the same types of applications as 
-<A NAME="IDX8171"></A>
+<A NAME="IDX8169"></A>
 <CODE>make</CODE>, and also for some new ones, and, while being simpler, it offers a number of advantages over 
-<A NAME="IDX8172"></A>
+<A NAME="IDX8170"></A>
 <CODE>make</CODE>. The first one is <EM>portability</EM>. When compiled to a bytecode executable 
-<A NAME="IDX8173"></A>
+<A NAME="IDX8171"></A>
 <CODE>lpmake</CODE> runs on any platform where a Ciao engine is available. Also, the fact that typically many of the operations are programmed in Prolog within the makefile, not needing external applications, improves portability further. The second advantage of 
-<A NAME="IDX8174"></A>
+<A NAME="IDX8172"></A>
 <CODE>lpmake</CODE> is <EM>improved programming capabilities</EM>. While 
-<A NAME="IDX8175"></A>
+<A NAME="IDX8173"></A>
 <CODE>lpmake</CODE> is simpler than 
-<A NAME="IDX8176"></A>
+<A NAME="IDX8174"></A>
 <CODE>make</CODE>, 
-<A NAME="IDX8177"></A>
+<A NAME="IDX8175"></A>
 <CODE>lpmake</CODE> allows using the Ciao Prolog language within the scripts. This allows establising more complex dependencies and programming powerful operations within the make file, and without resorting to external packages (e.g., operating system commands), which also helps portability. A final advantage of 
-<A NAME="IDX8178"></A>
+<A NAME="IDX8176"></A>
 <CODE>lpmake</CODE> is that it supports a form of <EM>autodocumentation</EM>: 
-<A NAME="IDX8179"></A>
-<A NAME="IDX8180"></A>
+<A NAME="IDX8177"></A>
+<A NAME="IDX8178"></A>
 comments associated to targets can be included in the configuration files. Calling 
-<A NAME="IDX8181"></A>
+<A NAME="IDX8179"></A>
 <CODE>lpmake</CODE> in a directory which has such a configuration file explains what commands the configuration file support and what these commands will do. 
 
 
 
 <UL>
-<LI><A HREF="ciao_184.html#SEC739">General operation</A>
-<LI><A HREF="ciao_184.html#SEC740">Format of the Configuration File</A>
-<LI><A HREF="ciao_184.html#SEC741">lpmake usage</A>
-<LI><A HREF="ciao_184.html#SEC742">Acknowledgments (lpmake)</A>
+<LI><A HREF="ciao_184.html#SEC738">General operation</A>
+<LI><A HREF="ciao_184.html#SEC739">Format of the Configuration File</A>
+<LI><A HREF="ciao_184.html#SEC740">lpmake usage</A>
+<LI><A HREF="ciao_184.html#SEC741">Acknowledgments (lpmake)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC739" HREF="ciao_toc.html#TOC739">General operation</A></H2>
+<H2><A NAME="SEC738" HREF="ciao_toc.html#TOC738">General operation</A></H2>
 
 <P>
 To prepare to use 
-<A NAME="IDX8182"></A>
+<A NAME="IDX8180"></A>
 <CODE>lpmake</CODE>, and in a similar way to 
-<A NAME="IDX8183"></A>
+<A NAME="IDX8181"></A>
 <CODE>make</CODE>, you must write a 
-<A NAME="IDX8184"></A>
-<A NAME="IDX8185"></A>
+<A NAME="IDX8182"></A>
+<A NAME="IDX8183"></A>
 <EM>configuration file</EM>: a module (typically called 
-<A NAME="IDX8186"></A>
+<A NAME="IDX8184"></A>
 <CODE>Makefile.pl</CODE>) that describes the relationships among files in your program or application, and states the commands for updating each file. In a program, typically the executable file is updated from object files, which are in turn made by compiling source files. Another example is running 
-<A NAME="IDX8187"></A>
+<A NAME="IDX8185"></A>
 <CODE>latex</CODE> and 
-<A NAME="IDX8188"></A>
+<A NAME="IDX8186"></A>
 <CODE>dvips</CODE> on a set of source <CODE>.tex</CODE> files to generate a document in <CODE>dvi</CODE> and <CODE>postscript</CODE> formats. Once a suitable makefile exists, each time you change some source files, simply typing <CODE>lpmake</CODE> suffices to perform all necessary operations (recompilations, processing text files, etc.). The 
-<A NAME="IDX8189"></A>
+<A NAME="IDX8187"></A>
 <CODE>lpmake</CODE> program uses the dependency rules in the makefile and the last modification times of the files to decide which of the files need to be updated. For each of those files, it issues the commands recorded in the makefile. For example, in the 
-<A NAME="IDX8190"></A>
+<A NAME="IDX8188"></A>
 <CODE>latex</CODE>/
-<A NAME="IDX8191"></A>
+<A NAME="IDX8189"></A>
 <CODE>dvips</CODE> case one rule states that the <CODE>.dvi</CODE> file whould be updated from the <CODE>.tex</CODE> files whenever one of them changes and another rule states that the <CODE>.ps</CODE> file needs to be updated from a <CODE>.dvi</CODE> file every time it changes. The rules also describe the commands to be issued to update the files. 
 
 
 <P>
 So, the general process is as follows: 
-<A NAME="IDX8192"></A>
+<A NAME="IDX8190"></A>
 <CODE>lpmake</CODE> executes commands in the configuration file to update one or more target <EM>names</EM>, where <EM>name</EM> is often a program, but can also be a file to be generated or even a "virtual" target. 
-<A NAME="IDX8193"></A>
+<A NAME="IDX8191"></A>
 <CODE>lpmake</CODE> updates a target if it depends on prerequisite files that have been modified since the target was last modified, or if the target does not exist. You can provide command line arguments to 
-<A NAME="IDX8194"></A>
+<A NAME="IDX8192"></A>
 <CODE>lpmake</CODE> to control which files should be regenerated, or how. 
 
 
 
 
-<H2><A NAME="SEC740" HREF="ciao_toc.html#TOC740">Format of the Configuration File</A></H2>
+<H2><A NAME="SEC739" HREF="ciao_toc.html#TOC739">Format of the Configuration File</A></H2>
 
 <P>
-<A NAME="IDX8195"></A>
+<A NAME="IDX8193"></A>
 <CODE>lpmake</CODE> uses as default configuration file the file 
-<A NAME="IDX8196"></A>
+<A NAME="IDX8194"></A>
 <CODE>Makefile.pl</CODE>, if it is present in the current directory. This can be overridden and another file used by means of the <CODE>-m</CODE> option. The configuration file must a <EM>module</EM> that uses the 
-<A NAME="IDX8197"></A>
+<A NAME="IDX8195"></A>
 <CODE>make</CODE> package. This package provides syntax for defining the dependency rules and functionality for correctly interpreting these rules. The configuration files can contain such rules and also arbitrary Ciao Prolog predicates. The syntax of the rules is described in section <A HREF="ciao_91.html#SEC382">The Ciao Make Package</A>, together with some examples. 
 
 
 
 
-<H2><A NAME="SEC741" HREF="ciao_toc.html#TOC741">lpmake usage</A></H2>
+<H2><A NAME="SEC740" HREF="ciao_toc.html#TOC740">lpmake usage</A></H2>
 
 
 <PRE>
@@ -181,11 +181,11 @@ lpmake -help  [ -m &#60;.../Configfile.pl&#62; ]
 
 
 
-<H2><A NAME="SEC742" HREF="ciao_toc.html#TOC742">Acknowledgments (<CODE>lpmake</CODE>)</A></H2>
+<H2><A NAME="SEC741" HREF="ciao_toc.html#TOC741">Acknowledgments (<CODE>lpmake</CODE>)</A></H2>
 
 <P>
 Some parts of the documentation are taken from the documentation of GNU's 
-<A NAME="IDX8198"></A>
+<A NAME="IDX8196"></A>
 <CODE>gmake</CODE>.
 
 

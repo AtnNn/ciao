@@ -9,7 +9,7 @@ STDLIBDIR = $(REALLIBDIR)/contrib
 ALLFILES = *
 
 all:  
-	if [ -d $(SRC)/contrib/chat80 && \
+	if [ -d $(SRC)/contrib/chat80 -a \
 	     ! -f $(SRC)/contrib/chat80/NODISTRIBUTE ] ; then \
 	   cd $(SRC)/contrib/chat80 && $(SETLOCALCIAO) $(SRC)/etc/lpmake ; \
 	fi

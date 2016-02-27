@@ -2,7 +2,7 @@
 ;; -------------------------------
 ;; (can normally be used with other Prolog modes and the default prolog.el)
 ;; 
-(setq load-path (cons "/home/clip/lib/ciao" load-path))
+(setq load-path (cons "/home/clip/lib/ciao/ciao-1.9" load-path))
 (autoload 'run-ciao-toplevel "ciao"
           "Start a Ciao/Prolog top-level sub-process." t)
 (autoload 'ciao-startup "ciao"

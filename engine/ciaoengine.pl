@@ -23,6 +23,14 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*9+350,2004/06/23,11:57*12+'CEST'), "Added option
+   in dynlink (dynlink.c) to export all global symbols of loaded
+   shared objects when using LINUX or MACOSX (Edison & Jose Morales)").
+
+:- comment(version(1*9+349,2004/06/10,17:59*22+'CEST'), "Minor
+corrections to compat.h and to two Makefiles to make ciao to compile
+in Solaris/i86 machines.  (Manuel Carro)").
+
 :- comment(version(1*9+343,2004/04/29,11:55*29+'CEST'),
 "Wait_for_Cond_Begin surrounded by brackets in several places (Manuel Carro)").
 

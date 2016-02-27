@@ -97,7 +97,7 @@ ciaoemulator: $(OBJ)
 	-chmod $(EXECMODE) $(ENGINENAME)
 	if test ! -f $(SRCINCLUDEDIR)/configure.h ; then \
 	  for f in $(DATADEFS) $(SUPPORT) $(CCOMPILATIONSUPPORT); do \
-	    ln -s -f $(OBJDIR)/$$f $(SRCINCLUDEDIR); \
+	    ln -f -s $(OBJDIR)/$$f $(SRCINCLUDEDIR); \
 	  done ; \
         fi
 

@@ -1,23 +1,24 @@
 :- module(persdbcache,
-	[ add_term_to_file/2, add_term_to_file_db/2,
+	[ add_term_to_file/3, add_term_to_file_db/3,
 	  delete_bak_if_no_ops/2, delete_file1/1,
-	  get_pred_files/6, keyword/1, persistent/5 ],
+	  get_pred_files/7, keyword/1, persistent/5 ],
 	[ assertions ]).
 
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(lists)).
 :- use_module(library(system)).
 :- use_module(library(file_locks)).
+:- use_module(library('persdb/persdbrt'),[create/2]).
 
 :- data persistent/5. % F/A (modulo expanded) is persistent and uses files
                       % FILE_OPS, FILE and FILE_BAK
 
-add_term_to_file_db(Term, Pred) :-
+add_term_to_file_db(Term, Pred, FilePerms) :-
         functor(Pred, F, N),
         current_fact(persistent(F, N, File_ops, _, File_bak)), !,
         delete_bak_if_no_ops(File_ops, File_bak),
-        add_term_to_file(Term, File_ops).
-add_term_to_file_db(_Term, _Pred).
+        add_term_to_file(Term, File_ops, FilePerms).
+add_term_to_file_db(_Term, _Pred, _FilePerms).
 
 % This ensure that we not create an operations file in a transient state
 delete_bak_if_no_ops(File_ops, File_bak) :-
@@ -31,8 +32,15 @@ delete_file1(File):-
 	;
 	 true).
 
-% add_term_to_file(Term,File) adds the term Term to a file File
-add_term_to_file(Term,File) :-
+% add_term_to_file(Term,File,FilePerms) adds the term Term to a file
+% File (if File is created, FilePerms are applied)
+add_term_to_file(Term, File, FilePerms) :-
+%jcf-begin
+	( file_exists(File) ->
+	  true
+	; create(File, FilePerms) % just to put right permissions in File.
+	),
+%jcf-end
         current_output(OldOutput),
         lock_file(File, FD, _),
         open(File,append,Stream),
@@ -40,15 +48,15 @@ add_term_to_file(Term,File) :-
         display_term(Term),
         close(Stream),
         unlock_file(FD, _),
-        set_output(OldOutput).        
+        set_output(OldOutput).
 
-get_pred_files(Dir, Name, Arity, File, File_ops, File_bak):-
+get_pred_files(Dir,DirPerms, Name, Arity, File, File_ops, File_bak):-
         add_final_slash(Dir, DIR),
         atom_codes(Name, NameString),
         append(Module,":"||PredName,NameString),
         atom_codes(Mod, Module),
         atom_concat(DIR, Mod, DirMod),
-        create_dir(DirMod),
+        create_dir(DirMod,DirPerms),
         number_codes(Arity, AS),
         append("/"||PredName, "_"||AS, FilePrefS),
         atom_codes(FilePref, FilePrefS),
@@ -57,10 +65,32 @@ get_pred_files(Dir, Name, Arity, File, File_ops, File_bak):-
         atom_concat(PathName, '_ops.pl', File_ops),
         atom_concat(PathName, '_bak.pl', File_bak).
 
-create_dir(Dir) :-
-        file_exists(Dir), !.  % Assuming it's a directory
-create_dir(Dir) :-
-        make_dirpath(Dir, 0xfff).
+create_dir(Dir,DirPerms) :-
+        file_exists(Dir), !,  % Assuming it's a directory
+	( 
+	    DirPerms = default -> 
+	    true
+	; 
+%% commented out because chmod/2 prints an awful message when
+%% it fails (e.g., when the user running this is not the owner of
+%% the directory). 
+%	    umask(OldUMask,0),
+%	    ( chmod(Dir,DirPerms) -> true ; true ), % always succeeds
+%	    umask(_,OldUMask),
+	    true
+	).
+create_dir(Dir,DirPerms) :-
+%        make_dirpath(Dir, 0xfff).
+	(
+	    DirPerms = default -> 
+	    make_dirpath(Dir, 0o777)
+	;
+	    make_dirpath(Dir, 0o777),
+	    umask(OldUMask,0),
+	    chmod(Dir,DirPerms),
+%	    make_dirpath(Dir, DirPerms),
+	    umask(_,OldUMask)
+	). 
 
 add_final_slash(Dir, DIR) :-
         atom_concat(_,'/',Dir) -> DIR = Dir ; atom_concat(Dir, '/', DIR).

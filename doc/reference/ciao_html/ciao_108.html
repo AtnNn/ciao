@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 29 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Active modules (high-level distributed execution)</TITLE>
@@ -12,7 +12,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_107.html">previous</A>,
 
 <H1><A NAME="SEC446" HREF="ciao_toc.html#TOC446">Active modules (high-level distributed execution)</A></H1>
 <P>
-<A NAME="IDX5424"></A>
+<A NAME="IDX5418"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_107.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#342 (2004/4/24, 20:30:39 CEST)
+<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
 
 
 <P>
@@ -33,23 +33,23 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_107.html">previous</A>,
 
 <P>
 Active modules [CH95] provide a high-level model of 
-<A NAME="IDX5425"></A>
+<A NAME="IDX5419"></A>
 inter-process communication and 
-<A NAME="IDX5426"></A>
+<A NAME="IDX5420"></A>
 distributed execution (note that this is also possible using Ciao's communication and concurrency primitives, such as sockets, concurrent predicates, etc., but at a lower level of abstraction). An 
-<A NAME="IDX5427"></A>
-<A NAME="IDX5428"></A>
+<A NAME="IDX5421"></A>
+<A NAME="IDX5422"></A>
 <EM>active module</EM> (or an 
-<A NAME="IDX5429"></A>
-<A NAME="IDX5430"></A>
+<A NAME="IDX5423"></A>
+<A NAME="IDX5424"></A>
 <EM>active object</EM>) is an ordinary module to which computational resources are attached, and which resides at a given location on the network. Compiling an active module produces an executable which, when running, acts as a <EM>server</EM> for a number of predicates: the predicates exported by the module. Predicates exported by an active module can be accessed by a program on the network by simply "using" the module, which then imports such "remote predicates." The process of "using" an active module does not involve transferring any code, but rather setting up things so that calls in the module using the active module are executed as remote procedure calls to the active module. This occurs in the same way independently of whether the active module and the using module are in the same machine or in different machines across the network. 
 
 
 <P>
 Except for having to compile it in a special way (see below), an active module is identical from the programmer point of view to an ordinary module. A program using an active module imports it and uses it in the same way as any other module, except that it uses "
-<A NAME="IDX5431"></A>
+<A NAME="IDX5425"></A>
 <CODE>use_active_module</CODE>" rather than "
-<A NAME="IDX5432"></A>
+<A NAME="IDX5426"></A>
 <CODE>use_module</CODE>" (see below). Also, an active module has an address (network address) which must be known in order to use it. In order to use an active module it is necessary to know its address: different "protocols" are provided for this purpose (see below). 
 
 
@@ -75,7 +75,7 @@ The second one is similar but saves the info in the directory in which the serve
 
 <P>
 The third one is based on a 
-<A NAME="IDX5433"></A>
+<A NAME="IDX5427"></A>
 name server for active modules. When an active module is started, it communicates its address to the name server. When the client of the active module wants to communicate with it, it asks the name server the active module address. This is all done transparently to the user. The name server must be running when the active module is started (and, of course, when the application using it is executed). The location of the name server for an application must be specified in an application file named <CODE>webbased_common.pl</CODE> (see below). 
 
 
@@ -85,7 +85,7 @@ These rendezvous methods are encoded in two modules: a first one, called <CODE>.
 
 <P>
 Active modules are compiled using the <CODE>-a</CODE> option of the Ciao compiler (this can also be done from the interactive top-level shell using 
-<A NAME="IDX5434"></A>
+<A NAME="IDX5428"></A>
 <CODE>make_actmod/2</CODE>). For example, issuing the following command: 
 
 
@@ -113,7 +113,7 @@ Now, if the server is running (e.g., <CODE>simple_server &#38;</CODE> in Un*x or
 
 <P>
 A simpler even client 
-<A NAME="IDX5435"></A>
+<A NAME="IDX5429"></A>
 <CODE>simple_client.pl</CODE> can be loaded into the top level and its predicates called as usual (and they will connect with the server if it is running). 
 
 
@@ -137,7 +137,7 @@ The current distribution provides a file <CODE>webbased_common.pl</CODE> that ca
 
 <P>
 The current distribution also provides a module that can be used as name server by any application. It is in file 
-<A NAME="IDX5436"></A>
+<A NAME="IDX5430"></A>
 <CODE>examples/webbased_server/webbased_server.pl</CODE>. 
 
 
@@ -215,7 +215,7 @@ or
 
 <LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX5437"></A>
+<A NAME="IDX5431"></A>
 <CODE>use_active_module/2</CODE>.
 
 </UL>
@@ -226,11 +226,11 @@ or
 
 <H2><A NAME="SEC450" HREF="ciao_toc.html#TOC450">Documentation on new declarations (<CODE>actmods</CODE>)</A></H2>
 <P>
-<A NAME="IDX5438"></A>
-<A NAME="IDX5439"></A>
+<A NAME="IDX5432"></A>
+<A NAME="IDX5433"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>use_active_module/2:</B>
-<DD><A NAME="IDX5440"></A>
+<DD><A NAME="IDX5434"></A>
 
 
 <P>

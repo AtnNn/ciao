@@ -87,7 +87,7 @@ engine: doengine$(ALT)
 
 dowindowsbat:
 	$(SETLOCALCIAO) $(CIAOC) Win32/setup_bat
-	Win32/setup_bat \"$(OBJDIR)/ciaoengine.exe\"
+	$(SETLOCALCIAO) Win32/setup_bat \"$(OBJDIR)/ciaoengine.exe\"
 
 doengine: bin/$(CIAOARCH)$(CIAODEBUG) include/$(CIAOARCH)$(CIAODEBUG) $(DEFAULTYPE)eng exe_header # dowindowsbat
 

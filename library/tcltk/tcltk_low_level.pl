@@ -374,8 +374,7 @@ receive_term(Term,VarNames,'$wish$'(_,Stream,_)) :-
 exceptions(Term) :-
         catch(Term, E, tcl_error(E)).
 
-tcl_error(A) :-
-	display(tcl_error(A)), nl.
+tcl_error(_).
 
 tcl_result(_).
 %	display(tcl_result(A)), nl.
@@ -479,7 +478,8 @@ core("      puts  $term_socket tcltk_low_level:tcl_result(execute($agoal)).").
 core("      flush $term_socket").
 core("  } else {").
 core("      prolog_event execute($agoal)"). 
-core("      prolog_list_events ").
+core("      prolog_list_events "). 
+core("      prolog_delete_event ").
 core("  }").
 core("  gets  $term_socket term ").
 core("  set ret [unify_term execute($agoal)) $term] ").
@@ -518,6 +518,7 @@ core(" set nterms [llength $terms] ").
 core(" set x 0 ").
 core(" while {$x<$nterms} { ").
 core("    puts $event_socket [lindex $terms $x]. ").
+%core("    set terms [list]").
 core("    flush $event_socket ").
 core("    incr x ").
 core(" } ").
@@ -701,6 +702,13 @@ core("} ").
 :- comment(version_maintenance,dir('../../version')).
 
  
+:- comment(version(1*9+348,2004/06/08,12:06*40+'CEST'), " Calls to
+   'prolog' spawned by events generated from the TclTk side were
+   processed but not consumed, hence associated execution of prolog
+   goals was repeated as new events arrived. Now fixed, by calling
+   prolog_delete_event. This did not happen in a tcl_eval/3 frame.
+   (Jose Manuel Gomez Perez)").
+
 :- comment(version(1*9+315,2004/02/25,18:28*19+'CET'), "Documentation
    restructured (Jose Manuel Gomez Perez)").
 

@@ -4,7 +4,8 @@
         output_html/1, html2terms/2, xml2terms/2, html_template/3,
         html_report_error/1, get_form_input/1, get_form_value/3,
         form_empty_value/1, form_default/3, % text_lines/2, 
-        set_cookie/2, get_cookies/1, url_query/2, url_query_values/2,
+        set_cookie/2, get_cookies/1,
+        url_query/2, url_query_amp/2, url_query_values/2,
         my_url/1, url_info/2, url_info_relative/3,
         form_request_method/1, icon_address/2, html_protect/1,
         http_lines/3
@@ -29,9 +30,9 @@
    all the predicates which do not imply the use of the HTTP
    protocol.").
 
-:- comment(appendix, "The code uses input from from L. Naish's forms and
-        F. Bueno's previous Chat interface.  Other people who have
-        contributed is (please inform us if we leave out anybody):
+:- comment(appendix, "The code uses input from from L. Naish's forms
+        and F. Bueno's previous Chat interface.  Other people who have
+        contributed are (please inform us if we leave out anybody):
         Markus Fromherz, Samir Genaim.").
 
 :- comment(define_flag/3,"Defines a flag as follows:
@@ -1159,6 +1160,16 @@ legal_cookie_char(C) -->
 url_query(Args, URLArgs) :-
         params_to_string(Args, 0'?, URLArgs).
 
+:- comment(url_query_amp(Dict,URLArgs), "Translates a dictionary
+   @var{Dict} of parameter values into a string @var{URLArgs} for
+   appending to a URL pointing to a form handler to be used in the href
+   of a link (uses &amp; instead of &).").
+
+:- true pred url_query_amp(+value_dict,-string).
+
+url_query_amp(Args, [0'?|URLArgs]) :-
+        params_to_string_amp(Args, URLArgs).
+
 :- comment(url_query_values(Dict,URLArgs), "@var{Dict} is a dictionary
    of parameter values and @var{URLArgs} is the URL-encoded string of
    those assignments, which may appear after an URL pointing to a CGI
@@ -1166,8 +1177,8 @@ url_query(Args, URLArgs) :-
    @tt{raw_form_values} flag.  The use of this predicate is
    reversible.").
 
-:- true pred url_query(+value_dict,-string).
-:- true pred url_query(-value_dict,+string).
+:- true pred url_query_values(+value_dict,-string).
+:- true pred url_query_values(-value_dict,+string).
 
 url_query_values(URLencoded, Dict) :-
         var(URLencoded), !,
@@ -1178,11 +1189,24 @@ url_query_values(URLencoded, Dict) :-
 
 params_to_string([], _, "").
 params_to_string([N=V|NVs], C, [C|String]) :-
+        param_to_string(N, V, String, Rest),
+        params_to_string(NVs, 0'&, Rest).
+
+params_to_string_amp([], "").
+params_to_string_amp([N=V|NVs], String) :-
+        param_to_string(N, V, String, Rest),
+        params_to_string_amp_(NVs, Rest).
+
+params_to_string_amp_([], "").
+params_to_string_amp_([N=V|NVs], [0'&,0'a,0'm,0'p,0';|String]) :-
+        param_to_string(N, V, String, Rest),
+        params_to_string_amp_(NVs, Rest).
+
+param_to_string(N, V, String, Rest) :-
         name(N,NS),
         name(V,VS),
         encoded_value(NS,String,[0'=|EVS]),
-        encoded_value(VS,EVS,Rest),
-        params_to_string(NVs, 0'&, Rest).
+        encoded_value(VS,EVS,Rest).
 
 encoded_value([]) --> "".
 encoded_value([32|Cs]) --> !, % " " = [32]
@@ -1365,6 +1389,10 @@ mappend([S|Ss], R) :-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+351,2004/06/23,18:37*20+'CEST'), ""Added
+   @pred{url_query_amp/2} similar to @pred{url_query/2} but using
+   &amp; instead of &. (Daniel Cabeza Gras)").
 
 :- comment(version(1*9+335,2004/04/16,16:18*08+'CEST'), "Changed the
    type of file data in form dictionaries: now it is of the form
