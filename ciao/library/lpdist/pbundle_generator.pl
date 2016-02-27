@@ -35,10 +35,13 @@
 pbundle_codeitem_kind := tgz|rpm_x86|deb_x86|win|dmg.
 % TODO: Simplify, extract from sub-bundles, etc.
 % TODO: Missing some internal manuals, add them.
-pbundle_docitem_kind := 
-    docpart("Ciao Manual", ciao, [html, pdf])|
-    docpart("CiaoPP Manual", ciaopp, [html, pdf])|
-    docpart("LPdoc Manual", lpdoc, [html, pdf]).
+pbundle_docitem_kind := manual_html|manual_pdf.
+% Sub-bundles whose documentation is distributed explicitly as a docitem
+% TODO: refine
+% TODO: Not here
+bundle_doc_subbundles(ciao, ciaosys, ciao, "Ciao Manual").
+bundle_doc_subbundles(ciao, ciaopp, ciaopp, "CiaoPP Manual").
+bundle_doc_subbundles(ciao, lpdoc, lpdoc, "LPdoc Manual").
 
 :- use_module(library(file_utils), [output_to_file/2]).
 
@@ -46,12 +49,13 @@ pbundle_docitem_kind :=
 % Generate the metadata file which contains all the produced output of
 % the bundle build process.
 pbundle_generate_meta(Bundle, DescFile) :-
-	output_to_file(pbundle_generate_meta_(Bundle, pbundle_codeitem_kind, pbundle_docitem_kind), DescFile).
+	pbundle_generate_meta_(Bundle, Desc),
+	clauses_to_file(Desc, DescFile).
 
-:- meta_predicate pbundle_generate_meta_(?, pred(1), pred(1)).
-pbundle_generate_meta_(Bundle, PFormat, DocFormat) :-
-	findall(F, enum_pbundle_code_items(Bundle, PFormat, F), Fs),
-	findall(D, enum_pbundle_doc_items(Bundle, DocFormat, D), Ds),
+:- export(pbundle_generate_meta_/2).
+pbundle_generate_meta_(Bundle, Desc) :-
+	findall(F, enum_pbundle_code_items(Bundle, F), Fs),
+	findall(D, enum_pbundle_doc_items(Bundle, D), Ds),
 	Desc = [% Bundle information (from manifest or source)
                 name = ~bundle_name(Bundle),
                 packname = ~bundle_packname(Bundle),
@@ -64,25 +68,77 @@ pbundle_generate_meta_(Bundle, PFormat, DocFormat) :-
 		commit_desc = ~bundle_commit_info(Bundle, desc),
 		% Items in this packaged bundle (after bundle build)
 		docs = Ds,
-		code = Fs],
-	%
-	push_prolog_flag(write_strings, on),
-	portray_clauses(Desc),
-	pop_prolog_flag(write_strings).
+		code = Fs].
 
-:- meta_predicate enum_pbundle_code_items(?, pred(1), ?).
 % Enumerate the pbundle items for code files
-enum_pbundle_code_items(Bundle, PFormat, Item) :-
-	VersionedPackName = ~bundle_versioned_packname(Bundle),
-	PFormat(X),
-	pbundle_codeitem_kind_info(X, Ext0),
-	atom_concat([VersionedPackName, Ext0], PFile),
-	( pbundle_file_kind_ext(PFileKind, Ext),
-	  atom_concat([_, '.', Ext], PFile) ->
-	    true
-	; fail
+% TODO: See ciaobot_internals.sh:get_produced_pbundle_item_base
+enum_pbundle_code_items(Bundle, Item) :-
+	pbundle_codeitem_kind(CodeKind),
+	pbundle_code_item(Bundle, CodeKind, Item).
+
+% Enumerate the pbundle items for documentation
+enum_pbundle_doc_items(Bundle, Item) :-
+	bundle_doc_subbundles(Bundle, SubBundle, SubBundleSuffix, SubBundleTitle),
+	pbundle_docitem_kind(PDocKind),
+	pbundle_doc_item(Bundle, SubBundle, SubBundleSuffix, SubBundleTitle, PDocKind, Item).
+
+% ---------------------------------------------------------------------------
+
+% Obtain the pbundle_item description for the specified CodeKind
+pbundle_code_item(Bundle, CodeKind, Item) :-
+	pbundle_codeitem_kind_info(CodeKind, Ext0),
+	atom_concat('.', Ext1, Ext0),
+	Packname = ~bundle_packname(Bundle),
+	Desc = ~bundle_commit_info(Bundle, desc),
+	( CodeKind = rpm_x86 ->
+	    RPMDesc = ~fix_commit_desc_for_rpm(Desc),
+	    PFile = ~atom_concat([Packname, '-', RPMDesc, '.', Ext1]),
+	    PFileKind = i386_rpm
+	; CodeKind = deb_x86 ->
+	    RPMDesc = ~fix_commit_desc_for_rpm(Desc), % TODO: Use RPM scheme too?
+	    Packname2 = ~loweratom(Packname),
+	    PFile = ~atom_concat([Packname2, '_', RPMDesc, '_', Ext1]),
+	    PFileKind = i386_deb
+	; PFile = ~atom_concat([Packname, '-', Desc, '.', Ext1]),
+	  ( pbundle_file_kind_ext(PFileKind, Ext),
+	    atom_concat([_, '.', Ext], PFile) ->
+	      true
+	  ; fail
+	  )
 	),
 	Item = pbundle_item(PFileKind, "", PFile).
+
+% TODO: Merge with code from ciaobot_internals.sh
+% Take a commit desc TAG-N-HASH and generate TAG-N.HASH, where N.HASH
+% will be the release number for RPM (no '-' is allowed there).
+fix_commit_desc_for_rpm(Desc) := RPMDesc :-
+	append(Tag, "-"||NHash, Desc), append(N, "-"||Hash, NHash),
+	!,
+	append(N, "."||Hash, NHash2),
+	append(Tag, "-"||NHash2, RPMDesc).
+fix_commit_desc_for_rpm(Desc) := Desc.
+
+% TODO: share implementation
+loweratom(X0, X) :- atom_codes(X0, Cs0), lowercodes(Cs0, Cs), atom_codes(X, Cs).
+
+lowercodes([], []).
+lowercodes([X0|Xs0], [X|Xs]) :- lowercode(X0, X), lowercodes(Xs0, Xs).
+
+lowercode(X0, X) :- X0 >= 0'A, X0 =< 0'Z, !, X is X0 - 0'A + 0'a.
+lowercode(X, X).
+
+% Obtain the pbundle_item description for the specified PDocKind and sub-bundle
+pbundle_doc_item(Bundle, _SubBundle, SubBundleSuffix, SubBundleTitle, PDocKind, Item) :-
+	pbundle_doc_kind_ext(PDocKind, Ext),
+	VersionedPackName = ~bundle_versioned_packname(Bundle),
+	atom_concat([VersionedPackName, '_', SubBundleSuffix, '.', Ext], PDoc),
+	%
+	Item = pbundle_item(PDocKind, SubBundleTitle, PDoc).
+
+% ---------------------------------------------------------------------------
+
+pbundle_doc_kind_ext(manual_pdf, 'pdf').
+pbundle_doc_kind_ext(manual_html, 'html').
 
 :- export(pbundle_file_kind_ext/2).
 pbundle_file_kind_ext(tar_gz, 'tar.gz').
@@ -90,18 +146,6 @@ pbundle_file_kind_ext(i386_rpm, 'i386.rpm').
 pbundle_file_kind_ext(i386_deb, 'i386.deb').
 pbundle_file_kind_ext(windows, 'exe').
 pbundle_file_kind_ext(macosx, 'dmg').
-
-:- meta_predicate enum_pbundle_doc_items(?, pred(1), ?).
-% Enumerate the pbundle items for documentation
-enum_pbundle_doc_items(Bundle, DocFormat, Item) :-
-	VersionedPackName = ~bundle_versioned_packname(Bundle),
-	DocFormat(X),
-	X = docpart(PDocTitle, Name, Exts),
-	member(Ext, Exts),
-	atom_concat([VersionedPackName, '_', Name, '.', Ext], PDoc),
-	atom_concat('manual_', Ext, PDocKind),
-	%
-	Item = pbundle_item(PDocKind, PDocTitle, PDoc).
 
 :- pred pbundle_codeitem_kind_info(Src, Ext) => atm * atm
    # "@var{Ext} is the extention of @var{Src}. @var{Src} is an allowed
@@ -118,6 +162,15 @@ pbundle_codeitem_kind_info(deb_x86, '.i386.deb').
 pbundle_codeitem_kind_info(dmg,     '.dmg').
 
 % ---------------------------------------------------------------------------
+% Write clauses to a file
+
+clauses_to_file(Desc, DescFile) :-
+	output_to_file(clauses_to_file_(Desc), DescFile).
+
+clauses_to_file_(Desc) :-
+	push_prolog_flag(write_strings, on),
+	portray_clauses(Desc),
+	pop_prolog_flag(write_strings).
 
 portray_clauses([]).
 portray_clauses([X|Xs]) :-
