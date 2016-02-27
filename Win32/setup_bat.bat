@@ -1,2 +1,2 @@
 @REM Change the path below to the absolute path of the application
-@"/home/clip/Systems/ciao-1.9/bin/Win32i86/ciaoengine.exe" %* -C -b "C:\home\clip\Systems\ciao-1.9\Win32\setup_bat.bat"
+@"/home/clip/Systems/ciao-1.9/bin/LINUXi86/ciaoengine.exe" %1 %2 %3 %4 %5 %6 %7 %8 %9 -C -b "C:\home\clip\Systems\ciao-1.9\Win32\setup_bat.bat"

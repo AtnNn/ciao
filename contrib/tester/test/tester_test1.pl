@@ -22,7 +22,8 @@ tester_func( FileArg ) :-
 	test_files( Path ),
 	atom_concat( Path , FileArg , File0 ),
 
-	message( note , [ '+++++++++++++++++++++++++++++++++++++++++++++++\n' ] ),
+	message( note ,
+         [ '+++++++++++++++++++++++++++++++++++++++++++++++\n' ] ),
 	(unload( File0 )->true;true),
 	module( File0 ),
 

@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 23 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 24 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Low-level concurrency/multithreading primitives</TITLE>
@@ -10,9 +10,9 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, 
 <P><HR><P>
 
 
-<H1><A NAME="SEC367" HREF="ciao_toc.html#TOC367">Low-level concurrency/multithreading primitives</A></H1>
+<H1><A NAME="SEC368" HREF="ciao_toc.html#TOC368">Low-level concurrency/multithreading primitives</A></H1>
 <P>
-<A NAME="IDX4703"></A>
+<A NAME="IDX4729"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+<STRONG>Version:</STRONG> 1.9#342 (2004/4/24, 20:30:39 CEST)
 
 
 <P>
@@ -29,14 +29,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, 
 
 <P>
 This module provides basic mechanisms for using concurrency and implementing multi-goal applications.
-<A NAME="IDX4704"></A>
-<A NAME="IDX4705"></A>
+<A NAME="IDX4730"></A>
+<A NAME="IDX4731"></A>
 It provides a means for arbitrary goals to be specified to be run in a separate stack set; in that case, they are assigned a goal identifier with which further accesses (e.g., asking for more solutions) to the goal can be made. Additionally, in some architectures, these goals can be assigned an O.S. thread, separate from the one which made the initial call, thus providing concurrency and, in multiprocessors, parallelism capabilities. 
 
 
 <P>
 As for now, the memory space of the threads (c.f., stack sets) is separate in the sense that goals are copied to the new stack set, and bindings of variables are not seen among stack sets which allows forward and backward execution to proceed independently in each stack set, at the cost of the initial goal copy. However, the program space (including, specially, the 
-<A NAME="IDX4706"></A>
+<A NAME="IDX4732"></A>
 concurrent predicates) are shared and seen by all the goals and threads, and should be used as the primary means of communication and synchronization. Higer level libraries can be built using these basic blocks. 
 
 
@@ -46,14 +46,14 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 
 
 <UL>
-<LI><A HREF="ciao_87.html#SEC368">Usage and interface (concurrency)</A>
-<LI><A HREF="ciao_87.html#SEC369">Documentation on exports (concurrency)</A>
-<LI><A HREF="ciao_87.html#SEC370">Known bugs and planned improvements (concurrency)</A>
+<LI><A HREF="ciao_87.html#SEC369">Usage and interface (concurrency)</A>
+<LI><A HREF="ciao_87.html#SEC370">Documentation on exports (concurrency)</A>
+<LI><A HREF="ciao_87.html#SEC371">Known bugs and planned improvements (concurrency)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC368" HREF="ciao_toc.html#TOC368">Usage and interface (<CODE>concurrency</CODE>)</A></H2>
+<H2><A NAME="SEC369" HREF="ciao_toc.html#TOC369">Usage and interface (<CODE>concurrency</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -70,37 +70,37 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4707"></A>
+<A NAME="IDX4733"></A>
 <CODE>eng_call/4</CODE>, 
-<A NAME="IDX4708"></A>
+<A NAME="IDX4734"></A>
 <CODE>eng_call/3</CODE>, 
-<A NAME="IDX4709"></A>
+<A NAME="IDX4735"></A>
 <CODE>eng_backtrack/2</CODE>, 
-<A NAME="IDX4710"></A>
+<A NAME="IDX4736"></A>
 <CODE>eng_cut/1</CODE>, 
-<A NAME="IDX4711"></A>
+<A NAME="IDX4737"></A>
 <CODE>eng_release/1</CODE>, 
-<A NAME="IDX4712"></A>
+<A NAME="IDX4738"></A>
 <CODE>eng_wait/1</CODE>, 
-<A NAME="IDX4713"></A>
+<A NAME="IDX4739"></A>
 <CODE>eng_kill/1</CODE>, 
-<A NAME="IDX4714"></A>
+<A NAME="IDX4740"></A>
 <CODE>eng_killothers/0</CODE>, 
-<A NAME="IDX4715"></A>
+<A NAME="IDX4741"></A>
 <CODE>eng_self/1</CODE>, 
-<A NAME="IDX4716"></A>
+<A NAME="IDX4742"></A>
 <CODE>goal_id/1</CODE>, 
-<A NAME="IDX4717"></A>
+<A NAME="IDX4743"></A>
 <CODE>eng_goal_id/1</CODE>, 
-<A NAME="IDX4718"></A>
+<A NAME="IDX4744"></A>
 <CODE>eng_status/0</CODE>, 
-<A NAME="IDX4719"></A>
+<A NAME="IDX4745"></A>
 <CODE>lock_atom/1</CODE>, 
-<A NAME="IDX4720"></A>
+<A NAME="IDX4746"></A>
 <CODE>unlock_atom/1</CODE>, 
-<A NAME="IDX4721"></A>
+<A NAME="IDX4747"></A>
 <CODE>atom_lock_state/2</CODE>, 
-<A NAME="IDX4722"></A>
+<A NAME="IDX4748"></A>
 <CODE>concurrent/1</CODE>.
 
 </UL>
@@ -112,7 +112,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4723"></A>
+<A NAME="IDX4749"></A>
 <CODE>prolog_sys</CODE>.
 
 </UL>
@@ -123,13 +123,13 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 
 
 
-<H2><A NAME="SEC369" HREF="ciao_toc.html#TOC369">Documentation on exports (<CODE>concurrency</CODE>)</A></H2>
+<H2><A NAME="SEC370" HREF="ciao_toc.html#TOC370">Documentation on exports (<CODE>concurrency</CODE>)</A></H2>
 <P>
-<A NAME="IDX4724"></A>
-<A NAME="IDX4725"></A>
+<A NAME="IDX4750"></A>
+<A NAME="IDX4751"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_call/4:</B>
-<DD><A NAME="IDX4726"></A>
+<DD><A NAME="IDX4752"></A>
 
 
 <P>
@@ -142,7 +142,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> Calls <CODE>Goal</CODE> in a new engine (stack set), possibly using a new thread, and returns a <CODE>GoalId</CODE> to designate this new goal henceforth. <CODE>EngineCreation</CODE> can be either <CODE>wait</CODE> or <CODE>create</CODE>; the distinction is not yet meaningful. <CODE>ThreadCreation</CODE> can be one of <CODE>self</CODE>, <CODE>wait</CODE>, or <CODE>create</CODE>. In the first case the creating thread is used to execute <CODE>Goal</CODE>, and thus it has to wait until its first result or failure. The call will fail if <CODE>Goal</CODE> fails, and succeed otherwise. However, the call will always suceed when a remote thread is started. The space and identifiers reclaimed for the thread must be explicitly deallocated by calling
 
-<A NAME="IDX4727"></A>
+<A NAME="IDX4753"></A>
 <CODE>eng_release/1</CODE>. <CODE>GoalId</CODE>s are unique in each execution of a Ciao Prolog program. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -162,11 +162,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4728"></A>
-<A NAME="IDX4729"></A>
+<A NAME="IDX4754"></A>
+<A NAME="IDX4755"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_call/3:</B>
-<DD><A NAME="IDX4730"></A>
+<DD><A NAME="IDX4756"></A>
 
 
 <P>
@@ -179,7 +179,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> Similar to
 
-<A NAME="IDX4731"></A>
+<A NAME="IDX4757"></A>
 <CODE>eng_call/4</CODE>, but the thread (if created) and stack areas are automatically released upon success or failure of the goal. No <CODE>GoalId</CODE> is provided for further interaction with the goal. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -196,11 +196,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4732"></A>
-<A NAME="IDX4733"></A>
+<A NAME="IDX4758"></A>
+<A NAME="IDX4759"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_backtrack/2:</B>
-<DD><A NAME="IDX4734"></A>
+<DD><A NAME="IDX4760"></A>
 
 
 <P>
@@ -209,9 +209,9 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> Performs backtracking on the goal designed by <CODE>GoalId</CODE>. A new thread can be used to perform backtracking, according to <CODE>ThreadCreation</CODE> (same as in
 
-<A NAME="IDX4735"></A>
+<A NAME="IDX4761"></A>
 <CODE>eng_call/4</CODE>). Fails if the goal is backtracked over by the local thread, and there are no more solutions. Always succeeds if executed by a remote thread. The engine is <STRONG>not</STRONG> automatically released up upon failure: 
-<A NAME="IDX4736"></A>
+<A NAME="IDX4762"></A>
 <CODE>eng_release/1</CODE> must be called to that end. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -225,11 +225,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4737"></A>
-<A NAME="IDX4738"></A>
+<A NAME="IDX4763"></A>
+<A NAME="IDX4764"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_cut/1:</B>
-<DD><A NAME="IDX4739"></A>
+<DD><A NAME="IDX4765"></A>
 
 
 <P>
@@ -238,7 +238,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> Performs a <EM>cut</EM> in the execution of the goal <CODE>GoalId</CODE>. The next call to
 
-<A NAME="IDX4740"></A>
+<A NAME="IDX4766"></A>
 <CODE>eng_backtrack/2</CODE> will therefore backtrack all the way and fail. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -249,11 +249,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4741"></A>
-<A NAME="IDX4742"></A>
+<A NAME="IDX4767"></A>
+<A NAME="IDX4768"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_release/1:</B>
-<DD><A NAME="IDX4743"></A>
+<DD><A NAME="IDX4769"></A>
 
 
 <P>
@@ -262,7 +262,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> Cleans up and releases the engine executing the goal designed by <CODE>GoalId</CODE>. The engine must be idle, i.e., currently not exedcuting any goal.
 
-<A NAME="IDX4744"></A>
+<A NAME="IDX4770"></A>
 <CODE>eng_wait/1</CODE> can be used to ensure this. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -273,11 +273,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4745"></A>
-<A NAME="IDX4746"></A>
+<A NAME="IDX4771"></A>
+<A NAME="IDX4772"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_wait/1:</B>
-<DD><A NAME="IDX4747"></A>
+<DD><A NAME="IDX4773"></A>
 
 
 <P>
@@ -295,11 +295,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4748"></A>
-<A NAME="IDX4749"></A>
+<A NAME="IDX4774"></A>
+<A NAME="IDX4775"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_kill/1:</B>
-<DD><A NAME="IDX4750"></A>
+<DD><A NAME="IDX4776"></A>
 
 
 <P>
@@ -308,7 +308,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> Kills the thread executing <CODE>GoalId</CODE> (if any), and frees the memory used up by the stack set. Usually one should wait (
 
-<A NAME="IDX4751"></A>
+<A NAME="IDX4777"></A>
 <CODE>eng_wait/1</CODE>) for a goal, and then release it, but killing the thread explicitly allows recovering from error states. A goal cannot kill itself. This feature should be used with caution, because there are situations where killing a thread might render the system in an unstable state. Threads should cooperate in their killing, but if the killed thread is blocked in a I/O operation, or inside an internal critical region, this cooperation is not possible and the system, although stopped, might very well end up in a incosistent state. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -319,11 +319,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4752"></A>
-<A NAME="IDX4753"></A>
+<A NAME="IDX4778"></A>
+<A NAME="IDX4779"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_killothers/0:</B>
-<DD><A NAME="IDX4754"></A>
+<DD><A NAME="IDX4780"></A>
 
 
 <P>
@@ -332,20 +332,20 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> Kills threads and releases stack sets of all active goals, but the one calling
 
-<A NAME="IDX4755"></A>
+<A NAME="IDX4781"></A>
 <CODE>eng_killothers</CODE>. Again, a safety measure. The same cautions as with 
-<A NAME="IDX4756"></A>
+<A NAME="IDX4782"></A>
 <CODE>eng_kill/1</CODE> should be taken. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4757"></A>
-<A NAME="IDX4758"></A>
+<A NAME="IDX4783"></A>
+<A NAME="IDX4784"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_self/1:</B>
-<DD><A NAME="IDX4759"></A>
+<DD><A NAME="IDX4785"></A>
 
 
 <P>
@@ -354,9 +354,9 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> <CODE>GoalId</CODE> is unified with the identifier of the goal within which
 
-<A NAME="IDX4760"></A>
+<A NAME="IDX4786"></A>
 <CODE>eng_self/1</CODE> is executed. 
-<A NAME="IDX4761"></A>
+<A NAME="IDX4787"></A>
 <CODE>eng_self/1</CODE> is deprecated, and eng_goal_id/1 should be used instead. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -367,11 +367,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4762"></A>
-<A NAME="IDX4763"></A>
+<A NAME="IDX4788"></A>
+<A NAME="IDX4789"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>goal_id/1:</B>
-<DD><A NAME="IDX4764"></A>
+<DD><A NAME="IDX4790"></A>
 
 
 <P>
@@ -380,9 +380,9 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> <CODE>GoalId</CODE> is unified with the identifier of the goal within which
 
-<A NAME="IDX4765"></A>
+<A NAME="IDX4791"></A>
 <CODE>goal_id/1</CODE> is executed. 
-<A NAME="IDX4766"></A>
+<A NAME="IDX4792"></A>
 <CODE>goal_id/1</CODE> is deprecated, and eng_goal_id/1 should be used instead. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -393,11 +393,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4767"></A>
-<A NAME="IDX4768"></A>
+<A NAME="IDX4793"></A>
+<A NAME="IDX4794"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_goal_id/1:</B>
-<DD><A NAME="IDX4769"></A>
+<DD><A NAME="IDX4795"></A>
 
 
 <P>
@@ -406,7 +406,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> <CODE>GoalId</CODE> is unified with the identifier of the goal within which
 
-<A NAME="IDX4770"></A>
+<A NAME="IDX4796"></A>
 <CODE>eng_goal_id/1</CODE> is executed. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -417,11 +417,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4771"></A>
-<A NAME="IDX4772"></A>
+<A NAME="IDX4797"></A>
+<A NAME="IDX4798"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>eng_status/0:</B>
-<DD><A NAME="IDX4773"></A>
+<DD><A NAME="IDX4799"></A>
 
 
 <P>
@@ -435,11 +435,11 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 </DL>
 
 <P>
-<A NAME="IDX4774"></A>
-<A NAME="IDX4775"></A>
+<A NAME="IDX4800"></A>
+<A NAME="IDX4801"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>lock_atom/1:</B>
-<DD><A NAME="IDX4776"></A>
+<DD><A NAME="IDX4802"></A>
 
 
 <P>
@@ -448,7 +448,7 @@ Additionally, a small set of lock primitives are provided. Locks are associated 
 <UL>
 <LI><EM>Description:</EM> The
 
-<A NAME="IDX4777"></A>
+<A NAME="IDX4803"></A>
 semaphore associated to <CODE>Atom</CODE> is accessed; if its value is nonzero, it is atomically decremented and the execution of this thread proceeds. Otherwise, the goal waits until a nonzero value is reached. The semaphore is then atomically decremented and the execution of this thread proceeds. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -459,11 +459,11 @@ semaphore associated to <CODE>Atom</CODE> is accessed; if its value is nonzero, 
 </DL>
 
 <P>
-<A NAME="IDX4778"></A>
-<A NAME="IDX4779"></A>
+<A NAME="IDX4804"></A>
+<A NAME="IDX4805"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>unlock_atom/1:</B>
-<DD><A NAME="IDX4780"></A>
+<DD><A NAME="IDX4806"></A>
 
 
 <P>
@@ -472,7 +472,7 @@ semaphore associated to <CODE>Atom</CODE> is accessed; if its value is nonzero, 
 <UL>
 <LI><EM>Description:</EM> The
 
-<A NAME="IDX4781"></A>
+<A NAME="IDX4807"></A>
 semaphore associated to <CODE>Atom</CODE> is atomically incremented. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -483,11 +483,11 @@ semaphore associated to <CODE>Atom</CODE> is atomically incremented.
 </DL>
 
 <P>
-<A NAME="IDX4782"></A>
-<A NAME="IDX4783"></A>
+<A NAME="IDX4808"></A>
+<A NAME="IDX4809"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_lock_state/2:</B>
-<DD><A NAME="IDX4784"></A>
+<DD><A NAME="IDX4810"></A>
 
 
 <P>
@@ -523,11 +523,11 @@ semaphore associated to <CODE>Atom</CODE> is atomically incremented.
 </DL>
 
 <P>
-<A NAME="IDX4785"></A>
-<A NAME="IDX4786"></A>
+<A NAME="IDX4811"></A>
+<A NAME="IDX4812"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>concurrent/1:</B>
-<DD><A NAME="IDX4787"></A>
+<DD><A NAME="IDX4813"></A>
 
 
 <P>
@@ -536,11 +536,11 @@ semaphore associated to <CODE>Atom</CODE> is atomically incremented.
 
 <P>
 The predicate named <CODE>F</CODE> with arity <CODE>A</CODE> is made 
-<A NAME="IDX4788"></A>
+<A NAME="IDX4814"></A>
 concurrent in the current module at runtime (useful for predicate names generated on-the-fly). This difficults a better compile-time analysis, but in turn offers more flexibility to applications. It is also faster for some applications: if several agents have to share data in a stuctured fashion (e.g., the generator knows and wants to restrict the data generated to a set of other threads), a possibility is to use the same concurrent fact and emply a field within the fact to distinguish the receiver/sender. This can cause many threads to access and wait on the same fact, which in turns can create contention problems. It is much better to create a new concurrent fact and to use that new name as a channel to communicate the different threads. 
-<A NAME="IDX4789"></A>
+<A NAME="IDX4815"></A>
 <CODE>concurrent/1</CODE> can either be given a 
-<A NAME="IDX4790"></A>
+<A NAME="IDX4816"></A>
 predicate spec in the form <CODE>Name/Arity</CODE>, with <CODE>Name</CODE> and <CODE>Arity</CODE> bound, or to give a value only to <CODE>Arity</CODE>, and let the system choose a new, unused <CODE>Name</CODE> for the fact.
 
 
@@ -548,7 +548,7 @@ predicate spec in the form <CODE>Name/Arity</CODE>, with <CODE>Name</CODE> and <
 
 
 
-<H2><A NAME="SEC370" HREF="ciao_toc.html#TOC370">Known bugs and planned improvements (<CODE>concurrency</CODE>)</A></H2>
+<H2><A NAME="SEC371" HREF="ciao_toc.html#TOC371">Known bugs and planned improvements (<CODE>concurrency</CODE>)</A></H2>
 
 
 <UL>

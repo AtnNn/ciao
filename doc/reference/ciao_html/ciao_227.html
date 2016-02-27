@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 23 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 24 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Printing graph using gnuplot as auxiliary tool.</TITLE>
@@ -10,9 +10,9 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_226.html">previous</A>,
 <P><HR><P>
 
 
-<H1><A NAME="SEC882" HREF="ciao_toc.html#TOC882">Printing graph using gnuplot as auxiliary tool.</A></H1>
+<H1><A NAME="SEC883" HREF="ciao_toc.html#TOC883">Printing graph using gnuplot as auxiliary tool.</A></H1>
 <P>
-<A NAME="IDX9736"></A>
+<A NAME="IDX9770"></A>
 
 
 <P>
@@ -24,29 +24,30 @@ This library uses <CODE>gnuplot</CODE> for printing graphs.
 
 
 <P>
-Two predicates are provided: 
+User-friendly predicates to generate data plots are provided, as well as predicates to set the general options which govern the generation of such plots. If no options is specified, global ones are used for data plots generation. 
 
 
-<LI>genarate_plot( BaseName , DataList )
+<P>
+Several files can be generated as temporary files. A BaseName is required for generating the temporaries files. Data files name will be created from BaseName + number + .dat. The BaseName + ".plot" will be the name used for <CODE>gnuplot</CODE> tool. 
 
-<LI>genarate_plot( BaseName , DataList , GlobalOptions )
 
- 
-Several files can be generated as temporary files. A BaseName is requiered for generating the tempoaries files.Data files name will be created from BaseName + number + .dat. The BaseName + ".plot" will be the name used for <CODE>gnuplot</CODE> tool. 
+<P>
+A list of pairs of list of pairs of the from (X,Y) and Local Option value is provided to the main predicate as data. In other words DataList = [(CurveDataList,LocalOptions), (CurveDataList1,LocalOptions1) ...]. Additionaly (function( String ) , LocalOptions) can be used for adding a curve to the plot (imagine you want to compare your result with 'x=y'). 
 
-A list of pairs of list of pairs of the from (X,Y) and Local Option value is provided to the main predicate as data. In other words DataList = [(CurveDataList,LocalOptions), (CurveDataList1,LocalOptions1) ...]. Additionaly (function( String ) , LocalOptions) can be used for adding a curve to the plot (imagine you want to compare your result with x=y). 
 
-LocalOptions of the DataList are options that are applied to the curve, as for example, if we print the curve with lines, or the title in the leyend, etc. GlobalOptions are referred to the plot options, like title in x or y axis, etc. 
+<P>
+LocalOptions of the DataList are options that are applied to the curve, as for example, if we print the curve with lines, or the title in the legend, etc. GlobalOptions are referred to the plot options, like title in x or y axis, etc. 
+
 
 
 <UL>
-<LI><A HREF="ciao_227.html#SEC883">Usage and interface (gnuplot)</A>
-<LI><A HREF="ciao_227.html#SEC884">Documentation on exports (gnuplot)</A>
+<LI><A HREF="ciao_227.html#SEC884">Usage and interface (gnuplot)</A>
+<LI><A HREF="ciao_227.html#SEC885">Documentation on exports (gnuplot)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC883" HREF="ciao_toc.html#TOC883">Usage and interface (<CODE>gnuplot</CODE>)</A></H2>
+<H2><A NAME="SEC884" HREF="ciao_toc.html#TOC884">Usage and interface (<CODE>gnuplot</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -63,13 +64,13 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX9737"></A>
+<A NAME="IDX9771"></A>
 <CODE>get_general_options/1</CODE>, 
-<A NAME="IDX9738"></A>
+<A NAME="IDX9772"></A>
 <CODE>set_general_options/1</CODE>, 
-<A NAME="IDX9739"></A>
+<A NAME="IDX9773"></A>
 <CODE>generate_plot/2</CODE>, 
-<A NAME="IDX9740"></A>
+<A NAME="IDX9774"></A>
 <CODE>generate_plot/3</CODE>.
 
 </UL>
@@ -81,11 +82,11 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX9741"></A>
+<A NAME="IDX9775"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX9742"></A>
+<A NAME="IDX9776"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX9743"></A>
+<A NAME="IDX9777"></A>
 <CODE>system</CODE>.
 
 </UL>
@@ -96,13 +97,13 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 
 
-<H2><A NAME="SEC884" HREF="ciao_toc.html#TOC884">Documentation on exports (<CODE>gnuplot</CODE>)</A></H2>
+<H2><A NAME="SEC885" HREF="ciao_toc.html#TOC885">Documentation on exports (<CODE>gnuplot</CODE>)</A></H2>
 <P>
-<A NAME="IDX9744"></A>
-<A NAME="IDX9745"></A>
+<A NAME="IDX9778"></A>
+<A NAME="IDX9779"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>get_general_options/1:</B>
-<DD><A NAME="IDX9746"></A>
+<DD><A NAME="IDX9780"></A>
 
 
 <P>
@@ -124,22 +125,24 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 </DL>
 
 <P>
-<A NAME="IDX9747"></A>
-<A NAME="IDX9748"></A>
+<A NAME="IDX9781"></A>
+<A NAME="IDX9782"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>set_general_options/1:</B>
-<DD><A NAME="IDX9749"></A>
+<DD><A NAME="IDX9783"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> <CODE>set_general_options(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Get the general options of the graphic that will be plotted. Posible options are:
+<LI><EM>Description:</EM> Get the general options of the graphic that will be plotted. Possible options are:
 
+
+<UL>
 <LI>format(A) Specify the format of points
 
-<LI>nokey Leyend is no represented
+<LI>nokey Legend is no represented
 
 <LI>nogrid No grid
 
@@ -149,7 +152,7 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI>xlabel(A) Label of X-Axis
 
-<LI>ylabel(A) Lavel of Y-Axis
+<LI>ylabel(A) Label of Y-Axis
 
 <LI>xrange(A,B) Define the X range representation
 
@@ -159,7 +162,7 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI>key(A) define the key (for example [left,box], left is the position, box indicates that a box should be around)
 
-<LI>term_post(A) define the postcript terminal. A is a list of atoms.
+<LI>term_post(A) define the postscript terminal. A is a list of atoms.
 
 <LI>size(A,B) specify the size of the plot (A,B float numbers)
 
@@ -167,6 +170,9 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 
 <LI>autoscale(A) autoscale the argument (for example: autoscale(x))
 
+</UL>
+
+ 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
 <CODE>X</CODE> is a list.
@@ -176,61 +182,66 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 </DL>
 
 <P>
-<A NAME="IDX9750"></A>
-<A NAME="IDX9751"></A>
+<A NAME="IDX9784"></A>
+<A NAME="IDX9785"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>generate_plot/2:</B>
-<DD><A NAME="IDX9752"></A>
+<DD><A NAME="IDX9786"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, TimeList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, DataList)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicates generate a '<CODE>BaseName</CODE> + .ps' postcript file using each element of <CODE>TimeList</CODE> as pair of list of pairs and local options, i.e., ( list((X,Y)), LocalOptions), in which X is the position in X-Axis and Y is the position in Y-Axis. Nevertheless, each element of <CODE>TimeList</CODE> can be a list of pairs instead of a pair for comodity. <CODE>gnuplot</CODE> is used as ausiliary tool. Temporary files '<CODE>BaseName</CODE> + N.dat' are generated for for every list of pairs, and '<CODE>BaseName</CODE> + .plot' is de file used by gnuplot. The local options can be:
+<LI><EM>Description:</EM> This predicates generate a '<CODE>BaseName</CODE> + .ps' postscript file using each element of <CODE>DataList</CODE> as pair of list of pairs and local options, i.e., ( list((X,Y)), LocalOptions), in which X is the position in X-Axis and Y is the position in Y-Axis. Nevertheless, each element of <CODE>DataList</CODE> can be a list of pairs instead of a pair for commodity. <CODE>gnuplot</CODE> is used as auxiliary tool. Temporary files '<CODE>BaseName</CODE> + N.dat' are generated for for every list of pairs, and '<CODE>BaseName</CODE> + .plot' is de file used by gnuplot. The local options can be:
 
+
+<UL>
 <LI>with(Option) Tells how the curve will be represented. Option can b line, dots, boxes, impulses, linespoints. This option HAVE TO BE the last one
 
-<LI>title(T) Put the name of the curve in the leyend to T
+<LI>title(T) Put the name of the curve in the legend to T
 
+</UL>
+
+ 
 <LI><EM>The following properties should hold at call time:</EM>
 
 <CODE>BaseName</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 <LI><EM>The following properties should hold upon exit:</EM>
 
 <CODE>BaseName</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX9753"></A>
-<A NAME="IDX9754"></A>
+<A NAME="IDX9787"></A>
+<A NAME="IDX9788"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>generate_plot/3:</B>
-<DD><A NAME="IDX9755"></A>
+<DD><A NAME="IDX9789"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, TimeList, GeneralOptions)</CODE>
+<STRONG>Usage:</STRONG> <CODE>generate_plot(BaseName, DataList, GeneralOptions)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It is the same as generate_plot/2 but <CODE>GeneralOptions</CODE> are used as the general options of the plot. Look at predicate set_general_options for detailed description of posible options
+<LI><EM>Description:</EM> It is the same as generate_plot/2 but <CODE>GeneralOptions</CODE> are used as the general options of the plot. Look at predicate set_general_options for detailed description of possible options
 
 <LI><EM>The following properties should hold at call time:</EM>
 
 <CODE>BaseName</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 
 <CODE>GeneralOptions</CODE> is a list.
@@ -240,7 +251,7 @@ LocalOptions of the DataList are options that are applied to the curve, as for e
 <CODE>BaseName</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 
-<CODE>TimeList</CODE> is a list of <CODE>pair</CODE>s.
+<CODE>DataList</CODE> is a list of <CODE>pair</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 
 <CODE>GeneralOptions</CODE> is a list.

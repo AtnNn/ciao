@@ -1236,7 +1236,7 @@ BOOL prolog_exec(Arg)
       if (wait_for_completion)
         waitpid(pid, &status, 0);
 
-      unif_stdin = !dup_stdin ||cunify(Arg, ptr_to_stream(Arg, str_in),  X(2));
+     unif_stdin = !dup_stdin ||cunify(Arg, ptr_to_stream(Arg, str_in),  X(2));
      unif_stdout = !dup_stdout||cunify(Arg, ptr_to_stream(Arg, str_out), X(3));
      unif_stderr = !dup_stderr||cunify(Arg, ptr_to_stream(Arg, str_err), X(4));
 

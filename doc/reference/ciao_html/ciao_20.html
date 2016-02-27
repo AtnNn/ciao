@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 23 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 24 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Basic term manipulation</TITLE>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_19.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#330 (2004/3/25, 16:54:55 CET)
+<STRONG>Version:</STRONG> 1.9#342 (2004/4/24, 20:30:39 CEST)
 
 
 <P>
@@ -90,20 +90,7 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>X = Y</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> unify.
-
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>X = Y</CODE>
+<STRONG>Usage:</STRONG> <CODE>X = Y</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -126,36 +113,13 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>arg(+ArgNo, +Term, ?Arg)</CODE>
+<STRONG>Usage:</STRONG> <CODE>arg(+ArgNo, +Term, ?Arg)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
 <LI><EM>Description:</EM> Argument <CODE>ArgNo</CODE> of the term <CODE>Term</CODE> is <CODE>Arg</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>ArgNo</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>arg(ArgNo, Term, Arg)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Argument <CODE>ArgNo</CODE> of the term <CODE>Term</CODE> is <CODE>Arg</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>ArgNo</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Term</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
 
 <CODE>ArgNo</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
@@ -176,27 +140,7 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>functor(?Term, ?Name, ?Arity)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> The principal functor of the term <CODE>Term</CODE> has name <CODE>Name</CODE> and arity <CODE>Arity</CODE>.
-
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Name</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Arity</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>functor(Term, Name, Arity)</CODE>
+<STRONG>Usage:</STRONG> <CODE>functor(?Term, ?Name, ?Arity)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -226,24 +170,7 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>?Term =.. ?List</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> The functor and arguments of the term <CODE>Term</CODE> comprise the list <CODE>List</CODE>.
-
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>List</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>Term =.. List</CODE>
+<STRONG>Usage:</STRONG> <CODE>?Term =.. ?List</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -270,7 +197,7 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>copy_term(Term, Copy)</CODE>
+<STRONG>Usage:</STRONG> <CODE>copy_term(Term, Copy)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -295,56 +222,18 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>copy_term(Term, Copy)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Copy</CODE> is a renaming of <CODE>Term</CODE>, such that brand new variables have been substituted for all variables in <CODE>Term</CODE>. If any of the variables of <CODE>Term</CODE> have
-
-<A NAME="IDX1458"></A>
-attributes, the copied variables will have copies of the attributes as well. It behaves as if defined by: 
-
-
-<PRE>
-:- data 'copy of'/1.
-
-copy_term(X, Y) :-
-        asserta_fact('copy of'(X)),
-        retract_fact('copy of'(Y)).
-</PRE>
-
- 
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
 </DL>
 
 <P>
+<A NAME="IDX1458"></A>
 <A NAME="IDX1459"></A>
-<A NAME="IDX1460"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>C/3:</B>
-<DD><A NAME="IDX1461"></A>
+<DD><A NAME="IDX1460"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>C(?S1, ?Terminal, ?S2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>S1</CODE> is connected by the terminal <CODE>Terminal</CODE> to <CODE>S2</CODE>. Internally used in <EM>DCG grammar rules</EM>. Defined as if by the single clause: <CODE>'C'([X|S], X, S).</CODE>
-
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>C(S1, Terminal, S2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>C(?S1, ?Terminal, ?S2)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>S1</CODE> is connected by the terminal <CODE>Terminal</CODE> to <CODE>S2</CODE>. Internally used in <EM>DCG grammar rules</EM>. Defined as if by the single clause: <CODE>'C'([X|S], X, S).</CODE>

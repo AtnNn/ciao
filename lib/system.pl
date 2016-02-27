@@ -223,7 +223,7 @@ cd(Dir) :- working_directory(_, Dir).
 
 :- comment(bug, "@pred{shell/n} commands have a bug in Windows: if the
    environment variable SHELL is instantiated to some Windows shell
-   implementation, then it is very possible that shell/{1,2} will not
+   implementation, then it is very possible that shell/@{1,2@} will not
    work, as it is always called with the -c flag to start the user
    command.  For example, COMMAND.COM @bf{might} need the flag /C -- but
    there is no way to know a priori which command line option is
@@ -292,17 +292,17 @@ exec(Command, StdIn, StdOut, StdErr):-
                               stream * stream * stream *
                               atm * int * int
 
-# "Finer control on execution of process.  @var{Command} is the
-command to be executed and @var{Arguments} is a list of atoms to be
-passed as arguments to the command.  When called with free variables,
-@var{StdIn}, @var{StdOut}, and @var{StdErr} are instantiated to
-streams connected to the standard output, input, and error of the
-created process. @var{Background} controls whether the caller waits
-for @var{Command} to finish, or if the process executing @var{Command}
-is completely detached (it can be waited for using
-@pred{wait/3}). @var{ErrCode} is the error code returned by the
-lower-level @tt{exec()} system call (this return code is
-system-dependent, but a non-zero value usually means that something
+# "@pred{exec/8} gives a finer control for launching external
+processes.  @var{Command} is the command to be executed and
+@var{Arguments} is a list of atoms to be passed as arguments to the
+command.  When called with free variables, @var{StdIn}, @var{StdOut},
+and @var{StdErr} are instantiated to streams connected to the standard
+output, input, and error of the created process. @var{Background}
+controls whether the caller waits for @var{Command} to finish, or if
+the process executing @var{Command} is completely detached (it can be
+waited for using @pred{wait/3}). @var{ErrCode} is the error code
+returned by the lower-level @tt{exec()} system call (this return code
+is system-dependent, but a non-zero value usually means that something
 has gone wrong).  If @var{Command} does not start by a slash,
 @pred{exec/8} uses the environment variable @tt{PATH} to search for
 it.  If @tt{PATH} is not set, @tt{/bin} and @tt{/usr/bin} are
@@ -587,17 +587,17 @@ make_directory(D) :-
 % We are however delegating it to make_directory/2 and absolute_file_name/7
 % (called below).
 make_dirpath(Path, Mode) :-
-	absolute_file_name(Path, '', '', '.', AbsolutePath, _, _),
-	atom_codes(AbsolutePath, AbsPathCodes),
-%         atom_codes(Path, PathCodes),
-%         (          % If relative, transform it into absolute
-%             PathCodes = "/"||_ ->
-%             AbsPathCodes = PathCodes
-%         ;
-%             working_directory(CurrentDir, CurrentDir),
-%             atom_codes(CurrentDir, CurrentDirCodes),
-%             append(CurrentDirCodes, "/"||PathCodes, AbsPathCodes)
-%         ),
+%	absolute_file_name(Path, '', '', '.', AbsolutePath, _, _),
+%	atom_codes(AbsolutePath, AbsPathCodes),
+         atom_codes(Path, PathCodes),
+         (          % If relative, transform it into absolute
+             PathCodes = "/"||_ ->
+             AbsPathCodes = PathCodes
+         ;
+             working_directory(CurrentDir, CurrentDir),
+             atom_codes(CurrentDir, CurrentDirCodes),
+             append(CurrentDirCodes, "/"||PathCodes, AbsPathCodes)
+         ),
         make_abs_dir(AbsPathCodes, '', Mode).
 % 
 % Making the intermediate directories: instead of cd'ing to
@@ -711,22 +711,26 @@ do_swapslash([C|D],[C|ND]) :-
 
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*9+342,2004/04/24,20:30*39+'CEST'),
+"absolute_file_name screwed up make_dirpath/2.  Corrected (by
+reverting to a previous version).  (Manuel Carro)").
+
 :- comment(version(1*9+340,2004/04/22,16:22*25+'CEST'), "exec/3-4
    should not wait until the process terminates.  (Jesus Correas
    Fernandez)").
 
 :- comment(version(1*9+338,2004/04/22,06:11*20+'CEST'), "Implemented
-wait/3 to wait for the end of processes.  ()").
+wait/3 to wait for the end of processes.  (Manuel Carro)").
 
 :- comment(version(1*9+337,2004/04/22,05:47*28+'CEST'), "popen/3
 reimplemented in Prolog based on exec/8.  This should be more
-portable.  ()").
+portable.  (Manuel Carro)").
 
 :- comment(version(1*9+336,2004/04/22,05:21*27+'CEST'), "Implemented
-exec/8 to base other exec's and popen/3 on it ()").
+exec/8 to base other exec's and popen/3 on it (Manuel Carro)").
 
 :- comment(version(1*9+331,2004/03/26,17:39*47+'CET'), "Errors in
-   exec() caught; processes killed in this case.  This affects shell/n
+   exec(Manuel Carro) caught; processes killed in this case.  This affects shell/n
    and exec/{3,4} (MCL)").
 
 :- comment(version(1*9+326,2004/03/16,16:18*08+'CET'), "Corrected
@@ -740,7 +744,7 @@ exec/8 to base other exec's and popen/3 on it ()").
         added (Jesus needed it).  (MCL)").
 
 :- comment(version(1*7+181,2002/01/25,20:14*06+'Hora estándar
-   romance'), "cyg2win/3 moved here.  ()").
+   romance'), "cyg2win/3 moved here.  (Manuel Carro)").
 
 :- comment(version(1*7+169,2002/01/03,17:57*18+'CET'), "Changed
    make_dirpath to make it completely deterministic.  (MCL)").
