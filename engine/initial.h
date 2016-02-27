@@ -97,6 +97,7 @@ extern TAGGED atom_compiled;
 extern TAGGED atom_interpreted;
 extern TAGGED atom_builtin;
 extern TAGGED atom_true;
+extern TAGGED atom_false;
 extern TAGGED atom_retry_hook;
 extern TAGGED atom_unprofiled;
 extern TAGGED atom_profiled;

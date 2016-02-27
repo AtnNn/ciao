@@ -260,7 +260,7 @@ BOOL prolog_unix_cd(Arg)
   }
 
   if (!IsAtom(X(1))){
-    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(1),2)
+    BUILTIN_ERROR(TYPE_ERROR(ATOMIC),X(1),2)
   }
 
   if (!expand_file_name(GetString(X(1)),pathBuf))
@@ -276,8 +276,8 @@ BOOL prolog_unix_cd(Arg)
 }
 
 
-// This tries to execute 'command' in $SHELL.  If $SHELL is not set, then 
-// shell_available is set to FALSE, else it is set to TRUE.  If 
+// This tries to execute 'command' in $SHELL.  If $SHELL is not set, then
+// shell_available is set to FALSE, else it is set to TRUE.  If
 // command == NULL no command is executed (the shell is just called).
 // Otherwise, command is passed to $SHELL, and the return code of the
 // execution is returned as the result of evaluating the function.  This is
@@ -315,8 +315,8 @@ BOOL prolog_unix_shell0(Arg)
   int retcode;
 
   retcode = ciao_shell_start(NULL);
-  return (retcode == 0);    
-}    
+  return (retcode == 0);
+}
 
 BOOL prolog_unix_shell2(Arg)
      Argdecl;
@@ -1074,8 +1074,26 @@ BOOL prolog_version(Arg)
 }
 
 
+BOOL prolog_wait(Arg)
+     Argdecl;
+{
+  int retcode, status;
+
+  DEREF(X(0), X(0));
+  if (!TagIsSmall(X(0))) {
+    BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(0),1);
+  }
+
+  retcode = waitpid(GetSmall(X(0)), &status, 0);
+
+  return
+    cunify(Arg, X(1), MakeSmall(retcode)) &&
+    cunify(Arg, X(2), MakeSmall(status));
+}
+
 /*
- * exec(+Process, -StdIn, -StdOut, -StdErr): connect to an external process
+ *exec(+Command, +Args, -StdIn, -StdOut, -StdErr, +Background, -PID, -Errcode):
+ * connect to an external process
  */
 
 #define Read  0
@@ -1086,42 +1104,90 @@ BOOL prolog_version(Arg)
 #define STDERR 2
 
 
+BOOL check_pipe(Arg, argno, stream_int)
+     Argdecl;
+     int argno;
+     int stream_int[2];
+{
+  DEREF(X(argno), X(argno));
+  if (X(argno) == atom_nil)
+    return FALSE;
+  else {
+    pipe(stream_int);
+    return TRUE;
+  }
+}
+
+#define MAXARGS 100
+
 BOOL prolog_exec(Arg)
      Argdecl;
 {
+  TAGGED head, list;
   char *command;
-  BOOL dup_stderr;
+  BOOL wait_for_completion;
+
+  BOOL
+    unif_stdin,
+    unif_stdout,
+    unif_stderr;
+  BOOL 
+    dup_stdin,
+    dup_stdout,
+    dup_stderr;
   int
     pipe_in[2],                                   /* Child standard input */
     pipe_out[2],                                 /* Child standard output */
     pipe_err[2];                                  /* Child standard error */
-
   struct stream_node
     *str_in,                       /* Connection to child standard input  */
     *str_out,                     /* Connection to child standard output  */
     *str_err                       /* Connection to child standard error  */
-    = NULL;                                    /* Avoid compiler warnings */
-
+         = NULL;                               /* Avoid compiler warnings */
 
   int pid;
+  int status = 0;
+  int nargs  = 0;
+  char **arguments = malloc(MAXARGS*sizeof(char *));
 
   DEREF(X(0), X(0));
   if (!IsAtom(X(0))){
     BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1)
   }
 
-  pipe(pipe_in);
-  pipe(pipe_out);
-
-  DEREF(X(3), X(3));
-  if (X(3) == atom_nil)
-    dup_stderr = FALSE;
-  else {
-    dup_stderr = TRUE;
-    pipe(pipe_err);
-  }
+  dup_stdin  = check_pipe(Arg, 2, pipe_in);
+  dup_stdout = check_pipe(Arg, 3, pipe_out);
+  dup_stderr = check_pipe(Arg, 4, pipe_err);
 
   command = GetString(X(0));
+
+  arguments[nargs++] = command;
+  DEREF(list, X(1));      /* Arguments. Traverse list and fill vector in. */
+  while(!IsVar(list) && TagIsLST(list)) {
+    DEREF(head, CTagToCar(list));
+    if (!TagIsATM(head))  /* We only allow atoms */
+        BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),head,2);
+    arguments[nargs++] = GetString(head);
+    list = CTagToCdr(list);
+    DEREF(list, list);
+  }
+  arguments[nargs] = NULL;
+
+ /* Make sure we had a real list */
+  if (!(!IsVar(list) && TagIsATM(list) && (list == atom_nil))) {
+    BUILTIN_ERROR(TYPE_ERROR(LIST), X(1), 2);
+  }    
+
+
+ /* Backgrounding or not. */
+
+  DEREF(X(5), X(5));
+  if ((X(5) == atom_true) ||
+      (X(5) == atom_wait))
+    wait_for_completion = FALSE;
+  else if (X(5) == atom_false)
+    wait_for_completion = TRUE;
+  else ERROR_IN_ARG(X(5), 6, STRICT_ATOM);
 
   /* Empty buffers before launching child */
   fflush(NULL);
@@ -1130,37 +1196,56 @@ BOOL prolog_exec(Arg)
 
   if (pid == -1) {
     SERIOUS_FAULT("exec/4 could not fork() new process");
-  } else
-    if (pid == 0) {                                              /* Child */
-      close(pipe_in[Write]);
-      dup2(pipe_in[Read],STDIN);
-      close(pipe_out[Read]);
-      dup2(pipe_out[Write],STDOUT);
+  } else 
+    if (pid == 0) {
+      /* This is the code of the child */ 
+      if (dup_stdin) {
+          close(pipe_in[Write]);
+          dup2(pipe_in[Read],STDIN);
+      }
+      if (dup_stdout) {
+          close(pipe_out[Read]);
+          dup2(pipe_out[Write],STDOUT);
+      }
       if (dup_stderr) {
-        close(pipe_err[Read]);
-        dup2(pipe_err[Write],STDERR);
+          close(pipe_err[Read]);
+          dup2(pipe_err[Write],STDERR);
       }
 
  // If there is any error while exec'ing, we have to give an error and then
  // abort completely. Unfortunately, if we have redirected the standard
  // error output, the error message will be lost!
 
-      if (execlp(command, command, NULL) < 0)
+      if (execvp(command, arguments) < 0)
         EXIT("Execution of command failed!");   // Should never return!
     } else {                                                    /* Parent */
-      close(pipe_in[Read]);
-      str_in  = new_stream(X(0), "w", fdopen(pipe_in[Write], "w"));
-      close(pipe_out[Write]);
-      str_out = new_stream(X(0), "r", fdopen(pipe_out[Read], "r"));
+
+      if (dup_stdin) {
+        close(pipe_in[Read]);
+        str_in  = new_stream(X(0), "w", fdopen(pipe_in[Write], "w"));
+      } 
+      if (dup_stdout) {
+        close(pipe_out[Write]);
+        str_out = new_stream(X(0), "r", fdopen(pipe_out[Read], "r"));
+      }
       if (dup_stderr) {
         close(pipe_err[Write]);
         str_err = new_stream(X(0), "r", fdopen(pipe_err[Read], "r"));
       }
-      return  cunify(Arg, ptr_to_stream(Arg, str_in), X(1))
-        &&    cunify(Arg, ptr_to_stream(Arg, str_out), X(2))
-        &&   (dup_stderr ?
-              cunify(Arg, ptr_to_stream(Arg, str_err), X(3)) :
-              TRUE);
+
+      if (wait_for_completion)
+        waitpid(pid, &status, 0);
+
+      unif_stdin = !dup_stdin ||cunify(Arg, ptr_to_stream(Arg, str_in),  X(2));
+     unif_stdout = !dup_stdout||cunify(Arg, ptr_to_stream(Arg, str_out), X(3));
+     unif_stderr = !dup_stderr||cunify(Arg, ptr_to_stream(Arg, str_err), X(4));
+
+      return (
+            unif_stdin && unif_stdout && unif_stderr &&
+            cunify(Arg, MakeSmall(pid), X(6)) && 
+            cunify(Arg, MakeSmall(status), X(7))
+             );
     }
 }
+
 

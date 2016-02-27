@@ -66,8 +66,8 @@ programming environment with a unique set of features:
    *Ciao* is distributed under the GNU General Public License.
 
 
-   This documentation corresponds to version 1.9#335 (2004/4/16,
-16:18:8 CEST).
+   This documentation corresponds to version 1.9#340 (2004/4/22,
+16:22:25 CEST).
 
    Copyright (C) F. Bueno, D. Cabeza, M. Carro, M. Hermenegildo, P.
 Lo'pez, and G. Puebla
@@ -142,8 +142,8 @@ The Ciao Prolog System
 **********************
 
 
-   This documentation corresponds to version 1.9#335 (2004/4/16,
-16:18:8 CEST).
+   This documentation corresponds to version 1.9#340 (2004/4/22,
+16:22:25 CEST).
 
 * Menu:
 
@@ -198,7 +198,7 @@ The Ciao Prolog System
 * Sorting lists::
 * compiler (library)::
 * Enumeration of integers inside a range::
-* Operating system utilities::
+* system (library)::
 * Prolog system internal predicates::
 * DEC-10 Prolog file IO::
 * Quintus-like internal database::
@@ -1163,78 +1163,76 @@ File: ciao.info,  Node: Version/Change Log (ciao),  Prev: Acknowledgments,  Up: 
 Version/Change Log (`ciao')
 ===========================
 
-*Version 1.10 (2002/5/16, 23:17:34 CEST)*
+*Version 1.10 (2004/4/15, 30:17:34 CEST)*
+        * Classical prolog mode as default behavior.
+
+        * Emacs-based environment improved.
+             * Improved emacs inferior (interaction) mode for Ciao
+               and CiaoPP.
+
+             * Xemacs compatibility improved (thanks to A. Rigo).
+
+             * New icons and modifications in the environment for the
+               preprocessor.
+
+             * Icons now installed in a separate dir.
+
+             * Compatibility with newer versions of `Cygwin'.
+
+             * Changes to programming environment:
+                  * Double-click startup of programming environment.
+
+                  * Reorganized menus: help and customization grouped
+                    in separate menus.
+
+                  * Error location extended.
+
+                  * Automatic/Manual location of errors produced when
+                    running Ciao tools now customizable.
+
+                  * Presentation of CiaoPP preprocessor output
+                    improved.
+
+             * Faces and coloring improved:
+                  * Faces for syntax-based highlighting more
+                    customizable.
+
+                  * Syntax-based coloring greatly improved.
+                    Literal-level assertions also correctly colored
+                    now.
+
+                  * Syntax-based coloring now also working on ASCII
+                    terminals (for newer versions of emacs).
+
+                  * Listing user-defined directives allowed to be
+                    colored in special face.
+
+                  * Syntax errors now colored also in inferior
+                    buffers.
+
+                  * Customizable faces now appear in the
+                    documentation.
+
+                  * Added new tool bar button (and binding) to
+                    refontify block/buffer.
+
+                  * Error marks now cleared automatically also when
+                    generating docs.
+
+                  * Added some fixes to hooks in lpdoc buffer.
+
+        * Bug fixes in compiler.
+             * Replication of clauses in some cases (thanks to S.
+               Craig).
+
         * Improvements related to supported platforms
              * Compilation and installation in different palatforms
                have been improved.
 
              * New Mac OS X kernels supported.
 
-        * Changes in compiler behavior and user interface:
-             * Emacs-based environment improved.
-                  * Revised syntax of Ciao emacs mode configuration
-                    files.
-
-                  * Improved emacs inferior (interaction) mode for
-                    Ciao and CiaoPP.
-
-                  * Xemacs compatibility improved (thanks to A. Rigo).
-
-                  * New icons and modifications in the environment
-                    for the preprocessor.
-
-                  * Icons now installed in a separate dir.
-
-                  * Double-click startup of programming environment.
-
-                  * Compatibility with newer versions of `Cygwin'.
-
-                  * Changes to programming environment.
-                       * Reorganized menus: help and customization
-                         grouped in separate menus.
-
-                       * Error location extended.
-
-                       * Automatic/Manual location of errors produced
-                         when running Ciao tools now customizable.
-
-                       * Presentation of CiaoPP preprocessor output
-                         improved.
-
-                  * Faces and coloring improved.
-                       * Faces for syntax-based highlighting more
-                         customizable.
-
-                       * Syntax-based coloring greatly improved. Now
-                         also working on ASCII terminals (for newer
-                         versions of emacs).
-
-                       * Literal-level assertions now correctly
-                         colored.
-
-                       * Listing user-defined directives allowed to
-                         be colored in special face.
-
-                       * Syntax errors now colored also in inferior
-                         buffers.
-
-                       * Customizable faces now appear in the
-                         documentation.
-
-                       * Added new tool bar button (and binding) to
-                         refontify block/buffer.
-
-                       * Error marks now cleared automatically also
-                         when generating docs.
-
-                       * Added some fixes to hooks in lpdoc buffer.
-
-             * Bug fixes in compiler.
-                  * Replication of clauses in some cases (thanks to
-                    S. Craig).
-
-        * Improvement and Bugs fixes in the engine:
-             * Got rid of some segmentation violation problems.
+        * Improvement and bugs fixes in the engine:
+             * Got rid of several segmentation violation problems.
 
              * Number of significant decimal digits to be printed now
                computed accurately.
@@ -1247,25 +1245,22 @@ Version/Change Log (`ciao')
              * C interface .h files reachable through a more standard
                location (thanks to R. Bagnara).
 
-             * Compatibility with command line options of newer
-               versions of gcc.
+             * Compatibility with newer versions of gcc.
 
         * New libraries and utilities added to the system:
-             * Components: utilities to build modules frontiers.
-
              * Factsdb: facts defined in external files can now be
                automatically cached on-demand.
 
              * Symfnames: File aliasing to internal streams added.
 
-        * More libraries added (still in development):
+        * New libraries added (in beta state):
              * fd: clp(FD)
 
              * xml_path: XML querying and transformation to Prolog.
 
              * xdr_handle: XDR schema to HTML forms utility.
 
-             * ddlist: Double linked list library.
+             * ddlist: Two-way traversal list library.
 
              * gnuplot: Interface to GnuPlot.
 
@@ -1292,28 +1287,28 @@ Version/Change Log (`ciao')
                     that names of parameters having unusual
                     characters are always correctly handled.
 
-             * Fixed bug in library tokenize regarding non-terminated
-               single or multiple-line comments. When the last line
-               of a file has a single-line comment and does not end
-               in a newline, it is accepted as correct. When an
+             * Fixed bug in tokenizer regarding non-terminated single
+               or multiple-line comments. When the last line of a
+               file has a single-line comment and does not end in a
+               newline, it is accepted as correct. When an
                open-comment /* sequence is not terminated in a file,
-               a syntax error is thrown.
+               a syntax error exception is thrown.
 
         * Other libraries improved:
-             * Added native_props to assertions package and include
+             * Added native_props to assertions package and included
                `nonground/1'.
 
              * In atom2terms, changed interpretation of double quoted
                strings so that they are not parsed to terms.
 
-             * Control on exceptions in active modules improved.
+             * Control on exceptions improved.
 
-             * Added `native/1+2' to basic_props.
+             * Added `native/1,2' to basic_props.
 
              * Davinci error processing improved.
 
-             * Foreign interfaces are now automatically declared as
-               implementation-defined ones.
+             * Foreign predicates are now automatically declared as
+               implementation-defined.
 
              * In lists, added `cross_product/2' to compute the
                cartesian product of a list of lists. Also added
@@ -1325,25 +1320,24 @@ Version/Change Log (`ciao')
 
              * The make library has been improved.
 
-             * In persdb added `pretractall_fact/1' and
+             * In persdb, added `pretractall_fact/1' and
                `retractall_fact/1' as persdb native capabilities.
 
              * Some minor updates in persdb_sql.
 
-             * Added treatment of Operators and module:pred calls to
+             * Added treatment of operators and module:pred calls to
                pretty-printer.
 
              * Updated report of read of syntax errors.
 
-             * File locking capabilities included.
+             * File locking capabilities included in `open/3'.
 
-             * New input/output facilities added to socket-related
-               library.
+             * New input/output facilities added to sockets.
 
              * Added `most_specific_generalization/3' and
                `most_general_instance/3' to terms_check.
 
-             * Added `sort_dict/2' to vndict.
+             * Added `sort_dict/2' to library vndict.
 
              * The xref library now treats also empty references.
 
@@ -4758,7 +4752,7 @@ Cabeza, <clip@clip.dia.fi.upm.es>, `http://www.clip.dia.fi.upm.es/',
 The CLIP Group, School of Computer Science, Technical University of
 Madrid.
 
-   *Version:* 1.9#335 (2004/4/16, 16:18:8 CEST)
+   *Version:* 1.9#340 (2004/4/22, 16:22:25 CEST)
 
    *Version of last change:* 1.9#323 (2004/3/8, 18:37:17 CET)
 
@@ -15965,7 +15959,7 @@ Documentation on exports (`compiler')
 
 
 
-File: ciao.info,  Node: Enumeration of integers inside a range,  Next: Operating system utilities,  Prev: compiler (library),  Up: Top
+File: ciao.info,  Node: Enumeration of integers inside a range,  Next: system (library),  Prev: compiler (library),  Up: Top
 
 Enumeration of integers inside a range
 **************************************
@@ -16025,33 +16019,19 @@ Documentation on exports (`between')
 
 
 
-File: ciao.info,  Node: Operating system utilities,  Next: Prolog system internal predicates,  Prev: Enumeration of integers inside a range,  Up: Top
+File: ciao.info,  Node: system (library),  Next: Prolog system internal predicates,  Prev: Enumeration of integers inside a range,  Up: Top
 
-Operating system utilities
-**************************
-
-   *Author(s):* Daniel Cabeza, Manuel Carro.
-
-   *Version:* 1.9#335 (2004/4/16, 16:18:8 CEST)
-
-   *Version of last change:* 1.9#331 (2004/3/26, 17:39:47 CET)
-
-   This module contains predicates for invoking services which are
-typically provided by the operating system. Note that the predicates
-which take names of files or directories as arguments in this module
-expect atoms, not path aliases. I.e., generally these predicates will
-not call `absolute_file_name/2' on names of files or directories
-taken as arguments.
+system (library)
+****************
 
 * Menu:
 
 * Usage and interface (system)::
 * Documentation on exports (system)::
 * Documentation on multifiles (system)::
-* Known bugs and planned improvements (system)::
 
 
-File: ciao.info,  Node: Usage and interface (system),  Next: Documentation on exports (system),  Prev: Operating system utilities,  Up: Operating system utilities
+File: ciao.info,  Node: Usage and interface (system),  Next: Documentation on exports (system),  Prev: system (library),  Up: system (library)
 
 Usage and interface (`system')
 ==============================
@@ -16063,21 +16043,19 @@ Usage and interface (`system')
    * *Exports:*
         - _Predicates:_
 
-          `pause/1', `time/1', `datime/1', `datime/9', `getenvstr/2',
-          `setenvstr/2', `extract_paths/2', `get_pid/1',
-          `current_host/1', `current_executable/1', `umask/2',
-          `make_directory/2', `make_directory/1', `make_dirpath/2',
-          `make_dirpath/1', `working_directory/2', `cd/1', `shell/0',
-          `shell/1', `shell/2', `system/1', `system/2', `popen/3',
-          `exec/4', `exec/3', `directory_files/2', `mktemp/2',
-          `file_exists/1', `file_exists/2', `file_property/2',
-          `file_properties/6', `modif_time/2', `modif_time0/2',
-          `fmode/2', `chmod/2', `chmod/3', `delete_file/1',
-          `delete_directory/1', `rename_file/2', `cyg2win/3'.
-
-        - _Regular Types:_
-
-          `datime_struct/1', `popen_mode/1'.
+          `pause/1', `time/1', `datime/1', `datime/9',
+          `datime_struct/1', `getenvstr/2', `setenvstr/2',
+          `extract_paths/2', `get_pid/1', `current_host/1',
+          `current_executable/1', `umask/2', `make_directory/2',
+          `make_directory/1', `make_dirpath/2', `make_dirpath/1',
+          `working_directory/2', `cd/1', `shell/0', `shell/1',
+          `shell/2', `system/1', `system/2', `popen/3',
+          `popen_mode/1', `exec/4', `exec/3', `exec/8', `wait/3',
+          `directory_files/2', `mktemp/2', `file_exists/1',
+          `file_exists/2', `file_property/2', `file_properties/6',
+          `modif_time/2', `modif_time0/2', `fmode/2', `chmod/2',
+          `chmod/3', `delete_file/1', `delete_directory/1',
+          `rename_file/2', `cyg2win/3'.
 
         - _Multifiles:_
 
@@ -16092,490 +16070,233 @@ Usage and interface (`system')
 
 
 
-File: ciao.info,  Node: Documentation on exports (system),  Next: Documentation on multifiles (system),  Prev: Usage and interface (system),  Up: Operating system utilities
+File: ciao.info,  Node: Documentation on exports (system),  Next: Documentation on multifiles (system),  Prev: Usage and interface (system),  Up: system (library)
 
 Documentation on exports (`system')
 ===================================
 
  - PREDICATE: pause/1:
-     `pause(Seconds)'
-
-     Make this thread sleep for some `Seconds'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: time/1:
-     `time(Time)'
-
-     `Time' is unified with the number of seconds elapsed since
-     January, 1, 1970 (UTC).
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: datime/1:
-     `datime(Datime)'
-
-     `Datime' is unified with a term of the form
-     `datime(Year,Month,Day,Hour,Minute,Second)' which contains the
-     current date and time.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: datime/9:
-     `datime(Time, Year, Month, Day, Hour, Min, Sec, WeekDay,
-     YearDay)'
-
-     `Time' is as in `time/1'. `WeekDay' is the number of days since
-     Sunday, in the range 0 to 6. `YearDay' is the number of days
-     since January 1, in the range 0 to 365.
-
-     *Usage 1:* `datime(+int, ?int, ?int, ?int, ?int, ?int, ?int,
-     ?int, ?int)'
-        - _Description:_ If `Time' is given, the rest of the
-          arguments are unified with the date and time to which the
-          `Time' argument refers.
-
-     *Usage 2:* `datime(-int, ?int, ?int, ?int, ?int, ?int, ?int,
-     ?int, ?int)'
-        - _Description:_ Bound `Time' to current time and the rest of
-          the arguments refer to current time.
+     No further documentation available for this predicate.
 
 
- - REGTYPE: datime_struct/1:
-     A regular type, defined as follows:
-               datime_struct(datime(Year,Month,Day,Hour,Min,Sec)) :-
-                       int(Year),
-                       int(Month),
-                       int(Day),
-                       int(Hour),
-                       int(Min),
-                       int(Sec).
 
+ - PREDICATE: datime_struct/1:
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: getenvstr/2:
-     `getenvstr(Name, Value)'
-
-     The environment variable `Name' has `Value'. Fails if variable
-     `Name' is not defined.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: setenvstr/2:
-     `setenvstr(Name, Value)'
-
-     The environment variable `Name' is assigned `Value'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: extract_paths/2:
-     `extract_paths(String, Paths)'
-
-     Interpret `String' as the value of a UNIX environment variable
-     holding a list of paths and return in `Paths' the list of the
-     paths. Paths in `String' are separated by colons, and an empty
-     path is considered a shorthand for '.' (current path). The most
-     typical environment variable with this format is PATH. For
-     example, this is a typical use:
-          ?- set_prolog_flag(write_strings, on).
-          
-          yes
-          ?- getenvstr('PATH', PATH), extract_paths(PATH, Paths).
-          
-          PATH = ":/home/bardo/bin:/home/clip/bin:/opt/bin/:/bin",
-          Paths = [".","/home/bardo/bin","/home/clip/bin","/opt/bin/","/bin"] ?
-          
-          yes
-          ?-
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: get_pid/1:
-     `get_pid(Pid)'
-
-     Unifies `Pid' with the process identificator of the current
-     process or thread.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: current_host/1:
-     `current_host(Hostname)'
-
-     `Hostname' is unified with the fully qualified name of the host.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: current_executable/1:
-     `current_executable(Path)'
-
-     Unifies `Path' with the path to the current executable.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: umask/2:
-     `umask(OldMask, NewMask)'
+     No further documentation available for this predicate.
 
-     The process file creation mask was `OldMask', and it is changed
-     to `NewMask'.
-
-     *Usage 2:* `umask(OldMask, NewMask)'
-        - _Description:_ Gets the process file creation mask without
-          changing it.
-
-        - _The following properties should hold at call time:_
-
-          `OldMask' is a free variable.   (`term_typing:var/1')
-
-          `NewMask' is a free variable.   (`term_typing:var/1')
-
-          The terms `OldMask' and `NewMask' are strictly identical.
-          (`term_compare:== /2')
-
-        - _The following properties hold upon exit:_
-
-          `OldMask' is an integer.   (`basic_props:int/1')
-
-          `NewMask' is an integer.   (`basic_props:int/1')
 
 
  - PREDICATE: make_directory/2:
-     `make_directory(DirName, Mode)'
-
-     Creates the directory `DirName' with a given `Mode'. This is, as
-     usual, operated against the current umask value.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: make_directory/1:
-     `make_directory(DirName)'
-
-     Equivalent to `make_directory(D,0o777)'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: make_dirpath/2:
-     `make_dirpath(Path, Mode)'
-
-     Creates the whole `Path' for a given directory with a given
-     `Mode'. As an example, `make_dirpath('/tmp/var/mydir/otherdir')'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: make_dirpath/1:
-     `make_dirpath(Path)'
-
-     Equivalent to `make_dirpath(D,0o777)'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: working_directory/2:
-     `working_directory(OldDir, NewDir)'
+     No further documentation available for this predicate.
 
-     Unifies current working directory with `OldDir', and then
-     changes the working directory to `NewDir'. Calling
-     `working_directory(Dir,Dir)' simply unifies `Dir' with the
-     current working directory without changing anything else.
-
-     *Usage 2:* `working_directory(OldDir, NewDir)'
-        - _Description:_ Gets current working directory.
-
-        - _The following properties should hold at call time:_
-
-          `OldDir' is a free variable.   (`term_typing:var/1')
-
-          `NewDir' is a free variable.   (`term_typing:var/1')
-
-          The terms `OldDir' and `NewDir' are strictly identical.
-          (`term_compare:== /2')
-
-        - _The following properties hold upon exit:_
-
-          `OldDir' is an atom.   (`basic_props:atm/1')
-
-          `NewDir' is an atom.   (`basic_props:atm/1')
 
 
  - PREDICATE: cd/1:
-     `cd(Path)'
-
-     Changes working directory to `Path'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: shell/0:
-     *Usage:*
-        - _Description:_ Execs the shell specified by the environment
-          variable `SHELL'. When the shell process terminates,
-          control is returned to Prolog.
+     No further documentation available for this predicate.
+
 
 
  - PREDICATE: shell/1:
-     `shell(Command)'
-
-     `Command' is executed in the shell specified by the environment
-     variable `SHELL'. It succeeds if the exit code is zero and fails
-     otherwise.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: shell/2:
-     `shell(Command, ReturnCode)'
-
-     Executes `Command' in the shell specified by the environment
-     variable `SHELL' and stores the exit code in `ReturnCode'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: system/1:
-     `system(Command)'
-
-     Executes `Command' using the shell `/bin/sh'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: system/2:
-     `system(Command, ReturnCode)'
-
-     Executes `Command' in the `/bin/sh' shell and stores the exit
-     code in `ReturnCode'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: popen/3:
-     `popen(Command, Mode, Stream)'
-
-     Open a pipe to process `Command' in a new shell with a given
-     `Mode' and return a communication `Stream' (as in UNIX
-     `popen(3)'). If `Mode' is `read' the output from the process is
-     sent to `Stream'. If `Mode' is `write', `Stream' is sent as
-     input to the process. `Stream' may be read from or written into
-     using the ordinary stream I/O predicates. `Stream' must be
-     closed explicitly using `close/1', i.e., it is not closed
-     automatically when the process dies.
+     No further documentation available for this predicate.
 
 
 
- - REGTYPE: popen_mode/1:
-     *Usage:* `popen_mode(M)'
-        - _Description:_ `M' is 'read' or 'write'.
+ - PREDICATE: popen_mode/1:
+     No further documentation available for this predicate.
+
 
 
  - PREDICATE: exec/4:
-     `exec(Command, StdIn, StdOut, StdErr)'
-
-     Starts the process `Command' and returns the standart I/O
-     streams of the process in `StdIn', `StdOut', and `StdErr'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: exec/3:
-     `exec(Command, StdIn, StdOut)'
+     No further documentation available for this predicate.
 
-     Starts the process `Command' and returns the standart I/O
-     streams of the process in `StdIn' and `StdOut'. `Standard error'
-     is connected to whichever the parent process had it connected to.
+
+
+ - PREDICATE: exec/8:
+     No further documentation available for this predicate.
+
+
+
+ - PREDICATE: wait/3:
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: directory_files/2:
-     `directory_files(Directory, FileList)'
-
-     `FileList' is the unordered list of entries (files, directories,
-     etc.) in `Directory'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: mktemp/2:
-     `mktemp(Template, Filename)'
-
-     Returns a unique `Filename' based on `Template': `Template' must
-     be a valid file name with six trailing X, which are substituted
-     to create a new file name.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: file_exists/1:
-     `file_exists(File)'
-
-     Succeeds if `File' (a file or directory) exists (and is
-     accessible).
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: file_exists/2:
-     `file_exists(File, Mode)'
-
-     `File' (a file or directory) exists and it is accessible with
-     `Mode', as in the Unix call `access(2)'. Typically, `Mode' is 4
-     for read permission, 2 for write permission and 1 for execute
-     permission.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: file_property/2:
-     `file_property(File, Property)'
-
-     `File' has the property `Property'. The possible properties are:
-
-    type(`Type')
-          `Type' is one of `regular', `directory', `symlink', `fifo',
-          `socket' or `unknown'.
-
-    linkto(`Linkto')
-          If `File' is a symbolic link, `Linkto' is the file pointed
-          to by the link (and the other properties come from that
-          file, not from the link itself).
-
-    mod_time(`ModTime')
-          `ModTime' is the time of last modification (seconds since
-          January, 1, 1970).
-
-    mode(`Protection')
-          `Protection' is the protection mode.
-
-    size(`Size')
-          `Size' is the size.
-
-     If `Property' is uninstantiated, the predicate will enumerate
-     the properties on backtracking.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: file_properties/6:
-     `file_properties(Path, Type, Linkto, Time, Protection, Size)'
-
-     The file `Path' has the following properties:
-
-        * File type `Type' (one of `regular', `directory', `symlink',
-          `fifo', `socket' or `unknown').
-
-        * If `Path' is a symbolic link, `Linkto' is the file pointed
-          to. All other properties come from the file pointed, not
-          the link. `Linkto' is " if `Path' is not a symbolic link.
-
-        * Time of last modification `Time' (seconds since January, 1,
-          1970).
-
-        * Protection mode `Protection'.
-
-        * Size in bytes `Size'.
-
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: modif_time/2:
-     `modif_time(File, Time)'
-
-     The file `File' was last modified at `Time', which is in seconds
-     since January, 1, 1970. Fails if `File' does not exist.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: modif_time0/2:
-     `modif_time0(File, Time)'
-
-     If `File' exists, `Time' is its latest modification time, as in
-     `modif_time/2'. Otherwise, if `File' does not exist, `Time' is
-     zero.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: fmode/2:
-     `fmode(File, Mode)'
-
-     The file `File' has protection mode `Mode'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: chmod/2:
-     `chmod(File, NewMode)'
-
-     Change the protection mode of file `File' to `NewMode'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: chmod/3:
-     `chmod(File, OldMode, NewMode)'
+     No further documentation available for this predicate.
 
-     The file `File' has protection mode `OldMode' and it is changed
-     to `NewMode'.
-
-     *Usage 2:* `chmod(File, OldMode, NewMode)'
-        - _Description:_ Equivalent to fmode(`File',`OldMode')
-
-        - _The following properties should hold at call time:_
-
-          `File' is an atom.   (`basic_props:atm/1')
-
-          `OldMode' is a free variable.   (`term_typing:var/1')
-
-          `NewMode' is a free variable.   (`term_typing:var/1')
-
-          The terms `OldMode' and `NewMode' are strictly identical.
-          (`term_compare:== /2')
-
-        - _The following properties hold upon exit:_
-
-          `File' is an atom.   (`basic_props:atm/1')
-
-          `OldMode' is an atom.   (`basic_props:atm/1')
-
-          `NewMode' is an atom.   (`basic_props:atm/1')
 
 
  - PREDICATE: delete_file/1:
-     `delete_file(File)'
-
-     Delete the file `File'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: delete_directory/1:
-     `delete_directory(File)'
-
-     Delete the directory `Directory'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: rename_file/2:
-     `rename_file(File1, File2)'
-
-     Change the name of `File1' to `File2'.
+     No further documentation available for this predicate.
 
 
 
  - PREDICATE: cyg2win/3:
-     *Usage:* `cyg2win(CygWinPath, WindowsPath, SwapSlash)'
-        - _Description:_ Converts a path in the CygWin style to a
-          Windows-style path, rewriting the driver part. If
-          `SwapSlash' is `swap', slashes are converted in to
-          backslash. If it is `noswap', they are preserved.
+     No further documentation available for this predicate.
 
-        - _The following properties should hold at call time:_
-
-          `CygWinPath' is a string (a list of character codes).
-          (`basic_props:string/1')
-
-          `WindowsPath' is a free variable.   (`term_typing:var/1')
-
-          `SwapSlash' is currently instantiated to an atom.
-          (`term_typing:atom/1')
-
-        - _The following properties should hold upon exit:_
-
-          `CygWinPath' is a string (a list of character codes).
-          (`basic_props:string/1')
-
-          `WindowsPath' is a string (a list of character codes).
-          (`basic_props:string/1')
-
-          `SwapSlash' is currently instantiated to an atom.
-          (`term_typing:atom/1')
 
 
 
-File: ciao.info,  Node: Documentation on multifiles (system),  Next: Known bugs and planned improvements (system),  Prev: Documentation on exports (system),  Up: Operating system utilities
+File: ciao.info,  Node: Documentation on multifiles (system),  Prev: Documentation on exports (system),  Up: system (library)
 
 Documentation on multifiles (`system')
 ======================================
@@ -16588,25 +16309,7 @@ Documentation on multifiles (`system')
 
 
 
-File: ciao.info,  Node: Known bugs and planned improvements (system),  Prev: Documentation on multifiles (system),  Up: Operating system utilities
-
-Known bugs and planned improvements (`system')
-==============================================
-
-   *  `shell/n' commands have a bug in Windows: if the environment
-     variable SHELL is instantiated to some Windows shell
-     implementation, then it is very possible that shell/
-
-   * If `exec/4' does not find the command to be executed, there is
-     no visible error message: it is sent to a error output which has
-     already been assigned to a different stream, disconnected from
-     the one the user sees.
-
-   * If the arguments to cyg2win/3 are not strings, strange results
-     appear, as a very mild type checking is performed.
-
-
-File: ciao.info,  Node: Prolog system internal predicates,  Next: DEC-10 Prolog file IO,  Prev: Operating system utilities,  Up: Top
+File: ciao.info,  Node: Prolog system internal predicates,  Next: DEC-10 Prolog file IO,  Prev: system (library),  Up: Top
 
 Prolog system internal predicates
 *********************************
@@ -26100,9 +25803,9 @@ Fuzzy Prolog
 
    *Author(s):* Claudio Vaucheret, Sergio Guadarrama, Francisco Bueno.
 
-   *Version:* 1.9#330 (2004/3/25, 16:54:55 CET)
+   *Version:* 1.9#340 (2004/4/22, 16:22:25 CEST)
 
-   *Version of last change:* 1.7#199 (2002/4/18, 18:5:46 CEST)
+   *Version of last change:* 1.9#339 (2004/4/22, 7:49:9 CEST)
 
    This package impements an extension of prolog to deal with
 uncertainty. We implement a fuzzy prolog that models interval-valued
@@ -49968,7 +49671,7 @@ Library/Module Definition Index
 * strings:                               String processing.
 * symfnames:                             Symbolic filenames.
 * syntax_extensions:                     Extending the syntax.
-* system:                                Operating system utilities.
+* system:                                system (library).
 * system_extra:                          system_extra (library).
 * system_info:                           Gathering some basic internal info.
 * table_widget1:                         table_widget1 (library).
@@ -50256,6 +49959,7 @@ Predicate/Method Definition Index
 * datime/9:                              Documentation on exports (system).
 * datime_string/1:                       Documentation on exports (system_extra).
 * datime_string/2:                       Documentation on exports (system_extra).
+* datime_struct/1:                       Documentation on exports (system).
 * davinci/0:                             Documentation on exports (davinci).
 * davinci_get/1:                         Documentation on exports (davinci).
 * davinci_get_all/1:                     Documentation on exports (davinci).
@@ -50377,6 +50081,7 @@ Predicate/Method Definition Index
 * event_type_widget/1:                   Documentation on exports (widget_class).
 * exec/3:                                Documentation on exports (system).
 * exec/4:                                Documentation on exports (system).
+* exec/8:                                Documentation on exports (system).
 * expand_value/1:                        Documentation on exports (widget_class).
 * extension/2:                           Documentation on exports (filenames).
 * extract_paths/2:                       Documentation on exports (system).
@@ -50778,6 +50483,7 @@ Predicate/Method Definition Index
 * pop_global/2:                          Documentation on exports (global).
 * pop_prolog_flag/1:                     Documentation on exports (prolog_flags).
 * popen/3:                               Documentation on exports (system).
+* popen_mode/1:                          Documentation on exports (system).
 * portray/1:                             Documentation on multifiles (write).
 * portray_attribute/2:                   Documentation on multifiles (write).
 * portray_clause/1:                      Documentation on exports (write).
@@ -51115,6 +50821,7 @@ Predicate/Method Definition Index
 * vrml_to_terms/2:                       Documentation on exports (provrml).
 * vrml_web_to_terms/2:                   Documentation on exports (provrml).
 * vrml_web_to_terms_file/2:              Documentation on exports (provrml).
+* wait/3:                                Documentation on exports (system).
 * warning/1:                             Documentation on exports (io_aux).
 * warning_message/1:                     Documentation on exports (messages).
 * warning_message/2:                     Documentation on exports (messages).
@@ -51304,7 +51011,6 @@ Regular Type Definition Index
 * complex_arg_property/1:                Documentation on exports (assertions_props).
 * complex_goal_property/1:               Documentation on exports (assertions_props).
 * constant/1:                            Documentation on exports (basic_props).
-* datime_struct/1:                       Documentation on exports (system).
 * dbconnection/1 <1>:                    Documentation on exports (mysql_client).
 * dbconnection/1:                        Documentation on internals (persdbrt_mysql).
 * dbname/1 <1>:                          Documentation on exports (db_client_types).
@@ -51384,7 +51090,6 @@ Regular Type Definition Index
 * path/1:                                Documentation on exports (andorra).
 * pattern/1 <1>:                         Documentation on exports (color_pattern).
 * pattern/1:                             Documentation on exports (patterns).
-* popen_mode/1:                          Documentation on exports (system).
 * postgrestype/1:                        Documentation on exports (sqltypes).
 * predfunctor/1:                         Documentation on exports (assertions_props).
 * predname/1:                            Documentation on exports (basic_props).
@@ -52070,7 +51775,6 @@ reference will appear in  online versions of the document.
 * / /2:                                  Documentation on exports (arithmetic).
 * // /2:                                 Documentation on exports (arithmetic).
 * /\ /2:                                 Documentation on exports (arithmetic).
-* /bin/sh:                               Documentation on exports (system).
 * /bin/sh.exe <1>:                       Installation and compilation under Windows.
 * /bin/sh.exe:                           Running executables from the command line.
 * /etc/bashrc <1>:                       Un*x full installation instructions.
@@ -52180,8 +51884,7 @@ reference will appear in  online versions of the document.
 * abort:                                 Options available during debugging.
 * abort/0:                               Documentation on exports (exceptions).
 * abs/1:                                 Documentation on exports (arithmetic).
-* absolute_file_name/2 <1>:              Operating system utilities.
-* absolute_file_name/2 <2>:              Documentation on exports (streams_basic).
+* absolute_file_name/2 <1>:              Documentation on exports (streams_basic).
 * absolute_file_name/2:                  Usage and interface (streams_basic).
 * absolute_file_name/7 <1>:              Documentation on exports (streams_basic).
 * absolute_file_name/7:                  Usage and interface (streams_basic).
@@ -52851,8 +52554,7 @@ reference will appear in  online versions of the document.
 * client installation:                   Server installation under Windows.
 * client.bat:                            Server installation under Windows.
 * CLIP group:                            Acknowledgments.
-* close/1 <1>:                           Documentation on exports (system).
-* close/1 <2>:                           Documentation on exports (streams_basic).
+* close/1 <1>:                           Documentation on exports (streams_basic).
 * close/1:                               Usage and interface (streams_basic).
 * close/2 <1>:                           Documentation on exports (iso_incomplete).
 * close/2:                               Usage and interface (iso_incomplete).
@@ -53677,10 +53379,11 @@ reference will appear in  online versions of the document.
 * exec/3 <3>:                            Usage and interface (system).
 * exec/3:                                Documentation on exports (default_predicates).
 * exec/4 <1>:                            Documentation on exports (system_extra).
-* exec/4 <2>:                            Known bugs and planned improvements (system).
-* exec/4 <3>:                            Documentation on exports (system).
-* exec/4 <4>:                            Usage and interface (system).
+* exec/4 <2>:                            Documentation on exports (system).
+* exec/4 <3>:                            Usage and interface (system).
 * exec/4:                                Documentation on exports (default_predicates).
+* exec/8 <1>:                            Documentation on exports (system).
+* exec/8:                                Usage and interface (system).
 * executable:                            Introduction to building executables.
 * executables:                           Un*x full installation instructions.
 * executables, compressed:               Types of executables generated.
@@ -55063,7 +54766,7 @@ reference will appear in  online versions of the document.
 * native/1 <3>:                          Documentation on exports (native_props).
 * native/1 <4>:                          Documentation on exports (basic_props).
 * native/1:                              Usage and interface (basic_props).
-* native/1+2:                            Version/Change Log (ciao).
+* native/1,2:                            Version/Change Log (ciao).
 * native/2 <1>:                          Documentation on exports (foreign_interface_properties).
 * native/2 <2>:                          Usage and interface (foreign_interface_properties).
 * native/2 <3>:                          Documentation on exports (native_props).
@@ -55247,7 +54950,8 @@ reference will appear in  online versions of the document.
 * open/3 <1>:                            Documentation on exports (symfnames).
 * open/3 <2>:                            Usage and interface (symfnames).
 * open/3 <3>:                            Documentation on exports (streams_basic).
-* open/3:                                Usage and interface (streams_basic).
+* open/3 <4>:                            Usage and interface (streams_basic).
+* open/3:                                Version/Change Log (ciao).
 * open/4 <1>:                            Documentation on exports (streams_basic).
 * open/4:                                Usage and interface (streams_basic).
 * open_client/2 <1>:                     Documentation on exports (linda).
@@ -55386,12 +55090,11 @@ reference will appear in  online versions of the document.
 * PATH:                                  Un*x full installation instructions.
 * path <1>:                              Un*x installation summary.
 * path:                                  Un*x user setup.
-* path alias <1>:                        Operating system utilities.
-* path alias <2>:                        Documentation on multifiles (streams_basic).
-* path alias <3>:                        Documentation on exports (streams_basic).
-* path alias <4>:                        Documentation on internals (modules).
-* path alias <5>:                        Documentation on exports (libpaths).
-* path alias <6>:                        Customizing library paths and path aliases.
+* path alias <1>:                        Documentation on multifiles (streams_basic).
+* path alias <2>:                        Documentation on exports (streams_basic).
+* path alias <3>:                        Documentation on internals (modules).
+* path alias <4>:                        Documentation on exports (libpaths).
+* path alias <5>:                        Customizing library paths and path aliases.
 * path alias:                            Documentation on exports (ciaosh).
 * path aliases:                          Types of executables generated.
 * path/1 <1>:                            Documentation on exports (andorra).
@@ -56217,7 +55920,6 @@ reference will appear in  online versions of the document.
 * shell/2 <2>:                           Documentation on exports (system).
 * shell/2 <3>:                           Usage and interface (system).
 * shell/2:                               Documentation on exports (default_predicates).
-* shell/n:                               Known bugs and planned improvements (system).
 * shell_s/0 <1>:                         Documentation on exports (jtopl).
 * shell_s/0:                             Usage and interface (jtopl).
 * shortcut, windows:                     Win32 binary installation summary.
@@ -57058,6 +56760,8 @@ reference will appear in  online versions of the document.
 * vrml_web_to_terms/2:                   Usage and interface (provrml).
 * vrml_web_to_terms_file/2 <1>:          Documentation on exports (provrml).
 * vrml_web_to_terms_file/2:              Usage and interface (provrml).
+* wait/3 <1>:                            Documentation on exports (system).
+* wait/3:                                Usage and interface (system).
 * wakeup_exp/1 <1>:                      Documentation on exports (when).
 * wakeup_exp/1:                          Usage and interface (when).
 * WAM:                                   Acknowledgments.
@@ -57265,936 +56969,935 @@ reference will appear in  online versions of the document.
 
 
 Tag Table:
-Node: Top6646
-Node: Summary14529
-Node: Introduction17971
-Node: About this manual18414
-Node: About the Ciao Prolog development system20784
-Node: ISO-Prolog compliance versus extensibility24195
-Node: About the name of the System26798
-Node: Referring to Ciao27787
-Node: Syntax terminology and notational conventions28773
-Node: Predicates and their components29539
-Node: Characters and character strings30711
-Node: Predicate specs31576
-Node: Modes32249
-Node: Properties and types33267
-Node: Declarations34253
-Node: Operators35592
-Node: A tour of the manual36492
-Node: PART I - The program development environment37444
-Node: PART II - The Ciao basic language (engine)39297
-Node: PART III - ISO-Prolog library (iso)40043
-Node: PART IV - Classic Prolog library (classic)40493
-Node: PART V - Annotated Prolog library (assertions)41197
-Node: PART VI - Ciao Prolog library miscellanea41978
-Node: PART VII - Ciao Prolog extensions42801
-Node: PART VIII - Interfaces to other languages and systems43732
-Node: PART IX - Abstract data types44533
-Node: PART X - Miscellaneous standalone utilities44959
-Node: PART XI - Contributed libraries45361
-Node: PART XII - Appendices45783
-Node: Acknowledgments46170
-Node: Version/Change Log (ciao)50045
-Node: Getting started on Un*x-like machines74561
-Node: Testing your Ciao Un*x installation75836
-Node: Un*x user setup78128
-Node: Using Ciao from a Un*x command shell80764
-Node: Starting/exiting the top-level shell (Un*x)81290
-Node: Getting help (Un*x)82008
-Node: Compiling and running programs (Un*x)82528
-Node: Generating executables (Un*x)84307
-Node: Running Ciao scripts (Un*x)85411
-Node: The Ciao initialization file (Un*x)86535
-Node: Printing manuals (Un*x)87252
-Node: An introduction to the Ciao emacs environment (Un*x)87939
-Node: Keeping up to date (Un*x)91337
-Node: Getting started on Windows machines91756
-Node: Testing your Ciao Win32 installation93132
-Node: Using Ciao from the Windows explorer and command shell95576
-Node: Starting/exiting the top-level shell (Win32)96183
-Node: Getting help (Win32)96789
-Node: Compiling and running programs (Win32)97332
-Node: Generating executables (Win32)99134
-Node: Running Ciao scripts (Win32)100307
-Node: The Ciao initialization file (Win32)101446
-Node: Printing manuals (Win32)102175
-Node: An introduction to the Ciao emacs environment (Win32)102763
-Node: Keeping up to date (Win32)106181
-Node: *** PART I - The program development environment106602
-Node: The stand-alone command-line compiler108483
-Node: Introduction to building executables109719
-Node: Paths used by the compiler during compilation113090
-Node: Running executables from the command line113845
-Node: Types of executables generated116996
-Ref: Types of executables generated-Footnote-1123486
-Ref: Types of executables generated-Footnote-2123852
-Node: Environment variables used by Ciao executables124458
-Node: Intermediate files in the compilation process125947
-Node: Usage (ciaoc)126999
-Node: The interactive top-level shell129153
-Node: Shell invocation and startup130266
-Node: Shell interaction131706
-Node: Entering recursive (conjunctive) shell levels134440
-Node: Usage and interface (ciaosh)135997
-Node: Documentation on exports (ciaosh)137127
-Node: Documentation on internals (ciaosh)144859
-Node: The interactive debugger145463
-Node: Marking modules and files for debugging in the top-level debugger148266
-Node: The debugging process152227
-Node: Marking modules and files for debugging with the embedded debugger153716
-Node: The procedure box control flow model156550
-Node: Format of debugging messages162044
-Node: Options available during debugging165519
-Node: Calling predicates that are not exported by a module174328
-Node: Acknowledgements175078
-Node: Predicates controlling the interactive debugger175950
-Node: Usage and interface (debugger)176757
-Node: Documentation on exports (debugger)177642
-Node: Documentation on internals (debugger)185408
-Node: Known bugs and planned improvements (debugger)186373
-Node: The script interpreter186845
-Node: How it works188468
-Node: Command line arguments in scripts190895
-Node: Customizing library paths and path aliases191562
-Node: Usage and interface (libpaths)192515
-Node: Documentation on exports (libpaths)193099
-Node: Documentation on multifiles (libpaths)194083
-Node: Using Ciao inside GNU emacs194646
-Node: Conventions for writing Ciao programs under Emacs198533
-Node: Checking the installation199894
-Node: Functionality and associated key sequences (bindings)200831
-Node: Syntax coloring and syntax-based editing201359
-Node: Getting on-line help202722
-Node: Loading and compiling programs204238
-Node: Commands available in toplevel and preprocessor buffers209849
-Node: Locating errors and checking the syntax of assertions215639
-Node: Commands which help typing in programs216787
-Node: Debugging programs217451
-Node: Preprocessing programs221663
-Node: Version control226161
-Node: Generating program documentation235424
-Node: Setting top level preprocessor and documenter executables237841
-Node: Other commands240145
-Node: Traditional Prolog Mode Commands240543
-Node: Coexistence with other Prolog interfaces241485
-Node: Getting the Ciao/Prolog mode version242631
-Node: Using Ciao/Prolog mode capabilities in standard shells242981
-Node: Customization245027
-Node: Ciao general variables245890
-Node: CiaoPP variables249406
-Node: LPdoc variables249850
-Node: Faces used in syntax-based highlighting (coloring)250562
-Node: Installation of the Ciao/Prolog emacs interface255246
-Node: Emacs version compatibility259522
-Node: Acknowledgments (ciao.el)259981
-Node: *** PART II - The Ciao basic language (engine)260522
-Node: The module system261253
-Node: Usage and interface (modules)264187
-Node: Documentation on internals (modules)264527
-Node: Directives for using code in other files272724
-Node: Usage and interface (loading_code)273315
-Node: Documentation on internals (loading_code)273717
-Node: Control constructs/predicates276024
-Node: Usage and interface (basiccontrol)276689
-Node: Documentation on exports (basiccontrol)277333
-Node: Documentation on internals (basiccontrol)282860
-Node: Basic builtin directives283239
-Node: Usage and interface (builtin_directives)284546
-Node: Documentation on internals (builtin_directives)284940
-Node: Basic data types and properties288941
-Node: Usage and interface (basic_props)289695
-Node: Documentation on exports (basic_props)290575
-Node: Extra-logical properties for typing302106
-Node: Usage and interface (term_typing)302754
-Node: Documentation on exports (term_typing)303305
-Node: Basic term manipulation311956
-Node: Usage and interface (term_basic)312441
-Node: Documentation on exports (term_basic)312949
-Node: Comparing terms318732
-Node: Usage and interface (term_compare)320180
-Node: Documentation on exports (term_compare)320684
-Node: Basic predicates handling names of constants328407
-Node: Usage and interface (atomic_basic)329015
-Node: Documentation on exports (atomic_basic)329624
-Node: Arithmetic335326
-Node: Usage and interface (arithmetic)336320
-Node: Documentation on exports (arithmetic)336822
-Node: Basic file/stream handling346639
-Node: Usage and interface (streams_basic)347222
-Node: Documentation on exports (streams_basic)348205
-Node: Documentation on multifiles (streams_basic)371841
-Node: Basic input/output373189
-Node: Usage and interface (io_basic)374043
-Node: Documentation on exports (io_basic)374765
-Node: Exception handling389658
-Node: Usage and interface (exceptions)390167
-Node: Documentation on exports (exceptions)390626
-Node: Changing system behaviour and various flags395028
-Node: Usage and interface (prolog_flags)398451
-Node: Documentation on exports (prolog_flags)399164
-Node: Documentation on multifiles (prolog_flags)406021
-Node: Fast/concurrent update of facts408045
-Node: Usage and interface (data_facts)409922
-Node: Documentation on exports (data_facts)410645
-Node: Documentation on internals (data_facts)419384
-Node: Extending the syntax421015
-Node: Usage and interface (syntax_extensions)421679
-Node: Documentation on internals (syntax_extensions)422061
-Node: Message printing primitives430615
-Node: Usage and interface (io_aux)431213
-Node: Documentation on exports (io_aux)431667
-Node: Known bugs and planned improvements (io_aux)436206
-Node: Attributed variables436533
-Node: Usage and interface (attributes)437309
-Node: Documentation on exports (attributes)437892
-Node: Documentation on multifiles (attributes)441111
-Node: Other information (attributes)442711
-Node: Gathering some basic internal info444187
-Node: Usage and interface (system_info)444780
-Node: Documentation on exports (system_info)445307
-Node: Documentation on internals (system_info)450806
-Node: Other predicates and features defined by default451348
-Node: Usage and interface (default_predicates)452179
-Node: Documentation on exports (default_predicates)453461
-Node: *** PART III - ISO-Prolog library (iso)472767
-Node: ISO-Prolog package473220
-Node: Usage and interface (iso)473707
-Node: All solutions predicates474153
-Node: Usage and interface (aggregates)475026
-Node: Documentation on exports (aggregates)475576
-Node: Dynamic predicates479855
-Node: Usage and interface (dynamic)481041
-Node: Documentation on exports (dynamic)481793
-Node: Documentation on multifiles (dynamic)489540
-Node: Term input489961
-Node: Usage and interface (read)490784
-Node: Documentation on exports (read)491350
-Node: Documentation on multifiles (read)494119
-Node: Documentation on internals (read)494896
-Node: Known bugs and planned improvements (read)495809
-Node: Term output496137
-Node: Usage and interface (write)497090
-Node: Documentation on exports (write)497932
-Node: Documentation on multifiles (write)507405
-Node: Defining operators509010
-Node: Usage and interface (operators)510238
-Node: Documentation on exports (operators)510683
-Node: The Iso Byte Char module512869
-Node: Usage and interface (iso_byte_char)513524
-Node: Documentation on exports (iso_byte_char)514152
-Node: Miscellaneous ISO Prolog predicates517051
-Node: Usage and interface (iso_misc)517570
-Node: Documentation on exports (iso_misc)518116
-Node: Incomplete ISO Prolog predicates519374
-Node: Usage and interface (iso_incomplete)519941
-Node: Documentation on exports (iso_incomplete)520371
-Node: *** PART IV - Classic Prolog library (classic)520794
-Node: Definite clause grammars521494
-Node: Usage and interface (dcg)526805
-Node: Definite clause grammars (expansion)527074
-Node: Usage and interface (dcg_expansion)527525
-Node: Documentation on exports (dcg_expansion)528080
-Node: Formatted output529250
-Node: Usage and interface (format)530741
-Node: Documentation on exports (format)531259
-Node: List processing539127
-Node: Usage and interface (lists)539552
-Node: Documentation on exports (lists)540540
-Node: Sorting lists549211
-Node: Usage and interface (sort)549633
-Node: Documentation on exports (sort)550018
-Node: Documentation on internals (sort)551771
-Node: compiler (library)552122
-Node: Usage and interface (compiler)552484
-Node: Documentation on exports (compiler)553212
-Node: Enumeration of integers inside a range554700
-Node: Usage and interface (between)555251
-Node: Documentation on exports (between)555639
-Node: Operating system utilities556427
-Node: Usage and interface (system)557327
-Node: Documentation on exports (system)558582
-Node: Documentation on multifiles (system)571195
-Node: Known bugs and planned improvements (system)571594
-Node: Prolog system internal predicates572384
-Node: Usage and interface (prolog_sys)573097
-Node: Documentation on exports (prolog_sys)573596
-Node: Documentation on internals (prolog_sys)579761
-Node: Known bugs and planned improvements (prolog_sys)582411
-Node: DEC-10 Prolog file IO582934
-Node: Usage and interface (dec10_io)583389
-Node: Documentation on exports (dec10_io)583825
-Node: Quintus-like internal database584636
-Node: Usage and interface (old_database)585873
-Node: Documentation on exports (old_database)586314
-Node: ttyout (library)588834
-Node: Usage and interface (ttyout)589116
-Node: Documentation on exports (ttyout)589621
-Node: Enabling operators at run-time590987
-Node: Usage and interface (runtime_ops)591687
-Node: *** PART V - Annotated Prolog library (assertions)592098
-Node: The Ciao assertion package592872
-Node: More info594637
-Node: Some attention points595468
-Node: Usage and interface (assertions)596650
-Node: Documentation on new declarations (assertions)598071
-Node: Documentation on exports (assertions)609889
-Node: Types and properties related to assertions614262
-Node: Usage and interface (assertions_props)615258
-Node: Documentation on exports (assertions_props)616159
-Node: Declaring regular types630383
-Node: Defining properties631814
-Node: Usage and interface (regtypes)639489
-Node: Documentation on new declarations (regtypes)640088
-Node: Properties which are native to analyzers643593
-Node: Usage and interface (native_props)644301
-Node: Documentation on exports (native_props)645375
-Node: ISO-Prolog modes656722
-Node: Usage and interface (isomodes)657307
-Node: Documentation on new modes (isomodes)657774
-Node: Classical Prolog modes659847
-Node: Usage and interface (basicmodes)660584
-Node: Documentation on new modes (basicmodes)661122
-Node: Run-time checking of assertions665174
-Node: Usage and interface (rtchecks)666105
-Node: Documentation on exports (rtchecks)666625
-Node: Documentation on internals (rtchecks)666968
-Node: Known bugs and planned improvements (rtchecks)667673
-Node: *** PART VI - Ciao Prolog library miscellanea668143
-Node: Structured stream handling668964
-Node: Usage and interface (streams)669291
-Node: Documentation on exports (streams)669742
-Node: Dictionaries670414
-Node: Usage and interface (dict)670868
-Node: Documentation on exports (dict)671330
-Node: String processing673414
-Node: Usage and interface (strings)673903
-Node: Documentation on exports (strings)674365
-Node: Documentation on internals (strings)676460
-Node: Printing status and error messages676826
-Node: Usage and interface (messages)677505
-Node: Documentation on exports (messages)678435
-Node: Documentation on multifiles (messages)689238
-Node: Documentation on internals (messages)689928
-Node: Known bugs and planned improvements (messages)690316
-Node: Accessing and redirecting the stream aliases690670
-Node: Usage and interface (io_alias_redirection)691650
-Node: Documentation on exports (io_alias_redirection)692134
-Node: Atom to term conversion693612
-Node: Usage and interface (atom2term)694188
-Node: Documentation on exports (atom2term)694591
-Node: Known bugs and planned improvements (atom2term)695497
-Node: ctrlcclean (library)695896
-Node: Usage and interface (ctrlcclean)696179
-Node: Documentation on exports (ctrlcclean)696673
-Node: errhandle (library)697225
-Node: Usage and interface (errhandle)697515
-Node: Documentation on exports (errhandle)697899
-Node: Fast reading and writing of terms698356
-Node: Usage and interface (fastrw)699008
-Node: Documentation on exports (fastrw)699550
-Node: Known bugs and planned improvements (fastrw)700983
-Node: File name manipulation701510
-Node: Usage and interface (filenames)702016
-Node: Documentation on exports (filenames)702541
-Node: Symbolic filenames706272
-Node: Usage and interface (symfnames)707473
-Node: Documentation on exports (symfnames)707990
-Node: Documentation on multifiles (symfnames)708645
-Node: Other information (symfnames)709367
-Node: File I/O utilities710536
-Node: Usage and interface (file_utils)710963
-Node: Documentation on exports (file_utils)711493
-Node: File locks714208
-Node: Usage and interface (file_locks)714892
-Node: Documentation on exports (file_locks)715258
-Node: Known bugs and planned improvements (file_locks)716320
-Node: Term manipulation utilities716596
-Node: Usage and interface (terms)717058
-Node: Documentation on exports (terms)717442
-Node: Term checking utilities718284
-Node: Usage and interface (terms_check)718732
-Node: Documentation on exports (terms_check)719240
-Node: Other information (terms_check)720618
-Node: Sets of variables in terms721122
-Node: Usage and interface (terms_vars)721571
-Node: Documentation on exports (terms_vars)722077
-Node: A simple pretty-printer for Ciao programs723144
-Node: Usage and interface (pretty_print)723749
-Node: Documentation on exports (pretty_print)724299
-Node: Documentation on internals (pretty_print)725493
-Node: Pretty-printing assertions727283
-Node: Usage and interface (assrt_write)727832
-Node: Documentation on exports (assrt_write)728419
-Node: The Ciao library browser730143
-Node: Usage and interface (librowser)731313
-Node: Documentation on exports (librowser)732697
-Node: Documentation on internals (librowser)737026
-Node: Code translation utilities737529
-Node: Usage and interface (expansion_tools)738471
-Node: Documentation on exports (expansion_tools)739218
-Node: Documentation on internals (expansion_tools)744193
-Node: Known bugs and planned improvements (expansion_tools)744982
-Node: Low-level concurrency/multithreading primitives745328
-Node: Usage and interface (concurrency)747344
-Node: Documentation on exports (concurrency)748141
-Node: Known bugs and planned improvements (concurrency)758364
-Node: All solutions concurrent predicates759070
-Node: Usage and interface (conc_aggregates)760159
-Node: Documentation on exports (conc_aggregates)760671
-Node: Known bugs and planned improvements (conc_aggregates)761619
-Node: The socket interface762011
-Node: Usage and interface (sockets)762698
-Node: Documentation on exports (sockets)763454
-Node: Sockets I/O770420
-Node: Usage and interface (sockets_io)770867
-Node: Documentation on exports (sockets_io)771355
-Node: The Ciao Make Package772715
-Node: Usage and interface (make)773377
-Node: Other information (make)774667
-Node: The Dependency Rules774944
-Node: Specifying Paths779657
-Node: Documenting Rules780249
-Node: An Example of a Makefile781592
-Node: Predicates Available When Using The Make Package786274
-Node: Usage and interface (make_rt)786949
-Node: Documentation on exports (make_rt)787714
-Node: system_extra (library)790229
-Node: Usage and interface (system_extra)791077
-Node: Documentation on exports (system_extra)792169
-Node: *** PART VII - Ciao Prolog extensions801205
-Node: Pure Prolog package802104
-Node: Usage and interface (pure)804214
-Node: Known bugs and planned improvements (pure)804529
-Node: Multiple Argument Indexing804908
-Node: Usage and interface (indexer)805820
-Node: Documentation on internals (indexer)806448
-Node: Higher-order810256
-Node: Usage and interface (hiord_rt)810715
-Node: Documentation on exports (hiord_rt)811053
-Node: Higher-order predicates811866
-Node: Usage and interface (hiordlib)812555
-Node: Documentation on exports (hiordlib)812938
-Node: Terms with named arguments -records/feature terms814484
-Node: Usage and interface (argnames)815276
-Node: Documentation on new declarations (argnames)815824
-Node: Other information (argnames)819812
-Node: Using argument names in a toy database820264
-Node: Complete code for the zebra example821601
-Node: Known bugs and planned improvements (argnames)824585
-Node: Functional notation824971
-Node: Usage and interface (functions)828745
-Node: Known bugs and planned improvements (functions)829090
-Node: global (library)829426
-Node: Usage and interface (global)829780
-Node: Documentation on exports (global)830197
-Node: Independent and-parallel execution830846
-Node: Usage and interface (andprolog)831787
-Node: Documentation on internals (andprolog)832204
-Node: Known bugs and planned improvements (andprolog)834077
-Node: Andorra execution834879
-Node: Usage and interface (andorra)837199
-Node: Documentation on new declarations (andorra)837737
-Node: Documentation on exports (andorra)839106
-Node: Other information (andorra)841076
-Node: Call on determinate841571
-Node: Usage and interface (det_hook_rt)842299
-Node: Documentation on exports (det_hook_rt)842805
-Node: Documentation on internals (det_hook_rt)843968
-Node: Other information (det_hook_rt)844493
-Node: Known bugs and planned improvements (det_hook_rt)845527
-Node: Miscellaneous predicates846006
-Node: Usage and interface (odd)846515
-Node: Documentation on exports (odd)846864
-Node: Delaying predicates (freeze)848546
-Node: Usage and interface (freeze)849140
-Node: Documentation on exports (freeze)849514
-Node: Delaying predicates (when)850505
-Node: Usage and interface (when)852212
-Node: Documentation on exports (when)852719
-Node: Known bugs and planned improvements (when)854534
-Node: Active modules (high-level distributed execution)854867
-Ref: Active modules (high-level distributed execution)-Footnote-1861515
-Node: Active module name servers861770
-Node: Active modules as agents865365
-Node: Usage and interface (actmods)865733
-Node: Documentation on new declarations (actmods)866188
-Node: Known bugs and planned improvements (actmods)867028
-Node: Breadth-first execution868274
-Node: Usage and interface (bf)869734
-Node: Known bugs and planned improvements (bf)870119
-Node: Iterative-deepening execution870382
-Node: Usage and interface (id)874379
-Node: Constraint programming over rationals874653
-Node: Usage and interface (clpq)875404
-Node: Other information (clpq)875737
-Node: Some CLP(Q) examples876009
-Node: Known bugs and planned improvements (clpq)878143
-Node: Constraint programming over reals878503
-Node: Usage and interface (clpr)879228
-Node: Other information (clpr)879553
-Node: Some CLP(R) examples879821
-Node: Known bugs and planned improvements (clpr)883493
-Node: Fuzzy Prolog883849
-Node: Usage and interface (fuzzy)886113
-Node: Documentation on new declarations (fuzzy)887052
-Node: Documentation on exports (fuzzy)887778
-Node: Other information (fuzzy)893676
-Node: Known bugs and planned improvements (fuzzy)894925
-Node: Object oriented programming895386
-Node: Early examples896557
-Node: Recommendations on when to use objects902943
-Node: Limitations on object usage904555
-Node: Declaring classes and interfaces904982
-Node: Usage and interface (class)906158
-Node: Documentation on new declarations (class)908170
-Node: Documentation on exports (class)916622
-Node: Other information (class)921534
-Node: Class and Interface error reporting at compile time922548
-Node: Class and Interface error reporting at run time933016
-Node: Normal Prolog module system interaction933491
-Node: Known bugs and planned improvements (class)934754
-Node: Compile-time usage of objects935075
-Node: Usage and interface (objects)935681
-Node: Documentation on new declarations (objects)936549
-Node: Other information (objects)940211
-Node: Error reporting at compile time (objects)941444
-Node: Error reporting at run time (objects)947373
-Node: Run time usage of objects948341
-Node: Usage and interface (objects_rt)949592
-Node: Documentation on exports (objects_rt)950728
-Node: Known bugs and planned improvements (objects_rt)961228
-Node: The Ciao Remote Services Package962037
-Node: Usage and interface (remote)962596
-Node: Documentation on exports (remote)963002
-Node: Known bugs and planned improvements (remote)964308
-Node: *** PART VIII - Interfaces to other languages and systems964998
-Node: Foreign Language Interface965815
-Node: Declaration of Types967301
-Node: Equivalence between Ciao Prolog and C types968918
-Node: Equivalence between Ciao Prolog and C modes971199
-Node: Custom access to Prolog from C972641
-Node: Term construction974291
-Node: Testing the Type of a Term977921
-Node: Term navigation979561
-Node: Testing for Equality and Performing Unification982120
-Node: Raising Exceptions983266
-Node: Creating and disposing of memory chunks983897
-Node: Calling Prolog from C984781
-Node: Examples986998
-Node: Mathematical functions987408
-Node: Addresses and C pointers988426
-Node: Lists of bytes and buffers989612
-Node: Lists of integers991004
-Node: Strings and atoms991986
-Node: Arbitrary Terms993875
-Node: Exceptions995766
-Node: Testing number types and using unbound length integers997041
-Node: Usage and interface (foreign_interface)999827
-Node: Foreign Language Interface Properties1000228
-Node: Usage and interface (foreign_interface_properties)1001065
-Node: Documentation on exports (foreign_interface_properties)1001771
-Node: Documentation on internals (foreign_interface_properties)1004629
-Node: Known bugs and planned improvements (foreign_interface_properties)1010059
-Node: Utilities for on-demand compilation of foreign files1010458
-Node: Usage and interface (foreign_compilation)1011537
-Node: Documentation on exports (foreign_compilation)1012130
-Node: Foreign Language Interface Builder1013660
-Node: Usage and interface (build_foreign_interface)1014373
-Node: Documentation on exports (build_foreign_interface)1015404
-Node: Interface to daVinci1018740
-Node: Usage and interface (davinci)1019904
-Node: Documentation on exports (davinci)1020626
-Node: Documentation on internals (davinci)1022533
-Node: The Tcl/Tk interface1024685
-Node: Usage and interface (tcltk)1033309
-Node: Documentation on exports (tcltk)1034011
-Node: Low level interface library to Tcl/Tk1039677
-Node: Usage and interface (tcltk_low_level)1040650
-Node: Documentation on exports (tcltk_low_level)1041453
-Node: Documentation on internals (tcltk_low_level)1047215
-Node: The Tcl/Tk Class Interface1047925
-Node: Usage and interface (window_class)1048929
-Node: Documentation on exports (window_class)1049742
-Node: widget_class (library)1053069
-Node: Usage and interface (widget_class)1053482
-Node: Documentation on exports (widget_class)1054534
-Node: menu_class (library)1068812
-Node: Usage and interface (menu_class)1069214
-Node: Documentation on exports (menu_class)1069965
-Node: canvas_class (library)1073440
-Node: Usage and interface (canvas_class)1073853
-Node: Documentation on multifiles (canvas_class)1074445
-Node: button_class (library)1075866
-Node: Usage and interface (button_class)1076283
-Node: Documentation on exports (button_class)1076769
-Node: checkbutton_class (library)1077689
-Node: Usage and interface (checkbutton_class)1078130
-Node: Documentation on exports (checkbutton_class)1078651
-Node: radiobutton_class (library)1079559
-Node: Usage and interface (radiobutton_class)1080000
-Node: Documentation on exports (radiobutton_class)1080521
-Node: entry_class (library)1081424
-Node: Usage and interface (entry_class)1081835
-Node: Documentation on exports (entry_class)1082471
-Node: label_class (library)1085099
-Node: Usage and interface (label_class)1085509
-Node: Documentation on exports (label_class)1085992
-Node: menubutton_class (library)1086309
-Node: Usage and interface (menubutton_class)1086743
-Node: Documentation on exports (menubutton_class)1087261
-Node: menu_entry_class (library)1088055
-Node: Usage and interface (menu_entry_class)1088490
-Node: Documentation on exports (menu_entry_class)1089089
-Node: shape_class (library)1091064
-Node: Usage and interface (shape_class)1091472
-Node: Documentation on exports (shape_class)1092033
-Node: arc_class (library)1093779
-Node: Usage and interface (arc_class)1094173
-Node: Documentation on exports (arc_class)1094726
-Node: oval_class (library)1099236
-Node: Usage and interface (oval_class)1099633
-Node: Documentation on exports (oval_class)1100160
-Node: poly_class (library)1102893
-Node: Usage and interface (poly_class)1103292
-Node: Documentation on exports (poly_class)1103786
-Node: line_class (library)1105389
-Node: Usage and interface (line_class)1105787
-Node: Documentation on exports (line_class)1106278
-Node: text_class (library)1107958
-Node: Usage and interface (text_class)1108370
-Node: Documentation on exports (text_class)1108920
-Node: The PiLLoW Web programming library1112374
-Node: Installing PiLLoW1113638
-Node: Usage and interface (pillow)1114523
-Node: HTML/XML/CGI programming1114987
-Node: Usage and interface (html)1115655
-Node: Documentation on exports (html)1116656
-Node: Documentation on multifiles (html)1125255
-Node: Other information (html)1126145
-Node: HTTP conectivity1126530
-Node: Usage and interface (http)1126989
-Node: Documentation on exports (http)1127488
-Node: PiLLoW types1128578
-Node: Usage and interface (pillow_types)1129064
-Node: Documentation on exports (pillow_types)1129699
-Node: Persistent predicate database1145790
-Node: Introduction to persistent predicates1146723
-Node: Persistent predicates1148841
-Node: Using file-based persistent predicates1152020
-Node: Implementation Issues1154087
-Node: Defining an initial database1155931
-Node: Using persistent predicates from the top level1156400
-Node: Usage and interface (persdbrt)1157088
-Node: Documentation on exports (persdbrt)1158575
-Node: Documentation on multifiles (persdbrt)1164813
-Node: Documentation on internals (persdbrt)1166328
-Node: Known bugs and planned improvements (persdbrt)1167942
-Node: Using the persdb library1168330
-Node: An example of persistent predicates (static version)1169158
-Node: An example of persistent predicates (dynamic version)1170155
-Node: A simple application / a persistent queue1170962
-Node: Filed predicates1172348
-Node: Usage and interface (factsdb_rt)1174154
-Node: Documentation on exports (factsdb_rt)1175011
-Node: Documentation on multifiles (factsdb_rt)1179071
-Node: Documentation on internals (factsdb_rt)1179914
-Node: Known bugs and planned improvements (factsdb_rt)1181125
-Node: SQL persistent database interface1181739
-Node: Implementation of the Database Interface1183738
-Node: Example(s)1185683
-Node: Usage and interface (persdbrt_mysql)1189582
-Node: Documentation on exports (persdbrt_mysql)1191301
-Node: Documentation on multifiles (persdbrt_mysql)1200493
-Node: Documentation on internals (persdbrt_mysql)1201532
-Node: Known bugs and planned improvements (persdbrt_mysql)1207166
-Node: Prolog to SQL translator1207823
-Node: Usage and interface (pl2sql)1210559
-Node: Documentation on exports (pl2sql)1211276
-Node: Documentation on multifiles (pl2sql)1217352
-Node: Documentation on internals (pl2sql)1219870
-Node: Known bugs and planned improvements (pl2sql)1226751
-Node: Low-level socket interface to SQL/ODBC databases1227047
-Node: Usage and interface (mysql_client)1227676
-Node: Documentation on exports (mysql_client)1228554
-Node: Types for the Low-level interface to SQL databases1230053
-Node: Usage and interface (db_client_types)1230696
-Node: Documentation on exports (db_client_types)1231276
-Node: sqltypes (library)1233305
-Node: Usage and interface (sqltypes)1233690
-Node: Documentation on exports (sqltypes)1234312
-Node: persdbtr_sql (library)1240134
-Node: Usage and interface (persdbtr_sql)1240506
-Node: Documentation on exports (persdbtr_sql)1240994
-Node: pl2sqlinsert (library)1241439
-Node: Usage and interface (pl2sqlinsert)1241865
-Node: Documentation on exports (pl2sqlinsert)1242637
-Node: Documentation on multifiles (pl2sqlinsert)1243004
-Node: Prolog to Java interface1243581
-Node: Prolog to Java Interface Structure1244567
-Node: Prolog side of the Java interface1245772
-Node: Java side1246848
-Node: Java event handling from Prolog1249529
-Node: Java exception handling from Prolog1251694
-Node: Usage and interface (javart)1252756
-Node: Documentation on exports (javart)1253820
-Node: Java to Prolog interface1265168
-Node: Usage and interface (jtopl)1267119
-Node: Documentation on exports (jtopl)1267855
-Node: Low-level Prolog to Java socket connection1271751
-Node: Usage and interface (javasock)1272567
-Node: Documentation on exports (javasock)1273479
-Node: Calling emacs from Prolog1277451
-Node: Usage and interface (emacs)1279537
-Node: Documentation on exports (emacs)1280140
-Node: linda (library)1281308
-Node: Usage and interface (linda)1281843
-Node: Documentation on exports (linda)1282514
-Node: *** PART IX - Abstract data types1284036
-Node: Extendable arrays with logarithmic access time1284448
-Node: Usage and interface (arrays)1285078
-Node: Documentation on exports (arrays)1285564
-Node: counters (library)1287214
-Node: Usage and interface (counters)1287506
-Node: Documentation on exports (counters)1287894
-Node: Identity lists1288370
-Node: Usage and interface (idlists)1288783
-Node: Documentation on exports (idlists)1289242
-Node: Lists of numbers1291028
-Node: Usage and interface (numlists)1291414
-Node: Documentation on exports (numlists)1292000
-Node: Pattern (regular expression) matching1294571
-Node: Usage and interface (patterns)1295114
-Node: Documentation on exports (patterns)1295757
-Node: Graphs1298886
-Node: Usage and interface (graphs)1299365
-Node: Documentation on exports (graphs)1299952
-Node: Documentation on internals (graphs)1303041
-Node: Unweighted graph-processing utilities1303432
-Node: Usage and interface (ugraphs)1304628
-Node: Documentation on exports (ugraphs)1305314
-Node: wgraphs (library)1307359
-Node: Usage and interface (wgraphs)1307721
-Node: Documentation on exports (wgraphs)1308176
-Node: Labeled graph-processing utilities1308479
-Node: Usage and interface (lgraphs)1308952
-Node: Documentation on exports (lgraphs)1309492
-Node: queues (library)1310184
-Node: Usage and interface (queues)1310454
-Node: Documentation on exports (queues)1310835
-Node: Random numbers1311383
-Node: Usage and interface (random)1311812
-Node: Documentation on exports (random)1312171
-Node: Set Operations1313017
-Node: Usage and interface (sets)1313451
-Node: Documentation on exports (sets)1314220
-Node: Variable name dictionaries1318060
-Node: Usage and interface (vndict)1318487
-Node: Documentation on exports (vndict)1319258
-Node: *** PART X - Miscellaneous standalone utilities1323400
-Node: A Program to Help Cleaning your Directories1323953
-Node: Usage (cleandirs)1324542
-Node: Known bugs and planned improvements (cleandirs)1326059
-Node: Printing the declarations and code in a file1326429
-Node: Usage (fileinfo)1327468
-Node: More detailed explanation of options (fileinfo)1328474
-Node: Printing the contents of a bytecode file1329866
-Node: Usage (viewpo)1330470
-Node: Crossed-references of a program1330768
-Node: Gathering the dependent files for a file1333298
-Node: Usage (get_deps)1334238
-Node: Finding differences between two Prolog files1334657
-Node: Usage (pldiff)1335428
-Node: Known bugs and planned improvements (pldiff)1335892
-Node: The Ciao lpmake scripting facility1336332
-Node: General operation1338782
-Node: Format of the Configuration File1340759
-Node: lpmake usage1341543
-Node: Acknowledgments (lpmake)1342829
-Node: Find out which architecture we are running on1343085
-Node: Usage (ciao_get_arch)1343849
-Node: More details1344100
-Node: Print out WAM code1344282
-Node: Usage (compiler_output)1344746
-Node: *** PART XI - Contributed libraries1345015
-Node: Programming MYCIN rules1345434
-Node: Usage and interface (mycin)1346622
-Node: Documentation on new declarations (mycin)1347098
-Node: Known bugs and planned improvements (mycin)1348133
-Node: Constraint programming over finite domains1348630
-Node: Usage and interface (fd)1351644
-Node: Documentation on exports (fd)1352605
-Node: XDR handle library1359662
-Node: Usage and interface (xdr_handle)1360709
-Node: Documentation on exports (xdr_handle)1361426
-Node: XML query library1365929
-Node: Usage and interface (xml_path)1368283
-Node: Documentation on exports (xml_path)1369024
-Node: Documentation on internals (xml_path)1374858
-Node: A Chart Library1375810
-Node: Bar charts1377367
-Ref: Bar charts-Footnote-11382716
-Node: Line graphs1382858
-Node: Scatter graphs1385866
-Node: Tables1388884
-Node: Overview of widgets1390456
-Node: Usage and interface (chartlib)1393988
-Node: Documentation on exports (chartlib)1394682
-Node: Low level Interface between Prolog and blt1400061
-Node: Usage and interface (bltclass)1400865
-Node: Documentation on exports (bltclass)1401527
-Node: Error Handler for Chartlib1402647
-Node: Usage and interface (chartlib_errhandle)1403426
-Node: Documentation on exports (chartlib_errhandle)1404033
-Node: Documentation on internals (chartlib_errhandle)1404978
-Node: Color and Pattern Library1405721
-Node: Usage and interface (color_pattern)1406248
-Node: Documentation on exports (color_pattern)1406919
-Node: Barchart widgets - 11411325
-Node: Usage and interface (genbar1)1413204
-Node: Documentation on exports (genbar1)1413928
-Node: Documentation on internals (genbar1)1420048
-Node: Barchart widgets - 21421918
-Node: Usage and interface (genbar2)1423777
-Node: Documentation on exports (genbar2)1424465
-Node: Depict barchart widgets - 31428310
-Node: Usage and interface (genbar3)1429560
-Node: Documentation on exports (genbar3)1430204
-Node: Documentation on internals (genbar3)1432186
-Node: Depict barchart widgets - 41433769
-Node: Usage and interface (genbar4)1435032
-Node: Documentation on exports (genbar4)1435677
-Node: Documentation on internals (genbar4)1438008
-Node: Depic line graph1439242
-Ref: Depic line graph-Footnote-11442096
-Node: Usage and interface (gengraph1)1442201
-Node: Documentation on exports (gengraph1)1443056
-Node: Line graph widgets1452204
-Ref: Line graph widgets-Footnote-11454541
-Node: Usage and interface (gengraph2)1454638
-Node: Documentation on exports (gengraph2)1455418
-Node: Multi barchart widgets1461639
-Node: Usage and interface (genmultibar)1464593
-Node: Documentation on exports (genmultibar)1465234
-Node: Documentation on internals (genmultibar)1467455
-Node: table_widget1 (library)1469381
-Node: Usage and interface (table_widget1)1470103
-Node: Documentation on exports (table_widget1)1470761
-Node: Documentation on internals (table_widget1)1472663
-Node: table_widget2 (library)1473740
-Node: Usage and interface (table_widget2)1474481
-Node: Documentation on exports (table_widget2)1475114
-Node: table_widget3 (library)1476671
-Node: Usage and interface (table_widget3)1477446
-Node: Documentation on exports (table_widget3)1478079
-Node: table_widget4 (library)1479214
-Node: Usage and interface (table_widget4)1479964
-Node: Documentation on exports (table_widget4)1480597
-Node: test_format (library)1482438
-Node: Usage and interface (test_format)1483465
-Node: Documentation on exports (test_format)1484114
-Node: ProVRML - a Prolog interface for VRML1486377
-Node: Usage and interface (provrml)1488008
-Node: Documentation on exports (provrml)1488857
-Node: Documentation on internals (provrml)1494215
-Node: boundary (library)1494827
-Node: Usage and interface (boundary)1495356
-Node: Documentation on exports (boundary)1496074
-Node: dictionary (library)1498464
-Node: Usage and interface (dictionary)1498962
-Node: Documentation on exports (dictionary)1499565
-Node: dictionary_tree (library)1501564
-Node: Usage and interface (dictionary_tree)1502138
-Node: Documentation on exports (dictionary_tree)1502959
-Node: error (library)1506854
-Node: Usage and interface (error)1507293
-Node: Documentation on exports (error)1507731
-Node: field_type (library)1508718
-Node: Usage and interface (field_type)1509111
-Node: Documentation on exports (field_type)1509480
-Node: field_value (library)1509982
-Node: Usage and interface (field_value)1510391
-Node: Documentation on exports (field_value)1510987
-Node: field_value_check (library)1511674
-Node: Usage and interface (field_value_check)1512106
-Node: Documentation on exports (field_value_check)1512780
-Node: generator (library)1513219
-Node: Usage and interface (generator)1513558
-Node: Documentation on exports (generator)1514283
-Node: generator_util (library)1515184
-Node: Usage and interface (generator_util)1515491
-Node: Documentation on exports (generator_util)1516478
-Node: internal_types (library)1520285
-Node: Usage and interface (internal_types)1520879
-Node: Documentation on exports (internal_types)1521373
-Node: io (library)1524490
-Node: Usage and interface (io)1524863
-Node: Documentation on exports (io)1525529
-Node: lookup (library)1528209
-Node: Usage and interface (lookup)1528506
-Node: Documentation on exports (lookup)1529787
-Node: parser (library)1537286
-Node: Usage and interface (parser)1537547
-Node: Documentation on exports (parser)1538305
-Node: parser_util (library)1539361
-Node: Usage and interface (parser_util)1539644
-Node: Documentation on exports (parser_util)1541395
-Node: possible (library)1561017
-Node: Usage and interface (possible)1561335
-Node: Documentation on exports (possible)1561774
-Node: tokeniser (library)1562066
-Node: Usage and interface (tokeniser)1562454
-Node: Documentation on exports (tokeniser)1562960
-Node: Double linked list1564021
-Node: Usage and interface (ddlist)1564741
-Node: Documentation on exports (ddlist)1565444
-Node: Other information (ddlist)1571076
-Node: Using insert_after1571388
-Node: More Complex example1572111
-Node: Measuring features from predicates (time cost or memory used...)1573088
-Node: Usage and interface (time_analyzer)1573877
-Node: Documentation on exports (time_analyzer)1574648
-Node: Printing graph using gnuplot as auxiliary tool.1586469
-Node: Usage and interface (gnuplot)1587907
-Node: Documentation on exports (gnuplot)1588502
-Node: Automatic modules caller tester1592643
-Node: Usage and interface (modtester)1593533
-Node: Documentation on exports (modtester)1594167
-Node: Automatic tester1595919
-Node: Usage and interface (tester)1596718
-Node: Documentation on exports (tester)1597179
-Node: Other information (tester)1599429
-Node: Understanding run_test predicate1599747
-Node: More complex example1601277
-Node: *** PART XII - Appendices1604716
-Node: Installing Ciao from the source distribution1605161
-Node: Un*x installation summary1606527
-Node: Un*x full installation instructions1611818
-Node: Checking for correct installation on Un*x1623386
-Node: Cleaning up the source directory1626705
-Node: Multiarchitecture support1627454
-Node: Installation and compilation under Windows1629963
-Node: Porting to currently unsupported operating systems1633048
-Node: Troubleshooting (nasty messages and nifty workarounds)1635926
-Node: Installing Ciao from a Win32 binary distribution1642484
-Node: Win32 binary installation summary1643881
-Node: Checking for correct installation on Win321648891
-Node: Compiling the miscellaneous utilities under Windows1653185
-Node: Server installation under Windows1653835
-Node: CGI execution under IIS1654803
-Node: Uninstallation under Windows1655582
-Node: Beyond installation1656617
-Node: Architecture-specific notes and limitations1657132
-Node: Keeping up to date with the Ciao users mailing list1658609
-Node: Downloading new versions1659643
-Node: Reporting bugs1660093
-Node: References1661079
-Node: Library/Module Definition Index1677963
-Node: Predicate/Method Definition Index1691788
-Node: Property Definition Index1783242
-Node: Regular Type Definition Index1790444
-Node: Declaration Definition Index1805912
-Node: Concept Definition Index1812974
-Node: Global Index1844207
+Node: Top6647
+Node: Summary14521
+Node: Introduction17963
+Node: About this manual18406
+Node: About the Ciao Prolog development system20776
+Node: ISO-Prolog compliance versus extensibility24187
+Node: About the name of the System26790
+Node: Referring to Ciao27779
+Node: Syntax terminology and notational conventions28765
+Node: Predicates and their components29531
+Node: Characters and character strings30703
+Node: Predicate specs31568
+Node: Modes32241
+Node: Properties and types33259
+Node: Declarations34245
+Node: Operators35584
+Node: A tour of the manual36484
+Node: PART I - The program development environment37436
+Node: PART II - The Ciao basic language (engine)39289
+Node: PART III - ISO-Prolog library (iso)40035
+Node: PART IV - Classic Prolog library (classic)40485
+Node: PART V - Annotated Prolog library (assertions)41189
+Node: PART VI - Ciao Prolog library miscellanea41970
+Node: PART VII - Ciao Prolog extensions42793
+Node: PART VIII - Interfaces to other languages and systems43724
+Node: PART IX - Abstract data types44525
+Node: PART X - Miscellaneous standalone utilities44951
+Node: PART XI - Contributed libraries45353
+Node: PART XII - Appendices45775
+Node: Acknowledgments46162
+Node: Version/Change Log (ciao)50037
+Node: Getting started on Un*x-like machines74155
+Node: Testing your Ciao Un*x installation75430
+Node: Un*x user setup77722
+Node: Using Ciao from a Un*x command shell80358
+Node: Starting/exiting the top-level shell (Un*x)80884
+Node: Getting help (Un*x)81602
+Node: Compiling and running programs (Un*x)82122
+Node: Generating executables (Un*x)83901
+Node: Running Ciao scripts (Un*x)85005
+Node: The Ciao initialization file (Un*x)86129
+Node: Printing manuals (Un*x)86846
+Node: An introduction to the Ciao emacs environment (Un*x)87533
+Node: Keeping up to date (Un*x)90931
+Node: Getting started on Windows machines91350
+Node: Testing your Ciao Win32 installation92726
+Node: Using Ciao from the Windows explorer and command shell95170
+Node: Starting/exiting the top-level shell (Win32)95777
+Node: Getting help (Win32)96383
+Node: Compiling and running programs (Win32)96926
+Node: Generating executables (Win32)98728
+Node: Running Ciao scripts (Win32)99901
+Node: The Ciao initialization file (Win32)101040
+Node: Printing manuals (Win32)101769
+Node: An introduction to the Ciao emacs environment (Win32)102357
+Node: Keeping up to date (Win32)105775
+Node: *** PART I - The program development environment106196
+Node: The stand-alone command-line compiler108077
+Node: Introduction to building executables109313
+Node: Paths used by the compiler during compilation112684
+Node: Running executables from the command line113439
+Node: Types of executables generated116590
+Ref: Types of executables generated-Footnote-1123080
+Ref: Types of executables generated-Footnote-2123446
+Node: Environment variables used by Ciao executables124052
+Node: Intermediate files in the compilation process125541
+Node: Usage (ciaoc)126593
+Node: The interactive top-level shell128747
+Node: Shell invocation and startup129860
+Node: Shell interaction131300
+Node: Entering recursive (conjunctive) shell levels134034
+Node: Usage and interface (ciaosh)135591
+Node: Documentation on exports (ciaosh)136721
+Node: Documentation on internals (ciaosh)144453
+Node: The interactive debugger145057
+Node: Marking modules and files for debugging in the top-level debugger147860
+Node: The debugging process151821
+Node: Marking modules and files for debugging with the embedded debugger153310
+Node: The procedure box control flow model156144
+Node: Format of debugging messages161638
+Node: Options available during debugging165113
+Node: Calling predicates that are not exported by a module173922
+Node: Acknowledgements174672
+Node: Predicates controlling the interactive debugger175544
+Node: Usage and interface (debugger)176351
+Node: Documentation on exports (debugger)177236
+Node: Documentation on internals (debugger)185002
+Node: Known bugs and planned improvements (debugger)185967
+Node: The script interpreter186439
+Node: How it works188062
+Node: Command line arguments in scripts190489
+Node: Customizing library paths and path aliases191156
+Node: Usage and interface (libpaths)192109
+Node: Documentation on exports (libpaths)192693
+Node: Documentation on multifiles (libpaths)193677
+Node: Using Ciao inside GNU emacs194240
+Node: Conventions for writing Ciao programs under Emacs198128
+Node: Checking the installation199489
+Node: Functionality and associated key sequences (bindings)200426
+Node: Syntax coloring and syntax-based editing200954
+Node: Getting on-line help202317
+Node: Loading and compiling programs203833
+Node: Commands available in toplevel and preprocessor buffers209444
+Node: Locating errors and checking the syntax of assertions215234
+Node: Commands which help typing in programs216382
+Node: Debugging programs217046
+Node: Preprocessing programs221258
+Node: Version control225756
+Node: Generating program documentation235019
+Node: Setting top level preprocessor and documenter executables237436
+Node: Other commands239740
+Node: Traditional Prolog Mode Commands240138
+Node: Coexistence with other Prolog interfaces241080
+Node: Getting the Ciao/Prolog mode version242226
+Node: Using Ciao/Prolog mode capabilities in standard shells242576
+Node: Customization244622
+Node: Ciao general variables245485
+Node: CiaoPP variables249001
+Node: LPdoc variables249445
+Node: Faces used in syntax-based highlighting (coloring)250157
+Node: Installation of the Ciao/Prolog emacs interface254841
+Node: Emacs version compatibility259117
+Node: Acknowledgments (ciao.el)259576
+Node: *** PART II - The Ciao basic language (engine)260117
+Node: The module system260848
+Node: Usage and interface (modules)263782
+Node: Documentation on internals (modules)264122
+Node: Directives for using code in other files272319
+Node: Usage and interface (loading_code)272910
+Node: Documentation on internals (loading_code)273312
+Node: Control constructs/predicates275619
+Node: Usage and interface (basiccontrol)276284
+Node: Documentation on exports (basiccontrol)276928
+Node: Documentation on internals (basiccontrol)282455
+Node: Basic builtin directives282834
+Node: Usage and interface (builtin_directives)284141
+Node: Documentation on internals (builtin_directives)284535
+Node: Basic data types and properties288536
+Node: Usage and interface (basic_props)289290
+Node: Documentation on exports (basic_props)290170
+Node: Extra-logical properties for typing301701
+Node: Usage and interface (term_typing)302349
+Node: Documentation on exports (term_typing)302900
+Node: Basic term manipulation311551
+Node: Usage and interface (term_basic)312036
+Node: Documentation on exports (term_basic)312544
+Node: Comparing terms318327
+Node: Usage and interface (term_compare)319775
+Node: Documentation on exports (term_compare)320279
+Node: Basic predicates handling names of constants328002
+Node: Usage and interface (atomic_basic)328610
+Node: Documentation on exports (atomic_basic)329219
+Node: Arithmetic334921
+Node: Usage and interface (arithmetic)335915
+Node: Documentation on exports (arithmetic)336417
+Node: Basic file/stream handling346234
+Node: Usage and interface (streams_basic)346817
+Node: Documentation on exports (streams_basic)347800
+Node: Documentation on multifiles (streams_basic)371436
+Node: Basic input/output372784
+Node: Usage and interface (io_basic)373638
+Node: Documentation on exports (io_basic)374360
+Node: Exception handling389253
+Node: Usage and interface (exceptions)389762
+Node: Documentation on exports (exceptions)390221
+Node: Changing system behaviour and various flags394623
+Node: Usage and interface (prolog_flags)398046
+Node: Documentation on exports (prolog_flags)398759
+Node: Documentation on multifiles (prolog_flags)405616
+Node: Fast/concurrent update of facts407640
+Node: Usage and interface (data_facts)409517
+Node: Documentation on exports (data_facts)410240
+Node: Documentation on internals (data_facts)418979
+Node: Extending the syntax420610
+Node: Usage and interface (syntax_extensions)421274
+Node: Documentation on internals (syntax_extensions)421656
+Node: Message printing primitives430210
+Node: Usage and interface (io_aux)430808
+Node: Documentation on exports (io_aux)431262
+Node: Known bugs and planned improvements (io_aux)435801
+Node: Attributed variables436128
+Node: Usage and interface (attributes)436904
+Node: Documentation on exports (attributes)437487
+Node: Documentation on multifiles (attributes)440706
+Node: Other information (attributes)442306
+Node: Gathering some basic internal info443782
+Node: Usage and interface (system_info)444375
+Node: Documentation on exports (system_info)444902
+Node: Documentation on internals (system_info)450401
+Node: Other predicates and features defined by default450943
+Node: Usage and interface (default_predicates)451774
+Node: Documentation on exports (default_predicates)453056
+Node: *** PART III - ISO-Prolog library (iso)472362
+Node: ISO-Prolog package472815
+Node: Usage and interface (iso)473302
+Node: All solutions predicates473748
+Node: Usage and interface (aggregates)474621
+Node: Documentation on exports (aggregates)475171
+Node: Dynamic predicates479450
+Node: Usage and interface (dynamic)480636
+Node: Documentation on exports (dynamic)481388
+Node: Documentation on multifiles (dynamic)489135
+Node: Term input489556
+Node: Usage and interface (read)490379
+Node: Documentation on exports (read)490945
+Node: Documentation on multifiles (read)493714
+Node: Documentation on internals (read)494491
+Node: Known bugs and planned improvements (read)495404
+Node: Term output495732
+Node: Usage and interface (write)496685
+Node: Documentation on exports (write)497527
+Node: Documentation on multifiles (write)507000
+Node: Defining operators508605
+Node: Usage and interface (operators)509833
+Node: Documentation on exports (operators)510278
+Node: The Iso Byte Char module512464
+Node: Usage and interface (iso_byte_char)513119
+Node: Documentation on exports (iso_byte_char)513747
+Node: Miscellaneous ISO Prolog predicates516646
+Node: Usage and interface (iso_misc)517165
+Node: Documentation on exports (iso_misc)517711
+Node: Incomplete ISO Prolog predicates518969
+Node: Usage and interface (iso_incomplete)519536
+Node: Documentation on exports (iso_incomplete)519966
+Node: *** PART IV - Classic Prolog library (classic)520389
+Node: Definite clause grammars521089
+Node: Usage and interface (dcg)526400
+Node: Definite clause grammars (expansion)526669
+Node: Usage and interface (dcg_expansion)527120
+Node: Documentation on exports (dcg_expansion)527675
+Node: Formatted output528845
+Node: Usage and interface (format)530336
+Node: Documentation on exports (format)530854
+Node: List processing538722
+Node: Usage and interface (lists)539147
+Node: Documentation on exports (lists)540135
+Node: Sorting lists548806
+Node: Usage and interface (sort)549228
+Node: Documentation on exports (sort)549613
+Node: Documentation on internals (sort)551366
+Node: compiler (library)551717
+Node: Usage and interface (compiler)552079
+Node: Documentation on exports (compiler)552807
+Node: Enumeration of integers inside a range554295
+Node: Usage and interface (between)554836
+Node: Documentation on exports (between)555224
+Node: system (library)556012
+Node: Usage and interface (system)556313
+Node: Documentation on exports (system)557549
+Node: Documentation on multifiles (system)561739
+Node: Prolog system internal predicates562075
+Node: Usage and interface (prolog_sys)562779
+Node: Documentation on exports (prolog_sys)563278
+Node: Documentation on internals (prolog_sys)569443
+Node: Known bugs and planned improvements (prolog_sys)572093
+Node: DEC-10 Prolog file IO572616
+Node: Usage and interface (dec10_io)573071
+Node: Documentation on exports (dec10_io)573507
+Node: Quintus-like internal database574318
+Node: Usage and interface (old_database)575555
+Node: Documentation on exports (old_database)575996
+Node: ttyout (library)578516
+Node: Usage and interface (ttyout)578798
+Node: Documentation on exports (ttyout)579303
+Node: Enabling operators at run-time580669
+Node: Usage and interface (runtime_ops)581369
+Node: *** PART V - Annotated Prolog library (assertions)581780
+Node: The Ciao assertion package582554
+Node: More info584319
+Node: Some attention points585150
+Node: Usage and interface (assertions)586332
+Node: Documentation on new declarations (assertions)587753
+Node: Documentation on exports (assertions)599571
+Node: Types and properties related to assertions603944
+Node: Usage and interface (assertions_props)604940
+Node: Documentation on exports (assertions_props)605841
+Node: Declaring regular types620065
+Node: Defining properties621496
+Node: Usage and interface (regtypes)629171
+Node: Documentation on new declarations (regtypes)629770
+Node: Properties which are native to analyzers633275
+Node: Usage and interface (native_props)633983
+Node: Documentation on exports (native_props)635057
+Node: ISO-Prolog modes646404
+Node: Usage and interface (isomodes)646989
+Node: Documentation on new modes (isomodes)647456
+Node: Classical Prolog modes649529
+Node: Usage and interface (basicmodes)650266
+Node: Documentation on new modes (basicmodes)650804
+Node: Run-time checking of assertions654856
+Node: Usage and interface (rtchecks)655787
+Node: Documentation on exports (rtchecks)656307
+Node: Documentation on internals (rtchecks)656650
+Node: Known bugs and planned improvements (rtchecks)657355
+Node: *** PART VI - Ciao Prolog library miscellanea657825
+Node: Structured stream handling658646
+Node: Usage and interface (streams)658973
+Node: Documentation on exports (streams)659424
+Node: Dictionaries660096
+Node: Usage and interface (dict)660550
+Node: Documentation on exports (dict)661012
+Node: String processing663096
+Node: Usage and interface (strings)663585
+Node: Documentation on exports (strings)664047
+Node: Documentation on internals (strings)666142
+Node: Printing status and error messages666508
+Node: Usage and interface (messages)667187
+Node: Documentation on exports (messages)668117
+Node: Documentation on multifiles (messages)678920
+Node: Documentation on internals (messages)679610
+Node: Known bugs and planned improvements (messages)679998
+Node: Accessing and redirecting the stream aliases680352
+Node: Usage and interface (io_alias_redirection)681332
+Node: Documentation on exports (io_alias_redirection)681816
+Node: Atom to term conversion683294
+Node: Usage and interface (atom2term)683870
+Node: Documentation on exports (atom2term)684273
+Node: Known bugs and planned improvements (atom2term)685179
+Node: ctrlcclean (library)685578
+Node: Usage and interface (ctrlcclean)685861
+Node: Documentation on exports (ctrlcclean)686355
+Node: errhandle (library)686907
+Node: Usage and interface (errhandle)687197
+Node: Documentation on exports (errhandle)687581
+Node: Fast reading and writing of terms688038
+Node: Usage and interface (fastrw)688690
+Node: Documentation on exports (fastrw)689232
+Node: Known bugs and planned improvements (fastrw)690665
+Node: File name manipulation691192
+Node: Usage and interface (filenames)691698
+Node: Documentation on exports (filenames)692223
+Node: Symbolic filenames695954
+Node: Usage and interface (symfnames)697155
+Node: Documentation on exports (symfnames)697672
+Node: Documentation on multifiles (symfnames)698327
+Node: Other information (symfnames)699049
+Node: File I/O utilities700218
+Node: Usage and interface (file_utils)700645
+Node: Documentation on exports (file_utils)701175
+Node: File locks703890
+Node: Usage and interface (file_locks)704574
+Node: Documentation on exports (file_locks)704940
+Node: Known bugs and planned improvements (file_locks)706002
+Node: Term manipulation utilities706278
+Node: Usage and interface (terms)706740
+Node: Documentation on exports (terms)707124
+Node: Term checking utilities707966
+Node: Usage and interface (terms_check)708414
+Node: Documentation on exports (terms_check)708922
+Node: Other information (terms_check)710300
+Node: Sets of variables in terms710804
+Node: Usage and interface (terms_vars)711253
+Node: Documentation on exports (terms_vars)711759
+Node: A simple pretty-printer for Ciao programs712826
+Node: Usage and interface (pretty_print)713431
+Node: Documentation on exports (pretty_print)713981
+Node: Documentation on internals (pretty_print)715175
+Node: Pretty-printing assertions716965
+Node: Usage and interface (assrt_write)717514
+Node: Documentation on exports (assrt_write)718101
+Node: The Ciao library browser719825
+Node: Usage and interface (librowser)720995
+Node: Documentation on exports (librowser)722379
+Node: Documentation on internals (librowser)726708
+Node: Code translation utilities727211
+Node: Usage and interface (expansion_tools)728153
+Node: Documentation on exports (expansion_tools)728900
+Node: Documentation on internals (expansion_tools)733875
+Node: Known bugs and planned improvements (expansion_tools)734664
+Node: Low-level concurrency/multithreading primitives735010
+Node: Usage and interface (concurrency)737026
+Node: Documentation on exports (concurrency)737823
+Node: Known bugs and planned improvements (concurrency)748046
+Node: All solutions concurrent predicates748752
+Node: Usage and interface (conc_aggregates)749841
+Node: Documentation on exports (conc_aggregates)750353
+Node: Known bugs and planned improvements (conc_aggregates)751301
+Node: The socket interface751693
+Node: Usage and interface (sockets)752380
+Node: Documentation on exports (sockets)753136
+Node: Sockets I/O760102
+Node: Usage and interface (sockets_io)760549
+Node: Documentation on exports (sockets_io)761037
+Node: The Ciao Make Package762397
+Node: Usage and interface (make)763059
+Node: Other information (make)764349
+Node: The Dependency Rules764626
+Node: Specifying Paths769339
+Node: Documenting Rules769931
+Node: An Example of a Makefile771274
+Node: Predicates Available When Using The Make Package775956
+Node: Usage and interface (make_rt)776631
+Node: Documentation on exports (make_rt)777396
+Node: system_extra (library)779911
+Node: Usage and interface (system_extra)780759
+Node: Documentation on exports (system_extra)781851
+Node: *** PART VII - Ciao Prolog extensions790887
+Node: Pure Prolog package791786
+Node: Usage and interface (pure)793896
+Node: Known bugs and planned improvements (pure)794211
+Node: Multiple Argument Indexing794590
+Node: Usage and interface (indexer)795502
+Node: Documentation on internals (indexer)796130
+Node: Higher-order799938
+Node: Usage and interface (hiord_rt)800397
+Node: Documentation on exports (hiord_rt)800735
+Node: Higher-order predicates801548
+Node: Usage and interface (hiordlib)802237
+Node: Documentation on exports (hiordlib)802620
+Node: Terms with named arguments -records/feature terms804166
+Node: Usage and interface (argnames)804958
+Node: Documentation on new declarations (argnames)805506
+Node: Other information (argnames)809494
+Node: Using argument names in a toy database809946
+Node: Complete code for the zebra example811283
+Node: Known bugs and planned improvements (argnames)814267
+Node: Functional notation814653
+Node: Usage and interface (functions)818427
+Node: Known bugs and planned improvements (functions)818772
+Node: global (library)819108
+Node: Usage and interface (global)819462
+Node: Documentation on exports (global)819879
+Node: Independent and-parallel execution820528
+Node: Usage and interface (andprolog)821469
+Node: Documentation on internals (andprolog)821886
+Node: Known bugs and planned improvements (andprolog)823759
+Node: Andorra execution824561
+Node: Usage and interface (andorra)826881
+Node: Documentation on new declarations (andorra)827419
+Node: Documentation on exports (andorra)828788
+Node: Other information (andorra)830758
+Node: Call on determinate831253
+Node: Usage and interface (det_hook_rt)831981
+Node: Documentation on exports (det_hook_rt)832487
+Node: Documentation on internals (det_hook_rt)833650
+Node: Other information (det_hook_rt)834175
+Node: Known bugs and planned improvements (det_hook_rt)835209
+Node: Miscellaneous predicates835688
+Node: Usage and interface (odd)836197
+Node: Documentation on exports (odd)836546
+Node: Delaying predicates (freeze)838228
+Node: Usage and interface (freeze)838822
+Node: Documentation on exports (freeze)839196
+Node: Delaying predicates (when)840187
+Node: Usage and interface (when)841894
+Node: Documentation on exports (when)842401
+Node: Known bugs and planned improvements (when)844216
+Node: Active modules (high-level distributed execution)844549
+Ref: Active modules (high-level distributed execution)-Footnote-1851197
+Node: Active module name servers851452
+Node: Active modules as agents855047
+Node: Usage and interface (actmods)855415
+Node: Documentation on new declarations (actmods)855870
+Node: Known bugs and planned improvements (actmods)856710
+Node: Breadth-first execution857956
+Node: Usage and interface (bf)859416
+Node: Known bugs and planned improvements (bf)859801
+Node: Iterative-deepening execution860064
+Node: Usage and interface (id)864061
+Node: Constraint programming over rationals864335
+Node: Usage and interface (clpq)865086
+Node: Other information (clpq)865419
+Node: Some CLP(Q) examples865691
+Node: Known bugs and planned improvements (clpq)867825
+Node: Constraint programming over reals868185
+Node: Usage and interface (clpr)868910
+Node: Other information (clpr)869235
+Node: Some CLP(R) examples869503
+Node: Known bugs and planned improvements (clpr)873175
+Node: Fuzzy Prolog873531
+Node: Usage and interface (fuzzy)875795
+Node: Documentation on new declarations (fuzzy)876734
+Node: Documentation on exports (fuzzy)877460
+Node: Other information (fuzzy)883358
+Node: Known bugs and planned improvements (fuzzy)884607
+Node: Object oriented programming885068
+Node: Early examples886239
+Node: Recommendations on when to use objects892625
+Node: Limitations on object usage894237
+Node: Declaring classes and interfaces894664
+Node: Usage and interface (class)895840
+Node: Documentation on new declarations (class)897852
+Node: Documentation on exports (class)906304
+Node: Other information (class)911216
+Node: Class and Interface error reporting at compile time912230
+Node: Class and Interface error reporting at run time922698
+Node: Normal Prolog module system interaction923173
+Node: Known bugs and planned improvements (class)924436
+Node: Compile-time usage of objects924757
+Node: Usage and interface (objects)925363
+Node: Documentation on new declarations (objects)926231
+Node: Other information (objects)929893
+Node: Error reporting at compile time (objects)931126
+Node: Error reporting at run time (objects)937055
+Node: Run time usage of objects938023
+Node: Usage and interface (objects_rt)939274
+Node: Documentation on exports (objects_rt)940410
+Node: Known bugs and planned improvements (objects_rt)950910
+Node: The Ciao Remote Services Package951719
+Node: Usage and interface (remote)952278
+Node: Documentation on exports (remote)952684
+Node: Known bugs and planned improvements (remote)953990
+Node: *** PART VIII - Interfaces to other languages and systems954680
+Node: Foreign Language Interface955497
+Node: Declaration of Types956983
+Node: Equivalence between Ciao Prolog and C types958600
+Node: Equivalence between Ciao Prolog and C modes960881
+Node: Custom access to Prolog from C962323
+Node: Term construction963973
+Node: Testing the Type of a Term967603
+Node: Term navigation969243
+Node: Testing for Equality and Performing Unification971802
+Node: Raising Exceptions972948
+Node: Creating and disposing of memory chunks973579
+Node: Calling Prolog from C974463
+Node: Examples976680
+Node: Mathematical functions977090
+Node: Addresses and C pointers978108
+Node: Lists of bytes and buffers979294
+Node: Lists of integers980686
+Node: Strings and atoms981668
+Node: Arbitrary Terms983557
+Node: Exceptions985448
+Node: Testing number types and using unbound length integers986723
+Node: Usage and interface (foreign_interface)989509
+Node: Foreign Language Interface Properties989910
+Node: Usage and interface (foreign_interface_properties)990747
+Node: Documentation on exports (foreign_interface_properties)991453
+Node: Documentation on internals (foreign_interface_properties)994311
+Node: Known bugs and planned improvements (foreign_interface_properties)999741
+Node: Utilities for on-demand compilation of foreign files1000140
+Node: Usage and interface (foreign_compilation)1001219
+Node: Documentation on exports (foreign_compilation)1001812
+Node: Foreign Language Interface Builder1003342
+Node: Usage and interface (build_foreign_interface)1004055
+Node: Documentation on exports (build_foreign_interface)1005086
+Node: Interface to daVinci1008422
+Node: Usage and interface (davinci)1009586
+Node: Documentation on exports (davinci)1010308
+Node: Documentation on internals (davinci)1012215
+Node: The Tcl/Tk interface1014367
+Node: Usage and interface (tcltk)1022991
+Node: Documentation on exports (tcltk)1023693
+Node: Low level interface library to Tcl/Tk1029359
+Node: Usage and interface (tcltk_low_level)1030332
+Node: Documentation on exports (tcltk_low_level)1031135
+Node: Documentation on internals (tcltk_low_level)1036897
+Node: The Tcl/Tk Class Interface1037607
+Node: Usage and interface (window_class)1038611
+Node: Documentation on exports (window_class)1039424
+Node: widget_class (library)1042751
+Node: Usage and interface (widget_class)1043164
+Node: Documentation on exports (widget_class)1044216
+Node: menu_class (library)1058494
+Node: Usage and interface (menu_class)1058896
+Node: Documentation on exports (menu_class)1059647
+Node: canvas_class (library)1063122
+Node: Usage and interface (canvas_class)1063535
+Node: Documentation on multifiles (canvas_class)1064127
+Node: button_class (library)1065548
+Node: Usage and interface (button_class)1065965
+Node: Documentation on exports (button_class)1066451
+Node: checkbutton_class (library)1067371
+Node: Usage and interface (checkbutton_class)1067812
+Node: Documentation on exports (checkbutton_class)1068333
+Node: radiobutton_class (library)1069241
+Node: Usage and interface (radiobutton_class)1069682
+Node: Documentation on exports (radiobutton_class)1070203
+Node: entry_class (library)1071106
+Node: Usage and interface (entry_class)1071517
+Node: Documentation on exports (entry_class)1072153
+Node: label_class (library)1074781
+Node: Usage and interface (label_class)1075191
+Node: Documentation on exports (label_class)1075674
+Node: menubutton_class (library)1075991
+Node: Usage and interface (menubutton_class)1076425
+Node: Documentation on exports (menubutton_class)1076943
+Node: menu_entry_class (library)1077737
+Node: Usage and interface (menu_entry_class)1078172
+Node: Documentation on exports (menu_entry_class)1078771
+Node: shape_class (library)1080746
+Node: Usage and interface (shape_class)1081154
+Node: Documentation on exports (shape_class)1081715
+Node: arc_class (library)1083461
+Node: Usage and interface (arc_class)1083855
+Node: Documentation on exports (arc_class)1084408
+Node: oval_class (library)1088918
+Node: Usage and interface (oval_class)1089315
+Node: Documentation on exports (oval_class)1089842
+Node: poly_class (library)1092575
+Node: Usage and interface (poly_class)1092974
+Node: Documentation on exports (poly_class)1093468
+Node: line_class (library)1095071
+Node: Usage and interface (line_class)1095469
+Node: Documentation on exports (line_class)1095960
+Node: text_class (library)1097640
+Node: Usage and interface (text_class)1098052
+Node: Documentation on exports (text_class)1098602
+Node: The PiLLoW Web programming library1102056
+Node: Installing PiLLoW1103320
+Node: Usage and interface (pillow)1104205
+Node: HTML/XML/CGI programming1104669
+Node: Usage and interface (html)1105337
+Node: Documentation on exports (html)1106338
+Node: Documentation on multifiles (html)1114937
+Node: Other information (html)1115827
+Node: HTTP conectivity1116212
+Node: Usage and interface (http)1116671
+Node: Documentation on exports (http)1117170
+Node: PiLLoW types1118260
+Node: Usage and interface (pillow_types)1118746
+Node: Documentation on exports (pillow_types)1119381
+Node: Persistent predicate database1135472
+Node: Introduction to persistent predicates1136405
+Node: Persistent predicates1138523
+Node: Using file-based persistent predicates1141702
+Node: Implementation Issues1143769
+Node: Defining an initial database1145613
+Node: Using persistent predicates from the top level1146082
+Node: Usage and interface (persdbrt)1146770
+Node: Documentation on exports (persdbrt)1148257
+Node: Documentation on multifiles (persdbrt)1154495
+Node: Documentation on internals (persdbrt)1156010
+Node: Known bugs and planned improvements (persdbrt)1157624
+Node: Using the persdb library1158012
+Node: An example of persistent predicates (static version)1158840
+Node: An example of persistent predicates (dynamic version)1159837
+Node: A simple application / a persistent queue1160644
+Node: Filed predicates1162030
+Node: Usage and interface (factsdb_rt)1163836
+Node: Documentation on exports (factsdb_rt)1164693
+Node: Documentation on multifiles (factsdb_rt)1168753
+Node: Documentation on internals (factsdb_rt)1169596
+Node: Known bugs and planned improvements (factsdb_rt)1170807
+Node: SQL persistent database interface1171421
+Node: Implementation of the Database Interface1173420
+Node: Example(s)1175365
+Node: Usage and interface (persdbrt_mysql)1179264
+Node: Documentation on exports (persdbrt_mysql)1180983
+Node: Documentation on multifiles (persdbrt_mysql)1190175
+Node: Documentation on internals (persdbrt_mysql)1191214
+Node: Known bugs and planned improvements (persdbrt_mysql)1196848
+Node: Prolog to SQL translator1197505
+Node: Usage and interface (pl2sql)1200241
+Node: Documentation on exports (pl2sql)1200958
+Node: Documentation on multifiles (pl2sql)1207034
+Node: Documentation on internals (pl2sql)1209552
+Node: Known bugs and planned improvements (pl2sql)1216433
+Node: Low-level socket interface to SQL/ODBC databases1216729
+Node: Usage and interface (mysql_client)1217358
+Node: Documentation on exports (mysql_client)1218236
+Node: Types for the Low-level interface to SQL databases1219735
+Node: Usage and interface (db_client_types)1220378
+Node: Documentation on exports (db_client_types)1220958
+Node: sqltypes (library)1222987
+Node: Usage and interface (sqltypes)1223372
+Node: Documentation on exports (sqltypes)1223994
+Node: persdbtr_sql (library)1229816
+Node: Usage and interface (persdbtr_sql)1230188
+Node: Documentation on exports (persdbtr_sql)1230676
+Node: pl2sqlinsert (library)1231121
+Node: Usage and interface (pl2sqlinsert)1231547
+Node: Documentation on exports (pl2sqlinsert)1232319
+Node: Documentation on multifiles (pl2sqlinsert)1232686
+Node: Prolog to Java interface1233263
+Node: Prolog to Java Interface Structure1234249
+Node: Prolog side of the Java interface1235454
+Node: Java side1236530
+Node: Java event handling from Prolog1239211
+Node: Java exception handling from Prolog1241376
+Node: Usage and interface (javart)1242438
+Node: Documentation on exports (javart)1243502
+Node: Java to Prolog interface1254850
+Node: Usage and interface (jtopl)1256801
+Node: Documentation on exports (jtopl)1257537
+Node: Low-level Prolog to Java socket connection1261433
+Node: Usage and interface (javasock)1262249
+Node: Documentation on exports (javasock)1263161
+Node: Calling emacs from Prolog1267133
+Node: Usage and interface (emacs)1269219
+Node: Documentation on exports (emacs)1269822
+Node: linda (library)1270990
+Node: Usage and interface (linda)1271525
+Node: Documentation on exports (linda)1272196
+Node: *** PART IX - Abstract data types1273718
+Node: Extendable arrays with logarithmic access time1274130
+Node: Usage and interface (arrays)1274760
+Node: Documentation on exports (arrays)1275246
+Node: counters (library)1276896
+Node: Usage and interface (counters)1277188
+Node: Documentation on exports (counters)1277576
+Node: Identity lists1278052
+Node: Usage and interface (idlists)1278465
+Node: Documentation on exports (idlists)1278924
+Node: Lists of numbers1280710
+Node: Usage and interface (numlists)1281096
+Node: Documentation on exports (numlists)1281682
+Node: Pattern (regular expression) matching1284253
+Node: Usage and interface (patterns)1284796
+Node: Documentation on exports (patterns)1285439
+Node: Graphs1288568
+Node: Usage and interface (graphs)1289047
+Node: Documentation on exports (graphs)1289634
+Node: Documentation on internals (graphs)1292723
+Node: Unweighted graph-processing utilities1293114
+Node: Usage and interface (ugraphs)1294310
+Node: Documentation on exports (ugraphs)1294996
+Node: wgraphs (library)1297041
+Node: Usage and interface (wgraphs)1297403
+Node: Documentation on exports (wgraphs)1297858
+Node: Labeled graph-processing utilities1298161
+Node: Usage and interface (lgraphs)1298634
+Node: Documentation on exports (lgraphs)1299174
+Node: queues (library)1299866
+Node: Usage and interface (queues)1300136
+Node: Documentation on exports (queues)1300517
+Node: Random numbers1301065
+Node: Usage and interface (random)1301494
+Node: Documentation on exports (random)1301853
+Node: Set Operations1302699
+Node: Usage and interface (sets)1303133
+Node: Documentation on exports (sets)1303902
+Node: Variable name dictionaries1307742
+Node: Usage and interface (vndict)1308169
+Node: Documentation on exports (vndict)1308940
+Node: *** PART X - Miscellaneous standalone utilities1313082
+Node: A Program to Help Cleaning your Directories1313635
+Node: Usage (cleandirs)1314224
+Node: Known bugs and planned improvements (cleandirs)1315741
+Node: Printing the declarations and code in a file1316111
+Node: Usage (fileinfo)1317150
+Node: More detailed explanation of options (fileinfo)1318156
+Node: Printing the contents of a bytecode file1319548
+Node: Usage (viewpo)1320152
+Node: Crossed-references of a program1320450
+Node: Gathering the dependent files for a file1322980
+Node: Usage (get_deps)1323920
+Node: Finding differences between two Prolog files1324339
+Node: Usage (pldiff)1325110
+Node: Known bugs and planned improvements (pldiff)1325574
+Node: The Ciao lpmake scripting facility1326014
+Node: General operation1328464
+Node: Format of the Configuration File1330441
+Node: lpmake usage1331225
+Node: Acknowledgments (lpmake)1332511
+Node: Find out which architecture we are running on1332767
+Node: Usage (ciao_get_arch)1333531
+Node: More details1333782
+Node: Print out WAM code1333964
+Node: Usage (compiler_output)1334428
+Node: *** PART XI - Contributed libraries1334697
+Node: Programming MYCIN rules1335116
+Node: Usage and interface (mycin)1336304
+Node: Documentation on new declarations (mycin)1336780
+Node: Known bugs and planned improvements (mycin)1337815
+Node: Constraint programming over finite domains1338312
+Node: Usage and interface (fd)1341326
+Node: Documentation on exports (fd)1342287
+Node: XDR handle library1349344
+Node: Usage and interface (xdr_handle)1350391
+Node: Documentation on exports (xdr_handle)1351108
+Node: XML query library1355611
+Node: Usage and interface (xml_path)1357965
+Node: Documentation on exports (xml_path)1358706
+Node: Documentation on internals (xml_path)1364540
+Node: A Chart Library1365492
+Node: Bar charts1367049
+Ref: Bar charts-Footnote-11372398
+Node: Line graphs1372540
+Node: Scatter graphs1375548
+Node: Tables1378566
+Node: Overview of widgets1380138
+Node: Usage and interface (chartlib)1383670
+Node: Documentation on exports (chartlib)1384364
+Node: Low level Interface between Prolog and blt1389743
+Node: Usage and interface (bltclass)1390547
+Node: Documentation on exports (bltclass)1391209
+Node: Error Handler for Chartlib1392329
+Node: Usage and interface (chartlib_errhandle)1393108
+Node: Documentation on exports (chartlib_errhandle)1393715
+Node: Documentation on internals (chartlib_errhandle)1394660
+Node: Color and Pattern Library1395403
+Node: Usage and interface (color_pattern)1395930
+Node: Documentation on exports (color_pattern)1396601
+Node: Barchart widgets - 11401007
+Node: Usage and interface (genbar1)1402886
+Node: Documentation on exports (genbar1)1403610
+Node: Documentation on internals (genbar1)1409730
+Node: Barchart widgets - 21411600
+Node: Usage and interface (genbar2)1413459
+Node: Documentation on exports (genbar2)1414147
+Node: Depict barchart widgets - 31417992
+Node: Usage and interface (genbar3)1419242
+Node: Documentation on exports (genbar3)1419886
+Node: Documentation on internals (genbar3)1421868
+Node: Depict barchart widgets - 41423451
+Node: Usage and interface (genbar4)1424714
+Node: Documentation on exports (genbar4)1425359
+Node: Documentation on internals (genbar4)1427690
+Node: Depic line graph1428924
+Ref: Depic line graph-Footnote-11431778
+Node: Usage and interface (gengraph1)1431883
+Node: Documentation on exports (gengraph1)1432738
+Node: Line graph widgets1441886
+Ref: Line graph widgets-Footnote-11444223
+Node: Usage and interface (gengraph2)1444320
+Node: Documentation on exports (gengraph2)1445100
+Node: Multi barchart widgets1451321
+Node: Usage and interface (genmultibar)1454275
+Node: Documentation on exports (genmultibar)1454916
+Node: Documentation on internals (genmultibar)1457137
+Node: table_widget1 (library)1459063
+Node: Usage and interface (table_widget1)1459785
+Node: Documentation on exports (table_widget1)1460443
+Node: Documentation on internals (table_widget1)1462345
+Node: table_widget2 (library)1463422
+Node: Usage and interface (table_widget2)1464163
+Node: Documentation on exports (table_widget2)1464796
+Node: table_widget3 (library)1466353
+Node: Usage and interface (table_widget3)1467128
+Node: Documentation on exports (table_widget3)1467761
+Node: table_widget4 (library)1468896
+Node: Usage and interface (table_widget4)1469646
+Node: Documentation on exports (table_widget4)1470279
+Node: test_format (library)1472120
+Node: Usage and interface (test_format)1473147
+Node: Documentation on exports (test_format)1473796
+Node: ProVRML - a Prolog interface for VRML1476059
+Node: Usage and interface (provrml)1477690
+Node: Documentation on exports (provrml)1478539
+Node: Documentation on internals (provrml)1483897
+Node: boundary (library)1484509
+Node: Usage and interface (boundary)1485038
+Node: Documentation on exports (boundary)1485756
+Node: dictionary (library)1488146
+Node: Usage and interface (dictionary)1488644
+Node: Documentation on exports (dictionary)1489247
+Node: dictionary_tree (library)1491246
+Node: Usage and interface (dictionary_tree)1491820
+Node: Documentation on exports (dictionary_tree)1492641
+Node: error (library)1496536
+Node: Usage and interface (error)1496975
+Node: Documentation on exports (error)1497413
+Node: field_type (library)1498400
+Node: Usage and interface (field_type)1498793
+Node: Documentation on exports (field_type)1499162
+Node: field_value (library)1499664
+Node: Usage and interface (field_value)1500073
+Node: Documentation on exports (field_value)1500669
+Node: field_value_check (library)1501356
+Node: Usage and interface (field_value_check)1501788
+Node: Documentation on exports (field_value_check)1502462
+Node: generator (library)1502901
+Node: Usage and interface (generator)1503240
+Node: Documentation on exports (generator)1503965
+Node: generator_util (library)1504866
+Node: Usage and interface (generator_util)1505173
+Node: Documentation on exports (generator_util)1506160
+Node: internal_types (library)1509967
+Node: Usage and interface (internal_types)1510561
+Node: Documentation on exports (internal_types)1511055
+Node: io (library)1514172
+Node: Usage and interface (io)1514545
+Node: Documentation on exports (io)1515211
+Node: lookup (library)1517891
+Node: Usage and interface (lookup)1518188
+Node: Documentation on exports (lookup)1519469
+Node: parser (library)1526968
+Node: Usage and interface (parser)1527229
+Node: Documentation on exports (parser)1527987
+Node: parser_util (library)1529043
+Node: Usage and interface (parser_util)1529326
+Node: Documentation on exports (parser_util)1531077
+Node: possible (library)1550699
+Node: Usage and interface (possible)1551017
+Node: Documentation on exports (possible)1551456
+Node: tokeniser (library)1551748
+Node: Usage and interface (tokeniser)1552136
+Node: Documentation on exports (tokeniser)1552642
+Node: Double linked list1553703
+Node: Usage and interface (ddlist)1554423
+Node: Documentation on exports (ddlist)1555126
+Node: Other information (ddlist)1560758
+Node: Using insert_after1561070
+Node: More Complex example1561793
+Node: Measuring features from predicates (time cost or memory used...)1562770
+Node: Usage and interface (time_analyzer)1563559
+Node: Documentation on exports (time_analyzer)1564330
+Node: Printing graph using gnuplot as auxiliary tool.1576151
+Node: Usage and interface (gnuplot)1577589
+Node: Documentation on exports (gnuplot)1578184
+Node: Automatic modules caller tester1582325
+Node: Usage and interface (modtester)1583215
+Node: Documentation on exports (modtester)1583849
+Node: Automatic tester1585601
+Node: Usage and interface (tester)1586400
+Node: Documentation on exports (tester)1586861
+Node: Other information (tester)1589111
+Node: Understanding run_test predicate1589429
+Node: More complex example1590959
+Node: *** PART XII - Appendices1594398
+Node: Installing Ciao from the source distribution1594843
+Node: Un*x installation summary1596209
+Node: Un*x full installation instructions1601500
+Node: Checking for correct installation on Un*x1613068
+Node: Cleaning up the source directory1616387
+Node: Multiarchitecture support1617136
+Node: Installation and compilation under Windows1619645
+Node: Porting to currently unsupported operating systems1622730
+Node: Troubleshooting (nasty messages and nifty workarounds)1625608
+Node: Installing Ciao from a Win32 binary distribution1632166
+Node: Win32 binary installation summary1633563
+Node: Checking for correct installation on Win321638573
+Node: Compiling the miscellaneous utilities under Windows1642867
+Node: Server installation under Windows1643517
+Node: CGI execution under IIS1644485
+Node: Uninstallation under Windows1645264
+Node: Beyond installation1646299
+Node: Architecture-specific notes and limitations1646814
+Node: Keeping up to date with the Ciao users mailing list1648291
+Node: Downloading new versions1649325
+Node: Reporting bugs1649775
+Node: References1650761
+Node: Library/Module Definition Index1667645
+Node: Predicate/Method Definition Index1681460
+Node: Property Definition Index1773218
+Node: Regular Type Definition Index1780420
+Node: Declaration Definition Index1795736
+Node: Concept Definition Index1802798
+Node: Global Index1834031
 
 End Tag Table

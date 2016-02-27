@@ -27,6 +27,8 @@
             popen_mode/1,
             exec/4,
             exec/3,
+            exec/8,
+            wait/3,
             directory_files/2,
             mktemp/2,
             file_exists/1,
@@ -58,7 +60,7 @@
    @pred{absolute_file_name/2} on names of files or directories taken
    as arguments.").
 
-:- use_module(engine(internals), ['$unix_popen'/3, '$exec'/4]).
+:- use_module(engine(internals), ['$unix_popen'/3, '$exec'/8]).
 :- use_module(library(lists), [append/3]).
 
 :- impl_defined([
@@ -66,6 +68,7 @@
         current_host/1, getenvstr/2, setenvstr/2, get_pid/1, 
         current_executable/1,
         shell/0, shell/2, system/2, mktemp/2, file_exists/2,
+        wait/3,
         file_properties/6, chmod/2, umask/2, 
         delete_file/1, delete_directory/1, rename_file/2, make_directory/2]).
 
@@ -275,7 +278,39 @@ system(Path) :- system(Path, _Status).
 :- true pred exec(+atm, -stream, -stream, -stream).
 
 exec(Command, StdIn, StdOut, StdErr):- 
-        '$exec'(Command, StdIn, StdOut, StdErr).
+        exec(Command, [], StdIn, StdOut, StdErr, true, _, _).
+
+
+:- true pred exec(+Command, 
+                  +Arguments, 
+                  ?StdIn, 
+                  ?StdOut,
+                  ?StdErr,
+                  +Background,
+                  -PID,
+                  -ErrCode) : atm * list(atm) * 
+                              stream * stream * stream *
+                              atm * int * int
+
+# "Finer control on execution of process.  @var{Command} is the
+command to be executed and @var{Arguments} is a list of atoms to be
+passed as arguments to the command.  When called with free variables,
+@var{StdIn}, @var{StdOut}, and @var{StdErr} are instantiated to
+streams connected to the standard output, input, and error of the
+created process. @var{Background} controls whether the caller waits
+for @var{Command} to finish, or if the process executing @var{Command}
+is completely detached (it can be waited for using
+@pred{wait/3}). @var{ErrCode} is the error code returned by the
+lower-level @tt{exec()} system call (this return code is
+system-dependent, but a non-zero value usually means that something
+has gone wrong).  If @var{Command} does not start by a slash,
+@pred{exec/8} uses the environment variable @tt{PATH} to search for
+it.  If @tt{PATH} is not set, @tt{/bin} and @tt{/usr/bin} are
+searched.".
+
+exec(Comm, Args, StdIn, StdOut, StdErr, Background, PID, ErrCode) :-
+     '$exec'(Comm, Args, StdIn, StdOut, StdErr, Background, PID, ErrCode).
+
 
 :- comment(exec(Command, StdIn, StdOut), "Starts the process
 @var{Command} and returns the standart I/O streams of the process in
@@ -285,7 +320,7 @@ whichever the parent process had it connected to.").
 :- true pred exec(+atm, -stream, -stream).
 
 exec(Command, StdIn, StdOut):- 
-        '$exec'(Command, StdIn, StdOut, []).
+        exec(Command, StdIn, StdOut, []).
 
  %% :- comment(bug, "When reading from a exec'ed process, the 'end of
  %% file' condition (when the launched process finishes) somehow
@@ -293,25 +328,54 @@ exec(Command, StdIn, StdOut):-
  %% causing subsequent Ciao Prolog reads to return the 'end of file'
  %% condition.").
 
+
+:- true pred wait(+Pid, -RetCode, -Status) : int * int * int # "wait/3
+waits for the process numbered @var{Pid}.  If @var{PID} equals
+-1, it will wait for any children process.  @var{RetCode} is usually
+the PID of the waited-for process, and -1 in case in case of error.
+@var{Status} is related to the exit value of the process in a
+system-dependent fashion.".
+
+
 :- comment(popen(Command, Mode, Stream), "Open a pipe to process
-    @var{Command} in a new shell with a given @var{Mode} and return a
-    communication @var{Stream} (as in UNIX @tt{popen(3)}). If
-    @var{Mode} is @tt{read} the output from the process is sent to
-    @var{Stream}. If @var{Mode} is @tt{write}, @tt{Stream} is sent as
-    input to the process. @var{Stream} may be read from or written
-    into using the ordinary stream I/O predicates. @var{Stream} must
-    be closed explicitly using @pred{close/1}, i.e., it is not closed
-    automatically when the process dies.
+@var{Command} in a new shell with a given @var{Mode} and return a
+communication @var{Stream} (as in UNIX @tt{popen(3)}). If @var{Mode}
+is @tt{read} the output from the process is sent to @var{Stream}. If
+@var{Mode} is @tt{write}, @tt{Stream} is sent as input to the
+process. @var{Stream} may be read from or written into using the
+ordinary stream I/O predicates. @var{Stream} must be closed explicitly
+using @pred{close/1}, i.e., it is not closed automatically when the
+process dies.  Note that @pred{popen/2} is defined in ***x as using
+@tt{/bin/sh}, which usually does not exist in Windows systems.  In
+this case, a @tt{sh} shell which comes with Windows is used.
 
 ").
 
 :- true pred popen(+atm, +popen_mode, -stream).
 
-popen(Command, Mode, S) :-
-	nonvar(Mode),
-	popen_mode(Mode),
-	atom(Command), !,
-	'$unix_popen'(Command, Mode, S0), !, S=S0.
+ %% popen(Command, Mode, S) :-
+ %% 	nonvar(Mode),
+ %% 	popen_mode(Mode),
+ %% 	atom(Command), !,
+ %% 	'$unix_popen'(Command, Mode, S0), !, S=S0.
+
+popen(Command, Mode, S):-
+        nonvar(Mode), 
+        popen_mode(Mode),
+        atom(Command), !,
+        (
+            get_os('Win32') ->
+            getenvstr('SHELL', WindowsShell),
+            atom_codes(Shell, WindowsShell)
+        ;
+            Shell = '/bin/sh'
+        ),
+        (
+            Mode = read ->
+            exec(Shell, ['-c', Command], [], S, [], true, _, _)
+        ;
+            exec(Shell, ['-c', Command], S, [], [], true, _, _)
+        ).
 
 :- regtype popen_mode(M)
   # "@var{M} is 'read' or 'write'.".
@@ -646,6 +710,20 @@ do_swapslash([C|D],[C|ND]) :-
 
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+340,2004/04/22,16:22*25+'CEST'), "exec/3-4
+   should not wait until the process terminates.  (Jesus Correas
+   Fernandez)").
+
+:- comment(version(1*9+338,2004/04/22,06:11*20+'CEST'), "Implemented
+wait/3 to wait for the end of processes.  ()").
+
+:- comment(version(1*9+337,2004/04/22,05:47*28+'CEST'), "popen/3
+reimplemented in Prolog based on exec/8.  This should be more
+portable.  ()").
+
+:- comment(version(1*9+336,2004/04/22,05:21*27+'CEST'), "Implemented
+exec/8 to base other exec's and popen/3 on it ()").
 
 :- comment(version(1*9+331,2004/03/26,17:39*47+'CET'), "Errors in
    exec() caught; processes killed in this case.  This affects shell/n

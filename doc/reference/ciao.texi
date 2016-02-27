@@ -82,7 +82,7 @@ GNU General Public License.
                         
 
 @sp 1
-This documentation corresponds to version 1.9#335 (2004/4/16, 16:18:8 CEST).
+This documentation corresponds to version 1.9#340 (2004/4/22, 16:22:25 CEST).
                           
 Copyright @copyright{} F. Bueno, D. Cabeza, M. Carro, M. Hermenegildo, P. L@'opez, and G. Puebla 
 
@@ -133,7 +133,7 @@ Any incompatibility of the above clauses with legal, contractual or judiciary de
 @subtitle @strong{The Ciao System Documentation Series}
 @subtitle Technical Report CLIP 3/97.1
 @subtitle @emph{Generated/Printed on:} @today 
-@subtitle Version 1.9#335 (2004/4/16, 16:18:8 CEST)
+@subtitle Version 1.9#340 (2004/4/22, 16:22:25 CEST)
 @author F. Bueno
 @author D. Cabeza
 @author M. Carro
@@ -203,7 +203,7 @@ Any incompatibility of the above clauses with legal, contractual or judiciary de
 @ifinfo
 
 @sp 1
-This documentation corresponds to version 1.9#335 (2004/4/16, 16:18:8 CEST).
+This documentation corresponds to version 1.9#340 (2004/4/22, 16:22:25 CEST).
 @end ifinfo
 @c Contents:
 @c @summarycontents
@@ -264,7 +264,7 @@ This documentation corresponds to version 1.9#335 (2004/4/16, 16:18:8 CEST).
 * Sorting lists::		
 * compiler (library)::		
 * Enumeration of integers inside a range::  
-* Operating system utilities::	
+* system (library)::		
 * Prolog system internal predicates::  
 * DEC-10 Prolog file IO::	
 * Quintus-like internal database::  
@@ -516,7 +516,7 @@ GNU General Public License.
 @ifnotinfo
 
 @sp 1
-This documentation corresponds to version 1.9#335 (2004/4/16, 16:18:8 CEST).
+This documentation corresponds to version 1.9#340 (2004/4/22, 16:22:25 CEST).
 @end ifnotinfo
 
 @c (component)
@@ -1309,39 +1309,32 @@ If you feel you have contributed to the development of Ciao and we have forgotte
 
 @table @strong
 
-@item Version 1.10 (2002/5/16, 23:17:34 CEST)
+@item Version 1.10 (2004/4/15, 30:17:34 CEST)
  
 @itemize @bullet{} 
-@item Improvements related to supported platforms 
-@itemize @bullet{} 
-@item Compilation and installation in different palatforms have been improved. 
-@item New Mac OS X kernels supported. 
-@end itemize  
-@item Changes in compiler behavior and user interface: 
-@itemize @bullet{} 
+@item Classical prolog mode as default behavior. 
 @item Emacs-based environment improved. 
 @itemize @bullet{} 
-@item Revised syntax of Ciao emacs mode configuration files. 
 @item Improved emacs inferior (interaction) mode for Ciao and CiaoPP. 
 @item Xemacs compatibility improved (thanks to A. Rigo). 
 @item New icons and modifications in the environment for the preprocessor. 
 @item Icons now installed in a separate dir. 
-@item Double-click startup of programming environment. 
 @item Compatibility with newer versions of 
 @glindex Cygwin
 @code{Cygwin}. 
-@item Changes to programming environment. 
+@item Changes to programming environment: 
 @itemize @bullet{} 
+@item Double-click startup of programming environment. 
 @item Reorganized menus: help and customization grouped in separate menus. 
 @item Error location extended. 
 @item Automatic/Manual location of errors produced when running Ciao tools now customizable. 
 @item Presentation of CiaoPP preprocessor output improved. 
 @end itemize  
-@item Faces and coloring improved. 
+@item Faces and coloring improved: 
 @itemize @bullet{} 
 @item Faces for syntax-based highlighting more customizable. 
-@item Syntax-based coloring greatly improved. Now also working on ASCII terminals (for newer versions of emacs). 
-@item Literal-level assertions now correctly colored. 
+@item Syntax-based coloring greatly improved. Literal-level assertions also correctly colored now. 
+@item Syntax-based coloring now also working on ASCII terminals (for newer versions of emacs). 
 @item Listing user-defined directives allowed to be colored in special face. 
 @item Syntax errors now colored also in inferior buffers. 
 @item Customizable faces now appear in the documentation. 
@@ -1354,33 +1347,39 @@ If you feel you have contributed to the development of Ciao and we have forgotte
 @itemize @bullet{} 
 @item Replication of clauses in some cases (thanks to S. Craig). 
 @end itemize  
+
+
+@item Improvements related to supported platforms 
+@itemize @bullet{} 
+@item Compilation and installation in different palatforms have been improved. 
+@item New Mac OS X kernels supported. 
 @end itemize  
 
 
-@item Improvement and Bugs fixes in the engine: 
+@item Improvement and bugs fixes in the engine: 
 @itemize @bullet{} 
-@item Got rid of some segmentation violation problems. 
+@item Got rid of several segmentation violation problems. 
 @item Number of significant decimal digits to be printed now computed accurately. 
 @item Added support to test conversion of a Ciao integer into a machine int. 
 @item Unbound length atoms now always working. 
 @item C interface .h files reachable through a more standard location (thanks to R. Bagnara). 
-@item Compatibility with command line options of newer versions of gcc. 
+@item Compatibility with newer versions of gcc. 
 @end itemize  
 
 
 @item New libraries and utilities added to the system: 
 @itemize @bullet{} 
-@item Components: utilities to build modules frontiers. 
 @item Factsdb: facts defined in external files can now be automatically cached on-demand. 
 @item Symfnames: File aliasing to internal streams added. 
 @end itemize  
- 
-@item More libraries added (still in development): 
+
+
+@item New libraries added (in beta state): 
 @itemize @bullet{} 
 @item fd: clp(FD) 
 @item xml_path: XML querying and transformation to Prolog. 
 @item xdr_handle: XDR schema to HTML forms utility. 
-@item ddlist: Double linked list library. 
+@item ddlist: Two-way traversal list library. 
 @item gnuplot: Interface to GnuPlot. 
 @item time_analyzer: Execution time profiling. 
 @end itemize  
@@ -1405,22 +1404,22 @@ If you feel you have contributed to the development of Ciao and we have forgotte
 @glindex url_query/2
 @code{url_query/2} so that names of parameters having unusual characters are always correctly handled. 
 @end itemize  
-@item Fixed bug in library tokenize regarding non-terminated single or multiple-line comments. When the last line of a file has a single-line comment and does not end in a newline, it is accepted as correct. When an open-comment /* sequence is not terminated in a file, a syntax error is thrown. 
+@item Fixed bug in tokenizer regarding non-terminated single or multiple-line comments. When the last line of a file has a single-line comment and does not end in a newline, it is accepted as correct. When an open-comment /* sequence is not terminated in a file, a syntax error exception is thrown. 
 @end itemize  
 
 
 @item Other libraries improved: 
 @itemize @bullet{} 
-@item Added native_props to assertions package and include 
+@item Added native_props to assertions package and included 
 @glindex nonground/1
 @code{nonground/1}. 
 @item In atom2terms, changed interpretation of double quoted strings so that they are not parsed to terms. 
-@item Control on exceptions in active modules improved. 
+@item Control on exceptions improved. 
 @item Added 
-@glindex native/1+2
-@code{native/1+2} to basic_props. 
+@glindex native/1,2
+@code{native/1,2} to basic_props. 
 @item Davinci error processing improved. 
-@item Foreign interfaces are now automatically declared as implementation-defined ones. 
+@item Foreign predicates are now automatically declared as implementation-defined. 
 @item In lists, added 
 @glindex cross_product/2
 @code{cross_product/2} to compute the cartesian product of a list of lists. Also added 
@@ -1432,16 +1431,18 @@ If you feel you have contributed to the development of Ciao and we have forgotte
 @glindex append/2
 @code{append/2} implementation with a much more efficient code. 
 @item The make library has been improved. 
-@item In persdb added 
+@item In persdb, added 
 @glindex pretractall_fact/1
 @code{pretractall_fact/1} and 
 @glindex retractall_fact/1
 @code{retractall_fact/1} as persdb native capabilities. 
 @item Some minor updates in persdb_sql. 
-@item Added treatment of Operators and module:pred calls to pretty-printer. 
+@item Added treatment of operators and module:pred calls to pretty-printer. 
 @item Updated report of read of syntax errors. 
-@item File locking capabilities included. 
-@item New input/output facilities added to socket-related library. 
+@item File locking capabilities included in 
+@glindex open/3
+@code{open/3}. 
+@item New input/output facilities added to sockets. 
 @item Added 
 @glindex most_specific_generalization/3
 @code{most_specific_generalization/3} and 
@@ -1449,7 +1450,7 @@ If you feel you have contributed to the development of Ciao and we have forgotte
 @code{most_general_instance/3} to terms_check. 
 @item Added 
 @glindex sort_dict/2
-@code{sort_dict/2} to vndict. 
+@code{sort_dict/2} to library vndict. 
 @item The xref library now treats also empty references. 
 @end itemize  
 
@@ -5721,7 +5722,7 @@ The predicate is of type @emph{dynamic}.
 
 @strong{Author(s):} Manuel Hermenegildo, Manuel C. Rodriguez, Daniel Cabeza, @email{clip@@clip.dia.fi.upm.es}, @uref{http://www.clip.dia.fi.upm.es/}, The CLIP Group, School of Computer Science, Technical University of Madrid.
 
-@strong{Version:} 1.9#335 (2004/4/16, 16:18:8 CEST)
+@strong{Version:} 1.9#340 (2004/4/22, 16:22:25 CEST)
 
 @strong{Version of last change:} 1.9#323 (2004/3/8, 18:37:17 CET)
 
@@ -27544,7 +27545,7 @@ No further documentation available for this predicate.
 @c (component)
 
 
-@node Enumeration of integers inside a range, Operating system utilities, compiler (library), Top
+@node Enumeration of integers inside a range, system (library), compiler (library), Top
 @comment node-name, next,  previous,  up
 @chapter Enumeration of integers inside a range
 @liindex between
@@ -27642,9 +27643,9 @@ This modules enumerates integers between two numbers, or checks that an integer 
 @c (component)
 
 
-@node Operating system utilities, Prolog system internal predicates, Enumeration of integers inside a range, Top
+@node system (library), Prolog system internal predicates, Enumeration of integers inside a range, Top
 @comment node-name, next,  previous,  up
-@chapter Operating system utilities
+@chapter system (library)
 @liindex system
 @c -------------------------------------------------
 @c WARNING: Do not edit this file (system.texic)
@@ -27652,17 +27653,8 @@ This modules enumerates integers between two numbers, or checks that an integer 
 @c /home/clip/Systems/ciao-1.9/lib/system.pl
 @c -------------------------------------------------
 
-@strong{Author(s):} Daniel Cabeza, Manuel Carro.
 
-@strong{Version:} 1.9#335 (2004/4/16, 16:18:8 CEST)
 
-@strong{Version of last change:} 1.9#331 (2004/3/26, 17:39:47 CET)
-
-This module contains predicates for invoking services which are typically provided by the operating system. Note that the predicates which take names of files or directories as arguments in this module expect atoms, not 
-@glindex path alias
-path aliases. I.e., generally these predicates will not call 
-@glindex absolute_file_name/2
-@code{absolute_file_name/2} on names of files or directories taken as arguments.
 
 
 
@@ -27670,10 +27662,9 @@ path aliases. I.e., generally these predicates will not call
 * Usage and interface (system)::  
 * Documentation on exports (system)::  
 * Documentation on multifiles (system)::  
-* Known bugs and planned improvements (system)::  
 @end menu
 
-@node Usage and interface (system), Documentation on exports (system), Operating system utilities, Operating system utilities
+@node Usage and interface (system), Documentation on exports (system), system (library), system (library)
 @comment node-name, next,  previous,  up
 @section Usage and interface (@code{system})
 @cartouche
@@ -27697,6 +27688,8 @@ path aliases. I.e., generally these predicates will not call
 @code{datime/1}, 
 @glindex datime/9
 @code{datime/9}, 
+@glindex datime_struct/1
+@code{datime_struct/1}, 
 @glindex getenvstr/2
 @code{getenvstr/2}, 
 @glindex setenvstr/2
@@ -27735,10 +27728,16 @@ path aliases. I.e., generally these predicates will not call
 @code{system/2}, 
 @glindex popen/3
 @code{popen/3}, 
+@glindex popen_mode/1
+@code{popen_mode/1}, 
 @glindex exec/4
 @code{exec/4}, 
 @glindex exec/3
 @code{exec/3}, 
+@glindex exec/8
+@code{exec/8}, 
+@glindex wait/3
+@code{wait/3}, 
 @glindex directory_files/2
 @code{directory_files/2}, 
 @glindex mktemp/2
@@ -27771,14 +27770,6 @@ path aliases. I.e., generally these predicates will not call
 @code{cyg2win/3}.
 
 
-@item @emph{Regular Types:}
-
-@glindex datime_struct/1
-@code{datime_struct/1}, 
-@glindex popen_mode/1
-@code{popen_mode/1}.
-
-
 @item @emph{Multifiles:}
 
 @glindex define_flag/3
@@ -27804,7 +27795,7 @@ path aliases. I.e., generally these predicates will not call
 @end cartouche
 
 
-@node Documentation on exports (system), Documentation on multifiles (system), Usage and interface (system), Operating system utilities
+@node Documentation on exports (system), Documentation on multifiles (system), Usage and interface (system), system (library)
 @comment node-name, next,  previous,  up
 @section Documentation on exports (@code{system})
 @iftex
@@ -27816,10 +27807,8 @@ path aliases. I.e., generally these predicates will not call
 @deffn PREDICATE pause/1:
 
 
-@code{pause(Seconds)}
 
-
-Make this thread sleep for some @code{Seconds}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -27833,10 +27822,8 @@ Make this thread sleep for some @code{Seconds}.
 @deffn PREDICATE time/1:
 
 
-@code{time(Time)}
 
-
-@code{Time} is unified with the number of seconds elapsed since January, 1, 1970 (UTC).
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -27850,10 +27837,8 @@ Make this thread sleep for some @code{Seconds}.
 @deffn PREDICATE datime/1:
 
 
-@code{datime(Datime)}
 
-
-@code{Datime} is unified with a term of the form @code{datime(Year,Month,Day,Hour,Minute,Second)} which contains the current date and time.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -27867,50 +27852,23 @@ Make this thread sleep for some @code{Seconds}.
 @deffn PREDICATE datime/9:
 
 
-@code{datime(Time, Year, Month, Day, Hour, Min, Sec, WeekDay, YearDay)}
 
+No further documentation available for this predicate.
 
-@code{Time} is as in 
-@glindex time/1
-@code{time/1}. @code{WeekDay} is the number of days since Sunday, in the range 0 to 6. @code{YearDay} is the number of days since January 1, in the range 0 to 365.
-
-
-@strong{Usage 1:} @code{datime(+int, ?int, ?int, ?int, ?int, ?int, ?int, ?int, ?int)}
-@itemize @minus
-@item @emph{Description:} If @code{Time} is given, the rest of the arguments are unified with the date and time to which the @code{Time} argument refers. 
-@end itemize
-
-@strong{Usage 2:} @code{datime(-int, ?int, ?int, ?int, ?int, ?int, ?int, ?int, ?int)}
-@itemize @minus
-@item @emph{Description:} Bound @code{Time} to current time and the rest of the arguments refer to current time. 
-@end itemize
 @end deffn
 @sp 1
 
 @iftex
-@edef@temp{@noexpand@writetocentry{@realbackslash unnumbsubsubsecentry{datime_struct/1 (regtype)}}}
+@edef@temp{@noexpand@writetocentry{@realbackslash unnumbsubsubsecentry{datime_struct/1 (pred)}}}
 @temp
 @end iftex
-@teindex datime_struct/1 
+@pdindex datime_struct/1 
 @glindex datime_struct/1 
-@deffn REGTYPE datime_struct/1:
+@deffn PREDICATE datime_struct/1:
 
 
 
-A regular type, defined as follows:
-@smallexample 
-@smallexample 
-datime_struct(datime(Year,Month,Day,Hour,Min,Sec)) :-
-        int(Year),
-        int(Month),
-        int(Day),
-        int(Hour),
-        int(Min),
-        int(Sec).
-@end smallexample 
-
-@end smallexample 
-
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -27924,10 +27882,8 @@ datime_struct(datime(Year,Month,Day,Hour,Min,Sec)) :-
 @deffn PREDICATE getenvstr/2:
 
 
-@code{getenvstr(Name, Value)}
 
-
-The environment variable @code{Name} has @code{Value}. Fails if variable @code{Name} is not defined.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -27941,10 +27897,8 @@ The environment variable @code{Name} has @code{Value}. Fails if variable @code{N
 @deffn PREDICATE setenvstr/2:
 
 
-@code{setenvstr(Name, Value)}
 
-
-The environment variable @code{Name} is assigned @code{Value}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -27958,23 +27912,8 @@ The environment variable @code{Name} is assigned @code{Value}.
 @deffn PREDICATE extract_paths/2:
 
 
-@code{extract_paths(String, Paths)}
 
-
-Interpret @code{String} as the value of a UNIX environment variable holding a list of paths and return in @code{Paths} the list of the paths. Paths in @code{String} are separated by colons, and an empty path is considered a shorthand for '.' (current path). The most typical environment variable with this format is PATH. For example, this is a typical use: 
-@smallexample 
-?- set_prolog_flag(write_strings, on).
-
-yes
-?- getenvstr('PATH', PATH), extract_paths(PATH, Paths).
-
-PATH = ":/home/bardo/bin:/home/clip/bin:/opt/bin/:/bin",
-Paths = [".","/home/bardo/bin","/home/clip/bin","/opt/bin/","/bin"] ?
-
-yes
-?- 
-@end smallexample  
-
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -27988,10 +27927,8 @@ yes
 @deffn PREDICATE get_pid/1:
 
 
-@code{get_pid(Pid)}
 
-
-Unifies @code{Pid} with the process identificator of the current process or thread.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28005,10 +27942,8 @@ Unifies @code{Pid} with the process identificator of the current process or thre
 @deffn PREDICATE current_host/1:
 
 
-@code{current_host(Hostname)}
 
-
-@code{Hostname} is unified with the fully qualified name of the host.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28022,10 +27957,8 @@ Unifies @code{Pid} with the process identificator of the current process or thre
 @deffn PREDICATE current_executable/1:
 
 
-@code{current_executable(Path)}
 
-
-Unifies @code{Path} with the path to the current executable.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28039,50 +27972,9 @@ Unifies @code{Path} with the path to the current executable.
 @deffn PREDICATE umask/2:
 
 
-@code{umask(OldMask, NewMask)}
 
+No further documentation available for this predicate.
 
-The process file creation mask was @code{OldMask}, and it is changed to @code{NewMask}.
-
-
-@strong{Usage 2:} @code{umask(OldMask, NewMask)}
-@itemize @minus
-@item @emph{Description:} Gets the process file creation mask without changing it. 
-@item @emph{The following properties should hold at call time:}
-
-
-@code{OldMask} is a free variable.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:var/1})
-
-@code{NewMask} is a free variable.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:var/1})
-
-The terms @code{OldMask} and @code{NewMask} are strictly identical.
-@iftex
-@hfill
-@end iftex
- (@code{term_compare:== /2})
-@item @emph{The following properties hold upon exit:}
-
-
-@code{OldMask} is an integer.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:int/1})
-
-@code{NewMask} is an integer.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:int/1})
-@end itemize
 @end deffn
 @sp 1
 
@@ -28095,10 +27987,8 @@ The terms @code{OldMask} and @code{NewMask} are strictly identical.
 @deffn PREDICATE make_directory/2:
 
 
-@code{make_directory(DirName, Mode)}
 
-
-Creates the directory @code{DirName} with a given @code{Mode}. This is, as usual, operated against the current umask value.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28112,10 +28002,8 @@ Creates the directory @code{DirName} with a given @code{Mode}. This is, as usual
 @deffn PREDICATE make_directory/1:
 
 
-@code{make_directory(DirName)}
 
-
-Equivalent to @code{make_directory(D,0o777)}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28129,10 +28017,8 @@ Equivalent to @code{make_directory(D,0o777)}.
 @deffn PREDICATE make_dirpath/2:
 
 
-@code{make_dirpath(Path, Mode)}
 
-
-Creates the whole @code{Path} for a given directory with a given @code{Mode}. As an example, @code{make_dirpath('/tmp/var/mydir/otherdir')}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28146,10 +28032,8 @@ Creates the whole @code{Path} for a given directory with a given @code{Mode}. As
 @deffn PREDICATE make_dirpath/1:
 
 
-@code{make_dirpath(Path)}
 
-
-Equivalent to @code{make_dirpath(D,0o777)}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28163,50 +28047,9 @@ Equivalent to @code{make_dirpath(D,0o777)}.
 @deffn PREDICATE working_directory/2:
 
 
-@code{working_directory(OldDir, NewDir)}
 
+No further documentation available for this predicate.
 
-Unifies current working directory with @code{OldDir}, and then changes the working directory to @code{NewDir}. Calling @code{working_directory(Dir,Dir)} simply unifies @code{Dir} with the current working directory without changing anything else.
-
-
-@strong{Usage 2:} @code{working_directory(OldDir, NewDir)}
-@itemize @minus
-@item @emph{Description:} Gets current working directory. 
-@item @emph{The following properties should hold at call time:}
-
-
-@code{OldDir} is a free variable.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:var/1})
-
-@code{NewDir} is a free variable.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:var/1})
-
-The terms @code{OldDir} and @code{NewDir} are strictly identical.
-@iftex
-@hfill
-@end iftex
- (@code{term_compare:== /2})
-@item @emph{The following properties hold upon exit:}
-
-
-@code{OldDir} is an atom.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:atm/1})
-
-@code{NewDir} is an atom.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:atm/1})
-@end itemize
 @end deffn
 @sp 1
 
@@ -28219,10 +28062,8 @@ The terms @code{OldDir} and @code{NewDir} are strictly identical.
 @deffn PREDICATE cd/1:
 
 
-@code{cd(Path)}
 
-
-Changes working directory to @code{Path}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28237,13 +28078,8 @@ Changes working directory to @code{Path}.
 
 
 
+No further documentation available for this predicate.
 
-
-
-@strong{Usage:} 
-@itemize @minus
-@item @emph{Description:} Execs the shell specified by the environment variable @code{SHELL}. When the shell process terminates, control is returned to Prolog. 
-@end itemize
 @end deffn
 @sp 1
 
@@ -28256,10 +28092,8 @@ Changes working directory to @code{Path}.
 @deffn PREDICATE shell/1:
 
 
-@code{shell(Command)}
 
-
-@code{Command} is executed in the shell specified by the environment variable @code{SHELL}. It succeeds if the exit code is zero and fails otherwise.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28273,10 +28107,8 @@ Changes working directory to @code{Path}.
 @deffn PREDICATE shell/2:
 
 
-@code{shell(Command, ReturnCode)}
 
-
-Executes @code{Command} in the shell specified by the environment variable @code{SHELL} and stores the exit code in @code{ReturnCode}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28290,12 +28122,8 @@ Executes @code{Command} in the shell specified by the environment variable @code
 @deffn PREDICATE system/1:
 
 
-@code{system(Command)}
 
-
-Executes @code{Command} using the shell 
-@glindex /bin/sh
-@code{/bin/sh}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28309,12 +28137,8 @@ Executes @code{Command} using the shell
 @deffn PREDICATE system/2:
 
 
-@code{system(Command, ReturnCode)}
 
-
-Executes @code{Command} in the 
-@glindex /bin/sh
-@code{/bin/sh} shell and stores the exit code in @code{ReturnCode}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28328,35 +28152,24 @@ Executes @code{Command} in the
 @deffn PREDICATE popen/3:
 
 
-@code{popen(Command, Mode, Stream)}
 
-
-Open a pipe to process @code{Command} in a new shell with a given @code{Mode} and return a communication @code{Stream} (as in UNIX @code{popen(3)}). If @code{Mode} is @code{read} the output from the process is sent to @code{Stream}. If @code{Mode} is @code{write}, @code{Stream} is sent as input to the process. @code{Stream} may be read from or written into using the ordinary stream I/O predicates. @code{Stream} must be closed explicitly using 
-@glindex close/1
-@code{close/1}, i.e., it is not closed automatically when the process dies. 
-
-
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
 
 @iftex
-@edef@temp{@noexpand@writetocentry{@realbackslash unnumbsubsubsecentry{popen_mode/1 (regtype)}}}
+@edef@temp{@noexpand@writetocentry{@realbackslash unnumbsubsubsecentry{popen_mode/1 (pred)}}}
 @temp
 @end iftex
-@teindex popen_mode/1 
+@pdindex popen_mode/1 
 @glindex popen_mode/1 
-@deffn REGTYPE popen_mode/1:
+@deffn PREDICATE popen_mode/1:
 
 
 
+No further documentation available for this predicate.
 
-
-
-@strong{Usage:} @code{popen_mode(M)}
-@itemize @minus
-@item @emph{Description:} @code{M} is 'read' or 'write'. 
-@end itemize
 @end deffn
 @sp 1
 
@@ -28369,10 +28182,8 @@ Open a pipe to process @code{Command} in a new shell with a given @code{Mode} an
 @deffn PREDICATE exec/4:
 
 
-@code{exec(Command, StdIn, StdOut, StdErr)}
 
-
-Starts the process @code{Command} and returns the standart I/O streams of the process in @code{StdIn}, @code{StdOut}, and @code{StdErr}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28386,10 +28197,38 @@ Starts the process @code{Command} and returns the standart I/O streams of the pr
 @deffn PREDICATE exec/3:
 
 
-@code{exec(Command, StdIn, StdOut)}
+
+No further documentation available for this predicate.
+
+@end deffn
+@sp 1
+
+@iftex
+@edef@temp{@noexpand@writetocentry{@realbackslash unnumbsubsubsecentry{exec/8 (pred)}}}
+@temp
+@end iftex
+@pdindex exec/8 
+@glindex exec/8 
+@deffn PREDICATE exec/8:
 
 
-Starts the process @code{Command} and returns the standart I/O streams of the process in @code{StdIn} and @code{StdOut}. @code{Standard error} is connected to whichever the parent process had it connected to.
+
+No further documentation available for this predicate.
+
+@end deffn
+@sp 1
+
+@iftex
+@edef@temp{@noexpand@writetocentry{@realbackslash unnumbsubsubsecentry{wait/3 (pred)}}}
+@temp
+@end iftex
+@pdindex wait/3 
+@glindex wait/3 
+@deffn PREDICATE wait/3:
+
+
+
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28403,10 +28242,8 @@ Starts the process @code{Command} and returns the standart I/O streams of the pr
 @deffn PREDICATE directory_files/2:
 
 
-@code{directory_files(Directory, FileList)}
 
-
-@code{FileList} is the unordered list of entries (files, directories, etc.) in @code{Directory}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28420,10 +28257,8 @@ Starts the process @code{Command} and returns the standart I/O streams of the pr
 @deffn PREDICATE mktemp/2:
 
 
-@code{mktemp(Template, Filename)}
 
-
-Returns a unique @code{Filename} based on @code{Template}: @code{Template} must be a valid file name with six trailing X, which are substituted to create a new file name.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28437,10 +28272,8 @@ Returns a unique @code{Filename} based on @code{Template}: @code{Template} must 
 @deffn PREDICATE file_exists/1:
 
 
-@code{file_exists(File)}
 
-
-Succeeds if @code{File} (a file or directory) exists (and is accessible).
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28454,10 +28287,8 @@ Succeeds if @code{File} (a file or directory) exists (and is accessible).
 @deffn PREDICATE file_exists/2:
 
 
-@code{file_exists(File, Mode)}
 
-
-@code{File} (a file or directory) exists and it is accessible with @code{Mode}, as in the Unix call @code{access(2)}. Typically, @code{Mode} is 4 for read permission, 2 for write permission and 1 for execute permission.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28471,38 +28302,8 @@ Succeeds if @code{File} (a file or directory) exists (and is accessible).
 @deffn PREDICATE file_property/2:
 
 
-@code{file_property(File, Property)}
 
-
-@code{File} has the property @code{Property}. The possible properties are: 
-
-
-@table @asis 
-
-
-@item type(@code{Type}) 
-@code{Type} is one of @code{regular}, @code{directory}, @code{symlink}, @code{fifo}, @code{socket} or @code{unknown}. 
-
-
-@item linkto(@code{Linkto}) 
-If @code{File} is a symbolic link, @code{Linkto} is the file pointed to by the link (and the other properties come from that file, not from the link itself). 
-
-
-@item mod_time(@code{ModTime}) 
-@code{ModTime} is the time of last modification (seconds since January, 1, 1970). 
-
-
-@item mode(@code{Protection}) 
-@code{Protection} is the protection mode. 
-
-
-@item size(@code{Size}) 
-@code{Size} is the size. 
-
-
-@end table  
-
-If @code{Property} is uninstantiated, the predicate will enumerate the properties on backtracking.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28516,32 +28317,8 @@ If @code{Property} is uninstantiated, the predicate will enumerate the propertie
 @deffn PREDICATE file_properties/6:
 
 
-@code{file_properties(Path, Type, Linkto, Time, Protection, Size)}
 
-
-The file @code{Path} has the following properties: 
-
-
-@itemize @bullet{} 
-
-
-@item File type @code{Type} (one of @code{regular}, @code{directory}, @code{symlink}, @code{fifo}, @code{socket} or @code{unknown}). 
-
-
-@item If @code{Path} is a symbolic link, @code{Linkto} is the file pointed to. All other properties come from the file pointed, not the link. @code{Linkto} is '' if @code{Path} is not a symbolic link. 
-
-
-@item Time of last modification @code{Time} (seconds since January, 1, 1970). 
-
-
-@item Protection mode @code{Protection}. 
-
-
-@item Size in bytes @code{Size}. 
-
-
-@end itemize  
-
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28555,10 +28332,8 @@ The file @code{Path} has the following properties:
 @deffn PREDICATE modif_time/2:
 
 
-@code{modif_time(File, Time)}
 
-
-The file @code{File} was last modified at @code{Time}, which is in seconds since January, 1, 1970. Fails if @code{File} does not exist.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28572,12 +28347,8 @@ The file @code{File} was last modified at @code{Time}, which is in seconds since
 @deffn PREDICATE modif_time0/2:
 
 
-@code{modif_time0(File, Time)}
 
-
-If @code{File} exists, @code{Time} is its latest modification time, as in 
-@glindex modif_time/2
-@code{modif_time/2}. Otherwise, if @code{File} does not exist, @code{Time} is zero.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28591,10 +28362,8 @@ If @code{File} exists, @code{Time} is its latest modification time, as in
 @deffn PREDICATE fmode/2:
 
 
-@code{fmode(File, Mode)}
 
-
-The file @code{File} has protection mode @code{Mode}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28608,10 +28377,8 @@ The file @code{File} has protection mode @code{Mode}.
 @deffn PREDICATE chmod/2:
 
 
-@code{chmod(File, NewMode)}
 
-
-Change the protection mode of file @code{File} to @code{NewMode}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28625,62 +28392,9 @@ Change the protection mode of file @code{File} to @code{NewMode}.
 @deffn PREDICATE chmod/3:
 
 
-@code{chmod(File, OldMode, NewMode)}
 
+No further documentation available for this predicate.
 
-The file @code{File} has protection mode @code{OldMode} and it is changed to @code{NewMode}.
-
-
-@strong{Usage 2:} @code{chmod(File, OldMode, NewMode)}
-@itemize @minus
-@item @emph{Description:} Equivalent to fmode(@code{File},@code{OldMode}) 
-@item @emph{The following properties should hold at call time:}
-
-
-@code{File} is an atom.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:atm/1})
-
-@code{OldMode} is a free variable.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:var/1})
-
-@code{NewMode} is a free variable.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:var/1})
-
-The terms @code{OldMode} and @code{NewMode} are strictly identical.
-@iftex
-@hfill
-@end iftex
- (@code{term_compare:== /2})
-@item @emph{The following properties hold upon exit:}
-
-
-@code{File} is an atom.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:atm/1})
-
-@code{OldMode} is an atom.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:atm/1})
-
-@code{NewMode} is an atom.
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:atm/1})
-@end itemize
 @end deffn
 @sp 1
 
@@ -28693,10 +28407,8 @@ The terms @code{OldMode} and @code{NewMode} are strictly identical.
 @deffn PREDICATE delete_file/1:
 
 
-@code{delete_file(File)}
 
-
-Delete the file @code{File}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28710,10 +28422,8 @@ Delete the file @code{File}.
 @deffn PREDICATE delete_directory/1:
 
 
-@code{delete_directory(File)}
 
-
-Delete the directory @code{Directory}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28727,10 +28437,8 @@ Delete the directory @code{Directory}.
 @deffn PREDICATE rename_file/2:
 
 
-@code{rename_file(File1, File2)}
 
-
-Change the name of @code{File1} to @code{File2}.
+No further documentation available for this predicate.
 
 @end deffn
 @sp 1
@@ -28745,59 +28453,14 @@ Change the name of @code{File1} to @code{File2}.
 
 
 
+No further documentation available for this predicate.
 
-
-
-@strong{Usage:} @code{cyg2win(CygWinPath, WindowsPath, SwapSlash)}
-@itemize @minus
-@item @emph{Description:} Converts a path in the CygWin style to a Windows-style path, rewriting the driver part. If @code{SwapSlash} is @code{swap}, slashes are converted in to backslash. If it is @code{noswap}, they are preserved. 
-@item @emph{The following properties should hold at call time:}
-
-
-@code{CygWinPath} is a string (a list of character codes).
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:string/1})
-
-@code{WindowsPath} is a free variable.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:var/1})
-
-@code{SwapSlash} is currently instantiated to an atom.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:atom/1})
-@item @emph{The following properties should hold upon exit:}
-
-
-@code{CygWinPath} is a string (a list of character codes).
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:string/1})
-
-@code{WindowsPath} is a string (a list of character codes).
-@iftex
-@hfill
-@end iftex
- (@code{basic_props:string/1})
-
-@code{SwapSlash} is currently instantiated to an atom.
-@iftex
-@hfill
-@end iftex
- (@code{term_typing:atom/1})
-@end itemize
 @end deffn
 @sp 1
 
 
 
-@node Documentation on multifiles (system), Known bugs and planned improvements (system), Documentation on exports (system), Operating system utilities
+@node Documentation on multifiles (system),  , Documentation on exports (system), system (library)
 @comment node-name, next,  previous,  up
 @section Documentation on multifiles (@code{system})
 @iftex
@@ -28819,31 +28482,10 @@ The predicate is @emph{multifile}.
 @sp 1
 
 
-
-@node Known bugs and planned improvements (system),  , Documentation on multifiles (system), Operating system utilities
-@comment node-name, next,  previous,  up
-@section Known bugs and planned improvements (@code{system})
-
-@itemize @bullet{}
-
-@item
-
-@glindex shell/n
-@code{shell/n} commands have a bug in Windows: if the environment variable SHELL is instantiated to some Windows shell implementation, then it is very possible that shell/
-
-@item
-If 
-@glindex exec/4
-@code{exec/4} does not find the command to be executed, there is no visible error message: it is sent to a error output which has already been assigned to a different stream, disconnected from the one the user sees.
-
-@item
-If the arguments to cyg2win/3 are not strings, strange results appear, as a very mild type checking is performed.
-@end itemize
-
 @c (component)
 
 
-@node Prolog system internal predicates, DEC-10 Prolog file IO, Operating system utilities, Top
+@node Prolog system internal predicates, DEC-10 Prolog file IO, system (library), Top
 @comment node-name, next,  previous,  up
 @chapter Prolog system internal predicates
 @liindex prolog_sys
@@ -45694,9 +45336,9 @@ clp(Q) and clp(R) cannot be used simultaneously in the same program, or even wit
 
 @strong{Author(s):} Claudio Vaucheret, Sergio Guadarrama, Francisco Bueno.
 
-@strong{Version:} 1.9#330 (2004/3/25, 16:54:55 CET)
+@strong{Version:} 1.9#340 (2004/4/22, 16:22:25 CEST)
 
-@strong{Version of last change:} 1.7#199 (2002/4/18, 18:5:46 CEST)
+@strong{Version of last change:} 1.9#339 (2004/4/22, 7:49:9 CEST)
 
 This package impements an extension of prolog to deal with uncertainty. We implement a fuzzy prolog that models interval-valued fuzzy logic. This approach is more general than other fuzzy prologs in two aspects: 
 

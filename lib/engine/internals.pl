@@ -32,7 +32,7 @@
         '$set_global_logical_var'/2, '$get_global_logical_var'/2,
         '$erase_atom'/1,
         /* system.pl */
-        '$unix_popen'/3, '$exec'/4,
+        '$unix_popen'/3, '$exec'/8,
         '$unix_argv'/1,
         '$load_foreign_files'/4, '$prepare_foreign_files'/3,
         '$foreign_base'/1, '$find_file'/8,
@@ -83,7 +83,7 @@ provides handles for the module system into the internal definitions.
 %	'$prolog_radix'/2,
 	'$constraint_list'/2, '$eq'/2,
         '$large_data'/3, '$interpreted_clause'/2, '$unix_popen'/3,
-        '$exec'/4, '$unix_argv'/1, '$load_foreign_files'/4,
+        '$exec'/8, '$unix_argv'/1, '$load_foreign_files'/4,
         '$prepare_foreign_files'/3, '$foreign_base'/1, '$find_file'/8,
         '$format_print_float'/3, '$format_print_integer'/3, 
         '$set_global_logical_var'/2, '$get_global_logical_var'/2,

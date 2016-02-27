@@ -9,7 +9,7 @@
 # make justinstall      just install the whole Ciao system (must have been
 #                       compiled before)
 #
-# make eng              compile the Ciao engine for this particular arch.
+# make engine           compile the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
 #                       executables in several architectures at once.
 # make cleanbackups     delete backup files
@@ -27,11 +27,20 @@
 # make installdoc       a subset of 'make install', which only installs the 
 #                       documentation. Useful after 'make doc'. 
 
-
-
 #------- You should not change ANYTHING in this file -------------
 #------- All customizable options are in the file SETTINGS -------
 
+# Compiling (the engine) in Windows under cygwin:
+# You can compile directly on a Windows machine, because CygWin
+# allows mounting samba shares as Unix directories: if it is not done,
+# just do:
+# 
+# $ mkdir --parents /home/clip          # Create a path to mount on
+# $ mount -f -s //clip/clip /home/clip  # Mount the Samba share
+# $ cd /home/clip/Systems/ciao-1.9
+# $ make eng
+# 
+# ... etc.  This makes compiling, developing and testing much easier.
 
 include SETTINGS
 include SHARED
@@ -45,7 +54,7 @@ all:
 	@echo "*** ========================================================="
 	@echo "*** Compiling ciao"
 	@echo "*** ========================================================="
-	$(MAKE) eng compiler applications libraries
+	$(MAKE) engine compiler applications libraries
 	@echo "*** ========================================================="
 	@echo "*** Ciao compilation completed"
 	@echo "*** ========================================================="
@@ -54,7 +63,7 @@ allwin32:
 	@echo "*** ========================================================="
 	@echo "*** Compiling ciao for Windows 32"
 	@echo "*** ========================================================="
-	$(MAKE) engwin32 compiler applications libraries
+	$(MAKE) engine compiler applications libraries
 	@echo "*** ========================================================="
 	@echo "*** Ciao compilation completed"
 	@echo "*** ========================================================="
@@ -70,13 +79,20 @@ crossengwin32:
 	 ADDOBJ='$(STATOBJ)' \
          CURRLIBS='$(LIBS) $(STAT_LIBS)')
 
+allwin32: engwin32 compiler applications libraries
+
 allpl: compiler applications libraries
 
-engin: eng$(ALT)
+engine: doengine$(ALT)
 
-eng: bin/$(CIAOARCH)$(CIAODEBUG) include/$(CIAOARCH)$(CIAODEBUG) $(DEFAULTYPE)eng exe_header
+dowindowsbat:
+	$(SETLOCALCIAO) $(CIAOC) Win32/setup_bat
+	Win32/setup_bat \"$(OBJDIR)/ciaoengine.exe\"
 
-engwin32: copysrcfiles eng
+doengine: bin/$(CIAOARCH)$(CIAODEBUG) include/$(CIAOARCH)$(CIAODEBUG) $(DEFAULTYPE)eng exe_header dowindowsbat
+
+
+doenginewin32: copysrcfiles doengine dowindowsbat
 	rm -f $(SRC)/Win32/bin/$(ENGINENAME)
 	cp $(OBJDIR)/$(ENGINENAME) $(SRC)/Win32/bin
 
@@ -205,7 +221,7 @@ version-ciao:
 	echo 'int ciao_patch = $(PATCH);' >> $(OBJDIR)/version.c;\
 	echo 'char *installibdir = "$(REALLIBDIR)";' >> $(OBJDIR)/version.c )
 
-installeng: eng installincludes justinstalleng
+installeng: engine installincludes justinstalleng
 
 justinstalleng:
 	@echo "*** ---------------------------------------------------------"

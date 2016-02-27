@@ -223,6 +223,7 @@ extern BOOL prolog_unix_shell0 PROTO((struct worker *w));
 extern BOOL prolog_unix_shell2 PROTO((struct worker *w));
 extern BOOL prolog_unix_system2 PROTO((struct worker *w));
 extern BOOL prolog_exec PROTO((struct worker *w));
+extern BOOL prolog_wait PROTO((struct worker *w));
 extern BOOL prolog_unix_argv PROTO((struct worker *w));
 extern BOOL prolog_unix_exit PROTO((struct worker *w));
 extern BOOL prolog_unix_mktemp PROTO((struct worker *w));
@@ -429,6 +430,7 @@ char symbolchar[256];
  TAGGED atom_interpreted;	/* "interpreted" */
  TAGGED atom_builtin;		/* "built_in" */
  TAGGED atom_true;		/* "true" */
+ TAGGED atom_false;		/* "false" */
  TAGGED atom_retry_hook;	/* "$$retry_hook" */
  TAGGED atom_unprofiled;	/* "unprofiled" */
  TAGGED atom_profiled;   	/* "profiled" */
@@ -1039,7 +1041,8 @@ static void initialize_intrinsics()
   define_c_mod_predicate("system","shell",prolog_unix_shell0,0);
   define_c_mod_predicate("system","shell",prolog_unix_shell2,2);
   define_c_mod_predicate("system","system",prolog_unix_system2,2);
-  define_c_predicate("$exec",prolog_exec,4);
+  define_c_mod_predicate("system", "wait", prolog_wait, 3);
+  define_c_predicate("$exec",prolog_exec,8);
   define_c_predicate("$unix_argv",prolog_unix_argv,1);
   /*  define_c_predicate("$unix_exit",prolog_unix_exit,1); //) ( (+ */
   define_c_mod_predicate("system","mktemp",prolog_unix_mktemp,2);
@@ -1444,6 +1447,7 @@ void init_once()
   atom_interpreted = init_atom_check("interpreted");
   atom_builtin = init_atom_check("built_in");
   atom_true = init_atom_check("true");
+  atom_false = init_atom_check("false");
   atom_retry_hook = init_atom_check("$$retry_hook");
 
   atom_unprofiled = init_atom_check("unprofiled");

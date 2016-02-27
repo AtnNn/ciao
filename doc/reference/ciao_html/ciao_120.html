@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 23 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Foreign Language Interface</TITLE>
@@ -10,7 +10,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>,
 <P><HR><P>
 
 
-<H1><A NAME="SEC501" HREF="ciao_toc.html#TOC501">Foreign Language Interface</A></H1>
+<H1><A NAME="SEC500" HREF="ciao_toc.html#TOC500">Foreign Language Interface</A></H1>
 <P>
 <A NAME="IDX5754"></A>
 
@@ -48,17 +48,17 @@ The Ciao Prolog compiler analyzes the Prolog code written by the user and gather
 
 
 <UL>
-<LI><A HREF="ciao_120.html#SEC502">Declaration of Types</A>
-<LI><A HREF="ciao_120.html#SEC503">Equivalence between Ciao Prolog and C types</A>
-<LI><A HREF="ciao_120.html#SEC504">Equivalence between Ciao Prolog and C modes</A>
-<LI><A HREF="ciao_120.html#SEC505">Custom access to Prolog from C</A>
-<LI><A HREF="ciao_120.html#SEC513">Examples</A>
-<LI><A HREF="ciao_120.html#SEC522">Usage and interface (foreign_interface)</A>
+<LI><A HREF="ciao_120.html#SEC501">Declaration of Types</A>
+<LI><A HREF="ciao_120.html#SEC502">Equivalence between Ciao Prolog and C types</A>
+<LI><A HREF="ciao_120.html#SEC503">Equivalence between Ciao Prolog and C modes</A>
+<LI><A HREF="ciao_120.html#SEC504">Custom access to Prolog from C</A>
+<LI><A HREF="ciao_120.html#SEC512">Examples</A>
+<LI><A HREF="ciao_120.html#SEC521">Usage and interface (foreign_interface)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC502" HREF="ciao_toc.html#TOC502">Declaration of Types</A></H2>
+<H2><A NAME="SEC501" HREF="ciao_toc.html#TOC501">Declaration of Types</A></H2>
 
 <P>
 Each predicate implemented as a foreign C function must have accompanying declarations in the Ciao Prolog associated file stating the types and modes of the C function. A sample declaration for <CODE>prolog_predicate</CODE> which is implemented as <CODE>foreign_function_name</CODE> is: 
@@ -88,10 +88,10 @@ This notation can be simplified in several ways. If the name of the foreign func
 
 
 
-<H2><A NAME="SEC503" HREF="ciao_toc.html#TOC503">Equivalence between Ciao Prolog and C types</A></H2>
+<H2><A NAME="SEC502" HREF="ciao_toc.html#TOC502">Equivalence between Ciao Prolog and C types</A></H2>
 
 <P>
-The automatic translation between Ciao Prolog and C types is defined (at the moment) only for some simple but useful types. The translation to be performed is solely defined by the types of the arguments in the Ciao Prolog file (i.e., no inspection of the corresponding C file is done). The names (and meaning) of the types known for performing that translation are to be found in section <A HREF="ciao_121.html#SEC523">Foreign Language Interface Properties</A>; they are also summarized below (Prolog types are on the left, and the corresponding C types on the right): 
+The automatic translation between Ciao Prolog and C types is defined (at the moment) only for some simple but useful types. The translation to be performed is solely defined by the types of the arguments in the Ciao Prolog file (i.e., no inspection of the corresponding C file is done). The names (and meaning) of the types known for performing that translation are to be found in section <A HREF="ciao_121.html#SEC522">Foreign Language Interface Properties</A>; they are also summarized below (Prolog types are on the left, and the corresponding C types on the right): 
 
 
 
@@ -125,13 +125,13 @@ Empty lists of bytes and integers are converted into C <CODE>NULL</CODE> pointer
 
 
 <P>
-Most of the work is performed by the predicates in the section <A HREF="ciao_123.html#SEC531">Foreign Language Interface Builder</A>, which can be called explicitly by the user. Doing that is not usually needed, since the Ciao Prolog Compiler takes care of building glue code files an of compiling and linking whatever is necessary. 
+Most of the work is performed by the predicates in the section <A HREF="ciao_123.html#SEC530">Foreign Language Interface Builder</A>, which can be called explicitly by the user. Doing that is not usually needed, since the Ciao Prolog Compiler takes care of building glue code files an of compiling and linking whatever is necessary. 
  
 
 
 
 
-<H2><A NAME="SEC504" HREF="ciao_toc.html#TOC504">Equivalence between Ciao Prolog and C modes</A></H2>
+<H2><A NAME="SEC503" HREF="ciao_toc.html#TOC503">Equivalence between Ciao Prolog and C modes</A></H2>
 
 <P>
 The (prefix) <CODE>+/1</CODE> ISO mode (or, equivalently, the in/1 mode) states that the corresponding Prolog argument is ground at the time of the call, and therefore it is an input argument in the C part; this groundness is automatically checked upon entry. The (prefix) <CODE>-/1</CODE> ISO mode (or, equivalently, the go/1 mode) states that Prolog expects the C side to generate a (ground) value for that argument. Arguments with output mode should appear in C functions as pointers to the corresponding base type (as it is usual with C), i.e., an argument which is an integer generated by the C file, declared as 
@@ -169,28 +169,28 @@ Note the type of the (single) argument of the function. Besides, the return valu
 
 
 
-<H2><A NAME="SEC505" HREF="ciao_toc.html#TOC505">Custom access to Prolog from C</A></H2>
+<H2><A NAME="SEC504" HREF="ciao_toc.html#TOC504">Custom access to Prolog from C</A></H2>
 
 <P>
-Automatic type conversions does not cover all the possible cases. When the automatic type conversion is not enough (or if the user, for any reason, does not want to go through the automatic conversion), it is possible to instruct Ciao Prolog not to make implicit type conversion. The strategy in that case is to pass the relevant argument(s) with a special type (a <CODE>ciao_term</CODE>) which can represent any term which can be built in Prolog. Operations to construct, traverse, and test this data abstraction from C are provided. The prototypes of these operations are placed on the <CODE>"ciao_prolog.h"</CODE> file, under the <CODE>include</CODE> subdirectory of the installation directory (the Ciao Prolog compiler knowns where it has been installed, and gives the C compiler the appropriate flags). This <EM>non direct correspondence</EM> mode is activated whenever a Ciao Prolog type unknown to the foreign interface (i.e., none of these in section <A HREF="ciao_121.html#SEC523">Foreign Language Interface Properties</A>) or the type <CODE>any_term</CODE> (which is explicitly recognised by the foreign language interface) is found. The latter is preferred, as it is much more informative, and external tools, as the the 
+Automatic type conversions does not cover all the possible cases. When the automatic type conversion is not enough (or if the user, for any reason, does not want to go through the automatic conversion), it is possible to instruct Ciao Prolog not to make implicit type conversion. The strategy in that case is to pass the relevant argument(s) with a special type (a <CODE>ciao_term</CODE>) which can represent any term which can be built in Prolog. Operations to construct, traverse, and test this data abstraction from C are provided. The prototypes of these operations are placed on the <CODE>"ciao_prolog.h"</CODE> file, under the <CODE>include</CODE> subdirectory of the installation directory (the Ciao Prolog compiler knowns where it has been installed, and gives the C compiler the appropriate flags). This <EM>non direct correspondence</EM> mode is activated whenever a Ciao Prolog type unknown to the foreign interface (i.e., none of these in section <A HREF="ciao_121.html#SEC522">Foreign Language Interface Properties</A>) or the type <CODE>any_term</CODE> (which is explicitly recognised by the foreign language interface) is found. The latter is preferred, as it is much more informative, and external tools, as the the 
 <A NAME="IDX5759"></A>
 CiaoPP preprocessor, can take advantage of them. 
 
 
 
 <UL>
-<LI><A HREF="ciao_120.html#SEC506">Term construction</A>
-<LI><A HREF="ciao_120.html#SEC507">Testing the Type of a Term</A>
-<LI><A HREF="ciao_120.html#SEC508">Term navigation</A>
-<LI><A HREF="ciao_120.html#SEC509">Testing for Equality and Performing Unification</A>
-<LI><A HREF="ciao_120.html#SEC510">Raising Exceptions</A>
-<LI><A HREF="ciao_120.html#SEC511">Creating and disposing of memory chunks</A>
-<LI><A HREF="ciao_120.html#SEC512">Calling Prolog from C</A>
+<LI><A HREF="ciao_120.html#SEC505">Term construction</A>
+<LI><A HREF="ciao_120.html#SEC506">Testing the Type of a Term</A>
+<LI><A HREF="ciao_120.html#SEC507">Term navigation</A>
+<LI><A HREF="ciao_120.html#SEC508">Testing for Equality and Performing Unification</A>
+<LI><A HREF="ciao_120.html#SEC509">Raising Exceptions</A>
+<LI><A HREF="ciao_120.html#SEC510">Creating and disposing of memory chunks</A>
+<LI><A HREF="ciao_120.html#SEC511">Calling Prolog from C</A>
 </UL>
 
 
 
-<H3><A NAME="SEC506" HREF="ciao_toc.html#TOC506">Term construction</A></H3>
+<H3><A NAME="SEC505" HREF="ciao_toc.html#TOC505">Term construction</A></H3>
 
 <P>
 All term construction primitives return an argument of type <CODE>ciao_term</CODE>, which is the result of constructing a term. All Ciao Prolog terms can be built using the interface operations <CODE>ciao_var()</CODE>, <CODE>ciao_structure()</CODE>, <CODE>ciao_integer()</CODE>, and <CODE>ciao_float()</CODE>. There are, however, variants and specialized versions of these operations which can be freely intermixed. Using one version or another is a matter of taste and convenience. We list below the prototypes of the primitives in order of complexity. 
@@ -266,7 +266,7 @@ Returns a new copy of the <CODE>term</CODE>, with fresh variables (as <CODE>copy
 
 
 
-<H3><A NAME="SEC507" HREF="ciao_toc.html#TOC507">Testing the Type of a Term</A></H3>
+<H3><A NAME="SEC506" HREF="ciao_toc.html#TOC506">Testing the Type of a Term</A></H3>
 
 <P>
 A <CODE>ciao_term</CODE> can contain <EM>any</EM> Prolog term, and its implementation is opaque to the C code. Therefore the only way to know reliably what data is passed on is using explicit functions to test term types. Below, <CODE>ciao_bool</CODE> is a type defined in <CODE>"ciao_prolog.h"</CODE> which can take the values 1 (for <STRONG>true</STRONG>) and 0 (for <STRONG>false</STRONG>). 
@@ -313,7 +313,7 @@ Returns true if <CODE>term</CODE> is a structure of any arity. This includes ato
 
 
 
-<H3><A NAME="SEC508" HREF="ciao_toc.html#TOC508">Term navigation</A></H3>
+<H3><A NAME="SEC507" HREF="ciao_toc.html#TOC507">Term navigation</A></H3>
 
 <P>
 The functions below can be used to recover the value of a <CODE>ciao_term</CODE> into C variables, or to inspect Prolog structures. 
@@ -375,7 +375,7 @@ Extracts the <EM>nth</EM> argument of the structure <CODE>term</CODE>. It behave
 
 
 
-<H3><A NAME="SEC509" HREF="ciao_toc.html#TOC509">Testing for Equality and Performing Unification</A></H3>
+<H3><A NAME="SEC508" HREF="ciao_toc.html#TOC508">Testing for Equality and Performing Unification</A></H3>
 
 <P>
 Variables of type <CODE>ciao_term</CODE> cannot be tested directly for equality: they are (currently) implemented as a sort of pointers which may be aliased (two different pointers may refer to the same object). The interface provides helper functions for testing term equality and to perform unification of terms. 
@@ -399,7 +399,7 @@ Performs equality testing of terms, and returns true if the test was successful.
 
 
 
-<H3><A NAME="SEC510" HREF="ciao_toc.html#TOC510">Raising Exceptions</A></H3>
+<H3><A NAME="SEC509" HREF="ciao_toc.html#TOC509">Raising Exceptions</A></H3>
 
 <P>
 The following functions offers a way of throwing 
@@ -422,7 +422,7 @@ Raises an exception an throws the term <CODE>ball</CODE>.
 
 
 
-<H3><A NAME="SEC511" HREF="ciao_toc.html#TOC511">Creating and disposing of memory chunks</A></H3>
+<H3><A NAME="SEC510" HREF="ciao_toc.html#TOC510">Creating and disposing of memory chunks</A></H3>
 
 <P>
 Memory to be used solely by the user C code can be reserved/disposed of using, e.g., the well-known <CODE>malloc()</CODE>/<CODE>free()</CODE> functions (or whatever other functions the user may have available). However, memory explicitly allocated by Ciao Prolog and passed to C code, or allocated by C code and passed on to Ciao Prolog (and subject to garbage collection by it) should be allotted and freed (when necessary) by using the functions: 
@@ -444,7 +444,7 @@ whose behavior is similar to <CODE>malloc()</CODE>/<CODE>free()</CODE>, but whic
 
 
 
-<H3><A NAME="SEC512" HREF="ciao_toc.html#TOC512">Calling Prolog from C</A></H3>
+<H3><A NAME="SEC511" HREF="ciao_toc.html#TOC511">Calling Prolog from C</A></H3>
 
 <P>
 It is also possible to make arbitraty calls to Prolog predicates from C. There are two basic ways of make a query, depending on whether only one solution is needed (or if the predicate to be called is known to generate only one solution), or if several solutions are required. 
@@ -498,23 +498,23 @@ Ends the query and frees the used resources.
 
 
 
-<H2><A NAME="SEC513" HREF="ciao_toc.html#TOC513">Examples</A></H2>
+<H2><A NAME="SEC512" HREF="ciao_toc.html#TOC512">Examples</A></H2>
 
 
 <UL>
-<LI><A HREF="ciao_120.html#SEC514">Mathematical functions</A>
-<LI><A HREF="ciao_120.html#SEC515">Addresses and C pointers</A>
-<LI><A HREF="ciao_120.html#SEC516">Lists of bytes and buffers</A>
-<LI><A HREF="ciao_120.html#SEC517">Lists of integers</A>
-<LI><A HREF="ciao_120.html#SEC518">Strings and atoms</A>
-<LI><A HREF="ciao_120.html#SEC519">Arbitrary Terms</A>
-<LI><A HREF="ciao_120.html#SEC520">Exceptions</A>
-<LI><A HREF="ciao_120.html#SEC521">Testing number types and using unbound length integers</A>
+<LI><A HREF="ciao_120.html#SEC513">Mathematical functions</A>
+<LI><A HREF="ciao_120.html#SEC514">Addresses and C pointers</A>
+<LI><A HREF="ciao_120.html#SEC515">Lists of bytes and buffers</A>
+<LI><A HREF="ciao_120.html#SEC516">Lists of integers</A>
+<LI><A HREF="ciao_120.html#SEC517">Strings and atoms</A>
+<LI><A HREF="ciao_120.html#SEC518">Arbitrary Terms</A>
+<LI><A HREF="ciao_120.html#SEC519">Exceptions</A>
+<LI><A HREF="ciao_120.html#SEC520">Testing number types and using unbound length integers</A>
 </UL>
 
 
 
-<H3><A NAME="SEC514" HREF="ciao_toc.html#TOC514">Mathematical functions</A></H3>
+<H3><A NAME="SEC513" HREF="ciao_toc.html#TOC513">Mathematical functions</A></H3>
 
 <P>
 In this example, the standard mathematical library is accessed to provide the <EM>sin</EM>, <EM>cos</EM>, and <EM>fabs</EM> functions. Note that the library is specified simply as 
@@ -551,7 +551,7 @@ The foreign interface adds the <CODE>-lm</CODE> at compile time. Note also how s
 
 
 
-<H3><A NAME="SEC515" HREF="ciao_toc.html#TOC515">Addresses and C pointers</A></H3>
+<H3><A NAME="SEC514" HREF="ciao_toc.html#TOC514">Addresses and C pointers</A></H3>
 
 <P>
 The <CODE>address</CODE> type designates any pointer, and provides a means to deal with C pointers in Prolog without interpreting them whatsoever. The C source file which implements the operations accessed from Prolog is declared with the 
@@ -634,7 +634,7 @@ void show_object(struct object *o) {
 
 
 
-<H3><A NAME="SEC516" HREF="ciao_toc.html#TOC516">Lists of bytes and buffers</A></H3>
+<H3><A NAME="SEC515" HREF="ciao_toc.html#TOC515">Lists of bytes and buffers</A></H3>
 
 <P>
 A list of bytes (c.f., a list of ints) corresponds to a byte buffer in C. The length of the buffer is associated to that of the list using the property <CODE>size_of/2</CODE>. The returned buffer <STRONG>is freed by Ciao Prolog</STRONG> upon its recepction, unless the <CODE>do_not_free/1</CODE> property is specified (see later). Conversely, a list of natural numbers in the range 0 to 255 can be passed to C as a buffer. 
@@ -704,7 +704,7 @@ void show_list(int l, char *s) {
 
 
 
-<H3><A NAME="SEC517" HREF="ciao_toc.html#TOC517">Lists of integers</A></H3>
+<H3><A NAME="SEC516" HREF="ciao_toc.html#TOC516">Lists of integers</A></H3>
 
 <P>
 <STRONG>File</STRONG> <EM>int_lists.pl</EM>: 
@@ -770,7 +770,7 @@ void show_list(int l, int *s) {
 
 
 
-<H3><A NAME="SEC518" HREF="ciao_toc.html#TOC518">Strings and atoms</A></H3>
+<H3><A NAME="SEC517" HREF="ciao_toc.html#TOC517">Strings and atoms</A></H3>
 
 <P>
 A C string can be seen as a buffer whose end is denoted by the trailing zero, and therefore stating its length is not needed. Two translations are possible into Ciao Prolog: as a Prolog string (list of bytes, with no trailing zero) and as an atom. These are selected automatically just by choosing the corresponding type (look at the examples below). 
@@ -867,7 +867,7 @@ void put_str(char *s) {
 
 
 
-<H3><A NAME="SEC519" HREF="ciao_toc.html#TOC519">Arbitrary Terms</A></H3>
+<H3><A NAME="SEC518" HREF="ciao_toc.html#TOC518">Arbitrary Terms</A></H3>
 
 <P>
 This example shows how data Prolog can be passed untouched to C code, and how it can be manipulated there. 
@@ -960,7 +960,7 @@ void custom_display_term(ciao_term term) {
 
 
 
-<H3><A NAME="SEC520" HREF="ciao_toc.html#TOC520">Exceptions</A></H3>
+<H3><A NAME="SEC519" HREF="ciao_toc.html#TOC519">Exceptions</A></H3>
 
 <P>
 The following example defines a predicate in C that converts a list of codes into a number using <CODE>strtol()</CODE>. If this conversion fails, then a exception is raised. 
@@ -1032,7 +1032,7 @@ int codes_to_number_c(char *s) {
 
 
 
-<H3><A NAME="SEC521" HREF="ciao_toc.html#TOC521">Testing number types and using unbound length integers</A></H3>
+<H3><A NAME="SEC520" HREF="ciao_toc.html#TOC520">Testing number types and using unbound length integers</A></H3>
 
 <P>
 Unbound length integers (and, in general, any number) can be converted to/from <CODE>ciao_terms</CODE> by using strings. The following examples show two possibilities: one which tries to be as smart as possible (checking whether numbers fit into a machine int or not), and being lazy and simpler -and probably slower. 
@@ -1132,7 +1132,7 @@ void force_string_conversion_c(ciao_term  number_in,
 
 
 
-<H2><A NAME="SEC522" HREF="ciao_toc.html#TOC522">Usage and interface (<CODE>foreign_interface</CODE>)</A></H2>
+<H2><A NAME="SEC521" HREF="ciao_toc.html#TOC521">Usage and interface (<CODE>foreign_interface</CODE>)</A></H2>
 
 <div class="cartouche">
 
