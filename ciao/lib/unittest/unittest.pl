@@ -545,6 +545,9 @@ current_test_module(Src, (:- use_module(TestModule))) :-
 current_test_module(Src, (:- use_module(TestModule, Predicates))) :-
 	clause_read(Src, 1, load_test_module(TestModule, Predicates),
 	    _, _, _, _).
+current_test_module(Src, (:- use_package(TestModule))) :-
+	clause_read(Src, 1, load_test_package(TestModule),
+	    _, _, _, _).
 
 collect_test_modules(Src) :=
 	~sort(~findall(TestModule, current_test_module(Src, TestModule))).
