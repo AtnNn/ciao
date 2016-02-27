@@ -103,7 +103,7 @@ invoke_gmake_localciao(Dir, Target) :-
 % ---------------------------------------------------------------------------
 % Invocation of external/nested build/installation code
 
-:- use_module(library(lpdist(ciao_config_options)), [gmake/1, install_log/1, ciaosh/1]).
+:- use_module(library(lpdist(ciao_config_options)), [gmake/1, build_log/1, ciaosh/1]).
 :- use_module(library(system_extra), [do/2]).
 
 % custom shell command with environment predefined for ciaosh execution
@@ -112,12 +112,12 @@ invoke_gmake_localciao(Dir, Target) :-
 invoke_customsh(Dir, Cmd) :-
 	do(['cd ', Dir, '; ',
 	    ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ',
-	    './', Cmd, ' >> ', ~install_log], ~command_option).
+	    './', Cmd, ' >> ', ~build_log], ~command_option).
 
 :- export(invoke_ciaosh/1).
 invoke_ciaosh(Input) :-
 	do([~setlocalciao, ' ', ~ciaosh, ' -f < ', Input, ' >> ',
-	    ~install_log], ~command_option).
+	    ~build_log], ~command_option).
 
 % ---------------------------------------------------------------------------
 

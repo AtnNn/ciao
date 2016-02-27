@@ -73,9 +73,9 @@ rootprefix(R) :-
 	),
 	S = R.
 
-:- export(install_log/1).
+:- export(build_log/1).
 % TODO: defined in ciao/build.sh too
-install_log := ~fsR(~build_dir/'install.log').
+build_log := ~fsR(~build_dir/'build.log').
 
 :- export(build_doc_dir/1).
 build_doc_dir := ~fsR(~build_dir/doc).

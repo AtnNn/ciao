@@ -686,7 +686,7 @@ do__clean_rpd() {
 }
 register_command "clean_log"
 do__clean_log() {
-    rm ${CIAOBUILDDIR}/install.log
+    rm ${CIAOBUILDDIR}/build.log
 }
 
 register_command "build_timingmodel"
@@ -994,6 +994,7 @@ register_command "bootstrap_settings"
 do__bootstrap_settings() {
     # Minimal settings file for compiling the engine for the first time
     test -d ${CIAOBUILDDIR} || mkdir ${CIAOBUILDDIR} # TODO: necessary?
+    # TODO: BUILD_LOG is not used later...
     cat > ${CIAOBUILDDIR}/CONFIG_input <<EOF
 INSTYPE=local
 SILENT=true
@@ -1010,7 +1011,7 @@ INSTALLGROUP=
 #
 CIAODESRC=${CIAODESRC}
 REALLIBDIR=${CIAODESRC}/ciao
-INSTALL_LOG=${CIAOBUILDDIR}/install.log
+BUILD_LOG=${CIAOBUILDDIR}/build.log
 RUNTIME_CHECKS=${RUNTIME_CHECKS}
 UNUSED_PRED_WARNINGS=${UNUSED_PRED_WARNINGS}
 CUSTOM_CC=${CUSTOM_CC}
@@ -1322,8 +1323,8 @@ do_prepare_bootstrap() {
 	do_boot_scan_bundles # TODO: why?
     else
         # also defined in prolog 
-        # TODO: search INSTALL_LOG
-	BUILD_LOG="${CIAOBUILDDIR}/install.log"
+        # TODO: search BUILD_LOG
+	BUILD_LOG="${CIAOBUILDDIR}/build.log"
         # TODO: There is a previous call to do__engine in do_build. Why?
 	normal_message "Building bootstrap engine"
 	do_engine build >> ${BUILD_LOG}

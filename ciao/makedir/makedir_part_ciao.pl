@@ -563,7 +563,7 @@ build_chr :-
 	( with_chr(yes) ->
 	    bold_message("Compiling CHR Libraries"),
 	    invoke_customsh('library/chr', 'do_bootstrap')
-%	do(['cd library/chr ; ', ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ./do_bootstrap >> ', ~install_log], ~command_option).
+%	do(['cd library/chr ; ', ~setlocalciao, ' CIAOSH=\"', ~ciaosh, ' -f \" ./do_bootstrap >> ', ~build_log], ~command_option).
 	; true
         ).
 
