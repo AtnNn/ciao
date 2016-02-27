@@ -10,7 +10,6 @@
 
 :- use_module(library(clpq(clpq_meta))).
 
-
 :- load_compilation_module(library(clpq(clpqtr))).
 % :- add_term_trans(clpqtr:translate_hash/2).
 :- add_goal_trans(clpqtr:translate_clp/2, 750). % TODO: Right priority?

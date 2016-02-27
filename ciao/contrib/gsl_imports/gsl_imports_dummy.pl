@@ -7,8 +7,7 @@ math library and related libraries such as the cost analysis
 install GSL and then reconfigure CiaoDE.').
 
 :- load_compilation_module(library(gsl_imports(gsl_imports_dummy_tr))).
-
-:- add_sentence_trans(gsl_imports_def/3, 750).
+:- add_sentence_trans(gsl_imports_dummy_tr:gsl_imports_def/3, 750).
 
 :- op(1150, fx, [dummy]).
 

@@ -1,14 +1,11 @@
 :- package(interface).
-%%------------------------------------------------------------------------
-%%
+
 %% O'CIAO: Object Oriented Programming in CIAO/Prolog
 %%
 %% SYNTAX FILE FOR INTERFACE IMPLEMENTATION 
 %%
 %% AUTHOR : Angel Fernandez Pineda
 %% DATE   : July 1999
-%%
-%%------------------------------------------------------------------------
 
 :- op(1150,fx,[(public),(inheritable),(method)]).
 
@@ -19,10 +16,7 @@
 :- new_declaration(attribute/1,on).
 :- new_declaration(implements/1,on).
 
-%%------------------------------------------------------------------------
-
-:- load_compilation_module(library(interface(interface_tr))).
-
 % TODO: uncertain priority: duplicates the compiler logic, not really compatible with other extensions
-:- add_clause_trans(interface_clause_trans/3, 8110).
-:- add_sentence_trans(interface_sentence_trans/3, 8110).
+:- load_compilation_module(library(interface(interface_tr))).
+:- add_clause_trans(interface_tr:interface_clause_trans/3, 8110).
+:- add_sentence_trans(interface_tr:interface_sentence_trans/3, 8110).

@@ -1,11 +1,11 @@
 :- package(persdb_mysql).
+
 :- use_module(library(persdb_mysql(persdbrt_mysql))).
+
+% NOTE: priority like 'persdb' (incompatible?)
 :- load_compilation_module(library(persdb_sql_common(persdbtr_sql))).
-% note: priority like 'persdb' (incompatible?)
-:- add_sentence_trans(sql_persistent_tr/2, 1110).
-%JCF
-:- add_goal_trans(sql_goal_tr/2, 1110).
-%JCF
+:- add_sentence_trans(persdbtr_sql:sql_persistent_tr/2, 1110).
+:- add_goal_trans(persdbtr_sql:sql_goal_tr/2, 1110). %JCF
 
 :- use_package(assertions).
 :- use_package(det_hook).

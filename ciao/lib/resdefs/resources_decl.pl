@@ -52,7 +52,7 @@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TODO: This add_mod_to_directives/3 is a ugly kludge
 :- load_compilation_module(library(resdefs(resources_tr))).
-:- add_sentence_trans(add_mod_to_directives/3, 820).
+:- add_sentence_trans(resources_tr:add_mod_to_directives/3, 820).
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

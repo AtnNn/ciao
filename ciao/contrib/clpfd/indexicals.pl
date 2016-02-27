@@ -33,14 +33,16 @@
 :- use_module(library(clpfd(fd_range))).
 :- use_module(library(clpfd(fd_term))).
 
-:- load_compilation_module(library(clpfd(indexicals_tr))).
-:- add_sentence_trans(indexicals_tr:translate/3, 340).
-
 :- use_package(condcomp).
 :- if((defined(optim_comp), backend(js_backend))).
 % TODO: fix for JS-backend (removes module qualification)
-:- add_term_trans(indexiclas:translate_fix/3, 340).
+:- load_compilation_module(library(clpfd(indexicals_tr))).
+:- add_sentence_trans(indexicals_tr:translate/3, 340).
+:- add_term_trans(indexicals_tr:translate_fix/3, 340).
 :- clpfd_flag(atom_based). % do not use module expansion tricks
+:- else.
+:- load_compilation_module(library(clpfd(indexicals_tr))).
+:- add_sentence_trans(indexicals_tr:translate/3, 340).
 :- endif.
 
 %:- multifile clpfd_call_wrapper/1.

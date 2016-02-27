@@ -31,7 +31,7 @@
 :- use_package(library(foreign_interface(foreign_interface_ops))).
 
 :- load_compilation_module(library(foreign_interface(foreign_inliner_tr))).
-:- load_compilation_module(library(foreign_interface(foreign_interface_tr))).
+:- add_sentence_trans(foreign_inliner_tr:foreign_inliner_tr/3, 1010).
 
-:- add_sentence_trans(foreign_inliner_tr/3, 1010).
-:- add_sentence_trans(foreign_interface_tr/3, 1020).
+:- load_compilation_module(library(foreign_interface(foreign_interface_tr))).
+:- add_sentence_trans(foreign_interface_tr:foreign_interface_tr/3, 1020).

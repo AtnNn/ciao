@@ -30,13 +30,11 @@
 %% Operators.
 :- include(library(clpfd(clpfd_ops))).
 
-:- load_compilation_module(library(clpfd(clpfd_tr))).
-
 %% MCL: Every user-level constraint is a goal, so it is easier to
 %% perform the translation goal by goal.  We may return a conjunction
 %% of goals, but the compiler is happy with that.
-
-:- add_goal_trans(trans_fd/2, 750). % TODO: Right priority?
+:- load_compilation_module(library(clpfd(clpfd_tr))).
+:- add_goal_trans(clpfd_tr:trans_fd/2, 750). % TODO: Right priority?
 
 %% Runtime predicates.
 :- use_module(library(clpfd(clpfd_rt))).

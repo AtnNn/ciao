@@ -4,14 +4,10 @@
 % directive.
 
 :- load_compilation_module(library(debugpred(debugpred_tr))).
+:- add_sentence_trans(debugpred_tr:debugpred_sentence_tr/3, 9010).
+:- add_goal_trans(debugpred_tr:debugpred_goal_tr/3, 9010).
 
-%:- use_module(library(debugpred(debugpred_rt))).
-
-% :- add_term_trans(debugpred_term_tr/3).
-
-:- add_sentence_trans(debugpred_sentence_tr/3, 9010).
-:- add_goal_trans(debugpred_goal_tr/3, 9010).
-
+% TODO: Import only the necessary predicates
 :- use_module(library(lists)).
 
 :- op(1150, fx, [debugpred]).

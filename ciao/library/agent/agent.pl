@@ -6,7 +6,7 @@
 :- include(agent_ops).
 
 :- load_compilation_module(library(agent(agent_tr))).
-:- add_sentence_trans(agent_s/3, 750).
+:- add_sentence_trans(agent_tr:agent_s/3, 750).
 
 %:- use_module(library(actmods(actmod_server)),[actmodmain/0]).
 
@@ -14,4 +14,5 @@
 
 :- use_module(library(agent(agent_call))).
 
+% TODO: Do not use initialization here (at least, add priorities)
 :- initialization(agent&&).

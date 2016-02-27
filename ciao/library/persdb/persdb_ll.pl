@@ -13,7 +13,8 @@
         update_files/0,
         update_files/1]).
 
+% TODO: Do not use initialization here (at least, add priorities)
 :- initialization(init_persdb).
 
 :- load_compilation_module(library(persdb(persdbtr))).
-:- add_sentence_trans(persistent_tr/2, 1110).
+:- add_sentence_trans(persdbtr:persistent_tr/2, 1110).

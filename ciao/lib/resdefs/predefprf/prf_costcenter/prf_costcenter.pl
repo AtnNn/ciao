@@ -7,8 +7,9 @@
 :- op(1150, fx, [check_point]).
 
 :- load_compilation_module(prf_costcenter(prf_costcenter_tr)).
-:- add_sentence_trans(cost_center_sentence_tr/3, 810).
-:- add_goal_trans(cost_center_goal_tr/3, 810).
+:- add_sentence_trans(prf_costcenter_tr:cost_center_sentence_tr/3, 810).
+:- add_goal_trans(prf_costcenter_tr:cost_center_goal_tr/3, 810).
+
 :- use_package(resdefs).
 :- use_module(prf_costcenter(prf_costcenter_rt)).
 

@@ -13,6 +13,5 @@
 :- include(library(andorra(andorraops))).
 
 :- load_compilation_module(library(andorra(andorra_tr))).
-
-:- add_sentence_trans(translation1/3, 750).
-:- add_clause_trans(translation2/3, 750).
+:- add_sentence_trans(andorra_tr:translation1/3, 750).
+:- add_clause_trans(andorra_tr:translation2/3, 750).

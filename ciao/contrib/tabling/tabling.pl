@@ -93,9 +93,7 @@
  %% :- op(1150, fx, [ const_table_module ]).
 
 :- load_compilation_module(library(tabling(tabling_tr))).
-
-:- add_sentence_trans(do_term_expansion/3, 750).  % TODO: Probably not
-						  % right priority
+:- add_sentence_trans(tabling_tr:do_term_expansion/3, 750). % TODO: Probably not right priority
 
 :- doc(doinclude,abolish_all_tables/0).
 :- doc(doinclude,tabled_call/1).

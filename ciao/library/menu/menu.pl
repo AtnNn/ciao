@@ -3,8 +3,7 @@
 :- doc(nodoc, assertions).
 
 :- load_compilation_module(library(menu(menu_tr))).
-
-:- add_sentence_trans(menu_term_expansion/3, 330).
+:- add_sentence_trans(menu_tr:menu_term_expansion/3, 330).
 
 :- include(library(menu(menu_op))).
 :- include(library(menu(menu_common))).

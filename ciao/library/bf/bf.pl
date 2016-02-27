@@ -6,7 +6,7 @@
 :- include(library(bf(ops))).
 
 :- load_compilation_module(library(bf(bftr))).
-:- add_sentence_trans(bftr/3, 750). % TODO: Probably not right priority
+:- add_sentence_trans(bftr:bftr/3, 750). % TODO: Probably not right priority
 
 % TODO: Priorities are not enough to make it work with other
 %       translations, such as fsyntax. See "Modular Extensions for

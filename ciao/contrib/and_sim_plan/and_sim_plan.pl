@@ -20,10 +20,9 @@
 
 :- op(950, xfy, [&]).
 
-:- load_compilation_module(library(and_sim_plan(and_sim_plan_tr))).
-
 % TODO: this seems a clause translation instead of a term translation
-:- add_sentence_trans(do_term_expansion/3, 750). % TODO: unsure about priority
+:- load_compilation_module(library(and_sim_plan(and_sim_plan_tr))).
+:- add_sentence_trans(and_sim_plan_tr:do_term_expansion/3, 750). % TODO: unsure about priority
 
 :- use_module(library(and_sim_plan(and_sim_plan_rt))).
 :- use_module(library(dynamic)).
