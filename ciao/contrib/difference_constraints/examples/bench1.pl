@@ -1,4 +1,6 @@
+% :- module(bench1,[test/3],[show_transformations]).
 :- module(bench1,[test/3]).
+
 
 :- use_package(library(difference_constraints)).
 
