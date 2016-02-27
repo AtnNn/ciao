@@ -178,7 +178,7 @@
    bit is included in this release. Here is the (longish) summary:
 
    @begin{itemize}
-   @item Extensions for functional notation:
+   @item Extensions to functional notation:
       @begin{itemize}
       @item Introduced @tt{fsyntax} package (just functional
             syntax). (Daniel Cabeza)
@@ -782,18 +782,18 @@
 :- doc(version(1*12+0,2005/07/03,18:50*50+'CEST'), "Temporary version
    before transition to SVN. (Jose Morales)").
 
-:- doc(version(1*11+247,2004/07/02,13:27*33+'CEST'), "Improved
-   front cover (old authors are now listed as editors, mention UNM,
-   new TR number including system version, pointer to
-   @tt{www.ciaohome.org}, mention multi-paradigm, etc.). Also changed
-   mention of GPL in summary to LGPL.  (Manuel Hermenegildo)").
+% :- doc(version(1*11+247,2004/07/02,13:27*33+'CEST'), "Improved
+%    front cover (old authors are now listed as editors, mention UNM,
+%    new TR number including system version, pointer to
+%    @tt{www.ciaohome.org}, mention multi-paradigm, etc.). Also changed
+%    mention of GPL in summary to LGPL.  (Manuel Hermenegildo)").
 
 :- doc(version(1*11+1,2003/04/04,18:30*31+'CEST'), "New
    development version to begin the builtin modularization (Jose
    Morales)").
 
-:- doc(version(1*10+1,2003/04/04,18:29*07+'CEST'), "Version
-   skipped (Jose Morales)").
+% :- doc(version(1*10+1,2003/04/04,18:29*07+'CEST'), "Version
+%    skipped (Jose Morales)").
 
 :- doc(version(1*10+0,2004/07/29,16:12*03+'CEST'), "
    @begin{itemize}
@@ -958,23 +958,23 @@
       @end{itemize}
    @end{itemize}").
 
-:- doc(version(1*9+355,2004/07/02,13:28*02+'CEST'), "Improved
-   front cover (old authors are now listed as editors, mention UNM,
-   new TR number including system version, pointer to
-   @tt{www.ciaohome.org}, mention multi-paradigm, etc.). Also changed
-   mention of GPL in summary to LGPL.  (Manuel Hermenegildo)").
+% :- doc(version(1*9+355,2004/07/02,13:28*02+'CEST'), "Improved
+%    front cover (old authors are now listed as editors, mention UNM,
+%    new TR number including system version, pointer to
+%    @tt{www.ciaohome.org}, mention multi-paradigm, etc.). Also changed
+%    mention of GPL in summary to LGPL.  (Manuel Hermenegildo)").
 
-:- doc(version(1*9+38,2002/12/12,20:06*26+'CET'), "Manual now
-   posted in pdf format (since lpdoc now generates much better pdf).
-   (Manuel Hermenegildo)").
+% :- doc(version(1*9+38,2002/12/12,20:06*26+'CET'), "Manual now
+%    posted in pdf format (since lpdoc now generates much better pdf).
+%    (Manuel Hermenegildo)").
 
-:- doc(version(1*9+34,2002/11/30,14:42*45+'CET'), "Installation
-   can now be done in Test distribution directory (for testing
-   purposes).  (Manuel Hermenegildo)").
+% :- doc(version(1*9+34,2002/11/30,14:42*45+'CET'), "Installation
+%    can now be done in Test distribution directory (for testing
+%    purposes).  (Manuel Hermenegildo)").
 
-:- doc(version(1*9+33,2002/11/30,14:37*10+'CET'), "Modified
-   installation site text to make more explicit the fact that we
-   support Mac OS X and XP.  (Manuel Hermenegildo)").
+% :- doc(version(1*9+33,2002/11/30,14:37*10+'CET'), "Modified
+%    installation site text to make more explicit the fact that we
+%    support Mac OS X and XP.  (Manuel Hermenegildo)").
 
 :- doc(version(1*9+0,2002/05/16,23:17*34+'CEST'), " New
    development version after stable 1.8p0 (MCL, DCG)").
@@ -1174,45 +1174,44 @@
          @end{itemize}
    @end{itemize}").
 
-:- doc(version(1*7+203,2002/04/20,13:38*54+'CEST'), "Minor changes
-   to Ciao description.  (Manuel Hermenegildo)").
+% :- doc(version(1*7+203,2002/04/20,13:38*54+'CEST'), "Minor changes
+%    to Ciao description.  (Manuel Hermenegildo)").
 
-:- doc(version(1*7+155,2001/11/24,11:53*36+'CET'), "Minor changes
-   to installation scripts to make sure permissions are left correctly
-   if installation is aborted.  (Manuel Hermenegildo)").
+% :- doc(version(1*7+155,2001/11/24,11:53*36+'CET'), "Minor changes
+%    to installation scripts to make sure permissions are left correctly
+%    if installation is aborted.  (Manuel Hermenegildo)").
 
-:- doc(version(1*7+154,2001/11/23,18:02*30+'CET'), "'ciao' script
-   now locally adds CIAOBIN path to PATH if not already present
-   (MCL)").
+% :- doc(version(1*7+154,2001/11/23,18:02*30+'CET'), "'ciao' script
+%    now locally adds CIAOBIN path to PATH if not already present
+%    (MCL)").
 
-:- doc(version(1*7+108,2001/06/02,12:17*18+'CEST'), "Minor bug in
-   main Makefile during uninstallation fixed: added rm -f of engine
-   Makefile before linking.  (Manuel Hermenegildo)").
+% :- doc(version(1*7+108,2001/06/02,12:17*18+'CEST'), "Minor bug in
+%    main Makefile during uninstallation fixed: added rm -f of engine
+%    Makefile before linking.  (Manuel Hermenegildo)").
 
-:- doc(version(1*7+101,2001/05/15,17:34*09+'CEST'), "Minor error
-   in manual fixed: the section explaining the Ciao name did not
-   appear.  (Manuel Hermenegildo)").
+% :- doc(version(1*7+101,2001/05/15,17:34*09+'CEST'), "Minor error
+%    in manual fixed: the section explaining the Ciao name did not
+%    appear.  (Manuel Hermenegildo)").
 
-:- doc(version(1*7+100,2001/05/13,15:48*57+'CEST'), "Added
-   @tt{/usr/share/info} to default @tt{INFOPATH} paths.  (Manuel
-   Hermenegildo)").
+% :- doc(version(1*7+100,2001/05/13,15:48*57+'CEST'), "Added
+%    @tt{/usr/share/info} to default @tt{INFOPATH} paths.  (Manuel
+%    Hermenegildo)").
 
-:- doc(version(1*7+87,2001/04/08,15:15*18+'CEST'), "Added @tt{doc}
-   and @tt{installdoc} targets to top level installation @{Makefile}
-   (can be used to regenerate and reinstall documentation if
-   @apl{lpdoc} is available.  (Manuel Hermenegildo)").
+% :- doc(version(1*7+87,2001/04/08,15:15*18+'CEST'), "Added @tt{doc}
+%    and @tt{installdoc} targets to top level installation @{Makefile}
+%    (can be used to regenerate and reinstall documentation if
+%    @apl{lpdoc} is available.  (Manuel Hermenegildo)").
 
-:- doc(version(1*7+14,2000/08/29,12:16*12+'CEST'), "Updated COMMON
-   to include makefile-sysindep; changed SETLOCAL{CIAOC,CIAOSHELL} to
-   SETLOCALCIAO (MCL)").
+% :- doc(version(1*7+14,2000/08/29,12:16*12+'CEST'), "Updated COMMON
+%    to include makefile-sysindep; changed SETLOCAL{CIAOC,CIAOSHELL} to
+%    SETLOCALCIAO (MCL)").
 
-:- doc(version(1*7+12,2000/08/22,18:16*33+'CEST'), "Changed a bug
-   in the installation: the .sta engine was not being copied!
-   (MCL)").
+% :- doc(version(1*7+12,2000/08/22,18:16*33+'CEST'), "Changed a bug
+%    in the installation: the .sta engine was not being copied!
+%    (MCL)").
 
 :- doc(version(1*7+0,2000/07/12,19:01*20+'CEST'), "Development
    version following even 1.6 distribution.").
-
 
 :- doc(version(1*6+0,2000/07/12,18:55*50+'CEST'), "
    @begin{itemize}
@@ -1246,12 +1245,12 @@
    @item Many bug fixes in libraries and engine.
    @end{itemize}").
 
-:- doc(version(1*5+134,2000/05/09,11:52*13+'CEST'), "Changed
-   location of suite to examples, updated documentation.  (MCL)").
+% :- doc(version(1*5+134,2000/05/09,11:52*13+'CEST'), "Changed
+%    location of suite to examples, updated documentation.  (MCL)").
 
-:- doc(version(1*5+94,2000/03/28,23:19*20+'CEST'), "The manual
-   intro now provides an overview of the different parts of the
-   manual.  (Manuel Hermenegildo)").
+% :- doc(version(1*5+94,2000/03/28,23:19*20+'CEST'), "The manual
+%    intro now provides an overview of the different parts of the
+%    manual.  (Manuel Hermenegildo)").
 
 :- doc(version(1*5+0,1999/11/29,16:16*23+'MEST'),"Development
    version following even 1.4 distribution.").
@@ -1298,9 +1297,9 @@
    @item Many bugs fixed.
    @end{itemize}").
 
-:- doc(version(0*9+32,1999/04/05,20:38*17+'MEST'), "Improved
-   uninstallation makefiles so that (almost) nothing is left behind.
-   (Manuel Hermenegildo)").
+% :- doc(version(0*9+32,1999/04/05,20:38*17+'MEST'), "Improved
+%    uninstallation makefiles so that (almost) nothing is left behind.
+%    (Manuel Hermenegildo)").
 
 :- doc(version(0*9+0,1999/03/10,17:03*49+'CET'), "
    @begin{itemize}
