@@ -22,7 +22,7 @@ allstat: message ciao_regular_libs autolibs
 
 message:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Building $(BASEMAIN) 'library' libraries..."
+	@echo "*** Building $(BASEMAIN) 'contrib' libraries..."
 	@echo "*** (this may take a while and is silent; please be patient)"
 	@echo "*** ---------------------------------------------------------"
 
@@ -45,7 +45,7 @@ autolibs:
 # May copy far more than what is needed
 install:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Installing $(BASEMAIN) 'library' libraries..."
+	@echo "*** Installing $(BASEMAIN) 'contrib' libraries..."
 	@echo "*** (in $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
 	mkdir -p $(STDLIBDIR)
@@ -57,7 +57,7 @@ install:
 
 uninstall:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Uninstalling $(BASEMAIN) 'library' libraries..."
+	@echo "*** Uninstalling $(BASEMAIN) 'contrib' libraries..."
 	@echo "*** (deleting $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(STDLIBDIR)

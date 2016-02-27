@@ -65,7 +65,11 @@ nnegint(N) :- posint(N).
 
 :- comment(flt/1, "The type of floating-point numbers. The range of
         floats is the one provided by the C @tt{double} type, typically
-        @tt{[4.9e-324, 1.8e+308]} (plus or minus).").
+        @tt{[4.9e-324, 1.8e+308]} (plus or minus).  There are also three
+        special values: Infinity, either positive or negative,
+        represented as @tt{1.0e1000} and @tt{-1.0e1000}; and
+        Not-a-number, which arises as the result of indeterminate
+        operations, represented as @tt{0.Nan}").
 
 :- true prop flt(T) + regtype # "@var{T} is a float.".
 

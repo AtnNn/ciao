@@ -16,9 +16,9 @@ ALLFILES = *
 # installation has not been made yet.
 #---------------------------------------------------------------------------
 
-alldyn:  message ciao_so_libs ciao_regular_libs autolibs
+alldyn:  message ciao_so_libs clpr_libs autolibs ciao_special_libs 
 
-allstat: message ciao_regular_libs autolibs
+allstat: message autolibs clpr_libs ciao_special_libs 
 
 message:
 	@echo "*** ---------------------------------------------------------"
@@ -33,15 +33,18 @@ ciao_so_libs:
 	cd sockets && $(MAKE) all
 	cd random && $(MAKE) all
 
-ciao_regular_libs:
-	cd javall && $(MAKE) all
-#	cd distribution; $(MAKE)      # Check it out!
-	cd pillow && $(MAKE)
-# Make before the links, because clpr uses a file linked into clpq
+# CLP{Q,R} needs some special consideration, as it generates 
+# internal links in order to share common sources.
+clpr_libs:
 	cd clpr && $(MAKE) links
 	cd clpq && $(MAKE) links
 	cd clpr && $(MAKE) all
 	cd clpq && $(MAKE) all
+
+ciao_special_libs:
+	cd javall && $(MAKE) all
+#	cd distribution; $(MAKE)      # Check it out!
+	cd pillow && $(MAKE)
 
 autolibs:
 	'rm' -f all_modules all_module_messages
@@ -85,4 +88,8 @@ distclean:
 	find . -name '*.itf' -exec 'rm' -f {} \;
 	find . -name '*.po'  -exec 'rm' -f {} \;
 	find . -name '*.asr' -exec 'rm' -f {} \;
+	find . -name '*.o' -exec 'rm' -f {} \;
+	find . -name '*.so' -exec 'rm' -f {} \;
+	find . -name '*.dll' -exec 'rm' -f {} \;
+	find . -name '*_glue.c' -exec 'rm' -f {} \;
 

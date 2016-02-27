@@ -1,22 +1,44 @@
-:- module(make_rt,[make/1,make_option/1,
-	           make_toplevel/1,dyn_load_cfg_module_into_make/1],[]).
-
-%% ISO Prolog-like modules
-:- use_module(library(format),[format/3]).
-:- use_module(library(compiler),[ensure_loaded/1,use_module/1]).
-:- use_module(library(aggregates),[findall/3]).
-
-%% CIAO libraries
-:- use_module(library(errhandle),[handle_error/2]).
-:- use_module(library(lists),[append/3]).
-:- use_module(library(filenames),[file_name_extension/3]).
-:- use_module(library(terms),[atom_concat/2]).
-:- use_module(library(system),[file_exists/1,modif_time0/2]).
-:- use_module(library(messages),
-	      [simple_message/2,warning_message/2,error_message/2]).
-:- use_module(library('assertions/assrt_lib'),[set_libs/2]).
+:- module(make_rt,[make/1,target/1,make_option/1,
+	           verbose_message/2,
+                   call_unknown/1,
+	           dyn_load_cfg_module_into_make/1,
+		   dyn_load_cfg_file_into_make/1],[]).
 
 %% ---------------------------------------------------------------------------
+:- use_package(assertions).
+:- use_package(regtypes).
+
+:- comment(title,"Predicates Available When Using The Make Package").
+
+:- comment(usage,"This module is loaded automatically when the
+   @lib{make} library package is used.").
+
+:- comment(module,"This is the run-time module which implements the
+   predicates which are provided when using the @lib{make} library
+   package.").
+
+%% ---------------------------------------------------------------------------
+
+%% ISO Prolog-like modules
+:- use_module(library(compiler), [ensure_loaded/1,use_module/1]).
+
+%% CIAO libraries
+:- use_module(library(filenames),[file_name_extension/3]).
+:- use_module(library(terms),    [atom_concat/2]).
+:- use_module(library(system),   [file_exists/1,modif_time0/2]).
+:- use_module(library(messages), [simple_message/2,warning_message/2]).
+:- use_module(library(format),   [format_control/1]).
+%% :- use_module(library('assertions/assrt_lib'),[set_libs/2]).
+
+:- regtype target(T) # "@var{T} is a Makefile target.".
+
+target(X) :- atm(X).
+
+:- pred make(TargetList) : list(target) 
+
+   # "This is the main entry point to the make library. Makes the list
+      of targets one by one and any needed intermediate targets as
+      dictated by the dependency rules.".
 
 make([]) :- 
 	!.
@@ -28,9 +50,11 @@ make([Target|Targets]) :-
 make(Target) :- 
 	call_unknown(_:target_deps(Target,[])), 
 	!,
-	verbose_message("making unconditional target ~w",[Target]),
-	call_unknown_nofail(_:target_comment(Target)),
-	_:do_target(Target).
+	( find_file(Target,PathFile)
+	-> verbose_message("unconditional target ~w exists",[PathFile])
+        ;  verbose_message("making unconditional target ~w",[Target]),
+	   call_unknown_nofail(_:target_comment(Target)),
+	   _:do_target(Target)).
 make(Target) :- 
 	call_unknown(_:target_deps(Target,Preconds)), 
 	!,
@@ -112,8 +136,11 @@ handle_suffix(Source,_SSuffix,TSuffix,FileBase,OTSuffix) :-
 	TSuffix == OTSuffix,
 	atom_concat([FileBase,'.',TSuffix],Target),
 	(  file_exists(Target) -> 
-	   simple_message("~w is up to date",[Target]) 
-	;  verbose_message("neither ~w nor ~w exist",[Source,Target]),
+	   %% *** Check that this is correct in all cases...
+	   warning_message("ancestor ~w of ~w not found",[Source,Target]) 
+	   %% simple_message("~w is up to date",[Target]) 
+	;  %% verbose_message("neither ~w nor ~w exist",[Source,Target]),
+	   warning_message("neither ~w nor ~w exist",[Source,Target]),
 	   fail ).
 handle_suffix(Source,SSuffix,TSuffix,FileBase,OTSuffix) :-
 	find_file(Source,_PathSource),
@@ -144,151 +171,45 @@ find_file(File,PathFile) :-
 	file_exists(PathFile).
 
 %% ---------------------------------------------------------------------------
-%% Top-level: for using lpmake as a standalone utility
-%% ---------------------------------------------------------------------------
-
-make_toplevel(ApplName) :-
-	prolog_flag(argv, Args, _),
- 	catch(parse_args(Args,ApplName), E, handle_make_error(E)).
-
-handle_make_error(make_args_error(Format,Args,ApplName)) :- 
-	append("~nERROR: ",Format,T1),
-	append(T1,"~n~n",T2),
-	format(user_error,T2,Args),
-	report_usage(ApplName,_Type,'').
-handle_make_error(make_error(Format,Args)) :- 
-	error_message(Format,Args).
-handle_make_error(error(Error,Where)) :- 
-	handle_error(Error, Where).
-
-parse_args(['-h'|Args],ApplName) :- 
-	parse_other_args_and_load(Args,Type,ConfigFile,[]),
-	!,
-	report_usage(ApplName,Type,ConfigFile).
-parse_args(['-help'|Args],ApplName) :- 
-	parse_other_args_and_load(Args,Type,ConfigFile,[]),
-	!,
-	report_usage(ApplName,Type,ConfigFile).
-parse_args(Args,_ApplName) :- 
-	parse_other_args_and_load(Args,_Type,_ConfigFile,Targets),
-	!,
-        process_targets(Targets).
-parse_args(Args,ApplName) :-
-	throw(make_args_error("~nIllegal arguments: ~w~n~n",[Args],ApplName)).
-	
-
-parse_other_args_and_load([Type,ConfigFile|Targets],Type,ConfigFile,Targets):- 
-	Type = '-m',
-	!,
-	load_config_file(Type,"module",ConfigFile).
-parse_other_args_and_load([Type,ConfigFile|Targets],Type,ConfigFile,Targets):- 
-	Type = '-u',
-	!,
-	load_config_file(Type,"user file",ConfigFile).
-parse_other_args_and_load(Targets,Type,ConfigFile,Targets) :- 
-	\+ member('-h', Targets),
-	\+ member('-u', Targets),
-	\+ member('-m', Targets),
-	!,
-	Type = '-m',
-	ConfigFile = 'Makefile.pl',
-	load_config_file(Type,"(default) module",ConfigFile).
-
-load_config_file(Type,Text,ConfigFile) :-
-	(  file_exists(ConfigFile) 
-	-> verbose_message("loading ~s ~w",[Text,ConfigFile]),
-	(  Type = '-m'
-	   -> use_module(ConfigFile)
-	   ;  ensure_loaded(ConfigFile) )
-	;  throw(make_error("file ~w does not exist",[ConfigFile])) ).
-
-%% This used to force make from outside to load dynamically a module 
-dyn_load_cfg_module_into_make(ConfigFile) :-
-	use_module(ConfigFile).
-
-%% If no target process default if defined
-process_targets([]) :-
-	call_unknown(_:target_exists(default)),
-	!,
-	make(default).
-%% else process first target
-process_targets([]) :-
-	call_unknown(_:target_exists(Target)),
-	!,
-	make(Target).
-%% If targets specified, process them
-process_targets(Targets) :-
-	!,
-	make(Targets).
-
-%% This is in narrow format because that way it looks nicer in a man page.
-usage_message("
-
-Supported command line options:
-
-[ -u <.../Configfile.pl> ] <command1> ... <commandn>
-
-  Process commands <command1> ... <commandn>, using user 
-  file <.../Configfile.pl> as configuration file. If no 
-  configuration file is specified a file 'Makefile.pl' in 
-  the current directory will be used. 
-
-[ -m <.../Configfile.pl> ] <command1> ... <commandn>
-
-  Same as above, but the configuration file is a module. 
-  Making this file a module is useful to implement 
-  inherintance across diferent configuration files, i.e., 
-  the values declared in a configuration file can be 
-  easily made to override those defined in another.
-
--h     [ -u <.../Configfile.pl> ]
--h     [ -m <.../Configfile.pl> ]
--help  [ -u <.../Configfile.pl> ]
--help  [ -m <.../Configfile.pl> ]
-
-  Print this help message. If a configuration file is given, 
-  and the commands in it are commented, then information on 
-  these commands is also printed.
-
-").
-
-report_usage(ApplName,Type,LoadedFile) :-
-	format(user_error,"~nUsage:~n~n       ~w <option(s)> <command(s)>~n",
-	                  [ApplName]),
-	usage_message(Text),
-	format(user_error,Text,[]),
-	format(user_error,"~nSupported commands:~n",[]),
-	report_commands(Type,LoadedFile).
-
-report_commands(_Type,'') :-
-	!,
-	format(user_error,"~n(no configuration file loaded)~n",[]).
-report_commands(Type,LoadedFile) :-
-	(  Type = '-m'
-	-> TypeText = "module"
-	;  TypeText = "user file" ),
-	format(user_error,"[From ~s: ~w]~n~n",[TypeText,LoadedFile]),
-	(  findall(Target,call_unknown(_:target_exists(Target)),Targets),
-	   Targets = [_ |_ ]
-	-> ( member(Target,Targets),
-	     format(user_error,"    ~w:~n",[Target]),
-	     (  call_unknown(_:target_comment(Target))
-	     -> true
-	     ;  format(user_error,"    (no information available)~n",[]) ),
-	     format(user_error,"~n",[]),
-	     fail
-	   ; true )
-	;  format(user_error,
-           "(no documented commands in the configuration file)~n",
-	   []) ).
-
-%% ---------------------------------------------------------------------------
 %% Support code
 %% ---------------------------------------------------------------------------
 
+:- pred dyn_load_cfg_module_into_make(ConfigFile) : sourcename 
+
+   # "Used to load dynamically a module (typically, a @file{Makefile})
+      into the make library from the application using the library.".
+
+dyn_load_cfg_module_into_make(ConfigFile) :-
+	use_module(ConfigFile).
+
+:- pred dyn_load_cfg_file_into_make(ConfigFile) : sourcename 
+
+   # "Used to load dynamically a user file (typically, a @file{Makefile})
+      into the make library from the application using the library.".
+
+dyn_load_cfg_file_into_make(ConfigFile) :-
+	ensure_loaded(ConfigFile).
+
+:- pred make_option(Option) : atm 
+
+   # "Asserting/retracting facts of this predicate sets/clears library 
+      options. Default is no options (i.e., the predicate is undefined). The 
+      following values are supported:
+@begin{verbatim}
+make_option('-v'). % Verbose: prints progress messages (for debugging rules).
+@end{verbatim}
+  ".
+
 :- data make_option/1.
 
-make_option('-v').
+%% Default is silent. Typically asserted by 
+%% make_option('-v').
+
+:- pred verbose_message(Text,ArgList) : format_control * list 
+
+   # "The text provided in @var{Text} is printed as a message, using
+     the arguments in @var{ArgList}, if @tt{make_option('-v')} is
+     defined. Otherwise nothing is printed.".
 
 verbose_message(Mess,Args) :-
 	(  call_unknown(make_option('-v'))

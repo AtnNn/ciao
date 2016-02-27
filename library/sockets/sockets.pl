@@ -97,7 +97,7 @@ denoting the O.S. port number) or a @concept{free variable}.
 @var{Streams} and the @var{Socket} are checked for the availability of
 data to be read.  @var{ReadStreams} is the list of streams belonging
 to @var{Streams} which have data pending to be read.  If @var{Socket}
-was a free variable, it is ignored, and @{NewStream} is not checked.
+was a free variable, it is ignored, and @var{NewStream} is not checked.
 If @var{Socket} was instantiated to a port number and there are
 connections pending, a connection is accepted and connected with the
 Prolog stream in @var{NewStream}.".

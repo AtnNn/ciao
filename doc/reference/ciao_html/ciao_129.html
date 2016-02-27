@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - text_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - poly_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC512" HREF="ciao_toc.html#TOC512">text_class (library)</A></H1>
+<H1><A NAME="SEC512" HREF="ciao_toc.html#TOC512">poly_class (library)</A></H1>
 <P>
-<A NAME="IDX5310"></A>
+<A NAME="IDX5299"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_129.html#SEC513">Usage and interface (text_class)</A>
-<LI><A HREF="ciao_129.html#SEC514">Documentation on exports (text_class)</A>
+<LI><A HREF="ciao_129.html#SEC513">Usage and interface (poly_class)</A>
+<LI><A HREF="ciao_129.html#SEC514">Documentation on exports (poly_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC513" HREF="ciao_toc.html#TOC513">Usage and interface (<CODE>text_class</CODE>)</A></H2>
+<H2><A NAME="SEC513" HREF="ciao_toc.html#TOC513">Usage and interface (<CODE>poly_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(text_class)).</CODE>
+<CODE>:- use_module(library(poly_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,18 +40,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5311"></A>
-<CODE>coord/2</CODE>, 
-<A NAME="IDX5312"></A>
-<CODE>point/2</CODE>, 
-<A NAME="IDX5313"></A>
-<CODE>text_characters/1</CODE>, 
-<A NAME="IDX5314"></A>
-<CODE>anchor/1</CODE>, 
-<A NAME="IDX5315"></A>
-<CODE>font_type/1</CODE>, 
-<A NAME="IDX5316"></A>
-<CODE>justify_text/1</CODE>.
+<A NAME="IDX5300"></A>
+<CODE>vertices/1</CODE>, 
+<A NAME="IDX5301"></A>
+<CODE>outline_color/1</CODE>.
 
 </UL>
 
@@ -62,8 +54,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5317"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX5302"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX5303"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -73,194 +67,76 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 
 
-<H2><A NAME="SEC514" HREF="ciao_toc.html#TOC514">Documentation on exports (<CODE>text_class</CODE>)</A></H2>
+<H2><A NAME="SEC514" HREF="ciao_toc.html#TOC514">Documentation on exports (<CODE>poly_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5318"></A>
-<A NAME="IDX5319"></A>
+<A NAME="IDX5304"></A>
+<A NAME="IDX5305"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>coord/2:</B>
-<DD><A NAME="IDX5320"></A>
+<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
+<DD><A NAME="IDX5306"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>coord(+X,+Y)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> specify the coordinates of a point used to position the text on the display.
+<LI><EM>Description:</EM> The arguments of the list specify the coordinates for three or more points that define a closed polygon. The first and last points may be the same. After the coordinates there may be any number of option-value pairs, each of which sets one of the configu- ration options for the item.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>+ListofPoints</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
 
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the list of vertices of the polygon.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-ListofPoints</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5321"></A>
-<A NAME="IDX5322"></A>
+<A NAME="IDX5307"></A>
+<A NAME="IDX5308"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>point/2:</B>
-<DD><A NAME="IDX5323"></A>
+<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
+<DD><A NAME="IDX5309"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>point(+X,+Y)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> change the coordinates of a point used to position the text on the display.
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the polygon's outline. This option defaults to black.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5324"></A>
-<A NAME="IDX5325"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
-<DD><A NAME="IDX5326"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Text</CODE> specifies the characters to be displayed in the text item. This option defaults to an empty string.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Text</CODE> is currently instantiated to an atom.
+<CODE>+Color</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the text displayed in the text item.
+<LI><EM>Description:</EM> Gets poly's outline <CODE>Color</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Text</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5327"></A>
-<A NAME="IDX5328"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>anchor/1:</B>
-<DD><A NAME="IDX5329"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>anchor(+AnchorPos)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AnchorPos</CODE> tells how to position the text relative to the positioning point for the text. This option defaluts to center.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+AnchorPos</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>anchor(-AnchorPos)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the position of the text relative to the positioning point.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-AnchorPos</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5330"></A>
-<A NAME="IDX5331"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
-<DD><A NAME="IDX5332"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Font</CODE> specifies the font to use for the text item. This option defaluts to arial.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the value of the <CODE>Font</CODE> used for the text item.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5333"></A>
-<A NAME="IDX5334"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>justify_text/1:</B>
-<DD><A NAME="IDX5335"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>justify_text(+How)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text within its bounding region. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+How</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>justify_text(-How)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-How</CODE> is currently instantiated to an atom.
+<CODE>-Color</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

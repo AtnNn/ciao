@@ -77,7 +77,7 @@ public class queens extends Frame {
 	if (argv.length == 0)
 	    plServer = new PLConnection();
 	else
-	    plServer = new PLConnection(argv[0]);
+	    plServer = new PLConnection(argv);
     } catch (Exception e) {
       System.err.println("Problems starting java server: " + e);
       System.exit(1);

@@ -46,7 +46,9 @@ class PLJavaObjServer extends Thread {
 		if (!response.equals(PLTerm.terminate))
 		    pl.toPrologPJ(cmd.getArg(0),response);
 	    } while (!cmd.getArg(1).equals(PLTerm.terminate));
-	    pl.stop();
+	    pl.joinSocketHandlers(); // waits for termination of all 
+	                             // but myself.
+	    pl.closeSocketStreams();
 	} catch (Exception e) {
 	    System.err.println("PLJavaObjServer error: " + e);
 	    e.printStackTrace();

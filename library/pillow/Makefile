@@ -16,7 +16,7 @@ install:
 	@if test ! -d $(WEB_IMAGES_PATH) ; then \
           echo 'Warning: The value of WEB_IMAGES_PATH=$(WEB_IMAGES_PATH) is not properly set, Pillow will not be correctly configured'; \
 	else \
-          cp -pr images/* $(WEB_IMAGES_PATH); \
+          /bin/cp -pfr images/* $(WEB_IMAGES_PATH); \
 	fi
 
 dist: Makefile \
@@ -24,4 +24,4 @@ dist: Makefile \
 	cd dist ; $(MAKE)
 
 distclean:
-	/bin/rm *.asr *.itf *.po
+	/bin/rm -f *.asr *.itf *.po

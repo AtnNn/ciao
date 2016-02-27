@@ -8,10 +8,10 @@
 	    sqlterm2string/2
 	], [dcg]).
 
-:- use_module(library('persdb_mysql/sqltypes'),
+:- use_module(library('persdb_sql_common/sqltypes'),
 	  [sybase2sqltype/2, sybase2sqltypes_list/2, sybasetype/1,
 	   get_type/2, type_union/3, type_compatible/2, accepted_type/2]).
-:- reexport(library('persdb_mysql/sqltypes'), [sqltype/1]).
+:- reexport(library('persdb_sql_common/sqltypes'), [sqltype/1]).
 
 
 :- multifile [relation/3, attribute/4].
@@ -56,7 +56,7 @@
    given Prolog query:
 
 @begin{verbatim}
-@includeverbatim{/home/clip/Systems/ciao/library/persdb_mysql/examples/pl2sql_example.pl}
+@includeverbatim{/home/clip/Systems/ciao/library/persdb_mysql/examples/small_examples/pl2sql_example.pl}
 @end{verbatim}
 
    @bf{Note:} while the translator can be used directly in programs,

@@ -5,8 +5,6 @@
 	],
 	[assertions,regtypes,isomodes]).
 
-:- use_module(library(concurrency)).
-
 :- comment(title,"Low-level Java to Prolog interface").
 
 :- comment(author,"Jes@'{u}s Correas").
@@ -42,6 +40,7 @@ predicates dealing with code loading.
 
 ").
 
+:- use_module(library(concurrency)).
 :- use_module(engine(internals)).
 :- use_module(library(system)).
 :- use_module(library(read),[read/1, read/2]).
@@ -110,22 +109,24 @@ predicates dealing with code loading.
 	received as single argument of this structure. A reference to the
 	new query is returned to Java.
 
-@item @tt{prolog_launch_query_on_thread(Q)} Compound term to evaluate a new
-	query using a separate thread. A reference to the new query is
-	returned to Java.
+@item @tt{prolog_next_solution} Atom to get the next solution
+	of a goal. A term representing the goal instantiated with the 
+        next solution is returned to Java.
 
-@item @tt{prolog_next_solution(ID)} Compound term to get the next solution
-	of a goal identified by the single argument of the structure. A term
-	representing the goal instantiated with the next solution is
-	returned to Java.
+@item @tt{prolog_execute} Atom to indicate that next solution of a
+	goal must be got, without blocking the requester (it has to check 
+        if this goal is still running using prolog_is_running command).
 
-@item @tt{prolog_terminate_query(ID)} Compound term to terminate the goal
-	identified by the argument. If the thread option is disabled, a cut
-	is made in the goal search tree, and the goal is removed from the
-	goal table; if the thread option is enabled, the thread evaluating
-	the goal is terminated.
+@item @tt{prolog_terminate_query} Atom to indicate that a goal must be 
+        terminated.
 
-@item @tt{prolog_exit} Atom to terminate the current Prolog process.
+@item @tt{prolog_use_module(M)} Compound term to load dynamically a 
+        module given as argument.
+
+@item @tt{prolog_is_running} Atom to check if a goal is yet running a
+        prolog_execute command.
+
+@item @tt{prolog_halt} Atom to terminate the current Prolog process.
 
 @end{itemize}
 ".
@@ -137,7 +138,7 @@ command(prolog_launch_query_on_thread(Query)) :-
 	callable(Query).
 command(prolog_next_solution(_)).
 command(prolog_terminate_query(_)).
-command(prolog_exit).
+command(prolog_halt).
 
 :- regtype answer(X) # "@var{X} is a response sent from the prolog
 	server. Is represented as an atom or a functor with arity 1 or 2,
@@ -161,7 +162,7 @@ answer(prolog_exception(X,Y)) :- int(X), nonvar(Y).
 	  client resides, and starts the prolog server
 	  listening at the jp socket. This predicate acts
 	  as a server: it includes an endless read-process loop
-	  until the @tt{prolog_exit} command is received.
+	  until the @tt{prolog_halt} command is received.
 @cindex{Prolog server}
 ".
 %----------------------------------------------------------------------------
@@ -169,7 +170,8 @@ prolog_server :-
 	current_host(Node),
 	get_port(user_input,Port),
 	start_socket_interface(Node:Port),
-	join_socket_interface.
+	join_socket_interface,
+	eng_killothers.
 
 %----------------------------------------------------------------------------
 :- pred prolog_server/1
@@ -178,14 +180,15 @@ prolog_server :-
 	  starts the prolog server listening at the jp
           socket. This predicate acts as a server: it
           includes an endless read-process loop
-	  until the @tt{prolog_exit} command is received.
+	  until the @tt{prolog_halt} command is received.
 @cindex{Prolog server}
 ".
 %----------------------------------------------------------------------------
 prolog_server(Port) :-
 	current_host(Node),
 	start_socket_interface(Node:Port),
-	join_socket_interface.
+	join_socket_interface,
+	eng_killothers.
 
 %% -----------------------------------------------------------------------
 :- pred get_port(+stream,-port)
@@ -212,7 +215,8 @@ shell_s :-
 	 process_command(Id,Command),
 	 !,  %% Avoid choicepoints (none should have been pushed--just in case)
 	 shell_s
-	).
+	),
+	!.
 
 shell_s :-
 	%% The previous command has failed, a general exception is
@@ -355,7 +359,10 @@ solve(Query,_JId) :-
 	retract_fact_nb(running_queries(Id, Query)).
 
 solve2(Query,Id) :-
+%% Oops! Query launching should be intercepted, but some strange 
+%%       behaviours prevent from using intercept/3.
         intercept(Query, Error, assertz_fact(exception_flag(Id, Error))),
+%%
 	(current_fact_nb(exception_flag(Id, Error)) ->
 	 assertz_fact(query_solutions(Id, prolog_exception(Id, Error))),
 	 retract_fact(exception_flag(Id, _))
@@ -425,15 +432,16 @@ termination_check('$disconnect').
 % -----------------------------------------------------------------------
 thread_id(Id) :-
 	eng_goal_id(Id).
-%	new_atom(I1),
-%	eng_self(I2).
-
 
 %%------------------------------------------------------------------------
 %% VERSION CONTROL
 %%------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+125,2001/10/17,13:42*47+'CEST'), "bug fixed:
+   Prolog server termination command did not stop the Prolog process.
+   (Jesus Correas Fernandez)").
 
 :- comment(version(1*7+42,2001/01/15,14:20*54+'CET'), "Bug correction when using nested goals and multithreading is not active    (Jesus Correas Fernandez)").
 

@@ -1,22 +1,303 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART IX - Abstract data types</TITLE>
+<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC589" HREF="ciao_toc.html#TOC589">PART IX - Abstract data types</A></H1>
+<H1><A NAME="SEC589" HREF="ciao_toc.html#TOC589">Calling emacs from Prolog</A></H1>
+<P>
+<A NAME="IDX6292"></A>
+
 
 <P>
-This part includes libraries which implement some generic data structures (abstract data types) that are used frequently in programs or in the Ciao system itself. 
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
 
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
+
+
+<P>
+This library provides a 
+<A NAME="IDX6293"></A>
+<A NAME="IDX6294"></A>
+<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
+<A NAME="IDX6295"></A>
+emacs mode, which is used to develop programs from within the 
+<A NAME="IDX6296"></A>
+<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
+<A NAME="IDX6297"></A>
+<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
+<A NAME="IDX6298"></A>
+<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
+
+
+
+<UL>
+
+<LI>Visit a file, which can then be edited.
+
+<LI>Execute arbitrary
+
+<A NAME="IDX6299"></A>
+<A NAME="IDX6300"></A>
+<EM>emacs lisp</EM> code, sent from Prolog. 
+
+</UL>
+
+<P>
+In order for this library to work correctly, the following is needed: 
+
+
+
+<UL>
+
+<LI>You should be running the
+
+<A NAME="IDX6301"></A>
+<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
+
+<LI>This
+
+<A NAME="IDX6302"></A>
+<CODE>emacs</CODE> should be running the 
+<A NAME="IDX6303"></A>
+<A NAME="IDX6304"></A>
+<EM>emacs server</EM>. This can be done by including the following line in your 
+<A NAME="IDX6305"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<PRE>
+;; Start a server that emacsclient can connect to.
+(server-start)
+</PRE>
+
+Or typing <CODE>M-x server-start</CODE> within 
+<A NAME="IDX6306"></A>
+<CODE>emacs</CODE>. 
+
+</UL>
+
+<P>
+This suffices for using 
+<A NAME="IDX6307"></A>
+<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
+<A NAME="IDX6308"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<DL COMPACT>
+
+<DT><CODE>(setq enable-local-eval t)</CODE>
+<DD>
+Allows executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval nil)</CODE>
+<DD>
+Does not allow executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
+<DD>
+Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
+
+</DL>
+
+<P>
+<STRONG>Examples:</STRONG> 
+
+
+<P>
+Assuming that a <CODE>.pl</CODE> file loads this library, then: 
+
+
+<DL COMPACT>
+
+<DT><CODE>..., emacs_edit('foo'), ...</CODE>
+<DD>
+Opens file <CODE>foo</CODE> for editing in 
+<A NAME="IDX6309"></A>
+<CODE>emacs</CODE>. 
+
+<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
+<DD>
+Starts execution of a Ciao top-level within 
+<A NAME="IDX6310"></A>
+<CODE>emacs</CODE>. 
+
+</DL>
+
+
+<UL>
+<LI><A HREF="ciao_146.html#SEC590">Usage and interface (emacs)</A>
+<LI><A HREF="ciao_146.html#SEC591">Documentation on exports (emacs)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC590" HREF="ciao_toc.html#TOC590">Usage and interface (<CODE>emacs</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(emacs)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX6311"></A>
+<CODE>emacs_edit/1</CODE>, 
+<A NAME="IDX6312"></A>
+<CODE>emacs_edit_nowait/1</CODE>, 
+<A NAME="IDX6313"></A>
+<CODE>emacs_eval/1</CODE>, 
+<A NAME="IDX6314"></A>
+<CODE>emacs_eval_nowait/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6315"></A>
+<CODE>elisp_string/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6316"></A>
+<CODE>hiord_rt</CODE>, 
+<A NAME="IDX6317"></A>
+<CODE>metaterms</CODE>, 
+<A NAME="IDX6318"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6319"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX6320"></A>
+<CODE>system</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC591" HREF="ciao_toc.html#TOC591">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
+<P>
+<A NAME="IDX6321"></A>
+<A NAME="IDX6322"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
+<DD><A NAME="IDX6323"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX6324"></A>
+<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6325"></A>
+<A NAME="IDX6326"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
+<DD><A NAME="IDX6327"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX6328"></A>
+<CODE>emacs</CODE> and continues without waiting for editing to finish. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6329"></A>
+<A NAME="IDX6330"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
+<DD><A NAME="IDX6331"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6332"></A>
+<A NAME="IDX6333"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
+<DD><A NAME="IDX6334"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6335"></A>
+<A NAME="IDX6336"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
+<DD><A NAME="IDX6337"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
+
+<A NAME="IDX6338"></A>
+<CODE>emacs</CODE> lisp code. 
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_145.html">previous</A>, <A HREF="ciao_147.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

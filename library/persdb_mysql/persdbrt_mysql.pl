@@ -28,7 +28,7 @@
 :- reexport(library('persdb_mysql/pl2sql'),
 	            [projterm/1,querybody/1]).
 
-:- reexport(library('persdb_mysql/sqltypes'),
+:- reexport(library('persdb_sql_common/sqltypes'),
 	            [sqltype/1]).
 %% sql_query_one_tuple_more/2 internal predicates
 
@@ -70,11 +70,11 @@ persLocation(db(Name, User, Password, Machine:Port)) :-
 	[pl2sqlstring/3,sqlstring/1
 	%% ,sqltype/1
 	]).
-:- use_module(library('persdb_mysql/sqltypes'),
+:- use_module(library('persdb_sql_common/sqltypes'),
 	[accepted_type/2
 	%% ,sqltype/1
 	]).
-:- use_module(library('persdb_mysql/insert_compiler/pl2sqlinsert'),
+:- use_module(library('persdb_sql_common/pl2sqlinsert'),
 	[pl2sqlInsert/2]).
 :- use_module(library('persdb_mysql/delete_compiler/pl2sqldelete'),
 	[pl2sqlDelete/2]).
@@ -605,6 +605,14 @@ dbcall(DBId,ComplexGoal) :-
 
 %% ---------------------------------------------------------------------------
 
+:- regtype tuple(T) # "@var{T} is a tuple of values from the ODBC database
+   interface.".
+
+tuple(T) :-
+	list(T,atm).
+
+:- comment(tuple/1,"@includedef{tuple/1}").
+
 :- comment(doinclude,db_query/4).
 
 :- pred db_query(+DBId,+ProjTerm,+Goal,ResultTerm)
@@ -625,6 +633,17 @@ db_query(DBId,ProjTerm,Goal,ResultTerm) :-
 	debug_message("result is ~w",[ResultTerm]).
 
 %% ---------------------------------------------------------------------------
+
+:- regtype answertableterm(AT) # "@var{AT} is a response from the ODBC
+   database interface.".
+
+answertableterm(ok).
+answertableterm(t(Answers)) :-
+	list(Answers,tuple).
+answertableterm(err(Answer)) :-
+	term(Answer).	
+
+:- comment(answertableterm/1,"@includedef{answertableterm/1}").
 
 :- comment(doinclude,sql_query/3).
 
@@ -652,6 +671,14 @@ sql_query(DBId,SQLString,ResultTerm):-
 	mysql_disconnect(DbConnection).
 
 %% ---------------------------------------------------------------------------
+
+:- regtype answertupleterm(X) #  "@var{X} is a predicate containing a tuple.".
+
+answertupleterm([]).
+answertupleterm(tup(T)) :-
+	tuple(T).
+
+:- comment(answertupleterm/1,"@includedef{answertupleterm/1}").
 
 :- comment(doinclude,db_query_one_tuple/4).
 
@@ -821,6 +848,9 @@ filter_types([[NativeId, NativeType]|NativeRest],[[NativeId,Type]|Rest]):-
 	
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+126,2001/10/26,14:51*32+'CEST'), "Changed file
+to a new directory of common SQL stuff (MCL)").
 
 :- comment(version(1*7+109,2001/06/03,17:08*19+'CEST'), "Inserted into
    library directory persdb_mysql as a modified version of persdb_sql

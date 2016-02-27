@@ -1,41 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - error (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC726" HREF="ciao_toc.html#TOC726">error (library)</A></H1>
+<H1><A NAME="SEC729" HREF="ciao_toc.html#TOC729">dictionary (library)</A></H1>
 <P>
-<A NAME="IDX7553"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#3 (1998/12/14, 19:14:44 MET)
+<A NAME="IDX7532"></A>
 
 
 <P>
-This file implements error predicates of different types. 
+<STRONG>Version:</STRONG> 0.1 (1998/12/7, 15:57:36 MET)
 
 
 <P>
-Implemented by G&ouml;ran Smedb&auml;ck. 
+This module contains the fixed dictionary. All the nodes in VRML with their associated fields.
 
 
 
 <UL>
-<LI><A HREF="ciao_191.html#SEC727">Usage and interface (error)</A>
-<LI><A HREF="ciao_191.html#SEC728">Documentation on exports (error)</A>
+<LI><A HREF="ciao_191.html#SEC730">Usage and interface (dictionary)</A>
+<LI><A HREF="ciao_191.html#SEC731">Documentation on exports (dictionary)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC727" HREF="ciao_toc.html#TOC727">Usage and interface (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC730" HREF="ciao_toc.html#TOC730">Usage and interface (<CODE>dictionary</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +39,7 @@ Implemented by G&ouml;ran Smedb&auml;ck.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(error)).</CODE>
+<CODE>:- use_module(library(dictionary)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,10 +48,8 @@ Implemented by G&ouml;ran Smedb&auml;ck.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7554"></A>
-<CODE>error_vrml/1</CODE>, 
-<A NAME="IDX7555"></A>
-<CODE>output_error/1</CODE>.
+<A NAME="IDX7533"></A>
+<CODE>dictionary/6</CODE>.
 
 </UL>
 
@@ -66,22 +60,26 @@ Implemented by G&ouml;ran Smedb&auml;ck.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7556"></A>
+<A NAME="IDX7534"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX7557"></A>
+<A NAME="IDX7535"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX7558"></A>
+<A NAME="IDX7536"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX7559"></A>
+<A NAME="IDX7537"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7560"></A>
+<A NAME="IDX7538"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7561"></A>
+<A NAME="IDX7539"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX7562"></A>
+<A NAME="IDX7540"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX7563"></A>
-<CODE>write</CODE>.
+<A NAME="IDX7541"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7542"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7543"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -91,58 +89,72 @@ Implemented by G&ouml;ran Smedb&auml;ck.
 
 
 
-<H2><A NAME="SEC728" HREF="ciao_toc.html#TOC728">Documentation on exports (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC731" HREF="ciao_toc.html#TOC731">Documentation on exports (<CODE>dictionary</CODE>)</A></H2>
 <P>
-<A NAME="IDX7564"></A>
-<A NAME="IDX7565"></A>
+<A NAME="IDX7544"></A>
+<A NAME="IDX7545"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
-<DD><A NAME="IDX7566"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary/6:</B>
+<DD><A NAME="IDX7546"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>error_vrml(Structure)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
+<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>undefined:+Structure</CODE>
- (undefined property)
+<CODE>?NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Structure</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>?AccessType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-Boundary</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX7567"></A>
-<A NAME="IDX7568"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
-<DD><A NAME="IDX7569"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>output_error(Message)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>dictionary(?NodeTypeId,?AccessType,?FieldTypeId,?FieldId,-Init_value,-Boundary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
+<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>undefined:+Message</CODE>
- (undefined property)
+<CODE>?NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Message</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>?AccessType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Init_value</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-Boundary</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

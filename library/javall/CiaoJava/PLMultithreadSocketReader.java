@@ -34,6 +34,11 @@ class PLMultithreadSocketReader extends Thread {
     private BufferedReader in;
 
     /**
+     * Socket writer object to be notified when termination is received.
+     */
+    private PLSocketWriter writer;
+
+    /**
      * List of messages received but with no requests waiting for them.
      * This data structure is composed as a hashtable whose keys are
      * the message identifiers, and whose values are vectors of
@@ -58,8 +63,10 @@ class PLMultithreadSocketReader extends Thread {
      *
      * @param in Stream on which this reader receives messages.
      */
-    public PLMultithreadSocketReader(BufferedReader in) {
+    public PLMultithreadSocketReader(BufferedReader in, 
+				     PLSocketWriter writer) {
 	this.in = in;
+	this.writer = writer;
 	msgTable = new Hashtable(STARTING_CAPACITY, FACTOR);
 	rqsTable = new Hashtable(STARTING_CAPACITY, FACTOR);
 	this.start();
@@ -97,6 +104,7 @@ class PLMultithreadSocketReader extends Thread {
 		System.exit(1);
 	    }
 	} while (!s.getArg(1).equals(PLTerm.terminate));
+	writer.write(s);
 	if (PLConnection.debugging)
 	    System.err.println("Terminating PLMultithreadSocketReader");
     }

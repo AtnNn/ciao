@@ -25,6 +25,10 @@ distclean: realclean
 	cd examples/pl2java && $(MAKE) distclean
 	cd javadoc && $(MAKE) distclean
 
+tags:
+	-etags -l prolog $(PROLOGSOURCES)
+	cd CiaoJava && $(MAKE) tags
+
 
 
 

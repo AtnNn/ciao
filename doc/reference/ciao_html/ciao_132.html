@@ -1,47 +1,87 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - HTTP conectivity</TITLE>
+<TITLE>The Ciao Prolog System               - The PiLLoW Web Programming Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_131.html">previous</A>, <A HREF="ciao_133.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_131.html">previous</A>, <A HREF="ciao_133.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC523" HREF="ciao_toc.html#TOC523">HTTP conectivity</A></H1>
+<H1><A NAME="SEC521" HREF="ciao_toc.html#TOC521">The PiLLoW Web Programming Library</A></H1>
 <P>
-<A NAME="IDX5450"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX5347"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#34 (2000/12/23, 16:42:52 CET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo, <A HREF="mailto:clip@clip.dia.fi.upm.es">clip@clip.dia.fi.upm.es</A>, <A HREF="http://www.clip.dia.fi.upm.es/">http://www.clip.dia.fi.upm.es/</A>, The CLIP Group, School of Computer Science, Technical University of Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
+<A NAME="IDX5348"></A>
+<A NAME="IDX5349"></A>
+<A NAME="IDX5350"></A>
+<A NAME="IDX5351"></A>
 
 
 <P>
-This module implements the 
-<A NAME="IDX5451"></A>
-HTTP protocol, which allows retrieving data from HTTP servers.
+<A NAME="IDX5352"></A>
+<A NAME="IDX5353"></A>
+
+
+<P>
+<A NAME="IDX5354"></A>
+<A NAME="IDX5355"></A>
+
+
+<P>
+<A NAME="IDX5356"></A>
+<A NAME="IDX5357"></A>
+This package implements the PiLLoW library [BibRef: pillow-ws-dist-short]. The following three chapters document, respectively, the predicates for HTML/XML/CGI programming, the predicate for HTTP conectivity, and the types used in the definition of the predicates (key for fully understanding the other predicates). You can find a paper and some additional information in the 
+<A NAME="IDX5358"></A>
+<CODE>library/pillow/doc</CODE> directory of the distribution, and in the WWW at <A HREF="http://clip.dia.fi.upm.es/Software/pillow/pillow.html">http://clip.dia.fi.upm.es/Software/pillow/pillow.html</A>. There is also a 
+<A NAME="IDX5359"></A>
+<A NAME="IDX5360"></A>
+<EM>PiLLoW on-line tutorial</EM> (slides) at <A HREF="http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html">http://clip.dia.fi.upm.es/logalg/slides/C_pillow/C_pillow.html</A> which illustrates the basic features and provides a number of examples of PiLLoW use. 
 
 
 
 <UL>
-<LI><A HREF="ciao_132.html#SEC524">Usage and interface (http)</A>
-<LI><A HREF="ciao_132.html#SEC525">Documentation on exports (http)</A>
+<LI><A HREF="ciao_132.html#SEC522">Installing PiLLoW</A>
+<LI><A HREF="ciao_132.html#SEC523">Usage and interface (pillow)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC524" HREF="ciao_toc.html#TOC524">Usage and interface (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC522" HREF="ciao_toc.html#TOC522">Installing PiLLoW</A></H2>
+<P>
+ To correctly install PiLLoW, first, make sure you downloaded the right version of PiLLoW (there are different versions for different LP/CLP systems; the version that comes with Ciao is of course the right one for Ciao). Then, please follow these steps: 
+
+
+
+<OL>
+
+<LI>Copy the files in the <CODE>images</CODE> directory to a WWW accessible directory in your server.
+
+<LI>Edit the file
+
+<A NAME="IDX5361"></A>
+<CODE>icon_address.pl</CODE> and change the fact to point to the URL to be used to access the images above. 
+
+<LI>In the Ciao system the files are in the correct place, in other systems copy the files
+
+<A NAME="IDX5362"></A>
+<CODE>pillow.pl</CODE> and 
+<A NAME="IDX5363"></A>
+<CODE>icon_address.pl</CODE> to a suitable directory so that your Prolog system will find them. 
+
+</OL>
+
+
+
+<H2><A NAME="SEC523" HREF="ciao_toc.html#TOC523">Usage and interface (<CODE>pillow</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,19 +89,18 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(http)).</CODE>
+<CODE>:- use_package(pillow).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
+<CODE>:- module(...,...,[pillow]).</CODE>
 
-<UL>
+<LI><STRONG>New operators defined:</STRONG>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX5452"></A>
-<CODE>fetch_url/3</CODE>.
-
-</UL>
+<A NAME="IDX5364"></A>
+<CODE>$/2</CODE> [150,xfx], 
+<A NAME="IDX5365"></A>
+<CODE>$/1</CODE> [150,fx].
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -70,16 +109,10 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5453"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX5454"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX5455"></A>
-<CODE>pillow/pillow_aux</CODE>, 
-<A NAME="IDX5456"></A>
-<CODE>pillow/pillow_types</CODE>, 
-<A NAME="IDX5457"></A>
-<CODE>pillow/http_ll</CODE>.
+<A NAME="IDX5366"></A>
+<CODE>pillow/http</CODE>, 
+<A NAME="IDX5367"></A>
+<CODE>pillow/html</CODE>.
 
 </UL>
 
@@ -87,45 +120,7 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 </div class="cartouche">
 
-
-
-<H2><A NAME="SEC525" HREF="ciao_toc.html#TOC525">Documentation on exports (<CODE>http</CODE>)</A></H2>
-<P>
-<A NAME="IDX5458"></A>
-<A NAME="IDX5459"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
-<DD><A NAME="IDX5460"></A>
-
-
-<P>
-<CODE>fetch_url(URL,Request,Response)</CODE>
-
-
-<P>
-Fetches the document pointed to by <CODE>URL</CODE> from Internet, using request parameters <CODE>Request</CODE>, and unifies <CODE>Response</CODE> with the parameters of the response. Fails on timeout. Note that redirections are not handled automatically, that is, if <CODE>Response</CODE> contains terms of the form <CODE>status(redirection,301,_)</CODE> and <CODE>location(NewURL)</CODE>, the program should in most cases access location <CODE>NewURL</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>fetch_url(URL,Request,Response)</CODE>
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>URL</CODE> specifies a URL.
- (<CODE>pillow_types:url_term/1</CODE>)
-
-<CODE>Request</CODE> is a list of <CODE>http_request_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Response</CODE> is a list of <CODE>http_response_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_131.html">previous</A>, <A HREF="ciao_133.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_131.html">previous</A>, <A HREF="ciao_133.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

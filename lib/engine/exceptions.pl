@@ -91,7 +91,7 @@ throw(Error) :-
         var(Error), !,
         throw(error(instantiation_error, throw/1-1)).
 throw(Error) :-
-        current_fact(catching(C, E, H)),
+        current_fact_nb(catching(C, E, H)),
         E = Error, !,
         throw_action(H, E, C).
 throw(Error) :-

@@ -22,7 +22,7 @@ classes:
 
 prolog:
 	$(SETLOCALCIAO) $(CIAOC) -c $(PROLOGSOURCES)
-	$(SETLOCALCIAO) $(CIAOC) $(PROLOGSERVER)
+	$(SETLOCALCIAO) $(CIAOC) -s $(PROLOGSERVER)
 	-chmod $(EXECMODE) $(PROLOGSERVER)
 
 clean realclean:

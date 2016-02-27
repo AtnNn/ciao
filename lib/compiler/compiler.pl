@@ -51,7 +51,8 @@ check_static_module(File) :-
 check_static_module(_).
 
 unload(File) :-
-        absolute_file_name(File, '_opt', '.pl', '.', _, Base, _),
+        opt_suffix(Opt, Opt),
+        absolute_file_name(File, Opt, '.pl', '.', _, Base, _),
         retract_fact(module_loaded(Module, Base, _, _)),
         abolish_module(Module).
 

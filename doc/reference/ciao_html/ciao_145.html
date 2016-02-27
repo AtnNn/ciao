@@ -1,37 +1,52 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - linda (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC586" HREF="ciao_toc.html#TOC586">linda (library)</A></H1>
+<H1><A NAME="SEC586" HREF="ciao_toc.html#TOC586">Low-level Prolog to Java socket connection</A></H1>
 <P>
-<A NAME="IDX6324"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.9#66 (1999/4/29, 12:28:0 MEST)
+<A NAME="IDX6244"></A>
 
 
 <P>
-This is a SICStus-like linda package. Note that this is essentially quite obsolete, and provided mostly in case it is needed for compatibility, since Ciao now supports all Linda functionality (and more) through the concurrent fact database.
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#125 (2001/10/17, 13:42:47 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#82 (2001/3/30, 13:16:44 CEST)
+
+
+<P>
+ 
+<A NAME="IDX6245"></A>
+<A NAME="IDX6246"></A>
+This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
+<A NAME="IDX6247"></A>
+<CODE>javart</CODE> (Prolog to Java low-level interface) or 
+<A NAME="IDX6248"></A>
+<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
 
 
 
 <UL>
-<LI><A HREF="ciao_145.html#SEC587">Usage and interface (linda)</A>
-<LI><A HREF="ciao_145.html#SEC588">Documentation on exports (linda)</A>
+<LI><A HREF="ciao_145.html#SEC587">Usage and interface (javasock)</A>
+<LI><A HREF="ciao_145.html#SEC588">Documentation on exports (javasock)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC587" HREF="ciao_toc.html#TOC587">Usage and interface (<CODE>linda</CODE>)</A></H2>
+<H2><A NAME="SEC587" HREF="ciao_toc.html#TOC587">Usage and interface (<CODE>javasock</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +54,7 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(linda)).</CODE>
+<CODE>:- use_module(library(javasock)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,36 +63,24 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6325"></A>
-<CODE>linda_client/1</CODE>, 
-<A NAME="IDX6326"></A>
-<CODE>close_client/0</CODE>, 
-<A NAME="IDX6327"></A>
-<CODE>in/1</CODE>, 
-<A NAME="IDX6328"></A>
-<CODE>in/2</CODE>, 
-<A NAME="IDX6329"></A>
-<CODE>in_noblock/1</CODE>, 
-<A NAME="IDX6330"></A>
-<CODE>out/1</CODE>, 
-<A NAME="IDX6331"></A>
-<CODE>rd/1</CODE>, 
-<A NAME="IDX6332"></A>
-<CODE>rd/2</CODE>, 
-<A NAME="IDX6333"></A>
-<CODE>rd_noblock/1</CODE>, 
-<A NAME="IDX6334"></A>
-<CODE>rd_findall/3</CODE>, 
-<A NAME="IDX6335"></A>
-<CODE>linda_timeout/2</CODE>, 
-<A NAME="IDX6336"></A>
-<CODE>halt_server/0</CODE>, 
-<A NAME="IDX6337"></A>
-<CODE>open_client/2</CODE>, 
-<A NAME="IDX6338"></A>
-<CODE>in_stream/2</CODE>, 
-<A NAME="IDX6339"></A>
-<CODE>out_stream/2</CODE>.
+<A NAME="IDX6249"></A>
+<CODE>start_socket_interface/1</CODE>, 
+<A NAME="IDX6250"></A>
+<CODE>stop_socket_interface/0</CODE>, 
+<A NAME="IDX6251"></A>
+<CODE>join_socket_interface/0</CODE>, 
+<A NAME="IDX6252"></A>
+<CODE>java_query/2</CODE>, 
+<A NAME="IDX6253"></A>
+<CODE>java_response/2</CODE>, 
+<A NAME="IDX6254"></A>
+<CODE>prolog_query/2</CODE>, 
+<A NAME="IDX6255"></A>
+<CODE>prolog_response/2</CODE>, 
+<A NAME="IDX6256"></A>
+<CODE>java_stream/3</CODE>, 
+<A NAME="IDX6257"></A>
+<CODE>java_debug/1</CODE>.
 
 </UL>
 
@@ -88,12 +91,20 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6340"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6341"></A>
+<A NAME="IDX6258"></A>
 <CODE>fastrw</CODE>, 
-<A NAME="IDX6342"></A>
-<CODE>sockets/sockets</CODE>.
+<A NAME="IDX6259"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6260"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX6261"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX6262"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX6263"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX6264"></A>
+<CODE>javall/jtopl</CODE>.
 
 </UL>
 
@@ -103,209 +114,249 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 
 
-<H2><A NAME="SEC588" HREF="ciao_toc.html#TOC588">Documentation on exports (<CODE>linda</CODE>)</A></H2>
+<H2><A NAME="SEC588" HREF="ciao_toc.html#TOC588">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
 <P>
-<A NAME="IDX6343"></A>
-<A NAME="IDX6344"></A>
+<A NAME="IDX6265"></A>
+<A NAME="IDX6266"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>linda_client/1:</B>
-<DD><A NAME="IDX6345"></A>
+<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/1:</B>
+<DD><A NAME="IDX6267"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Address</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6346"></A>
-<A NAME="IDX6347"></A>
+<A NAME="IDX6268"></A>
+<A NAME="IDX6269"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>close_client/0:</B>
-<DD><A NAME="IDX6348"></A>
+<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
+<DD><A NAME="IDX6270"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6349"></A>
-<A NAME="IDX6350"></A>
+<A NAME="IDX6271"></A>
+<A NAME="IDX6272"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>in/1:</B>
-<DD><A NAME="IDX6351"></A>
+<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
+<DD><A NAME="IDX6273"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6352"></A>
-<A NAME="IDX6353"></A>
+<A NAME="IDX6274"></A>
+<A NAME="IDX6275"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>in/2:</B>
-<DD><A NAME="IDX6354"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
+<DD><A NAME="IDX6276"></A>
 
 
 <P>
-No further documentation available for this predicate.
+The predicate is of type <EM>concurrent</EM>.
 
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:threadId(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:query(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6355"></A>
-<A NAME="IDX6356"></A>
+<A NAME="IDX6277"></A>
+<A NAME="IDX6278"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>in_noblock/1:</B>
-<DD><A NAME="IDX6357"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
+<DD><A NAME="IDX6279"></A>
 
 
 <P>
-No further documentation available for this predicate.
+The predicate is of type <EM>concurrent</EM>.
 
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:id(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:response(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6358"></A>
-<A NAME="IDX6359"></A>
+<A NAME="IDX6280"></A>
+<A NAME="IDX6281"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
-<DD><A NAME="IDX6360"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
+<DD><A NAME="IDX6282"></A>
 
 
 <P>
-No further documentation available for this predicate.
+The predicate is of type <EM>concurrent</EM>.
 
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:id(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:query(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6361"></A>
-<A NAME="IDX6362"></A>
+<A NAME="IDX6283"></A>
+<A NAME="IDX6284"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>rd/1:</B>
-<DD><A NAME="IDX6363"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
+<DD><A NAME="IDX6285"></A>
 
 
 <P>
-No further documentation available for this predicate.
+The predicate is of type <EM>concurrent</EM>.
 
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:id(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:response(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Arg2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6364"></A>
-<A NAME="IDX6365"></A>
+<A NAME="IDX6286"></A>
+<A NAME="IDX6287"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>rd/2:</B>
-<DD><A NAME="IDX6366"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_stream/3:</B>
+<DD><A NAME="IDX6288"></A>
 
 
 <P>
-No further documentation available for this predicate.
+The predicate is of type <EM>data</EM>.
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_stream(Arg1,Arg2,Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains prolog-to-java and java-to-prolog streams, and the network address where the Java process is running.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:pjStream(Arg1)</CODE>
+ (undefined property)
+
+<CODE>undefined:jpStream(Arg2)</CODE>
+ (undefined property)
+
+<CODE>Arg1</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>Arg2</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>Address</CODE> is a valid host name.
+ (<CODE>javasock:machine_name/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6367"></A>
-<A NAME="IDX6368"></A>
+<A NAME="IDX6289"></A>
+<A NAME="IDX6290"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>rd_noblock/1:</B>
-<DD><A NAME="IDX6369"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6370"></A>
-<A NAME="IDX6371"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rd_findall/3:</B>
-<DD><A NAME="IDX6372"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6373"></A>
-<A NAME="IDX6374"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>linda_timeout/2:</B>
-<DD><A NAME="IDX6375"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6376"></A>
-<A NAME="IDX6377"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>halt_server/0:</B>
-<DD><A NAME="IDX6378"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6379"></A>
-<A NAME="IDX6380"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>open_client/2:</B>
-<DD><A NAME="IDX6381"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6382"></A>
-<A NAME="IDX6383"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>in_stream/2:</B>
-<DD><A NAME="IDX6384"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6385"></A>
-<A NAME="IDX6386"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>out_stream/2:</B>
-<DD><A NAME="IDX6387"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
+<DD><A NAME="IDX6291"></A>
 
 
 <P>
@@ -315,6 +366,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_144.html">previous</A>, <A HREF="ciao_146.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

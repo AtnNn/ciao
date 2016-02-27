@@ -757,7 +757,8 @@ endif
 
 updatehtmlindex: 
 	-@cat Indexhead_$(BASEMAIN).html > $(DOCDIR)/index.html
-	-@cd $(DOCDIR); cat *.htmlbullet *.htmlindex >> index.html 
+	-@cd $(DOCDIR) && cat *.htmlbullet >> index.html
+	-@cd $(DOCDIR) && cat *.htmlindex >> index.html
 	-@$(ECHO) "<p><hr><p><b>Last modified on:</b> `date`.<p>" \
                       >> $(DOCDIR)/index.html
 	-@cat Indextail_$(BASEMAIN).html >> $(DOCDIR)/index.html
@@ -909,7 +910,7 @@ pdfview: # $(BASEMAIN).pdf
 	ghostview -magstep -1 -portrait -geometry +349+10 $(BASEMAIN).pdf &
 
 infoview: # $(BASEMAIN).info
-	xterm -fn 9x15 -e info $(BASEMAIN).info &
+	xterm -fn 9x15 -e info --file $(BASEMAIN).info &
 
 htmlview: # $(BASEMAIN).html
 	netscape -remote openURL\(file:`pwd`/$(BASEMAIN)_html/$(BASEMAIN).html\) &

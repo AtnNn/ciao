@@ -1,33 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Types for the Low-level interface to SQL databases</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC565" HREF="ciao_toc.html#TOC565">Types for the Low-level interface to SQL databases</A></H1>
+<H1><A NAME="SEC565" HREF="ciao_toc.html#TOC565">Low-level socket interface to SQL/ODBC databases</A></H1>
 <P>
-<A NAME="IDX6028"></A>
+<A NAME="IDX5950"></A>
 
 
 <P>
-<STRONG>Author(s):</STRONG> D. Cabeza, M. Carro, I. Caballero, and M. Hermenegildo..
+<STRONG>Author(s):</STRONG> Jose Morales.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#105 (2001/5/28, 11:16:19 CEST)
+
+
+<P>
+This library provides a low-level interface to MySQL using the MySQL C API and the Ciao foreign interface to C.
 
 
 
 <UL>
-<LI><A HREF="ciao_140.html#SEC566">Usage and interface (db_client_types)</A>
-<LI><A HREF="ciao_140.html#SEC567">Documentation on exports (db_client_types)</A>
+<LI><A HREF="ciao_140.html#SEC566">Usage and interface (mysql_client)</A>
+<LI><A HREF="ciao_140.html#SEC567">Documentation on exports (mysql_client)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC566" HREF="ciao_toc.html#TOC566">Usage and interface (<CODE>db_client_types</CODE>)</A></H2>
+<H2><A NAME="SEC566" HREF="ciao_toc.html#TOC566">Usage and interface (<CODE>mysql_client</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,31 +47,52 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(db_client_types)).</CODE>
+<CODE>:- use_module(library(mysql_client)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX5951"></A>
+<CODE>mysql_connect/5</CODE>, 
+<A NAME="IDX5952"></A>
+<CODE>mysql_query/3</CODE>, 
+<A NAME="IDX5953"></A>
+<CODE>mysql_query_one_tuple/3</CODE>, 
+<A NAME="IDX5954"></A>
+<CODE>mysql_free_query_connection/1</CODE>, 
+<A NAME="IDX5955"></A>
+<CODE>mysql_fetch/2</CODE>, 
+<A NAME="IDX5956"></A>
+<CODE>mysql_get_tables/2</CODE>, 
+<A NAME="IDX5957"></A>
+<CODE>mysql_table_types/3</CODE>, 
+<A NAME="IDX5958"></A>
+<CODE>mysql_disconnect/1</CODE>.
+
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6029"></A>
-<CODE>socketname/1</CODE>, 
-<A NAME="IDX6030"></A>
-<CODE>dbname/1</CODE>, 
-<A NAME="IDX6031"></A>
-<CODE>user/1</CODE>, 
-<A NAME="IDX6032"></A>
-<CODE>passwd/1</CODE>, 
-<A NAME="IDX6033"></A>
-<CODE>answertableterm/1</CODE>, 
-<A NAME="IDX6034"></A>
-<CODE>tuple/1</CODE>, 
-<A NAME="IDX6035"></A>
-<CODE>answertupleterm/1</CODE>, 
-<A NAME="IDX6036"></A>
-<CODE>sqlstring/1</CODE>.
+<A NAME="IDX5959"></A>
+<CODE>dbconnection/1</CODE>, 
+<A NAME="IDX5960"></A>
+<CODE>dbqueryconnection/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5961"></A>
+<CODE>foreign_interface/foreign_interface_properties</CODE>, 
+<A NAME="IDX5962"></A>
+<CODE>persdb_mysql/db_client_types</CODE>.
 
 </UL>
 
@@ -69,200 +102,168 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>,
 
 
 
-<H2><A NAME="SEC567" HREF="ciao_toc.html#TOC567">Documentation on exports (<CODE>db_client_types</CODE>)</A></H2>
+<H2><A NAME="SEC567" HREF="ciao_toc.html#TOC567">Documentation on exports (<CODE>mysql_client</CODE>)</A></H2>
 <P>
-<A NAME="IDX6037"></A>
-<A NAME="IDX6038"></A>
+<A NAME="IDX5963"></A>
+<A NAME="IDX5964"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
-<DD><A NAME="IDX6039"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_connect/5:</B>
+<DD><A NAME="IDX5965"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5966"></A>
+<A NAME="IDX5967"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX5968"></A>
 
 
 
 <PRE>
-socketname(IPAddress:PortNumber) :-
-        atm(IPAddress),
-        int(PortNumber).
+dbconnection(_1) :-
+        address(_1).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6040"></A>
-<A NAME="IDX6041"></A>
+<A NAME="IDX5969"></A>
+<A NAME="IDX5970"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
-<DD><A NAME="IDX6042"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query/3:</B>
+<DD><A NAME="IDX5971"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5972"></A>
+<A NAME="IDX5973"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query_one_tuple/3:</B>
+<DD><A NAME="IDX5974"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5975"></A>
+<A NAME="IDX5976"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
+<DD><A NAME="IDX5977"></A>
 
 
 
 <PRE>
-dbname(DBId) :-
-        atm(DBId).
+dbqueryconnection(_1) :-
+        address(_1).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
+<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6043"></A>
-<A NAME="IDX6044"></A>
+<A NAME="IDX5978"></A>
+<A NAME="IDX5979"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
-<DD><A NAME="IDX6045"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_free_query_connection/1:</B>
+<DD><A NAME="IDX5980"></A>
 
-
-
-<PRE>
-user(User) :-
-        atm(User).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6046"></A>
-<A NAME="IDX6047"></A>
+<A NAME="IDX5981"></A>
+<A NAME="IDX5982"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
-<DD><A NAME="IDX6048"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_fetch/2:</B>
+<DD><A NAME="IDX5983"></A>
 
-
-
-<PRE>
-passwd(Passwd) :-
-        atm(Passwd).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6049"></A>
-<A NAME="IDX6050"></A>
+<A NAME="IDX5984"></A>
+<A NAME="IDX5985"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>answertableterm/1:</B>
-<DD><A NAME="IDX6051"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_get_tables/2:</B>
+<DD><A NAME="IDX5986"></A>
 
 
 <P>
-Represents the types of responses that will be returned from the database interface. These can be a set of answer tuples, or the atom <CODE>ok</CODE> in case of a successful addition or deletion.
+No further documentation available for this predicate.
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>answertableterm(AT)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AT</CODE> is a response from the database interface.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6052"></A>
-<A NAME="IDX6053"></A>
+<A NAME="IDX5987"></A>
+<A NAME="IDX5988"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
-<DD><A NAME="IDX6054"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_table_types/3:</B>
+<DD><A NAME="IDX5989"></A>
 
-
-
-<PRE>
-tuple(T) :-
-        list(T,atm).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the database interface.
-
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6055"></A>
-<A NAME="IDX6056"></A>
+<A NAME="IDX5990"></A>
+<A NAME="IDX5991"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>answertupleterm/1:</B>
-<DD><A NAME="IDX6057"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_disconnect/1:</B>
+<DD><A NAME="IDX5992"></A>
 
-
-
-<PRE>
-answertupleterm([]).
-answertupleterm(tup(T)) :-
-        tuple(T).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>answertupleterm(X)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a predicate containing a tuple.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6058"></A>
-<A NAME="IDX6059"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
-<DD><A NAME="IDX6060"></A>
-
-
-
-<PRE>
-sqlstring(S) :-
-        string(S).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>S</CODE> is a string of SQL code.
-
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,41 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - io (library)</TITLE>
+<TITLE>The Ciao Prolog System               - generator_util (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC747" HREF="ciao_toc.html#TOC747">io (library)</A></H1>
+<H1><A NAME="SEC750" HREF="ciao_toc.html#TOC750">generator_util (library)</A></H1>
 <P>
-<A NAME="IDX7743"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#2 (1998/12/2)
-
-
-<P>
-This file implements I/O predicates of different types. 
-
-
-<P>
-Implemented by G&ouml;ran Smedb&auml;ck 
+<A NAME="IDX7660"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_198.html#SEC748">Usage and interface (io)</A>
-<LI><A HREF="ciao_198.html#SEC749">Documentation on exports (io)</A>
+<LI><A HREF="ciao_198.html#SEC751">Usage and interface (generator_util)</A>
+<LI><A HREF="ciao_198.html#SEC752">Documentation on exports (generator_util)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC748" HREF="ciao_toc.html#TOC748">Usage and interface (<CODE>io</CODE>)</A></H2>
+<H2><A NAME="SEC751" HREF="ciao_toc.html#TOC751">Usage and interface (<CODE>generator_util</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +31,7 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(io)).</CODE>
+<CODE>:- use_module(library(generator_util)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,20 +40,42 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7744"></A>
-<CODE>out/1</CODE>, 
-<A NAME="IDX7745"></A>
-<CODE>out/3</CODE>, 
-<A NAME="IDX7746"></A>
-<CODE>convert_atoms_to_string/2</CODE>, 
-<A NAME="IDX7747"></A>
-<CODE>read_terms_file/2</CODE>, 
-<A NAME="IDX7748"></A>
-<CODE>write_terms_file/2</CODE>, 
-<A NAME="IDX7749"></A>
-<CODE>read_vrml_file/2</CODE>, 
-<A NAME="IDX7750"></A>
-<CODE>write_vrml_file/2</CODE>.
+<A NAME="IDX7661"></A>
+<CODE>reading/4</CODE>, 
+<A NAME="IDX7662"></A>
+<CODE>reading/5</CODE>, 
+<A NAME="IDX7663"></A>
+<CODE>reading/6</CODE>, 
+<A NAME="IDX7664"></A>
+<CODE>open_node/6</CODE>, 
+<A NAME="IDX7665"></A>
+<CODE>close_node/5</CODE>, 
+<A NAME="IDX7666"></A>
+<CODE>close_nodeGut/4</CODE>, 
+<A NAME="IDX7667"></A>
+<CODE>open_PROTO/4</CODE>, 
+<A NAME="IDX7668"></A>
+<CODE>close_PROTO/6</CODE>, 
+<A NAME="IDX7669"></A>
+<CODE>open_EXTERNPROTO/5</CODE>, 
+<A NAME="IDX7670"></A>
+<CODE>close_EXTERNPROTO/6</CODE>, 
+<A NAME="IDX7671"></A>
+<CODE>open_DEF/5</CODE>, 
+<A NAME="IDX7672"></A>
+<CODE>close_DEF/5</CODE>, 
+<A NAME="IDX7673"></A>
+<CODE>open_Script/5</CODE>, 
+<A NAME="IDX7674"></A>
+<CODE>close_Script/5</CODE>, 
+<A NAME="IDX7675"></A>
+<CODE>decompose_field/3</CODE>, 
+<A NAME="IDX7676"></A>
+<CODE>indentation_list/2</CODE>, 
+<A NAME="IDX7677"></A>
+<CODE>start_vrmlScene/4</CODE>, 
+<A NAME="IDX7678"></A>
+<CODE>remove_comments/4</CODE>.
 
 </UL>
 
@@ -76,26 +86,18 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7751"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX7752"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7753"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX7754"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7755"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7756"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX7757"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7758"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7759"></A>
+<A NAME="IDX7679"></A>
+<CODE>provrml/error</CODE>, 
+<A NAME="IDX7680"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7760"></A>
-<CODE>format</CODE>.
+<A NAME="IDX7681"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX7682"></A>
+<CODE>provrml/field_value_check</CODE>, 
+<A NAME="IDX7683"></A>
+<CODE>provrml/lookup</CODE>, 
+<A NAME="IDX7684"></A>
+<CODE>provrml/parser_util</CODE>.
 
 </UL>
 
@@ -105,35 +107,65 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 
 
-<H2><A NAME="SEC749" HREF="ciao_toc.html#TOC749">Documentation on exports (<CODE>io</CODE>)</A></H2>
+<H2><A NAME="SEC752" HREF="ciao_toc.html#TOC752">Documentation on exports (<CODE>generator_util</CODE>)</A></H2>
 <P>
-<A NAME="IDX7761"></A>
-<A NAME="IDX7762"></A>
+<A NAME="IDX7685"></A>
+<A NAME="IDX7686"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
-<DD><A NAME="IDX7763"></A>
+<DT><span class="define">PREDICATE:</span> <B>reading/4:</B>
+<DD><A NAME="IDX7687"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>out(+ListOfOutput)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>reading(+IS,+NodeTypeId,+ParseIn,-ParseOut)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate used is out/3 (DCG) where we will 'save' the output in the second argument. The tird argument is the rest, nil.
+<LI><EM>Description:</EM> This predicate will refer to a formerly introduced interface. We do a checkup of the access type and output the values.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ListOfOutput</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+IS</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+ParseIn</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>-ParseOut</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>reading(+nodeGut,+NodeName,+ParseIn,-ParseOut)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This predicate will read a node gut and will check the field according to the name.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+nodeGut</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+NodeName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+ParseIn</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>-ParseOut</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7764"></A>
-<A NAME="IDX7765"></A>
+<A NAME="IDX7688"></A>
+<A NAME="IDX7689"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>out/3:</B>
-<DD><A NAME="IDX7766"></A>
+<DT><span class="define">PREDICATE:</span> <B>reading/5:</B>
+<DD><A NAME="IDX7690"></A>
 
 
 <P>
@@ -143,131 +175,258 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX7767"></A>
-<A NAME="IDX7768"></A>
+<A NAME="IDX7691"></A>
+<A NAME="IDX7692"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>convert_atoms_to_string/2:</B>
-<DD><A NAME="IDX7769"></A>
+<DT><span class="define">PREDICATE:</span> <B>reading/6:</B>
+<DD><A NAME="IDX7693"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>convert_atoms_to_string(+Atoms,-String)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7694"></A>
+<A NAME="IDX7695"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_node/6:</B>
+<DD><A NAME="IDX7696"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7697"></A>
+<A NAME="IDX7698"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_node/5:</B>
+<DD><A NAME="IDX7699"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7700"></A>
+<A NAME="IDX7701"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_nodeGut/4:</B>
+<DD><A NAME="IDX7702"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7703"></A>
+<A NAME="IDX7704"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_PROTO/4:</B>
+<DD><A NAME="IDX7705"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7706"></A>
+<A NAME="IDX7707"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_PROTO/6:</B>
+<DD><A NAME="IDX7708"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7709"></A>
+<A NAME="IDX7710"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_EXTERNPROTO/5:</B>
+<DD><A NAME="IDX7711"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7712"></A>
+<A NAME="IDX7713"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_EXTERNPROTO/6:</B>
+<DD><A NAME="IDX7714"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7715"></A>
+<A NAME="IDX7716"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_DEF/5:</B>
+<DD><A NAME="IDX7717"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7718"></A>
+<A NAME="IDX7719"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_DEF/5:</B>
+<DD><A NAME="IDX7720"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7721"></A>
+<A NAME="IDX7722"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_Script/5:</B>
+<DD><A NAME="IDX7723"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7724"></A>
+<A NAME="IDX7725"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_Script/5:</B>
+<DD><A NAME="IDX7726"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7727"></A>
+<A NAME="IDX7728"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>decompose_field/3:</B>
+<DD><A NAME="IDX7729"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7730"></A>
+<A NAME="IDX7731"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>indentation_list/2:</B>
+<DD><A NAME="IDX7732"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>indentation_list(+Parse,-IndList)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate transforms a list of atoms to a string.
+<LI><EM>Description:</EM> This predcate will construct a list with indentations to be output before text. The information of the indentations is inside the parse structure.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Atoms</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>-IndList</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7733"></A>
+<A NAME="IDX7734"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>start_vrmlScene/4:</B>
+<DD><A NAME="IDX7735"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7736"></A>
+<A NAME="IDX7737"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>remove_comments/4:</B>
+<DD><A NAME="IDX7738"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>remove_comments(+Value,-CommentsBefore,-ValueClean,-CommentsAfter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will remove comments and return the comments before and after the pure value.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 
-<CODE>-String</CODE> is a list of <CODE>num</CODE>s.
+<CODE>-CommentsBefore</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
-</UL>
 
-</DL>
-
-<P>
-<A NAME="IDX7770"></A>
-<A NAME="IDX7771"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>read_terms_file/2:</B>
-<DD><A NAME="IDX7772"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>read_terms_file(+Filename,-Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a filename to a file with terms, the predicate reads the terms and are returned in the second argument. <CODE>Filename</CODE> is an atom and <CODE>Term</CODE> is the read prolog terms.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Filename</CODE> is an atom.
+<CODE>-ValueClean</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>-Term</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7773"></A>
-<A NAME="IDX7774"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write_terms_file/2:</B>
-<DD><A NAME="IDX7775"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write_terms_file(+FileName,+List)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a filename and a list of terms the predicate will write them down to the file.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+List</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>-CommentsAfter</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7776"></A>
-<A NAME="IDX7777"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>read_vrml_file/2:</B>
-<DD><A NAME="IDX7778"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>read_vrml_file(+FileName,-Data)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a filename, the predicate returns the substance.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-Data</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7779"></A>
-<A NAME="IDX7780"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write_vrml_file/2:</B>
-<DD><A NAME="IDX7781"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write_vrml_file(+FileName,+Data)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a filename and data in form of a string, the predicate will write the data to the named file.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Data</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

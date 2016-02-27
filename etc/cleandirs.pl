@@ -223,7 +223,7 @@ decide_action_generator(File, GeneratorFile, AskRemList, Erased):-
 decide_action_backup(File, AskRemList, Erased):-
         working_directory(Dir, Dir),
         format("File ~w found in ~w~n", [File, Dir]),
-        erase_or_not(AskRemList, [File], Erased).
+        erase_or_not(AskRemList, File, Erased).
 
 
 %% In case of forced deletion: just 
@@ -350,6 +350,9 @@ can_generate(FileX, FileZ):-
 %% These version comment(s) can be moved elsewhere in the file.
 %% Subsequent version comments will be placed above the last one
 %% inserted.
+
+:- comment(version(0*1+3,2001/10/25,14:31*59+'CEST'), "Eliminated bug in
+   decide_action_backup. (Francisco Bueno Carrillo)").
 
 :- comment(version(0*1+2,2000/06/01,17:57*19+'CEST'), "Changed name of
 options, added --onlybackups option.  (MCL)").

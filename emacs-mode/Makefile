@@ -84,7 +84,7 @@ install:
             ln -s $(REALLIBDIR)/DOTemacs.el
 
 
-.PHONY: doc dvi
+.PHONY: doc dvi info
 
 doc CiaoMode.pl CiaoMode.lpdoc: ciao.el.body 
 	emacs -batch -l ./word-help.el -l ./ciao.el.body \
@@ -97,6 +97,12 @@ dvi: CiaoMode.lpdoc
 
 view: dvi
 	cd doc; $(MAKE) view
+
+info: CiaoMode.lpdoc
+	cd doc; $(MAKE) info
+
+infoview: info
+	cd doc; $(MAKE) infoview
 
 # ----------------------------------------------------------------------------
 

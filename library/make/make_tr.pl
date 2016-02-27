@@ -3,8 +3,8 @@
 %% Temporary (for debugging)
 :- use_module(library(write)).
 
-debug_tr(off).
-%% debug_tr(on).
+%% debug_tr(off).
+debug_tr(on).
 
 defdep( ( T <= S :: F :- Body ), Clauses, _Mod) :- 
 	!,

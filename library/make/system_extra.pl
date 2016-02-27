@@ -20,7 +20,8 @@
 	call_unknown/1,
 	replace_strings_in_file/3,
 	cyg2win/3,
-	writef/3 ],[assertions,isomodes,hiord]).
+	writef/3,
+	writef/2 ],[assertions,isomodes,hiord]).
 
 %% The idea is that it is an extension
 :- reexport(library(system)).
@@ -97,6 +98,7 @@ del_dir_if_empty(Dir) :-
 	;  true ),
 	cd(CD).
 
+:- redefining(make_directory/1). % It is defined in library(system)
 
 :- comment(make_directory(DirName),"Makes a new directory called
    @var{DirName}.").
@@ -346,6 +348,7 @@ convert_permissions(U,G,O,P) :-
 	valid_mode(O,NO),
 	P is NU << 6 + NG << 3 + NO.
 
+valid_mode( ''  , 0 ).
 valid_mode( x   , 1 ).
 valid_mode( w   , 2 ).
 valid_mode( wx  , 3 ).
@@ -572,7 +575,7 @@ match([H|T],[H|IT],RI) :-
 	match(T,IT,RI).
 	
 cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !,
-                                                             % New Drive notat.
+						             % New Drive notat.
         swapslash(Swap,Dir,Path).
 cyg2win("//"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !, % Drive letter
         swapslash(Swap,Dir,Path).

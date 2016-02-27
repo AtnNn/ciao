@@ -1,2 +1,2 @@
 :- module(_,_,[]).
-mygoal :- display(hello).
+mygoal :- display('^^ hello').

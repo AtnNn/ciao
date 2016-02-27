@@ -1187,6 +1187,16 @@ void number_to_string(Arg, term, base)
 
       fp[0] = CTagToArg(term,1); /* f = GetFloat(term); */
       fp[1] = CTagToArg(term,2);
+
+      if (f != f) { /* NaN */
+        *cbuf++ = '0';
+        *cbuf++ = '.';
+        *cbuf++ = 'N';
+        *cbuf++ = 'a';
+        *cbuf++ = 'n';
+        *cbuf++ = 0;
+      } else {
+
 #if defined(sun)
       if (fp[1-BIGENDIAN] & 0x80000000)
 #else
@@ -1199,7 +1209,7 @@ void number_to_string(Arg, term, base)
 
       if (f == 0.0)
 	exp = 0;
-      else if (f != f || f == f/2.0) /* catch NaN, Infinity */
+      else if (f == f/2.0) /* Infinity */
 	exp = 1000,
 	f = 1.0e+8;
       else
@@ -1272,6 +1282,7 @@ void number_to_string(Arg, term, base)
 	  cbuf[1] = '.';
 	  c[1-exp] = 0;
 	}
+      }
     }
   else
     bn_to_string(Arg,TagToSTR(term),base);

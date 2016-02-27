@@ -418,7 +418,7 @@ public abstract class PLTerm extends Object {
 
     if (Type == STRUCTURE &&
     	((PLStructure)this).getFunctor().equals(PLGoal.SOLUTION) &&
-	((PLStructure)this).getArity() == 2)
+	((PLStructure)this).getArity() <= 2)
       return true;
     else
       return false;

@@ -70,7 +70,9 @@ public class PLGoal {
    * @param		where	Prolog process on which the goal must
    *          			be evaluated.
    * @param		term	Prolog term that represents the goal that
-   *          			will be evaluated.
+   *          			will be evaluated. This term must be a
+   *                            <code>PLStructure</code> object or a 
+   *                            <code>PLAtom</code> object. 
    */
   public PLGoal(PLConnection where, PLTerm term) {
 
@@ -87,6 +89,9 @@ public class PLGoal {
    * @param		term	String containing the representation of a
    *                            well formed Prolog term that represents
    *                            the goal that will be evaluated.
+   *          			This term must be a
+   *                            <code>PLStructure</code> object or a 
+   *                            <code>PLAtom</code> object. 
    *
    * @exception         <code>PLException</code> if there is no
    *                    connection to Prolog. 
@@ -106,7 +111,7 @@ public class PLGoal {
 
   /**
    * Goal constructor. Creates a new goal on the <code>where</code> Prolog
-   * process, using the Prolog term represented with <code>termString</term>
+   * process, using the Prolog term represented with <code>termString</code>
    * string. This string must be a well formed Prolog term; otherwise a
    * <code>PLException</code> will be thrown. This method connects to
    * Prolog to parse the string containing the goal.
@@ -116,6 +121,9 @@ public class PLGoal {
    * @param		term	String containing the representation of a
    *                            well formed Prolog term that represents
    *                            the goal that will be evaluated.
+   *          			This term must be a
+   *                            <code>PLStructure</code> object or a 
+   *                            <code>PLAtom</code> object. 
    */
   public PLGoal(PLConnection where, String term) 
     throws IOException, PLException {
@@ -131,7 +139,7 @@ public class PLGoal {
    * Goal query.
    * Evaluates on the <code>PLConnection</code> associated object the
    * goal represented by this object. To obtain the solutions of this
-   * goal, the {@link nextSolution()} method must be called, once for
+   * goal, the {@link #nextSolution()} method must be called, once for
    * each solution.
    *
    * @exception <code>IOException</code>, <code>PLException</code>
@@ -183,17 +191,11 @@ public class PLGoal {
    * If there is no more solutions, all the variables of the goal
    * will be set to their original binding before calling this method.
    *
-   * When this method is invoked, Prolog may be still executing the
-   * goal: in this case <code>null</code> is returned, and 
-   * isStillRunning() method must be used to distinguish between
-   * a goal that fails, and a goal that is still running, but no
-   * solutions are available currently.
+   * This method will wait until the solution requested be available.
    *
    * @return  the term that corresponds to the query, with the
    *          variables unified with the solution.
-   * @return  <code>null</code> if there are no solutions available;
-   *          isStillRunning() must be used to ensure that there
-   *          are no more solutions.
+   * @return  <code>null</code> if there are no more solutions.
    *
    * @exception <code>IOException</code> if there are any error on 
    *            the sockets.
@@ -279,12 +281,12 @@ public class PLGoal {
   /**
    * Checks if Prolog is still running this query, or there are
    * solutions that have not been requested. This method must
-   * be used after nextSolution() returns <code>null</code> to
-   * ensure that there are no more solutions to request to
+   * be used after <code>nextSolution()</code> returns <code>null</code>
+   * to ensure that there are no more solutions to request to
    * this goal.
    *
    * @return  true if this query is still running in the Prolog side,
-   *          or is expecting nextSolution requests.
+   *          or is expecting <code>nextSolution()</code> requests.
    * @return  false if the goal has returned all solutions and is not
    *          running.
    *
@@ -302,9 +304,11 @@ public class PLGoal {
     case NOT_LAUNCHED:
 	throw new PLException("Query not launched");
     case TERMINATED:
-	throw new PLException("Query has been already terminated.");
+	return false;
+/*	throw new PLException("Query has been already terminated.");*/
     case FINISHED:
-	throw new PLException("Query is already finished.");
+	return false;
+/*	throw new PLException("Query is already finished.");*/
     }
 
     synchronized(this) {
@@ -340,8 +344,8 @@ public class PLGoal {
 	  throw new PLException("Query not launched");
       case TERMINATED:
 	  throw new PLException("Query has been already terminated.");
-      case FINISHED:
-	  throw new PLException("Query is already finished.");
+/*    case FINISHED:*/
+/*	  throw new PLException("Query is already finished.");*/
       }
 
       terminate_();
@@ -473,9 +477,7 @@ public class PLGoal {
    */
   public String toString() {
     
-    return "goal{" + this.actualGoal.toString() + ","
-      + goalId + "}";
-
+      return "goal{" + this.actualGoal.toString() + "}";
 
   }
 

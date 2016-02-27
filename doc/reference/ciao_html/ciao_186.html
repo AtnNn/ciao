@@ -1,52 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - test_format (library)</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget3 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC710" HREF="ciao_toc.html#TOC710">test_format (library)</A></H1>
+<H1><A NAME="SEC713" HREF="ciao_toc.html#TOC713">table_widget3 (library)</A></H1>
 <P>
-<A NAME="IDX7372"></A>
-
-
-<P>
-Most of the predicates exported by this module perform some checks to determine whether the arguments attain some conditions or not. In the second case an exception will be thrown. To catch the exceptions you can use the following metapredicates when invoking chartlib exported predicates: 
-
-
-
-<UL>
-
-<LI>
-
-<A NAME="IDX7373"></A>
-<CODE>chartlib_text_error_protect/1</CODE> 
-
-<LI>
-
 <A NAME="IDX7374"></A>
-<CODE>chartlib_text_error_protect/1</CODE> 
 
-</UL>
 
 <P>
-Both metapredicates are defined in the chartlib_errhandle module that comes with this library. Some of the predicates have a <CODE>Predicate</CODE> argument which will be used in case of error to show which chartlib predicate causes the error. 
+The predicates exported by this module display data in a regular table, as we brought up in the introduction. Both predicates have in common that the font weight for the elements placed in the first column is bold and the remaining elements are in medium font weight. 
+
+
+<P>
+If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
 
 
 
 <UL>
-<LI><A HREF="ciao_186.html#SEC711">Usage and interface (test_format)</A>
-<LI><A HREF="ciao_186.html#SEC712">Documentation on exports (test_format)</A>
+<LI><A HREF="ciao_186.html#SEC714">Usage and interface (table_widget3)</A>
+<LI><A HREF="ciao_186.html#SEC715">Documentation on exports (table_widget3)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC711" HREF="ciao_toc.html#TOC711">Usage and interface (<CODE>test_format</CODE>)</A></H2>
+<H2><A NAME="SEC714" HREF="ciao_toc.html#TOC714">Usage and interface (<CODE>table_widget3</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -54,7 +39,7 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(test_format)).</CODE>
+<CODE>:- use_module(library(table_widget3)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -64,23 +49,9 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 <LI><EM>Predicates:</EM>
 
 <A NAME="IDX7375"></A>
-<CODE>equalnumber/3</CODE>, 
+<CODE>tablewidget3/4</CODE>, 
 <A NAME="IDX7376"></A>
-<CODE>not_empty/4</CODE>, 
-<A NAME="IDX7377"></A>
-<CODE>not_empty/3</CODE>, 
-<A NAME="IDX7378"></A>
-<CODE>check_sublist/4</CODE>, 
-<A NAME="IDX7379"></A>
-<CODE>valid_format/4</CODE>, 
-<A NAME="IDX7380"></A>
-<CODE>vectors_format/4</CODE>, 
-<A NAME="IDX7381"></A>
-<CODE>valid_vectors/4</CODE>, 
-<A NAME="IDX7382"></A>
-<CODE>valid_attributes/2</CODE>, 
-<A NAME="IDX7383"></A>
-<CODE>valid_table/2</CODE>.
+<CODE>tablewidget3/5</CODE>.
 
 </UL>
 
@@ -91,9 +62,17 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7384"></A>
+<A NAME="IDX7377"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX7378"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7385"></A>
+<A NAME="IDX7379"></A>
+<CODE>chartlib/table_widget1</CODE>, 
+<A NAME="IDX7380"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX7381"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX7382"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -104,199 +83,67 @@ Both metapredicates are defined in the chartlib_errhandle module that comes with
 
 
 
-<H2><A NAME="SEC712" HREF="ciao_toc.html#TOC712">Documentation on exports (<CODE>test_format</CODE>)</A></H2>
+<H2><A NAME="SEC715" HREF="ciao_toc.html#TOC715">Documentation on exports (<CODE>table_widget3</CODE>)</A></H2>
+<P>
+<A NAME="IDX7383"></A>
+<A NAME="IDX7384"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget3/4:</B>
+<DD><A NAME="IDX7385"></A>
+
+
+<P>
+<CODE>tablewidget3(Title,Header,ElementTable,Footer)</CODE>
+
+
+<P>
+Shows a regular table in a window. The user does not choose a background image. 
+
+
+<P>
+Example: 
+
+<PRE>
+tablewidget3('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	       ['Tasks per fork','7.5']],
+	     'Footer text').
+</PRE>
+
+</DL>
+
 <P>
 <A NAME="IDX7386"></A>
 <A NAME="IDX7387"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>equalnumber/3:</B>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget3/5:</B>
 <DD><A NAME="IDX7388"></A>
 
 
 <P>
-<CODE>equalnumber(X,Y,Predicate)</CODE>
+<CODE>tablewidget3(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
 
 
 <P>
-Test whether the list <CODE>X</CODE> and the list <CODE>Y</CODE> contain the same number of elements. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7389"></A>
-<A NAME="IDX7390"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>not_empty/4:</B>
-<DD><A NAME="IDX7391"></A>
+Shows a regular table in a window. The user must set a background image. 
 
 
 <P>
-<CODE>not_empty(X,Y,Z,Predicate)</CODE>
-
-
-<P>
-Tests whether at least one the lists <CODE>X</CODE>, <CODE>Y</CODE> or <CODE>Z</CODE> are empty. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7392"></A>
-<A NAME="IDX7393"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>not_empty/3:</B>
-<DD><A NAME="IDX7394"></A>
-
-
-<P>
-<CODE>not_empty(X,Y,Predicate)</CODE>
-
-
-<P>
-Tests whether the lists <CODE>X</CODE> or <CODE>Y</CODE> are empty. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7395"></A>
-<A NAME="IDX7396"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>check_sublist/4:</B>
-<DD><A NAME="IDX7397"></A>
-
-
-<P>
-<CODE>check_sublist(List,Number,Number,Predicate)</CODE>
-
-
-<P>
-Tests if the number of elements in each sublist of <CODE>List</CODE> is <CODE>Number1</CODE> or <CODE>Number2</CODE>. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7398"></A>
-<A NAME="IDX7399"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_format/4:</B>
-<DD><A NAME="IDX7400"></A>
-
-
-<P>
-<CODE>valid_format(XVector,YVector,BarsAttributes,Predicate)</CODE>
-
-
-<P>
-Tests the following restrictions: 
-
-
-
-<UL>
-
-<LI>The <CODE>XVector</CODE> number of elements is the same as each <CODE>YVector</CODE> sublist number of elements.
-
-<LI>The <CODE>YVector</CODE> length is equal to <CODE>BarsAttributes</CODE> length.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7401"></A>
-<A NAME="IDX7402"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vectors_format/4:</B>
-<DD><A NAME="IDX7403"></A>
-
-
-<P>
-<CODE>vectors_format(XVector,YVectors,LinesAttributes,Predicate)</CODE>
-
-
-<P>
-Tests the following conditions: 
-
-
-
-<UL>
-
-<LI><CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
-
-<LI><CODE>XVector</CODE> list and each <CODE>YVectors</CODE> element have the same number of elements.
-
-<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 elements.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7404"></A>
-<A NAME="IDX7405"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_vectors/4:</B>
-<DD><A NAME="IDX7406"></A>
-
-
-<P>
-<CODE>valid_vectors(XVector,YVectors,LinesAttributes,Predicate)</CODE>
-
-
-<P>
-Tests the following conditions: 
-
-
-
-<UL>
-
-<LI><CODE>XVector</CODE> list, <CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
-
-<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 element.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7407"></A>
-<A NAME="IDX7408"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_attributes/2:</B>
-<DD><A NAME="IDX7409"></A>
-
-
-<P>
-<CODE>valid_attributes(BarsAttibuttes,Predicate)</CODE>
-
-
-<P>
-Check if each <CODE>BarsAttibuttes</CODE> element is a list composed of one or four elements. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7410"></A>
-<A NAME="IDX7411"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>valid_table/2:</B>
-<DD><A NAME="IDX7412"></A>
-
-
-<P>
-<CODE>valid_table(ElementTable,Predicate)</CODE>
-
-
-<P>
-All of the <CODE>ElementTable</CODE> sublists have the same number of elements and are not empty. 
-
+Example: 
+
+<PRE>
+tablewidget3('This is the title',
+	     'Header text',
+	     [['Number of processors','8'],['Average processors','95'],
+	         ['Average Tasks per fork','7.5']],
+	     'Footer text',
+	     './images/rain.gif')
+</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

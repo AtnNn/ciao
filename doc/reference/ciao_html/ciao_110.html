@@ -1,49 +1,43 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - davinci (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Foreign Language Interface Properties</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC450" HREF="ciao_toc.html#TOC450">davinci (library)</A></H1>
+<H1><A NAME="SEC451" HREF="ciao_toc.html#TOC451">Foreign Language Interface Properties</A></H1>
 <P>
-<A NAME="IDX4719"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX4636"></A>
 
 
 <P>
-This library allows connecting a Ciao Prolog application with daVinci V2.X. 
+<STRONG>Author(s):</STRONG> Jose Morales, Manuel Carro.
 
 
 <P>
-The communication is based on a two-way channel: after daVinci is started, messages are sent in to it and read in from it on demand by different Prolog predicates. Messages are sent via writing the term as text; messages are received by reading text and returning an atom. Commands sent and answers received are treated as terms from the Prolog side, since for daVinci they are text but have term syntax; the only difficulty lies in strings, for which special Prolog syntax is provided. 
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
 
 
 <P>
-See accompanying file <CODE>library('davinci/commands')</CODE> for examples on the use of this library. 
-
-
-<P>
-daVinci is developed by U. of Bremen, Germany.
+<STRONG>Version of last change:</STRONG> 1.7#77 (2001/3/26, 18:45:31 CEST)
 
 
 
 <UL>
-<LI><A HREF="ciao_110.html#SEC451">Usage and interface (davinci)</A>
-<LI><A HREF="ciao_110.html#SEC452">Documentation on exports (davinci)</A>
+<LI><A HREF="ciao_110.html#SEC452">Usage and interface (foreign_interface_properties)</A>
+<LI><A HREF="ciao_110.html#SEC453">Documentation on exports (foreign_interface_properties)</A>
+<LI><A HREF="ciao_110.html#SEC454">Documentation on internals (foreign_interface_properties)</A>
+<LI><A HREF="ciao_110.html#SEC455">Known bugs and planned improvements (foreign_interface_properties)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC451" HREF="ciao_toc.html#TOC451">Usage and interface (<CODE>davinci</CODE>)</A></H2>
+<H2><A NAME="SEC452" HREF="ciao_toc.html#TOC452">Usage and interface (<CODE>foreign_interface_properties</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -51,61 +45,42 @@ daVinci is developed by U. of Bremen, Germany.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(davinci)).</CODE>
+<CODE>:- use_module(library(foreign_interface_properties)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI><EM>Properties:</EM>
 
-<A NAME="IDX4720"></A>
-<CODE>davinci/0</CODE>, 
-<A NAME="IDX4721"></A>
-<CODE>topd/0</CODE>, 
-<A NAME="IDX4722"></A>
-<CODE>davinci_get/1</CODE>, 
-<A NAME="IDX4723"></A>
-<CODE>davinci_get_all/1</CODE>, 
-<A NAME="IDX4724"></A>
-<CODE>davinci_put/1</CODE>, 
-<A NAME="IDX4725"></A>
-<CODE>davinci_quit/0</CODE>, 
-<A NAME="IDX4726"></A>
-<CODE>davinci_ugraph/1</CODE>, 
-<A NAME="IDX4727"></A>
-<CODE>davinci_lgraph/1</CODE>, 
-<A NAME="IDX4728"></A>
-<CODE>ugraph2term/2</CODE>, 
-<A NAME="IDX4729"></A>
-<CODE>formatting/2</CODE>.
+<A NAME="IDX4637"></A>
+<CODE>native/1</CODE>, 
+<A NAME="IDX4638"></A>
+<CODE>native/2</CODE>, 
+<A NAME="IDX4639"></A>
+<CODE>size_of/3</CODE>, 
+<A NAME="IDX4640"></A>
+<CODE>foreign/1</CODE>, 
+<A NAME="IDX4641"></A>
+<CODE>foreign/2</CODE>, 
+<A NAME="IDX4642"></A>
+<CODE>returns/2</CODE>, 
+<A NAME="IDX4643"></A>
+<CODE>do_not_free/2</CODE>.
 
-</UL>
+<LI><EM>Regular Types:</EM>
 
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4730"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX4731"></A>
-<CODE>prompt</CODE>, 
-<A NAME="IDX4732"></A>
-<CODE>errhandle</CODE>, 
-<A NAME="IDX4733"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX4734"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX4735"></A>
-<CODE>graphs/ugraphs</CODE>, 
-<A NAME="IDX4736"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX4737"></A>
-<CODE>system</CODE>.
+<A NAME="IDX4644"></A>
+<CODE>int_list/1</CODE>, 
+<A NAME="IDX4645"></A>
+<CODE>byte_list/1</CODE>, 
+<A NAME="IDX4646"></A>
+<CODE>byte/1</CODE>, 
+<A NAME="IDX4647"></A>
+<CODE>null/1</CODE>, 
+<A NAME="IDX4648"></A>
+<CODE>address/1</CODE>.
 
 </UL>
 
@@ -115,148 +90,443 @@ daVinci is developed by U. of Bremen, Germany.
 
 
 
-<H2><A NAME="SEC452" HREF="ciao_toc.html#TOC452">Documentation on exports (<CODE>davinci</CODE>)</A></H2>
+<H2><A NAME="SEC453" HREF="ciao_toc.html#TOC453">Documentation on exports (<CODE>foreign_interface_properties</CODE>)</A></H2>
 <P>
-<A NAME="IDX4738"></A>
-<A NAME="IDX4739"></A>
+<A NAME="IDX4649"></A>
+<A NAME="IDX4650"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci/0:</B>
-<DD><A NAME="IDX4740"></A>
+<DT><span class="define">REGTYPE:</span> <B>int_list/1:</B>
+<DD><A NAME="IDX4651"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>int_list(List)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> is a list of integers.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4741"></A>
-<A NAME="IDX4742"></A>
+<A NAME="IDX4652"></A>
+<A NAME="IDX4653"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>topd/0:</B>
-<DD><A NAME="IDX4743"></A>
+<DT><span class="define">REGTYPE:</span> <B>byte_list/1:</B>
+<DD><A NAME="IDX4654"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>byte_list(List)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> is a list of bytes.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4744"></A>
-<A NAME="IDX4745"></A>
+<A NAME="IDX4655"></A>
+<A NAME="IDX4656"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_get/1:</B>
-<DD><A NAME="IDX4746"></A>
+<DT><span class="define">REGTYPE:</span> <B>byte/1:</B>
+<DD><A NAME="IDX4657"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>byte(Byte)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Byte</CODE> is a byte.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4747"></A>
-<A NAME="IDX4748"></A>
+<A NAME="IDX4658"></A>
+<A NAME="IDX4659"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_get_all/1:</B>
-<DD><A NAME="IDX4749"></A>
+<DT><span class="define">REGTYPE:</span> <B>null/1:</B>
+<DD><A NAME="IDX4660"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>null(Address)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Address</CODE> is a null adress.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4750"></A>
-<A NAME="IDX4751"></A>
+<A NAME="IDX4661"></A>
+<A NAME="IDX4662"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_put/1:</B>
-<DD><A NAME="IDX4752"></A>
+<DT><span class="define">REGTYPE:</span> <B>address/1:</B>
+<DD><A NAME="IDX4663"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>address(Address)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Address</CODE> is a memory address.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4753"></A>
-<A NAME="IDX4754"></A>
+<A NAME="IDX4664"></A>
+<A NAME="IDX4665"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_quit/0:</B>
-<DD><A NAME="IDX4755"></A>
+<DT><span class="define">PROPERTY:</span> <B>native/1:</B>
+<DD><A NAME="IDX4666"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>native(Name)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4667"></A>
+<CODE>Name</CODE> is implemented using the function <CODE>Name</CODE>. The implementation is not a common C one, but it accesses directly the internal Ciao Prolog data structures and functions, and therefore no glue code is generated for it. 
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4756"></A>
-<A NAME="IDX4757"></A>
+<A NAME="IDX4668"></A>
+<A NAME="IDX4669"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_ugraph/1:</B>
-<DD><A NAME="IDX4758"></A>
+<DT><span class="define">PROPERTY:</span> <B>native/2:</B>
+<DD><A NAME="IDX4670"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>native(PrologName,ForeignName)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4671"></A>
+<CODE>PrologName</CODE> is implemented using the function prolog_<CODE>ForeignName</CODE>. The same considerations as above example are to be applied. 
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4759"></A>
-<A NAME="IDX4760"></A>
+<A NAME="IDX4672"></A>
+<A NAME="IDX4673"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>davinci_lgraph/1:</B>
-<DD><A NAME="IDX4761"></A>
+<DT><span class="define">PROPERTY:</span> <B>size_of/3:</B>
+<DD><A NAME="IDX4674"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>size_of(Name,ListVar,SizeVar)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the size of the argument of type
+
+<A NAME="IDX4675"></A>
+<CODE>byte_list/1</CODE>, <CODE>ListVar</CODE>, is given by the argument of type integer <CODE>SizeVar</CODE>. 
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4762"></A>
-<A NAME="IDX4763"></A>
+<A NAME="IDX4676"></A>
+<A NAME="IDX4677"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ugraph2term/2:</B>
-<DD><A NAME="IDX4764"></A>
+<DT><span class="define">PROPERTY:</span> <B>foreign/1:</B>
+<DD><A NAME="IDX4678"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>foreign(Name)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4679"></A>
+<CODE>Name</CODE> is implemented using the foreign function <CODE>Name</CODE>. 
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4765"></A>
-<A NAME="IDX4766"></A>
+<A NAME="IDX4680"></A>
+<A NAME="IDX4681"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>formatting/2:</B>
-<DD><A NAME="IDX4767"></A>
+<DT><span class="define">PROPERTY:</span> <B>foreign/2:</B>
+<DD><A NAME="IDX4682"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>foreign(PrologName,ForeignName)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4683"></A>
+<CODE>PrologName</CODE> is implemented using the foreign function <CODE>ForeignName</CODE>. 
+</UL>
 
 </DL>
+
+<P>
+<A NAME="IDX4684"></A>
+<A NAME="IDX4685"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>returns/2:</B>
+<DD><A NAME="IDX4686"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>returns(Name,Var)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The result of the foreign function that implements the Prolog predicate
+
+<A NAME="IDX4687"></A>
+<CODE>Name</CODE> is unified with the Prolog variable <CODE>Var</CODE>. Cannot be used without 
+<A NAME="IDX4688"></A>
+<CODE>foreign/1</CODE> or 
+<A NAME="IDX4689"></A>
+<CODE>foreign/2</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4690"></A>
+<A NAME="IDX4691"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>do_not_free/2:</B>
+<DD><A NAME="IDX4692"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>do_not_free(Name,Var)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the C argument passed to (returned from) the foreign function will not be freed after calling the foreign function.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC454" HREF="ciao_toc.html#TOC454">Documentation on internals (<CODE>foreign_interface_properties</CODE>)</A></H2>
+<P>
+<A NAME="IDX4693"></A>
+<A NAME="IDX4694"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/1:</B>
+<DD><A NAME="IDX4695"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(Files)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Files</CODE> is the (list of) foreign file(s) that will be linked with the glue-code file.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Files</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4696"></A>
+<A NAME="IDX4697"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_source/2:</B>
+<DD><A NAME="IDX4698"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_source(OsArch,Files)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Files</CODE> are the OS and architecture dependant foreign files. This allows compiling and linking different files depending on the O.S. and architecture.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Files</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4699"></A>
+<A NAME="IDX4700"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/1:</B>
+<DD><A NAME="IDX4701"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(Libs)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Libs</CODE> is the (list of) external library(es) needed to link the C files. Only the short name of the library (i.e., what would follow the <CODE>-l</CODE> in the linker is needed.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Libs</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4702"></A>
+<A NAME="IDX4703"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_foreign_library/2:</B>
+<DD><A NAME="IDX4704"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_foreign_library(OsArch,Libs)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Libs</CODE> are the OS and architecture dependant libraries.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Libs</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4705"></A>
+<A NAME="IDX4706"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/1:</B>
+<DD><A NAME="IDX4707"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(Opts)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional compiler options (e.g., optimization options) that will be used during the compilation.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4708"></A>
+<A NAME="IDX4709"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>extra_compiler_opts/2:</B>
+<DD><A NAME="IDX4710"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>extra_compiler_opts(OsArch,Opts)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional compiler options.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4711"></A>
+<A NAME="IDX4712"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/1:</B>
+<DD><A NAME="IDX4713"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(Opts)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Opts</CODE> is the list of additional linker options that will be used during the linkage.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4714"></A>
+<A NAME="IDX4715"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>extra_linker_opts/2:</B>
+<DD><A NAME="IDX4716"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>extra_linker_opts(OsArch,Opts)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Opts</CODE> are the OS and architecture dependant additional linker options.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>OsArch</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Opts</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC455" HREF="ciao_toc.html#TOC455">Known bugs and planned improvements (<CODE>foreign_interface_properties</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+The <CODE>size_of/3</CODE> property has an empty definition
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_109.html">previous</A>, <A HREF="ciao_111.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,544 +1,74 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Foreign Language Interface Guidelines and Usage</TITLE>
+<TITLE>The Ciao Prolog System               - Run time usage of objects</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC431" HREF="ciao_toc.html#TOC431">Foreign Language Interface Guidelines and Usage</A></H1>
+<H1><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Run time usage of objects</A></H1>
 <P>
-<A NAME="IDX4621"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jose Morales, Manuel Carro.
+<A NAME="IDX4534"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#83 (2001/4/2, 14:30:17 CEST)
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda, Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#76 (2001/3/26, 18:8:57 CEST)
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
 
 
 <P>
-Ciao Prolog provides a high-level, flexible way to interface C and Prolog, based on the use of assertions to declare what are the expected types and modes of the arguments of a Prolog predicate, and which C files contain the corresponding code. I.e., the user must provide: 
+<STRONG>Version of last change:</STRONG> 1.7#51 (2001/1/25, 21:33:0 CET)
+
+
+<P>
+This library provides run-time support for 
+<A NAME="IDX4535"></A>
+object creation and manipulation. Objects are also called 
+<A NAME="IDX4536"></A>
+class instances, or simply 
+<A NAME="IDX4537"></A>
+instances. 
+
+
+<P>
+Objects in Ciao are treated as normal modules. This is, an object is a run-time generated Prolog module, which may be identified by an unique term across the whole application. 
+
+
+<P>
+This is a very simple example of how to create an instance, and how to make calls to it: 
+
+
+
+<PRE>
+            AnObj new myclass,
+            AnObj:mymethod.
+</PRE>
+
+<P>
+In order to make any object accessible from code, an usage relationship must be established between the class (from which instances are derived) and the code itself. Refer to 
+<A NAME="IDX4538"></A>
+<CODE>use_class/1</CODE> predicate or 
+<A NAME="IDX4539"></A>
+<CODE>use_class/1</CODE> declaration in order to do so. 
 
 
 
 <UL>
-<LI>A set of C files,
-
-<LI>A Ciao Prolog module defining whith predicates are implemented in the C files and the types and modes of their arguments, and an (optional) set of flags required for the compilation of the files.
-
-</UL>
-
-<P>
- 
-The Ciao Prolog compiler analyzes the Prolog code written by the user and gathers this information to generate automatically C code implementing the data translation between Prolog and C, and to compile the C code into dynamically loadable C object files, which are loaded automatically when needed. 
-
-
-<P>
-To this end, each predicate implemented as a foreign C function must appear in the Ciao Prolog module as: 
-
-
-
-<PRE>
-     :- true pred prolog_predicate(m1(Arg1), ... mN(ArgN)) :: type1 *
-          ... * typeN + (foreign(foreign_function_name), returns(ArgR)).
-
-     :- impl_defined([..., prolog_predicate/N, ...]).
-</PRE>
-
-<P>
-where <CODE>m1</CODE>, ..., <CODE>mN</CODE> and <CODE>type1</CODE>, ..., <CODE>typeN</CODE> are respectively the modes and types of the arguments. <CODE>foreign_function_name</CODE> is the name of the C function implementing 
-<A NAME="IDX4622"></A>
-<CODE>prolog_predicate/N</CODE>, and the result of this function is unified with <CODE>ArgR</CODE>. 
-
-
-<P>
-This notation can be simplified in several ways. If the name of the foreign function is the same as the name of the Ciao Prolog predicate, <CODE>foreign(foreign_function_name)</CODE> can be replaced by <CODE>foreign/0</CODE>. <CODE>returns(ArgR)</CODE> specifies that the result of the function corresponds to the <CODE>ArgR</CODE> argument of the Ciao Prolog predicate. If the foreign function does not return anything (or if its value is ignored), then <CODE>returns(ArgR)</CODE> must be removed. Note that <CODE>returns</CODE> cannot be used without <CODE>foreign</CODE>. A simplified form is thus: 
-
-
-
-<PRE>
-     :- true pred prolog_predicate(m1(Arg1), ... mN(ArgN)) :: type1 *
-          ... * typeN + foreign.
-</PRE>
-
-
-<UL>
-<LI><A HREF="ciao_107.html#SEC432">Equivalence between Ciao Prolog and C types</A>
-<LI><A HREF="ciao_107.html#SEC433">Equivalence between Ciao Prolog and C modes</A>
-<LI><A HREF="ciao_107.html#SEC434">Examples</A>
-<LI><A HREF="ciao_107.html#SEC440">Usage and interface (foreign_interface)</A>
-<LI><A HREF="ciao_107.html#SEC441">Known bugs and planned improvements (foreign_interface)</A>
+<LI><A HREF="ciao_107.html#SEC436">Usage and interface (objects_rt)</A>
+<LI><A HREF="ciao_107.html#SEC437">Documentation on exports (objects_rt)</A>
+<LI><A HREF="ciao_107.html#SEC438">Known bugs and planned improvements (objects_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC432" HREF="ciao_toc.html#TOC432">Equivalence between Ciao Prolog and C types</A></H2>
-
-<P>
-The translation between Ciao Prolog and C types is defined at the moment only for some simple, but very useful, types. The translation to be performed is solely defined by types of the arguments in the Ciao Prolog file (i.e., no inspection of the corresponding C file is done), obeying the table below. The Ciao Prolog types understood by the interface are contained in the 
-<A NAME="IDX4623"></A>
-package section <A HREF="ciao_108.html#SEC442">Foreign Language Interface Properties</A>, and are the following (Prolog types are on the left, and the corresponding C types on the right): 
-
-
-
-<UL>
-<LI>num &#60;-&#62; double
-
-<LI>int &#60;-&#62; int
-
-<LI>atm &#60;-&#62; char *
-
-<LI>string &#60;-&#62; char * (with trailing zero)
-
-<LI>byte_list &#60;-&#62; char * (a buffer of bytes, with associated length)
-
-<LI>int_list &#60;-&#62; int * (a buffer of integers, with associated length)
-
-<LI>address &#60;-&#62; void *
-
-</UL>
-
-<P>
-Strings, atoms, and lists of bytes are passed to (and from) C as dynamically (malloc) created arrays of characters (bytes). Those arrays are freed by Ciao Prolog upon return of the foreign function unless 
-<A NAME="IDX4624"></A>
-<CODE>do_not_free/2</CODE> is specified (see examples below). This caters for the case in which the C files save in a private state (either by themselves, or by library being called by them) the values passed on from Prolog. 
-
-
-<P>
-Empty lists of bytes are converted into <CODE>NULL</CODE>, and strings <CODE>[]</CODE> or atoms " are converted into <EM>""</EM> (a zero ended C string). <EM>NULL</EM> is converted into an empty list or the <EM>"</EM> atom. 
-
-
-<P>
-<CODE>NULL</CODE> strings and empty buffers are converted into the empty list or the null atom (<CODE>"</CODE>). Empty Ciao Prolog strings (<CODE>"</CODE> or <CODE>[]</CODE>) and null atoms are converted into zero-terminated strings of zero length. Empty Ciao Prolog lists are converted into <CODE>NULL</CODE>. 
-
-
-<P>
-The type 
-<A NAME="IDX4625"></A>
-<CODE>byte_list/1</CODE> requires an additional property, 
-<A NAME="IDX4626"></A>
-<CODE>size_of/3</CODE>, to indicate which argument represents its size. 
-
-
-<P>
-Most of the work is performed by the predicates in the @xref{Foreign Language Interface Builder}, which can be called explicitly by the user. Doing that is not usually needed, since the Ciao Prolog Compiler takes care of building glue code files an of compiling and linking whichever is necessary. 
- 
-
-
-
-
-<H2><A NAME="SEC433" HREF="ciao_toc.html#TOC433">Equivalence between Ciao Prolog and C modes</A></H2>
-
-<P>
-The in/1 or (prefix) +/1 mode states that the corresponding argument is given a value in Prolog, and therefore it is an input argument in the C part. The go/1 or (prefix) -/1 mode states that the Prolog side expects the C side to generate a value for that argument. The return value of a function can always be used as an output argument. Other output arguments should appear as pointers to the corresponding base type in the C files. E.g., an argument which is an integer generated by the C file, declared as 
-
-
-
-<PRE>
-:- true pred get_int(go(ThisInt)) :: int + foreign
-</PRE>
-
-<P>
-or as 
-
-
-
-<PRE>
-:- true pred get_int(+ThisInt) :: int + foreign
-</PRE>
-
-<P>
-should appear in the C code as 
-
-
-
-<PRE>
-void get_int(int *thisint)
-{
-        ....
-}
-</PRE>
-
-<P>
-The examples below illustrate this point, and the use of several assertions to guide the compilation. 
- 
-
-
-
-
-<H2><A NAME="SEC434" HREF="ciao_toc.html#TOC434">Examples</A></H2>
-
-
-<UL>
-<LI><A HREF="ciao_107.html#SEC435">Mathematical functions</A>
-<LI><A HREF="ciao_107.html#SEC436">Addresses and C pointers</A>
-<LI><A HREF="ciao_107.html#SEC437">Lists of bytes and buffers</A>
-<LI><A HREF="ciao_107.html#SEC438">Lists of integers</A>
-<LI><A HREF="ciao_107.html#SEC439">Strings and atoms</A>
-</UL>
-
-
-
-<H3><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Mathematical functions</A></H3>
-
-<P>
-The mathematical library is accessed to provide the <EM>sin</EM>, <EM>cos</EM>, and <EM>fabs</EM> functions. Note that that library is specified simply as 
-
-
-
-<PRE>
-:- use_foreign_library([m]).
-</PRE>
-
-<P>
-The foreign interface adds the <CODE>-lm</CODE> at compile time. Note also how some additional options are added to optimize the compiled code (only glue code, in this case) and mathematics (only in the case of Linux in an Intel processor). 
-
-
-<P>
-The functions imported from the C file, and exported as predicates by the Prolog module are stated as defined elsewhere by the directive 
-
-
-
-<PRE>
-:- impl_defined([sin/2,cos/2,fabs/2]).
-</PRE>
-
-<P>
-so that the Prolog compiler does not complain when examining the Prolog file. 
-
-
-<P>
-<EM>math.pl</EM> 
-
-
-
-<PRE>
-:- module(math,
-	[sin/2,
-	 cos/2,
-	 fabs/2
-	],
-	[assertions,
-	 basicmodes,
-	 regtypes,
-	 foreign_interface
-	]).
-
-:- true pred sin(in(X),go(Y)) :: num * num + (foreign,returns(Y)).
-:- true pred cos(in(X),go(Y)) :: num * num + (foreign,returns(Y)).
-:- true pred fabs(in(X),go(Y)) :: num * num + (foreign,returns(Y)).
-
-:- extra_compiler_opts(['-O2']).
-:- extra_compiler_opts('LINUXi86',['-ffast-math']).
-:- use_foreign_library([m]).
-
-:- impl_defined([sin/2,cos/2,fabs/2]).
-</PRE>
-
-
-
-<H3><A NAME="SEC436" HREF="ciao_toc.html#TOC436">Addresses and C pointers</A></H3>
-
-<P>
-The <CODE>address</CODE> type designates any pointer, and provides a means to deal with C pointers in Prolog without interpreting them whatsoever. The C source file which implements the operations accessed from Prolog is declared with the 
-
-
-
-<PRE>
-:- use_foreign_source(objects_c).
-</PRE>
-
-<P>
-directive. 
-
-
-<P>
-<EM>objects.pl</EM> 
-
-
-
-<PRE>
-:- module(objects,
-	[object/2,
-	 show_object/1
-	],
-	[assertions,
-	 basicmodes,
-	 regtypes,
-	 foreign_interface
-	]).
-	 
-:- true pred object(in(N),go(Object)) :: int * address +
-	(foreign,returns(Object)).
-
-:- true pred show_object(in(Object)) :: address + foreign.
-
-:- use_foreign_source(objects_c).
-:- extra_compiler_opts('-O2').
-
-:- impl_defined([object/2,show_object/1]).
-</PRE>
-
-<P>
-<EM>objects_c.c</EM> 
- 
-
-<PRE>
-#include &#60;stdio.h&#62;
-
-struct object {
-  char *name;
-  char *colour;
-};
-
-#define OBJECTS 3
-
-struct object objects[OBJECTS] =
-{ {"ring","golden"},
-  {"table","brown"},
-  {"bottle","green"} };
-
-struct object *object(int n) {
-  return &#38;objects[n % OBJECTS];
-}
-
-void show_object(struct object *o) {
-  printf("I show you a %s %s\n", o-&#62;colour, o-&#62;name);
-}
-</PRE>
-
-
-
-<H3><A NAME="SEC437" HREF="ciao_toc.html#TOC437">Lists of bytes and buffers</A></H3>
-
-<P>
-A list of bytes (c.f., a list of ints) corresponds to a buffer in C. The length of the buffer always goes associated to the list using the property <CODE>size_of/2</CODE>. The returned buffer <STRONG>is freed by Ciao Prolog</STRONG> upon its recepction, unless the <CODE>do_not_free/1</CODE> property is specified (see later). Conversely, a list of natural numbers not exceeding 255 can be passed to C as a buffer. 
-
-
-<P>
-<EM>byte_lists.pl</EM> 
-
-
-
-<PRE>
-:- module(byte_lists,
-	[obtain_list/3,
-	 show_list/2
-	],
-	[assertions,
-	 basicmodes,
-	 regtypes,
-	 foreign_interface
-	]).
-	 
-:- true pred obtain_list(in(N),go(Length),go(List)) :: int * int * byte_list
-	+ (foreign,size_of(List,Length)).
-:- true pred show_list(in(Length),in(List)) :: int * byte_list
-	+ (foreign,size_of(List,Length)).
-
-:- use_foreign_source(bytes_op).
-
-:- impl_defined([obtain_list/3,show_list/2]).
-</PRE>
-
-<P>
-<EM>bytes_op.c</EM> 
-
-
-
-<PRE>
-#include &#60;malloc.h&#62;
-#include &#60;stdio.h&#62;
-
-void obtain_list(int n, int *l, char **s) {
-  int i;
-  int c;
-  if (n &#60; 0) n = 0;
-  *l = n;
-  *s = (char *)malloc(*l);
-  for (i = 0; i &#60; *l; i++) {
-    (*s)[i] = i;
-  }
-}
-
-void show_list(int l, char *s) {
-  if (s) {
-    int n;
-    printf("From C: [");
-    for (n = 0; n &#60; l; n++) {
-      printf(" %d", s[n]);
-    }
-    printf("]\n");
-  } else {
-    printf("From C: []\n");
-  }
-}
-</PRE>
-
-
-
-<H3><A NAME="SEC438" HREF="ciao_toc.html#TOC438">Lists of integers</A></H3>
-
-<P>
-<EM>int_lists.pl</EM> 
-
-
-
-<PRE>
-:- module(int_lists,
-	[obtain_list/3,
-	 show_list/2
-	],
-	[assertions,
-	 basicmodes,
-	 regtypes,
-	 foreign_interface
-	]).
-	 
-:- true pred obtain_list(in(N),go(Length),go(List)) :: int * int * int_list
-	+ (foreign,size_of(List,Length)).
-:- true pred show_list(in(Length),in(List)) :: int * int_list
-	+ (foreign,size_of(List,Length)).
-
-:- use_foreign_source(ints_op).
-
-:- impl_defined([obtain_list/3,show_list/2]).
-</PRE>
-
-<P>
-<EM>ints_op.c</EM> 
-
-
-
-<PRE>
-#include &#60;malloc.h&#62;
-#include &#60;stdio.h&#62;
-
-void obtain_list(int n, int *l, int **s) {
-  int i;
-  int c;
-  if (n &#60; 0) n = 0;
-  *l = n;
-  *s = (int *)malloc((*l) * sizeof(int));
-  for (i = 0; i &#60; *l; i++) {
-    (*s)[i] = i;
-  }
-}
-
-void show_list(int l, int *s) {
-  if (s) {
-    int n;
-    printf("From C:");
-    for (n = 0; n &#60; l; n++) {
-      printf(" %d", s[n]);
-    }
-    printf(".\n");
-  } else {
-    printf("From C: []\n");
-  }
-}
-</PRE>
-
-
-
-<H3><A NAME="SEC439" HREF="ciao_toc.html#TOC439">Strings and atoms</A></H3>
-
-<P>
-A C string can be seen as a buffer whose end is denoted by the trailing zero, and therefore stating its length is not needed. Two translations are possible into Ciao Prolog: as a Prolog string (list of bytes, with no trailing zero) and as an atom. These are selected automatically just by choosing the corresponding type (look at the examples below). 
-
-
-<P>
-Note how the <CODE>do_not_free/1</CODE> property is specified in the 
-<A NAME="IDX4627"></A>
-<CODE>a_string/1</CODE> predicate: the string returned by C is static, and therefore it should not be freed by Prolog. 
- 
-<EM>strings_and_atoms.pl</EM> 
-
-
-
-<PRE>
-:- module(strings_and_atoms,
-	[lookup_string/2,
-	 lookup_atom/2,
-	 a_string/1,
-	 show_string/1,
-	 show_atom/1
-	],
-	[assertions,
-	 basicmodes,
-	 regtypes,
-	 foreign_interface
-	]).
-
-:- true pred a_string(go(S)) ::
-	string + (foreign(get_static_str),returns(S),do_not_free(S)).
-	 
-:- true pred lookup_string(in(N),go(S)) ::
-	int * string + (foreign(get_str),returns(S)).
-:- true pred lookup_atom(in(N),go(S)) ::
-	int * atm + (foreign(get_str),returns(S)).
-
-:- true pred show_string(in(S)) :: string + foreign(put_str).
-:- true pred show_atom(in(S)) :: atm + foreign(put_str).
-
-:- use_foreign_source(str_op).
-
-:- impl_defined([lookup_string/2,lookup_atom/2,show_string/1,show_atom/1,
-                 a_string/1]).
-</PRE>
-
-<P>
-<EM>str_op.c</EM> 
-
-
-
-<PRE>
-#include &#60;malloc.h&#62;
-#include &#60;stdio.h&#62;
-
-char *get_static_str() {
-  return "this is a string Ciao Prolog should not free";
-}
-
-char *get_str(int n) {
-  char *s;
-  int size;
-  int i;
-  int c;
-  if (n &#60; 0) n = -n;
-  size = (n%4) + 5;
-  s = (char *)malloc(size+1);
-  for (i = 0, c = ((i + n) % ('z' - 'a' + 1)) + 'a'; i &#60; size; i++,c++) {
-    if (c &#62; 'z') c = 'a'; 
-    s[i] = c;
-  }
-  s[i] = 0;
-  return s;
-}
-
-void put_str(char *s) {
-  if (s) {
-    printf("From C: \"%s\"\n", s);
-  } else {
-    printf("From C: null\n");
-  }
-}
-</PRE>
-
-
-
-<H2><A NAME="SEC440" HREF="ciao_toc.html#TOC440">Usage and interface (<CODE>foreign_interface</CODE>)</A></H2>
+<H2><A NAME="SEC436" HREF="ciao_toc.html#TOC436">Usage and interface (<CODE>objects_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -546,24 +76,624 @@ void put_str(char *s) {
 
 <LI><STRONG>Library usage:</STRONG>
 
-The foreign interface is used by including <CODE>foreign_interface</CODE> in the include list of a module, or by means of an explicit <CODE>:- use_package(foreign_interface)</CODE>.
+This library is automatically loaded when using the <EM>objects</EM> package: 
+
+<PRE>
+    :- module(<EM>ModuleName</EM>,<EM>Exports</EM>,[objects]).
+</PRE>
+
+Nothing special needs to be done. 
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4540"></A>
+<CODE>new/2</CODE>, 
+<A NAME="IDX4541"></A>
+<CODE>instance_of/2</CODE>, 
+<A NAME="IDX4542"></A>
+<CODE>derived_from/2</CODE>, 
+<A NAME="IDX4543"></A>
+<CODE>interface/2</CODE>, 
+<A NAME="IDX4544"></A>
+<CODE>instance_codes/2</CODE>, 
+<A NAME="IDX4545"></A>
+<CODE>destroy/1</CODE>, 
+<A NAME="IDX4546"></A>
+<CODE>use_class/1</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX4547"></A>
+<CODE>constructor/1</CODE>, 
+<A NAME="IDX4548"></A>
+<CODE>class_name/1</CODE>, 
+<A NAME="IDX4549"></A>
+<CODE>interface_name/1</CODE>, 
+<A NAME="IDX4550"></A>
+<CODE>instance_id/1</CODE>, 
+<A NAME="IDX4551"></A>
+<CODE>class_source/1</CODE>, 
+<A NAME="IDX4552"></A>
+<CODE>interface_source/1</CODE>, 
+<A NAME="IDX4553"></A>
+<CODE>method_spec/1</CODE>, 
+<A NAME="IDX4554"></A>
+<CODE>virtual_method_spec/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4555"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX4556"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX4557"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX4558"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX4559"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX4560"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX4561"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX4562"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX4563"></A>
+<CODE>compiler/compiler</CODE>, 
+<A NAME="IDX4564"></A>
+<CODE>prolog_sys</CODE>, 
+<A NAME="IDX4565"></A>
+<CODE>system</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC441" HREF="ciao_toc.html#TOC441">Known bugs and planned improvements (<CODE>foreign_interface</CODE>)</A></H2>
+<H2><A NAME="SEC437" HREF="ciao_toc.html#TOC437">Documentation on exports (<CODE>objects_rt</CODE>)</A></H2>
+<P>
+<A NAME="IDX4566"></A>
+<A NAME="IDX4567"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>new/2:</B>
+<DD><A NAME="IDX4568"></A>
+
+
+<P>
+Dynamic instance creation takes place by the ways of this predicate. 
+
+
+<P>
+It takes a free variable as first argument which will be instantiated to an internal object identifier. 
+
+
+<P>
+Second argument must be instantiated to a 
+<A NAME="IDX4569"></A>
+class constructor. Class constructors are designed to perform an initialization on the new created instance. Notice that instance initialization may involve some kind of computation, not only <EM>state initialization</EM>. 
+
+
+<P>
+A class constructor is made by a functor, which must match the intended class name, and any number of parameters. For example: 
+
+
+
+<PRE>
+            Obj new myclass(1500,'hello, world!!!')
+</PRE>
+
+<P>
+Those parameters depends (obviously) on the constructors defined at the class source. If no constructors where defined, no parameters are needed. This is called the 
+<A NAME="IDX4570"></A>
+default constructor. An example: 
+
+
+
+<PRE>
+            Obj new myclass
+</PRE>
+
+<P>
+The default constructor can not be called if there is any constructor available at the class source. 
+
+
+<P>
+Instantiation will raise an exception and fail whenever any of this conditions occur: 
+
+<UL>
+<LI>First argument is not a free variable.
+
+<LI>Second argument functor is a class, but there is no usage relationship with it.
+
+<LI>Second argument functor is not a class.
+
+<LI>The given constructor is unknown.
+
+<LI>The given constructor fails (notice that default constructor never fails).
+
+</UL>
+
+<P>
+Objects may also be statically declared, refer to 
+<A NAME="IDX4571"></A>
+<CODE>instance_of/2</CODE> declaration. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>new(InstanceVar,Constructor)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a new instance of the class specified by <CODE>Constructor</CODE> returning its identifier in <CODE>InstanceVar</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>InstanceVar</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>Constructor</CODE> is a term whose functor matches a class name.
+ (<CODE>objects_rt:constructor/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>InstanceVar</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4572"></A>
+<A NAME="IDX4573"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>instance_of/2:</B>
+<DD><A NAME="IDX4574"></A>
+
+
+<P>
+This predicate is used to perform dynamic type checking. You may check whether a particular instance belongs to a particular class or related descendants. 
+
+
+<P>
+instance_of/2 is used to perform static 
+<A NAME="IDX4575"></A>
+semantic analisys over object oriented code constructions. 
+
+
+<P>
+By the use of instance_of/2 you may help to perform such analisys. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>instance_of(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether <CODE>Instance</CODE> was derived from any descendant of <CODE>Class</CODE>, or that class itself
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>instance_of(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves, on backtracking, the inheritance line of <CODE>Instance</CODE> commencing on the creation class (that specified on call to
+
+<A NAME="IDX4576"></A>
+<CODE>new/2</CODE>) and continuing on the rest of ascendant classes, if any. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4577"></A>
+<A NAME="IDX4578"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>derived_from/2:</B>
+<DD><A NAME="IDX4579"></A>
+
+
+<P>
+Test whether an object identifier was derived directly from a class, by the usage of 
+<A NAME="IDX4580"></A>
+<CODE>new/2</CODE> or a static instance declaration (
+<A NAME="IDX4581"></A>
+<CODE>instance_of/2</CODE>). 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>derived_from(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test derivation of <CODE>Instance</CODE> from <CODE>Class</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>derived_from(Instance,Class)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves the <CODE>Class</CODE> responsable of the derivation of <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Class</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Class</CODE> is an atom denoting a class.
+ (<CODE>objects_rt:class_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4582"></A>
+<A NAME="IDX4583"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>interface/2:</B>
+<DD><A NAME="IDX4584"></A>
+
+
+<P>
+This predicate is used to ensure a given interface to be implemented by a given instance. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>interface(Instance,Interface)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Check whether <CODE>Instance</CODE> implements the given <CODE>Interface</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Interface</CODE> is an unique atom which identifies a public interface.
+ (<CODE>objects_rt:interface_name/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>interface(Instance,Interfaces)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves on backtracking all the implemented <CODE>Interfaces</CODE> of <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>Interfaces</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Interfaces</CODE> is an unique atom which identifies a public interface.
+ (<CODE>objects_rt:interface_name/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4585"></A>
+<A NAME="IDX4586"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>instance_codes/2:</B>
+<DD><A NAME="IDX4587"></A>
+
+
+<P>
+Retrieves a character string representation from an object identifier and vice-versa. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>instance_codes(Instance,String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves a <CODE>String</CODE> representation of given <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+
+<CODE>String</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>instance_codes(Instance,String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Reproduces an <CODE>Instance</CODE> from its <CODE>String</CODE> representation. Such an instance must be alive across the application: this predicate will fail whether the involved instance has been destroyed.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4588"></A>
+<A NAME="IDX4589"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>destroy/1:</B>
+<DD><A NAME="IDX4590"></A>
+
+
+<P>
+As well as instances are created, they must be destroyed when no longer needed in order to release system resources. 
+
+
+<P>
+Unfortunately, current O'Ciao implementation does not support automatic instance destruction, so user must manually call <EM>destroy/1</EM> in order to do so. 
+
+
+<P>
+The programmer <STRONG>must ensure</STRONG> that no other references to the involved object are left in memory when destroy/1 is called. If not, unexpected results may be obtained. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>destroy(Instance)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Destroys the object identified by <CODE>Instance</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Instance</CODE> is an unique term which identifies an object.
+ (<CODE>objects_rt:instance_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4591"></A>
+<A NAME="IDX4592"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
+<DD><A NAME="IDX4593"></A>
+
+
+<P>
+The behaviour of this predicate is identical to that provided by the declaration of the same name 
+<A NAME="IDX4594"></A>
+<CODE>use_class/1</CODE>. It allows user programs to dynamically load classes. Whether the given source is not a class it will perform a 
+<A NAME="IDX4595"></A>
+<CODE>use_module/1</CODE> predicate call.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>use_class(ClassSource)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamically loads the given <CODE>ClassSource</CODE>
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ClassSource</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
+ (<CODE>objects_rt:class_source/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4596"></A>
+<A NAME="IDX4597"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>constructor/1:</B>
+<DD><A NAME="IDX4598"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>constructor(Cons)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Cons</CODE> is a term whose functor matches a class name.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4599"></A>
+<A NAME="IDX4600"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_name/1:</B>
+<DD><A NAME="IDX4601"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_name(ClassName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ClassName</CODE> is an atom denoting a class.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4602"></A>
+<A NAME="IDX4603"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>interface_name/1:</B>
+<DD><A NAME="IDX4604"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>interface_name(Interface)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Interface</CODE> is an unique atom which identifies a public interface.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4605"></A>
+<A NAME="IDX4606"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>instance_id/1:</B>
+<DD><A NAME="IDX4607"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>instance_id(ID)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ID</CODE> is an unique term which identifies an object.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4608"></A>
+<A NAME="IDX4609"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>class_source/1:</B>
+<DD><A NAME="IDX4610"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>class_source(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4611"></A>
+<A NAME="IDX4612"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>interface_source/1:</B>
+<DD><A NAME="IDX4613"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>interface_source(Source)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration or an interface declaration (without .pl extension).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4614"></A>
+<A NAME="IDX4615"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>method_spec/1:</B>
+<DD><A NAME="IDX4616"></A>
+
+
+<P>
+There is no difference between method or attribute specifications, and habitual predicate specifications. It is just a Functor/Arity term. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>method_spec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method or attribute specification.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4617"></A>
+<A NAME="IDX4618"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>virtual_method_spec/1:</B>
+<DD><A NAME="IDX4619"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>virtual_method_spec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method specification.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC438" HREF="ciao_toc.html#TOC438">Known bugs and planned improvements (<CODE>objects_rt</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-The idea is nice, and should be extended to other languages
+Not really a bug: when loading code which declares static instances from the toplevel shell, predicate 
+<A NAME="IDX4620"></A>
+<CODE>use_module/1</CODE>) will not work properly: those instances may be not correctly created, and predicates will fail whenever they are not supposed to do. This may be avoided by reloading again the involved module, but make sure it is modified and saved to disk before doing so. 
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

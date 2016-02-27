@@ -30,6 +30,11 @@ class PLSocketReader extends Thread {
     private BufferedReader in;
 
     /**
+     * Socket writer object to be notified when termination is received.
+     */
+    private PLSocketWriter writer;
+
+    /**
      * List of messages received but with no requests waiting for them.
      */
     private Vector msgQueue;
@@ -40,8 +45,9 @@ class PLSocketReader extends Thread {
      *
      * @param in Stream on which this reader receives messages.
      */
-    public PLSocketReader(BufferedReader in) {
+    public PLSocketReader(BufferedReader in, PLSocketWriter writer) {
 	this.in = in;
+	this.writer = writer;
 	msgQueue = new Vector(STARTING_CAPACITY,INCREMENT);
 	this.start();
     }
@@ -68,6 +74,7 @@ class PLSocketReader extends Thread {
 		System.exit(1);
 	    }
 	} while (!s.getArg(1).equals(PLTerm.terminate));
+	writer.write(s);
 	if (PLConnection.debugging)
 	    System.err.println("Terminating PLSocketReader");
     }

@@ -8,7 +8,7 @@
 
 :- comment(module,"This package applies a @em{compiling control} technique
 to implement @index{depth first iterative deepening} execution
-@cite{iterative-deepening}. It changes the usual @em{depth-first}
+@cite{Stickel84}. It changes the usual @em{depth-first}
 computation rule by @index{iterative-deepening} on those predicates
 specifically marked. This is very useful in search problems when a
 @concept{complete proof procedure} is needed.
@@ -74,4 +74,10 @@ Another complete proof procedure implemented is the @lib{bf} package
 (@concept{breadth first execution}).
 
    ").
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+119,2001/08/28,15:39*01+'CEST'), "References in
+   iterative deepening fixed. Included this library in version
+   control.  (Manuel Hermenegildo)").
 

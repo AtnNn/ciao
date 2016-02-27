@@ -8,13 +8,21 @@
 :- use_module(library(prolog_sys), [new_atom/1]).
 
 
+ %%  %% There should be at least an active thread at the beginning ---
+ %%  %% otherwise there is no fairness! 
+ %% 
+ %% :- initialization(ensure_agent).
+
 :- concurrent ident_and_goal/2.     %% Put requests
 :- concurrent ident_and_answer/2.   %% Get answers
 
 
 :- concurrent sleeping_threads/1.   %% Number of threads waiting for a goal.
-
 sleeping_threads(0).
+
+%% Unused by now, but it will surely be helpful at some point.
+:- concurrent total_threads/1.   %% Number of threads waiting for a goal.
+total_threads(0).
 
 
 :- meta_predicate(&&(:)).
@@ -52,6 +60,7 @@ sleeping_threads(0).
 <&&(Handle):-
         Handle = '$handle'(Ident, InitialGoal),
         retract_fact(ident_and_answer(Ident, NewGoal)), !,
+        display(NewGoal), nl,
         NewGoal = InitialGoal.
 
 <&(Handle):- <&&(Handle).
@@ -71,12 +80,12 @@ agent:-
         increase_num_of_agents,
 %% Wait for a new goal to execute
         retract_fact(ident_and_goal(Ident, Goal)),
-%        display(picked_up(Ident, Goal)), nl,
+        display(picked_up(Ident, Goal)), nl,
 %% Once we have it, execute it --- but there is an agent less to execute
-        decrease_num_of_agents,
+        decrease_active_agents,
         once(Goal),
         assertz_fact(ident_and_answer(Ident, Goal)),
-%%        display(put(Ident, Goal)), nl,
+        display(put(Ident, Goal)), nl,
 %% And now there is again a new agent to run goals
         increase_num_of_agents,
 %% Back to get a new goal
@@ -86,11 +95,14 @@ once(Goal):- call(Goal), !.
 
 
 increase_num_of_agents:-
-        retract_fact(sleeping_threads(NumAg)), !,
+        retract_fact(sleeping_threads(NumAg)), 
         NewNumAg is NumAg + 1,
-        asserta_fact(sleeping_threads(NewNumAg)).
+        asserta_fact(sleeping_threads(NewNumAg)),
+        retract_fact(total_threads(NumThreads)),
+        NewNumThreads is NumThreads + 1,
+        asserta_fact(sleeping_threads(NewNumThreads)), !.
 
-decrease_num_of_agents:-
+decrease_active_agents:-
         retract_fact(sleeping_threads(NumAg)), !,
         NewNumAg is NumAg - 1,
         asserta_fact(sleeping_threads(NewNumAg)).

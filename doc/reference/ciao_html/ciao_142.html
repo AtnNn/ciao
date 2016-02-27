@@ -1,65 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Java to Prolog interface</TITLE>
+<TITLE>The Ciao Prolog System               - Types for the Low-level interface to SQL databases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC576" HREF="ciao_toc.html#TOC576">Low-level Java to Prolog interface</A></H1>
+<H1><A NAME="SEC571" HREF="ciao_toc.html#TOC571">Types for the Low-level interface to SQL databases</A></H1>
 <P>
-<A NAME="IDX6164"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX6039"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#109 (2001/6/3, 17:8:19 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.7#42 (2001/1/15, 14:20:54 CET)
-
-
-<P>
- 
-<A NAME="IDX6165"></A>
-<A NAME="IDX6166"></A>
-This module defines a low level Java to Prolog interface. This Prolog side of the Java to Prolog interface only has one public predicate: a server that listens at the socket connection with Java, and executes the commands received from the Java side. 
-
-
-<P>
-In order to evaluate the goals received from the Java side, this module can work in two ways: executing them in the same engine, or starting a thread for each goal. The easiest way is to launch them in the same engine, but the goals must be evaluated sequentially: once a goal provides the first solution, all the subsequent goals must be finished before this goal can backtrack to provide another solution. The Prolog side of this interface works as a top-level, and the goals partially evaluated are not independent. 
-
-
-<P>
-The solution of this goal dependence is to evaluate the goals in a different prolog engine. Although Ciao includes a mechanism to evaluate goals in different engines, the approach used in this interface is to launch each goal in a different thread. 
-
-
-<P>
-The decision of what kind of goal evaluation is selected is done by the Java side. Each evaluation type has its own command terms, so the Java side can choose the type it needs. 
-
-
-<P>
-A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or by calling <CODE>prolog_server/1</CODE> predicate and providing the port number as argument. The user predicates and libraries to be called from Java must be included in the executable file, or be accesible using the built-in predicates dealing with code loading. 
+<STRONG>Author(s):</STRONG> D. Cabeza, M. Carro, I. Caballero, and M. Hermenegildo..
 
 
 
 <UL>
-<LI><A HREF="ciao_142.html#SEC577">Usage and interface (jtopl)</A>
-<LI><A HREF="ciao_142.html#SEC578">Documentation on exports (jtopl)</A>
-<LI><A HREF="ciao_142.html#SEC579">Documentation on internals (jtopl)</A>
+<LI><A HREF="ciao_142.html#SEC572">Usage and interface (db_client_types)</A>
+<LI><A HREF="ciao_142.html#SEC573">Documentation on exports (db_client_types)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC577" HREF="ciao_toc.html#TOC577">Usage and interface (<CODE>jtopl</CODE>)</A></H2>
+<H2><A NAME="SEC572" HREF="ciao_toc.html#TOC572">Usage and interface (<CODE>db_client_types</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -67,59 +35,31 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(jtopl)).</CODE>
+<CODE>:- use_module(library(db_client_types)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6167"></A>
-<CODE>prolog_server/0</CODE>, 
-<A NAME="IDX6168"></A>
-<CODE>prolog_server/1</CODE>, 
-<A NAME="IDX6169"></A>
-<CODE>shell_s/0</CODE>, 
-<A NAME="IDX6170"></A>
-<CODE>query_solutions/2</CODE>, 
-<A NAME="IDX6171"></A>
-<CODE>query_requests/2</CODE>, 
-<A NAME="IDX6172"></A>
-<CODE>running_queries/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6173"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX6174"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX6175"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6176"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6177"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX6178"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6179"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX6180"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX6181"></A>
-<CODE>atom2term</CODE>, 
-<A NAME="IDX6182"></A>
-<CODE>javall/javasock</CODE>, 
-<A NAME="IDX6183"></A>
-<CODE>prolog_sys</CODE>.
+<A NAME="IDX6040"></A>
+<CODE>socketname/1</CODE>, 
+<A NAME="IDX6041"></A>
+<CODE>dbname/1</CODE>, 
+<A NAME="IDX6042"></A>
+<CODE>user/1</CODE>, 
+<A NAME="IDX6043"></A>
+<CODE>passwd/1</CODE>, 
+<A NAME="IDX6044"></A>
+<CODE>answertableterm/1</CODE>, 
+<A NAME="IDX6045"></A>
+<CODE>tuple/1</CODE>, 
+<A NAME="IDX6046"></A>
+<CODE>answertupleterm/1</CODE>, 
+<A NAME="IDX6047"></A>
+<CODE>sqlstring/1</CODE>.
 
 </UL>
 
@@ -129,293 +69,200 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 
 
-<H2><A NAME="SEC578" HREF="ciao_toc.html#TOC578">Documentation on exports (<CODE>jtopl</CODE>)</A></H2>
+<H2><A NAME="SEC573" HREF="ciao_toc.html#TOC573">Documentation on exports (<CODE>db_client_types</CODE>)</A></H2>
 <P>
-<A NAME="IDX6184"></A>
-<A NAME="IDX6185"></A>
+<A NAME="IDX6048"></A>
+<A NAME="IDX6049"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_server/0:</B>
-<DD><A NAME="IDX6186"></A>
+<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
+<DD><A NAME="IDX6050"></A>
 
+
+
+<PRE>
+socketname(IPAddress:PortNumber) :-
+        atm(IPAddress),
+        int(PortNumber).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Prolog server entry point. Reads from the standard input the node name and port number where the java client resides, and starts the prolog server listening at the jp socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_exit</CODE> command is received.
-
-<A NAME="IDX6187"></A>
-<A NAME="IDX6188"></A>
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6189"></A>
-<A NAME="IDX6190"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_server/1:</B>
-<DD><A NAME="IDX6191"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Prolog server entry point. Given a port number, starts the prolog server listening at the jp socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_exit</CODE> command is received.
-
-<A NAME="IDX6192"></A>
-<A NAME="IDX6193"></A>
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Arg1</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6194"></A>
-<A NAME="IDX6195"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>shell_s/0:</B>
-<DD><A NAME="IDX6196"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Command execution loop. This predicate is called when the connection to Java is established, and performs an endless loop processing the commands received.
+<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6197"></A>
-<A NAME="IDX6198"></A>
+<A NAME="IDX6051"></A>
+<A NAME="IDX6052"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>query_solutions/2:</B>
-<DD><A NAME="IDX6199"></A>
+<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
+<DD><A NAME="IDX6053"></A>
 
 
-<P>
-No further documentation available for this predicate.
 
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
+<PRE>
+dbname(DBId) :-
+        atm(DBId).
+</PRE>
 
 <P>
-<A NAME="IDX6200"></A>
-<A NAME="IDX6201"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>query_requests/2:</B>
-<DD><A NAME="IDX6202"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6203"></A>
-<A NAME="IDX6204"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>running_queries/2:</B>
-<DD><A NAME="IDX6205"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC579" HREF="ciao_toc.html#TOC579">Documentation on internals (<CODE>jtopl</CODE>)</A></H2>
-<P>
-<A NAME="IDX6206"></A>
-<A NAME="IDX6207"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>command/1:</B>
-<DD><A NAME="IDX6208"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>command(X)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a command received from the java client, to be executed by the Prolog process. The command is represented as an atom or a functor with arity 1. The command to be executed must be one of the following types:
+<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
 
-<A NAME="IDX6209"></A>
-<A NAME="IDX6210"></A>
-
-<UL>
-
-<LI><CODE>prolog_launch_query(Q)</CODE> Compound term to create a new query, received as single argument of this structure. A reference to the new query is returned to Java.
-
-<LI><CODE>prolog_launch_query_on_thread(Q)</CODE> Compound term to evaluate a new query using a separate thread. A reference to the new query is returned to Java.
-
-<LI><CODE>prolog_next_solution(ID)</CODE> Compound term to get the next solution of a goal identified by the single argument of the structure. A term representing the goal instantiated with the next solution is returned to Java.
-
-<LI><CODE>prolog_terminate_query(ID)</CODE> Compound term to terminate the goal identified by the argument. If the thread option is disabled, a cut is made in the goal search tree, and the goal is removed from the goal table; if the thread option is enabled, the thread evaluating the goal is terminated.
-
-<LI><CODE>prolog_exit</CODE> Atom to terminate the current Prolog process.
-
-</UL>
-
- 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6211"></A>
-<A NAME="IDX6212"></A>
+<A NAME="IDX6054"></A>
+<A NAME="IDX6055"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>answer/1:</B>
-<DD><A NAME="IDX6213"></A>
+<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
+<DD><A NAME="IDX6056"></A>
 
+
+
+<PRE>
+user(User) :-
+        atm(User).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>answer(X)</CODE>
+<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a response sent from the prolog server. Is represented as an atom or a functor with arity 1 or 2, depending on the functor name.
+<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
 
-<A NAME="IDX6214"></A>
-<A NAME="IDX6215"></A>
-
- 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6216"></A>
-<A NAME="IDX6217"></A>
+<A NAME="IDX6057"></A>
+<A NAME="IDX6058"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>process_command/1:</B>
-<DD><A NAME="IDX6218"></A>
+<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
+<DD><A NAME="IDX6059"></A>
 
 
-<P>
-No further documentation available for this predicate.
 
-
-</DL>
-
-<P>
-<A NAME="IDX6219"></A>
-<A NAME="IDX6220"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>solve/2:</B>
-<DD><A NAME="IDX6221"></A>
-
+<PRE>
+passwd(Passwd) :-
+        atm(Passwd).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>solve(+Query,+JId)</CODE>
+<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Runs the query on a separate thread and stores the solutions on the <CODE>query_solutions/2</CODE> data predicate.
+<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Query</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>+JId</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6222"></A>
-<A NAME="IDX6223"></A>
+<A NAME="IDX6060"></A>
+<A NAME="IDX6061"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_parse/2:</B>
-<DD><A NAME="IDX6224"></A>
+<DT><span class="define">REGTYPE:</span> <B>answertableterm/1:</B>
+<DD><A NAME="IDX6062"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>prolog_parse(+String,-Term)</CODE>
+Represents the types of responses that will be returned from the database interface. These can be a set of answer tuples, or the atom <CODE>ok</CODE> in case of a successful addition or deletion.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>answertableterm(AT)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Parses the string received as first argument and returns the prolog term as second argument. <STRONG>Important:</STRONG> This is a private predicate but could be called from java side, to parse strings to Prolog terms.
+<LI><EM>Description:</EM> <CODE>AT</CODE> is a response from the database interface.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>-Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6225"></A>
-<A NAME="IDX6226"></A>
+<A NAME="IDX6063"></A>
+<A NAME="IDX6064"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_command/1:</B>
-<DD><A NAME="IDX6227"></A>
+<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
+<DD><A NAME="IDX6065"></A>
 
+
+
+<PRE>
+tuple(T) :-
+        list(T,atm).
+</PRE>
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the database interface.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6228"></A>
-<A NAME="IDX6229"></A>
+<A NAME="IDX6066"></A>
+<A NAME="IDX6067"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_answer/2:</B>
-<DD><A NAME="IDX6230"></A>
+<DT><span class="define">REGTYPE:</span> <B>answertupleterm/1:</B>
+<DD><A NAME="IDX6068"></A>
 
+
+
+<PRE>
+answertupleterm([]).
+answertupleterm(tup(T)) :-
+        tuple(T).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_answer(+Id,+Answer)</CODE>
+<STRONG>Usage:</STRONG> <CODE>answertupleterm(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> writes to the output socket stream the given answer.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a predicate containing a tuple.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+</UL>
 
-<CODE>undefined:prolog_query_id(+Id)</CODE>
- (undefined property)
+</DL>
 
-<CODE>+Answer</CODE> is a response sent from the prolog server. Is represented as an atom or a functor with arity 1 or 2, depending on the functor name. 
-<A NAME="IDX6231"></A>
-<A NAME="IDX6232"></A>
+<P>
+<A NAME="IDX6069"></A>
+<A NAME="IDX6070"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
+<DD><A NAME="IDX6071"></A>
 
- (<CODE>jtopl:answer/1</CODE>)
+
+
+<PRE>
+sqlstring(S) :-
+        string(S).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sqlstring(S)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S</CODE> is a string of SQL code.
+
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

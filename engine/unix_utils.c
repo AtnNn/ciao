@@ -990,8 +990,10 @@ BOOL prolog_exec(Arg)
   struct stream_node 
     *str_in,                       /* Connection to child standard input  */
     *str_out,                     /* Connection to child standard output  */
-    *str_err;                      /* Connection to child standard error  */
-  
+    *str_err                       /* Connection to child standard error  */
+    = NULL;                                    /* Avoid compiler warnings */
+
+
   int pid;
 
   DEREF(X(0), X(0));

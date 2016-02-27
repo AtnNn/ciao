@@ -1,33 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - field_value (library)</TITLE>
+<TITLE>The Ciao Prolog System               - error (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC732" HREF="ciao_toc.html#TOC732">field_value (library)</A></H1>
+<H1><A NAME="SEC735" HREF="ciao_toc.html#TOC735">error (library)</A></H1>
 <P>
-<A NAME="IDX7575"></A>
+<A NAME="IDX7586"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/9, 13:51:13 MET)
+<STRONG>Version:</STRONG> 0.1#3 (1998/12/14, 19:14:44 MET)
+
+
+<P>
+This file implements error predicates of different types. 
+
+
+<P>
+Implemented by G&ouml;ran Smedb&auml;ck. 
 
 
 
 <UL>
-<LI><A HREF="ciao_193.html#SEC733">Usage and interface (field_value)</A>
-<LI><A HREF="ciao_193.html#SEC734">Documentation on exports (field_value)</A>
+<LI><A HREF="ciao_193.html#SEC736">Usage and interface (error)</A>
+<LI><A HREF="ciao_193.html#SEC737">Documentation on exports (error)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC733" HREF="ciao_toc.html#TOC733">Usage and interface (<CODE>field_value</CODE>)</A></H2>
+<H2><A NAME="SEC736" HREF="ciao_toc.html#TOC736">Usage and interface (<CODE>error</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(field_value)).</CODE>
+<CODE>:- use_module(library(error)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,10 +52,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7576"></A>
-<CODE>fieldValue/6</CODE>, 
-<A NAME="IDX7577"></A>
-<CODE>mfstringValue/5</CODE>.
+<A NAME="IDX7587"></A>
+<CODE>error_vrml/1</CODE>, 
+<A NAME="IDX7588"></A>
+<CODE>output_error/1</CODE>.
 
 </UL>
 
@@ -56,19 +64,24 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 <UL>
 
-<LI><EM>Application modules:</EM>
-
-<A NAME="IDX7578"></A>
-<CODE>parser</CODE>, 
-<A NAME="IDX7579"></A>
-<CODE>parser_util</CODE>, 
-<A NAME="IDX7580"></A>
-<CODE>error</CODE>.
-
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7581"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX7589"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7590"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7591"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7592"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7593"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7594"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7595"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7596"></A>
+<CODE>write</CODE>.
 
 </UL>
 
@@ -78,36 +91,58 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 
 
-<H2><A NAME="SEC734" HREF="ciao_toc.html#TOC734">Documentation on exports (<CODE>field_value</CODE>)</A></H2>
+<H2><A NAME="SEC737" HREF="ciao_toc.html#TOC737">Documentation on exports (<CODE>error</CODE>)</A></H2>
 <P>
-<A NAME="IDX7582"></A>
-<A NAME="IDX7583"></A>
+<A NAME="IDX7597"></A>
+<A NAME="IDX7598"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fieldValue/6:</B>
-<DD><A NAME="IDX7584"></A>
+<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
+<DD><A NAME="IDX7599"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>error_vrml(Structure)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:+Structure</CODE>
+ (undefined property)
+
+<CODE>Structure</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7585"></A>
-<A NAME="IDX7586"></A>
+<A NAME="IDX7600"></A>
+<A NAME="IDX7601"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mfstringValue/5:</B>
-<DD><A NAME="IDX7587"></A>
+<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
+<DD><A NAME="IDX7602"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>output_error(Message)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>undefined:+Message</CODE>
+ (undefined property)
+
+<CODE>Message</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

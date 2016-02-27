@@ -25,7 +25,7 @@ public class example1 extends Frame {
 	if (argv.length == 0)
 	    plServer = new PLConnection();
 	else
-	    plServer = new PLConnection(argv[0]);
+	    plServer = new PLConnection(argv);
     } catch (Exception e) {
       System.err.println("Problems starting java server: " + e);
       e.printStackTrace();

@@ -57,7 +57,7 @@ there will be a thread ready to launch it when the event raises.  The
 prolog side is different: there must be a thread in the low-level interface
 that listens to the asynchronous socket to launch the goals requested.
 
-@subsection{Prolog side}
+@subsection{Prolog side of the Java interface}
 @cindex{Low-Level Prolog to Java Interface Structure. Prolog side}
 The prolog side receives the actions to do in the
 java side from the user program, and sends them to the java side through the socket connection.
@@ -310,11 +310,10 @@ java_start(Node,Cp):-
 %% -----------------------------------------------------------------------
 :- pred java_stop/0 # "Stops the interface terminating the threads
 	that handle the socket connection, and finishing the Java
-        interface server if it was started using java_start/1,2.".
+        interface server if it was started using java_start/n.".
 %% -----------------------------------------------------------------------
 java_stop :-
 	is_connected,
-	assertz_fact(java_query(0,'$terminate')),
 	!,
 	stop_socket_interface.
 
@@ -339,7 +338,6 @@ java_connect(Node,Port) :-
 %% -----------------------------------------------------------------------
 java_disconnect :-
 	is_connected,
-	assertz_fact(java_query(0,'$disconnect')),
 	!,
 	stop_socket_interface.
 

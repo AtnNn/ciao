@@ -2,11 +2,24 @@
 
 :- use_module(library(compiler),[use_module/1]).
 :- use_module(library('make/system_extra')).
+:- use_module('/home/herme/lpmake/make/tmp/aux').
 
-test(X) :- 
+test1(X) :- 
         use_module(X),
-        call_unknown(_:mygoal),
+	display('** hello\n'),
+	call_unknown(_:mygoal),
         fail.
-test(X).
+
+test2(X) :- 
+        use_module(X),
+	display('** hello\n'),
+        inaux,
+        fail.
+
+test3(X) :- 
+	loadaux(X),
+ 	display('** hello\n'),
+        inaux,
+        fail.
 
 cu :- call_unknown(_:mygoal).

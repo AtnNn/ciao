@@ -1,8 +1,8 @@
 % :- module(client, [main/1]).
 
 %% This is to understand the remote calls
-:- include(library('remote/ciao_client')).  
-
+%:- include(library('remote/ciao_client')).  
+:- use_package(remote).
 %% This is to understand locally the concurrency-related calls
 :- include(library(hlc)).
 
@@ -23,13 +23,13 @@ main([]):-
 
 main([Host]):-
         (
-            hostname_address(Host, _Adress) ->
+            hostname_address(Host, _Address) ->
             step1(Host),
-            step2(Host),
-            step3(Host),
-            step4(Host),
-%            step5(Host),
-            step6(Host)
+              step2(Host)
+%              step3(Host),
+%              step4(Host),
+% %            step5(Host),
+%            step6(Host)
         ;
             format(
 "

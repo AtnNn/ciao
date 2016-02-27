@@ -34,24 +34,44 @@
 %%------------------------------------------------------------------------
 :- comment(copyright,"@include{Copyright.Manuals}").
 
-:- comment(summary,
-        "This document includes the reference manual of the Prolog Tcl/Tk bidirectional interface implemented in Ciao. This library of prolog predicates allows connection between @em{Tcl/Tk} graphical interface and @em{Prolog} programs.").
+:- comment(summary, "This document includes the reference manual of
+   the Prolog @index{Tcl/Tk bidirectional interface} implemented in
+   Ciao. This library of prolog predicates allows connection between a
+   @em{Tcl/Tk}-based @concept{graphical interface} and @em{Prolog}
+   programs.").
 
-:- comment(module,"The @lib{tcltk} library package is a bidirectional interface to
-   the @em{Tcl} (pronounced Tickle) language and @em{Tk} toolkit. Tcl is an
-   interpreter scripting language with many extensions packages, in particular
-   the graphical interface toolkit Tk.
-The proposed interaction between both languages is realized as an interface between two process, a Tcl/Tk process and a Prolog process. This approach allows programmers to use both Tcl/Tk and Prolog.
+:- comment(module,"The @lib{tcltk} library package is a bidirectional
+   interface to the @em{Tcl} (pronounced Tickle) language and @em{Tk}
+   toolkit. Tcl is an interpreter scripting language with many
+   extension packages, in particular the graphical interface toolkit
+   Tk.  The interaction between both languages is implemented as an
+   interface between two processes, a Tcl/Tk process and a Prolog
+   process. The approach allows programmers to program both in Tcl/Tk
+   and Prolog. 
 
-    @section{Prolog - Tcl/Tk interface structure}
-    The interface is made up of two parts: a Prolog part and a Tcl/Tk part. The Prolog part receives requests from a Prolog program and sends them to the Tcl/Tk part. The Tcl/Tk part receives from the socket and performs the actions included in the requests.
+    @noindent @bf{Prolog - Tcl/Tk interface structure}
 
-    @subsection{Prolog side}
-    The Prolog side receives the actions to do in the Tcl/Tk side from the user program, and sends them to the Tcl/Tk side through the socket connection. When the action is done in the Tcl/Tk side, the result is retrieved to the user program, or the action fails if any problem sucess. 
+    The interface is made up of two parts: a Prolog part and a Tcl/Tk
+    part. The Prolog part encodes the requests from a Prolog program
+    and sends them to the Tcl/Tk part via a socket. The Tcl/Tk part
+    receives from this socket and performs the actions included
+    implied by the requests.
 
-    @subsection{Tcl/Tk side}
-    The Tcl/Tk side waits for requests from the Prolog side, executes the Tcl/Tk code sended from the Prolog side, handle the events and exceptions raised in the Tcl/Tk side.
-").
+    @noindent @bf{Prolog side of the Prolog - Tcl/Tk interface}
+
+    The Prolog side receives the actions to perform in the Tcl/Tk side
+    from the user program and sends them to the Tcl/Tk side through
+    the socket connection. When the action is finished in the Tcl/Tk
+    side, the result is returned to the user program, or the action
+    fails if any problem occurs.
+
+    @noindent @bf{Tcl/Tk side of the Prolog - Tcl/Tk interface}
+
+    The Tcl/Tk side waits for requests from the Prolog side, executes
+    the Tcl/Tk code sent from the Prolog side. At the same time, the
+    Tcl/Tk side handles the events and exceptions raised in the Tcl/Tk
+    side, possibly passing on control to the Prolog side. ").
+
 %%------------------------------------------------------------------------
 
 :- regtype tclInterpreter(I) # "@var{I} is a reference to a @em{Tcl}
@@ -61,7 +81,7 @@ tclInterpreter(_).
 
 %%------------------------------------------------------------------------
 :- pred tcl_new(-TclInterpreter) :: tclInterpreter # "Creates a new
-   interpreter, initializes it, and returns a reference to it in
+   interpreter, initializes it, and returns a handle to it in
    @var{TclInterpreter}.".
 %%------------------------------------------------------------------------
 
@@ -69,7 +89,9 @@ tcl_new(I) :-
         tcltk_low_level:new_interp(I).
 
 %%------------------------------------------------------------------------
-:- pred tcl_delete(+TclInterpreter) :: tclInterpreter # "Given a handle to a Tcl interpreter in variable @var{TclInterpreter}, it deletes the interpreter from the system.".
+:- pred tcl_delete(+TclInterpreter) :: tclInterpreter # "Given a
+   handle to a Tcl interpreter in variable @var{TclInterpreter}, it
+   deletes the interpreter from the system.".
 %%------------------------------------------------------------------------
 
 tcl_delete(I) :-
@@ -80,13 +102,13 @@ tcl_delete(I) :-
 
         :: tclInterpreter * tclCommand * string
 
-        # "Evaluates the commands given in variable @var{Command} in the Tcl 
-          interpreter in variable @var{TclInterpreter}. The result will be stored 
-          as a string 
-          in @var{Result}. If there is an error in the @em{Command} an exception
-          is raised. The error messages will be @em{Tcl Exception: } if the error
-          is in the syntax of the tcltk code or @em{Prolog Exception: }, if the 
-          error is in the prolog term.".
+        # "Evaluates the commands given in @var{Command} in the Tcl
+          interpreter @var{TclInterpreter}. The result will be stored
+          as a string in @var{Result}. If there is an error in
+          @em{Command} an exception is raised. The error messages will
+          be @em{Tcl Exception:} if the error is in the syntax of the
+          tcltk code or @em{Prolog Exception:}, if the error is in the
+          prolog term.".
 %%------------------------------------------------------------------------
 %:- export(tcl_eval_result/1).
 
@@ -116,38 +138,41 @@ tcl_eval(I,Command,Result) :-
 
 %%------------------------------------------------------------------------
 %:- pred tcl_event(+TclInterpreter,+Command,-Events)
-
+%
 %       :: tclInterpreter * tclCommand * list
-
-%        # "Do the receive non blocking of the event and terms will be stored from Tcl by the @em{prolog_event} command as a list of terms in @em{Events}.".
+%
+%        # "Do the receive non blocking of the event and terms will be 
+%           stored from Tcl by the @em{prolog_event} command as a list 
+%           of terms in @em{Events}.". 
 %%------------------------------------------------------------------------
-
+%
 %tcl_event(I, _Command, EventList):-
 %       tcltk_low_level:receive_event(EventList,I).
-
+%
 %%------------------------------------------------------------------------
 :- pred tcl_event(+TclInterpreter,+Command,-Events)
 
         :: tclInterpreter * tclCommand * list
 
-        # "Evaluates the commands given in @var{Command} in Tcl interpreter handle
-          provided in @var{TclInterpreter}. @var{Events} is a list of terms stored 
-          from Tcl by the @em{prolog_event}. Blocks until there is something on the
-          event queue".
+        # "Evaluates the commands given in @var{Command} in the Tcl
+          interpreter whose handle is provided in
+          @var{TclInterpreter}. @var{Events} is a list of terms stored
+          from Tcl by @em{prolog_event}. Blocks until there is
+          something on the event queue".
 %%------------------------------------------------------------------------
 
 %tcl_event(I,[],EventList):-
-%       display('En el tcl_event1'),nl,
+%       display('In tcl_event1'),nl,
 %       tcltk_low_level:tcltk_raw_code("prolog_list_events ",I),
 %       tcltk_low_level:receive_list(EventList,I),
-%       display('En el fin tcl_event'),nl.
+%       display('In end of tcl_event'),nl.
 
 tcl_event(I,Command,EventList):-
-%       display('En el tcl_event1'),nl,
+%       display('In tcl_event1'),nl,
         tcltk_low_level:tcltk(Command,I),
         tcltk_low_level:tcltk_raw_code("prolog_list_events ",I),
         tcltk_low_level:receive_list(EventList,I).
-%       display('En el fin tcl_event'),nl.
+%       display('In end of tcl_event'),nl.
 
 %tcl_event(I,Command,EventList):-
 %       tcl_eval(I,Command,_),
@@ -156,7 +181,8 @@ tcl_event(I,Command,EventList):-
 
 %%------------------------------------------------------------------------
 :- comment(tclInterpreter/1,"
-        To use Tcl, you must create a @em{Tcl interpreter} object and send commands to it.").
+        To use Tcl, you must create a @em{Tcl interpreter} object and send 
+        commands to it."). 
 
 :- comment(tclCommand/1,"
         A @em{Tcl} command is specified as follows:
@@ -179,33 +205,33 @@ where:
 
 @begin{description}
 
-@item{Atom}
+@item{@tt{Atom}} denotes the printed representation of the atom.
 
-@item{Number} denote their printed representations.
+@item{@tt{Number}} denotes their printed representations.
 
-@item{chars(PrologString)} denotes the string represented by
+@item{@tt{chars(PrologString)}} denotes the string represented by
      @em{PrologString} (a list of character codes).
 
-@item{write(Term)} denotes the string that is printed by the corresponding 
-     built-in pridicate.
+@item{@tt{write(Term)}} denotes the string that is printed by the
+     corresponding built-in predicate.
 
-@item{format(Term)} denotes the string that is printed by the corresponding 
-     built-in pridicate.
+@item{@tt{format(Term)}} denotes the string that is printed by the
+     corresponding built-in predicate.
 
-@item{dq(Command)} denotes the string specified by 
-     @em{Command}, enclosed in double quotes.
+@item{@tt{dq(Command)}} denotes the string specified by @em{Command},
+     enclosed in double quotes.
 
-@item{br(Command)} denotes the string specified by 
-     @em{Command}, enclosed in braces.
+@item{@tt{br(Command)}} denotes the string specified by @em{Command},
+     enclosed in braces.
 
-@item{sqb(Command)} denotes the string specified by 
-     @em{Command}, enclosed in square brackets.
+@item{@tt{sqb(Command)}} denotes the string specified by @em{Command},
+     enclosed in square brackets.
 
-@item{min(Command)} denotes the string specified by 
-     @em{Command}, immediately preceded by a hyphen.
+@item{@tt{min(Command)}} denotes the string specified by @em{Command},
+     immediately preceded by a hyphen.
 
-@item{ListOfCommands} denotes the strings denoted by each element, separated 
-     by spaces. 
+@item{@tt{ListOfCommands}} denotes the strings denoted by each element,
+     separated by spaces.
 
 @end{description}
 
@@ -223,15 +249,24 @@ tclCommand(_).
 
         :: list * tclInterpreter
 
-        # "Performs basic Tcl and Tk initialization and creates the main window of a Tk application.@var{Options} is a list of optional elements according to :
+        # "Performs basic Tcl and Tk initialization and creates the
+          main window of a Tk application.@var{Options} is a list of
+          optional elements according to:
 
 @begin{description}
 
-@item{name(+ApplicationName)} Sets the Tk main window title @var{ApplicationName}. It is also used for communicating between Tcl/Tk applications via Tcl @em{send} command. Default name is an empty string.
+@item{@tt{name(+ApplicationName)}} Sets the Tk main window title to
+@var{ApplicationName}. It is also used for communicating between
+Tcl/Tk applications via the Tcl @em{send} command. Default name is an
+empty string.
 
-@item{display(+Display)} Gives the name of the screen on which to create the main window. Default is normally determined by the DISPLAY environment variable.
+@item{@tt{display(+Display)}} Gives the name of the screen on which to
+create the main window. Default is normally determined by the
+@tt{DISPLAY} environment variable.
 
-@item{file} Opens the sript file. Commands will not be read from standard input and the execution returns back to Prolog only after all windows (and the interpreter) have been deleted.
+@item{@tt{file}} Opens the sript @tt{file}. Commands will not be read
+from standard input and the execution returns back to Prolog only
+after all windows (and the interpreter) have been deleted.
 
 @end{description}
 
@@ -270,7 +305,7 @@ tk_option(display(Display),App0,App,_,Disp,File0,File):-
         Disp=Display,
         File=File0.
 
-% Hay que poner en la segunda condicion del if que si no hay display
+% Need to put in the second condition of the if case no display
 tk_new(Interp,Appname,Display,File):-
         (nonvar(Appname)->atom_concat(' -name ',Appname,Str1);
             atom_concat(' ',' ',Str1)),
@@ -284,14 +319,15 @@ tk_new(Interp,Appname,Display,File):-
         tcltk_low_level:new_interp(Interp,Options).
 
 %%------------------------------------------------------------------------
-:- pred tk_event_loop(+TclInterpreter) :: tclInterpreter # "Waits for
-an event and executes the goal associated to it. Events are stored from Tcl with the 
-@em{prolog} command. The unified term is
-sent to the Tcl interpreter in order to obtain the value of the tcl
-array of @em{prolog_variables}.  If the term received does not have
-the form @tt{execute(Goal)}, the predicate silently exists.  If the
-execution of @var{Goal} raises a Prolog error, the interpreter is
-deleted and an error message is given.".
+:- pred tk_event_loop(+TclInterpreter) :: tclInterpreter 
+
+# "Waits for an event and executes the goal associated to it. Events
+   are stored from Tcl with the @em{prolog} command. The unified term
+   is sent to the Tcl interpreter in order to obtain the value of the
+   tcl array of @em{prolog_variables}.  If the term received does not
+   have the form @tt{execute(Goal)}, the predicate silently exits.  If
+   the execution of @var{Goal} raises a Prolog error, the interpreter
+   is deleted and an error message is given.".
 
 %%------------------------------------------------------------------------
 
@@ -366,11 +402,11 @@ do_call(Goal,FromModule) :-
 :- pred tk_next_event(+TclInterpreter,-Event) 
         
         :: tclInterpreter * string 
-        
-        # "Processes events until there is at least one Prolog event associated
-          with @var{TclInterpreter}. @var{Event} is the term correspondig to the 
-          head of a queue of events stored from Tcl with the @em{prolog_event}
-          command.".
+
+# "Processes events until there is at least one Prolog event
+   associated with @var{TclInterpreter}. @var{Event} is the term
+   correspondig to the head of a queue of events stored from Tcl with
+   the @em{prolog_event} command.".
 %%------------------------------------------------------------------------
 
 tk_next_event(X,Event) :-
@@ -383,17 +419,17 @@ tk_next_event(X,Event) :-
         tcltk_low_level:tcltk_raw_code("prolog_delete_event ",X),
         tcltk_low_level:receive_confirm(_,X).
         
-%       display('En tk_next_event'),nl,
+%       display('In tk_next_event'),nl,
 %       tcl_event(X,[],[Event1|_]),
 %       ( Event1 = end_of_event_list -> tk_next_event(X,_)
 %         ; 
 %       Event = Event1,
-%%      display('Despues tcl_event '),display(Event),nl,
+%%      display('After tcl_event '),display(Event),nl,
 %       tcltk_low_level:tcltk_raw_code("prolog_delete_event ",X),
 %%      tcltk_low_level:delete_item_queue(X),
-%%      display('Despues prolog_delete '),display(Event),nl,
+%%      display('After prolog_delete '),display(Event),nl,
 %       tcltk_low_level:receive_confirm(_,X),display(Event),nl).
-%%      display('En el fin tk'),nl.
+%%      display('In end of tk'),nl.
 %%      tcltk_low_level:tcltk_raw_code("prolog_delete_event ",X).
 
 tk_next_event(_,_).
@@ -418,6 +454,10 @@ tk_loop(X,FromModule):-
 
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+123,2001/09/02,14:13*25+'CEST'), "Improved
+   documentation, still needs at least adding examples.  (Manuel
+   Hermenegildo)").
 
 :- comment(version(1*5+16,1999/12/14,17:12*49+'MET'), "Fixed minor bug
    in documentation.  (Manuel Hermenegildo)").

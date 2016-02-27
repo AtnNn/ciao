@@ -1,5 +1,5 @@
 :- use_module(library('persdb_mysql/persdbrt_mysql')).
-:- load_compilation_module(library('persdb_mysql/persdbtr_sql')).
+:- load_compilation_module(library('persdb_sql_common/persdbtr_sql')).
 :- add_sentence_trans(sql_persistent_tr/2).
 
 :- include(library(assertions)).

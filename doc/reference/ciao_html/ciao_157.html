@@ -1,45 +1,43 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Random numbers</TITLE>
+<TITLE>The Ciao Prolog System               - Labeled graph-processing utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC621" HREF="ciao_toc.html#TOC621">Random numbers</A></H1>
+<H1><A NAME="SEC621" HREF="ciao_toc.html#TOC621">Labeled graph-processing utilities</A></H1>
 <P>
-<A NAME="IDX6633"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX6619"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#35 (2000/12/28, 18:20:50 CET)
+<STRONG>Author(s):</STRONG> F. Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#150 (2000/5/24, 20:0:38 CEST)
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
 
 
 <P>
-This module provides predicates for generating pseudo-random numbers
+See the comments for the 
+<A NAME="IDX6620"></A>
+<CODE>ugraphs</CODE> library.
 
 
 
 <UL>
-<LI><A HREF="ciao_157.html#SEC622">Usage and interface (random)</A>
-<LI><A HREF="ciao_157.html#SEC623">Documentation on exports (random)</A>
+<LI><A HREF="ciao_157.html#SEC622">Usage and interface (lgraphs)</A>
+<LI><A HREF="ciao_157.html#SEC623">Documentation on exports (lgraphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC622" HREF="ciao_toc.html#TOC622">Usage and interface (<CODE>random</CODE>)</A></H2>
+<H2><A NAME="SEC622" HREF="ciao_toc.html#TOC622">Usage and interface (<CODE>lgraphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +45,7 @@ This module provides predicates for generating pseudo-random numbers
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(random)).</CODE>
+<CODE>:- use_module(library(lgraphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,12 +54,27 @@ This module provides predicates for generating pseudo-random numbers
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6634"></A>
-<CODE>random/1</CODE>, 
-<A NAME="IDX6635"></A>
-<CODE>random/3</CODE>, 
-<A NAME="IDX6636"></A>
-<CODE>srandom/1</CODE>.
+<A NAME="IDX6621"></A>
+<CODE>vertices_edges_to_lgraph/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6622"></A>
+<CODE>lgraph/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6623"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX6624"></A>
+<CODE>sets</CODE>.
 
 </UL>
 
@@ -71,70 +84,40 @@ This module provides predicates for generating pseudo-random numbers
 
 
 
-<H2><A NAME="SEC623" HREF="ciao_toc.html#TOC623">Documentation on exports (<CODE>random</CODE>)</A></H2>
+<H2><A NAME="SEC623" HREF="ciao_toc.html#TOC623">Documentation on exports (<CODE>lgraphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX6637"></A>
-<A NAME="IDX6638"></A>
+<A NAME="IDX6625"></A>
+<A NAME="IDX6626"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>random/1:</B>
-<DD><A NAME="IDX6639"></A>
+<DT><span class="define">REGTYPE:</span> <B>lgraph/2:</B>
+<DD><A NAME="IDX6627"></A>
 
 
 <P>
-<CODE>random(Number)</CODE>
-
-
-<P>
-<CODE>Number</CODE> is a (pseudo-) random number in the range [0.0,1.0]
-
-
-</DL>
-
-<P>
-<A NAME="IDX6640"></A>
-<A NAME="IDX6641"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random/3:</B>
-<DD><A NAME="IDX6642"></A>
-
-
-<P>
-<CODE>random(Low,Up,Number)</CODE>
-
-
-<P>
-<CODE>Number</CODE> is a (pseudo-) random number in the range [<CODE>Low</CODE>, <CODE>Up</CODE>]
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>random(+int,+int,-int)</CODE>
+<STRONG>Usage:</STRONG> <CODE>lgraph(Graph,Type)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>Low</CODE> and <CODE>Up</CODE> are integers, <CODE>Number</CODE> is an integer.
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a labeled graph of <CODE>Type</CODE> terms.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6643"></A>
-<A NAME="IDX6644"></A>
+<A NAME="IDX6628"></A>
+<A NAME="IDX6629"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>srandom/1:</B>
-<DD><A NAME="IDX6645"></A>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_lgraph/3:</B>
+<DD><A NAME="IDX6630"></A>
 
 
 <P>
-<CODE>srandom(Seed)</CODE>
-
-
-<P>
-Changes the sequence of pseudo-random numbers according to <CODE>Seed</CODE>. The stating sequence of numbers generated can be duplicated by calling the predicate with <CODE>Seed</CODE> unbound (the sequence depends on the OS).
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

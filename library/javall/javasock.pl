@@ -6,7 +6,8 @@
 	java_response/2,
 	prolog_query/2,
 	prolog_response/2,
-	java_stream/3
+	java_stream/3,
+	java_debug/1
 	],
 	[assertions,regtypes,isomodes]).
 
@@ -86,12 +87,6 @@ machine_name(X) :- atm(X).
 :- concurrent prolog_response/2.
 
 %% -----------------------------------------------------------------------
-:- pred terminated(flag)
-	:: atm # "Data predicate to indicate that the interface is over.".
-%% -----------------------------------------------------------------------
-:- concurrent terminated/1.
-
-%% -----------------------------------------------------------------------
 :- pred start_socket_interface(+Address) 
 	:: term
         # "Given an address in format 'node:port', creates the sockets
@@ -115,12 +110,10 @@ start_socket_interface(Node:SocketId):-
         connection terminate.".
 %% -----------------------------------------------------------------------
 stop_socket_interface :-
+	assertz_fact(java_query(0,'$terminate')),
+	assertz_fact(prolog_response(0,'$terminate')),
+	join_socket_interface,
 	retract_fact(java_threads(PjIn,PjOut,JpIn,JpOut,PlServer)),
-	eng_wait(PjIn),
-	eng_wait(PjOut),
-	eng_wait(JpIn),
-	eng_wait(JpOut),
-	eng_wait(PlServer),
 	eng_release(PjIn),
 	eng_release(PjOut),
 	eng_release(JpIn),
@@ -133,7 +126,6 @@ stop_socket_interface :-
 	retractall_fact(java_response(_,_)),
 	retractall_fact(prolog_query(_,_)),
 	retractall_fact(prolog_response(_,_)),
-	assertz_fact(terminated(on)),
 	!.
 
 %% -----------------------------------------------------------------------
@@ -141,8 +133,15 @@ stop_socket_interface :-
         connection terminate.".
 %% -----------------------------------------------------------------------
 join_socket_interface:-
-	retract_fact(terminated(_)),
+	java_threads(PjIn,PjOut,JpIn,JpOut,PlServer),
+	eng_wait(PjIn),
+	eng_wait(PjOut),
+	eng_wait(JpIn),
+	eng_wait(JpOut),
+	eng_wait(PlServer),
 	!.
+
+join_socket_interface.
 
 %% -----------------------------------------------------------------------
 :- pred pj_socket_reader/0 # "Predicate that runs in a separate thread
@@ -152,7 +151,7 @@ join_socket_interface:-
 pj_socket_reader :-
 	repeat,
 	  java_fast_read(pj,pj(Id,R)),
-	  debug('pj_socket_reader: pj'(Id,R)),
+	  java_debug('pj_socket_reader: pj'(Id,R)),
 	  (termination_check(Id,R) -> 
 	   assertz_fact(java_query(Id,R)),
 	   true
@@ -169,7 +168,7 @@ pj_socket_reader :-
 %% -----------------------------------------------------------------------
 pj_socket_writer :-
 	retract_fact(java_query(Id,Q)),
-	debug('pj_socket_writer: pj'(Id,Q)),
+	java_debug('pj_socket_writer: pj'(Id,Q)),
 	java_fast_write(pj,pj(Id,Q)),
 	(termination_check(Id,Q) -> 
 	 true
@@ -190,7 +189,7 @@ pj_socket_writer :-
 jp_socket_reader :-
         repeat,
           java_fast_read(jp,jp(Id,Q)),
-	  debug('jp_socket_reader: jp'(Id,Q)),
+	  java_debug('jp_socket_reader: jp'(Id,Q)),
 	  (termination_check(Id,Q) -> 
 	   assertz_fact(prolog_query(0,Q)),
 	   assertz_fact(prolog_response(0,Q))
@@ -207,7 +206,7 @@ jp_socket_reader :-
 %% -----------------------------------------------------------------------
 jp_socket_writer :-
 	retract_fact(prolog_response(Id,R)),
-	debug('jp_socket_writer:jp'(Id,R)),
+	java_debug('jp_socket_writer:jp'(Id,R)),
 	java_fast_write(jp,jp(Id,R)),
 	(termination_check(Id,R) -> 
 	 true
@@ -325,12 +324,14 @@ java_fast_read0(Stream,T) :-
 % Comment/uncomment next line to set debugging off/on.
 %debugging.
 
-debug(T) :-
+java_debug(T) :-
 	debugging,
-	display(T),nl,
+	open('javasock.log',append,S),
+	display(S,T),nl(S),
+	close(S),
 	!.
 
-debug(_) :- !.
+java_debug(_) :- !.
 
 
 %%------------------------------------------------------------------------

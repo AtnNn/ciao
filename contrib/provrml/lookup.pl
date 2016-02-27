@@ -150,8 +150,8 @@ lookup_check_node(_In,NodeTypeId) -->
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- pred lookup_check_interface_fieldValue(+ParseIn,-ParseOut,+AccessType,
-                                          +FieldType,+Id,+FieldValue)
-:: parse * parse * atm * atm * term * atm * term
+                                          +FieldType,+Id,+FieldValue,DCGIn,DCGOut)
+:: parse * parse * atm * atm * term * atm * term * string * string
  # "The predicate formats the output for the interface part of the prototype.
     It also checks the values for the fields.".
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

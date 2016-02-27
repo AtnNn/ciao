@@ -17,7 +17,7 @@
 
 :- comment(module, "This library provides predicates to support reading /
 	writing of terms on a format designed to be handled on read faster
-	than standart representation.").
+	than standard representation.").
 
 :- comment(fast_read(Term), "The next term is read from current standard
 	input and is unified with @var{Term}. The syntax of the term must

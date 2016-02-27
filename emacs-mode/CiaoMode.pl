@@ -40,6 +40,23 @@ main.
 
 :- comment(version_maintenance,dir('../version/')).
 
+:- comment(version(1*7+122,2001/08/30,20:49*07+'CEST'), "The commands
+   available in the interactive buffers (used by toplevel,
+   preprocessor, etc.) are now documented in order to help users not
+   very familiar with interactive buffers in emacs get
+   started. (Manuel Hermenegildo)").
+
+:- comment(version(1*7+121,2001/08/30,17:43*34+'CEST'), "Context help
+   now works in Ciao/CiaoPP/LPdoc toplevel interactive buffers in
+   emacs without needing to set the mode explicitly.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*7+120,2001/08/28,18:08*13+'CEST'), "Minor
+   corrections and improvements to documentation of emacs mode and
+   debugger. Also fixed dependency code so that emacs mode
+   documentation is always regenerated if the source file changes.
+   (Manuel Hermenegildo)").
+
 :- comment(version(1*7+92,2001/04/23,18:40*54+'CEST'), "Fixed bug which
    caused errors with short module names.  (Daniel Cabeza
    Gras)").

@@ -343,6 +343,7 @@ hexa_digit(1, D) :- D =< 0'f.
 %   <base> ' <base-digits>                      integer in other base (2..36)
 %   <digits> . <digits>                         float
 %   <digits> . <digits> (e|E) (-|+| ) <digits>  float with exponent
+%   0.Nan                                       Not-a-number value
 %   0 ' <character>                             ascii code of the character
 %   0 b <bin-digits>                            binary integer
 %   0 o <oct-digits>                            octal integer
@@ -396,6 +397,9 @@ read_digits(Typ, Ch, [], S0, N, Dict, Tokens) :-
 read_after_period(3, D, [0'.,D|S], S0, N, Dict, Tokens) :- !,
         getct(Ch, Typ),
         read_after_float(Typ, Ch, S, S0, N, Dict, Tokens).
+read_after_period(2, 0'N, [], "0", Nan, Dict, Tokens) :- !,
+        getct(Ch, Typ),
+        read_after_dot_N(Ch, Typ, Nan, Dict, Tokens).
 read_after_period(Typ, Ch, [], S0, N, Dict, Tokens) :-
         number_codes(N, S0),
         read_fullstop(Typ, Ch, Dict, Tokens).
@@ -461,6 +465,27 @@ token_start_e_sign(0'E, Sign, Typ, Ch, Dict, [var(Var,[0'E])|Tokens]) :-
 token_start_sign(Sign, Typ, Ch, Dict, [Atom|Tokens]) :- 
         read_symbol(Typ, Ch, Chars, NextCh, NextTyp),
         atom_token([Sign|Chars], Atom),
+        read_tokens(NextTyp, NextCh, Dict, Tokens).
+
+read_after_dot_N(0'a, 1, Nan, Dict, Tokens) :- !,
+        getct(Ch, Typ),
+        read_after_dot_Na(Ch, Typ, Nan, Dict, Tokens).
+read_after_dot_N(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
+        S = [0'N|S0],
+        read_name(Typ, Ch, S0, NextCh, NextTyp),
+        dic_lookup(Dict, S, Node),
+        check_singleton(Node, Var),
+        read_tokens(NextTyp, NextCh, Dict, Tokens).
+
+read_after_dot_Na(0'n, 1, Nan, Dict, Tokens) :- !,
+        Nan is 0/0, /* Provisional */
+        getct(Ch, Typ),
+        read_tokens(Typ, Ch, Dict, Tokens).
+read_after_dot_Na(Ch, Typ, 0, Dict, [atom(.),var(Var,S)|Tokens]) :-
+        S = [0'N,0'a|S0],
+        read_name(Typ, Ch, S0, NextCh, NextTyp),
+        dic_lookup(Dict, S, Node),
+        check_singleton(Node, Var),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 
 read_based_int(Base, S, EndTyp, EndCh) :-

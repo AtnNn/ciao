@@ -9,12 +9,12 @@ import java.util.*;
  * Starts and handles a connection to a Prolog process via sockets.
  * The PLConnection can be used in two ways, using the
  * <code>CiaoJava</code> interface as a Java
- * object server (using {@link CiaoJava.PLConnection#PLConnection()}),
+ * object server (using {@link #PLConnection()}),
  * or as a connection to a Prolog query server 
  * (using {@link CiaoJava.PLConnection#PLConnection(java.lang.String)}).
  * Working with a Prolog server using the Java side as a
  * client, the Prolog goals can be launched using 
- * {@link CiaoJava.PLConnection#query(CiaoJava.PLTerm)}
+ * {@link #query(CiaoJava.PLTerm)}
  * method with a <code>PLTerm</code> object representing a goal
  * (<code>PLAtoms</code> and <code>PLStructures</code>)
  * or creating and using {@link CiaoJava.PLGoal} objects.
@@ -60,6 +60,24 @@ public class PLConnection {
     public PLConnection() throws PLException, IOException {
 	ss = new ServerSocket(0);
 	start();
+	previousConnection = this;
+    }
+
+    /**
+     * Creates a new <code>PLConnection</code> object that executes the
+     * Prolog server, and starts it.
+     *
+     * @param    where     The command-line to start the Prolog process.
+     *                     This constructor forces that the connection be
+     *                     established to the newly created Prolog
+     *                     process, instead of waiting for any Prolog
+     *                     client that wants to connect to it.
+     *                     This constructor allows an array of strings
+     *                     for command-line arguments.
+     */
+    public PLConnection(String[] where) throws PLException, IOException {
+	ss = new ServerSocket(0);
+	start(where);
 	previousConnection = this;
     }
 
@@ -127,6 +145,35 @@ public class PLConnection {
     }
 
     /**
+     * Starts a PLConnection to use the Java/Prolog
+     * bidirectional interface. Starts the Prolog server
+     * process and connects to it creating the sockets, and
+     * starts the internal threads needed for interface communication.
+     *
+     * @param where command used to start the Prolog server process,
+     *              including optional arguments.
+     *
+     * @exception IOException if there are I/O problems.
+     * @exception PLException if there are problems regarding the Prolog
+     *                        process.
+     */
+    private void start(String[] where) throws IOException, PLException {
+	Runtime rt = Runtime.getRuntime();
+
+	plProc = rt.exec(where);
+	OutputStream pipeOut = plProc.getOutputStream();
+	PrintStream out = new PrintStream(pipeOut);
+	plInterpreter = new PLInterpreter(this);
+
+	// port number output.
+	int port = ss.getLocalPort();
+	out.println(port + ".");
+	out.flush();
+
+	createSockets(out);
+    }
+
+    /**
      * Starts the PLConnection for the Prolog-to-Java
      * interface: waits for a Prolog connection.
      *
@@ -172,8 +219,8 @@ public class PLConnection {
 
 	// Creating handler threads for
 	// Prolog-to-Java communication.
-	pjReader = new PLSocketReader(pjIn);
 	pjWriter = new PLSocketWriter(pjOut);
+	pjReader = new PLSocketReader(pjIn, pjWriter);
 
 	// Synchronizing prolog-to-java socket.
 	PLTerm pjSync = fromPrologPJ();
@@ -194,8 +241,8 @@ public class PLConnection {
 
 	// Creating handler threads for
 	// Java-to-Prolog communication.
-	jpReader = new PLMultithreadSocketReader(jpIn);
 	jpWriter = new PLSocketWriter(jpOut);
+	jpReader = new PLMultithreadSocketReader(jpIn,jpWriter);
 
 	// Synchronizing java-to-prolog socket.
 	PLTerm jpSync = fromPrologJP(ID_INTERFACE);
@@ -324,13 +371,20 @@ public class PLConnection {
 
 	toPrologJP(ID_INTERFACE,PLTerm.terminate);
 	toPrologPJ(ID_INTERFACE,PLTerm.terminate);
-	jpReader.join();
-	jpWriter.join();
-	pjReader.join();
-	pjWriter.join();
+	join();
 	// We don't need to wait for jServer's death.
 
 	Thread.sleep(1000,0);
+	closeSocketStreams();
+    }
+
+    /**
+     * Closes interface sockets and related streams.
+     *
+     * @exception IOException if the socket stream has been broken.
+     */
+    protected void closeSocketStreams() throws InterruptedException, 
+                                               IOException { 
 	pjIn.close();
 	pjOut.close();
 	jpIn.close();
@@ -338,6 +392,7 @@ public class PLConnection {
 
 	pjSocket.close();
 	jpSocket.close();
+
     }
 
     /**
@@ -345,11 +400,19 @@ public class PLConnection {
      */
     public void join() throws InterruptedException {
 
+	joinSocketHandlers();
+	jServer.join();
+    }
+
+    /**
+     * Waits until socket handling threads terminate.
+     */
+    protected void joinSocketHandlers() throws InterruptedException {
+
 	jpReader.join();
 	jpWriter.join();
 	pjReader.join();
 	pjWriter.join();
-	jServer.join();
     }
 
     /**

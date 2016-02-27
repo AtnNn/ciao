@@ -1,11 +1,19 @@
 
 :- module(rtchecks_sys,
-	[ calls/2,
+	[ 
+	  true/1,
+	  checked/1,
+	  trust/1,
+	  false/1,
 	  check/1,
 	  check/2,
+	  check_succ/2,
+	  check_pred/2,
 	  check_comp/2,
-	  prec/3,
-	  postc/2
+ 	  calls/2,
+ 	  prec/3,
+ 	  c_prec/3,
+ 	  postc/2
 	],
 	[
 	]).
@@ -14,7 +22,8 @@
 :- use_module(library(write), [ write/1 ]).
 
 :- include(library('rtchecks/rtchecks_sys_indep')).
-:- include(library('rtchecks/rtchecks_sys_dep_new')).
+:- include(library('rtchecks/rtchecks_sys_indep_pred')).
+:- include(library('rtchecks/rtchecks_sys_dep')).
 
 %% :- meta_predicate calls(goal,goal).
 %% :- meta_predicate check(goal).

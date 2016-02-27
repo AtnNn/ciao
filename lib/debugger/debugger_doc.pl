@@ -190,9 +190,9 @@ the debugger (i.e., use debug mode, and in a clause add the predicate
 The nodebug mode allows keeping the spy-points and breakpoints in the code
 instead of removing them from the code.
 
-Note that in order to use the @concept{embedded debugger} the buffer where
-the program will run must be in the Ciao inferior mode (
-@tt{M-x ciao-inferior-mode}).
+Note that in order to use the @concept{embedded debugger} the buffer
+where the program will run must be in the Ciao inferior mode
+(@key{M-x} @tt{ciao-inferior-mode}).
 
 See the following example:
 @begin{verbatim}

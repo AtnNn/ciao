@@ -111,11 +111,14 @@ zero length. Empty Ciao Prolog lists are converted into @tt{NULL}.
 The type @regtype{byte_list/1} requires an additional property,
 @prop{size_of/3}, to indicate which argument represents its size.
 
-Most of the work is performed by the predicates in the @ref{Foreign
-Language Interface Builder}, which can be called explicitly by the
-user.  Doing that is not usually needed, since the Ciao Prolog
-Compiler takes care of building glue code files an of compiling and
-linking whichever is necessary.
+Most of the work is performed by the predicates in the 
+@comment{@ref{Foreign Language Interface Builder}
+         Turned this to @em since this file is not in the documentation and 
+         thus the  cross-reference fails}
+@em{Foreign Language Interface Builder}, which can be called
+explicitly by the user.  Doing that is not usually needed, since the
+Ciao Prolog Compiler takes care of building glue code files an of
+compiling and linking whatever is necessary.
 
 
 @section{Equivalence between Ciao Prolog and C modes}

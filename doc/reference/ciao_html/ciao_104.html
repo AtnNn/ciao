@@ -1,472 +1,350 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Compile-time usage of objects</TITLE>
+<TITLE>The Ciao Prolog System               - Object oriented programming</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC420" HREF="ciao_toc.html#TOC420">Compile-time usage of objects</A></H1>
-<P>
-<A NAME="IDX4495"></A>
-
+<H1><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Object oriented programming</A></H1>
 
 <P>
 <STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#34 (2000/12/23, 16:42:52 CET)
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#32 (2000/11/14, 13:13:15 CET)
+<STRONG>Version of last change:</STRONG> 1.3#63 (1999/9/29, 19:54:17 MEST)
 
 
 <P>
-This package is required to enable user code to create objects and manipulate them, as well as loading any needed class. 
+O'Ciao is a set of libraries which allows object-oriented programming in Ciao Prolog. It extends the Ciao Prolog module system by introducing two new concepts: 
 
 
 
 <UL>
-<LI><A HREF="ciao_104.html#SEC421">Usage and interface (objects)</A>
-<LI><A HREF="ciao_104.html#SEC422">Documentation on new declarations (objects)</A>
-<LI><A HREF="ciao_104.html#SEC423">Other information (objects)</A>
+<LI>Inheritance.
+
+<LI>Instantiation.
+
+</UL>
+
+<P>
+<A NAME="IDX4385"></A>
+<A NAME="IDX4386"></A>
+<EM>Polymorphism</EM> is the third fundamental concept provided by object oriented programming. This concept is not mentioned here since <STRONG>traditional PROLOG systems are polymorphic by nature</STRONG>. 
+
+
+<P>
+Classes are declared in the same way as modules. However, they may be enriched with inheritance declarations and other object-oriented constructs. For an overview of the fundamentals of O'Ciao, see <A HREF="http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz">http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz</A>. However, we will introduce the concepts in a tutorial way via examples. 
+
+
+
+<UL>
+<LI><A HREF="ciao_104.html#SEC417">Early examples</A>
+<LI><A HREF="ciao_104.html#SEC418">Recommendations on when to use objects</A>
+<LI><A HREF="ciao_104.html#SEC419">Limitations on object usage</A>
 </UL>
 
 
 
-<H2><A NAME="SEC421" HREF="ciao_toc.html#TOC421">Usage and interface (<CODE>objects</CODE>)</A></H2>
+<H2><A NAME="SEC417" HREF="ciao_toc.html#TOC417">Early examples</A></H2>
 
-<div class="cartouche">
+<P>
+The following one is a very simple example which declares a class -- a simple stack. Note that if you replace <EM>class/1</EM> declaration with a <EM>module/1</EM> declaration, it will compile correctly, and can be used as a normal Prolog module. 
 
-<UL>
 
-<LI><STRONG>Library usage:</STRONG>
-
-Any code which needs to use objects must include the objects package: 
 
 <PRE>
-    :- module(<EM>ModuleName</EM>,<EM>Exports</EM>,[objects]).
-</PRE>
+%%----------------------------------------------%%
+%% A class for stacks.                          %%
+%%----------------------------------------------%%
 
-You can use objects even if your code is a class. Note that declaring a class does not automatically enables the code to create instances. 
+%% Class declaration: the current source defines a class.
+:- class(stack,[],[]).
 
-<PRE>
-    :- class(<EM>ModuleName</EM>,[],[objects]).
-</PRE>
+% State declaration: storage/1 is an attribute.
+:- dynamic storage/1.
 
-This package enables both static and dynamic usage of objects. 
+% Interface declaration: the following predicates will
+% be available at run-time.
+:- export(push/1).
+:- export(pop/1).
+:- export(top/1).
+:- export(is_empty/0).
 
-<LI><STRONG>New declarations defined:</STRONG>
+% Methods
 
-<A NAME="IDX4496"></A>
-<CODE> use_class/1</CODE>, 
-<A NAME="IDX4497"></A>
-<CODE> instance_of/2</CODE>, 
-<A NAME="IDX4498"></A>
-<CODE> new/2</CODE>.
+push(Item) :-
+        nonvar(Item), 
+        asserta_fact(storage(Item)).
 
-<LI><STRONG>Other modules used:</STRONG>
+pop(Item) :-
+        var(Item),
+        retract_fact(storage(Item)).
 
+top(Top) :-
+        storage(Top), !.
 
-<UL>
+is_empty :-
+        storage(_), !, fail.
+is_empty.
 
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4499"></A>
-<CODE>objects/objects_rt</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC422" HREF="ciao_toc.html#TOC422">Documentation on new declarations (<CODE>objects</CODE>)</A></H2>
-<P>
-<A NAME="IDX4500"></A>
-<A NAME="IDX4501"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_class/1:</B>
-<DD><A NAME="IDX4502"></A>
-
-
-<P>
-It establishes an 
-<A NAME="IDX4503"></A>
-usage relationship between the given file (which is supposed to declare a class) and current source. Usage relationships are needed in order to enable code to create instances of the given class, and to make calls to instances derived from such class. 
-
-
-<P>
-Since an interface is some kind of class, they may be used within this declaration but only for semantic checking porpouses. Instances will not be derived from interfaces. 
-
-
-<P>
-use_class/1 is used in the same way as 
-<A NAME="IDX4504"></A>
-<CODE>use_module/1</CODE>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE> use_class(ClassSource)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Establish usage relationship with <CODE>ClassSource</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>ClassSource</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
- (<CODE>objects_rt:class_source/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4505"></A>
-<A NAME="IDX4506"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>instance_of/2:</B>
-<DD><A NAME="IDX4507"></A>
-
-
-<P>
-Statically declares an identifier to be an instance of a given class. 
-
-
-<P>
-It may be used as 
-<A NAME="IDX4508"></A>
-<CODE>new/2</CODE> predicate except for: 
-
-<UL>
-
-<LI>The instance identifier will not be a variable, it must be provided by the user, and must be unique.
-
-<LI>Instance creation will never fail, even if the constructor fails.
-
-</UL>
-
-<P>
-For every statically declared object the given constructor will be called at program startup. Those instances may be destroyed manually, but it is not recommended. 
-
-
-<P>
-When reloading the involved class from the Ciao toplevel shell. It may destroy statically declared instances, and create them again. 
-
-
-<P>
-Statically declared instances must be called using a specifically designed module-qualification: <CODE>ClassName(Object):Goal</CODE>. For example: 
-
-<PRE>
-    :- module(example,[main/0],[objects]).
-    :- use_class(library(counter)).
-    :- cnt instance_of counter(10).
-
-    main :-
-         counter(cnt):decrease(1),
-         counter(cnt):current_value(X),
-         display(X).
 </PRE>
 
 <P>
-But <STRONG>statically written code</STRONG> (only) is allowed to use module-style qualifications as a macro: 
+If we load this code at the Ciao toplevel shell: 
+
+
 
 <PRE>
-    main :-
-         cnt:decrease(1),
-         cnt:current_value(X),
-         display(X).
+        ?- use_package(objects).
+
+        yes
+        ?- use_class(library('class/examples/stack')).
+
+        yes
+        ?-
 </PRE>
 
 <P>
-Notice that dynamically expanded goals such as <CODE>X=cnt,X:decrease(1)</CODE> will not work, use <CODE>X=counter(cnt),X:decrease(1)</CODE> instead. 
+we can create two stack <EM>instances</EM> : 
+
+
+
+<PRE>
+        ?- St1 new stack,St2 new stack.
+
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? ,
+</PRE>
+
+<P>
+and then, we can operate on them separately: 
+
+
+
+<PRE>
+        1 ?- St1:push(8),St2:push(9).
+
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
+
+        yes
+        1 ?- St1:top(I),St2:top(K).
+
+        I = 8,
+        K = 9,
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
+
+        yes
+        1 ?-
+</PRE>
+
+<P>
+The interesting point is that there are two stacks. If the previous example had been a normal module, we would have a stack , but <STRONG>only one</STRONG> stack. 
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE> instance_of(Object,Constructor)</CODE>.
+The next example introduces the concepts of <EM>inheritable</EM> predicate, <EM>constructor</EM>, <EM>destructor</EM> and <EM>virtual method</EM>. Refer to the following sections for further explanation. 
+
+
+
+<PRE>
+%%----------------------------------------------%%
+%% A generic class for item storage.            %%
+%%----------------------------------------------%%
+:- class(generic).
+
+% Public interface declaration:
+:- export([set/1,get/1,callme/0]).
+
+% An attribute
+:- data datum/1.
+
+% Inheritance declaration: datum/1 will be available to 
+% descendant classes (if any).
+:- inheritable(datum/1).
+
+% Attribute initialization: attributes are easily initialized
+% by writing clauses for them.
+datum(none).
+
+% Methods
+
+set(X) :-
+        type_check(X),
+        set_fact(datum(X)).
+
+get(X) :-
+        datum(X).
+
+callme :-
+        a_virtual(IMPL),
+        display(IMPL),
+        display(' implementation of a_virtual/0 '),
+        nl.
+
+% Constructor: in this case, every time an instance
+% of this class is created, it will display a message.
+generic :-
+        display(' generic class constructor '),
+        nl.
+
+% Destructor: analogous to the previous constructor,
+% it will display a message every time an instance
+% of this class is eliminated.
+destructor :-
+        display(' generic class destructor '),
+        nl.
+
+% Predicates:
+% cannot be called as messages (X:method)
+
+% Virtual declaration: tells the system to use the most
+% descendant implementation of a_virtual/1 when calling
+% it from inside this code (see callme/0).
+% If there is no descendant implementation for it, 
+% the one defined bellow will be used.
+:- virtual a_virtual/1.
+
+a_virtual(generic).
+
+:- virtual type_check/1.
+
+type_check(X) :-
+        nonvar(X).
+
+</PRE>
+
+<P>
+And the following example, is an extension of previous class. This is performed by establishing an inheritance relationship: 
+
+
+
+<PRE>
+%%----------------------------------------------%%
+%% This class provides additional functionality %%
+%% to the "generic" class.                      %%
+%%----------------------------------------------%%
+:- class(specific).
+
+% Establish an inheritance relationship with class "generic".
+:- inherit_class(library('class/examples/generic')).
+
+% Override inherited datum/1.
+% datum/1 is said to be overriden because there are both an
+% inherited definition (from class "generic") and a local one,
+% which overrides the one inherited.
+:- data datum/1. 
+:- inheritable datum/1.
+
+% Extend the public interface inherited from "generic".
+% note that set/1 and a_virtual/0 are also overriden. 
+% undo/0 is a new functionality added.
+:- export([set/1,undo/0]).
+
+% Methods
+
+set(Value) :-
+        inherited datum(OldValue),
+        !,
+        inherited set(Value),
+        asserta_fact(datum(OldValue)).
+set(Value) :-
+        inherited set(Value).
+
+undo :-
+        retract_fact(datum(Last)), !,
+        asserta_fact(inherited(datum(Last))).
+undo :-
+        retractall_fact(inherited(datum(_))).
+
+% Constructor
+specific :-
+        generic,
+        retractall_fact(inherited(datum(_))),
+        display(' specific class constructor '),
+        nl.
+
+% Destructor
+destructor :-
+        display(' specific class destructor '),
+        nl.
+
+% Predicates
+
+% New implementation of a_virtual/1. 
+% Since this predicate was declared virtual, the
+% implementation below will be called from the inherited 
+% method callme/0 instead of the version defined at "generic".
+a_virtual(specific).
+
+</PRE>
+
+<P>
+<STRONG>Additional examples</STRONG> may be found on the <EM>library/class/examples</EM> directory relative to your Ciao Prolog instalation. 
+
+
+
+
+<H2><A NAME="SEC418" HREF="ciao_toc.html#TOC418">Recommendations on when to use objects</A></H2>
+
+<P>
+We would like to give some advice in the use of object oriented programming, in conjunction with the declarative paradigm. 
+
+
+<P>
+You should reconsider using O'Ciao in the following cases: 
+
+
 
 <UL>
-<LI><EM>Description:</EM> Declares <CODE>Object</CODE> to be an instance of the class denoted by <CODE>Constructor</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI>The pretended "objects" have no state,i.e., no data or dynamic predicates. In this case, a normal module will suffice.
 
-<CODE>Object</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
+<LI>There is state, but there will be only one instance of a pretended class. Again, a module suffices.
 
-<CODE>Constructor</CODE> is a term whose functor matches a class name.
- (<CODE>objects_rt:constructor/1</CODE>)
+<LI>The "objects" are data structures (list,trees,etc) already supported by Prolog. However, it does make sense to model, using objects, data structures whose change implies a side-effect such as drawing a particular window on the screen.
+
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX4509"></A>
-<A NAME="IDX4510"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>new/2:</B>
-<DD><A NAME="IDX4511"></A>
-
-
-<P>
-This declaration has the same effect as 
-<A NAME="IDX4512"></A>
-<CODE> instance_of/2</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE> new(Object,Constructor)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Just an alias for
-
-<A NAME="IDX4513"></A>
-<CODE> instance_of/2</CODE>. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Object</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Constructor</CODE> is a term whose functor matches a class name.
- (<CODE>objects_rt:constructor/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC423" HREF="ciao_toc.html#TOC423">Other information (<CODE>objects</CODE>)</A></H2>
-
-<P>
- Compile-time errors are restricted to some local analysis. Since there is no type declaration in the Prolog language, there is no posibility to determine whenever a given variable will hold an instance of any class. 
-
-
-<P>
-However, little semantic analysis is performed. User may aid to perform such an analysis by the usage of run time checks (which are also detected at compile time), or static declarations. For example: 
-
-
-<P>
-<CODE>clause(Obj) :- Obj:a_method(334).</CODE> 
-
-
-<P>
-O'Ciao may be not able to determine whenever a_method/1 is a valid method for instance Obj, unless some help is provided: 
-
-
-<P>
-<CODE>clause(Obj) :- Obj instance_of myclass,Obj:a_method(334).</CODE> 
-
-
-<P>
-In such case, O'Ciao will report any semantic error at compile-time. 
- 
-Most of the run-time errors are related to normal Ciao Prolog module system. Since objects are treated as normal Prolog modules at run time, there is no further documentation here about that stuff. 
- 
-
-
-
-<UL>
-<LI><A HREF="ciao_104.html#SEC424">Error reporting at compile time (objects)</A>
-<LI><A HREF="ciao_104.html#SEC425">Error reporting at run time (objects)</A>
-</UL>
-
-
-
-<H3><A NAME="SEC424" HREF="ciao_toc.html#TOC424">Error reporting at compile time (objects)</A></H3>
-<P>
- 
+We recommend the usage of O'Ciao in the following cases: 
 
 
 
 <UL>
 
-<LI><STRONG>ERROR : invalid instance identifier <EM>ID</EM>: must be an atom</STRONG>
+<LI>You feel you will need to have several copies of a "module".
 
-There is a 
-<A NAME="IDX4514"></A>
-<CODE>instance_of/2</CODE> or 
-<A NAME="IDX4515"></A>
-<CODE>new/2</CODE> declaration where first argument <EM>ID</EM> must be an unique atom, but currently it is not. Statically declared instances needs an identifier to be provided by the user. 
+<LI>Local copies of a module are needed instead of a global module beeing modified by several ones.
 
-<LI><STRONG>ERROR : instance identifier <EM>ID</EM> already in use</STRONG>
+<LI>The "classes" are a representation of external entities to Prolog. For example: the X-Window system.
 
-There are two or more 
-<A NAME="IDX4516"></A>
-<CODE>instance_of/2</CODE> declarations with the same first argument <EM>ID</EM>. Instance identifiers must be unique. 
+<LI>There is state or code outside the Prolog system which needs to be manipulated. For example: interfaces to Java or Tcl/Tk code.
 
-<LI><STRONG>ERROR : invalid use_class/1 declaration: <EM>SourceFile</EM> is not a class</STRONG>
-
-Those are the causes for this error: 
-
-
-<UL>
-
-<LI>The given <EM>SourceFile</EM> does not exist, or is not accesible.
-
-<LI>The given <EM>SourceFile</EM> is not a Prolog source.
-
-<LI>The given <EM>SourceFile</EM> is a valid Prolog source, but it does not declare a class.
-
-</UL>
-
-<LI><STRONG>ERROR : unknown class on <EM>ID</EM> instance declaration</STRONG>
-
-The class defined on the 
-<A NAME="IDX4517"></A>
-<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> instance has not been loaded by a 
-<A NAME="IDX4518"></A>
-<CODE>use_class/1</CODE> declaration. 
-
-<LI><STRONG>ERROR : instance identifier <EM>ID</EM> is an exisisting Prolog module</STRONG>
-
-There is an statically declared instance whose identifier may cause interference with the Ciao Prolog module system. Use another instance identifier. 
-
-<LI><STRONG>ERROR : unknown constructor on <EM>ID</EM> instance declaration</STRONG>
-
-The given constructor on the 
-<A NAME="IDX4519"></A>
-<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> has not been defined at the corresponding class. 
-
-<LI><STRONG>ERROR : constructor is needed on <EM>ID</EM> instance declaration</STRONG>
-
-No constructor was defined on the 
-<A NAME="IDX4520"></A>
-<CODE>instance_of/2</CODE> declaration for <EM>ID</EM> and default constructor is not allowed. You must provide a constructor. 
-
-<LI><STRONG>ERROR : static instance <EM>ID</EM> was derived from a different constructor at <EM>AnotherModule</EM></STRONG>
-
-<EM>ID</EM> has been declared to be an static instance both on <EM>AnotherModule</EM> and current source, but different constructors were used. The most probable causes for this error are: 
-
-
-<UL>
-
-<LI>Occasionally, there is another module using the same instance identifier and it was not noticed by you. Another different identifier may be used instead.
-
-<LI>It was you intention to use the same object as declared by the other module. In this case, the same constructor must be used.
-
-</UL>
-
-<LI><STRONG>ERROR : invalid first argument in call to new(<EM>Arg</EM>,_)</STRONG>
-
-There is a new/1 goal in your code where first argument is not a free variable. For example: 
-
-<CODE>myobj new myclass</CODE> 
-
-First argument must be a variable in order to receive a run-time generated object identifier. 
-
-<LI><STRONG>ERROR : unknown class in call to new(?,<EM>Constructor</EM>) </STRONG>
-
-The given <EM>Constructor</EM> in call to new/2 does not correspond to any used class at current code. The most probable cause of this may be: 
-
-
-<UL>
-
-<LI>You forgot to include a
-
-<A NAME="IDX4521"></A>
-<CODE>use_class/1</CODE> declaration in your code. 
-
-<LI>There is a spelling mistake in the constructor.For example:
-
-:- use_class(myclass). 
-
-foo(X) :- X new mclass. 
-
-</UL>
-
-<LI><STRONG>ERROR : can not create an instance from an interface: new(?,<EM>Constructor</EM>) </STRONG>
-
-Given <EM>Constructor</EM> references an interface rather than a class. Instances can not be derived from interface-expanded code. 
-
-<LI><STRONG>ERROR : unknown constructor in call to new(?,<EM>Constructor</EM>) </STRONG>
-
-As the previous error, there is a mistake in the given <EM>Constructor</EM>. This error is reported when you are trying to call a constructor which was not defined at the corresponding class. Check the class definition to find what is going on. 
-
-Another cause for this error is the incorrect usage of the 
-<A NAME="IDX4522"></A>
-default constructor. Whenever there are one or more constructors defined at the involved class, you are restricted to chose one of them. This seems that default constructor will be available, if and only if, there are no constructors defined at the involved class. 
-
-<LI><STRONG>ERROR : call to non-public <EM>ID:Goal</EM></STRONG>
-
-You are trying to call a method which was not declared as public by the class specified in 
-<A NAME="IDX4523"></A>
-<CODE>instance_of/2</CODE> declaration for <EM>ID</EM>. 
-
-<LI><STRONG>ERROR : call to inaccessible predicate at instance <EM>ID:Goal</EM></STRONG>
-
-There is a call to <EM>Goal</EM> at statically declared instance <EM>ID</EM> which is unknown or was not declared as public. 
-
-<LI><STRONG>ERROR : unknown instance <EM>ID</EM> of class <EM>Class</EM> at <EM>Goal</EM></STRONG>
-
-There is a call to <EM>Goal</EM> where involved statically declared instance <EM>ID</EM> is unknown or is not derived from <EM>Class</EM>. Check whether it was declared by a 
-<A NAME="IDX4524"></A>
-<CODE>instance_of/2</CODE> declaration. 
-
-<LI><STRONG>ERROR : inaccessible attribute <EM>Fact</EM> at instance <EM>ID</EM></STRONG>
-
-There is an attempt to use <EM>ID:Fact</EM> but it was not declared as public. 
-
-<LI><STRONG>ERROR : unknown attribute <EM>Fact</EM> at instance <EM>ID</EM></STRONG>
-
-There is an attempt to use <EM>ID:Fact</EM> but it is unknown or it is not an attribute (may be a method). 
-
-<LI><STRONG>WARNING : invalid call to new(?,_)</STRONG>
-
-There is a call to new/2 in you code where first argument variable has been determined to hold any other instance. For example: 
-
-<CODE>foo :- X new myclass,X new otherclass.</CODE> 
-
-or 
-
-<CODE>foo(X) :- X instance_of myclass, X new myclass.</CODE> 
-
-The related call to new/2 will allways fail. 
-
-<LI><STRONG>WARNING : called <EM>Goal</EM> is not public at any used class</STRONG>
-
-There is a call to <EM>Var</EM>:<EM>Goal</EM> where <EM>Var</EM> has not been determined to be compatible with any class. However, <EM>Goal</EM> is not public at any class specified by the 
-<A NAME="IDX4525"></A>
-<CODE>use_class/1</CODE> declaration. 
-
-This is a warning (not an error) since <EM>Var</EM>:<EM>Goal</EM> may be not related to Object Oriented Programing. 
+<LI>You are not familiar with Prolog, but you know about object oriented programming. O'Ciao may be used as a learning tool to introduce yourself on the declarative programming paradigm.
 
 </UL>
 
 
 
-<H3><A NAME="SEC425" HREF="ciao_toc.html#TOC425">Error reporting at run time (objects)</A></H3>
+<H2><A NAME="SEC419" HREF="ciao_toc.html#TOC419">Limitations on object usage</A></H2>
+
 <P>
- 
+O'Ciao run-time speed is limited by the usage of meta-programming structures, for instance: <CODE>X = (Object:mymethod(25)), call(X)</CODE>. O'Ciao will optimize static manipulation of objects (those that can be determined at compile time). 
 
-<UL>
-
-<LI><STRONG>EXCEPTION : instantiation_error( '1st argument must be free variable')</STRONG>
-
-Calling to new/1 requieres first argument to be a free variable. For example: 
-
-<CODE>X = this_will_raise_an_exception,X new myclass.</CODE> 
-
-<LI><STRONG>EXCEPTION : instantiation_error('class not given')</STRONG>
-
-You called new/2 using a free variable as second argument. 
-
-<LI><STRONG>EXCEPTION : instantiation_error(inaccesible_class(<EM>Class</EM>), from(<EM>Module</EM>)) </STRONG>
-
-<EM>Module</EM> tried to create an instance of <EM>Class</EM> by the ways of new/2, but there is no usage relationship between <EM>Module</EM> and <EM>Class</EM>. 
-
-<LI><STRONG>EXCEPTION : instantiation_error(invalid_constructor( <EM>Constructor</EM>)) </STRONG>
-
-<EM>Constructor</EM> was not defined by the corresponding class. 
-
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_103.html">previous</A>, <A HREF="ciao_105.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,41 +1,227 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 July 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
+<TITLE>The Ciao Prolog System               - SQL persistent database interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC559" HREF="ciao_toc.html#TOC559">Low-level socket interface to SQL/ODBC databases</A></H1>
+<H1><A NAME="SEC551" HREF="ciao_toc.html#TOC551">SQL persistent database interface</A></H1>
 <P>
-<A NAME="IDX5939"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jose Morales.
+<A NAME="IDX5657"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#105 (2001/5/28, 11:16:19 CEST)
+<STRONG>Author(s):</STRONG> I. Caballero, D. Cabeza, J.M. G&oacute;mez, M. Hermenegildo, J. F. Morales, and M. Carro, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-This library provides a low-level interface to MySQL using the MySQL C API and the Ciao foreign interface to C.
+<STRONG>Version:</STRONG> 1.7#125 (2001/10/17, 13:42:47 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#109 (2001/6/3, 17:8:19 CEST)
+
+
+<P>
+The purpose of this library is to implement an instance of the generic concept of 
+<A NAME="IDX5658"></A>
+persistent predicates, where external 
+<A NAME="IDX5659"></A>
+relational databases are used for storage (see the documentation of the 
+<A NAME="IDX5660"></A>
+<CODE>persdb</CODE> library and [BibRef: radioweb-D3.1.M1-A1,radioweb-ta] for details). To this end, this library exports SQL persistent versions of the 
+<A NAME="IDX5661"></A>
+<CODE>assertz_fact/1</CODE>, 
+<A NAME="IDX5662"></A>
+<CODE>retract_fact/1</CODE> and 
+<A NAME="IDX5663"></A>
+<CODE>retractall_fact/1</CODE> builtin predicates. Persistent predicates also allow 
+<A NAME="IDX5664"></A>
+concurrent updates from several programs, since each update is atomic. 
+
+
+<P>
+The notion of persistence provides a very natural and transparent way to access database relations from a Prolog program. Stub definitions are provided for such predicates which access the database when the predicate is called (using the 
+<A NAME="IDX5665"></A>
+<CODE>db_client</CODE> library). A 
+<A NAME="IDX5666"></A>
+Prolog to SQL translator is used to generate the required 
+<A NAME="IDX5667"></A>
+SQL code dynamically (see library 
+<A NAME="IDX5668"></A>
+<CODE>pl2sql</CODE>). 
+
+
+<P>
+This library also provides facilities for reflecting more complex 
+<A NAME="IDX5669"></A>
+views of the database relations as Prolog predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations. Also, 
+<A NAME="IDX5670"></A>
+SQL-like 
+<A NAME="IDX5671"></A>
+aggregation operations are supported. 
 
 
 
 <UL>
-<LI><A HREF="ciao_138.html#SEC560">Usage and interface (mysql_client)</A>
-<LI><A HREF="ciao_138.html#SEC561">Documentation on exports (mysql_client)</A>
+<LI><A HREF="ciao_138.html#SEC552">Implementation of the Database Interface</A>
+<LI><A HREF="ciao_138.html#SEC553">Example(s)</A>
+<LI><A HREF="ciao_138.html#SEC554">Usage and interface (persdbrtmysql)</A>
+<LI><A HREF="ciao_138.html#SEC555">Documentation on exports (persdbrtmysql)</A>
+<LI><A HREF="ciao_138.html#SEC556">Documentation on multifiles (persdbrtmysql)</A>
+<LI><A HREF="ciao_138.html#SEC557">Documentation on internals (persdbrtmysql)</A>
+<LI><A HREF="ciao_138.html#SEC558">Known bugs and planned improvements (persdbrtmysql)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC560" HREF="ciao_toc.html#TOC560">Usage and interface (<CODE>mysql_client</CODE>)</A></H2>
+<H2><A NAME="SEC552" HREF="ciao_toc.html#TOC552">Implementation of the Database Interface</A></H2>
+
+<P>
+The architecture of the low-level implementation of the database interface was defined with two goals in mind: 
+
+
+
+<UL>
+<LI>to simplify the communication between the Prolog system and the relational database engines as much as possible, and
+
+<LI>to give as much flexibility as possible to the overall system. This includes simultaneous access to several databases, allowing both the databases and clients to reside on the same physical machine or different machines, and allowing the clients to reside in Win95/NT or Unix machines.
+
+</UL>
+
+<P>
+ 
+In order to allow the flexibility mentioned above, a client-sever architecture was chosen. At the server side, a MySQL server connects to the databases using the MySQL. At the client side, a MySQL client interface connects to this server. The server daemon (mysqld) should be running in the server machine; check your MySQL documentation on how to do that. 
+
+
+<P>
+After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the data will traverse in the opposite direction. These messages include logging on and off from the database, sending SQL queries, and receiving the responses. 
+
+
+<P>
+The low level implementation of the current library is accomplished by providing abstraction levels over the MySQL interface library. These layers of abstraction implement the persistent predicate view, build the appropriate commands for the database using a translator of Prolog goals to SQL commands, issue such commands using the mediator send/receive procedures, parse the responses, and present such responses to the Prolog engine via backtracking. 
+
+
+
+
+<H2><A NAME="SEC553" HREF="ciao_toc.html#TOC553">Example(s)</A></H2>
+
+
+<PRE>
+:- module(_, _, [persdb_mysql, functions]).
+
+:- use_module(library(write)).
+:- use_module(library(format)).
+
+:- use_module(user_and_password).
+
+sql_persistent_location(people, db(people, User, Password, HP)):-
+        mysql_host_and_port(HP),
+        mysql_user(User),
+        mysql_password(Password).
+
+:- sql_persistent(
+        people(string, string, int),   %% Prolog predicate and types
+        people(name, sex, age),        %% Table name and attributes
+        people).                       %% Database local id
+
+% Low level MySQL interface.
+
+:- use_module(library('persdb_mysql/mysql_client')).
+
+main :-
+        nl,
+        display('Creating database'), nl,nl,
+        create_people_db,
+        nl,
+        display('Inserting people'), nl,nl,
+        insert_people,
+        nl,
+        display('Showing people'), nl,nl,
+        show_people.
+
+% Create a database and a table of people.  Still needs to be ironed out.
+
+create_people_db :-
+        mysql_user(User),
+        mysql_password(Password),
+        mysql_host_and_port(HP),
+        mysql_connect(HP, '', User, Password, DbConnection),
+        
+        write(~mysql_query(DbConnection, "drop database if exists people")), nl,
+        write(~mysql_query(DbConnection, "create database people")), nl,
+        write(~mysql_query(DbConnection, "use people")), nl,
+        write(~mysql_query(DbConnection, "create table people(name char(16) not null, sex text, age int, primary key(name))")), nl,
+        mysql_disconnect(DbConnection).
+
+% Inserts people into the 'people' table.
+
+male(john, 15).
+male(peter, 24).
+male(ralph, 24).
+male(bart, 50).
+female(kirsten, 24).
+female(mary, 17).
+female(jona, 12).
+female(maija, 34).
+
+%% Tuples are inserted as in the local Prolog dynamic database
+insert_people :-
+        (
+            male(N, A),
+            display('Inserting '), 
+            display(male(N, A)), 
+            nl,
+            dbassertz_fact(people(N, male, A)), 
+            fail 
+        ; 
+            true
+        ),
+        (
+            female(N, A), 
+            display('Inserting '), 
+            display(female(N, A)), 
+            nl,
+            dbassertz_fact(people(N, female, A)),
+            fail 
+        ; 
+            true
+        ).
+
+ %% Removes people from the 'people' table.
+
+ %% Still not working in MySQL due to differences in SQL: working on it.
+
+remove_people(A, B, C) :-
+        dbretractall_fact(people(A, B, C)).
+ 
+remove_people_2(A, B, C) :-
+        dbretract_fact(people(A, B, C)),
+        display('Removed row '), display(people(A, B, C)), nl,
+        fail.
+remove_people_2(_, _, _) :-
+         display('No more rows'), nl.
+ 
+
+show_people :-
+        people(Name, Sex, Age),
+        display(people(Name, Sex, Age)),
+        nl,
+        fail.
+show_people :-
+        display('No more rows'), nl.
+        
+
+</PRE>
+
+
+
+<H2><A NAME="SEC554" HREF="ciao_toc.html#TOC554">Usage and interface (<CODE>persdbrtmysql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +229,40 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(mysql_client)).</CODE>
+Typically, this library is used including the 'persdb_mysql' package into the package list of the module, or using the 
+<A NAME="IDX5672"></A>
+<CODE>use_package/1</CODE> declaration: 
+<DL COMPACT>
+
+<DT>In a module:
+<DD>
+
+<PRE>
+	:- module(bar, [main/1], [persdb_mysql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- module(bar, [main/1]).
+        :- include(library(persdb_mysql)).
+</PRE>
+
+<DT>In a <EM>user</EM> file:
+<DD>
+
+<PRE>
+	:- use_package([persdb_mysql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- include(library(persdb_mysql)).
+</PRE>
+
+</DL>
+This loads the run-time and compile-time versions of the library (<CODE>persdbtr_mysql.pl</CODE> and <CODE>persdbrt_mysql.pl</CODE>) and includes some needed declarations.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,29 +271,33 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5940"></A>
-<CODE>mysql_connect/5</CODE>, 
-<A NAME="IDX5941"></A>
-<CODE>mysql_query/3</CODE>, 
-<A NAME="IDX5942"></A>
-<CODE>mysql_query_one_tuple/3</CODE>, 
-<A NAME="IDX5943"></A>
-<CODE>mysql_free_query_connection/1</CODE>, 
-<A NAME="IDX5944"></A>
-<CODE>mysql_fetch/2</CODE>, 
-<A NAME="IDX5945"></A>
-<CODE>mysql_get_tables/2</CODE>, 
-<A NAME="IDX5946"></A>
-<CODE>mysql_table_types/3</CODE>, 
-<A NAME="IDX5947"></A>
-<CODE>mysql_disconnect/1</CODE>.
+<A NAME="IDX5673"></A>
+<CODE>init_sql_persdb/0</CODE>, 
+<A NAME="IDX5674"></A>
+<CODE>dbassertz_fact/1</CODE>, 
+<A NAME="IDX5675"></A>
+<CODE>dbretract_fact/1</CODE>, 
+<A NAME="IDX5676"></A>
+<CODE>dbcurrent_fact/1</CODE>, 
+<A NAME="IDX5677"></A>
+<CODE>dbretractall_fact/1</CODE>, 
+<A NAME="IDX5678"></A>
+<CODE>make_sql_persistent/3</CODE>, 
+<A NAME="IDX5679"></A>
+<CODE>dbfindall/4</CODE>, 
+<A NAME="IDX5680"></A>
+<CODE>dbcall/2</CODE>, 
+<A NAME="IDX5681"></A>
+<CODE>sql_query/3</CODE>, 
+<A NAME="IDX5682"></A>
+<CODE>sql_get_tables/2</CODE>, 
+<A NAME="IDX5683"></A>
+<CODE>sql_table_types/3</CODE>.
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Multifiles:</EM>
 
-<A NAME="IDX5948"></A>
-<CODE>dbconnection/1</CODE>, 
-<A NAME="IDX5949"></A>
-<CODE>dbqueryconnection/1</CODE>.
+<A NAME="IDX5684"></A>
+<CODE>sql_persistent_location/2</CODE>.
 
 </UL>
 
@@ -85,10 +308,32 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5950"></A>
-<CODE>foreign_interface/foreign_interface_properties</CODE>, 
-<A NAME="IDX5951"></A>
-<CODE>persdb_mysql/db_client_types</CODE>.
+<A NAME="IDX5685"></A>
+<CODE>det_hook/det_hook_rt</CODE>, 
+<A NAME="IDX5686"></A>
+<CODE>persdb_mysql/db_client_types</CODE>, 
+<A NAME="IDX5687"></A>
+<CODE>persdb_mysql/pl2sql</CODE>, 
+<A NAME="IDX5688"></A>
+<CODE>persdb_mysql/sqltypes</CODE>, 
+<A NAME="IDX5689"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX5690"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX5691"></A>
+<CODE>metaterms</CODE>, 
+<A NAME="IDX5692"></A>
+<CODE>messages</CODE>, 
+<A NAME="IDX5693"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX5694"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX5695"></A>
+<CODE>persdb_mysql/mysql_client</CODE>, 
+<A NAME="IDX5696"></A>
+<CODE>persdb_mysql/insert_compiler/pl2sqlinsert</CODE>, 
+<A NAME="IDX5697"></A>
+<CODE>persdb_mysql/delete_compiler/pl2sqldelete</CODE>.
 
 </UL>
 
@@ -98,34 +343,704 @@ This library provides a low-level interface to MySQL using the MySQL C API and t
 
 
 
-<H2><A NAME="SEC561" HREF="ciao_toc.html#TOC561">Documentation on exports (<CODE>mysql_client</CODE>)</A></H2>
+<H2><A NAME="SEC555" HREF="ciao_toc.html#TOC555">Documentation on exports (<CODE>persdbrtmysql</CODE>)</A></H2>
 <P>
-<A NAME="IDX5952"></A>
-<A NAME="IDX5953"></A>
+<A NAME="IDX5698"></A>
+<A NAME="IDX5699"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_connect/5:</B>
-<DD><A NAME="IDX5954"></A>
+<DT><span class="define">PREDICATE:</span> <B>init_sql_persdb/0:</B>
+<DD><A NAME="IDX5700"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> Internal predicate, used to transform predicates statically declared as persistent (see
+
+<A NAME="IDX5701"></A>
+<CODE>sql_persistent/3</CODE>) into real persistent predicates.  
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5955"></A>
-<A NAME="IDX5956"></A>
+<A NAME="IDX5702"></A>
+<A NAME="IDX5703"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX5957"></A>
+<DT><span class="define">PREDICATE:</span> <B>dbassertz_fact/1:</B>
+<DD><A NAME="IDX5704"></A>
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbassertz_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX5705"></A>
+<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added to the end of the definition of the corresponding predicate. If any integrity constraint violation is done (database stored predicates), an error will be displayed. The predicate concerned must be statically (
+<A NAME="IDX5706"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX5707"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. <STRONG>Note:</STRONG> <EM>assertion of facts with uninstantiated variables not implemented at this time.</EM> 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtmysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5708"></A>
+<A NAME="IDX5709"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbretract_fact/1:</B>
+<DD><A NAME="IDX5710"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbretract_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX5711"></A>
+<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX5712"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX5713"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtmysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5714"></A>
+<A NAME="IDX5715"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbcurrent_fact/1:</B>
+<DD><A NAME="IDX5716"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbcurrent_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX5717"></A>
+<CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
+<A NAME="IDX5718"></A>
+<CODE>sql_persistent/3</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtmysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5719"></A>
+<A NAME="IDX5720"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbretractall_fact/1:</B>
+<DD><A NAME="IDX5721"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbretractall_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX5722"></A>
+<CODE>retractall_fact/1</CODE>: when called deletes all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX5723"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX5724"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtmysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5725"></A>
+<A NAME="IDX5726"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_sql_persistent/3:</B>
+<DD><A NAME="IDX5727"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>make_sql_persistent(addmodule,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamic version of the
+
+<A NAME="IDX5728"></A>
+<CODE>sql_persistent/3</CODE> declaration. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
+ (<CODE>persdbrtmysql:prologPredTypes/1</CODE>)
+
+<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
+ (<CODE>persdbrtmysql:tableAttributes/1</CODE>)
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrtmysql:persLocId/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5729"></A>
+<A NAME="IDX5730"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbfindall/4:</B>
+<DD><A NAME="IDX5731"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>dbfindall(?,?,goal,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbfindall(+DBId,+Pattern,+ComplexGoal,-Results)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Similar to
+
+<A NAME="IDX5732"></A>
+<CODE>findall/3</CODE>, but <CODE>Goal</CODE> is executed in database <CODE>DBId</CODE>. Certain restrictions and extensions apply to both <CODE>Pattern</CODE> and <CODE>ComplexGoal</CODE> stemming from the Prolog to SQL translation involved (see the corresponding type definitions for details). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+Pattern</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+ComplexGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>-Results</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5733"></A>
+<A NAME="IDX5734"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbcall/2:</B>
+<DD><A NAME="IDX5735"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbcall(+DBId,+ComplexGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Internal predicate, used by the transformed versions of the persistent predicates. Not meant to be called directly by users. It is exported by the library so that it can be used by the transformed versions of the persistent predicates in the modules in which they reside. Sends <CODE>ComplexGoal</CODE> to database <CODE>DBId</CODE> for evaluation. <CODE>ComplexGoal</CODE> must be a call to a persistent predicate which resides in database <CODE>DBId</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ComplexGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5736"></A>
+<A NAME="IDX5737"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_query/3:</B>
+<DD><A NAME="IDX5738"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_query(+DBId,+SQLString,AnswerTableTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is the response from database <CODE>DBId</CODE> to the
+
+<A NAME="IDX5739"></A>
+SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerTableTerm</CODE> can express a set of tuples, an error answer or a 'ok' response (see 
+<A NAME="IDX5740"></A>
+<CODE>answertableterm/1</CODE> for details). At the moment, 
+<A NAME="IDX5741"></A>
+<CODE>sql_query/3</CODE> log in and out for each query. This should be changed to log in only the first time and log out on exit and/or via a timer in the standard way. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+SQLString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
+
+<CODE>AnswerTableTerm</CODE> is a response from the ODBC database interface.
+ (<CODE>persdbrtmysql:answertableterm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5742"></A>
+<A NAME="IDX5743"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_get_tables/2:</B>
+<DD><A NAME="IDX5744"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>sql_get_tables(+Location,-Tables)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>Location</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>persdbrtmysql:persLocation(+Location)</CODE>
+ (<CODE>persdbrtmysql:persLocation/1</CODE>)
+
+<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>sql_get_tables(+DbConnection,-Tables)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>DbConnection</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5745"></A>
+<A NAME="IDX5746"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_table_types/3:</B>
+<DD><A NAME="IDX5747"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>sql_table_types(+Location,+Table,-AttrTypes)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>Location</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>persdbrtmysql:persLocation(+Location)</CODE>
+ (<CODE>persdbrtmysql:persLocation/1</CODE>)
+
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-AttrTypes</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>sql_table_types(+DbConnection,+Table,-AttrTypes)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>DbConnection</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-AttrTypes</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5748"></A>
+<A NAME="IDX5749"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
+<DD><A NAME="IDX5750"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5751"></A>
+<A NAME="IDX5752"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
+<DD><A NAME="IDX5753"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5754"></A>
+<A NAME="IDX5755"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
+<DD><A NAME="IDX5756"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5757"></A>
+<A NAME="IDX5758"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
+<DD><A NAME="IDX5759"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5760"></A>
+<A NAME="IDX5761"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
+<DD><A NAME="IDX5762"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5763"></A>
+<A NAME="IDX5764"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
+<DD><A NAME="IDX5765"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5766"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
+<DD><A NAME="IDX5767"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5768"></A>
+<CODE>sqltypes</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC556" HREF="ciao_toc.html#TOC556">Documentation on multifiles (<CODE>persdbrtmysql</CODE>)</A></H2>
+<P>
+<A NAME="IDX5769"></A>
+<A NAME="IDX5770"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_persistent_location/2:</B>
+<DD><A NAME="IDX5771"></A>
+
+
+<P>
+Relates names of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location</CODE>s).
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>sql_persistent_location(Keyword,Location)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Keyword</CODE> is an identifier for the persistent data location <CODE>Location</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrtmysql:persLocId/1</CODE>)
+
+<CODE>persdbrtmysql:persLocation(Location)</CODE>
+ (<CODE>persdbrtmysql:persLocation/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>sql_persistent_location(Keyword,DBLocation)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> In this usage, <CODE>DBLocation</CODE> is a <EM>relational database</EM>, in which case the predicate is stored as tuples in the database.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrtmysql:persLocId/1</CODE>)
+
+<CODE>DBLocation</CODE> is a structure describing a database.
+ (<CODE>persdbrtmysql:database_desc/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC557" HREF="ciao_toc.html#TOC557">Documentation on internals (<CODE>persdbrtmysql</CODE>)</A></H2>
+<P>
+<A NAME="IDX5772"></A>
+<A NAME="IDX5773"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>sql_persistent/3:</B>
+<DD><A NAME="IDX5774"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares the predicate corresponding to the main functor of <CODE>PrologPredTypes</CODE> as SQL persistent. <CODE>Keyword</CODE> is the
+
+<A NAME="IDX5775"></A>
+name of a location where the 
+<A NAME="IDX5776"></A>
+persistent storage for the predicate is kept, which in this case must be an external relational database. The description of this database is given through the 
+<A NAME="IDX5777"></A>
+<CODE>sql_persistent_location</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. <CODE>TableAttributes</CODE> provides the 
+<A NAME="IDX5778"></A>
+table name and 
+<A NAME="IDX5779"></A>
+attributes in the database corresponding respectively to the predicate name and arguments of the (virtual) Prolog predicate. 
+
+<STRONG>Example:</STRONG> 
 
 
 <PRE>
-dbconnection(_1) :-
-        address(_1).
+:- sql_persistent(product( integer,    integer, string, string ),
+              product( quantity,   id,      name,   size   ),
+              radiowebdb).
+
+sql_persistent_location(radiowebdb,
+   db('SQL Anywhere 5.0 Sample', user, pass,
+      'r2d5.dia.fi.upm.es':2020)).
 </PRE>
+
+ 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
+ (<CODE>persdbrtmysql:prologPredTypes/1</CODE>)
+
+<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
+ (<CODE>persdbrtmysql:tableAttributes/1</CODE>)
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrtmysql:persLocId/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5780"></A>
+<A NAME="IDX5781"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_query/4:</B>
+<DD><A NAME="IDX5782"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_query(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> contains all the
+
+<A NAME="IDX5783"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX5784"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX5785"></A>
+Prolog to SQL translation and 
+<A NAME="IDX5786"></A>
+<CODE>sql_query/3</CODE> for posing the actual query. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>persdbrtmysql:tuple/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5787"></A>
+<A NAME="IDX5788"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_query_one_tuple/4:</B>
+<DD><A NAME="IDX5789"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is one of the
+
+<A NAME="IDX5790"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX5791"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX5792"></A>
+Prolog to SQL translation and 
+<A NAME="IDX5793"></A>
+<CODE>sql_query_one_tuple/3</CODE> for posing the actual query. After last tuple has been reached, a null tuple is unified with ResultTerm, and the connection to the database finishes. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a predicate containing a tuple.
+ (<CODE>persdbrtmysql:answertupleterm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5794"></A>
+<A NAME="IDX5795"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_query_one_tuple/3:</B>
+<DD><A NAME="IDX5796"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_query_one_tuple(+DBId,+SQLString,ResultTuple)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTuple</CODE> contains an element from the set of tuples which represents the response in <CODE>DBId</CODE> to the
+
+<A NAME="IDX5797"></A>
+SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls return consecutive tuples, until the last tuple is reached. Then a null tuple is unified with <CODE>ResultTuple</CODE> and the connection is finished (calls to 
+<A NAME="IDX5798"></A>
+<CODE>mysql_disconnect/1</CODE>). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+SQLString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
+
+<CODE>ResultTuple</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>persdbrtmysql:tuple/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5799"></A>
+<A NAME="IDX5800"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX5801"></A>
+
 
 <P>
 <STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
@@ -138,128 +1053,56 @@ dbconnection(_1) :-
 </DL>
 
 <P>
-<A NAME="IDX5958"></A>
-<A NAME="IDX5959"></A>
+<A NAME="IDX5802"></A>
+<A NAME="IDX5803"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_query/3:</B>
-<DD><A NAME="IDX5960"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5961"></A>
-<A NAME="IDX5962"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_query_one_tuple/3:</B>
-<DD><A NAME="IDX5963"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5964"></A>
-<A NAME="IDX5965"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
-<DD><A NAME="IDX5966"></A>
+<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
+<DD><A NAME="IDX5804"></A>
 
 
 
 <PRE>
-dbqueryconnection(_1) :-
-        address(_1).
+tuple(T) :-
+        list(T,atm).
+tuple(T) :-
+        list(T,atm).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
+<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
 
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX5967"></A>
-<A NAME="IDX5968"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_free_query_connection/1:</B>
-<DD><A NAME="IDX5969"></A>
 
 
-<P>
-No further documentation available for this predicate.
+<H2><A NAME="SEC558" HREF="ciao_toc.html#TOC558">Known bugs and planned improvements (<CODE>persdbrtmysql</CODE>)</A></H2>
 
 
-</DL>
+<UL>
 
-<P>
-<A NAME="IDX5970"></A>
-<A NAME="IDX5971"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_fetch/2:</B>
-<DD><A NAME="IDX5972"></A>
+<LI>
 
+At least in the shell, reloading a file after changing the definition of a persistent predicate does not eliminate the old definition...
 
-<P>
-No further documentation available for this predicate.
+<LI>
 
+Functionality missing: some questions need to be debugged.
 
-</DL>
+<LI>
 
-<P>
-<A NAME="IDX5973"></A>
-<A NAME="IDX5974"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_get_tables/2:</B>
-<DD><A NAME="IDX5975"></A>
+Warning: still using kludgey string2term and still using some non-uniquified temp files.
 
+<LI>
 
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5976"></A>
-<A NAME="IDX5977"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_table_types/3:</B>
-<DD><A NAME="IDX5978"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5979"></A>
-<A NAME="IDX5980"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_disconnect/1:</B>
-<DD><A NAME="IDX5981"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
+Needs to be unified with the file-based library.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_216.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>
