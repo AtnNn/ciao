@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - text_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - menu_entry_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC529" HREF="ciao_toc.html#TOC529">text_class (library)</A></H1>
+<H1><A NAME="SEC568" HREF="ciao_toc.html#TOC568">menu_entry_class (library)</A></H1>
 <P>
-<A NAME="IDX5235"></A>
+<A NAME="IDX5906"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_136.html#SEC530">Usage and interface (text_class)</A>
-<LI><A HREF="ciao_136.html#SEC531">Documentation on exports (text_class)</A>
+<LI><A HREF="ciao_136.html#SEC569">Usage and interface (menu_entry_class)</A>
+<LI><A HREF="ciao_136.html#SEC570">Documentation on exports (menu_entry_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC530" HREF="ciao_toc.html#TOC530">Usage and interface (<CODE>text_class</CODE>)</A></H2>
+<H2><A NAME="SEC569" HREF="ciao_toc.html#TOC569">Usage and interface (<CODE>menu_entry_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(text_class)).</CODE>
+<CODE>:- use_module(library(menu_entry_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,18 +40,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5236"></A>
-<CODE>coord/2</CODE>, 
-<A NAME="IDX5237"></A>
-<CODE>point/2</CODE>, 
-<A NAME="IDX5238"></A>
-<CODE>text_characters/1</CODE>, 
-<A NAME="IDX5239"></A>
-<CODE>anchor/1</CODE>, 
-<A NAME="IDX5240"></A>
-<CODE>font_type/1</CODE>, 
-<A NAME="IDX5241"></A>
-<CODE>justify_text/1</CODE>.
+<A NAME="IDX5907"></A>
+<CODE>set_name/1</CODE>, 
+<A NAME="IDX5908"></A>
+<CODE>set_action/1</CODE>, 
+<A NAME="IDX5909"></A>
+<CODE>label_value/1</CODE>, 
+<A NAME="IDX5910"></A>
+<CODE>menu_name/1</CODE>.
 
 </UL>
 
@@ -62,8 +58,12 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5242"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX5911"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX5912"></A>
+<CODE>tcltk_obj/menu_class</CODE>, 
+<A NAME="IDX5913"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -73,194 +73,120 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 
 
-<H2><A NAME="SEC531" HREF="ciao_toc.html#TOC531">Documentation on exports (<CODE>text_class</CODE>)</A></H2>
+<H2><A NAME="SEC570" HREF="ciao_toc.html#TOC570">Documentation on exports (<CODE>menu_entry_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5243"></A>
-<A NAME="IDX5244"></A>
+<A NAME="IDX5914"></A>
+<A NAME="IDX5915"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>coord/2:</B>
-<DD><A NAME="IDX5245"></A>
+<DT><span class="define">PREDICATE:</span> <B>set_name/1:</B>
+<DD><A NAME="IDX5916"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>coord(+X,+Y)</CODE>
+<STRONG>Usage:</STRONG> <CODE>set_name(+Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> specify the coordinates of a point used to position the text on the display.
+<LI><EM>Description:</EM> <CODE>Name</CODE> of the menubutton associated.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5246"></A>
-<A NAME="IDX5247"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>point/2:</B>
-<DD><A NAME="IDX5248"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>point(+X,+Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> change the coordinates of a point used to position the text on the display.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5249"></A>
-<A NAME="IDX5250"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
-<DD><A NAME="IDX5251"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Text</CODE> specifies the characters to be displayed in the text item. This option defaults to an empty string.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Text</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the text displayed in the text item.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Text</CODE> is currently instantiated to an atom.
+<CODE>+Name</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5252"></A>
-<A NAME="IDX5253"></A>
+<A NAME="IDX5917"></A>
+<A NAME="IDX5918"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>anchor/1:</B>
-<DD><A NAME="IDX5254"></A>
+<DT><span class="define">PREDICATE:</span> <B>set_action/1:</B>
+<DD><A NAME="IDX5919"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>anchor(+AnchorPos)</CODE>
+<STRONG>Usage:</STRONG> <CODE>set_action(+Predicate)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>AnchorPos</CODE> tells how to position the text relative to the positioning point for the text. This option defaluts to center.
+<LI><EM>Description:</EM> Specifies <CODE>Predicate</CODE> asociated to the menu entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+AnchorPos</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>anchor(-AnchorPos)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the position of the text relative to the positioning point.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-AnchorPos</CODE> is currently instantiated to an atom.
+<CODE>+Predicate</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5255"></A>
-<A NAME="IDX5256"></A>
+<A NAME="IDX5920"></A>
+<A NAME="IDX5921"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
-<DD><A NAME="IDX5257"></A>
+<DT><span class="define">PREDICATE:</span> <B>label_value/1:</B>
+<DD><A NAME="IDX5922"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>label_value(+Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Font</CODE> specifies the font to use for the text item. This option defaluts to arial.
+<LI><EM>Description:</EM> <CODE>Value</CODE> specifies a value to be displayed as an identifying label in the menu entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Font</CODE> is currently instantiated to an atom.
+<CODE>+Value</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>label_value(-Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the value of the <CODE>Font</CODE> used for the text item.
+<LI><EM>Description:</EM> Gets the string which identify label in the menu entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Font</CODE> is currently instantiated to an atom.
+<CODE>-Value</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5258"></A>
-<A NAME="IDX5259"></A>
+<A NAME="IDX5923"></A>
+<A NAME="IDX5924"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>justify_text/1:</B>
-<DD><A NAME="IDX5260"></A>
+<DT><span class="define">PREDICATE:</span> <B>menu_name/1:</B>
+<DD><A NAME="IDX5925"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>justify_text(+How)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>menu_name(+Menu)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text within its bounding region. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
+<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when cascade entry is invoked.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+How</CODE> is currently instantiated to an atom.
+<CODE>+Menu</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>justify_text(-How)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>menu_name(-Menu)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
+<LI><EM>Description:</EM> Gets the <CODE>Menu</CODE> asociated to the cascade entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-How</CODE> is currently instantiated to an atom.
+<CODE>-Menu</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

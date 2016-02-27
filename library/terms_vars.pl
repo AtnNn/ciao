@@ -5,7 +5,7 @@
 :- use_module(library(idlists),[memberchk/2,union_idlists/3]).
 :- use_module(library(sort)).
 
-:- comment(title,"Term variables sets").
+:- comment(title,"Sets of variables in terms").
 
 %-------------------------------------------------------------------------
 :- comment(varset(Term,Xs),"@var{Xs} is the sorted list of all the 

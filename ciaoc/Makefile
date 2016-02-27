@@ -11,6 +11,7 @@ ASRGEN=gen_asr
 
 compiler:
 	cp -f $(CIAOCNAME) $(CIAOCSTA)
+	-chmod $(EXECMODE) $(CIAOCSTA)
 	$(SETLOCALCIAO) $(CIAOCSTA) -s -x $(CIAOCNAME)
 	$(SETLOCALCIAO) $(CIAOC) -s -x $(ASRGEN)
 	rm $(ASRGEN)

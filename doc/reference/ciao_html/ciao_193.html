@@ -1,37 +1,60 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget4 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - genbar2 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC731" HREF="ciao_toc.html#TOC731">table_widget4 (library)</A></H1>
+<H1><A NAME="SEC768" HREF="ciao_toc.html#TOC768">genbar2 (library)</A></H1>
 <P>
-<A NAME="IDX7305"></A>
-
-
-<P>
-In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row and column is bold. The remaining elements are in medium weight font. 
+<A NAME="IDX7933"></A>
 
 
 <P>
-If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
+This module defines predicates which show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
 
 
 
 <UL>
-<LI><A HREF="ciao_193.html#SEC732">Usage and interface (table_widget4)</A>
-<LI><A HREF="ciao_193.html#SEC733">Documentation on exports (table_widget4)</A>
+
+<LI>Numeric values for the x axis are needed, otherwise it does not work properly. See
+
+<A NAME="IDX7934"></A>
+<CODE>xbarelement2/1</CODE> definition type. 
+
+<LI>The bar position is proportional to the x-coordinate value.
+
+<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
+
+<A NAME="IDX7935"></A>
+<CODE>xbarelement2/1</CODE> type definition. Thus, the user can call each predicate in two ways. 
+
+<LI>The bar chart has a legend and one entry (symbol and label) per bar.
+
+<LI>If you do not want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
+
+<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contain elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> does not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
+
+</UL>
+
+<P>
+Particular features will be pointed out in the corresponding predicate. 
+
+
+
+<UL>
+<LI><A HREF="ciao_193.html#SEC769">Usage and interface (genbar2)</A>
+<LI><A HREF="ciao_193.html#SEC770">Documentation on exports (genbar2)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC732" HREF="ciao_toc.html#TOC732">Usage and interface (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC769" HREF="ciao_toc.html#TOC769">Usage and interface (<CODE>genbar2</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +62,7 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(table_widget4)).</CODE>
+<CODE>:- use_module(library(genbar2)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,10 +71,17 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7306"></A>
-<CODE>tablewidget4/4</CODE>, 
-<A NAME="IDX7307"></A>
-<CODE>tablewidget4/5</CODE>.
+<A NAME="IDX7936"></A>
+<CODE>barchart2/7</CODE>, 
+<A NAME="IDX7937"></A>
+<CODE>barchart2/11</CODE>, 
+<A NAME="IDX7938"></A>
+<CODE>percentbarchart2/7</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7939"></A>
+<CODE>xbarelement2/1</CODE>.
 
 </UL>
 
@@ -62,18 +92,20 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7308"></A>
+<A NAME="IDX7940"></A>
 <CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7309"></A>
+<A NAME="IDX7941"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7310"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX7311"></A>
+<A NAME="IDX7942"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX7943"></A>
 <CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7312"></A>
+<A NAME="IDX7944"></A>
 <CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7313"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX7945"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7946"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -83,77 +115,165 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 
-<H2><A NAME="SEC733" HREF="ciao_toc.html#TOC733">Documentation on exports (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC770" HREF="ciao_toc.html#TOC770">Documentation on exports (<CODE>genbar2</CODE>)</A></H2>
 <P>
-<A NAME="IDX7314"></A>
-<A NAME="IDX7315"></A>
+<A NAME="IDX7947"></A>
+<A NAME="IDX7948"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/4:</B>
-<DD><A NAME="IDX7316"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart2/7:</B>
+<DD><A NAME="IDX7949"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer)</CODE>
+<CODE>barchart2(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
 
 
 <P>
-Shows a regular table in a window. The system sets a default background image for the widget. 
+The maximum and minimum limits for axes are determined from the data. 
 
 
 <P>
 Example: 
 
+
+
 <PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-             'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table').
+barchart2('This is the header text',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+       [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
+  'My yaxixtitle',
+  [20,10],
+  'This is the footer text').
 </PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7317"></A>
-<A NAME="IDX7318"></A>
+<A NAME="IDX7950"></A>
+<A NAME="IDX7951"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/5:</B>
-<DD><A NAME="IDX7319"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart2/11:</B>
+<DD><A NAME="IDX7952"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+<CODE>barchart2(Header,BT,XT,XVector,XMax,XMin,YT,YVector,YMax,YMin,Footer)</CODE>
 
 
 <P>
-This predicate and 
-<A NAME="IDX7320"></A>
-<CODE>tablewidget4/4</CODE> are comparable, except that in the already defined you must set the background image. 
+You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, as you can check looking at the 
+<A NAME="IDX7953"></A>
+<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
+ 
+Example: 
+
+
+
+<PRE>
+barchart2('This is the header text',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1',Color1,Color2,Pattern1],
+         [2,'bar2',Color3,Color4,Pattern2] ],
+  10,
+  -10,
+  'My yaxixtitle',
+  [20,10],
+  100,
+  -10,
+  'The limits for the axes are set by the user').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7954"></A>
+<A NAME="IDX7955"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart2/7:</B>
+<DD><A NAME="IDX7956"></A>
+
+
+<P>
+<CODE>percentbarchart2(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+
+
+<P>
+The y axis maximum coordinate value is 100. The x axis limits are autoarrange. 
 
 
 <P>
 Example: 
 
+
+
 <PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-           'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table',
-  './images/rain.gif').
+percentbarchart2('This is a special barchart to represent percentages',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+          [2,'bar2','MediumTurquoise','Plum','pattern5'] ],
+  'My yaxixtitle',
+  [80,10],
+  'This is the footer text').
 </PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7957"></A>
+<A NAME="IDX7958"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>xbarelement2/1:</B>
+<DD><A NAME="IDX7959"></A>
+
+
+
+<PRE>
+xbarelement2([XValue,LegendElement]) :-
+        number(XValue),
+        atomic(LegendElement).
+xbarelement2([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
+        number(XValue),
+        atomic(LegendElement),
+        color(ForegColor),
+        color(BackgColor),
+        pattern(SPattern).
+</PRE>
+
+<P>
+Defines the attributes of the bar. 
+
+
+<DL COMPACT>
+
+<DT><CODE>XValue</CODE>
+<DD>
+x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
+
+<DT><CODE>LegendElement</CODE>
+<DD>
+Element legend name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
+
+<DT><CODE>ForegColor</CODE>
+<DD>
+Is the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>BackgColor</CODE>
+<DD>
+Is the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>SPattern</CODE>
+<DD>
+Is the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+
+</DL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

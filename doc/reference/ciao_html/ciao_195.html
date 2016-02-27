@@ -1,51 +1,38 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - ProVRML - a Prolog interface for VRML</TITLE>
+<TITLE>The Ciao Prolog System               - genbar4 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC737" HREF="ciao_toc.html#TOC737">ProVRML - a Prolog interface for VRML</A></H1>
+<H1><A NAME="SEC775" HREF="ciao_toc.html#TOC775">genbar4 (library)</A></H1>
 <P>
-<A NAME="IDX7362"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck, (Some changes by MCL), <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+<A NAME="IDX7985"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1#1 (1998/12/10, 16:19:45 MET)
+This module defines predicates which depict barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window and are similar to those exported in genbar2 module except in that those defined in this module doesn't display a legend. Thus, the user does not have to define legend element names. 
 
 
 <P>
-<A NAME="IDX7363"></A>
-<CODE>ProVRML</CODE> is Prolog library to handle VRML code. The library consists of modules to handle the tokenising, that is breaking the VRML code into smaller parts that can be analysed further. The further analysis will be the parsing. This is a complex part of the library and consists of several modules to handle errors and value check. When the parsing is done we have the Prolog terms of the VRML code. The terms are quite similar to the origin VRML code and can easily be read if you recognise that syntax. 
-
-
-<P>
-This Prolog terms of the VRML code is then possible to use for analysis, reconstruction, reverse enginering, building blocks for automatic generation of VRML code. There are several possibilities and these are only some of them. 
-
-
-<P>
-When you are done with the Prolog terms for the code, you would probably want to reverse the action and return to VRML code. This is done with the code generation modules. These are built up in more or less the same manner as the parser modules. 
+The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes . 
 
 
 
 <UL>
-<LI><A HREF="ciao_195.html#SEC738">Usage and interface (provrml)</A>
-<LI><A HREF="ciao_195.html#SEC739">Documentation on exports (provrml)</A>
-<LI><A HREF="ciao_195.html#SEC740">Documentation on internals (provrml)</A>
+<LI><A HREF="ciao_195.html#SEC776">Usage and interface (genbar4)</A>
+<LI><A HREF="ciao_195.html#SEC777">Documentation on exports (genbar4)</A>
+<LI><A HREF="ciao_195.html#SEC778">Documentation on internals (genbar4)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC738" HREF="ciao_toc.html#TOC738">Usage and interface (<CODE>provrml</CODE>)</A></H2>
+<H2><A NAME="SEC776" HREF="ciao_toc.html#TOC776">Usage and interface (<CODE>genbar4</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -53,7 +40,7 @@ When you are done with the Prolog terms for the code, you would probably want to
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(provrml)).</CODE>
+<CODE>:- use_module(library(genbar4)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -62,28 +49,12 @@ When you are done with the Prolog terms for the code, you would probably want to
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7364"></A>
-<CODE>vrml_web_to_terms/2</CODE>, 
-<A NAME="IDX7365"></A>
-<CODE>vrml_file_to_terms/2</CODE>, 
-<A NAME="IDX7366"></A>
-<CODE>vrml_web_to_terms_file/2</CODE>, 
-<A NAME="IDX7367"></A>
-<CODE>vrml_file_to_terms_file/2</CODE>, 
-<A NAME="IDX7368"></A>
-<CODE>terms_file_to_vrml/2</CODE>, 
-<A NAME="IDX7369"></A>
-<CODE>terms_file_to_vrml_file/2</CODE>, 
-<A NAME="IDX7370"></A>
-<CODE>terms_to_vrml_file/2</CODE>, 
-<A NAME="IDX7371"></A>
-<CODE>terms_to_vrml/2</CODE>, 
-<A NAME="IDX7372"></A>
-<CODE>vrml_to_terms/2</CODE>, 
-<A NAME="IDX7373"></A>
-<CODE>vrml_in_out/2</CODE>, 
-<A NAME="IDX7374"></A>
-<CODE>vrml_http_access/2</CODE>.
+<A NAME="IDX7986"></A>
+<CODE>barchart4/7</CODE>, 
+<A NAME="IDX7987"></A>
+<CODE>barchart4/11</CODE>, 
+<A NAME="IDX7988"></A>
+<CODE>percentbarchart4/7</CODE>.
 
 </UL>
 
@@ -94,18 +65,20 @@ When you are done with the Prolog terms for the code, you would probably want to
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7375"></A>
-<CODE>pillow/http</CODE>, 
-<A NAME="IDX7376"></A>
-<CODE>pillow/html</CODE>, 
-<A NAME="IDX7377"></A>
-<CODE>provrml/io</CODE>, 
-<A NAME="IDX7378"></A>
-<CODE>provrml/parser</CODE>, 
-<A NAME="IDX7379"></A>
-<CODE>provrml/generator</CODE>, 
-<A NAME="IDX7380"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX7989"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX7990"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX7991"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX7992"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX7993"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX7994"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7995"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -115,315 +88,157 @@ When you are done with the Prolog terms for the code, you would probably want to
 
 
 
-<H2><A NAME="SEC739" HREF="ciao_toc.html#TOC739">Documentation on exports (<CODE>provrml</CODE>)</A></H2>
+<H2><A NAME="SEC777" HREF="ciao_toc.html#TOC777">Documentation on exports (<CODE>genbar4</CODE>)</A></H2>
 <P>
-<A NAME="IDX7381"></A>
-<A NAME="IDX7382"></A>
+<A NAME="IDX7996"></A>
+<A NAME="IDX7997"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vrml_web_to_terms/2:</B>
-<DD><A NAME="IDX7383"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart4/7:</B>
+<DD><A NAME="IDX7998"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>vrml_web_to_terms(+WEBAddress,-Terms)</CODE>
+<CODE>barchart4(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Given a address to a VRML-document on the Internet, the predicate will return the prolog-terms.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+As we mentioned in the above paragraph, this predicate is comparable to 
+<A NAME="IDX7999"></A>
+<CODE>barchart2/8</CODE> except in the <CODE>XVector</CODE> argument type. 
 
-<CODE>+WEBAddress</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>-Terms</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
+<P>
+Example: 
+
+<PRE>
+barchart4('This is the header text',
+  'Barchart without legend',
+  'My xaxistitle',
+  [[2],[5],[6]],
+  'My yaxixtitle',
+  [20,10,59],
+  'Numeric values in the xaxis').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7384"></A>
-<A NAME="IDX7385"></A>
+<A NAME="IDX8000"></A>
+<A NAME="IDX8001"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vrml_file_to_terms/2:</B>
-<DD><A NAME="IDX7386"></A>
+<DT><span class="define">PREDICATE:</span> <B>barchart4/11:</B>
+<DD><A NAME="IDX8002"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>vrml_file_to_terms(+FileName,-Term)</CODE>
+<CODE>barchart4(Hder,BT,XT,XVector,XMax,XMin,YT,YVector,YMax,YMin,Fter)</CODE>
+
+
+<P>
+As we stated before, this predicate is quite similar to 
+<A NAME="IDX8003"></A>
+<CODE>barchart2/10</CODE> except in the following aspects: 
+
+
 
 <UL>
-<LI><EM>Description:</EM> Given a filename containing a VRML-file the predicate returns the prolog terms corresponding.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>The <CODE>XVector</CODE> argument type, because the yielded bar chart lacks the legend.
 
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<LI>The user can set limits for both <CODE>x</CODE> axis and <CODE>y</CODE> axis.
 
-<CODE>-Term</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>vrml_file_to_terms(+FileName,+Terms)</CODE>
+Example: 
 
-<UL>
-<LI><EM>Description:</EM> Given a filename containing a VRML-file and a filename, the predicate write the prolog terms corresponding to the filename.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Terms</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
+<PRE>
+barchart4('This is the header text, you can write a graph description',
+  'Barchart without legend',
+  'My xaxistitle',
+  [[2,'Blue','Yellow','pattern1'],
+       [20,'MediumTurquoise','Plum','pattern5'],
+       [30,'MediumTurquoise','Green','pattern5']],
+  50,
+  -10,
+  'My yaxixtitle',
+  [20,10,59],
+  100,
+  -10,
+  'Numeric values in the xaxis').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7387"></A>
-<A NAME="IDX7388"></A>
+<A NAME="IDX8004"></A>
+<A NAME="IDX8005"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vrml_web_to_terms_file/2:</B>
-<DD><A NAME="IDX7389"></A>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart4/7:</B>
+<DD><A NAME="IDX8006"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>vrml_web_to_terms_file(+WEBAddress,+FileName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a address to a VRML-document on the Internet and a filename, the predicate will write the prolog_terms to the file.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+WEBAddress</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7390"></A>
-<A NAME="IDX7391"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vrml_file_to_terms_file/2:</B>
-<DD><A NAME="IDX7392"></A>
+<CODE>percentbarchart4(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7393"></A>
-<A NAME="IDX7394"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>terms_file_to_vrml/2:</B>
-<DD><A NAME="IDX7395"></A>
+The y axis maximum coordinate value is 100. The x axis limits are automatically worked out. This predicate is useful when the bar height represents percentages. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>terms_file_to_vrml(+FileName,-List)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> From a given filename with prologterms on the special format, the predicate returns the corresponding VRML-code.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-List</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7396"></A>
-<A NAME="IDX7397"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>terms_file_to_vrml_file/2:</B>
-<DD><A NAME="IDX7398"></A>
+Example: 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>terms_file_to_vrml_file(+Atom,+Atom)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> From a given filename with prologterms on the special format, the predicate writes the corresponding VRML-code to second filename.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7399"></A>
-<A NAME="IDX7400"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>terms_to_vrml_file/2:</B>
-<DD><A NAME="IDX7401"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>terms_to_vrml_file(+Term,+FileName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given prolog-terms the predicate writes the corresponding VRML-code to the given file.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Term</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7402"></A>
-<A NAME="IDX7403"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>terms_to_vrml/2:</B>
-<DD><A NAME="IDX7404"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>terms_to_vrml(+Term,-VRMLCode)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given prolog-terms the predicate returns a list with the corresponding VRML-code.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Term</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-VRMLCode</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7405"></A>
-<A NAME="IDX7406"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vrml_to_terms/2:</B>
-<DD><A NAME="IDX7407"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>vrml_to_terms(+VRMLCode,-Terms)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a list with VRML-code the predicate will return the corresponding prolog-terms.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+VRMLCode</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>-Terms</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7408"></A>
-<A NAME="IDX7409"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vrml_in_out/2:</B>
-<DD><A NAME="IDX7410"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>vrml_in_out(+FileName,+FileName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> This is a controll-predicate that given a filename to a VRML-file and a filename, the predicate will read the VRML-code. Transform it to prolog-terms and then transform it back to VRRML-code and write it to the latter file.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7411"></A>
-<A NAME="IDX7412"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vrml_http_access/2:</B>
-<DD><A NAME="IDX7413"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>vrml_http_access(+ReadFilename,+BaseFilename)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a web-address to a VRML-file the predicate will load the code, write it first to the second argument with extension '_first.wrl'. Then it transform the code to prolog terms and write it with the extension '.term'. Transform it back to VRML-code and write it to the filename with '.wrl. A good test-predicate.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+ReadFilename</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+BaseFilename</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
+<PRE>
+percentbarchart4('This is the header text',
+  'Barchart without legend',
+  'My xaxistitle',
+  [[2,'Blue','Yellow','pattern1'],[5,'Yellow','Plum','pattern5'],
+       [6,'MediumTurquoise','Green','pattern5']],
+  'My yaxixtitle',
+  [20,10,59],
+  'Numeric values in the xaxis').
+</PRE>
 
 </DL>
 
 
 
-<H2><A NAME="SEC740" HREF="ciao_toc.html#TOC740">Documentation on internals (<CODE>provrml</CODE>)</A></H2>
+<H2><A NAME="SEC778" HREF="ciao_toc.html#TOC778">Documentation on internals (<CODE>genbar4</CODE>)</A></H2>
 <P>
-<A NAME="IDX7414"></A>
-<A NAME="IDX7415"></A>
+<A NAME="IDX8007"></A>
+<A NAME="IDX8008"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_page/2:</B>
-<DD><A NAME="IDX7416"></A>
+<DT><span class="define">REGTYPE:</span> <B>xbarelement4/1:</B>
+<DD><A NAME="IDX8009"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>read_page(+WEBAddress,-Data)</CODE>
+Defines the attributes of the bar. 
+<DL COMPACT>
 
-<UL>
-<LI><EM>Description:</EM> This routine reads a page on the web using pillow routines.
+<DT><CODE>XValue</CODE>
+<DD>
+x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<DT><CODE>ForegColor</CODE>
+<DD>
+It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
 
-<CODE>+WEBAddress</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<DT><CODE>BackgColor</CODE>
+<DD>
+It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
 
-<CODE>-Data</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
+<DT><CODE>SPattern</CODE>
+<DD>
+It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+</DL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_194.html">previous</A>, <A HREF="ciao_196.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

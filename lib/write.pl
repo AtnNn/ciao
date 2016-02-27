@@ -48,7 +48,7 @@ write_quick(Term) :- var(Term), display(Term).
 write_quick(Term) :- atomic(Term), display(Term).
 
 :- pred write_term(@Stream, ?Term, +OptList) 
-   => stream * term * list(write_option) +  iso
+   => stream * term * list(write_option) +  (iso, native)
 
    # "Outputs the term @var{Term} to the stream @var{Stream}, with the
       list of write-options @var{OptList}. See @pred{write_option/1}
@@ -61,7 +61,7 @@ write_term(Stream, Term, OptList) :-
         write_term_internal(Term, OptList, 3),
 	set_output(Curr).
 
-:- pred write_term(?Term, +OptList) => term * list(write_option) + iso
+:- pred write_term(?Term, +OptList) => term * list(write_option) + (iso, native)
 
    # "Behaves like @tt{current_output(S),
       write_term(S,Term,OptList)}.".
@@ -75,7 +75,7 @@ write_term_internal(Term, OptList, N) :-
         write_out(Term, Options, Priority, 0, 0, '(', 2'100, _).
 
 
-:- prop write_option(Opt) 
+:- prop write_option(Opt) + native
         # "@var{Opt} is a valid write option.".
 
 :- comment(write_option/1, "@var{Opt} is a valid write option which
@@ -160,7 +160,7 @@ one_opt(priority(Prio), _, Opts, _, Opts, Prio) :-
 one_opt(Opt, N, _, _, _, _) :-
         throw(error(domain_error(write_option, Opt), write_term/N-N)).
 
-:- prop boolean(Bool)
+:- prop boolean(Bool) + native
         # "@var{Bool} is either the atom @tt{true} or the atom @tt{false}.".
 
 boolean(true).
@@ -174,7 +174,7 @@ ignore_ops_flag(true).
 ignore_ops_flag(ops).
 ignore_ops_flag(false).
 
-:- pred write_canonical(@Stream, ?Term) => stream * term + iso
+:- pred write_canonical(@Stream, ?Term) => stream * term + (iso, native)
        # "Behaves like @tt{write_term(Stream, Term, [quoted(true),
           ignore_ops(true)])}.  The output of this predicate can
           always be parsed by @pred{read_term/2} even if the term
@@ -188,7 +188,7 @@ write_canonical(Stream, Term) :-
         write_canonical(Term),
 	set_output(Curr).
 
-:- pred write_canonical(?Term) => term + iso
+:- pred write_canonical(?Term) => term + (iso, native)
         # "Behaves like @tt{current_output(S), write_canonical(S,Term)}.".
 
 write_canonical(Term) :-
@@ -197,7 +197,7 @@ write_canonical(Term) :-
         Options = options(true,true,false,false,1000000),
 	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- pred print(@Stream, ?Term) => stream * term
+:- pred print(@Stream, ?Term) => stream * term + native
         # "Behaves like @tt{write_term(Stream, Term,
            [numbervars(true), portrayed(true)])}.".
 
@@ -208,14 +208,15 @@ print(Stream, Term) :-
 	print(Term),
 	set_output(Curr).
 
-:- pred print(?Term) => term
+:- pred print(?Term) => term + native
         # "Behaves like @tt{current_output(S), print(S,Term)}.".
 
 print(Term) :-
         Options = options(false,false,true,true,1000000),
 	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- pred write(@Stream, ?Term) => stream * term + iso
+:- pred write(@Stream, ?Term) => stream * term
+	+ ( iso, native(write(Stream,Term)) )
         # "Behaves like @tt{write_term(Stream, Term, [numbervars(true)])}.".
 
 write(Stream, Term) :-
@@ -225,7 +226,7 @@ write(Stream, Term) :-
 	write(Term),
 	set_output(Curr).
 
-:- pred write(?Term) => term + iso
+:- pred write(?Term) => term + ( iso, native(write(Term)) )
         # "Behaves like @tt{current_output(S), write(S,Term)}.".
 
 write(Term) :-
@@ -234,13 +235,13 @@ write(Term) :-
         Options = options(false,false,true,false,1000000),
 	write_out(Term, Options, 1200, 0, 0, '(', 2'100, _).
 
-:- pred write_list1/1 :: list
+:- pred write_list1/1 :: list + native
 	# "Writes a list to current output one element in each line.".
 
 write_list1([]).
 write_list1([H|L]) :- writeq(H), nl, write_list1(L).
 
-:- pred writeq(@Stream, ?Term) => stream * term + iso
+:- pred writeq(@Stream, ?Term) => stream * term + (iso, native)
         # "Behaves like @tt{write_term(Stream, Term, [quoted(true),
           numbervars(true)])}.".
 
@@ -251,7 +252,7 @@ writeq(Stream, Term) :-
 	writeq(Term),
 	set_output(Curr).
 
-:- pred writeq(?Term) => term + iso
+:- pred writeq(?Term) => term + (iso, native)
         # "Behaves like @tt{current_output(S), writeq(S,Term)}.".
 
 writeq(Term) :-
@@ -329,7 +330,7 @@ variable like an unbound variable, e.g. @tt{_673}.".
 
 :- multifile portray/1.
 
-:- pred portray(?Term)
+:- pred portray(?Term) + native
    # "@em{A user defined predicate.} This should either print the @var{Term}
       and succeed, or do nothing and fail.  In the latter case, the default
       printer (@tt{write/1}) will print the @var{Term}.".
@@ -570,7 +571,7 @@ put_string_code(C) :- put_code(C).
 
 /* portraying clauses */
 
-:- pred prettyvars(?Term) => term
+:- pred prettyvars(?Term) => term + native
         # "Similar to @tt{numbervars(Term,0,_)}, except that singleton
  variables in @var{Term} are unified with @tt{'$VAR'('_')}, so that when the
  resulting term is output with a write option @tt{numbervars(true)}, in the
@@ -613,7 +614,7 @@ pretty_vars_([X|Xs], Y, N0) :-
 pretty_vars_(Xs, _, N0) :-
 	pretty_vars(Xs, N0).
 
-:- pred portray_clause(?Clause) => term
+:- pred portray_clause(?Clause) => term + native
         # "Behaves like @tt{current_output(S), portray_clause(S,Term)}.". 
 
 % This must be careful not to bind any variables in Clause.
@@ -623,7 +624,7 @@ portray_clause(Clause) :-
 	fail.
 portray_clause(_).
 
-:- pred portray_clause(@Stream, ?Clause) => stream * term
+:- pred portray_clause(@Stream, ?Clause) => stream * term + native
         # "Outputs the clause @var{Clause} onto @var{Stream}, pretty printing
  its variables and using indentation, including a period at the end. This
  predicate is used by @tt{listing/0}.". 
@@ -723,7 +724,7 @@ write_fullstop(Ci) :-
 	'list clauses'(A, L, E, _),
 	nl, tab(D).
 
-:- pred numbervars(?Term, +N, ?M) => term * integer * integer
+:- pred numbervars(?Term, +N, ?M) => term * integer * integer + native
         # "Unifies each of the variables in term @var{Term} with a term
  of the form @tt{'$VAR'(I)} where @tt{I} is an integer from @var{N}
  onwards. @var{M} is unified with the last integer used plus 1. If the

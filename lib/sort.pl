@@ -13,7 +13,7 @@
         identical elements are merged, yielding @var{List2}. The
         time and space complexity of this operation is at worst
         @var{O(N lg N)} where @var{N} is the length of @var{List1}.").
-:- trust pred sort(+list,?list)
+:- trust pred sort(+list,?list) + native
 	# "@var{List2} is the sorted list corresponding to @var{List1}.".
 
 sort(List, Sorted) :-
@@ -97,7 +97,7 @@ merge(>, O, Os, N1, [N|Ns], [N1|Set]) :-
 	output.  The time and space complexity of this operation is
 	at worst @var{O(N lg N)} where @var{N} is the length of
 	@var{List1}.").
-:- trust pred keysort(+keylist,?keylist)
+:- trust pred keysort(+keylist,?keylist) + native
 	# "@var{List2} is the (key-)sorted list corresponding to @var{List1}.".
 %% :- trust pred keysort(+list(Arg1,keypair),?list(Arg2,keypair))
 %% 	# "@var{Arg1} is the (key-)sorted list corresponding to @var{Arg2}.".

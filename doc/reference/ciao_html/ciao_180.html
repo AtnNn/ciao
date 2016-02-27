@@ -1,171 +1,106 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low level Interface between Prolog and blt</TITLE>
+<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC686" HREF="ciao_toc.html#TOC686">Low level Interface between Prolog and blt</A></H1>
-<P>
-<A NAME="IDX6905"></A>
-
+<H1><A NAME="SEC725" HREF="ciao_toc.html#TOC725">Crossed-references of a program</A></H1>
 
 <P>
-This module exports some predicates to interact with Tcl-tk, particularly with the bltwish program. Bltwish is a windowing shell consisting of the Tcl command languaje, the Tk toolkit plus the additional commands that comes with the BLT library and a main program that reads commands. It creates a main window and then processes Tcl commands. 
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
+<P>
+The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+
+
+<P>
+The libraries involved are as follows: 
 
 <UL>
-<LI><A HREF="ciao_180.html#SEC687">Usage and interface (bltclass)</A>
-<LI><A HREF="ciao_180.html#SEC688">Documentation on exports (bltclass)</A>
+<LI>
+
+<A NAME="IDX7617"></A>
+<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
+<LI>
+
+<A NAME="IDX7618"></A>
+<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
+<LI>
+
+<A NAME="IDX7619"></A>
+<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
+<LI>
+
+<A NAME="IDX7620"></A>
+<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
+<LI>
+
+<A NAME="IDX7621"></A>
+<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
 </UL>
 
-
-
-<H2><A NAME="SEC687" HREF="ciao_toc.html#TOC687">Usage and interface (<CODE>bltclass</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(bltclass)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6906"></A>
-<CODE>new_interp/1</CODE>, 
-<A NAME="IDX6907"></A>
-<CODE>tcltk_raw_code/2</CODE>, 
-<A NAME="IDX6908"></A>
-<CODE>interp_file/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6909"></A>
-<CODE>bltwish_interp/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6910"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX6911"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX6912"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6913"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6914"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX6915"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX6916"></A>
-<CODE>terms</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC688" HREF="ciao_toc.html#TOC688">Documentation on exports (<CODE>bltclass</CODE>)</A></H2>
 <P>
-<A NAME="IDX6917"></A>
-<A NAME="IDX6918"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
-<DD><A NAME="IDX6919"></A>
+The first two are intended to be used by loading in 
+<A NAME="IDX7622"></A>
+<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
 
 
 <P>
-<CODE>new_interp(Interp)</CODE>
-
-
-<P>
-Creates a bltwish interprter and returns a socket. The socket allows the comunication between Prolog and Tcl-tk. Thus, bltwish receives the commands through the socket. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6920"></A>
-<A NAME="IDX6921"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
-<DD><A NAME="IDX6922"></A>
-
-
-<P>
-<CODE>tcltk_raw_code(Command_Line,Interp)</CODE>
-
-
-<P>
-Sends a command line to the interpreter. Tcl-tk parses and executes it. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6923"></A>
-<A NAME="IDX6924"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>bltwish_interp/1:</B>
-<DD><A NAME="IDX6925"></A>
-
-
-<P>
-<CODE>bltwish_interp(Interp)</CODE>
-
-
-<P>
-This type defines a bltwish interpreter. In fact, the bltwish interpreter receives the commands through the socket created. 
+The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
 
 <PRE>
-bltwish_interp(Interp) :-
-        stream(Interp).
+[ciao/etc]&#62; ciaosh
+Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
+?- use_module(xmrefs).
+
+yes
+?- set_flag(X).
+
+X = 3 ? 
+
+yes
+?- set_files([xfrefs, xmrefs,
+              library(xrefs),
+              library('xrefs/mrefs'),
+              library('xrefs/pxrefs'),
+              library('xrefs/xrefs2graph'),
+              library('xrefs/xrefsbuild'),
+              library('xrefs/xrefsread')
+	     ]).
+
+yes
+?- xmrefs.
+
 </PRE>
 
-</DL>
-
 <P>
-<A NAME="IDX6926"></A>
-<A NAME="IDX6927"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>interp_file/2:</B>
-<DD><A NAME="IDX6928"></A>
+so that it is displayed by daVinci as: 
 
 
 <P>
-<CODE>interp_file(File,Interp)</CODE>
+<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
 
 
 <P>
-Sends the script file (File) to the interpreter through the socket. A script file is a file that contains commands that Tcl-tk can execute. 
+The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
 
 
-</DL>
+<P>
+<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
+
+
+<P>
+For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

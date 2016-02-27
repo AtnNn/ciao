@@ -32,22 +32,23 @@
 
 Active modules @cite{ciao-dis-impl-parimp-www} provide a high-level
 model of @concept{inter-process communication} and
-@concept{distributed execution} (note that using Ciao's communication
-and concurrency primitives, such as sockets, concurrent predicates,
-etc.).  An @index{active module} (or an @index{active object}) is an
-ordinary module to which computational resources are attached, and
-which resides at a given location on the network.  Compiling an active
-module produces an executable which, when running, acts as a server
-for a number of predicates, the predicates exported by the
-module. Predicates exported by an active module can be accessed
-by a program on the network by simply ``using'' the module, which then
-imports such ``remote predicates.''  The process of loading an active
-module does not involve transferring any code, but rather setting up
-things so that calls in the module using the active module are
-executed as remote procedure calls to the active module. This
-occurs in the same way independently of whether the 
-active module and the using module are in the same machine or in
-different machines across the network. 
+@concept{distributed execution} (note that this is also possible using
+Ciao's communication and concurrency primitives, such as sockets,
+concurrent predicates, etc., but at a lower level of abstraction).  An
+@index{active module} (or an @index{active object}) is an ordinary
+module to which computational resources are attached, and which
+resides at a given location on the network.  Compiling an active
+module produces an executable which, when running, acts as a
+@em{server} for a number of predicates: the predicates exported by the
+module. Predicates exported by an active module can be accessed by a
+program on the network by simply ``using'' the module, which then
+imports such ``remote predicates.''  The process of ``using'' an
+active module does not involve transferring any code, but rather
+setting up things so that calls in the module using the active module
+are executed as remote procedure calls to the active module. This
+occurs in the same way independently of whether the active module and
+the using module are in the same machine or in different machines
+across the network.
 
 Except for having to compile it in a special way (see below), an active
 module is identical from the programmer point of view to an ordinary
@@ -103,11 +104,11 @@ predicate which has an infinite number of answers}.
   directory on a different machine --provided the full path is the same.
 
   The third one is based on a @concept{name server} for active modules.
-  When an active module is compiled, it communicates its address to the
+  When an active module is started, it communicates its address to the
   name server. When the client of the active module wants to communicate with
   it, it asks the name server the active module address. This is all done
   transparently to the user.
-  The name server must be running when the active module is compiled (and,
+  The name server must be running when the active module is started (and,
   of course, when the application using it is executed). The location
   of the name server for an application must be specified in an application
   file named @tt{webbased_common.pl} (see below).
@@ -164,7 +165,7 @@ predicate which has an infinite number of answers}.
   The current distribution provides a file @tt{webbased_common.pl} that
   can be used (after proper setting of its contents) for a server of
   active modules for a whole installation. Alternatively, particular 
-  servers for each application can (or could) be set up...
+  servers for each application can be set up (see below).
 
   The current distribution also provides a module that can be used as
   name server by any application. It is in
@@ -195,6 +196,27 @@ predicate which has an infinite number of answers}.
   by the compiler before the standard Ciao library. The same applies for
   when running all of them if the library loading is dynamic.
 
+  One way to do the above is using the @tt{-u} compiler option. Assume the
+  following file:
+  @begin{verbatim}
+     :- module(paths,[],[]).
+     :- multifile library_directory/1.
+     :- dynamic library_directory/1.
+     :- initialization(asserta_fact(
+	library_directory('/root/path/to/my/particular/application') )).
+  @end{verbatim}
+  then you have file @tt{webbased_common.pl} in a subdirectory @tt{actmods}
+  of the above cited path. You have to compile the name server, the active
+  modules, and the rest of the application with:
+  @begin{verbatim}
+    ciaoc -u paths -s ...
+  @end{verbatim}
+  to use your particular @tt{webbased_common.pl} and to make executables
+  statically link libraries. If they are dynamic, then you have to provide
+  for the above library_directory path to be set up upon execution. This
+  can be done, for example, by including module @tt{paths} into your
+  executables.
+
   Addresses of active modules are saved by the name server in a subdirectory
   @tt{webbased_db} of the directory where you start it
   ---see @tt{examples/webbased_server/webbased_db/webbased_server}).
@@ -222,6 +244,14 @@ predicate which has an infinite number of answers}.
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+2,2002/05/23,17:48*34+'CEST'), "Added a little
+   more documentation on how to set up a private webbased name server.
+   (Francisco Bueno Carrillo)").
+
+:- comment(version(1*9+1,2002/05/23,17:47*59+'CEST'), "Added some
+   control on exceptions from webbased active modules.  (Francisco
+   Bueno Carrillo)").
 
 :- comment(version(1*7+205,2002/04/22,20:52*09+'CEST'), "Added example
    on agents. Reorganized documentation on active modules.  (Francisco

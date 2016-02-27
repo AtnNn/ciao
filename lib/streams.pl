@@ -8,7 +8,7 @@
 :- comment(title,"Structured stream handling").
 
 open_null_stream(S) :-
-	'$open'('/dev/null', write, S).
+	'$open'('/dev/null', w, S).
 
 open_input(FileName, (OldInput, NewInput)) :-
         current_input(OldInput),

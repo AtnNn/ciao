@@ -37,5 +37,5 @@ void jump_to_next_instance(struct instance *x2_p_insp,
                            struct instance **x2,
                            struct instance **x5);
 void remove_link_chains(struct node **topdynamic,
-                                struct node *chpttoclear);
+                        struct node  *chpttoclear);
 

@@ -56,9 +56,10 @@ TEXINDEX=texindex
 BIBTEX=bibtex
 # ----------------------------------------------------------------------------
 # Define this to be the command that converts dvi to postscript in
-# your system
+# your system. Make sure it generates postscript fonts, not bitmaps (selecting 
+# -Ppdf often does the trick). -z preserves hypertext links.
 # 
-DVIPS=dvips
+DVIPS=dvips -z -Ppdf 
 # ----------------------------------------------------------------------------
 # Define this to be the command that views dvi files in your system
 # 
@@ -75,14 +76,15 @@ XDVISIZE=4
 # 
 LIBTEXINFO=yes
 # ----------------------------------------------------------------------------
-# Define this to be the command that converts tex to pdf in your system
-# 
-TEXPDF=pdftex
-# ----------------------------------------------------------------------------
 # Define this to be the command that converts postscript to pdf in
-# your system
+# your system. Make sure it generates postscript fonts, not bitmaps (selecting 
+# -Ppdf in dvips often does the trick)
 # 
-# PSPDF=ps2pdf 
+PSPDF=ps2pdf 
+# ----------------------------------------------------------------------------
+# (alt) Define this to be the command that converts tex to pdf in your system
+# 
+# TEXPDF=pdftex
 # ----------------------------------------------------------------------------
 # Define this to be the command that converts texinfo files into html
 # files in your system.
@@ -349,38 +351,63 @@ endif
 	-@$(TEX) '\nonstopmode\input $*.texic'
 # Obviously an overkill, but it generates many, many files...
 	-@chmod $(DATAMODE) $**.*
-	$(DVIPS) -f < $*.dvi > $*.ps
+	$(DVIPS) $*.dvi -o $*.ps
 	-@chmod $(DATAMODE) $*.ps
+# This, really to fix a bug in some versions of dvips:
+	-@rm -f head.tmp body.tmp
 ifeq (,$(findstring dvi,$(DOCFORMATS)))
 	-@rm -f $*.dvi
 endif
 	$(MAKE) texclean
 
+# Alternative, using PSPDF. Good for ps figures, but must make sure 
+# that no bitmap fonts are generated (at least -Ppdf in dvips MUST be set)
 .texic.pdf: 
 	@$(ECHO) "*** --------------------------------------------------------"
-	@$(ECHO) "*** Converting $*.texic to $*.pdf..."
+	@$(ECHO) "*** Converting $*.texic (via dvi and ps) to $*.pdf ..."
 	@$(ECHO) "*** --------------------------------------------------------"
 ifeq ($(LIBTEXINFO),yes)
 	-@ln -s $(LIBDIR)/texinfo.tex 
 endif
-	$(TEXPDF) '\nonstopmode\input $*.texic'
+# Depends on how smart your $(TEX) is...
+	-@$(TEX) '\nonstopmode\input $*.texic'
 	-$(TEXINDEX) $*.??
-	$(TEXPDF) '\nonstopmode\input $*.texic'
+	-@$(TEX) '\nonstopmode\input $*.texic'
 # Obviously an overkill, but it generates many, many files...
 	-@chmod $(DATAMODE) $**.*
-	-@chmod $(DATAMODE) $*.pdf
+	$(DVIPS) $*.dvi -o $*.ps
+	-@chmod $(DATAMODE) $*.ps
+# This, really to fix a bug in some versions of dvips:
+	-@rm -f head.tmp body.tmp
 ifeq (,$(findstring dvi,$(DOCFORMATS)))
 	-@rm -f $*.dvi
 endif
 	$(MAKE) texclean
+	$(PSPDF) $*.ps > $*.pdf
+	-@chmod $(DATAMODE) $*.pdf
+ifeq (,$(findstring ps,$(DOCFORMATS)))
+	-@rm -f $*.ps
+endif
 
-# Alternative, using PSPDF, but very inefficient (generates bitmaps!)
-# .ps.pdf: 
-# 	@$(ECHO) "*** --------------------------------------------------------"
-# 	@$(ECHO) "*** Converting $*.ps to $*.pdf (takes a while)..."
-# 	@$(ECHO) "*** --------------------------------------------------------"
-# 	$(PSPDF) $*.ps
-# 	-@chmod $(DATAMODE) $*.pdf
+
+# Alternative, using pdftex (but problems with ps figures)
+#.texic.pdf: 
+#	@$(ECHO) "*** --------------------------------------------------------"
+#	@$(ECHO) "*** Converting $*.texic to $*.pdf..."
+#	@$(ECHO) "*** --------------------------------------------------------"
+#ifeq ($(LIBTEXINFO),yes)
+#	-@ln -s $(LIBDIR)/texinfo.tex 
+#endif
+#	$(TEXPDF) '\nonstopmode\input $*.texic'
+#	-$(TEXINDEX) $*.??
+#	$(TEXPDF) '\nonstopmode\input $*.texic'
+## Obviously an overkill, but it generates many, many files...
+#	-@chmod $(DATAMODE) $**.*
+#	-@chmod $(DATAMODE) $*.pdf
+#ifeq (,$(findstring dvi,$(DOCFORMATS)))
+#	-@rm -f $*.dvi
+#endif
+#	$(MAKE) texclean
 
 .texic.texi:
 	@$(ECHO) "*** --------------------------------------------------------"
@@ -932,6 +959,8 @@ infoview: # $(BASEMAIN).info
 	xterm -fn 9x15 -e info --file $(BASEMAIN).info &
 
 htmlview: # $(BASEMAIN).html
-	netscape -remote openURL\(file:`pwd`/$(BASEMAIN)_html/$(BASEMAIN).html\) &
+	htmlview file:`pwd`/$(BASEMAIN)_html/$(BASEMAIN).html &
+# Above for modern linux; alternatives:
+# netscape -remote openURL\(file:`pwd`/$(BASEMAIN)_html/$(BASEMAIN).html\) &
 # END
 #----------------------------------------------------------------------------

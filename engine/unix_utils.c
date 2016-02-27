@@ -750,6 +750,29 @@ BOOL prolog_getenvstr(Arg)
 
 /* setenvstr(+Name,+Value) */
 
+#if defined(Solaris)
+/* emulate setenv in terms of putenv (from rpm 2.0.9) */
+int setenv(const char *name, const char *value, int overwrite)
+{
+  int len;
+  if (!overwrite && getenv(name)) return 0;
+  len = strlen(name) + strlen(value) + 2;
+  if (len < 255) {
+    char buf[256];
+    strcpy(buf, name);
+    strcat(buf, "=");
+    strcat(buf, value);
+    return putenv(buf);
+  } else {
+    char *buf = malloc(len);
+    strcpy(buf, name);
+    strcat(buf, "=");
+    strcat(buf, value);
+    return putenv(buf);
+  }
+}
+#endif
+
 BOOL prolog_setenvstr(Arg)
      Argdecl;
 {

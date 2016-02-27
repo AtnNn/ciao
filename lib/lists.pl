@@ -1,5 +1,6 @@
 :- module(lists, [
-        nonsingle/1, append/3, reverse/2, reverse/3, delete/3, % member/2, 
+        nonsingle/1, append/3, reverse/2, reverse/3, delete/3, %member/2, 
+	delete_non_ground/3, 
 	select/3, length/2, nth/3, add_after/4, add_before/4,
         % list/1, list/2, 
 	list1/2, dlist/3, list_concat/2, list_insert/2, insert_last/3, 
@@ -8,7 +9,7 @@
         list_lookup/4,
         intset_insert/3, intset_delete/3, intset_in/2, intset_sequence/3,
 	intersection/3, union/3, difference/3, sublist/2, subordlist/2,
-	equal_lists/2, list_to_list_of_lists/2, powerset/2
+	equal_lists/2, list_to_list_of_lists/2, powerset/2, cross_product/2
         ],
         [
 	assertions,isomodes,metatypes,hiord
@@ -35,7 +36,7 @@ nonsingle(_).
 append([], L, L).
 append([E|Es], L, [E|R]) :- append(Es, L, R).
 
-:- pred reverse(Xs,Ys) : list * var => list * list
+:- pred reverse(Xs,Ys) : list * term => list * list
    # "Reverses the order of elements in @var{Xs}.".
 
 reverse(Xs,Ys):- reverse(Xs,[],Ys).
@@ -53,11 +54,26 @@ delete([Head|Tail], Element, Rest) :-
 delete([Head|Tail], Element, [Head|Rest]) :-
 	delete(Tail, Element, Rest).
 
+:- pred delete_non_ground(L1,E,L2) # "@var{L2} is @var{L1} without the 
+   ocurrences of @var{E}. @var{E} can be a nonground term so that all the 
+   elements in @var{L1} it unifies with will be deleted". 
+
+delete_non_ground([], _, []).
+delete_non_ground([Head|Tail], Element, Rest) :-
+	eq(Head,Element), !,
+	delete_non_ground(Tail, Element, Rest).
+delete_non_ground([Head|Tail], Element, [Head|Rest]) :-
+	delete_non_ground(Tail, Element, Rest).
+
+eq(A, B):- \+ \+ A = B.
+
 :- pred select(X,Xs,Ys) # "@var{Xs} and @var{Ys} have the same
    elements except for one occurrence of @var{X}.".
 
 select(E, [E|Es], Es).
 select(E, [X|Es], [X|L]) :- select(E, Es, L).
+
+:- true comp length(A,B) + native(length(A,B)).
 
 :- pred length(L,N) : list * var => list * integer
 	# "Computes the length of @var{L}.".
@@ -173,7 +189,7 @@ contains_ro([], _) :- !, fail.
 contains_ro([X|_], X).
 contains_ro([_|Xs], X) :- contains_ro(Xs, X).
 
-:- pred contains/1 # "First membership.".
+:- pred contains1/2 # "First membership.".
 
 contains1([X|_], X) :- !.
 contains1([_|Xs], X) :- contains1(Xs, X).
@@ -188,6 +204,7 @@ nocontainsx([X1|Xs], X) :- X\==X1, nocontainsx(Xs, X).
 
 last(L, X) :- var(L), !, L = [X|_].
 last([_|L], X) :- last(L, X).
+last([X], X) .
 
 :- pred list_lookup(List, Functor, Key, Value)
         # "Look up @var{Functor}(@var{Key},@var{Value}) pair in variable
@@ -312,9 +329,37 @@ add_x([],_,Zss,Zss).
 add_x([Ys|Yss],X,Zss,[[X|Ys]|Xss]) :-
 	add_x(Yss,X,Zss,Xss).
 
+:- pred cross_product(+LList,-List) # "@var{List} is the cartesian
+        product of the lists in @var{LList}, that is, the list of
+        lists formed with one element of each list in @var{LList}, in
+        the same order.".
+
+cross_product([], [[]]).
+cross_product([L1|Ls], Lds) :-
+        cross_product(Ls, Lda),
+        add_each_elem(L1, Lda, Lds).
+
+add_each_elem([], _, []).
+add_each_elem([X|Xs], Lda, Lds) :-
+        add_elem(Lda, X, Lds, Lds_),
+        add_each_elem(Xs, Lda, Lds_).
+
+add_elem([], _X, Lds, Lds).
+add_elem([L|Ls], X, [[X|L]|XLs], Lds_) :-
+        add_elem(Ls, X, XLs, Lds_).
+
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+53,2003/01/10,19:19*44+'CET'), " Added 
+   delete_non_ground(L1,E,L2), L2 is L1 without the ocurrences of E. E can be 
+   a nonground term so that all the elements in L1 it unifies with will be 
+   deleted.  (Jose Manuel Gomez Perez)").
+
+:- comment(version(1*9+4,2002/05/24,19:30*52+'CEST'), "Added
+   cross_product/2 to compute the cartesian product of a list of lists.
+   (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+41,2000/02/04,13:34*24+'CET'), "Split
    @pred{sublist/2} into its two versions --respecting ordering or not

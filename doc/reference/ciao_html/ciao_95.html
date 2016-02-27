@@ -1,50 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Independent and-parallel execution</TITLE>
+<TITLE>The Ciao Prolog System               - Multiple Argument Indexing</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC358" HREF="ciao_toc.html#TOC358">Independent and-parallel execution</A></H1>
+<H1><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Multiple Argument Indexing</A></H1>
 <P>
-<A NAME="IDX4006"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Manuel Hermenegildo.
+<A NAME="IDX4720"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Tom Howland (http://home.pacbell.net/tomjdnh/pd.html), derived from work by Anil Nair, F. Bueno (for the Ciao package).
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#160 (2001/11/27, 12:35:53 CET)
-
-
-<P>
-<STRONG>Note:</STRONG> This is just a partial first shot. The real library still needs to be written. Not difficult, just no time... 
-
-
-<P>
-This library will eventually allow and-parallel execution of goals in (Herbrand-)independent fashion. It resembles the execution rules of &#38;-Prolog [HG90]. Basically, goals are run in and-parallel <EM>provided that their arguments do not share bindings</EM>, i.e., are not bound to terms which contain a common variable.
+This package is an extension of the idea of Prolog indexing, usually performed, in a limited way, on the first argument. This package provides more powerful indexing schemes. It lets you pick different arguments to index on, and provides for different combinations of arguments to index on. E.g., it will let you index on the first and third argument or the second and the third argument of a predicate.
 
 
 
 <UL>
-<LI><A HREF="ciao_95.html#SEC359">Usage and interface (andprolog)</A>
-<LI><A HREF="ciao_95.html#SEC360">Documentation on internals (andprolog)</A>
-<LI><A HREF="ciao_95.html#SEC361">Known bugs and planned improvements (andprolog)</A>
+<LI><A HREF="ciao_95.html#SEC395">Usage and interface (indexer)</A>
+<LI><A HREF="ciao_95.html#SEC396">Documentation on internals (indexer)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC359" HREF="ciao_toc.html#TOC359">Usage and interface (<CODE>andprolog</CODE>)</A></H2>
+<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Usage and interface (<CODE>indexer</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,142 +39,188 @@ This library will eventually allow and-parallel execution of goals in (Herbrand-
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(andprolog).</CODE>
+This facility is used as a package, thus either including 
+<A NAME="IDX4721"></A>
+<CODE>indexer</CODE> in the package list of the module, or by using the 
+<A NAME="IDX4722"></A>
+<CODE>use_package/1</CODE> declaration. The facility predicate 
+<A NAME="IDX4723"></A>
+<CODE>hash_term/2</CODE>, documented here, is defined in library module 
+<A NAME="IDX4724"></A>
+<CODE>hash</CODE>.
 
-or
+<LI><STRONG>Other modules used:</STRONG>
 
-<CODE>:- module(...,...,[andprolog]).</CODE>
 
-<LI><STRONG>New operators defined:</STRONG>
+<UL>
 
-<A NAME="IDX4007"></A>
-<CODE>@&#38;/2</CODE> [950,xfy].
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4725"></A>
+<CODE>assertions/native_props</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC360" HREF="ciao_toc.html#TOC360">Documentation on internals (<CODE>andprolog</CODE>)</A></H2>
+<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Documentation on internals (<CODE>indexer</CODE>)</A></H2>
 <P>
-<A NAME="IDX4008"></A>
-<A NAME="IDX4009"></A>
+<A NAME="IDX4726"></A>
+<A NAME="IDX4727"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>@&#38;/2:</B>
-<DD><A NAME="IDX4010"></A>
+<DT><span class="define">DECLARATION:</span> <B>index/1:</B>
+<DD><A NAME="IDX4728"></A>
 
 
 <P>
-<CODE>@&#38;(GoalA,GoalB)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>index(IndexSpecs)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares an indexing scheme for a predicate. All specs of <CODE>IndexSpecs</CODE> must be terms for the same predicate. Each spec declares an indexing on a combination of the arguments. Indexing will be performed using any of the specs in <CODE>IndexSpecs</CODE> (being thus interpreted as an or).
+
+You should use a <CODE>*</CODE> in an argument position if you wish to hash on the entire term in that argument. If a <CODE>+</CODE> is used only one level of the term in the argument is used for hashing. An <CODE>i</CODE> is used to indicate that argument is already an integer, and therefore its own value will be used for hashing. The argspec <CODE>?</CODE> simply indicates not to use the argument for indexing. 
+
+For example, the index specification: 
+
+<PRE>
+:- index foo(+,?,*,i), foo(?,?,?,i).
+</PRE>
+
+declares indexing for <CODE>foo/4</CODE> either on a combination of the first, third, and fourht arguments, or only on the last argument, which is an integer. In the first case, only the principal functor of the first argument will be used for hashing; the third argument will be used in its entirety. 
+
+The argspec <CODE>n</CODE> is a pragmatic extension and can not be used in conjunction with the other specifiers aside from <CODE>?</CODE>. It stands for "nonvar" and implies that the argument will not be used for hashing, since only ground terms can effectively be used in hashing. Thus, it can not be used in combination with other specifiers within a particular index specification. It is often the fastest thing to use.  
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>IndexSpecs</CODE> is an index specification.
+ (<CODE>indexer_doc:indexspecs/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4729"></A>
+<A NAME="IDX4730"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>indexspecs/1:</B>
+<DD><A NAME="IDX4731"></A>
 
 
 <P>
-<CODE>GoalA</CODE> and <CODE>GoalB</CODE> are run in independent and-parallel fashion. This is just a first sketch, and valid only for deterministic independent goals. The use is as 
+An index specification is defined as follows: 
 
+<PRE>
+indexspecs(Spec) :-
+        indexspec(Spec).
+indexspecs((Spec,Specs)) :-
+        indexspec(Spec),
+        indexspecs(Specs).
+</PRE>
 
 
 <PRE>
-q:- a &#38; b.
+indexspec(Spec) :-
+        Spec=..[_F|Args],
+        list(Args,argspec).
 </PRE>
 
 <P>
-which would start <CODE>a</CODE> and <CODE>b</CODE> in separate threads (possibly in parallalel, if the machine architecture and operating system allows that), and continue when <STRONG>both</STRONG> have finished. This type of execution is safe only when <CODE>a</CODE> and <CODE>b</CODE> are independent in the sense of variable sharing. This condition can be tested with the 
-<A NAME="IDX4011"></A>
-<CODE>indep/2</CODE> predicate. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX4012"></A>
-<A NAME="IDX4013"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>active_agents/1:</B>
-<DD><A NAME="IDX4014"></A>
-
-
-<P>
-<CODE>active_agents(NumberOfAgents)</CODE>
-
-
-<P>
-Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to execute. As for now, those agents are resource-consuming, even when they are just looking for work, and not executing any user goals.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4015"></A>
-<A NAME="IDX4016"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>indep/2:</B>
-<DD><A NAME="IDX4017"></A>
-
-
-<P>
-<CODE>indep(X,Y)</CODE>
-
-
-<P>
-<CODE>X</CODE> and <CODE>Y</CODE> are 
-<A NAME="IDX4018"></A>
-<A NAME="IDX4019"></A>
-<EM>independent</EM>, i.e., they are bound to terms which have no variables in common. For example, <CODE>indep(X,Y)</CODE> holds for <CODE>X=f(Z),Y=g(K)</CODE> and also for <CODE>X=f(a),Y=X</CODE> (since both <CODE>X</CODE> and <CODE>Y</CODE> are bound to ground terms). It does not hold for <CODE>X=f(Z),Y=g(Z)</CODE> and for <CODE>X=Y</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4020"></A>
-<A NAME="IDX4021"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>indep/1:</B>
-<DD><A NAME="IDX4022"></A>
-
-
-<P>
-<CODE>indep(X)</CODE>
-
-
-<P>
-<CODE>X</CODE> is a list of lists of length two, i.e., a list of the form <CODE>[[T1, T2], [T3, T4], ...]</CODE>. The variables in each pair of the list <CODE><CODE>X</CODE></CODE> are tested for independence using 
-<A NAME="IDX4023"></A>
-<CODE>indep/2</CODE>. This list-of-pairs format is the output of several independdnce analyzers for pair sharing.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC361" HREF="ciao_toc.html#TOC361">Known bugs and planned improvements (<CODE>andprolog</CODE>)</A></H2>
-
+<STRONG>Usage:</STRONG> <CODE>indexspecs(IndexSpecs)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> <CODE>IndexSpecs</CODE> is an index specification.
 
-<LI>
-
-<STRONG>Beware:</STRONG> the current code is just a partial first shot. It is provided for the sole purpose of experimentation and development.
-
-<LI>
-
-The fact that only the first solution is returned for the conjunction is due to performance issues (and lack of time), and we expect to remove it in a near future.
-
-<LI>
-
-CGEs (i.e., <CODE>=&#62;</CODE>) are not supported.
-
-<LI>
-
-The 
-<A NAME="IDX4024"></A>
-<CODE>indep/1</CODE>, 
-<A NAME="IDX4025"></A>
-<CODE>indep/2</CODE>, and 
-<A NAME="IDX4026"></A>
-<CODE>ground/1</CODE> tests are not very efficient; they will be replaced by native versions (taken from the &#38;-Prolog code) in the future.
 </UL>
 
+</DL>
+
+<P>
+<A NAME="IDX4732"></A>
+<A NAME="IDX4733"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>argspec/1:</B>
+<DD><A NAME="IDX4734"></A>
+
+
+<P>
+An argument hash specification is defined as follows: 
+
+<PRE>
+argspec(+).
+argspec(*).
+argspec(i).
+argspec(n).
+argspec(?).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>argspec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is an argument hash specification.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4735"></A>
+<A NAME="IDX4736"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>hash_term/2:</B>
+<DD><A NAME="IDX4737"></A>
+
+
+<P>
+<CODE>hash_term(Term,HashValue)</CODE>
+
+
+<P>
+Provides an efficient way to calculate an integer <CODE>HashValue</CODE> for a ground <CODE>Term</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>hash_term(T,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is a hashing index for <CODE>T</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>T</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+
+<CODE>N</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>hash_term(T,N)</CODE>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE><CODE>T</CODE></CODE> is not ground.
+ (<CODE>native_props:nonground/1</CODE>)
+
+<CODE>N</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

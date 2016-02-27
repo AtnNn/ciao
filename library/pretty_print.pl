@@ -148,24 +148,30 @@ pp(H,K):-
 
 ppb((A,B),Tab,K) :- !,
 	ppb(A,Tab,K),
-	write(','),nl,
+	write(','), nl,
 	ppb(B,Tab,K).
 ppb('&'(A,B),Tab,K) :- !,
 	ppc(A,Tab,K),
-	write(' &'),nl,
+	write(' &'), nl,
 	ppc(B,Tab,K).
 ppb(('&'(A)),Tab,K) :- !,
 	ppb(A,Tab,K),
 	write(' &').
+ppb(true(B),Tab,K) :- !,
+	tab(Tab), write('true('), nl,
+	NTab1 is Tab+4,
+	NTab2 is Tab+7,
+	ppc(B,NTab2,K), nl,
+	tab(NTab1), write(')').
 ppb((A->B;C),Tab,K) :- !,
 	tab(Tab), write('('), nl,
 	NTab1 is Tab+2,
 	NTab2 is Tab+5,
 	ppb(A,NTab1,K),
 	write(' ->'), nl,
-	ppb(B,NTab2,K),nl,
+	ppb(B,NTab2,K), nl,
 	tab(Tab), write(';'), nl,
-	ppb(C,NTab2,K),nl,
+	ppb(C,NTab2,K), nl,
 	tab(Tab), write(')').
 ppb((A->B),Tab,K) :- !,
 	tab(Tab), write('('), nl,
@@ -173,24 +179,25 @@ ppb((A->B),Tab,K) :- !,
 	NTab2 is Tab+5,
 	ppb(A,NTab1,K),
 	write(' ->'), nl,
-	ppb(B,NTab2,K),nl,
+	ppb(B,NTab2,K), nl,
 	tab(Tab), write(')').
 ppb((A;B),Tab,K) :- !,
 	tab(Tab), write('('), nl,
 	NTab is Tab+5,
-	ppb(A,NTab,K),nl,
+	ppb(A,NTab,K), nl,
 	tab(Tab), write(';'), nl,
-	ppb(B,NTab,K),nl,
+	ppb(B,NTab,K), nl,
 	tab(Tab), write(')').
 ppb('=>'(A,B),Tab,K) :- !,
 	tab(Tab), write('('), nl,
 	NTab is Tab+5,
-	ppb(A,NTab,K),nl,
+	ppb(A,NTab,K), nl,
 	tab(Tab), write('=>'), nl,
-	ppb(B,NTab,K),nl,
+	ppb(B,NTab,K), nl,
 	tab(Tab), write(')').
-ppb(A:_,Tab,K) :- !,
- 	ppg(A,Tab,K).
+% Not anymore!!!
+%% ppb(A:_,Tab,K) :- !,
+%%  	ppg(A,Tab,K).
 ppb(A,Tab,K) :-
  	ppg(A,Tab,K).
 
@@ -200,10 +207,12 @@ ppc('&'(A,B),Tab,K) :- !,
 	ppc(B,Tab,K).
 ppc(X,Tab,K) :-
 	functor(X,F,2),
-	( F=',' ; F='=>' ; F=';' ; F='->' ), !,
+%	( F=',' ; F='=>' ; F=';' ; F='->' ), !,
+% for the rest, '(' is written by ppb itself:
+	F=',' , !,
 	tab(Tab), write('('), nl,
 	NTab is Tab+1,
-	ppb(X,NTab,K),nl,
+	ppb(X,NTab,K), nl,
 	tab(Tab), write(')').
 ppc(A,Tab,K) :-
 	ppb(A,Tab,K).
@@ -225,6 +234,10 @@ ppg(A,Tab,_K) :-
 
 %% -----------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+89,2003/07/21,19:43*48+'CEST'), "Taken out
+   special care for Goal:Key (was not working in CiaoPP).  (Francisco
+   Bueno Carrillo)").
 
 :- comment(version(1*7+112,2001/06/25,17:34*09+'CEST'), "Changed
    non-default operator usages (A&).  (Daniel Cabeza Gras)").

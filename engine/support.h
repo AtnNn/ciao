@@ -205,26 +205,31 @@ extern struct worker *create_wam_storage PROTO((void));
 #define BindingOfSVA(X)		CTagToSVA(X)
 #define BindingOfStackvar(X)	X
 
+/* segfault patch -- jf */
+void trail_push_check(Argdecl, TAGGED x);
+
+/* segfault patch -- jf */
 #define BindSVA(U,V) \
 { \
   if (CondSVA(U)) \
-    TrailPush(w->trail_top,U); \
+    TrailPushCheck(w->trail_top,U); \
   CTagToSVA(U) = V; \
 }
 
+/* segfault patch -- jf */
 #define BindCVA(U,V) \
 { \
-  TrailPush(w->trail_top,U); \
+  TrailPushCheck(w->trail_top,U); \
   CTagToCVA(U) = V; \
 }
 
+/* segfault patch -- jf */
 #define BindHVA(U,V) \
 { \
   if (CondHVA(U)) \
-    TrailPush(w->trail_top,U); \
+    TrailPushCheck(w->trail_top,U); \
   CTagToHVA(U) = V; \
 }
-
 
 #define Wake \
 { \
@@ -379,3 +384,15 @@ extern void failc(char *mesg);
 #define ENG_TTYPRINTF3(FMT,A1,A2,A3) ENG_PRINTF3(Error_Stream_Ptr,FMT,A1,A2,A3) 
 
 #define ENG_TTYPRINTF4(FMT,A1,A2,A3,A4) ENG_PRINTF4(Error_Stream_Ptr,FMT,A1,A2,A3,A4) 
+
+
+#define EXPAND_ATOM_BUFFER(new_max_atom_length) \
+{ \
+     Atom_Buffer = \
+        (char *)checkrealloc((TAGGED *)Atom_Buffer, \
+                             Atom_Buffer_Length, \
+                             new_max_atom_length); \
+    Atom_Buffer_Length = new_max_atom_length; \
+}
+
+

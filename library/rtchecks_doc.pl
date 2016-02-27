@@ -26,6 +26,10 @@
 
 :- include(library(rtchecks)).
 
+:- comment(hide,callme/1). 
+:- comment(hide,callme/2). 
+:- comment(hide,proves/2). 
+:- comment(hide,disproves/2). 
 :- comment(hide,calls/2). 
 :- comment(hide,c_prec/3). 
 :- comment(hide,prec/3). 
@@ -45,6 +49,7 @@
 :- comment(hide,show_prog_point/1). 
 :- comment(hide,show_prop_and_prog_point/2).
 
+:- comment(doinclude,check/1).
 :- comment(check(Property),
     "Checks whether the property defined by @var{Property} holds.
      Otherwise, a warning message is issued.

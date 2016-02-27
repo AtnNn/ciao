@@ -1,182 +1,234 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Prolog to Java interface</TITLE>
+<TITLE>The Ciao Prolog System               - SQL persistent database interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC592" HREF="ciao_toc.html#TOC592">Low-level Prolog to Java interface</A></H1>
+<H1><A NAME="SEC625" HREF="ciao_toc.html#TOC625">SQL persistent database interface</A></H1>
 <P>
-<A NAME="IDX6014"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX6447"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> I. Caballero, D. Cabeza, J.M. G&oacute;mez, M. Hermenegildo, J. F. Morales, and M. Carro, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#74 (2001/3/26, 12:12:29 CEST)
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
 
 
 <P>
- 
+<STRONG>Version of last change:</STRONG> 1.9#58 (2003/2/5, 10:44:19 CET)
 
 
 <P>
-This module defines the low level Prolog to Java interface. This interface allows a Prolog program to start a Java process, create Java objects, invoke methods, set/get attributes (fields), and handle Java events. 
+The purpose of this library is to implement an instance of the generic concept of 
+<A NAME="IDX6448"></A>
+persistent predicates, where external 
+<A NAME="IDX6449"></A>
+relational databases are used for storage (see the documentation of the 
+<A NAME="IDX6450"></A>
+<CODE>persdb</CODE> library and [CHGT98,Par97] for details). To this end, this library exports SQL persistent versions of the 
+<A NAME="IDX6451"></A>
+<CODE>assertz_fact/1</CODE>, 
+<A NAME="IDX6452"></A>
+<CODE>retract_fact/1</CODE> and 
+<A NAME="IDX6453"></A>
+<CODE>retractall_fact/1</CODE> builtin predicates. Persistent predicates also allow 
+<A NAME="IDX6454"></A>
+concurrent updates from several programs, since each update is atomic. 
 
 
 <P>
-This interface only works with JDK version 1.2 or higher. 
+The notion of persistence provides a very natural and transparent way to access database relations from a Prolog program. Stub definitions are provided for such predicates which access the database when the predicate is called (using the 
+<A NAME="IDX6455"></A>
+<CODE>db_client</CODE> library). A 
+<A NAME="IDX6456"></A>
+Prolog to SQL translator is used to generate the required 
+<A NAME="IDX6457"></A>
+SQL code dynamically (see library 
+<A NAME="IDX6458"></A>
+<CODE>pl2sql</CODE>). 
 
 
 <P>
-Although the Java side interface is explained in Javadoc format (it is available at library/javall/javadoc/ in your Ciao installation), the general interface structure is detailed here. 
+This library also provides facilities for reflecting more complex 
+<A NAME="IDX6459"></A>
+views of the database relations as Prolog predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations. Also, 
+<A NAME="IDX6460"></A>
+SQL-like 
+<A NAME="IDX6461"></A>
+aggregation operations are supported. 
 
 
 
 <UL>
-<LI><A HREF="ciao_150.html#SEC593">Low-Level Prolog to Java Interface Structure</A>
-<LI><A HREF="ciao_150.html#SEC596">Java event handling from Prolog</A>
-<LI><A HREF="ciao_150.html#SEC597">Java exception handling from Prolog</A>
-<LI><A HREF="ciao_150.html#SEC598">Usage and interface (javart)</A>
-<LI><A HREF="ciao_150.html#SEC599">Documentation on exports (javart)</A>
+<LI><A HREF="ciao_150.html#SEC626">Implementation of the Database Interface</A>
+<LI><A HREF="ciao_150.html#SEC627">Example(s)</A>
+<LI><A HREF="ciao_150.html#SEC628">Usage and interface (persdbrt_mysql)</A>
+<LI><A HREF="ciao_150.html#SEC629">Documentation on exports (persdbrt_mysql)</A>
+<LI><A HREF="ciao_150.html#SEC630">Documentation on multifiles (persdbrt_mysql)</A>
+<LI><A HREF="ciao_150.html#SEC631">Documentation on internals (persdbrt_mysql)</A>
+<LI><A HREF="ciao_150.html#SEC632">Known bugs and planned improvements (persdbrt_mysql)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC593" HREF="ciao_toc.html#TOC593">Low-Level Prolog to Java Interface Structure</A></H2>
-<P>
-<A NAME="IDX6015"></A>
-<A NAME="IDX6016"></A>
-This low-level prolog to java interface is made up of two parts: a Prolog part and a Java part, running in separate processes. The Prolog part receives requests from a Prolog program and sends them to the Java part through a socket. The Java part receives requests from the socket and performs the actions included in the requests. 
-
+<H2><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Implementation of the Database Interface</A></H2>
 
 <P>
-If an event is thrown in the java side, an asynchronous message must be sent away to the prolog side, in order to launch a prolog goal to handle the event. This asynchronous communication is made by the means of a second socket. The nature of this communication needs the use of threads both in java and prolog: to deal with the 'sequential program flow,' and other threads for event handling. 
-
-
-<P>
-In both sides the threads are automatically created by the context of the objects we use. The user must be aware that different requests to the other side of the interface could run concurrently. 
- 
+The architecture of the low-level implementation of the database interface was defined with two goals in mind: 
 
 
 
 <UL>
-<LI><A HREF="ciao_150.html#SEC594">Prolog side of the Java interface</A>
-<LI><A HREF="ciao_150.html#SEC595">Java side</A>
-</UL>
+<LI>to simplify the communication between the Prolog system and the relational database engines as much as possible, and
 
-
-
-<H3><A NAME="SEC594" HREF="ciao_toc.html#TOC594">Prolog side of the Java interface</A></H3>
-<P>
-<A NAME="IDX6017"></A>
-<A NAME="IDX6018"></A>
-The prolog side receives the actions to do in the java side from the user program, and sends them to the java side through the socket connection. When the action is done in the java side, the result is returned to the user program, or the action fails if there is any problem in the java side. 
-
-
-<P>
-Prolog data representation of java elements is very simple in this low-level interface. Java primitive types such as integers and characters are translated into Prolog terms, and even some Java objects are translated that way (e. g. Java strings). Java objects are represented in Prolog as compound terms with a reference to identify the corresponding Java object. Data conversion is made automatically when the interface is used, so the Prolog user programs do not have to deal with the complexity of this tasks. 
-
-
-
-
-<H3><A NAME="SEC595" HREF="ciao_toc.html#TOC595">Java side</A></H3>
-<P>
-<A NAME="IDX6019"></A>
-<A NAME="IDX6020"></A>
-The java side of this layer is more complex than the prolog side. The tasks this part have to deal to are the following: 
-
-
-
-<UL>
-
-<LI>Wait for requests from the prolog side.
-
-<LI>Translate the prolog terms received in a 'serialized' form in a more useful java representation.
-
-<LI>Interpret the requests received from the prolog side.
-
-<LI>Handle the set of objects created by or derived from the requests received from de prolog side.
-
-<LI>Handle the events raised in the java side, and launch the listeners added in the prolog side.
-
-<LI>Handle the exceptions raised in the java side, and send to the prolog side.
+<LI>to give as much flexibility as possible to the overall system. This includes simultaneous access to several databases, allowing both the databases and clients to reside on the same physical machine or different machines, and allowing the clients to reside in Win95/NT or Unix machines.
 
 </UL>
 
 <P>
-In the implementation of the java side, two items must be carefully designed: the handling of java objects, and the representation of prolog data structures. The last item is specially important because all the interactions between prolog and java are made using prolog structures, an easy way to standardize the different data management of both languages. Even the requests themselves are encapsulated using prolog structures. The overload of this encapsulation is not significant in terms of socket traffic, due to the optimal implementation of the prolog serialized term. 
-
-
-<P>
-The java side must handle the objects created from the prolog side dinamically, and these objects must be accessed as fast as possible from the set of objects. The java API provides a powerful implementation of Hash tables that achieves all the requirements of our implementation. 
-
-
-<P>
-On the other hand, the java representation of prolog terms is made using the inheritance of java classes. In the java side exists a representation of a generic prolog term, implemented as an abstract class in java. Variables, atoms, compound terms, lists, and numeric terms are classes in the java side which inherit from the term class. Java objects can be seen also under the prolog representation as compound terms, where the single argument corresponds to the Hash key of the actual java object in the Hash table referred to before. This behaviour makes the handling of mixed java and prolog elements easy. Prolog goals are represented in the java side as objects which contain a prolog compound term with the term representing the goal. This case will be seen more in depth next, when the java to prolog is explained. 
-
-
-
-
-<H2><A NAME="SEC596" HREF="ciao_toc.html#TOC596">Java event handling from Prolog</A></H2>
-<P>
-<A NAME="IDX6021"></A>
-<A NAME="IDX6022"></A>
-Java event handling is based on a delegation model since version 1.1.x. This approach to event handling is very powerful and elegant, but a user program cannot handle all the events that can arise on a given object: for each kind of event, a listener must be implemented and added specifically. However, the Java 2 API includes a special listener (<CODE>AWTEventListener</CODE>) that can manage the internal java event queue. 
-
-
-<P>
-The prolog to java interface has been designed to emulate the java event handler, and is also based on event objects and listeners. The low level prolog to java interface implements its own event manager, to handle those events that have prolog listeners associated to the object that raises the event. From the prolog side can be added listeners to objects for specific events. The java side includes a list of goals to launch from the object and event type. 
-
-
-<P>
-Due to the events nature, the event handler must work in a separate thread to manage the events asynchronously. The java side has its own mechanisms to work this way. The prolog side must be implemented specially for event handling using threads. The communication between java and prolog is also asynchronous, and an additional socket stream is used to avoid interferences with the main socket stream. The event stream will work in this implementation only in one way: from java to prolog. If an event handler needs to send back requests to java, it will use the main socket stream, just like the requests sent directly from a prolog program. 
-
-
-<P>
-The internal process of register a Prolog event handler to a Java event is shown in the next figure: 
-
-
-<P>
-<IMG SRC="autofigip2jbn-events-pl-reg.jpg" ALT="Image:autofigip2jbn-events-pl-reg.jpg"> 
-
-
-<P>
-When an event raises, the low-level Prolog to Java interface has to send to the Prolog user program the goal to evaluate. Graphically, the complete process takes the tasks involved in the following figure: 
-
-
-<P>
-<IMG SRC="autofigip2jbn-events-pl-fire.jpg" ALT="Image:autofigip2jbn-events-pl-fire.jpg"> 
  
-
-
-
-
-<H2><A NAME="SEC597" HREF="ciao_toc.html#TOC597">Java exception handling from Prolog</A></H2>
-<P>
-<A NAME="IDX6023"></A>
-<A NAME="IDX6024"></A>
-Java exception handling is very similar to the peer prolog handling: it includes some specific statements to trap exceptions from user code. In the java side, the exceptions can be originated from an incorrect request, or can be originated in the code called from the request. Both exception types will be sent to prolog using the main socket stream, allowing the prolog program manage the exception. However, the first kind of exceptions are prefixed, so the user program can distinguish them from the second type of exceptions. 
+In order to allow the flexibility mentioned above, a client-sever architecture was chosen. At the server side, a MySQL server connects to the databases using the MySQL. At the client side, a MySQL client interface connects to this server. The server daemon (mysqld) should be running in the server machine; check your MySQL documentation on how to do that. 
 
 
 <P>
-In order to handle exceptions properly using the prolog to java and java to prolog interfaces simultaneously, in both sides of the interface will be filtered those exceptions coming from their own side: this avoids an endless loop of exceptions bouncing from one side to another. 
+After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the data will traverse in the opposite direction. These messages include logging on and off from the database, sending SQL queries, and receiving the responses. 
+
+
+<P>
+The low level implementation of the current library is accomplished by providing abstraction levels over the MySQL interface library. These layers of abstraction implement the persistent predicate view, build the appropriate commands for the database using a translator of Prolog goals to SQL commands, issue such commands using the mediator send/receive procedures, parse the responses, and present such responses to the Prolog engine via backtracking. 
 
 
 
 
-<H2><A NAME="SEC598" HREF="ciao_toc.html#TOC598">Usage and interface (<CODE>javart</CODE>)</A></H2>
+<H2><A NAME="SEC627" HREF="ciao_toc.html#TOC627">Example(s)</A></H2>
+
+
+<PRE>
+:- module(_, _, [persdb_mysql, functions]).
+
+% Some contributions from Guy-Noel Mathieu
+
+:- use_module(library(write)).
+:- use_module(library(format)).
+
+:- use_module(user_and_password).
+
+sql_persistent_location(people, db(people, User, Password, HP)):-
+        mysql_host_and_port(HP),
+        mysql_user(User),
+        mysql_password(Password).
+
+:- sql_persistent(
+        people(string, string, int),   %% Prolog predicate and types
+        people(name, sex, age),        %% Table name and attributes
+        people).                       %% Database local id
+
+% Low level MySQL interface.
+:- use_module(library('persdb_mysql/mysql_client')).
+
+main :-
+        nl,
+        display('Creating database'), nl,nl,
+        create_people_db,
+        nl,
+        display('Inserting people'), nl,nl,
+        insert_people,
+        nl,
+        display('Showing people'), nl,nl,
+        show_people,
+        display('Removing John'), nl,nl,
+        remove_people(john,_Y,_Z),
+        display('Showing people, after removing John'), nl,nl,
+        show_people,
+        remove_people(_X,female,_Z),
+        display('Showing people, after removing female'), nl,nl,
+        show_people.
+
+% Create a database and a table of people.  Still needs to be ironed out.
+
+create_people_db :-
+        mysql_user(User),
+        mysql_password(Password),
+        mysql_host_and_port(HP),
+        mysql_connect(HP, '', User, Password, DbConnection),
+        
+        write(~mysql_query(DbConnection, "drop database if exists people")), nl,
+        write(~mysql_query(DbConnection, "create database people")), nl,
+        write(~mysql_query(DbConnection, "use people")), nl,
+        write(~mysql_query(DbConnection, "create table people(name char(16) not null, sex text, age int, primary key(name))")), nl,
+        mysql_disconnect(DbConnection).
+
+% Inserts people into the 'people' table.
+
+male(john, 15).
+male(peter, 24).
+male(ralph, 24).
+male(bart, 50).
+female(kirsten, 24).
+female(mary, 17).
+female(jona, 12).
+female(maija, 34).
+
+%% Tuples are inserted as in the local Prolog dynamic database
+insert_people :-
+        (
+            male(N, A),
+            display('Inserting '), 
+            display(male(N, A)), 
+            nl,
+            dbassertz_fact(people(N, male, A)), 
+            fail 
+        ; 
+            true
+        ),
+        (
+            female(N, A), 
+            display('Inserting '), 
+            display(female(N, A)), 
+            nl,
+            dbassertz_fact(people(N, female, A)),
+            fail 
+        ; 
+            true
+        ).
+
+ %% Removes people from the 'people' table.
+
+ %% Still not working in MySQL due to differences in SQL: working on it.
+
+remove_people(A, B, C) :-
+        dbretractall_fact(people(A, B, C)).
+ 
+remove_people_2(A, B, C) :-
+        dbretract_fact(people(A, B, C)),
+        display('Removed row '), display(people(A, B, C)), nl,
+        fail.
+remove_people_2(_, _, _) :-
+         display('No more rows'), nl.
+
+show_people :-
+        people(Name, Sex, Age),
+        display(people(Name, Sex, Age)),
+        nl,
+        fail.
+show_people :-
+        display('No more rows'), nl.
+        
+
+</PRE>
+
+
+
+<H2><A NAME="SEC628" HREF="ciao_toc.html#TOC628">Usage and interface (<CODE>persdbrt_mysql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -184,7 +236,40 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(javart)).</CODE>
+Typically, this library is used including the 'persdb_mysql' package into the package list of the module, or using the 
+<A NAME="IDX6462"></A>
+<CODE>use_package/1</CODE> declaration: 
+<DL COMPACT>
+
+<DT>In a module:
+<DD>
+
+<PRE>
+	:- module(bar, [main/1], [persdb_mysql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- module(bar, [main/1]).
+        :- include(library(persdb_mysql)).
+</PRE>
+
+<DT>In a <EM>user</EM> file:
+<DD>
+
+<PRE>
+	:- use_package([persdb_mysql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- include(library(persdb_mysql)).
+</PRE>
+
+</DL>
+This loads the run-time and compile-time versions of the library (<CODE>persdbtr_mysql.pl</CODE> and <CODE>persdbrt_mysql.pl</CODE>) and includes some needed declarations.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -193,51 +278,33 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6025"></A>
-<CODE>java_start/0</CODE>, 
-<A NAME="IDX6026"></A>
-<CODE>java_start/1</CODE>, 
-<A NAME="IDX6027"></A>
-<CODE>java_start/2</CODE>, 
-<A NAME="IDX6028"></A>
-<CODE>java_stop/0</CODE>, 
-<A NAME="IDX6029"></A>
-<CODE>java_connect/2</CODE>, 
-<A NAME="IDX6030"></A>
-<CODE>java_disconnect/0</CODE>, 
-<A NAME="IDX6031"></A>
-<CODE>java_use_module/1</CODE>, 
-<A NAME="IDX6032"></A>
-<CODE>java_create_object/2</CODE>, 
-<A NAME="IDX6033"></A>
-<CODE>java_delete_object/1</CODE>, 
-<A NAME="IDX6034"></A>
-<CODE>java_invoke_method/2</CODE>, 
-<A NAME="IDX6035"></A>
-<CODE>java_get_value/2</CODE>, 
-<A NAME="IDX6036"></A>
-<CODE>java_set_value/2</CODE>, 
-<A NAME="IDX6037"></A>
-<CODE>java_add_listener/3</CODE>, 
-<A NAME="IDX6038"></A>
-<CODE>java_remove_listener/3</CODE>.
+<A NAME="IDX6463"></A>
+<CODE>init_sql_persdb/0</CODE>, 
+<A NAME="IDX6464"></A>
+<CODE>dbassertz_fact/1</CODE>, 
+<A NAME="IDX6465"></A>
+<CODE>dbretract_fact/1</CODE>, 
+<A NAME="IDX6466"></A>
+<CODE>dbcurrent_fact/1</CODE>, 
+<A NAME="IDX6467"></A>
+<CODE>dbretractall_fact/1</CODE>, 
+<A NAME="IDX6468"></A>
+<CODE>make_sql_persistent/3</CODE>, 
+<A NAME="IDX6469"></A>
+<CODE>dbfindall/4</CODE>, 
+<A NAME="IDX6470"></A>
+<CODE>dbcall/2</CODE>, 
+<A NAME="IDX6471"></A>
+<CODE>sql_query/3</CODE>, 
+<A NAME="IDX6472"></A>
+<CODE>sql_get_tables/2</CODE>, 
+<A NAME="IDX6473"></A>
+<CODE>sql_table_types/3</CODE>.
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Multifiles:</EM>
 
-<A NAME="IDX6039"></A>
-<CODE>machine_name/1</CODE>, 
-<A NAME="IDX6040"></A>
-<CODE>java_constructor/1</CODE>, 
-<A NAME="IDX6041"></A>
-<CODE>java_object/1</CODE>, 
-<A NAME="IDX6042"></A>
-<CODE>java_event/1</CODE>, 
-<A NAME="IDX6043"></A>
-<CODE>prolog_goal/1</CODE>, 
-<A NAME="IDX6044"></A>
-<CODE>java_field/1</CODE>, 
-<A NAME="IDX6045"></A>
-<CODE>java_method/1</CODE>.
+<A NAME="IDX6474"></A>
+<CODE>sql_persistent_location/2</CODE>.
 
 </UL>
 
@@ -248,22 +315,32 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6046"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX6047"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX6048"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX6049"></A>
+<A NAME="IDX6475"></A>
+<CODE>det_hook/det_hook_rt</CODE>, 
+<A NAME="IDX6476"></A>
+<CODE>persdb_mysql/db_client_types</CODE>, 
+<A NAME="IDX6477"></A>
+<CODE>persdb_mysql/pl2sql</CODE>, 
+<A NAME="IDX6478"></A>
+<CODE>persdb_sql_common/sqltypes</CODE>, 
+<A NAME="IDX6479"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX6480"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX6481"></A>
+<CODE>terms_vars</CODE>, 
+<A NAME="IDX6482"></A>
+<CODE>messages</CODE>, 
+<A NAME="IDX6483"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX6050"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6051"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6052"></A>
-<CODE>javall/javasock</CODE>, 
-<A NAME="IDX6053"></A>
-<CODE>system</CODE>.
+<A NAME="IDX6484"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX6485"></A>
+<CODE>persdb_mysql/mysql_client</CODE>, 
+<A NAME="IDX6486"></A>
+<CODE>persdb_sql_common/pl2sqlinsert</CODE>, 
+<A NAME="IDX6487"></A>
+<CODE>persdb_mysql/delete_compiler/pl2sqldelete</CODE>.
 
 </UL>
 
@@ -273,452 +350,755 @@ In order to handle exceptions properly using the prolog to java and java to prol
 
 
 
-<H2><A NAME="SEC599" HREF="ciao_toc.html#TOC599">Documentation on exports (<CODE>javart</CODE>)</A></H2>
+<H2><A NAME="SEC629" HREF="ciao_toc.html#TOC629">Documentation on exports (<CODE>persdbrt_mysql</CODE>)</A></H2>
 <P>
-<A NAME="IDX6054"></A>
-<A NAME="IDX6055"></A>
+<A NAME="IDX6488"></A>
+<A NAME="IDX6489"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_start/0:</B>
-<DD><A NAME="IDX6056"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6057"></A>
-<A NAME="IDX6058"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_start/1:</B>
-<DD><A NAME="IDX6059"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_start(+classpath)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Starts the Java server on the local machine, connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+classpath</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6060"></A>
-<A NAME="IDX6061"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_start/2:</B>
-<DD><A NAME="IDX6062"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_start(+machine_name,+classpath)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Starts the Java server in machine_name (using rsh!), connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+machine_name</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+classpath</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6063"></A>
-<A NAME="IDX6064"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_stop/0:</B>
-<DD><A NAME="IDX6065"></A>
+<DT><span class="define">PREDICATE:</span> <B>init_sql_persdb/0:</B>
+<DD><A NAME="IDX6490"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Stops the interface terminating the threads that handle the socket connection, and finishing the Java interface server if it was started using java_start/n.
+<LI><EM>Description:</EM> Internal predicate, used to transform predicates statically declared as persistent (see
 
+<A NAME="IDX6491"></A>
+<CODE>sql_persistent/3</CODE>) into real persistent predicates.  
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6066"></A>
-<A NAME="IDX6067"></A>
+<A NAME="IDX6492"></A>
+<A NAME="IDX6493"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_connect/2:</B>
-<DD><A NAME="IDX6068"></A>
+<DT><span class="define">PREDICATE:</span> <B>dbassertz_fact/1:</B>
+<DD><A NAME="IDX6494"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_connect(+machine_name,+port_number)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbassertz_fact(+Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Connects to an existing Java interface server running in machine_name and listening at port port_number. To connect to a Java server located in the local machine, use 'localhost' as machine_name.
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX6495"></A>
+<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added to the end of the definition of the corresponding predicate. If any integrity constraint violation is done (database stored predicates), an error will be displayed. The predicate concerned must be statically (
+<A NAME="IDX6496"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX6497"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. <STRONG>Note:</STRONG> <EM>assertion of facts with uninstantiated variables not implemented at this time.</EM> 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6498"></A>
+<A NAME="IDX6499"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbretract_fact/1:</B>
+<DD><A NAME="IDX6500"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbretract_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX6501"></A>
+<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX6502"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX6503"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6504"></A>
+<A NAME="IDX6505"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbcurrent_fact/1:</B>
+<DD><A NAME="IDX6506"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbcurrent_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX6507"></A>
+<CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
+<A NAME="IDX6508"></A>
+<CODE>sql_persistent/3</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6509"></A>
+<A NAME="IDX6510"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbretractall_fact/1:</B>
+<DD><A NAME="IDX6511"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbretractall_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX6512"></A>
+<CODE>retractall_fact/1</CODE>: when called deletes all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX6513"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX6514"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrt_mysql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6515"></A>
+<A NAME="IDX6516"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_sql_persistent/3:</B>
+<DD><A NAME="IDX6517"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>make_sql_persistent(addmodule,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamic version of the
+
+<A NAME="IDX6518"></A>
+<CODE>sql_persistent/3</CODE> declaration. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
+ (<CODE>persdbrt_mysql:prologPredTypes/1</CODE>)
+
+<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
+ (<CODE>persdbrt_mysql:tableAttributes/1</CODE>)
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrt_mysql:persLocId/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6519"></A>
+<A NAME="IDX6520"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbfindall/4:</B>
+<DD><A NAME="IDX6521"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>dbfindall(?,?,goal,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbfindall(+DBId,+Pattern,+ComplexGoal,-Results)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Similar to
+
+<A NAME="IDX6522"></A>
+<CODE>findall/3</CODE>, but <CODE>Goal</CODE> is executed in database <CODE>DBId</CODE>. Certain restrictions and extensions apply to both <CODE>Pattern</CODE> and <CODE>ComplexGoal</CODE> stemming from the Prolog to SQL translation involved (see the corresponding type definitions for details). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+Pattern</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+ComplexGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>-Results</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6523"></A>
+<A NAME="IDX6524"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbcall/2:</B>
+<DD><A NAME="IDX6525"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbcall(+DBId,+ComplexGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Internal predicate, used by the transformed versions of the persistent predicates. Not meant to be called directly by users. It is exported by the library so that it can be used by the transformed versions of the persistent predicates in the modules in which they reside. Sends <CODE>ComplexGoal</CODE> to database <CODE>DBId</CODE> for evaluation. <CODE>ComplexGoal</CODE> must be a call to a persistent predicate which resides in database <CODE>DBId</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+machine_name</CODE> is the network name of a machine.
- (<CODE>javart:machine_name/1</CODE>)
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
 
-<CODE>+port_number</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>+ComplexGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6069"></A>
-<A NAME="IDX6070"></A>
+<A NAME="IDX6526"></A>
+<A NAME="IDX6527"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_disconnect/0:</B>
-<DD><A NAME="IDX6071"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_query/3:</B>
+<DD><A NAME="IDX6528"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>sql_query(+DBId,+SQLString,AnswerTableTerm)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Closes the connection with the java process, terminating the threads that handle the connection to Java. This predicate does not terminate the Java process (this is the disconnection procedure for Java servers not started from Prolog). This predicate should be used when the communication is established with java_connect/2.
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is the response from database <CODE>DBId</CODE> to the
 
+<A NAME="IDX6529"></A>
+SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerTableTerm</CODE> can express a set of tuples, an error answer or a 'ok' response (see 
+<A NAME="IDX6530"></A>
+<CODE>answertableterm/1</CODE> for details). At the moment, 
+<A NAME="IDX6531"></A>
+<CODE>sql_query/3</CODE> log in and out for each query. This should be changed to log in only the first time and log out on exit and/or via a timer in the standard way. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+SQLString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
+
+<CODE>AnswerTableTerm</CODE> is a response from the ODBC database interface.
+ (<CODE>persdbrt_mysql:answertableterm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6072"></A>
-<A NAME="IDX6073"></A>
+<A NAME="IDX6532"></A>
+<A NAME="IDX6533"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>machine_name/1:</B>
-<DD><A NAME="IDX6074"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_get_tables/2:</B>
+<DD><A NAME="IDX6534"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>machine_name(X)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>sql_get_tables(+Location,-Tables)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is the network name of a machine.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6075"></A>
-<A NAME="IDX6076"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_constructor/1:</B>
-<DD><A NAME="IDX6077"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_constructor(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6078"></A>
-<A NAME="IDX6079"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_object/1:</B>
-<DD><A NAME="IDX6080"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_object(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6081"></A>
-<A NAME="IDX6082"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_event/1:</B>
-<DD><A NAME="IDX6083"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_event(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6084"></A>
-<A NAME="IDX6085"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>prolog_goal/1:</B>
-<DD><A NAME="IDX6086"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_goal(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6087"></A>
-<A NAME="IDX6088"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_field/1:</B>
-<DD><A NAME="IDX6089"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_field(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6090"></A>
-<A NAME="IDX6091"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_use_module/1:</B>
-<DD><A NAME="IDX6092"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6093"></A>
-<A NAME="IDX6094"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_create_object/2:</B>
-<DD><A NAME="IDX6095"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_create_object(+java_constructor,-java_object)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> New java object creation. The constructor must be a compound term as defined by its type, with the full class name as functor (e.g., 'java.lang.String'), and the parameters passed to the constructor as arguments of the structure.
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>Location</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+java_constructor</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
- (<CODE>javart:java_constructor/1</CODE>)
+<CODE>+Location</CODE> is a structure describing a database.
+ (<CODE>persdbrt_mysql:database_desc/1</CODE>)
 
-<CODE>-java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
+<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX6096"></A>
-<A NAME="IDX6097"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_delete_object/1:</B>
-<DD><A NAME="IDX6098"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_delete_object(+java_object)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>sql_get_tables(+DbConnection,-Tables)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Java object deletion. It removes the object given as argument from the Java object table.
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>DbConnection</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6099"></A>
-<A NAME="IDX6100"></A>
+<A NAME="IDX6535"></A>
+<A NAME="IDX6536"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_invoke_method/2:</B>
-<DD><A NAME="IDX6101"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_table_types/3:</B>
+<DD><A NAME="IDX6537"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_invoke_method(+java_object,+java_method)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>sql_table_types(+Location,+Table,-AttrTypes)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Invokes a java method on an object. Given a Java object reference, invokes the method represented with the second argument.
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>Location</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
+<CODE>+Location</CODE> is a structure describing a database.
+ (<CODE>persdbrt_mysql:database_desc/1</CODE>)
 
-<CODE>+java_method</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
- (<CODE>javart:java_method/1</CODE>)
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-AttrTypes</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX6102"></A>
-<A NAME="IDX6103"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>java_method/1:</B>
-<DD><A NAME="IDX6104"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_method(X)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>sql_table_types(+DbConnection,+Table,-AttrTypes)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6105"></A>
-<A NAME="IDX6106"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>java_get_value/2:</B>
-<DD><A NAME="IDX6107"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_get_value(+java_object,+java_field)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the value of a field. Given a Java object as first argument, it instantiates the variable given as second argument. This field must be uninstantiated in the java_field functor, or this predicate will fail.
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>DbConnection</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
+<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
 
-<CODE>+java_field</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
- (<CODE>javart:java_field/1</CODE>)
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-AttrTypes</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6108"></A>
-<A NAME="IDX6109"></A>
+<A NAME="IDX6538"></A>
+<A NAME="IDX6539"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_set_value/2:</B>
-<DD><A NAME="IDX6110"></A>
+<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
+<DD><A NAME="IDX6540"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_set_value(+java_object,+java_field)</CODE>
+<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Sets the value of a Java object field. Given a Java object reference, it assigns the value included in the java_field compound term. The field value in the java_field structure must be instantiated.
+<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_field</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
- (<CODE>javart:java_field/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6111"></A>
-<A NAME="IDX6112"></A>
+<A NAME="IDX6541"></A>
+<A NAME="IDX6542"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_add_listener/3:</B>
-<DD><A NAME="IDX6113"></A>
+<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
+<DD><A NAME="IDX6543"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>java_add_listener(?,?,goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_add_listener(+java_object,+java_event,+prolog_goal)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Adds a listener to an event on an object. Given a Java object reference, it registers the goal received as third argument to be launched when the Java event raises.
+<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_event</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
- (<CODE>javart:java_event/1</CODE>)
-
-<CODE>+prolog_goal</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
- (<CODE>javart:prolog_goal/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6114"></A>
-<A NAME="IDX6115"></A>
+<A NAME="IDX6544"></A>
+<A NAME="IDX6545"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_remove_listener/3:</B>
-<DD><A NAME="IDX6116"></A>
+<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
+<DD><A NAME="IDX6546"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_remove_listener(+java_object,+java_event,+prolog_goal)</CODE>
+<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> It removes a listener from an object event queue. Given a Java object reference, goal registered for the given event is removed.
+<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+java_object</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
- (<CODE>javart:java_object/1</CODE>)
-
-<CODE>+java_event</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
- (<CODE>javart:java_event/1</CODE>)
-
-<CODE>+prolog_goal</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
- (<CODE>javart:prolog_goal/1</CODE>)
 </UL>
 
 </DL>
+
+<P>
+<A NAME="IDX6547"></A>
+<A NAME="IDX6548"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
+<DD><A NAME="IDX6549"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6550"></A>
+<A NAME="IDX6551"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
+<DD><A NAME="IDX6552"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6553"></A>
+<A NAME="IDX6554"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
+<DD><A NAME="IDX6555"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6556"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
+<DD><A NAME="IDX6557"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX6558"></A>
+<CODE>sqltypes</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC630" HREF="ciao_toc.html#TOC630">Documentation on multifiles (<CODE>persdbrt_mysql</CODE>)</A></H2>
+<P>
+<A NAME="IDX6559"></A>
+<A NAME="IDX6560"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_persistent_location/2:</B>
+<DD><A NAME="IDX6561"></A>
+
+
+<P>
+Relates names of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location</CODE>s).
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>dynamic</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_persistent_location(Keyword,DBLocation)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> In this usage, <CODE>DBLocation</CODE> is a <EM>relational database</EM>, in which case the predicate is stored as tuples in the database.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrt_mysql:persLocId/1</CODE>)
+
+<CODE>DBLocation</CODE> is a structure describing a database.
+ (<CODE>persdbrt_mysql:database_desc/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC631" HREF="ciao_toc.html#TOC631">Documentation on internals (<CODE>persdbrt_mysql</CODE>)</A></H2>
+<P>
+<A NAME="IDX6562"></A>
+<A NAME="IDX6563"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
+<DD><A NAME="IDX6564"></A>
+
+
+
+<PRE>
+tuple(T) :-
+        list(T,atm).
+tuple(T) :-
+        list(T,atm).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6565"></A>
+<A NAME="IDX6566"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX6567"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6568"></A>
+<A NAME="IDX6569"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>sql_persistent/3:</B>
+<DD><A NAME="IDX6570"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares the predicate corresponding to the main functor of <CODE>PrologPredTypes</CODE> as SQL persistent. <CODE>Keyword</CODE> is the
+
+<A NAME="IDX6571"></A>
+name of a location where the 
+<A NAME="IDX6572"></A>
+persistent storage for the predicate is kept, which in this case must be an external relational database. The description of this database is given through the 
+<A NAME="IDX6573"></A>
+<CODE>sql_persistent_location</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. <CODE>TableAttributes</CODE> provides the 
+<A NAME="IDX6574"></A>
+table name and 
+<A NAME="IDX6575"></A>
+attributes in the database corresponding respectively to the predicate name and arguments of the (virtual) Prolog predicate. 
+
+Although a predicate may be persistent, other usual clauses can be defined in the source code. When querying a persistent predicate with non-persistent clauses, persistent and non-persisten clauses will be evaluated in turn; the order of evaluation is the usual Prolog order, considering that persistent clauses are defined in the program point where the 
+<A NAME="IDX6576"></A>
+<CODE>sql_persistent/3</CODE> declaration is. 
+
+<STRONG>Example:</STRONG> 
+
+
+<PRE>
+:- sql_persistent(product( integer,    integer, string, string ),
+              product( quantity,   id,      name,   size   ),
+              radiowebdb).
+
+sql_persistent_location(radiowebdb,
+   db('SQL Anywhere 5.0 Sample', user, pass,
+      'r2d5.dia.fi.upm.es':2020)).
+</PRE>
+
+ 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
+ (<CODE>persdbrt_mysql:prologPredTypes/1</CODE>)
+
+<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
+ (<CODE>persdbrt_mysql:tableAttributes/1</CODE>)
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrt_mysql:persLocId/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6577"></A>
+<A NAME="IDX6578"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_query/4:</B>
+<DD><A NAME="IDX6579"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_query(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> contains all the
+
+<A NAME="IDX6580"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX6581"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX6582"></A>
+Prolog to SQL translation and 
+<A NAME="IDX6583"></A>
+<CODE>sql_query/3</CODE> for posing the actual query. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>persdbrt_mysql:tuple/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6584"></A>
+<A NAME="IDX6585"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_query_one_tuple/4:</B>
+<DD><A NAME="IDX6586"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is one of the
+
+<A NAME="IDX6587"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX6588"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX6589"></A>
+Prolog to SQL translation and 
+<A NAME="IDX6590"></A>
+<CODE>sql_query_one_tuple/3</CODE> for posing the actual query. After last tuple has been reached, a null tuple is unified with ResultTerm, and the connection to the database finishes. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a predicate containing a tuple.
+ (<CODE>persdbrt_mysql:answertupleterm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6591"></A>
+<A NAME="IDX6592"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_query_one_tuple/3:</B>
+<DD><A NAME="IDX6593"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_query_one_tuple(+DBId,+SQLString,ResultTuple)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTuple</CODE> contains an element from the set of tuples which represents the response in <CODE>DBId</CODE> to the
+
+<A NAME="IDX6594"></A>
+SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls return consecutive tuples, until the last tuple is reached. Then a null tuple is unified with <CODE>ResultTuple</CODE> and the connection is finished (calls to 
+<A NAME="IDX6595"></A>
+<CODE>mysql_disconnect/1</CODE>). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>mysql_client:dbconnection/1</CODE>)
+
+<CODE>+SQLString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
+
+<CODE>ResultTuple</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>persdbrt_mysql:tuple/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC632" HREF="ciao_toc.html#TOC632">Known bugs and planned improvements (<CODE>persdbrt_mysql</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+At least in the shell, reloading a file after changing the definition of a persistent predicate does not eliminate the old definition...
+
+<LI>
+
+Functionality missing: some questions need to be debugged.
+
+<LI>
+
+Warning: still using kludgey string2term and still using some non-uniquified temp files.
+
+<LI>
+
+Needs to be unified with the file-based library.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

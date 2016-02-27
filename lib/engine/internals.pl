@@ -174,6 +174,7 @@ control_c_handler :- throw(control_c).
 
 % Called from engine(mexpand)
 uses_runtime_module_expansion.
+ciaopp_expansion :- fail.
 
 :- data goal_trans/2.
 
@@ -376,7 +377,7 @@ del_stumps(_).
 
 poload(AbsName) :-
 	'$push_qlinfo',
-        '$open'(AbsName, read, Stream),            % Gives errors
+        '$open'(AbsName, r, Stream),            % Gives errors
 	'$qread'(Stream, Version),
 	poversion(Version), !,
 	repeat,

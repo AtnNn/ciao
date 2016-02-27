@@ -1,56 +1,539 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART VIII - Interfaces to other languages and systems</TITLE>
+<TITLE>The Ciao Prolog System               - Fuzzy Prolog</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC437" HREF="ciao_toc.html#TOC437">PART VIII - Interfaces to other languages and systems</A></H1>
+<H1><A NAME="SEC459" HREF="ciao_toc.html#TOC459">Fuzzy Prolog</A></H1>
+<P>
+<A NAME="IDX4929"></A>
+
 
 <P>
-The following interfaces to/from Ciao Prolog are documented in this part: 
+<STRONG>Author(s):</STRONG> Claudio Vaucheret, Sergio Guadarrama, Francisco Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#199 (2002/4/18, 18:5:46 CEST)
+
+
+<P>
+This package impements an extension of prolog to deal with uncertainty. We implement a fuzzy prolog that models interval-valued fuzzy logic. This approach is more general than other fuzzy prologs in two aspects: 
+
+
+
+<OL>
+<LI>Truth values are sub-intervals on [0,1]. In fact, it could be a finite union of sub-intervals, as we will see below. Having a unique truth value is a particular case modeled with a unitary interval.
+
+<LI>Truth values are propagated through the rules by means of a set of <EM>aggregation operators</EM>. The definition of an <EM>aggregation operator</EM> is a generalization that subsumes conjunctive operators (triangular norms as min, prod, etc.), disjunctive operators (triangular co-norms as max, sum, etc.), average operators (averages as arithmetic average, cuasi-linear average, etc.) and hybrid operators (combinations of previous operators).
+
+</OL>
+
+<P>
+We add uncertainty using CLP(R) instead of implementing a new fuzzy resolution as other fuzzy prologs. In this way, we use the original inference mechanism of Prolog, and we use the constraints and its operations provided by CLP(R) to handle the concept of partial truth. We represent intervals as constrains over real numbers and <EM>aggregation operators</EM> as operations with constraints. 
+
+
+<P>
+Each fuzzy predicate has an additional argument which represents its truth value. We use ":~" instead of ":-" to distinguish fuzzy clauses from prolog clauses. In fuzzy clauses, truth values are obtained via an aggregation operator. There is also some syntactic sugar for defining fuzzy predicates with certain membership functions, the fuzzy counterparts of crisp predicates, and the fuzzy negation of a fuzzy predicate. 
+
+
 
 <UL>
+<LI><A HREF="ciao_112.html#SEC460">Usage and interface (fuzzy)</A>
+<LI><A HREF="ciao_112.html#SEC461">Documentation on new declarations (fuzzy)</A>
+<LI><A HREF="ciao_112.html#SEC462">Documentation on exports (fuzzy)</A>
+<LI><A HREF="ciao_112.html#SEC463">Other information (fuzzy)</A>
+<LI><A HREF="ciao_112.html#SEC464">Known bugs and planned improvements (fuzzy)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC460" HREF="ciao_toc.html#TOC460">Usage and interface (<CODE>fuzzy</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_package(fuzzy).</CODE>
+
+or
+
+<CODE>:- module(...,...,[fuzzy]).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4930"></A>
+<CODE>:#/2</CODE>, 
+<A NAME="IDX4931"></A>
+<CODE>fuzzy_predicate/1</CODE>, 
+<A NAME="IDX4932"></A>
+<CODE>fuzzy/1</CODE>, 
+<A NAME="IDX4933"></A>
+<CODE>fnot/1</CODE>, 
+<A NAME="IDX4934"></A>
+<CODE>:~/2</CODE>, 
+<A NAME="IDX4935"></A>
+<CODE>=&#62;/4</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX4936"></A>
+<CODE>fuzzybody/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4937"></A>
+<CODE>faggregator/1</CODE>.
+
+</UL>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4938"></A>
+<CODE>:~/2</CODE> [1200,xfx], 
+<A NAME="IDX4939"></A>
+<CODE>:~/1</CODE> [1200,xf], 
+<A NAME="IDX4940"></A>
+<CODE>:=/2</CODE> [1200,xfx], 
+<A NAME="IDX4941"></A>
+<CODE>:=/1</CODE> [1200,xf], 
+<A NAME="IDX4942"></A>
+<CODE>:#/2</CODE> [1200,xfx], 
+<A NAME="IDX4943"></A>
+<CODE>=&#62;/1</CODE> [1175,fx], 
+<A NAME="IDX4944"></A>
+<CODE>fnot/1</CODE> [1150,fx], 
+<A NAME="IDX4945"></A>
+<CODE>aggr/1</CODE> [1150,fx], 
+<A NAME="IDX4946"></A>
+<CODE>##/2</CODE> [1120,xfy], 
+<A NAME="IDX4947"></A>
+<CODE>&#60;#/2</CODE> [1120,xfy], 
+<A NAME="IDX4948"></A>
+<CODE>#&#62;/2</CODE> [1120,xfy], 
+<A NAME="IDX4949"></A>
+<CODE>fuzzy/1</CODE> [1150,fx], 
+<A NAME="IDX4950"></A>
+<CODE>fuzzy_predicate/1</CODE> [1190,fx], 
+<A NAME="IDX4951"></A>
+<CODE>fuzzy_discrete/1</CODE> [1190,fx].
+
+<LI><STRONG>New declarations defined:</STRONG>
+
+<A NAME="IDX4952"></A>
+<CODE>aggr/1</CODE>.
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC461" HREF="ciao_toc.html#TOC461">Documentation on new declarations (<CODE>fuzzy</CODE>)</A></H2>
+<P>
+<A NAME="IDX4953"></A>
+<A NAME="IDX4954"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>aggr/1:</B>
+<DD><A NAME="IDX4955"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>aggr(Name)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares <CODE>Name</CODE> an aggregator. Its binary definition has to be provided. For example:
+
+
+<PRE>
+:- aggr myaggr.
+
+myaggr(X,Y,Z):- Z .=. X*Y.
+</PRE>
+
+defines an aggregator identical to <CODE>prod</CODE>. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Name</CODE> is an atomic term (an atom or a number).
+ (<CODE>basic_props:constant/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC462" HREF="ciao_toc.html#TOC462">Documentation on exports (<CODE>fuzzy</CODE>)</A></H2>
+<P>
+<A NAME="IDX4956"></A>
+<A NAME="IDX4957"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>:#/2:</B>
+<DD><A NAME="IDX4958"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>:#(Name,Decl)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines fuzzy predicate <CODE>Name</CODE> from the declaration <CODE>Decl</CODE>.
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Decl</CODE> is one of the following three: 
+
+<PRE>
+fuzzydecl(fuzzy_predicate(_1)).
+fuzzydecl(fuzzy(_1)).
+fuzzydecl(fnot(_1)).
+</PRE>
+
+ (<CODE>user(... /fuzzy_doc):fuzzydecl/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4959"></A>
+<A NAME="IDX4960"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fuzzy_predicate/1:</B>
+<DD><A NAME="IDX4961"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fuzzy_predicate(Domain)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines a fuzzy predicate with piecewise linear continuous membership function. This is given by <CODE>Domain</CODE>, which is a list of pairs of domain-truth values, in increasing order and exhaustive. For example:
+
+
+<PRE>
+young :# fuzzy_predicate([(0,1),(35,1),(45,0),(120,0)]).
+</PRE>
+
+defines the predicate: 
+
+<PRE>
+young(X,1):- X .&#62;=. 0, X .&#60;. 35.
+young(X,M):- X .&#62;=. 35, X .&#60;. 45, 10*M .=. 45-X.
+young(X,0):- X .&#62;=. 45, X .=&#60;. 120. 
+</PRE>
+
+ 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Domain</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4962"></A>
+<A NAME="IDX4963"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fuzzy/1:</B>
+<DD><A NAME="IDX4964"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fuzzy(Name)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines a fuzzy predicate as the fuzzy counterpart of a crisp predicate <CODE>Name</CODE>. For example,
+
+
+<PRE>
+p_f :# fuzzy p/2
+</PRE>
+
+defines a new fuzzy predicate <CODE>p_f/3</CODE> (the last argument is the truth value) with truth value equal to 0 if <CODE>p/2</CODE> fails and 1 otherwise. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4965"></A>
+<A NAME="IDX4966"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fnot/1:</B>
+<DD><A NAME="IDX4967"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fnot(Name)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines a fuzzy predicate as the fuzzy negation of another fuzzy predicate <CODE>Name</CODE>. For example,
+
+
+<PRE>
+notp_f :# fnot p_f/3
+</PRE>
+
+defines the predicate: 
+
+<PRE>
+notp_f(X,Y,M) :-
+        p_f(X,Y,Mp),
+        M .=. 1 - Mp.
+</PRE>
+
+ 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Name</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4968"></A>
+<A NAME="IDX4969"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>:~/2:</B>
+<DD><A NAME="IDX4970"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>:~(Head,Body)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Defines a fuzzy clause for a fuzzy predicate. The clause contains calls to either fuzzy or crisp predicates. Calls to crisp predicates are automatically fuzzified. The last argument of <CODE>Head</CODE> is the truth value of the clause, which is obtained as the aggregation of the truth values of the body goals. An example:
+
+
+<PRE>
+:- module(young2,_,[fuzzy]).
+
+young_couple(X,Y,Mu) :~ min
+        age(X,X1),
+        age(Y,Y1),
+        young(X1,MuX),
+        young(Y1,MuY).
+
+age(john,37).
+age(rose,39).
+
+young :# fuzzy_predicate([(0,1),(35,1),(45,0),(120,0)]).
+
+</PRE>
+
+so that: 
+
+<PRE>
+?- young_couple(john,rose,M).
+
+M .=. 0.6 ? 
+</PRE>
+
+ 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Head</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Body</CODE> is a clause body plus an optional aggregation operator.
+ (<CODE>user(... /fuzzy_doc):fuzzybody/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4971"></A>
+<A NAME="IDX4972"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>fuzzybody/1:</B>
+<DD><A NAME="IDX4973"></A>
+
+
+<P>
+A clause body, optionally prefixed by the name of an aggregation operator. The agregators currently provided are listed under <CODE>faggregator/1</CODE>. By default, the aggregator used is <CODE>min</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fuzzybody(B)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>B</CODE> is a clause body plus an optional aggregation operator.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4974"></A>
+<A NAME="IDX4975"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>faggregator/1:</B>
+<DD><A NAME="IDX4976"></A>
+
+
+<P>
+The first three are, respectively, the T-norms: minimum, product, and Lukasiewicz's. The last three are their corresponding T-conorms. Aggregators can be defined by the user, see <CODE>aggr/1</CODE>. 
+
+<PRE>
+faggregator(min).
+faggregator(prod).
+faggregator(luka).
+faggregator(max).
+faggregator(dprod).
+faggregator(dluka).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>faggregator(Aggr)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Aggr</CODE> is an aggregator which is cumulative, i.e., its application to several values by iterating pairwise the binary operation is safe.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4977"></A>
+<A NAME="IDX4978"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>=&#62;/4:</B>
+<DD><A NAME="IDX4979"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>=&#62;(Aggr,A,B,Truth)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The fuzzy implication <CODE>A =&#62; B</CODE> defined by aggregator <CODE>Aggr</CODE>, resulting in the truth value <CODE>Truth</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Aggr</CODE> is an aggregator which is cumulative, i.e., its application to several values by iterating pairwise the binary operation is safe.
+ (<CODE>user(... /fuzzy_doc):faggregator/1</CODE>)
+
+<CODE>A</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>B</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Truth</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC463" HREF="ciao_toc.html#TOC463">Other information (<CODE>fuzzy</CODE>)</A></H2>
+
+<P>
+An example program: 
+
+<PRE>
+:- module(dicesum5,_,[fuzzy]).
+
+% this example tries to measure which is the possibility
+% that a couple of values, obtained throwing two loaded dice, sum 5. Let
+% us suppose we only know that one die is loaded to obtain a small value
+% and the other is loaded to obtain a large value. 
+%
+% the query is  ? sum(5,M)
+%
+
+small :# fuzzy_predicate([(1,1),(2,1),(3,0.7),(4,0.3),(5,0),(6,0)]).
+large :# fuzzy_predicate([(1,0),(2,0),(3,0.3),(4,0.7),(5,1),(6,1)]).
+
+die1(X,M) :~
+        small(X,M).
+
+die2(X,M) :~
+        large(X,M).
+
+two_dice(X,Y,M):~ prod
+        die1(X,M1),
+        die2(Y,M2).
+
+sum(2,M) :~  
+        two_dice(1,1,M1).
+
+sum(5,M) :~ dprod
+        two_dice(4,1,M1),
+        two_dice(1,4,M2),
+        two_dice(3,2,M3),
+        two_dice(2,3,M4).
+
+</PRE>
+
+<P>
+There are more examples in the subdirectory <CODE>fuzzy/examples</CODE> of the distribution. 
+
+
+
+
+<H2><A NAME="SEC464" HREF="ciao_toc.html#TOC464">Known bugs and planned improvements (<CODE>fuzzy</CODE>)</A></H2>
+
+
+<UL>
+
 <LI>
 
-<A NAME="IDX4460"></A>
-External interface (e.g., to C). 
+General aggregations defined by users.
+
 <LI>
 
-<A NAME="IDX4461"></A>
-Socket interface. 
+Inconsistent behaviour of meta-calls in fuzzy clauses.
+
 <LI>
 
-<A NAME="IDX4462"></A>
-Tcl/tk interface. 
-<LI>
-
-<A NAME="IDX4463"></A>
-Web interface (http, html, xml, etc.); 
-<LI>
-
-<A NAME="IDX4464"></A>
-Persistent predicate databases (interface between the Prolog internal database and the external file system). 
-<LI>
-
-<A NAME="IDX4465"></A>
-SQL-like database interface (interface between the Prolog internal database and external SQL/ODBC systems). 
-<LI>
-
-<A NAME="IDX4466"></A>
-Java interface. 
-<LI>
-
-<A NAME="IDX4467"></A>
-Calling emacs from Prolog. 
+Some meta-predicate constructions need be added, specially for 'disjunctive' fuzzy clauses, e.g., <CODE>sum/2</CODE> in the dice example.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

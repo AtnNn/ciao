@@ -1,5 +1,5 @@
 
-:- module(modules, [main/0], [assertions]).
+:- module(modules, [], [assertions]).
 
 :- comment(title, "The module system").
 
@@ -200,12 +200,14 @@ modulename(M) :- atm(M).
 
 metaspec(M) :- struct(M).
 
-main.
-
 %-----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
 %-----------------------------------------------------------------------------
+
+:- comment(version(1*9+28,2002/11/20,14:03*05+'CET'), "Deleted the
+   dummy @tt{main.}: it prevents proper documentation from being
+   generated!  (Manuel Hermenegildo)").
 
 :- comment(version(1*7+168,2002/01/03,17:45*02+'CET'), "Added dummy
    main/0 to avoid documentation complaints.  (MCL)").

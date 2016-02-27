@@ -1,128 +1,48 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Iterative-deepening execution</TITLE>
+<TITLE>The Ciao Prolog System               - Call on determinate</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Iterative-deepening execution</A></H1>
+<H1><A NAME="SEC424" HREF="ciao_toc.html#TOC424">Call on determinate</A></H1>
 <P>
-<A NAME="IDX4135"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Claudio Vaucheret, Manuel Hermenegildo.
+<A NAME="IDX4842"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Jos&eacute; Morales, Manuel Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#119 (2001/8/28, 15:39:1 CEST)
+<STRONG>Version:</STRONG> 1.7#149 (2001/11/19, 19:17:51 CET)
 
 
 <P>
-This package applies a <EM>compiling control</EM> technique to implement 
-<A NAME="IDX4136"></A>
-<A NAME="IDX4137"></A>
-<EM>depth first iterative deepening</EM> execution [Kor85]. It changes the usual <EM>depth-first</EM> computation rule by 
-<A NAME="IDX4138"></A>
-<A NAME="IDX4139"></A>
-<EM>iterative-deepening</EM> on those predicates specifically marked. This is very useful in search problems when a 
-<A NAME="IDX4140"></A>
-complete proof procedure is needed. 
+Offers an enriched variant of call and cut <CODE>!!/0</CODE> which executes pending goals when the computation has no more alternatives. 
 
 
 <P>
-When this computation rule is used, first all goals are expanded only up to a given depth. If no solution is found or more solutions are needed by backtracking, the depth limit is incremented and the whole goal is repeated. Although it might seem that this approach is very inefficient because all higher levels are repeated for the deeper ones, it has been shown that is performs only about b/(b - 1) times as many operations than the corresponding breadth-first search, (where b is the branching factor of the proof tree) while the waste of memory is the same as depth first. 
-
-
-<P>
-The usage is by means of the following directive: 
-
-
-<P>
-<CODE>:- iterative(Name, FirstCut, Formula).</CODE> 
-
-
-<P>
-which states than the predicate 'Name' given in functor/arity form will be executed using iterative deepening rule starting at the depth 'FirstCut' with depth being incremented by the predicate 'Formula'. This predicate compute the new depth using the previous one. It must implement a dilating function i.e. the new depth must be greater. For example, to start with depth 5 and increment by 10 you can write: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,f).</CODE> 
-
-
-<P>
-<CODE>f(X,Y) :- Y is X + 10.</CODE> 
-
-
-<P>
-or if you prefer, 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10)).</CODE> 
-
-
-<P>
-<A NAME="IDX4141"></A>
-<A NAME="IDX4142"></A>
-You can also use a fourth parameter to set a limiting depth. All goals below the given depth limit simply fail. Thus, with the following directive: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10),100).</CODE> 
-
-
-<P>
-all goals deeper than 100 will fail. 
-
-
-<P>
-An example of code using this package would be: 
-
-
-
-<PRE>
-
-</PRE>
-
-<P>
-The order of solutions are first the shallower and then the deeper. Solutions which are between two cutoff are given in the usual left to right order. For example, 
-
-
-
-<PRE>
-
-</PRE>
-
-<P>
-It is possible to preserve the iterative-deepening behavior for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will be treated in the usual way i.e. by depth-first computation. 
-
-
-<P>
-Another complete proof procedure implemented is the 
-<A NAME="IDX4143"></A>
-<CODE>bf</CODE> package (
-<A NAME="IDX4144"></A>
-breadth first execution). 
+This library is useful to, for example, get rid of external connections once the necessary data has been obtained.
 
 
 
 <UL>
-<LI><A HREF="ciao_103.html#SEC395">Usage and interface (id)</A>
+<LI><A HREF="ciao_103.html#SEC425">Usage and interface (det_hook_rt)</A>
+<LI><A HREF="ciao_103.html#SEC426">Documentation on exports (det_hook_rt)</A>
+<LI><A HREF="ciao_103.html#SEC427">Documentation on internals (det_hook_rt)</A>
+<LI><A HREF="ciao_103.html#SEC428">Other information (det_hook_rt)</A>
+<LI><A HREF="ciao_103.html#SEC429">Known bugs and planned improvements (det_hook_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Usage and interface (<CODE>id</CODE>)</A></H2>
+<H2><A NAME="SEC425" HREF="ciao_toc.html#TOC425">Usage and interface (<CODE>det_hook_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -130,16 +50,166 @@ breadth first execution).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(id).</CODE>
 
-or
+<PRE>
+:- use_module(library(det_hook_rt)).
+</PRE>
 
-<CODE>:- module(...,...,[id]).</CODE>
+in which case, <CODE>!!/0</CODE> is not available. 
+
+Typically, this library is used as a package: 
+
+<PRE>
+:- use_package(det_hook).
+</PRE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4843"></A>
+<CODE>det_try/3</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC426" HREF="ciao_toc.html#TOC426">Documentation on exports (<CODE>det_hook_rt</CODE>)</A></H2>
+<P>
+<A NAME="IDX4844"></A>
+<A NAME="IDX4845"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>det_try/3:</B>
+<DD><A NAME="IDX4846"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>det_try(goal,goal,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>det_try(Goal,OnCut,OnFail)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Action</CODE> is called, and <CODE>OnCut</CODE> and <CODE>OnFail</CODE> are goals to be executed when <CODE>Goal</CODE> is cut or when it finitely fails, respectively. In order for this to work, cutting must be performed in a special way, by using the
+
+<A NAME="IDX4847"></A>
+<CODE>!!/0</CODE> predicate, also provided by this module. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>OnCut</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>OnFail</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC427" HREF="ciao_toc.html#TOC427">Documentation on internals (<CODE>det_hook_rt</CODE>)</A></H2>
+<P>
+<A NAME="IDX4848"></A>
+<A NAME="IDX4849"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>!!/0:</B>
+<DD><A NAME="IDX4850"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Performs a special cut which prunes alternatives away, as the usual cut, but which also executes the goals specified as <CODE>OnCut</CODE> for any call in the scope of the cut.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC428" HREF="ciao_toc.html#TOC428">Other information (<CODE>det_hook_rt</CODE>)</A></H2>
+
+<P>
+As an example, the program 
+
+
+
+<PRE>
+:- module(_, _, [det_hook]).
+
+enumerate(X):-
+        display(enumerating), nl,
+        OnCut = (display('goal cut'), nl),
+        OnFail = (display('goal failed'), nl),
+        det_try(enum(X), OnCut, OnFail).
+
+enum(1).
+enum(2).
+enum(3).
+</PRE>
+
+<P>
+behaves as follows: 
+
+
+
+<PRE>
+?- enumerate(X).
+enumerating
+
+X = 1 ? ;
+
+X = 2 ? ;
+
+X = 3 ? ;
+goal failed
+</PRE>
+
+<P>
+(note the message inserted on failure). The execution can be cut as follows: 
+
+
+
+<PRE>
+?- use_package(det_hook).
+{Including /home/clip/lib/ciao/ciao-1.7/library/det_hook/det_hook.pl
+}
+
+yes
+?- enumerate(X), '!!'.
+enumerating
+goal cut
+
+X = 1 ? ;
+
+no
+</PRE>
+
+
+
+<H2><A NAME="SEC429" HREF="ciao_toc.html#TOC429">Known bugs and planned improvements (<CODE>det_hook_rt</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+If the started goals do not exhaust their solutions, and '!!'/0 is not used, the database will populate with facts which will be consulted the next time a '!!'/0 is used. This could cause incorrect executions.
+</UL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_102.html">previous</A>, <A HREF="ciao_104.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

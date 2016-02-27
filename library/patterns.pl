@@ -27,10 +27,10 @@
    To include a `-', you must use it in a context where it cannot possibly
    indicate a range: that is, as the first character, or immediately after
    a range.
-  @item{|} specifies an alternative.  Two regular expressions A and B with
+  @item{|} Specifies an alternative.  Two patterns A and B with
    | in between form an expression that matches anything that either A or B
    will match.
-  @item{@{...@}} groups alternatives inside larger patterns.
+  @item{@{...@}} Groups alternatives inside larger patterns.
   @item{\\} Quotes a special character (including itself).
  @end{description}").
 

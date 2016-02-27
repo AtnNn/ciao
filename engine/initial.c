@@ -319,6 +319,8 @@ BOOL stop_on_pred_calls = FALSE;            /* profile or trace -- Shared */
 #if defined(DEBUG)
 BOOL debug_gc      = FALSE;         /* debug garbage collection -- Shared */
 BOOL debug_threads = FALSE;            /* debug thread creation -- Shared */
+BOOL debug_choicepoints = FALSE;    /* debug choicepoints state -- Shared */
+BOOL debug_concchoicepoints = FALSE; /* debug conc. chpt. state -- Shared */
 BOOL debug_mem = FALSE;              /* debug memory manegement -- Shared */
 BOOL debug_conc = FALSE;                   /* debug concurrency -- Shared */
 #endif
@@ -1677,6 +1679,8 @@ void reinitialize(Arg)
     Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
 #endif
   }
+
+  /* Create an expandable char array for loading po files */ 
 
   if (Atom_Buffer_Length != STATICMAXATOM){
     Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,

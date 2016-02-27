@@ -22,3 +22,8 @@ int bn_quotient_remainder_quot_not_wanted(Bignum *x, Bignum *y, Bignum *z, Bignu
 int bn_from_float(register Bignum *x, Bignum *ignore, register Bignum *z, Bignum *zmax);
 int bn_from_string(register char *x, register Bignum *z, Bignum *zmax);
 void bn_to_string(Argdecl, register Bignum *x, int base);
+
+
+/* To be used by the test routines in ciao_prolog.c */
+
+ENG_INT bn_length(REGISTER Bignum *x);

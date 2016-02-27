@@ -82,7 +82,7 @@ main([T]) :-
 	(  T == main
         -> make_infoindex(SRC,IDir),
 	   make_DOTemacs(SRC,IDir,EDir),
-	   make_ciaomode(SRC,EDir),
+	   make_ciaomode(SRC,IDir,EDir),
 
            make_header(SDir),
            make_bats(EngineQuot),
@@ -135,6 +135,8 @@ make_DOTemacs(SDir,IDir,EDir) :-
                                   "<LPDOCDIR>" - IDirS],
                                 'DOTemacs.skel','../DOTemacs.el'),
         atom_codes(SDir,SDirS),
+	%% This was specific to Win, but note that now being done in general 
+	%% also for xemacs, so it may not be necessary here...
 	list_concat([
 	   ";; Specific to Windows installation:\n",
 	   ";; Location of Ciao shell\n",
@@ -170,15 +172,17 @@ make_foremacs(SDir):-
         cd(SDir),
         writef(ForEmacs, write, 'ForEmacs.txt').
 
-make_ciaomode(SDir,EDir) :-
+make_ciaomode(SDir,IDir,EDir) :-
 	cd(EDir),
 	setup_mess(['Building ',EDir,'/ciao.el (emacs mode).\n']),
 	atom_codes(EDir,EDirS),
+	atom_codes(IDir,IDirS),
 	replace_strings_in_file([ "\n" - "\n;" ],
                                 '../DOTemacs.el','DOTemacs.tmp'),
 	cat(['ciao.el.header','DOTemacs.tmp','ciao.el.body'],'ciao.el.tmp'),
 	delete_file('DOTemacs.tmp'),
-	replace_strings_in_file([ "<CIAOREALLIBDIR>" - EDirS ],
+	replace_strings_in_file([ "<CIAOREALLIBDIR>" - EDirS,
+                                  "<LPDOCDIR>" - IDirS ],
                                 'ciao.el.tmp','ciao.el'),
         delete_file('ciao.el.tmp'),
 	cd(SDir).
@@ -347,6 +351,10 @@ line :-
 
 % --------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+55,2003/01/18,00:08*21+'CET'), "Now passing
+   LPDOCDIR value to variable in emacs.el (for xemacs) (Manuel
+   Hermenegildo)").
 
 :- comment(version(1*7+111,2001/06/20,18:58*51+'CEST'), "Added an entry
    to the Windows registry to allow loading a file into a new toplevel

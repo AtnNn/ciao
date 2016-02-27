@@ -1,33 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - lookup (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>, <A HREF="ciao_208.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>, <A HREF="ciao_208.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC774" HREF="ciao_toc.html#TOC774">lookup (library)</A></H1>
+<H1><A NAME="SEC815" HREF="ciao_toc.html#TOC815">dictionary_tree (library)</A></H1>
 <P>
-<A NAME="IDX7715"></A>
+<A NAME="IDX8367"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1 (1999/1/14, 13:30:46 MET)
+<STRONG>Version:</STRONG> 0.1 (1999/1/14, 15:57:36 MET)
+
+
+<P>
+This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
 
 
 
 <UL>
-<LI><A HREF="ciao_207.html#SEC775">Usage and interface (lookup)</A>
-<LI><A HREF="ciao_207.html#SEC776">Documentation on exports (lookup)</A>
+<LI><A HREF="ciao_207.html#SEC816">Usage and interface (dictionary_tree)</A>
+<LI><A HREF="ciao_207.html#SEC817">Documentation on exports (dictionary_tree)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC775" HREF="ciao_toc.html#TOC775">Usage and interface (<CODE>lookup</CODE>)</A></H2>
+<H2><A NAME="SEC816" HREF="ciao_toc.html#TOC816">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +39,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(lookup)).</CODE>
+<CODE>:- use_module(library(dictionary_tree)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,34 +48,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7716"></A>
-<CODE>create_proto_element/3</CODE>, 
-<A NAME="IDX7717"></A>
-<CODE>get_prototype_interface/2</CODE>, 
-<A NAME="IDX7718"></A>
-<CODE>get_prototype_definition/2</CODE>, 
-<A NAME="IDX7719"></A>
-<CODE>lookup_check_node/4</CODE>, 
-<A NAME="IDX7720"></A>
-<CODE>lookup_check_field/6</CODE>, 
-<A NAME="IDX7721"></A>
-<CODE>lookup_check_interface_fieldValue/8</CODE>, 
-<A NAME="IDX7722"></A>
-<CODE>lookup_field/4</CODE>, 
-<A NAME="IDX7723"></A>
-<CODE>lookup_route/5</CODE>, 
-<A NAME="IDX7724"></A>
-<CODE>lookup_fieldTypeId/1</CODE>, 
-<A NAME="IDX7725"></A>
-<CODE>lookup_get_fieldType/4</CODE>, 
-<A NAME="IDX7726"></A>
-<CODE>lookup_field_access/4</CODE>, 
-<A NAME="IDX7727"></A>
-<CODE>lookup_set_def/3</CODE>, 
-<A NAME="IDX7728"></A>
-<CODE>lookup_set_prototype/4</CODE>, 
-<A NAME="IDX7729"></A>
-<CODE>lookup_set_extern_prototype/4</CODE>.
+<A NAME="IDX8368"></A>
+<CODE>create_dictionaries/1</CODE>, 
+<A NAME="IDX8369"></A>
+<CODE>is_dictionaries/1</CODE>, 
+<A NAME="IDX8370"></A>
+<CODE>get_definition_dictionary/2</CODE>, 
+<A NAME="IDX8371"></A>
+<CODE>get_prototype_dictionary/2</CODE>, 
+<A NAME="IDX8372"></A>
+<CODE>dictionary_insert/5</CODE>, 
+<A NAME="IDX8373"></A>
+<CODE>dictionary_lookup/5</CODE>, 
+<A NAME="IDX8374"></A>
+<CODE>merge_tree/2</CODE>.
 
 </UL>
 
@@ -82,42 +72,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7730"></A>
+<A NAME="IDX8375"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX7731"></A>
+<A NAME="IDX8376"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX7732"></A>
+<A NAME="IDX8377"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX7733"></A>
+<A NAME="IDX8378"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7734"></A>
+<A NAME="IDX8379"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7735"></A>
+<A NAME="IDX8380"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX7736"></A>
+<A NAME="IDX8381"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX7737"></A>
+<A NAME="IDX8382"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX7738"></A>
+<A NAME="IDX8383"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7739"></A>
-<CODE>provrml/error</CODE>, 
-<A NAME="IDX7740"></A>
-<CODE>provrml/io</CODE>, 
-<A NAME="IDX7741"></A>
-<CODE>provrml/parser_util</CODE>, 
-<A NAME="IDX7742"></A>
-<CODE>provrml/dictionary</CODE>, 
-<A NAME="IDX7743"></A>
-<CODE>provrml/dictionary_tree</CODE>, 
-<A NAME="IDX7744"></A>
-<CODE>provrml/field_value_check</CODE>, 
-<A NAME="IDX7745"></A>
-<CODE>provrml/boundary</CODE>, 
-<A NAME="IDX7746"></A>
-<CODE>provrml/generator_util</CODE>, 
-<A NAME="IDX7747"></A>
-<CODE>provrml/field_type</CODE>.
+<A NAME="IDX8384"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -127,396 +101,195 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>,
 
 
 
-<H2><A NAME="SEC776" HREF="ciao_toc.html#TOC776">Documentation on exports (<CODE>lookup</CODE>)</A></H2>
+<H2><A NAME="SEC817" HREF="ciao_toc.html#TOC817">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
 <P>
-<A NAME="IDX7748"></A>
-<A NAME="IDX7749"></A>
+<A NAME="IDX8385"></A>
+<A NAME="IDX8386"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>create_proto_element/3:</B>
-<DD><A NAME="IDX7750"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
+<DD><A NAME="IDX8387"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>create_proto_element(+Interface,+Definition,-Proto)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will construct a proto structure containing the interface and the definition.
+<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Interface</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Definition</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>-Proto</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>-Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7751"></A>
-<A NAME="IDX7752"></A>
+<A NAME="IDX8388"></A>
+<A NAME="IDX8389"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_prototype_interface/2:</B>
-<DD><A NAME="IDX7753"></A>
+<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
+<DD><A NAME="IDX8390"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>get_prototype_interface(+Proto,-Interface)</CODE>
+<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will return the interface from a proto structure.
+<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Proto</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>-Interface</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>?Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7754"></A>
-<A NAME="IDX7755"></A>
+<A NAME="IDX8391"></A>
+<A NAME="IDX8392"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_prototype_definition/2:</B>
-<DD><A NAME="IDX7756"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
+<DD><A NAME="IDX8393"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>get_prototype_definition(+Proto,-Definition)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary,-Tree)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will return the definition from a proto structure.
+<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Proto</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
 
-<CODE>-Definition</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7757"></A>
-<A NAME="IDX7758"></A>
+<A NAME="IDX8394"></A>
+<A NAME="IDX8395"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_check_node/4:</B>
-<DD><A NAME="IDX7759"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
+<DD><A NAME="IDX8396"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7760"></A>
-<A NAME="IDX7761"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_check_field/6:</B>
-<DD><A NAME="IDX7762"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7763"></A>
-<A NAME="IDX7764"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_check_interface_fieldValue/8:</B>
-<DD><A NAME="IDX7765"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>lookup_check_interface_fieldValue(+ParseIn,-ParseOut,+AccessType,+FieldType,+Id,+FieldValue,DCGIn,DCGOut)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary,-Tree)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate formats the output for the interface part of the prototype. It also checks the values for the fields.
+<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ParseIn</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
 
-<CODE>-ParseOut</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+AccessType</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FieldType</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Id</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FieldValue</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>DCGIn</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>DCGOut</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7766"></A>
-<A NAME="IDX7767"></A>
+<A NAME="IDX8397"></A>
+<A NAME="IDX8398"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_field/4:</B>
-<DD><A NAME="IDX7768"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
+<DD><A NAME="IDX8399"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>lookup_field(+Parse,+FieldTypeId,+FieldId0,+FieldId1)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key,+Type,+Field,+Dictionary,?Info)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will control that the two connected Fields are of the same type, e.g., SFColor - SFColor, MFVec3f - MFVec3f.
+<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>+FieldTypeId</CODE> is an atom.
+<CODE>+Key</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+FieldId0</CODE> is an atom.
+<CODE>+Type</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+FieldId1</CODE> is an atom.
+<CODE>+Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>?Info</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7769"></A>
-<A NAME="IDX7770"></A>
+<A NAME="IDX8400"></A>
+<A NAME="IDX8401"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_route/5:</B>
-<DD><A NAME="IDX7771"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
+<DD><A NAME="IDX8402"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>lookup_route(+Parse,+NodeTypeId0,+FieldId0,+NodeTypeId1,+FieldId1)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key,?Type,?Field,+Dictionary,-Info)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will check the routing behaviour for two given fields. They will be checked according to the binding rules, like name changes access proporties. The node types for the field must of course be given for the identification.
+<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>+NodeTypeId0</CODE> is an atom.
+<CODE>+Key</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+FieldId0</CODE> is an atom.
+<CODE>?Type</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+NodeTypeId1</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FieldId1</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7772"></A>
-<A NAME="IDX7773"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_fieldTypeId/1:</B>
-<DD><A NAME="IDX7774"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>lookup_fieldTypeId(+FieldTypeId)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate just make a check to see if the given FieldType id is among the allowed. You can not construct own ones and the check is mearly a spellcheck.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FieldTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7775"></A>
-<A NAME="IDX7776"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_get_fieldType/4:</B>
-<DD><A NAME="IDX7777"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>lookup_get_fieldType(+Parse,+NodeTypeId,+fieldId,-FieldType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate will return the given field's type. It will start the search in the ordinar dictionary and then to the personal dictionary sarting off with 'PROTO'. After it will go for 'DEF' and 'EXTERNPROTO'.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>+NodeTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+fieldId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-FieldType</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7778"></A>
-<A NAME="IDX7779"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_field_access/4:</B>
-<DD><A NAME="IDX7780"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>lookup_field_access(+Parse,+NodenameId,+FieldId,+FieldId)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate will control that the access proporties are correct according to the certain rules that we have. It makes a check to see if the fields are of the same access type or if one of them is an exposedField. It is not doing a route check up to control that behaviour entirely.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>+NodenameId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FieldId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+FieldId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7781"></A>
-<A NAME="IDX7782"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_set_def/3:</B>
-<DD><A NAME="IDX7783"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>lookup_set_def(+Parse,+Name,+Node)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate will enter a new post in the personal dictionary for the node definition.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>+Name</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Node</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7784"></A>
-<A NAME="IDX7785"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_set_prototype/4:</B>
-<DD><A NAME="IDX7786"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>lookup_set_prototype(+Parse,+Name,+Interface,+Definition)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The predicate will insert the prototype definition in the personal dictionary and will give a warning if there is a multiple name given.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>+Name</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Interface</CODE> is any term.
+<CODE>?Field</CODE> is any term.
  (<CODE>basic_props:term/1</CODE>)
 
-<CODE>+Definition</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7787"></A>
-<A NAME="IDX7788"></A>
+<A NAME="IDX8403"></A>
+<A NAME="IDX8404"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>lookup_set_extern_prototype/4:</B>
-<DD><A NAME="IDX7789"></A>
+<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
+<DD><A NAME="IDX8405"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>lookup_set_extern_prototype(+Parse,+Name,+Interface,+Strings)</CODE>
+<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree,+Tree)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will insert the external prototype definition in the personal dictionary and will give a warning if there is a multiple name given.
+<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 
-<CODE>+Name</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Interface</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Strings</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>, <A HREF="ciao_208.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_206.html">previous</A>, <A HREF="ciao_208.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

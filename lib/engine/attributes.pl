@@ -33,24 +33,24 @@ A-1010 Vienna, Austria").
 
 % Compiled inline -- these are hooks for the interpreter.
 
-:- pred attach_attribute(Var,Attr) : var * nonvar
+:- true pred attach_attribute(Var,Attr) : var * nonvar
         # "Attach attribute @var{Attr} to @var{Var}.".
 
 attach_attribute(X, Y) :- attach_attribute(X, Y).
 
-:- pred get_attribute(Var,Attr) : var(Var) => nonvar(Attr)
+:- true pred get_attribute(Var,Attr) : var(Var) => nonvar(Attr)
         # "Unify @var{Attr} with the attribute of @var{Var}, or fail if
           @var{Var} has no attribute.".
 
 get_attribute(X, Y) :- get_attribute(X, Y).
 
-:- pred update_attribute(Var,Attr) : var * nonvar
+:- true pred update_attribute(Var,Attr) : var * nonvar
         # "Change the attribute of attributed variable @var{Var} to
           @var{Attr}.".
 
 update_attribute(X, Y) :- update_attribute(X, Y).
 
-:- pred detach_attribute(Var) : var
+:- true pred detach_attribute(Var) : var
         # "Take out the attribute from the  attributed variable @var{Var}.".
 
 detach_attribute(X) :- detach_attribute(X).

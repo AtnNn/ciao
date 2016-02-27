@@ -1,55 +1,51 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Terms with named arguments -records/feature terms</TITLE>
+<TITLE>The Ciao Prolog System               - system_extra (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC346" HREF="ciao_toc.html#TOC346">Terms with named arguments -records/feature terms</A></H1>
+<H1><A NAME="SEC387" HREF="ciao_toc.html#TOC387">system_extra (library)</A></H1>
 <P>
-<A NAME="IDX3950"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza and Manuel Hermenegildo.
+<A NAME="IDX4446"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> M. Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#118 (2001/8/28, 15:7:22 CEST)
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
 
 
 <P>
-<A NAME="IDX3951"></A>
-<A NAME="IDX3952"></A>
-This library package provides syntax which allows accessing term arguments by name (these terms are sometimes also referred to as 
-<A NAME="IDX3953"></A>
-<A NAME="IDX3954"></A>
-<EM>records</EM>, and are also similar to 
-<A NAME="IDX3955"></A>
-<A NAME="IDX3956"></A>
-<EM>feature terms</EM> [AKPS92]).
+<STRONG>Version of last change:</STRONG> 1.9#90 (2003/7/22, 16:53:40 CEST)
+
+
+<P>
+This is a (temporary) extension to library 
+<A NAME="IDX4447"></A>
+<CODE>system</CODE> (which it reexports). It implements functionality that is often convenient in 
+<A NAME="IDX4448"></A>
+<CODE>Makefile</CODE>s. Much of this should probably end up eventually in 
+<A NAME="IDX4449"></A>
+<CODE>system</CODE>, but once we have worked out the best interface and, in some cases, the proper implementation (the implementations in here are in some cases just calls to Un*x shell primitives or commands).
 
 
 
 <UL>
-<LI><A HREF="ciao_92.html#SEC347">Usage and interface (argnames)</A>
-<LI><A HREF="ciao_92.html#SEC348">Documentation on new declarations (argnames)</A>
-<LI><A HREF="ciao_92.html#SEC349">Other information (argnames)</A>
-<LI><A HREF="ciao_92.html#SEC352">Known bugs and planned improvements (argnames)</A>
+<LI><A HREF="ciao_92.html#SEC388">Usage and interface (system_extra)</A>
+<LI><A HREF="ciao_92.html#SEC389">Documentation on exports (system_extra)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC347" HREF="ciao_toc.html#TOC347">Usage and interface (<CODE>argnames</CODE>)</A></H2>
+<H2><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Usage and interface (<CODE>system_extra</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -57,25 +53,99 @@ This library package provides syntax which allows accessing term arguments by na
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(argnames).</CODE>
+<CODE>:- use_module(library(system_extra)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[argnames]).</CODE>
 
-<LI><STRONG>New operators defined:</STRONG>
+<UL>
 
-<A NAME="IDX3957"></A>
-<CODE>$/2</CODE> [150,xfx], 
-<A NAME="IDX3958"></A>
-<CODE>=&#62;/2</CODE> [950,xfx], 
-<A NAME="IDX3959"></A>
-<CODE>argnames/1</CODE> [1150,fx].
+<LI><EM>Predicates:</EM>
 
-<LI><STRONG>New declarations defined:</STRONG>
+<A NAME="IDX4450"></A>
+<CODE>del_dir_if_empty/1</CODE>, 
+<A NAME="IDX4451"></A>
+<CODE>move_files/2</CODE>, 
+<A NAME="IDX4452"></A>
+<CODE>move_file/2</CODE>, 
+<A NAME="IDX4453"></A>
+<CODE>copy_files/2</CODE>, 
+<A NAME="IDX4454"></A>
+<CODE>copy_file/2</CODE>, 
+<A NAME="IDX4455"></A>
+<CODE>cat/2</CODE>, 
+<A NAME="IDX4456"></A>
+<CODE>cat_append/2</CODE>, 
+<A NAME="IDX4457"></A>
+<CODE>convert_permissions/4</CODE>, 
+<A NAME="IDX4458"></A>
+<CODE>symbolic_link/2</CODE>, 
+<A NAME="IDX4459"></A>
+<CODE>symbolic_link/3</CODE>, 
+<A NAME="IDX4460"></A>
+<CODE>delete_files/1</CODE>, 
+<A NAME="IDX4461"></A>
+<CODE>del_file_nofail/1</CODE>, 
+<A NAME="IDX4462"></A>
+<CODE>del_file_nofail/2</CODE>, 
+<A NAME="IDX4463"></A>
+<CODE>del_endings_nofail/2</CODE>, 
+<A NAME="IDX4464"></A>
+<CODE>ls/3</CODE>, 
+<A NAME="IDX4465"></A>
+<CODE>ls/2</CODE>, 
+<A NAME="IDX4466"></A>
+<CODE>filter_alist_pattern/3</CODE>, 
+<A NAME="IDX4467"></A>
+<CODE>do/2</CODE>, 
+<A NAME="IDX4468"></A>
+<CODE>set_perms/2</CODE>, 
+<A NAME="IDX4469"></A>
+<CODE>readf/2</CODE>, 
+<A NAME="IDX4470"></A>
+<CODE>datime_string/1</CODE>, 
+<A NAME="IDX4471"></A>
+<CODE>datime_string/2</CODE>, 
+<A NAME="IDX4472"></A>
+<CODE>all_values/2</CODE>, 
+<A NAME="IDX4473"></A>
+<CODE>no_tr_nl/2</CODE>, 
+<A NAME="IDX4474"></A>
+<CODE>call_unknown/1</CODE>, 
+<A NAME="IDX4475"></A>
+<CODE>replace_strings_in_file/3</CODE>, 
+<A NAME="IDX4476"></A>
+<CODE>writef/3</CODE>, 
+<A NAME="IDX4477"></A>
+<CODE>writef/2</CODE>.
 
-<A NAME="IDX3960"></A>
-<CODE>argnames/1</CODE>.
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4478"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX4479"></A>
+<CODE>patterns</CODE>, 
+<A NAME="IDX4480"></A>
+<CODE>filenames</CODE>, 
+<A NAME="IDX4481"></A>
+<CODE>messages</CODE>, 
+<A NAME="IDX4482"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX4483"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX4484"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX4485"></A>
+<CODE>aggregates</CODE>.
+
+</UL>
 
 </UL>
 
@@ -83,211 +153,1088 @@ or
 
 
 
-<H2><A NAME="SEC348" HREF="ciao_toc.html#TOC348">Documentation on new declarations (<CODE>argnames</CODE>)</A></H2>
+<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Documentation on exports (<CODE>system_extra</CODE>)</A></H2>
 <P>
-<A NAME="IDX3961"></A>
-<A NAME="IDX3962"></A>
+<A NAME="IDX4486"></A>
+<A NAME="IDX4487"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>argnames/1:</B>
-<DD><A NAME="IDX3963"></A>
+<DT><span class="define">PREDICATE:</span> <B>del_dir_if_empty/1:</B>
+<DD><A NAME="IDX4488"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>argnames(ArgNamedPredSpec)</CODE>.
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4489"></A>
+<A NAME="IDX4490"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>move_files/2:</B>
+<DD><A NAME="IDX4491"></A>
+
+
+<P>
+<CODE>move_files(Files,Dir)</CODE>
+
+
+<P>
+Move <CODE>Files</CODE> to directory <CODE>Dir</CODE> (note that to move only one file to a directory, 
+<A NAME="IDX4492"></A>
+<CODE>rename_file/2</CODE> can be used).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4493"></A>
+<A NAME="IDX4494"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>move_file/2:</B>
+<DD><A NAME="IDX4495"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4496"></A>
+<A NAME="IDX4497"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_files/2:</B>
+<DD><A NAME="IDX4498"></A>
+
+
+<P>
+<CODE>copy_files(Files,Dir)</CODE>
+
+
+<P>
+Copy <CODE>Files</CODE> to directory <CODE>Dir</CODE> (note that to move only one file to a directory, 
+<A NAME="IDX4499"></A>
+<CODE>rename_file/2</CODE> can be used).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4500"></A>
+<A NAME="IDX4501"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_file/2:</B>
+<DD><A NAME="IDX4502"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4503"></A>
+<A NAME="IDX4504"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>cat/2:</B>
+<DD><A NAME="IDX4505"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4506"></A>
+<A NAME="IDX4507"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>cat_append/2:</B>
+<DD><A NAME="IDX4508"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4509"></A>
+<A NAME="IDX4510"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>convert_permissions/4:</B>
+<DD><A NAME="IDX4511"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4512"></A>
+<A NAME="IDX4513"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>symbolic_link/2:</B>
+<DD><A NAME="IDX4514"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>symbolic_link(Source,Dir)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> An
+<LI><EM>Description:</EM> Create a symbolic link in <CODE>Dir</CODE> pointing to file or directory <CODE>Source</CODE> (performs a copy in Windows).
 
-<A NAME="IDX3964"></A>
-<CODE>argnames/1</CODE> declaration assigns names to the argument positions of terms (or literal/goals) which use a certain functor/arity. This allows referring to these arguments by their name rather than by their argument position. Sometimes, argument names may be clearer and easier to remember than argument positions, specially for predicates with many arguments. Also, in some cases this may allow adding arguments to certain predicates without having to change the code that uses them. These terms with named arguments are sometimes also referred to as 
-<A NAME="IDX3965"></A>
-records, and are also similar to 
-<A NAME="IDX3966"></A>
-feature terms [AKPS92]. For example, in order to write a program for the <EM>zebra</EM> puzzle we might declare: 
-
-
-
-<PRE>
-:- use_package([argnames]).
-:- argnames house(color, nation, pet, drink, car).
-</PRE>
-
-which first includes the package and then assigns a name to each of the arguments of any term (or literal/goal) with <CODE>house/5</CODE> as the main functor. 
-
-Once an 
-<A NAME="IDX3967"></A>
-<CODE>argnames/1</CODE> is given, is possible to use the names to refer to the arguments of any term (or literal/goal) which has the same main functor as that of the term which appears in the 
-<A NAME="IDX3968"></A>
-<CODE>argnames/1</CODE> declaration. This is done by first writing the functor name, then the infix operator <CODE>$</CODE>, and then, between curly brackets, zero, one, or more pairs <EM>argument-name</EM><CODE>=&#62;</CODE><EM>argument-value</EM>, separated by commas (i.e., the infix operator <CODE>=&#62;</CODE> is used between the name and the value). Again, argument names must be atomic. Argument values can be any term. Arguments which are not specified are assumed to have a value of "<CODE>_</CODE>" (i.e., they are left unconstrained). 
-
-Thus, after the declaration for <CODE>house/5</CODE> in the example above, any ocurrence in that code of, for example, <CODE>house${nation=&#62;Owns_zebra,pet=&#62;zebra}</CODE> is exactly equivalent to <CODE>house(_,Owns_zebra,zebra,_,_)</CODE>. Also, <CODE>house${}</CODE> is equivalent to <CODE>house(_,_,_,_,_)</CODE>. The actual zebra puzzle specification might include a clause such as: 
-
-
-
-<PRE>
-zebra(Owns_zebra, Drinks_water, Street) :-
-   Street = [house${},house${},house${},house${},house${}],
-   member(house${nation=&#62;Owns_zebra,pet=&#62;zebra}, Street),
-   member(house${nation=&#62;Drinks_water,drink=&#62;water}, Street),
-   member(house${drink=&#62;coffee,color=&#62;green}, Street),
-   left_right(house${color=&#62;ivory}, house${color=&#62;green}, Street),
-   member(house${car=&#62;porsche,pet=&#62;snails}, Street),
-        ...
-</PRE>
-
-Any number of 
-<A NAME="IDX3969"></A>
-<CODE>argnames/1</CODE> declarations can appear in a file, one for each functor whose arguments are to be accessed by name. As with other packages, argument name declarations are <EM>local to the file</EM> in which they appear. The 
-<A NAME="IDX3970"></A>
-<CODE>argnames/1</CODE> declarations affect only program text which appears after the declaration. It is easy to make a set of declarations affect several files for example by putting such declarations in a sepatate file which is included by all such files. 
-
-An 
-<A NAME="IDX3971"></A>
-<CODE>argnames/1</CODE> declaration does not change in any way the internal representation of the associated terms and does not affect run-time efficiency. It is simply syntactic sugar. 
-
- 
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX4515"></A>
+<A NAME="IDX4516"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>symbolic_link/3:</B>
+<DD><A NAME="IDX4517"></A>
 
-
-<H2><A NAME="SEC349" HREF="ciao_toc.html#TOC349">Other information (<CODE>argnames</CODE>)</A></H2>
 
 <P>
- 
-
-
-<P>
-Two simple examples of the use of the argnames library package follow. 
-
-
+<STRONG>Usage:</STRONG> <CODE>symbolic_link(Source,Dir,NewName)</CODE>
 
 <UL>
-<LI><A HREF="ciao_92.html#SEC350">Using argument names in a toy database</A>
-<LI><A HREF="ciao_92.html#SEC351">Complete code for the zebra example</A>
+<LI><EM>Description:</EM> Create a symbolic link in <CODE>Dir</CODE> pointing to file or directory <CODE>Source</CODE> and give it name <CODE>NewName</CODE> (performs a copy in Windows).
+
 </UL>
 
-
-
-<H3><A NAME="SEC350" HREF="ciao_toc.html#TOC350">Using argument names in a toy database</A></H3>
+</DL>
 
 <P>
+<A NAME="IDX4518"></A>
+<A NAME="IDX4519"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete_files/1:</B>
+<DD><A NAME="IDX4520"></A>
 
-
-
-<PRE>
-:- module(simple_db,_,[argnames,assertions,regtypes]).
-:- use_module(library(aggregates)).
-
-:- comment(title,"A simple database application using argument names").
-
-:- pred product/4 :: int * string * string * int.
-
-:- argnames 
-product( id,    description,    brand,          quantity        ).
-%       ----------------------------------------------------------
-product(  1,    "Keyboard",     "Logitech",     6               ).
-product(  2,    "Mouse",        "Logitech",     5               ).
-product(  3,    "Monitor",      "Philips",      3               ).
-product(  4,    "Laptop",       "Dell",         4               ).
-
-% Compute the stock of products from a given brand.
-% Note call to findall is equivalent to: findall(Q,product(_,_,Brand,Q),L).
-brand_stock(Brand,Stock) :-
-        findall(Q,product${brand=&#62;Brand,quantity=&#62;Q},L),
-        sumlist(L,Stock).
-
-sumlist([],0).
-sumlist([X|T],S) :- 
-        sumlist(T,S1),
-        S is X + S1.
-
-</PRE>
-
-
-
-<H3><A NAME="SEC351" HREF="ciao_toc.html#TOC351">Complete code for the zebra example</A></H3>
 
 <P>
+No further documentation available for this predicate.
 
 
+</DL>
 
-<PRE>
-:- module(_,zebra/3,[argnames]).
-
-/*     There are five consecutive houses, each of a different
-color and inhabited by men of different nationalities. They each
-own a different pet, have a different favorite drink, and drive a
-different car.
-
-1.   The Englishman lives in the red house.
-2.   The Spaniard owns the dog.
-3.   Coffee is drunk in the green house.
-4.   The Ukrainian drinks tea.
-5.   The green house is immediately to the right of the ivory
-     house.
-6.   The Porsche driver owns snails.
-7.   The Masserati is driven by the man who lives in the yellow
-     house.
-8.   Milk is drunk in the middle house.
-9.   The Norwegian lives in the first house on the left.
-10.  The man who drives a Saab lives in the house next to the man
-     with the fox.
-11.  The Masserati is driven by the man in the house next to the
-     house where the horse is kept.
-12.  The Honda driver drinks orange juice.
-13.  The Japanese drives a Jaguar.
-14.  The Norwegian lives next to the blue house.
-
-The problem is: Who owns the Zebra?  Who drinks water?
-*/
-
-:- argnames house(color, nation, pet, drink, car).
-
-zebra(Owns_zebra, Drinks_water, Street) :-
-        Street = [house${},house${},house${},house${},house${}],
-        member(house${nation =&#62; Owns_zebra, pet =&#62; zebra}, Street),
-        member(house${nation =&#62; Drinks_water, drink =&#62; water}, Street),
-        member(house${nation =&#62; englishman, color =&#62; red}, Street),
-        member(house${nation =&#62; spaniard, pet =&#62; dog}, Street),
-        member(house${drink =&#62; coffee, color =&#62; green}, Street),
-        member(house${nation =&#62; ukrainian, drink =&#62; tea}, Street),
-        left_right(house${color =&#62; ivory}, house${color =&#62; green}, Street),
-        member(house${car =&#62; porsche, pet =&#62; snails}, Street),
-        member(house${car =&#62; masserati, color =&#62; yellow}, Street),
-        Street = [_, _, house${drink =&#62; milk}, _, _],
-        Street = [house${nation =&#62; norwegian}|_],
-        next_to(house${car =&#62; saab}, house${pet =&#62; fox}, Street),
-        next_to(house${car =&#62; masserati}, house${pet =&#62; horse}, Street),
-        member(house${car =&#62; honda, drink =&#62; orange_juice}, Street),
-        member(house${nation =&#62; japanese, car =&#62; jaguar}, Street),
-        next_to(house${nation =&#62; norwegian}, house${color =&#62; blue}, Street).
-
-member(X,[X|_]).
-member(X,[_|Y]) :- member(X,Y).
-
-left_right(L,R,[L,R|_]).
-left_right(L,R,[_|T]) :- left_right(L,R,T).
-
-next_to(X,Y,L) :- left_right(X,Y,L).
-next_to(X,Y,L) :- left_right(Y,X,L).
-
-</PRE>
+<P>
+<A NAME="IDX4521"></A>
+<A NAME="IDX4522"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_file_nofail/1:</B>
+<DD><A NAME="IDX4523"></A>
 
 
+<P>
+No further documentation available for this predicate.
 
-<H2><A NAME="SEC352" HREF="ciao_toc.html#TOC352">Known bugs and planned improvements (<CODE>argnames</CODE>)</A></H2>
+
+</DL>
+
+<P>
+<A NAME="IDX4524"></A>
+<A NAME="IDX4525"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_file_nofail/2:</B>
+<DD><A NAME="IDX4526"></A>
 
 
-<UL>
+<P>
+No further documentation available for this predicate.
 
-<LI>
 
-It would be nice to add a mechanism to portray terms with named arguments in a special (user definable) way.
-</UL>
+</DL>
+
+<P>
+<A NAME="IDX4527"></A>
+<A NAME="IDX4528"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_endings_nofail/2:</B>
+<DD><A NAME="IDX4529"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4530"></A>
+<A NAME="IDX4531"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ls/3:</B>
+<DD><A NAME="IDX4532"></A>
+
+
+<P>
+<CODE>ls(Dir,Pattern,FileList)</CODE>
+
+
+<P>
+<CODE>FileList</CODE> is the unordered list of entries (files, directories, etc.) in <CODE>Directory</CODE> whose names match <CODE>Pattern</CODE>.If <CODE>Directory</CODE> does not exist <CODE>FileList</CODE> is empty.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4533"></A>
+<A NAME="IDX4534"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ls/2:</B>
+<DD><A NAME="IDX4535"></A>
+
+
+<P>
+<CODE>ls(Pattern,FileList)</CODE>
+
+
+<P>
+<CODE>FileList</CODE> is the unordered list of entries (files, directories, etc.) in the current directory whose names match <CODE>Pattern</CODE> (same as <CODE>ls('.',Pattern,FileList)</CODE>).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4536"></A>
+<A NAME="IDX4537"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>filter_alist_pattern/3:</B>
+<DD><A NAME="IDX4538"></A>
+
+
+<P>
+<CODE>filter_alist_pattern(UnFiltered,Pattern,Filtered)</CODE>
+
+
+<P>
+<CODE>Filtered</CODE> contains the elements of <CODE>UnFiltered</CODE> which match with <CODE>Pattern</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4539"></A>
+<A NAME="IDX4540"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>-/1:</B>
+<DD><A NAME="IDX4541"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>-goal</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4542"></A>
+<A NAME="IDX4543"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>do/2:</B>
+<DD><A NAME="IDX4544"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4545"></A>
+<A NAME="IDX4546"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_perms/2:</B>
+<DD><A NAME="IDX4547"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4548"></A>
+<A NAME="IDX4549"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>readf/2:</B>
+<DD><A NAME="IDX4550"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4551"></A>
+<A NAME="IDX4552"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>datime_string/1:</B>
+<DD><A NAME="IDX4553"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4554"></A>
+<A NAME="IDX4555"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>datime_string/2:</B>
+<DD><A NAME="IDX4556"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4557"></A>
+<A NAME="IDX4558"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>all_values/2:</B>
+<DD><A NAME="IDX4559"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>all_values(pred(1),?)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4560"></A>
+<A NAME="IDX4561"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>no_tr_nl/2:</B>
+<DD><A NAME="IDX4562"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4563"></A>
+<A NAME="IDX4564"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call_unknown/1:</B>
+<DD><A NAME="IDX4565"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>call_unknown(goal)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4566"></A>
+<A NAME="IDX4567"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>replace_strings_in_file/3:</B>
+<DD><A NAME="IDX4568"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4569"></A>
+<A NAME="IDX4570"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>writef/3:</B>
+<DD><A NAME="IDX4571"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4572"></A>
+<A NAME="IDX4573"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>writef/2:</B>
+<DD><A NAME="IDX4574"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4575"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>cyg2win/3:</B>
+<DD><A NAME="IDX4576"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4577"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4578"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>rename_file/2:</B>
+<DD><A NAME="IDX4579"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4580"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4581"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>delete_directory/1:</B>
+<DD><A NAME="IDX4582"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4583"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4584"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>delete_file/1:</B>
+<DD><A NAME="IDX4585"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4586"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4587"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chmod/3:</B>
+<DD><A NAME="IDX4588"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4589"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4590"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chmod/2:</B>
+<DD><A NAME="IDX4591"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4592"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4593"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>fmode/2:</B>
+<DD><A NAME="IDX4594"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4595"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4596"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>modif_time0/2:</B>
+<DD><A NAME="IDX4597"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4598"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4599"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>modif_time/2:</B>
+<DD><A NAME="IDX4600"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4601"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4602"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_properties/6:</B>
+<DD><A NAME="IDX4603"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4604"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4605"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_property/2:</B>
+<DD><A NAME="IDX4606"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4607"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4608"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_exists/2:</B>
+<DD><A NAME="IDX4609"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4610"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4611"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_exists/1:</B>
+<DD><A NAME="IDX4612"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4613"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4614"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>mktemp/2:</B>
+<DD><A NAME="IDX4615"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4616"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4617"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>directory_files/2:</B>
+<DD><A NAME="IDX4618"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4619"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4620"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>exec/3:</B>
+<DD><A NAME="IDX4621"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4622"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4623"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>exec/4:</B>
+<DD><A NAME="IDX4624"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4625"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4626"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>popen_mode/1:</B>
+<DD><A NAME="IDX4627"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4628"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4629"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>popen/3:</B>
+<DD><A NAME="IDX4630"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4631"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4632"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>system/2:</B>
+<DD><A NAME="IDX4633"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4634"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4635"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>system/1:</B>
+<DD><A NAME="IDX4636"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4637"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4638"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/2:</B>
+<DD><A NAME="IDX4639"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4640"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4641"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/1:</B>
+<DD><A NAME="IDX4642"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4643"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4644"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/0:</B>
+<DD><A NAME="IDX4645"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4646"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4647"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>cd/1:</B>
+<DD><A NAME="IDX4648"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4649"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4650"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>working_directory/2:</B>
+<DD><A NAME="IDX4651"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4652"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4653"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_dirpath/1:</B>
+<DD><A NAME="IDX4654"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4655"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4656"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_dirpath/2:</B>
+<DD><A NAME="IDX4657"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4658"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4659"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_directory/1:</B>
+<DD><A NAME="IDX4660"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4661"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4662"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_directory/2:</B>
+<DD><A NAME="IDX4663"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4664"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4665"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>umask/2:</B>
+<DD><A NAME="IDX4666"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4667"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4668"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>current_executable/1:</B>
+<DD><A NAME="IDX4669"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4670"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4671"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>current_host/1:</B>
+<DD><A NAME="IDX4672"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4673"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4674"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>get_pid/1:</B>
+<DD><A NAME="IDX4675"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4676"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4677"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>extract_paths/2:</B>
+<DD><A NAME="IDX4678"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4679"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4680"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>setenvstr/2:</B>
+<DD><A NAME="IDX4681"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4682"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4683"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>getenvstr/2:</B>
+<DD><A NAME="IDX4684"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4685"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4686"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime_struct/1:</B>
+<DD><A NAME="IDX4687"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4688"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4689"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime/9:</B>
+<DD><A NAME="IDX4690"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4691"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4692"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime/1:</B>
+<DD><A NAME="IDX4693"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4694"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4695"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>time/1:</B>
+<DD><A NAME="IDX4696"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4697"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4698"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>pause/1:</B>
+<DD><A NAME="IDX4699"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4700"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

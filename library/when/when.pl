@@ -160,6 +160,8 @@ add_when_to_var_list([Var|Vars], VarToLink):-
 
 
 
+:- comment(hide,verify_attribute/2).
+
 :- multifile verify_attribute/2.
 
 verify_attribute('$attvarlist'(Var, AttVarSet), Value):-
@@ -253,6 +255,8 @@ execute_goals([G|Gs]):-
  %% of variables which act as indirect pointers, plus making sure that
  %% the sets of variables associated to every expression is still a set.
  %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+:- comment(hide,combine_attributes/2).
 
 :- multifile combine_attributes/2.
  

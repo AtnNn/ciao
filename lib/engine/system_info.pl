@@ -31,7 +31,7 @@
 
 %%---------------------------------------------------------------------
 
-:- true pred get_arch(?ArchDescriptor) :: atm #
+:- true pred get_arch(?ArchDescriptor) :: atm + native #
 	"Unifies @var{ArchDescriptor} with a simple atom which describes
          the computer architecture currently executing the predicate.".
 
@@ -58,7 +58,7 @@ no
 
 %%---------------------------------------------------------------------
 
-:- true pred get_os(?OsDescriptor) :: atm #
+:- true pred get_os(?OsDescriptor) :: atm + native #
 	"Unifies @var{OsDescriptor} with a simple atom which describes
          the running Operating System when predicate was called.".
 
@@ -83,7 +83,7 @@ no
 
 %%---------------------------------------------------------------------
 
-:- pred current_module(Module) :: internal_module_id #
+:- pred current_module(Module) :: internal_module_id + native #
 	"Retrieves (on backtracking) all currently loaded modules into
          your application.".
 
@@ -102,7 +102,7 @@ no
 
 %%---------------------------------------------------------------------
 
-:- pred ciaolibdir(CiaoPath) :: atm(CiaoPath) #
+:- pred ciaolibdir(CiaoPath) :: atm(CiaoPath) + native #
 	"@var{CiaoPath} is the path to the root of the Ciao
 	libraries. Inside this directory, there are the directories
 	'lib', 'library' and 'contrib', which contain library modules.".
@@ -113,7 +113,7 @@ no
 
 this_module(M, M).
 
-:- pred this_module(Module) :: internal_module_id #
+:- pred this_module(Module) :: internal_module_id + native #
 	"@var{Module} is the internal module identifier for current module.".
 
 %%---------------------------------------------------------------------
@@ -124,7 +124,7 @@ this_module(M, M).
 	with an argument different for each user file, for
 	other modules is just the name of the module (as an atom).").
 
-:- prop internal_module_id(M) #
+:- prop internal_module_id(M) + native #
 	"@var{M} is an internal module identifier".
 
 internal_module_id(user(M)) :-

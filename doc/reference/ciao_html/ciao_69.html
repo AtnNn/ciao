@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Prolog system internal predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_68.html">previous</A>, <A HREF="ciao_70.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_68.html">previous</A>, <A HREF="ciao_70.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC265" HREF="ciao_toc.html#TOC265">Prolog system internal predicates</A></H1>
+<H1><A NAME="SEC298" HREF="ciao_toc.html#TOC298">Prolog system internal predicates</A></H1>
 <P>
-<A NAME="IDX3353"></A>
+<A NAME="IDX3787"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_68.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#153 (2000/5/29, 10:24:35 CEST)
+<STRONG>Version of last change:</STRONG> 1.9#92 (2003/7/24, 8:4:39 CEST)
 
 
 <P>
@@ -33,15 +33,15 @@ This module implements some miscellaneous predicates which provide access to som
 
 
 <UL>
-<LI><A HREF="ciao_69.html#SEC266">Usage and interface (prolog_sys)</A>
-<LI><A HREF="ciao_69.html#SEC267">Documentation on exports (prolog_sys)</A>
-<LI><A HREF="ciao_69.html#SEC268">Documentation on internals (prolog_sys)</A>
-<LI><A HREF="ciao_69.html#SEC269">Known bugs and planned improvements (prolog_sys)</A>
+<LI><A HREF="ciao_69.html#SEC299">Usage and interface (prolog_sys)</A>
+<LI><A HREF="ciao_69.html#SEC300">Documentation on exports (prolog_sys)</A>
+<LI><A HREF="ciao_69.html#SEC301">Documentation on internals (prolog_sys)</A>
+<LI><A HREF="ciao_69.html#SEC302">Known bugs and planned improvements (prolog_sys)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC266" HREF="ciao_toc.html#TOC266">Usage and interface (<CODE>prolog_sys</CODE>)</A></H2>
+<H2><A NAME="SEC299" HREF="ciao_toc.html#TOC299">Usage and interface (<CODE>prolog_sys</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -58,17 +58,17 @@ This module implements some miscellaneous predicates which provide access to som
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3354"></A>
+<A NAME="IDX3788"></A>
 <CODE>statistics/0</CODE>, 
-<A NAME="IDX3355"></A>
+<A NAME="IDX3789"></A>
 <CODE>statistics/2</CODE>, 
-<A NAME="IDX3356"></A>
+<A NAME="IDX3790"></A>
 <CODE>predicate_property/2</CODE>, 
-<A NAME="IDX3357"></A>
+<A NAME="IDX3791"></A>
 <CODE>current_atom/1</CODE>, 
-<A NAME="IDX3358"></A>
+<A NAME="IDX3792"></A>
 <CODE>garbage_collect/0</CODE>, 
-<A NAME="IDX3359"></A>
+<A NAME="IDX3793"></A>
 <CODE>new_atom/1</CODE>.
 
 </UL>
@@ -79,13 +79,13 @@ This module implements some miscellaneous predicates which provide access to som
 
 
 
-<H2><A NAME="SEC267" HREF="ciao_toc.html#TOC267">Documentation on exports (<CODE>prolog_sys</CODE>)</A></H2>
+<H2><A NAME="SEC300" HREF="ciao_toc.html#TOC300">Documentation on exports (<CODE>prolog_sys</CODE>)</A></H2>
 <P>
-<A NAME="IDX3360"></A>
-<A NAME="IDX3361"></A>
+<A NAME="IDX3794"></A>
+<A NAME="IDX3795"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>statistics/0:</B>
-<DD><A NAME="IDX3362"></A>
+<DD><A NAME="IDX3796"></A>
 
 
 <P>
@@ -94,16 +94,20 @@ This module implements some miscellaneous predicates which provide access to som
 <UL>
 <LI><EM>Description:</EM> Prints statistics about the system.
 
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3363"></A>
-<A NAME="IDX3364"></A>
+<A NAME="IDX3797"></A>
+<A NAME="IDX3798"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>statistics/2:</B>
-<DD><A NAME="IDX3365"></A>
+<DD><A NAME="IDX3799"></A>
 
 
 <P>
@@ -126,6 +130,10 @@ Options to get information about execution time. <CODE>Time_option</CODE> must b
 
 <CODE>Time_result</CODE> is a two-element list of integers. The first integer is the time since the start of the execution; the second integer is the time since the previous consult to time.
  (<CODE>prolog_sys:time_result/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
@@ -148,6 +156,10 @@ Options to get information about memory usage.
 
 Result is a two-element list of integers. The first element is the space taken up by the option selected, measured in bytes; the second integer is zero for program space (which grows as necessary), and the amount of free space otherwise.
  (<CODE>prolog_sys:memory_result/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
@@ -169,11 +181,15 @@ Options to get information about garbage collection.
  (<CODE>prolog_sys:garbage_collection_option/1</CODE>)
 
 <CODE>Gc_result</CODE> is a tree-element list of integers, related to 
-<A NAME="IDX3366"></A>
+<A NAME="IDX3800"></A>
 garbage collection and 
-<A NAME="IDX3367"></A>
+<A NAME="IDX3801"></A>
 memory management. When <CODE>stack_shifts</CODE> is selected, the first one is the number of shifts (reallocations) of the local stack; the second is the number of shifts of the trail, and the third is the time spent in these shifts. When <CODE>garbage_collection</CODE> is selected, the numbers are, respectively, the number of garbage collections performed, the number of bytes freed, and the time spent in garbage collection.
  (<CODE>prolog_sys:gc_result/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
@@ -196,6 +212,10 @@ Option to get information about the number of symbols in the program.
 
 <CODE>Symbol_result</CODE> is a two-element list of integers. The first one is the number of atom, functor, and predicate names in the symbol table. The second is the number of predicates known to be defined (although maybe without clauses).
  (<CODE>prolog_sys:symbol_result/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
@@ -204,16 +224,20 @@ Option to get information about the number of symbols in the program.
 <UL>
 <LI><EM>Description:</EM> If <CODE>Option</CODE> is unbound, it is bound to the values on the other cases.
 
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3368"></A>
-<A NAME="IDX3369"></A>
+<A NAME="IDX3802"></A>
+<A NAME="IDX3803"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>predicate_property/2:</B>
-<DD><A NAME="IDX3370"></A>
+<DD><A NAME="IDX3804"></A>
 
 
 <P>
@@ -236,16 +260,20 @@ Option to get information about the number of symbols in the program.
 
 <CODE>Property</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3371"></A>
-<A NAME="IDX3372"></A>
+<A NAME="IDX3805"></A>
+<A NAME="IDX3806"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_atom/1:</B>
-<DD><A NAME="IDX3373"></A>
+<DD><A NAME="IDX3807"></A>
 
 
 <P>
@@ -262,16 +290,20 @@ Option to get information about the number of symbols in the program.
 
 <CODE>Atom</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3374"></A>
-<A NAME="IDX3375"></A>
+<A NAME="IDX3808"></A>
+<A NAME="IDX3809"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>garbage_collect/0:</B>
-<DD><A NAME="IDX3376"></A>
+<DD><A NAME="IDX3810"></A>
 
 
 <P>
@@ -280,16 +312,20 @@ Option to get information about the number of symbols in the program.
 <UL>
 <LI><EM>Description:</EM> Forces garbage collection when called.
 
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3377"></A>
-<A NAME="IDX3378"></A>
+<A NAME="IDX3811"></A>
+<A NAME="IDX3812"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>new_atom/1:</B>
-<DD><A NAME="IDX3379"></A>
+<DD><A NAME="IDX3813"></A>
 
 
 <P>
@@ -306,19 +342,23 @@ Option to get information about the number of symbols in the program.
 
 <CODE>Atom</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC268" HREF="ciao_toc.html#TOC268">Documentation on internals (<CODE>prolog_sys</CODE>)</A></H2>
+<H2><A NAME="SEC301" HREF="ciao_toc.html#TOC301">Documentation on internals (<CODE>prolog_sys</CODE>)</A></H2>
 <P>
-<A NAME="IDX3380"></A>
-<A NAME="IDX3381"></A>
+<A NAME="IDX3814"></A>
+<A NAME="IDX3815"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>time_option/1:</B>
-<DD><A NAME="IDX3382"></A>
+<DD><A NAME="IDX3816"></A>
 
 
 <P>
@@ -332,11 +372,11 @@ Option to get information about the number of symbols in the program.
 </DL>
 
 <P>
-<A NAME="IDX3383"></A>
-<A NAME="IDX3384"></A>
+<A NAME="IDX3817"></A>
+<A NAME="IDX3818"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>memory_option/1:</B>
-<DD><A NAME="IDX3385"></A>
+<DD><A NAME="IDX3819"></A>
 
 
 <P>
@@ -350,11 +390,11 @@ Option to get information about the number of symbols in the program.
 </DL>
 
 <P>
-<A NAME="IDX3386"></A>
-<A NAME="IDX3387"></A>
+<A NAME="IDX3820"></A>
+<A NAME="IDX3821"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>garbage_collection_option/1:</B>
-<DD><A NAME="IDX3388"></A>
+<DD><A NAME="IDX3822"></A>
 
 
 <P>
@@ -368,11 +408,11 @@ Option to get information about the number of symbols in the program.
 </DL>
 
 <P>
-<A NAME="IDX3389"></A>
-<A NAME="IDX3390"></A>
+<A NAME="IDX3823"></A>
+<A NAME="IDX3824"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>symbol_option/1:</B>
-<DD><A NAME="IDX3391"></A>
+<DD><A NAME="IDX3825"></A>
 
 
 <P>
@@ -386,11 +426,11 @@ Option to get information about the number of symbols in the program.
 </DL>
 
 <P>
-<A NAME="IDX3392"></A>
-<A NAME="IDX3393"></A>
+<A NAME="IDX3826"></A>
+<A NAME="IDX3827"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>time_result/1:</B>
-<DD><A NAME="IDX3394"></A>
+<DD><A NAME="IDX3828"></A>
 
 
 <P>
@@ -404,11 +444,11 @@ Option to get information about the number of symbols in the program.
 </DL>
 
 <P>
-<A NAME="IDX3395"></A>
-<A NAME="IDX3396"></A>
+<A NAME="IDX3829"></A>
+<A NAME="IDX3830"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>memory_result/1:</B>
-<DD><A NAME="IDX3397"></A>
+<DD><A NAME="IDX3831"></A>
 
 
 <P>
@@ -422,11 +462,11 @@ Option to get information about the number of symbols in the program.
 </DL>
 
 <P>
-<A NAME="IDX3398"></A>
-<A NAME="IDX3399"></A>
+<A NAME="IDX3832"></A>
+<A NAME="IDX3833"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>gc_result/1:</B>
-<DD><A NAME="IDX3400"></A>
+<DD><A NAME="IDX3834"></A>
 
 
 <P>
@@ -435,20 +475,20 @@ Option to get information about the number of symbols in the program.
 <UL>
 <LI><EM>Description:</EM> <CODE>Result</CODE> is a tree-element list of integers, related to
 
-<A NAME="IDX3401"></A>
+<A NAME="IDX3835"></A>
 garbage collection and 
-<A NAME="IDX3402"></A>
+<A NAME="IDX3836"></A>
 memory management. When <CODE>stack_shifts</CODE> is selected, the first one is the number of shifts (reallocations) of the local stack; the second is the number of shifts of the trail, and the third is the time spent in these shifts. When <CODE>garbage_collection</CODE> is selected, the numbers are, respectively, the number of garbage collections performed, the number of bytes freed, and the time spent in garbage collection. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3403"></A>
-<A NAME="IDX3404"></A>
+<A NAME="IDX3837"></A>
+<A NAME="IDX3838"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>symbol_result/1:</B>
-<DD><A NAME="IDX3405"></A>
+<DD><A NAME="IDX3839"></A>
 
 
 <P>
@@ -463,7 +503,7 @@ memory management. When <CODE>stack_shifts</CODE> is selected, the first one is 
 
 
 
-<H2><A NAME="SEC269" HREF="ciao_toc.html#TOC269">Known bugs and planned improvements (<CODE>prolog_sys</CODE>)</A></H2>
+<H2><A NAME="SEC302" HREF="ciao_toc.html#TOC302">Known bugs and planned improvements (<CODE>prolog_sys</CODE>)</A></H2>
 
 
 <UL>
@@ -474,6 +514,6 @@ The space used by the process is not measured here: process data, code, and stac
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_68.html">previous</A>, <A HREF="ciao_70.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_68.html">previous</A>, <A HREF="ciao_70.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

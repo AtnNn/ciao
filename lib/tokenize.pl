@@ -43,6 +43,7 @@ define_flag(character_escapes, [iso, sicstus, off], iso).
 %    number(number)
 %    string(string)
 %    var(term,string)
+%    '/* ...'
 %    ',' | '(' | ' (' | ')' | '[' | ']' | '|' | '{' | '}'
 %    '.' % end of term 
 
@@ -107,9 +108,12 @@ read_tokens_solo(0';, Dict, [atom(;)|Tokens]) :-
         getct1(NextCh, NextTyp),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 read_tokens_solo(0'%, Dict, Tokens) :-          % comment
-        skip_code(10),                          % skip newline
-        getct1(NextCh, NextTyp),
-        read_tokens_after_layout(NextTyp, NextCh, Dict, Tokens).
+        ( skip_code_prot(10) ->                 % skip newline
+            getct1(NextCh, NextTyp),
+            read_tokens_after_layout(NextTyp, NextCh, Dict, Tokens)
+        ; % end of file
+          Tokens = []
+        ).
 read_tokens_solo(0'(, Dict, ['('|Tokens]) :-
         getct1(NextCh, NextTyp),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
@@ -179,14 +183,20 @@ read_symbol(LastTyp, LastCh, [], LastCh, LastTyp).
 % former, it skips the comment.  If the latter it just calls read_symbol.
 
 read_possible_comment(4, 0'*, Dict, Tokens) :- !,
-        skip_code(0'*),
-        getct(Ch, Typ),
-        read_end_comment(Typ, Ch, Dict, Tokens).
+        skip_comment_text(Dict, Tokens).
 read_possible_comment(Typ, Ch, Dict, [Atom|Tokens]) :-
         read_symbol(Typ, Ch, Chars, NextCh, NextTyp), % might read 0 chars
         atom_token([0'/|Chars], Atom),
         read_tokens(NextTyp, NextCh, Dict, Tokens).
 
+skip_comment_text(Dict, Tokens) :-
+        ( skip_code_prot(0'*) ->
+            getct(Ch, Typ),
+            read_end_comment(Typ, Ch, Dict, Tokens)
+        ; % end of file
+          Tokens = ['/* ...']
+        ).
+        
 read_end_comment(4, 0'/, Dict, Tokens) :- !,
         getct1(NextCh, NextTyp),
         read_tokens_after_layout(NextTyp, NextCh, Dict, Tokens).
@@ -194,9 +204,7 @@ read_end_comment(4, 0'*, Dict, Tokens) :- !,
         getct(Ch, Typ),
         read_end_comment(Typ, Ch, Dict, Tokens).
 read_end_comment(_, _, Dict, Tokens) :-
-        skip_code(0'*),
-        getct(Ch, Typ),
-        read_end_comment(Typ, Ch, Dict, Tokens).
+        skip_comment_text(Dict, Tokens).
 
 % read_fullstop(Typ, Char, Dict, Tokens)
 % looks at the next character after a full stop.  If the next character is
@@ -206,7 +214,7 @@ read_end_comment(_, _, Dict, Tokens) :-
 read_fullstop(-1, _, _, [.]) :- !.              % end of file
 read_fullstop(0, _, _, [.]) :- !.               % END OF CLAUSE
 read_fullstop(5, 0'%, _, [.]) :- !,             % END OF CLAUSE,
-        skip_code(10).                          % skip newline
+        ( skip_code_prot(10) -> true ; true ).  % skip newline
 read_fullstop(Typ, Ch, Dict, [Atom|Tokens]) :-
         read_symbol(Typ, Ch, S, NextCh, NextTyp),   % symbol
         atom_token([0'.|S], Atom),
@@ -559,9 +567,13 @@ atom_token(String, atom(Atom)) :-
         atom_codes(Atom, String), !.
 atom_token(String, badatom(String)).
 
-:- comment(bug, "When the last line of a file has a single-line comment
-           and does not end with a newline, an attempt to read past end
-           of stream will be produced.").
+skip_code_prot(C) :- catch(skip_code(C), _, fail).
+
+:- comment(version(1*9+56,2003/02/03,19:38*26+'CET'), "Fixed bug regarding
+   non-terminated single- or multiple-line comments.  When the last line
+   of a file has a single-line comment and does not end in a newline, it
+   is accepted as correct.  When an open-comment /* sequence is not
+   terminated in a file, a syntax error is thrown.  (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
    global CIAO version.  (Manuel Hermenegildo)").

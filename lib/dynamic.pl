@@ -51,7 +51,7 @@
           precede all clauses of the affected predicates.  This
           directive is defined as a prefix operator in the compiler.".
 
-:- pred asserta(+Clause) + iso
+:- true pred asserta(+Clause) + (iso, native)
 # "The current instance of @var{Clause} is interpreted as a clause and is
    added to the current program.  The predicate concerned must be dynamic.
    The new clause becomes the @em{first} clause for the predicate concerned.
@@ -63,7 +63,7 @@ asserta(Clause) :-
         dynamic_clauses(Clause, Root, Ptr0, asserta/1),
 	'$inserta'(Root, Ptr0).
 
-:- pred asserta(+Clause,-Ref)
+:- true pred asserta(+Clause,-Ref) + native
 # "Like @tt{asserta/1}. @var{Ref} is a unique identifier of the asserted
    clause.".
 
@@ -72,7 +72,7 @@ asserta(Clause, Ref) :-
 	'$inserta'(Root, Ptr0),
 	'$ptr_ref'(Ptr0, Ref).
 
-:- pred assertz(+Clause) + iso
+:- true pred assertz(+Clause) + (iso, native)
 # "Like @tt{asserta/1}, except that the new clause becomes the @em{last}
    clause for the predicate concerned.".
 
@@ -80,7 +80,7 @@ assertz(Clause) :-
         dynamic_clauses(Clause, Root, Ptr0, assertz/1),
 	'$insertz'(Root, Ptr0).
 
-:- pred assertz(+Clause,-Ref)
+:- true pred assertz(+Clause,-Ref) + native
 # "Like @tt{assertz/1}. @var{Ref} is a unique identifier of the asserted
    clause.".
 
@@ -89,14 +89,14 @@ assertz(Clause, Ref) :-
 	'$insertz'(Root, Ptr0),
 	'$ptr_ref'(Ptr0, Ref).
 
-:- pred assert(+Clause)
+:- true pred assert(+Clause) + native
 # "Identical to @tt{assertz/1}. Included for compatibility.".
 
 assert(Clause) :-
         dynamic_clauses(Clause, Root, Ptr0, assert/1),
 	'$insertz'(Root, Ptr0).
 
-:- pred assert(+Clause,-Ref)
+:- true pred assert(+Clause,-Ref) + native
 # "Identical to @tt{assertz/2}. Included for compatibility.".
 
 assert(Clause, Ref) :-
@@ -157,7 +157,7 @@ wellformed_body(Goal, _, Goal) :-
 functor name @var{F} is uninstatiated, a new, unique, predicate name
 is generated at runtime.").
 
-:- pred dynamic(+Spec).
+:- true pred dynamic(+Spec).
 
 dynamic(F/A, Mod) :-
         atom(F), !,
@@ -174,7 +174,7 @@ dynamic(F/A, Mod) :-
 
 :- comment(doinclude, data/1).
 
-:- pred data(+Spec).
+:- true pred data(+Spec).
 
 :- comment(data(F/A), "The predicate named @var{F} with arity @var{A}
 is made @concept{data} in the current module at runtime (useful for
@@ -242,7 +242,7 @@ dynamic1(F, _) :-
 
 
 
-:- pred retract(+Clause) + iso
+:- true pred retract(+Clause) + (iso, native)
 # "The first clause in the program that matches @var{Clause} is erased.
    The predicate concerned must be dynamic. 
 
@@ -264,7 +264,7 @@ retract(Clause) :-
 	'$erase'(Ptr),
         '$unlock_predicate'(Root).
 
-:- pred retractall(+Head)
+:- true pred retractall(+Head) + native
 # "Erase all clauses whose head matches @var{Head}, where @var{Head} must
    be instantiated to an atom or a compound term.  The predicate concerned
    must be dynamic.  The predicate definition is retained.".
@@ -283,7 +283,7 @@ retractall_(Head) :-
 	fail.
 retractall_(_).
 
-:- pred abolish(+Spec) + iso
+:- true pred abolish(+Spec) + (iso, native)
 # "Erase all clauses of the predicate specified by the predicate spec
    @var{Spec}. The predicate definition itself is also erased (the
    predicate is deemed undefined after execution of the abolish). The
@@ -305,7 +305,7 @@ abolish_data_of(Head) :-
         fail.
 abolish_data_of(_).
 
-:- pred clause(+Head,?Body) +iso
+:- true pred clause(+Head,?Body) + (iso, native)
 # "The clause '@var{Head} @tt{:-} @var{Body}' exists in the current
    program. The predicate concerned must be dynamic.".
 
@@ -320,10 +320,10 @@ clause(HEAD, Body) :-
 :- comment(clause(Head,Body,Ref),"Like @tt{clause(Head,Body)}, plus the
    clause is uniquely identified by @var{Ref}.").
 
-:- pred clause(+Head,?Body,?Ref)
+:- true pred clause(+Head,?Body,?Ref) + native
 # "@var{Head} must be instantiated to an atom or a compound term.".
 
-:- pred clause(?Head,?Body,+Ref)
+:- true pred clause(?Head,?Body,+Ref) + native
 # "@var{Ref} must be instantiated to a valid identifier.".
 
 clause(HEAD, Body, Ref) :-
@@ -340,10 +340,10 @@ clause(HEAD, Body, Ref) :-
         '$unlock_predicate'(Root),
 	'$ptr_ref'(Ptr, Ref).
 
-:- pred current_predicate(?Spec) + iso
+:- true pred current_predicate(?Spec) + (iso, native)
         # "A predicate in the current module is named @var{Spec}.".
 
-:- pred current_predicate(?Spec,?Module)
+:- true pred current_predicate(?Spec,?Module) + (iso, native)
         # "A predicate in @var{Module} is named @var{Spec}. @var{Module}
            never is an engine module.".
 

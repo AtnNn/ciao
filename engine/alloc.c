@@ -100,6 +100,17 @@ ENG_mem_cpy(dest, src, n)
 }
 */
 
+/* segfault patch -- jf */
+#if defined(MallocBase)     
+#define ENSURE_ADDRESSABLE(P, SIZE) \
+  (((TAGGED)(P) >= (TAGGED)MallocBase) && \
+  (((TAGGED)(P) - (TAGGED)MallocBase) < POINTERMASK) && \
+   (((TAGGED)(P) - (TAGGED)MallocBase + (SIZE)) < POINTERMASK))
+#else
+#define ENSURE_ADDRESSABLE(P, SIZE) \
+  ((TAGGED)(P) < POINTERMASK)
+#endif
+
 TAGGED *checkalloc(size)
      int size;
 {
@@ -120,17 +131,12 @@ TAGGED *checkalloc(size)
       Release_slock(mem_mng_l);
       SERIOUS_FAULT("Memory allocation failed");
     }
-#if defined(MallocBase)                                   /* Error by MCL */
-    if (((TAGGED)p < (TAGGED)MallocBase) ||
-        (((TAGGED)p - (TAGGED)MallocBase) > 1<<TAGOFFSET))
-#else
-    if ((TAGGED)p > 1<<TAGOFFSET)
-#endif
-      {
-        ENG_perror("% Malloc");
-        Release_slock(mem_mng_l);
-        SERIOUS_FAULT("Memory allocated out of addressable bounds!");
-      }
+    /* segfault patch -- jf */
+    if (!ENSURE_ADDRESSABLE(p, size)) {
+      ENG_perror("% Malloc");
+      Release_slock(mem_mng_l);
+      SERIOUS_FAULT("Memory allocated out of addressable bounds!");
+    }
 
     /* mem_prog_count += size+sizeof(TAGGED); */
     total_mem_count += size;
@@ -183,6 +189,12 @@ TAGGED *checkrealloc(ptr,decr,size)
         Release_slock(mem_mng_l);
         SERIOUS_FAULT("Memory allocation failed");
       }
+      /* segfault patch -- jf */
+      if (!ENSURE_ADDRESSABLE(p, size)) {
+	ENG_perror("% Malloc");
+	Release_slock(mem_mng_l);
+	SERIOUS_FAULT("Memory allocated out of addressable bounds!");
+      }
       memcpy(p, ptr, ((decr-1) & -4)+4);
       ptr[0] = (TAGGED)tiny_blocks;
       tiny_blocks = ptr;
@@ -198,6 +210,12 @@ TAGGED *checkrealloc(ptr,decr,size)
         ENG_perror("% realloc");
         Release_slock(mem_mng_l);
         SERIOUS_FAULT("Memory allocation failed");
+      }
+      /* segfault patch -- jf */
+      if (!ENSURE_ADDRESSABLE(p, size)) {
+	ENG_perror("% Malloc");
+	Release_slock(mem_mng_l);
+	SERIOUS_FAULT("Memory allocated out of addressable bounds!");
       }
       /* mem_prog_count  += (size-decr); */
       total_mem_count += (size-decr);

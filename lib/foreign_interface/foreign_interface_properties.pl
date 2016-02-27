@@ -193,7 +193,7 @@ native(_).
 
 :- prop native(PrologName,ForeignName) # "The Prolog predicate
 @pred{PrologName} is implemented using the function
-prolog_@tt{ForeignName}.  The same considerations as above example
+@tt{ForeignName}.  The same considerations as above example
 are to be applied.".
 
 native(_,_).

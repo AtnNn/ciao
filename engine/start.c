@@ -216,6 +216,10 @@ int start(argc, argv)
           if (strcmp(argv[i], "-tp") == SAME)        /* Trace predicates */
             predtrace = TRUE;
 #if defined(DBG) || defined(DEBUG)
+      else if (strcmp(argv[i], "-dcp") == SAME)  /*debug regular choicepoints*/
+        debug_choicepoints = TRUE;
+      else if (strcmp(argv[i], "-dconccp") == SAME) /*conc. choicepoints*/
+        debug_concchoicepoints = TRUE;
       else if (strcmp(argv[i], "-dt") == SAME)           /* debug threads */
         debug_threads = TRUE;
       else if (strcmp(argv[i], "-dgc") == SAME)      /* debug garb. coll. */

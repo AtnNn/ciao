@@ -1,37 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - File I/O utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Symbolic filenames</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC287" HREF="ciao_toc.html#TOC287">File I/O utilities</A></H1>
+<H1><A NAME="SEC320" HREF="ciao_toc.html#TOC320">Symbolic filenames</A></H1>
 <P>
-<A NAME="IDX3493"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX3927"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#55 (2000/2/11, 21:19:43 CET)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#9 (2002/5/28, 19:11:29 CEST)
+
+
+<P>
+This module provides a predicate for file opening which can use any term as an alias for the filename (i.e., symbolic filenames) instead of the usual constants which are file system path names of the actual files. 
+
+
+<P>
+The correspondence between an alias and the actual file path is done dynamically, without having to recompile the program. It is possible to define the correspondence via facts for 
+<A NAME="IDX3928"></A>
+<CODE>file_alias/2</CODE> in a file declared with 
+<A NAME="IDX3929"></A>
+<CODE>multifile:alias_file/1</CODE> in the program: those facts will be dynamically loaded when running the program. Alternatively, the correspondence can be defined via shell environment variables, by defining the value of a variable by the (symbolic) name of the file to be the path of the actual file.
 
 
 
 <UL>
-<LI><A HREF="ciao_75.html#SEC288">Usage and interface (file_utils)</A>
-<LI><A HREF="ciao_75.html#SEC289">Documentation on exports (file_utils)</A>
+<LI><A HREF="ciao_75.html#SEC321">Usage and interface (symfnames)</A>
+<LI><A HREF="ciao_75.html#SEC322">Documentation on exports (symfnames)</A>
+<LI><A HREF="ciao_75.html#SEC323">Documentation on multifiles (symfnames)</A>
+<LI><A HREF="ciao_75.html#SEC324">Other information (symfnames)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC288" HREF="ciao_toc.html#TOC288">Usage and interface (<CODE>file_utils</CODE>)</A></H2>
+<H2><A NAME="SEC321" HREF="ciao_toc.html#TOC321">Usage and interface (<CODE>symfnames</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +57,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(file_utils)).</CODE>
+<CODE>:- use_module(library(symfnames)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,14 +66,15 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3494"></A>
-<CODE>file_terms/2</CODE>, 
-<A NAME="IDX3495"></A>
-<CODE>copy_stdout/1</CODE>, 
-<A NAME="IDX3496"></A>
-<CODE>file_to_string/2</CODE>, 
-<A NAME="IDX3497"></A>
-<CODE>stream_to_string/2</CODE>.
+<A NAME="IDX3930"></A>
+<CODE>open/3</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX3931"></A>
+<CODE>alias_file/1</CODE>, 
+<A NAME="IDX3932"></A>
+<CODE>file_alias/2</CODE>.
 
 </UL>
 
@@ -66,10 +85,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, 
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3498"></A>
+<A NAME="IDX3933"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX3499"></A>
-<CODE>streams</CODE>.
+<A NAME="IDX3934"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -79,149 +98,132 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC289" HREF="ciao_toc.html#TOC289">Documentation on exports (<CODE>file_utils</CODE>)</A></H2>
+<H2><A NAME="SEC322" HREF="ciao_toc.html#TOC322">Documentation on exports (<CODE>symfnames</CODE>)</A></H2>
 <P>
-<A NAME="IDX3500"></A>
-<A NAME="IDX3501"></A>
+<A NAME="IDX3935"></A>
+<A NAME="IDX3936"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>file_terms/2:</B>
-<DD><A NAME="IDX3502"></A>
+<DT><span class="define">PREDICATE:</span> <B>open/3:</B>
+<DD><A NAME="IDX3937"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>file_terms(@File,?Terms)</CODE>
+<CODE>open(File,Mode,Stream)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Transform a file <CODE>File</CODE> to/from a list of terms <CODE>Terms</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>@File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>?Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>file_terms(File,Terms)</CODE>
+Open <CODE>File</CODE> with mode <CODE>Mode</CODE> and return in <CODE>Stream</CODE> the stream associated with the file. It is like 
+<A NAME="IDX3938"></A>
+<CODE>streams_basic:open/3</CODE>, but <CODE>File</CODE> is considered a symbolic name: either defined by 
+<A NAME="IDX3939"></A>
+<CODE>user:file_alias/2</CODE> or as an environment variable. Predicate 
+<A NAME="IDX3940"></A>
+<CODE>user:file_alias/2</CODE> is inspected before the environment variables.
 
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Terms</CODE> with the list of all terms in <CODE>File</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
+</DL>
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
 
-<CODE>Terms</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
+<H2><A NAME="SEC323" HREF="ciao_toc.html#TOC323">Documentation on multifiles (<CODE>symfnames</CODE>)</A></H2>
+<P>
+<A NAME="IDX3941"></A>
+<A NAME="IDX3942"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>alias_file/1:</B>
+<DD><A NAME="IDX3943"></A>
 
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
 
 <P>
-<STRONG>Usage 3:</STRONG> <CODE>file_terms(File,Terms)</CODE>
+<CODE>alias_file(File)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Writes the terms in list <CODE>Terms</CODE> (including the ending '.') onto file <CODE>File</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+Declares <CODE>File</CODE> to be a file defining symbolic names via 
+<A NAME="IDX3944"></A>
+<CODE>file_alias/2</CODE>. Anything else in <CODE>File</CODE> is simply ignored.
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
 
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3503"></A>
-<A NAME="IDX3504"></A>
+<A NAME="IDX3945"></A>
+<A NAME="IDX3946"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_stdout/1:</B>
-<DD><A NAME="IDX3505"></A>
+<DT><span class="define">PREDICATE:</span> <B>file_alias/2:</B>
+<DD><A NAME="IDX3947"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>copy_stdout(+File)</CODE>
+<CODE>file_alias(Alias,File)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Copies file <CODE>File</CODE> to standard output.
 
-<LI><EM>The following properties should hold upon exit:</EM>
+<P>
+Declares <CODE>Alias</CODE> as a symbolic name for <CODE>File</CODE>, the real name of an actual file (or directory).
 
-<CODE>+File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-</UL>
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
 
 </DL>
 
-<P>
-<A NAME="IDX3506"></A>
-<A NAME="IDX3507"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_to_string/2:</B>
-<DD><A NAME="IDX3508"></A>
 
+
+<H2><A NAME="SEC324" HREF="ciao_toc.html#TOC324">Other information (<CODE>symfnames</CODE>)</A></H2>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>file_to_string(+FileName,-String)</CODE>
+ The example discussed here is included in the distribution files. There is a main application file which uses module <CODE>mm</CODE>. This module reads a line from a file; the main predicate in the main file then prints this line. The important thing is that the file read is named by a symbolic name "<CODE>file</CODE>". The main application file declares another file where the symbolic names are assigned actual file names: 
 
-<UL>
-<LI><EM>Description:</EM> Reads all the characters from the file <CODE>FileName</CODE> and returns them in <CODE>String</CODE>.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+FileName</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
+<PRE>
 
-<CODE>-String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
+:- use_module(mm).
 
-</DL>
+:- multifile alias_file/1.
+alias_file(myfiles).
 
-<P>
-<A NAME="IDX3509"></A>
-<A NAME="IDX3510"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>stream_to_string/2:</B>
-<DD><A NAME="IDX3511"></A>
+main :- p(X), display(X), nl.
 
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>stream_to_string(+Stream,-String)</CODE>
+Now, the file <CODE>myfiles.pl</CODE> can be used to change the file you want to read from without having to recompile the application. The current assignment is: 
 
-<UL>
-<LI><EM>Description:</EM> Reads all the characters from <CODE>Stream</CODE> and returns them in <CODE>String</CODE>.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
+<PRE>
 
-<CODE>-String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
+%:- use_package([]).
+file_alias(file,'mm.pl').
 
-</DL>
+</PRE>
+
+<P>
+so the execution of the application will show the first line of <CODE>mm.pl</CODE>. However, you can change to: 
+
+
+
+<PRE>
+file_alias(file,'main.pl').
+
+</PRE>
+
+<P>
+and then execution of the same executable will show the first line of <CODE>main.pl</CODE>. 
+ 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_74.html">previous</A>, <A HREF="ciao_76.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

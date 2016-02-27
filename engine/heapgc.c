@@ -6,6 +6,7 @@
 
 #if defined(DEBUG)
 #include "threads.h"
+/*#include <time.h>*/
 #endif
 
 #include "datadefs.h"
@@ -482,11 +483,25 @@ static void markVariable(Arg, start)
 {   *(curr)= gc_PutValueFirst(*(j),*(curr)); \
     *(j)= gc_PutValueFirst((TAGGED)curr|GC_FIRSTMASK,*(j)); }
 
+#if defined(DEBUG)
+/*static int upcount = 0;*/
+#endif
+
 static void updateRelocationChain(curr,dest)
 TAGGED *curr,*dest;
 {
     REGISTER TAGGED *j;
     REGISTER TAGGED j1,c1;
+
+
+#if defined(DEBUG)
+    /* Make it go slower to trace it with TOP tool */
+    /* struct timespec delay = {0, 0} ;*/
+    /* upcount++; */
+    /* printf("%d\n", upcount); */
+    /* nanosleep(&delay, NULL); */
+#endif
+
 
     /* F-bit is set in *curr */
     c1= *curr;
@@ -611,17 +626,14 @@ static void compressHeap(Arg)
     int extra;
 
     /* the upward phase */
-    while (ChoiceYounger(cp,Gc_Choice_Start))
-      {
+    while (ChoiceYounger(cp,Gc_Choice_Start)) {
 	cp->global_top = dest;
 	cp=ChoiceCharOffset(cp,-cp->next_alt->node_offset);
 	
-	while (HeapYounger(curr,cp->global_top))
-	  {
+	while (HeapYounger(curr,cp->global_top)) {
 	    cv= HeapPop(curr);
-	    if (cv&QMask)	/* skip to box header */
-	      {
-		extra = LargeArity(cv);
+	    if (cv&QMask) {	/* skip to box header */
+    		extra = LargeArity(cv);
 		
 		curr -= extra;
 		cv = *curr;
@@ -629,38 +641,31 @@ static void compressHeap(Arg)
 		  dest -= extra;
 		else
 		  garbage_words += extra;
-	      }
-	    else
+	      } else
 	      extra = 0;
-	    if (gc_IsMarked(cv))
-	      {
+	    if (gc_IsMarked(cv)) {
 		if (garbage_words)
 		  curr[extra+1] = MakeFunctorFix + ((garbage_words-3)<<2),
 		  garbage_words = 0;
 		HeapDecr(dest);
-		if (gc_IsFirst(cv))
-		  {
+		if (gc_IsFirst(cv)) {
 		    updateRelocationChain(curr,dest);
 		    cv= *curr;
 		  }
-		if (IsHeapTerm(cv))
-		  {
+		if (IsHeapTerm(cv)) {
 		    REGISTER TAGGED *p= TagToPointer(cv);
 		
 		    if (HeapYounger(curr,p)
 #if defined(SEGMENTED_GC)
 			&& OffHeaptop(p,Gc_Heap_Start)
 #endif
-			)
-		      {
+			) {
 			intoRelocationChain(p,curr);
 		      }
-		    else if (p==curr)
-		      /* a cell pointing to itself */
+		    else if (p==curr)        /* a cell pointing to itself */
 		      *curr= gc_PutValue((TAGGED)dest,cv);
 		  }
-	      }
-	    else
+	      } else
 	      garbage_words++;
 	  }
       }
@@ -668,13 +673,10 @@ static void compressHeap(Arg)
     /* The downward phase */
     /* curr and dest both point to the beginning of the heap */
     curr += garbage_words;
-    while (HeapYounger(w->global_top,curr))
-      {
+    while (HeapYounger(w->global_top,curr)) {
 	cv= *curr;
-	if (gc_IsMarked(cv))
-	  {
-	    if (gc_IsFirst(cv))
-	      {
+	if (gc_IsMarked(cv)) {
+	    if (gc_IsFirst(cv)) {
 		updateRelocationChain(curr,dest);
 		cv= *curr;
 	      }
@@ -682,20 +684,17 @@ static void compressHeap(Arg)
 	    {
 	      REGISTER TAGGED *p= TagToPointer(cv);
 	
-	      if (IsHeapTerm(cv) && HeapYounger(p,curr))
-		{		
+	      if (IsHeapTerm(cv) && HeapYounger(p,curr)) {		
 		  /* move the current cell and insert into the reloc.chain */
 		  *dest= cv;
 		  intoRelocationChain(p,dest);
 		}
-	      else if (cv&QMask) /* move a box */
-		{
+	      else if (cv&QMask) { /* move a box */
 		  *curr = cv;
 		  for (extra = LargeArity(cv); extra>0; extra--)
 		    *dest++ = *curr++;
 		  *dest = cv;
-		}
-	      else		/* just move the current cell */
+		} else		/* just move the current cell */
 		*dest= cv;
 	    }
 	    (void)HeapNext(dest);
@@ -704,7 +703,6 @@ static void compressHeap(Arg)
 	  curr += LargeArity(cv);
 	(void)HeapNext(curr);
       }
-
     w->global_top = dest;
 }
 
@@ -759,7 +757,7 @@ void GarbageCollect(Arg)
     Total_Found= 0;
     Gcgrey= 0;
     if (w->segment_node==InitialNode) Gc_Total_Grey = 0;
-    trail_gc(Arg);		/* sets Gc_Aux_Node, gc_Choice_Start, Gc_Trail_Start */
+    trail_gc(Arg); /* sets Gc_Aux_Node, gc_Choice_Start, Gc_Trail_Start */
     Gc_Aux_Node->local_top = newa;
     Gc_Aux_Node->global_top = w->global_top;
     Gc_Aux_Node->frame = w->frame;
@@ -776,13 +774,11 @@ void GarbageCollect(Arg)
     }
   }
   else shuntVariables(Arg);
-
   /*
     #else
     shuntVariables(Arg);
     #endif
   */
-
     markTrail(Arg);
     markChoicepoints(Arg);
     compressTrail(Arg,TRUE);
@@ -801,11 +797,9 @@ void GarbageCollect(Arg)
     sweepTrail(Arg);
     sweepChoicepoints(Arg);
     compressHeap(Arg);
-
 				/* pop special regs from the trail stack */
     Current_Debugger_State = TrailPop(w->trail_top);
     SetShadowregs(w->node);	/* shadow regs may have changed */
-
 				/* statistics */
     t2= usertime()-t2;
     stats.gc_time+= t1+t2;

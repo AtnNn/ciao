@@ -1,48 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC604" HREF="ciao_toc.html#TOC604">Low-level Prolog to Java socket connection</A></H1>
+<H1><A NAME="SEC639" HREF="ciao_toc.html#TOC639">Low-level socket interface to SQL/ODBC databases</A></H1>
 <P>
-<A NAME="IDX6186"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX6741"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#2 (2002/6/14, 18:55:4 CEST)
+<STRONG>Author(s):</STRONG> Jose Morales.
 
 
 <P>
- 
-<A NAME="IDX6187"></A>
-<A NAME="IDX6188"></A>
-This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
-<A NAME="IDX6189"></A>
-<CODE>javart</CODE> (Prolog to Java low-level interface) or 
-<A NAME="IDX6190"></A>
-<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#209 (2002/4/24, 14:50:46 CEST)
+
+
+<P>
+This library provides a low-level interface to MySQL using the MySQL C API and the Ciao foreign interface to C.
 
 
 
 <UL>
-<LI><A HREF="ciao_152.html#SEC605">Usage and interface (javasock)</A>
-<LI><A HREF="ciao_152.html#SEC606">Documentation on exports (javasock)</A>
+<LI><A HREF="ciao_152.html#SEC640">Usage and interface (mysql_client)</A>
+<LI><A HREF="ciao_152.html#SEC641">Documentation on exports (mysql_client)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC605" HREF="ciao_toc.html#TOC605">Usage and interface (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC640" HREF="ciao_toc.html#TOC640">Usage and interface (<CODE>mysql_client</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -50,7 +47,7 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(javasock)).</CODE>
+<CODE>:- use_module(library(mysql_client)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -59,24 +56,29 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6191"></A>
-<CODE>start_socket_interface/2</CODE>, 
-<A NAME="IDX6192"></A>
-<CODE>stop_socket_interface/0</CODE>, 
-<A NAME="IDX6193"></A>
-<CODE>join_socket_interface/0</CODE>, 
-<A NAME="IDX6194"></A>
-<CODE>java_query/2</CODE>, 
-<A NAME="IDX6195"></A>
-<CODE>java_response/2</CODE>, 
-<A NAME="IDX6196"></A>
-<CODE>prolog_query/2</CODE>, 
-<A NAME="IDX6197"></A>
-<CODE>prolog_response/2</CODE>, 
-<A NAME="IDX6198"></A>
-<CODE>java_stream/4</CODE>, 
-<A NAME="IDX6199"></A>
-<CODE>java_debug/1</CODE>.
+<A NAME="IDX6742"></A>
+<CODE>mysql_connect/5</CODE>, 
+<A NAME="IDX6743"></A>
+<CODE>mysql_query/3</CODE>, 
+<A NAME="IDX6744"></A>
+<CODE>mysql_query_one_tuple/3</CODE>, 
+<A NAME="IDX6745"></A>
+<CODE>mysql_free_query_connection/1</CODE>, 
+<A NAME="IDX6746"></A>
+<CODE>mysql_fetch/2</CODE>, 
+<A NAME="IDX6747"></A>
+<CODE>mysql_get_tables/2</CODE>, 
+<A NAME="IDX6748"></A>
+<CODE>mysql_table_types/3</CODE>, 
+<A NAME="IDX6749"></A>
+<CODE>mysql_disconnect/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6750"></A>
+<CODE>dbconnection/1</CODE>, 
+<A NAME="IDX6751"></A>
+<CODE>dbqueryconnection/1</CODE>.
 
 </UL>
 
@@ -87,20 +89,10 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6200"></A>
-<CODE>fastrw</CODE>, 
-<A NAME="IDX6201"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6202"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX6203"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX6204"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX6205"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX6206"></A>
-<CODE>javall/jtopl</CODE>.
+<A NAME="IDX6752"></A>
+<CODE>foreign_interface/foreign_interface_properties</CODE>, 
+<A NAME="IDX6753"></A>
+<CODE>persdb_mysql/db_client_types</CODE>.
 
 </UL>
 
@@ -110,225 +102,159 @@ This module defines a low level socket interface, to be used by javart and jtopl
 
 
 
-<H2><A NAME="SEC606" HREF="ciao_toc.html#TOC606">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<H2><A NAME="SEC641" HREF="ciao_toc.html#TOC641">Documentation on exports (<CODE>mysql_client</CODE>)</A></H2>
 <P>
-<A NAME="IDX6207"></A>
-<A NAME="IDX6208"></A>
+<A NAME="IDX6754"></A>
+<A NAME="IDX6755"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/2:</B>
-<DD><A NAME="IDX6209"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_connect/5:</B>
+<DD><A NAME="IDX6756"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address,+Stream)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Address</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6210"></A>
-<A NAME="IDX6211"></A>
+<A NAME="IDX6757"></A>
+<A NAME="IDX6758"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
-<DD><A NAME="IDX6212"></A>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX6759"></A>
 
+
+
+<PRE>
+dbconnection(_1) :-
+        address(_1).
+</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6213"></A>
-<A NAME="IDX6214"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
-<DD><A NAME="IDX6215"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6216"></A>
-<A NAME="IDX6217"></A>
+<A NAME="IDX6760"></A>
+<A NAME="IDX6761"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
-<DD><A NAME="IDX6218"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query/3:</B>
+<DD><A NAME="IDX6762"></A>
 
 
 <P>
-The predicate is of type <EM>concurrent</EM>.
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6763"></A>
+<A NAME="IDX6764"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>mysql_query_one_tuple/3:</B>
+<DD><A NAME="IDX6765"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>java_query(ThreadId,Query)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6766"></A>
+<A NAME="IDX6767"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
+<DD><A NAME="IDX6768"></A>
+
+
+
+<PRE>
+dbqueryconnection(_1) :-
+        address(_1).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
+<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>ThreadId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6219"></A>
-<A NAME="IDX6220"></A>
+<A NAME="IDX6769"></A>
+<A NAME="IDX6770"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
-<DD><A NAME="IDX6221"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_free_query_connection/1:</B>
+<DD><A NAME="IDX6771"></A>
 
 
 <P>
-The predicate is of type <EM>concurrent</EM>.
+No further documentation available for this predicate.
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_response(Id,Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6222"></A>
-<A NAME="IDX6223"></A>
+<A NAME="IDX6772"></A>
+<A NAME="IDX6773"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
-<DD><A NAME="IDX6224"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_fetch/2:</B>
+<DD><A NAME="IDX6774"></A>
 
 
 <P>
-The predicate is of type <EM>concurrent</EM>.
+No further documentation available for this predicate.
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_query(Id,Query)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Query</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6225"></A>
-<A NAME="IDX6226"></A>
+<A NAME="IDX6775"></A>
+<A NAME="IDX6776"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
-<DD><A NAME="IDX6227"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_get_tables/2:</B>
+<DD><A NAME="IDX6777"></A>
 
 
 <P>
-The predicate is of type <EM>concurrent</EM>.
+No further documentation available for this predicate.
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prolog_response(Id,Response)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>Response</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6228"></A>
-<A NAME="IDX6229"></A>
+<A NAME="IDX6778"></A>
+<A NAME="IDX6779"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_stream/4:</B>
-<DD><A NAME="IDX6230"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_table_types/3:</B>
+<DD><A NAME="IDX6780"></A>
 
 
 <P>
-The predicate is of type <EM>data</EM>.
+No further documentation available for this predicate.
 
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>java_stream(PJStream,JPStream,Address,Stream)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains prolog-to-java and java-to-prolog streams, and the network address where the Java process is running. Last argument represents the Java process standard input stream.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>PJStream</CODE> is a compound term.
- (<CODE>basic_props:struct/1</CODE>)
-
-<CODE>JPStream</CODE> is a compound term.
- (<CODE>basic_props:struct/1</CODE>)
-
-<CODE>Address</CODE> is a valid host name.
- (<CODE>javasock:machine_name/1</CODE>)
-
-<CODE>Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6231"></A>
-<A NAME="IDX6232"></A>
+<A NAME="IDX6781"></A>
+<A NAME="IDX6782"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
-<DD><A NAME="IDX6233"></A>
+<DT><span class="define">PREDICATE:</span> <B>mysql_disconnect/1:</B>
+<DD><A NAME="IDX6783"></A>
 
 
 <P>
@@ -338,6 +264,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

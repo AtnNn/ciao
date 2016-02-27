@@ -10,7 +10,7 @@
 :- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
-:- true pred copy_term(Term, Copy) + iso
+:- true pred copy_term(Term, Copy) + (iso, native)
 
         # "@var{Copy} is a renaming of @var{Term}, such that brand new
            variables have been substituted for all variables in
@@ -30,26 +30,27 @@ copy_term(X, Y) :-
 
 % Compiled inline -- these provide hooks for the interpreter and comments.
 
-:- true prop '='(?X,?Y) + iso # "@var{X} and @var{Y} unify.".
+:- true prop '='(?X,?Y) + (iso, native) # "@var{X} and @var{Y} unify.".
 
 X=Y :- X=Y.
 
-:- true pred arg(+ArgNo,+Term,?Arg) : integer(ArgNo) + iso # "Argument
+:- true pred arg(+ArgNo,+Term,?Arg) : int(ArgNo) + (iso, native) # "Argument
    @var{ArgNo} of the term @var{Term} is @var{Arg}.".
 
 arg(X, Y, Z) :- arg(X, Y, Z).
 
-:- true pred functor(?Term,?Name,?Arity) + iso # "The principal functor of the
+:- true pred functor(?Term,?Name,?Arity) => ( atm(Name), num(Arity) ) + (iso, native)
+   # "The principal functor of the
    term @var{Term} has name @var{Name} and arity @var{Arity}.".
 
 functor(X, Y, Z) :- functor(X, Y, Z).
 
-:- true pred (?Term =.. ?List) + iso # "The functor and arguments of the term
-   @var{Term} comprise the list @var{List}.".
+:- true pred (?Term =.. ?List) => list(List) + (iso, native) # "The functor and 
+   arguments of the term @var{Term} comprise the list @var{List}.".
 
 X=..Y :- X=..Y.
 
-:- true pred 'C'(?S1,?Terminal,?S2) # "@var{S1} is connected by the
+:- true pred 'C'(?S1,?Terminal,?S2) + native # "@var{S1} is connected by the
    terminal @var{Terminal} to @var{S2}. Internally used in @em{DCG grammar
    rules}. Defined as if by the single clause: @tt{'C'([X|S], X, S).}
 ".

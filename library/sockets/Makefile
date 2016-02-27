@@ -1,5 +1,5 @@
 MODULE=sockets_c
-ADDITIONAL_FILES=sockets
+ADDITIONAL_FILES=sockets sockets_io
 
 include ../../SETTINGS
 include ../../SHARED

@@ -10,6 +10,14 @@ cut_trans((A0, B0), (A, B)) :- !,
 %	cut_trans(A0, A),
 %	cut_trans(B0, B).
 % cut_trans(('$metacut'(C)), ('$metacut'(C), '$pending_cut_goals')).
+%jcf-begin
+cut_trans((A0; B0), (A; B)) :- !,
+	cut_trans(A0, A),
+	cut_trans(B0, B).
+cut_trans((A0-> B0), (A-> B)) :- !,
+	cut_trans(A0, A),
+	cut_trans(B0, B).
+%jcf-end
 cut_trans(('!!'), (!, '$pending_cut_goals')) :- !.
 cut_trans(A, A).
 

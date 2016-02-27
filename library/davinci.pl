@@ -297,7 +297,8 @@ davinci_get_all(List):-
 % -------------------------------------------------------------------------
 
 davinci_ugraph(Graph):-
-	ugraph2term(Graph,Term),
+	join_duplicated_nodes(Graph,CGraph),
+	ugraph2term(CGraph,Term),
 	davinci_put(graph(new(Term))).
 
 ugraph2term([N-Ns|Graph],[Node|Term]):-
@@ -326,13 +327,87 @@ edges([],_Source,[]).
  %%         formatting(T, user_output).
 
 % -------------------------------------------------------------------------
+%% join_duplicated_nodes(+Graph,-CGraph)
+%% library('graphs/ugraphs'), library('graphs/lgraphs') nor lgraph2ugraph/2 
+%% consider that some nodes might include attributes in one of their 
+%% appearances, but do not include in the rest of appearances.
+%% As a result of this, some nodes may appear duplicated in two 
+%% circumstances: with and without attributes, or with different attributes.
+%% The latter is clearly an error, and it will be reported as is by davinci.
+%% The former, however, is not an error, and needs to be corrected
+%% before the graph is sent to davinci.
+%% This predicate works in the following way: 
+%% - node/2 expressions are only considered in the first argument of every 
+%%   element of the list.
+%% - when two elements of the graph list share the same node name
+%%   (modulo node/2) the list of pointed-to nodes are joint (set union).
+%% - If two elements of the graph list share the node name, but have
+%%   different attribute lists, only one attribute list is considered
+
+:- use_module(library(sets),[ord_union/3]).
+:- use_module(library(sort),[sort/2]).
+
+join_duplicated_nodes(Graph,CGraph):-
+	join_duplicated_nodes_(Graph,CGraph0),
+	propagate_full_names(CGraph0,CGraph0,CGraph).
+
+join_duplicated_nodes_([],[]).
+join_duplicated_nodes_([From-To|Graph],[GroupedFrom-GroupedTo|CGraph]):-
+	join_pointedto(From-To,Graph,GroupedFrom-GroupedTo,Rest),
+	join_duplicated_nodes_(Rest,CGraph).
+
+join_pointedto(From-To,Graph0,From-GroupedTo,Rest):-
+	From = node(Node,Att),!,
+	get_pointedto(Node,Graph0,GroupedTo0,Graph1),
+	get_pointedto(node(Node,Att),Graph1,GroupedTo1,Rest),
+	sort(To,ToSorted),
+	ord_union(ToSorted,GroupedTo0,GroupedTo2),
+	ord_union(GroupedTo1,GroupedTo2,GroupedTo).
+join_pointedto(From-To,Graph0,node(From,Att)-GroupedTo,Rest):-
+	\+ From = node(_,_),
+	get_pointedto(From,Graph0,GroupedTo0,Graph1),
+	get_pointedto(node(From,Att),Graph1,GroupedTo1,Rest),
+	(var(Att) -> Att = [] ; true),
+	sort(To,ToSorted),
+	ord_union(ToSorted,GroupedTo0,GroupedTo2),
+	ord_union(GroupedTo1,GroupedTo2,GroupedTo).
+
+get_pointedto(_,[],[],[]).
+get_pointedto(From,[From-To|Graph0],GroupedTo,Graph):-
+	get_pointedto(From,Graph0,GroupedTo0,Graph),
+	sort(To,ToSorted),
+	ord_union(ToSorted,GroupedTo0,GroupedTo).
+get_pointedto(From,[Node|Graph0],GroupedTo,[Node|Graph]):-
+	get_pointedto(From,Graph0,GroupedTo,Graph).
+
+%%
+
+propagate_full_names([],_,[]).
+propagate_full_names([From-ToList0|Graph],List,[From-ToList|CGraph]):-
+	propagate_full_names_(ToList0,List,ToList),
+	propagate_full_names(Graph,List,CGraph).
+
+propagate_full_names_([],_,[]).
+propagate_full_names_([E|Es],List,[node(E,Att)|Fs]):-  % unlabelled graphs.
+	\+ E = node(_,_),
+	\+ E = _-_,
+	member(node(E,Att)-_,List), !,
+	propagate_full_names_(Es,List,Fs).
+propagate_full_names_([E-L|Es],List,[node(E,Att)-L|Fs]):- % labelled graphs.
+	\+ E = node(_,_),
+	member(node(E,Att)-_,List), !,
+	propagate_full_names_(Es,List,Fs).
+propagate_full_names_([E|Es],List,[E|Fs]):-
+	propagate_full_names_(Es,List,Fs).
+
+% -------------------------------------------------------------------------
 :- pred davinci_lgraph(Graph) : lgraph
       # "Send a labeled graph to daVinci.".
 :- prop lgraph/1.
 :- impl_defined(lgraph/1).
 :- comment(doinclude,lgraph/1).
 :- comment(lgraph(Graph),
-"@var{Graph} is a term which denotes a wgraph as in @tt{library(wgraphs)},
+"@var{Graph} is a term which denotes a wgraph as in @tt{library('graphs/wgraphs')},
       except that the weights are labels, i.e.,
       they do not need to be integers.
  Vertices of the form @tt{node/2} are interpreted in a special way.
@@ -343,10 +418,16 @@ edges([],_Source,[]).
 
 davinci_lgraph(Graph):-
 	retractall_fact(label(_)),
-	lgraph2ugraph(Graph,UGraph),
-	davinci_ugraph(UGraph).
+%jcf-begin
+%	lgraph2ugraph(Graph,UGraph),
+%	davinci_ugraph(UGraph).
+	join_duplicated_nodes(Graph,CGraph),
+	lgraph2ugraph(CGraph,UGraph),
+	ugraph2term(UGraph,Term),
+	davinci_put(graph(new(Term))).
+%jcf-end
 
-% This one is similar to wgraph_to_ugraph/2 in library(wgraphs)
+% This one is similar to wgraph_to_ugraph/2 in library('graphs/wgraphs')
 % except that the labels (weights) are converted into new vertices
 % These new vertices are special, in the sense that they have daVinci
 % attributes so that they will appear as text instead of box nodes
@@ -455,7 +536,12 @@ parse_term0(C0,String0,Term,String):-
 parse_term0(C0,String0,Term,String):-
 	quote(C0), !,
 	parse_string(String0,Str,String),
-	parse_term(Str,Term,[]).
+%jcf-begin
+%% If an string is received as argument of a term, it should NOT
+%% be parsed in turn.
+%jcf% 	parse_term(Str,Term,[]).
+	Term = Str.
+%jcf-end
 parse_term0(C0,String0,Term,String):-
 	parse_struct([C0|String0],Term,String).
 
@@ -486,9 +572,20 @@ blank(C):-        " "=[C].
 quote(C):-   name('"',[C]).
 
 
-%% Control version comment prompting for the file.
-%% Local Variables: 
-%% mode: CIAO
-%% update-version-comments: "off"
-%% End:
+% -------------------------------------------------------------------------
 
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+76,2003/04/14,18:31*46+'CEST'), "Code added for
+   allowing attributes in lgraph/ugraph nodes. In previous version
+   attributes were allowed, but they had to be repeated in all places
+   the related node appeared (in the other case, node items were not
+   exactly equal, and davinci raised an error).  (Jesus Correas
+   Fernandez)").
+
+:- comment(version(1*9+75,2003/04/14,18:19*26+'CEST'), "Bug fixed when
+   receiving an error message from davinci: now davinci strings are
+   interpreted as Prolog strings (not as Prolog terms).  (Jesus
+   Correas Fernandez)").
+
+% -------------------------------------------------------------------------

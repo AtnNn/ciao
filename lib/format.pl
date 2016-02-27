@@ -361,7 +361,7 @@ format_control(C) :- atm(C).
 %				arguments
 %
 
-:- pred format(format_control(Format),Arguments)
+:- true pred format(format_control(Format),Arguments) + native
    # "Print @var{Arguments} onto current output stream according to format
       @var{Format}.".
 
@@ -372,7 +372,7 @@ format(Control, Arguments) :- format1(Control, Arguments), !.
 format(Control, Arguments) :-
 	throw(error(invalid_arguments(format(Control, Arguments)), format/2)).
 
-:- pred format(+Stream,format_control(Format),Arguments)
+:- true pred format(+Stream,format_control(Format),Arguments) + native
    # "Print @var{Arguments} onto @var{Stream} according to format
       @var{Format}.".
 

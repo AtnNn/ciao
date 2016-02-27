@@ -1,129 +1,266 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
+<TITLE>The Ciao Prolog System               - text_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC558" HREF="ciao_toc.html#TOC558">Using the persdb library</A></H1>
-
+<H1><A NAME="SEC586" HREF="ciao_toc.html#TOC586">text_class (library)</A></H1>
 <P>
-Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
+<A NAME="IDX6019"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_142.html#SEC559">An example of persistent predicates (static version)</A>
-<LI><A HREF="ciao_142.html#SEC560">An example of persistent predicates (dynamic version)</A>
-<LI><A HREF="ciao_142.html#SEC561">A simple application / a persistent queue</A>
+<LI><A HREF="ciao_142.html#SEC587">Usage and interface (text_class)</A>
+<LI><A HREF="ciao_142.html#SEC588">Documentation on exports (text_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC559" HREF="ciao_toc.html#TOC559">An example of persistent predicates (static version)</A></H2>
+<H2><A NAME="SEC587" HREF="ciao_toc.html#TOC587">Usage and interface (<CODE>text_class</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(text_class)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
-<PRE>
-:- use_package(iso).
-:- use_package(persdb).
+<UL>
 
-%% Declare the directory associated to the key "db" where the
-%% persistence sets of the persistent predicates are stored:
-persistent_dir(db,'./').
+<LI><EM>Predicates:</EM>
 
-%% Declare a persistent predicate:
-:- persistent(bar/1, db).
+<A NAME="IDX6020"></A>
+<CODE>coord/2</CODE>, 
+<A NAME="IDX6021"></A>
+<CODE>point/2</CODE>, 
+<A NAME="IDX6022"></A>
+<CODE>text_characters/1</CODE>, 
+<A NAME="IDX6023"></A>
+<CODE>anchor/1</CODE>, 
+<A NAME="IDX6024"></A>
+<CODE>font_type/1</CODE>, 
+<A NAME="IDX6025"></A>
+<CODE>justify_text/1</CODE>.
 
-%% Read a term, storing it in a new fact of the persistent predicate
-%% and list all the current facts of that predicate
-main:-
-     read(X),
-     assertz_fact(bar(X)),
-     findall(Y,bar(Y),L),
-     write(L).
+</UL>
 
-</PRE>
-
-
-
-<H2><A NAME="SEC560" HREF="ciao_toc.html#TOC560">An example of persistent predicates (dynamic version)</A></H2>
+<LI><STRONG>Other modules used:</STRONG>
 
 
-<PRE>
-:- use_package(iso).
-:- use_package(persdb).
+<UL>
 
-main([X]):-
-%%   Declare the directory associated to the key "db" 
-     asserta_fact(persistent_dir(db,'./')),
-%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
-     data(bar/1),
-%%   Declare the predicate bar/1 as persistent at run-time  
-     make_persistent(bar/1, db),
-     assertz_fact(bar(X)),
-     findall(Y, bar(Y), L),
-     write(L).    
+<LI><EM>System library modules:</EM>
 
-</PRE>
+<A NAME="IDX6026"></A>
+<CODE>objects/objects_rt</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
 
 
 
-<H2><A NAME="SEC561" HREF="ciao_toc.html#TOC561">A simple application / a persistent queue</A></H2>
+<H2><A NAME="SEC588" HREF="ciao_toc.html#TOC588">Documentation on exports (<CODE>text_class</CODE>)</A></H2>
+<P>
+<A NAME="IDX6027"></A>
+<A NAME="IDX6028"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>coord/2:</B>
+<DD><A NAME="IDX6029"></A>
 
-<PRE>
-:- module(queue, [main/0],[persdb]).
 
-:- use_package(iso).
+<P>
+<STRONG>Usage:</STRONG> <CODE>coord(+X,+Y)</CODE>
 
-:- use_module(library(read)).
-:- use_module(library(write)).
-:- use_module(library(aggregates)).
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> specify the coordinates of a point used to position the text on the display.
 
-persistent_dir(queue_dir,'./pers').
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-:- persistent(queue/1, queue_dir).
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-queue(first).
-queue(second).
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
 
-main:-
-     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
-     read(A),
-     (  handle_action(A)
-     -&#62; true
-     ;  write('Unknown command.'), nl ),
-     main.
+</DL>
 
-handle_action(end_of_file) :-
-     halt.
-handle_action(halt) :-
-     halt.
-handle_action(in(Term)) :-
-     assertz_fact(queue(Term)),
-     main.
-handle_action(slip(Term)) :-
-     asserta_fact(queue(Term)),
-     main.
-handle_action(out) :-
-     (  retract_fact(queue(Term))
-     -&#62; write('Out '), write(Term)
-     ;  write('FIFO empty.') ),
-     nl,
-     main.
-handle_action(list) :-
-     findall(Term,queue(Term),Terms),
-     write('Contents: '), write(Terms), nl,
-     main.
-     
+<P>
+<A NAME="IDX6030"></A>
+<A NAME="IDX6031"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>point/2:</B>
+<DD><A NAME="IDX6032"></A>
 
-</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>point(+X,+Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> change the coordinates of a point used to position the text on the display.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6033"></A>
+<A NAME="IDX6034"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
+<DD><A NAME="IDX6035"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Text</CODE> specifies the characters to be displayed in the text item. This option defaults to an empty string.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the text displayed in the text item.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6036"></A>
+<A NAME="IDX6037"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>anchor/1:</B>
+<DD><A NAME="IDX6038"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>anchor(+AnchorPos)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AnchorPos</CODE> tells how to position the text relative to the positioning point for the text. This option defaluts to center.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+AnchorPos</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>anchor(-AnchorPos)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the position of the text relative to the positioning point.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-AnchorPos</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6039"></A>
+<A NAME="IDX6040"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
+<DD><A NAME="IDX6041"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Font</CODE> specifies the font to use for the text item. This option defaluts to arial.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the value of the <CODE>Font</CODE> used for the text item.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6042"></A>
+<A NAME="IDX6043"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>justify_text/1:</B>
+<DD><A NAME="IDX6044"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>justify_text(+How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text within its bounding region. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+How</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>justify_text(-How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-How</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_141.html">previous</A>, <A HREF="ciao_143.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

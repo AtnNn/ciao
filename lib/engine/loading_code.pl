@@ -1,4 +1,4 @@
-:- module(_, [main/0], [assertions]).
+:- module(_, [], [assertions]).
 
 :- comment(title, "Directives for using code in other files").
 
@@ -44,10 +44,12 @@
 :- decl use_package(Package) : sourcename.
 :- decl use_package(Package) : list(sourcename).
 
-main.
-
 %------------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+30,2002/11/20,14:15*12+'CET'), "Took out the
+   unnecessary @tt{main.} fact, used to get around a temporary problem
+   with the documenter.  (Manuel Hermenegildo)").
 
 :- comment(version(1*7+166,2002/01/03,17:42*31+'CET'), "Added 'module'
    comment and a dummy main/0 in order to avoid documentation

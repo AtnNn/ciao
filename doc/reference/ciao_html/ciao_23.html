@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Arithmetic</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, <A HREF="ciao_24.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, <A HREF="ciao_24.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC117" HREF="ciao_toc.html#TOC117">Arithmetic</A></H1>
+<H1><A NAME="SEC150" HREF="ciao_toc.html#TOC150">Arithmetic</A></H1>
 <P>
-<A NAME="IDX1153"></A>
+<A NAME="IDX1511"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
 
 
 <P>
@@ -29,7 +29,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, 
 
 <P>
 Arithmetic is performed by built-in predicates which take as arguments arithmetic expressions (see 
-<A NAME="IDX1154"></A>
+<A NAME="IDX1512"></A>
 <CODE>arithexpression/1</CODE>) and evaluate them. Terms representing arithmetic expressions can be created dynamically, but at the time of evaluation, each variable in an arithmetic expression must be bound to a non-variable expression (the term must be ground). For example, given the code in the first line a possible shell interaction follows: 
 
 <PRE>
@@ -44,13 +44,13 @@ yes
 
 
 <UL>
-<LI><A HREF="ciao_23.html#SEC118">Usage and interface (arithmetic)</A>
-<LI><A HREF="ciao_23.html#SEC119">Documentation on exports (arithmetic)</A>
+<LI><A HREF="ciao_23.html#SEC151">Usage and interface (arithmetic)</A>
+<LI><A HREF="ciao_23.html#SEC152">Documentation on exports (arithmetic)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC118" HREF="ciao_toc.html#TOC118">Usage and interface (<CODE>arithmetic</CODE>)</A></H2>
+<H2><A NAME="SEC151" HREF="ciao_toc.html#TOC151">Usage and interface (<CODE>arithmetic</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -67,24 +67,24 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1155"></A>
+<A NAME="IDX1513"></A>
 <CODE>is/2</CODE>, 
-<A NAME="IDX1156"></A>
+<A NAME="IDX1514"></A>
 <CODE>&#60;/2</CODE>, 
-<A NAME="IDX1157"></A>
+<A NAME="IDX1515"></A>
 <CODE>=&#60;/2</CODE>, 
-<A NAME="IDX1158"></A>
+<A NAME="IDX1516"></A>
 <CODE>&#62;/2</CODE>, 
-<A NAME="IDX1159"></A>
+<A NAME="IDX1517"></A>
 <CODE>&#62;=/2</CODE>, 
-<A NAME="IDX1160"></A>
+<A NAME="IDX1518"></A>
 <CODE>=:=/2</CODE>, 
-<A NAME="IDX1161"></A>
+<A NAME="IDX1519"></A>
 <CODE>=\=/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX1162"></A>
+<A NAME="IDX1520"></A>
 <CODE>arithexpression/1</CODE>.
 
 </UL>
@@ -95,13 +95,13 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC119" HREF="ciao_toc.html#TOC119">Documentation on exports (<CODE>arithmetic</CODE>)</A></H2>
+<H2><A NAME="SEC152" HREF="ciao_toc.html#TOC152">Documentation on exports (<CODE>arithmetic</CODE>)</A></H2>
 <P>
-<A NAME="IDX1163"></A>
-<A NAME="IDX1164"></A>
+<A NAME="IDX1521"></A>
+<A NAME="IDX1522"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>is/2:</B>
-<DD><A NAME="IDX1165"></A>
+<DD><A NAME="IDX1523"></A>
 
 
 <P>
@@ -113,32 +113,47 @@ The arithmetic expression <CODE>Exp</CODE> is evaluated and the result is unifie
 
 
 <P>
-<STRONG>Usage 2:</STRONG> 
+<STRONG>Usage 1:</STRONG> <CODE>X is +arithexpression</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
+<LI><EM>The following properties hold upon exit:</EM>
 
-<CODE>Val</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>X</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>X is Exp</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
 <LI><EM>The following properties should hold at call time:</EM>
 
 <CODE>Exp</CODE> is an arithmetic expression.
  (<CODE>arithmetic:arithexpression/1</CODE>)
 <LI><EM>The following properties hold upon exit:</EM>
 
-<CODE>Val</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>X</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1166"></A>
-<A NAME="IDX1167"></A>
+<A NAME="IDX1524"></A>
+<A NAME="IDX1525"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>&#60;/2:</B>
-<DD><A NAME="IDX1168"></A>
+<DD><A NAME="IDX1526"></A>
 
 
 <P>
@@ -150,6 +165,17 @@ The numeric value of <CODE>Exp1</CODE> is less than the numeric value of <CODE>E
 
 
 <P>
+<STRONG>Usage 1:</STRONG> <CODE>+arithexpression &#60; +arithexpression</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
 <STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
@@ -161,16 +187,20 @@ The numeric value of <CODE>Exp1</CODE> is less than the numeric value of <CODE>E
 
 <CODE>Exp2</CODE> is an arithmetic expression.
  (<CODE>arithmetic:arithexpression/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1169"></A>
-<A NAME="IDX1170"></A>
+<A NAME="IDX1527"></A>
+<A NAME="IDX1528"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>=&#60;/2:</B>
-<DD><A NAME="IDX1171"></A>
+<DD><A NAME="IDX1529"></A>
 
 
 <P>
@@ -182,6 +212,17 @@ The numeric value of <CODE>Exp1</CODE> is less than or equal to the numeric valu
 
 
 <P>
+<STRONG>Usage 1:</STRONG> <CODE>+arithexpression =&#60; +arithexpression</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
 <STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
@@ -193,16 +234,20 @@ The numeric value of <CODE>Exp1</CODE> is less than or equal to the numeric valu
 
 <CODE>Exp2</CODE> is an arithmetic expression.
  (<CODE>arithmetic:arithexpression/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1172"></A>
-<A NAME="IDX1173"></A>
+<A NAME="IDX1530"></A>
+<A NAME="IDX1531"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>&#62;/2:</B>
-<DD><A NAME="IDX1174"></A>
+<DD><A NAME="IDX1532"></A>
 
 
 <P>
@@ -214,6 +259,17 @@ The numeric value of <CODE>Exp1</CODE> is greater than the numeric value of <COD
 
 
 <P>
+<STRONG>Usage 1:</STRONG> <CODE>+arithexpression &#62; +arithexpression</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
 <STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
@@ -225,16 +281,20 @@ The numeric value of <CODE>Exp1</CODE> is greater than the numeric value of <COD
 
 <CODE>Exp2</CODE> is an arithmetic expression.
  (<CODE>arithmetic:arithexpression/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1175"></A>
-<A NAME="IDX1176"></A>
+<A NAME="IDX1533"></A>
+<A NAME="IDX1534"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>&#62;=/2:</B>
-<DD><A NAME="IDX1177"></A>
+<DD><A NAME="IDX1535"></A>
 
 
 <P>
@@ -246,6 +306,17 @@ The numeric value of <CODE>Exp1</CODE> is greater than or equal to the numeric v
 
 
 <P>
+<STRONG>Usage 1:</STRONG> <CODE>+arithexpression &#62;= +arithexpression</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
 <STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
@@ -257,16 +328,20 @@ The numeric value of <CODE>Exp1</CODE> is greater than or equal to the numeric v
 
 <CODE>Exp2</CODE> is an arithmetic expression.
  (<CODE>arithmetic:arithexpression/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1178"></A>
-<A NAME="IDX1179"></A>
+<A NAME="IDX1536"></A>
+<A NAME="IDX1537"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>=:=/2:</B>
-<DD><A NAME="IDX1180"></A>
+<DD><A NAME="IDX1538"></A>
 
 
 <P>
@@ -278,6 +353,17 @@ The numeric values of <CODE>Exp1</CODE> and <CODE>Exp2</CODE> are equal when bot
 
 
 <P>
+<STRONG>Usage 1:</STRONG> <CODE>+arithexpression =:= +arithexpression</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
 <STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
@@ -289,16 +375,20 @@ The numeric values of <CODE>Exp1</CODE> and <CODE>Exp2</CODE> are equal when bot
 
 <CODE>Exp2</CODE> is an arithmetic expression.
  (<CODE>arithmetic:arithexpression/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1181"></A>
-<A NAME="IDX1182"></A>
+<A NAME="IDX1539"></A>
+<A NAME="IDX1540"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>=\=/2:</B>
-<DD><A NAME="IDX1183"></A>
+<DD><A NAME="IDX1541"></A>
 
 
 <P>
@@ -310,6 +400,17 @@ The numeric values of <CODE>Exp1</CODE> and <CODE>Exp2</CODE> are not equal when
 
 
 <P>
+<STRONG>Usage 1:</STRONG> <CODE>+arithexpression =\= +arithexpression</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
 <STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
@@ -321,27 +422,31 @@ The numeric values of <CODE>Exp1</CODE> and <CODE>Exp2</CODE> are not equal when
 
 <CODE>Exp2</CODE> is an arithmetic expression.
  (<CODE>arithmetic:arithexpression/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1184"></A>
-<A NAME="IDX1185"></A>
+<A NAME="IDX1542"></A>
+<A NAME="IDX1543"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>arithexpression/1:</B>
-<DD><A NAME="IDX1186"></A>
+<DD><A NAME="IDX1544"></A>
 
 
 <P>
 An arithmetic expression is a term built from numbers and 
-<A NAME="IDX1187"></A>
+<A NAME="IDX1545"></A>
 evaluable functors that represent arithmetic functions. An arithmetic expression evaluates to a number, which may be an integer (
-<A NAME="IDX1188"></A>
+<A NAME="IDX1546"></A>
 <CODE>int/1</CODE>) or a float (
-<A NAME="IDX1189"></A>
+<A NAME="IDX1547"></A>
 <CODE>flt/1</CODE>). The evaluable functors allowed in an arithmetic expression are listed below, together with an indication of the functions they represent. All evaluable functors defined in 
-<A NAME="IDX1190"></A>
+<A NAME="IDX1548"></A>
 ISO-Prolog are implemented, as well as some other useful or traditional. Unless stated otherwise, an expression evaluates to a float if any of its arguments is a float, otherwise to an integer. 
 
 
@@ -350,191 +455,191 @@ ISO-Prolog are implemented, as well as some other useful or traditional. Unless 
 
 <LI>
 
-<A NAME="IDX1191"></A>
+<A NAME="IDX1549"></A>
 <CODE>- /1</CODE>: sign reversal.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1192"></A>
+<A NAME="IDX1550"></A>
 <CODE>+ /1</CODE>: identity. 
 
 <LI>
 
-<A NAME="IDX1193"></A>
+<A NAME="IDX1551"></A>
 <CODE>-- /1</CODE>: decrement by one. 
 
 <LI>
 
-<A NAME="IDX1194"></A>
+<A NAME="IDX1552"></A>
 <CODE>++ /1</CODE>: increment by one. 
 
 <LI>
 
-<A NAME="IDX1195"></A>
+<A NAME="IDX1553"></A>
 <CODE>+ /2</CODE>: addition.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1196"></A>
+<A NAME="IDX1554"></A>
 <CODE>- /2</CODE>: subtraction.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1197"></A>
+<A NAME="IDX1555"></A>
 <CODE>* /2</CODE>: multiplication.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1198"></A>
+<A NAME="IDX1556"></A>
 <CODE>// /2</CODE>: integer division. Float arguments are truncated to integers, result always integer.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1199"></A>
+<A NAME="IDX1557"></A>
 <CODE>/ /2</CODE>: division. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1200"></A>
+<A NAME="IDX1558"></A>
 <CODE>rem/2</CODE>: integer remainder. The result is always an integer, its sign is the sign of the first argument.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1201"></A>
+<A NAME="IDX1559"></A>
 <CODE>mod/2</CODE>: modulo. The result is always a positive integer.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1202"></A>
+<A NAME="IDX1560"></A>
 <CODE>abs/1</CODE>: absolute value.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1203"></A>
+<A NAME="IDX1561"></A>
 <CODE>sign/1</CODE>: sign of.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1204"></A>
+<A NAME="IDX1562"></A>
 <CODE>float_integer_part/1</CODE>: float integer part. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1205"></A>
+<A NAME="IDX1563"></A>
 <CODE>float_fractional_part/1</CODE>: float fractional part. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1206"></A>
+<A NAME="IDX1564"></A>
 <CODE>truncate/1</CODE>: The result is the integer equal to the integer part of the argument.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1207"></A>
+<A NAME="IDX1565"></A>
 <CODE>integer/1</CODE>: same as 
-<A NAME="IDX1208"></A>
+<A NAME="IDX1566"></A>
 <CODE>truncate/1</CODE>. 
 
 <LI>
 
-<A NAME="IDX1209"></A>
+<A NAME="IDX1567"></A>
 <CODE>float/1</CODE>: conversion to float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1210"></A>
+<A NAME="IDX1568"></A>
 <CODE>floor/1</CODE>: largest integer not greater than.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1211"></A>
+<A NAME="IDX1569"></A>
 <CODE>round/1</CODE>: integer nearest to.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1212"></A>
+<A NAME="IDX1570"></A>
 <CODE>ceiling/1</CODE>: smallest integer not smaller than.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1213"></A>
+<A NAME="IDX1571"></A>
 <CODE>** /2</CODE>: exponentiation. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1214"></A>
+<A NAME="IDX1572"></A>
 <CODE>&#62;&#62; /2</CODE>: integer bitwise right shift.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1215"></A>
+<A NAME="IDX1573"></A>
 <CODE>&#60;&#60; /2</CODE>: integer bitwise left shift.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1216"></A>
+<A NAME="IDX1574"></A>
 <CODE>/\ /2</CODE>: integer bitwise and.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1217"></A>
+<A NAME="IDX1575"></A>
 <CODE>\/ /2</CODE>: integer bitwise or.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1218"></A>
+<A NAME="IDX1576"></A>
 <CODE>\ /1</CODE>: integer bitwise complement.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1219"></A>
+<A NAME="IDX1577"></A>
 <CODE># /2</CODE>: integer bitwise exclusive or (xor). 
 
 <LI>
 
-<A NAME="IDX1220"></A>
+<A NAME="IDX1578"></A>
 <CODE>exp/1</CODE>: exponential (<EM>e</EM> to the power of). Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1221"></A>
+<A NAME="IDX1579"></A>
 <CODE>log/1</CODE>: natural logarithm (base <EM>e</EM>). Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1222"></A>
+<A NAME="IDX1580"></A>
 <CODE>sqrt/1</CODE>: square root. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1223"></A>
+<A NAME="IDX1581"></A>
 <CODE>sin/1</CODE>: sine. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1224"></A>
+<A NAME="IDX1582"></A>
 <CODE>cos/1</CODE>: cosine. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1225"></A>
+<A NAME="IDX1583"></A>
 <CODE>atan/1</CODE>: arc tangent. Result always float.  <KBD> * ISO * </KBD>
 
 <LI>
 
-<A NAME="IDX1226"></A>
+<A NAME="IDX1584"></A>
 <CODE>gcd/2</CODE>: Greatest common divisor. Arguments must evaluate to integers, result always integer. 
 
 </UL>
 
 <P>
 In addition to these functors, a list of just a number evaluates to this number. Since a 
-<A NAME="IDX1227"></A>
+<A NAME="IDX1585"></A>
 quoted string is just a list of integers, this allows a quoted character to be used in place of its 
-<A NAME="IDX1228"></A>
+<A NAME="IDX1586"></A>
 ASCII code; e.g. <CODE>"A"</CODE> behaves within arithmetic expressions as the integer 65. Note that this is not 
-<A NAME="IDX1229"></A>
-<A NAME="IDX1230"></A>
+<A NAME="IDX1587"></A>
+<A NAME="IDX1588"></A>
 ISO-compliant, and that can be achieved by using the ISO notation <CODE>0'A</CODE>. 
 
 
@@ -561,6 +666,6 @@ Arithmetic expressions, as described above, are just data structures. If you wan
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, <A HREF="ciao_24.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_22.html">previous</A>, <A HREF="ciao_24.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

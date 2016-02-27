@@ -1,6 +1,4 @@
 :- module(_,[
-	make_directory/1, 
-%%      make_dirpath/1,
 	del_dir_if_empty/1, 
 	move_files/2,move_file/2,
 	copy_files/2,copy_file/2,
@@ -21,9 +19,20 @@
 	call_unknown/1,
 	replace_strings_in_file/3,
 	writef/3,
-	writef/2 ],[assertions,isomodes,hiord]).
+	writef/2 ],
+	[assertions,isomodes,hiord]).
+%% 	[assertions,isomodes,hiord,debug]).
 
-%% The idea is that it is an extension
+:- comment(module,"This is a (temporary) extension to library
+   @lib{system} (which it reexports). It implements functionality that
+   is often convenient in @file{Makefile}s. Much of this should
+   probably end up eventually in @lib{system}, but once we have worked
+   out the best interface and, in some cases, the proper
+   implementation (the implementations in here are in some cases just
+   calls to Un*x shell primitives or commands).").
+
+:- comment(author,"M. Hermenegildo").
+
 :- reexport(library(system)).
 %%  [datime/9,working_directory/2,file_exists/1,
 %%   file_exists/2,file_property/2,chmod/2,system/2,delete_file/1,
@@ -43,7 +52,7 @@
 %% calls to atom_concat).
 
 %% -------------------------------------------------------------------------
-%% Preds from the SICSTus library that we need to implement
+%% These are preds from the SICStus lib that probably need to be implemented 
 %% -------------------------------------------------------------------------
 
 %% In ciao it is called pause/1.
@@ -87,7 +96,6 @@
 %% delete_file_option(recursive).
 %% delete_file_option(ignore).
 
-
 del_dir_if_empty(Dir) :-
 	working_directory(CD,CD),
 	(  file_exists(Dir)
@@ -97,26 +105,6 @@ del_dir_if_empty(Dir) :-
 	   ;  true )
 	;  true ),
 	cd(CD).
-
-:- redefining(make_directory/1). % It is defined in library(system)
-
-:- comment(make_directory(DirName),"Makes a new directory called
-   @var{DirName}.").
-
-:- true pred make_directory(+atm).
-
-%% Needs real implementation...
-make_directory(DirName) :-
-	(  file_exists(DirName)
-	-> note_message("did not create ~w (it already exists)",[DirName])
-	;  do(['mkdir ',DirName],fail) ).
-
-%% version which also creates path
-%% Needs real implementation...
- %% make_dirpath(DirName) :-
- %% 	(  file_exists(DirName)
- %% 	-> note_message("did not create ~w (it already exists)",[DirName])
- %% 	;  do(['mkdir -p ',DirName],fail) ).
 
 %% Note name and type change, and it enumerates.
 %% `environ(?VAR, ?VALUE)'
@@ -320,19 +308,27 @@ filter_alist_pattern([_T|Ts],Pattern,NTs) :-
 :- meta_predicate(-(goal)).
 
 -(G) :- G, !.
--(G) :- warning_message("could not complete goal ~w",[G]).
+-(G) :- warning_message("in -/1, could not complete goal ~w",[G]).
+
+set_perms(Files,perm(User,Group,Others)) :-
+	convert_permissions(User,Group,Others,Perms),
+	!,
+	set_perms_(Files,Perms).
+set_perms(_Files,Perms) :-
+	error_message(
+	  "invalid permission '~w' (should be perm(User,Group,Others))",
+  	  [Perms]). 
 
 %% Files can have paths
-set_perms([],_Perms) :-
+set_perms_([],_P) :-
 	!.
-set_perms([File|Files],Perms) :-
+set_perms_([File|Files],P) :-
 	!,
-	set_perms(File,Perms),
-	set_perms(Files,Perms).
-set_perms(File,perm(User,Group,Others)) :-
+	set_perms_(File,P),
+	set_perms_(Files,P).
+set_perms_(File,P) :-
 	(  file_exists(File)
-	-> convert_permissions(User,Group,Others,P),
-	   no_path_file_name(File,FileName),
+	-> no_path_file_name(File,FileName),
 	   atom_concat(Path,FileName,File),
 	   (  Path = ''
 	   -> chmod(File,P)
@@ -340,7 +336,7 @@ set_perms(File,perm(User,Group,Others)) :-
 	      cd(Path),
 	      chmod(FileName,P),
 	      cd(WD) )
-	;  error_message("file ~w not found",[File]) ).
+	;  error_message("file '~w' not found",[File]) ).
 
 convert_permissions(U,G,O,P) :-
 	valid_mode(U,NU),
@@ -480,7 +476,7 @@ datime_string(datime(Year,Month,Day,Hour,Min,Sec),T) :-
 	list_concat([ DayS, "/", MonthS, "/", YearS, " ", HourS, ":",
 	              MinS,  ":", SecS ], T).
 
-%% :- meta_predicate(all_values(pred(1),?)).
+:- meta_predicate(all_values(pred(1),?)).
 %% 
 %% all_values(PredName,Values) :-
 %% 	findall(T,call_unknown(PredName(T)),Values).
@@ -489,15 +485,22 @@ datime_string(datime(Year,Month,Day,Hour,Min,Sec),T) :-
 all_values(PredName,Values) :-
 	findall(T,call_unknown(PredName(T)),Values).
 
+%% Defined in make
 :- meta_predicate call_unknown(goal).
 
 % Complication is so that flag is left as it was also upon failure.
 call_unknown(G) :-
 	prolog_flag(unknown,Old,fail),
-	(  %% call(_:G), 
+	prolog_flag(quiet,QOld,error),
+	(  %% nl, display('*** Calling (unknown): '), display(G), nl,
+	   %% %% call(_:G), 
 	   call(G),
-	   prolog_flag(unknown,_,Old)
+	   %% display('*** ...success with '), display(G), nl,
+	   prolog_flag(unknown,_,Old),
+	   prolog_flag(quiet,_,QOld)
 	;  prolog_flag(unknown,_,Old),
+	   prolog_flag(quiet,_,QOld),
+	   %% display('*** ...failure.'), nl,
 	   fail ).
 
 no_tr_nl(L,NL) :- 
@@ -581,8 +584,17 @@ match([H|T],[H|IT],RI) :-
  
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*9+90,2003/07/22,16:53*40+'CEST'), "Better error
+   handling in @pred{set_perms}.  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+24,2002/11/20,12:52*12+'CET'), "Improvements to
+   in @lib{system_extra}: eliminated @tt{make_directory} (now in
+   @lib{system}), improved documentation slightly, and several other
+   minor changes to adapt to new version of make.  (Manuel
+   Hermenegildo)").
+
 :- comment(version(1*7+180,2002/01/25,20:08*39+'Hora estándar
-   romance'), "Moved cyg2win/3 to system.pl ()").
+   romance'), "Moved cyg2win/3 to system.pl (MCL)").
 
 :- comment(version(1*7+170,2002/01/03,18:17*59+'CET'), "Removed
    make_dirpath (real implementation now in system.pl) (MCL)").

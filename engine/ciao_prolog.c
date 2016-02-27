@@ -51,6 +51,7 @@
 #include "nondet_defs.h"
 #include "prolog_tasks_defs.h"
 #include "term_support_defs.h"
+#include "bignum_defs.h"
 #include "stacks_defs.h"
 #if defined(DEBUG)
 #include "locks_defs.h"
@@ -88,6 +89,18 @@ extern char source_path[];
 extern int prolog_force_interactive;
 
 extern char *library_directory;
+
+/* Memory management routines --- now only interfaces to library, but they
+   might evolve in access to a custom memory management library */
+
+void *ciao_malloc(int size) {
+  return malloc(size);
+}
+
+void ciao_free(void *pointer){
+  free(pointer);
+}
+
 
 /* Low level term operations */
 
@@ -181,7 +194,7 @@ X *Name(ciao_state state, ciao_term list) { \
   int length; \
   length = ciao_list_length(state, list); \
   if (length == 0) return NULL; /* sure? */ \
-  array = (X *)malloc(sizeof(X) * length); \
+  array = (X *)ciao_malloc(sizeof(X) * length); \
   NameL(state, list, length, array); \
   return array; \
 }
@@ -193,7 +206,7 @@ char *ciao_list_to_str(ciao_state state, ciao_term list) {
   char *string;
   int length;
   length = ciao_list_length(state, list);
-  string = (char *)malloc(sizeof(char) * (length + 1));
+  string = (char *)ciao_malloc(sizeof(char) * (length + 1));
   ciao_list_to_byte_array_l(state, list, length, string);
   string[length] = 0;
   return string;
@@ -287,6 +300,10 @@ int ciao_opts(const char *program_name, int programc, const char **programv, int
 	if (strcmp(optv[i], "-tp") == SAME)        /* Trace predicates */
 	  predtrace = TRUE;
 #if defined(DBG) || defined(DEBUG)
+      else if (strcmp(optv[i], "-dcp") == SAME)  /*debug regular choicepoints*/
+        debug_choicepoints = TRUE;
+      else if (strcmp(optv[i], "-dconccp") == SAME) /*conc. choicepoints*/
+        debug_concchoicepoints = TRUE;
 	else if (strcmp(optv[i], "-dt") == SAME)           /* debug threads */
 	  debug_threads = TRUE;
 	else if (strcmp(optv[i], "-dgc") == SAME)      /* debug garb. coll. */
@@ -694,6 +711,22 @@ ciao_bool ciao_is_integer(ciao_term term) {
   return ciao_is_integer_s(ciao_implicit_state, term);
 }
 
+ciao_bool ciao_fits_in_int_s(ciao_state state, ciao_term term) {
+  TAGGED t;
+  t = ciao_unref(state, term);
+  DEREF(t, t);
+  /* This relies on lazy evaluation. Bignums are arrays of integers, and are
+     always (explicitly) canonized after every evaluation.  If more than one
+     word is needed, then it does not fit into an integer. */
+  /*  if (IsFloat(t)) printf("IsFloat\n"); else printf("Not IsFloat\n"); */
+
+  return TagIsSmall(t) || (IsInteger(t) && (bn_length(TagToSTR(t)) == 1));
+}
+
+ciao_bool ciao_fits_in_int(ciao_term term) {
+  return ciao_fits_in_int_s(ciao_implicit_state, term);
+}
+
 ciao_bool ciao_is_variable_s(ciao_state state, ciao_term term) {
   TAGGED t;
   t = ciao_unref(state, term);
@@ -715,6 +748,17 @@ int ciao_to_integer_s(ciao_state state, ciao_term term) {
 
 int ciao_to_integer(ciao_term term) {
   return ciao_to_integer_s(ciao_implicit_state, term);
+}
+
+ciao_bool ciao_to_integer_check_s(ciao_state state, ciao_term term, int *res) {
+  if (ciao_fits_in_int_s(state, term)) {
+    *res = ciao_to_integer_s(state, term);
+    return TRUE;
+  } else return FALSE;
+}
+
+ciao_bool ciao_to_integer_check(ciao_term term, int *res) {
+  return ciao_to_integer_check_s(ciao_implicit_state, term, res);
 }
 
 ciao_bool ciao_is_number_s(ciao_state state, ciao_term term) {
@@ -739,6 +783,39 @@ double ciao_to_float_s(ciao_state state, ciao_term term) {
 double ciao_to_float(ciao_term term) {
   return ciao_to_float_s(ciao_implicit_state, term);
 }
+
+char *ciao_get_number_chars_s(ciao_state state, ciao_term term) {
+  TAGGED number;
+  char *number_result;
+  Argdecl = state->worker_registers;
+
+  number = ciao_unref(state, term);
+  /* number_to_string() handles al kinds of numbers; it leaves the result in
+     Atom_Buffer */
+  number_to_string(Arg, number, GetSmall(current_radix));
+  number_result = ciao_malloc(strlen(Atom_Buffer) + 1);
+  strcpy(number_result, Atom_Buffer);
+  return number_result;
+}
+
+char *ciao_get_number_chars(ciao_term term) {
+  return ciao_get_number_chars_s(ciao_implicit_state, term);
+}
+
+/* PRECONDITION: number_result should really represent a number */
+/* TO DO: raise a proper exception */
+ciao_term ciao_put_number_chars_s(ciao_state state, char *number_string) {
+  TAGGED result;
+  (void)string_to_number( state->worker_registers, 
+                         (unsigned char *)number_string,
+                          &result);
+  return ciao_ref(state, result);
+} 
+
+ciao_term ciao_put_number_chars(char *number_string) {
+  return ciao_put_number_chars_s(ciao_implicit_state, number_string);
+}
+
 
 ciao_bool ciao_is_atom_s(ciao_state state, ciao_term term) {
   TAGGED t;
@@ -772,7 +849,7 @@ char *ciao_atom_name_dup_s(ciao_state state, ciao_term term) {
   const char *s2;
   char *s;
   s2 = ciao_atom_name_s(state, term);
-  s = (char *)malloc(sizeof(char *) * (strlen(s2) + 1));
+  s = (char *)ciao_malloc(sizeof(char *) * (strlen(s2) + 1));
   strcpy(s, s2);
   return s;
 }
@@ -1137,7 +1214,7 @@ void ciao_query_end(ciao_query *query) {
   SetShadowregs(b);
   w->next_alt = NULL;
 
-  free(query);
+  ciao_free(query);
 }
 
 ciao_query *ciao_query_begin_term_s(ciao_state state, ciao_term goal) {
@@ -1169,7 +1246,7 @@ ciao_query *ciao_query_begin_term_s(ciao_state state, ciao_term goal) {
     
   w->next_alt = NULL; 
 
-  query = (ciao_query *)malloc(sizeof(ciao_query));
+  query = (ciao_query *)ciao_malloc(sizeof(ciao_query));
   query->state = state;
   query->base_choice = ciao_get_choice(state);
   

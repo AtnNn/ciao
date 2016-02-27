@@ -40,7 +40,7 @@ obviously skip them if you have done them already at that time):
       been discussed above. The installation script also leaves a
       @tt{ciaosh}(@tt{.bat}) file inside the @file{shell} folder of the Ciao
       distribution which can be used to start the top-level shell from
-      the command line in Windows95/98/NT.
+      the command line in Windows systems.
 
 @subsection{Getting help (Win32)}
 

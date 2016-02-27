@@ -2,10 +2,12 @@
 
 # This Makefile *needs* GNU make
 
-# make all              compile the whole Ciao system (engine, libraries, docs)
-# make justinstall      just install the whole Ciao system (must have been
-#                        compiled before)
 # make install          compile and install the whole Ciao system
+# 
+# make all              compile the whole Ciao system (engine, libraries, ...)
+#                       (but does not regenerate docs: see make doc below)
+# make justinstall      just install the whole Ciao system (must have been
+#                       compiled before)
 #
 # make eng              compile the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
@@ -15,11 +17,13 @@
 # make engclean		delete all engines created
 # make totalclean       cleanbackups + distclean
 # 
-# make doc              regenerate all manuals from the sources. This can 
-#                       only be done if lpdoc has been installed previously. 
+# make doc              regenerate all manuals from the sources. 
+#                       NOTE: This can only be done if lpdoc has been 
+#                       installed previously.   
 #                       It does need not be done during a normal install, 
 #                       since the distribution comes with up to date 
 #                       documentation.
+# 
 # make installdoc       a subset of 'make install', which only installs the 
 #                       documentation. Useful after 'make doc'. 
 
@@ -223,12 +227,15 @@ installincludes:
 	-chmod $(EXECMODE) $(INSTALLEDINCLUDEDIR)
 	-cp $(NODEBUGSRCINCLUDEDIR)/* $(INSTALLEDINCLUDEDIR)
 	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
+	-mkdir -p $(INCLUDEROOT)
+	-ln -s $(INSTALLEDINCLUDEDIR)/ciao_prolog.h $(INCLUDEROOT)/ciao_prolog.h
 
 uninstallincludes:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling C include files for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(INSTALLEDINCLUDEDIR)
+	-rm -f $(INCLUDEROOT)/ciao_prolog.h
 
 install: all justinstall
 

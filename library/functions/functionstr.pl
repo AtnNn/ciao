@@ -26,6 +26,38 @@ defunc((:- function(Spec)), _, Mod) :- !,
         ; inform_user(['Invalid function specification: ',Spec])
         ).
 defunc((:- _), _, _) :- !, fail.
+%% MH Added syntax for one head, multiple bodies, separated by '|' or ';'.
+%%    Heads must be identical.
+defunc(';'(HeadClause,RestBodies), [RealClause|Rest], Mod) :- 
+	nonvar(HeadClause),
+	( HeadClause = (FuncHead := ( _ :- _ ))
+	; HeadClause = (FuncHead := _) ),
+	nonvar(RestBodies),
+	RestBodies = ';'(Body1,RBodies),
+        !,
+	copy_term(HeadClause,FA),
+	defunc(FA, RealClause, Mod),
+%%        inform_user(['To: ',RealClause]),
+%%        inform_user(['Passing on: ', ';'((FuncHead := Body1), RBodies)]),
+	defunc(';'((FuncHead := Body1), RBodies), Rest, Mod).
+defunc(';'(HeadClause,RestBody), [RealClause|Rest], Mod) :- 
+	nonvar(HeadClause),
+	( HeadClause = (FuncHead := ( _ :- _ ) )
+	; HeadClause = (FuncHead := _) ),
+        !,
+	copy_term(HeadClause,FA),
+	defunc(FA, RealClause, Mod),
+%%        inform_user(['To: ',RealClause]),
+%%        inform_user(['Passing on: ', (FuncHead := RestBody)]),
+	defunc((FuncHead := RestBody), Rest, Mod).
+%% defunc((FuncHead := DisBody), [ClauseA|Rest], Mod) :- 
+%% 	nonvar(DisBody),
+%% 	DisBody = ';'(A,R),
+%%         !,
+%% 	copy_term((FuncHead := A),FA),
+%% 	defunc(FA, ClauseA, Mod),
+%% 	defunc((FuncHead := R), Rest, Mod).
+%% End MH
 defunc((FuncHead := FuncValue), (Head :- Body), Mod) :- !,
         arith_flag(Mod, Arith_Flag),
         defunc_head(FuncHead, Mod, Arith_Flag, NewFuncHead, AddBody, RestBody),

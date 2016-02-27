@@ -1,33 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - tokeniser (library)</TITLE>
+<TITLE>The Ciao Prolog System               - field_value_check (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC786" HREF="ciao_toc.html#TOC786">tokeniser (library)</A></H1>
+<H1><A NAME="SEC827" HREF="ciao_toc.html#TOC827">field_value_check (library)</A></H1>
 <P>
-<A NAME="IDX8012"></A>
+<A NAME="IDX8433"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#171 (2002/1/3, 18:20:29 CET)
+<STRONG>Version:</STRONG> 0.1 (1998/12/9, 14:36:55 MET)
 
 
 
 <UL>
-<LI><A HREF="ciao_211.html#SEC787">Usage and interface (tokeniser)</A>
-<LI><A HREF="ciao_211.html#SEC788">Documentation on exports (tokeniser)</A>
+<LI><A HREF="ciao_211.html#SEC828">Usage and interface (field_value_check)</A>
+<LI><A HREF="ciao_211.html#SEC829">Documentation on exports (field_value_check)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC787" HREF="ciao_toc.html#TOC787">Usage and interface (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC828" HREF="ciao_toc.html#TOC828">Usage and interface (<CODE>field_value_check</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +35,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tokeniser)).</CODE>
+<CODE>:- use_module(library(field_value_check)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,10 +44,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8013"></A>
-<CODE>tokeniser/2</CODE>, 
-<A NAME="IDX8014"></A>
-<CODE>token_read/3</CODE>.
+<A NAME="IDX8434"></A>
+<CODE>fieldValue_check/8</CODE>, 
+<A NAME="IDX8435"></A>
+<CODE>mfstringValue/7</CODE>.
 
 </UL>
 
@@ -58,14 +58,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8015"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX8016"></A>
+<A NAME="IDX8436"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX8017"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX8018"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX8437"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX8438"></A>
+<CODE>provrml/generator_util</CODE>, 
+<A NAME="IDX8439"></A>
+<CODE>provrml/boundary</CODE>, 
+<A NAME="IDX8440"></A>
+<CODE>provrml/tokeniser</CODE>, 
+<A NAME="IDX8441"></A>
+<CODE>provrml/generator</CODE>, 
+<A NAME="IDX8442"></A>
+<CODE>provrml/parser_util</CODE>.
 
 </UL>
 
@@ -75,38 +81,27 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>,
 
 
 
-<H2><A NAME="SEC788" HREF="ciao_toc.html#TOC788">Documentation on exports (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC829" HREF="ciao_toc.html#TOC829">Documentation on exports (<CODE>field_value_check</CODE>)</A></H2>
 <P>
-<A NAME="IDX8019"></A>
-<A NAME="IDX8020"></A>
+<A NAME="IDX8443"></A>
+<A NAME="IDX8444"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tokeniser/2:</B>
-<DD><A NAME="IDX8021"></A>
+<DT><span class="define">PREDICATE:</span> <B>fieldValue_check/8:</B>
+<DD><A NAME="IDX8445"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tokeniser(+VRML,-Tokens)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> This predicate will perform the parsing of the VRML code. The result will be tokens that will be the source for producing the Prolog terms of the VRML code. This is done in the parser module. From these terms analysis, changing, and any thing that you want to do with VRML code from Prolog programming language. We perform the predicate with a catch call to be able to output error messages if encountered.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+VRML</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-Tokens</CODE> is a list of <CODE>term</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8022"></A>
-<A NAME="IDX8023"></A>
+<A NAME="IDX8446"></A>
+<A NAME="IDX8447"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>token_read/3:</B>
-<DD><A NAME="IDX8024"></A>
+<DT><span class="define">PREDICATE:</span> <B>mfstringValue/7:</B>
+<DD><A NAME="IDX8448"></A>
 
 
 <P>
@@ -116,6 +111,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_210.html">previous</A>, <A HREF="ciao_212.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

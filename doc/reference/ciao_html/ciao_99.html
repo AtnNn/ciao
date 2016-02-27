@@ -1,50 +1,59 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Delaying predicates (freeze)</TITLE>
+<TITLE>The Ciao Prolog System               - Functional notation</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC376" HREF="ciao_toc.html#TOC376">Delaying predicates (freeze)</A></H1>
+<H1><A NAME="SEC410" HREF="ciao_toc.html#TOC410">Functional notation</A></H1>
 <P>
-<A NAME="IDX4063"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
+<A NAME="IDX4780"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#72 (2000/3/19, 19:9:14 CET)
+<STRONG>Version of last change:</STRONG> 1.7#186 (2002/2/4, 19:11:45 CET)
 
 
 <P>
-This library offers a simple implementation of 
-<A NAME="IDX4064"></A>
-<CODE>freeze/2</CODE>, 
-<A NAME="IDX4065"></A>
-<CODE>frozen/2</CODE>, etc. [Col82,Nai85,Nai91,Car87] based on the use of attributed variables [Hol92,Hol90].
+This library package allows the use of functional notation in a Ciao module/program. 
 
+
+<P>
+All function applications (definitions) are translated to goals (predicate definitions) where another argument to hold the result of the function is added to the right. Function applications need to be preceded by the operator <CODE>~</CODE>, or the functor be declared as such by using the declaration 
+<A NAME="IDX4781"></A>
+<CODE>function/1</CODE>. There is an exception: all functions understood by 
+<A NAME="IDX4782"></A>
+<CODE>is/2</CODE> are considered as functions by default. This feature can be disabled by a declaration <CODE>:- function(arith(false))</CODE> (and reverted by using <CODE>true</CODE> instead of <CODE>false</CODE>). A functor normally considered as a function call can be escaped using the prefix operator <CODE>^</CODE>. Function definitions can be written by using the binary operator <CODE>:=</CODE>, and can have also body. Example of use: 
+
+<PRE>
+:- use_package(functions).
+
+fib(0) := 0.
+fib(1) := 1.
+fib(N) := ~fib(N-1) + ~fib(N-2) :- integer(N), N &#62; 1.
+
+write_fib(N):-
+        message(['The ',N,'. Fibonacci number is: ',~fib(N),'.']).
+
+</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_99.html#SEC377">Usage and interface (freeze)</A>
-<LI><A HREF="ciao_99.html#SEC378">Documentation on exports (freeze)</A>
-<LI><A HREF="ciao_99.html#SEC379">Documentation on multifiles (freeze)</A>
+<LI><A HREF="ciao_99.html#SEC411">Usage and interface (functions)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC377" HREF="ciao_toc.html#TOC377">Usage and interface (<CODE>freeze</CODE>)</A></H2>
+<H2><A NAME="SEC411" HREF="ciao_toc.html#TOC411">Usage and interface (<CODE>functions</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,128 +61,16 @@ This library offers a simple implementation of
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(freeze)).</CODE>
+<CODE>:- use_package(functions).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4066"></A>
-<CODE>freeze/2</CODE>, 
-<A NAME="IDX4067"></A>
-<CODE>frozen/2</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX4068"></A>
-<CODE>verify_attribute/2</CODE>, 
-<A NAME="IDX4069"></A>
-<CODE>combine_attributes/2</CODE>.
-
-</UL>
-
+<CODE>:- module(...,...,[functions]).</CODE>
 </UL>
 
 </div class="cartouche">
 
-
-
-<H2><A NAME="SEC378" HREF="ciao_toc.html#TOC378">Documentation on exports (<CODE>freeze</CODE>)</A></H2>
-<P>
-<A NAME="IDX4070"></A>
-<A NAME="IDX4071"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>freeze/2:</B>
-<DD><A NAME="IDX4072"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>freeze(?,goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>freeze(X,Goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If <CODE>X</CODE> is free delay <CODE>Goal</CODE> until <CODE>X</CODE> is non-variable.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4073"></A>
-<A NAME="IDX4074"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>frozen/2:</B>
-<DD><A NAME="IDX4075"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>frozen(?,goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>frozen(X,Goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Goal</CODE> is currently delayed until variable <CODE>X</CODE> becomes bound.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC379" HREF="ciao_toc.html#TOC379">Documentation on multifiles (<CODE>freeze</CODE>)</A></H2>
-<P>
-<A NAME="IDX4076"></A>
-<A NAME="IDX4077"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>verify_attribute/2:</B>
-<DD><A NAME="IDX4078"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4079"></A>
-<A NAME="IDX4080"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>combine_attributes/2:</B>
-<DD><A NAME="IDX4081"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

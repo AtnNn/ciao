@@ -1,4 +1,4 @@
-:- module(iso_incomplete, [open/4, close/2, stream_property/2], []).
+:- module(iso_incomplete, [close/2, stream_property/2], []).
 
 open(F, M, S, _) :- open(F, M, S).
 close(S, _) :- close(S).

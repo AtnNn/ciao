@@ -3,29 +3,35 @@
 # Ciao Global Compilation/Installation SETTINGS
 # ----------------------------------------------------------------------------
 # Define this to be a directory where the sources are reachable system-wide 
-# SRC=/home/clip/public_html/Software/Ciao/ciao-1.8p2
+# SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
 #
-SRC=/home/clip/public_html/Software/Ciao/ciao-1.8p2
+SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
 #-----------------------------------------------------------------------------
 # Define the following to be the places under which the installation
 # will be performed:
 
+# CIAOROOT=/usr/local
+#   or
+# CIAOROOT=/usr
+#   or
+CIAOROOT=/home/clip
+#CIAOROOT=/tmp
+
 # Executables will go here:
-BINROOT=/usr/local/bin
-#
-# BINROOT=/home/clip/bin
+BINROOT=$(CIAOROOT)/bin
 
 # Directory libraries will grow here:
-LIBROOT=/usr/local/lib
-# 
-# LIBROOT=/home/clip/lib
+LIBROOT=$(CIAOROOT)/lib
+
+# Headers will go here:
+INCLUDEROOT=$(CIAOROOT)/include
 
 # Define this to be the directory in which you want the documentation
 # installed.  Ideally, this directory should be accessible via WWW,
 # emacs info, and man:
-DOCROOT=/usr/local/etc/httpd/htdocs
+# DOCROOT=/usr/local/etc/httpd/htdocs
 # 
-# DOCROOT=/home/clip/public_html/Local/lpdoc_docs/Ciao
+DOCROOT=/home/clip/public_html/Local/lpdoc_docs/Ciao
 #-----------------------------------------------------------------------------
 # Misc installation options:
 
@@ -127,8 +133,9 @@ DOCDIR=$(DOCROOT)
 # Define this to be the permissions for installed execs/dirs and data files:
 EXECMODE=775
 DATAMODE=664
+INSTALLGROUP=clip
 
-# You oly want to change this if you are a developer.  Additionally,
+# You only want to change this if you are a developer.  Additionally,
 # setting the environment variable CIAODEBUG to the value '-debug' at
 # the time of compiling the engine will override the OPTIM_LEVEL and
 # DEBUG_LEVEL flags, and produce non optimized emulator code with
@@ -140,21 +147,24 @@ DATAMODE=664
 #    profile         -- Include profiling options for the emulator
 #    paranoid-debug  -- Emulator with C level debugging info available
 #                       plus paranoid C compilation warnings
+# DEBUG_LEVEL=nodebug
 DEBUG_LEVEL=nodebug
 
 # This is for locally compiling the engine in NT under Samba, ignore it
 
 ifeq ($(OSTYPE),cygwin)
-    SRC=/home/clip/public_html/Software/Ciao/ciao-1.8p2
-    ALT=win32
-    EXECSUFFIX=.exe
+#  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
+  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
+  ALT=win32
+  EXECSUFFIX=.exe
 endif
 
 # Same as above, old cygwin versions
 ifeq ($(OSTYPE),cygwin32)
-    SRC=/home/clip/public_html/Software/Ciao/ciao-1.8p2
-    ALT=win32
-    EXECSUFFIX=.exe
+#  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
+  SRC=/home/clip/public_html/Software/Ciao/ciao-1.9p98
+  ALT=win32
+  EXECSUFFIX=.exe
 endif
 
 # ----------------------------------------------------------------------------

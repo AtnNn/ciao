@@ -4,6 +4,7 @@
 #include "locks.h"
 #include "datadefs.h"
 #include "support.h"
+#include "wam.h"
 #include "predtyp.h"
 #include "task_areas.h"
 
@@ -15,6 +16,7 @@
 #include "misc_defs.h"
 #include "bignum_defs.h"
 #include "stacks_defs.h"
+#include "nondet_defs.h"
 #include "term_support_defs.h"
 #if defined(INTERNAL_CALLING)
 #include "wam_defs.h"
@@ -359,6 +361,7 @@ BOOL metacut(Arg)
   DEREF(X(0),X(0));
   w->node = ChoiceFromInt(X(0));
   SetShadowregs(w->node);
+  /*  ConcChptCleanUp(TopConcChpt, w->node);*/
   return TRUE;
 }
 

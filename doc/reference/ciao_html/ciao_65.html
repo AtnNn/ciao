@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Run-time checking of assertions</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC253" HREF="ciao_toc.html#TOC253">Run-time checking of assertions</A></H1>
+<H1><A NAME="SEC286" HREF="ciao_toc.html#TOC286">Run-time checking of assertions</A></H1>
 <P>
-<A NAME="IDX3132"></A>
+<A NAME="IDX3574"></A>
 
 
 <P>
@@ -25,21 +25,21 @@ This library package allows the use of run-time checks for the assertions introd
 
 <P>
 The recommended way of performing 
-<A NAME="IDX3133"></A>
-<A NAME="IDX3134"></A>
+<A NAME="IDX3575"></A>
+<A NAME="IDX3576"></A>
 <EM>run-time checks</EM> of predicate assertions in a program is via the Ciao preprocessor (see <CODE>ciaopp</CODE> manual), which performs the required program transformation. However, this package can also be used to perform checking of program-point assertions. 
 
 
 
 <UL>
-<LI><A HREF="ciao_65.html#SEC254">Usage and interface (rtchecks)</A>
-<LI><A HREF="ciao_65.html#SEC255">Documentation on multifiles (rtchecks)</A>
-<LI><A HREF="ciao_65.html#SEC256">Known bugs and planned improvements (rtchecks)</A>
+<LI><A HREF="ciao_65.html#SEC287">Usage and interface (rtchecks)</A>
+<LI><A HREF="ciao_65.html#SEC288">Documentation on internals (rtchecks)</A>
+<LI><A HREF="ciao_65.html#SEC289">Known bugs and planned improvements (rtchecks)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC254" HREF="ciao_toc.html#TOC254">Usage and interface (<CODE>rtchecks</CODE>)</A></H2>
+<H2><A NAME="SEC287" HREF="ciao_toc.html#TOC287">Usage and interface (<CODE>rtchecks</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -60,9 +60,9 @@ or
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3135"></A>
+<A NAME="IDX3577"></A>
 <CODE>assertions/meta_props</CODE>, 
-<A NAME="IDX3136"></A>
+<A NAME="IDX3578"></A>
 <CODE>rtchecks/rtchecks_sys</CODE>.
 
 </UL>
@@ -73,82 +73,40 @@ or
 
 
 
-<H2><A NAME="SEC255" HREF="ciao_toc.html#TOC255">Documentation on multifiles (<CODE>rtchecks</CODE>)</A></H2>
+<H2><A NAME="SEC288" HREF="ciao_toc.html#TOC288">Documentation on internals (<CODE>rtchecks</CODE>)</A></H2>
 <P>
-<A NAME="IDX3137"></A>
-<A NAME="IDX3138"></A>
+<A NAME="IDX3579"></A>
+<A NAME="IDX3580"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>callme/2:</B>
-<DD><A NAME="IDX3139"></A>
+<DT><span class="define">PREDICATE:</span> <B>check/1:</B>
+<DD><A NAME="IDX3581"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>check(Property)</CODE>
 
 
 <P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3140"></A>
-<A NAME="IDX3141"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>callme/1:</B>
-<DD><A NAME="IDX3142"></A>
+Checks whether the property defined by <CODE>Property</CODE> holds. Otherwise, a warning message is issued. It corresponds to a program-point 
+<A NAME="IDX3582"></A>
+check assertion (see section <A HREF="ciao_58.html#SEC258">The Ciao assertion package</A>).
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>check(Property)</CODE>
 
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
 
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3143"></A>
-<A NAME="IDX3144"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>proves/2:</B>
-<DD><A NAME="IDX3145"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3146"></A>
-<A NAME="IDX3147"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>disproves/2:</B>
-<DD><A NAME="IDX3148"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
+<CODE>Property</CODE> is of type <CODE>^ (list;list);list</CODE>.
+ (<CODE>meta_props:regtype/2</CODE>)
+</UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC256" HREF="ciao_toc.html#TOC256">Known bugs and planned improvements (<CODE>rtchecks</CODE>)</A></H2>
+<H2><A NAME="SEC289" HREF="ciao_toc.html#TOC289">Known bugs and planned improvements (<CODE>rtchecks</CODE>)</A></H2>
 
 
 <UL>
@@ -163,6 +121,6 @@ All the code in this package is included in the user program when it is used, an
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_64.html">previous</A>, <A HREF="ciao_66.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

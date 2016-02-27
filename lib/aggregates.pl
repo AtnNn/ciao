@@ -106,7 +106,7 @@ no
 ?- 
 @end{verbatim}").
 
-:- true pred setof(@term, +callable, ?list) + iso.
+:- true pred setof(@term, +callable, ?list) + (iso, native).
 
 %% This predicate is defined on p51 of the Dec-10 Prolog manual.
 
@@ -123,7 +123,7 @@ setof(Template, Filter, Set) :-
    avoided by using existential quantifiers on the free variables in
    front of the @var{Generator}, using @pred{^/2}.").
 
-:- true pred bagof(@term, +callable, ?list) + iso.
+:- true pred bagof(@term, +callable, ?list) + (iso, native).
 
 %   bagof records three things under the key '.':
 %       the end-of-bag marker          -
@@ -159,7 +159,7 @@ bagof(Template, Generator, Bag) :-
      existentially quantified. Faster than the other aggregation
      predicates.").
 
-:- pred findall(@term, +callable, ?list) + iso.
+:- true pred findall(@term, +callable, ?list) + (iso, native).
 
 %%  It is described in Clocksin & Mellish on p152.  The code they give has
 %%  a bug (which the Dec-10 bagof and setof predicates share) which
@@ -184,7 +184,7 @@ findall(Template, Generator, List, Tail) :-
      list.  This predicate is especially useful if @var{Generator} may
      have an infinite number of solutions.").
 
-:- pred findnsols(+int,@term,+callable,?list).
+:- pred findnsols(+int,@term,+callable,?list) + native.
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -197,7 +197,7 @@ findnsols(_,_,_,[]).
      "As @pred{findnsols/4}, but returning in @var{Tail} the tail of
      @var{List}.").
 
-:- pred findnsols(+int,@term,+callable,?,?).
+:- pred findnsols(+int,@term,+callable,?,?) + native.
 
 findnsols(N,E,P,L) :-
         N > 0, !,
@@ -223,7 +223,7 @@ save_n_solutions(NSol, N, Template, Generator) :-
         M1 = N -> fail.
 save_n_solutions(_,_,_,_).
 
-:- pred save_solutions(Template, Generator)
+:- pred save_solutions(Template, Generator) + native
 
    # "Enumerates all provable instances of the @var{Generator} and
      records the associated @var{Template} instances.  Neither
@@ -236,7 +236,7 @@ save_solutions(Template, Generator) :-
         fail.
 save_solutions(_,_).
 
-:- pred list_solutions(List)
+:- pred list_solutions(List) + native
 
    # "Pulls all the @var{Template} instances out of the data base into
       @var{List}".
@@ -250,7 +250,7 @@ list_solutions(-Term,Sofar,List) :-
         retract_fact(solution(NewTerm)), !,
         list_solutions(NewTerm, [Term|Sofar],List).
 
-:- pred list_key_solutions(List)
+:- pred list_key_solutions(List) + native
 
    # "Pulls all the Key-Term instances out of the data base into
      @var{List}".

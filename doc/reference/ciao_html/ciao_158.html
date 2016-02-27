@@ -1,33 +1,64 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Lists of numbers</TITLE>
+<TITLE>The Ciao Prolog System               - Java to Prolog interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>, <A HREF="ciao_159.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>, <A HREF="ciao_159.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC620" HREF="ciao_toc.html#TOC620">Lists of numbers</A></H1>
+<H1><A NAME="SEC663" HREF="ciao_toc.html#TOC663">Java to Prolog interface</A></H1>
 <P>
-<A NAME="IDX6390"></A>
+<A NAME="IDX6998"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.9#99 (1999/5/26, 11:33:15 MEST)
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#65 (2003/3/14, 12:48:10 CET)
+
+
+<P>
+ 
+<A NAME="IDX6999"></A>
+<A NAME="IDX7000"></A>
+This module defines the Prolog side of the Java to Prolog interface. This side of the interface only has one public predicate: a server that listens at the socket connection with Java, and executes the commands received from the Java side. 
+
+
+<P>
+In order to evaluate the goals received from the Java side, this module can work in two ways: executing them in the same engine, or starting a thread for each goal. The easiest way is to launch them in the same engine, but the goals must be evaluated sequentially: once a goal provides the first solution, all the subsequent goals must be finished before this goal can backtrack to provide another solution. The Prolog side of this interface works as a top-level, and the goals partially evaluated are not independent. 
+
+
+<P>
+The solution of this goal dependence is to evaluate the goals in a different prolog engine. Although Ciao includes a mechanism to evaluate goals in different engines, the approach used in this interface is to launch each goal in a different thread. 
+
+
+<P>
+The decision of what kind of goal evaluation is selected is done by the Java side. Each evaluation type has its own command terms, so the Java side can choose the type it needs. 
+
+
+<P>
+A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or by calling <CODE>prolog_server/1</CODE> predicate and providing the port number as argument. The user predicates and libraries to be called from Java must be included in the executable file, or be accesible using the built-in predicates dealing with code loading. 
 
 
 
 <UL>
-<LI><A HREF="ciao_158.html#SEC621">Usage and interface (numlists)</A>
-<LI><A HREF="ciao_158.html#SEC622">Documentation on exports (numlists)</A>
+<LI><A HREF="ciao_158.html#SEC664">Usage and interface (jtopl)</A>
+<LI><A HREF="ciao_158.html#SEC665">Documentation on exports (jtopl)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC621" HREF="ciao_toc.html#TOC621">Usage and interface (<CODE>numlists</CODE>)</A></H2>
+<H2><A NAME="SEC664" HREF="ciao_toc.html#TOC664">Usage and interface (<CODE>jtopl</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +66,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(numlists)).</CODE>
+<CODE>:- use_module(library(jtopl)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,23 +75,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6391"></A>
-<CODE>get_primes/2</CODE>, 
-<A NAME="IDX6392"></A>
-<CODE>sum_list/2</CODE>, 
-<A NAME="IDX6393"></A>
-<CODE>sum_list/3</CODE>, 
-<A NAME="IDX6394"></A>
-<CODE>sum_list_of_lists/2</CODE>, 
-<A NAME="IDX6395"></A>
-<CODE>sum_list_of_lists/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6396"></A>
-<CODE>intlist/1</CODE>, 
-<A NAME="IDX6397"></A>
-<CODE>numlist/1</CODE>.
+<A NAME="IDX7001"></A>
+<CODE>prolog_server/0</CODE>, 
+<A NAME="IDX7002"></A>
+<CODE>prolog_server/1</CODE>, 
+<A NAME="IDX7003"></A>
+<CODE>prolog_server/2</CODE>, 
+<A NAME="IDX7004"></A>
+<CODE>shell_s/0</CODE>, 
+<A NAME="IDX7005"></A>
+<CODE>query_solutions/2</CODE>, 
+<A NAME="IDX7006"></A>
+<CODE>query_requests/2</CODE>, 
+<A NAME="IDX7007"></A>
+<CODE>running_queries/2</CODE>.
 
 </UL>
 
@@ -71,8 +99,28 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6398"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX7008"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX7009"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX7010"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7011"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7012"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7013"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7014"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX7015"></A>
+<CODE>compiler/compiler</CODE>, 
+<A NAME="IDX7016"></A>
+<CODE>atom2term</CODE>, 
+<A NAME="IDX7017"></A>
+<CODE>javall/javasock</CODE>, 
+<A NAME="IDX7018"></A>
+<CODE>prolog_sys</CODE>.
 
 </UL>
 
@@ -82,180 +130,158 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>,
 
 
 
-<H2><A NAME="SEC622" HREF="ciao_toc.html#TOC622">Documentation on exports (<CODE>numlists</CODE>)</A></H2>
+<H2><A NAME="SEC665" HREF="ciao_toc.html#TOC665">Documentation on exports (<CODE>jtopl</CODE>)</A></H2>
 <P>
-<A NAME="IDX6399"></A>
-<A NAME="IDX6400"></A>
+<A NAME="IDX7019"></A>
+<A NAME="IDX7020"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_primes/2:</B>
-<DD><A NAME="IDX6401"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_server/0:</B>
+<DD><A NAME="IDX7021"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>get_primes(N,Primes)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Computes the <CODE>N</CODE>th first prime numbers in ascending order.
+<LI><EM>Description:</EM> Prolog server entry point. Reads from the standard input the node name and port number where the java client resides, and starts the prolog server listening at the jp socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
 
-<LI><EM>The following properties should hold at call time:</EM>
+However, from the low-level communication point of view, this Prolog server actually works as a client of the Java side. This means that Java side waits at the given port to a Prolog server trying to create a socket; Prolog side connects to that port, and then waits for Java requests (acting as a 'logical' server). To use this Prolog server as a real server waiting for connections at a given port, use <CODE>prolog_server/1</CODE>. 
 
-<CODE>N</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Primes</CODE> is a list of integers.
- (<CODE>numlists:intlist/1</CODE>)
+<A NAME="IDX7022"></A>
+<A NAME="IDX7023"></A>
+ 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6402"></A>
-<A NAME="IDX6403"></A>
+<A NAME="IDX7024"></A>
+<A NAME="IDX7025"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>intlist/1:</B>
-<DD><A NAME="IDX6404"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_server/1:</B>
+<DD><A NAME="IDX7026"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>intlist(X)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a list of integers.
+<LI><EM>Description:</EM> Waits for incoming Java connections to act as a Prolog goal server for Java requests.This is the only <CODE>prolog_server/*</CODE> predicate that works as a true server: given a port number, waits for a connection from Java and then serves Java requests. When a termination request is received, finishes the connection to Java and waits next Java connection request. This behaviour is different with respect to previous versions of this library. To work as before, use <CODE>prolog_server/2</CODE>.
+
+Although it currently does not support simultaneous Java connections, some work is being done in that direction. 
+<A NAME="IDX7027"></A>
+<A NAME="IDX7028"></A>
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7029"></A>
+<A NAME="IDX7030"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>prolog_server/2:</B>
+<DD><A NAME="IDX7031"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Prolog server entry point. Given a network <CODE>node</CODE> and a <CODE>port</CODE> number, starts the prolog server trying to connect to Java side at that <CODE>node:port</CODE> address, and then waits for Java requests. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
+
+However, from the low-level communication point of view, this Prolog server actually works as a client of the Java side. This means that Java side waits at the given port to a Prolog server trying to create a socket; Prolog side connects to that port, and then waits for Java requests (acting as a 'logical' server). To use this Prolog server as a real server waiting for connections at a given port, use <CODE>prolog_server/1</CODE>. 
+<A NAME="IDX7032"></A>
+<A NAME="IDX7033"></A>
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Arg2</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7034"></A>
+<A NAME="IDX7035"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>shell_s/0:</B>
+<DD><A NAME="IDX7036"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Command execution loop. This predicate is called when the connection to Java is established, and performs an endless loop processing the commands received. This predicate is only intended to be used by the Prolog to Java interface and it should not be used by a user program.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6405"></A>
-<A NAME="IDX6406"></A>
+<A NAME="IDX7037"></A>
+<A NAME="IDX7038"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>numlist/1:</B>
-<DD><A NAME="IDX6407"></A>
+<DT><span class="define">PREDICATE:</span> <B>query_solutions/2:</B>
+<DD><A NAME="IDX7039"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>numlist(X)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a list of numbers.
 
-</UL>
+<P>
+The predicate is of type <EM>concurrent</EM>.
+
 
 </DL>
 
 <P>
-<A NAME="IDX6408"></A>
-<A NAME="IDX6409"></A>
+<A NAME="IDX7040"></A>
+<A NAME="IDX7041"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list/2:</B>
-<DD><A NAME="IDX6410"></A>
+<DT><span class="define">PREDICATE:</span> <B>query_requests/2:</B>
+<DD><A NAME="IDX7042"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sum_list(List,N)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE>.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+The predicate is of type <EM>concurrent</EM>.
 
-<CODE>List</CODE> is a list of numbers.
- (<CODE>numlists:numlist/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6411"></A>
-<A NAME="IDX6412"></A>
+<A NAME="IDX7043"></A>
+<A NAME="IDX7044"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list/3:</B>
-<DD><A NAME="IDX6413"></A>
+<DT><span class="define">PREDICATE:</span> <B>running_queries/2:</B>
+<DD><A NAME="IDX7045"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sum_list(List,N0,N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE> plus <CODE>N0</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of numbers.
- (<CODE>numlists:numlist/1</CODE>)
-
-<CODE>N0</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6414"></A>
-<A NAME="IDX6415"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/2:</B>
-<DD><A NAME="IDX6416"></A>
+No further documentation available for this predicate.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists,N)</CODE>
+The predicate is of type <EM>concurrent</EM>.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6417"></A>
-<A NAME="IDX6418"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/3:</B>
-<DD><A NAME="IDX6419"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists,N0,N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE> plus <CODE>N0</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>N0</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>, <A HREF="ciao_159.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_157.html">previous</A>, <A HREF="ciao_159.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

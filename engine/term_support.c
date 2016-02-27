@@ -73,7 +73,7 @@ static void copy_it PROTO((struct worker *w, TAGGED *loc));
 void choice_overflow PROTO((Argdecl, int pad));
 void number_to_string PROTO((Argdecl,TAGGED term, int base));
 void checkdealloc PROTO((TAGGED *ptr, int decr));
-int bn_from_string PROTO((char *x, Bignum *z, Bignum *zmax));
+int  bn_from_string PROTO((char *x, Bignum *z, Bignum *zmax));
 void explicit_heap_overflow PROTO((Argdecl, int pad, int arity));
 void bn_to_string PROTO((Argdecl,Bignum *x, int base));
 
@@ -802,6 +802,92 @@ BOOL prolog_number_codes(Arg)
   return prolog_constant_codes(Arg,FALSE,TRUE);
 }
 
+ /* INTEGER :== [minus]{digit} */
+ /* FLOAT :== [minus]{digit}.{digit}[exp[sign]{digit}] */
+ /* ATOM :== {char} */
+
+
+/* string_to_number() tries to convert the string pointed to by AtBuf in a
+   number contained in the tagged word *strnum.  If this cannot be done
+   (e.g., AtBuf does not correspond syntactically to a number), FALSE is
+   returned.  Otherwise, TRUE is returned and the conversion is done */
+
+BOOL string_to_number(Arg, AtBuf, strnum)
+     Argdecl;
+     unsigned char *AtBuf;
+     TAGGED *strnum;
+{
+  BOOL sign = FALSE;
+  unsigned char *s = AtBuf;
+  int i;  
+
+  i = *s++;
+  if (i=='-') {
+    sign = TRUE;
+    i = *s++;
+  }
+
+  while (((i>='0') && (i<radixlim1)) ||
+         ((i>='a') && (i<radixlim2)) ||
+         ((i>='A') && (i<radixlim3)))
+    i = *s++;
+
+  if ((s - AtBuf) - sign > 1) {
+
+    if (i==0) {
+      /* It is an integer, either a small or a bignum */
+      REGISTER TAGGED *h = w->global_top;
+      TAGGED t;
+      int req = bn_from_string(AtBuf, h, Heap_End-CONTPAD);
+
+      if (req) {
+        explicit_heap_overflow(Arg ,req+CONTPAD, 2);
+        h = w->global_top;
+        if (bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD))
+          SERIOUS_FAULT("miscalculated size of bignum");
+      }
+
+      req = LargeArity(h[0]);
+      if (req==2 && IntIsSmall((int)h[1]))
+        t = MakeSmall(h[1]);
+      else {
+        w->global_top += req+1;
+        h[req] = h[0];
+        t = Tag(STR,h);
+      }
+      *strnum = t;                 /* The TAGGED word --- small or bignum */
+      return TRUE;  
+    }
+
+    /* It is a float */
+    if (i=='.') {
+      i = *s++;
+      if ((i>='0') && (i<='9')) {
+        do
+          i = *s++;
+        while ((i>='0') && (i<='9'));
+        if ((i=='e') || (i=='E')){
+          i = *s++;
+          if ((i=='+') || (i=='-')) i = *s++;
+          if ((i>='0') && (i<='9')) {
+            do
+              i = *s++;
+            while ((i>='0') && (i<='9'));
+          } else i = -1;
+        }
+      }
+      else i = -1;
+    }
+    if (i==0) {
+      *strnum = MakeFloat(Arg, atof(AtBuf));
+      return TRUE;
+    }
+  }
+  /* Could not make the conversion --- maybe a non-numeric atom */
+ return FALSE;
+}
+
+
 
 static BOOL prolog_constant_codes(Arg,atomp,numberp)
      Argdecl;
@@ -816,6 +902,7 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
   DEREF(X(0),X(0));
   DEREF(X(1),X(1));
   if (IsVar(X(0))) {
+    /* Construct a character string from the input list */
     cdr = X(1);
     s = (unsigned char *)Atom_Buffer;
     for (i=0; cdr!=atom_nil; i++) {
@@ -824,9 +911,12 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
         else if (!TagIsLST(cdr))
           BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(1),2)
             else if (i == Atom_Buffer_Length){
+              /*
                  Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
                                                     i, Atom_Buffer_Length<<=1);
-                      s = (unsigned char *)Atom_Buffer+i;
+               */
+              EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
+              s = (unsigned char *)Atom_Buffer+i;
             }
       DerefCar(car,cdr);
       if (IsVar(car))
@@ -837,17 +927,24 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
       DerefCdr(cdr,cdr);
     }
     if (i == Atom_Buffer_Length) {
-      Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
-                                         i, Atom_Buffer_Length<<=1);
+      EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
       s = (unsigned char *)Atom_Buffer+i;
     }
     *s++ = '\0';
+
+    /* s contains now the string of character codes, and i its size */
+
     if (i>=MAXATOM) atomp = FALSE;  /* Unneded with dynamic atom sizes */
 
-    /* INTEGER :== [minus]{digit} */
-    /* FLOAT :== [minus]{digit}.{digit}[exp[sign]{digit}] */
-    /* ATOM :== {char} */
+    if (numberp) {
+      TAGGED result;
+      if (string_to_number(Arg, (unsigned char *)Atom_Buffer, &result))
+          return cunify(Arg, result, X(0));
+    }
+    return atomp && cunify(Arg,init_atom_check(Atom_Buffer),X(0));
 
+    /* This piece of code factored out --- it is in a separate function now */
+    /*
     if (numberp) {
       BOOL sign = FALSE;
 	
@@ -907,6 +1004,8 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
       }
     }
     return (atomp && cunify(Arg,init_atom_check(Atom_Buffer),X(0)));
+    */
+
   } else {
     if (numberp && IsNumber(X(0)))
       number_to_string(Arg,X(0), GetSmall(current_radix)),
@@ -933,15 +1032,6 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
     }
     return cunify(Arg,cdr,X(1));
   }
-}
-
-#define EXPAND_ATOM_BUFFER(new_atom_length) \
-{ \
-  int i = Atom_Buffer_Length; \
-  while (Atom_Buffer_Length < new_atom_length) \
-    Atom_Buffer_Length<<=1; \
-  Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer, \
-                                     i, Atom_Buffer_Length); \
 }
 
 BOOL prolog_atom_length(Arg)
@@ -986,7 +1076,7 @@ BOOL prolog_sub_atom(Arg)
 #if defined(USE_ATOM_LEN)
     l = GetAtomLen(X(0));
 #else
-  l = strlen(s);
+    l = strlen(s);
 #endif
 
   b = GetInteger(X(1));
@@ -1000,7 +1090,7 @@ BOOL prolog_sub_atom(Arg)
   s += b;
 
   if (Atom_Buffer_Length <= atom_length)
-    EXPAND_ATOM_BUFFER(atom_length+1);
+     EXPAND_ATOM_BUFFER(atom_length+1);
 
   s1 = (unsigned char *)Atom_Buffer;
 
@@ -1039,8 +1129,8 @@ BOOL prolog_atom_concat(Arg)
 #endif
 
 #if defined(USE_DYNAMIC_ATOM_SIZE)
-      if (Atom_Buffer_Length < new_atom_length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      if (new_atom_length >= Atom_Buffer_Length)
+         EXPAND_ATOM_BUFFER(new_atom_length);
 #else
       if (new_atom_length > MAXATOM)
 #if defined(DEBUG)
@@ -1048,8 +1138,6 @@ BOOL prolog_atom_concat(Arg)
 #else
         return FALSE; 
 #endif
-      if (Atom_Buffer_Length < new_atom_length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
 #endif
 
       /* Append the two strings in atom_buffer */
@@ -1068,12 +1156,12 @@ BOOL prolog_atom_concat(Arg)
       s2 = (unsigned char *)GetString(X(2));
 
 #if defined(USE_ATOM_LEN)
-      if ((new_atom_length = GetAtomLen(X(2))+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = GetAtomLen(X(2))+1;
 #else
-      if ((new_atom_length = strlen(s2)+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = strlen(s2) + 1;
 #endif
+      if (new_atom_length >= Atom_Buffer_Length)
+          EXPAND_ATOM_BUFFER(new_atom_length);
 
       for ( ; *s1 && *s2 ; s1++, s2++)
         if (*s1 != *s2) return FALSE;
@@ -1106,8 +1194,8 @@ BOOL prolog_atom_concat(Arg)
         return FALSE;
 #endif
 
-      if (new_atom_length+1 > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length+1);
+      if (new_atom_length >= Atom_Buffer_Length) 
+         EXPAND_ATOM_BUFFER(new_atom_length+1);
 
       s = s2+new_atom_length;
 
@@ -1126,12 +1214,12 @@ BOOL prolog_atom_concat(Arg)
 
       s2 = (unsigned char *)GetString(X(2));
 #if defined(USE_ATOM_LEN)
-      if ((new_atom_length = GetAtomLen(X(2))+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = GetAtomLen(X(2))+1;
 #else
-      if ((new_atom_length = strlen(s2)+1) > Atom_Buffer_Length)
-        EXPAND_ATOM_BUFFER(new_atom_length);
+      new_atom_length = strlen(s2)+1;
 #endif
+      if (new_atom_length >= Atom_Buffer_Length)
+        EXPAND_ATOM_BUFFER(new_atom_length);
       X(3) = TaggedZero;
       push_choicept(Arg,address_nd_atom_concat);
       return nd_atom_concat(Arg);

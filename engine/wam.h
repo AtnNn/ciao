@@ -109,12 +109,13 @@ if (stop_on_pred_calls) {  \
 #define DISPATCH_R(Incr)	{ P += Incr;  goto ReadMode; }
 #define DISPATCH_W(Incr)	{ P += Incr;  goto WriteMode; }
 
+/* segfault patch -- jf */
 /*  'U' is a 'Yb(I)' expression. */
 #define GetFirstValue(U,V) \
 { \
   if (CondStackvar(U)) \
     { \
-      TrailPush(w->trail_top,TagSVA(&U)); \
+      TrailPushCheck(w->trail_top,TagSVA(&U)); \
       BindingOfStackvar(U) = V; \
     } \
   else \
@@ -230,10 +231,40 @@ if (stop_on_pred_calls) {  \
 { SetAlts(List); goto tryeach_w; }
 
 
+#if defined(DEBUG)
+#define REPORT_CLEANUP(TopCChpt, TopNode) \
+ if(debug_concchoicepoints) \
+    fprintf(stderr, "cut: removing chains (%x to %x)\n", \
+                    (int)TopCChpt, (int)TopNode);
+
+#define REPORT_CUT(NewNode) \
+ if (debug_choicepoints)  \
+   fprintf(stderr, "Cutting: new chpt = %x\n", (int)NewNode);
+#else
+#define REPORT_CUT(NewNode)
+#define REPORT_CLEANUP(TopCChpt, TopNode)
+#endif
+
+#if defined(THREADS)
+#define   ConcChptCleanUp(TopCChpt, TopNode) \
+    if (ChoiceYounger(TopCChpt, TopNode)) { \
+       REPORT_CLEANUP(TopCChpt, TopNode); \
+       remove_link_chains(&TopCChpt, TopNode); \
+    } 
+#else
+#define    ConcChptCleanUp(TopCChpt, TopNode)
+#endif
+
+/* Concurrency: if we cut (therefore discarding intermediate
+   choicepoints), make sure we also get rid of the linked chains which
+   point to the pending calls to concurrent predicates. (MCL) */
+
 #define DOCUT \
 { \
-      w->node = SetB(w->next_node); \
-      SetShadowregs(B); \
+    w->node = SetB(w->next_node); \
+    SetShadowregs(B); \
+    REPORT_CUT(w->node); \
+    ConcChptCleanUp(TopConcChpt, w->node); \
 }
 
 #define PUT_YVOID \
@@ -349,3 +380,4 @@ if (stop_on_pred_calls) {  \
 	  SetA(E,Offset(E,EToY0+i+1)); \
 	  Setfunc(ADDR); \
 }
+

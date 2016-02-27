@@ -365,10 +365,6 @@ cutb_x:
 w->local_top = 0; /* may get hole at top of local stack */
 w->next_node = ChoiceFromInt(Xb(P1));
 DOCUT;
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node))
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
 DISPATCH_R(1);
 
 case CUTB_X_NECK:
@@ -379,10 +375,6 @@ w->next_node = ChoiceFromInt(Xb(Pnext));
 case CUTB_NECK:
 cutb_neck:
 DOCUT;
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node))
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
 if (w->next_alt){
   w->next_alt = NULL;
   if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
@@ -398,10 +390,6 @@ w->next_node = ChoiceFromInt(Xb(P1)); /* P++ */
 case CUTB_NECK_PROCEED:
 cutb_neck_proceed:
 DOCUT;
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node)) 
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
 if (w->next_alt) {
   w->next_alt = NULL;
   if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
@@ -415,10 +403,6 @@ cute_x:
 w->next_node = ChoiceFromInt(Xb(P1));
 w->local_top = E; /* w->local_top may be 0 here. */
 DOCUT;
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node))
-  remove_link_chains(&TopConcChpt, w->next_node);
-#endif
 SetE(w->local_top);
 DISPATCH_R(1);
 
@@ -430,10 +414,6 @@ case CUTE_NECK:
 cute_neck:
 w->local_top = E; /* w->local_top may be 0 here. */
 DOCUT;
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node))
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
 				/* w->next_alt can't be NULL here */
 w->next_alt = NULL;
 if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
@@ -448,11 +428,6 @@ w->next_node = ChoiceFromInt(Xb(Pnext));
 case CUTF:
 cutf:
 DOCUT;
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node))
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
-
 SetE(w->frame);
 DISPATCH_R(0);
 
@@ -462,13 +437,6 @@ cut_y:
 RefStack(t1,&Yb(P1));
 w->next_node = ChoiceFromInt(t1);
 DOCUT;
-/* Concurrency: if we cut (therefore discarding intermediate
-   choicepoints), make sure we also get rid of the linked chains which
-   point to the pending calls to concurrent predicates. (MCL) */
-#if defined(THREADS)
-if (ChoiceYounger(TopConcChpt, w->next_node)) 
-     remove_link_chains(&TopConcChpt, w->next_node);
-#endif
 SetE(w->frame);
 DISPATCH_R(1);
 
@@ -672,10 +640,10 @@ case RETRY_INSTANCE:
 retry_instance:          /* Take into account "open" predicates.  (MCL) */
 /* If there is *definitely* no next instance, remove choicepoint */
 if (
-    (TagToRoot(X(6))->behavior_on_failure != DYNAMIC &&
+    (TagToRoot(X(RootArg))->behavior_on_failure != DYNAMIC &&
      !next_instance_conc(Arg, &ins)) /* Wait and removes handle if needed */
     ||
-    (TagToRoot(X(6))->behavior_on_failure == DYNAMIC &&
+    (TagToRoot(X(RootArg))->behavior_on_failure == DYNAMIC &&
      !next_instance(Arg, &ins))
     ) {
   w->next_alt = NULL;
@@ -683,33 +651,42 @@ if (
   SetShadowregs(B);
 }
 
-if (!ins) { /*  A conc. predicate has been closed, or
+if (!ins) { /*  A conc. predicate has been closed, or a
                 non-blocking call was made (MCL) */
 #if defined(DEBUG)                                      /* Extended check */
+  if (debug_concchoicepoints) {
+    if ((TagToRoot(X(RootArg))->behavior_on_failure != CONC_CLOSED) &&
+        (IS_BLOCKING(X(InvocationAttr))))
+      fprintf(stderr,
+"**wam(): failing on a concurrent closed pred, chpt=%x, failing chpt=%x .\n",
+              (int)w->node,(int)TopConcChpt);
+  }
+
   if (debug_conc) {
-
-    if ((TagToRoot(X(6))->behavior_on_failure != CONC_CLOSED) &&
-        (X(7) == atom_block))
-      fprintf(stderr, 
-              "**wam(): failing on a non concurrent closed pred.\n");
-
-    if (TagToRoot(X(6))->x2_pending_on_instance ||
-        TagToRoot(X(6))->x5_pending_on_instance)
+    if (TagToRoot(X(RootArg))->x2_pending_on_instance ||
+        TagToRoot(X(RootArg))->x5_pending_on_instance)
       fprintf(stderr, 
       "**wam(): failing with invokations pending from root, type = %d.\n",
-              (TagToRoot(X(6))->behavior_on_failure));
-
+              (TagToRoot(X(RootArg))->behavior_on_failure));
   }
 #endif
-  TopConcChpt = (struct node *)X(8);
+  TopConcChpt = (struct node *)TermToPointerOrNull(X(PrevDynChpt));
+#if defined(DEBUG)
+  if (debug_concchoicepoints)
+    fprintf(stderr, "New topmost concurrent chpt = %x\n", (int)TopConcChpt);
+#endif
   goto fail;                                           /* But fail anyway */
 }
 
 #if defined(DEBUG)
-if(debug_conc && TagToRoot(X(6))->behavior_on_failure != DYNAMIC) 
+if(debug_conc && TagToRoot(X(RootArg))->behavior_on_failure != DYNAMIC) 
     fprintf(stderr, 
             "*** %d(%d)  backtracking on a concurrent predicate.\n",
             (int)Thread_Id, (int)GET_INC_COUNTER);
+if(debug_concchoicepoints && 
+   TagToRoot(X(RootArg))->behavior_on_failure != DYNAMIC) 
+    fprintf(stderr, 
+            "backtracking to chpt. = %x\n", (int)w->node);
 #endif    
 
 P = ins->emulcode;

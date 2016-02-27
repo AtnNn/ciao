@@ -9,8 +9,11 @@
 	], [dcg]).
 
 :- use_module(library('persdb_sql_common/sqltypes'),
-	  [sybase2sqltype/2, sybase2sqltypes_list/2, sybasetype/1,
-	   get_type/2, type_union/3, type_compatible/2, accepted_type/2]).
+	  [
+%jcf%	      sybase2sqltype/2, sybase2sqltypes_list/2, sybasetype/1,
+	      get_type/2, type_union/3, type_compatible/2
+%jcf%	      , accepted_type/2
+          ]).
 :- reexport(library('persdb_sql_common/sqltypes'), [sqltype/1]).
 
 

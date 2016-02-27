@@ -1,8 +1,6 @@
 /*             Copyright (C)1990-2002 UPM-CLIP                  	     */
 /*                          1994-1995 Katholieke Universiteit Leuven.        */
-
-
-/* Copyright(C) 1988, Swedish Institute of Computer Science */
+/* Copyright(C) 1988, Swedish Institute of Computer Science                  */
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Name: arrays.pl
@@ -25,7 +23,8 @@
 	  aset/4,
 	  array_to_list/2
 	],
-	[ assertions
+	[ assertions,
+	  isomodes
 	]).
 
 /*
@@ -45,31 +44,33 @@
 	update_subarray(+, +, -, -, -).
 */
 
+:- comment(module,"This module implements extendable arrays with logarithmic 
+	access time. It has been adapted from shared code written by
+	David Warren and Fernando Pereira.").
+:- comment(author,"Lena Flood").
 
-%  new_array(-Array) 
-%  returns an empty new array Array
+:- pred new_array(-Array) # "returns an empty new array @var{Array}.".
  
 new_array(array($($,$,$,$),2)).
 
-%  is_array(+Array) 
-%  is true when Array actually is an array.
+:- pred is_array(+Array) # "@var{Array} actually is an array.".
  
-is_array(array(_,_)).
+is_array(array(_,N)):- number(N).
 
-
-%  aref(+Index, +Array, ?Element) 
-%  unifies Element to Array[Index], or fails if Array[Index] has 
-%  not been set.
+:- pred aref(+Index, +Array, ?Element) 
+	# "unifies @var{Element} to @var{Array}[@var{Index}], or fails if 
+	  @var{Array}[@var{Index}] has not been set.".
 	
 aref(Index, array(Array,Size), Item) :-
 	check_int(Index, aref(Index,array(Array,Size),Item)),
 	Index < 1<<Size,
 	array_item(Size, Index, Array, Item).
 
-%   arefa(+Index, +Array, ?Element) 
-%   is as aref/3, except that it unifies Element with a new array 
-%   if Array[Index] is undefined. This is useful for multidimensional 
-%   arrays implemented as arrays of arrays.
+:- pred arefa(+Index, +Array, ?Element) 
+	# "is as @tt{aref/3}, except that it unifies @var{Element} with
+	  a new array if @var{Array}[@var{Index}] is undefined. This is 
+	  useful for multidimensional arrays implemented as arrays of 
+	  arrays.".
  
 arefa(Index, array(Array,Size), Item) :-
 	check_int(Index, arefa(Index,array(Array,Size),Item)),
@@ -77,10 +78,10 @@ arefa(Index, array(Array,Size), Item) :-
 	array_item(Size, Index, Array, Item), !.
 arefa(_, _, Item) :- new_array(Item).
 
-%   arefl(Index, Array, Element) 
-%   is as aref/3, except that Element appears as '[]' for undefined 
-%   cells. Thus, arefl(_,_,[]) allways succeeds no matter what you
-%   give in the first or second args
+:- pred arefl(+Index, +Array, ?Element) 
+	# "is as @tt{aref/3}, except that @var{Element} appears as
+	  @tt{[]} for undefined cells. Thus, @tt{arefl(_,_,[])} always
+	  succeeds no matter what you give in the first or second args.".
  
 arefl(Index, array(Array,Size), Item) :-
 	check_int(Index, arefl(Index,array(Array,Size),Item)),
@@ -88,8 +89,9 @@ arefl(Index, array(Array,Size), Item) :-
 	array_item(Size, Index, Array, Item), !.
 arefl(_, _, []).
 
-%   aset(Index, Array, Element, NewArray) 
-%   unifies NewArray with the result of setting Array[Index] to Element.
+:- pred aset(+Index, +Array, Element, -NewArray) 
+	# "unifies @var{NewArray} with the result of setting
+	  @var{Array}[@var{Index}] to @var{Element}.".
  
 aset(Index, array(Array0,Size0), Item, array(Array,Size)) :-
 	check_int(Index, aset(Index,array(Array0,Size0),Item,array(Array,Size))),
@@ -97,9 +99,9 @@ aset(Index, array(Array0,Size0), Item, array(Array,Size)) :-
 	update_array_item(Size, Index, Array1, Item, Array).
 
 
-%   array_to_list(+Array, -List) 
-%   returns a list of pairs Index-Element of all the elements of Array
-%   that have been set.
+:- pred array_to_list(+Array, -List) 
+	# "returns a @var{List} of pairs Index-Element of all the elements
+	  of @var{Array} that have been set.".
  
 array_to_list(array($(A0,A1,A2,A3),Size), L0) :-
 	N is Size-2,
@@ -172,6 +174,9 @@ update_subarray(3, $(W,X,Y,Z), Z, Z1, $(W,X,Y,Z1)).
 
 %-------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*9+3,2002/05/23,21:32*30+'CEST'), "Turn comments
+   into assertions for documentation.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*3+62,1999/09/29,18:05*39+'MEST'), "Added
    libraries arrays and bitcodesets.  (Francisco Bueno Carrillo)").

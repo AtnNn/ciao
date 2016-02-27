@@ -1,45 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Random numbers</TITLE>
+<TITLE>The Ciao Prolog System               - Identity lists</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC642" HREF="ciao_toc.html#TOC642">Random numbers</A></H1>
+<H1><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Identity lists</A></H1>
 <P>
-<A NAME="IDX6564"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX7259"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 <P>
-This module provides predicates for generating pseudo-random numbers
+The operations in this module handle lists by performing equality checks via identity instead of unification.
 
 
 
 <UL>
-<LI><A HREF="ciao_165.html#SEC643">Usage and interface (random)</A>
-<LI><A HREF="ciao_165.html#SEC644">Documentation on exports (random)</A>
+<LI><A HREF="ciao_165.html#SEC683">Usage and interface (idlists)</A>
+<LI><A HREF="ciao_165.html#SEC684">Documentation on exports (idlists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC643" HREF="ciao_toc.html#TOC643">Usage and interface (<CODE>random</CODE>)</A></H2>
+<H2><A NAME="SEC683" HREF="ciao_toc.html#TOC683">Usage and interface (<CODE>idlists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +43,7 @@ This module provides predicates for generating pseudo-random numbers
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(random)).</CODE>
+<CODE>:- use_module(library(idlists)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,12 +52,22 @@ This module provides predicates for generating pseudo-random numbers
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6565"></A>
-<CODE>random/1</CODE>, 
-<A NAME="IDX6566"></A>
-<CODE>random/3</CODE>, 
-<A NAME="IDX6567"></A>
-<CODE>srandom/1</CODE>.
+<A NAME="IDX7260"></A>
+<CODE>member_0/2</CODE>, 
+<A NAME="IDX7261"></A>
+<CODE>memberchk/2</CODE>, 
+<A NAME="IDX7262"></A>
+<CODE>list_insert/2</CODE>, 
+<A NAME="IDX7263"></A>
+<CODE>add_after/4</CODE>, 
+<A NAME="IDX7264"></A>
+<CODE>add_before/4</CODE>, 
+<A NAME="IDX7265"></A>
+<CODE>delete/3</CODE>, 
+<A NAME="IDX7266"></A>
+<CODE>subtract/3</CODE>, 
+<A NAME="IDX7267"></A>
+<CODE>union_idlists/3</CODE>.
 
 </UL>
 
@@ -71,70 +77,148 @@ This module provides predicates for generating pseudo-random numbers
 
 
 
-<H2><A NAME="SEC644" HREF="ciao_toc.html#TOC644">Documentation on exports (<CODE>random</CODE>)</A></H2>
+<H2><A NAME="SEC684" HREF="ciao_toc.html#TOC684">Documentation on exports (<CODE>idlists</CODE>)</A></H2>
 <P>
-<A NAME="IDX6568"></A>
-<A NAME="IDX6569"></A>
+<A NAME="IDX7268"></A>
+<A NAME="IDX7269"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>random/1:</B>
-<DD><A NAME="IDX6570"></A>
+<DT><span class="define">PREDICATE:</span> <B>member_0/2:</B>
+<DD><A NAME="IDX7270"></A>
 
 
 <P>
-<CODE>random(Number)</CODE>
-
-
-<P>
-<CODE>Number</CODE> is a (pseudo-) random number in the range [0.0,1.0]
+No further documentation available for this predicate.
 
 
 </DL>
 
 <P>
-<A NAME="IDX6571"></A>
-<A NAME="IDX6572"></A>
+<A NAME="IDX7271"></A>
+<A NAME="IDX7272"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>random/3:</B>
-<DD><A NAME="IDX6573"></A>
+<DT><span class="define">PREDICATE:</span> <B>memberchk/2:</B>
+<DD><A NAME="IDX7273"></A>
 
 
 <P>
-<CODE>random(Low,Up,Number)</CODE>
+<CODE>memberchk(X,Xs)</CODE>
 
 
 <P>
-<CODE>Number</CODE> is a (pseudo-) random number in the range [<CODE>Low</CODE>, <CODE>Up</CODE>]
+Checks that <CODE>X</CODE> is an element of (list) <CODE>Xs</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7274"></A>
+<A NAME="IDX7275"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
+<DD><A NAME="IDX7276"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>random(+int,+int,-int)</CODE>
+<STRONG>Usage:</STRONG> <CODE>list_insert(-List,+Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>Low</CODE> and <CODE>Up</CODE> are integers, <CODE>Number</CODE> is an integer.
+<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of (tail-opened) <CODE>List</CODE> if there is not an element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6574"></A>
-<A NAME="IDX6575"></A>
+<A NAME="IDX7277"></A>
+<A NAME="IDX7278"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>srandom/1:</B>
-<DD><A NAME="IDX6576"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
+<DD><A NAME="IDX7279"></A>
 
 
 <P>
-<CODE>srandom(Seed)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_after(+L0,+E0,+E,-L)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after the first element identical to <CODE>E0</CODE> (or at end) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7280"></A>
+<A NAME="IDX7281"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
+<DD><A NAME="IDX7282"></A>
 
 
 <P>
-Changes the sequence of pseudo-random numbers according to <CODE>Seed</CODE>. The stating sequence of numbers generated can be duplicated by calling the predicate with <CODE>Seed</CODE> unbound (the sequence depends on the OS).
+<STRONG>Usage:</STRONG> <CODE>add_before(+L0,+E0,+E,-L)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> before the first element identical to <CODE>E0</CODE> (or at start) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7283"></A>
+<A NAME="IDX7284"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
+<DD><A NAME="IDX7285"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>delete(+List,+Element,-Rest)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Rest</CODE> has the same elements of <CODE>List</CODE> except for all the occurrences of elements identical to <CODE>Element</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7286"></A>
+<A NAME="IDX7287"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>subtract/3:</B>
+<DD><A NAME="IDX7288"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>subtract(+Set,+Set0,-Difference)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Difference</CODE> has the same elements of <CODE>Set</CODE> except those which have an identical occurrence in <CODE>Set0</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7289"></A>
+<A NAME="IDX7290"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>union_idlists/3:</B>
+<DD><A NAME="IDX7291"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>union_idlists(+List1,+List2,-List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but are not identical to an element in <CODE>List2</CODE> followed by the elements in <CODE>List2</CODE>.
+
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_164.html">previous</A>, <A HREF="ciao_166.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

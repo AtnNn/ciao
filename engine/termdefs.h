@@ -156,7 +156,7 @@ typedef double ENG_FLT;
 #define GetSmall(X)	((ENG_INT)(((X)>>SmallShift)-(TaggedZero>>SmallShift)))
 #define GetString(X)	(TagToAtom(X)->name)
 
-/* #define USE_ATOM_LEN */                                       /* MCL */
+#define USE_ATOM_LEN
 
 #if defined(USE_ATOM_LEN)
 #define GetAtomLen(X)   (TagToAtom(X)->atom_len)

@@ -1,48 +1,58 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Call on determinate</TITLE>
+<TITLE>The Ciao Prolog System               - Higher-order predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC367" HREF="ciao_toc.html#TOC367">Call on determinate</A></H1>
+<H1><A NAME="SEC400" HREF="ciao_toc.html#TOC400">Higher-order predicates</A></H1>
 <P>
-<A NAME="IDX4044"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jos&eacute; Morales, Manuel Carro.
+<A NAME="IDX4744"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#149 (2001/11/19, 19:17:51 CET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
 
 
 <P>
-Offers an enriched variant of call and cut <CODE>!!/0</CODE> which executes pending goals when the computation has no more alternatives. 
+<STRONG>Version:</STRONG> 1.9#93 (2003/7/29, 17:53:15 CEST)
 
 
 <P>
-This library is useful to, for example, get rid of external connections once the necessary data has been obtained.
+<STRONG>Version of last change:</STRONG> 1.7#208 (2002/4/23, 19:9:14 CEST)
+
+
+<P>
+This library implements a few basic higher-order predicates. These add functionality to the basic higher-order functionality of Ciao. Examples of the latter are: 
+ 
+Using pred(1): 
+
+
+
+<PRE>
+  list(L, between(1,6))
+  list(L, functor(_,2))
+  list(L, &#62;(0))
+</PRE>
+
+<P>
+Using pred(2): 
 
 
 
 <UL>
-<LI><A HREF="ciao_97.html#SEC368">Usage and interface (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC369">Documentation on exports (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC370">Documentation on internals (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC371">Other information (det_hook_rt)</A>
-<LI><A HREF="ciao_97.html#SEC372">Known bugs and planned improvements (det_hook_rt)</A>
+<LI><A HREF="ciao_97.html#SEC401">Usage and interface (hiordlib)</A>
+<LI><A HREF="ciao_97.html#SEC402">Documentation on exports (hiordlib)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC368" HREF="ciao_toc.html#TOC368">Usage and interface (<CODE>det_hook_rt</CODE>)</A></H2>
+<H2><A NAME="SEC401" HREF="ciao_toc.html#TOC401">Usage and interface (<CODE>hiordlib</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -50,18 +60,7 @@ This library is useful to, for example, get rid of external connections once the
 
 <LI><STRONG>Library usage:</STRONG>
 
-
-<PRE>
-:- use_module(library(det_hook_rt)).
-</PRE>
-
-in which case, <CODE>!!/0</CODE> is not available. 
-
-Typically, this library is used as a package: 
-
-<PRE>
-:- use_package(det_hook).
-</PRE>
+<CODE>:- use_module(library(hiordlib)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -70,8 +69,12 @@ Typically, this library is used as a package:
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4045"></A>
-<CODE>det_try/3</CODE>.
+<A NAME="IDX4745"></A>
+<CODE>map/3</CODE>, 
+<A NAME="IDX4746"></A>
+<CODE>foldl/4</CODE>, 
+<A NAME="IDX4747"></A>
+<CODE>minimum/3</CODE>.
 
 </UL>
 
@@ -81,135 +84,103 @@ Typically, this library is used as a package:
 
 
 
-<H2><A NAME="SEC369" HREF="ciao_toc.html#TOC369">Documentation on exports (<CODE>det_hook_rt</CODE>)</A></H2>
+<H2><A NAME="SEC402" HREF="ciao_toc.html#TOC402">Documentation on exports (<CODE>hiordlib</CODE>)</A></H2>
 <P>
-<A NAME="IDX4046"></A>
-<A NAME="IDX4047"></A>
+<A NAME="IDX4748"></A>
+<A NAME="IDX4749"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>det_try/3:</B>
-<DD><A NAME="IDX4048"></A>
+<DT><span class="define">PREDICATE:</span> <B>map/3:</B>
+<DD><A NAME="IDX4750"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>det_try(goal,goal,goal)</CODE>.
+<EM>Meta-predicate</EM> with arguments: <CODE>map(?,pred(2),?)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>det_try(Goal,OnCut,OnFail)</CODE>
+<STRONG>Usage:</STRONG> <CODE>map(LList,Op,RList)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Action</CODE> is called, and <CODE>OnCut</CODE> and <CODE>OnFail</CODE> are goals to be executed when <CODE>Goal</CODE> is cut or when it finitely fails, respectively. In order for this to work, cutting must be performed in a special way, by usin the
+<LI><EM>Description:</EM> Examples of use:
 
-<A NAME="IDX4049"></A>
-<CODE>!!/0</CODE> predicate, also provided by this module. 
+
+<PRE>
+  map([1,3,2], arg(f(a,b,c,d)), [a,c,b]) or
+  map([1,3,2], nth([a,b,c,d]), [a,c,b])
+  map(["D","C"], append("."), ["D.","C."])
+</PRE>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4751"></A>
+<A NAME="IDX4752"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>foldl/4:</B>
+<DD><A NAME="IDX4753"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>foldl(?,?,pred(3),?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>foldl(List,Seed,Op,Result)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Example of use:
+
+
+<PRE>
+?- foldl(["daniel","cabeza","gras"], "", 
+         (''(X,Y,Z) :- append(X, " "||Y, Z)), R).
+
+R = "daniel cabeza gras " ? 
+</PRE>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4754"></A>
+<A NAME="IDX4755"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>minimum/3:</B>
+<DD><A NAME="IDX4756"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>minimum(?,pred(2),?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>minimum(?List,+SmallerThan,?Minimum)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Minimum</CODE> is the smaller in the nonempty list <CODE>List</CODE> according to the relation <CODE>SmallerThan</CODE>:
+
+<A NAME="IDX4757"></A>
+<CODE>SmallerThan(X, Y)</CODE> succeeds iff X is smaller than Y. 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+<CODE>?List</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>+SmallerThan</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
 
-<CODE>OnCut</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>OnFail</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<CODE>?Minimum</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
-
-
-
-<H2><A NAME="SEC370" HREF="ciao_toc.html#TOC370">Documentation on internals (<CODE>det_hook_rt</CODE>)</A></H2>
-<P>
-<A NAME="IDX4050"></A>
-<A NAME="IDX4051"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>!!/0:</B>
-<DD><A NAME="IDX4052"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Performs a special cut which prunes alternatives away, as the usual cut, but which also executes the goals specified as <CODE>OnCut</CODE> for any call in the scope of the cut.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC371" HREF="ciao_toc.html#TOC371">Other information (<CODE>det_hook_rt</CODE>)</A></H2>
-
-<P>
-As an example, the program 
-
-
-
-<PRE>
-:- module(_, _, [det_hook]).
-
-enumerate(X):-
-        display(enumerating), nl,
-        OnCut = (display('goal cut'), nl),
-        OnFail = (display('goal failed'), nl),
-        det_try(enum(X), OnCut, OnFail).
-
-enum(1).
-enum(2).
-enum(3).
-</PRE>
-
-<P>
-behaves as follows: 
-
-
-
-<PRE>
-?- enumerate(X).
-enumerating
-
-X = 1 ? ;
-
-X = 2 ? ;
-
-X = 3 ? ;
-goal failed
-</PRE>
-
-<P>
-(note the message inserted on failure). The execution can be cut as follows: 
-
-
-
-<PRE>
-?- use_package(det_hook).
-{Including /home/clip/lib/ciao/ciao-1.7/library/det_hook/det_hook.pl
-}
-
-yes
-?- enumerate(X), '!!'.
-enumerating
-goal cut
-
-X = 1 ? ;
-
-no
-</PRE>
-
-
-
-<H2><A NAME="SEC372" HREF="ciao_toc.html#TOC372">Known bugs and planned improvements (<CODE>det_hook_rt</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-If the started goals do not exhaust their solutions, and '!!'/0 is not used, the database will populate with facts which will be consulted the next time a '!!'/0 is used. This could cause incorrect executions.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_96.html">previous</A>, <A HREF="ciao_98.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

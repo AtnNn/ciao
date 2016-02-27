@@ -824,8 +824,11 @@ BOOL prolog_fast_read_in_c_aux(Arg,out,vars,lastvar)
     j = 1;
     for (i=0; j; i++) {
       if (i == Atom_Buffer_Length) {
+        /*
 	Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
 					   i, Atom_Buffer_Length<<=1);
+        */  
+        EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);
 	s = (unsigned char *)Atom_Buffer+i;
       }
       if ((j = readchar(Input_Stream_Ptr, GET, NULL)) < -1)

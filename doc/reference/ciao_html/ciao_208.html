@@ -1,29 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - parser (library)</TITLE>
+<TITLE>The Ciao Prolog System               - error (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC777" HREF="ciao_toc.html#TOC777">parser (library)</A></H1>
+<H1><A NAME="SEC818" HREF="ciao_toc.html#TOC818">error (library)</A></H1>
 <P>
-<A NAME="IDX7790"></A>
+<A NAME="IDX8406"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+
+
+<P>
+<STRONG>Version:</STRONG> 0.1#3 (1998/12/14, 19:14:44 MET)
+
+
+<P>
+This file implements error predicates of different types.
 
 
 
 <UL>
-<LI><A HREF="ciao_208.html#SEC778">Usage and interface (parser)</A>
-<LI><A HREF="ciao_208.html#SEC779">Documentation on exports (parser)</A>
+<LI><A HREF="ciao_208.html#SEC819">Usage and interface (error)</A>
+<LI><A HREF="ciao_208.html#SEC820">Documentation on exports (error)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC778" HREF="ciao_toc.html#TOC778">Usage and interface (<CODE>parser</CODE>)</A></H2>
+<H2><A NAME="SEC819" HREF="ciao_toc.html#TOC819">Usage and interface (<CODE>error</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(parser)).</CODE>
+<CODE>:- use_module(library(error)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,50 +52,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7791"></A>
-<CODE>parser/2</CODE>, 
-<A NAME="IDX7792"></A>
-<CODE>nodeDeclaration/4</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7793"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX7794"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7795"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX7796"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7797"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7798"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX7799"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7800"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7801"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7802"></A>
-<CODE>provrml/lookup</CODE>, 
-<A NAME="IDX7803"></A>
-<CODE>provrml/field_value</CODE>, 
-<A NAME="IDX7804"></A>
-<CODE>provrml/tokeniser</CODE>, 
-<A NAME="IDX7805"></A>
-<CODE>provrml/parser_util</CODE>, 
-<A NAME="IDX7806"></A>
-<CODE>provrml/possible</CODE>, 
-<A NAME="IDX7807"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX8407"></A>
+<CODE>error_vrml/1</CODE>, 
+<A NAME="IDX8408"></A>
+<CODE>output_error/1</CODE>.
 
 </UL>
 
@@ -93,47 +65,52 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>,
 
 
 
-<H2><A NAME="SEC779" HREF="ciao_toc.html#TOC779">Documentation on exports (<CODE>parser</CODE>)</A></H2>
+<H2><A NAME="SEC820" HREF="ciao_toc.html#TOC820">Documentation on exports (<CODE>error</CODE>)</A></H2>
 <P>
-<A NAME="IDX7808"></A>
-<A NAME="IDX7809"></A>
+<A NAME="IDX8409"></A>
+<A NAME="IDX8410"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>parser/2:</B>
-<DD><A NAME="IDX7810"></A>
+<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
+<DD><A NAME="IDX8411"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>parser(+VRML,-Terms)</CODE>
+<STRONG>Usage:</STRONG> <CODE>error_vrml(+Structure)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The parser uses a tokeniser to read the input text string of VRML code and returns a list with the corresponding terms. The tokens will be read in this parser as the grammar says. The parser is according to the specification of the VRML grammar, accept that it is performed over tokens in sted of the actual code.
+<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+VRML</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>-Terms</CODE> is a list of <CODE>terms</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Structure</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7811"></A>
-<A NAME="IDX7812"></A>
+<A NAME="IDX8412"></A>
+<A NAME="IDX8413"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>nodeDeclaration/4:</B>
-<DD><A NAME="IDX7813"></A>
+<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
+<DD><A NAME="IDX8414"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>output_error(+Message)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Message</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_207.html">previous</A>, <A HREF="ciao_209.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

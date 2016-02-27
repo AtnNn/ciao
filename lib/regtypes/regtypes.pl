@@ -8,6 +8,8 @@
 :- op(1150, fx,(regtype)).      
 :- op(1150,xfx,(regtype)).
 
+:- meta_predicate regtype(goal).
+
 %% Control version comment prompting for the file.
 %% Local Variables: 
 %% mode: CIAO

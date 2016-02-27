@@ -14,3 +14,4 @@ struct instance *compile_term_aux(Argdecl,
                                   TAGGED body, 
                                   struct worker **new_worker);
 void number_to_string(Argdecl, TAGGED term, int base);
+BOOL string_to_number(Argdecl, unsigned char *AtBuf, TAGGED *strnum);

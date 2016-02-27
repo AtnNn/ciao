@@ -339,7 +339,10 @@ simplify_module(Module,Module).
 compose(Type,Module,File,LB,LE,Mess,Args) :-
 	append("{In ~w~n~s (~q): (lns ~w-~w) ",Mess,T1),
 	append(T1,"~n}~n",CMess),
+%	append("~w: ~w-~w: ~s: (~q): ",Mess,T1),
+%	append(T1,"~n",CMess),
 	prolog_flag(write_strings, Old, on),
+%	format(user_error,CMess,[File,LB,LE,Type,Module|Args]),
 	format(user_error,CMess,[File,Type,Module,LB,LE|Args]),
 	set_prolog_flag(write_strings, Old).
 

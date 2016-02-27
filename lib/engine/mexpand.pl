@@ -173,6 +173,7 @@ meta_expansion_arg1(X, Type, M, QM, Pr, NX, G, R) :-
         runtime_module_expansion(G, Type, Pr, M, QM, X, NX, R).
 
 term_to_meta_or_primitive(true, T, T).
+term_to_meta_or_primitive(fail, T, T) :- ciaopp_expansion, !.
 term_to_meta_or_primitive(fail, T, NT) :- term_to_meta(T,NT).
 
 % Called from internals
@@ -192,6 +193,8 @@ expand_meta_of_type(spec, S, M, QM, NS):- !,
 expand_meta_of_type(fact, Atom, M, QM, NAtom):- !,
 	atom_expansion_add_goals(Atom, M, QM, NAtom, no, no).
 expand_meta_of_type(goal, Goal, M, QM, NGoal):- !,
+	body_expansion(Goal, M, QM, NGoal).
+expand_meta_of_type(pred(_), Goal, M, QM, NGoal):- ciaopp_expansion, !,
 	body_expansion(Goal, M, QM, NGoal).
 expand_meta_of_type(pred(0), Goal, M, QM, NGoal):- !,
 	body_expansion(Goal, M, QM, NGoal).
@@ -259,6 +262,8 @@ unify_args(I, N, F, A, G) :-
         A1 is A+1,
         unify_args(I1, N, F, A1, G).
 
+runtime_module_expansion(G,_Type,_Primitive,_M,_QM, X, X, G) :-
+	ciaopp_expansion, !. % no runtime exp.
 runtime_module_expansion((P, R), Type, Primitive, M, QM, X, NX, R) :- !,
         % This predicate is defined diff. in compiler.pl and builtin.pl
         uses_runtime_module_expansion,

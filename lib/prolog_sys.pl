@@ -26,34 +26,34 @@ process data, code, and stack also take up memory.  The memory
 reported for atoms is not what is actually used, but the space used up
 by the hash table (which is enlarged as needed).").
 
-:- true pred statistics # "Prints statistics about the system.".
+:- true pred statistics + native # "Prints statistics about the system.".
 
 :- true pred statistics(Time_option, Time_result) : time_option * term =>
-time_option * time_result # "Gather information about time (either
+time_option * time_result + native # "Gather information about time (either
 process time or wall time) since last consult or since start of
 program.  Results are returned in milliseconds.".
 
 :- true pred statistics(Memory_option, Memory_result) : memory_option * term =>
-memory_option * memory_result # "Gather information about memory
+memory_option * memory_result + native # "Gather information about memory
 consumption.".
 
 :- true pred statistics(Garbage_collection_option, Gc_result) : garbage_collection_option *
-term => garbage_collection_option * gc_result # "Gather information
+term => garbage_collection_option * gc_result + native # "Gather information
 about garbage collection.".
 
 :- true pred statistics(Symbol_option, Symbol_result) :symbol_option * term =>
-symbol_option * symbol_result # "Gather information about number of
+symbol_option * symbol_result + native # "Gather information about number of
 symbols and predicates.".
 
-:- true pred statistics(Option, ?term) # "If @var{Option} is unbound,
+:- true pred statistics(Option, ?term) + native # "If @var{Option} is unbound,
 it is bound to the values on the other cases.".
 
-:- true pred garbage_collect # "Forces garbage collection when called.".
+:- true pred garbage_collect + native # "Forces garbage collection when called.".
 
-:- true pred current_atom(Atom) : var => atm # "Enumerates on
+:- true pred current_atom(Atom) : var => atm + native # "Enumerates on
 backtracking all the existing atoms in the system.".
 
-:- true pred new_atom(Atom) : var => atm # "Returns, on success, a new
+:- true pred new_atom(Atom) : var => atm + native # "Returns, on success, a new
 atom, not existing before in the system.  The entry argument must be a
 variable.  The idea behind this atom generation is to provide a fast
 source of identifiers for new objects, concurrent predicates, etc. on
@@ -106,7 +106,7 @@ two-element list of integers.  The first integer is the time since the
 start of the execution; the second integer is the time since the
 previous consult to time.".
 
-time_result([A, B]):- integer(A), integer(B).
+time_result([A, B]):- int(A), int(B).
 
 
 :- comment(doinclude, memory_result/1).
@@ -117,7 +117,7 @@ by the option selected, measured in bytes; the second integer is zero
 for program space (which grows as necessary), and the amount of free
 space otherwise.".
 
-memory_result([A, B]):- integer(A), integer(B).
+memory_result([A, B]):- int(A), int(B).
 
 
 :- comment(doinclude, gc_result/1).
@@ -132,7 +132,7 @@ selected, the numbers are, respectively, the number of garbage
 collections performed, the number of bytes freed, and the time spent
 in garbage collection.".
 
-gc_result([A, B, C]):- integer(A), integer(B), integer(C).
+gc_result([A, B, C]):- int(A), int(B), int(C).
 
 
 :- comment(doinclude, symbol_result/1).
@@ -143,7 +143,7 @@ gc_result([A, B, C]):- integer(A), integer(B), integer(C).
    the number of predicates known to be defined (although maybe
    without clauses).".
 
-symbol_result([A, B]):- integer(A), integer(B).
+symbol_result([A, B]):- int(A), int(B).
 
  %% memory_option(core).
  %% memory_option(heap).
@@ -165,7 +165,7 @@ statistics(garbage_collection, L) :- '$gc_usage'(L).
 statistics(stack_shifts, L) :- '$stack_shift_usage'(L).
 
 :- true pred predicate_property(Head, Property)
-   : term * term => callable * atm
+   : term * term => callable * atm + native
    # "The predicate with clause @var{Head} is @var{Property}.".
 
 % :- primitive_meta_predicate(predicate_property(fact,?)).
@@ -189,6 +189,10 @@ bit_decl(1, (concurrent)).
 bit_decl(2, (dynamic)).
 bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
+
+:- comment(version(1*9+92,2003/07/24,08:04*39+'CEST'), "Changed
+   integer by int in regtype definitions.  (Francisco Bueno
+   Carrillo)").
 
 :- comment(version(1*5+153,2000/05/29,10:24*35+'CEST'), "Added some
 declarations for builtins.  (MCL)").

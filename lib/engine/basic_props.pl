@@ -5,7 +5,7 @@
          sequence/2, sequence_or_list/2, character_code/1, string/1,
          predname/1, atm_or_atm_list/1, compat/2,
          iso/1, not_further_inst/2,
-	 regtype/1
+	 regtype/1, native/1, native/2
         ],
         [assertions]).
 
@@ -286,12 +286,37 @@ compat(T, P) :- \+ \+ P(T).
 
 :- impl_defined(not_further_inst/2).
 
+% Built-in in CiaoPP
 :- true prop regtype(G) # "Defines a regular type.".
+:- meta_predicate regtype(goal).
 
 :- impl_defined(regtype/1).
 
+% Built-in in CiaoPP
+:- true prop native(Pred,Key)
+   # "This predicate is understood natively by CiaoPP as @var{Key}.".
+%%   # "Predicate @var{Pred} is understood natively by CiaoPP as @var{Key}.".
+:- meta_predicate native(goal,?).
 
+:- impl_defined(native/2).
+
+% Built-in in CiaoPP
+:- true prop native(Pred)
+   # "This predicate is understood natively by CiaoPP.".
+%%   # "Predicate @var{Pred} is understood natively by CiaoPP.".
+:- meta_predicate native(goal).
+
+native(X):- native(X,X).
+
+% ------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+93,2003/07/29,17:53*15+'CEST'), "Minor mod to
+   @pred{native/1} and @pred{native/2} documentation.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*9+87,2003/07/17,16:59*54+'CEST'), "Added
+   native/1+2.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+204,2002/04/22,18:42*18+'CEST'), "Fixed a bug
    introduced in patch 190. (Daniel Cabeza Gras)").

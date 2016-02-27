@@ -26,6 +26,11 @@ main :-
 	Face1 new canvas_class([Left_eye,Right_eye,Lips]),
 	Face1:show,
 	hit_enter,
+	Lips:move(2,2),
+	Left_eye:move(-40,2),
+	Right_eye:move(40,2),
+	Face1:show,
+	hit_enter,
 	destroy Face1,
 	destroy Left_eye,
 	destroy Right_eye.

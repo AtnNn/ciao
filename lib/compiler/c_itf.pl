@@ -1,6 +1,6 @@
 :- module(c_itf,
         [process_files_from/7, process_file/7, cleanup_c_itf_data/0,
-         activate_translation/3,
+         activate_translation/3, module_expansion/9,
          defines_module/2, exports/5, def_multifile/4, decl/2,
          uses/2, adds/2, imports_pred/7, imports_all/2, includes/2, loads/2,
          clause_of/7, defines_pred/3, dyn_decl/4, meta_pred/4,
@@ -13,6 +13,7 @@
          add_module_check/1, module_error/0, ensure_imported/4, location/3,
          opt_suffix/2, default_package/1,
          handle_exc/1, get_so_name/2, multifile/1,
+	 set_ciaopp_expansion/1,
          expand_list/2, compute_base_name/4, module_from_base/2,
          use_mod/3, static_base/1, static_module/1, module_loaded/4,
          make_po_file/1,
@@ -417,7 +418,7 @@ process_files_from_(File, Mode, Type, TreatP, StopP, SkipP, RedoP) :-
         process_remaining_files(Mode, TreatP, StopP, SkipP, RedoP).
 
 process_remaining_files(Mode, TreatP, StopP, SkipP, RedoP) :-
-        retract_fact(process_too(Mode, Base)), % Coming from ensure_loaded
+        retract_fact(process_too(Mode, Base)),
         \+ current_fact(processed(Base, Mode)), !,
           file_data(Base, Pl, Dir),
           process_file_(Base, Pl, Dir, Mode, any, TreatP, StopP, SkipP, RedoP),
@@ -616,7 +617,11 @@ get_base_name(File, Base, PlName, Dir) :-
 get_base_name(File, Base, PlName, Dir) :-
         compute_base_name(File, Base, PlName, Dir),
         asserta_fact(base_name_1(File, Base)),
-        asserta_fact(file_data_1(Base, PlName, Dir)).
+        ( current_fact(file_data_1(Base, _, _)) ->
+            true
+        ;
+            asserta_fact(file_data_1(Base, PlName, Dir))
+        ).
 
 compute_base_name(File, Base, PlName, Dir) :-
         prolog_flag(fileerrors, OldFE, off),
@@ -648,7 +653,7 @@ read_record_file(PlName, Base, Dir, Type) :-
         working_directory(_, OldDir).
 
 read_record_file_(PlName, Base, Type) :-
-        '$open'(PlName, read, Stream),
+        '$open'(PlName, r, Stream),
         skip_shell_lines(Stream),
         read_source_term(Stream, Data, VNs, Sings, Ln0, Ln1),
         ( Data = end_of_file -> % empty file
@@ -656,7 +661,7 @@ read_record_file_(PlName, Base, Type) :-
             assertz_fact(defines_module(Base, M))
         ; process_first_term(Data, Base, M, VNs, Sings, PlName, Ln0, Ln1),
           ( M=user(_), Type==module ->
-              compiler_error(Ln0, Ln1, module_missing)
+              warning_module_missing(Ln0, Ln1)
           ; true
           ),
           read_record_next(Stream, Base, PlName, M, main)
@@ -913,7 +918,7 @@ do_include(File, Base, Module,_Ln0,_Ln1) :-
         get_base_name(File, _, SourceFile, _), !,
         assertz_fact(includes(Base, File)),
         now_doing(['Including ',SourceFile]),
-        '$open'(SourceFile, read, Stream),
+        '$open'(SourceFile, r, Stream),
         read_record_next(Stream, Base, SourceFile, Module, include),
         close(Stream),
         end_doing.
@@ -1448,7 +1453,7 @@ read_itf(ItfName, ItfTime, Base, Dir, Type) :-
         ),
         defines_module(Base, M),
         ( M = user(_), Type == module ->
-            compiler_error(_, _, module_missing)
+            warning_module_missing(_, _)
         ; true),
         end_doing, !,
         assertz_fact(already_have_itf(Base)),
@@ -1468,7 +1473,7 @@ base_names_in_itf(_,_).
 
 do_read_itf(ItfName, Base) :-
         delete_itf_data(Base),
-        '$open'(ItfName, read, Stream),
+        '$open'(ItfName, r, Stream),
         current_input(CI),
         set_input(Stream),
         ( itf_version(V),
@@ -1649,12 +1654,14 @@ get_so_name(Base, SoName) :-
         atom_concat('_', Aso, _Aso),
         atom_concat(Base, _Aso, SoName).
 
+warning_module_missing(L0, L1) :-
+        error_in_lns(L0, L1, warning,
+                     ['Source used as module without module declaration']).
+
 compiler_error(L0, L1, Error) :-
         compiler_error_data(Error, Message),
         error_in_lns(L0, L1, error, Message).
 
-compiler_error_data(module_missing,
-        ['Source used as module without module declaration']).
 compiler_error_data(bad_module(_Base, M),
         ['Bad module ',M,' in module declaration']).
 compiler_error_data(badly_formed(Decl, Spec),
@@ -1755,7 +1762,7 @@ stream_of_file(Path, Dir, Stream, Ref) :-
         file_exists(Dir, 2), % Write permission
         ( file_exists(Path) -> delete_file(Path) ; true ),
         delete_on_ctrlc(Path, Ref),
-        '$open'(Path, write, Stream).
+        '$open'(Path, w, Stream).
 
 compiler_pass(Source, Base, Module, Mode) :-
         del_compiler_pass_data,
@@ -1837,18 +1844,21 @@ compile_clauses(Base, Module, Mode) :-
         retract_fact(clause_of(Base,H,B,Dict,Src,Ln0,Ln1)),
           \+ number(H),
           asserta_fact(location(Src,Ln0,Ln1), Ref),
-          expand_clause(H, B, Module, Dict, H0, B0),
-          ( Mode = interpreted,
-            current_fact(interpret_srcdbg(Module)) ->
-              srcdbg_expand(H0,B0,H1,B1,Dict)
-          ; H1 = H0, B1 = B0
-          ),
-          head_expansion(H1, Module, H2),
-          body_expansion(B1, Module, -, B2),
+          module_expansion(H, B, Module, Dict, Mode, _, _, H2, B2),
           compile_clause(Mode, H2, B2, Module),
           erase(Ref),
         fail.
 compile_clauses(_, _, _).
+
+module_expansion(H, B, Module, Dict, Mode, H0, B0, H2, B2) :-
+        expand_clause(H, B, Module, Dict, H0, B0),
+        ( Mode = interpreted,
+            current_fact(interpret_srcdbg(Module)) ->
+              srcdbg_expand(H0,B0,H1,B1,Dict)
+        ; H1 = H0, B1 = B0
+        ),
+        head_expansion(H1, Module, H2),
+        body_expansion(B1, Module, -, B2).
 
 compile_goal_decl(DN, Base, Module, Mode) :-
         functor(Decl, DN, 1),
@@ -2140,7 +2150,23 @@ end_brace_if_needed :-
         ; true
         ).
 
+% ---------------------------------------------------------------------------
+% Module expansion code
+
+% Enable or disable custom module expansion required by ciaopp
+:- data ciaopp_expansion_enabled/0.
+
+set_ciaopp_expansion(true) :-
+	current_fact(ciaopp_expansion_enabled), !.
+set_ciaopp_expansion(true) :-
+	asserta_fact(ciaopp_expansion_enabled).
+set_ciaopp_expansion(false) :-
+	retractall_fact(ciaopp_expansion_enabled).
+
+ciaopp_expansion :- current_fact(ciaopp_expansion_enabled).
+
 :- include(engine(mexpand)).
+% ---------------------------------------------------------------------------
 
 multifile(M, F, N) :- multifile(M, F, N, _DynMode).
 
@@ -2480,7 +2506,7 @@ compute_pred_module(_).
 qload_dyn(File, Module) :-
         now_doing(['Loading ',File]),
         '$push_qlinfo',
-        '$open'(File, read, Stream),            % Gives errors
+        '$open'(File, r, Stream),            % Gives errors
         ( qload_dyn_s(Stream, Module) -> true
         ; error_in_lns(_,_,warning, [File,' - wrong .po version number'])
         ),
@@ -2658,6 +2684,24 @@ retract_clause(Head, Body) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+91,2003/07/23,13:51*38+'CEST'), "Added
+   set_ciaopp_expansion/1 to activate custom module expansions
+   required by CiaoPP (Jose Morales)").
+
+:- comment(version(1*9+71,2003/03/27,19:32*10+'CET'), "Changed Error
+   message to Warning message when a use_module is done on a user
+   file. (Daniel Cabeza Gras)").
+
+:- comment(version(1*9+70,2003/03/21,19:54*14+'CET'), "Fixed bug
+   derived from the assertion of several facts file_data_1/3 referring
+   to the same base, which produced the duplication of clauses of
+   modules used by several modules in the program. Thanks to
+   @index{Stephen Craig} for pointing out this bug. (Daniel Cabeza
+   Gras)").
+
+:- comment(version(1*9+39,2002/12/12,20:47*57+'CET'), "Exported
+   module_expansion.  (Francisco Bueno - Daniel Cabeza)").
 
 :- comment(version(1*7+202,2002/04/19,19:34*03+'CEST'), "Fixed bug
    happening when a file redefined an operator name with a different

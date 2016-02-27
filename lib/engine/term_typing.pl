@@ -15,7 +15,8 @@
         for testing types.  They depend on the state of instantiation of
         their arguments, thus being of extra-logical nature.").
 
-:- true prop ground(@X) # "@var{X} is currently ground (it contains no variables).".
+:- true prop ground(@X) => gnd(X) + native
+	# "@var{X} is currently ground (it contains no variables).".
 
 ground(Term):-
 	nonvar(Term),
@@ -32,37 +33,41 @@ ground_(N,Term):-
 
 % Compiled inline -- these are hooks for the interpreter.
 
-:- true prop atom(@X) # "@var{X} is currently instantiated to an atom.".
+:- true prop atom(@X)=> atm(X) + native
+	# "@var{X} is currently instantiated to an atom.".
 
 atom(X) :- atom(X).
 
-:- true prop atomic(@X) # "@var{X} is currently instantiated to an atom or a
-   number.".
+:- true prop atomic(@X) + native
+	# "@var{X} is currently instantiated to an atom or a number.".
 
 atomic(X) :- atomic(X).
 
-:- true prop float(@X) # "@var{X} is currently instantiated to a float.".
+:- true prop float(@X) => flt(X) + native
+	# "@var{X} is currently instantiated to a float.".
 
 float(X) :- float(X).
 
-:- true prop integer(@X) # "@var{X} is currently instantiated to an integer.".
+:- true prop integer(@X) => int(X) + native
+	# "@var{X} is currently instantiated to an integer.".
 
 integer(X) :- integer(X).
 
-:- true prop nonvar(@X) 
+:- true prop nonvar(@X) + native
    # "@var{X} is currently a term which is not a free variable.".
 
 nonvar(X) :- nonvar(X).
 
-:- true prop number(@X) # "@var{X} is currently instantiated to a number.".
+:- true prop number(@X) => num(X) + native
+	# "@var{X} is currently instantiated to a number.".
 
 number(X) :- number(X).
 
-:- true prop var(@X) # "@var{X} is a free variable.".
+:- true prop var(@X) + native # "@var{X} is a free variable.".
 
 var(X) :- var(X).
 
-:- true prop type(X,Y) => atm(Y) # "@var{X} is internally of type
+:- true prop type(X,Y) => atm(Y) + native # "@var{X} is internally of type
    @var{Y} (@tt{var}, @tt{attv}, @tt{float}, @tt{integer},
    @tt{structure}, @tt{atom} or @tt{list}).".
 

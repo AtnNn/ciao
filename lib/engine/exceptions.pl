@@ -16,7 +16,7 @@
 :- primitive_meta_predicate(catch(goal, ?, goal)).
 :- primitive_meta_predicate(intercept(goal, ?, goal)).
 
-:- true pred halt + iso.
+:- true pred halt + (iso, native).
 
 :- comment(halt, "Halt the system, exiting to the invoking shell.").
 

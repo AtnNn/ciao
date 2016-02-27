@@ -31,12 +31,16 @@ freeze(X, Goal) :-
         attach_attribute( V, '$frozen_goals'(V,Goal)),
         X = V.
 
+:- comment(hide,verify_attribute/2).
+
 :- multifile verify_attribute/2.
 
 verify_attribute('$frozen_goals'(Var, Goal), Value):-
         detach_attribute(Var),
         Var = Value, 
         call(Goal).
+
+:- comment(hide,combine_attributes/2).
 
 :- multifile combine_attributes/2.
 

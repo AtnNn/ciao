@@ -1,5 +1,5 @@
 
-:- module(meta_props,[call/2, prop/2, regtype/2],[assertions]).
+:- module(meta_props,[call/2, prop/2, regtype/2],[assertions, hiord]).
 
 %:- use_module(engine(basic_props),[callable/1]).
 
@@ -43,8 +43,10 @@
 :- true prop call(P,A) : callable(P)
    # "@var{A} has property @var{P}.".
 
-:- impl_defined(call/2).
+%:- impl_defined(call/2).
 % Belongs to basiccontrol, defined as an expansion in the compiler.
+
+call(P,A):- hiord_rt:call(P,A).
 
 :- true prop prop(A,P) : prop(P,^ (callable;prop_abs))
    # "@var{A} has property @var{P}.".
@@ -110,6 +112,9 @@ regtype(A,P):- prop(A,P).
 	define @tt{callme/2} in your program).").
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+16,2002/10/10,20:41*38+'CEST'), "call/2 now
+   requires package hiord.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+167,2002/01/03,17:43*50+'CET'), "Into version
    tracking (MCL)").

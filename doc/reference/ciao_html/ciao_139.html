@@ -1,47 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - HTTP conectivity</TITLE>
+<TITLE>The Ciao Prolog System               - oval_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC540" HREF="ciao_toc.html#TOC540">HTTP conectivity</A></H1>
+<H1><A NAME="SEC577" HREF="ciao_toc.html#TOC577">oval_class (library)</A></H1>
 <P>
-<A NAME="IDX5375"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
-
-
-<P>
-This module implements the 
-<A NAME="IDX5376"></A>
-HTTP protocol, which allows retrieving data from HTTP servers.
+<A NAME="IDX5975"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_139.html#SEC541">Usage and interface (http)</A>
-<LI><A HREF="ciao_139.html#SEC542">Documentation on exports (http)</A>
+<LI><A HREF="ciao_139.html#SEC578">Usage and interface (oval_class)</A>
+<LI><A HREF="ciao_139.html#SEC579">Documentation on exports (oval_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC541" HREF="ciao_toc.html#TOC541">Usage and interface (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC578" HREF="ciao_toc.html#TOC578">Usage and interface (<CODE>oval_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,7 +31,7 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(http)).</CODE>
+<CODE>:- use_module(library(oval_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -58,8 +40,16 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5377"></A>
-<CODE>fetch_url/3</CODE>.
+<A NAME="IDX5976"></A>
+<CODE>coord/4</CODE>, 
+<A NAME="IDX5977"></A>
+<CODE>width/1</CODE>, 
+<A NAME="IDX5978"></A>
+<CODE>height/1</CODE>, 
+<A NAME="IDX5979"></A>
+<CODE>center/2</CODE>, 
+<A NAME="IDX5980"></A>
+<CODE>outline_color/1</CODE>.
 
 </UL>
 
@@ -70,16 +60,8 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5378"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX5379"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX5380"></A>
-<CODE>pillow/pillow_aux</CODE>, 
-<A NAME="IDX5381"></A>
-<CODE>pillow/pillow_types</CODE>, 
-<A NAME="IDX5382"></A>
-<CODE>pillow/http_ll</CODE>.
+<A NAME="IDX5981"></A>
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -89,43 +71,181 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 
 
-<H2><A NAME="SEC542" HREF="ciao_toc.html#TOC542">Documentation on exports (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC579" HREF="ciao_toc.html#TOC579">Documentation on exports (<CODE>oval_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5383"></A>
-<A NAME="IDX5384"></A>
+<A NAME="IDX5982"></A>
+<A NAME="IDX5983"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
-<DD><A NAME="IDX5385"></A>
+<DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
+<DD><A NAME="IDX5984"></A>
 
 
 <P>
-<CODE>fetch_url(URL,Request,Response)</CODE>
-
-
-<P>
-Fetches the document pointed to by <CODE>URL</CODE> from Internet, using request parameters <CODE>Request</CODE>, and unifies <CODE>Response</CODE> with the parameters of the response. Fails on timeout. Note that redirections are not handled automatically, that is, if <CODE>Response</CODE> contains terms of the form <CODE>status(redirection,301,_)</CODE> and <CODE>location(NewURL)</CODE>, the program should in most cases access location <CODE>NewURL</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>fetch_url(URL,Request,Response)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X1,+Y1,+X2,+Y2)</CODE>
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval.
 
-<CODE>URL</CODE> specifies a URL.
- (<CODE>pillow_types:url_term/1</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Request</CODE> is a list of <CODE>http_request_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
+<CODE>+X1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Response</CODE> is a list of <CODE>http_response_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Y1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+X2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5985"></A>
+<A NAME="IDX5986"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>width/1:</B>
+<DD><A NAME="IDX5987"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5988"></A>
+<A NAME="IDX5989"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>height/1:</B>
+<DD><A NAME="IDX5990"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Heigh</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5991"></A>
+<A NAME="IDX5992"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>center/2:</B>
+<DD><A NAME="IDX5993"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>center(+X,+Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>center(-X,-Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5994"></A>
+<A NAME="IDX5995"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
+<DD><A NAME="IDX5996"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the oval's outline. This option defaults to black.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets oval's outline <CODE>Color</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_138.html">previous</A>, <A HREF="ciao_140.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

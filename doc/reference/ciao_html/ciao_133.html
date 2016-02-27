@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - oval_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - entry_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC520" HREF="ciao_toc.html#TOC520">oval_class (library)</A></H1>
+<H1><A NAME="SEC559" HREF="ciao_toc.html#TOC559">entry_class (library)</A></H1>
 <P>
-<A NAME="IDX5191"></A>
+<A NAME="IDX5872"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_133.html#SEC521">Usage and interface (oval_class)</A>
-<LI><A HREF="ciao_133.html#SEC522">Documentation on exports (oval_class)</A>
+<LI><A HREF="ciao_133.html#SEC560">Usage and interface (entry_class)</A>
+<LI><A HREF="ciao_133.html#SEC561">Documentation on exports (entry_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC521" HREF="ciao_toc.html#TOC521">Usage and interface (<CODE>oval_class</CODE>)</A></H2>
+<H2><A NAME="SEC560" HREF="ciao_toc.html#TOC560">Usage and interface (<CODE>entry_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(oval_class)).</CODE>
+<CODE>:- use_module(library(entry_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,16 +40,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5192"></A>
-<CODE>coord/4</CODE>, 
-<A NAME="IDX5193"></A>
-<CODE>width/1</CODE>, 
-<A NAME="IDX5194"></A>
-<CODE>height/1</CODE>, 
-<A NAME="IDX5195"></A>
-<CODE>center/2</CODE>, 
-<A NAME="IDX5196"></A>
-<CODE>outline_color/1</CODE>.
+<A NAME="IDX5873"></A>
+<CODE>textvariable_entry/1</CODE>, 
+<A NAME="IDX5874"></A>
+<CODE>textvariablevalue_string/1</CODE>, 
+<A NAME="IDX5875"></A>
+<CODE>textvariablevalue_number/1</CODE>, 
+<A NAME="IDX5876"></A>
+<CODE>justify_entry/1</CODE>.
 
 </UL>
 
@@ -60,8 +58,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5197"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX5877"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX5878"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX5879"></A>
+<CODE>tcltk/examples/tk_test_aux</CODE>, 
+<A NAME="IDX5880"></A>
+<CODE>tcltk/tcltk</CODE>.
 
 </UL>
 
@@ -71,181 +75,144 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>,
 
 
 
-<H2><A NAME="SEC522" HREF="ciao_toc.html#TOC522">Documentation on exports (<CODE>oval_class</CODE>)</A></H2>
+<H2><A NAME="SEC561" HREF="ciao_toc.html#TOC561">Documentation on exports (<CODE>entry_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5198"></A>
-<A NAME="IDX5199"></A>
+<A NAME="IDX5881"></A>
+<A NAME="IDX5882"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
-<DD><A NAME="IDX5200"></A>
+<DT><span class="define">PREDICATE:</span> <B>textvariable_entry/1:</B>
+<DD><A NAME="IDX5883"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>coord(+X1,+Y1,+X2,+Y2)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>textvariable_entry(+Variable)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval.
+<LI><EM>Description:</EM> <CODE>Variable</CODE> specifies the name of the Tcl variable
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+X1</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y1</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+X2</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y2</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5201"></A>
-<A NAME="IDX5202"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>width/1:</B>
-<DD><A NAME="IDX5203"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5204"></A>
-<A NAME="IDX5205"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>height/1:</B>
-<DD><A NAME="IDX5206"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies shape's <CODE>Heigh</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Height</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Height</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5207"></A>
-<A NAME="IDX5208"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>center/2:</B>
-<DD><A NAME="IDX5209"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>center(+X,+Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>center(-X,-Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>-Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5210"></A>
-<A NAME="IDX5211"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
-<DD><A NAME="IDX5212"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the oval's outline. This option defaults to black.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Color</CODE> is currently instantiated to an atom.
+<CODE>+Variable</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>textvariable_entry(-Variable)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets oval's outline <CODE>Color</CODE>.
+<LI><EM>Description:</EM> Gets the name of the Tcl <CODE>Variable</CODE> associated to the entry
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Color</CODE> is currently instantiated to an atom.
+<CODE>-Variable</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5884"></A>
+<A NAME="IDX5885"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>textvariablevalue_string/1:</B>
+<DD><A NAME="IDX5886"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>textvariablevalue_string(+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies the <CODE>Value</CODE> of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>textvariablevalue_string(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> is the value of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5887"></A>
+<A NAME="IDX5888"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>textvariablevalue_number/1:</B>
+<DD><A NAME="IDX5889"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>textvariablevalue_number(+Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies the <CODE>Value</CODE> of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>textvariablevalue_number(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> is the value of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5890"></A>
+<A NAME="IDX5891"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>justify_entry/1:</B>
+<DD><A NAME="IDX5892"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>justify_entry(+How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text in the entry. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+How</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>justify_entry(-How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-How</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_132.html">previous</A>, <A HREF="ciao_134.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

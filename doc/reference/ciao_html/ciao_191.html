@@ -1,37 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 August 2003 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget2 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Color and Pattern Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC725" HREF="ciao_toc.html#TOC725">table_widget2 (library)</A></H1>
+<H1><A NAME="SEC761" HREF="ciao_toc.html#TOC761">Color and Pattern Library</A></H1>
 <P>
-<A NAME="IDX7274"></A>
-
-
-<P>
-In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row is bold. The remaining elements are in medium weight font. 
+<A NAME="IDX7853"></A>
 
 
 <P>
-If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
+This module contains predicates to access and check conformance to the available colors and patterns.
 
 
 
 <UL>
-<LI><A HREF="ciao_191.html#SEC726">Usage and interface (table_widget2)</A>
-<LI><A HREF="ciao_191.html#SEC727">Documentation on exports (table_widget2)</A>
+<LI><A HREF="ciao_191.html#SEC762">Usage and interface (color_pattern)</A>
+<LI><A HREF="ciao_191.html#SEC763">Documentation on exports (color_pattern)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC726" HREF="ciao_toc.html#TOC726">Usage and interface (<CODE>table_widget2</CODE>)</A></H2>
+<H2><A NAME="SEC762" HREF="ciao_toc.html#TOC762">Usage and interface (<CODE>color_pattern</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +35,7 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(table_widget2)).</CODE>
+<CODE>:- use_module(library(color_pattern)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,10 +44,25 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7275"></A>
-<CODE>tablewidget2/4</CODE>, 
-<A NAME="IDX7276"></A>
-<CODE>tablewidget2/5</CODE>.
+<A NAME="IDX7854"></A>
+<CODE>color/2</CODE>, 
+<A NAME="IDX7855"></A>
+<CODE>pattern/2</CODE>, 
+<A NAME="IDX7856"></A>
+<CODE>random_color/1</CODE>, 
+<A NAME="IDX7857"></A>
+<CODE>random_lightcolor/1</CODE>, 
+<A NAME="IDX7858"></A>
+<CODE>random_darkcolor/1</CODE>, 
+<A NAME="IDX7859"></A>
+<CODE>random_pattern/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7860"></A>
+<CODE>color/1</CODE>, 
+<A NAME="IDX7861"></A>
+<CODE>pattern/1</CODE>.
 
 </UL>
 
@@ -62,18 +73,10 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7277"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7278"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7279"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX7280"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7281"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7282"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX7862"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7863"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -83,73 +86,249 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 
-<H2><A NAME="SEC727" HREF="ciao_toc.html#TOC727">Documentation on exports (<CODE>table_widget2</CODE>)</A></H2>
+<H2><A NAME="SEC763" HREF="ciao_toc.html#TOC763">Documentation on exports (<CODE>color_pattern</CODE>)</A></H2>
 <P>
-<A NAME="IDX7283"></A>
-<A NAME="IDX7284"></A>
+<A NAME="IDX7864"></A>
+<A NAME="IDX7865"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget2/4:</B>
-<DD><A NAME="IDX7285"></A>
+<DT><span class="define">REGTYPE:</span> <B>color/1:</B>
+<DD><A NAME="IDX7866"></A>
 
 
 <P>
-<CODE>tablewidget2(Title,Header,ElementTable,Footer)</CODE>
+<CODE>color(Color)</CODE>
 
 
-<P>
-Shows a regular table in a window. The system sets a default background image for the widget. 
-
-
-<P>
-Example: 
 
 <PRE>
-tablewidget2('COM Features',
-	     'Extracted from "Inside COM" book ',
-	     [['Feature','Rich people','Bean Plants','C++','COM'],
-	       ['Edible','Yes','Yes','No','No'],
-	       ['Supports inheritance','Yes','Yes','Yes','Yes and No'],
-	       ['Can run for President','Yes','No','No','No']],
-	     'What do you think about COM?').
+color('GreenYellow').
+color('Yellow').
+color('White').
+color('Wheat').
+color('BlueViolet').
+color('Violet').
+color('MediumTurquoise').
+color('DarkTurquoise').
+color('Turquoise').
+color('Thistle').
+color('Tan').
+color('Sienna').
+color('Salmon').
+color('VioletRed').
+color('OrangeRed').
+color('MediumVioletRed').
+color('IndianRed').
+color('Red').
+color('Plum').
+color('Pink').
+color('MediumOrchid').
+color('DarkOrchid').
+color('Orchid').
+color('Orange').
+color('Maroon').
+color('Magenta').
+color('Khaki').
+color('Grey').
+color('LightGray').
+color('DimGray').
+color('DarkSlateGray').
+color('YellowGreen').
+color('SpringGreen').
+color('SeaGreen').
+color('PaleGreen').
+color('MediumSpringGreen').
+color('MediumSeaGreen').
+color('LimeGreen').
+color('ForestGreen').
+color('DarkOliveGreen').
+color('DarkGreen').
+color('Green').
+color('Goldenrod').
+color('Gold').
+color('Brown').
+color('Firebrick').
+color('Cyan').
+color('Coral').
+color('SteelBlue').
+color('SlateBlue').
+color('SkyBlue').
+color('Navy').
+color('MidnightBlue').
+color('MediumSlateBlue').
+color('MediumBlue').
+color('LightSteelBlue').
+color('LightBlue').
+color('DarkSlateBlue').
+color('CornflowerBlue').
+color('CadetBlue').
+color('Blue').
+color('Black').
+color('MediumAquamarine').
+color('Aquamarine').
 </PRE>
+
+<P>
+Defines available colors for elements such as points, lines or bars. 
+
 
 </DL>
 
 <P>
-<A NAME="IDX7286"></A>
-<A NAME="IDX7287"></A>
+<A NAME="IDX7867"></A>
+<A NAME="IDX7868"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget2/5:</B>
-<DD><A NAME="IDX7288"></A>
+<DT><span class="define">PREDICATE:</span> <B>color/2:</B>
+<DD><A NAME="IDX7869"></A>
 
 
 <P>
-<CODE>tablewidget2(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+<STRONG>Usage:</STRONG> <CODE>color(C1,C2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether the color <CODE>C1</CODE> is a valid color or not. If <CODE>C1</CODE> is a variable the predicate will choose a valid color randomly. If <CODE>C1</CODE> is a ground term that is not a valid color an exception (error9) will be thrown
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>color_pattern:color(C1)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>color_pattern:color(C2)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7870"></A>
+<A NAME="IDX7871"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX7872"></A>
 
 
 <P>
-This predicate and 
-<A NAME="IDX7289"></A>
-<CODE>tablewidget2/4</CODE> are quite similar, except that in the already one defined you must set the background image. 
+<CODE>pattern(Pattern)</CODE>
 
 
-<P>
-Example: 
 
 <PRE>
-tablewidget2('COM Features',
-	     'Extracted from "Inside COM" book ',
-	     [['Feature','Rich people','Bean Plants','C++','COM'],
-	       ['Edible','Yes','Yes','No','No'],
-	       ['Supports inheritance','Yes','Yes','Yes','Yes and No'],
-	       ['Can run for President','Yes','No','No','No']],
-	     'What do you think about COM?',
-	     './images/rain.gif').
+pattern(pattern1).
+pattern(pattern2).
+pattern(pattern3).
+pattern(pattern4).
+pattern(pattern5).
+pattern(pattern6).
+pattern(pattern7).
+pattern(pattern8).
+pattern(pattern9).
 </PRE>
+
+<P>
+Defines valid patterns used in the stipple style bar attribute. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7873"></A>
+<A NAME="IDX7874"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pattern/2:</B>
+<DD><A NAME="IDX7875"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P1,P2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether the pattern <CODE>P1</CODE> is a valid pattern or not. If <CODE>P1</CODE> is a variable the predicate will choose a valid pattern randomly. If <CODE>P1</CODE> is a ground term that is not a valid pattern an exception (error10) will be thrown.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>color_pattern:pattern(P1)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>color_pattern:pattern(P2)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7876"></A>
+<A NAME="IDX7877"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_color/1:</B>
+<DD><A NAME="IDX7878"></A>
+
+
+<P>
+<CODE>random_color(Color)</CODE>
+
+
+<P>
+This predicate choose a valid color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7879"></A>
+<A NAME="IDX7880"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_lightcolor/1:</B>
+<DD><A NAME="IDX7881"></A>
+
+
+<P>
+<CODE>random_lightcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid light color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7882"></A>
+<A NAME="IDX7883"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_darkcolor/1:</B>
+<DD><A NAME="IDX7884"></A>
+
+
+<P>
+<CODE>random_darkcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid dark color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7885"></A>
+<A NAME="IDX7886"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_pattern/1:</B>
+<DD><A NAME="IDX7887"></A>
+
+
+<P>
+<CODE>random_pattern(Pattern)</CODE>
+
+
+<P>
+This predicate choose a valid pattern among the availables randomly. 
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_190.html">previous</A>, <A HREF="ciao_192.html">next</A>, <A HREF="ciao_232.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

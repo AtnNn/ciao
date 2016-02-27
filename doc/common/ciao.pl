@@ -154,6 +154,21 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*9+38,2002/12/12,20:06*26+'CET'), "Manual now
+   posted in pdf format (since lpdoc now generates much better pdf).
+   (Manuel Hermenegildo)").
+
+:- comment(version(1*9+34,2002/11/30,14:42*45+'CET'), "Installation
+   can now be done in Test distribution directory (for testing
+   purposes).  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+33,2002/11/30,14:37*10+'CET'), "Modified
+   installation site text to make more explicit the fact that we
+   support Mac OS X and XP.  (Manuel Hermenegildo)").
+
+:- comment(version(1*9+0,2002/05/16,23:17*34+'CEST'), " New
+development version after stable 1.8p0 (MCL, DCG)").
+
 :- comment(version(1*8+0,2002/05/16,21:20*27+'CEST'), "
 @begin{itemize}
 @item Improvements related to supported platforms:
@@ -369,7 +384,7 @@ now locally adds CIAOBIN path to PATH if not already present (MCL)").
    Hermenegildo)").
 
 :- comment(version(1*7+87,2001/04/08,15:15*18+'CEST'), "Added @tt{doc}
-   and @tt{installdoc} targets to top level installation @tt{Makefile}
+   and @tt{installdoc} targets to top level installation @{Makefile}
    (can be used to regenerate and reinstall documentation if
    @apl{lpdoc} is available.  (Manuel Hermenegildo)").
 
@@ -488,7 +503,7 @@ cached and next time it is needed no access to the file system is required.
       files.
 @item New concurrency primitives.
 @item Changed assertion comment operator to #.
-@item Implemented high-order with call/N.
+@item Implemented higher-order with call/N.
 @item Integrated SQL-interface to external databases with 
       persistent predicate concept. 
 @item First implementation of object oriented programming package.
