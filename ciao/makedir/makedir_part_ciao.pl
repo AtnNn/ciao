@@ -1415,9 +1415,12 @@ is_site_start_d(Dir) :-
 
 ciao_mode_lisp_desc :=
 	lib_file_list(~emacsmode_dir, 
-          ~append(
+          ~append([
+            ~addprops(['ciao-site-file.el'], [copy_and_link]),
             ~addprops(~ciao_mode_el_files, [copy_and_link]),
-            ~addprops(~ciao_mode_elc_files, [copy_and_link]))).
+            ~addprops(~ciao_mode_elc_files, [copy_and_link])
+          ])
+        ).
 
 ciao_mode_lisp_files := [
 	'word-help',
