@@ -7,7 +7,7 @@
 # endif
 
 # todo: put a name to this relative path
-include ../../../ciaosetup_modules/makefile__common
+include ../../../makedir/ciaosetup_modules/makefile__common
 
 SHELL=/bin/sh
 OBJFILES=wam.o format.o inout.o misc.o startgoal.o ciao.o \

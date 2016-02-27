@@ -1,8 +1,9 @@
 % ===========================================================================
-:- module(_, _, [make, fsyntax]).
+:- module(_, _, [ciaopaths, make, fsyntax]).
 % ===========================================================================
 :- doc(title,  "CiaoDE Compilation/Installation module").
 :- doc(author, "Edison Mera").
+:- doc(author, "Jose F. Morales").
 :- doc(module, "This file is part of the CiaoDE installation system.").
 % ===========================================================================
 
@@ -15,175 +16,175 @@
 :- use_module(engine(system_info), [get_ciao_ext/1, get_exec_ext/1]).
 
 :- use_module(library(make(system_extra))).
-:- use_module(library(distutils)).
-:- use_module(library(autoconfig)).
-:- use_module(library(distutils(readme_generator))).
-:- use_module(library(distutils(distclean))).
-:- use_module(ciaodesrc(makedir('CIAODESHARED'))).
+:- use_module(library(distutils), [component_make/2, lpmake_subdir/3]).
+:- use_module(library(component_registry)). % TODO: Refine
+:- use_module(ciaodesrc(makedir(makedir_aux))).
+:- use_module(ciaodesrc(makedir(makedir_component))).
+:- use_module(ciaodesrc(makedir(makedir_distclean))).
 :- use_module(ciaodesrc(makedir('ConfigMenu'))).
 :- use_module(ciaodesrc(makedir('ConfigValues'))).
 :- use_module(ciaodesrc(makedir('MenuOptions'))).
 :- use_module(library(aggregates)).
 :- use_module(library(unittest)).
 
-% Define options used to build the Win32 installer
-:- use_module(ciaodesrc(makedir(makedir_win32))).
+% ---------------------------------------------------------------------------
+% Targets for the distpkg generation
 
-% Define options used to build the rpm package
-:- use_module(ciaodesrc(makedir(makedir_rpm))).
+:- use_module(ciaodesrc(makedir(distpkg_gen_win32))).
+:- use_module(ciaodesrc(makedir(distpkg_gen_rpm))).
+:- use_module(ciaodesrc(makedir(distpkg_gen_mac))).
+:- use_module(ciaodesrc(makedir(distpkg_gen_src))).
+:- use_module(ciaodesrc(makedir(distpkg_gen_bin))).
+:- use_module(ciaodesrc(makedir(distpkg_gen_common))).
 
-% Define options used to build the mac package and macport protfile
-:- use_module(ciaodesrc(makedir(makedir_mac))).
-
-% Define options used to build the source/binary installer
-:- use_module(ciaodesrc(makedir(makedir_src))).
-:- use_module(ciaodesrc(makedir(makedir_bin))).
-:- use_module(ciaodesrc(makedir(makedir_base))).
+% ---------------------------------------------------------------------------
 
 :- use_module(ciaodesrc(makedir('DOCCOMMON')), [docdir/1]).
 
-:- doc(module, "
+% bootclean <- realclean + Remove the static lpmake and engine.  Note
+% 	that if you do it, you must execute the ./configure script
+% 	again.
 
-@section{Main CiaoDE Makefile}
+% ============================================================================
 
-bootclean <- realclean + Remove the static lpmake and engine.  Note
-	that if you do it, you must execute the ./configure script
-	again.").
+:- include(ciaodesrc(makedir('makedir_SHARE'))).
+component_id(ciaode).
+component_dname('CiaoDE'). % the whole system...
+component_readme_dir('doc/readmes').
+component_readme(as('README_CIAODE', 'README')).
+component_readme(as('DEVEL_CIAODE', 'DEVEL')).
+component_manual_dir(_) :- fail.
 
+% ============================================================================
 
-all <- [allciao, chr, allextra] :- true.
+component_all <- [all_ciao, all_chr, all_extra] :- true.
 
-'ciaosetup_modules/ciaosetup.opts' <- 'ciao/makedir/MenuOptions.pl'
+'makedir/ciaosetup_modules/ciaosetup.opts' <- 'ciao/makedir/MenuOptions.pl'
 	:: File :-
 	output_to_file(ciaosetup_opts, File).
 
-allciao <- :-
-	lpmake_subdir(ciao, makedir_part_ciao, all).
+all_ciao <- :- component_make(ciao, all).
 
-chr <- :-
-	lpmake_subdir(ciao, makedir_part_ciao, chr).
+all_chr <- :- component_make(ciao, chr). % TODO: CHR should be a subcomponent of libs or contrib
 
-allextra <- :-
-	make_extracomponent(all).
+all_extra <- :-
+	extra_components_make(all).
 
 platdep <- [] :-
-	make_component(platdep).
+	all_components_make(platdep).
 
-make_extracomponent(Target) :-
-	(
-	    extracomponent(P),
-	    ( lpmake_subdir(P, ~atom_concat(makedir_part_, P), Target)
-	    -> true ),
+% invoke lpmake Target on all extra components
+extra_components_make(Target) :-
+	( % (failure-driven loop)
+          extra_component(P),
+	    component_make(P, Target),
 	    fail
-	;
-	    true
+	; true
 	).
 
-make_component(Target) :-
-	(
-	    component(P),
-	    ( lpmake_subdir(P, ~atom_concat(makedir_part_, P), Target) -> true ),
+% invoke lpmake Target on all components
+all_components_make(Target) :-
+	( % (failure-driven loop)
+	  component(P),
+	    component_make(P, Target),
 	    fail
-	;
-	    true
+	; true
+	).
+
+% invoke lpmake Target on all components (reverse order)
+allrev_components_make(Target) :-
+	( % (failure-driven loop)
+	  ( extra_component(P)
+	  ; basic_component(P)
+	  ),
+	    component_make(P, Target),
+	    fail
+	; true
 	).
 
 allnolibsextra <- :-
-	make_extracomponent(allnolibs).
+	extra_components_make(allnolibs).
 
 librariesextra <- :-
-	make_extracomponent(libraries).
+	extra_components_make(libraries).
 
 applicationsextra <- :-
-	make_extracomponent(applications).
+	extra_components_make(applications).
 
-docs <- [docsreadmes] :-
-	make_component(docs).
+docs <- ['build/doc', docs_readmes] :-
+	all_components_make(docs).
 
 'build/doc' <- :-
 	mkdir_perm('build', ~perms),
 	mkdir_perm('build/doc', ~perms).
 
-docsreadmes <- ['build/doc'] :-
-	output_to_file(ciaosetup_opts, 'doc/readmes/configure_help.tmp'),
-	SrcDir = ~atom_concat([~component_src(ciaode), '/doc/readmes']),
-	DocDir = 'build/doc',
-	Files = [as('README_CIAODE', 'README'),
-	         as('DEVEL_CIAODE', 'DEVEL')],
-	generate_readme_files(Files, SrcDir, DocDir).
+component_register <- :- true.
+component_unregister <- :- true.
 
-install <- :-
-	install.
-
-installdoc <- :-
-	installdoc.
-installdoc :-
-	make_component(installdoc).
-
-install :-
-	install_ciao,
-	install_extras.
-
-install_ciao :-
-	lpmake_subdir(ciao, makedir_part_ciao, install).
+component_install <- :-
+	component_install.
+component_install :-
+	all_components_make(install).
 
 install_extras <- :-
 	install_extras.
 
 install_extras :-
-	make_extracomponent(install).
+	extra_components_make(install).
 
-uninstall <- :-
-	uninstall.
+component_uninstall <- :-
+	component_uninstall.
 
-uninstall :-
-	uninstall_extras,
-	uninstall_ciao.
+component_uninstall :-
+	% (uninstall must be performed in reverse dependency order)
+	allrev_components_make(uninstall).
 
-uninstall_extras :-
-	make_extracomponent(uninstall).
+% ---------------------------------------------------------------------------
 
-uninstall_ciao :-
-	bold_message("Uninstalling Ciao"),
-	lpmake_subdir(ciao, makedir_part_ciao, uninstall),
-	make_subdir(~lpmake, ~gmake, 'ciao', '', uninstalleng,
-	    ~command_option),
-	bold_message("Ciao uninstallation completed").
+% TODO: automatically done by install
+installdoc <- :-
+	installdoc.
+installdoc :-
+	all_components_make(installdoc).
 
-unreconfigure <- :-
-	unreconfigure.
+% ---------------------------------------------------------------------------
 
-unreconfigure :-
-	make_extracomponent(unreconfigure),
-	lpmake_subdir(ciao, makedir_part_ciao, unreconfigure).
+% TODO: automatically done by install
+register_all <- :-
+	all_components_make(component_register),
+	register_message.
 
-reconfigure <- :-
-	lpmake_subdir(ciao, makedir_part_ciao, reconfigure),
-	make_extracomponent(reconfigure),
+% TODO: Is this message shown in normal installations?
+% ((un)register_all is automatically invoked from (un)install)
+register_message :-
 	bold_message(
-"Your initialization files have been modified for Ciao execution.
-You must make sure they are re-read (by, e.g., logging out and
-back into your system) before using any Ciao component.").
+"Your initialization files have been modified for Ciao execution.\n"||
+"You must make sure they are re-read (by, e.g., logging out and\n"||
+"back into your system) before using any Ciao component.").
+
+% TODO: automatically done by uninstall
+unregister_all <- :-
+	unregister_all.
+
+unregister_all :-
+	% (unregister must be performed in reverse dependency order)
+	allrev_components_make(component_unregister).
+
+% ---------------------------------------------------------------------------
+
+:- use_module(library(component_registry), [show_components/0]).
+
+% (available from the command line)
+show_components <- :-
+	show_components.
+
+% ---------------------------------------------------------------------------
 
 bootclean <- :-
 	do(['rm -rf bin'], fail).
 
 runtests <- [] # "Run CiaoDE tests" :-
-	runtestsciao,
-	runtestsextra.
-
-runtestsciao :-
-	lpmake_subdir(ciao, makedir_part_ciao, runtests).
-
-runtestsextra :-
-	make_extracomponent(runtests).
+	all_components_make(runtests).
 
 runbenchmarks <- [] # "Run CiaoDE benchmarks" :-
-	runbenchmarksciao,
-	runbenchmarksextra.
-
-runbenchmarksciao :-
-	lpmake_subdir(ciao, makedir_part_ciao, runbenchmarks).
-
-runbenchmarksextra :-
-	make_extracomponent(runbenchmarks).
+	all_components_make(runbenchmarks).

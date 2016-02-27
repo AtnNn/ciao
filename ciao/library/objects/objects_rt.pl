@@ -83,11 +83,8 @@
          Nothing special needs to be done.
         ").
 
-:- doc(title,
-	"Handling with objects").
-
-:- doc(subtitle,
-	"Run-time support for O'Ciao object manipulation").
+:- doc(title, "Handling with objects").
+:- doc(subtitle, "Run-time support for O'Ciao object manipulation").
 
 :- doc(author,"Angel Fernandez Pineda").
 

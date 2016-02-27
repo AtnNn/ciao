@@ -81,6 +81,7 @@ dcg_connect(_, (P->Q), Eq, ((P->Q),Eq)) :- !.
 dcg_connect(_, X0, Eq, X) :- dcg_and(X0, Eq, X).
 
 dcg_translate_dcg(X, Y, S, S0, S) :- var(X), !,
+        % TODO: Not working, FIX
         this_module(M),
 	Y=M:phrase(X,S0,S),
         add_module_check(ensure_imported(M, phrase, 3)).
@@ -110,12 +111,37 @@ dcg_translate_dcg('|'(X,Y), (X1;Y1), S, S0, S) :- !,
 dcg_translate_dcg(!, !, S0, S0, _) :- !.
 dcg_translate_dcg({G}, call(G), S0, S0, _) :- var(G), !.
 dcg_translate_dcg({G}, G, S0, S0, _) :- !.
+% Note:
+%   We only allow module qualification of atomic goals in DCGs,
+%   to mimic the behaviour of the Ciao module system.
+%
+%   This introduces an incompatibility with DCG expansion in Prolog
+%   systems such as SICStus and SWI Prolog. Those systems propagated
+%   module qualification through control structures (e.g. M:(a,b) ===>
+%   M:a, M:b). If useful, we could add (e.g., as a parameter) that
+%   behaviour to our module system.
+%   
+dcg_translate_dcg((M:X), MX1, S, S0, S) :- nonvar(X), !,
+	MX1 = (M:X1),
+	% TODO: Use is_control(X) to emit a or error warning in case
+	%   case that a control predicate is used? (or expect
+	%   'M:,'/4).
+	dcg_translate_dcg(X, X1, S, S0, S).
 dcg_translate_dcg(X, X1, S, S0, S) :-
 	dcg_translate_dcg_atom(X, X1, S0, S).
 
 dcg_and(X, Y, Z) :- X==true, !, Z=Y.
 dcg_and(X, Y, Z) :- Y==true, !, Z=X.
 dcg_and(X, Y, (X,Y)).
+
+% TODO: Enable to control qualification errors
+% is_control(\+ _).
+% is_control((_,_)).
+% is_control((_->_)).
+% is_control((_;_)).
+% is_control('|'(_,_)).
+% is_control(!).
+% is_control(if(_,_,_)).
 
 dcg_translate_dcg_atom(X, X1, S0, S) :-
 	functor(X, F, A),

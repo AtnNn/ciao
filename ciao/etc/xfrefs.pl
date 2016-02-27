@@ -12,9 +12,10 @@
 :- reexport(library(xrefs),[ set_files/1, set_flag/1 ]).
 
 :- doc(title,"Crossed-references between files").
-:- doc(subtitle,"@bf{The CIAO System Documentation Series}").
-:- doc(subtitle,"@em{Draft printed on:} @today{}").
+:- doc(subtitle_extra,"@bf{The CIAO System Documentation Series}").
+:- doc(subtitle_extra,"@em{Draft printed on:} @today{}").
 :- doc(author,"Francisco Bueno").
+
 :- doc(module,"This module allows displaying a graph of
         crossed-references between source code in different files.
         The graph is obtained using

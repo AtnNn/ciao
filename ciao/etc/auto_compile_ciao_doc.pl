@@ -1,5 +1,6 @@
-%% CIAO syntax
 :- use_package([assertions]).  
+
+:- doc(filetype, application).
 
 :- doc(title,"Compile Ciao in an arbitrary subdirectory").
 
@@ -32,5 +33,3 @@ started.
 
 ").
 
-
-main.

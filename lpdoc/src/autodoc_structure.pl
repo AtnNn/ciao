@@ -1,4 +1,4 @@
-:- module(autodoc_structure, _, [dcg, assertions, regtypes, basicmodes, fsyntax]).
+:- module(autodoc_structure, [], [dcg, assertions, regtypes, basicmodes, fsyntax]).
 
 :- doc(title,"Handling the Document Structure").
 :- doc(author,"Jose F. Morales").

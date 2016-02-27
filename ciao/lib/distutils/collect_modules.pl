@@ -2,8 +2,7 @@
 		current_dir_module/4, current_dir_module/6],
 	    [assertions, regexp]).
 
-
-:- use_module(library(distutils(find))).
+:- use_module(library(distutils(dirutils)), [current_find/7, dir_after_dummy_/2]).
 :- use_module(library(distutils(skip_settings))).
 
 :- use_module(library(aggregates)).

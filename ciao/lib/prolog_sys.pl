@@ -1,10 +1,9 @@
 :- module(prolog_sys, [
-        statistics/0, statistics/2, predicate_property/2,
-        current_atom/1, garbage_collect/0,
+        statistics/0, statistics/2,
 	clockfreq_result/1,
 	tick_result/1,
         new_atom/1,
-% regtypes
+	% regtypes {
 	symbol_result/1,
 	gc_result/1,
 	memory_result/1,
@@ -14,54 +13,57 @@
 	memory_option/1,
 	clockfreq_option/1,
 	tick_option/1,
-	time_option/1
-],
+	time_option/1,
+	% },
+	%
+	predicate_property/2,
+	predicate_property/3, % (+1 because of addmodule)
+	%
+        current_atom/1, garbage_collect/0
+        ],
         [assertions, isomodes]).
-
-:- impl_defined([
-        statistics/0,
-        current_atom/1,
-        new_atom/1,
-        garbage_collect/0]).
 
 :- use_module(engine(internals)).
 
 :- doc(title, "Prolog system internal predicates").
 :- doc(author, "Manuel Carro").
 :- doc(author, "Daniel Cabeza").
-:- doc(author, "Mats Carlsson").
+:- doc(author, "Jos@'{e} F. Morales").
+:- doc(author, "Mats Carlsson (original author)").
 
 :- doc(module, "This module implements some miscellaneous predicates
    which provide access to some internal statistics, special properties
    of the predicates, etc.").
 
-:- doc(bug, "The space used by the process is not measured here:
-process data, code, and stack also take up memory.  The memory
-reported for atoms is not what is actually used, but the space used up
-by the hash table (which is enlarged as needed).").
+% ---------------------------------------------------------------------------
 
+:- doc(bug, "The space used by the process is not measured here:
+   process data, code, and stack also take up memory.  The memory
+   reported for atoms is not what is actually used, but the space used
+   up by the hash table (which is enlarged as needed).").
 
 :- trust pred statistics # "Prints statistics about the system.".
-
+:- impl_defined(statistics/0).
 
 :- pred statistics(Tick_option, Tick_result) 
 	: tick_option * term => tick_option * tick_result 
-# "Gather information about clock ticks (either run, user, system or
-wall tick) since last consult or since start of program.  A tick is
-the smallest amount of time that a clock can measure.".
+   # "Gather information about clock ticks (either run, user, system
+     or wall tick) since last consult or since start of program.  A
+     tick is the smallest amount of time that a clock can measure.".
 
 :- pred statistics(Clockfreq_option, Clockfreq_result) 
 	: clockfreq_option * term => clockfreq_option * clockfreq_result 
-# "Gather information about frequency of the clocks used to measure
-the ticks (either run-user, system or wall clock).  Results are
-returned in hertz.  This value also can be defined as the amount of
-ticks that a clock can measure in one second.".
+   # "Gather information about frequency of the clocks used to measure
+     the ticks (either run-user, system or wall clock).  Results are
+     returned in hertz.  This value also can be defined as the amount
+     of ticks that a clock can measure in one second.".
 
 :- pred statistics(Time_option, Time_result) 
 	: time_option * term => time_option * time_result 
-# "Gather information about time (either process time or wall time)
-since last consult or since start of program.  Results are returned in
-milliseconds. Note that internally, time is calculated as:
+   # "Gather information about time (either process time or wall time)
+     since last consult or since start of program.  Results are
+     returned in milliseconds. Note that internally, time is
+     calculated as:
 
 @begin{verbatim}
   Time_result = (Tick_result / Clockfreq_result) * 1000
@@ -71,35 +73,20 @@ milliseconds. Note that internally, time is calculated as:
 
 :- pred statistics(Memory_option, Memory_result) 
 	: memory_option * term => memory_option * memory_result
-# "Gather information about memory consumption.".
-
+   # "Gather information about memory consumption.".
 
 :- pred statistics(Garbage_collection_option, Gc_result)
 	: garbage_collection_option * term => garbage_collection_option * gc_result 
-# "Gather information about garbage collection.".
-
+   # "Gather information about garbage collection.".
 
 :- pred statistics(Symbol_option, Symbol_result) 
 	: symbol_option * term => symbol_option * symbol_result 
-# "Gather information about number of symbols and predicates.".
-
+   # "Gather information about number of symbols and predicates.".
 
 :- pred statistics(Option, ?term) # "If @var{Option} is unbound,
-it is bound to the values on the other cases.".
+   it is bound to the values on the other cases.".
 
-
-:- trust pred garbage_collect # "Forces garbage collection when called.".
-
-
-:- trust pred current_atom(Atom) => atm # "Enumerates on
-backtracking all the existing atoms in the system.".
-
-
-:- trust pred new_atom(Atom) : var => atm # "Returns, on success, a new
-atom, not existing before in the system.  The entry argument must be a
-variable.  The idea behind this atom generation is to provide a fast
-source of identifiers for new objects, concurrent predicates, etc. on
-the fly.".
+% ---------------------------------------------------------------------------
 
 :- doc(doinclude, time_option/1).  
 
@@ -112,6 +99,8 @@ time_option(usertime).
 time_option(systemtime).
 time_option(walltime).
 
+:- doc(doinclude, tick_option/1).  
+
 :- true prop tick_option(M) + regtype # "Options to get information about
    execution ticks.".
 
@@ -119,6 +108,8 @@ tick_option(runtick).
 tick_option(usertick).
 tick_option(systemtick).
 tick_option(walltick).  
+
+:- doc(doinclude, clockfreq_option/1).  
 
 :- true prop clockfreq_option(M) + regtype # "Options to get information about
    the frequency of clocks used to get the ticks.".
@@ -141,7 +132,6 @@ memory_option(local_stack).
 memory_option(trail).
 memory_option(choice).
 
-
 :- doc(doinclude, garbage_collection_option/1).
 
 :- true prop garbage_collection_option(M) + regtype # "Options to get
@@ -150,14 +140,12 @@ memory_option(choice).
 garbage_collection_option(garbage_collection).
 garbage_collection_option(stack_shifts).
 
-
 :- doc(doinclude, symbol_option/1).
 
 :- true prop symbol_option(M) + regtype # "Option to get information
    about the number of symbols in the program.".
 
 symbol_option(symbols).
-
 
 :- doc(doinclude, time_result/1).
 
@@ -195,7 +183,6 @@ space otherwise.".
 
 memory_result([A, B]):- int(A), int(B).
 
-
 :- doc(doinclude, gc_result/1).
 
 :- true prop gc_result(Result) + regtype # "@var{Result} is a
@@ -209,7 +196,6 @@ collections performed, the number of bytes freed, and the time spent
 in garbage collection.".
 
 gc_result([A, B, C]):- int(A), int(B), int(C).
-
 
 :- doc(doinclude, symbol_result/1).
 
@@ -252,23 +238,95 @@ statistics(heap, L) :- statistics(program, L).
 statistics(garbage_collection, L) :- '$gc_usage'(L).
 statistics(stack_shifts, L) :- '$stack_shift_usage'(L).
 
+% ---------------------------------------------------------------------------
+
+:- trust pred garbage_collect # "Forces garbage collection when called.".
+:- impl_defined(garbage_collect/0).
+
+% ---------------------------------------------------------------------------
+
+:- trust pred current_atom(Atom) => atm
+   # "Enumerates on backtracking all the existing atoms in the system.".
+:- impl_defined(current_atom/1).
+
+% ---------------------------------------------------------------------------
+
+:- trust pred new_atom(Atom) : var => atm # "Returns, on success, a new
+atom, not existing before in the system.  The entry argument must be a
+variable.  The idea behind this atom generation is to provide a fast
+source of identifiers for new objects, concurrent predicates, etc. on
+the fly.".
+:- impl_defined(new_atom/1).
+
+% ---------------------------------------------------------------------------
+
+:- doc(bug, "
+  The predicate @pred{predicate_property/2} needs more work:
+  @begin{itemize}
+
+  @item{Efficiency:} In order to be complete and efficient, this needs
+    to be a built-in predicate of our module system. Consulting
+    predicate properties does not seem a dangerous operation (except
+    that, when it cannot be resolved at compile-time, it prevents
+    removal of module runtime information).
+
+  @item{Correctness:} The head is automatically module-expanded on
+    call. If the head is not module-expanded, there are consistency
+    problems.  Other systems avoid those problems by disallowing the
+    import of two predicates with the same name from different
+    modules. That is clearly not a solution in Ciao.
+
+  @end{itemize}
+").   
+
+:- doc(bug, "Implement a @pred{'$predicate_property'/2} where the
+	module can be specified. That will simplify the
+	@pred{predicate_property/2} implementation").
+
+% TODO: This was disabled (it should not) --JFMC
+%:- primitive_meta_predicate(predicate_property(fact,?)).
+:- primitive_meta_predicate(predicate_property(fact,addmodule)).
+
 :- test predicate_property(Head, Prop) :
-	( Head = 'basiccontrol:true' ) => ( Prop = compiled )
-	# "Predicate property of true is compiled".
+	( Head = true ) => ( Prop = compiled )
+	# "Predicate property of @pred{true/0} is compiled".
 
 :- pred predicate_property(Head, Property)
    => callable * atm
-   # "The predicate with clause @var{Head} is @var{Property}.".
+   # "The predicate @var{Head}, visible from the current module, (a
+     goal) has the property @var{Property}.".
 
-% from the analysis:
-%LibCert% :- true success predicate_property(A,B) => ( callable(A), rt20(B) ).
-
-
-
-% :- primitive_meta_predicate(predicate_property(fact,?)).
-
-predicate_property(Head, Prop) :-
+% (CallerM added by 'addmodule')
+predicate_property(Head, Prop, CallerM) :- nonvar(Head), !,
 	'$predicate_property'(Head, Entry, Bits), % xref nondet.c
+	( predicate_property_bits(Entry, Bits, Prop)
+	; % TODO: The slow part, reimplement
+	  functor(Head, MF, N),
+	  module_unconcat(MF, EM, F),
+	  % obtain the imported module from the effective one
+	  '$imports'(CallerM, IM, F, N, EM),
+	  predicate_property_mod(IM, F, N, Prop)
+	).
+% Note: be careful with this case, non-instantiated meta-arguments may
+%       not behave as expected yet
+predicate_property(Head, Prop, CallerM) :-
+	% (enumerate all predicates defined or visible from the module)
+	% TODO: we need a '$predicate_property' that asks for the
+	%       module, this is slow too.
+	( '$defines'(CallerM, F, N), EM = CallerM, IM = CallerM
+	; '$imports'(CallerM, IM, F, N, EM)
+	),
+	%
+	module_concat(EM, F, MF),
+	functor(Head, MF, N),
+	'$predicate_property'(Head, Entry, Bits), % xref nondet.c
+	%
+	( predicate_property_bits(Entry, Bits, Prop)
+	; % TODO: The slow part, reimplement
+	  predicate_property_mod(IM, F, N, Prop)
+	).
+
+predicate_property_bits(Entry, Bits, Prop) :-
 	(   Entry=8 -> BaseProp=interpreted	% xref predtyp.h
         ;   BaseProp=compiled
         ),
@@ -277,8 +335,13 @@ predicate_property(Head, Prop) :-
 predicate_property_(0, P, P) :- !.
 predicate_property_(_, P, P).
 predicate_property_(Bits0, _, P) :-
+	% Bits0 cannot be 0,
+	% obtain in B the smaller power of 2 so that
+	%   Bits0 = Bits LOGICAL_XOR B
+	%   (e.g. Bits0 = 2'10101010, Bits = 2'10101000, B = 2'10)
 	Bits is Bits0/\(Bits0-1),
 	B is Bits0-Bits,
+	%
 	bit_decl(B, Prop),
 	predicate_property_(Bits, Prop, P).
 
@@ -287,8 +350,31 @@ bit_decl(2, (dynamic)).
 bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
 
+% TODO: Prop=exported cannot be implemented until '$exported' is added
+predicate_property_mod(M, _F, _N, Prop) :-
+	Prop = imported_from(M).
+predicate_property_mod(M, F, N, Prop) :-
+	functor(G, F, N),
+	% TODO: It repeats solutions!
+	'$meta_args'(M, G),
+	Prop = meta_predicate(G).
+
+% The reverse of module_concat
+% TODO: This is really inefficient; write in C
+%       (or adopt a hash-table approach like in optim_comp)
+module_unconcat(MF, M, F) :-
+	atom_codes(MF, MFc),
+	append(Mc, [0':|Fc], MFc),
+	atom_codes(M, Mc),
+	atom_codes(F, Fc).
+
+append([], Ys, Ys).
+append([X|Xs], Ys, [X|Zs]) :- append(Xs, Ys, Zs).
 
 /*
+% from the analysis:
+%LibCert% :- true success predicate_property(A,B) => ( callable(A), rt20(B) ).
+
 :- prop rt20/1 + regtype.
 
 rt20(compiled).

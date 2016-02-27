@@ -123,7 +123,7 @@
 %	    , chr_leash/1
 
 	  ]
-          , [ swi_mattr_global ] 
+          , [attr, expander]
 %% Ciao end
 	).
 
@@ -139,6 +139,7 @@
 %:- use_module(hprolog).
 %:- include(chr_op).
 
+:- use_module(library(attr(attr_rt)), [get_attr/3, put_attr/3]).
 :- use_module(library(chr(hprolog))).
 :- include( library( 'chr/chr_op') ).
 :- use_module(library(write), [print/1]).

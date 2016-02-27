@@ -5,7 +5,7 @@
 # make ciaosh     compiles the ciao interactive toplevel
 # make ciao-shell compiles the ciao-script runtime
 
-include ../../ciaosetup_modules/makefile__common
+include ../../makedir/ciaosetup_modules/makefile__common
 include ../SETTINGS
 include ../SHARED
 

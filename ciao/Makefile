@@ -21,16 +21,6 @@
 # make distclean        delete all files which can be automatically generated
 # make engclean		delete all engines created
 # make totalclean       cleanbackups + distclean
-# 
-# make docs             regenerate all manuals from the sources. 
-#                       NOTE: This can only be done if lpdoc has been 
-#                       installed previously.   
-#                       It does need not be done during a normal install, 
-#                       since the distribution comes with up to date 
-#                       documentation.
-# 
-# make installdoc       a subset of 'make install', which only installs the 
-#                       documentation. Useful after 'make docs'. 
 
 
 #------- You should not change ANYTHING in this file -------------
@@ -65,7 +55,7 @@
 # CIAODESRC=$(PWD)/..
 SRC=$(CIAODESRC)
 
-include ../ciaosetup_modules/makefile__common
+include ../makedir/ciaosetup_modules/makefile__common
 -include SETTINGS
 -include SHARED
 
@@ -75,7 +65,7 @@ GMAKEOPTS="--no-print-directory"
 GMAKE=$(MAKE) $(GMAKEOPTS)
 #GMAKE=$(MAKE)
 
-.PHONY: docs installdoc engine
+.PHONY: engine
 
 default: all$(ALT)
 
@@ -437,12 +427,8 @@ installincludes:
 
 fullinstall:
 	$(GMAKE) all
-	$(GMAKE) docs
+	$(LPMAKECMD) docs
 	$(GMAKE) install
-
-# install:
-# 	$(GMAKE) all
-# 	$(GMAKE) justinstall
 
 installsrc: reconfiguresrc
 
@@ -522,22 +508,6 @@ reconfiguresrc:
 unreconfigure:
 	$(LPMAKECMD) unreconfigure
 
-install:
-	$(LPMAKECMD) justinstall reconfigure
-
-justinstall:
-	$(LPMAKECMD) justinstall
-
-docs:
-#	cd emacs-mode && $(GMAKE) docs
-	$(LPMAKECMD) docs
-
-docsemacs:
-	$(LPMAKECMD) docsemacs
-
-installdoc:
-	$(LPMAKECMD) installdoc
-
 uninstalletc:
 	(cd etc && $(LPMAKECMD) uninstall)
 
@@ -548,10 +518,6 @@ uninstall:
 #	-rm -rf $(BUILDREALLIBDIR)
 #	-rm -r $(LIBDIR)
 	@$(BOLDER_MESSAGE) "Ciao uninstallation completed"
-
-uninstalldoc:
-	@$(LPMAKECMD) uninstalldoc
-#	cd doc && $(GMAKE) uninstall
 
 test:
 	(cd examples/misc && $(GMAKE) distclean suite && $(GMAKE) exec_suite)

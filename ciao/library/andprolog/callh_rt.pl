@@ -9,6 +9,7 @@
 :- use_module(library(andprolog(andprolog_props))).
 
 :- use_module(library(apll)).
+:- use_module(library(odd)).
 
 
 %%**********************************************************************
@@ -23,13 +24,18 @@
 
 call_handler(Handler) :-
 	retrieve_goal(Handler,Goal),
+ %%   	display(agent_stealing(Handler,Goal)),nl,	
 	call(Goal),
+ %% 	not_measure,
+ %%  	retrieve_goal(Handler,Goal),
+ %%     display(agent_new_answer(Handler,Goal)), nl,
 	enter_mutex(Handler),
 	save_end_execution(Handler),
 	set_goal_finished(Handler),
 	exit_mutex(Handler),
 	release(Handler).
 call_handler(Handler) :-
+ %%    	display(agent_fail(Handler)), nl,
 	enter_mutex(Handler),
 	set_goal_failed(Handler),
 	exit_mutex(Handler),
@@ -44,8 +50,8 @@ call_handler(Handler) :-
 
 call_det_handler(Handler) :-
 	retrieve_goal(Handler,Goal),
-	call(Goal) ->
 	(
+	    call(Goal) ->
 	    enter_mutex(Handler),
 	    set_goal_finished(Handler),
 	    exit_mutex(Handler),

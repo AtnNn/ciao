@@ -1,36 +1,15 @@
-:- module(_, _, [fsyntax, assertions]).
+:- module(_, _, [ciaopaths, fsyntax, assertions]).
 
 :- use_module(library(system)).
 :- use_module(library(terms), [atom_concat/2]).
-:- use_module(library(autoconfig)).
+:- use_module(library(component_registry), [component_src/2, component_ins/2]).
 :- use_module(ciaodesrc(makedir('ConfigValues'))).
 
 :- reexport(ciaodesrc(makedir('DOCCOMMON'))).
 
-% ---------------------------------------------------------------------------
-% Distpkg (distribution package) definitions
-
-distpkg_name := 'ciao'.
-% TODO: this avoids duplicated code; language support would make it nicer
-:- include(library(distutils(distpkg_versions__template))).
-:- use_module(library(distutils(distpkg_versions))).
-:- export(distpkg_version/1).
-:- export(distpkg_version_nice/1).
-:- export(distpkg_name_version/1).
-
-% ----------------------------------------------------------------------------
-% Directories
-
-:- pred distpkg_root_dir(PackageRootDir) => atm(PackageRootDir)
-
-# "@var{PackageRootDir} defines the root directory from where the
-  package actions (generations of tars, documentation, version ...)
-  will take place (do not forget the / at the end of the path).
-
-  Example: distpkg_root_dir := '/home/clip/Systems/CiaoDE/'.".
-
-% TODO: review
-distpkg_root_dir := ~atom_concat(~component_src(ciao), '/').
+% the component that contains this manual
+:- export(parent_component/1).
+parent_component := 'ciao'.
 
 % ----------------------------------------------------------------------------
 % Paths and options for components
@@ -72,12 +51,10 @@ pathsfile := ~atom_concat(~component_ins(ciao), '/doc/common/doc_ops.pl').
 startpage := 1.
 papertype := afourpaper.
 
-% compresscommand := 'gzip -f'.
-% compressext := 'gz'.
-
 perms := perm(rwX, rwX, rX).
 
 owner := ~get_pwnam.
 group := ~get_grnam.
 
+docformat := texi|ps|pdf|manl|info|html.
 

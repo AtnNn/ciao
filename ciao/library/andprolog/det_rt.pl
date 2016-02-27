@@ -147,23 +147,22 @@ perform_some_other_det_work(Handler) :-
 	perform_some_other_det_work_(Handler,GS).
 
 perform_some_other_det_work_(Handler,GS) :-
-	goal_finished(Handler) ->
 	(
+	    goal_finished(Handler) ->
 	    exit_mutex_self
 	;
-	    goal_failed(Handler) ->
 	    (
+		goal_failed(Handler) ->
 		exit_mutex_self,
 		fail
 	    ;
-		find_det_goal(GS,H) ->
 		(
+		    find_det_goal(GS,H) ->
   		    exit_mutex_self,
   		    call_det_handler(H),
   		    enter_mutex_self
   		;
-		    suspend,
-		    enter_mutex_self
+		    suspend
 		),
 		perform_some_other_det_work_(Handler,GS)
 	    )

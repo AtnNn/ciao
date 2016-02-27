@@ -8,4 +8,4 @@
 
 :- doc(module,"@include{IsoProlog.lpdoc}").
 
-main.
+

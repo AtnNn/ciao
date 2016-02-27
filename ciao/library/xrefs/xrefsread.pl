@@ -16,8 +16,8 @@
 :- use_module(library(terms), [atom_concat/2]).  
 
 :- doc(title,"Finding crossed-references between modules/files").
-:- doc(subtitle,"@bf{The CIAO System Documentation Series}").
-:- doc(subtitle,"@em{Draft printed on:} @today{}").
+:- doc(subtitle_extra,"@bf{The CIAO System Documentation Series}").
+:- doc(subtitle_extra,"@em{Draft printed on:} @today{}").
 :- doc(author,"Francisco Bueno").
 :- doc(module,"This library provides support for obtaining 
         crossed-references between modules (based on the module interface)

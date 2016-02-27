@@ -26,9 +26,9 @@ speedups :-
 	retractall_fact(timeseq(_)),
 	retractall_fact(timeseqfinal(_)),
 	retractall_fact(timepar(_)),
-	main_seq(10000),
-	between(1,8,N),
-	main_det_par(N,10000),
+   	main_seq(10000),
+  	between(1,2,N),
+  	main_det_par(N,10000),
 	fail.
 speedups.
 
@@ -48,6 +48,7 @@ main_seq(_) :-
 
 main_det_par(N,X) :-
 	ensure_agents(N),
+   	pause(1),
 	between(1,10,_),
 	gen_list(X,L),
         statistics(walltime, [T3,_]),
@@ -63,7 +64,7 @@ main_det_par(N,X) :-
 	SpUp is 100*(Seq/Par),
 	floor(SpUp,Sp1),
 	Sp is Sp1/100,
-	format("-- qsort(~f), ~d agents, SpeedUp=~2f~n", [X,N,Sp]),
+	format("-- qsort(~d), ~d agents, SpeedUp=~2f vs Seq=~4f~n", [X,N,Sp,Seq]),
 	fail.
 
 qsort_seq([], []) :- !.

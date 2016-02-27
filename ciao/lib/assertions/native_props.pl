@@ -51,8 +51,8 @@
 		terminates/1,
 		test_type/2,
 		throws/2,
-		user_output/2,
-		intervals/2 %[LD]
+		user_output/2
+% 		intervals/2 %[LD]
 % 		, user_error/2
 	    ],
 	    [assertions, hiord]).
@@ -124,7 +124,7 @@
 % --------------------------------------------------------------------------
 
 :- doc(tau(Types), "@var{Types} contains a list with the type associations
-   for each variable, in the form @tt{V/[T1,..,TN]}.Note that tau is used
+   for each variable, in the form @tt{V/[T1,..,TN]}. Note that tau is used
    in object-oriented programs only").
 
 :- true prop tau(TypeInfo) + native
@@ -145,7 +145,7 @@ valid_type([Type|Rest]) :-
 
 
 
-:- doc(constraint(C), " @var{C} contains a list of linear (in)equalities
+:- doc(constraint(C), "@var{C} contains a list of linear (in)equalities
    that relate variables and @tt{int} values. For example,  @tt{[A < B + 4]} 
    is a constraint while @tt{[A < BC + 4]} or @tt{[A = 3.4, B >= C]} are
    not.").
@@ -1110,13 +1110,3 @@ size(_, _, _).
 
 size(_, _).
 % :- impl_defined(size/2).
-
-
-%[LD]
-
-:- prop intervals(X, Y) 
-# "Data size @var{X} belongs to some interval in the list of intervals
-@var{Y}. The list of intervals @var{Y} represents union of its elements".
-
-intervals(_,_).
-%[\LD]

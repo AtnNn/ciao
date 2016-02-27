@@ -192,7 +192,9 @@ comment_or_doccomment(Dict, Level, Tokens) :-
 	    read_doccomment(NextTyp1, NextCh1, Chars, NextTyp2, NextCh2),
 	    Tokens = [doccomment(Chars)|Tokens0],
 	    read_tokens_after_layout(NextTyp2, NextCh2, Dict, Level, Tokens0)
-	; ( NextCh = 0'\n ->
+	; ( ( NextCh = 0'\n % no more chars in the line
+	    ; NextTyp = -1 % no more chars in the file
+	    ) ->
 	      NextTyp = NextTyp2,
 	      NextCh = NextCh2
           ; skip_line, getct1(NextCh2, NextTyp2)

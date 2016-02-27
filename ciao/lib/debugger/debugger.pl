@@ -4,78 +4,48 @@
 %	srcdbg_spy/7,
 		call_in_module/2,
 		debug_trace/1,
-		debugging/0,
 		do_interrupt_command/1,
-		leash/1,
-		maxdepth/1,
 		switch_off_debugger/0,
-		adjust_debugger/0,
-		current_debugged/1,
-% Common
-		debug_module/1,
-		debug_module_source/1,
-		nodebug_module/1,
-		nospy/1,
-		spy/1],
+		adjust_debugger/0],
 	    [dcg, assertions, hiord, define_flag]).
 
 :- use_module(engine(debugger_support)).
 :- use_module(library(debugger(debugger_lib)), [
-		all_spypoints/0,
 		adjust_debugger_state/2,
-		breakpoint/5,
-		break_info/6,
-		call_hook1/1,
-		call_hook2/2,
-		debugging_options/0,
-		debugdepth/1,
-		defaultopt/1,
-		do_retry_fail/3,
-		functor_spec/5,
+		debug_mod/2,
+		debug_trace2/10,
+		do_once_command/2,
 		get_attributed_vars/3,
-		get_command/1,
-		get_debugger_state/1,
-		lastof/3,
-		leashed/1,
-		multpredspec/1,
-		nospy1/1,
-		port_info/2,
-		print_srcdbg_info/5,
-		proc_extraopts/3,
-		reset_debugger/1,
-		reset_printdepth/0,
-		retry_hook_/8,
-		set_debugger/1,
-		set_defaultopt/3,
-		set_printdepth/1,
-		show_leash_info/1,
-		spy1/1,
-		spy_info/5,
-		what_is_on/1,
-		write_goal2/4,
-		write_goal_v/3,
-		write_goal_v_name/3]).
+		get_debugger_state/1]).
 :- reexport(library(debugger(debugger_lib)), [
-		debug/0,
-		nodebug/0,
-		trace/0,
-		notrace/0,
-		get_debugger_state/1,
-		nospyall/0,
 		breakpt/6,
-		nobreakpt/6,
+		current_debugged/1,
+		debug/0,
+		debug_module/1,
+		debug_module_source/1,
+		debugging/0,
+		debugrtc/0,
+		get_debugger_state/1,
+		leash/1,
+		list_breakpt/0,
+		maxdepth/1,
 		nobreakall/0,
+		nobreakpt/6,
+		nodebug/0,
+		nodebug_module/1,
+		nodebugrtc/0,
+		nospy/1,
+		nospyall/0,
+		notrace/0,
 		reset_debugger/1,
 		retry_hook/4,
-		list_breakpt/0]).
-:- use_module(engine(internals)).
+		spy/1,
+		trace/0,
+		tracertc/0]).
+:- use_module(engine(internals), [term_to_meta/2, '$setarg'/4, module_concat/3]).
 :- use_module(engine(hiord_rt), ['$nodebug_call'/1, '$meta_call'/1]).
 :- use_module(library(format)).
 :- use_module(library(ttyout)).
-:- use_module(library(read),   [read/2]).
-:- use_module(library(aggregates)).
-:- use_module(library(varnames(apply_dict))).
-:- use_module(library(lists), [append/3]).
 :- use_module(user,           ['$shell_call'/1]).
 
 :- doc(title, "Predicates controlling the interactive debugger").
@@ -100,8 +70,6 @@
 :- doc(hide, retry_hook/4).
 :- doc(hide, debug_trace/1).
 :- doc(hide, do_interrupt_command/1).
-
-:- include(library(debugger(debugger_common))).
 
 
 %------------------ Bug Comments ------------------------------
@@ -146,51 +114,6 @@ switch_off_debugger :-
 	'$setarg'(2, State, off, true),
 	'$debugger_mode'.
 
-:- pred maxdepth(MaxDepth) : int
-# "Set maximum invocation depth in debugging to
-           @var{MaxDepth}. Calls to compiled predicates are not included
-           in the computation of the depth.".
-
-maxdepth(D) :-
-	integer(D), !,
-	retractall_fact(debugdepth(_)),
-	assertz_fact(debugdepth(D)),
-	what_maxdepth.
-maxdepth(D) :-
-	format(user_error, '{Bad maxdepth ~q - must be an integer}~n', [D]).
-
-:- prop port(X) + regtype.
-
-port(call).
-port(exit).
-port(redo).
-port(fail).
-
-:- pred leash(Ports) : list(port)
-# "Leash on ports @var{Ports}, some of @tt{call}, @tt{exit},
-	@tt{redo}, @tt{fail}. By default, all ports are on leash.".
-
-leash(L) :-
-	nonvar(L),
-	leash1(L),
-	!.
-leash(L) :-
-	format(user_error, '{Bad leash specification ~q}~n', [L]).
-
-leash1(half) :- !, leash1([call, redo]).
-leash1(full) :- !, leash1([call, exit, redo, fail]).
-leash1(loose) :- !, leash1([call]).
-leash1(none) :- !, leash1([]).
-leash1(tight) :- !, leash1([call, redo, fail]).
-leash1(L) :-
-	list(L),
-	retractall_fact(leashed(_)), leashlist(L), what_is_leashed.
-
-leashlist([]).
-leashlist([Port|L]) :-
-	assertz_fact(leashed(Port)),
-	leashlist(L).
-
 %------------------------ meta-interpreters ------------------------------
 
 % called from interpreter.pl
@@ -199,7 +122,8 @@ debug_trace(X) :-
 	extract_info(X, Goal, Pred, Src, Ln0, Ln1, Dict, Number),
 	( debuggable(Goal) ->
 	    get_debugger_state(State),
-	    debug_trace2(Goal, State, Pred, Src, Ln0, Ln1, Dict, Number)
+	    debug_trace2(Goal, State, Pred, Src, Ln0, Ln1, Dict, Number,
+	        get_attributed_vars, debug_call)
 	;
 	    term_to_meta(X, G),
 	    '$nodebug_call'(G)
@@ -216,6 +140,8 @@ in_debug_module(G) :-
 	functor(G, F, _),
 	current_fact(debug_mod(_, Mc)),
 	atom_concat(Mc, _, F).
+
+:- meta_predicate debug_call(goal).
 
 debug_call(Goal) :- '$shell_call'(Goal).
 
@@ -270,7 +196,7 @@ already_seen([T|_Ts], Term) :-
 already_seen([_T|Ts], Term) :- already_seen(Ts, Term).
 
 do_interrupt_command(0'@) :- !, % @(command)
-	ttyskipeol, do_once_command('| ?- '),
+	ttyskipeol, do_once_command('| ?- ', debug_call),
 	do_interrupt_command(0'\n).
 do_interrupt_command(0'a) :- !, % a(bort)
 	ttyskipeol, abort.

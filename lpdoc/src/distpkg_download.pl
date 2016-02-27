@@ -2,7 +2,6 @@
 
 :- use_module(library(aggregates)).
 
-:- use_module(library(distutils)).
 :- use_module(library(distutils(dirutils))).
 :- use_module(library(distutils(distpkg_meta))).
 
@@ -91,12 +90,25 @@ gen_download_list_([DFile|R], UseCGI, [Row|Next]) :- !,
 wrap_download_cgi(Url) := NewUrl :-
 	Maillist = ~maillist,
 	DownloadCGI = ~download_cgi,
-	NewUrl = ~atom_concat([DownloadCGI, '?url=', Url, '&list=', Maillist]).
+	% TODO: Relative URL (w.r.t. the current location) are not supported by download_cgi
+        %       (when fixed this will disappear)
+	( absolute_url(Url) ->
+	    Url2 = Url
+	; Url2 = ~atom_concat(~download_full_url, Url)
+	),
+	%
+	NewUrl = ~atom_concat([DownloadCGI, '?url=', Url2, '&list=', Maillist]).
 
 % This is the location of the download script
 download_cgi := 'http://www.clip.dia.fi.upm.es/download_cgi/download.cgi'.
+download_full_url := '/Software/Ciao/'. % TODO: a hack (see wrap_download_cgi)
 % Mailing list recommended (leave empty for no list)
 maillist := 'ciao-users'.
+
+% Is a given URL an absolute path in the server?
+absolute_url(Url) :- atom_concat('/', _, Url).
+absolute_url(Url) :- atom_concat('file:', _, Url).
+absolute_url(Url) :- atom_concat('http:', _, Url).
 
 % A table row for file download entry
 % The url is in @var{Url}, its size is @var{Size}
@@ -119,9 +131,9 @@ file_html_row(Kind, Url, Desc, Size) := R :-
 % TODO: some images like download_debian.png, download_fedora.png, etc. are unused
 % TODO: The images are in the website skel (CIAOROOT/website/skel/images/)
 distpkg_file_kind_info(tar_gz, "Source (All Platforms)", 'download_sources.png').
-distpkg_file_kind_info(i386_rpm, "RPM based Linux (Fedora, Redhat, Centos, Mandriva)", 'download_rpms.png').
-distpkg_file_kind_info(i386_deb, "Debian based Linux (Ubuntu, XUbuntu, Knoppix)", 'download_debs.png').
-distpkg_file_kind_info(windows, "Windows 2000/XP/Vista", 'download_windows.png').
+distpkg_file_kind_info(i386_rpm, "RPM-based Linux (Fedora, Redhat, Centos, Mandriva)", 'download_rpms.png').
+distpkg_file_kind_info(i386_deb, "Debian-based Linux (Ubuntu, XUbuntu, Knoppix)", 'download_debs.png').
+distpkg_file_kind_info(windows, "Windows 2000/XP/Vista/7", 'download_windows.png').
 distpkg_file_kind_info(macosx, "Mac OS X", 'download_mac.png').
 %
 distpkg_file_kind_info(manual_ps, "PS", 'download_manual.png').
@@ -165,6 +177,7 @@ distpkg_root := ~setting_value(distpkg_localdir).
 
 % The URL to the distpkg root (for downloading)
 distpkg_url := Url :-
+	% TODO: Use relative URLs is htmlurl is '' (search uses of htmlurl)
 	Url0 = ~setting_value(htmlurl),
 	Url = ~atom_concat(~path_name(Url0), ~setting_value(distpkg_localurl)).
 

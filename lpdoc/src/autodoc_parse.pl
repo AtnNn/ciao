@@ -11,7 +11,7 @@
 :- use_module(library(lists), [append/3]).
 :- use_module(library(errhandle), [error_protect/1]).
 
-:- use_module(lpdocsrc(src(autodoc))).
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_aux)), [read_file/2]).
 :- use_module(lpdocsrc(src(autodoc_errors))).
 :- use_module(lpdocsrc(src(autodoc_index))).
@@ -57,7 +57,7 @@ parse_docstring__1(DocSt, Verb, S, RS2) :-
 	transition(read, DocSt, empty, Verb, RS2, S, []),
 	!.
 parse_docstring__1(DocSt, _Verb, S, RS2) :-
-	docstate_backend(DocSt, Backend),
+	docst_backend(DocSt, Backend),
 	empty_doctree(RS2),
 	send_signal(parse_error(rewrite, [Backend, S])).
 
@@ -445,19 +445,19 @@ handle_incl_command(include(FileS), DocSt, Verb, RContent) :-
 	atom_codes(RelFile, FileS),
 	error_protect(absolute_file_name(library(RelFile), File)),
 	%% These are not turned off for now...
-	doc_message("{-> Including file ~w in documentation string", [File], DocSt),
+	docst_message("{-> Including file ~w in documentation string", [File], DocSt),
 	read_file(File, Content),
 	parse_docstring__1(DocSt, Verb, Content, RContent),
-	doc_message("}", DocSt).
+	docst_message("}", DocSt).
 handle_incl_command(includeverbatim(FileS), DocSt, _Verb, XNewComm) :-
 	!,
 	atom_codes(RelFile, FileS),
 	error_protect(absolute_file_name(library(RelFile), File)),
-	doc_message(
+	docst_message(
 	    "{-> Including file ~w verbatim in documentation string", [File],
 	    DocSt),
 	read_file(File, Content),
-	doc_message("}", DocSt),
+	docst_message("}", DocSt),
 	% TODO: why not string_verb?
 	XNewComm = string_esc(Content).
 % TODO: Treat this command here or in autodoc? --JF
@@ -468,7 +468,7 @@ handle_incl_command(includefact(Pred), DocSt, Verb, RContent) :-
 	( Functor \== 0,
 	  functor(Pattern, Functor, Arity),
 	  clause_read(_, Pattern, true, _, _, _, _) ->
-	    doc_message("-> Including fact ~w in documentation string", [Functor], DocSt),
+	    docst_message("-> Including fact ~w in documentation string", [Functor], DocSt),
 	    ( Arity = 1 ->
 		true
 	    ; send_signal(parse_error(aritynot1, []))
@@ -481,7 +481,7 @@ handle_incl_command(includedef(Pred), DocSt, _Verb, RContent) :-
 	Pred = Functor/Arity,
 	!,
 	( portray_to_string(Functor, Arity, Content) ->
-	    doc_message("-> Including code for ~w in documentation string", [Functor/Arity], DocSt),
+	    docst_message("-> Including code for ~w in documentation string", [Functor/Arity], DocSt),
 	    % TODO: here type is not 'normal' but 'verb'
 	    escape_string(normal, Content, DocSt, NContent),
 	    build_env('verbatim', [raw_string(NContent)], RContent)

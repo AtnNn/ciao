@@ -22,15 +22,14 @@
 :- use_module(library(format)).
 
 % Local libraries
-:- use_module(lpdocsrc(src(autodoc))).
-:- use_module(lpdocsrc(src(comments)), [version_descriptor/1, docstring/1,
-	stringcommand/1]).
-
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_refsdb))).
 :- use_module(lpdocsrc(src(autodoc_index))).
 :- use_module(lpdocsrc(src(autodoc_structure))).
 :- use_module(lpdocsrc(src(autodoc_filesystem))).
 :- use_module(lpdocsrc(src(autodoc_settings))).
+:- use_module(lpdocsrc(src(comments)), [version_descriptor/1, docstring/1,
+	stringcommand/1]).
 
 % The backends
 :- use_module(lpdocsrc(src(autodoc_texinfo)), []).
@@ -91,6 +90,7 @@ cmd_type('}') :- !.
 cmd_type('{') :- !.
 cmd_type('@') :- !.
 cmd_type(today(s)) :- !.
+cmd_type(version(s)) :- !.
 cmd_type(hfill(s)) :- !.
 cmd_type(iso(s)) :- !.
 cmd_type('`'(s)) :- !.
@@ -195,18 +195,21 @@ icmd_type(htmlenv1(t,t)). % html environment
 icmd_type(htmldecl(t)). % html decl
 icmd_type(htmlcomment(t)). % html comment
 % ** Commands for 'manl' **
-icmd_type(man_page(td,t,t,td,td,td)). % html environment
+icmd_type(man_page(td,t,t,t,td,td,td)). % html environment
 % ** Shared internal commands **
 icmd_type(section_env(t,t,td,td)).
-icmd_type(section_link(t)). % a separated section 
+% a link to a component (makes module-scope references available in the references closure) % TODO: we are more specific than just 'references' 
+icmd_type(component_link(t)).
 icmd_type(idx_env(t,t,t,d,d)). % index command
 % dependency with a separated section (depending on the backend, it may include
 % or not the contents of the separated section)
-icmd_type(backend_linkdep(t)).
+icmd_type(backend_include_component(t)).
 icmd_type(backend_idx(t,t,t)).
 icmd_type(hfill).
 icmd_type(linebreak). % break the current line (should it be like "@p @noindent"?)
-icmd_type(subtitle_line(d)). % a line formatted with bigger font (not a good idea, use subsections instead?)
+% a line formatted like subsection titles (bigger/stronger fonts)
+% TODO: good idea? use real sections instead?
+icmd_type(subsection_title(d)).
 icmd_type(twocolumns(d)).
 icmd_type(itemize_none(d)).
 icmd_type(itemize_plain(d)).
@@ -219,16 +222,16 @@ icmd_type(alert(d)).
 icmd_type(idx_anchor(t,t,t,t,t)). % an anchor for entries in the index
 icmd_type(end_document).
 icmd_type(copyright_page(d)).
-icmd_type(title(d)).
-icmd_type(subtitle(d)).
+icmd_type(cover_title(d,t)). % the title and optional subtitle (second argument is list(d))
+icmd_type(cover_subtitle_extra(d)).
 icmd_type(authors(d)).
 icmd_type(backend_comment(t)).
 icmd_type(quotation(d)).
 icmd_type(setpagenumber(t)).
-icmd_type(printindex(t,t)).
+icmd_type(show_index(t)).
 icmd_type(backend_printindex(t)).
-icmd_type(printtoc(t)). % print table of contents (or part of it)
-icmd_type(printbiblio).
+icmd_type(show_toc(t)). % show the table of contents (or part of it)
+icmd_type(show_biblio).
 icmd_type(simple_link(t,t,t,s)).
 icmd_type(cite_link(t,s)).
 icmd_type(ref_link(t,s)).
@@ -286,6 +289,49 @@ empty_doctree([]).
 
 % ---------------------------------------------------------------------------
 
+% TODO: There could be many more operations on doctree...
+
+:- export(doctree_insert_end/3).
+:- pred doctree_insert_end(A0, Elem, A) ::
+   doctree * doctree * doctree 
+# "Insert @var{Elem} in @var{A0} at the end, obtaining
+   @var{A}".
+doctree_insert_end(A0, Elem, A) :-
+	doctree_simplify([A0, Elem], A).
+
+:- export(doctree_insert_before_section/3).
+:- pred doctree_insert_before_section(A0, Elem, A) :: 
+   doctree * doctree * doctree 
+# "Insert @var{Elem} in @var{A0} before the first section, obtaining
+   @var{A}".
+
+doctree_insert_before_section(A0, Elem, A) :-
+        doctree_insert_before_section_(A0, no, Elem, A).
+
+% (@var(More) indicates if we should insert @tt{show_toc} or fail in
+% case that the current list ends without a section command)
+doctree_insert_before_section_([], no, Elem, [Elem]) :- !.
+doctree_insert_before_section_([A|As], _, Elem, [B|As]) :-
+        doctree_insert_before_section_(A, yes, Elem, B), !.
+doctree_insert_before_section_([A|As], _, Elem, [Elem,A|As]) :- is_section_cmd(A), !.
+doctree_insert_before_section_([A|As], More, Elem, [A|Bs]) :-
+        doctree_insert_before_section_(As, More, Elem, Bs).
+
+is_section_cmd(section_env(_,_,_,_)).
+
+% ---------------------------------------------------------------------------
+
+:- export(doctree_concat/3).
+% TODO: improve
+doctree_concat(A, B, C) :- is_list(A), is_list(B), !,
+        append(A, B, C).
+doctree_concat(A, B, [A,B]).
+
+is_list([]).
+is_list([_|_]).
+
+% ---------------------------------------------------------------------------
+
 :- doc(subsection, "Documentation Links").
 
 % TODO: current definition of the doctree regular type is incomplete
@@ -326,7 +372,7 @@ doctokens(_). % TODO: define
 %   with_parent: section label appended with parent base
 %   unnumbered: special unnumbered section
 %   linktop: just contain navigation references to top
-%   first_file_section: first section in the file (may require special translation)
+%   file_top_section: first section in the file (may require special translation)
 % TODO: finish
 
 :- use_module(library(lists), [select/3]).
@@ -450,8 +496,8 @@ doctree_scan_and_save_refs(R, DocSt) :-
 	labgen_init(DocSt),
 	doctree_scan_refs(R, DocSt),
 	labgen_clean(DocSt),
-	save_refs(DocSt),
-	refs_clean(DocSt).
+	docst_mdata_save(DocSt),
+	docst_mdata_clean(DocSt).
 
 :- pred doctree_scan_refs(R, DocSt) : ( doctree(R), docstate(DocSt) ).
 doctree_scan_refs(A, _DocSt) :-
@@ -463,21 +509,19 @@ doctree_scan_refs(L0, DocSt) :-
 	L0 = section_env(SecProps, SectLabel, TitleR, Body),
 	section_select_prop(subfile(SubName), SecProps, PrevSecProps),
 	!,
-	DocR = section_env([first_file_section|PrevSecProps], SectLabel, TitleR, Body),
-	docstate_currmod(DocSt, OutName),
-	scan_subfile(OutName, SubName, DocR, DocSt),
-	doctree_scan_refs(section_link(external_subfile(OutName, SubName)), DocSt).
+	DocR = section_env([file_top_section|PrevSecProps], SectLabel, TitleR, Body),
+	scan_subfile(SubName, DocR, DocSt, SubBase),
+	doctree_scan_refs(component_link(SubBase), DocSt).
 doctree_scan_refs(A, DocSt) :-
 	A = section_env(SecProps, SectLabel, Title, Body),
 	!,
 	ensure_fill_label(Title, DocSt, SectLabel),
-	section_prop(level(L), SecProps),
-	add_refs_entry(sect(L, SectLabel, Title), DocSt),
+	project_section_props(SecProps, SecProps2),
+	docst_mdata_assertz(sect(SecProps2, SectLabel, Title), DocSt),
 	doctree_scan_refs(Body, DocSt).
-doctree_scan_refs(section_link(E), DocSt) :-
+doctree_scan_refs(component_link(Base), DocSt) :-
 	!,
-	resolve_external(E, DocSt, Base),
-	add_refs_entry(sectlink(Base), DocSt).
+	docst_mdata_assertz(refs_link(Base), DocSt).
 doctree_scan_refs(idx_env(Mode, Type, IdxLabel, Ref, _Body), DocSt) :-
 	!,
 	add_idx_entry(Mode, Type, IdxLabel, Ref, DocSt).
@@ -498,7 +542,7 @@ doctree_scan_refs(cite(Ref), DocSt) :- !,
 	%% White space in argument---line 33 of file bla bla bla
 	%% : \citation{att-var-iclp,ciao-manual-tr,
 	remove_spaces(Ref, RefClean),
-	add_refs_entry(citation(RefClean), DocSt).
+	docst_mdata_assertz(citation(RefClean), DocSt).
 doctree_scan_refs(Command, DocSt) :-
 	functor(Command, Cmd, A),
 	functor(BT, Cmd, A),
@@ -509,6 +553,15 @@ doctree_scan_refs(Command, DocSt) :-
 	Command =.. [_|Xs],
 	BT =.. [_|Ts],
 	doctree_scan_refs_args(Ts, Xs, DocSt).
+
+% The section props that are globally visible in references
+project_section_props([], []).
+project_section_props([P|Ps0], Ps) :-
+        ( projected_prop(P) -> Ps = [P|Ps1] ; Ps = Ps1 ),
+	project_section_props(Ps0, Ps1).
+
+projected_prop(level(_)).
+projected_prop(is_special(_)).
 
 doctree_scan_refs_args([], [], _DocSt).
 doctree_scan_refs_args([T|Ts], [X|Xs], DocSt) :-
@@ -541,7 +594,7 @@ add_idx_entry(Mode, Type, IdxLabel, Key, DocSt) :-
 	ensure_fill_label(Key, DocSt, IdxLabel),
 	% TODO: Accents are lost here; use something richer than 'plaintext'? (e.g. unicode)
 	doctree_to_rawtext(Key, DocSt, Key2),
-	add_refs_entry(idx(Mode, Type, IdxLabel, Key2), DocSt).
+	docst_mdata_assertz(idx(Mode, Type, IdxLabel, Key2), DocSt).
 
 remove_spaces([],     []).
 remove_spaces([32|R], RC) :- !,
@@ -552,13 +605,10 @@ remove_spaces([A|R], [A|RC]) :-
 % (first pass)
 % TODO: See write_as_subfile
 % Scan a part that will be rendered as a subfile
-scan_subfile(OutName, SubSuffix, X, DocSt) :-
-	get_subbase(OutName, SubSuffix, SubName),
-	get_sub_docstate(DocSt, SubName, DocSt1),	
+scan_subfile(SubSuffix, X, DocSt, SubName) :-
+	docst_new_sub(DocSt, SubSuffix, DocSt1),	
+	docst_currmod(DocSt1, SubName),
 	doctree_scan_and_save_refs(X, DocSt1).
-
-get_sub_docstate(DocSt0, SubName, DocSt) :-
-	docstate_set_currmod(DocSt0, SubName, DocSt).
 
 % ---------------------------------------------------------------------------
 
@@ -568,14 +618,14 @@ get_sub_docstate(DocSt0, SubName, DocSt) :-
 
 % ---------------------------------------------------------------------------
 
-:- export(doctree_prepare_refs_translate_and_write/3).
-doctree_prepare_refs_translate_and_write(ModR, DocSt, OS) :-
+:- export(doctree_prepare_docst_translate_and_write/3).
+doctree_prepare_docst_translate_and_write(ModR, DocSt, OS) :-
 	prepare_current_refs(DocSt),
 	doctree_translate_and_write(ModR, DocSt, OS),
 	clean_current_refs(DocSt),
 	!.
-doctree_prepare_refs_translate_and_write(_ModR, _DocSt, _OS) :-
-	throw(failed_doctree_prepare_refs_translate_and_write).
+doctree_prepare_docst_translate_and_write(_ModR, _DocSt, _OS) :-
+	throw(failed_doctree_prepare_docst_translate_and_write).
 
 % ---------------------------------------------------------------------------
 
@@ -722,20 +772,25 @@ rewrite_cmd(L0, DocSt, R) :-
 	L0 = section_env(SecProps, SectLabel, TitleR, Body),
 	section_select_prop(subfile(SubName), SecProps, PrevSecProps),
 	!,
-	DocR = section_env([first_file_section|PrevSecProps], SectLabel, TitleR, Body),
-	docstate_currmod(DocSt, OutName),
-	write_as_subfile(OutName, SubName, DocR, DocSt),
-	R = section_link(external_subfile(OutName, SubName)).
-rewrite_cmd(section_link(External), DocSt, L) :- !,
+	DocR = section_env([file_top_section|PrevSecProps], SectLabel, TitleR, Body),
+	write_as_subfile(SubName, DocR, DocSt, SubBase),
+	R = component_link(SubBase).
+rewrite_cmd(component_link(Base), DocSt, L) :- !,
 	% Note: this translation is just for the texinfo backend
 	% (for the other backends, doctree_scan_refs has already made its work)
-	resolve_external(External, DocSt, Base),
-	docstate_backend(DocSt, Backend),
+	docst_backend(DocSt, Backend),
 	absfile_for_subtarget(Base, Backend, cr, F),
 	% TODO: hack, remove the path since we live in the same directory
 	get_name(F, FName),
-	L = backend_linkdep(FName).
+	L = backend_include_component(FName).
 % ... (shared commands) ...
+rewrite_cmd(version(""), DocSt,  R) :- !,
+	% TODO: Allow different views of the version
+	( docst_gdata_query(DocSt, main_globalvers(GlobalVers)) ->
+	    version_numstr(GlobalVers, Str),
+	    R = string_esc(Str)
+	; R = string_esc("<version>")
+	).
 rewrite_cmd(math(X), _DocSt,  R) :- !,
 	fmt_to_latex(X, X1),
 	R = mathenv(X1).
@@ -759,10 +814,10 @@ rewrite_cmd(defauthor(IdxLabel, Name, Text), DocSt, R) :- !,
 	% TODO: merge with idx_env or defpred?
 	Mode = def, Type = author, Ref = Name, Body = Text,
 	fmt_idx_env(Mode, Type, IdxLabel, Ref, Body, DocSt, R).
-rewrite_cmd(printtoc(TOCKind), DocSt, R) :- !,
+rewrite_cmd(show_toc(TOCKind), DocSt, R) :- !,
 	fmt_toc(TOCKind, DocSt, R).
-rewrite_cmd(printbiblio, DocSt, R) :- !,
-	( doc_customdic_get(DocSt, biblio_doctree, RefsR0) ->
+rewrite_cmd(show_biblio, DocSt, R) :- !,
+	( docst_mvar_get(DocSt, biblio_doctree, RefsR0) ->
 	    ( RefsR0 = [] ->
 	        % TODO: Generalize for other sections?
 	        R = string_esc("(this section is empty)")
@@ -772,11 +827,11 @@ rewrite_cmd(printbiblio, DocSt, R) :- !,
 	  % written before the bibliography is resolved.
 	  R = string_esc("[ERROR - NO BIBLIOGRAPHY]")
 	).
-rewrite_cmd(printindex(Name,IndexId), DocSt, R) :- !,
-	docstate_backend(DocSt, Backend),
+rewrite_cmd(show_index(IndexId), DocSt, R) :- !,
+	docst_backend(DocSt, Backend),
 	( Backend = html ->
 	    % format the index ourselves
-	    fmt_index(Name, IndexId, DocSt, R)
+	    fmt_index(IndexId, DocSt, R)
 	; % let the backend print the index
 	  R = backend_printindex(IndexId)
 	).
@@ -792,7 +847,7 @@ rewrite_cmd(string_verb(X), DocSt, R) :- !,
 	R = raw_string(X2),
 	escape_string(verb, X, DocSt, X2).
 rewrite_cmd(X, DocSt, L) :-
-	docstate_backend(DocSt, Backend),
+	docst_backend(DocSt, Backend),
 	autodoc_rw_command_hook(Backend, DocSt, X, L).
 
 rewrite_cmd_args([], [], _, []).
@@ -809,21 +864,16 @@ rewrite_commands([X|Xs], DocSt, [Y|Ys]) :-
 
 :- multifile autodoc_rw_command_hook/4. 
 
-write_as_subfile(OutName, SubSuffix, DocR0, DocSt) :-
-	% Include X as a subfile
-	get_subbase(OutName, SubSuffix, SubName),
-	get_sub_docstate(DocSt, SubName, DocSt1),
-	insert_printtoc(DocR0, DocSt1, DocR),
-	% clean some customdic variables
-	doc_customdic_replace(DocSt1, fulltree, _, DocSt2),
-	doc_customdic_replace(DocSt2, currtree, _, DocSt3),
-	doc_customdic_replace(DocSt3, nav, _, DocSt4),
+write_as_subfile(SubSuffix, DocR0, DocSt, SubName) :-
+	docst_new_sub(DocSt, SubSuffix, DocSt1),
+	insert_show_toc(DocR0, DocSt1, DocR), % TODO: move to doctree_prepare_...?
 	%
-	docstate_backend(DocSt, Backend),
-	%
+	docst_backend(DocSt1, Backend),
+	docst_currmod(DocSt1, SubName),
 	absfile_for_subtarget(SubName, Backend, cr, SubFile),
 	open(SubFile, write, SubOS),
-	doctree_prepare_refs_translate_and_write(DocR, DocSt4, SubOS),
+	doctree_prepare_docst_translate_and_write(DocR, DocSt1, SubOS),
+	%
 	close(SubOS).
 
 :- use_module(library(make(make_rt)), [get_name/2]).
@@ -841,7 +891,7 @@ write_as_subfile(OutName, SubSuffix, DocR0, DocSt) :-
 %   verb: a verbatim string 
 
 escape_string(InputType, NS, DocSt, VS) :-
-	docstate_backend(DocSt, Backend),
+	docst_backend(DocSt, Backend),
 	( autodoc_escape_string_hook(Backend, InputType, NS, DocSt, VS) ->
 	    true
 	; VS = NS % TODO: wrong! define escape_string for all backends
@@ -919,12 +969,6 @@ doctokens_write_list([R|Rs], NL0, NL, DocSt, OS) :-
 
 %% ---------------------------------------------------------------------------
 
-resolve_external(external_subfile(OutName, SubName), _DocSt, Base) :- !,
-	get_subbase(OutName, SubName, Base).
-resolve_external(external(Base0), _DocSt, Base) :- !, Base = Base0.
-
-%% ---------------------------------------------------------------------------
-
 % TODO: this contains some hardwired cases, can it be improved? --JF
 remove_first_nl([string_esc(" ")|Xs0], Xs) :- !,
 	remove_first_nl(Xs0, Xs).
@@ -933,6 +977,68 @@ remove_first_nl([string_verb(S0)|Xs], [string_verb(S)|Xs]) :- !,
 
 remove_first_nl_str(" "||S0, S) :- !, remove_first_nl_str(S0, S).
 remove_first_nl_str("\n"||S0, S) :- !, S = S0.
+
+% ===========================================================================
+
+:- doc(section, "Versions and Operations on Versions").
+
+:- export(is_version/1).
+is_version(Version) :- nonvar(Version), Version \== [].
+
+version_format(version(V*SV+P, Y/M/D),
+               V, SV, P, Y, M, D, [], [], [], []).
+version_format(version(V*SV+P, Y/M/D, []),
+               V, SV, P, Y, M, D, [], [], [], []).
+version_format(version(V*SV+P, Y/M/D, H:N*S+Z),
+               V, SV, P, Y, M, D, H,  N,  S,  Z).
+
+:- export(version_patch/2).
+version_patch(V, VPatch) :-
+	version_format(V, _, _, VPatch, _, _, _, _, _, _, _).
+
+:- export(version_date/2).
+version_date(Version, Date) :-
+	( version_format(Version, _, _, _, Year, Month, Day, _, _, _, _) ->
+	    Date = Year/Month/Day
+	; fail
+	).
+
+:- export(version_numstr/2).
+:- pred version_numstr(Version, Str) # "Obtain the string @var{Str}
+   representation of version @var{Version} (except date)".
+
+version_numstr(Version, Str) :-
+	( Version = version(Ver*Sub+Patch, _)
+	; Version = version(Ver*Sub+Patch, _, _)
+	),
+	!,
+	( Patch = 0 ->
+	    format_to_string("~w.~w", [Ver, Sub], Str)
+	; format_to_string("~w.~w#~w", [Ver, Sub, Patch], Str)
+	).
+
+:- export(version_string/2).  
+:- pred version_string(Version, Str) # "Obtain the string @var{Str}
+   representation of version @var{Version} (including date)".
+
+version_string(Version, Str) :-
+	( Version = version(_, Date), Time = []
+	; Version = version(_, Date, Time)
+	),
+	!,
+	% Format version number
+	version_numstr(Version, Sv),
+	% Format date/time
+	( Time = [] ->
+	    format_to_string("(~w)", [Date], Sd)
+	; Time = H:M*S+Z ->
+	    format_to_string("(~w, ~w:~w:~w ~w)", [Date, H, M, S, Z], Sd)
+	; throw(unknown_time(Time))
+	),
+	list_concat([Sv, " ", Sd], Str).
+version_string(Version, Str) :-
+	message(warning, ['unrecognized version format `', Version, '\'']),
+	Str = "".
 
 % ===========================================================================
 
@@ -945,7 +1051,7 @@ remove_first_nl_str("\n"||S0, S) :- !, S = S0.
 :- pred fmt_cite(Ref, DocSt, R) # "Process (resolve) a bibliographical
    citation".
 fmt_cite(Ref0, DocSt, R) :-
-	( doc_customdic_get(DocSt, biblio_pairs, RefPairs) ->
+	( docst_mvar_get(DocSt, biblio_pairs, RefPairs) ->
 	    remove_spaces(Ref0, Ref),
 	    comma_split(Ref, Refs),
 	    resolve_cites(Refs, RefPairs, DocSt, R1),
@@ -988,7 +1094,7 @@ resolve_cite(C, RefPairs, _DocSt, R) :-
 	    R = cite_link(CiteLink, Text)
 	; R = string_esc("{UNKNOWNCITE?}"),
 	  % TODO: Improve warning message
-	  message(error, ['Unresolved bibliographical reference `', Ref, '\'.'])
+	  message(error, ['Unresolved bibliographical reference `', Ref, '\''])
 	).
 
 % ---------------------------------------------------------------------------
@@ -996,10 +1102,10 @@ resolve_cite(C, RefPairs, _DocSt, R) :-
 :- pred fmt_ref(Ref, DocSt, R) # "Process a section reference".
 % (note: currently sections can only be referenced by its name)
 fmt_ref(Ref0, DocSt, R) :-
-	( doc_customdic_get(DocSt, fulltree, FullTree) ->
+	( docst_mvar_get(DocSt, full_toc_tree, FullTree) ->
 	    doctree_to_rawtext(Ref0, DocSt, Ref1),
 	    resolve_ref(Ref1, FullTree, R)
-	; throw(bug_no_fulltree)
+	; throw(bug_no_full_toc_tree)
 	).
 
 resolve_ref(Ref, FullTree, R) :-
@@ -1016,52 +1122,128 @@ resolve_ref(Ref, FullTree, R) :-
 :- doc(subsection, "Formatting the Table of Contents").
 % (with references to sections/subsections)
 % 
-% Note: the full or partial TOC may be wanted
+% We allow different views of the full table of contents. The
+% @pred{toc_kind/1} specifies the available views. The same page may
+% include more than one view.
 
+% TODO: change names
+:- regtype toc_kind/1.
+toc_kind := toc_view(_S) % Each of the TOC views located in a page:
+                            %   (_S=yes) == we are in the sidebar
+          | single(_)     % Special, single section (e.g. toc, copyright, etc.)
+          | global_links  % Global links (toc, references, etc.)
+          | full          % Global (all except local contents)
+          | vertical_menu % Vertical menu (for web pages)
+          | global        % Global (all except local contents, hide childs)
+          | local         % Local contents (current page)
+          | indices.      % Indices
+
+% TODO: include the navigation buttons as views here?
 fmt_toc(_, DocSt, R) :-
 	% TODO: generalize?
-	docstate_backend(DocSt, Backend),
+	docst_backend(DocSt, Backend),
 	\+ Backend = html, % ignore if not HTML
 	!,
 	R = [].
-fmt_toc(all, DocSt, R) :- !,
-	fmt_toc(local, DocSt, R1),
-	fmt_toc(global, DocSt, R2),
-	doctree_simplify([R1, R2], R).
-fmt_toc(TOCKind, DocSt, R) :- TOCKind = vertical_menu, !,
-	( doc_customdic_lookup(DocSt, fulltree, Tree0) ->
+fmt_toc(toc_view(Sidebar), DocSt, R) :- !,
+	show_subparts_in_maintext(DocSt, SubpartsInMaintext),
+	% TODO: add copyright, etc?
+        % TODO: SubpartsInMaintext should be obtained from DocSt
+        ( SubpartsInMaintext = no, Sidebar = yes ->
+	    fmt_toc(global_links, DocSt, R0),
+	    fmt_toc(local, DocSt, R1),
+	    fmt_toc(global, DocSt, R2),
+	    fmt_toc(indices, DocSt, R3),
+	    doctree_simplify([R1,R2,R0,R3], R)
+        ; SubpartsInMaintext = yes, Sidebar = yes ->
+	    fmt_toc(global_links, DocSt, R0),
+	    fmt_toc(indices, DocSt, R3),
+	    doctree_simplify([R0,R3], R)
+        ; SubpartsInMaintext = no, Sidebar = no ->
+	    doctree_simplify([], R)
+        ; SubpartsInMaintext = yes, Sidebar = no ->
+	    fmt_toc(global, DocSt, R2),
+	    doctree_simplify([R2], R)
+	; throw(bug_toc_view(SubpartsInMaintext, Sidebar))
+	).
+fmt_toc(global_links, DocSt, R) :- !,
+        Title = string_esc("Global Links"),
+	fmt_toc_custom([toc, changelog, bugs, references, copyright], DocSt, Ri),
+        R = [subsection_title(Title), itemize_bullet(Ri)].
+fmt_toc(TOCKind, DocSt, R) :- TOCKind = single(Kind), !,
+        % TODO: This is a ugly and slow hack; copy nav implementation
+	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
 	    true
 	; throw(menu_not_computed)
 	),
 	% Remove the root node
-	Tree0 = [node(_,_,Tree)],
+	Tree0 = [toc_node(_,_,_,Tree)],
 	%
-	docstate_currmod(DocSt, Name),
-	fmt_vmenu(Tree, Name, 0, R0),
+	( member(toc_node(Link,T,Props,_Subs), Tree),
+	  section_prop(is_special(Kind), Props) ->
+	    R = simple_link(default, no_label, Link, T)
+	; R = []
+	).
+fmt_toc(TOCKind, DocSt, R) :- TOCKind = vertical_menu, !,
+	( docst_mvar_lookup(DocSt, full_toc_tree, Tree0) ->
+	    true
+	; throw(menu_not_computed)
+	),
+	% Remove the root node
+	Tree0 = [toc_node(_,_,_,Tree)],
+	%
+	docst_currmod(DocSt, Name),
+	fmt_vertical_menu(Tree, Name, 0, R0),
 	( \+ doctree_is_empty(R0) ->
 	    R = [itemize_bullet(R0)]
 	; R = []
 	).
 fmt_toc(TOCKind, DocSt, R) :-
-	( doc_customdic_lookup(DocSt, currtree, Tree) ->
+        toc_source(TOCKind, Source),
+	( docst_mvar_lookup(DocSt, Source, Tree0) ->
 	    true
 	; throw(menu_not_computed)
 	),
+	( Source = full_toc_tree -> 
+	    % Remove the root node
+	    Tree0 = [toc_node(_,_,_,Tree)]
+	; Tree = Tree0
+	),
 	fmt_toc_(Tree, TOCKind, R0),
 	( \+ doctree_is_empty(R0) ->
-	    toc_title(TOCKind, Title),
-	    R = [subtitle_line(Title), itemize_bullet(R0)]
+	    docst_modtype(DocSt, ModuleType),
+	    toc_title(TOCKind, ModuleType, Title),
+	    ( doctree_is_empty(Title) -> R = R1 % no title
+	    ; R = [subsection_title(Title)|R1]
+	    ),
+	    R1 = [itemize_bullet(R0)]
 	; R = []
 	).
 
+show_subparts_in_maintext(DocSt, SubpartsInMaintext) :-
+	( docst_modtype(DocSt, ModType),
+	  subparts_in_maintext(ModType) ->
+	    SubpartsInMaintext = yes
+	; SubpartsInMaintext = no
+	).
+
+subparts_in_maintext(application).
+% subparts_in_maintext(documentation). % No, these files are bigger!
+subparts_in_maintext(part).
+
 % ---------------------------------------------------------------------------
 
-% Format the node tree as a table of contents
+% Format the node tree as a table of contents. Different views are
+% obtained depending on @var{TOCKind}.
 fmt_toc_([], _, []).
-fmt_toc_([node(Link,T,Subs)|Ss], TOCKind, Rs) :-
-	( toc_include_link(TOCKind, Link) ->
+fmt_toc_([toc_node(Link,T,Props,Subs)|Ss], TOCKind, Rs) :-
+        % TODO: Use Props to implement views for indices, etc.
+	( toc_link_filter(TOCKind, Props, Link, Recursive) ->
 	    Rs = [R|Rs0],
-	    fmt_toc_(Subs, TOCKind, SubRs),
+	    ( Recursive = yes ->
+	        fmt_toc_(Subs, TOCKind, SubRs)
+	    ; SubRs = []
+	    ),
 	    fmt_toc_link(default, Link, T, SubRs, R)
 	; Rs = Rs0
         ),
@@ -1070,13 +1252,15 @@ fmt_toc_([node(Link,T,Subs)|Ss], TOCKind, Rs) :-
 
 % ---------------------------------------------------------------------------
 
-% Format the node tree as a vertical menu
-fmt_vmenu([], _, _Depth, []).
-fmt_vmenu([node(Link,T,Subs)|Ss], Name, Depth, Rs) :-
-	( \+ doclink_is_local(Link) ->
+% Format the node tree as a vertical menu (for web pages)
+fmt_vertical_menu([], _, _Depth, []).
+fmt_vertical_menu([toc_node(Link,T,Props,Subs)|Ss], Name, Depth, Rs) :-
+	( % TODO: same condition than in 'full' toc?
+          \+ doclink_is_local(Link),
+	  \+ section_prop(is_special(_), Props) ->
 	    Rs = [R|Rs0],
 	    Depth1 is Depth + 1,
-	    fmt_vmenu(Subs, Name, Depth1, SubRs),
+	    fmt_vertical_menu(Subs, Name, Depth1, SubRs),
 	    ( Link = link_to(Name, _) -> Style = 'selmenu'
 	    ; Link = no_link -> Style = 'phonymenu'
 	    ; Style = 'unselmenu'
@@ -1086,7 +1270,7 @@ fmt_vmenu([node(Link,T,Subs)|Ss], Name, Depth, Rs) :-
 	; Rs = Rs0
         ),
 	% Continue with the rest of nodes
-	fmt_vmenu(Ss, Name, Depth, Rs0).
+	fmt_vertical_menu(Ss, Name, Depth, Rs0).
 
 % ---------------------------------------------------------------------------
 
@@ -1097,47 +1281,86 @@ fmt_toc_link(Style, Link, Title, SubRs, R) :- !,
 	; R0 = [itemize_bullet(SubRs)]
 	).
 
-% toc_title(full, string_esc("Table of Contents")).
-toc_title(local, string_esc("Table of Contents")).
-toc_title(global, string_esc("Parts")).
+% ---------------------------------------------------------------------------
 
-% toc_include_link(full, _).
-toc_include_link(local, Link) :- doclink_is_local(Link). 
-toc_include_link(global, Link) :- \+ doclink_is_local(Link). 
+% A customized TOC 
+fmt_toc_custom([], _, []).
+fmt_toc_custom([N|Ns], DocSt, Rs) :-
+	fmt_toc(single(N), DocSt, R),
+	( doctree_is_empty(R) ->
+	    Rs = Rs0
+	; Rs = [item(""), R|Rs0]
+	),
+	fmt_toc_custom(Ns, DocSt, Rs0).
 
 % ---------------------------------------------------------------------------
 
-:- doc(subsection, "Auxiliary for Table of Contents").
+:- doc(subsection, "Kinds of Table of Contents").
+% This defines properties of different kinds of table of contents
 
-:- export(insert_printtoc/3).
-:- pred insert_printtoc(R0, DocSt, R) # "Insert the command to print
-   the table of contents in a given doctree. The right place may be
+% Title
+:- discontiguous(toc_title/3).
+% What kind of links are displayed in this toc
+:- discontiguous(toc_link_filter/4).
+% State variable containing the toc source
+:- discontiguous(toc_source/2).
+
+% The full table of contents (title is in the section name)
+toc_title(full, _, []).
+toc_source(full, full_toc_tree).
+toc_link_filter(full, Props, Link, yes) :-
+        \+ doclink_is_local(Link),
+	\+ section_prop(is_special(_), Props).
+
+% TODO: use different names depending on modtype
+toc_title(global, application, string_esc("Parts of this manual")).
+toc_title(global, part, string_esc("Subparts")) :- !.
+toc_title(global, documentation, string_esc("Subparts")) :- !.
+toc_title(global, module, string_esc("Submodules")) :- !.
+toc_title(global, package, string_esc("Submodules")) :- !. % TODO: really?
+toc_title(global, _, string_esc("Parts")) :- !. % include and package
+toc_source(global, curr_toc_tree).
+toc_link_filter(global, Props, Link, no) :-
+        \+ doclink_is_local(Link),
+	\+ section_prop(is_special(_), Props).
+
+% (in this page)
+toc_title(local, module, string_esc("Module Sections")) :- !.
+toc_title(local, package, string_esc("Package Sections")) :- !.
+toc_title(local, _, string_esc("Sections")) :- !.
+toc_source(local, curr_toc_tree).
+toc_link_filter(local, _Props, Link, yes) :-
+        doclink_is_local(Link). 
+
+toc_title(indices, _, string_esc("Indices")).
+toc_source(indices, full_toc_tree).
+toc_link_filter(indices, Props, _Link, yes) :-
+	section_prop(is_special(index), Props).
+
+% ---------------------------------------------------------------------------
+
+:- doc(subsection, "Insertion of Command to show the Table of Contents").
+
+% TODO: I am unsure about this part.
+
+:- export(insert_show_toc/3).
+:- pred insert_show_toc(R0, DocSt, R) # "Insert the command to show
+   the table of contents in a given @pred{doctree/1}. The right place may be
    different depending on the chosen backend.".
-insert_printtoc(R0, DocSt, R) :-
-	( ( docstate_backend(DocSt, Backend), Backend = texinfo
-	  ; doc_doing_mainmod(DocSt),
-	    \+ setting_value(html_layout, 'website_layout')
-	  ) ->
-	    % Only for mainmod and for texinfo; html components puts the menu elsewhere
+insert_show_toc(R0, _DocSt, R) :-
+        ( \+ setting_value(html_layout, 'website_layout') ->
 	    % TODO: @bug{menutexi} Not yet working, still needs external '.el'
-	    insert_printtoc_(R0, R)
+	    insert_show_toc_(R0, R)
 	; R = R0
 	).
 
-% Insert 'printtoc' in the right place (just before first section)
-insert_printtoc_(R0, R) :-
+% Insert 'show_toc' in the right place
+insert_show_toc_(R0, R) :-
 	R0 = section_env(PrevSecProps, SectLabel, TitleR, Body0),
-	insert_printtoc__(Body0, no, Body),
+	Toc = show_toc(toc_view(no)),
+%	doctree_insert_before_section(Body0, Toc, Body),
+	doctree_insert_end(Body0, Toc, Body),
 	R = section_env(PrevSecProps, SectLabel, TitleR, Body).
-
-% (@var(More) indicates if we should insert @tt{printtoc} or fail in
-% case that the current list ends without a section command)
-insert_printtoc__([], no, [printtoc(all)]) :- !.
-insert_printtoc__([A|As], _, [B|As]) :- insert_printtoc__(A, yes, B), !.
-insert_printtoc__([A|As], _, [printtoc(all),A|As]) :- is_section_cmd(A), !.
-insert_printtoc__([A|As], More, [A|Bs]) :- insert_printtoc__(As, More, Bs).
-
-is_section_cmd(section_env(_,_,_,_)).
 
 % ---------------------------------------------------------------------------
 

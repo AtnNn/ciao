@@ -8,4 +8,3 @@ ins_alias_paths([
 	    plindent = 'contrib/plindent'
 	    ]).
 
-main_lpdoc_settings('doc/reference/SETTINGS').

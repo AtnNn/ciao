@@ -22,7 +22,7 @@
 		do/5,
 		try_finally/3,
 		set_owner/2,
-		readf/2,
+		readf/2, % TODO: like file_to_string?
 		datime_string/1,
 		datime_string/2,
 		datime_atom/1,
@@ -30,15 +30,24 @@
 		no_tr_nl/2,
 		replace_strings/3,
 		replace_strings_in_file/3,
-		writef/3,
-		writef/2,
+		writef/3, % TODO: like string_to_file?
+		writef/2, % TODO: like string_to_file?
 		add_suffix/3,
 		add_preffix/3,
 		writef_list/3,
 		writef_list/2,
 		etags/2,
 		any_to_term/2,
-		touch/1
+		touch/1,
+		%,
+		get_perms/2,
+		set_perms/2,
+		set_exec_perms/2,
+		mkdir_perm/2,
+		convert_permissions/2,
+		convert_permissions/4,
+		execute_permissions/2,
+		execute_permissions/4
 	    ],
 	    [assertions, regtypes, isomodes, hiord, regexp]).
 
@@ -67,8 +76,6 @@
 :- use_module(library(read)).
 :- use_module(library(write)).
 :- use_module(library(file_utils)).
-
-:- reexport(library(distutils(setperms))).
 
 :- use_module(engine(basiccontrol), ['$metachoice'/1]).
 
@@ -122,6 +129,7 @@
 %% delete_file_option(recursive).
 %% delete_file_option(ignore).
 
+% TODO: Improve this implementation
 del_dir_if_empty(Dir) :-
 	working_directory(CD, CD),
 	( file_exists(Dir)
@@ -567,6 +575,7 @@ show_error_if_required(_ReturnCode, Action, OutputFile, ErrorFile) :-
 % 	stream_to_string(SExecO, Output),
 % 	stream_to_string(SErrO,  Error).
 
+% TODO: Action is not an action but a list of options, fix!
 :- pred do(Command, OutputFile, ErrorFile, Action)
 	: ( list(Command, atm),
 	    atm(OutputFile), atm(ErrorFile),
@@ -645,6 +654,56 @@ process_action(L, ReturnCode, Command) :-
 	throw(error(system_error(ReturnCode, Command))).
 process_action(_, _ReturnCode, _Command).
 
+
+% TODO: Avoid creating the ciaostr.tmp file. At least, put it in another place with another name
+:- export(do_str/3).
+do_str(Command, Fail, String) :-
+	( append(Command, [' > ciaostr.tmp'], Cmd),
+	  do(Cmd, Fail),
+	  file_exists('ciaostr.tmp') ->
+	    readf('ciaostr.tmp', String),
+	    delete_file('ciaostr.tmp')
+	; fail
+	).
+
+% TODO: improve...
+:- export(do_str_without_nl/3).
+do_str_without_nl(Command, Fail, String) :-
+	do_str(Command, Fail, StringNl),
+	no_tr_nl(StringNl, String).
+
+% TODO: merge with do_str_without_nl?
+:- export(do_str_without_nl__popen/2).
+do_str_without_nl__popen(Command, String) :-
+	popen(Command, read, Stream),
+	stream_to_string(Stream, String0),
+	no_tr_nl(String0, String).
+
+% Execute @var{Command} and read each line from the output as an atom
+% TODO: merge with do (with options)
+:- export(do_atmlist__popen/2).
+do_atmlist__popen(Command, Xs) :-
+	popen(Command, read, Stream),
+	read_lines(Stream, Xs).
+
+% read each line as individual atoms
+read_lines(Stream, Xs) :-
+	get_line(Stream, L),
+	!,
+	(
+	    L = end_of_file
+	->
+	    Xs = []
+	;
+	    atom_codes(X, L),
+	    Xs = [X|Xs0],
+	    read_lines(Stream, Xs0)
+	).
+read_lines(_, []).
+
+:- use_module(library(strings), [get_line/2]).
+
+% ---------------------------------------------------------------------------
 
 cat(Sources, Target) :-
 	( file_exists(Target)
@@ -725,7 +784,7 @@ datime_to_string(datime(Year, Month, Day, Hour, Min, Sec), S) :-
 		MinS, ":", SecS], S).
 
 no_tr_nl(L, NL) :-
-	append(NL, [10], L),
+	append(NL, [0'\n], L),
 	!.
 no_tr_nl(L, L).
 
@@ -817,6 +876,8 @@ match([],    I,      I).
 match([H|T], [H|IT], RI) :-
 	match(T, IT, RI).
 
+% TODO: Strange definition -- used in lpmake.pl
+%       It is similar to 'read from atom', but Any can be any term.
 :- doc(any_to_term(Any, Term), "Interprets the result of print
    @var{Any} as a term @var{Term}").
 
@@ -827,3 +888,125 @@ any_to_term(Any, Term) :-
 	close(WriteTo),
 	read_term(ReadFrom, Term, []),
 	close(ReadFrom).
+
+% ===========================================================================
+
+:- doc(section, "File Permissions").
+
+get_perms(File, perm(User, Group, Others)) :-
+	fmode(File, P),
+	convert_permissions(User, Group, Others, P).
+
+set_perms(Files, Perm) :-
+	set_exec_perms_(Files, 0, _, Perm).
+
+set_exec_perms(Files, Perm) :-
+	set_exec_perms_(Files, Exec, Exec, Perm).
+
+mkdir_perm(Dir, Perms) :-
+	var(Perms),
+	!,
+	mkdir_mode(Dir, 0o777).
+mkdir_perm(Dir, Perms) :-
+	Perms = perm(User, Group, Others),
+	execute_permissions(User, Group, Others, Exec),
+	convert_permissions(User, Group, Others, Perm) ->
+	Mode is Perm \/ Exec,
+	mkdir_mode(Dir, Mode).
+
+mkdir_mode(Dir, Mode) :-
+	catch(make_dirpath(Dir, Mode),
+	    Error,
+	    (
+		show_message(error, "Error calling ~w",
+		    [make_dirpath(Dir, Mode)]),
+		throw(Error)
+	    )
+	).
+
+set_exec_perms_(Files, PermExec, Exec, perm(User, Group, Others)) :-
+	(
+	    execute_permissions(User, Group, Others, Exec),
+	    convert_permissions(User, Group, Others, Perm) ->
+	    set_perms_(Files, Perm \/ PermExec, Exec)
+	;
+	    error_message(
+		"invalid permission (should be perm(User,Group,Others))", [])
+	).
+
+%% Files can have paths
+set_perms_([], _Perm, _Exec) :-
+	!.
+set_perms_([File|Files], Perm, Exec) :-
+	!,
+	set_perms_(File,  Perm, Exec),
+	set_perms_(Files, Perm, Exec).
+
+set_perms_(File, Perm, Exec) :-
+	set_perm(File, Perm, Exec).
+
+set_perm(File, Perm, Exec) :-
+	(
+	    file_exists(File) ->
+	    (
+		file_property(File, mode(OrigMode)),
+		(
+		    file_property(File, type(directory)) ->
+		    Mode is Perm \/ Exec
+		;
+		    Mode is Perm \/ (Exec /\ OrigMode)
+		),
+		(
+		    Mode == OrigMode -> % same mode, do nothing
+		    true
+		;
+		    chmod(File, Mode)
+		)
+	    )
+	;
+	    error_message("In set_perms/2, file '~w' not found", [File])
+	).
+
+execute_permissions(perm(U, G, O), E) :-
+	execute_permissions(U, G, O, E).
+
+execute_permissions(U, G, O, E) :-
+	exec_mask_perm(U, NU),
+	exec_mask_perm(G, NG),
+	exec_mask_perm(O, NO),
+	E is NU << 6 + NG << 3 + NO.
+
+convert_permissions(perm(U, G, O), P) :-
+	convert_permissions(U, G, O, P).
+
+convert_permissions(U, G, O, P) :-
+	valid_mode(U, NU),
+	valid_mode(G, NG),
+	valid_mode(O, NO),
+	P is NU << 6 + NG << 3 + NO.
+
+exec_mask_perm(''  , 0).
+exec_mask_perm(x   , 0).
+exec_mask_perm(w   , 0).
+exec_mask_perm(wx  , 0).
+exec_mask_perm(r   , 0).
+exec_mask_perm(rx  , 0).
+exec_mask_perm(rw  , 0).
+exec_mask_perm(rwx , 0).
+exec_mask_perm('X' , 1).
+exec_mask_perm(wX  , 1).
+exec_mask_perm(rX  , 1).
+exec_mask_perm(rwX , 1).
+
+valid_mode(''  , 0).
+valid_mode(x   , 1).
+valid_mode(w   , 2).
+valid_mode(wx  , 3).
+valid_mode(r   , 4).
+valid_mode(rx  , 5).
+valid_mode(rw  , 6).
+valid_mode(rwx , 7).
+valid_mode('X' , 0).
+valid_mode(wX  , 2).
+valid_mode(rX  , 4).
+valid_mode(rwX , 6).

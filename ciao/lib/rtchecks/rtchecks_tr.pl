@@ -223,6 +223,9 @@ rtchecks_goal_tr(PPAssertion, PPRTCheck, _) :-
 	!.
 rtchecks_goal_tr(Goal, Goal1, M) :-
 	goal_alias_db(Goal, Goal1, M), !.
+rtchecks_goal_tr('$orig_call'(Goal), RM:Goal, M) :-
+	functor(Goal, F, N),
+	module_qualifier(F, N, M, RM).
 rtchecks_goal_tr('$meta$rtc'(Goal, MG), MG=RM:Goal, M) :-
 	functor(Goal, F, N),
 	module_qualifier(F, N, M, RM).

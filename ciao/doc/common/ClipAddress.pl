@@ -1,20 +1,14 @@
 %%% @hfill not understood by some tools?
-%% :- doc(credits, "@tt{clip@@dia.fi.upm.es} @hfill The CLIP Group").
-%% :- doc(credits, 
+%% :- doc(address, "@tt{clip@@dia.fi.upm.es} @hfill The CLIP Group").
+%% :- doc(address, 
 %%   "@tt{http://www.clip.dia.fi.upm.es/} @hfill Facultad de Inform@'{a}tica").
-%% :- doc(credits, "@hfill Universidad Polit@'{e}cnica de Madrid").
-%% Authors should be added by hand...
-%% :- doc(credits, "Francisco Bueno, Daniel Cabeza, Manuel Carro,").
-%% :- doc(credits, "Manuel Hermenegildo, P. L@'{o}pez, and Germ@'{a}n Puebla").
-%% :- doc(credits, "Facultad de Inform@'{a}tica").
-%% :- doc(credits, "Universidad Polit@'{e}cnica de Madrid").
-:- doc(credits, " ").
-:- doc(credits, "The Computational logic, Languages, ").
-:- doc(credits, "Implementation, and Parallelism (CLIP) Lab").
-%% :- doc(credits, "The CLIP Group").
-:- doc(credits, "@uref{http://www.cliplab.org/}").
-:- doc(credits, "@email{webmaster@@clip.dia.fi.upm.es}").
-%:- doc(credits, "School of CS, Technical University of Madrid"). 
-:- doc(credits, "School of CS, T. U. of Madrid (UPM)"). 
-% :- doc(credits, "CS and ECE Departments, University of New Mexico").
-:- doc(credits, "IMDEA Software Institute").
+%% :- doc(address, "@hfill Universidad Polit@'{e}cnica de Madrid").
+:- doc(address, "The Computational logic, Languages, ").
+:- doc(address, "Implementation, and Parallelism (CLIP) Lab").
+%% :- doc(address, "The CLIP Group").
+:- doc(address, "@uref{http://www.cliplab.org/}").
+:- doc(address, "@email{webmaster@@clip.dia.fi.upm.es}").
+%:- doc(address, "School of CS, Technical University of Madrid"). 
+:- doc(address, "School of CS, T. U. of Madrid (UPM)"). 
+% :- doc(address, "CS and ECE Departments, University of New Mexico").
+:- doc(address, "IMDEA Software Institute").

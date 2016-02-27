@@ -69,6 +69,13 @@ tools to add the required packages.  In Windows, doing a full
 installation of CygWin ensures that you have all the required
 packages.
 
+Note that the @concept{GNU} implementation of the @concept{make} Un*x
+command is (still) internally used during the installation process. It
+is available in many systems (including all Linux systems and Mac OS
+X) simply as @apl{make}. If any of the installation steps stop right
+away with @apl{make} error messages, you probably need to install
+@tt{gmake}.
+
 @section{Obtaining the Sources (ciaode)}
 
 @begin{enumerate}
@@ -110,86 +117,68 @@ following section.
 
 @section{Custom Installations (ciaode)}
 
-More advanced uses of CiaoDE will require some customization of the
-default build and installation options. Follow the next steps:
+Advanced uses of CiaoDE would require the customization of the default
+build and installation options. In that case, the installation process
+usually follows the following steps:
 
 @begin{enumerate}
 
-@item Once you have placed the source files in an installation
-      directory, run:
+@item From the directory where the sources are stored, run:
 
 @begin{verbatim}
 ./ciaosetup configure
 @end{verbatim}
 
-      This will generate some configuration files.  Note that by
-      default the system will be configured to be installed in
-      @tt{/usr/local}, with some reasonable installation options, and
-      @bf{for all users} (for which you will need to run the
-      installation as root).  In case you want to change the
-      installation choices (there are quite a few options!), install
-      elsewhere, or make a personal installation, you can use a
-      menu-driven procedure, as will be explained below.
+      It will perform a default configuration, where the system will
+      be configured to be installed as the system administrator
+      (@tt{root}) in a standard directory available for all users in
+      the machine (e.g., @tt{/usr/local}).
 
-      The configure command accepts several options. If you want to
-      see a brief description use the @tt{--help} argument (or check
-      the next section bellow on configuration options):
+      The additional options @tt{--instype=src} and
+      @tt{--sysavail=user}, will prepare CiaoDE to run from the
+      sources directly, and configured in the user's home directory
+      (recommended for CiaoDE developers).
+
+      In case you want to install elsewhere, or change any of the
+      installation options, you can use a customized configuration
+      procedure. The configure command accepts several options. You
+      can see a brief description of them with:
 
 @begin{verbatim}
-$ ./ciaosetup configure --help
+./ciaosetup configure --help
 @end{verbatim}
 
-      The @tt{--menu} option shows a menu with configuration options.
-      You must follow the instructions that appear on it.  When asked
-      for the configuration level, if you are happy with the default
-      options, select the first option and no questions will be made.
-      If you need a higher level of customization, select the last
-      option.  Note that for CiaoDE development is recommended to use
-      the option @tt{--instype=src} and @tt{--sysavail=user}, which
-      prepares the CiaoDE to run from the sources directly, and
-      configured in the user's home directory.
-
-      Note that the @concept{GNU} implementation of the @concept{make}
-      Un*x command is used internally in some specific parts. It is
-      available in many systems (including all Linux systems and Mac
-      OS X) simply as @apl{make}. If this or next steps stop right
-      away with @apl{make} error messages it is probably an older
-      version and you need to install @tt{gmake}.
+      Use the @tt{--menu} option to select configuration options
+      interactively. You must follow the instructions that appear on
+      it.  When asked for the configuration level, if you are happy
+      with the default options, select the first option and no
+      questions will be made.  If you need a higher level of
+      customization, select the last option.
 
 @item Once the configuration process has finished, run:
 
 @begin{verbatim}
- @tt{./ciaosetup build}
+./ciaosetup build
 @end{verbatim}
 
       This will build executables and compile libraries.
 
-@item If you have obtained the CiaoDE source from the cvs repository,
+@item If you have obtained the CiaoDE source from the SVN repository,
       you need to generate the documentation.  This can be done using:
 
 @begin{verbatim}
- @tt{./ciaosetup docs}
+./ciaosetup docs
 @end{verbatim}
 
 @item After the compilation completes successfully, run:
 
 @begin{verbatim}
- @tt{./ciaosetup install}
+./ciaosetup install
 @end{verbatim}
 
       This will install everything in the specified directories.
 
-      If you want to see the other available options, run
-      @tt{./ciaosetup help}
 @end{enumerate}
 
-@section{Configuration Options (ciaode)}
-
-This is the list of available configuration options for
-@tt{./ciaosetup configure}, useful to customize your CiaoDE
-installation:
-
-@begin{verbatim}
-@includeverbatim{configure_help.tmp}
-@end{verbatim}
-
+If you want to see the other available commands, run @tt{./ciaosetup
+help}.

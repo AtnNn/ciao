@@ -1,5 +1,5 @@
 % ===========================================================================
-:- module(_, _, [make, fsyntax, assertions, define_flag, regexp]).
+:- module(_, _, [ciaopaths, make, fsyntax, assertions, define_flag, regexp]).
 % ===========================================================================
 :- doc(title,  "Ciao etc Compilation/Installation installer").
 :- doc(author, "Edison Mera").
@@ -13,11 +13,13 @@
 :- use_module(library(lists),      [append/3]).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(terms)).
-:- use_module(library(distutils)).
-:- use_module(library(autoconfig)).
-:- use_module(library(distutils(setperms))).
+:- use_module(library(distutils), [build_executable/3]).
+:- use_module(library(component_registry), [component_src/2]).
+:- use_module(library(make(system_extra))).
 :- use_module(ciaodesrc(makedir('ConfigValues'))).
 :- use_module(ciaodesrc(makedir('DOCCOMMON'))).
+:- use_module(ciaodesrc(makedir(makedir_component))).
+:- use_module(ciaodesrc(makedir(makedir_aux))).
 
 plutility :=
 	fileinfo|
@@ -35,103 +37,92 @@ plutility :=
 
 %dotcshrc     := ~atom_concat(~srcbindir, '/DOTcshrc').
 %dotprofile   := ~atom_concat(~srcbindir, '/DOTprofile').
-basefile := ~atom_concat([~srcbindir, '/', ~versionmain]).
+basefile := ~atom_concat([~srcbindir, '/', ~component_name_version(ciao)]).
 ciao_get_arch := 'ciao_get_arch'.
 
 shscript := ~ciao_get_arch|~basemain.
 
-abs_plutility := ~atom_concat([~srcbindir, '/', ~plutility,
-		'-', ~vers, ~get_ciao_ext]).
-abs_ciao_get_arch := ~atom_concat([~srcbindir, '/', ~ciao_get_arch,
-		'-', ~vers]).
-abs_shscript := ~atom_concat([~srcbindir, '/', ~shscript,
-		'-', ~vers]).
+abs_plutility := ~atom_concat([~srcbindir, '/', ~plutility, '-', ~component_version(ciao), ~get_ciao_ext]).
+abs_ciao_get_arch := ~atom_concat([~srcbindir, '/', ~ciao_get_arch, '-', ~component_version(ciao)]).
+abs_shscript := ~atom_concat([~srcbindir, '/', ~shscript, '-', ~component_version(ciao)]).
 
 exe_header := ~atom_concat(~component_src(ciao), '/lib/compiler/header').
 
-all <- [comp_message, 'DOTcshrc', 'DOTprofile'|~append(
+% ============================================================================
+
+:- include(ciaodesrc(makedir('makedir_SHARE'))).
+component_id(ciao_etc).
+component_dname('Ciao (etc) Utilities').
+component_readme_dir(_) :- fail.
+component_readme(_) :- fail.
+component_manual_dir(_) :- fail.
+
+% ============================================================================
+
+% (private)
+component_all <- ['DOTcshrc', 'DOTprofile'|~append(
 		~findall(P, abs_plutility(P)),
 		~findall(P, abs_shscript(P)))] :- true.
 
-install <- [] # "Install ciao shell utilities." :-
+component_register <- [] :- true.
+component_unregister <- [] :- true.
+
+component_install <- [] # "Install ciao shell utilities." :-
 	ciaobindir(BinDir),
 	libdir(LibDir),
 	build_root(BuildRoot),
 	atom_concat(BuildRoot, BinDir, BuildBinDir),
-	vers(Vers),
-	versionmain(VersionMain),
+	component_version(ciao, Vers),
+	component_name_version(ciao, VersionMain),
 	srcbindir(SrcBinDir),
 	mkdir_perm(BuildBinDir, ~perms),
-% Copy shell initialization files
-	copy_file('DOTprofile', ~atom_concat(BuildRoot, ~reallibdir),
-	    [overwrite]),
-	-set_perms(~atom_concat([BuildRoot, ~reallibdir,
-		    '/DOTprofile']), ~perms),
-	do(['ln -sf ', ~relreallibdir, '/DOTprofile ', BuildRoot, LibDir,
-		'/DOTprofile'], nofail),
-	copy_file('DOTcshrc', ~atom_concat(BuildRoot, ~reallibdir), [
-		overwrite]),
-	do(['ln -sf ', ~relreallibdir, '/DOTcshrc ', BuildRoot, LibDir,
-		'/DOTcshrc'], nofail),
-% Copy startup script
+	% Copy shell initialization files
+	copy_file('DOTprofile', ~atom_concat(BuildRoot, ~reallibdir), [overwrite]),
+	-set_perms(~atom_concat([BuildRoot, ~reallibdir, '/DOTprofile']), ~perms),
+	do(['ln -sf ', ~relreallibdir, '/DOTprofile ', BuildRoot, LibDir, '/DOTprofile'], nofail),
+	copy_file('DOTcshrc', ~atom_concat(BuildRoot, ~reallibdir), [overwrite]),
+	do(['ln -sf ', ~relreallibdir, '/DOTcshrc ', BuildRoot, LibDir, '/DOTcshrc'], nofail),
+	% Copy startup script
 	atom_concat([SrcBinDir,   '/', VersionMain], SourceVersionMain),
 	atom_concat([BuildBinDir, '/', VersionMain], TargetVersionMain),
 
 	del_file_nofail(TargetVersionMain),
 	copy_file(SourceVersionMain, TargetVersionMain, [overwrite]),
 	-set_exec_perms(TargetVersionMain, ~perms),
-	--copy_file(~versionmain, ~atom_concat([BuildBinDir, '/', ~basemain
-		]),
-	    [overwrite, symlink]),
+	--copy_file(~component_name_version(ciao), ~atom_concat([BuildBinDir, '/', ~basemain]), [overwrite, symlink]),
 	( install_prolog_name(yes) ->
-	    --copy_file(~versionmain, ~atom_concat([BuildBinDir, '/prolog'
-		    ]),
-		[overwrite, symlink])
-	;
-	    true
+	    --copy_file(~component_name_version(ciao), ~atom_concat([BuildBinDir, '/prolog']), [overwrite, symlink])
+	; true
 	),
 	get_ciao_ext(Ext),
-	(
-	    (
-		plutility(BaseFile),
-		atom_concat([SrcBinDir, '/', BaseFile, '-', Vers, Ext],
-		    SourceFile),
-		atom_concat([BaseFile, '-', Vers, Ext],
-		    TargetFile)
-	    ;
-		shscript(BaseFile),
-		atom_concat([SrcBinDir, '/', BaseFile, '-', Vers],
-		    SourceFile),
-		atom_concat([BaseFile, '-', Vers],
-		    TargetFile)
+	( % (failure-driven loop)
+	    ( plutility(BaseFile),
+	      atom_concat([SrcBinDir, '/', BaseFile, '-', Vers, Ext], SourceFile),
+	      atom_concat([BaseFile, '-', Vers, Ext], TargetFile)
+	    ; shscript(BaseFile),
+	      atom_concat([SrcBinDir, '/', BaseFile, '-', Vers], SourceFile),
+	      atom_concat([BaseFile, '-', Vers], TargetFile)
 	    ),
-	    --delete_file(~atom_concat([BuildRoot, BinDir, '/',
-			TargetFile])),
-	    --delete_file(~atom_concat([BuildRoot, BinDir, '/',
-			BaseFile])),
+	    --delete_file(~atom_concat([BuildRoot, BinDir, '/', TargetFile])),
+	    --delete_file(~atom_concat([BuildRoot, BinDir, '/', BaseFile])),
 %	    -copy_file(SourceFile, ~atom_concat([BuildRoot,BinDir,'/',
 %	        TargetFile]), [overwrite]),
-	    -copy_file(~atom_concat([SrcBinDir, '/', TargetFile]),
-		~atom_concat(BuildRoot, BinDir), [overwrite]),
+	    -copy_file(~atom_concat([SrcBinDir, '/', TargetFile]), ~atom_concat(BuildRoot, BinDir), [overwrite]),
 %	    -copy_file(~atom_concat([SrcBinDir, '/', BaseFile]),
 %		~atom_concat(BuildRoot, BinDir), [overwrite]),
-	    --copy_file(TargetFile, ~atom_concat([BuildBinDir, '/',
-			BaseFile]),
-		[overwrite, symlink]),
-	    -set_exec_perms(~atom_concat([BuildBinDir, '/', BaseFile]),
-		~perms),
-	    -set_exec_perms(~atom_concat([BuildBinDir, '/', TargetFile]),
-		~perms),
+	    --copy_file(TargetFile, ~atom_concat([BuildBinDir, '/', BaseFile]), [overwrite, symlink]),
+	    -set_exec_perms(~atom_concat([BuildBinDir, '/', BaseFile]), ~perms),
+	    -set_exec_perms(~atom_concat([BuildBinDir, '/', TargetFile]), ~perms),
 	    fail
 	;
 	    true
 	).
 
-uninstall <- :-
-	justuninstall(~instype).
+component_uninstall <- :-
+	component_uninstall(~instype).
 
-justuninstall(src).
-justuninstall(ins) :- douninstall.
+component_uninstall(src).
+component_uninstall(ins) :- douninstall.
 
 douninstall :-
 	ciaobindir(BinDir),
@@ -145,10 +136,10 @@ douninstall :-
 		~atom_concat([BuildRoot, RealLibDir, '/DOTprofile']),
 		~atom_concat([BuildRoot, RealLibDir, '/DOTcshrc']),
 		~atom_concat([BuildRoot, BinDir, '/', ~basemain]),
-		~atom_concat([BuildRoot, BinDir, '/', ~versionmain]),
+		~atom_concat([BuildRoot, BinDir, '/', ~component_name_version(ciao)]),
 		~atom_concat([BuildRoot, LibDir, '/NewUser'])]),
 	get_ciao_ext(Ext),
-	vers(Vers),
+	component_version(ciao, Vers),
 	(
 	    (
 		plutility(BaseFile),
@@ -159,10 +150,8 @@ douninstall :-
 	    ),
 % 	    display('deleting '),display([~atom_concat([BinDir,'/',File]),
 % 	    ~atom_concat([BinDir,'/',BaseFile])]),nl,
-	    --delete_file(~atom_concat([BuildRoot, BinDir, '/', BaseFile
-		    ])),
-	    --delete_file(~atom_concat([BuildRoot, BinDir, '/', File
-		    ])),
+	    --delete_file(~atom_concat([BuildRoot, BinDir, '/', BaseFile])),
+	    --delete_file(~atom_concat([BuildRoot, BinDir, '/', File])),
 	    fail
 	;
 	    true
@@ -220,15 +209,15 @@ dobasefile(FileName) :-
 	ciao_extra_commands(ExtraCommands),
 	replace_strings_in_file([
 		["<v>ExtraCommands</v>", ExtraCommands],
-		["<v>CiaoVersion</v>",   ~atom_codes(~vers)],
+		["<v>CiaoVersion</v>",   ~atom_codes(~component_version(ciao))],
 		["<v>CiaoSuffix</v>",    ~atom_codes(~get_ciao_ext)],
 		["<v>CiaoBinDir</v>",    ~atom_codes(~ciaobindir)]],
 	    'ciao.skel', FileName),
-	--copy_file(~versionmain,
+	--copy_file(~component_name_version(ciao),
 	    ~atom_concat([~srcbindir, '/', ~basemain]),
 	    [overwrite, symlink]),
 	( install_prolog_name(yes) ->
-	    --copy_file(~versionmain,
+	    --copy_file(~component_name_version(ciao),
 		~atom_concat([~srcbindir, '/prolog']),
 		[overwrite, symlink])
 	;
@@ -239,7 +228,7 @@ dobasefile(FileName) :-
 ~abs_ciao_get_arch <- [ciao_get_arch] :: FileName :-
 	normal_message("Creating ~w", [FileName]),
 	copy_file(ciao_get_arch, FileName, [overwrite]),
-	--copy_file(~atom_concat('ciao_get_arch-', ~vers),
+	--copy_file(~atom_concat('ciao_get_arch-', ~component_version(ciao)),
 	    ~atom_concat([~srcbindir, '/ciao_get_arch']), [overwrite,
 		symlink]).
 
@@ -253,11 +242,8 @@ dobasefile(FileName) :-
 % 	    ~atom_concat(~component_src(ciao),'/NewUser'),
 % 	    'NewUser-install').
 
-comp_message <- :-
-	bold_message("Compiling utilities in etc directory").
-
 plsource(FileName, Vers, SrcBinDir, BaseFile, AbsSourceFile) :-
-	vers(Vers),
+	component_version(ciao, Vers),
 	srcbindir(SrcBinDir),
 	get_ciao_ext(Ext),
 	atom_concat([SrcBinDir, '/', BaseFile, '-', Vers, Ext], FileName),

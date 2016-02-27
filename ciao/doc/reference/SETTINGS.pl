@@ -1,13 +1,28 @@
-:- module(_, _, [fsyntax, assertions]).
+:- module(_, _, [ciaopaths, regtypes, fsyntax, assertions]).
+
+:- include(lpdocsrc(lib('SETTINGS_schema'))).
+% ***************************************************************************
+% This is a LPdoc configuration file. See SETTINGS_schema for documentation *
+% ***************************************************************************
 
 :- use_module(library(terms), [atom_concat/2]).
-:- use_module(library(autoconfig)).
+:- use_module(library(component_registry), [component_src/2]).
 :- use_module(ciaodesrc(makedir('ConfigValues'))).
 
+% TODO: component version exported from here
 :- reexport(ciaosrc(doc(common('LPDOCCOMMON')))).
+libtexinfo(_) :- fail.
+datamode(_) :- fail.
+execmode(_) :- fail.
 
-output_name := ~distpkg_name_version.
+% TODO: move to lpdoc, put version numbers automatically, and symlinks
+parent_component_version_nice := ~distpkg_obtain_version_nice(~atom_concat(~component_src(~parent_component), '/')).
+:- use_module(library(distutils(distpkg_versions))).
 
+manual_name := 'ciao'. % TODO: use it to obtain the version-less name (e.g., for symlinks)
+output_name := ~atom_concat([~manual_name, '-', ~parent_component_version_nice]).
+
+% TODO: use parent_component to share those defs
 filepath := ~atom_concat(~component_src(ciao), ~ciaofilepathref)|~emacs_mode_path.
 
 ciaofilepathref := ~ciaofilepath|~ciaofilepath_common.
@@ -134,7 +149,8 @@ docstr_annotatedprolog :=
 %	'meta_props'
 
 docstr_miscprolog :=
-	['benchmarks/ecrc',
+	['ciaopaths_doc', % TODO: Not the right place
+	 'benchmarks/ecrc',
 	 'getopts',
 	 'llists',
 	 'streams',
@@ -164,6 +180,9 @@ docstr_miscprolog :=
 	 'sockets/sockets',
 	 'sockets/sockets_io',
          %
+	 % TODO: is 'ciao/etc/lpmake.pl' being documented?
+	 %       (and other tools under ciao/etc?)
+	 % TODO: nest
 	 'make/make_doc',
 	 'make/make_rt',
 	 'make/system_extra'].
@@ -206,10 +225,14 @@ docstr_extendprolog :=
 	 'clpr/clpr_doc',
 	 'fuzzy/fuzzy_doc',
          %
-	 'objects/ociao_doc',
-	 'class/class_doc',
-	 'objects/objects_doc',
-	 'objects/objects_rt'].
+	 'objects/ociao_doc'-[
+	   'class/class_doc',
+	   'objects/objects_doc',
+	   'objects/objects_rt',
+	   'interface/interface_doc'
+         ]
+         ].
+
 % 'remote_doc',
 % 'mattr_global_doc'
 
@@ -235,8 +258,7 @@ docstr_interfaces :=
 	 %
 	 'davinci',
 	 %
-	 'tcltk/tcltk',
-	 'tcltk/tcltk_low_level',
+	 'tcltk/tcltk'-['tcltk/tcltk_low_level'],
 	 %
 %  'window_class_doc',
 %    'widget_class_doc',
@@ -269,14 +291,17 @@ docstr_interfaces :=
 	   'factsdb/factsdb_rt'
          ],
 	 ~docstr_persdb_mysql_docs(~with_mysql),
+	 % TODO: nest
 	 'persdb_sql_common/sqltypes',
 	 'persdb_sql_common/persdbtr_sql',
 	 'persdb_sql_common/pl2sqlinsert',
          %
-	 'javall/javart',
-	 'javall/jtopl',
-         %
-	 'javall/javasock',
+	 'javall/javall_doc'-[
+	   'javall/javart',
+	   'javall/jtopl',
+           %
+	   'javall/javasock'
+         ],
 	 'emacs/emacs',
 	 'linda'].
 
@@ -284,6 +309,7 @@ docstr_interfaces :=
 %	db_client',
 
 docstr_persdb_mysql_docs(yes) := [
+	% TODO: nest
 	'persdb_mysql/persdbrt_mysql',
 	'persdb_mysql/pl2sql',
 	'persdb_mysql/mysql_client',
@@ -316,12 +342,12 @@ docstr_adts :=
 %     'lsets'
 
 docstr_utilcomponents :=
-	['autoconfig/autoconfig',
-	 'cleandirs',
+	['cleandirs',
 	 'fileinfo',
 	 'viewpo',
 %        'xrefs_doc',
 	 'xrefs/callgraph',
+	 % 'show_deps'?
 	 'get_deps',
 	 'pldiff',
 	 'lpmake',
@@ -408,13 +434,4 @@ doc_mainopts := '-nopatches'.
 %       indices (due to internal, maybe arbitrary, limitations) --JF.
 doc_compopts := '-noisoline'|'-noengmods'|'-propmods'|'-nochangelog'|'-nopropuses'.
 
-% ----------------------------------------------------------------------------
-% BUILD ROOT
-% ----------------------------------------------------------------------------
 
-:- pred doc_build_root(Dir) => atm(Dir)
-
-# "@var{Dir} is the directory where documentation files will be
-  placed. @var{Dir}/tmp will be used for temporary/cache files.".
-
-doc_build_root := ~atom_concat(~distpkg_root_dir, 'doc/reference/').

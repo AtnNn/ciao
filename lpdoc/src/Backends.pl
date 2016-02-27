@@ -5,5 +5,3 @@
 :- doc(title,"LPdoc Backends").
 
 %% :- doc(module,"...").
-
-main.

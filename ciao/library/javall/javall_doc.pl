@@ -6,16 +6,16 @@
 
 :- doc(title,"Prolog/Java Bidirectional Interface").
 
-:- doc(subtitle,"@bf{The CIAO System Documentation Series}").
-%:- doc(subtitle,"Technical Report CLIP 5/97.1").
-:- doc(subtitle,"@em{Printed on:} @today{}").
+:- doc(subtitle_extra,"@bf{The CIAO System Documentation Series}").
+%:- doc(subtitle_extra,"Technical Report CLIP 5/97.1").
+:- doc(subtitle_extra,"@em{Printed on:} @today{}").
 
 :- doc(author, "Jes@'{u}s Correas").
 :- doc(author, "The CLIP Group").
-:- doc(credits, "@tt{clip@@dia.fi.upm.es}").
-:- doc(credits, "@tt{http://www.clip.dia.fi.upm.es/}").
-:- doc(credits, "Facultad de Inform@'{a}tica").
-:- doc(credits, "Universidad Polit@'{e}cnica de Madrid").
+:- doc(address, "@tt{clip@@dia.fi.upm.es}").
+:- doc(address, "@tt{http://www.clip.dia.fi.upm.es/}").
+:- doc(address, "Facultad de Inform@'{a}tica").
+:- doc(address, "Universidad Polit@'{e}cnica de Madrid").
 
 :- doc(copyright,"
 Copyright @copyright{} 1996-2002 Jes@'{u}s Correas Fern@'{a}ndez/The CLIP Group.

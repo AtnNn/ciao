@@ -32,7 +32,7 @@
            of Ciao Prolog system and is distributed under GNU Lesser 
            General Public License. Consider COPYING file in source package
            of visit following Internet address: 
-           http://www.gnu.org/licenses/lgpl.html for complete text of the 
+           @uref{http://www.gnu.org/licenses/lgpl.html} for complete text of the 
            license.").
 
 :- doc(summary, "This is just a single module of the whole Ciao DHT 

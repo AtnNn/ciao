@@ -1,6 +1,7 @@
 :- module(freeze, [freeze/2, frozen/2], [assertions, nortchecks]).
 
 :- doc(title,"Delaying predicates (freeze)").
+:- doc(author,"Remy Haemmerle").
 :- doc(author,"Manuel Carro").
 :- doc(author,"Daniel Cabeza").
 
@@ -27,8 +28,13 @@
 :- meta_predicate frozen(?, goal).
 
 freeze(X, Goal) :-
-        attach_attribute( V, '$frozen_goals'(V,Goal)),
-        X = V.
+        (
+            var(X) -> 
+            attach_attribute( V, '$frozen_goals'(V,Goal)),
+            X = V
+        ;
+            call(Goal)
+        ).
 
 :- doc(hide,verify_attribute/2).
 
@@ -57,4 +63,9 @@ combine_attributes('$frozen_goals'(V1, G1), '$frozen_goals'(V2, G2)):-
    until variable @var{X} becomes bound.".
 
 frozen(Var, Goal):-
-        get_attribute(Var, '$frozen_goals'(_, Goal)).
+	var(Var), 
+        (
+	    get_attribute(Var, '$frozen_goals'(_, Goal)), !
+	;
+	    Goal = true
+	).

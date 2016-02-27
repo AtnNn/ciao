@@ -12,7 +12,7 @@
 :- use_module(library(dict)).
 :- use_module(library(write)).
 
-:- use_module(ciaodesrc(makedir('CIAODESHARED')), [invoke_lpdoc/1]).
+:- use_module(ciaodesrc(makedir(makedir_aux)), [invoke_lpdoc/1]).
 
 :- doc(bug, "This module could be unnecessary with minor additions
 in LPdoc. For example, adding parameters as input.").

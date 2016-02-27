@@ -1,20 +1,21 @@
 :- use_package(assertions).
 
+:- doc(filetype, application). % TODO: or 'documentation'?
+
 :- doc(title,"The Ciao System").
+:- doc(subtitle, "A New Generation, Multi-Paradigm Programming Language and Environment").
+:- doc(subtitle, "(Including a State-of-the-Art ISO-Prolog)").
 
-:- doc(subtitle,
-	"@em{A New Generation, Multi-Paradigm Programming Language and Environment}").
-:- doc(subtitle,
-	"@em{(Including a State-of-the-Art ISO-Prolog)}").
-:- doc(subtitle,"REFERENCE MANUAL").
-:- doc(subtitle,"@bf{The Ciao Documentation Series}").
-:- doc(subtitle,"@uref{http://www.ciaohome.org/}").
-:- doc(subtitle,"@em{Generated/Printed on:} @today{}").
-:- doc(subtitle,"Technical Report CLIP 3/97-@em{<version below>}").
+:- doc(logo, 'ciao-shadow-64h').
 
-% TODO: At this point, it cannot be 'author' because it inserts
-%       "Edited by" as an author. --JFMC
-:- doc(credits, "@em{Edited by:}").
+:- doc(subtitle_extra,"REFERENCE MANUAL").
+:- doc(subtitle_extra,"@bf{The Ciao Documentation Series}").
+:- doc(subtitle_extra,"@uref{http://www.ciaohome.org/}").
+:- doc(subtitle_extra,"@em{Generated/Printed on:} @today{}").
+:- doc(subtitle_extra,"Technical Report CLIP 3/97-@version{}").
+
+% TODO: Replace 'credits' by 'editor'? (JFMC)
+:- doc(credits, "@bf{Edited by:}").
 :- doc(credits, "Francisco Bueno").
 :- doc(credits, "Daniel Cabeza").
 :- doc(credits, "Manuel Carro").
@@ -153,7 +154,7 @@
 
 ").
 
-main.
+% TODO: This file is not using the special acknowledgments section.
 
 %% --------------------------------------------------------------------------- 
 

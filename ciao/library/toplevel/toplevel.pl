@@ -20,7 +20,7 @@
 		display_debugged/0,
 		top_prompt/2
 	    ],
-	    [dcg, assertions, nortchecks, define_flag]).
+	    [ciaopaths, dcg, assertions, nortchecks, define_flag]).
 
 %:- ensure_loaded(library(toplevel(toplevel__scope))).
 :- use_module(user,
@@ -58,9 +58,6 @@
 
 :- use_module(library(rtchecks(rtchecks_utils)), [handle_rtcheck/1]).
 :- use_module(library(atom_to_term)).
-
-% This will load the paths of configured components of ciao, like ciaopp -- EMM
-:- use_module(library(autoconfig), []).
 
 :- redefining(make_exec/2).
 :- redefining(debug_module/1).
@@ -188,7 +185,7 @@ shell_query(Variables, Query) :-
 	    ttynl, throw(go_top)
 	; intercept(valid_solution(Query, Variables, VarNames),
 		rtcheck(T, P, Pr, V, L),
-		handle_rtcheck(rtcheck(T, P, Pr, V, L))) ->
+		(handle_rtcheck(rtcheck(T, P, Pr, V, L)),tracertc)) ->
 	    (quiet_mode -> true ; ttynl, ttydisplay(yes))
 	; (quiet_mode -> true ; ttynl, ttydisplay(no))
 	),

@@ -7,8 +7,7 @@
 		save_group/1,
 		retract_group/1,
 		set_value/3,
-		current_value/3,
-		main/0],
+		current_value/3],
 	    [assertions, fsyntax]).
 
 :- use_module(library(file_utils)).
@@ -20,13 +19,14 @@
 
 :- use_module(library(persvalue(persvalue_base))).
 
+% TODO: Bad indexing (only first argument)
 :- data persistent_file/2.
 :- data current_value/3.
 
 :- doc(author, "Edison Mera").
 
 :- doc(module, "This module provides support for store persistent
-	values in a file.  The file is compatible with gnu make and
+	values in a file.  The file is compatible with GNU @tt{make} and
 	can be used to store persistent configuration values.").
 
 get_value(Group, Name, Value) :-
@@ -79,8 +79,10 @@ set_value(Group, Name, Value) :-
 	retractall(current_value(Group, Name, _)),
 	assertz_fact(current_value(Group, Name, Value)).
 
-main :-
-	load_file(test, 'test.txt'),
-	show_values(test),
-	assertz_fact(current_value(test, 'Eureka', 'Aristoteles')),
-	save_file(test, 'test.txt').
+% TODO: This is a test entry that should be in other module, disabled
+% :- export(main/0).
+% main :-
+% 	load_file(test, 'test.txt'),
+% 	show_values(test),
+% 	assertz_fact(current_value(test, 'Eureka', 'Aristoteles')),
+% 	save_file(test, 'test.txt').

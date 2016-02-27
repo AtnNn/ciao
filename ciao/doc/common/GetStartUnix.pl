@@ -1,5 +1,7 @@
 :- use_package(assertions).
 
+:- doc(filetype, documentation).
+
 :- doc(title,"Getting started on Un*x-like machines").
 
 :- doc(author,"Manuel Hermenegildo").
@@ -230,4 +232,3 @@ Ciao is a little different...
 
 ").
 
-main.

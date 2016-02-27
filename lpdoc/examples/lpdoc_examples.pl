@@ -1,5 +1,7 @@
 :- use_package([assertions]).
 
+:- doc(filetype, documentation).
+
 :- doc(title,"An Example - Documenting a Library Module").
 
 :- doc(author,"Manuel Hermenegildo").
@@ -29,4 +31,4 @@ following chapter illustrates the use and some of the capabilities of
 
 ").
 
-main.
+

@@ -16,10 +16,6 @@
 
 :- doc(title,"ProVRML - a Prolog interface for VRML").
 
-:- doc(subtitle,"@bf{The CIAO System Documentation Series}").
-%:- doc(subtitle,"Technical Report CLIP XXXXXX").
-:- doc(subtitle,"@em{Draft printed on:} @today{}").
-
 :- doc(author, "G@..{o}ran Smedb@..{a}ck").
 :- doc(author, "Manuel Carro (some changes)").
 :- doc(author, "The CLIP Group").

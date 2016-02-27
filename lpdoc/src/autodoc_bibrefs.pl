@@ -11,8 +11,9 @@
 	bibliographical references found during the generation of
 	documentation.").
 
-:- doc(bug, "Current using BibTeX to resolve references. Merge with
-bibutils.").
+:- doc(bug, "Using external BibTeX command to resolve references. We
+can merge with @apl{bibutils} in order to get rid of this
+dependency.").
 
 :- use_module(library(dict)).
 :- use_module(library(aggregates)).
@@ -24,12 +25,7 @@ bibutils.").
 :- use_module(library(make(make_rt)), [verbose_message/1, verbose_message/2]).
 :- use_module(library(make(system_extra)), [(-) /1, do/4, try_finally/3]).
 
-%% Names and paths of external commands used by lpdoc and other paths
-%% which get stored in the executable on installation:
-:- use_module(lpdocsrc(makedir('LPDOCSETTINGS')), [
-		bibtex/1, emacs_for_ciao/1]).
-
-:- use_module(lpdocsrc(src(autodoc))).
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_doctree))).
 :- use_module(lpdocsrc(src(autodoc_refsdb))).
 :- use_module(lpdocsrc(src(autodoc_aux))).
@@ -55,7 +51,7 @@ bibutils.").
 % - Store the results (in the docstate)
 
 resolve_bibliography(DocSt) :-
-	docstate_currmod(DocSt, Name),
+	docst_currmod(DocSt, Name),
 	verbose_message("{Resolving bibliographical references", []),	
 	( no_citations(DocSt) ->
 	    % We had no citations, do nothing
@@ -79,8 +75,8 @@ resolve_bibliography(DocSt) :-
 	),
 	% Save results in the docstate
 	% TODO: at this time this is more convenient than asserting data
-	doc_customdic_lookup(DocSt, biblio_doctree, RefsR),
-	doc_customdic_lookup(DocSt, biblio_pairs, RefPairs),
+	docst_mvar_lookup(DocSt, biblio_doctree, RefsR),
+	docst_mvar_lookup(DocSt, biblio_pairs, RefPairs),
 	verbose_message("}", []).
 
 run_bibtex(TmpBase, _RAuxFile, _BblFile) :-
@@ -100,13 +96,12 @@ run_bibtex(TmpBase, _RAuxFile, _BblFile) :-
 write_bibtex_citations(DocSt, RAuxFile) :-
 	bibtex_config(LibDir, BibFiles),
 	%
-	docstate_currmod(DocSt, Name),
 	open(RAuxFile, write, CS),
 	% Write all citations
-	( refs_closure_entry(Entry, _Base, Name),
-	  Entry = citation(RefClean),
-	  format(CS, "\\citation{~s}\n", [RefClean]),
-	  fail
+	( % (failure-driven loop)
+	  docst_gdata_query(DocSt, citation(RefClean)),
+	    format(CS, "\\citation{~s}\n", [RefClean]),
+	    fail
 	; true
 	),
 	% Our custom style that writes cites in pseudo-lpdoc notation
@@ -121,12 +116,7 @@ write_bibtex_citations(DocSt, RAuxFile) :-
 
 % There are no citations in refs_closure
 no_citations(DocSt) :-
-	docstate_currmod(DocSt, Name),
-	( refs_closure_entry(Entry, _Base, Name),
-	  Entry = citation(_) ->
-	    fail
-	; true
-	).
+	\+ docst_gdata_query(DocSt, citation(_)).
 
 % ---------------------------------------------------------------------------
 

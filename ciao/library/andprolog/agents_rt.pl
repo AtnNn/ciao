@@ -67,15 +67,14 @@ create_agent :-
    based on the goal scheduling defined by @var{GS}.").
 
 agent(GS) :-
-	repeat,
-	agent_(GS).
-
-agent_(GS) :-
+ %%    	display(agent_pre_work_mutex),nl,
+	enter_mutex_self,
+ %%     display(agent_pre_work),nl,
 	work(GS),
-	agent_(GS).
+	agent(GS).
 
-agent_(GS) :-
-	agent_(GS).
+agent(GS) :-
+	agent(GS).
 
 
 :- pred work(+int).
@@ -86,30 +85,36 @@ agent_(GS) :-
    @var{GS}. Otherwise, the agent will suspend.").
 
 work(GS) :-
-	enter_mutex_self,
-	read_event(Handler) ->
+ %%   	display(entering_work),nl,
 	(
+	    read_event(Handler) ->
+ %%   	    display(agent_read_event),nl,
 	    exit_mutex_self,
 	    enter_mutex(Handler),
-	    goal_toreexecute(Handler) ->
 	    (
+		goal_toreexecute(Handler) ->
+ %% 		nl,display(never_never_never),nl,
 		set_goal_rem_executing(Handler),
 		save_init_execution(Handler),
 		exit_mutex(Handler),
 		call_handler(Handler)
 	    ;
 		set_goal_rem_executing(Handler),
+ %%   		display(move_exec_top),nl,
 		move_execution_top(Handler),
 		exit_mutex(Handler),
+ %%  		display(pre_fail),nl,
 		fail
 	    )
 	;
-	    find_goal(GS,H) ->
+ %%   	    display(agent_no_read_event),nl,
 	    (
+		find_goal(GS,H) ->
+ %%    		display(agent_find_goal),nl,
 		exit_mutex_self,
 		enter_mutex(H),
-		goal_det(H) ->
 		(
+		    goal_det(H) ->
 		    exit_mutex(H),
 		    call_det_handler(H),
 		    work(GS)
@@ -117,9 +122,12 @@ work(GS) :-
 		    save_init_execution(H),
 		    exit_mutex(H),
 		    call_handler(H)
+ %% 		    pause(1)
 		)
 	    ;
+ %%     	display(agent_to_suspend),nl,
 		suspend,
+ %%     	display(agent_after_suspend),nl,
 		work(GS)
 	    )
         ).

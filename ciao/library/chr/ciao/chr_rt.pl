@@ -16,7 +16,8 @@
 
 :- use_module(library(chr(hprolog))). % , [ term_variables/2 ] ).
 
-:- use_package( library( swi_mattr_global ) ).
+:- use_package(attr).
+:- use_module(library(attr(attr_rt)), [get_attr/3, put_attr/3]).
 
 :- use_module(library(odd), [setarg/3]).
 :- use_module(library(sort), [sort/2]).
@@ -24,4 +25,5 @@
 :- use_module(library(iso_misc), [compound/1]).
 :- use_module(library(sets), [merge/3]).
 
+:- set_prolog_flag( check_cycles, on ).
 'chr debug_event'(_).

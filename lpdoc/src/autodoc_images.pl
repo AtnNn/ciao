@@ -15,7 +15,7 @@
 
 :- use_module(library(terms), [atom_concat/2]).
 
-:- use_module(lpdocsrc(src(autodoc))).
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_filesystem))).
 :- use_module(lpdocsrc(src(autodoc_settings))).
 :- use_module(lpdocsrc(src(autodoc_aux))).
@@ -35,6 +35,7 @@
 :- export(locate_and_convert_image/4).
 % TODO: Allow file specs in ImageSpecS (see spec_add_suffix/3)
 % TODO: directory output for target is missing
+% TODO: [URGENT] Remember converted images!
 :- pred locate_and_convert_image(SrcSpecS, AcceptedFormats, DocSt, TargetFileS) ::
 	string * list(atom) * docstate * string # 
         "The image at @var{SrcSpecS} is located (as one of the known
@@ -48,7 +49,7 @@ locate_and_convert_image(SrcSpecS, AcceptedFormats, DocSt, TargetFileS) :-
 	( known_format(SrcExt), % (may backtrack)
 	  %
 	  spec_add_suffix(SrcSpec, SrcExt, SrcSpecExt),
-	  error_protect(absolute_file_name(library(SrcSpecExt), SrcFile)) ->
+	  catch(absolute_file_name(library(SrcSpecExt), SrcFile), _, fail) ->
 	    % Image found!
 	    atom_concat([SrcBase, '.', SrcExt], SrcFile),
 	    % Determine the target format
@@ -64,11 +65,7 @@ locate_and_convert_image(SrcSpecS, AcceptedFormats, DocSt, TargetFileS) :-
 	    get_name(SrcBase, SrcName),
 	    atom_concat('autofig', SrcName, TargetBase),
 	    atom_concat([TargetBase, '.', TargetFormat], TargetFile),
-	    % Convert the image
-	    doc_message("-> Including image ~w in documentation as ~w", [SrcFile, TargetFile], DocSt),
-	    %format(user_error, "-> Including image ~w in documentation as ~w~n", [SrcFile, TargetFile]),
-	    % ( verbose_message("Converting/Copying file from ~w to ~w", [SrcFile, TargetFile]),
-	    image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, DocSt),
+	    cached_image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, DocSt),
 	    %
 	    atom_codes(TargetFile, TargetFileS)
 	; error_message("-> Image ~w not found in any known format", [SrcSpec]),
@@ -85,9 +82,33 @@ known_format('jpg').
 spec_add_suffix(SrcSpec, SrcExt, SrcSpecExt) :-
 	atom_concat([SrcSpec, '.', SrcExt], SrcSpecExt).
 
+% ---------------------------------------------------------------------------
+:- doc(section, "Cached Image Copy/Conversions").
+% TODO: This part is not incremental (and it should be).
+
+% TODO: good indexing?
+:- data cached_image/4.
+
+:- export(clean_image_cache/0).
+:- pred clean_image_cache/0 # "Clean the cache for image copy/conversions.".
+clean_image_cache :-
+        retractall_fact(cached_image(_,_,_,_)).
+
+cached_image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, _DocSt) :-
+        current_fact(cached_image(SrcBase, SrcExt, TargetBase, TargetFormat)), !.
+cached_image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, DocSt) :-
+	% Convert the image
+	docst_message("-> Including image ~w in documentation as ~w", [SrcBase, TargetBase], DocSt),
+	%format(user_error, "-> Including image ~w in documentation as ~w~n", [SrcFile, TargetFile]),
+	% ( verbose_message("Converting/Copying file from ~w to ~w", [SrcFile, TargetFile]),
+	image_convert(SrcBase, SrcExt, TargetBase, TargetFormat, DocSt),
+        assertz_fact(cached_image(SrcBase, SrcExt, TargetBase, TargetFormat)).
+
+% ---------------------------------------------------------------------------
+:- doc(section, "Image Copy/Conversion").
+
 %% Names and paths of external commands used by lpdoc and other paths
 %% which get stored in the executable on installation:
-:- use_module(lpdocsrc(makedir('LPDOCSETTINGS')), [convertc/1]).
 :- use_module(library(make(system_extra)),
 		[del_file_nofail/1,
 		do/2,
@@ -106,7 +127,7 @@ image_convert(SrcBase, SrcExt, TargetBase, TargetExt, DocSt) :-
 	%%    -del_file_nofail(~atom_concat(SrcBase, '.gif')),
 	%%    -del_file_nofail(~atom_concat(SrcBase, '.ppm.tmp'))
 	%%;
-	docstate_backend(DocSt, Backend),
+	docst_backend(DocSt, Backend),
 	absfile_for_aux(Target, Backend, AbsFile),
 	( SrcExt = TargetExt ->
 	    % same format, just copy

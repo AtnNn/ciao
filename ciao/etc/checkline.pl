@@ -5,6 +5,8 @@
 :- use_module(library(lists)).
 :- use_module(library(checklines)).
 
+:- doc(title, "Line Length Checker").
+
 :- doc(author, "Edison Mera").
 
 :- doc(module, "This program helps to verify that a file does not
@@ -15,7 +17,19 @@
 @includefact{usage_message/1}
 @end{verbatim}
 
+@subsection{Related Tools}
+
+The @tt{whitespace-mode} for @apl{emacs} offers a similar
+functionality.
 ").
+
+usage_message :=
+	"Usage: checkline [-l Chars] -|FileName \n"||
+	"Chars is the max number of characters. By default 80.\n"||
+	"FileName is the file name to verify.\n"||
+	"\'-\' Is used to indicate that the standard input will be used.\n".
+
+% ---------------------------------------------------------------------------
 
 main(Args) :-
 	process_args(Args, Params),
@@ -59,10 +73,5 @@ show_warnings_lines_too_long([L|Ls]) :-
 	show_warnings_lines_too_long(Ls).
 
 show_help :-
-	display_string(~report_usage).
+	display_string(~usage_message).
 
-report_usage :=
-	"Usage: checkline [-l Chars] -|FileName \n"||
-	"Chars is the max number of characters. By default 80.\n"||
-	"FileName is the file name to verify.\n"||
-	"\'-\' Is used to indicate that the standard input will be used.\n".

@@ -10,7 +10,7 @@
 
 :- doc(module,"@begin{alert}General documentation pending@end{alert}").
 
-main.
+
 
 
 

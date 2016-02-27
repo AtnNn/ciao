@@ -14,7 +14,7 @@
 :- use_module(library(lists), [reverse/2, append/3]).
 :- use_module(library(aggregates), [findall/3]).
 
-:- use_module(lpdocsrc(src(autodoc))).
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_filesystem))).
 :- use_module(lpdocsrc(src(autodoc_doctree))).
 :- use_module(lpdocsrc(src(autodoc_structure))).
@@ -56,17 +56,17 @@ get_idxbase(IdxName, _DocSt, IdxBase) :-
 % TODO: make typeindex data so that the user can define new indices?
 %:- data(typeindex/5).
 
-typeindex(lib,    'li',"code","Library/Module Definition Index",  string_esc("")).
+typeindex(lib,    'li',"code","Library/Module Index",  string_esc("")).
 typeindex(apl,    'ap',"code","Application Index",                string_esc("")).
-typeindex(pred,   'pd',"code","Predicate/Method Definition Index",string_esc("")).
-%% typeindex(func,   'fu',"code","Function/Method Definition Index", string_esc("")).
-typeindex(prop,   'pr',"code","Property Definition Index",        string_esc("")).
-typeindex(regtype,'te',"code","Regular Type Definition Index",    string_esc("")).
-typeindex(decl,   'de',"code","Declaration Definition Index",     string_esc("")).
-typeindex(op,     'op',"code","Operator Definition Index",        string_esc("")).
-typeindex(modedef,'mo',"code","Mode Definition Index",            string_esc("")).
+typeindex(pred,   'pd',"code","Predicate/Method Index",string_esc("")).
+%% typeindex(func,   'fu',"code","Function/Method Index", string_esc("")).
+typeindex(prop,   'pr',"code","Property Index",        string_esc("")).
+typeindex(regtype,'te',"code","Regular Type Index",    string_esc("")).
+typeindex(decl,   'de',"code","Declaration Index",     string_esc("")).
+typeindex(op,     'op',"code","Operator Index",        string_esc("")).
+typeindex(modedef,'mo',"code","Mode Index",            string_esc("")).
 typeindex(file,   'fi',"code","File/Directory Index",             string_esc("")).
-typeindex(concept,'co',""    ,"Concept Definition Index",         string_esc("")).
+typeindex(concept,'co',""    ,"Concept Index",         string_esc("")).
 typeindex(author, 'au',"" ,"Author Index",                     string_esc("")).
 %% Some versions of makeinfo get confused by this one (core dump!)
 typeindex(global, 'gl',"code","Global Index",
@@ -175,7 +175,7 @@ fmt_idx_env(Mode, Type, IdxLabel, Ref, Body, DocSt, R) :-
 	),
 	OutLink = link_to(IdxBase, local_label(RefLab)),
 	%
-	( docstate_backend(DocSt, texinfo) ->
+	( docst_backend(DocSt, texinfo) ->
 	    % TODO: I could use Ref, but accents break texinfo.tex
 	    doctree_to_rawtext(Ref, DocSt, Ref1),
 	    Ref2 = raw(Ref1)
@@ -186,11 +186,9 @@ fmt_idx_env(Mode, Type, IdxLabel, Ref, Body, DocSt, R) :-
 
 % ---------------------------------------------------------------------------
 
-:- export(fmt_index/4).
-fmt_index(ComponentName, IndexId, _DocSt, R) :-
-	% TODO: Make sure that refs_closure for ComponentName are loaded
-	%       (they may have been cleaned)
-	sort_index_entries(IndexId, ComponentName, DicDic),
+:- export(fmt_index/3).
+fmt_index(IndexId, DocSt, R) :-
+	sort_index_entries(IndexId, DocSt, DicDic),
 	flatten_dic(DicDic, Groups, []),
 	R = twocolumns(R0),
 	fmt_index_groups(Groups, R0).
@@ -200,7 +198,7 @@ fmt_index_groups([(G,Dic)|Gs], R) :-
 	flatten_dic(Dic, KVs, []),
 	index_links(KVs, Ls),
 	( symbol_norm(G) -> Header = "Symbols" ; Header = [G] ),
-	R = [subtitle_line(string_esc(Header)), itemize_plain(Ls)|R0],
+	R = [subsection_title(string_esc(Header)), itemize_plain(Ls)|R0],
 	fmt_index_groups(Gs, R0).
 
 % Normalized initial characters for indices
@@ -210,10 +208,10 @@ norm_alpha(X, Y) :- X >= 0'A, X =< 0'Z, !, Y = X.
 symbol_norm(0). % (so that it appears the first when sorted)
 
 % Sort index entries in groups of groups
-sort_index_entries(IndexId, ComponentName, Dic) :-
+sort_index_entries(IndexId, DocSt, Dic) :-
 	Dic0 = _, % empty dictionary
 	findall(idx_e(ExtMode, Text, Base, IdxLabel), 
-                query_index_entries(IndexId, ComponentName, ExtMode, Text, Base, IdxLabel),
+                query_index_entries(IndexId, DocSt, ExtMode, Text, Base, IdxLabel),
 		Es),
 	sort_index_entries_(Es, Dic0, Dic).
 
@@ -243,13 +241,12 @@ sort_index_entries_([idx_e(ExtMode,Text,Base,IdxLabel)|Es], D0, D) :-
 
 % Enumerates (on backtracking) all entries for index IndexId
 % ((Text,Base) is the result)
-query_index_entries(IndexId, ComponentName, ExtMode, Text, Base, IdxLabel) :-
+query_index_entries(IndexId, DocSt, ExtMode, Text, Base, IdxLabel) :-
 	( typeindex(IdxName, IndexId, _, _, _) ->
 	    true
 	; throw(wrong_index_id(IndexId))
 	),
-	refs_closure_entry(Entry, Base, ComponentName),
-	Entry = idx(Mode, Type, IdxLabel, Text),
+	docst_gdata_query(DocSt, Base, idx(Mode, Type, IdxLabel, Text)),
 	( Mode = def -> ExtMode = def(Type) % extend the mode with the type
 	; ExtMode = Mode
 	),

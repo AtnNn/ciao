@@ -1,16 +1,19 @@
-:- module(_, _, [assertions, make, dcg, fsyntax, hiord]).
+:- module(_, _, [ciaopaths, assertions, make, dcg, fsyntax, hiord]).
 
 :- use_module(library(hiordlib), [map/3]).
 :- use_module(library(lists)).
 :- use_module(library(dynamic)).
 :- use_module(library(make(system_extra))).
 :- use_module(library(make(make_rt))).
-:- use_module(library(distutils)).
-:- use_module(library(autoconfig)).
+:- use_module(library(component_registry), [component_src/2]).
 :- use_module(library(persvalue)).
 :- use_module(library(messages)).
 :- use_module(ciaodesrc(makedir('MenuOptions'))).
-:- use_module(ciaodesrc(makedir('CIAODESHARED'))).
+:- use_module(ciaodesrc(makedir(makedir_component))).
+
+% TODO: Redesign the code for the menus
+% TODO: This predicate is called though settings_set_value, via set_value
+:- use_module(ciaodesrc(makedir('ConfigValues')), [build_doc_dir/1]).
 
 :- reexport(ciaodesrc(makedir('DOCCOMMON'))).
 
@@ -321,3 +324,25 @@ query_value_(Help, Name, DefaultValue, Value) :-
 	    Value = DefaultValue
 	; Value = Value1
 	).
+
+% ---------------------------------------------------------------------------
+
+:- doc(section, "Input operations for user interaction").
+
+% (exported)
+get_atom(Atom) :-
+	current_input(S),
+	get_atom_(S, Atom).
+
+get_atom_(Stream, Atom) :-
+	get_string(Stream, String),
+	atom_codes(Atom, String).
+
+get_string(Stream, String) :-
+	get_code(Stream, Code),
+	( "\n" = [Code] ->
+	    String = []
+	; String = [Code|String2],
+	  get_string(Stream, String2)
+	).
+

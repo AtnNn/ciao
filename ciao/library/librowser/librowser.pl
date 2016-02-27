@@ -35,11 +35,8 @@
 
 :- doc(author, "Angel Fernandez Pineda").
 
-:- doc(title,
-	"The Ciao library browser").
-
-:- doc(subtitle,
-	"A browser tool for the Ciao toplevel shell").
+:- doc(title, "The Ciao library browser").
+:- doc(subtitle, "A browser tool for the Ciao toplevel shell").
 
 :- doc(summary, "Librowser was designed to provide a simple help
 	facility to the user at the top level which allows

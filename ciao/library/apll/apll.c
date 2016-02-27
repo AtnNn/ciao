@@ -29,6 +29,8 @@
 #include "visandor.h"
 
 
+node_t *start_choice = NULL;
+
 #if defined(ANDPARALLEL)
 /* local atoms */
 tagged_t fifo;
@@ -243,6 +245,7 @@ bool_t apll_push_goal(Arg)
      Argdecl;
 {
 #if defined(ANDPARALLEL)
+  push_choicept(Arg,address_nd_environment_protection_c);
   par_handler_t *h = NULL;
 
   DEREF(X(0),X(0));
@@ -430,7 +433,7 @@ bool_t apll_cancellation(Arg)
 //	    Release_slock(Mutex_Lock);
 //	  }
 //	  else if (h->exec_state == REM_EXECUTING) {  // done
-//	    if (Cancel_Goal_Exec_Handler_Of(h->remote_agent) != NULL) printf("\nPROBLEMAS CANCEL I\n");
+//	    if (Cancel_Goal_Exec_Handler_Of(h->remote_agent) != NULL) printf("\nBUG CANCEL I\n");
 //	    Cancel_Goal_Exec_Handler_Of(h->remote_agent) = h;
 //	    h->exec_state = CANCELLING;
 //	    Release_slock(Mutex_Lock);
@@ -452,7 +455,7 @@ bool_t apll_cancellation(Arg)
 //	    Release_slock(Mutex_Lock);
 //	  }
 //	  else if (h->exec_state == MORE_SOLS) {  // done
-//	    if (Cancel_Goal_Exec_Handler_Of(h->remote_agent) != NULL) printf("\nPROBLEMAS CANCEL III\n");
+//	    if (Cancel_Goal_Exec_Handler_Of(h->remote_agent) != NULL) printf("\nBUG CANCEL III\n");
 //	    //Cancel_Goal_Exec_Handler_Of(h->remote_agent) = h;
 //	    h->exec_state = CANCELLING;
 //	    Release_slock(Mutex_Lock);
@@ -902,6 +905,8 @@ bool_t apll_save_init_execution(Arg)
 #if defined(ANDPARALLEL)
   par_handler_t *h = read_handler(X(0));
 
+  if (start_choice == NULL) start_choice = w->node;
+
   if (h != NULL) {
     if (h->exec_limits == NULL) {
       (h->exec_limits) = (parallel_exec_entry_t *)
@@ -931,6 +936,9 @@ bool_t apll_save_end_execution(Arg)
     if (h->exec_limits != NULL) {
       (h->exec_limits)->end = w->node;
     }
+//    ComputeA(w->local_top,w->node);
+//    printf("\nHandler %p limits are %p and %p -> %p %p\n",h,(h->exec_limits)->init,(h->exec_limits)->end,
+//	   w->local_top,(h->exec_limits)->end->local_top);
   }
 #endif
 
@@ -969,18 +977,38 @@ bool_t apll_move_execution_top(Arg)
   par_handler_t *h = read_handler(X(0));
   
   node_t *node = w->node;
-  
+
   // Move choice points of current parallel goal execution to top of stack
-  w->node = ChoiceCharOffset(w->node,-w->node->next_alt->node_offset);
+//  printf("\nMoving exec top %p\n",w->node);
+//  printf("\ntrail node %p y trail %p\n",w->node->trail_top,w->trail_top);
   ComputeA(w->local_top,w->node);
+  w->node = ChoiceCharOffset(w->node,-w->node->next_alt->node_offset);
+//  printf("\nMoving exec top %p\n",w->node);
+//  printf("\nMoving exec top %p\n",w->node); fflush(stdout);
+//  printf("\ntrail node %p y trail %p\n",w->node->trail_top,w->trail_top);
   if (h != NULL) {
     if (h->exec_limits != NULL) {
-      Wait_Acquire_slock(Parallel_Exec_Lock);
       CIAO_REGISTER node_t *init = (h->exec_limits)->init;
+      frame_t *init_frame = (h->exec_limits)->init->local_top;
+      tagged_t *init_heap = (h->exec_limits)->init->global_top;
       CIAO_REGISTER node_t *end = (h->exec_limits)->end;
       if (ChoiceYounger(w->node, (h->exec_limits)->end)) {
 
-	Release_slock(Parallel_Exec_Lock);
+//	printf("\nMoving trapped goal node %p - ini %p - end %p\n",w->node,init,end); fflush(stdout);
+//	printf("\nHas to analyze agaist %p\n",h->exec_limits->end->local_top);
+
+//	for(node = w->node; !ChoiceYounger(start_choice,node); node = ChoiceCharOffset(node, -node->next_alt->node_offset))
+//	  {
+//	    printf("\nNode %p=%p trail value %p=%p\n",node,node->next_alt,node->trail_top,CTagToPointer(node->trail_top));
+//	    printf("\nProtects until %p %p\n",node->global_top,node->local_top);
+//	  }
+
+	tagged_t *itrail;
+//	for(itrail = w->trail_top; !TrailYounger(start_choice->trail_top,itrail); itrail--)
+//	  {
+//	    printf("\nitrail %p=%p\n",itrail,CTagToPointer(itrail));
+//	  }
+
 	CIAO_REGISTER node_t *node, *node2, *pargoal_node, *younger_nodes;
 	CIAO_REGISTER tagged_t *pargoal_trail, *younger_trail;
 
@@ -990,16 +1018,12 @@ bool_t apll_move_execution_top(Arg)
           ChoiceCharDifference(ChoiceCharOffset(init, -init->next_alt->node_offset), end);
 	int size_younger_nodes =
 	  ChoiceCharDifference(end,w->node);
-	
+
 	for(node = w->node; node != end; node = ChoiceCharOffset(node, -node->next_alt->node_offset))
 	  node2 = node;
 
-	node2->global_top = init->global_top;
-	node2->local_top = init->local_top;
-
 	int size_pargoal_trail =
-          TrailCharDifference(//init->trail_top, //end->trail_top);
-			  init->trail_top, node2->trail_top);
+          TrailCharDifference(init->trail_top, node2->trail_top);
 	int size_younger_trail =
 	  TrailCharDifference(node2->trail_top, w->trail_top);
 
@@ -1034,15 +1058,16 @@ bool_t apll_move_execution_top(Arg)
 	    node2 = ChoiceCharOffset(node2,-node2->next_alt->node_offset);
 	  }
 	
-	// STEP FIVE: Update top of heap, local stack of oldest choice point
-        //node->local_top = par_goal_node->local_top;
-	// node->global_top = init->global_top;
-
-	// STEP SIX: Move pargoal_node to top of stack and
+	// STEP FIVE: Move pargoal_node to top of stack and
 	// pargoal_trail to top of trail
       	w->node = ChoiceCharOffset(w->node, size_pargoal_node);
 	memcpy(w->node, pargoal_node, size_pargoal_node);
 	memcpy(TrailCharOffset(w->trail_top, -size_pargoal_trail), pargoal_trail, size_pargoal_trail);
+
+	// STEP SIX: Update top of heap, local stack of oldest choice point
+        init->local_top = init_frame;
+	init->global_top = init_heap;
+
 /* 	ComputeA(w->local_top,w->node); */
 /* 	NewShadowregs(w->global_top); */
 /* 	SaveGtop(w->node, w->global_top); */
@@ -1052,6 +1077,7 @@ bool_t apll_move_execution_top(Arg)
 	// STEP NINE: Update trail pointers of choice points that are
 	// moved on top of the stack
 	node2 = w->node;
+
 	while (ChoiceYounger(node2, node)) {
 	  node2->global_top = w->global_top;
 	  node2->local_top = w->local_top;
@@ -1059,6 +1085,7 @@ bool_t apll_move_execution_top(Arg)
 	  node2 = ChoiceCharOffset(node2,-node2->next_alt->node_offset);
 	}
 
+	//NEED TO BE REVISED!!!
 	node2 = w->node;
 	while (ChoiceYounger(node2, Choice_Start)) {
 	    int i;
@@ -1095,6 +1122,8 @@ bool_t apll_move_execution_top(Arg)
 			    ht->exec_limits->end = ChoiceCharOffset(ht->exec_limits->end,size_younger_nodes);	
 			  }
 		      }
+//		    printf("\nNew handler %p limits are %p y %p -> protect %p - %p\n",ht,(ht->exec_limits)->init,
+//			   (ht->exec_limits)->end,(ht->exec_limits)->init->local_top,(ht->exec_limits)->end->local_top);
 		  }
 	      }
 	    node2 = ChoiceCharOffset(node2,-node2->next_alt->node_offset);
@@ -1111,6 +1140,38 @@ bool_t apll_move_execution_top(Arg)
 	  node2 = ChoiceCharOffset(node2,-node2->next_alt->node_offset);
 	}
 
+	//STEP ELEVEN: remove trail cells pointing out of my environment
+	for(itrail = w->trail_top; !TrailYounger(h->exec_limits->init->trail_top,itrail); itrail--)
+	  {
+//	    if (TagIsHVA(CTagToPointer(itrail)))
+//	      {
+//		if ((TagToPointer(CTagToPointer(itrail)) >= h->exec_limits->end->global_top) ||
+//		    (TagToPointer(CTagToPointer(itrail)) < h->exec_limits->init->global_top))
+//		  {
+//		    if (OnHeap(TagToPointer(CTagToPointer(itrail))))
+//		      {
+//			printf("\nTHIS IS THE CASE!!!\n");
+//			CTagToPointer(itrail) = 0;
+//		      }
+//		  }
+//	      }  
+	    if (TagIsSVA(CTagToPointer(itrail)))
+	      {
+//		printf("\nAnalizing %p(%p): %p - %p\n",CTagToPointer(itrail),
+//		       TagToPointer(CTagToPointer(itrail)),
+//		       h->exec_limits->init->local_top,
+//		       h->exec_limits->end->local_top);
+		if (((TagToPointer(CTagToPointer(itrail)) >= (tagged_t*)h->exec_limits->end->local_top) ||
+		     (TagToPointer(CTagToPointer(itrail)) < (tagged_t*)h->exec_limits->init->local_top)) &&
+		    OnStack(TagToPointer(CTagToPointer(itrail))))
+		  {
+//			printf("\nTHIS IS THE CASE!!!\n");
+		    CTagToPointer(itrail) = 0;
+		  }
+	      }
+
+	  }
+
 	// CLEANUP? Increment the number of remote trapped backwards executions
 	Wait_Acquire_slock(nrembacktr_trapped_l);
 	if (nrembacktr_trapped != NULL && measure)
@@ -1121,37 +1182,46 @@ bool_t apll_move_execution_top(Arg)
 	checkdealloc((tagged_t*)younger_nodes,size_younger_nodes);
 	checkdealloc(pargoal_trail,size_pargoal_trail);
 	checkdealloc(younger_trail,size_younger_trail);
-      }
-      else {
+
 	SetShadowregs(w->node);
-	Release_slock(Parallel_Exec_Lock);
+//	for(node = w->node; !ChoiceYounger(start_choice,node); node = ChoiceCharOffset(node, -node->next_alt->node_offset))
+//	  {
+//	    printf("\nNode %p=%p trail value %p=%p\n",node,node->next_alt,node->trail_top,CTagToPointer(node->trail_top));
+//	    printf("\nProtects until %p %p\n",node->global_top,node->local_top);
+//	  }
+//	for(itrail = w->trail_top; !TrailYounger(start_choice->trail_top,itrail); itrail--)
+//	  {
+//	    printf("\nitrail %p=%p\n",itrail,CTagToPointer(itrail));
+//	  }
 
-	// CLEANUP? Increment the number of remote backwards executions on top
-	Wait_Acquire_slock(nrembacktr_top_l);
-	if (nrembacktr_top != NULL && measure)
-	  (nrembacktr_top->value)++;
-	Release_slock(nrembacktr_top_l);
       }
+      else 
+	{
+	  if (w->node != (h->exec_limits)->end) printf("\nBUG!!!!\n");
+	  SetShadowregs(w->node);
+	}
 
-      if (h->exec_state == CANCELLING)
-	{
-	  if (Cancel_Goal_Exec_Handler != NULL) printf("\nPROBLEMAS CANCEL II\n");
-	  Wait_Acquire_slock(Mutex_Lock_Of(h->remote_agent));
-	  Cancel_Goal_Exec_Handler = h;
-	  Release_slock(Mutex_Lock_Of(h->remote_agent));
-	}
-      else
-	{
-	  Wait_Acquire_slock(Mutex_Lock_Of(h->agent));
+//      if (h->exec_state == CANCELLING)
+//	{
+//	  if (Cancel_Goal_Exec_Handler != NULL) printf("\nBUG CANCEL II\n");
+//	  Wait_Acquire_slock(Mutex_Lock_Of(h->remote_agent));
+//	  Cancel_Goal_Exec_Handler = h;
+//	  Release_slock(Mutex_Lock_Of(h->remote_agent));
+//	}
+//      else
+//	{
+//Following lines needed if mutex is released before the execution of move_execution_top
+//	  Wait_Acquire_slock(Mutex_Lock_Of(h->agent));
 	  h->exec_state = REM_EXECUTING;
-	  Release_slock(Mutex_Lock_Of(h->agent));
-	}
+//	  Release_slock(Mutex_Lock_Of(h->agent));
+//	}
       
     }
   }
   
 #endif
 
+//  printf("\nEND NODE %p and trail node %p and trail %p\n",w->node,w->node->trail_top,w->trail_top);
   return TRUE;
 }
 
@@ -1181,7 +1251,9 @@ bool_t apll_suspend(Arg)
   EVENT(AGENT_IDLE,0,nacagents);
 #endif
 
+//  printf("\nPRE waiting for work"); fflush(stdout);
   Wait_Acquire_lock(Waiting_For_Work_Lock);
+//  printf("\nPOST waiting for work"); fflush(stdout);
 #if defined(DEBUG)
   if (debug_threads)
     printf("Suspending: %x\n",w);
@@ -1215,7 +1287,7 @@ bool_t apll_suspend(Arg)
 #endif
   Suspended_Waiting_For_Work = FALSE;
   Release_lock(Waiting_For_Work_Lock);
-//  Wait_Acquire_slock(Mutex_Lock);
+  if (Mode == FORWARD_EXEC)  Wait_Acquire_slock(Mutex_Lock);
 
 #if defined(VISANDOR)
   EVENT(AGENT_BUSY,0,nacagents);
@@ -1707,17 +1779,29 @@ bool_t apll_not_measure(Arg)
 
 /* ***************************************************************** */
 
+bool_t nd_environment_protection_c(Arg)
+     Argdecl;
+{
+#if defined(ANDPARALLEL)
+  pop_choicept(Arg);
+  return FALSE;
+#endif
+
+  return TRUE;
+}
 
 /* Initialization procedure */
 bool_t init(Arg)
      Argdecl;
 {
 #if defined(ANDPARALLEL)
+  address_nd_environment_protection_c = def_retry_c(nd_environment_protection_c,0);
+
   fifo             = init_atom_check("fifo");
   lifo             = init_atom_check("lifo");
   det              = init_atom_check("det");
+  nagents = 1;
 #endif
-
   return TRUE;
 }
 

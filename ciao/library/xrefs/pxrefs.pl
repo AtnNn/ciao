@@ -12,8 +12,8 @@
 :- use_module(library(write), [write/1]).  
 
 :- doc(title,"Lists of crossed-references between files").
-:- doc(subtitle,"@bf{The CIAO System Documentation Series}").
-:- doc(subtitle,"@em{Draft printed on:} @today{}").
+:- doc(subtitle_extra,"@bf{The CIAO System Documentation Series}").
+:- doc(subtitle_extra,"@em{Draft printed on:} @today{}").
 :- doc(author, "Francisco Bueno").
 :- doc(module,
 	"This library provides support for identifying crossed-references

@@ -125,8 +125,8 @@ num(T) :- int(T).
 :- trust comp atm/1 + test_type(arithmetic).
 
 % Should be current_atom/1
+atm(T) :- atom(T), !.
 atm(a).
-atm(T) :- atom(T).
 
 :- doc(struct/1, "The type of compound terms, or terms with
 non-zeroary functors. By now there is a limit of 255 arguments.").

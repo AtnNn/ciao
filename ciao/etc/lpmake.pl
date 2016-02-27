@@ -1,4 +1,4 @@
-:- module(lpmake, [main/1], [make, assertions, regexp]).
+:- module(lpmake, [main/1], [ciaopaths, make, assertions, regexp]).
 
 :- use_module(library(terms),    [atom_concat/2]).
 :- use_module(library(libpaths), [get_alias_path/0]).
@@ -10,8 +10,6 @@
 %% ISO Prolog-like modules
 :- use_module(library(format),     [format/3]).
 :- use_module(library(aggregates), [findall/3]).
-
-:- use_module(library(autoconfig), []).
 
 %% Ciao libraries
 :- use_module(library(errhandle), [handle_error/2]).
@@ -27,10 +25,10 @@
 
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "The CLIP Group").
-:- doc(credits, "@tt{clip@@dia.fi.upm.es}").
-:- doc(credits, "@tt{http://www.clip.dia.fi.upm.es/}").
-:- doc(credits, "Facultad de Inform@'{a}tica").
-:- doc(credits, "Universidad Polit@'{e}cnica de Madrid").
+:- doc(address, "@tt{clip@@dia.fi.upm.es}").
+:- doc(address, "@tt{http://www.clip.dia.fi.upm.es/}").
+:- doc(address, "Facultad de Inform@'{a}tica").
+:- doc(address, "Universidad Polit@'{e}cnica de Madrid").
 
 :- doc(copyright, "
 Copyright @copyright{} 1997-2002 The Clip Group.

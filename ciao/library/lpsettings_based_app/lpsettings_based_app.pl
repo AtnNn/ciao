@@ -140,9 +140,11 @@ load_settings :-
 	    verbose_message("Using configuration file ~w", [AbsFilePath]),
 	    dyn_load_cfg_module_into_make(AbsFilePath)
 	;
-	    get_cwd(CWD),
+	    working_directory(CWD0, CWD0),
+	    path_name(CWD0, CWD),
 	    add_name_value(filepath, CWD),
-	    verbose_message("setting filepath to ~w", [CWD])
+	    add_name_value('$schema', 'SETTINGS_schema'), % assume that we have a valid schema
+	    verbose_message("No configuration file. Setting filepath to ~w", [CWD])
 	),
 	( findall(T, make_rt:get_value(pathsfile, T), [ThePathAliasFile]) ->
 	    use_module(library(ThePathAliasFile)),

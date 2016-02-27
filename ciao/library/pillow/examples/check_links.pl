@@ -1,6 +1,8 @@
 :- module(check_links, [main/1,check_links/2],[]).
 :- use_package(pillow).
 
+:- use_module(library(format)).
+
 main([URL]) :- !,
         check_links(URL,BadLinks),
         report_bad_links(BadLinks).
@@ -28,15 +30,15 @@ check_source_links1(env(_Name,_Atts,Env_html),BaseURL,BL0,BL) :- !,
 check_source_links1(_,_,BL,BL).
 
 check_link(URL,BaseURL,BL0,BL) :-
-	write(URL),nl,
+	format("~s", [URL]),
         url_info_relative(URL,BaseURL,URLInfo), !,
         fetch_url_status(URLInfo,Status,Phrase),
         ( Status \== success ->
-	  display(no_success), nl,
-          atom_codes(P,Phrase),
-          atom_codes(U,URL),
-          BL = [badlink(U,P)|BL0]
-        ; display(success), nl, BL = BL0
+	    format(" [Error]\n", []),
+	    atom_codes(P,Phrase),
+	    atom_codes(U,URL),
+	    BL = [badlink(U,P)|BL0]
+        ; format(" [OK]\n", []), BL = BL0
         ).
 check_link(_,_,BL,BL).
 

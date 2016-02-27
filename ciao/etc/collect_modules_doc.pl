@@ -1,5 +1,6 @@
-%% CIAO syntax
 :- use_package([assertions]).  
+
+:- doc(filetype, application).
 
 :- doc(title,"Gathering all modules in a directory").
 
@@ -21,5 +22,3 @@
 
 ").
 
-
-main.

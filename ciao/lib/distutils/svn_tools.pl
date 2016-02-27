@@ -9,14 +9,13 @@
 SVN repository").
 
 :- use_module(library(lists)).
-:- use_module(library(distutils)).
+:- use_module(library(make(system_extra)), [do_str/3]).
 
 % ---------------------------------------------------------------------------
 
 :- export(svn_revision_time/3).
 :- pred svn_revision_time(+string, +string, ?atm).
 % TODO: This command should be simplified
-% TODO: move to a new module called 'svn_tools'
 svn_revision_time(Repository, Revision0, SvnTimeAtom) :-
 	atom_codes(ARepository, Repository),
 	just_revision_number(Revision0, Revision),

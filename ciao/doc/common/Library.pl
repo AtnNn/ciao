@@ -24,4 +24,3 @@
 
 %% Note: the preprocessor can eventually put these in!
 
-main.

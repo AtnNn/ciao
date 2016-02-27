@@ -5,7 +5,7 @@
 :- doc(author,"Jose F. Morales").
 :- doc(author,"Manuel Hermenegildo").
 
-:- use_module(lpdocsrc(src(autodoc))).
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_doctree))).
 :- use_module(lpdocsrc(src(autodoc_images))).
 :- use_module(lpdocsrc(src(autodoc_aux)), [ascii_blank_lines/2]).
@@ -113,8 +113,8 @@ rw_command(bibitem(Label,_Ref), _DocSt, R) :- !,
 	R = [item(bf([string_esc("["), string_esc(Label), string_esc("]")]))].
 rw_command(idx_anchor(_, _, _, _, R0), _, R) :- !, R = R0.
 rw_command(simple_link(_,_,_,_), _, nop) :- !.
-rw_command(man_page(TitleR, Version, AuthorRs, SummaryR, UsageR, CopyrightR), DocSt, R) :- !,
-        fmt_man(TitleR, Version, AuthorRs, SummaryR, UsageR, CopyrightR, DocSt, R).
+rw_command(man_page(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR), DocSt, R) :- !,
+        fmt_man(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR, DocSt, R).
 rw_command(X, _DocSt, _R) :- !,
 	throw(cannot_rewrite(rw_command(X))).
 
@@ -127,7 +127,7 @@ rw_command_body(var(Body), "I",          Body) :- !.
 rw_command_body(missing_link(Text), "I", R) :- !, R = raw(Text).
 rw_command_body(ref_link(_Link, Text), "I", R) :- !, R = raw(Text).
 
-fmt_man(TitleR, Version, AuthorRs, SummaryR, UsageR, CopyrightR, DocSt, R) :-
+fmt_man(TitleR, Version, AuthorRs, AddressRs, SummaryR, UsageR, CopyrightR, DocSt, R) :-
 	( version_date(Version, Date),
 	  version_numstr(Version, VerStr) ->
 	    true
@@ -155,8 +155,12 @@ fmt_man(TitleR, Version, AuthorRs, SummaryR, UsageR, CopyrightR, DocSt, R) :-
 		     raw(".SH SYNOPSIS"), raw_nl,
 		     UsageR, raw_nl]
         ),
-	fmt_man_authors(AuthorRs, AuthorRs2),
-	doc_modname(DocSt, ModName),
+	sep_nl(AuthorRs, AuthorRs2),
+	( AddressRs = [] ->
+	    AddressRs2 = []
+	; sep_nl([string_esc("")|AddressRs], AddressRs2)
+	),
+	docst_modname(DocSt, ModName),
 	atom_codes(ModName, ModNameS),
 	R = [raw(".TH "), raw(ModNameS),
 	     raw(" l """), raw(DateStr), raw(""""), raw_nl,
@@ -187,12 +191,13 @@ fmt_man(TitleR, Version, AuthorRs, SummaryR, UsageR, CopyrightR, DocSt, R) :-
 	     raw_nl,
 	     raw_nl,
 	     raw(".SH AUTHOR"), raw_nl,
-	     AuthorRs2].
+	     AuthorRs2,
+	     AddressRs2].
 
-fmt_man_authors([],                 []).
-fmt_man_authors([AuthorR|AuthorRs], Rs) :-
-	Rs = [raw(".br"),raw("\n"),AuthorR,raw("\n")|Rs0],
-	fmt_man_authors(AuthorRs, Rs0).
+sep_nl([],                 []).
+sep_nl([X|Xs], Rs) :-
+	Rs = [raw(".br"),raw("\n"),X,raw("\n")|Rs0],
+	sep_nl(Xs, Rs0).
 
 fmt_structuring(SecProps, TitleR, R) :-
 	( section_prop(level(Level), SecProps) ->

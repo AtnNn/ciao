@@ -14,8 +14,8 @@
 :- use_module(library(xrefs(xrefs2graph)), [xrefs2graph/2]).
 
 :- doc(title,"Graphs of crossed-references between modules").
-:- doc(subtitle,"@bf{The CIAO System Documentation Series}").
-:- doc(subtitle,"@em{Draft printed on:} @today{}").
+:- doc(subtitle_extra,"@bf{The CIAO System Documentation Series}").
+:- doc(subtitle_extra,"@em{Draft printed on:} @today{}").
 :- doc(author,"Francisco Bueno").
 :- doc(module,"This library provides support for obtaining a graph of
         crossed-references between modules. The graph has directed edges

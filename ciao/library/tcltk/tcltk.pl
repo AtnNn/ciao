@@ -18,9 +18,9 @@
 
 :- doc(author,"Montse Iglesias Urraca").
 :- doc(author, "The CLIP Group").
-:- doc(credits, "@tt{http://www.clip.dia.fi.upm.es/}").
-:- doc(credits, "Facultad de Inform@'{a}tica").
-:- doc(credits, "Universidad Polit@'{e}cnica de Madrid").
+:- doc(address, "@tt{http://www.clip.dia.fi.upm.es/}").
+:- doc(address, "Facultad de Inform@'{a}tica").
+:- doc(address, "Universidad Polit@'{e}cnica de Madrid").
 
 :- use_module(tcltk_low_level, 
 	[

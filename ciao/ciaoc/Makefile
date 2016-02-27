@@ -1,7 +1,7 @@
 #------- You should not change ANYTHING in this file ----------------
 #------- All customizable options are in the file ../SETTINGS -------
 
-include ../../ciaosetup_modules/makefile__common
+include ../../makedir/ciaosetup_modules/makefile__common
 include ../SETTINGS
 include ../SHARED
 

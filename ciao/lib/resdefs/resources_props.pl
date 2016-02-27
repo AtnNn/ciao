@@ -2,7 +2,8 @@
 		cost/7,
 		cost/8,
 		head_cost/4,
-		literal_cost/4
+		literal_cost/4,
+		intervals/3
 	    ],
 	    [assertions, hiord]).
 
@@ -211,6 +212,7 @@ cost_t(redo, Goal, Rel, Ap, Res, IF, CostFunction, T0) :-
 :- export(cost/5).
 :- export(rel_cost/5).
 :- export(rel_cost/4).
+:- export(intervals/2).
 
 :- true prop cost(Head, Approx, Type, Res, CostExpr)
 	: callable * approx * cost_type * resource * cost_expression
@@ -239,4 +241,27 @@ cost_t(redo, Goal, Rel, Ap, Res, IF, CostFunction, T0) :-
 	: callable * approx * term * callable
 # "Same as @var{rel_cost/5}, but with Type=call.".
 :- impl_defined(rel_cost/4). % Transformed by resdefs_tr to cost/7.
+
+%[LD]
+:- prop intervals(X, Y) 
+# "Data size @var{X} belongs to some interval in the list of intervals
+@var{Y}. The list of intervals @var{Y} represents union of its elements".
+
+:- impl_defined(intervals/2). % Transformed by resdefs_tr to intervals/3.
+%[\LD]
+
 :- pop_prolog_flag(unused_pred_warnings).
+
+:- prop intervals(Goal, Value, Intervals) # "@var{Goal} is
+	executed to obtain the data size @var{Size} in @var{Value},
+	and the predicate succeeds iif the Value is in the interval
+	@var{Intervals}.".
+
+:- meta_predicate intervals(addterm(goal), ?, ?).
+
+intervals(G, _, X, L) :- call(G), in_intervals(X, L), !.
+
+in_interval(X, i(A, B)) :- A =< X, X =< B.
+
+in_intervals(X, [I|_]) :- in_interval(X, I).
+in_intervals(X, [_|L]) :- in_intervals(X, L).

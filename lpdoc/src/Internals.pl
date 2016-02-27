@@ -5,5 +5,3 @@
 :- doc(title,"PART II - LPdoc Internals Manual").
 
 %% :- doc(module,"...").
-
-main.

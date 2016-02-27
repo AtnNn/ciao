@@ -8,4 +8,3 @@
 
 :- doc(module,"@include{Contrib.lpdoc}").
 
-main.

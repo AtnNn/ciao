@@ -5,7 +5,7 @@
 :- doc(author,"Manuel Hermenegildo").
 :- doc(author,"Jose F. Morales").
 
-:- use_module(lpdocsrc(src(autodoc))).
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_filesystem))).
 :- use_module(lpdocsrc(src(autodoc_structure))).
 :- use_module(lpdocsrc(src(autodoc_index))).
@@ -130,9 +130,15 @@ rw_command(email(Text, Address), _DocSt, NBody) :- !,
 	NBody = [raw("@email{"), Address, raw(","), Text, raw("}")].
 rw_command(image_auto(IFile0, Opts), DocSt, NBody) :- !,
 	locate_and_convert_image(IFile0, ['eps'], DocSt, IFile1),
-	( append(IFile, ".eps", IFile1) -> true % required by texinfo.tex
-	; IFile1 = IFile
+	( append(IFile2, ".eps", IFile1) -> true % required by texinfo.tex
+	; IFile2 = IFile1
 	),
+	atom_codes(AFile2, IFile2),
+	% TODO: Possible bug here: make sure that IFile is a relative
+	% file and that images are preserved (for distributing .texi)
+	docst_backend(DocSt, Backend),
+	absfile_for_aux(AFile2, Backend, AFile),
+	atom_codes(AFile, IFile),
 	( Opts = [] ->
 	    NBody = [raw("@image{"), raw(IFile), raw("}")]
 	; Opts = [Width, Height] ->
@@ -184,14 +190,14 @@ rw_command(infoenv_onlytex(Cmd, Body), _DocSt, R) :- !,
 %
 rw_command(section_env(SecProps, SectLabel, TitleR, BodyR), DocSt, R) :- !,
 	fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, R).
-rw_command(backend_linkdep(Name), _DocSt, R) :- !,
+rw_command(backend_include_component(Name), _DocSt, R) :- !,
 	atom_codes(Name, NameS),
 	R = infocmd("include", raw(NameS)).
 rw_command(hfill, _DocSt, R) :- !, % vertical space
 	%% some versions of makeinfo do not seem to like @hfill... 
 	R = if(tex, infocmd("hfill")).
 rw_command(linebreak,        _, [raw_fc, raw_nleb]) :- !.
-rw_command(subtitle_line(Xs), _DocSt, R) :- !,
+rw_command(subsection_title(Xs), _DocSt, R) :- !,
 	R = infoenv("strong", Xs).
 rw_command(twocolumns(X), _DocSt, R) :- !, R = X. % ignore
 rw_command(itemize_none(Xs), _DocSt, R) :- !,
@@ -232,10 +238,15 @@ rw_command(copyright_page(CopyrightR), _DocSt, R) :-
 	     infocmd("vskip", raw("0pt plus 1filll")),
 	     CopyrightR,
 	     raw_nl].
-rw_command(title(TitleR), _DocSt, R) :- !,
-	R = infocmd("title", TitleR).
-rw_command(subtitle(Rs), _DocSt, R) :- !,
-	fmt_subtitle(Rs, R).
+rw_command(cover_title(TitleR, SubtitleR), _DocSt, R) :- !,
+	R = [infocmd("title", TitleR),
+	     backend_comment("@font@authorrm=cmbx10 scaled @magstep2"),
+	     SubtitleR2],
+	fmt_cover_subtitle(SubtitleR, SubtitleR2).
+rw_command(cover_subtitle_extra(Rs), _DocSt, R) :- !,
+        % Use @subtitle info commands to write the extra subtitle lines
+        % TODO: right place to put it?
+	fmt_cover_subtitle_extra(Rs, R).
 rw_command(authors(AuthorRs), _DocSt, R) :- !,
 	fmt_authors(AuthorRs, R).
 rw_command(backend_comment(String), _DocSt, R) :- !,
@@ -262,7 +273,7 @@ rw_command(left_and_right(Left, Right), _DocSt, R) :- !,
 	R = [Left, hfill, Right].
 rw_command(navigation_env(_, _), _DocSt, R) :- !, R = [].
 rw_command(defpred(IdxLabel, Type, Text, PN, Body), DocSt, R) :- !,
-	( doc_opt('-shorttoc', DocSt) ->
+	( docst_opt('-shorttoc', DocSt) ->
 	    % Do not put the predicates in the table of contents
 	    R1 = []
 	; R1 = pred_in_toc(PN, Type)
@@ -335,15 +346,27 @@ def_cmd_args(I, N, [X|Xs]) :-
 %       section in "Info"'s info.
 
 fmt_section_env(SecProps, TopSectLabel0, TitleR2, RestR, DocSt, ModR) :-
-	section_prop(first_file_section, SecProps),
-	section_prop(coversec(SubtitleRs, AuthorRs, GVersShortR, GVersR, CopyrightR), SecProps),
+	section_prop(file_top_section, SecProps),
+	section_prop(coversec(SubtitleRs,
+	                      SubtitleExtraRs,
+	                      AuthorRs,
+			      AddressRs,
+			      GVersShortR,
+			      GVersR,
+			      CopyrightR), SecProps),
 	!,
 	( section_prop(paper_opts(StartPage, PaperType), SecProps) -> true ; fail ),
 	get_nodename(TopSectLabel0, TopSectLabel),
-	% Add version (GVers) to subtitle
+	% Version (if available)
 	( doctree_is_empty(GVersShortR) ->
-	    SubtitleRs2 = SubtitleRs
-	; append(SubtitleRs, [GVersShortR], SubtitleRs2)
+	    GVersShortRs = []
+	; GVersShortRs = [GVersShortR]
+	),
+	% Address
+	( AddressRs = [] ->
+	    AddressRs2 = []
+	; % reuse the info @author command for this
+	  AddressRs2 = authors([string_esc("")|AddressRs])
 	),
 	% Document skeleton
 	fmt_header_and_cover(TitleR2, PaperType, DocSt, HeaderR),
@@ -353,10 +376,11 @@ fmt_section_env(SecProps, TopSectLabel0, TitleR2, RestR, DocSt, ModR) :-
 	  if(tex, [
             raw_nl,
 	    infoenv("titlepage", [
-	      title(TitleR2),
-	      backend_comment("@font@authorrm=cmbx10 scaled @magstep2"),
-	      subtitle(SubtitleRs2),
+	      cover_title(TitleR2, SubtitleRs),
+	      cover_subtitle_extra(SubtitleExtraRs), % TODO: format in other way?
+	      cover_subtitle_extra(GVersShortRs), % TODO: format in other way?
 	      authors(AuthorRs),
+	      AddressRs2,
 	      copyright_page(CopyrightR)
             ]),
 	    raw_nl,
@@ -393,7 +417,7 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, R) :-
 % Translate to info commands to insert index entries
 fmt_backend_idx([], _, _, []).
 fmt_backend_idx([IdxName|Ids], KeyR, DocSt, Rs) :-
-	( docstate_has_index(IdxName, DocSt),
+	( docst_has_index(IdxName, DocSt),
 	  typeindex(IdxName, IndexId, _, _, _) ->
 	    atom_codes(IndexId, IndexIdS),
 	    append(IndexIdS, "index", IdxCmd),
@@ -408,7 +432,14 @@ fmt_authors(AuthorRs, R) :-
 	; map_infocmd(AuthorRs, "author", R)
 	).
 
-fmt_subtitle(Rs, Rs2) :-
+fmt_cover_subtitle(Rs, Rs2) :-
+        apply_emph(Rs, Rs1),
+	map_infocmd(Rs1, "subtitle", Rs2).
+
+apply_emph([], []).
+apply_emph([R|Rs0], [em(R)|Rs]) :- apply_emph(Rs0, Rs).
+
+fmt_cover_subtitle_extra(Rs, Rs2) :-
 	map_infocmd(Rs, "subtitle", Rs2).
 
 % apply info Command to each R
@@ -418,11 +449,11 @@ map_infocmd([R|Rs], Command,  [R2|Rs2]) :-
 	map_infocmd(Rs, Command, Rs2).
 
 fmt_header_and_cover(TitleR, PaperType, DocSt, R) :-
-	docstate_currmod(DocSt, Name),
+	docst_currmod(DocSt, Name),
 	atom_codes(Name, NameS),
 	%
 	atom_codes(PaperType, PaperTypeS),
-	( doc_opt('-onesided', DocSt) ->
+	( docst_opt('-onesided', DocSt) ->
 	    NewPage = "on"
 	; NewPage = "odd"
 	),
@@ -482,7 +513,7 @@ define_indices([IdxName|Is], DocSt, [IR|IRs]) :-
 fmt_section(SecProps, SectLabel0, TitleR, BodyR, DocSt, R) :-
 	get_nodename(SectLabel0, SectLabel1),
 	( section_prop(with_parent, SecProps) ->
-	    docstate_currmod(DocSt, Name0),
+	    docst_currmod(DocSt, Name0),
 	    atom_codes(Name0, NameS0),
 	    texinfo_escape(NameS0, NameS),
 	    % TODO: info documentation says that parenthesis are not allowed either!
@@ -666,7 +697,7 @@ move_file(In, Out) :-
 
 :- use_module(library(system), [working_directory/2, cd/1]).
 :- use_module(library(make(make_rt)), [get_name/2]).
-:- use_module(lpdocsrc(makedir('LPDOCSETTINGS')), [emacs_for_ciao/1]).
+:- use_module(ciaodesrc(makedir('ConfigValues')), [emacs_for_ciao/1]).
 
 % TODO: Move next to autodoc:fmt_infodir_entry2. Put call there?
 % TODO: Is .infoindex extension really necessary? Can it be something else?
@@ -694,6 +725,12 @@ copy_with_perms(In, Out) :-
 % 	cat_append(IDT,dir),
 % 	-set_perms(dir,~get_datamode),
 % 	cd(WD).
+
+% ---------------------------------------------------------------------------
+
+:- export(infodir_base/2). % TODO: Temporally exported for lpdoc.pl
+infodir_base(Mod, ModInfodir) :-
+	atom_concat(Mod, 'dir', ModInfodir).
 
 % ---------------------------------------------------------------------------
 
@@ -836,7 +873,6 @@ do_texi_to_rtf(TexiFile, RTFFile, FileBase) :-
 :- use_module(library(file_utils), [file_to_string/2, string_to_file/2]).
 :- use_module(library(make(system_extra)), [(-)/1, copy_file/3, set_perms/2, del_files_nofail/1]).
 :- use_module(library(system), [delete_file/1]).
-:- use_module(lpdocsrc(makedir('LPDOCSETTINGS')), [
-		tex/1, texindex/1, dvips/1, ps2pdf/1, 
-		makeinfo/1, makertf/1]).
+
+
 

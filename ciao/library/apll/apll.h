@@ -14,6 +14,8 @@ extern pthread_attr_t joinable_thread;
 
 #define NUMBER_STATES  8
 
+try_node_t *address_nd_environment_protection_c;
+
 
 /* ****************************************** */
 /*   ANDPROLOG LOW-LEVEL SUPPORT PRIMITIVES   */

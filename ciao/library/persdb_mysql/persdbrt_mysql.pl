@@ -249,15 +249,15 @@ atomicgoal( G ) :-
 
 :- doc(title,"SQL persistent database interface").
 
-:- doc(subtitle,"@bf{The CIAO System Documentation Series}").
-:- doc(subtitle,"Technical Report CLIP 10/98.0").
-:- doc(subtitle,"RadioWeb (ESPRIT Project 25562) Report D3.1.M2-A2").
+:- doc(subtitle_extra,"@bf{The CIAO System Documentation Series}").
+:- doc(subtitle_extra,"Technical Report CLIP 10/98.0").
+:- doc(subtitle_extra,"RadioWeb (ESPRIT Project 25562) Report D3.1.M2-A2").
 
-:- doc(subtitle,"ECCOSIC (@em{Comision Conjunta Hispano-Norteamericana}").
-:- doc(subtitle,"@em{de Cooperacion Cientifica y Tecnologica} Project 98059)"). 
-%% :- doc(subtitle,"@em{Draft printed on:} @today{}").
+:- doc(subtitle_extra,"ECCOSIC (@em{Comision Conjunta Hispano-Norteamericana}").
+:- doc(subtitle_extra,"@em{de Cooperacion Cientifica y Tecnologica} Project 98059)"). 
+%% :- doc(subtitle_extra,"@em{Draft printed on:} @today{}").
 
-:- doc(subtitle,"December 26, 1998").
+:- doc(subtitle_extra,"December 26, 1998").
 
 :- doc(author, "Ignacio Caballero").
 :- doc(author, "Daniel Cabeza").
@@ -266,10 +266,10 @@ atomicgoal( G ) :-
 :- doc(author, "Jose F. Morales").
 :- doc(author, "Manuel Carro").
 :- doc(author, "The CLIP Group").
-:- doc(credits, "@tt{clip@@dia.fi.upm.es}").
-:- doc(credits, "@tt{http://www.clip.dia.fi.upm.es/}").
-:- doc(credits, "Facultad de Inform@'{a}tica").
-:- doc(credits, "Universidad Polit@'{e}cnica de Madrid").
+:- doc(address, "@tt{clip@@dia.fi.upm.es}").
+:- doc(address, "@tt{http://www.clip.dia.fi.upm.es/}").
+:- doc(address, "Facultad de Inform@'{a}tica").
+:- doc(address, "Universidad Polit@'{e}cnica de Madrid").
 
 %% %% The Free Software Foundation.
 %% :- doc(copyright,"

@@ -3,18 +3,19 @@
 		docformatdir/2, settings_auto/1, svn_repository/1, lpdoclib/1,
 		distpkg_revision/1, mandir/1, infodir/1,
 		bibfile/1, htmldir/1],
-	    [assertions, fsyntax]).
+	    [ciaopaths, assertions, fsyntax]).
 
 % TODO: distpkg_revision/1 should be defined here or in other module?
 
 :- use_module(library(persvalue),          [load_file/2, current_value/3]).
 :- use_module(library(terms),              [atom_concat/2]).
-:- use_module(library(make(system_extra)), [no_tr_nl/2]).
+:- use_module(library(make(system_extra)), [no_tr_nl/2, do_str_without_nl__popen/2]).
 :- use_module(library(messages)).
 :- use_module(library(file_utils)).
 :- use_module(library(system)).
-:- use_module(library(distutils)).
-:- use_module(library(autoconfig)).
+:- use_module(library(component_registry), [component_src/2]).
+
+:- use_module(ciaodesrc(makedir('ConfigValues')), [build_root/1]).
 
 :- initialization(initvals).
 
@@ -24,15 +25,20 @@ initvals :- load_file(ciaosrcsettings, ~settings_auto).
 
 % Define this to be the permissions for installed execs/dirs and data files:
 
+% TODO: What does this comment mean?
 % --- DTM: A variable is missing here
+% TODO: Duplicated in config_stage1.pl (what would be the right place to put it?)
 perms(perm(rwX, rwX, rX)).
+
+% TODO: also computed in lpdoc/src/lpdoc.pl (ensure_lpdoclib_defined/0) 
+%       (this cannot be a configurable setting, lpdoc knows where it lives)
+lpdoclib := ~atom_concat([~component_src(lpdoc), '/lib']).
 
 docdir := ~atom_concat([~build_root, ~settings_value('DOCDIR'), '/']).
 htmldir := ~atom_concat([~build_root, ~settings_value('HTMLDIR'), '/']).
 % ~atom_concat(~build_root, ~settings_value('HTMLURL')).
 mandir := ~atom_concat([~build_root, ~settings_value('MANDIR'), '/']).
 infodir := ~atom_concat([~build_root, ~settings_value('INFODIR'), '/']).
-lpdoclib := ~atom_concat([~component_src(lpdoc), '/lib']).
 %% .bib files now in a predefined location (JFMC)
 %%bibfile := ~decompose(~settings_value('BIBFILES'), ',').
 % Bibliography files for documentation (clip.bib and general.bib)
@@ -83,7 +89,7 @@ svn_revision_atom(A) :-
 	atom_codes(A, S).
 
 svn_revision_string(Path, String) :-
-	shell_string(~atom_concat([
+	do_str_without_nl__popen(~atom_concat([
 		    'which svnversion > /dev/null 2>&1 && svnversion ',
 		    Path]), String0),
 	(

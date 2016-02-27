@@ -481,8 +481,7 @@ create_global_runner(TmpDir, Modules, RunnerFile) :-
 	(
 	    unittest_print_clauses(
 		[
-		    (:- module(_, _, [])),
-		    (:- use_module(library(autoconfig), [])),
+		    (:- module(_, _, [ciaopaths])),
 		    (:- use_module(library(unittest(unittest_utils)))),
 		    (:- use_module(library(unittest(unittest_base))))
 		], IO, []),

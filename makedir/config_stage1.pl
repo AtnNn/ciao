@@ -6,16 +6,18 @@
 :- use_module(library(streams)).
 :- use_module(library(write)).
 :- use_module(library(messages)).
-:- use_module(.('DOCCOMMON')).
 
-:- use_module(library(autoconfig(autoconfig_base))).
-:- use_module(library(distutils(find))).
-:- use_module(library(distutils(setperms))).
+:- use_module(library(component_registry(component_registry_base))).
+:- use_module(library(distutils(dirutils)), [path_concat/3]).
+:- use_module(library(make(system_extra))).
 
 % ----------------------------------------------------------------------------
 % Place here prolog code that do not require auto generated modules or config
 % files
 % ----------------------------------------------------------------------------
+
+% TODO: Duplicated in DOCCOMMON.pl (what would be the right place to put it?)
+perms(perm(rwX, rwX, rX)).
 
 config_source_components(Src) :-
 	component_setup_dir(all, SetupDir),
@@ -25,7 +27,6 @@ config_source_components(Src) :-
 	string_to_file("", SetupDirFND),
 	components(Src, Components),
 	config_source_components_dir(Components, Src, SetupDir).
-%	use_module( library( autoconfig ) ),
 
 config_source_components_dir([],                     _Src, _SetupDir).
 config_source_components_dir([Component|Components], Src,  SetupDir) :-
@@ -90,12 +91,6 @@ generate_auto_loadable_file(ConfigList, ComponentPath, SetupDir) :-
 	;
 	    InsAliasPaths = []
 	),
-	(
-	    member(main_lpdoc_settings(MainLPDocSettings), ConfigList) ->
-	    true
-	;
-	    true
-	),
 	!,
 	atom_concat(SetupDir,       ComponentName,  ComponentName1),
 	atom_concat(ComponentName1, '_src_auto.pl', SetupName),
@@ -105,13 +100,6 @@ generate_auto_loadable_file(ConfigList, ComponentPath, SetupDir) :-
 	write_alias_paths(InsAliasPaths),
 	portray_clause(component_description(ComponentName, ComponentPack,
 		ComponentType, ComponentPath)),
-	(
-	    var(MainLPDocSettings) ->
-	    true
-	;
-	    portray_clause(( main_lpdoc_settings(ComponentName,
-			MainLPDocSettings) ))
-	),
 	close_output(UO),
 	perms(Perms),
 	set_perms(SetupName, Perms).

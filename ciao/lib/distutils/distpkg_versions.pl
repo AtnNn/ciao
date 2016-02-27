@@ -5,13 +5,13 @@
 :- use_module(library(make(system_extra))).
 :- use_module(library(terms), [atom_concat/2]).
 
-:- doc(title, "Obtaining Version Names from Distribution Packages").
+:- doc(title, "Obtain and Format Component Versions").
 
 % ---------------------------------------------------------------------------
 :- export(distpkg_obtain_version/2).
 :- pred distpkg_obtain_version(PkgDir, Version) => atm(Version)
-# "@var{Version} is the package version. @var{PkgDir} is the directory
-  where the @index{distribution package} is stored".
+   # "@var{Version} is version of component at directory @var{PkgDir},
+     with format @em{version}.@em{patch}.@em{revision}".
 
 distpkg_obtain_version(PkgDir, Version) :-
 	get_version_string(PkgDir, V),
@@ -25,10 +25,8 @@ distpkg_obtain_version(PkgDir, Version) :-
 % ---------------------------------------------------------------------------
 :- export(distpkg_obtain_version_nice/2).
 :- pred distpkg_obtain_version_nice(PkgDir, NiceVersion) => atm(NiceVersion)
-
-# "@var{NiceVersion} defines the package version that would be presented
-  to the user in a distribution website or manual installation. It is
-  the aesthetic version of @pred{distpkg_obtain_name_version/2}.".
+   # "@var{Version} is version of component at directory @var{PkgDir},
+     with format @em{version}.@em{patch}".
 
 distpkg_obtain_version_nice(PkgDir, NiceVersion) :-
 	get_version_string(PkgDir, V),
@@ -36,18 +34,6 @@ distpkg_obtain_version_nice(PkgDir, NiceVersion) :-
 	atom_codes(VA, V),
 	atom_codes(PA, P),
 	atom_concat([VA, '.', PA], NiceVersion).
-
-% ---------------------------------------------------------------------------
-:- export(distpkg_obtain_name_version/3).
-:- pred distpkg_obtain_name_version(Name, PkgDir, NameVersion) => atm(NameVersion)
-
-# "@var{NameVersion} is the concatenation of the package name
-  @var{Name} and its version. It is used as a title in a distribution
-  website or manual installation.".
-
-distpkg_obtain_name_version(Name, PkgDir, NameVersion) :-
-	distpkg_obtain_version_nice(PkgDir, Version),
-	atom_concat([Name, '-', Version], NameVersion).
 
 % ---------------------------------------------------------------------------
 :- pred get_revision_string(PkgDir, Revision)
@@ -59,8 +45,8 @@ distpkg_obtain_name_version(Name, PkgDir, NameVersion) :-
    non-working copy, then empty string is returned. ".
 
 % TODO: Cache results? It may call SVN in each call!
-% TODO: somewhat duplicated in makedir/CIAODESHARED.pl
-% Case 1: There exist a REVISION file under the distpkg_root_dir
+% TODO: somewhat duplicated in makedir/makedir_component.pl
+% Case 1: There exist a REVISION file under PkgDir
 get_revision_string(PkgDir, Revision) :-
 	atom_concat(PkgDir, 'REVISION', RevisionFile),
 	file_exists(RevisionFile),
@@ -68,10 +54,8 @@ get_revision_string(PkgDir, Revision) :-
 	no_tr_nl(~file_to_string(RevisionFile), Revision).
 % Case 2: there is a .svn, so it is a working copy
 get_revision_string(PkgDir, Revision) :-
-	no_tr_nl(~stream_to_string(~popen(~atom_concat([
-			    'which svnversion > /dev/null 2>&1 && svnversion ',
-			    PkgDir, 'makedir']),
-		    read)), Revision),
+	Cmd = ~atom_concat(['which svnversion > /dev/null 2>&1 && svnversion ', PkgDir, 'makedir']),
+	Revision = ~no_tr_nl(~stream_to_string(~popen(Cmd, read))),
 	Revision \== "",
 	!.
 % Case 3: Unkown

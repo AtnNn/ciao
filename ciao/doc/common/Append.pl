@@ -7,5 +7,3 @@
 :- doc(author,"The CLIP Group").
 
 :- doc(module,"@include{Append.lpdoc}").
-
-main.

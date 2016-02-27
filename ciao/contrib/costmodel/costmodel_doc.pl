@@ -2,8 +2,8 @@
 :- doc(nodoc, assertions).
 
 :- doc(title,    "The Ciao Costmodel").
-:- doc(subtitle, "REFERENCE MANUAL").
-:- doc(subtitle, "@em{Generated/Printed on:} @today{}").
+:- doc(subtitle_extra, "REFERENCE MANUAL").
+:- doc(subtitle_extra, "@em{Generated/Printed on:} @today{}").
 
 :- doc(author, "Edison Mera").
 :- doc(author, "Teresa Trigo").

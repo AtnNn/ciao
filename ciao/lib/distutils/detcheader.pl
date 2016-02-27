@@ -5,9 +5,7 @@
 :- use_module(library(file_utils)).
 :- use_module(library(foreign_compilation)).
 :- use_module(library(system)).
-:- use_module(library(distutils)).
 :- use_module(library(make(system_extra))).
-
 
 :- doc(author, "Edison Mera").
 

@@ -1,5 +1,7 @@
 :- use_package(assertions).
 
+:- doc(filetype, documentation).
+
 :- doc(title,"Getting started on Windows machines").
 
 :- doc(author,"Manuel Hermenegildo").
@@ -199,8 +201,6 @@ to sign up on the Ciao user's mailing list, receive announcements
 regarding new versions, download new versions, report bugs, etc.
 
 ").
-
-main.
 
 %% --------------------------------------------------------------------------- 
 :- doc(version,dir('../../version')).

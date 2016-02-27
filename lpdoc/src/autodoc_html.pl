@@ -1,7 +1,7 @@
 :- module(autodoc_html, [], [assertions, regtypes, fsyntax]).
 % (Nothing is exported, because everything works using hooks)
 
-:- use_module(lpdocsrc(src(autodoc))).
+:- use_module(lpdocsrc(src(autodoc_state))).
 :- use_module(lpdocsrc(src(autodoc_structure))).
 :- use_module(lpdocsrc(src(autodoc_filesystem))).
 :- use_module(lpdocsrc(src(autodoc_doctree))).
@@ -180,13 +180,13 @@ rw_command(htmlcomment(C), _, NewCommand) :- !,
 %
 rw_command(section_env(SecProps, SectLabel, TitleR, Body), DocSt, R) :- !,
 	fmt_section_env(SecProps, SectLabel, TitleR, Body, DocSt, R).
-rw_command(backend_linkdep(_), _DocSt, nop) :- !.
+rw_command(backend_include_component(_), _DocSt, nop) :- !.
 rw_command(hfill, _DocSt, R) :- !, % vertical space
 	% TODO: finish
 	R = raw(" ").
 rw_command(linebreak, _DocSt, R) :- !,
 	R = raw("<br/>").
-rw_command(subtitle_line(X), _DocSt, R) :- !,
+rw_command(subsection_title(X), _DocSt, R) :- !,
 	R = htmlenv(h2, X).
 rw_command(twocolumns(X), _DocSt, R) :- !,
 	R = htmlenv(div, [class="twocolumns"], X).
@@ -211,12 +211,17 @@ rw_command(bibitem(Label,Ref), _DocSt, R) :- !,
 	R = [item(htmlenv(strong, [id=Ref], R0))].
 rw_command(idx_anchor(_Indices, IdxLabel, _Key, OutLink, Text), DocSt, R) :- !,
 	fmt_link(idx_anchor, IdxLabel, OutLink, DocSt, Text, R).
-rw_command(title(TitleR), _DocSt, R) :- !,
-	R = htmlenv(h1, TitleR).
-rw_command(subtitle(Rs), _DocSt, R) :- !,
-	fmt_subtitle(Rs, R).
+rw_command(cover_title(TitleR, SubtitleRs), _DocSt, R) :- !,
+        BoxStyle = "padding: 16px; margin: 0px; background:#46a; color:white; text-shadow: 1px 1px 2px #000;",
+        H1Style = "margin-top:0px; margin-bottom:0px;",
+	R = htmlenv(div, [style=BoxStyle], [
+              htmlenv(h1, [style=H1Style], TitleR)
+              |Rs]),
+	sep_nl(SubtitleRs, Rs).
+rw_command(cover_subtitle_extra(Rs), _DocSt, R) :- !,
+	sep_nl(Rs, R).
 rw_command(authors(AuthorRs), _DocSt, R) :- !,
-	fmt_authors(AuthorRs, R).
+	sep_nl(AuthorRs, R).
 rw_command(backend_comment(_String), _DocSt, R) :- !,
 	R = nop.
 rw_command(quotation(X), _DocSt, R) :- !,
@@ -281,17 +286,10 @@ fmt_link(Style, IdLabel, Link, DocSt, Text, R) :-
 	  R = htmlenv(a, Props, Text)
 	).
 
-fmt_authors(AuthorRs, R) :-
-	map_env(AuthorRs, "author", R).
-
-fmt_subtitle(Rs, Rs2) :-
-	map_env(Rs, "subtitle", Rs2).
-
-% apply info Command to each R
-map_env([],     _Command, []).
-map_env([R|Rs], Command,  [R2|Rs2]) :-
+sep_nl([],     []).
+sep_nl([R|Rs], [R2|Rs2]) :-
 	R2 = [R, raw("<br/>")],
-	map_env(Rs, Command, Rs2).
+	sep_nl(Rs, Rs2).
 
 fmt_html_props([], _, []) :- !.
 fmt_html_props([P0], DocSt, [P]) :- !,
@@ -315,24 +313,23 @@ fmt_html_prop(P, _, _) :-
 
 % TODO: refine this code
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
-	section_prop(first_file_section, SecProps),
+	section_prop(file_top_section, SecProps),
 	!,
 	fmt_nav(DocSt, SectPathR, PrevNextR),
-	( section_prop(coversec(_,_,_,_,_), SecProps) ->
+	( section_prop(coversec(_,_,_,_,_,_,_), SecProps) ->
 	    IsCover = yes
 	; IsCover = no
 	),
-	get_main_title(MainTitleR, DocSt),
+	( docst_gdata_query(DocSt, main_title(MainTitleR)) ->
+	    true
+	; throw(bug_no_main_title)
+	),
 	( IsCover = yes ->
 	    TitleR2 = MainTitleR
 	; TitleR2 = [TitleR, raw(" &mdash; "), MainTitleR]
 	),
 	%
-	( IsCover = yes ->
-	    fmt_cover(SecProps, TitleR, BodyR, SectR)
-	; fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, SectR)
-	),
-	%
+	% TODO: remove pragmas, define new comment types instead
 	( section_prop(pragmas(Pragmas), SecProps) -> true ; Pragmas = [] ),
 	%
 	( member(section_image(SectImg), Pragmas) ->
@@ -344,17 +341,29 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 	%
 	( setting_value(html_layout, Layout0),
 	  Layout0 = 'website_layout' ->
-	    SidebarR2 = [PreSect, printtoc(vertical_menu)],
+	    SidebarR2 = [PreSect, show_toc(vertical_menu)],
 	    Layout = nav_searchbox_menu_main,
+	    % TODO: Hardwired, fix
 	    MaybeIcon = yes('ciao-icon16.ico'),
-	    CssList = ['lpdoc.css', 'css/ciaode.css']
+	    CssList = ['lpdoc.css', 'css/website.css'],
+	    %
+            SectR = [htmlenv(h1, TitleR), raw_nl, BodyR]
 	; Layout = nav_sidebar_main,
-	  ( IsCover = yes ->
-	      SidebarR2 = []
-	  ; SidebarR2 = printtoc(all)
+	  % Optional logo
+	  ( IsCover = no, docst_gdata_query(DocSt, main_logo(Logo)) ->
+	      atom_codes(Logo, LogoS),
+	      LogoR = image(LogoS)
+	  ; LogoR = []
 	  ),
+	  SidebarR1 = show_toc(toc_view(yes)),
+	  doctree_simplify([LogoR, SidebarR1], SidebarR2),
 	  MaybeIcon = no,
-	  CssList = ['lpdoc.css']
+	  CssList = ['lpdoc.css'],
+	  %
+	  ( IsCover = yes ->
+	      fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR)
+	  ; fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, SectR)
+	  )
 	),
 	%
 	fmt_layout(Layout, SectPathR, PrevNextR, SidebarR2, SectR, R),
@@ -362,21 +371,51 @@ fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, ModR) :-
 fmt_section_env(SecProps, SectLabel, TitleR, BodyR, DocSt, R) :-
 	fmt_section(SecProps, SectLabel, TitleR, BodyR, DocSt, R).
 
-fmt_cover(SecProps, TitleR, BodyR, SectR) :-
-	section_prop(coversec(SubtitleRs, AuthorRs, GVersShortR, _GVersR, _CopyrightR),
+% Format a module as a cover
+fmt_cover(SecProps, TitleR, BodyR, DocSt, SectR) :-
+	section_prop(coversec(SubtitleRs,
+	                      SubtitleExtraRs,
+	                      AuthorRs,
+	                      AddressRs,
+			      GVersShortR,
+			      _GVersR,
+			      _CopyrightR),
 	             SecProps),
 	% Add version (GVers) to subtitle
 	( doctree_is_empty(GVersShortR) ->
-	    SubtitleRs2 = SubtitleRs
-	; append(SubtitleRs, [GVersShortR], SubtitleRs2)
+	    GVersShortRs = []
+	; GVersShortRs = [GVersShortR]
+	),
+	% Address box (optional)
+	( AddressRs = [] ->
+	    AddressRs2 = []
+	; sep_nl(AddressRs, AddressRs1),
+	  % TODO: add css style for this
+	  AddressRs2 = 
+	    htmlenv(div, [style="float:right; font-size:8pt; background: #d2e3ec; padding: 16px;"],
+	      AddressRs1)
 	),
 	% Document skeleton
+	( docst_gdata_query(DocSt, main_logo(Logo)) ->
+	    atom_codes(Logo, LogoS),
+	    MainLogoR = image(LogoS)
+	; MainLogoR = []
+	),
 	SectR = [
 	  htmlenv(div, [
-	    title(TitleR),
-	    subtitle(SubtitleRs2),
-	    authors(AuthorRs)
-	    % htmlenv(div, CopyrightR),
+            linebreak, % add some margin here
+	    MainLogoR,
+	    cover_title(TitleR, SubtitleRs),
+	    % TODO: add css style for this
+	    AddressRs2,
+	    htmlenv(div, [style="padding: 16px; float:right; text-align:right;"], [
+	      authors(AuthorRs)
+            ]),
+	    htmlenv(div, [style="font-size: 8pt; padding: 16px;"], [
+	      cover_subtitle_extra(SubtitleExtraRs),
+	      cover_subtitle_extra(GVersShortRs)
+            ]),
+	    htmlenv(div, [class="clearer"], [])
 	  ]),
 	  raw_nl,
 	  BodyR
@@ -384,7 +423,7 @@ fmt_cover(SecProps, TitleR, BodyR, SectR) :-
 
 % Navigation, sidebar, and main contents
 fmt_layout(nav_sidebar_main, SectPathR, PrevNextR, SidebarR, MainR, R) :-
-	made_with_lpdoc(MadeWithLpdoc),
+	colophon(Colophon),
 	R = [%htmlenv(div, [class="header"], [
              %  htmlenv(h1, [raw("HEADER")])
              %]),
@@ -403,7 +442,7 @@ fmt_layout(nav_sidebar_main, SectPathR, PrevNextR, SidebarR, MainR, R) :-
 	     % repeat navigation here too
 	     navigation_env(raw("&nbsp;"), PrevNextR),
 	     % the footer
-	     MadeWithLpdoc
+	     Colophon
             ].
 fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, R) :-
 	% TODO: Generalize, this contains many definitions that are only valid
@@ -412,7 +451,7 @@ fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, R)
 	LogoImg = 'ciao2-small-shadow-reduced.png',
 	img_url(LogoImg, LogoSrc),
 	fmt_html_template('google_search.html', [], SearchBoxR),
-	made_with_lpdoc(MadeWithLpdoc),
+	colophon(Colophon),
 	R = [%
 	     htmlenv(div, [class="documentwrapper"], [
 	       htmlenv(div, [class="title"], [
@@ -433,11 +472,13 @@ fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, R)
                ]),
 	       htmlenv(div, [class="clearer"], [])
              ]),
-             MadeWithLpdoc
+             Colophon
             ].
 
-% TODO: Allow customized notes
-made_with_lpdoc(R) :-
+% colophon: "a the brief description of the publication or production
+% notes relevant to the edition"
+% (this is standard also for Web pages)
+colophon(R) :-
 	R = htmlenv(div, [class="footer"], [string_esc("Generated with LPdoc using Ciao")]).
 
 fmt_headers(MaybeIcon, CssList, Title, Body, R) :-
@@ -498,7 +539,7 @@ doclabel_to_html_id(_, Id) :- !, Id = "".
 % From a doclink, obtain a HTML href 
 doctree_to_href(Link, DocSt, HRef) :-
 	Link = link_to(Base, SectLabel), !,
-	docstate_currmod(DocSt, Name),
+	docst_currmod(DocSt, Name),
 	( Base = Name ->
 	    HRef = HRef0
 	; Backend = html,
@@ -536,7 +577,7 @@ html_escape([], []).
 % (path to the root node, links to the previous and next nodes)
 
 fmt_nav(DocSt, PathR, PrevNextR):-
-	( doc_customdic_get(DocSt, nav, Nav) ->
+	( docst_mvar_get(DocSt, nav, Nav) ->
 	    true
 	; throw(bug_no_nav)
 	),

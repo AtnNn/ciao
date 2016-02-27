@@ -2,19 +2,23 @@
 %:- module(_,[main/0,main/1],[make,fsyntax,assertions]).
 
 :- doc(title, "The lpdoc Documentation Generator").
+:- doc(subtitle, "An Automatic Documentation Generator for (C)LP Systems").
 
-:- doc(subtitle, 
-	"@em{An Automatic Documentation Generator for (C)LP Systems}").
-:- doc(subtitle, "REFERENCE MANUAL").
-:- doc(subtitle, "@bf{The Ciao Documentation Series}").
-:- doc(subtitle, "@uref{http://www.ciaohome.org/}").
-:- doc(subtitle,"@em{Generated/Printed on:} @today{}").
-:- doc(subtitle, "Technical Report CLIP 5/97.1-@em{<version below>}").
+:- doc(logo, 'lpdoc-logo-128').
 
-:- doc(author, "Manuel Hermenegildo").
-:- doc(author, "Jos@'{e} Francisco Morales").
+:- doc(subtitle_extra, "REFERENCE MANUAL").
+:- doc(subtitle_extra, "@bf{The Ciao Documentation Series}").
+:- doc(subtitle_extra, "@uref{http://www.ciaohome.org/}").
+:- doc(subtitle_extra, "@em{Generated/Printed on:} @today{}").
+:- doc(subtitle_extra, "Technical Report CLIP 5/97.1-@version{}").
 
-%% Need to add path 
+% TODO: Replace 'credits' by 'editor'? (JFMC)
+% TODO: In this case, the people here are also the authors
+:- doc(credits, "@bf{Edited by:}").
+:- doc(credits, "Manuel Hermenegildo").
+:- doc(credits, "Jos@'{e} Francisco Morales").
+
+% TODO: Move to a better place or add path
 % :- include(library('ClipAddress')).
 
 :- doc(copyright, " Copyright @copyright{} 1996-2011 Manuel
@@ -58,21 +62,24 @@ cooperation with lpmake
 :- use_module(library(file_utils)).
 
 % :- use_module(library(filenames)).
-:- use_module(library(autoconfig)).
+:- use_module(library(component_registry), [component_src/2]).
 
 %% LPdoc libraries
 :- use_module(.(autodoc)).
+:- use_module(.(autodoc_state)).
+:- use_module(.(autodoc_images), [clean_image_cache/0]).
 :- use_module(.(autodoc_structure)).
 :- use_module(.(autodoc_settings)).
 :- use_module(.(autodoc_filesystem)).
 :- use_module(.(autodoc_aux)).
+:- use_module(.(autodoc_texinfo), [infodir_base/2]).
 
-:- use_module(library(distutils(dirutils))).
+:- use_module(library(distutils(dirutils)), [path_name/2, get_abs_path_no_check/2]).
+:- use_module(library(system), [working_directory/2]).
 
 %% Version information
 :- include(lpdocsrc(src(version_auto))).
 
-%% This is to let lpdoc be able to do installation without makefiles:
 :- use_module(library(make(make_rt))).
 
 % ===========================================================================
@@ -113,31 +120,25 @@ do_comment_version :-
 :- doc(section, "Processing Documentation Targets").
 
 start(Targets) :-
+	verify_settings,	
 	clean_fs_db,
+	clean_image_cache,
 	reset_output_dir_db,
-	ensure_doc_build_root,
+	ensure_lpdoclib_defined,
 	load_vpaths,
 	parse_structure,
 	process_targets(Targets).
 
 % ---------------------------------------------------------------------------
 
-ensure_doc_build_root :-
-	% If no build_root is specified, the output is the same
-	% dir in which lpdoc is executing
-	% TODO: Unused?
-	( setting_value(doc_build_root, _) ->
-	    true
-	; get_cwd(CWD),
-	  add_name_value(doc_build_root, CWD)
-	),
-	% Define lpdoclib
-	% TODO: This is defined somewhere else. Make sure that it works 
-	% in all installation types.
+% Define lpdoclib
+% TODO: Defined also in ./makedir/DOCCOMMON.pl; why?
+ensure_lpdoclib_defined :-
+	% TODO: use alias path instead? (a similar problem was in ciaopp/ilciao/java_interface.pl)
 	LpDocLibDir = ~atom_concat([~component_src(lpdoc), '/lib/']),
 	add_name_value(lpdoclib, LpDocLibDir).
-	% TODO: I am not sure that this is the best way to do it;
-	%   maybe resources have to be specified individually
+
+:- use_module(library(system), [file_exists/1]).
 
 % ---------------------------------------------------------------------------
 % Process the targets
@@ -316,11 +317,6 @@ translate_doctree(Backend, FileBase) :-
 
 :- doc(section, "Commands for Output Visualization").
 
-%% Names and paths of external commands used by lpdoc and other paths
-%% which get stored in the executable on installation:
-:- use_module(lpdocsrc(makedir('LPDOCSETTINGS')), [
-		xdvi/1, xdvisize/1, htmlview/1, pdfview/1, psview/1]).
-
 % Default 
 view <- [htmlview] # "Visualize default format (.html)" :- true.
 
@@ -363,24 +359,6 @@ view_document(Suffix, File) :-
 	( Mode = fg -> Opts = [] ; Opts = [bg] ),
 	sh_exec([App, ' ', File], [default|Opts]).
 
-% The viewer application for a given file format
-% viewer(Suffix, App, Mode):
-%   Mode = fg (call in foreground) or bg (call in background)
-viewer('html', 'open', fg) :- get_os('DARWIN'), !.
-viewer('pdf', 'open', fg) :- get_os('DARWIN'), !.
-viewer('ps', 'open', fg) :- get_os('DARWIN'), !.
-viewer('html', App, bg) :- App = ~htmlview, !.
-viewer('pdf', App, bg) :- App = ~pdfview, !.
-viewer('ps', App, bg) :- App = ~psview, !.
-
-:- use_module(engine(system_info), [get_os/1]).
-
-% TODO: This seems to be done by the emacs mode...
-% lpsettings <- [] # "Generates default LPSETTINGS.pl in the current directory"
-% 	:-
-% 	get_cwd(CWD),
-% 	generate_default_lpsettings_file(CWD, '').
-
 %% ===========================================================================
 
 :- doc(section, "Cleaning up Commands").
@@ -401,7 +379,10 @@ distclean <- [] # "Delete all temporal files, including .texi" :-
 realclean <- [] # "Deletes everything." :-
 	clean_all.
 
+% ===========================================================================
 
+:- doc(version_maintenance,dir('../version')).
 
-
+:- doc(version(2*1+0,2011/05/30,16:25*11+'CEST'), "Revamped LPdoc
+   (full changelog soon) (Jose Morales)").
 

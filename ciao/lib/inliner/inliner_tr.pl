@@ -436,26 +436,6 @@ vars_of_unfold_args(N, Specs, Args, Vars0, Vars) :-
 	vars_of_unfold_args(N1, Specs, Args, Vars1, Vars).
 vars_of_unfold_args(_, _, _, Vars, Vars).
 
-:- export(intersect_vars/3).
-intersect_vars([],     _,  []).
-intersect_vars([X|S1], S2, S) :-
-	( member_var(S2, X) ->
-	    S = [X|SList] ;
-	    S = SList ),
-	intersect_vars(S1, S2, SList).
-
-diff_vars([],     _L, []).
-diff_vars([H|L1], L2, L3) :-
-	member_var(L2, H),
-	!,
-	diff_vars(L1, L2, L3).
-diff_vars([H|L1], L2, [H|L3]) :-
-	diff_vars(L1, L2, L3).
-
-% member_var([],       _) :- fail.
-member_var([E|List], Ele) :-
-	E == Ele -> true ; member_var(List, Ele).
-
 transform_args(N, Specs, Lit, Head, Pred, NUVars, Vars0, Vars, TParams0) :-
 	arg(N, Specs, Spec0),
 	arg(N, Lit,   LArg),

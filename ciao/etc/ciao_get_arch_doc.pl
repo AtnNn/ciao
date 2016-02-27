@@ -1,6 +1,7 @@
-%% CIAO syntax
 :- use_package(assertions).  
 :- doc(nodoc,assertions).  
+
+:- doc(filetype, application).
 
 :- doc(title,"Find out which architecture we are running on").
 
@@ -26,5 +27,3 @@ enable/disable certain characteristics.
 
 ").
 
-
-main.

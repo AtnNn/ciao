@@ -1,4 +1,4 @@
-:- module(_, [], [assertions, fsyntax]).
+:- module(_, [], [ciaopaths, assertions, fsyntax]).
 
 :- doc(title, "Template Support for the HTML Backend").
 :- doc(author, "Jose F. Morales").
@@ -9,10 +9,7 @@
 :- use_module(library(file_utils)).
 :- use_module(library(make(system_extra))).
 
-:- use_module(library(distutils), [path_name/2]).
-:- use_module(library(distutils(dirutils)), [get_abs_path/2]).
-
-:- use_module(library(autoconfig)).
+:- use_module(library(distutils(dirutils)), [path_name/2, get_abs_path/2]).
 
 :- use_module(library(lists)).
 :- use_module(library(terms), [atom_concat/2]).
@@ -34,6 +31,7 @@
 :- pred img_url(Name, Url) :: atm * string # "Obtain the @var{URL} where image @var{Name}
    is or will be found.".
 img_url(Name) := Url :-
+	% TODO: Use relative URLs is htmlurl is '' (search uses of htmlurl)
 	WebURL = ~setting_value(htmlurl),
 	Url = ~list_concat([~atom_codes(~path_name(WebURL)),
 	                    "images/", ~atom_codes(Name)]).
@@ -45,6 +43,7 @@ img_url(Name) := Url :-
 % Like html_template, but recognizes <v>Var</v> in strings too, and outputs
 % a doctree
 fmt_html_template(File, Args0) := R :-
+	% TODO: Use relative URLs is htmlurl is '' (search uses of htmlurl)
 	WebURL = ~setting_value(htmlurl),
 	DirImages = ~atom_concat(~path_name(WebURL), 'images/'),
 	WS = [weburl = WebURL, dirImage = DirImages],

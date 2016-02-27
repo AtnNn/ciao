@@ -1,6 +1,13 @@
 :- use_package([assertions]).
 
-main.
+:- doc(filetype, documentation).
+
+:- doc(title,"The interactive debugger").
+
+:- doc(subtitle_extra,"@em{A part of the Ciao interactive program development environment}").
+:- doc(subtitle_extra,"@bf{The Ciao System Documentation Series}").
+:- doc(subtitle_extra,"Technical Report CLIP X/YY.1").
+:- doc(subtitle_extra,"@em{Draft printed on:} @today{}").
 
 :- doc(author, "Daniel Cabeza").
 :- doc(author, "Manuel C. Rodriguez").
@@ -9,13 +16,6 @@ main.
 :- doc(author, "Mats Carlsson (first version)").
 :- doc(author, "T. Chikayama (first version)").
 :- doc(author, "K. Shen (first version)").
-
-:- doc(title,"The interactive debugger").
-
-:- doc(subtitle,"@em{A part of the Ciao interactive program development environment}").
-:- doc(subtitle,"@bf{The Ciao System Documentation Series}").
-:- doc(subtitle,"Technical Report CLIP X/YY.1").
-:- doc(subtitle,"@em{Draft printed on:} @today{}").
 
 %% Give problems when autocompiling libraries, since they reside in doc/common
 %% :- include(library('ClipAddress')).

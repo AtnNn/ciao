@@ -2,8 +2,8 @@
 :- doc(nodoc,assertions).
 
 :- doc(title, "The PiLLoW Web programming library").
-:- doc(subtitle,"REFERENCE MANUAL").
-:- doc(subtitle,"@em{Generated/Printed on:} @today{}").
+:- doc(subtitle_extra,"REFERENCE MANUAL").
+:- doc(subtitle_extra,"@em{Generated/Printed on:} @today{}").
 
 :- doc(author, "Daniel Cabeza").
 :- doc(author, "Manuel Hermenegildo").

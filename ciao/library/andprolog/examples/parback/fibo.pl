@@ -11,7 +11,6 @@
 :- use_module(library(between)).
 :- use_module(library(odd)).
 :- use_module(library(arithpreds), [floor/2]).
-:- use_module(library(apll)).
 
 :- use_module(extras).
 
@@ -39,9 +38,9 @@ speedups :-
 	retractall_fact(timeseq(_)),
 	retractall_fact(timeseqfinal(_)),
 	retractall_fact(timepar(_)),
-	main_seq(25),
-	between(1,8,N),
-	main_det_par(N,25),
+	main_seq(15),
+	between(1,2,N),
+	main_det_par(N,15),
 	fail.
 speedups.
 
@@ -49,9 +48,10 @@ speedups.
 
 main_det_par(N,X) :-
 	ensure_agents(N),
+ 	pause(1),
 	between(1,10,_),
         statistics(walltime, [T3,_]),
-	fib_det_gc(X,15,_),
+	fib_det_gc(X,12,_),
         statistics(walltime, [T4,_]),
 	DeltaPar is T4 - T3,
 	assertz_fact(timepar(DeltaPar)),
@@ -63,7 +63,7 @@ main_det_par(N,X) :-
 	SpUp is 100*(Seq/Par),
 	floor(SpUp,Sp1),
 	Sp is Sp1/100,
-	format("-- fibo(~f), ~d agents, SpeedUp=~2f~n", [X,N,Sp]),
+	format("-- fibo(~d), ~d agents, SpeedUp=~2f vs Seq=~4f~n", [X,N,Sp,Seq]),
 	fail.
 
 fib_seq(0, 0) :- !.

@@ -6,4 +6,3 @@
 
 %% :- doc(module,"...").
 
-main.

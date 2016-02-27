@@ -41,8 +41,11 @@
 :- meta_predicate((goal&>_)).
 Goal &> Handler :-
 	push_goal(Goal,nondet,Handler),
+ %%    	display(publishing(Goal)),nl,
 % 	undo(cancel(Handler)),
 	release_some_suspended_thread.
+ %% 	display(libero_some),nl.
+
 
  %% cancel(Handler) :-
  %% 	cancellation(Handler),
@@ -108,25 +111,36 @@ Handler <& :-
 :- doc('<&&'(Handler), "Fair version of the <&/1 operator.").
 
 Handler <&& :-
+ %%    	display(checking_state),nl,
 	enter_mutex_self,
 	(
 	    goal_available(Handler) ->
+ %%         display(is_available),nl,
 	    exit_mutex_self,
 	    retrieve_goal(Handler,Goal),
+ %%         display(exec_local(Goal)),nl,
 	    call(Goal)
+ %%     	    display(exec_local_answer1(Goal)),nl
 	;
+ %%    	    display(not_available),nl,
 	    (
 		goal_toreexecute(Handler) ->
 		exit_mutex_self,
-		enter_mutex_remote(Handler),
-		send_event(Handler),
-		exit_mutex_remote(Handler),
-		release_remote(Handler),
-		enter_mutex_self
+		retrieve_goal(Handler,Goal),
+ %%     		display(reexecuting(Goal)),nl,
+ %%   		display(exec_local(Goal)),nl,
+		call(Goal)
+ %%   		display(exec_local_answer2(Goal)),nl
+ %% 		pause(1)
+ %% 		enter_mutex_remote(Handler),
+ %% 		send_event(Handler),
+ %% 		exit_mutex_remote(Handler),
+ %% 		release_remote(Handler),
+ %% 		enter_mutex_self
 	    ;
-		true
-	    ),
-	    perform_some_other_work(Handler)
+ %%     		display(not_to_reexecte),nl,
+		perform_some_other_work(Handler)
+	    )
 	).
 
 
@@ -140,7 +154,9 @@ Handler <&& :-
 :- meta_predicate((goal&goal)).
 GoalA & GoalB :-
 	GoalA &> H,
+ %%   	display(exec_local(GoalB)),nl,
 	GoalB,
+ %%   	display(exec_local_answer3(GoalB)),nl,
 	H <& .
 
 
@@ -172,6 +188,7 @@ sending_event(Handler) :-
 	set_goal_tobacktrack(Handler),
 	exit_mutex_self,
 	enter_mutex_remote(Handler),
+ %%   	display(sending_back(Handler)),nl,
 	send_event(Handler),
 	exit_mutex_remote(Handler),
 	release_remote(Handler),
@@ -193,16 +210,19 @@ perform_some_other_work(Handler) :-
 perform_some_other_work_(Handler,GS) :-
 	(
 	    goal_finished(Handler) ->
+ %%     	    display(is_finished),nl,
  	    sending_event(Handler)
 	;
 	    (
 		goal_failed(Handler) ->
+ %%     		display(is_failed),nl,
 		set_goal_toreexecute(Handler),
 		exit_mutex_self,
 		fail
 	    ;
+ %%     		display(to_suspend_local),nl,
 		suspend,
- 		enter_mutex_self,
+ %%     		display(after_suspend_local),nl,
 		perform_some_other_work_(Handler,GS)
 	    )
 	).

@@ -1,5 +1,7 @@
 :- use_package(assertions).
 
+:- doc(filetype, documentation).
+
 :- doc(title,"Beyond installation").
 
 :- doc(author,"Manuel Carro").
@@ -38,4 +40,3 @@ The features that do not work are disabled at compile time.
 
 "). 
 
-main.

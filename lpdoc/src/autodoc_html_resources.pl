@@ -18,8 +18,8 @@
 % ---------------------------------------------------------------------------
 % Copy the website skel (images, css, etc.)
 
-:- use_module(library(distutils), [path_name/2, copy_dir_rec/9, set_owner_rec/2]).
-:- use_module(library(distutils(dirutils)), [get_abs_path/2]).
+:- use_module(library(distutils(dirutils)), 
+   [path_name/2, copy_dir_rec/9, set_owner_rec/2, get_abs_path/2]).
 
 :- export(prepare_web_skel/1).
 % TODO: Avoid copy if not necessary

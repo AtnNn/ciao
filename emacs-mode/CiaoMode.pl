@@ -4,12 +4,14 @@
 
 :- use_package([assertions]).
 
-:- doc(title,"Using Ciao inside GNU emacs").
+:- doc(filetype, documentation).
 
-:- doc(subtitle,"@em{An interactive program development environment for Ciao}").
-:- doc(subtitle,"@bf{The Ciao System Documentation Series}").
-:- doc(subtitle,"Technical Report CLIP 4/00.5.81").
-:- doc(subtitle,"@em{Draft printed on:} @today{}").
+:- doc(title,"Using Ciao inside GNU emacs").
+:- doc(subtitle,"An interactive program development environment for Ciao").
+
+:- doc(subtitle_extra,"@bf{The Ciao System Documentation Series}").
+:- doc(subtitle_extra,"Technical Report CLIP 4/00.5.81").
+:- doc(subtitle_extra,"@em{Draft printed on:} @today{}").
 
 :- doc(author,"Manuel Hermenegildo").
 :- doc(author,"Manuel C. Rodriguez").
@@ -36,4 +38,4 @@
 
 :- doc(module,"@include{CiaoMode.lpdoc}").
 
-main.
+

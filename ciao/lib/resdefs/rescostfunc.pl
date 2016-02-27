@@ -1,5 +1,6 @@
-:- module(rescostfunc, [expand_cf/3, compact_cf/3], [assertions, nativeprops,
-		dcg]).
+:- module(rescostfunc, [expand_cf/3, compact_cf/3, compound_size/3,
+		compact_size/3],
+	    [assertions, nativeprops, dcg]).
 
 :- use_module(library(hiordlib)).
 :- use_module(library(lists)).
@@ -11,10 +12,10 @@ expand_cf(CF, IF, CFN) :-
 	sort(E0, E1),
 	map(E1, m_to_goal, IF).
 
-compact_1(length(A, V),    V, length(A)) :- !.
-compact_1(term_size(A, V), V, size(A)) :- !.
-compact_1(A=V,             V, int(A)) :- !.
-compact_1(G,               V, E) :-
+compact_size(length(A, V),    V, length(A)) :- !.
+compact_size(term_size(A, V), V, size(A)) :- !.
+compact_size(A=V,             V, int(A)) :- !.
+compact_size(G,               V, E) :-
 	G =.. [F|A1],
 	append(A, [V], A1),
 	E =.. [F|A].
@@ -25,7 +26,7 @@ compact_1(G,               V, E) :-
 
 compact_cf(ExprV, IF, Expr) :-
 	member(G, IF),
-	compact_1(G, ExprV1, Expr),
+	compact_size(G, ExprV1, Expr),
 	ExprV == ExprV1,
 	!.
 compact_cf(AV + BV, G, A + B) :-

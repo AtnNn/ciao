@@ -1,4 +1,4 @@
-:- module(_, _, []).
+:- module(_, [main/1], []).
 
 :- use_module(library(system)).
 

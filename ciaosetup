@@ -18,17 +18,18 @@ old_dir=`pwd`; cd `dirname $0`; self=`pwd`; cd ${old_dir}; old_dir=
 set -e
 
 # Import modules for ciaosetup
-. "${self}/ciaosetup_modules/terminal_io.sh"
-. "${self}/ciaosetup_modules/common.sh"
+. "${self}/makedir/ciaosetup_modules/terminal_io.sh"
+. "${self}/makedir/ciaosetup_modules/common.sh"
 
 # Register all commands
-. "${self}/ciaosetup_modules/command_registry.sh"
-command_group_dir="${self}/ciaosetup_modules"
+. "${self}/makedir/ciaosetup_modules/command_registry.sh"
+command_group_dir="${self}/makedir/ciaosetup_modules"
 load_command_groups \
     "help" \
     "all_in_one" \
     "config" \
     "compilation" \
+    "documentation" \
     "installation" \
     "lpdoc" \
     "ciaopp" \
@@ -36,7 +37,6 @@ load_command_groups \
     "javall" \
     "emacs" \
     "maintenance" \
-    "documentation" \
     "testing" \
     "benchmarking" \
     "miniprolog" \
@@ -48,3 +48,4 @@ build_command_case
 # Setup vars and execute command_case
 setup_vars
 command_case "$@"
+

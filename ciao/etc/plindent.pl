@@ -8,14 +8,18 @@
 
 :- use_module(plindent(autoindent)).
 
+:- doc(title, "Automatic Source Indenter").
 :- doc(author, "Edison Mera").
 
-:- doc(module, "Automatic indenter of prolog files. This module
-	implements the main predicates to create the executable
-	program.").
+:- doc(module, "This module implements a command-line interface to the
+	Prolog automatic indenter.
 
-show_help :-
-	display_string("
+@begin{verbatim}
+@includefact{usage_message/1}
+@end{verbatim}
+").
+
+usage_message("
 Automatic indenter of prolog files.
 
 Usage:
@@ -53,6 +57,10 @@ process_args([]) :-
 	stream_to_string(CI, SourceS),
 	plindent(_Source, SourceS, Target),
 	write_string(Target).
+
+show_help :-
+	usage_message(M),
+	display_string(M).
 
 main(Args) :-
 	process_args(Args),

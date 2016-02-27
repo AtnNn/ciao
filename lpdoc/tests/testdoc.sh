@@ -61,10 +61,10 @@ EOF
 # This is a hack... it has the version number hardwired.
 function get_component_file() {
     case $1 in
-	ciao) echo "ciao-1.13.0" ;;
+	ciao) echo "ciao-1.13.1" ;;
 	ciaopp_ref_man) echo "ciaopp-1.2.0" ;;
-	ciaopp_internals) echo "ciaopp_internals-1.2.0" ;;
-	lpdoc) echo "lpdoc-2.0.38" ;;
+	ciaopp_doc) echo "ciaopp_internals-1.2.0" ;;
+	lpdoc) echo "lpdoc-2.1.0" ;;
 	# for testing
 	ciaotest) echo "ciao" ;;
 	singlelpdoc) echo "singlelpdoc" ;;
@@ -76,7 +76,7 @@ function get_component_dir() {
     case $1 in
 	ciao) echo "${ciaode}/ciao" ;;
 	ciaopp_ref_man) echo "${ciaode}/ciaopp" ;;
-	ciaopp_internals) echo "${ciaode}/ciaopp" ;;
+	ciaopp_doc) echo "${ciaode}/ciaopp" ;;
 	lpdoc) echo "${ciaode}/lpdoc" ;;
 	# for testing
 	ciaotest) echo "${ciaode}/lpdoc/tests/ciaotest" ;;
@@ -89,7 +89,7 @@ function get_component_outdir() {
     case $1 in
 	ciao) echo "${ciaode}/build/doc" ;;
 	ciaopp_ref_man) echo "${ciaode}/build/doc" ;;
-	ciaopp_internals) echo "${ciaode}/build/doc" ;;
+	ciaopp_doc) echo "${ciaode}/build/doc" ;;
 	lpdoc) echo "${ciaode}/build/doc" ;;
 	# for testing
 	ciaotest) echo "${ciaode}/lpdoc/tests/ciaotest" ;;
@@ -102,7 +102,7 @@ function get_component_cmd() {
     case $1 in
 	ciao) echo "lpmake docs" ;;
 	ciaopp_ref_man) echo "lpmake docs" ;;
-	ciaopp_internals) echo "lpmake docs" ;;
+	ciaopp_doc) echo "lpmake docs" ;;
 	lpdoc) echo "lpmake docs" ;;
 	# for testing
 	ciaotest) cat <<EOF
@@ -144,7 +144,7 @@ function full_docs() {
 
 # Rebuild lpdoc if necessary
 function update_lpdoc() {
-    ${ciaode}/ciaosetup alllpdoc
+    ${ciaode}/ciaosetup all_lpdoc
 }
 
 # Rebuild the documentation for ${component}

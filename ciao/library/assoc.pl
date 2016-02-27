@@ -46,10 +46,6 @@
 :- doc(author,"Pablo Chico").
 :- doc(author,"Manuel Carro").
 
-:- doc(subtitle,"").
-:- doc(copyright,"").
-:- doc(summary,"").
-
 :- doc(module,"This library implements a table.  It takes its name
           from the classical \"association lists\".  It allows storing
           a set of values and a key for each value, such that the

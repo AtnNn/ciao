@@ -10,7 +10,7 @@
 
 :- use_module(lpdocsrc(src(autodoc_settings))).
 :- use_module(lpdocsrc(src(autodoc_structure))).
-:- use_module(lpdocsrc(src(autodoc)), [backend_id/1]).
+:- use_module(lpdocsrc(src(autodoc_state)), [backend_id/1]).
 
 :- use_module(library(aggregates)).
 :- use_module(library(make(system_extra)), [(-) /1]).
@@ -158,7 +158,7 @@ get_output_dir(Backend, Dir) :-
 	),
 	assertz_fact(computed_output_dir(Backend, Dir)).
 
-:- use_module(library(distutils), [path_name/2]).
+:- use_module(library(distutils(dirutils)), [path_name/2]).
 
 :- export(get_cache_dir/2).
 :- pred get_cache_dir(Backend, Dir) # "Obtain the @var{Dir} directory
@@ -301,8 +301,7 @@ absfile_to_relfile(A, Backend, B) :-
 % ---------------------------------------------------------------------------
 % Cleaning final and temporary files
 
-:- use_module(library(distutils),
-	    [delete_files_and_dirs/1]).
+:- use_module(library(distutils(dirutils)), [delete_files_and_dirs/1]).
 :- use_module(library(make(system_extra)),
 	    [ % Local to system_extra...
 		(-) /1,

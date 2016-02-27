@@ -156,23 +156,6 @@ xml2terms(Chars, Terms) :-
 
 %% Terms -> HTML/XML translation %%
 
-put_str(X, S, T) :-
-	append(X, T, S).
-
-:- use_module(library(format)).
-:- use_module(library(streams)).
-:- use_module(library(file_utils)).
-
-:- meta_predicate output_to_string(goal, ?).
-output_to_string(Goal, String) :-
-	pipe(ReadFrom, WriteTo),
-	current_output(CO),
-	set_output(WriteTo),
-	call(Goal),
-	close(WriteTo),
-	set_output(CO),
-	stream_to_string(ReadFrom, String).
-
 html_term(X) --> {var(X)}, !,
         "<b>**Warning: free variable**</b>".
 html_term(T) --> {html_expansion(T,NT)}, !,

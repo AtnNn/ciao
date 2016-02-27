@@ -1,18 +1,17 @@
-:- module(_, _, [assertions, make, dcg, fsyntax, hiord, define_flag, regexp]).
+:- module(_, _, [ciaopaths, assertions, make, dcg, fsyntax, hiord, define_flag, regexp]).
 
 :- use_module(library(system)).
 :- use_module(library(terms),      [atom_concat/2]).
-:- use_module(library(filenames),  [no_path_file_name/2]).
 :- use_module(library(aggregates), [findall/3]).
-:- use_module(library(distutils)).
-:- use_module(library(autoconfig)).
+:- use_module(library(distutils), [stop_command_option/2]).
+:- use_module(library(component_registry), [component_src/2, component_description/4]).
 :- use_module(library(format)).
 :- use_module(library(regexp(regexp_flags)), []).
 :- use_module(library(rtchecks(rtchecks_basic))).
 :- use_module(library(gen_asr_file), [gaf/1]).
 
 :- use_module(ciaodesrc(makedir('ConfigMenu'))).
-:- use_module(ciaodesrc(makedir('CIAODESHARED'))).
+:- use_module(ciaodesrc(makedir(makedir_component))).
 :- use_module(ciaodesrc(makedir('DOCCOMMON'))).
 
 % ----------------------------------------------------------------------------
@@ -34,32 +33,20 @@ staticcompname := 'ciaoc'.
 % 	convert_permissions(Perm, Number).
 
 % Define this to be the main file name (with suffix if there is one???).
-mainname := 'ciao'.
-% Headers for the executable at startup
-header := 'Ciao'.
-copyrt := 'UPM-CLIP'.
-actualdir := ~no_path_file_name(~component_src(ciao)).
-codes_atom(A, B) :- atom_codes(B, A).
-
-basemain := ~no_path_file_name(~mainname).
-vers := ~vers(~basemain).
-patch := ~patch(~basemain).
-versionmain := ~versionmain(~basemain).
-vpmain := ~vpmain(~basemain).
-win32vpmain := ~win32vpmain(~basemain).
-
+basemain := 'ciao'.
 
 % The Ciao version used
-% todo: some definitions here are duplicated in
-%       ciaode/ciaosetup_modules/common.sh, ciaode/ciao/Makefile,
-%       ciaode/ciao/SHARED
+% TODO: some definitions here are duplicated in:
+%       CIAOROOT/makedir/ciaosetup_modules/common.sh
+%       CIAOROOT/ciao/Makefile
+%       CIAOROOT/ciao/SHARED
 
-prolog := ~versionmain.
-home := ~codes_atom(~getenvstr('HOME')).
+prolog := ~component_name_version(ciao).
+
 builddir := ~atom_concat(~component_src(ciaode), '/build').
 srcbindir := ~atom_concat(~builddir, '/bin').
-ciaoc := ~atom_concat([~srcbindir, '/ciaoc-', ~vers, ~get_ciao_ext]).
-baseciaosh := ~atom_concat(['ciaosh-', ~vers, ~get_ciao_ext]).
+ciaoc := ~atom_concat([~srcbindir, '/ciaoc-', ~component_version(ciao), ~get_ciao_ext]).
+baseciaosh := ~atom_concat(['ciaosh-', ~component_version(ciao), ~get_ciao_ext]).
 ciaosh := ~atom_concat([~srcbindir, '/', ~baseciaosh]).
 binciaosh := ~atom_concat([~ciaobindir, '/', ~baseciaosh]).
 
@@ -76,10 +63,32 @@ lpdoclibbasedir(src) := ~atom_concat(~component_src(lpdoc), '/lib').
 lpdoclibbasedir(ins) := ~atom_concat(~ciaolibroot,          '/lpdoc').
 
 lpdoclibsubdir(src) := ''.
-lpdoclibsubdir(ins) := ~atom_concat('/', ~versionmain('lpdoc')).
+lpdoclibsubdir(ins) := ~atom_concat('/', ~component_name_version('lpdoc')).
 
 lpdoclibdir_(InsType) := ~atom_concat(~lpdoclibbasedir(InsType),
 	    ~lpdoclibsubdir(InsType)).
+
+% ---------------------------------------------------------------------------
+
+:- export(build_root/1).
+:- pred build_root(BuildRoot) # "Unifies @var{BuildRoot} with the
+   value of the environment variable @tt{BUILD_ROOT}, which is used for
+   package generators to do a fake installation in the specified
+   directory.".
+
+build_root(R) :-
+	( current_env('BUILD_ROOT', S) -> true
+	; S = ''
+	),
+	S = R.
+
+% ---------------------------------------------------------------------------
+
+%:- export(install_log/1).
+install_log := ~atom_concat(~component_src(ciaode), '/install.log').
+
+%:- export(build_doc_dir/1).
+build_doc_dir := ~atom_concat(~builddir, '/doc').
 
 % ============================================================================
 % Constants defined using the configuration values
@@ -87,12 +96,8 @@ lpdoclibdir_(InsType) := ~atom_concat(~lpdoclibbasedir(InsType),
 
 :- doc(bug, "gmake must be replaced by lpmake.").
 
-gmake := [~settings_value('MAKEDIR'), ~settings_value('MAKENAME')].
-
 :- doc(bug, "Relation between build_root/1 and docdir/1 must
    be checked").
-
-%lpdoclib := ~atom_concat([~settings_value('LIBROOT'),'/', 'lpdoc-2.0']).
 
 :- pred env_or_settings_value(Name, Value) # "Let us to use
 	environment variables to define values.".
@@ -111,8 +116,8 @@ install_prolog_name := ~settings_value('INSTALL_PROLOG_NAME').
 compress_libs := ~settings_value('COMPRESS_LIBS').
 runtime_checks := ~settings_value('RUNTIME_CHECKS').
 
-lpmake([~atom_concat(~srcbindir, '/'), 'lpmake.sta']).
-lpdoc2([~atom_concat(~srcbindir, '/'), 'lpdoc']).
+lpdoc2 := ~atom_concat(~srcbindir, '/lpdoc').
+gmake := ~atom_concat(~settings_value('MAKEDIR'), ~settings_value('MAKENAME')).
 
 libdir := ~settings_value('LIBDIR').
 ciaolibroot := ~settings_value('LIBROOT').
@@ -189,6 +194,7 @@ setlocalciao := ~atom_concat([
 % 	'/ciaoengine.', ~get_platform, ~get_exec_ext]).
 
 flag_black_list(optimized_profiler).
+flag_black_list(prompt_alternatives_no_bindings).
 flag_black_list(regexp_format).
 flag_black_list(regexp_exact).
 

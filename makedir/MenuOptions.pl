@@ -1,20 +1,23 @@
-:- module(_, _, [fsyntax, assertions, iso, hiord, define_flag]).
+:- module(_, _, [ciaopaths, fsyntax, assertions, iso, hiord, define_flag]).
+
+:- doc(title, "Customizable Ciao Options").
+:- doc(author, "Edison Mera").
+
+:- doc(module, "This module contains definitions for all customizable
+   CIAO options.").
+
 % :- ml(120).
 :- use_module(library(terms),         [atom_concat/2]).
 :- use_module(library(system)).
-:- use_module(library(distutils)).
-:- use_module(library(autoconfig)).
+:- use_module(library(distutils(dirutils))).
+:- use_module(library(make(system_extra)), [do_str/3]).
+:- use_module(library(component_registry), [component_src/2]).
 :- use_module(library(lists)).
 :- use_module(library(messages)).
 :- use_module(library(distutils(detcheader))).
 :- use_module(ciaodesrc(makedir('ConfigMenu'))).
 :- use_module(ciaodesrc(makedir('ConfigValues'))).
-:- use_module(ciaodesrc(makedir('CIAODESHARED')), [build_doc_dir/1]).
-
-:- doc(author, "Edison Mera").
-
-:- doc(module, "This module contains definitions for all
-   customizable CIAO options.").
+:- use_module(ciaodesrc(makedir(makedir_component)), [component_name_version/2]).
 
 :- meta_predicate settings_set_value(goal).
 
@@ -37,6 +40,14 @@ get_home(H) :-
 	    absolute_dir_name(~atom_concat('~', UserSrc), H)
 	; absolute_dir_name('~', H)
 	).
+
+% TODO: where does USERSRC come from? (I have not seen it anywhere)
+%       This seems to be an environment variable to allow installation
+%       in a user directiory different than the current one. It may
+%       have serious problems like not using the right file
+%       permissions. It does not seem to be used anywhere.
+usersrc(UserSrc) :-
+	current_env('USERSRC', UserSrc).
 
 % TODO: useful? move to the libraries?
 absolute_dir_name(Dir, AbsDir) :-
@@ -354,7 +365,7 @@ get_libdir('src', LibRoot) := LibRoot.
 get_libdir('ins', LibRoot) := ~path_concat(LibRoot, 'ciao').
 
 get_relreallibdir('src') := ''.
-get_relreallibdir('ins') := ~versionmain.
+get_relreallibdir('ins') := ~component_name_version(ciao).
 
 get_reallibdir(LibDir, RelRealLibDir) :=
 	~path_concat(LibDir, RelRealLibDir).
@@ -363,7 +374,7 @@ get_reallibdir(LibDir, RelRealLibDir) :=
 %       'src', it is now under 'build')
 get_enginedir('src', Prefix) := ~path_concat(Prefix, 'objs').
 get_enginedir('ins', Prefix) :=
-	~path_list_concat([Prefix, 'lib', 'ciao', ~versionmain, 'engine']).
+	~path_list_concat([Prefix, 'lib', 'ciao', ~component_name_version(ciao), 'engine']).
 
 get_final_libroot('src', _Prefix) := ~component_src(ciao).
 get_final_libroot('ins', Prefix) := ~path_concat(Prefix, 'lib').
@@ -376,7 +387,7 @@ get_final_includeroot('ins', Prefix) := ~path_concat(Prefix, 'include').
 get_ciaohdir_root('src', Prefix) := ~path_concat(Prefix, 'include').
 % note: this is INSTALLEDINCLUDEDIR, use a single definition!
 get_ciaohdir_root('ins', Prefix) :=
-	~path_list_concat([Prefix, 'lib', 'ciao', ~versionmain, 'include']).
+	~path_list_concat([Prefix, 'lib', 'ciao', ~component_name_version(ciao), 'include']).
 
 get_update_sh('all',  'no').
 get_update_sh('user', 'yes').
@@ -396,7 +407,7 @@ get_update_sh('user', 'yes').
 % ----------------------------------------------------------------------------
 
 ciao_config_entry('CIAODESRC', [set_value(~component_src(ciaode))]).
-ciao_config_entry('MAIN',      [set_value(~mainname)]).
+ciao_config_entry('MAIN',      [set_value(~basemain)]).
 % ciao_config_entry('ABSSRC',      [set_value(~absolute_dir_name('.'))]).
 ciao_config_entry('CONFIGLEVEL',
 	    [

@@ -24,13 +24,17 @@
 speedups :-
 	set_prolog_flag(gc, off),
 	retractall_fact(timeseq(_)),
+	retractall_fact(timeseq_first(_)),
 	retractall_fact(timeseqfinal(_)),
+	retractall_fact(timeseqfinal_first(_)),
 	retractall_fact(timepar(_)),
-	gen_list(14,L1),
+	retractall_fact(timepar_first(_)),
+  	gen_list(9,1,L1),
+ %%  	gen_list(9,10,L1),
 	permutation(L1, L),
-	main_seq(L),
-	between(1, 8, N),
-	main_par(N, L, 2),
+ %% 	main_seq(L),
+  	between(2, 2, N),
+  	main_par(N, L, 1),
 	fail.
 speedups.
 
@@ -48,17 +52,20 @@ main_seq(_) :-
 
 main_seq_(L) :-
         statistics(walltime, [T1,_]),
-	just_first(qsort_seq(L,L2)),
+	just_first(qsort_seq(L,_)), 
         statistics(walltime, [T2,_]),
         DeltaSeq is T2 - T1,
+	display(seq_first(DeltaSeq)),nl,
 	assertz_fact(timeseq_first(DeltaSeq)),
 	fail.
 
 main_seq_(L) :-
         statistics(walltime, [T1,_]),
+ %% 	(qsort_seq(L,Lout),display(sol(Lout)),nl,fail;true),
 	(qsort_seq(L,_),fail;true),
         statistics(walltime, [T2,_]),
         DeltaSeq is T2 - T1,
+	display(seq_all(DeltaSeq)),nl,
 	assertz_fact(timeseq(DeltaSeq)),
 	fail.
 
@@ -68,52 +75,57 @@ main_par(A, L, G) :-
 	main_par_(A,L,G),
 	fail.
 main_par(A, _L, _G) :-
-	retract_fact(timeseqfinal_first(Seq)),
-	findall(TP,retract_fact(timepar_first(TP)),L),
-	average(L,Par),
-	SpUp is 100*(Seq/Par),
-	floor(SpUp,Sp1),
-	Sp is Sp1/100,
-	format("-- ~d agents, SpeedUp First=~2f~n", [A,Sp]),
-	fail.
- %% main_par(A, _L, _G) :-
- %% 	retract_fact(timeseqfinal(Seq)),
- %% 	findall(TP,retract_fact(timepar(TP)),L),
- %% 	average(L,Par),
- %% 	SpUp is 100*(Seq/Par),
- %% 	floor(SpUp,Sp1),
- %% 	Sp is Sp1/100,
- %% 	format("-- ~d agents, SpeedUp All=~2f~n", [A,Sp]),
- %% 	fail.
+ 	retract_fact(timeseqfinal_first(Seq)),
+ 	findall(TP,retract_fact(timepar_first(TP)),L),
+ 	average(L,Par),
+ 	SpUp is 100*(Seq/Par),
+ 	floor(SpUp,Sp1),
+ 	Sp is Sp1/100,
+ 	format("-- ~d agents, SpeedUp First=~2f vs Seq=~4f~n", [A,Sp,Seq]),
+ 	fail.
+main_par(A, _L, _G) :-
+ 	retract_fact(timeseqfinal(Seq)),
+ 	findall(TP,retract_fact(timepar(TP)),L),
+ 	average(L,Par),
+ 	SpUp is 100*(Seq/Par),
+ 	floor(SpUp,Sp1),
+ 	Sp is Sp1/100,
+ 	format("-- ~d agents, SpeedUp All=~2f vs Seq=~4f~n", [A,Sp,Seq]),
+ 	fail.
 
-main_par_(_A,L,G) :-
-        statistics(walltime, [T1,_]),
-	just_first(qsort_par_gc(L,14,G,_L)),
-        statistics(walltime, [T2,_]),
-        DeltaSeq is T2 - T1,
-	assertz_fact(timepar_first(DeltaSeq)),
+ %% main_par_(_A,L,_G) :-
+ %% 	statistics(walltime, [T1,_]),
+ %%  %%   	just_first(qsort_par_gc(L,11,G,_L)),
+ %%   	just_first(qsort_par(L,_L)),
+ %% 	statistics(walltime, [T2,_]),
+ %% 	DeltaSeq is T2 - T1,
+ %% 	display(par_first(DeltaSeq)),nl,
+ %%    	assertz_fact(timepar_first(DeltaSeq)),
+ %%   	fail.
+main_par_(_,L,_G) :-
+	statistics(walltime, [T1,_]),
+ %%  	(qsort_par_gc(L,7,G,Lout),display(sol(Lout)),nl,fail;true),
+ %%  	(qsort_par_gc(L,11,G,_),fail;true),
+ 	(qsort_par(L,_),fail;true),
+	statistics(walltime, [T2,_]),
+	DeltaSeq is T2 - T1,
+	display(par_all(DeltaSeq)),nl,
+	assertz_fact(timepar(DeltaSeq)),
 	fail.
- %% main_par_(_,L,G) :-
- %%         statistics(walltime, [T1,_]),
- %% 	(qsort_par_gc(L,14,G,_L),fail;true),
- %%         statistics(walltime, [T2,_]),
- %%         DeltaSeq is T2 - T1,
- %% 	assertz_fact(timepar(DeltaSeq)),
- %% 	fail.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 qsort_seq([], []) :- !.
 qsort_seq([X|L], R) :-
 	partition(L, X, L1, L2),
-	qsort_seq(L2, R2), 
-        qsort_seq(L1, R1), 
+        qsort_seq(L2, R1), 
+	qsort_seq(L1, R2), 
         append(R1, [X|R2], R).
 
 qsort_par([], []).
 qsort_par([X|L], R) :-
         partition(L, X, L1, L2),
-        qsort_par(L2, R2) & qsort_par(L1, R1),
+        qsort_par(L1, R2) & qsort_par(L2, R1),
         append(R1, [X|R2], R).
 
 partition(L, P, L1, L2) :-
@@ -189,10 +201,11 @@ union_gc([X|TX], [Y|TY], [Y|TZ], N1, N2):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-gen_list(0, []) :- !.
-gen_list(N, [N1|L]) :-
+gen_list(0, _, []) :- !.
+gen_list(N, G, [N1Out|L]) :-
 	N1 is N - 1,
-	gen_list(N1, L).
+	N1Out is N1 * G,
+	gen_list(N1, G, L).
 permutation(L1, L2) :-
 	length(L1, N),
 	permutation_(L1, N, L2).

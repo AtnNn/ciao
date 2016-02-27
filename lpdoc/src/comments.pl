@@ -14,8 +14,8 @@
    autodoc_doctree.  This is the textual representation of a doctree
    (JFMC)").
 
-:- doc(title,"LPdoc Comments and Mark-up Language").
-% TODO: This seems more a subtitle...
+:- doc(title,"Documentation Mark-up Language and Declarations").
+% TODO: The following title looks more like a subtitle
 %:- doc(title,"Enhancing Documentation with Machine-Readable Comments").
 
 :- doc(author,"Manuel Hermenegildo").
@@ -87,23 +87,45 @@ doc_id_type(title, single, docstr). % warning, note (manpage)
 @end{verbatim}
      ".
 
-doc_id_type(subtitle, multiple, docstr). % ignore,note
-:- decl doc(CommentType,SubTitleText) => =(subtitle) * docstring
+doc_id_type(subtitle, multiple, docstr). % ignore
+:- decl doc(CommentType,SubtitleText) => =(subtitle) * docstring
 
-   # "Provides @index{subtitle} lines. This can be, e.g., an
+   # "Provides a @index{subtitle}, an explanatory or alternate
+     @index{title}. The subtitle will be displayed under the proper
+     title.
+
+     @item @em{Example:}
+@begin{verbatim}
+:- doc(title,""Dr. Strangelove"").
+:- doc(subtitle,""How I Learned to Stop Worrying and Love the Bomb"").
+@end{verbatim}
+     ".
+
+doc_id_type(subtitle_extra, multiple, docstr). % ignore
+:- decl doc(CommentType,SubtitleText) => =(subtitle_extra) * docstring
+
+   # "Provides additional @index{subtitle} lines. This can be, e.g., an
      explanation of the application to add to the title, the address
      of the author(s) of the application, etc. When generating
-     documentation automatically, the text in @var{SubTitleText} will
+     documentation automatically, the text in @var{SubtitleText} will
      be used accordingly. Several of these declarations can appear per
      module, which is useful for, e.g., multiple line addresses.
 
      @item @em{Example:}
 @begin{verbatim}
-:- doc(subtitle,""A Reference Manual"").
+:- doc(subtitle_extra,""A Reference Manual"").
+:- doc(subtitle_extra,""Technical Report 1/1.0"").
 @end{verbatim}
      ".
 
-doc_id_type(author, multiple, docstr). % warning, 
+% TODO: Refine types
+% TODO: This could specify the logo of manual subparts/components.
+doc_id_type(logo, single, term). % ignore
+:- decl doc(CommentType,SubtitleText) => =(logo) * term
+
+   # "The name of the logo image for the manual.".
+
+doc_id_type(author, multiple, docstr). % warning
 :- decl doc(CommentType,AuthorText) => =(author) * docstring
 
    # "Provides the @index{author}(s) of the module or application. If
@@ -121,19 +143,36 @@ doc_id_type(author, multiple, docstr). % warning,
 @end{verbatim}
      ".
 
-doc_id_type(credits, multiple, docstr). % warning, 
-% :- decl doc(CommentType,AuthorText) => =(author) * docstring
+doc_id_type(address, multiple, docstr). % ignore
+:- decl doc(CommentType,Text) => =(address) * docstring
+
+   # "Provides the physical and electronic @index{address}, or any
+     other contact information for the authors of the module or
+     application.
+
+     @item @em{Example:}
+@begin{verbatim}
+:- doc(address,""Syracuse University"").
+@end{verbatim}
+     ".
+
+doc_id_type(credits, multiple, docstr). % ignore
+%
+% % TODO: Undocumented since I am not sure if this is the best way to
+% % do it. Maybe 'editors' is better.
+%
+% :- decl doc(CommentType,Text) => =(credits) * docstring
 % 
-%    # "Additional documentation text placed next to the
-%      authors. Contrary the @index{author} declaration, its text is not
-%      indexed nor documented as author names.
-% 
-%      @item @em{Example:}
-% @begin{verbatim}
-% :- doc(credits,""@em{Edited by:}"").
-% :- doc(credits,""Someone"").
-% @end{verbatim}
-%      ".
+%     # "Additional documentation that follows to the
+%       authors. Contrary the @index{author} declaration, its text is not
+%       indexed nor documented as author names.
+%  
+%       @item @em{Example:}
+%  @begin{verbatim}
+%  :- doc(credits,""@em{Edited by:}"").
+%  :- doc(credits,""Someone"").
+%  @end{verbatim}
+%       ".
 
 doc_id_type(ack,      single, docstr). % ignore
 :- decl doc(CommentType,AckText) => =(ack) * docstring
@@ -655,6 +694,120 @@ escapeseq --> "@{"
 
    @begin{itemize}
 
+   @item @bf{Formatting commands:} 
+
+   The following commands are used to format certain words or
+   sentences in a special font, build itemized lists, introduce
+   sections, include examples, etc.
+
+   @begin{description}
+
+   @item{@tt{@@comment@{}@em{text}@tt{@}}} @cindex{@@comment command}
+   @em{text} will be treated as a @index{comment} and will be ignored.
+
+   @item{@tt{@@begin@{itemize@}}} @cindex{@@begin@{itemize@} command}
+   marks the beginning of an @index{itemized list}. Each item should
+   be in a separate paragraph and preceded by an @tt{@@item} command.
+
+   @item{@tt{@@item}} @cindex{@@item command} marks the
+   beginning of a new @index{item in an itemized list}.
+
+   @item{@tt{@@end@{itemize@}}} @cindex{@@end@{itemize@} command}
+   marks the end of an itemized list.
+
+   @item{@tt{@@begin@{enumerate@}}} @cindex{@@begin@{enumerate@}
+   command} marks the beginning of an @index{enumerated list}. Each
+   item should be in a separate paragraph and preceded by an
+   @tt{@@item} command.
+
+   @item{@tt{@@end@{enumerate@}}} @cindex{@@end@{enumerate@}
+   command} marks the end of an enumerated list. 
+
+   @item{@tt{@@begin@{description@}}} @cindex{@@begin@{description@}
+   command} marks the beginning of a @index{description list}, i.e., a
+   list of items and their description (this list describing the
+   different allowable commads is in fact a description list). Each
+   item should be in a separate paragraph and contained in an
+   @tt{@@item@{}@em{itemtext}@tt{@}} command.
+
+   @item{@tt{@@item@{}@em{itemtext}@tt{@}}} @cindex{@@item command}
+   marks the beginning of a @index{new item in description list}, and
+   contains the header for the item.
+
+   @item{@tt{@@end@{description@}}} @cindex{@@end@{description@}
+   command} marks the end of a description list. 
+
+   @item{@tt{@@begin@{verbatim@}}} @cindex{@@begin@{verbatim@}
+   command} marks the beginning of @index{fixed format text},
+   @cindex{verbatim text} such as a program example. A fixed-width,
+   typewriter-like font is used.
+
+   @item{@tt{@@end@{verbatim@}}} @cindex{@@end@{verbatim@} command}
+   marks the end of formatted text.
+
+   @item{@tt{@@begin@{cartouche@}}} @cindex{@@begin@{cartouche@}
+   command} marks the beginning of a section of text in a
+   @index{framed box}, with round corners.
+
+   @item{@tt{@@end@{cartouche@}}} @cindex{@@end@{cartouche@} command}
+   marks the end of a section of text in a @concept{framed box}.
+
+   @item{@tt{@@begin@{alert@}}} @cindex{@@begin@{alert@}
+   command} marks the beginning of a section of text in a
+   @index{framed box}, for alert messages.
+
+   @item{@tt{@@end@{alert@}}} @cindex{@@end@{alert@} command}
+   marks the end of the alert message.
+
+   @item{@tt{@@section@{}@em{text}@tt{@}}} @cindex{@@section command}
+   starts a @index{section} whose title is @em{text}. Due to a limitation of
+   the @apl{info} format, do not use @tt{:} or @tt{-} or @tt{,} in
+   section, subsection, title (chapter), etc. headings.
+
+   @item{@tt{@@subsection@{}@em{text}@tt{@}}} @cindex{@@subsection
+   command} starts a @index{subsection} whose title is @em{text}.
+
+   @item{@tt{@@footnote@{}@em{text}@tt{@}}} @cindex{@@footnote
+   command} places @em{text} in a @index{footnote}.
+
+   @item{@tt{@@hfill}} @cindex{@@hfill command} introduces horizontal
+   filling space @cindex{spcae, horizontal fill} (may be ignored in
+   certain formats).
+
+   @item{@tt{@@bf@{}@em{text}@tt{@}}} @cindex{@@bf command} @em{text}
+   will be formatted in @index{bold face} or any other @index{strong
+   face}.
+
+   @item{@tt{@@em@{}@em{text}@tt{@}}} @cindex{@@em command} @em{text}
+   will be formatted in @index{italics face} or any other
+   @index{emphasis face}.
+
+   @item{@tt{@@tt@{}@em{text}@tt{@}}} @cindex{@@tt command} @em{text}
+   will be formatted in a @index{fixed-width font} (i.e.,
+   @index{typewriter-like font}).
+
+   @item{@tt{@@key@{}@em{key}@tt{@}}} @cindex{@@key command} @em{key}
+   is the identifier of a @index{keyboard key} (i.e., a letter such as
+   @tt{a}, or a special key identifier such as @tt{RET} or @tt{DEL})
+   and will be formatted as @key{LFD} or in a fixed-width,
+   typewriter-like font.
+
+   @item{@tt{@@sp@{}@em{N}@tt{@}}} @cindex{@@sp command} generates
+   @em{N} @index{blank lines} of space. @cindex{space, extra lines}
+   Forces also a paragraph break.
+
+   @item{@tt{@@p}} @cindex{@@p command} forces a @index{paragraph
+   break}, in the same way as leaving one or more blank lines.
+
+   @item{@tt{@@noindent}} @cindex{@@noindent command} used at the
+   beginning of a paragraph, states that the first line of the
+   paragraph should not be indented. @cindex{indentation, avoiding}
+   Useful, for example, for @index{avoiding indentation} on paragraphs
+   that are continuations of other paragraphs, such as after a
+   verbatim.
+
+   @end{description}
+
    @item @bf{Indexing commands:} 
 
    The following commands are used to
@@ -789,120 +942,15 @@ escapeseq --> "@{"
 
    @end{description}
 
-   @item @bf{Formatting commands:} 
-
-   The following commands are used to format certain words or
-   sentences in a special font, build itemized lists, introduce
-   sections, include examples, etc.
+   @item @bf{Date and Version:} 
 
    @begin{description}
-
-   @item{@tt{@@comment@{}@em{text}@tt{@}}} @cindex{@@comment command}
-   @em{text} will be treated as a @index{comment} and will be ignored.
-
-   @item{@tt{@@begin@{itemize@}}} @cindex{@@begin@{itemize@} command}
-   marks the beginning of an @index{itemized list}. Each item should
-   be in a separate paragraph and preceded by an @tt{@@item} command.
-
-   @item{@tt{@@item}} @cindex{@@item command} marks the
-   beginning of a new @index{item in an itemized list}.
-
-   @item{@tt{@@end@{itemize@}}} @cindex{@@end@{itemize@} command}
-   marks the end of an itemized list.
-
-   @item{@tt{@@begin@{enumerate@}}} @cindex{@@begin@{enumerate@}
-   command} marks the beginning of an @index{enumerated list}. Each
-   item should be in a separate paragraph and preceded by an
-   @tt{@@item} command.
-
-   @item{@tt{@@end@{enumerate@}}} @cindex{@@end@{enumerate@}
-   command} marks the end of an enumerated list. 
-
-   @item{@tt{@@begin@{description@}}} @cindex{@@begin@{description@}
-   command} marks the beginning of a @index{description list}, i.e., a
-   list of items and their description (this list describing the
-   different allowable commads is in fact a description list). Each
-   item should be in a separate paragraph and contained in an
-   @tt{@@item@{}@em{itemtext}@tt{@}} command.
-
-   @item{@tt{@@item@{}@em{itemtext}@tt{@}}} @cindex{@@item command}
-   marks the beginning of a @index{new item in description list}, and
-   contains the header for the item.
-
-   @item{@tt{@@end@{description@}}} @cindex{@@end@{description@}
-   command} marks the end of a description list. 
-
-   @item{@tt{@@begin@{verbatim@}}} @cindex{@@begin@{verbatim@}
-   command} marks the beginning of @index{fixed format text},
-   @cindex{verbatim text} such as a program example. A fixed-width,
-   typewriter-like font is used.
-
-   @item{@tt{@@end@{verbatim@}}} @cindex{@@end@{verbatim@} command}
-   marks the end of formatted text.
-
-   @item{@tt{@@begin@{cartouche@}}} @cindex{@@begin@{cartouche@}
-   command} marks the beginning of a section of text in a
-   @index{framed box}, with round corners.
-
-   @item{@tt{@@end@{cartouche@}}} @cindex{@@end@{cartouche@} command}
-   marks the end of a section of text in a @concept{framed box}.
-
-   @item{@tt{@@begin@{alert@}}} @cindex{@@begin@{alert@}
-   command} marks the beginning of a section of text in a
-   @index{framed box}, for alert messages.
-
-   @item{@tt{@@end@{alert@}}} @cindex{@@end@{alert@} command}
-   marks the end of the alert message.
-
-   @item{@tt{@@section@{}@em{text}@tt{@}}} @cindex{@@section command}
-   starts a @index{section} whose title is @em{text}. Due to a limitation of
-   the @apl{info} format, do not use @tt{:} or @tt{-} or @tt{,} in
-   section, subsection, title (chapter), etc. headings.
-
-   @item{@tt{@@subsection@{}@em{text}@tt{@}}} @cindex{@@subsection
-   command} starts a @index{subsection} whose title is @em{text}.
-
-   @item{@tt{@@footnote@{}@em{text}@tt{@}}} @cindex{@@footnote
-   command} places @em{text} in a @index{footnote}.
 
    @item{@tt{@@today}} @cindex{@@today command} prints the
    current @index{date}.
 
-   @item{@tt{@@hfill}} @cindex{@@hfill command} introduces horizontal
-   filling space @cindex{spcae, horizontal fill} (may be ignored in
-   certain formats).
-
-   @item{@tt{@@bf@{}@em{text}@tt{@}}} @cindex{@@bf command} @em{text}
-   will be formatted in @index{bold face} or any other @index{strong
-   face}.
-
-   @item{@tt{@@em@{}@em{text}@tt{@}}} @cindex{@@em command} @em{text}
-   will be formatted in @index{italics face} or any other
-   @index{emphasis face}.
-
-   @item{@tt{@@tt@{}@em{text}@tt{@}}} @cindex{@@tt command} @em{text}
-   will be formatted in a @index{fixed-width font} (i.e.,
-   @index{typewriter-like font}).
-
-   @item{@tt{@@key@{}@em{key}@tt{@}}} @cindex{@@key command} @em{key}
-   is the identifier of a @index{keyboard key} (i.e., a letter such as
-   @tt{a}, or a special key identifier such as @tt{RET} or @tt{DEL})
-   and will be formatted as @key{LFD} or in a fixed-width,
-   typewriter-like font.
-
-   @item{@tt{@@sp@{}@em{N}@tt{@}}} @cindex{@@sp command} generates
-   @em{N} @index{blank lines} of space. @cindex{space, extra lines}
-   Forces also a paragraph break.
-
-   @item{@tt{@@p}} @cindex{@@p command} forces a @index{paragraph
-   break}, in the same way as leaving one or more blank lines.
-
-   @item{@tt{@@noindent}} @cindex{@@noindent command} used at the
-   beginning of a paragraph, states that the first line of the
-   paragraph should not be indented. @cindex{indentation, avoiding}
-   Useful, for example, for @index{avoiding indentation} on paragraphs
-   that are continuations of other paragraphs, such as after a
-   verbatim.
+   @item{@tt{@@version}} @cindex{@@version command} prints the
+   @index{version} of the current manual.
 
    @end{description}
 
@@ -931,50 +979,6 @@ escapeseq --> "@{"
    @item{@tt{@@defmathcmd@{}@em{cmd}@tt{@}@{}@em{def}@tt{@}}}
    @cindex{@@defmathcmd/2 command}
    defines the math command @em{cmd}, which is expanded as @em{def} (with no arguments).
-
-   @end{description}
-
-   @item @bf{Accents and special characters:} 
-
-   The following commands can be used to insert @index{accents} and
-   @index{special characters}.
-
-   @begin{description}
-
-   @item{@tt{@@`@{o@}}}    @result  @cindex{@@` command}          @`{o} 
-   @item{@tt{@@'@{o@}}}    @result  @cindex{@@' command}          @'{o} 
-   @item{@tt{@@^@{o@}}}    @result  @cindex{@@^ command}          @^{o} 
-   @item{@tt{@@..@{o@}}}   @result  @cindex{@@.. command}         @..{o} 
-   @item{@tt{@@\"@{o@}}}   @result  @cindex{@@\" command}         @\"{o} 
-   @item{@tt{@@~@{o@}}}    @result  @cindex{@@~ command}          @~{o} 
-   @item{@tt{@@=@{o@}}}    @result  @cindex{@@= command}          @={o} 
-   @item{@tt{@@.@{o@}}}    @result  @cindex{@@. command}          @.{o} 
-   @item{@tt{@@u@{o@}}}    @result  @cindex{@@u command}          @u{o} 
-   @item{@tt{@@v@{o@}}}    @result  @cindex{@@v command}          @v{o} 
-   @item{@tt{@@H@{o@}}}    @result  @cindex{@@H command}          @H{o} 
-   @item{@tt{@@t@{oo@}}}   @result  @cindex{@@t command}          @t{oo}
-   @item{@tt{@@c@{o@}}}    @result  @cindex{@@c command}          @c{o} 
-   @item{@tt{@@d@{o@}}}    @result  @cindex{@@d command}          @d{o} 
-   @item{@tt{@@b@{o@}}}    @result  @cindex{@@b command}          @b{o} 
-   @item{@tt{@@oe}}        @result  @cindex{@@oe command}         @oe{} 
-   @item{@tt{@@OE}}        @result  @cindex{@@OE command}         @OE{} 
-   @item{@tt{@@ae}}        @result  @cindex{@@ae command}         @ae{} 
-   @item{@tt{@@AE}}        @result  @cindex{@@AE command}         @AE{} 
-   @item{@tt{@@aa}}        @result  @cindex{@@aa command}         @aa{} 
-   @item{@tt{@@AA}}        @result  @cindex{@@AA command}         @AA{} 
-   @item{@tt{@@o}}         @result  @cindex{@@o command}          @o{} 
-   @item{@tt{@@O}}         @result  @cindex{@@O command}          @O{} 
-   @item{@tt{@@l}}         @result  @cindex{@@l command}          @l{} 
-   @item{@tt{@@L}}         @result  @cindex{@@L command}          @L{} 
-   @item{@tt{@@ss}}        @result  @cindex{@@ss command}         @ss{} 
-   @item{@tt{@@?}}         @result  @cindex{@@? command}          @?{} 
-   @item{@tt{@@!}}         @result  @cindex{@@! command}          @!{} 
-   @item{@tt{@@i}}         @result  @cindex{@@i command}          @i 
-   @item{@tt{@@j}}         @result  @cindex{@@j command}          @j 
-   @item{@tt{@@copyright}} @result  @cindex{@@copyright command}  @copyright
-   @item{@tt{@@iso}}       @result  @cindex{@@iso command}        @iso
-   @item{@tt{@@bullet}}    @result  @cindex{@@bullet command}     @bullet
-   @item{@tt{@@result}}    @result  @cindex{@@result command}     @result
 
    @end{description}
 
@@ -1036,6 +1040,50 @@ escapeseq --> "@{"
 
    @end{description}
    
+   @item @bf{Accents and special characters:} 
+
+   The following commands can be used to insert @index{accents} and
+   @index{special characters}.
+
+   @begin{description}
+
+   @item{@tt{@@`@{o@}}}    @result  @cindex{@@` command}          @`{o} 
+   @item{@tt{@@'@{o@}}}    @result  @cindex{@@' command}          @'{o} 
+   @item{@tt{@@^@{o@}}}    @result  @cindex{@@^ command}          @^{o} 
+   @item{@tt{@@..@{o@}}}   @result  @cindex{@@.. command}         @..{o} 
+   @item{@tt{@@\"@{o@}}}   @result  @cindex{@@\" command}         @\"{o} 
+   @item{@tt{@@~@{o@}}}    @result  @cindex{@@~ command}          @~{o} 
+   @item{@tt{@@=@{o@}}}    @result  @cindex{@@= command}          @={o} 
+   @item{@tt{@@.@{o@}}}    @result  @cindex{@@. command}          @.{o} 
+   @item{@tt{@@u@{o@}}}    @result  @cindex{@@u command}          @u{o} 
+   @item{@tt{@@v@{o@}}}    @result  @cindex{@@v command}          @v{o} 
+   @item{@tt{@@H@{o@}}}    @result  @cindex{@@H command}          @H{o} 
+   @item{@tt{@@t@{oo@}}}   @result  @cindex{@@t command}          @t{oo}
+   @item{@tt{@@c@{o@}}}    @result  @cindex{@@c command}          @c{o} 
+   @item{@tt{@@d@{o@}}}    @result  @cindex{@@d command}          @d{o} 
+   @item{@tt{@@b@{o@}}}    @result  @cindex{@@b command}          @b{o} 
+   @item{@tt{@@oe}}        @result  @cindex{@@oe command}         @oe{} 
+   @item{@tt{@@OE}}        @result  @cindex{@@OE command}         @OE{} 
+   @item{@tt{@@ae}}        @result  @cindex{@@ae command}         @ae{} 
+   @item{@tt{@@AE}}        @result  @cindex{@@AE command}         @AE{} 
+   @item{@tt{@@aa}}        @result  @cindex{@@aa command}         @aa{} 
+   @item{@tt{@@AA}}        @result  @cindex{@@AA command}         @AA{} 
+   @item{@tt{@@o}}         @result  @cindex{@@o command}          @o{} 
+   @item{@tt{@@O}}         @result  @cindex{@@O command}          @O{} 
+   @item{@tt{@@l}}         @result  @cindex{@@l command}          @l{} 
+   @item{@tt{@@L}}         @result  @cindex{@@L command}          @L{} 
+   @item{@tt{@@ss}}        @result  @cindex{@@ss command}         @ss{} 
+   @item{@tt{@@?}}         @result  @cindex{@@? command}          @?{} 
+   @item{@tt{@@!}}         @result  @cindex{@@! command}          @!{} 
+   @item{@tt{@@i}}         @result  @cindex{@@i command}          @i 
+   @item{@tt{@@j}}         @result  @cindex{@@j command}          @j 
+   @item{@tt{@@copyright}} @result  @cindex{@@copyright command}  @copyright
+   @item{@tt{@@iso}}       @result  @cindex{@@iso command}        @iso
+   @item{@tt{@@bullet}}    @result  @cindex{@@bullet command}     @bullet
+   @item{@tt{@@result}}    @result  @cindex{@@result command}     @result
+
+   @end{description}
+
    @end{itemize}
 
 ").

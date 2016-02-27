@@ -7,7 +7,6 @@
 % the convert utility again to avoid overwrite your changes.
 
 :- reexport(ciaosrc(doc(common('LPDOCCOMMON')))).
-:- reexport(ciaodesrc(makedir('DOCCOMMON')), [lpdoclib/1]).
 
 :- redefining(_).
 

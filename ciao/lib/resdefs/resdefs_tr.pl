@@ -25,7 +25,6 @@ resdefs_sentence_tr(
 	    (resource_usage(Res, Value) :- Body),
 	    (resource_usage(Res, Value) :- Body), M) :-
 	check_resource(Res, M),
-	stop_here2,
 	assertz_fact(def_ru_db(Res, M)).
 resdefs_sentence_tr(
 	    (global_resource_usage(Res, Value) :- Body),
@@ -33,12 +32,9 @@ resdefs_sentence_tr(
 	check_resource(Res, M),
 	assertz_fact(def_gru_db(Res, M)).
 resdefs_sentence_tr(end_of_file, RUL, M) :-
-	stop_here2,
 	findall('$def$ru'(Res), retract_fact(def_ru_db(Res, M)), RUL, GRUL),
 	findall('$def$gru'(Res), retract_fact(def_gru_db(Res, M)), GRUL,
 	    [end_of_file]).
-
-stop_here2.
 
 check_resource(Res, M) :-
 	\+ \+ resource_db(Res, M) ->
@@ -66,3 +62,7 @@ resdefs_goal_tr(rel_cost(Goal, Ap, Res, CostFunction), Cost, M) :-
 	expand_cost(Goal, rel, Ap, call, Res, CostFunction, Cost, M).
 resdefs_goal_tr(rel_cost(Goal, Ap, Type, Res, CostFunction), Cost, M) :-
 	expand_cost(Goal, rel, Ap, Type, Res, CostFunction, Cost, M).
+%
+resdefs_goal_tr(intervals(Size, Intervals),
+	    (intervals(Goal, V, Intervals)), _) :-
+	compound_size(Size, V, Goal).

@@ -5137,7 +5137,9 @@ width0pt\relax} \fi
 % #1 is (mandatory) image filename; we tack on .eps extension.
 % #2 is (optional) width, #3 is (optional) height.
 % #4 is just the usual extra ignored arg for parsing this stuff.
-\def\imagexxx#1,#2,#3,#4\finish{%
+\def\imagexxx#1,#2,#3,#4\finish{\begingroup
+  \catcode`\^^M = 5     % in case we're inside an example
+  \normalturnoffactive  % allow _ et al. in names
   % \epsfbox itself resets \epsf?size at each figure.
   \setbox0 = \hbox{\ignorespaces #2}\ifdim\wd0 > 0pt \epsfxsize=#2\relax \fi
   \setbox0 = \hbox{\ignorespaces #3}\ifdim\wd0 > 0pt \epsfysize=#3\relax \fi
@@ -5150,7 +5152,7 @@ width0pt\relax} \fi
   \else
     \epsfbox{#1.eps}%
   \fi
-}
+\endgroup}
 
 
 \message{paper sizes,}

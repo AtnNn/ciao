@@ -1,14 +1,13 @@
-:- module(distpkg_generator, [], [assertions, basicmodes,
-		nativeprops, fsyntax, hiord, regtypes]).
+:- module(distpkg_generator, [], [ciaopaths,
+	assertions, basicmodes, nativeprops, fsyntax, hiord, regtypes]).
 
 :- doc(title, "Generation of distpkg"). 
 
 :- doc(module, "This module defines the generation of distribution
    packages (@index{distpkg})").
 
-% (imported from: makedir/makedir_common.pl)
+% (imported from: makedir/distpkg_gen_common.pl)
 
-:- use_module(library(autoconfig), []).
 :- use_module(library(aggregates)).
 :- use_module(library(file_utils)).
 :- use_module(library(lists)).
@@ -16,10 +15,10 @@
 :- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(streams)).
 :- use_module(library(write)).
-:- use_module(library(distutils(dirutils)), [split_path_and_name/3, get_cwd/1]).
+:- use_module(library(distutils(dirutils)), [split_path_and_name/3]).
 :- use_module(library(make(make_rt))).
 :- use_module(library(make(system_extra))).
-:- use_module(library(distutils)).
+:- use_module(library(distutils), [enum_distpkg_codeitem_contents/6]).
 :- use_module(library(distutils(skip_settings))).
 
 % ---------------------------------------------------------------------------
@@ -30,11 +29,11 @@ distpkg_generate_meta(PackageName, PackageNameVersion,
 	    PackageVersion, PackageVersionNice, Time, PkgFormat, DocFormat) :-
 	findall(F, enum_distpkg_code_items(PackageNameVersion, PkgFormat, F), Fs),
 	findall(D, enum_distpkg_doc_items(PackageNameVersion, DocFormat, D), Ds),
-	Desc = [distpkg_name = PackageName,
-	        distpkg_name_version = PackageNameVersion,
-		distpkg_version = PackageVersion,
-		distpkg_version_nice = PackageVersionNice,
-		distpkg_date = Time,
+	Desc = [distpkg_name = PackageName, % TODO: rename by component_name?
+	        distpkg_name_version = PackageNameVersion, % TODO: avoid?
+		distpkg_version = PackageVersion, % TODO: rename by component_version?
+		distpkg_version_nice = PackageVersionNice, % TODO: necessary?
+		distpkg_date = Time, % TODO: rename by 'build_date' or component_date?
 		docs = Ds,
 		code = Fs],
 	%
@@ -92,6 +91,17 @@ portray_clauses([]).
 portray_clauses([X|Xs]) :-
 	portray_clause(X),
 	portray_clauses(Xs).
+
+% ---------------------------------------------------------------------------
+
+% TODO: This predicate is not used, but it should (at least in assertions)
+:- export(distpkg_codeitem_type/1).
+:- regtype distpkg_codeitem_type/1 # "The types of files that contains
+code in a @index{distribution package}.".
+distpkg_codeitem_type(src). % Source files
+distpkg_codeitem_type(noa). % Platform independent binary files: Not Architecture
+distpkg_codeitem_type(bin). % Binary files, including platform dependent files
+distpkg_codeitem_type(raw). % Almost all files, minimal number of ignored files
 
 % ---------------------------------------------------------------------------
 

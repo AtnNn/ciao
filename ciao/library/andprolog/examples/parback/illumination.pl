@@ -18,6 +18,7 @@
 :- use_module(library(between)).
 :- use_module(library(arithpreds), [floor/2]).
 
+
 :- data timeseq_first/1.
 :- data timeseqfinal_first/1.
 :- data timepar_first/1.
@@ -33,7 +34,7 @@ speedups :-
 	retractall_fact(timepar(_)),
 	R = [[0,1,1,0,0,0,1,0],[1,1,0,0,1,0,1,0],[0,0,1,1,0,0,0,1],[0,0,0,0,1,0,0,0],
 	[0,1,1,0,0,1,0,0],[0,0,0,1,1,0,1,0],[0,0,1,1,0,0,0,1],[0,0,1,0,0,1,0,0]],
-	main_seq(R),
+  	main_seq(R),
 	between(1, 8, N),
 	main_par(N, R).
 speedups.
@@ -52,7 +53,7 @@ main_seq(_) :-
 
 main_seq_(R) :-
         statistics(walltime, [T1,_]),
-	just_first(find_ind(R,3,_L)),
+	just_first(find_ind(R,3,L)), display(first_seq(L)),nl,
         statistics(walltime, [T2,_]),
         DeltaSeq is T2 - T1,
 	assertz_fact(timeseq_first(DeltaSeq)),
@@ -60,7 +61,7 @@ main_seq_(R) :-
 
 main_seq_(R) :-
         statistics(walltime, [T1,_]),
-	(find_ind(R,3,_),fail;true),
+	(find_ind(R,3,L),display(all_seq(L)),nl,fail;true),
         statistics(walltime, [T2,_]),
         DeltaSeq is T2 - T1,
 	assertz_fact(timeseq(DeltaSeq)),
@@ -78,7 +79,7 @@ main_par(A, _) :-
 	SpUp is 100*(Seq/Par),
 	floor(SpUp,Sp1),
 	Sp is Sp1/100,
-	format("-- ~d agents, SpeedUp First=~2f~n", [A,Sp]),
+	format("-- ~d agents, SpeedUp First=~2f vs Seq=~4f~n", [A,Sp,Seq]),
 	fail.
 main_par(A, _) :-
 	current_fact(timeseqfinal(Seq)),
@@ -87,19 +88,21 @@ main_par(A, _) :-
 	SpUp is 100*(Seq/Par),
 	floor(SpUp,Sp1),
 	Sp is Sp1/100,
-	format("-- ~d agents, SpeedUp All=~2f~n", [A,Sp]),
+	format("-- ~d agents, SpeedUp All=~2f vs Seq=~4f~n", [A,Sp,Seq]),
 	fail.
 
 main_par_(R) :-
+	pause(1),
         statistics(walltime, [T1,_]),
-	just_first(find_par(R,3,_)),
+	just_first(find_par(R,3,L)),display(first_par(L)),nl,
         statistics(walltime, [T2,_]),
         DeltaSeq is T2 - T1,
 	assertz_fact(timepar_first(DeltaSeq)),
 	fail.
 main_par_(R) :-
+	pause(1),
         statistics(walltime, [T1,_]),
-	(find_par(R,3,_),fail;true),
+	(find_par(R,3,L),display(all_par(L)),nl,fail;true),
         statistics(walltime, [T2,_]),
         DeltaSeq is T2 - T1,
 	assertz_fact(timepar(DeltaSeq)),
@@ -172,7 +175,7 @@ throw_colum_ndet_par([C],[R],_) :-
 	!, get_colum(C,1,R).
 
 throw_colum_ndet_par([C|RC],[R1,R2|RR],D) :- 
-	get_colum(C,1,R1) & throw_colum_ndet(RC,[R2|RR],D),
+	get_colum(C,1,R1) & throw_colum_ndet_par(RC,[R2|RR],D),
 	check_value(R1,R2,D).
 
 find_ind(Board,D,R) :-
@@ -183,8 +186,8 @@ throw_colum_ndet([C],[R],_) :-
 	!,get_colum(C,1,R).
 
 throw_colum_ndet([C|RC],[R1,R2|RR],D) :- 
+	throw_colum_ndet(RC,[R2|RR],D), %IMPORTANT:ti have the same search order than when only 1 thread is used
 	get_colum(C,1,R1),
-	throw_colum_ndet(RC,[R2|RR],D),
 	check_value(R1,R2,D).
 
 get_colum([],_,_) :- !, fail.
@@ -242,7 +245,7 @@ get_number(bin,_P,0).
 get_number(dec,_,R) :-
 	random(1,10,R).
 
-pause :- fib(15,_).
+pause :- fib(22,_).
 
 fib(0, 0) :- !.
 fib(1, 1) :- !.

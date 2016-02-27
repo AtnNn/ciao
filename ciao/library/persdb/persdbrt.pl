@@ -24,27 +24,17 @@
 %:- use_module(engine(basic_props)).
 :- use_module(library(persdb(persdbcache))).
 
-% Not sure about this (DCG)
-% :- doc(bug,"make_persistent/2 should really be persistent/2 (since
-%    it doesn't really make a predicate persistent but rather declares
-%    it as such, i.e., we do not use make_data/1, we use data/1) ?").
-
-:- doc(bug,"To load in the toplevel a file which uses this package,
-   module @tt{library(persdb(persdbrt))} has to be previously loaded.").
-
-%% ---------------------------------------------------------------------------
 :- doc(title, "Persistent predicate database").
-
 :- doc(subtitle,"A Generic Database Interface").
 
 :- doc(author, "Jos@'{e} Manuel G@'{o}mez P@'{e}rez").
 :- doc(author, "Daniel Cabeza").
 :- doc(author, "Manuel Hermenegildo").
 :- doc(author, "The CLIP Group").
-:- doc(credits, "@tt{clip@@dia.fi.upm.es}").
-:- doc(credits, "@tt{http://www.clip.dia.fi.upm.es/}").
-:- doc(credits, "Facultad de Inform@'{a}tica").
-:- doc(credits, "Universidad Polit@'{e}cnica de Madrid").
+:- doc(address, "@tt{clip@@dia.fi.upm.es}").
+:- doc(address, "@tt{http://www.clip.dia.fi.upm.es/}").
+:- doc(address, "Facultad de Inform@'{a}tica").
+:- doc(address, "Universidad Polit@'{e}cnica de Madrid").
 
 :- doc(copyright,"
 Copyright @copyright{} 1997-2002 The Clip Group.
@@ -689,3 +679,13 @@ create(Path, FilePerms):-
 # "@var{X} is an atom, the name of a directory.".
 
 directoryname(X) :- atm(X).
+
+% ===========================================================================
+
+% Not sure about this (DCG)
+% :- doc(bug,"make_persistent/2 should really be persistent/2 (since
+%    it doesn't really make a predicate persistent but rather declares
+%    it as such, i.e., we do not use make_data/1, we use data/1) ?").
+
+:- doc(bug,"To load in the toplevel a file which uses this package,
+   module @tt{library(persdb(persdbrt))} has to be previously loaded.").

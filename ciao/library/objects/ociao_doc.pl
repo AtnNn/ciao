@@ -12,19 +12,12 @@
 %%
 %%------------------------------------------------------------------------
 
-:- module(ociao_doc,[main/0],[assertions]).
+:- module(ociao_doc,[],[assertions]).
 
-%%------------------------------------------------------------------------
-%%
-%% MANUAL GENERAL HEADERS
-%%
-%%------------------------------------------------------------------------
+:- doc(filetype, documentation).
 
-:- doc(title,
-	"Object oriented programming").
-
-%:- doc(subtitle,
-%	"Object oriented programming in Ciao Prolog").
+:- doc(title, "Object Oriented Programming").
+%:- doc(subtitle, "Object oriented programming in Ciao Prolog").
 
 :- doc(author,"Angel Fernandez Pineda").
 
@@ -202,4 +195,4 @@
 
 %%------------------------------------------------------------------------
 
-main.
+

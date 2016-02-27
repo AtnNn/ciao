@@ -27,9 +27,9 @@ speedups :-
 	retractall_fact(timeseq(_)),
 	retractall_fact(timeseqfinal(_)),
 	retractall_fact(timepar(_)),
-	main_seq(40,40,40),
-	between(1,8,N),
-	main_det_par(40,40,40,N),
+	main_seq(50,50,50),
+  	between(1,2,N),
+  	main_det_par(50,50,50,N),
 	fail.
 speedups.
 
@@ -50,6 +50,7 @@ main_seq(_,_,_) :-
 
 main_det_par(X,Y,Z,N) :-
 	ensure_agents(N),
+ 	pause(1),
 	between(1,10,_),
 	gen_list(X,Y,L1),
 	gen_list(Z,Y,L2),
@@ -66,7 +67,7 @@ main_det_par(X,Y,Z,N) :-
 	SpUp is 100*(Seq/Par),
 	floor(SpUp,Sp1),
 	Sp is Sp1/100,
-	format("-- mmat(~f,~f,~f), ~d agents, SpeedUp=~2f~n", [X,Y,Z,N,Sp]),
+	format("-- mmat(~d,~d,~d), ~d agents, SpeedUp=~2f vs Seq=~4f~n", [X,Y,Z,N,Sp,Seq]),
 	fail.
 
 mmatrix_seq([],_,[]).
