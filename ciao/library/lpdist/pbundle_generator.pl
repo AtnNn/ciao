@@ -39,9 +39,9 @@ pbundle_docitem_kind := manual_html|manual_pdf.
 % Sub-bundles whose documentation is distributed explicitly as a docitem
 % TODO: refine
 % TODO: Not here
-bundle_doc_subbundles(ciao, ciaosys, ciao, "Ciao Manual").
-bundle_doc_subbundles(ciao, ciaopp, ciaopp, "CiaoPP Manual").
-bundle_doc_subbundles(ciao, lpdoc, lpdoc, "LPdoc Manual").
+bundle_doc_subbundles(ciaode, ciaosys, ciao, "Ciao Manual").
+bundle_doc_subbundles(ciaode, ciaopp, ciaopp, "CiaoPP Manual").
+bundle_doc_subbundles(ciaode, lpdoc, lpdoc, "LPdoc Manual").
 
 :- use_module(library(file_utils), [output_to_file/2]).
 
@@ -52,6 +52,7 @@ pbundle_generate_meta(Bundle, DescFile) :-
 	pbundle_generate_meta_(Bundle, Desc),
 	clauses_to_file(Desc, DescFile).
 
+% :- export(pbundle_generate_meta_/2).
 pbundle_generate_meta_(Bundle, Desc) :-
 	findall(F, enum_pbundle_code_items(Bundle, F), Fs),
 	findall(D, enum_pbundle_doc_items(Bundle, D), Ds),
@@ -110,6 +111,8 @@ pbundle_code_item(Bundle, CodeKind, Item) :-
 % TODO: Merge with code from ciaobot_internals.sh
 % Take a commit desc TAG-N-HASH and generate TAG-N.HASH, where N.HASH
 % will be the release number for RPM (no '-' is allowed there).
+% TODO: Use TAG-N+HASH instead for debian? ('+' is more common)
+% TODO: Use TAG+HASH-N for ubuntu?
 fix_commit_desc_for_rpm(Desc) := RPMDesc :-
 	atom_codes(Desc, Desc1),
 	append(Tag, "-"||NHash, Desc1), append(N, "-"||Hash, NHash),
