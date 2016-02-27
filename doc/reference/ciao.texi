@@ -82,7 +82,7 @@ GNU General Public License.
                         
 
 @sp 1
-This documentation corresponds to version 1.9#342 (2004/4/24, 20:30:39 CEST).
+This documentation corresponds to version 1.9#344 (2004/4/29, 12:56:34 CEST).
                           
 Copyright @copyright{} F. Bueno, D. Cabeza, M. Carro, M. Hermenegildo, P. L@'opez, and G. Puebla 
 
@@ -133,7 +133,7 @@ Any incompatibility of the above clauses with legal, contractual or judiciary de
 @subtitle @strong{The Ciao System Documentation Series}
 @subtitle Technical Report CLIP 3/97.1
 @subtitle @emph{Generated/Printed on:} @today 
-@subtitle Version 1.9#342 (2004/4/24, 20:30:39 CEST)
+@subtitle Version 1.9#344 (2004/4/29, 12:56:34 CEST)
 @author F. Bueno
 @author D. Cabeza
 @author M. Carro
@@ -203,7 +203,7 @@ Any incompatibility of the above clauses with legal, contractual or judiciary de
 @ifinfo
 
 @sp 1
-This documentation corresponds to version 1.9#342 (2004/4/24, 20:30:39 CEST).
+This documentation corresponds to version 1.9#344 (2004/4/29, 12:56:34 CEST).
 @end ifinfo
 @c Contents:
 @c @summarycontents
@@ -516,7 +516,7 @@ GNU General Public License.
 @ifnotinfo
 
 @sp 1
-This documentation corresponds to version 1.9#342 (2004/4/24, 20:30:39 CEST).
+This documentation corresponds to version 1.9#344 (2004/4/29, 12:56:34 CEST).
 @end ifnotinfo
 
 @c (component)
@@ -5722,7 +5722,7 @@ The predicate is of type @emph{dynamic}.
 
 @strong{Author(s):} Manuel Hermenegildo, Manuel C. Rodriguez, Daniel Cabeza, @email{clip@@clip.dia.fi.upm.es}, @uref{http://www.clip.dia.fi.upm.es/}, The CLIP Group, School of Computer Science, Technical University of Madrid.
 
-@strong{Version:} 1.9#342 (2004/4/24, 20:30:39 CEST)
+@strong{Version:} 1.9#344 (2004/4/29, 12:56:34 CEST)
 
 @strong{Version of last change:} 1.9#323 (2004/3/8, 18:37:17 CET)
 
@@ -13411,9 +13411,7 @@ Behaves like @code{current_output(S), displayq(S,Term)}.
 
 @strong{Author(s):} The CLIP Group.
 
-@strong{Version:} 1.9#342 (2004/4/24, 20:30:39 CEST)
-
-@strong{Version of last change:} 1.7#107 (2001/5/31, 14:12:58 CEST)
+@strong{Version:} 1.9#344 (2004/4/29, 12:56:34 CEST)
 
 This module includes predicates related to exceptions, which alter the normal flow of Prolog.
 
@@ -13449,9 +13447,7 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 @glindex halt/0
 @code{halt/0}, 
 @glindex halt/1
-@code{halt/1}, 
-@glindex abort/0
-@code{abort/0}.
+@code{halt/1}.
 
 
 @end itemize
@@ -13486,12 +13482,58 @@ the execution of "@code{catch(p(0), E, display(E)), display(.), fail.}" results 
 @emph{Meta-predicate} with arguments: @code{catch(goal,?,goal)}.
 
 
-@strong{Usage:} @code{catch(+callable, ?term, +callable)}
+@strong{Usage 1:} @code{catch(+callable, ?term, +callable)}
 @iftex
 @hfill
 @end iftex
 @key{ @bullet{} ISO @bullet{} }
 @itemize @minus
+@item @emph{The following properties hold globally:}
+
+
+This predicate is understood natively by CiaoPP.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:native/1})
+@end itemize
+
+@strong{Usage 2:} 
+@iftex
+@hfill
+@end iftex
+@key{ @bullet{} ISO @bullet{} }
+@itemize @minus
+@item @emph{Calls should, and exit will be compatible with:}
+
+
+@code{Error} is any term.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:term/1})
+@item @emph{The following properties should hold at call time:}
+
+
+@code{Goal} is a term which represents a goal, i.e., an atom or a structure.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:callable/1})
+
+@code{Handler} is a term which represents a goal, i.e., an atom or a structure.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:callable/1})
+@item @emph{The following properties hold upon exit:}
+
+
+@code{Error} is any term.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:term/1})
 @item @emph{The following properties hold globally:}
 
 
@@ -13523,6 +13565,40 @@ Executes @code{Goal}. If an exception is raised during its execution, @code{Erro
 
 @emph{Meta-predicate} with arguments: @code{intercept(goal,?,goal)}.
 
+
+@strong{Usage 2:} 
+@itemize @minus
+@item @emph{Calls should, and exit will be compatible with:}
+
+
+@code{Error} is any term.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:term/1})
+@item @emph{The following properties should hold at call time:}
+
+
+@code{Goal} is a term which represents a goal, i.e., an atom or a structure.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:callable/1})
+
+@code{Handler} is a term which represents a goal, i.e., an atom or a structure.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:callable/1})
+@item @emph{The following properties hold upon exit:}
+
+
+@code{Error} is any term.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:term/1})
+@end itemize
 @end deffn
 @sp 1
 
@@ -13545,7 +13621,23 @@ Raises an error, throwing the exception @code{Ball}, to be caught by an ancestor
 @code{intercept/3}. The closest matching ancestor is chosen. Exceptions are also thrown by other builtins in case of error.
 
 
-@strong{Usage:} 
+@strong{Usage 1:} 
+@iftex
+@hfill
+@end iftex
+@key{ @bullet{} ISO @bullet{} }
+@itemize @minus
+@item @emph{Calls should, and exit will be compatible with:}
+
+
+@code{Ball} is currently a term which is not a free variable.
+@iftex
+@hfill
+@end iftex
+ (@code{term_typing:nonvar/1})
+@end itemize
+
+@strong{Usage 2:} 
 @iftex
 @hfill
 @end iftex
@@ -13578,7 +13670,23 @@ Raises an error, throwing the exception @code{Ball}, to be caught by an ancestor
 Halt the system, exiting to the invoking shell.
 
 
-@strong{Usage:} 
+@strong{Usage 1:} 
+@iftex
+@hfill
+@end iftex
+@key{ @bullet{} ISO @bullet{} }
+@itemize @minus
+@item @emph{The following properties hold globally:}
+
+
+This predicate is understood natively by CiaoPP.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:native/1})
+@end itemize
+
+@strong{Usage 2:} 
 @iftex
 @hfill
 @end iftex
@@ -13610,6 +13718,22 @@ This predicate is understood natively by CiaoPP.
 
 Halt the system, exiting to the invoking shell, returning exit code @code{Code}.
 
+
+@strong{Usage 2:} 
+@iftex
+@hfill
+@end iftex
+@key{ @bullet{} ISO @bullet{} }
+@itemize @minus
+@item @emph{The following properties should hold at call time:}
+
+
+@code{Code} is an integer.
+@iftex
+@hfill
+@end iftex
+ (@code{basic_props:int/1})
+@end itemize
 @end deffn
 @sp 1
 

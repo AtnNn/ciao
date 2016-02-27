@@ -123,7 +123,7 @@ static void c_term_trail_push(Arg,t, trail_origo)
      TAGGED t;
      TAGGED **trail_origo;
 {
-  if (!ChoiceDifference(w->node,w->trail_top)) {
+  if (ChoiceDifference(w->node,w->trail_top) < CHOICEPAD) {
     REGISTER TAGGED *tr = w->trail_top;
     int reloc;
 

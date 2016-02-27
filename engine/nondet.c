@@ -812,7 +812,9 @@ BOOL open_predicate(Arg)
 
   return TRUE;
 }
-#else                                                          /* THREADS */
+
+#else                                                          /* !THREADS */
+
 BOOL close_predicate(Arg)
      Argdecl;
 {
@@ -824,6 +826,7 @@ BOOL open_predicate(Arg)
 {
   return TRUE;
 }
+
 #endif
 
 
@@ -889,9 +892,9 @@ static struct instance *current_instance_conc(Arg, block)
    matching instance */
 
     current_one = first_possible_instance(X(0), root, &x2_n, &x5_n);
-    if (current_one == NULL)  /* Let others enter and update */
+    if (current_one == NULL) {  /* Let others enter and update */
         Wait_For_Cond_End(root->clause_insertion_cond);
-
+    }
   } while (!current_one && block == BLOCK);
 
   /* Here with (current_one || block == NON_BLOCK).  current_one == NULL
@@ -986,14 +989,14 @@ static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
     while(TRUE){  
     /* Wait until a change is signaled, and test that the change affects us */
 
-      if (block == BLOCK) 
+      if (block == BLOCK) {
         Wait_For_Cond_Begin( \
                              ((*inst_pptr1 == NULL) && \
                               (*inst_pptr2 == NULL) && \
                               root->behavior_on_failure == CONC_OPEN ), \
                               root->clause_insertion_cond \
                              )
-      else { /* In any case, leave the predicate locked */
+      } else { /* In any case, leave the predicate locked */
         Cond_Begin(root->clause_insertion_cond);
       }
           

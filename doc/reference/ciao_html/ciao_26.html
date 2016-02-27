@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 24 April 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 29 April 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Exception handling</TITLE>
@@ -20,11 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_25.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#342 (2004/4/24, 20:30:39 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.7#107 (2001/5/31, 14:12:58 CEST)
+<STRONG>Version:</STRONG> 1.9#344 (2004/4/29, 12:56:34 CEST)
 
 
 <P>
@@ -65,9 +61,7 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 <A NAME="IDX1826"></A>
 <CODE>halt/0</CODE>, 
 <A NAME="IDX1827"></A>
-<CODE>halt/1</CODE>, 
-<A NAME="IDX1828"></A>
-<CODE>abort/0</CODE>.
+<CODE>halt/1</CODE>.
 
 </UL>
 
@@ -79,11 +73,11 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <H2><A NAME="SEC162" HREF="ciao_toc.html#TOC162">Documentation on exports (<CODE>exceptions</CODE>)</A></H2>
 <P>
+<A NAME="IDX1828"></A>
 <A NAME="IDX1829"></A>
-<A NAME="IDX1830"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>catch/3:</B>
-<DD><A NAME="IDX1831"></A>
+<DD><A NAME="IDX1830"></A>
 
 
 <P>
@@ -107,7 +101,7 @@ the execution of "<CODE>catch(p(0), E, display(E)), display(.), fail.</CODE>" re
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>catch(+callable, ?term, +callable)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>catch(+callable, ?term, +callable)</CODE>
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -117,14 +111,40 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>Error</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Handler</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Error</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
+<A NAME="IDX1831"></A>
 <A NAME="IDX1832"></A>
-<A NAME="IDX1833"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>intercept/3:</B>
-<DD><A NAME="IDX1834"></A>
+<DD><A NAME="IDX1833"></A>
 
 
 <P>
@@ -133,7 +153,7 @@ This predicate is understood natively by CiaoPP.
 
 <P>
 Executes <CODE>Goal</CODE>. If an exception is raised during its execution, <CODE>Error</CODE> is unified with the exception, and if the unification succeeds, <CODE>Handler</CODE> is executed and then the execution resumes after the predicate which produced the exception. Note the difference with builtin 
-<A NAME="IDX1835"></A>
+<A NAME="IDX1834"></A>
 <CODE>catch/3</CODE>, given the same code defined there, the execution of "<CODE>intercept(p(0), E, display(E)), display(.), fail.</CODE>" results in the output "<CODE>error---.0.</CODE>".
 
 
@@ -141,14 +161,35 @@ Executes <CODE>Goal</CODE>. If an exception is raised during its execution, <COD
 <EM>Meta-predicate</EM> with arguments: <CODE>intercept(goal,?,goal)</CODE>.
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>Error</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Handler</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Error</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
+<A NAME="IDX1835"></A>
 <A NAME="IDX1836"></A>
-<A NAME="IDX1837"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>throw/1:</B>
-<DD><A NAME="IDX1838"></A>
+<DD><A NAME="IDX1837"></A>
 
 
 <P>
@@ -157,14 +198,25 @@ Executes <CODE>Goal</CODE>. If an exception is raised during its execution, <COD
 
 <P>
 Raises an error, throwing the exception <CODE>Ball</CODE>, to be caught by an ancestor 
-<A NAME="IDX1839"></A>
+<A NAME="IDX1838"></A>
 <CODE>catch/3</CODE> or 
-<A NAME="IDX1840"></A>
+<A NAME="IDX1839"></A>
 <CODE>intercept/3</CODE>. The closest matching ancestor is chosen. Exceptions are also thrown by other builtins in case of error.
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>Ball</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -177,11 +229,11 @@ Raises an error, throwing the exception <CODE>Ball</CODE>, to be caught by an an
 </DL>
 
 <P>
+<A NAME="IDX1840"></A>
 <A NAME="IDX1841"></A>
-<A NAME="IDX1842"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>halt/0:</B>
-<DD><A NAME="IDX1843"></A>
+<DD><A NAME="IDX1842"></A>
 
 
 <P>
@@ -193,7 +245,18 @@ Halt the system, exiting to the invoking shell.
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -206,11 +269,11 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
+<A NAME="IDX1843"></A>
 <A NAME="IDX1844"></A>
-<A NAME="IDX1845"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>halt/1:</B>
-<DD><A NAME="IDX1846"></A>
+<DD><A NAME="IDX1845"></A>
 
 
 <P>
@@ -221,14 +284,25 @@ This predicate is understood natively by CiaoPP.
 Halt the system, exiting to the invoking shell, returning exit code <CODE>Code</CODE>.
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Code</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
+<A NAME="IDX1846"></A>
 <A NAME="IDX1847"></A>
-<A NAME="IDX1848"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>abort/0:</B>
-<DD><A NAME="IDX1849"></A>
+<DD><A NAME="IDX1848"></A>
 
 
 <P>

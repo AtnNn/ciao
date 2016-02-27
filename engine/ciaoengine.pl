@@ -23,6 +23,9 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*9+343,2004/04/29,11:55*29+'CEST'),
+"Wait_for_Cond_Begin surrounded by brackets in several places (Manuel Carro)").
+
 :- comment(version(1*9+330,2004/03/25,16:54*55+'CET'), "Solved some
 problems in shell/n and exec/3,4} in windows.  shell/n now call
 directly the command in the SHELL environment variable using

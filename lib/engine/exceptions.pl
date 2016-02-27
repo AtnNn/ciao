@@ -39,7 +39,7 @@ abort :- '$exit'(-32768).
 
 %------ errors ------%
 
-:- concurrent catching/3, thrown/1.
+:- data catching/3, thrown/1.
 
 :- true pred catch(+callable,?term,+callable) + (iso, native).
 
@@ -122,6 +122,10 @@ retract_catching(Ch, Er, Ha) :- retract_fact_nb(catching(Ch, Er, Ha)).
 retract_catching(Ch, Er, Ha) :- asserta_fact(catching(Ch, Er, Ha)), fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*9+344,2004/04/29,12:56*34+'CEST'), "catching/1
+   and thrown/1 are now 'data' predicates instead of 'concurrent' to
+   avoid a bug in concurrent facts (Jose Morales)").
 
 :- comment(version(1*7+107,2001/05/31,14:12*58+'CEST'), "Changed data
 to be concurrent; changed retract_fact/1 to retract_fact_nb/1 (MCL)").
