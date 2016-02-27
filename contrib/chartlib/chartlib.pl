@@ -1,9 +1,9 @@
 :- module(chartlib,[],[assertions,regtypes,isomodes]).
 
-
 :- comment(title, "A Chart Library").
 
 :- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
+
 
 :- comment(module,"This library is intended to eaose the task of displaying
    some graphical results. This library allows the programmer to visualize

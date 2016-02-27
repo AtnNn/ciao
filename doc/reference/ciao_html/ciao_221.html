@@ -1,33 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - parser (library)</TITLE>
+<TITLE>The Ciao Prolog System               - io (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>, <A HREF="ciao_222.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>, <A HREF="ciao_222.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC861" HREF="ciao_toc.html#TOC861">parser (library)</A></H1>
+<H1><A NAME="SEC837" HREF="ciao_toc.html#TOC837">io (library)</A></H1>
 <P>
-<A NAME="IDX9407"></A>
+<A NAME="IDX9238"></A>
 
 
 <P>
 <STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
 
 
+<P>
+<STRONG>Version:</STRONG> 0.1#2 (1998/12/2)
+
+
+<P>
+This file implements I/O predicates of different types. 
+
+
+<P>
+Implemented by G&ouml;ran Smedb&auml;ck 
+
+
 
 <UL>
-<LI><A HREF="ciao_221.html#SEC862">Usage and interface (parser)</A>
-<LI><A HREF="ciao_221.html#SEC863">Documentation on exports (parser)</A>
+<LI><A HREF="ciao_221.html#SEC838">Usage and interface (io)</A>
+<LI><A HREF="ciao_221.html#SEC839">Documentation on exports (io)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC862" HREF="ciao_toc.html#TOC862">Usage and interface (<CODE>parser</CODE>)</A></H2>
+<H2><A NAME="SEC838" HREF="ciao_toc.html#TOC838">Usage and interface (<CODE>io</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(parser)).</CODE>
+<CODE>:- use_module(library(io)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,15 +56,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX9408"></A>
-<CODE>parser/2</CODE>, 
-<A NAME="IDX9409"></A>
-<CODE>nodeDeclaration/4</CODE>.
-
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX9410"></A>
-<CODE>field_Id/1</CODE>.
+<A NAME="IDX9239"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX9240"></A>
+<CODE>out/3</CODE>, 
+<A NAME="IDX9241"></A>
+<CODE>convert_atoms_to_string/2</CODE>, 
+<A NAME="IDX9242"></A>
+<CODE>read_terms_file/2</CODE>, 
+<A NAME="IDX9243"></A>
+<CODE>write_terms_file/2</CODE>, 
+<A NAME="IDX9244"></A>
+<CODE>read_vrml_file/2</CODE>, 
+<A NAME="IDX9245"></A>
+<CODE>write_vrml_file/2</CODE>.
 
 </UL>
 
@@ -63,36 +80,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX9411"></A>
+<A NAME="IDX9246"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX9412"></A>
+<A NAME="IDX9247"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX9413"></A>
+<A NAME="IDX9248"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX9414"></A>
+<A NAME="IDX9249"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX9415"></A>
+<A NAME="IDX9250"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX9416"></A>
+<A NAME="IDX9251"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX9417"></A>
+<A NAME="IDX9252"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX9418"></A>
+<A NAME="IDX9253"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX9419"></A>
+<A NAME="IDX9254"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX9420"></A>
-<CODE>provrml/lookup</CODE>, 
-<A NAME="IDX9421"></A>
-<CODE>provrml/field_value</CODE>, 
-<A NAME="IDX9422"></A>
-<CODE>provrml/tokeniser</CODE>, 
-<A NAME="IDX9423"></A>
-<CODE>provrml/parser_util</CODE>, 
-<A NAME="IDX9424"></A>
-<CODE>provrml/possible</CODE>, 
-<A NAME="IDX9425"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX9255"></A>
+<CODE>format</CODE>.
 
 </UL>
 
@@ -102,38 +109,39 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>,
 
 
 
-<H2><A NAME="SEC863" HREF="ciao_toc.html#TOC863">Documentation on exports (<CODE>parser</CODE>)</A></H2>
+<H2><A NAME="SEC839" HREF="ciao_toc.html#TOC839">Documentation on exports (<CODE>io</CODE>)</A></H2>
 <P>
-<A NAME="IDX9426"></A>
-<A NAME="IDX9427"></A>
+<A NAME="IDX9256"></A>
+<A NAME="IDX9257"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>parser/2:</B>
-<DD><A NAME="IDX9428"></A>
+<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
+<DD><A NAME="IDX9258"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>parser(+VRML, -Terms)</CODE>
+<STRONG>Usage:</STRONG> <CODE>out(ListOfOutput)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The parser uses a tokeniser to read the input text string of VRML code and returns a list with the corresponding terms. The tokens will be read in this parser as the grammar says. The parser is according to the specification of the VRML grammar, accept that it is performed over tokens in sted of the actual code.
+<LI><EM>Description:</EM> The predicate used is out/3 (DCG) where we will 'save' the output in the second argument. The tird argument is the rest, nil.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+VRML</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>-Terms</CODE> is a list of <CODE>terms</CODE>s.
+<CODE>ListOfOutput</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ListOfOutput</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX9429"></A>
-<A NAME="IDX9430"></A>
+<A NAME="IDX9259"></A>
+<A NAME="IDX9260"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>nodeDeclaration/4:</B>
-<DD><A NAME="IDX9431"></A>
+<DT><span class="define">PREDICATE:</span> <B>out/3:</B>
+<DD><A NAME="IDX9261"></A>
 
 
 <P>
@@ -143,27 +151,166 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX9432"></A>
-<A NAME="IDX9433"></A>
+<A NAME="IDX9262"></A>
+<A NAME="IDX9263"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>field_Id/1:</B>
-<DD><A NAME="IDX9434"></A>
+<DT><span class="define">PREDICATE:</span> <B>convert_atoms_to_string/2:</B>
+<DD><A NAME="IDX9264"></A>
 
 
 <P>
-A property, defined as follows:
+<STRONG>Usage:</STRONG> <CODE>convert_atoms_to_string(Atoms, String)</CODE>
 
-<PRE>
+<UL>
+<LI><EM>Description:</EM> The predicate transforms a list of atoms to a string.
 
-<PRE>
-field_Id(_1).
-</PRE>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-</PRE>
+<CODE>Atoms</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>String</CODE> is a list of <CODE>num</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Atoms</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>String</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9265"></A>
+<A NAME="IDX9266"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_terms_file/2:</B>
+<DD><A NAME="IDX9267"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_terms_file(Filename, Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename to a file with terms, the predicate reads the terms and are returned in the second argument. <CODE>Filename</CODE> is an atom and <CODE>Term</CODE> is the read prolog terms.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Filename</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Term</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Filename</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Term</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9268"></A>
+<A NAME="IDX9269"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>write_terms_file/2:</B>
+<DD><A NAME="IDX9270"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_terms_file(FileName, List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename and a list of terms the predicate will write them down to the file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>List</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>FileName</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>List</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9271"></A>
+<A NAME="IDX9272"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_vrml_file/2:</B>
+<DD><A NAME="IDX9273"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_vrml_file(FileName, Data)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename, the predicate returns the substance.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Data</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>FileName</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Data</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9274"></A>
+<A NAME="IDX9275"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>write_vrml_file/2:</B>
+<DD><A NAME="IDX9276"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_vrml_file(FileName, Data)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename and data in form of a string, the predicate will write the data to the named file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Data</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>FileName</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Data</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>, <A HREF="ciao_222.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_220.html">previous</A>, <A HREF="ciao_222.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

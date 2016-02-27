@@ -2,7 +2,7 @@
 :- load_compilation_module(library('persdb_sql_common/persdbtr_sql')).
 :- add_sentence_trans(sql_persistent_tr/2).
 %JCF
-%:- add_goal_trans(sql_goal_tr/2).
+:- add_goal_trans(sql_goal_tr/2).
 %JCF
 
 :- include(library(assertions)).
@@ -14,7 +14,7 @@
 
 %% Data predicate used to define "sql persistent locations"
 :- multifile sql_persistent_location/2.
-:- dynamic sql_persistent_location/2.
+:- data sql_persistent_location/2.
 :- discontiguous('sql_persistent_location'/2).
 
 %% Data predicates used to keep the status information about the sessions and the queries : .......
@@ -25,12 +25,10 @@
 :- discontiguous(sql__relation/3).
 :- discontiguous(sql__attribute/4).
 
-
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
-
-:- comment(version(1*9+114,2003/11/27,20:57*55+'CET'), "Names of
+:- comment(version(1*11+62,2003/11/27,21:24*17+'CET'), "Names of
    multifile predicates relation/3 and attribute/4 changed to
    sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
 

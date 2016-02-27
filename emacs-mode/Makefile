@@ -37,13 +37,13 @@ SUBSTITUTE_STRING=../etc/substitute_string
 #include /home/clip/Systems/ciao/SHARED
 #SUBSTITUTE_STRING = /home/clip/Systems/ciao/etc/substitute_string
 #-----------------------------------------------------------------------------
-ICONS = ciaopl.xpm ciao.xpm ciaoload.xpm find_error.xpm \
-	   clear.xpm ciaoasr.xpm checkassertions.xpm ciaodebug.xpm \
-           lpdoc.xpm lpdocview.xpm ciaoexeout.xpm ciaoitf.xpm \
-	   ciaopo.xpm ciaopreprocask.xpm ciaopreproc.xpm ciaopreprocsee.xpm \
-           ciaoscrt.xpm manuals.xpm wordhelp.xpm complete.xpm ciaoprompt.xpm \
-           ciaorehighlight.xpm ciaostorequery.xpm stop.xpm \
-           ciaoclearquery.xpm clip.xpm 
+ICONS = checkassertions.xpm ciao.xpm ciaoanalysis.xpm ciaoasr.xpm \
+        ciaoclearquery.xpm ciaocustomize.xpm ciaodebug.xpm ciaoexeout.xpm \
+	ciaoitf.xpm ciaoload.xpm ciaopeval.xpm ciaopl.xpm ciaopo.xpm \
+	ciaopreproc.xpm ciaopreprocask.xpm ciaopreprocsee.xpm \
+	ciaoprompt.xpm ciaorehighlight.xpm ciaoscrt.xpm ciaostorequery.xpm \
+	clear.xpm clip.xpm complete.xpm find_error.xpm lpdoc.xpm \
+	lpdocview.xpm  manuals.xpm stop.xpm wordhelp.xpm
 REALLIBDIR = $(LIBDIR)/$(VERSIONMAIN)
 ICONDIR = $(LIBDIR)/$(VERSIONMAIN)/icons
 #-----------------------------------------------------------------------------

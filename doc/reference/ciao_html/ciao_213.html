@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - field_type (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>, <A HREF="ciao_214.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>, <A HREF="ciao_214.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC837" HREF="ciao_toc.html#TOC837">field_type (library)</A></H1>
+<H1><A NAME="SEC813" HREF="ciao_toc.html#TOC813">dictionary_tree (library)</A></H1>
 <P>
-<A NAME="IDX9120"></A>
+<A NAME="IDX9019"></A>
 
 
 <P>
@@ -20,22 +20,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#174 (2003/12/4, 17:47:35 CET)
+<STRONG>Version of last change:</STRONG> 1.9#173 (2003/12/4, 17:47:16 CET)
+
+
+<P>
+This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
 
 
 
 <UL>
-<LI><A HREF="ciao_213.html#SEC838">Usage and interface (field_type)</A>
-<LI><A HREF="ciao_213.html#SEC839">Documentation on exports (field_type)</A>
+<LI><A HREF="ciao_213.html#SEC814">Usage and interface (dictionary_tree)</A>
+<LI><A HREF="ciao_213.html#SEC815">Documentation on exports (dictionary_tree)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC838" HREF="ciao_toc.html#TOC838">Usage and interface (<CODE>field_type</CODE>)</A></H2>
+<H2><A NAME="SEC814" HREF="ciao_toc.html#TOC814">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(field_type)).</CODE>
+<CODE>:- use_module(library(dictionary_tree)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,8 +56,50 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX9121"></A>
-<CODE>fieldType/1</CODE>.
+<A NAME="IDX9020"></A>
+<CODE>create_dictionaries/1</CODE>, 
+<A NAME="IDX9021"></A>
+<CODE>is_dictionaries/1</CODE>, 
+<A NAME="IDX9022"></A>
+<CODE>get_definition_dictionary/2</CODE>, 
+<A NAME="IDX9023"></A>
+<CODE>get_prototype_dictionary/2</CODE>, 
+<A NAME="IDX9024"></A>
+<CODE>dictionary_insert/5</CODE>, 
+<A NAME="IDX9025"></A>
+<CODE>dictionary_lookup/5</CODE>, 
+<A NAME="IDX9026"></A>
+<CODE>merge_tree/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX9027"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX9028"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX9029"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX9030"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX9031"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX9032"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX9033"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX9034"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX9035"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX9036"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -63,30 +109,243 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>,
 
 
 
-<H2><A NAME="SEC839" HREF="ciao_toc.html#TOC839">Documentation on exports (<CODE>field_type</CODE>)</A></H2>
+<H2><A NAME="SEC815" HREF="ciao_toc.html#TOC815">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
 <P>
-<A NAME="IDX9122"></A>
-<A NAME="IDX9123"></A>
+<A NAME="IDX9037"></A>
+<A NAME="IDX9038"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fieldType/1:</B>
-<DD><A NAME="IDX9124"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
+<DD><A NAME="IDX9039"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>fieldType(+FieldTypeId)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dictionaries(Dictionary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Boolean predicate used to check the fieldTypeId with the defiened.
+<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+FieldTypeId</CODE> is an atom.
+<CODE>Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dictionary</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9040"></A>
+<A NAME="IDX9041"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
+<DD><A NAME="IDX9042"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>is_dictionaries(Dictionary)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9043"></A>
+<A NAME="IDX9044"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
+<DD><A NAME="IDX9045"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(Dictionary, Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dictionary</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Tree</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9046"></A>
+<A NAME="IDX9047"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
+<DD><A NAME="IDX9048"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(Dictionary, Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Dictionary</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Tree</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9049"></A>
+<A NAME="IDX9050"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
+<DD><A NAME="IDX9051"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_insert(Key, Type, Field, Dictionary, Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Key</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Dictionary</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Key</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Type</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Field</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Dictionary</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9052"></A>
+<A NAME="IDX9053"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
+<DD><A NAME="IDX9054"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(Key, Type, Field, Dictionary, Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Key</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Dictionary</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Info</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX9055"></A>
+<A NAME="IDX9056"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
+<DD><A NAME="IDX9057"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>merge_tree(Tree, Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Tree</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Tree</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>, <A HREF="ciao_214.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_212.html">previous</A>, <A HREF="ciao_214.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

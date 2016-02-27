@@ -4,7 +4,7 @@
 
 :- module(bltclass,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
+:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
 
 
 :- export(new_interp/1).

@@ -17,14 +17,13 @@
         unlock_atom/1,
         atom_lock_state/2,
         concurrent/1],
-        [assertions, isomodes, engine(metadefs)]).
+        [assertions, isomodes]).
 
 
 :- use_module(library(prolog_sys), [new_atom/1]).
 :- use_module(engine(internals), [
         module_concat/3,
         term_to_meta/2,
-        imports/5,
         '$predicate_property'/3,
         '$define_predicate'/2,
         '$set_property'/2]).
@@ -313,7 +312,7 @@ concurrent(F/A, Mod) :-
         number(A), !,
         module_concat(Mod, F, MF),
         functor(Head, MF, A), !,
-        asserta_fact(imports(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
+        asserta_fact('$imports'(Mod, Mod, F, A, Mod)), % defines/3 in not dynamic
 	concurrent1(Head, concurrent/2).
 
 concurrent1(F, Goal) :-
@@ -335,7 +334,7 @@ table, causing Ciao Prolog to abort.").
 :- comment(version_maintenance,dir('../../version')).
 
 :- comment(version(1*7+138,2001/11/08,19:50*32+'CET'), "The fact that
-   the concurrency library now needs to be loaded explicitly is now
+   the currency library now needs to be loaded explicitly is now
    correctly documented.  (Manuel Hermenegildo)").
 
 :- comment(version(1*7+114,2001/07/09,13:20*42+'CEST'), "eng_self/1

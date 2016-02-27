@@ -24,7 +24,7 @@ foreign_compiler_options('SunOS4','Sparc','gcc',['-fPIC']).
 foreign_linker_options('SunOS4','Sparc','ld',[]).
 foreign_compiler_options('Win32','alpha','gcc',[]).
 foreign_linker_options('Win32','alpha','gcc',['-c']).
-foreign_compiler_options('Win32','i86','gcc',['-shared']).
+foreign_compiler_options('Win32','i86','gcc',[]).
 foreign_linker_options('Win32','i86','gcc',['-c']).
 foreign_compiler_options('Win32','i86','i386-mingw32-gcc',[]).
 foreign_linker_options('Win32','i86','i386-mingw32-gcc',['-c']).

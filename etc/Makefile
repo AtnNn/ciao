@@ -1,3 +1,4 @@
+
 include ../SETTINGS
 include ../SHARED
 
@@ -126,7 +127,7 @@ distclean realclean: clean
                   rm -f $${File} ; \
 	   fi ; \
 	 done
-	# Do not remove the windows fix_size, it goes into the distribution
+# Do not remove the windows fix_size, it goes into the distribution
 	@if [ -f fix_size ]; \
 	  then echo "Removing fix_size"; \
                rm -f fix_size ; \

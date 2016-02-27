@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The Ciao assertion package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_58.html">previous</A>, <A HREF="ciao_60.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_58.html">previous</A>, <A HREF="ciao_60.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC266" HREF="ciao_toc.html#TOC266">The Ciao assertion package</A></H1>
+<H1><A NAME="SEC240" HREF="ciao_toc.html#TOC240">The Ciao assertion package</A></H1>
 <P>
-<A NAME="IDX3638"></A>
+<A NAME="IDX3421"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_58.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
@@ -29,26 +29,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_58.html">previous</A>, 
 
 <P>
 The 
-<A NAME="IDX3639"></A>
+<A NAME="IDX3422"></A>
 <CODE>assertions</CODE> package adds a number of new declaration definitions and new operator definitions which allow including 
-<A NAME="IDX3640"></A>
+<A NAME="IDX3423"></A>
 program assertions in user programs. Such assertions can be used to describe predicates, properties, modules, applications, etc. These descriptions can be formal specifications (such as preconditions and post-conditions) or machine-readable textual comments. 
 
 
 <P>
 This module is part of the 
-<A NAME="IDX3641"></A>
+<A NAME="IDX3424"></A>
 <CODE>assertions</CODE> library. It defines the basic code-related assertions, i.e., those intended to be used mainly by compilation-related tools, such as the static analyzer or the run-time test generator. 
 
 
 <P>
 Giving 
-<A NAME="IDX3642"></A>
+<A NAME="IDX3425"></A>
 specifications for predicates and other program elements is the main functionality documented here. The exact syntax of comments 
-<A NAME="IDX3643"></A>
-<A NAME="IDX3644"></A>
+<A NAME="IDX3426"></A>
+<A NAME="IDX3427"></A>
 is described in the autodocumenter (
-<A NAME="IDX3645"></A>
+<A NAME="IDX3428"></A>
 <CODE>lpdoc</CODE> [Knu84,Her99]) manual, although some support for adding machine-readable comments in assertions is also mentioned here. 
 
 
@@ -58,16 +58,16 @@ There are two kinds of assertions: predicate assertions and program point assert
 
 
 <UL>
-<LI><A HREF="ciao_59.html#SEC267">More info</A>
-<LI><A HREF="ciao_59.html#SEC268">Some attention points</A>
-<LI><A HREF="ciao_59.html#SEC269">Usage and interface (assertions)</A>
-<LI><A HREF="ciao_59.html#SEC270">Documentation on new declarations (assertions)</A>
-<LI><A HREF="ciao_59.html#SEC271">Documentation on exports (assertions)</A>
+<LI><A HREF="ciao_59.html#SEC241">More info</A>
+<LI><A HREF="ciao_59.html#SEC242">Some attention points</A>
+<LI><A HREF="ciao_59.html#SEC243">Usage and interface (assertions)</A>
+<LI><A HREF="ciao_59.html#SEC244">Documentation on new declarations (assertions)</A>
+<LI><A HREF="ciao_59.html#SEC245">Documentation on exports (assertions)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC267" HREF="ciao_toc.html#TOC267">More info</A></H2>
+<H2><A NAME="SEC241" HREF="ciao_toc.html#TOC241">More info</A></H2>
 
 <P>
 The facilities provided by the library are documented in the description of its component modules. This documentation is intended to provide information only at a "reference manual" level. For a more tutorial introduction to the subject and some more examples please see the document "An Assertion Language for Debugging of Constraint Logic Programs (Technical Report CLIP2/97.1)". The assertion language implemented in this library is modeled after this design document, although, due to implementation issues, it may differ in some details. The purpose of this manual is to document precisely what the implementation of the library supports at any given point in time. 
@@ -75,33 +75,33 @@ The facilities provided by the library are documented in the description of its 
 
 
 
-<H2><A NAME="SEC268" HREF="ciao_toc.html#TOC268">Some attention points</A></H2>
+<H2><A NAME="SEC242" HREF="ciao_toc.html#TOC242">Some attention points</A></H2>
 
 
 <UL>
 
 <LI><STRONG>Formatting commands within text strings:</STRONG>
 
-<A NAME="IDX3646"></A>
-<A NAME="IDX3647"></A>
+<A NAME="IDX3429"></A>
+<A NAME="IDX3430"></A>
 many of the predicates defined in these modules include arguments intended for providing textual information. This includes titles, descriptions, comments, etc. The type of this argument is a character string. In order for the automatic generation of documentation to work correctly, this 
-<A NAME="IDX3648"></A>
+<A NAME="IDX3431"></A>
 character string should adhere to certain conventions. See the description of the 
-<A NAME="IDX3649"></A>
+<A NAME="IDX3432"></A>
 <CODE>docstring/1</CODE> type/grammar for details. 
 
 <LI><STRONG>Referring to variables:</STRONG> In order for the automatic documentation system to work correctly,
 
-<A NAME="IDX3650"></A>
+<A NAME="IDX3433"></A>
 variable names (for example, when referring to arguments in the head patterns of <EM>pred</EM> declarations) must be surrounded by an <CODE>@var</CODE> command. For example, <CODE>@var{VariableName}</CODE> should be used for referring to the variable "VariableName", which will appear then formatted as follows: <CODE>VariableName</CODE>. See the description of the 
-<A NAME="IDX3651"></A>
+<A NAME="IDX3434"></A>
 <CODE>docstring/1</CODE> type/grammar for details. 
 
 </UL>
 
 
 
-<H2><A NAME="SEC269" HREF="ciao_toc.html#TOC269">Usage and interface (<CODE>assertions</CODE>)</A></H2>
+<H2><A NAME="SEC243" HREF="ciao_toc.html#TOC243">Usage and interface (<CODE>assertions</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -110,7 +110,7 @@ variable names (for example, when referring to arguments in the head patterns of
 <LI><STRONG>Library usage:</STRONG>
 
 The recommended procedure in order to make use of assertions in user programs is to include the 
-<A NAME="IDX3652"></A>
+<A NAME="IDX3435"></A>
 <CODE>assertions</CODE> syntax library, using one of the following declarations, as appropriate: 
 
 
@@ -127,83 +127,83 @@ The recommended procedure in order to make use of assertions in user programs is
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3653"></A>
+<A NAME="IDX3436"></A>
 <CODE>check/1</CODE>, 
-<A NAME="IDX3654"></A>
+<A NAME="IDX3437"></A>
 <CODE>trust/1</CODE>, 
-<A NAME="IDX3655"></A>
+<A NAME="IDX3438"></A>
 <CODE>true/1</CODE>, 
-<A NAME="IDX3656"></A>
+<A NAME="IDX3439"></A>
 <CODE>false/1</CODE>.
 
 </UL>
 
 <LI><STRONG>New operators defined:</STRONG>
 
-<A NAME="IDX3657"></A>
+<A NAME="IDX3440"></A>
 <CODE>=&#62;/2</CODE> [975,xfx], 
-<A NAME="IDX3658"></A>
+<A NAME="IDX3441"></A>
 <CODE>::/2</CODE> [978,xfx], 
-<A NAME="IDX3659"></A>
+<A NAME="IDX3442"></A>
 <CODE>decl/1</CODE> [1150,fx], 
-<A NAME="IDX3660"></A>
+<A NAME="IDX3443"></A>
 <CODE>decl/2</CODE> [1150,xfx], 
-<A NAME="IDX3661"></A>
+<A NAME="IDX3444"></A>
 <CODE>pred/1</CODE> [1150,fx], 
-<A NAME="IDX3662"></A>
+<A NAME="IDX3445"></A>
 <CODE>pred/2</CODE> [1150,xfx], 
-<A NAME="IDX3663"></A>
+<A NAME="IDX3446"></A>
 <CODE>prop/1</CODE> [1150,fx], 
-<A NAME="IDX3664"></A>
+<A NAME="IDX3447"></A>
 <CODE>prop/2</CODE> [1150,xfx], 
-<A NAME="IDX3665"></A>
+<A NAME="IDX3448"></A>
 <CODE>modedef/1</CODE> [1150,fx], 
-<A NAME="IDX3666"></A>
+<A NAME="IDX3449"></A>
 <CODE>calls/1</CODE> [1150,fx], 
-<A NAME="IDX3667"></A>
+<A NAME="IDX3450"></A>
 <CODE>calls/2</CODE> [1150,xfx], 
-<A NAME="IDX3668"></A>
+<A NAME="IDX3451"></A>
 <CODE>success/1</CODE> [1150,fx], 
-<A NAME="IDX3669"></A>
+<A NAME="IDX3452"></A>
 <CODE>success/2</CODE> [1150,xfx], 
-<A NAME="IDX3670"></A>
+<A NAME="IDX3453"></A>
 <CODE>comp/1</CODE> [1150,fx], 
-<A NAME="IDX3671"></A>
+<A NAME="IDX3454"></A>
 <CODE>comp/2</CODE> [1150,xfx], 
-<A NAME="IDX3672"></A>
+<A NAME="IDX3455"></A>
 <CODE>entry/1</CODE> [1150,fx].
 
 <LI><STRONG>New declarations defined:</STRONG>
 
-<A NAME="IDX3673"></A>
+<A NAME="IDX3456"></A>
 <CODE>pred/1</CODE>, 
-<A NAME="IDX3674"></A>
+<A NAME="IDX3457"></A>
 <CODE>pred/2</CODE>, 
-<A NAME="IDX3675"></A>
+<A NAME="IDX3458"></A>
 <CODE>calls/1</CODE>, 
-<A NAME="IDX3676"></A>
+<A NAME="IDX3459"></A>
 <CODE>calls/2</CODE>, 
-<A NAME="IDX3677"></A>
+<A NAME="IDX3460"></A>
 <CODE>success/1</CODE>, 
-<A NAME="IDX3678"></A>
+<A NAME="IDX3461"></A>
 <CODE>success/2</CODE>, 
-<A NAME="IDX3679"></A>
+<A NAME="IDX3462"></A>
 <CODE>comp/1</CODE>, 
-<A NAME="IDX3680"></A>
+<A NAME="IDX3463"></A>
 <CODE>comp/2</CODE>, 
-<A NAME="IDX3681"></A>
+<A NAME="IDX3464"></A>
 <CODE>prop/1</CODE>, 
-<A NAME="IDX3682"></A>
+<A NAME="IDX3465"></A>
 <CODE>prop/2</CODE>, 
-<A NAME="IDX3683"></A>
+<A NAME="IDX3466"></A>
 <CODE>entry/1</CODE>, 
-<A NAME="IDX3684"></A>
+<A NAME="IDX3467"></A>
 <CODE>modedef/1</CODE>, 
-<A NAME="IDX3685"></A>
+<A NAME="IDX3468"></A>
 <CODE>decl/1</CODE>, 
-<A NAME="IDX3686"></A>
+<A NAME="IDX3469"></A>
 <CODE>decl/2</CODE>, 
-<A NAME="IDX3687"></A>
+<A NAME="IDX3470"></A>
 <CODE>comment/2</CODE>.
 
 <LI><STRONG>Other modules used:</STRONG>
@@ -213,7 +213,7 @@ The recommended procedure in order to make use of assertions in user programs is
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3688"></A>
+<A NAME="IDX3471"></A>
 <CODE>assertions/assertions_props</CODE>.
 
 </UL>
@@ -224,34 +224,34 @@ The recommended procedure in order to make use of assertions in user programs is
 
 
 
-<H2><A NAME="SEC270" HREF="ciao_toc.html#TOC270">Documentation on new declarations (<CODE>assertions</CODE>)</A></H2>
+<H2><A NAME="SEC244" HREF="ciao_toc.html#TOC244">Documentation on new declarations (<CODE>assertions</CODE>)</A></H2>
 <P>
-<A NAME="IDX3689"></A>
-<A NAME="IDX3690"></A>
+<A NAME="IDX3472"></A>
+<A NAME="IDX3473"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>pred/1:</B>
-<DD><A NAME="IDX3691"></A>
+<DD><A NAME="IDX3474"></A>
 
 
 <P>
-<A NAME="IDX3692"></A>
-<A NAME="IDX3693"></A>
+<A NAME="IDX3475"></A>
+<A NAME="IDX3476"></A>
 This assertion provides information on a predicate. The body of the assertion (its only argument) contains properties or comments in the formats defined by 
-<A NAME="IDX3694"></A>
+<A NAME="IDX3477"></A>
 <CODE>assrt_body/1</CODE>. 
 
 
 <P>
 More than one of these assertions may appear per predicate, in which case each one represents a possible "
-<A NAME="IDX3695"></A>
+<A NAME="IDX3478"></A>
 mode" of use (
-<A NAME="IDX3696"></A>
+<A NAME="IDX3479"></A>
 usage) of the predicate. The exact scope of the usage is defined by the properties given for calls in the body of each assertion (which should thus distinguish the different usages intended). All of them together cover all possible modes of usage. 
 
 
 <P>
 For example, the following assertions describe (all the and the only) modes of usage of predicate <CODE>length/2</CODE> (see 
-<A NAME="IDX3697"></A>
+<A NAME="IDX3480"></A>
 <CODE>lists</CODE>): 
 
 <PRE>
@@ -276,20 +276,20 @@ For example, the following assertions describe (all the and the only) modes of u
 </DL>
 
 <P>
-<A NAME="IDX3698"></A>
-<A NAME="IDX3699"></A>
+<A NAME="IDX3481"></A>
+<A NAME="IDX3482"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>pred/2:</B>
-<DD><A NAME="IDX3700"></A>
+<DD><A NAME="IDX3483"></A>
 
 
 <P>
-<A NAME="IDX3701"></A>
-<A NAME="IDX3702"></A>
+<A NAME="IDX3484"></A>
+<A NAME="IDX3485"></A>
 This assertion is similar to a 
-<A NAME="IDX3703"></A>
+<A NAME="IDX3486"></A>
 <CODE>pred/1</CODE> assertion but it is explicitely qualified. Non-qualified 
-<A NAME="IDX3704"></A>
+<A NAME="IDX3487"></A>
 <CODE>pred/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
 
 
@@ -309,24 +309,24 @@ This assertion is similar to a
 </DL>
 
 <P>
-<A NAME="IDX3705"></A>
-<A NAME="IDX3706"></A>
+<A NAME="IDX3488"></A>
+<A NAME="IDX3489"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>calls/1:</B>
-<DD><A NAME="IDX3707"></A>
+<DD><A NAME="IDX3490"></A>
 
 
 <P>
-<A NAME="IDX3708"></A>
-<A NAME="IDX3709"></A>
+<A NAME="IDX3491"></A>
+<A NAME="IDX3492"></A>
 This assertion is similar to a 
-<A NAME="IDX3710"></A>
+<A NAME="IDX3493"></A>
 <CODE>pred/1</CODE> assertion but it only provides information about the calls to a predicate. If one or several calls assertions are given they are understood to describe all possible calls to the predicate. 
 
 
 <P>
 For example, the following assertion describes all possible calls to predicate <CODE>is/2</CODE> (see 
-<A NAME="IDX3711"></A>
+<A NAME="IDX3494"></A>
 <CODE>arithmetic</CODE>): 
 
 <PRE>
@@ -346,20 +346,20 @@ For example, the following assertion describes all possible calls to predicate <
 </DL>
 
 <P>
-<A NAME="IDX3712"></A>
-<A NAME="IDX3713"></A>
+<A NAME="IDX3495"></A>
+<A NAME="IDX3496"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>calls/2:</B>
-<DD><A NAME="IDX3714"></A>
+<DD><A NAME="IDX3497"></A>
 
 
 <P>
-<A NAME="IDX3715"></A>
-<A NAME="IDX3716"></A>
+<A NAME="IDX3498"></A>
+<A NAME="IDX3499"></A>
 This assertion is similar to a 
-<A NAME="IDX3717"></A>
+<A NAME="IDX3500"></A>
 <CODE>calls/1</CODE> assertion but it is explicitely qualified. Non-qualified 
-<A NAME="IDX3718"></A>
+<A NAME="IDX3501"></A>
 <CODE>calls/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
 
 
@@ -379,18 +379,18 @@ This assertion is similar to a
 </DL>
 
 <P>
-<A NAME="IDX3719"></A>
-<A NAME="IDX3720"></A>
+<A NAME="IDX3502"></A>
+<A NAME="IDX3503"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>success/1:</B>
-<DD><A NAME="IDX3721"></A>
+<DD><A NAME="IDX3504"></A>
 
 
 <P>
-<A NAME="IDX3722"></A>
-<A NAME="IDX3723"></A>
+<A NAME="IDX3505"></A>
+<A NAME="IDX3506"></A>
 This assertion is similar to a 
-<A NAME="IDX3724"></A>
+<A NAME="IDX3507"></A>
 <CODE>pred/1</CODE> assertion but it only provides information about the answers to a predicate. The described answers might be conditioned to a particular way of calling the predicate. 
 
 
@@ -414,20 +414,20 @@ For example, the following assertion specifies the answers of the <CODE>length/2
 </DL>
 
 <P>
-<A NAME="IDX3725"></A>
-<A NAME="IDX3726"></A>
+<A NAME="IDX3508"></A>
+<A NAME="IDX3509"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>success/2:</B>
-<DD><A NAME="IDX3727"></A>
+<DD><A NAME="IDX3510"></A>
 
 
 <P>
-<A NAME="IDX3728"></A>
-<A NAME="IDX3729"></A>
+<A NAME="IDX3511"></A>
+<A NAME="IDX3512"></A>
 This assertion is similar to a 
-<A NAME="IDX3730"></A>
+<A NAME="IDX3513"></A>
 <CODE>success/1</CODE> assertion but it is explicitely qualified. Non-qualified 
-<A NAME="IDX3731"></A>
+<A NAME="IDX3514"></A>
 <CODE>success/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
 
 
@@ -447,24 +447,24 @@ This assertion is similar to a
 </DL>
 
 <P>
-<A NAME="IDX3732"></A>
-<A NAME="IDX3733"></A>
+<A NAME="IDX3515"></A>
+<A NAME="IDX3516"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>comp/1:</B>
-<DD><A NAME="IDX3734"></A>
+<DD><A NAME="IDX3517"></A>
 
 
 <P>
-<A NAME="IDX3735"></A>
-<A NAME="IDX3736"></A>
+<A NAME="IDX3518"></A>
+<A NAME="IDX3519"></A>
 This assertion is similar to a 
-<A NAME="IDX3737"></A>
+<A NAME="IDX3520"></A>
 <CODE>pred/1</CODE> assertion but it only provides information about the global execution properties of a predicate (note that such kind of information is also conveyed by pred assertions). The described properties might be conditioned to a particular way of calling the predicate. 
 
 
 <P>
 For example, the following assertion specifies that the computation of <CODE>append/3</CODE> (see 
-<A NAME="IDX3738"></A>
+<A NAME="IDX3521"></A>
 <CODE>lists</CODE>) will not fail <EM>if</EM> it is called as described (but does not compel the predicate to be called that way): 
 
 <PRE>
@@ -484,20 +484,20 @@ For example, the following assertion specifies that the computation of <CODE>app
 </DL>
 
 <P>
-<A NAME="IDX3739"></A>
-<A NAME="IDX3740"></A>
+<A NAME="IDX3522"></A>
+<A NAME="IDX3523"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>comp/2:</B>
-<DD><A NAME="IDX3741"></A>
+<DD><A NAME="IDX3524"></A>
 
 
 <P>
-<A NAME="IDX3742"></A>
-<A NAME="IDX3743"></A>
+<A NAME="IDX3525"></A>
+<A NAME="IDX3526"></A>
 This assertion is similar to a 
-<A NAME="IDX3744"></A>
+<A NAME="IDX3527"></A>
 <CODE>comp/1</CODE> assertion but it is explicitely qualified. Non-qualified 
-<A NAME="IDX3745"></A>
+<A NAME="IDX3528"></A>
 <CODE>comp/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
 
 
@@ -517,18 +517,18 @@ This assertion is similar to a
 </DL>
 
 <P>
-<A NAME="IDX3746"></A>
-<A NAME="IDX3747"></A>
+<A NAME="IDX3529"></A>
+<A NAME="IDX3530"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>prop/1:</B>
-<DD><A NAME="IDX3748"></A>
+<DD><A NAME="IDX3531"></A>
 
 
 <P>
-<A NAME="IDX3749"></A>
-<A NAME="IDX3750"></A>
+<A NAME="IDX3532"></A>
+<A NAME="IDX3533"></A>
 This assertion is similar to a <CODE>pred/1</CODE> assertion but it flags that the predicate being documented is also a "
-<A NAME="IDX3751"></A>
+<A NAME="IDX3534"></A>
 property." 
 
 
@@ -538,8 +538,8 @@ Properties are standard predicates, but which are <EM>guaranteed to terminate fo
 
 <P>
 Provided the above holds, properties can thus be safely used as 
-<A NAME="IDX3752"></A>
-run-time checks. The program transformation used in <CODE>ciaopp</CODE> for run-time checking guarantees the third requirement. It also performs some basic checks on properties which in most cases are enough for the second requirement. However, it is the user's responsibility to guarantee termination of the properties defined. (See also section <A HREF="ciao_61.html#SEC275">Declaring regular types</A> for some considerations applicable to writing properties.) 
+<A NAME="IDX3535"></A>
+run-time checks. The program transformation used in <CODE>ciaopp</CODE> for run-time checking guarantees the third requirement. It also performs some basic checks on properties which in most cases are enough for the second requirement. However, it is the user's responsibility to guarantee termination of the properties defined. (See also section <A HREF="ciao_61.html#SEC249">Declaring regular types</A> for some considerations applicable to writing properties.) 
 
 
 <P>
@@ -559,20 +559,20 @@ The set of properties is thus a strict subset of the set of predicates. Note tha
 </DL>
 
 <P>
-<A NAME="IDX3753"></A>
-<A NAME="IDX3754"></A>
+<A NAME="IDX3536"></A>
+<A NAME="IDX3537"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>prop/2:</B>
-<DD><A NAME="IDX3755"></A>
+<DD><A NAME="IDX3538"></A>
 
 
 <P>
-<A NAME="IDX3756"></A>
-<A NAME="IDX3757"></A>
+<A NAME="IDX3539"></A>
+<A NAME="IDX3540"></A>
 This assertion is similar to a 
-<A NAME="IDX3758"></A>
+<A NAME="IDX3541"></A>
 <CODE>prop/1</CODE> assertion but it is explicitely qualified. Non-qualified 
-<A NAME="IDX3759"></A>
+<A NAME="IDX3542"></A>
 <CODE>prop/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
 
 
@@ -592,30 +592,30 @@ This assertion is similar to a
 </DL>
 
 <P>
-<A NAME="IDX3760"></A>
-<A NAME="IDX3761"></A>
+<A NAME="IDX3543"></A>
+<A NAME="IDX3544"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>entry/1:</B>
-<DD><A NAME="IDX3762"></A>
+<DD><A NAME="IDX3545"></A>
 
 
 <P>
-<A NAME="IDX3763"></A>
-<A NAME="IDX3764"></A>
+<A NAME="IDX3546"></A>
+<A NAME="IDX3547"></A>
 This assertion provides information about the <EM>external</EM> calls to a predicate. It is identical syntactically to a 
-<A NAME="IDX3765"></A>
+<A NAME="IDX3548"></A>
 <CODE>calls/1</CODE> assertion. However, they describe only external calls, i.e., calls to the exported predicates of a module from outside the module, or calls to the predicates in a non-modular file from other files (or the user). 
 
 
 <P>
 These assertions are <EM>trusted</EM> by the compiler. As a result, if their descriptions are erroneous they can introduce bugs in programs. Thus, 
-<A NAME="IDX3766"></A>
+<A NAME="IDX3549"></A>
 <CODE>entry/1</CODE> assertions should be written with care. 
 
 
 <P>
 An important use of these assertions is in 
-<A NAME="IDX3767"></A>
+<A NAME="IDX3550"></A>
 providing information to the compiler which it may not be able to infer from the program. The main use is in providing information on the ways in which exported predicates of a module will be called from outside the module. This will greatly improve the precision of the analyzer, which otherwise has to assume that the arguments that exported predicates receive are any arbitrary term. 
 
 
@@ -632,11 +632,11 @@ providing information to the compiler which it may not be able to infer from the
 </DL>
 
 <P>
-<A NAME="IDX3768"></A>
-<A NAME="IDX3769"></A>
+<A NAME="IDX3551"></A>
+<A NAME="IDX3552"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>modedef/1:</B>
-<DD><A NAME="IDX3770"></A>
+<DD><A NAME="IDX3553"></A>
 
 
 <P>
@@ -677,18 +677,18 @@ is equivalent to:
 </DL>
 
 <P>
-<A NAME="IDX3771"></A>
-<A NAME="IDX3772"></A>
+<A NAME="IDX3554"></A>
+<A NAME="IDX3555"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>decl/1:</B>
-<DD><A NAME="IDX3773"></A>
+<DD><A NAME="IDX3556"></A>
 
 
 <P>
-<A NAME="IDX3774"></A>
-<A NAME="IDX3775"></A>
+<A NAME="IDX3557"></A>
+<A NAME="IDX3558"></A>
 This assertion is similar to a 
-<A NAME="IDX3776"></A>
+<A NAME="IDX3559"></A>
 <CODE>pred/1</CODE> assertion but it is used for declarations instead than for predicates. 
 
 
@@ -705,20 +705,20 @@ This assertion is similar to a
 </DL>
 
 <P>
-<A NAME="IDX3777"></A>
-<A NAME="IDX3778"></A>
+<A NAME="IDX3560"></A>
+<A NAME="IDX3561"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>decl/2:</B>
-<DD><A NAME="IDX3779"></A>
+<DD><A NAME="IDX3562"></A>
 
 
 <P>
-<A NAME="IDX3780"></A>
-<A NAME="IDX3781"></A>
+<A NAME="IDX3563"></A>
+<A NAME="IDX3564"></A>
 This assertion is similar to a 
-<A NAME="IDX3782"></A>
+<A NAME="IDX3565"></A>
 <CODE>decl/1</CODE> assertion but it is explicitely qualified. Non-qualified 
-<A NAME="IDX3783"></A>
+<A NAME="IDX3566"></A>
 <CODE>decl/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. 
 
 
@@ -738,11 +738,11 @@ This assertion is similar to a
 </DL>
 
 <P>
-<A NAME="IDX3784"></A>
-<A NAME="IDX3785"></A>
+<A NAME="IDX3567"></A>
+<A NAME="IDX3568"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>comment/2:</B>
-<DD><A NAME="IDX3786"></A>
+<DD><A NAME="IDX3569"></A>
 
 
 <P>
@@ -751,8 +751,8 @@ This assertion is similar to a
 <UL>
 <LI><EM>Description:</EM>
 
-<A NAME="IDX3787"></A>
-<A NAME="IDX3788"></A>
+<A NAME="IDX3570"></A>
+<A NAME="IDX3571"></A>
 This assertion gives a text <CODE>Comment</CODE> for a given predicate <CODE>Pred</CODE>. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -760,9 +760,9 @@ This assertion gives a text <CODE>Comment</CODE> for a given predicate <CODE>Pre
  (<CODE>assertions_props:head_pattern/1</CODE>)
 
 <CODE>Comment</CODE> is a text comment with admissible documentation commands. The usual formatting commands that are applicable in comment strings are defined by 
-<A NAME="IDX3789"></A>
+<A NAME="IDX3572"></A>
 <CODE>stringcommand/1</CODE>. See the 
-<A NAME="IDX3790"></A>
+<A NAME="IDX3573"></A>
 <CODE>lpdoc</CODE> manual for documentation on comments. 
  (<CODE>assertions_props:docstring/1</CODE>)
 </UL>
@@ -771,13 +771,13 @@ This assertion gives a text <CODE>Comment</CODE> for a given predicate <CODE>Pre
 
 
 
-<H2><A NAME="SEC271" HREF="ciao_toc.html#TOC271">Documentation on exports (<CODE>assertions</CODE>)</A></H2>
+<H2><A NAME="SEC245" HREF="ciao_toc.html#TOC245">Documentation on exports (<CODE>assertions</CODE>)</A></H2>
 <P>
-<A NAME="IDX3791"></A>
-<A NAME="IDX3792"></A>
+<A NAME="IDX3574"></A>
+<A NAME="IDX3575"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>check/1:</B>
-<DD><A NAME="IDX3793"></A>
+<DD><A NAME="IDX3576"></A>
 
 
 <P>
@@ -786,11 +786,11 @@ This assertion gives a text <CODE>Comment</CODE> for a given predicate <CODE>Pre
 <UL>
 <LI><EM>Description:</EM>
 
-<A NAME="IDX3794"></A>
-<A NAME="IDX3795"></A>
+<A NAME="IDX3577"></A>
+<A NAME="IDX3578"></A>
 This assertion provides information on a clause program point (position in the body of a clause). Calls to a 
-<A NAME="IDX3796"></A>
-<CODE>check/1</CODE> assertion can appear in the body of a clause in any place where a literal can normally appear. The property defined by <CODE>PropertyConjunction</CODE> should hold in all the run-time stores corresponding to that program point. See also section <A HREF="ciao_65.html#SEC288">Run-time checking of assertions</A>. 
+<A NAME="IDX3579"></A>
+<CODE>check/1</CODE> assertion can appear in the body of a clause in any place where a literal can normally appear. The property defined by <CODE>PropertyConjunction</CODE> should hold in all the run-time stores corresponding to that program point. See also @xref{Run-time checking of assertions}. 
 <LI><EM>The following properties should hold at call time:</EM>
 
 <CODE>PropertyConjunction</CODE> is either a term or a <EM>conjunction</EM> of terms. The main functor and arity of each of those terms corresponds to the definition of a property. The first argument of each such term is a variable which appears as a head argument.
@@ -800,11 +800,11 @@ This assertion provides information on a clause program point (position in the b
 </DL>
 
 <P>
-<A NAME="IDX3797"></A>
-<A NAME="IDX3798"></A>
+<A NAME="IDX3580"></A>
+<A NAME="IDX3581"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>trust/1:</B>
-<DD><A NAME="IDX3799"></A>
+<DD><A NAME="IDX3582"></A>
 
 
 <P>
@@ -813,18 +813,18 @@ This assertion provides information on a clause program point (position in the b
 <UL>
 <LI><EM>Description:</EM>
 
-<A NAME="IDX3800"></A>
-<A NAME="IDX3801"></A>
+<A NAME="IDX3583"></A>
+<A NAME="IDX3584"></A>
 This assertion also provides information on a clause program point. It is identical syntactically to a 
-<A NAME="IDX3802"></A>
+<A NAME="IDX3585"></A>
 <CODE>check/1</CODE> assertion. However, the properties stated are not taken as something to be checked but are instead <EM>trusted</EM> by the compiler. While the compiler may in some cases detect an inconsistency between a 
-<A NAME="IDX3803"></A>
+<A NAME="IDX3586"></A>
 <CODE>trust/1</CODE> assertion and the program, in all other cases the information given in the assertion will be taken to be true. As a result, if these assertions are erroneous they can introduce bugs in programs. Thus, 
-<A NAME="IDX3804"></A>
+<A NAME="IDX3587"></A>
 <CODE>trust/1</CODE> assertions should be written with care. 
 
 An important use of these assertions is in 
-<A NAME="IDX3805"></A>
+<A NAME="IDX3588"></A>
 providing information to the compiler which it may not be able to infer from the program (either because the information is not present or because the analyzer being used is not precise enough). In particular, providing information on external predicates which may not be accessible at the time of compiling the module can greatly improve the precision of the analyzer. This can be easily done with trust assertion.  
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -835,11 +835,11 @@ providing information to the compiler which it may not be able to infer from the
 </DL>
 
 <P>
-<A NAME="IDX3806"></A>
-<A NAME="IDX3807"></A>
+<A NAME="IDX3589"></A>
+<A NAME="IDX3590"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>true/1:</B>
-<DD><A NAME="IDX3808"></A>
+<DD><A NAME="IDX3591"></A>
 
 
 <P>
@@ -848,12 +848,12 @@ providing information to the compiler which it may not be able to infer from the
 <UL>
 <LI><EM>Description:</EM>
 
-<A NAME="IDX3809"></A>
-<A NAME="IDX3810"></A>
+<A NAME="IDX3592"></A>
+<A NAME="IDX3593"></A>
 This assertion is identical syntactically to a 
-<A NAME="IDX3811"></A>
+<A NAME="IDX3594"></A>
 <CODE>check/1</CODE> assertion. However, the properties stated have been proved to hold by the analyzer. Thus, these assertions often represent the 
-<A NAME="IDX3812"></A>
+<A NAME="IDX3595"></A>
 analyzer output. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -864,11 +864,11 @@ analyzer output.
 </DL>
 
 <P>
-<A NAME="IDX3813"></A>
-<A NAME="IDX3814"></A>
+<A NAME="IDX3596"></A>
+<A NAME="IDX3597"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>false/1:</B>
-<DD><A NAME="IDX3815"></A>
+<DD><A NAME="IDX3598"></A>
 
 
 <P>
@@ -877,12 +877,12 @@ analyzer output.
 <UL>
 <LI><EM>Description:</EM>
 
-<A NAME="IDX3816"></A>
-<A NAME="IDX3817"></A>
+<A NAME="IDX3599"></A>
+<A NAME="IDX3600"></A>
 This assertion is identical syntactically to a 
-<A NAME="IDX3818"></A>
+<A NAME="IDX3601"></A>
 <CODE>check/1</CODE> assertion. However, the properties stated have been proved not to hold by the analyzer. Thus, these assertions often represent the 
-<A NAME="IDX3819"></A>
+<A NAME="IDX3602"></A>
 analyzer output. 
 <LI><EM>The following properties should hold at call time:</EM>
 
@@ -893,6 +893,6 @@ analyzer output.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_58.html">previous</A>, <A HREF="ciao_60.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_58.html">previous</A>, <A HREF="ciao_60.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

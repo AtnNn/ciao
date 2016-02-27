@@ -91,7 +91,7 @@ prime([X|Primes],Num):-
 	prime(Primes,Num).
 
 
-:- comment(version(1*9+237,2003/12/22,18:23*36+'CET'), "Added comment
+:- comment(version(1*11+113,2003/12/22,18:22*36+'CET'), "Added comment
    author and module.  (Edison Mera)").
 
 :- comment(version(0*9+99,1999/05/26,11:33*15+'MEST'), "Documented

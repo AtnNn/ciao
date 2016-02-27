@@ -27,21 +27,8 @@ stream_property(S, P) :- % It is not complete
 % char_conversion(_,_) :- not_yet_implemented.
 % current_char_conversion(_,_) :- not_yet_implemented.
 
-%% *** Delete this comment after reading: it is only a reminder! ***
-%% 
-%% The "assertions" library needs to be included in order to support
-%% ":- comment(...,...)." declarations such as below, i.e., insert: 
-%% 
-%% :- module(_,_,[assertions]).
-%% 
-%% At the beginning of the file:
-%% The following version comment(s) can be moved elsewhere in the 
-%% file. Subsequent version comments will always be placed above 
-%% the last one inserted.
-
-
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+263,2003/12/31,11:55*21+'CET'), "Added
+:- comment(version(1*11+141,2003/12/31,11:56*25+'CET'), "Added
    documentation.  (Edison Mera)").
 

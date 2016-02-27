@@ -254,7 +254,7 @@ void collect_one_pending_unification(Arg)
     sofar++; 
     CTagToPointer(ref) = ref;     		               /* untrail */
     
-    X(0) = CTagToGoal(ref);
+    X(0) = ref;                               /* Was CTagToGoal(ref); DCG */
     X(1) = value;
     
     if ( !CondCVA(ref))	

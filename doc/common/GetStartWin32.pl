@@ -203,8 +203,11 @@ regarding new versions, download new versions, report bugs, etc.
 main.
 
 %% --------------------------------------------------------------------------- 
-:- comment(version_maintenance,dir('../../version')).
+:- comment(version,dir('../../version')).
 %% --------------------------------------------------------------------------- 
-:- comment(version(1*9+116,2003/12/03,13:35*35+'CET'), "Minor fix in
-   version_maintenance (Edison Mera)").
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+157,2004/01/09,15:21*39+'CET'), "Control
+   version started.  (Edison Mera)").
 

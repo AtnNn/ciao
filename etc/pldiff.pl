@@ -160,6 +160,6 @@ variant(Term1,Term2):-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+258,2003/12/30,23:52*10+'CET'), "Started
+:- comment(version(1*11+136,2003/12/30,23:51*20+'CET'), "Started
    version control.  (Edison Mera)").
 

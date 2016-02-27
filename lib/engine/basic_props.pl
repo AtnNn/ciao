@@ -5,11 +5,13 @@
          sequence/2, sequence_or_list/2, character_code/1, string/1,
          predname/1, atm_or_atm_list/1, compat/2,
          iso/1, not_further_inst/2, sideff/2,
-	 regtype/1, native/1, native/2
+	 regtype/1, native/1, native/2,
+	 eval/1
         ],
         [assertions]).
 
-%% Commented out to avoid including hiord_rt in all executables, put declarations instead
+%% Commented out to avoid including hiord_rt in all executables, 
+%% put declarations instead:
 %% :- use_package(hiord).
 :- set_prolog_flag(read_hiord, on).
 :- import(hiord_rt, [call/2]).
@@ -32,7 +34,8 @@
 :- comment(term/1, "The most general type (includes all possible
    terms).").
 
-:- true prop term(X) + regtype # "@var{X} is any term.".
+:- true prop term(X) + ( regtype, native ) # "@var{X} is any term.".
+:- true comp term(X) + sideff(free).
 
 term(_).
 
@@ -40,7 +43,8 @@ term(_).
         @tt{[-2^2147483616, 2^2147483616)}.  Thus for all practical
         purposes, the range of integers can be considered infinite.").
 
-:- true prop int(T) + regtype # "@var{T} is an integer.".
+:- true prop int(T) + ( regtype, native ) # "@var{T} is an integer.".
+:- true comp int(T) + sideff(free).
 
 int(X) :-
         nonvar(X), !,
@@ -57,8 +61,9 @@ give_sign(P, N) :- N is -P.
 :- comment(nnegint/1, "The type of non-negative integers, i.e.,
 	natural numbers.").
 
-:- true prop nnegint(T) + regtype
+:- true prop nnegint(T) + ( regtype, native )
 	# "@var{T} is a non-negative integer.".
+:- true comp nnegint(T) + sideff(free).
 
 nnegint(X) :-
         nonvar(X), !,
@@ -76,14 +81,16 @@ nnegint(N) :- posint(N).
         Not-a-number, which arises as the result of indeterminate
         operations, represented as @tt{0.Nan}").
 
-:- true prop flt(T) + regtype # "@var{T} is a float.".
+:- true prop flt(T) + ( regtype, native ) # "@var{T} is a float.".
+:- true comp flt(T) + sideff(free).
 
 flt(T) :- nonvar(T), !, float(T).
 flt(T) :- int(N), T is N/10.
 
 :- comment(num/1, "The type of numbers, that is, integer or floating-point.").
 
-:- true prop num(T) + regtype # "@var{T} is a number.".
+:- true prop num(T) + ( regtype, native ) # "@var{T} is a number.".
+:- true comp num(T) + sideff(free).
 
 num(T) :- number(T), !.
 num(T) :- int(T).
@@ -92,7 +99,8 @@ num(T) :- int(T).
 :- comment(atm/1, "The type of atoms, or non-numeric constants.  The
         size of atoms is unbound.").
 
-:- true prop atm(T) + regtype # "@var{T} is an atom.".
+:- true prop atm(T) + ( regtype, native ) # "@var{T} is an atom.".
+:- true comp atm(T) + sideff(free).
 
 % Should be current_atom/1
 atm(a).
@@ -101,14 +109,16 @@ atm(T) :- atom(T).
 :- comment(struct/1, "The type of compound terms, or terms with
 non-zeroary functors. By now there is a limit of 255 arguments.").
 
-:- true prop struct(T) + regtype # "@var{T} is a compound term.".
+:- true prop struct(T) + ( regtype, native ) # "@var{T} is a compound term.".
+:- true comp struct(T) + sideff(free).
 
 struct([_|_]):- !.
 struct(T) :- functor(T, _, A), A>0. % compound(T).
 
 :- comment(gnd/1, "The type of all terms without variables.").
 
-:- true prop gnd(T) + regtype # "@var{T} is ground.".
+:- true prop gnd(T) + ( regtype, native ) # "@var{T} is ground.".
+:- true comp gnd(T) + sideff(free).
 
 gnd([]) :- !.
 gnd(T) :- functor(T, _, A), grnd_args(A, T).
@@ -122,6 +132,7 @@ grnd_args(N, T) :-
 
 :- true prop constant(T) + regtype
    # "@var{T} is an atomic term (an atom or a number).".
+:- true comp constant(T) + sideff(free).
 
 constant(T) :- atm(T).
 constant(T) :- num(T).
@@ -129,6 +140,7 @@ constant(T) :- num(T).
 :- true prop callable(T) + regtype
    # "@var{T} is a term which represents a goal, i.e.,
         an atom or a structure.".
+:- true comp callable(T) + sideff(free).
 
 callable(T) :- atm(T).
 callable(T) :- struct(T).
@@ -166,6 +178,7 @@ way around.
 
 :- true prop operator_specifier(X) + regtype # "@var{X} specifies the type and
         associativity of an operator.".
+:- true comp operator_specifier(X) + sideff(free).
 
 operator_specifier(fy).
 operator_specifier(fx).
@@ -180,6 +193,7 @@ operator_specifier(xf).
    @includedef{list/1}").
 
 :- true prop list(L) + regtype # "@var{L} is a list.".
+:- true comp list(L) + sideff(free).
 
 list([]).
 list([_|L]) :- list(L).
@@ -188,6 +202,7 @@ list([_|L]) :- list(L).
    @var{T} holds.").
 
 :- true prop list(L,T) + regtype # "@var{L} is a list of @var{T}s.".
+:- true comp list(L,T) + sideff(free).
 :- meta_predicate list(?, pred(1)).
 
 list([],_).
@@ -196,6 +211,7 @@ list([X|Xs], T) :-
         list(Xs, T).
 
 :- true prop member(X,L) # "@var{X} is an element of @var{L}.".
+:- true comp member(X,L) + sideff(free).
 
 member(X, [X|_]).
 member(X, [_Y|Xs]):- member(X, Xs).
@@ -205,6 +221,7 @@ member(X, [_Y|Xs]):- member(X, Xs).
    a sequence of three atoms, @tt{a} is a sequence of one atom.").
 
 :- true prop sequence(S,T) + regtype # "@var{S} is a sequence of @var{T}s.".
+:- true comp sequence(S,T) + sideff(free).
 
 :- meta_predicate sequence(?, pred(1)).
 
@@ -215,14 +232,16 @@ sequence((E,S), T) :-
 
 :- true prop sequence_or_list(S,T) + regtype
    # "@var{S} is a sequence or list of @var{T}s.".
-
+:- true comp sequence_or_list(S,T) + sideff(free).
 :- meta_predicate sequence_or_list(?, pred(1)).
 
 sequence_or_list(E, T) :- list(E,T).
 sequence_or_list(E, T) :- sequence(E, T).
 
-:- true prop character_code(T) => int + regtype
+:- true prop character_code(T) + regtype
    # "@var{T} is an integer which is a character code.".
+:- true success character_code(T) => int.
+:- true comp character_code(T) + sideff(free).
 
 character_code(I) :- int(I).
 
@@ -233,8 +252,10 @@ character_code(I) :- int(I).
         syntax when the list is not complete: @tt{\"st\"||R} is
         equivalent to @tt{[0's,0't|R]}.").
 
-:- true prop string(T) => list(character_code) + regtype
+:- true prop string(T) + regtype
    # "@var{T} is a string (a list of character codes).".
+:- true success string(T) => list(character_code).
+:- true comp string(T) + sideff(free).
 
 string(T) :- list(T, character_code).
 
@@ -247,6 +268,7 @@ string(T) :- list(T, character_code).
 :- true prop predname(P) + regtype
    # "@var{P} is a Name/Arity structure denoting
 	a predicate name: @includedef{predname/1}".
+:- true comp predname(P) + sideff(free).
 
 predname(P/A) :-
 	atm(P),
@@ -254,6 +276,7 @@ predname(P/A) :-
 
 :- true prop atm_or_atm_list(T) + regtype
    # "@var{T} is an atom or a list of atoms.".
+:- true comp atm_or_atm_list(T) + sideff(free).
 
 atm_or_atm_list(T) :- atm(T).
 atm_or_atm_list(T) :- list(T, atm).
@@ -271,6 +294,7 @@ atm_or_atm_list(T) :- list(T, atm).
 :- true prop compat(Term,Prop)
    # "@var{Term} is @em{compatible} with @var{Prop}".
 :- meta_predicate compat(?, pred(1)).
+:- true comp compat(Term,Prop) + sideff(free).
 
 compat(T, P) :- \+ \+ P(T).
 
@@ -278,31 +302,32 @@ compat(T, P) :- \+ \+ P(T).
 % automatic documenter.
 
 :- true prop iso(G) # "@em{Complies with the ISO-Prolog standard.}".
+:- true comp iso(G) + sideff(free).
 
 :- impl_defined([iso/1]).
 
 :- true prop not_further_inst(G,V)
         # "@var{V} is not further instantiated.". % by the predicate
+:- true comp not_further_inst(G,V) + sideff(free).
 
 :- impl_defined(not_further_inst/2).
 
-:- true comp sideff(G,X) + native(sideff(G,X)).
-:- calls sideff(G,X) : member(X,[free,soft,hard]).
-:- true prop sideff(G,X) # "@var{G} is side-effect @var{X}.".
-:- comment(sideff(G,X),"Declares that @var{G} is side-effect free,
-   soft (do not affect execution, e.g., input/output), or hard (e.g.,
-   assert/retract).").
+:- true comp sideff(G,X) + ( native, sideff(free) ).
+:- prop sideff(G,X) : member(X,[free,soft,hard])
+# "@var{G} is side-effect @var{X}.".
+:- comment(sideff(G,X),"Declares that @var{G} is side-effect free
+   (if its execution has no observable result other than its success,
+   its failure, or its abortion), soft (if its execution may have other
+   observable results which, however, do not affect subsequent execution,
+   e.g., input/output), or hard (e.g., assert/retract).").
 :- meta_predicate sideff(goal,?).
 
 :- impl_defined(sideff/2).
 
- %% :- prop sideff(G, X).
- %% 
- %% sideff(_,_).
-
 % Built-in in CiaoPP
 :- true prop regtype(G) # "Defines a regular type.".
 :- meta_predicate regtype(goal).
+:- true comp regtype(G) + sideff(free).
 
 :- impl_defined(regtype/1).
 
@@ -310,6 +335,7 @@ compat(T, P) :- \+ \+ P(T).
 :- true prop native(Pred,Key)
    # "This predicate is understood natively by CiaoPP as @var{Key}.".
 %%   # "Predicate @var{Pred} is understood natively by CiaoPP as @var{Key}.".
+:- true comp native(P,K) + sideff(free).
 :- meta_predicate native(goal,?).
 
 :- impl_defined(native/2).
@@ -318,12 +344,24 @@ compat(T, P) :- \+ \+ P(T).
 :- true prop native(Pred)
    # "This predicate is understood natively by CiaoPP.".
 %%   # "Predicate @var{Pred} is understood natively by CiaoPP.".
+:- true comp native(P) + sideff(free).
 :- meta_predicate native(goal).
 
 native(X):- native(X,X).
 
+:- true prop eval/1.
+
+:- impl_defined(eval/1).
+
 % ------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+166,2004/02/03,21:12*16+'CET'), "Defined
+   side-effect in sideff/2. Added sideff declarations.
+   (Francisco Bueno Carrillo)").
+
+:- comment(version(1*11+50,2003/10/15,05:36*15+'CEST'), "Added native
+   to all native types.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*9+93,2003/07/29,17:53*15+'CEST'), "Minor mod to
    @pred{native/1} and @pred{native/2} documentation.  (Manuel
@@ -358,4 +396,3 @@ native(X):- native(X,X).
 :- comment(version(0*9+19,1999/03/25,16:32*32+'MET'), "Fixed bug in
    int/1 to avoid infinite loops when the argument is not compatible
    with int.  (Daniel Cabeza Gras)").
-

@@ -215,6 +215,6 @@ args(X, Y, S0, S) :-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+209,2003/12/21,02:05*22+'CET'), "Added comment
+:- comment(version(1*11+86,2003/12/21,02:03*40+'CET'), "Added comment
    author.  (Edison Mera)").
 

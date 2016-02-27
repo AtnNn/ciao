@@ -78,12 +78,24 @@ write_status_assertion(no,Status,Type,Goal):-
 
 write_comment([],_AsComm):- !.
 write_comment(Comm,AsComm):-
-	write_comment_as_comment(AsComm,Comm).
+	check_comas_in_comment(Comm,CC ),
+	write_comment_as_comment(AsComm,CC).
 
 write_comment_as_comment(yes,Comm):-
 	format('~n%% ~8|#  "~s"',[Comm]).
 write_comment_as_comment(no,Comm):-
 	format('~n~8|#  "~s"',[Comm]).
+
+check_comas_in_comment( [] , [] ).
+
+check_comas_in_comment( [A|Ar] , [A|Br] ) :-
+	A \== 0'",
+	check_comas_in_comment(Ar,Br).
+
+check_comas_in_comment( [A|Ar] , [0'\\,A|Br] ) :-
+	check_comas_in_comment(Ar,Br).
+
+
 
 write_if_not_empty([],_Mod,_AsComm,_Always):- !.
 write_if_not_empty([true],_Mod,_AsComm,conj):- !.
@@ -120,7 +132,7 @@ print_tail_disj([Prop|Props]):-
 
 print_conjunction([]).
 print_conjunction([Prop]):- !,
-	format("~q",[Prop]).
+	might_be_qualified(Prop).
 print_conjunction([Prop|Props]):-
 	format("( ~q",[Prop]),
 	print_tail_conj(Props).
@@ -130,6 +142,11 @@ print_tail_conj([]):-
 print_tail_conj([Prop|Props]):-
 	format(", ~q",[Prop]),
 	print_tail_conj(Props).
+
+might_be_qualified(M:Prop):- !,
+	format("( ~q )",[M:Prop]).
+might_be_qualified(Prop):- !,
+	format("~q",[Prop]).
 
 unify_vars([]).
 unify_vars([N=V|Dict]):-
@@ -143,6 +160,13 @@ decide_on_call(_Call,conj).
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+206,2004/03/03,18:25*25+'CET'), "BUG:printing
+   comas in comment is fixed up (David Trallero Mena)").
+
+:- comment(version(1*11+122,2003/12/24,16:37*14+'CET'), "Correctly
+   print qualified properties in assertions.  (Francisco Bueno
+   Carrillo)").
 
 :- comment(version(1*5+2,1999/11/29,18:02*53+'MET'), "assrt_props is
    now assertions_props. (Francisco Bueno Carrillo)").
@@ -161,4 +185,3 @@ decide_on_call(_Call,conj).
 :- comment(version(0*5+0,1998/2/2), "Created. (Francisco Bueno)").
 
 %% ---------------------------------------------------------------------------
-

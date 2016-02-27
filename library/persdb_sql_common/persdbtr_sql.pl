@@ -1,5 +1,4 @@
-:- module(persdbtr_sql,[sql_persistent_tr/2, 
-%jcf sql_goal_tr/2,
+:- module(persdbtr_sql,[sql_persistent_tr/2, sql_goal_tr/2,
 	dbId/2],[assertions]).
 
 %:- reexport(library('persdb_sql/db_client',
@@ -23,9 +22,8 @@ sql_persistent_tr( (:- sql_persistent(PrologDef,SQLDef,DBId)), ClauseList) :-
 % queries to that predicate should provide wrong results (first database rows, then 
 % prolog clauses), but it doesn't. THIS MUST BE CHECKED!
 
-%jcf 09.05.2003- commented out to test sql optimization.
-%sql_goal_tr( Goal, db_call_db_atomic_goal(DBId,Goal)) :-
-%	current_fact(dbId(DBId,Goal)).
+sql_goal_tr( Goal, db_call_db_atomic_goal(DBId,Goal)) :-
+	current_fact(dbId(DBId,Goal)).
 %jcf
 
 

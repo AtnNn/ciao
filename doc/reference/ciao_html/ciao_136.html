@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - menubutton_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - menu_entry_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC572" HREF="ciao_toc.html#TOC572">menubutton_class (library)</A></H1>
+<H1><A NAME="SEC547" HREF="ciao_toc.html#TOC547">menu_entry_class (library)</A></H1>
 <P>
-<A NAME="IDX6413"></A>
+<A NAME="IDX6305"></A>
 
 
 <P>
@@ -20,22 +20,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#137 (2003/12/4, 17:34:7 CET)
+<STRONG>Version of last change:</STRONG> 1.9#135 (2003/12/4, 17:33:57 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_136.html#SEC573">Usage and interface (menubutton_class)</A>
-<LI><A HREF="ciao_136.html#SEC574">Documentation on exports (menubutton_class)</A>
+<LI><A HREF="ciao_136.html#SEC548">Usage and interface (menu_entry_class)</A>
+<LI><A HREF="ciao_136.html#SEC549">Documentation on exports (menu_entry_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC573" HREF="ciao_toc.html#TOC573">Usage and interface (<CODE>menubutton_class</CODE>)</A></H2>
+<H2><A NAME="SEC548" HREF="ciao_toc.html#TOC548">Usage and interface (<CODE>menu_entry_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(menubutton_class)).</CODE>
+<CODE>:- use_module(library(menu_entry_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,7 +52,13 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6414"></A>
+<A NAME="IDX6306"></A>
+<CODE>set_name/1</CODE>, 
+<A NAME="IDX6307"></A>
+<CODE>set_action/1</CODE>, 
+<A NAME="IDX6308"></A>
+<CODE>label_value/1</CODE>, 
+<A NAME="IDX6309"></A>
 <CODE>menu_name/1</CODE>.
 
 </UL>
@@ -64,9 +70,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6415"></A>
+<A NAME="IDX6310"></A>
 <CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX6416"></A>
+<A NAME="IDX6311"></A>
+<CODE>tcltk_obj/menu_class</CODE>, 
+<A NAME="IDX6312"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -77,42 +85,144 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>,
 
 
 
-<H2><A NAME="SEC574" HREF="ciao_toc.html#TOC574">Documentation on exports (<CODE>menubutton_class</CODE>)</A></H2>
+<H2><A NAME="SEC549" HREF="ciao_toc.html#TOC549">Documentation on exports (<CODE>menu_entry_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX6417"></A>
-<A NAME="IDX6418"></A>
+<A NAME="IDX6313"></A>
+<A NAME="IDX6314"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>menu_name/1:</B>
-<DD><A NAME="IDX6419"></A>
+<DT><span class="define">PREDICATE:</span> <B>set_name/1:</B>
+<DD><A NAME="IDX6315"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>menu_name(+Menu)</CODE>
+<STRONG>Usage:</STRONG> <CODE>set_name(Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when menubutton is clicked.
+<LI><EM>Description:</EM> <CODE>Name</CODE> of the menubutton associated.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Menu</CODE> is currently instantiated to an atom.
+<CODE>Name</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Name</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6316"></A>
+<A NAME="IDX6317"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_action/1:</B>
+<DD><A NAME="IDX6318"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>set_action(Predicate)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies <CODE>Predicate</CODE> asociated to the menu entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Predicate</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Predicate</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6319"></A>
+<A NAME="IDX6320"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>label_value/1:</B>
+<DD><A NAME="IDX6321"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>label_value(Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> specifies a value to be displayed as an identifying label in the menu entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Value</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Value</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>menu_name(-Menu)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>label_value(Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the name of the <CODE>Menu</CODE> asociated to the menubutton.
+<LI><EM>Description:</EM> Gets the string which identify label in the menu entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Menu</CODE> is currently instantiated to an atom.
+<CODE>Value</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Value</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6322"></A>
+<A NAME="IDX6323"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>menu_name/1:</B>
+<DD><A NAME="IDX6324"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>menu_name(Menu)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when cascade entry is invoked.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Menu</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Menu</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>menu_name(Menu)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the <CODE>Menu</CODE> asociated to the cascade entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Menu</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Menu</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

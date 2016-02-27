@@ -36,74 +36,96 @@
 :- comment(author,"Manuel Carro").
 
 :- comment(doinclude,use_foreign_source/1).
-:- true decl use_foreign_source(Files) : atm_or_atm_list
-        # "@var{Files} is the (list of) foreign
-	file(s) that will be linked with the glue-code file.". 
+
+:- true decl use_foreign_source(Files) : atm_or_atm_list #
+   "@var{Files} is the (list of) foreign file(s) that will be linked
+   with the glue-code file.".
 
 :- comment(doinclude,use_foreign_source/2).
+
 :- true decl use_foreign_source(OsArch, Files) : atm * atm_or_atm_list
-        # "@var{Files} are the OS and architecture dependant foreign files.
-          This allows compiling and linking different files depending on the 
-          O.S. and architecture.".
+   # "@var{Files} are the OS and architecture dependant foreign files.
+   This allows compiling and linking different files depending on the
+   O.S. and architecture.".
 
 :- comment(doinclude,use_foreign_library/1).
-:- true decl use_foreign_library(Libs) : atm_or_atm_list
-        # "@var{Libs} is the (list of) external library(es) needed to link 
-          the C files.  Only the short name of the library (i.e., what would 
-          follow the @tt{-l} in the linker is needed.".
+
+:- true decl use_foreign_library(Libs) : atm_or_atm_list # "@var{Libs}
+   is the (list of) external library(es) needed to link the C files.
+   Only the short name of the library (i.e., what would follow the
+   @tt{-l} in the linker is needed.".
 
 :- comment(doinclude,use_foreign_library/2).
+
 :- true decl use_foreign_library(OsArch,Libs) : atm * atm_or_atm_list
-        # "@var{Libs} are the OS and
-	architecture dependant libraries.".
+# "@var{Libs} are the OS and architecture dependant libraries.".
 
 :- comment(doinclude,extra_compiler_opts/1).
-:- true decl extra_compiler_opts(Opts) : atm_or_atm_list
-        # "@var{Opts} is the list of additional compiler options 
-          (e.g., optimization options) that will be used during the 
-          compilation.".  
+
+:- true decl extra_compiler_opts(Opts) : atm_or_atm_list # "@var{Opts}
+   is the list of additional compiler options (e.g., optimization
+   options) that will be used during the compilation.".
 
 :- comment(doinclude,extra_compiler_opts/2).
+
 :- true decl extra_compiler_opts(OsArch,Opts) : atm * atm_or_atm_list
-        # "@var{Opts} are the OS and architecture dependant additional
-          compiler options.".
+   # "@var{Opts} are the OS and architecture dependant additional
+   compiler options.".
 
 :- comment(doinclude,use_compiler/1).
+
 :- true decl use_compiler(Compiler) : atm # "@var{Compiler} is the
-compiler to use in this file.  When this option is used, the default
-(Ciao-provided) compiler options are not used; those specified in
-@pred{extra_compiler_options} are used instead.".
+   compiler to use in this file.  When this option is used, the
+   default (Ciao-provided) compiler options are not used; those
+   specified in @pred{extra_compiler_options} are used instead.".
 
 :- comment(doinclude,use_compiler/2).
 
 :- true decl use_compiler(OsArch, Compiler) : atm * atm #
-"@var{Compiler} is the compiler to use in this file when compiling for
-the architecture @var{OsArch}.  The option management is the same as
-in @pred{use_compiler/2}.".
+   "@var{Compiler} is the compiler to use in this file when compiling
+   for the architecture @var{OsArch}.  The option management is the
+   same as in @pred{use_compiler/2}.".
 
 :- comment(doinclude,extra_linker_opts/1).
-:- true decl extra_linker_opts(Opts) : atm_or_atm_list
-        # "@var{Opts} is the list of additional linker options that will be 
-          used during the linkage.".
+
+:- true decl extra_linker_opts(Opts) : atm_or_atm_list # "@var{Opts}
+   is the list of additional linker options that will be used during
+   the linkage.".
 
 :- comment(doinclude,extra_linker_opts/2).
-:- true decl extra_linker_opts(OsArch,Opts) : atm * atm_or_atm_list
-        # "@var{Opts} are the OS and architecture dependant additional linker
-          options.".
+
+:- true decl extra_linker_opts(OsArch,Opts) : atm * atm_or_atm_list #
+   "@var{Opts} are the OS and architecture dependant additional linker
+   options.".
 
 :- comment(doinclude,use_linker/1).
-:- true decl use_linker(Linker) : atm
-        # "@var{Linker} is the linker to use in this file. When this option is used, the default
-(Ciao-provided) linker options are not used; those specified in
-@pred{extra_linker_options/1} are used instead.".
+
+:- true decl use_linker(Linker) : atm # "@var{Linker} is the linker to
+   use in this file. When this option is used, the default
+   (Ciao-provided) linker options are not used; those specified in
+   @pred{extra_linker_options/1} are used instead.".
 
 :- comment(doinclude,use_linker/2).
-:- true decl use_linker(OsArch, Linker) : atm * atm
-        # "@var{Compiler} is the linker to use in this file when compiling for the architecture @var{OsArch}.   The option management is the same as
-in @pred{use_compiler/2}.". 
 
+:- true decl use_linker(OsArch, Linker) : atm * atm # "@var{Compiler}
+   is the linker to use in this file when compiling for the
+   architecture @var{OsArch}.  The option management is the same as in
+   @pred{use_compiler/2}.".
 
-:- regtype any_term(X) # "@var{X} is any term. The foreign interface passes it to C functions as a general term.".
+:- comment(doinclude,foreign_inline/2).
+
+:- true decl foreign_inline(Term,Text) : predname * string #
+   "@var{Term} is a predicate name.  @var{Text} is a source C code
+   that define the predicate @var{Term}.  @var{Term} is present for
+   future use with the analyzers.  Example of this can be viewed in
+   the hrtimer library.".
+
+:- true decl foreign_inline(Term,Text) : var * string # "This usage
+   of foreign_inline is to add globally the C source code that are in
+   @var{Text}.".
+
+:- regtype any_term(X) # "@var{X} is any term. The foreign interface
+   passes it to C functions as a general term.".
 
 any_term(_).
 
@@ -210,21 +232,24 @@ native(_,_).
 
 :- comment(version_maintenance,dir('../../version/')).
 
-
 %% Note that the "assertions" library needs to be included in order
 %% to support ":- comment(...,...)." declarations such as these.
 %% These version comment(s) can be moved elsewhere in the file.
 %% Subsequent version comments will be placed above the last one
 %% inserted.
 
-:- comment(version(1*9+229,2003/12/22,17:34*59+'CET'), "Added comment
-   module. (Edison Mera)").
+:- comment(version(1*11+216,2004/03/26,20:08*06+'CET'), "Added new
+   foreign_inline/2 declaration to let to write inline C code in the
+   prolog modules.  (Edison Mera)").
+
+:- comment(version(1*11+105,2003/12/22,17:37*54+'CET'), "Added comment
+   module.  (Edison Mera)").
 
 :- comment(version(1*7+77,2001/03/26,18:45*31+'CEST'), "Improved
    documentation (MCL)").
 
 :- comment(version(1*7+64,2001/03/05,12:54*14+'MET'), "Added title and
-   summary. (Manuel Carro)").
+summary.  (Manuel Carro)").
 
 :- comment(version(1*5+137,2000/05/10,11:29*26+'CEST'), "Added
    int_list as external type.  (jfran)").

@@ -8,6 +8,7 @@
 
 /* declarations for global functions accessed here */
 
+
 #include "float_tostr.h"
 #include "format_defs.h"
 #include "wamfunction_defs.h"
@@ -48,7 +49,7 @@ BOOL prolog_format_print_float(Arg)
   DEREF(X(1),X(1));
   DEREF(X(2),X(2));
   precision = GetInteger(X(2));
-
+  
   /* New code (Edison): */
 
   f = GetFloat(X(1));
@@ -59,7 +60,7 @@ BOOL prolog_format_print_float(Arg)
     precision = 6;
   float_to_string(buf, precision, formatChar, f, 10);
   print_string(Output_Stream_Ptr, buf);
-  
+
   return TRUE;
 }
 

@@ -20,7 +20,7 @@ enable/disable certain characteristics.
    Usage: ciao_get_arch
    @end{verbatim}
 
-   @section{More details}
+   @section{More details (ciao_get_arch)}
 
    Look at the script itself...
 

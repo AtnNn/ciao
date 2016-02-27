@@ -1,27 +1,50 @@
 :- module(_,[
 	del_dir_if_empty/1, 
 	move_files/2,move_file/2,
-	copy_files/2,copy_file/2,
+	copy_files/2,
 	cat/2,cat_append/2,
 	convert_permissions/4,
 	symbolic_link/2, symbolic_link/3,
-	delete_files/1,del_file_nofail/1,del_file_nofail/2,
+	delete_files/1,
+	delete_files_nofail/1,
+	del_file_nofail/1,del_file_nofail/2,
 	del_endings_nofail/2,
 	ls/3,ls/2,
 	filter_alist_pattern/3,
 	'-'/1, do/2,
+%	finally/2,
 	set_perms/2,
 	readf/2,
 	datime_string/1,
 	datime_string/2,
+	datime_atom/1,
+	datime_atom/2,
 	all_values/2,
 	no_tr_nl/2,
 	call_unknown/1,
 	replace_strings_in_file/3,
 	writef/3,
-	writef/2 ],
+	writef/2,
+
+	add_suffix/3,
+	add_preffix/3,
+	writef_list/3,
+	writef_list/2,
+	delete_filess/1,
+	etags/2,
+	etagss/2,
+	get_dirs/2,
+	get_rec_dirs/2,
+	get_rec_dirs/3,
+	get_rec_dirs/4,
+	lss/3,
+	lss/4,
+	lss/6,
+	copy_files_rec/3,
+	filter_dirs/3,
+	touch/1
+	],
 	[assertions,isomodes,hiord]).
-%% 	[assertions,isomodes,hiord,debug]).
 
 :- comment(module,"This is a (temporary) extension to library
    @lib{system} (which it reexports). It implements functionality that
@@ -46,6 +69,7 @@
 :- use_module(library(lists),[list_concat/2,append/3]).
 :- use_module(library(sort),[sort/2]).
 :- use_module(library(aggregates),[findall/3]).
+:- use_module(library(sets)).
 
 %% IDEA: where they used to take an atom, all now take in addition a 
 %% list of atoms, which are concatenated (saves all the 
@@ -193,18 +217,21 @@ move_file(File,Dir) :-
 %% Need to do this better of course...
 copy_files([],_Dir).
 copy_files([File|Files],Dir) :-
-	copy_file(File,Dir),
+	copy_file_dir(File,Dir),
 	copy_files(Files,Dir).
 
-%% Must be done using OS -- this is way too slow...
-copy_file(File,Dir) :-
-	file_exists(File),
-	file_property(File, type(directory)),
-	!,
+copy_file_dir(File,Dir) :-
 	atom_concat([Dir,'/',File],Target),
-	cat(File,Target).
-copy_file(File,Target) :-
-	cat(File,Target).
+	copy_file(File,Target).
+%% Must be done using OS -- this is way too slow...
+%copy_file(File,Dir) :-
+%	file_exists(File),
+%	file_property(File, type(directory)),
+%	!,
+%	atom_concat([Dir,'/',File],Target),
+%	cat(File,Target).
+%copy_file(File,Target) :-
+%	cat(File,Target).
 	
 %% This one missing (simple to add?)
 %% `system'
@@ -274,7 +301,6 @@ ls(Directory,Pattern,SFileList) :-
 	sort(FileList,SFileList).
 ls(_Directory,_Pattern,[]).
 
-
 :- comment(ls(Pattern,FileList), 
         "@var{FileList} is the unordered list of entries (files,
         directories, etc.) in the current directory whose names match
@@ -286,7 +312,126 @@ ls(_Directory,_Pattern,[]).
 ls(Pattern,FileList) :-
 	ls('.',Pattern,FileList).
 
+lss(Dir, Pattern, FileList) :-
+	lss(Dir, Pattern, '', [], [], FileList).
+lss(Dir, Pattern, PatternExclude, FileLists) :-
+	lss(Dir, Pattern, PatternExclude, [], [], FileLists).
+lss(Dir, Pattern, PatternExclude, SkipDirs, SkipDirsFiles, FileLists) :-
+	file_exists(Dir),
+	!,
+	directory_files(Dir, Files),
+	filter_rec_dirs(Dir, ['.','..'|SkipDirs], SkipDirsFiles, Files, [], Dirs),
+	ls_rec([Dir|Dirs], Pattern, PatternExclude, FileLists).
+
+ls_rec([], _Pattern, _PatternExclude, []).
+ls_rec([Dir|Dirs], Pattern, PatternExclude, FileLists) :-
+	ls(Dir, Pattern, []),
+	ls_rec(Dirs, Pattern, PatternExclude, FileLists).
+ls_rec([Dir|Dirs], Pattern, PatternExclude, [[Dir,FileList]|FileLists]) :-
+	ls(Dir, PatternExclude, FileListExclude),
+	(   FileListExclude = [] ->
+	    ls(Dir, Pattern, FileList)
+	;
+	    ls(Dir, Pattern, FileListAll),
+	    ord_union_diff(FileListExclude, FileListAll, _, FileList),
+	    (   FileListExclude = ['.','..'] ->
+		true
+	    ;
+		display(Dir),display(': Skipping '),display(FileListExclude), nl
+	    )
+	),
+	ls_rec(Dirs, Pattern, PatternExclude, FileLists).
+
+get_rec_dirs(Dir, Dirs) :-
+	get_rec_dirs(Dir, ['.', '..'], [], Dirs).
+
+get_rec_dirs(Dir, SkipDirs, Dirs) :-
+	get_rec_dirs(Dir, SkipDirs, [], Dirs).
+
+get_rec_dirs(Dir, SkipDirs, SkipDirsFile, Dirs) :-
+	file_exists(Dir),
+	!,
+	directory_files(Dir, Files),
+	filter_rec_dirs(Dir, ['.','..'|SkipDirs], SkipDirsFile, Files, [], Dirs).
+
+filter_rec_dirs(_Dir, _SkipDirs, _SkipDirsWithFiles, [], Dirs0, Dirs0).
+
+filter_rec_dirs(Dir, SkipDirs, SkipDirsFiles, [File|Files], Dirs0, Dirs) :-
+	member(File, SkipDirs) ->
+	filter_rec_dirs(Dir, SkipDirs, SkipDirsFiles, Files, Dirs0, Dirs)
+ ;
+	atom_concat([Dir, '/', File], SubDir),
+	(   file_exists(SubDir),
+	    file_property(SubDir, type(directory)) ->
+	    (   directory_files(SubDir, SubFiles),
+		(   member(X, SkipDirsFiles), member(X, SubFiles) ->
+		    filter_rec_dirs(Dir,SkipDirs,SkipDirsFiles,Files,Dirs0,Dirs)
+		;
+		    filter_rec_dirs(SubDir,SkipDirs,SkipDirsFiles,SubFiles,Dirs0,Dirs1),
+		    filter_rec_dirs(Dir,SkipDirs,SkipDirsFiles,Files,[SubDir|Dirs1],Dirs)
+		)
+	    )
+	;
+	    filter_rec_dirs(Dir, SkipDirs, SkipDirsFiles, Files, Dirs0, Dirs)
+	).
+
+delete_filess([]).
+delete_filess([[Dir,FileList]|FileLists]) :-
+	atom_concat(Dir,'/',Dir2),
+	add_preffix(Dir2, FileList, AbsFileList),
+	delete_files(AbsFileList),
+	delete_filess(FileLists).
+
+etag(AbsFile,TagFile) :-
+	do(['etags -a -l prolog ', AbsFile, ' -o ', TagFile], nofail).
+
+etags([],_TagFile).
+etags([AbsFile|AbsFileList],TagFile) :-
+	etag(AbsFile,TagFile),
+	etags(AbsFileList,TagFile).
+
 :- pop_prolog_flag(multi_arity_warnings).
+
+add_suffix(_Suffix, [], []).
+add_suffix(Suffix, [L|Ls], [R|Rs]) :-
+ 	atom_concat(L, Suffix, R),
+	add_suffix(Suffix,Ls,Rs).
+	
+add_preffix(_Preffix, [], []).
+add_preffix(Preffix, [L|Ls], [R|Rs]) :-
+	atom_concat(Preffix, L, R),
+	add_preffix(Preffix,Ls,Rs).
+
+etagss([],_TagFile).
+etagss([[Dir,FileList]|FileLists],TagFile) :-
+	atom_concat(Dir,'/',Dir2),
+	add_preffix(Dir2,FileList,AbsFileList),
+	etags(AbsFileList,TagFile),
+	etagss(FileLists,TagFile).
+
+get_dirs(Dir, Dirs) :-
+	directory_files(Dir, Files),
+	filter_dirs(Dir, Files, Dirs).
+
+filter_dirs(_Dir, [], []).
+filter_dirs(Dir, ['.'|Files], Dirs) :-
+	filter_dirs(Dir, Files, Dirs).
+filter_dirs(Dir, ['..'|Files], Dirs) :-
+	filter_dirs(Dir, Files, Dirs).
+filter_dirs(Dir, [File|Files], [File|Dirs]) :-
+	atom_concat([Dir, File],File2),
+	file_property(File2, type(directory)), !,
+	filter_dirs(Dir, Files, Dirs).
+filter_dirs(Dir, [_File|Files], Dirs) :-
+	filter_dirs(Dir, Files, Dirs).
+
+:- comment(touch(File), "Updates the access and modification time of
+   @var{File} to current time.").
+
+touch(File) :-
+	time(Time),
+	modif_time(File, Time).
+
 
 :- comment(filter_alist_pattern(UnFiltered,Pattern,Filtered),
         "@var{Filtered} contains the elements of @var{UnFiltered}
@@ -309,6 +454,9 @@ filter_alist_pattern([_T|Ts],Pattern,NTs) :-
 
 -(G) :- G, !.
 -(G) :- warning_message("in -/1, could not complete goal ~w",[G]).
+
+:- pred finally(Goal,Finally) # "Try with the Goal @var{Goal}, but always
+   continues with the evaluation of @var{Finally}, then fail if @var{Goal} fail.".
 
 finally(Goal, Finally) :-
 	(Goal -> Ok = 1; Ok = 0),
@@ -341,7 +489,7 @@ set_perms_(File,P) :-
 	      cd(Path),
 	      finally(
 		chmod(FileName,P),
-		cd(WD)) )
+	        cd(WD)) )
 	;  error_message("file '~w' not found",[File]) ).
 
 convert_permissions(U,G,O,P) :-
@@ -374,7 +522,7 @@ del_file_nofail(FileBase,Ending) :-
 	atom_concat([FileBase,Ending],File),
 	file_exists(File,2), % exists and writeable
 	!,
-	delete_file(File). 
+	delete_file(File).
 del_file_nofail(FileBase,Ending) :-
 	atom_concat([FileBase,Ending],File),
 	file_exists(File),   % exists but not writeable
@@ -386,12 +534,50 @@ del_file_nofail(_FileBase,_Ending).
 %% 	             [FileBase,Ending]).
 
 :- pop_prolog_flag(multi_arity_warnings).
+i_copy_files(_BaseDir, _DestDir, []).
+i_copy_files(BaseDir, DestDir, ['.'|Files]) :-
+	i_copy_files(BaseDir, DestDir, Files).
+i_copy_files(BaseDir, DestDir, ['..'|Files]) :-
+	i_copy_files(BaseDir, DestDir, Files).
+i_copy_files(BaseDir, DestDir, [File|Files]) :-
+	atom_concat([BaseDir, '/', File], BaseFile),
+	atom_concat([DestDir, '/', File], DestFile),
+	(
+	    file_exists(BaseFile) ->
+	    (
+		file_property(BaseFile, type(directory)) -> true;
+		(
+%		    display(['Copying ', BaseFile, ' to ', DestFile]),nl,
+		    copy_file(BaseFile, DestFile)
+		)
+	    );
+	    true
+	),
+	i_copy_files(BaseDir, DestDir, Files). 
+
+copy_files_rec(_BaseDir, _DestDir, []).
+copy_files_rec(BaseDir, DestDir, [[AbsBaseDir,FileList]|FileLists]) :-
+	atom_concat(BaseDir, RelDir, AbsBaseDir),
+	atom_concat(DestDir, RelDir, AbsDestDir),
+	make_dirpath(AbsDestDir),
+	i_copy_files(AbsBaseDir, AbsDestDir, FileList),
+	copy_files_rec(BaseDir, DestDir, FileLists).
+
+delete_files_nofail([]).
+delete_files_nofail([File|Files]) :-
+ 	del_file_nofail(File),
+ 	delete_files_nofail(Files).
 
 delete_files([]).
 delete_files([File|Files]) :-
-	del_file_nofail(File),
+	atom(File),!,
+	delete_file(File),
 	delete_files(Files).
 
+delete_files([File|Files]) :-
+	atom_concat(File,FileAtom),
+	delete_file(FileAtom),
+	delete_files(Files).
 
 do([],_Fail) :-
 	!.
@@ -468,9 +654,13 @@ copy_stream_list(I,H,T) :-
 	get_code(I,Code),
 	(  Code = -1 -> H=T ; H=[Code|R], copy_stream_list(I,R,T) ).
 
+datime_atom(T) :-
+	datime_string(S),
+	atom_codes(T,S).
 
-
-
+datime_atom(D,T) :-
+	datime_string(D,S),
+	atom_codes(T,S).
 datime_string(T) :-
 	datime(_,Year,Month,Day,Hour,Min,Sec,_WeekDay,_YearDay),
 	datime_string(datime(Year,Month,Day,Hour,Min,Sec),T).
@@ -548,6 +738,20 @@ writef(Codes,Mode,File) :-
 
 :- pop_prolog_flag(multi_arity_warnings).
 
+% some extensions to writef:
+:- push_prolog_flag(multi_arity_warnings, off).
+
+writef_list(A, Config) :-
+	list_concat(A, B),
+	writef(B, Config).
+
+writef_list(A, Option, Config) :-
+	list_concat(A, B),
+	writef(B, Option, Config).
+
+:- pop_prolog_flag(multi_arity_warnings).
+
+
 codes_to_stream([],_O).
 codes_to_stream([H|T],O) :-
 	put_code(O,H),
@@ -596,25 +800,38 @@ match([H|T],[H|IT],RI) :-
  
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+329,2004/03/25,16:25*36+'CET'), "Better error
-   handling in @pred{set_perms} (brought back from 1.11).  (Manuel
-   Hermenegildo)").
+:- comment(version(1*11+198,2004/02/16,17:28*46+'CET'), "Changed
+   copy_files to use the new system:copy_file/2.  (Edison Mera)").
 
-:- comment(version(1*9+108,2003/09/19,18:26*11+'CEST'), "Now the
+:- comment(version(1*11+176,2004/02/04,18:29*18+'CET'), "Added the
+   next predicates: add_suffix/3, add_preffix/3, writef_list/3,
+   writef_list/2, delete_filess/1, etags/2, etagss/2, get_dirs/2,
+   get_rec_dirs/2, get_rec_dirs/3, get_rec_dirs/4, lss/3, lss/4,
+   lss/6, copy_files_rec/3, filter_dirs/3, touch/1 that makes easy the
+   implementation of Makefiles for lpmake.  (Edison Mera)").
+
+:- comment(version(1*11+175,2004/02/04,17:39*58+'CET'), "Added lss
+   predicate, that obtain a list of a list of the files in a
+   subdirectory recursively.  (Edison Mera)").
+
+:- comment(version(1*11+172,2004/02/03,22:45*01+'CET'), "Fixed a use
+   of ~ (when not using functions).  (Manuel Hermenegildo)").
+
+:- comment(version(1*11+43,2003/09/19,18:35*22+'CEST'), "Now the
    writef predicate can receive empty strings.  (Edison Mera)").
 
-:- comment(version(1*9+107,2003/09/19,17:45*54+'CEST'), "Corrected a
+:- comment(version(1*11+42,2003/09/19,17:33*43+'CEST'), "Corrected a
    malfunction with replace_strings_in_file predicate.  Now lets to
    change a string by an empty string.  Also the separator - has been
    changed by a list of 2 elements [,].  (Edison Mera)").
 
-:- comment(version(1*9+106,2003/09/19,17:44*10+'CEST'), "Corrected a
-   minor inconsistency in the documentation of ls/3.  (Edison Mera)").
+:- comment(version(1*11+33,2003/07/29,17:32*51+'CEST'), "Corrected a
+   minor inconsistency in the documentation of ls/3. (Edison Mera)").
 
-:- comment(version(1*9+105,2003/09/19,17:41*09+'CEST'), "Corrected a
+:- comment(version(1*11+30,2003/07/23,12:34*03+'CEST'), "Corrected a
    bug in @pred{set_perms}.  @pred{finally} added.  (Edison Mera)").
 
-:- comment(version(1*9+90,2003/07/22,16:53*40+'CEST'), "Better error
+:- comment(version(1*11+29,2003/07/22,16:53*59+'CEST'), "Better error
    handling in @pred{set_perms}.  (Manuel Hermenegildo)").
 
 :- comment(version(1*9+24,2002/11/20,12:52*12+'CET'), "Improvements to
@@ -623,8 +840,8 @@ match([H|T],[H|IT],RI) :-
    minor changes to adapt to new version of make.  (Manuel
    Hermenegildo)").
 
-:- comment(version(1*7+180,2002/01/25,20:08*39+'Hora estándar
-   romance'), "Moved cyg2win/3 to system.pl (MCL)").
+:- comment(version(1*7+180,2002/01/25,20:08*39+'CEST'), "Moved
+   cyg2win/3 to system.pl (MCL)").
 
 :- comment(version(1*7+170,2002/01/03,18:17*59+'CET'), "Removed
    make_dirpath (real implementation now in system.pl) (MCL)").

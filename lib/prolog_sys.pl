@@ -2,7 +2,7 @@
         statistics/0, statistics/2, predicate_property/2,
         current_atom/1, garbage_collect/0,
         new_atom/1],
-        [assertions, isomodes]). %  engine(metadefs)
+        [assertions, isomodes]). 
 
 :- impl_defined([
         statistics/0,
@@ -33,6 +33,17 @@ time_option * time_result # "Gather information about time (either
 process time or wall time) since last consult or since start of
 program.  Results are returned in milliseconds.".
 
+:- true pred statistics(Click_option, Click_result) : click_option *
+term => click_option * click_result # "Gather information about clock
+clicks (either run, user, system or wall click) since last consult or
+since start of program.".
+
+:- true pred statistics(Clockfreq_option, Clockfreq_result) :
+clockfreq_option * term => clockfreq_option * clockfreq_result #
+"Gather information about frequency of the clocks used to measure the
+clicks (either run-user, system or wall clock).  Results are returned
+in hertzios.".
+
 :- true pred statistics(Memory_option, Memory_result) : memory_option * term =>
 memory_option * memory_result # "Gather information about memory
 consumption.".
@@ -61,12 +72,29 @@ the fly.".
 
 :- comment(doinclude, time_option/1).  
 
-:- true prop time_option(M) + regtype # "Options to get information about
-execution time.  @var{M} must be one of @tt{runtime}, @tt{walltime}.".
+:- true prop time_option(M) + regtype # "Options to get information
+about execution time.  @var{M} must be one of @tt{runtime},
+@tt{usertime}, @tt{systemtime} or @tt{walltime}.".
 
 time_option(runtime).
+time_option(usertime).
+time_option(systemtime).
 time_option(walltime).
 
+:- true prop click_option(M) + regtype # "Options to get information about
+   execution clicks.".
+
+click_option(runclick).
+click_option(userclick).
+click_option(systemclick).
+click_option(wallclick).  
+
+:- true prop clockfreq_option(M) + regtype # "Options to get information about
+   the frequency of clocks used to get the clicks.".
+
+clockfreq_option(userclockfreq).
+clockfreq_option(systemclockfreq).
+clockfreq_option(wallclockfreq).
 
 :- comment(doinclude, memory_option/1).
 
@@ -102,12 +130,28 @@ symbol_option(symbols).
 :- comment(doinclude, time_result/1).
 
 :- true prop time_result(Result) + regtype # "@var{Result} is a
-two-element list of integers.  The first integer is the time since the
-start of the execution; the second integer is the time since the
+two-element list of numbers.  The first number is the time since the
+start of the execution; the second number is the time since the
 previous consult to time.".
 
-time_result([A, B]):- int(A), int(B).
+time_result([A, B]):- num(A), num(B).
 
+:- comment(doinclude, click_result/1).
+
+:- true prop click_result(Result) + regtype # "@var{Result} is a
+two-element list of numbers.  The first number is the number of clicks
+since the start of the execution; the second number is the number of
+clicks since the previous consult to click.".
+
+click_result([A, B]):- num(A), num(B).
+
+:- comment(doinclude, clockfreq_result/1).
+
+:- true prop clockfreq_result(Result) + regtype # "@var{Result} is a
+number.  It gives the frequency in hertzios used by the clock used to
+get the clicks.".
+
+clockfreq_result(A):- num(A).
 
 :- comment(doinclude, memory_result/1).
 
@@ -149,7 +193,18 @@ symbol_result([A, B]):- int(A), int(B).
  %% memory_option(heap).
 
 statistics(runtime, L) :- '$runtime'(L).
+statistics(usertime, L) :- '$usertime'(L).
+statistics(systemtime, L) :- '$systemtime'(L).
 statistics(walltime, L) :- '$walltime'(L).
+
+statistics(runclick, L) :- '$runclick'(L).
+statistics(userclick, L) :- '$userclick'(L).
+statistics(systemclick, L) :- '$systemclick'(L).
+statistics(wallclick, L) :- '$wallclick'(L).
+
+statistics(userclockfreq, L) :- '$userclockfreq'(L).
+statistics(systemclockfreq, L) :- '$systemclockfreq'(L).
+statistics(wallclockfreq, L) :- '$wallclockfreq'(L).
 
 statistics(memory, L) :- '$total_usage'(L).
 statistics(symbols, L) :- '$internal_symbol_usage'(L).
@@ -190,7 +245,11 @@ bit_decl(2, (dynamic)).
 bit_decl(4, (wait)).
 bit_decl(8, (multifile)).
 
-:- comment(version(1*9+92,2003/07/24,08:04*39+'CEST'), "Changed
+:- comment(version(1*11+57,2003/11/24,18:03*15+'CET'), "Added click
+   options to the statistics.  This is for improve the medition of
+   time.  (Edison Mera Menéndez)").
+
+:- comment(version(1*11+48,2003/09/25,18:47*37+'CEST'), "Changed
    integer by int in regtype definitions.  (Francisco Bueno
    Carrillo)").
 

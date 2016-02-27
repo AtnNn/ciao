@@ -15,8 +15,10 @@
         for testing types.  They depend on the state of instantiation of
         their arguments, thus being of extra-logical nature.").
 
-:- true prop ground(@X) => gnd(X) + native
+:- true prop ground(X) + native
 	# "@var{X} is currently ground (it contains no variables).".
+:- true success ground(X) => gnd(X).
+:- true comp ground(@X) + ( sideff(free), native ).
 
 ground(Term):-
 	nonvar(Term),
@@ -33,49 +35,67 @@ ground_(N,Term):-
 
 % Compiled inline -- these are hooks for the interpreter.
 
-:- true prop atom(@X)=> atm(X) + native
+:- true prop atom(X) + native
 	# "@var{X} is currently instantiated to an atom.".
+:- true success atom(X) => atm(X).
+:- true comp atom(@X) + ( sideff(free), native ).
 
 atom(X) :- atom(X).
 
-:- true prop atomic(@X) + native
+:- true prop atomic(X) + native
 	# "@var{X} is currently instantiated to an atom or a number.".
+:- true comp atomic(@X) + ( sideff(free), native ).
 
 atomic(X) :- atomic(X).
 
-:- true prop float(@X) => flt(X) + native
+:- true prop float(X) + native
 	# "@var{X} is currently instantiated to a float.".
+:- true success float(X) => flt(X).
+:- true comp float(@X) + ( sideff(free), native ).
 
 float(X) :- float(X).
 
-:- true prop integer(@X) => int(X) + native
+:- true prop integer(X) + native
 	# "@var{X} is currently instantiated to an integer.".
+:- true success integer(X) => int(X).
+:- true comp integer(@X) + ( sideff(free), native ).
 
 integer(X) :- integer(X).
 
-:- true comp nonvar(X) + ( native, native(not_free(X)) ).
-:- true prop nonvar(@X)
+:- true prop nonvar(X) + native(not_free(X))
    # "@var{X} is currently a term which is not a free variable.".
+:- true comp nonvar(@X) + ( sideff(free), native ).
 
 nonvar(X) :- nonvar(X).
 
-:- true prop number(@X) => num(X) + native
+:- true prop number(X) + native
 	# "@var{X} is currently instantiated to a number.".
+:- true success number(X) => num(X).
+:- true comp number(@X) + ( sideff(free), native ).
 
 number(X) :- number(X).
 
-:- true comp var(X) + ( native, native(free(X)), sideff(hard) ).
-:- true prop var(@X) # "@var{X} is a free variable.".
+:- true prop var(X) + native(free(X))
+   # "@var{X} is a free variable.".
+:- true comp var(@X) + ( native, sideff(free) ).
 
 var(X) :- var(X).
 
-:- true prop type(X,Y) => atm(Y) + native # "@var{X} is internally of type
-   @var{Y} (@tt{var}, @tt{attv}, @tt{float}, @tt{integer},
-   @tt{structure}, @tt{atom} or @tt{list}).".
+:- true prop type(X,Y) + native
+   # "@var{X} is internally of type @var{Y} (@tt{var}, @tt{attv}, @tt{float},
+      @tt{integer}, @tt{structure}, @tt{atom} or @tt{list}).".
+:- true success type(X,Y) => atm(Y).
+:- true comp type/2 + ( sideff(free), native ).
 
 type(X, Y) :- type(X, Y). 
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*11+167,2004/02/03,21:15*56+'CET'), "Added sideff
+   declarations.  (Francisco Bueno Carrillo)").
+
+:- comment(version(1*11+124,2003/12/26,20:06*44+'CET'), "Changed the
+   :- prop with properties to :- pred.  (Francisco Bueno Carrillo)").
 
 :- comment(version(0*7+8,1998/09/23,19:21*44+'MEST'), "Changed
    assertion comment to #.  (Manuel Hermenegildo)").

@@ -1,3 +1,4 @@
+
 :- module(
         andprolog_rt,
         ['&'/2,
@@ -29,6 +30,7 @@ number_of_active_agents(1).
  %% valid only for deterministic independent goals.").
 
 :- meta_predicate((goal&goal)).
+:- true comp (A & B) + native(call((A,B))).
 
 GoalA & GoalB:-
         leave_goal(GoalA, IdA),

@@ -1,1 +1,1 @@
-z('user:bar'(a)) .
+z('user:bar'(b)) .

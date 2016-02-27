@@ -1,26 +1,258 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART IX - Abstract data types</TITLE>
+<TITLE>The Ciao Prolog System               - Extendable arrays with logarithmic access time</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC681" HREF="ciao_toc.html#TOC681">PART IX - Abstract data types</A></H1>
+<H1><A NAME="SEC655" HREF="ciao_toc.html#TOC655">Extendable arrays with logarithmic access time</A></H1>
+<P>
+<A NAME="IDX7671"></A>
+
 
 <P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<STRONG>Author(s):</STRONG> Lena Flood.
 
 
 <P>
-This part includes libraries which implement some generic data structures (abstract data types) that are used frequently in programs or in the Ciao system itself. 
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.11#112 (2003/12/22, 18:18:22 CET)
+
+
+<P>
+This module implements extendable arrays with logarithmic access time. It has been adapted from shared code written by David Warren and Fernando Pereira.
+
+
+
+<UL>
+<LI><A HREF="ciao_163.html#SEC656">Usage and interface (arrays)</A>
+<LI><A HREF="ciao_163.html#SEC657">Documentation on exports (arrays)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC656" HREF="ciao_toc.html#TOC656">Usage and interface (<CODE>arrays</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(arrays)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7672"></A>
+<CODE>new_array/1</CODE>, 
+<A NAME="IDX7673"></A>
+<CODE>is_array/1</CODE>, 
+<A NAME="IDX7674"></A>
+<CODE>aref/3</CODE>, 
+<A NAME="IDX7675"></A>
+<CODE>arefa/3</CODE>, 
+<A NAME="IDX7676"></A>
+<CODE>arefl/3</CODE>, 
+<A NAME="IDX7677"></A>
+<CODE>aset/4</CODE>, 
+<A NAME="IDX7678"></A>
+<CODE>array_to_list/2</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC657" HREF="ciao_toc.html#TOC657">Documentation on exports (<CODE>arrays</CODE>)</A></H2>
+<P>
+<A NAME="IDX7679"></A>
+<A NAME="IDX7680"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>new_array/1:</B>
+<DD><A NAME="IDX7681"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>new_array(Array)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> returns an empty new array <CODE>Array</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Array</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7682"></A>
+<A NAME="IDX7683"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>is_array/1:</B>
+<DD><A NAME="IDX7684"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>is_array(Array)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Array</CODE> actually is an array.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Array</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7685"></A>
+<A NAME="IDX7686"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>aref/3:</B>
+<DD><A NAME="IDX7687"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>aref(Index, Array, Element)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> unifies <CODE>Element</CODE> to <CODE>Array</CODE>[<CODE>Index</CODE>], or fails if <CODE>Array</CODE>[<CODE>Index</CODE>] has not been set.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Index</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Array</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7688"></A>
+<A NAME="IDX7689"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arefa/3:</B>
+<DD><A NAME="IDX7690"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>arefa(Index, Array, Element)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that it unifies <CODE>Element</CODE> with a new array if <CODE>Array</CODE>[<CODE>Index</CODE>] is undefined. This is useful for multidimensional arrays implemented as arrays of arrays.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Index</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Array</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7691"></A>
+<A NAME="IDX7692"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>arefl/3:</B>
+<DD><A NAME="IDX7693"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>arefl(Index, Array, Element)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> is as <CODE>aref/3</CODE>, except that <CODE>Element</CODE> appears as <CODE>[]</CODE> for undefined cells. Thus, <CODE>arefl(_,_,[])</CODE> always succeeds no matter what you give in the first or second args.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Index</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Array</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7694"></A>
+<A NAME="IDX7695"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>aset/4:</B>
+<DD><A NAME="IDX7696"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>aset(Index, Array, Element, NewArray)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> unifies <CODE>NewArray</CODE> with the result of setting <CODE>Array</CODE>[<CODE>Index</CODE>] to <CODE>Element</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Index</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Array</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>NewArray</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7697"></A>
+<A NAME="IDX7698"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>array_to_list/2:</B>
+<DD><A NAME="IDX7699"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>array_to_list(Array, List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> returns a <CODE>List</CODE> of pairs Index-Element of all the elements of <CODE>Array</CODE> that have been set.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Array</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>List</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_162.html">previous</A>, <A HREF="ciao_164.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

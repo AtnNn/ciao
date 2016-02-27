@@ -173,6 +173,6 @@ display_string([C|Cs]) :- put_code(C), display_string(Cs).
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+194,2003/12/19,16:56*00+'CET'), "Documentation
+:- comment(version(1*11+72,2003/12/19,16:56*14+'CET'), "Documentation
    revised.  (Edison Mera)").
 

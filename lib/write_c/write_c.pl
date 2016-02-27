@@ -631,7 +631,7 @@ unary_expression(X, Halt) -->
 	postfix_expression(X, Halt).
 
 unary_operator(address(X), X, '&').
-unary_operator(^(X), X, '*').
+unary_operator('^'(X), X, '*').
 unary_operator(+X, X, '+').
 unary_operator(-X, X, '-').
 unary_operator(\X, X, '~').

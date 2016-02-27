@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Basic predicates handling names of constants</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC147" HREF="ciao_toc.html#TOC147">Basic predicates handling names of constants</A></H1>
+<H1><A NAME="SEC121" HREF="ciao_toc.html#TOC121">Basic predicates handling names of constants</A></H1>
 <P>
-<A NAME="IDX1493"></A>
+<A NAME="IDX1246"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#334 (2004/4/13, 13:28:2 CEST)
+<STRONG>Version of last change:</STRONG> 1.11#169 (2004/2/3, 21:36:40 CET)
 
 
 <P>
@@ -33,13 +33,13 @@ The Ciao system provides builtin predicates which allow dealing with names of co
 
 
 <UL>
-<LI><A HREF="ciao_22.html#SEC148">Usage and interface (atomic_basic)</A>
-<LI><A HREF="ciao_22.html#SEC149">Documentation on exports (atomic_basic)</A>
+<LI><A HREF="ciao_22.html#SEC122">Usage and interface (atomic_basic)</A>
+<LI><A HREF="ciao_22.html#SEC123">Documentation on exports (atomic_basic)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC148" HREF="ciao_toc.html#TOC148">Usage and interface (<CODE>atomic_basic</CODE>)</A></H2>
+<H2><A NAME="SEC122" HREF="ciao_toc.html#TOC122">Usage and interface (<CODE>atomic_basic</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -56,21 +56,21 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1494"></A>
+<A NAME="IDX1247"></A>
 <CODE>name/2</CODE>, 
-<A NAME="IDX1495"></A>
+<A NAME="IDX1248"></A>
 <CODE>atom_codes/2</CODE>, 
-<A NAME="IDX1496"></A>
+<A NAME="IDX1249"></A>
 <CODE>number_codes/2</CODE>, 
-<A NAME="IDX1497"></A>
+<A NAME="IDX1250"></A>
 <CODE>number_codes/3</CODE>, 
-<A NAME="IDX1498"></A>
+<A NAME="IDX1251"></A>
 <CODE>atom_number/2</CODE>, 
-<A NAME="IDX1499"></A>
+<A NAME="IDX1252"></A>
 <CODE>atom_length/2</CODE>, 
-<A NAME="IDX1500"></A>
+<A NAME="IDX1253"></A>
 <CODE>atom_concat/3</CODE>, 
-<A NAME="IDX1501"></A>
+<A NAME="IDX1254"></A>
 <CODE>sub_atom/4</CODE>.
 
 </UL>
@@ -81,13 +81,13 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC149" HREF="ciao_toc.html#TOC149">Documentation on exports (<CODE>atomic_basic</CODE>)</A></H2>
+<H2><A NAME="SEC123" HREF="ciao_toc.html#TOC123">Documentation on exports (<CODE>atomic_basic</CODE>)</A></H2>
 <P>
-<A NAME="IDX1502"></A>
-<A NAME="IDX1503"></A>
+<A NAME="IDX1255"></A>
+<A NAME="IDX1256"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>name/2:</B>
-<DD><A NAME="IDX1504"></A>
+<DD><A NAME="IDX1257"></A>
 
 
 <P>
@@ -96,36 +96,27 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <P>
 <CODE>String</CODE> is the list of the ASCII codes of the characters comprising the name of <CODE>Const</CODE>. Note that if <CODE>Const</CODE> is an atom whose name can be interpreted as a number (e.g. '96'), the predicate is not reversible, as that atom will not be constructed when <CODE>Const</CODE> is uninstantiated. Thus it is recommended that new programs use the ISO-compliant predicates 
-<A NAME="IDX1505"></A>
+<A NAME="IDX1258"></A>
 <CODE>atom_codes/2</CODE> or 
-<A NAME="IDX1506"></A>
+<A NAME="IDX1259"></A>
 <CODE>number_codes/2</CODE>, as these predicates do not have this inconsistency.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>name(+constant, ?string)</CODE>
+<STRONG>General properties:</STRONG> 
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>name(Const,String)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>name(-constant, +string)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If <CODE>String</CODE> can be interpreted as a number, <CODE>Const</CODE> is unified with that number, otherwise with the atom whose name is <CODE>String</CODE>.
-
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
@@ -142,12 +133,12 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:string/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(name(Const,String))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 4:</STRONG> 
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
 <LI><EM>Description:</EM> If <CODE>String</CODE> can be interpreted as a number, <CODE>Const</CODE> is unified with that number, otherwise with the atom whose name is <CODE>String</CODE>.
@@ -165,22 +156,23 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:constant/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(name(Const,String))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1507"></A>
-<A NAME="IDX1508"></A>
+<A NAME="IDX1260"></A>
+<A NAME="IDX1261"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_codes/2:</B>
-<DD><A NAME="IDX1509"></A>
+<DD><A NAME="IDX1262"></A>
 
 
 <P>
 <CODE>atom_codes(Atom, String)</CODE>
+<KBD> * ISO * </KBD>
 
 
 <P>
@@ -188,30 +180,20 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>atom_codes(+atm, ?string)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>General properties:</STRONG> 
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>atom_codes(Atom,String)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>atom_codes(-atm, +string)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
@@ -228,13 +210,12 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:string/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_codes(Atom,String))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 4:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
 <LI><EM>The following properties should hold at call time:</EM>
@@ -250,22 +231,23 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:atm/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_codes(Atom,String))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1510"></A>
-<A NAME="IDX1511"></A>
+<A NAME="IDX1263"></A>
+<A NAME="IDX1264"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>number_codes/2:</B>
-<DD><A NAME="IDX1512"></A>
+<DD><A NAME="IDX1265"></A>
 
 
 <P>
 <CODE>number_codes(Number, String)</CODE>
+<KBD> * ISO * </KBD>
 
 
 <P>
@@ -273,30 +255,20 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>number_codes(+num, ?string)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>General properties:</STRONG> 
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>number_codes(Number,String)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>number_codes(-num, +string)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
@@ -313,13 +285,12 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:string/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(number_codes(Number,String))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 4:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
 <LI><EM>The following properties should hold at call time:</EM>
@@ -335,22 +306,22 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:num/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(number_codes(Number,String))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1513"></A>
-<A NAME="IDX1514"></A>
+<A NAME="IDX1266"></A>
+<A NAME="IDX1267"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>number_codes/3:</B>
-<DD><A NAME="IDX1515"></A>
+<DD><A NAME="IDX1268"></A>
 
 
 <P>
-<CODE>number_codes(Number, Base, String)</CODE>
+<CODE>number_codes(Number, String, Base)</CODE>
 
 
 <P>
@@ -358,52 +329,45 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>number_codes(+num, +int, ?string)</CODE>
+<STRONG>General properties:</STRONG> 
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>number_codes(Number,String,Base)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>number_codes(-num, +int, +string)</CODE>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>String</CODE> is a string (a list of character codes).
+<CODE>Base</CODE> is a string (a list of character codes).
  (<CODE>basic_props:string/1</CODE>)
 <LI><EM>The following properties should hold at call time:</EM>
 
 <CODE>Number</CODE> is a number.
  (<CODE>basic_props:num/1</CODE>)
 
-<CODE>Base</CODE> is an integer.
+<CODE>String</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 <LI><EM>The following properties hold upon exit:</EM>
 
-<CODE>String</CODE> is a string (a list of character codes).
+<CODE>Base</CODE> is a string (a list of character codes).
  (<CODE>basic_props:string/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(number_codes(Number,String,Base))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 4:</STRONG> 
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
 <LI><EM>The following properties should hold at call time:</EM>
@@ -411,10 +375,10 @@ This predicate is understood natively by CiaoPP.
 <CODE>Number</CODE> is a free variable.
  (<CODE>term_typing:var/1</CODE>)
 
-<CODE>Base</CODE> is an integer.
+<CODE>String</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 
-<CODE>String</CODE> is a string (a list of character codes).
+<CODE>Base</CODE> is a string (a list of character codes).
  (<CODE>basic_props:string/1</CODE>)
 <LI><EM>The following properties hold upon exit:</EM>
 
@@ -422,18 +386,18 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:num/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(number_codes(Number,String,Base))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1516"></A>
-<A NAME="IDX1517"></A>
+<A NAME="IDX1269"></A>
+<A NAME="IDX1270"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_number/2:</B>
-<DD><A NAME="IDX1518"></A>
+<DD><A NAME="IDX1271"></A>
 
 
 <P>
@@ -445,27 +409,20 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>atom_number(+atm, ?num)</CODE>
+<STRONG>General properties:</STRONG> 
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>atom_number(Atom,Number)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>atom_number(-atm, +num)</CODE>
-
-<UL>
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
@@ -482,12 +439,12 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:num/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_number(Atom,Number))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 4:</STRONG> 
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
 <LI><EM>The following properties should hold at call time:</EM>
@@ -503,22 +460,23 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:atm/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_number(Atom,Number))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1519"></A>
-<A NAME="IDX1520"></A>
+<A NAME="IDX1272"></A>
+<A NAME="IDX1273"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_length/2:</B>
-<DD><A NAME="IDX1521"></A>
+<DD><A NAME="IDX1274"></A>
 
 
 <P>
 <CODE>atom_length(Atom, Length)</CODE>
+<KBD> * ISO * </KBD>
 
 
 <P>
@@ -526,19 +484,20 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>atom_length(+atm, ?int)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>General properties:</STRONG> 
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>atom_length(Atom,Length)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
@@ -555,22 +514,23 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:int/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_length(Atom,Length))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1522"></A>
-<A NAME="IDX1523"></A>
+<A NAME="IDX1275"></A>
+<A NAME="IDX1276"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>atom_concat/3:</B>
-<DD><A NAME="IDX1524"></A>
+<DD><A NAME="IDX1277"></A>
 
 
 <P>
 <CODE>atom_concat(Atom_1, Atom_2, Atom_12)</CODE>
+<KBD> * ISO * </KBD>
 
 
 <P>
@@ -578,60 +538,20 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>atom_concat(+atom, +atom, ?atom)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>General properties:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Concatenate two atoms.
-
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>atom_concat(Atom_1,Atom_2,Atom_12)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>atom_concat(-atom, -atom, +atom)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Non-deterministically split an atom.
-
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> <CODE>atom_concat(-atom, +atom, +atom)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain suffix (or fail if it cannot be done).
-
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> <CODE>atom_concat(+atom, -atom, +atom)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain prefix (or fail if it cannot be done).
-
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 5:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> 
 
 <UL>
 <LI><EM>Description:</EM> Concatenate two atoms.
@@ -653,13 +573,12 @@ This predicate is understood natively by CiaoPP.
  (<CODE>term_typing:atom/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_concat(Atom_1,Atom_2,Atom_12))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 6:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
 <LI><EM>Description:</EM> Non-deterministically split an atom.
@@ -683,13 +602,12 @@ This predicate is understood natively by CiaoPP.
  (<CODE>term_typing:atom/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_concat(Atom_1,Atom_2,Atom_12))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 7:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 3:</STRONG> 
 
 <UL>
 <LI><EM>Description:</EM> Take out of an atom a certain suffix (or fail if it cannot be done).
@@ -710,13 +628,12 @@ This predicate is understood natively by CiaoPP.
  (<CODE>term_typing:atom/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_concat(Atom_1,Atom_2,Atom_12))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 8:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 4:</STRONG> 
 
 <UL>
 <LI><EM>Description:</EM> Take out of an atom a certain prefix (or fail if it cannot be done).
@@ -737,18 +654,18 @@ This predicate is understood natively by CiaoPP.
  (<CODE>term_typing:atom/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(atom_concat(Atom_1,Atom_2,Atom_12))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1525"></A>
-<A NAME="IDX1526"></A>
+<A NAME="IDX1278"></A>
+<A NAME="IDX1279"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sub_atom/4:</B>
-<DD><A NAME="IDX1527"></A>
+<DD><A NAME="IDX1280"></A>
 
 
 <P>
@@ -760,17 +677,20 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>sub_atom(+atm, +int, +int, ?atm)</CODE>
+<STRONG>General properties:</STRONG> 
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
+
+<CODE>sub_atom(Atom,Before,Length,Sub_atom)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> 
+<STRONG>Usage:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
@@ -793,13 +713,13 @@ This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:atm/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
+<CODE>basic_props:eval(sub_atom(Atom,Before,Length,Sub_atom))</CODE>
+ (<CODE>basic_props:eval/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_21.html">previous</A>, <A HREF="ciao_23.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -13,6 +13,7 @@ purpose is the needed one, it is probably wiser (faster and clearer)
 to check in the program itself using directly arithmetic
 predicates.").
 
+
 :- pred between(+Min, +Max, ?N) : number * number * int # "@var{N} is
 an integer which is greater than or equal to @var{Min} and smaller
 than or equal to @var{Max}.  Both @var{Min} and @var{Max} can be
@@ -28,7 +29,10 @@ between_nd(N, Min, Max) :-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+276,2004/01/09,16:37*11+'CET'), "Changed
+:- comment(version(1*11+159,2004/01/09,16:54*42+'CET'), "Changed
    argument order of @pred{between/3} to match original definition by
    O'Keefe (Daniel Cabeza & Jose Morales)").
+
+:- comment(version(1*11+158,2004/01/09,15:28*52+'CET'), "Add comment
+   author and module.  (Edison Mera)").
 

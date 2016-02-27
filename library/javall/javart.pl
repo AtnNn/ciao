@@ -42,9 +42,9 @@ the general interface structure is detailed here.
 @section{Prolog to Java Interface Structure}
 @cindex{Prolog to Java Interface Structure}
 This interface is made up of two parts: a Prolog
-side and a Java side, running in separate processes. The Prolog side 
-receives requests from a Prolog program and sends them to the Java side
-through a socket. The Java side receives requests from the socket and
+part and a Java part, running in separate processes. The Prolog part 
+receives requests from a Prolog program and sends them to the Java part
+through a socket. The Java part receives requests from the socket and
 performs the actions included in the requests.
 
 If an event is thrown in the Java side, an asynchronous message must
@@ -78,7 +78,7 @@ do not have to deal with the complexity of this tasks.
 @subsection{Java side}
 @cindex{Prolog to Java Interface Structure. Java side}
 The Java side of this layer is more complex than the Prolog side. The tasks
-this part has to deal to are the following:
+this part have to deal to are the following:
 
 @begin{itemize}
   

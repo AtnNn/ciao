@@ -11,18 +11,14 @@ ALLFILES = *
 # Local compilation of all libraries: since the CIAO compiler takes
 # care of dependencies, an easy way is to compile a fake program which
 # includes all loadable modules.  The library directory must be
-# patched to point to the not-yet-installed libraries.  We also use
-# the recently compiled, since installation has not been made yet.
-#
-# The order in which libraries are being compiled is not arbitrary:
-# for example, clp(Q,R) must be compiled first, since other libraries
-# depend on them.
-#
+# patched (hence -C -L) to point to the not-yet-installed libraries.
+# We also make it to use the locally installed engine, since
+# installation has not been made yet.
 #---------------------------------------------------------------------------
 
-alldyn:  message ciao_so_libs clp_libs autolibs ciao_special_libs 
+alldyn:  message ciao_so_libs clp_libs autolibs ciao_special_libs
 
-allstat: message              clp_libs autolibs ciao_special_libs 
+allstat: message              clp_libs autolibs ciao_special_libs
 
 message:
 	@echo "*** ---------------------------------------------------------"
@@ -37,7 +33,7 @@ ciao_so_libs:
 	cd sockets && $(MAKE) all
 	cd random && $(MAKE) all
 
-# CLP{Q,R} needs some special consideration, as it generates 
+# CLP{Q,R} needs some special consideration, as it generates
 # internal links in order to share common sources.
 clp_libs:
 	-ln -sf ../clpqr-common/Makefile-common clpq/Makefile && \
@@ -46,7 +42,7 @@ clp_libs:
 		cd clpr && $(MAKE) compile
 
 ciao_special_libs:
-# The user might not have (a decent) java 
+# The user might not have (a decent) java
 ifeq ($(WITH_JAVA_INTERFACE),yes)
 	cd javall && $(MAKE) all
 endif
@@ -54,25 +50,40 @@ endif
 	cd pillow && $(MAKE)
 
 MYSQL_DIRECTORY=persdb_mysql
+MYSQL_DIRECTORY_OP=persdb_mysql_op
 
 autolibs:
 # This is so that if someone does not need the MySQL library, or has
 # it installed in some weird place, the compilation still goes
 # smoothly.
+# WARNING!!!!! In a future only a version of MySQL interface should exist!!!!
+# MCL: in the meantime WE ARE NOT DISTRIBUTING persdb_mysql_op; and we check
+# whether it exists or not before attempting its compilation.
 ifeq ($(WITH_MYSQL),yes)
-	-@rm -f $(MYSQL_DIRECTORY)/NOCOMPILE
+	-@rm -f $(MYSQL_DIRECTORY)/NOCOMPILE 
 	../etc/substitute_string \
 		where_mysql_client_lives \
 		$(MYSQL_CLIENT_DIRECTORY) \
 		$(MYSQL_DIRECTORY)/linker_option_template.pl \
 		$(MYSQL_DIRECTORY)/linker_opts.pl
 	$(SETLOCALCIAO) $(CIAOC) -x $(SRCLIB)/library/$(MYSQL_DIRECTORY)/mysql_use_client
-	@rm -f $(SRCLIB)/library/$(MYSQL_DIRECTORY)/mysql_use_client
+	if [ -d $(MYSQL_DIRECTORY_OP) ] ; then \
+	../etc/substitute_string \
+		where_mysql_client_lives \
+		$(MYSQL_CLIENT_DIRECTORY) \
+		$(MYSQL_DIRECTORY_OP)/linker_option_template.pl \
+		$(MYSQL_DIRECTORY_OP)/linker_opts.pl ; \
+	$(SETLOCALCIAO) $(CIAOC) -x $(SRCLIB)/library/$(MYSQL_DIRECTORY_OP)/mysql_use_client ; \
+	rm -f $(SRCLIB)/library/$(MYSQL_DIRECTORY)/mysql_use_client ; \
+	fi
 else
 	@touch $(MYSQL_DIRECTORY)/NOCOMPILE
+	if [ -d $(MYSQL_DIRECTORY_OP) ] ; then \
+	@touch $(MYSQL_DIRECTORY_OP)/NOCOMPILE ; \
+	fi
 endif
 	'rm' -f all_modules all_module_messages
-# This is so that if installation is aborted, the permissions are left 
+# This is so that if installation is aborted, the permissions are left
 # set properly and *another user* can reinstall
 	-touch all_modules all_module_messages
 	-chmod $(DATAMODE) all_modules all_module_messages
@@ -122,4 +133,4 @@ distclean:
 	find . -name '*.asr' -exec 'rm' -f {} \;
 	find . -name '*.ass' -exec 'rm' -f {} \;
 	find . -name '*.ast' -exec 'rm' -f {} \;
-
+	'rm' -f all_modules all_module_messages

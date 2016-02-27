@@ -11,7 +11,7 @@ default:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Building $(MAIN) documentation ..."
 	@echo "*** ---------------------------------------------------------"
-	-cd ../emacs-mode; $(MAKE) doc
+	-cd ../emacs-mode; $(MAKE) CiaoMode.pl
 	-cd reference; 'rm' $(MAIN).htmlindex
 	-cd reference; $(MAKE) all
 

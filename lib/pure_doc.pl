@@ -2,7 +2,7 @@
 :- comment(nodoc,assertions).
 
 :- comment(title,"Pure Prolog package").
- 
+
 :- comment(author,"The CLIP Group").
  
 :- comment(module,"This library package allows the use of 
@@ -76,6 +76,6 @@
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+224,2003/12/21,20:16*18+'CET'), "Added comment
+:- comment(version(1*11+100,2003/12/21,20:16*33+'CET'), "Added comment
    author.  (Edison Mera)").
 

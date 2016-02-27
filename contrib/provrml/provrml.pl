@@ -21,7 +21,7 @@
 :- comment(subtitle,"@em{Draft printed on:} @today{}").
 
 :- comment(author, "G@..{o}ran Smedb@..{a}ck").
-:- comment(author, "(Some changes by MCL)").
+:- comment(author, "(Some changes by Manuel Carro)").
 :- comment(author, "@tt{clip@@dia.fi.upm.es}").
 :- comment(author, "@tt{http://www.clip.dia.fi.upm.es/}").
 :- comment(author, "The CLIP Group").

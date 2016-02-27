@@ -90,6 +90,6 @@ list_all_sols(-Term, Id, SoFar, Rest):-
 
 :- comment(version_maintenance, dir('../version')).
 
-:- comment(version(1*9+221,2003/12/21,20:06*33+'CET'), "Control
-   version started. (Edison Mera)").
+:- comment(version(1*11+97,2003/12/21,20:07*18+'CET'), "Control
+   version started.  (Edison Mera)").
 

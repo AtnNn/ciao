@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Quintus-like internal database</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC257" HREF="ciao_toc.html#TOC257">Quintus-like internal database</A></H1>
+<H1><A NAME="SEC231" HREF="ciao_toc.html#TOC231">Quintus-like internal database</A></H1>
 <P>
-<A NAME="IDX3572"></A>
+<A NAME="IDX3355"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#213 (2003/12/21, 2:20:13 CET)
+<STRONG>Version:</STRONG> 1.11#90 (2003/12/21, 2:20:48 CET)
 
 
 <P>
@@ -33,13 +33,13 @@ These predicates store arbitrary terms in the database without interfering with 
 
 
 <UL>
-<LI><A HREF="ciao_55.html#SEC258">Usage and interface (old_database)</A>
-<LI><A HREF="ciao_55.html#SEC259">Documentation on exports (old_database)</A>
+<LI><A HREF="ciao_55.html#SEC232">Usage and interface (old_database)</A>
+<LI><A HREF="ciao_55.html#SEC233">Documentation on exports (old_database)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC258" HREF="ciao_toc.html#TOC258">Usage and interface (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC232" HREF="ciao_toc.html#TOC232">Usage and interface (<CODE>old_database</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -56,13 +56,13 @@ These predicates store arbitrary terms in the database without interfering with 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3573"></A>
+<A NAME="IDX3356"></A>
 <CODE>recorda/3</CODE>, 
-<A NAME="IDX3574"></A>
+<A NAME="IDX3357"></A>
 <CODE>recordz/3</CODE>, 
-<A NAME="IDX3575"></A>
+<A NAME="IDX3358"></A>
 <CODE>recorded/3</CODE>, 
-<A NAME="IDX3576"></A>
+<A NAME="IDX3359"></A>
 <CODE>current_key/2</CODE>.
 
 </UL>
@@ -73,13 +73,13 @@ These predicates store arbitrary terms in the database without interfering with 
 
 
 
-<H2><A NAME="SEC259" HREF="ciao_toc.html#TOC259">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC233" HREF="ciao_toc.html#TOC233">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
 <P>
-<A NAME="IDX3577"></A>
-<A NAME="IDX3578"></A>
+<A NAME="IDX3360"></A>
+<A NAME="IDX3361"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>recorda/3:</B>
-<DD><A NAME="IDX3579"></A>
+<DD><A NAME="IDX3362"></A>
 
 
 <P>
@@ -91,9 +91,16 @@ The term <CODE>Term</CODE> is recorded in the internal database as the first ite
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>recorda(+Key, ?Term, -Ref)</CODE>
+<STRONG>Usage:</STRONG> <CODE>recorda(Key, Term, Ref)</CODE>
 
 <UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Key</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Ref</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
 This predicate is understood natively by CiaoPP.
@@ -103,11 +110,11 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX3580"></A>
-<A NAME="IDX3581"></A>
+<A NAME="IDX3363"></A>
+<A NAME="IDX3364"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>recordz/3:</B>
-<DD><A NAME="IDX3582"></A>
+<DD><A NAME="IDX3365"></A>
 
 
 <P>
@@ -119,9 +126,16 @@ Like <CODE>recorda/3</CODE>, except that the new term becomes the <EM>last</EM> 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>recordz(+Key, ?Term, -Ref)</CODE>
+<STRONG>Usage:</STRONG> <CODE>recordz(Key, Term, Ref)</CODE>
 
 <UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Key</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+
+<CODE>Ref</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
 This predicate is understood natively by CiaoPP.
@@ -131,11 +145,11 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX3583"></A>
-<A NAME="IDX3584"></A>
+<A NAME="IDX3366"></A>
+<A NAME="IDX3367"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>recorded/3:</B>
-<DD><A NAME="IDX3585"></A>
+<DD><A NAME="IDX3368"></A>
 
 
 <P>
@@ -147,7 +161,7 @@ The internal database is searched for terms recorded under the key <CODE>Key</CO
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>recorded(?Key, ?Term, ?Ref)</CODE>
+<STRONG>Usage:</STRONG> <CODE>recorded(Key, Term, Ref)</CODE>
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
@@ -159,11 +173,11 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX3586"></A>
-<A NAME="IDX3587"></A>
+<A NAME="IDX3369"></A>
+<A NAME="IDX3370"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_key/2:</B>
-<DD><A NAME="IDX3588"></A>
+<DD><A NAME="IDX3371"></A>
 
 
 <P>
@@ -175,7 +189,7 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>current_key(?Name, ?Key)</CODE>
+<STRONG>Usage:</STRONG> <CODE>current_key(Name, Key)</CODE>
 
 <UL>
 <LI><EM>The following properties hold globally:</EM>
@@ -187,6 +201,6 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -177,10 +177,10 @@ current_prolog_flag(X, Y) :- prolog_flag(X, Y, Y). /* ISO */
            an existing flag, unify @var{OldValue} with the value
            associated with it, and set it to new value @var{NewValue}.").
 
-:- true pred prolog_flag(?atm,?term,+term) + native.
+:- true pred prolog_flag(?atm,?term,+term).
 
 :- true pred prolog_flag(?FlagName,-OldValue,-NewValue)
-        : (atm(FlagName), OldValue == NewValue) + native
+        : (atm(FlagName), OldValue == NewValue)
         # "Same as @tt{current_prolog_flag(@var{FlagName}, @var{OldValue})}".
 
 prolog_flag(compiling, Old, New) :-

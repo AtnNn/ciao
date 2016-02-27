@@ -1,4 +1,4 @@
-:- module(write_tokens, [write_tokens/1], []).
+:- module(write_tokens, [write_tokens/1]).
 
 :- use_module(library(strings)).
 :- use_module(library(write)).

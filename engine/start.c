@@ -29,6 +29,7 @@
 #include "profile_defs.h"
 #include "startgoal_defs.h"
 #include "prolog_tasks_defs.h"
+#include "timing_defs.h"
 
 /* local declarations */
 
@@ -162,6 +163,11 @@ int start(argc, argv)
   char *raw_source_path = NULL;
   FILE *qfile = NULL;
 
+#ifdef PROFILE
+  PROFILE__RESET_CALL_STACK;
+#endif
+
+  init_statistics();                             /* init the statistics related info */
   fillchardigit();                               /* prepares the char digit table */
   init_locks();                                  /* global, first of all! */
 
@@ -355,7 +361,7 @@ int start(argc, argv)
       }
 
       /* Check now if the SHELL variable has been defined --- the
-         shell/{0,1,2} calls depend on it. */
+         shell/{0,3} calls depend on it. */
       if (!getenv("SHELL")){
         strcat(temp_path, "/sh.exe");  /* CygWin shell --- MUST be here */
         setenv("SHELL", temp_path, 1);
@@ -425,8 +431,8 @@ int start(argc, argv)
     fclose(qfile);
     /* wam->next_insn set to boot code in local_init_each_time */
     /*w->node->global_top = w->global_top;*/     /* Isn't this unnecessary? */
-    /* w->node->term[0] = X(0) = init_atom_check("boot");*/
-    firstgoal(first_goal, "boot");              /*  Fills in worker_entry */
+    /* w->node->term[0] = X(0) = init_atom_check("internals:boot");*/
+    firstgoal(first_goal, "internals:boot");              /*  Fills in worker_entry */
   }
   
   return 0;

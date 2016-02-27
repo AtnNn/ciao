@@ -39,7 +39,6 @@ static BOOL prolog_atom_mode(Argdecl);
 static struct definition *define_builtin(char *pname, int instr, int arity);
 static void classify_atom(struct atom *s);
 static BOOL prolog_ciaolibdir(Argdecl);
-static void initialize_intrinsics(void);
 static void deffunction(char *atom, int arity, CInfo proc, int funcno);
 static void define_functions(void);
 
@@ -52,17 +51,29 @@ static void define_functions(void);
   void enable_conditions();
 */
 
-struct statistics stats = {0.0, 
-                           0, 
-                           0, 
-                           0, 
-                           0.0,
-                           0, 
-                           0, 
-                           0.0, 
-                           0.0,
-                           0.0,
-                           0.0};                                /* Shared */
+struct statistics stats = {
+  0, /*ENG_FLT ss_click*/
+  0, /*ENG_INT ss_global*/
+  0, /*ENG_INT ss_local*/
+  0, /*ENG_INT ss_control*/
+  0, /*ENG_LINT gc_click*/
+  0, /*ENG_INT gc_count*/
+  0, /*ENG_INT gc_acc*/
+  0, /*ENG_LINT startclick*/
+  0, /*ENG_LINT lastclick*/
+  0, /*ENG_LINT startwallclick*/
+  0, /*ENG_LINT lastwallclick*/
+  0, /*ENG_LINT startuserclick*/
+  0, /*ENG_LINT lastuserclick*/
+  0, /*ENG_LINT startsystemclick*/
+  0, /*ENG_LINT lastsystemclick*/
+
+/* keep in mind that the next values can be redefined for a better
+					 frequency */
+  0, /*ENG_LINT wallclockfreq*/
+  0, /*ENG_LINT userclockfreq*/
+  0  /*ENG_LINT systemclockfreq*/
+};                                /* Shared */
 
 struct sw_on_key_node **atmtab; /* Shared --- but need lock when accessing /
                                    reallocing it! */
@@ -184,7 +195,6 @@ extern BOOL first_instance PROTO((struct worker *w));
 extern BOOL current_stream PROTO((struct worker *w));
 extern BOOL current_predicate PROTO((struct worker *w));
 extern BOOL predicate_property PROTO((struct worker *w));
-extern BOOL prolog_runtime PROTO((struct worker *w));
 /* extern BOOL prolog_walltime PROTO((struct worker *w)); */
 extern BOOL prolog_datime PROTO((struct worker *w));
 extern BOOL prolog_time PROTO((struct worker *w));
@@ -223,7 +233,6 @@ extern BOOL prolog_unix_shell0 PROTO((struct worker *w));
 extern BOOL prolog_unix_shell2 PROTO((struct worker *w));
 extern BOOL prolog_unix_system2 PROTO((struct worker *w));
 extern BOOL prolog_exec PROTO((struct worker *w));
-extern BOOL prolog_wait PROTO((struct worker *w));
 extern BOOL prolog_unix_argv PROTO((struct worker *w));
 extern BOOL prolog_unix_exit PROTO((struct worker *w));
 extern BOOL prolog_unix_mktemp PROTO((struct worker *w));
@@ -236,8 +245,11 @@ extern BOOL prolog_unix_delete PROTO((struct worker *w));
 extern BOOL prolog_unix_rename PROTO((struct worker *w));
 extern BOOL prolog_unix_mkdir PROTO((struct worker *w));
 extern BOOL prolog_current_host PROTO((struct worker *w));
-extern BOOL prolog_getenvstr PROTO((struct worker *w));
-extern BOOL prolog_setenvstr PROTO((struct worker *w));
+extern BOOL prolog_c_get_env PROTO((struct worker *w));
+extern BOOL prolog_c_set_env PROTO((struct worker *w));
+extern BOOL prolog_c_del_env PROTO((struct worker *w));
+extern BOOL prolog_c_current_env PROTO((struct worker *w));
+extern BOOL prolog_c_copy_file PROTO((struct worker *w));
 /* extern BOOL prolog_pause PROTO((struct worker *w)); */
 /* extern BOOL prolog_getpid PROTO((struct worker *w)); */
 
@@ -248,6 +260,8 @@ extern BOOL prolog_prepare_foreign_files PROTO((struct worker *w));
 extern BOOL prolog_foreign_base PROTO((struct worker *w));
 */
 extern BOOL prolog_find_file PROTO((struct worker *w));
+extern BOOL prolog_path_is_absolute PROTO((struct worker *w));
+extern BOOL prolog_expand_file_name PROTO((struct worker *w));
 extern BOOL prolog_format_print_integer PROTO((struct worker *w));
 extern BOOL prolog_format_print_float PROTO((struct worker *w));
 extern BOOL prolog_save PROTO((struct worker *w));
@@ -297,22 +311,30 @@ extern BOOL counter_values PROTO((struct worker *w));
 extern BOOL reset_counters PROTO((struct worker *w));
 #endif
 
-                                                            
+extern BOOL prolog_runclick PROTO((struct worker *w));             /* EMM */
+extern BOOL prolog_userclick PROTO((struct worker *w));            /* EMM */
+extern BOOL prolog_systemclick PROTO((struct worker *w));          /* EMM */
+extern BOOL prolog_wallclick PROTO((struct worker *w));            /* EMM */
+
+extern BOOL prolog_runtime PROTO((struct worker *w));              /* EMM */
+extern BOOL prolog_usertime PROTO((struct worker *w));             /* EMM */
+extern BOOL prolog_systemtime PROTO((struct worker *w));           /* EMM */
 extern BOOL prolog_walltime PROTO((struct worker *w));             /* MCL */
+
 extern BOOL prolog_pause PROTO((struct worker *w));                /* MCL */
 extern BOOL prolog_getpid PROTO((struct worker *w));               /* MCL */
-extern BOOL prolog_getarch PROTO((struct worker *w));               /* MCL */
-extern BOOL prolog_getos PROTO((struct worker *w));               /* MCL */
+extern BOOL prolog_getarch PROTO((struct worker *w));              /* MCL */
+extern BOOL prolog_getos PROTO((struct worker *w));                /* MCL */
 extern BOOL prolog_version PROTO((struct worker *w));              /* DCG */
 
 extern BOOL prolog_dynlink PROTO((struct worker *w));              /* MCL */
 extern BOOL prolog_dynunlink PROTO((struct worker *w));            /* JFMC */
 
-extern BOOL prolog_fast_read_in_c PROTO((struct worker *w));      /* OPA */
-extern BOOL prolog_fast_write_in_c PROTO((struct worker *w));     /* OPA */
+extern BOOL prolog_fast_read_in_c PROTO((struct worker *w));       /* OPA */
+extern BOOL prolog_fast_write_in_c PROTO((struct worker *w));      /* OPA */
 
-extern BOOL compressLZ PROTO((struct worker *w));                 /* OPA */
-extern BOOL copyLZ PROTO((struct worker *w));                     /* OPA */
+extern BOOL compressLZ PROTO((struct worker *w));                  /* OPA */
+extern BOOL copyLZ PROTO((struct worker *w));                      /* OPA */
 
 /* GLOBAL DATA STRUCTURES */
 
@@ -430,7 +452,6 @@ char symbolchar[256];
  TAGGED atom_interpreted;	/* "interpreted" */
  TAGGED atom_builtin;		/* "built_in" */
  TAGGED atom_true;		/* "true" */
- TAGGED atom_false;		/* "false" */
  TAGGED atom_retry_hook;	/* "$$retry_hook" */
  TAGGED atom_unprofiled;	/* "unprofiled" */
  TAGGED atom_profiled;   	/* "profiled" */
@@ -737,37 +758,11 @@ static TAGGED deffunctor(pname,arity)
   return SetArity(MakeString(pname),arity);
 }
 
-
-struct definition *define_c_predicate(pname,procedure,arity)
-     char  *pname;
-     BOOL (*procedure)();
-     int arity;
-{
-  struct definition *func;
-  ENG_INT current_mem = total_mem_count;
-  
-  func = insert_definition(predicates_location,MakeString(pname),arity,TRUE);
-  SetEnterInstr(func,ENTER_C);
-#if 0 /* was GAUGE */
-  {
-    func->code.cinfo = 
-      (struct c_code_info *)checkalloc(sizeof(struct c_code_info));
-    func->code.cinfo->procedure = procedure;
-    func->code.cinfo->counter = 0;
-  }
-#else
-  func->code.cinfo = procedure;
-#endif
-  INC_MEM_PROG((total_mem_count - current_mem));
-  return func;
-}
-
-
-struct definition *define_c_mod_predicate(module,pname,procedure,arity)
+struct definition *define_c_mod_predicate(module,pname,arity,procedure)
      char *module;                 /* Module in which the definition goes */
      char  *pname;                               /* Prolog predicate name */
-     BOOL (*procedure)();                        /* Pointer to C function */
      int arity;                                     /* Arity of predicate */
+     BOOL (*procedure)();                        /* Pointer to C function */
 {
   struct definition *func;
   REGISTER struct sw_on_key_node *keyval;
@@ -815,8 +810,6 @@ struct definition *define_c_mod_predicate(module,pname,procedure,arity)
   return func;
 }
 
-
-/* JFMC: undefine a predicate defined with define_c_mod_predicate */
 void undefine_c_mod_predicate(char *module, char *pname, int arity) {
   struct definition *f;
   char mod_pname[STATICMAXATOM]; /* Pred. name with module name prepended */
@@ -836,10 +829,8 @@ void undefine_c_mod_predicate(char *module, char *pname, int arity) {
   GENERAL INITIALIZATION
   ------------------------------------------------------------  */
 
-
-static void initialize_intrinsics()
-{
-
+static void unused_initialize_intrinsics() {
+  /* define_c_predicate is deprecated */
                                /* kprim.c */
 #if defined(MARKERS)
   define_c_predicate("launch_goal", prolog_launch_goal, 2);
@@ -847,149 +838,7 @@ static void initialize_intrinsics()
   define_c_predicate("fail_goal", prolog_fail_goal, 1);
   define_c_predicate("redo_goal", prolog_redo_goal, 1);
 #endif
-                              /* initial.c */
-  
-  define_c_predicate("$atom_mode",prolog_atom_mode,2);
-  define_c_predicate("ciaolibdir",prolog_ciaolibdir,1);
-
-
-
-				/* streams.c */
-  
-  define_c_predicate("stream_code",prolog_stream_code,2);
-  define_c_predicate("$bootversion",prolog_bootversion,0);
-  /*define_c_predicate("$source_path_name",prolog_sourcepath,2); */
-  define_c_predicate("$open",prolog_open,3);
-  define_c_predicate("close",prolog_close,1); 
-  define_c_predicate("$unix_popen",prolog_unix_popen,3);
-  define_c_predicate("character_count",character_count,2);
-  define_c_predicate("line_position",line_position,2);
-  define_c_predicate("line_count",line_count,2);
-  /* aliases handling */
-  define_c_predicate("current_input",prolog_current_input,1);
-  define_c_predicate("set_input",prolog_set_input,1);
-  define_c_predicate("current_output",prolog_current_output,1);
-  define_c_predicate("set_output",prolog_set_output,1);
-
-  define_c_mod_predicate("io_alias_redirection",
-                         "replace_stream", prolog_replace_stream,2);
-  define_c_mod_predicate("io_alias_redirection", 
-                         "get_stream", prolog_get_stream,2);
-
-
-
-
-                              /* objareas.c */
-
-  define_c_predicate("$purge",prolog_purge,1);
-  define_c_predicate("$erase",prolog_erase,1);
-  define_c_predicate("$ptr_ref",prolog_ptr_ref,2);
-  define_c_predicate("$inserta",inserta,2);
-  define_c_predicate("$insertz",insertz,2);
-  define_c_predicate("$make_bytecode_object",make_bytecode_object,4);
-/*  define_c_predicate("$context_switch",context_switch,0);*/ 
-
-				/* term_support.c */
-
-  define_c_predicate("name",prolog_name,2);
-  define_c_predicate("atom_codes",prolog_atom_codes,2);
-  define_c_predicate("number_codes",prolog_number_codes_2,2);
-  define_c_predicate("number_codes",prolog_number_codes_3,3);
-  define_c_predicate("atom_length",prolog_atom_length,2);
-  define_c_predicate("sub_atom",prolog_sub_atom,4);
-  define_c_predicate("atom_concat",prolog_atom_concat,3);
-  define_c_predicate("copy_term",prolog_copy_term,2);
-
-				/* indexing.c */
-
-  define_c_predicate("$abolish",prolog_abolish,1); /* JFMC */
-  define_c_predicate("$define_predicate",define_predicate,2);
-  define_c_predicate("$erase_clause",erase_clause,1);
-  define_c_predicate("$clause_number",clause_number,2);
-  define_c_predicate("$compiled_clause",compiled_clause,4);
-  define_c_predicate("$empty_gcdef_bin",empty_gcdef_bin,0);
-  define_c_predicate("$set_property",set_property,2);
-
-				/* inout.c */
-  
-  define_c_predicate("code_class",code_class,2);
-  define_c_predicate("flush_output",flush_output,0);
-  define_c_predicate("flush_output",flush_output1,1);
-  address_getct = define_c_predicate("getct",getct,2);
-  address_getct1 = define_c_predicate("getct1",getct1,2);
-  address_get = define_c_predicate("get_code",get,1);
-  address_get2 = define_c_predicate("get_code",get2,2);
-  address_get1 = define_c_predicate("get1_code",get1,1);
-  address_get12 = define_c_predicate("get1_code",get12,2);
-  address_peek = define_c_predicate("peek_code",peek,1);
-  address_peek2 = define_c_predicate("peek_code",peek2,2);
-  define_c_predicate("nl",nl,0);
-  define_c_predicate("nl",nl1,1);
-  define_c_predicate("put_code",put,1);
-  define_c_predicate("put_code",put2,2);
-  define_c_predicate("tab",tab,1);
-  define_c_predicate("tab",tab2,2);
-  address_skip = define_c_predicate("skip_code",skip,1);
-  address_skip2 = define_c_predicate("skip_code",skip2,2);
-  address_skip_line = define_c_predicate("skip_line",skip_line,0);
-  address_skip_line1 = define_c_predicate("skip_line",skip_line1,1);
-  define_c_predicate("display",prolog_display,1);
-  define_c_predicate("display",prolog_display2,2);
-  define_c_predicate("displayq",prolog_displayq,1);
-  define_c_predicate("displayq",prolog_displayq2,2);
-  define_c_predicate("clearerr",prolog_clearerr,1);
-  define_c_mod_predicate("fastrw","fast_read",prolog_fast_read_in_c,1);
-  define_c_mod_predicate("fastrw","fast_write",prolog_fast_write_in_c,1);
-  define_c_mod_predicate("compressed_bytecode","compressLZ",compressLZ,1);
-  define_c_mod_predicate("compressed_bytecode","copyLZ",copyLZ,1);
-
-				/* builtin.c */
-  
-  define_c_predicate("$ddt",set_predtrace,1);
-
-				/* qread.c */
-
-  define_c_predicate("$qread",prolog_qread,2);
-  define_c_predicate("$push_qlinfo",push_qlinfo,0);
-  define_c_predicate("$pop_qlinfo",pop_qlinfo,0);
-
 				/* misc.c */
-  
-  define_c_mod_predicate("prolog_sys", "new_atom", prolog_new_atom, 1);
-  define_c_predicate("$set_global_logical_var", set_glv, 2);
-  define_c_predicate("$get_global_logical_var", get_glv, 2);
-#if defined(ATOMGC)
-  define_c_predicate("$erase_atom", prolog_erase_atom, 1);
-#endif
-  define_c_mod_predicate("system","current_executable",
-                         prolog_current_executable,1);
-  define_c_predicate("$prompt",prompt,2);
-  define_c_predicate("$frozen",frozen,2);
-  define_c_predicate("$defrost",defrost,2);
-  define_c_predicate("$setarg",setarg,4);
-  define_c_predicate("$undo_goal",undo,1);
-  define_c_predicate("$metachoice",metachoice,1);
-  define_c_predicate("$metacut",metacut,1);
-  define_c_predicate("$retry_cut",retry_cut,2);
-  define_c_predicate("$unknown",unknown,2);
-/* define_c_predicate("$leash_mode",leash_mode,2);*/
-/* define_c_predicate("$maxdepth",maxdepth,2); */
-/* define_c_predicate("$printdepth",printdepth,2); */
-/* define_c_predicate("$breaklevel",breaklevel,2); */
-  define_c_predicate("$compiling",compiling,2);
-  define_c_predicate("$ferror_flag",ferror_flag,2);
-/* define_c_predicate("$single_var_flag",single_var_flag,2); */
-/* define_c_predicate("$character_escapes_flag",character_escapes_flag,2); */
-/* define_c_predicate("$multiple_flag",redefine_flag,2);*/
-  define_c_predicate("$quiet_flag",quiet_flag,2);
-  define_c_predicate("$spypoint",spypoint,3);
-  define_c_predicate("$debugger_state",debugger_state,2);
-  define_c_predicate("$debugger_mode",debugger_mode,0);
-  define_c_predicate("$prolog_radix",prolog_radix,2);
-  define_c_predicate("$constraint_list",constraint_list,2);
-  define_c_predicate("$eq",prolog_eq,2);
-  define_c_predicate("$large_data",large_data,3);
-  define_c_predicate("$interpreted_clause",prolog_interpreted_clause,2);
 #if defined(UNDEFINED)
   define_c_predicate("launch_goal_plus",prolog_launch_goal_plus,3);
 #endif
@@ -999,30 +848,10 @@ static void initialize_intrinsics()
   define_c_predicate("launch_goal_shv",prolog_launch_goal_shv,2);
   define_c_predicate("launch_goal_cont",prolog_launch_goal_cont,3);
 #endif
-  
-  /* In library(concurrency), under library/concurrency */
-  define_c_mod_predicate("concurrency", "$eng_call",  prolog_eng_call, 6);
-  define_c_mod_predicate("concurrency", "$eng_backtrack",  prolog_eng_backtrack, 2);
-  define_c_mod_predicate("concurrency", "$eng_cut",  prolog_eng_cut, 1);
-  define_c_mod_predicate("concurrency", "$eng_release", prolog_eng_release, 1);
-  define_c_mod_predicate("concurrency", "$eng_wait", prolog_eng_wait, 1);
-  define_c_mod_predicate("concurrency", "$eng_kill",  prolog_eng_kill, 1);
-  define_c_mod_predicate("concurrency", "$eng_killothers", prolog_eng_killothers, 0);
-  define_c_mod_predicate("concurrency", "$eng_status", prolog_eng_status, 0);
-  define_c_mod_predicate("concurrency", "$eng_status1", prolog_eng_status1, 1);
-  define_c_mod_predicate("concurrency", "$eng_self", prolog_eng_self, 2);
+				/* misc.c */
 
   /* The next one not yet finished */ 
   /*  define_c_predicate("concurrency", "eng_clean"      prolog_eng_clean, 1);*/
-
-  define_c_mod_predicate("concurrency", "lock_atom",prolog_lock_atom,1);
-  define_c_mod_predicate("concurrency", "unlock_atom",prolog_unlock_atom,1);
-  define_c_mod_predicate("concurrency", "atom_lock_state",prolog_lock_atom_state,2);
-
-  define_c_predicate("$unlock_predicate",prolog_unlock_predicate,1);
-
-
-
 #if defined(UNDEFINED)
   define_c_predicate("goal_status",prolog_tasks_status,0);
   define_c_predicate("kill_goal",prolog_kill_thread,1);
@@ -1032,123 +861,10 @@ static void initialize_intrinsics()
   define_c_predicate("backtrack_goal",prolog_backtrack_goal,1);
   define_c_predicate("release_goal",prolog_release_goal,1);
 #endif
-
-
-				/* unix_utils.c */
-
-  define_c_mod_predicate("system","working_directory",prolog_unix_cd,2);
-  define_c_mod_predicate("system","pause", prolog_pause, 1);
-  define_c_mod_predicate("system","shell",prolog_unix_shell0,0);
-  define_c_mod_predicate("system","shell",prolog_unix_shell2,2);
-  define_c_mod_predicate("system","system",prolog_unix_system2,2);
-  define_c_mod_predicate("system", "wait", prolog_wait, 3);
-  define_c_predicate("$exec",prolog_exec,8);
-  define_c_predicate("$unix_argv",prolog_unix_argv,1);
-  /*  define_c_predicate("$unix_exit",prolog_unix_exit,1); //) ( (+ */
-  define_c_mod_predicate("system","mktemp",prolog_unix_mktemp,2);
-  define_c_mod_predicate("system","file_exists",prolog_unix_access,2);
-  define_c_mod_predicate("system","directory_files",prolog_directory_files,2);
-  define_c_mod_predicate("system","file_properties",prolog_file_properties,6);
-  define_c_mod_predicate("system","chmod",prolog_unix_chmod,2);
-  define_c_mod_predicate("system","umask",prolog_unix_umask,2);
-  define_c_mod_predicate("system","delete_file",prolog_unix_delete,1);
-  define_c_mod_predicate("system","rename_file",prolog_unix_rename,2);
-  define_c_mod_predicate("system","make_directory",prolog_unix_mkdir,2);
-  define_c_mod_predicate("system","delete_directory",prolog_unix_rmdir,1);
-  define_c_mod_predicate("system","current_host",prolog_current_host,1);
-  define_c_mod_predicate("system","getenvstr",prolog_getenvstr, 2);
-  define_c_mod_predicate("system","setenvstr",prolog_setenvstr, 2);
-  define_c_mod_predicate("system","get_pid", prolog_getpid, 1);
-  define_c_predicate("get_arch", prolog_getarch, 1);
-  define_c_predicate("get_os", prolog_getos, 1);
-  define_c_predicate("$ciao_version", prolog_version, 2);
-
-  define_c_predicate("$find_file",prolog_find_file,8); 
-
-
-                            /* dynlink.c */
-
-  define_c_predicate("dynlink", prolog_dynlink, 2);
-  define_c_predicate("dynunlink", prolog_dynunlink, 1); /* JFMC */
-
-
-                              /* foreign.c */
-  /* -- Taken out foreign.c (DCG)
-  define_c_predicate("$load_foreign_files",prolog_load_foreign_files,4);
-  define_c_predicate("$prepare_foreign_files",prolog_prepare_foreign_files,3);
-  define_c_predicate("$foreign_base",prolog_foreign_base,1);
-  */
-				/* format.c */
-  
-  define_c_predicate("$format_print_float",prolog_format_print_float,3);
-  define_c_predicate("$format_print_integer",prolog_format_print_integer,3);
-
-				/* timing.c */
-
-  define_c_predicate("$runtime",prolog_runtime,1);
-  define_c_predicate("$walltime", prolog_walltime, 1);
-  define_c_mod_predicate("system","time",prolog_time,1);
-  define_c_mod_predicate("system","datime",prolog_datime,9);
-
-
-				/* stacks.c */
-
-  define_c_predicate("$termheap_usage",termheap_usage,1);
-  define_c_predicate("$envstack_usage",envstack_usage,1);
-  define_c_predicate("$trail_usage",trail_usage,1);
-  define_c_predicate("$choice_usage",choice_usage,1);
-  define_c_predicate("$stack_shift_usage",stack_shift_usage,1);
-
-				/* alloc.c */
-
-  define_c_mod_predicate("prolog_sys","statistics",statistics,0);
-  define_c_predicate("$program_usage",program_usage,1);
-  define_c_predicate("$internal_symbol_usage",internal_symbol_usage,1);
-  define_c_predicate("$total_usage",total_usage,1);
-
-                                 /* heapgc.c */
-
-  define_c_predicate("$gc_mode",gc_mode,2);
-  define_c_predicate("$gc_trace",gc_trace,2);
-  define_c_predicate("$gc_margin",gc_margin,2);
-  define_c_predicate("$gc_usage",gc_usage,1);
-  define_c_mod_predicate("prolog_sys","garbage_collect",gc_start,0);
-
 				/* nondet.c */
-  
-  define_c_predicate("repeat",prolog_repeat,0);
-  define_c_mod_predicate("prolog_sys","current_atom",current_atom,1);
-  define_c_predicate("current_stream",current_stream,3);
-  define_c_predicate("$current_predicate",current_predicate,2);
-  define_c_predicate("$predicate_property",predicate_property,3);
-  define_c_predicate("$current_clauses",current_clauses,2);
-
 #if defined(OLD_DATABASE)
   define_c_predicate("$current_key",current_key,4);
 #endif
-  define_c_predicate("$first_instance",first_instance,2);
-  define_c_predicate("$close_predicate",close_predicate,1);
-  define_c_predicate("$open_predicate",open_predicate,1);
-
-#if defined(GAUGE)
-  				/* gauge.c */
-
-  define_c_predicate("$emulated_clause_counters",emulated_clause_counters,4);
-  define_c_predicate("$counter_values",counter_values,3);
-  define_c_predicate("$reset_counters",reset_counters,2);
-#endif
-
-  address_nd_repeat = def_retry_c(nd_repeat,0);
-  address_nd_current_atom = def_retry_c(nd_current_atom,2);
-  address_nd_current_stream = def_retry_c(nd_current_stream,4);
-  address_nd_current_predicate = def_retry_c(nd_current_predicate,4);
-  address_nd_predicate_property = def_retry_c(nd_predicate_property,5);
-  address_nd_atom_concat = def_retry_c(nd_atom_concat,4);
-
-#if defined(STATICENG)
-#include "addmodules.c"
-#endif  
-
 }
 
 static void deffunction(atom,arity,proc,funcno)
@@ -1309,7 +1025,13 @@ void init_locks(){
 
 extern char *library_directory;
 
+extern BOOL fu1_type();
+extern BOOL fu1_get_attribute();
+extern BOOL bu2_attach_attribute();
+extern BOOL bu1_detach_attribute();
+extern BOOL bu2_update_attribute();
 
+extern TAGGED atm_var, atm_attv, atm_float, atm_int, atm_str, atm_atm, atm_lst;
 
 void init_once()
 {
@@ -1320,9 +1042,7 @@ void init_once()
 
   /* Init time variables */
 
-  stats.lasttime = stats.starttime = usertime();
-  stats.startwalltime = walltime();
-  stats.lastwalltime = stats.startwalltime;
+  reset_statistics();
 
 #if defined(THREADS) && defined(USE_POSIX_THREADS)
   pthread_attr_init(&detached_thread);
@@ -1381,32 +1101,19 @@ void init_once()
   /* builtintab[42] = bu3_compare; */
   builtintab[43] = bu3_functor;
 
- 	                    /* Attributed variables support, DMCAI, clp.c */
-  {
-    extern BOOL 
-      fu1_type(),
-      fu1_get_attribute(),
-      bu2_attach_attribute(),
-      bu1_detach_attribute(),
-      bu2_update_attribute();
-    extern TAGGED
-      atm_var, atm_attv, atm_float, atm_int, atm_str, atm_atm, atm_lst;
- 
-    atm_var   = init_atom_check("var");
-    atm_attv  = init_atom_check("attv");
-    atm_float = init_atom_check("float");
-    atm_int   = init_atom_check("integer");
-    atm_str   = init_atom_check("structure");
-    atm_atm   = init_atom_check("atom");
-    atm_lst   = init_atom_check("list"); 
+  atm_var   = init_atom_check("var");
+  atm_attv  = init_atom_check("attv");
+  atm_float = init_atom_check("float");
+  atm_int   = init_atom_check("integer");
+  atm_str   = init_atom_check("structure");
+  atm_atm   = init_atom_check("atom");
+  atm_lst   = init_atom_check("list"); 
     
-    builtintab[44] = fu1_type;                         
-    builtintab[45] = fu1_get_attribute;
-    builtintab[46] = bu2_attach_attribute;
-    builtintab[47] = bu2_update_attribute;
-    builtintab[48] = bu1_detach_attribute;
-  }
-
+  builtintab[44] = fu1_type;                         
+  builtintab[45] = fu1_get_attribute;
+  builtintab[46] = bu2_attach_attribute;
+  builtintab[47] = bu2_update_attribute;
+  builtintab[48] = bu1_detach_attribute;
   
 #if defined(MARKERS)
   atom_success=init_atom_check("success");
@@ -1447,7 +1154,6 @@ void init_once()
   atom_interpreted = init_atom_check("interpreted");
   atom_builtin = init_atom_check("built_in");
   atom_true = init_atom_check("true");
-  atom_false = init_atom_check("false");
   atom_retry_hook = init_atom_check("$$retry_hook");
 
   atom_unprofiled = init_atom_check("unprofiled");
@@ -1465,7 +1171,6 @@ void init_once()
 
   atom_self = init_atom_check("self");
   atom_create = init_atom_check("create");
-
 
 #if defined(GAUGE)
   atom_counter = init_atom_check("counter");
@@ -1501,7 +1206,7 @@ void init_once()
   functor_builtin = deffunctor("builtin",1);
   functor_Dref = deffunctor("$ref",2);
   functor_Dstream = deffunctor("$stream",2);
-  functor_Dsetarg = deffunctor("$setarg",4);
+  functor_Dsetarg = deffunctor("internals:$setarg",4);
   functor_large = deffunctor("large",2);
   functor_long = deffunctor("long",1);
 
@@ -1516,44 +1221,310 @@ void init_once()
   address_internal_call = define_builtin("user:internal_call",ENTER_UNDEFINED,0);
 #endif
 
-  address_interpret_goal = define_builtin("interpret_goal",ENTER_UNDEFINED,2);
-  address_call_with_cont = define_builtin("call_with_cont",ENTER_UNDEFINED,1);
-  address_interpret_compiled_goal = define_builtin("interpret_compiled_goal",ENTER_UNDEFINED,2);
-  address_undefined_goal = define_builtin("undefined_goal",ENTER_UNDEFINED,1);
-  address_trace = define_builtin("debug_goal",ENTER_UNDEFINED,1);
-  address_help = define_builtin("control_c_handler",ENTER_UNDEFINED,0);
-  address_restart = define_builtin("reboot",ENTER_UNDEFINED,0);
+  address_interpret_goal = define_builtin("basiccontrol:interpret_goal",ENTER_UNDEFINED,2);
+  address_call_with_cont = define_builtin("internals:call_with_cont",ENTER_UNDEFINED,1);
+  address_interpret_compiled_goal = define_builtin("basiccontrol:interpret_compiled_goal",ENTER_UNDEFINED,2);
+  address_undefined_goal = define_builtin("basiccontrol:undefined_goal",ENTER_UNDEFINED,1);
+  address_trace = define_builtin("basiccontrol:debug_goal",ENTER_UNDEFINED,1);
+  address_help = define_builtin("internals:control_c_handler",ENTER_UNDEFINED,0);
+  address_restart = define_builtin("internals:reboot",ENTER_UNDEFINED,0);
   (void) define_builtin("$geler",BUILTIN_GELER,2);
-  (void) define_builtin("$instance",BUILTIN_INSTANCE,3);
-  (void) define_builtin("dif",BUILTIN_DIF,2);
-  (void) define_builtin("$exit",BUILTIN_ABORT,1);
+  (void) define_builtin("internals:$instance",BUILTIN_INSTANCE,3);
+  (void) define_builtin("internals:dif",BUILTIN_DIF,2);
+  (void) define_builtin("internals:$exit",BUILTIN_ABORT,1);
 /*
 #if !defined(ATTRVARS)
   address_fast_apply = define_builtin("apply",ENTER_UNDEFINED,2);
   address_slow_apply = define_builtin("debug_apply",ENTER_UNDEFINED,2);
 #endif
 */
-  address_call = define_builtin("call",BUILTIN_CALL,1);
-  (void) define_builtin("SYSCALL",BUILTIN_SYSCALL,1);
-  (void) define_builtin("$nodebug_call",BUILTIN_NODEBUGCALL,1);
-  address_true = define_builtin("true",BUILTIN_TRUE,0);
-  address_fail = define_builtin("fail",BUILTIN_FAIL,0);
-  address_error = define_builtin("error",ENTER_UNDEFINED,5);
+  address_call = define_builtin("hiord_rt:call",BUILTIN_CALL,1);
+  (void) define_builtin("hiord_rt:SYSCALL",BUILTIN_SYSCALL,1);
+  (void) define_builtin("hiord_rt:$nodebug_call",BUILTIN_NODEBUGCALL,1);
+  address_true = define_builtin("basiccontrol:true",BUILTIN_TRUE,0);
+  address_fail = define_builtin("basiccontrol:fail",BUILTIN_FAIL,0);
+  address_error = define_builtin("internals:error",ENTER_UNDEFINED,5);
 
                                           /* Attributed variables support */
-  address_pending_unifications = 
-    define_builtin("pending_unifications",ENTER_UNDEFINED,1);
-  address_uvc = define_builtin("uvc",ENTER_UNDEFINED,2);
-  address_ucc = define_builtin("ucc",ENTER_UNDEFINED,2);
+  address_pending_unifications = define_builtin("internals:pending_unifications",ENTER_UNDEFINED,1);
+  address_uvc = define_builtin("internals:uvc",ENTER_UNDEFINED,2);
+  address_ucc = define_builtin("internals:ucc",ENTER_UNDEFINED,2);
 
-  (void) define_builtin("$current_instance",BUILTIN_CURRENT_INSTANCE,5);
-  (void) define_builtin("$compile_term",BUILTIN_COMPILE_TERM,2);
+  (void) define_builtin("internals:$current_instance",BUILTIN_CURRENT_INSTANCE,5);
+  (void) define_builtin("internals:$compile_term",BUILTIN_COMPILE_TERM,2);
 /*
 #if !defined(ATTRVARS)
   (void) define_builtin("$apply",BUILTIN_APPLY,2);
 #endif
 */
-  initialize_intrinsics();
+                              /* initial.c */
+  
+  define_c_mod_predicate("internals","$atom_mode",2,prolog_atom_mode);
+  define_c_mod_predicate("system_info","ciaolibdir",1,prolog_ciaolibdir);
+
+				/* streams.c */
+  
+  define_c_mod_predicate("streams_basic","stream_code",2,prolog_stream_code);
+  define_c_mod_predicate("internals","$bootversion",0,prolog_bootversion);
+  define_c_mod_predicate("internals","$open",3,prolog_open);
+  define_c_mod_predicate("streams_basic","close",1,prolog_close); 
+  define_c_mod_predicate("internals","$unix_popen",3,prolog_unix_popen);
+  define_c_mod_predicate("streams_basic","character_count",2,character_count);
+  define_c_mod_predicate("streams_basic","line_position",2,line_position);
+  define_c_mod_predicate("streams_basic","line_count",2,line_count);
+  define_c_mod_predicate("streams_basic","current_input",1,prolog_current_input);
+  define_c_mod_predicate("streams_basic","set_input",1,prolog_set_input);
+  define_c_mod_predicate("streams_basic","current_output",1,prolog_current_output);
+  define_c_mod_predicate("streams_basic","set_output",1,prolog_set_output);
+
+  define_c_mod_predicate("io_alias_redirection", "replace_stream",2, prolog_replace_stream);
+  define_c_mod_predicate("io_alias_redirection", "get_stream",2, prolog_get_stream);
+
+                              /* objareas.c */
+
+  define_c_mod_predicate("internals","$purge",1,prolog_purge);
+  define_c_mod_predicate("internals","$erase",1,prolog_erase);
+  define_c_mod_predicate("internals","$ptr_ref",2,prolog_ptr_ref);
+  define_c_mod_predicate("internals","$inserta",2,inserta);
+  define_c_mod_predicate("internals","$insertz",2,insertz);
+  define_c_mod_predicate("internals","$make_bytecode_object",4,make_bytecode_object);
+
+				/* term_support.c */
+
+  define_c_mod_predicate("atomic_basic","name",2,prolog_name);
+  define_c_mod_predicate("atomic_basic","atom_codes",2,prolog_atom_codes);
+  define_c_mod_predicate("atomic_basic","number_codes",2,prolog_number_codes_2);
+  define_c_mod_predicate("atomic_basic","number_codes",3,prolog_number_codes_3);
+  define_c_mod_predicate("atomic_basic","atom_length",2,prolog_atom_length);
+  define_c_mod_predicate("atomic_basic","sub_atom",4,prolog_sub_atom);
+  define_c_mod_predicate("atomic_basic","atom_concat",3,prolog_atom_concat);
+  define_c_mod_predicate("term_basic","copy_term",2,prolog_copy_term);
+
+				/* indexing.c */
+  define_c_mod_predicate("internals","$abolish",1,prolog_abolish); 
+  define_c_mod_predicate("internals","$define_predicate",2,define_predicate);
+  define_c_mod_predicate("internals","$erase_clause",1,erase_clause);
+  define_c_mod_predicate("internals","$clause_number",2,clause_number);
+  define_c_mod_predicate("internals","$compiled_clause",4,compiled_clause);
+  define_c_mod_predicate("internals","$empty_gcdef_bin",0,empty_gcdef_bin);
+  define_c_mod_predicate("internals","$set_property",2,set_property);
+
+				/* inout.c */
+  
+  define_c_mod_predicate("io_basic","code_class",2,code_class);
+  define_c_mod_predicate("streams_basic","flush_output",0,flush_output);
+  define_c_mod_predicate("streams_basic","flush_output",1,flush_output1);
+  address_getct = define_c_mod_predicate("io_basic","getct",2,getct);
+  address_getct1 = define_c_mod_predicate("io_basic","getct1",2,getct1);
+  address_get = define_c_mod_predicate("io_basic","get_code",1,get);
+  address_get2 = define_c_mod_predicate("io_basic","get_code",2,get2);
+  address_get1 = define_c_mod_predicate("io_basic","get1_code",1,get1);
+  address_get12 = define_c_mod_predicate("io_basic","get1_code",2,get12);
+  address_peek = define_c_mod_predicate("io_basic","peek_code",1,peek);
+  address_peek2 = define_c_mod_predicate("io_basic","peek_code",2,peek2);
+  define_c_mod_predicate("io_basic","nl",0,nl);
+  define_c_mod_predicate("io_basic","nl",1,nl1);
+  define_c_mod_predicate("io_basic","put_code",1,put);
+  define_c_mod_predicate("io_basic","put_code",2,put2);
+  define_c_mod_predicate("io_basic","tab",1,tab);
+  define_c_mod_predicate("io_basic","tab",2,tab2);
+  address_skip = define_c_mod_predicate("io_basic","skip_code",1,skip);
+  address_skip2 = define_c_mod_predicate("io_basic","skip_code",2,skip2);
+  address_skip_line =
+    define_c_mod_predicate("io_basic","skip_line",0,skip_line);
+  address_skip_line1 =
+    define_c_mod_predicate("io_basic","skip_line",1,skip_line1);
+  define_c_mod_predicate("io_basic","display",1,prolog_display);
+  define_c_mod_predicate("io_basic","display",2,prolog_display2);
+  define_c_mod_predicate("io_basic","displayq",1,prolog_displayq);
+  define_c_mod_predicate("io_basic","displayq",2,prolog_displayq2);
+  define_c_mod_predicate("streams_basic","clearerr",1,prolog_clearerr);
+  define_c_mod_predicate("fastrw","fast_read",1,prolog_fast_read_in_c);
+  define_c_mod_predicate("fastrw","fast_write",1,prolog_fast_write_in_c);
+  define_c_mod_predicate("compressed_bytecode","compressLZ",1,compressLZ);
+  define_c_mod_predicate("compressed_bytecode","copyLZ",1,copyLZ);
+
+				/* builtin.c */
+  
+  define_c_mod_predicate("internals","$ddt",1,set_predtrace);
+
+				/* qread.c */
+
+  define_c_mod_predicate("internals","$qread",2,prolog_qread);
+  define_c_mod_predicate("internals","$push_qlinfo",0,push_qlinfo);
+  define_c_mod_predicate("internals","$pop_qlinfo",0,pop_qlinfo);
+
+				/* misc.c */
+  
+  define_c_mod_predicate("prolog_sys", "new_atom", 1, prolog_new_atom);
+  define_c_mod_predicate("internals","$set_global_logical_var", 2, set_glv);
+  define_c_mod_predicate("internals","$get_global_logical_var", 2, get_glv);
+#if defined(ATOMGC)
+  define_c_mod_predicate("internals","$erase_atom", 1, prolog_erase_atom);
+#endif
+  define_c_mod_predicate("system","current_executable",1, prolog_current_executable);
+  define_c_mod_predicate("internals","$prompt",2,prompt);
+  define_c_mod_predicate("internals","$frozen",2,frozen);
+  define_c_mod_predicate("internals","$defrost",2,defrost);
+  define_c_mod_predicate("internals","$setarg",4,setarg);
+  define_c_mod_predicate("internals","$undo_goal",1,undo);
+  define_c_mod_predicate("basiccontrol","$metachoice",1,metachoice);
+  define_c_mod_predicate("basiccontrol","$metacut",1,metacut);
+  define_c_mod_predicate("internals","$unknown",2,unknown);
+  define_c_mod_predicate("internals","$compiling",2,compiling);
+  define_c_mod_predicate("internals","$ferror_flag",2,ferror_flag);
+  define_c_mod_predicate("internals","$quiet_flag",2,quiet_flag);
+  define_c_mod_predicate("debugger_support","$retry_cut",2,retry_cut);
+  define_c_mod_predicate("debugger_support","$spypoint",3,spypoint);
+  define_c_mod_predicate("debugger_support","$debugger_state",2,debugger_state);
+  define_c_mod_predicate("debugger_support","$debugger_mode",0,debugger_mode);
+  define_c_mod_predicate("internals","$prolog_radix",2,prolog_radix);
+  define_c_mod_predicate("internals","$constraint_list",2,constraint_list);
+  define_c_mod_predicate("internals","$eq",2,prolog_eq);
+  define_c_mod_predicate("internals","$large_data",3,large_data);
+  define_c_mod_predicate("internals","$interpreted_clause",2,prolog_interpreted_clause);
+  
+  /* In library(concurrency), under library/concurrency */
+  define_c_mod_predicate("concurrency", "$eng_call", 6,  prolog_eng_call);
+  define_c_mod_predicate("concurrency", "$eng_backtrack", 2,  prolog_eng_backtrack);
+  define_c_mod_predicate("concurrency", "$eng_cut", 1,  prolog_eng_cut);
+  define_c_mod_predicate("concurrency", "$eng_release", 1, prolog_eng_release);
+  define_c_mod_predicate("concurrency", "$eng_wait", 1, prolog_eng_wait);
+  define_c_mod_predicate("concurrency", "$eng_kill", 1,  prolog_eng_kill);
+  define_c_mod_predicate("concurrency", "$eng_killothers", 0, prolog_eng_killothers);
+  define_c_mod_predicate("concurrency", "$eng_status", 0, prolog_eng_status);
+  define_c_mod_predicate("concurrency", "$eng_status1", 1, prolog_eng_status1);
+  define_c_mod_predicate("concurrency", "$eng_self", 2, prolog_eng_self);
+
+  define_c_mod_predicate("concurrency", "lock_atom",1,prolog_lock_atom);
+  define_c_mod_predicate("concurrency", "unlock_atom",1,prolog_unlock_atom);
+  define_c_mod_predicate("concurrency", "atom_lock_state",2,prolog_lock_atom_state);
+
+  define_c_mod_predicate("internals","$unlock_predicate",1,prolog_unlock_predicate);
+
+				/* unix_utils.c */
+
+  define_c_mod_predicate("system","working_directory",2,prolog_unix_cd);
+  define_c_mod_predicate("system","pause", 1, prolog_pause);
+  define_c_mod_predicate("system","shell",0,prolog_unix_shell0);
+  define_c_mod_predicate("system","shell",2,prolog_unix_shell2);
+  define_c_mod_predicate("system","system",2,prolog_unix_system2);
+  define_c_mod_predicate("internals","$exec",4,prolog_exec);
+  define_c_mod_predicate("internals","$unix_argv",1,prolog_unix_argv);
+  define_c_mod_predicate("system","mktemp",2,prolog_unix_mktemp);
+  define_c_mod_predicate("system","file_exists",2,prolog_unix_access);
+  define_c_mod_predicate("system","directory_files",2,prolog_directory_files);
+  define_c_mod_predicate("system","file_properties",6,prolog_file_properties);
+  define_c_mod_predicate("system","chmod",2,prolog_unix_chmod);
+  define_c_mod_predicate("system","umask",2,prolog_unix_umask);
+  define_c_mod_predicate("system","delete_file",1,prolog_unix_delete);
+  define_c_mod_predicate("system","rename_file",2,prolog_unix_rename);
+  define_c_mod_predicate("system","make_directory",2,prolog_unix_mkdir);
+  define_c_mod_predicate("system","delete_directory",1,prolog_unix_rmdir);
+  define_c_mod_predicate("system","c_copy_file", 2,prolog_c_copy_file);
+  define_c_mod_predicate("system","current_host",1,prolog_current_host);
+  define_c_mod_predicate("system","c_get_env", 2,prolog_c_get_env);
+  define_c_mod_predicate("system","c_set_env", 2,prolog_c_set_env);
+  define_c_mod_predicate("system","c_del_env", 1,prolog_c_del_env);
+  define_c_mod_predicate("system","c_current_env", 3,prolog_c_current_env);
+
+  define_c_mod_predicate("system","get_pid", 1, prolog_getpid);
+  define_c_mod_predicate("system_info","get_arch", 1, prolog_getarch);
+  define_c_mod_predicate("system_info","get_os", 1, prolog_getos);
+  define_c_mod_predicate("internals","$ciao_version", 2, prolog_version);
+
+  define_c_mod_predicate("internals","$find_file",8,prolog_find_file); 
+  define_c_mod_predicate("internals","$path_is_absolute",1,prolog_path_is_absolute); 
+  define_c_mod_predicate("internals","$expand_file_name",2,prolog_expand_file_name); 
+
+                            /* dynlink.c */
+
+  define_c_mod_predicate("internals","dynlink", 2, prolog_dynlink);
+  define_c_mod_predicate("internals","dynunlink", 1, prolog_dynunlink); 
+
+				/* format.c */
+  
+  define_c_mod_predicate("internals","$format_print_float",3,prolog_format_print_float);
+  define_c_mod_predicate("internals","$format_print_integer",3,prolog_format_print_integer);
+
+				/* timing.c */
+
+  define_c_mod_predicate("internals","$runtime",1,prolog_runtime);
+  define_c_mod_predicate("internals","$usertime",1,prolog_usertime);
+  define_c_mod_predicate("internals","$systemtime",1,prolog_systemtime);  
+  define_c_mod_predicate("internals","$walltime",1,prolog_walltime);
+
+  define_c_mod_predicate("system","time",1,prolog_time);
+  define_c_mod_predicate("system","datime",9,prolog_datime);
+  
+                                /* clock/cpu clicks */  
+
+  define_c_mod_predicate("internals","$runclick",1,prolog_runclick);
+  define_c_mod_predicate("internals","$userclick",1,prolog_userclick);
+  define_c_mod_predicate("internals","$systemclick",1,prolog_systemclick);
+  define_c_mod_predicate("internals","$wallclick",1,prolog_wallclick);
+
+                                /* clock frequency */  
+
+  define_c_mod_predicate("internals","$userclockfreq",1,prolog_userclockfreq);
+  define_c_mod_predicate("internals","$systemclockfreq",1,prolog_systemclockfreq);
+  define_c_mod_predicate("internals","$wallclockfreq",1,prolog_wallclockfreq);
+
+				/* stacks.c */
+
+  define_c_mod_predicate("internals","$termheap_usage",1,termheap_usage);
+  define_c_mod_predicate("internals","$envstack_usage",1,envstack_usage);
+  define_c_mod_predicate("internals","$trail_usage",1,trail_usage);
+  define_c_mod_predicate("internals","$choice_usage",1,choice_usage);
+  define_c_mod_predicate("internals","$stack_shift_usage",1,stack_shift_usage);
+
+				/* alloc.c */
+
+  define_c_mod_predicate("prolog_sys","statistics",0,statistics);
+  define_c_mod_predicate("internals","$program_usage",1,program_usage);
+  define_c_mod_predicate("internals","$internal_symbol_usage",1,internal_symbol_usage);
+  define_c_mod_predicate("internals","$total_usage",1,total_usage);
+
+                                 /* heapgc.c */
+
+  define_c_mod_predicate("internals","$gc_mode",2,gc_mode);
+  define_c_mod_predicate("internals","$gc_trace",2,gc_trace);
+  define_c_mod_predicate("internals","$gc_margin",2,gc_margin);
+  define_c_mod_predicate("internals","$gc_usage",1,gc_usage);
+  define_c_mod_predicate("prolog_sys","garbage_collect",0,gc_start);
+
+				/* nondet.c */
+  
+  define_c_mod_predicate("basiccontrol","repeat",0,prolog_repeat);
+  define_c_mod_predicate("prolog_sys","current_atom",1,current_atom);
+  define_c_mod_predicate("streams_basic","current_stream",3,current_stream);
+  define_c_mod_predicate("internals","$current_predicate",2,current_predicate);
+  define_c_mod_predicate("internals","$predicate_property",3,predicate_property);
+  define_c_mod_predicate("internals","$current_clauses",2,current_clauses);
+
+  define_c_mod_predicate("internals","$first_instance",2,first_instance);
+  define_c_mod_predicate("internals","$close_predicate",1,close_predicate);
+  define_c_mod_predicate("internals","$open_predicate",1,open_predicate);
+
+#if defined(GAUGE)
+  				/* gauge.c */
+
+  define_c_mod_predicate("internals","$emulated_clause_counters",4,emulated_clause_counters);
+  define_c_mod_predicate("internals","$counter_values",3,counter_values);
+  define_c_mod_predicate("internals","$reset_counters",2,reset_counters);
+#endif
+
+  address_nd_repeat = def_retry_c(nd_repeat,0);
+  address_nd_current_atom = def_retry_c(nd_current_atom,2);
+  address_nd_current_stream = def_retry_c(nd_current_stream,4);
+  address_nd_current_predicate = def_retry_c(nd_current_predicate,4);
+  address_nd_predicate_property = def_retry_c(nd_predicate_property,5);
+  address_nd_atom_concat = def_retry_c(nd_atom_concat,4);
+
+#if defined(STATICENG)
+#include "addmodules.c"
+#endif  
+
 #if defined(MARKERS)
   init_markercode();
 #endif

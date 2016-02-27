@@ -1,5 +1,8 @@
 /* Copyright (C) 1996,1997,1998,1999,2000,2001,2002 UPM-CLIP */
 
+#ifndef _SUPPORT_H
+#define _SUPPORT_H
+
 #include "debug.h"
 #include "initial.h"
 
@@ -284,18 +287,140 @@ extern void failc(char *mesg);
 
 #define MINOR_FAULT(Y)         {return FALSE;}
 
-/* Error codes, xref errors.pl //) */
-#define INSTANTIATION_ERROR 1
+/* Error codes, xref errhandle.pl, internals.pl //) */
+
+/* OGRAMA: error classification ISO PROLOG */
+
+/* Errors identifiers cannot be zero (as 0 = -0) */
+#define INSTANTIATION_ERROR     1
+#define TYPE_ERROR(D)           (RANGE_PER_ERROR*START_TYPE+D)
+#define DOMAIN_ERROR(D)         (RANGE_PER_ERROR*START_DOM+D)
+#define EXISTENCE_ERROR(D)      (RANGE_PER_ERROR*START_EXIST+D)
+#define PERMISSION_ERROR(D,F)   (RANGE_PER_ERROR*START_PERM+D*10+F)
+#define REPRESENTATION_ERROR(D) (RANGE_PER_ERROR*START_REPRES+D)
+#define EVALUATION_ERROR(D)     (RANGE_PER_ERROR*START_EVAL+D)
+#define RESOURCE_ERROR          (RANGE_PER_ERROR*START_RES)
+#define SYNTAX_ERROR            (RANGE_PER_ERROR*START_SYNTAX)
+#define SYSTEM_ERROR            (RANGE_PER_ERROR*START_SYSTEM)
+#define USER_EXCEPTION          (RANGE_PER_ERROR*START_USER)
+
+#define RANGE_PER_ERROR 100                    /* Enough number of errors */
+
+#define START_INST    0
+#define START_TYPE    1
+#define START_DOM     2
+#define START_EXIST   3
+#define START_PERM    4
+#define START_REPRES  5
+#define START_EVAL    6
+#define START_RES     7
+#define START_SYNTAX  8
+#define START_SYSTEM  9
+#define START_USER    10
+
+/* TYPE_ERRORS */
+#define STRICT_ATOM          0
+#define ATOMIC               1
+#define BYTE                 2
+#define CHARACTER            3
+#define COMPOUND             4
+#define EVALUABLE            5
+#define IN_BYTE              6
+#define INTEGER              7
+#define LIST                 8
+#define NUMBER               9
+#define PREDICATE_INDICATOR 10
+#define VARIABLE            11
+#define CALLABLE            12
+
+/* DOMAIN_ERRORS */
+#define CHARACTER_CODE_LIST     0
+#define SOURCE_SINK             1
+#define STREAM                  2
+#define IO_MODE                 3
+#define NOT_EMPTY_LIST          4
+#define NOT_LESS_THAN_ZERO      5
+#define OPERATOR_PRIORITY       6
+#define PROLOG_FLAG             7
+#define READ_OPTION             8
+#define FLAG_VALUE              9
+#define CLOSE_OPTION           10
+#define STREAM_OPTION          11
+#define STREAM_OR_ALIAS        12
+#define STREAM_POSITION        13
+#define STREAM_PROPERTY        14
+#define WRITE_OPTION           15
+#define OPERATOR_SPECIFIER     16
+
+
+/* EXISTENCE_ERRORS */
+#define PROCEDURE 0
+/* SOURCE_SINK and STREAM already defined */
+/*
+#define SOURCE_SINK             1
+#define STREAM                  2
+*/
+
+/* PERMISION_ERRORS: composed of type of action + object on which the action
+   is defined */
+
+/* PERMISSION_TYPE */
+#define ACCESS      0
+#define CREATE      1
+#define INPUT       2
+#define MODIFY      3
+#define OPEN        4
+#define OUTPUT      5
+#define REPOSITION  6
+
+/* OBJECTS */
+#define BINARY_STREAM        0
+/*
+#define SOURCE_SINK             1
+#define STREAM                  2
+*/
+#define TEXT_STREAM          3
+#define FLAG                 4
+#define OPERATOR             5
+#define PAST_END_OF_STREAM   6
+#define PRIVATE_PROCEDURE    7
+#define STATIC_PROCEDURE     8
+
+
+
+/* REPRESENTATION_ERROR */
+
+/* CHARACTER_CODE_LIST already defined */
+/* #define CHARACTER_CODE_LIST     0 */
+#define IN_CHARACTER_CODE   1
+#define MAX_ARITY           2
+/*#define CHARACTER            3*/
+#define MAX_INTEGER         4
+#define MIN_INTEGER         5
+#define CHARACTER_CODE      6
+
+/* EVALUATION_ERROR */
+#define FLOAT_OVERFLOW 0
+#define INT_OVERFLOW   1
+#define E_UNDEFINED    2
+#define E_UNDERFLOW    3
+#define ZERO_DIVISOR   4
+
+
+/* OGRAMA: OLD VERSION ---------------------------------------------------- */ 
+/* #define TYPE_ERROR(Type) (32+Type) */ /* includes also domain errors */ 
+
+/* #define INSTANTIATION_ERROR 1
 #define READ_PAST_EOS_ERROR 2
 #define NO_READ_PERMISSION 3
 #define NO_WRITE_PERMISSION 4
 #define NO_SUCH_FILE 5
 #define NO_OPEN_PERMISSION 6
-#define USER_EXCEPTION 7 
-#define TYPE_ERROR(Type) (32+Type) /* includes also domain errors */
+#define NO_ACCESS_PERMISSION 7
+#define SYSTEM_ERROR 8 OGRAMA: Error de sistema */
 
 /* Type codes for TYPE_ERROR  //) */
-#define STRICT_ATOM 0
+/* #define STRICT_ATOM 0
 #define ATOMIC 1
 #define BYTE 2
 #define CALLABLE 3
@@ -306,10 +431,14 @@ extern void failc(char *mesg);
 #define LIST 8
 #define NUMBER 9
 #define PREDICATE_INDICATOR 10
-#define VARIABLE 11
+#define VARIABLE 11 
+*/
 
-#define CHARACTER_CODE_LIST 32 /* First domain code */
+/*
+#define CHARACTER_CODE_LIST 32 First domain code 
 #define STREAM_OR_ALIAS 33
+#define SOURCE_SINK 34  OGRAMA */
+/* END OLD VERSION ----------------------------------------------------------- */
 
 #define BUILTIN_ERROR(Code,Culpr,ArgNo) \
    { ErrArgNo = ArgNo; Culprit = Culpr; return -Code; }
@@ -400,3 +529,4 @@ extern void failc(char *mesg);
 }
 
 
+#endif /* _SUPPORT_H */

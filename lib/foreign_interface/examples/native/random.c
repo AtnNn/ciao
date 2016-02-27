@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "../../../../bin/LINUXi86/bin/LINUXi86/datadefs.h"
-#include "../../../../bin/LINUXi86/support.h"
+#include "/home/clip/Systems/ciao/bin/LINUXi86/datadefs.h"
+#include "/home/clip/Systems/ciao/bin/LINUXi86/support.h"
 /*#include "common_headers.h"*/
 
 /*

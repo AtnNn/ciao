@@ -91,7 +91,7 @@ dic_replace_(>, Key, Val, _, Val1, L, R1, Val1, L, R2) :-
 %% update-version-comments: "../version"
 %% End:
 
-:- comment(version(1*9+240,2003/12/22,18:52*17+'CET'), "Added comment
+:- comment(version(1*11+116,2003/12/22,18:52*05+'CET'), "Added comment
    author.  (Edison Mera)").
 
 :- comment(version(1*7+139,2001/11/12,17:24*35+'CET'), "Added

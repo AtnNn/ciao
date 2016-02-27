@@ -133,7 +133,6 @@ TAGGED *checkalloc(size)
     }
     /* segfault patch -- jf */
     if (!ENSURE_ADDRESSABLE(p, size)) {
-      ENG_perror("% Malloc");
       Release_slock(mem_mng_l);
       SERIOUS_FAULT("Memory allocated out of addressable bounds!");
     }
@@ -191,7 +190,6 @@ TAGGED *checkrealloc(ptr,decr,size)
       }
       /* segfault patch -- jf */
       if (!ENSURE_ADDRESSABLE(p, size)) {
-	ENG_perror("% Malloc");
 	Release_slock(mem_mng_l);
 	SERIOUS_FAULT("Memory allocated out of addressable bounds!");
       }
@@ -213,7 +211,6 @@ TAGGED *checkrealloc(ptr,decr,size)
       }
       /* segfault patch -- jf */
       if (!ENSURE_ADDRESSABLE(p, size)) {
-	ENG_perror("% Malloc");
 	Release_slock(mem_mng_l);
 	SERIOUS_FAULT("Memory allocated out of addressable bounds!");
       }
@@ -404,6 +401,9 @@ BOOL statistics(Arg)
 {
   struct stream_node *s = Output_Stream_Ptr;
   ENG_INT used, free;
+  ENG_LINT userclick0 = userclick();
+  ENG_LINT systemclick0 = systemclick();
+  ENG_LINT wallclick0 = wallclick();
   struct frame *newa;
 
   /*
@@ -451,16 +451,33 @@ BOOL statistics(Arg)
               used+free, used, free);
 
   ENG_PRINTF4(s,
-              "%10.3f sec. for %ld global, %ld local, and %ld control space overflows\n",
-              stats.ss_time, stats.ss_global, stats.ss_local, stats.ss_control);
+              " %10.6f sec. for %ld global, %ld local, and %ld control space overflows\n",
+              ((ENG_FLT)stats.ss_click)/stats.userclockfreq, stats.ss_global, stats.ss_local, stats.ss_control);
   ENG_PRINTF3(s,
-              "%10.3f sec. for %ld garbage collections which collected %ld bytes\n",
-              stats.gc_time, stats.gc_count, stats.gc_acc*sizeof(TAGGED));
+              " %10.6f sec. for %ld garbage collections which collected %ld bytes\n\n",
+              ((ENG_FLT)stats.gc_click)/stats.userclockfreq, stats.gc_count, stats.gc_acc*sizeof(TAGGED));
 
-  ENG_PRINTF2(s,
-              "%10.3f sec. runtime, %10.3f sec. walltime\n\n",
-              (usertime() - stats.starttime),
-              (walltime() - stats.startwalltime)/1000);
+  ENG_PRINTF3(s,
+              " runtime:    %10.6f sec. %12lld clicks at %12lld Hz\n",
+	      (ENG_FLT)(userclick0-stats.startclick)/stats.userclockfreq,
+              userclick0-stats.startclick,
+	      stats.userclockfreq);
+  ENG_PRINTF3(s,
+              " usertime:   %10.6f sec. %12lld clicks at %12lld Hz\n",
+	      (ENG_FLT)(userclick0-stats.startuserclick)/stats.userclockfreq,
+	      userclick0-stats.startuserclick,
+	      stats.userclockfreq);
+  ENG_PRINTF3(s,
+              " systemtime: %10.6f sec. %12lld clicks at %12lld Hz\n",
+	      (ENG_FLT)(systemclick0-stats.startsystemclick)/stats.systemclockfreq,
+              systemclick0-stats.startsystemclick,
+	      stats.systemclockfreq);
+
+  ENG_PRINTF3(s,
+              " walltime:   %10.6f sec. %12lld clicks at %12lld Hz\n\n",
+	      (ENG_FLT)(wallclick0-stats.startwallclick)/stats.wallclockfreq,
+	      wallclick0-stats.startwallclick,
+	      stats.wallclockfreq);
 
   return TRUE;
 }

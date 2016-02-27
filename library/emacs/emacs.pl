@@ -232,7 +232,7 @@ system_dependent_incompatible(Prop,Arg):-
 %---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+234,2003/12/22,18:14*10+'CET'), "Added comment
+:- comment(version(1*11+110,2003/12/22,18:14*00+'CET'), "Added comment
    author.  (Edison Mera)").
 
 :- comment(version(1*5+54,2000/02/10,21:32*23+'CET'), "New library for

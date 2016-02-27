@@ -1,45 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - File name manipulation</TITLE>
+<TITLE>The Ciao Prolog System               - Symbolic filenames</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC327" HREF="ciao_toc.html#TOC327">File name manipulation</A></H1>
+<H1><A NAME="SEC299" HREF="ciao_toc.html#TOC299">Symbolic filenames</A></H1>
 <P>
-<A NAME="IDX4500"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Angel Fernandez Pineda.
+<A NAME="IDX4252"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#51 (1999/9/9, 16:28:44 MEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-This library provides some small utilities to handle file name syntax.
+<STRONG>Version of last change:</STRONG> 1.9#9 (2002/5/28, 19:11:29 CEST)
+
+
+<P>
+This module provides a predicate for file opening which can use any term as an alias for the filename (i.e., symbolic filenames) instead of the usual constants which are file system path names of the actual files. 
+
+
+<P>
+The correspondence between an alias and the actual file path is done dynamically, without having to recompile the program. It is possible to define the correspondence via facts for 
+<A NAME="IDX4253"></A>
+<CODE>file_alias/2</CODE> in a file declared with 
+<A NAME="IDX4254"></A>
+<CODE>multifile:alias_file/1</CODE> in the program: those facts will be dynamically loaded when running the program. Alternatively, the correspondence can be defined via shell environment variables, by defining the value of a variable by the (symbolic) name of the file to be the path of the actual file.
 
 
 
 <UL>
-<LI><A HREF="ciao_76.html#SEC328">Usage and interface (filenames)</A>
-<LI><A HREF="ciao_76.html#SEC329">Documentation on exports (filenames)</A>
+<LI><A HREF="ciao_76.html#SEC300">Usage and interface (symfnames)</A>
+<LI><A HREF="ciao_76.html#SEC301">Documentation on exports (symfnames)</A>
+<LI><A HREF="ciao_76.html#SEC302">Documentation on multifiles (symfnames)</A>
+<LI><A HREF="ciao_76.html#SEC303">Other information (symfnames)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC328" HREF="ciao_toc.html#TOC328">Usage and interface (<CODE>filenames</CODE>)</A></H2>
+<H2><A NAME="SEC300" HREF="ciao_toc.html#TOC300">Usage and interface (<CODE>symfnames</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +57,7 @@ This library provides some small utilities to handle file name syntax.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(filenames)).</CODE>
+<CODE>:- use_module(library(symfnames)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,14 +66,15 @@ This library provides some small utilities to handle file name syntax.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4501"></A>
-<CODE>no_path_file_name/2</CODE>, 
-<A NAME="IDX4502"></A>
-<CODE>file_name_extension/3</CODE>, 
-<A NAME="IDX4503"></A>
-<CODE>basename/2</CODE>, 
-<A NAME="IDX4504"></A>
-<CODE>extension/2</CODE>.
+<A NAME="IDX4255"></A>
+<CODE>open/3</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX4256"></A>
+<CODE>alias_file/1</CODE>, 
+<A NAME="IDX4257"></A>
+<CODE>file_alias/2</CODE>.
 
 </UL>
 
@@ -74,8 +85,10 @@ This library provides some small utilities to handle file name syntax.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4505"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX4258"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX4259"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -85,145 +98,27 @@ This library provides some small utilities to handle file name syntax.
 
 
 
-<H2><A NAME="SEC329" HREF="ciao_toc.html#TOC329">Documentation on exports (<CODE>filenames</CODE>)</A></H2>
+<H2><A NAME="SEC301" HREF="ciao_toc.html#TOC301">Documentation on exports (<CODE>symfnames</CODE>)</A></H2>
 <P>
-<A NAME="IDX4506"></A>
-<A NAME="IDX4507"></A>
+<A NAME="IDX4260"></A>
+<A NAME="IDX4261"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>no_path_file_name/2:</B>
-<DD><A NAME="IDX4508"></A>
+<DT><span class="define">PREDICATE:</span> <B>open/3:</B>
+<DD><A NAME="IDX4262"></A>
 
 
 <P>
-This predicate will extract the last item (usually the file name) from a given path. 
+<CODE>open(File, Mode, Stream)</CODE>
 
 
 <P>
-The first argument must be instantiated to a string or atom. Whenever the first argument is an atom, the second argument will be an atom. Whenever the first argument is a string, the second argument will be a string. 
-
-
-<P>
-This predicate will fail under any of the following conditions: 
-
-<UL>
-<LI>First argument is not an atom, nor a string.
-
-<LI>Second argument is not the last given path item (given path is the first argument).
-
-</UL>
-
-<P>
-Those are the most usual usages of no_path_file_name/2: 
-
-<PRE>
-?- no_path_file_name_("/home/nexusV/somefile.txt",K).
-
-K = "somefile.txt" ? 
-
-yes
-?- no_path_file_name('/home/nexusV/somefile.txt',K).
-
-K = 'somefile.txt' ? 
-
-yes
-?- 
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>no_path_file_name(Path, FileName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>FileName</CODE> is the file corresponding to the given <CODE>Path</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Path</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4509"></A>
-<A NAME="IDX4510"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_name_extension/3:</B>
-<DD><A NAME="IDX4511"></A>
-
-
-<P>
-This predicate may be used in two ways: 
-
-<UL>
-
-<LI>To create a file name from its components: name and extension. For instance:
-
-
-<PRE>
-?- file_name_extension(File,mywork,'.txt').
-
-File = 'mywork.txt' ? 
-
-yes
-?- 
-</PRE>
-
-<LI>To split a file name into its name and extension. For Instance:
-
-
-<PRE>
-?- file_name_extension('mywork.txt',A,B).
-
-A = mywork,
-B = '.txt' ? 
-
-yes
-?- 
-</PRE>
-
-</UL>
-
-<P>
-Any other usage of file_name_extension/3 will cause the predicate to fail. Notice that valid arguments are accepted both as atoms or strings. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>file_name_extension(FileName, BaseName, Extension)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Splits a <CODE>FileName</CODE> into its <CODE>BaseName</CODE> and <CODE>Extension</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>BaseName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>Extension</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4512"></A>
-<A NAME="IDX4513"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>basename/2:</B>
-<DD><A NAME="IDX4514"></A>
-
-
-<P>
-<CODE>basename(FileName, BaseName)</CODE>
-
-
-<P>
-<CODE>BaseName</CODE> is <CODE>FileName</CODE> without extension. Equivalent to <CODE>file_name_extension(FileName,BaseName,_)</CODE>. Useful to extract the base name of a file using functional syntax.
+Open <CODE>File</CODE> with mode <CODE>Mode</CODE> and return in <CODE>Stream</CODE> the stream associated with the file. It is like 
+<A NAME="IDX4263"></A>
+<CODE>streams_basic:open/3</CODE>, but <CODE>File</CODE> is considered a symbolic name: either defined by 
+<A NAME="IDX4264"></A>
+<CODE>user:file_alias/2</CODE> or as an environment variable. Predicate 
+<A NAME="IDX4265"></A>
+<CODE>user:file_alias/2</CODE> is inspected before the environment variables.
 
 
 <P>
@@ -232,47 +127,124 @@ Any other usage of file_name_extension/3 will cause the predicate to fail. Notic
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
+<CODE>Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>BaseName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
+<CODE>File</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Mode</CODE> is an opening mode ('read', 'write' or 'append').
+ (<CODE>streams_basic:io_mode/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
 </UL>
 
 </DL>
 
+
+
+<H2><A NAME="SEC302" HREF="ciao_toc.html#TOC302">Documentation on multifiles (<CODE>symfnames</CODE>)</A></H2>
 <P>
-<A NAME="IDX4515"></A>
-<A NAME="IDX4516"></A>
+<A NAME="IDX4266"></A>
+<A NAME="IDX4267"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>extension/2:</B>
-<DD><A NAME="IDX4517"></A>
+<DT><span class="define">PREDICATE:</span> <B>alias_file/1:</B>
+<DD><A NAME="IDX4268"></A>
 
 
 <P>
-<CODE>extension(FileName, Extension)</CODE>
+<CODE>alias_file(File)</CODE>
 
 
 <P>
-<CODE>Extension</CODE> is the extension (suffix) of <CODE>FileName</CODE>. Equivalent to <CODE>file_name_extension(FileName,_,Extension)</CODE>. Useful to extract the extension of a file using functional syntax.
+Declares <CODE>File</CODE> to be a file defining symbolic names via 
+<A NAME="IDX4269"></A>
+<CODE>file_alias/2</CODE>. Anything else in <CODE>File</CODE> is simply ignored.
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+The predicate is <EM>multifile</EM>.
 
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>Extension</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-</UL>
 
 </DL>
+
+<P>
+<A NAME="IDX4270"></A>
+<A NAME="IDX4271"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_alias/2:</B>
+<DD><A NAME="IDX4272"></A>
+
+
+<P>
+<CODE>file_alias(Alias, File)</CODE>
+
+
+<P>
+Declares <CODE>Alias</CODE> as a symbolic name for <CODE>File</CODE>, the real name of an actual file (or directory).
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC303" HREF="ciao_toc.html#TOC303">Other information (<CODE>symfnames</CODE>)</A></H2>
+
+<P>
+ The example discussed here is included in the distribution files. There is a main application file which uses module <CODE>mm</CODE>. This module reads a line from a file; the main predicate in the main file then prints this line. The important thing is that the file read is named by a symbolic name "<CODE>file</CODE>". The main application file declares another file where the symbolic names are assigned actual file names: 
+
+
+
+<PRE>
+
+:- use_module(mm).
+
+:- multifile alias_file/1.
+alias_file(myfiles).
+
+main :- p(X), display(X), nl.
+
+</PRE>
+
+<P>
+Now, the file <CODE>myfiles.pl</CODE> can be used to change the file you want to read from without having to recompile the application. The current assignment is: 
+
+
+
+<PRE>
+
+%:- use_package([]).
+file_alias(file,'mm.pl').
+
+</PRE>
+
+<P>
+so the execution of the application will show the first line of <CODE>mm.pl</CODE>. However, you can change to: 
+
+
+
+<PRE>
+file_alias(file,'main.pl').
+
+</PRE>
+
+<P>
+and then execution of the same executable will show the first line of <CODE>main.pl</CODE>. 
+ 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

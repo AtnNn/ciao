@@ -1,106 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pure Prolog package</TITLE>
+<TITLE>The Ciao Prolog System               - Multiple Argument Indexing</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Pure Prolog package</A></H1>
+<H1><A NAME="SEC368" HREF="ciao_toc.html#TOC368">Multiple Argument Indexing</A></H1>
 <P>
-<A NAME="IDX5236"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<A NAME="IDX5058"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> Tom Howland (http://home.pacbell.net/tomjdnh/pd.html), derived from work by Anil Nair, F. Bueno (for the Ciao package).
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#224 (2003/12/21, 20:16:18 CET)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-This library package allows the use of 
-<A NAME="IDX5237"></A>
-<A NAME="IDX5238"></A>
-<EM>pure Prolog</EM> in a Ciao module/program. It is based on the fact that if an 
-<A NAME="IDX5239"></A>
-<A NAME="IDX5240"></A>
-<EM>engine module</EM> is imported explicitly then all of them have to be imported explicitly. The engine modules are: 
-
-<UL>
-<LI><CODE>engine(arithmetic)</CODE>
-
-section <A HREF="ciao_23.html#SEC150">Arithmetic</A>. 
-<LI><CODE>engine(atomic_basic)</CODE>
-
-section <A HREF="ciao_22.html#SEC147">Basic predicates handling names of constants</A>. 
-<LI><CODE>engine(attributes)</CODE>
-
-section <A HREF="ciao_31.html#SEC178">Attributed variables</A>. 
-<LI><CODE>engine(basic_props)</CODE>
-
-section <A HREF="ciao_18.html#SEC135">Basic data types and properties</A>. 
-<LI><CODE>engine(basiccontrol)</CODE>
-
-section <A HREF="ciao_16.html#SEC128">Control constructs/predicates</A>. 
-<LI><CODE>engine(data_facts)</CODE>
-
-section <A HREF="ciao_28.html#SEC167">Fast/concurrent update of facts</A>. 
-<LI><CODE>engine(exceptions)</CODE>
-
-section <A HREF="ciao_26.html#SEC160">Exception handling</A>. 
-<LI><CODE>engine(io_aux)</CODE>
-
-section <A HREF="ciao_30.html#SEC174">Message printing primitives</A>. 
-<LI><CODE>engine(io_basic)</CODE>
-
-section <A HREF="ciao_25.html#SEC157">Basic input/output</A>. 
-<LI><CODE>engine(prolog_flags)</CODE>
-
-section <A HREF="ciao_27.html#SEC163">Changing system behaviour and various flags</A>. 
-<LI><CODE>engine(streams_basic)</CODE>
-
-section <A HREF="ciao_24.html#SEC153">Basic file/stream handling</A>. 
-<LI><CODE>engine(system_info)</CODE>
-
-section <A HREF="ciao_32.html#SEC183">Gathering some basic internal info</A>. 
-<LI><CODE>engine(term_basic)</CODE>
-
-section <A HREF="ciao_20.html#SEC141">Basic term manipulation</A>. 
-<LI><CODE>engine(term_compare)</CODE>
-
-section <A HREF="ciao_21.html#SEC144">Comparing terms</A>. 
-<LI><CODE>engine(term_typing)</CODE>
-
-section <A HREF="ciao_19.html#SEC138">Extra-logical properties for typing</A>. 
-</UL>
-
-<P>
-Note that if any of these modules is explicitely imported in a program then the language defaults to Pure Prolog, plus the functionality added by the modules explicitely imported. 
+<STRONG>Version of last change:</STRONG> 1.11#101 (2003/12/21, 20:21:31 CET)
 
 
 <P>
-It is recommended that if you explicitely import an engine module you also use this package, which will guarantee that the predicate <CODE>true/0</CODE> is defined (note that this is the only Ciao builtin which cannot be redefined). 
+This package is an extension of the idea of Prolog indexing, usually performed, in a limited way, on the first argument. This package provides more powerful indexing schemes. It lets you pick different arguments to index on, and provides for different combinations of arguments to index on. E.g., it will let you index on the first and third argument or the second and the third argument of a predicate.
 
 
 
 <UL>
-<LI><A HREF="ciao_95.html#SEC397">Usage and interface (pure)</A>
-<LI><A HREF="ciao_95.html#SEC398">Known bugs and planned improvements (pure)</A>
+<LI><A HREF="ciao_95.html#SEC369">Usage and interface (indexer)</A>
+<LI><A HREF="ciao_95.html#SEC370">Documentation on internals (indexer)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC397" HREF="ciao_toc.html#TOC397">Usage and interface (<CODE>pure</CODE>)</A></H2>
+<H2><A NAME="SEC369" HREF="ciao_toc.html#TOC369">Usage and interface (<CODE>indexer</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -108,28 +47,188 @@ It is recommended that if you explicitely import an engine module you also use t
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(pure).</CODE>
+This facility is used as a package, thus either including 
+<A NAME="IDX5059"></A>
+<CODE>indexer</CODE> in the package list of the module, or by using the 
+<A NAME="IDX5060"></A>
+<CODE>use_package/1</CODE> declaration. The facility predicate 
+<A NAME="IDX5061"></A>
+<CODE>hash_term/2</CODE>, documented here, is defined in library module 
+<A NAME="IDX5062"></A>
+<CODE>hash</CODE>.
 
-or
+<LI><STRONG>Other modules used:</STRONG>
 
-<CODE>:- module(...,...,[pure]).</CODE>
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5063"></A>
+<CODE>assertions/native_props</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC398" HREF="ciao_toc.html#TOC398">Known bugs and planned improvements (<CODE>pure</CODE>)</A></H2>
+<H2><A NAME="SEC370" HREF="ciao_toc.html#TOC370">Documentation on internals (<CODE>indexer</CODE>)</A></H2>
+<P>
+<A NAME="IDX5064"></A>
+<A NAME="IDX5065"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>index/1:</B>
+<DD><A NAME="IDX5066"></A>
 
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>index(IndexSpecs)</CODE>.
 
 <UL>
+<LI><EM>Description:</EM> Declares an indexing scheme for a predicate. All specs of <CODE>IndexSpecs</CODE> must be terms for the same predicate. Each spec declares an indexing on a combination of the arguments. Indexing will be performed using any of the specs in <CODE>IndexSpecs</CODE> (being thus interpreted as an or).
 
-<LI>
+You should use a <CODE>*</CODE> in an argument position if you wish to hash on the entire term in that argument. If a <CODE>+</CODE> is used only one level of the term in the argument is used for hashing. An <CODE>i</CODE> is used to indicate that argument is already an integer, and therefore its own value will be used for hashing. The argspec <CODE>?</CODE> simply indicates not to use the argument for indexing. 
 
-Currently, the following builtin predicates/program constructs cannot be redefined, in addition to <CODE>true/0</CODE>: <CODE>(-&#62;)/2</CODE> <CODE>(,)/2</CODE> <CODE>(+)/1</CODE> <CODE>if/3</CODE>
+For example, the index specification: 
+
+<PRE>
+:- index foo(+,?,*,i), foo(?,?,?,i).
+</PRE>
+
+declares indexing for <CODE>foo/4</CODE> either on a combination of the first, third, and fourht arguments, or only on the last argument, which is an integer. In the first case, only the principal functor of the first argument will be used for hashing; the third argument will be used in its entirety. 
+
+The argspec <CODE>n</CODE> is a pragmatic extension and can not be used in conjunction with the other specifiers aside from <CODE>?</CODE>. It stands for "nonvar" and implies that the argument will not be used for hashing, since only ground terms can effectively be used in hashing. Thus, it can not be used in combination with other specifiers within a particular index specification. It is often the fastest thing to use.  
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>IndexSpecs</CODE> is an index specification.
+ (<CODE>indexer_doc:indexspecs/1</CODE>)
 </UL>
 
+</DL>
+
+<P>
+<A NAME="IDX5067"></A>
+<A NAME="IDX5068"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>indexspecs/1:</B>
+<DD><A NAME="IDX5069"></A>
+
+
+<P>
+An index specification is defined as follows: 
+
+<PRE>
+indexspecs(Spec) :-
+        indexspec(Spec).
+indexspecs((Spec,Specs)) :-
+        indexspec(Spec),
+        indexspecs(Specs).
+</PRE>
+
+
+<PRE>
+indexspec(Spec) :-
+        Spec=..[_F|Args],
+        list(Args,argspec).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>indexspecs(IndexSpecs)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>IndexSpecs</CODE> is an index specification.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5070"></A>
+<A NAME="IDX5071"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>argspec/1:</B>
+<DD><A NAME="IDX5072"></A>
+
+
+<P>
+An argument hash specification is defined as follows: 
+
+<PRE>
+argspec(+).
+argspec(*).
+argspec(i).
+argspec(n).
+argspec(?).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>argspec(Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> is an argument hash specification.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5073"></A>
+<A NAME="IDX5074"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>hash_term/2:</B>
+<DD><A NAME="IDX5075"></A>
+
+
+<P>
+<CODE>hash_term(Term, HashValue)</CODE>
+
+
+<P>
+Provides an efficient way to calculate an integer <CODE>HashValue</CODE> for a ground <CODE>Term</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>hash_term(T, N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is a hashing index for <CODE>T</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>T</CODE> is currently ground (it contains no variables).
+ (<CODE>term_typing:ground/1</CODE>)
+
+<CODE>N</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>hash_term(T, N)</CODE>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE><CODE>T</CODE></CODE> is not ground.
+ (<CODE>native_props:nonground/1</CODE>)
+
+<CODE>N</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

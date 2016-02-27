@@ -152,7 +152,7 @@ run_tester( LogFile , ResultFile , I , T , L , C , L2 , E , GoodExamples ,
 	    true 
 	;
 	    display( RealOutput , SlideTitle ) , 
-	    display( RealOutput , 'done.\n'  )
+	    display( RealOutput , ' done.\n'  )
 	),
 
 	retract_fact( tester_last_output( OldUserOutput ) ),

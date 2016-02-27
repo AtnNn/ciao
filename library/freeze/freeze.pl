@@ -1,4 +1,4 @@
-:- module(freeze, [freeze/2, frozen/2],[assertions,isomodes]).
+:- module(freeze, [freeze/2, frozen/2],[assertions,isomodes,mattr_global,show_trans]).
 
 :- comment(title,"Delaying predicates (freeze)").
 :- comment(author,"Manuel Carro").
@@ -23,42 +23,33 @@
 # "If @var{X} is free delay @var{Goal} until @var{X} is
    non-variable.".
 
-:- meta_predicate
-        freeze(?, goal),
-        frozen(?, goal).
+:- meta_predicate freeze(?, goal).
+:- meta_predicate frozen(?, goal).
 
 freeze(X, Goal) :-
-        attach_attribute( V, '$frozen_goals'(V,Goal)),
+        set_attr( V, '$frozen_goals'(Goal)),
         X = V.
 
-:- comment(hide,verify_attribute/2).
+:- comment(hide,check_attr/2).
 
-:- multifile verify_attribute/2.
 
-verify_attribute('$frozen_goals'(Var, Goal), Value):-
-        detach_attribute(Var),
-        Var = Value, 
+check_attr('$frozen_goals'(Goal), _Value):-
         call(Goal).
 
-:- comment(hide,combine_attributes/2).
+:- comment(hide,combine_attributes/3).
 
-:- multifile combine_attributes/2.
-
-combine_attributes('$frozen_goals'(V1, G1), '$frozen_goals'(V2, G2)):-
-        detach_attribute(V1),
-        detach_attribute(V2),
-        V1 = V2,
+combine_attributes('$frozen_goals'(G1), '$frozen_goals'(G2) , V):-
         term_to_meta(T1,G1),
         term_to_meta(T2,G2),
         term_to_meta((T1,T2),G),
-        attach_attribute(V1, '$frozen_goals'(V1, G)).
+        set_attr(V, '$frozen_goals'(G)).
 
 
 :- pred frozen(X, Goal) => callable(Goal) # "@var{Goal} is currently delayed
    until variable @var{X} becomes bound.".
 
 frozen(Var, Goal):-
-        get_attribute(Var, '$frozen_goals'(_, Goal)).
+        get_attr(Var, '$frozen_goals'(Goal)).
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).

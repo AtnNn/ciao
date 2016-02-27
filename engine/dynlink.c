@@ -63,10 +63,9 @@ static void add_to_loaded_objects PROTO((char *module_name,
 #  define LIB_LOADING_TYPE RTLD_LAZY | RTLD_GLOBAL
 # endif
 #elif defined(LINUX)
-# define LIB_LOADING_TYPE RTLD_LAZY | RTLD_GLOBAL
+# define LIB_LOADING_TYPE RTLD_LAZY              /* No RTLD_GLOBAL in Linux */
 #elif defined(DARWIN)
-# define LIB_LOADING_TYPE NSLINKMODULE_OPTION_BINDNOW 
-/* | NSLINKMODULE_OPTION_PRIVATE */
+# define LIB_LOADING_TYPE NSLINKMODULE_OPTION_BINDNOW | NSLINKMODULE_OPTION_PRIVATE
 #elif defined(SunOS4)
 # define LIB_LOADING_TYPE 1                          /* SunOS man pages... */
 #endif

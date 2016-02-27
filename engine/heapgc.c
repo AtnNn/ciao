@@ -43,11 +43,11 @@ static void compressHeap(Argdecl);
 BOOL gc_usage(Arg)
      Argdecl;
 {
-  ENG_INT t;
+  ENG_FLT t;
   TAGGED x;
 
-  t= stats.gc_time*1000;
-  MakeLST(x,MakeInteger(Arg,t),atom_nil);
+  t= (ENG_FLT)stats.gc_click*1000/stats.userclockfreq;
+  MakeLST(x,MakeFloat(Arg,t),atom_nil);
   t= stats.gc_acc*sizeof(TAGGED);
   MakeLST(x,MakeInteger(Arg,t),x);
   t= stats.gc_count;
@@ -749,7 +749,7 @@ void GarbageCollect(Arg)
       }
     }
 
-    t1= usertime();
+    t1= userclick();
 
     /* push special REGISTERS on the trail stack */
     TrailPush(w->trail_top,Current_Debugger_State);
@@ -784,7 +784,7 @@ void GarbageCollect(Arg)
     compressTrail(Arg,TRUE);
 
     Gc_Total_Grey += Gcgrey;
-    t1 = (t2= usertime())-t1;
+    t1 = (t2= userclick())-t1;
     if( current_gctrace==atom_verbose ) {
 	ENG_TTYPRINTF2("{GC}  mark: %ld cells marked in %.3f sec\n",
 		      Total_Found,t1);
@@ -801,10 +801,10 @@ void GarbageCollect(Arg)
     Current_Debugger_State = TrailPop(w->trail_top);
     SetShadowregs(w->node);	/* shadow regs may have changed */
 				/* statistics */
-    t2= usertime()-t2;
-    stats.gc_time+= t1+t2;
-    stats.starttime += t1+t2;
-    stats.lasttime += t1+t2;
+    t2= userclick()-t2;
+    stats.gc_click+= t1+t2;
+    stats.startclick += t1+t2;
+    stats.lastclick += t1+t2;
     stats.gc_count++;
     stats.gc_acc+= hz-HeapDifference(Heap_Start,w->global_top);
     if( current_gctrace==atom_verbose ) {
@@ -817,7 +817,7 @@ void GarbageCollect(Arg)
 		      HeapDifference(w->global_top,Heap_End));
 	ENG_TTYPRINTF2("{GC}  %ld cells reclaimed in %ld gc's\n",
 		      stats.gc_acc,stats.gc_count);
-	ENG_TTYPRINTF2("{GC}  GC time = %.3f  Total= %.3f\n\n",
-		      t1+t2,stats.gc_time);
+	ENG_TTYPRINTF2("{GC}  GC time = %.6f  Total= %.6f\n\n",
+		      ((ENG_FLT)(t1+t2))/stats.userclockfreq,((ENG_FLT)stats.gc_click)/stats.userclockfreq);
       }
 }

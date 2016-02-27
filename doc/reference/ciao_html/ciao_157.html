@@ -1,38 +1,177 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - pl2sqlinsert (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Prolog to Java interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC657" HREF="ciao_toc.html#TOC657">pl2sqlinsert (library)</A></H1>
+<H1><A NAME="SEC634" HREF="ciao_toc.html#TOC634">Prolog to Java interface</A></H1>
 <P>
-<A NAME="IDX7392"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<A NAME="IDX7347"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#345 (2004/5/4, 15:31:0 CEST)
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.9#67 (2003/3/14, 12:48:36 CET)
+
+
+<P>
+ 
+
+
+<P>
+This module defines the Ciao Prolog to Java interface. This interface allows a Prolog program to start a Java process, create Java objects, invoke methods, set/get attributes (fields), and handle Java events. 
+
+
+<P>
+This interface only works with JDK version 1.2 or higher. 
+
+
+<P>
+Although the Java side interface is explained in Javadoc format (it is available at <CODE>library/javall/javadoc/</CODE> in your Ciao installation), the general interface structure is detailed here. 
 
 
 
 <UL>
-<LI><A HREF="ciao_157.html#SEC658">Usage and interface (pl2sqlinsert)</A>
-<LI><A HREF="ciao_157.html#SEC659">Documentation on exports (pl2sqlinsert)</A>
-<LI><A HREF="ciao_157.html#SEC660">Documentation on multifiles (pl2sqlinsert)</A>
+<LI><A HREF="ciao_157.html#SEC635">Prolog to Java Interface Structure</A>
+<LI><A HREF="ciao_157.html#SEC638">Java event handling from Prolog</A>
+<LI><A HREF="ciao_157.html#SEC639">Java exception handling from Prolog</A>
+<LI><A HREF="ciao_157.html#SEC640">Usage and interface (javart)</A>
+<LI><A HREF="ciao_157.html#SEC641">Documentation on exports (javart)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC658" HREF="ciao_toc.html#TOC658">Usage and interface (<CODE>pl2sqlinsert</CODE>)</A></H2>
+<H2><A NAME="SEC635" HREF="ciao_toc.html#TOC635">Prolog to Java Interface Structure</A></H2>
+<P>
+<A NAME="IDX7348"></A>
+<A NAME="IDX7349"></A>
+This interface is made up of two parts: a Prolog part and a Java part, running in separate processes. The Prolog part receives requests from a Prolog program and sends them to the Java part through a socket. The Java part receives requests from the socket and performs the actions included in the requests. 
+
+
+<P>
+If an event is thrown in the Java side, an asynchronous message must be sent away to the Prolog side, in order to launch a Prolog goal to handle the event. This asynchronous communication is performed using a separate socket. The nature of this communication needs the use of threads both in Java and Prolog: to deal with the 'sequential program flow,' and other threads for event handling. 
+
+
+<P>
+In both sides the threads are automatically created by the context of the objects we use. The user must be aware that different requests to the other side of the interface could run concurrently. 
+ 
+
+
+
+<UL>
+<LI><A HREF="ciao_157.html#SEC636">Prolog side of the Java interface</A>
+<LI><A HREF="ciao_157.html#SEC637">Java side</A>
+</UL>
+
+
+
+<H3><A NAME="SEC636" HREF="ciao_toc.html#TOC636">Prolog side of the Java interface</A></H3>
+<P>
+<A NAME="IDX7350"></A>
+<A NAME="IDX7351"></A>
+The Prolog side receives the actions to do in the Java side from the user program, and sends them to the Java process through the socket connection. When the action is done in the Java side, the result is returned to the user Prolog program, or the action fails if there is any problem in the Java side. 
+
+
+<P>
+Prolog data representation of Java elements is very simple in this interface. Java primitive types such as integers and characters are translated into the Prolog corresponding terms, and even some Java objects are translated in the same way (e. g. Java strings). Java objects are represented in Prolog as compound terms with a reference id to identify the corresponding Java object. Data conversion is made automatically when the interface is used, so the Prolog user programs do not have to deal with the complexity of this tasks. 
+
+
+
+
+<H3><A NAME="SEC637" HREF="ciao_toc.html#TOC637">Java side</A></H3>
+<P>
+<A NAME="IDX7352"></A>
+<A NAME="IDX7353"></A>
+The Java side of this layer is more complex than the Prolog side. The tasks this part have to deal to are the following: 
+
+
+
+<UL>
+
+<LI>Wait for requests from the Prolog side.
+
+<LI>Translate the Prolog terms received in the Prolog 'serialized' form to a more useful Java representation (see the Java interface documentation available at <CODE>library/javall/javadoc/</CODE> in your Ciao installation for details regarding Java representation of Prolog terms).
+
+<LI>Interpret the requests received from the Prolog side, and execute them.
+
+<LI>Handle the set of objects created by or derived from the requests received from de prolog side.
+
+<LI>Handle the events raised in the Java side, and launch the listeners added in the prolog side.
+
+<LI>Handle the exceptions raised in the Java side, and send them to the Prolog side.
+
+</UL>
+
+<P>
+In the implementation of the Java side, two items must be carefully designed: the handling of Java objects, and the representation of prolog data structures. The last item is specially important because all the interactions between Prolog and Java are made using Prolog structures, an easy way to standardize the different data management in both sides. Even the requests themselves are encapsulated using Prolog structures. The overload of this encapsulation is not significant in terms of socket traffic, due to the optimal implementation of the prolog serialized term. 
+
+
+<P>
+The java side must handle the objects created from the Prolog side dinamically, and these objects must be accessed as fast as possible from the set of objects. The Java API provides a powerful implementation of Hash tables that achieves all the requirements of our implementation. 
+
+
+<P>
+On the other hand, the java representation of prolog terms is made using the inheritance of java classes. In the java side exists a representation of a generic prolog term, implemented as an abstract class in java. Variables, atoms, compound terms, lists, and numeric terms are classes in the java side which inherit from the term class. Java objects can be seen also under the prolog representation as compound terms, where the single argument corresponds to the Hash key of the actual java object in the Hash table referred to before. This behaviour makes the handling of mixed java and prolog elements easy. Prolog goals are represented in the java side as objects which contain a prolog compound term with the term representing the goal. This case will be seen more in depth next, when the java to prolog is explained. 
+
+
+
+
+<H2><A NAME="SEC638" HREF="ciao_toc.html#TOC638">Java event handling from Prolog</A></H2>
+<P>
+<A NAME="IDX7354"></A>
+<A NAME="IDX7355"></A>
+Java event handling is based on a delegation model since version 1.1.x. This approach to event handling is very powerful and elegant, but a user program cannot handle all the events that can arise on a given object: for each kind of event, a listener must be implemented and added specifically. However, the Java 2 API includes a special listener (<CODE>AWTEventListener</CODE>) that can manage the internal java event queue. 
+
+
+<P>
+The prolog to java interface has been designed to emulate the java event handler, and is also based on event objects and listeners. The prolog to java interface implements its own event manager, to handle those events that have prolog listeners associated to the object that raises the event. From the prolog side can be added listeners to objects for specific events. The java side includes a list of goals to launch from the object and event type. 
+
+
+<P>
+Due to the events nature, the event handler must work in a separate thread to manage the events asynchronously. The java side has its own mechanisms to work this way. The prolog side must be implemented specially for event handling using threads. The communication between java and prolog is also asynchronous, and an additional socket stream is used to avoid interferences with the main socket stream. The event stream will work in this implementation only in one way: from java to prolog. If an event handler needs to send back requests to java, it will use the main socket stream, just like the requests sent directly from a prolog program. 
+
+
+<P>
+The internal process of register a Prolog event handler to a Java event is shown in the next figure: 
+
+
+<P>
+When an event raises, the Prolog to Java interface has to send to the Prolog user program the goal to evaluate. Graphically, the complete process takes the tasks involved in the following figure: 
+
+
+<P>
+ 
+
+
+
+
+<H2><A NAME="SEC639" HREF="ciao_toc.html#TOC639">Java exception handling from Prolog</A></H2>
+<P>
+<A NAME="IDX7356"></A>
+<A NAME="IDX7357"></A>
+Java exception handling is very similar to the peer prolog handling: it includes some specific statements to trap exceptions from user code. In the java side, the exceptions can be originated from an incorrect request, or can be originated in the code called from the request. Both exception types will be sent to prolog using the main socket stream, allowing the prolog program manage the exception. However, the first kind of exceptions are prefixed, so the user program can distinguish them from the second type of exceptions. 
+
+
+<P>
+In order to handle exceptions properly using the prolog to java and java to prolog interfaces simultaneously, in both sides of the interface will be filtered those exceptions coming from their own side: this avoids an endless loop of exceptions bouncing from one side to another. 
+
+
+
+
+<H2><A NAME="SEC640" HREF="ciao_toc.html#TOC640">Usage and interface (<CODE>javart</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -40,7 +179,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(pl2sqlinsert)).</CODE>
+<CODE>:- use_module(library(javart)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -49,15 +188,51 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7393"></A>
-<CODE>pl2sqlInsert/2</CODE>.
+<A NAME="IDX7358"></A>
+<CODE>java_start/0</CODE>, 
+<A NAME="IDX7359"></A>
+<CODE>java_start/1</CODE>, 
+<A NAME="IDX7360"></A>
+<CODE>java_start/2</CODE>, 
+<A NAME="IDX7361"></A>
+<CODE>java_stop/0</CODE>, 
+<A NAME="IDX7362"></A>
+<CODE>java_connect/2</CODE>, 
+<A NAME="IDX7363"></A>
+<CODE>java_disconnect/0</CODE>, 
+<A NAME="IDX7364"></A>
+<CODE>java_use_module/1</CODE>, 
+<A NAME="IDX7365"></A>
+<CODE>java_create_object/2</CODE>, 
+<A NAME="IDX7366"></A>
+<CODE>java_delete_object/1</CODE>, 
+<A NAME="IDX7367"></A>
+<CODE>java_invoke_method/2</CODE>, 
+<A NAME="IDX7368"></A>
+<CODE>java_get_value/2</CODE>, 
+<A NAME="IDX7369"></A>
+<CODE>java_set_value/2</CODE>, 
+<A NAME="IDX7370"></A>
+<CODE>java_add_listener/3</CODE>, 
+<A NAME="IDX7371"></A>
+<CODE>java_remove_listener/3</CODE>.
 
-<LI><EM>Multifiles:</EM>
+<LI><EM>Regular Types:</EM>
 
-<A NAME="IDX7394"></A>
-<CODE>sql__relation/3</CODE>, 
-<A NAME="IDX7395"></A>
-<CODE>sql__attribute/4</CODE>.
+<A NAME="IDX7372"></A>
+<CODE>machine_name/1</CODE>, 
+<A NAME="IDX7373"></A>
+<CODE>java_constructor/1</CODE>, 
+<A NAME="IDX7374"></A>
+<CODE>java_object/1</CODE>, 
+<A NAME="IDX7375"></A>
+<CODE>java_event/1</CODE>, 
+<A NAME="IDX7376"></A>
+<CODE>prolog_goal/1</CODE>, 
+<A NAME="IDX7377"></A>
+<CODE>java_field/1</CODE>, 
+<A NAME="IDX7378"></A>
+<CODE>java_method/1</CODE>.
 
 </UL>
 
@@ -68,40 +243,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7396"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX7397"></A>
-<CODE>between</CODE>, 
-<A NAME="IDX7398"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX7399"></A>
-<CODE>dec10_io</CODE>, 
-<A NAME="IDX7400"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7401"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX7402"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7403"></A>
-<CODE>old_database</CODE>, 
-<A NAME="IDX7404"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX7405"></A>
-<CODE>prolog_sys</CODE>, 
-<A NAME="IDX7406"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7407"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX7408"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX7409"></A>
-<CODE>ttyout</CODE>, 
-<A NAME="IDX7410"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7411"></A>
+<A NAME="IDX7379"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX7380"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7412"></A>
-<CODE>iso_misc</CODE>.
+<A NAME="IDX7381"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX7382"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7383"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7384"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7385"></A>
+<CODE>javall/javasock</CODE>, 
+<A NAME="IDX7386"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -111,69 +268,542 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>,
 
 
 
-<H2><A NAME="SEC659" HREF="ciao_toc.html#TOC659">Documentation on exports (<CODE>pl2sqlinsert</CODE>)</A></H2>
+<H2><A NAME="SEC641" HREF="ciao_toc.html#TOC641">Documentation on exports (<CODE>javart</CODE>)</A></H2>
 <P>
-<A NAME="IDX7413"></A>
+<A NAME="IDX7387"></A>
+<A NAME="IDX7388"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_start/0:</B>
+<DD><A NAME="IDX7389"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Starts the Java server on the local machine, connects to it, and starts the event handling thread.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7390"></A>
+<A NAME="IDX7391"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_start/1:</B>
+<DD><A NAME="IDX7392"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_start(Classpath)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Starts the Java server on the local machine, connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Classpath</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Classpath</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7393"></A>
+<A NAME="IDX7394"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_start/2:</B>
+<DD><A NAME="IDX7395"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Starts the Java server in machine_name (using rsh!), connects to it, and starts the event handling thread. The Java server is started using the classpath received as argument.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>Arg2</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is the network name of a machine.
+ (<CODE>javart:machine_name/1</CODE>)
+
+<CODE>undefined:classpath(Arg2)</CODE>
+ (undefined property)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7396"></A>
+<A NAME="IDX7397"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_stop/0:</B>
+<DD><A NAME="IDX7398"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Stops the interface terminating the threads that handle the socket connection, and finishing the Java interface server if it was started using java_start/n.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7399"></A>
+<A NAME="IDX7400"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_connect/2:</B>
+<DD><A NAME="IDX7401"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Connects to an existing Java interface server running in machine_name and listening at port port_number. To connect to a Java server located in the local machine, use 'localhost' as machine_name.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is the network name of a machine.
+ (<CODE>javart:machine_name/1</CODE>)
+
+<CODE>Arg2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is the network name of a machine.
+ (<CODE>javart:machine_name/1</CODE>)
+
+<CODE>undefined:port_number(Arg2)</CODE>
+ (undefined property)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7402"></A>
+<A NAME="IDX7403"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_disconnect/0:</B>
+<DD><A NAME="IDX7404"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Closes the connection with the java process, terminating the threads that handle the connection to Java. This predicate does not terminate the Java process (this is the disconnection procedure for Java servers not started from Prolog). This predicate should be used when the communication is established with java_connect/2.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7405"></A>
+<A NAME="IDX7406"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>machine_name/1:</B>
+<DD><A NAME="IDX7407"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>machine_name(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is the network name of a machine.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7408"></A>
+<A NAME="IDX7409"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_constructor/1:</B>
+<DD><A NAME="IDX7410"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_constructor(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7411"></A>
+<A NAME="IDX7412"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_object/1:</B>
+<DD><A NAME="IDX7413"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_object(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+
+</UL>
+
+</DL>
+
+<P>
 <A NAME="IDX7414"></A>
+<A NAME="IDX7415"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pl2sqlInsert/2:</B>
-<DD><A NAME="IDX7415"></A>
+<DT><span class="define">REGTYPE:</span> <B>java_event/1:</B>
+<DD><A NAME="IDX7416"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>java_event(X)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
+
+</UL>
 
 </DL>
 
-
-
-<H2><A NAME="SEC660" HREF="ciao_toc.html#TOC660">Documentation on multifiles (<CODE>pl2sqlinsert</CODE>)</A></H2>
 <P>
-<A NAME="IDX7416"></A>
 <A NAME="IDX7417"></A>
+<A NAME="IDX7418"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sql__relation/3:</B>
-<DD><A NAME="IDX7418"></A>
+<DT><span class="define">REGTYPE:</span> <B>prolog_goal/1:</B>
+<DD><A NAME="IDX7419"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>prolog_goal(X)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
 
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7419"></A>
 <A NAME="IDX7420"></A>
+<A NAME="IDX7421"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sql__attribute/4:</B>
-<DD><A NAME="IDX7421"></A>
+<DT><span class="define">REGTYPE:</span> <B>java_field/1:</B>
+<DD><A NAME="IDX7422"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>java_field(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7423"></A>
+<A NAME="IDX7424"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_use_module/1:</B>
+<DD><A NAME="IDX7425"></A>
 
 
 <P>
-The predicate is <EM>multifile</EM>.
+<STRONG>Usage:</STRONG> <CODE>java_use_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Loads a module and makes it available from Java.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Module</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7426"></A>
+<A NAME="IDX7427"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_create_object/2:</B>
+<DD><A NAME="IDX7428"></A>
 
 
 <P>
-The predicate is of type <EM>data</EM>.
+<STRONG>Usage:</STRONG> 
 
+<UL>
+<LI><EM>Description:</EM> New java object creation. The constructor must be a compound term as defined by its type, with the full class name as functor (e.g., 'java.lang.String'), and the parameters passed to the constructor as arguments of the structure.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
+ (<CODE>javart:java_constructor/1</CODE>)
+
+<CODE>Arg2</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is a java constructor (structure with functor as constructor full name, and arguments as constructor arguments).
+ (<CODE>javart:java_constructor/1</CODE>)
+
+<CODE>Arg2</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Arg2</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7429"></A>
+<A NAME="IDX7430"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_delete_object/1:</B>
+<DD><A NAME="IDX7431"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Java object deletion. It removes the object given as argument from the Java object table.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7432"></A>
+<A NAME="IDX7433"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_invoke_method/2:</B>
+<DD><A NAME="IDX7434"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Invokes a java method on an object. Given a Java object reference, invokes the method represented with the second argument.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
+ (<CODE>javart:java_method/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
+ (<CODE>javart:java_method/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7435"></A>
+<A NAME="IDX7436"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>java_method/1:</B>
+<DD><A NAME="IDX7437"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_method(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a java method (structure with functor as method name, and arguments as method ones, plus a result argument. This result argument is unified with the atom 'Yes' if the java method returns void).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7438"></A>
+<A NAME="IDX7439"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_get_value/2:</B>
+<DD><A NAME="IDX7440"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Gets the value of a field. Given a Java object as first argument, it instantiates the variable given as second argument. This field must be uninstantiated in the java_field functor, or this predicate will fail.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
+ (<CODE>javart:java_field/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
+ (<CODE>javart:java_field/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7441"></A>
+<A NAME="IDX7442"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_set_value/2:</B>
+<DD><A NAME="IDX7443"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Sets the value of a Java object field. Given a Java object reference, it assigns the value included in the java_field compound term. The field value in the java_field structure must be instantiated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
+ (<CODE>javart:java_field/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java field (structure on which the functor name is the field name, and the single argument is the field value).
+ (<CODE>javart:java_field/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7444"></A>
+<A NAME="IDX7445"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_add_listener/3:</B>
+<DD><A NAME="IDX7446"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>java_add_listener(?,?,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Adds a listener to an event on an object. Given a Java object reference, it registers the goal received as third argument to be launched when the Java event raises.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>Arg3</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
+ (<CODE>javart:prolog_goal/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>Arg3</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
+ (<CODE>javart:prolog_goal/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7447"></A>
+<A NAME="IDX7448"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_remove_listener/3:</B>
+<DD><A NAME="IDX7449"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> It removes a listener from an object event queue. Given a Java object reference, goal registered for the given event is removed.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>Arg3</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
+ (<CODE>javart:prolog_goal/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Arg1</CODE> is a java object (a structure with functor '$java_object', and argument an integer given by the java side).
+ (<CODE>javart:java_object/1</CODE>)
+
+<CODE>Arg2</CODE> is a java event represented as an atom with the full event constructor name (e.g., 'java.awt.event.ActionListener').
+ (<CODE>javart:java_event/1</CODE>)
+
+<CODE>Arg3</CODE> is a prolog predicate. Prolog term that represents the goal that must be invoked when the event raises on the object. The predicate arguments can be java objects, or even the result of java methods. These java objects will be evaluated when the event raises (instead of when the listener is added). The arguments that represent java objects must be instantiated to already created objects. The variables will be kept uninstantiated when the event raises and the predicate is called.
+ (<CODE>javart:prolog_goal/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_156.html">previous</A>, <A HREF="ciao_158.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

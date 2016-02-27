@@ -18,9 +18,9 @@
 #include <math.h>
 #include <string.h>
 
-/* #if (defined(__GLIBC__))&&(!defined(CYGWIN)) */
-/* # include <ieee754.h> */
-/* #else */
+#if defined(__GLIBC__)
+# include <ieee754.h>
+#else
 
 # include "configure.h"
 
@@ -86,7 +86,7 @@ union ieee854_long_double
       } ieee;
   };
 
-/* #endif */
+#endif
 
 /*
 typedef struct {
@@ -454,7 +454,7 @@ static char * scale(
     sa >>= k;
     s >>= (short)(k);
 
-/*     printf("EXTRA_BITS-(8 + scalee - shift)=%d\n", EXTRA_BITS-k); */
+/*   printf("EXTRA_BITS-(8 + scalee - shift)=%d\n", EXTRA_BITS-k); */
 
 /*     printf("1.scalee=%lx shift=%llx r=%llx m0=%llx m1=%llx\n", scalee, shift, r, m0, m1); */
   //  printf("(k + scalee - shift)=(%d+%ld-%lld)=%lld\n",k,scalee,shift,(k + scalee - shift));
@@ -689,14 +689,14 @@ char * float_to_string(
   f = (((unsigned long long)r.ieee.mantissa0)*0x100000000LL)+((unsigned long long)r.ieee.mantissa1);
   s = r.ieee.negative;
   e = be - 1075;
-  
-/*   printf("number=%g\n",x); */
-/*   printf("mantissa0=%lx\nmantissa1=%lx\nexponent=%lx\nnegative=%lx\n", */
-/* 	 r.ieee.mantissa0, */
-/* 	 r.ieee.mantissa1, */
-/* 	 r.ieee.exponent, */
-/* 	 r.ieee.negative); */
-/*   printf("f=%llx\n",f);   */
+  /*
+  printf("mantissa0=%lx\nmantissa1=%lx\nexponent=%lx\nnegative=%lx\n",
+	 r.ieee.mantissa0,
+	 r.ieee.mantissa1,
+	 r.ieee.exponent,
+	 r.ieee.negative);
+  printf("f=%llx\n",f);  
+  */
 
   if(format=='E'||format=='G') {/* ||format=='p') { */
     digits = digits_lower;

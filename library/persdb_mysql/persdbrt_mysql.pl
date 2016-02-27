@@ -61,7 +61,7 @@
    case the predicate is stored as tuples in the database.".
 
 :- multifile sql_persistent_location/2.
-:- dynamic sql_persistent_location/2.
+:- data sql_persistent_location/2.
 
 %% -----------------------------------------
 :- comment(hide,'$is_sql_persistent'/3).
@@ -876,7 +876,7 @@ filter_types([[NativeId, NativeType]|NativeRest],[[NativeId,Type]|Rest]):-
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+113,2003/11/27,20:56*06+'CET'), "Names of
+:- comment(version(1*11+61,2003/11/27,21:23*22+'CET'), "Names of
    multifile predicates relation/3 and attribute/4 changed to
    sql__relation/3 and sql__attribute/4.  (Jesus Correas Fernandez)").
 

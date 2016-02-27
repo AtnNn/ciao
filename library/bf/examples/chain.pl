@@ -1,4 +1,4 @@
-:- module(chain, _, [bf]).
+- module(chain, _, [bf]).
 
 test(bf) :- bfchain(a,d).
 test(df) :- chain(a,d).   % loops!

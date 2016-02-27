@@ -40,7 +40,7 @@
 :- comment(author, "David Trallero Mena").
 
 :- comment(module, "This library has been done for measuring or compare
- execution features (currently only time) of predicates. This module relies
+ execution features (currently only time) of predicates. This module relys
  on gnuplot, an auxiliary module which use the tool @tt{gnuplot}, for
  representing results graphically").
 

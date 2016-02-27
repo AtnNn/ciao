@@ -109,7 +109,7 @@ void ENG_init(argc, argv)
       fclose(qfile);
       w->node->global_top = w->global_top;
       if (boot_from_ql){
-        w->node->term[0] = X(0) = init_atom_check("boot");
+        w->node->term[0] = X(0) = init_atom_check("internals:boot");
         startwam(w);
       }
     }
@@ -149,7 +149,7 @@ void ENG_kick_start(Arg)
      Argdecl;
 {
 
-  w->node->term[0] = X(0) = init_atom_check("boot");
+  w->node->term[0] = X(0) = init_atom_check("internals:boot");
   startwam(w);
   at_exit(0);
 }

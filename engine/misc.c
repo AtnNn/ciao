@@ -329,6 +329,7 @@ BOOL prolog_current_executable(Arg)
   return cunify(Arg, MakeString(source_path), X(0));
 }
 
+
 BOOL prompt(Arg)
      Argdecl;
 {

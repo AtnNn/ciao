@@ -614,6 +614,8 @@ struct definition *new_functor(tagpname,arity)
   func->code.undinfo = NULL;
 #if defined(PROFILE)
   func->no_of_calls = 0;
+  func->no_of_fails = 0;
+  func->no_of_redos = 0;
   func->time_spent = 0;
 #endif
   return func;
@@ -1211,29 +1213,32 @@ struct stream_node *stream_to_ptr_check(t, mode, errcode)
 	n = stream_user_output;
       else if (t==atom_user_error)
 	n = stream_user_error;
+      else {
+            *errcode = DOMAIN_ERROR(STREAM_OR_ALIAS);
+            return NULL;
+      }
     }
-  else if (TagIsSTR(t) && (TagToHeadfunctor(t) == functor_Dstream))
-    {
+  else if (TagIsSTR(t) && (TagToHeadfunctor(t) == functor_Dstream)) {
       DerefArg(x1,t,1);
       DerefArg(x2,t,2);
       if (!TagIsSmall(x1) || !TagIsSmall(x2) ||
-	  (n=TagToStream(x1), n->label != x2))
-	n = NULL;
+	  (n = TagToStream(x1), n->label != x2)) {
+            *errcode = EXISTENCE_ERROR(STREAM);
+            return NULL;
+      }
+    } else {
+        *errcode = DOMAIN_ERROR(STREAM_OR_ALIAS);
+        return NULL;
     }
-
-  if (n==NULL) {
-    *errcode = TYPE_ERROR(STREAM_OR_ALIAS);
-    return NULL;
-  }
 
   if (mode=='r') {
     if (n->streammode=='w'||n->streammode=='a') {
-      *errcode = NO_READ_PERMISSION;
+      *errcode = PERMISSION_ERROR(ACCESS,STREAM);  
       return NULL;
     }
   } else if (mode=='w') {
     if (n->streammode=='r') {
-      *errcode = NO_WRITE_PERMISSION;
+      *errcode = PERMISSION_ERROR(MODIFY,STREAM); 
       return NULL;
     }
   }

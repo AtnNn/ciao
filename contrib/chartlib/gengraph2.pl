@@ -1,6 +1,6 @@
 :- module(gengraph2,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
+:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
 
 
 :- export(graph_b2/9).
@@ -1432,7 +1432,7 @@ table(Interp):-
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+270,2004/01/01,14:19*56+'CET'), "Added comment
+:- comment(version(1*11+149,2004/01/01,14:19*37+'CET'), "Added comment
    title.  (Edison Mera)").
 
 :- comment(version(1*9+162,2003/12/04,17:39*33+'CET'), "Added author

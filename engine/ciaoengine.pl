@@ -23,16 +23,101 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+350,2004/06/23,11:57*12+'CEST'), "Added option
-   in dynlink (dynlink.c) to export all global symbols of loaded
-   shared objects when using LINUX or MACOSX (Edison & Jose Morales)").
+:- comment(version(1*11+209,2004/03/10,01:44*08+'CET'), "Changed
+   float_*.c /.h and term_support.c, to improve the conversion between
+   float numbers and strings.  Now the exponent symbol is e for bases
+   less than 10, p for bases less or equals than 25 (25=p), and _ for
+   bases less or equals than 36.  (Edison Mera)").
 
-:- comment(version(1*9+349,2004/06/10,17:59*22+'CEST'), "Minor
-corrections to compat.h and to two Makefiles to make ciao to compile
-in Solaris/i86 machines.  (Manuel Carro)").
+:- comment(version(1*11+205,2004/03/03,15:09*06+'CET'), "Solved minor
+   bug in statistics/0 that shows an usertime and runtime different
+   even when there was no garbage collection nor hidden time consuming
+   tasks.  (Edison Mera)").
 
-:- comment(version(1*9+343,2004/04/29,11:55*29+'CEST'),
-"Wait_for_Cond_Begin surrounded by brackets in several places (Manuel Carro)").
+:- comment(version(1*11+203,2004/02/27,16:00*43+'CET'), "Improved
+   predicate statistics/0 to show the timing info in a more organized
+   way, the file modified was alloc.c.  (Edison Mera)").
+
+:- comment(version(1*11+202,2004/02/27,00:02*29+'CET'), "Solved a bug
+   that formatted incorrectly numbers nears to 1, before this patch
+   format(\"~1f~N\",0.99). showed 010. (Edison Mera)").
+
+:- comment(version(1*11+197,2004/02/16,17:26*17+'CET'), "In
+   engine/unix_utils.c, changed prolog_c_del_env to be compatible with
+   Solaris. (Edison Mera)").
+
+:- comment(version(1*11+194,2004/02/16,17:12*33+'CET'),
+   "number_codes/3 now is reversible, also for floating point numbers
+   in other bases than 10.  (Edison Mera)").
+
+:- comment(version(1*11+192,2004/02/16,17:04*37+'CET'), "Now
+   number_codes/3 is defined in the engine.  These change also implies
+   modifications to number_codes/2.  (Edison Mera)").
+
+:- comment(version(1*11+191,2004/02/16,17:03*30+'CET'), "In
+   float_const.c, float_const.h. Improved powl_int to use directly the
+   power tables.  Added fillchardigit, and char_digit, required to
+   convert a char in its value.  (Edison Mera)").
+
+:- comment(version(1*11+190,2004/02/16,16:57*29+'CET'), "In
+   engine/bignum.c, engine/bignum_defs.h, engine/ciao_prolog.c,
+   engine/inout.c, engine/qget.c, engine/qinsert.c. Changed
+   bn_from_string to support different numeric bases
+   correctly. (Edison Mera)").
+
+:- comment(version(1*11+182,2004/02/10,13:16*07+'CET'), "Corrected a
+   bug in float_tostr.c.  Because of that, format("~0f",1.0/7.0e111)
+   showed '0.' instead of '0'. (Edison Mera)").
+
+:- comment(version(1*11+151,2004/01/02,00:26*33+'CET'), "Minor change
+   to avoid a warning in streams.c (Edison Mera)").
+
+:- comment(version(1*11+120,2003/12/22,23:35*35+'CET'), "Fixed a nasty
+   C gluecode bug that inserted stack references into the heap (Jose
+   Morales)").
+
+:- comment(version(1*11+55,2003/10/30,20:13*21+'CET'), "file_exists/2
+   returned errors in the first argument when they were really in the
+   second argument.  (Manuel Carro)").
+
+:- comment(version(1*11+54,2003/10/28,16:58*58+'CET'), "Now the
+   predicate statistics/0 show walltime with 6 decimal digits, to
+   reflect the fact that the precision is up to 1 microsecond.
+   (Edison Mera)").
+
+:- comment(version(1*11+53,2003/10/28,16:57*00+'CET'), "Corrected a
+   problem with the statistics(walltime,_) predicate that truncates
+   the precision to milliseconds.  Now the predicate returns the time
+   with a precision up to 1 microsecond.  (Edison Mera)").
+
+:- comment(version(1*11+51,2003/10/21,19:39*52+'CEST'), "Corrected a
+   problem with float_to_string when try to print 0.0 and erased
+   irrelevants zeros at right in the digit generation function. The
+   modified file is float_tostr.c.  (Edison Mera)").
+
+:- comment(version(1*11+39,2003/09/04,18:01*37+'CEST'), "Corrected a
+   problem with prolog_directory_files in the file unix_utils.c.  Now
+   the system show a correct error when the system could not open the
+   given directory.  (Edison Mera)").
+
+:- comment(version(1*11+32,2003/07/28,13:10*09+'CEST'), "Corrected a
+   problem with powl.  The powl function is not present in some old C
+   compilers, due to this, now the system uses your own power funtion
+   called powl_int, in the file float_const.c .  (Edison Mera)").
+
+:- comment(version(1*11+31,2003/07/24,14:26*06+'CEST'), "Changed long
+   constants in floating point routines to suffix LL (long long), as
+   new versions of gcc complain about the L suffix.  (MCL)").
+
+:- comment(version(1*11+23,2003/05/28,17:59*31+'CEST'), "Added
+   exceptions to current_output/1 (MCL)").
+
+:- comment(version(1*11+22,2003/05/28,17:58*05+'CEST'), "Added
+exceptions to current_input/1 (MCL)").
+
+:- comment(version(1*11+20,2003/05/27,20:54*51+'CEST'), "Changed C
+   macros related to exceptions.  A richer set of exceptions are
+   available now.  (MCL)").
 
 :- comment(version(1*9+330,2004/03/25,16:54*55+'CET'), "Solved some
 problems in shell/n and exec/3,4} in windows.  shell/n now call
@@ -48,45 +133,6 @@ message is returned if there is no SHELL environment variable (no
 exceptions are thrown because 1.9 did not have all the ISO exceptions,
 which were introduced in 1.11) (MCL)").
 
-:- comment(version(1*9+324,2004/03/10,01:40*39+'CET'), "Changed
-   float_*.c /.h and term_support.c, to improve the conversion between
-   float numbers and strings.  Now the exponent symbol is e for bases
-   less than 10, p for bases less or equals than 25 (25=p), and _ for
-   bases less or equals than 36.  (Edison Mera)").
-
-:- comment(version(1*9+319,2004/02/26,23:59*45+'CET'), "Solved a bug
-   that formatted incorrectly numbers nears to 1, before this patch
-   format(\"~1f~N\",0.99). showed 010. (Edison Mera)").
-
-:- comment(version(1*9+301,2004/02/16,17:26*09+'CET'), "In
-   engine/unix_utils.c, changed prolog_c_del_env to be compatible with
-   Solaris. (Edison Mera)").
-
-:- comment(version(1*9+298,2004/02/16,17:13*26+'CET'), "number_codes/3
-   now is reversible, also for floating point numbers in other bases
-   than 10.  (Edison Mera)").
-
-:- comment(version(1*9+296,2004/02/16,17:04*20+'CET'), "Now
-   number_codes/3 is defined in the engine.  These change also implies
-   modifications to number_codes/2.  (Edison Mera)").
-
-:- comment(version(1*9+295,2004/02/16,17:01*45+'CET'), "In
-   float_const.c, float_const.h. Improved powl_int to use directly the
-   power tables.  Added fillchardigit, and char_digit, required to
-   convert a char in its value. (Edison Mera)").
-
-:- comment(version(1*9+294,2004/02/16,16:57*21+'CET'), "In
-   engine/bignum.c, engine/bignum_defs.h, engine/ciao_prolog.c,
-   engine/inout.c, engine/qget.c, engine/qinsert.c. Changed
-   bn_from_string to support different numeric bases
-   correctly. (Edison Mera)").
-
-:- comment(version(1*9+293,2004/02/16,16:55*37+'CET'), "Added
-   float_tostr.c .h and float_const.c .h to solve some bugs when
-   printing floating point numbers (correction ported from ciao-1.11),
-   and changed related files: Makefile, format.c, term_support.c.
-   (Edison Mera)").
-
 :- comment(version(1*9+284,2004/02/13,17:32*26+'CET'), "Changed handling
    of end-of-lines to understand unix, mac and win styles.  Added
    support for skip_line/[0,1]. (Daniel Cabeza Gras)").
@@ -94,10 +140,6 @@ which were introduced in 1.11) (MCL)").
 :- comment(version(1*9+274,2004/01/09,16:01*17+'CET'), "Runtime
    reported by statistics/0 now matches that returned by
    statistics(runtime, _).  (Manuel Carro)").
-
-:- comment(version(1*9+244,2003/12/22,23:35*15+'CET'), "Fixed a nasty
-   C gluecode bug that inserted stack references into the heap (Jose
-   Morales)").
 
 :- comment(version(1*9+83,2003/06/05,01:13*41+'CEST'), "Fixed a trail
    overflow bug. Added upper bound checks in memory allocation
@@ -158,19 +200,19 @@ ciao_term ciao_put_number_chars(char *number_string);
     (MCL)").
 
 :- comment(version(1*9+45,2003/01/07,13:01*02+'CET'), "Changed
-   optimization level from -O3 to -O2 (-O3 gave, in general, worst
-   results) (MCL)").
+optimization level from -O3 to -O2 (-O3 gave, in general, worst
+results) (MCL)").
 
 :- comment(version(1*9+41,2002/12/12,21:51*40+'CET'), "Unbound length
-   atoms can now appear in source (and in .po) files; also, checks for
-   expansion of atom lengths made more uniform.  (MCL)").
+atoms can now appear in source (and in .po) files; also, checks for
+expansion of atom lengths made more uniform.  (MCL)").
 
 :- comment(version(1*9+23,2002/11/18,14:28*24+'CET'), "Added #ifdef's
-   suggested by Roberto Bagnara to the ciao_prolog.h file.  (MCL)").
+suggested by Roberto Bagnara to the ciao_prolog.h file.  (MCL)").
 
 :- comment(version(1*9+8,2002/05/27,16:57*51+'CEST'), "Added entries
-   in makefile-sysdep to deal with gcc 3.1 different command line
-   options (some -m to -f).  (MCL)").
+in makefile-sysdep to deal with gcc 3.1 different command line options
+(some -m to -f).  (MCL)").
 
 :- comment(version(1*7+207,2002/04/23,18:58*09+'CEST'), "Makefiles
    changed to be more resilient to errors.  (MCL)").

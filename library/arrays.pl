@@ -178,7 +178,7 @@ update_subarray(3, $(W,X,Y,Z), Z, Z1, $(W,X,Y,Z1)).
 %-------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+236,2003/12/22,18:18*14+'CET'), "Added comment
+:- comment(version(1*11+112,2003/12/22,18:18*22+'CET'), "Added comment
    title.  (Edison Mera)").
 
 :- comment(version(1*9+3,2002/05/23,21:32*30+'CEST'), "Turn comments

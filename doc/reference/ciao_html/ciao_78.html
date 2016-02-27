@@ -1,45 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - File I/O utilities</TITLE>
+<TITLE>The Ciao Prolog System               - File locks</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC335" HREF="ciao_toc.html#TOC335">File I/O utilities</A></H1>
+<H1><A NAME="SEC307" HREF="ciao_toc.html#TOC307">File locks</A></H1>
 <P>
-<A NAME="IDX4539"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<A NAME="IDX4292"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> J. Gomez, D. Cabeza, M. Carro.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#216 (2003/12/21, 2:30:59 CET)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-This module implements the file I/O utilities.
+<STRONG>Version of last change:</STRONG> 1.7#159 (2001/11/27, 11:58:24 CET)
+
+
+<P>
+This module implements file locks: the ability to lock a fiel so that other processes cannot access it until the file is unlocked. <STRONG>It is, however, not working.</STRONG> The predicates do nothing. Proper implementation is planned for a near future.
 
 
 
 <UL>
-<LI><A HREF="ciao_78.html#SEC336">Usage and interface (file_utils)</A>
-<LI><A HREF="ciao_78.html#SEC337">Documentation on exports (file_utils)</A>
+<LI><A HREF="ciao_78.html#SEC308">Usage and interface (file_locks)</A>
+<LI><A HREF="ciao_78.html#SEC309">Documentation on exports (file_locks)</A>
+<LI><A HREF="ciao_78.html#SEC310">Known bugs and planned improvements (file_locks)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC336" HREF="ciao_toc.html#TOC336">Usage and interface (<CODE>file_utils</CODE>)</A></H2>
+<H2><A NAME="SEC308" HREF="ciao_toc.html#TOC308">Usage and interface (<CODE>file_locks</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +48,7 @@ This module implements the file I/O utilities.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(file_utils)).</CODE>
+<CODE>:- use_module(library(file_locks)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,28 +57,10 @@ This module implements the file I/O utilities.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4540"></A>
-<CODE>file_terms/2</CODE>, 
-<A NAME="IDX4541"></A>
-<CODE>copy_stdout/1</CODE>, 
-<A NAME="IDX4542"></A>
-<CODE>file_to_string/2</CODE>, 
-<A NAME="IDX4543"></A>
-<CODE>stream_to_string/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4544"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX4545"></A>
-<CODE>streams</CODE>.
+<A NAME="IDX4293"></A>
+<CODE>lock_file/3</CODE>, 
+<A NAME="IDX4294"></A>
+<CODE>unlock_file/2</CODE>.
 
 </UL>
 
@@ -87,149 +70,73 @@ This module implements the file I/O utilities.
 
 
 
-<H2><A NAME="SEC337" HREF="ciao_toc.html#TOC337">Documentation on exports (<CODE>file_utils</CODE>)</A></H2>
+<H2><A NAME="SEC309" HREF="ciao_toc.html#TOC309">Documentation on exports (<CODE>file_locks</CODE>)</A></H2>
 <P>
-<A NAME="IDX4546"></A>
-<A NAME="IDX4547"></A>
+<A NAME="IDX4295"></A>
+<A NAME="IDX4296"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>file_terms/2:</B>
-<DD><A NAME="IDX4548"></A>
+<DT><span class="define">PREDICATE:</span> <B>lock_file/3:</B>
+<DD><A NAME="IDX4297"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>file_terms(@File, ?Terms)</CODE>
+<STRONG>Usage:</STRONG> <CODE>lock_file(File, LockType, Result)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Transform a file <CODE>File</CODE> to/from a list of terms <CODE>Terms</CODE>.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>@File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>?Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>file_terms(File, Terms)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Terms</CODE> with the list of all terms in <CODE>File</CODE>.
+<LI><EM>Description:</EM> Tries to lock <CODE>File</CODE> with <CODE>LockType</CODE> and returns the result (either <CODE>true</CODE> or <CODE>false</CODE>) in <CODE>Result</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
+<CODE>File</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Terms</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<CODE>LockType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>Result</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
+</DL>
+
 <P>
-<STRONG>Usage 3:</STRONG> <CODE>file_terms(File, Terms)</CODE>
+<A NAME="IDX4298"></A>
+<A NAME="IDX4299"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>unlock_file/2:</B>
+<DD><A NAME="IDX4300"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>unlock_file(File, Result)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Writes the terms in list <CODE>Terms</CODE> (including the ending '.') onto file <CODE>File</CODE>.
+<LI><EM>Description:</EM> Tries to unlock <CODE>File</CODE> the result (either <CODE>true</CODE> or <CODE>false</CODE>) in <CODE>Result</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
+<CODE>File</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>Result</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX4549"></A>
-<A NAME="IDX4550"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_stdout/1:</B>
-<DD><A NAME="IDX4551"></A>
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>copy_stdout(+File)</CODE>
+<H2><A NAME="SEC310" HREF="ciao_toc.html#TOC310">Known bugs and planned improvements (<CODE>file_locks</CODE>)</A></H2>
+
 
 <UL>
-<LI><EM>Description:</EM> Copies file <CODE>File</CODE> to standard output.
 
-<LI><EM>The following properties should hold upon exit:</EM>
+<LI>
 
-<CODE>+File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
+No doing anything helpful.
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4552"></A>
-<A NAME="IDX4553"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_to_string/2:</B>
-<DD><A NAME="IDX4554"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>file_to_string(+FileName, -String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Reads all the characters from the file <CODE>FileName</CODE> and returns them in <CODE>String</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>-String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4555"></A>
-<A NAME="IDX4556"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>stream_to_string/2:</B>
-<DD><A NAME="IDX4557"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>stream_to_string(+Stream, -String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Reads all the characters from <CODE>Stream</CODE> and returns them in <CODE>String</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>-String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_77.html">previous</A>, <A HREF="ciao_79.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

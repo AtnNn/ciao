@@ -200,7 +200,7 @@ match_pattern_pred1([A1|A1s], [A2|A2s]):-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+255,2003/12/30,23:32*38+'CET'), "Added comment
+:- comment(version(1*11+133,2003/12/30,23:32*28+'CET'), "Added comment
    author, and comment for letter_match/2.  (Edison Mera)").
 
 :- comment(version(1*3+49,1999/09/08,21:08*09+'MEST'), "Improved the

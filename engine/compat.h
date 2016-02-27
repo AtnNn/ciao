@@ -27,14 +27,21 @@
 #endif
 
 #if defined(SYMM)
-# define LONGJMP(Env, Val)   longjmp(Env, Val)
-# define SETJMP(Env)         setjmp(Env)
-# define JMP_BUF             jmp_buf
+# define LONGJMP(Env, Val) longjmp(Env, Val)
+# define SETJMP(Env) setjmp(Env)
+# define JMP_BUF jmp_buf
 #else                                                         /* Not SYMM */
 # if defined(Solaris)
+#  if defined(i86)                                      /* Solaris && i86 */
+#   define JMP_BUF int
+#   define SETJMP(Env)  0
+#   define LONGJMP(Env, Val) \
+ ENG_TTYPRINTF0("{Serious error recovery not available in this architecture}\n"); at_exit(-1);
+#  else                                               /* Solaris && sparc */
 #   define JMP_BUF           jmp_buf
 #   define SETJMP(Env)       setjmp(Env)
 #   define LONGJMP(Env, Val) longjmp(Env, Val)
+#  endif
 # else 
 #  if defined(crossWin32i86)            
 #  define JMP_BUF           jmp_buf

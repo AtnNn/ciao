@@ -1,49 +1,51 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Predicates Available When Using The Make Package</TITLE>
+<TITLE>The Ciao Prolog System               - system_extra (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Predicates Available When Using The Make Package</A></H1>
+<H1><A NAME="SEC361" HREF="ciao_toc.html#TOC361">system_extra (library)</A></H1>
 <P>
-<A NAME="IDX4926"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
+<A NAME="IDX4695"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> M. Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#251 (2003/12/30, 22:8:3 CET)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-This is the run-time module which implements the predicates which are provided when using the 
-<A NAME="IDX4927"></A>
-<CODE>make</CODE> library package in a given application. For example, they are used internally by 
-<A NAME="IDX4928"></A>
-<CODE>lpmake</CODE>.
+<STRONG>Version of last change:</STRONG> 1.11#198 (2004/2/16, 17:28:46 CET)
+
+
+<P>
+This is a (temporary) extension to library 
+<A NAME="IDX4696"></A>
+<CODE>system</CODE> (which it reexports). It implements functionality that is often convenient in 
+<A NAME="IDX4697"></A>
+<CODE>Makefile</CODE>s. Much of this should probably end up eventually in 
+<A NAME="IDX4698"></A>
+<CODE>system</CODE>, but once we have worked out the best interface and, in some cases, the proper implementation (the implementations in here are in some cases just calls to Un*x shell primitives or commands).
 
 
 
 <UL>
-<LI><A HREF="ciao_92.html#SEC390">Usage and interface (make_rt)</A>
-<LI><A HREF="ciao_92.html#SEC391">Documentation on exports (make_rt)</A>
+<LI><A HREF="ciao_92.html#SEC362">Usage and interface (system_extra)</A>
+<LI><A HREF="ciao_92.html#SEC363">Documentation on exports (system_extra)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC390" HREF="ciao_toc.html#TOC390">Usage and interface (<CODE>make_rt</CODE>)</A></H2>
+<H2><A NAME="SEC362" HREF="ciao_toc.html#TOC362">Usage and interface (<CODE>system_extra</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -51,9 +53,7 @@ This is the run-time module which implements the predicates which are provided w
 
 <LI><STRONG>Library usage:</STRONG>
 
-This module is loaded automatically when the 
-<A NAME="IDX4929"></A>
-<CODE>make</CODE> library package is used.
+<CODE>:- use_module(library(system_extra)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -62,21 +62,100 @@ This module is loaded automatically when the
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4930"></A>
-<CODE>make/1</CODE>, 
-<A NAME="IDX4931"></A>
-<CODE>make_option/1</CODE>, 
-<A NAME="IDX4932"></A>
-<CODE>verbose_message/2</CODE>, 
-<A NAME="IDX4933"></A>
+<A NAME="IDX4699"></A>
+<CODE>del_dir_if_empty/1</CODE>, 
+<A NAME="IDX4700"></A>
+<CODE>move_files/2</CODE>, 
+<A NAME="IDX4701"></A>
+<CODE>move_file/2</CODE>, 
+<A NAME="IDX4702"></A>
+<CODE>copy_files/2</CODE>, 
+<A NAME="IDX4703"></A>
+<CODE>cat/2</CODE>, 
+<A NAME="IDX4704"></A>
+<CODE>cat_append/2</CODE>, 
+<A NAME="IDX4705"></A>
+<CODE>convert_permissions/4</CODE>, 
+<A NAME="IDX4706"></A>
+<CODE>symbolic_link/2</CODE>, 
+<A NAME="IDX4707"></A>
+<CODE>symbolic_link/3</CODE>, 
+<A NAME="IDX4708"></A>
+<CODE>delete_files/1</CODE>, 
+<A NAME="IDX4709"></A>
+<CODE>delete_files_nofail/1</CODE>, 
+<A NAME="IDX4710"></A>
+<CODE>del_file_nofail/1</CODE>, 
+<A NAME="IDX4711"></A>
+<CODE>del_file_nofail/2</CODE>, 
+<A NAME="IDX4712"></A>
+<CODE>del_endings_nofail/2</CODE>, 
+<A NAME="IDX4713"></A>
+<CODE>ls/3</CODE>, 
+<A NAME="IDX4714"></A>
+<CODE>ls/2</CODE>, 
+<A NAME="IDX4715"></A>
+<CODE>filter_alist_pattern/3</CODE>, 
+<A NAME="IDX4716"></A>
+<CODE>do/2</CODE>, 
+<A NAME="IDX4717"></A>
+<CODE>set_perms/2</CODE>, 
+<A NAME="IDX4718"></A>
+<CODE>readf/2</CODE>, 
+<A NAME="IDX4719"></A>
+<CODE>datime_string/1</CODE>, 
+<A NAME="IDX4720"></A>
+<CODE>datime_string/2</CODE>, 
+<A NAME="IDX4721"></A>
+<CODE>datime_atom/1</CODE>, 
+<A NAME="IDX4722"></A>
+<CODE>datime_atom/2</CODE>, 
+<A NAME="IDX4723"></A>
+<CODE>all_values/2</CODE>, 
+<A NAME="IDX4724"></A>
+<CODE>no_tr_nl/2</CODE>, 
+<A NAME="IDX4725"></A>
 <CODE>call_unknown/1</CODE>, 
-<A NAME="IDX4934"></A>
-<CODE>dyn_load_cfg_module_into_make/1</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX4935"></A>
-<CODE>target/1</CODE>.
+<A NAME="IDX4726"></A>
+<CODE>replace_strings_in_file/3</CODE>, 
+<A NAME="IDX4727"></A>
+<CODE>writef/3</CODE>, 
+<A NAME="IDX4728"></A>
+<CODE>writef/2</CODE>, 
+<A NAME="IDX4729"></A>
+<CODE>add_suffix/3</CODE>, 
+<A NAME="IDX4730"></A>
+<CODE>add_preffix/3</CODE>, 
+<A NAME="IDX4731"></A>
+<CODE>writef_list/3</CODE>, 
+<A NAME="IDX4732"></A>
+<CODE>writef_list/2</CODE>, 
+<A NAME="IDX4733"></A>
+<CODE>delete_filess/1</CODE>, 
+<A NAME="IDX4734"></A>
+<CODE>etags/2</CODE>, 
+<A NAME="IDX4735"></A>
+<CODE>etagss/2</CODE>, 
+<A NAME="IDX4736"></A>
+<CODE>get_dirs/2</CODE>, 
+<A NAME="IDX4737"></A>
+<CODE>get_rec_dirs/2</CODE>, 
+<A NAME="IDX4738"></A>
+<CODE>get_rec_dirs/3</CODE>, 
+<A NAME="IDX4739"></A>
+<CODE>get_rec_dirs/4</CODE>, 
+<A NAME="IDX4740"></A>
+<CODE>lss/3</CODE>, 
+<A NAME="IDX4741"></A>
+<CODE>lss/4</CODE>, 
+<A NAME="IDX4742"></A>
+<CODE>lss/6</CODE>, 
+<A NAME="IDX4743"></A>
+<CODE>copy_files_rec/3</CODE>, 
+<A NAME="IDX4744"></A>
+<CODE>filter_dirs/3</CODE>, 
+<A NAME="IDX4745"></A>
+<CODE>touch/1</CODE>.
 
 </UL>
 
@@ -87,18 +166,24 @@ This module is loaded automatically when the
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4936"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX4937"></A>
-<CODE>filenames</CODE>, 
-<A NAME="IDX4938"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX4939"></A>
+<A NAME="IDX4746"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX4940"></A>
+<A NAME="IDX4747"></A>
+<CODE>patterns</CODE>, 
+<A NAME="IDX4748"></A>
+<CODE>filenames</CODE>, 
+<A NAME="IDX4749"></A>
 <CODE>messages</CODE>, 
-<A NAME="IDX4941"></A>
-<CODE>format</CODE>.
+<A NAME="IDX4750"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX4751"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX4752"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX4753"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX4754"></A>
+<CODE>sets</CODE>.
 
 </UL>
 
@@ -108,147 +193,1501 @@ This module is loaded automatically when the
 
 
 
-<H2><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Documentation on exports (<CODE>make_rt</CODE>)</A></H2>
+<H2><A NAME="SEC363" HREF="ciao_toc.html#TOC363">Documentation on exports (<CODE>system_extra</CODE>)</A></H2>
 <P>
-<A NAME="IDX4942"></A>
-<A NAME="IDX4943"></A>
+<A NAME="IDX4755"></A>
+<A NAME="IDX4756"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>make/1:</B>
-<DD><A NAME="IDX4944"></A>
+<DT><span class="define">PREDICATE:</span> <B>del_dir_if_empty/1:</B>
+<DD><A NAME="IDX4757"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>make(TargetList)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4758"></A>
+<A NAME="IDX4759"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>move_files/2:</B>
+<DD><A NAME="IDX4760"></A>
+
+
+<P>
+<CODE>move_files(Files, Dir)</CODE>
+
+
+<P>
+Move <CODE>Files</CODE> to directory <CODE>Dir</CODE> (note that to move only one file to a directory, 
+<A NAME="IDX4761"></A>
+<CODE>rename_file/2</CODE> can be used).
+
+
+<P>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> This is the main entry point to the make library. Makes the list of targets one by one and any needed intermediate targets as dictated by the dependency rules.
-
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>TargetList</CODE> is a list of <CODE>target</CODE>s.
+<CODE>Files</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
-</UL>
 
-</DL>
-
-<P>
-<A NAME="IDX4945"></A>
-<A NAME="IDX4946"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>target/1:</B>
-<DD><A NAME="IDX4947"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>target(T)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a Makefile target.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4948"></A>
-<A NAME="IDX4949"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_option/1:</B>
-<DD><A NAME="IDX4950"></A>
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>make_option(Option)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Asserting/retracting facts of this predicate sets/clears library options. Default is no options (i.e., the predicate is undefined). The following values are supported:
-
-
-<PRE>
-make_option('-v'). % Verbose: prints progress messages (for debugging rules).
-</PRE>
-
- 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Option</CODE> is an atom.
+<CODE>Dir</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
+<A NAME="IDX4762"></A>
+<A NAME="IDX4763"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>move_file/2:</B>
+<DD><A NAME="IDX4764"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4765"></A>
+<A NAME="IDX4766"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_files/2:</B>
+<DD><A NAME="IDX4767"></A>
+
+
+<P>
+<CODE>copy_files(Files, Dir)</CODE>
+
+
+<P>
+Copy <CODE>Files</CODE> to directory <CODE>Dir</CODE> (note that to move only one file to a directory, 
+<A NAME="IDX4768"></A>
+<CODE>rename_file/2</CODE> can be used).
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Files</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>Dir</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4769"></A>
+<A NAME="IDX4770"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>cat/2:</B>
+<DD><A NAME="IDX4771"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4772"></A>
+<A NAME="IDX4773"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>cat_append/2:</B>
+<DD><A NAME="IDX4774"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4775"></A>
+<A NAME="IDX4776"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>convert_permissions/4:</B>
+<DD><A NAME="IDX4777"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4778"></A>
+<A NAME="IDX4779"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>symbolic_link/2:</B>
+<DD><A NAME="IDX4780"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>symbolic_link(Source, Dir)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Create a symbolic link in <CODE>Dir</CODE> pointing to file or directory <CODE>Source</CODE> (performs a copy in Windows).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4781"></A>
+<A NAME="IDX4782"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>symbolic_link/3:</B>
+<DD><A NAME="IDX4783"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>symbolic_link(Source, Dir, NewName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Create a symbolic link in <CODE>Dir</CODE> pointing to file or directory <CODE>Source</CODE> and give it name <CODE>NewName</CODE> (performs a copy in Windows).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4784"></A>
+<A NAME="IDX4785"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete_files/1:</B>
+<DD><A NAME="IDX4786"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4787"></A>
+<A NAME="IDX4788"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete_files_nofail/1:</B>
+<DD><A NAME="IDX4789"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4790"></A>
+<A NAME="IDX4791"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_file_nofail/1:</B>
+<DD><A NAME="IDX4792"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4793"></A>
+<A NAME="IDX4794"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_file_nofail/2:</B>
+<DD><A NAME="IDX4795"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4796"></A>
+<A NAME="IDX4797"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_endings_nofail/2:</B>
+<DD><A NAME="IDX4798"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4799"></A>
+<A NAME="IDX4800"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ls/3:</B>
+<DD><A NAME="IDX4801"></A>
+
+
+<P>
+<CODE>ls(Directory, Pattern, FileList)</CODE>
+
+
+<P>
+<CODE>FileList</CODE> is the unordered list of entries (files, directories, etc.) in <CODE>Directory</CODE> whose names match <CODE>Pattern</CODE>.If <CODE>Directory</CODE> does not exist <CODE>FileList</CODE> is empty.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Directory</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
+
+<CODE>FileList</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>FileList</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4802"></A>
+<A NAME="IDX4803"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ls/2:</B>
+<DD><A NAME="IDX4804"></A>
+
+
+<P>
+<CODE>ls(Pattern, FileList)</CODE>
+
+
+<P>
+<CODE>FileList</CODE> is the unordered list of entries (files, directories, etc.) in the current directory whose names match <CODE>Pattern</CODE> (same as <CODE>ls('.',Pattern,FileList)</CODE>).
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
+
+<CODE>FileList</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>FileList</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4805"></A>
+<A NAME="IDX4806"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>filter_alist_pattern/3:</B>
+<DD><A NAME="IDX4807"></A>
+
+
+<P>
+<CODE>filter_alist_pattern(UnFiltered, Pattern, Filtered)</CODE>
+
+
+<P>
+<CODE>Filtered</CODE> contains the elements of <CODE>UnFiltered</CODE> which match with <CODE>Pattern</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>UnFiltered</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
+
+<CODE>Filtered</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Filtered</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4808"></A>
+<A NAME="IDX4809"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>-/1:</B>
+<DD><A NAME="IDX4810"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>-goal</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4811"></A>
+<A NAME="IDX4812"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>do/2:</B>
+<DD><A NAME="IDX4813"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4814"></A>
+<A NAME="IDX4815"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_perms/2:</B>
+<DD><A NAME="IDX4816"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4817"></A>
+<A NAME="IDX4818"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>readf/2:</B>
+<DD><A NAME="IDX4819"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4820"></A>
+<A NAME="IDX4821"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>datime_string/1:</B>
+<DD><A NAME="IDX4822"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4823"></A>
+<A NAME="IDX4824"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>datime_string/2:</B>
+<DD><A NAME="IDX4825"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4826"></A>
+<A NAME="IDX4827"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>datime_atom/1:</B>
+<DD><A NAME="IDX4828"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4829"></A>
+<A NAME="IDX4830"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>datime_atom/2:</B>
+<DD><A NAME="IDX4831"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4832"></A>
+<A NAME="IDX4833"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>all_values/2:</B>
+<DD><A NAME="IDX4834"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>all_values(pred(1),?)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4835"></A>
+<A NAME="IDX4836"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>no_tr_nl/2:</B>
+<DD><A NAME="IDX4837"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4838"></A>
+<A NAME="IDX4839"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call_unknown/1:</B>
+<DD><A NAME="IDX4840"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>call_unknown(goal)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4841"></A>
+<A NAME="IDX4842"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>replace_strings_in_file/3:</B>
+<DD><A NAME="IDX4843"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4844"></A>
+<A NAME="IDX4845"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>writef/3:</B>
+<DD><A NAME="IDX4846"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4847"></A>
+<A NAME="IDX4848"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>writef/2:</B>
+<DD><A NAME="IDX4849"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4850"></A>
+<A NAME="IDX4851"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_suffix/3:</B>
+<DD><A NAME="IDX4852"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4853"></A>
+<A NAME="IDX4854"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_preffix/3:</B>
+<DD><A NAME="IDX4855"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4856"></A>
+<A NAME="IDX4857"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>writef_list/3:</B>
+<DD><A NAME="IDX4858"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4859"></A>
+<A NAME="IDX4860"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>writef_list/2:</B>
+<DD><A NAME="IDX4861"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4862"></A>
+<A NAME="IDX4863"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete_filess/1:</B>
+<DD><A NAME="IDX4864"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4865"></A>
+<A NAME="IDX4866"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>etags/2:</B>
+<DD><A NAME="IDX4867"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4868"></A>
+<A NAME="IDX4869"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>etagss/2:</B>
+<DD><A NAME="IDX4870"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4871"></A>
+<A NAME="IDX4872"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_dirs/2:</B>
+<DD><A NAME="IDX4873"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4874"></A>
+<A NAME="IDX4875"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_rec_dirs/2:</B>
+<DD><A NAME="IDX4876"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4877"></A>
+<A NAME="IDX4878"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_rec_dirs/3:</B>
+<DD><A NAME="IDX4879"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4880"></A>
+<A NAME="IDX4881"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_rec_dirs/4:</B>
+<DD><A NAME="IDX4882"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4883"></A>
+<A NAME="IDX4884"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lss/3:</B>
+<DD><A NAME="IDX4885"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4886"></A>
+<A NAME="IDX4887"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lss/4:</B>
+<DD><A NAME="IDX4888"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4889"></A>
+<A NAME="IDX4890"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>lss/6:</B>
+<DD><A NAME="IDX4891"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4892"></A>
+<A NAME="IDX4893"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_files_rec/3:</B>
+<DD><A NAME="IDX4894"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4895"></A>
+<A NAME="IDX4896"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>filter_dirs/3:</B>
+<DD><A NAME="IDX4897"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4898"></A>
+<A NAME="IDX4899"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>touch/1:</B>
+<DD><A NAME="IDX4900"></A>
+
+
+<P>
+<CODE>touch(File)</CODE>
+
+
+<P>
+Updates the access and modification time of <CODE>File</CODE> to current time.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4901"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>cyg2win/3:</B>
+<DD><A NAME="IDX4902"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4903"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4904"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>rename_file/2:</B>
+<DD><A NAME="IDX4905"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4906"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4907"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>delete_directory/1:</B>
+<DD><A NAME="IDX4908"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4909"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4910"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>delete_file/1:</B>
+<DD><A NAME="IDX4911"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4912"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4913"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chmod/3:</B>
+<DD><A NAME="IDX4914"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4915"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4916"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>chmod/2:</B>
+<DD><A NAME="IDX4917"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4918"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4919"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>fmode/2:</B>
+<DD><A NAME="IDX4920"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4921"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4922"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>modif_time0/2:</B>
+<DD><A NAME="IDX4923"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4924"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4925"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>modif_time/2:</B>
+<DD><A NAME="IDX4926"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4927"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4928"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_properties/6:</B>
+<DD><A NAME="IDX4929"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4930"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4931"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_property/2:</B>
+<DD><A NAME="IDX4932"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4933"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4934"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_exists/2:</B>
+<DD><A NAME="IDX4935"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4936"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4937"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>file_exists/1:</B>
+<DD><A NAME="IDX4938"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4939"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4940"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>mktemp/2:</B>
+<DD><A NAME="IDX4941"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4942"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4943"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>directory_files/2:</B>
+<DD><A NAME="IDX4944"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4945"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4946"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>exec/3:</B>
+<DD><A NAME="IDX4947"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4948"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4949"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>exec/4:</B>
+<DD><A NAME="IDX4950"></A>
+
+
+<P>
+ Imported from 
 <A NAME="IDX4951"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
 <A NAME="IDX4952"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>verbose_message/2:</B>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>popen_mode/1:</B>
 <DD><A NAME="IDX4953"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>verbose_message(Text, ArgList)</CODE>
+ Imported from 
+<A NAME="IDX4954"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
 
-<UL>
-<LI><EM>Description:</EM> The text provided in <CODE>Text</CODE> is printed as a message, using the arguments in <CODE>ArgList</CODE>, if <CODE>make_option('-v')</CODE> is defined. Otherwise nothing is printed.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Text</CODE> is an atom or string describing how the arguments should be formatted. If it is an atom it will be converted into a string with <CODE>name/2</CODE>.
- (<CODE>format:format_control/1</CODE>)
-
-<CODE>ArgList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4954"></A>
 <A NAME="IDX4955"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>call_unknown/1:</B>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>popen/3:</B>
 <DD><A NAME="IDX4956"></A>
 
 
 <P>
-<CODE>call_unknown(G)</CODE>
-
-
-<P>
-This is a local copy, to make package independent. Complication is so that flags are left as they were also upon failure.
+ Imported from 
+<A NAME="IDX4957"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
 
 
 </DL>
 
 <P>
-<A NAME="IDX4957"></A>
 <A NAME="IDX4958"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dyn_load_cfg_module_into_make/1:</B>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>system/2:</B>
 <DD><A NAME="IDX4959"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dyn_load_cfg_module_into_make(ConfigFile)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Used to load dynamically a module (typically, a
-
+ Imported from 
 <A NAME="IDX4960"></A>
-<CODE>Makefile</CODE>) into the make library from the application using the library. 
-<LI><EM>The following properties should hold at call time:</EM>
+<CODE>system</CODE> (see the corresponding documentation for details).
 
-<CODE>ConfigFile</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4961"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>system/1:</B>
+<DD><A NAME="IDX4962"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4963"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4964"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/2:</B>
+<DD><A NAME="IDX4965"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4966"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4967"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/1:</B>
+<DD><A NAME="IDX4968"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4969"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4970"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>shell/0:</B>
+<DD><A NAME="IDX4971"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4972"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4973"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>cd/1:</B>
+<DD><A NAME="IDX4974"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4975"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4976"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>working_directory/2:</B>
+<DD><A NAME="IDX4977"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4978"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4979"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_dirpath/1:</B>
+<DD><A NAME="IDX4980"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4981"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4982"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_dirpath/2:</B>
+<DD><A NAME="IDX4983"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4984"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4985"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_directory/1:</B>
+<DD><A NAME="IDX4986"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4987"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4988"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_directory/2:</B>
+<DD><A NAME="IDX4989"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4990"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4991"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>umask/2:</B>
+<DD><A NAME="IDX4992"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4993"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4994"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>current_executable/1:</B>
+<DD><A NAME="IDX4995"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4996"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4997"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>current_host/1:</B>
+<DD><A NAME="IDX4998"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4999"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5000"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>get_pid/1:</B>
+<DD><A NAME="IDX5001"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5002"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5003"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>extract_paths/2:</B>
+<DD><A NAME="IDX5004"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5005"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5006"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>copy_file/2:</B>
+<DD><A NAME="IDX5007"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5008"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5009"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>del_env/1:</B>
+<DD><A NAME="IDX5010"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5011"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5012"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>set_env/2:</B>
+<DD><A NAME="IDX5013"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5014"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5015"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>current_env/2:</B>
+<DD><A NAME="IDX5016"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5017"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5018"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>setenvstr/2:</B>
+<DD><A NAME="IDX5019"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5020"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5021"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>getenvstr/2:</B>
+<DD><A NAME="IDX5022"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5023"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5024"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime_struct/1:</B>
+<DD><A NAME="IDX5025"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5026"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5027"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime/9:</B>
+<DD><A NAME="IDX5028"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5029"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5030"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>datime/1:</B>
+<DD><A NAME="IDX5031"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5032"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5033"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>time/1:</B>
+<DD><A NAME="IDX5034"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5035"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5036"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>pause/1:</B>
+<DD><A NAME="IDX5037"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX5038"></A>
+<CODE>system</CODE> (see the corresponding documentation for details).
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_91.html">previous</A>, <A HREF="ciao_93.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

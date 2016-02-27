@@ -733,20 +733,20 @@ ql_compile_file_emit(clause(Pred/_,Code,ProfileData,TypeKey,Data), Stream) :- !,
 	qdump(Tokens, 0, Dic, Stream),
 	dic_lookup(Sdic, Goal, 0),
 	define_predicate_mode(Mode),
-	ql_emit_directive('$compiled_clause'(Pred,Goal,Mode,Data),
+	ql_emit_directive('internals:$compiled_clause'(Pred,Goal,Mode,Data),
 			  Dic, Sdic, Stream).
 ql_compile_file_emit(declare_predicate(Pred), Stream) :- !,
 	ql_declare_predicate(Pred, Goal),
 	ql_emit_directive(Goal, _, _, Stream).
 ql_compile_file_emit(clause(Pred,Clause), Stream) :- !,
-	ql_emit_directive('$interpreted_clause'(Pred, Clause), _, _, Stream).
+	ql_emit_directive('internals:$interpreted_clause'(Pred, Clause), _, _, Stream).
 ql_compile_file_emit(declare_clause(Name/Ar,No), _) :- !,
 	get_key(Name, Ar, F),
 	ql_record_predicate(No, F, Name/Ar).
 ql_compile_file_emit(set_property(Key,Prop), Stream) :- !,
 	functor(Key, Name, Ar),
 	ql_add_prop(Key, Name/Ar, Prop),
-	ql_emit_directive('$set_property'(Key, Prop), _, _, Stream).
+	ql_emit_directive('internals:$set_property'(Key, Prop), _, _, Stream).
 ql_compile_file_emit(_, _).			% ignore others
 
 ql_record_predicate(0, F, Pred) :-
@@ -768,7 +768,7 @@ ql_add_prop(F, Pred, Prop) :-
 	asserta_fact('$predicate'(F,Pred,[Prop])).
 
  
-ql_declare_predicate(Pred, '$define_predicate'(Pred, Mode)) :-
+ql_declare_predicate(Pred, 'internals:$define_predicate'(Pred, Mode)) :-
 	define_predicate_mode(Mode).
 
 ql_emit_version(Stream) :-
@@ -828,14 +828,14 @@ incore_ql_compile_file_emit(clause(Pred/_,Code,ProfileData,TypeKey,Data), Stream
 	dic_lookup(Sdic, Goal, 0),
 	define_predicate_mode(Mode),
 	'$compiled_clause'(Pred, Obj, Mode, Data),
-	ql_emit_directive('$compiled_clause'(Pred,Goal,Mode,Data),
+	ql_emit_directive('internals:$compiled_clause'(Pred,Goal,Mode,Data),
 			  Dic, Sdic, Stream).
 incore_ql_compile_file_emit(declare_predicate(Pred), Stream) :- !,
 	ql_declare_predicate(Pred, Goal),
 	ql_emit_directive(Goal, _, _, Stream).
 incore_ql_compile_file_emit(clause(Pred,Clause), Stream) :- !,
 	'$interpreted_clause'(Pred, Clause),
-	ql_emit_directive('$interpreted_clause'(Pred, Clause), _, _, Stream).
+	ql_emit_directive('internals:$interpreted_clause'(Pred, Clause), _, _, Stream).
 incore_ql_compile_file_emit(declare_clause(Name/Ar,No), _) :- !,
 	incore_subdef(No, Name/Ar),
 	get_key(Name, Ar, F),
@@ -843,7 +843,7 @@ incore_ql_compile_file_emit(declare_clause(Name/Ar,No), _) :- !,
 incore_ql_compile_file_emit(set_property(Key,Prop), Stream) :- !,
 	functor(Key, Name, Ar),
 	ql_add_prop(Key, Name/Ar, Prop),
-	ql_emit_directive('$set_property'(Key, Prop), _, _, Stream),
+	ql_emit_directive('internals:$set_property'(Key, Prop), _, _, Stream),
         '$set_property'(Key, Prop).
 incore_ql_compile_file_emit(_, _).			% ignore others
 

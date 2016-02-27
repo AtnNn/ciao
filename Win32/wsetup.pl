@@ -184,8 +184,8 @@ make_ciaomode(SDir,IDir,EDir) :-
                                 '../DOTemacs.el','DOTemacs.tmp'),
 	cat(['ciao.el.header','DOTemacs.tmp','ciao.el.body'],'ciao.el.tmp'),
 	delete_file('DOTemacs.tmp'),
-	replace_strings_in_file([["<CIAOREALLIBDIR>", EDirS],
-                                 ["<LPDOCDIR>", IDirS ]],
+	replace_strings_in_file([[ "<CIAOREALLIBDIR>", EDirS],
+                                 ["<LPDOCDIR>", IDirS]],
                                 'ciao.el.tmp','ciao.el'),
         delete_file('ciao.el.tmp'),
 	cd(SDir).
@@ -203,7 +203,6 @@ make_header(CiaoPath) :-
         display('ENGINE=${CIAOENGINE:-${INSTENGINE}}\n'),
         display('exec "$ENGINE" "$@" -C -b $0\n\^L\n'),
         close_output(Out).
-
 
 :- pred ciaoreg(+string, +string, +atm, -string).
 
@@ -313,11 +312,13 @@ ciaoreg(CiaoPath, Engine, ExeExt, Reg) :-
           ExeExt=IIS_string]
         ].
         
-
 % --------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+109,2003/09/23,15:42*22+'CEST'), "First
+:- comment(version(1*11+219,2004/04/21,17:02*01+'CEST'), "Updated to
+generate skel_bat files when compiling also ()").
+
+:- comment(version(1*11+46,2003/09/23,15:44*27+'CEST'), "First
    argument in replace_strings_in_file changed to be consistent with
    the new format of the input of this predicate.  (Edison Mera)").
 

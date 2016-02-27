@@ -1,2 +1,2 @@
+'user:bar'(c) .
 'user:bar'(a) .
-'user:bar'(b) .

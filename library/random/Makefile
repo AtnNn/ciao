@@ -6,9 +6,10 @@ include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 REQLIBS=
 
+# jf- added the _glue suffix, until this lib is compiled with foreign
 SRCNAME=$(MODULE).c
-OBJNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).o
-LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).so
+OBJNAME=$(MODULE)_$(OSNAME)$(ARCHNAME)_glue.o
+LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME)_glue.so
 HEADERS=common_headers.h
 
 phony:

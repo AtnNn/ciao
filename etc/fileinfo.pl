@@ -152,8 +152,8 @@ print_gathered_module_data(_M,Base) :-
 	set_prolog_flag(write_strings, on),
 	format("{Printing all code info~n",[]),
 
-	defines_module(Base,DefMod),
-          format("~w defines module ~w~n",[Base,DefMod]),
+	forall((defines_module(Base,DefMod),
+          format("~w defines module ~w~n",[Base,DefMod]))),
 
 	forall((exports(Base,F,A,T,Met),
            format("~w exports ~w/~w (~w) meta=~w~n",[Base,F,A,T,Met]))),
@@ -240,6 +240,11 @@ unify_vars([N=V|Dict]):-
 %% ---------------------------------------------------------------------------
 
 :- comment(version_maintenance,on).
+
+:- comment(version(0*5+7,2003/07/29,18:07*56+'CEST'), "Fixed: when -f
+   was used without -m, fileinfo printed the code and interface of a
+   randomly selected module (instead of traversing all the related
+   modules of the current module).  (Jesus Correas Fernandez)").
 
 :- comment(version(0*5+6,1999/04/15,20:33*06+'MEST'), "Added @tt{-asr}
    usage.  (Manuel Hermenegildo)").

@@ -22,4 +22,3 @@ erase_all :-
 	retractall_fact(bar(_)).
 
 
-u(X) :- update_files(X).

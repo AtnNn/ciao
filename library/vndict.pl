@@ -42,7 +42,7 @@ varnamesl(D):- list(D,varnamepair).
 
 varnamepair(X=Y):- varname(X), var(Y).
 
-:- regtype varname(N) # "@var{N} is a term representing a variable name.".
+:- regtype varname(N) # "@var{N} is term representing a variable name.".
 
 varname('$VAR'(S)):- string(S).
 
@@ -263,7 +263,7 @@ un_number_var_list([],[],Vars,Names,Vars,Names).
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+99,2003/08/27,17:56*12+'CEST'), "Added
+:- comment(version(1*11+35,2003/08/28,16:15*20+'CEST'), "Added
    sort_dict/2.  (Francisco Bueno Carrillo)").
 
 :- comment(version(0*8+19,1998/12/03,12:53*16+'MET'), "Updated type

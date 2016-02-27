@@ -1,7 +1,6 @@
 :- module(genbar4,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
-
+:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
 
 :- export(barchart4/7).
 :- export(barchart4/11).
@@ -16,7 +15,6 @@
 :- use_module(library('chartlib/install_utils')).
 :- use_module(library(lists)).
 :- use_module(library(random)).
-
 
 :- comment(title, "Depict barchart widgets - 4").
 
@@ -482,7 +480,7 @@ xbarelement4([XValue,ForegColor,BackgColor,SPattern]):-
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+268,2004/01/01,14:15*51+'CET'), "Added comment
+:- comment(version(1*11+147,2004/01/01,14:16*00+'CET'), "Added comment
    title.  (Edison Mera)").
 
 :- comment(version(1*9+160,2003/12/04,17:39*27+'CET'), "Added author

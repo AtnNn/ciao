@@ -14,8 +14,6 @@
 
 :- multifile persistent_dir/2.
 :- data persistent_dir/2.
-:- multifile persistent_dir/4.
-:- data persistent_dir/4.
 
 :- initialization(init_persdb).
 

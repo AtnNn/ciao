@@ -54,7 +54,7 @@ atoms_concat([A1|Atoms], A2, Atom) :-
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+218,2003/12/21,18:44*51+'CET'), "Added comment
+:- comment(version(1*11+94,2003/12/21,18:44*37+'CET'), "Added comment
    author and module.  (Edison Mera)").
 
 :- comment(version(1*7+141,2001/11/12,17:47*36+'CET'), "Added doc for

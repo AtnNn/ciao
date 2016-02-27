@@ -787,7 +787,7 @@ right now. It is saved for when flag is not set.")
 ;; CiaoPP variables
 ;; ---------------------------------------------------------------------------
 
-(defcustom ciao-ciaopp-system (or (getenv "CIAOPP") "ciaopp-0.8")
+(defcustom ciao-ciaopp-system (or (getenv "CIAOPP") "ciaopp-1.0")
   "Name of Ciao preprocessor executable."
   :group 'ciaopp
   :type 'string)
@@ -2120,6 +2120,7 @@ the communication with the Ciao/Prolog top level:
 
   (ciao-define-key map "\C-ct" 'run-ciao-toplevel)
   (ciao-define-key map "\C-cl" 'ciao-load-buffer)
+  (ciao-define-key map "\C-cf" 'ciao-load-and-check-buffer)
 
   (ciao-define-key map "\C-cx" 'ciao-make-exec)
   (ciao-define-key map "\C-co" 'ciao-make-po)
@@ -2267,14 +2268,18 @@ See the preprocessor manual for details. The following commands
 implement the communication with the Ciao preprocessor:
   ")
 
-  (ciao-define-key map "\C-cM" 'ciao-preprocess-buffer-menu)
-  (ciao-define-key map "\C-cP" 'ciao-preprocess-buffer)
-  (ciao-define-key map "\C-cT" 'ciao-check-types-modes)
+;;   (ciao-define-key map "\C-cM" 'ciao-preprocess-buffer-menu)
+;;   (ciao-define-key map "\C-cP" 'ciao-preprocess-buffer)
+;;   (ciao-define-key map "\C-cT" 'ciao-check-types-modes)
+  (ciao-define-key map "\C-cA" 'ciao-analyze-buffer)
+  (ciao-define-key map "\C-cT" 'ciao-check-assertions)
+  (ciao-define-key map "\C-cO" 'ciao-optimize-buffer)
+  (ciao-define-key map "\C-cM" 'ciao-browse-preprocessor-options)
   (ciao-define-key map "\C-c\C-p" 'ciao-set-ciaopp-output-pred)
   (ciao-define-key map "\C-c\C-f" 'ciao-set-ciaopp-output-full)
   (ciao-define-key map "\C-c\C-x" 'ciao-set-ciaopp-output-none)
   (ciao-define-key map "\C-c\C-v" 'ciao-show-preprocessor-output)
-  (ciao-define-key map "\C-cV" 'ciao-preprocess-buffer-and-show-output)
+;;  (ciao-define-key map "\C-cV" 'ciao-preprocess-buffer-and-show-output)
   (ciao-define-key map "\C-c\C-r" 'run-ciao-preprocessor)
 
   (ciao-documentation-section 
@@ -2474,10 +2479,11 @@ how things are set up in your @tt{.emacs} file).")
 ;;      "TOP-LEVEL/COMPILER"
      ["(Re)Start ciao top level"                 run-ciao-toplevel t]
      ["(Re)Load buffer into top level"           ciao-load-buffer  t]
+     ["(Re)Load and check buffer into top level" ciao-load-and-check-buffer t]
      ["(Re)Load main and related modules"        ciao-load-from-main-module t]
      ["Make executable from buffer as main"      ciao-make-exec t]
      "----"
-     ["Go to (next) preproc/compiler error msg" ciao-find-last-run-errors t]
+     ["Go to (next) preproc/compiler error msg"  ciao-find-last-run-errors t]
      ["Remove error (and dbg) marks in buffers"  ciao-unmark-last-run-errors t]
      "----"
      (list "Query and main file"
@@ -2639,16 +2645,25 @@ how things are set up in your @tt{.emacs} file).")
 	      'ciao-unmark-last-run-errors "icons/clear" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
 	      'ciao-check-buffer-syntax "icons/ciaoasr" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-check-types-modes    "icons/checkassertions" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-preprocess-buffer-menu 
+;; 	      "icons/ciaopreprocask" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-preprocess-buffer    "icons/ciaopreproc" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-preprocess-buffer-and-show-output
+;; 	      "icons/ciaopreprocsee" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
-	      'ciao-check-types-modes    "icons/checkassertions" ciao-mode-map)
+	      'ciao-analyze-buffer "icons/ciaoanalysis" ciao-mode-map)
+ 	     (tool-bar-add-item-from-menu 
+ 	      'ciao-check-assertions "icons/checkassertions" ciao-mode-map)
+ 	     (tool-bar-add-item-from-menu 
+ 	      'ciao-optimize-buffer "icons/ciaopeval" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
-	      'ciao-preprocess-buffer-menu 
-	      "icons/ciaopreprocask" ciao-mode-map)
-	     (tool-bar-add-item-from-menu 
-	      'ciao-preprocess-buffer    "icons/ciaopreproc" ciao-mode-map)
-	     (tool-bar-add-item-from-menu 
-	      'ciao-preprocess-buffer-and-show-output
-	      "icons/ciaopreprocsee" ciao-mode-map)
+ 	      'ciao-browse-preprocessor-options
+ 	      "icons/ciaocustomize" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
 	      'ciao-debug-buffer "icons/ciaodebug" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
@@ -2724,14 +2739,19 @@ how things are set up in your @tt{.emacs} file).")
 ;;     "CIAO PREPROCESSOR (in development)"
      "Note: CiaoPP required (in development)"
      "----"
-     ["Preprocess buffer (choosing options)"   ciao-preprocess-buffer-menu t]
-     ["Preprocess buffer (w/previous options)" ciao-preprocess-buffer t]
-     ["Check types and modes"  ciao-check-types-modes t]
+;;      ["Preprocess buffer (choosing options)"   ciao-preprocess-buffer-menu t]
+;;      ["Preprocess buffer (w/previous options)" ciao-preprocess-buffer t]
+;;      ["Check types and modes"  ciao-check-types-modes t]
+     ["Analyze buffer"                         ciao-analyze-buffer t]
+     ["Check buffer assertions"                ciao-check-assertions t]
+     ["Optimize buffer"                        ciao-optimize-buffer t]
+     ["Browse analysis/checking/optimizing options"         
+                                         ciao-browse-preprocessor-options t]
      ["Go to (next) preproc/compiler error msg" ciao-find-last-run-errors t]
      ["Remove error (and dbg) marks in buffers"  ciao-unmark-last-run-errors t]
      ["Show last preprocessor output file"     ciao-show-preprocessor-output t]
-     ["Preprocess buffer (w/previous options) and show output"  
-                                      ciao-preprocess-buffer-and-show-output t]
+;;      ["Preprocess buffer (w/previous options) and show output"  
+;;                                       ciao-preprocess-buffer-and-show-output t]
      ["Output only predicate-level analysis info" ciao-set-ciaopp-output-pred t]
      ["Output literal- and pred-level analysis info" ciao-set-ciaopp-output-full t]
      ["Do not output analysis info" ciao-set-ciaopp-output-none t]
@@ -4134,9 +4154,10 @@ already) where preprocessing commands and preprocessing menu options
 can be input directly. Programs can be preprocessed by typing commands
 in this window, or, more typically, by opening the file to be
 preprocessed in an emacs window (where it can be edited) and issuing a
-command (such as \\<ciao-mode-map> \\[ciao-preprocess-buffer-menu] or
-\\[ciao-preprocess-buffer]) directly from there (see the preprocessing
-commands of this mode and their bindings).
+command (such as \\<ciao-mode-map> \\[ciao-analyze-buffer],
+\\[ciao-check-assertions], \\[ciao-optimize-buffer], or
+\\[ciao-browse-preprocessor-options]) directly from there (see the
+preprocessing commands of this mode and their bindings).
 
    Note that many useful commands (e.g., to repeat and edit previous
 commands, interrupt jobs, locate errors, automatic completions, etc.)
@@ -4660,36 +4681,62 @@ details."
 ;; Preprocess buffer
 ;;------------------------------------------------------------
 
-(defun ciao-preprocess-buffer-menu ()
-  "Preprocess the buffer, selecting options. Instructs the
-preprocessor to load the current buffer and start an interactive
-dialog in which the different options available in the preprocessor
-can be set. "
-  (interactive)
-  (ciao-do-preprocess-buffer 'menu nil))
+;; (defun ciao-preprocess-buffer-menu ()
+;;   "Preprocess the buffer, selecting options. Instructs the
+;; preprocessor to load the current buffer and start an interactive
+;; dialog in which the different options available in the preprocessor
+;; can be set. "
+;;   (interactive)
+;;   (ciao-do-preprocess-buffer 'menu nil))
+;; 
+;; (defun ciao-preprocess-buffer ()
+;;   "Preprocess the buffer, using the previously selected options. If no
+;; options were set previously, then the preprocessor defaults are used."
+;;   (interactive)
+;;   (ciao-do-preprocess-buffer 'nomenu nil))
+;; 
+;; (defun ciao-preprocess-buffer-and-show-output ()
+;;   "Preprocess the buffer, using the previously selected (or default)
+;; options, waits for preprocessing to finish and displays the
+;; preprocessor output (leaving the cursor at the same point if already
+;; on a preprocessor output file). This allows running the preprocessor
+;; over and over and watching the output while modifying the source
+;; code."
+;;   (interactive)
+;;   (ciao-do-preprocess-buffer 'nomenu t))
 
-(defun ciao-preprocess-buffer ()
-  "Preprocess the buffer, using the previously selected options. If no
-options were set previously, then the preprocessor defaults are used."
+(defun ciao-analyze-buffer ()
+  "Call the preprocessor to perform a number of pre-selected analyses
+on the current buffer (and related modules)."
   (interactive)
-  (ciao-do-preprocess-buffer 'nomenu nil))
+  (message "Analyzing buffer... ")
+  (ciao-do-preprocess-buffer 'analyze t))
 
-(defun ciao-preprocess-buffer-and-show-output ()
-  "Preprocess the buffer, using the previously selected (or default)
-options, waits for preprocessing to finish and displays the
-preprocessor output (leaving the cursor at the same point if already
-on a preprocessor output file). This allows running the preprocessor
-over and over and watching the output while modifying the source
-code."
+(defun ciao-check-assertions ()
+  "Call the preprocessor to perform compile-time checking of the
+assertions (types, modes, determinacy, nonfailure, cost, ...) in the
+current buffer (and against those in related modules)."
   (interactive)
-  (ciao-do-preprocess-buffer 'nomenu t))
+  (message "Checking assertions... ")
+  (ciao-do-preprocess-buffer 'checkassrt nil))
 
-(defun ciao-check-types-modes ()
-  "Uses the preprocessor to perform compile-time checking of types and
-modes (pptypesfd and shfr analyses). "
+(defun ciao-optimize-buffer ()
+  "Uses the preprocessor to perform optimizations (partial evaluation,
+abstract specialization, parallelization, ...) on the current buffer
+(and related modules)."
   (interactive)
-  (message "Checking types and modes... ")
-  (ciao-do-preprocess-buffer 'typesmodes nil))
+  (message "Optimizing buffer... ")
+  (ciao-do-preprocess-buffer 'optimize t))
+
+(defun ciao-browse-preprocessor-options ()
+  "Browse and select (using the preprocessor menus) the actions to be
+performed by the preprocessor when performing analisys used by
+\\<ciao-mode-map> \\[ciao-] \\[ciao-analyze-buffer],
+\\[ciao-check-assertions], \\[ciao-optimize-buffer], and the
+corresponding toolbar buttons."
+  (interactive)
+  (message "Browsing preprocessor options... ")
+  (ciao-do-preprocess-buffer 'customize nil))
 
 (defun ciao-do-preprocess-buffer (action showoutput)
   "Main function to call the preprocessor. Implements the others via options."
@@ -4699,9 +4746,16 @@ modes (pptypesfd and shfr analyses). "
   (ciao-send-command 
    ciao-ciaopp-buffer-name 
     (cond
-     ((eq action 'menu)        (ciao-build-ciaopp-command "[]"))
-     ((eq action 'nomenu)      (ciao-build-ciaopp-command nil ))
-     ((eq action 'typesmodes)  (ciao-build-ciaopp-specific-command "ctcheck"))
+;;      ((eq action 'menu)        (ciao-build-ciaopp-command "[]"))
+;;      ((eq action 'nomenu)      (ciao-build-ciaopp-command nil ))
+;;     ((eq action 'typesmodes)  (ciao-build-ciaopp-specific-command "ctcheck"))
+     ((eq action 'checkassrt)  (ciao-build-ciaopp-specific-command "auto_check_assert"))
+     ((eq action 'analyze)  (ciao-build-ciaopp-specific-command
+				"auto_analyze"))
+     ((eq action 'optimize)  (ciao-build-ciaopp-specific-command
+				"auto_optimize"))
+     ((eq action 'customize)  (ciao-build-ciaopp-specific-command
+				"customize_and_exec"))
      (t nil))
     t)
   (if showoutput
@@ -4954,6 +5008,32 @@ query, the user is asked whether it should be called."
   (interactive)
   (ciao-unmark-last-run-errors)
   (ciao-load-buffer-current-or-main nil))
+
+(defun ciao-load-and-check-buffer ()
+  "Load CiaoPP and then the current buffer (and any auxiliary files it
+may use) into the top level. Use CiaoPP auto_check_assrt predicate to
+check current buffer assertions and then load the buffer if there was
+no error."
+  (interactive)
+  (ciao-unmark-last-run-errors)
+  (ciao-check-assertions)
+  (add-hook 'ciao-ciaopp-prompt-inferior-hook 
+	    'ciao-find-errors-or-load-buffer t)
+  (if ciao-locate-errors-after-run
+      (add-hook 'ciao-ciaopp-prompt-inferior-hook 
+		'ciao-launch-find-last-run-errors-from-orig-buffer t)))
+
+
+(defun ciao-find-errors-or-load-buffer ()
+  (switch-to-buffer ciao-last-source-buffer-used)
+  (if (and ciao-locate-errors-after-run (ciao-any-errors))
+      (ciao-find-last-run-errors)
+    (ciao-load-buffer)
+    ;; In this case, probably best to stay in original buffer
+    (switch-to-buffer-other-window ciao-last-source-buffer-used))
+  )
+
+
 
 (defun ciao-load-from-main-module ()
   "Load the module designated as @index{main module} (and all related files

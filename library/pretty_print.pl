@@ -197,8 +197,9 @@ ppb('=>'(A,B),Tab,K) :- !,
 	tab(Tab), write('=>'), nl,
 	ppb(B,NTab,K), nl,
 	tab(Tab), write(')').
-ppb(A:_,Tab,K) :- !,
- 	ppg(A,Tab,K).
+% Not anymore!!!
+%% ppb(A:_,Tab,K) :- !,
+%%  	ppg(A,Tab,K).
 ppb(A,Tab,K) :-
  	ppg(A,Tab,K).
 
@@ -239,18 +240,16 @@ ppg(A,Tab,_K) :-
 	tab(Tab),
 	writeq(A).
 
+
 %% -----------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+248,2003/12/30,21:52*00+'CET'), "Added comment
+:- comment(version(1*11+126,2003/12/30,21:52*16+'CET'), "Added comment
    author.  (Edison Mera)").
 
-:- comment(version(1*9+104,2003/09/17,17:36*05+'CEST'), "Take
-   operators into account.  (Francisco Bueno Carrillo)").
-
-:- comment(version(1*9+89,2003/07/21,19:43*48+'CEST'), "See 1*11+41.
-   Special care for Goal:Key out. Taken in again, for compatibility
-   with CiaoPP).  (Francisco Bueno Carrillo)").
+:- comment(version(1*11+41,2003/09/17,17:38*14+'CEST'), "Take
+   operators into account. Taken out special care for Goal:Key (was not 
+   working in CiaoPP).  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+112,2001/06/25,17:34*09+'CEST'), "Changed
    non-default operator usages (A&).  (Daniel Cabeza Gras)").

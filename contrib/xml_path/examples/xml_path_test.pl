@@ -20,10 +20,10 @@ main :-
 	tparsing,
 	tindexing.
 tquery:-
-	line,
-	xml_test_dir(XMLDir),
-	format("Retrieving XML document from URL:~n~+ ~aej1.xml~n", [XMLDir]),
-	format("............~n~n", []),
+       line,
+       xml_test_dir(XMLDir),
+       format("Retrieving XML document from URL:~n~+ ~aej1.xml~n", [XMLDir]),
+       format("............~n~n", []),
 	format("Performing the following query on XML doc:~n", []),
 	format("~+product@val(_,prueba)::(quantity(X), time-left(Y)~n", []),
 	format("~+~+negotiation::preference::price(Z)) with X * Z .>. Y~n~n", []),
@@ -33,21 +33,21 @@ tquery .
 tsearch :-
 	line,
 	format("Retrieving the complete XML element to match query.~n", []),
-	format("............~n~n", []),
+       format("............~n~n", []),
 	search(1).
 tsearch.
 
 tsearch_match :-
 	line,
 	format("Retrieving the exact subelement path of the XML doc to match query.~n", []),
-	format("............~n~n", []),
+       format("............~n~n", []),
 	search_match(1).
 tsearch_match.
 
 tparsing :-
 	line,
 	format("Retrieving the exact subelement of the XML doc to match query.~n", []),
-	format("............~n~n", []),
+       format("............~n~n", []),
 	parsing(1).
 tparsing. 
 

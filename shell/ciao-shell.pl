@@ -135,7 +135,7 @@ hello dolly
 
 :- use_module(library(libpaths), [get_alias_path/0]).
 :- use_module(library(compiler),
-        [ensure_loaded/1, set_debug_mode/1]).
+        [ensure_loaded/2, set_debug_mode/1]).
 :- use_module(library(errhandle)).
 :- use_module(engine(internals), ['$bootversion'/0]).
 
@@ -155,7 +155,8 @@ main :- get_alias_path,
         fail.
 
 '$load&call'(File,Rest) :-
-        ensure_loaded(File),
+	this_module(Module),
+        ensure_loaded(File, Module),
         set_prolog_flag(quiet, off),
         error_protect(main(Rest)).
 

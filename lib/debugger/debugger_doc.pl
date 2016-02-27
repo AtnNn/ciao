@@ -2,7 +2,7 @@
 
 main.
 
-:- comment(author,"D. Cabeza").
+:- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel C. Rodriguez").
 :- comment(author,"(A. Ciepielewski, M. Carlsson, T. Chikayama, K. Shen)").
 
@@ -730,6 +730,6 @@ changes.)
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+188,2003/12/19,16:02*03+'CET'), "Control
+:- comment(version(1*11+67,2003/12/19,16:11*38+'CET'), "Control
    version started.  (Edison Mera)").
 

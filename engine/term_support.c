@@ -123,7 +123,7 @@ static void c_term_trail_push(Arg,t, trail_origo)
      TAGGED t;
      TAGGED **trail_origo;
 {
-  if (ChoiceDifference(w->node,w->trail_top) < CHOICEPAD) {
+  if (!ChoiceDifference(w->node,w->trail_top)) {
     REGISTER TAGGED *tr = w->trail_top;
     int reloc;
 
@@ -820,16 +820,16 @@ BOOL prolog_number_codes_3(Arg)
    (e.g., AtBuf does not correspond syntactically to a number), FALSE is
    returned.  Otherwise, TRUE is returned and the conversion is done */
 
-BOOL string_to_number(Arg, AtBuf, base, strnum)
+BOOL string_to_number(Arg, AtBuf, base, strnum, arity)
      Argdecl;
      unsigned char *AtBuf;
      int base;
      TAGGED *strnum;
-
+     int arity;
 {
   BOOL sign = FALSE;
   unsigned char *s = AtBuf;
-  int i, d;
+  int i, d;  
   ENG_LFLT m=0;
   double num;
   int exp=0,e=0,se=1;
@@ -872,7 +872,7 @@ BOOL string_to_number(Arg, AtBuf, base, strnum)
       int req = bn_from_string(AtBuf, h, Heap_End-CONTPAD, base);
 
       if (req) {
-        explicit_heap_overflow(Arg ,req+CONTPAD, 2);
+        explicit_heap_overflow(Arg ,req+CONTPAD, arity);
         h = w->global_top;
         if (bn_from_string(Atom_Buffer, h, Heap_End-CONTPAD, base))
           SERIOUS_FAULT("miscalculated size of bignum");
@@ -887,7 +887,7 @@ BOOL string_to_number(Arg, AtBuf, base, strnum)
         t = Tag(STR,h);
       }
       *strnum = t;                 /* The TAGGED word --- small or bignum */
-      return TRUE;  
+      return TRUE;
     }
 
 /* It is a float. Note that if is a float, after the point the digits
@@ -900,13 +900,13 @@ BOOL string_to_number(Arg, AtBuf, base, strnum)
 	m = m * base+char_digit[i];
 	i = *s++;
       }
-      while(i!='.');
+      while(i!=FLOAT_POINT);
       i = *s++;
       d = char_digit[i];
       if ((0<=d) && (d<base)) {
-        char exponent_lower = exponents_lower[base];
-        char exponent_upper = exponents_upper[base];
-         do {
+	char exponent_lower = exponents_lower[base];
+	char exponent_upper = exponents_upper[base];
+        do {
 	  m = m * base+char_digit[i];
 	  exp++;
           i = *s++;
@@ -914,8 +914,8 @@ BOOL string_to_number(Arg, AtBuf, base, strnum)
         }
 	while ((0<=d) && (d<base) && (i!=exponent_lower) && (i!=exponent_upper));
         if ((i==exponent_lower) || (i==exponent_upper)) {
-	  i = *s++;
-	  if ((i=='+') || (i=='-')) {
+          i = *s++;
+          if ((i=='+') || (i=='-')) {
 	    if(i=='-')
 	      se=-1;
 	    i = *s++;
@@ -978,7 +978,7 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp,ci)
       if (IsVar(cdr))
         BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,2)
         else if (!TagIsLST(cdr))
-          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(ci),ci+1)
+          BUILTIN_ERROR(DOMAIN_ERROR(CHARACTER_CODE_LIST),X(ci),ci+1)
             else if (i == Atom_Buffer_Length){
               /*
                  Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
@@ -991,7 +991,7 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp,ci)
       if (IsVar(car))
         BUILTIN_ERROR(INSTANTIATION_ERROR,atom_nil,ci+1)
         if (!TagIsSmall(car) || (car<=TaggedZero) || (car>=MakeSmall(256)))
-          BUILTIN_ERROR(TYPE_ERROR(CHARACTER_CODE_LIST),X(ci),ci+1)
+          BUILTIN_ERROR(DOMAIN_ERROR(CHARACTER_CODE_LIST),X(ci),ci+1)
 	  *s++ = GetSmall(car);
       DerefCdr(cdr,cdr);
     }
@@ -1016,9 +1016,9 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp,ci)
       else // if (ci==1)
 	base = GetSmall(current_radix);
       if((base < 2)||(base > 36))
-	BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);   
-      if (string_to_number(Arg, (unsigned char *)Atom_Buffer, base, &result))
-	return cunify(Arg, result, X(0));
+	BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(1),2);
+      if (string_to_number(Arg, (unsigned char *)Atom_Buffer, base, &result, ci+1))
+        return cunify(Arg, result, X(0));
     }
     return atomp && cunify(Arg,init_atom_check(Atom_Buffer),X(0));
   } else {
@@ -1032,8 +1032,8 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp,ci)
       else // if (ci==1)
 	base = GetSmall(current_radix);
       if((base < 2)||(base > 36))
-	BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2);
-      number_to_string(Arg,X(0), base);
+	BUILTIN_ERROR(DOMAIN_ERROR(SOURCE_SINK),X(1),2);
+      number_to_string(Arg,X(0),base);
       s = (unsigned char *)Atom_Buffer;
     }
     else if (atomp && TagIsATM(X(0)))
@@ -1049,7 +1049,7 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp,ci)
 
               s += (i = strlen(s));
     if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i<<1))
-      explicit_heap_overflow(Arg,CONTPAD+(i<<1),2);
+      explicit_heap_overflow(Arg,CONTPAD+(i<<1),ci+1);
 
     cdr = atom_nil;
     while (i>0)	{
@@ -1293,14 +1293,12 @@ void number_to_string(Arg, term, base)
   else if (IsFloat(term))
     {
       ENG_FLT f;
-/*       unsigned int *fp = (unsigned int *)(&f); */
+      unsigned int *fp = (unsigned int *)(&f);
       char *cbuf;
       int eng_flt_signif = (int)((SHR_EXP+1) * invlog2[base] + 1);
 
-/*       fp[0] = CTagToArg(term,1); /\* f = GetFloat(term); *\/ */
-/*       fp[1] = CTagToArg(term,2); */
-
-      f = GetFloat(term);
+      fp[0] = CTagToArg(term,1); /* f = GetFloat(term); */
+      fp[1] = CTagToArg(term,2);
 
       /* Print using the default precision.  'p' is a new 'prolog' :-)
          format not considered by, e.g., the printf family, to

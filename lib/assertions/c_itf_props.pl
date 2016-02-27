@@ -1,5 +1,6 @@
 
-:- module(c_itf_props,[ moddesc/1, filename/1 ],[ assertions, regtypes ]).
+:- module(c_itf_props,[ moddesc/1, filename/1, switch/1 ],
+	[ assertions, regtypes ]).
 
 :- comment(title,"Some types and properties related to c_itf").
 
@@ -20,6 +21,13 @@ moddesc(user(X)) :- atom(X).
 filename(X) :- 
 	atm(X).
 
+% ---------------------------------------------------------------------------
+:- regtype switch(X) 
+   # "@var{X} is an atom indicating yes/no.".
+% ---------------------------------------------------------------------------
+
+switch(yes).
+switch(no).
 
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version/')).

@@ -1,6 +1,7 @@
 :- module(table_widget1,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
+:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
+
 
 :- export(tablewidget1/4).
 :- export(tablewidget1/5).

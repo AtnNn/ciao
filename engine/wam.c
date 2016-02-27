@@ -14,7 +14,6 @@ int start_of_savedump = 0;                    /* Must be the first symbol */
 #include "instrdefs.h"
 #include "predtyp.h"
 #include "wam.h"
-#include "u2defs.h"
 #include "task_areas.h"
 
 #include "attr_defs.h"
@@ -279,11 +278,18 @@ int wam(Arg, worker)
   SetA(E,Offset(E,EToY0));
   LoadH;
   X(0) = t0;
+
   goto call1;
 
   /* FAILING */
 
  fail:
+
+/*
+  The profiling code must be here
+*/
+  PROFILE__FAIL_HOOK;
+
 #if defined(DEBUG)
   if (debug_choicepoints){
   fprintf(stderr, "Failing: node = %x, next_node = %x, conc. node = %x\n",   
@@ -349,9 +355,9 @@ int wam(Arg, worker)
       S = (TAGGED *)w->next_node;
       i = OffsetToArity(i) - 1;
 #if defined(DEBUG)
-    if (debug_choicepoints)
-      fprintf(stderr, "Reloading %d words from node %x\n", 
-              i, (int)w->node);
+      if (debug_choicepoints)
+        fprintf(stderr, "Reloading %d words from node %x\n", 
+                i, (int)w->node);
 #endif
       while(i >= 0)
         wt[i--] = ChoiceNext(S);
@@ -394,7 +400,7 @@ int wam(Arg, worker)
         collect_one_pending_unification(Arg);         /* does not touch H */
         DEREF(t0,X(1)); 
         if ( TagIsCVA(t0) ) {
-          X(1)=CTagToGoal(t0); 
+                                    /* Taken out X(1)=CTagToGoal(t0); DCG */
           Setfunc(address_ucc);	        /* patch prev. SETUP_PENDING_CALL */
         }
       } else {
@@ -573,7 +579,7 @@ int wam(Arg, worker)
       goto call4;
 #endif
 */
-      
+
   case BUILTIN_CALL:
     PredTrace("B",Func);
     t0 = X(0); 
@@ -741,7 +747,7 @@ int wam(Arg, worker)
     if (debug_choicepoints)
       fprintf(stderr, "WAM created choicepoint (r), node = %x\n", 
                        (int)w->node);
-#endif
+#endif    
     /* segfault patch -- jf */
     if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
       choice_overflow(Arg, CHOICEPAD);
@@ -765,81 +771,7 @@ int wam(Arg, worker)
     switch (OPCODE)
 #endif
       {
-
-#include "shdisp_r.c"
-
-#include "u1disp_r.c"
-      
-#include "u2void_r.c"
-
-#include "u2xvar_r.c"
-
-#include "u2yvar_r.c"
-
-#include "u2xval_r.c"
-
-#include "u2yval_r.c"
-
-#include "wamgauge_r.c"
-
-    case FAIL:
-      goto fail;
-
-    case HEAPMARGIN_CALLQ:
-      P++;                                             /* MCL --- was p++ */
-
-    case HEAPMARGIN_CALL:
-      if (HeapDifference(w->global_top,Heap_End) < LP1) {
-        explicit_heap_overflow(Arg,LP1, SP3);
-        t0 = X(0);		/* if followed by get_*_x0 */
-      }
-      DISPATCH_R(1+BPL);
-
-    case NECK:
-    neck_r:
-    if (w->next_alt){
-      SetB(w->node);
-      if (B->next_alt) {			/* retry */
-        B->next_alt = w->next_alt;
-      } else {			/* try */
-        B->next_alt = w->next_alt; /* 4 contiguous moves */
-        B->frame = w->frame;
-        B->next_insn = w->next_insn;
-        SaveLtop(B);
-        i=B->next_alt->node_offset;
-        if (i>ArityToOffset(0)) {
-          i = OffsetToArity(i);
-          SetB(w->next_node);
-#if defined(DEBUG)
-          if (debug_choicepoints)
-          fprintf(stderr, "Storing %d registers (r) in node %x\n", 
-                    i, (int)w->next_node);
-#endif
-          do
-            ChoicePush(pt1,(w->term-1)[i]);
-          while (--i);
-        }
-        if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
-          choice_overflow(Arg,CHOICEPAD);
-      }
-      w->next_alt = NULL;
-      SetE(w->local_top);	/* OK even before allocate */
-    }
-    DISPATCH_R(0);
-    
-    case DYNAMIC_NECK_PROCEED:
-      LoadH;
-      goto dynamic_neck_proceed_w;
-
-    case NECK_PROCEED:
-      LoadH;
-      goto neck_proceed_w;
-      
-    case PROCEED:
-    proceed_r:
-      PROCED;
-      goto ReadMode;		/* c2 may optimise this case */
-      
+#include "wamread.c"
     default:
       goto illop;
     }
@@ -889,112 +821,26 @@ int wam(Arg, worker)
   switch (OPCODE)
 #endif
     {
-#include "shdisp_w.c"
-#include "u1disp_w.c"
-
-#include "u2void_w.c"
-#include "u2xvar_w.c"
-#include "u2yvar_w.c"
-#include "u2xval_w.c"
-#include "u2yval_w.c"
-#include "wamgauge_w.c"
-
-  case FAIL:
-    goto fail;
-    
-  case HEAPMARGIN_CALLQ:
-    P++;                                             /* MCL -- was p++  */
-    
-  case HEAPMARGIN_CALL:
-    if (HeapDifference(H,Heap_End) < LP1){
-      StoreH;
-      explicit_heap_overflow(Arg,LP1, SP3);
-      LoadH;
-      t0 = X(0);		/* if followed by get_*_x0 */
-    }
-    DISPATCH_W(1+BPL);
-   
-  case NECK:
-  neck_w:
-  if (w->next_alt) {
-    SetB(w->node);
-    if (B->next_alt) {			/* retry */
-      B->next_alt = w->next_alt;
-    } else {			/* try */
-      B->next_alt = w->next_alt; /* 4 contiguous moves */
-      B->frame = w->frame;
-      B->next_insn = w->next_insn;
-      SaveLtop(B);
-      i=B->next_alt->node_offset;
-      if (i>ArityToOffset(0)){
-        i = OffsetToArity(i);
-        SetB(w->next_node);
-#if defined(DEBUG)
-       if (debug_choicepoints)
-          fprintf(stderr, "Storing %d registers (w) in node %x\n", 
-                    i, (int)w->next_node);
-#endif
-        do
-          ChoicePush(pt1,(w->term-1)[i]);
-        while (--i);
-      }
-      if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
-        choice_overflow(Arg,CHOICEPAD);
-    }
-    w->next_alt = NULL;
-    SetE(w->local_top);	/* OK even before allocate */
-  }
-  DISPATCH_W(0);
-
-  case DYNAMIC_NECK_PROCEED:
-  dynamic_neck_proceed_w:
-  Unify_atom_internal(PointerToTerm(ins),X(3));
-  if (!w->next_alt)
-    goto proceed_w;
-  SetB(w->node);
-  if (!B->next_alt && (def_clock = use_clock+1)==0xffff){
-    StoreH;
-    clock_overflow(Arg);
-    LoadH;
-  }
-
-  case NECK_PROCEED:
-  neck_proceed_w:
-  if (w->next_alt) {
-    SetB(w->node);
-    if (B->next_alt) {			/* retry */
-      B->next_alt = w->next_alt;
-    } else {			/* try */
-      B->next_alt = w->next_alt; /* 4 contiguous moves */
-      B->frame = w->frame;
-      B->next_insn = w->next_insn;
-      SaveLtop(B);
-      i=B->next_alt->node_offset;
-      if (i>ArityToOffset(0)) {
-        i = OffsetToArity(i);
-        SetB(w->next_node);
-        do
-          ChoicePush(pt1,(w->term-1)[i]);
-        while (--i);
-      }
-      if (ChoiceYounger(ChoiceOffset(B,CHOICEPAD),w->trail_top))
-        choice_overflow(Arg,CHOICEPAD);
-    }
-    w->next_alt = NULL;
-  } else
-    w->local_top = 0;
-  SetE(w->frame);
-  P = w->next_insn;
-  goto WriteMode;
-      
-  case PROCEED:
-  proceed_w:
-  PROCED;
-  goto WriteMode;		/* c2 may optimise this case */
-  
+#include "wamwrite.c"
   default:
     goto illop;
   }
+
+ exit_toplevel:
+  w->insn = P;
+  /* What should we save here? */
+  /* w->node = B; */                                       /* MCL */
+  /* w->frame = E->frame; */                               /* MCL */
+  if (worker && (worker->action & KEEP_STACKS)) {     /* We may backtrack */
+    SAVE_WAM_STATE;
+  }
+  /* We may have been signaled and jumped here from enter_predicate: */
+  if (Stop_This_Goal(Arg))
+    wam_exit_code = WAM_INTERRUPTED;
+#if defined(DEBUG)
+  /* printf("Goal %x returning!\n", worker); */
+#endif
+  return wam_exit_code;
 
   illop:
   SERIOUS_FAULT("unimplemented WAM instruction");

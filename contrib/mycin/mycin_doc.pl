@@ -8,8 +8,7 @@
 %% DATE   : FEBRAURY 2000
 %%
 %%------------------------------------------------------------------------
-
-:- use_package(assertions).
+:- module(mycin_doc,_,[assertions]).
 
 :- comment(nodoc,assertions).
 
@@ -124,6 +123,9 @@
 %% These version comment(s) can be moved elsewhere in the file.
 %% Subsequent version comments will be placed above the last one
 %% inserted.
+
+:- comment(version(1*11+153,2004/01/07,13:31*25+'CET'), "Added module
+   to avoid compilation errors.  (Edison Mera)").
 
 :- comment(version(1*5+59,2000/02/29,14:51*54+'CET'), "Initial
    documentation.  (Angel Fernandez Pineda)").

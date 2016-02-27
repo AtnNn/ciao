@@ -1,4 +1,5 @@
-:- use_package(clpr).
+:- use_package(clpq).
+
 :- use_module(library(write)).
 
 mmultiply([],_,[]).

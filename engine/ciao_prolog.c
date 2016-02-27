@@ -118,7 +118,7 @@ void ciao_ensure_heap(ciao_state state, int cells) {
   struct worker *w;
   w = state->worker_registers;
   if (HeapDifference(w->global_top,Heap_End) < CONTPAD + cells)
-    explicit_heap_overflow(w, CONTPAD + cells, 2);
+    explicit_heap_overflow(w, CONTPAD + cells, 0);
 }
 
 /* --------------------------------------------------------------------------- */ 
@@ -809,9 +809,10 @@ ciao_term ciao_put_number_chars_s(ciao_state state, char *number_string) {
   (void)string_to_number( state->worker_registers, 
                          (unsigned char *)number_string,
 			  GetSmall(current_radix),
-                          &result);
+                          &result,
+			  0);
   return ciao_ref(state, result);
-} 
+}
 
 ciao_term ciao_put_number_chars(char *number_string) {
   return ciao_put_number_chars_s(ciao_implicit_state, number_string);
@@ -1145,7 +1146,7 @@ int ciao_firstgoal(ciao_state state, ciao_term goal) {
 
 int ciao_boot(ciao_state state) {
   int exit_code;
-  exit_code = ciao_firstgoal(state, ciao_structure_s(state, "boot", 0));
+  exit_code = ciao_firstgoal(state, ciao_structure_s(state, "internals:boot", 0));
   return exit_code;
 }
 

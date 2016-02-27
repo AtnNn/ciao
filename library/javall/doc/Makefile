@@ -35,8 +35,8 @@
 # (many makefiles define LIBDIR and it is a common mistake to 
 # include one of those in a SETTINGS and get lpdoc confused)
 # 
-override LIBDIR=/home/clip/lib/lpdoc-1.9-for-ciao-1.9
-override LPDOC=/home/clip/bin/lpdoc-1.9-for-ciao-1.9
+override LIBDIR=/home/clip/lib/lpdoc-1.9-for-ciao-1.11
+override LPDOC=/home/clip/bin/lpdoc-1.9-for-ciao-1.11
 # ----------------------------------------------------------------------------
 # Define this to be the command that runs tex in your system
 # 

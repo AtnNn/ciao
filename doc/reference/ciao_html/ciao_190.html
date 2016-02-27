@@ -1,37 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - XDR handle library</TITLE>
+<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC755" HREF="ciao_toc.html#TOC755">XDR handle library</A></H1>
+<H1><A NAME="SEC730" HREF="ciao_toc.html#TOC730">Programming MYCIN rules</A></H1>
 <P>
-<A NAME="IDX8285"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> José Manuel Gómez Pérez.
+<A NAME="IDX8147"></A>
 
 
 <P>
-This library offers facilities to enable users to setup preferences on the values an eventual XML document may take. XML documents are specified by XDR documents (eXternal Data Representation standard), in a way conceptually similar to that of objects and classes in object oriented programming. These facilities allow to take as input an XDR Schema defining the class of documents of interest, and establish a dialogue with the user via an HTML form that allows the user to setup preferences to select sub-classes of documents (those which satisfy the preferences). The preferences are the output of the process and may be in the form of XPath expressions, for example, as can be seen in the example attached in the "examples" directory. 
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.11#153 (2004/1/7, 13:31:25 CET)
+
+
+<P>
+MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
+<A NAME="IDX8148"></A>
+<A NAME="IDX8149"></A>
+<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
+
+<UL>
+
+<LI>A value of -1 stands for <EM>surely not</EM>.
+
+<LI>A value of 1 stands for <EM>certainly</EM>.
+
+<LI>A value of 0 stands for <EM>I don't know</EM>.
+
+</UL>
+
+<P>
+Intermediate values are allowed. 
+
+
+<P>
+Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
 
 
 
 <UL>
-<LI><A HREF="ciao_190.html#SEC756">Usage and interface (xdr_handle)</A>
-<LI><A HREF="ciao_190.html#SEC757">Documentation on exports (xdr_handle)</A>
+<LI><A HREF="ciao_190.html#SEC731">Usage and interface (mycin)</A>
+<LI><A HREF="ciao_190.html#SEC732">Documentation on new declarations (mycin)</A>
+<LI><A HREF="ciao_190.html#SEC733">Known bugs and planned improvements (mycin)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC756" HREF="ciao_toc.html#TOC756">Usage and interface (<CODE>xdr_handle</CODE>)</A></H2>
+<H2><A NAME="SEC731" HREF="ciao_toc.html#TOC731">Usage and interface (<CODE>mycin</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,60 +68,16 @@ This library offers facilities to enable users to setup preferences on the value
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(xdr_handle)).</CODE>
+In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
-<LI><STRONG>Exports:</STRONG>
+<PRE>
+           :- mycin(MycinDataBaseName).
+</PRE>
 
+<LI><STRONG>New declarations defined:</STRONG>
 
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX8286"></A>
-<CODE>xdr_tree/3</CODE>, 
-<A NAME="IDX8287"></A>
-<CODE>xdr_tree/1</CODE>, 
-<A NAME="IDX8288"></A>
-<CODE>xdr2html/4</CODE>, 
-<A NAME="IDX8289"></A>
-<CODE>xdr2html/2</CODE>, 
-<A NAME="IDX8290"></A>
-<CODE>unfold_tree/2</CODE>, 
-<A NAME="IDX8291"></A>
-<CODE>unfold_tree_dic/3</CODE>, 
-<A NAME="IDX8292"></A>
-<CODE>xdr_xpath/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX8293"></A>
-<CODE>xdr_node/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX8294"></A>
-<CODE>pillow/http</CODE>, 
-<A NAME="IDX8295"></A>
-<CODE>pillow/html</CODE>, 
-<A NAME="IDX8296"></A>
-<CODE>pillow/pillow_types</CODE>, 
-<A NAME="IDX8297"></A>
-<CODE>xdr_handle/xdr_types</CODE>, 
-<A NAME="IDX8298"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX8299"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8300"></A>
-<CODE>terms</CODE>.
-
-</UL>
+<A NAME="IDX8150"></A>
+<CODE>export/1</CODE>.
 
 </UL>
 
@@ -100,210 +85,59 @@ This library offers facilities to enable users to setup preferences on the value
 
 
 
-<H2><A NAME="SEC757" HREF="ciao_toc.html#TOC757">Documentation on exports (<CODE>xdr_handle</CODE>)</A></H2>
+<H2><A NAME="SEC732" HREF="ciao_toc.html#TOC732">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
 <P>
-<A NAME="IDX8301"></A>
-<A NAME="IDX8302"></A>
+<A NAME="IDX8151"></A>
+<A NAME="IDX8152"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>xdr_tree/3:</B>
-<DD><A NAME="IDX8303"></A>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX8153"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>xdr_tree(+XDR_url, -XDR_tree, -XDR_id)</CODE>
+This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
+
+<PRE>
+:- export p/1.
+</PRE>
+
+<P>
+must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
+<A NAME="IDX8154"></A>
+certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Parses an XDR (External Data Representation Standard) located at an url <CODE>XDR_url</CODE> into a tree structured Prolog term <CODE>XDR_tree</CODE>. It also returns an identifier of the XDR_tree <CODE>XDR_id</CODE> corresponding to the sequence of nodes in the tree (this is intended to be a hook to use in CGI applications).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+XDR_url</CODE> specifies a URL.
- (<CODE>pillow_types:url_term/1</CODE>)
-
-<CODE>-XDR_tree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-
-<CODE>-XDR_id</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8304"></A>
-<A NAME="IDX8305"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xdr_tree/1:</B>
-<DD><A NAME="IDX8306"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xdr_tree(XDR_tree)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Checks the correctness of an XDR tree <CODE>XDR_tree</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>XDR_tree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8307"></A>
-<A NAME="IDX8308"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>xdr_node/1:</B>
-<DD><A NAME="IDX8309"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xdr_node(XDR_node)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>XDR_node</CODE> is a XDR tree node.
+<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
 
 </UL>
 
 </DL>
 
-<P>
-<A NAME="IDX8310"></A>
-<A NAME="IDX8311"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xdr2html/4:</B>
-<DD><A NAME="IDX8312"></A>
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>xdr2html(+XDRTree, -HTMLOutput, -UnfoldedTree, -Dic)</CODE>
+<H2><A NAME="SEC733" HREF="ciao_toc.html#TOC733">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
+
 
 <UL>
-<LI><EM>Description:</EM> Receives an XDR tree <CODE>XDRTree</CODE> and produces the corresponding HTML code <CODE>HTMLOutput</CODE>, an equivalente unfolded plain tree <CODE>UnfoldedTree</CODE> and a control dictionary <CODE>Dic</CODE> to hold a reference the evenutal fom objects.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI>
 
-<CODE>+XDRTree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
+Not fully implemented.
 
-<CODE>-HTMLOutput</CODE> is a term representing HTML code.
- (<CODE>pillow_types:html_term/1</CODE>)
+<LI>
 
-<CODE>-UnfoldedTree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
+Dynamic mycin predicates not implemented: open question.
 
-<CODE>-Dic</CODE> is a dictionary of values of the attributes of a form. It is a list of <CODE>form_assignment</CODE>
- (<CODE>pillow_types:form_dict/1</CODE>)
+<LI>
+
+Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8313"></A>
-<A NAME="IDX8314"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xdr2html/2:</B>
-<DD><A NAME="IDX8315"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xdr2html(+XDRTree, -HTMLOutput)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Receives an XDR tree <CODE>XDRTree</CODE> and produces the corresponding HTML code <CODE>HTMLOutput</CODE>. This html code is intended to be part of a form used as a means by which an eventual user can give value to an instance of the XDR, i.e. an XML element.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+XDRTree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-
-<CODE>-HTMLOutput</CODE> is a term representing HTML code.
- (<CODE>pillow_types:html_term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8316"></A>
-<A NAME="IDX8317"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>unfold_tree/2:</B>
-<DD><A NAME="IDX8318"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>unfold_tree(+XDRTree, -UFT)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Obtains an unfolded XDR tree <CODE>UFT</CODE> from a standard XDR tree <CODE>XDRTree</CODE>, i.e. an XDR tree where all references to XDR elements have been substituted with the elements themselves. Especially useful for eventual generation of equivalent XPATH expressions, (see example).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+XDRTree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-
-<CODE>-UFT</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8319"></A>
-<A NAME="IDX8320"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>unfold_tree_dic/3:</B>
-<DD><A NAME="IDX8321"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>unfold_tree_dic(+XDRTree, -UFT, -Dic)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Obtains an unfolded XDR tree <CODE>UFT</CODE> and a form dictionary <CODE>Dic</CODE> from a standard XDR tree <CODE>XDRTree</CODE>. Especially useful for HTML form data exchange (see example).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+XDRTree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-
-<CODE>-UFT</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-
-<CODE>-Dic</CODE> is a dictionary of values of the attributes of a form. It is a list of <CODE>form_assignment</CODE>
- (<CODE>pillow_types:form_dict/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8322"></A>
-<A NAME="IDX8323"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>xdr_xpath/2:</B>
-<DD><A NAME="IDX8324"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>xdr_xpath(+XDRTree, -XPath)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Produces an XPATH expression <CODE>XPath</CODE> from an XDR tree <CODE>XDRTree</CODE>. If the given XDR tree has no definite value the xpath expression produced will be empty
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+XDRTree</CODE> specifies an XDR document.
- (<CODE>xdr_types:xdr/1</CODE>)
-
-<CODE>-XPath</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_189.html">previous</A>, <A HREF="ciao_191.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -34,14 +34,14 @@
    @var{Mode} and return in @var{Stream} the stream associated with the
    file.  No extension is implicit in @var{File}.").
 
-:- true pred open(+sourcename, +io_mode, ?stream) + (iso, native)
+:- true comp open/3 + native.
+:- true pred open(+sourcename, +io_mode, ?stream) + iso
         # "Normal use.".
-:- true pred open(+int, +io_mode, ?stream) + native 
-        # "In the special case that @var{File} is an integer, it is
-        assumed to be a file descriptor passed to Prolog from a
-        foreign function call. The file descriptor is connected to a
-        Prolog stream (invoking the UNIX function @tt{fdopen}) which
-        is unified with @var{Stream}.".
+:- true pred open(+int, +io_mode, ?stream) # "In the special case that
+        @var{File} is an integer, it is assumed to be a file descriptor
+        passed to Prolog from a foreign function call. The file
+        descriptor is connected to a Prolog stream (invoking the UNIX
+        function @tt{fdopen}) which is unified with @var{Stream}.".
 
 :- comment(open(File, Mode, Stream, Options), "Same as
    @tt{open(@var{File}, @var{Mode}, @var{Stream})} with options @var{Options}.
@@ -56,6 +56,8 @@ open(FileName, Mode, S, Opts) :-
         open_internal(FileName, Mode, S, Opts, 4).
 
 open_internal(FileName, Mode, S, Opts, N) :-
+        var(S),
+        atom(FileName),
         nonvar(Mode),
         io_mode(Mode), !,
         ( var(Opts) ->
@@ -70,10 +72,18 @@ open_internal(FileName, Mode, S, Opts, N) :-
 	;
 	  throw(error(domain_error(open_option_list, Opts), open/N-4))
 	).
+open_internal(_, _, S, _, N) :- nonvar(S), !,
+        throw(error(type_error(variable), open/N-3)).
+open_internal(FileName, _, _, _, N) :- var(FileName), !,
+        throw(error(instantiation_error, open/N-1)).
+open_internal(FileName, _, _, _, N) :- nonvar(FileName), !,
+        throw(error(domain_error(source_sink, FileName), open/N-1)).
 open_internal(_, Mode, _, _, N) :- var(Mode), !,
         throw(error(instantiation_error, open/N-2)).
-open_internal(_, Mode, _, _, N) :-
+open_internal(_, Mode, _, _, N) :- atom(Mode), !,
         throw(error(domain_error(io_mode, Mode), open/N-2)).
+open_internal(_, Mode, _, _, N) :- nonvar(Mode), \+ atom(Mode), !,
+        throw(error(type_error(atom, Mode), open/N-2)).
 
 codif_opts([], Codif, Codif).
 codif_opts([Opt|Opts], InCodif, OutCodif):-
@@ -132,7 +142,9 @@ io_mode(append).
 :- true pred set_input(+stream) + (iso, native).
 
 :- comment(current_input(Stream), "Unify @var{Stream} with the
-   @concept{current input stream}.").
+@concept{current input stream}.  In addition to the ISO behavior,
+stream aliases are allowed.  This is useful for most applications
+checking whether a stream is the standard input or output.").
 
 :- true pred current_input(?stream) + (iso, native).
 
@@ -145,7 +157,8 @@ io_mode(append).
 :- true pred set_output(+stream) + (iso, native).
 
 :- comment(current_output(Stream), "Unify @var{Stream} with the
-   @concept{current output stream}.").
+@concept{current output stream}.  The same comment as for
+@pred{current_input/1} applies.").
 
 :- true pred current_output(?stream) + (iso, native).
 
@@ -172,7 +185,7 @@ io_mode(append).
 :- comment(flush_output, "Behaves like @tt{current_output(S),
    flush_output(S)}").
 
-:- true pred flush_output + (iso, native).
+:- true pred flush_output + iso.
 
 :- comment(clearerr(Stream), "Clear the end-of-file and error indicators
            for input stream @var{Stream}.").
@@ -438,10 +451,16 @@ open_option_list(_). % Should be better defined.
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+247,2003/12/29,18:50*42+'CET'), "An error is
+:- comment(version(1*11+125,2003/12/29,18:52*30+'CET'), "An error is
 now given when absolute_file_name/7 is called with the 2nd, 3rd, or
 4th argument instantiated to something other than an atom.  (Manuel
 Carro)").
+
+:- comment(version(1*11+24,2003/05/28,21:22*09+'CEST'), "Added check
+and exceptio for Filename being a variable (MCL)").
+
+:- comment(version(1*11+21,2003/05/28,17:57*39+'CEST'), "Added
+exceptions to current_input/1 (MCL)").
 
 :- comment(version(1*9+51,2003/01/09,17:57*00+'CET'), "Added open/4,
    which by now just implements file locking.  (Daniel Cabeza Gras)").

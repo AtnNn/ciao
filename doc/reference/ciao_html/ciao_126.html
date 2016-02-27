@@ -1,54 +1,51 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low level interface library to Tcl/Tk</TITLE>
+<TITLE>The Ciao Prolog System               - The Tcl/Tk Class Interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC541" HREF="ciao_toc.html#TOC541">Low level interface library to Tcl/Tk</A></H1>
+<H1><A NAME="SEC516" HREF="ciao_toc.html#TOC516">The Tcl/Tk Class Interface</A></H1>
 <P>
-<A NAME="IDX6063"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Montse Iglesias Urraca.
+<A NAME="IDX5963"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> Montserrat Urraca, Montserrat Iglesias Urraca, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#348 (2004/6/8, 12:6:40 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-The 
-<A NAME="IDX6064"></A>
-<CODE>tcltk_low_level</CODE> library defines the low level interface used by the 
-<A NAME="IDX6065"></A>
-<CODE>tcltk</CODE> library. Essentially it includes all the code related directly to the handling of sockets and processes. This library should normally not be used directly by user programs, which use 
-<A NAME="IDX6066"></A>
-<CODE>tcltk</CODE> instead. On the other hand in some cases it may be useful to undertand how this library works in order to understand possible problems in programs that use the 
-<A NAME="IDX6067"></A>
-<CODE>tcltk</CODE> library. 
+<STRONG>Version of last change:</STRONG> 1.9#152 (2003/12/4, 17:35:17 CET)
+
+
+<P>
+This library implements an object-orented graphical library with a number of predefined objects, using the Prolog Tcl/Tk interface. This interface allows creating and destroying objects and modifying their properties. The 
+<A NAME="IDX5964"></A>
+<CODE>window_class</CODE> contains three clases: widget class, menu class, and canvas class. The constructor class is window_class. 
+
+
+<P>
+<STRONG>Note:</STRONG> This library (and the documentation) are still under development. 
 
 
 
 <UL>
-<LI><A HREF="ciao_126.html#SEC542">Usage and interface (tcltk_low_level)</A>
-<LI><A HREF="ciao_126.html#SEC543">Documentation on exports (tcltk_low_level)</A>
-<LI><A HREF="ciao_126.html#SEC544">Documentation on internals (tcltk_low_level)</A>
+<LI><A HREF="ciao_126.html#SEC517">Usage and interface (window_class)</A>
+<LI><A HREF="ciao_126.html#SEC518">Documentation on multifiles (window_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC542" HREF="ciao_toc.html#TOC542">Usage and interface (<CODE>tcltk_low_level</CODE>)</A></H2>
+<H2><A NAME="SEC517" HREF="ciao_toc.html#TOC517">Usage and interface (<CODE>window_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -56,39 +53,7 @@ The
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tcltk_low_level)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6068"></A>
-<CODE>new_interp/1</CODE>, 
-<A NAME="IDX6069"></A>
-<CODE>new_interp/2</CODE>, 
-<A NAME="IDX6070"></A>
-<CODE>new_interp_file/2</CODE>, 
-<A NAME="IDX6071"></A>
-<CODE>tcltk/2</CODE>, 
-<A NAME="IDX6072"></A>
-<CODE>tcltk_raw_code/2</CODE>, 
-<A NAME="IDX6073"></A>
-<CODE>receive_result/2</CODE>, 
-<A NAME="IDX6074"></A>
-<CODE>send_term/2</CODE>, 
-<A NAME="IDX6075"></A>
-<CODE>receive_event/2</CODE>, 
-<A NAME="IDX6076"></A>
-<CODE>receive_list/2</CODE>, 
-<A NAME="IDX6077"></A>
-<CODE>receive_confirm/2</CODE>, 
-<A NAME="IDX6078"></A>
-<CODE>delete/1</CODE>.
-
-</UL>
+<CODE>:- use_module(library(window_class)).</CODE>
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -97,22 +62,24 @@ The
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6079"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX6080"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX6081"></A>
+<A NAME="IDX5965"></A>
+<CODE>class/class_rt</CODE>, 
+<A NAME="IDX5966"></A>
+<CODE>class/virtual</CODE>, 
+<A NAME="IDX5967"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX5968"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX6082"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6083"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6084"></A>
+<A NAME="IDX5969"></A>
 <CODE>strings</CODE>, 
-<A NAME="IDX6085"></A>
+<A NAME="IDX5970"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX6086"></A>
-<CODE>format</CODE>.
+<A NAME="IDX5971"></A>
+<CODE>tcltk/tcltk</CODE>, 
+<A NAME="IDX5972"></A>
+<CODE>tcltk/tcltk_low_level</CODE>, 
+<A NAME="IDX5973"></A>
+<CODE>aggregates</CODE>.
 
 </UL>
 
@@ -122,304 +89,170 @@ The
 
 
 
-<H2><A NAME="SEC543" HREF="ciao_toc.html#TOC543">Documentation on exports (<CODE>tcltk_low_level</CODE>)</A></H2>
+<H2><A NAME="SEC518" HREF="ciao_toc.html#TOC518">Documentation on multifiles (<CODE>window_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX6087"></A>
-<A NAME="IDX6088"></A>
+<A NAME="IDX5974"></A>
+<A NAME="IDX5975"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
-<DD><A NAME="IDX6089"></A>
+<DT><span class="define">PREDICATE:</span> <B>$class$/1:</B>
+<DD><A NAME="IDX5976"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Creates two sockets to connect to the <EM>wish</EM> process, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6090"></A>
-<A NAME="IDX6091"></A>
+<A NAME="IDX5977"></A>
+<A NAME="IDX5978"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>new_interp/2:</B>
-<DD><A NAME="IDX6092"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$super/2:</B>
+<DD><A NAME="IDX5979"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>new_interp(-TclInterpreter, +Options)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with the <CODE>Options</CODE>.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-
-<CODE>+Options</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6093"></A>
-<A NAME="IDX6094"></A>
+<A NAME="IDX5980"></A>
+<A NAME="IDX5981"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>new_interp_file/2:</B>
-<DD><A NAME="IDX6095"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$initial_state/3:</B>
+<DD><A NAME="IDX5982"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>new_interp_file(+FileName, -TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Creates two sockets, the term socket and the event socket, and opens a pipe to process <EM>wish</EM> in a new shell invoked with a <CODE>FileName</CODE>. <CODE>FileName</CODE> is treated as a name of a sript file
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>+FileName</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6096"></A>
-<A NAME="IDX6097"></A>
+<A NAME="IDX5983"></A>
+<A NAME="IDX5984"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tcltk/2:</B>
-<DD><A NAME="IDX6098"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$virtual/6:</B>
+<DD><A NAME="IDX5985"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tcltk(+Code, +TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Sends the <CODE>Code</CODE> converted to string to the <CODE>TclInterpreter</CODE>
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>+Code</CODE> is a <EM>Tcl</EM> command.
- (<CODE>tcltk_low_level:tclCommand/1</CODE>)
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6099"></A>
-<A NAME="IDX6100"></A>
+<A NAME="IDX5986"></A>
+<A NAME="IDX5987"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
-<DD><A NAME="IDX6101"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$attr_template/4:</B>
+<DD><A NAME="IDX5988"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tcltk_raw_code(+String, +TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Sends the tcltk code items of the <CODE>Stream</CODE> to the <CODE>TclInterpreter</CODE>
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>+String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6102"></A>
-<A NAME="IDX6103"></A>
+<A NAME="IDX5989"></A>
+<A NAME="IDX5990"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>receive_result/2:</B>
-<DD><A NAME="IDX6104"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$default_cons/1:</B>
+<DD><A NAME="IDX5991"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>receive_result(-Result, +TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Receives the <CODE>Result</CODE> of the last <EM>TclCommand</EM> into the <CODE>TclInterpreter</CODE>. If the <EM>TclCommand</EM> is not correct the <EM>wish</EM> process is terminated and a message appears showing the error
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>-Result</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6105"></A>
-<A NAME="IDX6106"></A>
+<A NAME="IDX5992"></A>
+<A NAME="IDX5993"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>send_term/2:</B>
-<DD><A NAME="IDX6107"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$constructor/4:</B>
+<DD><A NAME="IDX5994"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>send_term(+String, +TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Sends the goal executed to the <CODE>TclInterpreter</CODE>. <CODE>String</CODE> has the predicate with unified variables
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>+String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6108"></A>
-<A NAME="IDX6109"></A>
+<A NAME="IDX5995"></A>
+<A NAME="IDX5996"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>receive_event/2:</B>
-<DD><A NAME="IDX6110"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$destructor/3:</B>
+<DD><A NAME="IDX5997"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>receive_event(-Event, +TclInterpreter)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Receives the <CODE>Event</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+The predicate is <EM>multifile</EM>.
 
-<CODE>-Event</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6111"></A>
-<A NAME="IDX6112"></A>
+<A NAME="IDX5998"></A>
+<A NAME="IDX5999"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>receive_list/2:</B>
-<DD><A NAME="IDX6113"></A>
+<DT><span class="define">PREDICATE:</span> <B>class$implements/2:</B>
+<DD><A NAME="IDX6000"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>receive_list(-List, +TclInterpreter)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Receives the <CODE>List</CODE> from the event socket of the <CODE>TclInterpreter</CODE>.The <CODE>List</CODE> has all the predicates that have been inserted from Tcl/Tk with the command prolog_event. It is a list of terms.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-List</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6114"></A>
-<A NAME="IDX6115"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>receive_confirm/2:</B>
-<DD><A NAME="IDX6116"></A>
+No further documentation available for this predicate.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>receive_confirm(-String, +TclInterpreter)</CODE>
+The predicate is <EM>multifile</EM>.
 
-<UL>
-<LI><EM>Description:</EM> Receives the <CODE>String</CODE> from the event socket of the <CODE>TclInterpreter</CODE> when a term inserted into the event queue is managed.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6117"></A>
-<A NAME="IDX6118"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>delete/1:</B>
-<DD><A NAME="IDX6119"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>delete(+TclInterpreter)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Terminates the <EM>wish</EM> process and closes the pipe, term socket and event socket. Deletes the interpreter <CODE>TclInterpreter</CODE> from the system
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk_low_level:tclInterpreter/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC544" HREF="ciao_toc.html#TOC544">Documentation on internals (<CODE>tcltk_low_level</CODE>)</A></H2>
-<P>
-<A NAME="IDX6120"></A>
-<A NAME="IDX6121"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>core/1:</B>
-<DD><A NAME="IDX6122"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>core(+String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM>
-
-<A NAME="IDX6123"></A>
-<CODE>core/1</CODE> is a set of facts which contain <CODE>String</CODE>s to be sent to the Tcl/Tk interpreter on startup. They implement miscelaneous Tcl/Tk procedures which are used by the Tcl/Tk interface. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_125.html">previous</A>, <A HREF="ciao_127.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

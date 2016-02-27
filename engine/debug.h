@@ -4,7 +4,6 @@
 
 #if !defined(_DEBUG_H_)
 #define _DEBUG_H_
-#endif
 
 #if defined(DEBUG)
 extern int debug_c;                                             /* Shared */
@@ -17,3 +16,5 @@ extern BOOL debug_gc,
 #endif
 
 extern BOOL stop_on_pred_calls, predtrace, profile, prof_include_time;
+
+#endif /* _DEBUG_H */

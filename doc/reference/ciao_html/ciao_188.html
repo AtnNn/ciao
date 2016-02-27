@@ -1,143 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
+<TITLE>The Ciao Prolog System               - Gathering all modules in a directory</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC748" HREF="ciao_toc.html#TOC748">Programming MYCIN rules</A></H1>
-<P>
-<A NAME="IDX8199"></A>
-
+<H1><A NAME="SEC726" HREF="ciao_toc.html#TOC726">Gathering all modules in a directory</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<STRONG>Author(s):</STRONG> D. Cabeza, M. Carro.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 0.0#1 (2002/1/3, 17:40:19 CET)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
-
-
-<P>
-MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
-<A NAME="IDX8200"></A>
-<A NAME="IDX8201"></A>
-<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
-
-<UL>
-
-<LI>A value of -1 stands for <EM>surely not</EM>.
-
-<LI>A value of 1 stands for <EM>certainly</EM>.
-
-<LI>A value of 0 stands for <EM>I don't know</EM>.
-
-</UL>
-
-<P>
-Intermediate values are allowed. 
-
-
-<P>
-Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
+A simple bash script for 
+<A NAME="IDX8144"></A>
+collecting files which are modules, in order to compile automatically the CIAO libraries. 
 
 
 
 <UL>
-<LI><A HREF="ciao_188.html#SEC749">Usage and interface (mycin)</A>
-<LI><A HREF="ciao_188.html#SEC750">Documentation on new declarations (mycin)</A>
-<LI><A HREF="ciao_188.html#SEC751">Known bugs and planned improvements (mycin)</A>
+<LI><A HREF="ciao_188.html#SEC727">Usage (collect_modules)</A>
+<LI><A HREF="ciao_188.html#SEC728">More details (collect_modules)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC749" HREF="ciao_toc.html#TOC749">Usage and interface (<CODE>mycin</CODE>)</A></H2>
+<H2><A NAME="SEC727" HREF="ciao_toc.html#TOC727">Usage (collect_modules)</A></H2>
 
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
 <PRE>
-           :- mycin(MycinDataBaseName).
+   Usage: collect_modules module_name
 </PRE>
 
-<LI><STRONG>New declarations defined:</STRONG>
-
-<A NAME="IDX8202"></A>
-<CODE>export/1</CODE>.
-
-</UL>
-
-</div class="cartouche">
 
 
-
-<H2><A NAME="SEC750" HREF="ciao_toc.html#TOC750">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
-<P>
-<A NAME="IDX8203"></A>
-<A NAME="IDX8204"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
-<DD><A NAME="IDX8205"></A>
-
+<H2><A NAME="SEC728" HREF="ciao_toc.html#TOC728">More details (collect_modules)</A></H2>
 
 <P>
-This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
+Look at the Makefiles in lib and library 
 
-<PRE>
-:- export p/1.
-</PRE>
-
-<P>
-must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
-<A NAME="IDX8206"></A>
-certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC751" HREF="ciao_toc.html#TOC751">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-Not fully implemented.
-
-<LI>
-
-Dynamic mycin predicates not implemented: open question.
-
-<LI>
-
-Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

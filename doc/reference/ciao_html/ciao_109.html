@@ -1,52 +1,114 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Breadth-first execution</TITLE>
+<TITLE>The Ciao Prolog System               - Iterative-deepening execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC452" HREF="ciao_toc.html#TOC452">Breadth-first execution</A></H1>
+<H1><A NAME="SEC426" HREF="ciao_toc.html#TOC426">Iterative-deepening execution</A></H1>
 <P>
-<A NAME="IDX5435"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
+<A NAME="IDX5294"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> Claudio Vaucheret, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#143 (2000/5/12, 13:54:34 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-This package implements breadth-first execution of predicates. Predicates written with operators 
-<A NAME="IDX5436"></A>
-<CODE>'&#60;-'/1</CODE> (facts) and 
-<A NAME="IDX5437"></A>
-<CODE>'&#60;-'/2</CODE> (clauses) are executed using breadth-first search. This may be useful in search problems when a 
-<A NAME="IDX5438"></A>
-complete proof procedure is needed. An example of code would be: 
+<STRONG>Version of last change:</STRONG> 1.7#119 (2001/8/28, 15:39:1 CEST)
+
+
+<P>
+This package applies a <EM>compiling control</EM> technique to implement 
+<A NAME="IDX5295"></A>
+<A NAME="IDX5296"></A>
+<EM>depth first iterative deepening</EM> execution [Kor85]. It changes the usual <EM>depth-first</EM> computation rule by 
+<A NAME="IDX5297"></A>
+<A NAME="IDX5298"></A>
+<EM>iterative-deepening</EM> on those predicates specifically marked. This is very useful in search problems when a 
+<A NAME="IDX5299"></A>
+complete proof procedure is needed. 
+
+
+<P>
+When this computation rule is used, first all goals are expanded only up to a given depth. If no solution is found or more solutions are needed by backtracking, the depth limit is incremented and the whole goal is repeated. Although it might seem that this approach is very inefficient because all higher levels are repeated for the deeper ones, it has been shown that is performs only about b/(b - 1) times as many operations than the corresponding breadth-first search, (where b is the branching factor of the proof tree) while the waste of memory is the same as depth first. 
+
+
+<P>
+The usage is by means of the following directive: 
+
+
+<P>
+<CODE>:- iterative(Name, FirstCut, Formula).</CODE> 
+
+
+<P>
+which states than the predicate 'Name' given in functor/arity form will be executed using iterative deepening rule starting at the depth 'FirstCut' with depth being incremented by the predicate 'Formula'. This predicate compute the new depth using the previous one. It must implement a dilating function i.e. the new depth must be greater. For example, to start with depth 5 and increment by 10 you can write: 
+
+
+<P>
+<CODE>:- iterative(p/1,5,f).</CODE> 
+
+
+<P>
+<CODE>f(X,Y) :- Y is X + 10.</CODE> 
+
+
+<P>
+or if you prefer, 
+
+
+<P>
+<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10)).</CODE> 
+
+
+<P>
+<A NAME="IDX5300"></A>
+<A NAME="IDX5301"></A>
+You can also use a fourth parameter to set a limiting depth. All goals below the given depth limit simply fail. Thus, with the following directive: 
+
+
+<P>
+<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10),100).</CODE> 
+
+
+<P>
+all goals deeper than 100 will fail. 
+
+
+<P>
+An example of code using this package would be: 
+
+
 
 <PRE>
-:- module(chain, _, [bf]).
+:- module(example_id, _,[id]).
 
-test(bf) :- bfchain(a,d).
-test(df) :- chain(a,d).   % loops!
+test(id) :- 
+        idchain(a,d).
+test(df) :- 
+        chain(a,d).   % loops!
 
-bfchain(X,X) &#60;- .
-bfchain(X,Y) &#60;- arc(X,Z), bfchain(Z,Y).
+:- iterative(idchain/2, 3, ( _(X,Z) :- Z is X + 1) ).
+
+idchain(X,X).
+idchain(X,Y) :- 
+        arc(X,Z), 
+        idchain(Z,Y).
 
 chain(X,X).
-chain(X,Y) :- arc(X,Z), chain(Z,Y).
+chain(X,Y) :- 
+        arc(X,Z), 
+        chain(Z,Y).
 
 arc(a,b).
 arc(a,d).
@@ -56,31 +118,58 @@ arc(c,a).
 </PRE>
 
 <P>
-There is another version, called 
-<A NAME="IDX5439"></A>
-<CODE>bf/af</CODE>, which ensures AND-fairness by goal shuffling. This version correctly says "<CODE>no</CODE>" executing the following test: 
+The order of solutions are first the shallower and then the deeper. Solutions which are between two cutoff are given in the usual left to right order. For example, 
+
+
 
 <PRE>
-:- module(sublistapp, [test/0,sublistapp/2], ['bf/af']).
+% OLD EXAMPLE - Won't work!
 
-test :- sublistapp([a],[b]).
+:- module(_, _, [det_hook]).
 
-sublistapp(S,L) &#60;- append(_,S,Y), append(Y,_,L).
+:- use_module(engine(internals)).
 
-append([], L, L) &#60;- .
-append([X|Xs], L, [X|Ys]) &#60;- append(Xs, L, Ys).
+pr(I, X, Y) :-
+        display(open(I)), nl,
+        '$metachoice'(C),
+        det_try(pr2(X, Y, C),
+        (display(close_done(I)), nl),
+        (display(close_abort(I)), nl)).
+
+pr2(X, _, _) :- X =&#60; 0, !, fail.  
+pr2(2, 2, C) :- '$metacut'(C).
+pr2(X, Y, C) :- (X = Y ; X1 is X - 1, pr2(X1, Y, C)).
+        
+test1 :-
+        pr(x, 4, X),
+        pr(y, 4, Y),
+        display(X),
+        display(Y),
+        nl, X = 1,
+        Y = 3, !.
 
 </PRE>
 
+<P>
+It is possible to preserve the iterative-deepening behavior for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will be treated in the usual way i.e. by depth-first computation. 
+
+
+<P>
+Another complete proof procedure implemented is the 
+<A NAME="IDX5302"></A>
+<CODE>bf</CODE> package (
+<A NAME="IDX5303"></A>
+breadth first execution). 
+
+
 
 <UL>
-<LI><A HREF="ciao_109.html#SEC453">Usage and interface (bf)</A>
-<LI><A HREF="ciao_109.html#SEC454">Known bugs and planned improvements (bf)</A>
+<LI><A HREF="ciao_109.html#SEC427">Usage and interface (id)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC453" HREF="ciao_toc.html#TOC453">Usage and interface (<CODE>bf</CODE>)</A></H2>
+<H2><A NAME="SEC427" HREF="ciao_toc.html#TOC427">Usage and interface (<CODE>id</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -88,35 +177,16 @@ append([X|Xs], L, [X|Ys]) &#60;- append(Xs, L, Ys).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(bf).</CODE>
+<CODE>:- use_package(id).</CODE>
 
 or
 
-<CODE>:- module(...,...,[bf]).</CODE>
-
-<LI><STRONG>New operators defined:</STRONG>
-
-<A NAME="IDX5440"></A>
-<CODE>&#60;-/2</CODE> [1200,xfx], 
-<A NAME="IDX5441"></A>
-<CODE>&#60;-/1</CODE> [1200,xf].
+<CODE>:- module(...,...,[id]).</CODE>
 </UL>
 
 </div class="cartouche">
 
-
-
-<H2><A NAME="SEC454" HREF="ciao_toc.html#TOC454">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-Does not correctly work in user files.
-</UL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_108.html">previous</A>, <A HREF="ciao_110.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

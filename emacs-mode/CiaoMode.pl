@@ -40,13 +40,39 @@ main.
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+323,2004/03/08,18:37*17+'CET'), "Errors now
+:- comment(version(1*11+221,2004/04/21,18:42*25+'CEST'), "changed
+   "customize" behaivour in ciaopp to customize and exec (David
+   Trallero Mena)").
+
+:- comment(version(1*11+220,2004/04/21,18:40*22+'CEST'), "Added
+   ciao-load-and-check-buffer that check assertions in ciaopp and if
+   everything was fine then it loads the buffer into toplevel (David
+   Trallero Mena)").
+
+:- comment(version(1*11+208,2004/03/08,18:35*50+'CET'), "Errors now
    also located in source files with no suffix, or .pls etc.  (Manuel
    Hermenegildo)").
 
+:- comment(version(1*11+178,2004/02/04,18:55*32+'CET'), "Fixed bug
+   that made ciao-analyze-buffer not work the first time.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*11+177,2004/02/04,18:52*34+'CET'), "Fixed some
+   minor issues remaining from the ciaopp-0.8 menus.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*11+173,2004/02/04,12:59*46+'CET'), "Unified 1.9
+   and 1.11 changes.  (Manuel Hermenegildo)").
+
+:- comment(version(1*11+165,2004/02/03,19:20*51+'CET'), "Integrated
+   changes for ciaopp-1.0.  (David Trallero Mena)").
+
+:- comment(version(1*11+49,2003/09/26,18:05*44+'CEST'), "Greatly
+   improved syntax-based coloring. (Daniel Cabeza Gras)").
+
 :- comment(version(1*9+281,2004/02/02,15:51*32+'CET'), "Fixed problem
    with C-c d when module has a name with single quotes (extra set of
-   quotes not added anymore).  (Manuel Hermenegildo)").
+   quotes not added anymore).   (Manuel Hermenegildo)").
 
 :- comment(version(1*9+280,2004/02/02,15:51*10+'CET'), "Better
    highlighting when newlines present in commands. Persistent

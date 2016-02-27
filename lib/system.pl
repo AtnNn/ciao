@@ -7,6 +7,10 @@
             datime_struct/1,
             getenvstr/2,
             setenvstr/2,
+	    current_env/2,
+	    set_env/2,
+	    del_env/1,
+	    copy_file/2,
             extract_paths/2,
             get_pid/1,
             current_host/1,
@@ -27,8 +31,6 @@
             popen_mode/1,
             exec/4,
             exec/3,
-            exec/8,
-            wait/3,
             directory_files/2,
             mktemp/2,
             file_exists/1,
@@ -45,7 +47,7 @@
             rename_file/2,
 	    cyg2win/3
         ],
-	[assertions, isomodes, regtypes]).
+	[assertions, isomodes, hiord, regtypes]).
 
 :- comment(title, "Operating system utilities").
 
@@ -60,15 +62,14 @@
    @pred{absolute_file_name/2} on names of files or directories taken
    as arguments.").
 
-:- use_module(engine(internals), ['$unix_popen'/3, '$exec'/8]).
+:- use_module(engine(internals), ['$unix_popen'/3, '$exec'/4]).
 :- use_module(library(lists), [append/3]).
 
 :- impl_defined([
         working_directory/2, directory_files/2, pause/1, time/1, datime/9,
-        current_host/1, getenvstr/2, setenvstr/2, get_pid/1, 
-        current_executable/1,
+        current_host/1, c_get_env/2, c_set_env/2, c_current_env/3, c_del_env/1,
+	c_copy_file/2, get_pid/1, current_executable/1,
         shell/0, shell/2, system/2, mktemp/2, file_exists/2,
-        wait/3,
         file_properties/6, chmod/2, umask/2, 
         delete_file/1, delete_directory/1, rename_file/2, make_directory/2]).
 
@@ -126,15 +127,119 @@ datime_struct(datime(Year,Month,Day,Hour,Min,Sec)) :-
 	# "Bound @var{Time} to current time and the rest of the
 	arguments refer to current time.".
 
+:- true pred copy_file(+atm, +atm).
+
+:- comment(copy_file(Source,Destination), "Copies the file @{Source} to
+	@{Destination}.").
+
+copy_file(Source, _Destination) :-
+	( \+atom(Source) ),
+	!,
+	throw(error(domain_error(atom,Source),copy_file/2-1)).
+copy_file(_Source, Destination) :-
+	( \+atom(Destination) ),
+	!,
+	throw(error(domain_error(atom,Destination),copy_file/2-2)).
+
+copy_file(Source, Destination) :-
+	c_copy_file(Source, Destination).
+
 :- comment(getenvstr(Name, Value), "The environment variable @var{Name}
     has @var{Value}.  Fails if variable @var{Name} is not defined.").
 
 :- true pred getenvstr(+atm, ?string).
 
+getenvstr(Name, _Value) :-
+	( \+ atom(Name) ),
+	!,
+	throw(error(domain_error(atom,Name),getenvstr/2-1)).
+
+getenvstr(Name, Value) :-
+	c_get_env(Name, Value2),
+	atom_codes(Value2,Value).
+
 :- comment(setenvstr(Name, Value), "The environment variable @var{Name}
     is assigned @var{Value}.").
 
 :- true pred setenvstr(+atm, +string).
+
+setenvstr(Name, _Value) :-
+	( \+ atom(Name) ),
+	!,
+	throw(error(domain_error(atom,Name),setenvstr/2-1)).
+
+setenvstr(_Name, Value) :-
+	( \+ ( Value = [_|_] ; Value = [] ) ),
+	!,
+	throw(error(domain_error(character_code_list,Value),setenvstr/2-2)).
+
+setenvstr(Name, Value) :-
+	atom_codes(Value2,Value),
+	c_set_env(Name, Value2).
+
+:- true pred set_env(+atm, +atm).
+
+:- comment(set_env(Name, Value), "The environment variable @var{Name}
+    is assigned @var{Value}.").
+
+set_env(Name, _Value) :-
+	( \+ atom(Name) ),
+	!,
+	throw(error(domain_error(atom,Name),set_env/2-1)).
+set_env(_Name, Value) :-
+	( \+ atom(Value) ),
+	!,
+	throw(error(domain_error(atom,Value),set_env/2-2)).
+set_env(Name, Value) :-
+	c_set_env(Name, Value).
+
+:- true pred del_env(+atm).
+
+:- comment(del_env(Name), "The environment variable @var{Name} is
+   removed.").
+
+del_env(Name) :-
+	( \+ atom(Name) ),
+	!,
+	throw(error(domain_error(atom,Name),del_env/1-1)).
+
+del_env(Name) :-
+	c_del_env(Name).
+
+:- true pred current_env(?atm, ?atm).
+
+:- comment(current_env(Name,Value), "If @var{Name} is an atom, then
+   unifies the environment variable @var{Name} with its value. Note
+   that this predicate can be used to enumerate all the environment
+   variables using backtracking.").
+
+
+:- push_prolog_flag(multi_arity_warnings,off).
+
+
+current_env(Name, _Value) :-
+	( \+ ( var(Name); atom(Name) ) ),
+	!,
+	throw(error(domain_error(var_or_atom,Name),current_env/2-1)).
+current_env(_Name, Value) :-
+	( \+ ( var(Value); atom(Value) ) ),
+	!,
+	throw(error(domain_error(var_or_atom,Value),current_env/2-2)).
+
+current_env(Name, Value) :-
+	atom(Name) -> c_get_env(Name,Value);
+	current_env(0, Name, Value).
+
+current_env(I, Name, Value) :-
+	c_current_env(I, Name2, Value2),
+	(
+	    Name=Name2, Value=Value2
+	;
+	    J is I + 1,
+	    current_env(J, Name, Value)
+	).
+
+:- pop_prolog_flag(multi_arity_warnings).
 
 
 :- comment(extract_paths(String, Paths), "Interpret @var{String} as the
@@ -223,7 +328,7 @@ cd(Dir) :- working_directory(_, Dir).
 
 :- comment(bug, "@pred{shell/n} commands have a bug in Windows: if the
    environment variable SHELL is instantiated to some Windows shell
-   implementation, then it is very possible that shell/@{1,2@} will not
+   implementation, then it is very possible that shell/{1,2} will not
    work, as it is always called with the -c flag to start the user
    command.  For example, COMMAND.COM @bf{might} need the flag /C -- but
    there is no way to know a priori which command line option is
@@ -278,39 +383,7 @@ system(Path) :- system(Path, _Status).
 :- true pred exec(+atm, -stream, -stream, -stream).
 
 exec(Command, StdIn, StdOut, StdErr):- 
-        exec(Command, [], StdIn, StdOut, StdErr, true, _, _).
-
-
-:- true pred exec(+Command, 
-                  +Arguments, 
-                  ?StdIn, 
-                  ?StdOut,
-                  ?StdErr,
-                  +Background,
-                  -PID,
-                  -ErrCode) : atm * list(atm) * 
-                              stream * stream * stream *
-                              atm * int * int
-
-# "@pred{exec/8} gives a finer control for launching external
-processes.  @var{Command} is the command to be executed and
-@var{Arguments} is a list of atoms to be passed as arguments to the
-command.  When called with free variables, @var{StdIn}, @var{StdOut},
-and @var{StdErr} are instantiated to streams connected to the standard
-output, input, and error of the created process. @var{Background}
-controls whether the caller waits for @var{Command} to finish, or if
-the process executing @var{Command} is completely detached (it can be
-waited for using @pred{wait/3}). @var{ErrCode} is the error code
-returned by the lower-level @tt{exec()} system call (this return code
-is system-dependent, but a non-zero value usually means that something
-has gone wrong).  If @var{Command} does not start by a slash,
-@pred{exec/8} uses the environment variable @tt{PATH} to search for
-it.  If @tt{PATH} is not set, @tt{/bin} and @tt{/usr/bin} are
-searched.".
-
-exec(Comm, Args, StdIn, StdOut, StdErr, Background, PID, ErrCode) :-
-     '$exec'(Comm, Args, StdIn, StdOut, StdErr, Background, PID, ErrCode).
-
+        '$exec'(Command, StdIn, StdOut, StdErr).
 
 :- comment(exec(Command, StdIn, StdOut), "Starts the process
 @var{Command} and returns the standart I/O streams of the process in
@@ -320,7 +393,7 @@ whichever the parent process had it connected to.").
 :- true pred exec(+atm, -stream, -stream).
 
 exec(Command, StdIn, StdOut):- 
-        exec(Command, StdIn, StdOut, []).
+        '$exec'(Command, StdIn, StdOut, []).
 
  %% :- comment(bug, "When reading from a exec'ed process, the 'end of
  %% file' condition (when the launched process finishes) somehow
@@ -328,54 +401,25 @@ exec(Command, StdIn, StdOut):-
  %% causing subsequent Ciao Prolog reads to return the 'end of file'
  %% condition.").
 
-
-:- true pred wait(+Pid, -RetCode, -Status) : int * int * int # "wait/3
-waits for the process numbered @var{Pid}.  If @var{PID} equals
--1, it will wait for any children process.  @var{RetCode} is usually
-the PID of the waited-for process, and -1 in case in case of error.
-@var{Status} is related to the exit value of the process in a
-system-dependent fashion.".
-
-
 :- comment(popen(Command, Mode, Stream), "Open a pipe to process
-@var{Command} in a new shell with a given @var{Mode} and return a
-communication @var{Stream} (as in UNIX @tt{popen(3)}). If @var{Mode}
-is @tt{read} the output from the process is sent to @var{Stream}. If
-@var{Mode} is @tt{write}, @tt{Stream} is sent as input to the
-process. @var{Stream} may be read from or written into using the
-ordinary stream I/O predicates. @var{Stream} must be closed explicitly
-using @pred{close/1}, i.e., it is not closed automatically when the
-process dies.  Note that @pred{popen/2} is defined in ***x as using
-@tt{/bin/sh}, which usually does not exist in Windows systems.  In
-this case, a @tt{sh} shell which comes with Windows is used.
+    @var{Command} in a new shell with a given @var{Mode} and return a
+    communication @var{Stream} (as in UNIX @tt{popen(3)}). If
+    @var{Mode} is @tt{read} the output from the process is sent to
+    @var{Stream}. If @var{Mode} is @tt{write}, @tt{Stream} is sent as
+    input to the process. @var{Stream} may be read from or written
+    into using the ordinary stream I/O predicates. @var{Stream} must
+    be closed explicitly using @pred{close/1}, i.e., it is not closed
+    automatically when the process dies.
 
 ").
 
 :- true pred popen(+atm, +popen_mode, -stream).
 
- %% popen(Command, Mode, S) :-
- %% 	nonvar(Mode),
- %% 	popen_mode(Mode),
- %% 	atom(Command), !,
- %% 	'$unix_popen'(Command, Mode, S0), !, S=S0.
-
-popen(Command, Mode, S):-
-        nonvar(Mode), 
-        popen_mode(Mode),
-        atom(Command), !,
-        (
-            get_os('Win32') ->
-            getenvstr('SHELL', WindowsShell),
-            atom_codes(Shell, WindowsShell)
-        ;
-            Shell = '/bin/sh'
-        ),
-        (
-            Mode = read ->
-            exec(Shell, ['-c', Command], [], S, [], true, _, _)
-        ;
-            exec(Shell, ['-c', Command], S, [], [], true, _, _)
-        ).
+popen(Command, Mode, S) :-
+	nonvar(Mode),
+	popen_mode(Mode),
+	atom(Command), !,
+	'$unix_popen'(Command, Mode, S0), !, S=S0.
 
 :- regtype popen_mode(M)
   # "@var{M} is 'read' or 'write'.".
@@ -565,8 +609,9 @@ chmod(Path, OldMode, NewMode) :-
 
 :- pred rename_file(+atm,+atm).
 
-:- comment(make_directory(DirName, Mode), 
-        "Creates the directory @var{DirName} with a given @var{Mode}.  This is, as usual, operated against the current umask value.").
+:- comment(make_directory(DirName, Mode), "Creates the directory
+        @var{DirName} with a given @var{Mode}.  This is, as usual,
+        operated against the current umask value.").
 
 :- pred make_directory(+atm, +int).
 
@@ -587,17 +632,17 @@ make_directory(D) :-
 % We are however delegating it to make_directory/2 and absolute_file_name/7
 % (called below).
 make_dirpath(Path, Mode) :-
-%	absolute_file_name(Path, '', '', '.', AbsolutePath, _, _),
-%	atom_codes(AbsolutePath, AbsPathCodes),
-         atom_codes(Path, PathCodes),
-         (          % If relative, transform it into absolute
-             PathCodes = "/"||_ ->
-             AbsPathCodes = PathCodes
-         ;
-             working_directory(CurrentDir, CurrentDir),
-             atom_codes(CurrentDir, CurrentDirCodes),
-             append(CurrentDirCodes, "/"||PathCodes, AbsPathCodes)
-         ),
+	absolute_file_name(Path, '', '', '.', AbsolutePath, _, _),
+	atom_codes(AbsolutePath, AbsPathCodes),
+%         atom_codes(Path, PathCodes),
+%         (          % If relative, transform it into absolute
+%             PathCodes = "/"||_ ->
+%             AbsPathCodes = PathCodes
+%         ;
+%             working_directory(CurrentDir, CurrentDir),
+%             atom_codes(CurrentDir, CurrentDirCodes),
+%             append(CurrentDirCodes, "/"||PathCodes, AbsPathCodes)
+%         ),
         make_abs_dir(AbsPathCodes, '', Mode).
 % 
 % Making the intermediate directories: instead of cd'ing to
@@ -671,7 +716,7 @@ decompose_aux([P|Ps], RestP, [P|RestQ]-TailQ):-
 make_dirpath(Path) :-
         make_dirpath(Path, 0o777) .
 
-:- pred cyg2win(CygWinPath, WindowsPath, SwapSlash) : 
+:- pred cyg2win(CygWinPath, WindowsPath, SpawSlash) : 
         string * var * atom => string * string * atom
 #  "Converts a path in the CygWin style to a Windows-style path,
     rewriting the driver part.  If @var{SwapSlash} is @tt{swap},
@@ -681,6 +726,7 @@ make_dirpath(Path) :-
 :- comment(bug,
    "If the arguments to cyg2win/3 are not strings, strange results
     appear, as a very mild type checking is performed.").
+
 
 cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':| Path],Swap) :- !,
 						             % New Drive notat.
@@ -711,26 +757,28 @@ do_swapslash([C|D],[C|ND]) :-
 
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+342,2004/04/24,20:30*39+'CEST'),
-"absolute_file_name screwed up make_dirpath/2.  Corrected (by
-reverting to a previous version).  (Manuel Carro)").
+:- comment(version(1*11+184,2004/02/11,18:35*28+'CET'), "Renamed
+   predicate environ/2 to current_env, set_environ/2 to set_env/2, and
+   added predicate del_env/2.  (Edison Mera)").
 
-:- comment(version(1*9+340,2004/04/22,16:22*25+'CEST'), "exec/3-4
-   should not wait until the process terminates.  (Jesus Correas
-   Fernandez)").
+:- comment(version(1*11+183,2004/02/11,18:34*05+'CET'), "Added
+   copy_file/2 predicate, that copies a file to other.  (Edison
+   Mera)").
 
-:- comment(version(1*9+338,2004/04/22,06:11*20+'CEST'), "Implemented
-wait/3 to wait for the end of processes.  (Manuel Carro)").
+:- comment(version(1*11+181,2004/02/09,15:39*00+'CET'), "Added
+   set_environ/2, and now environ/2 is only to read, not to write
+   environment variables.  (Edison Mera)").
 
-:- comment(version(1*9+337,2004/04/22,05:47*28+'CEST'), "popen/3
-reimplemented in Prolog based on exec/8.  This should be more
-portable.  (Manuel Carro)").
+:- comment(version(1*11+180,2004/02/08,15:54*56+'CET'), "Added
+   predicate environ/2, in the future must be used in replace of
+   getenvstr and setenvstr.  (Edison Mera)").
 
-:- comment(version(1*9+336,2004/04/22,05:21*27+'CEST'), "Implemented
-exec/8 to base other exec's and popen/3 on it (Manuel Carro)").
+:- comment(version(1*11+179,2004/02/07,23:17*36+'CET'), "getenvstr and
+   setenvstr has been modified to handle bad domains in arguments
+   using exceptions.  (Edison Mera)").
 
 :- comment(version(1*9+331,2004/03/26,17:39*47+'CET'), "Errors in
-   exec(Manuel Carro) caught; processes killed in this case.  This affects shell/n
+   exec() caught; processes killed in this case.  This affects shell/n
    and exec/{3,4} (MCL)").
 
 :- comment(version(1*9+326,2004/03/16,16:18*08+'CET'), "Corrected
@@ -744,7 +792,7 @@ exec/8 to base other exec's and popen/3 on it (Manuel Carro)").
         added (Jesus needed it).  (MCL)").
 
 :- comment(version(1*7+181,2002/01/25,20:14*06+'Hora estándar
-   romance'), "cyg2win/3 moved here.  (Manuel Carro)").
+   romance'), "cyg2win/3 moved here.  ()").
 
 :- comment(version(1*7+169,2002/01/03,17:57*18+'CET'), "Changed
    make_dirpath to make it completely deterministic.  (MCL)").

@@ -1,50 +1,114 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Printing the contents of a bytecode file</TITLE>
+<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC729" HREF="ciao_toc.html#TOC729">Printing the contents of a bytecode file</A></H1>
+<H1><A NAME="SEC704" HREF="ciao_toc.html#TOC704">Crossed-references of a program</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.5#2 (1999/11/11, 19:20:50 MET)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-This simple program takes as an argument a bytecode (.po) file and prints out in symbolic form the information contained in the file. It uses compiler and engine builtins to do so, so that it keeps track with changes in bytecode format. 
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
+<P>
+<STRONG>Version of last change:</STRONG> 1.11#135 (2003/12/30, 23:50:8 CET)
+
+
+<P>
+The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+
+
+<P>
+The libraries involved are as follows: 
 
 <UL>
-<LI><A HREF="ciao_180.html#SEC730">Usage (viewpo)</A>
+<LI>
+
+<A NAME="IDX8080"></A>
+<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
+<LI>
+
+<A NAME="IDX8081"></A>
+<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
+<LI>
+
+<A NAME="IDX8082"></A>
+<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
+<LI>
+
+<A NAME="IDX8083"></A>
+<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
+<LI>
+
+<A NAME="IDX8084"></A>
+<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
 </UL>
 
+<P>
+The first two are intended to be used by loading in 
+<A NAME="IDX8085"></A>
+<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
 
 
-<H2><A NAME="SEC730" HREF="ciao_toc.html#TOC730">Usage (viewpo)</A></H2>
-
+<P>
+The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
 
 <PRE>
-   
-	viewpo &#60;file1&#62;.po
-	   : print .po contents in symbolic form
+[ciao/etc]&#62; ciaosh
+Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
+?- use_module(xmrefs).
 
-	viewpo -h
-	   : print this information
+yes
+?- set_flag(X).
+
+X = 3 ? 
+
+yes
+?- set_files([xfrefs, xmrefs,
+              library(xrefs),
+              library('xrefs/mrefs'),
+              library('xrefs/pxrefs'),
+              library('xrefs/xrefs2graph'),
+              library('xrefs/xrefsbuild'),
+              library('xrefs/xrefsread')
+	     ]).
+
+yes
+?- xmrefs.
 
 </PRE>
 
+<P>
+so that it is displayed by daVinci as: 
+
+
+<P>
+<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
+
+
+<P>
+The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
+
+
+<P>
+<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
+
+
+<P>
+For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
+
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_179.html">previous</A>, <A HREF="ciao_181.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

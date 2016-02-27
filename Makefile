@@ -9,9 +9,11 @@
 # make justinstall      just install the whole Ciao system (must have been
 #                       compiled before)
 #
-# make engine           compile the Ciao engine for this particular arch.
+# make installeng	Compile and Install (or only
+# make engine           compile) the Ciao engine for this particular arch.
 #			This is the only make action needed for using Ciao
 #                       executables in several architectures at once.
+# 
 # make cleanbackups     delete backup files
 # make distclean        delete all files which can be automatically generated
 # make engclean		delete all engines created
@@ -26,6 +28,7 @@
 # 
 # make installdoc       a subset of 'make install', which only installs the 
 #                       documentation. Useful after 'make doc'. 
+
 
 #------- You should not change ANYTHING in this file -------------
 #------- All customizable options are in the file SETTINGS -------
@@ -59,6 +62,7 @@ all:
 	@echo "*** Ciao compilation completed"
 	@echo "*** ========================================================="
 
+
 allwin32: 
 	@echo "*** ========================================================="
 	@echo "*** Compiling ciao for Windows 32"
@@ -87,16 +91,15 @@ engine: doengine$(ALT)
 
 dowindowsbat:
 	$(SETLOCALCIAO) $(CIAOC) Win32/setup_bat
-	$(SETLOCALCIAO) Win32/setup_bat \"$(OBJDIR)/ciaoengine.exe\"
+	Win32/setup_bat \"$(OBJDIR)/ciaoengine.exe\"
 
-doengine: bin/$(CIAOARCH)$(CIAODEBUG) include/$(CIAOARCH)$(CIAODEBUG) $(DEFAULTYPE)eng exe_header # dowindowsbat
-
+doengine: bin/$(CIAOARCH)$(CIAODEBUG) include/$(CIAOARCH)$(CIAODEBUG) $(DEFAULTYPE)eng exe_header
 
 doenginewin32: copysrcfiles doengine dowindowsbat
 	rm -f $(SRC)/Win32/bin/$(ENGINENAME)
 	cp $(OBJDIR)/$(ENGINENAME) $(SRC)/Win32/bin
 
-dyneng: commoneng stateng libciao
+dyneng: commoneng stateng # libciao
 	(umask 002; cd $(OBJDIR) &&  \
 	 $(MAKE) configure.h && \
 	 $(MAKE) $(MFLAGS) $(ENGINENAME) CURRLIBS='$(LIBS)')
@@ -177,7 +180,7 @@ libraries:
 	cd contrib && $(MAKE) all
 
 copysrcfiles: createsrcdir
-	cd engine && for File in *.[ch] Makefile ; \
+	cd engine && for File in *.[ch] *.pl Makefile ; \
 	do if [ ! -f $(OBJDIR)/$${File} -o $${File} -nt $(OBJDIR)/$${File} ]; \
              then rm -f $(OBJDIR)/$${File} ; cp $${File} $(OBJDIR)/$${File} ; \
 	   fi ; \
@@ -190,6 +193,7 @@ bin/$(CIAOARCH)$(CIAODEBUG):
 	$(MAKE) createsrcdir
 	cd $(OBJDIR) &&	                   \
 	   ln -s ../../engine/*.[ch] . &&   \
+	   ln -s ../../engine/*.pl . &&   \
 	   ln -s ../../engine/Makefile . && \
 	   rm -f configure.h
 
@@ -325,7 +329,7 @@ test:
 
 
 clean: engclean
-	cd ciaoc &&          $(MAKE) clean
+#	cd ciaoc &&          $(MAKE) clean
 	cd lib &&            $(MAKE) clean
 	cd shell &&          $(MAKE) clean
 #	cd emacs &&          $(MAKE) clean
@@ -345,7 +349,7 @@ tar:
 
 
 
-totalclean: cleanbackups distclean
+totalclean: cleanbackups cleangmon distclean
 
 engrealclean engclean:
 	@echo "*** ---------------------------------------------------------"
@@ -357,6 +361,9 @@ engrealclean engclean:
 cleanbackups:
 	(cd $(SRC) && find . -name '*~' -exec /bin/rm {} \;)
 	(cd $(SRC) && find $(SRC) -name '#*' -exec /bin/rm {} \;)
+
+cleangmon:
+	(cd $(SRC) && find . -name gmon.out -exec /bin/rm {} \;)
 
 cleanasrs:
 	(cd $(SRC) && find . -name '*.asr' -exec /bin/rm {} \;)
@@ -372,17 +379,15 @@ distclean: engclean
 	cd Win32 && $(MAKE) distclean
 #	cd tests && $(MAKE) distclean
 	cd examples && $(MAKE) distclean
-	cd version && $(MAKE) distclean
-
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/doc $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/lib $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/library $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/contrib $(MAKE) distclean
+	rm -rf TAGS *.po *.itf *.asr
 
 cflow:
 	cd ${OBJDIR} && cflow -i -D${CIAOARCH} *.c > ${SRC}/etc/cflow.out
 
 cxref:
 	cd $(OBJDIR) && cxref -xref-function -D$(ARCHNAME) -D$(OSNAME) $(THREAD_FLAG) $(FOREIGN_FILES_FLAG) *.[ch] -O$(SRC)/etc/cxref
-
 

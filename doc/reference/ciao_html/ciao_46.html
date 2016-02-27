@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Definite clause grammars (expansion)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC225" HREF="ciao_toc.html#TOC225">Definite clause grammars (expansion)</A></H1>
+<H1><A NAME="SEC199" HREF="ciao_toc.html#TOC199">Definite clause grammars (expansion)</A></H1>
 <P>
-<A NAME="IDX3047"></A>
+<A NAME="IDX2816"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#302 (2004/2/16, 18:48:1 CET)
+<STRONG>Version:</STRONG> 1.11#87 (2003/12/21, 2:9:27 CET)
 
 
 <P>
@@ -29,13 +29,13 @@ This module implements the Definite clause grammars (expansion).
 
 
 <UL>
-<LI><A HREF="ciao_46.html#SEC226">Usage and interface (dcg_expansion)</A>
-<LI><A HREF="ciao_46.html#SEC227">Documentation on exports (dcg_expansion)</A>
+<LI><A HREF="ciao_46.html#SEC200">Usage and interface (dcg_expansion)</A>
+<LI><A HREF="ciao_46.html#SEC201">Documentation on exports (dcg_expansion)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC226" HREF="ciao_toc.html#TOC226">Usage and interface (<CODE>dcg_expansion</CODE>)</A></H2>
+<H2><A NAME="SEC200" HREF="ciao_toc.html#TOC200">Usage and interface (<CODE>dcg_expansion</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,11 +52,11 @@ This module implements the Definite clause grammars (expansion).
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3048"></A>
+<A NAME="IDX2817"></A>
 <CODE>phrase/2</CODE>, 
-<A NAME="IDX3049"></A>
+<A NAME="IDX2818"></A>
 <CODE>phrase/3</CODE>, 
-<A NAME="IDX3050"></A>
+<A NAME="IDX2819"></A>
 <CODE>dcg_translation/2</CODE>.
 
 </UL>
@@ -68,9 +68,9 @@ This module implements the Definite clause grammars (expansion).
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3051"></A>
+<A NAME="IDX2820"></A>
 <CODE>terms</CODE>, 
-<A NAME="IDX3052"></A>
+<A NAME="IDX2821"></A>
 <CODE>assertions/doc_props</CODE>.
 
 </UL>
@@ -81,13 +81,13 @@ This module implements the Definite clause grammars (expansion).
 
 
 
-<H2><A NAME="SEC227" HREF="ciao_toc.html#TOC227">Documentation on exports (<CODE>dcg_expansion</CODE>)</A></H2>
+<H2><A NAME="SEC201" HREF="ciao_toc.html#TOC201">Documentation on exports (<CODE>dcg_expansion</CODE>)</A></H2>
 <P>
-<A NAME="IDX3053"></A>
-<A NAME="IDX3054"></A>
+<A NAME="IDX2822"></A>
+<A NAME="IDX2823"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>phrase/2:</B>
-<DD><A NAME="IDX3055"></A>
+<DD><A NAME="IDX2824"></A>
 
 
 <P>
@@ -105,11 +105,11 @@ Like <CODE>phrase(Phrase,List,[])</CODE>.
 </DL>
 
 <P>
-<A NAME="IDX3056"></A>
-<A NAME="IDX3057"></A>
+<A NAME="IDX2825"></A>
+<A NAME="IDX2826"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>phrase/3:</B>
-<DD><A NAME="IDX3058"></A>
+<DD><A NAME="IDX2827"></A>
 
 
 <P>
@@ -117,25 +117,29 @@ Like <CODE>phrase(Phrase,List,[])</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>phrase(+Phrase, ?List, ?Remainder)</CODE>
+<STRONG>Usage:</STRONG> <CODE>phrase(Phrase, List, Remainder)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> The list <CODE>List</CODE> is a phrase of type <CODE>Phrase</CODE> (according to the current grammar rules), where <CODE>Phrase</CODE> is either a non-terminal or more generally a grammar rule body. <CODE>Remainder</CODE> is what remains of the list after a phrase has been found.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Phrase</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
 <LI><EM>The following properties should hold globally:</EM>
 
-Documentation is still incomplete: <CODE>phrase(+Phrase,?List,?Remainder)</CODE> may not conform the functionality documented.
+Documentation is still incomplete: <CODE>phrase(Phrase,List,Remainder)</CODE> may not conform the functionality documented.
  (<CODE>doc_props:doc_incomplete/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3059"></A>
-<A NAME="IDX3060"></A>
+<A NAME="IDX2828"></A>
+<A NAME="IDX2829"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dcg_translation/2:</B>
-<DD><A NAME="IDX3061"></A>
+<DD><A NAME="IDX2830"></A>
 
 
 <P>
@@ -145,6 +149,6 @@ Performs the code expansion of source clauses that use DCGs.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

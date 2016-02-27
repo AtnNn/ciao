@@ -86,7 +86,7 @@ read_to_close1(C, [C|L]) :-
 %---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*9+216,2003/12/21,02:30*59+'CET'), "Added comment
+:- comment(version(1*11+93,2003/12/21,02:30*33+'CET'), "Added comment
    author and module.  (Edison Mera)").
 
 :- comment(version(1*5+55,2000/02/11,21:19*43+'CET'), "Changed

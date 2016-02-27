@@ -129,15 +129,10 @@ stop_socket_interface :-
 	assertz_fact(prolog_response(0,'$terminate')),
 	join_socket_interface,
 	retract_fact(java_threads(PjIn,PjOut,JpIn,JpOut,PlServer)),
-	java_debug('Stopping pj_socket_reader:'(PjIn)),
 	eng_release(PjIn),
-	java_debug('Stopping pj_socket_writer:'(PjOut)),
 	eng_release(PjOut),
-	java_debug('Stopping jp_socket_reader:'(JpIn)),
 	eng_release(JpIn),
-	java_debug('Stopping jp_socket_writer:'(JpOut)),
 	eng_release(JpOut),
-	java_debug('Stopping shell_s:'(PlServer)),
 	eng_release(PlServer),
 %        retract_fact(java_stream(DataStream,EventStream,_,StdStream)),
 %        close(DataStream),
@@ -159,22 +154,14 @@ stop_socket_interface :-
 %% -----------------------------------------------------------------------
 join_socket_interface:-
 	java_threads(PjIn,PjOut,JpIn,JpOut,PlServer),
-	java_debug('Waiting pj_socket_reader:'(PjIn)),
 	eng_wait(PjIn),
-	java_debug('Waiting pj_socket_writer:'(PjOut)),
 	eng_wait(PjOut),
-	java_debug('Waiting jp_socket_reader:'(JpIn)),
 	eng_wait(JpIn),
-	java_debug('Waiting jp_socket_writer:'(JpOut)),
 	eng_wait(JpOut),
-	java_debug('Waiting shell_s:'(PlServer)),
 	eng_wait(PlServer),
 %	!,
-	java_debug('Retracting java_stream'(DataStream,EventStream,_,_)),
 	retract_fact_nb(java_stream(DataStream,EventStream,_,_)),
-	java_debug('Closing'(DataStream)),
         close(DataStream),
-	java_debug('Closing'(EventStream)),
         close(EventStream).
 
 join_socket_interface.
@@ -307,7 +294,7 @@ bind_socket_interface(Port):-
 
 %% -----------------------------------------------------------------------
 :- pred java_server(+Port)
-	:: int 
+	:: int
         # "Given a @var{Port}, waits for a connection request from a
 	  Java client and synchronizes the sockets to the java
 	  process.".

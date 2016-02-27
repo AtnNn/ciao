@@ -97,7 +97,6 @@ extern TAGGED atom_compiled;
 extern TAGGED atom_interpreted;
 extern TAGGED atom_builtin;
 extern TAGGED atom_true;
-extern TAGGED atom_false;
 extern TAGGED atom_retry_hook;
 extern TAGGED atom_unprofiled;
 extern TAGGED atom_profiled;
@@ -213,11 +212,5 @@ extern BOOL nd_predicate_property PROTO((struct worker *w));
 extern BOOL nd_current_stream PROTO((struct worker *w));
 extern BOOL nd_atom_concat PROTO((struct worker *w));
 
-
-
-struct definition *define_c_mod_predicate(char *module, 
-                                          char  *pname, 
-                                          BOOL (*procedure)(), 
-                                          int arity);
-/* JFMC */
+struct definition *define_c_mod_predicate(char *module, char  *pname, int arity, BOOL (*procedure)());
 void undefine_c_mod_predicate(char *module, char *pname, int arity); 

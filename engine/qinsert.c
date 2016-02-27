@@ -128,7 +128,7 @@ static TAGGED qlgetlarge(Arg,f)
                                        i, Atom_Buffer_Length<<=1);
   }
  out:
-  if (bn_from_string(ws,w->global_top,Heap_End)) {
+  if (bn_from_string(ws,w->global_top,Heap_End,GetSmall(current_radix))) {
     SERIOUS_FAULT("$qload: miscalculated heap usage");
   } else  {
     TAGGED *h = w->global_top;
@@ -196,7 +196,8 @@ void qlgetbytecode(Arg,f,insn_p,length)
       } else {
         bn_from_string(ws,
                        (Bignum *)insn_p,
-                       (Bignum *)((char *)insn_p+length));
+                       (Bignum *)((char *)insn_p+length),
+		       GetSmall(current_radix));
         insn_p += LargeArity(*wp)<<1;
       }
       break;

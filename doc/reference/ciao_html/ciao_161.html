@@ -1,151 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
+<TITLE>The Ciao Prolog System               - linda (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC675" HREF="ciao_toc.html#TOC675">Calling emacs from Prolog</A></H1>
+<H1><A NAME="SEC651" HREF="ciao_toc.html#TOC651">linda (library)</A></H1>
 <P>
-<A NAME="IDX7634"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> The CLIP Group.
+<A NAME="IDX7607"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 0.9#66 (1999/4/29, 12:28:0 MEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#234 (2003/12/22, 18:14:10 CET)
-
-
-<P>
-This library provides a 
-<A NAME="IDX7635"></A>
-<A NAME="IDX7636"></A>
-<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
-<A NAME="IDX7637"></A>
-emacs mode, which is used to develop programs from within the 
-<A NAME="IDX7638"></A>
-<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
-<A NAME="IDX7639"></A>
-<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
-<A NAME="IDX7640"></A>
-<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
+This is a SICStus-like linda package. Note that this is essentially quite obsolete, and provided mostly in case it is needed for compatibility, since Ciao now supports all Linda functionality (and more) through the concurrent fact database.
 
 
 
 <UL>
-
-<LI>Visit a file, which can then be edited.
-
-<LI>Execute arbitrary
-
-<A NAME="IDX7641"></A>
-<A NAME="IDX7642"></A>
-<EM>emacs lisp</EM> code, sent from Prolog. 
-
-</UL>
-
-<P>
-In order for this library to work correctly, the following is needed: 
-
-
-
-<UL>
-
-<LI>You should be running the
-
-<A NAME="IDX7643"></A>
-<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
-
-<LI>This
-
-<A NAME="IDX7644"></A>
-<CODE>emacs</CODE> should be running the 
-<A NAME="IDX7645"></A>
-<A NAME="IDX7646"></A>
-<EM>emacs server</EM>. This can be done by including the following line in your 
-<A NAME="IDX7647"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<PRE>
-;; Start a server that emacsclient can connect to.
-(server-start)
-</PRE>
-
-Or typing <CODE>M-x server-start</CODE> within 
-<A NAME="IDX7648"></A>
-<CODE>emacs</CODE>. 
-
-</UL>
-
-<P>
-This suffices for using 
-<A NAME="IDX7649"></A>
-<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
-<A NAME="IDX7650"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<DL COMPACT>
-
-<DT><CODE>(setq enable-local-eval t)</CODE>
-<DD>
-Allows executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval nil)</CODE>
-<DD>
-Does not allow executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
-<DD>
-Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
-
-</DL>
-
-<P>
-<STRONG>Examples:</STRONG> 
-
-
-<P>
-Assuming that a <CODE>.pl</CODE> file loads this library, then: 
-
-
-<DL COMPACT>
-
-<DT><CODE>..., emacs_edit('foo'), ...</CODE>
-<DD>
-Opens file <CODE>foo</CODE> for editing in 
-<A NAME="IDX7651"></A>
-<CODE>emacs</CODE>. 
-
-<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
-<DD>
-Starts execution of a Ciao top-level within 
-<A NAME="IDX7652"></A>
-<CODE>emacs</CODE>. 
-
-</DL>
-
-
-<UL>
-<LI><A HREF="ciao_161.html#SEC676">Usage and interface (emacs)</A>
-<LI><A HREF="ciao_161.html#SEC677">Documentation on exports (emacs)</A>
+<LI><A HREF="ciao_161.html#SEC652">Usage and interface (linda)</A>
+<LI><A HREF="ciao_161.html#SEC653">Documentation on exports (linda)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC676" HREF="ciao_toc.html#TOC676">Usage and interface (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC652" HREF="ciao_toc.html#TOC652">Usage and interface (<CODE>linda</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -153,7 +39,7 @@ Starts execution of a Ciao top-level within
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(emacs)).</CODE>
+<CODE>:- use_module(library(linda)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -162,19 +48,36 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7653"></A>
-<CODE>emacs_edit/1</CODE>, 
-<A NAME="IDX7654"></A>
-<CODE>emacs_edit_nowait/1</CODE>, 
-<A NAME="IDX7655"></A>
-<CODE>emacs_eval/1</CODE>, 
-<A NAME="IDX7656"></A>
-<CODE>emacs_eval_nowait/1</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7657"></A>
-<CODE>elisp_string/1</CODE>.
+<A NAME="IDX7608"></A>
+<CODE>linda_client/1</CODE>, 
+<A NAME="IDX7609"></A>
+<CODE>close_client/0</CODE>, 
+<A NAME="IDX7610"></A>
+<CODE>in/1</CODE>, 
+<A NAME="IDX7611"></A>
+<CODE>in/2</CODE>, 
+<A NAME="IDX7612"></A>
+<CODE>in_noblock/1</CODE>, 
+<A NAME="IDX7613"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX7614"></A>
+<CODE>rd/1</CODE>, 
+<A NAME="IDX7615"></A>
+<CODE>rd/2</CODE>, 
+<A NAME="IDX7616"></A>
+<CODE>rd_noblock/1</CODE>, 
+<A NAME="IDX7617"></A>
+<CODE>rd_findall/3</CODE>, 
+<A NAME="IDX7618"></A>
+<CODE>linda_timeout/2</CODE>, 
+<A NAME="IDX7619"></A>
+<CODE>halt_server/0</CODE>, 
+<A NAME="IDX7620"></A>
+<CODE>open_client/2</CODE>, 
+<A NAME="IDX7621"></A>
+<CODE>in_stream/2</CODE>, 
+<A NAME="IDX7622"></A>
+<CODE>out_stream/2</CODE>.
 
 </UL>
 
@@ -185,14 +88,12 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7658"></A>
-<CODE>terms_check</CODE>, 
-<A NAME="IDX7659"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7660"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX7661"></A>
-<CODE>system</CODE>.
+<A NAME="IDX7623"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7624"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX7625"></A>
+<CODE>sockets/sockets</CODE>.
 
 </UL>
 
@@ -202,104 +103,218 @@ Starts execution of a Ciao top-level within
 
 
 
-<H2><A NAME="SEC677" HREF="ciao_toc.html#TOC677">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC653" HREF="ciao_toc.html#TOC653">Documentation on exports (<CODE>linda</CODE>)</A></H2>
+<P>
+<A NAME="IDX7626"></A>
+<A NAME="IDX7627"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>linda_client/1:</B>
+<DD><A NAME="IDX7628"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7629"></A>
+<A NAME="IDX7630"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_client/0:</B>
+<DD><A NAME="IDX7631"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7632"></A>
+<A NAME="IDX7633"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in/1:</B>
+<DD><A NAME="IDX7634"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7635"></A>
+<A NAME="IDX7636"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in/2:</B>
+<DD><A NAME="IDX7637"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7638"></A>
+<A NAME="IDX7639"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in_noblock/1:</B>
+<DD><A NAME="IDX7640"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7641"></A>
+<A NAME="IDX7642"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
+<DD><A NAME="IDX7643"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7644"></A>
+<A NAME="IDX7645"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd/1:</B>
+<DD><A NAME="IDX7646"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7647"></A>
+<A NAME="IDX7648"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd/2:</B>
+<DD><A NAME="IDX7649"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7650"></A>
+<A NAME="IDX7651"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd_noblock/1:</B>
+<DD><A NAME="IDX7652"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7653"></A>
+<A NAME="IDX7654"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd_findall/3:</B>
+<DD><A NAME="IDX7655"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7656"></A>
+<A NAME="IDX7657"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>linda_timeout/2:</B>
+<DD><A NAME="IDX7658"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7659"></A>
+<A NAME="IDX7660"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>halt_server/0:</B>
+<DD><A NAME="IDX7661"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
 <P>
 <A NAME="IDX7662"></A>
 <A NAME="IDX7663"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
+<DT><span class="define">PREDICATE:</span> <B>open_client/2:</B>
 <DD><A NAME="IDX7664"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
 
+</DL>
+
+<P>
 <A NAME="IDX7665"></A>
-<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
-</UL>
-
-</DL>
-
-<P>
 <A NAME="IDX7666"></A>
-<A NAME="IDX7667"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
-<DD><A NAME="IDX7668"></A>
+<DT><span class="define">PREDICATE:</span> <B>in_stream/2:</B>
+<DD><A NAME="IDX7667"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
 
+</DL>
+
+<P>
+<A NAME="IDX7668"></A>
 <A NAME="IDX7669"></A>
-<CODE>emacs</CODE> and continues without waiting for editing to finish. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7670"></A>
-<A NAME="IDX7671"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
-<DD><A NAME="IDX7672"></A>
+<DT><span class="define">PREDICATE:</span> <B>out_stream/2:</B>
+<DD><A NAME="IDX7670"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7673"></A>
-<A NAME="IDX7674"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
-<DD><A NAME="IDX7675"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7676"></A>
-<A NAME="IDX7677"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
-<DD><A NAME="IDX7678"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
-
-<A NAME="IDX7679"></A>
-<CODE>emacs</CODE> lisp code. 
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

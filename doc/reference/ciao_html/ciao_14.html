@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The module system</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC122" HREF="ciao_toc.html#TOC122">The module system</A></H1>
+<H1><A NAME="SEC96" HREF="ciao_toc.html#TOC96">The module system</A></H1>
 <P>
-<A NAME="IDX1151"></A>
+<A NAME="IDX872"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
@@ -33,43 +33,43 @@ Modularity is a basic notion in a modern computer language. Modules allow dividi
 
 <P>
 The predicates visible in a module are the predicates defined in that module, plus the predicates imported from other modules. Only predicates exported by a module can be imported from other modules. The default module of a given predicate name is the local one if the predicate is defined locally, else the last module from which the predicate is imported, having explicit imports priority (that is, a predicate imported by an <CODE>use_module/2</CODE> declaration is always preferred above a predicate imported by an <CODE>use_module/1</CODE> declaration). To refer to a predicate from a module which is not the default for that predicate the name has to be module 
-<A NAME="IDX1152"></A>
-<A NAME="IDX1153"></A>
+<A NAME="IDX873"></A>
+<A NAME="IDX874"></A>
 qualified. A module qualified predicate name has the form <CODE>Module</CODE>:<CODE>Predicate</CODE> as in the call <CODE>debugger:debug_module(M)</CODE>. Note that this does not allow having access to predicates not imported, nor defining clauses of other modules. 
 
 
 <P>
 All predicates defined in files with no module declaration belong to a special module called 
-<A NAME="IDX1154"></A>
-<A NAME="IDX1155"></A>
+<A NAME="IDX875"></A>
+<A NAME="IDX876"></A>
 <CODE>user</CODE>, and all are implicitly exported. This allows dividing programs in several files without being aware of the module system at all. Note that this feature is only supported for compatibility reasons, being its use discouraged. Many attractive compilation features of Ciao cannot be performed in <CODE>user</CODE> modules. 
 
 
 <P>
 The case of multifile predicates (defined with the declaration 
-<A NAME="IDX1156"></A>
+<A NAME="IDX877"></A>
 <CODE>multifile/1</CODE>) is also special. Multifile predicates can be defined by clauses distributed in several modules, and all modules which define a predicate as multifile can use that predicate. The name space of multifile predicates is independent, as if they belonged to special module <CODE>multifile</CODE>. 
 
 
 <P>
 Every <CODE>user</CODE> or module file imports implicitly a number of modules called 
-<A NAME="IDX1157"></A>
+<A NAME="IDX878"></A>
 builtin modules. They are imported before all other importations of the module, allowing thus redefining any of their predicates (with the exception of 
-<A NAME="IDX1158"></A>
+<A NAME="IDX879"></A>
 <CODE>true/0</CODE>) by defining local versions or importing them from other modules. Importing explicitly from a builtin module, however, disables the implicit importation of the rest (this feature is used by package 
-<A NAME="IDX1159"></A>
+<A NAME="IDX880"></A>
 <CODE>library(pure)</CODE> to define pure prolog code).
 
 
 
 <UL>
-<LI><A HREF="ciao_14.html#SEC123">Usage and interface (modules)</A>
-<LI><A HREF="ciao_14.html#SEC124">Documentation on internals (modules)</A>
+<LI><A HREF="ciao_14.html#SEC97">Usage and interface (modules)</A>
+<LI><A HREF="ciao_14.html#SEC98">Documentation on internals (modules)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC123" HREF="ciao_toc.html#TOC123">Usage and interface (<CODE>modules</CODE>)</A></H2>
+<H2><A NAME="SEC97" HREF="ciao_toc.html#TOC97">Usage and interface (<CODE>modules</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -84,13 +84,13 @@ Modules are an intrinsic feature of Ciao, so nothing special has to be done to u
 
 
 
-<H2><A NAME="SEC124" HREF="ciao_toc.html#TOC124">Documentation on internals (<CODE>modules</CODE>)</A></H2>
+<H2><A NAME="SEC98" HREF="ciao_toc.html#TOC98">Documentation on internals (<CODE>modules</CODE>)</A></H2>
 <P>
-<A NAME="IDX1160"></A>
-<A NAME="IDX1161"></A>
+<A NAME="IDX881"></A>
+<A NAME="IDX882"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>module/3:</B>
-<DD><A NAME="IDX1162"></A>
+<DD><A NAME="IDX883"></A>
 
 
 <P>
@@ -99,17 +99,17 @@ Modules are an intrinsic feature of Ciao, so nothing special has to be done to u
 <UL>
 <LI><EM>Description:</EM> Declares a module of name <CODE>Name</CODE> which exports the predicates in <CODE>Exports</CODE>, and uses the packages in <CODE>Packages</CODE>. <CODE>Name</CODE> must match with the name of the file where the module resides, without extension. For each source in <CODE>Packages</CODE>, a
 
-<A NAME="IDX1163"></A>
+<A NAME="IDX884"></A>
 package file is included, as if by an 
-<A NAME="IDX1164"></A>
+<A NAME="IDX885"></A>
 <CODE>include/1</CODE> declaration. If the source is specified with a 
-<A NAME="IDX1165"></A>
+<A NAME="IDX886"></A>
 path alias, this is the file included, if it is an atom, the library paths are searched. Package files provide functionalities by declaring imports from other modules, defining operators, new declarations, translations of code, etc. 
 
 This directive must appear the first in the file. 
 
 Also, if the compiler finds an unknown declaration as the first term in a file, the name of the declaration is regarded as a package library to be included, and the arguments of the declaration (if present) are interpreted like the arguments of 
-<A NAME="IDX1166"></A>
+<A NAME="IDX887"></A>
 <CODE>module/3</CODE>. 
 <LI><EM>The following properties hold at call time:</EM>
 
@@ -126,11 +126,11 @@ Also, if the compiler finds an unknown declaration as the first term in a file, 
 </DL>
 
 <P>
-<A NAME="IDX1167"></A>
-<A NAME="IDX1168"></A>
+<A NAME="IDX888"></A>
+<A NAME="IDX889"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>module/2:</B>
-<DD><A NAME="IDX1169"></A>
+<DD><A NAME="IDX890"></A>
 
 
 <P>
@@ -139,7 +139,7 @@ Also, if the compiler finds an unknown declaration as the first term in a file, 
 <UL>
 <LI><EM>Description:</EM> Same as directive
 
-<A NAME="IDX1170"></A>
+<A NAME="IDX891"></A>
 <CODE>module/3</CODE>, with an implicit package <CODE>default</CODE>. 
 <LI><EM>The following properties hold at call time:</EM>
 
@@ -153,11 +153,11 @@ Also, if the compiler finds an unknown declaration as the first term in a file, 
 </DL>
 
 <P>
-<A NAME="IDX1171"></A>
-<A NAME="IDX1172"></A>
+<A NAME="IDX892"></A>
+<A NAME="IDX893"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>export/1:</B>
-<DD><A NAME="IDX1173"></A>
+<DD><A NAME="IDX894"></A>
 
 
 <P>
@@ -194,11 +194,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1174"></A>
-<A NAME="IDX1175"></A>
+<A NAME="IDX895"></A>
+<A NAME="IDX896"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>use_module/2:</B>
-<DD><A NAME="IDX1176"></A>
+<DD><A NAME="IDX897"></A>
 
 
 <P>
@@ -219,11 +219,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1177"></A>
-<A NAME="IDX1178"></A>
+<A NAME="IDX898"></A>
+<A NAME="IDX899"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>use_module/1:</B>
-<DD><A NAME="IDX1179"></A>
+<DD><A NAME="IDX900"></A>
 
 
 <P>
@@ -241,11 +241,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1180"></A>
-<A NAME="IDX1181"></A>
+<A NAME="IDX901"></A>
+<A NAME="IDX902"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>import/2:</B>
-<DD><A NAME="IDX1182"></A>
+<DD><A NAME="IDX903"></A>
 
 
 <P>
@@ -267,11 +267,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1183"></A>
-<A NAME="IDX1184"></A>
+<A NAME="IDX904"></A>
+<A NAME="IDX905"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>reexport/2:</B>
-<DD><A NAME="IDX1185"></A>
+<DD><A NAME="IDX906"></A>
 
 
 <P>
@@ -292,11 +292,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1186"></A>
-<A NAME="IDX1187"></A>
+<A NAME="IDX907"></A>
+<A NAME="IDX908"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>reexport/1:</B>
-<DD><A NAME="IDX1188"></A>
+<DD><A NAME="IDX909"></A>
 
 
 <P>
@@ -314,11 +314,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1189"></A>
-<A NAME="IDX1190"></A>
+<A NAME="IDX910"></A>
+<A NAME="IDX911"></A>
 <DL>
 <DT><span class="define">DECLARATION:</span> <B>meta_predicate/1:</B>
-<DD><A NAME="IDX1191"></A>
+<DD><A NAME="IDX912"></A>
 
 
 <P>
@@ -336,11 +336,11 @@ predname(P/A) :-
 </DL>
 
 <P>
-<A NAME="IDX1192"></A>
-<A NAME="IDX1193"></A>
+<A NAME="IDX913"></A>
+<A NAME="IDX914"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>modulename/1:</B>
-<DD><A NAME="IDX1194"></A>
+<DD><A NAME="IDX915"></A>
 
 
 <P>
@@ -358,11 +358,11 @@ A module name is an atom, not containing characters `:' or `$'. Also, <CODE>user
 </DL>
 
 <P>
-<A NAME="IDX1195"></A>
-<A NAME="IDX1196"></A>
+<A NAME="IDX916"></A>
+<A NAME="IDX917"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>metaspec/1:</B>
-<DD><A NAME="IDX1197"></A>
+<DD><A NAME="IDX918"></A>
 
 
 <P>
@@ -390,7 +390,7 @@ This argument should be instantiated to a predicate name, as Functor/Arity.
 <DT><CODE>pred(<EM>N</EM>)</CODE>
 <DD>
 This argument should be instantiated to a predicate construct to be called by means of a <CODE>call/<EM>N</EM></CODE> predicate call (see 
-<A NAME="IDX1198"></A>
+<A NAME="IDX919"></A>
 <CODE>call/2</CODE>). 
 
 <DT><CODE>addmodule</CODE>
@@ -414,6 +414,6 @@ These other values denote that this argument is not module expanded.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

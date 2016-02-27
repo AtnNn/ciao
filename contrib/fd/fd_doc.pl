@@ -13,32 +13,10 @@
 :- comment(module,  
 
 "This package allows to write and evaluate constraint programming
- expressions over finite domains in a Ciao program. It is based upon
- the indexicals concept.
+ expressions over finite domains in a Ciao program. 
 
-The syntax of this constraint system is described below:
-
-@begin{itemize}
-
-@item @em{c ::= X in r} (@em{r} is the range of variable @em{X}).
-@item @em{c ::= E1 .=. E2} (eventual value of expression @em{E1} equals @em{E2})
-@item @em{c ::= E1 .<>. E2} (@em{E1} differs from @em{E2})
-@item @em{c ::= E1 .<. E2} (@em{E1} is lower than @em{E2})
-@item @em{c ::= E1 .>. E2} (@em{E1} is greater than @em{E2})
-@item @em{c ::= E1 .=<. E2} (@em{E1} is lower or equal than @em{E2})
-@item @em{c ::= E1 .>=. E2} (@em{E1} is greater or equal than @em{E2})
-
-@item @em{r ::= r1} (one interval range).
-@item @em{r ::= r1 .&. r} (multi interval range).
-@item @em{r1 ::= t..t} (interval range).
-@item @em{r1 ::= dom(X)} (indexical domain, e.g., @em{X in dom(Y)} means @em{\"X in the domain of Y\"}).
-@item @em{t::= n} (integer).
-@item @em{t::= min(X)} (indexical min).
-@item @em{t::= max(X)} (indexical max).
-@end{itemize}
-
-@noindent Some examples of this constraints package (more can be found
-in the source and library directories):
+@noindent
+(Other examples can be found in the source and library directories.)
 
 @begin{itemize}
 @item SEND + MORE = MONEY:
@@ -60,8 +38,7 @@ in the source and library directories):
 
 ").
 
-%:- ensure_loaded(fd_syntax).
-:- include(library('fd/fd_syntax')).
+:- include(fd_syntax).
 
 :- comment(doinclude, fd_item/1).
 

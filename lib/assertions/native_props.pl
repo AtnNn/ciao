@@ -1,6 +1,5 @@
 :- module(native_props,
-        [  entry_point_name/2
-         , covered/2
+        [  covered/2
 	 , linear/1
          , mshare/1
          , nonground/1
@@ -22,19 +21,19 @@
          , finite_solutions/1
          , terminates/1
         ],
-        [assertions,pure]).
+        [assertions]).
 
 :- reexport(library('andprolog/andprolog_rt'),[indep/1,indep/2]).
 :- comment(doinclude,indep/1).
 :- comment(doinclude,indep/2).
 
-:- reexport(engine(term_typing),[ground/1,nonvar/1,var/1]).
-:- comment(doinclude,ground/1).
-:- comment(doinclude,nonvar/1).
-:- comment(doinclude,var/1).
-
-:- reexport(engine(basic_props),[regtype/1, native/2, native/1, sideff/2,
-        term/1, int/1, nnegint/1, flt/1, num/1, atm/1, struct/1, gnd/1]).
+%% :- reexport(engine(term_typing),[ground/1,nonvar/1,var/1]).
+%% :- comment(doinclude,ground/1).
+%% :- comment(doinclude,nonvar/1).
+%% :- comment(doinclude,var/1).
+%% 
+%% :- reexport(engine(basic_props),[regtype/1, native/2, native/1, sideff/2,
+%%         term/1, int/1, nnegint/1, flt/1, num/1, atm/1, struct/1, gnd/1]).
 
 :- reexport(library(terms_check),[instance/2]).
 
@@ -61,12 +60,6 @@
    Note the different names of the library and the package.").
 
 % --------------------------------------------------------------------------
-
-:- prop entry_point_name/2.
-% if you change this declaration, you have to change ciaoPP:
-:- meta_predicate entry_point_name(goal,?).
-:- impl_defined(entry_point_name/2).
-:- comment(hide,entry_point_name/2).
 
 :- comment(covered(X,Y), "All variables occuring in @var{X} occur also
    in @var{Y}.").
@@ -299,12 +292,22 @@ call of the form @var{X} is given by the expression @var{Y}").
 
 :- impl_defined(terminates/1).
 
+% Built-in in CiaoPP
+:- prop entry_point_name/2.
+% if you change this declaration, you have to change ciaoPP:
+:- meta_predicate entry_point_name(goal,?).
+:- impl_defined(entry_point_name/2).
+:- comment(hide,entry_point_name/2).
 
 % --------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+86,2003/07/17,16:59*29+'CEST'), "Added
+:- comment(version(1*11+144,2003/12/31,19:02*09+'CET'), "Do not
+   reexport from engine modules. Moved to the package.  (Francisco
+   Bueno Carrillo)").
+
+:- comment(version(1*11+28,2003/07/17,18:18*16+'CEST'), "Added
    nonground/1.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*9+40,2002/12/12,20:48*37+'CET'), "Added

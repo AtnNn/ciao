@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Defining operators</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_39.html">previous</A>, <A HREF="ciao_41.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_39.html">previous</A>, <A HREF="ciao_41.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC210" HREF="ciao_toc.html#TOC210">Defining operators</A></H1>
+<H1><A NAME="SEC184" HREF="ciao_toc.html#TOC184">Defining operators</A></H1>
 <P>
-<A NAME="IDX2918"></A>
+<A NAME="IDX2687"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_39.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
@@ -50,13 +50,13 @@ standard_ops :-
 
 
 <UL>
-<LI><A HREF="ciao_40.html#SEC211">Usage and interface (operators)</A>
-<LI><A HREF="ciao_40.html#SEC212">Documentation on exports (operators)</A>
+<LI><A HREF="ciao_40.html#SEC185">Usage and interface (operators)</A>
+<LI><A HREF="ciao_40.html#SEC186">Documentation on exports (operators)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC211" HREF="ciao_toc.html#TOC211">Usage and interface (<CODE>operators</CODE>)</A></H2>
+<H2><A NAME="SEC185" HREF="ciao_toc.html#TOC185">Usage and interface (<CODE>operators</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -73,15 +73,15 @@ standard_ops :-
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2919"></A>
+<A NAME="IDX2688"></A>
 <CODE>op/3</CODE>, 
-<A NAME="IDX2920"></A>
+<A NAME="IDX2689"></A>
 <CODE>current_op/3</CODE>, 
-<A NAME="IDX2921"></A>
+<A NAME="IDX2690"></A>
 <CODE>current_prefixop/3</CODE>, 
-<A NAME="IDX2922"></A>
+<A NAME="IDX2691"></A>
 <CODE>current_infixop/4</CODE>, 
-<A NAME="IDX2923"></A>
+<A NAME="IDX2692"></A>
 <CODE>current_postfixop/3</CODE>.
 
 </UL>
@@ -92,13 +92,13 @@ standard_ops :-
 
 
 
-<H2><A NAME="SEC212" HREF="ciao_toc.html#TOC212">Documentation on exports (<CODE>operators</CODE>)</A></H2>
+<H2><A NAME="SEC186" HREF="ciao_toc.html#TOC186">Documentation on exports (<CODE>operators</CODE>)</A></H2>
 <P>
-<A NAME="IDX2924"></A>
-<A NAME="IDX2925"></A>
+<A NAME="IDX2693"></A>
+<A NAME="IDX2694"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>op/3:</B>
-<DD><A NAME="IDX2926"></A>
+<DD><A NAME="IDX2695"></A>
 
 
 <P>
@@ -107,15 +107,25 @@ standard_ops :-
 
 <P>
 Declares the atom <CODE>Name</CODE> to be an operator of the stated <CODE>Type</CODE> and <CODE>Precedence</CODE> (0 =&#60; <CODE>Precedence</CODE> =&#60; 1200). <CODE>Name</CODE> may also be a list of atoms in which case all of them are declared to be operators. If <CODE>Precedence</CODE> is 0 then the operator properties of <CODE>Name</CODE> (if any) are cancelled. Note that, unlike in 
-<A NAME="IDX2927"></A>
+<A NAME="IDX2696"></A>
 ISO-Prolog, it is allowed to define two operators with the same name, one infix and the other postfix.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>op(+int, +operator_specifier, +atm_or_atm_list)</CODE>
+<STRONG>Usage:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Precedence</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Type</CODE> specifies the type and associativity of an operator.
+ (<CODE>basic_props:operator_specifier/1</CODE>)
+
+<CODE>Name</CODE> is an atom or a list of atoms.
+ (<CODE>basic_props:atm_or_atm_list/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
 This predicate is understood natively by CiaoPP.
@@ -125,11 +135,11 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX2928"></A>
-<A NAME="IDX2929"></A>
+<A NAME="IDX2697"></A>
+<A NAME="IDX2698"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_op/3:</B>
-<DD><A NAME="IDX2930"></A>
+<DD><A NAME="IDX2699"></A>
 
 
 <P>
@@ -141,10 +151,30 @@ The atom <CODE>Op</CODE> is currently an operator of type <CODE>Type</CODE> and 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>current_op(?int, ?operator_specifier, ?atm)</CODE>
+<STRONG>Usage:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>Precedence</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Type</CODE> specifies the type and associativity of an operator.
+ (<CODE>basic_props:operator_specifier/1</CODE>)
+
+<CODE>Op</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Precedence</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Type</CODE> specifies the type and associativity of an operator.
+ (<CODE>basic_props:operator_specifier/1</CODE>)
+
+<CODE>Op</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 <LI><EM>The following properties hold globally:</EM>
 
 This predicate is understood natively by CiaoPP.
@@ -154,11 +184,11 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX2931"></A>
-<A NAME="IDX2932"></A>
+<A NAME="IDX2700"></A>
+<A NAME="IDX2701"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_prefixop/3:</B>
-<DD><A NAME="IDX2933"></A>
+<DD><A NAME="IDX2702"></A>
 
 
 <P>
@@ -167,18 +197,18 @@ This predicate is understood natively by CiaoPP.
 
 <P>
 Similar to 
-<A NAME="IDX2934"></A>
+<A NAME="IDX2703"></A>
 <CODE>current_op/3</CODE>, but it concerns only the prefix operators. It returns <STRONG>only one solution</STRONG>. Not a predicate for general use.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2935"></A>
-<A NAME="IDX2936"></A>
+<A NAME="IDX2704"></A>
+<A NAME="IDX2705"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_infixop/4:</B>
-<DD><A NAME="IDX2937"></A>
+<DD><A NAME="IDX2706"></A>
 
 
 <P>
@@ -187,18 +217,18 @@ Similar to
 
 <P>
 Similar to 
-<A NAME="IDX2938"></A>
+<A NAME="IDX2707"></A>
 <CODE>current_op/3</CODE>, but it concerns only infix operators. It returns <STRONG>only one solution</STRONG>. Not a predicate for general use.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2939"></A>
-<A NAME="IDX2940"></A>
+<A NAME="IDX2708"></A>
+<A NAME="IDX2709"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>current_postfixop/3:</B>
-<DD><A NAME="IDX2941"></A>
+<DD><A NAME="IDX2710"></A>
 
 
 <P>
@@ -207,13 +237,13 @@ Similar to
 
 <P>
 Similar to 
-<A NAME="IDX2942"></A>
+<A NAME="IDX2711"></A>
 <CODE>current_op/3</CODE>, but it concerns only the postfix operators. It returns <STRONG>only one solution</STRONG>. Not a predicate for general use.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_39.html">previous</A>, <A HREF="ciao_41.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_39.html">previous</A>, <A HREF="ciao_41.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

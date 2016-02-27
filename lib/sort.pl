@@ -189,7 +189,7 @@ keylist([_-_|KL]) :- keylist(KL).
 
 keypair(_-_).
 
-:- comment(version(1*9+210,2003/12/21,02:12*13+'CET'), "Added comment
+:- comment(version(1*11+88,2003/12/21,02:13*47+'CET'), "Added comment
    module.  (Edison Mera)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with

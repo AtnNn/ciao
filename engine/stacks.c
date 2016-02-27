@@ -32,7 +32,7 @@ BOOL stack_shift_usage(Arg)
      Argdecl;
 {
   TAGGED x;
-  ENG_INT time = stats.ss_time*1000;
+  ENG_LINT time = (stats.ss_click*1000)/stats.userclockfreq;
   
   MakeLST(x,MakeInteger(Arg,time),atom_nil);
   time = stats.ss_local+stats.ss_control;
@@ -178,7 +178,7 @@ void choice_overflow(Arg,pad)
      Argdecl;
      int pad;
 {
-  ENG_FLT time0;
+  ENG_LINT click0;
   TAGGED *choice_top;
   struct try_node *next_alt;
 
@@ -187,7 +187,7 @@ void choice_overflow(Arg,pad)
     printf("Thread %d calling choice overflow\n", (int)Thread_Id);
 #endif
 
-  time0 = usertime();
+  click0 = userclick();
 
   if (!(next_alt = w->node->next_alt)) /* ensure A', P' exist */
     w->node->next_alt = w->next_alt,
@@ -286,10 +286,10 @@ void choice_overflow(Arg,pad)
   w->node->next_alt = next_alt;
 
   stats.ss_control++;
-  time0 = usertime()-time0;
-  stats.starttime += time0;
-  stats.lasttime += time0;
-  stats.ss_time += time0;
+  click0 = userclick()-click0;
+  stats.startclick += click0;
+  stats.lastclick += click0;
+  stats.ss_click += click0;
 }
 
 
@@ -302,7 +302,7 @@ void stack_overflow(Arg)
   REGISTER TAGGED t1 /* , t2 */ ; /* unused */
   REGISTER TAGGED *pt1;
   REGISTER struct node *n, *n2;
-  ENG_FLT time0 = usertime();
+  ENG_FLT click0 = userclick();
   
 #if defined(DEBUG)
   if (debug_gc) printf("Thread %d calling stack overflow\n", (int)Thread_Id);
@@ -382,10 +382,10 @@ void stack_overflow(Arg)
   Stack_End = newh+count;	/* new high bound */
   Stack_Warn = StackOffset(Stack_End,-STACKPAD);
   stats.ss_local++;
-  time0 = usertime()-time0;
-  stats.starttime += time0;
-  stats.lasttime += time0;
-  stats.ss_time += time0;
+  click0 = userclick()-click0;
+  stats.startclick += click0;
+  stats.lastclick += click0;
+  stats.ss_click += click0;
 }
 
 
@@ -444,7 +444,7 @@ void heap_overflow(Arg,pad)
     REGISTER TAGGED *pt1;
     REGISTER struct node *n, *n2;
     TAGGED *newh;
-    ENG_FLT time0 = usertime();
+    ENG_FLT click0 = userclick();
     
     int wake_count = HeapCharDifference(Heap_Warn_Soft,Heap_Start);
     
@@ -458,100 +458,97 @@ void heap_overflow(Arg,pad)
                         oldcount*sizeof(TAGGED),
                         newcount*sizeof(TAGGED));
 #if defined(DEBUG)
-      if (debug_gc)
-        printf("Thread %d is reallocing HEAP from %lx to %lx\n", 
-               (int)Thread_Id, (long int)Heap_Start, (long int)newh);
+    if (debug_gc)
+      printf("Thread %d is reallocing HEAP from %lx to %lx\n", 
+             (int)Thread_Id, (long int)Heap_Start, (long int)newh);
 #endif
 
 
-      reloc_factor = (char *)newh - (char *)Heap_Start;
+    reloc_factor = (char *)newh - (char *)Heap_Start;
       
-      /* AA, HH and TR are free pointers;  BB is last used word. */
+    /* AA, HH and TR are free pointers;  BB is last used word. */
       
-      if (reloc_factor!=0)
+    if (reloc_factor!=0) {
+      struct node *aux_node;
+      REGISTER struct frame *frame;
+      int i;
+      
+      aux_node = ChoiceCharOffset(w->node,ArityToOffset(0));
+      aux_node->next_alt = fail_alt;
+      aux_node->frame = w->frame;
+      aux_node->next_insn = w->next_insn;
+      aux_node->global_top = w->global_top;
+      aux_node->local_top = w->local_top; /* segfault patch -- jf */
+      
+      /* relocate pointers in global stk */
+      pt1 = newh;
+      w->global_top = (TAGGED *)((char *)w->global_top + reloc_factor);
+      while (HeapYounger(w->global_top,pt1)) {
+	t1 = HeapNext(pt1);
+	if (t1&QMask) pt1 += LargeArity(t1);
+	else if (IsHeapTerm(t1))
+	  *(pt1-1) += reloc_factor;
+      }
+      
+      /* relocate pointers in trail stk */
+      pt1 = Trail_Start;
+      TrailPush(w->trail_top,Current_Debugger_State);
+      while (TrailYounger(w->trail_top,pt1)) {
+	t1 = TrailNext(pt1);
+	if (IsHeapTerm(t1))
+	  *(pt1-1) += reloc_factor;
+      }
+      Current_Debugger_State = TrailPop(w->trail_top);
+      
+      
+      /* relocate pointers in choice&env stks */
+      for (n=aux_node; n!=InitialNode; n=n2)
 	{
-	  struct node *aux_node;
-	  REGISTER struct frame *frame;
-	  int i;
-	  
-	  aux_node = ChoiceCharOffset(w->node,ArityToOffset(0));
-	  aux_node->next_alt = fail_alt;
-	  aux_node->frame = w->frame;
-	  aux_node->next_insn = w->next_insn;
-	  aux_node->global_top = w->global_top;
-	  aux_node->local_top = w->local_top; /* segfault patch -- jf */
-	  
-				/* relocate pointers in global stk */
-	  pt1 = newh;
-	  w->global_top = (TAGGED *)((char *)w->global_top + reloc_factor);
-	  while (HeapYounger(w->global_top,pt1))
+	  n2=ChoiceCharOffset(n,-n->next_alt->node_offset);
+	  for (pt1=n->term; pt1!=(TAGGED *)n2;)
 	    {
-	      t1 = HeapNext(pt1);
-	      if (t1&QMask) pt1 += LargeArity(t1);
-	      else if (IsHeapTerm(t1))
-		*(pt1-1) += reloc_factor;
-	    }
-
-				/* relocate pointers in trail stk */
-	  pt1 = Trail_Start;
-	  TrailPush(w->trail_top,Current_Debugger_State);
-	  while (TrailYounger(w->trail_top,pt1))
-	    {
-	      t1 = TrailNext(pt1);
+	      t1 = ChoicePrev(pt1);
 	      if (IsHeapTerm(t1))
 		*(pt1-1) += reloc_factor;
 	    }
-	  Current_Debugger_State = TrailPop(w->trail_top);
 	  
-
-				/* relocate pointers in choice&env stks */
-	  for (n=aux_node; n!=InitialNode; n=n2)
+	  i = FrameSize(n->next_insn);
+	  frame = n->frame;
+	  while (frame >= n2->local_top)
 	    {
-	      n2=ChoiceCharOffset(n,-n->next_alt->node_offset);
-	      for (pt1=n->term; pt1!=(TAGGED *)n2;)
+	      pt1 = (TAGGED *)StackCharOffset(frame,i);
+	      while (pt1!=frame->term)
 		{
-		  t1 = ChoicePrev(pt1);
+		  t1 = *(--pt1);
 		  if (IsHeapTerm(t1))
-		    *(pt1-1) += reloc_factor;
+		    *pt1 += reloc_factor;
 		}
-	      
-	      i = FrameSize(n->next_insn);
-	      frame = n->frame;
-	      while (frame >= n2->local_top)
-		{
-		  pt1 = (TAGGED *)StackCharOffset(frame,i);
-		  while (pt1!=frame->term)
-		    {
-		      t1 = *(--pt1);
-		      if (IsHeapTerm(t1))
-			*pt1 += reloc_factor;
-		    }
-		  i = FrameSize(frame->next_insn);
-		  frame = frame->frame;
-		} 
-	      *(TAGGED *)(&n->global_top) += reloc_factor;
-	    }
+	      i = FrameSize(frame->next_insn);
+	      frame = frame->frame;
+	    } 
 	  *(TAGGED *)(&n->global_top) += reloc_factor;
-	  
-	  SetShadowregs(w->node);
 	}
+      *(TAGGED *)(&n->global_top) += reloc_factor;
       
-      Heap_Start = newh; /* new low bound */
-      Heap_End = newh+newcount; /* new high bound */
-      Int_Heap_Warn = (Int_Heap_Warn==Heap_Warn
-		       ? HeapOffset(Heap_End,-CALLPAD)
-		       : Heap_Start);
-      Heap_Warn = HeapOffset(Heap_End,-CALLPAD);
-      if (wake_count>=0)
-	Heap_Warn_Soft = HeapCharOffset(Heap_Start,-wake_count);
+      SetShadowregs(w->node);
+    }
+    
+    Heap_Start = newh; /* new low bound */
+    Heap_End = newh+newcount; /* new high bound */
+    Int_Heap_Warn = (Int_Heap_Warn==Heap_Warn
+		     ? HeapOffset(Heap_End,-CALLPAD)
+		     : Heap_Start);
+    Heap_Warn = HeapOffset(Heap_End,-CALLPAD);
+    if (wake_count>=0)
+      Heap_Warn_Soft = HeapCharOffset(Heap_Start,-wake_count);
       else
 	Heap_Warn_Soft = Int_Heap_Warn;
-      stats.ss_global++;
-      time0 = usertime()-time0;
-      stats.starttime += time0;
-      stats.lasttime += time0;
-      stats.ss_time += time0;
-    }
+    stats.ss_global++;
+    click0 = userclick()-click0;
+    stats.startclick += click0;
+    stats.lastclick += click0;
+    stats.ss_click += click0;
+  }
 }
 
 

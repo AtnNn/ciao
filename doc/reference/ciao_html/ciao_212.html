@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - error (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_211.html">previous</A>, <A HREF="ciao_213.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_211.html">previous</A>, <A HREF="ciao_213.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC834" HREF="ciao_toc.html#TOC834">error (library)</A></H1>
+<H1><A NAME="SEC810" HREF="ciao_toc.html#TOC810">dictionary (library)</A></H1>
 <P>
-<A NAME="IDX9110"></A>
+<A NAME="IDX9004"></A>
 
 
 <P>
@@ -20,26 +20,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_211.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#179 (2003/12/4, 19:25:17 CET)
+<STRONG>Version of last change:</STRONG> 1.9#172 (2003/12/4, 17:47:7 CET)
 
 
 <P>
-This file implements error predicates of different types.
+This module contains the fixed dictionary. All the nodes in VRML with their associated fields.
 
 
 
 <UL>
-<LI><A HREF="ciao_212.html#SEC835">Usage and interface (error)</A>
-<LI><A HREF="ciao_212.html#SEC836">Documentation on exports (error)</A>
+<LI><A HREF="ciao_212.html#SEC811">Usage and interface (dictionary)</A>
+<LI><A HREF="ciao_212.html#SEC812">Documentation on exports (dictionary)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC835" HREF="ciao_toc.html#TOC835">Usage and interface (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC811" HREF="ciao_toc.html#TOC811">Usage and interface (<CODE>dictionary</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +47,7 @@ This file implements error predicates of different types.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(error)).</CODE>
+<CODE>:- use_module(library(dictionary)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,10 +56,8 @@ This file implements error predicates of different types.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX9111"></A>
-<CODE>error_vrml/1</CODE>, 
-<A NAME="IDX9112"></A>
-<CODE>output_error/1</CODE>.
+<A NAME="IDX9005"></A>
+<CODE>dictionary/6</CODE>.
 
 </UL>
 
@@ -70,8 +68,26 @@ This file implements error predicates of different types.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX9113"></A>
-<CODE>write</CODE>.
+<A NAME="IDX9006"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX9007"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX9008"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX9009"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX9010"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX9011"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX9012"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX9013"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX9014"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX9015"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -81,52 +97,86 @@ This file implements error predicates of different types.
 
 
 
-<H2><A NAME="SEC836" HREF="ciao_toc.html#TOC836">Documentation on exports (<CODE>error</CODE>)</A></H2>
+<H2><A NAME="SEC812" HREF="ciao_toc.html#TOC812">Documentation on exports (<CODE>dictionary</CODE>)</A></H2>
 <P>
-<A NAME="IDX9114"></A>
-<A NAME="IDX9115"></A>
+<A NAME="IDX9016"></A>
+<A NAME="IDX9017"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
-<DD><A NAME="IDX9116"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary/6:</B>
+<DD><A NAME="IDX9018"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>error_vrml(+Structure)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>dictionary(NodeTypeId, AccessType, FieldTypeId, FieldId, Init_value, Boundary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
+<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Structure</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>AccessType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Init_value</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>Boundary</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Init_value</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>Boundary</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX9117"></A>
-<A NAME="IDX9118"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
-<DD><A NAME="IDX9119"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>output_error(+Message)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>dictionary(NodeTypeId, AccessType, FieldTypeId, FieldId, Init_value, Boundary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
+<LI><EM>Description:</EM> To lookup information about the nodes, getting their properties. Note that the type returned for the bound can be of two different types bound or bound_double. The rotation type have one bound for the directions and one for the degree of rotation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Message</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>AccessType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>FieldTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>FieldId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Init_value</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
+
+<CODE>Boundary</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Init_value</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+
+<CODE>Boundary</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_211.html">previous</A>, <A HREF="ciao_213.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_211.html">previous</A>, <A HREF="ciao_213.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

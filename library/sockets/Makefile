@@ -11,9 +11,10 @@ else
   REQLIBS=
 endif
 
+# jf- added the _glue suffix, until this lib is compiled with foreign
 SRCNAME=$(MODULE).c
-OBJNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).o
-LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME).so
+OBJNAME=$(MODULE)_$(OSNAME)$(ARCHNAME)_glue.o
+LIBNAME=$(MODULE)_$(OSNAME)$(ARCHNAME)_glue.so
 HEADERS=common_headers.h
 
 phony:
@@ -53,5 +54,5 @@ allarchs:
 		echo -------------------------------------------- ; \
 		echo ; \
 		echo Making in $$machine; \
-		echo "unsetenv CIAODEBUG; cd $(SRC)/library/sockets; $(MAKE)" | rsh $$machine csh; \
+		echo "unsetenv CIAODEBUG; cd $(SRC)/library/sockets; gmake" | rsh $$machine csh; \
 	done

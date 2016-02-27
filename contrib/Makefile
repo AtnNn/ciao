@@ -9,7 +9,7 @@ STDLIBDIR = $(REALLIBDIR)/contrib
 ALLFILES = *
 
 all:  
-	if [ -d $(SRC)/contrib/chat80 -a \
+	if [ -d $(SRC)/contrib/chat80 && \
 	     ! -f $(SRC)/contrib/chat80/NODISTRIBUTE ] ; then \
 	   cd $(SRC)/contrib/chat80 && $(SETLOCALCIAO) $(SRC)/etc/lpmake ; \
 	fi
@@ -42,11 +42,11 @@ uninstall:
 
 # *.itf *.po *.asr are eliminated recursively so that no Makefiles 
 # underneath  are needed for cleaning up prolog-only libraries. MH.
-distclean:
+distclean: 
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning $(STDLIBDIR)/library..."
 	@echo "*** ---------------------------------------------------------"
-	-cd $(SRC)/contrib/chat80 && \
+	cd $(SRC)/contrib/chat80 && \
 	$(SETLOCALCIAO) $(SRC)/etc/lpmake distclean
 	find . -name '*.itf' -exec 'rm' -f {} \;
 	find . -name '*.po'  -exec 'rm' -f {} \;
@@ -58,5 +58,3 @@ distclean:
 	find . -name '*.ass' -exec 'rm' -f {} \;
 	find . -name '*.ast' -exec 'rm' -f {} \;
 
-#$(SRC)/etc/lpmake:
-#	cd $(SRC)/etc; $(MAKE) lpmake

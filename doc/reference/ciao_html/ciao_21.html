@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Comparing terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC144" HREF="ciao_toc.html#TOC144">Comparing terms</A></H1>
+<H1><A NAME="SEC118" HREF="ciao_toc.html#TOC118">Comparing terms</A></H1>
 <P>
-<A NAME="IDX1462"></A>
+<A NAME="IDX1215"></A>
 
 
 <P>
@@ -20,11 +20,11 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#199 (2003/12/19, 18:18:33 CET)
+<STRONG>Version of last change:</STRONG> 1.11#171 (2004/2/3, 21:45:8 CET)
 
 
 <P>
@@ -33,8 +33,8 @@ These built-in predicates are extra-logical. They treat uninstantiated variables
 
 <P>
 The predicates make reference to a 
-<A NAME="IDX1463"></A>
-<A NAME="IDX1464"></A>
+<A NAME="IDX1216"></A>
+<A NAME="IDX1217"></A>
 <EM>standard total ordering</EM> of terms, which is as follows: 
 
 
@@ -64,13 +64,13 @@ For example, here is a list of terms in standard order:
 
 
 <UL>
-<LI><A HREF="ciao_21.html#SEC145">Usage and interface (term_compare)</A>
-<LI><A HREF="ciao_21.html#SEC146">Documentation on exports (term_compare)</A>
+<LI><A HREF="ciao_21.html#SEC119">Usage and interface (term_compare)</A>
+<LI><A HREF="ciao_21.html#SEC120">Documentation on exports (term_compare)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC145" HREF="ciao_toc.html#TOC145">Usage and interface (<CODE>term_compare</CODE>)</A></H2>
+<H2><A NAME="SEC119" HREF="ciao_toc.html#TOC119">Usage and interface (<CODE>term_compare</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -87,23 +87,23 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1465"></A>
+<A NAME="IDX1218"></A>
+<CODE>\==/2</CODE>, 
+<A NAME="IDX1219"></A>
+<CODE>@&#60;/2</CODE>, 
+<A NAME="IDX1220"></A>
+<CODE>@=&#60;/2</CODE>, 
+<A NAME="IDX1221"></A>
+<CODE>@&#62;/2</CODE>, 
+<A NAME="IDX1222"></A>
+<CODE>@&#62;=/2</CODE>, 
+<A NAME="IDX1223"></A>
 <CODE>compare/3</CODE>.
 
 <LI><EM>Properties:</EM>
 
-<A NAME="IDX1466"></A>
-<CODE>==/2</CODE>, 
-<A NAME="IDX1467"></A>
-<CODE>\==/2</CODE>, 
-<A NAME="IDX1468"></A>
-<CODE>@&#60;/2</CODE>, 
-<A NAME="IDX1469"></A>
-<CODE>@=&#60;/2</CODE>, 
-<A NAME="IDX1470"></A>
-<CODE>@&#62;/2</CODE>, 
-<A NAME="IDX1471"></A>
-<CODE>@&#62;=/2</CODE>.
+<A NAME="IDX1224"></A>
+<CODE>==/2</CODE>.
 
 </UL>
 
@@ -113,68 +113,59 @@ These predicates are builtin in Ciao, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC146" HREF="ciao_toc.html#TOC146">Documentation on exports (<CODE>term_compare</CODE>)</A></H2>
+<H2><A NAME="SEC120" HREF="ciao_toc.html#TOC120">Documentation on exports (<CODE>term_compare</CODE>)</A></H2>
 <P>
-<A NAME="IDX1472"></A>
-<A NAME="IDX1473"></A>
+<A NAME="IDX1225"></A>
+<A NAME="IDX1226"></A>
 <DL>
 <DT><span class="define">PROPERTY:</span> <B>==/2:</B>
-<DD><A NAME="IDX1474"></A>
+<DD><A NAME="IDX1227"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>Term1 == Term2</CODE>
+<STRONG>General properties:</STRONG> <CODE>Term1 == Term2</CODE>
+
+<UL>
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term1==Term2</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>Term1 == Term2</CODE>
 
 <UL>
 <LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are strictly identical.
 
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>Term1 == Term2</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are strictly identical.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1475"></A>
-<A NAME="IDX1476"></A>
+<A NAME="IDX1228"></A>
+<A NAME="IDX1229"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>\==/2:</B>
-<DD><A NAME="IDX1477"></A>
+<DT><span class="define">PREDICATE:</span> <B>\==/2:</B>
+<DD><A NAME="IDX1230"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>Term1 \== Term2</CODE>
+<STRONG>Usage:</STRONG> <CODE>Term1 \== Term2</CODE>
 
 <UL>
 <LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are not strictly identical.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
 <CODE>Term1</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
@@ -182,23 +173,8 @@ This predicate is understood natively by CiaoPP.
 <CODE>Term2</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>Term1 \== Term2</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are not strictly identical.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
+<CODE>Term1\==Term2</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
@@ -207,20 +183,20 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX1478"></A>
-<A NAME="IDX1479"></A>
+<A NAME="IDX1231"></A>
+<A NAME="IDX1232"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>@&#60;/2:</B>
-<DD><A NAME="IDX1480"></A>
+<DT><span class="define">PREDICATE:</span> <B>@&#60;/2:</B>
+<DD><A NAME="IDX1233"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>@&#60;(Term1, Term2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>@&#60;(Term1, Term2)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes the term <CODE>Term2</CODE> in the standard order.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
 <CODE>Term1</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
@@ -228,23 +204,8 @@ This predicate is understood natively by CiaoPP.
 <CODE>Term2</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@&#60;(Term1, Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
+<CODE>@&#60;(Term1,Term2)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
@@ -253,20 +214,20 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX1481"></A>
-<A NAME="IDX1482"></A>
+<A NAME="IDX1234"></A>
+<A NAME="IDX1235"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>@=&#60;/2:</B>
-<DD><A NAME="IDX1483"></A>
+<DT><span class="define">PREDICATE:</span> <B>@=&#60;/2:</B>
+<DD><A NAME="IDX1236"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>@=&#60;(Term1, Term2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>@=&#60;(Term1, Term2)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes or is identical to the term <CODE>Term2</CODE> in the standard order.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
 <CODE>Term1</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
@@ -274,23 +235,8 @@ This predicate is understood natively by CiaoPP.
 <CODE>Term2</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@=&#60;(Term1, Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes or is identical to the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
+<CODE>@=&#60;(Term1,Term2)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
@@ -299,20 +245,20 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX1484"></A>
-<A NAME="IDX1485"></A>
+<A NAME="IDX1237"></A>
+<A NAME="IDX1238"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>@&#62;/2:</B>
-<DD><A NAME="IDX1486"></A>
+<DT><span class="define">PREDICATE:</span> <B>@&#62;/2:</B>
+<DD><A NAME="IDX1239"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>@&#62;(Term1, Term2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>@&#62;(Term1, Term2)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows the term <CODE>Term2</CODE> in the standard order.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
 <CODE>Term1</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
@@ -320,23 +266,8 @@ This predicate is understood natively by CiaoPP.
 <CODE>Term2</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@&#62;(Term1, Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
+<CODE>@&#62;(Term1,Term2)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
@@ -345,20 +276,20 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX1487"></A>
-<A NAME="IDX1488"></A>
+<A NAME="IDX1240"></A>
+<A NAME="IDX1241"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>@&#62;=/2:</B>
-<DD><A NAME="IDX1489"></A>
+<DT><span class="define">PREDICATE:</span> <B>@&#62;=/2:</B>
+<DD><A NAME="IDX1242"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>@&#62;=(Term1, Term2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>@&#62;=(Term1, Term2)</CODE>
 
 <UL>
 <LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows or is identical to the term <CODE>Term2</CODE> in the standard order.
 
-<LI><EM>The following properties should hold globally:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
 <CODE>Term1</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
@@ -366,23 +297,8 @@ This predicate is understood natively by CiaoPP.
 <CODE>Term2</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
 
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@&#62;=(Term1, Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows or is identical to the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
+<CODE>@&#62;=(Term1,Term2)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
 
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
@@ -391,11 +307,11 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P>
-<A NAME="IDX1490"></A>
-<A NAME="IDX1491"></A>
+<A NAME="IDX1243"></A>
+<A NAME="IDX1244"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>compare/3:</B>
-<DD><A NAME="IDX1492"></A>
+<DD><A NAME="IDX1245"></A>
 
 
 <P>
@@ -407,27 +323,7 @@ This predicate is understood natively by CiaoPP.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>compare(?atm, @term, @term)</CODE>
-
-<UL>
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>?atm</CODE> is an element of <CODE>[=,&#62;,&#60;]</CODE>.
- (<CODE>basic_props:member/2</CODE>)
-
-<CODE>@term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>@term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties hold globally:</EM>
-
-This predicate is understood natively by CiaoPP.
- (<CODE>basic_props:native/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
+<STRONG>Usage:</STRONG> 
 
 <UL>
 <LI><EM>Calls should, and exit will be compatible with:</EM>
@@ -468,6 +364,9 @@ This predicate is understood natively by CiaoPP.
 <CODE>Term2</CODE> is not further instantiated.
  (<CODE>basic_props:not_further_inst/2</CODE>)
 
+<CODE>compare(Op,Term1,Term2)</CODE> is side-effect <CODE>free</CODE>.
+ (<CODE>basic_props:sideff/2</CODE>)
+
 This predicate is understood natively by CiaoPP.
  (<CODE>basic_props:native/1</CODE>)
 </UL>
@@ -475,6 +374,6 @@ This predicate is understood natively by CiaoPP.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

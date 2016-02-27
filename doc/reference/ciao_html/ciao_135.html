@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - label_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - menubutton_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC569" HREF="ciao_toc.html#TOC569">label_class (library)</A></H1>
+<H1><A NAME="SEC544" HREF="ciao_toc.html#TOC544">menubutton_class (library)</A></H1>
 <P>
-<A NAME="IDX6407"></A>
+<A NAME="IDX6298"></A>
 
 
 <P>
@@ -20,22 +20,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#129 (2003/12/4, 17:33:30 CET)
+<STRONG>Version of last change:</STRONG> 1.9#137 (2003/12/4, 17:34:7 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_135.html#SEC570">Usage and interface (label_class)</A>
-<LI><A HREF="ciao_135.html#SEC571">Documentation on exports (label_class)</A>
+<LI><A HREF="ciao_135.html#SEC545">Usage and interface (menubutton_class)</A>
+<LI><A HREF="ciao_135.html#SEC546">Documentation on exports (menubutton_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC570" HREF="ciao_toc.html#TOC570">Usage and interface (<CODE>label_class</CODE>)</A></H2>
+<H2><A NAME="SEC545" HREF="ciao_toc.html#TOC545">Usage and interface (<CODE>menubutton_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(label_class)).</CODE>
+<CODE>:- use_module(library(menubutton_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,8 +52,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6408"></A>
-<CODE>textvariable_label/1</CODE>.
+<A NAME="IDX6299"></A>
+<CODE>menu_name/1</CODE>.
 
 </UL>
 
@@ -64,8 +64,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6409"></A>
-<CODE>objects/objects_rt</CODE>.
+<A NAME="IDX6300"></A>
+<CODE>objects/objects_rt</CODE>, 
+<A NAME="IDX6301"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -75,22 +77,50 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>,
 
 
 
-<H2><A NAME="SEC571" HREF="ciao_toc.html#TOC571">Documentation on exports (<CODE>label_class</CODE>)</A></H2>
+<H2><A NAME="SEC546" HREF="ciao_toc.html#TOC546">Documentation on exports (<CODE>menubutton_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX6410"></A>
-<A NAME="IDX6411"></A>
+<A NAME="IDX6302"></A>
+<A NAME="IDX6303"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>textvariable_label/1:</B>
-<DD><A NAME="IDX6412"></A>
+<DT><span class="define">PREDICATE:</span> <B>menu_name/1:</B>
+<DD><A NAME="IDX6304"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage 1:</STRONG> <CODE>menu_name(Menu)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when menubutton is clicked.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Menu</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Menu</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>menu_name(Menu)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the name of the <CODE>Menu</CODE> asociated to the menubutton.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Menu</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Menu</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

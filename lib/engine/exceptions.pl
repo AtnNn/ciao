@@ -1,9 +1,10 @@
 :- module(exceptions, [
         catch/3, intercept/3, throw/1, halt/0, halt/1, abort/0],
-        [assertions, isomodes, .(metadefs)]).
+        [assertions, isomodes]).
 
-:- use_module(engine(internals),
-        ['$exit'/1,'$metachoice'/1,'$meta_call'/1,'$metacut'/1]).
+:- use_module(engine(internals), ['$exit'/1]).
+:- use_module(engine(basiccontrol), ['$metachoice'/1,'$metacut'/1]).
+:- use_module(engine(hiord_rt), ['$meta_call'/1]).
 
 :- comment(title, "Exception handling").
 
@@ -39,7 +40,7 @@ abort :- '$exit'(-32768).
 
 %------ errors ------%
 
-:- data catching/3, thrown/1.
+:- concurrent catching/3, thrown/1.
 
 :- true pred catch(+callable,?term,+callable) + (iso, native).
 
@@ -59,8 +60,20 @@ p(X) :- display(X).
 catch(Goal, Error, _) :-
         '$metachoice'(Choice),
         asserta_catching(Choice, Error, []),
+        '$metachoice'(BeforeChoice),
         '$meta_call'(Goal),
-        retract_catching(Choice, Error, []).
+	'$metachoice'(AfterChoice),
+        ( BeforeChoice = AfterChoice -> % no more solutions
+            HasChoice = false
+        ;
+            HasChoice = true
+        ),
+        retract_catching(Choice, Error, []),
+        ( HasChoice = false ->
+            ! % remove the unnecessary exception choice point
+        ;
+            true
+        ).
 catch(_, Error, Handler) :-
         retract_fact_nb(thrown(Error)), !,
         '$meta_call'(Handler).
@@ -107,8 +120,10 @@ throw_action([], Error, Choice) :-
         asserta_fact(thrown(Error)),
         cut_to(Choice), % This cuts also next clause
         fail.
-throw_action(Handler, _, _) :-
-        '$meta_call'(Handler).
+throw_action(Handler, Error, Choice) :-
+        retract_catching(Choice, Error, Handler),
+        '$meta_call'(Handler),
+        asserta_catching(Choice, Error, Handler).
 
 cut_to(Choice) :-
         retract_fact_nb(catching(C,_,_)),
@@ -123,9 +138,14 @@ retract_catching(Ch, Er, Ha) :- asserta_fact(catching(Ch, Er, Ha)), fail.
 
 :- comment(version_maintenance,dir('../../version')).
 
-:- comment(version(1*9+344,2004/04/29,12:56*34+'CEST'), "catching/1
-   and thrown/1 are now 'data' predicates instead of 'concurrent' to
-   avoid a bug in concurrent facts (Jose Morales)").
+:- comment(version(1*11+214,2004/03/26,19:41*58+'CET'), "Solved bug
+   that hangs ciao when thrown exceptions from the handler of the
+   intercept/3 predicate.  (Edison Mera)").
+
+:- comment(version(1*11+4,2003/04/07,13:52*50+'CEST'),
+   "'$metachoice'/1, '$metacut'/1 imported from
+   basiccontrol. '$meta_call'/1 imported from hiord_rt.  (Jose
+   Morales)").
 
 :- comment(version(1*7+107,2001/05/31,14:12*58+'CEST'), "Changed data
 to be concurrent; changed retract_fact/1 to retract_fact_nb/1 (MCL)").

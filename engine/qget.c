@@ -86,7 +86,6 @@ TAGGED getlarge(Arg,f)
   REGISTER int used_length = 0;
   REGISTER char *ws = Atom_Buffer;
 
-
   while ((ws[used_length++] = GETC(f)))
     if (used_length == Atom_Buffer_Length){
       EXPAND_ATOM_BUFFER(Atom_Buffer_Length*2);

@@ -87,11 +87,11 @@ vars_in_args([Arg|Rest],[Arg_list|Rest_list]) :-
 %% update-version-comments: "../version"
 %% End:
 %-------------------------------------------------------------------------
-:- comment(version(1*9+220,2003/12/21,18:58*25+'CET'), "Added comment
+:- comment(version(1*11+96,2003/12/21,18:58*37+'CET'), "Added comment
 author and module.  (Edison Mera)").
 
-:- comment(version(1*9+101,2003/09/04,15:58*35+'CEST'), "Updated
-   comment for varsbag/3.  (Francisco Bueno Carrillo)").
+:- comment(version(1*11+38,2003/09/04,16:00*33+'CEST'), "Updated
+	comment for varsbag/3.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+142,2001/11/12,17:49*44+'CET'), "Split
    metaterms into terms_check and terms_vars. 

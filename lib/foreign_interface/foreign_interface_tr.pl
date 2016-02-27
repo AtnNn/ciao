@@ -1,4 +1,4 @@
-:- module(foreign_interface_tr, [foreign_interface_tr/3], [assertions]).
+:- module(foreign_interface_tr, [foreign_interface_tr/3], []).
 
 :- use_package(assertions).
 

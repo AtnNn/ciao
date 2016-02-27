@@ -1,45 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Multiple Argument Indexing</TITLE>
+<TITLE>The Ciao Prolog System               - Higher-order</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC399" HREF="ciao_toc.html#TOC399">Multiple Argument Indexing</A></H1>
+<H1><A NAME="SEC371" HREF="ciao_toc.html#TOC371">Higher-order</A></H1>
 <P>
-<A NAME="IDX5241"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Tom Howland (http://home.pacbell.net/tomjdnh/pd.html), derived from work by Anil Nair, F. Bueno (for the Ciao package).
+<A NAME="IDX5076"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza Gras.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#225 (2003/12/21, 20:20:39 CET)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-This package is an extension of the idea of Prolog indexing, usually performed, in a limited way, on the first argument. This package provides more powerful indexing schemes. It lets you pick different arguments to index on, and provides for different combinations of arguments to index on. E.g., it will let you index on the first and third argument or the second and the third argument of a predicate.
+<STRONG>Version of last change:</STRONG> 1.11#102 (2003/12/22, 16:52:51 CET)
+
+
+<P>
+This module is a wrapper to the implementation defined predicate 
+<A NAME="IDX5077"></A>
+<CODE>call/1</CODE>, and implements the 
+<A NAME="IDX5078"></A>
+<CODE>call/2</CODE> predicate.
 
 
 
 <UL>
-<LI><A HREF="ciao_96.html#SEC400">Usage and interface (indexer)</A>
-<LI><A HREF="ciao_96.html#SEC401">Documentation on internals (indexer)</A>
+<LI><A HREF="ciao_96.html#SEC372">Usage and interface (hiord_rt)</A>
+<LI><A HREF="ciao_96.html#SEC373">Documentation on exports (hiord_rt)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC400" HREF="ciao_toc.html#TOC400">Usage and interface (<CODE>indexer</CODE>)</A></H2>
+<H2><A NAME="SEC372" HREF="ciao_toc.html#TOC372">Usage and interface (<CODE>hiord_rt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,25 +51,25 @@ This package is an extension of the idea of Prolog indexing, usually performed, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-This facility is used as a package, thus either including 
-<A NAME="IDX5242"></A>
-<CODE>indexer</CODE> in the package list of the module, or by using the 
-<A NAME="IDX5243"></A>
-<CODE>use_package/1</CODE> declaration. The facility predicate 
-<A NAME="IDX5244"></A>
-<CODE>hash_term/2</CODE>, documented here, is defined in library module 
-<A NAME="IDX5245"></A>
-<CODE>hash</CODE>.
+<CODE>:- use_module(library(hiord_rt)).</CODE>
 
-<LI><STRONG>Other modules used:</STRONG>
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>System library modules:</EM>
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX5246"></A>
-<CODE>assertions/native_props</CODE>.
+<A NAME="IDX5079"></A>
+<CODE>call/1</CODE>, 
+<A NAME="IDX5080"></A>
+<CODE>call/2</CODE>, 
+<A NAME="IDX5081"></A>
+<CODE>SYSCALL/1</CODE>, 
+<A NAME="IDX5082"></A>
+<CODE>$nodebug_call/1</CODE>, 
+<A NAME="IDX5083"></A>
+<CODE>$meta_call/1</CODE>.
 
 </UL>
 
@@ -75,160 +79,125 @@ This facility is used as a package, thus either including
 
 
 
-<H2><A NAME="SEC401" HREF="ciao_toc.html#TOC401">Documentation on internals (<CODE>indexer</CODE>)</A></H2>
+<H2><A NAME="SEC373" HREF="ciao_toc.html#TOC373">Documentation on exports (<CODE>hiord_rt</CODE>)</A></H2>
 <P>
-<A NAME="IDX5247"></A>
-<A NAME="IDX5248"></A>
+<A NAME="IDX5084"></A>
+<A NAME="IDX5085"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>index/1:</B>
-<DD><A NAME="IDX5249"></A>
+<DT><span class="define">PREDICATE:</span> <B>call/1:</B>
+<DD><A NAME="IDX5086"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>index(IndexSpecs)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Declares an indexing scheme for a predicate. All specs of <CODE>IndexSpecs</CODE> must be terms for the same predicate. Each spec declares an indexing on a combination of the arguments. Indexing will be performed using any of the specs in <CODE>IndexSpecs</CODE> (being thus interpreted as an or).
-
-You should use a <CODE>*</CODE> in an argument position if you wish to hash on the entire term in that argument. If a <CODE>+</CODE> is used only one level of the term in the argument is used for hashing. An <CODE>i</CODE> is used to indicate that argument is already an integer, and therefore its own value will be used for hashing. The argspec <CODE>?</CODE> simply indicates not to use the argument for indexing. 
-
-For example, the index specification: 
-
-<PRE>
-:- index foo(+,?,*,i), foo(?,?,?,i).
-</PRE>
-
-declares indexing for <CODE>foo/4</CODE> either on a combination of the first, third, and fourht arguments, or only on the last argument, which is an integer. In the first case, only the principal functor of the first argument will be used for hashing; the third argument will be used in its entirety. 
-
-The argspec <CODE>n</CODE> is a pragmatic extension and can not be used in conjunction with the other specifiers aside from <CODE>?</CODE>. It stands for "nonvar" and implies that the argument will not be used for hashing, since only ground terms can effectively be used in hashing. Thus, it can not be used in combination with other specifiers within a particular index specification. It is often the fastest thing to use.  
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>IndexSpecs</CODE> is an index specification.
- (<CODE>indexer_doc:indexspecs/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5250"></A>
-<A NAME="IDX5251"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>indexspecs/1:</B>
-<DD><A NAME="IDX5252"></A>
+<CODE>call(G)</CODE>
 
 
 <P>
-An index specification is defined as follows: 
-
-<PRE>
-indexspecs(Spec) :-
-        indexspec(Spec).
-indexspecs((Spec,Specs)) :-
-        indexspec(Spec),
-        indexspecs(Specs).
-</PRE>
-
-
-<PRE>
-indexspec(Spec) :-
-        Spec=..[_F|Args],
-        list(Args,argspec).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>indexspecs(IndexSpecs)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>IndexSpecs</CODE> is an index specification.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5253"></A>
-<A NAME="IDX5254"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>argspec/1:</B>
-<DD><A NAME="IDX5255"></A>
+Executes goal <CODE>G</CODE>, restricting the scope of the cuts to the execution of <CODE>G</CODE>. Equivalent to writing a variable <CODE>G</CODE> in a goal position.
 
 
 <P>
-An argument hash specification is defined as follows: 
-
-<PRE>
-argspec(+).
-argspec(*).
-argspec(i).
-argspec(n).
-argspec(?).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>argspec(Spec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> is an argument hash specification.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5256"></A>
-<A NAME="IDX5257"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>hash_term/2:</B>
-<DD><A NAME="IDX5258"></A>
+<EM>Meta-predicate</EM> with arguments: <CODE>call(goal)</CODE>.
 
 
 <P>
-<CODE>hash_term(Term, HashValue)</CODE>
-
-
-<P>
-Provides an efficient way to calculate an integer <CODE>HashValue</CODE> for a ground <CODE>Term</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>hash_term(T, N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is a hashing index for <CODE>T</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>T</CODE> is currently ground (it contains no variables).
- (<CODE>term_typing:ground/1</CODE>)
-
-<CODE>N</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>hash_term(T, N)</CODE>
+<STRONG>Usage:</STRONG> 
+<KBD> * ISO * </KBD>
 
 <UL>
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE><CODE>T</CODE></CODE> is not ground.
- (<CODE>native_props:nonground/1</CODE>)
+<CODE>G</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>N</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>N</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
 </UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5087"></A>
+<A NAME="IDX5088"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call/2:</B>
+<DD><A NAME="IDX5089"></A>
+
+
+<P>
+<CODE>call(Pred, Arg1)</CODE>
+
+
+<P>
+There exists a set of builtin predicates of the form 
+<A NAME="IDX5090"></A>
+<CODE>call/N</CODE> with <CODE>N &#62; 1</CODE> which execute predicate <CODE>Pred</CODE> given arguments <CODE>Arg1</CODE> ... <CODE>ArgX</CODE>. If <CODE>Pred</CODE> has already arguments <CODE>Arg1</CODE> is added to the start, the rest to the end. This predicate, when <CODE>Pred</CODE> is a variable, can be written using the special Ciao syntax <CODE>Pred(Arg1,...,ArgX)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold globally:</EM>
+
+This predicate is understood natively by CiaoPP.
+ (<CODE>basic_props:native/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5091"></A>
+<A NAME="IDX5092"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>SYSCALL/1:</B>
+<DD><A NAME="IDX5093"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5094"></A>
+<A NAME="IDX5095"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>$nodebug_call/1:</B>
+<DD><A NAME="IDX5096"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>$nodebug_call(goal)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5097"></A>
+<A NAME="IDX5098"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>$meta_call/1:</B>
+<DD><A NAME="IDX5099"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -22,7 +22,7 @@
 :- comment(author, "Facultad de Inform@'{a}tica").
 :- comment(author, "Universidad Polit@'{e}cnica de Madrid").
 
-:- use_module(library('tcltk/tcltk_low_level'),
+:- use_module(tcltk_low_level,
 	[
 	    new_interp/1,
 	    new_interp/2,
@@ -41,9 +41,7 @@
 :- use_module(library(write)).
 :- use_module(library(strings)).
 :- use_module(library(lists),[append/3,list_insert/2]).
-:- use_module(engine(internals), ['$meta_call'/1]). 
-% In ciao-1.11:
-% :- use_module(engine(hiord_rt), ['$meta_call'/1]). 
+:- use_module(engine(hiord_rt), ['$meta_call'/1]). 
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
@@ -322,6 +320,7 @@ tcl_eval_aux(Command, I, Result, AccResult, FromModule) :-
 	 )
  	;
  	 true).
+
 
 not_waiting_for_more(tcl_eval_finished).
 

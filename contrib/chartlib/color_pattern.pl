@@ -1,6 +1,6 @@
 :- module(color_pattern,[],[assertions,regtypes,isomodes]).
 
-:- comment(author, "Isabel Martín").
+:- comment(author,"Isabel Mart@'{i}n Garc@'{i}a").
 
 
 :- export(color/1).

@@ -1,84 +1,109 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - A Program to Help Cleaning your Directories</TITLE>
+<TITLE>The Ciao Prolog System               - Printing the declarations and code in a file</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC723" HREF="ciao_toc.html#TOC723">A Program to Help Cleaning your Directories</A></H1>
+<H1><A NAME="SEC699" HREF="ciao_toc.html#TOC699">Printing the declarations and code in a file</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#3 (2001/10/25, 14:31:59 CEST)
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
 
 
 <P>
-A simple program for traversing a directory tree and deciding which files may be deleted in order to save space and not to loose information. 
+<STRONG>Version:</STRONG> 0.5#7 (2003/7/29, 18:7:56 CEST)
+
+
+<P>
+A simple program for 
+<A NAME="IDX8070"></A>
+printing assertion information (
+<A NAME="IDX8071"></A>
+predicate declarations, 
+<A NAME="IDX8072"></A>
+property declarations, 
+<A NAME="IDX8073"></A>
+type declarations, etc.) and 
+<A NAME="IDX8074"></A>
+printing code-related information (
+<A NAME="IDX8075"></A>
+imports, 
+<A NAME="IDX8076"></A>
+exports, 
+<A NAME="IDX8077"></A>
+libraries used, etc.) on a file. The file should be a single Ciao or Prolog source file. It uses the Ciao compiler's pass one to do it. This program is specially useful for example for checking what assertions the 
+<A NAME="IDX8078"></A>
+assertion normalizer is producing from the original assertions in the file or to check what the compiler is actually seeing after some of the syntactic expansions (but before goal translations). 
 
 
 
 <UL>
-<LI><A HREF="ciao_178.html#SEC724">Usage (cleandirs)</A>
-<LI><A HREF="ciao_178.html#SEC725">Known bugs and planned improvements (cleandirs)</A>
+<LI><A HREF="ciao_178.html#SEC700">Usage (fileinfo)</A>
+<LI><A HREF="ciao_178.html#SEC701">More detailed explanation of options (fileinfo)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC724" HREF="ciao_toc.html#TOC724">Usage (cleandirs)</A></H2>
+<H2><A NAME="SEC700" HREF="ciao_toc.html#TOC700">Usage (fileinfo)</A></H2>
 
 
 <PRE>
    
-cleandirs [--silent] &#60;initial_dir&#62; &#60;delete_options&#62; &#60;backup_options&#62;
-cleandirs explores &#60;initial_dir&#62; (which should be an absolute path)
-and looks for backup files and files which can be generated from other
-files, using a plausible heuristic aimed at retaining the same amount
-of information while recovering some disk space.  The heuristic is
-based on the extension of the filename.
+    fileinfo -asr &#60;filename.asr&#62; 
+       : pretty prints the contents of &#60;filename.asr&#62; 
 
-Delete options is one of:
-   --list: just list the files/directories which are amenable to be deleted,
-           but do not delete them. SAFE.
-    --ask: list the files/directories and ask for deletion. UNSAFE if you
-           make a mistake.
- --delete: just delete the files/directories without asking.  I envy your
-           brave soul if you choose this option.
+    fileinfo [-v] [-m] &#60;-a|-f|-c|-e&#62; &#60;filename&#62; [libdir1] ... [libdirN]
+    -v : verbose output (e.g., lists all files read)
+    -m : restrict info to current module
+    -a : print assertions 
+    -f : print code and interface (imports/exports, etc.)
+    -c : print code only
+    -e : print only errors - useful to check syntax of assertions in file
 
-Backup options is one of:
- --includebackups: include backup files in the list of files to check.
- --excludebackups: do not include backup files in the list of files to check.
-    --onlybackups: include only backup files in the list of files to check.
+    fileinfo -h
+       : print this information
 
-Symbolic links are not traversed.  Special files are not checked.
+    Note that system lib paths *must* be given explicitly, e.g. :
+
+    fileinfo -m -c foo.pl \
+             /home/clip/System/ciao/lib \
+             /home/clip/System/ciao/library \
 
 </PRE>
 
+
+
+<H2><A NAME="SEC701" HREF="ciao_toc.html#TOC701">More detailed explanation of options (fileinfo)</A></H2>
+
 <P>
  
-Invoking the program with no arguments will return an up-to-date information on the options.
-
-
-
-
-<H2><A NAME="SEC725" HREF="ciao_toc.html#TOC725">Known bugs and planned improvements (<CODE>cleandirs</CODE>)</A></H2>
-
 
 <UL>
 
-<LI>
+<LI>If the <CODE>-a</CODE> option is selected, <CODE>fileinfo</CODE> prints the assertions (only code-oriented assertions -- not comment-oriented assertions) in the file <EM>after normalization</EM>. If the <CODE>-f</CODE> option is selected <CODE>fileinfo</CODE> prints the file interface, the declarations contained in the file, and the actual code. The <CODE>-c</CODE> option prints only the code. If the <CODE>-e</CODE> option is selected <CODE>fileinfo</CODE> prints only any sintactic and import-export errors found in the file, including the assertions.
 
-Recursive removal of subdirectories relies on the existence of a recursive /bin/rm command in your system.
+<LI><CODE>filename</CODE> must be the name of a Prolog or Ciao source file.
+
+<LI>This filename can be followed by other arguments which will be taken to be library directory paths in which to look for files used by the file being analyzed.
+
+<LI>If the <CODE>-m</CODE> option is selected, only the information related to the current module is printed.
+
+<LI>The <CODE>-v</CODE> option produces verbose output. This is very useful for debugging, since all the files accessed during assertion normalization are listed.
+
+<LI>In the <CODE>-asr</CODE> usage,
+
+<A NAME="IDX8079"></A>
+<CODE>fileinfo</CODE> can be used to print the contents of a <CODE>.asr</CODE> file in human-readable form. 
+
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

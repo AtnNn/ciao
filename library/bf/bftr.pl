@@ -1,4 +1,4 @@
-:- module(_, [bftr/3],[]).
+:- module(_, [bftr/3],[assertions]).
 
 :- data bf_pred/3.
 
@@ -17,8 +17,16 @@ clausetr(Head, Body, M, TrCls) :-
           TrCls = ['$bfpred'(P),(P :- '$bf'([u([P],P)|L],L,P))| TrCl]
         ),
         body_to_dl(Body, Bodylist, Bodyrest),
-        TrCl = '$bfcl'(Head, Bodylist, Bodyrest).
+        TrCl = ['$bfcl'(Head, Bodylist, Bodyrest)].
         
 body_to_dl((A, B), [A|Bs], R):- !, body_to_dl(B, Bs, R).
 body_to_dl(true, R, R) :- !.
 body_to_dl(A, [A|R], R).
+
+
+
+:- comment(version_maintenance,dir('../../version/')).
+
+:- comment(version(1*11+217,2004/04/12,16:20*13+'CEST'), "Added to
+version control.  (Manuel Carro)").
+

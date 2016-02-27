@@ -1,73 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 25 June 2004 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 October 2004 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Barchart widgets - 1</TITLE>
+<TITLE>The Ciao Prolog System               - Error Handler for Chartlib</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC780" HREF="ciao_toc.html#TOC780">Barchart widgets - 1</A></H1>
+<H1><A NAME="SEC755" HREF="ciao_toc.html#TOC755">Error Handler for Chartlib</A></H1>
 <P>
-<A NAME="IDX8591"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Isabel Martín.
+<A NAME="IDX8484"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.9#351 (2004/6/23, 18:37:20 CEST)
+<STRONG>Author(s):</STRONG> Isabel Mart&iacute;n Garc&iacute;a.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.9#260 (2003/12/31, 0:13:52 CET)
+<STRONG>Version:</STRONG> 1.11#222 (2004/5/24, 13:8:7 CEST)
 
 
 <P>
-This module defines predicates to show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
+<STRONG>Version of last change:</STRONG> 1.9#155 (2003/12/4, 17:39:9 CET)
+
+
+<P>
+This module is an error handler. If the format of the arguments is not correct in a call to a chartlib predicate an exception will be thrown . You can wrap the chartlib predicates with the predicates exported by this module to handle automatically the errors if any. 
 
 
 
 <UL>
-
-<LI>No numeric values for the <CODE>x</CODE> axis are needed because they will be interpreted as labels. See
-
-<A NAME="IDX8592"></A>
-<CODE>xbarelement1/1</CODE> definition type. 
-
-<LI>The bars will be displayed at uniform intervals.
-
-<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
-
-<A NAME="IDX8593"></A>
-<CODE>xbarelement1</CODE> type definition. Thus, the user can call each predicate in two ways. 
-
-<LI>The bar chart has a legend. One entry (symbol and label) per bar.
-
-<LI>If you don't want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
-
-</UL>
-
-<P>
-Particular features will be pointed out in the corresponding predicate. 
-
-
-
-<UL>
-<LI><A HREF="ciao_196.html#SEC781">Usage and interface (genbar1)</A>
-<LI><A HREF="ciao_196.html#SEC782">Documentation on exports (genbar1)</A>
-<LI><A HREF="ciao_196.html#SEC783">Documentation on internals (genbar1)</A>
+<LI><A HREF="ciao_196.html#SEC756">Usage and interface (chartlib_errhandle)</A>
+<LI><A HREF="ciao_196.html#SEC757">Documentation on exports (chartlib_errhandle)</A>
+<LI><A HREF="ciao_196.html#SEC758">Documentation on internals (chartlib_errhandle)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC781" HREF="ciao_toc.html#TOC781">Usage and interface (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC756" HREF="ciao_toc.html#TOC756">Usage and interface (<CODE>chartlib_errhandle</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -75,7 +48,7 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(genbar1)).</CODE>
+<CODE>:- use_module(library(chartlib_errhandle)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -84,25 +57,10 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8594"></A>
-<CODE>barchart1/7</CODE>, 
-<A NAME="IDX8595"></A>
-<CODE>barchart1/9</CODE>, 
-<A NAME="IDX8596"></A>
-<CODE>percentbarchart1/7</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX8597"></A>
-<CODE>yelement/1</CODE>, 
-<A NAME="IDX8598"></A>
-<CODE>axis_limit/1</CODE>, 
-<A NAME="IDX8599"></A>
-<CODE>header/1</CODE>, 
-<A NAME="IDX8600"></A>
-<CODE>title/1</CODE>, 
-<A NAME="IDX8601"></A>
-<CODE>footer/1</CODE>.
+<A NAME="IDX8485"></A>
+<CODE>chartlib_text_error_protect/1</CODE>, 
+<A NAME="IDX8486"></A>
+<CODE>chartlib_visual_error_protect/1</CODE>.
 
 </UL>
 
@@ -113,18 +71,10 @@ Particular features will be pointed out in the corresponding predicate.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8602"></A>
+<A NAME="IDX8487"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX8603"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX8604"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX8605"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX8606"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX8607"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX8488"></A>
+<CODE>chartlib/install_utils</CODE>.
 
 </UL>
 
@@ -134,345 +84,159 @@ Particular features will be pointed out in the corresponding predicate.
 
 
 
-<H2><A NAME="SEC782" HREF="ciao_toc.html#TOC782">Documentation on exports (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC757" HREF="ciao_toc.html#TOC757">Documentation on exports (<CODE>chartlib_errhandle</CODE>)</A></H2>
 <P>
-<A NAME="IDX8608"></A>
-<A NAME="IDX8609"></A>
+<A NAME="IDX8489"></A>
+<A NAME="IDX8490"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart1/7:</B>
-<DD><A NAME="IDX8610"></A>
+<DT><span class="define">PREDICATE:</span> <B>chartlib_text_error_protect/1:</B>
+<DD><A NAME="IDX8491"></A>
 
 
 <P>
-<CODE>barchart1(Header, BarchartTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
+<CODE>chartlib_text_error_protect(G)</CODE>
 
 
 <P>
-The <CODE>y</CODE> axis range is determined from the limits of the data. Two examples are given to demonstrate clearly how to call the predicates. In the first example the user sets the bar appearance, in the second one the appearance features will be chosen by the system and the colors that have been assigned to the variables Color1, Color2 and Pattern will be shown also. 
+This predicate catches the thrown exception and sends it to the appropiate handler. The handler will show the error message in the standard output. 
 
 
 <P>
-Example 1: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['bar1','legend_element1','Blue','Yellow','pattern1'],
-           ['bar2','legend_element2','Plum','SeaGreen','pattern2'],
-           ['bar3','legend_element3','Turquoise','Yellow','pattern5'] ],
-  'yaxixtitle',
-  [20,10,59],
-  'footer').
-</PRE>
-
-<P>
-Example 2: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['element1','legend_element1',Color1,Color2,Pattern],
-            ['element2','legend_element2'],
-            ['element3','legend_element3'] ],
-  'yaxixtitle',
-  [20,10,59],
-  'footer').
-</PRE>
-
-<P>
- 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX8611"></A>
-<A NAME="IDX8612"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart1/9:</B>
-<DD><A NAME="IDX8613"></A>
+<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_text_error_protect(goal)</CODE>.
 
 
 <P>
-<CODE>barchart1(Header, BTitle, XTitle, XVector, YTitle, YVector, YMax, YMin, Footer)</CODE>
-
-
-<P>
-You can set the minimum and maximum limits of the <CODE>y</CODE> axis. Data outside the limits will not be plotted. Each limit, as you can check by looking at the 
-<A NAME="IDX8614"></A>
-<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-barchart1('This is the header text',
-  'Barchart title',
-  'xaxistitle',
-  [ ['element1','e1','Blue','Yellow','pattern1'],
-      ['element2','e2','Turquoise','Plum','pattern5'],
-      ['element3','e3','Turquoise','Green','pattern5'] ],
-  'yaxixtitle',
-  [20,10,59],
-  70,
-  _,
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8615"></A>
-<A NAME="IDX8616"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart1/7:</B>
-<DD><A NAME="IDX8617"></A>
-
-
-<P>
-<CODE>percentbarchart1(Header, BTitle, XTitle, XVector, YTitle, YVector, Footer)</CODE>
-
-
-<P>
-The y axis maximum coordinate value is 100. The <CODE>x</CODE> axis limits are automatically worked out. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-percentbarchart1('This is a special barchart to represent percentages',
-  'Barchart with legend',
-  'My xaxistitle',
-  [ [1,'bar1','Blue','Yellow','pattern1'],
-       [8,'bar2','MediumTurquoise','Plum','pattern5'] ],
-  'My yaxixtitle',
-  [80,10],
-  'This is the footer text').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX8618"></A>
-<A NAME="IDX8619"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>yelement/1:</B>
-<DD><A NAME="IDX8620"></A>
-
-
-<P>
- 
-
-
-
-<PRE>
-yelement(Y) :-
-        number(Y).
-</PRE>
-
-<P>
-Y is the bar lenght, so it must be a numeric value. 
-
-
-<P>
-Both Prolog and Tcl-Tk support integers and floats. Integers are usually specified in decimal, but if the first character is 0 the number is read in octal (base 8), and if the first two characters are 0x, the number is read in hexadecimal (base16). Float numbers may be specified using most of the forms defined for ANSI C, including the following examples: 
-
-
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI>9.56
+<LI><EM>The following properties should hold at call time:</EM>
 
-<LI>5.88e-2
-
-<LI>5.1E2
-
-</UL>
-
-<P>
-Note: Be careful when using floats. While 8. or 7.e4 is interpreted by Tcl-tk as 8.0 and 7.0e4, Prolog will not read them as float numbers. Example: 
-
-<PRE>
-        ?- number(8.e+5).
-        {SYNTAX ERROR: (lns 130-130) , or ) expected in arguments
-        number ( 8 
-        ** here **
-        . e + 5 ) . 
-        }
-
-        no
-        ?- number(8.).
-        {SYNTAX ERROR: (lns 138-138) , or ) expected in arguments
-        number ( 8 
-        ** here **
-        . ) . 
-        }
-
-        no
-
-        ?- number(8.0e+5).
-
-        yes
-        ?- number(8.0).
-
-        yes
-</PRE>
-
-<P>
-Precision: Tcl-tk internally represents integers with the C type <CODE>int</CODE>, which provides at least 32 bits of precision on most machines. Since Prolog integers can (in some implementations) exceed 32 bits but the precision in Tcl-tk depends on the machine, it is up to the progammer to ensure that the values fit into the maximum precision of the machine for integers. Real numbers are represented with the C type <CODE>double</CODE>, which is usually represented with 64-bit values (about 15 decimal digits of precision) using the IEEE Floating Point Standard. 
-
-
-<P>
-Conversion: If the list is composed by integers and floats, Tcl-tk will convert integers to floats. 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX8621"></A>
-<A NAME="IDX8622"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>axis_limit/1:</B>
-<DD><A NAME="IDX8623"></A>
-
-
-
-<PRE>
-axis_limit(X) :-
-        number(X).
-axis_limit(_1).
-</PRE>
-
-<P>
-This type is defined in order to set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, is a number or a variable. If the argument is not a number the limit will be calculated from the data (i.e., if YMax value is <CODE>Var</CODE> the maximum y axis limit will be calculated using the largest data value). 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX8624"></A>
-<A NAME="IDX8625"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>header/1:</B>
-<DD><A NAME="IDX8626"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>header(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the header of the graph.
-
+<CODE>G</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX8627"></A>
-<A NAME="IDX8628"></A>
+<A NAME="IDX8492"></A>
+<A NAME="IDX8493"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>title/1:</B>
-<DD><A NAME="IDX8629"></A>
+<DT><span class="define">PREDICATE:</span> <B>chartlib_visual_error_protect/1:</B>
+<DD><A NAME="IDX8494"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>title(X)</CODE>
+<CODE>chartlib_visual_error_protect(G)</CODE>
+
+
+<P>
+This predicate catches the thrown exception and sends it to the appropiate handler. The handler will pop up a message box. 
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_visual_error_protect(goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) to be used as label, usually not very long.
+<LI><EM>The following properties should hold at call time:</EM>
 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX8630"></A>
-<A NAME="IDX8631"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>footer/1:</B>
-<DD><A NAME="IDX8632"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>footer(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the footer of the graph.
-
+<CODE>G</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Documentation on internals (<CODE>genbar1</CODE>)</A></H2>
+<H2><A NAME="SEC758" HREF="ciao_toc.html#TOC758">Documentation on internals (<CODE>chartlib_errhandle</CODE>)</A></H2>
 <P>
-<A NAME="IDX8633"></A>
-<A NAME="IDX8634"></A>
+<A NAME="IDX8495"></A>
+<A NAME="IDX8496"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement1/1:</B>
-<DD><A NAME="IDX8635"></A>
+<DT><span class="define">REGTYPE:</span> <B>handler_type/1:</B>
+<DD><A NAME="IDX8497"></A>
 
 
+<P>
+<CODE>handler_type(X)</CODE>
+
+
+<P>
+The library chartlib includes two error handlers already programmed. 
 
 <PRE>
-xbarelement1([XValue,LegendElement]) :-
-        atomic(XValue),
-        atomic(LegendElement).
-xbarelement1([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
-        atomic(XValue),
-        atomic(LegendElement),
-        color(ForegColor),
-        color(BackgColor),
-        pattern(SPattern).
+handler_type(text).
+handler_type(visual).
 </PRE>
 
+</DL>
+
 <P>
-Defines the attributes of the bar. 
-<DL COMPACT>
+<A NAME="IDX8498"></A>
+<A NAME="IDX8499"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>error_message/2:</B>
+<DD><A NAME="IDX8500"></A>
 
-<DT><CODE>XValue</CODE>
-<DD>
-bar label. Although <CODE>XValue</CODE> values may be numbers, the will be treated as labels. Different elements with the same label will produce different bars. 
 
-<DT><CODE>LegendElement</CODE>
-<DD>
-Legend element name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
+<P>
+<CODE>error_message(ErrorCode, ErrorMessage)</CODE>
 
-<DT><CODE>ForegColor</CODE>
-<DD>
-It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
 
-<DT><CODE>BackgColor</CODE>
-<DD>
-It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+<P>
+Binds the error code with its corresponding text message. 
 
-<DT><CODE>SPattern</CODE>
-<DD>
-It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ErrorCode</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>ErrorMessage</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
-<P>
- 
 
+<P>
+<A NAME="IDX8501"></A>
+<A NAME="IDX8502"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>error_file/2:</B>
+<DD><A NAME="IDX8503"></A>
+
+
+<P>
+<CODE>error_file(ErrorCode, ErrorFile)</CODE>
+
+
+<P>
+Binds the error code with its corresponding script error file. 
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ErrorCode</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>ErrorFile</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_241.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_243.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -17,7 +17,6 @@
 %%------------------------------------------------------------------------
 
 :- use_module(library('compiler/c_itf')).
-:- use_module(engine(internals),[builtin_module/1]).
 :- use_module(library(lists),[append/3]).
 :- use_module(library('class/class_itf')).
 :- use_module(library(filenames),[no_path_file_name/2]).
