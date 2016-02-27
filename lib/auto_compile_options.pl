@@ -14,12 +14,16 @@ foreign_compiler_options('LINUX','armv4l','gcc',['-fPIC']).
 foreign_linker_options('LINUX','armv4l','gcc',['-shared']).
 foreign_compiler_options('LINUX','i86','gcc',['-fPIC']).
 foreign_linker_options('LINUX','i86','ld',['-shared']).
+foreign_compiler_options('LINUX','i86_64','gcc',['-m32 -fPIC -shared']).
+foreign_linker_options('LINUX','i86_64','ld',['-melf_i386 -fPIC -shared']).
 foreign_compiler_options('LINUX','ppc','gcc',['-fPIC']).
 foreign_linker_options('LINUX','ppc','gcc',['-shared']).
 foreign_compiler_options('Dynix','i86','cc',[]).
 foreign_linker_options('Dynix','i86','ld',[]).
 foreign_compiler_options('Solaris','Sparc','gcc',[]).
 foreign_linker_options('Solaris','Sparc','ld',['-G']).
+foreign_compiler_options('Solaris','Sparc64','gcc',[]).
+foreign_linker_options('Solaris','Sparc64','ld',['-G']).
 foreign_compiler_options('Solaris','i86','gcc',[]).
 foreign_linker_options('Solaris','i86','ld',['-G']).
 foreign_compiler_options('SunOS4','Sparc','gcc',['-fPIC']).

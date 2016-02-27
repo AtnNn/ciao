@@ -45,12 +45,16 @@ if [ -f /bin/uname -o -f /usr/bin/uname ]; then
 
 	case "$os,$ht" in
         *BSD,i[3456]86 )        CIAOARCH=BSDi86 ;;
+	SunOS,sun4v )           CIAOARCH=SolarisSparc64 ;; # MCL
+	SunOS,sun4u )           CIAOARCH=SolarisSparc64 ;; # MCL
 	SunOS,sun3* )           CIAOARCH=SUN3 ;;
 	SunOS,sun4* )           CIAOARCH=SunOS4Sparc ;;
 	SunOS,i86pc )           CIAOARCH=Solarisi86 ;; # MCL
 	Linux,i[3456]86 )       CIAOARCH=LINUXi86 ;;
+	Linux,x86_64 )          CIAOARCH=LINUXi86_64 ;;
 	Linux,alpha )           CIAOARCH=LINUXalpha ;;
 	Linux,ppc )		CIAOARCH=LINUXppc ;;
+	Linux,ppc64 )		CIAOARCH=LINUXppc64 ;; # ACC
 	Linux,powerpc )		CIAOARCH=LINUXppc ;;
         Linux,sparc )           CIAOARCH=LINUXSparc ;;
         Linux,sparc64 )         CIAOARCH=LINUXSparc64 ;;
@@ -72,6 +76,7 @@ if [ -f /bin/uname -o -f /usr/bin/uname ]; then
 	*,mips )                CIAOARCH=MIPS ;;
 	*,CRAY-2 )              CIAOARCH=CRAY2 ;;
 	Darwin,"Power Macintosh" ) CIAOARCH=DARWINppc ;;    # JFMC 
+	Darwin,i386 )           CIAOARCH=DARWINi86 ;;    # MCL
 	esac
 fi
 
