@@ -21,13 +21,13 @@
 
 atom2term(Atom,Term):-
 	name(Atom,String),
-	parse_term(String,Term, _).
+	parse_term(String,Term, _), !.
 
 :- pred string2term(+String,-Term) # "Same as @pred{atom2term/2} but
    first argument is a string (containing a term).".
 
 string2term(String,Term):-
-	parse_term(String,Term, _).
+	parse_term(String,Term, _), !.
 
 :- pred parse_term(+String, -Term, ?Dummy)
       # "@var{String} is parsed into @var{Term} upto @var{Dummy}
@@ -95,6 +95,10 @@ parse_string0(C,String,[C|List],String1):-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+189,2002/02/14,17:16*46+'CET'), "Added cuts so
+   that atom2term/2 and string2term/2 give only one solution.  (Daniel
+   Cabeza Gras)").
 
 :- comment(version(0*9+78,1999/05/03,19:19*27+'MEST'), "Fixed a bug in
    parse_term/3 which failed on alone atoms. (Daniel Cabeza Gras)").

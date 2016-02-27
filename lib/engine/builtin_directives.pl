@@ -1,4 +1,4 @@
-:- module(builtin_directives, [], [assertions]).
+:- module(builtin_directives, [main/0], [assertions]).
 
 % ----------------------------------------------------------------------------
 :- comment(title, "Basic builtin directives").
@@ -82,8 +82,13 @@
         # "@var{Goal} will be executed after an abort of the execution of
           any program containing the current code.".
 
+main.
+
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+165,2002/01/03,17:38*59+'CET'), "Added main/0
+   just to avoid documentation errors.  (MCL)").
 
 :- comment(version(0*9+11,1999/03/18,21:28*24+'MET'), "Distributed
    documentation of some directives in several modules.  (Daniel Cabeza

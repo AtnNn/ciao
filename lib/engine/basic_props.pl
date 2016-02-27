@@ -7,7 +7,12 @@
          iso/1, not_further_inst/2,
 	 regtype/1
         ],
-        [assertions,hiord]).
+        [assertions]).
+
+%% Commented out to avoid including hiord_rt in all executables, put declarations instead
+%% :- use_package(hiord).
+:- set_prolog_flag(read_hiord, on).
+:- impl_defined([call/2]).
 
 :- comment(title,"Basic data types and properties").
 
@@ -288,11 +293,15 @@ compat(T, P) :- \+ \+ P(T).
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+190,2002/03/06,18:39*52+'CET'), "Taken out
+   package hiord to avoid including hiord_rt in all executables (Daniel
+   Cabeza Gras)").
+
 :- comment(version(1*7+97,2001/05/03,16:10*19+'CEST'), "Changed int
    to nnegint in predname.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+39,2001/01/05,19:04*12+'CET'), "Added package
-hiord in order to understand the T(X) syntax.  (MCL)").
+   hiord in order to understand the T(X) syntax.  (MCL)").
 
 :- comment(version(1*7+25,2000/10/23,15:52*30+'CEST'), "Fixed definition
    of flt/1, which looped for non-variable non-numeric terms.  (Daniel

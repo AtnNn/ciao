@@ -5,6 +5,7 @@
         term_to_meta/2,
         module_concat/3,
         last_module_exp/5,
+        goal_trans/2,
         '$atom_mode'/2, /* write.pl */
         '$nodebug_call'/1,
         '$meta_call'/1, % This is transformed by mexpand to call/1
@@ -171,6 +172,8 @@ control_c_handler :- throw(control_c).
 
 % Called from engine(mexpand)
 uses_runtime_module_expansion.
+
+:- data goal_trans/2.
 
 :- include(mexpand).
 
@@ -547,6 +550,10 @@ do_undefined(warning, X) :-
 % do_undefined(fail, X) :- fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+182,2002/01/31,19:11*26+'CET'), "Changed module
+   expansion to call goal expansions in between, even in runtime
+   expansions!  (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+147,2001/11/15,19:38*07+'CET'), "Changed
    execution of initialization directives.  Now the initialization of a

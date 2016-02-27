@@ -340,14 +340,6 @@ sourcename(S) :- struct(S).
 
 :- comment(version_maintenance,dir('../../version')).
 
-
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
-
 :- comment(version(1*7+47,2001/01/22,10:24*23+'CET'), "Added
 stream_alias to denote the built-in atoms denoting streams.  (MCL)").
 

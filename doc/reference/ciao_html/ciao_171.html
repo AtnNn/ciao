@@ -1,177 +1,184 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Ciao lpmake scripting facility</TITLE>
+<TITLE>The Ciao Prolog System               - chartlib_errhandle (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC671" HREF="ciao_toc.html#TOC671">The Ciao lpmake scripting facility</A></H1>
-
+<H1><A NAME="SEC639" HREF="ciao_toc.html#TOC639">chartlib_errhandle (library)</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
-
-
-<P>
- 
+<A NAME="IDX6404"></A>
 
 
 <P>
-<A NAME="IDX6877"></A>
-<A NAME="IDX6878"></A>
-<A NAME="IDX6879"></A>
-<A NAME="IDX6880"></A>
-
-
-<P>
-<STRONG>Note:</STRONG> 
-<A NAME="IDX6881"></A>
-<CODE>lpmake</CODE> and the 
-<A NAME="IDX6882"></A>
-<CODE>make</CODE> library are still under active development, and they may change substantially in future releases. 
-
-
-<P>
-<A NAME="IDX6883"></A>
-<CODE>lpmake</CODE> is a Ciao application which uses the Ciao 
-<A NAME="IDX6884"></A>
-<CODE>make</CODE> library to implement a dependency-driven scripts in a similar way to the Un*x 
-<A NAME="IDX6885"></A>
-<CODE>make</CODE> facility. 
-
-
-<P>
-The original purpose of the Un*x 
-<A NAME="IDX6886"></A>
-<CODE>make</CODE> utility is to determine automatically which pieces of a large program needed to be recompiled, and issue the commands to recompile them. In practice, 
-<A NAME="IDX6887"></A>
-<CODE>make</CODE> is often used for many other purposes: it can be used to describe any task where some files must be updated automatically from others whenever the others change. 
-<A NAME="IDX6888"></A>
-<CODE>lpmake</CODE> can be used for the same types of applications as 
-<A NAME="IDX6889"></A>
-<CODE>make</CODE>, and also for some new ones, and offers a number of advantages over 
-<A NAME="IDX6890"></A>
-<CODE>make</CODE>. The first one is <EM>portability</EM>. When compiled to a bytecode executable 
-<A NAME="IDX6891"></A>
-<CODE>lpmake</CODE> runs on any platform where a Ciao engine is available. Also, the fact that typically many of the operations are programmed in Prolog within the makefile, not needing external applications, improves portability further. The second advantage of 
-<A NAME="IDX6892"></A>
-<CODE>lpmake</CODE> is <EM>improved programming capabilities</EM>. While 
-<A NAME="IDX6893"></A>
-<CODE>lpmake</CODE> is simpler than 
-<A NAME="IDX6894"></A>
-<CODE>make</CODE>, 
-<A NAME="IDX6895"></A>
-<CODE>lpmake</CODE> allows using the Ciao Prolog language within the scripts. This allows establising more complex dependencies and programming powerful operations within the make file, and without resorting to external packages (e.g., operating system commands), which also helps portability. A final advantage of 
-<A NAME="IDX6896"></A>
-<CODE>lpmake</CODE> is that it supports a form of <EM>autodocumentation</EM>: 
-<A NAME="IDX6897"></A>
-<A NAME="IDX6898"></A>
-comments associated to targets can be included in the configuration files. Calling 
-<A NAME="IDX6899"></A>
-<CODE>lpmake</CODE> in a directory which has such a configuration file explains what commands the configuration file support and what these commands will do. 
+This module is an error handler. If the format of the arguments is not correct in a call to a chartlib predicate an exception will be thrown . You can wrap the chartlib predicates with the predicates exported by this module to handle automatically the errors if any. 
 
 
 
 <UL>
-<LI><A HREF="ciao_171.html#SEC672">General operation</A>
-<LI><A HREF="ciao_171.html#SEC673">lpmake usage</A>
-<LI><A HREF="ciao_171.html#SEC674">Acknowledgments (lpmake)</A>
+<LI><A HREF="ciao_171.html#SEC640">Usage and interface (chartlib_errhandle)</A>
+<LI><A HREF="ciao_171.html#SEC641">Documentation on exports (chartlib_errhandle)</A>
+<LI><A HREF="ciao_171.html#SEC642">Documentation on internals (chartlib_errhandle)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC672" HREF="ciao_toc.html#TOC672">General operation</A></H2>
+<H2><A NAME="SEC640" HREF="ciao_toc.html#TOC640">Usage and interface (<CODE>chartlib_errhandle</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(chartlib_errhandle)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX6405"></A>
+<CODE>chartlib_text_error_protect/1</CODE>, 
+<A NAME="IDX6406"></A>
+<CODE>chartlib_visual_error_protect/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6407"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX6408"></A>
+<CODE>chartlib/install_utils</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC641" HREF="ciao_toc.html#TOC641">Documentation on exports (<CODE>chartlib_errhandle</CODE>)</A></H2>
+<P>
+<A NAME="IDX6409"></A>
+<A NAME="IDX6410"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>chartlib_text_error_protect/1:</B>
+<DD><A NAME="IDX6411"></A>
+
 
 <P>
-To prepare to use 
-<A NAME="IDX6900"></A>
-<CODE>lpmake</CODE>, and in a similar way to 
-<A NAME="IDX6901"></A>
-<CODE>make</CODE>, you must write a file (typically called 
-<A NAME="IDX6902"></A>
-<CODE>Makefile.pl</CODE>) that describes the relationships among files in your program or application, and states the commands for updating each file. In a program, typically the executable file is updated from object files, which are in turn made by compiling source files. Another example is running 
-<A NAME="IDX6903"></A>
-<CODE>latex</CODE> and 
-<A NAME="IDX6904"></A>
-<CODE>dvips</CODE> on a set of source <CODE>.tex</CODE> files to generate a document in <CODE>dvi</CODE> and <CODE>postscript</CODE> formats. Once a suitable makefile exists, each time you change some source files, simply typing <CODE>lpmake</CODE> suffices to perform all necessary operations (recompilations, processing text files, etc.). The 
-<A NAME="IDX6905"></A>
-<CODE>lpmake</CODE> program uses the dependency rules in the makefile and the last modification times of the files to decide which of the files need to be updated. For each of those files, it issues the commands recorded in the makefile. For example, in the 
-<A NAME="IDX6906"></A>
-<CODE>latex</CODE>/
-<A NAME="IDX6907"></A>
-<CODE>dvips</CODE> case one rule states that the <CODE>.dvi</CODE> file whould be updated from the <CODE>.tex</CODE> files whenever one of them changes and another rule states that the <CODE>.ps</CODE> file needs to be updated from a <CODE>.dvi</CODE> file every time it changes. The rule also describe the commands to be issued to update the files. 
+<CODE>chartlib_text_error_protect(G)</CODE>
 
 
 <P>
-So, the general process is as follows: 
-<A NAME="IDX6908"></A>
-<CODE>lpmake</CODE> executes commands in the 
-<A NAME="IDX6909"></A>
-<CODE>Makefile.pl</CODE> to update one or more target <EM>names</EM>, where <EM>name</EM> is often a program, but can also be a file to be generated or even a "virtual" target. If no <CODE>-l</CODE> or <CODE>-m</CODE> options are present, 
-<A NAME="IDX6910"></A>
-<CODE>lpmake</CODE> will look for the makefile 
-<A NAME="IDX6911"></A>
-<CODE>Makefile.pl</CODE>. 
-<A NAME="IDX6912"></A>
-<CODE>lpmake</CODE> updates a target if it depends on prerequisite files that have been modified since the target was last modified, or if the target does not exist. You can provide command line arguments to 
-<A NAME="IDX6913"></A>
-<CODE>lpmake</CODE> to control which files should be regenerated, or how. 
+This predicate catches the thrown exception and sends it to the appropiate handler. The handler will show the error message in the standard output. 
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_text_error_protect(goal)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6412"></A>
+<A NAME="IDX6413"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>chartlib_visual_error_protect/1:</B>
+<DD><A NAME="IDX6414"></A>
+
+
+<P>
+<CODE>chartlib_visual_error_protect(G)</CODE>
+
+
+<P>
+This predicate catches the thrown exception and sends it to the appropiate handler. The handler will pop up a message box. 
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>chartlib_visual_error_protect(goal)</CODE>.
+
+
+</DL>
 
 
 
+<H2><A NAME="SEC642" HREF="ciao_toc.html#TOC642">Documentation on internals (<CODE>chartlib_errhandle</CODE>)</A></H2>
+<P>
+<A NAME="IDX6415"></A>
+<A NAME="IDX6416"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>handler_type/1:</B>
+<DD><A NAME="IDX6417"></A>
 
-<H2><A NAME="SEC673" HREF="ciao_toc.html#TOC673">lpmake usage</A></H2>
 
+<P>
+<CODE>handler_type(X)</CODE>
+
+
+<P>
+The library chartlib includes two error handlers already programmed. 
 
 <PRE>
-
-Supported command line options:
-
-[-v] [-u &#60;.../Configfile.pl&#62;] &#60;command1&#62; ... &#60;commandn&#62;
-
-  Process commands &#60;command1&#62; ... &#60;commandn&#62;, using user 
-  file &#60;.../Configfile.pl&#62; as configuration file. If no 
-  configuration file is specified a file 'Makefile.pl' in 
-  the current directory will be used. 
-
-[-v] [-m &#60;.../Configfile.pl&#62;] &#60;command1&#62; ... &#60;commandn&#62;
-
-  Same as above, but the configuration file is a module. 
-  Making this file a module is useful to implement 
-  inherintance across diferent configuration files, i.e., 
-  the values declared in a configuration file can be 
-  easily made to override those defined in another.
-
-  Optional argument '-v' produces verbose output, reporting 
-  on the processing of the dependency rules. Very useful 
-  for debugging Makefiles.
-
--h     [ -u &#60;.../Configfile.pl&#62; ]
--h     [ -m &#60;.../Configfile.pl&#62; ]
--help  [ -u &#60;.../Configfile.pl&#62; ]
--help  [ -m &#60;.../Configfile.pl&#62; ]
-
-  Print this help message. If a configuration file is given, 
-  and the commands in it are commented, then information on 
-  these commands is also printed.
-
+handler_type(text).
+handler_type(visual).
 </PRE>
 
-
-
-<H2><A NAME="SEC674" HREF="ciao_toc.html#TOC674">Acknowledgments (<CODE>lpmake</CODE>)</A></H2>
+</DL>
 
 <P>
-Some parts of the documentation are taken from the documentation of GNU's 
-<A NAME="IDX6914"></A>
-<CODE>gmake</CODE>.
+<A NAME="IDX6418"></A>
+<A NAME="IDX6419"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>error_message/2:</B>
+<DD><A NAME="IDX6420"></A>
 
+
+<P>
+<CODE>error_message(ErrorCode,ErrorMessage)</CODE>
+
+
+<P>
+Binds the error code with its corresponding text message. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6421"></A>
+<A NAME="IDX6422"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>error_file/2:</B>
+<DD><A NAME="IDX6423"></A>
+
+
+<P>
+<CODE>error_file(ErrorCode,ErrorFile)</CODE>
+
+
+<P>
+Binds the error code with its corresponding script error file. 
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_170.html">previous</A>, <A HREF="ciao_172.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

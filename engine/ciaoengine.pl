@@ -25,10 +25,16 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
-:- comment(version(1*7+161,2001/11/27,12:53*26+'CET'), "Removed some
-warnings.  (MCL)").
+:- comment(version(1*7+193,2002/03/25,11:51*37+'CET'), "Generalized
+the cache for "last_inserted_clause" (look for
+CACHE_INCREMENTAL_CLAUSE_INSERTION); just small improvements.  Could
+not make the same thing with the try_node chain in incore_insert.
+(MCL)").
 
-:- comment(version(1*7+151,2001/11/23,15:08*49+'CET'), " added
+:- comment(version(1*7+161,2001/11/27,12:53*26+'CET'), "Removed some
+   warnings.  (MCL)").
+
+:- comment(version(1*7+151,2001/11/23,15:08*49+'CET'), "Added
 -fno-strict-aliasing to the C command line options in order to work
 around (wrong?) optimizations and inconvenient ANSI casting
 conventions.  The Ciao engine now seems to compile correctly with the
@@ -37,51 +43,52 @@ later gcc suite.
     (MCL)").
 
 :- comment(version(1*7+150,2001/11/23,14:57*54+'CET'), "Added patch
-for Mac Os X developer tools 10.1 (thanks to @index{Kris Gybels}) (MCL)").
+   for Mac Os X developer tools 10.1 (thanks to @index{Kris Gybels})
+   (MCL)").
 
 :- comment(version(1*7+132,2001/10/31,10:14*18+'CET'), "Added
-initialization of SHELL environment variable under Windows when it is
-not set.  (MCL)").
+   initialization of SHELL environment variable under Windows when it
+   is not set.  (MCL)").
 
 :- comment(version(1*7+115,2001/07/09,19:10*00+'CEST'), "Solved a
    problem with '$/' in Windows.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+113,2001/07/05,17:10*06+'CEST'), "exec/3 was
-giving segmentation fault due to a unitialized variable.  Solved.
-(MCL)").
+   giving segmentation fault due to a unitialized variable.  Solved.
+   (MCL)").
 
 :- comment(version(1*7+68,2001/03/22,17:28*29+'CET'), "Solved a bug
-(which only showed up in Mac OS X): in the wam() label "fail:" four X
-regs were popped be it necessary or not (in case less registers were
-needed, the WAM just discarded those recovered).  This caused the
-first choicepoint of a concurrent goal to be accessed out of the
-bounds of the allocated memory in case of failure of the computation,
-and a OS signal was raised.  I have conducted some experiments, and
-the original code did not seem to bring any advantage in terms of
-execution time, so I have simplified it (the original code is still in
-place and commented).  (MCL)").
+   (which only showed up in Mac OS X): in the wam() label "fail:" four
+   X regs were popped be it necessary or not (in case less registers
+   were needed, the WAM just discarded those recovered).  This caused
+   the first choicepoint of a concurrent goal to be accessed out of
+   the bounds of the allocated memory in case of failure of the
+   computation, and a OS signal was raised.  I have conducted some
+   experiments, and the original code did not seem to bring any
+   advantage in terms of execution time, so I have simplified it (the
+   original code is still in place and commented).  (MCL)").
 
 :- comment(version(1*7+67,2001/03/21,12:28*26+'CET'), "
-ThreadCreateNoGoalId not called anywhere --- removed.  (MCL)").
+   ThreadCreateNoGoalId not called anywhere --- removed.  (MCL)").
 
 :- comment(version(1*7+65,2001/03/05,16:21*45+'CET'), "Added support
-for threads in DARWIN; some problems still pending, but most of it
-works.  (MCL)").
+   for threads in DARWIN; some problems still pending, but most of it
+   works.  (MCL)").
 
 :- comment(version(1*7+60,2001/02/12,18:09*03+'CET'), "Added patches
-for a concurrency problem which appeared in nonindexed accesses to
-predicates: when post-indexing unification failed the lock was not
-unset, and backtracking to retry_instance blocked.  Solved by keeping
-a bit in the choicepoint reflecting whether the backtracking worker
-had locked the predicate, and unlocking before entering
-next_instance_conc.  (MCL)").
+   for a concurrency problem which appeared in nonindexed accesses to
+   predicates: when post-indexing unification failed the lock was not
+   unset, and backtracking to retry_instance blocked.  Solved by
+   keeping a bit in the choicepoint reflecting whether the
+   backtracking worker had locked the predicate, and unlocking before
+   entering next_instance_conc.  (MCL)").
 
 :- comment(version(1*7+53,2001/01/26,15:34*44+'CET'), "Changed name
-for alias redirection module .  (MCL)").
+   for alias redirection module .  (MCL)").
 
 :- comment(version(1*7+48,2001/01/22,12:21*43+'CET'), "Added
-prolog_{replace,get}_stream(), aimed at replacing the file pointed to
-by the Prolog stream aliases.  (MCL)").
+   prolog_{replace,get}_stream(), aimed at replacing the file pointed
+   to by the Prolog stream aliases.  (MCL)").
 
 :- comment(version(1*7+46,2001/01/19,19:43*48+'CET'), "Fixed another bug on
    self-contained executables when called from certain web servers.  (Oscar
@@ -92,7 +99,7 @@ by the Prolog stream aliases.  (MCL)").
    variable.  (Oscar Portela Arjona)").
 
 :- comment(version(1*7+38,2001/01/05,18:30*05+'CET'), "Added Sparc64
-options to locks.h (MCL)").
+   options to locks.h (MCL)").
 
 :- comment(version(1*7+34,2000/12/23,16:42*52+'CET'), "Added patches
    to compile in Darwin (MacOS X). The new DARWINppc architecture is
@@ -101,66 +108,68 @@ options to locks.h (MCL)").
    Morales)").
 
 :- comment(version(1*7+29,2000/11/03,15:07*41+'CET'), "Added suport
-for Linux in Sparc.  (MCL)").
+   for Linux in Sparc.  (MCL)").
 
 :- comment(version(1*7+28,2000/11/03,10:45*01+'CET'), "Improved
-behavior in non-blocking calls to concurrent facts, and solved a bug:
-a NB call which does not have matching fact at indexing level does not
-push a choicepoint.  (MCL)").
+   behavior in non-blocking calls to concurrent facts, and solved a
+   bug: a NB call which does not have matching fact at indexing level
+   does not push a choicepoint.  (MCL)").
 
 :- comment(version(1*7+27,2000/10/30,19:22*49+'CET'), "nonblocking
-calls to predicates were not protected by a lock.  Fixed.  (MCL)").
+   calls to predicates were not protected by a lock.  Fixed.  (MCL)").
 
 :- comment(version(1*7+26,2000/10/24,18:24*26+'CEST'), ""Fixed bug in
    fastwrite/fastread when writing/reading lists of small integers (between 1
    and 255).  (Oscar Portela Arjona)").
 
 :- comment(version(1*7+19,2000/09/11,21:27*01+'CEST'), "Added several
-system predicates (rm,mv,mkdir,rmdir) to the Ciao Prolog libraries.
-Not removed from the 'make' library: will unify them.  (MCL)").
+   system predicates (rm,mv,mkdir,rmdir) to the Ciao Prolog libraries.
+   Not removed from the 'make' library: will unify them.  (MCL)").
 
 :- comment(version(1*7+13,2000/08/24,18:41*05+'CEST'), "Changed getc()
-in fastreading to readchar(); fastreading was not working with
-sockets!  (MCL)").
+   in fastreading to readchar(); fastreading was not working with
+   sockets!  (MCL)").
 
 :- comment(version(1*7+2,2000/07/19,14:15*15+'CEST'), "Added patches
-to compile in Power PC contributed by Paulo Moura.  (MCL)").
+   to compile in Power PC contributed by Paulo Moura.  (MCL)").
 
 :- comment(version(1*7+1,2000/07/18,15:47*04+'CEST'), "Some warnings fixed
    (Oscar Portela Arjona)").
 
 :- comment(version(1*5+172,2000/07/12,16:45*31+'CEST'), "Partially
-solved undetected heap overflows in fast_read: no enough checks were
-made when constructing terms.  Workaround: ensuring enough heap space
-(16 kCels at the moment) before each call to fast_read.  (MCL, DCG)").
+   solved undetected heap overflows in fast_read: no enough checks
+   were made when constructing terms.  Workaround: ensuring enough
+   heap space (16 kCels at the moment) before each call to fast_read.
+   (MCL, DCG)").
 
 :- comment(version(1*5+171,2000/07/07,16:10*17+'CEST'), "Solved a bug
-in calls to non-blocking failing concurrent predicates: if possibly
-matching clauses exist, the lock has to be released after the
-execution (otherwise the clause might be removed in the middle of an
-execution); this was being done by an $unlock_predicate/1 after
-$current_instance/5. But if the predicate fails, $unlock_predicate/1
-is never reached.  It was solved by pushing a choicepoint even if the
-accessed clause is the last one, and, on redo, checking if the call is
-non-blocking before trying to wait on it.  next_instance_conc will
-leave a lock if there is a possibly matching clause (which will be
-released by $unlock_predicate/1) and remove it after the last clause
-is reached, for CONC_CLOSED and NON_BLOCKING calls.  (MCL)").
+   in calls to non-blocking failing concurrent predicates: if possibly
+   matching clauses exist, the lock has to be released after the
+   execution (otherwise the clause might be removed in the middle of
+   an execution); this was being done by an $unlock_predicate/1 after
+   $current_instance/5. But if the predicate fails,
+   $unlock_predicate/1 is never reached.  It was solved by pushing a
+   choicepoint even if the accessed clause is the last one, and, on
+   redo, checking if the call is non-blocking before trying to wait on
+   it.  next_instance_conc will leave a lock if there is a possibly
+   matching clause (which will be released by $unlock_predicate/1) and
+   remove it after the last clause is reached, for CONC_CLOSED and
+   NON_BLOCKING calls.  (MCL)").
 
 :- comment(version(1*5+164,2000/06/22,19:48*58+'CEST'), "Changed
-new_atom/1 to generate atoms having only alphanumeric characters.
-(MCL)").
+   new_atom/1 to generate atoms having only alphanumeric characters.
+   (MCL)").
 
 :- comment(version(1*5+161,2000/06/01,20:23*24+'CEST'), "Fixed a bug
    which made that sometimes root directory was computed as the empty
    atom.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+160,2000/06/01,12:27*49+'CEST'), "Changed
-stat() in unix_utils.c to lstat() to gather information about links.
-(MCL)").
+   stat() in unix_utils.c to lstat() to gather information about
+   links.  (MCL)").
 
 :- comment(version(1*5+155,2000/05/29,19:34*30+'CEST'), "Changed xchgw
-to xchg in assembly code to avoid compiler complaints.  (MCL)").
+   to xchg in assembly code to avoid compiler complaints.  (MCL)").
 
 :- comment(version(1*5+136,2000/05/09,14:16*01+'CEST'), "Access to
    clauses and facts is now (partially) protected.  Concurrent threads
@@ -188,56 +197,57 @@ to xchg in assembly code to avoid compiler complaints.  (MCL)").
    wam.c. (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+129,2000/05/02,20:46*52+'CEST'), "relBuf in
-prolog_find_file() is now explicitly allocated, since MAXATOM is a
-variable and some compilers do not know how to translate a variable
-array length directly.  (MCL)").
+   prolog_find_file() is now explicitly allocated, since MAXATOM is a
+   variable and some compilers do not know how to translate a variable
+   array length directly.  (MCL)").
 
 :- comment(version(1*5+128,2000/05/02,18:04*14+'CEST'), "Changed the
-implementation of general semaphores, using posix locks.  Much simpler
-and more efficient now.  (MCL)").
+   implementation of general semaphores, using posix locks.  Much
+   simpler and more efficient now.  (MCL)").
 
 :- comment(version(1*5+126,2000/05/02,16:47*23+'CEST'), "Corrected
-non-initialized variable in eng_killothers() (MCL)").
+   non-initialized variable in eng_killothers() (MCL)").
 
 :- comment(version(1*5+125,2000/04/28,21:37*08+'CEST'), "close/1
-checks for previous choicepoints which are enumerating the current
-open streams and substitutes the closed stream by the next one in the
-stream chain.  But this causes close/1 not to be O(1), and to run
-slower and slower in unexpected cases (e.g., in a TCP/IP client),
-where (apparently) no choicepoints were being pushed (but they
-actually were).  (MCL)").
+   checks for previous choicepoints which are enumerating the current
+   open streams and substitutes the closed stream by the next one in
+   the stream chain.  But this causes close/1 not to be O(1), and to
+   run slower and slower in unexpected cases (e.g., in a TCP/IP
+   client), where (apparently) no choicepoints were being pushed (but
+   they actually were).  (MCL)").
 
 :- comment(version(1*5+124,2000/04/28,21:16*05+'CEST'), "Many Prolog
-builtins call catch; it is not concurrent, so no concurrent
-applications should call them.  Making the data fact used by it
-concurrent will, for the moment, solve this problem.  (MCL)").
+   builtins call catch; it is not concurrent, so no concurrent
+   applications should call them.  Making the data fact used by it
+   concurrent will, for the moment, solve this problem.  (MCL)").
 
 :- comment(version(1*5+123,2000/04/28,17:24*44+'CEST'), "Added
-processor relinquishing; it gives much better and stable performance
-in a monoprocessor execution.  It seems to overload execution in a
-Linux 2 processor box!  (MCL)").
+   processor relinquishing; it gives much better and stable
+   performance in a monoprocessor execution.  It seems to overload
+   execution in a Linux 2 processor box!  (MCL)").
 
 :- comment(version(1*5+122,2000/04/28,17:22*01+'CEST'), "All the
-Signal_Cond_End replaced by Broadcast_Cond_End: this is the right
-thing to do, since all threads waiting on a fact should be awoken and
-given the opportunity of inspecting the newly added facts. (MCL)").
+   Signal_Cond_End replaced by Broadcast_Cond_End: this is the right
+   thing to do, since all threads waiting on a fact should be awoken
+   and given the opportunity of inspecting the newly added
+   facts. (MCL)").
 
 :- comment(version(1*5+121,2000/04/28,14:25*20+'CEST'), "Added macro
-for process relinquishing.  (MCL)").
+   for process relinquishing.  (MCL)").
 
 :- comment(version(1*5+120,2000/04/28,14:24*59+'CEST'), "Added macro
-for condition broadcasting.  (MCL)").
+   for condition broadcasting.  (MCL)").
 
 :- comment(version(1*5+119,2000/04/28,14:23*49+'CEST'), "Solved a bug
-with concurrent facts wich appeared explicitly in the source file:
-their pending_x? fields were not being initialized in
-compile_term_aux().  (MCL)").
+   with concurrent facts wich appeared explicitly in the source file:
+   their pending_x? fields were not being initialized in
+   compile_term_aux().  (MCL)").
 
 :- comment(version(1*5+112,2000/04/07,17:44*20+'CEST'), "Added code
-for library-based locking in Windows -- not tested.  (MCL)").
+   for library-based locking in Windows -- not tested.  (MCL)").
 
 :- comment(version(1*5+111,2000/04/07,17:43*52+'CEST'), "Code for
-locking (in locks.h) cleaned up.  (MCL)").
+   locking (in locks.h) cleaned up.  (MCL)").
 
 :- comment(version(1*5+98,2000/03/30,14:58*35+'CEST'), "Removed some
    old dependencies in the Makefile, renamed some internal C fuctions

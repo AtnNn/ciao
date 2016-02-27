@@ -52,8 +52,10 @@ do_file_initialization(File) :-
 
 check_static_module(File) :-
         base_name(File, Base),
-        static_base(Base), !,
-        message(note, 'module already in executable').
+        defines_module(Base, Module),
+        static_module(Module), !,
+        message(note, ['module ',Module,
+                       ' already in executable, just made visible']).
 check_static_module(_).
 
 unload(File) :-
@@ -102,6 +104,9 @@ mode_of_module(Module, Mode) :- module_loaded(Module, _, _, Mode).
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+176,2002/01/14,17:27*00+'CET'), "changed 'module
+   already in executable' message.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+85,2001/04/05,11:16*53+'CEST'), "Fixed the
    foreign interface bug seen with ensure_loaded/1 (Jose Morales)").

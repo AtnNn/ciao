@@ -25,7 +25,7 @@ fibaux(Fact, Fpost, N, F):-
 
 do_fib:-
         statistics(runtime, _),
-        N = 1000,
+        N = 1500,
         fib(N, F),
         fib(K, F),
         statistics(runtime, [_|T]),

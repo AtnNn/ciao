@@ -23,6 +23,7 @@
          set_debug_mode/1, set_nodebug_mode/1, mode_of_module/2,
          set_debug_module/1, set_nodebug_module/1,
          set_debug_module_source/1]).
+:- use_module(library(goal_trans), [add_goal_trans/2]).
 :- use_module(library(system), [file_exists/1]).
 :- use_module(library(errhandle)).
 :- use_module(library(ttyout)).
@@ -32,8 +33,9 @@
 :- use_module(library(sort), [sort/2, keysort/2]).
 :- use_module(library(attrdump), [copy_extract_attr/3]).
 :- use_module(library(debugger)).
-:- use_module(library('compiler/translation')).
-:- use_module(library('compiler/c_itf'), [expand_list/2,interpret_srcdbg/1]).
+:- use_module(library('compiler/translation'),
+        [expand_term/4, add_sentence_trans/2, add_term_trans/2]).
+:- use_module(library('compiler/c_itf'), [expand_list/2,interpret_srcdbg/1,multifile/1]).
 :- use_module(engine(internals),
         [imports/5, '$bootversion'/0, '$nodebug_call'/1, '$setarg'/4,
          '$open'/3, '$abolish'/1,'$empty_gcdef_bin'/0]).
@@ -329,8 +331,7 @@ shell_expand((:- Decl), VarNames, Query) :-
 shell_expand(RawQuery, VarNames, Query) :-
         current_fact(shell_module(ShMod)),
         expand_term(('SHELL':-RawQuery), ShMod, VarNames, Expansion),
-        ( Expansion = ('SHELL':-Query0) ->
-            expand_goal(Query0, ShMod, VarNames, Query)
+        ( Expansion = ('SHELL':-Query), !
         ; Query = fail,
           message(error, ['unexpected answer from expansion: ',Expansion])
         ).
@@ -355,24 +356,20 @@ include_st(Stream) :-
           expand_term(RawData, ShMod, VarNames, Data0),
 	  expand_list(Data0, Data1),
         ( Data1 = end_of_file, !
-        ; interpret_data(Data1, VarNames, L0, L1),
+        ; interpret_data(Data1, L0, L1),
           fail).
 
-interpret_data((?- Goal), _, _, _) :- !,
+interpret_data((?- Goal), _, _) :- !,
         '$shell_call'(Goal), !.
-interpret_data((:- Decl), _, L0, L1) :- !,
+interpret_data((:- Decl), L0, L1) :- !,
         ( current_fact(new_decl(Decl)) ->
             true
         ; shell_directive(Decl) ->
-            '$shell_call'(Decl)
+            call(Decl)
         ; bad_shell_directive(Decl, L0, L1)
         ).
-interpret_data((H :- B0), VarNames, _, _) :- !,
-        shell_module(ShMod),
-        expand_goal(B0, ShMod, VarNames, B),
-        '$shell_call'(assertz((H :- B))).
-interpret_data(Fact, _, _, _) :-
-        '$shell_call'(assertz(Fact)).
+interpret_data(Clause, _, _) :-
+        '$shell_call'(assertz(Clause)).
 
 bad_shell_directive(Decl, L0, L1) :-
         functor(Decl,F,A),
@@ -461,7 +458,9 @@ new_declaration(S) :-
 
 load_compilation_module(File) :-
         this_module(M),
-        use_module(File, all, M).
+        use_module(File, all, M),   % Here for sentence/term expansions
+        shell_module(ShM),
+        use_module(File, all, ShM). % In ciaoshcope for goal expansions
 
 add_sentence_trans(P) :-
         current_fact(shell_module(ShMod)),

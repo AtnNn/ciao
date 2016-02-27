@@ -4,4 +4,4 @@ clean:
 	rm -f *.itf *.asr *.po
 
 distclean: clean
-	rm -f *~
+	rm -f *~ phone_book queens

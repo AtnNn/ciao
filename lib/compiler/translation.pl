@@ -1,25 +1,24 @@
 :- module(translation, [
         expand_term/4,
-        expand_goal/4,
         expand_clause/6,
+        goal_trans/2,
         add_sentence_trans/2,
         del_sentence_trans/1,
         add_term_trans/2,
         del_term_trans/1,
-        add_goal_trans/2,
-        del_goal_trans/1,
         add_clause_trans/2,
-        del_clause_trans/1
+        del_clause_trans/1,
+        add_goal_trans/2,
+        del_goal_trans/1
         ], [assertions]).
 
 :- meta_predicate
         add_sentence_trans(+, spec),
         add_term_trans(+, spec),
-        add_goal_trans(+, spec),
+%       add_goal_trans(+, spec), % Already in included  add_goal_trans.pl
         add_clause_trans(+, spec).
 
 :- use_module(engine(internals), ['$meta_call'/1, term_to_meta/2]).
-:- use_module(library('compiler/c_itf'), [meta_args/2, imports/5]).
 :- use_module(library(lists), [append/3]).
 
 expand_term(X0, M, Dict, X2) :-
@@ -111,128 +110,6 @@ term_trans_args(N, X, Ts, Dict, Y) :-
         term_translation_t(Xn, Ts, Dict, Yn),
         term_trans_args(N1, X, Ts, Dict, Y).
 
-do_translations([], X, _, X).
-do_translations([T|Ts], X, Dict, Y) :-
-        do_translation(T, X, Dict, Xt),
-        do_translations(Ts, Xt, Dict, Y).
-
-do_translation(T, X, Dict, Y) :-
-        comp_goal(T, Dict, G),
-        arg(1, G, X),
-        arg(2, G, Y),
-        '$meta_call'(G), !.
-do_translation(_, X, _, X).
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Recursive by goals
-expand_goal(G, M, Dict, NG) :-
-        nonvar(G),
-        current_fact(goal_trans(M,_)), !,
-        body_translation(G, M, Dict, NG).
-expand_goal(G, _, _, G).
-
-:- data goal_trans/2.
-
-add_goal_trans(M, S) :-
-        term_to_meta(T/A, S),
-        atom(T),
-        create_trans(A, T, M, Tr),
-        assertz_fact(goal_trans(M,Tr)).
-
-del_goal_trans(M) :-
-        retractall_fact(goal_trans(M,_)).
-
-sent_trans_of_goals((Head :- Body), M, Dict, (Head :- NewBody)) :- !,
-        body_translation(Body, M, Dict, NewBody).
-sent_trans_of_goals(Head, _, _, Head).
-
-body_translation(V, _, _, W) :- var(V), !, W = V.
-body_translation(Goal, M, Dict, NewGoal) :-
-        functor(Goal, F, A),
-        functor(Meta, F, A),
-        construct(Meta), !, % Control predicates
-        functor(NewGoal, F, A),
-        goal_trans_meta_args(A, Meta, Goal, M, Dict, NewGoal).
-body_translation(Goal, M, Dict, NewGoal) :-
-        functor(Goal, F, A),
-        functor(Meta, F, A),
-        meta_pred(M, Meta), !, % Meta-predicates
-        functor(Goal1, F, A),
-        goal_trans_meta_args(A, Meta, Goal, M, Dict, Goal1),
-        simple_goal_trans(Goal1, M, Dict, NewGoal).
-body_translation(Goal, M, Dict, NewGoal) :-
-        simple_goal_trans(Goal, M, Dict, NewGoal).
-
-goal_trans_meta_args(0, _, _, _, _, _) :- !.
-goal_trans_meta_args(N, Meta, G, M, Dict, NG) :-
-        arg(N, Meta, K),
-        arg(N, G, Gn),
-        arg(N, NG, NGn),
-        goal_trans_meta_arg(K, Gn, M, Dict, NGn),
-        N1 is N-1,
-        goal_trans_meta_args(N1, Meta, G, M, Dict, NG).
-
-goal_trans_meta_arg(goal, G, M, Dict, NG) :- !,
-        body_translation(G, M, Dict, NG).
-goal_trans_meta_arg(clause, S, _, _, S) :- var(S), !.
-goal_trans_meta_arg(clause, S, M, Dict, NS) :- !,
-        sent_trans_of_goals(S, M, Dict, NS).
-goal_trans_meta_arg(_, A, _, _, A).
-
-simple_goal_trans(G, M, Dict, NG) :-
-        goal_trans(M, T),
-        do_proper_translation(T, G, Dict, Gt), !,
-        body_translation(Gt, M, Dict, NG).
-simple_goal_trans(G, _, _, G).
-
-do_proper_translation(T, X, Dict, Y) :-
-        comp_goal(T, Dict, G),
-        arg(1, G, X),
-        arg(2, G, Y),
-        '$meta_call'(G), !.
-
-create_trans(2, T,_M, T).
-create_trans(3, T, M, Tr) :-
-        functor(Tr, T, 1),
-        arg(1, Tr, M).
-create_trans(4, T, M, Tr) :-
-        functor(Tr, T, 2),
-        arg(1, Tr, M).
-
-comp_goal(T,_Dict, G) :-
-        atom(T), !,
-        functor(G, T, 2).
-comp_goal(T,_Dict, G) :-
-        functor(T, F, 1), !,
-        arg(1, T, M),
-        functor(G, F, 3),
-        arg(3, G, M).
-comp_goal(T, Dict, G) :-
-        functor(T, F, 2), !,
-        arg(1, T, M),
-        functor(G, F, 4),
-        arg(3, G, M),
-        arg(4, G, Dict).
-
-meta_pred(M, Meta) :-
-        meta_args(M, Meta), !.
-meta_pred(M, Meta) :-
-        meta_args(O, Meta),
-        functor(Meta, F, A),
-        imports(M, _, F, A, O).
-
-construct((goal,goal)).
-construct((goal;goal)).
-construct((goal->goal)).
-construct((\+ goal)).
-construct((? ^ goal)).
-construct(if(goal,goal,goal)).
-construct(? : goal).
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 expand_clause(H, B, M, Dict, H1, B1) :-
@@ -254,6 +131,51 @@ add_clause_trans(M, S) :-
 
 del_clause_trans(M) :-
         retractall_fact(clause_translations(M,_)).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+:- data goal_trans/2.
+
+:- include(library('compiler/add_goal_trans')).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_trans(2, T,_M, T).
+create_trans(3, T, M, Tr) :-
+        functor(Tr, T, 1),
+        arg(1, Tr, M).
+create_trans(4, T, M, Tr) :-
+        functor(Tr, T, 2),
+        arg(1, Tr, M).
+
+do_translations([], X, _, X).
+do_translations([T|Ts], X, Dict, Y) :-
+        do_translation(T, X, Dict, Xt),
+        do_translations(Ts, Xt, Dict, Y).
+
+do_translation(T, X, Dict, Y) :-
+        comp_goal(T, Dict, G),
+        arg(1, G, X),
+        arg(2, G, Y),
+        '$meta_call'(G), !.
+do_translation(_, X, _, X).
+
+comp_goal(T,_Dict, G) :-
+        atom(T), !,
+        functor(G, T, 2).
+comp_goal(T,_Dict, G) :-
+        functor(T, F, 1), !,
+        arg(1, T, M),
+        functor(G, F, 3),
+        arg(3, G, M).
+comp_goal(T, Dict, G) :-
+        functor(T, F, 2), !,
+        arg(1, T, M),
+        functor(G, F, 4),
+        arg(3, G, M),
+        arg(4, G, Dict).
+
 
 % ----------------------------------------------------------------------------
 

@@ -1,5 +1,7 @@
 ; -*- mode: emacs-lisp; -*-
 
+;; **** Fixed some additional xemacs compatibility issues (searches)
+
 ;; --------------------------------------------------------------------------
 ;; The actual code of the mode starts here.
 ;; --------------------------------------------------------------------------
@@ -256,7 +258,7 @@ Manuel C. Rodriguez. See the changelog for details."
 ;; ---------------------------------------------------------------------------
 
 (require 'comint)
-(require 'calendar)
+;; (require 'calendar)
 (require 'easymenu)
 (require 'word-help)
 (require 'etags)
@@ -361,6 +363,14 @@ process."
 
 (defvar ciao-inferior-error nil
   "Stores the line in the inferior buffer which shows the error line.")
+
+(defvar ciao-finding-errors nil
+  "Non nil if we are in the middle of the process of finding errors.
+   In that case it contains the original buffer to return to in the end.")
+
+(defvar ciao-last-process-buffer-used nil
+  "Contains which is the last process buffer (preprocessor, toplevel,
+   ...) used.")
 
 (defcustom ciao-main-buffer ""
   "Name of main module in a multiple module program. It is very useful
@@ -491,35 +501,118 @@ right now. It is saved for when flag is not set.")
 	      ".*[\*0-9]+  [\*0-9]+"
 	      "  \\([CERF][a-z]+\\):.* ? "))
 
-(defcustom ciao-debug-call-color 'secondary-selection
+(defface ciao-debug-call-color
+;;   '((((type tty) (class color))
+;;      (:background "yellow" :foreground "black"))
+;;     (((class color) (background light))
+;;      (:background "yellow"))
+;;     (((class color) (background dark))
+;;      (:background "yellow"))
+;;     (t (:inverse-video t)))
+  '((((type tty) (class color))
+     (:background "cyan" :foreground "black"))
+    (((class color) (background light))
+     (:background "yellow"))
+    (((class color) (background dark))
+     (:background "SkyBlue4"))
+    (t (:inverse-video t)))
+    "Color to use with the call port in source debugger.")
+;; was  secondary-selection
+(defcustom ciao-debug-call-color 'ciao-debug-call-color
   "Color to use with the call port in source debugger."
   :group 'ciao
   :type 'face)
 
-(defcustom ciao-debug-exit-color 'highlight
+(defface ciao-debug-exit-color
+;;   '((((type tty) (class color))
+;;      (:background "green" :foreground "black"))
+;;     (((class color) (background light))
+;;      (:background "green"))
+;;     (((class color) (background dark))
+;;      (:background "green"))
+;;     (t (:inverse-video t)))
+  '((((type tty) (class color))
+     (:background "green"))
+    (((class color) (background light))
+     (:background "green"))
+    (((class color) (background dark))
+     (:background "darkolivegreen"))
+    (t (:inverse-video t)))
+    "Color to use with the exit port in source debugger.")
+;; was highlight
+(defcustom ciao-debug-exit-color 'ciao-debug-exit-color
   "Color to use with the exit port in source debugger."
   :group 'ciao
   :type 'face)
 
-(defcustom ciao-debug-fail-color 'modeline
+(defface ciao-debug-fail-color
+  '((((type tty) (class color))
+     (:background "Firebrick" :foreground "White"))
+    (((class color) (background light))
+     (:background "Firebrick" :foreground "White"))
+    (((class color) (background dark))
+     (:background "Firebrick" :foreground "White"))
+    (t (:inverse-video t)))
+    "Color to use with the fail port in source debugger.")
+;; was paren-mismatch-face
+(defcustom ciao-debug-fail-color 'ciao-debug-fail-color
   "Color to use with the fail port in source debugger."
   :group 'ciao
   :type 'face)
 
-(defcustom ciao-debug-redo-color 'holiday-face
+(defface ciao-debug-redo-color
+  '((((type tty) (class color))
+     (:background "orange" :foreground "black"))
+    (((class color) (background light))
+     (:background "orange"))
+    (((class color) (background dark))
+     (:background "orange"))
+    (t (:inverse-video t)))
+    "Color to use with the redo port in source debugger.")
+;; was  isearch
+(defcustom ciao-debug-redo-color 'ciao-debug-redo-color
   "Color to use with the redo port in source debugger."
   :group 'ciao
   :type 'face)
 
-(defcustom ciao-debug-expansion 'region
+(defface ciao-debug-expansion
+  '((((type tty) (class color))
+     (:background "blue" :foreground "white"))
+    (((type tty) (class mono))
+     (:inverse-video t))
+    (((class color) (background dark))
+     (:background "blue3"))
+    (((class color) (background light))
+     (:background "lightgoldenrod2"))
+    (t (:background "gray")))
+    "Color to use in source debugger when the predicate was not found.")
+;; was  region
+(defcustom ciao-debug-expansion 'ciao-debug-expansion
   "Color to use in source debugger when the predicate was not found."
   :group 'ciao
   :type 'face)
 
-(defcustom ciao-debug-breakpoint-color 'font-lock-warning-face
+(defface ciao-debug-breakpoint-color
+  '((((type tty) (class color)) (:foreground "red"))
+    (((class color) (background light)) (:foreground "Red" :bold t))
+    (((class color) (background dark)) (:foreground "Pink" :bold t))
+    (t (:inverse-video t :bold t)))
+    "Color to use with breakpoints in source debugger.")
+;; was  font-lock-warning-face
+(defcustom ciao-debug-breakpoint-color 'ciao-debug-breakpoint-color
   "Color to use with breakpoints in source debugger."
   :group 'ciao
   :type 'face)
+
+(defcustom ciao-logo "ciao.xpm"
+  "Ciao logo image."
+  :group 'ciao
+  :type 'file)
+
+(defcustom ciao-clip-logo "clip.xpm"
+  "CLIP logo image."
+  :group 'ciao
+  :type 'file)
 
 ;; ---------------------------------------------------------------------------
 ;; CiaoPP variables
@@ -773,21 +866,19 @@ has been loaded or not (see ciao-check-buffer-syntax).")
      "add_sentence_trans" "add_term_trans" "add_clause_trans"
      "add_goal_trans"))
 
-; (defcustom ciao-ociao-builtin-face 'font-lock-ForestGreen
-;    "Color to fontify the Ciao/Prolog builtin directives."
-;     :group 'ciao
-;     :type 'face)
-
-(defvar ciao-ociao-directives
-  '( "virtual" "public" "inheritable" "implements" "inherit_class" "class"
-     "use_class"))
+(defvar ciao-library-directives
+  '( 
+;; functions
+     "function" 
+;; argnames
+     "argnames" 
+;; ociao
+     "virtual" "public" "inheritable" "implements" "inherit_class" "class"
+     "use_class"
+     ))
  
-; (defcustom ciao-ociao-directives-face 'font-lock-NavyBlue-bold
-;   "Color to fontify the Ciao/Prolog O'Ciao directives."
-;   :group 'ciao
-;   :type 'face)
-
-(defvar ciao-user-directives nil)
+(defvar ciao-user-directives 
+  '( "argnames" ))
  
 ; (setq ciao-mode-font-lock-keywords
 (defvar ciao-mode-font-lock-keywords
@@ -804,17 +895,17 @@ has been loaded or not (see ciao-check-buffer-syntax).")
     ;; lpdoc comments
     ((lambda (limit) 
        (ciao-font-lock-match limit
-                             "^ *:- *comment( *bug\\>"
+                             "^ *:- *\\(comment\\|doc\\)( *bug\\>"
                              "[^\\\"]\" *)\\. *\n"))
      . 'font-lock-warning-face)
     ((lambda (limit) 
        (ciao-font-lock-match limit
- 			     "^ *:- *comment( *\\(version\\(_maintenance\\)?\\|doinclude\\|hide\\|filetype\\|nodoc\\)\\>" 
+ 			     "^ *:- *\\(comment\\|doc\\)( *\\(version\\(_maintenance\\)?\\|doinclude\\|hide\\|filetype\\|nodoc\\)\\>" 
  			     ") *\\. *\n"))
      . font-lock-comment-face)
     ((lambda (limit) 
        (ciao-font-lock-match limit
-                             "^ *:- *comment("
+                             "^ *:- *\\(comment\\|doc\\)("
                              "[^\\\"]\" *)\\. *\n")) 
      . font-lock-NavyBlue)
     ;; characters " and @
@@ -856,7 +947,13 @@ has been loaded or not (see ciao-check-buffer-syntax).")
     ((lambda (limit) 
        (ciao-font-lock-match
         limit
-        (concat "^ *:- *" (regexp-opt ciao-ociao-directives t) "\\>")
+        (concat "^ *:- *" (regexp-opt ciao-library-directives t) "\\>")
+        "^[ \t]*$\\|\\.$"))
+     . font-lock-NavyBlue-bold)
+    ((lambda (limit) 
+       (ciao-font-lock-match
+        limit
+        (concat "^ *:- *" (regexp-opt ciao-user-directives t) "\\>")
         "^[ \t]*$\\|\\.$"))
      . font-lock-NavyBlue-bold)
     ((lambda (limit) 
@@ -919,12 +1016,12 @@ has been loaded or not (see ciao-check-buffer-syntax).")
 ;;(setq ciao-inferior-font-lock-keywords
 (defvar ciao-inferior-font-lock-keywords
       '(
-	("^\\(\\(\\|[0-9]+ \\|ciaopp \\|| \\)\\?-\\)"
-         . ciao-prompt-face) ;; Prompts
-	("^\\([A-Z_][a-zA-Z0-9_]*\\) = \\(.*\\)\\(,\\|? *.\\)$"
-         (1 font-lock-ForestGreen-bold)                  ;; Answer variable
+	("^\\([A-Z][a-zA-Z0-9_]*\\) = \\(.*\\)\\(,\\| \\?.*\\)$"
+         (1 font-lock-magenta)                           ;; Answer variable
          (2 font-lock-Blue-bold)                         ;; Answer value
          )
+	("^\\(\\(\\|[0-9]+ \\|ciaopp \\|| \\)\\?-\\)"
+         . font-lock-prompt-face) ;; Prompts
 	("^yes$" . font-lock-ForestGreen-bold)           ;; Answer
 	("^no$" . font-lock-Goldenrod-bold)              ;; Answer
 	("^Select[^:]*:" . font-lock-ForestGreen)        ;; Preproc prompt
@@ -943,84 +1040,113 @@ has been loaded or not (see ciao-check-buffer-syntax).")
  [0-9][0-9]:[0-9][0-9]:[0-9][0-9] [A-Z][A-Z][A-Z] [1-2][0-9][0-9][0-9]$"
          . font-lock-ForestGreen-bold)       ;; Startup
 ;	("\\(^\\?- *[^{ ]\\|^| \\?- *\\).*\\. *\n"
-;	 . font-lock-Blue-bold) ;; Query don't work
+;	 . font-lock-Blue-bold) ;; Query doesn't work(?)
 ))
 
 ;;----------------------------------------------------------------------------
 ;; Faces for supporting font-lock
 ;;----------------------------------------------------------------------------
-(defvar font-lock-ForestGreen 'font-lock-ForestGreen)
-(defface font-lock-ForestGreen
-  '((((class color) (background light)) (:foreground "ForestGreen")))
-  "Font Lock mode face used to highlight ."
-  :group 'font-lock-highlighting-faces)
+(defvar font-lock-comment-face 'font-lock-comment-face)
+(defface font-lock-comment-face
+  '((((type tty pc) (class color) (background light)) (:foreground "red"))
+    (((type tty pc) (class color) (background dark)) (:foreground "red1"))
+    (((class grayscale) (background light))
+     (:foreground "DimGray" :bold t :italic t))
+    (((class grayscale) (background dark))
+     (:foreground "LightGray" :bold t :italic t))
+    (((class color) (background light)) (:foreground "Firebrick"))
+    (((class color) (background dark)) (:foreground "chocolate1"))
+    (t (:bold t :italic t)))
+  "Font Lock mode face used to highlight comments."
+  :group 'ciao)
 
-(defvar ciao-prompt-face 'ciao-prompt-face)
-(defface ciao-prompt-face
-  '((((class color) (background light)) (:foreground "coral" 
-						     :bold t)))
-  "Face used to highlight prompts in Ciao inferior mode."
-  :group 'font-lock-highlighting-faces)
-
-(defvar font-lock-ForestGreen-bold 'font-lock-ForestGreen-bold)
-(defface font-lock-ForestGreen-bold
-  '((((class color) (background light)) (:foreground "ForestGreen" 
-						     :bold t)))
-  "Font Lock mode face used to highlight ."
-  :group 'font-lock-highlighting-faces)
-
-(defvar font-lock-NavyBlue-bold 'font-lock-NavyBlue-bold)
-(defface font-lock-NavyBlue-bold
-  '((((class color) (background light)) (:foreground "NavyBlue" 
-						     :bold t)))
-  "Font Lock mode face used to highlight ."
-  :group 'font-lock-highlighting-faces)
-
-(defvar font-lock-NavyBlue 'font-lock-NavyBlue)
-(defface font-lock-NavyBlue
-  '((((class color) (background light)) (:foreground "NavyBlue"))
+(defvar font-lock-warning-face 'font-lock-comment-face)
+(defface font-lock-warning-face
+  '((((type tty) (class color)) (:foreground "red"))
+    (((class color) (background light)) (:foreground "Red" :bold t))
+    (((class color) (background dark)) (:foreground "Pink" :bold t))
     (t (:inverse-video t :bold t)))
-  "Font Lock mode face used to highlight warnings."
-  :group 'font-lock-highlighting-faces)
+  "Font Lock mode face used to highlight warnings, etc."
+  :group 'ciao)
 
 (defvar ciao-clauseheadname-face 'ciao-clauseheadname-face)
 (defface ciao-clauseheadname-face
   '((((class color) (background light)) (:foreground "Blue")))
   "Face used to highlight head names in Ciao."
-  :group 'font-lock-highlighting-faces)
+  :group 'ciao)
+
+(defvar font-lock-prompt-face 'font-lock-prompt-face)
+(defface font-lock-prompt-face
+  '((((class color) (background light)) (:foreground "coral" 
+						     :bold t)))
+  "Face used to highlight prompts in Ciao inferior mode."
+  :group 'ciao)
+
+(defvar font-lock-magenta 'font-lock-magenta)
+(defface font-lock-magenta
+  '((((class color) (background light)) (:foreground "magenta")))
+  "Font Lock mode face."
+  :group 'ciao)
+
+(defvar font-lock-ForestGreen 'font-lock-ForestGreen)
+(defface font-lock-ForestGreen
+  '((((class color) (background light)) (:foreground "ForestGreen")))
+  "Font Lock mode face."
+  :group 'ciao)
+
+(defvar font-lock-ForestGreen-bold 'font-lock-ForestGreen-bold)
+(defface font-lock-ForestGreen-bold
+  '((((class color) (background light)) (:foreground "ForestGreen" 
+						     :bold t)))
+  "Font Lock mode face."
+  :group 'ciao)
+
+(defvar font-lock-NavyBlue-bold 'font-lock-NavyBlue-bold)
+(defface font-lock-NavyBlue-bold
+  '((((class color) (background light)) (:foreground "NavyBlue" 
+						     :bold t)))
+  "Font Lock mode face."
+  :group 'ciao)
+
+(defvar font-lock-NavyBlue 'font-lock-NavyBlue)
+(defface font-lock-NavyBlue
+  '((((class color) (background light)) (:foreground "NavyBlue"))
+    (t (:inverse-video t :bold t)))
+  "Font Lock mode face."
+  :group 'ciao)
 
 (defvar font-lock-Blue-bold 'font-lock-Blue-bold)
 (defface font-lock-Blue-bold
   '((((class color) (background light)) (:foreground "Blue" :bold t)))
-  "Font Lock mode face used to highlight ."
-  :group 'font-lock-highlighting-faces)
+  "Font Lock mode face."
+  :group 'ciao)
 
 (defvar font-lock-MediumBlue-bold 'font-lock-MediumBlue-bold)
 (defface font-lock-MediumBlue-bold
   '((((class color) (background light)) (:foreground "MediumBlue" :bold t))
     (t (:inverse-video t :bold t)))
-  "Font Lock mode face used to highlight warnings."
-  :group 'font-lock-highlighting-faces)
+  "Font Lock mode face."
+  :group 'ciao)
 
 (defvar font-lock-keyword 'font-lock-keyword)
 (defface font-lock-keyword
   '((((class color) (background light)) (:foreground "RoyalBlue")))
-  "Font Lock mode face used to highlight ."
-  :group 'font-lock-highlighting-faces)
+  "Font Lock mode face."
+  :group 'ciao)
 
 (defvar font-lock-crossref 'font-lock-crossref)
 (defface font-lock-crossref
   '((((class color) (background light)) (:foreground "DarkGoldenrod" )))
-  "Font Lock mode face used to highlight ."
-  :group 'font-lock-highlighting-faces)
+  "Font Lock mode face."
+  :group 'ciao)
 
 (defvar font-lock-Goldenrod-bold 'font-lock-Goldenrod-bold)
 (defface font-lock-Goldenrod-bold
   '((((class color) (background light)) (:foreground "Goldenrod"
 						     :bold t))
     (t (:bold t :italic t)))
-  "Font Lock mode face used to highlight ."
-  :group 'font-lock-highlighting-faces)
+  "Font Lock mode face."
+  :group 'ciao)
 
 (defvar font-lock-DarkGreen-bold 'font-lock-DarkGreen-bold)
 (defface font-lock-DarkGreen-bold
@@ -1028,22 +1154,22 @@ has been loaded or not (see ciao-check-buffer-syntax).")
 						     :bold t)
      (t (:inverse-video t :bold t))))
   "Font Lock mode face."
-  :group 'font-lock-hightlighting-faces)
+  :group 'ciao)
 
 (defvar font-lock-Brown 'font-lock-Brown)
 (defface font-lock-Brown
   '((((class color) (background light)) (:foreground "Brown")
      (t (:inverse-video t :bold t))))
   "Font Lock mode face."
-  :group 'font-lock-hightlighting-faces)
+  :group 'ciao)
 
 (defvar font-lock-Brown-bold 'font-lock-Brown-bold)
 (defface font-lock-Brown-bold
   '((((class color) (background light)) (:foreground "Brown"
 						     :bold t)
     (t (:inverse-video t :bold t))))
-  "Font Lock mode face used to highlight warnings."
-  :group 'font-lock-highlighting-faces)
+  "Font Lock mode face."
+  :group 'ciao)
 
 ;;------------------------------------------------------------
 ;; Key and menu bindings + documentation sections
@@ -1116,7 +1242,7 @@ comment. Optional binding sets and reports a different binding."
 (defun ciao-mode-commands (map inferior-map)
 
   (ciao-documentation-section
-    "Syntax coloring and syntax based editing"
+    "Syntax coloring and syntax-based editing"
     
     "Syntax-based coloring is provided automatically when opening
 Ciao/Prolog files. The mode should be set to Ciao/Prolog and the Ciao mode
@@ -1186,7 +1312,7 @@ include:
   ;; (ciao-define-key map "\t" 'ciao-indent-line)
   (ciao-define-key inferior-map "\C-c\C-i" 'ciao-help-on-current-symbol)
   (ciao-define-key inferior-map "\C-c/"    'ciao-complete-current-symbol)
-  (ciao-define-key inferior-map "\C-c`"    'ciao-find-last-run-errors-here)
+  (ciao-define-key inferior-map "\C-c`"    'ciao-find-last-run-errors)
   (ciao-define-key inferior-map "\C-ce" 'ciao-unmark-last-run-errors)
   (ciao-define-key inferior-map "\C-cq" 'ciao-set-query)
 ;; (ciao-define-key map "???" 'ciao-clear-query)
@@ -1301,6 +1427,7 @@ implement the communication with the Ciao preprocessor:
 
   (ciao-define-key map "\C-cM" 'ciao-preprocess-buffer-menu)
   (ciao-define-key map "\C-cP" 'ciao-preprocess-buffer)
+  (ciao-define-key map "\C-cT" 'ciao-check-types-modes)
   (ciao-define-key map "\C-c\C-v" 'ciao-show-preprocessor-output)
   (ciao-define-key map "\C-cV" 'ciao-preprocess-buffer-and-show-output)
   (ciao-define-key map "\C-c\C-r" 'run-ciao-preprocessor)
@@ -1621,9 +1748,11 @@ how things are set up in your @tt{.emacs} file).")
 	     (tool-bar-add-item-from-menu 
 	      'ciao-check-buffer-syntax "ciaoasr" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
+	      'ciao-check-types-modes    "checkassertions" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
 	      'ciao-debug-buffer "ciaodebug" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
-	      'ciao-gen-buffer-doc "new" ciao-mode-map)
+	      'ciao-gen-buffer-doc "lpdoc" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
 	      'ciao-start-viewer "lpdocview" ciao-mode-map)
 	     (tool-bar-add-item-from-menu 
@@ -1660,6 +1789,7 @@ how things are set up in your @tt{.emacs} file).")
      "CIAO PREPROCESSOR (in development)"
      ["Preprocess buffer (choosing options)"   ciao-preprocess-buffer-menu t]
      ["Preprocess buffer (w/previous options)" ciao-preprocess-buffer t]
+     ["Check types and modes"  ciao-check-types-modes t]
      ["Locate (next) preproc/compiler error msg" ciao-find-last-run-errors t]
      ["Show last preprocessor output file"     ciao-show-preprocessor-output t]
      ["Preprocess buffer and show output"  
@@ -1883,8 +2013,6 @@ how things are set up in your @tt{.emacs} file).")
   (setq comment-indent-function 'ciao-comment-indent)
   (make-local-variable 'update-version-comments)
   (setq update-version-comments 0) ; 0 means "uninitialized"
-  (make-local-variable 'last-process-buffer-used)
-  (setq last-process-buffer-used ciao-toplevel-buffer-name)
   ;; Source debugger variables
   (make-local-variable 'ciao-debug-last-frame) 
   (setq ciao-debug-last-frame nil)
@@ -2249,7 +2377,8 @@ inclusion of a changelog entry even if the buffer is unmodified."
 	comment
 	month day year time
 	old-version-control
-	change-file)
+	change-file
+	tmp-point)
   (setq original-point (point))
   (beginning-of-buffer)
   (cond
@@ -2263,17 +2392,17 @@ inclusion of a changelog entry even if the buffer is unmodified."
 	(progn 
 	  (find-file version-file)
 	  (beginning-of-buffer)
-	  (set-mark (point))
+	  (setq tmp-point (point))
 	  (search-forward-regexp "\\.")
 	  (backward-char 1)
 	  ;; kill-region modifies and sets lock...
 	  (setq version-major
-		(buffer-substring-no-properties (mark) (point)))
+		(buffer-substring-no-properties tmp-point (point)))
 	  (forward-char 1)
-	  (set-mark (point))
+	  (setq tmp-point (point))
 	  (end-of-line)
 	  (setq version-minor
-		(buffer-substring-no-properties (mark) (point)))
+		(buffer-substring-no-properties tmp-point (point)))
 	  (setq no-previous-version nil)
 	  (kill-buffer (current-buffer))
 	  )
@@ -2296,10 +2425,10 @@ inclusion of a changelog entry even if the buffer is unmodified."
 	    (find-file patch-file)
 	    (beginning-of-buffer)
 	    (setq patch-buffer (current-buffer))
-	    (set-mark (point))
+	    (setq tmp-point (point))
 	    (end-of-line)
 	    (setq patch-number 
-		  (buffer-substring-no-properties (mark) (point)))
+		  (buffer-substring-no-properties tmp-point (point)))
 	    (kill-buffer (current-buffer))
 	    )
 	;; No patch file: new patch number
@@ -2309,23 +2438,23 @@ inclusion of a changelog entry even if the buffer is unmodified."
     )
    ((search-forward-regexp "^ *:- *comment( *version(" nil t)
     ;; A previous version exists in the file: get it
-    (set-mark (point))
+    (setq tmp-point (point))
     (search-forward-regexp "\\*")
     (backward-char 1)
     (setq version-major
-	  (buffer-substring-no-properties (mark) (point)))
+	  (buffer-substring-no-properties tmp-point (point)))
     (forward-char 1)
-    (set-mark (point))
+    (setq tmp-point (point))
     (search-forward-regexp "\\+")
     (backward-char 1)
     (setq version-minor
-	  (buffer-substring-no-properties (mark) (point)))
+	  (buffer-substring-no-properties tmp-point (point)))
     (forward-char 1)
-    (set-mark (point))
+    (setq tmp-point (point))
     (search-forward-regexp " *,")
     (backward-char 1)
     (setq patch-number 
-	  (buffer-substring-no-properties (mark) (point)))
+	  (buffer-substring-no-properties tmp-point (point)))
     (setq no-previous-version nil)
     )
    (t
@@ -2384,9 +2513,9 @@ inclusion of a changelog entry even if the buffer is unmodified."
     (switch-to-buffer original-buffer) ;; So that relative paths work!
     (find-file version-file)
     (beginning-of-buffer)
-    (set-mark (point))
+    (setq tmp-point (point))
     (end-of-line)
-    (delete-region (mark) (point))
+    (delete-region tmp-point (point))
     (insert-string (concat version-major "." version-minor))
     (setq old-version-control version-control)
     (setq version-control 'never)
@@ -2397,9 +2526,9 @@ inclusion of a changelog entry even if the buffer is unmodified."
     (switch-to-buffer original-buffer) ;; So that relative paths work!
     (find-file patch-file)
     (beginning-of-buffer)
-    (set-mark (point))
+    (setq tmp-point (point))
     (end-of-line)
-    (delete-region (mark) (point))
+    (delete-region tmp-point (point))
     (beginning-of-buffer)
     (insert-string patch-number)
     (setq old-version-control version-control)
@@ -2518,40 +2647,44 @@ the different files in which they occur.
 "
 
   (interactive)
-  (setq original-buffer (current-buffer))
-  (search-forward-regexp "^ *:- *comment( *version(")
-  (recenter 0)
-  (set-mark (point))
-  (search-forward-regexp ") *,")
-  (backward-char 1)
-  (setq version (buffer-substring-no-properties (mark) (point)))
-  (if (string-match "GlobalChangeLog" (buffer-name))
-      ;; It is a changelog buffer: find matches in files
-      (progn
-	(search-forward "\"")
-	(set-mark (point))
-	(search-forward "\"")
-	(backward-char 1)
-	(setq file (buffer-substring-no-properties (mark) (point)))
-	(find-file-other-window file)
+  (let ((mbeg 0) (mend 0))
+    (setq original-buffer (current-buffer))
+    (search-forward-regexp "^ *:- *comment( *version(")
+    (setq mbeg (match-end 0))
+    (recenter 0)
+    (goto-char mbeg)
+    (search-forward-regexp ") *,")
+    (setq mend (- (match-beginning 0) 1))
+    (goto-char mend)
+    (setq version (buffer-substring-no-properties mbeg mend))
+    (if (string-match "GlobalChangeLog" (buffer-name))
+	;; It is a changelog buffer: find matches in files
+	(progn
+	  (search-forward "\"")
+	  (setq mbeg (match-end 0))
+	  (goto-char mbeg)
+	  (search-forward "\"")
+	  (setq mend (match-beginning 0))
+	  (setq file (buffer-substring-no-properties mbeg mend))
+	  (find-file-other-window file)
+	  (beginning-of-buffer)
+	  (search-forward version)
+	  (beginning-of-line)
+	  (recenter 0)
+	  (switch-to-buffer-other-window original-buffer))
+      ;; It is a normal buffer: find entry in changelog buffer
+      (if (or (string= (ciao-version-maint-type) "on") 
+	      (string= (ciao-version-maint-type) "off"))
+	  (error "No GlobalChangeLog file is associated with this file")
+	(find-file-other-window 
+	 (concat (ciao-version-maint-type) "/GlobalChangeLog"))
+	(ciao-mode) ;; set buffer to ciao mode so that bindings are active!
 	(beginning-of-buffer)
 	(search-forward version)
 	(beginning-of-line)
 	(recenter 0)
 	(switch-to-buffer-other-window original-buffer))
-    ;; It is a normal buffer: find entry in changelog buffer
-    (if (or (string= (ciao-version-maint-type) "on") 
-	    (string= (ciao-version-maint-type) "off"))
-	(error "No GlobalChangeLog file is associated with this file")
-      (find-file-other-window 
-       (concat (ciao-version-maint-type) "/GlobalChangeLog"))
-      (ciao-mode) ;; set buffer to ciao mode so that bindings are active!
-      (beginning-of-buffer)
-      (search-forward version)
-      (beginning-of-line)
-      (recenter 0)
-      (switch-to-buffer-other-window original-buffer))
-    ))
+      )))
 
 (defun ciao-handle-version-control-option ()
   "Look and see if there is a local variable designating whether
@@ -2617,13 +2750,13 @@ the different files in which they occur.
       (beginning-of-buffer)
       (if (search-forward-regexp 
 	   "^ *:- *comment( *version_maintenance *, *" nil t)
-	  (progn
+	  (let ((begin 0))
 	    (search-forward-regexp "dir( *'*" nil t)
-	    (set-mark (point))
+	    (setq begin (point))
 	    (search-forward-regexp "'* *)" nil t)
 	    (goto-char (match-beginning 0))
 	    (setq update-version-comments 
-		  (buffer-substring-no-properties (mark) (point)))
+		  (buffer-substring-no-properties begin (point)))
 	    (message (concat "DIR: " update-version-comments))
 	    )
 	(setq update-version-comments nil)
@@ -2763,9 +2896,13 @@ ciao-mode-hook is called after comint-mode-hook.
 
 "
   (interactive)
+  ;; Makes sure ciao mode is initialized (keymaps, etc.). We then
+  ;; override with inferior mode.
+  (ciao-mode)
   (cond ((not (eq major-mode 'ciao-inferior-mode))
 	 (kill-all-local-variables)
 	 (comint-mode)
+         (setq comint-highlight-prompt nil) ; avoid unwanted coloring
 	 (setq major-mode 'ciao-inferior-mode)
 	 (setq mode-name "Ciao/Prolog/LPdoc Listener")
 	 (setq mode-line-process '(": %s"))
@@ -2798,6 +2935,7 @@ ciao-mode-hook is called after comint-mode-hook.
 	 (use-local-map ciao-inferior-mode-map)
 	 (easy-menu-define ciao-inferior-menu ciao-inferior-mode-map 
 			   "Ciao/Prolog Mode Menus" ciao-inferior-mode-menus)
+	 (easy-menu-add ciao-inferior-menu)
 	 (setq comint-prompt-regexp 
                "^\\(\\(\\|[0-9]+ \\|ciaopp \\|| \\)\\?-\\)")
 ;              "\\(^|* *\\?- *\\)\\|\\(^ciaopp \\?- *\\)") 
@@ -2822,14 +2960,38 @@ ciao-mode-hook is called after comint-mode-hook.
 	(t t)))
 
 (defun ciao ()
-  "Same as \\[run-ciao-toplevel]"
+  "Like \\[run-ciao-toplevel], but starts with a single window with logo."
   (interactive)
-  (run-ciao-toplevel))
+  (run-ciao-toplevel)
+  (switch-to-buffer (concat "*" ciao-toplevel-buffer-name "*"))
+   ;; *** Checking for emacs-21 (has tool-bar-mode defined)
+   ;; *** then, setup nice logo (only if started explicitely)
+  (if  (fboundp 'tool-bar-mode)
+      (let ((beg 0) (end 0))
+	(ciao-wait-for-prompt ciao-toplevel-buffer-name 
+			      "Starting Ciao toplevel")
+ 	(goto-char (point-min))
+ 	(setq beg (point))
+ 	(open-line 3)
+ 	(next-line 1)
+	(insert-image 
+	 (find-image (list (list :type 'xpm :file ciao-clip-logo))))
+ 	(insert-string " ")
+ 	(insert-image 
+	 (find-image (list (list :type 'xpm :file ciao-logo))))
+ 	(setq end (point))
+ 	;; (put-text-property beg end 'face 'Info-title-1-face)
+       
+ 	))
+  (delete-other-windows)
+  (goto-char (point-max))
+  (message "Starting Ciao toplevel... done.")
+  )
 
 (defun prolog ()
-  "Same as \\[run-ciao-toplevel]"
+  "Like \\[run-ciao-toplevel], but starts with a single window with logo."
   (interactive)
-  (run-ciao-toplevel))
+  (ciao))
 
 (defun run-ciao-toplevel ()
   "Ensure that an inferior Ciao/Prolog top-level process is
@@ -2857,9 +3019,11 @@ buffers into the top level) ensures that a top level is started
   (ciao-ensure-inferior-process ciao-toplevel-buffer-name))
 
 (defun ciaopp ()
-  "Same as \\[run-ciao-preprocessor]"
+  "Same as \\[run-ciao-preprocessor]. Starts with a single window."
   (interactive)
-  (run-ciao-preprocessor))
+  (run-ciao-preprocessor)
+  (switch-to-buffer (concat "*" ciao-ciaopp-buffer-name "*")) 
+  (delete-other-windows))
 
 (defun run-ciao-preprocessor ()
   "Ensure that an inferior Ciao preprocessor process is running. 
@@ -2887,47 +3051,48 @@ buffers into the top level) ensures that a top level is started
 
 ;; MH Made it recenter, and then the functions below are trivial
 (defun ciao-ensure-inferior-process (buffname)
-  (setq buff (buffer-name))
-  (cond
-   ;; Complication, because we are sharing the inferior mode
-   ((string= buffname ciao-toplevel-buffer-name)
-    (setq system ciao-system)
-    (setq system-args ciao-system-args))
-   ((string= buffname ciao-ciaopp-buffer-name)
-    (setq system ciao-ciaopp-system)
-    (setq system-args ciao-ciaopp-system-args))
-;; *** Temporary until lpdoc-2.0
-   ((string= buffname ciao-lpdoc-buffer-name)
-    (setq system "/bin/tcsh")
-    (setq system-args "")
-;;  (setq system ciao-lpdoc-system)
-;;  (setq system-args ciao-lpdoc-system-args)
-    )
-   )
-  (switch-to-buffer-other-window 
-   (if (equal ""
-	      ;; Done differently because of filenames with blanks...
-	      ;; (ciao-get-string-after-blank system)
-	      system-args
-	      )
+  (let (tmpbuff)
+    (setq tmpbuff (buffer-name))
+    (cond
+     ;; Complication, because we are sharing the inferior mode
+     ((string= buffname ciao-toplevel-buffer-name)
+      (setq system ciao-system)
+      (setq system-args ciao-system-args))
+     ((string= buffname ciao-ciaopp-buffer-name)
+      (setq system ciao-ciaopp-system)
+      (setq system-args ciao-ciaopp-system-args))
+     ;; *** Temporary until lpdoc-2.0
+     ((string= buffname ciao-lpdoc-buffer-name)
+      (setq system "/bin/tcsh")
+      (setq system-args "")
+      ;;  (setq system ciao-lpdoc-system)
+      ;;  (setq system-args ciao-lpdoc-system-args)
+      )
+     )
+    (switch-to-buffer-other-window 
+     (if (equal ""
+		;; Done differently because of filenames with blanks...
+		;; (ciao-get-string-after-blank system)
+		system-args
+		)
+	 (make-comint buffname 
+		      ;; Done differently because of filenames with blanks...
+		      ;; (ciao-get-string-before-blank system)
+		      system
+		      ) 
        (make-comint buffname 
 		    ;; Done differently because of filenames with blanks...
-		    ;; (ciao-get-string-before-blank system)
+		    ;; (ciao-get-string-before-blank system) ; command name
 		    system
-		    ) 
-     (make-comint buffname 
-		  ;; Done differently because of filenames with blanks...
-		  ;; (ciao-get-string-before-blank system) ; command name
-		  system
-		  nil                                   ; filename
-		  ;; Done differently because of filenames with blanks...
-		  ;; (ciao-get-string-after-blank system)  ; arguments
-		  system-args
-		  ))) 
-  (ciao-inferior-mode)
-  (goto-char (point-max))
-  (switch-to-buffer-other-window buff)
-  (setq last-process-buffer-used buffname))
+		    nil                                   ; filename
+		    ;; Done differently because of filenames with blanks...
+		    ;; (ciao-get-string-after-blank system)  ; arguments
+		    system-args
+		    )))
+    (ciao-inferior-mode)
+    (goto-char (point-max))
+    (switch-to-buffer-other-window tmpbuff)
+    (setq ciao-last-process-buffer-used buffname)))
 
 ;; Had to do this differently because of filenames with blanks...
 ;; (defun ciao-get-string-before-blank  (string)
@@ -2944,12 +3109,18 @@ buffers into the top level) ensures that a top level is started
   "Recenter the most recently used Ciao/Prolog inferior process buffer
 (top level or preprocessor)."
   (interactive)
-  (ciao-ensure-inferior-process last-process-buffer-used)
-  )
+  (if ciao-last-process-buffer-used
+    (ciao-ensure-inferior-process ciao-last-process-buffer-used)
+   (message "No process has been started.")
+  ))
+
+(defvar ciao-tmp-calling-buff nil
+  "Temp var to save calling buffer when issuing commands.")
 
 ;; General interface to subprocess
 (defun ciao-send-command (buffername command recenter-opt)
-  (setq buff (buffer-name))
+  ;; remember the buffer we are at
+  (setq ciao-tmp-calling-buff (buffer-name))
   (save-some-buffers)
   (if (eq (comint-check-proc (get-buffer (concat "*" buffername "*"))) nil)
       (progn
@@ -2964,7 +3135,7 @@ buffers into the top level) ensures that a top level is started
 			 'ciao-do-send-command-global t))))
     (ciao-do-send-command buffername command recenter-opt))
   ;; MH Added to improve tracking of last inferior buffer used.
-  (setq last-process-buffer-used buffername)
+  (setq ciao-last-process-buffer-used buffername)
   )
 
 ;; Terrible kludge to pass arguments (just for the first command)
@@ -2978,7 +3149,7 @@ buffers into the top level) ensures that a top level is started
        (recenter 0))
    (insert-string command)
    (comint-send-input)
-   (switch-to-buffer-other-window buff))
+   (switch-to-buffer-other-window ciao-tmp-calling-buff))
 
 ;; MH Alternative?
 ;; (defun ciao-send-command (buffername command)
@@ -2988,22 +3159,27 @@ buffers into the top level) ensures that a top level is started
 ;;   t)
 
 ;; ;; MH This works, but you do not see the progress (only the dots) :-(
-(defun ciao-wait-for-prompt (buffername)
+(defun ciao-wait-for-prompt (buffername action)
   (setq original-buffer (current-buffer))
   (setq prompt-buffer (concat "*" buffername "*"))
   (switch-to-buffer-other-window prompt-buffer)
-  (ciao-do-wait-for-prompt (get-buffer-process prompt-buffer) 1)
+  (ciao-do-wait-for-prompt (get-buffer-process prompt-buffer) 1 action)
   (switch-to-buffer-other-window original-buffer)
   )
 
-(defun ciao-do-wait-for-prompt (proc ndots)
+(defun ciao-do-wait-for-prompt (proc ndots action)
+  ;; Sometimes it is undefined if we have just created the comint buffer
   (goto-char comint-last-input-end)
-  (message (concat "Waiting for command completion" (dotlist ndots)))
-  (if (search-forward "?- " nil t)
+  (message (concat action (dotlist ndots)))
+  ;; Stop if prompt or abort
+;; **** Added case
+  (if (or (search-forward "?- " nil t) 
+	  (search-forward "Ciao/Prolog/LPdoc Listener finished" nil t) 
+	  (not (get-buffer-process (current-buffer))))
       t
 ;;    (accept-process-output proc 0 500)
     (sleep-for 0.5)
-    (ciao-do-wait-for-prompt proc (+ ndots 1))
+    (ciao-do-wait-for-prompt proc (+ ndots 1) action)
     )
   )
 
@@ -3021,82 +3197,65 @@ buffers into the top level) ensures that a top level is started
   "Go to the location in the source file containing the next error reported by
 the last Ciao/Prolog subprocess (preprocessor or toplevel) which was run."
   (interactive)
-  (ciao-find-error last-process-buffer-used))
+  (let (process-buffer)
+    (setq process-buffer (concat "*" ciao-last-process-buffer-used "*"))
+    (if (and ciao-last-process-buffer-used 
+	     (get-buffer-process process-buffer))
+	(if ciao-finding-errors
+	    (progn
+	      ;; Go to process buffer
+	      (if (equal (current-buffer) process-buffer)
+		  ()
+		(switch-to-buffer-other-window process-buffer)
+		)
+	      ;; Go to process buffer
+	      (ciao-find-error process-buffer))
+	  ;; Mark that we are starting a finding errors session
+	  (setq ciao-finding-errors (current-buffer))
+	  ;; Start with a single window
+	  (delete-other-windows)
+	  ;; Go to process buffer, split in two
+	  (switch-to-buffer-other-window process-buffer)
+	  (end-of-buffer)
+	  (move-to-column 0) ;; skip prompt if at prompt
+	  ;; Go back to previous prompt or beginning of buffer
+	  (search-backward-regexp "^\\(\\?-\\|ciaopp \\?-\\)" nil t)
+	  (end-of-line)
+	  (ciao-find-error process-buffer))
+    )))
 
-(defun ciao-unmark-last-run-errors()
-  "Remove the error mark in a buffer."
-  (interactive)
-  (save-excursion
-    (if ciao-previous-error
+(defun ciao-find-error (process-buffer)
+  "Go to location in source file containing next error, highlight."
+  (let (beginline endline filename error)
+    ;; first repaint (eliminates any previous error marks in buffer)
+    ;; No need to do anything if file is not being visited any more
+    (if (and ciao-previous-error
+	     (get-file-buffer (car (cdr (cdr ciao-previous-error)))))
 	(progn 
-	  (set-buffer (get-file-buffer (car (cdr (cdr ciao-previous-error)))))
-	  (ciao-uncolor (car ciao-previous-error)
-			(car (cdr ciao-previous-error))
-			'ciao-error))
-      (setq ciao-previous-error nil))
-    (if ciao-inferior-error
-	(progn
-	  ;; (set-buffer (concat "*" ciao-toplevel-buffer-name "*"))
-	  (set-buffer (concat "*" last-process-buffer-used "*"))
-	  (ciao-uncolor ciao-inferior-error
-			ciao-inferior-error
-			'ciao-error)
-	  (setq ciao-inferior-error nil)))))
-
-(defun ciao-find-last-run-errors-here ()
-  "Go to location in source file containing next error reported by the 
-Ciao/Prolog (sub)process (preprocessor or toplevel) running in the current
-buffer" 
-  (interactive)
-  (ciao-find-error nil))
-
-;; These not used any more...
-;; (defun ciao-find-ciao-error ()
-;;   "Go to location in source file containing next error reported by the 
-;;    Ciao/Prolog top-level subprocess" 
-;;   (interactive)
-;;   (ciao-find-error ciao-toplevel-buffer-name))
-;; 
-;; (defun ciao-find-ciaopp-error ()
-;;   "Go to location in source file containing next error reported by the 
-;;    Ciao preprocessor subprocess" 
-;;   (interactive)
-;;   (ciao-find-error ciao-ciaopp-buffer-name))
- 
-(defun ciao-find-error (processbuff)
-  "Go to location in source file containing next error reported by a
-   Ciao/Prolog subprocess. If processbuff is nil, we are in the process
-   buffer already" 
-;  (save-excursion
-  (let ((origbuff (current-buffer)) error beginline endline filename)
-    ;; if starting from file buffer, go to process buffer
-    (if (eq processbuff nil)
-	()
-      ;; repaint (eliminates any previous error marks in buffer)
-      (if ciao-previous-error
-	  (progn
-	    (get-file-buffer (car (cdr (cdr ciao-previous-error))))
-	    (if (> (car ciao-previous-error) 0)
+	  (set-buffer (get-file-buffer 
+		       (car (cdr (cdr ciao-previous-error)))))
+	  (if (> (car ciao-previous-error) 0)
+	      (progn 
 		(ciao-uncolor (car ciao-previous-error)
 			      (car (cdr ciao-previous-error))
-			      'ciao-error))
-	    (setq ciao-previous-error nil)))
-      (switch-to-buffer-other-window (concat "*" processbuff "*")))
-    ;; get error data
+			      'ciao-error)))
+	  (setq ciao-previous-error nil)))
+    (set-buffer process-buffer)
+    ;; In process buffer, get error data
     (setq error (ciao-get-next-error-data))
-    (setq beginline (car error))
-    (setq endline (car (cdr error)))
-    (setq filename (car (cdr (cdr error))))
     (if (eq error nil)
-	;; no more errors
+	;; There are no (more) errors
 	(progn
 	  (goto-char (point-max)) ;; goto end of process buffer
-	  (if (eq processbuff nil)
-	      ()
-	    ;; if starting from file buffer, return to (last) file buffer
-	    (switch-to-buffer-other-window origbuff))
-	  (error "No (more) errors"))
-      ;; error located, go to file, if known
+	  ;; Return to original buffer
+	  (switch-to-buffer-other-window ciao-finding-errors)
+	  (delete-other-windows)
+	  (setq ciao-finding-errors nil)
+	  (message "There are no (more) errors."))
+      ;; Error located, get info, go to file, if known.
+      (setq beginline (car error))
+      (setq endline (car (cdr error)))
+      (setq filename (car (cdr (cdr error))))
       (if (eq filename nil)
 	  (message "No corresponding file could be determined.")
 	(find-file-other-window filename)
@@ -3104,6 +3263,7 @@ buffer"
 	    ;; No line numbers: just visit file
             (progn 
 	      (beginning-of-buffer)
+	      (message "Error within this file.")
 	      (setq ciao-previous-error nil))
 	  ;; Else, highlight region in opened file...
 	  (push-mark (point) t)
@@ -3113,11 +3273,22 @@ buffer"
 	  (setq ciao-previous-error error)
 	  (goto-line (+ endline 1))
 	  (backward-char 1)
-	  (message "Mark set"))
+	  (message "Mark set")
+	  )
 	;; If started from process buffer, return to it
-	(if (eq processbuff nil)
-	    (switch-to-buffer-other-window origbuff)
-	  t)))))
+	;; (if started-from-inferior-buffer
+	;;    (switch-to-buffer-other-window ciao-finding-errors))
+	))))
+
+;; (defun ciao-being-in-inferior-buffer (processbuff)
+;;   "Checking that we are in an inferior process buffer"
+;;   (or (eq processbuff nil)
+;;       (string= (buffer-name) 
+;; 	       (concat "*" ciao-toplevel-buffer-name "*"))
+;;       (string= (buffer-name) 
+;; 	       (concat "*" ciao-ciaopp-buffer-name "*"))
+;;       (string= (buffer-name) 
+;; 	       (concat "*" ciao-lpdoc-buffer-name "*"))))
 
 (defun ciao-get-next-error-data ()
   "Locates next error, and highlights it. Returns:
@@ -3126,26 +3297,33 @@ buffer"
         beginline/endline = location of error in process buffer
         file = source file containing error (if nil: no file was located)"
 
-  ;; Uncolor previous error
+  ;; If we have a previous error found and colored, uncolor it
   (if ciao-inferior-error
       (progn
 	(ciao-uncolor ciao-inferior-error
 		      ciao-inferior-error
 		      'ciao-error)
+	(goto-line ciao-inferior-error)
 	(setq ciao-inferior-error nil)))
 
 ;; From 21.1 on , this does not go over the prompt. Using column instead:
 ;;  (beginning-of-line)
-  (move-to-column 0)
-  (if (or (not (search-backward-regexp 
-               "^\\({?WARNING.*:\\|{?ERROR.*:\\|{?NOTE.*:\\|\\?-\\)" 
+;;  (move-to-column 0)
+  (end-of-line)
+  (if (or (not (search-forward-regexp 
+         "^\\({?WARNING.*:\\|{?ERROR.*:\\|{?NOTE.*:\\|\\?-\\|ciaopp \\?-\\)" 
                nil t))
-          (string=  (buffer-substring-no-properties (point) (+ (point) 1))
-		    "?"))
+          (string=  (buffer-substring-no-properties (- (point) 2) (point))
+		    "?-")
+          (string=  (buffer-substring-no-properties (- (point) 9) (point))
+		    "ciaopp ?-")
+	  )
       ;; No (more) errors found
+      (setq ciao-inferior-error nil)
       nil
     (let ((messpoint (point)) beginline endline openpoint filename)
-      (recenter 0)
+      (recenter 1)
+      (move-to-column 0)
       (if (not (search-forward "lns " (+ (point) 80) t))
 	  ;; No line number info: -1 -1
 	  (progn
@@ -3165,7 +3343,7 @@ buffer"
 		(string-to-int (buffer-substring-no-properties beg (point)))))
 	)
       ;; Beginning of ERROR/WARNING/... line
-      (beginning-of-line)
+      (move-to-column 0)
       (setq ciao-inferior-error (ciao-what-line))
       (ciao-color ciao-inferior-error
 		  ciao-inferior-error
@@ -3198,9 +3376,12 @@ buffer"
 	(let ((beg (point)))
           (search-forward-regexp "\\.\\(po\\|itf\\|asr\\|pl\\)\\>")
           (setq filename (fix-cygwin-drive-letter
-                (concat (buffer-substring-no-properties beg (match-beginning 0)) ".pl"))))
+                (concat (buffer-substring-no-properties 
+			 beg (match-beginning 0)) ".pl"))))
 	(goto-char messpoint)
-        (beginning-of-line))
+        ;; (beginning-of-line)
+	(move-to-column 0)
+	)
       (cons beginline (cons endline (cons filename nil)))
       )))
 
@@ -3208,6 +3389,31 @@ buffer"
   (if (not (eq (string-match "//./" filename) 0))
       filename
     (concat (substring filename 2 3) ":" (substring filename 3))
+    ))
+
+(defun ciao-unmark-last-run-errors()
+  "Remove the error mark in a buffer."
+  (interactive)
+  (if ciao-last-process-buffer-used
+      (save-excursion
+	(setq ciao-finding-errors nil)
+	(if ciao-previous-error
+	    (progn 
+	      (set-buffer (get-file-buffer 
+			   (car (cdr (cdr ciao-previous-error)))))
+	      (ciao-uncolor (car ciao-previous-error)
+			    (car (cdr ciao-previous-error))
+			    'ciao-error))
+	  (message "No error mark(s) found.")
+	  (setq ciao-previous-error nil))
+	(if ciao-inferior-error
+	    (progn
+	      (set-buffer (concat "*" ciao-last-process-buffer-used "*"))
+	      (ciao-uncolor ciao-inferior-error
+			    ciao-inferior-error
+			    'ciao-error)
+	      (setq ciao-inferior-error nil))))
+    (message "No recent program processing active.")
     ))
 
 ;;------------------------------------------------------------
@@ -3226,22 +3432,34 @@ checking must be done with the preprocessor."
   (if (and ciao-assrt-lib-loaded ;; if lib loaded and process still running...
 	   (comint-check-proc 
 	    (get-buffer-create (concat "*" ciao-toplevel-buffer-name "*"))))
-      ()
+      (ciao-do-check-buffer-syntax)
+;;    (sleep-for 0.5) ;; Allow for input to arrive at comint
+;;     (ciao-wait-for-prompt ciao-toplevel-buffer-name 
+;; 			  "Loading assertion checking library")
+    (ciao-ensure-inferior-process (concat "*" ciao-toplevel-buffer-name "*"))
+    (add-hook 'ciao-prompt-inferior-hook 'ciao-load-assrt-lib t)
+    (add-hook 'ciao-prompt-inferior-hook 'ciao-do-check-buffer-syntax t)
+    )
+;;   (ciao-wait-for-prompt ciao-toplevel-buffer-name 
+;; 			"Checking assertion syntax")
+  ;; (ciao-find-last-run-errors)
+ )
+
+(defun ciao-load-assrt-lib ()
     (ciao-send-command 
      ciao-toplevel-buffer-name 
      "use_module(library('assertions/assrt_lib'))."
      t)
-    (ciao-wait-for-prompt ciao-toplevel-buffer-name)
-    (setq ciao-assrt-lib-loaded t)
-    )
+    (setq ciao-assrt-lib-loaded t))
+
+(defun ciao-do-check-buffer-syntax ()
   (ciao-send-command 
    ciao-toplevel-buffer-name 
    (concat "prolog_flag(verbose_compilation,_Old,off),"
            "check_code_and_assrt_syntax('" (buffer-file-name) "'),"
            "prolog_flag(verbose_compilation,_,_Old)." 
 	   )
-   t)
-  )
+   t))
 
 ;;------------------------------------------------------------
 ;; Some aid for inserting text (very limited for now)
@@ -3285,11 +3503,26 @@ used."
   (ciao-send-command 
    ciao-ciaopp-buffer-name (ciao-build-ciaopp-command nil) t))
 
+(defun ciao-check-types-modes ()
+  "Perform compile-time checking with both types (pptypesfd) and modes
+ (shfr) analyses."
+  (interactive)
+  (ciao-send-command 
+    ciao-ciaopp-buffer-name (ciao-build-ciaopp-specific-command "ctcheck") t)
+  (ciao-wait-for-prompt ciao-ciaopp-buffer-name
+			"Checking types and modes")
+  (message "Checking types and modes... done.")
+  (ciao-find-last-run-errors)
+  )
+
 (defun ciao-build-ciaopp-command (options)
   (concat "precompile('" (buffer-file-name)
 	  (if (string= options nil)
 	      "')."
 	    (concat "'," options ").") )))
+
+(defun ciao-build-ciaopp-specific-command (command-name)
+  (concat command-name "('" (buffer-file-name) "').") )
 
 (defun ciao-show-preprocessor-output ()
   "Show last output file produced by Ciao preprocessor. The preprocessor
@@ -3307,26 +3540,28 @@ the previous function, but is meant to be called already from the
 buffer in which the processor is running."
   (interactive)
   (save-excursion
-    (goto-char (point-max))
-    (search-backward "written file ")
-    (forward-char 13)
-    (set-mark (point))
-    (search-forward "}")
-    (backward-char 1)
-    (setq file (buffer-substring-no-properties (mark) (point)))
-    (if (get-file-buffer file)
-	;; The complication is to not complain if disk more recent!
-	(progn 
-	  (switch-to-buffer (get-file-buffer file))
-	  (let ((local-buff-point (point)))
-	    (kill-buffer (get-file-buffer file))
-	    (find-file file)
-	    (goto-char local-buff-point)))
-      (find-file file)
-      )
-    ))
+    (let ((mbeg 0) (mend 0))
+      (goto-char (point-max))
+      (search-backward-regexp "written file ")
+      (setq mbeg (match-end 0))
+      (goto-char mbeg)
+      (search-forward-regexp "}")
+      (setq mend (match-beginning 0))
+      (setq file (buffer-substring-no-properties mbeg mend))
+      (if (get-file-buffer file)
+	  ;; The complication is to not complain if disk more recent!
+	  (progn 
+	    (switch-to-buffer (get-file-buffer file))
+	    (let ((local-buff-point (point)))
+	      (kill-buffer (get-file-buffer file))
+	      (find-file file)
+	      (goto-char local-buff-point)))
+	(find-file file)
+	)
+    )))
 ;; (global-set-key "\C-c\C-f" 'ciao-show-file)
-(define-key comint-mode-map "\C-c\C-v" 'ciao-show-file)
+;; (define-key comint-mode-map "\C-c\C-v" 'ciao-show-file)
+(define-key ciao-inferior-mode-map "\C-c\C-v" 'ciao-show-file)
 
 
 (defun ciao-preprocess-buffer-and-show-output ()
@@ -3409,14 +3644,17 @@ buffer. An active module is a remote procedure call server (see the
 (defun ciao-get-module-name ()
   (save-excursion 
     (beginning-of-buffer)
-    (let ((module-name
-           (if (eq (search-forward-regexp "^ *:- *\\(module\\|class\\)( *" 
-                                          10000 t) nil)
-               "user"
-             (set-mark (point))
-             (search-forward-regexp " *\\(,\\|)\\)")
-             (goto-char (match-beginning 0))
-             (buffer-substring-no-properties (mark) (point)))))
+    (let ((mbeg 0) (mend 0) (module-name nil))
+      (setq module-name
+	    (if (eq (search-forward-regexp "^ *:- *\\(module\\|class\\)( *" 
+					   10000 t) nil)
+		"user"
+	      (goto-char (match-end 0))
+	      (setq mbeg (match-end 0))
+	      (search-forward-regexp " *\\(,\\|)\\)")
+	      (setq mend (match-beginning 0))
+	      (goto-char (match-beginning 0))
+	      (buffer-substring-no-properties mbeg mend)))
       (if (eq (string-match "_" module-name) 0)
 	  (file-name-nondirectory 
 	   (file-name-sans-extension
@@ -3556,7 +3794,8 @@ this command always loads the region in debugging mode (interpreted)."
   (ciao-write-region start end temp-file)
   (ciao-send-command ciao-toplevel-buffer-name 
    (concat "debug_module(user), ensure_loaded('" temp-file "')." ) t)
-  (ciao-wait-for-prompt ciao-toplevel-buffer-name)
+  (ciao-wait-for-prompt ciao-toplevel-buffer-name
+			"Loading Ciao/Prolog code")
   (ciao-del-temp-files temp-file)
   (message "Loading Ciao/Prolog code... done"))
 
@@ -3606,7 +3845,10 @@ traditional debug."
 	   (setq default "N")))
     (setq string (concat string "Select debug mode (N/S/D)? "))
     (setq option
-	  (read-string string default nil default))
+ 	  (read-string string default nil))
+    (if (string= option "") (setq option default))
+    ;; Was simply:  (but xemacs does not support the last argument)
+    ;;	  (read-string string default nil default))
     ;; Send the apropiate command to Ciao
     (cond ((and (or (string= actually "N")
 		    (string= actually "S"))
@@ -3755,7 +3997,8 @@ buffers selected for source debug."
       (forward-line)
       (end-of-line)
       (setq end (point))
-      (beginning-of-line)
+      ;; (beginning-of-line)
+      (move-to-column 0)
       (if (search-forward-regexp "\\[\\(.*\\)\\]" end t)
 	  (setq buffers-debug (funcall ciao-match-string 1))
 ;;	    (setq buffers-debug (match-string-no-properties 1))
@@ -3764,7 +4007,8 @@ buffers selected for source debug."
       (forward-line)
       (end-of-line)
       (setq end (point))
-      (beginning-of-line)
+      ;; (beginning-of-line)
+      (move-to-column 0)
       (if (search-forward-regexp "\\[\\(.*\\)\\]" end t)
 	  (setq buffers-debug (cons buffers-debug 
 				    (funcall ciao-match-string 1)))
@@ -3916,7 +4160,7 @@ buffers selected for source debug."
 (defun ciao-debug-display-line (file start end pred numpred port buffname)
   (let* ((count 0) (init 0) (finish 0) (test t)
 	 (last-nonmenu-event t)  ; Prevent use of dialog box for questions.
-	 ;; Problema para la depuracion embebida
+	 ;; Problem for embedded debugger
 	 (buffer
 	  (save-excursion
 	    (or (eq (current-buffer) buffname)
@@ -4010,8 +4254,8 @@ buffers selected for source debug."
 	  (set-window-point window overlay-arrow-position)))))
 
 (defun ciao-what-line ()
-  "Return the line number. This function is needed because in xemacs the
-function what-line does not behave as in emacs."
+  "Return the line number. This function is a fix for the fact that in
+xemacs the function what-line does not behave as in emacs."
   (save-excursion
     (beginning-of-line)
     (1+ (count-lines 1 (point)))))
@@ -4180,7 +4424,11 @@ function what-line does not behave as in emacs."
   (let (hook)
     (setq ciao-ciaopp-prompt-marker-acc 
 	  (concat ciao-ciaopp-prompt-marker-acc string))
-    (if (string-match "\nciaopp \\?- " ciao-ciaopp-prompt-marker-acc)
+;; *** Added one case
+    (if (or 
+	 (string-match "\nciaopp \\?- " ciao-ciaopp-prompt-marker-acc)
+	 (string-match "\nCiao/Prolog/LPdoc Listener finished"
+		       ciao-ciaopp-prompt-marker-acc))
 	(progn
 	  ;; We found a prompt then remove it from accumulator so don't call
 	  ;; again hook.
@@ -4356,7 +4604,7 @@ or not)."
 	(save-excursion
 	  (set-buffer (concat "*" ciao-toplevel-buffer-name "*"))
 	  (setq column (current-column)))
-	(if (not (eq column 3))
+	(if (eq column 3)
 	    t
 	  (ciao-send-command ciao-toplevel-buffer-name "@" t)
 	  (sleep-for 0.01))))
@@ -4853,6 +5101,7 @@ function is a string it is taken to be the comment."
 ;; Kludge to fix old version maintenance entries...
 ;;------------------------------------------------------------
 
+; Probably does not work in xemacs...
 (defun ciao-fix-old-version-maintenance ()
   (interactive)
   (beginning-of-buffer)

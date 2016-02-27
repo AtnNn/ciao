@@ -1,47 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
+<TITLE>The Ciao Prolog System               - Random numbers</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC628" HREF="ciao_toc.html#TOC628">Pattern (regular expression) matching</A></H1>
+<H1><A NAME="SEC592" HREF="ciao_toc.html#TOC592">Random numbers</A></H1>
 <P>
-<A NAME="IDX6573"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
+<A NAME="IDX6039"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#49 (1999/9/8, 21:8:9 MEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
 
 
 <P>
-This library provides facilities for matching strings and terms against 
-<A NAME="IDX6574"></A>
-<A NAME="IDX6575"></A>
-<EM>patterns</EM> (i.e., 
-<A NAME="IDX6576"></A>
-<A NAME="IDX6577"></A>
-<EM>regular expressions</EM>).
+<STRONG>Version:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
+
+
+<P>
+This module provides predicates for generating pseudo-random numbers
 
 
 
 <UL>
-<LI><A HREF="ciao_155.html#SEC629">Usage and interface (patterns)</A>
-<LI><A HREF="ciao_155.html#SEC630">Documentation on exports (patterns)</A>
+<LI><A HREF="ciao_155.html#SEC593">Usage and interface (random)</A>
+<LI><A HREF="ciao_155.html#SEC594">Documentation on exports (random)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC629" HREF="ciao_toc.html#TOC629">Usage and interface (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC593" HREF="ciao_toc.html#TOC593">Usage and interface (<CODE>random</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,7 +43,7 @@ This library provides facilities for matching strings and terms against
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(patterns)).</CODE>
+<CODE>:- use_module(library(random)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -58,33 +52,12 @@ This library provides facilities for matching strings and terms against
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6578"></A>
-<CODE>match_pattern/2</CODE>, 
-<A NAME="IDX6579"></A>
-<CODE>match_pattern/3</CODE>, 
-<A NAME="IDX6580"></A>
-<CODE>case_insensitive_match/2</CODE>, 
-<A NAME="IDX6581"></A>
-<CODE>letter_match/2</CODE>, 
-<A NAME="IDX6582"></A>
-<CODE>match_pattern_pred/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6583"></A>
-<CODE>pattern/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6584"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX6040"></A>
+<CODE>random/1</CODE>, 
+<A NAME="IDX6041"></A>
+<CODE>random/3</CODE>, 
+<A NAME="IDX6042"></A>
+<CODE>srandom/1</CODE>.
 
 </UL>
 
@@ -94,153 +67,70 @@ This library provides facilities for matching strings and terms against
 
 
 
-<H2><A NAME="SEC630" HREF="ciao_toc.html#TOC630">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC594" HREF="ciao_toc.html#TOC594">Documentation on exports (<CODE>random</CODE>)</A></H2>
 <P>
-<A NAME="IDX6585"></A>
-<A NAME="IDX6586"></A>
+<A NAME="IDX6043"></A>
+<A NAME="IDX6044"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
-<DD><A NAME="IDX6587"></A>
+<DT><span class="define">PREDICATE:</span> <B>random/1:</B>
+<DD><A NAME="IDX6045"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String)</CODE>
+<CODE>random(Number)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<P>
+<CODE>Number</CODE> is a (pseudo-) random number in the range [0.0,1.0]
 
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6588"></A>
-<A NAME="IDX6589"></A>
+<A NAME="IDX6046"></A>
+<A NAME="IDX6047"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
-<DD><A NAME="IDX6590"></A>
+<DT><span class="define">PREDICATE:</span> <B>random/3:</B>
+<DD><A NAME="IDX6048"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String,Tail)</CODE>
+<CODE>random(Low,Up,Number)</CODE>
+
+
+<P>
+<CODE>Number</CODE> is a (pseudo-) random number in the range [<CODE>Low</CODE>, <CODE>Up</CODE>]
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>random(+int,+int,-int)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Tail</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6591"></A>
-<A NAME="IDX6592"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
-<DD><A NAME="IDX6593"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1,Pred2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
+<LI><EM>Description:</EM> If <CODE>Low</CODE> and <CODE>Up</CODE> are integers, <CODE>Number</CODE> is an integer.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6594"></A>
-<A NAME="IDX6595"></A>
+<A NAME="IDX6049"></A>
+<A NAME="IDX6050"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
-<DD><A NAME="IDX6596"></A>
+<DT><span class="define">PREDICATE:</span> <B>srandom/1:</B>
+<DD><A NAME="IDX6051"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6597"></A>
-<A NAME="IDX6598"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
-<DD><A NAME="IDX6599"></A>
+<CODE>srandom(Seed)</CODE>
 
 
 <P>
-Special characters for <CODE>Pattern</CODE> are: 
-<DL COMPACT>
+Changes the sequence of pseudo-random numbers according to <CODE>Seed</CODE>. The stating sequence of numbers generated can be duplicated by calling the predicate with <CODE>Seed</CODE> unbound (the sequence depends on the OS).
 
-<DT>*
-<DD>
-Matches any string, including the null string. 
-<DT>?
-<DD>
-Matches any single character. 
-<DT>[...]
-<DD>
-Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
-<DT>|
-<DD>
-specifies an alternative. Two regular expressions A and B with | in between form an expression that matches anything that either A or B will match. 
-<DT>{...}
-<DD>
-groups alternatives inside larger patterns. 
-<DT>\
-<DD>
-Quotes a special character (including itself). 
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6600"></A>
-<A NAME="IDX6601"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
-<DD><A NAME="IDX6602"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1,Pred2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
-
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_154.html">previous</A>, <A HREF="ciao_156.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -41,8 +41,24 @@ dbqueryconnection := ~address.
 
 % ----------------------------------------------------------------------------
 
-:- true pred init(in(N), go(DbConnection)) :: int * address + (foreign(mysql_init), returns(DbConnection)).
-:- true pred connect(in(DbConnection0), in(Host), in(User), in(Passwd), in(DbName), in(Port), in(X), in(Y), go(DbConnection)) :: address * atm * atm * atm * atm * int * address * int * address + (foreign(mysql_real_connect), returns(DbConnection)).
+:- true pred 
+        init(in(N), go(DbConnection)) :: 
+              int * address + 
+        (foreign(mysql_init), returns(DbConnection)).
+
+:- true pred connect(
+        in(DbConnection0), 
+        in(Host),
+        in(User),
+        in(Passwd),
+        in(DbName),
+        in(Port), 
+        in(X),
+        in(Y),
+        go(DbConnection)) :: 
+        address * atm * atm * atm * atm * int * address * int * address + 
+        (foreign(mysql_real_connect), returns(DbConnection)).
+
 :- true pred disconnect(in(DbConnection0)) :: address + foreign(mysql_close).
 :- true pred num_rows(in(DbQueryConnection), go(Num)) :: address * int + (foreign, returns(Num)).
 :- true pred num_fields(in(DbQueryConnection), go(Num)) :: address * int + (foreign, returns(Num)).
@@ -84,10 +100,12 @@ dbqueryconnection := ~address.
 
 % ----------------------------------------------------------------------------
 
-mysql_connect(Host:Port, DbName, User, Passwd) := DbConnection :-
-	DbConnection0 = ~init(0),
-	DbConnection = ~connect(DbConnection0, Host, User, Passwd, DbName, Port, ~null, 0),
-	\+ DbConnection = ~null,
+mysql_connect(Host:Port, DbName, User, Passwd, DbConnection) :-
+	init(0, DbConnection0),
+        null(Null),
+        connect(DbConnection0, Host, User, Passwd, DbName, Port, Null, 0, 
+                DbConnection),
+	\+ null(DbConnection),
         !.
 mysql_connect(_Host:_Port, _DbName, _User, _Passwd, _Connection) :-
         throw(error('could not start connection', mysql_connect)), fail.

@@ -37,11 +37,12 @@ SUBSTITUTE_STRING=../etc/substitute_string
 #include /home/clip/Systems/ciao/SHARED
 #SUBSTITUTE_STRING = /home/clip/Systems/ciao/etc/substitute_string
 #-----------------------------------------------------------------------------
-LIBFILES = word-help.el ciao.xpm ciaoload.xpm ciaoasr.xpm ciaoexeout.xpm \
-           ciaoitf.xpm ciaopl.xpm ciaopo.xpm ciaoscrt.xpm lpdocview.xpm \
-	   clear.xpm complete.xpm wordhelp.xpm ciaomanuals.xpm manuals.xpm \
-           ciaodebug.xpm stop.xpm ciaoprompt.xpm ciaostorequery.xpm \
-	   ciaoclearquery.xpm
+LIBFILES = word-help.el ciaopl.xpm ciao.xpm ciaoload.xpm find_error.xpm \
+	   clear.xpm ciaoasr.xpm checkassertions.xpm ciaodebug.xpm \
+           lpdoc.xpm lpdocview.xpm ciaoexeout.xpm ciaoitf.xpm \
+	   ciaopo.xpm ciaoscrt.xpm  manuals.xpm wordhelp.xpm \
+           complete.xpm ciaoprompt.xpm ciaostorequery.xpm stop.xpm \
+	   ciaoclearquery.xpm clip.xpm 
 REALLIBDIR = $(LIBDIR)/$(VERSIONMAIN)
 #-----------------------------------------------------------------------------
 install: 
@@ -50,8 +51,9 @@ install:
 	@echo "*** ---------------------------------------------------------"
 	-mkdir -p $(REALLIBDIR)
 	-chmod $(EXECMODE) $(REALLIBDIR)
+	-cd $(REALLIBDIR) && 'rm' -f $(LIBFILES)
 	cp $(LIBFILES) $(REALLIBDIR)
-	-cd $(REALLIBDIR); chmod $(DATAMODE) $(LIBFILES); 'rm' -f *~
+	-cd $(REALLIBDIR) && chmod $(DATAMODE) $(LIBFILES) && 'rm' -f *~
 	$(SUBSTITUTE_STRING) "<CIAOLIBDIR>" $(LIBDIR) \
                                  "<LPDOCDIR>" $(DOCDIR) \
 	     DOTemacs.skel $(REALLIBDIR)/DOTemacs.el
@@ -77,18 +79,18 @@ install:
 	     $(REALLIBDIR)/ciao.el
 	-rm -f $(REALLIBDIR)/ciao.el.tmp
 	-chmod $(DATAMODE) $(REALLIBDIR)/ciao.el
-	-cd $(REALLIBDIR); emacs -batch -l ciao.el -f compile-ciao-mode
+	-cd $(REALLIBDIR) && emacs -batch -l ciao.el -f compile-ciao-mode
 	-chmod $(DATAMODE) $(REALLIBDIR)/ciao.elc
 	-chmod $(DATAMODE) $(REALLIBDIR)/word-help.elc 
-	-cd $(LIBDIR); 'rm' -f ciao.el; \
+	-cd $(LIBDIR) &&  'rm' -f ciao.el &&  \
 	    ln -s $(REALLIBDIR)/ciao.el
-	-cd $(LIBDIR); 'rm' -f ciao.elc; \
+	-cd $(LIBDIR) &&  'rm' -f ciao.elc &&  \
 	    ln -s $(REALLIBDIR)/ciao.elc
-	-cd $(LIBDIR); 'rm' -f prolog.el; \
+	-cd $(LIBDIR) &&  'rm' -f prolog.el &&  \
             ln -s $(REALLIBDIR)/ciao.el prolog.el
-	-cd $(LIBDIR); 'rm' -f prolog.elc; \
+	-cd $(LIBDIR) &&  'rm' -f prolog.elc &&  \
             ln -s $(REALLIBDIR)/ciao.elc prolog.elc
-	-cd $(LIBDIR); 'rm' -f DOTemacs.el; \
+	-cd $(LIBDIR) &&  'rm' -f DOTemacs.el &&  \
             ln -s $(REALLIBDIR)/DOTemacs.el
 
 
@@ -101,16 +103,16 @@ doc CiaoMode.pl CiaoMode.lpdoc: ciao.el.body
 	touch CiaoMode.pl
 
 dvi: CiaoMode.lpdoc
-	cd doc; $(MAKE) dvi
+	cd doc &&  $(MAKE) dvi
 
 view: dvi
-	cd doc; $(MAKE) view
+	cd doc &&  $(MAKE) view
 
 info: CiaoMode.lpdoc
-	cd doc; $(MAKE) info
+	cd doc &&  $(MAKE) info
 
 infoview: info
-	cd doc; $(MAKE) infoview
+	cd doc &&  $(MAKE) infoview
 
 # ----------------------------------------------------------------------------
 
@@ -118,7 +120,7 @@ uninstall:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling emacs library files from $(REALLIBDIR) ..."
 	@echo "*** ---------------------------------------------------------"
-	-( cd $(REALLIBDIR); 'rm' -f $(LIBFILES) )
+	-( cd $(REALLIBDIR) && 'rm' -f $(LIBFILES) )
 	'rm' -f $(LIBDIR)/DOTemacs.el $(LIBDIR)/ciao.el $(LIBDIR)/ciao.elc 
 	'rm' -f $(LIBDIR)/prolog.el $(LIBDIR)/prolog.elc 
 	-rmdir $(REALLIBDIR)

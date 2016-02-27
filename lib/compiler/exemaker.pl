@@ -1,19 +1,48 @@
 :- module(exemaker,
-        [make_exec/2, make_actmod/2, force_lazy/1, undo_force_lazy/1,
+        [make_exec/2,
+         make_actmod/2,
+         force_lazy/1,
+         undo_force_lazy/1,
          dynamic_search_path/1],
         [assertions]).
 
 :- use_module(library('compiler/c_itf'),
-        [handle_exc/1, process_file/7, process_files_from/7, false/1,
-         old_file_extension/2, make_po_file/1, get_so_name/2, base_name/2,
-         file_data/3, module_error/1, defines_module/2, cleanup_c_itf_data/0,
-         processed/2, exports/5, imports_pred/7, def_multifile/4,
-         addmodule_inc/3, decl/2]).
+        [handle_exc/1,
+         process_file/7,
+         process_files_from/7,
+         false/1,
+         old_file_extension/2,
+         make_po_file/1,
+         get_so_name/2,
+         base_name/2,
+         file_data/3,
+         module_error/1,
+         defines_module/2,
+         cleanup_c_itf_data/0,
+         processed/2,
+         exports/5,
+         imports_pred/7,
+         def_multifile/4,
+         addmodule_inc/3,
+         decl/2]).
 :- use_module(library(system),
-        [file_exists/1, fmode/2, chmod/2, mktemp/2, delete_file/1]).
+        [file_exists/1, 
+         fmode/2,
+         chmod/2,
+         mktemp/2,
+         delete_file/1,
+         working_directory/2,
+	 cyg2win/3]).
 :- use_module(library('compiler/pl2wam')).
-:- use_module(library(aggregates), [findall/3,findall/4]).
-:- use_module(library(file_utils), [file_terms/2, copy_stdout/1]).
+:- use_module(library(aggregates),
+        [findall/3,
+         findall/4]).
+:- use_module(library(lists), [append/3]).
+:- use_module(library(file_utils), [
+        file_terms/2,
+        copy_stdout/1,
+        file_to_string/2
+                                   ]).
 :- use_module(library(ctrlcclean), [delete_on_ctrlc/2]).
 :- use_module(engine(internals), [module_concat/3]).
 :- use_module(library('foreign_interface/build_foreign_interface')). % JFMC
@@ -364,21 +393,125 @@ create_exec(ExecName, Base, PoFiles) :-
 	copy_pos(PoFiles,Stream),
 	close(Stream),
         erase(Ref),
+        generate_batch(OS, ExecName), % Generate batch file if needed
         set_input(Si),
         set_output(So),
         fmode(PlName, M0),
         M1 is M0 \/ ((M0 >> 2) /\ 0o111), % Copy read permissions to execute
         chmod(ExecName, M1).
 
+ % The chunk of code below tries to untangle the different installation
+ % possibilities in order to find out which engine has to be
+ % concatenated to the Ciao executable.
 copy_header(none) :- !, % OPA
 	copy_stdout(library('compiler/header')).
-copy_header(TargetEng) :- !,
-	verbose_message(['{Using engine for ',TargetEng,'}']),
-	ciaolibdir(Libdir),
-	atom_concat(Libdir,'/engine/ciaoengine.',Dir),
-	atom_concat(Dir,TargetEng,Dir2),
-	atom_concat(Dir2,'.sta',Engine),
+copy_header(TargetEng) :-
+        ciaolibdir(LibDir),
+        determine_engine_name(TargetEng, EngName, Where),
+        determine_engine_dir(TargetEng, Where, LibDir, EngDir),
+        atom_concat(EngDir, EngName, Engine),
+        file_exists(Engine),
+        verbose_message(['{Using ', Engine, ' for executable}']),
+        !,  % Found it, go ahead
 	copy_stdout(Engine).
+copy_header(Target):-
+        message(error, 
+               [ 'Could not find engine! Target was ',
+                 Target]),
+        fail.
+
+
+ % Which engine name can be applied to each architecture? Windows
+ % executables are always named ciaoengine.exe, and are (for now)
+ % static.  **x static executables are named *.sta, and can have the
+ % OS/Arch combination in the name.  It is probably not wise to look
+ % for a generic ciaoengine.sta executable in the shared, general
+ % library directory; hence the direct/generic atom in the third
+ % argument. 
+
+% Windows engines always same name (at least for now)
+determine_engine_name('Win32i86', 'ciaoengine.exe', direct).
+% Other engines have different names according to placement!
+determine_engine_name(TargetEng, Engine, direct):-  % If in installation
+        TargetEng \== 'Win32i86',
+        atom_concat('ciaoengine.', TargetEng, Eng1),
+        atom_concat(Eng1, '.sta', Engine).
+determine_engine_name(TargetEng, 'ciaoengine.sta', generic):-  % For sources
+        TargetEng \== 'Win32i86'.
+
+
+% What directory this engine can be in?
+determine_engine_dir(TargetEng, Where, LibDir, EngDir):-
+        intermediate_dir(TargetEng, Where, IntermediateDir),
+        atom_concat(LibDir, IntermediateDir, EngDir),
+        file_exists(EngDir).
+
+% Windows engines can be placed differently from other engines
+intermediate_dir('Win32i86', _, '/Win32/bin/').
+intermediate_dir(_Target, direct, '/engine/').   % For unix --- Windows also, later?
+intermediate_dir(Target, _, Dir):-
+        atom_concat('/bin/', Target, Dir1),
+        atom_concat(Dir1, '/', Dir).
+
+%% This is called only from Windows: it receives a (Windows) Ciao
+%% Prolog executable and generates the corresponding batch file by
+%% filling in some values in a skeleton.
+
+generate_batch('Win32', ExecName):- !, % Untangle file name
+        exec_ext(ExecExt),
+        bat_ext(BatExt), 
+        (
+            atom_concat(Base, ExecExt, ExecName) ->
+            true
+        ;
+            Base = ExecName
+        ),
+        atom_concat(Base, BatExt, BatName),
+        ( file_exists(BatName) -> delete_file(BatName) ; true ),
+        file_to_string(library('compiler/bat_skel'), BatSkel),
+        append(Head, "/path/to/ciao/application"||Tail, BatSkel),
+        !,
+        % working_directory(D, D),
+        % atom_codes(D, DCodes),
+        % display(batname(BatName)), nl,
+        atom_codes(BatName, FullBatCodes),
+        % append(DCodes, "/"||BatNameCodes, FullBatCodes),
+	% atom_codes(FB, FullBatCodes),
+	% display(FB), nl,
+        cyg2win(FullBatCodes, Windified, swap),
+        atom_codes(HeadAtom, Head),
+        atom_codes(WindifiedAtom, Windified),
+        atom_codes(TailAtom, Tail),
+        open(BatName, write, Stream),
+        display(Stream, HeadAtom),
+        display(Stream, WindifiedAtom), 
+        display(Stream, TailAtom),
+        close(Stream).
+        
+
+generate_batch(_, _).
+
+ windify_directory("/cygdrive/"||[Drive, 0'/|Path], 
+                  [Drive, 0':, 0'\\|WPath]):-
+        reverse_slash(Path, WPath).
+
+reverse_slash([], []).
+reverse_slash("/"||Path, "\\"||WPath):- !,
+        reverse_slash(Path, WPath).
+reverse_slash([C|Path], [C|WPath]):-
+        reverse_slash(Path, WPath).
+
+%% Previous code:
+ %% copy_header(none) :- !, % OPA
+ %% 	copy_stdout(library('compiler/header')).
+ %% copy_header(TargetEng) :- !,
+ %% 	verbose_message(['{Using engine for ',TargetEng,'}']),
+ %% 	ciaolibdir(Libdir),
+ %% 	atom_concat(Libdir,'/engine/ciaoengine.',Dir),
+ %% 	atom_concat(Dir,TargetEng,Dir2),
+ %% 	atom_concat(Dir2,'.sta',Engine),
+ %% 	copy_stdout(Engine).
+
 
 copy_pos(PoFiles,_) :- % OPA
 	current_prolog_flag(compress_exec,no), !,
@@ -463,6 +596,14 @@ verbose_message(M) :-
 % ------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+184,2002/01/31,19:49*14+'CET'), ".bat files are
+generated in Windows (MCL)").
+
+:- comment(version(1*7+177,2002/01/17,19:45*19+'CET'), "Added some
+more intelligence to the -S switch: it looks now for Windows engine
+(under CIAOLIB/Win32/bin/) and for unix/linux engines (under
+CIAOLIB/engine and CIAOLIB/bin/ARCH/).  (MCL)").
 
 :- comment(version(1*7+86,2001/04/05,22:10*12+'CEST'), "Fixed a bug
    which prevented static executables compiled with

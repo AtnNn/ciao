@@ -11,7 +11,7 @@ q:-
         format("Used ~d milliseconds~n", T).
 
 do_queens:-
-        queens(8, _), fail.
+        queens(11, _), fail.
 do_queens.
 
 queens(N, Qs):-

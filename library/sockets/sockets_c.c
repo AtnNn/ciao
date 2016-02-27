@@ -1,7 +1,7 @@
 /* Copyright (C) 1996, UPM-CLIP */
 
 #include "common_headers.h"
-#if defined(DARWIN)
+#if defined(DARWIN) || defined(LINUX)
 #include <string.h>
 #endif
 #include <sys/types.h>

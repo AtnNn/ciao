@@ -1,18 +1,7 @@
-(require 'hilit19)
-
-;; Modula-2
-(setq auto-mode-alist
-      (cons '("\\.mod$" . modula-2-mode) auto-mode-alist))   
-(setq auto-mode-alist
-      (cons '("\\.def$" . modula-2-mode) auto-mode-alist))   
-
-;; Hope
-(autoload 'hope-mode "hope-mode" "Edit Hope programs" t)
-
-(setq auto-mode-alist
-      (cons '(".*\\.hop$".hope-mode) auto-mode-alist))
-(setq auto-mode-alist
-      (cons '(".*\\.LST$".hope-mode) auto-mode-alist))
+;; 
+;; This contains a series of definitions which may be useful when
+;; running under MS-Windows (depends on the version of emacs)
+;; 
 
 ;;command.com shell on Win95/98
 ;;
@@ -32,7 +21,6 @@
   (setq comint-process-echoes t))
 
 (add-hook 'comint-mode-hook 'my-comint-init)
-
 
 ;; Complete directories with "\"
 (add-hook 'shell-mode-hook

@@ -1,9 +1,10 @@
 % This code is included in builtin.pl and in compiler.pl.
 % It uses the following facts (defined either in builtin or in compiler):
-%  imports/5   - MODULE imports from MODULE2 F/A, which resides in ENDMODULE
-%  meta_args/2 - MODULE has meta declaration META
-%  multifile/3 - MODULE defines multifile F/A
-%  defines/3   - MODULE defines F/A
+%  imports/5    - MODULE imports from MODULE2 F/A, which resides in ENDMODULE
+%  meta_args/2  - MODULE has meta declaration META
+%  multifile/3  - MODULE defines multifile F/A
+%  defines/3    - MODULE defines F/A
+%  goal_trans/2 - MODULE defines goal translation G
 
 % Called from c_itf
 body_expansion(V, M, QM, NA) :- var(V), !,
@@ -30,17 +31,28 @@ body_expansion(if(A,B,C),M,QM,if(NA,NB,NC)) :- !,
 	body_expansion(A,M,QM,NA),
 	body_expansion(B,M,QM,NB),
         body_expansion(C,M,QM,NC).
+body_expansion(!,_M,_QM,!):- !.
+body_expansion(A, M, QM, NC) :-
+        current_fact(goal_trans(M,_)),
+        expand_goal(A, M, QM, NB), !,
+        body_expansion(NB, M, -, NC).
 body_expansion(Call,M,QM,NCall) :-
         functor(Call, call, N), N > 1, % call/n
-        imports(M, _, call, 2, hiord_rt),
+        ( imports(M, _, call, 2, HM) -> HM = hiord_rt ),
         !,
         Call =.. [_, P| LAs],
         As =.. [''| LAs],
         N1 is N-1,
         meta_expansion_arg1(P, pred(N1), M, QM, true, NP, NCall, call(NP,As)).
-body_expansion(!,_M,_QM,!):- !.
 body_expansion(A, M, QM, NA) :-
         atom_expansion_add_goals(A, M, QM, A1, NA, A1).
+
+expand_goal(G, M, QM, NG) :-
+        ( QM = (-) -> QG = G ; QG = QM:G ),
+        goal_trans(M, T),
+          arg(1, T, QG),
+          arg(2, T, NG),
+          '$meta_call'(T), !.
 
 atom_expansion_add_goals(V, _, _, _, _, _) :- var(V), !, fail.
 atom_expansion_add_goals('$meta_call'(X), M, -, call(X), G, G) :-

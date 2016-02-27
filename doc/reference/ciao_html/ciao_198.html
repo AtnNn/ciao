@@ -1,33 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - field_value_check (library)</TITLE>
+<TITLE>The Ciao Prolog System               - parser (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC764" HREF="ciao_toc.html#TOC764">field_value_check (library)</A></H1>
+<H1><A NAME="SEC727" HREF="ciao_toc.html#TOC727">parser (library)</A></H1>
 <P>
-<A NAME="IDX7690"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/9, 14:36:55 MET)
+<A NAME="IDX7265"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_198.html#SEC765">Usage and interface (field_value_check)</A>
-<LI><A HREF="ciao_198.html#SEC766">Documentation on exports (field_value_check)</A>
+<LI><A HREF="ciao_198.html#SEC728">Usage and interface (parser)</A>
+<LI><A HREF="ciao_198.html#SEC729">Documentation on exports (parser)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC765" HREF="ciao_toc.html#TOC765">Usage and interface (<CODE>field_value_check</CODE>)</A></H2>
+<H2><A NAME="SEC728" HREF="ciao_toc.html#TOC728">Usage and interface (<CODE>parser</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(field_value_check)).</CODE>
+<CODE>:- use_module(library(parser)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,10 +40,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7691"></A>
-<CODE>fieldValue_check/8</CODE>, 
-<A NAME="IDX7692"></A>
-<CODE>mfstringValue/7</CODE>.
+<A NAME="IDX7266"></A>
+<CODE>parser/2</CODE>, 
+<A NAME="IDX7267"></A>
+<CODE>nodeDeclaration/4</CODE>.
 
 </UL>
 
@@ -58,20 +54,36 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7693"></A>
+<A NAME="IDX7268"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7269"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7270"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7271"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7272"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7273"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7274"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7275"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7276"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7694"></A>
-<CODE>provrml/io</CODE>, 
-<A NAME="IDX7695"></A>
-<CODE>provrml/generator_util</CODE>, 
-<A NAME="IDX7696"></A>
-<CODE>provrml/boundary</CODE>, 
-<A NAME="IDX7697"></A>
+<A NAME="IDX7277"></A>
+<CODE>provrml/lookup</CODE>, 
+<A NAME="IDX7278"></A>
+<CODE>provrml/field_value</CODE>, 
+<A NAME="IDX7279"></A>
 <CODE>provrml/tokeniser</CODE>, 
-<A NAME="IDX7698"></A>
-<CODE>provrml/generator</CODE>, 
-<A NAME="IDX7699"></A>
-<CODE>provrml/parser_util</CODE>.
+<A NAME="IDX7280"></A>
+<CODE>provrml/parser_util</CODE>, 
+<A NAME="IDX7281"></A>
+<CODE>provrml/possible</CODE>, 
+<A NAME="IDX7282"></A>
+<CODE>provrml/error</CODE>.
 
 </UL>
 
@@ -81,27 +93,38 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>,
 
 
 
-<H2><A NAME="SEC766" HREF="ciao_toc.html#TOC766">Documentation on exports (<CODE>field_value_check</CODE>)</A></H2>
+<H2><A NAME="SEC729" HREF="ciao_toc.html#TOC729">Documentation on exports (<CODE>parser</CODE>)</A></H2>
 <P>
-<A NAME="IDX7700"></A>
-<A NAME="IDX7701"></A>
+<A NAME="IDX7283"></A>
+<A NAME="IDX7284"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fieldValue_check/8:</B>
-<DD><A NAME="IDX7702"></A>
+<DT><span class="define">PREDICATE:</span> <B>parser/2:</B>
+<DD><A NAME="IDX7285"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>parser(+VRML,-Terms)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The parser uses a tokeniser to read the input text string of VRML code and returns a list with the corresponding terms. The tokens will be read in this parser as the grammar says. The parser is according to the specification of the VRML grammar, accept that it is performed over tokens in sted of the actual code.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+VRML</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>-Terms</CODE> is a list of <CODE>terms</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7703"></A>
-<A NAME="IDX7704"></A>
+<A NAME="IDX7286"></A>
+<A NAME="IDX7287"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mfstringValue/7:</B>
-<DD><A NAME="IDX7705"></A>
+<DT><span class="define">PREDICATE:</span> <B>nodeDeclaration/4:</B>
+<DD><A NAME="IDX7288"></A>
 
 
 <P>
@@ -111,6 +134,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

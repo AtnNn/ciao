@@ -1,8 +1,11 @@
-:- module(_, [], [assertions]).
+:- module(_, [main/0], [assertions]).
 
 :- comment(title, "Directives for using code in other files").
 
 :- comment(author, "Daniel Cabeza").
+
+:- comment(module, 
+        "Documentation for the directives used to load code into Ciao Prolog (both from the toplevel shell and by other modules).").
 
 :- comment(usage, "These directives are builtin in Ciao, so nothing special
    has to be done to use them.").
@@ -41,8 +44,14 @@
 :- decl use_package(Package) : sourcename.
 :- decl use_package(Package) : list(sourcename).
 
+main.
+
 %------------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+166,2002/01/03,17:42*31+'CET'), "Added 'module'
+   comment and a dummy main/0 in order to avoid documentation
+   complaints.  (MCL)").
 
 :- comment(version(1*3+107,1999/11/18,13:06*14+'MET'), "Added to
    version maintenance.  (Manuel Hermenegildo)").

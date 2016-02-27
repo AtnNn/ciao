@@ -1,123 +1,84 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Labeled graph-processing utilities</TITLE>
+<TITLE>The Ciao Prolog System               - A Program to Help Cleaning your Directories</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC641" HREF="ciao_toc.html#TOC641">Labeled graph-processing utilities</A></H1>
-<P>
-<A NAME="IDX6688"></A>
-
+<H1><A NAME="SEC602" HREF="ciao_toc.html#TOC602">A Program to Help Cleaning your Directories</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> F. Bueno.
+<STRONG>Author(s):</STRONG> Manuel Carro.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
+<STRONG>Version:</STRONG> 0.1#3 (2001/10/25, 14:31:59 CEST)
 
 
 <P>
-See the comments for the 
-<A NAME="IDX6689"></A>
-<CODE>ugraphs</CODE> library.
+A simple program for traversing a directory tree and deciding which files may be deleted in order to save space and not to loose information. 
 
 
 
 <UL>
-<LI><A HREF="ciao_159.html#SEC642">Usage and interface (lgraphs)</A>
-<LI><A HREF="ciao_159.html#SEC643">Documentation on exports (lgraphs)</A>
+<LI><A HREF="ciao_159.html#SEC603">Usage (cleandirs)</A>
+<LI><A HREF="ciao_159.html#SEC604">Known bugs and planned improvements (cleandirs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC642" HREF="ciao_toc.html#TOC642">Usage and interface (<CODE>lgraphs</CODE>)</A></H2>
+<H2><A NAME="SEC603" HREF="ciao_toc.html#TOC603">Usage (cleandirs)</A></H2>
 
-<div class="cartouche">
+
+<PRE>
+   
+cleandirs: &#60;initial_dir&#62; &#60;delete_options&#62; &#60;backup_options&#62;
+cleandirs explores &#60;initial_dir&#62; (which should be an absolute path)
+and looks for backup files and files which can be generated from other
+files, using a plausible heuristic aimed at retaining the same amount
+of information while recovering some disk space.  The heuristic is
+based on the extension of the filename.
+
+Delete options is one of:
+   --list: just list the files/directories which are amenable to be deleted,
+           but do not delete them. SAFE.
+    --ask: list the files/directories and ask for deletion. UNSAFE if you
+           make a mistake.
+ --delete: just delete the files/directories without asking.  I envy your
+           brave soul if you choose this option.
+
+Backup options is one of:
+ --includebackups: include backup files in the list of files to check.
+ --excludebackups: do not include backup files in the list of files to check.
+    --onlybackups: include only backup files in the list of files to check.
+
+Symbolic links are not traversed.  Special files are not checked.
+
+</PRE>
+
+<P>
+ 
+Invoking the program with no arguments will return an up-to-date information on the options.
+
+
+
+
+<H2><A NAME="SEC604" HREF="ciao_toc.html#TOC604">Known bugs and planned improvements (<CODE>cleandirs</CODE>)</A></H2>
+
 
 <UL>
 
-<LI><STRONG>Library usage:</STRONG>
+<LI>
 
-<CODE>:- use_module(library(lgraphs)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6690"></A>
-<CODE>vertices_edges_to_lgraph/3</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6691"></A>
-<CODE>lgraph/2</CODE>.
-
+Recursive removal of subdirectories relies on the existence of a recursive /bin/rm command in your system.
 </UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6692"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX6693"></A>
-<CODE>sets</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC643" HREF="ciao_toc.html#TOC643">Documentation on exports (<CODE>lgraphs</CODE>)</A></H2>
-<P>
-<A NAME="IDX6694"></A>
-<A NAME="IDX6695"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>lgraph/2:</B>
-<DD><A NAME="IDX6696"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>lgraph(Graph,Type)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a labeled graph of <CODE>Type</CODE> terms.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6697"></A>
-<A NAME="IDX6698"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_lgraph/3:</B>
-<DD><A NAME="IDX6699"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

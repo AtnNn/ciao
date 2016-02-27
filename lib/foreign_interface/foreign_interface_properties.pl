@@ -128,20 +128,20 @@ returns(_,_).
 
 :- prop foreign(Name)
  # "The Prolog predicate @pred{Name} is implemented using the foreign
-    function @code{Name}.".
+    function @tt{Name}.".
 
 foreign(_).
 
 
 :- prop foreign(PrologName,ForeignName)
  # "The Prolog predicate @pred{PrologName} is implemented using the foreign
-    function @code{ForeignName}.".
+    function @tt{ForeignName}.".
 
 foreign(_,_).
 
 
 :- prop native(Name) # "The Prolog predicate @pred{Name} is
-implemented using the function @code{Name}.  The implementation is not
+implemented using the function @tt{Name}.  The implementation is not
 a common C one, but it accesses directly the internal Ciao Prolog data
 structures and functions, and therefore no glue code is generated for
 it.".
@@ -151,7 +151,7 @@ native(_).
 
 :- prop native(PrologName,ForeignName) # "The Prolog predicate
 @pred{PrologName} is implemented using the function
-prolog_@code{ForeignName}.  The same considerations as above example
+prolog_@tt{ForeignName}.  The same considerations as above example
 are to be applied.".
 
 native(_,_).

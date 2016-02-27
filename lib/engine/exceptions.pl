@@ -121,13 +121,6 @@ retract_catching(Ch, Er, Ha) :- asserta_fact(catching(Ch, Er, Ha)), fail.
 
 :- comment(version_maintenance,dir('../../version')).
 
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
-
 :- comment(version(1*7+107,2001/05/31,14:12*58+'CEST'), "Changed data
 to be concurrent; changed retract_fact/1 to retract_fact_nb/1 (MCL)").
 

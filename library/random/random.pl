@@ -34,11 +34,9 @@
 
 :- comment(version_maintenance,dir('../../version')).
 
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
+:- comment(version(1*7+194,2002/04/04,21:08*41+'CEST'), "Corrected an
+error in srandom/1 which made it to cause a segmentation violation.
+(MCL)").
 
 :- comment(version(1*5+150,2000/05/24,20:00*38+'CEST'), "Changed
 Makefile to compile .pl to .po and .itf; otherwise the first load

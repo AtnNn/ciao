@@ -62,13 +62,6 @@ moment. Use with (lots of) caution.
 
 :- comment(version_maintenance,dir('../../version')).
 
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
-
 :- comment(version(1*5+156,2000/05/30,11:00*51+'CEST'), "Moved *_r and
 *_q files to subdirectories q and r.  (MCL)").
 

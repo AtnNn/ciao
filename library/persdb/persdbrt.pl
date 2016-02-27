@@ -639,7 +639,7 @@ get_pred_files(Dir, Name, Arity, File, File_ops, File_bak):-
 create_dir(Dir) :-
         file_exists(Dir), !.  % Assuming it's a directory
 create_dir(Dir) :-
-        make_directory(Dir, 0xfff).
+        make_dirpath(Dir, 0xfff).
 
 delete_file1(File):-
 	(file_exists(File)->

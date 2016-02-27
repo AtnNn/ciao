@@ -60,6 +60,16 @@ BIBTEX=bibtex
 # 
 DVIPS=dvips
 # ----------------------------------------------------------------------------
+# Define this to be the command that views dvi files in your system
+# 
+XDVI=xdvi
+# ----------------------------------------------------------------------------
+# Define this to be the default size at which manuals are viewed
+# This is typically an integer (1-10 usually) and unfortunately changes 
+# depending on the version of xdvi used.
+# 
+XDVISIZE=4
+# ----------------------------------------------------------------------------
 # If set to yes the texinfo.tex file that comes with the lpdoc distribution 
 # will be used. Otherwise, the system texinfo file will be used. 
 # 
@@ -892,16 +902,16 @@ braveclean: realclean
 #----------------------------------------------------------------------------
 # Some handy viewers:
 view dviview: # $(BASEMAIN).dvi
-	xdvi -s 8 -expert -geometry 623x879-0-0 $(BASEMAIN).dvi &
+	$(XDVI) -s $(XDVISIZE) -expert -geometry 623x879-0-0 $(BASEMAIN).dvi &
 
 largedviview: # $(BASEMAIN).dvi
-	xdvi -s 5 -expert -geometry 984x760+30-0 $(BASEMAIN).dvi &
+	$(XDVI) -s 5 -expert -geometry 984x760+30-0 $(BASEMAIN).dvi &
 
 svgaview: # $(BASEMAIN).dvi
-	xdvi -s 8 -expert -geometry 643x590+1280+0 $(BASEMAIN).dvi &
+	$(XDVI) -s 8 -expert -geometry 643x590+1280+0 $(BASEMAIN).dvi &
 
 xgaview: # $(BASEMAIN).dvi
-	xdvi -s 8 -expert -geometry 643x759-0-0 $(BASEMAIN).dvi &
+	$(XDVI) -s 8 -expert -geometry 643x759-0-0 $(BASEMAIN).dvi &
 
 psview: # $(BASEMAIN).ps
 	ghostview -magstep -1 -portrait -geometry +349+10 $(BASEMAIN).ps &

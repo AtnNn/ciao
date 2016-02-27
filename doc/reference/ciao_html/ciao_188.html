@@ -1,37 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget3 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC733" HREF="ciao_toc.html#TOC733">table_widget3 (library)</A></H1>
+<H1><A NAME="SEC697" HREF="ciao_toc.html#TOC697">dictionary_tree (library)</A></H1>
 <P>
-<A NAME="IDX7443"></A>
-
-
-<P>
-The predicates exported by this module display data in a regular table, as we brought up in the introduction. Both predicates have in common that the font weight for the elements placed in the first column is bold and the remaining elements are in medium font weight. 
+<A NAME="IDX6938"></A>
 
 
 <P>
-If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
+<STRONG>Version:</STRONG> 0.1 (1999/1/14, 15:57:36 MET)
+
+
+<P>
+This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
 
 
 
 <UL>
-<LI><A HREF="ciao_188.html#SEC734">Usage and interface (table_widget3)</A>
-<LI><A HREF="ciao_188.html#SEC735">Documentation on exports (table_widget3)</A>
+<LI><A HREF="ciao_188.html#SEC698">Usage and interface (dictionary_tree)</A>
+<LI><A HREF="ciao_188.html#SEC699">Documentation on exports (dictionary_tree)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC734" HREF="ciao_toc.html#TOC734">Usage and interface (<CODE>table_widget3</CODE>)</A></H2>
+<H2><A NAME="SEC698" HREF="ciao_toc.html#TOC698">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +39,7 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(table_widget3)).</CODE>
+<CODE>:- use_module(library(dictionary_tree)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,10 +48,20 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7444"></A>
-<CODE>tablewidget3/4</CODE>, 
-<A NAME="IDX7445"></A>
-<CODE>tablewidget3/5</CODE>.
+<A NAME="IDX6939"></A>
+<CODE>create_dictionaries/1</CODE>, 
+<A NAME="IDX6940"></A>
+<CODE>is_dictionaries/1</CODE>, 
+<A NAME="IDX6941"></A>
+<CODE>get_definition_dictionary/2</CODE>, 
+<A NAME="IDX6942"></A>
+<CODE>get_prototype_dictionary/2</CODE>, 
+<A NAME="IDX6943"></A>
+<CODE>dictionary_insert/5</CODE>, 
+<A NAME="IDX6944"></A>
+<CODE>dictionary_lookup/5</CODE>, 
+<A NAME="IDX6945"></A>
+<CODE>merge_tree/2</CODE>.
 
 </UL>
 
@@ -62,18 +72,26 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7446"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7447"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7448"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX7449"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7450"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7451"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX6946"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX6947"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX6948"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX6949"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX6950"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX6951"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX6952"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6953"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX6954"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6955"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -83,67 +101,195 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 
-<H2><A NAME="SEC735" HREF="ciao_toc.html#TOC735">Documentation on exports (<CODE>table_widget3</CODE>)</A></H2>
+<H2><A NAME="SEC699" HREF="ciao_toc.html#TOC699">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
 <P>
-<A NAME="IDX7452"></A>
-<A NAME="IDX7453"></A>
+<A NAME="IDX6956"></A>
+<A NAME="IDX6957"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget3/4:</B>
-<DD><A NAME="IDX7454"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
+<DD><A NAME="IDX6958"></A>
 
 
 <P>
-<CODE>tablewidget3(Title,Header,ElementTable,Footer)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
 
-<P>
-Shows a regular table in a window. The user does not choose a background image. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-
-<P>
-Example: 
-
-<PRE>
-tablewidget3('This is the title',
-	     'Header text',
-	     [['Number of processors','8'],['Average processors','95'],
-	       ['Tasks per fork','7.5']],
-	     'Footer text').
-</PRE>
+<CODE>-Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7455"></A>
-<A NAME="IDX7456"></A>
+<A NAME="IDX6959"></A>
+<A NAME="IDX6960"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget3/5:</B>
-<DD><A NAME="IDX7457"></A>
+<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
+<DD><A NAME="IDX6961"></A>
 
 
 <P>
-<CODE>tablewidget3(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>?Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6962"></A>
+<A NAME="IDX6963"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
+<DD><A NAME="IDX6964"></A>
 
 
 <P>
-Shows a regular table in a window. The user must set a background image. 
+<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary,-Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6965"></A>
+<A NAME="IDX6966"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
+<DD><A NAME="IDX6967"></A>
 
 
 <P>
-Example: 
+<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary,-Tree)</CODE>
 
-<PRE>
-tablewidget3('This is the title',
-	     'Header text',
-	     [['Number of processors','8'],['Average processors','95'],
-	         ['Average Tasks per fork','7.5']],
-	     'Footer text',
-	     './images/rain.gif')
-</PRE>
+<UL>
+<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6968"></A>
+<A NAME="IDX6969"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
+<DD><A NAME="IDX6970"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key,+Type,+Field,+Dictionary,?Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>?Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6971"></A>
+<A NAME="IDX6972"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
+<DD><A NAME="IDX6973"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key,?Type,?Field,+Dictionary,-Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6974"></A>
+<A NAME="IDX6975"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
+<DD><A NAME="IDX6976"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree,+Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

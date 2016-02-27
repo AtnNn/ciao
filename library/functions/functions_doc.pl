@@ -26,6 +26,14 @@ Example of use:
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+186,2002/02/04,19:11*45+'CET'), "Added ^^
+   operator to avoid expanding a goal inside another goal.  (Daniel
+   Cabeza Gras)").
+
+:- comment(version(1*7+183,2002/01/31,19:15*16+'CET'), "Fixed a bug
+   related expansion of module-qualified predicate/function calls.
+   (Daniel Cabeza Gras)").
+
 :- comment(version(1*7+103,2001/05/21,19:22*58+'CEST'), "Fixed a bug
    related to disabling arithmetic functions and defining new predefined
    function names.  (Daniel Cabeza Gras)").

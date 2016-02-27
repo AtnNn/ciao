@@ -186,8 +186,28 @@ struct try_node {
 
 /* switch_on_constant/structure: hash on terms. */
 
-#define SwitchSize(X)	(((X)->mask>>3)+1) /* 3 is log2(sizeof(struct sw_on_key_node)) */
-#define SizeToMask(X)	(((X)-1)<<3)
+/* 
+    4 is log2(sizeof(struct sw_on_key_node))
+
+    IF THE SIZE OF "struct sw_on_key_node" CHANGES, THIS CONSTANT MUST BE
+    UPDATED AS WELL.  Besides, THE SIZE OF "struct sw_on_key_node" MUST BE A
+    POWER OF 2.
+
+    (MCL, after experimentation and inspection)
+
+*/
+
+ /* Remember to update if sw_on_key_node ever changes*/
+
+#define LOG_SWITCH_KEY 3
+
+
+#define SwitchSize(X) (((X)->mask>>LOG_SWITCH_KEY)+1) 
+#define SizeToMask(X) (((X)-1)<<LOG_SWITCH_KEY)
+
+/* REMEMBER TO UPDATE THE CONSTANT ABOVE IF THIS STRUCT CHANGES
+   THE SIZE OF THE STRUCT BELOW MUST BE A POWER OF TWO --- ADD PADDING IF
+   NECESSARY  */
 
 struct sw_on_key_node {
   TAGGED key;
@@ -231,7 +251,11 @@ struct sw_on_key {
 
 struct incore_info {
   struct emul_info *clauses;	                          /* first clause */
-  struct emul_info **clauses_tail;         /* where to insert next clause */
+  struct emul_info **clauses_tail;         /* "next" field of last clause */
+#if defined(CACHE_INCREMENTAL_CLAUSE_INSERTION)
+  struct emul_info *last_inserted_clause;   /* Pointer to the last clause */
+  unsigned int last_inserted_num;           /* Number of last ins. clause */
+#endif
   struct try_node *varcase;
   struct try_node *lstcase;
   struct sw_on_key *othercase;

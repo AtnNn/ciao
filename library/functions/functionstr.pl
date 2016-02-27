@@ -2,7 +2,7 @@
 
 :- use_module(library(terms), [copy_args/3]).
 
-:- data function/2.
+:- data function/3.
 :- data ignore_arith/1.
 
 % defunc(FuncItem, PredItem, Module) :- PredItem is a clause, query or
@@ -10,13 +10,15 @@
 % To be called as a sentence translation
 
 defunc(0, _, Mod) :- !,
-        retractall_fact(function(_,Mod)),
+        retractall_fact(function(_,Mod,_)),
         retractall_fact(ignore_arith(Mod)).        
 defunc(end_of_file, end_of_file, _) :- !.
 defunc((?- _), _, _) :- !, fail.
 defunc((:- function(Spec)), _, Mod) :- !,
-        ( Spec = F/A, functor(P, F, A) ->
-            make_function(P, Mod)
+        ( Spec = QM:F/A, functor(P, F, A) ->
+            make_function(P, Mod, QM)
+        ; Spec = F/A, functor(P, F, A) ->
+            make_function(P, Mod, (-))
         ; Spec = arith(true) ->
             retractall_fact(ignore_arith(Mod))
         ; Spec = arith(false) ->
@@ -69,34 +71,39 @@ defunc_args(N, T0, Mod, Arith, T1, Add, Rest) :-
         defunc_exp(A0, Mod, Arith, A1, NRest, Rest),
         defunc_args(N1, T0, Mod, Arith, T1, Add, NRest).
 
-% defunc_exp(Exp, Module, Arith, NewExp, AddGoal, RestGoal) :- NewExp is a
-% expression without functions equivalent to Exp when adding goals
+% defunc_exp(Exp, Module, Arith, NewExp, AddGoal, RestGoal) :- NewExp is
+% a expression without functions equivalent to Exp when adding goals
 % AddGoal minus RestGoal.
 
 % assumes is/2 is imported
 defunc_exp(V,_Mod,_Arith, V, G, G) :- var(V), !.
-defunc_exp(^T0, Mod, Arith, T1, Add, Rest) :- !,
+defunc_exp(^T0, Mod, Arith, T1, Add, Rest) :- !, % Only works in heads
         functor(T0, F, A),
         functor(T1, F, A),
         defunc_args(A, T0, Mod, Arith, T1, Add, Rest).        
+defunc_exp(^^(T),_Mod,_Arith,^^(T), G, G) :- !.
 defunc_exp(Fun, Mod, true, V, Add, Rest) :-
         arith_exp(Fun), !,
         functor(Fun, F, A),
         functor(NFn, F, A),
         defunc_args(A, Fun, Mod, tempfalse, NFn, Add, (V is NFn, Rest)).
 defunc_exp(Fun, Mod, Arith, V, Add, Rest) :-
-        is_function(Fun, Mod, Fn), !,
+        is_function(Fun, Mod, Fn, QM), !,
         functor(Fn, F, A),
         A1 is A+1,
         functor(NFn, F, A1),
         arg(A1, NFn, V),
+        add_qualification(QM, NFn, QNFn),
         new_arith(Arith, NArith),
-        defunc_args(A, Fn, Mod, NArith, NFn, Add, (NFn, Rest)).
+        defunc_args(A, Fn, Mod, NArith, NFn, Add, (QNFn, Rest)).
 defunc_exp(T0, Mod, Arith, T1, Add, Rest) :-
-        \+ (T0 = is(_,_)), % avoid infinite loop
+        (T0 = is(_,_) -> Arith = false ; true), % avoid infinite loop
         functor(T0, F, A),
         functor(T1, F, A),
         defunc_args(A, T0, Mod, Arith, T1, Add, Rest).
+
+add_qualification((-), P, P) :- !.
+add_qualification(QM, P, QM:P).
 
 new_arith(false, false).
 new_arith(tempfalse, true).
@@ -105,23 +112,31 @@ new_arith(true, true).
 % defunc_goal(Goal, NewGoal, Module) :-
 %   NewGoal is a goal equivalent to Goal (in Module) but without functions.
 % To be called as a goal translation
+defunc_goal(^^(G), G,_Mod) :- !.
 defunc_goal((U1 = U2), NewGoal, Mod) :-
         (V = U1, Fun = U2 ; V = U2, Fun = U1),
         var(V), nonvar(Fun),
-        is_function(Fun, Mod, Fn), !,
+        is_function(Fun, Mod, Fn, QM), !,
         arith_flag(Mod, Arith_Flag),
         functor(Fn, F, A),
         A1 is A+1,
         functor(NFn, F, A1),
         arg(A1, NFn, V), 
-        defunc_args(A, Fn, Mod, Arith_Flag, NFn, NewGoal, NFn).
-defunc_goal(Goal, NewGoal, Mod) :-
-        \+ (Goal = is(_,_)), % avoid infinite loop
+        add_qualification(QM, NFn, QNFn),
+        defunc_args(A, Fn, Mod, Arith_Flag, NFn, NewGoal, QNFn).
+defunc_goal(QM:Goal, NewGoal, Mod) :- !,
         arith_flag(Mod, Arith_Flag),
         functor(Goal, F, A),
         functor(Goal1, F, A),
-        NewGoal = (_,_),
-        defunc_args(A, Goal, Mod, Arith_Flag, Goal1, NewGoal, Goal1).
+        defunc_args(A, Goal, Mod, Arith_Flag, Goal1, NewGoal, QM:Goal1),
+        NewGoal \== QM:Goal.
+defunc_goal(Goal, NewGoal, Mod) :-
+        arith_flag(Mod, Arith_Flag),
+        (Goal = is(_,_) -> Arith_Flag = false ; true), % avoid infinite loop
+        functor(Goal, F, A),
+        functor(Goal1, F, A),
+        defunc_args(A, Goal, Mod, Arith_Flag, Goal1, NewGoal, Goal1),
+        NewGoal \== Goal.
 
 arith_exp(-(_)).
 arith_exp(+(_)).
@@ -159,13 +174,16 @@ arith_exp(sin(_)).
 arith_exp(cos(_)).
 arith_exp(atan(_)).
 
-make_function(P, Mod) :-
-        current_fact(function(P, Mod)), !.
-make_function(P, Mod) :-
-        asserta_fact(function(P, Mod)).
+make_function(P, Mod, QM) :-
+        current_fact(function(P, Mod, QM)), !.
+make_function(P, Mod, QM) :-
+        asserta_fact(function(P, Mod, QM)).
 
-is_function(~(Fun),_Mod, Fun) :- !.
-is_function(Fun, Mod, Fun) :- function(Fun, Mod).
+is_function(~V,_Mod, call(V), (-)) :- var(V), !.
+is_function(~(QM:Fun),_Mod, Fun, QM) :- !.
+is_function(~(Fun),_Mod, Fun, (-)) :- !.
+is_function(QM:Fun, Mod, Fun, QM) :- !, function(Fun, Mod, QM).
+is_function(Fun, Mod, Fun, (-)) :- function(Fun, Mod, (-)).
 
 
 concat_bodies(V, B, NB) :- var(V), !,

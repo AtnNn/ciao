@@ -1,8 +1,10 @@
-:- module(fuzzy_tr,[fuzzy_pred/3],[]).
+:- module(fuzzy_tr,[fuzzy_pred/3,fuzzy_pred2/3],[]).
 
 :- use_module(library(aggregates), [findall/4]).
 :- use_module(library(terms),[copy_args/3]).
 :- use_module(library(messages),[error_message/2]).
+
+:- use_module(library('compiler/c_itf')).
 
 :- data fpred/1.
 
@@ -17,6 +19,18 @@
 
 :- include(library('fuzzy/ops')).
 :- include(library('clpr/ops')).
+
+fuzzy_pred2(clause(H,'$add_contr'(B,T)),clause(H,NB),M):-
+	         obtain_crisp(B,BPrime,M,T),
+	         add_contr(H,BPrime,T,NB,M).
+fuzzy_pred2(clause(H,('$add_neg'(O,A),B)),clause(H,B),M):-
+	(
+	    fpredicate(O/A,M) -> true
+	;
+	    error_message("~p is not a fuzzy predicate",[O/A])
+	).
+
+
 
 build_cl(X1,M1,X2,M2,Name,(H :- ExpMax , ExpMin  ),Comp):-
 	M1 == M2,!,
@@ -85,8 +99,8 @@ add_fuzzy_clause0([c(H,B,Type)|L],Cls1,Cls2):-
 	assertz_fact(frule(H,B,Type)),
 	add_fuzzy_clause0(L,Cls1,Cls2).
 add_fuzzy_clause0([c(H,B,Type)|L],Cls,Cls2):-
-	obtain_crisp(B,Crisps,[],NB),
-	assertz_fact(frule(H,NB,Type)),
+	obtain_crisp2(B,Crisps,[]),
+	assertz_fact(frule(H,B,Type)), % cambio
 	fuzzyfing(Crisps,Cls,Cls1),
 	add_fuzzy_clause0(L,Cls1,Cls2).
 
@@ -107,15 +121,29 @@ fuzzyfing([Name/Ar|Crisp],Cls,Cls2):-
 	fuzzyfing(Crisp,Cls1,Cls2).
 
 
-obtain_crisp((A,B),Crisps,Tail,(NA,NB)):-
-	obtain_crisp(A,Crisps,T1,NA),
-	obtain_crisp(B,T1,Tail,NB).
+obtain_crisp2((A,B),Crisps,Tail):-
+	obtain_crisp2(A,Crisps,T1),
+	obtain_crisp2(B,T1,Tail).
 
-obtain_crisp({A},Crisp,Crisp,A).  % to manage crisp calls
-obtain_crisp(A,Crisp,Crisp,A):-
+obtain_crisp2({_A},Crisp,Crisp).  % to manage crisp calls
+obtain_crisp2(A,Crisp,Crisp):-
 	functor(A,F,Ar),
 	fpred(F/Ar),!.
-obtain_crisp(A,[Name/Ar|Crisp],Crisp,H):-
+obtain_crisp2(A,[Name/Ar|Crisp],Crisp):-
+	functor(A,Name,Ar).
+
+
+
+obtain_crisp((A,B),(NA,NB),M,T):-
+	obtain_crisp(A,NA,M,T),
+	obtain_crisp(B,NB,M,T).
+
+obtain_crisp(A,A,_,fact). 
+obtain_crisp({A},A,_,_).  % to manage crisp calls
+obtain_crisp(A,A,M,_):-
+	functor(A,F,Ar),
+	fpredicate(F/Ar,M),!.
+obtain_crisp(A,H,_,_):-
 	functor(A,Name,Ar),
        	Ar1 is Ar + 1,
 	atom_concat('$f_',Name,F),
@@ -123,29 +151,28 @@ obtain_crisp(A,[Name/Ar|Crisp],Crisp,H):-
 	copy_args(Ar,H,A).
 
 
-
 fuzzy_pred(end_of_file,Cls,_) :-
 	!,
-        assertz_fact(fpred('=>'/_)),
+%        assertz_fact(fpred('=>'/4)),
 	add_fuzzy_clause(Cls,Cls1),
 	findall(CL,(retract_fact(frule(H,B,T)),
-	            add_contr(H,B,T,CL)
+	            CL = (H:-'$add_contr'(B,T)) 
+%	            add_contr(H,B,T,CL)
 		   ),
 		   Cls1,Negated
 	       ),
 	findall(CL,(retract_fact(fnegclause(N,O,A)),
-	            add_neg(N,O,A,CL)
-		   ),
-		   Negated,[end_of_file]
+		 add_neg(N,O,A,CL)
+		 ),
+		   Negated,Is_fuzzy
 	       ),
-%		   Negated,Aggreg
-%	       ),
-% 	findall(CL,(retract_fact(fagrclause(F,F1,F2,A,Type)),
-% 	            add_agg(F,F1,F2,A,Type,CL)
-% 		   ),
-% 		   Aggreg,[end_of_file]
-% 	       ),
-	retractall_fact(fpred(_)).
+ 	findall(CL,(retract_fact(fpred(F/A)),
+ 	            CL = (:- is_fuzzy(F,A,truth))
+ 		   ),
+ 		   Is_fuzzy,[end_of_file]
+ 	       ).
+
+
 	
 fuzzy_pred( (Name :# fuzzy_predicate Lista),Cls,_):-
 	!,
@@ -204,6 +231,7 @@ fuzzy_pred((H :~ B0),[],_):-
 fuzzy_pred((:- aggr A),(:- op(1190,fx,A)),_):-
 	asserta_fact(faggr(A)), !.
 
+
 % default
 fuzzy_pred((H :~  B),[],_):-
 	!,
@@ -226,61 +254,6 @@ fuzzy_pred((Npred :# fnot Opred/A),[],_):-
 	assertz_fact(fnegclause(Npred,Opred,A)).
 
 
-% fuzzy_pred((F :# aggr_dprod (F1/A,F2/A)),[],_):-
-% 	!,
-% 	(
-% 	    fpred(F/A) -> true
-% 	;
-% 	    assertz_fact(fpred(F/A))
-% 	),
-% 	assertz_fact(fagrclause(F,F1,F2,A,dprod)).
-
-% fuzzy_pred((F :# aggr_dluka (F1/A,F2/A)),[],_):-
-% 	!,
-% 	(
-% 	    fpred(F/A) -> true
-% 	;
-% 	    assertz_fact(fpred(F/A))
-% 	),
-% 	assertz_fact(fagrclause(F,F1,F2,A,dluka)).
-
-% fuzzy_pred((F :# aggr_max (F1/A,F2/A)),[],_):-
-% 	!,
-% 	(
-% 	    fpred(F/A) -> true
-% 	;
-% 	    assertz_fact(fpred(F/A))
-% 	),
-%  	assertz_fact(fagrclause(F,F1,F2,A,max)).
-
-% fuzzy_pred((F :# aggr_prod (F1/A,F2/A)),[],_):-
-% 	!,
-% 	(
-% 	    fpred(F/A) -> true
-% 	;
-% 	    assertz_fact(fpred(F/A))
-% 	),
-% 	assertz_fact(fagrclause(F,F1,F2,A,prod)).
-
-% fuzzy_pred((F :# aggr_luka (F1/A,F2/A)),[],_):-
-% 	!,
-% 	(
-% 	    fpred(F/A) -> true
-% 	;
-% 	    assertz_fact(fpred(F/A))
-% 	),
-% 	assertz_fact(fagrclause(F,F1,F2,A,luka)).
-
-% fuzzy_pred((F :# aggr_min (F1/A,F2/A)),[],_):-
-% 	!,
-% 	(
-% 	    fpred(F/A) -> true
-% 	;
-% 	    assertz_fact(fpred(F/A))
-% 	),
-%  	assertz_fact(fagrclause(F,F1,F2,A,min)).
-
-
 fuzzy_pred(( F :# fuzzy Name/Ar ),[(H:-if(N,M = 1,M = 0))],_):-
 	!,
 	A is Ar + 1,
@@ -299,112 +272,108 @@ addconstrain([X|RestV],Mu,(X.>=.Mu,RestC)):-
 	addconstrain(RestV,Mu,RestC).
 
 
-add_contr(H,B,less,(H :- B,AB)):- !,
+add_contr(H,B,less,(B,AB),M):- !,
  	functor(H,_,Ar),
  	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
+ 	memfunct(B,ListVar,[],M),
  	addconstrain(ListVar,Mu,AB).
 
-add_contr(H,_B,fact,(H:- Mu .>=.0,Mu .=<.1 )):- !,
+add_contr(H,_B,fact,(Mu .>=.0,Mu .=<.1 ),_M):- !,
  	functor(H,_,Ar),
  	arg(Ar,H,Mu).
 
-add_contr(H,B,min,(H :- B,AB)):- !,
- 	functor(H,_,Ar),
- 	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
-	AB = (minim(ListVar,Mu),Mu .>=.0,Mu .=<.1).
+% add_contr(H,B,min,(B,AB),M):- !,
+%  	functor(H,_,Ar),
+%  	arg(Ar,H,Mu),
+%  	memfunct(B,ListVar,[],M),
+% 	AB = (minim(ListVar,Mu),Mu .>=.0,Mu .=<.1).
 
-add_contr(H,B,luka,(H :- B,AB)):- !,
- 	functor(H,_,Ar),
- 	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
-	AB = (lukalist(ListVar,Mu),Mu .>=.0,Mu .=<.1).
+% add_contr(H,B,luka,(B,AB),M):- !,
+%  	functor(H,_,Ar),
+%  	arg(Ar,H,Mu),
+%  	memfunct(B,ListVar,[],M),
+% 	AB = (lukalist(ListVar,Mu),Mu .>=.0,Mu .=<.1).
 
-add_contr(H,B,prod,(H :- B,AB)):- !,
- 	functor(H,_,Ar),
- 	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
-        (
-	    ListVar == [] ->
-	    AB = (Mu .>=.0,Mu .=<.1)
-	;
-	    transprod(ListVar,Prod),
-	    AB = (Mu .=. Prod,Mu .>=.0,Mu .=<.1)
-	).
+% add_contr(H,B,prod,(B,AB),M):- !,
+%  	functor(H,_,Ar),
+%  	arg(Ar,H,Mu),
+%  	memfunct(B,ListVar,[],M),
+%         (
+% 	    ListVar == [] ->
+% 	    AB = (Mu .>=.0,Mu .=<.1)
+% 	;
+% 	    transprod(ListVar,Prod),
+% 	    AB = (Mu .=. Prod,Mu .>=.0,Mu .=<.1)
+% 	).
 
-add_contr(H,B,max,(H :- B,AB)):- !,
- 	functor(H,_,Ar),
- 	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
-	AB = (maxim(ListVar,Mu),Mu .>=.0,Mu .=<.1).
+% add_contr(H,B,max,(B,AB),M):- !,
+%  	functor(H,_,Ar),
+%  	arg(Ar,H,Mu),
+%  	memfunct(B,ListVar,[],M),
+% 	AB = (maxim(ListVar,Mu),Mu .>=.0,Mu .=<.1).
 
-add_contr(H,B,dluka,(H :- B,AB)):- !,
- 	functor(H,_,Ar),
- 	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
-	AB = (dlukalist(ListVar,Mu),Mu .>=.0,Mu .=<.1).
+% add_contr(H,B,dluka,(B,AB),M):- !,
+%  	functor(H,_,Ar),
+%  	arg(Ar,H,Mu),
+%  	memfunct(B,ListVar,[],M),
+% 	AB = (dlukalist(ListVar,Mu),Mu .>=.0,Mu .=<.1).
 
-add_contr(H,B,dprod,(H :- B,AB)):- !,
- 	functor(H,_,Ar),
- 	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
-	AB = (dprodlist(ListVar,Mu),Mu .>=.0,Mu .=<.1).
+% add_contr(H,B,dprod,(B,AB),M):- !,
+%  	functor(H,_,Ar),
+%  	arg(Ar,H,Mu),
+%  	memfunct(B,ListVar,[],M),
+% 	AB = (dprodlist(ListVar,Mu),Mu .>=.0,Mu .=<.1).
  
-add_contr(H,B,Any,(H :- B,AB)):-
+add_contr(H,B,Any,(B,AB),M):-
  	functor(H,_,Ar),
  	arg(Ar,H,Mu),
- 	memfunct(B,ListVar,[]),
-	AB = (inject(ListVar,Any,Mu),Mu .>=.0,Mu .=<.1).
+ 	memfunct(B,ListVar,[],M),
+	atom_concat(Any,'_initial',IAny),
+	functor(Initial,IAny,2),
+	atom_concat(Any,'_final',FAny),
+	functor(Final,FAny,3),
+	AB = (preinject(ListVar,Initial,TempVar),
+	inject(TempVar,Any,MuTemp),
+	postinject(TempVar,MuTemp,Final,Mu),
+	Mu .>=.0,Mu .=<.1).
  
-add_neg(N,O,A,(NewPred :- OldPred,Mu .=. 1 - MuO)):-
-	(
-	    fpred(O/A) ->
+add_neg(N,O,A,(NewPred :- '$add_neg'(O,A),OldPred,Mu .=. 1 - MuO)):-
+%	(
+%	    fpred(O/A) ->
 	    functor(OldPred,O,A),
 	    functor(NewPred,N,A),
 	    Arm1 is A - 1,
 	    copy_args(Arm1,OldPred,NewPred),
 	    arg(A,NewPred,Mu),
-	    arg(A,OldPred,MuO)
-	;
-	    error_message("~p is not a fuzzy predicate",[O/A])
-	).
+	    arg(A,OldPred,MuO).
+%	;
+%	    error_message("~p is not a fuzzy predicate",[O/A])
+%	).
 			
-% add_agg(F,F1,F2,A,Type,(H :- B1,B2,Res)):-
-% 	(
-% 	    (fpred(F1/A),fpred(F2/A)) ->
-% 	    functor(B1,F1,A),
-% 	    functor(B2,F2,A),
-% 	    functor(H,F,A),
-% 	    Arm1 is A - 1,
-% 	    copy_args(Arm1,H,B1),
-% 	    copy_args(Arm1,H,B2),
-% 	    arg(A,H,Mu),
-% 	    arg(A,B1,Mu1),
-% 	    arg(A,B2,Mu2),
-% 	    functor(Res,Type,3),
-% 	    arg(1,Res,Mu1),
-% 	    arg(2,Res,Mu2),
-% 	    arg(3,Res,Mu)
-% 	;
-% 	    error_message("~p : attempt to aggregate non fuzzy predicate",[F])
-% 	).
-	     
-
-
 
 
 transprod([X],X).
 transprod([X|RestV],(X * RestP)):-
 	transprod(RestV,RestP).
 
-memfunct((A,B),ListVar,Tail):-
+memfunct((A,B),ListVar,Tail,M):-
 	!,
- 	memfunct(A,ListVar,TListVar),
- 	memfunct(B,TListVar,Tail).
-memfunct({_A},R,R).  % to manage crisp calls
-memfunct(A,[X|R],R):-
+ 	memfunct(A,ListVar,TListVar,M),
+ 	memfunct(B,TListVar,Tail,M).
+memfunct({_A},R,R,_M).  % to manage crisp calls
+memfunct(A,[X|R],R,M):-
  	functor(A,F,Ar),
- 	fpred(F/Ar),!,
+ 	fpredicate(F/Ar,M),!,
  	arg(Ar,A,X).
-memfunct(_,R,R).
+memfunct(_,R,R,_):-
+	error_message("something is wrong",[]).
+
+
+fpredicate(F/Ar,M):-
+    defines_module(B,M),
+    decl(B,is_fuzzy(F,Ar,_Type)).
+fpredicate(F/Ar,M):-
+    imports(M,_M2,F,Ar,M2),
+    defines_module(B,M2),
+    decl(B,is_fuzzy(F,Ar,_Type)).
+	

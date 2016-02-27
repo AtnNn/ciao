@@ -1,18 +1,33 @@
 :- module(bignums, [do_bignums/0]).
 
 :- use_module(library(write)).
+:- use_module(library(prolog_sys)).
 
 do_bignums:-
+        statistics(runtime, _),
         N = 13,
-        Exp = 7111,
+        Exp = 16000,
         write('Naively calculating '), write(N),
-        write('^'), write(Exp), write(' = '), flush_output,
+        write('^'), write(Exp), flush_output,
         exponential_naive(N, Exp,R),
-        write(R), nl,
+        write('  Done'), nl,
         write('Divide-and-conquer calculating '), write(N),
-        write('^'), write(Exp), write(' = '), flush_output,
+        write('^'), write(Exp), flush_output,
         exponential_div(N, Exp, Res),
-        write(Res), nl.
+        write('  Done'), nl,
+        (
+            Res = R ->
+            write('Both results are equal'),
+            nl
+        ;
+            write('*********************** Results differ ******************')
+        ),
+        statistics(runtime, [_,T]),
+        write('Used '),
+        write(T),
+        write(' milliseconds in total'),
+        nl.
+
 
         
 

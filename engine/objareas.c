@@ -425,10 +425,10 @@ BOOL make_bytecode_object(Arg)
  
 #if defined(GAUGE)
   counter_cnt = GetInteger(num1);
-  lsize = (sizeof(struct emul_info)-sizeof(INSN)+GetInteger(num)+
+  lsize = (sizeof(struct emul_info)-ANY*sizeof(INSN)+GetInteger(num)+
 	   counter_cnt*sizeof(ENG_INT)+3) & ~3;
 #else
-  lsize = sizeof(struct emul_info)-sizeof(INSN)+GetInteger(num);
+  lsize = sizeof(struct emul_info)-ANY*sizeof(INSN)+GetInteger(num);
 #endif
 
   object=(struct emul_info *)checkalloc(lsize);

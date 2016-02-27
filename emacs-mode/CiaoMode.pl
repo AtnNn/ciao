@@ -40,16 +40,55 @@ main.
 
 :- comment(version_maintenance,dir('../version/')).
 
+:- comment(version(1*7+188,2002/02/08,20:06*47+'CET'), "Set
+   comint-highlight-prompt to nil because otherwise coloring is not
+   correctly done.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+187,2002/02/08,18:42*46+'CET'), "Changed some
+   colors (Daniel Cabeza Gras)").
+
+:- comment(version(1*7+172,2002/01/03,21:45*17+'CET'), "Made remaning
+   faces local to Ciao mode for portability.  (Manuel
+   Hermenegildo)").
+
+:- comment(version(1*7+163,2002/01/03,12:09*10+'CET'), "Many
+   improvements to emacs-based environment, some taking advantage of
+   the great capabilities of emacs 21.1 and later:
+
+   @begin{itemize}
+   @item Errors reported by inferior processes are now explored in
+         forward order (i.e., the first error rewported is the first
+         one highlighted). Improved tracking of errors. 
+   @item @tt{:- doc} now also supported and highlighted.
+   @item Nicer banner in emacs 21.1 
+   @item Improved behaviour of stored query.
+   @item Direct access to preprocessor (checking modes/types and
+         locating errors) from toolbar.
+   @item New icons for visualization of generated documentation.
+   @item Improved behaviour of recentering, finding errors, etc.
+   @item Debugger faces are now locally defined (and better
+         customization). This also improves comtability with xemacs
+         (which has different faces).
+   @item Eliminated need for calendar.el
+   @item Fixed some remaining incompatibilities with xemacs.
+   @item Wait for prompt has better termination characteristics.
+   @item Added some missing library directives to fontlock list, organized
+         this better.
+   @item Many other minor bugs fixed.
+   @end{itemize}
+
+   (Manuel Hermenegildo)").
+
 :- comment(version(1*7+152,2001/11/23,16:11*27+'CET'), "Modified
-Makefile: -\(cd ....\) was erroneously interpreted; changed to -( cd
-... ) (MCL)").
+   Makefile: -\(cd ....\) was erroneously interpreted; changed to -(
+   cd ... ) (MCL)").
 
 :- comment(version(1*7+148,2001/11/17,20:40*45+'CET'), "Several
    improvements to emacs-based environment:
 
    @begin{itemize}
-   @item Specific tool bar now available, with icons for main fuctions 
-         (works from emacs 21.1 on). 
+   @item Ciao-specific tool bars now shown when editing files and in inferior 
+         processes, with icons for main fuctions (works from emacs 21.1 on). 
    @item Other minor adaptations for working with emacs 21.1.
    @item Fixes to set-query. Also, previous query now appears in prompt.
    @item Added new interactive entry points (M-x): ciao, prolog, ciaopp.

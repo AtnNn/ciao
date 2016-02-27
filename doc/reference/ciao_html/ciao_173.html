@@ -1,24 +1,466 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART XI - Contributed libraries</TITLE>
+<TITLE>The Ciao Prolog System               - genbar1 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_172.html">previous</A>, <A HREF="ciao_174.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_172.html">previous</A>, <A HREF="ciao_174.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC678" HREF="ciao_toc.html#TOC678">PART XI - Contributed libraries</A></H1>
+<H1><A NAME="SEC646" HREF="ciao_toc.html#TOC646">genbar1 (library)</A></H1>
+<P>
+<A NAME="IDX6459"></A>
+
 
 <P>
-<A NAME="IDX6915"></A>
-<A NAME="IDX6916"></A>
-This part includes a number of libraries which have contributed by users of the Ciao system. Over time, some of these libraries are moved to the main library directories of the system. 
+This module defines predicates to show barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window. They all share the following features: 
 
+
+
+<UL>
+
+<LI>No numeric values for the <CODE>x</CODE> axis are needed because they will be interpreted as labels. See
+
+<A NAME="IDX6460"></A>
+<CODE>xbarelement1/1</CODE> definition type. 
+
+<LI>The bars will be displayed at uniform intervals.
+
+<LI>The user can either select the appearance of the bars (background color, foreground color and stipple style) or not. See the
+
+<A NAME="IDX6461"></A>
+<CODE>xbarelement1</CODE> type definition. Thus, the user can call each predicate in two ways. 
+
+<LI>The bar chart has a legend. One entry (symbol and label) per bar.
+
+<LI>If you don't want to display text in the elements header, barchart title, x axis title, y axis title or footer, simply type <CODE>"</CODE> as the value of the argument.
+
+<LI>The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes .
+
+</UL>
+
+<P>
+Particular features will be pointed out in the corresponding predicate. 
+
+
+
+<UL>
+<LI><A HREF="ciao_173.html#SEC647">Usage and interface (genbar1)</A>
+<LI><A HREF="ciao_173.html#SEC648">Documentation on exports (genbar1)</A>
+<LI><A HREF="ciao_173.html#SEC649">Documentation on internals (genbar1)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC647" HREF="ciao_toc.html#TOC647">Usage and interface (<CODE>genbar1</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(genbar1)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX6462"></A>
+<CODE>barchart1/7</CODE>, 
+<A NAME="IDX6463"></A>
+<CODE>barchart1/9</CODE>, 
+<A NAME="IDX6464"></A>
+<CODE>percentbarchart1/7</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6465"></A>
+<CODE>yelement/1</CODE>, 
+<A NAME="IDX6466"></A>
+<CODE>axis_limit/1</CODE>, 
+<A NAME="IDX6467"></A>
+<CODE>header/1</CODE>, 
+<A NAME="IDX6468"></A>
+<CODE>title/1</CODE>, 
+<A NAME="IDX6469"></A>
+<CODE>footer/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6470"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX6471"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX6472"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX6473"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX6474"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6475"></A>
+<CODE>random/random</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC648" HREF="ciao_toc.html#TOC648">Documentation on exports (<CODE>genbar1</CODE>)</A></H2>
+<P>
+<A NAME="IDX6476"></A>
+<A NAME="IDX6477"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>barchart1/7:</B>
+<DD><A NAME="IDX6478"></A>
+
+
+<P>
+<CODE>barchart1(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+
+
+<P>
+The <CODE>y</CODE> axis range is determined from the limits of the data. Two examples are given to demonstrate clearly how to call the predicates. In the first example the user sets the bar appearance, in the second one the appearance features will be chosen by the system and the colors that have been assigned to the variables Color1, Color2 and Pattern will be shown also. 
+
+
+<P>
+Example 1: 
+
+
+
+<PRE>
+barchart1('This is the header text',
+  'Barchart title',
+  'xaxistitle',
+  [ ['bar1','legend_element1','Blue','Yellow','pattern1'],
+           ['bar2','legend_element2','Plum','SeaGreen','pattern2'],
+           ['bar3','legend_element3','Turquoise','Yellow','pattern5'] ],
+  'yaxixtitle',
+  [20,10,59],
+  'footer').
+</PRE>
+
+<P>
+Example 2: 
+
+
+
+<PRE>
+barchart1('This is the header text',
+  'Barchart title',
+  'xaxistitle',
+  [ ['element1','legend_element1',Color1,Color2,Pattern],
+            ['element2','legend_element2'],
+            ['element3','legend_element3'] ],
+  'yaxixtitle',
+  [20,10,59],
+  'footer').
+</PRE>
+
+<P>
+ 
+ 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6479"></A>
+<A NAME="IDX6480"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>barchart1/9:</B>
+<DD><A NAME="IDX6481"></A>
+
+
+<P>
+<CODE>barchart1(Header,BTitle,XTitle,XVector,YTitle,YVector,YMax,YMin,Footer)</CODE>
+
+
+<P>
+You can set the minimum and maximum limits of the <CODE>y</CODE> axis. Data outside the limits will not be plotted. Each limit, as you can check by looking at the 
+<A NAME="IDX6482"></A>
+<CODE>axis_limit/1</CODE> definition, is a number. If the argument is a variable the limit will be calculated from the data (i.e., if <CODE>YMax</CODE> value is YValueMax the maximum y axis limit will calculated using the largest data value). 
+
+
+<P>
+Example: 
+
+
+
+<PRE>
+barchart1('This is the header text',
+  'Barchart title',
+  'xaxistitle',
+  [ ['element1','e1','Blue','Yellow','pattern1'],
+      ['element2','e2','Turquoise','Plum','pattern5'],
+      ['element3','e3','Turquoise','Green','pattern5'] ],
+  'yaxixtitle',
+  [20,10,59],
+  70,
+  _,
+  'footer').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX6483"></A>
+<A NAME="IDX6484"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>percentbarchart1/7:</B>
+<DD><A NAME="IDX6485"></A>
+
+
+<P>
+<CODE>percentbarchart1(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
+
+
+<P>
+The y axis maximum coordinate value is 100. The <CODE>x</CODE> axis limits are automatically worked out. 
+
+
+<P>
+Example: 
+
+
+
+<PRE>
+percentbarchart1('This is a special barchart to represent percentages',
+  'Barchart with legend',
+  'My xaxistitle',
+  [ [1,'bar1','Blue','Yellow','pattern1'],
+       [8,'bar2','MediumTurquoise','Plum','pattern5'] ],
+  'My yaxixtitle',
+  [80,10],
+  'This is the footer text').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX6486"></A>
+<A NAME="IDX6487"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>yelement/1:</B>
+<DD><A NAME="IDX6488"></A>
+
+
+<P>
+ 
+
+
+
+<PRE>
+yelement(Y) :-
+        number(Y).
+</PRE>
+
+<P>
+Y is the bar lenght, so it must be a numeric value. 
+
+
+<P>
+Both Prolog and Tcl-Tk support integers and floats. Integers are usually specified in decimal, but if the first character is 0 the number is read in octal (base 8), and if the first two characters are 0x, the number is read in hexadecimal (base16). Float numbers may be specified using most of the forms defined for ANSI C, including the following examples: 
+
+
+
+<UL>
+<LI>9.56
+
+<LI>5.88e-2
+
+<LI>5.1E2
+
+</UL>
+
+<P>
+Note: Be careful when using floats. While 8. or 7.e4 is interpreted by Tcl-tk as 8.0 and 7.0e4, Prolog will not read them as float numbers. Example: 
+
+<PRE>
+        ?- number(8.e+5).
+        {SYNTAX ERROR: (lns 130-130) , or ) expected in arguments
+        number ( 8 
+        ** here **
+        . e + 5 ) . 
+        }
+
+        no
+        ?- number(8.).
+        {SYNTAX ERROR: (lns 138-138) , or ) expected in arguments
+        number ( 8 
+        ** here **
+        . ) . 
+        }
+
+        no
+
+        ?- number(8.0e+5).
+
+        yes
+        ?- number(8.0).
+
+        yes
+</PRE>
+
+<P>
+Precision: Tcl-tk internally represents integers with the C type <CODE>int</CODE>, which provides at least 32 bits of precision on most machines. Since Prolog integers can (in some implementations) exceed 32 bits but the precision in Tcl-tk depends on the machine, it is up to the progammer to ensure that the values fit into the maximum precision of the machine for integers. Real numbers are represented with the C type <CODE>double</CODE>, which is usually represented with 64-bit values (about 15 decimal digits of precision) using the IEEE Floating Point Standard. 
+
+
+<P>
+Conversion: If the list is composed by integers and floats, Tcl-tk will convert integers to floats. 
+ 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6489"></A>
+<A NAME="IDX6490"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>axis_limit/1:</B>
+<DD><A NAME="IDX6491"></A>
+
+
+
+<PRE>
+axis_limit(X) :-
+        number(X).
+axis_limit(_1).
+</PRE>
+
+<P>
+This type is defined in order to set the minimum and maximum limits of the axes. Data outside the limits will not be plotted. Each limit, is a number or a variable. If the argument is not a number the limit will be calculated from the data (i.e., if YMax value is <CODE>Var</CODE> the maximum y axis limit will be calculated using the largest data value). 
+ 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6492"></A>
+<A NAME="IDX6493"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>header/1:</B>
+<DD><A NAME="IDX6494"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>header(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the header of the graph.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6495"></A>
+<A NAME="IDX6496"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>title/1:</B>
+<DD><A NAME="IDX6497"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>title(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) to be used as label, usually not very long.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6498"></A>
+<A NAME="IDX6499"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>footer/1:</B>
+<DD><A NAME="IDX6500"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>footer(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a text (an atom) describing the footer of the graph.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC649" HREF="ciao_toc.html#TOC649">Documentation on internals (<CODE>genbar1</CODE>)</A></H2>
+<P>
+<A NAME="IDX6501"></A>
+<A NAME="IDX6502"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>xbarelement1/1:</B>
+<DD><A NAME="IDX6503"></A>
+
+
+
+<PRE>
+xbarelement1([XValue,LegendElement]) :-
+        atomic(XValue),
+        atomic(LegendElement).
+xbarelement1([XValue,LegendElement,ForegColor,BackgColor,SPattern]) :-
+        atomic(XValue),
+        atomic(LegendElement),
+        color(ForegColor),
+        color(BackgColor),
+        pattern(SPattern).
+</PRE>
+
+<P>
+Defines the attributes of the bar. 
+<DL COMPACT>
+
+<DT><CODE>XValue</CODE>
+<DD>
+bar label. Although <CODE>XValue</CODE> values may be numbers, the will be treated as labels. Different elements with the same label will produce different bars. 
+
+<DT><CODE>LegendElement</CODE>
+<DD>
+Legend element name. It may be a number or an atom and equal or different to the XValue. Every <CODE>LegendElement</CODE> value of the list must be unique. 
+
+<DT><CODE>ForegColor</CODE>
+<DD>
+It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>BackgColor</CODE>
+<DD>
+It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
+
+<DT><CODE>SPattern</CODE>
+<DD>
+It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
+
+</DL>
+<P>
+ 
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_172.html">previous</A>, <A HREF="ciao_174.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_172.html">previous</A>, <A HREF="ciao_174.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

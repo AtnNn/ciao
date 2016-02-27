@@ -1,14 +1,9 @@
-:- module(error,[error_vrml/1,output_error/1]).
-
-:- include(library(assertions)).
+:- module(error,[error_vrml/1,output_error/1], [assertions,isomodes]).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- comment(module,"This file implements error predicates of different types.
-
-   Implemented by G@..{o}ran Smedb@..{a}ck.
-
-").
+:- comment(module,"This file implements error predicates of different types.").
+:- comment(author, "G@..{o}ran Smedb@..{a}ck").
 
 :- comment(version(0*1+3,1998/12/14,19:14*44+'MET'), "Changing error to
    warning for bound check errors.  (Goran Smedback)").

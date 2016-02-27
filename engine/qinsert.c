@@ -278,11 +278,11 @@ static void ql_load_dbnode(Arg,Li,f,codelength,counter_cnt)
      struct qlstream *f;
 {
 #if GAUGE
-  int lsize = (sizeof(struct emul_info)-sizeof(INSN)+
+  int lsize = (sizeof(struct emul_info)-ANY*sizeof(INSN)+
 	       codelength+
 	       counter_cnt*sizeof(ENG_INT)+3) & ~3;
 #else
-  int lsize = sizeof(struct emul_info)-sizeof(INSN)+codelength;
+  int lsize = sizeof(struct emul_info)-ANY*sizeof(INSN)+codelength;
 #endif
   struct emul_info *db;
 

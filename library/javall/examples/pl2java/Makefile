@@ -15,7 +15,7 @@ clean realclean:
 	/bin/rm -f *.itf *.po *.dep *.asr
 
 distclean: realclean
-	/bin/rm -f *~
+	/bin/rm -f *~ calculator
 
 
 

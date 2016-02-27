@@ -23,6 +23,10 @@
 
 main.
 
+:- comment(version(0*0+1,2002/01/03,17:40*19+'CET'), "It now prints
+dots as compilations progresses (it was pretty boring before).
+(MCL)").
+
 :- comment(version(0*0+0,1998/08/12,19:53*41+'MET DST'), "Working.
    (MCL)").
 

@@ -23,13 +23,6 @@ unlock_file(_,_).
 
 :- comment(version_maintenance,dir('../../version')).
 
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
-
 :- comment(version(1*7+159,2001/11/27,11:58*24+'CET'), "Added comments
 in file locks not doing anything.  (MCL)").
 

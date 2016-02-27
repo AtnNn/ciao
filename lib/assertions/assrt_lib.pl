@@ -72,7 +72,7 @@ library @lib{compiler/c_itf}.
 :- use_module(library(system),
 	[fmode/2,chmod/2,file_exists/1,file_exists/2,delete_file/1]).
 :- use_module(library('compiler/translation'),
-	[expand_clause/6,expand_goal/4,del_goal_trans/1,del_clause_trans/1]).
+	[expand_clause/6,del_goal_trans/1,del_clause_trans/1]).
 
 %% ---------------------------------------------------------------------------
 :- pred asr_version(int) # "Contains a version number which identifies
@@ -333,9 +333,7 @@ save_clause_of(Base,M):-
 	   B=Body
 	 ; % do the "second expansion"
 %	   io_aux:message(['{Original: ',(Head:-Body)]),
-	   expand_clause(Head,Body,M,VarNames,H,BX),
-%	   io_aux:message(['{Intermediate: ',(H:-BX)]),
-	   expand_goal(BX,M,VarNames,B)
+	   expand_clause(Head,Body,M,VarNames,H,B)
 %	   io_aux:message(['{Expanded: ',(H:-B)])
 	),
 	% one more patch!!

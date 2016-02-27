@@ -91,12 +91,12 @@ $(ENGINENAME): configure.h ciaoemulator
 ciaoemulator: $(OBJ)
 	$(CC) $(CONSOLEFLAG) $(LDFLAGS) $(OBJ) $(CURRLIBS) -o $(ENGINENAME)
 	chmod $(DATAMODE) *.o
-	( cd ../../etc && rm -f fix_size && $(MAKE) fix_size; );
-	../../etc/fix_size $(ENGINENAME)
+	( cd $(SRC)/etc && $(MAKE) force_fix_size; )
+	$(SRC)/etc/fix_size$(EXECSUFFIX) $(ENGINENAME)
 	chmod $(EXECMODE) $(ENGINENAME)
 	if test ! -f $(SRCINCLUDEDIR)/configure.h ; then \
 	  for f in $(DATADEFS) $(SUPPORT) $(CCOMPILATIONSUPPORT); do \
-	    ln -s $(OBJDIR)/$$f $(SRCINCLUDEDIR); \
+	    ln -s -f $(OBJDIR)/$$f $(SRCINCLUDEDIR); \
 	  done ; \
         fi
 
@@ -243,6 +243,11 @@ sockets_c.o:
 random.o:
 	cd ../../library/random && $(MAKE) random_$(CIAOARCH).o
 	cp ../../library/random/random_$(CIAOARCH).o ./random.o
+
+# Needs external libs in windows!
+# mysql_client.o:
+# 	cp ../../library/persdb_mysql/mysql_client.c .
+# 	$(CC) $(CFLAGS) -c mysql_client.c
 
 #fastrw.o:
 #	cd ../../library/fastwr ; $(MAKE) fastrw_$(CIAOARCH).o

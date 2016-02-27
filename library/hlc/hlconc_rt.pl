@@ -17,12 +17,8 @@
 :- concurrent ident_and_answer/2.   %% Get answers
 
 
-:- concurrent sleeping_threads/1.   %% Number of threads waiting for a goal.
-sleeping_threads(0).
-
-%% Unused by now, but it will surely be helpful at some point.
-:- concurrent total_threads/1.   %% Number of threads waiting for a goal.
-total_threads(0).
+:- concurrent threads_info/2.   %% (Total threads, threads sleeping)
+threads_info(0, 0).
 
 
 :- meta_predicate(&&(:)).
@@ -68,7 +64,7 @@ total_threads(0).
 
 ensure_agent:-
         (
-            current_fact_nb(sleeping_threads(0)) ->
+            current_fact_nb(threads_info(0, _)) ->
             eng_call(agent, create, create)
         ;
             true
@@ -95,27 +91,18 @@ once(Goal):- call(Goal), !.
 
 
 increase_num_of_agents:-
-        retract_fact(sleeping_threads(NumAg)), 
+        retract_fact(threads_info(NumAg, NumThreads)), !,
         NewNumAg is NumAg + 1,
-        asserta_fact(sleeping_threads(NewNumAg)),
-        retract_fact(total_threads(NumThreads)),
         NewNumThreads is NumThreads + 1,
-        asserta_fact(sleeping_threads(NewNumThreads)), !.
+        asserta_fact(threads_info(NewNumAg, NewNumThreads)).
 
 decrease_active_agents:-
-        retract_fact(sleeping_threads(NumAg)), !,
+        retract_fact(threads_info(NumAg, NumThreads)), !,
         NewNumAg is NumAg - 1,
-        asserta_fact(sleeping_threads(NewNumAg)).
+        asserta_fact(threads_info(NewNumAg, NumThreads)).
 
 
 :- comment(version_maintenance,dir('../../version')).
-
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
 
 :- comment(version(1*7+4,2000/07/25,18:05*17+'CEST'), "Higher level
 concurrency (hlc) started.  No backtracking at the moment.  (MCL)").

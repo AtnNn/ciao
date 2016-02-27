@@ -1,22 +1,303 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART IX - Abstract data types</TITLE>
+<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC618" HREF="ciao_toc.html#TOC618">PART IX - Abstract data types</A></H1>
+<H1><A NAME="SEC580" HREF="ciao_toc.html#TOC580">Unweighted graph-processing utilities</A></H1>
+<P>
+<A NAME="IDX5959"></A>
+
 
 <P>
-This part includes libraries which implement some generic data structures (abstract data types) that are used frequently in programs or in the Ciao system itself. 
+<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
 
+
+<P>
+<STRONG>Version:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#105 (1999/6/4, 12:24:49 MEST)
+
+
+<P>
+An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
+
+
+<P>
+An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
+
+
+<P>
+An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
+
+
+<P>
+A vertex can be any term. Two vertices are distinct iff they are not identical (
+<A NAME="IDX5960"></A>
+<CODE>==/2</CODE>). 
+
+
+<P>
+A path is represented as a list of vertices. No vertex can appear twice in a path. 
+
+
+
+<UL>
+<LI><A HREF="ciao_151.html#SEC581">Usage and interface (ugraphs)</A>
+<LI><A HREF="ciao_151.html#SEC582">Documentation on exports (ugraphs)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC581" HREF="ciao_toc.html#TOC581">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(ugraphs)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX5961"></A>
+<CODE>vertices_edges_to_ugraph/3</CODE>, 
+<A NAME="IDX5962"></A>
+<CODE>neighbors/3</CODE>, 
+<A NAME="IDX5963"></A>
+<CODE>edges/2</CODE>, 
+<A NAME="IDX5964"></A>
+<CODE>del_vertices/3</CODE>, 
+<A NAME="IDX5965"></A>
+<CODE>vertices/2</CODE>, 
+<A NAME="IDX5966"></A>
+<CODE>add_vertices/3</CODE>, 
+<A NAME="IDX5967"></A>
+<CODE>add_edges/3</CODE>, 
+<A NAME="IDX5968"></A>
+<CODE>transpose/2</CODE>, 
+<A NAME="IDX5969"></A>
+<CODE>point_to/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX5970"></A>
+<CODE>ugraph/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5971"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX5972"></A>
+<CODE>sort</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC582" HREF="ciao_toc.html#TOC582">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
+<P>
+<A NAME="IDX5973"></A>
+<A NAME="IDX5974"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
+<DD><A NAME="IDX5975"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5976"></A>
+<A NAME="IDX5977"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
+<DD><A NAME="IDX5978"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex,+Graph,-Neighbors)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5979"></A>
+<A NAME="IDX5980"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
+<DD><A NAME="IDX5981"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges(+Graph,-Edges)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5982"></A>
+<A NAME="IDX5983"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
+<DD><A NAME="IDX5984"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1,+Vertices,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5985"></A>
+<A NAME="IDX5986"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
+<DD><A NAME="IDX5987"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vertices(+Graph,-Vertices)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5988"></A>
+<A NAME="IDX5989"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
+<DD><A NAME="IDX5990"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1,+Vertices,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5991"></A>
+<A NAME="IDX5992"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
+<DD><A NAME="IDX5993"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1,+Edges,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5994"></A>
+<A NAME="IDX5995"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
+<DD><A NAME="IDX5996"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>transpose(+Graph,-Transpose)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5997"></A>
+<A NAME="IDX5998"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
+<DD><A NAME="IDX5999"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex,+Graph,-Point_to)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6000"></A>
+<A NAME="IDX6001"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
+<DD><A NAME="IDX6002"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
+
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_150.html">previous</A>, <A HREF="ciao_152.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

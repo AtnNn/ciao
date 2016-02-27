@@ -1,57 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - gengraph1 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget4 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_182.html">previous</A>, <A HREF="ciao_184.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_182.html">previous</A>, <A HREF="ciao_184.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC716" HREF="ciao_toc.html#TOC716">gengraph1 (library)</A></H1>
+<H1><A NAME="SEC681" HREF="ciao_toc.html#TOC681">table_widget4 (library)</A></H1>
 <P>
-<A NAME="IDX7259"></A>
+<A NAME="IDX6780"></A>
 
 
 <P>
-This module defines predicates which depict line graph and scatter graph widgets. All eigth predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. A dataset is defined by two lists xvector and yvector, which contain the points coordinates. As you might guess, the values placed in the the same position in both lists are the coordinates of a point. They both share the following features: 
+In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row and column is bold. The remaining elements are in medium weight font. 
+
+
+<P>
+If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
 
 
 
 <UL>
-
-<LI>Numeric values for vector elements are needed. We'll use two vectors to represent the X-Y coordinates of each set of plotted data, but in this case every dataset shares the X-vector, i.e., x-coordinate of points with the same index <A NAME="DOCF5" HREF="ciao_foot.html#FOOT5">(5)</A> in different datasets is the same. Thus, the numbers of points in each yvector must be equal to the number of points in the xvector.
-
-<LI>The active element color is navyblue, which means that when you select a legend element, the corresponding line or point dataset turns into navyblue.
-
-<LI>The user can either select the appearance of the lines and/or points of each dataset or not. If not, the system will choose the colors for the lines and the points among the available ones in accordance with the plot background color and it will also set the points size and symbol to the default. If the plot background color is black, the system will choose a lighter color, and the system will select a darker color when the plot background color is white. Thus, the user can define the appearanse attributes of each dataset in four different ways. Take a look at the
-
-<A NAME="IDX7260"></A>
-<CODE>attributes/1</CODE> type definition and see the examples to understand it clearly. 
-
-<LI>The graph has a legend and one entry (symbol and label) per dataset.
-
-<LI>If you do not want to display text in the element header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
-
-</UL>
-
-<P>
-The names of the line graph predicates begin with <STRONG>graph_</STRONG> and those corresponding to the scatter graph group begin with <STRONG>scattergraph_</STRONG>. 
-
-
-
-<UL>
-<LI><A HREF="ciao_183.html#SEC717">Usage and interface (gengraph1)</A>
-<LI><A HREF="ciao_183.html#SEC718">Documentation on exports (gengraph1)</A>
+<LI><A HREF="ciao_183.html#SEC682">Usage and interface (table_widget4)</A>
+<LI><A HREF="ciao_183.html#SEC683">Documentation on exports (table_widget4)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC717" HREF="ciao_toc.html#TOC717">Usage and interface (<CODE>gengraph1</CODE>)</A></H2>
+<H2><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Usage and interface (<CODE>table_widget4</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -59,7 +39,7 @@ The names of the line graph predicates begin with <STRONG>graph_</STRONG> and th
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gengraph1)).</CODE>
+<CODE>:- use_module(library(table_widget4)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -68,35 +48,10 @@ The names of the line graph predicates begin with <STRONG>graph_</STRONG> and th
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7261"></A>
-<CODE>graph_b1/9</CODE>, 
-<A NAME="IDX7262"></A>
-<CODE>graph_b1/13</CODE>, 
-<A NAME="IDX7263"></A>
-<CODE>graph_w1/9</CODE>, 
-<A NAME="IDX7264"></A>
-<CODE>graph_w1/13</CODE>, 
-<A NAME="IDX7265"></A>
-<CODE>scattergraph_b1/8</CODE>, 
-<A NAME="IDX7266"></A>
-<CODE>scattergraph_b1/12</CODE>, 
-<A NAME="IDX7267"></A>
-<CODE>scattergraph_w1/8</CODE>, 
-<A NAME="IDX7268"></A>
-<CODE>scattergraph_w1/12</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX7269"></A>
-<CODE>vector/1</CODE>, 
-<A NAME="IDX7270"></A>
-<CODE>smooth/1</CODE>, 
-<A NAME="IDX7271"></A>
-<CODE>attributes/1</CODE>, 
-<A NAME="IDX7272"></A>
-<CODE>symbol/1</CODE>, 
-<A NAME="IDX7273"></A>
-<CODE>size/1</CODE>.
+<A NAME="IDX6781"></A>
+<CODE>tablewidget4/4</CODE>, 
+<A NAME="IDX6782"></A>
+<CODE>tablewidget4/5</CODE>.
 
 </UL>
 
@@ -107,20 +62,18 @@ The names of the line graph predicates begin with <STRONG>graph_</STRONG> and th
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7274"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7275"></A>
+<A NAME="IDX6783"></A>
 <CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7276"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX7277"></A>
+<A NAME="IDX6784"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX6785"></A>
+<CODE>chartlib/table_widget1</CODE>, 
+<A NAME="IDX6786"></A>
 <CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7278"></A>
+<A NAME="IDX6787"></A>
 <CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7279"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7280"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX6788"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -130,518 +83,77 @@ The names of the line graph predicates begin with <STRONG>graph_</STRONG> and th
 
 
 
-<H2><A NAME="SEC718" HREF="ciao_toc.html#TOC718">Documentation on exports (<CODE>gengraph1</CODE>)</A></H2>
+<H2><A NAME="SEC683" HREF="ciao_toc.html#TOC683">Documentation on exports (<CODE>table_widget4</CODE>)</A></H2>
 <P>
-<A NAME="IDX7281"></A>
-<A NAME="IDX7282"></A>
+<A NAME="IDX6789"></A>
+<A NAME="IDX6790"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b1/9:</B>
-<DD><A NAME="IDX7283"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget4/4:</B>
+<DD><A NAME="IDX6791"></A>
 
 
 <P>
-<CODE>graph_b1(Header,GTitle,XTitle,XVector,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
+<CODE>tablewidget4(Title,Header,ElementTable,Footer)</CODE>
 
 
 <P>
-Besides the features mentioned at the begining of the chapter, the displayed graph generated when calling this predicate has the following distinguishing characteristics: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axes limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  'yaxixtitle',
-  [ [10,35,40],[25,50,60] ],
-  [ ['element1','Blue','Yellow','plus',6],['element2',Outline,Color] ],
-  'footer',
-  'linear').
-</PRE>
-
-<P>
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7284"></A>
-<A NAME="IDX7285"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b1/13:</B>
-<DD><A NAME="IDX7286"></A>
-
-
-<P>
-<CODE>graph_b1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-graph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['line1','circle',4],['line2',OutlineColor,Color]],
-  'footer',
-  'step').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7287"></A>
-<A NAME="IDX7288"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w1/9:</B>
-<DD><A NAME="IDX7289"></A>
-
-
-<P>
-<CODE>graph_w1(Header,GTitle,XTitle,XVector,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX7290"></A>
-<CODE>graph_b1/9</CODE>. The differences lies in the plot background color and in the cross hairs color, which are white and black respectively. 
+Shows a regular table in a window. The system sets a default background image for the widget. 
 
 
 <P>
 Example: 
 
 <PRE>
-graph_w1('This is the header text', 
-  'Graph_title', 
-  'xaxistitle',
-  [20,10,40,50], 
-  'yaxixtitle', 
-  [ [10,35,40,50],[25,20,60,40] ],
-  [['line1','Blue','DarkOrchid'],['line2','circle',3]],
-  'footer', 
-  'quadratic').  
+tablewidget4('Some sterEUtypes',
+  'Source: Eurostat yearbook, 1999',
+  [['Country','Adult alcohol intake per year (litres)',
+       'Cigarettes smoked per day per adult',
+             'Suicides per 100000 people'],
+      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
+      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
+      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
+  'This is part of the published table').
 </PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7291"></A>
-<A NAME="IDX7292"></A>
+<A NAME="IDX6792"></A>
+<A NAME="IDX6793"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w1/13:</B>
-<DD><A NAME="IDX7293"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget4/5:</B>
+<DD><A NAME="IDX6794"></A>
 
 
 <P>
-<CODE>graph_w1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
+<CODE>tablewidget4(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
 
 
 <P>
-This predicate is quite similar to 
-<A NAME="IDX7294"></A>
-<CODE>graph_b1/13</CODE>, the differences between them are listed below: 
+This predicate and 
+<A NAME="IDX6795"></A>
+<CODE>tablewidget4/4</CODE> are comparable, except that in the already defined you must set the background image. 
 
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
 
 <P>
 Example: 
 
 <PRE>
-graph_w1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  100,
-  10,      
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  _,
-  [['element1','Blue','Yellow'],['element2','Turquoise','Plum']],
-  'footer',
-  'quadratic').
+tablewidget4('Some sterEUtypes',
+  'Source: Eurostat yearbook, 1999',
+  [['Country','Adult alcohol intake per year (litres)',
+       'Cigarettes smoked per day per adult',
+           'Suicides per 100000 people'],
+      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
+      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
+      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
+  'This is part of the published table',
+  './images/rain.gif').
 </PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7295"></A>
-<A NAME="IDX7296"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b1/8:</B>
-<DD><A NAME="IDX7297"></A>
-
-
-<P>
-<CODE>scattergraph_b1(Header,GTitle,XTitle,XVector,YTitle,YVectors,PAtts,Footer)</CODE>
-
-
-<P>
-Apart from the features brought up at the beginning of the chapter, the scatter graph displayed invoking this predicate has the following characteristics: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axes limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [10,15,20],
-  'yaxixtitle',
-  [[10,35,20],[15,11,21]],
-  [['element1','Blue','Yellow'],['element2','Turquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7298"></A>
-<A NAME="IDX7299"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b1/12:</B>
-<DD><A NAME="IDX7300"></A>
-
-
-<P>
-<CODE>scattergraph_b1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['point dataset1','Blue','Yellow'],['point dataset2']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7301"></A>
-<A NAME="IDX7302"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w1/8:</B>
-<DD><A NAME="IDX7303"></A>
-
-
-<P>
-<CODE>scattergraph_w1(Header,GT,XT,XVector,YT,YVectors,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX7304"></A>
-<CODE>scattergraph_b1/8</CODE> except in the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>If the user does not fix the points colors, they will be chosen among the lighter ones.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  [['e1','Blue','Green'],['e2','MediumVioletRed','Plum']],
-  'footer').
-</PRE>
-
-<P>
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7305"></A>
-<A NAME="IDX7306"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w1/12:</B>
-<DD><A NAME="IDX7307"></A>
-
-
-<P>
-<CODE>scattergraph_w1(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX7308"></A>
-<CODE>scattergraph1_b1/13</CODE>, the differences between them are listed below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w1('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [20,10,59],
-  150,
-  5,
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  -10,
-  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7309"></A>
-<A NAME="IDX7310"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>vector/1:</B>
-<DD><A NAME="IDX7311"></A>
-
-
-
-<PRE>
-vector(X) :-
-        list(X,number).
-</PRE>
-
-<P>
-The type vector defines a list of numbers (integers or floats). 
- 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7312"></A>
-<A NAME="IDX7313"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>smooth/1:</B>
-<DD><A NAME="IDX7314"></A>
-
-
-<P>
-<CODE>smooth(Smooth)</CODE>
-
-
-<P>
- 
-
-<PRE>
-smooth(linear).
-smooth(cubic).
-smooth(quadratic).
-smooth(step).
-</PRE>
-
-<P>
-Specifies how connecting segments are drawn between data points. If <CODE>Smooth</CODE> is <CODE>linear</CODE>, a single line segment is drawn, connecting both data points. When <CODE>Smooth</CODE> is <CODE>step</CODE>, two line segments will be drawn, the first line is a horizontal line segment that steps the next X-coordinate and the second one is a vertical line, moving to the next Y-coordinate. Both <CODE>cubic</CODE> and <CODE>quadratic</CODE> generate multiple segments between data points. If <CODE>cubic</CODE>is used, the segments are generated using a cubic spline. If <CODE>quadratic</CODE>, a quadratic spline is used. The default is linear. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7315"></A>
-<A NAME="IDX7316"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>attributes/1:</B>
-<DD><A NAME="IDX7317"></A>
-
-
-
-<PRE>
-attributes([ElementName]) :-
-        atomic(ElementName).
-attributes([ElementName,OutLine,Color]) :-
-        atomic(ElementName),
-        color(OutLine),
-        color(Color).
-attributes([ElementName,Symbol,Size]) :-
-        atomic(ElementName),
-        symbol(Symbol),
-        size(Size).
-attributes([ElementName,OutLine,Color,Symbol,Size]) :-
-        atomic(ElementName),
-        color(OutLine),
-        color(Color),
-        symbol(Symbol),
-        size(Size).
-</PRE>
-
-<P>
-Each line or point dataset in the graph has its own attributes, which are defined by this type. The name of the dataset, specified in the <CODE>ElementName</CODE> argument, may be either a number or an atom. The second argument is the color of a thin line around each point in the dataset and the Color argument is the points and lines color. Both <CODE>OutLine</CODE> and <CODE>Color</CODE> must be a valid color (see available values in 
-<A NAME="IDX7318"></A>
-<CODE>color/1</CODE>), otherwise a random color according to the plot background color will be selected. The <CODE>Symbol</CODE> must be a valid symbol and the <CODE>Size</CODE> must be a number. Be careful if you want to especify the <CODE>Symbol</CODE> and the <CODE>Size</CODE>, otherwise the predicate will not work as you expect. If you don't select a symbol and a size for a dataset the default values will be square and 1 pixel. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7319"></A>
-<A NAME="IDX7320"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>symbol/1:</B>
-<DD><A NAME="IDX7321"></A>
-
-
-<P>
-<CODE>symbol(Symbol)</CODE>
-
-
-<P>
- 
-
-<PRE>
-symbol(square).
-symbol(circle).
-symbol(diamond).
-symbol(plus).
-symbol(cross).
-symbol(splus).
-symbol(scross).
-symbol(triangle).
-</PRE>
-
-<P>
-<CODE>Symbol</CODE> stands for the shape of the points whether in scatter graphs or in line graphs. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7322"></A>
-<A NAME="IDX7323"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>size/1:</B>
-<DD><A NAME="IDX7324"></A>
-
-
-<P>
-<CODE>size(Size)</CODE>
-
-
-<P>
- 
-
-<PRE>
-size(Size) :-
-        number(Size).
-</PRE>
-
-<P>
-<CODE>Size</CODE> stands for the size in pixels of the points whether in scatter graphs or in line graphs. 
-
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_182.html">previous</A>, <A HREF="ciao_184.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_182.html">previous</A>, <A HREF="ciao_184.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

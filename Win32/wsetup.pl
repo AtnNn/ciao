@@ -44,10 +44,17 @@
 
 :- use_module(library(lists), [append/3,list_concat/2]).
 :- use_module(library(streams), [open_output/2, close_output/1]).
-:- use_module(library(system), [getenvstr/2, working_directory/2,cd/1]).
+:- use_module(library(system), [
+        getenvstr/2, 
+        working_directory/2,
+        cd/1,
+        cyg2win/3]).
 :- use_module(library('make/system_extra'),
-	[cat/2,delete_file/1,readf/2,replace_strings_in_file/3,
-	 cyg2win/3,writef/3]).
+	[cat/2,
+         delete_file/1,
+         readf/2,
+         replace_strings_in_file/3,
+	 writef/3]).
 :- use_module(registry,[win_reg/3]).
 
 % Extension used for executables in Windows:
@@ -206,8 +213,11 @@ make_bats(Engine) :-
         fail.
 make_bats(_).
 
-bat_file('Win32/bat_skel',
-         '@REM Change /path/to/ciao/application to the absolute path \c
+
+ %% bat_file('Win32/bat_skel', Head, Tail):-
+ %%         bat_file('lib/compiler', Head, Tail).
+bat_file('lib/compiler/bat_skel',
+         '@REM Change the path below to the absolute path \c
           of the application\n',
          ' -C -b "/path/to/ciao/application"').
 bat_file('shell/ciaosh.bat','',' -C -i -b "$/shell/ciaosh"').

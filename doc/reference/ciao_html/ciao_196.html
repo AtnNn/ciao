@@ -1,33 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - field_type (library)</TITLE>
+<TITLE>The Ciao Prolog System               - io (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC758" HREF="ciao_toc.html#TOC758">field_type (library)</A></H1>
+<H1><A NAME="SEC721" HREF="ciao_toc.html#TOC721">io (library)</A></H1>
 <P>
-<A NAME="IDX7672"></A>
+<A NAME="IDX7151"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/9, 13:30:46 MET)
+<STRONG>Version:</STRONG> 0.1#2 (1998/12/2)
+
+
+<P>
+This file implements I/O predicates of different types. 
+
+
+<P>
+Implemented by G&ouml;ran Smedb&auml;ck 
 
 
 
 <UL>
-<LI><A HREF="ciao_196.html#SEC759">Usage and interface (field_type)</A>
-<LI><A HREF="ciao_196.html#SEC760">Documentation on exports (field_type)</A>
+<LI><A HREF="ciao_196.html#SEC722">Usage and interface (io)</A>
+<LI><A HREF="ciao_196.html#SEC723">Documentation on exports (io)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC759" HREF="ciao_toc.html#TOC759">Usage and interface (<CODE>field_type</CODE>)</A></H2>
+<H2><A NAME="SEC722" HREF="ciao_toc.html#TOC722">Usage and interface (<CODE>io</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +43,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(field_type)).</CODE>
+<CODE>:- use_module(library(io)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,8 +52,50 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7673"></A>
-<CODE>fieldType/1</CODE>.
+<A NAME="IDX7152"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX7153"></A>
+<CODE>out/3</CODE>, 
+<A NAME="IDX7154"></A>
+<CODE>convert_atoms_to_string/2</CODE>, 
+<A NAME="IDX7155"></A>
+<CODE>read_terms_file/2</CODE>, 
+<A NAME="IDX7156"></A>
+<CODE>write_terms_file/2</CODE>, 
+<A NAME="IDX7157"></A>
+<CODE>read_vrml_file/2</CODE>, 
+<A NAME="IDX7158"></A>
+<CODE>write_vrml_file/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7159"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7160"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7161"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7162"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7163"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7164"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7165"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7166"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7167"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7168"></A>
+<CODE>format</CODE>.
 
 </UL>
 
@@ -55,30 +105,169 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>,
 
 
 
-<H2><A NAME="SEC760" HREF="ciao_toc.html#TOC760">Documentation on exports (<CODE>field_type</CODE>)</A></H2>
+<H2><A NAME="SEC723" HREF="ciao_toc.html#TOC723">Documentation on exports (<CODE>io</CODE>)</A></H2>
 <P>
-<A NAME="IDX7674"></A>
-<A NAME="IDX7675"></A>
+<A NAME="IDX7169"></A>
+<A NAME="IDX7170"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fieldType/1:</B>
-<DD><A NAME="IDX7676"></A>
+<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
+<DD><A NAME="IDX7171"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>fieldType(+FieldTypeId)</CODE>
+<STRONG>Usage:</STRONG> <CODE>out(+ListOfOutput)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Boolean predicate used to check the fieldTypeId with the defiened.
+<LI><EM>Description:</EM> The predicate used is out/3 (DCG) where we will 'save' the output in the second argument. The tird argument is the rest, nil.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+FieldTypeId</CODE> is an atom.
+<CODE>+ListOfOutput</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7172"></A>
+<A NAME="IDX7173"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>out/3:</B>
+<DD><A NAME="IDX7174"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7175"></A>
+<A NAME="IDX7176"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>convert_atoms_to_string/2:</B>
+<DD><A NAME="IDX7177"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>convert_atoms_to_string(+Atoms,-String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate transforms a list of atoms to a string.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Atoms</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-String</CODE> is a list of <CODE>num</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7178"></A>
+<A NAME="IDX7179"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_terms_file/2:</B>
+<DD><A NAME="IDX7180"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_terms_file(+Filename,-Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename to a file with terms, the predicate reads the terms and are returned in the second argument. <CODE>Filename</CODE> is an atom and <CODE>Term</CODE> is the read prolog terms.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Filename</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Term</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX7181"></A>
+<A NAME="IDX7182"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>write_terms_file/2:</B>
+<DD><A NAME="IDX7183"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_terms_file(+FileName,+List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename and a list of terms the predicate will write them down to the file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+List</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7184"></A>
+<A NAME="IDX7185"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_vrml_file/2:</B>
+<DD><A NAME="IDX7186"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_vrml_file(+FileName,-Data)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename, the predicate returns the substance.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Data</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7187"></A>
+<A NAME="IDX7188"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>write_vrml_file/2:</B>
+<DD><A NAME="IDX7189"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_vrml_file(+FileName,+Data)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename and data in form of a string, the predicate will write the data to the named file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Data</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

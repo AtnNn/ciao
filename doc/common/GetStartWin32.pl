@@ -204,5 +204,5 @@ regarding new versions, download new versions, report bugs, etc.
 main.
 
 %% --------------------------------------------------------------------------- 
-:- comment(version_maintenance,dir('../../version')).
+:- comment(version,dir('../../version')).
 %% --------------------------------------------------------------------------- 

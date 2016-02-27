@@ -39,7 +39,8 @@
             chmod/3,
             delete_file/1,
             delete_directory/1,
-            rename_file/2
+            rename_file/2,
+	    cyg2win/3
         ],
 	[assertions, isomodes, regtypes]).
 
@@ -57,6 +58,7 @@
    as arguments.").
 
 :- use_module(engine(internals), ['$unix_popen'/3, '$exec'/4]).
+:- use_module(library(lists), [append/3]).
 
 :- impl_defined([
         working_directory/2, directory_files/2, pause/1, time/1, datime/9,
@@ -65,6 +67,17 @@
         shell/0, shell/2, system/2, mktemp/2, file_exists/2,
         file_properties/6, chmod/2, umask/2, 
         delete_file/1, delete_directory/1, rename_file/2, make_directory/2]).
+
+
+:- multifile define_flag/3.
+
+%% This flag determines which path style is returned by the system
+%% predicates which can return paths.  'os_dependent' means paths 
+%% will be returned in the forma0-t the OS accepts it.  'posix' means
+%% using a POSIX-style, with slashes, no drive letters or UNC paths,
+%% and semicolons as separators.
+
+define_flag(path_style, [posix, os_dependent], os_dependent).
 
 
 :- comment(pause(Seconds), "Make this thread sleep for some @var{Seconds}.").
@@ -482,25 +495,78 @@ make_directory(D) :-
         "Creates the whole @var{Path} for a given directory with a given @var{Mode}. As an example, @tt{make_dirpath('/tmp/var/mydir/otherdir')}."). 
 
 make_dirpath(Path, Mode) :-
-	working_directory(CurrentDir, CurrentDir),
-	make_dirpath_aux(Path, Mode),
-	working_directory(_, CurrentDir).
+        atom_codes(Path, PathCodes),
+        (          % If relative, transform it into absolute
+            PathCodes = "/"||_ ->
+            AbsPathCodes = PathCodes
+        ;
+            working_directory(CurrentDir, CurrentDir),
+            atom_codes(CurrentDir, CurrentDirCodes),
+            append(CurrentDirCodes, "/"||PathCodes, AbsPathCodes)
+        ),
+        make_abs_dir(AbsPathCodes, '', Mode).
+% 
+% Making the intermediate directories: instead of cd'ing to
+% directories (which is something which can break and modify the
+% program state), we construct incrementally the intermediate directories.
+% The idea here is to traverse the absolute path and construct 
+% partial paths, which are appended to an atom which represents the
+% (initially empty) path.  Depending on the implementation of
+% atom_concat/3 (and of the atoms), this can be done quite fast if the
+% first argument does not need to be completely traversed.
 
-make_dirpath_aux(Path, Mode) :-
-	atom_concat(Head, Tail, Path),
-	atom_concat('/', SubTail, Tail), !,
-	(Head = '' ->
-	 working_directory(CurrentDir, '/')
-	;
-	 ((file_exists(Head), file_property(Head, type(directory)))
-	  ;
-	   make_directory(Head, Mode) 
-	 ),
-	 working_directory(CurrentDir, Head)),
-	make_dirpath_aux(SubTail, Mode).
-make_dirpath_aux(Dir, Mode) :-
-	make_directory(Dir, Mode).
-	 
+% End of path
+make_abs_dir("", _, _Mode):- !.
+% The recursive case: perform a step in the recursion and construct the
+% intermediate directory.
+make_abs_dir(Path, IncPath, Mode):-
+        decompose(Path, RestPath, Component-[]),
+        % Transform into atom and add to partial path
+        atom_codes(PartComp, Component),
+        atom_concat(IncPath, PartComp, NewPath),
+        (
+            file_exists(NewPath) ->
+            true
+        ;
+            make_directory(NewPath, Mode)
+        ),
+        make_abs_dir(RestPath, NewPath, Mode).
+
+% Collapse double slashes into only one (that is the Linux/Unix convention)
+decompose("//"||PathWOSlash, RestPath, Queue):- !, 
+        decompose("/"||PathWOSlash, RestPath, Queue).
+decompose("/"||PathWOSlash, RestPath, "/"||Queue-TailQ):-
+        decompose_aux(PathWOSlash, RestPath, Queue-TailQ).
+decompose_aux("", "", Q-Q).
+decompose_aux("/"||P, "/"||P, Q-Q):- !.
+decompose_aux([P|Ps], RestP, [P|RestQ]-TailQ):- 
+        decompose_aux(Ps, RestP, RestQ-TailQ).
+
+
+
+ %% make_dirpath(Path, Mode) :-
+ %% 	working_directory(CurrentDir, CurrentDir),
+ %% 	make_dirpath_aux(Path, Mode),
+ %% 	working_directory(_, CurrentDir).
+ %% 
+ %% make_dirpath_aux(Path, Mode) :-
+ %% 	atom_concat(Head, Tail, Path),
+ %% 	atom_concat('/', SubTail, Tail), !,
+ %% 	(Head = '' ->
+ %% 	 working_directory(CurrentDir, '/')
+ %% 	;
+ %% 	 ((file_exists(Head), file_property(Head, type(directory)))
+ %% 	  ;
+ %% 	   make_directory(Head, Mode) 
+ %% 	 ),
+ %% 	 working_directory(CurrentDir, Head)),
+ %% 	make_dirpath_aux(SubTail, Mode).
+ %% make_dirpath_aux(Dir, Mode) :-
+ %% 	make_directory(Dir, Mode).
+ %% 	 
+
+
+
 :- pred make_dirpath(+atm).
 
 :- comment(make_dirpath(Path),
@@ -509,9 +575,47 @@ make_dirpath_aux(Dir, Mode) :-
 :- pred make_dirpath(+atm).
 	  
 make_dirpath(Path) :-
-	  make_dirpath(Path, 0o777) .
+        make_dirpath(Path, 0o777) .
+
+:- comment(cyg2win(+CygWinPath, ?WindowsPath, +SpawSlash), "Converts a
+path in the CygWin style to a Windows-style path, rewriting the driver
+part.  If @var{SwapSlash} is @tt{swap}, slashes are converted in to
+backslash.  If it is @tt{noswap}, they are preserved.").
+
+cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':| Path],Swap) :- !,
+						             % New Drive notat.
+        swapslash(Swap,[0'/ | Dir],Path).
+cyg2win("//"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !, % Drive letter
+        swapslash(Swap,Dir,Path).
+cyg2win("//"||Dir, "\\\\"||Path,Swap) :- !,                  % Network drive
+        swapslash(Swap,Dir,Path).
+cyg2win(Dir,  [D,0': |Path],Swap) :-                         % Default drive
+        swapslash(Swap,Dir,Path),
+        default_drive(D).
+
+default_drive(D) :-
+        getenvstr('COMSPEC',[D|_]), !. % Shell command interpreter' drive
+default_drive(0'C).                    % If not defined, assume C
+
+swapslash(noswap,Dir,Dir) :-
+	!.
+swapslash(swap,Dir,Path) :-
+	do_swapslash(Dir,Path).
+
+do_swapslash([],[]).
+do_swapslash([0'/|D],[0'\\|ND]) :- !,
+        do_swapslash(D,ND).
+do_swapslash([C|D],[C|ND]) :-
+        do_swapslash(D,ND).
+
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+181,2002/01/25,20:14*06+'Hora estándar
+   romance'), "cyg2win/3 moved here.  ()").
+
+:- comment(version(1*7+169,2002/01/03,17:57*18+'CET'), "Changed
+   make_dirpath to make it completely deterministic.  (MCL)").
 
 :- comment(version(1*7+158,2001/11/27,10:12*07+'CET'), "make_dirpath/1 and
    make_dirpath/2 added to system (Jose Manuel Gomez Perez)").

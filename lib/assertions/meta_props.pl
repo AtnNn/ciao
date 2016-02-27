@@ -108,3 +108,9 @@ regtype(A,P):- prop(A,P).
         library. This is done automatically if the package is used
         instead of the library module (but then you @em{should not}
 	define @tt{callme/2} in your program).").
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+167,2002/01/03,17:43*50+'CET'), "Into version
+   tracking (MCL)").
+

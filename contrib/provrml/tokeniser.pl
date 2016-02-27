@@ -86,7 +86,7 @@ token_read_string_backslash(C) -->
 	char_string_symbol(C).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:- pred token_read(-comment(Comment))
+:- pred token_read(-Comment)
 :: term
 # "The predicate will return a token for a comment. The comment
    symbol, the bracket will start the comment and go for a complete line.".
@@ -610,4 +610,14 @@ koll([H|L]):-
 %% mode: CIAO
 %% update-version-comments: "../../version"
 %% End:
+
+
+%% Note that the "assertions" library needs to be included in order
+%% to support ":- comment(...,...)." declarations such as these.
+%% These version comment(s) can be moved elsewhere in the file.
+%% Subsequent version comments will be placed above the last one
+%% inserted.
+
+:- comment(version(1*7+171,2002/01/03,18:20*29+'CET'), "Changed an
+   erroneous type (MCL)").
 

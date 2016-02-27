@@ -1,37 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget4 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - error (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC736" HREF="ciao_toc.html#TOC736">table_widget4 (library)</A></H1>
+<H1><A NAME="SEC700" HREF="ciao_toc.html#TOC700">error (library)</A></H1>
 <P>
-<A NAME="IDX7458"></A>
-
-
-<P>
-In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row and column is bold. The remaining elements are in medium weight font. 
+<A NAME="IDX6977"></A>
 
 
 <P>
-If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
+<STRONG>Author(s):</STRONG> G&ouml;ran Smedb&auml;ck.
+
+
+<P>
+<STRONG>Version:</STRONG> 0.1#3 (1998/12/14, 19:14:44 MET)
+
+
+<P>
+This file implements error predicates of different types.
 
 
 
 <UL>
-<LI><A HREF="ciao_189.html#SEC737">Usage and interface (table_widget4)</A>
-<LI><A HREF="ciao_189.html#SEC738">Documentation on exports (table_widget4)</A>
+<LI><A HREF="ciao_189.html#SEC701">Usage and interface (error)</A>
+<LI><A HREF="ciao_189.html#SEC702">Documentation on exports (error)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC737" HREF="ciao_toc.html#TOC737">Usage and interface (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC701" HREF="ciao_toc.html#TOC701">Usage and interface (<CODE>error</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +43,7 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(table_widget4)).</CODE>
+<CODE>:- use_module(library(error)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,32 +52,10 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7459"></A>
-<CODE>tablewidget4/4</CODE>, 
-<A NAME="IDX7460"></A>
-<CODE>tablewidget4/5</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX7461"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7462"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7463"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX7464"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7465"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7466"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX6978"></A>
+<CODE>error_vrml/1</CODE>, 
+<A NAME="IDX6979"></A>
+<CODE>output_error/1</CODE>.
 
 </UL>
 
@@ -83,77 +65,52 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 
-<H2><A NAME="SEC738" HREF="ciao_toc.html#TOC738">Documentation on exports (<CODE>table_widget4</CODE>)</A></H2>
+<H2><A NAME="SEC702" HREF="ciao_toc.html#TOC702">Documentation on exports (<CODE>error</CODE>)</A></H2>
 <P>
-<A NAME="IDX7467"></A>
-<A NAME="IDX7468"></A>
+<A NAME="IDX6980"></A>
+<A NAME="IDX6981"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/4:</B>
-<DD><A NAME="IDX7469"></A>
+<DT><span class="define">PREDICATE:</span> <B>error_vrml/1:</B>
+<DD><A NAME="IDX6982"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer)</CODE>
+<STRONG>Usage:</STRONG> <CODE>error_vrml(+Structure)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Given a structure with the error type as its head with possible arguments, it will write the associated error-text.
 
-<P>
-Shows a regular table in a window. The system sets a default background image for the widget. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-
-<P>
-Example: 
-
-<PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-             'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table').
-</PRE>
+<CODE>+Structure</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7470"></A>
-<A NAME="IDX7471"></A>
+<A NAME="IDX6983"></A>
+<A NAME="IDX6984"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget4/5:</B>
-<DD><A NAME="IDX7472"></A>
+<DT><span class="define">PREDICATE:</span> <B>output_error/1:</B>
+<DD><A NAME="IDX6985"></A>
 
 
 <P>
-<CODE>tablewidget4(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+<STRONG>Usage:</STRONG> <CODE>output_error(+Message)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> This predicate will print the error message given as the argument. This predicate is used for warnings that only needs to be given as information and not necessarily give an error by the VRML browser.
 
-<P>
-This predicate and 
-<A NAME="IDX7473"></A>
-<CODE>tablewidget4/4</CODE> are comparable, except that in the already defined you must set the background image. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-
-<P>
-Example: 
-
-<PRE>
-tablewidget4('Some sterEUtypes',
-  'Source: Eurostat yearbook, 1999',
-  [['Country','Adult alcohol intake per year (litres)',
-       'Cigarettes smoked per day per adult',
-           'Suicides per 100000 people'],
-      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
-      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
-      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
-  'This is part of the published table',
-  './images/rain.gif').
-</PRE>
+<CODE>+Message</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_188.html">previous</A>, <A HREF="ciao_190.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

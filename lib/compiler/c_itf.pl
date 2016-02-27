@@ -14,7 +14,8 @@
          opt_suffix/2, default_package/1,
          handle_exc/1, get_so_name/2, multifile/1,
          expand_list/2, compute_base_name/4, module_from_base/2,
-         use_mod/3, static_base/1, module_loaded/4, make_po_file/1,
+         use_mod/3, static_base/1, static_module/1, module_loaded/4,
+         make_po_file/1,
          false/1, old_file_extension/2, load_compile/1, needs_reload/1,
          abolish_module/1, interpret_file/1, interpret_module/1,
          interpret_srcdbg/1,pred_module/2, addmodule_inc/3,
@@ -36,7 +37,7 @@
         '$unlock_predicate'/1, dynlink/2, dynunlink/1,
         poversion/1, '$qread'/2, '$push_qlinfo'/0, '$pop_qlinfo'/0,
          % Used by mexpand
-         module_concat/3, term_to_meta/2
+         module_concat/3, term_to_meta/2, '$meta_call'/1
         ]).
 :- use_module(library(system), [
         modif_time0/2, modif_time/2, time/1, fmode/2, chmod/2,
@@ -1856,8 +1857,7 @@ compile_clauses(Base, Module, Mode) :-
         retract_fact(clause_of(Base,H,B,Dict,Src,Ln0,Ln1)),
           \+ number(H),
           asserta_fact(location(Src,Ln0,Ln1), Ref),
-          expand_clause(H, B, Module, Dict, H0, BX),
-          expand_goal(BX, Module, Dict, B0),
+          expand_clause(H, B, Module, Dict, H0, B0),
           ( Mode = interpreted,
             current_fact(interpret_srcdbg(Module)) ->
               srcdbg_expand(H0,B0,H1,B1,Dict)
@@ -1872,8 +1872,8 @@ compile_clauses(_, _, _).
 
 compile_goal_decl(DN, Base, Module, Mode) :-
         functor(Decl, DN, 1),
-        findall(loc(Decl,Dict,Src,Ln0,Ln1),
-                clause_of(Base, 1, Decl, Dict, Src, Ln0, Ln1),
+        findall(loc(Decl,Src,Ln0,Ln1),
+                clause_of(Base, 1, Decl,_Dict, Src, Ln0, Ln1),
                 Decls),
         compile_goal_decls(Decls, DN, Module, Mode).
 
@@ -1885,10 +1885,10 @@ compile_goal_decls(Decls, DN, Module, Mode) :-
         compile_goal_decls_(Decls, DeclM, Module, Mode).
 
 compile_goal_decls_([], _, _, _).
-compile_goal_decls_([loc(Decl,Dict,Src,Ln0,Ln1)|_], DeclM, Module, Mode) :-
+compile_goal_decls_([loc(Decl,Src,Ln0,Ln1)|_], DeclM, Module, Mode) :-
         asserta_fact(location(Src,Ln0,Ln1), Ref),
         arg(1, Decl, Goal),
-        module_expand_goal(Goal, Module, Dict, Goal1),
+        body_expansion(Goal, Module, -, Goal1),
         compile_clause(Mode, DeclM, Goal1, Module),
         erase(Ref),
         fail.
@@ -2156,10 +2156,6 @@ end_brace_if_needed :-
 
 multifile(M, F, N) :- multifile(M, F, N, _DynMode).
 
-module_expand_goal(B, Mod, Dict, B1) :-
-        expand_goal(B, Mod, Dict, BX),
-        body_expansion(BX, Mod, -, B1).
-
 %% EXPANSION: heads
 
 head_expansion('$:'(H), _, H) :- !. % For use by code translators
@@ -2334,6 +2330,7 @@ discard_delayed_dynlinks :-
 :- data foreign_library/2.
 
 check_dynlink(SoName, Module) :-
+        debug(['Calling ',check_dynlink(SoName, Module)]),
         current_fact(foreign_library(Module, LastSoTime)), !,
         modif_time(SoName, SoTime),
         ( SoTime > LastSoTime ->
@@ -2343,9 +2340,12 @@ check_dynlink(SoName, Module) :-
         ; true
         ).
 check_dynlink(SoName, Module) :-
+        debug(['First time',''(check_dynlink(SoName, Module))]),
         modif_time(SoName, SoTime),
         dynlink(SoName, Module),
-        assertz_fact(foreign_library(Module, SoTime)).
+        assertz_fact(foreign_library(Module, SoTime)),
+        debug(['Asserted ',foreign_library(Module, SoTime)]),
+        debug(['Ended check_dynlink']).
 
 check_dynunlink(Module) :-
         retract_fact(foreign_library(Module, _)),
@@ -2644,6 +2644,9 @@ retract_clause(Head, Body) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+175,2002/01/14,17:24*34+'CET'), "Exported
+   static_module/1. (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+104,2001/05/24,20:42*02+'CEST'), "Now the
    initialization of sentence translations is done by translating a 0,

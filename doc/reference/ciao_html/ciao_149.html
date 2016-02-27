@@ -1,147 +1,47 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
+<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_148.html">previous</A>, <A HREF="ciao_150.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_148.html">previous</A>, <A HREF="ciao_150.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC612" HREF="ciao_toc.html#TOC612">Calling emacs from Prolog</A></H1>
+<H1><A NAME="SEC573" HREF="ciao_toc.html#TOC573">Pattern (regular expression) matching</A></H1>
 <P>
-<A NAME="IDX6386"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#145 (2001/11/12, 19:13:34 CET)
+<A NAME="IDX5895"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
+<STRONG>Version:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
 
 
 <P>
-This library provides a 
-<A NAME="IDX6387"></A>
-<A NAME="IDX6388"></A>
-<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
-<A NAME="IDX6389"></A>
-emacs mode, which is used to develop programs from within the 
-<A NAME="IDX6390"></A>
-<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
-<A NAME="IDX6391"></A>
-<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
-<A NAME="IDX6392"></A>
-<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
+<STRONG>Version of last change:</STRONG> 1.3#49 (1999/9/8, 21:8:9 MEST)
+
+
+<P>
+This library provides facilities for matching strings and terms against 
+<A NAME="IDX5896"></A>
+<A NAME="IDX5897"></A>
+<EM>patterns</EM> (i.e., 
+<A NAME="IDX5898"></A>
+<A NAME="IDX5899"></A>
+<EM>regular expressions</EM>).
 
 
 
 <UL>
-
-<LI>Visit a file, which can then be edited.
-
-<LI>Execute arbitrary
-
-<A NAME="IDX6393"></A>
-<A NAME="IDX6394"></A>
-<EM>emacs lisp</EM> code, sent from Prolog. 
-
-</UL>
-
-<P>
-In order for this library to work correctly, the following is needed: 
-
-
-
-<UL>
-
-<LI>You should be running the
-
-<A NAME="IDX6395"></A>
-<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
-
-<LI>This
-
-<A NAME="IDX6396"></A>
-<CODE>emacs</CODE> should be running the 
-<A NAME="IDX6397"></A>
-<A NAME="IDX6398"></A>
-<EM>emacs server</EM>. This can be done by including the following line in your 
-<A NAME="IDX6399"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<PRE>
-;; Start a server that emacsclient can connect to.
-(server-start)
-</PRE>
-
-Or typing <CODE>M-x server-start</CODE> within 
-<A NAME="IDX6400"></A>
-<CODE>emacs</CODE>. 
-
-</UL>
-
-<P>
-This suffices for using 
-<A NAME="IDX6401"></A>
-<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
-<A NAME="IDX6402"></A>
-<CODE>.emacs</CODE> file: 
-
-
-<DL COMPACT>
-
-<DT><CODE>(setq enable-local-eval t)</CODE>
-<DD>
-Allows executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval nil)</CODE>
-<DD>
-Does not allow executing lisp code without asking. 
-
-<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
-<DD>
-Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
-
-</DL>
-
-<P>
-<STRONG>Examples:</STRONG> 
-
-
-<P>
-Assuming that a <CODE>.pl</CODE> file loads this library, then: 
-
-
-<DL COMPACT>
-
-<DT><CODE>..., emacs_edit('foo'), ...</CODE>
-<DD>
-Opens file <CODE>foo</CODE> for editing in 
-<A NAME="IDX6403"></A>
-<CODE>emacs</CODE>. 
-
-<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
-<DD>
-Starts execution of a Ciao top-level within 
-<A NAME="IDX6404"></A>
-<CODE>emacs</CODE>. 
-
-</DL>
-
-
-<UL>
-<LI><A HREF="ciao_149.html#SEC613">Usage and interface (emacs)</A>
-<LI><A HREF="ciao_149.html#SEC614">Documentation on exports (emacs)</A>
+<LI><A HREF="ciao_149.html#SEC574">Usage and interface (patterns)</A>
+<LI><A HREF="ciao_149.html#SEC575">Documentation on exports (patterns)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC613" HREF="ciao_toc.html#TOC613">Usage and interface (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC574" HREF="ciao_toc.html#TOC574">Usage and interface (<CODE>patterns</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -149,7 +49,7 @@ Starts execution of a Ciao top-level within
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(emacs)).</CODE>
+<CODE>:- use_module(library(patterns)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -158,19 +58,21 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6405"></A>
-<CODE>emacs_edit/1</CODE>, 
-<A NAME="IDX6406"></A>
-<CODE>emacs_edit_nowait/1</CODE>, 
-<A NAME="IDX6407"></A>
-<CODE>emacs_eval/1</CODE>, 
-<A NAME="IDX6408"></A>
-<CODE>emacs_eval_nowait/1</CODE>.
+<A NAME="IDX5900"></A>
+<CODE>match_pattern/2</CODE>, 
+<A NAME="IDX5901"></A>
+<CODE>match_pattern/3</CODE>, 
+<A NAME="IDX5902"></A>
+<CODE>case_insensitive_match/2</CODE>, 
+<A NAME="IDX5903"></A>
+<CODE>letter_match/2</CODE>, 
+<A NAME="IDX5904"></A>
+<CODE>match_pattern_pred/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6409"></A>
-<CODE>elisp_string/1</CODE>.
+<A NAME="IDX5905"></A>
+<CODE>pattern/1</CODE>.
 
 </UL>
 
@@ -181,16 +83,8 @@ Starts execution of a Ciao top-level within
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6410"></A>
-<CODE>hiord_rt</CODE>, 
-<A NAME="IDX6411"></A>
-<CODE>terms_check</CODE>, 
-<A NAME="IDX6412"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6413"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX6414"></A>
-<CODE>system</CODE>.
+<A NAME="IDX5906"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -200,104 +94,153 @@ Starts execution of a Ciao top-level within
 
 
 
-<H2><A NAME="SEC614" HREF="ciao_toc.html#TOC614">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
+<H2><A NAME="SEC575" HREF="ciao_toc.html#TOC575">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
 <P>
-<A NAME="IDX6415"></A>
-<A NAME="IDX6416"></A>
+<A NAME="IDX5907"></A>
+<A NAME="IDX5908"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
-<DD><A NAME="IDX6417"></A>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
+<DD><A NAME="IDX5909"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
 
-<A NAME="IDX6418"></A>
-<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6419"></A>
-<A NAME="IDX6420"></A>
+<A NAME="IDX5910"></A>
+<A NAME="IDX5911"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
-<DD><A NAME="IDX6421"></A>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
+<DD><A NAME="IDX5912"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String,Tail)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Opens the given file for editing in
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
 
-<A NAME="IDX6422"></A>
-<CODE>emacs</CODE> and continues without waiting for editing to finish. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>Tail</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6423"></A>
-<A NAME="IDX6424"></A>
+<A NAME="IDX5913"></A>
+<A NAME="IDX5914"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
-<DD><A NAME="IDX6425"></A>
+<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
+<DD><A NAME="IDX5915"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
+<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1,Pred2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6426"></A>
-<A NAME="IDX6427"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
-<DD><A NAME="IDX6428"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6429"></A>
-<A NAME="IDX6430"></A>
+<A NAME="IDX5916"></A>
+<A NAME="IDX5917"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
-<DD><A NAME="IDX6431"></A>
+<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
+<DD><A NAME="IDX5918"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5919"></A>
+<A NAME="IDX5920"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX5921"></A>
+
+
+<P>
+Special characters for <CODE>Pattern</CODE> are: 
+<DL COMPACT>
+
+<DT>*
+<DD>
+Matches any string, including the null string. 
+<DT>?
+<DD>
+Matches any single character. 
+<DT>[...]
+<DD>
+Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
+<DT>|
+<DD>
+specifies an alternative. Two regular expressions A and B with | in between form an expression that matches anything that either A or B will match. 
+<DT>{...}
+<DD>
+groups alternatives inside larger patterns. 
+<DT>\
+<DD>
+Quotes a special character (including itself). 
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
 
-<A NAME="IDX6432"></A>
-<CODE>emacs</CODE> lisp code. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5922"></A>
+<A NAME="IDX5923"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
+<DD><A NAME="IDX5924"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1,Pred2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
+
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_148.html">previous</A>, <A HREF="ciao_150.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_148.html">previous</A>, <A HREF="ciao_150.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

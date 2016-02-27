@@ -111,7 +111,7 @@ void load_ql_files(Arg, qfile)
   pop_qlinfo(NULL);
 }
 
-static void open_emulator(file,stream,p)
+static void open_emulator(file, stream, p)
      char *file;
      FILE **stream;
      char *p;
@@ -239,8 +239,8 @@ int start(argc, argv)
 
 /* Find out the library_directory --- we need it before using '$' anywhere */
 
-#if defined(OldWin32) /* Not used anymore */
-  /* This assumes ciaoengine is run as relative/absolute path */
+/*
+#if defined(OldWin32) 
   {
     char *p;
     int slashcount = 0;
@@ -250,7 +250,6 @@ int start(argc, argv)
 
     expand_file_name(p, library_directory);
 
-    /* skip 3 '/' because engine is in directory "$/Win32/bin/" */
     p = library_directory+strlen(library_directory);
 
     while(p >= library_directory && slashcount<1)
@@ -271,12 +270,22 @@ int start(argc, argv)
     }
   }
 #endif
+*/
 
+  /* If there is a CIAOLIB variable, we always use its value */
   if (!(library_directory = getenv("CIAOLIB")))
 #if defined(Win32)
+    /* Otherwise, look in the registry (for Windows executables) and set a
+       couple more of variables  */ 
     {
+      /* These are for the registry */
       HKEY SOFTWAREKey, CiaoPrologKey;
       DWORD buffer_size = MAXPATHLEN;
+
+      /* These are to locate the shell (needed for the shell/1 call) */
+      char *temp_path = (char *)checkalloc(MAXPATHLEN+1);
+      char *current_path;
+      char *current_path_local;
  
       library_directory = (char *)checkalloc(MAXPATHLEN+1);
      
@@ -291,32 +300,39 @@ int start(argc, argv)
 	  RegCloseKey(CiaoPrologKey);
 	} else {
 	  fprintf(stderr,
-                 "Registry key not found. Remember to install Ciao Prolog!\n");
+                  "%s\n%s\n",
+               "Registry key not found. Please remember to install Ciao Prolog"
+               "or to set the CIAOLIB environment variable!");
 	  at_exit(1); 
 	}
-    }
-#else
-    library_directory = installibdir;
-#endif
 
-#if defined(Win32)
-    {
       /* Now, we adjust a couple of things to be used inside Windows;
          outstandingly, the PATH and the presence of the SHELL variable.
-         The PATH should include the Win32/bin directory under the Windows
-         distribution; inside it there is a sh.exe which we assign to the
-         SHELL variable if it has not been already set by the user.  */
+         We assume that ciaoengine.exe (if there is any), cygwin.dll, and
+         sh.exe are in the same directory.  This is placed either in the 
+         Win32/bin subdir or in the applications subdir (if it is packed).
+
+         The SHELL environment variable, if not already set, should point to
+         the sh.exe executable.
+      */
     
-    /* Construct the Win32/bin directory */
+      /* 
+         We need the library directory here.  It either points to an
+         installation directory, and it is stored in the registry, or exists
+         because we got it from an environment variable, or we reverted to
+         the "current directory", for "packed" distributions.  The last one
+         not yet implemented. */
 
-      char *temp_path = (char *)checkalloc(MAXPATHLEN+1);
-      char *current_path;
-      char *current_path_local;
-      
+     /* Guess which one exists.  Start with the Win32/bin option */
+
       strcpy(temp_path, library_directory);
-      strcat(temp_path, SUBDIR_WINDOWS_BIN);             /* .../Win32/bin */
+      strcat(temp_path, SUBDIR_WINDOWS_BIN);
+      if (access(temp_path, F_OK)){ 
+       /* Does not exist --- look in the libdir itself */
+        strcpy(temp_path, library_directory);
+      }
 
-       /* Is it already in the PATH? */
+      /* Is it already in the PATH? */
       if (!(current_path = getenv("PATH")) ||               /* No path or */
           !strstr(current_path, temp_path)) {      /* does not contain it */
          /* Add to $PATH at the end */
@@ -333,23 +349,35 @@ int start(argc, argv)
       }
 
       /* Check now if the SHELL variable has been defined --- the
-         shell/{0,3} call depends on it. */
+         shell/{0,3} calls depend on it. */
       if (!getenv("SHELL")){
-        strcat(temp_path, "/sh.exe");  /* CygWin shell */
+        strcat(temp_path, "/sh.exe");  /* CygWin shell --- MUST be here */
         setenv("SHELL", temp_path, 1);
       }
     }
+#else
+  /* Revert to installation-defined library directory otherwise */
+    library_directory = installibdir;
 #endif
+
+
+    /* No source path -- try to open the emulator itself and load the
+       bytecode starting at the end of the emulator.  The length of the
+       emulator is stored in a variable */
 
   if (raw_source_path == NULL) {
     REGISTER char *p;
 
     for (p=argv[0]; *p && *p != '/'; p++);
-    if (*p != '/') open_emulator(argv[0],&qfile,getenv("PATH"));
-    if (qfile == NULL) open_emulator(argv[0],&qfile,".");
-    if (qfile == NULL) { fprintf(stderr,"%s: file not found\n", argv[0]);
-                         at_exit(1); }}
-  else {
+    if (*p != '/') 
+        open_emulator(argv[0],&qfile,getenv("PATH"));
+    if (qfile == NULL) 
+        open_emulator(argv[0],&qfile,".");
+    if (qfile == NULL) { 
+        fprintf(stderr,"%s: file not found\n", argv[0]);
+        at_exit(1);
+    }
+  } else {
     expand_file_name(raw_source_path,source_path);
 #if defined(Win32)
     i = strlen(source_path)-4;

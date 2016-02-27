@@ -1,5 +1,6 @@
 :- module(_,[
-	make_directory/1, make_dirpath/1,
+	make_directory/1, 
+%%      make_dirpath/1,
 	del_dir_if_empty/1, 
 	move_files/2,move_file/2,
 	copy_files/2,copy_file/2,
@@ -19,7 +20,6 @@
 	no_tr_nl/2,
 	call_unknown/1,
 	replace_strings_in_file/3,
-	cyg2win/3,
 	writef/3,
 	writef/2 ],[assertions,isomodes,hiord]).
 
@@ -113,10 +113,10 @@ make_directory(DirName) :-
 
 %% version which also creates path
 %% Needs real implementation...
-make_dirpath(DirName) :-
-	(  file_exists(DirName)
-	-> note_message("did not create ~w (it already exists)",[DirName])
-	;  do(['mkdir -p ',DirName],fail) ).
+ %% make_dirpath(DirName) :-
+ %% 	(  file_exists(DirName)
+ %% 	-> note_message("did not create ~w (it already exists)",[DirName])
+ %% 	;  do(['mkdir -p ',DirName],fail) ).
 
 %% Note name and type change, and it enumerates.
 %% `environ(?VAR, ?VALUE)'
@@ -574,37 +574,18 @@ match([],I,I).
 match([H|T],[H|IT],RI) :-
 	match(T,IT,RI).
 	
-cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':| Path],Swap) :- !,
-						             % New Drive notat.
-        swapslash(Swap,[0'/ | Dir],Path).
-cyg2win("//"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !, % Drive letter
-        swapslash(Swap,Dir,Path).
-cyg2win("//"||Dir, "\\\\"||Path,Swap) :- !,                  % Network drive
-        swapslash(Swap,Dir,Path).
-cyg2win(Dir,  [D,0': |Path],Swap) :-                         % Default drive
-        swapslash(Swap,Dir,Path),
-        default_drive(D).
-
-default_drive(D) :-
-        getenvstr('COMSPEC',[D|_]), !. % Shell command interpreter' drive
-default_drive(0'C).                    % If not defined, assume C
-
-swapslash(noswap,Dir,Dir) :-
-	!.
-swapslash(swap,Dir,Path) :-
-	do_swapslash(Dir,Path).
-
-do_swapslash([],[]).
-do_swapslash([0'/|D],[0'\\|ND]) :- !,
-        do_swapslash(D,ND).
-do_swapslash([C|D],[C|ND]) :-
-        do_swapslash(D,ND).
 
 %%------------------------------------------------------------------------
 %% VERSION CONTROL
 %%------------------------------------------------------------------------
  
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+180,2002/01/25,20:08*39+'Hora estándar
+   romance'), "Moved cyg2win/3 to system.pl ()").
+
+:- comment(version(1*7+170,2002/01/03,18:17*59+'CET'), "Removed
+   make_dirpath (real implementation now in system.pl) (MCL)").
 
 :- comment(version(1*7+128,2001/10/26,18:27*47+'CEST'), "Bug fixed in
    cyg2win/3: when third argument was 'swap', the slash after the

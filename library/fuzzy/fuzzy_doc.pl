@@ -2,13 +2,11 @@
 :- comment(nodoc,assertions).
 :- comment(nodoc,regtypes).
 
+:- comment(bug,"General aggregations defined by users.").
 :- comment(bug,"Inconsistent behaviour of meta-calls in fuzzy clauses.").
 :- comment(bug,"Some meta-predicate constructions need be added, specially
                 for 'disjunctive' fuzzy clauses, e.g., @tt{sum/2} in the
                 dice example.").
-:- comment(bug,"Calls in fuzzy clauses to fuzzy predicates imported are
-	        first crispified and then fuzzified: the truth value does
-                not pass the module boundary!.").
 
 :- comment(title,"Fuzzy Prolog").  
 
@@ -178,6 +176,12 @@ myaggr(X,Y,Z):- Z .=. X*Y.
 %% ----------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version/')).
+
+:- comment(version(1*7+192,2002/03/15,10:55*23+'CET'), "Fixed Aggregations
+   predefined and defined by users (Sergio Guadarrama)").
+
+:- comment(version(1*7+191,2002/03/12,13:46*08+'CET'), "now fuzzy
+   predicates imported are considered as such (Claudio Vaucheret)").
 
 :- comment(version(1*7+137,2001/11/02,21:24*56+'CET'), "Reformatted
    the documentation.  (Francisco Bueno Carrillo)").

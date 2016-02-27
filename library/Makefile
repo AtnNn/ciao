@@ -91,9 +91,11 @@ distclean:
 	@echo "*** ---------------------------------------------------------"
 	find . -name '*.itf' -exec 'rm' -f {} \;
 	find . -name '*.po'  -exec 'rm' -f {} \;
-	find . -name '*.asr' -exec 'rm' -f {} \;
 	find . -name '*.o' -exec 'rm' -f {} \;
 	find . -name '*.so' -exec 'rm' -f {} \;
 	find . -name '*.dll' -exec 'rm' -f {} \;
 	find . -name '*_glue.c' -exec 'rm' -f {} \;
+	find . -name '*.asr' -exec 'rm' -f {} \;
+	find . -name '*.ass' -exec 'rm' -f {} \;
+	find . -name '*.ast' -exec 'rm' -f {} \;
 

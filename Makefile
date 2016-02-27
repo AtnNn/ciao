@@ -335,12 +335,12 @@ distclean: engclean
 	cd etc && $(MAKE) distclean
 	cd emacs-mode && $(MAKE) distclean
 	cd Win32 && $(MAKE) distclean
+#	cd tests && $(MAKE) distclean
+	cd examples && $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/doc $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/lib $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/library $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/contrib $(MAKE) distclean
-	cd examples && $(MAKE) distclean
-	/bin/rm -f *~
 
 cflow:
 	cd ${OBJDIR} && cflow -i -D${CIAOARCH} *.c > ${SRC}/etc/cflow.out

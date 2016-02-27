@@ -44,21 +44,7 @@ static void init_interpreted(register struct definition *f);
 /* Indexing for the incore compiler. */
 
 
-/* If this is activated, we try to speed up insertion of compiled predicates
-  by caching the last insertion peformed, and using the pointers cached not
-  to advance the chain of clauses from the beginning: we try, instead, to
-  start at the point where the last insertion was performed and make less
-  hops. */
-
-
-
-#if defined(CACHE_INCREMENTAL_CLAUSE_INSERTION)
-static struct emul_info *last_def_clauses = NULL;
-static struct emul_info *last_insertion_point = NULL;
-static unsigned int last_number = ~0;
-#endif
-
-/* static void free_info PROTO((int insn, char *info)); */
+/* Patch bytecode information related to the last clause inserted */
 
 static void set_nondet(t,def,first)
      REGISTER struct try_node *t;
@@ -72,35 +58,39 @@ static void set_nondet(t,def,first)
 
 #if defined(CACHE_INCREMENTAL_CLAUSE_INSERTION)
 
-/* Will only work if we are inserting in the same clause chain, and we try
-   to insert in a position farther than the last we have inserted in.  We
-   should check that the number of clauses has not changed since the last
-   caching operation, but clauses in compiled predicates are added at the
-   end of the list (the "num" field is taken from the "next" field in
-   incore_insert()).  (MCL) */
+/* If this is activated, patching is sped up by caching the last insertion
+  peformed, and using the cache not to advance in the chain of clauses from
+  the beginning.  Inserting always at the end is simply not possible because
+  the clause numbers to be accessed do not come ordered. The cache is used
+  it only if we are inserting farther than the last clause inserted. 
 
-  if ((last_def_clauses == def->clauses) &&  /* Inserting in the same pred. */
-      (t->number >= last_number)){  /* Inserting farther than the last point */
-    cl = last_insertion_point;
-    i  = 1 + t->number - last_number;
+  We should check that the clause numbers have not changed --- i.e., that
+  intermediate records are not erased --- as that would invalidate our
+  count.
+*/
+
+  if (t->number >= def->last_inserted_num){/* farther than last insertion */
+    cl = def->last_inserted_clause;
+    i  = t->number - def->last_inserted_num;
   } else {
-    i  = t->number;
+    i  = t->number - 1;
     cl = def->clauses;
   }
-  last_def_clauses = def->clauses;
-  last_number = t->number;
 
-  while(--i)
+  for( ; i; i--)/* Skip until end of chain --- it is not NULL terminated! */
     cl = cl->next;
-  last_insertion_point = cl;
+
+  def->last_inserted_clause = cl;
+  def->last_inserted_num    = t->number;
 #else
   for (i=t->number, cl=def->clauses; --i;) /* 1-based numbers */
     cl = cl->next;
 #endif
 
+ /* Patch previous emul_p "fail_alt" code */
   t->emul_p = cl->emulcode+1;
   if (first)			/* maintain emul_p2 optimization */
-    t->emul_p2 = t->emul_p + p2_offset(*t->emul_p);
+        t->emul_p2 = t->emul_p + p2_offset(*t->emul_p);
 
 }
 
@@ -118,7 +108,7 @@ static void incore_insert(t0,effar,ref,def)
   t = (struct try_node *)checkalloc(sizeof(struct try_node));
   t->node_offset = ArityToOffset(effar);
  /* Last "next" is num. of clauses: we are inserting at the end of the chain */
- t->number = (unsigned int)ref->next;
+  t->number = (unsigned int)ref->next;
   t->emul_p = 
     (INSN *)(*ref->emulcode + (char *)ref->emulcode);/* initial p: det case */
 #if defined(GAUGE)
@@ -576,6 +566,10 @@ BOOL define_predicate(Arg)
       d->varcase = fail_alt;
       d->lstcase = NULL;        /* Used by native preds to hold nc_info */
       d->othercase = NULL; /* Used by native preds to hold index_clause */
+#if defined(CACHE_INCREMENTAL_CLAUSE_INSERTION)
+      d->last_inserted_clause = NULL;
+      d->last_inserted_num = ~0;
+#endif
       f->code.incoreinfo = d;
     }
     f->properties.nonvar = 0;
@@ -660,9 +654,10 @@ BOOL compiled_clause(Arg)
   }
   d->clauses_tail = &ref->next;
 
-  bitmap = (type&0x1 && !f->properties.nonvar ? 0x1 : 0) | /* var */
-    (type&0x8 && !f->properties.var ? 0x2 : 0) | /* lst */
-      (type&0x16 && !f->properties.var ? 0x4 : 0); /* other */
+  bitmap = 
+    (type&0x1 &&  !f->properties.nonvar ? 0x1 : 0) | /* var   */
+    (type&0x8 &&  !f->properties.var    ? 0x2 : 0) | /* lst   */
+    (type&0x16 && !f->properties.var    ? 0x4 : 0) ; /* other */
   if ((type&0x21) == 0x21)
     f->properties.nonvar = 1;
   if ((type&0x3e) == 0x3e)

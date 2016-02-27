@@ -1,53 +1,334 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Find out which architecture we are running on</TITLE>
+<TITLE>The Ciao Prolog System               - Color and Pattern Library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC675" HREF="ciao_toc.html#TOC675">Find out which architecture we are running on</A></H1>
-
+<H1><A NAME="SEC643" HREF="ciao_toc.html#TOC643">Color and Pattern Library</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Robert Manchek.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.0#6 (2001/3/26, 13:56:52 CEST)
+<A NAME="IDX6424"></A>
 
 
 <P>
-The architecure and operating system the engine is compiled for determines whether we can use or not certain libraries. This script, taken from a PVM distribution, uses a heuristic (which may need to be tuned from time to time) to find out the platform. It returns a string which is used throughout the engine (in #ifdefs) to enable/disable certain characteristics. 
+This module contains predicates to access and check conformance to the available colors and patterns.
 
 
 
 <UL>
-<LI><A HREF="ciao_172.html#SEC676">Usage (ciao_get_arch)</A>
-<LI><A HREF="ciao_172.html#SEC677">More details</A>
+<LI><A HREF="ciao_172.html#SEC644">Usage and interface (color_pattern)</A>
+<LI><A HREF="ciao_172.html#SEC645">Documentation on exports (color_pattern)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC676" HREF="ciao_toc.html#TOC676">Usage (ciao_get_arch)</A></H2>
+<H2><A NAME="SEC644" HREF="ciao_toc.html#TOC644">Usage and interface (<CODE>color_pattern</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(color_pattern)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX6425"></A>
+<CODE>color/2</CODE>, 
+<A NAME="IDX6426"></A>
+<CODE>pattern/2</CODE>, 
+<A NAME="IDX6427"></A>
+<CODE>random_color/1</CODE>, 
+<A NAME="IDX6428"></A>
+<CODE>random_lightcolor/1</CODE>, 
+<A NAME="IDX6429"></A>
+<CODE>random_darkcolor/1</CODE>, 
+<A NAME="IDX6430"></A>
+<CODE>random_pattern/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6431"></A>
+<CODE>color/1</CODE>, 
+<A NAME="IDX6432"></A>
+<CODE>pattern/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6433"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6434"></A>
+<CODE>random/random</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC645" HREF="ciao_toc.html#TOC645">Documentation on exports (<CODE>color_pattern</CODE>)</A></H2>
+<P>
+<A NAME="IDX6435"></A>
+<A NAME="IDX6436"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>color/1:</B>
+<DD><A NAME="IDX6437"></A>
+
+
+<P>
+<CODE>color(Color)</CODE>
+
 
 
 <PRE>
-   Usage: ciao_get_arch
+color('GreenYellow').
+color('Yellow').
+color('White').
+color('Wheat').
+color('BlueViolet').
+color('Violet').
+color('MediumTurquoise').
+color('DarkTurquoise').
+color('Turquoise').
+color('Thistle').
+color('Tan').
+color('Sienna').
+color('Salmon').
+color('VioletRed').
+color('OrangeRed').
+color('MediumVioletRed').
+color('IndianRed').
+color('Red').
+color('Plum').
+color('Pink').
+color('MediumOrchid').
+color('DarkOrchid').
+color('Orchid').
+color('Orange').
+color('Maroon').
+color('Magenta').
+color('Khaki').
+color('Grey').
+color('LightGray').
+color('DimGray').
+color('DarkSlateGray').
+color('YellowGreen').
+color('SpringGreen').
+color('SeaGreen').
+color('PaleGreen').
+color('MediumSpringGreen').
+color('MediumSeaGreen').
+color('LimeGreen').
+color('ForestGreen').
+color('DarkOliveGreen').
+color('DarkGreen').
+color('Green').
+color('Goldenrod').
+color('Gold').
+color('Brown').
+color('Firebrick').
+color('Cyan').
+color('Coral').
+color('SteelBlue').
+color('SlateBlue').
+color('SkyBlue').
+color('Navy').
+color('MidnightBlue').
+color('MediumSlateBlue').
+color('MediumBlue').
+color('LightSteelBlue').
+color('LightBlue').
+color('DarkSlateBlue').
+color('CornflowerBlue').
+color('CadetBlue').
+color('Blue').
+color('Black').
+color('MediumAquamarine').
+color('Aquamarine').
 </PRE>
 
+<P>
+Defines available colors for elements such as points, lines or bars. 
 
 
-<H2><A NAME="SEC677" HREF="ciao_toc.html#TOC677">More details</A></H2>
+</DL>
 
 <P>
-Look at the script itself... 
+<A NAME="IDX6438"></A>
+<A NAME="IDX6439"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>color/2:</B>
+<DD><A NAME="IDX6440"></A>
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>color(C1,C2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether the color <CODE>C1</CODE> is a valid color or not. If <CODE>C1</CODE> is a variable the predicate will choose a valid color randomly. If <CODE>C1</CODE> is a ground term that is not a valid color an exception (error9) will be thrown
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>color_pattern:color(C1)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>color_pattern:color(C2)</CODE>
+ (<CODE>color_pattern:color/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6441"></A>
+<A NAME="IDX6442"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX6443"></A>
+
+
+<P>
+<CODE>pattern(Pattern)</CODE>
+
+
+
+<PRE>
+pattern(pattern1).
+pattern(pattern2).
+pattern(pattern3).
+pattern(pattern4).
+pattern(pattern5).
+pattern(pattern6).
+pattern(pattern7).
+pattern(pattern8).
+pattern(pattern9).
+</PRE>
+
+<P>
+Defines valid patterns used in the stipple style bar attribute. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6444"></A>
+<A NAME="IDX6445"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pattern/2:</B>
+<DD><A NAME="IDX6446"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P1,P2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Test whether the pattern <CODE>P1</CODE> is a valid pattern or not. If <CODE>P1</CODE> is a variable the predicate will choose a valid pattern randomly. If <CODE>P1</CODE> is a ground term that is not a valid pattern an exception (error10) will be thrown.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>color_pattern:pattern(P1)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>color_pattern:pattern(P2)</CODE>
+ (<CODE>color_pattern:pattern/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6447"></A>
+<A NAME="IDX6448"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_color/1:</B>
+<DD><A NAME="IDX6449"></A>
+
+
+<P>
+<CODE>random_color(Color)</CODE>
+
+
+<P>
+This predicate choose a valid color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6450"></A>
+<A NAME="IDX6451"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_lightcolor/1:</B>
+<DD><A NAME="IDX6452"></A>
+
+
+<P>
+<CODE>random_lightcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid light color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6453"></A>
+<A NAME="IDX6454"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_darkcolor/1:</B>
+<DD><A NAME="IDX6455"></A>
+
+
+<P>
+<CODE>random_darkcolor(Color)</CODE>
+
+
+<P>
+This predicate choose a valid dark color among the availables randomly. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6456"></A>
+<A NAME="IDX6457"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random_pattern/1:</B>
+<DD><A NAME="IDX6458"></A>
+
+
+<P>
+<CODE>random_pattern(Pattern)</CODE>
+
+
+<P>
+This predicate choose a valid pattern among the availables randomly. 
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_171.html">previous</A>, <A HREF="ciao_173.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

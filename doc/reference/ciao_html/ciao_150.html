@@ -1,37 +1,42 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - linda (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Graphs</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC615" HREF="ciao_toc.html#TOC615">linda (library)</A></H1>
+<H1><A NAME="SEC576" HREF="ciao_toc.html#TOC576">Graphs</A></H1>
 <P>
-<A NAME="IDX6433"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.9#66 (1999/4/29, 12:28:0 MEST)
+<A NAME="IDX5925"></A>
 
 
 <P>
-This is a SICStus-like linda package. Note that this is essentially quite obsolete, and provided mostly in case it is needed for compatibility, since Ciao now supports all Linda functionality (and more) through the concurrent fact database.
+<STRONG>Author(s):</STRONG> F. Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_150.html#SEC616">Usage and interface (linda)</A>
-<LI><A HREF="ciao_150.html#SEC617">Documentation on exports (linda)</A>
+<LI><A HREF="ciao_150.html#SEC577">Usage and interface (graphs)</A>
+<LI><A HREF="ciao_150.html#SEC578">Documentation on exports (graphs)</A>
+<LI><A HREF="ciao_150.html#SEC579">Documentation on internals (graphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC616" HREF="ciao_toc.html#TOC616">Usage and interface (<CODE>linda</CODE>)</A></H2>
+<H2><A NAME="SEC577" HREF="ciao_toc.html#TOC577">Usage and interface (<CODE>graphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +44,7 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(linda)).</CODE>
+<CODE>:- use_module(library(graphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,36 +53,21 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6434"></A>
-<CODE>linda_client/1</CODE>, 
-<A NAME="IDX6435"></A>
-<CODE>close_client/0</CODE>, 
-<A NAME="IDX6436"></A>
-<CODE>in/1</CODE>, 
-<A NAME="IDX6437"></A>
-<CODE>in/2</CODE>, 
-<A NAME="IDX6438"></A>
-<CODE>in_noblock/1</CODE>, 
-<A NAME="IDX6439"></A>
-<CODE>out/1</CODE>, 
-<A NAME="IDX6440"></A>
-<CODE>rd/1</CODE>, 
-<A NAME="IDX6441"></A>
-<CODE>rd/2</CODE>, 
-<A NAME="IDX6442"></A>
-<CODE>rd_noblock/1</CODE>, 
-<A NAME="IDX6443"></A>
-<CODE>rd_findall/3</CODE>, 
-<A NAME="IDX6444"></A>
-<CODE>linda_timeout/2</CODE>, 
-<A NAME="IDX6445"></A>
-<CODE>halt_server/0</CODE>, 
-<A NAME="IDX6446"></A>
-<CODE>open_client/2</CODE>, 
-<A NAME="IDX6447"></A>
-<CODE>in_stream/2</CODE>, 
-<A NAME="IDX6448"></A>
-<CODE>out_stream/2</CODE>.
+<A NAME="IDX5926"></A>
+<CODE>dgraph_to_ugraph/2</CODE>, 
+<A NAME="IDX5927"></A>
+<CODE>dlgraph_to_lgraph/2</CODE>, 
+<A NAME="IDX5928"></A>
+<CODE>edges_to_ugraph/2</CODE>, 
+<A NAME="IDX5929"></A>
+<CODE>edges_to_lgraph/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX5930"></A>
+<CODE>dgraph/1</CODE>, 
+<A NAME="IDX5931"></A>
+<CODE>dlgraph/1</CODE>.
 
 </UL>
 
@@ -88,12 +78,12 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6449"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6450"></A>
-<CODE>fastrw</CODE>, 
-<A NAME="IDX6451"></A>
-<CODE>sockets/sockets</CODE>.
+<A NAME="IDX5932"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX5933"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX5934"></A>
+<CODE>graphs/lgraphs</CODE>.
 
 </UL>
 
@@ -103,218 +93,227 @@ This is a SICStus-like linda package. Note that this is essentially quite obsole
 
 
 
-<H2><A NAME="SEC617" HREF="ciao_toc.html#TOC617">Documentation on exports (<CODE>linda</CODE>)</A></H2>
+<H2><A NAME="SEC578" HREF="ciao_toc.html#TOC578">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
 <P>
-<A NAME="IDX6452"></A>
-<A NAME="IDX6453"></A>
+<A NAME="IDX5935"></A>
+<A NAME="IDX5936"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>linda_client/1:</B>
-<DD><A NAME="IDX6454"></A>
+<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
+<DD><A NAME="IDX5937"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>dgraph(Graph)</CODE>
 
+
+<P>
+A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6455"></A>
-<A NAME="IDX6456"></A>
+<A NAME="IDX5938"></A>
+<A NAME="IDX5939"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>close_client/0:</B>
-<DD><A NAME="IDX6457"></A>
+<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
+<DD><A NAME="IDX5940"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>dlgraph(Graph)</CODE>
 
+
+<P>
+A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6458"></A>
-<A NAME="IDX6459"></A>
+<A NAME="IDX5941"></A>
+<A NAME="IDX5942"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>in/1:</B>
-<DD><A NAME="IDX6460"></A>
+<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
+<DD><A NAME="IDX5943"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6461"></A>
-<A NAME="IDX6462"></A>
+<A NAME="IDX5944"></A>
+<A NAME="IDX5945"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>in/2:</B>
-<DD><A NAME="IDX6463"></A>
+<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
+<DD><A NAME="IDX5946"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6464"></A>
-<A NAME="IDX6465"></A>
+<A NAME="IDX5947"></A>
+<A NAME="IDX5948"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>in_noblock/1:</B>
-<DD><A NAME="IDX6466"></A>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
+<DD><A NAME="IDX5949"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6467"></A>
-<A NAME="IDX6468"></A>
+<A NAME="IDX5950"></A>
+<A NAME="IDX5951"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
-<DD><A NAME="IDX6469"></A>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
+<DD><A NAME="IDX5952"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC579" HREF="ciao_toc.html#TOC579">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
+<P>
+<A NAME="IDX5953"></A>
+<A NAME="IDX5954"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
+<DD><A NAME="IDX5955"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
+
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6470"></A>
-<A NAME="IDX6471"></A>
+<A NAME="IDX5956"></A>
+<A NAME="IDX5957"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>rd/1:</B>
-<DD><A NAME="IDX6472"></A>
+<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
+<DD><A NAME="IDX5958"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
 
-</DL>
-
-<P>
-<A NAME="IDX6473"></A>
-<A NAME="IDX6474"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rd/2:</B>
-<DD><A NAME="IDX6475"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6476"></A>
-<A NAME="IDX6477"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rd_noblock/1:</B>
-<DD><A NAME="IDX6478"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6479"></A>
-<A NAME="IDX6480"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rd_findall/3:</B>
-<DD><A NAME="IDX6481"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6482"></A>
-<A NAME="IDX6483"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>linda_timeout/2:</B>
-<DD><A NAME="IDX6484"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6485"></A>
-<A NAME="IDX6486"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>halt_server/0:</B>
-<DD><A NAME="IDX6487"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6488"></A>
-<A NAME="IDX6489"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>open_client/2:</B>
-<DD><A NAME="IDX6490"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6491"></A>
-<A NAME="IDX6492"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>in_stream/2:</B>
-<DD><A NAME="IDX6493"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6494"></A>
-<A NAME="IDX6495"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>out_stream/2:</B>
-<DD><A NAME="IDX6496"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_149.html">previous</A>, <A HREF="ciao_151.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,55 +1,52 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - gengraph2 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - test_format (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC719" HREF="ciao_toc.html#TOC719">gengraph2 (library)</A></H1>
+<H1><A NAME="SEC684" HREF="ciao_toc.html#TOC684">test_format (library)</A></H1>
 <P>
-<A NAME="IDX7325"></A>
+<A NAME="IDX6796"></A>
 
 
 <P>
-This module defines predicates which show line graph widgets. All eight predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. Every predicate share the following features: 
+Most of the predicates exported by this module perform some checks to determine whether the arguments attain some conditions or not. In the second case an exception will be thrown. To catch the exceptions you can use the following metapredicates when invoking chartlib exported predicates: 
 
 
 
 <UL>
 
-<LI>A dataset is defined by three lists xvector, yvector and attributes. The arguments named <CODE>XVectors</CODE> (or <CODE>XVs</CODE>), <CODE>YVectors</CODE> (or <CODE>YVs</CODE>) and <CODE>LAtts</CODE><A NAME="DOCF6" HREF="ciao_foot.html#FOOT6">(6)</A> contain this information. Those arguments must be lists whose elements are also lists. The first dataset is defined by the firts element of the three lists, the second dataset is defined by the second element of the three lists and so on.
+<LI>
 
-<LI>Numeric values for the vector elements are needed. We will use two vectors to represent the X-Y coordinates of each set of data plotted. In these predicates the vectors can have different number of points. However, the number of elements in xvector and yvector that pertain to a certain dataset must be, obviously, equal.
+<A NAME="IDX6797"></A>
+<CODE>chartlib_text_error_protect/1</CODE> 
 
-<LI>The active line color is blue, which means that when you select a legend element, the corresponding line turns into navyblue.
+<LI>
 
-<LI>The user can either select the appearance for the lines and the points or not. See the
-
-<A NAME="IDX7326"></A>
-<CODE>attributes/1</CODE> type definition. Thus, the user can call each predicate in different ways ways. 
-
-<LI>The graph has a legend and one entry (symbol and label) per dataset.
-
-<LI>If you do not want to display text in the elements header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
-
-<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
+<A NAME="IDX6798"></A>
+<CODE>chartlib_text_error_protect/1</CODE> 
 
 </UL>
+
+<P>
+Both metapredicates are defined in the chartlib_errhandle module that comes with this library. Some of the predicates have a <CODE>Predicate</CODE> argument which will be used in case of error to show which chartlib predicate causes the error. 
+
 
 
 <UL>
-<LI><A HREF="ciao_184.html#SEC720">Usage and interface (gengraph2)</A>
-<LI><A HREF="ciao_184.html#SEC721">Documentation on exports (gengraph2)</A>
+<LI><A HREF="ciao_184.html#SEC685">Usage and interface (test_format)</A>
+<LI><A HREF="ciao_184.html#SEC686">Documentation on exports (test_format)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC720" HREF="ciao_toc.html#TOC720">Usage and interface (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC685" HREF="ciao_toc.html#TOC685">Usage and interface (<CODE>test_format</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -57,7 +54,7 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(gengraph2)).</CODE>
+<CODE>:- use_module(library(test_format)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -66,22 +63,24 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7327"></A>
-<CODE>graph_b2/9</CODE>, 
-<A NAME="IDX7328"></A>
-<CODE>graph_b2/13</CODE>, 
-<A NAME="IDX7329"></A>
-<CODE>graph_w2/9</CODE>, 
-<A NAME="IDX7330"></A>
-<CODE>graph_w2/13</CODE>, 
-<A NAME="IDX7331"></A>
-<CODE>scattergraph_b2/8</CODE>, 
-<A NAME="IDX7332"></A>
-<CODE>scattergraph_b2/12</CODE>, 
-<A NAME="IDX7333"></A>
-<CODE>scattergraph_w2/8</CODE>, 
-<A NAME="IDX7334"></A>
-<CODE>scattergraph_w2/12</CODE>.
+<A NAME="IDX6799"></A>
+<CODE>equalnumber/3</CODE>, 
+<A NAME="IDX6800"></A>
+<CODE>not_empty/4</CODE>, 
+<A NAME="IDX6801"></A>
+<CODE>not_empty/3</CODE>, 
+<A NAME="IDX6802"></A>
+<CODE>check_sublist/4</CODE>, 
+<A NAME="IDX6803"></A>
+<CODE>valid_format/4</CODE>, 
+<A NAME="IDX6804"></A>
+<CODE>vectors_format/4</CODE>, 
+<A NAME="IDX6805"></A>
+<CODE>valid_vectors/4</CODE>, 
+<A NAME="IDX6806"></A>
+<CODE>valid_attributes/2</CODE>, 
+<A NAME="IDX6807"></A>
+<CODE>valid_table/2</CODE>.
 
 </UL>
 
@@ -92,20 +91,10 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7335"></A>
-<CODE>chartlib/gengraph1</CODE>, 
-<A NAME="IDX7336"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7337"></A>
+<A NAME="IDX6808"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7338"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX7339"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7340"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7341"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX6809"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -115,376 +104,199 @@ This module defines predicates which show line graph widgets. All eight predicat
 
 
 
-<H2><A NAME="SEC721" HREF="ciao_toc.html#TOC721">Documentation on exports (<CODE>gengraph2</CODE>)</A></H2>
+<H2><A NAME="SEC686" HREF="ciao_toc.html#TOC686">Documentation on exports (<CODE>test_format</CODE>)</A></H2>
 <P>
-<A NAME="IDX7342"></A>
-<A NAME="IDX7343"></A>
+<A NAME="IDX6810"></A>
+<A NAME="IDX6811"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/9:</B>
-<DD><A NAME="IDX7344"></A>
+<DT><span class="define">PREDICATE:</span> <B>equalnumber/3:</B>
+<DD><A NAME="IDX6812"></A>
 
 
 <P>
-<CODE>graph_b2(Header,GTitle,XTitle,XVectors,YTitle,YVectors,LAtts,Footer,Sm)</CODE>
+<CODE>equalnumber(X,Y,Predicate)</CODE>
 
 
 <P>
-Besides the features mentioned at the begining of the module chapter, the displayed graph generated calling this predicate has the following distinguish characteristics: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,50]],
-  [['line1','Blue','Yellow'],['line2']],
-  'footer',
-  'natural').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7345"></A>
-<A NAME="IDX7346"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_b2/13:</B>
-<DD><A NAME="IDX7347"></A>
-
-
-<P>
-<CODE>graph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-In addition to the features brought up at the begining of the module chapter, this graph has the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the maximum and minimum values for the graph axes.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,35]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50.5,
-  _,
-  [['line1','Blue','Yellow'],['line','MediumTurquoise','Plum']],
-  'footer',
-  'step').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7348"></A>
-<A NAME="IDX7349"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/9:</B>
-<DD><A NAME="IDX7350"></A>
-
-
-<P>
-<CODE>graph_w2(Header,GT,XT,XVectors,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX7351"></A>
-<CODE>graph_b2/9</CODE>. The difference lies in the graph appearance, as you can see below. 
-
-
-
-<UL>
-
-<LI>The plotting area background color is white.
-
-<LI>The cross hairs color is black.
-
-</UL>
-
-<P>
-Example: 
-
-
-
-<PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[25,50]],
-  'yaxixtitle',
-  [[10,35,40],[25,40]],
-  [['element1','Blue','DarkOrchid'],['element2','DarkOliveGreen',
-    'Firebrick']],
-  'footer',
-  'natural').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7352"></A>
-<A NAME="IDX7353"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>graph_w2/13:</B>
-<DD><A NAME="IDX7354"></A>
-
-
-<P>
-<CODE>graph_w2(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
-
-
-<P>
-This predicate is comparable to 
-<A NAME="IDX7355"></A>
-<CODE>graph_b2/13</CODE>. The differences lie in the plot background color and in the cross hairs color, wich are white and black respectively. 
-
-
-<P>
-Example: 
-
-<PRE>
-graph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,30,59],[10,35,40]],
-  80,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['element1','Blue','Green'],['element2','Turquoise','Black']],
-  'footer',
-  'linear').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7356"></A>
-<A NAME="IDX7357"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/8:</B>
-<DD><A NAME="IDX7358"></A>
-
-
-<P>
-<CODE>scattergraph_b2(Header,GT,XT,XVectors,YT,YVectors,PAtts,Footer)</CODE>
-
-
-<P>
-Apart from the features brought up at the beginning of the chapter, the scatter graph displayed when invoking this predicate has the following features: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>The axis limits are determined from the data.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[10,15,20],[8,30,40]],
-  'yaxixtitle',
-  [[10,35,20],[15,11,21]],
-  [['element1','Blue','Yellow'],['element2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7359"></A>
-<A NAME="IDX7360"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/12:</B>
-<DD><A NAME="IDX7361"></A>
-
-
-<P>
-<CODE>scattergraph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
-
-
-<P>
-The particular features related to this predicate are described below: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_b2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,50],[18,40,59]],
-  50,
-  _,
-  'yaxixtitle',
-  [[10,35,40],[25,50,60]],
-  50,
-  _,
-  [['point dataset1'],['point dataset2']],
-  'footer').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX7362"></A>
-<A NAME="IDX7363"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/8:</B>
-<DD><A NAME="IDX7364"></A>
-
-
-<P>
-<CODE>scattergraph_w2(Header,GTitle,XTitle,XVs,YTitle,YVs,PAtts,Footer)</CODE>
-
-
-<P>
-This predicate is quite similar to 
-<A NAME="IDX7365"></A>
-<CODE>scattergraph_w1/8</CODE> except in the following: 
-
-
-
-<UL>
-
-<LI>The plotting area background color is black.
-
-<LI>The cross hairs color is white.
-
-<LI>If the user do not provide the colors of the points, they will be chosen among the lighter ones.
-
-</UL>
-
-<P>
-Example: 
-
-<PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,30,40,15,30,35,20,30]],
-  'yaxixtitle',
-  [[10,30,40,25,20,25,20,25]],
-  [['set1','cross',4]],
-  'footer').
-</PRE>
-
-<P>
- 
+Test whether the list <CODE>X</CODE> and the list <CODE>Y</CODE> contain the same number of elements. 
 
 
 </DL>
 
 <P>
-<A NAME="IDX7366"></A>
-<A NAME="IDX7367"></A>
+<A NAME="IDX6813"></A>
+<A NAME="IDX6814"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/12:</B>
-<DD><A NAME="IDX7368"></A>
+<DT><span class="define">PREDICATE:</span> <B>not_empty/4:</B>
+<DD><A NAME="IDX6815"></A>
 
 
 <P>
-<CODE>scattergraph_w2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
+<CODE>not_empty(X,Y,Z,Predicate)</CODE>
 
 
 <P>
-This predicate is comparable to 
-<A NAME="IDX7369"></A>
-<CODE>scattergraph_w2/13</CODE>, the differences between them are listed below: 
+Tests whether at least one the lists <CODE>X</CODE>, <CODE>Y</CODE> or <CODE>Z</CODE> are empty. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6816"></A>
+<A NAME="IDX6817"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>not_empty/3:</B>
+<DD><A NAME="IDX6818"></A>
+
+
+<P>
+<CODE>not_empty(X,Y,Predicate)</CODE>
+
+
+<P>
+Tests whether the lists <CODE>X</CODE> or <CODE>Y</CODE> are empty. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6819"></A>
+<A NAME="IDX6820"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>check_sublist/4:</B>
+<DD><A NAME="IDX6821"></A>
+
+
+<P>
+<CODE>check_sublist(List,Number,Number,Predicate)</CODE>
+
+
+<P>
+Tests if the number of elements in each sublist of <CODE>List</CODE> is <CODE>Number1</CODE> or <CODE>Number2</CODE>. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6822"></A>
+<A NAME="IDX6823"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_format/4:</B>
+<DD><A NAME="IDX6824"></A>
+
+
+<P>
+<CODE>valid_format(XVector,YVector,BarsAttributes,Predicate)</CODE>
+
+
+<P>
+Tests the following restrictions: 
 
 
 
 <UL>
 
-<LI>The plotting area background color is white.
+<LI>The <CODE>XVector</CODE> number of elements is the same as each <CODE>YVector</CODE> sublist number of elements.
 
-<LI>The cross hairs color is black.
+<LI>The <CODE>YVector</CODE> length is equal to <CODE>BarsAttributes</CODE> length.
 
 </UL>
 
-<P>
-Example: 
+</DL>
 
-<PRE>
-scattergraph_w2('This is the header text',
-  'Graph_title',
-  'xaxistitle',
-  [[20,10,59],[15,30,50]],
-  150,
-  5,
-  'yaxixtitle',
-  [[10,35,40],[25,20,60]],
-  _,
-  -10,
-  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
-  'footer').
-</PRE>
+<P>
+<A NAME="IDX6825"></A>
+<A NAME="IDX6826"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vectors_format/4:</B>
+<DD><A NAME="IDX6827"></A>
+
+
+<P>
+<CODE>vectors_format(XVector,YVectors,LinesAttributes,Predicate)</CODE>
+
+
+<P>
+Tests the following conditions: 
+
+
+
+<UL>
+
+<LI><CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
+
+<LI><CODE>XVector</CODE> list and each <CODE>YVectors</CODE> element have the same number of elements.
+
+<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 elements.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6828"></A>
+<A NAME="IDX6829"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_vectors/4:</B>
+<DD><A NAME="IDX6830"></A>
+
+
+<P>
+<CODE>valid_vectors(XVector,YVectors,LinesAttributes,Predicate)</CODE>
+
+
+<P>
+Tests the following conditions: 
+
+
+
+<UL>
+
+<LI><CODE>XVector</CODE> list, <CODE>YVectors</CODE> list and <CODE>LinesAttributes</CODE> list have the same number of elements.
+
+<LI>Each sublist of <CODE>LinesAttributes</CODE> is composed of 5, 3 or 1 element.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6831"></A>
+<A NAME="IDX6832"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_attributes/2:</B>
+<DD><A NAME="IDX6833"></A>
+
+
+<P>
+<CODE>valid_attributes(BarsAttibuttes,Predicate)</CODE>
+
+
+<P>
+Check if each <CODE>BarsAttibuttes</CODE> element is a list composed of one or four elements. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX6834"></A>
+<A NAME="IDX6835"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>valid_table/2:</B>
+<DD><A NAME="IDX6836"></A>
+
+
+<P>
+<CODE>valid_table(ElementTable,Predicate)</CODE>
+
+
+<P>
+All of the <CODE>ElementTable</CODE> sublists have the same number of elements and are not empty. 
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_183.html">previous</A>, <A HREF="ciao_185.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

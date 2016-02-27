@@ -1,106 +1,143 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 11 April 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
+<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_167.html">previous</A>, <A HREF="ciao_169.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_167.html">previous</A>, <A HREF="ciao_169.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC665" HREF="ciao_toc.html#TOC665">Crossed-references of a program</A></H1>
-
+<H1><A NAME="SEC624" HREF="ciao_toc.html#TOC624">Programming MYCIN rules</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
-
-
-<P>
-The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+<A NAME="IDX6239"></A>
 
 
 <P>
-The libraries involved are as follows: 
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#194 (2002/4/4, 21:8:41 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
+
+
+<P>
+MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
+<A NAME="IDX6240"></A>
+<A NAME="IDX6241"></A>
+<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
 
 <UL>
-<LI>
 
-<A NAME="IDX6868"></A>
-<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
-<LI>
+<LI>A value of -1 stands for <EM>surely not</EM>.
 
-<A NAME="IDX6869"></A>
-<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
-<LI>
+<LI>A value of 1 stands for <EM>certainly</EM>.
 
-<A NAME="IDX6870"></A>
-<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
-<LI>
+<LI>A value of 0 stands for <EM>I don't know</EM>.
 
-<A NAME="IDX6871"></A>
-<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
-<LI>
-
-<A NAME="IDX6872"></A>
-<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
 </UL>
 
 <P>
-The first two are intended to be used by loading in 
-<A NAME="IDX6873"></A>
-<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
+Intermediate values are allowed. 
 
 
 <P>
-The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
+Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
+
+
+
+<UL>
+<LI><A HREF="ciao_168.html#SEC625">Usage and interface (mycin)</A>
+<LI><A HREF="ciao_168.html#SEC626">Documentation on new declarations (mycin)</A>
+<LI><A HREF="ciao_168.html#SEC627">Known bugs and planned improvements (mycin)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC625" HREF="ciao_toc.html#TOC625">Usage and interface (<CODE>mycin</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
 <PRE>
-[ciao/etc]&#62; ciaosh
-Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
-?- use_module(xmrefs).
+           :- mycin(MycinDataBaseName).
+</PRE>
 
-yes
-?- set_flag(X).
+<LI><STRONG>New declarations defined:</STRONG>
 
-X = 3 ? 
+<A NAME="IDX6242"></A>
+<CODE>export/1</CODE>.
 
-yes
-?- set_files([xfrefs, xmrefs,
-              library(xrefs),
-              library('xrefs/mrefs'),
-              library('xrefs/pxrefs'),
-              library('xrefs/xrefs2graph'),
-              library('xrefs/xrefsbuild'),
-              library('xrefs/xrefsread')
-	     ]).
+</UL>
 
-yes
-?- xmrefs.
+</div class="cartouche">
 
+
+
+<H2><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
+<P>
+<A NAME="IDX6243"></A>
+<A NAME="IDX6244"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX6245"></A>
+
+
+<P>
+This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
+
+<PRE>
+:- export p/1.
 </PRE>
 
 <P>
-so that it is displayed by daVinci as: 
+must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
+<A NAME="IDX6246"></A>
+certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
 
 
 <P>
-<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
+<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
+
+</UL>
+
+</DL>
 
 
-<P>
-The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
+
+<H2><A NAME="SEC627" HREF="ciao_toc.html#TOC627">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
 
 
-<P>
-<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
+<UL>
 
+<LI>
 
-<P>
-For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
+Not fully implemented.
 
+<LI>
+
+Dynamic mycin predicates not implemented: open question.
+
+<LI>
+
+Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_167.html">previous</A>, <A HREF="ciao_169.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_167.html">previous</A>, <A HREF="ciao_169.html">next</A>, <A HREF="ciao_213.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

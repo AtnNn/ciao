@@ -17,6 +17,7 @@
 :- use_module(library(format)).
 :- use_module(library(ttyout)).
 :- use_module(library(read), [read/2]).
+:- use_module(library(system), [cyg2win/3]).
 :- use_module(library(write)).
 :- use_module(library(aggregates)).
 :- use_module(library(sort)).
@@ -56,6 +57,10 @@
 %------------------ Version Comments ------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+185,2002/02/04,18:45*52+'CET'), "Fixed
+   print_srcdbg_info/5 to show paths in Windows mode when running in a
+   windows machine (good for debugging!)  (MCL)").
 
 :- comment(version(1*7+91,2001/04/23,18:19*24+'CEST'), "Fixed @@
    debugging command (Daniel Cabeza Gras)").
@@ -799,7 +804,18 @@ write_goal(T, X, Xs, B, D, Port, Pred, Src, Ln0, Ln1, Number) :-
 
 print_srcdbg_info(_, _, nil, nil, nil):- !.
 print_srcdbg_info(Pred, Src, Ln0, Ln1, Number):-
-	display_list(['         In ',Src,' (',Ln0,-,Ln1,') ',
+        (
+            get_os('Win32') ->
+            atom_codes(Src, SrcCodes),
+            % Emacs understand slashes instead of backslashes, even on
+            % Windows, and this saves problems with escaping
+            % backslashes
+            cyg2win(SrcCodes, ActualSrcCodes, noswap),
+            atom_codes(ActualSrc, ActualSrcCodes)
+        ;
+            Src = ActualSrc
+        ),
+	display_list(['         In ', ActualSrc,' (',Ln0,-,Ln1,') ',
 	             Pred,-,Number,'\n']).
 
 spy_info([], Goal, ' + ') --> {'$spypoint'(Goal, on, on)}, !.

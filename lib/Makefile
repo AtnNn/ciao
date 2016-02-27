@@ -71,3 +71,5 @@ distclean:
 	find . -name '*.itf' -exec 'rm' -f {} \;
 	find . -name '*.po'  -exec 'rm' -f {} \;
 	find . -name '*.asr' -exec 'rm' -f {} \;
+	find . -name '*.ass' -exec 'rm' -f {} \;
+	find . -name '*.ast' -exec 'rm' -f {} \;

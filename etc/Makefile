@@ -6,7 +6,7 @@ include $(SYSDEP_FILES)/mkf-$(CIAOARCH)
 
 # Beware: these must be .pl files: otherwise they may be eliminated on cleanup
 # get_version taken out
-PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake cleandirs fix_size
+PLUTILITIES=fileinfo get_deps pldiff viewpo lpmake cleandirs fix_size show_asr
 SHSCRIPTS=ciao_get_arch collect_modules
 
 .SUFFIXES: .pl
@@ -120,11 +120,12 @@ distclean realclean: clean
                   rm -f $${File} ; \
 	   fi ; \
 	 done
+	# Do not remove the windows fix_size, it goes into the distribution
 	@if [ -f fix_size ]; \
 	  then echo "Removing fix_size"; \
                rm -f fix_size ; \
          fi
 
-fix_size: fix_size.c
+force_fix_size: 
 	$(CC) -o fix_size fix_size.c
 
