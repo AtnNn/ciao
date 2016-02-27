@@ -1,38 +1,61 @@
 
-@section{Windows installation from the precompiled distribution} 
+@cindex{installation, Windows, from binaries}
 
 This describes the installation of Ciao after downloading the Windows
-@em{precompiled} distribution. This is the simplest Windows
-installation, since it requires no compilation and is highly
-recommended.
+@em{binary} (i.e., @em{precompiled}) distribution.  It includes the
+installation of libraries and manuals and applies to Windows NT/95/98
+systems. This is the simplest Windows installation, since it requires
+no compilation and is highly recommended. However, it is also possible
+to compile Ciao from the source distribution on these systems (please refer
+to @ref{Installing Ciao from the source distribution} for details).
 
-@subsection{Installation of the precompiled distribution}
+If you find any problems during installation, please refer to
+@ref{Troubleshooting (nasty messages and nifty workarounds)}.
+@cindex{troubleshooting} See also @ref{Downloading new versions} and
+@ref{Reporting bugs}.
 
-Please follow these steps (below we use the terms @em{folder} and
-@em{directory} interchangeably):
+@section{Win32 binary installation summary}
+
+@noindent Please follow these steps (below we use the terms
+@em{folder} and @em{directory} interchangeably):
 
 @begin{enumerate} 
 
 @item Download the precompiled distribution and unpack it into any
-      suitable folder, such as, e.g., @tt{C:\Program Files} (this will
-      create there a folder whose name reflects the Ciao version). Due
-      to limitations of Windows related to file associations, do not
-      put Ciao too deep in the folder hierarchy.  For unpacking you
-      will need a recent version of a zip archive manager -- there are
-      many freely available such as @apl{WinZip}, @apl{unzip},
-      @apl{pkunzip}, etc.). If you have a previous version of Ciao
-      installed, make sure you do not have any Ciao applications
-      (including, e.g., a toplevel shell) running, or the extraction
-      process may not be able to complete. You may want to delete the
-      entire folder of the previous installation to save space.
+      suitable folder, such as, e.g., @tt{C:\Program Files}.
 
-@item Run (e.g. by double-clicking on it) the @tt{install}(@tt{.bat})
-      script. This will update the windows registry (the file
-      @tt{ciao.reg} lists the additions) and also create some
-      @tt{.bat} files for running Ciao executables from the command
+      This will create there a folder whose name reflects the Ciao
+      version. Due to limitations of Windows related to file
+      associations, do not put Ciao too deep in the folder hierarchy.
+      For unpacking you will need a recent version of a zip archive
+      manager -- there are many freely available such as @apl{WinZip},
+      @apl{unzip}, @apl{pkunzip}, etc. (see for example
+      @tt{www.winzip.com}). Some users have reported some problems
+      with version 6.2 of WinZip, but no problems with, e.g., version
+      7. With WinZip, simply click on ``Extract'' and select the
+      extraction folder as indicated above.
+
+@item Stop any Ciao-related  applications.
+
+      If you have a previous version of Ciao installed, make sure you
+      do not have any Ciao applications (including, e.g., a toplevel
+      shell) running, or the extraction process may not be able to
+      complete. You may also want to delete the entire folder of the
+      previous installation to save space.
+
+@item Open the Ciao source directory created during extraction and run
+      (e.g. by double-clicking on it) the @tt{install}(@tt{.bat})
+      script. Answer ``yes'' to the dialog that pops up and type any
+      type any character in the installation window to finish the
+      process. You may need to reboot for the changes in the registry
+      to take effect.
+
+      This will update the windows registry (the file @tt{ciao}(@tt{.reg})
+      lists the additions) and also create some @tt{.bat} files which
+      may be useful for running Ciao executables from the command
       line.  It also creates initialization scripts for the
-      @apl{emacs} editor. After that, you may need to reboot for the
-      changes in the registry to take effect.
+      @apl{emacs} editor. The actions performed by the installation
+      script are reported in the installation window.
 
 @item You may want to add a @index{windows shortcut} @cindex{shortcut,
       windows} in a convenient place, such as the desktop, to
@@ -42,195 +65,69 @@ Please follow these steps (below we use the terms @em{folder} and
       appropriate option, @tt{Send to->Desktop as shortcut}).
 
 @item You may also want to add another shortcut to the file
-      @file{ciao.html} located inside
+      @file{ciao}(@tt{.html}) located inside
       @tt{doc\reference\ciao_html} so that you can open the
       Ciao manual by simply double-clicking on this shortcut. 
 
-@end{enumerate}
-
-@subsection{Getting started after Windows installation}
-
-The actions and registry changes performed by the installation
-procedure, in addition to setting icons for ciao-related file types,
-make several other things possible:
-
-@begin{itemize} 
-
-@item Double-clicking on the shortcut made above to @tt{ciao.html}
-      should show the Ciao manual in your default WWW browser.  Make
-      sure you configure your browser to use @index{style sheets} for
-      correct formatting of the manual (note, however, some older versions of
-      @concept{Explorer} did not support style sheets well and will
-      give better results turning them off).  The @tt{doc\reference}
-      folder contains the manual also in the other formats present in
-      the distribution, such as @tt{info} (very convenient for users
-      of the @apl{emacs} editor/program development system) and
-      @tt{postscript} or @tt{pdf}, which are specially useful for
-      printing, using an application such as @apl{ghostview} (freely
-      available from @uref{http://www.cs.wisc.edu/~ghost/index.html})
-      or @apl{acrobat reader} (@uref{http://www.adobe.com})
-      respectively. @cindex{printing, manual} @cindex{manual,
-      printing}
-
-@item It is possible to run any Ciao executable (ending in @tt{.cpx})
-      by double-clicking on it.  For example, you can try starting
-      this way @apl{ciaosh.cpx}, from inside the shell folder or from
-      the shortcut created above.
-
-@item Once the shell is started, you can load and execute Prolog
-      modules inside the interactive toplevel shell in the standard
-      way (e.g., type @tt{use_module(@em{file}).},
-      @tt{use_module(library(@em{file})).} for library modules, 
-      @tt{ensure_loaded(@em{file}).} for files which are not modules,
-      and @tt{use_package(@em{file}).} for library packages).
-
-      For example, you may want to type @tt{use_package(iso)} to
-      ensure Ciao has loaded all the iso builtins (whether this is
-      done by default or not depends on your @file{.ciaorc} file).  Do
-      not worry about any 'module already in executable' messages
-      --these are normal and simply mean that a certain module is
-      already pre-loaded in the toplevel shell. At this point, typing
-      @tt{write(hello).} should work.
-
-@item To change the working directory to, say, the @tt{tests}
-      directory, first do:
-
-@begin{verbatim}
-    ?- use_module(library(system)).
-@end{verbatim}
-
-      @noindent (loading the @lib{system} library makes a number of
-      system-related predicates such as @pred{cd/1} accessible) and
-      then:
-
-@begin{verbatim}
-    ?- cd('$/tests').  
-@end{verbatim}
-
-      @noindent (in Ciao the sequence @tt{$/} @em{at the beginning of
-      a path name} is replaced by the path of the Ciao root
-      directory).
-
-@item @concept{Executables} can be generated from the toplevel shell
-      (using @pred{make_exec/2}) or using the standalone compiler
-      (@apl{ciaoc.cpx}, located in the @tt{ciaoc} folder). To be able
-      to make an executable, the file should define the predicate
-      @pred{main/1} (or @pred{main/0}), which will be called upon
-      startup (see the corresponding manual section for details).
-
-      @noindent For example, within the @file{tests} directory, you
-      can type:
-
-@begin{verbatim}
-    ?- make_exec(hw,_).
-@end{verbatim}
-
-      @noindent which should produce an executable. Double-clicking on
-      this executable should execute it.
-
-@item The Ciao toplevel can be made to execute upon startup a number
-      of commands (such as, e.g., loading certain files or setting
-      certain Prolog flags) contained in an initialization file.  This
-      file should be called @file{.ciaorc} and placed in your
-      @em{home} folder (e.g., the same in which you put your
-      @file{.emacs} file). You need to set the environment variable
-      @tt{HOME} to the path of this folder for the Ciao toplevel shell
-      to be able to locate this file on startup.
-
-@item To exit the top level shell, type @tt{halt.} as usual, or @key{^Z}.
-
-@item Another way of creating Ciao executables from source files is by
-      right-clicking on @tt{.pl} files and choosing "make
-      executable". This also uses the standalone compiler.
-
-@item Double-clicking on files ending in @tt{.pls}, "ciao prolog
-      scripts", will also execute them. These are files containing
-      Prolog source but which get executed without having to
-      explicitly compile them (in the same way as, e.g., @tt{.bat}
-      files). As an example, you can double click on the file
-      @file{hw.pls} in the @file{tests} folder and look at the source
-      with an editor. You can try changing the @tt{Hello world}
-      message and double-clicking again.
-
-      As you can see, the file should define the predicate
-      @pred{main/1}, which will be called upon startup.  The two
-      header lines are only necessary in Un*x. You can leave them in
-      in Windows (so that the script will work also in Un*x without
-      any change) or you can take them out.  These two lines can be
-      added automatically in @apl{emacs} from the Ciao/Prolog menu or by
-      typing @key{^C} @key{I} @key{S}.
-
-@end{itemize}
-
-@subsection{Starting executables from the Windows command line}
-
-The installation script also creates a @tt{.bat} skeleton file
-(@tt{bat_skel} in folder Win32) which allows running Ciao executables
-from the command line.  If you want to run a Ciao executable
-@tt{file.cpx} from the command line, you normally copy the skeleton
-file to the folder were the executable is and rename it to file.bat,
-then change its contents as explained in a comment inside.  Note that
-this @tt{.bat} file is usually not necessary in NT, as its command
-shell understands file extension associations, i.e., in windows NT it
-is possible to run the @tt{file.cpx} executable directly. Due to
-limitations of @tt{.bat} files in Windows 95/98, in those OSs no more
-than 9 command line arguments can be passed to the executable (in NT
-there is no such restriction).  
-
-The installation script creates also @tt{ciaosh.bat} and
-@tt{ciaoc.bat} files (in the @file{shell} and @file{ciaoc} folders
-respectively). These allow calling the interactive top-level and the
-standalone compiler from the command line in Windows95/98.
-
-@subsection{Using the emacs environment under Windows}
-
-@cindex{emacs, under Win32} While it is easy to use Ciao with any
-editor of your choice, using it within the @apl{emacs} editor/program
-development system is highly recommended: Ciao includes an @apl{emacs}
-@em{mode} which greatly simplifies many program development tasks (see
-@ref{Using Ciao inside GNU emacs} for details on the capabilities of
-@apl{ciao}/@apl{emacs} combination.
+@item Finally, if the (freely available) @apl{emacs}
+      editor/environment is not installed in your system, we
+      @em{highly recommend} that you also install it at this point.
+      While it is easy to use Ciao with any editor of your choice, the
+      Ciao distribution includes a very powerful @cindex{development
+      environment} @em{application development environment} which is
+      based on @apl{emacs} and which enables, e.g., source-level
+      debugging, syntax coloring, context-sensitive on-line help,
+      etc. If you are not convinced, consider that many programmers 
+      inside Micros*ft use @tt{emacs} for developing their programs.
 
 @include{EmacsDownload.lpdoc}
 
-In order to allow @apl{emacs} to load the Ciao mode automatically when
-editing and to access the documentation, open using @apl{emacs}
-(@key{^X}@key{^F})) the file @file{~/.emacs} (or, perhaps,
-@file{c:/.emacs}) and add the following line to it:
+      @cindex{emacs mode, setting up, Win32} You need to tell
+      @apl{emacs} how to load the Ciao mode automatically when editing
+      and how to access the on-line documentation: 
 
-@begin{verbatim}
-        (load-file "<CIAODIR>/DOTemacs.el")
-@end{verbatim}
+      @begin{itemize}
 
-@noindent where you should put in place of @tt{<CIAODIR>} the
-directory where you installed the Ciao distribution. After doing this
-(and exiting and restarting @apl{emacs}) the following things should
-work:
+      @item Start @apl{emacs} (double click on the icon or from the
+            @tt{Start} menu). Open (menu @tt{Files->Open File} or
+            simply @key{^X}@key{^F}) the file @file{ForEmacs.txt} that
+            the installation script has created in directory where you
+            installed the Ciao distribution.
 
-@begin{itemize}
+      @item Copy the lines in the file (select with the mouse and then
+            menu @tt{Edit->Copy}). Open/Create using @apl{emacs} (menu
+            @tt{Files->Open File} or simply @key{^X}@key{^F}) the file
+            @file{~/.emacs} (or, if this fails, @file{c:/.emacs}).
 
-@item When opening a Prolog file (with @tt{.pl} or @tt{.pls} ending)
-      the code should appear highlighted according to syntax (e.g.,
-      comments in red), and a @tt{Ciao/Prolog} menu should appear in
-      the menu bar on top of the @apl{emacs} window.
+      @item Paste the two lines (menu @tt{Edit->Paste} or simply
+            @key{^X}@key{^Y}) into the file and save (menu
+            @tt{Files->Save Buffer} or simply @key{^X}@key{^S}).
 
-@item Accessing the Ciao manuals from the @tt{Ciao/Prolog} menu (or
-      typing @key{^H} @key{i}) should open a list of manuals in info
-      format in which the Ciao manual(s) should appear.
+      @item Exit @apl{emacs} and start it again.
 
-@item Loading the file using the @tt{Ciao/Prolog} menu (or typing
-      @key{^C} @key{l}) should start in another emacs buffer the Ciao
-      toplevel shell and load the file. You should now be able to
-      switch the the toplevel shell and make queries from within
-      @apl{emacs}.
+      @end{itemize}
 
-@item You can also, e.g., create executables from the @tt{Ciao/Prolog}
-      menu. See @ref{Using Ciao inside GNU emacs} for the many other
-      functionalities of this environment.
+      @noindent @apl{emacs} should not report any errors (at least
+      related to Ciao) on startup. At this point the @apl{emacs}
+      checks in the following section should work.
 
-@end{itemize}
+@end{enumerate}
 
-@subsection{Compiling the miscellaneous utilities under Windows}
+@section{Checking for correct installation on Win32}
+
+After the actions and registry changes performed by the installation
+procedure, you should check that the following should work correctly:
+
+@include{InstallTestWin32bin.lpdoc}
+
+@noindent
+Finally, if @apl{emacs} is installed, after starting it
+(double-clicking on the @tt{emacs} icon or from the @tt{Start} menu)
+the following should work:
+
+@include{EmacsTesting.lpdoc}
+
+@section{Compiling the miscellaneous utilities under Windows}
 
 The @file{etc} folder contains a number of utilities, documented in
 the manual in @em{PART V - Miscellaneous Standalone Utilities}.  In
@@ -238,7 +135,7 @@ the Win32 distribution these utilities are not compiled by the
 installation process.  You can create the executable for each of them
 when needed by compiling the corresponding @tt{.pl} file.
 
-@subsection{Server installation under Windows}
+@section{Server installation under Windows}
 
 @cindex{installation, Windows clients}
 @cindex{installation, Windows server}
@@ -248,17 +145,20 @@ clients, the following steps are recommended:
 
 @begin{itemize}
 
-@item Follow the standard installation procedure on the server.
-      All the functionality specified in the previous sections should
-      then be available on the server. 
+@item Follow the standard installation procedure on the server. When
+      selecting the folder in which Ciao is installed make sure you
+      select a folder that is visible by the client machines. Also
+      make sure that the functionality specified in the previous
+      sections is now available on the server.
 
 @item Perform a @index{client installation} on each client, by running
       (e.g., double-click on it) the @file{client.bat} script. This
-      should update the registry of each client.
+      should update the registry of each client. At this point all the
+      functionality should also be available on the clients.
 
 @end{itemize}
 
-@subsection{Uninstallation under Windows}
+@section{Uninstallation under Windows}
 
 @comment{*** Should have an uninstall script also...}
 

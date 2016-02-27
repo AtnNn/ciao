@@ -21,13 +21,16 @@
 % S. Varma (sacha@clip.dia.fi.upm.es) using input from L. Naish's forms
 % and F. Bueno's previous Chat interface
 
-:- module(html, [url_info/2, url_info_relative/3, url_query/2,
+/**** Be careful when changing code, to not break auto distribution generation
+ ****/
+:- module(html, [
+        url_info/2, url_info_relative/3, url_query/2,
         output_html/1, html2terms/2, xml2terms/2, html_template/3,
         http_lines/3, 
         html_report_error/1, get_form_input/1, get_form_value/3,
         form_empty_value/1, text_lines/2, form_default/3, my_url/1,
-        form_request_method/1, icon_address/2, html_protect/1],
-        ['pillow/ops',dcg,assertions]).
+        form_request_method/1, icon_address/2, html_protect/1
+        ], ['pillow/ops',dcg,assertions]).
 
 :- use_module(library(strings),
         [write_string/1, get_line/1, whitespace/2, whitespace0/2, string/3]).
@@ -39,18 +42,15 @@
 
 :- include(icon_address).
 
-icon_address(warning,IAddress):-
+icon_address(Img, IAddress):-
         icon_base_address(BAddress),
-        atom_concat(BAddress,'warning_large.gif',IAddress).
-icon_address(dot,IAddress):-
-        icon_base_address(BAddress),
-        atom_concat(BAddress,'redball.gif',IAddress).
-icon_address(clip,IAddress):-
-        icon_base_address(BAddress),
-        atom_concat(BAddress,'clip.gif',IAddress).
-icon_address(pillow,IAddress):-
-        icon_base_address(BAddress),
-        atom_concat(BAddress,'pillow_d.gif',IAddress).
+        icon_img(Img,ImgSrc),
+        atom_concat(BAddress,ImgSrc,IAddress).
+
+icon_img(warning,'warning_large.gif').
+icon_img(dot,'redball.gif').
+icon_img(clip,'clip.gif').
+icon_img(pillow,'pillow_d.gif').
 
 %%% HTML <-> Terms translation %%%
 
@@ -260,6 +260,8 @@ html_term(cgi_reply) --> !,
         "Content-type: text/html",
         newline,
         newline.
+html_term(prolog_term(T)) --> !,
+        prolog_term(T).
 % Constructs
 html_term(verbatim(Text)) --> !,
         html_quoted(Text).
@@ -642,7 +644,7 @@ xml_value(V,_Dict) --> % This is not correct syntax
         xml_bad_value(V).
 
 xml_quoted_string(Q, []) --> [Q], !.
-xml_quoted_string(Q, "&quot;"||Cs) -->
+xml_quoted_string(Q, [0'&,0'q,0'u,0'o,0't,0';|Cs]) -->
         """",
         xml_quoted_string(Q, Cs).
 xml_quoted_string(Q, [C|Cs]) -->
@@ -1038,12 +1040,12 @@ textarea_data(L) -->
 textarea_data(S) -->
         string(S).
 
-:- meta_predicate html_protect(goal).
+:- meta_predicate(html_protect(:)). % For compatibility
 
 html_protect(Goal) :-
         catch(Goal,E,html_report_error(E)).
 html_protect(_) :-
-        html_report_error('Sorry, PiLLoW application failed.').
+        html_report_error('Sorry, application failed.').
 
 %%% Support predicates %%%
 
@@ -1055,6 +1057,9 @@ mappend([S|Ss], R) :-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+114,2000/04/11,20:23*43+'CEST'), "Added pillow
+   term prolog_term/1.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*3+115,1999/11/24,00:58*36+'MET'), "Added file to
    version control.  (Manuel Hermenegildo)").

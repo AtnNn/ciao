@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include "threads.h"
 #include "main.h"
 #include "debug.h"
 #include "initial.h"
-#include "threads.h"
 #include "task_areas.h"
 
 /* declarations for global functions accessed here */
@@ -98,6 +98,9 @@ void load_ql_files(Arg, qfile)
   push_qlinfo(NULL);
   if (is_a_script(qfile)) 
     skip_to_ctrl_l(qfile);
+#if defined(ALLOW_COMPRESSED_CODE)
+  is_compressed(qfile);
+#endif
   more_ql = qread1(w,qfile,&X(0));	            /* ignore version no. */
   w->global_top = w->node->global_top;              /* Reset heap pointer */
   
@@ -108,39 +111,16 @@ void load_ql_files(Arg, qfile)
   pop_qlinfo(NULL);
 }
 
- /* Creates the wam structure, allocates its areas and initializes them.
-    This returns an empty, fresh wam.  We do not add it here to the task
-    state list; it needs its own thread, which we have after startwam() */
-
-
-extern ENG_INT mem_prog_count;
-
-struct worker *create_and_init_wam()
-{
-  Argdecl;
-  /*ENG_INT saved_program_count = mem_prog_count;  */
-
-  Arg = create_wam_storage();                         /* Just create *Arg */
-  create_wam_areas(Arg);                      /* Make room for the stacks */
-  numstack_init(Arg);                                     /* bignum areas */
-  local_init_each_time(Arg);                               /* Local areas */
-
-  /*mem_prog_count = saved_program_count;                          */
-  
-  return Arg;
-}
-
 
 
 extern char cwd[];
-
 
 int main(argc, argv)
      int argc;
      char *argv[];
 {
   /*Argdecl;*/
-  wrb_state_p first_worker;
+  goal_descriptor_p first_goal;
   BOOL quiet = FALSE;
   int i;
   char *lc_ctype;
@@ -155,7 +135,7 @@ int main(argc, argv)
 
   lc_ctype = getenv("LC_CTYPE");
   if (lc_ctype!=NULL &&
-      (strcmp(lc_ctype,"ja_JP.EUC")==SAME || strcmp(lc_ctype,"ja_JP.euc")==SAME))
+    (strcmp(lc_ctype,"ja_JP.EUC")==SAME || strcmp(lc_ctype,"ja_JP.euc")==SAME))
     init_kanji();
   else
     init_latin1();
@@ -284,7 +264,8 @@ int main(argc, argv)
 
     /* Global initializations */
     checkasserts();
-    init_wrb_state_list();
+    /*init_wrb_state_list();*/
+    init_goal_desc_list();
     init_once();
     init_alloc();
     current_quiet_flag = quiet ? atom_on : atom_off;
@@ -295,13 +276,13 @@ int main(argc, argv)
  /* Make the first wam.  We need it to load the ql's. Main thread is always
     goal # 0 */
 
-    first_worker = init_first_worker_entry();
-    load_ql_files(first_worker->worker_registers, qfile);
+    first_goal = init_first_gd_entry();
+    load_ql_files(first_goal->worker_registers, qfile);
     fclose(qfile);
     /* wam->next_insn set to boot code in local_init_each_time */
     /*w->node->global_top = w->global_top;*/     /* Isn't this unnecessary? */
     /* w->node->term[0] = X(0) = init_atom_check("boot");*/
-    firstgoal(first_worker, "boot");              /*  Fills in worker_entry */
+    firstgoal(first_goal, "boot");              /*  Fills in worker_entry */
   }
   
   return 0;
@@ -315,5 +296,6 @@ void at_exit(result)
 #if defined(PROFILE)
   if (profile) dump_profile();
 #endif
+  fflush(NULL);
   exit(result);
 }

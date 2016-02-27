@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% SOURCE-TO-SOURCE EXPANSION FOR STATIC OBJECT USAGE
 %%
@@ -8,7 +8,7 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 

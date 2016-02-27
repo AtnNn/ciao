@@ -10,8 +10,16 @@
 
 :- comment(author,"Jes@'{u}s Correas").
 
-:- comment(module,"This module defines a low level socket interface, to be
-	used by javart and jtopl.").
+:- comment(module,"
+@cindex{Socket implementation}
+This module defines a low level socket interface, to be used by javart and
+jtopl. Includes all the code related directly to the handling of
+sockets. This library
+should not be used by any user program, because is a very low-level
+connection to Java. Use @lib{javart} (Prolog to Java low-level interface)
+or @lib{jtopl} (Java to Prolog interface) libraries instead.
+
+").
 
 :- use_module(library(fastrw), [fast_read/1, fast_write/1]).
 :- use_module(library(read),[read/2]).
@@ -19,15 +27,18 @@
 :- use_module(library(dynamic)). 
 :- use_module(library(format)). 
 
-:- pred java_stream(DataStream, EventStream, Address) 
-	:: atm * int * machine_name
-        # "Stores the ids of the streams used.".
+:- pred java_stream(DataStream, EventStream, Address)
+	:: atm * int * machine_name # "Stores the identifiers of the streams
+	used. A fact is asserted when the connection to the Java process is
+	established. It Contains the data and event streams, and the network
+	address where the Java process is running.".
+
 :- dynamic java_stream/3.
 
 %% -----------------------------------------------------------------------
 :- pred socket_connection(+node, +stream) 
 	:: atom * stream
-        # "Given a stream connected to a node, gets the socket port from
+        # "Given a stream connected to a node, it gets the socket port from
 	  the given stream and creates the sockets to connect to the java
 	  process.". 
 %% -----------------------------------------------------------------------
@@ -41,7 +52,7 @@ socket_connection(Node, Stream):-
 
 %% -----------------------------------------------------------------------
 :- pred socket_disconnection/0 
-	# "Closes the sockets to disconnect from the java process.".
+	# "It closes the sockets to disconnect from the java process.".
 %% -----------------------------------------------------------------------
 
 socket_disconnection :-
@@ -52,7 +63,7 @@ socket_disconnection :-
 
 %% -----------------------------------------------------------------------
 :- pred java_client(+address)
-	# "Opens a connection at an address, and asserts the java_stream
+	# "Opens a connection at an address, and asserts the @tt{java_stream}
 	  corresponding fact.".
 %% -----------------------------------------------------------------------
 
@@ -63,7 +74,7 @@ java_client(Address) :-
 %% -----------------------------------------------------------------------
 :- pred open_client(+address, -stream, -stream)
 	:: term * stream * stream
-        # "Given an address (Host:Port format), creates and synchronizes
+        # "Given an address (@tt{Host:Port} format), creates and synchronizes
 	  the sockets to the java process.".
 %% -----------------------------------------------------------------------
 
@@ -82,10 +93,11 @@ open_event_client(Host, Port, EventStream) :-
         java_fast_read0(EventStream, event).
 
 %% -----------------------------------------------------------------------
-:- pred java_fast_write(+type, +term)
-	:: atom * term
-        # "writes on the given stream type the term received as second
-	  argument.".
+:- pred java_fast_write(+type, +term) :: atom * term # " It writes on the given
+	stream type the term received as second argument. This is the basic
+	predicate used to send data to the Java side. The first argument
+	reflects the socket type: event or data. The second argument is the
+	term to be sent to the Java side.".
 %% -----------------------------------------------------------------------
 java_fast_write(data,T) :-
         current_fact(java_stream(DataStream,_,_)),
@@ -109,10 +121,12 @@ java_fast_write0(Stream,T) :-
         ).
 
 %% -----------------------------------------------------------------------
-:- pred java_fast_write(+type, -term)
-	:: atom * term
-        # "reads from the given stream type one term and unifies it with
-	  the term received as second argument.".
+:- pred java_fast_read(+type, -term) :: atom * term # "It reads from the
+	given stream type one term and unifies it with the term received as
+	second argument. This is the basic predicate used to receive data
+	from the Java side. The first argument reflects the socket type:
+	event or data. The second argument is unified with the data
+	received from the socket.".
 %% -----------------------------------------------------------------------
 
 java_fast_read(data, T) :-
@@ -135,3 +149,14 @@ java_fast_read0(Stream,T) :-
         fail
         ).
 
+
+%%------------------------------------------------------------------------
+%% VERSION CONTROL
+%%------------------------------------------------------------------------
+ 
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+49,2000/02/08,16:35*38+'CET'), "Predicate
+   documentation.  (Jesus Correas Fernandez)").
+
+%%------------------------------------------------------------------------

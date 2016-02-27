@@ -1,37 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Term input</TITLE>
+<TITLE>The Ciao Prolog System               - iso_misc (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, <A HREF="ciao_42.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, <A HREF="ciao_42.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC159" HREF="ciao_toc.html#TOC159">Term input</A></H1>
+<H1><A NAME="SEC205" HREF="ciao_toc.html#TOC205">iso_misc (library)</A></H1>
 <P>
-<A NAME="IDX1928"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<A NAME="IDX2360"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.8#10 (1998/11/24, 17:52:5 MET)
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 
 <UL>
-<LI><A HREF="ciao_41.html#SEC160">Usage and interface (read)</A>
-<LI><A HREF="ciao_41.html#SEC161">Documentation on exports (read)</A>
+<LI><A HREF="ciao_41.html#SEC206">Usage and interface (iso_misc)</A>
+<LI><A HREF="ciao_41.html#SEC207">Documentation on exports (iso_misc)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC160" HREF="ciao_toc.html#TOC160">Usage and interface (<CODE>read</CODE>)</A></H2>
+<H2><A NAME="SEC206" HREF="ciao_toc.html#TOC206">Usage and interface (<CODE>iso_misc</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +35,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(read)).</CODE>
+<CODE>:- use_module(library(iso_misc)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,8 +44,16 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1929"></A>
-<CODE>read/2</CODE>.
+<A NAME="IDX2361"></A>
+<CODE>\=/2</CODE>, 
+<A NAME="IDX2362"></A>
+<CODE>once/1</CODE>, 
+<A NAME="IDX2363"></A>
+<CODE>compound/1</CODE>, 
+<A NAME="IDX2364"></A>
+<CODE>sub_atom/5</CODE>, 
+<A NAME="IDX2365"></A>
+<CODE>unify_with_occurs_check/2</CODE>.
 
 </UL>
 
@@ -60,14 +64,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, 
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX1930"></A>
-<CODE>tokenize</CODE>, 
-<A NAME="IDX1931"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX1932"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX1933"></A>
-<CODE>assertions/doc_props</CODE>.
+<A NAME="IDX2366"></A>
+<CODE>between</CODE>.
 
 </UL>
 
@@ -77,53 +75,13 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC161" HREF="ciao_toc.html#TOC161">Documentation on exports (<CODE>read</CODE>)</A></H2>
+<H2><A NAME="SEC207" HREF="ciao_toc.html#TOC207">Documentation on exports (<CODE>iso_misc</CODE>)</A></H2>
 <P>
-<A NAME="IDX1934"></A>
-<A NAME="IDX1935"></A>
+<A NAME="IDX2367"></A>
+<A NAME="IDX2368"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read/1:</B>
-<DD><A NAME="IDX1936"></A>
-
-
-<P>
-<CODE>read(Term)</CODE>
-
-
-<P>
-Like <CODE>read(Stream,Term)</CODE> with <CODE>Stream</CODE> associated to the current standard input.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1937"></A>
-<A NAME="IDX1938"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>read/2:</B>
-<DD><A NAME="IDX1939"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>read(+Stream,?(Term))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The next term, delimited by a full-stop (i.e., a <CODE>.</CODE> followed by either a space or a control character), is read from <CODE>Stream</CODE> and is unified with <CODE>Term</CODE>. The syntax of the term must agree with current operator declarations. If the end of <CODE>Stream</CODE> has been reached, <CODE>Term</CODE> is unified with the term <CODE>end_of_file</CODE>. Further calls to <CODE>read/2</CODE> for the same stream will then cause an error, unless the stream is connected to the terminal (in which case a prompt is opened on the terminal).
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>read(+Stream,?(Term))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1940"></A>
-<A NAME="IDX1941"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>read_term/2:</B>
-<DD><A NAME="IDX1942"></A>
+<DT><span class="define">PREDICATE:</span> <B>\=/2:</B>
+<DD><A NAME="IDX2369"></A>
 
 
 <P>
@@ -133,11 +91,29 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1943"></A>
-<A NAME="IDX1944"></A>
+<A NAME="IDX2370"></A>
+<A NAME="IDX2371"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_term/3:</B>
-<DD><A NAME="IDX1945"></A>
+<DT><span class="define">PREDICATE:</span> <B>once/1:</B>
+<DD><A NAME="IDX2372"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>once(goal)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2373"></A>
+<A NAME="IDX2374"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>compound/1:</B>
+<DD><A NAME="IDX2375"></A>
 
 
 <P>
@@ -147,11 +123,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1946"></A>
-<A NAME="IDX1947"></A>
+<A NAME="IDX2376"></A>
+<A NAME="IDX2377"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_top_level/3:</B>
-<DD><A NAME="IDX1948"></A>
+<DT><span class="define">PREDICATE:</span> <B>sub_atom/5:</B>
+<DD><A NAME="IDX2378"></A>
 
 
 <P>
@@ -161,11 +137,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1949"></A>
-<A NAME="IDX1950"></A>
+<A NAME="IDX2379"></A>
+<A NAME="IDX2380"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>second_prompt/2:</B>
-<DD><A NAME="IDX1951"></A>
+<DT><span class="define">PREDICATE:</span> <B>unify_with_occurs_check/2:</B>
+<DD><A NAME="IDX2381"></A>
 
 
 <P>
@@ -175,6 +151,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, <A HREF="ciao_42.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_40.html">previous</A>, <A HREF="ciao_42.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

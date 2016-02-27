@@ -98,14 +98,20 @@ typedef enum {DYNAMIC, CONC_OPEN, CONC_CLOSED} Behavior;
 struct int_info {
   volatile Behavior  behavior_on_failure;/* behavior if no clauses match. */
 
-  LOCK clause_lock_l;
+
+#if defined(CONDITIONAL_VARS)
+  CONDITION clause_insertion_cond;
+#else
+  /*  SLOCK clause_insertion_cond;            */
+  CONDITION clause_insertion_cond;
+#endif
 
   InstanceHandle *x2_pending_on_instance;     /* Used when pred. is empty */
   InstanceHandle *x5_pending_on_instance;
 
-  struct instance *first;
-  struct instance *varcase;
-  struct instance *lstcase;
+  struct instance  *first  ;
+  struct instance  *varcase;
+  struct instance  *lstcase;
   struct sw_on_key *indexer;
 };
 
@@ -113,12 +119,10 @@ struct und_info {
 	int unused;
 	};
 
-typedef BOOL (*CInfo)();
+typedef BOOL   (*CInfo)();
 typedef TAGGED (*TInfo)();
 
-
                                 /* Streams: a doubly linked circular list */
-
 struct stream_node {
   TAGGED label;
   struct stream_node *backward;
@@ -145,9 +149,10 @@ struct atom {
   unsigned int index:29;
                                /* support for locking on atom names. MCL. */
 #if defined(THREADS)                    /* Do not waste space otherwise */
-  LOCK atom_lock_l;   /* Storage in separate area at object time creation */
+  LOCK atom_lock_l;                      /* May be held for a long time */
 #if defined(GENERAL_LOCKS)
   volatile int atom_lock_counter;               /* For general semaphores */
+  SLOCK counter_lock;                            /* Held for a short time */
 #endif
 #endif
   unsigned int atom_len;

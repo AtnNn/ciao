@@ -1,2 +1,3 @@
 
-int wam(Argdecl, wrb_state_p worker);
+int wam(Argdecl, goal_descriptor_p);
+

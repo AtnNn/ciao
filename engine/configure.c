@@ -248,7 +248,7 @@ void generate_defines(cflags)
 }
 
 
-/* SunOs does not usually include strsep  */
+/* SunOs does not include strsep  */
 #if defined(SunOS4) || defined(Solaris) || defined(IRIX)
 /*      $NetBSD: strsep.c,v 1.8 1998/10/13 20:32:09 kleink Exp $        */
 /*-

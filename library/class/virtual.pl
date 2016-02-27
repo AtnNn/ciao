@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% RUN-TIME SUPPORT FOR VIRTUAL METHOD CALLING
 %%
@@ -8,11 +8,11 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 %% WARNING:
-%%   Those predicates are used by O'CIAO class expansion.
+%%   Those predicates are used by O'Ciao class expansion.
 %%   Dont call directly !!!!
 %%------------------------------------------------------------------------
 

@@ -3,6 +3,7 @@
 #include "predtyp.h"
 #include "profile_defs.h"
 #include "timing_defs.h"
+#include "alloc_defs.h"
 
 #include <stdlib.h>
 #include <math.h>
@@ -91,8 +92,9 @@ void dump_profile(void)
            GetString(d->printname),
            d->arity);
   }
-  checkdealloc(pred_table);
+  checkdealloc((TAGGED *)pred_table, realsize*sizeof(struct definition *));
 }
+
 
 static int compare_times(arg1, arg2)
      const void *arg1, *arg2;

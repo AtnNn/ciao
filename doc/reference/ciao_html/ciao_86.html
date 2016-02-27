@@ -1,113 +1,77 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pure Prolog package</TITLE>
+<TITLE>The Ciao Prolog System               - PART VII - Ciao Prolog extensions</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_85.html">previous</A>, <A HREF="ciao_87.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_85.html">previous</A>, <A HREF="ciao_87.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC306" HREF="ciao_toc.html#TOC306">Pure Prolog package</A></H1>
-<P>
-<A NAME="IDX3487"></A>
-
+<H1><A NAME="SEC352" HREF="ciao_toc.html#TOC352">PART VII - Ciao Prolog extensions</A></H1>
 
 <P>
-This library package allows the use of 
-<A NAME="IDX3488"></A>
-<A NAME="IDX3489"></A>
-<EM>pure Prolog</EM> in a Ciao module/program. It is based on the fact that if an 
-<A NAME="IDX3490"></A>
-<A NAME="IDX3491"></A>
-<EM>engine module</EM> is imported explicitly then all of them have to be imported explicitly. The engine modules are: 
+The libraries documented in this part extend the Ciao language in several different ways. The extensions include: 
 
 <UL>
-<LI><CODE>engine(arithmetic)</CODE>
+<LI>
 
-section <A HREF="ciao_22.html#SEC98">Arithmetic</A>. 
-<LI><CODE>engine(atomic_basic)</CODE>
+<A NAME="IDX4032"></A>
+pure Prolog programming (well, this can be viewed more as a restriction than an extension); 
+<LI>
 
-section <A HREF="ciao_21.html#SEC95">Basic predicates handling names of constants</A>. 
-<LI><CODE>engine(attributes)</CODE>
+<A NAME="IDX4033"></A>
+feature terms or 
+<A NAME="IDX4034"></A>
+<A NAME="IDX4035"></A>
+<EM>records</EM> (i.e., structures with names for each field); 
+<LI>
 
-section <A HREF="ciao_31.html#SEC130">Attributed variables</A>. 
-<LI><CODE>engine(basic_props)</CODE>
+<A NAME="IDX4036"></A>
+parallel programming (e.g., &#38;-Prolog style); 
+<LI>
 
-section <A HREF="ciao_17.html#SEC83">Basic data types and properties</A>. 
-<LI><CODE>engine(basiccontrol)</CODE>
+<A NAME="IDX4037"></A>
+functional syntax; 
+<LI>
 
-section <A HREF="ciao_15.html#SEC76">Control constructs/predicates</A>. 
-<LI><CODE>engine(concurrency)</CODE>
+<A NAME="IDX4038"></A>
+higher-order library; 
+<LI>
 
-section <A HREF="ciao_28.html#SEC119">Concurrency/multithreading primitives</A>. 
-<LI><CODE>engine(data_facts)</CODE>
+<A NAME="IDX4039"></A>
+global variables; 
+<LI><CODE>setarg</CODE> and <CODE>undo</CODE>;
 
-section <A HREF="ciao_26.html#SEC111">Fast/concurrent update of facts</A>. 
-<LI><CODE>engine(exceptions)</CODE>
+<LI>
 
-section <A HREF="ciao_25.html#SEC108">Exception handling</A>. 
-<LI><CODE>engine(io_aux)</CODE>
+<A NAME="IDX4040"></A>
+delaying predicate execution; 
+<LI>
 
-section <A HREF="ciao_30.html#SEC126">Message printing primitives</A>. 
-<LI><CODE>engine(io_basic)</CODE>
+<A NAME="IDX4041"></A>
+active modules; 
+<LI>
 
-section <A HREF="ciao_23.html#SEC101">Basic input/output</A>. 
-<LI><CODE>engine(prolog_flags)</CODE>
+<A NAME="IDX4042"></A>
+breadth-first execution; 
+<LI>
 
-section <A HREF="ciao_27.html#SEC115">Changing system behaviour and various flags</A>. 
-<LI><CODE>engine(streams_basic)</CODE>
+<A NAME="IDX4043"></A>
+iterative deepening-based execution; 
+<LI>
 
-section <A HREF="ciao_24.html#SEC104">Basic file/stream handling</A>. 
-<LI><CODE>engine(system_info)</CODE>
+<A NAME="IDX4044"></A>
+constraint logic programming; 
+<LI>
 
-section <A HREF="ciao_32.html#SEC133">Gathering some basic internal info</A>. 
-<LI><CODE>engine(term_basic)</CODE>
-
-section <A HREF="ciao_19.html#SEC89">Basic term manipulation</A>. 
-<LI><CODE>engine(term_compare)</CODE>
-
-section <A HREF="ciao_20.html#SEC92">Comparing terms</A>. 
-<LI><CODE>engine(term_typing)</CODE>
-
-section <A HREF="ciao_18.html#SEC86">Extra-logical properties for typing</A>. 
+<A NAME="IDX4045"></A>
+object oriented programming. 
 </UL>
-
-<P>
-Note that if any of these modules is explicitely imported in a program then the language defaults to Pure Prolog, plus the functionality added by the modules explicitely imported. 
-
-
-<P>
-It is recommended that if you explicitely import an engine module you also use this package, which will guarantee that the predicate <CODE>true/0</CODE> is defined (note that this is the only Ciao builtin which cannot be redefined). 
-
-
-
-<UL>
-<LI><A HREF="ciao_86.html#SEC307">Usage and interface (pure)</A>
-</UL>
-
-
-
-<H2><A NAME="SEC307" HREF="ciao_toc.html#TOC307">Usage and interface (<CODE>pure</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_package(pure).</CODE>
-
-or
-
-<CODE>:- module(...,...,[pure]).</CODE>
-</UL>
-
-</div class="cartouche">
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_85.html">previous</A>, <A HREF="ciao_87.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_85.html">previous</A>, <A HREF="ciao_87.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

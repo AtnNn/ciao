@@ -11,9 +11,9 @@
 /* # define REGISTER register */
 
 #include "configure.h"
+#include "locks.h"
 #include "alloc.h"
 #include "registers.h"
 #include "termdefs.h"
 #include "access.h"
-#include "locks.h"
 #include "objareas.h"

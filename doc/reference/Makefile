@@ -20,7 +20,10 @@
 # 
 # gmake view 		calls xdvi 
 # 			(also, gmake dviview, gmake svgaview, gmake xgaview)
-# gmake psview 		makes ps, calls ghostview
+# gmake psview 		calls ghostview
+# gmake pdfview		calls ghostview
+# gmake infoview	calls info
+# gmake htmlview	calls netscape
 #----------------------------------------------------------------------------
 # The trickiness (playing with functions for paths, basenames, etc.) 
 # ensures that dependencies are maintained even though the sources and 
@@ -47,11 +50,6 @@ TEX=tex
 # Not needed if texi2dvi is installed
 TEXINDEX=texindex
 # ----------------------------------------------------------------------------
-# If set to yes the texinfo.tex file that comes with the lpdoc distribution 
-# will be used. Otehrwise, the system texinfo file will be used. 
-# 
-LIBTEXINFO=yes
-# ----------------------------------------------------------------------------
 # Define this to be the command that builds .bbl files from .bib bibliography
 # files in your system
 # 
@@ -61,6 +59,11 @@ BIBTEX=bibtex
 # your system
 # 
 DVIPS=dvips
+# ----------------------------------------------------------------------------
+# If set to yes the texinfo.tex file that comes with the lpdoc distribution 
+# will be used. Otherwise, the system texinfo file will be used. 
+# 
+LIBTEXINFO=yes
 # ----------------------------------------------------------------------------
 # Define this to be the command that converts tex to pdf in your system
 # 
@@ -129,11 +132,12 @@ RTFTOHLP= hc31
 #           You should probably not change anything below this 
 #----------------------------------------------------------------------------
 # Default values in case not defined in SETTINGS (e.g., in older versions)
-DATAMODE = 664 # Permissions for automatically generated data files
-EXECMODE = 775 # Permissions for automatically generated exec files and dirs
-MAINOPTS =     # Options for main file
-COMPOPTS =     # Options for component files
-STARTPAGE=1    # Starting page
+DATAMODE = 664       # Permissions for automatically generated data files
+EXECMODE = 775       # Perms for automatically generated exec files and dirs
+MAINOPTS =           # Options for main file
+COMPOPTS =           # Options for component files
+STARTPAGE=1          # Starting page
+PAPERTYPE=afourpaper # Paper type (output format)
 #----------------------------------------------------------------------------
 include SETTINGS
 #----------------------------------------------------------------------------
@@ -179,6 +183,7 @@ $(BASEMAIN).texic texic: $(MAIN) $(COMPTEXI) $(SETTINGS)
 	@$(ECHO) "*** --------------------------------------------------------"
 	@$(LPDOC) $(MAINOPTS) -l $(FILEPATHS) -s $(SYSTEMPATHS) \
 	           -i $(INDICES) -u $(PATHSFILE) -p $(STARTPAGE) \
+	           -t $(PAPERTYPE) \
 	           -main $(notdir $<) $(COMPTEXI)
 	-@chmod $(DATAMODE) $(BASEMAIN).texic
 	-@chmod $(DATAMODE) $(BASEMAIN).refs
@@ -836,7 +841,7 @@ clean: texclean
 	@$(ECHO) "*** --------------------------------------------------------"
 	-@rm -f $(BASEMAIN)refs.el
 	-@rm -f *~
-	-@rm -f *.asr *.itf 
+	-@rm -f *.asr *.itf *.po
 
 # Eliminates all intermediate file >and the .texic<, but leaves targets (docs)
 distclean: clean
@@ -895,6 +900,12 @@ xgaview: # $(BASEMAIN).dvi
 
 psview: # $(BASEMAIN).ps
 	ghostview -magstep -1 -portrait -geometry +349+10 $(BASEMAIN).ps &
+
+pdfview: # $(BASEMAIN).pdf
+	ghostview -magstep -1 -portrait -geometry +349+10 $(BASEMAIN).pdf &
+
+infoview: # $(BASEMAIN).info
+	xterm -fn 9x15 -e info $(BASEMAIN).info &
 
 htmlview: # $(BASEMAIN).html
 	netscape -remote openURL\(file:`pwd`/$(BASEMAIN)_html/$(BASEMAIN).html\) &

@@ -27,6 +27,9 @@ headers:
 	/bin/rm -f  $(HEADERS)
 	echo \#include \"$(SRC)/bin/$(CIAOARCH)/datadefs.h\" > $(HEADERS)
 	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support.h\" >> $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support_defs.h\" >> $(HEADERS)
+	echo \#include \"$(SRC)/bin/$(CIAOARCH)/stacks_defs.h\" >> $(HEADERS)
+	chmod $(DATAMODE) $(HEADERS)
 
 clean:
 	/bin/rm -f $(OBJNAME)

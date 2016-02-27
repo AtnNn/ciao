@@ -1,203 +1,158 @@
-:- module(srcdbg, [srcdbg_expand/4], [assertions]).
+:- module(srcdbg, [srcdbg_expand/5], [assertions]).
 
 :- use_module(library('compiler/c_itf'), [location/3]).
 :- use_module(library(lists),[delete/3,length/2]).
 :- use_module(library(sets),[insert/3]).
 :- use_module(library(write),[printable_char/1]).
 
-:- pred srcdbg_expand/4 # "This is the expansion needed to perform
+:- pred srcdbg_expand/5 # "This is the expansion needed to perform
    source-level debugging.".
 
-srcdbg_expand(Old_H,Old_B,Old_H,New_B) :-
-	location(Src,L0,L1),
-	search_head(Old_H,Xs),
-	srcdbg_expand_(Old_B,New_B,Src,L0,L1,Xs,_).
+srcdbg_expand(Old_H, Old_B, Old_H, New_B, Dict) :-
+	location(Src, L0, L1),
+	search_head(Old_H, Xs, Dict),
+	srcdbg_expand_(Old_B, New_B, Src, L0, L1, Xs, _, Dict).
 
-srcdbg_expand_(','(A,B),','(NewA,NewB),Src,L0,L1,Xs,Zs):- 
+srcdbg_expand_(','(A,B), ','(NewA, NewB), Src, L0, L1, Xs, Zs, Dict):- 
 	!,
-	srcdbg_expand_(A,NewA,Src,L0,L1,Xs,Ys),
-	srcdbg_expand_(B,NewB,Src,L0,L1,Ys,Zs).
-srcdbg_expand_('->'(A,B),'->'(NewA,NewB),Src,L0,L1,Xs,Zs):- 
+	srcdbg_expand_(A, NewA, Src, L0, L1, Xs, Ys, Dict),
+	srcdbg_expand_(B, NewB, Src, L0, L1, Ys, Zs, Dict).
+srcdbg_expand_('->'(A,B), '->'(NewA, NewB), Src, L0, L1, Xs, Zs, Dict):- 
 	!,
-	srcdbg_expand_(A,NewA,Src,L0,L1,Xs,Ys),
-	srcdbg_expand_(B,NewB,Src,L0,L1,Ys,Zs).
-srcdbg_expand_(';'(A,B),';'(NewA,NewB),Src,L0,L1,Xs,Zs):- 
+	srcdbg_expand_(A, NewA, Src, L0, L1, Xs, Ys, Dict),
+	add_pred_to_list('->',Ys,Ks),
+	srcdbg_expand_(B, NewB, Src, L0, L1, Ks, Zs, Dict).
+srcdbg_expand_(';'(A,B), ';'(NewA, NewB), Src, L0, L1, Xs, Zs, Dict):- 
 	!,
-	srcdbg_expand_(A,NewA,Src,L0,L1,Xs,Ys),
-	srcdbg_expand_(B,NewB,Src,L0,L1,Ys,Zs).
-srcdbg_expand_(if(A,B,C),if(NewA,NewB,NewC),Src,L0,L1,Xs,Ks):- 
+	srcdbg_expand_(A, NewA, Src, L0, L1, Xs, Ys, Dict),
+	srcdbg_expand_(B, NewB, Src, L0, L1, Ys, Zs, Dict).
+srcdbg_expand_(if(A, B, C), if(NewA, NewB, NewC), Src, L0, L1, Xs, Ks, Dict):- 
 	!,
-	srcdbg_expand_(A,NewA,Src,L0,L1,Xs,Ys),
-	srcdbg_expand_(B,NewB,Src,L0,L1,Ys,Zs),
-	srcdbg_expand_(C,NewC,Src,L0,L1,Zs,Ks).
-srcdbg_expand_(\+(A),\+(NewA),Src,L0,L1,Xs,Ys):- 
+	add_pred_to_list('if',Xs,Ts),
+	srcdbg_expand_(A, NewA, Src, L0, L1, Ts, Ys, Dict),
+	srcdbg_expand_(B, NewB, Src, L0, L1, Ys, Zs, Dict),
+	srcdbg_expand_(C, NewC, Src, L0, L1, Zs, Ks, Dict).
+srcdbg_expand_(\+(A), \+(NewA), Src ,L0, L1, Xs, Ys, Dict):- 
 	!,
-	srcdbg_expand_(A,NewA,Src,L0,L1,Xs,Ys).
-srcdbg_expand_(!,!,_,_,_,Xs,Xs):- !. 
-srcdbg_expand_(true,true,_,_,_,Xs,Xs):- !. 
-srcdbg_expand_(Goal,srcdbg_spy(Goal,Pred,Src,L0,L1,Number),Src,L0,L1,Xs,Zs):- 
+	srcdbg_expand_(A, NewA, Src, L0, L1, Xs, Ys, Dict).
+srcdbg_expand_(!, !, _, _, _, Xs, Xs, _):- !. 
+srcdbg_expand_(true, true, _, _, _, Xs, Xs, _):- !. 
+srcdbg_expand_(Goal, srcdbg_spy(Goal, Pred, Src, L0, L1, Number), 
+	       Src, L0, L1, Xs, Zs, Dict):- 
 	!,
-	functor(Goal,Pred,Arity),
-	add_pred_to_list(Pred,Xs,Ks),
-	get_pred_number(Pred,Ks,Number),
-	search_args(1,Ks,Goal,Arity,Zs).
+	functor(Goal, Pred, Arity),
+	add_pred_to_list(Pred, Xs, Ks),
+	get_pred_number(Pred, Ks, Number),
+	search_args(1, Ks, Goal, Arity, Zs, Dict).
 
 %% search_head: Add pred to the list and all arguments
-search_head(Goal,Xs):-
-	functor(Goal,Pred,Arity),
-	search_args(1,[pred(Pred,1)],Goal,Arity,Xs).
+search_head(Goal, Xs, Dict):-
+	functor(Goal, Pred, Arity),
+	search_args(1, [pred(Pred, 1)], Goal, Arity, Xs, Dict).
 
 %% search_args: Search the whole list of arguments. It calls 
 %% search_arg which add individual arguments to the list of strings
-search_args(_,Xs,_,0,Xs).
-search_args(Number,Xs,Goal,Number,Ys):-
+search_args(_Number, Xs, _Goal, 0, Xs, _Dict).
+search_args(Number, Xs, Goal, Number, Ys, Dict):-
 	!,
-	arg(Number,Goal,Arg),
-	search_arg(Arg,Xs,Ys).
-search_args(Number,Xs,Goal,Arity,Ys):-
-	arg(Number,Goal,Arg),
-	search_arg(Arg,Xs,Zs),
+	arg(Number, Goal, Arg),
+	search_arg(Arg, Xs, Ys, Dict).
+search_args(Number, Xs, Goal, Arity, Ys, Dict):-
+	arg(Number, Goal, Arg),
+	search_arg(Arg, Xs, Zs, Dict),
 	Next_arg is Number+1,
-	search_args(Next_arg,Zs,Goal,Arity,Ys).
-
-% % Caso base: Aridad 0
-% search_preds(_,Xs,_,0,Xs):- !.
-
-% % Last arguments of the Goal
-% search_preds(Max,Xs,Goal,Max,Ys):-
-% 	!,arg(Max,Goal,Arg),
-% 	search_arg(Arg,Xs,Ys).
-
-% % Arguments from 1 to MaxNumber-1 of the Goal
-% search_preds(Number,Xs,Goal,MaxNumber,Zs):-
-% 	Number < MaxNumber,
-% 	!,arg(Number,Goal,Arg),
-% 	search_arg(Arg,Xs,Ys),
-% 	NewNumber is Number+1,
-% 	search_preds(NewNumber,Ys,Goal,MaxNumber,Zs).
+	search_args(Next_arg, Zs, Goal, Arity, Ys, Dict).
 
 %% search_arg: Add argument to the list. Search_arg has posibility of 
 %% arguments
-
 % Variables
-search_arg(Arg,Xs,Xs):- var(Arg),!.
+search_arg(Arg, Xs, Ys, Dict):- 
+	var(Arg), !,
+        nonvar(Dict),
+ 	name_var_realname(Dict, Arg, RealName),
+ 	add_pred_to_list(RealName, Xs, Ys).
+
+% Lists
+search_arg(.(X,Y), Ys, Zs, Dict):-
+	!, 
+	search_arg(X, Ys, Ks, Dict),
+	search_arg(Y, Ks, Zs, Dict).
 % Strings
-search_arg([X|Xs],Ys,Zs):- 
+search_arg([X|Xs], Ys, Zs, _Dict):- 
 	is_string([X|Xs]), !,
-	atom_codes(Word,[X|Xs]),
-	add_pred_to_list(Word,Ys,Zs).
+	atom_codes(Word, [X|Xs]),
+	add_pred_to_list(Word, Ys, Zs).
 % Empty list
-search_arg([],Xs,Xs):- !.
+search_arg([], Xs, Xs, _Dict):- !.
 % Numbers
-search_arg(Arg,Xs,Xs):- number(Arg).
+search_arg(Arg, Xs, Xs, _Dict):- number(Arg).
 % Atoms
-search_arg(Arg,Xs,Ys):-
+search_arg(Arg, Xs, Ys, _):-
 	nonvar(Arg),
 	atom(Arg),
-	add_pred_to_list(Arg,Xs,Ys).
-% Lists
-search_arg(.(X,Y),Ys,Zs):-
-	!, 
-	search_arg(X,Ys,Ks),
-	search_arg(Y,Ks,Zs).
+	add_pred_to_list(Arg, Xs, Ys).
 % Preds
-search_arg(Arg,Xs,Ys):-
-	functor(Arg,Pred,Arity),
+search_arg(Arg, Xs, Ys, Dict):-
+	functor(Arg, Pred, Arity),
 	Arity > 0,
-	add_pred_to_list(Pred,Xs,Zs),
-	search_args(1,Zs,Arg,Arity,Ys).
+	add_pred_to_list(Pred, Xs, Zs),
+	search_args(1, Zs, Arg, Arity, Ys, Dict).
 
-% %% SEARCH_ARG
-% % Variables
-% search_arg(Arg,Xs,Xs):-
-% 	var(Arg),!.
+%% name_var_realname
+name_var_realname([], _Var, '_'):- !.
+name_var_realname([Name=Var|_Rest], TheVar, Name):- 
+	TheVar==Var,!.
+name_var_realname([_|Xs], TheVar, Name):- 
+	name_var_realname(Xs, TheVar, Name).
 
-% % Strings
-% search_arg([X|Xs],Ys,Zs):-
-% 	is_string([X|Xs]),!,
-% 	atom_codes(Word,[X|Xs]),
-% 	add_pred_to_body(Word,Ys,Zs,_).
-	
-% % Empty list
-% search_arg([],Xs,Xs).
-
-% % Atoms
-% search_arg(Arg,Xs,Ys):-
-% 	nonvar(Arg),
-% 	atm(Arg),!,
-% 	add_pred_to_body(Arg,Xs,Ys,_).
-
-% % Numbers
-% search_arg(Arg,Xs,Xs):-
-% 	nonvar(Arg),
-% 	number(Arg),!.
-
-% % Preds
-% search_arg(Arg,Xs,Zs):-
-% 	nonvar(Arg),
-% 	functor(Arg,Pred,Arity),
-% 	Arity > 0,!,
-% 	search_arg(Pred,Xs,Ys),
-% 	search_preds(1,Ys,Arg,Arity,Zs).
-
-
-
-% add_pred_to_body  
-% add_pred_to_body(Pred,Xs,Zs,R):-
-% 	find_pred_suffix(Pred,Xs,Number),
-% 	R is Number + 1,
-% 	(member(pred(Pred,OldNumber),Xs) ->
-% 	    delete(Xs,pred(Pred,OldNumber),Ys),
-% 	    NewNumber is OldNumber + 1,
-% 	    insert(Ys,pred(Pred,NewNumber),Zs)
-% 	; NewNumber is Number+1,
-% 	  insert(Xs,pred(Pred,NewNumber),Zs)).
-
-add_pred_to_list(Pred,Xs,Ys):-
-	(member(pred(Pred,OldNumber),Xs) ->
-	    delete(Xs,pred(Pred,OldNumber),Zs),
+%% Add_pred_to_list
+add_pred_to_list(Pred, Xs, Ys):-
+	(member(pred(Pred, OldNumber), Xs) ->
+	    delete(Xs, pred(Pred, OldNumber), Zs),
 	    NewNumber is OldNumber+1,
-	    insert(Zs,pred(Pred,NewNumber),Ys)
+	    insert(Zs, pred(Pred, NewNumber), Ys)
 	;
-	    insert(Xs,pred(Pred,1),Ys)
+	    insert(Xs, pred(Pred,1), Ys)
 	).
 
-get_pred_number(_,[],0).
-get_pred_number(Word,[pred(Pred,Number)|Xs],Occur_Number):-
-	count_suffix(Word,Pred,Suffix_Number),
+% Used when searching in emacs for subexpressions. Not the whole word
+get_pred_number(_, [], 0).
+get_pred_number(Word, [pred(Pred, Number)|Xs], Occur_Number):-
+	count_suffix(Word, Pred, Suffix_Number),
 	Count_Number is Number * Suffix_Number,
-	get_pred_number(Word,Xs,Rest_Number),
+	get_pred_number(Word, Xs, Rest_Number),
 	Occur_Number is Count_Number + Rest_Number.
 	
-% %find_pred_suffix
-% find_pred_suffix(_,[],0).
-
-% find_pred_suffix(Word,[pred(Pred,OldNumber)|Xs],Number):-
-%    	count_suffix(Word,Pred,NumberPred),
-% 	NewNumber is NumberPred * OldNumber,
-% 	find_pred_suffix(Word,Xs,NumberFind),
-% 	Number is NewNumber + NumberFind.  
-
-
 %count_suffix
-count_suffix(Word,Pred,Number):-
-	atom_codes(Word,WordList),
-	atom_codes(Pred,PredList),
-	find_sublist(WordList,PredList,Number,WordList).
+count_suffix(Word, Pred, Number):-
+	atom_codes(Word, WordList),
+	atom_codes(Pred, PredList),
+	find_sublist(WordList, PredList, Number, WordList).
 
-find_sublist(_,[],0,_):-!.
-find_sublist(WordList,WordList,1,_):-!.
-find_sublist(WordList,PredList,0,_):-
-	length(WordList,WordNumber),
-	length(PredList,PredNumber),
+% find_sublist/4
+% Arguments: 
+%  1.- Word to search
+%  2.- List where search for the word.
+%  3.- Number of times the word was found.
+%  4.- The whole word for recursive search.
+find_sublist(_, [], 0, _):-!.
+find_sublist(WordList, PredList, 0, _):-
+	length(WordList, WordNumber),
+	length(PredList, PredNumber),
 	WordNumber > PredNumber,!.
-find_sublist([],Ys,Number,Word):-
-	find_sublist(Word,Ys,NewNumber,Word),!,
+find_sublist([], Ys, Number, Word):-
+	find_sublist(Word, Ys, NewNumber, Word),!,
 	Number is NewNumber + 1.
-find_sublist([X|Xs],[X|Ys],Number,Word):-
-	find_sublist(Xs,Ys,Number,Word),!.
+find_sublist([X|Xs], [X|Ys], NewNumber, Word):-
+	find_sublist_(Xs, Ys, Number, Rest),!,
+	find_sublist(Word, Rest, Rest_Number, Word),
+	NewNumber is Number+Rest_Number.
 find_sublist([X|Xs],[_|Ys],Number,Word):-
-	find_sublist([X|Xs],Ys,Number,Word),!.
+	find_sublist([X|Xs], Ys, Number, Word),!.
+
+find_sublist_([], Ys, 1, Ys):-!.
+find_sublist_([X|Xs], [X|Ys], Number, Zs):-
+	find_sublist_(Xs, Ys, Number, Zs),!.
 
 %is string
 is_string([X]):-printable_char(X).
@@ -213,6 +168,18 @@ is_string([X|Xs]):-
 %% These version comment(s) can be moved elsewhere in the file.
 %% Subsequent version comments will be placed above the last one
 %% inserted.
+
+:- comment(version(1*5+61,2000/03/09,09:45*14+'CET'), "Fixed a bug, when
+   searching for > or if did not consider the conditional if and the ->
+   predicate. Fixed just adding -> and if to the list of predicates found.
+   (Manuel Carlos Rodriguez)").
+
+:- comment(version(1*5+48,2000/02/08,13:01*04+'CET'), "Fix a bug when
+   counting prefix in a word.  (Manuel Carlos Rodriguez)").
+
+:- comment(version(1*5+42,2000/02/04,14:02*36+'CET'), "Fixed a bug when
+   source debugging a list as [X|_]. When expanding the source it is
+   interpreted as a string.  (Manuel Carlos Rodriguez)").
 
 :- comment(version(1*5+24,1999/12/28,13:18*53+'CET'), "Fixed bug in number
    of pred to search in emacs (Manuel Carlos Rodriguez)").

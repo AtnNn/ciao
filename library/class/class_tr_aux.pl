@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% AUXILIARY FILE FOR
 %% SOURCE-TO-SOURCE EXPANSION FOR CLASS DECLARATION
@@ -12,7 +12,7 @@
 %% 
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 %% This file is used by class_tr.pl in order to expand method clauses.

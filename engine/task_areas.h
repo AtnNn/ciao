@@ -1,13 +1,12 @@
 /* (C) 1997 The CLIP Group */
 
-/* Workers can be: */
-
+/* States a worker can be in */
 typedef enum {
   IDLE,      /* The memory areas are available for being used by a thread */
   WORKING,                 /* The memory areas are being used by a thread */
-  WAITING                              /* Frozen -- maybe on backtracking */
+  PENDING_SOLS,                /* Frozen --  backtracking can be requested */
+  FAILED	             /* Frozen -- but no more solutions available */
 } Thread_State;
-
 
 
 /* Save wam() local variables, to reenter after leaving it blocked (e.g., if
@@ -30,50 +29,36 @@ struct wam_private {
 #define HAS_CONTINUATION  2
 #define KEEP_STACKS       4
 #define BACKTRACKING      8
+#define CREATE_THREAD    16
+#define CREATE_WAM       32
+#define NEEDS_FREEING    64
 
-/* This is the state of the worker; they are held together in a linked list.
-   A worker is free iff its state is IDLE.  The wam_private_state is only
-   meaningful when it is in a WAITING state.  The rest of the fields just
-   reflect the corresponding values in the worker_entry of the goal. */
+/* The goal descriptors are held together in a doubly linked circular
+   list; there is a pointer to the list, which points always to a free
+   goal descriptor (if there is any in the list).  All the free goal
+   descriptors can be found following the forward link of this initial
+   pointer.  */
 
-struct wrb_state_str {
-  struct worker *worker_registers;                   /* The WAM registers */
-  THREAD_T thread_id;                               /* Thread Id (cached) */
-  int      goal_id;                            /* Entry in array (cached) */
-  int      action;                                 /* What to do (cached) */
-  Thread_State state;                                  /* What I am up to */
+struct goal_str {
+/* Pointer to the WAM registers.  
+   If NULL, no WAM has been associated to the goal.  */
+  unsigned int goal_number;
+  struct worker *worker_registers;
   struct wam_private wam_private_state;
-  struct wrb_state_str *next;
+  /* This defines the state of the WAM (if any) associated to the goal */
+  Thread_State state;      
+  /* If any thread is working on the WAM, these are the points to interact
+     with it */
+  THREAD_ID thread_id;
+  THREAD_T  thread_handle;	/* Different from thread_id in Win32 */
+  int      action;		/* Defines the behavior of the goal */
+  TAGGED goal;			/* The pointer to the goal to execute */
+  SLOCK goal_lock_l;		/* Still to be used */
+  struct goal_str *forward, *backward;
 };
 
-typedef struct wrb_state_str wrb_state;
-typedef struct wrb_state_str *wrb_state_p;
+typedef struct goal_str  goal_descriptor;
+typedef struct goal_str *goal_descriptor_p;
 
-
-/* This is a preliminary state of a worker.  It is filled with minimal
-   information when a thread requests the creation of another thread.  Then
-   the generated thread looks for memory areas to execute, and fills in the
-   remaining area. */
-
-struct conts {
-  TAGGED goal_and_success;                                        /* goal */
-  TAGGED on_failure;                              /* Failure continuation */
-};
-
-
-/* Wether a worker entry is free or not is denoted exclusively by the
-   "worker" pointer being NULL or not */
-
-typedef struct {
-  union {
-    TAGGED goal;
-    struct conts gas;
-  } g;
-  TAGGED goal_or_goal_and_conts;                   /* Depending on action */
-  TAGGED goal;
-  THREAD_T thread_id;                  /* Filled in when launching thread */
-  int goal_id;                                  /* Id in the worker table */
-  int action;
-  BOOL create_thread;
-  wrb_state_p worker;
-} worker_entry, *worker_entry_p;
+#define TermToGoalDesc(term) (goal_descriptor_p)TermToPointer(term)
+#define GoalDescToTerm(goal) PointerToTerm(goal)

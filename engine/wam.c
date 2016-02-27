@@ -7,13 +7,13 @@ int start_of_savedump = 0;                    /* Must be the first symbol */
 #include <unistd.h>
 
 #include "compat.h"
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
 #include "instrdefs.h"
 #include "predtyp.h"
 #include "wam.h"
 #include "u2defs.h"
-#include "threads.h"
 #include "task_areas.h"
 
 #include "attr_defs.h"
@@ -97,7 +97,7 @@ extern struct definition                  /* Attributed variables support */
 
 int wam(Arg, worker)
      Argdecl;
-     wrb_state_p worker;
+     goal_descriptor_p worker;
 {
                          /* KERNEL OF EMULATOR. */
 
@@ -329,7 +329,12 @@ int wam(Arg, worker)
 
   /* #if defined(ATTRVARS) */
   if (OffHeaptop(H,Heap_Warn_Soft)) {
-    int wake_count = WakeCount;
+    int wake_count;
+
+    if (Stop_This_Goal(Arg)) 
+      goto exit_toplevel; 
+
+    wake_count = WakeCount;
     
     if (OffHeaptop(H+4*wake_count,Heap_Warn)) {
       SETUP_PENDING_CALL(address_true);
@@ -349,7 +354,7 @@ int wam(Arg, worker)
       } else {
         SETUP_PENDING_CALL(address_pending_unifications);
         StoreH;
-        collect_goals_from_trail(Arg,wake_count);
+        collect_pending_unifications(Arg,wake_count);
         LoadH;
       }
     }

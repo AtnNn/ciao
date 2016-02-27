@@ -21,11 +21,16 @@
 % M. Hermenegildo (herme@fi.upm.es), D. Cabeza (dcabeza@fi.upm.es) and
 % S. Varma (sacha@clip.dia.fi.upm.es)
 
-:- module(http, [fetch_url/3], ['pillow/ops',dcg,assertions]).
+/**** Be careful when changing code, to not break auto distribution generation
+ ****/
+:- module(http, [
+        fetch_url/3
+        ], ['pillow/ops',dcg,assertions]).
 
 :- use_module(library(sockets)).
 :- use_module(library(strings), [write_string/2, string/3]).
 :- use_module(library(lists), [select/3]).
+:- use_module(library(file_utils), [stream_to_string/2]).
 :- use_module(library('pillow/common')).
 
 pillow_version("1.1").
@@ -194,20 +199,7 @@ http_transaction(Host, Port, Request, Timeout, Response) :-
 	Timeout_ms is Timeout*1000,
         select_socket(_,_,Timeout_ms,[Stream],R),
         R \== [],  % Fail if timeout
-        current_input(OldIn),
-        set_input(Stream),
-        read_to_close(Response),
-        set_input(OldIn),
-        close(Stream).
-
-read_to_close(L) :-
-        get_code(C),
-        read_to_close1(C, L).
-
-read_to_close1(-1, []) :- !.
-read_to_close1(C, [C|L]) :-
-        get_code(C1),
-        read_to_close1(C1, L).
+        stream_to_string(Stream,Response).
 
 % ============================================================================
 % PROLOG BNF GRAMMAR FOR HTTP RESPONSES

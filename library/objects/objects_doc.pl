@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% DOCUMENTATION FILE ON OBJECT MANIPULATION
 %%
@@ -8,7 +8,7 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -54,6 +54,10 @@
          objects and manipulate them, as well as loading any needed class.
          ").
 
+%% Error reporting:
+
+:- include(library('objects/objects_error_doc')).
+
 %%------------------------------------------------------------------------
 
 :- comment(' use_class'/1,
@@ -95,7 +99,7 @@
          be called at program startup. Those instances may be destroyed
          manually, but it is not recommended. 
 
-         When reloading the involved class from the CIAO toplevel shell. 
+         When reloading the involved class from the Ciao toplevel shell. 
          It may destroy statically declared instances, and create them again.
 
          Statically declared instances must be called using a specifically 
@@ -139,6 +143,10 @@
 %%------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+90,2000/03/24,14:29*27+'CET'), "Error reporting
+   section has been moved to separate appendix (Angel Fernandez
+   Pineda)").
 
 :- comment(version(1*3+78,1999/10/13,18:31*08+'MEST'), "use_class may
    accept an interface-expanded source.  (Angel Fernandez Pineda)").

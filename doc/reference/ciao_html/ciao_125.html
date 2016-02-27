@@ -1,47 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
+<TITLE>The Ciao Prolog System               - Identity lists</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC446" HREF="ciao_toc.html#TOC446">Pattern (regular expression) matching</A></H1>
+<H1><A NAME="SEC498" HREF="ciao_toc.html#TOC498">Identity lists</A></H1>
 <P>
-<A NAME="IDX4808"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<A NAME="IDX5571"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#49 (1999/9/8, 21:8:9 MEST)
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-This library provides facilities for matching strings and terms against 
-<A NAME="IDX4809"></A>
-<A NAME="IDX4810"></A>
-<EM>patterns</EM> (i.e., 
-<A NAME="IDX4811"></A>
-<A NAME="IDX4812"></A>
-<EM>regular expressions</EM>).
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+
+
+<P>
+The operations in this module handle lists by performing equality checks via identity instead of unification.
 
 
 
 <UL>
-<LI><A HREF="ciao_125.html#SEC447">Usage and interface (patterns)</A>
-<LI><A HREF="ciao_125.html#SEC448">Documentation on exports (patterns)</A>
+<LI><A HREF="ciao_125.html#SEC499">Usage and interface (idlists)</A>
+<LI><A HREF="ciao_125.html#SEC500">Documentation on exports (idlists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC447" HREF="ciao_toc.html#TOC447">Usage and interface (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC499" HREF="ciao_toc.html#TOC499">Usage and interface (<CODE>idlists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,7 +43,7 @@ This library provides facilities for matching strings and terms against
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(patterns)).</CODE>
+<CODE>:- use_module(library(idlists)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -58,31 +52,22 @@ This library provides facilities for matching strings and terms against
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4813"></A>
-<CODE>match_pattern/2</CODE>, 
-<A NAME="IDX4814"></A>
-<CODE>match_pattern/3</CODE>, 
-<A NAME="IDX4815"></A>
-<CODE>case_insensitive_match/2</CODE>, 
-<A NAME="IDX4816"></A>
-<CODE>match_pattern_pred/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX4817"></A>
-<CODE>pattern/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4818"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX5572"></A>
+<CODE>member_0/2</CODE>, 
+<A NAME="IDX5573"></A>
+<CODE>memberchk/2</CODE>, 
+<A NAME="IDX5574"></A>
+<CODE>list_insert/2</CODE>, 
+<A NAME="IDX5575"></A>
+<CODE>add_after/4</CODE>, 
+<A NAME="IDX5576"></A>
+<CODE>add_before/4</CODE>, 
+<A NAME="IDX5577"></A>
+<CODE>delete/3</CODE>, 
+<A NAME="IDX5578"></A>
+<CODE>subtract/3</CODE>, 
+<A NAME="IDX5579"></A>
+<CODE>union_idlists/3</CODE>.
 
 </UL>
 
@@ -92,84 +77,13 @@ This library provides facilities for matching strings and terms against
 
 
 
-<H2><A NAME="SEC448" HREF="ciao_toc.html#TOC448">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
+<H2><A NAME="SEC500" HREF="ciao_toc.html#TOC500">Documentation on exports (<CODE>idlists</CODE>)</A></H2>
 <P>
-<A NAME="IDX4819"></A>
-<A NAME="IDX4820"></A>
+<A NAME="IDX5580"></A>
+<A NAME="IDX5581"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
-<DD><A NAME="IDX4821"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4822"></A>
-<A NAME="IDX4823"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
-<DD><A NAME="IDX4824"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String,Tail)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Pattern</CODE> is a pattern to match against.
- (<CODE>patterns:pattern/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Tail</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4825"></A>
-<A NAME="IDX4826"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
-<DD><A NAME="IDX4827"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1,Pred2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4828"></A>
-<A NAME="IDX4829"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
-<DD><A NAME="IDX4830"></A>
+<DT><span class="define">PREDICATE:</span> <B>member_0/2:</B>
+<DD><A NAME="IDX5582"></A>
 
 
 <P>
@@ -179,70 +93,132 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX4831"></A>
-<A NAME="IDX4832"></A>
+<A NAME="IDX5583"></A>
+<A NAME="IDX5584"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
-<DD><A NAME="IDX4833"></A>
+<DT><span class="define">PREDICATE:</span> <B>memberchk/2:</B>
+<DD><A NAME="IDX5585"></A>
 
 
 <P>
-Special characters for <CODE>Pattern</CODE> are: 
-<DL COMPACT>
+<CODE>memberchk(X,Xs)</CODE>
 
-<DT>*
-<DD>
-Matches any string, including the null string. 
-<DT>?
-<DD>
-Matches any single character. 
-<DT>[...]
-<DD>
-Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
-<DT>|
-<DD>
-specifies an alternative. Two regular expressions A and B with | in between form an expression that matches anything that either A or B will match. 
-<DT>{...}
-<DD>
-groups alternatives inside larger patterns. 
-<DT>\
-<DD>
-Quotes a special character (including itself). 
+
+<P>
+Checks that <CODE>X</CODE> is an element of (list) <CODE>Xs</CODE>.
+
+
 </DL>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
+<A NAME="IDX5586"></A>
+<A NAME="IDX5587"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
+<DD><A NAME="IDX5588"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>list_insert(-(List),+Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
+<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of (tail-opened) <CODE>List</CODE> if there is not an element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4834"></A>
-<A NAME="IDX4835"></A>
+<A NAME="IDX5589"></A>
+<A NAME="IDX5590"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
-<DD><A NAME="IDX4836"></A>
+<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
+<DD><A NAME="IDX5591"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1,Pred2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>add_after(+L0,+E0,+E,-(L))</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after the first element identical to <CODE>E0</CODE> (or at end) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5592"></A>
+<A NAME="IDX5593"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
+<DD><A NAME="IDX5594"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_before(+L0,+E0,+E,-(L))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds element <CODE>E</CODE> before the first element identical to <CODE>E0</CODE> (or at start) of list <CODE>L0</CODE>, returning in <CODE>L</CODE> the new list.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5595"></A>
+<A NAME="IDX5596"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
+<DD><A NAME="IDX5597"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>delete(+List,+Element,-(Rest))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Rest</CODE> has the same elements of <CODE>List</CODE> except for all the occurrences of elements identical to <CODE>Element</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5598"></A>
+<A NAME="IDX5599"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>subtract/3:</B>
+<DD><A NAME="IDX5600"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>subtract(+Set,+Set0,-(Difference))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Difference</CODE> has the same elements of <CODE>Set</CODE> except those which have an identical occurrence in <CODE>Set0</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5601"></A>
+<A NAME="IDX5602"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>union_idlists/3:</B>
+<DD><A NAME="IDX5603"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>union_idlists(+List1,+List2,-(List))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but are not identical to an element in <CODE>List2</CODE> followed by the elements in <CODE>List2</CODE>.
 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

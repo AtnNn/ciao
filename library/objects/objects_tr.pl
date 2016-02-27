@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% SOURCE-TO-SOURCE EXPANSION FOR OBJECT USAGE
 %%
@@ -8,7 +8,7 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@
 
 %%------------------------------------------------------------------------
 %%
-%% AVOID ANY EXPANSION FROM CIAO TOPLEVEL
+%% AVOID ANY EXPANSION FROM Ciao TOPLEVEL
 %%
 %%------------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ obj_sentence_trans(end_of_file,Exp,Module) :-
 		     ('$static_instance_creation$'),
 		     (:- multifile 'class$call'/3),
 	             ('$force$rt$info$'(X) :- call(X))
-					     % Forces CIAO compiler to generate
+					     % Forces Ciao compiler to generate
                                              % run-time info for this 
 	                                     % module.
 	         ]

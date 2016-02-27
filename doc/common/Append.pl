@@ -2,11 +2,11 @@
 
 :- comment(filetype, part).
 
-:- comment(title,"PART XI - Appendices").
+:- comment(title,"PART XII - Appendices").
 
-:- comment(module,"The appendix included extensively documents the 
-	installation of the Ciao environment.").
+:- comment(module,"@include{Append.lpdoc}").
 
+main.
 
 %% --------------------------------------------------------------------------- 
 :- comment(version_maintenance,dir('../../version')).

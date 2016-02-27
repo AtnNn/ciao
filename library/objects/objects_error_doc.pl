@@ -1,28 +1,20 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO : OBJECT ORIENTED PROGRAMMING IN CIAO/Prolog
+%% O'Ciao : OBJECT ORIENTED PROGRAMMING IN Ciao/Prolog
 %%
 %% DOCUMENTATION FILE ON OBJECT MANIPULATION
 %%
 %% AUTHOR : Angel Fernandez Pineda
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
-:- module(objects_error_doc,[],[assertions]).
-
 %%------------------------------------------------------------------------
 
-:- comment(title,
-	"Error reporting when using objects").
 
-:- comment(author,"Angel Fernandez Pineda").
-
-:- comment(copyright,"@include{Copyright.Manuals}").
-
-:- comment(module,
+:- comment(appendix,
 	"
  Compile-time errors are restricted to some
  local analysis. Since there is no type declaration in the Prolog
@@ -35,21 +27,21 @@
 
  @tt{clause(Obj) :- Obj:a_method(334).}
 
- O'CIAO may be not able to determine whenever a_method/1 is a valid method
+ O'Ciao may be not able to determine whenever a_method/1 is a valid method
  for instance Obj, unless some help is provided:
 
  @tt{clause(Obj) :- Obj instance_of myclass,Obj:a_method(334).}
 
- In such case, O'CIAO will report any semantic error at compile-time.
+ In such case, O'Ciao will report any semantic error at compile-time.
 
 
- Most of the run-time errors are related to normal CIAO Prolog 
+ Most of the run-time errors are related to normal Ciao Prolog 
  module system. Since objects are treated as normal Prolog 
  modules at run time, there is no further documentation 
  here about that stuff.
 
 
- @section{Error reporting at compile time (objects)}
+ @subsection{Error reporting at compile time (objects)}
 
 
 
@@ -92,7 +84,7 @@
  @item @bf{ERROR : instance identifier @em{ID} is an exisisting Prolog module}
 
      There is an statically declared instance whose identifier may cause
-     interference with the CIAO Prolog module system. Use another instance
+     interference with the Ciao Prolog module system. Use another instance
      identifier.
 
  @item @bf{ERROR : unknown constructor on @em{ID} instance declaration}
@@ -223,7 +215,7 @@
 
  @end{itemize}
 
- @section{Error reporting at run time (objects)}
+ @subsection{Error reporting at run time (objects)}
 
 
  @begin{itemize}
@@ -257,22 +249,22 @@
 
 %%------------------------------------------------------------------------
 
-:- comment(version_maintenance,dir('../../version')).
+%:- comment(version_maintenance,dir('../../version')).
 
 
-:- comment(version(1*5+14,1999/12/14,15:29*55+'MET'), "Fixed some missing
-   @end{itemize} (Angel Fernandez Pineda)").
+%:- comment(version(1*5+14,1999/12/14,15:29*55+'MET'), "Fixed some missing
+%   @end{itemize} (Angel Fernandez Pineda)").
 
-:- comment(version(1*3+79,1999/10/13,18:48*00+'MEST'), "Added another error
-   message.  (Angel Fernandez Pineda)").
+%:- comment(version(1*3+79,1999/10/13,18:48*00+'MEST'), "Added another error
+%   message.  (Angel Fernandez Pineda)").
 
-:- comment(version(1*3+71,1999/10/06,15:14*08+'MEST'), "Another brick on
-   the wall.  (Angel Fernandez Pineda)").
+%:- comment(version(1*3+71,1999/10/06,15:14*08+'MEST'), "Another brick on
+%   the wall.  (Angel Fernandez Pineda)").
 
-:- comment(version(1*3+67,1999/09/30,14:10*03+'MEST'), "Updated error
-   reporting messages.  (Angel Fernandez Pineda)").
+%:- comment(version(1*3+67,1999/09/30,14:10*03+'MEST'), "Updated error
+%   reporting messages.  (Angel Fernandez Pineda)").
 
-:- comment(version(1*3+42,1999/07/26,17:17*42+'MEST'), "Error reporting
-   moved to separate file.  (Angel Fernandez Pineda)").
+%:- comment(version(1*3+42,1999/07/26,17:17*42+'MEST'), "Error reporting
+%   moved to separate file.  (Angel Fernandez Pineda)").
 
 %%------------------------------------------------------------------------

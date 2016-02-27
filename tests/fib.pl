@@ -1,4 +1,4 @@
-:- module(fib, [do_fib/0,fib/2]).
+:- module(fib, [do_fib/0,fib/2],[]).
 :- use_module(library(write)).
 :- use_module(library(prolog_sys)).
 

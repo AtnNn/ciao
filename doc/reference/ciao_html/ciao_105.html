@@ -1,45 +1,30 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The socket interface</TITLE>
+<TITLE>The Ciao Prolog System               - foreign_interface (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC370" HREF="ciao_toc.html#TOC370">The socket interface</A></H1>
+<H1><A NAME="SEC415" HREF="ciao_toc.html#TOC415">foreign_interface (library)</A></H1>
 <P>
-<A NAME="IDX3883"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.3#5 (1999/6/21, 14:22:42 MEST)
-
-
-<P>
-This module defines primitives to open sockets, send, and receive data from them. This allows communicating with other processes, on the same machine or across the Internet. The reader should also consult standard bibliography on the topic for a proper use of these primitives.
+<A NAME="IDX4437"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_105.html#SEC371">Usage and interface (sockets)</A>
-<LI><A HREF="ciao_105.html#SEC372">Documentation on exports (sockets)</A>
+<LI><A HREF="ciao_105.html#SEC416">Usage and interface (foreign_interface)</A>
+<LI><A HREF="ciao_105.html#SEC417">Documentation on new declarations (foreign_interface)</A>
+<LI><A HREF="ciao_105.html#SEC418">Documentation on exports (foreign_interface)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC371" HREF="ciao_toc.html#TOC371">Usage and interface (<CODE>sockets</CODE>)</A></H2>
+<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Usage and interface (<CODE>foreign_interface</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,50 +32,120 @@ This module defines primitives to open sockets, send, and receive data from them
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(sockets)).</CODE>
+<CODE>:- use_package(foreign_interface).</CODE>
+
+or
+
+<CODE>:- module(...,...,[foreign_interface]).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI><EM>Properties:</EM>
 
-<A NAME="IDX3884"></A>
-<CODE>connect_to_socket/3</CODE>, 
-<A NAME="IDX3885"></A>
-<CODE>socket_recv/2</CODE>, 
-<A NAME="IDX3886"></A>
-<CODE>socket_recv_code/3</CODE>, 
-<A NAME="IDX3887"></A>
-<CODE>socket_send/2</CODE>, 
-<A NAME="IDX3888"></A>
-<CODE>select_socket/5</CODE>, 
-<A NAME="IDX3889"></A>
-<CODE>socket_accept/2</CODE>, 
-<A NAME="IDX3890"></A>
-<CODE>bind_socket/3</CODE>, 
-<A NAME="IDX3891"></A>
-<CODE>connect_to_socket_type/4</CODE>.
+<A NAME="IDX4438"></A>
+<CODE>size_of/3</CODE>, 
+<A NAME="IDX4439"></A>
+<CODE>do_not_free/2</CODE>, 
+<A NAME="IDX4440"></A>
+<CODE>returns/2</CODE>, 
+<A NAME="IDX4441"></A>
+<CODE>foreign/1</CODE>, 
+<A NAME="IDX4442"></A>
+<CODE>foreign/2</CODE>, 
+<A NAME="IDX4443"></A>
+<CODE>native/1</CODE>, 
+<A NAME="IDX4444"></A>
+<CODE>native/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX3892"></A>
-<CODE>socket_type/1</CODE>.
+<A NAME="IDX4445"></A>
+<CODE>address/1</CODE>, 
+<A NAME="IDX4446"></A>
+<CODE>byte/1</CODE>, 
+<A NAME="IDX4447"></A>
+<CODE>byte_list/1</CODE>.
 
 </UL>
 
-<LI><STRONG>Other modules used:</STRONG>
+<LI><STRONG>New operators defined:</STRONG>
 
+<A NAME="IDX4448"></A>
+<CODE>=&#62;/2</CODE> [975,xfx], 
+<A NAME="IDX4449"></A>
+<CODE>::/2</CODE> [978,xfx], 
+<A NAME="IDX4450"></A>
+<CODE>decl/1</CODE> [1150,fx], 
+<A NAME="IDX4451"></A>
+<CODE>decl/2</CODE> [1150,xfx], 
+<A NAME="IDX4452"></A>
+<CODE>pred/1</CODE> [1150,fx], 
+<A NAME="IDX4453"></A>
+<CODE>pred/2</CODE> [1150,xfx], 
+<A NAME="IDX4454"></A>
+<CODE>prop/1</CODE> [1150,fx], 
+<A NAME="IDX4455"></A>
+<CODE>prop/2</CODE> [1150,xfx], 
+<A NAME="IDX4456"></A>
+<CODE>modedef/1</CODE> [1150,fx], 
+<A NAME="IDX4457"></A>
+<CODE>calls/1</CODE> [1150,fx], 
+<A NAME="IDX4458"></A>
+<CODE>calls/2</CODE> [1150,xfx], 
+<A NAME="IDX4459"></A>
+<CODE>success/1</CODE> [1150,fx], 
+<A NAME="IDX4460"></A>
+<CODE>success/2</CODE> [1150,xfx], 
+<A NAME="IDX4461"></A>
+<CODE>comp/1</CODE> [1150,fx], 
+<A NAME="IDX4462"></A>
+<CODE>comp/2</CODE> [1150,xfx], 
+<A NAME="IDX4463"></A>
+<CODE>entry/1</CODE> [1150,fx], 
+<A NAME="IDX4464"></A>
+<CODE>regtype/1</CODE> [1150,fx], 
+<A NAME="IDX4465"></A>
+<CODE>regtype/2</CODE> [1150,xfx].
 
-<UL>
+<LI><STRONG>New declarations defined:</STRONG>
 
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX3893"></A>
-<CODE>sockets/sockets_c</CODE>.
-
-</UL>
+<A NAME="IDX4466"></A>
+<CODE>comment/2</CODE>, 
+<A NAME="IDX4467"></A>
+<CODE>decl/1</CODE>, 
+<A NAME="IDX4468"></A>
+<CODE>decl/2</CODE>, 
+<A NAME="IDX4469"></A>
+<CODE>pred/1</CODE>, 
+<A NAME="IDX4470"></A>
+<CODE>pred/2</CODE>, 
+<A NAME="IDX4471"></A>
+<CODE>prop/1</CODE>, 
+<A NAME="IDX4472"></A>
+<CODE>prop/2</CODE>, 
+<A NAME="IDX4473"></A>
+<CODE>modedef/1</CODE>, 
+<A NAME="IDX4474"></A>
+<CODE>calls/1</CODE>, 
+<A NAME="IDX4475"></A>
+<CODE>calls/2</CODE>, 
+<A NAME="IDX4476"></A>
+<CODE>success/1</CODE>, 
+<A NAME="IDX4477"></A>
+<CODE>success/2</CODE>, 
+<A NAME="IDX4478"></A>
+<CODE>comp/1</CODE>, 
+<A NAME="IDX4479"></A>
+<CODE>comp/2</CODE>, 
+<A NAME="IDX4480"></A>
+<CODE>entry/1</CODE>, 
+<A NAME="IDX4481"></A>
+<CODE>regtype/1</CODE>, 
+<A NAME="IDX4482"></A>
+<CODE>regtype/2</CODE>.
 
 </UL>
 
@@ -98,281 +153,446 @@ This module defines primitives to open sockets, send, and receive data from them
 
 
 
-<H2><A NAME="SEC372" HREF="ciao_toc.html#TOC372">Documentation on exports (<CODE>sockets</CODE>)</A></H2>
+<H2><A NAME="SEC417" HREF="ciao_toc.html#TOC417">Documentation on new declarations (<CODE>foreign_interface</CODE>)</A></H2>
 <P>
-<A NAME="IDX3894"></A>
-<A NAME="IDX3895"></A>
+<A NAME="IDX4483"></A>
+<A NAME="IDX4484"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>connect_to_socket/3:</B>
-<DD><A NAME="IDX3896"></A>
+<DT><span class="define">DECLARATION:</span> <B>comment/2:</B>
+<DD><A NAME="IDX4485"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>connect_to_socket(+Host,+Port,-(Stream))</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4486"></A>
+<A NAME="IDX4487"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>decl/1:</B>
+<DD><A NAME="IDX4488"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4489"></A>
+<A NAME="IDX4490"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>decl/2:</B>
+<DD><A NAME="IDX4491"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4492"></A>
+<A NAME="IDX4493"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>pred/1:</B>
+<DD><A NAME="IDX4494"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4495"></A>
+<A NAME="IDX4496"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>pred/2:</B>
+<DD><A NAME="IDX4497"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4498"></A>
+<A NAME="IDX4499"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>prop/1:</B>
+<DD><A NAME="IDX4500"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4501"></A>
+<A NAME="IDX4502"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>prop/2:</B>
+<DD><A NAME="IDX4503"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4504"></A>
+<A NAME="IDX4505"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>modedef/1:</B>
+<DD><A NAME="IDX4506"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4507"></A>
+<A NAME="IDX4508"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>calls/1:</B>
+<DD><A NAME="IDX4509"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4510"></A>
+<A NAME="IDX4511"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>calls/2:</B>
+<DD><A NAME="IDX4512"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4513"></A>
+<A NAME="IDX4514"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>success/1:</B>
+<DD><A NAME="IDX4515"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4516"></A>
+<A NAME="IDX4517"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>success/2:</B>
+<DD><A NAME="IDX4518"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4519"></A>
+<A NAME="IDX4520"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>comp/1:</B>
+<DD><A NAME="IDX4521"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4522"></A>
+<A NAME="IDX4523"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>comp/2:</B>
+<DD><A NAME="IDX4524"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4525"></A>
+<A NAME="IDX4526"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>entry/1:</B>
+<DD><A NAME="IDX4527"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4528"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>regtype/1:</B>
+<DD><A NAME="IDX4529"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4530"></A>
+<CODE>basic_props</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX4531"></A>
+<A NAME="IDX4532"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>regtype/2:</B>
+<DD><A NAME="IDX4533"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC418" HREF="ciao_toc.html#TOC418">Documentation on exports (<CODE>foreign_interface</CODE>)</A></H2>
+<P>
+<A NAME="IDX4534"></A>
+<A NAME="IDX4535"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>address/1:</B>
+<DD><A NAME="IDX4536"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>address(Address)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Calls
+<LI><EM>Description:</EM> <CODE>Address</CODE> is a valid memory address.
 
-<A NAME="IDX3897"></A>
-<CODE>connect_to_socket_type/4</CODE> with SOCK_STREAM connection type. This is the connection type you want in order to use the 
-<A NAME="IDX3898"></A>
-<CODE>write/2</CODE> and 
-<A NAME="IDX3899"></A>
-<CODE>read/2</CODE> predicates (and other stream IO related predicates). 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Host</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Port</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>-(Stream)</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3900"></A>
-<A NAME="IDX3901"></A>
+<A NAME="IDX4537"></A>
+<A NAME="IDX4538"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>socket_recv/2:</B>
-<DD><A NAME="IDX3902"></A>
+<DT><span class="define">REGTYPE:</span> <B>byte/1:</B>
+<DD><A NAME="IDX4539"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>socket_recv(+Stream,?(String))</CODE>
+<STRONG>Usage:</STRONG> <CODE>byte(Byte)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> As
+<LI><EM>Description:</EM> <CODE>Byte</CODE> is a byte
 
-<A NAME="IDX3903"></A>
-<CODE>socket_recv_code/3</CODE>, but the return code is ignored. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?(String)</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3904"></A>
-<A NAME="IDX3905"></A>
+<A NAME="IDX4540"></A>
+<A NAME="IDX4541"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>socket_type/1:</B>
-<DD><A NAME="IDX3906"></A>
+<DT><span class="define">REGTYPE:</span> <B>byte_list/1:</B>
+<DD><A NAME="IDX4542"></A>
 
 
 <P>
-Defines the atoms which can be used to specify the socket type recognized by 
-<A NAME="IDX3907"></A>
-<CODE>connect_to_socket_type/4</CODE>. Defined as follows: 
-
-<PRE>
-socket_type(stream).
-socket_type(dgram).
-socket_type(raw).
-socket_type(seqpacket).
-socket_type(rdm).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>socket_type(T)</CODE>
+<STRONG>Usage:</STRONG> <CODE>byte_list(List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a valid socket type.
+<LI><EM>Description:</EM> <CODE>List</CODE> is a list of bytes.
 
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3908"></A>
-<A NAME="IDX3909"></A>
+<A NAME="IDX4543"></A>
+<A NAME="IDX4544"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>socket_recv_code/3:</B>
-<DD><A NAME="IDX3910"></A>
+<DT><span class="define">PROPERTY:</span> <B>size_of/3:</B>
+<DD><A NAME="IDX4545"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>socket_recv_code(+Stream,?(String),?(Length))</CODE>
+<STRONG>Usage:</STRONG> <CODE>size_of(Name,ListVar,SizeVar)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Receives a <CODE>String</CODE> from the socket associated to <CODE>Stream</CODE>, and returns its <CODE>Length</CODE>. If <CODE>Length</CODE> is -1, no more data is available.
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the size of the argument of type
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>?(String)</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>?(Length)</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<A NAME="IDX4546"></A>
+<CODE>byte_list/1</CODE>, <CODE>ListVar</CODE>, is given by the argument of type integer <CODE>SizeVar</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3911"></A>
-<A NAME="IDX3912"></A>
+<A NAME="IDX4547"></A>
+<A NAME="IDX4548"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>socket_send/2:</B>
-<DD><A NAME="IDX3913"></A>
+<DT><span class="define">PROPERTY:</span> <B>do_not_free/2:</B>
+<DD><A NAME="IDX4549"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>socket_send(+Stream,+String)</CODE>
+<STRONG>Usage:</STRONG> <CODE>do_not_free(Name,Var)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Sends <CODE>String</CODE> to the socket associated to <CODE>Stream</CODE>. The socket has to be in connected state. <CODE>String</CODE> is not supposed to be NULL terminated, since it is a Prolog string. If a NULL terminated string is needed at the other side, it has to be explicitly created in Prolog.
+<LI><EM>Description:</EM> For predicate <CODE>Name</CODE>, the C argument passed to (returned from) the foreign function will not be freed after calling the foreign function.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>+String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3914"></A>
-<A NAME="IDX3915"></A>
+<A NAME="IDX4550"></A>
+<A NAME="IDX4551"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>select_socket/5:</B>
-<DD><A NAME="IDX3916"></A>
+<DT><span class="define">PROPERTY:</span> <B>returns/2:</B>
+<DD><A NAME="IDX4552"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>select_socket(+Socket,-(NewStream),+TO_ms,+Streams,-(ReadStreams))</CODE>
+<STRONG>Usage:</STRONG> <CODE>returns(Name,Var)</CODE>
 
 <UL>
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>Description:</EM> The result of the foreign function that implements the Prolog predicate
 
-<CODE>+Socket</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>-(NewStream)</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>+TO_ms</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Streams</CODE> is a list of <CODE>stream</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-(ReadStreams)</CODE> is a list of <CODE>stream</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<A NAME="IDX4553"></A>
+<CODE>Name</CODE> is unified with the Prolog variable <CODE>Var</CODE>. Cannot be used without 
+<A NAME="IDX4554"></A>
+<CODE>foreign/1</CODE> or 
+<A NAME="IDX4555"></A>
+<CODE>foreign/2</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3917"></A>
-<A NAME="IDX3918"></A>
+<A NAME="IDX4556"></A>
+<A NAME="IDX4557"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>socket_accept/2:</B>
-<DD><A NAME="IDX3919"></A>
+<DT><span class="define">PROPERTY:</span> <B>foreign/1:</B>
+<DD><A NAME="IDX4558"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>socket_accept(+Sock,-(Stream))</CODE>
+<STRONG>Usage:</STRONG> <CODE>foreign(Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Creates a new <CODE>Stream</CODE> connected to <CODE>Sock</CODE>.
+<LI><EM>Description:</EM> The Prolog predicate
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Sock</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>-(Stream)</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
+<A NAME="IDX4559"></A>
+<CODE>Name</CODE> is implemented using the foreign function <CODE>Name</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3920"></A>
-<A NAME="IDX3921"></A>
+<A NAME="IDX4560"></A>
+<A NAME="IDX4561"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>bind_socket/3:</B>
-<DD><A NAME="IDX3922"></A>
+<DT><span class="define">PROPERTY:</span> <B>foreign/2:</B>
+<DD><A NAME="IDX4562"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>bind_socket(?(Port),+Length,-(Socket))</CODE>
+<STRONG>Usage:</STRONG> <CODE>foreign(PrologName,ForeignName)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Returs an AF_INET <CODE>Socket</CODE> bound to <CODE>Port</CODE> (which may be assigned by the OS or defined by the caller), and listens to it (hence no listen call in this set of primitives). <CODE>Length</CODE> specifies the maximum number of pending connections.
+<LI><EM>Description:</EM> The Prolog predicate
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>?(Port)</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Length</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>-(Socket)</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<A NAME="IDX4563"></A>
+<CODE>PrologName</CODE> is implemented using the foreign function <CODE>ForeignName</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3923"></A>
-<A NAME="IDX3924"></A>
+<A NAME="IDX4564"></A>
+<A NAME="IDX4565"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>connect_to_socket_type/4:</B>
-<DD><A NAME="IDX3925"></A>
+<DT><span class="define">PROPERTY:</span> <B>native/1:</B>
+<DD><A NAME="IDX4566"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>connect_to_socket_type(+Host,+Port,+Type,-(Stream))</CODE>
+<STRONG>Usage:</STRONG> <CODE>native(Name)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Returns a <CODE>Stream</CODE> which connects to <CODE>Host</CODE>. The <CODE>Type</CODE> of connection can be defined. A <CODE>Stream</CODE> is returned, which can be used to
+<LI><EM>Description:</EM> The Prolog predicate
 
-<A NAME="IDX3926"></A>
-<CODE>write/2</CODE> to, to 
-<A NAME="IDX3927"></A>
-<CODE>read/2</CODE>, to 
-<A NAME="IDX3928"></A>
-<CODE>socket_send/2</CODE> to, or to 
-<A NAME="IDX3929"></A>
-<CODE>socket_recv/2</CODE> from the socket. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<A NAME="IDX4567"></A>
+<CODE>Name</CODE> is implemented using the native function <CODE>Name</CODE>. 
+</UL>
 
-<CODE>+Host</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+</DL>
 
-<CODE>+Port</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<P>
+<A NAME="IDX4568"></A>
+<A NAME="IDX4569"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>native/2:</B>
+<DD><A NAME="IDX4570"></A>
 
-<CODE>+Type</CODE> is a valid socket type.
- (<CODE>sockets:socket_type/1</CODE>)
 
-<CODE>-(Stream)</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
+<P>
+<STRONG>Usage:</STRONG> <CODE>native(PrologName,ForeignName)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The Prolog predicate
+
+<A NAME="IDX4571"></A>
+<CODE>PrologName</CODE> is implemented using the native function prolog_<CODE>ForeignName</CODE>. 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_104.html">previous</A>, <A HREF="ciao_106.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

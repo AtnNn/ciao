@@ -1,14 +1,14 @@
-USE_THREADS=no
+#USE_THREADS=no
 
 ifeq ($(USE_THREADS),yes)
     LD_THREAD_LIB=-lpthread
 # I do not know how to write locks in MIPS assembler code, so only POSIX
 # locks are accepted at the moment.
 # ifeq ($(USE_POSIX_LOCKS),yes)
-#     THREAD_FLAG=-DTHREADS -DUSE_POSIX_THREADS -DUSE_LOCKS -DPOSIX_LOCKS
+#     THREAD_FLAG=-DTHREADS -DUSE_POSIX_THREADS
 #     LD_LOCK_LIB=
 # else
-    THREAD_FLAG=-DTHREADS -DUSE_POSIX_THREADS -DPOSIX_LOCKS
+    THREAD_FLAG=-DTHREADS
     LD_LOCK_LIB=
 # endif
 else

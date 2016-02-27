@@ -3,15 +3,16 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
+#include <stdlib.h>  /* for atoi MCL */
 
 void perror() /*, ENG_perror()*/;
 extern int errno;
 
 #include "compat.h"
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
 #include "ciao.h"
-#include "threads.h"
 #include "task_areas.h"
 
 /* declarations for global functions accessed here */
@@ -22,10 +23,11 @@ extern int errno;
 #include "tasks_defs.h"
 #include "main_defs.h"
 #include "alloc_defs.h"
+#include "bignum_defs.h"
+#include "stacks_defs.h"
 
 /* local declarations */
 
-static void writechar(int ch, register int i, register struct stream_node *s);
 static int readchar(register struct stream_node *s, int type, struct definition *pred_address);
 static void display_term(Argdecl, TAGGED term, struct stream_node *stream, BOOL quoted);
 BOOL code_class(Argdecl);
@@ -53,7 +55,7 @@ BOOL code_class(Arg)
       stream->char_count++; \
 }
 
-static void writechar(ch,i,s)
+void writechar(ch,i,s)
      int ch;
      REGISTER int i;
      REGISTER struct stream_node *s;
@@ -627,60 +629,56 @@ static void display_term(Arg, term, stream, quoted)
   REGISTER TAGGED aux;
   int arity,i;
 
-  switch (TagOf(term))
-    {
-    case LST:
-      writechar('[',1,stream);
+  switch (TagOf(term)) {
+  case LST:
+    writechar('[',1,stream);
+    DerefCar(aux,term);
+    display_term(Arg,aux, stream, quoted);
+    DerefCdr(term,term);
+    while(TagIsLST(term)) {
+      writechar(',',1,stream);
       DerefCar(aux,term);
       display_term(Arg,aux, stream, quoted);
       DerefCdr(term,term);
-      while(TagIsLST(term))
-	{
-	  writechar(',',1,stream);
-	  DerefCar(aux,term);
-	  display_term(Arg,aux, stream, quoted);
-	  DerefCdr(term,term);
-	}
-      if(term!=atom_nil)
-	{
-	  writechar('|',1,stream);
-	  display_term(Arg,term, stream, quoted);
-	}
-      writechar(']',1,stream);
-      break;
-    case STR:
-      if (STRIsLarge(term))
-	goto number;
-      display_term(Arg,TagToHeadfunctor(term),stream, quoted);
-      writechar('(',1,stream);
-      arity = Arity(TagToHeadfunctor(term));
-      for(i=1; i<=arity; i++)
-	{
-	  if(i>1) writechar(',',1,stream);
-	  DerefArg(aux,term,i);
-	  display_term(Arg,aux, stream, quoted);
-	}
-      writechar(')',1,stream);
-      break;
-    case UBV:
-    case SVA:
-    case HVA:
-    case CVA:
-      {
-	print_variable(Arg,stream,term);
-	break;
-      }
-    case ATM:
-      if (quoted)
-        print_atom(Arg,stream,term);
-      else
-        print_string(stream,TagToAtom(term)->name);
-      break;
-    case NUM:
-    number:
-      print_number(Arg,stream,term);
+    }
+    if(term!=atom_nil){
+      writechar('|',1,stream);
+      display_term(Arg,term, stream, quoted);
+    }
+    writechar(']',1,stream);
+    break;
+  case STR:
+    if (STRIsLarge(term))
+      goto number;
+    display_term(Arg,TagToHeadfunctor(term),stream, quoted);
+    writechar('(',1,stream);
+    arity = Arity(TagToHeadfunctor(term));
+    for(i=1; i<=arity; i++){
+      if(i>1) writechar(',',1,stream);
+      DerefArg(aux,term,i);
+      display_term(Arg,aux, stream, quoted);
+    }
+    writechar(')',1,stream);
+    break;
+  case UBV:
+  case SVA:
+  case HVA:
+  case CVA:
+    {
+      print_variable(Arg,stream,term);
       break;
     }
+  case ATM:
+    if (quoted)
+      print_atom(Arg,stream,term);
+    else
+      print_string(stream,TagToAtom(term)->name);
+    break;
+  case NUM:
+  number:
+  print_number(Arg,stream,term);
+  break;
+  }
 }
 
 BOOL prolog_display(Arg)
@@ -742,4 +740,203 @@ BOOL prolog_clearerr(Arg)
   if (s->streammode != 's') clearerr(s->streamfile);
 
   return TRUE;
+}
+
+/*----------------------------------------------------*/
+
+#define FASTRW_VERSION  'C'
+#define FASTRW_MAX_VARS 1024
+
+BOOL prolog_fast_read_on_c_aux(Argdecl,
+                               TAGGED *out,
+                               TAGGED *vars,
+                               int *lastvar);
+
+BOOL prolog_fast_read_on_c(Arg)		/* OPA */
+     Argdecl;
+{
+  int i,lastvar = 0;
+  TAGGED term, vars[FASTRW_MAX_VARS];
+
+  if ((i = getc(Input_Stream_Ptr->streamfile)) < -1)
+     BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+  if (i != FASTRW_VERSION) return FALSE;
+
+  if (!prolog_fast_read_on_c_aux(Arg,&term,vars,&lastvar)) return FALSE;
+  return cunify(Arg,X(0),term);
+}
+
+BOOL prolog_fast_read_on_c_aux(Arg,out,vars,lastvar)
+     Argdecl;
+     TAGGED *out,*vars;
+     int *lastvar;
+{
+  int i,k,j;
+  unsigned char *s = (unsigned char *) Atom_Buffer;
+  TAGGED *h = w->global_top;
+
+  if ((k = getc(Input_Stream_Ptr->streamfile)) < -1)
+     BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+
+  switch(k) {
+  case ']':
+    *out = atom_nil;
+    return TRUE;
+  case '[':
+    w->global_top += 2;
+    if (!prolog_fast_read_on_c_aux(Arg,h,vars,lastvar)) return FALSE;
+    if (!prolog_fast_read_on_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
+    *out = Tag(LST,h);
+    return TRUE;
+  case '_':
+  case 'I':
+  case 'F':
+  case 'A':
+  case '"':
+  case 'S':
+    j = 1;
+    for (i=0; j; i++) {
+      if (i== Atom_Buffer_Length) {
+	Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,
+					   i, Atom_Buffer_Length<<=1);
+	s = (unsigned char *)Atom_Buffer+i;}
+      if ((j = getc(Input_Stream_Ptr->streamfile)) < -1)
+	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+      *s++ = j;
+    }
+    switch (k) {
+    case '_':
+      if ((i = atoi(Atom_Buffer)) == *lastvar)
+	*h = vars[(*lastvar)++] = TagHVA(w->global_top++);
+      *out = vars[i];
+      return TRUE;
+    case 'I':
+      if((i = bn_from_string(Atom_Buffer,h, Heap_End-CONTPAD))) {
+	explicit_heap_overflow(Arg,i+CONTPAD, 2);
+	if (bn_from_string(Atom_Buffer,w->global_top, Heap_End-CONTPAD))
+	  SERIOUS_FAULT("miscalculated size of bignum");
+      }
+      if ((i = LargeArity(h[0])) ==2 && IntIsSmall((int)h[1]))
+	*out = MakeSmall(h[1]);
+      else {
+	*out = Tag(STR,h);
+	w->global_top += i+1;
+	h[i] = h[0];
+      }	
+      return TRUE;
+    case 'F':
+      *out = MakeFloat(Arg,atof(Atom_Buffer));
+      return TRUE;
+    case 'A':
+      *out = MakeString(Atom_Buffer);
+      return TRUE;
+    case '"':
+      for (i--;i--;) MakeLST(*out,MakeSmall(Atom_Buffer[i]),*out);
+      if (!prolog_fast_read_on_c_aux(Arg,h+1,vars,lastvar)) return FALSE;
+      return TRUE;
+    case 'S':
+      if ((i = getc(Input_Stream_Ptr->streamfile)) < -1)
+	BUILTIN_ERROR(READ_PAST_EOS_ERROR,atom_nil,0)
+      *h = SetArity(MakeString(Atom_Buffer),i);
+      *out = Tag(STR,h++);
+      for(w->global_top += i+1;i--;)
+	if (!prolog_fast_read_on_c_aux(Arg,h++,vars,lastvar)) return FALSE;
+      return TRUE;
+    }
+  default:
+    return FALSE;
+  }
+}
+
+void prolog_fast_write_on_c_aux(Argdecl,
+                                TAGGED in,
+                                TAGGED *vars, 
+                                int *lastvar);
+
+BOOL prolog_fast_write_on_c(Arg)		/* OPA */
+     Argdecl;
+{
+  TAGGED vars[FASTRW_MAX_VARS];
+  int lastvar = 0;
+
+  DEREF(X(0),X(0));
+  writechar(FASTRW_VERSION,1,Output_Stream_Ptr);
+  prolog_fast_write_on_c_aux(Arg,X(0),vars,&lastvar);
+  return TRUE;
+}
+
+void prolog_fast_write_on_c_aux(Arg,in,vars,lastvar)
+     Argdecl;
+     TAGGED in, *vars;
+     int *lastvar;
+{
+  int i,j;
+  TAGGED term;
+
+  switch (TagOf(in))
+    {
+    case LST:
+      DerefCar(term,in);
+      DerefCdr(in,in);
+      if (TagIsSmall(term) && GetSmall(term) && ((i = GetSmall(term)) < 256)){
+	for(writechar('"',1,Output_Stream_Ptr);i && (i < 256);) {
+	  writechar(i,1,Output_Stream_Ptr);
+	  if (TagOf(in) == LST) {
+	    DerefCar(term,in);
+	    DerefCdr(in,in);
+	    if (!TagIsSmall(term)) break;
+	    else i = GetSmall(term);
+	  }
+	  else {
+	    writechar(0,1,Output_Stream_Ptr);
+	    prolog_fast_write_on_c_aux(Arg,in,vars,lastvar);
+	    return;
+	  }	  
+	}
+	writechar(0,1,Output_Stream_Ptr);
+      }
+      writechar('[',1,Output_Stream_Ptr);
+      prolog_fast_write_on_c_aux(Arg,term,vars,lastvar);
+      prolog_fast_write_on_c_aux(Arg,in,vars,lastvar);
+      return;
+    case UBV:
+    case SVA:
+    case HVA:
+    case CVA:
+      writechar('_',1,Output_Stream_Ptr);
+      DEREF(in,in);
+      for (i = 0;i < *lastvar; i++)
+	if (vars[i] == in) break;
+      if (i == *lastvar) vars[(*lastvar)++] = in;
+/*snprintf((char *) Atom_Buffer,4,"%i",i);*/
+/* We are not checking the result, anyway... */
+      sprintf((char *) Atom_Buffer,"%i",i); 
+      print_string(Output_Stream_Ptr,Atom_Buffer);
+      writechar(0,1,Output_Stream_Ptr);
+      return;
+    case STR:
+      if (!STRIsLarge(in)) {
+      writechar('S',1,Output_Stream_Ptr);
+      print_string(Output_Stream_Ptr,TagToAtom(TagToHeadfunctor(in))->name);
+      writechar(0,1,Output_Stream_Ptr);
+      writechar(j = Arity(TagToHeadfunctor(in)),1,Output_Stream_Ptr);
+      for(i = 1; i <= j; prolog_fast_write_on_c_aux(Arg,term,vars,lastvar))
+	DerefArg(term,in,i++);
+      return;
+      }
+    case NUM:
+      if (IsFloat(in)) writechar('F',1,Output_Stream_Ptr);
+      else writechar('I',1,Output_Stream_Ptr);
+      print_number(Arg,Output_Stream_Ptr,in);
+      writechar(0,1,Output_Stream_Ptr);
+      return;
+    case ATM:
+      if (in != atom_nil) {
+	writechar('A',1,Output_Stream_Ptr);
+	print_string(Output_Stream_Ptr,TagToAtom(in)->name);
+	writechar(0,1,Output_Stream_Ptr);
+      }
+      else writechar(']',1,Output_Stream_Ptr);
+      return;
+    }
 }

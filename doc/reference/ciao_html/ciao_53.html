@@ -1,41 +1,42 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - DEC-10 Prolog file IO</TITLE>
+<TITLE>The Ciao Prolog System               - String processing</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC193" HREF="ciao_toc.html#TOC193">DEC-10 Prolog file IO</A></H1>
+<H1><A NAME="SEC239" HREF="ciao_toc.html#TOC239">String processing</A></H1>
 <P>
-<A NAME="IDX2276"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<A NAME="IDX2734"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
 
 
 <P>
-This module implements the support for DEC-10 Prolog style file I/O.
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+
+
+<P>
+This module provides predicates for doing input/output with strings (character code lists) and for including in grammars defining strings.
 
 
 
 <UL>
-<LI><A HREF="ciao_53.html#SEC194">Usage and interface (dec10_io)</A>
-<LI><A HREF="ciao_53.html#SEC195">Documentation on exports (dec10_io)</A>
+<LI><A HREF="ciao_53.html#SEC240">Usage and interface (strings)</A>
+<LI><A HREF="ciao_53.html#SEC241">Documentation on exports (strings)</A>
+<LI><A HREF="ciao_53.html#SEC242">Documentation on internals (strings)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC194" HREF="ciao_toc.html#TOC194">Usage and interface (<CODE>dec10_io</CODE>)</A></H2>
+<H2><A NAME="SEC240" HREF="ciao_toc.html#TOC240">Usage and interface (<CODE>strings</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,17 +44,29 @@ This module implements the support for DEC-10 Prolog style file I/O.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(dec10_io)).</CODE>
+<CODE>:- use_module(library(strings)).</CODE>
 
-<LI><STRONG>Other modules used:</STRONG>
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>System library modules:</EM>
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX2277"></A>
-<CODE>streams</CODE>.
+<A NAME="IDX2735"></A>
+<CODE>get_line/2</CODE>, 
+<A NAME="IDX2736"></A>
+<CODE>get_line/1</CODE>, 
+<A NAME="IDX2737"></A>
+<CODE>write_string/2</CODE>, 
+<A NAME="IDX2738"></A>
+<CODE>write_string/1</CODE>, 
+<A NAME="IDX2739"></A>
+<CODE>whitespace/2</CODE>, 
+<A NAME="IDX2740"></A>
+<CODE>whitespace0/2</CODE>, 
+<A NAME="IDX2741"></A>
+<CODE>string/3</CODE>.
 
 </UL>
 
@@ -63,106 +76,182 @@ This module implements the support for DEC-10 Prolog style file I/O.
 
 
 
-<H2><A NAME="SEC195" HREF="ciao_toc.html#TOC195">Documentation on exports (<CODE>dec10_io</CODE>)</A></H2>
+<H2><A NAME="SEC241" HREF="ciao_toc.html#TOC241">Documentation on exports (<CODE>strings</CODE>)</A></H2>
 <P>
-<A NAME="IDX2278"></A>
-<A NAME="IDX2279"></A>
+<A NAME="IDX2742"></A>
+<A NAME="IDX2743"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>see/1:</B>
-<DD><A NAME="IDX2280"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_line/2:</B>
+<DD><A NAME="IDX2744"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>get_line(Stream,Line)</CODE>
+
+
+<P>
+Reads from <CODE>Stream</CODE> a line of text and unifies <CODE>Line</CODE> with it. The end of the line can have UNIX [10] or MS-DOS [13 10] termination, which is not included in <CODE>Line</CODE>. At EOF, the term end_of_file is returned.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2281"></A>
-<A NAME="IDX2282"></A>
+<A NAME="IDX2745"></A>
+<A NAME="IDX2746"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>seeing/1:</B>
-<DD><A NAME="IDX2283"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_line/1:</B>
+<DD><A NAME="IDX2747"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>get_line(Line)</CODE>
+
+
+<P>
+Behaves like <CODE>current_input(S), get_line(S,Line)</CODE>.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2284"></A>
-<A NAME="IDX2285"></A>
+<A NAME="IDX2748"></A>
+<A NAME="IDX2749"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>seen/0:</B>
-<DD><A NAME="IDX2286"></A>
+<DT><span class="define">PREDICATE:</span> <B>write_string/2:</B>
+<DD><A NAME="IDX2750"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>write_string(Stream,String)</CODE>
+
+
+<P>
+Writes <CODE>String</CODE> onto <CODE>Stream</CODE>.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2287"></A>
-<A NAME="IDX2288"></A>
+<A NAME="IDX2751"></A>
+<A NAME="IDX2752"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tell/1:</B>
-<DD><A NAME="IDX2289"></A>
+<DT><span class="define">PREDICATE:</span> <B>write_string/1:</B>
+<DD><A NAME="IDX2753"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>write_string(String)</CODE>
+
+
+<P>
+Behaves like <CODE>current_input(S), write_string(S, String)</CODE>.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2290"></A>
-<A NAME="IDX2291"></A>
+<A NAME="IDX2754"></A>
+<A NAME="IDX2755"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>telling/1:</B>
-<DD><A NAME="IDX2292"></A>
+<DT><span class="define">PREDICATE:</span> <B>whitespace/2:</B>
+<DD><A NAME="IDX2756"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>whitespace(String,Rest)</CODE>
 
+
+<P>
+In a grammar rule, as <CODE>whitespace/0</CODE>, represents whitespace (a positive number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
+
+<PRE>
+   attrs([]) --&#62; ""
+   attrs([N|Ns]) --&#62;
+       whitespace,
+       attr(N),
+       attrs(Ns).
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX2293"></A>
-<A NAME="IDX2294"></A>
+<A NAME="IDX2757"></A>
+<A NAME="IDX2758"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>told/0:</B>
-<DD><A NAME="IDX2295"></A>
+<DT><span class="define">PREDICATE:</span> <B>whitespace0/2:</B>
+<DD><A NAME="IDX2759"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>whitespace0(String,Rest)</CODE>
 
+
+<P>
+In a grammar rule, as <CODE>whitespace0/0</CODE>, represents possible whitespace (any number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is <CODE>String</CODE> or a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
+
+
+
+<PRE>
+   assignment(N,V) --&#62;
+       variable_name(N), whitespace0, "=", whitespace0, value(V).
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX2296"></A>
-<A NAME="IDX2297"></A>
+<A NAME="IDX2760"></A>
+<A NAME="IDX2761"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>close_file/1:</B>
-<DD><A NAME="IDX2298"></A>
+<DT><span class="define">PREDICATE:</span> <B>string/3:</B>
+<DD><A NAME="IDX2762"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>string(String,Head,Tail)</CODE>
 
+
+<P>
+In a 
+<A NAME="IDX2763"></A>
+grammar rule, as <CODE>string/1</CODE>, represents literally <CODE>String</CODE>. An example of use would be: 
+
+
+
+<PRE>
+double(A) --&#62;
+        string(A),
+        string(A).
+</PRE>
+
+</DL>
+
+
+
+<H2><A NAME="SEC242" HREF="ciao_toc.html#TOC242">Documentation on internals (<CODE>strings</CODE>)</A></H2>
+<P>
+<A NAME="IDX2764"></A>
+<A NAME="IDX2765"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>line/1:</B>
+<DD><A NAME="IDX2766"></A>
+
+
+<P>
+A property, defined as follows:
+
+<PRE>
+
+<PRE>
+line(L) :-
+        string(L).
+line(end_of_file).
+</PRE>
+
+</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_52.html">previous</A>, <A HREF="ciao_54.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

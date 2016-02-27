@@ -71,6 +71,8 @@ library @lib{compiler/c_itf}.
 :- use_module(library(lists),[append/3]).
 :- use_module(library(system),
 	[fmode/2,chmod/2,file_exists/1,file_exists/2,delete_file/1]).
+:- use_module(library('compiler/translation'),
+	[expand_clause/6,expand_goal/4,del_goal_trans/1,del_clause_trans/1]).
 
 %% ---------------------------------------------------------------------------
 :- pred asr_version(int) # "Contains a version number which identifies
@@ -322,15 +324,31 @@ process_file_assertions_(Base,Opts):-
 	%  generate_asr_file(Base,Verb,main), %% MH2
         %% c_itf erases the clauses, so we must save them here 
         %% (or do the processing inside c_itf...)
-	( clause_of(Base, Head, Body, VarNames, Source, Line0, Line1),
-%% 	  format("Base = ~w~n Head = ~w~n Body = ~w~n VarNames = ~w~n 
-%%                  Source = ~w~n Line0 = ~w~n Line1 = ~w~n",
-%%  	         [Base, Head, Body, VarNames, Source, Line0, Line1]),
-	  assertz_fact(
-		  clause_read(Base,Head,Body,VarNames,Source,Line0,Line1)),
-  	  fail
-	; 
-	  true).
+	%% Second translation -PBC
+        activate_translation(Base,M,add_clause_trans),
+        activate_translation(Base,M,add_goal_trans),
+        expand_clause(0,0,M,_,_,_), % Translator initialization
+	save_clause_of(Base,M),
+	%% deactivate translations
+	del_goal_trans(M),
+	del_clause_trans(M).
+
+save_clause_of(Base,M):-
+	clause_of(Base,Head,Body,VarNames,Source,Line0,Line1),
+        ( number(Head)
+	-> H=Head,
+	   B=Body
+	 ; % do the "second expansion"
+	   % io_aux:message(['{Original: ',(Head:-Body)]),
+	   expand_clause(Head,Body,M,VarNames,H,BX),
+	   expand_goal(BX,M,VarNames,B)
+	   % io_aux:message(['{Expanded: ',(H:-B)])
+	),
+	% one more patch!!
+	( var(VarNames) -> VarNames=[] ; true ),
+	assertz_fact(clause_read(Base,H,B,VarNames,Source,Line0,Line1)),
+	fail.
+save_clause_of(_Base,_M).
 
 :- push_prolog_flag(multi_arity_warnings,off).
 

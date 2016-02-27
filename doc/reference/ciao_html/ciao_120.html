@@ -1,41 +1,147 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - atom2term (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC431" HREF="ciao_toc.html#TOC431">atom2term (library)</A></H1>
+<H1><A NAME="SEC485" HREF="ciao_toc.html#TOC485">Calling emacs from Prolog</A></H1>
 <P>
-<A NAME="IDX4699"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno, Daniel Cabeza.
+<A NAME="IDX5434"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#78 (1999/5/3, 19:19:27 MEST)
+<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
+
+
+<P>
+This library provides a 
+<A NAME="IDX5435"></A>
+<A NAME="IDX5436"></A>
+<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
+<A NAME="IDX5437"></A>
+emacs mode, which is used to develop programs from within the 
+<A NAME="IDX5438"></A>
+<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
+<A NAME="IDX5439"></A>
+<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
+<A NAME="IDX5440"></A>
+<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
 
 
 
 <UL>
-<LI><A HREF="ciao_120.html#SEC432">Usage and interface (atom2term)</A>
-<LI><A HREF="ciao_120.html#SEC433">Documentation on exports (atom2term)</A>
+
+<LI>Visit a file, which can then be edited.
+
+<LI>Execute arbitrary
+
+<A NAME="IDX5441"></A>
+<A NAME="IDX5442"></A>
+<EM>emacs lisp</EM> code, sent from Prolog. 
+
+</UL>
+
+<P>
+In order for this library to work correctly, the following is needed: 
+
+
+
+<UL>
+
+<LI>You should be running the
+
+<A NAME="IDX5443"></A>
+<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
+
+<LI>This
+
+<A NAME="IDX5444"></A>
+<CODE>emacs</CODE> should be running the 
+<A NAME="IDX5445"></A>
+<A NAME="IDX5446"></A>
+<EM>emacs server</EM>. This can be done by including the following line in your 
+<A NAME="IDX5447"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<PRE>
+;; Start a server that emacsclient can connect to.
+(server-start)
+</PRE>
+
+Or typing <CODE>M-x server-start</CODE> within 
+<A NAME="IDX5448"></A>
+<CODE>emacs</CODE>. 
+
+</UL>
+
+<P>
+This suffices for using 
+<A NAME="IDX5449"></A>
+<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
+<A NAME="IDX5450"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<DL COMPACT>
+
+<DT><CODE>(setq enable-local-eval t)</CODE>
+<DD>
+Allows executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval nil)</CODE>
+<DD>
+Does not allow executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
+<DD>
+Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
+
+</DL>
+
+<P>
+<STRONG>Examples:</STRONG> 
+
+
+<P>
+Assuming that a <CODE>.pl</CODE> file loads this library, then: 
+
+
+<DL COMPACT>
+
+<DT><CODE>..., emacs_edit('foo'), ...</CODE>
+<DD>
+Opens file <CODE>foo</CODE> for editing in 
+<A NAME="IDX5451"></A>
+<CODE>emacs</CODE>. 
+
+<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
+<DD>
+Starts execution of a Ciao top-level within 
+<A NAME="IDX5452"></A>
+<CODE>emacs</CODE>. 
+
+</DL>
+
+
+<UL>
+<LI><A HREF="ciao_120.html#SEC486">Usage and interface (emacs)</A>
+<LI><A HREF="ciao_120.html#SEC487">Documentation on exports (emacs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC432" HREF="ciao_toc.html#TOC432">Usage and interface (<CODE>atom2term</CODE>)</A></H2>
+<H2><A NAME="SEC486" HREF="ciao_toc.html#TOC486">Usage and interface (<CODE>emacs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +149,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(atom2term)).</CODE>
+<CODE>:- use_module(library(emacs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,10 +158,37 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4700"></A>
-<CODE>atom2term/2</CODE>, 
-<A NAME="IDX4701"></A>
-<CODE>string2term/2</CODE>.
+<A NAME="IDX5453"></A>
+<CODE>emacs_edit/1</CODE>, 
+<A NAME="IDX5454"></A>
+<CODE>emacs_edit_nowait/1</CODE>, 
+<A NAME="IDX5455"></A>
+<CODE>emacs_eval/1</CODE>, 
+<A NAME="IDX5456"></A>
+<CODE>emacs_eval_nowait/1</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX5457"></A>
+<CODE>elisp_string/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5458"></A>
+<CODE>metaterms</CODE>, 
+<A NAME="IDX5459"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX5460"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX5461"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -65,60 +198,104 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>,
 
 
 
-<H2><A NAME="SEC433" HREF="ciao_toc.html#TOC433">Documentation on exports (<CODE>atom2term</CODE>)</A></H2>
+<H2><A NAME="SEC487" HREF="ciao_toc.html#TOC487">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
 <P>
-<A NAME="IDX4702"></A>
-<A NAME="IDX4703"></A>
+<A NAME="IDX5462"></A>
+<A NAME="IDX5463"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>atom2term/2:</B>
-<DD><A NAME="IDX4704"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
+<DD><A NAME="IDX5464"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>atom2term(+Atom,-(Term))</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Convert an atom into a term. <CODE>Atom</CODE> is an atom, but must have term syntax. <CODE>Term</CODE> is a term resulting from parsing <CODE>Atom</CODE> char by char. Note: this is just a simple version written for parsing daVinci's messages. There should be a call to the standard reader to do this!
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX5465"></A>
+<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5466"></A>
+<A NAME="IDX5467"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
+<DD><A NAME="IDX5468"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX5469"></A>
+<CODE>emacs</CODE> and continues without waiting for editing to finish. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5470"></A>
+<A NAME="IDX5471"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
+<DD><A NAME="IDX5472"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4705"></A>
-<A NAME="IDX4706"></A>
+<A NAME="IDX5473"></A>
+<A NAME="IDX5474"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>string2term/2:</B>
-<DD><A NAME="IDX4707"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
+<DD><A NAME="IDX5475"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>string2term(+String,-(Term))</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Same as
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
 
-<A NAME="IDX4708"></A>
-<CODE>atom2term/2</CODE> but first argument is a string (containing a term). 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4709"></A>
-<A NAME="IDX4710"></A>
+<A NAME="IDX5476"></A>
+<A NAME="IDX5477"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>parse_term/3:</B>
-<DD><A NAME="IDX4711"></A>
+<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
+<DD><A NAME="IDX5478"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
+
+<A NAME="IDX5479"></A>
+<CODE>emacs</CODE> lisp code. 
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_119.html">previous</A>, <A HREF="ciao_121.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

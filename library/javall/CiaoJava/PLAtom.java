@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 
 /**
  * Prolog atom representation. This class is used to represent
- * prolog atoms and empty lists (The empty list [] is represented
- * in prolog and in the fast_read/fast_write format as an atom).
+ * Prolog atoms and empty lists (The empty list [] is represented
+ * in Prolog and in the fast_read/fast_write format as an atom).
  * This class does not represent numeric atoms; use instead
  * PLInteger and PLFloat classes.
  */
@@ -16,7 +16,7 @@ public class PLAtom extends PLTerm {
    * Atom constructor. Creates a new atom object with its name given
    * as argument.
    *
-   * @param name Name of the prolog atom.
+   * @param name Name of the Prolog atom.
    */
   public PLAtom(String name) {
 
@@ -26,7 +26,9 @@ public class PLAtom extends PLTerm {
   }
 
   /**
-   * String representation of a prolog atom.
+   * String representation of a Prolog atom.
+   *
+   * @return The <code>String</code> representation of this atom.
    */
   public String toString() {
 
@@ -35,14 +37,14 @@ public class PLAtom extends PLTerm {
   }
 
   /**
-   * Gets the java representation of the atom as an object.
+   * Gets the Java representation of the atom as an object.
    *
-   * @param i <code>PLInterpreter</code> object representing a prolog
-   *          to java interpreter. Although is not used in this class,
+   * @param i <code>PLInterpreter</code> object representing a Prolog
+   *          to Java interpreter. Although is not used in this class,
    *          is included to implement the same method of class
    *          <code>PLTerm</code>.
    *
-   * @return a java <code>Object</code> with the name of this prolog atom.
+   * @return a Java <code>Object</code> with the name of this Prolog atom.
    */
   public Object javaRepr(PLInterpreter i) {
     
@@ -53,6 +55,8 @@ public class PLAtom extends PLTerm {
   /**
    * Gets the name of this atom as a string. Returns a copy of the
    * string name instead of the name itself.
+   * 
+   * @return A <code>String</code> with the name of this atom.
    */
   public String getName() {
     
@@ -61,10 +65,10 @@ public class PLAtom extends PLTerm {
   }
 
   /**
-   * Execution test on prolog objects. Implements the abstract method
+   * Execution test on Prolog objects. Implements the abstract method
    * of class <code>PLTerm</code>.
    * 
-   * @return true if the related prolog term can be evaluated as a goal;
+   * @return true if the related Prolog term can be evaluated as a goal;
    *         false otherwise.
    */
   public boolean isRunnable() {
@@ -74,11 +78,11 @@ public class PLAtom extends PLTerm {
   }
 
   /**
-   * comparison between prolog terms.
+   * comparison between Prolog terms.
    *
    * @param term The <code>PLTerm</code> object to compare with this object.
    *
-   * @return true if the term received as argument is similar to this
+   * @return <code>true</code> if the term received as argument is similar to this
    *         atom: is a <code>PLAtom</code> object and has the same
    *         atom name;
    *         false otherwise.
@@ -93,7 +97,11 @@ public class PLAtom extends PLTerm {
   }
 
   /**
-   * Makes a full copy of this <code>PLAtom</code> object.
+   * Makes a full copy of this <code>PLAtom</code> object. Creates 
+   * a new <code>PLAtom</code> object with the name equals to this
+   * object name.
+   *
+   * @return The new object created.
    */
   public PLTerm copy() {
     
@@ -102,10 +110,11 @@ public class PLAtom extends PLTerm {
   }
 
   /**
-   * Returns the number of cells used in the internal prolog
-   * representation.
-   * This function is only needed for $fast format generation in
-   * prolog $fast_read version 'a'.
+   * Returns the number of cells used in the internal Prolog
+   * representation. This function is only needed for $fast format generation in
+   * Prolog $fast_read version 'a'.
+   * 
+   * @return The number of cells used in the internal Prolog representation.
    */
   protected int numberOfCells() {
     return 0;
@@ -113,7 +122,7 @@ public class PLAtom extends PLTerm {
 
   /**
    * this method is under development. Must implement the launching
-   * of a prolog goal with no arguments.
+   * of a Prolog goal with no arguments.
    */
   public void launchGoal(PrintWriter out) throws PLGoalException {
 

@@ -1,7 +1,6 @@
 
 :- module(jtopl,
-	[prolog_server/0,
-	 prolog_parse/2
+	[prolog_server/0
 	],
 	[assertions,regtypes,isomodes]).
 
@@ -9,8 +8,37 @@
 
 :- comment(author,"Jes@'{u}s Correas").
 
-:- comment(module,
-	"This module defines a low level Java to Prolog interface.").
+:- comment(module, "
+@cindex{Low level Java to Prolog interface}
+This module defines a low level Java to Prolog interface. This Prolog side
+of the Java to Prolog interface only has one public predicate: a server
+that listens at the socket connection with Java, and executes the commands
+received from the Java side.
+
+In order to evaluate the goals received from the Java side, this module can
+work in two ways: executing them in the same engine, or starting a thread
+for each goal. The easiest way is to launch them in the same engine, but
+the goals must be evaluated sequentially: once a goal provides the first
+solution, all the subsequent goals must be finished before this goal can
+backtrack to provide another solution. The Prolog side of this interface
+works as a top-level, and the goals partially evaluated are not
+independent.
+
+The solution of this goal dependence is to evaluate the goals in a
+different prolog engine. Although Ciao includes a mechanism to evaluate
+goals in different engines, the approach used in this interface is to
+launch each goal in a different thread.
+
+The decision of what kind of goal evaluation is selected is done by the
+Java side. Each evaluation type has its own command terms, so the Java side
+can choose the type it needs.
+
+A Prolog server starts by calling the @tt{prolog_server/0} predicate. The
+user predicates and libraries to be called from Java must be
+included in the executable file, or be accesible using the built-in
+predicates dealing with code loading.
+
+").
 
 :- use_module(engine(internals)).
 :- use_module(library(system)).
@@ -27,33 +55,79 @@
 :- concurrent query_solutions/2.
 :- concurrent running_queries/2.
 
+:- comment(doinclude,command/1).
+:- comment(doinclude,answer/1).
+:- comment(doinclude,prolog_query/1).
+:- comment(doinclude,shell_s/0).
+:- comment(doinclude,process_first_command/1).
+:- comment(doinclude,process_next_command/2).
+:- comment(doinclude,solve/1).
+:- comment(doinclude,solve_on_thread/1).
+:- comment(doinclude,get_query_id/1).
+:- comment(doinclude,prolog_parse/2).
+:- comment(doinclude,read_command/1).
+:- comment(doinclude,write_answer/1).
+
 %%------------------------------------------------------------------
 %% REGTYPES
 %%------------------------------------------------------------------
+:- regtype command(X) # "@var{X} is a command received from the java
+	client, to be executed by the Prolog process. The command is
+	represented as an atom or a functor with arity 1. The command to be
+	executed must be one of the following types:
+@cindex{Java commands}
+@begin{itemize}
 
-:- regtype command(X)
-	# "@var{X} is a command received from the java client. Is
-          represented as an atom or a functor with arity 1.".
+@item @tt{prolog_launch_query(Q)} Compound term to create a new query,
+	received as single argument of this structure. A reference to the
+	new query is returned to Java.
+
+@item @tt{prolog_launch_query_on_thread(Q)} Compound term to evaluate a new
+	query using a separate thread. A reference to the new query is
+	returned to Java.
+
+@item @tt{prolog_next_solution(ID)} Compound term to get the next solution
+	of a goal identified by the single argument of the structure. A term
+	representing the goal instantiated with the next solution is
+	returned to Java.
+
+@item @tt{prolog_terminate_query(ID)} Compound term to terminate the goal
+	identified by the argument. If the thread option is disabled, a cut
+	is made in the goal search tree, and the goal is removed from the
+	goal table; if the thread option is enabled, the thread evaluating
+	the goal is terminated.
+
+@item @tt{prolog_exit} Atom to terminate the current Prolog process.
+
+@end{itemize}
+".
+
 command(prolog_launch_query(Query)) :-
 	prolog_query(Query).
 
 command(prolog_launch_query_on_thread(Query)) :-
 	prolog_query(Query).
-command(prolog_next_solution).
-command(prolog_terminate_query).
+command(prolog_next_solution(_)).
+command(prolog_terminate_query(_)).
 command(prolog_exit).
 
-:- regtype answer(X)
-	# "@var{X} is a response sent from the prolog server. Is
-          represented as an atom or a functor.".
-answer(prolog_success).
-answer(prolog_fail).
-answer(prolog_solution(_, _)).
-answer(prolog_query_id(X)) :-
-	int(X).
+:- regtype answer(X) # "@var{X} is a response sent from the prolog
+	server. Is represented as an atom or a functor with arity 1 or 2,
+	depending on the functor name.
+@cindex{Prolog answers}
 
-:- regtype prolog_query(X)
-	# "@var{X} is a query to be launched from the prolog server.".
+".
+
+answer(prolog_success).  
+answer(prolog_fail).
+answer(prolog_solution(X, Y)) :- atom(X), nonvar(Y).  
+answer(prolog_query_id(X)) :- int(X).
+answer(prolog_exception(X)) :- nonvar(X).
+answer(prolog_exception(X,Y)) :- int(X), nonvar(Y).
+
+:- regtype prolog_query(X) # "@var{X} is a query to be launched from the
+prolog server.".
+
 prolog_query(Query) :-
 	callable(Query).
 
@@ -63,8 +137,10 @@ prolog_query(Query) :-
 	  input the node name and port number where the java
 	  client resides, and starts the prolog server
 	  listening at the data socket. This predicate acts
-	  as a server: includes an infinite read-process loop
-	  until the prolog_exit command is received.".
+	  as a server: it includes an endless read-process loop
+	  until the @tt{prolog_exit} command is received.
+@cindex{Prolog server}
+".
 %----------------------------------------------------------------------------
 prolog_server :-
 	current_host(Node),
@@ -72,7 +148,23 @@ prolog_server :-
 	shell_s.
 
 %----------------------------------------------------------------------------
-:- pred shell_s/0 # "Starts the prolog server.".
+:- pred shell_s/0 # "Command execution loop. This predicate is called
+	when the connection to Java is established, and performs an endless
+	loop dealing with the following tasks:
+
+@begin{itemize}
+
+@item reads a command from the socket. All the commands are explained in the
+	@tt{command} type description,
+
+@item processes the command using the @tt{process_first_command/1} and
+	@tt{process_next_command/1} predicates, and
+
+@item returns the results of the command execution.
+
+@end{itemize}
+
+".
 %----------------------------------------------------------------------------
 shell_s :-
         read_command(Command),
@@ -85,15 +177,14 @@ shell_s :-
 
 
 %----------------------------------------------------------------------------
-:- pred process_first_command(+Command)
-	:: command
-        # "Process the first command of a query. With threads, process all
-	   the commands received from the prolog server.".
+:- pred process_first_command(+Command) 
+	:: command 
+        # "Processes the first command of a query. Using the threads option, it
+	processes all the commands received from the prolog server.".
 %----------------------------------------------------------------------------
-process_first_command(prolog_exit) :-
-	%% Kills all the remaining threads and closes the prolog server.
-        eng_killothers,
-        process_next_command(_, prolog_exit).
+process_first_command(prolog_exit) :- 
+	%% Kills all the remaining threads and closes the prolog server.  
+        eng_killothers, process_next_command(_,prolog_exit).
 
 process_first_command(prolog_launch_query(Q)) :-
 	%% Sets a goal for launching. Launching itself is done when the
@@ -154,7 +245,8 @@ process_first_command(Command) :-
 :- pred solve(+Query)
         :: prolog_query
         # "Runs the query processing the commands received from the java
-           side, and handles query nesting. Is used only with no threads.".
+           side, and handles query nesting. It is used only with the thread
+           option disabled.".
 %----------------------------------------------------------------------------
 %:- meta_predicate solve(goal).
 
@@ -176,8 +268,8 @@ solve(_Query) :-
 %----------------------------------------------------------------------------
 :- pred solve_on_thread(+Query)
         :: prolog_query
-        # "Runs the query on a separate thread and stores the solutions on the
-	   query_solutions/2 data predicate.".
+        # "Runs the query on a separate thread and stores the solutions 
+           on the @tt{query_solutions/2} data predicate.".
 %----------------------------------------------------------------------------
 solve_on_thread(Query) :-
 	eng_self(Id),
@@ -207,7 +299,7 @@ error_handler(Id, Error) :-
 :- pred get_query_id(-Id)
         :: prolog_query_id
         # "Produces the query id for the next query, when is invoked the
-	  no threads version.".
+	  threads option disabled.".
 %----------------------------------------------------------------------------
 get_query_id(Id) :-
 	running_queries(Id0, _),
@@ -254,7 +346,8 @@ process_next_command(Id, _) :-
         :: string * term
         # "Parses the string received as first argument and returns
 	   the prolog term as second argument.
-           This is a private predicate but is called from java side.".
+           @bf{Important:} This is a private predicate but could be called
+           from java side, to parse strings to Prolog terms.".
 %----------------------------------------------------------------------------
 prolog_parse(S, Term) :-
 	string2term(S, Term).
@@ -275,3 +368,15 @@ write_answer(Answer) :-
 read_command(Command) :-
 	java_fast_read(data,Command).
 
+
+%%------------------------------------------------------------------------
+%% VERSION CONTROL
+%%------------------------------------------------------------------------
+
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+40,2000/02/08,16:32*42+'CET'), "Interface Documentation. (Jesus Correas Fernandez)").
+
+
+
+%%------------------------------------------------------------------------

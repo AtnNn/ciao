@@ -16,8 +16,22 @@ void skip_to_ctrl_l(FILE *file);
 
 #define BUFFERED_PO
 
+/* We want to have support for loading compressed bytecode */
+
+#define ALLOW_COMPRESSED_CODE
+
+#if defined(ALLOW_COMPRESSED_CODE)
+# define GETC(f) readLZ(f)
+int readLZ(FILE *stream);
+void is_compressed(FILE *file);
+#endif
+
 #if defined(BUFFERED_PO)
-# define GETC(f) buffered_input(f)
+# if defined(ALLOW_COMPRESSED_CODE)
+#  define GETC_LZ(f) buffered_input(f)
+# else
+#  define GETC(f) buffered_input(f)
+# endif   
 # if defined(DEBUG)
 #  define UNGETC(chr, f) \
    if (!qlbuffidx)  fprintf(stderr, "Error UNGETting: buffer underfull!\n"); \
@@ -26,7 +40,11 @@ void skip_to_ctrl_l(FILE *file);
 #  define UNGETC(chr, f) qlbuffidx-- 
 # endif
 #else
-# define GETC(f) getc(f)
+# if defined(ALLOW_COMPRESSED_CODE)
+#  define GETC_LZ(f) getc(f)
+# else
+#  define GETC(f) getc(f)
+# endif
 # define UNGETC(chr, f) ungetc(chr, f)
 #endif
 

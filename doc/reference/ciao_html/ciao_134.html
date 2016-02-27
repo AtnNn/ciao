@@ -1,106 +1,140 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Crossed-references of a program</TITLE>
+<TITLE>The Ciao Prolog System               - Random numbers</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC471" HREF="ciao_toc.html#TOC471">Crossed-references of a program</A></H1>
-
+<H1><A NAME="SEC526" HREF="ciao_toc.html#TOC526">Random numbers</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
-
-
-<P>
-The <CODE>xrefs</CODE> crossed-references Ciao library includes several modules which allow displaying crossed-references of the code in a program. Crossed-references identify modules which import code from other modules, or files (be them modules or not) which use code in other files. Crossed-references can be obtained as a term representing a graph, displayed graphically (using daVinci, a graph displayer developed by U. of Bremen, Germany), or printed as a list. 
+<A NAME="IDX5803"></A>
 
 
 <P>
-The libraries involved are as follows: 
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#26 (1999/12/29, 15:7:59 CET)
+
+
+<P>
+This module provides predicates for generating pseudo-random numbers
+
+
 
 <UL>
-<LI>
-
-<A NAME="IDX5033"></A>
-<CODE>etc(xmrefs)</CODE> displays a graph of crossed-references between modules using daVinci, 
-<LI>
-
-<A NAME="IDX5034"></A>
-<CODE>etc(xfrefs)</CODE> displays a graph of crossed-references between files using daVinci, 
-<LI>
-
-<A NAME="IDX5035"></A>
-<CODE>library(xrefs)</CODE> obtains a graph of crossed-references between files, 
-<LI>
-
-<A NAME="IDX5036"></A>
-<CODE>library('xrefs/mrefs')</CODE> obtains a graph of crossed-references between modules, 
-<LI>
-
-<A NAME="IDX5037"></A>
-<CODE>library('xrefs/pxrefs')</CODE> prints a list of crossed-references between files. 
+<LI><A HREF="ciao_134.html#SEC527">Usage and interface (random)</A>
+<LI><A HREF="ciao_134.html#SEC528">Documentation on exports (random)</A>
 </UL>
 
+
+
+<H2><A NAME="SEC527" HREF="ciao_toc.html#TOC527">Usage and interface (<CODE>random</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(random)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX5804"></A>
+<CODE>random/1</CODE>, 
+<A NAME="IDX5805"></A>
+<CODE>random/3</CODE>, 
+<A NAME="IDX5806"></A>
+<CODE>srandom/1</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC528" HREF="ciao_toc.html#TOC528">Documentation on exports (<CODE>random</CODE>)</A></H2>
 <P>
-The first two are intended to be used by loading in 
-<A NAME="IDX5038"></A>
-<CODE>ciaosh</CODE>. The other three are intended to be used as modules within an application. 
-
-
-<P>
-The following is an example graph of the library modules involved in the crossed-references application. It has been obtained with: 
-
-<PRE>
-[ciao/etc]&#62; ciaosh
-Ciao-Prolog 1.5 #24: Tue Dec 28 14:12:11 CET 1999
-?- use_module(xmrefs).
-
-yes
-?- set_flag(X).
-
-X = 3 ? 
-
-yes
-?- set_files([xfrefs, xmrefs,
-              library(xrefs),
-              library('xrefs/mrefs'),
-              library('xrefs/pxrefs'),
-              library('xrefs/xrefs2graph'),
-              library('xrefs/xrefsbuild'),
-              library('xrefs/xrefsread')
-	     ]).
-
-yes
-?- xmrefs.
-
-</PRE>
-
-<P>
-so that it is displayed by daVinci as: 
-
-
-<P>
-<IMG SRC="autofigxmgraph.jpg" ALT="Image:autofigxmgraph.jpg"> 
-
-
-<P>
-The following is an example graph of the same module files, where crossed-references have been obtained with <CODE>xfrefs:xfrefs(whodefs)</CODE> instead of <CODE>xmrefs:xmrefs</CODE>: 
+<A NAME="IDX5807"></A>
+<A NAME="IDX5808"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random/1:</B>
+<DD><A NAME="IDX5809"></A>
 
 
 <P>
-<IMG SRC="autofigxfgraph.jpg" ALT="Image:autofigxfgraph.jpg"> 
+<CODE>random(Number)</CODE>
 
 
 <P>
-For more information refer to the xrefs documentation (<CODE>xrefs_doc.dvi</CODE>) in the source library of the Ciao distribution.
+<CODE>Number</CODE> is a (pseudo-) random number in the range [0.0,1.0]
 
+
+</DL>
+
+<P>
+<A NAME="IDX5810"></A>
+<A NAME="IDX5811"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>random/3:</B>
+<DD><A NAME="IDX5812"></A>
+
+
+<P>
+<CODE>random(Low,Up,Number)</CODE>
+
+
+<P>
+<CODE>Number</CODE> is a (pseudo-) random number in the range [<CODE>Low</CODE>, <CODE>Up</CODE>]
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>random(+int,+int,-(int))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> If <CODE>Low</CODE> and <CODE>Up</CODE> are integers, <CODE>Number</CODE> is an integer.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5813"></A>
+<A NAME="IDX5814"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>srandom/1:</B>
+<DD><A NAME="IDX5815"></A>
+
+
+<P>
+<CODE>srandom(Seed)</CODE>
+
+
+<P>
+Changes the sequence of pseudo-random numbers according to <CODE>Seed</CODE>. The stating sequence of numbers generated can be duplicated by calling the predicate with <CODE>Seed</CODE> unbound (the sequence depends on the OS).
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -76,7 +76,7 @@ stateng: commoneng
 
 commoneng:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Compiling $(BASEMAIN) engine for $(OSNAME)/$(ARCHNAME)..."
+	@echo "*** Compiling $(BASEMAIN) engine for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
 	$(MAKE) $(MFLAGS) version-ciao
 
@@ -144,16 +144,16 @@ bin/$(CIAOARCH)$(CIAODEBUG):
 createsrcdir:
 	if test ! -d $(SRC)/bin ; then \
 	  mkdir $(SRC)/bin ; \
-	  touch $(SRC)/bin/.nodistribute ; \
+	  touch $(SRC)/bin/NODISTRIBUTE ; \
 	  chmod $(EXECMODE) $(SRC)/bin ; \
-	  chmod $(DATAMODE) $(SRC)/bin/.nodistribute ; \
+	  chmod $(DATAMODE) $(SRC)/bin/NODISTRIBUTE ; \
         fi
 	if test ! -d $(OBJDIR) ; then \
 	  mkdir $(OBJDIR) ; chmod $(EXECMODE) $(OBJDIR) ; fi
 
 createincludedir:
 	if test ! -d $(SRC)/include ; then \
-	  mkdir $(SRC)/include ; chmod $(EXECMODE) $(SRC)/include ; touch $(SRC)/include/.nodistribute ; fi
+	  mkdir $(SRC)/include ; chmod $(EXECMODE) $(SRC)/include ; touch $(SRC)/include/NODISTRIBUTE ; fi
 	if test ! -d $(SRCINCLUDEDIR) ; then \
 	  mkdir $(SRCINCLUDEDIR) ; chmod $(EXECMODE) $(SRCINCLUDEDIR) ; fi
 
@@ -169,28 +169,32 @@ installeng: eng installincludes justinstalleng
 
 justinstalleng:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Installing $(BASEMAIN) engine for $(OSNAME)/$(ARCHNAME)..."
+	@echo "*** Installing $(BASEMAIN) engine for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
 	-(umask 002; mkdir -p $(REALLIBDIR); \
-	cd $(OBJDIR); $(MAKE) install LD=$(LD) \
-	CC=$(CC) CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' LIBS=$(LIBS))
+	 cd $(OBJDIR); $(MAKE) install LD=$(LD) \
+	 CC=$(CC) CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' LIBS=$(LIBS))
 
 uninstalleng:
-#	@echo "*** ---------------------------------------------------------"
-#	@echo "*** Uninstalling $(BASEMAIN) engine for $(OSNAME)/$(ARCHNAME)..."
-#	@echo "*** ---------------------------------------------------------"
+	@echo "*** ---------------------------------------------------------"
+	@echo "*** Uninstalling $(BASEMAIN) engine for $(OSNAME)$(ARCHNAME)..."
+	@echo "*** ---------------------------------------------------------"
+	cd $(OBJDIR); $(MAKE) uninstall
 
 installincludes:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Installing C include files for $(OSNAME)/$(ARCHNAME)..."
+	@echo "*** Installing C include files for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
 	-mkdir -p $(REALLIBDIR)/include
+	-chmod $(EXECMODE) $(REALLIBDIR)/include
 	-mkdir -p $(INSTALLEDINCLUDEDIR)
+	-chmod $(EXECMODE) $(INSTALLEDINCLUDEDIR)
 	-cp $(NODEBUGSRCINCLUDEDIR)/* $(INSTALLEDINCLUDEDIR)
+	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
 
 uninstallincludes:
 	@echo "*** ---------------------------------------------------------"
-	@echo "*** Uninstalling C include files for $(OSNAME)/$(ARCHNAME)..."
+	@echo "*** Uninstalling C include files for $(OSNAME)$(ARCHNAME)..."
 	@echo "*** ---------------------------------------------------------"
 	-rm -rf $(INSTALLEDINCLUDEDIR)
 
@@ -201,6 +205,8 @@ justinstall:
 	@echo "*** Installing ciao"
 	@echo "*** ========================================================="
 	-mkdir -p $(REALLIBDIR)
+	-chmod $(EXECMODE) $(LIBDIR)
+	-chmod $(EXECMODE) $(REALLIBDIR)
 	$(MAKE) justinstalleng
 	$(MAKE) installincludes
 	cd ciaoc;   $(MAKE) install
@@ -209,7 +215,6 @@ justinstall:
 	cd lib;     $(MAKE) install
 	cd library; $(MAKE) install
 ifeq ($(INSTALL_EMACS_SUPPORT),yes)
-#	cd emacs;   $(MAKE) install
 	cd emacs-mode;   $(MAKE) install
 endif
 	find $(REALLIBDIR) -type d -exec chmod $(EXECMODE) {} \;
@@ -222,18 +227,17 @@ uninstall:
 	@echo "*** ========================================================="
 	@echo "*** Uninstalling ciao"
 	@echo "*** ========================================================="
-	$(MAKE) uninstalleng
 	$(MAKE) uninstallincludes
 	cd ciaoc; $(MAKE) uninstall
 	cd shell; $(MAKE) uninstall
 	cd etc;     $(MAKE) uninstall
-	cd $(OBJDIR); $(MAKE) uninstall
+	$(MAKE) uninstalleng
 	cd lib; $(MAKE) uninstall
 	cd library; $(MAKE) uninstall
-#	cd emacs; $(MAKE) uninstall
 	cd emacs-mode; $(MAKE) uninstall
-	cd doc; $(MAKE) uninstall DOCFORMATS=$(TARDOCFORMATS)
+	cd doc; $(MAKE) uninstall DOCFORMATS="$(TARDOCFORMATS)"
 	-rm -r $(REALLIBDIR)
+	-rm -r $(LIBDIR)
 	@echo "*** ========================================================="
 	@echo "*** Ciao deinstallation completed"
 	@echo "*** ========================================================="
@@ -278,6 +282,9 @@ cleanbackups:
 	(cd $(SRC); find . -name '*~' -exec /bin/rm {} \;)
 	(cd $(SRC); find $(SRC) -name '#*' -exec /bin/rm {} \;)
 
+cleanasrs:
+	(cd $(SRC); find . -name '*.asr' -exec /bin/rm {} \;)
+
 distclean: engclean
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning $(SRC) distribution tree... (unix)"
@@ -285,6 +292,8 @@ distclean: engclean
 	cd ciaoc; $(MAKE) distclean
 	cd shell; $(MAKE) distclean
 	cd etc; $(MAKE) distclean
+	cd emacs-mode; $(MAKE) distclean
+	cd Win32; $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/doc $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/lib $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/library $(MAKE) distclean

@@ -11,6 +11,14 @@
 #include "qget_defs.h"
 #include "stacks_defs.h"
 
+#if defined(ALLOW_COMPRESSED_CODE)
+#if defined(LINUX) || defined(Win32)
+#include <string.h>
+#else
+#include <strings.h>
+#endif
+#endif
+
 /* local declarations */
 
 static void load_dbnode(Argdecl, int Li, FILE *f, int codelength, int counter_cnt);
@@ -56,6 +64,69 @@ int buffered_input(stream)
 
 #endif
 
+#if defined(ALLOW_COMPRESSED_CODE)
+
+int  Last, PrefixSize, Size[4096], Buffer[3840], BufferP;
+char *Dict[4096], *First, Vault[200000], compressed, remaining;
+
+/* Allows the load of compressed bytecode. The compression algorithm used is
+   based on Lempel-Ziv, reducing bytecode size to about 1/3 and varying load
+   time to about 125% when using buffered input and to less than 60% when using
+   unbuffered one (note: even thorough this, the load of compressed bytecode
+   is faster when buffered input is enabled). Files containing compressed
+   bytecode are recognized because they begin by ^L the bytecode sequence. */
+
+void is_compressed(FILE *file)
+{ int i;
+  
+ if ((compressed = ((i=GETC(file)) == 12)))
+     { Last = 4095;
+       remaining = BufferP = 0;
+       for (i = 0; i < 257; Size[i++] = 1) (Dict[i]=&Vault[i])[0] = i%256;}
+  else UNGETC(i, file);}
+
+#define InLZ(n,n2) { for (; size < n; size += 8) \
+	                  i += GETC_LZ(stream)*(1<<size); \
+                     Buffer[--BufferP] = i % n2; \
+      	             i /= n2; \
+                     size -= n; }    
+      
+int readLZ(FILE *stream)
+{ 
+  int  i = 0;
+  char size = 0;
+
+  if (compressed) {
+    if (remaining)
+      return (int)First[PrefixSize-remaining--];  
+    if (!BufferP) { 
+      BufferP = 3840;
+      while (BufferP > 3584)
+        InLZ(9,512);
+      while (BufferP > 3072)
+        InLZ(10,1024);	  
+      while (BufferP > 2048)
+        InLZ(11,2048);
+      while (BufferP) 
+        InLZ(12,4096);
+      BufferP = 3840; 
+    }
+    if ((i=Buffer[--BufferP]) == 256) 
+      return EOF;
+    if (Last == 4095) 
+      (First = &Vault[Last = 256])[0] = i;
+    else { 
+      Size[++Last] = PrefixSize+1;            
+      (Dict[Last] = First)[PrefixSize] = Dict[i][0];
+      bcopy(Dict[i],First += Size[Last],Size[i]);
+    }
+    remaining = (PrefixSize=Size[i])-1;
+    return (int)First[0];
+  }
+  else return GETC_LZ(stream);}
+
+#endif                                                                                                
+
 extern int getshort PROTO((FILE *file));
 extern TAGGED getlarge PROTO((Argdecl, FILE *file));
 extern ENG_INT getlong PROTO((FILE *file));
@@ -75,6 +146,9 @@ BOOL push_qlinfo(Arg)
   qlbuffidx = QLBFSIZE; /* Empty */
   qlbuffend = QLBFSIZE; 
 #endif  
+#if defined(ALLOW_COMPRESSED_CODE)
+  compressed = 0;
+#endif
 
   p->next = qlstack;
   qlstack = p;
@@ -353,6 +427,9 @@ BOOL prolog_qread(Arg)
     qfile = s->streamfile;
   if (is_a_script(qfile)) 
     skip_to_ctrl_l(qfile);
+#if defined(ALLOW_COMPRESSED_CODE)
+  is_compressed(qfile);
+#endif
   if (qread1(Arg,qfile, &goal))
     return cunify(Arg,goal,X(1));
   }

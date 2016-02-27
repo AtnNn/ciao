@@ -1,47 +1,262 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART VII - Ciao Prolog extensions</TITLE>
+<TITLE>The Ciao Prolog System               - davinci (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_84.html">previous</A>, <A HREF="ciao_86.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_84.html">previous</A>, <A HREF="ciao_86.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC305" HREF="ciao_toc.html#TOC305">PART VII - Ciao Prolog extensions</A></H1>
+<H1><A NAME="SEC349" HREF="ciao_toc.html#TOC349">davinci (library)</A></H1>
+<P>
+<A NAME="IDX3983"></A>
+
 
 <P>
-The libraries documented in this part extend the Ciao language in several different ways. The extensions include: 
+<STRONG>Author(s):</STRONG> Francisco Bueno.
+
+
+<P>
+This library allows connecting a Ciao Prolog application with daVinci V2.X. 
+
+
+<P>
+The communication is based on a two-way channel: after daVinci is started, messages are sent in to it and read in from it on demand by different Prolog predicates. Messages are sent via writing the term as text; messages are received by reading text and returning an atom. Commands sent and answers received are treated as terms from the Prolog side, since for daVinci they are text but have term syntax; the only difficulty lies in strings, for which special Prolog syntax is provided. 
+
+
+<P>
+See accompanying file <CODE>library('davinci/commands')</CODE> for examples on the use of this library. 
+
+
+<P>
+daVinci is developed by U. of Bremen, Germany.
+
+
 
 <UL>
-<LI>pure Prolog programming (although someone might view this as a restriction rather than an extension);
+<LI><A HREF="ciao_85.html#SEC350">Usage and interface (davinci)</A>
+<LI><A HREF="ciao_85.html#SEC351">Documentation on exports (davinci)</A>
+</UL>
 
-<LI>feature terms or
 
-<A NAME="IDX3485"></A>
-<A NAME="IDX3486"></A>
-<EM>records</EM> (i.e., structures with names for each field); 
-<LI>parallel (&#38;-Prolog) programming;
 
-<LI>functional syntax;
+<H2><A NAME="SEC350" HREF="ciao_toc.html#TOC350">Usage and interface (<CODE>davinci</CODE>)</A></H2>
 
-<LI>global variables;
+<div class="cartouche">
 
-<LI><CODE>setarg</CODE> and <CODE>undo</CODE>;
+<UL>
 
-<LI>active modules;
+<LI><STRONG>Library usage:</STRONG>
 
-<LI>breadth-first execution;
+<CODE>:- use_module(library(davinci)).</CODE>
 
-<LI>constraint logic programming;
+<LI><STRONG>Exports:</STRONG>
 
-<LI>object oriented programming.
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX3984"></A>
+<CODE>davinci/0</CODE>, 
+<A NAME="IDX3985"></A>
+<CODE>topd/0</CODE>, 
+<A NAME="IDX3986"></A>
+<CODE>davinci_get/1</CODE>, 
+<A NAME="IDX3987"></A>
+<CODE>davinci_get_all/1</CODE>, 
+<A NAME="IDX3988"></A>
+<CODE>davinci_put/1</CODE>, 
+<A NAME="IDX3989"></A>
+<CODE>davinci_quit/0</CODE>, 
+<A NAME="IDX3990"></A>
+<CODE>davinci_ugraph/1</CODE>, 
+<A NAME="IDX3991"></A>
+<CODE>davinci_lgraph/1</CODE>, 
+<A NAME="IDX3992"></A>
+<CODE>ugraph2term/2</CODE>, 
+<A NAME="IDX3993"></A>
+<CODE>formatting/2</CODE>.
 
 </UL>
 
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX3994"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX3995"></A>
+<CODE>prompt</CODE>, 
+<A NAME="IDX3996"></A>
+<CODE>errhandle</CODE>, 
+<A NAME="IDX3997"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX3998"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX3999"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX4000"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX4001"></A>
+<CODE>system</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC351" HREF="ciao_toc.html#TOC351">Documentation on exports (<CODE>davinci</CODE>)</A></H2>
+<P>
+<A NAME="IDX4002"></A>
+<A NAME="IDX4003"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci/0:</B>
+<DD><A NAME="IDX4004"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4005"></A>
+<A NAME="IDX4006"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>topd/0:</B>
+<DD><A NAME="IDX4007"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4008"></A>
+<A NAME="IDX4009"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_get/1:</B>
+<DD><A NAME="IDX4010"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4011"></A>
+<A NAME="IDX4012"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_get_all/1:</B>
+<DD><A NAME="IDX4013"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4014"></A>
+<A NAME="IDX4015"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_put/1:</B>
+<DD><A NAME="IDX4016"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4017"></A>
+<A NAME="IDX4018"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_quit/0:</B>
+<DD><A NAME="IDX4019"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4020"></A>
+<A NAME="IDX4021"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_ugraph/1:</B>
+<DD><A NAME="IDX4022"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4023"></A>
+<A NAME="IDX4024"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_lgraph/1:</B>
+<DD><A NAME="IDX4025"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4026"></A>
+<A NAME="IDX4027"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ugraph2term/2:</B>
+<DD><A NAME="IDX4028"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4029"></A>
+<A NAME="IDX4030"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>formatting/2:</B>
+<DD><A NAME="IDX4031"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_84.html">previous</A>, <A HREF="ciao_86.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_84.html">previous</A>, <A HREF="ciao_86.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

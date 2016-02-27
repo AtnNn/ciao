@@ -40,7 +40,7 @@
 @includeverbatim{example_dynamic.pl}
 @end{verbatim}
 
-@section{A simple application: a persistent queue}
+@section{A simple application / a persistent queue}
 @begin{verbatim}
 @includeverbatim{queue.pl}
 @end{verbatim}

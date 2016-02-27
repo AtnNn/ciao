@@ -1,46 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Control constructs/predicates</TITLE>
+<TITLE>The Ciao Prolog System               - Directives for using code in other files</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_14.html">previous</A>, <A HREF="ciao_16.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_14.html">previous</A>, <A HREF="ciao_16.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC76" HREF="ciao_toc.html#TOC76">Control constructs/predicates</A></H1>
+<H1><A NAME="SEC122" HREF="ciao_toc.html#TOC122">Directives for using code in other files</A></H1>
 <P>
-<A NAME="IDX760"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+<A NAME="IDX1150"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#34 (1999/12/31, 18:49:41 CET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#13 (1999/12/14, 13:37:34 MET)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-This module contains the set of basic control predicates, except the predicates dealing with exceptions, which are in section <A HREF="ciao_25.html#SEC108">Exception handling</A>.
+<STRONG>Version of last change:</STRONG> 1.3#107 (1999/11/18, 13:6:14 MET)
 
 
 
 <UL>
-<LI><A HREF="ciao_15.html#SEC77">Usage and interface (basiccontrol)</A>
-<LI><A HREF="ciao_15.html#SEC78">Documentation on exports (basiccontrol)</A>
-<LI><A HREF="ciao_15.html#SEC79">Documentation on internals (basiccontrol)</A>
+<LI><A HREF="ciao_15.html#SEC123">Usage and interface (loading_code)</A>
+<LI><A HREF="ciao_15.html#SEC124">Documentation on internals (loading_code)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC77" HREF="ciao_toc.html#TOC77">Usage and interface (<CODE>basiccontrol</CODE>)</A></H2>
+<H2><A NAME="SEC123" HREF="ciao_toc.html#TOC123">Usage and interface (<CODE>loading_code</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,271 +43,111 @@ This module contains the set of basic control predicates, except the predicates 
 
 <LI><STRONG>Library usage:</STRONG>
 
-These predicates/constructs are builtin in CIAO, so nothing special has to be done to use them. In fact, as they are hardwired in some parts of the system, most of them cannot be redefined.
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX761"></A>
-<CODE>,/2</CODE>, 
-<A NAME="IDX762"></A>
-<CODE>;/2</CODE>, 
-<A NAME="IDX763"></A>
-<CODE>-&#62;/2</CODE>, 
-<A NAME="IDX764"></A>
-<CODE>!/0</CODE>, 
-<A NAME="IDX765"></A>
-<CODE>\+/1</CODE>, 
-<A NAME="IDX766"></A>
-<CODE>if/3</CODE>, 
-<A NAME="IDX767"></A>
-<CODE>true/0</CODE>, 
-<A NAME="IDX768"></A>
-<CODE>fail/0</CODE>, 
-<A NAME="IDX769"></A>
-<CODE>repeat/0</CODE>, 
-<A NAME="IDX770"></A>
-<CODE>call/1</CODE>.
-
-</UL>
-
+These directives are builtin in Ciao, so nothing special has to be done to use them.
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC78" HREF="ciao_toc.html#TOC78">Documentation on exports (<CODE>basiccontrol</CODE>)</A></H2>
+<H2><A NAME="SEC124" HREF="ciao_toc.html#TOC124">Documentation on internals (<CODE>loading_code</CODE>)</A></H2>
 <P>
-<A NAME="IDX771"></A>
-<A NAME="IDX772"></A>
+<A NAME="IDX1151"></A>
+<A NAME="IDX1152"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>,/2:</B>
-<DD><A NAME="IDX773"></A>
+<DT><span class="define">DECLARATION:</span> <B>ensure_loaded/1:</B>
+<DD><A NAME="IDX1153"></A>
 
 
 <P>
-<CODE>P , Q</CODE>
-
-
-<P>
-Conjunction (<CODE>P</CODE> <EM>and</EM> <CODE>Q</CODE>).
-
-
-</DL>
-
-<P>
-<A NAME="IDX774"></A>
-<A NAME="IDX775"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>;/2:</B>
-<DD><A NAME="IDX776"></A>
-
-
-<P>
-<CODE>P ; Q</CODE>
-
-
-<P>
-Disjunction (<CODE>P</CODE> <EM>or</EM> <CODE>Q</CODE>).
-
-
-</DL>
-
-<P>
-<A NAME="IDX777"></A>
-<A NAME="IDX778"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>-&#62;/2:</B>
-<DD><A NAME="IDX779"></A>
-
-
-<P>
-<CODE>P -&#62; Q</CODE>
-
-
-<P>
-If <CODE>P</CODE> then <CODE>Q</CODE> else fail, using first solution of <CODE>P</CODE> only. Also, <CODE>(</CODE><CODE>P</CODE> <CODE>-&#62;</CODE> <CODE>Q</CODE> <CODE>;</CODE> <CODE>R</CODE><CODE>)</CODE>, if <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, using first solution of <CODE>P</CODE> only. No cuts are allowed in <CODE>P</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX780"></A>
-<A NAME="IDX781"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>!/0:</B>
-<DD><A NAME="IDX782"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> :- <CODE>ensure_loaded(File)</CODE>.
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Commit to any choices taken in the current predicate.
+<LI><EM>Description:</EM> Specifies that the code present in <CODE>File</CODE> will be included in the executable being prepared, in the <CODE>user</CODE> module. The file <CODE>File</CODE> cannot have a module declaration. This directive is intended to be used by programs not divided in modules. Dividing programs into modules is however strongly encouraged, since most of the attractive features of Ciao (such as static debugging and global optimization) are only partially available for <CODE>user</CODE> modules.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX783"></A>
-<A NAME="IDX784"></A>
+<A NAME="IDX1154"></A>
+<A NAME="IDX1155"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>\+/1:</B>
-<DD><A NAME="IDX785"></A>
+<DT><span class="define">DECLARATION:</span> <B>include/1:</B>
+<DD><A NAME="IDX1156"></A>
 
 
 <P>
-<CODE>\+ P</CODE>
-
-
-<P>
-Goal <CODE>P</CODE> is not provable (negation by failure). Fails if <CODE>P</CODE> has a solution, and succeeds otherwise. No cuts are allowed in <CODE>P</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX786"></A>
-<A NAME="IDX787"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>if/3:</B>
-<DD><A NAME="IDX788"></A>
-
-
-<P>
-<CODE>if(P,Q,R)</CODE>
-
-
-<P>
-If <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, exploring all solutions of <CODE>P</CODE>. No cuts are allowed in <CODE>P</CODE>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX789"></A>
-<A NAME="IDX790"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>true/0:</B>
-<DD><A NAME="IDX791"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> :- <CODE>include(File)</CODE>.
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Succeed (noop).
+<LI><EM>Description:</EM> The contents of the file <CODE>File</CODE> are included in the current program text exactly as if they had been written in place of this directive.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX792"></A>
-<A NAME="IDX793"></A>
+<A NAME="IDX1157"></A>
+<A NAME="IDX1158"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fail/0:</B>
-<DD><A NAME="IDX794"></A>
+<DT><span class="define">DECLARATION:</span> <B>use_package/1:</B>
+<DD><A NAME="IDX1159"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
-<KBD> * ISO * </KBD>
+:- <CODE>use_package(Package)</CODE>.
+
+
+<P>
+Specifies the use in this file of the packages defined in <CODE>Package</CODE>. See the description of the third argument of 
+<A NAME="IDX1160"></A>
+<CODE>module/3</CODE> for an explanation of 
+<A NAME="IDX1161"></A>
+package files. 
+
+
+<P>
+This directive must appear the first in the file, or just after a 
+<A NAME="IDX1162"></A>
+<CODE>module/3</CODE> declaration. A file with no module declaration, in the absence of this directive, uses an implicit package <CODE>iso</CODE>, which enables to include 
+<A NAME="IDX1163"></A>
+ISO-Prolog compatible code (compatibility not 100% yet).
+
+
+<P>
+<STRONG>Usage 1:</STRONG> :- <CODE>use_package(Package)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Fail, backtrack immediately.
+<LI><EM>The following properties should hold at call time:</EM>
 
+<CODE>Package</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX795"></A>
-<A NAME="IDX796"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>repeat/0:</B>
-<DD><A NAME="IDX797"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> :- <CODE>use_package(Package)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Generates an infinite sequence of backtracking choices.
+<LI><EM>The following properties should hold at call time:</EM>
 
+<CODE>Package</CODE> is a list of <CODE>sourcename</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX798"></A>
-<A NAME="IDX799"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>call/1:</B>
-<DD><A NAME="IDX800"></A>
-
-
-<P>
-<CODE>call(G)</CODE>
-
-
-<P>
-Executes goal <CODE>G</CODE>, restricting the scope of the cuts to the execution of <CODE>G</CODE>. Writing a variable <CODE>G</CODE> in a goal position is equivalent.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>call(goal)</CODE>.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC79" HREF="ciao_toc.html#TOC79">Documentation on internals (<CODE>basiccontrol</CODE>)</A></H2>
-<P>
-<A NAME="IDX801"></A>
-<A NAME="IDX802"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>|/2:</B>
-<DD><A NAME="IDX803"></A>
-
-
-<P>
-An alias for disjunction (when appearing outside a list). The alias is performed when terms are read in.
-
-
-</DL>
-
-<P>
-<A NAME="IDX804"></A>
-<A NAME="IDX805"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>call/2:</B>
-<DD><A NAME="IDX806"></A>
-
-
-<P>
-<CODE>call(Pred,Arg1)</CODE>
-
-
-<P>
-There exists a set of builtin predicates of the form 
-<A NAME="IDX807"></A>
-<CODE>call/N</CODE> such that execute predicate <CODE>Pred</CODE> given arguments <CODE>Arg1</CODE> ... <CODE>ArgX</CODE>, if <CODE>Pred</CODE> has already arguments the new ones are added to the start. This predicate can be written using the special Ciao syntax <CODE>Pred(Arg1,...,ArgX)</CODE>.
-
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_14.html">previous</A>, <A HREF="ciao_16.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_14.html">previous</A>, <A HREF="ciao_16.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

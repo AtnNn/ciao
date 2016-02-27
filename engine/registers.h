@@ -71,7 +71,14 @@ extern int prolog_argc;
 #define Stack_Warn          w->stack_warn
 #define Choice_End          w->choice_end
 #define Choice_Start        w->choice_start
+
+
+#define USE_TAGGED_CHOICE_START
+
+#if defined(USE_TAGGED_CHOICE_START)
 #define Tagged_Choice_Start w->tagged_choice_start
+#endif
+
 #define Trail_Start         w->trail_start
 #define Trail_End           w->trail_end
 
@@ -109,6 +116,10 @@ extern int prolog_argc;
 /* Expanded worker (not always active) */
 
 #define Expanded_Worker (w->misc->expanded_worker)
+
+#define Next_Worker(w)  (w->misc->next_worker)
+
+#define Stop_This_Goal(w) (w->misc->stop_this_goal)
 
 /* Global variables */
 

@@ -1,51 +1,257 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Properties which are native to analyzers</TITLE>
+<TITLE>The Ciao Prolog System               - Declaring regular types</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC221" HREF="ciao_toc.html#TOC221">Properties which are native to analyzers</A></H1>
+<H1><A NAME="SEC267" HREF="ciao_toc.html#TOC267">Declaring regular types</A></H1>
 <P>
-<A NAME="IDX2738"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno, Manuel Hermenegildo, Pedro Lopez.
+<A NAME="IDX3218"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#9 (1999/12/9, 21:57:42 MET)
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo, Pedro Lopez, Francisco Bueno.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-<A NAME="IDX2739"></A>
-<A NAME="IDX2740"></A>
-This library contains a set of properties which are natively understood by the different program analyzers of 
-<A NAME="IDX2741"></A>
-<CODE>ciaopp</CODE>. They are used by 
-<A NAME="IDX2742"></A>
-<CODE>ciaopp</CODE> on output and they can also be used as properties in assertions.
+<STRONG>Version of last change:</STRONG> 1.5#9 (1999/12/9, 21:57:42 MET)
+
+
+<P>
+This library package adds some new declaration definitions and new operator definitions to user programs. These new declarations and operators provide some very simple syntactic sugar to support 
+<A NAME="IDX3219"></A>
+regular type definitions in source code. Regular types are just properties which have the additional characteristic of being 
+<A NAME="IDX3220"></A>
+regular types (
+<A NAME="IDX3221"></A>
+<CODE>basic_props:regtype/1</CODE>). 
+
+
+<P>
+For example, this library package allows writing: 
+
+<PRE>
+   :- regtype tree(X) # "<CODE>X</CODE> is a tree.".
+</PRE>
+
+<P>
+instead of the more combersome: 
+
+<PRE>
+   :- prop tree(X) + regtype # "<CODE>X</CODE> is a tree.".
+</PRE>
+
+<P>
+Regular types can be used as properties to describe predicates and play an essential role in program debugging (see the Ciao Prolog preprocessor (<CODE>ciaopp</CODE>) manual). 
+
+
+<P>
+In this chapter we explain some general considerations worth taking into account when writing properties in general, not just regular types. The exact 
+<A NAME="IDX3222"></A>
+syntax of regular types is also described. 
+
+
+<P>
+ 
 
 
 
 <UL>
-<LI><A HREF="ciao_62.html#SEC222">Usage and interface (native_props)</A>
-<LI><A HREF="ciao_62.html#SEC223">Documentation on exports (native_props)</A>
+<LI><A HREF="ciao_62.html#SEC268">Defining properties</A>
+<LI><A HREF="ciao_62.html#SEC269">Usage and interface (regtypes)</A>
+<LI><A HREF="ciao_62.html#SEC270">Documentation on new declarations (regtypes)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC222" HREF="ciao_toc.html#TOC222">Usage and interface (<CODE>native_props</CODE>)</A></H2>
+<H2><A NAME="SEC268" HREF="ciao_toc.html#TOC268">Defining properties</A></H2>
+
+<P>
+Given the classes of assertions in the Ciao assertion language, there are two fundamental classes of properties. Properties used in assertions which refer to execution states (i.e., <CODE>calls/1</CODE>, <CODE>success/1</CODE>, and the like) are called 
+<A NAME="IDX3223"></A>
+<A NAME="IDX3224"></A>
+<EM>properties of execution states</EM>. Properties used in assertions related to computations (i.e., <CODE>comp/1</CODE>) are called 
+<A NAME="IDX3225"></A>
+<A NAME="IDX3226"></A>
+<EM>properties of computations</EM>. Different considerations apply when writing a property of the former or of the later kind. 
+
+
+<P>
+Consider a definition of the predicate <CODE>string_concat/3</CODE> which concatenates two character strings (represented as lists of ASCII codes): 
+
+<PRE>
+string_concat([],L,L).
+string_concat([X|Xs],L,[X|NL]):- string_concat(Xs,L,NL).
+</PRE>
+
+<P>
+Assume that we would like to state in an assertion that each argument "is a list of integers." However, we must decide which one of the following two possibilities we mean exactly: "the argument is <EM>instantiated</EM> to a list of integers" (let us call this property <CODE>instantiated_to_intlist/1</CODE>), or "if any part of the argument is instantiated, this instantiation must be compatible with the argument being a list of integers" (we will call this property <CODE>compatible_with_intlist/1</CODE>). For example, <CODE>instantiated_to_intlist/1</CODE> should be true for the terms <CODE>[]</CODE> and <CODE>[1,2]</CODE>, but should not for <CODE>X</CODE>, <CODE>[a,2]</CODE>, and <CODE>[X,2]</CODE>. In turn, <CODE>compatible_with_intlist/1</CODE> should be true for <CODE>[]</CODE>, <CODE>X</CODE>, <CODE>[1,2]</CODE>, and <CODE>[X,2]</CODE>, but should not be for <CODE>[X|1]</CODE>, <CODE>[a,2]</CODE>, and <CODE>1</CODE>. We refer to properties such as <CODE>instantiated_to_intlist/1</CODE> above as 
+<A NAME="IDX3227"></A>
+<A NAME="IDX3228"></A>
+<EM>instantiation properties</EM> and to those such as <CODE>compatible_with_intlist/1</CODE> as 
+<A NAME="IDX3229"></A>
+<A NAME="IDX3230"></A>
+<EM>compatibility properties</EM> (corresponding to the traditional notions of "instantiation types" and "compatibility types"). 
+
+
+<P>
+It turns out that both of these notions are quite useful in practice. In the example above, we probably would like to use <CODE>compatible_with_intlist/1</CODE> to state that on success of <CODE>string_concat/3</CODE> all three argument must be compatible with lists of integers in an assertion like: 
+
+
+
+<PRE>
+:- success string_concat(A,B,C) =&#62; ( compatible_with_intlist(A),
+                                     compatible_with_intlist(B),
+                                     compatible_with_intlist(C) ).
+</PRE>
+
+<P>
+With this assertion, no error will be flagged for a call to <CODE>string_concat/3</CODE> such as <CODE>string_concat([20],L,R)</CODE>, which on success produces the resulting atom <CODE>string_concat([20],L,[20|L])</CODE>, but a call <CODE>string_concat([],a,R)</CODE> would indeed flag an error. 
+
+
+<P>
+On the other hand, and assuming that we are running on a Prolog system, we would probably like to use <CODE>instantiated_to_intlist/1</CODE> for <CODE>sumlist/2</CODE> as follows: 
+
+
+
+<PRE>
+:- calls sumlist(L,N) : instantiated_to_intlist(L).
+
+sumlist([],0).
+sumlist([X|R],S) :- sumlist(R,PS), S is PS+X.
+</PRE>
+
+<P>
+to describe the type of calls for which the program has been designed, i.e., those in which the first argument of <CODE>sumlist/2</CODE> is indeed a list of integers. 
+
+
+<P>
+The property <CODE>instantiated_to_intlist/1</CODE> might be written as in the following (Prolog) definition: 
+
+
+
+<PRE>
+:- prop instantiated_to_intlist/1.
+
+instantiated_to_intlist(X) :- 
+       nonvar(X), instantiated_to_intlist_aux(X).
+
+instantiated_to_intlist_aux([]).
+instantiated_to_intlist_aux([X|T]) :-
+       integer(X), instantiated_to_intlist(T).
+</PRE>
+
+<P>
+(Recall that the Prolog builtin <CODE>integer/1</CODE> itself implements an instantiation check, failing if called with a variable as the argument.) 
+
+
+<P>
+The property <CODE>compatible_with_intlist/1</CODE> might in turn be written as follows (also in Prolog): 
+
+
+
+<PRE>
+:- prop compatible_with_intlist/1.
+
+compatible_with_intlist(X) :- var(X).
+compatible_with_intlist(X) :- 
+       nonvar(X), compatible_with_intlist_aux(X).
+
+compatible_with_intlist_aux([]).
+compatible_with_intlist_aux([X|T]) :-
+       int_compat(X), compatible_with_intlist(T).
+
+int_compat(X) :- var(X).
+int_compat(X) :- nonvar(X), integer(X).
+</PRE>
+
+<P>
+Note that these predicates meet the criteria for being properties and thus the <CODE>prop/1</CODE> declaration is correct. 
+
+
+<P>
+Ensuring that a property meets the criteria for "not affecting the computation" can sometimes make its coding somewhat tedious. In some ways, one would like to be able to write simply: 
+
+
+
+<PRE>
+intlist([]).
+intlist([X|R]) :- int(X), intlist(R).
+</PRE>
+
+<P>
+(Incidentally, note that the above definition, provided that it suits the requirements for being a property and that <CODE>int/1</CODE> is a regular type, meets the criteria for being a regular type. Thus, it could be declared <CODE>:- regtype intlist/1</CODE>.) 
+
+
+<P>
+But note that (independently of the definition of <CODE>int/1</CODE>) the definition above is not the correct instantiation check, since it would succeed for a call such as <CODE>intlist(X)</CODE>. In fact, it is not strictly correct as a compatibility property either, because, while it would fail or succeed as expected, it would perform instantiations (e.g., if called with <CODE>intlist(X)</CODE> it would bind <CODE>X</CODE> to <CODE>[]</CODE>). In practice, it is convenient to provide some run-time support to aid in this task. 
+
+
+<P>
+The run-time support of the Ciao system (see section <A HREF="ciao_67.html#SEC286">Run-time checking of assertions</A>) ensures that the execution of properties is performed in such a way that properties written as above can be used directly as instantiation checks. Thus, writing: 
+
+
+
+<PRE>
+:- calls sumlist(L,N) : intlist(L).
+</PRE>
+
+<P>
+has the desired effect. Also, the same properties can often be used as compatibility checks by writing them in the assertions as <CODE>compat(Property)</CODE> (<CODE>basic_props:compat/1</CODE>). Thus, writing: 
+
+
+
+<PRE>
+:- success string_concat(A,B,C) =&#62; ( compat(intlist(A)),
+                                     compat(intlist(B)),
+                                     compat(intlist(C)) ).
+</PRE>
+
+<P>
+also has the desired effect. 
+
+
+<P>
+As a general rule, the properties that can be used directly for checking for compatibility should be <EM>downwards closed</EM>, i.e., once they hold they will keep on holding in every state accessible in forwards execution. There are certain predicates which are inherently <EM>instantiation</EM> checks and should not be used as <EM>compatibility</EM> properties nor appear in the definition of a property that is to be used with <CODE>compat</CODE>. Examples of such predicates (for Prolog) are <CODE>==</CODE>, <CODE>ground</CODE>, <CODE>nonvar</CODE>, <CODE>integer</CODE>, <CODE>atom</CODE>, <CODE>&#62;</CODE>, etc. as they require a certain instantiation degree of their arguments in order to succeed. 
+
+
+<P>
+In contrast with properties of execution states, <EM>properties of computations</EM> refer to the entire execution of the call(s) that the assertion relates to. One such property is, for example, <CODE>not_fail/1</CODE> (note that although it has been used as in <CODE>:- comp append(Xs,Ys,Zs) + not_fail</CODE>, it is in fact read as <CODE>not_fail(append(Xs,Ys,Zs))</CODE>; see <CODE>assertions_props:complex_goal_property/1</CODE>). For this property, which should be interpreted as "execution of the predicate either succeeds at least once or loops," we can use the following predicate <CODE>not_fail/1</CODE> for run-time checking: 
+
+
+
+<PRE>
+not_fail(Goal):-
+      if( call(Goal),
+          true,            %% then
+          warning(Goal) ). %% else
+</PRE>
+
+<P>
+where the <CODE>warning/1</CODE> (library) predicate simply prints a warning message. 
+
+
+<P>
+In this simple case, implementation of the predicate is not very difficult using the (non-standard) <CODE>if/3</CODE> builtin predicate present in many Prolog systems. 
+
+
+<P>
+However, it is not so easy to code predicates which check other properties of the computation and we may in general need to program a meta-interpreter for this purpose. 
+
+
+
+
+<H2><A NAME="SEC269" HREF="ciao_toc.html#TOC269">Usage and interface (<CODE>regtypes</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -53,57 +259,25 @@ This library contains a set of properties which are natively understood by the d
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library('assertions/native_props'))</CODE> 
+<CODE>:- use_package(regtypes).</CODE>
 
-or also as a package <CODE>:- use_package(nativeprops)</CODE>. 
+or
 
-Note the different names of the library and the package.
+<CODE>:- module(...,...,[regtypes]).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+<LI><STRONG>New operators defined:</STRONG>
 
+<A NAME="IDX3231"></A>
+<CODE>regtype/1</CODE> [1150,fx], 
+<A NAME="IDX3232"></A>
+<CODE>regtype/2</CODE> [1150,xfx].
 
-<UL>
+<LI><STRONG>New declarations defined:</STRONG>
 
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX2743"></A>
-<CODE>linear/1</CODE>, 
-<A NAME="IDX2744"></A>
-<CODE>mshare/1</CODE>, 
-<A NAME="IDX2745"></A>
-<CODE>fails/1</CODE>, 
-<A NAME="IDX2746"></A>
-<CODE>not_fails/1</CODE>, 
-<A NAME="IDX2747"></A>
-<CODE>possibly_fails/1</CODE>, 
-<A NAME="IDX2748"></A>
-<CODE>covered/1</CODE>, 
-<A NAME="IDX2749"></A>
-<CODE>not_covered/1</CODE>, 
-<A NAME="IDX2750"></A>
-<CODE>is_det/1</CODE>, 
-<A NAME="IDX2751"></A>
-<CODE>possibly_nondet/1</CODE>, 
-<A NAME="IDX2752"></A>
-<CODE>mut_exclusive/1</CODE>, 
-<A NAME="IDX2753"></A>
-<CODE>not_mut_exclusive/1</CODE>, 
-<A NAME="IDX2754"></A>
-<CODE>size_lb/2</CODE>, 
-<A NAME="IDX2755"></A>
-<CODE>size_ub/2</CODE>, 
-<A NAME="IDX2756"></A>
-<CODE>steps_lb/2</CODE>, 
-<A NAME="IDX2757"></A>
-<CODE>steps_ub/2</CODE>, 
-<A NAME="IDX2758"></A>
-<CODE>sideff_pure/1</CODE>, 
-<A NAME="IDX2759"></A>
-<CODE>sideff_soft/1</CODE>, 
-<A NAME="IDX2760"></A>
-<CODE>sideff_hard/1</CODE>.
-
-</UL>
+<A NAME="IDX3233"></A>
+<CODE>regtype/1</CODE>, 
+<A NAME="IDX3234"></A>
+<CODE>regtype/2</CODE>.
 
 <LI><STRONG>Other modules used:</STRONG>
 
@@ -112,12 +286,8 @@ Note the different names of the library and the package.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX2761"></A>
-<CODE>andprolog/andprolog</CODE>, 
-<A NAME="IDX2762"></A>
-<CODE>metaterms</CODE>, 
-<A NAME="IDX2763"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX3235"></A>
+<CODE>assertions/assertions_props</CODE>.
 
 </UL>
 
@@ -127,503 +297,119 @@ Note the different names of the library and the package.
 
 
 
-<H2><A NAME="SEC223" HREF="ciao_toc.html#TOC223">Documentation on exports (<CODE>native_props</CODE>)</A></H2>
+<H2><A NAME="SEC270" HREF="ciao_toc.html#TOC270">Documentation on new declarations (<CODE>regtypes</CODE>)</A></H2>
 <P>
-<A NAME="IDX2764"></A>
-<A NAME="IDX2765"></A>
+<A NAME="IDX3236"></A>
+<A NAME="IDX3237"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>linear/1:</B>
-<DD><A NAME="IDX2766"></A>
+<DT><span class="define">DECLARATION:</span> <B>regtype/1:</B>
+<DD><A NAME="IDX3238"></A>
 
 
 <P>
-<CODE>linear(X)</CODE>
+<A NAME="IDX3239"></A>
+<A NAME="IDX3240"></A>
+This assertion is similar to a pred assertion but it flags that the predicate being documented is also a "
+<A NAME="IDX3241"></A>
+regular type." This allows for example checking whether it is in the class of types supported by the type checking and inference modules. Currently, types are properties whose definitions are <EM>regular programs</EM>. 
 
 
 <P>
-<CODE>X</CODE> is bound to a term which is linear, i.e., if it contains any variables, such variables appear only once in the term. For example, <CODE>[1,2,3]</CODE> and <CODE>f(A,B)</CODE> are linear terms, while <CODE>f(A,A)</CODE> is not.
+ A regular program is defined by a set of clauses, each of the form: 
+
+<PRE>
+p(x, v_1, ..., v_n)  :- body_1, ..., body_k.
+</PRE>
+
+<P>
+where: 
+
+<OL>
+<LI><CODE>x</CODE> is a term whose variables (which are called <EM>term variables</EM>) are unique, i.e., it is not allowed to introduce equality constraints between the variables of <CODE>x</CODE>.
+
+For example, <CODE>p(f(X, Y)) :- ...</CODE> is valid, but <CODE>p(f(X, X)) :- ...</CODE> is not. 
+
+<LI>in all clauses defining <CODE>p/n+1</CODE> the terms <CODE>x</CODE> do not unify except maybe for one single clause in which <CODE>x</CODE> is a variable.
+
+<LI><CODE>n</CODE> &#62;= 0 and <CODE>p/n</CODE> is a <EM>parametric type functor</EM> (whereas the predicate defined by the clauses is <CODE>p/n</CODE>+1).
+
+<LI><CODE>v_1</CODE>, ..., <CODE>v_n</CODE> are unique variables, which are called <EM>parametric variables</EM>.
+
+<LI>Each <CODE>body_i</CODE> is of the form:
+
+
+<OL>
+<LI><CODE>regtype(z, t)</CODE> where <CODE>z</CODE> is one of the <EM>term variables</EM> and <CODE>t</CODE> is a <EM>regular type expression</EM>;
+
+<LI><CODE>q(y, t_1, ..., t_m)</CODE> where <CODE>m</CODE> &#62;= 0, <CODE>q/m</CODE> is a <EM>parametric type functor</EM>, not in the set of functors <CODE>=/2</CODE>, <CODE>^/2</CODE>, <CODE>./3</CODE> <CODE>regtype/2</CODE>.
+
+<CODE>t_1, ..., t_m</CODE> are <EM>regular type expressions</EM>, and <CODE>y</CODE> is a <EM>term variable</EM>. 
+</OL>
+
+<LI>Each term variable occurs at most once in the clause's body (and should be as the first argument of a literal).
+
+</OL>
+
+<P>
+A <EM>regular type expression</EM> is either a parametric variable or a parametric type functor applied to some of the parametric variables. 
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>linear(X)</CODE>
+A parametric type functor is a regular type, defined by a regular program, or a basic type. Basic types are defined in the CIAO 
+<A NAME="IDX3242"></A>
+<CODE>engine(basic_props)</CODE> manual. 
+
+
+<P>
+The set of types is thus a well defined subset of the set of properties. Note that types can be used to describe characteristics of arguments in assertions and they can also be executed (called) as any other predicates. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>regtype(AssertionBody)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is instantiated to a linear term.
+<LI><EM>The following properties should hold at call time:</EM>
 
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2767"></A>
-<A NAME="IDX2768"></A>
+<A NAME="IDX3243"></A>
+<A NAME="IDX3244"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>mshare/1:</B>
-<DD><A NAME="IDX2769"></A>
+<DT><span class="define">DECLARATION:</span> <B>regtype/2:</B>
+<DD><A NAME="IDX3245"></A>
 
 
 <P>
-<CODE>mshare(X)</CODE>
+<A NAME="IDX3246"></A>
+<A NAME="IDX3247"></A>
+This assertion is similar to a 
+<A NAME="IDX3248"></A>
+<CODE>regtype/1</CODE> assertion but it is explicitely qualified. Non-qualified 
+<A NAME="IDX3249"></A>
+<CODE>regtype/1</CODE> assertions are assumed the qualifier <CODE>check</CODE>. Note that checking regular type definitions should be done with the <CODE>ciaopp</CODE> preprocessor. 
 
 
 <P>
-<CODE>X</CODE> contains all 
-<A NAME="IDX2770"></A>
-<A NAME="IDX2771"></A>
-<EM>sharing sets</EM> [JL88,MH89] which specify the possible variable occurrences in the terms to which the variables involved in the clause may be bound. Sharing sets are a compact way of representing groundness of variables and dependencies between variables. This representation is however generally difficult to read for humans. For this reason, this information is often translated to 
-<A NAME="IDX2772"></A>
-<CODE>ground/1</CODE>, 
-<A NAME="IDX2773"></A>
-<CODE>indep/1</CODE> and 
-<A NAME="IDX2774"></A>
-<CODE>indep/2</CODE> properties, which are easier to read.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>mshare(X)</CODE>
+<STRONG>Usage:</STRONG> :- <CODE>regtype(AssertionStatus,AssertionBody)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> The sharing pattern is <CODE><CODE>X</CODE></CODE>.
+<LI><EM>The following properties should hold at call time:</EM>
 
-</UL>
+<CODE>AssertionStatus</CODE> is an acceptable status for an assertion.
+ (<CODE>assertions_props:assrt_status/1</CODE>)
 
-</DL>
-
-<P>
-<A NAME="IDX2775"></A>
-<A NAME="IDX2776"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>fails/1:</B>
-<DD><A NAME="IDX2777"></A>
-
-
-<P>
-<CODE>fails(X)</CODE>
-
-
-<P>
-Calls of the form <CODE>X</CODE> fail.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>fails(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Calls of the form <CODE>X</CODE> fail.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2778"></A>
-<A NAME="IDX2779"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>not_fails/1:</B>
-<DD><A NAME="IDX2780"></A>
-
-
-<P>
-<CODE>not_fails(X)</CODE>
-
-
-<P>
-Calls of the form <CODE>X</CODE> produce at least one solution, or not terminate [DLH97].
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>not_fails(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> All the calls of the form <CODE>X</CODE> do not fail.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2781"></A>
-<A NAME="IDX2782"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>possibly_fails/1:</B>
-<DD><A NAME="IDX2783"></A>
-
-
-<P>
-<CODE>possibly_fails(X)</CODE>
-
-
-<P>
-Non-failure is not ensured for any call of the form <CODE>X</CODE> [DLH97]. In other words, nothing can be ensured about non-failure nor termination of such calls.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>possibly_fails(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Non-failure is not ensured for calls of the form <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2784"></A>
-<A NAME="IDX2785"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>covered/1:</B>
-<DD><A NAME="IDX2786"></A>
-
-
-<P>
-<CODE>covered(X)</CODE>
-
-
-<P>
-For any call of the form <CODE>X</CODE> there is at least one clause whose test succeeds (i.e. all the calls of the form <CODE>X</CODE> are covered.) [DLH97].
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>covered(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> All the calls of the form <CODE>X</CODE> are covered.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2787"></A>
-<A NAME="IDX2788"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>not_covered/1:</B>
-<DD><A NAME="IDX2789"></A>
-
-
-<P>
-<CODE>not_covered(X)</CODE>
-
-
-<P>
-There is some call of the form <CODE>X</CODE> for which there is not any clause whose test succeeds [DLH97].
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>not_covered(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Not all of the calls of the form <CODE>X</CODE> are covered.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2790"></A>
-<A NAME="IDX2791"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>is_det/1:</B>
-<DD><A NAME="IDX2792"></A>
-
-
-<P>
-<CODE>is_det(X)</CODE>
-
-
-<P>
-All calls of the form <CODE>X</CODE> are deterministic, i.e. produce at most one solution, or not terminate.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>is_det(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> All calls of the form <CODE>X</CODE> are deterministic.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2793"></A>
-<A NAME="IDX2794"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>possibly_nondet/1:</B>
-<DD><A NAME="IDX2795"></A>
-
-
-<P>
-<CODE>possibly_nondet(X)</CODE>
-
-
-<P>
-Non-determinism is not ensured for all calls of the form <CODE>X</CODE>. In other words, nothing can be ensured about determinacy nor termination of such calls.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>possibly_nondet(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Non-determinism is not ensured for calls of the form <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2796"></A>
-<A NAME="IDX2797"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>mut_exclusive/1:</B>
-<DD><A NAME="IDX2798"></A>
-
-
-<P>
-<CODE>mut_exclusive(X)</CODE>
-
-
-<P>
-For any call of the form <CODE>X</CODE> at most one clause succeeds, i.e. clauses are pairwise exclusive.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>mut_exclusive(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> For any call of the form <CODE>X</CODE> at most one clause succeeds.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2799"></A>
-<A NAME="IDX2800"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>not_mut_exclusive/1:</B>
-<DD><A NAME="IDX2801"></A>
-
-
-<P>
-<CODE>not_mut_exclusive(X)</CODE>
-
-
-<P>
-Not for all calls of the form <CODE>X</CODE> at most one clause succeeds. I.e. clauses are not disjoint for some call.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>not_mut_exclusive(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Not for all calls of the form <CODE>X</CODE> at most one clause succeeds.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2802"></A>
-<A NAME="IDX2803"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>size_lb/2:</B>
-<DD><A NAME="IDX2804"></A>
-
-
-<P>
-<CODE>size_lb(X,Y)</CODE>
-
-
-<P>
-The minimum size of the terms to which the argument <CODE>Y</CODE> is bound to is given by the expression <CODE>Y</CODE>. Various measures can be used to determine the size of an argument, e.g., list-length, term-size, term-depth, integer-value, etc. [DL93].
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>size_lb(X,Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Y</CODE> is a lower bound on the size of argument <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2805"></A>
-<A NAME="IDX2806"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>size_ub/2:</B>
-<DD><A NAME="IDX2807"></A>
-
-
-<P>
-<CODE>size_ub(X,Y)</CODE>
-
-
-<P>
-The maximum size of the terms to which the argument <CODE>Y</CODE> is bound to is given by the expression <CODE>Y</CODE>. Various measures can be used to determine the size of an argument, e.g., list-length, term-size, term-depth, integer-value, etc. [DL93].
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>size_ub(X,Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Y</CODE> is a upper bound on the size of argument <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2808"></A>
-<A NAME="IDX2809"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>steps_lb/2:</B>
-<DD><A NAME="IDX2810"></A>
-
-
-<P>
-<CODE>steps_lb(X,Y)</CODE>
-
-
-<P>
-The minimum computation time (in resolution steps) spent by any call of the form <CODE>X</CODE> is given by the expression <CODE>Y</CODE> [DLHL97,GHD96]
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>steps_lb(X,Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Y</CODE> is a lower bound on the cost of any call of the form <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2811"></A>
-<A NAME="IDX2812"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>steps_ub/2:</B>
-<DD><A NAME="IDX2813"></A>
-
-
-<P>
-<CODE>steps_ub(X,Y)</CODE>
-
-
-<P>
-The maximum computation time (in resolution steps) spent by any call of the form <CODE>X</CODE> is given by the expression <CODE>Y</CODE> [DL93,GHD96]
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>steps_ub(X,Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Y</CODE> is a upper bound on the cost of any call of the form <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2814"></A>
-<A NAME="IDX2815"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>sideff_pure/1:</B>
-<DD><A NAME="IDX2816"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sideff_pure(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is pure, i.e., has no side-effects.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2817"></A>
-<A NAME="IDX2818"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>sideff_soft/1:</B>
-<DD><A NAME="IDX2819"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sideff_soft(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> has
-
-<A NAME="IDX2820"></A>
-<A NAME="IDX2821"></A>
-<EM>soft side-effects</EM>, i.e., those not affecting program execution (e.g., input/output). 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2822"></A>
-<A NAME="IDX2823"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>sideff_hard/1:</B>
-<DD><A NAME="IDX2824"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sideff_hard(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> has
-
-<A NAME="IDX2825"></A>
-<A NAME="IDX2826"></A>
-<EM>hard side-effects</EM>, i.e., those that might affect program execution (e.g., assert/retract). 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2827"></A>
-<A NAME="IDX2828"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>indep/1:</B>
-<DD><A NAME="IDX2829"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>indep(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The variables in pairs in <CODE><CODE>X</CODE></CODE> are pairwise independent.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2830"></A>
-<A NAME="IDX2831"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>indep/2:</B>
-<DD><A NAME="IDX2832"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>indep(X,Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> do not have variables in common.
-
+<CODE>AssertionBody</CODE> is an assertion body.
+ (<CODE>assertions_props:assrt_body/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_61.html">previous</A>, <A HREF="ciao_63.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

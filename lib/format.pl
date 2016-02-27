@@ -1,4 +1,5 @@
-:- module(format, [format/2, format/3, format_control/1],
+:- module(format, 
+	[format/2, format/3, format_control/1],
 	[dcg,assertions,isomodes]).
 
 :- use_module(library(write)).
@@ -563,7 +564,7 @@ putn_list(N, [C|Chars]) :-
    as texinfo does not allow ':' in titles.  (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
-   global CIAO version.  (Manuel Hermenegildo)").
+   global Ciao version.  (Manuel Hermenegildo)").
 
 :- comment(version(0*1+0,1997/8/21), "Added basic
    documentation. (Manuel Hermenegildo)").

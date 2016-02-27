@@ -12,7 +12,7 @@ SHSCRIPTS=ciao_get_arch collect_modules
 
 .pl:
 	@echo "Compiling $*.pl..." ; \
-	$(SETLOCALCOMPILER) $(CIAOC) $* ; \
+	$(SETLOCALCOMPILER) $(CIAOC) -x $* ; \
 	chmod $(EXECMODE) $* ; 
 
 all: comp_message $(PLUTILITIES)
@@ -85,6 +85,7 @@ uninstall:
 ifeq ($(INSTALL_PROLOG_NAME),yes)
 	-rm -f $(BINDIR)/prolog
 endif
+	-rm -f $(REALLIBDIR)/NewUser
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Removing utilities from etc directory..."
 	@echo "*** ---------------------------------------------------------"

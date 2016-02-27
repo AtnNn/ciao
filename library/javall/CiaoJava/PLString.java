@@ -3,16 +3,21 @@ package CiaoJava;
 import java.util.Vector;
 
 /**
- * java representation of a prolog string.
+ * This class implements the Java representation of a Prolog string.
+ * Although in Prolog strings are represented as lists of integers,
+ * internally a more eficient implementation is made. The Java side
+ * of this interface has implemented the string representation
+ * accordingly to the byte representation given by the serialization
+ * mechanism.
  */
 public class PLString extends PLTerm {
   private String Value;
 
   /**
-   * Given a java string, creates a java <code>PLString</code>
+   * Given a Java string, creates a Java <code>PLString</code>
    * object.
    *
-   * @param s String that will contain the prolog string.
+   * @param s String that will contain the Prolog string.
    */
   public PLString(String s) {
 
@@ -22,9 +27,9 @@ public class PLString extends PLTerm {
   }
 
   /**
-   * String representation of a java PLString object.
+   * String representation of a Java PLString object.
    *
-   * @return a java string with a copy of the prolog string. 
+   * @return a Java string with a copy of the Prolog string. 
    */
   public String toString() {
 
@@ -33,9 +38,9 @@ public class PLString extends PLTerm {
   }
 
   /**
-   * Gets the value of a prolog string object.
+   * Gets the value of a Prolog string object.
    *
-   * @return the value of this prolog string object.
+   * @return the value of this Prolog string object.
    */
   public String getValue() {
 
@@ -44,13 +49,14 @@ public class PLString extends PLTerm {
   }
 
   /**
-   * Java representation of a PLString. 
+   * Java representation of a <code>PLString</code>. Creates a copy
+   * of the value of this <code>PLString</code> and returns it.
    *
    * @param i <code>PLInterpreter</code> object used to 
-   *          obtain the java representation. Included
+   *          obtain the Java representation. Included
    *          here only for compatibility purposes.
    *
-   * @return a java object representation of this prolog string.
+   * @return a Java object representation of this Prolog string.
    */
   public Object javaRepr(PLInterpreter i) {
 
@@ -59,8 +65,9 @@ public class PLString extends PLTerm {
   }
 
   /**
-   * Execution test on prolog objects. Returns true if the
-   * related prolog term can be evaluated.
+   * Execution test on Prolog objects. Returns true if the
+   * related Prolog term can be evaluated. Included here
+   * only for compatibility purposes.
    *
    * @return Always <code>false</code>.
    */
@@ -71,13 +78,12 @@ public class PLString extends PLTerm {
   }
 
   /**
-   * Compares the PLString object with the PLTerm given as
-   * argument. Implementation of the method inherited from
-   * PLTerm.
+   * Compares this <code>PLString</code> object with the <code>PLTerm</code> given as
+   * argument. Implementation of the method inherited from PLTerm.
    *
    * @param t Prolog term to be compared to.
    *
-   * @return <code>true</code> if this prolog string is equal
+   * @return <code>true</code> if this Prolog string is equal
    *         to the term received as argument;
    *         <code>false</code> otherwise.
    */
@@ -91,9 +97,9 @@ public class PLString extends PLTerm {
 
   /**
    * Makes a full copy of this <code>PLString</code>
-   * object. Recursively clones the elements of this term.
+   * object.
    *
-   * @return a copy of this prolog term.
+   * @return a copy of this Prolog term.
    */
   public PLTerm copy() {
 
@@ -105,7 +111,7 @@ public class PLString extends PLTerm {
   /**
    * Returns the number of characters of this <code>PLString</code>.
    *
-   * @return The number of characters of this prolog string.
+   * @return The number of characters of this Prolog string.
    */
   public int length() {
 
@@ -115,7 +121,7 @@ public class PLString extends PLTerm {
 
   /**
    * Returns the number of cells needed to represent
-   * this PLString in the prolog heap. Only used for
+   * this PLString in the Prolog heap. Only used for
    * $fast_read format version 'a'.
    *
    * @return 0 (no cells used).

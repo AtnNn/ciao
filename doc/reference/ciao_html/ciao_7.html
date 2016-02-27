@@ -1,323 +1,778 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The interactive debugger</TITLE>
+<TITLE>The Ciao Prolog System               - The interactive top-level shell</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_6.html">previous</A>, <A HREF="ciao_8.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_6.html">previous</A>, <A HREF="ciao_8.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC31" HREF="ciao_toc.html#TOC31">The interactive debugger</A></H1>
-
+<H1><A NAME="SEC64" HREF="ciao_toc.html#TOC64">The interactive top-level shell</A></H1>
 <P>
- 
-
-
-<P>
-The Ciao program development environment includes a number of advanced debugging tools, such as the 
-<A NAME="IDX329"></A>
-<CODE>ciaopp</CODE> preprocessor and some execution visualizers. Herein we discuss the interactive debugger available in the standard top-level, which allows to trace the control flow of programs, similar to other popular Prolog systems. This is a classical Byrd 'box-type' 
-<A NAME="IDX330"></A>
-<A NAME="IDX331"></A>
-<EM>debugger</EM> [Byr80,BBP81], with some enhancements. 
+<A NAME="IDX490"></A>
 
 
 <P>
-Byrd's 
-<A NAME="IDX332"></A>
-Procedure Box model of debugging execution provides a simple way of visualising control flow, especially during backtracking. Control flow is viewed at the predicate level, rather than at the level of individual clauses. The Ciao debugger has the ability to mark selected modules and/or files for debugging, rather than having to exhaustively trace your program. It also allows to selectively set 
-<A NAME="IDX333"></A>
-spy-points. Spy-points allow the programmer to nominate interesting predicates at which program execution is to pause so that the programmer can interact with the debugger. There is a wide choice of control and information options available during debugging interaction. 
+<STRONG>Author(s):</STRONG> Daniel Cabeza and the CLIP Group.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#11 (1999/12/14, 13:14:36 MET)
+
+
+<P>
+<A NAME="IDX491"></A>
+<CODE>ciaosh</CODE> is the Ciao interactive top-level shell. It provides the user with an interactive programming environment with tools for incrementally building programs, debugging programs by following their executions, and modifying parts of programs without having to start again from scratch. If available, it is strongly recommended to use it with the 
+<A NAME="IDX492"></A>
+emacs interface provided, as it greatly simplifies the operation. This chapter documents general operation in the shell itself. Other chapters document the 
 
 
 
 <UL>
-<LI><A HREF="ciao_7.html#SEC32">Marking modules and files for debugging</A>
-<LI><A HREF="ciao_7.html#SEC33">The debugging process</A>
-<LI><A HREF="ciao_7.html#SEC34">The procedure box control flow model</A>
-<LI><A HREF="ciao_7.html#SEC35">Format of debugging messages</A>
-<LI><A HREF="ciao_7.html#SEC36">Options available during debugging</A>
+<LI><A HREF="ciao_7.html#SEC65">Shell invocation and startup</A>
+<LI><A HREF="ciao_7.html#SEC66">Shell interaction</A>
+<LI><A HREF="ciao_7.html#SEC67">Entering recursive (conjunctive) shell levels</A>
+<LI><A HREF="ciao_7.html#SEC68">Usage and interface (ciaosh)</A>
+<LI><A HREF="ciao_7.html#SEC69">Documentation on exports (ciaosh)</A>
+<LI><A HREF="ciao_7.html#SEC70">Documentation on internals (ciaosh)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC32" HREF="ciao_toc.html#TOC32">Marking modules and files for debugging</A></H2>
+<H2><A NAME="SEC65" HREF="ciao_toc.html#TOC65">Shell invocation and startup</A></H2>
 
 <P>
-Usually, when a program is not working properly, the programmer has a feeling of which are the modules where the fault may be. Since full-fledged debugging is only available on <EM>consulted</EM> (interpreted) modules, which are executed much slower than compiled modules, there is the posibility of telling the top level which particular modules are wanted to be loaded in 
-<A NAME="IDX334"></A>
-<A NAME="IDX335"></A>
-<EM>consult mode</EM>, with the aim of debugging them. The most simple way of achieving this (appart from using the Ciao 
-<A NAME="IDX336"></A>
-<CODE>emacs</CODE> mode, which includes special support for debugging) is executing in the Ciao shell prompt, for each suspicious module <CODE>Module</CODE> in the program, a command like this: 
+When invoked, the shell responds with a message of identification and the prompt <CODE>?- </CODE> as soon as it is ready to accept input, thus: 
 
 
 
 <PRE>
-?- debug_module(Module).
+Ciao-Prolog X.Y #PP: Thu Mar 25 17:20:55 MET 1999
+?- 
 </PRE>
 
 <P>
-Note that files without module declaration belong to the module user, so the command to be issued for debugging a user file, say 'foo.pl', would be <CODE>debug_module(user)</CODE>, and not <CODE>debug_module(foo)</CODE>. 
+When the shell is initialized it looks for a file 
+<A NAME="IDX493"></A>
+<CODE>.ciaorc</CODE> in the HOME directory and makes an <CODE>include</CODE> of it, if it exists. This file is useful for including 
+<A NAME="IDX494"></A>
+<CODE>use_module/1</CODE> declarations for the modules one wants to be loaded by default, changing 
+<A NAME="IDX495"></A>
+prolog flags, etc. If the initialization file does not exist, the 
+<A NAME="IDX496"></A>
+ISO-Prolog compatibility package 
+<A NAME="IDX497"></A>
+<CODE>iso</CODE> is included, to provide (almost) all the ISO builtins by default. Two command-line options control the loading of the initialization file: 
+
+
+<DL COMPACT>
+
+<DT><CODE>-f</CODE>
+<DD>
+Fast start, do not load any initialization file. 
+
+<DT><CODE>-l</CODE> <CODE>File</CODE>
+<DD>
+Look for initialization file <CODE>File</CODE> instead of <CODE>~/.ciaorc</CODE>. If it does not exist, include the compatibility package <CODE>iso</CODE>. 
+
+</DL>
+
+
+
+<H2><A NAME="SEC66" HREF="ciao_toc.html#TOC66">Shell interaction</A></H2>
+
+<P>
+After the shell outputs the prompt, it is expecting either an internal command (see the following sections) or a 
+<A NAME="IDX498"></A>
+<A NAME="IDX499"></A>
+<EM>query</EM> (a goal or sequence of goals). When typing in the input, which must be a valid prolog term, if the term does not end in the first line, subsequent lines are indented. For example: 
+
+
+
+<PRE>
+?- X =
+   f(a,
+   b).
+
+X = f(a,b) ? 
+
+yes
+?- 
+</PRE>
+
+<P>
+The queries are executed by the shell as if they appeared in the 
+<A NAME="IDX500"></A>
+user module. Thus, in addition to builtin predicates, predicates available to be executed directly are all predicates defined by loaded user files (files with no module declaration), and imported predicates from modules by the use of <CODE>use_module</CODE>. 
 
 
 <P>
-The above command performs in fact two related things: on the one hand, it instructs the compiler to load any file containing a module of this name in consult mode; on the other, it instructs the debugger to actually prepare for debugging the code belonging to that module. After that, the modules which are to be debugged have to be (re)loaded in any appropriate form. The nice thing is that, if the modules are part of a bigger application, a command to load the main application file will automatically force loading the dependent modules which have changed, including those whose loading mode has changed, thus allowing the debugging of required files. 
-
-
-<P>
-Later, as the bug location is isolated, one would want to restrict more and more the modules where debugging takes place. To this end, and without the need of reloading, one can tell the debugger to not consider a module for debugging issuing a 
-<A NAME="IDX337"></A>
-<CODE>nodebug_module/1</CODE> command, which counteracts a 
-<A NAME="IDX338"></A>
-<CODE>debug_module/1</CODE> command with the same module name. 
-
-
-<P>
-There exist also the top-level commands 
-<A NAME="IDX339"></A>
-<CODE>set_debug_mode/1</CODE> and 
-<A NAME="IDX340"></A>
-<CODE>set_nodebug_mode/1</CODE>, which accept as argument a file spec (i.e., <CODE>library(foo)</CODE> or <CODE>foo</CODE>, even if it is a user file) to be able to load a file in consult mode without changing the set of modules the debugger will try to spy. 
-
-
-
-
-<H2><A NAME="SEC33" HREF="ciao_toc.html#TOC33">The debugging process</A></H2>
-
-<P>
-Once modules or user files are marked for debugging and reloaded, the traditional debugging shell commands can be used (the 
-<A NAME="IDX341"></A>
-<CODE>debugger</CODE> library following this section contains all the commands and their description), with the same meaning as in other Prolog systems such as 
-<A NAME="IDX342"></A>
-SICStus. The difference in their behavior is that in Ciao debugging takes place only in the modules in which it was activated, and that 
-<A NAME="IDX343"></A>
-<CODE>nospy/1</CODE> and 
-<A NAME="IDX344"></A>
-<CODE>spy/1</CODE> accept sequences of predicate specs, and they will search for those predicates only in the debugging-marked modules. 
-
-
-
-
-<H2><A NAME="SEC34" HREF="ciao_toc.html#TOC34">The procedure box control flow model</A></H2>
-
-<P>
-During debugging the interpreter prints out a sequence of goals in various states of instantiation in order to show the state the program has reached in its execution. However, in order to understand what is occurring it is necessary to understand when and why the interpreter prints out goals. As in other programming languages, key points of interest are procedure entry and return, but in Prolog there is the additional complexity of backtracking. One of the major confusions that novice Prolog programmers have to face is the question of what actually happens when a goal fails and the system suddenly starts backtracking. The Procedure Box model of Prolog execution views program control flow in terms of movement about the program text. This model provides a basis for the debugging mechanism in the interpreter, and enables the user to view the behaviour of the program in a consistent way. 
-
-
-<P>
-Let us look at an example Prolog procedure: 
-
-
-<P>
-<IMG SRC="autofigbyrdbox.jpg" ALT="Image:autofigbyrdbox.jpg"> 
-
-
-<P>
-The first clause states that <CODE>Y</CODE> is a descendant of <CODE>X</CODE> if <CODE>Y</CODE> is an offspring of <CODE>X</CODE>, and the second clause states that <CODE>Y</CODE> is a descendant of <CODE>X</CODE> if <CODE>Z</CODE> is an offspring of <CODE>X</CODE> and <CODE>Y</CODE> is a descendant of <CODE>Z</CODE>. In the diagram a box has been drawn around the whole procedure and labelled arrows indicate the control flow in and out of this box. There are four such arrows which we shall look at in turn. 
+The possible answers of the shell, after executing an internal command or query, are: 
 
 
 
 <UL>
 
-<LI>Call
+<LI>If the execution failed (or produced an error), the answer is <CODE>no</CODE>.
 
-This arrow represents initial invocation of the procedure. When a goal of the form <CODE>descendant(X,Y)</CODE> is required to be satisfied, control passes through the Call port of the descendant box with the intention of matching a component clause and then satisfying any subgoals in the body of that clause. Note that this is independent of whether such a match is possible; i.e. first the box is called, and then the attempt to match takes place. Textually we can imagine moving to the code for descendant when meeting a call to descendant in some other part of the code. 
+<LI>If the execution was successful, and no
 
-<LI>Exit
+<A NAME="IDX501"></A>
+answer variable (see below) was bound (or constraints where imposed on such variables), the answer is simply <CODE>yes</CODE>. 
 
-This arrow represents a successful return from the procedure. This occurs when the initial goal has been unified with one of the component clauses and any subgoals have been satisfied. Control now passes out of the Exit port of the descendant box. Textually we stop following the code for descendant and go back to the place we came from. 
+<LI>If the execution was successful and bindings where made (or constraints where imposed) on
 
-<LI>Redo
+<A NAME="IDX502"></A>
+answer variables, then the shell outputs the values of answer variables, as a sequence of bindings (or constraints), and then prints a <CODE>?</CODE> as a prompt. At this point it is expecting an input line from the user. By entering a carriage-return (<KBD>RET</KBD>) or any line starting with <CODE>y</CODE>, the query terminates and the shell answer <CODE>yes</CODE>. Entering a `<CODE>,</CODE>' the shell enters a 
+<A NAME="IDX503"></A>
+recursive level (see below). Finally, any other answer forces the system to backtrack and look for the next solution (answering as with the first solution). 
 
-This arrow indicates that a subsequent goal has failed and that the system is backtracking in an attempt to find alternatives to previous solutions. Control passes through the Redo port of the descendant box. An attempt will now be made to resatisfy one of the component subgoals in the body of the clause that last succeeded; or, if that fails, to completely rematch the original goal with an alternative clause and then try to satisfy any subgoals in the body of this new clause. Textually we follow the code backwards up the way we came looking for new ways of succeeding, possibly dropping down on to another clause and following that if necessary. 
-
-<LI>Fail
-
-This arrow represents a failure of the initial goal, which might occur if no clause is matched, or if subgoals are never satisfied, or if any solution produced is always rejected by later processing. Control now passes out of the Fail port of the descendant box and the system continues to backtrack. Textually we move back to the code which called this procedure and keep moving backwards up the code looking for choice points. 
 </UL>
 
 <P>
-In terms of this model, the information we get about the procedure box is only the control flow through these four ports. This means that at this level we are not concerned with which clause matches, and how any subgoals are satisfied, but rather we only wish to know the initial goal and the final outcome. However, it can be seen that whenever we are trying to satisfy subgoals, what we are actually doing is passing through the ports of <EM>their</EM> respective boxes. If we were to follow this, then we would have complete information about the control flow inside the procedure box. 
-
-
-<P>
-Note that the box we have drawn around the procedure should really be seen as an invocation box. That is, there will be a different box for each different invocation of the procedure. Obviously, with something like a recursive procedure, there will be many different Calls and Exits in the control flow, but these will be for different invocations. Since this might get confusing each invocation box is given a unique integer identifier. 
-
-
-
-
-<H2><A NAME="SEC35" HREF="ciao_toc.html#TOC35">Format of debugging messages</A></H2>
-
-<P>
-This section explains the exact format of the message output by the debugger at a port. All trace messages are output to the terminal regardless of where the current output stream is directed (which allows tracing programs while they are performing file IO). The basic format is as follows: 
+To allow using connection variables in queries without having to report their results, variables whose name starts with <CODE>_</CODE> are not considered in answers, the rest being the 
+<A NAME="IDX504"></A>
+<A NAME="IDX505"></A>
+<EM>answer variable</EM>s. This example illustrates the previous points: 
 
 
 
 <PRE>
-S  13  7  Call: T user:descendant(dani,_123) ?
+?- member(a, [b, c]).
+
+no
+?- member(a, [a, b]).
+
+yes
+?- member(X, [a|L]).
+
+X = a ? ;
+
+L = [X|_] ? 
+
+yes
+?- atom_codes(ciao, _C), member(L, _C).
+
+L = 99 ? ;
+
+L = 105 ? ;
+
+L = 97 ? ;
+
+L = 111 ? ;
+
+no
+?- 
 </PRE>
 
-<P>
-<CODE>S</CODE> is a spy-point indicator. It is printed as '<CODE>+</CODE>', indicating that there is a spy-point on <CODE>descendant/2</CODE> in module <CODE>user</CODE>, or as ' ', denoting no spy-point. 
 
 
-<P>
-<CODE>T</CODE> is a subterm trace. This is used in conjunction with the <CODE>^</CODE> command (set subterm), described below. If a subterm has been selected, <CODE>T</CODE> is printed as the sequence of commands used to select the subterm. Normally, however, <CODE>T</CODE> is printed as ' ', indicating that no subterm has been selected. 
-
+<H2><A NAME="SEC67" HREF="ciao_toc.html#TOC67">Entering recursive (conjunctive) shell levels</A></H2>
 
 <P>
-The first number is the unique invocation identifier. It is always nondecreasing (provided that the debugger is switched on) regardless of whether or not the invocations are being actually seen. This number can be used to cross correlate the trace messages for the various ports, since it is unique for every invocation. It will also give an indication of the number of procedure calls made since the start of the execution. The invocation counter starts again for every fresh execution of a command, and it is also reset when retries (see later) are performed. 
-
-
-<P>
-The number following this is the <EM>current depth</EM>; i.e., the number of direct <EM>ancestors</EM> this goal has. The next word specifies the particular port (<CODE>Call</CODE>, <CODE>Exit</CODE>, <CODE>Redo</CODE> or <CODE>Fail</CODE>). The goal is then printed so that its current instantiation state can be inspected. The final <CODE>?</CODE> is the prompt indicating that the debugger is waiting for user interaction. One of the option codes allowed (see below) can be input at this point. 
-
-
-<P>
-Ports can be unleashed. This means that the debugger will not stop for interaction at the messages for an unleashed port. Obviously, the <CODE>?</CODE> prompt will not be shown in such messages, since the user has specified to not wish to interact at this point. 
-
-
-<P>
-Note that not all procedure calls are traced; there are a few basic predicates which have been made invisible since it is more convenient not to trace them. These include debugging directives, basic control structures, and some builtins. This means that messages will never be printed concerning these predicates during debugging. 
-
-
-
-
-<H2><A NAME="SEC36" HREF="ciao_toc.html#TOC36">Options available during debugging</A></H2>
-<P>
-<A NAME="IDX345"></A>
-<A NAME="IDX346"></A>
-
-
-<P>
-This section describes the particular options that are available when the debugger prompts after printing out a debugging message. All the options are one letter mnemonics, some of which can be optionally followed by a decimal integer. They are read from the terminal with any blanks being completely ignored up to the next terminator (carriage-return, line-feed, or escape). Some options only actually require the terminator; e.g., the creep option, only requires <KBD>RET</KBD>. 
-
-
-<P>
-The only option which do really needs to be remembered is '<CODE>h</CODE>' (followed by <KBD>RET</KBD>). This provides help in the form of the following list of available options. 
+As stated before, when the user answers with `<CODE>,</CODE>' after a solution is presented, the shell enters a 
+<A NAME="IDX506"></A>
+<A NAME="IDX507"></A>
+<EM>recursive level</EM>, changing its prompt to <EM>N</EM> <CODE>?- </CODE> (where <EM>N</EM> is the recursion level) and keeping the bindings or constraints of the solution (this is inspired by the 
+<A NAME="IDX508"></A>
+<A NAME="IDX509"></A>
+<EM>LogIn</EM> language developed by 
+<A NAME="IDX510"></A>
+<A NAME="IDX511"></A>
+<EM>H. Ait-Kaci</EM>, 
+<A NAME="IDX512"></A>
+<A NAME="IDX513"></A>
+<EM>P. Lincoln</EM> and 
+<A NAME="IDX514"></A>
+<A NAME="IDX515"></A>
+<EM>Roger Nasr</EM> [AKNL86]). Thus, the following queries will be executed within that context, and all variables in the lower level solutions will be reported in subsequent solutions at this level. To exit a recursive level, input an <KBD>EOF</KBD> character or the command <CODE>up</CODE>. The last solution after entering the level is repeated, to allow asking for more solutions. Use command <CODE>top</CODE> to exit all recursive levels and return to the top level. Example interaction: 
 
 
 
 <PRE>
-&#60;cr&#62;   creep            c      creep
- l     leap             s      skip
- r     retry            r &#60;i&#62;  retry i
- f     fail             f &#60;i&#62;  fail i
- d     display          p      print
- w     write
- g     ancestors        g &#60;n&#62;  ancestors n
- n     nodebug          =      debugging
- +     spy this         -      nospy this
- a     abort            b      break
- @     command          u      unify
- &#60;     reset printdepth &#60; &#60;n&#62;  set printdepth
- ^     reset subterm    ^ &#60;n&#62;  set subterm
- ?     help             h      help
+?- directory_files('.',_Fs), member(F,_Fs).
+
+F = 'file_utils.po' ? ,
+
+1 ?- file_property(F, mod_time(T)).
+
+F = 'file_utils.po',
+T = 923497679 ? 
+
+yes
+1 ?- up.
+
+F = 'file_utils.po' ? ;
+
+F = 'file_utils.pl' ? ;
+
+F = 'file_utils.itf' ? ,
+
+1 ?- file_property(F, mod_time(T)).
+
+F = 'file_utils.itf',
+T = 923497679 ? 
+
+yes
+1 ?- ^D
+F = 'file_utils.itf' ? 
+
+yes
+?- 
 </PRE>
+
+
+
+<H2><A NAME="SEC68" HREF="ciao_toc.html#TOC68">Usage and interface (<CODE>ciaosh</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+The following predicates can be used at the top-level shell natively (but see also the commands available in section <A HREF="ciao_8.html#SEC71">The interactive debugger</A> which are also available within the top-level shell).
+
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
-<LI><CODE>c</CODE>
 
-<A NAME="IDX347"></A>
-<A NAME="IDX348"></A>
-<EM>creep</EM> causes the debugger to single-step to the very next port and print a message. Then if the port is leashed the user is prompted for further interaction. Otherwise it continues creeping. If leashing is off, creep is the same as leap (see below) except that a complete trace is printed on the terminal. 
+<LI><EM>Predicates:</EM>
 
-<LI><CODE>l</CODE>
-
-<A NAME="IDX349"></A>
-<A NAME="IDX350"></A>
-<EM>leap</EM> causes the interpreter to resume running the program, only stopping when a spy-point is reached (or when the program terminates). Leaping can thus be used to follow the execution at a higher level than exhaustive tracing. All that is needed to do is to set spy-points on an evenly spread set of pertinent predicates, and then follow the control flow through these by leaping from one to the other. 
-
-<LI><CODE>s</CODE>
-
-<A NAME="IDX351"></A>
-<A NAME="IDX352"></A>
-<EM>skip</EM> is only valid for Call and Redo ports. It skips over the entire execution of the predicate. That is, no message will be seen until control comes back to this predicate (at either the Exit port or the Fail port). Skip is particularly useful while creeping since it guarantees that control will be returned after the (possibly complex) execution within the box. With skip then no message at all will appear until control returns. This includes calls to predicates with spy-points set; they will be masked out during the skip. There is a way of overriding this: the <CODE>t</CODE> option after a <KBD>^C</KBD> interrupt will disable the masking. Normally, however, this masking is just what is required! 
-
-<LI><CODE>r</CODE>
-
-<A NAME="IDX353"></A>
-<A NAME="IDX354"></A>
-<EM>retry</EM> can be used at any of the four ports (although at the Call port it has no effect). It transfers control back to the Call port of the box. This allows restarting an invocation when, for example, it has left the programmer with some weird result. The state of execution is exactly the same as in the original call, (unless the invocation has performed side effects, which will not be undone). When a retry is performed the invocation counter is reset so that counting will continue from the current invocation number regardless of what happened before the retry. This is in accord with the fact that execution has, in operational terms, returned to the state before anything else was called. 
-
-If an integer is supplied after the retry command, then this is taken as specifying an invocation number and the system tries to get to the Call port, not of the current box, but of the invocation box specified. It does this by continuously failing until it reaches the right place. Unfortunately this process cannot be guaranteed: it may be the case that the invocation then programmer is looking for has been cut out of the search space by cuts in the program. In this case the system fails to the latest surviving Call port before the correct one. 
-
-<LI><CODE>f</CODE>
-
-<A NAME="IDX355"></A>
-<A NAME="IDX356"></A>
-<EM>fail</EM> can be used at any of the four ports (although at the Fail port it has no effect). It transfers control to the Fail port of the box, forcing the invocation to fail prematurely. If an integer is supplied after the command, then this is taken as specifying an invocation number and the system tries to get to the Fail port of the invocation box specified. It does this by continuously failing until it reaches the right place. Unfortunately, as before, this process cannot be guaranteed. 
-
-<LI><CODE>d</CODE> displays the current goal using <CODE>display/1</CODE>. See write (below).
-
-<LI><CODE>p</CODE> re-prints the current goal using <CODE>print/1</CODE>. Nested structures will be printed to the specified <EM>printdepth</EM> (below).
-
-<LI><CODE>w</CODE> writes the current goal on the terminal using <CODE>write/1</CODE>.
-
-<LI><CODE>g</CODE> provides a list of ancestors to the current goal, i.e., all goals that are hierarchically above the current goal in the calling sequence. It is always possible to jump to any goal in the ancestor list (by using retry, etc.). If an integer <CODE>n</CODE> is supplied, then only <CODE>n</CODE> ancestors will be printed. That is to say, the last <CODE>n</CODE> ancestors will be printed counting back from the current goal. Each entry in the list is preceded by the invocation number followed by the depth number (as would be given in a trace message).
-
-<LI><CODE>n</CODE> switches the debugger off. Note that this is the correct way to switch debugging off at a trace point. The <CODE>@</CODE> or <CODE>b</CODE> options cannot be used because they always return to the debugger.
-
-<LI><CODE>=</CODE> outputs information concerning the status of the current debugging session.
-
-<LI><CODE>+</CODE>
-
-<A NAME="IDX357"></A>
-<A NAME="IDX358"></A>
-<EM>spy</EM> sets a spy-point on the current goal. 
-
-<LI><CODE>-</CODE>
-
-<A NAME="IDX359"></A>
-<A NAME="IDX360"></A>
-<EM>nospy</EM> removes the spy-point from the current goal. 
-
-<LI><CODE>a</CODE>
-
-<A NAME="IDX361"></A>
-<A NAME="IDX362"></A>
-<EM>abort</EM> causes an abort of the current execution. All the execution states built so far are destroyed and the system is put right back at the top-level of the interpreter. (This is the same as the built-in predicate <CODE>abort/0</CODE>.) 
-
-<LI><CODE>b</CODE>
-
-<A NAME="IDX363"></A>
-<A NAME="IDX364"></A>
-<EM>break</EM> introduces an interpreter break-point: current execution flow is suspended, and a new interpreter top-level started 'on top' of the previous execution, which is 'sitting underneath' it. When the break-point is ended (with <KBD>^D</KBD>) previous execution is resumed, and the user will be reprompted at the port at which execution broke. The new execution is completely separate from the suspended one; the invocation numbers will start again from 1 during the break. The debugger is temporarily switched off as the break-point is called and will be re-switched on when the break is finished. However, any changes to the leashing or to spy-points will remain in effect. (This option might not be temporarily available.) 
-
-<LI><CODE>@</CODE>
-
-<A NAME="IDX365"></A>
-<A NAME="IDX366"></A>
-<EM>command</EM> allows calling arbitrary goals. It is effectively a one-off break (see above). The initial message <CODE>| :- </CODE> will be output on the terminal, and a command is then read from the terminal and executed as if it was at top-level. 
-
-<LI><CODE>u</CODE>
-
-<A NAME="IDX367"></A>
-<A NAME="IDX368"></A>
-<EM>unify</EM> is available at the Call port and gives the option of providing a solution to the goal from the terminal rather than executing the goal. This is convenient, e.g., for providing a "stub" for a predicate that has not yet been written. A prompt <CODE>|: </CODE> will be output on the terminal, and the solution is then read from the terminal and unified with the goal. (This option might not be temporarily available.) 
-
-<LI><CODE>&#60;</CODE>
-
-<A NAME="IDX369"></A>
-<A NAME="IDX370"></A>
-<EM>printdepth</EM> sets a limit for the subterm nesting level that is printed in messages. While in the debugger, a printdepth is in effect for limiting the subterm nesting level when printing the current goal. When displaying or writing the current goal, all nesting levels are shown. The limit is initially 10. This command, without arguments, resets the limit to 10. With an argument of <CODE>n</CODE> the limit is set to <CODE>n</CODE>. 
-
-<LI><CODE>^</CODE>
-
-<A NAME="IDX371"></A>
-<A NAME="IDX372"></A>
-<EM>subterm</EM> sets the subterm to be printed in messages. While at a particular port, a current subterm of the current goal is maintained. It is the current subterm which is displayed, printed, or written when prompting for a debugger command. Used in combination with the printdepth, this provides a means for navigating in the current goal for focusing on the part which is of interest. The current subterm is set to the current goal when arriving at a new port. This command, without arguments, resets the current subterm to the current goal. With an argument of <CODE>n</CODE> (greater than 0 and less or equal to the number of subterms of the current subterm), the current subterm is replaced by its <CODE>n</CODE>'th subterm. With an argument of <CODE>0</CODE>, the current subterm is replaced by its parent term. 
-
-<LI><CODE>?</CODE> or <CODE>h</CODE> displays the table of options given above.
+<A NAME="IDX516"></A>
+<CODE>use_module/1</CODE>, 
+<A NAME="IDX517"></A>
+<CODE>use_module/2</CODE>, 
+<A NAME="IDX518"></A>
+<CODE>ensure_loaded/1</CODE>, 
+<A NAME="IDX519"></A>
+<CODE>include/1</CODE>, 
+<A NAME="IDX520"></A>
+<CODE>use_package/1</CODE>, 
+<A NAME="IDX521"></A>
+<CODE>consult/1</CODE>, 
+<A NAME="IDX522"></A>
+<CODE>compile/1</CODE>, 
+<A NAME="IDX523"></A>
+<CODE>./2</CODE>, 
+<A NAME="IDX524"></A>
+<CODE>make_po/1</CODE>, 
+<A NAME="IDX525"></A>
+<CODE>unload/1</CODE>, 
+<A NAME="IDX526"></A>
+<CODE>set_debug_mode/1</CODE>, 
+<A NAME="IDX527"></A>
+<CODE>set_nodebug_mode/1</CODE>, 
+<A NAME="IDX528"></A>
+<CODE>make_actmod/2</CODE>, 
+<A NAME="IDX529"></A>
+<CODE>force_lazy/1</CODE>, 
+<A NAME="IDX530"></A>
+<CODE>undo_force_lazy/1</CODE>, 
+<A NAME="IDX531"></A>
+<CODE>dynamic_search_path/1</CODE>, 
+<A NAME="IDX532"></A>
+<CODE>multifile/1</CODE>.
 
 </UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>Application modules:</EM>
+
+<A NAME="IDX533"></A>
+<CODE>toplev</CODE>.
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX534"></A>
+<CODE>libpaths</CODE>, 
+<A NAME="IDX535"></A>
+<CODE>compiler/compiler</CODE>, 
+<A NAME="IDX536"></A>
+<CODE>compiler/exemaker</CODE>, 
+<A NAME="IDX537"></A>
+<CODE>compiler/c_itf</CODE>, 
+<A NAME="IDX538"></A>
+<CODE>debugger/debugger</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC69" HREF="ciao_toc.html#TOC69">Documentation on exports (<CODE>ciaosh</CODE>)</A></H2>
+<P>
+<A NAME="IDX539"></A>
+<A NAME="IDX540"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_module/1:</B>
+<DD><A NAME="IDX541"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>use_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Load into the top-level the module defined in <CODE>Module</CODE>, importing all the predicates it exports.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX542"></A>
+<A NAME="IDX543"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_module/2:</B>
+<DD><A NAME="IDX544"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>use_module(Module,Imports)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Load into the top-level the module defined in <CODE>Module</CODE>, importing the predicates in <CODE>Imports</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Imports</CODE> is a list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX545"></A>
+<A NAME="IDX546"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ensure_loaded/1:</B>
+<DD><A NAME="IDX547"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ensure_loaded(File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Load into the top-level the code residing in file (or files) <CODE>File</CODE>, which is user (i.e. non-module) code.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name or a list of source names.
+ (<CODE>ciaosh_doc:sourcenames/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX548"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>make_exec/2:</B>
+<DD><A NAME="IDX549"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX550"></A>
+<CODE>toplev</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+<P>
+<A NAME="IDX551"></A>
+<A NAME="IDX552"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>include/1:</B>
+<DD><A NAME="IDX553"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>include(File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The contents of the file <CODE>File</CODE> are included in the top-level shell. For the moment, it only works with some directives, which are interpreted by the shell, or with normal clauses (which are asserted), if library(dynamic) is loaded beforehand.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX554"></A>
+<A NAME="IDX555"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>use_package/1:</B>
+<DD><A NAME="IDX556"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>use_package(Package)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Equivalent to issuing an include(library(<CODE>Package</CODE>)) for each listed file. By now some package contents cannot be handled.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Package</CODE> is a source name or a list of source names.
+ (<CODE>ciaosh_doc:sourcenames/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX557"></A>
+<A NAME="IDX558"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>consult/1:</B>
+<DD><A NAME="IDX559"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>consult(File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Provided for backward compatibility. Similar to
+
+<A NAME="IDX560"></A>
+<CODE>ensure_loaded/1</CODE>, but ensuring each listed file is loaded in consult mode (see section <A HREF="ciao_8.html#SEC71">The interactive debugger</A>). 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name or a list of source names.
+ (<CODE>ciaosh_doc:sourcenames/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX561"></A>
+<A NAME="IDX562"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>compile/1:</B>
+<DD><A NAME="IDX563"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>compile(File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Provided for backward compatibility. Similar to
+
+<A NAME="IDX564"></A>
+<CODE>ensure_loaded/1</CODE>, but ensuring each listed file is loaded in compile mode (see section <A HREF="ciao_8.html#SEC71">The interactive debugger</A>). 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name or a list of source names.
+ (<CODE>ciaosh_doc:sourcenames/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX565"></A>
+<A NAME="IDX566"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>./2:</B>
+<DD><A NAME="IDX567"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>[File|Files]</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Provided for backward compatibility, obsoleted by
+
+<A NAME="IDX568"></A>
+<CODE>ensure_loaded/1</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Files</CODE> is a list of <CODE>sourcename</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX569"></A>
+<A NAME="IDX570"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_po/1:</B>
+<DD><A NAME="IDX571"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_po(Files)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Make object (<CODE>.po</CODE>) files from <CODE>Files</CODE>. Equivalent to executing "<CODE>ciaoc -c</CODE>" on the files.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Files</CODE> is a source name or a list of source names.
+ (<CODE>ciaosh_doc:sourcenames/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX572"></A>
+<A NAME="IDX573"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>unload/1:</B>
+<DD><A NAME="IDX574"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>unload(File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unloads dynamically loaded file <CODE>File</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX575"></A>
+<A NAME="IDX576"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_debug_mode/1:</B>
+<DD><A NAME="IDX577"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>set_debug_mode(File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set the loading mode of <CODE>File</CODE> to <EM>consult</EM>. See section <A HREF="ciao_8.html#SEC71">The interactive debugger</A>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX578"></A>
+<A NAME="IDX579"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_nodebug_mode/1:</B>
+<DD><A NAME="IDX580"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>set_nodebug_mode(File)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set the loading mode of <CODE>File</CODE> to <EM>compile</EM>. See section <A HREF="ciao_8.html#SEC71">The interactive debugger</A>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX581"></A>
+<A NAME="IDX582"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_actmod/2:</B>
+<DD><A NAME="IDX583"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_actmod(ModuleFile,PublishMod)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Make an
+
+<A NAME="IDX584"></A>
+active module executable from the module residing in <CODE>ModuleFile</CODE>, using address publish module of name <CODE>PublishMod</CODE> (which needs to be in the library paths). 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>ModuleFile</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>PublishMod</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX585"></A>
+<A NAME="IDX586"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>force_lazy/1:</B>
+<DD><A NAME="IDX587"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>force_lazy(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Force module of name <CODE>Module</CODE> to be loaded lazily in the subsequent created executables.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX588"></A>
+<A NAME="IDX589"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>undo_force_lazy/1:</B>
+<DD><A NAME="IDX590"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>undo_force_lazy(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Disable a previous
+
+<A NAME="IDX591"></A>
+<CODE>force_lazy/1</CODE> on module <CODE>Module</CODE> (or, if it is uninstantiated, all previous 
+<A NAME="IDX592"></A>
+<CODE>force_lazy/1</CODE>). 
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX593"></A>
+<A NAME="IDX594"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dynamic_search_path/1:</B>
+<DD><A NAME="IDX595"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dynamic_search_path(Name)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Asserting a fact to this data predicate, files using
+
+<A NAME="IDX596"></A>
+path alias <CODE>Name</CODE> will be treated as dynamic in the subsequent created executables. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Name</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX597"></A>
+<A NAME="IDX598"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>multifile/1:</B>
+<DD><A NAME="IDX599"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>multifile Pred</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamically declare predicate <CODE>Pred</CODE> as multifile. This is useful at the top-level shell to be able to call multifile predicates of loaded files.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        int(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC70" HREF="ciao_toc.html#TOC70">Documentation on internals (<CODE>ciaosh</CODE>)</A></H2>
+<P>
+<A NAME="IDX600"></A>
+<A NAME="IDX601"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>sourcenames/1:</B>
+<DD><A NAME="IDX602"></A>
+
+
+<P>
+Is defined as follows:
+
+<PRE>
+sourcenames(File) :-
+        sourcename(File).
+sourcenames(Files) :-
+        list(Files,sourcename).
+</PRE>
+
+<P>
+See 
+<A NAME="IDX603"></A>
+<CODE>sourcename/1</CODE> in section <A HREF="ciao_25.html#SEC153">Basic file/stream handling</A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sourcenames(Files)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Files</CODE> is a source name or a list of source names.
+
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_6.html">previous</A>, <A HREF="ciao_8.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_6.html">previous</A>, <A HREF="ciao_8.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

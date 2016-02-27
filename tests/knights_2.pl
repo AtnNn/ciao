@@ -7,7 +7,7 @@
  %% Update Count    : 292
  %% Status          : Unknown, Use with caution!
 
-:- module(knights_2, [knights/2], []).
+:- module(knights_2, [knights/2, main/1], []).
 :- use_module(library(aggregates), [findall/3]).
 :- use_module(library(write), [write/1]).
 :- use_module(library(prolog_sys)).
@@ -15,6 +15,9 @@
  %% knights_print(5) performs 12385816 resolution steps (and fails...)
 
  %% NxN board, a knight has to traverse it.
+
+main(X):-
+	knights(X, _).
 
 wtime(T):- statistics(runtime, [_,T]).
 

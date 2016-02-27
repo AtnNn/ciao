@@ -89,7 +89,7 @@ BOOL prolog_open(Arg)
     goto bomb2;
   else
     return
-    cunify(Arg,ptr_to_stream(Arg,new_stream(X(0),modespec,fileptr)),X(2));
+    cunify(Arg, ptr_to_stream(Arg,new_stream(X(0),modespec,fileptr)),X(2));
 
  bomb2:
   fclose(fileptr);
@@ -112,6 +112,8 @@ BOOL prolog_open(Arg)
 
 /* as Quintus closing a stream object referring to user_input,user_output */
 /*   or user_error will succeed but cause no changes */
+
+extern LOCK stream_list_l;
 
 BOOL prolog_close(Arg)
      Argdecl;
@@ -136,15 +138,16 @@ BOOL prolog_close(Arg)
       else
         close(GetInteger(stream->label));            /* Needs a lock here */
 
- /* WARNING: Can we safely dealloc here the stream structure? Maybe another
-    worker is sharing it! */
+
+ /* We are twiggling with a shared structure: lock the access to it */
+
+      Wait_Acquire_lock(stream_list_l);
 
       stream->label = ERRORTAG;
       stream->backward->forward = stream->forward;
       stream->forward->backward = stream->backward;
 
       /* now ensure that no choicepoints point at the stream */
-
       {
 	REGISTER struct node *B;
 	TAGGED t1, t2;
@@ -159,8 +162,8 @@ BOOL prolog_close(Arg)
 	    B->term[3] = t2;
       }
 
-
       checkdealloc((TAGGED *)stream,sizeof(struct stream_node));
+      Release_lock(stream_list_l);
     }
   return TRUE;
 }

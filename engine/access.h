@@ -72,13 +72,13 @@
 
 
 
-/******************** Compiler does a poor job on these:
-#define ChoiceFromInt(Y)	((struct node *)ChoiceOffset(Choice_Start,(GetSmall(Y))))
-#define ChoiceToInt(Y)		(MakeSmall(ChoiceDifference(Choice_Start,Y)))
-********************/
-
-#define ChoiceFromInt(Y)	(ChoiceCharOffset(Tagged_Choice_Start,Y))
-#define ChoiceToInt(Y)		(ChoiceCharDifference(Tagged_Choice_Start,Y))
+#if defined(USE_TAGGED_CHOICE_START)
+#define ChoiceFromInt(Y) (ChoiceCharOffset(Tagged_Choice_Start,Y))
+#define ChoiceToInt(Y)	 (ChoiceCharDifference(Tagged_Choice_Start,Y))
+#else
+#define ChoiceFromInt(Y) ((struct node *)ChoiceOffset(Choice_Start,(GetSmall(Y))))
+#define ChoiceToInt(Y)	 (MakeSmall(ChoiceDifference(Choice_Start,Y)))
+#endif
 
 #define RefHeap(To,From) \
 { To = *(From); }

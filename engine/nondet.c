@@ -625,9 +625,9 @@ BOOL first_instance(Arg)
   if (root->behavior_on_failure == DYNAMIC) 
     inst = ACTIVE_INSTANCE(Arg,root->first,use_clock,TRUE);
   else {
-    Wait_Acquire_lock(root->clause_lock_l);
-    inst = root->first;               /* Do not wait! Return what we have */
-    Release_lock(root->clause_lock_l);
+    Cond_Begin(root->clause_insertion_cond);
+    inst = root->first;
+    Broadcast_Cond(root->clause_insertion_cond);
   }
 
   if (!inst)
@@ -770,14 +770,11 @@ BOOL close_predicate(Arg)
 {
   REGISTER struct int_info *root = TagToRoot(X(0));
 
-#if defined(THREADS)
-  Wait_Acquire_lock(root->clause_lock_l);
-#endif
-  if (root->behavior_on_failure == CONC_OPEN)
+  Cond_Begin(root->clause_insertion_cond);
+  if (root->behavior_on_failure == CONC_OPEN) 
     root->behavior_on_failure = CONC_CLOSED;
-#if defined(THREADS)
-  Release_lock(root->clause_lock_l);
-#endif
+  Broadcast_Cond(root->clause_insertion_cond);
+
   return TRUE;
 }
 
@@ -786,14 +783,12 @@ BOOL open_predicate(Arg)
 {
   REGISTER struct int_info *root = TagToRoot(X(0));
 
-#if defined(THREADS)
-  Wait_Acquire_lock(root->clause_lock_l);
-#endif
-  if (root->behavior_on_failure == CONC_CLOSED)
+
+  Cond_Begin(root->clause_insertion_cond);
+  if (root->behavior_on_failure == CONC_CLOSED) 
     root->behavior_on_failure = CONC_OPEN;
-#if defined(THREADS)
-  Release_lock(root->clause_lock_l);
-#endif
+  Broadcast_Cond(root->clause_insertion_cond);
+
   return TRUE;
 }
 #else                                                          /* THREADS */
@@ -830,56 +825,40 @@ static struct instance *current_instance_conc(Arg, block)
   REGISTER struct int_info *root = TagToRoot(X(2));
 
 
+#if defined(DEBUG)
+      if (debug_conc) fprintf(stderr, "** Entering current_instance_conc\n");
+#endif
 
   do {
-#if defined(DEBUG) && defined(THREADS)
-    if (debug_conc && !root->first)
-      fprintf(stderr, 
-              "*** %d(%d) before waiting in c_i without first instance, blocking = %d.\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER, block);
-#endif
-
-    /*
-#if defined(DEBUG)
-    fprintf(stderr, "wait_for_an_instance_pointer, root is %x\n",
-            (unsigned int)root);
-#endif
-    */
-
     try_instance = wait_for_an_instance_pointer(&(root->first), 
                                                 &(root->first),
                                                 root, block);
-    /*
 #if defined(DEBUG)
-    fprintf(stderr, "wait_for_an_instance_pointer finished\n");
+    if (debug_conc) fprintf(stderr, "** After wait_for_an_instance_pointer\n");
 #endif
-    */
-
-#if defined(DEBUG) && defined(THREADS)
-    if (debug_conc && Lock_is_unset(root->clause_lock_l))
-        fprintf(stderr, "%d(%d) after waiting in c_i, without clause lock!\n",
-                (int)Thread_Id, (int)GET_INC_COUNTER);
-    if (debug_conc && !root->first && try_instance)
-      fprintf(stderr, 
-              "*** %d(%d) after waiting in c_i without first instance.\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER);
-#endif
-
     if (!try_instance) {
-      Release_lock(root->clause_lock_l);
+      Wait_For_Cond_End(root->clause_insertion_cond);
+#if defined(DEBUG)
+     if (debug_conc) fprintf(stderr,"** Exiting current_instance with NULL\n");
+#endif
       return NULL;
     }
     
-    /* If we are here, we have a lock for the predicate.  Get first possibly
-       matching instance; weak indexing here */
+#if defined(DEBUG)
+      if (debug_conc) fprintf(stderr, "** current_instance: got a fact!\n");
+#endif
+
+/* If we are here, we have a lock for the predicate.  Get first possibly
+   matching instance; weak indexing here */
 
     if (!(current_one = first_possible_instance(X(0), root, &x2_n, &x5_n)))
-      Release_lock(root->clause_lock_l);     /* Time to add more clauses. */
-
-    } while (!current_one && block == BLOCK);
+      /* Release the lock, let others add clauses */
+      Wait_For_Cond_End(root->clause_insertion_cond);
+  } while (!current_one && block == BLOCK);
 
 #if defined(DEBUG) && defined(THREADS)
-  if (debug_conc && block == BLOCK && Lock_is_unset(root->clause_lock_l))
+  if (debug_conc && block == BLOCK && 
+      Cond_Lock_is_unset(root->clause_insertion_cond))
     fprintf(stderr, "***%d(%d) current_instance_conc: putting chpt without locks!\n",
             (int)Thread_Id, (int)GET_INC_COUNTER);
   if (debug_conc && !root->first)
@@ -923,11 +902,13 @@ static struct instance *current_instance_conc(Arg, block)
     NewShadowregs(w->global_top);
   }
 
+#if defined(DEBUG)
+  if (debug_conc) fprintf(stderr, "** Exiting current_instance\n");
+#endif
+
   return current_one;
 }
 
- /* Wait until an instance appears.  Helpful for saving choicepoint space.
-    Make a tight loop!  Always exits with lock set! */
 
 static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
      struct instance **inst_pptr1, **inst_pptr2;
@@ -935,120 +916,29 @@ static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
      BlockingType block;
 {
 
-  volatile struct instance *pptr1, *pptr2;
-  volatile Behavior behavior_this_pred;
-
-  while(TRUE){
-                       /* First, spin looking for something new to appear */
-
-    do {
-      pptr1 = *inst_pptr1;
-      pptr2 = *inst_pptr2;
-      behavior_this_pred = root->behavior_on_failure;
-    } while (!pptr1 && !pptr2 &&
-             block == BLOCK &&
-             behavior_this_pred == CONC_OPEN);
-
-
-    /*
-    while (!*inst_pptr1 && 
-           !*inst_pptr2 &&
-           block == BLOCK &&
-           root->behavior_on_failure == CONC_OPEN)
-      ;
-    */
-
-      /* If so, make sure it is still here -- keep the lock */
-
-    Wait_Acquire_lock(root->clause_lock_l);
-
+  volatile struct instance *pptr1 = NULL, *pptr2 = NULL;
+  /* volatile Behavior behavior_this_pred; */
+  
+  while(TRUE){  
+    /* Wait until a change is signaled, and test that the change affects us */
+    Wait_For_Cond_Begin( \
+                   ((*inst_pptr1 == NULL) && \
+                    (*inst_pptr2 == NULL) && \
+                    block == BLOCK && \
+                    root->behavior_on_failure == CONC_OPEN ), \
+                    root->clause_insertion_cond
+                         )
+      /* Test again to find out which was the case */
+      
     pptr1 = *inst_pptr1;
     pptr2 = *inst_pptr2;
-    behavior_this_pred = root->behavior_on_failure;
-
     if (pptr1 || pptr2) 
       return TRUE;
-    else if (block == NO_BLOCK || behavior_this_pred == CONC_CLOSED)
+    else if (block == NO_BLOCK || root->behavior_on_failure == CONC_CLOSED)
       return FALSE;
-    else Release_lock(root->clause_lock_l);
+    else Wait_For_Cond_End(root->clause_insertion_cond); /* Let others update */
   }
 }
-
-#if defined(UNDEFINED)
-static BOOL wait_for_an_instance_pointer(inst_pptr1, inst_pptr2, root, block)
-     struct instance **inst_pptr1, **inst_pptr2;
-     struct int_info *root;
-     BlockingType block;
-{
-  volatile struct instance *pptr1, *pptr2;
-  volatile Behavior cls_state;
-
-  /*
-#if defined(DEBUG)
-  fprintf(stderr,
-          "(%d) In wait_for_an_instance_pointer: pptr1 = %x, pptr2 = %x)\n",
-          GET_INC_COUNTER,
-          (unsigned int)inst_pptr1, 
-          (unsigned int)inst_pptr2);
-  fprintf(stderr, "(%d) In wait_for_an_instance_pointer: *pptr1 = %x, *pptr2 = %x\n",
-          GET_INC_COUNTER,
-          (unsigned int)*inst_pptr1, 
-          (unsigned int)*inst_pptr2);
-#endif
-  */
-
-  while(TRUE){
-                       /* First, spin looking for something new to appear */
-    do {
-      Wait_Acquire_lock(root->clause_lock_l);
-      pptr1 = *inst_pptr1;
-      pptr2 = *inst_pptr2;
-      cls_state = root->behavior_on_failure;
-      Release_lock(root->clause_lock_l);
-    } while (block == BLOCK &&
-             cls_state == CONC_OPEN &&
-             pptr1 == NULL && 
-             pptr2 == NULL);
-
-                    /* If so, make sure it is still here -- keep the lock */
-
-    /*
-#if defined(DEBUG)
-      fprintf(stderr, "About to lock in wait_for_an_instance_pointer\n");
-#endif
-    */
-
-    Wait_Acquire_lock(root->clause_lock_l);
-
-    /*
-#if defined(DEBUG)
-      fprintf(stderr, "Locked in wait_for_an_instance_pointer\n");
-#endif
-    */
-    pptr1 = *inst_pptr1;
-    pptr2 = *inst_pptr2;
-    cls_state = root->behavior_on_failure;
-    if (pptr1 || pptr2) {
-
-      /*
-#if defined(DEBUG)
-      fprintf(stderr, "Leaving wait_for_an_instance_pointer (a)\n");
-#endif
-      */
-
-      return TRUE;
-    } else if (block == NO_BLOCK || cls_state == CONC_CLOSED){
-
-      /*
-#if defined(DEBUG)
-      fprintf(stderr, "Leaving wait_for_an_instance_pointer (b)\n");
-#endif
-      */
-      return FALSE;
-    } else Release_lock(root->clause_lock_l);
-  }
-}
-#endif
 
 static struct instance *first_possible_instance(x0, root, x2_n, x5_n)
      TAGGED x0;
@@ -1132,49 +1022,37 @@ BOOL next_instance_conc(Arg,ipp)
     fprintf(stderr, 
             "*** %d(%d) entering next_instance_conc without first instance.\n",
             (int)Thread_Id, (int)GET_INC_COUNTER);
-  if (debug_conc)
+  if (debug_conc) {
     fprintf(stderr,
             "*** %d(%d) entering next_instance_conc with x2 = %x\n",
             (int)Thread_Id, (int)GET_INC_COUNTER, (int)x2_ins_h->inst_ptr);
-  if (debug_conc)
     fprintf(stderr,
             "*** %d(%d) entering next_instance_conc with x5 = %x\n",
             (int)Thread_Id, (int)GET_INC_COUNTER, (int)x5_ins_h->inst_ptr);
+    fprintf(stderr,
+            "*** %d(%d) entering next_instance_conc with block = %x\n",
+            (int)Thread_Id, (int)GET_INC_COUNTER, (int)block);
+  }
 #endif
-
 
   do {
-#if defined(DEBUG) && defined(THREADS)
-    if (debug_conc && !root->first)
-      fprintf(stderr, 
-              "*** %d(%d) before waiting in n_i without first instance.\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER);
-#endif
     next_instance_pointer =
       wait_for_an_instance_pointer(&(x2_ins_h->inst_ptr), 
                                    &(x5_ins_h->inst_ptr),
                                    root, block);
-#if defined(DEBUG) && defined(THREADS)
-    if (debug_conc && Lock_is_unset(root->clause_lock_l))
-        fprintf(stderr, "%d(%d) after waiting in n_i, without clause lock!\n",
-                (int)Thread_Id, (int)GET_INC_COUNTER);
-    if (debug_conc && !root->first && next_instance_pointer)
-      fprintf(stderr, 
-              "*** %d(%d) after waiting in n_i without first instance.\n",
-              (int)Thread_Id, (int)GET_INC_COUNTER);
-#endif
-    if (!next_instance_pointer) { 
+    if (!next_instance_pointer) {           /* Closed or non-waiting call */
       remove_handle(x2_ins_h, root, X2);
       remove_handle(x5_ins_h, root, X5);
       *ipp = NULL;                                       /* Cause failure */
-      Release_lock(root->clause_lock_l);
+      /* Time for new assertions */
+      Wait_For_Cond_End(root->clause_insertion_cond);
       return FALSE;                                 /* Remove choicepoint */
     }
 
     /* Locate a satisfactory instance. */
-
     jump_to_next_instance(x2_ins_h->inst_ptr, x5_ins_h->inst_ptr,
                           ipp, &x2_insp, &x5_insp);
+
     /* Move handle forwards to re-start (if necesary) in a new clause */
     change_handle_to_instance(x2_ins_h, x2_insp, root, X2);
     change_handle_to_instance(x5_ins_h, x5_insp, root, X5);
@@ -1187,8 +1065,7 @@ BOOL next_instance_conc(Arg,ipp)
 #endif
 
     if (!*ipp)
-      Release_lock(root->clause_lock_l);       /* Time for new assertions */
-
+      Wait_For_Cond_End(root->clause_insertion_cond);
   } while (!*ipp);
 
 #if defined(DEBUG) && defined(THREADS)
@@ -1321,8 +1198,8 @@ static void link_handle(handle, inst, root, chain)
      WhichChain chain;                               /* Is that X2 or X5? */
 {
 #if defined(DEBUG) 
-  if (debug_conc && Lock_is_unset(root->clause_lock_l))
-    fprintf(stderr, "*** Thread %d(%d) in link_handle() with lock unset!\n", 
+  if (debug_conc && Cond_Lock_is_unset(root->clause_insertion_cond))
+    fprintf(stderr, "*** Thread %d(%d) in link_handle() with lock unset!\n",
             (int)Thread_Id, (int)GET_INC_COUNTER);
 #endif
 
@@ -1358,7 +1235,7 @@ static void unlink_handle(xi, root, chain)
   struct instance *inst;
 
 #if defined(DEBUG)
-  if (debug_conc && Lock_is_unset(root->clause_lock_l))
+  if (debug_conc && Cond_Lock_is_unset(root->clause_insertion_cond))
     fprintf(stderr, "*** Thread_Id %d(%d) in unlink_handle() with lock unset!\n", 
             (int)Thread_Id, (int)GET_INC_COUNTER);
 #endif
@@ -1404,7 +1281,7 @@ void move_queue(srcq, destq, destinst)
     *srcq && (*srcq)->inst_ptr ? (*srcq)->inst_ptr->root : NULL;
   int counter = 0;
 
-  if (debug_conc && root && Lock_is_unset(root->clause_lock_l))
+  if (debug_conc && root && Cond_Lock_is_unset(root->clause_insertion_cond))
     fprintf(stderr, "*** in move_queue() with lock unset!\n");
 
   if (debug_conc)
@@ -1465,7 +1342,9 @@ void remove_link_chains(topdynamic, chpttoclear)
               (int)Thread_Id, (int)GET_INC_COUNTER, 
               (unsigned long)movingtop);
 #endif
-    Wait_Acquire_lock(TagToRoot(movingtop->term[6])->clause_lock_l);
+
+    Cond_Begin(TagToRoot(movingtop->term[6])->clause_insertion_cond);
+
 #if defined(DEBUG)
     if (TagToInstHandle(movingtop->term[2]) == NULL)
       fprintf(stderr, "*** %d(%d) remove_link_chains: X2 handle is NULL!!\n",
@@ -1479,7 +1358,9 @@ void remove_link_chains(topdynamic, chpttoclear)
     remove_handle(TagToInstHandle(movingtop->term[5]), 
                   TagToRoot(movingtop->term[6]),
                   X5);
-    Release_lock(TagToRoot(movingtop->term[6])->clause_lock_l);
+
+    Broadcast_Cond(TagToRoot(movingtop->term[6])->clause_insertion_cond);
+
     movingtop = (struct node *)TermToPointerOrNull(movingtop->term[8]);
   }
 #if defined(DEBUG) && defined(THREADS)

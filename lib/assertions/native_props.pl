@@ -26,6 +26,7 @@
 
 :- use_module(library(metaterms),[varsbag/3]).
 :- use_module(library(sort),[sort/2]).
+:- use_module(library(lists)).
 
 % --------------------------------------------------------------------------
 :- comment(title,"Properties which are native to analyzers").

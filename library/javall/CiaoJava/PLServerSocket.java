@@ -6,7 +6,6 @@ import java.net.*;
 
 /**
  *
- * Class PLServerSocket
  * This class creates a server socket and keeps it listening at
  * socket port #5000 (or number given in constructor).
  *
@@ -17,6 +16,7 @@ public class PLServerSocket {
   private final int MAXPORT = 5010;
 
   /**
+   * Server socket creation.
    * Creates a new server socket at port 5000 or
    * higher, and prints the port # at the standard output.
    * When the openSocket() method be called, the object will be
@@ -43,9 +43,9 @@ public class PLServerSocket {
   }
 
   /**
-   * openSocket method. Accepts a client request for this socket port.
+   * Accepts a client request for this socket port.
    *
-   * @return a <code>Socket</code> object that represents the
+   * @return A <code>Socket</code> object that represents the
    *         connection accepted.
    **/
   public Socket openSocket() throws IOException {
@@ -58,8 +58,8 @@ public class PLServerSocket {
   }
 
   /**
-   * getReader method. Returns the BufferedReader input stream for this
-   * socket connection. If the socket isn't opened, returns null.
+   * Returns the <code>BufferedReader</code> input stream for this
+   * socket connection. If the socket isn't opened, returns <code>null</code>.
    *
    * @param s <code>Socket</code> object from which the stream reader
    *          is to be obtained.
@@ -72,7 +72,7 @@ public class PLServerSocket {
   }
 
   /**
-   * getWriter method. Returns the PrintWriter output stream for this
+   * Returns the PrintWriter output stream for this
    * socket connection. If the socket isn't opened, returns null.
    *
    * @param s <code>Socket</code> object from which the stream writer

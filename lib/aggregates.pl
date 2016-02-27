@@ -4,18 +4,23 @@
         bagof/3,
         findall/3,
         findall/4,
+        findnsols/4,
+        findnsols/5,
  	(^)/2
         ],
 	[assertions,isomodes]).
 
 :- use_module(library(sort)).
 :- use_module(library(lists),[length/2]).
+:- use_module(engine(internals),['$setarg'/4]).
 
 :- meta_predicate
-        findall(?,:,?),
-        findall(?,:,?,?),
-        bagof(?,:,?),
-        setof(?,:,?).
+        bagof(?,goal,?),
+        setof(?,goal,?),
+        findall(?,goal,?),
+        findall(?,goal,?,?),
+        findnsols(?,?,goal,?),
+        findnsols(?,?,goal,?,?).
 
 :- set_prolog_flag(multi_arity_warnings, off).
 
@@ -165,9 +170,59 @@ findall(Template, Generator, List) :-
         save_solutions(-Template, Generator),
         list_solutions(List, []).
 
+:- pred findall(?Template, +Generator, ?List, ?Tail) + iso
+   # "As @pred{findall/3}, but returning in @var{Tail} the tail of
+     @var{List}.".
+
 findall(Template, Generator, List, Tail) :-
         save_solutions(-Template, Generator),
         list_solutions(List, Tail).
+
+:- comment(findnsols(N,Template,Generator,List),
+     "As @pred{findall/3}, but generating at most @var{N} solutions of
+     @var{Generator}.  Thus, the length of @var{List} will not be
+     greater than @var{N}.  If @var{N}=<0, returns directly an empty
+     list.  This predicate is especially useful if @var{Generator} may
+     have an infinite number of solutions.").
+
+:- pred findnsols(+int,?,+callable,?list).
+
+findnsols(N,E,P,L) :-
+        N > 0, !,
+        NSol=n(0),
+        save_n_solutions(NSol,N,-E,P),
+        list_solutions(L,[]).
+findnsols(_,_,_,[]).
+
+:- comment(findnsols(N,Template,Generator,List,Tail),
+     "As @pred{findnsols/4}, but returning in @var{Tail} the tail of
+     @var{List}.").
+
+:- pred findnsols(+int,?,+callable,?list,?).
+
+findnsols(N,E,P,L) :-
+        N > 0, !,
+        NSol=n(0),
+        save_n_solutions(NSol,N,-E,P),
+        list_solutions(L,[]).
+findnsols(_,_,_,[]).
+
+findnsols(N,E,P,L,T) :-
+        N > 0, !,
+        NSol=n(0),
+        save_n_solutions(NSol,N,-E,P),
+        list_solutions(L,T).
+findnsols(_,_,_,T,T).
+
+save_n_solutions(NSol, N, Template, Generator) :-
+        asserta_fact(solution('-')),
+        call(Generator),
+        asserta_fact(solution(Template)),
+        NSol = n(M),
+        M1 is M+1,
+        '$setarg'(1, NSol,M1,true),
+        M1 = N -> fail.
+save_n_solutions(_,_,_,_).
 
 :- pred save_solutions(Template, Generator)
 
@@ -372,11 +427,15 @@ list_is_free_of([Head|Tail], Var) :-
 
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*5+115,2000/04/12,12:17*22+'CEST'), "Added
+   findnsols/4 and findnsols/5 to compute a bounded number of solutions
+   for a predicate. (Daniel Cabeza Gras)").
+
 :- comment(version(0*7+9,1998/09/23,19:34*28+'MEST'), "Moved ^/2 here
    from basiccontrol.pl.  (Manuel Hermenegildo)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
-   global CIAO version.  (Manuel Hermenegildo)").
+   global Ciao version.  (Manuel Hermenegildo)").
 
 :- comment(version(0*2+0,1997/8/21), "Added basic
    documentation. (Manuel Hermenegildo)").

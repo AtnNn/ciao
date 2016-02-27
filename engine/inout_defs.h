@@ -1,9 +1,4 @@
-/*
-  static void writechar(int ch, register int i, register struct stream_node *s);
-  static int readchar(register struct stream_node *s, int valpat, int typpat, struct definition *pred_address);
-static void display_term(Argdecl, TAGGED term, struct stream_node *stream, BOOL quoted);
- */
-
+void writechar(int ch, int i, struct stream_node *s);
 BOOL flush_output(Argdecl);
 BOOL flush_output1(Argdecl);
 BOOL getct(Argdecl);
@@ -29,3 +24,5 @@ BOOL prolog_display2(Argdecl);
 BOOL prolog_displayq(Argdecl);
 BOOL prolog_displayq2(Argdecl);
 BOOL prolog_clearerr(Argdecl);
+BOOL prolog_fast_read_on_c(Argdecl);
+BOOL prolog_fast_write_on_c(Argdecl);

@@ -1,1093 +1,174 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using Ciao inside GNU emacs</TITLE>
+<TITLE>The Ciao Prolog System               - Customizing library paths and path aliases</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC49" HREF="ciao_toc.html#TOC49">Using Ciao inside GNU emacs</A></H1>
+<H1><A NAME="SEC87" HREF="ciao_toc.html#TOC87">Customizing library paths and path aliases</A></H1>
+<P>
+<A NAME="IDX814"></A>
+
 
 <P>
-<STRONG>Author(s):</STRONG> Manuel Hermenegildo and the CLIP Group.
+<STRONG>Author(s):</STRONG> D.Cabeza.
 
 
 <P>
-The Ciao/Prolog 
-<A NAME="IDX508"></A>
-emacs interface (or <EM>mode</EM> 
-<A NAME="IDX509"></A>
-<A NAME="IDX510"></A>
-in 
-<A NAME="IDX511"></A>
-<CODE>emacs</CODE> terms) provides a rich, integrated user interface to the Ciao 
-<A NAME="IDX512"></A>
-<A NAME="IDX513"></A>
-<EM>program development environment</EM> components, including the 
-<A NAME="IDX514"></A>
-<CODE>ciaosh</CODE> interactive top level and the 
-<A NAME="IDX515"></A>
-<CODE>ciaopp</CODE> preprocessor. While most features of the Ciao development environment are available from the command line of the preprocessor and the top-level shell, using Ciao inside 
-<A NAME="IDX516"></A>
-<CODE>emacs</CODE> is highly recommended. The facilities that this mode provides include: 
+This library provides means for customizing, from environment variables, the libraries and 
+<A NAME="IDX815"></A>
+path aliases known by an executable. Many applications of Ciao, including 
+<A NAME="IDX816"></A>
+<CODE>ciaoc</CODE>, 
+<A NAME="IDX817"></A>
+<CODE>ciaosh</CODE>, and 
+<A NAME="IDX818"></A>
+<CODE>ciao-shell</CODE> make use of this library. Note that if an executable is created dynamic, it will try to load its components at startup, before the procedures of this module can be invoked, so in this case all the components should be in standard locations.
 
 
 
 <UL>
-
-<LI>
-
-<A NAME="IDX517"></A>
-<A NAME="IDX518"></A>
-<EM>Syntax highlighting</EM> and syntax coloring, 
-<A NAME="IDX519"></A>
-<A NAME="IDX520"></A>
-<A NAME="IDX521"></A>
-<A NAME="IDX522"></A>
-<EM>auto-indentation</EM>, 
-<A NAME="IDX523"></A>
-<A NAME="IDX524"></A>
-<EM>auto-fill</EM>, etc. of code. This includes the assertions used by the preprocessor and the documentation strings used by the Ciao auto-documenter, 
-<A NAME="IDX525"></A>
-<CODE>lpdoc</CODE>. 
-
-<LI>Providing automatic access to
-
-<A NAME="IDX526"></A>
-on-line help for all predicates by accessing the Ciao system manuals in 
-<A NAME="IDX527"></A>
-<CODE>info</CODE> format. 
-
-<LI>Starting and communicating with
-
-<A NAME="IDX528"></A>
-<CODE>ciaopp</CODE>, the 
-<A NAME="IDX529"></A>
-<A NAME="IDX530"></A>
-<EM>Ciao preprocessor</EM>, running in its own 
-<A NAME="IDX531"></A>
-sub-shell. This allows easily performing certain kinds of 
-<A NAME="IDX532"></A>
-<A NAME="IDX533"></A>
-<EM>static checks</EM> (useful for finding errors in programs before running them), program analysis tasks, and 
-<A NAME="IDX534"></A>
-<A NAME="IDX535"></A>
-<EM>program transformations</EM> on source programs. 
-
-<LI>Starting and communicating with the
-
-<A NAME="IDX536"></A>
-<A NAME="IDX537"></A>
-<EM>Ciao top-level</EM>, running in its own 
-<A NAME="IDX538"></A>
-sub-shell. This facilitates loading programs, checking the <EM>syntax</EM> of programs (and of 
-<A NAME="IDX539"></A>
-<A NAME="IDX540"></A>
-<EM>assertions</EM> within programs), marking and unmarking modules for interactive debugging, making stand-alone executables, compiling modules to dynamically linkable Prolog objects, compiling modules to active objects, etc. 
-
-<LI>Syntax highlighting and coloring of the error and warning messages produced by the top level, preprocessor, or any other tool using the same message format (such as the
-
-<A NAME="IDX541"></A>
-<CODE>lpdoc</CODE> auto-documenter), and <EM>locating automatically the points in the source files where such errors occur</EM>. 
-
-<LI>Performing automatic
-
-<A NAME="IDX542"></A>
-<A NAME="IDX543"></A>
-<EM>version control</EM> and keeping a 
-<A NAME="IDX544"></A>
-<A NAME="IDX545"></A>
-<EM>change log</EM> of individual files or whole applications. This is done by automatically including change log entries in source files, which can then be processed by the 
-<A NAME="IDX546"></A>
-<CODE>lpdoc</CODE> auto-documenter. 
-
+<LI><A HREF="ciao_11.html#SEC88">Usage and interface (libpaths)</A>
+<LI><A HREF="ciao_11.html#SEC89">Documentation on exports (libpaths)</A>
+<LI><A HREF="ciao_11.html#SEC90">Documentation on multifiles (libpaths)</A>
 </UL>
 
-<P>
-This chapter explains how to use the Ciao/Prolog 
-<A NAME="IDX547"></A>
-<CODE>emacs</CODE> interface and how to set up your 
-<A NAME="IDX548"></A>
-<CODE>emacs</CODE> environment for correct operation. The Ciao 
-<A NAME="IDX549"></A>
-<CODE>emacs</CODE> interface can also be used to work with other Prolog or CLP systems. 
 
+
+<H2><A NAME="SEC88" HREF="ciao_toc.html#TOC88">Usage and interface (<CODE>libpaths</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(libpaths)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
-<LI><A HREF="ciao_11.html#SEC50">Installation of the Ciao/Prolog emacs interface</A>
-<LI><A HREF="ciao_11.html#SEC51">Functionality and associated key sequences (bindings)</A>
-<LI><A HREF="ciao_11.html#SEC64">Commands available in toplevel and preprocessor buffers</A>
-<LI><A HREF="ciao_11.html#SEC65">Using Ciao/Prolog mode capabilities in standard shells</A>
-<LI><A HREF="ciao_11.html#SEC66">Coexistence with other Prolog interfaces</A>
-<LI><A HREF="ciao_11.html#SEC67">Version information</A>
-<LI><A HREF="ciao_11.html#SEC68">Acknowledgments (ciao.el)</A>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX819"></A>
+<CODE>get_alias_path/0</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX820"></A>
+<CODE>file_search_path/2</CODE>, 
+<A NAME="IDX821"></A>
+<CODE>library_directory/1</CODE>.
+
 </UL>
 
+<LI><STRONG>Other modules used:</STRONG>
 
 
-<H2><A NAME="SEC50" HREF="ciao_toc.html#TOC50">Installation of the Ciao/Prolog emacs interface</A></H2>
+<UL>
 
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX822"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX823"></A>
+<CODE>lists</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC89" HREF="ciao_toc.html#TOC89">Documentation on exports (<CODE>libpaths</CODE>)</A></H2>
 <P>
-It may be possible that a complete pre-installation of the Ciao/Prolog 
-<A NAME="IDX550"></A>
-<CODE>emacs</CODE> interface was already completed during Ciao installation. To check this, open a file with a <CODE>.pl</CODE> ending. You should see that 
-<A NAME="IDX551"></A>
-<CODE>emacs</CODE> enters Ciao/Prolog mode: the mode is identified in the 
-<A NAME="IDX552"></A>
-status bar below the 
-<A NAME="IDX553"></A>
-buffer and, if the 
-<A NAME="IDX554"></A>
-emacs menu bar is enabled, you should see the Ciao/Prolog menu. You should be able from the menu-bar, for example, to go to the Ciao manuals in the info or load the <CODE>.pl</CODE> file that you just opened into a ciao top level. 
-
-
-<P>
-If opening a file ending with <CODE>.pl</CODE> puts emacs in another mode (such as 
-<A NAME="IDX555"></A>
-<CODE>perl</CODE> mode, which is the --arguably incorrect-- default setting in some 
-<A NAME="IDX556"></A>
-<CODE>emacs</CODE> distributions), then you can set things so that the Ciao/Prolog mode is loaded by default in your system. This can be done by including in your 
-<A NAME="IDX557"></A>
-<CODE>.emacs</CODE> file a line such as: 
-
-
-<P>
-<CODE>(load &#60;CIAOLIBDIR&#62;/DOTemacs)</CODE> 
+<A NAME="IDX824"></A>
+<A NAME="IDX825"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_alias_path/0:</B>
+<DD><A NAME="IDX826"></A>
 
 
 <P>
-This loads the above mentioned file from the Ciao library, which contains the following lines (except that the paths are changed during installation to appropriate values for your system): 
+<CODE>get_alias_path</CODE>
 
 
+<P>
+Consult the environment variable 'CIAOALIASPATH' and add facts to predicates 
+<A NAME="IDX827"></A>
+<CODE>library_directory/1</CODE> and 
+<A NAME="IDX828"></A>
+<CODE>file_search_path/2</CODE> to define new library paths and 
+<A NAME="IDX829"></A>
+path aliases. The format of 'CIAOALIASPATH' is a sequence of paths or alias assignments separated by colons, an alias assignment is the name of the alias, an '=' and the path represented by that alias (no blanks allowed). For example, given 
 
 <PRE>
-;; Ciao / @&#38;-Prolog / Prolog mode
-;; (can be used for SICStus, and coexist with SICStus Prolog prolog.el)
-;; 
-(setq load-path (cons "&#60;CIAOLIBDIR&#62;" load-path))
-(autoload 'run-ciao-toplevel "ciao"
-          "Start a Ciao / @&#38;-Prolog / Prolog top-level sub-process." t)
-(autoload 'run-ciao-preprocessor "ciao"
-          "Start a Ciao / @&#38;-Prolog / Prolog preprocessor sub-process." t)
-(autoload 'ciao-mode "ciao"
-          "Major mode for edit/run Ciao, Prolog, @&#38;-Prolog" t)
-(autoload 'ciao-inferior-mode "ciao"
-          "Major mode for running Ciao, Prolog, lpdoc, etc." t)
-(setq auto-mode-alist (cons '("\\.pl$" . ciao-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.pls$" . ciao-mode) auto-mode-alist))
-(setq auto-mode-alist (cons '("\\.lpdoc$" . ciao-mode) auto-mode-alist))
-(setq completion-ignored-extensions
-      (append '(".dep" ".itf" ".po" ".asr" ".cpx")
-              completion-ignored-extensions))
-;; ------------------------------------------------------------------------
-;; In Un*x, the following (or similar) lines should be included in your
-;; .cshrc or .profile to find the manuals (the Ciao installation leaves
-;; in the Ciao library directory 'DOTcshrc' and 'DOTprofile' files with
-;; the right paths which can be included directly in your startup scripts):
-;; 
-;; setenv INFOPATH /usr/local/info:/usr/info:&#60;LPDOCDIR&#62;
-;; ------------------------------------------------------------------------
-
+   CIAOALIASPATH=/home/bardo/ciao:contrib=/usr/local/lib/ciao
 </PRE>
 
 <P>
-If you would like to configure things in a different way, you can also copy the contents of this file to your 
-<A NAME="IDX558"></A>
-<CODE>.emacs</CODE> file and make the appropriate changes. For example, if you do not want <CODE>.pl</CODE> files to be put automatically in Ciao/Prolog mode, then comment out (or remove) the line: 
+the predicate will define /home/bardo/ciao as a library path and /usr/local/lib/ciao as the path represented by 'contrib'.
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC90" HREF="ciao_toc.html#TOC90">Documentation on multifiles (<CODE>libpaths</CODE>)</A></H2>
+<P>
+<A NAME="IDX830"></A>
+<A NAME="IDX831"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_search_path/2:</B>
+<DD><A NAME="IDX832"></A>
 
 
 <P>
-<CODE>(setq auto-mode-alist</CODE> ... <CODE>)</CODE> 
+See section <A HREF="ciao_25.html#SEC153">Basic file/stream handling</A>.
 
 
 <P>
-You will then need to switch manually to Ciao/Prolog mode by typing <CODE>M-x ciao-mode</CODE> after opening a Prolog file. 
+The predicate is <EM>multifile</EM>.
 
 
 <P>
-If you are able to open the Ciao/Prolog menu but the Ciao manuals are not found or the 
-<A NAME="IDX559"></A>
-<CODE>ciao</CODE> command (the top-level) is not found when loading <CODE>.pl</CODE> files, the probable cause is that you do not have the Ciao paths in the <CODE>INFOPATH</CODE> and <CODE>MANPATH</CODE> 
-<A NAME="IDX560"></A>
-<A NAME="IDX561"></A>
-<EM>environment variables</EM> (whether these variables are set automatically or not for users depends on how the Ciao system was installed). You can add these paths easily by including the line: 
+The predicate is of type <EM>dynamic</EM>.
 
 
-<P>
-<CODE>source &#60;CIAOLIBDIR&#62;/DOTcshrc</CODE> 
-
-
-<P>
-in your <CODE>.login</CODE> or <CODE>.cshrc</CODE> files if you are using 
-<A NAME="IDX562"></A>
-<CODE>csh</CODE> (or 
-<A NAME="IDX563"></A>
-<CODE>tcsh</CODE>, etc.), or, alternatively, the line: 
-
-
-<P>
-<CODE>. &#60;CIAOLIBDIR&#62;/DOTprofile</CODE> 
-
-
-<P>
-in your <CODE>.login</CODE> or <CODE>.profile</CODE> files if you are using 
-<A NAME="IDX564"></A>
-<CODE>sh</CODE> (or 
-<A NAME="IDX565"></A>
-<CODE>bash</CODE>, etc.). See the Ciao installation instructions (section <A HREF="ciao_140.html#SEC482">Installing Ciao</A>) for details. 
-
-
-
-
-<H2><A NAME="SEC51" HREF="ciao_toc.html#TOC51">Functionality and associated key sequences (bindings)</A></H2>
-
-<P>
-The following is a summary of the capabilities of the Ciao/Prolog emacs interface and the (default) 
-<A NAME="IDX566"></A>
-<A NAME="IDX567"></A>
-<EM>key sequences</EM> used to access those capabilities. Most of these functions are accessible also from the menu bar. 
-
-
-
-<UL>
-<LI><A HREF="ciao_11.html#SEC52">Getting on-line help</A>
-<LI><A HREF="ciao_11.html#SEC53">Loading and compiling programs</A>
-<LI><A HREF="ciao_11.html#SEC54">Locating errors and checking the syntax of assertions</A>
-<LI><A HREF="ciao_11.html#SEC55">Commands which help in typing in programs</A>
-<LI><A HREF="ciao_11.html#SEC56">Debugging programs</A>
-<LI><A HREF="ciao_11.html#SEC57">Preprocessing programs</A>
-<LI><A HREF="ciao_11.html#SEC58">Version control</A>
-<LI><A HREF="ciao_11.html#SEC59">Setting the top-level</A>
-<LI><A HREF="ciao_11.html#SEC60">Traditional Prolog Mode Commands</A>
-<LI><A HREF="ciao_11.html#SEC61">Other commands</A>
-<LI><A HREF="ciao_11.html#SEC63">Getting the Ciao/Prolog mode version</A>
-</UL>
-
-
-
-<H3><A NAME="SEC52" HREF="ciao_toc.html#TOC52">Getting on-line help</A></H3>
-
-<P>
-The following commands are useful for getting on-line help. This is done by accessing the 
-<A NAME="IDX568"></A>
-<CODE>info</CODE> version of the Ciao manuals or the 
-<A NAME="IDX569"></A>
-<CODE>emacs</CODE> built-in help strings. Note also that the 
-<A NAME="IDX570"></A>
-<CODE>info</CODE> standard <CODE>search</CODE> command (generally bound to <KBD>s</KBD>) can be used inside 
-<A NAME="IDX571"></A>
-<CODE>info</CODE> buffers to search for a given string. 
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>TAB</KBD>
-<DD>
-Find help for the symbol (e.g., predicate, directive, declaration, type, etc.) that is currently under the cursor. Opens a (hopefully) relevant part of the Ciao manuals in 
-<A NAME="IDX572"></A>
-<CODE>info</CODE> mode. Requires that the Ciao manuals in 
-<A NAME="IDX573"></A>
-<CODE>info</CODE> format be installed and that they accessible to emacs (i.e., they should appear somewhere in the info directory when typing <CODE>M-x info</CODE>). It also requires 
-<A NAME="IDX574"></A>
-<CODE>word-help.el</CODE>, which is provided with Ciao. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>/</KBD>
-<DD>
-Find a completion for the symbol (e.g., predicate, directive, declaration, type, etc.) that is currently under the cursor. Uses for completion the contents of the indices of the Ciao manuals. Same requirements as for finding help for the symbol. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^M</KBD>
-<DD>
-Go to the part of the info directory containing the Ciao manuals. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^H</KBD> <KBD>m</KBD>
-<DD>
-Show a short description of the Ciao/Prolog emacs mode, including all key bindings. 
-</DL>
-
-
-
-<H3><A NAME="SEC53" HREF="ciao_toc.html#TOC53">Loading and compiling programs</A></H3>
-
-<P>
-These commands allow 
-<A NAME="IDX575"></A>
-<A NAME="IDX576"></A>
-<EM>loading programs</EM>, 
-<A NAME="IDX577"></A>
-<A NAME="IDX578"></A>
-<EM>creating executables</EM>, etc. by issuing the appropriate commands to a Ciao/Prolog top level shell, running in its own buffer as a subprocess. See section <A HREF="ciao_6.html#SEC24">The interactive top-level shell</A> for details. The following commands implement the communication with the Ciao/Prolog top level: 
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>t</KBD>
-<DD>
-Ensure that an inferior Ciao/Prolog top-level process is running. Normally, it is not necessary to use this function since execution of any of the other functions related to the top level ensures that a top level is started (starting one if required). This function is useful when one would like to start a top level in order to type a command directly by hand into it. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>l</KBD>
-<DD>
-Load the current buffer (and any auxiliary files it may use) into the top level. The type of compilation performed (
-<A NAME="IDX579"></A>
-<A NAME="IDX580"></A>
-<EM>compiling</EM> or 
-<A NAME="IDX581"></A>
-<A NAME="IDX582"></A>
-<EM>consulting</EM>) is selected automatically depending on whether the buffer has been marked for debugging or not -- see below. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>x</KBD>
-<DD>
-Make an executable from the code in the current buffer. The buffer must contain a 
-<A NAME="IDX583"></A>
-<CODE>main/0</CODE> or 
-<A NAME="IDX584"></A>
-<CODE>main/1</CODE> predicate. Note that compiler options can be set to determine whether the libraries and auxiliary files used by the executable will be statically linked, dynamically linked, auto-loaded, etc. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>o</KBD>
-<DD>
-Make a Prolog object (.po) file from the code in the current buffer. This is very useful during debugging or program development, when only one or a few files of a large application are modified. If the application executable is dynamically linked, i.e., the component .po files are loaded dynamically during startup of the application, then this command can be used to recompile only the file or files which have changed, and the correct version will be loaded dynamically the next time the application is started. However, note that this only works if the inter-module interfaces have not changed. A safer, but possibly slower way is to generate the executable again, letting the Ciao compiler, which is inherently incremental, determine what needs to be recompiled. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>a</KBD>
-<DD>
-Make an active module executable from the code in the current buffer. An active module is a remote procedure call server (see the 
-<A NAME="IDX585"></A>
-<CODE>activemod</CODE> library documentation for details). 
-</DL>
-
-
-
-<H3><A NAME="SEC54" HREF="ciao_toc.html#TOC54">Locating errors and checking the syntax of assertions</A></H3>
-
-<P>
-These commands allow several syntactic checks of assertions, and locating quickly the point in the source code corresponding to errors flagged by the compiler or preprocessor: 
-<A NAME="IDX586"></A>
-<A NAME="IDX587"></A>
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>`</KBD>
-<DD>
-Go to location in source file containing next error reported by the last Ciao/Prolog subprocess (preprocessor or toplevel) which was run. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>E</KBD>
-<DD>
-Check the syntax of the code and assertions in the current buffer, as well as imports and exports. Note that full (semantic) assertion checking must be done with the preprocessor. 
-</DL>
-
-
-
-<H3><A NAME="SEC55" HREF="ciao_toc.html#TOC55">Commands which help in typing in programs</A></H3>
-
-<P>
-The following commands are intended to help in the process of writing programs: 
-<A NAME="IDX588"></A>
-<A NAME="IDX589"></A>
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>I</KBD> <KBD>S</KBD>
-<DD>
-Insert a (Unix) header at the top of the current buffer so that the ciao script interpreter will be called on this file if <EM>run</EM> from the command line. It also makes the file 'executable' (e.g., '<CODE>chmod +x &#60;file&#62;</CODE>' in Unix). See section <A HREF="ciao_9.html#SEC42">The script interpreter</A> for details. 
-</DL>
-
-
-
-<H3><A NAME="SEC56" HREF="ciao_toc.html#TOC56">Debugging programs</A></H3>
-
-<P>
-These commands allow marking modules for 
-<A NAME="IDX590"></A>
-<A NAME="IDX591"></A>
-<EM>debugging</EM> by issuing the appropiate commands to a Ciao/Prolog top level shell, running in its own buffer as a subprocess. There are two differents type of debugging: tradicional prolog debugging and source debugging. In order to use breakpoints the source debugging must be on. The following commands implement the comunication with the Ciao/Prolog top level: 
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>m</KBD>
-<DD>
-Mark the current buffer for debugging. Note that if the buffer has already been loaded while it was unmarked for debugging (and has therefore been loaded in "compile" mode) it has to be loaded again. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>u</KBD>
-<DD>
-Unmarks the current buffer for debugging. Note that if the buffer has already been loaded while it was marked for debugging (and has therefore been loaded in "consult" mode) it has to be loaded again. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>y</KBD>
-<DD>
-Turn on source debugging, i.e., line tracing (experimental). 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>n</KBD>
-<DD>
-Turn off source debugging (line tracing). 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>b</KBD>
-<DD>
-Breakpoint on actual predicate. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>v</KBD>
-<DD>
-Remove breakpoint on actual predicate. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>d</KBD>
-<DD>
-Redisplay breakpoints in all Ciao buffers. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>r</KBD>
-<DD>
-Load the current region (between the cursor and a previous mark) into the top level for debugging. Since loading a region of a file is typically done for debugging and/or testing purposes, this command always loads the region in debugging mode (consult). 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>p</KBD>
-<DD>
-Load the predicate around the cursor into the top level. Since loading a single predicate is typically done for debugging and/or testing purposes, this command always loads the predicate in debugging mode (consult). 
-</DL>
-
-
-
-<H3><A NAME="SEC57" HREF="ciao_toc.html#TOC57">Preprocessing programs</A></H3>
-
-<P>
-These commands allow 
-<A NAME="IDX592"></A>
-<A NAME="IDX593"></A>
-<EM>preprocessing programs</EM> with 
-<A NAME="IDX594"></A>
-<CODE>ciaopp</CODE>, the 
-<A NAME="IDX595"></A>
-<A NAME="IDX596"></A>
-<EM>Ciao preprocessor</EM>. 
-
-
-<P>
-See the preprocessor manual for details. The following commands implement the communication with the Ciao preprocessor: 
- 
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>M</KBD>
-<DD>
-Preprocess the buffer, selecting options. Instructs the preprocessor to load the current buffer and start an interactive dialog in which the different options available in the preprocessor can be set. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>P</KBD>
-<DD>
-Preprocess the buffer, using the previously selected options. If no options were set previously, then the preprocessor defaults are used. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^V</KBD>
-<DD>
-Show last output file produced by Ciao preprocessor. The preprocessor works by producing a file which is a transformed and/or adorned (with assertions) version of the input file. This is often used after running the preprocessor in order to see such results. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>V</KBD>
-<DD>
-Preprocess the buffer, selecting options. Instructs the preprocessor to load the current buffer and start an interactive dialog in which the different options available in the preprocessor can be set. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^R</KBD>
-<DD>
-Ensure that an inferior Ciao preprocessor process is running 
-</DL>
-
-
-
-<H3><A NAME="SEC58" HREF="ciao_toc.html#TOC58">Version control</A></H3>
-
-<P>
-The following commands can be used to carry out a simple form of 
-<A NAME="IDX597"></A>
-version control by keeping a 
-<A NAME="IDX598"></A>
-log of changes on a file or a group of related files. This log is kept in a format that is understood by 
-<A NAME="IDX599"></A>
-<CODE>lpdoc</CODE>, the Ciao documenter [Her99a]. As a result, if these version comments are present, then 
-<A NAME="IDX600"></A>
-<CODE>lpdoc</CODE> will be able to automatically assign up to date version numbers to the manuals that it generates. This way it is always possible to identify to which version of the software a manual corresponds. Also, 
-<A NAME="IDX601"></A>
-<CODE>lpdoc</CODE> can create automatically sections describing the changes made since previous versions, which are extracted from the comments in the changelog entries. 
-
-
-<P>
-The main effect of these commands is automatically associate the following information to a set of changes performed in the file and/or in a set of related files: 
-
-
-
-<UL>
-
-<LI>a
-
-<A NAME="IDX602"></A>
-<A NAME="IDX603"></A>
-<EM>version number</EM> (such as, e.g., <CODE>1.2</CODE>, where <CODE>1</CODE> is the 
-<A NAME="IDX604"></A>
-major version number and <CODE>2</CODE> is the 
-<A NAME="IDX605"></A>
-minor version number), 
-
-<LI>a
-
-<A NAME="IDX606"></A>
-patch number (such as, e.g., the <CODE>4</CODE> in <CODE>1.2#4</CODE>), 
-
-<LI>a
-
-<A NAME="IDX607"></A>
-time stamp (such as, e.g., <CODE>1998/12/14,17:20*28+MET</CODE>), 
-
-<LI>the author of the change,
-
-<A NAME="IDX608"></A>
-<A NAME="IDX609"></A>
-and 
-
-<LI>a comment explaining the change.
-
-<A NAME="IDX610"></A>
-<A NAME="IDX611"></A>
-</UL>
-
-<P>
-The 
-<A NAME="IDX612"></A>
-version numbering used can be local to a single file or common to a number of related files. A simple version numbering policy is implemented: when a relevant change is made, the user typically inserts a 
-<A NAME="IDX613"></A>
-changelog entry for it, using the appropriate command (or selecting the corresponding option when prompted while saving a file). This will cause the <EM>patch number</EM> for the file (or for the whole system that the file is part of) to be incremented automatically and the corresponding machine-readable comment to be inserted in the file. Major and minor version numbers can also be changed, but this is always invoked by hand (see below). 
-
-
-<P>
-The changelog entry is written in the form of a 
-<A NAME="IDX614"></A>
-<CODE>comment/2</CODE> declaration. As mentioned before, the advantage of using this kind of changelog entries is that these declarations can be processed by the 
-<A NAME="IDX615"></A>
-<CODE>lpdoc</CODE> automatic documenter (see the 
-<A NAME="IDX616"></A>
-<CODE>lpdoc</CODE> reference manual [Her99a] or the 
-<A NAME="IDX617"></A>
-<CODE>assertions</CODE> library documentation for more details on these declarations). 
-
-
-<P>
-Whether the user is asked or not to introduce such changelog entries, and how the patch and version numbers should be increased is controlled by the presence in the file of a 
-<A NAME="IDX618"></A>
-<CODE>comment/2</CODE> declaration of the type: 
-
-
-<P>
-<CODE>:- comment(version_maintenance,&#60;type&#62;).</CODE> 
-
-
-<P>
-(note that this requires including the 
-<A NAME="IDX619"></A>
-<CODE>assertions</CODE> library in the source file). These declarations themselves are also typically introduced automatically when using this mode (see below). 
-
-
-<P>
-The version maintenance mode can also be set alternatively by inserting a comment such as: 
-
-
-
-<PRE>
-%% Local Variables: 
-%% mode: Ciao/Prolog
-%% update-version-comments: ""off""
-%% End:
-</PRE>
-
-<P>
-The lines above instruct emacs to put the buffer visiting the file in 
-<A NAME="IDX620"></A>
-emacs Ciao/Prolog mode and to turn version maintenance off. Setting the version maintenance mode in this way has the disadvantage that 
-<A NAME="IDX621"></A>
-<CODE>lpdoc</CODE>, the auto-documenter, and other related tools will not be aware of the type of version maintenance being performed (the lines above are comments for Prolog). However, this can be useful in fact for setting the 
-<A NAME="IDX622"></A>
-<A NAME="IDX623"></A>
-<EM>version maintenance mode for packages</EM> and other files meant for inclusion in other files, since that way the settings will not affect the file in which the package is included. 
-
-
-<P>
-The following commands implement the version control support: 
-
-
-<DL COMPACT>
-
-<DT><KBD>^X</KBD> <KBD>^S</KBD>
-<DD>
-This is the standard 
-<A NAME="IDX624"></A>
-<CODE>emacs</CODE> command that saves a buffer by writing the contents into the associated <CODE>.pl</CODE> file. However, in Ciao/Prolog mode this command can be set to ask the user before saving whether to introduce a change log entry documenting the changes performed. 
-
-If the buffer does not already contain a comment specifying the 
-<A NAME="IDX625"></A>
-type of version control to be performed, and before saving the buffer, the Ciao/Prolog mode prompts the user to choose among the following options: 
-
-<DL COMPACT>
-
-<DT><KBD>q</KBD>
-<DD>
-Turn off prompting for the introduction of change log entries for now. 
-<A NAME="IDX626"></A>
-<CODE>emacs</CODE> will not ask again while the buffer is loaded, but it will ask again next time you load the buffer. 
-
-<DT><KBD>n</KBD>
-<DD>
-Turn off version control for this file. A version control comment such as: 
-
-<CODE>:- comment(version_maintenance,off).</CODE> 
-
-is added to the buffer and the file is saved. 
-<A NAME="IDX627"></A>
-<CODE>emacs</CODE> will not perform any version control on this file until the line above is removed or modified (i.e., from now on C-x C-s simply saves the buffer). 
-
-<DT><KBD>y</KBD>
-<DD>
-Turn version control on for this file. 
-
-</DL>
-
-If <KBD>y</KBD> is selected, then the system prompts again regarding how and where the version and patch number information is to be maintained. The following options are available: 
-
-<DL COMPACT>
-
-<DT><CODE>on</CODE>
-<DD>
-All version control information will be contained within this file. When saving a buffer (C-x C-s) emacs will ask if a change log entry should be added to the file before saving. If a comment is entered by the user, a new patch number is assigned to it and the comment is added to the file. This patch number will be the one that follows the most recent change log entry already in the file. This is obviously useful when maintaining version numbers individually for each file. 
-
-<DT><CODE>&#60;directory_name&#62;</CODE>
-<DD>
-Global version control will be performed coherently on several files. When saving a buffer (C-x C-s) emacs will ask if a change log entry should be added to the file before saving. If a comment is given, the global patch number (which will be kept in the file: <CODE>&#60;directory_name&#62;/GlobalPatch</CODE>) is atomically incremented and the change log entry is added to the current file, associated to that patch number. Also, a small entry is added to a file <CODE>&#60;directory_name&#62;/GlobalChangeLog</CODE> which points to the current file. This allows inspecting all changes sequentially by visiting all the files where the changes were made (see C-c `). This is obviously useful when maintaining a single thread of version and patch numbers for a set of files. 
-
-<DT><CODE>off</CODE>
-<DD>
-Turns off version control: C-x C-s then simply saves the file as usual. 
-
-</DL>
-
-<STRONG>Some useful tips:</STRONG> 
-
-
-<UL>
-
-<LI>If a change log entry is in fact introduced, the cursor is left at the point in the file where the comment was inserted and the mark is left at the original file point. This allows inspecting (and possibly modifying) the change log entry, and then returning to the original point in the file by simply typing C-x C-x.
-
-<LI>
-
-<A NAME="IDX628"></A>
-<A NAME="IDX629"></A>
-The first change log entry is entered by default at the end of the buffer. Later, the change log entries can be moved anywhere else in the file. New change log entries are always inserted just above the first change log entry which appears in the file. 
-
-<LI>The comments in change log entries can be edited at any time.
-
-<LI>If a change log entry is moved to another file, and version numbers are shared by several files through a directory, the corresponding file pointer in the <CODE>&#60;directory_name&#62;/GlobalChangeLog</CODE> file needs to be changed also, for the entry to be locatable later using C-c C-n.
-
-</UL>
-
- 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^S</KBD>
-<DD>
-Same as C-x C-s except that it forces prompting for inclusion of a changelog entry even if the buffer is unmodified. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>n</KBD>
-<DD>
-Force a move to a new major/minor version number (the user will be prompted for the new numbers). Only applicable if using directory-based version maintenance. Note that otherwise it suffices with introducing a change log entry in the file and changing its version number by hand. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^N</KBD>
-<DD>
-When a unique version numbering is being maintained across several files, this command allows inspecting all changes sequentially by visiting all the files in which the changes were made: 
-
-
-<UL>
-
-<LI>If in a source file, find the next changelog entry in the source file, open in another window the corresponding
-
-<A NAME="IDX630"></A>
-<CODE>GlobalChangeLog</CODE> file, and position the cursor at the corresponding entry. This allows browsing the previous and following changes made, which may perhaps reside in other files in the system. 
-
-<LI>If in a
-
-<A NAME="IDX631"></A>
-<CODE>GlobalChangeLog</CODE> file, look for the next entry in the file, and open in another window the source file in which the corresponding comment resides, positioning the corresponding comment at the top of the screen. This allows going through a section of the 
-<A NAME="IDX632"></A>
-<CODE>GlobalChangeLog</CODE> file checking all the corresponding comments in the different files in which they occur. 
-
-</UL>
-
- 
-</DL>
-
-
-
-<H3><A NAME="SEC59" HREF="ciao_toc.html#TOC59">Setting the top-level, preprocessor, and documenter executables</A></H3>
-
-<P>
-These commands allow 
-<A NAME="IDX633"></A>
-<A NAME="IDX634"></A>
-<EM>changing the executables used</EM> when starting a Prolog top-level, the preprocessor, or the auto-documenter. They also allow changing the arguments that these executables take, and changing the path where the libraries reside. In the case of the top-level and preprocessor, this should be done only by users which understand the implications, but it is very useful if several versions of Ciao/Prolog are available in the system: 
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>C</KBD>
-<DD>
-Change the Ciao/Prolog executable used to run the Prolog-like top level. It is set by default to <CODE>ciao</CODE> or, to the environment variable <CODE>CIAO</CODE> if it is defined. 
-<A NAME="IDX635"></A>
-<A NAME="IDX636"></A>
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>^C</KBD>
-<DD>
-Change the arguments passed to the Ciao/Prolog executable. They are set by default to none or, to the environment variable <CODE>CIAOARGS</CODE> if it is defined. 
-<A NAME="IDX637"></A>
-<A NAME="IDX638"></A>
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>P</KBD>
-<DD>
-Change the executable used to run the Ciao Preprocessor toplevel. It is set by default to <CODE>ciaopp</CODE> or, to the environment variable <CODE>CIAOPP</CODE> if it is defined. 
-<A NAME="IDX639"></A>
-<A NAME="IDX640"></A>
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>^P</KBD>
-<DD>
-Change the arguments parssed to the Ciao preprocessor executable. They are set by default to none or, to the environment variable <CODE>CIAOPPARGS</CODE> if it is defined. 
-<A NAME="IDX641"></A>
-<A NAME="IDX642"></A>
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>L</KBD>
-<DD>
-Change the location of the Ciao/Prolog library paths (changes the environment variable CIAOLIB). 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>D</KBD>
-<DD>
-Change the executable used to run the LPdoc auto-documenter. It is set by default to <CODE>lpdoc</CODE> or, to the environment variable <CODE>LPDOC</CODE> if it is defined. 
-<A NAME="IDX643"></A>
-<A NAME="IDX644"></A>
-<A NAME="IDX645"></A>
-<A NAME="IDX646"></A>
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>^D</KBD>
-<DD>
-Change the arguments parssed to the LPdoc auto-documenter. They are set by default to none or, to the environment variable <CODE>LPDOCARGS</CODE> if it is defined. 
-<A NAME="IDX647"></A>
-<A NAME="IDX648"></A>
-<A NAME="IDX649"></A>
-<A NAME="IDX650"></A>
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>S</KBD> <KBD>^L</KBD>
-<DD>
-Change the path in which the LPdoc library is installed. It is set by default to <CODE>/home/clip/lib</CODE> or, to the environment variable <CODE>LPDOCLIB</CODE> if it is defined. 
-<A NAME="IDX651"></A>
-<A NAME="IDX652"></A>
-<A NAME="IDX653"></A>
-<A NAME="IDX654"></A>
-</DL>
-
-
-
-<H3><A NAME="SEC60" HREF="ciao_toc.html#TOC60">Traditional Prolog Mode Commands</A></H3>
-
-<P>
-These commands provide some bindings and facilities for loading programs, which are present in emacs Prolog modes of other Prolog systems (e.g., SICStus). This is useful mainly if the Ciao/Prolog emacs mode is used with such Prolog systems. Note that the behavior of these commands in Ciao is slightly different from that of SICStus. 
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>K</KBD>
-<DD>
-Compile the entire buffer. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>k</KBD>
-<DD>
-Compile a given region. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^K</KBD>
-<DD>
-Compile the predicate around point. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>C</KBD>
-<DD>
-Consult the entire buffer. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>c</KBD>
-<DD>
-Consult a given region. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^C</KBD>
-<DD>
-Consult the predicate around point. 
-</DL>
-
-
-
-<H3><A NAME="SEC61" HREF="ciao_toc.html#TOC61">Other commands</A></H3>
-
-<P>
-Some other commands which are active in the Ciao/Prolog mode: 
-<DL COMPACT>
-
-<DT><KBD>TAB</KBD>
-<DD>
-Indent current line as Ciao/Prolog code. With argument, indent any additional lines of the same clause rigidly along with this one. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>^L</KBD>
-<DD>
-Recenter the most recently used Ciao/Prolog inferior process buffer (top-level or preprocessor). 
-</DL>
-
-
-
-<H3><A NAME="SEC62" HREF="ciao_toc.html#TOC62">Generating program documentation:</A></H3>
-
-<P>
-These commands provide some bindings and facilities for generating the documentation corresponding to the current buffer. This is specially useful while modifying the documentation for a file, in order to check the output that will be produced. 
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>D</KBD> <KBD>S</KBD>
-<DD>
-Visit the <CODE>SETTINGS</CODE> file (which controls all auto-documenter options). 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>D</KBD> <KBD>F</KBD>
-<DD>
-Change the default output format used the LPdoc auto-documenter. It is set by default to <CODE>dvi</CODE> or, to the environment variable <CODE>LPDOCFORMAT</CODE> if it is defined. 
-<A NAME="IDX655"></A>
-<A NAME="IDX656"></A>
-<A NAME="IDX657"></A>
-<A NAME="IDX658"></A>
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>D</KBD> <KBD>G</KBD>
-<DD>
-Generate the documentation according to SETTINGS in the default format. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>D</KBD> <KBD>B</KBD>
-<DD>
-Generate the documentation for the current buffer in the default format. Basically, it sets MAIN in SETTINGS to the current buffer and then generates the documentation. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>D</KBD> <KBD>V</KBD>
-<DD>
-Start a viewer on the documentation for the current buffer in the default format. 
-</DL>
-
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>D</KBD> <KBD>W</KBD>
-<DD>
-Change the root working dir used by the LPdoc auto-documenter. It is set by default to a new dir under <CODE>/tmp</CODE> or, to the environment variable <CODE>LPDOCWDIR</CODE> if it is defined. 
-<A NAME="IDX659"></A>
-<A NAME="IDX660"></A>
-<A NAME="IDX661"></A>
-<A NAME="IDX662"></A>
-</DL>
-
-
-
-<H3><A NAME="SEC63" HREF="ciao_toc.html#TOC63">Getting the Ciao/Prolog mode version</A></H3>
-
-<P>
-<A NAME="IDX663"></A>
-<A NAME="IDX664"></A>
-<DL COMPACT>
-
-<DT><KBD>^C</KBD> <KBD>v</KBD>
-<DD>
-Report the version of the emacs Ciao/Prolog mode. 
 </DL>
 
 <P>
- 
-
-
-
-
-<H2><A NAME="SEC64" HREF="ciao_toc.html#TOC64">Commands available in toplevel and preprocessor buffers</A></H2>
-
-<P>
-The interactive top level and the preprocessor both are typically run in an iteractive buffer, in which it is possible to communicate with them in the same way as is they had been started from a standard shell. In addition, the commands and key bindings available in buffers containing source code are also available in these interactive buffers, when applicable. 
-
-
-
-
-<H2><A NAME="SEC65" HREF="ciao_toc.html#TOC65">Using Ciao/Prolog mode capabilities in standard shells</A></H2>
-
-<P>
-The capabilities (commands, coloring, ...) which are active in the Ciao/Prolog "inferior" mode (the mode of the buffers in which the top level and the preprocessor run) can also be made available in any standard command line shell which is being run within emacs. This can be enabled by going to the buffer in which the shell is running and typing "<KBD>M-x</KBD> <CODE>ciao-inferior-mode</CODE>". This is very useful for example when running the stand-alone compiler, the 
-<A NAME="IDX665"></A>
-<CODE>lpdoc</CODE> auto-documenter, or even certain user applications (those that use the standard error message library) in an emacs sub-shell. Turning the Ciao/Prolog inferior mode on on that sub-shell will highlight and color the error messages (type <KBD>^L</KBD>), and automatically find and visit the locations in the files in which the errors are reported. 
-
-
-
-
-<H2><A NAME="SEC66" HREF="ciao_toc.html#TOC66">Coexistence with other Prolog interfaces</A></H2>
-
-<P>
-As mentioned previously, the Ciao/Prolog 
-<A NAME="IDX666"></A>
-<CODE>emacs</CODE> interface can also be used to work with other Prolog or CLP systems. Also, the Ciao/Prolog 
-<A NAME="IDX667"></A>
-<CODE>emacs</CODE> interface (<EM>mode</EM>) can coexist with other Prolog-related 
-<A NAME="IDX668"></A>
-<CODE>emacs</CODE> interfaces (<EM>modes</EM>) 
-<A NAME="IDX669"></A>
-<A NAME="IDX670"></A>
-(such as, e.g., the 
-<A NAME="IDX671"></A>
-<CODE>SICStus</CODE> Prolog interface). Only one of the interfaces can be active at a time for a given buffer (i.e., for each given file opened inside 
-<A NAME="IDX672"></A>
-<CODE>emacs</CODE>). In order the change a buffer to a given interface, move the cursor to that buffer and type <CODE>M-x ...-mode</CODE> (e.g., for the Ciao/Prolog mode, <CODE>M-x ciao-mode</CODE>). 
+<A NAME="IDX833"></A>
+<A NAME="IDX834"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>library_directory/1:</B>
+<DD><A NAME="IDX835"></A>
 
 
 <P>
-If several Prolog-related 
-<A NAME="IDX673"></A>
-<CODE>emacs</CODE> interfaces are loaded, then typically the <EM>last</EM> one to be loaded takes precedence, in the sense that this will be the interface in which 
-<A NAME="IDX674"></A>
-<CODE>emacs</CODE> will be set when opening files which have a <CODE>.pl</CODE> ending (this depends a bit on how things are set up in your <CODE>.emacs</CODE> file). 
+See section <A HREF="ciao_25.html#SEC153">Basic file/stream handling</A>.
 
-
-
-
-<H2><A NAME="SEC67" HREF="ciao_toc.html#TOC67">Version information</A></H2>
-<P>
-This documentation corresponds to Ciao/Prolog emacs mode version <STRONG>5.70</STRONG>. This mode is currently being developed within 
-<A NAME="IDX675"></A>
-<CODE>GNU emacs</CODE> version 20.2. It should also work with all other 20.XX and later 19.XX versions. 
-
-
-
-
-<H2><A NAME="SEC68" HREF="ciao_toc.html#TOC68">Acknowledgments (ciao.el)</A></H2>
 
 <P>
-This code is derived from the 1993 version of the emacs interface for 
-<A NAME="IDX676"></A>
-&#38;-Prolog, itself derived from the original 
-<A NAME="IDX677"></A>
-<CODE>prolog.el</CODE> by 
-<A NAME="IDX678"></A>
-<A NAME="IDX679"></A>
-<EM>Masanobu Umeda</EM> with changes by 
-<A NAME="IDX680"></A>
-<A NAME="IDX681"></A>
-<EM>Johan Andersson</EM>, 
-<A NAME="IDX682"></A>
-<A NAME="IDX683"></A>
-<EM>Peter Olin</EM>, 
-<A NAME="IDX684"></A>
-<A NAME="IDX685"></A>
-<EM>Mats Carlsson</EM>, and 
-<A NAME="IDX686"></A>
-<A NAME="IDX687"></A>
-<EM>Johan Bevemyr</EM> of 
-<A NAME="IDX688"></A>
-<A NAME="IDX689"></A>
-<EM>SICS</EM>, Sweden. Other changes also by Daniel Cabeza.
+The predicate is <EM>multifile</EM>.
 
+
+<P>
+The predicate is of type <EM>dynamic</EM>.
+
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_10.html">previous</A>, <A HREF="ciao_12.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -342,7 +342,7 @@ static void make_undefined(Arg,f)
      Argdecl;
      struct definition *f;
 {
-  /*Wait_Acquire_lock(prolog_predicates_l);*/
+  /*Wait_Acquire_slock(prolog_predicates_l);*/
   leave_to_gc(f->predtyp, (char *)f->code.intinfo);
   if (f->predtyp==ENTER_INTERPRETED) {
     /* erase as much as possible */
@@ -361,23 +361,16 @@ static void make_undefined(Arg,f)
    on those predicates.   MCL.
 */
 
-#if defined(THREADS)
-          Wait_Acquire_lock(f->code.intinfo->clause_lock_l);
-#endif          
+          Cond_Begin(f->code.intinfo->clause_insertion_cond);
           expunge_instance(i);
-#if defined(THREADS)
-          Release_lock(f->code.intinfo->clause_lock_l);
-#endif          
+          Broadcast_Cond(f->code.intinfo->clause_insertion_cond);
         }
       }
     }
-#if defined(THREADS)
-    Wait_Acquire_lock(f->code.intinfo->clause_lock_l);
-#endif          
+
+    Cond_Begin(f->code.intinfo->clause_insertion_cond);
     (void)ACTIVE_INSTANCE(Arg,f->code.intinfo->first,use_clock,TRUE);
-#if defined(THREADS)
-    Release_lock(f->code.intinfo->clause_lock_l);
-#endif          
+    Broadcast_Cond(f->code.intinfo->clause_insertion_cond);
   }
 
   /*f->properties.public = 0;*/
@@ -389,7 +382,7 @@ static void make_undefined(Arg,f)
 #endif
   SetEnterInstr(f,ENTER_UNDEFINED);
 
-  /*Release_lock(prolog_predicates_l);*/
+  /*Release_slock(prolog_predicates_l);*/
 }
 
 /* Really get rid of abolished predicate. */
@@ -520,24 +513,14 @@ static void init_interpreted(f)
 
   f->code.intinfo = (struct int_info *)checkalloc(sizeof(struct int_info));
 
-  /* Moved to set_property()
-     f->code.intinfo->behavior_on_failure =
-     #if defined(THREADS)
-     f->properties.concurrent ? CONC_OPEN : DYNAMIC;
-     #else
-     DYNAMIC;
-     #endif
-  */
-
   /* By default, make it DYNAMIC.  
      set_property() may change this behavior later. MCL. */
 
   f->code.intinfo->behavior_on_failure = DYNAMIC;
 
-#if defined(THREADS)
-  f->code.intinfo->clause_lock_l = create_dynamic_lock();
-  Init_lock(f->code.intinfo->clause_lock_l);
-#endif
+  /*f->code.intinfo->clause_insertion_cond = create_dynamic_lock();*/
+  Init_Cond(f->code.intinfo->clause_insertion_cond);
+
   /*  MCL added on 26 Nov 98 */
   f->code.intinfo->x2_pending_on_instance = NULL;
   f->code.intinfo->x5_pending_on_instance = NULL;

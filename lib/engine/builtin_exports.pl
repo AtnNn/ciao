@@ -62,6 +62,7 @@ builtin_export(concurrency,eng_kill,1,0) .
 builtin_export(concurrency,eng_killothers,0,0) .
 builtin_export(concurrency,eng_self,1,0) .
 builtin_export(concurrency,eng_status,0,0) .
+builtin_export(concurrency,eng_status1,1,0) .
 builtin_export(concurrency,lock_atom,1,0) .
 builtin_export(concurrency,unlock_atom,1,0) .
 builtin_export(concurrency,atom_lock_state,2,0) .

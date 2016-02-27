@@ -1,9 +1,10 @@
 %% Sicstus 0.7, pizarro, debug code (-g, no -O): 5670ms
 
-:- module(speed, [speed/0]).
+:- module(speed, [speed/0],[]).
 :- use_module(library(write)).
 :- use_module(library(prolog_sys)).
 :- use_module(library(format)).
+
 
 speed:-
         statistics(runtime, _),
@@ -12,7 +13,7 @@ speed:-
         format("Used ~d milliseconds~n", T).
 
 do_queens:-
-        queens(11, _), fail.
+        queens(8, _), fail.
 do_queens.
 
 queens(N, Qs):-
@@ -43,6 +44,7 @@ queens_list(N, [N|Ns]):-
         N > 0,
         N1 is N - 1,
         queens_list(N1, Ns).
+
 
 
 

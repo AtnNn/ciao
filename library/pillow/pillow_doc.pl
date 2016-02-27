@@ -1,7 +1,7 @@
 :- use_package([assertions]).
 :- comment(nodoc,assertions).
 
-:- comment(title,"Connecting with the Web").
+:- comment(title,"Connecting with the Web (PiLLoW)").
 
 :- comment(module,"@cindex{WWW, interfacing with} This package
    implements the PiLLoW library @cite{pillow-ws-dist} in Ciao.  It is
@@ -10,6 +10,9 @@
    documentation on previous versions. However, note that this version
    is newer and has some bug fixes and added functionality (templates,
    XML processing, and others, which you can try to guess the rest by
-   looking at the source).").
+   looking at the source). You can also find a paper and some
+   additional information in the @file{library/pillow/doc} directory 
+   of the distribution.").
 
 :- include(library(pillow)).
+

@@ -1,9 +1,10 @@
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 
+#include "threads.h"
+#include "locks.h"
 #include "datadefs.h"
 #include "support.h"
 #include "predtyp.h"
-#include "threads.h"
 #include "task_areas.h"
 
 /* declarations for global functions accessed here */
@@ -527,10 +528,23 @@ BOOL debugger_state(Arg)
      Argdecl;
 {
 #if defined(DEBUG)
-  /*
   if (debug_gc)
-    printf("Thread %d is changing debbuger state\n", (int)Thread_Id);
-    */
+    fprintf(stderr,
+            "Thread %d is in debbuger_state\n", (int)Thread_Id);
+
+  /*
+  DEREF(X(0), X(0));
+  if (IsVar(X(0)))
+    fprintf(stderr, "First Arg. is Var\n");
+  else 
+    wr_functor("First Arg. is ", X(0));
+
+  DEREF(X(1), X(1));
+  if (IsVar(X(1)))
+    fprintf(stderr, "Second Arg. is Var\n");
+  else 
+    wr_functor("Second Arg. is ", X(1));
+  */
 #endif
 
   if (!cunify(Arg,Current_Debugger_State,X(0)))
@@ -543,13 +557,14 @@ BOOL debugger_mode(Arg)
      Argdecl;
 {
 #if defined(DEBUG)
-  /*
   if (debug_gc)
-  printf("Thread %d is changing debbuger mode\n", (int)Thread_Id);
-  */
+    fprintf(stderr, "Thread %d is changing debbuger mode\n", (int)Thread_Id);
 #endif
 
   if (TagIsSTR(Current_Debugger_State)) {
+#if defined(DEBUG)
+  if (debug_gc)  fprintf(stderr, "Current_Debugger_State is structure\n");
+#endif
     RefArg(Current_Debugger_Mode,Current_Debugger_State,2);
     if (Current_Debugger_Mode != atom_off)
 /*
@@ -1012,10 +1027,11 @@ BOOL insertz_aux(root, n)
     REGISTER struct instance **loc;
     ENG_INT current_mem = total_mem_count;
     
-    if (!root->first)
-	n->rank = TaggedZero,
-	n->backward = n,
-	root->first = n;
+    if (!root->first) {
+      n->rank = TaggedZero;
+      n->backward = n;
+      root->first = n;
+    }
     else if (root->first->backward->rank == TaggedHigh)
       SERIOUS_FAULT("database node full in assert or record")
     else {
@@ -1035,13 +1051,14 @@ BOOL insertz_aux(root, n)
 	   n->key==functor_list ? &root->lstcase :
 	   &dyn_puthash(&root->indexer,n->key)->value.instp);
     
-    if (!(*loc))
-	n->next_backward = n,
-	(*loc) = n;
-    else
-	n->next_backward = (*loc)->next_backward,
-	(*loc)->next_backward->next_forward = n,
-	(*loc)->next_backward = n;
+    if (!(*loc)){
+      n->next_backward = n;
+      (*loc) = n;
+    } else {
+      n->next_backward = (*loc)->next_backward;
+      (*loc)->next_backward->next_forward = n;
+      (*loc)->next_backward = n;
+    }
     
     INC_MEM_PROG((total_mem_count - current_mem));
     return TRUE;
@@ -1104,7 +1121,7 @@ BOOL prolog_new_atom(Arg)
   if (!IsVar(X(0)))
     ERROR_IN_ARG(X(0), 1, VARIABLE);
 
-  Wait_Acquire_lock(atom_id_l);
+  Wait_Acquire_slock(atom_id_l);
 
   previous_atoms_count = prolog_atoms->count;
   do {
@@ -1117,7 +1134,7 @@ BOOL prolog_new_atom(Arg)
     /* Make sure no smart guy already inserted the atom we have in mind */
   } while(prolog_atoms->count == previous_atoms_count);
 
-  Release_lock(atom_id_l);
+  Release_slock(atom_id_l);
   return cunify(Arg, X(0), new_atom);
 }
 

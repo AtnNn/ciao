@@ -1,11 +1,12 @@
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 
-#include "datadefs.h"
-#include "support.h"
-
 #if defined(DEBUG) || defined(THREADS)
 #include "threads.h"
 #endif
+
+#include "datadefs.h"
+#include "support.h"
+
 
 /* declarations for global functions accessed here */
 
@@ -229,8 +230,10 @@ void choice_overflow(Arg,pad)
       Trail_Start = Choice_End = newtr;                /* new low bound */
       Choice_Start = Trail_End = newtr+newcount;      /* new high bound */
       /* Do not take out (TAGGED) casting, or the engine will break!! */
-      Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
 
+#if defined(USE_TAGGED_CHOICE_START)
+      Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
+#endif
       {
         REGISTER TAGGED *x;
 	/* We have to relocate the concurrent topmost choicepoint */

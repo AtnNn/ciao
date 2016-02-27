@@ -1,59 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Breadth-first execution</TITLE>
+<TITLE>The Ciao Prolog System               - Miscellaneous predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC324" HREF="ciao_toc.html#TOC324">Breadth-first execution</A></H1>
+<H1><A NAME="SEC369" HREF="ciao_toc.html#TOC369">Miscellaneous predicates</A></H1>
 <P>
-<A NAME="IDX3582"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
+<A NAME="IDX4134"></A>
 
 
 <P>
-This package implements breadth-first execution of predicates. Predicates written with operators 
-<A NAME="IDX3583"></A>
-<CODE>'&#60;-'/1</CODE> (facts) and 
-<A NAME="IDX3584"></A>
-<CODE>'&#60;-'/2</CODE> (clauses) are executed using breadth-first search. An example of code would be: 
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
 
-<PRE>
-:- module(bf_example, _, [bf]).
 
-test(bf) :- bfchain(a,d).
-test(df) :- chain(a,d).   % loops!
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
-bfchain(X,X) &#60;- .
-bfchain(X,Y) &#60;- arc(X,Z), bfchain(Z,Y).
 
-chain(X,X).
-chain(X,Y) :- arc(X,Z), chain(Z,Y).
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#95 (1999/11/8, 18:37:30 MET)
 
-arc(a,b).
-arc(a,d).
-arc(b,c).
-arc(c,a).
 
-</PRE>
+<P>
+This module implements some miscellaneous non-logical (but sometimes very useful) predicates.
+
 
 
 <UL>
-<LI><A HREF="ciao_93.html#SEC325">Usage and interface (bf)</A>
-<LI><A HREF="ciao_93.html#SEC326">Known bugs and planned improvements (bf)</A>
+<LI><A HREF="ciao_93.html#SEC370">Usage and interface (odd)</A>
+<LI><A HREF="ciao_93.html#SEC371">Documentation on exports (odd)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC325" HREF="ciao_toc.html#TOC325">Usage and interface (<CODE>bf</CODE>)</A></H2>
+<H2><A NAME="SEC370" HREF="ciao_toc.html#TOC370">Usage and interface (<CODE>odd</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -61,35 +47,96 @@ arc(c,a).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(bf).</CODE>
+<CODE>:- use_module(library(odd)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[bf]).</CODE>
 
-<LI><STRONG>New operators defined:</STRONG>
+<UL>
 
-<A NAME="IDX3585"></A>
-<CODE>&#60;-/2</CODE> [1200,xfx], 
-<A NAME="IDX3586"></A>
-<CODE>&#60;-/1</CODE> [1200,xf].
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4135"></A>
+<CODE>setarg/3</CODE>, 
+<A NAME="IDX4136"></A>
+<CODE>undo/1</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC326" HREF="ciao_toc.html#TOC326">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
+<H2><A NAME="SEC371" HREF="ciao_toc.html#TOC371">Documentation on exports (<CODE>odd</CODE>)</A></H2>
+<P>
+<A NAME="IDX4137"></A>
+<A NAME="IDX4138"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>setarg/3:</B>
+<DD><A NAME="IDX4139"></A>
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>setarg(Index,Term,NewArg)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Replace destructively argument <CODE>Index</CODE> in <CODE>Term</CODE> by <CODE>NewArg</CODE>. The assignment is undone on backtracking. This is a major change to the normal behavior of data assignment in Ciao Prolog.
 
-<LI>
+<LI><EM>The following properties should hold at call time:</EM>
 
-Does not correctly work in user files.
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
+</DL>
+
+<P>
+<A NAME="IDX4140"></A>
+<A NAME="IDX4141"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>undo/1:</B>
+<DD><A NAME="IDX4142"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>undo(Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>call(<CODE>Goal</CODE>)</CODE> is executed on backtracking. This is a major change to the normal
+
+<A NAME="IDX4143"></A>
+control of Ciao Prolog execution. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_92.html">previous</A>, <A HREF="ciao_94.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -2,21 +2,24 @@ package CiaoJava;
 
 /**
  * Prolog integer representation.
- * Warning: this implementation can only work with prolog integers
- * that fit in java Integer type.
+ * This implementation can only work with Prolog integers
+ * that fit in Java <code>Integer</code> type. The <code>Long</code>
+ * representation cannot be used due to the importance of integer
+ * numbers for almost every class in the Java API.
  */
 public class PLInteger extends PLTerm {
   /**
-   * Value of the prolog integer.
+   * Value of the Prolog integer.
    */
   Integer Value;
 
   /**
-   * Integer constructor with its value given as argument.
+   * Integer constructor. Creates a new <code>PLInteger</code> object
+   * with initial value given as argument.
    *
    * @param v Initial value of this <code>PLInteger</code> object.
    *        This argument must be the largest representation of an
-   *        integral number to manage prolog integers.
+   *        integral number to manage Prolog integers.
    */
   public PLInteger(int v) {
 
@@ -26,7 +29,10 @@ public class PLInteger extends PLTerm {
     }
 
   /**
-   * String representation.
+   * String representation. Returns the <code>String</code> representation
+   * of this <code>PLInteger</code> object.
+   *
+   * @return The string representation of this <code>PLInteger</code> object.
    */
   public String toString() {
 
@@ -35,15 +41,16 @@ public class PLInteger extends PLTerm {
     }
 
   /**
-   * Gets the java representation of this prolog integer as an object.
-   * The object returned must be a java <code>Integer</code> object.
+   * Gets the Java representation of this Prolog integer as an object.
+   * The object returned must be a Java <code>Integer</code> object.
    *
    * @param i <code>PLInterpreter</code> object to interpret the
-   *          this prolog term (included for compatibility with
+   *          this Prolog term (although is not needed in this
+   *          method, this parameter is included here for compatibility with
    *          the abstract declaration in <code>PLTerm</code>).
    *
-   * @return  An <code>Object</code> representing the prolog integer.
-   *          This object will be a java <code>Integer</code> object.
+   * @return  An <code>Object</code> representing the Prolog integer.
+   *          This object will be a Java <code>Integer</code> object.
    */
   public Object javaRepr(PLInterpreter i) {
 
@@ -52,7 +59,9 @@ public class PLInteger extends PLTerm {
     }
 
   /**
-   * Gets the value of the integer object.
+   * Gets the integer value of the <code>PLInteger</code> object.
+   *
+   * @return The primitive <code>int</code> value of this Prolog integer.
    */
   public int getValue() {
 
@@ -61,8 +70,11 @@ public class PLInteger extends PLTerm {
     }
 
   /**
-   * Execution test on prolog objects. Returns true if the
-   * related prolog term can be evaluated.
+   * Execution test on Prolog objects. Returns true if the
+   * related Prolog term can be evaluated. Included here
+   * for compatibility with the <code>PLTerm</code> class.
+   *
+   * @return Always <code>false</code>.
    */
   public boolean isRunnable() {
 
@@ -71,9 +83,13 @@ public class PLInteger extends PLTerm {
   }
 
   /**
-   * comparison between prolog terms.
+   * comparison between Prolog terms.
    *
    * @param t Prolog term to compare to.
+   *
+   * @return <code>true</code> if the <code>PLTerm</code>
+   *         received as argument is equal to this <code>PLInteger</code>
+   *         object.
    */
   public boolean equals(PLTerm t) {
 
@@ -86,6 +102,10 @@ public class PLInteger extends PLTerm {
 
   /**
    * Makes a full copy of this <code>PLInteger</code> object.
+   * Creates a new <code>PLInteger</code> object with the
+   * integer value of this object.
+   *
+   * @return A new <code>PLInteger</code> with the value of this object.
    */
   public PLTerm copy() {
     
@@ -94,10 +114,10 @@ public class PLInteger extends PLTerm {
   }
 
   /**
-   * Number of cells used in the internal prolog representation.
+   * Number of cells used in the internal Prolog representation.
    * This function is only needed for $fast format generation in
-   * prolog $fast_read version 'a'.
-   * This will NOT work if the internal prolog representation of
+   * Prolog $fast_read version 'a'.
+   * This will NOT work if the internal Prolog representation of
    * this integer needs a structure (large integer representation).
    */
   protected int numberOfCells() {

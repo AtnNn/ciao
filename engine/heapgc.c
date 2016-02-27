@@ -4,14 +4,15 @@
 #define SEGMENTED_GC 1
 #define EARLY_RESET 1
 
+#if defined(DEBUG)
+#include "threads.h"
+#endif
+
 #include "datadefs.h"
 #include "gcdatadefs.h"
 #include "gcsupport.h"
 #include "support.h"
 
-#if defined(DEBUG)
-#include "threads.h"
-#endif
 
 /* declarations for global functions accessed here */
 

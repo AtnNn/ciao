@@ -1,4 +1,5 @@
-:- module(file_utils, [file_terms/2, copy_stdout/1, file_to_string/2],
+:- module(file_utils, [file_terms/2, copy_stdout/1, 
+	  file_to_string/2,stream_to_string/2],
         [assertions,isomodes]).
 
 :- use_module(library(read), [read/1]).
@@ -53,24 +54,44 @@ copy_stdout(File) :-
       and returns them in @var{String}.".
 
 file_to_string(File, String) :-
-        open_input(File, IO),
-        get_code(Code),
-        get_string(Code, String),
-        close_input(IO).
+        open(File, read, Stream),
+        stream_to_string(Stream, String).
 
-get_string(-1, []) :- !.
-get_string(C, [C|Cs]) :-
-        get_code(D),
-        get_string(D, Cs).
+:- pred stream_to_string(+Stream, -String) :: stream * string
+   # "Reads all the characters from @var{Stream}
+      and returns them in @var{String}.".
+
+stream_to_string(Stream, String) :-
+        current_input(OldIn),
+        set_input(Stream),
+        read_to_close(String),
+        set_input(OldIn),
+        close(Stream).
+
+read_to_close(L) :-
+        get_code(C),
+        read_to_close1(C, L).
+
+read_to_close1(-1, []) :- !.
+read_to_close1(C, [C|L]) :-
+        get_code(C1),
+        read_to_close1(C1, L).
+
+%---------------------------------------------------------------------------
+:- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*5+55,2000/02/11,21:19*43+'CET'), "Changed
+   file_to_string/2 and stream_to_string/2 which did not work well
+   (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+53,2000/02/10,20:27*23+'CET'), "Added
+   stream_to_string/2. (This library needs serious extension/cleaning
+   up).  (Manuel Hermenegildo)").
 
 :- comment(version(0*5+17,1998/06/11,21:05*03+'MET DST'), "Added
    file_to_string/2, fixed bug in copy_stdout/1 (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
-   global CIAO version.  (Manuel Hermenegildo)").
+   global Ciao version.  (Manuel Hermenegildo)").
 
-%% Version comment prompting control for this file.
-%% Local Variables: 
-%% mode: CIAO
-%% update-version-comments: "../version"
-%% End:
+%---------------------------------------------------------------------------

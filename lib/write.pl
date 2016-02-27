@@ -725,7 +725,7 @@ numbervars(X, N0, N) :-
         ; throw(error(type_error(integer, N0), numbervars/3-2))
 	).
 
-numbervars1('$VAR'(N0), N0, N) :- !, N is N0+1.
+numbervars1(X, N0, N) :- var(X), !, X='$VAR'(N0), N is N0+1.
 numbervars1(X, N0, N) :- atomic(X), !, N0=N.
 numbervars1([X|Xs], N0, N) :- !,
 	numbervars1(X, N0, N1),

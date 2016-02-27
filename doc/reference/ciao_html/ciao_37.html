@@ -1,46 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Dynamic predicates</TITLE>
+<TITLE>The Ciao Prolog System               - All solutions predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC146" HREF="ciao_toc.html#TOC146">Dynamic predicates</A></H1>
+<H1><A NAME="SEC192" HREF="ciao_toc.html#TOC192">All solutions predicates</A></H1>
 <P>
-<A NAME="IDX1792"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<A NAME="IDX2184"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.5#30 (1998/6/30, 14:23:37 MET DST)
+<STRONG>Author(s):</STRONG> First version by Richard A. O'Keefe and David H.D. Warren. Changes by Mats Carlsson, Daniel Cabeza, and Manuel Hermenegildo.
 
 
 <P>
-This module implements the assert/retract family of predicates to manipulate dynamic predicates. 
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-The predicates defined in this module allow modification of the program as it is actually running. Clauses can be added to the program (<EM>asserted</EM>) or removed from the program (<EM>retracted</EM>). For these predicates, the argument which corresponds to the clause head must be instantiated to an atom or a compound term. The argument corresponding to the clause must be instantiated either to a term <CODE>Head :- Body</CODE> or, if the body part is empty, to <CODE>Head</CODE>. An empty body part is represented as <CODE>true</CODE>. 
+<STRONG>Version of last change:</STRONG> 1.5#115 (2000/4/12, 12:17:22 CEST)
+
+
+<P>
+This module implements the standard solution aggregation predicates. 
+
+
+<P>
+When there are many solutions to a problem, and when all those solutions are required to be collected together, this can be achieved by repeatedly backtracking and gradually building up a list of the solutions. The following built-in predicates are provided to automate this process. 
 
 
 
 <UL>
-<LI><A HREF="ciao_37.html#SEC147">Usage and interface (dynamic)</A>
-<LI><A HREF="ciao_37.html#SEC148">Documentation on exports (dynamic)</A>
-<LI><A HREF="ciao_37.html#SEC149">Documentation on multifiles (dynamic)</A>
+<LI><A HREF="ciao_37.html#SEC193">Usage and interface (aggregates)</A>
+<LI><A HREF="ciao_37.html#SEC194">Documentation on exports (aggregates)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC147" HREF="ciao_toc.html#TOC147">Usage and interface (<CODE>dynamic</CODE>)</A></H2>
+<H2><A NAME="SEC193" HREF="ciao_toc.html#TOC193">Usage and interface (<CODE>aggregates</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,7 +51,7 @@ The predicates defined in this module allow modification of the program as it is
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(dynamic)).</CODE>
+<CODE>:- use_module(library(aggregates)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -57,35 +60,20 @@ The predicates defined in this module allow modification of the program as it is
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1793"></A>
-<CODE>asserta/1</CODE>, 
-<A NAME="IDX1794"></A>
-<CODE>asserta/2</CODE>, 
-<A NAME="IDX1795"></A>
-<CODE>assertz/1</CODE>, 
-<A NAME="IDX1796"></A>
-<CODE>assertz/2</CODE>, 
-<A NAME="IDX1797"></A>
-<CODE>assert/1</CODE>, 
-<A NAME="IDX1798"></A>
-<CODE>assert/2</CODE>, 
-<A NAME="IDX1799"></A>
-<CODE>retract/1</CODE>, 
-<A NAME="IDX1800"></A>
-<CODE>retractall/1</CODE>, 
-<A NAME="IDX1801"></A>
-<CODE>abolish/1</CODE>, 
-<A NAME="IDX1802"></A>
-<CODE>clause/2</CODE>, 
-<A NAME="IDX1803"></A>
-<CODE>clause/3</CODE>, 
-<A NAME="IDX1804"></A>
-<CODE>current_predicate/1</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX1805"></A>
-<CODE>do_on_abolish/1</CODE>.
+<A NAME="IDX2185"></A>
+<CODE>setof/3</CODE>, 
+<A NAME="IDX2186"></A>
+<CODE>bagof/3</CODE>, 
+<A NAME="IDX2187"></A>
+<CODE>findall/3</CODE>, 
+<A NAME="IDX2188"></A>
+<CODE>findall/4</CODE>, 
+<A NAME="IDX2189"></A>
+<CODE>findnsols/4</CODE>, 
+<A NAME="IDX2190"></A>
+<CODE>findnsols/5</CODE>, 
+<A NAME="IDX2191"></A>
+<CODE>^/2</CODE>.
 
 </UL>
 
@@ -96,8 +84,10 @@ The predicates defined in this module allow modification of the program as it is
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX1806"></A>
-<CODE>assertions/doc_props</CODE>.
+<A NAME="IDX2192"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX2193"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -107,408 +97,209 @@ The predicates defined in this module allow modification of the program as it is
 
 
 
-<H2><A NAME="SEC148" HREF="ciao_toc.html#TOC148">Documentation on exports (<CODE>dynamic</CODE>)</A></H2>
+<H2><A NAME="SEC194" HREF="ciao_toc.html#TOC194">Documentation on exports (<CODE>aggregates</CODE>)</A></H2>
 <P>
-<A NAME="IDX1807"></A>
-<A NAME="IDX1808"></A>
+<A NAME="IDX2194"></A>
+<A NAME="IDX2195"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>asserta/1:</B>
-<DD><A NAME="IDX1809"></A>
+<DT><span class="define">PREDICATE:</span> <B>setof/3:</B>
+<DD><A NAME="IDX2196"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause)</CODE>.
+<EM>Meta-predicate</EM> with arguments: <CODE>setof(?,goal,?)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>asserta(+Clause)</CODE>
+<STRONG>Usage:</STRONG> <CODE>setof(@(Template),+Generator,?(Set))</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> The current instance of <CODE>Clause</CODE> is interpreted as a clause and is added to the current program. The predicate concerned must be dynamic. The new clause becomes the <EM>first</EM> clause for the predicate concerned. Any uninstantiated variables in the <CODE>Clause</CODE> will be replaced by new private variables.
+<LI><EM>Description:</EM> Finds the <CODE>Set</CODE> of instances of the <CODE>Template</CODE> satisfying <CODE>Generator</CODE>. The set is in ascending order (see section <A HREF="ciao_21.html#SEC141">Comparing terms</A> for a definition of this order) without duplicates, and is non-empty. If there are no solutions, <CODE>setof</CODE> fails. <CODE>setof</CODE> may succeed in more than one way, binding free variables in <CODE>Generator</CODE> to different values. This can be avoided by using existential quantifiers on the free variables in front of <CODE>Generator</CODE>, using
 
-<LI><EM>The following properties should hold globally:</EM>
+<A NAME="IDX2197"></A>
+<CODE>^/2</CODE>. For example, given the clauses: 
 
-Documentation is still incomplete: <CODE>asserta(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<PRE>
+father(bill, tom).
+father(bill, ann).
+father(bill, john).
+father(harry, july).
+father(harry, daniel).
+</PRE>
+
+The following query produces two alternative solutions via backtracking: 
+
+<PRE>
+?- setof(X,father(F,X),Sons).
+
+F = bill,
+Sons = [ann,john,tom] ? ;
+
+F = harry,
+Sons = [daniel,july] ? ;
+
+no
+?- 
+</PRE>
+
+ 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Template</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Generator</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Set</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1810"></A>
-<A NAME="IDX1811"></A>
+<A NAME="IDX2198"></A>
+<A NAME="IDX2199"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>asserta/2:</B>
-<DD><A NAME="IDX1812"></A>
+<DT><span class="define">PREDICATE:</span> <B>bagof/3:</B>
+<DD><A NAME="IDX2200"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause,?)</CODE>.
+<EM>Meta-predicate</EM> with arguments: <CODE>bagof(?,goal,?)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>asserta(+Clause,-(Ref))</CODE>
+<STRONG>Usage:</STRONG> <CODE>bagof(@(Template),+Generator,?(Bag))</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+<LI><EM>Description:</EM> Finds all the instances of the <CODE>Template</CODE> produced by the <CODE>Generator</CODE>, and returns them in the <CODE>Bag</CODE> in the order in which they were found. If the <CODE>Generator</CODE> contains free variables which are not bound in the <CODE>Template</CODE>, it assumes that this is like any other Prolog question and that you want bindings for those variables. This can be avoided by using existential quantifiers on the free variables in front of the <CODE>Generator</CODE>, using
 
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>asserta(+Clause,-(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<A NAME="IDX2201"></A>
+<CODE>^/2</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1813"></A>
-<A NAME="IDX1814"></A>
+<A NAME="IDX2202"></A>
+<A NAME="IDX2203"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assertz/1:</B>
-<DD><A NAME="IDX1815"></A>
+<DT><span class="define">PREDICATE:</span> <B>findall/3:</B>
+<DD><A NAME="IDX2204"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause)</CODE>.
+<EM>Meta-predicate</EM> with arguments: <CODE>findall(?,goal,?)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>assertz(+Clause)</CODE>
+<STRONG>Usage:</STRONG> <CODE>findall(?(Template),+Generator,?(List))</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>, except that the new clause becomes the <EM>last</EM> clause for the predicate concerned.
+<LI><EM>Description:</EM> A special case of bagof, where all free variables in the <CODE>Generator</CODE> are taken to be existentially quantified. Faster than the other aggregation predicates.
 
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>assertz(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1816"></A>
-<A NAME="IDX1817"></A>
+<A NAME="IDX2205"></A>
+<A NAME="IDX2206"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assertz/2:</B>
-<DD><A NAME="IDX1818"></A>
+<DT><span class="define">PREDICATE:</span> <B>findall/4:</B>
+<DD><A NAME="IDX2207"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause,?)</CODE>.
+<EM>Meta-predicate</EM> with arguments: <CODE>findall(?,goal,?,?)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>assertz(+Clause,-(Ref))</CODE>
+<STRONG>Usage:</STRONG> <CODE>findall(?(Template),+Generator,?(List),?(Tail))</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Like <CODE>assertz/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+<LI><EM>Description:</EM> As
 
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>assertz(+Clause,-(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<A NAME="IDX2208"></A>
+<CODE>findall/3</CODE>, but returning in <CODE>Tail</CODE> the tail of <CODE>List</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1819"></A>
-<A NAME="IDX1820"></A>
+<A NAME="IDX2209"></A>
+<A NAME="IDX2210"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>assert/1:</B>
-<DD><A NAME="IDX1821"></A>
+<DT><span class="define">PREDICATE:</span> <B>findnsols/4:</B>
+<DD><A NAME="IDX2211"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause)</CODE>.
+<CODE>findnsols(N,Template,Generator,List)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>assert(+Clause)</CODE>
+As 
+<A NAME="IDX2212"></A>
+<CODE>findall/3</CODE>, but generating at most <CODE>N</CODE> solutions of <CODE>Generator</CODE>. Thus, the length of <CODE>List</CODE> will not be greater than <CODE>N</CODE>. If <CODE>N</CODE>=&#60;0, returns directly an empty list. This predicate is especially useful if <CODE>Generator</CODE> may have an infinite number of solutions.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>findnsols(?,?,goal,?)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2213"></A>
+<A NAME="IDX2214"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>findnsols/5:</B>
+<DD><A NAME="IDX2215"></A>
+
+
+<P>
+<CODE>findnsols(N,Template,Generator,List,Tail)</CODE>
+
+
+<P>
+As 
+<A NAME="IDX2216"></A>
+<CODE>findnsols/4</CODE>, but returning in <CODE>Tail</CODE> the tail of <CODE>List</CODE>.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>findnsols(?,?,goal,?,?)</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2217"></A>
+<A NAME="IDX2218"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>^/2:</B>
+<DD><A NAME="IDX2219"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>X ^ P</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Identical to <CODE>assertz/1</CODE>. Included for compatibility.
+<LI><EM>Description:</EM> Existential quantification: <CODE>X</CODE> is existentially quantified in <CODE>P</CODE>. E.g., in <CODE>A^p(A,B)</CODE>, <CODE>A</CODE> is existentially quantified. Used only within
 
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>assert(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
+<A NAME="IDX2220"></A>
+aggregation predicates. In all other contexts, simply, execute the procedure call <CODE>P</CODE>. 
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1822"></A>
-<A NAME="IDX1823"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>assert/2:</B>
-<DD><A NAME="IDX1824"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>assert(+Clause,-(Ref))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Identical to <CODE>assertz/2</CODE>. Included for compatibility.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>assert(+Clause,-(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1825"></A>
-<A NAME="IDX1826"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>retract/1:</B>
-<DD><A NAME="IDX1827"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retract(clause)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>retract(+Clause)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The first clause in the program that matches <CODE>Clause</CODE> is erased. The predicate concerned must be dynamic.
-
-The predicate <CODE>retract/1</CODE> may be used in a non-determinate fashion, i.e., it will successively retract clauses matching the argument through backtracking. If reactivated by backtracking, invocations of the predicate whose clauses are being retracted will proceed unaffected by the retracts. This is also true for invocations of <CODE>clause</CODE> for the same predicate. The space occupied by a retracted clause will be recovered when instances of the clause are no longer in use. 
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>retract(+Clause)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1828"></A>
-<A NAME="IDX1829"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>retractall/1:</B>
-<DD><A NAME="IDX1830"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retractall(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>retractall(+Head)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Erase all clauses whose head matches <CODE>Head</CODE>, where <CODE>Head</CODE> must be instantiated to an atom or a compound term. The predicate concerned must be dynamic. The predicate definition is retained.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>retractall(+Head)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1831"></A>
-<A NAME="IDX1832"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>abolish/1:</B>
-<DD><A NAME="IDX1833"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>abolish(spec)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>abolish(+Spec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Erase all clauses of the predicate specified by the predicate spec, or list of predicate specs, <CODE>Spec</CODE>. The predicate definition itself is also erased (the predicate is deemed undefined after execution of the abolish). The predicates concerned must all be user defined.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>abolish(+Spec)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1834"></A>
-<A NAME="IDX1835"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>clause/2:</B>
-<DD><A NAME="IDX1836"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>clause(+Head,?(Body))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The clause '<CODE>Head</CODE> <CODE>:-</CODE> <CODE>Body</CODE>' exists in the current program. The predicate concerned must be dynamic.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>clause(+Head,?(Body))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1837"></A>
-<A NAME="IDX1838"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>clause/3:</B>
-<DD><A NAME="IDX1839"></A>
-
-
-<P>
-<CODE>clause(Head,Body,Ref)</CODE>
-
-
-<P>
-Like <CODE>clause(Head,Body)</CODE>, plus the clause is uniquely identified by <CODE>Ref</CODE>.
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?,?)</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>clause(+Head,?(Body),?(Ref))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Head</CODE> must be instantiated to an atom or a compound term.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>clause(+Head,?(Body),?(Ref))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>clause(?(Head),?(Body),+Ref)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Ref</CODE> must be instantiated to a valid identifier.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>clause(?(Head),?(Body),+Ref)</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1840"></A>
-<A NAME="IDX1841"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>current_predicate/1:</B>
-<DD><A NAME="IDX1842"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>current_predicate(?(Spec))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> A user defined predicate is named <CODE>Spec</CODE>.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Documentation is still incomplete: <CODE>current_predicate(?(Spec))</CODE> may not conform the functionality documented.
- (<CODE>doc_props:doc_incomplete/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1843"></A>
-<A NAME="IDX1844"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dynamic/1:</B>
-<DD><A NAME="IDX1845"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1846"></A>
-<A NAME="IDX1847"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>data/1:</B>
-<DD><A NAME="IDX1848"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1849"></A>
-<A NAME="IDX1850"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>wellformed_body/3:</B>
-<DD><A NAME="IDX1851"></A>
-
-
-<P>
-<CODE>wellformed_body(BodyIn,Env,BodyOut)</CODE>
-
-
-<P>
-<CODE>BodyIn</CODE> is a well-formed clause body. <CODE>BodyOut</CODE> is its counterpart with no single-variable meta-goals (i.e., with <CODE>call(X)</CODE> for <CODE>X</CODE>). <CODE>Env</CODE> denotes if global cuts are admissible in <CODE>BodyIn</CODE> (<CODE>+</CODE> if they are, <CODE>-</CODE> if they are not).
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC149" HREF="ciao_toc.html#TOC149">Documentation on multifiles (<CODE>dynamic</CODE>)</A></H2>
-<P>
-<A NAME="IDX1852"></A>
-<A NAME="IDX1853"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>do_on_abolish/1:</B>
-<DD><A NAME="IDX1854"></A>
-
-
-<P>
-<CODE>do_on_abolish(Head)</CODE>
-
-
-<P>
-A hook predicate which will be called when the definition of the predicate of <CODE>Head</CODE> is abolished.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_36.html">previous</A>, <A HREF="ciao_38.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

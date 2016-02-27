@@ -6,8 +6,8 @@
 %	    user/1,
 %	    passwd/1,
 %	    socketname/1,
- 	    dbassertz_fact/1,  
- 	    dbretract_fact/1, 
+ 	    dbassertz_fact/1,
+ 	    dbretract_fact/1,
  	    dbcurrent_fact/1,
 	    dbretractall_fact/1,
  	    make_sql_persistent/3,
@@ -21,7 +21,7 @@
 	    sql_table_types/3
         ],[assertions, regtypes, basicmodes]).
 
-:- reexport(library('persdb_sql/db_client'), 
+:- reexport(library('persdb_sql/db_client'),
 	            [socketname/1,dbname/1,user/1,passwd/1]).
 
 :- reexport(library('persdb_sql/pl2sql'),
@@ -103,7 +103,7 @@ persLocation(db(Name, User, Password, Machine:Port)) :-
 :- comment(doinclude, querybody/1).
 
 
-:- comment(usage, "Typically, this library is used including the 
+:- comment(usage, "Typically, this library is used including the
    'persdb_sql' package into the package list of the module, or using the
    @decl{use_package/1} declaration:
 @begin{description}
@@ -134,10 +134,12 @@ persLocation(db(Name, User, Password, Machine:Port)) :-
 :- comment(subtitle,"@bf{The CIAO System Documentation Series}").
 :- comment(subtitle,"Technical Report CLIP 10/98.0").
 :- comment(subtitle,"RadioWeb (ESPRIT Project 25562) Report D3.1.M2-A2").
+:- comment(subtitle,"ECCOSIC (Fulbright Project 98059)").
 %% :- comment(subtitle,"@em{Draft printed on:} @today{}").
 :- comment(subtitle,"December 26, 1998").
 
-:- comment(author, "I. Caballero, D. Cabeza, J.M. G@'{o}mez, and M. Hermenegildo").
+:- comment(author,
+        "I. Caballero, D. Cabeza, J.M. G@'{o}mez, and M. Hermenegildo").
 :- comment(author, "@tt{clip@@dia.fi.upm.es}").
 :- comment(author, "@tt{http://www.clip.dia.fi.upm.es/}").
 :- comment(author, "The CLIP Group").
@@ -199,14 +201,14 @@ interface was defined with two goals in mind:
 @begin{itemize}
 @item to simplify the communication between the Prolog system and the
   relational database engines as much as possible, and
-  
+
 @item to give as much flexibility as possible to the overall system.
   This includes simultaneous access to several databases, allowing
   both the databases and clients to reside on the same physical
   machine or different machines, and allowing the clients to reside in
   Win95/NT or Unix machines.
 @end{itemize}
- 
+
 
 In order to allow the flexibility mentioned above, a client-sever
 architecture was chosen. The following figure depicts the overall
@@ -258,7 +260,7 @@ backtracking.
 % This forces documentation (otherwise, it stays undefined!)
 sql_persistent(_,_,_).
 
-:- decl sql_persistent(PrologPredTypes,TableAttributes,Keyword) 
+:- decl sql_persistent(PrologPredTypes,TableAttributes,Keyword)
    => prologPredTypes * tableAttributes * persLocId
 
 # "Declares the predicate corresponding to the main functor of
@@ -273,15 +275,15 @@ sql_persistent(_,_,_).
    respectively to the predicate name and arguments of the (virtual)
    Prolog predicate.
 
-   @bf{Example:} 
+   @bf{Example:}
 
 @begin{verbatim}
 :- sql_persistent(product( integer,    integer, string, string ),
               product( quantity,   id,      name,   size   ),
               radiowebdb).
 
-sql_persistent_location(radiowebdb, 
-   db('SQL Anywhere 5.0 Sample', user, pass, 
+sql_persistent_location(radiowebdb,
+   db('SQL Anywhere 5.0 Sample', user, pass,
       'r2d5.dia.fi.upm.es':2020)).
 @end{verbatim}
 ".
@@ -289,28 +291,28 @@ sql_persistent_location(radiowebdb,
 %% ---------------------------------------------------------------------------
 
 :- comment(prologPredTypes/1,"@includedef{prologPredTypes/1}").
- 
+
 :- prop prologPredTypes(PredTypes) # "@var{PredTypes} is a structure
     describing a Prolog predicate name with its types.".
 
-prologPredTypes(PredTypes) :- 
+prologPredTypes(PredTypes) :-
 	PredTypes =.. [PredName|Types],
 	atm(PredName),
  	list(Types,sqltype).
- 
+
 :- comment(tableAttributes/1,"@includedef{tableAttributes/1}").
- 
+
 :- prop tableAttributes(TableAttributes)  # "@var{TableAttributes} is a
     structure describing a table name and some attributes.".
- 
-tableAttributes(TableAttributes) :- 
+
+tableAttributes(TableAttributes) :-
  	TableAttributes =.. [TableName|AttributeNames],
  	atm(TableName),
  	list(AttributeNames,atm).
- 
+
 :- prop persLocId(Id)  # "@var{Id} is the name of a persistent storage location.".
- 
-persLocId(Id) :- 
+
+persLocId(Id) :-
  	atm(Id).
 
 %% ---------------------------------------------------------------------------
@@ -324,10 +326,10 @@ persLocId(Id) :-
 # "In this usage, @var{DBLocation} is a @em{relational database}, in which
    case the predicate is stored as tuples in the database.".
 
-:- regtype database_desc(D) # "@var{D} is a structure describing a 
+:- regtype database_desc(D) # "@var{D} is a structure describing a
    database.".
 
-database_desc(db(DBId,User,Passwd,Socket)) :- 
+database_desc(db(DBId,User,Passwd,Socket)) :-
 	dbname(DBId),
 	user(User),
 	passwd(Passwd),
@@ -349,7 +351,7 @@ database_desc(db(DBId,User,Passwd,Socket)) :-
 :- meta_predicate make_sql_persistent(addmodule,?,?).
 :- impl_defined(make_sql_persistent/3).
 
-:- pred make_sql_persistent(PrologPredTypes,TableAttributes,Keyword) 
+:- pred make_sql_persistent(PrologPredTypes,TableAttributes,Keyword)
    => prologPredTypes * tableAttributes * persLocId
 
 # "Dynamic version of the @decl{sql_persistent/3} declaration.".
@@ -380,16 +382,16 @@ equal_args(Pred1, Pred2, Index, Arity) :-
 
 assert_args([], [], _, _) :-
 	!.
-assert_args([Type|Ts], [ArgName|As], N, TableName) :- 
+assert_args([Type|Ts], [ArgName|As], N, TableName) :-
 	sqltype(Type),
 	!,
 	assertz_fact(attribute(N, TableName, ArgName, Type)),
 	N1 is N+1,
 	assert_args(Ts, As, N1, TableName).
-assert_args([T|_], [_|_], _, TableName) :- 
+assert_args([T|_], [_|_], _, TableName) :-
 	!,
 	error_message("illegal SQL type ~w in predicate for ~w",[T, TableName]).
-assert_args(_,_,_,TableName) :- 
+assert_args(_,_,_,TableName) :-
 	error_message("arity mismatch in declaration for ~w",[TableName]).
 
 
@@ -405,8 +407,8 @@ assert_args(_,_,_,TableName) :-
      added to the end of the definition of the corresponding predicate. If
      any integrity constraint violation is done (database stored
      predicates), an error will be displayed.  The predicate concerned must
-     be statically (@decl{sql_persistent/3}) or dinamically 
-     (@pred{make_sql_persistent/3}) declared. Any uninstantiated variables in 
+     be statically (@decl{sql_persistent/3}) or dinamically
+     (@pred{make_sql_persistent/3}) declared. Any uninstantiated variables in
      the @var{Fact} will be replaced by new, private variables.  @bf{Note:}
      @em{assertion of facts with uninstantiated variables not implemented at
      this time.}".
@@ -416,7 +418,7 @@ dbassertz_fact(Fact) :-
 	debug_message("fact to assert is ~w",[Fact]),
 	init_sql_persdb,
         debug_message("checking if ~w/~w is persistent",[F,A]),
- 	sql_persistent(F/A,DBId), 
+ 	sql_persistent(F/A,DBId),
  	debug_message("persistent predicate found, location: ~w",[DBId]),
 	debug_message("ready to call to the insertion compiler, with the fact ~w",[Fact]),
 	pl2sqlInsert(Fact,SQLString),
@@ -431,9 +433,9 @@ dbassertz_fact(Fact) :-
 
 :- meta_predicate dbretract_fact(addmodule,?).
 :- impl_defined(dbretract_fact/1).
- 
+
 :- pred dbretract_fact(+Fact) :: fact
- 
+
  # "Persistent extension of @pred{retract_fact/1}: deletes on
     backtracking all the facts which unify with @var{Fact}.  The
     predicate concerned must be statically (@decl{sql_persistent/3}) or
@@ -460,12 +462,12 @@ dbretract_fact(Fact):-
 
 :- meta_predicate dbretractall_fact(addmodule,?).
 :- impl_defined(dbretractall_fact/1).
- 
+
 :- pred dbretractall_fact(+Fact) :: fact
 
  # "Persistent extension of @pred{retractall_fact/1}: when called deletes
    all the facts which unify with @var{Fact}. The predicate concerned must
-   be statically (@decl{sql_persistent/3}) or dinamically 
+   be statically (@decl{sql_persistent/3}) or dinamically
    (@pred{make_sql_persistent/3}) declared.".
 
 dbretractall_fact(Fact):-
@@ -473,7 +475,7 @@ dbretractall_fact(Fact):-
 	init_sql_persdb,
 	functor(Fact, F, A),
  	sql_persistent(F/A,DBId),
-%% %%%%%% TO SEE: maybe there are two predicates with the same name 
+%% %%%%%% TO SEE: maybe there are two predicates with the same name
 %%                and located in different places (different databases, files,
 %%                persistent and non-persistent predicates,...)
  	debug_message("persistent predicate found, location: ~w",[DBId]),
@@ -532,7 +534,7 @@ drop_temporal_view(DBId):-
 	( ResultTerm1='ok' ->
 	    debug_message("view dropped",[])
 	;     %% next lines are used to drop a view in Access ODBC Driver
-	    %% trying to drop view with other SQL sentence. Temporarily useful, 
+	    %% trying to drop view with other SQL sentence. Temporarily useful,
             %% until deletion compiler adapted
 	    sql_query(DBId,"DROP TABLE PL_TMP_TO_RETRACT",ResultTerm2),
 	    ( ResultTerm2='ok' ->
@@ -579,7 +581,7 @@ fact(_).
 
 %% :- meta_predicate dbfindall(?,?,goal,?).
 
-:- pred dbfindall(+DBId,+Pattern,+ComplexGoal,-Results) 
+:- pred dbfindall(+DBId,+Pattern,+ComplexGoal,-Results)
    :: dbconnection * projterm * querybody * list
 
    # "Similar to @pred{findall/3}, but @var{Goal} is executed in
@@ -588,7 +590,7 @@ fact(_).
      to SQL translation involved (see the corresponding type
      definitions for details).".
 
-dbfindall(DBId,Pattern,ComplexGoal,Results) :- 
+dbfindall(DBId,Pattern,ComplexGoal,Results) :-
 	debug_message("projecting    ~w    onto    ~w    in ~w",
 	       [ComplexGoal,Pattern,DBId]),
 	init_sql_persdb,
@@ -598,7 +600,7 @@ dbfindall(DBId,Pattern,ComplexGoal,Results) :-
 	functor(Pattern,PF,_),
 	map_pattern_functor(ResultsList,PF,Results).
 
-dbfindall(DBId,_Pattern,ComplexGoal,_Results) :- 
+dbfindall(DBId,_Pattern,ComplexGoal,_Results) :-
 	error_message("in database identifier ~w in dbfindall/4 for ~w",
 	       [DBId,ComplexGoal]),
 	fail.
@@ -643,7 +645,7 @@ dbcall(DBId,ComplexGoal) :-
 
 :- comment(doinclude,db_query/4).
 
-:- pred db_query(+DBId,+ProjTerm,+Goal,ResultTerm) 
+:- pred db_query(+DBId,+ProjTerm,+Goal,ResultTerm)
 	:: dbconnection * projterm * querybody * tuple
 
 # "@var{ResultTerm} contains all the @concept{tuples} which are the
@@ -664,13 +666,13 @@ db_query(DBId,ProjTerm,Goal,ResultTerm) :-
 
 :- comment(doinclude,sql_query/3).
 
-:- pred sql_query(+DBId,+SQLString,AnswerTableTerm) 
+:- pred sql_query(+DBId,+SQLString,AnswerTableTerm)
 	:: dbconnection * sqlstring * answertableterm
 
 # "@var{ResultTerm} is the response from database @var{DBId} to the
    @concept{SQL query} in @var{SQLString} to database
    @var{DBId}. @var{AnswerTableTerm} can express a set of tuples, an error
-   answer or a 'ok' response (see @decl{answertableterm/1} for details). 
+   answer or a 'ok' response (see @decl{answertableterm/1} for details).
    At the moment, @pred{sql_query/3} log in and out for each query. This
    should be changed to log in only the first time and log out on exit
    and/or via a timer in the standard way.".
@@ -688,7 +690,7 @@ sql_query(DBId,SQLString,ResultTerm):-
 
 :- comment(doinclude,db_query_one_tuple/4).
 
-:- pred db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm) 
+:- pred db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm)
 	:: dbconnection * projterm * querybody * answertupleterm
 
 # "@var{ResultTerm} is one of the @concept{tuples} which are the response
@@ -709,7 +711,7 @@ db_query_one_tuple(DBId,ProjTerm,Goal,tup(ResultTerm)) :-
 %% ---------------------------------------------------------------------------
 :- comment(doinclude,sql_query_one_tuple/3).
 
-:- pred sql_query_one_tuple(+DBId,+SQLString,ResultTuple) 
+:- pred sql_query_one_tuple(+DBId,+SQLString,ResultTuple)
 	:: dbconnection * sqlstring * tuple
 
 # "@var{ResultTuple} contains an element from the set of tuples which
@@ -739,7 +741,7 @@ sql_query_one_tuple_more(dbqueryconnection(Stream,DbHandle,Answer),tup(ResultTer
 	  ;
 	   true
 	  )
-	;  
+	;
 	  sql_query_one_tuple_more(dbqueryconnection(Stream,DbHandle,Answer),tup(ResultTerm))
 	).
 
@@ -776,7 +778,7 @@ db_call_db_atomic_goal(DBId,Goal) :-
 	functor(Goal,F,A),
 	debug_message("checking if ~w/~w, stored in ~w, is persistent",[F,A,DBId]),
 	(  sql_persistent(F/A, DBId)
-	-> 
+	->
 	   debug_message("Calling db_query_one_tuple for ~w/~w ~n",[F,A]),
 	   db_query_one_tuple(DBId,Goal,Goal,ResultsList),
 	   debug_message("Return from db_query_one_tuple with ~w ~n",[ResultsList]),
@@ -810,7 +812,7 @@ initialize_db.
 
 :- prop atomicgoal(G)  # "@var{G} is an atomic goal.".
 
-atomicgoal( G ) :- 
+atomicgoal( G ) :-
 	term(G).
 
 :- comment(atomicgoal/1,"@var{G} is a single goal, not containing
@@ -838,13 +840,13 @@ sql_get_tables(DBId, TablesList):-
 	sql_persistent_location(DBId,db(Id,User,Passwd,Address:Port)),
 	sql_get_tables(db(Id,User,Passwd,Address:Port), TablesList).
 
-:- pred sql_table_types(+Location,+Table,-AttrTypes) 
+:- pred sql_table_types(+Location,+Table,-AttrTypes)
 	:: persLocation * atm * list
 
 # "@var{AttrTypes} are the attributes and types of @var{Table} in
    @var{Location}.".
 
-:- pred sql_table_types(+DbConnection,+Table,-AttrTypes) 
+:- pred sql_table_types(+DbConnection,+Table,-AttrTypes)
 	:: dbconnection * atm * list
 
 # "@var{AttrTypes} are the attributes and types of @var{Table} in
@@ -868,9 +870,12 @@ filter_types([],[]).
 filter_types([[NativeId, NativeType]|NativeRest],[[NativeId,Type]|Rest]):-
 	accepted_type(NativeType, Type),
 	filter_types(NativeRest, Rest).
-	                
+	
 %% ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+105,2000/04/03,14:21*58+'CEST'), "Added ack. to
+ECCOSIC in persdbrt_sql (MCL)").
 
 :- comment(version(0*9+35,1999/04/06,13:52*16+'MEST'), "Changed from
    type to regtype.  (Manuel Hermenegildo)").
@@ -889,7 +894,7 @@ filter_types([[NativeId, NativeType]|NativeRest],[[NativeId,Type]|Rest]):-
    compatibility with the file based persistent predicates completed (Jose
    Manuel Gomez Perez)").
 
-:- comment(version(0*6+15,1998/08/04,14:12*46+'MET DST'), "retractz_fact/1, 
+:- comment(version(0*6+15,1998/08/04,14:12*46+'MET DST'), "retractz_fact/1,
    retractall_fact/1, current_fact/1, added (Ignacio Caballero Blanco)").
 
 :- comment(version(0*6+8,1998/07/30,16:52*01+'MET DST'), "assertz_fact/1

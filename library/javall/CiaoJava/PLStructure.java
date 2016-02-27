@@ -3,7 +3,10 @@ package CiaoJava;
 import java.io.PrintWriter;
 
 /**
- * Prolog structure representation.
+ * This class is used to represent in Java the
+ * Prolog compound terms. This is the basic
+ * construct to manage requests, answers and
+ * goals in the Java side of this interface.
  */
 public class PLStructure extends PLTerm {
   String Name;
@@ -16,7 +19,7 @@ public class PLStructure extends PLTerm {
    *
    * @param name  Functor name.
    * @param arity Structure arity.
-   * @param arg   Array of prolog arguments.
+   * @param arg   Array of Prolog arguments.
    *
    */
   public PLStructure(String name, int arity, PLTerm arg[]) {
@@ -31,11 +34,12 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * Creates a new <code>PLStructure</code> object
-   * with the functor and arguments received as parameters.
+   * Creates a new <code>PLStructure</code> object.
+   * Creates the Prolog structure using the functor and
+   * argument list received as parameters.
    *
    * @param name  Functor name.
-   * @param arg   Array of prolog arguments.
+   * @param arg   Array of Prolog arguments.
    *
    */
   public PLStructure(String name, PLTerm arg[]) {
@@ -50,10 +54,10 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * String representation of a prolog structure.
+   * String representation of a Prolog structure.
    *
-   * @return a java string that represents the contents of this
-   *         prolog structure.
+   * @return a Java string that represents the contents of this
+   *         Prolog structure.
    */
   public String toString() {
 
@@ -66,10 +70,10 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * Returns the functor of this prolog structure.
+   * Returns the functor name of this Prolog structure.
    *
    * @return the string that contains the functor of this
-   *         prolog structure.
+   *         Prolog structure.
    */
   public String getFunctor() {
 
@@ -78,7 +82,7 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * Returns the arity of this prolog structure.
+   * Returns the arity of this Prolog structure.
    *
    * @return the number of elements of this structure.
    */
@@ -89,10 +93,10 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * Returns an array of prolog terms containing the arguments
+   * Returns an array of Prolog terms containing the arguments
    * of this structure.
    *
-   * @return a java array of <code>PLTerm</code> objects that
+   * @return a Java array of <code>PLTerm</code> objects that
    *         contains the arguments of this structure.
    */
   public PLTerm[] getArgs() {
@@ -107,7 +111,7 @@ public class PLStructure extends PLTerm {
    *
    * @param argNumber Position of the argument to be returned.
    *
-   * @return the prolog term included in the position <code>argNumber</code>
+   * @return the Prolog term included in the position <code>argNumber</code>
    *         of the argument list.
    */
   public PLTerm getArg(int argNumber) {
@@ -120,17 +124,17 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * java representation of a structure. If this structure
-   * refers to a java object in the object table of the
-   * interpreter received as argument, then this java object
+   * Java representation of a structure. If this structure
+   * refers to a Java object in the object table of the
+   * interpreter received as argument, then this Java object
    * is returned. Otherwise, this <code>PLStructure</code>
    * object is returned itself.
    *
    * @param i <code>PLInterpreter</code> object used to
-   *          build the java representation.
+   *          build the Java representation.
    *
-   * @return a java object with the java representation
-   *         of this prolog structure.
+   * @return a Java object with the Java representation
+   *         of this Prolog structure.
    */
   public Object javaRepr(PLInterpreter i) {
 
@@ -145,14 +149,14 @@ public class PLStructure extends PLTerm {
   }
 
 //   /**
-//    * Java type test on prolog objects. Returns true if the
-//    * related prolog term can be evaluated as a java-type
-//    * prolog declaration, that is, a structure with one argument
-//    * and specific functor used to inform to java about the type
-//    * of the argument received from prolog.
+//    * Java type test on Prolog objects. Returns true if the
+//    * related Prolog term can be evaluated as a Java-type
+//    * Prolog declaration, that is, a structure with one argument
+//    * and specific functor used to inform to Java about the type
+//    * of the argument received from Prolog.
 //    *
 //    * @return <code>true</code> if the term represented by this
-//    *         prolog structure can be evaluated as a java-type
+//    *         Prolog structure can be evaluated as a Java-type
 //    *         specification;
 //    *         <code>false</code> otherwise.
 //    */
@@ -174,13 +178,13 @@ public class PLStructure extends PLTerm {
 //   }
 
 //   /**
-//    * Given a java-type prolog specification, returns the java
+//    * Given a Java-type Prolog specification, returns the Java
 //    * object that represents it.
 //    *
-//    * @return An <code>Object</code> instance with the java 
-//    *         representation of the java-type specification;
+//    * @return An <code>Object</code> instance with the Java 
+//    *         representation of the Java-type specification;
 //    *         <code>null</code> if there is no possible 
-//    *         java representation (when isJavaType returns 
+//    *         Java representation (when isJavaType returns 
 //    *         <code>false</code>).
 //    */
 //   private Object getJavaObject() {
@@ -216,23 +220,23 @@ public class PLStructure extends PLTerm {
 //   }
 
   /**
-   * Execution test on prolog objects. Returns true if the
-   * related prolog term can be evaluated.
+   * Execution test on Prolog objects. Returns true if the
+   * related Prolog term can be evaluated.
    *
-   * @return Always <code>true</code> (every prolog structure
-   *         can be used to represent a prolog goal).
+   * @return Always <code>true</code> (every Prolog structure
+   *         can be used to represent a Prolog goal).
    */
   public boolean isRunnable() {
   	return true;
   }
 
   /** 
-   * comparison between prolog terms. 
+   * comparison between Prolog terms. 
    *
    * @param t Prolog term to be compared to.
    *
    * @return <code>true</code> if this structure is equal
-   *         to the prolog term received as argument;
+   *         to the Prolog term received as argument;
    *         <code>false</code> otherwise.
    */
   public boolean equals(PLTerm t) {
@@ -248,12 +252,12 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * Makes a full copy of this <code>PLStructure</code> prolog structure
+   * Makes a full copy of this <code>PLStructure</code> Prolog structure
    * object. Recursively clones the arguments of this term.
    *
    * @return a <code>PLTerm</code> object that contains a full copy 
-   *         of this prolog structure; that is, no argument is shared
-   *         between this object and the prolog term returned.
+   *         of this Prolog structure; that is, no argument is shared
+   *         between this object and the Prolog term returned.
    *
    */
   public PLTerm copy() {
@@ -268,7 +272,7 @@ public class PLStructure extends PLTerm {
   }
     
   /**
-   * Term unification. Unifies this prolog structure with the term
+   * Term unification. Unifies this Prolog structure with the term
    * received as argument. This method overrides the one 
    * inherited from PLTerm.
    * 
@@ -333,16 +337,16 @@ public class PLStructure extends PLTerm {
   }
 
   /**
-   * Goal launching. Evaluates this structure as a goal and prints
-   * it to the eventStream to be launched by prolog. Before launching, 
+   * Goal launching. Evaluates this structure as a goal and sends
+   * it to the eventStream to be launched by Prolog. Before launching, 
    * calculates the values of arguments with the interpreter given, if they
-   * must be constructed by java.
+   * must be constructed by Java.
    *
    * @param interpreter <code>PLInterpreter</code> object used to interpret
    *                    the arguments of this structure before launching
-   *                    to the prolog process.
+   *                    to the Prolog process.
    * @param pl          <code>PLConnection</code> object that represents
-   *                    the connection to the prolog process.
+   *                    the connection to the Prolog process.
    **/
   public void launchGoal(PLInterpreter interpreter,
                          PLConnection pl) {
@@ -361,10 +365,10 @@ public class PLStructure extends PLTerm {
 
   /**
    * Goal launching. Evaluates this structure as a goal and prints
-   * it to the eventStream to be launched by prolog. Before launching, 
+   * it to the eventStream to be launched by Prolog.
    *
    * @param pl          <code>PLConnection</code> object that represents
-   *                    the connection to the prolog process.
+   *                    the connection to the Prolog process.
    */
   public void launchGoal(PLConnection pl) {
 

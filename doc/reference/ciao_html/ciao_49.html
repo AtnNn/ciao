@@ -1,41 +1,41 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - List processing</TITLE>
+<TITLE>The Ciao Prolog System               - Quintus-like internal database</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC180" HREF="ciao_toc.html#TOC180">List processing</A></H1>
+<H1><A NAME="SEC226" HREF="ciao_toc.html#TOC226">Quintus-like internal database</A></H1>
 <P>
-<A NAME="IDX2097"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<A NAME="IDX2551"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#63 (1999/4/28, 16:11:31 MEST)
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 <P>
-This module provides a set of predicates for list processing.
+ The predicates described in this section were introduced in early implementations of Prolog to provide efficient means of performing operations on large quantities of data. The introduction of indexed dynamic predicates have rendered these predicates obsolete, and the sole purpose of providing them is to support existing code. There is no reason whatsoever to use them in new code. 
+
+
+<P>
+These predicates store arbitrary terms in the database without interfering with the clauses which make up the program. The terms which are stored in this way can subsequently be retrieved via the key on which they were stored. Many terms may be stored on the same key, and they can be individually accessed by pattern matching. Alternatively, access can be achieved via a special identifier which uniquely identifies each recorded term and which is returned when the term is stored. 
 
 
 
 <UL>
-<LI><A HREF="ciao_49.html#SEC181">Usage and interface (lists)</A>
-<LI><A HREF="ciao_49.html#SEC182">Documentation on exports (lists)</A>
+<LI><A HREF="ciao_49.html#SEC227">Usage and interface (old_database)</A>
+<LI><A HREF="ciao_49.html#SEC228">Documentation on exports (old_database)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC181" HREF="ciao_toc.html#TOC181">Usage and interface (<CODE>lists</CODE>)</A></H2>
+<H2><A NAME="SEC227" HREF="ciao_toc.html#TOC227">Usage and interface (<CODE>old_database</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +43,7 @@ This module provides a set of predicates for list processing.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(lists)).</CODE>
+<CODE>:- use_module(library(old_database)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,57 +52,14 @@ This module provides a set of predicates for list processing.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2098"></A>
-<CODE>nonsingle/1</CODE>, 
-<A NAME="IDX2099"></A>
-<CODE>append/3</CODE>, 
-<A NAME="IDX2100"></A>
-<CODE>reverse/2</CODE>, 
-<A NAME="IDX2101"></A>
-<CODE>delete/3</CODE>, 
-<A NAME="IDX2102"></A>
-<CODE>select/3</CODE>, 
-<A NAME="IDX2103"></A>
-<CODE>length/2</CODE>, 
-<A NAME="IDX2104"></A>
-<CODE>nth/3</CODE>, 
-<A NAME="IDX2105"></A>
-<CODE>add_after/4</CODE>, 
-<A NAME="IDX2106"></A>
-<CODE>dlist/3</CODE>, 
-<A NAME="IDX2107"></A>
-<CODE>list_concat/2</CODE>, 
-<A NAME="IDX2108"></A>
-<CODE>list_insert/2</CODE>, 
-<A NAME="IDX2109"></A>
-<CODE>insert_last/3</CODE>, 
-<A NAME="IDX2110"></A>
-<CODE>contains_ro/2</CODE>, 
-<A NAME="IDX2111"></A>
-<CODE>nocontainsx/2</CODE>, 
-<A NAME="IDX2112"></A>
-<CODE>last/2</CODE>, 
-<A NAME="IDX2113"></A>
-<CODE>list_lookup/4</CODE>, 
-<A NAME="IDX2114"></A>
-<CODE>intersection/3</CODE>, 
-<A NAME="IDX2115"></A>
-<CODE>union/3</CODE>, 
-<A NAME="IDX2116"></A>
-<CODE>difference/3</CODE>, 
-<A NAME="IDX2117"></A>
-<CODE>equal_lists/2</CODE>, 
-<A NAME="IDX2118"></A>
-<CODE>list_to_list_of_lists/2</CODE>, 
-<A NAME="IDX2119"></A>
-<CODE>powerset/2</CODE>.
-
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX2120"></A>
-<CODE>list1/2</CODE>, 
-<A NAME="IDX2121"></A>
-<CODE>sublist/2</CODE>.
+<A NAME="IDX2552"></A>
+<CODE>recorda/3</CODE>, 
+<A NAME="IDX2553"></A>
+<CODE>recordz/3</CODE>, 
+<A NAME="IDX2554"></A>
+<CODE>recorded/3</CODE>, 
+<A NAME="IDX2555"></A>
+<CODE>current_key/2</CODE>.
 
 </UL>
 
@@ -112,655 +69,80 @@ This module provides a set of predicates for list processing.
 
 
 
-<H2><A NAME="SEC182" HREF="ciao_toc.html#TOC182">Documentation on exports (<CODE>lists</CODE>)</A></H2>
+<H2><A NAME="SEC228" HREF="ciao_toc.html#TOC228">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
 <P>
-<A NAME="IDX2122"></A>
-<A NAME="IDX2123"></A>
+<A NAME="IDX2556"></A>
+<A NAME="IDX2557"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>nonsingle/1:</B>
-<DD><A NAME="IDX2124"></A>
+<DT><span class="define">PREDICATE:</span> <B>recorda/3:</B>
+<DD><A NAME="IDX2558"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>nonsingle(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is not a singleton.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2125"></A>
-<A NAME="IDX2126"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>append/3:</B>
-<DD><A NAME="IDX2127"></A>
+<CODE>recorda(+Key,?(Term),-(Ref))</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>append(Xs,Ys,Zs)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Zs</CODE> is <CODE>Ys</CODE> appended to <CODE>Xs</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2128"></A>
-<A NAME="IDX2129"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>reverse/2:</B>
-<DD><A NAME="IDX2130"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>reverse(Xs,Ys)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Reverses the order of elements in <CODE>Xs</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Xs</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Ys</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Xs</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Ys</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2131"></A>
-<A NAME="IDX2132"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>reverse/3:</B>
-<DD><A NAME="IDX2133"></A>
-
-
-<P>
-No further documentation available for this predicate.
+The term <CODE>Term</CODE> is recorded in the internal database as the first item for the key <CODE>Key</CODE>, where <CODE>Ref</CODE> is its implementation-defined identifier. The key must be given, and only its principal functor is significant. Any uninstantiated variables in the <CODE>Term</CODE> will be replaced by new private variables, along with copies of any subgoals blocked on these variables.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2134"></A>
-<A NAME="IDX2135"></A>
+<A NAME="IDX2559"></A>
+<A NAME="IDX2560"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>delete/3:</B>
-<DD><A NAME="IDX2136"></A>
+<DT><span class="define">PREDICATE:</span> <B>recordz/3:</B>
+<DD><A NAME="IDX2561"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>delete(L1,E,L2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>L2</CODE> is <CODE>L1</CODE> without the ocurrences of <CODE>E</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2137"></A>
-<A NAME="IDX2138"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>select/3:</B>
-<DD><A NAME="IDX2139"></A>
+<CODE>recordz(+Key,?(Term),-(Ref))</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>select(X,Xs,Ys)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Xs</CODE> and <CODE>Ys</CODE> have the same elements except for one occurrence of <CODE>X</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2140"></A>
-<A NAME="IDX2141"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>length/2:</B>
-<DD><A NAME="IDX2142"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>length(L,N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Computes the length of <CODE>L</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>L</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>N</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>L</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>N</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>length(L,N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Outputs <CODE>L</CODE> of length <CODE>N</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>L</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>N</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>L</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>N</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> <CODE>length(L,N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Checks that <CODE>L</CODE> is of length <CODE>N</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>L</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>N</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>L</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>N</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2143"></A>
-<A NAME="IDX2144"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>nth/3:</B>
-<DD><A NAME="IDX2145"></A>
-
-
-<P>
-<CODE>nth(N,List,Elem)</CODE>
-
-
-<P>
-<CODE>N</CODE> is the position in <CODE>List</CODE> of <CODE>Elem</CODE>. <CODE>N</CODE> counts from one.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>nth(+int,?(list),?(term))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Elem</CODE> and the <CODE>N</CODE>th element of <CODE>List</CODE>.
-
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>nth(-(int),?(list),?(term))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Finds the positions where <CODE>Elem</CODE> is in <CODE>List</CODE>. Positions are found in ascending order.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2146"></A>
-<A NAME="IDX2147"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>add_after/4:</B>
-<DD><A NAME="IDX2148"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>add_after(+L0,+E0,+E,-(L))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Adds element <CODE>E</CODE> after element <CODE>E0</CODE> (or at end) to list <CODE>L0</CODE> returning in <CODE>L</CODE> the new list (uses term comparison).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2149"></A>
-<A NAME="IDX2150"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>add_before/4:</B>
-<DD><A NAME="IDX2151"></A>
-
-
-<P>
-No further documentation available for this predicate.
+Like <CODE>recorda/3</CODE>, except that the new term becomes the <EM>last</EM> item for the key <CODE>Key</CODE>.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2152"></A>
-<A NAME="IDX2153"></A>
+<A NAME="IDX2562"></A>
+<A NAME="IDX2563"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>list1/2:</B>
-<DD><A NAME="IDX2154"></A>
+<DT><span class="define">PREDICATE:</span> <B>recorded/3:</B>
+<DD><A NAME="IDX2564"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>list1(?,pred(1))</CODE>.
+<CODE>recorded(?(Key),?(Term),?(Ref))</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>list1(X,Y)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a list of <CODE>Y</CODE>s of at least one element.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2155"></A>
-<A NAME="IDX2156"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dlist/3:</B>
-<DD><A NAME="IDX2157"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dlist(List,DList,Tail)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> is the result of removing <CODE>Tail</CODE> from the end of <CODE>DList</CODE> (makes a difference list from a list).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2158"></A>
-<A NAME="IDX2159"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>list_concat/2:</B>
-<DD><A NAME="IDX2160"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>list_concat(LL,L)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>L</CODE> is the concatenation of all the lists in <CODE>LL</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>LL</CODE> is a list of <CODE>list</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>L</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2161"></A>
-<A NAME="IDX2162"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>list_insert/2:</B>
-<DD><A NAME="IDX2163"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>list_insert(-(List),+Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Adds <CODE>Term</CODE> to the end of <CODE>List</CODE> if there is no element in <CODE>List</CODE> identical to <CODE>Term</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2164"></A>
-<A NAME="IDX2165"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>insert_last/3:</B>
-<DD><A NAME="IDX2166"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>insert_last(+L0,+E,-(L))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Adds element <CODE>E</CODE> at end of list <CODE>L0</CODE> returning <CODE>L</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2167"></A>
-<A NAME="IDX2168"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>contains_ro/2:</B>
-<DD><A NAME="IDX2169"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Impure membership (does not instantiate a variable in its first argument.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2170"></A>
-<A NAME="IDX2171"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>contains1/2:</B>
-<DD><A NAME="IDX2172"></A>
-
-
-<P>
-No further documentation available for this predicate.
+The internal database is searched for terms recorded under the key <CODE>Key</CODE>. These terms are successively unified with <CODE>Term</CODE> in the order they occur in the database. At the same time, <CODE>Ref</CODE> is unified with the implementation-defined identifier uniquely identifying the recorded item. If the key is instantiated to a compound term, only its principal functor is significant. If the key is uninstantiated, all terms in the database are successively unified with <CODE>Term</CODE> in the order they occur.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2173"></A>
-<A NAME="IDX2174"></A>
+<A NAME="IDX2565"></A>
+<A NAME="IDX2566"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>nocontainsx/2:</B>
-<DD><A NAME="IDX2175"></A>
+<DT><span class="define">PREDICATE:</span> <B>current_key/2:</B>
+<DD><A NAME="IDX2567"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>nocontainsx(L,X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is not identical to any element of <CODE>L</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2176"></A>
-<A NAME="IDX2177"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>last/2:</B>
-<DD><A NAME="IDX2178"></A>
+<CODE>current_key(?(KeyName),?(KeyTerm))</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>last(L,X)</CODE>
+<CODE>KeyTerm</CODE> is the most general form of the key for a currently recorded term, and <CODE>KeyName</CODE> is the name of that key. This predicate can be used to enumerate in undefined order all keys for currently recorded terms through backtracking.
 
-<UL>
-<LI><EM>Description:</EM> Adds element <CODE>X</CODE> to incomplete (i.e., ended in a variable) list <CODE>L</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2179"></A>
-<A NAME="IDX2180"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>list_lookup/3:</B>
-<DD><A NAME="IDX2181"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2182"></A>
-<A NAME="IDX2183"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>list_lookup/4:</B>
-<DD><A NAME="IDX2184"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>list_lookup(List,Functor,Key,Value)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Look up <CODE>Functor</CODE>(<CODE>Key</CODE>,<CODE>Value</CODE>) pair in variable ended key-value pair list <CODE>L</CODE> or else add it at the end.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2185"></A>
-<A NAME="IDX2186"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>intset_insert/3:</B>
-<DD><A NAME="IDX2187"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2188"></A>
-<A NAME="IDX2189"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>intset_delete/3:</B>
-<DD><A NAME="IDX2190"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2191"></A>
-<A NAME="IDX2192"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>intset_in/2:</B>
-<DD><A NAME="IDX2193"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2194"></A>
-<A NAME="IDX2195"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>intset_sequence/3:</B>
-<DD><A NAME="IDX2196"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2197"></A>
-<A NAME="IDX2198"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>intersection/3:</B>
-<DD><A NAME="IDX2199"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>intersection(+List1,+List2,-(List))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are both in <CODE>List1</CODE> and <CODE>List2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2200"></A>
-<A NAME="IDX2201"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>union/3:</B>
-<DD><A NAME="IDX2202"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>union(+List1,+List2,-(List))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> followed by the elements which are in <CODE>List2</CODE> but not in <CODE>List1</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2203"></A>
-<A NAME="IDX2204"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>difference/3:</B>
-<DD><A NAME="IDX2205"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>difference(+List1,+List2,-(List))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List</CODE> has the elements which are in <CODE>List1</CODE> but not in <CODE>List2</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2206"></A>
-<A NAME="IDX2207"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>sublist/2:</B>
-<DD><A NAME="IDX2208"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sublist(List1,List2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List2</CODE> contains all the elements of <CODE>List1</CODE>.
-
-<LI><EM>If the following properties should hold at call time:</EM>
-
-<CODE>List2</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2209"></A>
-<A NAME="IDX2210"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>equal_lists/2:</B>
-<DD><A NAME="IDX2211"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>equal_lists(+List1,+List2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>List1</CODE> has all the elements of <CODE>List2</CODE>, and vice versa.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2212"></A>
-<A NAME="IDX2213"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>list_to_list_of_lists/2:</B>
-<DD><A NAME="IDX2214"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>list_to_list_of_lists(+List,-(LList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>LList</CODE> is the list of one element lists with elements of <CODE>List</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2215"></A>
-<A NAME="IDX2216"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>powerset/2:</B>
-<DD><A NAME="IDX2217"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>powerset(+List,-(LList))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>LList</CODE> is the powerset of <CODE>List</CODE>, i.e., the list of all lists which have elements of <CODE>List</CODE>. If <CODE>List</CODE> is ordered, <CODE>LList</CODE> and all its elements are ordered.
-
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

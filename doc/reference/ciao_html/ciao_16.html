@@ -1,66 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Basic builtin directives</TITLE>
+<TITLE>The Ciao Prolog System               - Control constructs/predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, <A HREF="ciao_17.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, <A HREF="ciao_17.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC80" HREF="ciao_toc.html#TOC80">Basic builtin directives</A></H1>
+<H1><A NAME="SEC125" HREF="ciao_toc.html#TOC125">Control constructs/predicates</A></H1>
 <P>
-<A NAME="IDX808"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX1164"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#11 (1999/3/18, 21:28:24 MET)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-This chapter documents the basic 
-<A NAME="IDX809"></A>
-builtin directives in CIAO, additional to the documented in other chapters. These 
-<A NAME="IDX810"></A>
-directives are natively interpreted by the CIAO compiler (
-<A NAME="IDX811"></A>
-<CODE>ciaoc</CODE>). 
+<STRONG>Version of last change:</STRONG> 1.5#66 (2000/3/16, 17:3:30 CET)
 
 
 <P>
-Unlike in other Prolog systems, directives in CIAO are not goals to be <EM>executed</EM> by the compiler or top level. Instead, they are <EM>read</EM> and acted upon by these programs. The advantage of this is that the effect of the directives is consistent for executables, code loaded in the top level, code analyzed by the preprocessor, etc. 
-
-
-<P>
-As a result, by default only the builtin directives or declarations defined in this manual can be used in user programs. However, it is possible to define new declarations 
-<A NAME="IDX812"></A>
-<A NAME="IDX813"></A>
-by using the 
-<A NAME="IDX814"></A>
-<CODE>new_declaration/1</CODE> and 
-<A NAME="IDX815"></A>
-<CODE>new_declaration/2</CODE> directives documented in section <A HREF="ciao_29.html#SEC123">Extending the syntax</A>.
+This module contains the set of basic control predicates, except the predicates dealing with exceptions, which are in section <A HREF="ciao_26.html#SEC157">Exception handling</A>.
 
 
 
 <UL>
-<LI><A HREF="ciao_16.html#SEC81">Usage and interface (builtin_directives)</A>
-<LI><A HREF="ciao_16.html#SEC82">Documentation on internals (builtin_directives)</A>
+<LI><A HREF="ciao_16.html#SEC126">Usage and interface (basiccontrol)</A>
+<LI><A HREF="ciao_16.html#SEC127">Documentation on exports (basiccontrol)</A>
+<LI><A HREF="ciao_16.html#SEC128">Documentation on internals (basiccontrol)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC81" HREF="ciao_toc.html#TOC81">Usage and interface (<CODE>builtin_directives</CODE>)</A></H2>
+<H2><A NAME="SEC126" HREF="ciao_toc.html#TOC126">Usage and interface (<CODE>basiccontrol</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -68,154 +48,387 @@ by using the
 
 <LI><STRONG>Library usage:</STRONG>
 
-These directives are builtin in CIAO, so nothing special has to be done to use them.
+These predicates/constructs are builtin in Ciao, so nothing special has to be done to use them. In fact, as they are hardwired in some parts of the system, most of them cannot be redefined.
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX1165"></A>
+<CODE>,/2</CODE>, 
+<A NAME="IDX1166"></A>
+<CODE>;/2</CODE>, 
+<A NAME="IDX1167"></A>
+<CODE>-&#62;/2</CODE>, 
+<A NAME="IDX1168"></A>
+<CODE>!/0</CODE>, 
+<A NAME="IDX1169"></A>
+<CODE>\+/1</CODE>, 
+<A NAME="IDX1170"></A>
+<CODE>if/3</CODE>, 
+<A NAME="IDX1171"></A>
+<CODE>true/0</CODE>, 
+<A NAME="IDX1172"></A>
+<CODE>fail/0</CODE>, 
+<A NAME="IDX1173"></A>
+<CODE>repeat/0</CODE>, 
+<A NAME="IDX1174"></A>
+<CODE>call/1</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC82" HREF="ciao_toc.html#TOC82">Documentation on internals (<CODE>builtin_directives</CODE>)</A></H2>
+<H2><A NAME="SEC127" HREF="ciao_toc.html#TOC127">Documentation on exports (<CODE>basiccontrol</CODE>)</A></H2>
 <P>
-<A NAME="IDX816"></A>
-<A NAME="IDX817"></A>
+<A NAME="IDX1175"></A>
+<A NAME="IDX1176"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>multifile/1:</B>
-<DD><A NAME="IDX818"></A>
+<DT><span class="define">PREDICATE:</span> <B>,/2:</B>
+<DD><A NAME="IDX1177"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>multifile Predicates</CODE>.
+<CODE>P , Q</CODE>
+
+
+<P>
+Conjunction (<CODE>P</CODE> <EM>and</EM> <CODE>Q</CODE>).
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> Specifies that each predicate in <CODE>Predicates</CODE> may have clauses in more than one file. Each file that contains clauses for a
-
-<A NAME="IDX819"></A>
-multifile predicate must contain a directive multifile for the predicate. The directive should precede all clauses of the affected predicates. This directive is defined as a prefix operator in the compiler. 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Predicates</CODE> is a sequence or list of <CODE>predname</CODE>s.
- (<CODE>basic_props:sequence_or_list/2</CODE>)
-</UL>
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 
-</DL>
-
-<P>
-<A NAME="IDX820"></A>
-<A NAME="IDX821"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>discontiguous/1:</B>
-<DD><A NAME="IDX822"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>discontiguous Predicates</CODE>.
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Specifies that each predicate in <CODE>Predicates</CODE> may be defined in this file by clauses which are not in consecutive order. Otherwise, a warning is signaled by the compiler when clauses of a predicate are not consecutive (this behavior is controllable by the
-
-<A NAME="IDX823"></A>
-prolog flag <EM>discontiguous_warnings</EM>). The directive should precede all clauses of the affected predicates. This directive is defined as a prefix operator in the compiler. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Predicates</CODE> is a sequence or list of <CODE>predname</CODE>s.
- (<CODE>basic_props:sequence_or_list/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX824"></A>
-<A NAME="IDX825"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>impl_defined/1:</B>
-<DD><A NAME="IDX826"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>impl_defined(Predicates)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Specifies that each predicate in <CODE>Predicates</CODE> is <EM>impl</EM>icitly <EM>defined</EM> in the current prolog source, either because it is a builtin predicate or because it is defined in a C file. Otherwise, a warning is signaled by the compiler when an exported predicate is not defined in the module or imported from other module.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Predicates</CODE> is a sequence or list of <CODE>predname</CODE>s.
- (<CODE>basic_props:sequence_or_list/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX827"></A>
-<A NAME="IDX828"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>redefining/1:</B>
-<DD><A NAME="IDX829"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>redefining(Predicate)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Specifies that this module redefines predicate <CODE>Predicate</CODE>, also imported from other module, or imports it from more than one module. This prevents the compiler giving warnings about redefinitions of that predicate. <CODE>Predicate</CODE> can be partially (or totally) uninstantiated, to allow disabling those warnings for several (or all) predicates at once.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Predicate</CODE> is <EM>compatible</EM> with <CODE>predname</CODE>
- (<CODE>basic_props:compat/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX830"></A>
-<A NAME="IDX831"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>initialization/1:</B>
-<DD><A NAME="IDX832"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>initialization(Goal)</CODE>.
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Goal</CODE> will be executed at the start of the execution of any program containing the current code.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX833"></A>
-<A NAME="IDX834"></A>
+<A NAME="IDX1178"></A>
+<A NAME="IDX1179"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>on_abort/1:</B>
-<DD><A NAME="IDX835"></A>
+<DT><span class="define">PREDICATE:</span> <B>;/2:</B>
+<DD><A NAME="IDX1180"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>on_abort(Goal)</CODE>.
+<CODE>P ; Q</CODE>
+
+
+<P>
+Disjunction (<CODE>P</CODE> <EM>or</EM> <CODE>Q</CODE>).
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Goal</CODE> will be executed after an abort of the execution of any program containing the current code.
-
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
  (<CODE>basic_props:callable/1</CODE>)
 </UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1181"></A>
+<A NAME="IDX1182"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>-&#62;/2:</B>
+<DD><A NAME="IDX1183"></A>
+
+
+<P>
+<CODE>P -&#62; Q</CODE>
+
+
+<P>
+If <CODE>P</CODE> then <CODE>Q</CODE> else fail, using first solution of <CODE>P</CODE> only. Also, <CODE>(</CODE><CODE>P</CODE> <CODE>-&#62;</CODE> <CODE>Q</CODE> <CODE>;</CODE> <CODE>R</CODE><CODE>)</CODE>, if <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, using first solution of <CODE>P</CODE> only. No cuts are allowed in <CODE>P</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1184"></A>
+<A NAME="IDX1185"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>!/0:</B>
+<DD><A NAME="IDX1186"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Commit to any choices taken in the current predicate.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Commit to any choices taken in the current predicate.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1187"></A>
+<A NAME="IDX1188"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>\+/1:</B>
+<DD><A NAME="IDX1189"></A>
+
+
+<P>
+<CODE>\+ P</CODE>
+
+
+<P>
+Goal <CODE>P</CODE> is not provable (negation by failure). Fails if <CODE>P</CODE> has a solution, and succeeds otherwise. No cuts are allowed in <CODE>P</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1190"></A>
+<A NAME="IDX1191"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>if/3:</B>
+<DD><A NAME="IDX1192"></A>
+
+
+<P>
+<CODE>if(P,Q,R)</CODE>
+
+
+<P>
+If <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, exploring all solutions of <CODE>P</CODE>. No cuts are allowed in <CODE>P</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>R</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1193"></A>
+<A NAME="IDX1194"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>true/0:</B>
+<DD><A NAME="IDX1195"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Succeed (noop).
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Succeed (noop).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1196"></A>
+<A NAME="IDX1197"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fail/0:</B>
+<DD><A NAME="IDX1198"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Fail, backtrack immediately.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Fail, backtrack immediately.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1199"></A>
+<A NAME="IDX1200"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>repeat/0:</B>
+<DD><A NAME="IDX1201"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Generates an infinite sequence of backtracking choices.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Generates an infinite sequence of backtracking choices.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1202"></A>
+<A NAME="IDX1203"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call/1:</B>
+<DD><A NAME="IDX1204"></A>
+
+
+<P>
+<CODE>call(G)</CODE>
+
+
+<P>
+Executes goal <CODE>G</CODE>, restricting the scope of the cuts to the execution of <CODE>G</CODE>. Writing a variable <CODE>G</CODE> in a goal position is equivalent.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>call(goal)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>G</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC128" HREF="ciao_toc.html#TOC128">Documentation on internals (<CODE>basiccontrol</CODE>)</A></H2>
+<P>
+<A NAME="IDX1205"></A>
+<A NAME="IDX1206"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>|/2:</B>
+<DD><A NAME="IDX1207"></A>
+
+
+<P>
+An alias for disjunction (when appearing outside a list). The alias is performed when terms are read in.
+
+
+</DL>
+
+<P>
+<A NAME="IDX1208"></A>
+<A NAME="IDX1209"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call/2:</B>
+<DD><A NAME="IDX1210"></A>
+
+
+<P>
+<CODE>call(Pred,Arg1)</CODE>
+
+
+<P>
+There exists a set of builtin predicates of the form 
+<A NAME="IDX1211"></A>
+<CODE>call/N</CODE> such that execute predicate <CODE>Pred</CODE> given arguments <CODE>Arg1</CODE> ... <CODE>ArgX</CODE>, if <CODE>Pred</CODE> has already arguments the new ones are added to the start. This predicate can be written using the special Ciao syntax <CODE>Pred(Arg1,...,ArgX)</CODE>.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, <A HREF="ciao_17.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, <A HREF="ciao_17.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

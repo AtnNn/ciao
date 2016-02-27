@@ -9,7 +9,9 @@
                   make_exec/2,
                   include/1, use_package/1,
                   consult/1, compile/1, '.'/2,
-                  debug_module/1, nodebug_module/1
+                  debug_module/1, nodebug_module/1,
+                  debug_module_source/1,
+		  display_debugged/0
 		 ],
                  [dcg]).
 
@@ -19,7 +21,8 @@
 :- use_module(library(compiler),
         [use_module/3, ensure_loaded/1,
          set_debug_mode/1, set_nodebug_mode/1, mode_of_module/2,
-         set_debug_module/1, set_nodebug_module/1]).
+         set_debug_module/1, set_nodebug_module/1,
+         set_debug_module_source/1]).
 :- use_module(library(system), [file_exists/1]).
 :- use_module(library(errhandle)).
 :- use_module(library(ttyout)).
@@ -30,13 +33,17 @@
 :- use_module(library(attrdump), [copy_extract_attr/3]).
 :- use_module(library(debugger)).
 :- use_module(library('compiler/translation')).
-:- use_module(library('compiler/c_itf'), [expand_list/2]).
+:- use_module(library('compiler/c_itf'), [expand_list/2,interpret_srcdbg/1]).
 :- use_module(engine(internals),
         ['$bootversion'/0, '$nodebug_call'/1, '$setarg'/4, '$open'/3,
          '$abolish'/1,'$empty_gcdef_bin'/0]).
+:- use_module(library(lists),[difference/3]).
+:- use_module(library(format),[format/3]).
+:- use_module(library(aggregates), [findall/3]).
 
 :- redefining(make_exec/2).
 :- redefining(debug_module/1).
+:- redefining(debug_module_source/1).
 :- redefining(nodebug_module/1).
 :- redefining(ensure_loaded/1).
 
@@ -45,7 +52,6 @@
 :- data shell_module/1. % Module where queries are called
 
 shell_start :-
-        initialize_debugger,
         '$abolish'('user:main'),
 	current_prolog_flag(argv, Args),
 	interpret_args(Args),
@@ -74,7 +80,6 @@ include_if_exists(File) :-
         ).
 
 shell_abort :-
-        initialize_debugger,
 	message('{ Execution aborted }'),
 	shell_body,
 	( '$nodebug_call'(exit_hook), fail ; true).
@@ -124,9 +129,9 @@ debugger_info :-
         ; ttydisplay('{'),ttydisplay(T),ttydisplay('}\n')
         ).
 
-get_query(Query, Variables) :-
-        read_top_level(user, RawQuery, Variables),
-        shell_expand(RawQuery, Query),
+get_query(Query, Dict) :-
+        read_term(user, RawQuery, [dictionary(Dict),variable_names(VarNames)]),
+        shell_expand(RawQuery, VarNames, Query),
         Query\==end_of_file,
         Query\== up.
 
@@ -303,16 +308,16 @@ version(A) :-
 	assertz_fact('$current version'(A)).
 version(_) :- throw(error(instantiation_error,version/1-1)).
 
-shell_expand(V, Query) :- var(V), !, Query = call(V).
-shell_expand((:- Decl), Query) :-
+shell_expand(V, _, Query) :- var(V), !, Query = call(V).
+shell_expand((:- Decl), VarNames, Query) :-
         current_fact(shell_module(ShMod)),
-        expand_term((:- Decl), ShMod, Query),
+        expand_term((:- Decl), ShMod, VarNames, Query),
         ( Query = true -> true ; true). % unify Query if a var
-shell_expand(RawQuery, Query) :-
+shell_expand(RawQuery, VarNames, Query) :-
         current_fact(shell_module(ShMod)),
-        expand_term(('SHELL':-RawQuery), ShMod, Expansion),
+        expand_term(('SHELL':-RawQuery), ShMod, VarNames, Expansion),
         ( Expansion = ('SHELL':-Query0) ->
-            expand_goal(Query0, ShMod, Query)
+            expand_goal(Query0, ShMod, VarNames, Query)
         ; Query = fail,
           message(error, ['unexpected answer from expansion: ',Expansion])
         ).
@@ -333,27 +338,27 @@ include(File) :-
 include_st(Stream) :-
         current_fact(shell_module(ShMod)),
         repeat,
-	  read_term(Stream, RawData, [lines(L0,L1)]),
-          expand_term(RawData, ShMod, Data0),
+	  read_term(Stream, RawData, [variable_names(VarNames),lines(L0,L1)]),
+          expand_term(RawData, ShMod, VarNames, Data0),
 	  expand_list(Data0, Data1),
         ( Data1 = end_of_file, !
-        ; interpret_data(Data1, L0, L1),
+        ; interpret_data(Data1, VarNames, L0, L1),
           fail).
 
-interpret_data((?- Goal), _, _) :- !,
+interpret_data((?- Goal), _, _, _) :- !,
         call_user(Goal), !.
-interpret_data((:- Decl), L0, L1) :- !,
+interpret_data((:- Decl), _, L0, L1) :- !,
         ( current_fact(new_decl(Decl)) ->
             true
         ; shell_directive(Decl) ->
             call_user(Decl)
         ; bad_shell_directive(Decl, L0, L1)
         ).
-interpret_data((H :- B0), _, _) :- !,
+interpret_data((H :- B0), VarNames, _, _) :- !,
         shell_module(ShMod),
-        expand_goal(B0, ShMod, B),
+        expand_goal(B0, ShMod, VarNames, B),
         call_user(assertz((H :- B))).
-interpret_data(Fact, _, _) :-
+interpret_data(Fact, _, _, _) :-
         call_user(assertz(Fact)).
 
 bad_shell_directive(Decl, L0, L1) :-
@@ -466,11 +471,38 @@ add_goal_trans(P) :-
 debug_module(M):-
         set_debug_module(M),
         debugger:debug_module(M),
-        ( mode_of_module(M, Mode), Mode \== interpreted ->
+        ( mode_of_module(M, Mode), Mode \== interpreted(raw) ->
             message(['{Consider reloading module ',M,'}'])
         ; true
-        ).
+        ),
+	display_debugged.
 
 nodebug_module(M):-
         set_nodebug_module(M),
-        debugger:nodebug_module(M).
+        debugger:nodebug_module(M),
+	display_debugged.
+
+debug_module_source(M):-
+        set_debug_module_source(M),
+        debugger:debug_module_source(M),
+        ( mode_of_module(M, Mode), Mode \== interpreted(srcdbg) ->
+            message(['{Consider reloading module ',M,'}'])
+        ; true
+        ),
+	display_debugged.
+
+display_debugged :-
+        current_debugged(Ms),
+ 	current_source_debugged(Ss),
+	difference(Ms,Ss,M),
+        ( M = [] ->
+          format(user, '{No module is selected for debugging}~n',[])
+        ; format(user, '{Modules selected for debugging: ~w}~n',[M])
+        ),
+        ( Ss = [] ->
+	  format(user, '{No module is selected for source debugging}~n',[])
+	; format(user, '{Modules selected for source debugging: ~w}~n',[Ss])
+	).
+
+current_source_debugged(Ss) :- 
+	findall(S, current_fact(interpret_srcdbg(S)), Ss).

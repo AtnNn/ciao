@@ -37,29 +37,16 @@ extern struct sw_on_key *prolog_predicates;    /* Shared -- never changes */
 extern struct sw_on_key **predicates_location;                  /* Shared */
 
 /* Database locks */
-
-extern LOCK_ST prolog_predicates_st;                           /* Storage */
-extern LOCK    prolog_predicates_l;                      /* Pointer to it */
-
-/* Wait until concurrent is copied */
-extern LOCK_ST launch_goal_st;
-extern LOCK    launch_goal_l;
-
-/* Ensure no two threads try to backtrack at the same time the same goal */
-extern LOCK_ST backtrack_goal_st;
-extern LOCK    backtrack_goal_l;
-
+extern SLOCK    prolog_predicates_l;                      /* Pointer to it */
 
 /* Wait until new worker Id is generated */
-extern LOCK_ST worker_id_pool_st;
-extern LOCK    worker_id_pool_l;
+extern SLOCK    worker_id_pool_l;
+extern SLOCK    atom_id_l;
+extern SLOCK    wam_list_l;
 
-extern LOCK_ST atom_id_st;
-extern LOCK    atom_id_l;
 
 #if defined(DEBUG)
-extern LOCK_ST ops_counter_st;
-extern LOCK    ops_counter_l;
+extern SLOCK    ops_counter_l;
 #endif
 
 
@@ -146,6 +133,11 @@ extern TAGGED functor_Dstream;
 extern TAGGED functor_Dsetarg;
 extern TAGGED functor_large;
 extern TAGGED functor_long;
+
+extern TAGGED functor_active;
+extern TAGGED functor_pending;
+extern TAGGED functor_failed;
+extern TAGGED functor_available;
 
 extern TAGGED current_prompt;
 extern TAGGED current_unknown;

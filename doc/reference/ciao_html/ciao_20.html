@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Comparing terms</TITLE>
+<TITLE>The Ciao Prolog System               - Basic term manipulation</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_19.html">previous</A>, <A HREF="ciao_21.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_19.html">previous</A>, <A HREF="ciao_21.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC92" HREF="ciao_toc.html#TOC92">Comparing terms</A></H1>
+<H1><A NAME="SEC138" HREF="ciao_toc.html#TOC138">Basic term manipulation</A></H1>
 <P>
-<A NAME="IDX1002"></A>
+<A NAME="IDX1379"></A>
 
 
 <P>
@@ -20,53 +20,18 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_19.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
-
-
-<P>
-These built-in predicates are extra-logical. They treat uninstantiated variables as objects with values which may be compared, and they never instantiate those variables. They should <EM>not</EM> be used when what you really want is arithmetic comparison or unification. 
-
-
-<P>
-The predicates make reference to a 
-<A NAME="IDX1003"></A>
-<A NAME="IDX1004"></A>
-<EM>standard total ordering</EM> of terms, which is as follows: 
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 
 <UL>
-
-<LI>Variables, by age (roughly, oldest first -- the order is <EM>not</EM> related to the names of variables).
-
-<LI>Floats, in numeric order (e.g. -1.0 is put before 1.0).
-
-<LI>Integers, in numeric order (e.g. -1 is put before 1).
-
-<LI>Atoms, in alphabetical (i.e. character code) order.
-
-<LI>Compound terms, ordered first by arity, then by the name of the principal functor, then by the arguments in left-to-right order. Recall that lists are equivalent to compound terms with principal functor <CODE>'.'/2</CODE>.
-
-</UL>
-
-<P>
-For example, here is a list of terms in standard order: 
-
-
-
-<PRE>
-[ X, -1.0, -9, 1, bar, foo, [1], X = Y, foo(0,2), bar(1,1,1) ]
-</PRE>
-
-
-<UL>
-<LI><A HREF="ciao_20.html#SEC93">Usage and interface (term_compare)</A>
-<LI><A HREF="ciao_20.html#SEC94">Documentation on exports (term_compare)</A>
+<LI><A HREF="ciao_20.html#SEC139">Usage and interface (term_basic)</A>
+<LI><A HREF="ciao_20.html#SEC140">Documentation on exports (term_basic)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC93" HREF="ciao_toc.html#TOC93">Usage and interface (<CODE>term_compare</CODE>)</A></H2>
+<H2><A NAME="SEC139" HREF="ciao_toc.html#TOC139">Usage and interface (<CODE>term_basic</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -74,7 +39,7 @@ For example, here is a list of terms in standard order:
 
 <LI><STRONG>Library usage:</STRONG>
 
-These predicates are builtin in CIAO, so nothing special has to be done to use them.
+These predicates are builtin in Ciao, so nothing special has to be done to use them.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -83,23 +48,21 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1005"></A>
-<CODE>compare/3</CODE>.
+<A NAME="IDX1380"></A>
+<CODE>arg/3</CODE>, 
+<A NAME="IDX1381"></A>
+<CODE>functor/3</CODE>, 
+<A NAME="IDX1382"></A>
+<CODE>=../2</CODE>, 
+<A NAME="IDX1383"></A>
+<CODE>copy_term/2</CODE>, 
+<A NAME="IDX1384"></A>
+<CODE>C/3</CODE>.
 
 <LI><EM>Properties:</EM>
 
-<A NAME="IDX1006"></A>
-<CODE>==/2</CODE>, 
-<A NAME="IDX1007"></A>
-<CODE>\==/2</CODE>, 
-<A NAME="IDX1008"></A>
-<CODE>@&#60;/2</CODE>, 
-<A NAME="IDX1009"></A>
-<CODE>@=&#60;/2</CODE>, 
-<A NAME="IDX1010"></A>
-<CODE>@&#62;/2</CODE>, 
-<A NAME="IDX1011"></A>
-<CODE>@&#62;=/2</CODE>.
+<A NAME="IDX1385"></A>
+<CODE>=/2</CODE>.
 
 </UL>
 
@@ -109,325 +72,214 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC94" HREF="ciao_toc.html#TOC94">Documentation on exports (<CODE>term_compare</CODE>)</A></H2>
+<H2><A NAME="SEC140" HREF="ciao_toc.html#TOC140">Documentation on exports (<CODE>term_basic</CODE>)</A></H2>
 <P>
-<A NAME="IDX1012"></A>
-<A NAME="IDX1013"></A>
+<A NAME="IDX1386"></A>
+<A NAME="IDX1387"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>==/2:</B>
-<DD><A NAME="IDX1014"></A>
+<DT><span class="define">PROPERTY:</span> <B>=/2:</B>
+<DD><A NAME="IDX1388"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>Term1 == Term2</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>X = Y</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are strictly identical.
+<LI><EM>Description:</EM> Unify <CODE>X</CODE> and <CODE>Y</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>Term1 == Term2</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>X = Y</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are strictly identical.
+<LI><EM>Description:</EM> Unify <CODE>X</CODE> and <CODE>Y</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1015"></A>
-<A NAME="IDX1016"></A>
+<A NAME="IDX1389"></A>
+<A NAME="IDX1390"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>\==/2:</B>
-<DD><A NAME="IDX1017"></A>
+<DT><span class="define">PREDICATE:</span> <B>arg/3:</B>
+<DD><A NAME="IDX1391"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>Term1 \== Term2</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>arg(+ArgNo,+Term,?(Arg))</CODE>
+<KBD> * ISO * </KBD>
 
 <UL>
-<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are not strictly identical.
+<LI><EM>Description:</EM> Argument <CODE>ArgNo</CODE> of the term <CODE>Term</CODE> is <CODE>Arg</CODE>.
 
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>Term1 \== Term2</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are not strictly identical.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1018"></A>
-<A NAME="IDX1019"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>@&#60;/2:</B>
-<DD><A NAME="IDX1020"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>@&#60;(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@&#60;(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1021"></A>
-<A NAME="IDX1022"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>@=&#60;/2:</B>
-<DD><A NAME="IDX1023"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>@=&#60;(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes or is identical to the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@=&#60;(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes or is identical to the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1024"></A>
-<A NAME="IDX1025"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>@&#62;/2:</B>
-<DD><A NAME="IDX1026"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>@&#62;(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@&#62;(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1027"></A>
-<A NAME="IDX1028"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>@&#62;=/2:</B>
-<DD><A NAME="IDX1029"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>@&#62;=(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows or is identical to the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>@&#62;=(Term1,Term2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows or is identical to the term <CODE>Term2</CODE> in the standard order.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1030"></A>
-<A NAME="IDX1031"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>compare/3:</B>
-<DD><A NAME="IDX1032"></A>
-
-
-<P>
-<CODE>compare(Op,Term1,Term2)</CODE>
-
-
-<P>
-<CODE>Op</CODE> is the result of comparing the terms <CODE>Term1</CODE> and <CODE>Term2</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>compare(?(atm),@(term),@(term))</CODE>
-
-<UL>
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>?(atm)</CODE> is an element of <CODE>[=,&#62;,&#60;]</CODE>.
- (<CODE>basic_props:member/2</CODE>)
-
-<CODE>@(term)</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-
-<CODE>@(term)</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
-
-<UL>
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Op</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Term1</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>ArgNo</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+</UL>
 
-<CODE>Term2</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>arg(ArgNo,Term,Arg)</CODE>
+<KBD> * ISO * </KBD>
 
-<CODE>Op</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<UL>
+<LI><EM>Description:</EM> Argument <CODE>ArgNo</CODE> of the term <CODE>Term</CODE> is <CODE>Arg</CODE>.
 
-<CODE>Term1</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Term2</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>ArgNo</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
 
-<CODE>Op</CODE> is an element of <CODE>[=,&#62;,&#60;]</CODE>.
- (<CODE>basic_props:member/2</CODE>)
+<CODE>Term</CODE> is currently a term which is not a free variable.
+ (<CODE>term_typing:nonvar/1</CODE>)
 
-<CODE>Term1</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>ArgNo</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+</UL>
 
-<CODE>Term2</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties should hold globally:</EM>
+</DL>
 
-<CODE>Term1</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
+<P>
+<A NAME="IDX1392"></A>
+<A NAME="IDX1393"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>functor/3:</B>
+<DD><A NAME="IDX1394"></A>
 
-<CODE>Term2</CODE> is not further instantiated.
- (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>functor(?(Term),?(Name),?(Arity))</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The principal functor of the term <CODE>Term</CODE> has name <CODE>Name</CODE> and arity <CODE>Arity</CODE>.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>functor(Term,Name,Arity)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The principal functor of the term <CODE>Term</CODE> has name <CODE>Name</CODE> and arity <CODE>Arity</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1395"></A>
+<A NAME="IDX1396"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>=../2:</B>
+<DD><A NAME="IDX1397"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>?(Term) =.. ?(List)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The functor and arguments of the term <CODE>Term</CODE> comprise the list <CODE>List</CODE>.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>Term =.. List</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> The functor and arguments of the term <CODE>Term</CODE> comprise the list <CODE>List</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1398"></A>
+<A NAME="IDX1399"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>copy_term/2:</B>
+<DD><A NAME="IDX1400"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>copy_term(Term,Copy)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Copy</CODE> is a renaming of <CODE>Term</CODE>, such that brand new variables have been substituted for all variables in <CODE>Term</CODE>. If any of the variables of <CODE>Term</CODE> have
+
+<A NAME="IDX1401"></A>
+attributes, the copied variables will have copies of the attributes as well. It behaves as if defined by: 
+
+
+<PRE>
+:- data 'copy of'/1.
+
+copy_term(X, Y) :-
+        asserta_fact('copy of'(X)),
+        retract_fact('copy of'(Y)).
+</PRE>
+
+ 
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>copy_term(Term,Copy)</CODE>
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Copy</CODE> is a renaming of <CODE>Term</CODE>, such that brand new variables have been substituted for all variables in <CODE>Term</CODE>. If any of the variables of <CODE>Term</CODE> have
+
+<A NAME="IDX1402"></A>
+attributes, the copied variables will have copies of the attributes as well. It behaves as if defined by: 
+
+
+<PRE>
+:- data 'copy of'/1.
+
+copy_term(X, Y) :-
+        asserta_fact('copy of'(X)),
+        retract_fact('copy of'(Y)).
+</PRE>
+
+ 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1403"></A>
+<A NAME="IDX1404"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>C/3:</B>
+<DD><A NAME="IDX1405"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>C(?(S1),?(Terminal),?(S2))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S1</CODE> is connected by the terminal <CODE>Terminal</CODE> to <CODE>S2</CODE>. Used in <EM>DCG grammar rules</EM>. Defined as if by the single clause: <CODE>'C'([X|S], X, S).</CODE>
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>C(S1,Terminal,S2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>S1</CODE> is connected by the terminal <CODE>Terminal</CODE> to <CODE>S2</CODE>. Used in <EM>DCG grammar rules</EM>. Defined as if by the single clause: <CODE>'C'([X|S], X, S).</CODE>
+
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_19.html">previous</A>, <A HREF="ciao_21.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_19.html">previous</A>, <A HREF="ciao_21.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

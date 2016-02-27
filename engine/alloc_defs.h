@@ -1,4 +1,4 @@
-
+struct worker *free_wam(void);
 BOOL program_usage(Argdecl);
 BOOL internal_symbol_usage(Argdecl);
 BOOL statistics(Argdecl);
@@ -11,4 +11,4 @@ void create_wam_areas(Argdecl);
 void init_alloc(void);
 extern ENG_INT total_mem_count;
 extern ENG_INT num_of_predicates;
-/*void mem_prog_reset(void);*/
+void release_wam(Argdecl);

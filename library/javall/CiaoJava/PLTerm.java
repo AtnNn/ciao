@@ -4,11 +4,17 @@ import java.util.*;
 import java.io.*;
 
 /**
- * java representation of prolog terms.
- * Abstract class for representing generic prolog
- * terms.
- * The rest of the term representation classes are
+ * Java representation of Prolog terms.
+ * Abstract class for representing generic Prolog
+ * terms. The rest of the term representation classes are
  * childs of this one.
+ *
+ * This class contains data and code
+ * that are common to every term. It includes
+ * also the conversion mechanism between the
+ * Java representation of Prolog terms and
+ * the serialized representation received
+ * from Prolog.
  */
 public abstract class PLTerm extends Object {
 
@@ -23,15 +29,40 @@ public abstract class PLTerm extends Object {
   static final int STRUCTURE = 5;
   static final int VARIABLE  = 6;
   static final int STRING    = 7;
-
-  /*
-   * Other constants.
-   */
+    
+    /*
+     * Other constants.
+     */
   private static final String INTERPRETER_ERROR = "No";
   private static final String INTERPRETER_SUCCESS = "Yes";
+  private static final String JAVA_QUIT = "$java_quit";
+
+    /**
+     * Empty list representation. This <code>PLTerm</code> constant
+     * represents the empty list.
+     */
   public static final PLTerm nil = new PLAtom("[]");
+
+    /**
+     * Success representation. This <code>PLAtom</code> constant
+     * is used to send back to Prolog if a request with no
+     * return value has been successfully completed.
+     */
   public static final PLTerm success = new PLAtom(INTERPRETER_SUCCESS);
+
+    /**
+     * Fail representation. This <code>PLAtom</code> constant
+     * is used to send back to Prolog if a request has
+     * failed.
+     */
   public static final PLTerm fail = new PLAtom(INTERPRETER_ERROR);
+
+    /**
+     * Termination term. This is the term received when the Prolog
+     * side tries to finish the execution of the Java side.
+     */
+  static final PLTerm quit = new PLAtom(JAVA_QUIT);
+
   static final String JAVA_OBJECT = "$java_object";
   static final String PROLOG_EXCEPTION = "prolog_exception";
   static final String PROLOG_FAIL = "prolog_fail";
@@ -84,84 +115,90 @@ public abstract class PLTerm extends Object {
   /****************************************************/
 
   /**
-   * String representation of the prolog term. 
+   * String representation of the Prolog term. 
+   *
+   * @return a <code>String</code> representing this term.
    */
   abstract public String toString();
 
   /**
-   * java representation of the prolog term.
-   * Is used to obtain the equivalent java object.
+   * Java representation of the Prolog term.
+   * Is used to obtain the equivalent Java object.
    * 
    * @param i <code>PLInterpreter</code> object used
-   *          to interpret the prolog representation
-   *          of java objects.
+   *          to interpret the Prolog representation
+   *          of Java objects.
    *
-   * @return  a java object representation of the prolog
+   * @return  a Java object representation of the Prolog
    *          term.
    */
   abstract public Object javaRepr(PLInterpreter i);
 
   /**
-   * Execution test for prolog objects.
+   * Execution test for Prolog objects.
    *
-   * @return <code>true</code> if this prolog term can
-   *         be evaluated in the prolog side as a goal;
+   * @return <code>true</code> if this Prolog term can
+   *         be evaluated in the Prolog side as a goal;
    *         <code>false</code> otherwise.
    */
   abstract public boolean isRunnable();
 
   /**
-   * Comparison between prolog terms.
+   * Comparison between Prolog terms.
    *
    * @param t Term to be compared to.
    *
-   * @return <code>true</code> if this prolog term is
+   * @return <code>true</code> if this Prolog term is
    *         equal to the term received as argument;
    *         <code>false</code> otherwise.
    */
   abstract public boolean equals(PLTerm t);
 
   /**
-   * Number of cells on the prolog WAM heap for this term.
+   * Number of cells on the Prolog WAM heap for this term.
+   * Not used currently.
    */
   abstract protected int numberOfCells();
 
   /**
-   * Duplication of prolog terms.
+   * Duplication of Prolog terms.
    * Performs an in depth term duplication, so that will be
    * no shared elements between this term and the copy
-   * returned.
+   * returned. The implementation of this method
+   * in the <code>PLList</code>, <code>PLStructure</code>
+   * and <code>PLVariable</code> clases perform the
+   * duplication recursively.
    *
-   * @return a copy of this prolog term.
+   * @return a copy of this Prolog term.
    */
   abstract public PLTerm copy();
 
   /**
-   * Execution of a prolog goal. This method is combined
+   * Execution of a Prolog goal. This method is combined
    * with <tt>nextSolution</tt> to obtain the set of
    * solutions given by a query on a goal.
    * Only are executed those terms where <tt>isRunnable</tt>
    * returns <tt>true</tt>.
    *
    * @param out	socket descriptor for sending the
-   *            goal description to prolog.
+   *            goal description to Prolog.
    *
-   * @return    prolog goal identifier, if the goal is accepted
-   *            as a valid goal in the prolog side;
-   *            prolog Exception term, if a problem has been
-   *            found translating the term to a prolog goal.
+   * @return    Prolog goal identifier, if the goal is accepted
+   *            as a valid goal in the Prolog side;
+   *            Prolog Exception term, if a problem has been
+   *            found translating the term to a Prolog goal.
    *
-   * @exception PLGoalException if this term cannot be a prolog goal.
+   * @exception PLGoalException if this term cannot be a Prolog goal.
    */
   public void launchGoal(PrintWriter out) throws PLGoalException {
 
-    throw new PLGoalException("This term cannot be a prolog goal: " 
+    throw new PLGoalException("This term cannot be a Prolog goal: " 
 			      + this.toString());
 
   }
 
   /**
-   * Term unification. Unifies this prolog term with the term
+   * Term unification. Unifies this Prolog term with the term
    * received as argument. 
    * 
    * <p><bold>Important:</bold> The unification is 'two sided':
@@ -215,7 +252,7 @@ public abstract class PLTerm extends Object {
   /**
    * Variable test.
    *
-   * @return <code>true</code> if this prolog term is a variable;
+   * @return <code>true</code> if this Prolog term is a variable;
    *         <code>false</code> otherwise.
    */
   public boolean isVariable() {
@@ -225,7 +262,7 @@ public abstract class PLTerm extends Object {
   /**
    * Structure test. 
    *
-   * @return <code>true</code> if this prolog term is a structure;
+   * @return <code>true</code> if this Prolog term is a structure;
    *         <code>false</code> otherwise.
    */
   public boolean isStructure() {
@@ -235,7 +272,7 @@ public abstract class PLTerm extends Object {
   /**
    * List test.
    *
-   * @return <code>true</code> if this prolog term is a list;
+   * @return <code>true</code> if this Prolog term is a list;
    *         <code>false</code> otherwise.
    */
   public boolean isList() {
@@ -245,7 +282,7 @@ public abstract class PLTerm extends Object {
   /**
    * String test. 
    *
-   * @return <code>true</code> if this prolog term is a string;
+   * @return <code>true</code> if this Prolog term is a string;
    *         <code>false</code> otherwise.
    */
   public boolean isString() {
@@ -255,7 +292,7 @@ public abstract class PLTerm extends Object {
   /**
    * Nil test.
    *
-   * @return <code>true</code> if this prolog term is nil;
+   * @return <code>true</code> if this Prolog term is nil;
    *         <code>false</code> otherwise.
    */
   public boolean isNil() {
@@ -266,7 +303,7 @@ public abstract class PLTerm extends Object {
    * Prolog exception test.
    *
    * @return <code>true</code> if the term represents a
-   *         prolog exception;
+   *         Prolog exception;
    *         <code>false</code> otherwise.
    */
   protected boolean isException() {
@@ -283,7 +320,7 @@ public abstract class PLTerm extends Object {
    * Prolog fail test.
    *
    * @return <code>true</code> if the term represents the valid
-   *         prolog atom used to indicate goal fail;
+   *         Prolog atom used to indicate goal fail;
    *         <code>false</code> otherwise.
    */
   protected boolean isPrologFail() {
@@ -299,7 +336,7 @@ public abstract class PLTerm extends Object {
    * Prolog success test.
    *
    * @return <code>true</code> if the term represents the valid
-   *         prolog atom used to indicate prolog success;
+   *         Prolog atom used to indicate Prolog success;
    *         <code>false</code> otherwise.
    */
   protected boolean isPrologSuccess() {
@@ -315,7 +352,7 @@ public abstract class PLTerm extends Object {
    * Prolog query id test.
    *
    * @return <code>true</code> if the term represents the valid
-   *         prolog structure used to indicate a query id;
+   *         Prolog structure used to indicate a query id;
    *         <code>false</code> otherwise.
    */
   protected boolean isQueryId() {
@@ -333,7 +370,7 @@ public abstract class PLTerm extends Object {
    * Prolog solution test.
    *
    * @return <code>true</code> if the term represents the valid
-   *         prolog structure used to indicate a query solution;
+   *         Prolog structure used to indicate a query solution;
    *         <code>false</code> otherwise.
    */
   protected boolean isSolution() {
@@ -348,14 +385,14 @@ public abstract class PLTerm extends Object {
   }
 
   /**
-   * Conversion from prolog low level format to a java object.
-   * Receives a prolog term in low level format from a stream reader,
+   * Conversion from Prolog low level format to a Java object.
+   * Receives a Prolog term in low level format from a stream reader,
    * and builds a <code>PLTerm</code> representation of the term
    * received.
    *
    * @param in Reader from which the term will be read.
    *
-   * @return a prolog term object with the term read.
+   * @return a Prolog term object with the term read.
    *
    * @exception PLException if raises any error reading the term.
    */
@@ -365,11 +402,18 @@ public abstract class PLTerm extends Object {
     AtomTable = at;
     VarNumber = 0;
     VarCounter = 0;
+    char v;
 
-    // Version.
-    char v = getChar(in);
-    if (v != currentVersion)
-      throw new PLException("Wrong fast_write version");
+    // Version. If a PLException occurs at this point, is assumed that
+    // the socket is closed, and therefore the java server must be finished.
+    try {
+	v = getChar(in);
+    } catch (PLException e) {
+	return PLAtom.quit;
+    }
+    if (v != currentVersion) {
+	throw new PLException("Wrong fast_write version:");
+    }
 
     // Prefix.
     getPrefix(in);
@@ -380,7 +424,7 @@ public abstract class PLTerm extends Object {
   }
 
   /**
-   * Gets the prefix of a prolog low level fast format term.
+   * Gets the prefix of a Prolog low level fast format term.
    *
    * @param in Reader from which the term will be read.
    */
@@ -416,7 +460,7 @@ public abstract class PLTerm extends Object {
    * @return    The integer read.
    *
    * @exception <code>PLException</code> if the integer
-   *            received is not a valid java integer.
+   *            received is not a valid Java integer.
    */
   private static int getInt(BufferedReader in) throws PLException {
     int value = 0;
@@ -443,7 +487,7 @@ public abstract class PLTerm extends Object {
    * @return    The float read. 
    *
    * @exception <code>PLException</code> if the float received
-   *            is not a valid java float.
+   *            is not a valid Java float.
    */
   private static float getFloat(BufferedReader in) throws PLException {
     float value = 0;
@@ -475,9 +519,13 @@ public abstract class PLTerm extends Object {
   private static char getChar(BufferedReader in) throws PLException {
 
     char c;
+    int i;
 
     try {
-      c = (char)in.read();
+	i = in.read();
+	if (i == -1)
+	    throw new PLException("End of input socket");
+	c = (char)i;
     } catch  (IOException e) {
       throw new PLException("Cannot read from the input socket");
     }
@@ -624,10 +672,10 @@ public abstract class PLTerm extends Object {
   }
 
   /**
-   * Translation from a java object to prolog low level representation.
+   * Translation from a Java object to Prolog low level representation.
    *
    * @return a string that contains the low level representation of
-   *         this prolog term.
+   *         this Prolog term.
    */
   public String fastWrite() {
 

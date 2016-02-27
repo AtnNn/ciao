@@ -18,7 +18,7 @@
 :- comment(author, "Daniel Cabeza").
 :- comment(author, "Mats Carlsson").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(module, "This module provides predicates for character
@@ -114,7 +114,7 @@
     5 - punctuation (includes !;""'%(),[]@{|@} )
    @end{verbatim}
    Note that in @concept{ISO-Prolog} the back quote @tt{`} is a punctuation
-   character, whereas in CIAO it is a graphic character.  Thus, if
+   character, whereas in Ciao it is a graphic character.  Thus, if
    compatibility with @concept{ISO-Prolog} is desired, the programmer should
    not use this character in unquoted names.").
 

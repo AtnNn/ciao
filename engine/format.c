@@ -4,7 +4,6 @@
 
 #include "datadefs.h"
 #include "support.h"
-/*#include "threads.h"*/
 
 /* declarations for global functions accessed here */
 

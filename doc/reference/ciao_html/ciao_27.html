@@ -1,138 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Changing system behaviour and various flags</TITLE>
+<TITLE>The Ciao Prolog System               - Fast/concurrent update of facts</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_26.html">previous</A>, <A HREF="ciao_28.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_26.html">previous</A>, <A HREF="ciao_28.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC115" HREF="ciao_toc.html#TOC115">Changing system behaviour and various flags</A></H1>
+<H1><A NAME="SEC160" HREF="ciao_toc.html#TOC160">Fast/concurrent update of facts</A></H1>
 <P>
-<A NAME="IDX1454"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Mats Carlsson.
+<A NAME="IDX1767"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
 
 
 <P>
-<A NAME="IDX1455"></A>
-<A NAME="IDX1456"></A>
-Flags define some parameters of the system and control the behavior of system or library predicates. Each flag has a name and an associated predefined value, and except some system flags which are fixed in general their associated value is changeable. Predefined flags in the system are: 
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
-<DL COMPACT>
+<P>
+<A NAME="IDX1768"></A>
+<A NAME="IDX1769"></A>
+Prolog implementations traditionally implement the concept of 
+<A NAME="IDX1770"></A>
+dynamic predicates: predicates which can be inspected or modified at run-time, adding or deleting individual clauses. The powerfulness of this feature brings also a great disadvantage: as new clause bodies can be arbitrarily added to the program, new unknown predicate calls can arise, thus preventing any global analysis or optimization of the code. But it is the case that most of the time what the programmer wants is simply to store data, with the purpose of sharing it between search branches, predicates, or even execution threads. In Ciao the concept of data predicate serves this purpose: a data predicate is a predicate composed exclusively by facts, which can be inspected, and dynamically added or deleted, at run-time. Using data predicates instead of normal dynamic predicates brings benefits in terms of speed, but above all turns the code automatically analyzable.
+<A NAME="IDX1771"></A>
+<A NAME="IDX1772"></A>
+There is also a special kind of data predicates, called concurrent predicates, which can be used to communicate/synchronize among different execution threads (see section <A HREF="ciao_29.html#SEC168">Low-level concurrency/multithreading primitives</A>).
 
-<DT><CODE>fileerrors</CODE>
-<DD>
-If <CODE>on</CODE>, predicates handling files give errors when a file is inexistent or an operation is not allowed. If <CODE>off</CODE>, fail in that conditions. Initially <CODE>on</CODE>. 
-
-<DT><CODE>unknown</CODE>
-<DD>
-Controls action on calls to undefined predicates. The possible states of the flag are: 
-
-<DL COMPACT>
-
-<DT><CODE>error</CODE>
-<DD>
-An error is thrown with the 
-<A NAME="IDX1457"></A>
-error term <CODE>existence_error(procedure, F/A)</CODE>. 
-
-<DT><CODE>fail</CODE>
-<DD>
-The call simply fails. 
-
-<DT><CODE>warning</CODE>
-<DD>
-A warning is written and the call fails. 
-
-</DL>
-
-The state is initially <CODE>error</CODE>. <KBD> * ISO * </KBD>
-
-<DT><CODE>quiet</CODE>
-<DD>
-Controls which messages issued using 
-<A NAME="IDX1458"></A>
-<CODE>io_aux</CODE> are actually written. As the system uses that library to report its messages, this flag controls the <EM>verbosity</EM> of the system. Possible states of the flag are: 
-
-<DL COMPACT>
-
-<DT><CODE>on</CODE>
-<DD>
-No messages are reported. 
-
-<DT><CODE>error</CODE>
-<DD>
-Only error messages are reported. 
-
-<DT><CODE>warning</CODE>
-<DD>
-Only error and warning messages are reported. 
-
-<DT><CODE>off</CODE>
-<DD>
-All messages are reported, except debug messages. This is the default state. 
-
-<DT><CODE>debug</CODE>
-<DD>
-All messages, including debug messages, are reported. This is only intended for the system implementators. 
-
-</DL>
-
-<DT><CODE>argv</CODE>
-<DD>
-Value is a list of atoms representing the program arguments supplied when the current executable was invoked. This is the value to which is instantiated the argument of the 
-<A NAME="IDX1459"></A>
-<CODE>main/1</CODE> predicate at executable startup. Unchangeable. 
-
-<DT><CODE>bounded</CODE>
-<DD>
-It is <CODE>false</CODE>, to denote that the range of integers can be considered infinite (but see 
-<A NAME="IDX1460"></A>
-<CODE>int/1</CODE>). Unchangeable. <KBD> * ISO * </KBD>
-
-<DT><CODE>integer_rounding_function</CODE>
-<DD>
-It is <CODE>toward_zero</CODE>, so that <CODE>-1 =:= -3//2</CODE> succeeds. Unchangeable. <KBD> * ISO * </KBD>
-
-<DT><CODE>max_arity</CODE>
-<DD>
-It is 255, so that no compound term (or predicate) can have more than this number of arguments. Unchangeable. <KBD> * ISO * </KBD>
-
-<DT><CODE>gc</CODE>
-<DD>
-Controls whether garbage collection is done. May be <CODE>on</CODE> (default) or <CODE>off</CODE>. 
-
-<DT><CODE>gc_margin</CODE>
-<DD>
-An integer <CODE>Margin</CODE>. If less than <CODE>Margin</CODE> kilobytes are reclaimed in a garbage collection then the size of the garbage collected area should be increased. Also, no garbage collection is attempted unless the garbage collected area has at least <CODE>Margin</CODE> kilobytes. Initially 500. 
-
-<DT><CODE>gc_trace</CODE>
-<DD>
-Governs garbage collection trace messages. An element off <CODE>[on,off,terse,verbose]</CODE>. Initially <CODE>off</CODE>. 
-
-</DL>
 
 
 <UL>
-<LI><A HREF="ciao_27.html#SEC116">Usage and interface (prolog_flags)</A>
-<LI><A HREF="ciao_27.html#SEC117">Documentation on exports (prolog_flags)</A>
-<LI><A HREF="ciao_27.html#SEC118">Documentation on multifiles (prolog_flags)</A>
+<LI><A HREF="ciao_27.html#SEC161">Usage and interface (data_facts)</A>
+<LI><A HREF="ciao_27.html#SEC162">Documentation on exports (data_facts)</A>
+<LI><A HREF="ciao_27.html#SEC163">Documentation on internals (data_facts)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC116" HREF="ciao_toc.html#TOC116">Usage and interface (<CODE>prolog_flags</CODE>)</A></H2>
+<H2><A NAME="SEC161" HREF="ciao_toc.html#TOC161">Usage and interface (<CODE>data_facts</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -140,7 +51,7 @@ Governs garbage collection trace messages. An element off <CODE>[on,off,terse,ve
 
 <LI><STRONG>Library usage:</STRONG>
 
-These predicates are builtin in CIAO, so nothing special has to be done to use them.
+These predicates are builtin in Ciao, so nothing special has to be done to use them.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -149,31 +60,34 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1461"></A>
-<CODE>set_prolog_flag/2</CODE>, 
-<A NAME="IDX1462"></A>
-<CODE>current_prolog_flag/2</CODE>, 
-<A NAME="IDX1463"></A>
-<CODE>prolog_flag/3</CODE>, 
-<A NAME="IDX1464"></A>
-<CODE>push_prolog_flag/2</CODE>, 
-<A NAME="IDX1465"></A>
-<CODE>pop_prolog_flag/1</CODE>, 
-<A NAME="IDX1466"></A>
-<CODE>prompt/2</CODE>, 
-<A NAME="IDX1467"></A>
-<CODE>gc/0</CODE>, 
-<A NAME="IDX1468"></A>
-<CODE>nogc/0</CODE>, 
-<A NAME="IDX1469"></A>
-<CODE>fileerrors/0</CODE>, 
-<A NAME="IDX1470"></A>
-<CODE>nofileerrors/0</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX1471"></A>
-<CODE>define_flag/3</CODE>.
+<A NAME="IDX1773"></A>
+<CODE>asserta_fact/1</CODE>, 
+<A NAME="IDX1774"></A>
+<CODE>asserta_fact/2</CODE>, 
+<A NAME="IDX1775"></A>
+<CODE>assertz_fact/1</CODE>, 
+<A NAME="IDX1776"></A>
+<CODE>assertz_fact/2</CODE>, 
+<A NAME="IDX1777"></A>
+<CODE>current_fact/1</CODE>, 
+<A NAME="IDX1778"></A>
+<CODE>current_fact/2</CODE>, 
+<A NAME="IDX1779"></A>
+<CODE>retract_fact/1</CODE>, 
+<A NAME="IDX1780"></A>
+<CODE>retractall_fact/1</CODE>, 
+<A NAME="IDX1781"></A>
+<CODE>current_fact_nb/1</CODE>, 
+<A NAME="IDX1782"></A>
+<CODE>retract_fact_nb/1</CODE>, 
+<A NAME="IDX1783"></A>
+<CODE>close_predicate/1</CODE>, 
+<A NAME="IDX1784"></A>
+<CODE>open_predicate/1</CODE>, 
+<A NAME="IDX1785"></A>
+<CODE>set_fact/1</CODE>, 
+<A NAME="IDX1786"></A>
+<CODE>erase/1</CODE>.
 
 </UL>
 
@@ -183,201 +97,62 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC117" HREF="ciao_toc.html#TOC117">Documentation on exports (<CODE>prolog_flags</CODE>)</A></H2>
+<H2><A NAME="SEC162" HREF="ciao_toc.html#TOC162">Documentation on exports (<CODE>data_facts</CODE>)</A></H2>
 <P>
-<A NAME="IDX1472"></A>
-<A NAME="IDX1473"></A>
+<A NAME="IDX1787"></A>
+<A NAME="IDX1788"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>set_prolog_flag/2:</B>
-<DD><A NAME="IDX1474"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta_fact/1:</B>
+<DD><A NAME="IDX1789"></A>
 
 
 <P>
-<CODE>set_prolog_flag(FlagName,Value)</CODE>
+<CODE>asserta_fact(Fact)</CODE>
 
 
 <P>
-Set existing flag <CODE>FlagName</CODE> to <CODE>Value</CODE>.
+<CODE>Fact</CODE> is added to the corresponding 
+<A NAME="IDX1790"></A>
+data predicate. The fact becomes the first clause of the predicate concerned.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>set_prolog_flag(+atm,+term)</CODE>
-<KBD> * ISO * </KBD>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact)</CODE>.
 
-<UL>
-</UL>
 
 <P>
 <STRONG>Usage 2:</STRONG> 
-<KBD> * ISO * </KBD>
 
 <UL>
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>FlagName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Value</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1475"></A>
-<A NAME="IDX1476"></A>
+<A NAME="IDX1791"></A>
+<A NAME="IDX1792"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>current_prolog_flag/2:</B>
-<DD><A NAME="IDX1477"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta_fact/2:</B>
+<DD><A NAME="IDX1793"></A>
 
 
 <P>
-<CODE>current_prolog_flag(FlagName,Value)</CODE>
-
-
-<P>
-<CODE>FlagName</CODE> is an existing flag and <CODE>Value</CODE> is the value currently associated with it.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>current_prolog_flag(?(atm),?(term))</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>FlagName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Value</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>FlagName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Value</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1478"></A>
-<A NAME="IDX1479"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_flag/3:</B>
-<DD><A NAME="IDX1480"></A>
-
-
-<P>
-<CODE>prolog_flag(FlagName,OldValue,NewValue)</CODE>
-
-
-<P>
-<CODE>FlagName</CODE> is an existing flag, unify <CODE>OldValue</CODE> with the value associated with it, and set it to new value <CODE>NewValue</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>prolog_flag(?(atm),?(term),+term)</CODE>
-
-<UL>
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>prolog_flag(?(FlagName),-(OldValue),-(NewValue))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Same as <CODE>current_prolog_flag(<CODE>FlagName</CODE>, <CODE>OldValue</CODE>)</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>FlagName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-The terms <CODE>OldValue</CODE> and <CODE>NewValue</CODE> are strictly identical.
- (<CODE>term_compare:== /2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> 
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>FlagName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>OldValue</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>NewValue</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>FlagName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>OldValue</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> <CODE>prolog_flag(FlagName,OldValue,NewValue)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Same as <CODE>current_prolog_flag(<CODE>FlagName</CODE>, <CODE>OldValue</CODE>)</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>OldValue</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>NewValue</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>FlagName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-The terms <CODE>OldValue</CODE> and <CODE>NewValue</CODE> are strictly identical.
- (<CODE>term_compare:== /2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1481"></A>
-<A NAME="IDX1482"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>push_prolog_flag/2:</B>
-<DD><A NAME="IDX1483"></A>
-
-
-<P>
-<CODE>push_prolog_flag(Flag,NewValue)</CODE>
+<CODE>asserta_fact(Fact,Ref)</CODE>
 
 
 <P>
 Same as 
-<A NAME="IDX1484"></A>
-<CODE>set_prolog_flag/2</CODE>, but storing current value of <CODE>Flag</CODE> to restore it with 
-<A NAME="IDX1485"></A>
-<CODE>pop_prolog_flag/1</CODE>.
+<A NAME="IDX1794"></A>
+<CODE>asserta_fact/1</CODE>, instantiating <CODE>Ref</CODE> to a unique identifier of the asserted fact.
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>push_prolog_flag(+atm,+term)</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact,?)</CODE>.
 
-<UL>
-</UL>
 
 <P>
 <STRONG>Usage 2:</STRONG> 
@@ -385,355 +160,531 @@ Same as
 <UL>
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Flag</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 
-<CODE>NewValue</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1486"></A>
-<A NAME="IDX1487"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pop_prolog_flag/1:</B>
-<DD><A NAME="IDX1488"></A>
-
-
-<P>
-<CODE>pop_prolog_flag(Flag)</CODE>
-
-
-<P>
-Restore the value of <CODE>Flag</CODE> previous to the last non-canceled 
-<A NAME="IDX1489"></A>
-<CODE>push_prolog_flag/2</CODE> on it.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>pop_prolog_flag(+atm)</CODE>
-
-<UL>
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Flag</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1490"></A>
-<A NAME="IDX1491"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prompt/2:</B>
-<DD><A NAME="IDX1492"></A>
-
-
-<P>
-<CODE>prompt(Old,New)</CODE>
-
-
-<P>
-Unify <CODE>Old</CODE> with the current prompt for reading, change it to <CODE>New</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>prompt(?(atm),+atm)</CODE>
-
-<UL>
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>prompt(Old,New)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unify <CODE>Old</CODE> with the current prompt for reading without changing it.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Old</CODE> is a free variable.
+<CODE>Ref</CODE> is a free variable.
  (<CODE>term_typing:var/1</CODE>)
-
-<CODE>New</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-The terms <CODE>Old</CODE> and <CODE>New</CODE> are strictly identical.
- (<CODE>term_compare:== /2</CODE>)
 <LI><EM>The following properties hold upon exit:</EM>
 
-<CODE>Old</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Ref</CODE> is a reference of a dynamic or data clause.
+ (<CODE>data_facts:reference/1</CODE>)
+</UL>
 
-<CODE>New</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+</DL>
+
+<P>
+<A NAME="IDX1795"></A>
+<A NAME="IDX1796"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assertz_fact/1:</B>
+<DD><A NAME="IDX1797"></A>
+
+
+<P>
+<CODE>assertz_fact(Fact)</CODE>
+
+
+<P>
+<CODE>Fact</CODE> is added to the corresponding 
+<A NAME="IDX1798"></A>
+data predicate. The fact becomes the last clause of the predicate concerned.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1799"></A>
+<A NAME="IDX1800"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assertz_fact/2:</B>
+<DD><A NAME="IDX1801"></A>
+
+
+<P>
+<CODE>assertz_fact(Fact,Ref)</CODE>
+
+
+<P>
+Same as 
+<A NAME="IDX1802"></A>
+<CODE>assertz_fact/1</CODE>, instantiating <CODE>Ref</CODE> to a unique identifier of the asserted fact.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact,?)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Ref</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Ref</CODE> is a reference of a dynamic or data clause.
+ (<CODE>data_facts:reference/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1803"></A>
+<A NAME="IDX1804"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_fact/1:</B>
+<DD><A NAME="IDX1805"></A>
+
+
+<P>
+<CODE>current_fact(Fact)</CODE>
+
+
+<P>
+Gives on backtracking all the facts defined as data or concurrent which unify with <CODE>Fact</CODE>. It is faster than calling the predicate explicitly, which do invoke the meta-interpreter. If the <CODE>Fact</CODE> has been defined as concurrent and has not been 
+<A NAME="IDX1806"></A>
+closed, 
+<A NAME="IDX1807"></A>
+<CODE>current_fact/1</CODE> will wait (instead of failing) for more clauses to appear after the last clause of <CODE>Fact</CODE> is returned.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>current_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1808"></A>
+<A NAME="IDX1809"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_fact/2:</B>
+<DD><A NAME="IDX1810"></A>
+
+
+<P>
+<CODE>current_fact(Fact,Ref)</CODE>
+
+
+<P>
+<CODE>Fact</CODE> is a fact of a 
+<A NAME="IDX1811"></A>
+data predicate and <CODE>Ref</CODE> is its reference identifying it uniquely.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>current_fact(fact,?)</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>current_fact(+callable,-(reference))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gives on backtracking all the facts defined as data which unify with <CODE>Fact</CODE>, instantiating <CODE>Ref</CODE> to a unique identifier for each fact.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>current_fact(?(callable),+reference)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given <CODE>Ref</CODE>, unifies <CODE>Fact</CODE> with the fact identified by it.
+
 </UL>
 
 <P>
 <STRONG>Usage 3:</STRONG> 
 
 <UL>
+<LI><EM>Description:</EM> Gives on backtracking all the facts defined as data which unify with <CODE>Fact</CODE>, instantiating <CODE>Ref</CODE> to a unique identifier for each fact.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Ref</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Ref</CODE> is a reference of a dynamic or data clause.
+ (<CODE>data_facts:reference/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 4:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Given <CODE>Ref</CODE>, unifies <CODE>Fact</CODE> with the fact identified by it.
+
 <LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>Old</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>New</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Ref</CODE> is a reference of a dynamic or data clause.
+ (<CODE>data_facts:reference/1</CODE>)
 <LI><EM>The following properties hold upon exit:</EM>
 
-<CODE>Old</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
+</DL>
+
 <P>
-<STRONG>Usage 4:</STRONG> <CODE>prompt(Old,New)</CODE>
+<A NAME="IDX1812"></A>
+<A NAME="IDX1813"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retract_fact/1:</B>
+<DD><A NAME="IDX1814"></A>
+
+
+<P>
+<CODE>retract_fact(Fact)</CODE>
+
+
+<P>
+Unifies <CODE>Fact</CODE> with the first matching fact of a 
+<A NAME="IDX1815"></A>
+data predicate, and then erases it. On backtracking successively unifies with and erases new matching facts. If <CODE>Fact</CODE> is declared as 
+<A NAME="IDX1816"></A>
+concurrent and is non-
+<A NAME="IDX1817"></A>
+closed, 
+<A NAME="IDX1818"></A>
+<CODE>retract_fact/1</CODE> will wait for more clauses or for the closing of the predicate after the last matching clause has been removed.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Unify <CODE>Old</CODE> with the current prompt for reading without changing it.
-
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Old</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>New</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-The terms <CODE>Old</CODE> and <CODE>New</CODE> are strictly identical.
- (<CODE>term_compare:== /2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Old</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>New</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1493"></A>
-<A NAME="IDX1494"></A>
+<A NAME="IDX1819"></A>
+<A NAME="IDX1820"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>gc/0:</B>
-<DD><A NAME="IDX1495"></A>
+<DT><span class="define">PREDICATE:</span> <B>retractall_fact/1:</B>
+<DD><A NAME="IDX1821"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> 
+<CODE>retractall_fact(Fact)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Enable garbage collection. Equivalent to <CODE>set_prolog_flag(gc, on)</CODE>
 
-</UL>
+<P>
+Erase all the facts of a 
+<A NAME="IDX1822"></A>
+data predicate unifying with <CODE>Fact</CODE>. Even if all facts are removed, the predicate continues to exist.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retractall_fact(fact)</CODE>.
+
 
 <P>
 <STRONG>Usage 2:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Enable garbage collection. Equivalent to <CODE>set_prolog_flag(gc, on)</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1496"></A>
-<A NAME="IDX1497"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>nogc/0:</B>
-<DD><A NAME="IDX1498"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Disable garbage collection. Equivalent to <CODE>set_prolog_flag(gc, off)</CODE>
-
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Disable garbage collection. Equivalent to <CODE>set_prolog_flag(gc, off)</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1499"></A>
-<A NAME="IDX1500"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fileerrors/0:</B>
-<DD><A NAME="IDX1501"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Enable reporting of file errors. Equivalent to <CODE>set_prolog_flag(fileerrors, on)</CODE>
-
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Enable reporting of file errors. Equivalent to <CODE>set_prolog_flag(fileerrors, on)</CODE>
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX1502"></A>
-<A NAME="IDX1503"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>nofileerrors/0:</B>
-<DD><A NAME="IDX1504"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Disable reporting of file errors. Equivalent to <CODE>set_prolog_flag(fileerrors, off)</CODE>
-
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Disable reporting of file errors. Equivalent to <CODE>set_prolog_flag(fileerrors, off)</CODE>
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC118" HREF="ciao_toc.html#TOC118">Documentation on multifiles (<CODE>prolog_flags</CODE>)</A></H2>
-<P>
-<A NAME="IDX1505"></A>
-<A NAME="IDX1506"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>define_flag/3:</B>
-<DD><A NAME="IDX1507"></A>
-
-
-<P>
-<CODE>define_flag(Flag,Values,Default)</CODE>
-
-
-<P>
-New flags can be defined by writing facts of this predicate. <CODE>Flag</CODE> is the name of the new flag, <CODE>Values</CODE> defines the posible values for the flag (see below) and <CODE>Default</CODE> defines the predefined value associated with the flag (which should be compatible with <CODE>Values</CODE>).
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Posible values for the flag are atoms.
-
-Example: 
-
-<PRE>
-:- multifile define_flag/3.
-define_flag(tmpdir, atom, '/tmp').
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Flag</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-Unify <CODE>Values</CODE> and <CODE>atom</CODE>.
- (<CODE>term_basic:= /2</CODE>)
-
-<CODE>Default</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Posible values for the flag are integers.
-
-Example: 
-
-<PRE>
-:- multifile define_flag/3.
-define_flag(max_connections, integer, 10).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Flag</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-Unify <CODE>Values</CODE> and <CODE>integer</CODE>.
- (<CODE>term_basic:= /2</CODE>)
-
-<CODE>Default</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> <CODE>define_flag(Flag,Values,Default)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Posible values for the flag are the elements of <CODE>Values</CODE>.
-
-Example: 
-
-<PRE>
-:- multifile define_flag/3.
-define_flag(debug, [on,debug,trace,off], off).
-</PRE>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Flag</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>Values</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Default</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Default</CODE> is an element of <CODE>Values</CODE>.
- (<CODE>basic_props:member/2</CODE>)
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1823"></A>
+<A NAME="IDX1824"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_fact_nb/1:</B>
+<DD><A NAME="IDX1825"></A>
+
+
+<P>
+<CODE>current_fact_nb(Fact)</CODE>
+
+
+<P>
+Behaves as 
+<A NAME="IDX1826"></A>
+<CODE>current_fact/1</CODE> but a fact is never waited on even if it is 
+<A NAME="IDX1827"></A>
+concurrent and non-
+<A NAME="IDX1828"></A>
+closed.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>current_fact_nb(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1829"></A>
+<A NAME="IDX1830"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retract_fact_nb/1:</B>
+<DD><A NAME="IDX1831"></A>
+
+
+<P>
+<CODE>retract_fact_nb(Fact)</CODE>
+
+
+<P>
+Behaves as 
+<A NAME="IDX1832"></A>
+<CODE>retract_fact/1</CODE>, but never waits on a fact, even if it has been declared as 
+<A NAME="IDX1833"></A>
+concurrent and is non-
+<A NAME="IDX1834"></A>
+closed.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact_nb(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1835"></A>
+<A NAME="IDX1836"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_predicate/1:</B>
+<DD><A NAME="IDX1837"></A>
+
+
+<P>
+<CODE>close_predicate(Pred)</CODE>
+
+
+<P>
+<A NAME="IDX1838"></A>
+<A NAME="IDX1839"></A>
+Changes the behavior of the predicate <CODE>Pred</CODE> if it has been declared as a 
+<A NAME="IDX1840"></A>
+concurrent predicate: calls to this predicate will fail (instead of wait) if no more clauses of <CODE>Pred</CODE> are available.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>close_predicate(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1841"></A>
+<A NAME="IDX1842"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_predicate/1:</B>
+<DD><A NAME="IDX1843"></A>
+
+
+<P>
+<CODE>open_predicate(Pred)</CODE>
+
+
+<P>
+Reverts the behavior of 
+<A NAME="IDX1844"></A>
+concurrent predicate <CODE>Pred</CODE> to waiting instead of failing if no more clauses of <CODE>Pred</CODE> are available.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>open_predicate(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1845"></A>
+<A NAME="IDX1846"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_fact/1:</B>
+<DD><A NAME="IDX1847"></A>
+
+
+<P>
+<CODE>set_fact(Fact)</CODE>
+
+
+<P>
+Sets <CODE>Fact</CODE> as the unique fact of the corresponding 
+<A NAME="IDX1848"></A>
+data predicate.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>set_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1849"></A>
+<A NAME="IDX1850"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>erase/1:</B>
+<DD><A NAME="IDX1851"></A>
+
+
+<P>
+<CODE>erase(Ref)</CODE>
+
+
+<P>
+Deletes the clause referenced by <CODE>Ref</CODE>.
+
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Ref</CODE> is a reference of a dynamic or data clause.
+ (<CODE>data_facts:reference/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC163" HREF="ciao_toc.html#TOC163">Documentation on internals (<CODE>data_facts</CODE>)</A></H2>
+<P>
+<A NAME="IDX1852"></A>
+<A NAME="IDX1853"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>fact/1:</B>
+<DD><A NAME="IDX1854"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>fact(F)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>F</CODE> is a fact (an atom or a structure).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1855"></A>
+<A NAME="IDX1856"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>reference/1:</B>
+<DD><A NAME="IDX1857"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>reference(R)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>R</CODE> is a reference of a dynamic or data clause.
+
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_26.html">previous</A>, <A HREF="ciao_28.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_26.html">previous</A>, <A HREF="ciao_28.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -17,8 +17,8 @@ SCRIPTSHELL = ciao-shell
 # The ciao compiler (ciaoc) takes cares of the dependencies itself. 
 
 all:
-	$(SETLOCALCOMPILER) $(CIAOC) $(TOPLEVELSHELL)
-	$(SETLOCALCOMPILER) $(CIAOC) -s $(SCRIPTSHELL)
+	$(SETLOCALCOMPILER) $(CIAOC) -x $(TOPLEVELSHELL)
+	$(SETLOCALCOMPILER) $(CIAOC) -x -s $(SCRIPTSHELL)
 
 install:
 	-mkdir -p $(BINDIR)

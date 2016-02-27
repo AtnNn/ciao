@@ -1,33 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Structured stream handling</TITLE>
+<TITLE>The Ciao Prolog System               - Term input</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC162" HREF="ciao_toc.html#TOC162">Structured stream handling</A></H1>
+<H1><A NAME="SEC208" HREF="ciao_toc.html#TOC208">Term input</A></H1>
 <P>
-<A NAME="IDX1952"></A>
+<A NAME="IDX2382"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.5#15 (1998/6/9, 16:30:53 MET DST)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#100 (2000/3/30, 18:1:28 CEST)
 
 
 
 <UL>
-<LI><A HREF="ciao_42.html#SEC163">Usage and interface (streams)</A>
-<LI><A HREF="ciao_42.html#SEC164">Documentation on exports (streams)</A>
+<LI><A HREF="ciao_42.html#SEC209">Usage and interface (read)</A>
+<LI><A HREF="ciao_42.html#SEC210">Documentation on exports (read)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC163" HREF="ciao_toc.html#TOC163">Usage and interface (<CODE>streams</CODE>)</A></H2>
+<H2><A NAME="SEC209" HREF="ciao_toc.html#TOC209">Usage and interface (<CODE>read</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,20 +39,101 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(streams)).</CODE>
+<CODE>:- use_module(library(read)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX2383"></A>
+<CODE>read/1</CODE>, 
+<A NAME="IDX2384"></A>
+<CODE>read/2</CODE>, 
+<A NAME="IDX2385"></A>
+<CODE>read_term/2</CODE>, 
+<A NAME="IDX2386"></A>
+<CODE>read_term/3</CODE>, 
+<A NAME="IDX2387"></A>
+<CODE>read_top_level/3</CODE>, 
+<A NAME="IDX2388"></A>
+<CODE>second_prompt/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX2389"></A>
+<CODE>tokenize</CODE>, 
+<A NAME="IDX2390"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX2391"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX2392"></A>
+<CODE>assertions/doc_props</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC164" HREF="ciao_toc.html#TOC164">Documentation on exports (<CODE>streams</CODE>)</A></H2>
+<H2><A NAME="SEC210" HREF="ciao_toc.html#TOC210">Documentation on exports (<CODE>read</CODE>)</A></H2>
 <P>
-<A NAME="IDX1953"></A>
-<A NAME="IDX1954"></A>
+<A NAME="IDX2393"></A>
+<A NAME="IDX2394"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>open_null_stream/1:</B>
-<DD><A NAME="IDX1955"></A>
+<DT><span class="define">PREDICATE:</span> <B>read/1:</B>
+<DD><A NAME="IDX2395"></A>
+
+
+<P>
+<CODE>read(Term)</CODE>
+
+
+<P>
+Like <CODE>read(Stream,Term)</CODE> with <CODE>Stream</CODE> associated to the current standard input.
+
+
+</DL>
+
+<P>
+<A NAME="IDX2396"></A>
+<A NAME="IDX2397"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read/2:</B>
+<DD><A NAME="IDX2398"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read(+Stream,?(Term))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The next term, delimited by a full-stop (i.e., a <CODE>.</CODE> followed by either a space or a control character), is read from <CODE>Stream</CODE> and is unified with <CODE>Term</CODE>. The syntax of the term must agree with current operator declarations. If the end of <CODE>Stream</CODE> has been reached, <CODE>Term</CODE> is unified with the term <CODE>end_of_file</CODE>. Further calls to <CODE>read/2</CODE> for the same stream will then cause an error, unless the stream is connected to the terminal (in which case a prompt is opened on the terminal).
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>read(+Stream,?(Term))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2399"></A>
+<A NAME="IDX2400"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_term/2:</B>
+<DD><A NAME="IDX2401"></A>
 
 
 <P>
@@ -58,11 +143,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1956"></A>
-<A NAME="IDX1957"></A>
+<A NAME="IDX2402"></A>
+<A NAME="IDX2403"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>open_input/2:</B>
-<DD><A NAME="IDX1958"></A>
+<DT><span class="define">PREDICATE:</span> <B>read_term/3:</B>
+<DD><A NAME="IDX2404"></A>
 
 
 <P>
@@ -72,11 +157,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1959"></A>
-<A NAME="IDX1960"></A>
+<A NAME="IDX2405"></A>
+<A NAME="IDX2406"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>close_input/1:</B>
-<DD><A NAME="IDX1961"></A>
+<DT><span class="define">PREDICATE:</span> <B>read_top_level/3:</B>
+<DD><A NAME="IDX2407"></A>
 
 
 <P>
@@ -86,25 +171,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1962"></A>
-<A NAME="IDX1963"></A>
+<A NAME="IDX2408"></A>
+<A NAME="IDX2409"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>open_output/2:</B>
-<DD><A NAME="IDX1964"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1965"></A>
-<A NAME="IDX1966"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>close_output/1:</B>
-<DD><A NAME="IDX1967"></A>
+<DT><span class="define">PREDICATE:</span> <B>second_prompt/2:</B>
+<DD><A NAME="IDX2410"></A>
 
 
 <P>
@@ -114,6 +185,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_41.html">previous</A>, <A HREF="ciao_43.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

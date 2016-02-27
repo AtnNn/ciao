@@ -7,7 +7,7 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel Hermenegildo").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- true pred copy_term(Term, Copy) + iso

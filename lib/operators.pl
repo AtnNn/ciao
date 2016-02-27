@@ -69,8 +69,8 @@ do_ops([X|Xs], Left, Prec, Right, Type) :-
 	do_ops(Xs, Left, Prec, Right, Type).
 
 :- trust pred current_op(?Precedence,?Type,?Op)
-+ doc_incomplete
-# "The atom @var{Op} is currently an operator of type @var{Type} and
+   + doc_incomplete
+   # "The atom @var{Op} is currently an operator of type @var{Type} and
    precedence @var{Precedence}.  Neither @var{Op} nor the other arguments need
    be instantiated at the time of the call; i.e., this predicate can be used
    to generate as well as to test.".
@@ -115,6 +115,7 @@ standard_ops :-
 	op( 200,  fy,[(+),(-),(\)]),
         op( 200, xfx,['**']),
 	op( 200, xfy,[(^)]),
+	op( 200, xfy,[(`)]),
         op(  25,  fy,[(^)]).
 
 :- initialization(standard_ops).

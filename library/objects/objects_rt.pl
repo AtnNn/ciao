@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% RUNTIME SUPPORT FOR OBJECT MANIPULATION
 %%
@@ -8,7 +8,7 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@
 	"Handling with objects").
 
 :- comment(subtitle,
-	"Run-time support for O'CIAO object manipulation").
+	"Run-time support for O'Ciao object manipulation").
 
 :- comment(author,"Angel Fernandez Pineda").
 
@@ -96,7 +96,7 @@
          and manipulation. Objects are also called @concept{class instances},
          or simply @concept{instances}.
 
-         Objects in CIAO are treated as normal modules. This is, an object
+         Objects in Ciao are treated as normal modules. This is, an object
          is a run-time generated Prolog module, which may be identified by
          an unique term across the whole application. 
 
@@ -458,7 +458,7 @@ give_initial_state(_,_).
 	"As well as instances are created, they must be destroyed when
          no longer needed in order to release system resources.
 
-         Unfortunately, current O'CIAO implementation does not support
+         Unfortunately, current O'Ciao implementation does not support
          automatic instance destruction, so user must manually call
          @em{destroy/1} in order to do so.
 
@@ -680,9 +680,6 @@ static_new_aux(_).
 %%------------------------------------------------------------------------
 
 :- comment(bug,
-   "Rock-and-roll Star ate my hamster :-(").
-
-:- comment(bug,
 	"Not really a bug: when loading code which declares 
          static instances from the toplevel shell, 
          predicate @pred{use_module/1}) will not work
@@ -727,7 +724,7 @@ static_new_aux(_).
    may be declared for constructors.  (Angel Fernandez Pineda)").
 
 :- comment(version(1*3+57,1999/09/21,14:24*41+'MEST'), "Enhanced 
-   implementation technology due to new features on CIAO prolog
+   implementation technology due to new features on Ciao prolog
    compiler. Removed published/2, no longer supported. 
    Meta-arguments are now working, really !!! I promise !!!. 
    (Angel Fernandez Pineda)").

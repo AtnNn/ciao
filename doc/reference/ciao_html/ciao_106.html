@@ -1,47 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The tcl/tk interface</TITLE>
+<TITLE>The Ciao Prolog System               - Utilities for on-demand compilation of foreign files</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC373" HREF="ciao_toc.html#TOC373">The tcl/tk interface</A></H1>
+<H1><A NAME="SEC419" HREF="ciao_toc.html#TOC419">Utilities for on-demand compilation of foreign files</A></H1>
 <P>
-<A NAME="IDX3930"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Montse Iglesias.
+<A NAME="IDX4572"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#34 (1999/12/31, 18:49:41 CET)
+<STRONG>Author(s):</STRONG> Manuel Carro, Jose Morales.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#16 (1999/12/14, 17:12:49 MET)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-The 
-<A NAME="IDX3931"></A>
-<CODE>tcltk</CODE> library package is a bidirectional to the <EM>Tcl</EM> (pronounced Tickle) language and <EM>Tk</EM> toolkit. Tcl is an interpreter scripting language with many extensions packages, in particular the graphical interface toolkit Tk
+<STRONG>Version of last change:</STRONG> 1.3#36 (1999/7/20, 10:37:31 MEST)
+
+
+<P>
+This module provides two predicates which give the user information regarding how to compile external (C) files in order to link them with the Ciao Prolog engine at runtime. 
+
+
+<P>
+These predicates are not intended to be called directly by the end-user. Instead, a tool or module whose aim is generating dynamically loadable files from source files should use the predicates in this file in order to find out what are the proper compiler and linker to use, and which options must be passed to them in the current architecture.
 
 
 
 <UL>
-<LI><A HREF="ciao_106.html#SEC374">Usage and interface (tcltk)</A>
-<LI><A HREF="ciao_106.html#SEC375">Documentation on exports (tcltk)</A>
+<LI><A HREF="ciao_106.html#SEC420">Usage and interface (foreign_compilation)</A>
+<LI><A HREF="ciao_106.html#SEC421">Documentation on exports (foreign_compilation)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC374" HREF="ciao_toc.html#TOC374">Usage and interface (<CODE>tcltk</CODE>)</A></H2>
+<H2><A NAME="SEC420" HREF="ciao_toc.html#TOC420">Usage and interface (<CODE>foreign_compilation</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,7 +51,7 @@ The
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tcltk)).</CODE>
+<CODE>:- use_module(library(foreign_compilation)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -58,27 +60,10 @@ The
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3932"></A>
-<CODE>tcl_new/1</CODE>, 
-<A NAME="IDX3933"></A>
-<CODE>tcl_eval/3</CODE>, 
-<A NAME="IDX3934"></A>
-<CODE>tcl_delete/1</CODE>, 
-<A NAME="IDX3935"></A>
-<CODE>tcl_event/3</CODE>, 
-<A NAME="IDX3936"></A>
-<CODE>tk_event_loop/1</CODE>, 
-<A NAME="IDX3937"></A>
-<CODE>tk_new/2</CODE>, 
-<A NAME="IDX3938"></A>
-<CODE>tk_new/4</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX3939"></A>
-<CODE>tclInterpreter/1</CODE>, 
-<A NAME="IDX3940"></A>
-<CODE>tclCommand/1</CODE>.
+<A NAME="IDX4573"></A>
+<CODE>compiler_and_opts/2</CODE>, 
+<A NAME="IDX4574"></A>
+<CODE>linker_and_opts/2</CODE>.
 
 </UL>
 
@@ -89,12 +74,8 @@ The
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3941"></A>
-<CODE>tcltk/tcltk_low_level</CODE>, 
-<A NAME="IDX3942"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX3943"></A>
-<CODE>strings</CODE>.
+<A NAME="IDX4575"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -104,278 +85,58 @@ The
 
 
 
-<H2><A NAME="SEC375" HREF="ciao_toc.html#TOC375">Documentation on exports (<CODE>tcltk</CODE>)</A></H2>
+<H2><A NAME="SEC421" HREF="ciao_toc.html#TOC421">Documentation on exports (<CODE>foreign_compilation</CODE>)</A></H2>
 <P>
-<A NAME="IDX3944"></A>
-<A NAME="IDX3945"></A>
+<A NAME="IDX4576"></A>
+<A NAME="IDX4577"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>tclInterpreter/1:</B>
-<DD><A NAME="IDX3946"></A>
+<DT><span class="define">PREDICATE:</span> <B>compiler_and_opts/2:</B>
+<DD><A NAME="IDX4578"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tclInterpreter(I)</CODE>
+<STRONG>Usage:</STRONG> <CODE>compiler_and_opts(?(Compiler),?(Opts))</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>I</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+<LI><EM>Description:</EM> If you want to compile a foreign language file for dynamic linking in the current operating system and architecture, you have to use the compiler <CODE>Compiler</CODE> and gite it the options <CODE>Opts</CODE>. A variable in <CODE>Opts</CODE> means that no special option is needed.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>?(Compiler)</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>?(Opts)</CODE> is a list of <CODE>atom</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3947"></A>
-<A NAME="IDX3948"></A>
+<A NAME="IDX4579"></A>
+<A NAME="IDX4580"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>tclCommand/1:</B>
-<DD><A NAME="IDX3949"></A>
+<DT><span class="define">PREDICATE:</span> <B>linker_and_opts/2:</B>
+<DD><A NAME="IDX4581"></A>
 
 
 <P>
- A <EM>Tcl</EM> command is specified as follows: 
-
-<PRE>
-      Command         --&#62; Atom  { other than [] }
-                        | Number
-                        | chars(PrologString)
-                        | write(Term)
-                        | format(Fmt,Args)
-                        | dq(Command)
-                        | br(Command)
-                        | sqb(Command)
-                        | min(Command)
-                        | ListOfCommands
-      ListOfCommands  --&#62; []
-                        |[Command|ListOfCommands]
-</PRE>
-
-<P>
-where: 
-
-
-<DL COMPACT>
-
-<DT>Atom
-<DD>
-<DT>Number
-<DD>
-denote their printed representations. 
-
-<DT>chars(PrologString)
-<DD>
-denotes the string represented by <EM>PrologString</EM> (a list of character codes). 
-
-<DT>write(Term)
-<DD>
-denotes the string that is printed by the corresponding built-in pridicate. 
-
-<DT>format(Term)
-<DD>
-denotes the string that is printed by the corresponding built-in pridicate. 
-
-<DT>dq(Command)
-<DD>
-denotes the string specified by <EM>Command</EM>, enclosed in double quotes. 
-
-<DT>br(Command)
-<DD>
-denotes the string specified by <EM>Command</EM>, enclosed in braces. 
-
-<DT>sqb(Command)
-<DD>
-denotes the string specified by <EM>Command</EM>, enclosed in square brackets. 
-
-<DT>min(Command)
-<DD>
-denotes the string specified by <EM>Command</EM>, immediately preceded by a hyphen. 
-
-<DT>ListOfCommands
-<DD>
-denotes the strings denoted by each element, separated by spaces. 
-
-</DL>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tclCommand(C)</CODE>
+<STRONG>Usage:</STRONG> <CODE>linker_and_opts(?(Linker),?(Options))</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>C</CODE> is a <EM>Tcl</EM> command.
+<LI><EM>Description:</EM> If you want to link a foreign language file for dynamic linking in the current operating system and architecture, you have to use the linker <CODE>Compiler</CODE> and gite it the options <CODE>Opts</CODE>. A variable in <CODE>Opts</CODE> means that no special option is needed.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>?(Linker)</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>?(Options)</CODE> is a list of <CODE>atom</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3950"></A>
-<A NAME="IDX3951"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_new/1:</B>
-<DD><A NAME="IDX3952"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tcl_new(-(TclInterpreter))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Creates a new interpreter, initializes it, and returns a reference to it in <CODE>TclInterpreter</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-(TclInterpreter)</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3953"></A>
-<A NAME="IDX3954"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_eval/3:</B>
-<DD><A NAME="IDX3955"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tcl_eval(+TclInterpreter,+Command,-(Result))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Evaluates the commands and the result will be stored as a string in <EM>Result</EM>
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-
-<CODE>+Command</CODE> is a <EM>Tcl</EM> command.
- (<CODE>tcltk:tclCommand/1</CODE>)
-
-<CODE>-(Result)</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3956"></A>
-<A NAME="IDX3957"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_delete/1:</B>
-<DD><A NAME="IDX3958"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tcl_delete(+TclInterpreter)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Deletes the interpreter in <CODE>TclInterpreter</CODE> and the memory used by it
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3959"></A>
-<A NAME="IDX3960"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcl_event/3:</B>
-<DD><A NAME="IDX3961"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tcl_event(+TclInterpreter,+Command,-(Events))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Do the receive non blocking of the event and terms will be stored from Tcl by the <EM>prolog_event</EM> command as a list of terms in <EM>Events</EM>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-
-<CODE>+Command</CODE> is a <EM>Tcl</EM> command.
- (<CODE>tcltk:tclCommand/1</CODE>)
-
-<CODE>-(Events)</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3962"></A>
-<A NAME="IDX3963"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tk_event_loop/1:</B>
-<DD><A NAME="IDX3964"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX3965"></A>
-<A NAME="IDX3966"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tk_new/2:</B>
-<DD><A NAME="IDX3967"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tk_new(+Options,-(TclInterpreter))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Performs basic Tcl and Tk initialization and creates the main window of a Tk application.<EM>Options</EM> is a list of optional elements according to :
-
-<DL COMPACT>
-
-<DT>name
-<DD>
-Sets the Tk application name. The application name will be displayed in the main window and is also used for communicating between applications in Tk. Default name is an empty string. 
-
-<DT>display
-<DD>
-Gives the name of the screen on which to create the main window. Default is normally determined by the DISPLAY environment variable. 
-
-<DT>file
-<DD>
-Open the sript file, commands will not be read from standard input and the execution returns back to Prolog only after all windows (and the interpreter) have been deleted. 
-
-</DL>
-
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Options</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>-(TclInterpreter)</CODE> is a reference to a <EM>Tcl</EM> interpreter.
- (<CODE>tcltk:tclInterpreter/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3968"></A>
-<A NAME="IDX3969"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tk_new/4:</B>
-<DD><A NAME="IDX3970"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_105.html">previous</A>, <A HREF="ciao_107.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

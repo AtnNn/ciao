@@ -27,7 +27,7 @@
          @ref{Control constructs/predicates}.
    @item @tt{engine(concurrency)}
 
-         @ref{Concurrency/multithreading primitives}.
+         @ref{Low-level concurrency/multithreading primitives}.
    @item @tt{engine(data_facts)}
 
          @ref{Fast/concurrent update of facts}.

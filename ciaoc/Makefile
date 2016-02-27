@@ -8,7 +8,7 @@ include ../makefile-sysindep
 CIAOCNAME=ciaoc
 
 compiler:
-	$(SETLOCALCOMPILER) $(CIAOC) -s $(CIAOCNAME)
+	$(SETLOCALCOMPILER) $(CIAOC) -s -x $(CIAOCNAME)
 
 install:
 	-mkdir -p $(BINDIR)
@@ -32,4 +32,6 @@ cleanexecs:
 	/bin/mv $(STATICCOMPNAME) temp-$(STATICCOMPNAME)
 # Mask out owner-[executable,readable,writable] files
 	find . -name 'ciaoc*' -perm -000700 -exec /bin/rm {} \;
+# Include also any stray .cpx compiler (sometimes not executable!)
+	find . -name 'ciaoc.cpx' -exec /bin/rm {} \;
 	/bin/mv temp-$(STATICCOMPNAME) $(STATICCOMPNAME)

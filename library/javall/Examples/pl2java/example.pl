@@ -21,6 +21,7 @@
 :- use_module(library('javall/javart')).
 :- use_module(library(lists)).
 :- export(example/0).
+:- export(main/0).
 
 :- dynamic acumulator/1.
 :- dynamic operator/1.
@@ -32,6 +33,8 @@ acumulator(0).
 operator("+").
 number_editing(false).
 
+main:-
+	example.
 
 example:-
 	(connected(_) -> 

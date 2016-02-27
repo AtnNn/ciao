@@ -8,12 +8,17 @@
 #   * Paths in DOTemacs.skel are fixed and DOTemacs.el (which contains
 #     the suggestions at to what users should put in their .emacs files)
 #     generated and installed in the libraries.
-#   * ciao.el.header, a commented version of DOTemacs.el and
-#     ciao.el.body are concatenated to produce ciao.el, which is
+#   * ciao.el.header, a commented version of DOTemacs.el, 
+#     ciao.el.body, and a commented version of CiaoMode.pl (which contains
+#     version info)  are concatenated to produce ciao.el, which is
 #     installed in the libraries. A link to it called prolog.el is made.
+#     The current Ciao version is also included in ciao.el at this time.
 #   * word-help.el is also installed in the libraries.
 #   * All .el files in the libraries are byte-compiled.
 #    
+# - Version control: is now done automatically on CiaoMode.pl upon saving 
+#   ciao.el.body.
+# 
 # - Generating the documentation (gmake doc): 
 #   * CiaoMode.lpdoc is generated from ciao.el.body using emacs
 #     (contains the documentation for all the functions in
@@ -22,7 +27,7 @@
 # 
 # - Generating a standalone manual for ciao.el (gmake dvi): 
 #   * Also, CiaoMode.dvi is generated in the doc directory using lpdoc
-#     from CiaoMode.pl and CiaoMode.lpdoc
+#     from CiaoMode.pl and CiaoMode.lpdoc. This is for tests only. 
 #
 #-----------------------------------------------------------------------------
 include ../SETTINGS
@@ -46,9 +51,18 @@ install:
 	../etc/substitute_string '^' ';;' \
 	     $(REALLIBDIR)/DOTemacs.el \
 	     $(REALLIBDIR)/DOTemacs.tmp
-	cat ciao.el.header $(REALLIBDIR)/DOTemacs.tmp ciao.el.body \
-	    > $(REALLIBDIR)/ciao.el.tmp
+	../etc/substitute_string '^' ';;' \
+	     CiaoMode.pl \
+	     $(REALLIBDIR)/CiaoMode.pl.tmp
+	../etc/substitute_string 'ciao-mode-version "Development Version"' \
+	     'ciao-mode-version "$(VERSION)p$(PATCH)"' \
+	     ciao.el.body $(REALLIBDIR)/ciao.el.body.tmp
+	cat ciao.el.header $(REALLIBDIR)/DOTemacs.tmp \
+	    $(REALLIBDIR)/CiaoMode.pl.tmp \
+	    $(REALLIBDIR)/ciao.el.body.tmp > $(REALLIBDIR)/ciao.el.tmp
 	-rm -f $(REALLIBDIR)/DOTemacs.tmp
+	-rm -f $(REALLIBDIR)/CiaoMode.pl.tmp
+	-rm -f $(REALLIBDIR)/ciao.el.body.tmp
 	../etc/substitute_string '<CIAOREALLIBDIR>' \
              $(REALLIBDIR) \
 	     $(REALLIBDIR)/ciao.el.tmp \
@@ -81,6 +95,9 @@ doc CiaoMode.pl CiaoMode.lpdoc: ciao.el.body
 dvi: CiaoMode.lpdoc
 	cd doc; $(MAKE) dvi
 
+view: dvi
+	cd doc; $(MAKE) view
+
 # ----------------------------------------------------------------------------
 
 uninstall: 
@@ -98,7 +115,8 @@ clean:
 	@echo "*** ---------------------------------------------------------"
 	'rm' -f *~
 
-realclean: clean
+realclean distclean: clean
+	'rm' -f CiaoMode.lpdoc
 # END
 #-----------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% DOCUMENTATION FILE ON CLASS ERROR REPORTING
 %%
@@ -8,38 +8,30 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
-:- module(class_error_doc,[],[assertions]).
+%:- module(class_error_doc,[],[assertions]).
 
-%%------------------------------------------------------------------------
 
-:- comment(title,
-	"Error reporting when compiling classes and interfaces").
-
-:- comment(author,"Angel Fernandez Pineda").
-
-:- comment(copyright,"@include{Copyright.Manuals}").
-
-:- comment(module,
+:- comment(appendix,
 	"
- This chapter will explain error reporting when declaring
- a class. The first section will explain compile-time
- errors, this is, any semantic error which may be determined
- at compile time. The second section will explain run-time
- errors, this is, any exception that may be raisen by the 
- incorrect usage of O'CIAO. Some of those errors may be not
- reported at compile time, due to the use of meta-programational
+
+ This describes the errors reported when declaring a class or an
+ interface. The first section will explain compile-time errors, this is,
+ any semantic error which may be determined at compile time. The second
+ section will explain run-time errors, this is, any exception that may
+ be raisen by the incorrect usage of O'Ciao. Some of those errors may be
+ not reported at compile time, due to the use of meta-programational
  structures. For example:
 
    @tt{functor(X,my_method,0),call(X).}
 
- O'CIAO is not able to check whether my_method/0 is a valid method
+ O'Ciao is not able to check whether my_method/0 is a valid method
  or not. So, this kind of checking is left to run time.
 
- @section{Error reporting at compile time}
+ @subsection{Class and Interface error reporting at compile time}
 
 
  @begin{itemize}
@@ -58,7 +50,7 @@
  @item @bf{ERROR : sorry, addmodule meta-arg is not allowed at @em{F/A}. }
 
        You are trying to declare @em{F/A} as meta-predicate, and one of
-       the meta-arguments is @em{addmodule}. This is not allowed in O'CIAO
+       the meta-arguments is @em{addmodule}. This is not allowed in O'Ciao
        due to implementation restrictions. For example:
 
        @tt{:- meta_predicate example(addmodule).}
@@ -349,7 +341,7 @@
 
 
 
- @section{Error reporting at run time}
+ @subsection{Class and Interface error reporting at run time}
 
 
 
@@ -363,10 +355,10 @@
 
  @end{itemize}
 
- @section{Normal Prolog module system interaction}
+ @subsection{Normal Prolog module system interaction}
 
- O'CIAO works in conjunction with the habitual CIAO Prolog module system,
- which also reports its own error messages. This will cause CIAO to 
+ O'Ciao works in conjunction with the Ciao Prolog module system,
+ which also reports its own error messages. This will cause Ciao to 
  report a little criptic error messages due to the general mechanism of
  source-to-source expansion. Those are some tips you must consider when
  compiling a class:
@@ -403,16 +395,16 @@
 
 %%------------------------------------------------------------------------
 
-:- comment(version_maintenance,dir('../../version')).
+%:- comment(version_maintenance,dir('../../version')).
 
 
-:- comment(version(1*5+15,1999/12/14,15:30*23+'MET'), "Fixed some missing
-   @end{itemize} (Angel Fernandez Pineda)").
+%:- comment(version(1*5+15,1999/12/14,15:30*23+'MET'), "Fixed some missing
+%   @tt{@@end@{itemize@}} (Angel Fernandez Pineda)").
 
-:- comment(version(1*3+66,1999/09/30,13:19*04+'MEST'), "Updated
-   documentation. (Angel Fernandez Pineda)").
+%:- comment(version(1*3+66,1999/09/30,13:19*04+'MEST'), "Updated
+%   documentation. (Angel Fernandez Pineda)").
 
-:- comment(version(1*3+41,1999/07/26,17:16*58+'MEST'), "Error reporting
-   moved to separate file.  (Angel Fernandez Pineda)").
+%:- comment(version(1*3+41,1999/07/26,17:16*58+'MEST'), "Error reporting
+%   moved to separate file.  (Angel Fernandez Pineda)").
 
 %%------------------------------------------------------------------------

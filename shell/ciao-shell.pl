@@ -143,18 +143,25 @@ main :- get_alias_path,
 
 '$interpret_args'(['-i',File | Rest]) :- !,
         set_debug_mode(File),
-        ensure_loaded(File),
-        error_protect(main(Rest)).
+        '$load&call'(File,Rest).
 '$interpret_args'([File | Rest]) :- !,
-        ensure_loaded(File),
-        error_protect(main(Rest)).
+        '$load&call'(File,Rest).
 '$interpret_args'(_) :-
         '$bootversion',
         display('Should provide a prolog file!'), nl,
         fail.
 
+'$load&call'(File,Rest) :-
+        set_prolog_flag(quiet, off),
+        ensure_loaded(File),
+        error_protect(main(Rest)).
+
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*5+130,2000/05/03,20:19*04+'CEST'), "Changed the
+   script interpreter to restore the flag quiet to off.  (Daniel Cabeza
+   Gras)").
 
 :- comment(version(1*3+106,1999/11/18,12:48*54+'MET'), "Added file to
    version system. Added reference to @apl{emacs} mode. (Manuel

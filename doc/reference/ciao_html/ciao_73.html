@@ -1,45 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - File name manipulation</TITLE>
+<TITLE>The Ciao Prolog System               - Fast Reading and Writing of Terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC259" HREF="ciao_toc.html#TOC259">File name manipulation</A></H1>
+<H1><A NAME="SEC305" HREF="ciao_toc.html#TOC305">Fast Reading and Writing of Terms</A></H1>
 <P>
-<A NAME="IDX3187"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Angel Fernandez Pineda.
+<A NAME="IDX3698"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Oscar Portela Arjona.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#51 (1999/9/9, 16:28:44 MEST)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-This library provides some small utilities to handle file name syntax.
+<STRONG>Version of last change:</STRONG> 1.5#81 (2000/3/23, 16:37:17 CET)
+
+
+<P>
+This library provides predicates to support reading / writing of terms on a format designed to be handled on read faster than standart representation.
 
 
 
 <UL>
-<LI><A HREF="ciao_73.html#SEC260">Usage and interface (filenames)</A>
-<LI><A HREF="ciao_73.html#SEC261">Documentation on exports (filenames)</A>
+<LI><A HREF="ciao_73.html#SEC306">Usage and interface (fastrw)</A>
+<LI><A HREF="ciao_73.html#SEC307">Documentation on exports (fastrw)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC260" HREF="ciao_toc.html#TOC260">Usage and interface (<CODE>filenames</CODE>)</A></H2>
+<H2><A NAME="SEC306" HREF="ciao_toc.html#TOC306">Usage and interface (<CODE>fastrw</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -47,7 +47,7 @@ This library provides some small utilities to handle file name syntax.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(filenames)).</CODE>
+<CODE>:- use_module(library(fastrw)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -56,14 +56,12 @@ This library provides some small utilities to handle file name syntax.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3188"></A>
-<CODE>no_path_file_name/2</CODE>, 
-<A NAME="IDX3189"></A>
-<CODE>file_name_extension/3</CODE>, 
-<A NAME="IDX3190"></A>
-<CODE>basename/2</CODE>, 
-<A NAME="IDX3191"></A>
-<CODE>extension/2</CODE>.
+<A NAME="IDX3699"></A>
+<CODE>fast_read/1</CODE>, 
+<A NAME="IDX3700"></A>
+<CODE>fast_write/1</CODE>, 
+<A NAME="IDX3701"></A>
+<CODE>fast_write_to_string/3</CODE>.
 
 </UL>
 
@@ -74,8 +72,8 @@ This library provides some small utilities to handle file name syntax.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3192"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX3702"></A>
+<CODE>dict</CODE>.
 
 </UL>
 
@@ -85,194 +83,62 @@ This library provides some small utilities to handle file name syntax.
 
 
 
-<H2><A NAME="SEC261" HREF="ciao_toc.html#TOC261">Documentation on exports (<CODE>filenames</CODE>)</A></H2>
+<H2><A NAME="SEC307" HREF="ciao_toc.html#TOC307">Documentation on exports (<CODE>fastrw</CODE>)</A></H2>
 <P>
-<A NAME="IDX3193"></A>
-<A NAME="IDX3194"></A>
+<A NAME="IDX3703"></A>
+<A NAME="IDX3704"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>no_path_file_name/2:</B>
-<DD><A NAME="IDX3195"></A>
+<DT><span class="define">PREDICATE:</span> <B>fast_read/1:</B>
+<DD><A NAME="IDX3705"></A>
 
 
 <P>
-This predicate will extract the last item (usually the file name) from a given path. 
+<CODE>fast_read(Term)</CODE>
 
 
 <P>
-The first argument must be instantiated to a string or atom. Whenever the first argument is an atom, the second argument will be an atom. Whenever the first argument is a string, the second argument will be a string. 
+The next term is read from current standart input and is unified with <CODE>Term</CODE>. The syntax of the term must agree with fast_read / fast_write format. If the end of the input has been reached, <CODE>Term</CODE> is unified with the term 'end_of_file'. Further calls to 
+<A NAME="IDX3706"></A>
+<CODE>fast_read/1</CODE> will then cause an error.
 
-
-<P>
-This predicate will fail under any of the following conditions: 
-
-<UL>
-<LI>First argument is not an atom, nor a string.
-
-<LI>Second argument is not the last given path item (given path is the first argument).
-
-</UL>
-
-<P>
-Those are the most usual usages of no_path_file_name/2: 
-
-<PRE>
-?- no_path_file_name_("/home/nexusV/somefile.txt",K).
-
-K = "somefile.txt" ? 
-
-yes
-?- no_path_file_name('/home/nexusV/somefile.txt',K).
-
-K = 'somefile.txt' ? 
-
-yes
-?- 
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>no_path_file_name(Path,FileName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>FileName</CODE> is the file corresponding to the given <CODE>Path</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Path</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3196"></A>
-<A NAME="IDX3197"></A>
+<A NAME="IDX3707"></A>
+<A NAME="IDX3708"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>file_name_extension/3:</B>
-<DD><A NAME="IDX3198"></A>
+<DT><span class="define">PREDICATE:</span> <B>fast_write/1:</B>
+<DD><A NAME="IDX3709"></A>
 
 
 <P>
-This predicate may be used in two ways: 
-
-<UL>
-
-<LI>To create a file name from its components: name and extension. For instance:
-
-
-<PRE>
-?- file_name_extension(File,mywork,'.txt').
-
-File = 'mywork.txt' ? 
-
-yes
-?- 
-</PRE>
-
-<LI>To split a file name into its name and extension. For Instance:
-
-
-<PRE>
-?- file_name_extension('mywork.txt',A,B).
-
-A = mywork,
-B = '.txt' ? 
-
-yes
-?- 
-</PRE>
-
-</UL>
-
-<P>
-Any other usage of file_name_extension/3 will cause the predicate to fail. Notice that valid arguments are accepted both as atoms or strings. 
+<CODE>fast_write(Term)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>file_name_extension(FileName,BaseName,Extension)</CODE>
+Output <CODE>Term</CODE> in a way that 
+<A NAME="IDX3710"></A>
+<CODE>fast_read/1</CODE> will be able to read it back.
 
-<UL>
-<LI><EM>Description:</EM> Splits a <CODE>FileName</CODE> into its <CODE>BaseName</CODE> and <CODE>Extension</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>BaseName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>Extension</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3199"></A>
-<A NAME="IDX3200"></A>
+<A NAME="IDX3711"></A>
+<A NAME="IDX3712"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>basename/2:</B>
-<DD><A NAME="IDX3201"></A>
+<DT><span class="define">PREDICATE:</span> <B>fast_write_to_string/3:</B>
+<DD><A NAME="IDX3713"></A>
 
 
 <P>
-<CODE>basename(FileName,BaseName)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-<CODE>BaseName</CODE> is <CODE>FileName</CODE> without extension. Equivalent to <CODE>file_name_extension(FileName,BaseName,_)</CODE>. Useful to extract the base name of a file using functional syntax.
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>BaseName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3202"></A>
-<A NAME="IDX3203"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>extension/2:</B>
-<DD><A NAME="IDX3204"></A>
-
-
-<P>
-<CODE>extension(FileName,Extension)</CODE>
-
-
-<P>
-<CODE>Extension</CODE> is the extension (suffix) of <CODE>FileName</CODE>. Equivalent to <CODE>file_name_extension(FileName,_,Extension)</CODE>. Useful to extract the extension of a file using functional syntax.
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>FileName</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-
-<CODE>Extension</CODE> is an atom or a string
- (<CODE>filenames:atom_or_str/1</CODE>)
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_72.html">previous</A>, <A HREF="ciao_74.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

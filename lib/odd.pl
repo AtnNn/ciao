@@ -29,14 +29,14 @@
 integer * struct * term # "Replace destructively argument @var{Index} in
 @var{Term} by @var{NewArg}.  The assignment is undone on
 backtracking. This is a major change to the normal behavior of data
-assignment in CIAO Prolog.".
+assignment in Ciao Prolog.".
 
 setarg(I, F, X):-
         '$setarg'(I, F, X, on).
 
 :- true pred undo(Goal) : callable => callable # "
 @tt{call(@var{Goal})} is executed on backtracking.  This is a major
-change to the normal @concept{control} of CIAO Prolog execution.".
+change to the normal @concept{control} of Ciao Prolog execution.".
 
 undo(X):-
         '$undo_goal'(call(X)).
@@ -100,11 +100,11 @@ undo(X):-
    library to odd (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
-   global CIAO version.  (Manuel Hermenegildo)").
+   global Ciao version.  (Manuel Hermenegildo)").
 
 %% Version comment prompting control for this file.
 %% Local Variables: 
-%% mode: CIAO
+%% mode: ciao
 %% update-version-comments: "../version"
 %% End:
 

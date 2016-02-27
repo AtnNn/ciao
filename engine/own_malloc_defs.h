@@ -1,10 +1,10 @@
 /*#define USE_OWN_MALLOC_SOLARIS */            /* Optional, to test impl. */
 #define USE_OWN_MALLOC_LINUX         /* Linux malloc breaks: use own m.m. */
 /*#define USE_OWN_MALLOC_IRIX*/
-/*#define USE_OWN_MALLOC_NT*/
+/*#define USE_OWN_MALLOC_Win32*/
 /*#define USE_OWN_MALLOC_SUNOS*/
 
-#if defined(LINUX) || defined(Solaris) 
+#if defined(LINUX) || defined(Solaris) || defined(Win32)
 #  include <stdlib.h>
 #endif
 

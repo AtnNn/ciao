@@ -74,12 +74,12 @@
    modified versions of C. Taboch original code) are in the same directory
    as this library. This executable must be running on the Windows (NT/95)
    machine where the databas(es) is(are) also running.@footnote{The server
-   can be downloaded from the same site(s) as the CIAO system. The
+   can be downloaded from the same site(s) as the Ciao system. The
    downloaded package contains complete installation instructions for the
-   server. Before trying to run the CIAO Prolog side of things, make sure
+   server. Before trying to run the Ciao Prolog side of things, make sure
    that the server is correctly installed and running, and that it can be
    accessed from the small sample client that comes with the server
-   distribution. Once this is achieved, connection from CIAO should not
+   distribution. Once this is achieved, connection from Ciao should not
    pose problems.}
 
    @item At the client side a Prolog client can connect to the

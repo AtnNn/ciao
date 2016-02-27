@@ -1,4 +1,4 @@
-
+struct stream_node *insert_new_stream(struct stream_node *new_stream);
 BOOL cunify(Argdecl, TAGGED x1, TAGGED x2);
 BOOL cunify_args(Argdecl, int arity, TAGGED *pt1, TAGGED *pt2);
 ENG_FLT get_float(register TAGGED t);

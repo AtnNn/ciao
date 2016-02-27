@@ -1,241 +1,32 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Definite clause grammars</TITLE>
+<TITLE>The Ciao Prolog System               - Classic Prolog package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC172" HREF="ciao_toc.html#TOC172">Definite clause grammars</A></H1>
+<H1><A NAME="SEC219" HREF="ciao_toc.html#TOC219">Classic Prolog package</A></H1>
 <P>
-<A NAME="IDX2070"></A>
-
-
-<P>
-This library package allows the use of DCGs (Definite Clause Grammars) [Col78,PW80] in a Ciao module/program. 
+<A NAME="IDX2523"></A>
 
 
 <P>
-Definite clause grammars are an extension of the well-known context-free grammars. Prolog's grammar rules provide a convenient notation for expressing definite clause grammars. A DCG rule in Prolog takes the general form 
+This library package allows the use of certain Prolog features which have become sort of 'classical' from many Prolog implementations. These include definite clause grammars and some classical predicates like <CODE>append/3</CODE>. The libraries listed below define these predicates, and the following chapters describe them.
 
-
-
-<PRE>
-<CODE>head</CODE> --&#62; <CODE>body</CODE>.
-</PRE>
-
-<P>
-meaning "a possible form for <CODE>head</CODE> is <CODE>body</CODE>". Both <CODE>body</CODE> and <CODE>head</CODE> are sequences of one or more items linked by the standard Prolog conjunction operator <CODE>,</CODE>. 
-
-
-<P>
-Definite clause grammars extend context-free grammars in the following ways: 
-
-
-
-<OL>
-
-<LI>A non-terminal symbol may be any Prolog term (other than a variable or number).
-
-<LI>A terminal symbol may be any Prolog term. To distinguish terminals from non-terminals, a sequence of one or more terminal symbols is written within a grammar rule as a Prolog list. An empty sequence is written as the empty list <CODE>[]</CODE>. If the terminal symbols are ASCII character codes, such lists can be written (as elsewhere) as strings. An empty sequence is written as the empty list, <CODE>[]</CODE> or <CODE>""</CODE>.
-
-<LI>Extra conditions, in the form of Prolog procedure calls, may be included in the right-hand side of a grammar rule. Such procedure calls are written enclosed in <CODE>{}</CODE> brackets.
-
-<LI>The left-hand side of a grammar rule consists of a non-terminal, optionally followed by a sequence of terminals (again written as a Prolog list).
-
-<LI>Alternatives may be stated explicitly in the right-hand side of a grammar rule, using the disjunction operator <CODE>;</CODE> or <CODE>|</CODE> as in Prolog.
-
-<LI>The cut symbol may be included in the right-hand side of a grammar rule, as in a Prolog clause. The cut symbol does not need to be enclosed in <CODE>{}</CODE> brackets.
-
-</OL>
-
-<P>
-As an example, here is a simple grammar which parses an arithmetic expression (made up of digits and operators) and computes its value. 
-
-
-
-<PRE>
-expr(Z) --&#62; term(X), "+", expr(Y), {Z is X + Y}.
-expr(Z) --&#62; term(X), "-", expr(Y), {Z is X - Y}.
-expr(X) --&#62; term(X).
-
-term(Z) --&#62; number(X), "*", term(Y), {Z is X * Y}.
-term(Z) --&#62; number(X), "/", term(Y), {Z is X / Y}.
-term(Z) --&#62; number(Z).
-
-number(C) --&#62; "+", number(C).
-number(C) --&#62; "-", number(X), {C is -X}.
-number(X) --&#62; [C], {"0"=&#60;C, C=&#60;"9", X is C - "0"}.
-</PRE>
-
-<P>
-In the last rule, <CODE>C</CODE> is the ASCII code of some digit. 
-
-
-<P>
-The query 
-
-
-
-<PRE>
-| ?- expr(Z, "-2+3*5+1", []).
-</PRE>
-
-<P>
-will compute <CODE>Z</CODE>=14. The two extra arguments are explained below. 
-
-
-<P>
-Now, in fact, grammar rules are merely a convenient "syntactic sugar" for ordinary Prolog clauses. Each grammar rule takes an input string, analyses some initial portion, and produces the remaining portion (possibly enlarged) as output for further analysis. The arguments required for the input and output strings are not written explicitly in a grammar rule, but the syntax implicitly defines them. We now show how to translate grammar rules into ordinary clauses by making explicit the extra arguments. 
-
-
-<P>
-A rule such as 
-
-
-
-<PRE>
-p(X) --&#62; q(X).
-</PRE>
-
-<P>
-translates into 
-
-
-
-<PRE>
-p(X, S0, S) :- q(X, S0, S).
-</PRE>
-
-<P>
-If there is more than one non-terminal on the right-hand side, as in 
-
-
-
-<PRE>
-p(X, Y) --&#62; 
-        q(X), 
-        r(X, Y),
-        s(Y).
-</PRE>
-
-<P>
-then corresponding input and output arguments are identified, as in 
-
-
-
-<PRE>
-p(X, Y, S0, S) :- 
-        q(X, S0, S1), 
-        r(X, Y, S1, S2), 
-        r(Y, S2, S).
-</PRE>
-
-<P>
-Terminals are translated using the built-in predicate <CODE>term_basic:'C'/3</CODE> (this predicate is not normally useful in itself; it has been given the name <CODE>'C'</CODE> simply to avoid using up a more useful name). Then, for instance 
-
-
-
-<PRE>
-p(X) --&#62; [go,to], q(X), [stop].
-</PRE>
-
-<P>
-is translated by 
-
-
-
-<PRE>
-p(X, S0, S) :-
-        'C'(S0, go, S1), 
-        'C'(S1, to, S2), 
-        q(X, S2, S3), 
-        'C'(S3, stop, S).
-</PRE>
-
-<P>
-Extra conditions expressed as explicit procedure calls naturally translate as themselves, e.g. 
-
-
-
-<PRE>
-p(X) --&#62; [X], {integer(X), X&#62;0}, q(X).
-</PRE>
-
-<P>
-translates to 
-
-
-
-<PRE>
-p(X, S0, S) :- 
-        'C'(S0, X, S1), 
-        integer(X), 
-        X&#62;0, 
-        q(X, S1, S).
-</PRE>
-
-<P>
-Similarly, a cut is translated literally. 
-
-
-<P>
-Terminals on the left-hand side of a rule translate into an explicit list in the output argument of the main non-terminal, e.g. 
-
-
-
-<PRE>
-is(N), [not] --&#62; [aint].
-</PRE>
-
-<P>
-becomes 
-
-
-
-<PRE>
-is(N, S0, [not|S]) :- 'C'(S0, aint, S).
-</PRE>
-
-<P>
-Disjunction has a fairly obvious translation, e.g. 
-
-
-
-<PRE>
-args(X, Y) --&#62; 
-        (   dir(X), [to], indir(Y)
-        ;   indir(Y), dir(X)
-        ).
-</PRE>
-
-<P>
-translates to 
-
-
-
-<PRE>
-args(X, Y, S0, S) :-
-        (   dir(X, S0, S1), 
-            'C'(S1, to, S2), 
-            indir(Y, S2, S)
-        ;   indir(Y, S0, S1), 
-            dir(X, S1, S)
-        ).
-</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_46.html#SEC173">Usage and interface (dcg)</A>
+<LI><A HREF="ciao_46.html#SEC220">Usage and interface (classic)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC173" HREF="ciao_toc.html#TOC173">Usage and interface (<CODE>dcg</CODE>)</A></H2>
+<H2><A NAME="SEC220" HREF="ciao_toc.html#TOC220">Usage and interface (<CODE>classic</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -243,16 +34,52 @@ args(X, Y, S0, S) :-
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(dcg).</CODE>
+<CODE>:- use_package(classic).</CODE>
 
 or
 
-<CODE>:- module(...,...,[dcg]).</CODE>
+<CODE>:- module(...,...,[classic]).</CODE>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX2524"></A>
+<CODE>--&#62;/2</CODE> [1200,xfx].
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX2525"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX2526"></A>
+<CODE>old_database</CODE>, 
+<A NAME="IDX2527"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX2528"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX2529"></A>
+<CODE>dict</CODE>, 
+<A NAME="IDX2530"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX2531"></A>
+<CODE>dec10_io</CODE>, 
+<A NAME="IDX2532"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX2533"></A>
+<CODE>ttyout</CODE>, 
+<A NAME="IDX2534"></A>
+<CODE>dynmods</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_45.html">previous</A>, <A HREF="ciao_47.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

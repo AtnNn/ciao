@@ -1,4 +1,4 @@
-.TH ciao l "2000/1/26"
+.TH ciao l "2000/5/5"
 
 .SH NAME
 .B ciao
@@ -12,34 +12,40 @@
  
 .B Ciao 
 is a 
-.I public domain 
-programming environment which supports the development and efficient compilation of 
-.I logic programs
+.I public domain
 , 
-.I constraint logic programs 
-(CLP), 
-.I functional logic programs
-, and 
-.I object-oriented logic programs
-. In particular, 
-.B Ciao 
-includes standard 
-.B ISO-Prolog 
-as a sublanguage and a program development environment similar to that of traditional Prolog and CLP implementations. However, 
-.B Ciao 
-extends the Prolog language and improves on traditional Prolog programming environments in a number of significant ways: 
+.I next generation 
+programming environment with a unique set of features: 
+
+
 
 
 .(l F 
+
+
+* Ciao is a complete Prolog system, supporting 
+.I ISO-Prolog
+, but its novel modular design allows both 
+.I restricting 
+and 
+.I extending 
+the language. As a result, it allows working with 
+.I fully declarative subsets 
+of Prolog and also to 
+.I extend 
+these subsets (or ISO-Prolog) both syntactically and semantically. Most importantly, these restrictions and extensions can be activated separately on each program module so that several extensions can coexist in the same application for different modules. 
+
+
+* Ciao extensions currently include feature terms (records), higher-order (with predicate abstractions), functions, constraints, objects, persistence, several control rules (breadth-first search, iterative deepening, ...), concurrency (threads/engines), a good base for distributed execution (agents), and parallel execution. Libraries also support WWW programming, sockets, external interfaces (C, Java, TclTk, relational databases, etc.), etc. 
 
 
 * 
 .B Ciao 
 offers support for 
 .I programming in the large 
-with a robust module/object system, module-based automatic incremental compilation (with no need for makefiles), an assertion language for declaring (
+with a robust module/object system, module-based separate/incremental compilation (automatically --no need for makefiles), an assertion language for declaring (
 .I optional
-) program properties (including types and modes), automatic static inference and static/dynamic checking of such assertions, etc. 
+) program properties (including types and modes, but also determinacy, non-failure, cost, etc.), automatic static inference and static/dynamic checking of such assertions, etc. 
 
 
 * 
@@ -51,53 +57,61 @@ producing small executables (including only those builtins used by the program) 
 
 * The 
 .B Ciao 
-compiler generates several forms of architecture-independent and stand-alone executables. Library modules can be compiled into compact bytecode or C source files, and linked statically, dynamically, or autoloaded. 
-
-
-* 
-.B Ciao 
-supports concurrency (threads), distributed execution, and parallel execution. 
+programming environment includes a classical top-level and a rich emacs interface with an embeddable source-level debugger and a number of execution visualization tools. 
 
 
 * The 
 .B Ciao 
-programming environment includes a large number of 
-.I libraries 
-providing a wide range of additional functionality, from WWW programming to support for several control rules. 
+compiler (which can be run outside the top level shell) generates several forms of architecture-independent and stand-alone executables, which run with speed, efficiency and executable size which are very competive with other commercial and academic Prolog/CLP systems. Library modules can be compiled into compact bytecode or C source files, and linked statically, dynamically, or autoloaded. 
+
+
+* The novel modular design of Ciao enables, in addition to modular program development, effective global program analysis and static debugging and optimization via source to source program transformation. These tasks are performed by the 
+.B Ciao preprocessor 
+(
+.B ciaopp
+, distributed separately). 
 
 
 * The 
 .B Ciao 
 programming environment also includes 
 .B lpdoc
-, a tool for generating documentation automatically for Prolog programs adorned with (
+, an automatic documentation generator for LP/CLP programs. It processes Prolog files adorned with (
 .B Ciao
-) assertions and special, machine-readable comments. 
+) assertions and machine-readable comments and generates manuals in many formats including 
+.B postscript
+, 
+.B pdf
+, 
+.B texinfo
+, 
+.B info
+, 
+.B HTML
+, 
+.B man
+, etc. , as well as on-line help, ascii 
+.B README 
+files, entries for indices of manuals (
+.B info
+, WWW, ...), and maintains WWW distribution sites. 
 
 
 .)l 
 
-The 
-.B Ciao 
-language has been designed from the ground up to be highly extensible (in a modular way) and to allow modular program development, global program analysis, and static debugging and optimization via source to source program transformation, including automatic parallelization. The latter tasks are performed by the 
-.B Ciao preprocessor 
-(
-.B ciaopp
-, distributed separately). The 
-.B Ciao 
-system also includes a rich 
-.B emacs 
-interface and a number of execution visualization tools. 
-
 
 .B Ciao 
-is distributed under the GNU General Public License, version 2, as published by the Free Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. 
+is distributed under the GNU General Public License. 
+
+
+
+
 
 
 
 
 .SH VERSION
-This man page corresponds to version 1.5#37 (2000/1/26).
+This man page corresponds to version 1.5#133 (2000/5/5).
 
 
 .SH MORE INFO
@@ -151,9 +165,17 @@ Any incompatibility of the above clauses with legal, contractual or judiciary de
 
 .SH AUTHOR
 .br
-F. Bueno, D. Cabeza, M. Carro,
+F. Bueno
 .br
-M. Hermenegildo, P. Lo\*'pez, and G. Puebla
+D. Cabeza
+.br
+M. Carro
+.br
+M. Hermenegildo
+.br
+P. Lo\*'pez
+.br
+G. Puebla
 .br
 clip@dia.fi.upm.es
 .br

@@ -17,4 +17,7 @@ realclean: clean
 	/bin/rm -rf suite
 
 distclean: realclean
+	@echo "*** ---------------------------------------------------------"
+	@echo "*** Cleaning up tests directory."
+	@echo "*** ---------------------------------------------------------"
 	/bin/rm -rf *~

@@ -1,41 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Quintus-like internal database</TITLE>
+<TITLE>The Ciao Prolog System               - Definite clause grammars (expansion)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_47.html">previous</A>, <A HREF="ciao_49.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_47.html">previous</A>, <A HREF="ciao_49.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC177" HREF="ciao_toc.html#TOC177">Quintus-like internal database</A></H1>
+<H1><A NAME="SEC223" HREF="ciao_toc.html#TOC223">Definite clause grammars (expansion)</A></H1>
 <P>
-<A NAME="IDX2084"></A>
+<A NAME="IDX2536"></A>
 
 
 <P>
 <STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
-<P>
- The predicates described in this section were introduced in early implementations of Prolog to provide efficient means of performing operations on large quantities of data. The introduction of indexed dynamic predicates have rendered these predicates obsolete, and the sole purpose of providing them is to support existing code. There is no reason whatsoever to use them in new code. 
-
-
-<P>
-These predicates store arbitrary terms in the database without interfering with the clauses which make up the program. The terms which are stored in this way can subsequently be retrieved via the key on which they were stored. Many terms may be stored on the same key, and they can be individually accessed by pattern matching. Alternatively, access can be achieved via a special identifier which uniquely identifies each recorded term and which is returned when the term is stored. 
-
-
 
 <UL>
-<LI><A HREF="ciao_48.html#SEC178">Usage and interface (old_database)</A>
-<LI><A HREF="ciao_48.html#SEC179">Documentation on exports (old_database)</A>
+<LI><A HREF="ciao_48.html#SEC224">Usage and interface (dcg_expansion)</A>
+<LI><A HREF="ciao_48.html#SEC225">Documentation on exports (dcg_expansion)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC178" HREF="ciao_toc.html#TOC178">Usage and interface (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC224" HREF="ciao_toc.html#TOC224">Usage and interface (<CODE>dcg_expansion</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,87 +35,108 @@ These predicates store arbitrary terms in the database without interfering with 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(old_database)).</CODE>
+<CODE>:- use_module(library(dcg_expansion)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX2537"></A>
+<CODE>phrase/2</CODE>, 
+<A NAME="IDX2538"></A>
+<CODE>phrase/3</CODE>, 
+<A NAME="IDX2539"></A>
+<CODE>dcg_translation/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX2540"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX2541"></A>
+<CODE>assertions/doc_props</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC179" HREF="ciao_toc.html#TOC179">Documentation on exports (<CODE>old_database</CODE>)</A></H2>
+<H2><A NAME="SEC225" HREF="ciao_toc.html#TOC225">Documentation on exports (<CODE>dcg_expansion</CODE>)</A></H2>
 <P>
-<A NAME="IDX2085"></A>
-<A NAME="IDX2086"></A>
+<A NAME="IDX2542"></A>
+<A NAME="IDX2543"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>recorda/3:</B>
-<DD><A NAME="IDX2087"></A>
+<DT><span class="define">PREDICATE:</span> <B>phrase/2:</B>
+<DD><A NAME="IDX2544"></A>
 
 
 <P>
-<CODE>recorda(+Key,?(Term),-(Ref))</CODE>
+<CODE>phrase(Phrase,List)</CODE>
 
 
 <P>
-The term <CODE>Term</CODE> is recorded in the internal database as the first item for the key <CODE>Key</CODE>, where <CODE>Ref</CODE> is its implementation-defined identifier. The key must be given, and only its principal functor is significant. Any uninstantiated variables in the <CODE>Term</CODE> will be replaced by new private variables, along with copies of any subgoals blocked on these variables.
+Like <CODE>phrase(Phrase,List,[])</CODE>.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>phrase(goal,?)</CODE>.
 
 
 </DL>
 
 <P>
-<A NAME="IDX2088"></A>
-<A NAME="IDX2089"></A>
+<A NAME="IDX2545"></A>
+<A NAME="IDX2546"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>recordz/3:</B>
-<DD><A NAME="IDX2090"></A>
+<DT><span class="define">PREDICATE:</span> <B>phrase/3:</B>
+<DD><A NAME="IDX2547"></A>
 
 
 <P>
-<CODE>recordz(+Key,?(Term),-(Ref))</CODE>
+<EM>Meta-predicate</EM> with arguments: <CODE>phrase(goal,?,?)</CODE>.
 
 
 <P>
-Like <CODE>recorda/3</CODE>, except that the new term becomes the <EM>last</EM> item for the key <CODE>Key</CODE>.
+<STRONG>Usage:</STRONG> <CODE>phrase(+Phrase,?(List),?(Remainder))</CODE>
 
+<UL>
+<LI><EM>Description:</EM> The list <CODE>List</CODE> is a phrase of type <CODE>Phrase</CODE> (according to the current grammar rules), where <CODE>Phrase</CODE> is either a non-terminal or more generally a grammar rule body. <CODE>Remainder</CODE> is what remains of the list after a phrase has been found.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>phrase(+Phrase,?(List),?(Remainder))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2091"></A>
-<A NAME="IDX2092"></A>
+<A NAME="IDX2548"></A>
+<A NAME="IDX2549"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>recorded/3:</B>
-<DD><A NAME="IDX2093"></A>
+<DT><span class="define">PREDICATE:</span> <B>dcg_translation/2:</B>
+<DD><A NAME="IDX2550"></A>
 
 
 <P>
-<CODE>recorded(?(Key),?(Term),?(Ref))</CODE>
-
-
-<P>
-The internal database is searched for terms recorded under the key <CODE>Key</CODE>. These terms are successively unified with <CODE>Term</CODE> in the order they occur in the database. At the same time, <CODE>Ref</CODE> is unified with the implementation-defined identifier uniquely identifying the recorded item. If the key is instantiated to a compound term, only its principal functor is significant. If the key is uninstantiated, all terms in the database are successively unified with <CODE>Term</CODE> in the order they occur.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2094"></A>
-<A NAME="IDX2095"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>current_key/2:</B>
-<DD><A NAME="IDX2096"></A>
-
-
-<P>
-<CODE>current_key(?(KeyName),?(KeyTerm))</CODE>
-
-
-<P>
-<CODE>KeyTerm</CODE> is the most general form of the key for a currently recorded term, and <CODE>KeyName</CODE> is the name of that key. This predicate can be used to enumerate in undefined order all keys for currently recorded terms through backtracking.
+Performs the code expansion of source clauses that use DCGs.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_47.html">previous</A>, <A HREF="ciao_49.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_47.html">previous</A>, <A HREF="ciao_49.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -8,10 +8,11 @@
 
 SHELL=/bin/sh
 DEBUGFILES=cmnd.o help.o interface.o string.o instr2name.o qinstr2name.o
-BUILTINS=wam.o kernel.o  format.o inout.o misc.o startgoal.o \
+BUILTINS=wam.o format.o inout.o misc.o startgoal.o \
 	 nondet.o objareas.o streams.o timing.o wambuiltin.o wamfunction.o \
 	 unix_utils.o attr.o dynlink.o tasks.o locks.o prolog_tasks.o \
 	 own_malloc_linear.o
+# kernel.o
 SUPPORTS=alloc.o heapgc.o indexing.o initial.o registers.o  \
 	stacks.o support.o term_support.o wamsupport.o \
 	qread.o qget.o builtin.o interrupt.o gauge.o \
@@ -42,8 +43,8 @@ install: # $(ENGINENAME)
 	-ln -s $(INSTALLEDENGINE).$(CIAOARCH) $(INSTALLEDENGINE)
 	-chmod $(EXECMODE) $(ENGINEDIR)
 	-chmod $(EXECMODE) $(INSTALLEDENGINE)
-	-cp $(DATADEFS) $(SUPPORT) $(INSTALLEDINCLUDEDIR)
-	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
+#	-cp $(DATADEFS) $(SUPPORT) $(INSTALLEDINCLUDEDIR)
+#	-chmod $(DATAMODE) $(INSTALLEDINCLUDEDIR)/*
 
 uninstall:
 	-rm -f $(INSTALLEDENGINE)
@@ -63,14 +64,17 @@ ciaoemulator: $(OBJ)
 
 clean:
 	/bin/rm -f makecase configure qinstr2name.h instr2name.h \
-	version.c configure.h *.o kernel_con kernel.con \
-	def_kernel.c 68k_kernel.s
+	version.c configure.h *.o 
+#	kernel_con kernel.con 
+#	def_kernel.c 68k_kernel.s
 
 realclean:
 	/bin/rm -f $(ENGINENAME) $(CIAOLIBNAME)
 
 distclean:
 	/bin/rm -f *~
+	/bin/rm -f TAGS
+	/bin/rm -f depends
 
 libciao: mode sh_object
 
@@ -162,22 +166,22 @@ gauge.o: $(DATADEFS) $(SUPPORT) predtyp.h gauge_defs.h
 bignum.o: $(DATADEFS) $(SUPPORT)
 flinkage.o:
 
-kernel.o:	$(DATADEFS) kernel_con.c Makefile
-	$(MAKE) def_kernel.o $(MFLAGS) CC=$(CC) CFLAGS='$(CFLAGS)'
-	cp def_kernel.o kernel.o;
+# kernel.o:	$(DATADEFS) kernel_con.c Makefile
+# 	$(MAKE) def_kernel.o $(MFLAGS) CC=$(CC) CFLAGS='$(CFLAGS)'
+# 	cp def_kernel.o kernel.o;
 
-def_kernel.c: Makefile
-	/bin/rm -f def_kernel.c
-	echo 'static char ignore;' >> def_kernel.c
+# def_kernel.c: Makefile
+# 	/bin/rm -f def_kernel.c
+# 	echo 'static char ignore;' >> def_kernel.c
 
-def_kernel.o:
+# def_kernel.o:
 
-kernel_con: kernel_con.c $(DATADEFS)
-	$(CC) $(CFLAGS) kernel_con.c -o kernel_con
+# kernel_con: kernel_con.c $(DATADEFS)
+# 	$(CC) $(CFLAGS) kernel_con.c -o kernel_con
 
-kernel.con: kernel_con
-	/bin/rm -f kernel.con
-	./kernel_con > kernel.con
+# kernel.con: kernel_con
+# 	/bin/rm -f kernel.con
+# 	./kernel_con > kernel.con
 
 # This is for Win32
 sockets_c.o:
@@ -187,6 +191,10 @@ sockets_c.o:
 random.o:
 	cd ../../library/random ; $(MAKE) random_$(CIAOARCH).o
 	cp ../../library/random/random_$(CIAOARCH).o ./random.o
+
+#fastrw.o:
+#	cd ../../library/fastwr ; $(MAKE) fastrw_$(CIAOARCH).o
+#	cp ../../library/fastrw/fastrw_$(CIAOARCH).o ./fastrw.o
 
 touch:
 	touch *.[ch]

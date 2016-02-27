@@ -5,19 +5,19 @@
 
 :- comment(author,"Daniel Cabeza and the CLIP Group").
 
-:- comment(usage, "Modules are an intrinsic feature of CIAO, so nothing
+:- comment(usage, "Modules are an intrinsic feature of Ciao, so nothing
    special has to be done to use them.").
 
 :- comment(summary, "Modularity is a basic notion in a modern computer
    language.  Modules allow dividing programs in several parts, which
-   have its own independent name spaces.").
+   have their own independent name spaces.").
 
 :- comment(module, "Modularity is a basic notion in a modern computer
    language.  Modules allow dividing programs in several parts, which
-   have its own independent name spaces.  The module system in CIAO, as
-   in many other Prolog implementations, is procedure based.  This means
-   that predicate names are local to a module, but functor/atom names in
-   data are shared.
+   have its own independent name spaces.  The module system in Ciao
+   @cite{ciao-modules-entcs}, as in many other Prolog implementations,
+   is procedure based.  This means that predicate names are local to a
+   module, but functor/atom names in data are shared.
 
    The predicates visible in a module are the predicates defined in that
    module, plus the predicates imported from other modules.  Only
@@ -38,7 +38,7 @@
    implicitly exported.  This allows dividing programs in several files
    without being aware of the module system at all.  Note that this
    feature is only supported for compatibility reasons, being its use
-   discouraged.  Many attractive compilation features of CIAO cannot be
+   discouraged.  Many attractive compilation features of Ciao cannot be
    performed in @tt{user} modules.
 
    The case of multifile predicates (defined with the declaration

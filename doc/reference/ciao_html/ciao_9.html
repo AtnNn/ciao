@@ -1,168 +1,582 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The script interpreter</TITLE>
+<TITLE>The Ciao Prolog System               - Predicates controlling the interactive debugger</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC42" HREF="ciao_toc.html#TOC42">The script interpreter</A></H1>
-
+<H1><A NAME="SEC80" HREF="ciao_toc.html#TOC80">Predicates controlling the interactive debugger</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<A NAME="IDX710"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#106 (1999/11/18, 12:48:54 MET)
+<STRONG>Author(s):</STRONG> A. Ciepielewski, M. Carlsson, T. Chikayama, K. Shen, D. Cabeza, M. Rodriguez.
 
 
 <P>
-<A NAME="IDX475"></A>
-<CODE>ciao-shell</CODE> is the Ciao script interpreter. It can be used to write 
-<A NAME="IDX476"></A>
-<A NAME="IDX477"></A>
-<EM>Prolog shell scripts</EM> (see [Her96,CHV96b]), that is, executable files containing source code, which are compiled on demand. 
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-Writing Prolog scripts can sometimes be advantageous with respect to creating binary executables for small- to medium-sized programs that are modified often and perform relatively simple tasks. The advantage is that no compilation is necessary, and thus changes and updates to the program imply only editing the source file. The disadvantage is that startup of the script (the first time after it is modified) is slower than for an application that has been compiled previously. 
+<STRONG>Version of last change:</STRONG> 1.5#107 (2000/4/5, 9:55:16 CEST)
 
 
 <P>
-An area of application is, for example, writing 
-<A NAME="IDX478"></A>
-<A NAME="IDX479"></A>
-<EM>CGI executables</EM>: the slow speed of the network connection in comparison with that of executing a program makes program execution speed less important has made scripting languages very popular for writing these scripts. Logic languages are, a priori, excellent candidates to be used as scripting languages. For example, the built-in grammars and databases can sometimes greatly simplify many typical script-based applications. 
+This library implements predicates which are normally used in the interactive top-level shell to debug programs. A subset of them are available in the embeddable debugger.
 
 
 
 <UL>
-<LI><A HREF="ciao_9.html#SEC43">How it works</A>
-<LI><A HREF="ciao_9.html#SEC44">Command line arguments in scripts</A>
+<LI><A HREF="ciao_9.html#SEC81">Usage and interface (debugger)</A>
+<LI><A HREF="ciao_9.html#SEC82">Documentation on exports (debugger)</A>
+<LI><A HREF="ciao_9.html#SEC83">Documentation on internals (debugger)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC43" HREF="ciao_toc.html#TOC43">How it works</A></H2>
+<H2><A NAME="SEC81" HREF="ciao_toc.html#TOC81">Usage and interface (<CODE>debugger</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(debugger)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX711"></A>
+<CODE>debug_module/1</CODE>, 
+<A NAME="IDX712"></A>
+<CODE>nodebug_module/1</CODE>, 
+<A NAME="IDX713"></A>
+<CODE>debug_module_source/1</CODE>, 
+<A NAME="IDX714"></A>
+<CODE>debug/0</CODE>, 
+<A NAME="IDX715"></A>
+<CODE>nodebug/0</CODE>, 
+<A NAME="IDX716"></A>
+<CODE>trace/0</CODE>, 
+<A NAME="IDX717"></A>
+<CODE>notrace/0</CODE>, 
+<A NAME="IDX718"></A>
+<CODE>spy/1</CODE>, 
+<A NAME="IDX719"></A>
+<CODE>nospy/1</CODE>, 
+<A NAME="IDX720"></A>
+<CODE>nospyall/0</CODE>, 
+<A NAME="IDX721"></A>
+<CODE>breakpt/6</CODE>, 
+<A NAME="IDX722"></A>
+<CODE>nobreakpt/6</CODE>, 
+<A NAME="IDX723"></A>
+<CODE>nobreakall/0</CODE>, 
+<A NAME="IDX724"></A>
+<CODE>list_breakpt/0</CODE>, 
+<A NAME="IDX725"></A>
+<CODE>debugging/0</CODE>, 
+<A NAME="IDX726"></A>
+<CODE>leash/1</CODE>, 
+<A NAME="IDX727"></A>
+<CODE>maxdepth/1</CODE>, 
+<A NAME="IDX728"></A>
+<CODE>call_in_module/2</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX729"></A>
+<CODE>debugger/debugger_lib</CODE>, 
+<A NAME="IDX730"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX731"></A>
+<CODE>ttyout</CODE>, 
+<A NAME="IDX732"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX733"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX734"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX735"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX736"></A>
+<CODE>prolog_sys</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC82" HREF="ciao_toc.html#TOC82">Documentation on exports (<CODE>debugger</CODE>)</A></H2>
+<P>
+<A NAME="IDX737"></A>
+<A NAME="IDX738"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debug_module/1:</B>
+<DD><A NAME="IDX739"></A>
+
 
 <P>
-Essentially, <CODE>ciao-shell</CODE> is a smaller version of the Ciao top-level, which starts by loading the file given to it as the first argument and then starts execution at 
-<A NAME="IDX480"></A>
-<CODE>main/1</CODE> (the argument is instantiated to a list containing the command line options, in the usual way). However, while doing this, <CODE>ciao-shell</CODE> changes the 
-<A NAME="IDX481"></A>
-prolog flag <CODE>quiet</CODE> so that no informational or warning messages are printed (error messages will be reported to <CODE>user_error</CODE>, however). The operation of <CODE>ciao-shell</CODE> in Unix-like systems is based in a special compiler feature: when the first character of a file is '<CODE>#</CODE>', the compiler skips the first lines until an empty line is found. 
+<STRONG>Usage:</STRONG> <CODE>debug_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The debugger will take into acount module <CODE>Module</CODE> (assuming it is loaded in interpreted mode). When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>interpret</EM> the loading mode of files defining that module and also to mark it as 'modified' so that (re)loading this file or a main file that uses this module will force it to be reloaded for source-level debugging.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX740"></A>
+<A NAME="IDX741"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nodebug_module/1:</B>
+<DD><A NAME="IDX742"></A>
 
 
 <P>
-For example, in a Linux/Unix system, assume a file called 
-<A NAME="IDX482"></A>
-<CODE>hello</CODE> contains the following program: 
+<STRONG>Usage:</STRONG> <CODE>nodebug_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The debugger will not take into acount module <CODE>Module</CODE>. When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>compile</EM> the loading mode of files defining that module.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX743"></A>
+<A NAME="IDX744"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debug_module_source/1:</B>
+<DD><A NAME="IDX745"></A>
 
 
+<P>
+<STRONG>Usage:</STRONG> <CODE>debug_module_source(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The debugger will take into acount module <CODE>Module</CODE> (assuming it is is loaded in source-level debug mode). When issuing this command at the toplevel shell, the compiler is instructed also to set to <EM>interpret</EM> the loading mode of files defining that module and also to mark it as 'modified' so that (re)loading this file or a main file that uses this module will force it to be reloaded for source-level debugging.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX746"></A>
+<A NAME="IDX747"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debug/0:</B>
+<DD><A NAME="IDX748"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Switches the debugger on. The interpreter will stop at all ports of procedure boxes of spied predicates.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX749"></A>
+<A NAME="IDX750"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nodebug/0:</B>
+<DD><A NAME="IDX751"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Switches the debugger off. If there are any spy-points set then they will be kept but disabled.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX752"></A>
+<A NAME="IDX753"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>trace/0:</B>
+<DD><A NAME="IDX754"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Start tracing, switching the debugger on if needed. The interpreter will stop at all leashed ports of procedure boxes of predicates either belonging to debugged modules or called from clauses of debugged modules. A message is printed at each stop point, expecting input from the user (write <CODE>h</CODE> to see the available options).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX755"></A>
+<A NAME="IDX756"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>notrace/0:</B>
+<DD><A NAME="IDX757"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Equivalent to
+
+<A NAME="IDX758"></A>
+<CODE>nodebug/0</CODE>. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX759"></A>
+<A NAME="IDX760"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>spy/1:</B>
+<DD><A NAME="IDX761"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>spy(PredSpec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set spy-points on predicates belonging to debugged modules and which match <CODE>PredSpec</CODE>, switching the debugger on if needed. This predicate is defined as a prefix operator by the toplevel.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredSpec</CODE> is a sequence of <CODE>multpredspec</CODE>s.
+ (<CODE>basic_props:sequence/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX762"></A>
+<A NAME="IDX763"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nospy/1:</B>
+<DD><A NAME="IDX764"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nospy(PredSpec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Remove spy-points on predicates belonging to debugged modules which match <CODE>PredSpec</CODE>. This predicate is defined as a prefix operator by the toplevel.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredSpec</CODE> is a sequence of <CODE>multpredspec</CODE>s.
+ (<CODE>basic_props:sequence/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX765"></A>
+<A NAME="IDX766"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nospyall/0:</B>
+<DD><A NAME="IDX767"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Remove all spy-points.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX768"></A>
+<A NAME="IDX769"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>breakpt/6:</B>
+<DD><A NAME="IDX770"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>breakpt(Pred,Src,Ln0,Ln1,Number,RealLine)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set a
+
+<A NAME="IDX771"></A>
+<A NAME="IDX772"></A>
+<EM>breakpoint</EM> in file <CODE>Src</CODE> between lines <CODE>Ln0</CODE> and <CODE>Ln1</CODE> at the literal corresponding to the <CODE>Number</CODE>'th occurence of (predicate) name <CODE>Pred</CODE>. The complication comes from the fact that the reader only gives the start and end line numbers for the predicate. The rest of the arguments provide enough information to be able to locate the exact predicate that the <CODE>RealLine</CODE> line refers to. This is normally not issued by users but rather by the 
+<A NAME="IDX773"></A>
+<CODE>emacs</CODE> mode, which automatically computes the different argument after selecting a point in the source file. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Src</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Ln0</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Ln1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Number</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>RealLine</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX774"></A>
+<A NAME="IDX775"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nobreakpt/6:</B>
+<DD><A NAME="IDX776"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>nobreakpt(Pred,Src,Ln0,Ln1,Number,RealLine)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Remove a breakpoint in file <CODE>Src</CODE> between lines <CODE>Ln0</CODE> and <CODE>Ln1</CODE> at the <CODE>Number</CODE>'th occurence of (predicate) name <CODE>Pred</CODE> (see
+
+<A NAME="IDX777"></A>
+<CODE>breakpt/6</CODE>). Also normally used from de 
+<A NAME="IDX778"></A>
+<CODE>emacs</CODE> mode. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Pred</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Src</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Ln0</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Ln1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>Number</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>RealLine</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX779"></A>
+<A NAME="IDX780"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nobreakall/0:</B>
+<DD><A NAME="IDX781"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Remove all breakpoints.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX782"></A>
+<A NAME="IDX783"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>list_breakpt/0:</B>
+<DD><A NAME="IDX784"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Prints out the location of all breakpoints. The location of the breakpoints is showed usual by referring to the source file, the lines between which the predicate can be found, the predicate name and the number of ocurrence of the predicate name of the literal.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX785"></A>
+<A NAME="IDX786"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>debugging/0:</B>
+<DD><A NAME="IDX787"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Display debugger state.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX788"></A>
+<A NAME="IDX789"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>leash/1:</B>
+<DD><A NAME="IDX790"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>leash(Ports)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Leash on ports <CODE>Ports</CODE>, some of <CODE>call</CODE>, <CODE>exit</CODE>, <CODE>redo</CODE>, <CODE>fail</CODE>. By default, all ports are on leash.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Ports</CODE> is a list of <CODE>port</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX791"></A>
+<A NAME="IDX792"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>maxdepth/1:</B>
+<DD><A NAME="IDX793"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>maxdepth(MaxDepth)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Set maximum invocation depth in debugging to <CODE>MaxDepth</CODE>. Calls to compiled predicates are not included in the computation of the depth.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>MaxDepth</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX794"></A>
+<A NAME="IDX795"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>call_in_module/2:</B>
+<DD><A NAME="IDX796"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>call_in_module(Module,Predicate)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Calls predicate <CODE>Predicate</CODE> belonging to module <CODE>Module</CODE>, even if that module does not export the predicate. This only works for modules which are in debug (interpreted) mode (i.e., they are not optimized).
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Predicate</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC83" HREF="ciao_toc.html#TOC83">Documentation on internals (<CODE>debugger</CODE>)</A></H2>
+<P>
+<A NAME="IDX797"></A>
+<A NAME="IDX798"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>multpredspec/1:</B>
+<DD><A NAME="IDX799"></A>
+
+
+<P>
+A property, defined as follows:
 
 <PRE>
-#!/bin/sh 
-exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
-
-main(_) :-
-     write('Hello world'), nl.
-</PRE>
-
-<P>
-Then, the file 
-<A NAME="IDX483"></A>
-<CODE>hello</CODE> can be <EM>run</EM> by simply making it executable and invoking it from the command line: 
-
-
 
 <PRE>
-/herme@clip:/tmp
-[86]&#62; chmod +x hello
-
-/herme@clip:/tmp
-[87]&#62; hello
-Hello world
+multpredspec(Mod:Spec) :-
+        atm(Mod),
+        multpredspec(Spec).
+multpredspec(Name/Low-High) :-
+        atm(Name),
+        int(Low),
+        int(High).
+multpredspec(Name/(Low-High)) :-
+        atm(Name),
+        int(Low),
+        int(High).
+multpredspec(Name/Arity) :-
+        atm(Name),
+        int(Arity).
+multpredspec(Name) :-
+        atm(Name).
 </PRE>
 
-<P>
-The line: 
-
-<PRE>
-#!/bin/sh 
 </PRE>
 
-<P>
-invokes the <CODE>/bin/sh</CODE> shell which will interpret the following line: 
-
-<PRE>
-exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
-</PRE>
-
-<P>
-and invoke 
-<A NAME="IDX484"></A>
-<CODE>ciao-shell</CODE>, instructing it to read this same file (<CODE>$0</CODE>), passing it the rest of the arguments to <CODE>hello</CODE> as arguments to the prolog program. The second part of the line <CODE># -*- mode: ciao; -*-</CODE> is simply a comment which is seen by 
-<A NAME="IDX485"></A>
-<CODE>emacs</CODE> and instructs it to edit this file in Ciao mode (this is needed because these script files typically do not have a <CODE>.pl</CODE> ending). When 
-<A NAME="IDX486"></A>
-<CODE>ciao-shell</CODE> starts, if it is the first time, it compiles the program (skipping the first lines, as explained above), or else at successive runs loads the <CODE>.po</CODE> object file, and then calls 
-<A NAME="IDX487"></A>
-<CODE>main/1</CODE>. 
-
-
-<P>
-Note that the process of creating Prolog scripts is made very simple by the Ciao 
-<A NAME="IDX488"></A>
-emacs mode, which automatically inserts the header and makes the file executable (See section <A HREF="ciao_11.html#SEC49">Using Ciao inside GNU emacs</A>). 
-
-
-
-
-<H2><A NAME="SEC44" HREF="ciao_toc.html#TOC44">Command line arguments in scripts</A></H2>
-
-<P>
-The following example illustrates the use of command-line arguments in scripts. Assume that a file called <CODE>say</CODE> contains the following lines: 
-
-
-
-<PRE>
-#!/bin/sh 
-exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
-
-main(Argv) :-
-     write_list(Argv), nl.
-
-write_list([]).
-write_list([Arg|Args]) :- 
-     write(Arg),
-     write(' '),
-     write_list(Args).
-</PRE>
-
-<P>
-An example of use is: 
-
-
-
-<PRE>
-/herme@clip:/tmp
-[91]&#62; say hello dolly
-hello dolly 
-</PRE>
-
-<P>
- 
-
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_8.html">previous</A>, <A HREF="ciao_10.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

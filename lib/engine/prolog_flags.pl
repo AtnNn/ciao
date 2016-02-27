@@ -9,7 +9,7 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Mats Carlsson").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(module,"@cindex{prolog flag} Flags define some parameters of

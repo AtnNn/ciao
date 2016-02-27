@@ -3,13 +3,16 @@
 ifeq ($(DEBUG_LEVEL),profile)
     DEBUG_FLAGS=-pg -DPROFILE -DDEBUG
     PROFILE_LD_FLAGS=-pg
+    OPTIM_LEVEL=debug
+    CIAODEBUG=-debug
+    OPTIM_FLAGS=
 endif
 
 
 # Optimizations for LINUX 386
 
 ifeq ($(OPTIM_LEVEL),optimized)
-    OPTIM_FLAGS=-O3 -fomit-frame-pointer -malign-loops=2 -malign-jumps=2 -malign-functions=2
+    OPTIM_FLAGS=-Wall -O3 -fomit-frame-pointer -malign-loops=2 -malign-jumps=2 -malign-functions=2
 endif
 
 
@@ -18,9 +21,9 @@ ifeq ($(USE_THREADS),yes)
     LD_THREAD_LIB=-lpthread
     LD_LOCK_LIB=
 ifeq ($(USE_POSIX_LOCKS),yes)
-    THREAD_FLAG=-D_REENTRANT -DTHREADS -DUSE_POSIX_THREADS -DPOSIX_LOCKS
+    THREAD_FLAG=-D_REENTRANT -DTHREADS
 else
-    THREAD_FLAG=-D_REENTRANT -DTHREADS -DUSE_POSIX_THREADS
+    THREAD_FLAG=-D_REENTRANT -DTHREADS
 endif
 else
     LD_THREAD_LIB=

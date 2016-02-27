@@ -8,7 +8,7 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel Hermenegildo").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(module,"This library contains traditional Prolog predicates

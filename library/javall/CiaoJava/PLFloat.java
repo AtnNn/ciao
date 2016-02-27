@@ -1,13 +1,13 @@
 package CiaoJava;
 
 /**
- * This class represents the prolog floats. Internally the prolog floats are
- * stored as double, to allow the conversion in the java side.
+ * This class represents the Prolog floats. Internally the Prolog floats are
+ * stored as double, to facilitate the conversion in the Java side.
  */
 public class PLFloat extends PLTerm {
   /**
-   * Value of this prolog float. Must be the largest representation
-   * of a float point number in java, so can be implemented prolog floats.
+   * Value of this Prolog float. Must be the largest representation
+   * of a float point number in Java, so can be implemented Prolog floats.
    */
   Double Value;
 
@@ -25,10 +25,10 @@ public class PLFloat extends PLTerm {
   }
 
   /**
-   * String representation of a prolog float. Uses the representation 
-   * of the toString method of the Double java class.
+   * String representation of a Prolog float. Uses the representation 
+   * of the toString method of the Double Java class.
    *
-   * @return The string representation of the prolog float.
+   * @return The string representation of the Prolog float.
    */
   public String toString() {
 
@@ -37,8 +37,14 @@ public class PLFloat extends PLTerm {
   }
 
   /**
-   * Java representation of a prolog float. Returns the java 
-   * <code>Double</code> object that contains the prolog float.
+   * Java representation of a Prolog float. Returns the Java 
+   * <code>Double</code> object that contains the Prolog float.
+   *
+   * @param i is the PLInterpreter instance used to translate
+   *          Prolog representations of Java objects. Although
+   *          this method makes no use of this argument, is
+   *          included to keep the declaration of this method
+   *          as abstract in class <code>PLTerm</code>.
    *
    * @return an <code>Object</code> instance that contains a 
    *         <code>Double</code> object.
@@ -51,7 +57,10 @@ public class PLFloat extends PLTerm {
   }
 
   /**
-   * Returns the value of this prolog float.
+   * Returns the value of this Prolog float as a Java <code>double</code>.
+   *
+   * @return The value of this Prolog <code>PLFloat</code> as a Java
+   *         <code>double</code>.
    */
   public double getValue() {
 
@@ -60,8 +69,12 @@ public class PLFloat extends PLTerm {
   }
   
   /**
-   * Execution test on prolog objects. Returns true if the
-   * related prolog term can be evaluated.
+   * Execution test on Prolog objects. Returns true if the
+   * related Prolog term can be evaluated. 
+   * This method is included for compatibility with the
+   * <code>PLTerm</code> class.
+   *
+   * @return Always <code>false</code>.
    */
   public boolean isRunnable() {
 
@@ -70,9 +83,13 @@ public class PLFloat extends PLTerm {
   }
 
   /**
-   * Comparison between prolog terms. 
+   * Comparison between Prolog terms. 
    *
    * @param t Prolog term to compare to.
+   *
+   * @return <code>true</code> if the Prolog term received as 
+   *         argument is equal to this <code>PLFloat</code><
+   *         <code>false</code> otherwise.
    */
   public boolean equals(PLTerm t) {
 
@@ -85,6 +102,10 @@ public class PLFloat extends PLTerm {
 
   /**
    * Makes a full copy of this <code>PLFloat</code> object.
+   * Creates a new <code>PLFloat</code> object with the
+   * value of this object.
+   *
+   * @return A copy of this <code>PLFloat</code> object.
    */
   public PLTerm copy() {
     

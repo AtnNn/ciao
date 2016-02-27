@@ -52,6 +52,7 @@ autolibs:
 install:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Installing $(BASEMAIN) 'library' libraries..."
+	@echo "*** (in $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
 	mkdir -p $(STDLIBDIR)
 	-chmod $(EXECMODE) $(STDLIBDIR)
@@ -63,12 +64,17 @@ install:
 uninstall:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling $(BASEMAIN) 'library' libraries..."
+	@echo "*** (deleteing $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
-	-cd $(STDLIBDIR); rm -rf *
-	-rmdir $(STDLIBDIR)
+	-rm -rf $(STDLIBDIR)
 
+# *.itf *.po *.asr are eliminated recursively so that no Makefiles 
+# underneath  are needed for cleaning up prolog-only libraries. MH.
 distclean: 
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning $(BASEMAIN)/library..."
 	@echo "*** ---------------------------------------------------------"
-	/bin/rm -f *.itf *.po *.asr
+	find . -name '*.itf' -exec 'rm' -f {} \;
+	find . -name '*.po'  -exec 'rm' -f {} \;
+	find . -name '*.asr' -exec 'rm' -f {} \;
+

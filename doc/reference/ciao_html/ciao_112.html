@@ -1,222 +1,212 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - SQL persistent database interface</TITLE>
+<TITLE>The Ciao Prolog System               - Persistent predicate database</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC399" HREF="ciao_toc.html#TOC399">SQL persistent database interface</A></H1>
+<H1><A NAME="SEC436" HREF="ciao_toc.html#TOC436">Persistent predicate database</A></H1>
 <P>
-<A NAME="IDX4137"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> I. Caballero, D. Cabeza, J.M. G&oacute;mez, and M. Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+<A NAME="IDX4765"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Author(s):</STRONG> J.M. Gomez, D. Cabeza, and M. Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#35 (1999/4/6, 13:52:16 MEST)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-The purpose of this library is to implement an instance of the generic concept of 
-<A NAME="IDX4138"></A>
-persistent predicates, where external 
-<A NAME="IDX4139"></A>
-relational databases are used for storage (see the documentation of the 
-<A NAME="IDX4140"></A>
-<CODE>persdb</CODE> library and [CHGT98,Par97] for details). To this end, this library exports SQL persistent versions of the 
-<A NAME="IDX4141"></A>
-<CODE>assertz_fact/1</CODE>, 
-<A NAME="IDX4142"></A>
-<CODE>retract_fact/1</CODE> and 
-<A NAME="IDX4143"></A>
-<CODE>retractall_fact/1</CODE> builtin predicates. Persistent predicates also allow 
-<A NAME="IDX4144"></A>
-concurrent updates from several programs, since each update is atomic. 
+<STRONG>Version of last change:</STRONG> 0.8#31 (1998/12/27, 19:17:20 MET)
 
-
-<P>
-The notion of persistence provides a very natural and transparent way to access database relations from a Prolog program. Stub definitions are provided for such predicates which access the database when the predicate is called (using the 
-<A NAME="IDX4145"></A>
-<CODE>db_client</CODE> library). A 
-<A NAME="IDX4146"></A>
-Prolog to SQL translator is used to generate the required 
-<A NAME="IDX4147"></A>
-SQL code dynamically (see library 
-<A NAME="IDX4148"></A>
-<CODE>pl2sql</CODE>). 
-
-
-<P>
-This library also provides facilities for reflecting more complex 
-<A NAME="IDX4149"></A>
-views of the database relations as Prolog predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations. Also, 
-<A NAME="IDX4150"></A>
-SQL-like 
-<A NAME="IDX4151"></A>
-aggregation operations are supported. 
-
-
-
-<UL>
-<LI><A HREF="ciao_112.html#SEC400">Implementation of the Database Interface</A>
-<LI><A HREF="ciao_112.html#SEC401">Example(s)</A>
-<LI><A HREF="ciao_112.html#SEC402">Usage and interface (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC403">Documentation on exports (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC404">Documentation on multifiles (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC405">Documentation on internals (persdbrtsql)</A>
-<LI><A HREF="ciao_112.html#SEC406">Known bugs and planned improvements (persdbrtsql)</A>
-</UL>
-
-
-
-<H2><A NAME="SEC400" HREF="ciao_toc.html#TOC400">Implementation of the Database Interface</A></H2>
-
-<P>
-The architecture of the low-level implementation of the database interface was defined with two goals in mind: 
-
-
-
-<UL>
-<LI>to simplify the communication between the Prolog system and the relational database engines as much as possible, and
-
-<LI>to give as much flexibility as possible to the overall system. This includes simultaneous access to several databases, allowing both the databases and clients to reside on the same physical machine or different machines, and allowing the clients to reside in Win95/NT or Unix machines.
-
-</UL>
 
 <P>
  
-In order to allow the flexibility mentioned above, a client-sever architecture was chosen. The following figure depicts the overall architecture of the system: 
+
+
+
+<UL>
+<LI><A HREF="ciao_112.html#SEC437">Introduction to persistent predicates</A>
+<LI><A HREF="ciao_112.html#SEC438">Persistent predicates</A>
+<LI><A HREF="ciao_112.html#SEC439">Using file-based persistent predicates</A>
+<LI><A HREF="ciao_112.html#SEC440">Implementation Issues</A>
+<LI><A HREF="ciao_112.html#SEC441">Using persistent predicates from the top level</A>
+<LI><A HREF="ciao_112.html#SEC442">Usage and interface (persdbrt)</A>
+<LI><A HREF="ciao_112.html#SEC443">Documentation on exports (persdbrt)</A>
+<LI><A HREF="ciao_112.html#SEC444">Documentation on multifiles (persdbrt)</A>
+<LI><A HREF="ciao_112.html#SEC445">Documentation on internals (persdbrt)</A>
+<LI><A HREF="ciao_112.html#SEC446">Known bugs and planned improvements (persdbrt)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC437" HREF="ciao_toc.html#TOC437">Introduction to persistent predicates</A></H2>
+
+<P>
+This library implements a <EM>generic persistent predicate database</EM>. The basic notion implemented by the library is that of a 
+<A NAME="IDX4766"></A>
+persistent predicate. The persistent predicate concept provides a simple, yet powerful generic persistent data access method [CHGT98,Par97]. A persistent predicate is a special kind of dynamic, data predicate that "resides" in some persistent medium (such as a set of files, a database, etc.) that is typically external to the program using such predicates. The main effect is that any changes made to to a persistent predicate from a program "survive" across executions. I.e., if the program is halted and restarted the predicate that the new process sees is in precisely the same state as it was when the old process was halted (provided no change was made in the meantime to the storage by other processes or the user). 
 
 
 <P>
-<IMG SRC="autofigarchitecture.jpg" ALT="Image:autofigarchitecture.jpg"> 
+Persistent predicates appear to a program as ordinary predicates, and calls to these predicates can appear in clause bodies in the usual way. However, the definitions of these predicates do not appear in the program. Instead, the library maintains automatically the definitions of predicates which have been declared as persistent in the persistent storage. 
 
 
 <P>
-At the server side, a "database mediator server" connects on one side to the databases using the ODBC interface (this interface is available for the databases of the RadioWeb project, as well as for the majority of the databases running in the Win95/NT operating systems) and on the other it is connected to the network by TCP/IP using a fixed socket number / service (currently fixed to socket number 2020). 
+<A NAME="IDX4767"></A>
+Updates to persistent predicates can be made by calling predicates similar to 
+<A NAME="IDX4768"></A>
+<CODE>assertz_fact/1</CODE> and 
+<A NAME="IDX4769"></A>
+<CODE>retract_fact/1</CODE>. The library makes sure that each update is a 
+<A NAME="IDX4770"></A>
+transactional update, in the sense that if the update terminates, then the permanent storage has definitely been modified. For example, if the program making the updates is halted just after the update and then restarted, then the updated state of the predicate will be seen. This provides security against possible data loss due to, for example, a system crash. Also, due to the atomicity of the transactions, persistent predicates allow 
+<A NAME="IDX4771"></A>
+concurrent updates from several programs. 
+
+
+
+
+<H2><A NAME="SEC438" HREF="ciao_toc.html#TOC438">Persistent predicates, files, and relational databases</A></H2>
+
+<P>
+The concept of persistent predicates provided by this library essentially implements a light-weight, simple, and at the same time powerful form of relational database (a 
+<A NAME="IDX4772"></A>
+deductive database), and which is standalone, in the sense that it does not require external support, other than the file management capabilities provided by the operating system. This is due to the fact that the persistent predicates are in fact stored in one or more auxiliary files in a given directory. 
 
 
 <P>
-The mediator server must run on the Windows (NT/95) operating system, on the machine where the databases are also running. The (Prolog) clients which connect to it can be run locally at the server machine. In addition, remote clients running on different machines can also connect to the mediator server by connecting to its socket number (service). Such clients can run on either Unix or Windows systems. 
+This type of database is specially useful when building small to medium-sized standalone applications in Prolog which require persistent storage. In many cases it provides a much easier way of implementing such storage than using files under direct program control. For example, interactive applications can use persistent predicates to represent their internal state in a way that is close to the application. The persistence of such predicates then allows automatically restoring the state to that at the end of a previous session. Using persistent predicates amounts to simply declaring some predicates as such and eliminates having to worry about opening files, closing them, recovering from system crashes, etc. 
 
 
 <P>
-After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the data will traverse in the opposite direction. These messages include logging on and off from the database, sending SQL queries, and receiving the responses. 
+In other cases, however, it may be convenient to use a relational database as persistent storage. This may be the case, for example, when the data already resides in such a database (where it is perhaps accessed also by other applications) or the volume of data is very large. 
+<A NAME="IDX4773"></A>
+<CODE>persdb_sql</CODE> [CCG98] is a companion library which implements the same notion of persistent predicates used herein, but keeping the storage in a relational database. This provides a very natural and transparent way to access SQL database relations from a Prolog program. In that library, facilities are also provided for reflecting more complex <EM>views</EM> of the database relations as predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations, and may include SQL-like aggregation operations. 
 
 
 <P>
-The low level implementation of the current library is accomplished by providing several abstraction levels over the socket interface library of the Prolog engine. These layers of abstraction implement the persistent predicate view, build the appropriate commands for the database using a translator of Prolog goals to SQL commands, issue such commands using the mediator send/receive procedures, parse the responses, and present such responses to the Prolog engine via backtracking. 
+A nice characteristic of the notion of persistent predicates used in both of these libraries is that it abstracts away how the predicate is actually stored. Thus, a program can use persistent predicates stored in files or in external relational databases interchangeably, and the type of storage used for a given predicate can be changed without having to modify the program (except for replacing the corresponding 
+<A NAME="IDX4774"></A>
+<CODE>persistent/2</CODE> declarations). 
+
+
+<P>
+An example application of the 
+<A NAME="IDX4775"></A>
+<CODE>persdb</CODE> and 
+<A NAME="IDX4776"></A>
+<CODE>persdb_sql</CODE> libraries (and also the 
+<A NAME="IDX4777"></A>
+<CODE>pillow</CODE> library [CH97]), is 
+<A NAME="IDX4778"></A>
+<CODE>WebDB</CODE> [GCH98]. 
+<A NAME="IDX4779"></A>
+<CODE>WebDB</CODE> is a generic, highly customizable <EM>deductive database engine</EM> with an <EM>html interface</EM>. 
+<A NAME="IDX4780"></A>
+<CODE>WebDB</CODE> allows creating and maintaining Prolog-based databases as well as relational databases (residing in conventional relational database engines) using any standard WWW browser. 
 
 
 
 
-<H2><A NAME="SEC401" HREF="ciao_toc.html#TOC401">Example(s)</A></H2>
+<H2><A NAME="SEC439" HREF="ciao_toc.html#TOC439">Using file-based persistent predicates</A></H2>
+
+<P>
+Persistent predicates can be declared statically, using 
+<A NAME="IDX4781"></A>
+<CODE>persistent/2</CODE> declarations (which is the preferred method, when possible), or dynamically via calls to 
+<A NAME="IDX4782"></A>
+<CODE>make_persistent/2</CODE>. Currently, persistent predicates may only contain facts, i.e., they are <EM>dynamic</EM> predicates of type 
+<A NAME="IDX4783"></A>
+<CODE>data/1</CODE>, and <EM>should be declared as such</EM>. 
+
+
+<P>
+Predicates declared as persistent are linked to a directory, and the persistent state of the predicate will be kept in several files in that directory. The files in which the persistent predicates are stored are in readable, plain ASCII format, and in Prolog syntax. One advantage of this approach is that such files can also be created or edited by hand, in a text editor, or even by other applications. 
+
+
+<P>
+An example definition of a persistent predicate implemented by files follows: 
+
 
 
 <PRE>
-:- include(library('persdb_sql/persdb_sql')).
-:- use_module(library(format)).
+:- persistent(p/3,dbdir).
 
-%% ------------------------------------------------- %%
-%% First sample database : 'SA 6.0 Sample' %%
-%% ------------------------------------------------- %%
+:- multifile persistent_dir/2.
+:- data persistent_dir/2.
 
-%% Declare product/4 a persistent predicate, storage in 'radiowebdb':
-:- sql_persistent(product( int,    int, string, string ),
-              product( quantity,   id,      name,   size   ),
-              sampledb).
-sql_persistent_location(sampledb, %% The 'sampledb' descriptor:
-         db('ASA 6.0 Sample','dba', 'sql','r2d5.dia.fi.upm.es':2020)).
-
-main0 :-
-%% Prints the contents of the relation 'product/4' by backtracking over it:
-         format("Printing table:\n",[]),
-         product(Quantity, Id, Name, Size), 
-         format("Tuple: ~w \t ~w \t ~w \t ~w \n",
-                [Quantity, Id, Name, Size]),
-         fail.
-main0 :-
-         format("Done.\n",[]).
-
-%% Generalizing table printing:
-%% Prints the contents of Pred by backtracking over it
-print_predicate(Pred):- 
-        format("Printing relation:\n",[]),
-        Pred, %% predicate call
-        Pred=..[_|Args],
-        format("\t Tuple: ~w \n",[Args]),
-        fail.
-print_predicate(_Pred):-
-        format("Done.~n",[]).
-
-main1 :- %% similar to main0:
-%% Prints the contents of the relation 'product/4' by backtracking over it:
-        print_predicate(product(_Quantity,_Id,_Name,_Size)).
-
-main2 :- %% Issues a complex query inside a db_findall:
-         dbfindall(sampledb,
-                   foo(Quantity, Id, Name, Size, Bar),
-                   ( product(Quantity, Id, Name, Size),
-                     I^N^S^(Bar is avg(Q,product(Q, I, N, S)))
-                   ),
-                   Results),
-         format("Results = ~w~n",[Results]).
-main21 :- %% Using db_call
-         dbcall(sampledb,
-             (product(Quantity, Id, Name, Size),
-              product(Quantity, Id1, _Name1, _Size1),Id1&#62;Id)),
-%%       product(Quantity, Id, Name, Size),
-%%          product(Quantity, Id1, Name1, Size1),
-%%          Id1&#62;Id,
-         format("Tuple: ~w \t ~w \t ~w \t ~w \n",
-                [Quantity, Id, Name, Size]).
-
-main22 :-  % get the set of tables from a database
-        sql_get_tables(sampledb,TablesList),
-        display(TablesList).
-
-main23 :- % get table attributes and its types 
-        sql_table_types(sampledb, 'Customer', AttList),
-        display(AttList).
-        
-%% ------------------------------------------------- %%
-%% Second sample database : 'Literature'             %%
-%% ------------------------------------------------- %%
-
-:- sql_persistent(authors(string,string,int),
-               authors(firstName,lastName,id), %% 'id' is the primary key
-               literature_db).
-sql_persistent_location(literature_db,
-        db('Literature','dba','sql','r2d5.dia.fi.upm.es':2020)).
-
-main3:- %% Prints the contents of authors
-         print_predicate(authors(_FirstName,_LastName,_Id)) .
-
-main4:- %% assert a persistent fact
-         dbassertz_fact(authors('Pedro','Calderon de la Barca',17)).
-
-main6:- %% retract a persistent fact
-         dbretract_fact(authors('Pedro','Calderon de la Barca',17)).
-
-main9:- %% checking if a persistent fact is a current fact
-        dbcurrent_fact(authors(_X,_Y,_Z)).
-
+persistent_dir(dbdir, '/home/clip/public_html/db').
 </PRE>
 
+<P>
+The first line declares the predicate <CODE>p/3</CODE> persistent. The argument <CODE>dbdir</CODE> is a key used to index into a fact of the relation 
+<A NAME="IDX4784"></A>
+<CODE>persistent_dir/2</CODE>, which specifies the directory where the corresponding files will be kept. The effect of the declaration, together with the 
+<A NAME="IDX4785"></A>
+<CODE>persistent_dir/2</CODE> fact, is that, although the predicate is handled in the same way as a normal data predicate, in addition the system will create and maintain efficiently a persistent version of <CODE>p/3</CODE> via files in the directory <CODE>/home/clip/public_html/db</CODE>. 
 
 
-<H2><A NAME="SEC402" HREF="ciao_toc.html#TOC402">Usage and interface (<CODE>persdbrtsql</CODE>)</A></H2>
+<P>
+The level of indirection provided by the <CODE>dbdir</CODE> argument makes it easy to place the storage of several persistent predicates in a common directory, by specifying the same key for all of them. It also allows changing the directory for several such persistent predicates by modifying only one fact in the program. Furthermore, the 
+<A NAME="IDX4786"></A>
+<CODE>persistent_dir/2</CODE> predicate can even be dynamic and specified at run-time. 
+
+
+
+
+<H2><A NAME="SEC440" HREF="ciao_toc.html#TOC440">Implementation Issues</A></H2>
+
+<P>
+We outline the current implementation approach. This implementation attempts to provide at the same time efficiency and security. To this end, up to three files are used for each predicate (the 
+<A NAME="IDX4787"></A>
+persistence set): the 
+<A NAME="IDX4788"></A>
+data file, the 
+<A NAME="IDX4789"></A>
+operations file, and the 
+<A NAME="IDX4790"></A>
+backup file. In the 
+<A NAME="IDX4791"></A>
+updated state the facts (tuples) that define the predicate are stored in the data file and the operations file is empty (the backup file, which contains a security copy of the data file, may or may not exist). 
+
+
+<P>
+While a program using a persistent predicate is running, any insertion (assert) or deletion (retract) operations on the predicate are performed on both the program memory and on the persistence set. However, in order to incurr only a small overhead in the execution, rather than changing the data file directly, a record of each of the insertion and deletion operations is <EM>appended</EM> to the operations file. The predicate is then in a 
+<A NAME="IDX4792"></A>
+transient state, in that the contents of the data file do not reflect exactly the current state of the corresponding predicate. However, the complete persistence set does. 
+
+
+<P>
+When a program starts, when it is halted, or, periodically, when it is idle for some time, all pending operations in the operations file are performed on the data file. A backup of the data file is created first to prevent data loss if the system crashes during this operation. The order in which this updating of files is done ensures that, if at any point the process dies, on restart data will be completely recovered. This process of updating the persistence set can also be triggered at any point in the execution of a program by calling 
+<A NAME="IDX4793"></A>
+<CODE>update_files/2</CODE>. 
+
+
+
+
+<H2><A NAME="SEC441" HREF="ciao_toc.html#TOC441">Using persistent predicates from the top level</A></H2>
+
+<P>
+Special care must be taken when using persistent predicates from the top level. This includes not only defining persistent predicates on the fly from de top level (which is not really very useful in practice) but also the more frequent case of loading into the top level modules or user files which use persistent predicates. As mentioned before, the persistence set is updated automatically each time a program using the corresponding persistent predicates is run or halted. However, since the top level itself is also a standard program, persistent predicates would only be updated whenever the top level is started, when they are typically still not loaded. 
+
+
+<P>
+If a program launched from a top level needs to update the persistence sets of any persistent predicate it must be done by calling the 
+<A NAME="IDX4794"></A>
+<CODE>update_files/2</CODE> method explicitly. 
+
+
+
+
+<H2><A NAME="SEC442" HREF="ciao_toc.html#TOC442">Usage and interface (<CODE>persdbrt</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -224,40 +214,40 @@ main9:- %% checking if a persistent fact is a current fact
 
 <LI><STRONG>Library usage:</STRONG>
 
-Typically, this library is used including the 'persdb_sql' package into the package list of the module, or using the 
-<A NAME="IDX4152"></A>
-<CODE>use_package/1</CODE> declaration: 
+Typically, this library is used including the 'persdb' package into the syntax list of the module, or using the 
+<A NAME="IDX4795"></A>
+<CODE>syntax/1</CODE> declaration: 
 <DL COMPACT>
 
 <DT>In a module:
 <DD>
 
 <PRE>
-	:- module(bar, [main/1], [persdb_sql]).
+        :- module(bar, [main/1], [persdb]).
 </PRE>
 
 or 
 
 <PRE>
         :- module(bar, [main/1]).
-        :- include(library(persdb_sql)).
+        :- include(library(persdb)).
 </PRE>
 
 <DT>In a <EM>user</EM> file:
 <DD>
 
 <PRE>
-	:- use_package([persdb_sql]).
+        :- syntax([persdb]).
 </PRE>
 
 or 
 
 <PRE>
-        :- include(library(persdb_sql)).
+        :- include(library(persdb)).
 </PRE>
 
 </DL>
-This loads the run-time and compile-time versions of the library (<CODE>persdbtr_sql.pl</CODE> and <CODE>persdbrt_sql.pl</CODE>) and includes some needed declarations.
+This syntax file loads the run-time and compile-time versions of the library (<CODE>persdbtr.pl</CODE> and <CODE>persdbrt.pl</CODE>) and includes some needed declarations.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -266,33 +256,27 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4153"></A>
-<CODE>init_sql_persdb/0</CODE>, 
-<A NAME="IDX4154"></A>
-<CODE>dbassertz_fact/1</CODE>, 
-<A NAME="IDX4155"></A>
-<CODE>dbretract_fact/1</CODE>, 
-<A NAME="IDX4156"></A>
-<CODE>dbcurrent_fact/1</CODE>, 
-<A NAME="IDX4157"></A>
-<CODE>dbretractall_fact/1</CODE>, 
-<A NAME="IDX4158"></A>
-<CODE>make_sql_persistent/3</CODE>, 
-<A NAME="IDX4159"></A>
-<CODE>dbfindall/4</CODE>, 
-<A NAME="IDX4160"></A>
-<CODE>dbcall/2</CODE>, 
-<A NAME="IDX4161"></A>
-<CODE>sql_query/3</CODE>, 
-<A NAME="IDX4162"></A>
-<CODE>sql_get_tables/2</CODE>, 
-<A NAME="IDX4163"></A>
-<CODE>sql_table_types/3</CODE>.
+<A NAME="IDX4796"></A>
+<CODE>passertz_fact/1</CODE>, 
+<A NAME="IDX4797"></A>
+<CODE>pretract_fact/1</CODE>, 
+<A NAME="IDX4798"></A>
+<CODE>pcurrent_fact/1</CODE>, 
+<A NAME="IDX4799"></A>
+<CODE>init_persdb/0</CODE>, 
+<A NAME="IDX4800"></A>
+<CODE>initialize_db/0</CODE>, 
+<A NAME="IDX4801"></A>
+<CODE>make_persistent/2</CODE>, 
+<A NAME="IDX4802"></A>
+<CODE>update_files/2</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX4164"></A>
-<CODE>sql_persistent_location/2</CODE>.
+<A NAME="IDX4803"></A>
+<CODE>persistent_dir/2</CODE>, 
+<A NAME="IDX4804"></A>
+<CODE>$is_persistent/2</CODE>.
 
 </UL>
 
@@ -303,26 +287,16 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4165"></A>
-<CODE>persdb_sql/db_client</CODE>, 
-<A NAME="IDX4166"></A>
-<CODE>persdb_sql/pl2sql</CODE>, 
-<A NAME="IDX4167"></A>
-<CODE>persdb_sql/sqltypes</CODE>, 
-<A NAME="IDX4168"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX4169"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX4170"></A>
-<CODE>metaterms</CODE>, 
-<A NAME="IDX4171"></A>
-<CODE>messages</CODE>, 
-<A NAME="IDX4172"></A>
+<A NAME="IDX4805"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX4173"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX4174"></A>
-<CODE>persdb_sql/insert_compiler/pl2sqlinsert</CODE>.
+<A NAME="IDX4806"></A>
+<CODE>streams</CODE>, 
+<A NAME="IDX4807"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX4808"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX4809"></A>
+<CODE>file_locks/file_locks</CODE>.
 
 </UL>
 
@@ -332,761 +306,342 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 
 
 
-<H2><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Documentation on exports (<CODE>persdbrtsql</CODE>)</A></H2>
+<H2><A NAME="SEC443" HREF="ciao_toc.html#TOC443">Documentation on exports (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX4175"></A>
-<A NAME="IDX4176"></A>
+<A NAME="IDX4810"></A>
+<A NAME="IDX4811"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>init_sql_persdb/0:</B>
-<DD><A NAME="IDX4177"></A>
+<DT><span class="define">PREDICATE:</span> <B>passertz_fact/1:</B>
+<DD><A NAME="IDX4812"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>passertz_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>passertz_fact(Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent version of
+
+<A NAME="IDX4813"></A>
+<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added at the end of the definition of the corresponding predicate. The predicate concerned must be declared 
+<A NAME="IDX4814"></A>
+<CODE>persistent</CODE>. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4815"></A>
+<A NAME="IDX4816"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pretract_fact/1:</B>
+<DD><A NAME="IDX4817"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>pretract_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pretract_fact(Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent version of
+
+<A NAME="IDX4818"></A>
+<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be declared 
+<A NAME="IDX4819"></A>
+<CODE>persistent</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4820"></A>
+<A NAME="IDX4821"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>pcurrent_fact/1:</B>
+<DD><A NAME="IDX4822"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>pcurrent_fact(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pcurrent_fact(Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent version of
+
+<A NAME="IDX4823"></A>
+<CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
+<A NAME="IDX4824"></A>
+<CODE>persistent</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4825"></A>
+<A NAME="IDX4826"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>init_persdb/0:</B>
+<DD><A NAME="IDX4827"></A>
 
 
 <P>
 <STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Internal predicate, used to transform predicates statically declared as persistent (see
+<LI><EM>Description:</EM> Executes
 
-<A NAME="IDX4178"></A>
-<CODE>sql_persistent/3</CODE>) into real persistent predicates.  
+<A NAME="IDX4828"></A>
+<CODE>initialize_db/0</CODE> if no initialization has been done yet. Needed when accesing persistent predicates before doing any of 
+<A NAME="IDX4829"></A>
+<CODE>passertz_fact/1</CODE>, 
+<A NAME="IDX4830"></A>
+<CODE>pretract_fact/1</CODE>, or 
+<A NAME="IDX4831"></A>
+<CODE>pcurrent_fact/1</CODE>. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4179"></A>
-<A NAME="IDX4180"></A>
+<A NAME="IDX4832"></A>
+<A NAME="IDX4833"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_persistent/3:</B>
-<DD><A NAME="IDX4181"></A>
+<DT><span class="define">PREDICATE:</span> <B>initialize_db/0:</B>
+<DD><A NAME="IDX4834"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM>
+
+<A NAME="IDX4835"></A>
+<A NAME="IDX4836"></A>
+Initializes the whole database, updating the state of the declared persistent predicates. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4837"></A>
+<A NAME="IDX4838"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_persistent/2:</B>
+<DD><A NAME="IDX4839"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>make_persistent(spec,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_persistent(PredDesc,Keyword)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamic version of the
+
+<A NAME="IDX4840"></A>
+<CODE>persistent</CODE> declaration. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        int(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
+ (<CODE>persdbrt:keyword/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4841"></A>
+<A NAME="IDX4842"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>update_files/2:</B>
+<DD><A NAME="IDX4843"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>update_files(PredDesc,Arity)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Updates the state of the given persistent predicate and its corresponding persistence set.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        int(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+
+<CODE>Arity</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC444" HREF="ciao_toc.html#TOC444">Documentation on multifiles (<CODE>persdbrt</CODE>)</A></H2>
+<P>
+<A NAME="IDX4844"></A>
+<A NAME="IDX4845"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>persistent_dir/2:</B>
+<DD><A NAME="IDX4846"></A>
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>persistent_dir(Keyword,Location_Path)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Relates identifiers of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location_Path</CODE>s). <CODE>Location_Path</CODE> is <STRONG>a directory</STRONG> and it means that the definition for the persistent predicates associated with <CODE>Keyword</CODE> is kept in files in that directory. These files, in the updated state, contain the actual definition of the predicate in Prolog syntax (but with module names resolved).
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
+ (<CODE>persdbrt:keyword/1</CODE>)
+
+<CODE>Location_Path</CODE> is an atom which is the name of a directory.
+ (<CODE>persdbrt:directoryname/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4847"></A>
+<A NAME="IDX4848"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>$is_persistent/2:</B>
+<DD><A NAME="IDX4849"></A>
 
 
 <P>
 No further documentation available for this predicate.
 
 
+<P>
+The predicate is <EM>multifile</EM>.
+
+
 </DL>
 
+
+
+<H2><A NAME="SEC445" HREF="ciao_toc.html#TOC445">Documentation on internals (<CODE>persdbrt</CODE>)</A></H2>
 <P>
-<A NAME="IDX4182"></A>
-<A NAME="IDX4183"></A>
+<A NAME="IDX4850"></A>
+<A NAME="IDX4851"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dbassertz_fact/1:</B>
-<DD><A NAME="IDX4184"></A>
+<DT><span class="define">REGTYPE:</span> <B>keyword/1:</B>
+<DD><A NAME="IDX4852"></A>
 
 
 <P>
-The predicate is of type <EM>implicit</EM>.
+An atom which identifies a fact of the 
+<A NAME="IDX4853"></A>
+<CODE>persistent_dir/2</CODE> relation. This fact relates this atom to a directory in which the persistent storage for one or more persistent predicates is kept.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dbassertz_fact(+Fact)</CODE>
+<STRONG>Usage:</STRONG> <CODE>keyword(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Persistent extension of
+<LI><EM>Description:</EM> <CODE>X</CODE> is an atom corresponding to a directory identifier.
 
-<A NAME="IDX4185"></A>
-<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added to the end of the definition of the corresponding predicate. If any integrity constraint violation is done (database stored predicates), an error will be displayed. The predicate concerned must be statically (
-<A NAME="IDX4186"></A>
-<CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX4187"></A>
-<CODE>make_sql_persistent/3</CODE>) declared. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. <STRONG>Note:</STRONG> <EM>assertion of facts with uninstantiated variables not implemented at this time.</EM> 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtsql:fact/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4188"></A>
-<A NAME="IDX4189"></A>
+<A NAME="IDX4854"></A>
+<A NAME="IDX4855"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dbretract_fact/1:</B>
-<DD><A NAME="IDX4190"></A>
+<DT><span class="define">REGTYPE:</span> <B>directoryname/1:</B>
+<DD><A NAME="IDX4856"></A>
 
 
 <P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbretract_fact(+Fact)</CODE>
+<STRONG>Usage:</STRONG> <CODE>directoryname(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Persistent extension of
+<LI><EM>Description:</EM> <CODE>X</CODE> is an atom which is the name of a directory.
 
-<A NAME="IDX4191"></A>
-<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
-<A NAME="IDX4192"></A>
-<CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX4193"></A>
-<CODE>make_sql_persistent/3</CODE>) declared. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtsql:fact/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4194"></A>
-<A NAME="IDX4195"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbcurrent_fact/1:</B>
-<DD><A NAME="IDX4196"></A>
-
-
-<P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbcurrent_fact(+Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Persistent extension of
-
-<A NAME="IDX4197"></A>
-<CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
-<A NAME="IDX4198"></A>
-<CODE>sql_persistent/3</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtsql:fact/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4199"></A>
-<A NAME="IDX4200"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbretractall_fact/1:</B>
-<DD><A NAME="IDX4201"></A>
-
-
-<P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbretractall_fact(+Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Persistent extension of
-
-<A NAME="IDX4202"></A>
-<CODE>retractall_fact/1</CODE>: when called deletes all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
-<A NAME="IDX4203"></A>
-<CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX4204"></A>
-<CODE>make_sql_persistent/3</CODE>) declared. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtsql:fact/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4205"></A>
-<A NAME="IDX4206"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_sql_persistent/3:</B>
-<DD><A NAME="IDX4207"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> of type <EM>implicit</EM> with arguments: <CODE>make_sql_persistent(addmodule,?,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>make_sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Dynamic version of the
-
-<A NAME="IDX4208"></A>
-<CODE>sql_persistent/3</CODE> declaration. 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
- (<CODE>persdbrtsql:prologPredTypes/1</CODE>)
-
-<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
- (<CODE>persdbrtsql:tableAttributes/1</CODE>)
-
-<CODE>Keyword</CODE> is the name of a persistent storage location.
- (<CODE>persdbrtsql:persLocId/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4209"></A>
-<A NAME="IDX4210"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbfindall/4:</B>
-<DD><A NAME="IDX4211"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbfindall(+DBId,+Pattern,+ComplexGoal,-(Results))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Similar to
-
-<A NAME="IDX4212"></A>
-<CODE>findall/3</CODE>, but <CODE>Goal</CODE> is executed in database <CODE>DBId</CODE>. Certain restrictions and extensions apply to both <CODE>Pattern</CODE> and <CODE>ComplexGoal</CODE> stemming from the Prolog to SQL translation involved (see the corresponding type definitions for details). 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+Pattern</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+ComplexGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>-(Results)</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4213"></A>
-<A NAME="IDX4214"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbcall/2:</B>
-<DD><A NAME="IDX4215"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbcall(+DBId,+ComplexGoal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Internal predicate, used by the transformed versions of the persistent predicates. Not meant to be called directly by users. It is exported by the library so that it can be used by the transformed versions of the persistent predicates in the modules in which they reside. Sends <CODE>ComplexGoal</CODE> to database <CODE>DBId</CODE> for evaluation. <CODE>ComplexGoal</CODE> must be a call to a persistent predicate which resides in database <CODE>DBId</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+ComplexGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4216"></A>
-<A NAME="IDX4217"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_query/3:</B>
-<DD><A NAME="IDX4218"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sql_query(+DBId,+SQLString,AnswerTableTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is the response from database <CODE>DBId</CODE> to the
-
-<A NAME="IDX4219"></A>
-SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerTableTerm</CODE> can express a set of tuples, an error answer or a 'ok' response (see 
-<A NAME="IDX4220"></A>
-<CODE>answertableterm/1</CODE> for details). At the moment, 
-<A NAME="IDX4221"></A>
-<CODE>sql_query/3</CODE> log in and out for each query. This should be changed to log in only the first time and log out on exit and/or via a timer in the standard way. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+SQLString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
-
-<CODE>AnswerTableTerm</CODE> is a response from the ODBC database interface.
- (<CODE>db_client:answertableterm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4222"></A>
-<A NAME="IDX4223"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_get_tables/2:</B>
-<DD><A NAME="IDX4224"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>sql_get_tables(+Location,-(Tables))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>Location</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>persdbrtsql:persLocation(+Location)</CODE>
- (<CODE>persdbrtsql:persLocation/1</CODE>)
-
-<CODE>-(Tables)</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>sql_get_tables(+DbConnection,-(Tables))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>DbConnection</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>-(Tables)</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4225"></A>
-<A NAME="IDX4226"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_table_types/3:</B>
-<DD><A NAME="IDX4227"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>sql_table_types(+Location,+Table,-(AttrTypes))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>Location</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>persdbrtsql:persLocation(+Location)</CODE>
- (<CODE>persdbrtsql:persLocation/1</CODE>)
-
-<CODE>+Table</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-(AttrTypes)</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>sql_table_types(+DbConnection,+Table,-(AttrTypes))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>DbConnection</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+Table</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-(AttrTypes)</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4228"></A>
-<A NAME="IDX4229"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
-<DD><A NAME="IDX4230"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4231"></A>
-<A NAME="IDX4232"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
-<DD><A NAME="IDX4233"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an ODBC database.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4234"></A>
-<A NAME="IDX4235"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
-<DD><A NAME="IDX4236"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the ODBC database.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4237"></A>
-<A NAME="IDX4238"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
-<DD><A NAME="IDX4239"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the ODBC database.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4240"></A>
-<A NAME="IDX4241"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
-<DD><A NAME="IDX4242"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4243"></A>
-<A NAME="IDX4244"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
-<DD><A NAME="IDX4245"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4246"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX4247"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX4248"></A>
-<CODE>sqltypes</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC404" HREF="ciao_toc.html#TOC404">Documentation on multifiles (<CODE>persdbrtsql</CODE>)</A></H2>
-<P>
-<A NAME="IDX4249"></A>
-<A NAME="IDX4250"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_persistent_location/2:</B>
-<DD><A NAME="IDX4251"></A>
-
-
-<P>
-Relates names of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location</CODE>s).
-
-
-<P>
-The predicate is <EM>multifile</EM> and of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>sql_persistent_location(Keyword,Location)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Keyword</CODE> is an identifier for the persistent data location <CODE>Location</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Keyword</CODE> is the name of a persistent storage location.
- (<CODE>persdbrtsql:persLocId/1</CODE>)
-
-<CODE>persdbrtsql:persLocation(Location)</CODE>
- (<CODE>persdbrtsql:persLocation/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>sql_persistent_location(Keyword,DBLocation)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> In this usage, <CODE>DBLocation</CODE> is a <EM>relational database</EM>, in which case the predicate is stored as tuples in the database.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Keyword</CODE> is the name of a persistent storage location.
- (<CODE>persdbrtsql:persLocId/1</CODE>)
-
-<CODE>DBLocation</CODE> is a structure describing a database.
- (<CODE>persdbrtsql:database_desc/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC405" HREF="ciao_toc.html#TOC405">Documentation on internals (<CODE>persdbrtsql</CODE>)</A></H2>
-<P>
-<A NAME="IDX4252"></A>
-<A NAME="IDX4253"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>db_query/4:</B>
-<DD><A NAME="IDX4254"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>db_query(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> contains all the
-
-<A NAME="IDX4255"></A>
-tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
-<A NAME="IDX4256"></A>
-<CODE>pl2sqlstring/3</CODE> for the 
-<A NAME="IDX4257"></A>
-Prolog to SQL translation and 
-<A NAME="IDX4258"></A>
-<CODE>sql_query/3</CODE> for posing the actual query. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+ProjTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+Goal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>ResultTerm</CODE> is a tuple of values from the ODBC database interface.
- (<CODE>db_client:tuple/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4259"></A>
-<A NAME="IDX4260"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>db_query_one_tuple/4:</B>
-<DD><A NAME="IDX4261"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is one of the
-
-<A NAME="IDX4262"></A>
-tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
-<A NAME="IDX4263"></A>
-<CODE>pl2sqlstring/3</CODE> for the 
-<A NAME="IDX4264"></A>
-Prolog to SQL translation and 
-<A NAME="IDX4265"></A>
-<CODE>sql_query_one_tuple/3</CODE> for posing the actual query. After last tuple has been reached, a null tuple is unified with ResultTerm, and the connection to the database finishes. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+ProjTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+Goal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>ResultTerm</CODE> is a predicate containing a tuple.
- (<CODE>db_client:answertupleterm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4266"></A>
-<A NAME="IDX4267"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_query_one_tuple/3:</B>
-<DD><A NAME="IDX4268"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sql_query_one_tuple(+DBId,+SQLString,ResultTuple)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ResultTuple</CODE> contains an element from the set of tuples which represents the response in <CODE>DBId</CODE> to the
-
-<A NAME="IDX4269"></A>
-SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls return consecutive tuples, until the last tuple is reached. Then a null tuple is unified with <CODE>ResultTuple</CODE> and the connection is finished (calls to 
-<A NAME="IDX4270"></A>
-<CODE>db_logoff/1</CODE> and 
-<A NAME="IDX4271"></A>
-<CODE>odbc_disconnect/1</CODE>). 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+SQLString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
-
-<CODE>ResultTuple</CODE> is a tuple of values from the ODBC database interface.
- (<CODE>db_client:tuple/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4272"></A>
-<A NAME="IDX4273"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX4274"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4275"></A>
-<A NAME="IDX4276"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
-<DD><A NAME="IDX4277"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC406" HREF="ciao_toc.html#TOC406">Known bugs and planned improvements (<CODE>persdbrtsql</CODE>)</A></H2>
+<H2><A NAME="SEC446" HREF="ciao_toc.html#TOC446">Known bugs and planned improvements (<CODE>persdbrt</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-At least in the shell, reloading a file after changing the definition of a persistent predicate does not eliminate the old definition...
+Shouldn't the declarations for persistent_dir/2 be inside persdb.pl? (would save a lot of writing).
 
 <LI>
 
-Functionality missing: some questions need to be debugged.
+make_persistent/2 should really be persistent/2 (since it doesn't really make a predicate persistent but rather declares it as such, i.e., we do not use make_data/1, we use data/1) ?
 
 <LI>
 
-Warning: still using kludgey string2term and still using some non-uniquified temp files.
+having to use pcurrent_fact is not so nice
 
 <LI>
 
-Needs to be unified with the file-based library.
+passert, pretract, etc. should really be overloaded versions of assert, retract etc., i.e., it should be possible to use assertz_fact directly
+
+<LI>
+
+we need also asserta_fact, right? Otherwise isn't it difficult to do many things?
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_111.html">previous</A>, <A HREF="ciao_113.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

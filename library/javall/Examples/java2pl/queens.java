@@ -73,13 +73,11 @@ public class queens extends Frame {
    **/
   public static void main(String argv[]) {
 
-    if (argv.length < 1) {
-      System.err.println("usage: java queens prolog-process");
-      System.exit(1);
-    }
-
     try {
-      plServer = new PLConnection(argv[0]);
+	if (argv.length == 0)
+	    plServer = new PLConnection();
+	else
+	    plServer = new PLConnection(argv[0]);
     } catch (Exception e) {
       System.err.println("Problems starting java server: " + e);
       System.exit(1);

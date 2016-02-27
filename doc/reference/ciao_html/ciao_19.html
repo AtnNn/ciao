@@ -1,18 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Basic term manipulation</TITLE>
+<TITLE>The Ciao Prolog System               - Extra-logical properties for typing</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC89" HREF="ciao_toc.html#TOC89">Basic term manipulation</A></H1>
+<H1><A NAME="SEC135" HREF="ciao_toc.html#TOC135">Extra-logical properties for typing</A></H1>
 <P>
-<A NAME="IDX975"></A>
+<A NAME="IDX1342"></A>
 
 
 <P>
@@ -20,18 +20,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.7#8 (1998/9/23, 19:21:44 MEST)
+
+
+<P>
+This library contains traditional Prolog predicates for testing types. They depend on the state of instantiation of their arguments, thus being of extra-logical nature.
 
 
 
 <UL>
-<LI><A HREF="ciao_19.html#SEC90">Usage and interface (term_basic)</A>
-<LI><A HREF="ciao_19.html#SEC91">Documentation on exports (term_basic)</A>
+<LI><A HREF="ciao_19.html#SEC136">Usage and interface (term_typing)</A>
+<LI><A HREF="ciao_19.html#SEC137">Documentation on exports (term_typing)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC90" HREF="ciao_toc.html#TOC90">Usage and interface (<CODE>term_basic</CODE>)</A></H2>
+<H2><A NAME="SEC136" HREF="ciao_toc.html#TOC136">Usage and interface (<CODE>term_typing</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,30 +47,33 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-These predicates are builtin in CIAO, so nothing special has to be done to use them.
+These predicates are builtin in Ciao, so nothing special has to be done to use them.
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX976"></A>
-<CODE>arg/3</CODE>, 
-<A NAME="IDX977"></A>
-<CODE>functor/3</CODE>, 
-<A NAME="IDX978"></A>
-<CODE>=../2</CODE>, 
-<A NAME="IDX979"></A>
-<CODE>copy_term/2</CODE>, 
-<A NAME="IDX980"></A>
-<CODE>C/3</CODE>.
-
 <LI><EM>Properties:</EM>
 
-<A NAME="IDX981"></A>
-<CODE>=/2</CODE>.
+<A NAME="IDX1343"></A>
+<CODE>var/1</CODE>, 
+<A NAME="IDX1344"></A>
+<CODE>nonvar/1</CODE>, 
+<A NAME="IDX1345"></A>
+<CODE>atom/1</CODE>, 
+<A NAME="IDX1346"></A>
+<CODE>integer/1</CODE>, 
+<A NAME="IDX1347"></A>
+<CODE>float/1</CODE>, 
+<A NAME="IDX1348"></A>
+<CODE>number/1</CODE>, 
+<A NAME="IDX1349"></A>
+<CODE>atomic/1</CODE>, 
+<A NAME="IDX1350"></A>
+<CODE>ground/1</CODE>, 
+<A NAME="IDX1351"></A>
+<CODE>type/2</CODE>.
 
 </UL>
 
@@ -72,218 +83,314 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC91" HREF="ciao_toc.html#TOC91">Documentation on exports (<CODE>term_basic</CODE>)</A></H2>
+<H2><A NAME="SEC137" HREF="ciao_toc.html#TOC137">Documentation on exports (<CODE>term_typing</CODE>)</A></H2>
 <P>
-<A NAME="IDX982"></A>
-<A NAME="IDX983"></A>
+<A NAME="IDX1352"></A>
+<A NAME="IDX1353"></A>
 <DL>
-<DT><span class="define">PROPERTY:</span> <B>=/2:</B>
-<DD><A NAME="IDX984"></A>
+<DT><span class="define">PROPERTY:</span> <B>var/1:</B>
+<DD><A NAME="IDX1354"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>X = Y</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>var(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Unify <CODE>X</CODE> and <CODE>Y</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a free variable.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>X = Y</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>var(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Unify <CODE>X</CODE> and <CODE>Y</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a free variable.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX985"></A>
-<A NAME="IDX986"></A>
+<A NAME="IDX1355"></A>
+<A NAME="IDX1356"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arg/3:</B>
-<DD><A NAME="IDX987"></A>
+<DT><span class="define">PROPERTY:</span> <B>nonvar/1:</B>
+<DD><A NAME="IDX1357"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>arg(+ArgNo,+Term,?(Arg))</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>nonvar(T)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Argument <CODE>ArgNo</CODE> of the term <CODE>Term</CODE> is <CODE>Arg</CODE>.
+<LI><EM>Description:</EM> <CODE>T</CODE> is currently a term which is not a free variable.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>ArgNo</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
+<CODE>T</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>arg(ArgNo,Term,Arg)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>nonvar(T)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Argument <CODE>ArgNo</CODE> of the term <CODE>Term</CODE> is <CODE>Arg</CODE>.
+<LI><EM>Description:</EM> <CODE>T</CODE> is currently a term which is not a free variable.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>The following properties hold globally:</EM>
 
-<CODE>ArgNo</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>Term</CODE> is currently a term which is not a free variable.
- (<CODE>term_typing:nonvar/1</CODE>)
-
-<CODE>ArgNo</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
+<CODE>T</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX988"></A>
-<A NAME="IDX989"></A>
+<A NAME="IDX1358"></A>
+<A NAME="IDX1359"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>functor/3:</B>
-<DD><A NAME="IDX990"></A>
+<DT><span class="define">PROPERTY:</span> <B>atom/1:</B>
+<DD><A NAME="IDX1360"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>functor(?(Term),?(Name),?(Arity))</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>atom(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The principal functor of the term <CODE>Term</CODE> has name <CODE>Name</CODE> and arity <CODE>Arity</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>functor(Term,Name,Arity)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>atom(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The principal functor of the term <CODE>Term</CODE> has name <CODE>Name</CODE> and arity <CODE>Arity</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX991"></A>
-<A NAME="IDX992"></A>
+<A NAME="IDX1361"></A>
+<A NAME="IDX1362"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>=../2:</B>
-<DD><A NAME="IDX993"></A>
+<DT><span class="define">PROPERTY:</span> <B>integer/1:</B>
+<DD><A NAME="IDX1363"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>?(Term) =.. ?(List)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>integer(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The functor and arguments of the term <CODE>Term</CODE> comprise the list <CODE>List</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an integer.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>Term =.. List</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>integer(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The functor and arguments of the term <CODE>Term</CODE> comprise the list <CODE>List</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an integer.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX994"></A>
-<A NAME="IDX995"></A>
+<A NAME="IDX1364"></A>
+<A NAME="IDX1365"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_term/2:</B>
-<DD><A NAME="IDX996"></A>
+<DT><span class="define">PROPERTY:</span> <B>float/1:</B>
+<DD><A NAME="IDX1366"></A>
 
 
 <P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>copy_term(Term,Copy)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>float(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Copy</CODE> is a renaming of <CODE>Term</CODE>, such that brand new variables have been substituted for all variables in <CODE>Term</CODE>. If any of the variables of <CODE>Term</CODE> have
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a float.
 
-<A NAME="IDX997"></A>
-attributes, the copied variables will have copies of the attributes as well. It behaves as if defined by: 
+<LI><EM>The following properties hold globally:</EM>
 
-
-<PRE>
-:- data 'copy of'/1.
-
-copy_term(X, Y) :-
-        asserta_fact('copy of'(X)),
-        retract_fact('copy of'(Y)).
-</PRE>
-
- 
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>copy_term(Term,Copy)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>float(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Copy</CODE> is a renaming of <CODE>Term</CODE>, such that brand new variables have been substituted for all variables in <CODE>Term</CODE>. If any of the variables of <CODE>Term</CODE> have
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a float.
 
-<A NAME="IDX998"></A>
-attributes, the copied variables will have copies of the attributes as well. It behaves as if defined by: 
+<LI><EM>The following properties hold globally:</EM>
 
-
-<PRE>
-:- data 'copy of'/1.
-
-copy_term(X, Y) :-
-        asserta_fact('copy of'(X)),
-        retract_fact('copy of'(Y)).
-</PRE>
-
- 
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX999"></A>
-<A NAME="IDX1000"></A>
+<A NAME="IDX1367"></A>
+<A NAME="IDX1368"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>C/3:</B>
-<DD><A NAME="IDX1001"></A>
+<DT><span class="define">PROPERTY:</span> <B>number/1:</B>
+<DD><A NAME="IDX1369"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>C(?(S1),?(Terminal),?(S2))</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>number(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>S1</CODE> is connected by the terminal <CODE>Terminal</CODE> to <CODE>S2</CODE>. Used in <EM>DCG grammar rules</EM>. Defined as if by the single clause: <CODE>'C'([X|S], X, S).</CODE>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a number.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>C(S1,Terminal,S2)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>number(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>S1</CODE> is connected by the terminal <CODE>Terminal</CODE> to <CODE>S2</CODE>. Used in <EM>DCG grammar rules</EM>. Defined as if by the single clause: <CODE>'C'([X|S], X, S).</CODE>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to a number.
 
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1370"></A>
+<A NAME="IDX1371"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>atomic/1:</B>
+<DD><A NAME="IDX1372"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>atomic(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom or a number.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>atomic(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently instantiated to an atom or a number.
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1373"></A>
+<A NAME="IDX1374"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>ground/1:</B>
+<DD><A NAME="IDX1375"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>ground(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently ground (it contains no variables).
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>ground(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is currently ground (it contains no variables).
+
+<LI><EM>The following properties hold globally:</EM>
+
+<CODE>X</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1376"></A>
+<A NAME="IDX1377"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>type/2:</B>
+<DD><A NAME="IDX1378"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>type(X,Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is internally of type <CODE>Y</CODE> (<CODE>var</CODE>, <CODE>attv</CODE>, <CODE>float</CODE>, <CODE>integer</CODE>, <CODE>structure</CODE>, <CODE>atom</CODE> or <CODE>list</CODE>).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Y</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>type(X,Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is internally of type <CODE>Y</CODE> (<CODE>var</CODE>, <CODE>attv</CODE>, <CODE>float</CODE>, <CODE>integer</CODE>, <CODE>structure</CODE>, <CODE>atom</CODE> or <CODE>list</CODE>).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Y</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_18.html">previous</A>, <A HREF="ciao_20.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,33 +1,78 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - ttyout (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Formatted output</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC199" HREF="ciao_toc.html#TOC199">ttyout (library)</A></H1>
+<H1><A NAME="SEC246" HREF="ciao_toc.html#TOC246">Formatted output</A></H1>
 <P>
-<A NAME="IDX2314"></A>
+<A NAME="IDX2797"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#27 (1999/7/9, 20:25:50 MEST)
+
+
+<P>
+The <CODE>format</CODE> family of predicates is due to Quintus Prolog. They act as a Prolog interface to the C <CODE>stdio</CODE> function <CODE>printf()</CODE>, allowing formatted output. 
+
+
+<P>
+Output is formatted according to an output pattern which can have either a format control sequence or any other character, which will appear verbatim in the output. Control sequences act as place-holders for the actual terms that will be output. Thus 
+
+<PRE>
+        | ?- format("Hello ~q!",world).
+</PRE>
+
+<P>
+will print <CODE>Hello world!</CODE>. 
+
+
+<P>
+If there is only one item to print it may be supplied alone. If there are more they have to be given as a list. If there are none then an empty list should be supplied. There has to be as many items as control characters. 
+
+
+<P>
+The character <CODE>~</CODE> introduces a control sequence. To print a <CODE>~</CODE> verbatim just repeat it: 
+
+<PRE>
+        | ?- format("Hello ~~world!", []).
+</PRE>
+
+<P>
+will result in <CODE>Hello ~world!</CODE>. 
+
+
+<P>
+A format may be spread over several lines. The control sequence <CODE></CODE> followed by a <KBD>LFD</KBD> will translate to the empty string: 
+
+<PRE>
+        | ?- format("Hello world!", []).
+</PRE>
+
+<P>
+will result in <CODE>Hello world!</CODE>.
 
 
 
 <UL>
-<LI><A HREF="ciao_55.html#SEC200">Usage and interface (ttyout)</A>
-<LI><A HREF="ciao_55.html#SEC201">Documentation on exports (ttyout)</A>
+<LI><A HREF="ciao_55.html#SEC247">Usage and interface (format)</A>
+<LI><A HREF="ciao_55.html#SEC248">Documentation on exports (format)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC200" HREF="ciao_toc.html#TOC200">Usage and interface (<CODE>ttyout</CODE>)</A></H2>
+<H2><A NAME="SEC247" HREF="ciao_toc.html#TOC247">Usage and interface (<CODE>format</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,169 +80,370 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(ttyout)).</CODE>
+<CODE>:- use_module(library(format)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX2798"></A>
+<CODE>format/2</CODE>, 
+<A NAME="IDX2799"></A>
+<CODE>format/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX2800"></A>
+<CODE>format_control/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX2801"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX2802"></A>
+<CODE>assertions/doc_props</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC201" HREF="ciao_toc.html#TOC201">Documentation on exports (<CODE>ttyout</CODE>)</A></H2>
+<H2><A NAME="SEC248" HREF="ciao_toc.html#TOC248">Documentation on exports (<CODE>format</CODE>)</A></H2>
 <P>
-<A NAME="IDX2315"></A>
-<A NAME="IDX2316"></A>
+<A NAME="IDX2803"></A>
+<A NAME="IDX2804"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ttyget/1:</B>
-<DD><A NAME="IDX2317"></A>
+<DT><span class="define">PREDICATE:</span> <B>format/2:</B>
+<DD><A NAME="IDX2805"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>format(Format,Arguments)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Print <CODE>Arguments</CODE> onto current output stream according to format <CODE>Format</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Format</CODE> is an atom or string describing how the arguments should be formatted. If it is an atom it will be converted into a string with <CODE>name/2</CODE>.
+ (<CODE>format:format_control/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2318"></A>
-<A NAME="IDX2319"></A>
+<A NAME="IDX2806"></A>
+<A NAME="IDX2807"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ttyget1/1:</B>
-<DD><A NAME="IDX2320"></A>
+<DT><span class="define">PREDICATE:</span> <B>format/3:</B>
+<DD><A NAME="IDX2808"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>format(+Stream,Format,Arguments)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Print <CODE>Arguments</CODE> onto <CODE>Stream</CODE> according to format <CODE>Format</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Format</CODE> is an atom or string describing how the arguments should be formatted. If it is an atom it will be converted into a string with <CODE>name/2</CODE>.
+ (<CODE>format:format_control/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2321"></A>
-<A NAME="IDX2322"></A>
+<A NAME="IDX2809"></A>
+<A NAME="IDX2810"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>ttynl/0:</B>
-<DD><A NAME="IDX2323"></A>
+<DT><span class="define">REGTYPE:</span> <B>format_control/1:</B>
+<DD><A NAME="IDX2811"></A>
 
 
 <P>
-No further documentation available for this predicate.
+ The general format of a control sequence is <CODE>~<CODE>N</CODE><CODE>C</CODE></CODE>. The character <CODE>C</CODE> determines the type of the control sequence. <CODE>N</CODE> is an optional numeric argument. An alternative form of <CODE>N</CODE> is <CODE>*</CODE>. <CODE>*</CODE> implies that the next argument in <CODE>Arguments</CODE> should be used as a numeric argument in the control sequence. Example: 
 
 
-</DL>
 
-<P>
-<A NAME="IDX2324"></A>
-<A NAME="IDX2325"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttyput/1:</B>
-<DD><A NAME="IDX2326"></A>
-
+<PRE>
+| ?- format("Hello~4cworld!", [0'x]).
+</PRE>
 
 <P>
-No further documentation available for this predicate.
+and 
 
 
-</DL>
 
-<P>
-<A NAME="IDX2327"></A>
-<A NAME="IDX2328"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttyskip/1:</B>
-<DD><A NAME="IDX2329"></A>
-
+<PRE>
+| ?- format("Hello~*cworld!", [4,0'x]).
+</PRE>
 
 <P>
-No further documentation available for this predicate.
+both produce 
 
 
-</DL>
 
-<P>
-<A NAME="IDX2330"></A>
-<A NAME="IDX2331"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttytab/1:</B>
-<DD><A NAME="IDX2332"></A>
-
+<PRE>
+Helloxxxxworld!
+</PRE>
 
 <P>
-No further documentation available for this predicate.
+The following control sequences are available. 
 
 
-</DL>
+
+<UL>
+
+<LI>~a The argument is an atom. The atom is printed without quoting.
+
+<LI>~<CODE>N</CODE>c (Print character.) The argument is a number that will be interpreted as an ASCII code. <CODE>N</CODE> defaults to one and is interpreted as the number of times to print the character.
+
+<LI>~<CODE>N</CODE>e
+
+<LI>~<CODE>N</CODE>E
+
+<LI>~<CODE>N</CODE>f
+
+<LI>~<CODE>N</CODE>g
+
+<LI>~<CODE>N</CODE>G (Print float). The argument is a float. The float and <CODE>N</CODE> will be passed to the C <CODE>printf()</CODE> function as
+
+
+<PRE>
+printf("%.<CODE>N</CODE>e", <CODE>Arg</CODE>)
+printf("%.<CODE>N</CODE>E", <CODE>Arg</CODE>)
+printf("%.<CODE>N</CODE>f", <CODE>Arg</CODE>)
+printf("%.<CODE>N</CODE>g", <CODE>Arg</CODE>)
+printf("%.<CODE>N</CODE>G", <CODE>Arg</CODE>)
+</PRE>
+
+If <CODE>N</CODE> is not supplied the action defaults to 
+
+
+<PRE>
+printf("%e", <CODE>Arg</CODE>)
+printf("%E", <CODE>Arg</CODE>)
+printf("%f", <CODE>Arg</CODE>)
+printf("%g", <CODE>Arg</CODE>)
+printf("%G", <CODE>Arg</CODE>)
+</PRE>
+
+<LI>~<CODE>N</CODE>d (Print decimal.) The argument is an integer. <CODE>N</CODE> is interpreted as the number of digits after the decimal point. If <CODE>N</CODE> is 0 or missing, no decimal point will be printed. Example:
+
+
+<PRE>
+| ?- format("Hello ~1d world!", [42]).
+| ?- format("Hello ~d world!", [42]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello 4.2 world!
+Hello 42 world!
+</PRE>
+
+respectively. 
+
+<LI>~<CODE>N</CODE>D (Print decimal.) The argument is an integer. Identical to <CODE>~<CODE>N</CODE>d</CODE> except that <CODE>,</CODE> will separate groups of three digits to the left of the decimal point. Example:
+
+
+<PRE>
+| ?- format("Hello ~1D world!", [12345]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello 1,234.5 world!
+</PRE>
+
+<LI>~<CODE>N</CODE>r (Print radix.) The argument is an integer. <CODE>N</CODE> is interpreted as a radix. <CODE>N</CODE> should be &#62;= 2 and &#60;= 36. If <CODE>N</CODE> is missing the radix defaults to 8. The letters <CODE>a-z</CODE> will denote digits larger than 9. Example:
+
+
+<PRE>
+| ?- format("Hello ~2r world!", [15]).
+| ?- format("Hello ~16r world!", [15]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello 1111 world!
+Hello f world!
+</PRE>
+
+respectively. 
+
+<LI>~<CODE>N</CODE>R (Print radix.) The argument is an integer. Identical to <CODE>~<CODE>N</CODE>r</CODE> except that the letters <CODE>A-Z</CODE> will denote digits larger than 9. Example:
+
+
+<PRE>
+| ?- format("Hello ~16R world!", [15]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello F world!
+</PRE>
+
+<LI>~<CODE>N</CODE>s (Print string.) The argument is a list of ASCII codes. Exactly <CODE>N</CODE> characters will be printed. <CODE>N</CODE> defaults to the length of the string. Example:
+
+
+<PRE>
+| ?- format("Hello ~4s ~4s!", ["new","world"]).
+| ?- format("Hello ~s world!", ["new"]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello new  worl!
+Hello new world!
+</PRE>
+
+respectively. 
+
+<LI>~i (Ignore argument.) The argument may be of any type. The argument will be ignored. Example:
+
+
+<PRE>
+| ?- format("Hello ~i~s world!", ["old","new"]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello new world!
+</PRE>
+
+<LI>~k (Print canonical.) The argument may be of any type. The argument will be passed to <CODE>write_canonical/2</CODE> (section <A HREF="ciao_44.html#SEC214">Term output</A>). Example:
+
+
+<PRE>
+| ?- format("Hello ~k world!", [[a,b,c]]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello .(a,.(b,.(c,[]))) world!
+</PRE>
+
+<LI>~p (print.) The argument may be of any type. The argument will be passed to <CODE>print/2</CODE> (section <A HREF="ciao_44.html#SEC214">Term output</A>). Example:
+
+
+<PRE>
+| ?- assert((portray([X|Y]) :- print(cons(X,Y)))).
+| ?- format("Hello ~p world!", [[a,b,c]]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello cons(a,cons(b,cons(c,[]))) world!
+</PRE>
+
+<LI>~q (Print quoted.) The argument may be of any type. The argument will be passed to <CODE>writeq/2</CODE> (section <A HREF="ciao_44.html#SEC214">Term output</A>). Example:
+
+
+<PRE>
+| ?- format("Hello ~q world!", [['A','B']]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello ['A','B'] world!
+</PRE>
+
+<LI>~w (write.) The argument may be of any type. The argument will be passed to <CODE>write/2</CODE> (section <A HREF="ciao_44.html#SEC214">Term output</A>). Example:
+
+
+<PRE>
+| ?- format("Hello ~w world!", [['A','B']]).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello [A,B] world!
+</PRE>
+
+<LI>~<CODE>N</CODE>n (Print newline.) Print <CODE>N</CODE> newlines. <CODE>N</CODE> defaults to 1. Example:
+
+
+<PRE>
+| ?- format("Hello ~n world!", []).
+</PRE>
+
+will print as 
+
+
+<PRE>
+Hello
+ world!
+</PRE>
+
+<LI>~N (Fresh line.) Print a newline, if not already at the beginning of a line.
+
+</UL>
 
 <P>
-<A NAME="IDX2333"></A>
-<A NAME="IDX2334"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttyflush/0:</B>
-<DD><A NAME="IDX2335"></A>
+ 
+The following control sequences are also available for compatibility, but do not perform any useful functions. 
 
 
-<P>
-No further documentation available for this predicate.
 
+<UL>
+<LI>~<CODE>N</CODE>| (Set tab.) Set a tab stop at position <CODE>N</CODE>, where <CODE>N</CODE> defaults to the current position, and advance the current position there.
 
-</DL>
+<LI>~<CODE>N</CODE>+ (Advance tab.) Set a tab stop at <CODE>N</CODE> positions past the current position, where <CODE>N</CODE> defaults to 8, and advance the current position there.
 
-<P>
-<A NAME="IDX2336"></A>
-<A NAME="IDX2337"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttydisplay/1:</B>
-<DD><A NAME="IDX2338"></A>
+<LI>~<CODE>N</CODE>t (Set fill character.) Set the fill character to be used in the next position movement to <CODE>N</CODE>, where <CODE>N</CODE> defaults to <KBD>SPC</KBD>.
 
+</UL>
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>format_control(C)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>C</CODE> is an atom or string describing how the arguments should be formatted. If it is an atom it will be converted into a string with <CODE>name/2</CODE>.
 
-</DL>
+<LI><EM>The following properties should hold globally:</EM>
 
-<P>
-<A NAME="IDX2339"></A>
-<A NAME="IDX2340"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttydisplayq/1:</B>
-<DD><A NAME="IDX2341"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2342"></A>
-<A NAME="IDX2343"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttyskipeol/0:</B>
-<DD><A NAME="IDX2344"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX2345"></A>
-<A NAME="IDX2346"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>ttydisplay_string/1:</B>
-<DD><A NAME="IDX2347"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
+Documentation is still incomplete: <CODE>format_control(C)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_54.html">previous</A>, <A HREF="ciao_56.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

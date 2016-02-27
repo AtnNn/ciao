@@ -1,125 +1,100 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
+<TITLE>The Ciao Prolog System               - http (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Using the persdb library</A></H1>
+<H1><A NAME="SEC433" HREF="ciao_toc.html#TOC433">http (library)</A></H1>
+<P>
+<A NAME="IDX4755"></A>
+
 
 <P>
-Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
+<STRONG>Version:</STRONG> 1.5#128 (2000/5/2, 18:4:14 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
 
 
 
 <UL>
-<LI><A HREF="ciao_111.html#SEC396">An example of persistent predicates (static version)</A>
-<LI><A HREF="ciao_111.html#SEC397">An example of persistent predicates (dynamic version)</A>
+<LI><A HREF="ciao_111.html#SEC434">Usage and interface (http)</A>
+<LI><A HREF="ciao_111.html#SEC435">Documentation on exports (http)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">An example of persistent predicates (static version)</A></H2>
+<H2><A NAME="SEC434" HREF="ciao_toc.html#TOC434">Usage and interface (<CODE>http</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(http)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
-<PRE>
-:- include(library(persdb)).
+<UL>
 
-%% Required declarations for persistent_dir/2.
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
+<LI><EM>Predicates:</EM>
 
-%% Declare the directory associated to the key "db" where the
-%% persistence sets of the persistent predicates are stored:
-persistent_dir(db,'./').
+<A NAME="IDX4756"></A>
+<CODE>fetch_url/3</CODE>.
 
-%% Declare a persistent predicate:
-:- persistent(bar/1, db).
+</UL>
 
-%% Read a term, storing it in a new fact of the persistent predicate
-%% and list all the current facts of that predicate
-main:-
-     read(X),
-     passertz_fact(bar(X)),
-     findall(Y,bar(Y),L),
-     write(L).
-
-</PRE>
+<LI><STRONG>Other modules used:</STRONG>
 
 
+<UL>
 
-<H2><A NAME="SEC397" HREF="ciao_toc.html#TOC397">An example of persistent predicates (dynamic version)</A></H2>
+<LI><EM>System library modules:</EM>
 
+<A NAME="IDX4757"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX4758"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX4759"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX4760"></A>
+<CODE>file_utils</CODE>, 
+<A NAME="IDX4761"></A>
+<CODE>pillow/common</CODE>.
 
-<PRE>
-:- include(library(persdb)).
+</UL>
 
-%% Required declarations for persistent_dir/2.
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
+</UL>
 
-main([X]):-
-%%   Declare the directory associated to the key "db" 
-     asserta_fact(persistent_dir(db,'./')),
-%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
-     data(bar/1),
-%%   Declare the predicate bar/1 as persistent at run-time  
-     make_persistent(bar/1, db),
-     passertz_fact(bar(X)),
-     findall(Y, bar(Y), L),
-     write(L).    
-
-</PRE>
+</div class="cartouche">
 
 
 
-<H2><A NAME="SEC398" HREF="ciao_toc.html#TOC398">A simple application: a persistent queue</A></H2>
+<H2><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Documentation on exports (<CODE>http</CODE>)</A></H2>
+<P>
+<A NAME="IDX4762"></A>
+<A NAME="IDX4763"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
+<DD><A NAME="IDX4764"></A>
 
-<PRE>
-:- module(queue, [main/0]).
 
-:- include(library(persdb)).
+<P>
+No further documentation available for this predicate.
 
-:- multifile persistent_dir/2.
-:- data persistent_dir/2.
 
-:- persistent(queue/1, queue_dir).
-
-persistent_dir(queue_dir,'./pers').
-
-main:-
-     write('Action ( in(Term). | out. | list. | halt. ): '),
-     read(A),
-     (  handle_action(A)
-     -&#62; true
-     ;  write('Unknown command.'), nl ),
-     main.
-
-handle_action(halt) :-
-     halt.
-handle_action(in(Term)) :-
-     passertz_fact(queue(Term)),
-     main.
-handle_action(out) :-
-     (  pretract_fact(queue(Term))
-     -&#62; write('Out '), write(Term)
-     ;  write('FIFO empty.') ),
-     nl,
-     main.
-handle_action(list) :-
-     findall(Term,pcurrent_fact(queue(Term)),Terms),
-     write('Contents: '), write(Terms), nl,
-     main.
-     
-
-</PRE>
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_110.html">previous</A>, <A HREF="ciao_112.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

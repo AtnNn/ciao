@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% MAIN DOCUMENTATION FILE
 %%
@@ -8,7 +8,7 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -24,15 +24,15 @@
 	"Object oriented programming").
 
 %:- comment(subtitle,
-%	"Object oriented programming in CIAO Prolog").
+%	"Object oriented programming in Ciao Prolog").
 
 :- comment(author,"Angel Fernandez Pineda").
 
 :- comment(copyright,"@include{Copyright.Manuals}").
 
 :- comment(summary,
-	"O'CIAO is an object-oriented programming extension to CIAO
-         Prolog, which enhances the CIAO Prolog module system
+	"O'Ciao is an object-oriented programming extension to Ciao
+         Prolog, which enhances the Ciao Prolog module system
          by adding:
 
          @begin{itemize}
@@ -44,9 +44,9 @@
 	").
 
 :- comment(module,
-	"O'CIAO is a set of libraries which allows
-         object-oriented programming in CIAO Prolog.
-         It extends the CIAO Prolog module system by introducing
+	"O'Ciao is a set of libraries which allows
+         object-oriented programming in Ciao Prolog.
+         It extends the Ciao Prolog module system by introducing
          two new concepts:
 
           @begin{itemize}
@@ -62,11 +62,11 @@
         Classes are declared in the same way as modules.
         However, they may be enriched with inheritance declarations and other 
         object-oriented constructs. For an overview of the fundamentals
-        of O'CIAO, see 
+        of O'Ciao, see 
         @uref{http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz}.
         However, we will introduce the concepts in a tutorial way via examples.
 
-@section{Early examples:}
+@section{Early examples}
 
         The following one is a very simple example which declares a class --
         a simple stack.
@@ -80,7 +80,7 @@
 @includeverbatim{stack}
 @end{verbatim}
 
-        If we load this code at the CIAO toplevel shell:
+        If we load this code at the Ciao toplevel shell:
 
 @begin{verbatim}
         ?- use_package(objects).
@@ -142,10 +142,10 @@
 @end{verbatim}
 
         @bf{Additional examples} may be found on the 
-        @em{library/class/examples} directory relative to your CIAO 
+        @em{library/class/examples} directory relative to your Ciao 
         Prolog instalation.
 
-@section{Recommendations on when to use objects:}
+@section{Recommendations on when to use objects}
 
                @comment{---- RECOMMENDATIONS -----}
 
@@ -153,7 +153,7 @@
         oriented programming, in conjunction with the declarative 
         paradigm.
 
-        You should reconsider using O'CIAO in the following cases:
+        You should reconsider using O'Ciao in the following cases:
 
         @begin{itemize}
 
@@ -170,7 +170,7 @@
 
         @end{itemize} 
 
-        We recommend the usage of O'CIAO in the following cases: 
+        We recommend the usage of O'Ciao in the following cases: 
 
         @begin{itemize}
 
@@ -184,17 +184,17 @@
                needs to be manipulated. For example: interfaces to
                Java or Tcl/Tk code.
          @item You are not familiar with Prolog, but you know about 
-               object oriented programming. O'CIAO may be used as 
+               object oriented programming. O'Ciao may be used as 
                a learning tool to introduce yourself on the declarative
                programming paradigm.
 
         @end{itemize} 
 
-@section{Limitations on object usage:}
+@section{Limitations on object usage}
 
-        O'CIAO run-time speed is limited by the usage of meta-programming
+        O'Ciao run-time speed is limited by the usage of meta-programming
         structures, for instance: @tt{X = (Object:mymethod(25)), call(X)}. 
-        O'CIAO will optimize static manipulation of objects (those that
+        O'Ciao will optimize static manipulation of objects (those that
         can be determined at compile time).
 	").
 

@@ -2,7 +2,8 @@ package CiaoJava;
 
 /**
  * This class implements the exceptions that can be thrown
- * using the CiaoJava package.
+ * using the CiaoJava package, and translates the exceptions
+ * received from the Prolog side.
  */
 public class PLException extends Exception {
 
@@ -30,11 +31,14 @@ public class PLException extends Exception {
   }
 
   /**
-   * Translated a prolog exception represented as a 
-   * term in a java PLException.
+   * Translated a Prolog exception represented as a 
+   * term in a Java PLException.
    *
    * @param prologException <code>PLTerm</code> object that represents
-   *                        the prolog exception.
+   *                        the Prolog exception.
+   *
+   * @return <code>PLException</code> object with the Java exception
+   *         representing the Prolog exception.
    */
   public static PLException translateException(PLTerm prologException) {
 

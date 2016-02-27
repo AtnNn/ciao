@@ -1,7 +1,16 @@
 package CiaoJava;
 
 /**
- * Prolog variables representation
+ * Prolog variables representation. This class
+ * represents a Prolog variable, to provide
+ * a Prolog style of variable instancing.
+ * This class uses the characteristic Java
+ * representation of objects as references.
+ * If the object referenced by a variable
+ * changes, the variable content will change
+ * too. This allows to provide a Prolog behaviour
+ * of Java variables containing PLVariable
+ * objects.
  */
 public class PLVariable extends PLTerm {
   int VarNumber;
@@ -10,7 +19,7 @@ public class PLVariable extends PLTerm {
   private static int lastRef = -1;
 
   /**
-   * Creates a new prolog variable
+   * Creates a new Prolog variable
    * and references it to a free variable number.
    */
   public PLVariable() {
@@ -25,7 +34,7 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Creates a new prolog variable with a given
+   * Creates a new Prolog variable with a given
    * variable number.
    *
    * @param number variable number.
@@ -41,8 +50,11 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * free variable test. Returns true if this prolog variable is
+   * free variable test. Returns true if this Prolog variable is
    * unbound.
+   *
+   * @return <code>true</code> if this Prolog variable is unbound<
+   *         <code>false</code> if is bound to anothe Prolog term.
    */
   public boolean isFree() {
 
@@ -51,8 +63,10 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Returns the binding of this prolog variable. If this variable
+   * Returns the binding of this Prolog variable. If this variable
    * is free, returns null.
+   *
+   * @return the current binding of this variable.
    */
   public PLTerm getBinding() {
 
@@ -62,6 +76,8 @@ public class PLVariable extends PLTerm {
 
   /**
    * Returns the internal variable number.
+   *
+   * @return The internal variable number.
    */
   public int getNumber() {
 
@@ -70,8 +86,8 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Variable binding. Binds the prolog variable represented
-   * by this object to a prolog term. If the variable is
+   * Variable binding. Binds the Prolog variable represented
+   * by this object to a Prolog term. If the variable is
    * already bound, the binding is replaced with this one.
    *
    * @param term Term to bind to.
@@ -83,7 +99,8 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Variable unbinding. Uninstantiates this prolog variable.
+   * Variable unbinding. Uninstantiates this Prolog variable,
+   * by setting <code>null</code> to the binding attribute.
    */
   public void unbind() {
 
@@ -92,8 +109,8 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Returns the string representation of this prolog variable
-   * If the variable is bound to a prolog term, this term is
+   * Returns the string representation of this Prolog variable
+   * If the variable is bound to a Prolog term, this term is
    * also represented enclosed between brackets.
    *
    * @return The string representation of this variable.
@@ -122,18 +139,23 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Execution test on prolog objects.
+   * Execution test on Prolog objects. This method
+   * is included for implementing the <code>PLTerm</code>
+   * abstract method.
    *
-   * @return <code>true</code> if the
-   *         related prolog term can be evaluated;
-   *         <code>false</code> otherwise.
+   * @return Always <code>false</code>.
    */
   public boolean isRunnable() {
   	return false;
   }
 
   /**
-   * comparison between prolog terms. 
+   * Strict comparison between Prolog terms. 
+   *
+   * @return <code>true</code> if the <code>PLTerm</code> object
+   *         is exactly a <code>PLVariable</code> object and
+   *         has the same variable number<
+   *         <code>false</code> otherwise.
    */
   public boolean equals(PLTerm t) {
 
@@ -144,8 +166,12 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Makes a full copy of this <code>PLVariable</code> prolog variable
-   * object. Recursively clones the term bound by this variable.
+   * Makes a full copy of this <code>PLVariable</code> Prolog variable
+   * object. Recursively clones the term bound by this variable, in order
+   * to create a new <code>PLVariable</code> with no shared components.
+   *
+   * @return A <code>PLTerm</code> object with a copy of this variable
+   *         and its contents.
    */
   public PLTerm copy() {
 
@@ -159,14 +185,14 @@ public class PLVariable extends PLTerm {
   }
 
   /**
-   * Term unification. Unifies this prolog variable with the term
+   * Term unification. Unifies this Prolog variable with the term
    * received as argument. If this is a free variable, binds it
    * to the term received as argument. If not, tries to unify
    * the binding with the term received.
    *
    * @param term Term to unify with.
    *
-   * @return true if the unification is successful: false otherwise.
+   * @return <code>true</code> if the unification is successful: false otherwise.
    */
   public boolean unify(PLTerm term) {
 
@@ -182,6 +208,11 @@ public class PLVariable extends PLTerm {
   /**
    * Undo the unification made on this variable using as pattern
    * the term received as argument.
+   *
+   * @param term <code>PLTerm</code> object that contains the
+   *             <code>PLVariable</code> object with the content
+   *             to be stored on this variable.
+   *
    */
   public void backtrack(PLTerm term) throws PLException {
 

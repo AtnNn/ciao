@@ -1,143 +1,168 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Customizing library paths and path aliases</TITLE>
+<TITLE>The Ciao Prolog System               - The script interpreter</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC45" HREF="ciao_toc.html#TOC45">Customizing library paths and path aliases</A></H1>
+<H1><A NAME="SEC84" HREF="ciao_toc.html#TOC84">The script interpreter</A></H1>
+
 <P>
-<A NAME="IDX489"></A>
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
 
 
 <P>
-This library provides means for customizing, from environment variables, the libraries and 
-<A NAME="IDX490"></A>
-path aliases known by an executable. Many applications of CIAO, including 
-<A NAME="IDX491"></A>
-<CODE>ciaoc</CODE>, 
-<A NAME="IDX492"></A>
-<CODE>ciaosh</CODE>, and 
-<A NAME="IDX493"></A>
-<CODE>ciao-shell</CODE> make use of this library. Note that if an executable is created dynamic, it will try to load its components at startup, before the procedures of this module can be invoked, so in this case all the components should be in standard locations.
+<STRONG>Version:</STRONG> 1.5#133 (2000/5/5, 17:32:14 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#130 (2000/5/3, 20:19:4 CEST)
+
+
+<P>
+<A NAME="IDX800"></A>
+<CODE>ciao-shell</CODE> is the Ciao script interpreter. It can be used to write 
+<A NAME="IDX801"></A>
+<A NAME="IDX802"></A>
+<EM>Prolog shell scripts</EM> (see [Her96,CHV96b]), that is, executable files containing source code, which are compiled on demand. 
+
+
+<P>
+Writing Prolog scripts can sometimes be advantageous with respect to creating binary executables for small- to medium-sized programs that are modified often and perform relatively simple tasks. The advantage is that no compilation is necessary, and thus changes and updates to the program imply only editing the source file. The disadvantage is that startup of the script (the first time after it is modified) is slower than for an application that has been compiled previously. 
+
+
+<P>
+An area of application is, for example, writing 
+<A NAME="IDX803"></A>
+<A NAME="IDX804"></A>
+<EM>CGI executables</EM>: the slow speed of the network connection in comparison with that of executing a program makes program execution speed less important has made scripting languages very popular for writing these scripts. Logic languages are, a priori, excellent candidates to be used as scripting languages. For example, the built-in grammars and databases can sometimes greatly simplify many typical script-based applications. 
 
 
 
 <UL>
-<LI><A HREF="ciao_10.html#SEC46">Usage and interface (libpaths)</A>
-<LI><A HREF="ciao_10.html#SEC47">Documentation on exports (libpaths)</A>
-<LI><A HREF="ciao_10.html#SEC48">Documentation on multifiles (libpaths)</A>
+<LI><A HREF="ciao_10.html#SEC85">How it works</A>
+<LI><A HREF="ciao_10.html#SEC86">Command line arguments in scripts</A>
 </UL>
 
 
 
-<H2><A NAME="SEC46" HREF="ciao_toc.html#TOC46">Usage and interface (<CODE>libpaths</CODE>)</A></H2>
+<H2><A NAME="SEC85" HREF="ciao_toc.html#TOC85">How it works</A></H2>
 
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(libpaths)).</CODE>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX494"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX495"></A>
-<CODE>lists</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC47" HREF="ciao_toc.html#TOC47">Documentation on exports (<CODE>libpaths</CODE>)</A></H2>
 <P>
-<A NAME="IDX496"></A>
-<A NAME="IDX497"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_alias_path/0:</B>
-<DD><A NAME="IDX498"></A>
+Essentially, <CODE>ciao-shell</CODE> is a smaller version of the Ciao top-level, which starts by loading the file given to it as the first argument and then starts execution at 
+<A NAME="IDX805"></A>
+<CODE>main/1</CODE> (the argument is instantiated to a list containing the command line options, in the usual way). However, while doing this, <CODE>ciao-shell</CODE> changes the 
+<A NAME="IDX806"></A>
+prolog flag <CODE>quiet</CODE> so that no informational or warning messages are printed (error messages will be reported to <CODE>user_error</CODE>, however). The operation of <CODE>ciao-shell</CODE> in Unix-like systems is based in a special compiler feature: when the first character of a file is '<CODE>#</CODE>', the compiler skips the first lines until an empty line is found. 
 
 
 <P>
-<CODE>get_alias_path</CODE>
+For example, in a Linux/Unix system, assume a file called 
+<A NAME="IDX807"></A>
+<CODE>hello</CODE> contains the following program: 
 
 
-<P>
-Consult the environment variable 'CIAOALIASPATH' and add facts to predicates 
-<A NAME="IDX499"></A>
-<CODE>library_directory/1</CODE> and 
-<A NAME="IDX500"></A>
-<CODE>file_search_path/2</CODE> to define new library paths and 
-<A NAME="IDX501"></A>
-path aliases. The format of 'CIAOALIASPATH' is a sequence of paths or alias assignments separated by colons, an alias assignment is the name of the alias, an '=' and the path represented by that alias (no blanks allowed). For example, given 
 
 <PRE>
-   CIAOALIASPATH=/home/bardo/ciao:contrib=/usr/local/lib/ciao
+#!/bin/sh 
+exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
+
+main(_) :-
+     write('Hello world'), nl.
 </PRE>
 
 <P>
-the predicate will define /home/bardo/ciao as a library path and /usr/local/lib/ciao as the path represented by 'contrib'.
+Then, the file 
+<A NAME="IDX808"></A>
+<CODE>hello</CODE> can be <EM>run</EM> by simply making it executable and invoking it from the command line: 
 
 
-</DL>
 
+<PRE>
+/herme@clip:/tmp
+[86]&#62; chmod +x hello
 
-
-<H2><A NAME="SEC48" HREF="ciao_toc.html#TOC48">Documentation on multifiles (<CODE>libpaths</CODE>)</A></H2>
-<P>
-<A NAME="IDX502"></A>
-<A NAME="IDX503"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_search_path/2:</B>
-<DD><A NAME="IDX504"></A>
-
-
-<P>
-See section <A HREF="ciao_24.html#SEC104">Basic file/stream handling</A>.
-
+/herme@clip:/tmp
+[87]&#62; hello
+Hello world
+</PRE>
 
 <P>
-The predicate is <EM>multifile</EM> and of type <EM>dynamic</EM>.
+The line: 
 
-
-</DL>
-
-<P>
-<A NAME="IDX505"></A>
-<A NAME="IDX506"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>library_directory/1:</B>
-<DD><A NAME="IDX507"></A>
-
+<PRE>
+#!/bin/sh 
+</PRE>
 
 <P>
-See section <A HREF="ciao_24.html#SEC104">Basic file/stream handling</A>.
+invokes the <CODE>/bin/sh</CODE> shell which will interpret the following line: 
+
+<PRE>
+exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
+</PRE>
+
+<P>
+and invoke 
+<A NAME="IDX809"></A>
+<CODE>ciao-shell</CODE>, instructing it to read this same file (<CODE>$0</CODE>), passing it the rest of the arguments to <CODE>hello</CODE> as arguments to the prolog program. The second part of the line <CODE># -*- mode: ciao; -*-</CODE> is simply a comment which is seen by 
+<A NAME="IDX810"></A>
+<CODE>emacs</CODE> and instructs it to edit this file in Ciao mode (this is needed because these script files typically do not have a <CODE>.pl</CODE> ending). When 
+<A NAME="IDX811"></A>
+<CODE>ciao-shell</CODE> starts, if it is the first time, it compiles the program (skipping the first lines, as explained above), or else at successive runs loads the <CODE>.po</CODE> object file, and then calls 
+<A NAME="IDX812"></A>
+<CODE>main/1</CODE>. 
 
 
 <P>
-The predicate is <EM>multifile</EM> and of type <EM>dynamic</EM>.
+Note that the process of creating Prolog scripts is made very simple by the Ciao 
+<A NAME="IDX813"></A>
+emacs mode, which automatically inserts the header and makes the file executable (See section <A HREF="ciao_12.html#SEC91">Using Ciao inside GNU emacs</A>). 
 
 
-</DL>
+
+
+<H2><A NAME="SEC86" HREF="ciao_toc.html#TOC86">Command line arguments in scripts</A></H2>
+
+<P>
+The following example illustrates the use of command-line arguments in scripts. Assume that a file called <CODE>say</CODE> contains the following lines: 
+
+
+
+<PRE>
+#!/bin/sh 
+exec ciao-shell $0 "$@" # -*- mode: ciao; -*-
+
+main(Argv) :-
+     write_list(Argv), nl.
+
+write_list([]).
+write_list([Arg|Args]) :- 
+     write(Arg),
+     write(' '),
+     write_list(Args).
+</PRE>
+
+<P>
+An example of use is: 
+
+
+
+<PRE>
+/herme@clip:/tmp
+[91]&#62; say hello dolly
+hello dolly 
+</PRE>
+
+<P>
+ 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_9.html">previous</A>, <A HREF="ciao_11.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -97,14 +97,23 @@ provides handles for the module system into the internal definitions.
 
 :- multifile load_libs/0.
 
+:- data all_loaded/0.
+
 boot:-
+        initialize_debugger_state,
         setup_paths,
         ( load_libs ; true),
 	initialize,
+        asserta_fact(all_loaded),
         gomain.
 boot:-
         message(error,'Predicates user:main/0 and user:main/1 undefined, exiting...'),
         halt(1).
+
+% This has to be done before any choicepoint
+initialize_debugger_state :-
+	'$debugger_state'(_, s(off,off,1000000,0,[])),
+	'$debugger_mode'.
 
 gomain :-
         '$predicate_property'('user:main',_,_), !,
@@ -119,8 +128,10 @@ global_failure :-
         halt(2).
 
 reboot:-
+        all_loaded,
+        initialize_debugger_state,
 	reinitialize,
-	( '$nodebug_call'(aborting) -> true ; global_failure ).
+	'$nodebug_call'(aborting), !.
 
 initialize:-
 	initialization(_),
@@ -139,8 +150,8 @@ control_c_handler :- throw(control_c).
 
 %% Module expansion
 
-% Called from engine(mexpand), fails to avoid infinite loop of expansions
-uses_runtime_module_expansion :- fail.
+% Called from engine(mexpand)
+uses_runtime_module_expansion.
 
 :- include(mexpand).
 
@@ -152,7 +163,7 @@ module_warning(not_imported(F, N, M, QM)) :- !,
                           ' does not import the predicate from module ',QM]).
 module_warning(bad_pred_abs(PA)) :- !,
         message(error, ['Bad predicate abstraction ',~~(PA),
-                          ' : head functor should be ''\\:''']).
+                          ' : head functor should be ''''']).
 module_warning(big_pred_abs(PA, N)) :- !,
         message(error, ['Predicate abstraction ',~~(PA),
                           ' has too many arguments: should be ',N]).
@@ -199,7 +210,11 @@ do_module_exp(QM, T, M, Type, NT) :-
         arg(5,GEXP,NT),
         '$meta_call'(GEXP).
 do_module_exp(QM, T, M, Type, NT) :-
-        expand_meta(T, Type, M, QM, NT).
+        expand_meta(T, Type, M, QM, NT). %,
+%        \+ recursive(NT).
+
+% recursive((last_module_exp(_,_,_,_,_),_)).
+% recursive((mid_module_exp(_,_,_,_,_),_)).
 
 :- include(builtin_modules).
 
@@ -220,20 +235,13 @@ module_concat(_, A, A). % If a number, do not change to complain later
 % Support for call/n, see mexpand & read
 
 call(V, _) :- var(V), !, throw(error(instantiation_error, call/n-1)).
-call(:-(H,B), A) :-
-        copy_term(:-(H,B), :-(A,NB)),
-        '$meta_call'(NB).
-call(Pred/N, A) :-
-        functor(A, _, NA),
-        ( NA=N ->
-            functor(Pred, F, M),
-            T is N+M,
-            functor(Goal, F, T),
-            unify_args(N, A, N, Goal),
-            unify_args(M, Pred, T, Goal),
-            '$meta_call'(Goal)
-        ; throw(error(type_error(pred(NA),Pred), call/n-1))
-        ).
+call(Pred, Args) :-
+        Pred = 'PA'(Sh,_H,_B),
+        copy_term(Pred, 'PA'(Sh,Args,Goal)), !,
+        '$meta_call'(Goal).
+call(Pred, A) :-
+        functor(A,_,N),
+        throw(error(type_error(pred(N),Pred), call/n-1)).
 
 %------ call with continuations -----%
 % Called from within the emulator, as possible boot goal for a wam
@@ -270,31 +278,23 @@ load_lib(Module,_File) :-
         current_module(Module), !.
 load_lib(Module, File) :- % loads both .so and .po - JFMC
         prolog_flag(fileerrors, OldFE, off),
-        ( get_arch(A),
-          get_os(O),
-          atom_concat(O, A, OsArch),
-          atom_concat('_', OsArch, OsArchSuff),
+        ( getOsArchSuf(OsArchSuff),
           absolute_file_name(File, OsArchSuff, '.so', '.', Abs, Base, _),
-          Abs \== Base -> % Has .so extension
-            set_prolog_flag(fileerrors, OldFE),
+          Abs \== Base, % Has .so extension
 	    dynlink(Abs, Module),
-            assertz_fact(current_module(Module)),
-	    Ok = yes
+%            assertz_fact(current_module(Module)),
+	    fail
 	; true
 	),
         ( absolute_file_name(File, '_opt', '.po', '.', Abs, Base, _),
-          Abs \== Base -> % Has .po extension
-            set_prolog_flag(fileerrors, OldFE),
+          Abs \== Base, % Has .po extension
             poload(Abs),
             ldlibs(Module),
-	    Ok = yes
+	    fail
         ; true
 	),
-	( Ok = no ->
-	  message(error,['library ',File,' not found, exiting...']),
-          halt(1)
-	; true
-        ).
+        set_prolog_flag(fileerrors, OldFE),
+        check_module_loaded(Module, File).
 
 %------ load_lib for lazy load ------%
 
@@ -304,30 +304,33 @@ load_lib_lazy(Module, File) :- % loads both .so and .po - JFMC
         del_stumps(Module),
         prolog_flag(fileerrors, OldFE, off),
         ( absolute_file_name(File, '_opt', '.po', '.', Abs, Base, _),
-          Abs \== Base -> % Has .po extension
-            set_prolog_flag(fileerrors, OldFE),
+          Abs \== Base, % Has .po extension
             poload(Abs),
             initialize_module(Module),
-	    Ok = yes
+	    fail
         ; true
 	),
-	( get_arch(A),
-          get_os(O),
-          atom_concat(O, A, OsArch),
-          atom_concat('_', OsArch, OsArchSuff),
+	( getOsArchSuf(OsArchSuff),
           absolute_file_name(File, OsArchSuff, '.so', '.', Abs, Base, _),
-          Abs \== Base -> % Has .so extension
-            set_prolog_flag(fileerrors, OldFE),
+          Abs \== Base, % Has .so extension
 	    dynlink(Abs, Module),
-            assertz_fact(current_module(Module)),
-	    Ok = yes
+%            assertz_fact(current_module(Module)),
+	    fail
         ; true
 	),
-	( Ok = no ->
-	  message(error,['library ',File,' not found, exiting...']),
-          halt(1)
-	; true
-        ).
+        set_prolog_flag(fileerrors, OldFE),
+        check_module_loaded(Module, File).
+
+getOsArchSuf(OsArchSuff) :-
+        get_os(Os),
+        get_arch(Arch),
+        atom_concat(Os, Arch, OsArch),
+        atom_concat('_', OsArch, OsArchSuff).
+
+check_module_loaded(Module,_File) :- current_module(Module), !.
+check_module_loaded(_Module,File) :-
+        message(error,['library ',File,' not found, exiting...']),
+        halt(1).
 
 :- multifile stump/2.
 :- data stump/2.
@@ -525,6 +528,34 @@ do_undefined(warning, X) :-
 % do_undefined(fail, X) :- fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+117,2000/04/12,18:35*57+'CEST'), "Changed
+   predicate abstractions to have the head with functor '', and to mark
+   shared variables with `.  Changed predicate closures so that they
+   behave as (are syntactic sugar of) predicate abstractions.  (Daniel
+   Cabeza Gras)").
+
+:- comment(version(1*5+116,2000/04/12,13:44*55+'CEST'), "Added
+   initialization of debugger state at boot time.  (Daniel Cabeza
+   Gras & Manuel Carro Liñares & Manuel Carlos Rodríguez)").
+
+:- comment(version(1*5+63,2000/03/13,18:43*45+'CET'), "Changed mexpand
+   to allow using user:pred to call pred from one user file to another,
+   useful if pred is also imported from a module. (Daniel Cabeza
+   Gras)").
+
+:- comment(version(1*5+56,2000/02/16,21:27*41+'CET'), "Added check to
+   exit the executable when an abort occurs before all object code is
+   loaded.  (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+50,2000/02/10,18:12*18+'CET'), "Fixed bug in the
+   startup of executables which failed when libraries where composed of
+   prolog and C code. (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+44,2000/02/04,20:03*24+'CET'), "Fixed a bug
+   introduced in version 1*3+55 which disallowed undetermined calls
+   inside an undetermined call (which happens mainly in the toplevel).
+   (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+34,1999/12/31,18:49*41+'CET'), "Changed predicate
    abstractions to have the head with functor '\:', and to have separate

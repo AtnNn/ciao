@@ -499,6 +499,16 @@ w->frame = E->frame;                               /* MCL */
 if (worker && (worker->action & KEEP_STACKS)) {     /* We may backtrack */
   SAVE_WAM_STATE;
 }
+
+/* We may have been signaled and jumped here from enter_predicate: */
+
+if (Stop_This_Goal(Arg)) 
+     wam_exit_code = WAM_INTERRUPTED;
+
+#if defined(DEBUG)
+     /* printf("Goal %x returning!\n", worker); */
+#endif
+
 return wam_exit_code;
 
 case RETRY_CQ:

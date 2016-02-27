@@ -1,33 +1,45 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - file_utils (library)</TITLE>
+<TITLE>The Ciao Prolog System               - File name manipulation</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, <A HREF="ciao_75.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, <A HREF="ciao_75.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC262" HREF="ciao_toc.html#TOC262">file_utils (library)</A></H1>
+<H1><A NAME="SEC308" HREF="ciao_toc.html#TOC308">File name manipulation</A></H1>
 <P>
-<A NAME="IDX3205"></A>
+<A NAME="IDX3714"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.5#17 (1998/6/11, 21:5:3 MET DST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#51 (1999/9/9, 16:28:44 MEST)
+
+
+<P>
+This library provides some small utilities to handle file name syntax.
 
 
 
 <UL>
-<LI><A HREF="ciao_74.html#SEC263">Usage and interface (file_utils)</A>
-<LI><A HREF="ciao_74.html#SEC264">Documentation on exports (file_utils)</A>
+<LI><A HREF="ciao_74.html#SEC309">Usage and interface (filenames)</A>
+<LI><A HREF="ciao_74.html#SEC310">Documentation on exports (filenames)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC263" HREF="ciao_toc.html#TOC263">Usage and interface (<CODE>file_utils</CODE>)</A></H2>
+<H2><A NAME="SEC309" HREF="ciao_toc.html#TOC309">Usage and interface (<CODE>filenames</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(file_utils)).</CODE>
+<CODE>:- use_module(library(filenames)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,12 +56,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3206"></A>
-<CODE>file_terms/2</CODE>, 
-<A NAME="IDX3207"></A>
-<CODE>copy_stdout/1</CODE>, 
-<A NAME="IDX3208"></A>
-<CODE>file_to_string/2</CODE>.
+<A NAME="IDX3715"></A>
+<CODE>no_path_file_name/2</CODE>, 
+<A NAME="IDX3716"></A>
+<CODE>file_name_extension/3</CODE>, 
+<A NAME="IDX3717"></A>
+<CODE>basename/2</CODE>, 
+<A NAME="IDX3718"></A>
+<CODE>extension/2</CODE>.
 
 </UL>
 
@@ -60,10 +74,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, 
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX3209"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX3210"></A>
-<CODE>streams</CODE>.
+<A NAME="IDX3719"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -73,124 +85,194 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC264" HREF="ciao_toc.html#TOC264">Documentation on exports (<CODE>file_utils</CODE>)</A></H2>
+<H2><A NAME="SEC310" HREF="ciao_toc.html#TOC310">Documentation on exports (<CODE>filenames</CODE>)</A></H2>
 <P>
-<A NAME="IDX3211"></A>
-<A NAME="IDX3212"></A>
+<A NAME="IDX3720"></A>
+<A NAME="IDX3721"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>file_terms/2:</B>
-<DD><A NAME="IDX3213"></A>
+<DT><span class="define">PREDICATE:</span> <B>no_path_file_name/2:</B>
+<DD><A NAME="IDX3722"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>file_terms(@(File),?(Terms))</CODE>
+This predicate will extract the last item (usually the file name) from a given path. 
+
+
+<P>
+The first argument must be instantiated to a string or atom. Whenever the first argument is an atom, the second argument will be an atom. Whenever the first argument is a string, the second argument will be a string. 
+
+
+<P>
+This predicate will fail under any of the following conditions: 
 
 <UL>
-<LI><EM>Description:</EM> Transform a file <CODE>File</CODE> to/from a list of terms <CODE>Terms</CODE>.
+<LI>First argument is not an atom, nor a string.
 
-<LI><EM>The following properties should hold upon exit:</EM>
+<LI>Second argument is not the last given path item (given path is the first argument).
 
-<CODE>@(File)</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>?(Terms)</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>file_terms(File,Terms)</CODE>
+Those are the most usual usages of no_path_file_name/2: 
+
+<PRE>
+?- no_path_file_name_("/home/nexusV/somefile.txt",K).
+
+K = "somefile.txt" ? 
+
+yes
+?- no_path_file_name('/home/nexusV/somefile.txt',K).
+
+K = 'somefile.txt' ? 
+
+yes
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>no_path_file_name(Path,FileName)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Unifies <CODE>Terms</CODE> with the list of all terms in <CODE>File</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Terms</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 3:</STRONG> <CODE>file_terms(File,Terms)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Writes the terms in list <CODE>Terms</CODE> (including the ending '.') onto file <CODE>File</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-
-<CODE>Terms</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3214"></A>
-<A NAME="IDX3215"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_stdout/1:</B>
-<DD><A NAME="IDX3216"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>copy_stdout(+File)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Copies file <CODE>File</CODE> to standard output.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX3217"></A>
-<A NAME="IDX3218"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>file_to_string/2:</B>
-<DD><A NAME="IDX3219"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>file_to_string(+FileName,-(String))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Reads all the characters from the file <CODE>FileName</CODE> and returns them in <CODE>String</CODE>.
+<LI><EM>Description:</EM> <CODE>FileName</CODE> is the file corresponding to the given <CODE>Path</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+FileName</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
+<CODE>Path</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
 
-<CODE>-(String)</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>FileName</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3723"></A>
+<A NAME="IDX3724"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>file_name_extension/3:</B>
+<DD><A NAME="IDX3725"></A>
+
+
+<P>
+This predicate may be used in two ways: 
+
+<UL>
+
+<LI>To create a file name from its components: name and extension. For instance:
+
+
+<PRE>
+?- file_name_extension(File,mywork,'.txt').
+
+File = 'mywork.txt' ? 
+
+yes
+?- 
+</PRE>
+
+<LI>To split a file name into its name and extension. For Instance:
+
+
+<PRE>
+?- file_name_extension('mywork.txt',A,B).
+
+A = mywork,
+B = '.txt' ? 
+
+yes
+?- 
+</PRE>
+
+</UL>
+
+<P>
+Any other usage of file_name_extension/3 will cause the predicate to fail. Notice that valid arguments are accepted both as atoms or strings. 
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>file_name_extension(FileName,BaseName,Extension)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Splits a <CODE>FileName</CODE> into its <CODE>BaseName</CODE> and <CODE>Extension</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>FileName</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
+
+<CODE>BaseName</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
+
+<CODE>Extension</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3726"></A>
+<A NAME="IDX3727"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>basename/2:</B>
+<DD><A NAME="IDX3728"></A>
+
+
+<P>
+<CODE>basename(FileName,BaseName)</CODE>
+
+
+<P>
+<CODE>BaseName</CODE> is <CODE>FileName</CODE> without extension. Equivalent to <CODE>file_name_extension(FileName,BaseName,_)</CODE>. Useful to extract the base name of a file using functional syntax.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>FileName</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
+
+<CODE>BaseName</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX3729"></A>
+<A NAME="IDX3730"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>extension/2:</B>
+<DD><A NAME="IDX3731"></A>
+
+
+<P>
+<CODE>extension(FileName,Extension)</CODE>
+
+
+<P>
+<CODE>Extension</CODE> is the extension (suffix) of <CODE>FileName</CODE>. Equivalent to <CODE>file_name_extension(FileName,_,Extension)</CODE>. Useful to extract the extension of a file using functional syntax.
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>FileName</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
+
+<CODE>Extension</CODE> is an atom or a string
+ (<CODE>filenames:atom_or_str/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, <A HREF="ciao_75.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_73.html">previous</A>, <A HREF="ciao_75.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

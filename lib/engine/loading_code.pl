@@ -4,7 +4,7 @@
 
 :- comment(author, "Daniel Cabeza").
 
-:- comment(usage, "These directives are builtin in CIAO, so nothing special
+:- comment(usage, "These directives are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(doinclude,ensure_loaded/1).
@@ -15,7 +15,7 @@
           declaration.  This directive is intended to be used by
           programs not divided in modules.  Dividing programs into
           modules is however strongly encouraged, since most of the
-          attractive features of CIAO (such as static debugging and
+          attractive features of Ciao (such as static debugging and
           global optimization) are only partially available for
           @tt{user} modules.".
 

@@ -484,6 +484,23 @@ TAGGED make_float(Arg,i)
 /* --------------------------------------------------------*/
 
 
+/* Protect the creation of streams: several threads might want to create
+   streams at once. */
+
+extern LOCK stream_list_l;
+
+struct stream_node *insert_new_stream(struct stream_node *new_stream){
+
+  Wait_Acquire_lock(stream_list_l);
+  new_stream->forward = root_stream_ptr;
+  new_stream->backward = root_stream_ptr->backward;
+  root_stream_ptr->backward->forward = new_stream;
+  root_stream_ptr->backward = new_stream;
+  Release_lock(stream_list_l);
+
+  return new_stream;
+}
+
 struct stream_node *new_stream(streamname, streammode, streamfile)
      TAGGED streamname;
      char *streammode;
@@ -497,11 +514,7 @@ struct stream_node *new_stream(streamname, streammode, streamfile)
   s->pending_char = -100;
   update_stream(s,streamfile);
 
-  s->forward = root_stream_ptr,
-  s->backward = root_stream_ptr->backward,
-  root_stream_ptr->backward->forward = s,
-  root_stream_ptr->backward = s;
-  return s;
+  return insert_new_stream(s);
 }
 
 
@@ -651,11 +664,11 @@ struct definition *insert_definition(swp,tagpname,arity,insertp)
      concurrently. */
 
 #if defined(DEBUG) && defined(THREADS)
-  if (Lock_is_unset(prolog_predicates_l))
+  if (SLock_is_unset(prolog_predicates_l))
     printf("**** entering insert_definition() without lock\n");
 #endif
 
-  /* Wait_Acquire_lock(prolog_predicates_l); */ /* Moved to current_clauses */
+  /* Wait_Acquire_slock(prolog_predicates_l); */ /* Moved to current_clauses */
 
   keyval = (struct sw_on_key_node *)incore_gethash((*swp),key);
 
@@ -666,7 +679,7 @@ struct definition *insert_definition(swp,tagpname,arity,insertp)
 
   /* Unlock here */
 
-  /*Release_lock(prolog_predicates_l);*/ /* Moved to current_clauses */
+  /*Release_slock(prolog_predicates_l);*/ /* Moved to current_clauses */
 
   /* Maybe we can perform two separate locks instead of a big one */
 
@@ -736,12 +749,28 @@ struct definition *find_definition(swp,term,argl,insertp)
     else
       arity = 0;
 
-  Wait_Acquire_lock(prolog_predicates_l);
+  /*
+#if defined(DEBUG)
+  if (debug_conc){
+      fprintf(stderr, "Entering find_definition\n");
+      if (SLock_is_unset(prolog_predicates_l))
+        fprintf(stderr, "lock is unset\n");
+      else
+        fprintf(stderr, "lock is set\n");
+  }
+#endif
+  */
+  Wait_Acquire_slock(prolog_predicates_l);
   result = insert_definition(swp,term,arity,insertp);
-  Release_lock(prolog_predicates_l);
-
+  Release_slock(prolog_predicates_l);
+  /*
+#if defined(DEBUG)
+  if (debug_conc) fprintf(stderr, "Exiting find_definition\n");
+#endif
+  */
   return result;
 }
+
 
 static struct definition *parse_1_definition();
 
@@ -832,9 +861,9 @@ static struct definition *parse_1_definition(tagname, tagarity)
     }
 
   if (TagIsATM(tagname)) {
-    Wait_Acquire_lock(prolog_predicates_l);
+    Wait_Acquire_slock(prolog_predicates_l);
     result = insert_definition(predicates_location,tagname,arity,TRUE);
-    Release_lock(prolog_predicates_l);
+    Release_slock(prolog_predicates_l);
     return result;
   } else return NULL;
 }

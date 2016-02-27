@@ -7,8 +7,8 @@
         contains_ro/2, contains1/2, nocontainsx/2, last/2, list_lookup/3,
         list_lookup/4,
         intset_insert/3, intset_delete/3, intset_in/2, intset_sequence/3,
-	intersection/3, union/3, difference/3, sublist/2, equal_lists/2,
-	list_to_list_of_lists/2, powerset/2
+	intersection/3, union/3, difference/3, sublist/2, subordlist/2,
+	equal_lists/2, list_to_list_of_lists/2, powerset/2
         ],
         [
 	assertions,isomodes,metatypes
@@ -263,12 +263,12 @@ difference([Element|Residue], List, Difference) :-
 difference([Element|Residue], List, [Element|Difference]) :-
 	difference(Residue, List, Difference).
 
-:- prop sublist(?List1, +List2) # "@var{List2} contains all the elements of
-        @var{List1}.".
+:- prop subordlist(?List1, +List2)
+	# "@var{List2} contains all the elements of @var{List1}
+	   in the same order.".
 
-% More efficient version MH
-sublist(List, List).
-sublist(Sublist, [H|T]) :- 
+subordlist(List, List).
+subordlist(Sublist, [H|T]) :- 
 	sublist_aux(T, H, Sublist).
 
 sublist_aux(Sublist, _, Sublist).
@@ -277,10 +277,13 @@ sublist_aux([H|T], _, Sublist) :-
 sublist_aux([H|T], X, [X|Sublist]) :- 
 	sublist_aux(T, H, Sublist).
 
-%% sublist([], _).
-%% sublist([Element|Residue], List) :-
-%% 	member(Element, List),
-%% 	sublist(Residue, List).
+:- prop sublist(?List1, +List2)
+	# "@var{List2} contains all the elements of @var{List1}.".
+
+sublist([], _).
+sublist([Element|Residue], List) :-
+	member(Element, List),
+	sublist(Residue, List).
 
 :- pred equal_lists(+List1, +List2) # "@var{List1} has all the
         elements of @var{List2}, and vice versa.".
@@ -313,6 +316,10 @@ add_x([Ys|Yss],X,Zss,[[X|Ys]|Xss]) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*5+41,2000/02/04,13:34*24+'CET'), "Split
+   @pred{sublist/2} into its two versions --respecting ordering or not
+   (Francisco Bueno Carrillo)").
 
 :- comment(version(0*9+63,1999/04/28,16:11*31+'MEST'), "Changed
    list_lookup/4 to allow indexing with functors, following suggestion of

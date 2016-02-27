@@ -1,9 +1,12 @@
-:- module(common,
-        [http_lws0/2, http_lws/2, http_crlf/2, http_sp/2, http_line/3,
-         http_media_type/5, http_type_params/3, http_lo_up_token/3,
-         http_lo_up_token_char/3, http_lo_up_token_rest/3, loupalpha/3,
-         loalpha/3, upalpha/3, digit/3, parse_integer/3, http_token/3,
-         http_quoted_string/3], [dcg]).
+/**** Be careful when changing code, to not break auto distribution generation
+ ****/
+:- module(common, [
+        http_lws0/2, http_lws/2, http_crlf/2, http_sp/2, http_line/3,
+        http_media_type/5, http_type_params/3, http_lo_up_token/3,
+        http_lo_up_token_char/3, http_lo_up_token_rest/3, loupalpha/3,
+        loalpha/3, upalpha/3, digit/3, parse_integer/3, http_token/3,
+        http_quoted_string/3
+        ], [dcg]).
 
 %%% HTTP and basic parsing %%%
 

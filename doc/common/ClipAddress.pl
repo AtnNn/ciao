@@ -3,8 +3,9 @@
 %% :- comment(author, 
 %%   "@tt{http://www.clip.dia.fi.upm.es/} @hfill Facultad de Inform@'{a}tica").
 %% :- comment(author, "@hfill Universidad Polit@'{e}cnica de Madrid").
-:- comment(author, "F. Bueno, D. Cabeza, M. Carro,").
-:- comment(author, "M. Hermenegildo, P. L@'{o}pez, and G. Puebla").
+%% Authors should be added by hand...
+%% :- comment(author, "F. Bueno, D. Cabeza, M. Carro,").
+%% :- comment(author, "M. Hermenegildo, P. L@'{o}pez, and G. Puebla").
 :- comment(author, "@email{clip@@dia.fi.upm.es}").
 :- comment(author, "@uref{http://www.clip.dia.fi.upm.es/}").
 %% :- comment(author, "Facultad de Inform@'{a}tica").

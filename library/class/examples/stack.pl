@@ -36,3 +36,6 @@ is_empty :-
 	fail.
 
 is_empty.
+
+:- comment(version_maintenance,off).
+

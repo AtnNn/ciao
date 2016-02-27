@@ -4,9 +4,9 @@
    Ref: Knuth vol. 2 sec. 4.3.1
 */  
 
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
-#include "threads.h"
 
 /* declarations for global functions accessed here */
 

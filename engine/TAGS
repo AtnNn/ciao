@@ -1,5 +1,5 @@
 
-access.h,2452
+access.h,2538
 #define Offset(Offset9,243
 #define CharOffset(CharOffset10,285
 #define OnHeap(OnHeap16,409
@@ -41,54 +41,62 @@ access.h,2452
 #define ChoicePrev(ChoicePrev69,2610
 #define ChoiceNext(ChoiceNext70,2642
 #define ChoicePush(ChoicePush71,2674
-#define ChoiceFromInt(ChoiceFromInt80,2950
-#define ChoiceToInt(ChoiceToInt81,3017
-#define RefHeap(RefHeap83,3088
-#define RefCar(RefCar86,3134
-#define RefCdr(RefCdr89,3187
-#define RefArg(RefArg92,3240
-#define RefHeapNext(RefHeapNext95,3297
-#define PushRefHeapNext(PushRefHeapNext98,3349
-#define RefStack(RefStack101,3410
-#define HeapPushRefStack(HeapPushRefStack104,3457
-#define RefHVA(RefHVA107,3517
-#define RefCVA(RefCVA110,3570
-#define RefSVA(RefSVA113,3623
-#define LoadSVA(LoadSVA116,3676
-#define Load2SVA(Load2SVA117,3715
-#define PreLoadHVA(PreLoadHVA118,3761
-#define ConstrHVA(ConstrHVA119,3804
-#define LoadHVA(LoadHVA120,3852
-#define Load2HVA(Load2HVA121,3906
-#define LoadCVA(LoadCVA122,3972
+#define ChoiceFromInt(ChoiceFromInt76,2754
+#define ChoiceToInt(ChoiceToInt77,2821
+#define ChoiceFromInt(ChoiceFromInt79,2897
+#define ChoiceToInt(ChoiceToInt80,2980
+#define RefHeap(RefHeap83,3058
+#define RefCar(RefCar86,3104
+#define RefCdr(RefCdr89,3157
+#define RefArg(RefArg92,3210
+#define RefHeapNext(RefHeapNext95,3267
+#define PushRefHeapNext(PushRefHeapNext98,3319
+#define RefStack(RefStack101,3380
+#define HeapPushRefStack(HeapPushRefStack104,3427
+#define RefHVA(RefHVA107,3487
+#define RefCVA(RefCVA110,3540
+#define RefSVA(RefSVA113,3593
+#define LoadSVA(LoadSVA116,3646
+#define Load2SVA(Load2SVA117,3685
+#define PreLoadHVA(PreLoadHVA118,3731
+#define ConstrHVA(ConstrHVA119,3774
+#define LoadHVA(LoadHVA120,3822
+#define Load2HVA(Load2HVA121,3876
+#define LoadCVA(LoadCVA122,3942
 
 addmodules.c,0
 
-alloc.c,653
-extern int end;30,580
-ENG_INT total_mem_count 36,802
-ENG_INT mem_prog_count 40,1007
-ENG_INT num_of_predicates 43,1122
-extern  LOCK    mem_mng_l;53,1614
-#define THRESHHOLD 56,1719
-#define NTINY 57,1741
-static TAGGED *tiny_blocks 59,1760
-static TAGGED *get_tiny_blocks(61,1838
-TAGGED *checkalloc(101,2686
-void checkdealloc(144,3757
-TAGGED *checkrealloc(166,4195
-#define CREATE_TYPED_STORAGE(CREATE_TYPED_STORAGE213,5397
-struct worker *create_wam_storage(215,5471
-void create_wam_areas(228,5764
-void init_alloc(265,6905
-BOOL program_usage(292,7645
-BOOL internal_symbol_usage(303,7886
-BOOL total_usage(315,8166
-BOOL statistics(329,8394
+alloc.c,863
+extern int end;32,632
+ENG_INT total_mem_count 38,854
+ENG_INT mem_prog_count 42,1059
+ENG_INT num_of_predicates 45,1174
+extern SLOCK    mem_mng_l;55,1594
+#define THRESHHOLD 58,1699
+#define NTINY 59,1721
+static TAGGED *tiny_blocks 61,1740
+static TAGGED *get_tiny_blocks(63,1818
+TAGGED *checkalloc(103,2667
+void checkdealloc(146,3742
+TAGGED *checkrealloc(167,4130
+extern ENG_INT mem_prog_count;219,5559
+struct worker *create_and_init_wam(221,5591
+struct worker *wam_list 235,6062
+SLOCK    wam_list_l;236,6094
+struct worker *free_wam(238,6116
+void release_wam(255,6458
+#define CREATE_TYPED_STORAGE(CREATE_TYPED_STORAGE266,6652
+struct worker *create_wam_storage(268,6726
+void create_wam_areas(281,7019
+void init_alloc(320,8204
+BOOL program_usage(347,8944
+BOOL internal_symbol_usage(358,9185
+BOOL total_usage(370,9465
+BOOL statistics(384,9693
 
 alloc_defs.h,80
-extern ENG_INT total_mem_count;12,343
-extern ENG_INT num_of_predicates;13,375
+extern ENG_INT total_mem_count;12,373
+extern ENG_INT num_of_predicates;13,405
 
 alloc.h,656
 #define kB 6,49
@@ -110,9 +118,9 @@ alloc.h,656
 #define XREGBANKSIZE 37,912
 #define GETENV(GETENV41,1087
 #define INC_MEM_PROG(INC_MEM_PROG50,1234
-#define DEC_MEM_PROG(DEC_MEM_PROG54,1387
-#define INC_MEM_PROG(INC_MEM_PROG60,1546
-#define DEC_MEM_PROG(DEC_MEM_PROG62,1616
+#define DEC_MEM_PROG(DEC_MEM_PROG56,1420
+#define INC_MEM_PROG(INC_MEM_PROG63,1604
+#define DEC_MEM_PROG(DEC_MEM_PROG65,1674
 
 attr.c,638
 extern struct definition *address_true;31,1166
@@ -214,31 +222,6 @@ typedef char *ENG_pred_ref;ENG_pred_ref22,483
 typedef int ENG_term_ref;ENG_term_ref23,542
 typedef unsigned long int ENG_term;ENG_term25,569
 
-ciao_lock.h,846
-typedef int _lock_t;_lock_t7,206
-# define init_lock(init_lock9,228
-# define _lock(_lock10,254
-# define un_lock(un_lock11,276
-# define test_lock(test_lock12,300
-# define try_lock(try_lock13,328
-typedef VOLATILE int _lock_t;_lock_t21,491
-#   define asm_swap(asm_swap23,536
-#  define try_lock(try_lock31,768
-typedef VOLATILE char _lock_t;_lock_t36,860
-#   define try_lock(try_lock39,938
-#   define asm_swap(asm_swap41,995
-#   define try_lock(try_lock48,1220
-typedef VOLATILE int _lock_t;_lock_t53,1326
-#   define asm_ll(asm_ll55,1371
-#   define asm_sc(asm_sc62,1574
-#  define asm_swap(asm_swap70,1802
-#  define try_lock(try_lock75,1936
-#define try_lock(try_lock80,1998
-# define test_lock(test_lock90,2288
-# define init_lock(init_lock95,2371
-# define _lock(_lock101,2444
-# define un_lock(un_lock112,2714
-
 common_headers.h,0
 
 compat.h,914
@@ -329,11 +312,6 @@ dynlink_defs.h,0
 
 ENG_defs.h,0
 
-fastrw.c,80
-#define FASTRW_MAX_VARS 1,0
-BOOL prolog_fast_read(3,30
-void fast_read(12,184
-
 fix_path.h,46
 #define FIX_PATHS1,0
 #define REN_PAIRS 2,18
@@ -343,8 +321,8 @@ int (*(ENG_pre_linkage[1,0
 char *ENG_pre_map[2,34
 
 format.c,81
-BOOL prolog_format_print_float(35,867
-BOOL prolog_format_print_integer(68,1784
+BOOL prolog_format_print_float(34,842
+BOOL prolog_format_print_integer(67,1759
 
 format_defs.h,0
 
@@ -385,24 +363,24 @@ gcsupport.h,320
 heapgc.c,684
 #define SEGMENTED_GC 4,90
 #define EARLY_RESET 5,113
-BOOL gc_usage(41,1023
-BOOL gc_mode(56,1310
-BOOL gc_trace(64,1437
-BOOL gc_margin(74,1601
-#define gc_shuntVariable(gc_shuntVariable122,2587
-static void shuntVariables(131,2817
-static void markTrail(216,5124
-static void markFrames(275,6647
-static void markChoicepoints(306,7338
-void compressTrail(361,8605
-static void markVariable(392,9320
-#define intoRelocationChain(intoRelocationChain480,11396
-static void updateRelocationChain(484,11544
-static void sweepTrail(505,11933
-static void sweepFrames(541,12750
-static void sweepChoicepoints(572,13377
-static void compressHeap(602,14036
-void GarbageCollect(713,16442
+BOOL gc_usage(42,1024
+BOOL gc_mode(57,1311
+BOOL gc_trace(65,1438
+BOOL gc_margin(75,1602
+#define gc_shuntVariable(gc_shuntVariable123,2588
+static void shuntVariables(132,2818
+static void markTrail(217,5125
+static void markFrames(276,6648
+static void markChoicepoints(307,7339
+void compressTrail(362,8606
+static void markVariable(393,9321
+#define intoRelocationChain(intoRelocationChain481,11397
+static void updateRelocationChain(485,11545
+static void sweepTrail(506,11934
+static void sweepFrames(542,12751
+static void sweepChoicepoints(573,13378
+static void compressHeap(603,14037
+void GarbageCollect(714,16443
 
 heapgc_defs.h,0
 
@@ -427,369 +405,367 @@ static struct gcdef gcdef315,8705
 } *gcdef_bin;318,8802
 void leave_to_gc(320,8817
 static void make_undefined(341,9320
-BOOL empty_gcdef_bin(396,10906
-void relocate_gcdef_clocks(413,11194
-static void free_info(425,11438
-BOOL prolog_abolish(483,13020
-BOOL abolish(496,13341
-static void init_interpreted(517,13979
-BOOL define_predicate(553,14935
-BOOL erase_clause(610,16291
-BOOL clause_number(622,16494
-BOOL compiled_clause(636,16763
-struct sw_on_key_node *dyn_puthash(708,18834
-BOOL set_property(728,19216
+BOOL empty_gcdef_bin(389,10787
+void relocate_gcdef_clocks(406,11075
+static void free_info(418,11319
+BOOL prolog_abolish(476,12901
+BOOL abolish(489,13222
+static void init_interpreted(510,13860
+BOOL define_predicate(545,14809
+BOOL erase_clause(602,16165
+BOOL clause_number(614,16368
+BOOL compiled_clause(628,16637
+struct sw_on_key_node *dyn_puthash(700,18708
+BOOL set_property(720,19090
 
 indexing_defs.h,0
 
-initial.c,6587
+initial.c,6410
 struct statistics stats 54,1301
 struct sw_on_key_node **atmtab;66,1696
 struct sw_on_key *prolog_atoms;68,1826
   *prolog_chars=70,1980
 CInfo builtintab[73,2029
 struct sw_on_key *switch_on_function;77,2185
-BOOL predtrace 304,12910
-BOOL profile 305,12987
-BOOL prof_include_time 306,13064
-BOOL stop_on_pred_calls 307,13141
-BOOL debug_gc 309,13237
-BOOL debug_threads 310,13314
-BOOL debug_mem 311,13391
-BOOL debug_conc 312,13468
-CLOCK def_clock=316,13631
-struct stream_node *stream_user_input;325,13939
-struct stream_node *stream_user_output;326,14016
-struct stream_node *stream_user_error;327,14093
-struct stream_node *root_stream_ptr;330,14172
-struct sw_on_key  *prolog_predicates 332,14250
-struct sw_on_key **predicates_location 334,14373
-pthread_attr_t detached_thread;337,14502
-pthread_attr_t joinable_thread;338,14534
-LOCK_ST prolog_predicates_st;343,14621
-LOCK    prolog_predicates_l;344,14698
-LOCK_ST mem_mng_st;353,14967
-LOCK    mem_mng_l;354,14987
-LOCK_ST launch_goal_st;358,15140
-LOCK    launch_goal_l;359,15164
-LOCK_ST backtrack_goal_st;363,15284
-LOCK    backtrack_goal_l;364,15311
-LOCK_ST worker_id_pool_st;369,15456
-LOCK    worker_id_pool_l;370,15483
-LOCK_ST atom_id_st;376,15605
-LOCK    atom_id_l;377,15625
-unsigned long int ops_counter 382,15706
-LOCK_ST ops_counter_st;383,15741
-LOCK ops_counter_l;384,15765
-BOOL wam_initialized 387,15793
-#define IsLowerChar(IsLowerChar391,15879
-#define IsUpperChar(IsUpperChar392,15922
-#define IsDigit(IsDigit393,15965
-#define IsSymbolChar(IsSymbolChar394,16008
-char symbolchar[398,16071
- TAGGED atom_success;401,16115
- TAGGED atom_failure;402,16137
- TAGGED atom_share;406,16168
- TAGGED atom_noshare;407,16214
- TAGGED atom_nil;408,16262
- TAGGED atom_list;409,16292
- TAGGED atom_user_input;410,16322
- TAGGED atom_user_output;411,16367
- TAGGED atom_user_error;412,16413
- TAGGED atom_read;413,16457
- TAGGED atom_write;414,16491
- TAGGED atom_append;415,16526
- TAGGED atom_socket;416,16563
- TAGGED atom_symlink;417,16600
- TAGGED atom_regular;418,16639
- TAGGED atom_directory;419,16678
- TAGGED atom_fifo;420,16721
- TAGGED atom_unknown;421,16754
- TAGGED atom_prolog;422,16793
- TAGGED atom_user;423,16831
- TAGGED atom_lessthan;424,16864
- TAGGED atom_greaterthan;425,16898
- TAGGED atom_equal;426,16934
- TAGGED atom_off;427,16965
- TAGGED atom_on;428,16996
- TAGGED atom_error;429,17025
- TAGGED atom_trace;430,17060
- TAGGED atom_debug;431,17095
- TAGGED atom_fail;432,17130
- TAGGED atom_all;433,17163
- TAGGED atom_terse;434,17194
- TAGGED atom_verbose;435,17229
- TAGGED atom_compiled;436,17268
- TAGGED atom_interpreted;437,17309
- TAGGED atom_builtin;438,17355
- TAGGED atom_true;439,17395
- TAGGED atom_retry_hook;440,17428
- TAGGED atom_unprofiled;441,17474
- TAGGED atom_profiled;442,17518
- TAGGED atom_concurrent;444,17603
- TAGGED atom_wait;445,17647
- TAGGED atom_dynamic;446,17680
- TAGGED atom_multifile;447,17719
- TAGGED atom_installibdir;448,17762
- TAGGED atom_block;450,17790
- TAGGED atom_no_block;451,17830
- TAGGED atom_self;454,17880
- TAGGED atom_create;455,17930
- TAGGED atom_counter;460,18004
- TAGGED functor_neck;463,18060
- TAGGED functor_list;464,18082
- TAGGED functor_cut;465,18104
- TAGGED functor_minus;466,18125
- TAGGED functor_slash;467,18148
- TAGGED functor_and;468,18171
- TAGGED functor_functor;469,18192
- TAGGED functor_tagged;470,18217
- TAGGED functor_emul_entry;471,18241
- TAGGED functor_builtin;472,18269
- TAGGED functor_Dref;473,18294
- TAGGED functor_Dstream;474,18316
- TAGGED functor_Dsetarg;475,18341
- TAGGED functor_large;476,18366
- TAGGED functor_long;477,18389
- TAGGED current_prompt;479,18412
- TAGGED current_unknown;480,18436
- TAGGED current_compiling;485,18595
- TAGGED current_ferror_flag;486,18622
- TAGGED current_quiet_flag;490,18773
- TAGGED current_gcmode;491,18801
- TAGGED current_gctrace;492,18825
- TAGGED current_gcmargin;493,18850
- TAGGED current_radix;496,18987
- struct try_node *address_nd_repeat;498,19012
- struct try_node *address_nd_current_instance;499,19049
- struct try_node *address_nd_current_atom;500,19096
- struct try_node *address_nd_current_predicate;501,19139
- struct try_node *address_nd_predicate_property;502,19187
- struct try_node *address_nd_current_stream;503,19236
- struct try_node *address_nd_atom_concat;504,19281
- struct definition *address_true;506,19324
- struct definition *address_fail;507,19358
- struct definition *address_call;515,19543
- struct definition *address_internal_call 517,19607
- struct definition *address_interpret_goal;519,19664
- struct definition *address_call_with_cont;520,19708
- struct definition *address_interpret_compiled_goal;521,19785
- struct definition *address_interpret_c_goal;522,19838
- struct definition *address_undefined_goal;523,19884
- struct definition *address_help;524,19928
- struct definition *address_restart;525,19963
- struct definition *address_trace;526,20001
- struct definition *address_getct;527,20036
- struct definition *address_getct1;528,20071
- struct definition *address_get;529,20107
- struct definition *address_get2;530,20140
- struct definition *address_get1;531,20174
- struct definition *address_get12;532,20208
- struct definition *address_peek;533,20243
- struct definition *address_peek2;534,20277
- struct definition *address_skip;535,20312
- struct definition *address_skip2;536,20346
- struct definition *address_error;537,20381
-struct definition *address_pending_unifications;540,20536
-struct definition *address_uvc;541,20585
-struct definition *address_ucc;542,20617
-static void classify_atom(550,20831
-#define MIN_MEM_CHUNK_SIZE 616,23130
-#define MAX(MAX617,23162
-struct atom *new_atom_check(620,23223
-static BOOL prolog_atom_mode(686,24931
-static BOOL prolog_ciaolibdir(706,25333
-static struct definition *define_builtin(713,25454
-static TAGGED deffunctor(731,26005
-struct definition *define_c_predicate(739,26127
-struct definition *define_c_mod_predicate(768,26948
-void undefine_c_mod_predicate(823,28838
-static void initialize_intrinsics(845,29597
-static void deffunction(1134,41582
-static void deffunction_nobtin(1146,41867
-static void define_functions(1159,42124
-void init_kanji(1213,44237
-void init_latin1(1236,44897
-void init_streams(1256,45438
-void init_locks(1273,46032
-extern char library_directory[1303,46611
-extern char *library_directory;1305,46650
-void init_once(1310,46692
-void glb_init_each_time(1552,54820
-void local_init_each_time(1573,55161
-void init_each_time(1631,56904
-void init_streams_each_time(1639,57002
-void reinitialize(1647,57195
+BOOL predtrace 307,13063
+BOOL profile 308,13140
+BOOL prof_include_time 309,13217
+BOOL stop_on_pred_calls 310,13294
+BOOL debug_gc 312,13390
+BOOL debug_threads 313,13467
+BOOL debug_mem 314,13544
+BOOL debug_conc 315,13621
+CLOCK def_clock=319,13784
+struct stream_node *stream_user_input;328,14092
+struct stream_node *stream_user_output;329,14169
+struct stream_node *stream_user_error;330,14246
+struct stream_node *root_stream_ptr;333,14325
+struct sw_on_key  *prolog_predicates 335,14403
+struct sw_on_key **predicates_location 337,14526
+pthread_attr_t detached_thread;340,14655
+pthread_attr_t joinable_thread;341,14687
+SLOCK    prolog_predicates_l;345,14789
+SLOCK    mem_mng_l;348,14875
+SLOCK    worker_id_pool_l;352,15013
+SLOCK    atom_id_l;356,15136
+SLOCK new_stream_l;359,15209
+SLOCK ops_counter_l;363,15290
+BOOL wam_initialized 366,15319
+#define IsLowerChar(IsLowerChar370,15405
+#define IsUpperChar(IsUpperChar371,15448
+#define IsDigit(IsDigit372,15491
+#define IsSymbolChar(IsSymbolChar373,15534
+char symbolchar[377,15597
+ TAGGED atom_success;380,15641
+ TAGGED atom_failure;381,15663
+ TAGGED atom_share;385,15694
+ TAGGED atom_noshare;386,15740
+ TAGGED atom_nil;387,15788
+ TAGGED atom_list;388,15818
+ TAGGED atom_user_input;389,15848
+ TAGGED atom_user_output;390,15893
+ TAGGED atom_user_error;391,15939
+ TAGGED atom_read;392,15983
+ TAGGED atom_write;393,16017
+ TAGGED atom_append;394,16052
+ TAGGED atom_socket;395,16089
+ TAGGED atom_symlink;396,16126
+ TAGGED atom_regular;397,16165
+ TAGGED atom_directory;398,16204
+ TAGGED atom_fifo;399,16247
+ TAGGED atom_unknown;400,16280
+ TAGGED atom_prolog;401,16319
+ TAGGED atom_user;402,16357
+ TAGGED atom_lessthan;403,16390
+ TAGGED atom_greaterthan;404,16424
+ TAGGED atom_equal;405,16460
+ TAGGED atom_off;406,16491
+ TAGGED atom_on;407,16522
+ TAGGED atom_error;408,16551
+ TAGGED atom_trace;409,16586
+ TAGGED atom_debug;410,16621
+ TAGGED atom_fail;411,16656
+ TAGGED atom_all;412,16689
+ TAGGED atom_terse;413,16720
+ TAGGED atom_verbose;414,16755
+ TAGGED atom_compiled;415,16794
+ TAGGED atom_interpreted;416,16835
+ TAGGED atom_builtin;417,16881
+ TAGGED atom_true;418,16921
+ TAGGED atom_retry_hook;419,16954
+ TAGGED atom_unprofiled;420,17000
+ TAGGED atom_profiled;421,17044
+ TAGGED atom_concurrent;423,17129
+ TAGGED atom_wait;424,17173
+ TAGGED atom_dynamic;425,17206
+ TAGGED atom_multifile;426,17245
+ TAGGED atom_installibdir;427,17288
+ TAGGED atom_block;429,17316
+ TAGGED atom_no_block;430,17356
+ TAGGED atom_self;433,17406
+ TAGGED atom_create;434,17456
+ TAGGED atom_counter;439,17530
+ TAGGED functor_neck;442,17586
+ TAGGED functor_list;443,17608
+ TAGGED functor_cut;444,17630
+ TAGGED functor_minus;445,17651
+ TAGGED functor_slash;446,17674
+ TAGGED functor_and;447,17697
+ TAGGED functor_functor;448,17718
+ TAGGED functor_tagged;449,17743
+ TAGGED functor_emul_entry;450,17767
+ TAGGED functor_builtin;451,17795
+ TAGGED functor_Dref;452,17820
+ TAGGED functor_Dstream;453,17842
+ TAGGED functor_Dsetarg;454,17867
+ TAGGED functor_large;455,17892
+ TAGGED functor_long;456,17915
+ TAGGED functor_active;459,17939
+ TAGGED functor_pending;460,17963
+ TAGGED functor_failed;461,17988
+ TAGGED functor_available;462,18012
+ TAGGED current_prompt;466,18042
+ TAGGED current_unknown;467,18066
+ TAGGED current_compiling;472,18225
+ TAGGED current_ferror_flag;473,18252
+ TAGGED current_quiet_flag;477,18403
+ TAGGED current_gcmode;478,18431
+ TAGGED current_gctrace;479,18455
+ TAGGED current_gcmargin;480,18480
+ TAGGED current_radix;483,18617
+ struct try_node *address_nd_repeat;485,18642
+ struct try_node *address_nd_current_instance;486,18679
+ struct try_node *address_nd_current_atom;487,18726
+ struct try_node *address_nd_current_predicate;488,18769
+ struct try_node *address_nd_predicate_property;489,18817
+ struct try_node *address_nd_current_stream;490,18866
+ struct try_node *address_nd_atom_concat;491,18911
+ struct definition *address_true;493,18954
+ struct definition *address_fail;494,18988
+ struct definition *address_call;502,19173
+ struct definition *address_internal_call 504,19237
+ struct definition *address_interpret_goal;506,19294
+ struct definition *address_call_with_cont;507,19338
+ struct definition *address_interpret_compiled_goal;508,19415
+ struct definition *address_interpret_c_goal;509,19468
+ struct definition *address_undefined_goal;510,19514
+ struct definition *address_help;511,19558
+ struct definition *address_restart;512,19593
+ struct definition *address_trace;513,19631
+ struct definition *address_getct;514,19666
+ struct definition *address_getct1;515,19701
+ struct definition *address_get;516,19737
+ struct definition *address_get2;517,19770
+ struct definition *address_get1;518,19804
+ struct definition *address_get12;519,19838
+ struct definition *address_peek;520,19873
+ struct definition *address_peek2;521,19907
+ struct definition *address_skip;522,19942
+ struct definition *address_skip2;523,19976
+ struct definition *address_error;524,20011
+struct definition *address_pending_unifications;527,20166
+struct definition *address_uvc;528,20215
+struct definition *address_ucc;529,20247
+static void classify_atom(537,20461
+#define MIN_MEM_CHUNK_SIZE 603,22760
+#define MAX(MAX604,22792
+struct atom *new_atom_check(607,22853
+static BOOL prolog_atom_mode(674,24594
+static BOOL prolog_ciaolibdir(694,24996
+static struct definition *define_builtin(701,25117
+static TAGGED deffunctor(719,25670
+struct definition *define_c_predicate(727,25792
+struct definition *define_c_mod_predicate(756,26615
+void undefine_c_mod_predicate(811,28507
+static void initialize_intrinsics(833,29268
+static void deffunction(1125,41448
+static void deffunction_nobtin(1137,41733
+static void define_functions(1150,41990
+void init_kanji(1204,44103
+void init_latin1(1227,44763
+void init_streams(1247,45304
+void init_locks(1265,45899
+extern char library_directory[1282,46225
+extern char *library_directory;1284,46264
+void init_once(1289,46306
+void glb_init_each_time(1539,54628
+void local_init_each_time(1560,54969
+void init_each_time(1621,56802
+void init_streams_each_time(1629,56900
+void reinitialize(1637,57093
 
 initial_defs.h,0
 
-initial.h,5223
+initial.h,5089
 extern struct stream_node *stream_user_input;26,780
 extern struct stream_node *stream_user_output;27,857
 extern struct stream_node *stream_user_error;28,934
 extern struct stream_node *root_stream_ptr;33,1058
 extern struct sw_on_key *prolog_predicates;35,1136
 extern struct sw_on_key **predicates_location;37,1259
-extern LOCK_ST prolog_predicates_st;41,1359
-extern LOCK    prolog_predicates_l;42,1436
-extern LOCK_ST launch_goal_st;45,1552
-extern LOCK    launch_goal_l;46,1583
-extern LOCK_ST backtrack_goal_st;49,1690
-extern LOCK    backtrack_goal_l;50,1724
-extern LOCK_ST worker_id_pool_st;54,1803
-extern LOCK    worker_id_pool_l;55,1837
-extern LOCK_ST atom_id_st;57,1871
-extern LOCK    atom_id_l;58,1898
-extern LOCK_ST ops_counter_st;61,1944
-extern LOCK    ops_counter_l;62,1975
-extern BOOL wam_initialized;66,2014
-extern char symbolchar[68,2140
-extern char *installibdir;70,2218
- TAGGED atom_success;75,2317
- TAGGED atom_failure;76,2339
-extern TAGGED atom_share;79,2369
-extern TAGGED atom_noshare;80,2395
-extern TAGGED atom_nil;81,2423
-extern TAGGED atom_list;82,2447
-extern TAGGED atom_user_input;83,2472
-extern TAGGED atom_user_output;84,2503
-extern TAGGED atom_user_error;85,2535
-extern TAGGED atom_read;86,2566
-extern TAGGED atom_write;87,2591
-extern TAGGED atom_append;88,2617
-extern TAGGED atom_socket;89,2644
-extern TAGGED atom_symlink;90,2671
-extern TAGGED atom_regular;91,2699
-extern TAGGED atom_directory;92,2727
-extern TAGGED atom_fifo;93,2757
-extern TAGGED atom_unknown;94,2782
-extern TAGGED atom_prolog;95,2810
-extern TAGGED atom_user;96,2837
-extern TAGGED atom_lessthan;97,2862
-extern TAGGED atom_greaterthan;98,2891
-extern TAGGED atom_equal;99,2923
-extern TAGGED atom_off;100,2949
-extern TAGGED atom_on;101,2973
-extern TAGGED atom_error;102,2996
-extern TAGGED atom_trace;103,3022
-extern TAGGED atom_debug;104,3048
-extern TAGGED atom_fail;105,3074
-extern TAGGED atom_all;106,3099
-extern TAGGED atom_terse;107,3123
-extern TAGGED atom_verbose;108,3149
-extern TAGGED atom_compiled;109,3177
-extern TAGGED atom_interpreted;110,3206
-extern TAGGED atom_builtin;111,3238
-extern TAGGED atom_true;112,3266
-extern TAGGED atom_retry_hook;113,3291
-extern TAGGED atom_unprofiled;114,3322
-extern TAGGED atom_profiled;115,3353
-extern TAGGED atom_wait;117,3413
-extern TAGGED atom_dynamic;118,3438
-extern TAGGED atom_concurrent;119,3466
-extern TAGGED atom_multifile;120,3497
-extern TAGGED atom_self;122,3528
-extern TAGGED atom_create;123,3553
-extern TAGGED atom_installibdir;125,3581
-extern TAGGED atom_block;127,3615
-extern TAGGED atom_no_block;128,3641
-extern TAGGED atom_counter;131,3690
-extern TAGGED functor_neck;134,3726
-extern TAGGED functor_list;135,3754
-extern TAGGED functor_cut;136,3782
-extern TAGGED functor_minus;137,3809
-extern TAGGED functor_slash;138,3838
-extern TAGGED functor_and;139,3867
-extern TAGGED functor_functor;140,3894
-extern TAGGED functor_tagged;141,3925
-extern TAGGED functor_emul_entry;142,3955
-extern TAGGED functor_builtin;143,3989
-extern TAGGED functor_Dref;144,4020
-extern TAGGED functor_Dstream;145,4048
-extern TAGGED functor_Dsetarg;146,4079
-extern TAGGED functor_large;147,4110
-extern TAGGED functor_long;148,4139
-extern TAGGED current_prompt;150,4168
-extern TAGGED current_unknown;151,4198
-extern TAGGED current_compiling;156,4387
-extern TAGGED current_ferror_flag;158,4472
-extern TAGGED current_quiet_flag;162,4643
-extern TAGGED current_gcmode;163,4677
-extern TAGGED current_gctrace;164,4707
-extern TAGGED current_gcmargin;165,4738
-extern TAGGED current_radix;168,4892
-extern struct try_node *address_nd_repeat;170,4922
-extern struct try_node *address_nd_current_instance;171,4965
-extern struct try_node *address_nd_current_atom;172,5018
-extern struct try_node *address_nd_current_predicate;173,5067
-extern struct try_node *address_nd_predicate_property;174,5121
-extern struct try_node *address_nd_current_stream;175,5176
-extern struct try_node *address_nd_atom_concat;176,5227
-extern struct definition *address_true;178,5276
-extern struct definition *address_fail;179,5316
-extern struct definition *address_call;189,5527
-extern struct definition *address_internal_call;191,5597
-extern struct definition *address_interpret_goal;193,5653
-extern struct definition *address_call_with_cont;194,5703
-extern struct definition *address_interpret_compiled_goal;195,5753
-extern struct definition *address_interpret_c_goal;196,5812
-extern struct definition *address_undefined_goal;197,5864
-extern struct definition *address_help;198,5914
-extern struct definition *address_restart;199,5955
-extern struct definition *address_trace;200,5999
-extern struct definition *address_getct;201,6040
-extern struct definition *address_getct1;202,6081
-extern struct definition *address_get;203,6123
-extern struct definition *address_get2;204,6162
-extern struct definition *address_get1;205,6202
-extern struct definition *address_get12;206,6242
-extern struct definition *address_peek;207,6283
-extern struct definition *address_peek2;208,6323
-extern struct definition *address_skip;209,6364
-extern struct definition *address_skip2;210,6404
-extern struct definition *address_error;211,6445
+extern SLOCK    prolog_predicates_l;40,1358
+extern SLOCK    worker_id_pool_l;43,1481
+extern SLOCK    atom_id_l;44,1515
+extern SLOCK    wam_list_l;45,1542
+extern SLOCK    ops_counter_l;49,1591
+extern BOOL wam_initialized;53,1631
+extern char symbolchar[55,1757
+extern char *installibdir;57,1835
+ TAGGED atom_success;62,1934
+ TAGGED atom_failure;63,1956
+extern TAGGED atom_share;66,1986
+extern TAGGED atom_noshare;67,2012
+extern TAGGED atom_nil;68,2040
+extern TAGGED atom_list;69,2064
+extern TAGGED atom_user_input;70,2089
+extern TAGGED atom_user_output;71,2120
+extern TAGGED atom_user_error;72,2152
+extern TAGGED atom_read;73,2183
+extern TAGGED atom_write;74,2208
+extern TAGGED atom_append;75,2234
+extern TAGGED atom_socket;76,2261
+extern TAGGED atom_symlink;77,2288
+extern TAGGED atom_regular;78,2316
+extern TAGGED atom_directory;79,2344
+extern TAGGED atom_fifo;80,2374
+extern TAGGED atom_unknown;81,2399
+extern TAGGED atom_prolog;82,2427
+extern TAGGED atom_user;83,2454
+extern TAGGED atom_lessthan;84,2479
+extern TAGGED atom_greaterthan;85,2508
+extern TAGGED atom_equal;86,2540
+extern TAGGED atom_off;87,2566
+extern TAGGED atom_on;88,2590
+extern TAGGED atom_error;89,2613
+extern TAGGED atom_trace;90,2639
+extern TAGGED atom_debug;91,2665
+extern TAGGED atom_fail;92,2691
+extern TAGGED atom_all;93,2716
+extern TAGGED atom_terse;94,2740
+extern TAGGED atom_verbose;95,2766
+extern TAGGED atom_compiled;96,2794
+extern TAGGED atom_interpreted;97,2823
+extern TAGGED atom_builtin;98,2855
+extern TAGGED atom_true;99,2883
+extern TAGGED atom_retry_hook;100,2908
+extern TAGGED atom_unprofiled;101,2939
+extern TAGGED atom_profiled;102,2970
+extern TAGGED atom_wait;104,3030
+extern TAGGED atom_dynamic;105,3055
+extern TAGGED atom_concurrent;106,3083
+extern TAGGED atom_multifile;107,3114
+extern TAGGED atom_self;109,3145
+extern TAGGED atom_create;110,3170
+extern TAGGED atom_installibdir;112,3198
+extern TAGGED atom_block;114,3232
+extern TAGGED atom_no_block;115,3258
+extern TAGGED atom_counter;118,3307
+extern TAGGED functor_neck;121,3343
+extern TAGGED functor_list;122,3371
+extern TAGGED functor_cut;123,3399
+extern TAGGED functor_minus;124,3426
+extern TAGGED functor_slash;125,3455
+extern TAGGED functor_and;126,3484
+extern TAGGED functor_functor;127,3511
+extern TAGGED functor_tagged;128,3542
+extern TAGGED functor_emul_entry;129,3572
+extern TAGGED functor_builtin;130,3606
+extern TAGGED functor_Dref;131,3637
+extern TAGGED functor_Dstream;132,3665
+extern TAGGED functor_Dsetarg;133,3696
+extern TAGGED functor_large;134,3727
+extern TAGGED functor_long;135,3756
+extern TAGGED functor_active;137,3785
+extern TAGGED functor_pending;138,3815
+extern TAGGED functor_failed;139,3846
+extern TAGGED functor_available;140,3876
+extern TAGGED current_prompt;142,3910
+extern TAGGED current_unknown;143,3940
+extern TAGGED current_compiling;148,4129
+extern TAGGED current_ferror_flag;150,4214
+extern TAGGED current_quiet_flag;154,4385
+extern TAGGED current_gcmode;155,4419
+extern TAGGED current_gctrace;156,4449
+extern TAGGED current_gcmargin;157,4480
+extern TAGGED current_radix;160,4634
+extern struct try_node *address_nd_repeat;162,4664
+extern struct try_node *address_nd_current_instance;163,4707
+extern struct try_node *address_nd_current_atom;164,4760
+extern struct try_node *address_nd_current_predicate;165,4809
+extern struct try_node *address_nd_predicate_property;166,4863
+extern struct try_node *address_nd_current_stream;167,4918
+extern struct try_node *address_nd_atom_concat;168,4969
+extern struct definition *address_true;170,5018
+extern struct definition *address_fail;171,5058
+extern struct definition *address_call;181,5269
+extern struct definition *address_internal_call;183,5339
+extern struct definition *address_interpret_goal;185,5395
+extern struct definition *address_call_with_cont;186,5445
+extern struct definition *address_interpret_compiled_goal;187,5495
+extern struct definition *address_interpret_c_goal;188,5554
+extern struct definition *address_undefined_goal;189,5606
+extern struct definition *address_help;190,5656
+extern struct definition *address_restart;191,5697
+extern struct definition *address_trace;192,5741
+extern struct definition *address_getct;193,5782
+extern struct definition *address_getct1;194,5823
+extern struct definition *address_get;195,5865
+extern struct definition *address_get2;196,5904
+extern struct definition *address_get1;197,5944
+extern struct definition *address_get12;198,5984
+extern struct definition *address_peek;199,6025
+extern struct definition *address_peek2;200,6065
+extern struct definition *address_skip;201,6106
+extern struct definition *address_skip2;202,6146
+extern struct definition *address_error;203,6187
 
-inout.c,1057
-extern int errno;8,139
-BOOL code_class(36,852
-#define INC_COUNTS(INC_COUNTS48,1080
-static void writechar(56,1263
-#define SAVE_XREGS(SAVE_XREGS80,1727
-#define RESTORE_XREGS(RESTORE_XREGS89,1957
-#define REGS_TO_SAVE 98,2194
-#define PEEK 100,2272
-#define GET 101,2290
-#define GET1 102,2308
-#define EXITCOND(EXITCOND104,2327
-static int readchar(108,2479
-BOOL flush_output(207,5156
-BOOL flush_output1(219,5428
-BOOL getct(237,5800
-BOOL getct1(254,6144
-BOOL get(271,6515
-BOOL get2(286,6784
-BOOL get1(306,7145
-BOOL get12(323,7443
-BOOL peek(344,7830
-BOOL peek2(359,8102
-BOOL nl(379,8466
-BOOL nl1(389,8623
-BOOL put(405,8901
-BOOL put2(420,9189
-BOOL tab(441,9612
-BOOL tab2(455,9862
-BOOL skip(475,10233
-BOOL skip2(496,10643
-void print_string(526,11397
-void print_variable(554,11964
-void print_number(566,12295
-void print_atom(575,12472
-static void display_term(621,13428
-BOOL prolog_display(686,14795
-BOOL prolog_display2(694,14925
-BOOL prolog_displayq(709,15202
-BOOL prolog_displayq2(717,15333
-BOOL prolog_clearerr(732,15611
+inout.c,1282
+extern int errno;9,179
+BOOL code_class(38,863
+#define INC_COUNTS(INC_COUNTS50,1091
+void writechar(58,1274
+#define SAVE_XREGS(SAVE_XREGS82,1731
+#define RESTORE_XREGS(RESTORE_XREGS91,1961
+#define REGS_TO_SAVE 100,2198
+#define PEEK 102,2276
+#define GET 103,2294
+#define GET1 104,2312
+#define EXITCOND(EXITCOND106,2331
+static int readchar(110,2483
+BOOL flush_output(209,5160
+BOOL flush_output1(221,5432
+BOOL getct(239,5804
+BOOL getct1(256,6148
+BOOL get(273,6519
+BOOL get2(288,6788
+BOOL get1(308,7149
+BOOL get12(325,7447
+BOOL peek(346,7834
+BOOL peek2(361,8106
+BOOL nl(381,8470
+BOOL nl1(391,8627
+BOOL put(407,8905
+BOOL put2(422,9193
+BOOL tab(443,9616
+BOOL tab2(457,9866
+BOOL skip(477,10237
+BOOL skip2(498,10647
+void print_string(528,11401
+void print_variable(556,11968
+void print_number(568,12299
+void print_atom(577,12476
+static void display_term(623,13432
+BOOL prolog_display(684,14769
+BOOL prolog_display2(692,14899
+BOOL prolog_displayq(707,15176
+BOOL prolog_displayq2(715,15307
+BOOL prolog_clearerr(730,15585
+#define FASTRW_VERSION 747,15896
+#define FASTRW_MAX_VARS 748,15924
+BOOL prolog_fast_read_on_c(755,16130
+BOOL prolog_fast_read_on_c_aux(769,16503
+BOOL prolog_fast_write_on_c(856,18967
+void prolog_fast_write_on_c_aux(868,19220
 
 inout_defs.h,0
 
@@ -1065,87 +1041,126 @@ static void abortmsg(81,1810
 
 interrupt_defs.h,0
 
-kernel_con.c,144
-#define ASFORM 7,89
-#define CCFORM 8,127
-#define PLFORM 9,173
-#define FORM 10,218
-#define MI(MI12,239
-#define NL 13,275
-int main(15,302
-
-locks.c,861
-static LOCK    locks_pool_l 26,602
-static LOCK_ST locks_pool_st;27,638
-static LOCK_BLOCK_P dynamic_block_list 29,669
-static LOCK_BLOCK_P new_lock_block(34,817
-void init_dynamic_locks(48,1140
-LOCK create_dynamic_lock(62,1591
-BOOL lock_is_unset(82,2052
-BOOL prolog_lock_atom(96,2306
-BOOL prolog_unlock_atom(125,2998
-BOOL prolog_lock_atom_state(143,3395
-BOOL prolog_lock_atom_bin(177,4362
-BOOL prolog_unlock_atom_bin(195,4695
-BOOL prolog_unlock_predicate(216,5224
-BOOL prolog_lock_atom(231,5562
-BOOL prolog_lock_atom_state(238,5624
-BOOL prolog_unlock_atom(245,5692
-void init_dynamic_locks(251,5803
-LOCK create_dynamic_lock(255,5834
-BOOL prolog_unlock_predicate(260,5885
-unsigned long int ops_counter 272,6060
-LOCK_ST ops_counter_st;273,6095
-LOCK ops_counter_l;274,6119
-unsigned long int get_inc_counter(276,6140
-void reset_counter(285,6340
+locks.c,565
+BOOL lock_is_unset_win32(76,2020
+BOOL lock_is_unset(85,2208
+BOOL prolog_lock_atom(102,2557
+BOOL prolog_unlock_atom(131,3259
+BOOL prolog_lock_atom_state(149,3665
+BOOL prolog_lock_atom_bin(182,4642
+BOOL prolog_unlock_atom_bin(198,4974
+BOOL prolog_unlock_predicate(219,5504
+BOOL prolog_lock_atom(242,6070
+BOOL prolog_lock_atom_state(245,6127
+BOOL prolog_unlock_atom(248,6190
+BOOL prolog_unlock_predicate(255,6377
+unsigned long int ops_counter 270,6650
+SLOCK ops_counter_l;271,6685
+unsigned long int get_inc_counter(273,6707
+void reset_counter(282,6909
 
 locks_defs.h,0
 
-locks.h,1264
-#define _LOCKS_H_ 5,27
-#define GENERAL_LOCKS10,168
-#define NULL 13,210
-typedef sem_t LOCK_ST;LOCK_ST18,314
-typedef LOCK_ST *LOCK;LOCK19,337
-typedef long int Int;Int21,366
-typedef volatile unsigned long int LOCK_ST;LOCK_ST22,443
-typedef LOCK_ST *LOCK;LOCK23,487
-#define LOCK_BLOCK_SIZE 33,688
-typedef struct LOCK_BLOCK LOCK_BLOCK35,717
-} *LOCK_BLOCK_P;LOCK_BLOCK_P39,831
-#define Init_lock(Init_lock46,930
-#define Wait_Acquire_lock(Wait_Acquire_lock47,961
-#define Release_lock(Release_lock48,992
-#define Lock_is_unset(Lock_is_unset49,1023
-#define lock_offset 73,1379
-#define LockOffSet(LockOffSet74,1456
-#define LockOffSet(LockOffSet76,1588
-#    define aswap(aswap84,1833
-#    define aswap(aswap94,2311
-#  define aswap(aswap104,2588
-#define Init_lock(Init_lock124,3441
-#define Wait_Acquire_lock(Wait_Acquire_lock150,4305
-#define Release_lock(Release_lock152,4381
-#define Lock_is_unset(Lock_is_unset153,4433
-#define Init_lock(Init_lock165,4799
-#define Wait_Acquire_lock(Wait_Acquire_lock166,4850
-#define Release_lock(Release_lock167,4895
-#define Lock_is_unset(Lock_is_unset168,4940
-#define GET_INC_COUNTER 176,5241
-#define RESET_COUNTER 177,5283
-#define GET_INC_COUNTER 179,5327
-#define RESET_COUNTER 180,5353
+locks.h,3962
+#define _LOCKS_H_ 3,25
+#define GENERAL_LOCKS6,171
+#define NULL 9,213
+#define Init_slock(Init_slock14,364
+#define Wait_Acquire_slock(Wait_Acquire_slock15,396
+#define Release_slock(Release_slock16,428
+#define Destroy_slock(Destroy_slock17,460
+#define SLock_is_unset(SLock_is_unset18,492
+#define Init_lock(Init_lock21,599
+#define Wait_Acquire_lock(Wait_Acquire_lock22,630
+#define Release_lock(Release_lock23,661
+#define Destroy_lock(Destroy_lock24,692
+#define Lock_is_unset(Lock_is_unset25,723
+#define USE_LOCKS29,791
+#define HAVE_NATIVE_SLOCKS37,1162
+typedef volatile unsigned long int SLOCK_ST;SLOCK_ST45,1266
+} SLOCK;SLOCK49,1379
+#define lock_offset 53,1415
+#define LockOffSet(LockOffSet54,1492
+#define LockOffSet(LockOffSet56,1617
+#   define aswap(aswap63,1885
+#   define aswap(aswap75,2517
+#   define asm_ll(asm_ll87,3051
+#   define asm_sc(asm_sc95,3255
+#  define aswap(aswap103,3475
+#define mips_try_lock(mips_try_lock109,3607
+# define mips_lock(mips_lock111,3654
+#define Init_slock(Init_slock124,4023
+#define Wait_Acquire_slock(Wait_Acquire_slock138,4408
+#define Wait_Acquire_slock(Wait_Acquire_slock140,4457
+#define Release_slock(Release_slock146,4579
+#define Destroy_slock(Destroy_slock147,4632
+#define SLock_is_unset(SLock_is_unset148,4712
+#define HAVE_LIB_LOCKS166,5342
+#define RELINQUISH_PROCESSOR 175,5487
+#define RELINQUISH_PROCESSOR 177,5537
+typedef pthread_mutex_t LOCK;LOCK180,5575
+#define Init_lock(Init_lock182,5606
+#define Wait_Acquire_lock(Wait_Acquire_lock183,5664
+#define Release_lock(Release_lock184,5716
+#define Destroy_lock(Destroy_lock185,5770
+#define Lock_is_unset(Lock_is_unset186,5825
+#define CONDITIONAL_VARS188,5873
+typedef struct conditionstruct conditionstruct190,5899
+} CONDITION;CONDITION195,6029
+#define Wait_Acquire_Cond_lock_internal(Wait_Acquire_Cond_lock_internal199,6108
+#define Release_Cond_lock_internal(Release_Cond_lock_internal200,6188
+#define Wait_For_Cond_End(Wait_For_Cond_End202,6259
+#define Cond_Lock_is_unset(Cond_Lock_is_unset203,6325
+#define Cond_Begin(Cond_Begin204,6388
+#define Init_Cond(Init_Cond207,6483
+#define Wait_For_Cond_Begin(Wait_For_Cond_Begin211,6722
+#define Signal_Cond_End(Signal_Cond_End218,7202
+#define Broadcast_Cond_End(Broadcast_Cond_End222,7407
+#define Init_Cond(Init_Cond228,7625
+#define Wait_For_Cond_Begin(Wait_For_Cond_Begin229,7675
+#define Signal_Cond_End(Signal_Cond_End240,8388
+#define Broadcast_Cond_End(Broadcast_Cond_End241,8451
+#define HAVE_LIB_LOCKS248,8630
+typedef LPCRITICAL_SECTION LOCK;LOCK252,8681
+#define Init_lock(Init_lock254,8715
+#define Wait_Acquire_lock(Wait_Acquire_lock255,8773
+#define Release_lock(Release_lock256,8826
+#define Destroy_lock(Destroy_lock257,8879
+#define Lock_is_unset(Lock_is_unset258,8933
+typedef SLOCK LOCK;LOCK267,9191
+#define Init_lock(Init_lock269,9212
+#define Wait_Acquire_lock(Wait_Acquire_lock270,9256
+#define Release_lock(Release_lock271,9310
+#define Destroy_lock(Destroy_lock272,9364
+#define Lock_is_unset(Lock_is_unset273,9418
+typedef LOCK SLOCK;SLOCK281,9653
+#define Init_slock(Init_slock283,9674
+#define Wait_Acquire_slock(Wait_Acquire_slock284,9718
+#define Release_slock(Release_slock285,9772
+#define Destroy_slock(Destroy_slock286,9826
+#define SLock_is_unset(SLock_is_unset287,9880
+#define Init_slock(Init_slock297,10122
+#define Wait_Acquire_slock(Wait_Acquire_slock298,10154
+#define Release_slock(Release_slock299,10186
+#define Destroy_slock(Destroy_slock300,10218
+#define SLock_is_unset(SLock_is_unset301,10250
+#define Init_lock(Init_lock303,10284
+#define Wait_Acquire_lock(Wait_Acquire_lock304,10315
+#define Release_lock(Release_lock305,10346
+#define Destroy_lock(Destroy_lock306,10377
+#define Lock_is_unset(Lock_is_unset307,10408
+#define GET_INC_COUNTER 318,10701
+#define RESET_COUNTER 319,10743
+#define GET_INC_COUNTER 321,10787
+#define RESET_COUNTER 322,10813
 
-main.c,235
+main.c,150
 #define USAGE_STRING 34,675
 BOOL interactive 36,755
 void load_ql_files(92,2154
-extern ENG_INT mem_prog_count;116,2842
-struct worker *create_and_init_wam(118,2874
-extern char cwd[135,3380
-int main(138,3401
-void at_exit(312,8473
+extern char cwd[116,2687
+int main(118,2707
+void at_exit(293,7802
 
 main_defs.h,0
 
@@ -1170,48 +1185,48 @@ makecase.c,44
 main(5,66
 print_within_parenthesis(39,869
 
-misc.c,1187
-BOOL set_glv(32,724
-BOOL get_glv(53,1138
-BOOL set_glv(72,1512
-BOOL get_glv(78,1612
-int compare_help(102,2147
-static int compare_aux(127,2560
-static int compare_args_aux(244,5259
-extern char source_path[303,6818
-BOOL prolog_current_executable(305,6846
-BOOL prompt(322,7262
-BOOL unknown(330,7383
-BOOL metachoice(339,7508
-BOOL metacut(347,7609
-BOOL retry_cut(357,7741
-BOOL setarg(392,8557
-BOOL undo(477,10544
-BOOL frozen(490,10842
-BOOL defrost(503,11129
-BOOL debugger_state(526,11468
-BOOL debugger_mode(542,11756
-BOOL compiling(631,13469
-BOOL ferror_flag(648,13732
-BOOL quiet_flag(682,14333
-BOOL spypoint(690,14466
-BOOL prolog_radix(712,14918
-BOOL constraint_list(721,15065
-int find_constraints(754,15732
-BOOL prolog_eq(807,16984
-BOOL prolog_dif(821,17266
-BOOL large_data(951,20063
-BOOL prolog_interpreted_clause(964,20327
-struct int_info *current_clauses_aux(993,21035
-BOOL insertz_aux(1008,21343
-BOOL prolog_erase_atom(1053,22447
-#define NEW_ATOM_LEN 1088,23368
-static char new_atom_str[1089,23392
-#define FIRST_CHAR 1090,23438
-#define LAST_CHAR 1091,23515
-#define NUM_OF_CHARS 1092,23538
-unsigned int x 1094,23589
-BOOL prolog_new_atom(1096,23614
+misc.c,1188
+BOOL set_glv(33,743
+BOOL get_glv(54,1157
+BOOL set_glv(73,1531
+BOOL get_glv(79,1631
+int compare_help(103,2166
+static int compare_aux(128,2579
+static int compare_args_aux(245,5278
+extern char source_path[304,6837
+BOOL prolog_current_executable(306,6865
+BOOL prompt(323,7281
+BOOL unknown(331,7402
+BOOL metachoice(340,7527
+BOOL metacut(348,7628
+BOOL retry_cut(358,7760
+BOOL setarg(393,8576
+BOOL undo(478,10563
+BOOL frozen(491,10861
+BOOL defrost(504,11148
+BOOL debugger_state(527,11487
+BOOL debugger_mode(556,12056
+BOOL compiling(646,13871
+BOOL ferror_flag(663,14134
+BOOL quiet_flag(697,14735
+BOOL spypoint(705,14868
+BOOL prolog_radix(727,15320
+BOOL constraint_list(736,15467
+int find_constraints(769,16134
+BOOL prolog_eq(822,17386
+BOOL prolog_dif(836,17668
+BOOL large_data(966,20465
+BOOL prolog_interpreted_clause(979,20729
+struct int_info *current_clauses_aux(1008,21437
+BOOL insertz_aux(1023,21745
+BOOL prolog_erase_atom(1069,22872
+#define NEW_ATOM_LEN 1104,23793
+static char new_atom_str[1105,23817
+#define FIRST_CHAR 1106,23863
+#define LAST_CHAR 1107,23940
+#define NUM_OF_CHARS 1108,23963
+unsigned int x 1110,24014
+BOOL prolog_new_atom(1112,24039
 
 misc_defs.h,0
 
@@ -1227,7 +1242,7 @@ M_time.h,228
 #define microtime(microtime19,416
 #define microtimeinit(microtimeinit24,480
 
-nondet.c,1571
+nondet.c,1518
 typedef enum {BLOCK, NO_BLOCK} BlockingType;BlockingType26,540
 #define E	67,2326
 #define SetE(SetE68,2359
@@ -1252,47 +1267,46 @@ BOOL nd_predicate_property(465,12189
 struct instance *current_instance(508,13594
 static struct instance *current_instance_noconc(537,14334
 BOOL first_instance(619,16997
-BOOL next_instance(644,17710
-BOOL current_key(684,18760
-BOOL close_predicate(768,21433
-BOOL open_predicate(784,21772
-BOOL close_predicate(800,22186
-BOOL open_predicate(806,22246
-static struct instance *current_instance_conc(822,22830
-static BOOL wait_for_an_instance_pointer(932,26768
-static BOOL wait_for_an_instance_pointer(978,27935
-static struct instance *first_possible_instance(1053,29887
-BOOL next_instance_conc(1112,31817
-void jump_to_next_instance(1217,35685
-InstanceHandle *make_handle_to(1251,36683
-void remove_handle(1277,37690
-static void change_handle_to_instance(1297,38163
-static void link_handle(1317,38779
-static void unlink_handle(1353,40099
-void move_queue(1395,41447
-void remove_link_chains(1449,43099
+BOOL next_instance(644,17672
+BOOL current_key(684,18722
+BOOL close_predicate(768,21395
+BOOL open_predicate(781,21695
+BOOL close_predicate(795,22071
+BOOL open_predicate(801,22131
+static struct instance *current_instance_conc(817,22715
+static BOOL wait_for_an_instance_pointer(913,26146
+static struct instance *first_possible_instance(943,27157
+BOOL next_instance_conc(1002,29087
+void jump_to_next_instance(1094,32480
+InstanceHandle *make_handle_to(1128,33478
+void remove_handle(1154,34485
+static void change_handle_to_instance(1174,34958
+static void link_handle(1194,35574
+static void unlink_handle(1230,36906
+void move_queue(1272,38267
+void remove_link_chains(1326,39932
 
 nondet_defs.h,51
 typedef enum {X5, X2} WhichChain;WhichChain6,160
 
 objareas.c,419
 BOOL prolog_purge(27,584
-#define InstOrNull(InstOrNull54,1411
-BOOL prolog_erase(56,1472
-BOOL prolog_ptr_ref(152,4970
-BOOL inserta(195,6082
-BOOL insertz(289,8785
-int compile_large(365,11018
-BOOL make_bytecode_object(378,11260
-struct instance *active_instance(549,16358
-void clock_overflow(637,18780
-static void relocate_table_clocks(686,20226
-void relocate_clocks(702,20627
-void expunge_instance(727,21070
+#define InstOrNull(InstOrNull53,1371
+BOOL prolog_erase(55,1432
+BOOL prolog_ptr_ref(161,5228
+BOOL inserta(204,6340
+BOOL insertz(298,9211
+int compile_large(397,12144
+BOOL make_bytecode_object(410,12386
+struct instance *active_instance(581,17484
+void clock_overflow(669,19906
+static void relocate_table_clocks(718,21352
+void relocate_clocks(734,21753
+void expunge_instance(759,22196
 
 objareas_defs.h,0
 
-objareas.h,1683
+objareas.h,1685
 #define CACHE_INCREMENTAL_CLAUSE_INSERTION8,253
 typedef unsigned short int CLOCK;CLOCK10,297
 #define ACTIVE_INSTANCE(ACTIVE_INSTANCE13,333
@@ -1304,34 +1318,34 @@ typedef struct instance_handle instance_handle56,1746
 struct instance instance75,2676
 typedef enum {DYNAMIC, CONC_OPEN, CONC_CLOSED} Behavior;Behavior96,3383
 struct int_info int_info98,3441
-struct und_info und_info112,3795
-typedef BOOL (*CInfo)CInfo116,3831
-typedef TAGGED (*TInfo)TInfo117,3856
-struct stream_node stream_node122,3963
-extern struct stream_node *root_stream_ptr;137,4380
-struct atom atom141,4457
-struct try_node try_node164,5167
-#define ArityToOffset(ArityToOffset177,5741
-#define OffsetToArity(OffsetToArity179,5823
-#define SwitchSize(SwitchSize184,5957
-#define SizeToMask(SizeToMask185,6045
-struct sw_on_key_node sw_on_key_node187,6081
-struct sw_on_key sw_on_key215,7353
-struct incore_info incore_info227,7601
-#define SetEnterInstr(SetEnterInstr235,7864
-union definfo definfo245,8089
-struct definition definition258,8280
-#define DEF_SIBLING(DEF_SIBLING284,9334
-extern struct sw_on_key_node **atmtab;288,9472
-extern struct sw_on_key *prolog_atoms;289,9511
-extern CInfo builtintab[290,9550
-struct statistics statistics292,9578
-extern struct statistics stats;306,10160
-struct c_code_info c_code_info311,10259
-#define INCR_COUNTER(INCR_COUNTER316,10323
-#define INCR_ENTRY_COUNTER(INCR_ENTRY_COUNTER317,10360
-struct other_stuff other_stuff321,10418
-struct qlstream qlstream329,10578
+struct und_info und_info118,3941
+typedef BOOL   (*CInfo)CInfo122,3977
+typedef TAGGED (*TInfo)TInfo123,4004
+struct stream_node stream_node126,4109
+extern struct stream_node *root_stream_ptr;141,4526
+struct atom atom145,4603
+struct try_node try_node168,5314
+#define ArityToOffset(ArityToOffset181,5888
+#define OffsetToArity(OffsetToArity183,5970
+#define SwitchSize(SwitchSize188,6104
+#define SizeToMask(SizeToMask189,6192
+struct sw_on_key_node sw_on_key_node191,6228
+struct sw_on_key sw_on_key219,7500
+struct incore_info incore_info231,7748
+#define SetEnterInstr(SetEnterInstr239,8011
+union definfo definfo249,8236
+struct definition definition262,8427
+#define DEF_SIBLING(DEF_SIBLING288,9481
+extern struct sw_on_key_node **atmtab;292,9619
+extern struct sw_on_key *prolog_atoms;293,9658
+extern CInfo builtintab[294,9697
+struct statistics statistics296,9725
+extern struct statistics stats;310,10307
+struct c_code_info c_code_info315,10406
+#define INCR_COUNTER(INCR_COUNTER320,10470
+#define INCR_ENTRY_COUNTER(INCR_ENTRY_COUNTER321,10507
+struct other_stuff other_stuff325,10565
+struct qlstream qlstream333,10725
 
 own_malloc_bin.c,1337
 #define TRUE 27,629
@@ -1373,16 +1387,16 @@ TAGGED *own_realloc(590,16937
 
 own_malloc_defs.h,352
 #define USE_OWN_MALLOC_LINUX 2,77
-#  define USE_OWN_MALLOC16,710
-#  define Malloc(Malloc17,735
-#  define Free(Free18,773
-#  define Realloc(Realloc19,809
-#  define Malloc(Malloc21,857
-#  define Free(Free22,891
-#  define Realloc(Realloc23,931
-#  define Malloc(Malloc29,1064
-#  define Free(Free30,1096
-#  define Realloc(Realloc31,1124
+#  define USE_OWN_MALLOC16,730
+#  define Malloc(Malloc17,755
+#  define Free(Free18,793
+#  define Realloc(Realloc19,829
+#  define Malloc(Malloc21,877
+#  define Free(Free22,911
+#  define Realloc(Realloc23,951
+#  define Malloc(Malloc29,1084
+#  define Free(Free30,1116
+#  define Realloc(Realloc31,1144
 
 own_malloc_linear.c,948
 #define TRUE 31,639
@@ -1443,80 +1457,68 @@ predtyp.h,881
 #define OTHER_STUFF 35,925
 
 profile.c,244
-extern BOOL prof_include_time;11,176
-ENG_FLT time_last_addition;17,308
-struct definition *last_called_predicate 18,336
-void add_to_profiling(20,386
-void dump_profile(38,772
-static int compare_times(97,2685
-char * predicate_type(112,3030
+extern BOOL prof_include_time;12,200
+ENG_FLT time_last_addition;18,332
+struct definition *last_called_predicate 19,360
+void add_to_profiling(21,410
+void dump_profile(39,796
+static int compare_times(99,2758
+char * predicate_type(114,3103
 
 profile_defs.h,0
 
-prolog_tasks.c,935
-int killing_threads 19,378
-#define MAXWORKERS 31,930
-worker_entry goal_table[33,955
-static int next_available_id 34,992
-void init_worker_entry_table(36,1073
-#define NEXT_ID(NEXT_ID43,1186
-int get_new_goal_id(45,1229
-wrb_state_p init_first_worker_entry(71,1887
-void make_worker_entry_free(82,2153
-static int worker_from_WAM(98,2552
-BOOL prolog_kill_thread(115,2842
-BOOL prolog_kill_other_threads(144,3524
-BOOL prolog_join_goal(175,4298
-BOOL prolog_thread_self(201,4981
-BOOL prolog_tasks_status(212,5206
-#define IS_CALLABLE(IS_CALLABLE220,5297
-#define ENSURE_CALLABLE(ENSURE_CALLABLE222,5376
-BOOL prolog_launch_goal_plus(249,6598
-BOOL prolog_backtrack_goal(322,9257
-BOOL prolog_backtrack_goal(368,10559
-BOOL prolog_launch_goal_plus(372,10672
-BOOL prolog_release_goal(381,10946
-BOOL prolog_eng_call(403,11448
-void *make_backtracking(492,14382
-BOOL prolog_eng_backtrack(507,14872
-BOOL prolog_eng_cut(609,17543
+prolog_tasks.c,502
+int killing_threads 22,423
+BOOL prolog_eng_kill(34,927
+extern goal_descriptor_p goal_desc_list;60,1520
+extern SLOCK goal_desc_list_l;61,1561
+BOOL prolog_eng_killothers(98,2315
+BOOL prolog_eng_wait(163,4036
+BOOL prolog_eng_self(202,5178
+BOOL prolog_eng_status(213,5411
+#define NOT_CALLABLE(NOT_CALLABLE221,5500
+#define ENSURE_CALLABLE(ENSURE_CALLABLE223,5580
+BOOL prolog_eng_release(232,5885
+BOOL prolog_eng_call(252,6287
+BOOL prolog_eng_backtrack(320,8599
+BOOL prolog_eng_cut(380,10402
 
 prolog_tasks_defs.h,88
 extern pthread_attr_t detached_thread;3,52
 extern pthread_attr_t joinable_thread;4,91
 
 qget.c,176
-char workstring[28,770
-int getshort(30,804
-ENG_INT getlong(49,1133
-TAGGED getlarge(68,1464
-ENG_FLT getdouble(104,2176
-char *getstring(123,2511
-void getbytecode(143,2839
+char workstring[29,771
+int getshort(31,805
+ENG_INT getlong(50,1134
+TAGGED getlarge(69,1465
+ENG_FLT getdouble(105,2177
+char *getstring(124,2512
+void getbytecode(144,2840
 
 qget_defs.h,0
 
 qinsert.c,660
-#define QL(QL27,729
-#define QLCHECK(QLCHECK28,754
-struct qlinfo qlinfo31,825
-extern char workstring[38,926
-extern TAGGED *qlarray;39,1003
-extern int qloffset,40,1080
-extern int qloffset, qllimit;40,1080
-extern struct qlinfo *qlstack;41,1157
-extern struct emul_info *latest_bytecode;42,1234
-extern int latest_bytecode_size;43,1311
-#define GETC(GETC63,1800
-static int ql_getc(65,1828
-static int qlgetshort(81,2069
-static ENG_INT qlgetlong(93,2226
-static char *qlgetstring(104,2431
-static TAGGED qlgetlarge(114,2583
-static ENG_FLT qlgetdouble(147,3305
-void qlgetbytecode(158,3511
-static void ql_load_dbnode(274,6214
-BOOL qlinsert(304,6971
+#define QL(QL28,730
+#define QLCHECK(QLCHECK29,755
+struct qlinfo qlinfo32,826
+extern char workstring[39,927
+extern TAGGED *qlarray;40,1004
+extern int qloffset,41,1081
+extern int qloffset, qllimit;41,1081
+extern struct qlinfo *qlstack;42,1158
+extern struct emul_info *latest_bytecode;43,1235
+extern int latest_bytecode_size;44,1312
+#define GETC(GETC64,1801
+static int ql_getc(66,1829
+static int qlgetshort(82,2070
+static ENG_INT qlgetlong(94,2227
+static char *qlgetstring(105,2432
+static TAGGED qlgetlarge(115,2584
+static ENG_FLT qlgetdouble(148,3306
+void qlgetbytecode(159,3512
+static void ql_load_dbnode(275,6215
+BOOL qlinsert(305,6972
 
 qinsert_defs.h,0
 
@@ -1538,46 +1540,63 @@ qinstrdefs.h,450
 #define RELOC_EMUL_ENTRY 22,417
 #define RELOC_COUNTER 23,445
 
-qread.c,689
-#define QL(QL19,378
-#define QLCHECK(QLCHECK20,403
-struct qlinfo qlinfo23,474
-#define QLBFSIZE 32,601
-int  qlbuffidx,33,623
-int  qlbuffidx, qlbuffend;33,623
-unsigned char qlbuff[34,650
-int buffered_input(44,1047
-TAGGED *qlarray=65,1635
-int qloffset=66,1712
-struct qlinfo *qlstack=67,1789
-BOOL push_qlinfo(69,1867
-BOOL pop_qlinfo(91,2313
-void expand_qload(106,2624
-struct emul_info *latest_bytecode;123,3007
-int latest_bytecode_size;124,3084
-static void load_dbnode(126,3162
-void reloc_pointer(157,3936
-void reloc_counter(173,4254
-void reloc_emul_entry(198,4930
-BOOL qread1(214,5221
-int is_a_script(321,7398
-void skip_to_ctrl_l(334,7560
-BOOL prolog_qread(345,7723
+qread.c,1201
+#define QL(QL27,512
+#define QLCHECK(QLCHECK28,537
+struct qlinfo qlinfo31,608
+#define QLBFSIZE 40,735
+int  qlbuffidx,41,757
+int  qlbuffidx, qlbuffend;41,757
+unsigned char qlbuff[42,784
+int buffered_input(52,1181
+int  Last,69,1576
+int  Last, PrefixSize,69,1576
+int  Last, PrefixSize, Size[69,1576
+int  Last, PrefixSize, Size[4096], Buffer[69,1576
+int  Last, PrefixSize, Size[4096], Buffer[3840], BufferP;69,1576
+char *Dict[70,1634
+char *Dict[4096], *First,70,1634
+char *Dict[4096], *First, Vault[70,1634
+char *Dict[4096], *First, Vault[200000], compressed,70,1634
+char *Dict[4096], *First, Vault[200000], compressed, remaining;70,1634
+void is_compressed(79,2163
+#define InLZ(InLZ88,2404
+int readLZ(94,2635
+TAGGED *qlarray=136,3787
+int qloffset=137,3864
+struct qlinfo *qlstack=138,3941
+BOOL push_qlinfo(140,4019
+BOOL pop_qlinfo(165,4525
+void expand_qload(180,4836
+struct emul_info *latest_bytecode;197,5219
+int latest_bytecode_size;198,5296
+static void load_dbnode(200,5374
+void reloc_pointer(231,6148
+void reloc_counter(247,6466
+void reloc_emul_entry(272,7142
+BOOL qread1(288,7433
+int is_a_script(395,9610
+void skip_to_ctrl_l(408,9772
+BOOL prolog_qread(419,9935
 
-qread_defs.h,176
+qread_defs.h,314
 #define BUFFERED_PO17,509
-# define GETC(GETC20,555
-#  define UNGETC(UNGETC22,610
-#  define UNGETC(UNGETC26,743
-# define GETC(GETC29,795
-# define UNGETC(UNGETC30,820
+#define ALLOW_COMPRESSED_CODE21,593
+# define GETC(GETC24,659
+#  define GETC_LZ(GETC_LZ31,813
+#  define GETC(GETC33,859
+#  define UNGETC(UNGETC36,926
+#  define UNGETC(UNGETC40,1059
+#  define GETC_LZ(GETC_LZ44,1147
+#  define GETC(GETC46,1183
+# define UNGETC(UNGETC48,1217
 
 registers.c,73
 int reg_bank_size 5,69
 char **prolog_argv;7,150
 int prolog_argc;8,227
 
-registers.h,2218
+registers.h,2350
 #define SIZEOFWORKER(SIZEOFWORKER5,123
 extern int reg_bank_size;8,220
 extern char **prolog_argv;9,246
@@ -1608,48 +1627,51 @@ extern int prolog_argc;10,273
 #define Stack_Warn 71,2137
 #define Choice_End 72,2179
 #define Choice_Start 73,2221
-#define Tagged_Choice_Start 74,2265
-#define Trail_Start 75,2316
-#define Trail_End 76,2359
-#define Input_Stream_Ptr 81,2447
-#define Output_Stream_Ptr 82,2504
-#define Numstack_Top 87,2624
-#define Numstack_End 88,2668
-#define Numstack_First 89,2712
-#define Numstack_Last 90,2758
-#define Current_Debugger_State 95,2866
-#define Current_Debugger_Mode 96,2938
-#define Atom_Buffer 101,3084
-#define Atom_Buffer_Length 102,3128
-#define Last_Insn 107,3205
-#define Expanded_Worker 111,3293
-#define GLOBVAR(GLOBVAR115,3369
-#define Gc_Total_Grey 119,3485
-#define Gcgrey 120,3535
-#define Total_Found 121,3578
-#define Cvas_Found 122,3630
-#define Gc_Aux_Node 123,3682
-#define Gc_Choice_Start 124,3734
-#define Gc_Trail_Start 125,3786
-#define Gc_Heap_Start 126,3838
-#define Gc_Stack_Start 127,3888
-#define TopConcChpt 132,3999
-#define GlobReg(GlobReg136,4071
-#define ErrArgNo 140,4148
-#define Culprit 141,4183
-#define ComputeA(ComputeA145,4280
-#define NewShadowregs(NewShadowregs153,4481
-#define SetShadowregs(SetShadowregs159,4599
-#define SaveGtop(SaveGtop165,4736
-#define RestoreGtop(RestoreGtop168,4798
-#define SaveLtop(SaveLtop171,4865
-#define RestoreLtop(RestoreLtop174,4927
-#define FrameSize(FrameSize177,4992
-#define LOffset	180,5066
-#define SetEvent	185,5142
-#define TestEvent	186,5207
+#define USE_TAGGED_CHOICE_START76,2267
+#define Tagged_Choice_Start 79,2337
+#define Trail_Start 82,2396
+#define Trail_End 83,2439
+#define Input_Stream_Ptr 88,2527
+#define Output_Stream_Ptr 89,2584
+#define Numstack_Top 94,2704
+#define Numstack_End 95,2748
+#define Numstack_First 96,2792
+#define Numstack_Last 97,2838
+#define Current_Debugger_State 102,2946
+#define Current_Debugger_Mode 103,3018
+#define Atom_Buffer 108,3164
+#define Atom_Buffer_Length 109,3208
+#define Last_Insn 114,3285
+#define Expanded_Worker 118,3373
+#define Next_Worker(Next_Worker120,3425
+#define Stop_This_Goal(Stop_This_Goal122,3473
+#define GLOBVAR(GLOBVAR126,3550
+#define Gc_Total_Grey 130,3666
+#define Gcgrey 131,3716
+#define Total_Found 132,3759
+#define Cvas_Found 133,3811
+#define Gc_Aux_Node 134,3863
+#define Gc_Choice_Start 135,3915
+#define Gc_Trail_Start 136,3967
+#define Gc_Heap_Start 137,4019
+#define Gc_Stack_Start 138,4069
+#define TopConcChpt 143,4180
+#define GlobReg(GlobReg147,4252
+#define ErrArgNo 151,4329
+#define Culprit 152,4364
+#define ComputeA(ComputeA156,4461
+#define NewShadowregs(NewShadowregs164,4662
+#define SetShadowregs(SetShadowregs170,4780
+#define SaveGtop(SaveGtop176,4917
+#define RestoreGtop(RestoreGtop179,4979
+#define SaveLtop(SaveLtop182,5046
+#define RestoreLtop(RestoreLtop185,5108
+#define FrameSize(FrameSize188,5173
+#define LOffset	191,5247
+#define SetEvent	196,5323
+#define TestEvent	197,5388
 
-shdisp_r.c,2740
+shdisp_r.c,2709
 LoadH;5,62
 goto inittrue;6,69
 LoadH;9,103
@@ -1774,13 +1796,12 @@ w->next_node 415,5626
 w->local_top 416,5664
 DOCUT;417,5716
 if 419,5744
-return wam_exit_code;502,7604
-if 506,7652
-if (!ins)676,10891
-P 694,11606
-goto ReadMode;695,11625
-LoadH;698,11662
-goto get_constraint;699,11669
+if 505,7676
+if (!ins)686,11106
+P 704,11821
+goto ReadMode;705,11840
+LoadH;708,11877
+goto get_constraint;709,11884
 
 shdisp_w.c,4875
 		ComputeE;5,73
@@ -1989,92 +2010,94 @@ shdisp_w.c,4875
 		      {BindCVA(t2,t1); Wake;747,11716
 
 stacks.c,440
-BOOL stack_shift_usage(30,552
-BOOL termheap_usage(45,930
-BOOL envstack_usage(59,1292
-BOOL choice_usage(75,1684
-BOOL trail_usage(89,2041
-void explicit_heap_overflow(107,2483
-static void calculate_segment_node(162,4005
-void choice_overflow(176,4357
-void stack_overflow(294,8282
-static BOOL gcexplicit 390,11004
-BOOL gc_start(393,11084
-void heap_overflow(403,11274
-void collect_goals_from_trail(555,15786
-void trail_gc(617,17025
+BOOL stack_shift_usage(31,553
+BOOL termheap_usage(46,931
+BOOL envstack_usage(60,1293
+BOOL choice_usage(76,1685
+BOOL trail_usage(90,2042
+void explicit_heap_overflow(108,2484
+static void calculate_segment_node(163,4006
+void choice_overflow(177,4358
+void stack_overflow(297,8327
+static BOOL gcexplicit 393,11049
+BOOL gc_start(396,11129
+void heap_overflow(406,11319
+void collect_goals_from_trail(558,15831
+void trail_gc(620,17070
 
 stacks_defs.h,0
 
-startgoal.c,145
-JMP_BUF abort_env;34,668
-void firstgoal(37,747
-wrb_state_p gimme_a_new_worker(81,2111
-void *startgoal(97,2569
-void *startgoal_simp(163,4436
+startgoal.c,122
+JMP_BUF abort_env;32,640
+void firstgoal(35,719
+THREAD_RES_T startgoal(75,1890
+THREAD_RES_T make_backtracking(146,4473
 
 startgoal_defs.h,0
 
-streams.c,489
+streams.c,525
 #  define MAXPATHLEN 19,327
 #  define MAXPATHLEN 21,364
 #define ENG_NOFILES 25,406
 BOOL prolog_bootversion(41,781
 BOOL prolog_open(70,1282
-BOOL prolog_close(116,2365
-BOOL prolog_unix_popen(169,3799
-void ENG_perror(191,4226
-BOOL prolog_current_input(208,4532
-BOOL prolog_set_input(215,4646
-BOOL prolog_current_output(233,4985
-BOOL prolog_set_output(240,5101
-BOOL prolog_stream_code(270,5863
-BOOL character_count(308,6851
-BOOL line_position(324,7162
-BOOL line_count(340,7491
+extern SLOCK new_stream_l;116,2366
+BOOL prolog_close(118,2394
+BOOL prolog_unix_popen(172,3869
+void ENG_perror(194,4296
+BOOL prolog_current_input(211,4602
+BOOL prolog_set_input(218,4716
+BOOL prolog_current_output(236,5055
+BOOL prolog_set_output(243,5171
+BOOL prolog_stream_code(273,5933
+BOOL character_count(311,6921
+BOOL line_position(327,7232
+BOOL line_count(343,7561
 
 streams_defs.h,0
 
-support.c,1298
+support.c,1384
 void failc(42,1445
 static struct sw_on_key_node *atom_gethash(60,1895
 TAGGED init_atom_check(108,3124
-TAGGED make_large(254,7560
-#define NumstackBlockSize(NumstackBlockSize287,8232
-void numstack_init(289,8291
-static void numstack_overflow(302,8536
-TAGGED bn_call(327,9162
-TAGGED make_integer_check(389,10640
-TAGGED make_float_check(424,11337
-TAGGED make_integer(459,12046
-TAGGED make_float(473,12281
-struct stream_node *new_stream(492,12637
-static int file_is_tty(513,13166
-void update_stream(523,13349
-void update_std_streams(538,13681
-void update_std_streams(554,14075
-struct definition *new_functor(573,14666
-void expand_sw_on_key(603,15418
-void add_definition(632,16115
-struct definition *insert_definition(645,16394
-TAGGED make_structure(696,17796
-struct definition *find_definition(721,18296
-struct definition *parse_definition(754,19034
-static struct definition **find_subdef_chain(767,19307
-static struct definition *parse_1_definition(792,19999
-BOOL cunify_args(855,21719
-static BOOL cunify_args_aux(878,22196
-BOOL cunify(935,23731
-static BOOL cunify_aux(957,24121
-ENG_INT get_integer(1064,26162
-ENG_FLT get_float(1075,26356
-TAGGED ptr_to_stream(1108,27052
-struct stream_node *stream_to_ptr(1138,27852
-struct stream_node *stream_to_ptr_check(1178,28825
+TAGGED make_large(249,7427
+#define NumstackBlockSize(NumstackBlockSize282,8099
+void numstack_init(284,8158
+static void numstack_overflow(297,8403
+TAGGED bn_call(322,9029
+TAGGED make_integer_check(384,10507
+TAGGED make_float_check(419,11204
+TAGGED make_integer(454,11913
+TAGGED make_float(468,12148
+extern SLOCK new_stream_l;490,12601
+struct stream_node *insert_new_stream(492,12629
+struct stream_node *new_stream(504,12979
+static int file_is_tty(521,13377
+void update_stream(531,13560
+void update_std_streams(546,13892
+void update_std_streams(562,14286
+struct definition *new_functor(581,14877
+void expand_sw_on_key(611,15629
+void add_definition(640,16326
+struct definition *insert_definition(653,16605
+TAGGED make_structure(704,18010
+struct definition *find_definition(729,18510
+struct definition *parse_definition(778,19606
+static struct definition **find_subdef_chain(791,19879
+static struct definition *parse_1_definition(816,20571
+BOOL cunify_args(879,22293
+static BOOL cunify_args_aux(902,22770
+BOOL cunify(959,24305
+static BOOL cunify_aux(981,24695
+ENG_INT get_integer(1088,26736
+ENG_FLT get_float(1099,26930
+TAGGED ptr_to_stream(1132,27626
+struct stream_node *stream_to_ptr(1162,28426
+struct stream_node *stream_to_ptr_check(1202,29399
 
 support_defs.h,0
 
-support.h,3247
+support.h,3289
 extern INSN *bootcode;8,135
 extern INSN *internal_calling;10,188
 extern INSN *startgoalcode;12,226
@@ -2120,354 +2143,368 @@ extern char incremental_symbol_table_path[27,715
 #define WakeCount 234,6651
 #define PlainUntrail(PlainUntrail237,6735
 #define WAM_ABORT 259,7483
-extern JMP_BUF abort_env;264,7575
-#define SERIOUS_FAULT(SERIOUS_FAULT268,7634
-#define MAJOR_FAULT(MAJOR_FAULT271,7770
-#define USAGE_FAULT(USAGE_FAULT273,7828
-#define MINOR_FAULT(MINOR_FAULT275,7886
-#define INSTANTIATION_ERROR 278,7972
-#define READ_PAST_EOS_ERROR 279,8002
-#define NO_READ_PERMISSION 280,8032
-#define NO_WRITE_PERMISSION 281,8061
-#define NO_SUCH_FILE 282,8091
-#define NO_OPEN_PERMISSION 283,8114
-#define TYPE_ERROR(TYPE_ERROR284,8143
-#define ATOM 287,8250
-#define ATOMIC 288,8265
-#define BYTE 289,8282
-#define CALLABLE 290,8297
-#define COMPOUND 291,8316
-#define EVALUABLE 292,8335
-#define IN_BYTE 293,8355
-#define INTEGER 294,8373
-#define LIST 295,8391
-#define NUMBER 296,8406
-#define PREDICATE_INDICATOR 297,8423
-#define VARIABLE 298,8454
-#define CHARACTER_CODE_LIST 300,8475
-#define STREAM_OR_ALIAS 301,8530
-#define BUILTIN_ERROR(BUILTIN_ERROR303,8558
-#define ERROR_IN_ARG(ERROR_IN_ARG306,8657
-#define NDEREF(NDEREF312,8811
-#define MakeLST(MakeLST330,9186
-#define MakeSTR(MakeSTR343,9549
-#define Unify_constant(Unify_constant350,9733
-#define ENG_PRINTF1(ENG_PRINTF1359,9975
-#define ENG_PRINTF2(ENG_PRINTF2362,10077
-#define ENG_PRINTF3(ENG_PRINTF3365,10185
-#define ENG_PRINTF4(ENG_PRINTF4368,10299
-#define ENG_TTYPRINTF0(ENG_TTYPRINTF0371,10419
-#define ENG_TTYPRINTF1(ENG_TTYPRINTF1373,10485
-#define ENG_TTYPRINTF2(ENG_TTYPRINTF2375,10556
-#define ENG_TTYPRINTF3(ENG_TTYPRINTF3377,10633
-#define ENG_TTYPRINTF4(ENG_TTYPRINTF4379,10716
+#define WAM_INTERRUPTED 260,7532
+extern JMP_BUF abort_env;265,7605
+#define SERIOUS_FAULT(SERIOUS_FAULT269,7664
+#define MAJOR_FAULT(MAJOR_FAULT272,7800
+#define USAGE_FAULT(USAGE_FAULT274,7858
+#define MINOR_FAULT(MINOR_FAULT276,7916
+#define INSTANTIATION_ERROR 279,8002
+#define READ_PAST_EOS_ERROR 280,8032
+#define NO_READ_PERMISSION 281,8062
+#define NO_WRITE_PERMISSION 282,8091
+#define NO_SUCH_FILE 283,8121
+#define NO_OPEN_PERMISSION 284,8144
+#define TYPE_ERROR(TYPE_ERROR285,8173
+#define STRICT_ATOM 288,8280
+#define ATOMIC 289,8302
+#define BYTE 290,8319
+#define CALLABLE 291,8334
+#define COMPOUND 292,8353
+#define EVALUABLE 293,8372
+#define IN_BYTE 294,8392
+#define INTEGER 295,8410
+#define LIST 296,8428
+#define NUMBER 297,8443
+#define PREDICATE_INDICATOR 298,8460
+#define VARIABLE 299,8491
+#define CHARACTER_CODE_LIST 301,8512
+#define STREAM_OR_ALIAS 302,8567
+#define BUILTIN_ERROR(BUILTIN_ERROR304,8595
+#define ERROR_IN_ARG(ERROR_IN_ARG307,8694
+#define NDEREF(NDEREF313,8848
+#define MakeLST(MakeLST331,9223
+#define MakeSTR(MakeSTR344,9586
+#define Unify_constant(Unify_constant351,9770
+#define ENG_PRINTF1(ENG_PRINTF1360,10012
+#define ENG_PRINTF2(ENG_PRINTF2363,10114
+#define ENG_PRINTF3(ENG_PRINTF3366,10222
+#define ENG_PRINTF4(ENG_PRINTF4369,10336
+#define ENG_TTYPRINTF0(ENG_TTYPRINTF0372,10456
+#define ENG_TTYPRINTF1(ENG_TTYPRINTF1374,10522
+#define ENG_TTYPRINTF2(ENG_TTYPRINTF2376,10593
+#define ENG_TTYPRINTF3(ENG_TTYPRINTF3378,10670
+#define ENG_TTYPRINTF4(ENG_TTYPRINTF4380,10753
 
-task_areas.h,472
-} Thread_State;Thread_State9,300
-struct wam_private wam_private16,430
-#define NO_ACTION 28,681
-#define SHARES_STRUCTURE 29,709
-#define HAS_CONTINUATION 30,737
-#define KEEP_STACKS 31,765
-#define BACKTRACKING 32,793
-struct wrb_state_str wrb_state_str39,1120
-typedef struct wrb_state_str wrb_state;wrb_state49,1602
-typedef struct wrb_state_str *wrb_state_p;wrb_state_p50,1642
-struct conts conts58,1933
-} worker_entry, *worker_entry_p;worker_entry_p79,2596
+task_areas.h,574
+} Thread_State;Thread_State9,380
+struct wam_private wam_private15,509
+#define NO_ACTION 27,760
+#define SHARES_STRUCTURE 28,788
+#define HAS_CONTINUATION 29,816
+#define KEEP_STACKS 30,844
+#define BACKTRACKING 31,872
+#define CREATE_THREAD 32,900
+#define CREATE_WAM 33,928
+#define NEEDS_FREEING 34,956
+struct goal_str goal_str42,1283
+typedef struct goal_str  goal_descriptor;goal_descriptor60,1983
+typedef struct goal_str *goal_descriptor_p;goal_descriptor_p61,2025
+#define TermToGoalDesc(TermToGoalDesc63,2070
+#define GoalDescToTerm(GoalDescToTerm64,2138
 
-tasks.c,570
-wrb_state_p wrb_state_list;26,528
-LOCK_ST wrb_state_list_st;28,559
-LOCK    wrb_state_list_l;29,586
-void print_task_status(35,728
-int kill_thread(70,1898
-void kill_other_threads(80,2096
-void allow_thread_cancellation(111,2733
-void disallow_thread_cancellation(119,2873
-void init_wrb_state_list(126,2942
-static wrb_state_p create_wrb_state(134,3085
-wrb_state_p attach_me_to_wrb_state_list(148,3417
-void make_worker_free(168,4069
-static wrb_state_p get_my_task_block(176,4221
-struct worker *get_my_worker(195,4647
-wrb_state_p look_for_a_free_worker(209,4998
+tasks.c,786
+SLOCK    goal_desc_list_l;30,613
+goal_descriptor_p goal_desc_list 31,640
+SLOCK thread_to_free_l;33,682
+THREAD_T thread_to_free 34,706
+void init_goal_desc_list(41,837
+void reinit_list(57,1315
+void allow_thread_cancellation(91,2204
+void disallow_thread_cancellation(99,2344
+unsigned int global_goal_number 104,2411
+goal_descriptor_p init_first_gd_entry(107,2537
+goal_descriptor_p gimme_a_new_gd(126,3129
+goal_descriptor_p attach_me_to_goal_desc_list(142,3589
+void associate_wam_goal(167,4382
+void print_task_status(180,4737
+TAGGED list_of_goals(215,5879
+BOOL prolog_eng_status1(256,7000
+void unlink_wam(269,7328
+void make_goal_desc_free(289,8008
+struct worker *get_my_worker(314,8731
+goal_descriptor_p look_for_a_free_goal_desc(345,9653
+void enqueue_thread(364,10143
 
 tasks_defs.h,0
 
-termdefs.h,7124
+termdefs.h,7098
 #define ANY 10,319
-#define SAME 11,399
-typedef unsigned short int INSN;INSN13,415
-typedef unsigned long int TAGGED;TAGGED14,492
-typedef unsigned long int UNTAGGED;UNTAGGED15,569
-typedef int BOOL;BOOL16,646
-typedef long ENG_INT;ENG_INT17,664
-typedef double ENG_FLT;ENG_FLT18,686
-#define FALSE 20,711
-#define TRUE 21,727
-#define WORDSIZE 27,805
-#define SmallShift 28,825
-#define TAGSIZE 29,895
-#define ARITYSIZE 30,913
-#define TAGOFFSET 31,933
-#define ARITYOFFSET 32,979
-#define ARITYLIMIT 33,1039
-#define TAGMASK	35,1084
-#define QMask	36,1155
-#define ZMask	37,1212
-#define POINTERMASK	38,1269
-#define INDEXMASK	39,1329
-#define Tag(Tag43,1478
-#define Tag(Tag45,1548
-#define TagIndex(TagIndex48,1606
-#define PointerPart(PointerPart50,1676
-#define TagToPointer(TagToPointer53,1746
-#define TagToPointer(TagToPointer55,1827
-#define IndexPart(IndexPart58,1897
-#define HasTag(HasTag60,1949
-#define TagOf(TagOf61,2007
-#define CT(CT62,2061
-#define IsVar(IsVar64,2134
-#define TagIsHVA(TagIsHVA66,2206
-#define TagIsCVA(TagIsCVA67,2249
-#define TagIsSVA(TagIsSVA68,2283
-#define TagIsSmall(TagIsSmall69,2339
-#define TagIsLarge(TagIsLarge70,2390
-#define TagIsNUM(TagIsNUM71,2445
-#define TagIsATM(TagIsATM72,2501
-#define TagIsLST(TagIsLST73,2535
-#define TagIsSTR(TagIsSTR74,2569
-#define TagIsStructure(TagIsStructure75,2615
-#define STRIsLarge(STRIsLarge76,2673
-#define TermToPointer(TermToPointer79,2743
-#define TermToPointerOrNull(TermToPointerOrNull80,2812
-#define PointerToTerm(PointerToTerm82,2920
-#define PointerToTermOrZero(PointerToTermOrZero83,2985
-#define TermToPointer(TermToPointer86,3089
-#define TermToPointerOrNull(TermToPointerOrNull87,3145
-#define PointerToTerm(PointerToTerm88,3207
-#define PointerToTermOrZero(PointerToTermOrZero89,3259
-#define VarIsCVA(VarIsCVA93,3350
-#define TermIsATM(TermIsATM96,3439
-#define TermIsLST(TermIsLST97,3502
-#define IsHeapTerm(IsHeapTerm103,3739
-#define IsHeapVar(IsHeapVar105,3812
-#define IsStackVar(IsStackVar106,3858
-#define IsAtomic(IsAtomic107,3916
-#define IsComplex(IsComplex108,3971
-#define TermIsAtomic(TermIsAtomic110,4019
-#define TermIsComplex(TermIsComplex111,4074
-#define TagBitFunctor 113,4133
-#define TagBitComplex 114,4207
-#define TagBitCVA 116,4282
-#define TagBitSVA 117,4334
-#define HVA 121,4456
-#define CVA 122,4501
-#define SVA 123,4553
-#define UBV 124,4599
-#define NUM 126,4667
-#define ATM 127,4720
-#define LST 128,4782
-#define STR 129,4818
-#define MAXTAG 131,4860
-#define NOTAG 132,4877
-#define ERRORTAG 134,4894
-#define TaggedLow	147,5287
-#define TaggedZero	148,5316
-#define TaggedHigh	149,5353
-#define HighInt	150,5390
-#define MakeSmall(MakeSmall153,5457
-#define GetSmall(GetSmall154,5528
-#define GetString(GetString155,5604
-#define USE_ATOM_LEN 157,5647
-#define GetAtomLen(GetAtomLen160,5743
-#define MakeFunctorFix 163,5800
-#define MakeFunctorFloat 164,5851
-#define LargeIsFloat(LargeIsFloat165,5902
-#define MakeLarge(MakeLarge167,5967
-#define MakeInteger(MakeInteger168,6026
-#define MakeFloat(MakeFloat169,6107
-#define MakeAtom(MakeAtom170,6150
-#define MakeString(MakeString171,6186
-#define GetInteger(GetInteger173,6228
-#define GetFloat(GetFloat174,6297
-#define IntIsSmall(IntIsSmall176,6376
-#define IsInteger(IsInteger177,6433
-#define IsFloat(IsFloat178,6509
-#define IsNumber(IsNumber179,6563
-#define IsAtom(IsAtom180,6616
-#define IsString(IsString181,6646
-# define CTagToHVA(CTagToHVA188,6863
-# define CTagToCVA(CTagToCVA189,6902
-# define CTagToSVA(CTagToSVA190,6941
-# define CTagToLST(CTagToLST191,6980
-# define CTagToSTR(CTagToSTR192,7019
-# define CTagToGoal(CTagToGoal193,7058
-# define CTagToDef(CTagToDef194,7112
-# define CTagToCar(CTagToCar195,7165
-# define CTagToCdr(CTagToCdr196,7204
-# define CTagToArg(CTagToArg197,7257
-# define CTagToPointer(CTagToPointer198,7312
-# define CTagToHVA(CTagToHVA200,7379
-# define CTagToCVA(CTagToCVA201,7416
-# define CTagToSVA(CTagToSVA202,7453
-# define CTagToLST(CTagToLST203,7490
-# define CTagToSTR(CTagToSTR204,7527
-# define CTagToGoal(CTagToGoal205,7564
-# define CTagToDef(CTagToDef206,7603
-# define CTagToCar(CTagToCar207,7640
-# define CTagToCdr(CTagToCdr208,7677
-# define CTagToArg(CTagToArg209,7714
-# define CTagToPointer(CTagToPointer210,7755
-# define TagToHVA(TagToHVA216,7869
-# define TagToCVA(TagToCVA217,7920
-# define TagToSVA(TagToSVA218,7957
-# define TagToUBV(TagToUBV219,7994
-# define TagToLST(TagToLST220,8031
-# define TagToSTR(TagToSTR221,8068
-# define TagHVA(TagHVA223,8106
-# define TagSVA(TagSVA224,8153
-# define TagCVA(TagCVA225,8183
-# define TagToHVA(TagToHVA228,8234
-# define TagToCVA(TagToCVA229,8297
-# define TagToSVA(TagToSVA230,8363
-# define TagToUBV(TagToUBV231,8429
-# define TagToLST(TagToLST232,8495
-# define TagToSTR(TagToSTR233,8561
-# define TagHVA(TagHVA235,8628
-# define TagSVA(TagSVA236,8658
-# define TagCVA(TagCVA237,8688
-# define TagToHVA(TagToHVA239,8724
-# define TagToCVA(TagToCVA240,8774
-# define TagToSVA(TagToSVA241,8829
-# define TagToUBV(TagToUBV242,8884
-# define TagToLST(TagToLST243,8939
-# define TagToSTR(TagToSTR244,8994
-# define TagHVA(TagHVA246,9050
-# define TagSVA(TagSVA247,9097
-# define TagCVA(TagCVA248,9127
-#define LargeArity(LargeArity257,9258
-#define LargeInsns(LargeInsns259,9301
-#define Arity(Arity261,9344
-#define SetArity(SetArity262,9391
-#define TagToAtom(TagToAtom264,9475
-#define TagToHeadfunctor(TagToHeadfunctor270,9743
-#define TagToArg(TagToArg271,9784
-#define TagToCar(TagToCar272,9832
-#define TagToCdr(TagToCdr273,9864
-#define TagToGoal(TagToGoal274,9910
-#define TagToDef(TagToDef275,9957
-#define TagToInstance(TagToInstance277,10004
-#define TagToInstHandle(TagToInstHandle278,10073
-#define TagToInstancePtr(TagToInstancePtr279,10144
-#define TagToStream(TagToStream280,10217
-#define TagToRoot(TagToRoot281,10281
-#define TagToEmul(TagToEmul282,10340
-#define TagToFunctor(TagToFunctor283,10400
-struct numstack numstack285,10465
-struct io_streams io_streams303,11118
-struct debugger_state debugger_state308,11280
-#define MAXGLOBALVARS 314,11448
-struct misc_info{misc_info317,11481
-struct worker worker349,12775
-struct frame frame424,14701
-typedef enum {CHOICE,MARKER} node_type;node_type430,14906
-struct node node433,14968
-struct extension_regs extension_regs444,15282
-struct marker marker448,15387
-struct node node457,15696
-typedef unsigned long Bignum;Bignum469,15935
-#define ChoiceptMarkPure(ChoiceptMarkPure471,15966
-#define ChoiceptTestPure(ChoiceptTestPure472,16030
-#define ChoiceptMarkStatic(ChoiceptMarkStatic473,16087
-#define ChoiceptTestStatic(ChoiceptTestStatic474,16153
-#define ChoiceptMarkNoCVA(ChoiceptMarkNoCVA477,16240
-#define ChoiceptTestNoCVA(ChoiceptTestNoCVA478,16315
-#define ChoiceptMarkNoCVA(ChoiceptMarkNoCVA480,16391
-#define ChoiceptTestNoCVA(ChoiceptTestNoCVA481,16465
-#define BPL	486,16602
-#define BPT	487,16643
-#define BPTP	488,16686
-#define BPF	489,16732
-#define Deposit(Deposit492,16827
+#define SAME 11,396
+typedef unsigned short int INSN;INSN13,412
+typedef unsigned long int TAGGED;TAGGED14,489
+typedef unsigned long int UNTAGGED;UNTAGGED15,566
+typedef int BOOL;BOOL18,675
+# define FALSE 19,731
+# define TRUE 20,748
+typedef long ENG_INT;ENG_INT23,772
+typedef double ENG_FLT;ENG_FLT24,794
+#define WORDSIZE 29,880
+#define SmallShift 30,900
+#define TAGSIZE 31,970
+#define ARITYSIZE 32,988
+#define TAGOFFSET 33,1008
+#define ARITYOFFSET 34,1054
+#define ARITYLIMIT 35,1114
+#define TAGMASK	37,1159
+#define QMask	38,1230
+#define ZMask	39,1287
+#define POINTERMASK	40,1344
+#define INDEXMASK	41,1404
+#define Tag(Tag45,1553
+#define Tag(Tag47,1623
+#define TagIndex(TagIndex50,1681
+#define PointerPart(PointerPart52,1751
+#define TagToPointer(TagToPointer55,1821
+#define TagToPointer(TagToPointer57,1902
+#define IndexPart(IndexPart60,1972
+#define HasTag(HasTag62,2024
+#define TagOf(TagOf63,2082
+#define CT(CT64,2136
+#define IsVar(IsVar66,2209
+#define TagIsHVA(TagIsHVA68,2281
+#define TagIsCVA(TagIsCVA69,2324
+#define TagIsSVA(TagIsSVA70,2358
+#define TagIsSmall(TagIsSmall71,2414
+#define TagIsLarge(TagIsLarge72,2465
+#define TagIsNUM(TagIsNUM73,2520
+#define TagIsATM(TagIsATM74,2576
+#define TagIsLST(TagIsLST75,2610
+#define TagIsSTR(TagIsSTR76,2644
+#define TagIsStructure(TagIsStructure77,2690
+#define STRIsLarge(STRIsLarge78,2748
+#define TermToPointer(TermToPointer81,2818
+#define TermToPointerOrNull(TermToPointerOrNull82,2887
+#define PointerToTerm(PointerToTerm84,2995
+#define PointerToTermOrZero(PointerToTermOrZero85,3060
+#define TermToPointer(TermToPointer88,3164
+#define TermToPointerOrNull(TermToPointerOrNull89,3220
+#define PointerToTerm(PointerToTerm90,3282
+#define PointerToTermOrZero(PointerToTermOrZero91,3334
+#define VarIsCVA(VarIsCVA95,3425
+#define TermIsATM(TermIsATM98,3514
+#define TermIsLST(TermIsLST99,3577
+#define IsHeapTerm(IsHeapTerm105,3814
+#define IsHeapVar(IsHeapVar107,3887
+#define IsStackVar(IsStackVar108,3933
+#define IsAtomic(IsAtomic109,3991
+#define IsComplex(IsComplex110,4046
+#define TermIsAtomic(TermIsAtomic112,4094
+#define TermIsComplex(TermIsComplex113,4149
+#define TagBitFunctor 115,4208
+#define TagBitComplex 116,4282
+#define TagBitCVA 118,4357
+#define TagBitSVA 119,4409
+#define HVA 123,4531
+#define CVA 124,4576
+#define SVA 125,4628
+#define UBV 126,4674
+#define NUM 128,4742
+#define ATM 129,4795
+#define LST 130,4857
+#define STR 131,4893
+#define MAXTAG 133,4935
+#define NOTAG 134,4952
+#define ERRORTAG 136,4969
+#define TaggedLow	149,5362
+#define TaggedZero	150,5391
+#define TaggedHigh	151,5428
+#define HighInt	152,5465
+#define MakeSmall(MakeSmall155,5532
+#define GetSmall(GetSmall156,5603
+#define GetString(GetString157,5679
+#define GetAtomLen(GetAtomLen162,5824
+#define MakeFunctorFix 165,5881
+#define MakeFunctorFloat 166,5932
+#define LargeIsFloat(LargeIsFloat167,5983
+#define MakeLarge(MakeLarge169,6048
+#define MakeInteger(MakeInteger170,6107
+#define MakeFloat(MakeFloat171,6188
+#define MakeAtom(MakeAtom172,6231
+#define MakeString(MakeString173,6267
+#define GetInteger(GetInteger175,6309
+#define GetFloat(GetFloat176,6378
+#define IntIsSmall(IntIsSmall178,6457
+#define IsInteger(IsInteger179,6514
+#define IsFloat(IsFloat180,6590
+#define IsNumber(IsNumber181,6644
+#define IsAtom(IsAtom182,6697
+#define IsString(IsString183,6727
+# define CTagToHVA(CTagToHVA190,6944
+# define CTagToCVA(CTagToCVA191,6983
+# define CTagToSVA(CTagToSVA192,7022
+# define CTagToLST(CTagToLST193,7061
+# define CTagToSTR(CTagToSTR194,7100
+# define CTagToGoal(CTagToGoal195,7139
+# define CTagToDef(CTagToDef196,7193
+# define CTagToCar(CTagToCar197,7246
+# define CTagToCdr(CTagToCdr198,7285
+# define CTagToArg(CTagToArg199,7338
+# define CTagToPointer(CTagToPointer200,7393
+# define CTagToHVA(CTagToHVA202,7460
+# define CTagToCVA(CTagToCVA203,7497
+# define CTagToSVA(CTagToSVA204,7534
+# define CTagToLST(CTagToLST205,7571
+# define CTagToSTR(CTagToSTR206,7608
+# define CTagToGoal(CTagToGoal207,7645
+# define CTagToDef(CTagToDef208,7684
+# define CTagToCar(CTagToCar209,7721
+# define CTagToCdr(CTagToCdr210,7758
+# define CTagToArg(CTagToArg211,7795
+# define CTagToPointer(CTagToPointer212,7836
+# define TagToHVA(TagToHVA218,7950
+# define TagToCVA(TagToCVA219,8001
+# define TagToSVA(TagToSVA220,8038
+# define TagToUBV(TagToUBV221,8075
+# define TagToLST(TagToLST222,8112
+# define TagToSTR(TagToSTR223,8149
+# define TagHVA(TagHVA225,8187
+# define TagSVA(TagSVA226,8234
+# define TagCVA(TagCVA227,8264
+# define TagToHVA(TagToHVA230,8315
+# define TagToCVA(TagToCVA231,8378
+# define TagToSVA(TagToSVA232,8444
+# define TagToUBV(TagToUBV233,8510
+# define TagToLST(TagToLST234,8576
+# define TagToSTR(TagToSTR235,8642
+# define TagHVA(TagHVA237,8709
+# define TagSVA(TagSVA238,8739
+# define TagCVA(TagCVA239,8769
+# define TagToHVA(TagToHVA241,8805
+# define TagToCVA(TagToCVA242,8855
+# define TagToSVA(TagToSVA243,8910
+# define TagToUBV(TagToUBV244,8965
+# define TagToLST(TagToLST245,9020
+# define TagToSTR(TagToSTR246,9075
+# define TagHVA(TagHVA248,9131
+# define TagSVA(TagSVA249,9178
+# define TagCVA(TagCVA250,9208
+#define LargeArity(LargeArity259,9339
+#define LargeInsns(LargeInsns261,9382
+#define Arity(Arity263,9425
+#define SetArity(SetArity264,9472
+#define TagToAtom(TagToAtom266,9556
+#define TagToHeadfunctor(TagToHeadfunctor272,9824
+#define TagToArg(TagToArg273,9865
+#define TagToCar(TagToCar274,9913
+#define TagToCdr(TagToCdr275,9945
+#define TagToGoal(TagToGoal276,9991
+#define TagToDef(TagToDef277,10038
+#define TagToInstance(TagToInstance279,10085
+#define TagToInstHandle(TagToInstHandle280,10154
+#define TagToInstancePtr(TagToInstancePtr281,10225
+#define TagToStream(TagToStream282,10298
+#define TagToRoot(TagToRoot283,10362
+#define TagToEmul(TagToEmul284,10421
+#define TagToFunctor(TagToFunctor285,10481
+struct numstack numstack287,10546
+struct io_streams io_streams305,11199
+struct debugger_state debugger_state310,11361
+#define MAXGLOBALVARS 316,11529
+struct misc_info{misc_info319,11562
+struct worker worker359,13083
+struct frame frame443,15383
+typedef enum {CHOICE,MARKER} node_type;node_type449,15588
+struct node node452,15650
+struct extension_regs extension_regs463,15964
+struct marker marker467,16069
+struct node node476,16378
+typedef unsigned long Bignum;Bignum488,16617
+#define ChoiceptMarkPure(ChoiceptMarkPure490,16648
+#define ChoiceptTestPure(ChoiceptTestPure491,16712
+#define ChoiceptMarkStatic(ChoiceptMarkStatic492,16769
+#define ChoiceptTestStatic(ChoiceptTestStatic493,16835
+#define ChoiceptMarkNoCVA(ChoiceptMarkNoCVA496,16922
+#define ChoiceptTestNoCVA(ChoiceptTestNoCVA497,16997
+#define ChoiceptMarkNoCVA(ChoiceptMarkNoCVA499,17073
+#define ChoiceptTestNoCVA(ChoiceptTestNoCVA500,17147
+#define BPL	505,17284
+#define BPT	506,17325
+#define BPTP	507,17368
+#define BPF	508,17414
+#define Deposit(Deposit511,17509
 
 term_support.c,995
-#define TopOfOldHeap 46,1374
-#define Xop(Xop47,1422
-#define Xinv(Xinv48,1466
-#define ODDOP(ODDOP49,1511
-#define EVENOP(EVENOP54,1619
-#define EMIT(EMIT59,1731
-#define GCTEST(GCTEST62,1773
-static void c_term_trail_push(118,3913
-static void c_term_size(141,4491
-static INSN *emit_unify_void(223,6513
-static BOOL c_term(247,6918
-BOOL compile_term(504,11985
-struct instance *compile_term_aux(531,12842
-TAGGED decode_instance_key(684,17079
-  radixlim1,753,18282
-  radixlim2,754,18295
-  radixlim3;755,18308
-BOOL prolog_init_radix(757,18322
-BOOL prolog_name(775,18660
-BOOL prolog_atom_codes(781,18748
-BOOL prolog_number_codes(787,18843
-static BOOL prolog_constant_codes(794,18941
-#define EXPAND_ATOM_BUFFER(EXPAND_ATOM_BUFFER926,22974
-BOOL prolog_atom_length(935,23263
-BOOL prolog_sub_atom(955,23697
-BOOL prolog_atom_concat(1003,24578
-void number_to_string(1134,27967
-BOOL prolog_copy_term(1281,31116
-static void copy_it(1313,31750
-TAGGED cross_copy_term(1386,33680
+#define TopOfOldHeap 47,1375
+#define Xop(Xop48,1423
+#define Xinv(Xinv49,1467
+#define ODDOP(ODDOP50,1512
+#define EVENOP(EVENOP55,1620
+#define EMIT(EMIT60,1732
+#define GCTEST(GCTEST63,1774
+static void c_term_trail_push(119,3914
+static void c_term_size(142,4492
+static INSN *emit_unify_void(224,6514
+static BOOL c_term(248,6919
+BOOL compile_term(505,11986
+struct instance *compile_term_aux(532,12843
+TAGGED decode_instance_key(689,17142
+  radixlim1,758,18345
+  radixlim2,759,18358
+  radixlim3;760,18371
+BOOL prolog_init_radix(762,18385
+BOOL prolog_name(780,18723
+BOOL prolog_atom_codes(786,18811
+BOOL prolog_number_codes(792,18906
+static BOOL prolog_constant_codes(799,19004
+#define EXPAND_ATOM_BUFFER(EXPAND_ATOM_BUFFER931,23044
+BOOL prolog_atom_length(940,23333
+BOOL prolog_sub_atom(960,23774
+BOOL prolog_atom_concat(1008,24662
+void number_to_string(1139,28093
+BOOL prolog_copy_term(1286,31242
+static void copy_it(1318,31876
+TAGGED cross_copy_term(1391,33806
 
 term_support_defs.h,0
 
-threads.h,1728
-typedef pthread_t THREAD_T;THREAD_T15,353
-#define Thread_Create_NoGoalId(Thread_Create_NoGoalId17,382
-#define Thread_Create_GoalId(Thread_Create_GoalId20,489
-#define Thread_Join(Thread_Join23,594
-#define Thread_Exit(Thread_Exit24,641
-#define Thread_Id 25,694
-#define Allow_Thread_Cancel 26,737
-#define Disallow_Thread_Cancel 29,890
-#define Thread_Cancel(Thread_Cancel32,1043
-#define Thread_Equal(Thread_Equal33,1088
-  extern int m_myid;42,1382
-#define Thread_Exit(Thread_Exit45,1527
-#define Allow_Thread_Cancel 47,1645
-typedef thread_t THREAD_T;THREAD_T63,1943
-#define Thread_Create(Thread_Create66,1972
-#define Thread_Join(Thread_Join69,2145
-#define Thread_Exit(Thread_Exit70,2192
-#define Thread_Id 71,2237
-#define Allow_Thread_Cancel 72,2276
-#define Disallow_Thread_Cancel 73,2305
-#define Thread_Cancel(Thread_Cancel74,2337
-#define Thread_Equal(Thread_Equal75,2385
-typedef pthread_t THREAD_T;THREAD_T82,2507
-#define Thread_Create_NoGoalId(Thread_Create_NoGoalId89,2697
-#define Thread_Create_GoalId(Thread_Create_GoalId92,2804
-#define Thread_Join(Thread_Join95,2909
-#define Thread_Exit(Thread_Exit96,2956
-#define Thread_Id 97,3005
-#define Allow_Thread_Cancel 98,3048
-#define Disallow_Thread_Cancel 101,3235
-#define Thread_Cancel(Thread_Cancel104,3388
-#define Thread_Equal(Thread_Equal105,3433
-typedef int THREAD_T;THREAD_T128,3914
-#define Thread_Id 130,3937
-#define Thread_Create_GoalId(Thread_Create_GoalId131,3964
-#define Thread_Join(Thread_Join134,4123
-#define Thread_Exit(Thread_Exit135,4147
-#define Allow_Thread_Cancel 136,4224
-#define Disallow_Thread_Cancel 137,4253
-#define Thread_Cancel(Thread_Cancel138,4285
-#define Thread_Equal(Thread_Equal139,4336
+threads.h,2066
+#define USE_POSIX_THREADS13,377
+#define USE_WIN32_THREADS17,431
+typedef pthread_t THREAD_T;THREAD_T25,597
+typedef pthread_t THREAD_ID;THREAD_ID26,652
+typedef void *    THREAD_ARG;THREAD_ARG27,721
+typedef void *    THREAD_RES_T;THREAD_RES_T28,751
+typedef void *(*THREAD_START)THREAD_START29,783
+#define Thread_Create_NoGoalId(Thread_Create_NoGoalId31,823
+#define Thread_Create_GoalId(Thread_Create_GoalId36,967
+#define Thread_Join(Thread_Join41,1109
+#define Thread_Exit(Thread_Exit42,1160
+#define Thread_Id 43,1209
+#define Allow_Thread_Cancel 44,1252
+#define Disallow_Thread_Cancel 47,1405
+#define Thread_Cancel(Thread_Cancel50,1558
+#define Thread_Equal(Thread_Equal51,1603
+#define Thread_Dispose(Thread_Dispose52,1662
+typedef HANDLE THREAD_T;THREAD_T62,1859
+typedef DWORD  THREAD_ID;THREAD_ID63,1908
+typedef LPVOID THREAD_ARG;THREAD_ARG64,1969
+typedef DWORD  THREAD_RES_T;THREAD_RES_T65,2042
+typedef LPTHREAD_START_ROUTINE  THREAD_START;THREAD_START66,2071
+#define Thread_Create_NoGoalId(Thread_Create_NoGoalId74,2343
+#define Thread_Create_GoalId(Thread_Create_GoalId77,2463
+#define Thread_Join(Thread_Join81,2661
+#define Thread_Exit(Thread_Exit86,2781
+#define Thread_Id 87,2829
+#define Allow_Thread_Cancel 90,2977
+#define Disallow_Thread_Cancel 91,3006
+#define Thread_Cancel(Thread_Cancel92,3039
+#define Thread_Dispose(Thread_Dispose93,3118
+#define Thread_Equal(Thread_Equal94,3189
+typedef int THREAD_T;THREAD_T118,3674
+typedef int THREAD_ID;THREAD_ID119,3696
+typedef void *THREAD_ARG;THREAD_ARG120,3759
+typedef void *THREAD_RES_T;THREAD_RES_T121,3785
+typedef void *(*THREAD_START)THREAD_START122,3813
+#define Thread_Id 125,3854
+#define Thread_Create_GoalId(Thread_Create_GoalId126,3881
+#define Thread_Create_no_Id(Thread_Create_no_Id128,3996
+#define Thread_Join(Thread_Join129,4052
+#define Thread_Exit(Thread_Exit130,4075
+#define Allow_Thread_Cancel131,4152
+#define Disallow_Thread_Cancel132,4180
+#define Thread_Cancel(Thread_Cancel133,4211
+#define Thread_Equal(Thread_Equal134,4262
 
 timing.c,191
 ENG_FLT usertime(21,395
@@ -2563,45 +2600,45 @@ u2yvar_w.c,131
 		ComputeE;39,596
 		ComputeE;46,702
 
-unix_utils.c,1242
-extern char library_directory[39,752
-extern char *library_directory;41,791
-# define MAXPATHLEN 56,1086
-#define DriveSelector(DriveSelector60,1138
-char cwd[65,1288
-BOOL expand_file_name(67,1367
-struct ren_pair ren_pair214,4434
-static struct ren_pair rename_path_pairs[216,4478
-int fix_path(218,4535
-void compute_cwd(241,5008
-BOOL prolog_unix_cd(251,5109
-BOOL prolog_unix_shell0(280,5637
-BOOL prolog_unix_shell2(290,5794
-BOOL prolog_unix_system2(322,6492
-BOOL prolog_unix_argv(336,6750
-BOOL prolog_unix_mktemp(360,7121
-BOOL prolog_unix_access(377,7424
-BOOL prolog_directory_files(406,7995
-BOOL prolog_file_properties(451,8955
-BOOL prolog_unix_chmod(518,10621
-BOOL prolog_unix_umask(545,11052
-BOOL prolog_unix_delete(566,11366
-BOOL prolog_current_host(591,11762
-BOOL prolog_getenvstr(640,13188
-BOOL prolog_pause(673,13766
-BOOL prolog_getpid(697,14085
-#  define S_ISDIR(S_ISDIR733,15387
-BOOL prolog_find_file(736,15444
-extern char *emulator_architecture;845,17712
-BOOL prolog_getarch(850,17781
-extern char *emulator_os;858,17909
-BOOL prolog_getos(863,17964
-#define Read 875,18164
-#define Write 876,18181
-#define STDIN 878,18199
-#define STDOUT 879,18217
-#define STDERR 880,18235
-BOOL prolog_exec(883,18254
+unix_utils.c,1240
+extern char library_directory[32,601
+extern char *library_directory;34,640
+# define MAXPATHLEN 49,935
+#define DriveSelector(DriveSelector53,987
+char cwd[58,1137
+BOOL expand_file_name(60,1216
+struct ren_pair ren_pair207,4283
+static struct ren_pair rename_path_pairs[209,4327
+int fix_path(211,4384
+void compute_cwd(234,4857
+BOOL prolog_unix_cd(244,4958
+BOOL prolog_unix_shell0(273,5493
+BOOL prolog_unix_shell2(283,5650
+BOOL prolog_unix_system2(315,6355
+BOOL prolog_unix_argv(329,6620
+BOOL prolog_unix_mktemp(353,6991
+BOOL prolog_unix_access(370,7301
+BOOL prolog_directory_files(399,7879
+BOOL prolog_file_properties(444,8846
+BOOL prolog_unix_chmod(511,10519
+BOOL prolog_unix_umask(538,10957
+BOOL prolog_unix_delete(559,11271
+BOOL prolog_current_host(584,11674
+BOOL prolog_getenvstr(633,13100
+BOOL prolog_pause(666,13685
+BOOL prolog_getpid(690,14004
+#  define S_ISDIR(S_ISDIR726,15306
+BOOL prolog_find_file(729,15363
+extern char *emulator_architecture;849,17959
+BOOL prolog_getarch(854,18028
+extern char *emulator_os;862,18156
+BOOL prolog_getos(867,18211
+#define Read 879,18411
+#define Write 880,18428
+#define STDIN 882,18446
+#define STDOUT 883,18464
+#define STDERR 884,18482
+BOOL prolog_exec(887,18501
 
 unix_utils_defs.h,0
 
@@ -2836,3 +2873,6 @@ void init_contcode(204,5807
 TAGGED evaluate(225,6174
 
 wamsupport_defs.h,0
+
+Win32Threads.h,31
+#define _Win32Threads_H_	4,36

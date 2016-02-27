@@ -3,9 +3,9 @@
 #include <sys/types.h>
 #include <signal.h>
 #include "compat.h"
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
-#include "threads.h"
 #include "task_areas.h"
 
 /* declarations for global functions accessed here */

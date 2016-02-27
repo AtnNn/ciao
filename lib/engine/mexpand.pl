@@ -32,7 +32,7 @@ body_expansion(if(A,B,C),M,QM,if(NA,NB,NC)) :- !,
 body_expansion(Call,M,QM,NCall) :-
         functor(Call, call, N), N > 1, !, % call/n
         Call =.. [_, P| LAs],
-        As =.. [(\:)| LAs],
+        As =.. [''| LAs],
         N1 is N-1,
         meta_expansion_arg1(P, pred(N1), M, QM, true, NP, NCall, call(NP,As)).
 body_expansion(!,_M,_QM,!):- !.
@@ -55,6 +55,10 @@ atom_expansion(_, F, _, _, _, NA, error) :- number(F), !, NA = F.
 atom_expansion(A, F, N, M, -, NA, RM) :- !,
         unqualified_atom_expansion(A, F, N, M, NA, RM).
 atom_expansion(A, F, N, M, M, NA, RM) :- !,
+        atom_expansion_here(A, F, N, M, NA),
+        RM = M.
+atom_expansion(A, F, N, M, QM, NA, RM) :-
+        M = user(_), QM = user, !,
         atom_expansion_here(A, F, N, M, NA),
         RM = M.
 atom_expansion(A, F, N, M, QM, NA, RM) :-
@@ -144,7 +148,7 @@ expand_meta_of_type(pred(0), Goal, M, QM, NGoal):- !,
 	body_expansion(Goal, M, QM, NGoal).
 expand_meta_of_type(pred(N), P, M, QM, NP):-
         integer(N),
-        pred_expansion(P, N, M, QM, NP).
+        pred_expansion(P, N, M, QM, [], NP).
 
 expand_clause((H:-B), M, QM, (NH:-NB)):- !,
 	atom_expansion_add_goals(H, M, QM, NH, no, no),
@@ -159,32 +163,34 @@ spec_expansion(F/A, M, QM, NF/A) :-
 	atom_expansion(G, F, A, M, QM, NG, _),
 	functor(NG,NF,A).
 
-pred_expansion(PredAbs, N, M, QM, :-(NH,NB)) :-
-        PredAbs = :-(H,_B), !,
+pred_expansion(`(V,PredAbs), N, M, QM, ShVs, Term) :- !,
+        pred_expansion(PredAbs, N, M, QM, [V|ShVs], Term).
+pred_expansion(PredAbs, N, M, QM, ShVs, 'PA'(ShVs,H,NB)) :-
+        PredAbs = :-(H,B), !,
         functor(H,Hf,Ha),
-        ( Hf = (\:), ! ; module_warning(bad_pred_abs(PredAbs)) ),
+        ( Hf = '', ! ; module_warning(bad_pred_abs(PredAbs)) ),
         check_pred_arity(Ha,N,PredAbs),
-        copy_term(PredAbs, :-(NH,RB)),
-        body_expansion(RB, M, QM, NB).
-pred_expansion(P, N, M, QM, R) :-
+        body_expansion(B, M, QM, NB).
+pred_expansion(P, N, M, QM, ShVs, R) :-
         nonvar(P),
         functor(P, F, A),
-        pred_expansion_(F, A, P, N, M, QM, R).
+        pred_expansion_(F, A, P, N, M, QM, ShVs, R).
 
-pred_expansion_((\:), A, P, N,_M,_QM, :-(NH,true)) :- !,
-        check_pred_arity(A, N, P),
-        copy_term(P,NH).
-pred_expansion_(F,   A, P, N, M, QM, NP/N) :-
+pred_expansion_('', A, P, N,_M,_QM, ShVs, 'PA'(ShVs,P,true)) :- !,
+        check_pred_arity(A, N, P).
+% For higher-order terms, all variables are shared
+pred_expansion_(F,  A, P, N, M, QM,_ShVs, 'PA'(P,H,NG)) :-
         atom(F),
+        functor(H,'',N),
         T is N+A,
         functor(G, F, T),
-        unify_args(A, P, T, G),
+        unify_args(1, A, P, 2, G), % Unify pred args skipping first
+        arg(1,H,I), % Unify first head arg
+        arg(1,G,I),
+        A2 is A+2,
+        unify_args(2, N, H, A2, G), % Unify rest head args
         atom_expansion(G, F, T, M, QM, G1, RM),
-	possibly_meta_expansion(F, T, G1, M, RM, NG, no, no),
-        functor(NG, NF, NT),
-        NA is NT-N,
-        functor(NP, NF, NA),
-        unify_args(NA, NP, NT, NG).
+	possibly_meta_expansion(F, T, G1, M, RM, NG, no, no).
 
 check_pred_arity(A, N, PredAbs) :-
         compare(R,A,N),
@@ -195,13 +201,13 @@ check_pred_arity(A, N, PredAbs) :-
             module_warning(big_pred_abs(PredAbs, N))
         ).
 
-unify_args(0,_F,_A,_G) :- !.
-unify_args(N, F, A, G) :- 
-        arg(N, F, X),
+unify_args(I, N,_F,_A,_G) :- I > N, !.
+unify_args(I, N, F, A, G) :- 
+        arg(I, F, X),
         arg(A, G, X),
-        N1 is N-1,
-        A1 is A-1,
-        unify_args(N1, F, A1, G).
+        I1 is I+1,
+        A1 is A+1,
+        unify_args(I1, N, F, A1, G).
 
 runtime_module_expansion((P, R), Type, Primitive, M, QM, X, NX, R) :- !,
         % This predicate is defined diff. in compiler.pl and builtin.pl

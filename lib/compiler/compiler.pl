@@ -2,6 +2,7 @@
                      use_module/1, use_module/2, use_module/3, unload/1,
                      set_debug_mode/1, set_nodebug_mode/1,
                      set_debug_module/1, set_nodebug_module/1,
+		     set_debug_module_source/1,
                      mode_of_module/2, module_of/2
                      ], [assertions]).
 
@@ -86,11 +87,25 @@ set_nodebug_mode(File) :-
 
 set_debug_module(Mod) :- 
         module_pattern(Mod, MPat),
-        (interpret_module(MPat), ! ; assertz_fact(interpret_module(MPat))).
+	retractall_fact(interpret_srcdbg(MPat)),
+        (   current_fact(interpret_module(MPat)), ! 
+	; 
+	    assertz_fact(interpret_module(MPat))
+	).
 
 set_nodebug_module(Mod) :-
         module_pattern(Mod, MPat),
-        retract_fact(interpret_module(MPat)).
+        retract_fact(interpret_module(MPat)),
+	retractall_fact(interpret_srcdbg(MPat)).
+
+set_debug_module_source(Mod) :- 
+        module_pattern(Mod, MPat),
+	assertz_fact(interpret_module(MPat)),
+        (   
+	    current_fact(interpret_srcdbg(MPat)), ! 
+	; 
+	    assertz_fact(interpret_srcdbg(MPat))
+	).
 
 module_pattern(user, user(_)) :- !.
 module_pattern(Module, Module) :- atom(Module).

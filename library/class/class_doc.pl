@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% DOCUMENTATION FILE ON CLASS SYNTAX
 %%
@@ -8,7 +8,7 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -30,6 +30,10 @@
 	    virtual_method_spec/1
 	]).
 
+%% Error reporting appendix:
+
+:- include(library('class/class_error_doc')).
+
 %%------------------------------------------------------------------------
 %%
 %% MANUAL GENERAL HEADERS
@@ -45,10 +49,10 @@
 
 :- comment(summary,
 	"This section will explain how to declare a class/interface 
-         using O'CIAO.").
+         using O'Ciao.").
 
 :- comment(module,
-	"O'CIAO classes are declared in the same way as traditional
+	"O'Ciao classes are declared in the same way as traditional
          prolog modules. The general mechanism of @em{source expansion}
          will translate object-oriented declarations to normal prolog
          code. This is done transparently to the user.
@@ -80,9 +84,9 @@
          
          Please, do not use SICStus-like module declaration, with a non-empty 
          export list. In other case, some non-sense errors will be 
-         reported by normal CIAO module system.
+         reported by normal Ciao module system.
 
-         Most of the regular CIAO declarations may be used when defining
+         Most of the regular Ciao declarations may be used when defining
          a class, such as @decl{concurrent/1},@decl{dynamic/1},
          @decl{discontiguous/1},@decl{multifile/1}, and so on.
 
@@ -213,7 +217,7 @@
          instance will own a particular copy of those attribute definitions.
          In this way, one instance may have different state from another.
 
-         O'CIAO attributes are restricted to hold simple facts. It is not
+         O'Ciao attributes are restricted to hold simple facts. It is not
          possible to hold a Head :- Body clause at an instance attribute.
 
          Notice that attributes are @index{multi-evaluated} by nature,
@@ -260,7 +264,7 @@
 
          In order to get more information about concurrent behavior take
          a look to the concurrent/1 built-in declaration on 
-         CIAO Prolog module system.
+         Ciao Prolog module system.
         ").
 
 :- decl concurrent(Spec) : (method_spec(Spec)) #
@@ -520,7 +524,7 @@ constructor.
 
          A destructor will never be wanted to be part of the public
          interface, and there is no need to mark them as inheritable,
-         since all inherited destructors are called by O'CIAO just before 
+         since all inherited destructors are called by O'Ciao just before 
          yours.
 
          This is a simple example of destructor declaration:
@@ -531,7 +535,7 @@ constructor.
 @end{verbatim}
 
         Destructor declaration is not mandatory. Failure or sucess of 
-        destructors will be ignored by O'CIAO, and they will be called
+        destructors will be ignored by O'Ciao, and they will be called
         only once.
 
         This functionality is usefull when some computation is need at
@@ -558,6 +562,9 @@ destructor.
 
 :- comment(version_maintenance,dir('../../version')).
 
+
+:- comment(version(1*5+89,2000/03/24,14:24*48+'CET'), "Error reporting section
+   has been moved to separate appendix (Angel Fernandez Pineda)").
 
 :- comment(version(1*5+3,1999/11/29,18:06*27+'MET'), "Fixed minor bug on
    assert/retract expansion. Documentation on
@@ -591,7 +598,7 @@ destructor.
    public by default.  (Angel Fernandez Pineda)").
 
 :- comment(version(1*3+20,1999/07/07,09:14*48+'MEST'), "Changed error
-   reporting style to fit CIAO compiler style.  (Angel Fernandez Pineda)").
+   reporting style to fit Ciao compiler style.  (Angel Fernandez Pineda)").
 
 :- comment(version(1*3+17,1999/07/05,18:47*59+'MEST'), "Fixed bug on
    run-time expansions (Angel Fernandez Pineda)").
@@ -605,8 +612,8 @@ destructor.
 :- comment(version(1*3+3,1999/06/15,16:06*09+'MEST'), "concurrent/1
    declaration now working.  (Angel Fernandez Pineda)").
 
-:- comment(version(1*3+2,1999/06/15,15:41*33+'MEST'), "O'CIAO adapted to
-   new CIAO-1.3 compiler. New features added for optimization porpouses.
+:- comment(version(1*3+2,1999/06/15,15:41*33+'MEST'), "O'Ciao adapted to
+   new Ciao-1.3 compiler. New features added for optimization porpouses.
    (Angel Fernandez Pineda)").
 
 :- comment(version(0*9+55,1999/04/22,16:38*10+'MEST'), "Added documentation

@@ -5,15 +5,15 @@
 
 :- comment(author, "Daniel Cabeza").
 
-:- comment(usage, "These directives are builtin in CIAO, so nothing special
+:- comment(usage, "These directives are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(module, "This chapter documents the basic @concept{builtin
-   directives} in CIAO, additional to the documented in other chapters.
-   These @concept{directives} are natively interpreted by the CIAO
+   directives} in Ciao, additional to the documented in other chapters.
+   These @concept{directives} are natively interpreted by the Ciao
    compiler (@apl{ciaoc}).
 
-   Unlike in other Prolog systems, directives in CIAO are not goals to
+   Unlike in other Prolog systems, directives in Ciao are not goals to
    be @em{executed} by the compiler or top level. Instead, they are
    @em{read} and acted upon by these programs. The advantage of this
    is that the effect of the directives is consistent for executables,

@@ -31,26 +31,26 @@
 
 read(Stream, X) :-
         current_input(CurIn),
-	read_internal(X, Stream, CurIn, _, _, _, read/2).
+        read_internal(X, Stream, CurIn, _, _, _, read/2).
 
 :- comment(read(Term),"Like @tt{read(Stream,Term)} with @var{Stream}
-	associated to the current standard input.").
+        associated to the current standard input.").
 
 read(X) :-
-	current_input(Stream),
-	read_internal(X, Stream, Stream, _, _, _, read/1).
+        current_input(Stream),
+        read_internal(X, Stream, Stream, _, _, _, read/1).
 
 read_term(Stream, X, Options) :-
-        option_list(Options, Vs, Ns, Ss, Lns, 3),
-        current_input(CurIn),
-	read_internal(X, Stream, CurIn, VarDict, Tokens, Lns, read_term/3),
-        extract_vars(Vs, Tokens),
-        extract_names(Ns, Ss, VarDict).
+        read_term_aux(Options, Stream, 3, X).
 
 read_term(X, Options) :-
-        option_list(Options, Vs, Ns, Ss, Lns, 2),
-	current_input(Stream),
-	read_internal(X, Stream, Stream, VarDict, Tokens, Lns, read_term/2),
+        current_input(Stream),
+        read_term_aux(Options, Stream, 2, X).
+
+read_term_aux(Options, Stream, N, X) :-
+        option_list(Options, Vs, Ns, Ss, Lns, VarDict, N),
+        current_input(CurIn),
+        read_internal(X, Stream, CurIn, VarDict, Tokens, Lns, read_term/N),
         extract_vars(Vs, Tokens),
         extract_names(Ns, Ss, VarDict).
 
@@ -58,22 +58,23 @@ read_top_level(Stream, Data, Variables) :-
         current_input(CurIn),
 	read_internal(Data, Stream, CurIn, Variables, _, _, read_top_level/3).
 
-option_list(V, _, _, _, _, Arg) :- var(V), !,
+option_list(V, _, _, _, _, _, Arg) :- var(V), !,
         throw(error(instantiation_error,read_term/Arg-Arg)).
-option_list([], _, _, _, _, _) :- !.
-option_list([O|Os], Vs, Ns, Ss, Ls, Arg) :- !,
-        option(O, Vs, Ns, Ss, Ls, Arg),
-        option_list(Os, Vs, Ns, Ss, Ls, Arg).
-option_list(Os, _, _, _, _, Arg) :-
+option_list([], _, _, _, _, _, _) :- !.
+option_list([O|Os], Vs, Ns, Ss, Ls, Dict, Arg) :- !,
+        option(O, Vs, Ns, Ss, Ls, Dict, Arg),
+        option_list(Os, Vs, Ns, Ss, Ls, Dict, Arg).
+option_list(Os, _, _, _, _, _, Arg) :-
         throw(error(type_error(list,Os),read_term/Arg-Arg)).
 
-option(V, _, _, _, _, Arg) :- var(V), !,
+option(V, _, _, _, _, _, Arg) :- var(V), !,
         throw(error(instantiation_error,read_term/Arg-Arg)).
-option(variables(Vs), variables(Vs), _, _, _, _) :- !.
-option(variable_names(Ns), _, variable_names(Ns), _, _, _) :- !.
-option(singletons(Ss), _, _, singletons(Ss), _, _) :- !.
-option(lines(L0,L1), _, _, _, lines(L0,L1), _) :- !.
-option(Op, _, _, _, _, Arg) :-
+option(variables(Vs), variables(Vs), _, _, _, _, _) :- !.
+option(variable_names(Ns), _, variable_names(Ns), _, _, _, _) :- !.
+option(singletons(Ss), _, _, singletons(Ss), _, _, _) :- !.
+option(lines(L0,L1), _, _, _, lines(L0,L1), _, _) :- !.
+option(dictionary(Dict), _, _, _, _, Dict, _) :- !.
+option(Op, _, _, _, _, _, Arg) :-
         throw(error(domain_error(read_option,Op),read_term/Arg-Arg)).
 
 extract_vars(V, _) :- var(V), !. % No need of computing it
@@ -104,7 +105,6 @@ extract_names2(dic(Str,[Var|Sing],L,R), Ns, Ns_, Ss, Ss_) :-
         ; Ss1 = Ss2
         ),
         extract_names2(R, Ns2, Ns_, Ss2, Ss_).
-
 
 read_internal(Answer, Stream, CurIn, Variables, Tokens, Lines, Predicate) :-
         catch(read_internal(Answer, Stream, CurIn, Variables, Tokens, Lines),
@@ -191,10 +191,13 @@ read([], _, _, _) :-
 %   read(+Token, +RestTokens, +Precedence, -Term, -LeftOver)
 
 read(X, _, _, _, _) :- var(X), !, fail.		% space saver
-read(var(Variable,_), ['('|S1], Precedence, Answer, S) :- !,
+read(var(Variable,Name), ['('|S1], Precedence, Answer, S) :- !,
 	read(S1, 999, Arg1, S2),
 	read_args(S2, RestArgs, S3), !,
-        Term =.. [call,Variable,Arg1|RestArgs],
+        ( Name = "_" ->
+          Term =.. ['',Arg1|RestArgs]
+        ; Term =.. [call,Variable,Arg1|RestArgs]
+        ),
 	read_rest(S3, 0, Term, Precedence, Answer, S).
 read(var(Variable,_), S0, Precedence, Answer, S) :- !,
 	read_rest(S0, 0, Variable, Precedence, Answer, S).
@@ -378,6 +381,13 @@ second_prompt(Old, New) :-
         ), !.
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*5+100,2000/03/30,18:01*28+'CEST'), "Added option
+   dictionary(Dict) to read_term to get the variables dictionary (as
+   returned by read_top_level/3). (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+74,2000/03/20,16:49*45+'CET'), "Syntax _(Args) is
+   now read as ''(Args).  (Daniel Cabeza Gras)").
 
 :- comment(version(0*8+10,1998/11/24,17:52*05+'MET'), "Fixed bug when
    the last term of a file had syntax error (EOF was lost).  (Daniel

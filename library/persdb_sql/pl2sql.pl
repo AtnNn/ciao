@@ -43,13 +43,13 @@
 :- comment(author,"C. Draxler. Adapted by M. Hermenegildo and I. Caballero").
 
 :- comment(module,"This library performs translation of Prolog queries
-   into @concept{SQL}. The code is an adaptation for CIAO of the
+   into @concept{SQL}. The code is an adaptation for Ciao of the
    @concept{Prolog to SQL compiler} written by Christoph Draxler, CIS
    Centre for Information and Speech Processing,
    Ludwig-Maximilians-University Munich,
    @tt{draxler@@cis.uni-muenchen.de}, Version 1.1. Many thanks to
    Christoph for allowing us to include this adaptation of his code
-   with CIAO.
+   with Ciao.
 
    The translator needs to know the correspondence between Prolog
    predicates and the @concept{SQL tables} in the database. To this
@@ -1477,11 +1477,11 @@ check_type_compatible(TypeA,TypeB) :-
 :- comment(version_maintenance,dir('../../version')).
 
 :- comment(version(0*9+96,1999/05/21,19:53*48+'MEST'), "SQL strings
-   (string-type attributes) are now treated as CIAO strings, and not as
-   CIAO atoms (Ignacio Caballero Blanco)").
+   (string-type attributes) are now treated as Ciao strings, and not as
+   Ciao atoms (Ignacio Caballero Blanco)").
 
 :- comment(version(0*9+94,1999/05/21,19:37*42+'MEST'), "Type system moved
-   to sqltypes.pl; now is based on CIAO types (Ignacio Caballero Blanco)").
+   to sqltypes.pl; now is based on Ciao types (Ignacio Caballero Blanco)").
 
 :- comment(version(0*9+36,1999/04/06,14:02*00+'MEST'), "Changed type
    to regtype.  (Manuel Hermenegildo)").
@@ -1496,7 +1496,7 @@ check_type_compatible(TypeA,TypeB) :-
    types). (Manuel Hermenegildo)").
 
 :- comment(version(0*5+43,1998/07/07,12:32*38+'MET DST'), "Completed
-   definition of type tests in CIAO.  (Manuel Hermenegildo)").
+   definition of type tests in Ciao.  (Manuel Hermenegildo)").
 
 :- comment(version(0*5+42,1998/07/07,12:12*11+'MET DST'),
    "Parametrized correspondence between Prolog and SQL arithmetic
@@ -1527,7 +1527,7 @@ check_type_compatible(TypeA,TypeB) :-
    definition dynamic and exported.  (Ignacio Caballero Blanco)").
 
 :- comment(version(0*1+0,1998/06/16,13:00*28+'MET DST'), "Started
-   autodoc. Previous: ported to CIAO, modularized, etc.  (Manuel
+   autodoc. Previous: ported to Ciao, modularized, etc.  (Manuel
    Hermenegildo)").
 
 % -----------------------------------------------------------------------------

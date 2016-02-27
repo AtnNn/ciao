@@ -1,197 +1,222 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
+<TITLE>The Ciao Prolog System               - SQL persistent database interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC413" HREF="ciao_toc.html#TOC413">Low-level socket interface to SQL/ODBC databases</A></H1>
+<H1><A NAME="SEC451" HREF="ciao_toc.html#TOC451">SQL persistent database interface</A></H1>
 <P>
-<A NAME="IDX4431"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> D. Cabeza, M. Carro, I. Caballero, and M. Hermenegildo..
+<A NAME="IDX4857"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Author(s):</STRONG> I. Caballero, D. Cabeza, J.M. G&oacute;mez, and M. Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#53 (1999/9/15, 23:37:55 MEST)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-This library provides a socket-based interface to 
-<A NAME="IDX4432"></A>
-SQL Databases, using the 
-<A NAME="IDX4433"></A>
-database mediator server ODBC interface developed by C. Taboch and I. Caballero. The interface currently works for databases running in 
-<A NAME="IDX4434"></A>
-Win95/NT machines via 
-<A NAME="IDX4435"></A>
-ODBC. This low-level interface was defined with two goals in mind: 
+<STRONG>Version of last change:</STRONG> 1.5#105 (2000/4/3, 14:21:58 CEST)
+
+
+<P>
+The purpose of this library is to implement an instance of the generic concept of 
+<A NAME="IDX4858"></A>
+persistent predicates, where external 
+<A NAME="IDX4859"></A>
+relational databases are used for storage (see the documentation of the 
+<A NAME="IDX4860"></A>
+<CODE>persdb</CODE> library and [CHGT98,Par97] for details). To this end, this library exports SQL persistent versions of the 
+<A NAME="IDX4861"></A>
+<CODE>assertz_fact/1</CODE>, 
+<A NAME="IDX4862"></A>
+<CODE>retract_fact/1</CODE> and 
+<A NAME="IDX4863"></A>
+<CODE>retractall_fact/1</CODE> builtin predicates. Persistent predicates also allow 
+<A NAME="IDX4864"></A>
+concurrent updates from several programs, since each update is atomic. 
+
+
+<P>
+The notion of persistence provides a very natural and transparent way to access database relations from a Prolog program. Stub definitions are provided for such predicates which access the database when the predicate is called (using the 
+<A NAME="IDX4865"></A>
+<CODE>db_client</CODE> library). A 
+<A NAME="IDX4866"></A>
+Prolog to SQL translator is used to generate the required 
+<A NAME="IDX4867"></A>
+SQL code dynamically (see library 
+<A NAME="IDX4868"></A>
+<CODE>pl2sql</CODE>). 
+
+
+<P>
+This library also provides facilities for reflecting more complex 
+<A NAME="IDX4869"></A>
+views of the database relations as Prolog predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations. Also, 
+<A NAME="IDX4870"></A>
+SQL-like 
+<A NAME="IDX4871"></A>
+aggregation operations are supported. 
 
 
 
 <UL>
-
-<LI>To simplify the communication between the Prolog system and the relational database engines as much as possible.
-
-<LI>To give as much flexibility to the overall system. This includes supporting simultaneous access to several databases, and also allowing both the databases and clients to reside on the same or different physical Win95/NT machines. The clients can reside also in
-
-<A NAME="IDX4436"></A>
-Unix/Linux machines. It is also possible to access database selections in either 
-<A NAME="IDX4437"></A>
-tuple at a time or 
-<A NAME="IDX4438"></A>
-set at a time fashion, as needed. 
-
+<LI><A HREF="ciao_114.html#SEC452">Implementation of the Database Interface</A>
+<LI><A HREF="ciao_114.html#SEC453">Example(s)</A>
+<LI><A HREF="ciao_114.html#SEC454">Usage and interface (persdbrtsql)</A>
+<LI><A HREF="ciao_114.html#SEC455">Documentation on exports (persdbrtsql)</A>
+<LI><A HREF="ciao_114.html#SEC456">Documentation on multifiles (persdbrtsql)</A>
+<LI><A HREF="ciao_114.html#SEC457">Documentation on internals (persdbrtsql)</A>
+<LI><A HREF="ciao_114.html#SEC458">Known bugs and planned improvements (persdbrtsql)</A>
 </UL>
 
+
+
+<H2><A NAME="SEC452" HREF="ciao_toc.html#TOC452">Implementation of the Database Interface</A></H2>
+
 <P>
-In order to allow the flexibility mentioned above, a socket (TCP/IP) client-server architecture was chosen. The interface has two main components: 
+The architecture of the low-level implementation of the database interface was defined with two goals in mind: 
 
 
 
 <UL>
+<LI>to simplify the communication between the Prolog system and the relational database engines as much as possible, and
 
-<LI>At the server side, a <EM>database mediator server</EM> connects on one side to the databases using the ODBC interface and on the other to a fixed port number (service), on which the mediator server listens for requests. The source code (and executables) for this server (slightly modified versions of C. Taboch original code) are in the same directory as this library. This executable must be running on the Windows (NT/95) machine where the databas(es) is(are) also running.<A NAME="DOCF3" HREF="ciao_foot.html#FOOT3">(3)</A>
-
-<LI>At the client side a Prolog client can connect to the database by loading this library and calling the appropriate predicates. The Prolog client can run on either Windows or Unix/Linux systems, locally at the server machine or remotely in different machines. The mediator server port number (service) used is currently fixed to 2020. After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the response data will return in the opposite direction. These messages include login on and off from the database, sending
-
-<A NAME="IDX4439"></A>
-SQL queries, and receiving the responses. 
+<LI>to give as much flexibility as possible to the overall system. This includes simultaneous access to several databases, allowing both the databases and clients to reside on the same physical machine or different machines, and allowing the clients to reside in Win95/NT or Unix machines.
 
 </UL>
 
 <P>
-<STRONG>Example:</STRONG> 
+ 
+In order to allow the flexibility mentioned above, a client-sever architecture was chosen. The following figure depicts the overall architecture of the system: 
+
+
+<P>
+<IMG SRC="autofigarchitecture.jpg" ALT="Image:autofigarchitecture.jpg"> 
+
+
+<P>
+At the server side, a "database mediator server" connects on one side to the databases using the ODBC interface (this interface is available for the databases of the RadioWeb project, as well as for the majority of the databases running in the Win95/NT operating systems) and on the other it is connected to the network by TCP/IP using a fixed socket number / service (currently fixed to socket number 2020). 
+
+
+<P>
+The mediator server must run on the Windows (NT/95) operating system, on the machine where the databases are also running. The (Prolog) clients which connect to it can be run locally at the server machine. In addition, remote clients running on different machines can also connect to the mediator server by connecting to its socket number (service). Such clients can run on either Unix or Windows systems. 
+
+
+<P>
+After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the data will traverse in the opposite direction. These messages include logging on and off from the database, sending SQL queries, and receiving the responses. 
+
+
+<P>
+The low level implementation of the current library is accomplished by providing several abstraction levels over the socket interface library of the Prolog engine. These layers of abstraction implement the persistent predicate view, build the appropriate commands for the database using a translator of Prolog goals to SQL commands, issue such commands using the mediator send/receive procedures, parse the responses, and present such responses to the Prolog engine via backtracking. 
+
+
+
+
+<H2><A NAME="SEC453" HREF="ciao_toc.html#TOC453">Example(s)</A></H2>
+
 
 <PRE>
-:- use_module(library('persdb_sql/db_client')).
+:- include(library('persdb_sql/persdb_sql')).
 :- use_module(library(format)).
-:- use_module(library(lists)).
 
-:- multifile issue_debug_messages/1.
-:- data issue_debug_messages/1.
-issue_debug_messages('db_client').
+%% ------------------------------------------------- %%
+%% First sample database : 'SA 6.0 Sample' %%
+%% ------------------------------------------------- %%
 
-main0:- %% getting the tables existing in a database
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
-        db_login(Stream,'DaletDemo',dalet_admin,dalet_admin,
-%%        db_login(Stream,'ASA 6.0 Sample',dba,sql,
-                 dbconnection(Stream,DbHandle)),
-%%        db_get_tables(dbconnection(Stream,DbHandle),TablesList),
-        db_table_types(dbconnection(Stream,DbHandle),'Titles',AttList),
-        db_logoff(dbconnection(Stream,DbHandle)),
-        odbc_disconnect(Stream),
-        format("Results: ~w \n",AttList).
+%% Declare product/4 a persistent predicate, storage in 'radiowebdb':
+:- sql_persistent(product( int,    int, string, string ),
+              product( quantity,   id,      name,   size   ),
+              sampledb).
+sql_persistent_location(sampledb, %% The 'sampledb' descriptor:
+         db('ASA 6.0 Sample','dba', 'sql','r2d5.dia.fi.upm.es':2020)).
 
-main1 :- %% accessing the whole table in one go
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream), 
-        db_login(Stream,'ASA 6.0 Sample',dba,sql,Conn),
-        db_eval_sql(Conn,"SELECT fname,lname,address from ""DBA"".customer 
-                   WHERE ((Id&#62;100) AND (Id&#60;105))",Term), 
-        write(Term), nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,nl,
-        functor(Term,X,_Y),
-        write(X),nl,
-        Term=..[_|L],
-        write('That is L'),nl,        
-        write(L),nl,L=[M],length(M,N),write(N),
-%        db_eval_sql(Conn,"SELECT id,name,description,color from 
-%                    ""DBA"".product WHERE size='One size fits all' 
-%                    OR size='Large'",Term2), 
-%        write(Term2), nl,
-        db_logoff(Conn),
-        odbc_disconnect(Stream).
+main0 :-
+%% Prints the contents of the relation 'product/4' by backtracking over it:
+         format("Printing table:\n",[]),
+         product(Quantity, Id, Name, Size), 
+         format("Tuple: ~w \t ~w \t ~w \t ~w \n",
+                [Quantity, Id, Name, Size]),
+         fail.
+main0 :-
+         format("Done.\n",[]).
 
-main2:- %% accessing tuples one by one
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
-        db_login(Stream,'ASA 6.0 Sample',dba,sql,Conn),
-        db_stmt_handle(Conn,
-              "SELECT fname,lname,address from ""DBA"".customer 
-               WHERE ((Id&#62;100) AND (Id&#60;105))",QueryConn),
-        db_one_tuple(QueryConn,Answer),
-        format("First Tuple: ~w \n",Answer),
-        db_one_tuple(QueryConn,Answer2),
-        format("Second Tuple: ~w \n",Answer2),
-        db_logoff(Conn),
-        odbc_disconnect(Stream).
+%% Generalizing table printing:
+%% Prints the contents of Pred by backtracking over it
+print_predicate(Pred):- 
+        format("Printing relation:\n",[]),
+        Pred, %% predicate call
+        Pred=..[_|Args],
+        format("\t Tuple: ~w \n",[Args]),
+        fail.
+print_predicate(_Pred):-
+        format("Done.~n",[]).
+
+main1 :- %% similar to main0:
+%% Prints the contents of the relation 'product/4' by backtracking over it:
+        print_predicate(product(_Quantity,_Id,_Name,_Size)).
+
+main2 :- %% Issues a complex query inside a db_findall:
+         dbfindall(sampledb,
+                   foo(Quantity, Id, Name, Size, Bar),
+                   ( product(Quantity, Id, Name, Size),
+                     I^N^S^(Bar is avg(Q,product(Q, I, N, S)))
+                   ),
+                   Results),
+         format("Results = ~w~n",[Results]).
+main21 :- %% Using db_call
+         dbcall(sampledb,
+             (product(Quantity, Id, Name, Size),
+              product(Quantity, Id1, _Name1, _Size1),Id1&#62;Id)),
+%%       product(Quantity, Id, Name, Size),
+%%          product(Quantity, Id1, Name1, Size1),
+%%          Id1&#62;Id,
+         format("Tuple: ~w \t ~w \t ~w \t ~w \n",
+                [Quantity, Id, Name, Size]).
+
+main22 :-  % get the set of tables from a database
+        sql_get_tables(sampledb,TablesList),
+        display(TablesList).
+
+main23 :- % get table attributes and its types 
+        sql_table_types(sampledb, 'Customer', AttList),
+        display(AttList).
         
-main3:- %% bringing tuples (one to one) from Literature Database
-        %% TO SEE : check it
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
-        db_login(Stream,'Literature',dba,sql,Conn),
-        db_stmt_handle(Conn,"SELECT * FROM AUTHORS ORDER BY ID",QueryConn),
-        print_all_one_by_one(QueryConn),
-        db_logoff(Conn),
-        odbc_disconnect(Stream).
+%% ------------------------------------------------- %%
+%% Second sample database : 'Literature'             %%
+%% ------------------------------------------------- %%
 
-print_all_one_by_one(QueryConn):-
-        db_one_tuple(QueryConn,Answer), 
-        Answer\=[],
-        !,
-        format(" ~w \n",Answer),
-        print_all_one_by_one(QueryConn).
-print_all_one_by_one(_QueryConn):-
-        write(' Finished fetching query statement.'),
-        nl.
+:- sql_persistent(authors(string,string,int),
+               authors(firstName,lastName,id), %% 'id' is the primary key
+               literature_db).
+sql_persistent_location(literature_db,
+        db('Literature','dba','sql','r2d5.dia.fi.upm.es':2020)).
 
-main4:- %% inserting a tuple into the Literature database
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
-        db_login(Stream,'Literature',dba,sql,Conn),
-        db_stmt_handle(Conn, 
-               "INSERT INTO AUTHORS values ('Martin Gaite',
-                'Carmen',10,'1910-7-10 00:00:00:000')",_QueryConn),
-        db_logoff(Conn),
-        odbc_disconnect(Stream).
-        
-main5:- %% creating a view
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
-        db_login(Stream,'Literature',dba,sql,Conn),
-        db_stmt_handle(Conn,
-               "CREATE VIEW AntoniosDateOfBirth AS SELECT 
-                LastName,Date_of_birth FROM 
-                AUTHORS where FirstName='Antonio';",_QueryConn),
-        db_logoff(Conn),
-        odbc_disconnect(Stream).        
+main3:- %% Prints the contents of authors
+         print_predicate(authors(_FirstName,_LastName,_Id)) .
 
-main6:- %% printing the view
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
-        db_login(Stream,'Literature',dba,sql,Conn),
-        db_eval_sql(Conn,"select * from AntoniosDateOfBirth",Term),
-        write(Term),
-        db_logoff(Conn),
-        odbc_disconnect(Stream).
+main4:- %% assert a persistent fact
+         dbassertz_fact(authors('Pedro','Calderon de la Barca',17)).
 
-main7:- %% dropping a view
-        odbc_connect('r2d5.dia.fi.upm.es':2020,Stream),
-        db_login(Stream,'Literature',dba,sql,Conn),
-        db_eval_sql(Conn,"DROP VIEW AntoniosDateOfBirth",Term),
-        write(Term),
-        db_logoff(Conn),
-        odbc_disconnect(Stream).
+main6:- %% retract a persistent fact
+         dbretract_fact(authors('Pedro','Calderon de la Barca',17)).
+
+main9:- %% checking if a persistent fact is a current fact
+        dbcurrent_fact(authors(_X,_Y,_Z)).
 
 </PRE>
 
 
-<UL>
-<LI><A HREF="ciao_114.html#SEC414">Usage and interface (db_client)</A>
-<LI><A HREF="ciao_114.html#SEC415">Documentation on exports (db_client)</A>
-<LI><A HREF="ciao_114.html#SEC416">Documentation on internals (db_client)</A>
-<LI><A HREF="ciao_114.html#SEC417">Known bugs and planned improvements (db_client)</A>
-</UL>
 
-
-
-<H2><A NAME="SEC414" HREF="ciao_toc.html#TOC414">Usage and interface (<CODE>db_client</CODE>)</A></H2>
+<H2><A NAME="SEC454" HREF="ciao_toc.html#TOC454">Usage and interface (<CODE>persdbrtsql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -199,7 +224,40 @@ main7:- %% dropping a view
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(db_client)).</CODE>
+Typically, this library is used including the 'persdb_sql' package into the package list of the module, or using the 
+<A NAME="IDX4872"></A>
+<CODE>use_package/1</CODE> declaration: 
+<DL COMPACT>
+
+<DT>In a module:
+<DD>
+
+<PRE>
+	:- module(bar, [main/1], [persdb_sql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- module(bar, [main/1]).
+        :- include(library(persdb_sql)).
+</PRE>
+
+<DT>In a <EM>user</EM> file:
+<DD>
+
+<PRE>
+	:- use_package([persdb_sql]).
+</PRE>
+
+or 
+
+<PRE>
+        :- include(library(persdb_sql)).
+</PRE>
+
+</DL>
+This loads the run-time and compile-time versions of the library (<CODE>persdbtr_sql.pl</CODE> and <CODE>persdbrt_sql.pl</CODE>) and includes some needed declarations.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -208,45 +266,33 @@ main7:- %% dropping a view
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4440"></A>
-<CODE>odbc_connect/2</CODE>, 
-<A NAME="IDX4441"></A>
-<CODE>db_login/5</CODE>, 
-<A NAME="IDX4442"></A>
-<CODE>db_eval_sql/3</CODE>, 
-<A NAME="IDX4443"></A>
-<CODE>db_stmt_handle/3</CODE>, 
-<A NAME="IDX4444"></A>
-<CODE>db_one_tuple/2</CODE>, 
-<A NAME="IDX4445"></A>
-<CODE>db_get_tables/2</CODE>, 
-<A NAME="IDX4446"></A>
-<CODE>db_table_types/3</CODE>, 
-<A NAME="IDX4447"></A>
-<CODE>db_logoff/1</CODE>, 
-<A NAME="IDX4448"></A>
-<CODE>odbc_disconnect/1</CODE>.
+<A NAME="IDX4873"></A>
+<CODE>init_sql_persdb/0</CODE>, 
+<A NAME="IDX4874"></A>
+<CODE>dbassertz_fact/1</CODE>, 
+<A NAME="IDX4875"></A>
+<CODE>dbretract_fact/1</CODE>, 
+<A NAME="IDX4876"></A>
+<CODE>dbcurrent_fact/1</CODE>, 
+<A NAME="IDX4877"></A>
+<CODE>dbretractall_fact/1</CODE>, 
+<A NAME="IDX4878"></A>
+<CODE>make_sql_persistent/3</CODE>, 
+<A NAME="IDX4879"></A>
+<CODE>dbfindall/4</CODE>, 
+<A NAME="IDX4880"></A>
+<CODE>dbcall/2</CODE>, 
+<A NAME="IDX4881"></A>
+<CODE>sql_query/3</CODE>, 
+<A NAME="IDX4882"></A>
+<CODE>sql_get_tables/2</CODE>, 
+<A NAME="IDX4883"></A>
+<CODE>sql_table_types/3</CODE>.
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Multifiles:</EM>
 
-<A NAME="IDX4449"></A>
-<CODE>socketname/1</CODE>, 
-<A NAME="IDX4450"></A>
-<CODE>dbname/1</CODE>, 
-<A NAME="IDX4451"></A>
-<CODE>user/1</CODE>, 
-<A NAME="IDX4452"></A>
-<CODE>passwd/1</CODE>, 
-<A NAME="IDX4453"></A>
-<CODE>dbconnection/1</CODE>, 
-<A NAME="IDX4454"></A>
-<CODE>answertableterm/1</CODE>, 
-<A NAME="IDX4455"></A>
-<CODE>tuple/1</CODE>, 
-<A NAME="IDX4456"></A>
-<CODE>dbqueryconnection/1</CODE>, 
-<A NAME="IDX4457"></A>
-<CODE>answertupleterm/1</CODE>.
+<A NAME="IDX4884"></A>
+<CODE>sql_persistent_location/2</CODE>.
 
 </UL>
 
@@ -257,18 +303,26 @@ main7:- %% dropping a view
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4458"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX4459"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX4460"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX4461"></A>
+<A NAME="IDX4885"></A>
+<CODE>persdb_sql/db_client</CODE>, 
+<A NAME="IDX4886"></A>
+<CODE>persdb_sql/pl2sql</CODE>, 
+<A NAME="IDX4887"></A>
+<CODE>persdb_sql/sqltypes</CODE>, 
+<A NAME="IDX4888"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX4889"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX4890"></A>
+<CODE>metaterms</CODE>, 
+<A NAME="IDX4891"></A>
+<CODE>messages</CODE>, 
+<A NAME="IDX4892"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX4462"></A>
-<CODE>persdb_sql/string2term</CODE>, 
-<A NAME="IDX4463"></A>
-<CODE>messages</CODE>.
+<A NAME="IDX4893"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX4894"></A>
+<CODE>persdb_sql/insert_compiler/pl2sqlinsert</CODE>.
 
 </UL>
 
@@ -278,420 +332,302 @@ main7:- %% dropping a view
 
 
 
-<H2><A NAME="SEC415" HREF="ciao_toc.html#TOC415">Documentation on exports (<CODE>db_client</CODE>)</A></H2>
+<H2><A NAME="SEC455" HREF="ciao_toc.html#TOC455">Documentation on exports (<CODE>persdbrtsql</CODE>)</A></H2>
 <P>
-<A NAME="IDX4464"></A>
-<A NAME="IDX4465"></A>
+<A NAME="IDX4895"></A>
+<A NAME="IDX4896"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>odbc_connect/2:</B>
-<DD><A NAME="IDX4466"></A>
+<DT><span class="define">PREDICATE:</span> <B>init_sql_persdb/0:</B>
+<DD><A NAME="IDX4897"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>odbc_connect(+DbAddress,-(Stream))</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Opens a socket connection to port <CODE>DbAddress</CODE>, which should be the address of a
+<LI><EM>Description:</EM> Internal predicate, used to transform predicates statically declared as persistent (see
 
-<A NAME="IDX4467"></A>
-database mediator server. <CODE>Stream</CODE> is the identifier of the corresponding Prolog stream. It is simply a call to 
-<A NAME="IDX4468"></A>
-<CODE>connect_to_socket/3</CODE> 
+<A NAME="IDX4898"></A>
+<CODE>sql_persistent/3</CODE>) into real persistent predicates.  
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4899"></A>
+<A NAME="IDX4900"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_persistent/3:</B>
+<DD><A NAME="IDX4901"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4902"></A>
+<A NAME="IDX4903"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbassertz_fact/1:</B>
+<DD><A NAME="IDX4904"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbassertz_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX4905"></A>
+<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added to the end of the definition of the corresponding predicate. If any integrity constraint violation is done (database stored predicates), an error will be displayed. The predicate concerned must be statically (
+<A NAME="IDX4906"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX4907"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. <STRONG>Note:</STRONG> <EM>assertion of facts with uninstantiated variables not implemented at this time.</EM> 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+DbAddress</CODE> is a structure describing a complete TCP/IP port address.
- (<CODE>db_client:socketname/1</CODE>)
-
-<CODE>-(Stream)</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtsql:fact/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4469"></A>
-<A NAME="IDX4470"></A>
+<A NAME="IDX4908"></A>
+<A NAME="IDX4909"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>db_login/5:</B>
-<DD><A NAME="IDX4471"></A>
+<DT><span class="define">PREDICATE:</span> <B>dbretract_fact/1:</B>
+<DD><A NAME="IDX4910"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>db_login(+Stream,+DbName,+User,+Passwd,-(DbConnection))</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbretract_fact(+Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Logs on to the database <CODE>DbName</CODE> with user <CODE>User</CODE> and password <CODE>Passwd</CODE> via connection <CODE>Stream</CODE>. <CODE>DbConnection</CODE> contains the identifier of the session, to be used in the calls to other predicates defining the interface. It fails and display an error message if the login is not succesfully completed.
+<LI><EM>Description:</EM> Persistent extension of
 
+<A NAME="IDX4911"></A>
+<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX4912"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX4913"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
-
-<CODE>+DbName</CODE> is the identifier of an ODBC database.
- (<CODE>db_client:dbname/1</CODE>)
-
-<CODE>+User</CODE> is a user name in the ODBC database.
- (<CODE>db_client:user/1</CODE>)
-
-<CODE>+Passwd</CODE> is the password for the user name in the ODBC database.
- (<CODE>db_client:passwd/1</CODE>)
-
-<CODE>-(DbConnection)</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtsql:fact/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4472"></A>
-<A NAME="IDX4473"></A>
+<A NAME="IDX4914"></A>
+<A NAME="IDX4915"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
-<DD><A NAME="IDX4474"></A>
+<DT><span class="define">PREDICATE:</span> <B>dbcurrent_fact/1:</B>
+<DD><A NAME="IDX4916"></A>
 
-
-
-<PRE>
-socketname(IPAddress:PortNumber) :-
-        atm(IPAddress),
-        int(PortNumber).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbcurrent_fact(+Fact)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
+<LI><EM>Description:</EM> Persistent extension of
 
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4475"></A>
-<A NAME="IDX4476"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
-<DD><A NAME="IDX4477"></A>
-
-
-
-<PRE>
-dbname(DBId) :-
-        atm(DBId).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an ODBC database.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4478"></A>
-<A NAME="IDX4479"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
-<DD><A NAME="IDX4480"></A>
-
-
-
-<PRE>
-user(User) :-
-        atm(User).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the ODBC database.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4481"></A>
-<A NAME="IDX4482"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
-<DD><A NAME="IDX4483"></A>
-
-
-
-<PRE>
-passwd(Passwd) :-
-        atm(Passwd).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the ODBC database.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4484"></A>
-<A NAME="IDX4485"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX4486"></A>
-
-
-
-<PRE>
-dbconnection(dbconnection(DbStream,DbHandle)) :-
-        stream(DbStream),
-        dbhandle(DbHandle).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4487"></A>
-<A NAME="IDX4488"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>db_eval_sql/3:</B>
-<DD><A NAME="IDX4489"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>db_eval_sql(+DbConnection,+Sentence,-(AnswerTableTerm))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Evaluates the SQL code in <CODE>Sentence</CODE> in database session <CODE>DbConnection</CODE>. <CODE>AnswerTableTerm</CODE> is the response. If a wrong answer is obtained, <CODE>AnswerTableTerm</CODE> will indicate the error (see
-
-<A NAME="IDX4490"></A>
-<CODE>answertableterm</CODE> for details). 
+<A NAME="IDX4917"></A>
+<CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
+<A NAME="IDX4918"></A>
+<CODE>sql_persistent/3</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtsql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4919"></A>
+<A NAME="IDX4920"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbretractall_fact/1:</B>
+<DD><A NAME="IDX4921"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbretractall_fact(+Fact)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Persistent extension of
+
+<A NAME="IDX4922"></A>
+<CODE>retractall_fact/1</CODE>: when called deletes all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
+<A NAME="IDX4923"></A>
+<CODE>sql_persistent/3</CODE>) or dinamically (
+<A NAME="IDX4924"></A>
+<CODE>make_sql_persistent/3</CODE>) declared. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
+ (<CODE>persdbrtsql:fact/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4925"></A>
+<A NAME="IDX4926"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>make_sql_persistent/3:</B>
+<DD><A NAME="IDX4927"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>make_sql_persistent(addmodule,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>make_sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Dynamic version of the
+
+<A NAME="IDX4928"></A>
+<CODE>sql_persistent/3</CODE> declaration. 
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
+ (<CODE>persdbrtsql:prologPredTypes/1</CODE>)
+
+<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
+ (<CODE>persdbrtsql:tableAttributes/1</CODE>)
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrtsql:persLocId/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4929"></A>
+<A NAME="IDX4930"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbfindall/4:</B>
+<DD><A NAME="IDX4931"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbfindall(+DBId,+Pattern,+ComplexGoal,-(Results))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Similar to
+
+<A NAME="IDX4932"></A>
+<CODE>findall/3</CODE>, but <CODE>Goal</CODE> is executed in database <CODE>DBId</CODE>. Certain restrictions and extensions apply to both <CODE>Pattern</CODE> and <CODE>ComplexGoal</CODE> stemming from the Prolog to SQL translation involved (see the corresponding type definitions for details). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
  (<CODE>db_client:dbconnection/1</CODE>)
 
-<CODE>+Sentence</CODE> is a string of SQL code.
- (<CODE>db_client:sqlstring/1</CODE>)
+<CODE>+Pattern</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
 
-<CODE>-(AnswerTableTerm)</CODE> is a response from the ODBC database interface.
+<CODE>+ComplexGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>-(Results)</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4933"></A>
+<A NAME="IDX4934"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dbcall/2:</B>
+<DD><A NAME="IDX4935"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbcall(+DBId,+ComplexGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Internal predicate, used by the transformed versions of the persistent predicates. Not meant to be called directly by users. It is exported by the library so that it can be used by the transformed versions of the persistent predicates in the modules in which they reside. Sends <CODE>ComplexGoal</CODE> to database <CODE>DBId</CODE> for evaluation. <CODE>ComplexGoal</CODE> must be a call to a persistent predicate which resides in database <CODE>DBId</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+ComplexGoal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4936"></A>
+<A NAME="IDX4937"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_query/3:</B>
+<DD><A NAME="IDX4938"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sql_query(+DBId,+SQLString,AnswerTableTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is the response from database <CODE>DBId</CODE> to the
+
+<A NAME="IDX4939"></A>
+SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerTableTerm</CODE> can express a set of tuples, an error answer or a 'ok' response (see 
+<A NAME="IDX4940"></A>
+<CODE>answertableterm/1</CODE> for details). At the moment, 
+<A NAME="IDX4941"></A>
+<CODE>sql_query/3</CODE> log in and out for each query. This should be changed to log in only the first time and log out on exit and/or via a timer in the standard way. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+SQLString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
+
+<CODE>AnswerTableTerm</CODE> is a response from the ODBC database interface.
  (<CODE>db_client:answertableterm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4491"></A>
-<A NAME="IDX4492"></A>
+<A NAME="IDX4942"></A>
+<A NAME="IDX4943"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>answertableterm/1:</B>
-<DD><A NAME="IDX4493"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_get_tables/2:</B>
+<DD><A NAME="IDX4944"></A>
 
 
 <P>
-Represents the types of responses that will be returned from the ODBC database interface. These can be a set of answer tuples, or the atom <CODE>ok</CODE> in case of a successful addition or deletion.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>answertableterm(AT)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>sql_get_tables(+Location,-(Tables))</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>AT</CODE> is a response from the ODBC database interface.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4494"></A>
-<A NAME="IDX4495"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
-<DD><A NAME="IDX4496"></A>
-
-
-
-<PRE>
-tuple(T) :-
-        list(T,atm).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4497"></A>
-<A NAME="IDX4498"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>db_stmt_handle/3:</B>
-<DD><A NAME="IDX4499"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>db_stmt_handle(+DbConnection,+Sentence,-(DbQueryConnection))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Evaluates the SQL code in <CODE>Sentence</CODE> in database session <CODE>DbConnection</CODE>. If <CODE>Sentence</CODE> is a succesfull selection, <CODE>DbQueryConnection</CODE> is a <EM>handle</EM> to the set of tuples produced by this selection. The individual members of this set can then be accessed via <CODE>DbQueryConnection</CODE> using the
-
-<A NAME="IDX4500"></A>
-<CODE>db_one_tuple/2</CODE> predicate. If <CODE>Sentence</CODE> is not succesfull or is not a selection, <CODE>DbQueryConnection</CODE> will contain the answer received. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
- (<CODE>db_client:dbconnection/1</CODE>)
-
-<CODE>+Sentence</CODE> is a string of SQL code.
- (<CODE>db_client:sqlstring/1</CODE>)
-
-<CODE>-(DbQueryConnection)</CODE> is a unique identifier of a query answer in a database session connection.
- (<CODE>db_client:dbqueryconnection/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4501"></A>
-<A NAME="IDX4502"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
-<DD><A NAME="IDX4503"></A>
-
-
-
-<PRE>
-dbqueryconnection(dbqueryconnection(DbStream,DbHandle,StmtHandle)) :-
-        stream(DbStream),
-        dbhandle(DbHandle),
-        stmthandle(StmtHandle).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4504"></A>
-<A NAME="IDX4505"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>db_one_tuple/2:</B>
-<DD><A NAME="IDX4506"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>db_one_tuple(+DbQueryConnection,-(TupleTerm))</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>TupleTerm</CODE> represents the last tuple read from handle <CODE>DbQueryConnection</CODE>. Will be an empty list if all the answers have already been read. It displays an error if any unformatted string is fetched.
+<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>Location</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+DbQueryConnection</CODE> is a unique identifier of a query answer in a database session connection.
- (<CODE>db_client:dbqueryconnection/1</CODE>)
+<CODE>persdbrtsql:persLocation(+Location)</CODE>
+ (<CODE>persdbrtsql:persLocation/1</CODE>)
 
-<CODE>-(TupleTerm)</CODE> is a predicate containing a tuple.
- (<CODE>db_client:answertupleterm/1</CODE>)
+<CODE>-(Tables)</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX4507"></A>
-<A NAME="IDX4508"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>answertupleterm/1:</B>
-<DD><A NAME="IDX4509"></A>
-
-
-
-<PRE>
-answertupleterm([]).
-answertupleterm(tup(T)) :-
-        tuple(T).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>answertupleterm(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a predicate containing a tuple.
-
-<LI><EM>The following properties should hold globally:</EM>
-
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4510"></A>
-<A NAME="IDX4511"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>db_get_tables/2:</B>
-<DD><A NAME="IDX4512"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>db_get_tables(+DbConnection,-(Tables))</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>sql_get_tables(+DbConnection,-(Tables))</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>DbConnection</CODE>.
@@ -708,15 +644,33 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4513"></A>
-<A NAME="IDX4514"></A>
+<A NAME="IDX4945"></A>
+<A NAME="IDX4946"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>db_table_types/3:</B>
-<DD><A NAME="IDX4515"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_table_types/3:</B>
+<DD><A NAME="IDX4947"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>db_table_types(+DbConnection,+Table,-(AttrTypes))</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>sql_table_types(+Location,+Table,-(AttrTypes))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>Location</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>persdbrtsql:persLocation(+Location)</CODE>
+ (<CODE>persdbrtsql:persLocation/1</CODE>)
+
+<CODE>+Table</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-(AttrTypes)</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>sql_table_types(+DbConnection,+Table,-(AttrTypes))</CODE>
 
 <UL>
 <LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>DbConnection</CODE>.
@@ -736,137 +690,359 @@ Defines a regular type.
 </DL>
 
 <P>
-<A NAME="IDX4516"></A>
-<A NAME="IDX4517"></A>
+<A NAME="IDX4948"></A>
+<A NAME="IDX4949"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>db_logoff/1:</B>
-<DD><A NAME="IDX4518"></A>
+<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
+<DD><A NAME="IDX4950"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>db_logoff(+DbConnection)</CODE>
+<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Logs off from the database identified by <CODE>DbConnection</CODE>. It fails and display an error message if the login is not succesfully completed.
+<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4951"></A>
+<A NAME="IDX4952"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
+<DD><A NAME="IDX4953"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an ODBC database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4954"></A>
+<A NAME="IDX4955"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
+<DD><A NAME="IDX4956"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the ODBC database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4957"></A>
+<A NAME="IDX4958"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
+<DD><A NAME="IDX4959"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the ODBC database.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4960"></A>
+<A NAME="IDX4961"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
+<DD><A NAME="IDX4962"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4963"></A>
+<A NAME="IDX4964"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
+<DD><A NAME="IDX4965"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4966"></A>
+<DL>
+<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
+<DD><A NAME="IDX4967"></A>
+
+
+<P>
+ Imported from 
+<A NAME="IDX4968"></A>
+<CODE>sqltypes</CODE> (see the corresponding documentation for details).
+
+
+</DL>
+
+
+
+<H2><A NAME="SEC456" HREF="ciao_toc.html#TOC456">Documentation on multifiles (<CODE>persdbrtsql</CODE>)</A></H2>
+<P>
+<A NAME="IDX4969"></A>
+<A NAME="IDX4970"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sql_persistent_location/2:</B>
+<DD><A NAME="IDX4971"></A>
+
+
+<P>
+Relates names of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location</CODE>s).
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+<P>
+The predicate is of type <EM>data</EM>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>sql_persistent_location(Keyword,Location)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Keyword</CODE> is an identifier for the persistent data location <CODE>Location</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrtsql:persLocId/1</CODE>)
+
+<CODE>persdbrtsql:persLocation(Location)</CODE>
+ (<CODE>persdbrtsql:persLocation/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>sql_persistent_location(Keyword,DBLocation)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> In this usage, <CODE>DBLocation</CODE> is a <EM>relational database</EM>, in which case the predicate is stored as tuples in the database.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Keyword</CODE> is the name of a persistent storage location.
+ (<CODE>persdbrtsql:persLocId/1</CODE>)
+
+<CODE>DBLocation</CODE> is a structure describing a database.
+ (<CODE>persdbrtsql:database_desc/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC457" HREF="ciao_toc.html#TOC457">Documentation on internals (<CODE>persdbrtsql</CODE>)</A></H2>
+<P>
+<A NAME="IDX4972"></A>
+<A NAME="IDX4973"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>db_query/4:</B>
+<DD><A NAME="IDX4974"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>db_query(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> contains all the
+
+<A NAME="IDX4975"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX4976"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX4977"></A>
+Prolog to SQL translation and 
+<A NAME="IDX4978"></A>
+<CODE>sql_query/3</CODE> for posing the actual query. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
  (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>db_client:tuple/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4519"></A>
-<A NAME="IDX4520"></A>
+<A NAME="IDX4979"></A>
+<A NAME="IDX4980"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>odbc_disconnect/1:</B>
-<DD><A NAME="IDX4521"></A>
+<DT><span class="define">PREDICATE:</span> <B>db_query_one_tuple/4:</B>
+<DD><A NAME="IDX4981"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>odbc_disconnect(+Stream)</CODE>
+<STRONG>Usage:</STRONG> <CODE>db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Closes the socket connection to <CODE>Stream</CODE>. It is simply a call to
+<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is one of the
 
-<A NAME="IDX4522"></A>
-<CODE>close/1</CODE>. 
+<A NAME="IDX4982"></A>
+tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
+<A NAME="IDX4983"></A>
+<CODE>pl2sqlstring/3</CODE> for the 
+<A NAME="IDX4984"></A>
+Prolog to SQL translation and 
+<A NAME="IDX4985"></A>
+<CODE>sql_query_one_tuple/3</CODE> for posing the actual query. After last tuple has been reached, a null tuple is unified with ResultTerm, and the connection to the database finishes. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Stream</CODE> is an open stream.
- (<CODE>streams_basic:stream/1</CODE>)
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+ProjTerm</CODE> is a database projection term.
+ (<CODE>pl2sql:projterm/1</CODE>)
+
+<CODE>+Goal</CODE> is a database query goal.
+ (<CODE>pl2sql:querybody/1</CODE>)
+
+<CODE>ResultTerm</CODE> is a predicate containing a tuple.
+ (<CODE>db_client:answertupleterm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4523"></A>
-<A NAME="IDX4524"></A>
+<A NAME="IDX4986"></A>
+<A NAME="IDX4987"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>match_string/3:</B>
-<DD><A NAME="IDX4525"></A>
+<DT><span class="define">PREDICATE:</span> <B>sql_query_one_tuple/3:</B>
+<DD><A NAME="IDX4988"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC416" HREF="ciao_toc.html#TOC416">Documentation on internals (<CODE>db_client</CODE>)</A></H2>
-<P>
-<A NAME="IDX4526"></A>
-<A NAME="IDX4527"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbhandle/1:</B>
-<DD><A NAME="IDX4528"></A>
-
-
-
-<PRE>
-dbhandle(H) :-
-        string(H).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbhandle(H)</CODE>
+<STRONG>Usage:</STRONG> <CODE>sql_query_one_tuple(+DBId,+SQLString,ResultTuple)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> is the internal database identifier (handle) of a database session.
+<LI><EM>Description:</EM> <CODE>ResultTuple</CODE> contains an element from the set of tuples which represents the response in <CODE>DBId</CODE> to the
 
-<LI><EM>The following properties should hold globally:</EM>
+<A NAME="IDX4989"></A>
+SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls return consecutive tuples, until the last tuple is reached. Then a null tuple is unified with <CODE>ResultTuple</CODE> and the connection is finished (calls to 
+<A NAME="IDX4990"></A>
+<CODE>db_logoff/1</CODE> and 
+<A NAME="IDX4991"></A>
+<CODE>odbc_disconnect/1</CODE>). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
+<CODE>+DBId</CODE> a unique identifier of a database session connection.
+ (<CODE>db_client:dbconnection/1</CODE>)
+
+<CODE>+SQLString</CODE> is a string containing SQL code.
+ (<CODE>pl2sql:sqlstring/1</CODE>)
+
+<CODE>ResultTuple</CODE> is a tuple of values from the ODBC database interface.
+ (<CODE>db_client:tuple/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4529"></A>
-<A NAME="IDX4530"></A>
+<A NAME="IDX4992"></A>
+<A NAME="IDX4993"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>stmthandle/1:</B>
-<DD><A NAME="IDX4531"></A>
+<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
+<DD><A NAME="IDX4994"></A>
 
-
-
-<PRE>
-stmthandle(H) :-
-        string(H).
-</PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>stmthandle(H)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> is the internal statement identifier (handle) of a query answer in a database session connection.
+<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
 
-<LI><EM>The following properties should hold globally:</EM>
+</UL>
 
-Defines a regular type.
- (<CODE>basic_props:regtype/1</CODE>)
+</DL>
+
+<P>
+<A NAME="IDX4995"></A>
+<A NAME="IDX4996"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
+<DD><A NAME="IDX4997"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
+
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC417" HREF="ciao_toc.html#TOC417">Known bugs and planned improvements (<CODE>db_client</CODE>)</A></H2>
+<H2><A NAME="SEC458" HREF="ciao_toc.html#TOC458">Known bugs and planned improvements (<CODE>persdbrtsql</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-Need to fix the problem with parametric types being meta_predicates ... list(_,tuple/1).
+At least in the shell, reloading a file after changing the definition of a persistent predicate does not eliminate the old definition...
+
+<LI>
+
+Functionality missing: some questions need to be debugged.
+
+<LI>
+
+Warning: still using kludgey string2term and still using some non-uniquified temp files.
+
+<LI>
+
+Needs to be unified with the file-based library.
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_113.html">previous</A>, <A HREF="ciao_115.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

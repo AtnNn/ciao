@@ -1,22 +1,234 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART IX - Abstract data types</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC430" HREF="ciao_toc.html#TOC430">PART IX - Abstract data types</A></H1>
+<H1><A NAME="SEC482" HREF="ciao_toc.html#TOC482">Low-level Prolog to Java socket connection</A></H1>
+<P>
+<A NAME="IDX5404"></A>
+
 
 <P>
-This part includes libraries which implement some generic data structures that are habitually used in programs.
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
 
+
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#49 (2000/2/8, 16:35:38 CET)
+
+
+<P>
+ 
+<A NAME="IDX5405"></A>
+<A NAME="IDX5406"></A>
+This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
+<A NAME="IDX5407"></A>
+<CODE>javart</CODE> (Prolog to Java low-level interface) or 
+<A NAME="IDX5408"></A>
+<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
+
+
+
+<UL>
+<LI><A HREF="ciao_119.html#SEC483">Usage and interface (javasock)</A>
+<LI><A HREF="ciao_119.html#SEC484">Documentation on exports (javasock)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC483" HREF="ciao_toc.html#TOC483">Usage and interface (<CODE>javasock</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(javasock)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX5409"></A>
+<CODE>socket_connection/2</CODE>, 
+<A NAME="IDX5410"></A>
+<CODE>socket_disconnection/0</CODE>, 
+<A NAME="IDX5411"></A>
+<CODE>java_fast_read/2</CODE>, 
+<A NAME="IDX5412"></A>
+<CODE>java_fast_write/2</CODE>, 
+<A NAME="IDX5413"></A>
+<CODE>java_stream/3</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5414"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX5415"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX5416"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX5417"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX5418"></A>
+<CODE>format</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC484" HREF="ciao_toc.html#TOC484">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
+<P>
+<A NAME="IDX5419"></A>
+<A NAME="IDX5420"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>socket_connection/2:</B>
+<DD><A NAME="IDX5421"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socket_connection(+node,+stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a stream connected to a node, it gets the socket port from the given stream and creates the sockets to connect to the java process.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+node</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5422"></A>
+<A NAME="IDX5423"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>socket_disconnection/0:</B>
+<DD><A NAME="IDX5424"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> It closes the sockets to disconnect from the java process.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5425"></A>
+<A NAME="IDX5426"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_fast_read/2:</B>
+<DD><A NAME="IDX5427"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_fast_read(+type,-(term))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It reads from the given stream type one term and unifies it with the term received as second argument. This is the basic predicate used to receive data from the Java side. The first argument reflects the socket type: event or data. The second argument is unified with the data received from the socket.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+type</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>-(term)</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5428"></A>
+<A NAME="IDX5429"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_fast_write/2:</B>
+<DD><A NAME="IDX5430"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_fast_write(+type,+term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  It writes on the given stream type the term received as second argument. This is the basic predicate used to send data to the Java side. The first argument reflects the socket type: event or data. The second argument is the term to be sent to the Java side.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+type</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+term</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5431"></A>
+<A NAME="IDX5432"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_stream/3:</B>
+<DD><A NAME="IDX5433"></A>
+
+
+<P>
+The predicate is of type <EM>dynamic</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_stream(DataStream,EventStream,Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains the data and event streams, and the network address where the Java process is running.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>DataStream</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>EventStream</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>undefined:machine_name(Address)</CODE>
+ (undefined property)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_118.html">previous</A>, <A HREF="ciao_120.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

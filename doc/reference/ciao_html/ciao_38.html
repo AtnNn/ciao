@@ -1,29 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - iso_byte_char (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Dynamic predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC150" HREF="ciao_toc.html#TOC150">iso_byte_char (library)</A></H1>
+<H1><A NAME="SEC195" HREF="ciao_toc.html#TOC195">Dynamic predicates</A></H1>
 <P>
-<A NAME="IDX1855"></A>
+<A NAME="IDX2221"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.5#30 (1998/6/30, 14:23:37 MET DST)
+
+
+<P>
+This module implements the assert/retract family of predicates to manipulate dynamic predicates. 
+
+
+<P>
+The predicates defined in this module allow modification of the program as it is actually running. Clauses can be added to the program (<EM>asserted</EM>) or removed from the program (<EM>retracted</EM>). For these predicates, the argument which corresponds to the clause head must be instantiated to an atom or a compound term. The argument corresponding to the clause must be instantiated either to a term <CODE>Head :- Body</CODE> or, if the body part is empty, to <CODE>Head</CODE>. An empty body part is represented as <CODE>true</CODE>. 
 
 
 
 <UL>
-<LI><A HREF="ciao_38.html#SEC151">Usage and interface (iso_byte_char)</A>
-<LI><A HREF="ciao_38.html#SEC152">Documentation on exports (iso_byte_char)</A>
+<LI><A HREF="ciao_38.html#SEC196">Usage and interface (dynamic)</A>
+<LI><A HREF="ciao_38.html#SEC197">Documentation on exports (dynamic)</A>
+<LI><A HREF="ciao_38.html#SEC198">Documentation on multifiles (dynamic)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC151" HREF="ciao_toc.html#TOC151">Usage and interface (<CODE>iso_byte_char</CODE>)</A></H2>
+<H2><A NAME="SEC196" HREF="ciao_toc.html#TOC196">Usage and interface (<CODE>dynamic</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,20 +48,405 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(iso_byte_char)).</CODE>
+<CODE>:- use_module(library(dynamic)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX2222"></A>
+<CODE>asserta/1</CODE>, 
+<A NAME="IDX2223"></A>
+<CODE>asserta/2</CODE>, 
+<A NAME="IDX2224"></A>
+<CODE>assertz/1</CODE>, 
+<A NAME="IDX2225"></A>
+<CODE>assertz/2</CODE>, 
+<A NAME="IDX2226"></A>
+<CODE>assert/1</CODE>, 
+<A NAME="IDX2227"></A>
+<CODE>assert/2</CODE>, 
+<A NAME="IDX2228"></A>
+<CODE>retract/1</CODE>, 
+<A NAME="IDX2229"></A>
+<CODE>retractall/1</CODE>, 
+<A NAME="IDX2230"></A>
+<CODE>abolish/1</CODE>, 
+<A NAME="IDX2231"></A>
+<CODE>clause/2</CODE>, 
+<A NAME="IDX2232"></A>
+<CODE>clause/3</CODE>, 
+<A NAME="IDX2233"></A>
+<CODE>current_predicate/1</CODE>, 
+<A NAME="IDX2234"></A>
+<CODE>data/1</CODE>, 
+<A NAME="IDX2235"></A>
+<CODE>wellformed_body/3</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX2236"></A>
+<CODE>do_on_abolish/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX2237"></A>
+<CODE>assertions/doc_props</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC152" HREF="ciao_toc.html#TOC152">Documentation on exports (<CODE>iso_byte_char</CODE>)</A></H2>
+<H2><A NAME="SEC197" HREF="ciao_toc.html#TOC197">Documentation on exports (<CODE>dynamic</CODE>)</A></H2>
 <P>
-<A NAME="IDX1856"></A>
-<A NAME="IDX1857"></A>
+<A NAME="IDX2238"></A>
+<A NAME="IDX2239"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>char_code/2:</B>
-<DD><A NAME="IDX1858"></A>
+<DT><span class="define">PREDICATE:</span> <B>asserta/1:</B>
+<DD><A NAME="IDX2240"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>asserta(+Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The current instance of <CODE>Clause</CODE> is interpreted as a clause and is added to the current program. The predicate concerned must be dynamic. The new clause becomes the <EM>first</EM> clause for the predicate concerned. Any uninstantiated variables in the <CODE>Clause</CODE> will be replaced by new private variables.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>asserta(+Clause)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2241"></A>
+<A NAME="IDX2242"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>asserta/2:</B>
+<DD><A NAME="IDX2243"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>asserta(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>asserta(+Clause,-(Ref))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>asserta(+Clause,-(Ref))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2244"></A>
+<A NAME="IDX2245"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assertz/1:</B>
+<DD><A NAME="IDX2246"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz(+Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Like <CODE>asserta/1</CODE>, except that the new clause becomes the <EM>last</EM> clause for the predicate concerned.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>assertz(+Clause)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2247"></A>
+<A NAME="IDX2248"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assertz/2:</B>
+<DD><A NAME="IDX2249"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assertz(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assertz(+Clause,-(Ref))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Like <CODE>assertz/1</CODE>. <CODE>Ref</CODE> is a unique identifier of the asserted clause.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>assertz(+Clause,-(Ref))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2250"></A>
+<A NAME="IDX2251"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assert/1:</B>
+<DD><A NAME="IDX2252"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assert(+Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Identical to <CODE>assertz/1</CODE>. Included for compatibility.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>assert(+Clause)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2253"></A>
+<A NAME="IDX2254"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>assert/2:</B>
+<DD><A NAME="IDX2255"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>assert(clause,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>assert(+Clause,-(Ref))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Identical to <CODE>assertz/2</CODE>. Included for compatibility.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>assert(+Clause,-(Ref))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2256"></A>
+<A NAME="IDX2257"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retract/1:</B>
+<DD><A NAME="IDX2258"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retract(clause)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retract(+Clause)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The first clause in the program that matches <CODE>Clause</CODE> is erased. The predicate concerned must be dynamic.
+
+The predicate <CODE>retract/1</CODE> may be used in a non-determinate fashion, i.e., it will successively retract clauses matching the argument through backtracking. If reactivated by backtracking, invocations of the predicate whose clauses are being retracted will proceed unaffected by the retracts. This is also true for invocations of <CODE>clause</CODE> for the same predicate. The space occupied by a retracted clause will be recovered when instances of the clause are no longer in use. 
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>retract(+Clause)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2259"></A>
+<A NAME="IDX2260"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>retractall/1:</B>
+<DD><A NAME="IDX2261"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>retractall(fact)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>retractall(+Head)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Erase all clauses whose head matches <CODE>Head</CODE>, where <CODE>Head</CODE> must be instantiated to an atom or a compound term. The predicate concerned must be dynamic. The predicate definition is retained.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>retractall(+Head)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2262"></A>
+<A NAME="IDX2263"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>abolish/1:</B>
+<DD><A NAME="IDX2264"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>abolish(spec)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>abolish(+Spec)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Erase all clauses of the predicate specified by the predicate spec, or list of predicate specs, <CODE>Spec</CODE>. The predicate definition itself is also erased (the predicate is deemed undefined after execution of the abolish). The predicates concerned must all be user defined.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>abolish(+Spec)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2265"></A>
+<A NAME="IDX2266"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>clause/2:</B>
+<DD><A NAME="IDX2267"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>clause(+Head,?(Body))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The clause '<CODE>Head</CODE> <CODE>:-</CODE> <CODE>Body</CODE>' exists in the current program. The predicate concerned must be dynamic.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>clause(+Head,?(Body))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2268"></A>
+<A NAME="IDX2269"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>clause/3:</B>
+<DD><A NAME="IDX2270"></A>
+
+
+<P>
+<CODE>clause(Head,Body,Ref)</CODE>
+
+
+<P>
+Like <CODE>clause(Head,Body)</CODE>, plus the clause is uniquely identified by <CODE>Ref</CODE>.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>clause(fact,?,?)</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>clause(+Head,?(Body),?(Ref))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Head</CODE> must be instantiated to an atom or a compound term.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>clause(+Head,?(Body),?(Ref))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>clause(?(Head),?(Body),+Ref)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Ref</CODE> must be instantiated to a valid identifier.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>clause(?(Head),?(Body),+Ref)</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2271"></A>
+<A NAME="IDX2272"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_predicate/1:</B>
+<DD><A NAME="IDX2273"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>current_predicate(?(Spec))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> A user defined predicate is named <CODE>Spec</CODE>.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+Documentation is still incomplete: <CODE>current_predicate(?(Spec))</CODE> may not conform the functionality documented.
+ (<CODE>doc_props:doc_incomplete/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2274"></A>
+<A NAME="IDX2275"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dynamic/1:</B>
+<DD><A NAME="IDX2276"></A>
 
 
 <P>
@@ -54,11 +456,11 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1859"></A>
-<A NAME="IDX1860"></A>
+<A NAME="IDX2277"></A>
+<A NAME="IDX2278"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>atom_chars/2:</B>
-<DD><A NAME="IDX1861"></A>
+<DT><span class="define">PREDICATE:</span> <B>data/1:</B>
+<DD><A NAME="IDX2279"></A>
 
 
 <P>
@@ -68,188 +470,49 @@ No further documentation available for this predicate.
 </DL>
 
 <P>
-<A NAME="IDX1862"></A>
-<A NAME="IDX1863"></A>
+<A NAME="IDX2280"></A>
+<A NAME="IDX2281"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>number_chars/2:</B>
-<DD><A NAME="IDX1864"></A>
+<DT><span class="define">PREDICATE:</span> <B>wellformed_body/3:</B>
+<DD><A NAME="IDX2282"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>wellformed_body(BodyIn,Env,BodyOut)</CODE>
+
+
+<P>
+<CODE>BodyIn</CODE> is a well-formed clause body. <CODE>BodyOut</CODE> is its counterpart with no single-variable meta-goals (i.e., with <CODE>call(X)</CODE> for <CODE>X</CODE>). <CODE>Env</CODE> denotes if global cuts are admissible in <CODE>BodyIn</CODE> (<CODE>+</CODE> if they are, <CODE>-</CODE> if they are not).
 
 
 </DL>
 
+
+
+<H2><A NAME="SEC198" HREF="ciao_toc.html#TOC198">Documentation on multifiles (<CODE>dynamic</CODE>)</A></H2>
 <P>
-<A NAME="IDX1865"></A>
-<A NAME="IDX1866"></A>
+<A NAME="IDX2283"></A>
+<A NAME="IDX2284"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_byte/1:</B>
-<DD><A NAME="IDX1867"></A>
+<DT><span class="define">PREDICATE:</span> <B>do_on_abolish/1:</B>
+<DD><A NAME="IDX2285"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1868"></A>
-<A NAME="IDX1869"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_byte/2:</B>
-<DD><A NAME="IDX1870"></A>
+<CODE>do_on_abolish(Head)</CODE>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1871"></A>
-<A NAME="IDX1872"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>peek_byte/1:</B>
-<DD><A NAME="IDX1873"></A>
+A hook predicate which will be called when the definition of the predicate of <CODE>Head</CODE> is abolished.
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1874"></A>
-<A NAME="IDX1875"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>peek_byte/2:</B>
-<DD><A NAME="IDX1876"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1877"></A>
-<A NAME="IDX1878"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>put_byte/1:</B>
-<DD><A NAME="IDX1879"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1880"></A>
-<A NAME="IDX1881"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>put_byte/2:</B>
-<DD><A NAME="IDX1882"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1883"></A>
-<A NAME="IDX1884"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_char/1:</B>
-<DD><A NAME="IDX1885"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1886"></A>
-<A NAME="IDX1887"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>get_char/2:</B>
-<DD><A NAME="IDX1888"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1889"></A>
-<A NAME="IDX1890"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>peek_char/1:</B>
-<DD><A NAME="IDX1891"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1892"></A>
-<A NAME="IDX1893"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>peek_char/2:</B>
-<DD><A NAME="IDX1894"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1895"></A>
-<A NAME="IDX1896"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>put_char/1:</B>
-<DD><A NAME="IDX1897"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX1898"></A>
-<A NAME="IDX1899"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>put_char/2:</B>
-<DD><A NAME="IDX1900"></A>
-
-
-<P>
-No further documentation available for this predicate.
+The predicate is <EM>multifile</EM>.
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_37.html">previous</A>, <A HREF="ciao_39.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

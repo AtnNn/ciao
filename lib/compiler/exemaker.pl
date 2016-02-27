@@ -16,7 +16,7 @@
 :- use_module(library(file_utils), [file_terms/2, copy_stdout/1]).
 :- use_module(library(ctrlcclean), [delete_on_ctrlc/2]).
 :- use_module(engine(internals), [module_concat/3]).
-:- use_module(library(foreign_interface)). % JFMC
+:- use_module(library('foreign_interface/build_foreign_interface')). % JFMC
 
 % Extension for ciao executables in Win32
 :- include(win_exec_ext).
@@ -24,6 +24,7 @@
 :- multifile define_flag/3.
 
 define_flag(executables, [static, eagerload, lazyload], eagerload).
+define_flag(check_libraries, [on, off], off).
 
 :- data ok_lazy/1.
 
@@ -45,7 +46,8 @@ make_actmod(ModuleFile, PublishMod) :-
         catch(make_exec_prot([MainFile], ExecName), Error, handle_exc(Error)).
 
 make_exec_prot(Files, ExecName) :-
-        process_files_from(Files, po, any, treat_file, false, false, redo_po),
+        process_files_from(Files, po, any,
+                           treat_file, stopOnlib, skipOnlib, redo_po),
         \+ current_fact(module_error(_)),
         Files = [MainFile|_],
         base_name(MainFile, Base),
@@ -70,6 +72,27 @@ treat_file(Base) :-
 	fail.
 treat_file(Base) :-
         make_po_file(Base).
+
+
+stopOnlib(Base) :-
+        current_prolog_flag(check_libraries, off),
+        current_prolog_flag(executables,Mode), Mode \== static,
+        is_lib_no_engine(Base).
+
+skipOnlib(Base) :-
+        current_prolog_flag(check_libraries, off),
+        is_lib(Base).
+
+is_lib_no_engine(Base) :-
+        ciaolibdir(Dir),
+        atom_concat(Dir,Name,Base),
+        atom_concat('/lib',Inside,Name), % Directories stating by lib in Ciao
+        \+ atom_concat('/engine/',_,Inside). % but not in lib/engine
+
+is_lib(Base) :-
+        ciaolibdir(Dir),
+        atom_concat(Dir,Name,Base),
+        atom_concat('/lib',_,Name). % Directories stating by lib in Ciao
 
 % JFMC
 redo_po(Base) :-
@@ -266,8 +289,9 @@ compute_required_loads(_B0, Pred, Pred). % Incomplete structure
 
 compile_stumps(Base, Module, Loads, Pred) :-
         define_stump_pred,
-        exports(Base, F, A, Def, Meta),
-          Def \== implicit,
+        exports(Base, F, A,_Def, Meta),
+%% This prevents .so libraries to be lazyloaded
+%          Def \== implicit,
           addmodule_inc(Meta, A, A1),
           module_concat(Module, F, MF),
           functor(Pred, MF, A1),
@@ -401,6 +425,18 @@ verbose_message(M) :-
 % ------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+51,2000/02/10,18:42*31+'CET'), "Fixed a bug which
+   prevented .so libraries to be lazyloaded. (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+47,2000/02/07,20:18*32+'CET'), "Fixed a bug
+   introduced in version 1*5+38 which made that executables created with
+   check_libraries off did not include engine(internals). (Daniel Cabeza
+   Gras)").
+
+:- comment(version(1*5+38,2000/02/01,19:05*58+'CET'), "Added prolog_flag
+   check_libraries (off by default) to avoid processing Ciao libraries,
+   in order to speedup compilation.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*3+81,1999/10/15,18:48*17+'MEST'), "Fixed a bug when
    defining additional dynamic search paths, which prevented the load of

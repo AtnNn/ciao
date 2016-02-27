@@ -1,173 +1,375 @@
 
 #if !defined(_LOCKS_H_)
-
-
 #define _LOCKS_H_                           /* avoid multiple definitions */
 
-
-/* If we undefine this, only semaphores will be available */
-
+/* If we undefine this, only binary semaphores will be available */
 #define GENERAL_LOCKS
 
 #if !defined(NULL)
 #define NULL (void *)0
 #endif
 
-#if defined(POSIX_LOCKS) && defined(THREADS)
-#include <semaphore.h>     
-typedef sem_t LOCK_ST;
-typedef LOCK_ST *LOCK;
-#else
-typedef long int Int;                 /* basic integer, size == word size */
-typedef volatile unsigned long int LOCK_ST;
-typedef LOCK_ST *LOCK;
-/*
-typedef unsigned long int Int;
-typedef volatile Int LOCK_ST;
-typedef LOCK_ST *LOCK;
-*/
-#endif
-
-/* Struct to hold an array of locks; several of them can be linked together */
-
-#define LOCK_BLOCK_SIZE 128
-
-typedef struct LOCK_BLOCK {
-  LOCK_ST lockarray[LOCK_BLOCK_SIZE];
-  int current_index;
-  struct LOCK_BLOCK *next;
-} *LOCK_BLOCK_P;
-  
-
-
-
 #if !defined(THREADS)                                   /* Empty macros */
+/* Spin locks: fast, but make a busy-wait */
+#define Init_slock(p)          
+#define Wait_Acquire_slock(p)  
+#define Release_slock(p)       
+#define Destroy_slock(p)       
+#define SLock_is_unset(p)      1
 
+/* non spin locks: should suspend the thread, but are possibly slower */
 #define Init_lock(p)          
 #define Wait_Acquire_lock(p)  
 #define Release_lock(p)       
+#define Destroy_lock(p)       
 #define Lock_is_unset(p)      1
 
+#else  /* We have THREADS!!!!! */
+
+#define USE_LOCKS
+
+/* First, we look at the spin locks.  We know how to do them in i86 and in
+   Sparc architectures.  I am not really sure about the Sequent: could not
+   try it, actually.  This is heavily influenced by Kish Shen and Roland
+   Karlsson (thanks to both). */
+
+#if (defined(i86) || defined(Sparc) || defined(Sequent)) && defined(__GNUC__)
+#define HAVE_NATIVE_SLOCKS
+
 /*
-#define Acquire_lock_or_fail(p) 
-#define Try_Acquire_self_lock(p)
-#define Reset_lock(p, value) 
-#define Release_self_lock(p)
-*/
-
-#else 
-
-#if !defined(POSIX_LOCKS)
-
-/* Kish' implementation */
-
-/*
-#if defined(UNDEF)
-#if defined(sparc) || defined(sequent) 
-#define DESTRUCTIVE 1 
-#endif
+#if defined(Sparc) || defined(Sequent) 
+#define DESTRUCTIVE  
 #endif
 */
+
+typedef volatile unsigned long int SLOCK_ST;
+typedef volatile struct {
+  SLOCK_ST  lock_st;
+  SLOCK_ST *lock_pt;
+} SLOCK;
+
 
 #if defined(DESTRUCTIVE)
 #define lock_offset 1 /*lock is offset from start of structure by one word*/
-#define LockOffSet(p) (((LOCK_ST *)(p)) + lock_offset)
+#define LockOffSet(p) (p.lock_pt + lock_offset)
 #else                                                     /* !DESTRUCTIVE */
-#define LockOffSet(p) ((LOCK_ST *)(p))
+#define LockOffSet(p) (p.lock_pt)
 #endif                                                     /* DESTRUCTIVE */
 
-                   /* Macro definition for sparc */
-#  if defined(Sparc)     
-#    ifdef __GNUC__
 
-/* uses GNU C's interface */
-#    define aswap(addr,reg)                                     \
+/***************************************************************************/
+
+# if defined(Sparc)                        /* Macro definition for sparc */
+#   define aswap(addr,reg)                                      \
 ({ int _ret;                                                    \
    asm volatile ("swap %1,%0"                                   \
         : "=r" (_ret), "=m" (*(addr))    /* Output %0,%1 */     \
         : "m"  (*(addr)), "0" (reg));    /* Input (%2),%0 */    \
    _ret;                                                        \
 })
+# endif                                                          /* Sparc */
 
-#    else                                                    /* !__GNUC__ */
+/***************************************************************************/
 
-#    define aswap(addr,reg) Swap(addr,reg)
-
-#    endif                                                    /* __GNUC__ */
-#  endif                                                         /* sparc */
-
-
-                           /* Now, Intel 80x86 stuff */
-
-#  if defined(i86)
-
-#  define aswap(adr,reg)                                        \
-  ({ Int _ret;                                                  \
+# if defined(i86) || defined(Sequent)          /* Now, Intel 80x86 stuff */
+#   define aswap(adr,reg)                                       \
+  ({ long int _ret;                                             \
      asm volatile ("xchgw %0,%1"                                \
         : "=q" (_ret), "=m" (*(adr))    /* Output %0,%1 */      \
         : "m"  (*(adr)), "0"  (reg));   /* Input (%2),%0 */     \
      _ret;                                                      \
   })
-
 #  endif
 
+/***************************************************************************/
+ /* Untested for MIPS! */
+# if defined(mips)
+#   define asm_ll(adr)						\
+  ({ int _ret;							\
+     asm VOLATILE ("ll %0,%1"					\
+	: "=r" (_ret), "=m" (*(adr))	/* Output %0,%1 */	\
+	: "m"  (*(adr)));		/* Input (%2) */	\
+     _ret;							\
+  })
 
-/* We have to make sure that lock operations do not get removed by a
-   ultra-smart compiler.  barrier(), taken from Linux kernel code, ensures
-   that any values the compiler remembered don't get reused after the lock
-   is acquired. We want one before the unlock too - so as to force a
-   writeback of values. That gives us synchronization points at the locks.  */
+#   define asm_sc(adr,reg)					\
+  ({ int _ret;							\
+     asm VOLATILE ("sc %0,%1"					\
+	: "=r" (_ret), "=m" (*(adr))	/* Output %0,%1 */	\
+	: "m"  (*(adr)), "0" (reg));	/* Input (%2),%0 */	\
+     _ret;							\
+  })
 
-/*#define barrier() __asm__("": : :"memory")   Not working.... :-( */
+#  define aswap(p,v)						\
+  ({ int _ret;							\
+     do { _ret = asm_ll(p); } while(! asm_sc(p, v));		\
+     _ret;							\
+  })
+
+#define mips_try_lock(p) (*(LockOffset(p))=1)
+
+# define mips_lock(p)						\
+do { if (mips_try_lock(p)) break;			        \
+     {{ t_lock_wait(); }}					\
+     {{ t_debug(__FILE__,__LINE__); }}				\
+     while(*(LockOffset*p))==1) continue;		        \
+     {{ t_lock_ready(); }}					\
+   } while(1)
+# endif
+
+/***************************************************************************/
 
 
-#define Init_lock(p)             *(LockOffSet(p))=0
-
-/*
-#define Wait_Acquire_lock(p)         \
-{                                    \
-    while (aswap((LockOffSet(p)),1)) \
-      ;                              \
-}
-*/
+/* Initialize a spin lock */
+#define Init_slock(p)  { \
+        p.lock_pt = &p.lock_st; \
+        *(LockOffSet(p))=0; \
+       }
 
 /*
   From alan@lxorguk.ukuu.org.uk: 
-
   Whenever the lock grab fails the CPU will spin sampling the cache
   line until another CPU writes it back which invalidates our MESI
   cache line for the data. This avoids the code spin-generating lock
   cycles on the bus.
-
-  From an experiment involving access to a shared predicate, this option
-  gives much better performance than POSIX locks (with the difference being
-  more acute the more agents there are).  The alternative native locks are
-  faster for one and two concurrent agents looking at the same predicate,
-  but they get slightly behind in performance from three agents onwards.
-  MCL.
 */
 
-#define Wait_Acquire_lock(p) while (aswap((LockOffSet(p)),1)) {while(*p);}
+#if defined(mips)
+#define Wait_Acquire_slock(p) mips_lock(p)
+#else
+#define Wait_Acquire_slock(p) \
+     while (aswap((LockOffSet(p)),1)) { \
+        while(*(LockOffSet(p)));\
+    }
+#endif
 
-#define Release_lock(p)          *(LockOffSet(p))=0
-#define Lock_is_unset(p)         *(LockOffSet(p))==0
+#define Release_slock(p)          *(LockOffSet(p))=0
+#define Destroy_slock(p)          p.lock_pt = NULL /* Force error afterwards */
+#define SLock_is_unset(p)         *(LockOffSet(p))==0
 
 /*
-#define Acquire_lock_or_fail(p)  aswap((LockOffSet(p)),1)==0
-#define Try_Acquire_self_lock(p) (aswap(*(LOCK_ST **)p, *(LOCK_ST *)p))
+#define Acquire_slock_or_fail(p)  aswap((LockOffSet(p)),1)==0
+#define Try_Acquire_self_slock(p) (aswap(*(LOCK_ST **)p, *(LOCK_ST *)p))
 #define Reset_lock(p, value)     (aswap(*(LOCK_ST **)p, value))
 #define Release_self_lock(p)
 */
 
+#endif
 
-#else                                                   /*  (POSIX_LOCKS) */
+/* Now, the O.S. for which we know there are locks provided by a library.
+   These presumably put the thread to sleep and do not consume any
+   resources, but also are more expensive to call. */
 
-#define Init_lock(p)             sem_init(p, 0, 1)
-#define Wait_Acquire_lock(p)     sem_wait(p)
-#define Release_lock(p)          sem_post(p)
-#define Lock_is_unset(p)         lock_is_unset(p)
+/***************************************************************************/
 
-#endif                                                  /*  (POSIX_LOCKS) */
+#if defined(LINUX) || defined(IRIX) || defined (Solaris)
+#define HAVE_LIB_LOCKS
+
+
+#include <pthread.h>
+#include <unistd.h>
+#include <errno.h>
+
+/* IRIX machines seem to have a fair scheduling without having to relinquish
+   anything. */
+#if defined(_POSIX_PRIORITY_SCHEDULING) && !defined(IRIX)
+#include <sched.h>
+#define RELINQUISH_PROCESSOR sched_yield();
+#else
+#define RELINQUISH_PROCESSOR 
+#endif
+
+typedef pthread_mutex_t LOCK;
+
+#define Init_lock(p)         pthread_mutex_init(&p, NULL)
+#define Wait_Acquire_lock(p) pthread_mutex_lock(&p)
+#define Release_lock(p)      pthread_mutex_unlock(&p)
+#define Destroy_lock(p)      pthread_mutex_destroy(&p)
+#define Lock_is_unset(p)     lock_is_unset(&p)
+
+#define CONDITIONAL_VARS
+
+typedef pthread_cond_t COND_VAR;
+
+#define Cond_Var_Init(cond)    pthread_cond_init(&cond, NULL)
+#define Cond_Var_Wait(cond, lock) pthread_cond_wait(&cond, &lock)
+/*#define Cond_Var_Signal(cond) pthread_cond_signal(&cond)*/
+#define Cond_Var_Broadcast(cond) pthread_cond_broadcast(&cond)
+#endif
+/***************************************************************************/
+
+#if defined(Win32)
+#define HAVE_LIB_LOCKS
+
+#include "Win32Threads.h"
+
+ /* I am using Critical Section Objects instead of mutexes because,
+ according t the MS documentation, CSO are faster, although they cannot be
+ used to synchronize objects belonging to different processes.  */
+
+typedef CRITICAL_SECTION LOCK;
+
+#define Init_lock(p)         InitializeCriticalSection(&p)
+#define Wait_Acquire_lock(p) EnterCriticalSection(&p)
+#define Release_lock(p)      LeaveCriticalSection(&p)
+#define Destroy_lock(p)      DeleteCriticalSection(&p)
+#define Lock_is_unset(p)     lock_is_unset_win32(&p)
+
+#define CONDITIONAL_VARS
+#define RELINQUISH_PROCESSOR
+
+typedef HANDLE COND_VAR;
+
+#define Cond_Var_Init(cond) cond = CreateEvent(NULL, FALSE, FALSE, NULL)
+
+/* put a timeout; we might miss a wakeup otherwise, since we do not */
+/* have atomic Wait and Unlock in Win95/98 */
+
+#define Cond_Var_Wait(cond, lock) \
+        Release_lock(lock); \
+        WaitForSingleObject(cond, 10); \
+        Wait_Acquire_lock(lock)
+/*#define Cond_Var_Signal(cond)     SetEvent(cond)*/
+#define Cond_Var_Broadcast(cond)  PulseEvent(cond)
+#endif
+
+
+/***************************************************************************/
+
+#if !defined(HAVE_LIB_LOCKS) && defined(HAVE_NATIVE_SLOCKS)
+/* Define the non-spin ones in terms of the spin ones */
+
+typedef SLOCK LOCK;
+
+#define Init_lock(p)          Init_slock(p)
+#define Wait_Acquire_lock(p)  Wait_Acquire_slock(p)  
+#define Release_lock(p)       Release_slock(p)       
+#define Destroy_lock(p)       Destroy_slock(p)       
+#define Lock_is_unset(p)      SLock_is_unset(p)      
+#endif
+
+/***************************************************************************/
+
+#if defined(HAVE_LIB_LOCKS) && !defined(HAVE_NATIVE_SLOCKS)
+/* Do it the other way around */
+
+typedef LOCK SLOCK;
+
+#define Init_slock(p)          Init_lock(p)
+#define Wait_Acquire_slock(p)  Wait_Acquire_lock(p)  
+#define Release_slock(p)       Release_lock(p)       
+#define Destroy_slock(p)       Destroy_lock(p)       
+#define SLock_is_unset(p)      Lock_is_unset(p)      
+#endif
+
+
+/***************************************************************************/
+
+#if !defined(HAVE_LIB_LOCKS) && !defined(HAVE_NATIVE_SLOCKS)
+
+typedef SLOCK int;
+typedef LOCK  int;
+
+#define Init_slock(p)          
+#define Wait_Acquire_slock(p)  
+#define Release_slock(p)       
+#define Destroy_slock(p)       
+#define SLock_is_unset(p)      1
+
+#define Init_lock(p)          
+#define Wait_Acquire_lock(p)  
+#define Release_lock(p)       
+#define Destroy_lock(p)       
+#define Lock_is_unset(p)      1
+#endif
+
+/***************************************************************************/
+
+
+/* The two below should not be used in user code, only here. */
+#define Wait_Acquire_Cond_lock_internal(Cond) Wait_Acquire_lock(Cond.cond_lock)
+#define Release_Cond_lock_internal(Cond) Release_lock(Cond.cond_lock)
+
+
+
+/* Use of the conditional vars: 
+
+A conditional variable is inited using Init_Cond(cond_var)
+
+The variables involved in a condition which is expressed by cond_var are
+changed using:
+
+Cond_Begin(cond_var)
+... change the variables ...
+Broadcast_Cond(cond_var)
+
+which releases all the threads waiting on the condition.
+
+When a thread has to check that / wait for a condition to hold, 
+
+Wait_For_Cond_Begin(pred(...), cond_var)
+...do something...
+Wait_For_Cond_End(cond_var)
+
+where pred() determines when the condition *does not hold*, i.e., the 
+execution continues when pred() is false.
+
+*/
+
+
+#define Wait_For_Cond_End(Cond)  Release_Cond_lock_internal(Cond)
+#define Cond_Lock_is_unset(Cond) Lock_is_unset(Cond.cond_lock)
+#define Cond_Begin(Cond)  Wait_Acquire_Cond_lock_internal(Cond)
+
+#if defined(CONDITIONAL_VARS)
+
+#define Init_Cond(Cond) {                                            \
+                          Init_lock(Cond.cond_lock);                 \
+                          Cond_Var_Init(Cond.cond_var);   \
+                        }
+#define Wait_For_Cond_Begin(Predicate, Cond) {                             \
+                     Wait_Acquire_Cond_lock_internal(Cond);                \
+                     RELINQUISH_PROCESSOR                                  \
+                     while (Predicate) {                                   \
+                       Cond_Var_Wait(Cond.cond_var, Cond.cond_lock); \
+                   }                                                       \
+                }
+#define Signal_Cond(Cond) {                             \
+                     Cond_Var_Signal(Cond.cond_var);   \
+                     Release_Cond_lock_internal(Cond);      \
+                 }
+#define Broadcast_Cond(Cond) {                             \
+                     Cond_Var_Broadcast(Cond.cond_var);   \
+                     Release_Cond_lock_internal(Cond);      \
+                 }
+#else
+
+#define Init_Cond(Cond) Init_lock(Cond.cond_lock)
+#define Wait_For_Cond_Begin(Predicate, Cond) {                     \
+                       BOOL pred_is_signaled;                      \
+                       Wait_Acquire_Cond_lock_internal(Cond);      \
+                       pred_is_signaled = (Predicate);             \
+                       while(pred_is_signaled) {                   \
+                         Release_Cond_lock_internal(Cond);         \
+                         RELINQUISH_PROCESSOR                      \
+                         Wait_Acquire_Cond_lock_internal(Cond);    \
+                         pred_is_signaled = (Predicate);           \
+                       }                                           \
+                     }
+#define Signal_Cond(Cond) Release_Cond_lock_internal(Cond)
+#define Broadcast_Cond(Cond) Release_Cond_lock_internal(Cond)
+
+#endif
+
+typedef struct conditionstruct {
+   LOCK     cond_lock;
+#if defined(CONDITIONAL_VARS)
+   COND_VAR cond_var;
+#endif
+} CONDITION;
+
+/***************************************************************************/
+
 #endif                                                       /* THREADS */
 #endif                                             /* !defined(_LOCKS_H_) */
 

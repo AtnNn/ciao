@@ -17,9 +17,9 @@
 :- comment(get_line(Stream, Line), "Reads from @var{Stream} a line of
    text and unifies @var{Line} with it.  The end of the line can have
    UNIX [10] or MS-DOS [13 10] termination, which is not included in
-   @var{Line}.").
+   @var{Line}.  At EOF, the term end_of_file is returned.").
 
-:- true pred get_line(+stream, ?string).
+:- true pred get_line(+stream, ?line).
 
 get_line(Stream, Line) :-
         current_input(OldIn),
@@ -30,14 +30,17 @@ get_line(Stream, Line) :-
 :- comment(get_line(Line), "Behaves like @tt{current_input(S),
    get_line(S,Line)}.").
 
-:- true pred get_line(?string).
+:- true pred get_line(?line).
 
 get_line(Line) :-
         get_code(C),
-        get_line_after(C, Cs),
-        Line = Cs.
+        ( C = -1 -> Line = end_of_file
+        ; get_line_after(C, Cs),
+          Line = Cs
+        ).
 
-get_line_after(-1,[]) :- !. % EOF
+get_line_after(-1,[]) :- !, % EOF
+        current_input(S), clearerr(S).
 get_line_after(10,[]) :- !. % Newline
 get_line_after(13, R) :- !, % Return, delete if at end of line
         get_code(C),
@@ -49,6 +52,13 @@ get_line_after(13, R) :- !, % Return, delete if at end of line
 get_line_after(C, [C|Cs]) :-
         get_code(C1),
         get_line_after(C1, Cs).
+
+:- comment(doinclude,line/1).
+
+:- prop line/1.
+
+line(L) :- string(L).
+line(end_of_file).
 
 :- comment(write_string(Stream, String), "Writes @var{String} onto
    @var{Stream}.").

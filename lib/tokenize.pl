@@ -5,14 +5,14 @@
 /*
 Diffs. with ISO:
 
-- "`" is a graphic char, there are not back_quoted_strings
-- "\" followed by any layout char (not only new_line) in a string is a
+- ` is a graphic char, there are not back_quoted_strings
+- \ followed by any layout char (not only new_line) in a string is a
   continuation_escape_sequence 
-- "\^" starts a control_escape_char in a string
-- "\c" skips layout in a string
-- "\e" = ESC, "\d" = DEL, "\s" = SPACE
+- \^ starts a control_escape_char in a string
+- \c skips layout in a string
+- \e = ESC, \d = DEL, \s = SPACE
 - 13'23 is 23 in base 13 (same for other bases)
-- 0'' is accepted as 0''' (if not followed by "'")
+- 0'' is accepted as 0''' (if not followed by ')
 
 */
 
@@ -312,7 +312,7 @@ read_one_octal(3, D, [D], EndTyp, EndCh) :-
         getct(EndCh, EndTyp).
 read_one_octal(EndTyp, EndCh, [], EndTyp, EndCh).
 
-read_octal_iso(4, 92, []).  % ends in "\"
+read_octal_iso(4, 92, []).  % ends in \
 read_octal_iso(3, D, [D|Ds]) :-
         D =< 0'7, !,
         getct(Ch, Typ),
@@ -332,7 +332,7 @@ read_one_hexa(TD, D, [D], EndTyp, EndCh) :-
         getct(EndCh, EndTyp).
 read_one_hexa(EndTyp, EndCh, [], EndTyp, EndCh).
 
-read_hexa_iso(4, 92, []).  % ends in "\"
+read_hexa_iso(4, 92, []).  % ends in \
 read_hexa_iso(TD, D, [D|Ds]) :-
         hexa_digit(TD, D), !,
         getct(Ch, Typ),

@@ -1,9 +1,10 @@
 
 #include <stdlib.h>
+
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
 #include "qinstrdefs.h"
-#include "threads.h"
 
 /* declarations for global functions accessed here */
 

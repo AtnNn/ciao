@@ -26,15 +26,18 @@ all:
 
 autolibs: 
 	$(SRC)/etc/generate_foreign_compile_options $(MAKE) $(SRC)/makefile-sysdep $(SRC)/lib/auto_compile_options.pl
+	-chmod $(DATAMODE) $(SRC)/lib/auto_compile_options.pl
 	'rm' -f all_modules all_module_messages
 	$(SRC)/etc/collect_modules all_modules
 	$(SETLOCALCIAOSHELL) $(CIAOSHELL) < all_modules > all_module_messages
+	-chmod $(DATAMODE) all_modules
 	'rm' -f all_module_messages
 
 # May copy far more than what is needed
 install:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Installing $(BASEMAIN) 'lib' libraries..."
+	@echo "*** (in $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
 	mkdir -p $(STDLIBDIR)
 	-chmod $(EXECMODE) $(STDLIBDIR)
@@ -46,12 +49,16 @@ install:
 uninstall:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling $(BASEMAIN) 'lib' libraries..."
+	@echo "*** (deleting $(STDLIBDIR))"
 	@echo "*** ---------------------------------------------------------"
-	-cd $(STDLIBDIR); rm -rf *
-	-rmdir $(STDLIBDIR)
+	-rm -rf $(STDLIBDIR)
 
+# *.itf *.po *.asr are eliminated recursively so that no Makefiles 
+# underneath  are needed for cleaning up prolog-only libraries. MH.
 distclean: 
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Cleaning $(BASEMAIN)/lib..."
 	@echo "*** ---------------------------------------------------------"
-	/bin/rm -f *.itf *.po *.asr
+	find . -name '*.itf' -exec 'rm' -f {} \;
+	find . -name '*.po'  -exec 'rm' -f {} \;
+	find . -name '*.asr' -exec 'rm' -f {} \;

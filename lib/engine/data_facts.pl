@@ -11,7 +11,7 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel Carro").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(module,"@cindex{data predicate}Prolog implementations
@@ -24,7 +24,7 @@
     code.  But it is the case that most of the time what the programmer
     wants is simply to store data, with the purpose of sharing it
     between search branches, predicates, or even execution threads.  In
-    CIAO the concept of data predicate serves this purpose: a data
+    Ciao the concept of data predicate serves this purpose: a data
     predicate is a predicate composed exclusively by facts, which can be
     inspected, and dynamically added or deleted, at run-time.  Using
     data predicates instead of normal dynamic predicates brings benefits
@@ -32,7 +32,7 @@
     analyzable.@cindex{concurrent predicate} There is also a special
     kind of data predicates, called concurrent predicates, which can be
     used to communicate/synchronize among different execution threads
-    (see @ref{Concurrency/multithreading primitives}).").
+    (see @ref{Low-level concurrency/multithreading primitives}).").
 
 :- true decl data(Predicates) : sequence_or_list(predname)
         # "Defines each predicate in @var{Predicates} as a @concept{data

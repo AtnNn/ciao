@@ -1,37 +1,72 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Basic predicates handling names of constants</TITLE>
+<TITLE>The Ciao Prolog System               - Comparing terms</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC95" HREF="ciao_toc.html#TOC95">Basic predicates handling names of constants</A></H1>
+<H1><A NAME="SEC141" HREF="ciao_toc.html#TOC141">Comparing terms</A></H1>
 <P>
-<A NAME="IDX1033"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<A NAME="IDX1406"></A>
 
 
 <P>
-The CIAO system provides builtin predicates which allow dealing with names of constants (atoms or numbers). As an atom name must be of less than 512 characters, to handle sequences of more characters, strings (character code lists) must be used.
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+These built-in predicates are extra-logical. They treat uninstantiated variables as objects with values which may be compared, and they never instantiate those variables. They should <EM>not</EM> be used when what you really want is arithmetic comparison or unification. 
+
+
+<P>
+The predicates make reference to a 
+<A NAME="IDX1407"></A>
+<A NAME="IDX1408"></A>
+<EM>standard total ordering</EM> of terms, which is as follows: 
 
 
 
 <UL>
-<LI><A HREF="ciao_21.html#SEC96">Usage and interface (atomic_basic)</A>
-<LI><A HREF="ciao_21.html#SEC97">Documentation on exports (atomic_basic)</A>
+
+<LI>Variables, by age (roughly, oldest first -- the order is <EM>not</EM> related to the names of variables).
+
+<LI>Floats, in numeric order (e.g. -1.0 is put before 1.0).
+
+<LI>Integers, in numeric order (e.g. -1 is put before 1).
+
+<LI>Atoms, in alphabetical (i.e. character code) order.
+
+<LI>Compound terms, ordered first by arity, then by the name of the principal functor, then by the arguments in left-to-right order. Recall that lists are equivalent to compound terms with principal functor <CODE>'.'/2</CODE>.
+
+</UL>
+
+<P>
+For example, here is a list of terms in standard order: 
+
+
+
+<PRE>
+[ X, -1.0, -9, 1, bar, foo, [1], X = Y, foo(0,2), bar(1,1,1) ]
+</PRE>
+
+
+<UL>
+<LI><A HREF="ciao_21.html#SEC142">Usage and interface (term_compare)</A>
+<LI><A HREF="ciao_21.html#SEC143">Documentation on exports (term_compare)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC96" HREF="ciao_toc.html#TOC96">Usage and interface (<CODE>atomic_basic</CODE>)</A></H2>
+<H2><A NAME="SEC142" HREF="ciao_toc.html#TOC142">Usage and interface (<CODE>term_compare</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +74,7 @@ The CIAO system provides builtin predicates which allow dealing with names of co
 
 <LI><STRONG>Library usage:</STRONG>
 
-These predicates are builtin in CIAO, so nothing special has to be done to use them.
+These predicates are builtin in Ciao, so nothing special has to be done to use them.
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,20 +83,23 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1034"></A>
-<CODE>name/2</CODE>, 
-<A NAME="IDX1035"></A>
-<CODE>atom_codes/2</CODE>, 
-<A NAME="IDX1036"></A>
-<CODE>number_codes/2</CODE>, 
-<A NAME="IDX1037"></A>
-<CODE>number_codes/3</CODE>, 
-<A NAME="IDX1038"></A>
-<CODE>atom_length/2</CODE>, 
-<A NAME="IDX1039"></A>
-<CODE>atom_concat/3</CODE>, 
-<A NAME="IDX1040"></A>
-<CODE>sub_atom/4</CODE>.
+<A NAME="IDX1409"></A>
+<CODE>compare/3</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX1410"></A>
+<CODE>==/2</CODE>, 
+<A NAME="IDX1411"></A>
+<CODE>\==/2</CODE>, 
+<A NAME="IDX1412"></A>
+<CODE>@&#60;/2</CODE>, 
+<A NAME="IDX1413"></A>
+<CODE>@=&#60;/2</CODE>, 
+<A NAME="IDX1414"></A>
+<CODE>@&#62;/2</CODE>, 
+<A NAME="IDX1415"></A>
+<CODE>@&#62;=/2</CODE>.
 
 </UL>
 
@@ -71,556 +109,325 @@ These predicates are builtin in CIAO, so nothing special has to be done to use t
 
 
 
-<H2><A NAME="SEC97" HREF="ciao_toc.html#TOC97">Documentation on exports (<CODE>atomic_basic</CODE>)</A></H2>
+<H2><A NAME="SEC143" HREF="ciao_toc.html#TOC143">Documentation on exports (<CODE>term_compare</CODE>)</A></H2>
 <P>
-<A NAME="IDX1041"></A>
-<A NAME="IDX1042"></A>
+<A NAME="IDX1416"></A>
+<A NAME="IDX1417"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>name/2:</B>
-<DD><A NAME="IDX1043"></A>
+<DT><span class="define">PROPERTY:</span> <B>==/2:</B>
+<DD><A NAME="IDX1418"></A>
 
 
 <P>
-<CODE>name(Const,String)</CODE>
-
-
-<P>
-<CODE>String</CODE> is the list of the ASCII codes of the characters comprising the name of <CODE>Const</CODE>. Note that if <CODE>Const</CODE> is an atom whose name can be interpreted as a number (e.g. '96'), the predicate is not reversible, as that atom will not be constructed when <CODE>Const</CODE> is uninstantiated. Thus it is recommended that new programs use the ISO-compliant predicates 
-<A NAME="IDX1044"></A>
-<CODE>atom_codes/2</CODE> or 
-<A NAME="IDX1045"></A>
-<CODE>number_codes/2</CODE>, as these predicates do not have this inconsistency.
-
-
-<P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>name(+constant,?(string))</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>Term1 == Term2</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are strictly identical.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>name(-(constant),+string)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>Term1 == Term2</CODE>
 
 <UL>
-<LI><EM>Description:</EM> If <CODE>String</CODE> can be interpreted as a number, <CODE>Const</CODE> is unified with that number, otherwise with the atom whose name is <CODE>String</CODE>.
+<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are strictly identical.
 
-</UL>
+<LI><EM>The following properties should hold globally:</EM>
 
-<P>
-<STRONG>Usage 3:</STRONG> 
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Const</CODE> is an atomic term (an atom or a number).
- (<CODE>basic_props:constant/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> If <CODE>String</CODE> can be interpreted as a number, <CODE>Const</CODE> is unified with that number, otherwise with the atom whose name is <CODE>String</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Const</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Const</CODE> is an atomic term (an atom or a number).
- (<CODE>basic_props:constant/1</CODE>)
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1046"></A>
-<A NAME="IDX1047"></A>
+<A NAME="IDX1419"></A>
+<A NAME="IDX1420"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>atom_codes/2:</B>
-<DD><A NAME="IDX1048"></A>
+<DT><span class="define">PROPERTY:</span> <B>\==/2:</B>
+<DD><A NAME="IDX1421"></A>
 
 
 <P>
-<CODE>atom_codes(Atom,String)</CODE>
-
-
-<P>
-<CODE>String</CODE> is the list of the ASCII codes of the characters comprising the name of <CODE>Atom</CODE>.
-
-
-<P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>atom_codes(+atm,?(string))</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>Term1 \== Term2</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are not strictly identical.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>atom_codes(-(atm),+string)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>Term1 \== Term2</CODE>
 
 <UL>
-</UL>
+<LI><EM>Description:</EM> The terms <CODE>Term1</CODE> and <CODE>Term2</CODE> are not strictly identical.
 
-<P>
-<STRONG>Usage 3:</STRONG> 
-<KBD> * ISO * </KBD>
+<LI><EM>The following properties should hold globally:</EM>
 
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1049"></A>
-<A NAME="IDX1050"></A>
+<A NAME="IDX1422"></A>
+<A NAME="IDX1423"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>number_codes/2:</B>
-<DD><A NAME="IDX1051"></A>
+<DT><span class="define">PROPERTY:</span> <B>@&#60;/2:</B>
+<DD><A NAME="IDX1424"></A>
 
 
 <P>
-<CODE>number_codes(Number,String)</CODE>
-
-
-<P>
-<CODE>String</CODE> is the list of the ASCII codes of the characters comprising a representation of <CODE>Number</CODE>.
-
-
-<P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>number_codes(+num,?(string))</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>@&#60;(Term1,Term2)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes the term <CODE>Term2</CODE> in the standard order.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>number_codes(-(num),+string)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>@&#60;(Term1,Term2)</CODE>
 
 <UL>
-</UL>
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes the term <CODE>Term2</CODE> in the standard order.
 
-<P>
-<STRONG>Usage 3:</STRONG> 
-<KBD> * ISO * </KBD>
+<LI><EM>The following properties should hold globally:</EM>
 
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1052"></A>
-<A NAME="IDX1053"></A>
+<A NAME="IDX1425"></A>
+<A NAME="IDX1426"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>number_codes/3:</B>
-<DD><A NAME="IDX1054"></A>
+<DT><span class="define">PROPERTY:</span> <B>@=&#60;/2:</B>
+<DD><A NAME="IDX1427"></A>
 
 
 <P>
-<CODE>number_codes(Number,String,Base)</CODE>
-
-
-<P>
-<CODE>String</CODE> is the list of the ASCII codes of the characters comprising a representation of <CODE>Number</CODE> in base <CODE>Base</CODE>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>number_codes(+num,?(string),+int)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>@=&#60;(Term1,Term2)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes or is identical to the term <CODE>Term2</CODE> in the standard order.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>number_codes(-(num),+string,+int)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>@=&#60;(Term1,Term2)</CODE>
 
 <UL>
-</UL>
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> precedes or is identical to the term <CODE>Term2</CODE> in the standard order.
 
-<P>
-<STRONG>Usage 3:</STRONG> 
+<LI><EM>The following properties should hold globally:</EM>
 
-<UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-
-<CODE>Base</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> 
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Number</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-
-<CODE>Base</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Number</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1055"></A>
-<A NAME="IDX1056"></A>
+<A NAME="IDX1428"></A>
+<A NAME="IDX1429"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>atom_length/2:</B>
-<DD><A NAME="IDX1057"></A>
+<DT><span class="define">PROPERTY:</span> <B>@&#62;/2:</B>
+<DD><A NAME="IDX1430"></A>
 
 
 <P>
-<CODE>atom_length(Atom,Length)</CODE>
-
-
-<P>
-<CODE>Length</CODE> is the number of characters forming the name of <CODE>Atom</CODE>.
-
-
-<P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>atom_length(+atm,?(int))</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>@&#62;(Term1,Term2)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows the term <CODE>Term2</CODE> in the standard order.
+
+<LI><EM>The following properties should hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> 
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>@&#62;(Term1,Term2)</CODE>
 
 <UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows the term <CODE>Term2</CODE> in the standard order.
 
-<CODE>Length</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>The following properties should hold globally:</EM>
 
-<CODE>Atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 
-<CODE>Length</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1058"></A>
-<A NAME="IDX1059"></A>
+<A NAME="IDX1431"></A>
+<A NAME="IDX1432"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>atom_concat/3:</B>
-<DD><A NAME="IDX1060"></A>
+<DT><span class="define">PROPERTY:</span> <B>@&#62;=/2:</B>
+<DD><A NAME="IDX1433"></A>
 
 
 <P>
-<CODE>atom_concat(Atom_1,Atom_2,Atom_12)</CODE>
-
-
-<P>
-<CODE>Atom_12</CODE> is the result of concatenating <CODE>Atom_1</CODE> followed by <CODE>Atom_2</CODE>.
-
-
-<P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>atom_concat(+atom,+atom,?(atom))</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 1:</STRONG> <CODE>@&#62;=(Term1,Term2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Concatenate two atoms.
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows or is identical to the term <CODE>Term2</CODE> in the standard order.
 
+<LI><EM>The following properties should hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>atom_concat(-(atom),-(atom),+atom)</CODE>
-<KBD> * ISO * </KBD>
+<STRONG>Usage 2:</STRONG> <CODE>@&#62;=(Term1,Term2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Non-deterministically split an atom.
+<LI><EM>Description:</EM> The term <CODE>Term1</CODE> follows or is identical to the term <CODE>Term2</CODE> in the standard order.
 
-</UL>
+<LI><EM>The following properties should hold globally:</EM>
 
-<P>
-<STRONG>Usage 3:</STRONG> <CODE>atom_concat(-(atom),+atom,+atom)</CODE>
-<KBD> * ISO * </KBD>
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain suffix (or fail if it cannot be done).
-
-</UL>
-
-<P>
-<STRONG>Usage 4:</STRONG> <CODE>atom_concat(+atom,-(atom),+atom)</CODE>
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain prefix (or fail if it cannot be done).
-
-</UL>
-
-<P>
-<STRONG>Usage 5:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Concatenate two atoms.
-
-<LI><EM>Calls should, and exit will be compatible with:</EM>
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 6:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Non-deterministically split an atom.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_2</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 7:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain suffix (or fail if it cannot be done).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 8:</STRONG> 
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> Take out of an atom a certain prefix (or fail if it cannot be done).
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Atom_1</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>Atom_2</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>Atom_12</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
-
-<CODE>Atom_2</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX1061"></A>
-<A NAME="IDX1062"></A>
+<A NAME="IDX1434"></A>
+<A NAME="IDX1435"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>sub_atom/4:</B>
-<DD><A NAME="IDX1063"></A>
+<DT><span class="define">PREDICATE:</span> <B>compare/3:</B>
+<DD><A NAME="IDX1436"></A>
 
 
 <P>
-<CODE>sub_atom(Atom,Before,Length,Sub_atom)</CODE>
+<CODE>compare(Op,Term1,Term2)</CODE>
 
 
 <P>
-<CODE>Sub_atom</CODE> is formed with <CODE>Length</CODE> consecutive characters of <CODE>Atom</CODE> after the <CODE>Before</CODE> character.
+<CODE>Op</CODE> is the result of comparing the terms <CODE>Term1</CODE> and <CODE>Term2</CODE>.
 
 
 <P>
-The predicate is of type <EM>implicit</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>sub_atom(+atm,+integer,+integer,?(atm))</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>compare(?(atm),@(term),@(term))</CODE>
 
 <UL>
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>?(atm)</CODE> is an element of <CODE>[=,&#62;,&#60;]</CODE>.
+ (<CODE>basic_props:member/2</CODE>)
+
+<CODE>@(term)</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>@(term)</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 <P>
 <STRONG>Usage 2:</STRONG> 
 
 <UL>
-<LI><EM>Calls should, and exit will be compatible with:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Sub_atom</CODE> is an atom.
+<CODE>Op</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Atom</CODE> is an atom.
+<CODE>Term1</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Term2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Op</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>Before</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
+<CODE>Term1</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<CODE>Length</CODE> is currently instantiated to an integer.
- (<CODE>term_typing:integer/1</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
+<CODE>Term2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 
-<CODE>Sub_atom</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>Op</CODE> is an element of <CODE>[=,&#62;,&#60;]</CODE>.
+ (<CODE>basic_props:member/2</CODE>)
+
+<CODE>Term1</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Term2</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties should hold globally:</EM>
+
+<CODE>Term1</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
+
+<CODE>Term2</CODE> is not further instantiated.
+ (<CODE>basic_props:not_further_inst/2</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_20.html">previous</A>, <A HREF="ciao_22.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

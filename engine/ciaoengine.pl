@@ -25,77 +25,179 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*5+133,2000/05/05,17:32*14+'CEST'),
+"SignalObjectAndWait in Win32 (the equivalent to the POSIX
+pthread_cond_wait) exists only in NT 4.0 and Windows 2000; I am
+substituting it for WaitForSingleObject with a timeout.  (MCL)").
 
+:- comment(version(1*5+132,2000/05/05,17:29*54+'CEST'), "Threads in
+Win32 up and running, with native locks, kernel32 critical sections,
+and wait on events to make threads sleep when waiting for a fact to
+appear.  (MCL)").
+
+:- comment(version(1*5+131,2000/05/04,19:46*36+'CEST'), "Fixed a bug
+   related to attributed variables, by changing a
+   collect_goals_from_trail() call to collect_pending_unifications() in
+   wam.c. (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+129,2000/05/02,20:46*52+'CEST'), "relBuf in
+prolog_find_file() is now explicitly allocated, since MAXATOM is a
+variable and some compilers do not know how to translate a variable
+array length directly.  (MCL)").
+
+:- comment(version(1*5+128,2000/05/02,18:04*14+'CEST'), "Changed the
+implementation of general semaphores, using posix locks.  Much simpler
+and more efficient now.  (MCL)").
+
+:- comment(version(1*5+126,2000/05/02,16:47*23+'CEST'), "Corrected
+non-initialized variable in eng_killothers() (MCL)").
+
+:- comment(version(1*5+125,2000/04/28,21:37*08+'CEST'), "close/1
+checks for previous choicepoints which are enumerating the current
+open streams and substitutes the closed stream by the next one in the
+stream chain.  But this causes close/1 not to be O(1), and to run
+slower and slower in unexpected cases (e.g., in a TCP/IP client),
+where (apparently) no choicepoints were being pushed (but they
+actually were).  (MCL)").
+
+:- comment(version(1*5+124,2000/04/28,21:16*05+'CEST'), "Many Prolog
+builtins call catch; it is not concurrent, so no concurrent
+applications should call them.  Making the data fact used by it
+concurrent will, for the moment, solve this problem.  (MCL)").
+
+:- comment(version(1*5+123,2000/04/28,17:24*44+'CEST'), "Added
+processor relinquishing; it gives much better and stable performance
+in a monoprocessor execution.  It seems to overload execution in a
+Linux 2 processor box!  (MCL)").
+
+:- comment(version(1*5+122,2000/04/28,17:22*01+'CEST'), "All the
+Signal_Cond_End replaced by Broadcast_Cond_End: this is the right
+thing to do, since all threads waiting on a fact should be awoken and
+given the opportunity of inspecting the newly added facts. (MCL)").
+
+:- comment(version(1*5+121,2000/04/28,14:25*20+'CEST'), "Added macro
+for process relinquishing.  (MCL)").
+
+:- comment(version(1*5+120,2000/04/28,14:24*59+'CEST'), "Added macro
+for condition broadcasting.  (MCL)").
+
+:- comment(version(1*5+119,2000/04/28,14:23*49+'CEST'), "Solved a bug
+with concurrent facts wich appeared explicitly in the source file:
+their pending_x? fields were not being initialized in
+compile_term_aux().  (MCL)").
+
+:- comment(version(1*5+112,2000/04/07,17:44*20+'CEST'), "Added code
+for library-based locking in Windows -- not tested.  (MCL)").
+
+:- comment(version(1*5+111,2000/04/07,17:43*52+'CEST'), "Code for
+locking (in locks.h) cleaned up.  (MCL)").
+
+:- comment(version(1*5+98,2000/03/30,14:58*35+'CEST'), "Removed some
+   old dependencies in the Makefile, renamed some internal C fuctions
+   to match the Prolog predicates.  (MCL)").
+
+:- comment(version(1*5+76,2000/03/21,12:06*21+'CET'), "Changed thread
+   urgent termination: killing a goal now sets an internal event on
+   the wam executing it.  wam() checks it and exits.  After some time,
+   the thread is checked, and explicitly cancelled if it has not
+   exited.  (MCL)").
+
+:- comment(version(1*5+75,2000/03/21,12:06*05+'CET'), "Added support
+   for threads in Windows 32, by using the native Windows thread
+   management primitives.  Internal code for threads totally
+   rewritten.  (MCL)").
+
+:- comment(version(1*5+60,2000/03/08,17:36*34+'CET'), "Changed
+   prolog_find_file() so that _opt filenames are not given if older than
+   regular ones (Daniel Cabeza Gras)").
+
+:- comment(version(1*5+52,2000/02/10,20:08*28+'CET'), "Improved
+   behavior of catch & throw under choicepoint reallocation.  This
+   solved a bug when aborting in the middle of a debugging session
+   (USE_TAGGED_CHOICE_START). May affect the time behavior of the cut?
+   (MCL)").
+
+:- comment(version(1*5+46,2000/02/07,11:05*53+'CET'), "Load of compressed
+   bytecode performance improved: load time becomes about 125% (with
+   buff. input) and less than 60% (without it).  (Oscar Portela Arjona)").
+
+:- comment(version(1*5+39,2000/02/02,13:17*35+'CET'), "Added support
+   for loading compressed bytecode from .po files. Preliminary tests
+   show a compression ratio of 1:3 while the load time become about
+   150% if using buffered input or about 70% else (note: however, the
+   load of compressed bytecode is faster when using buffered input)
+   (OPA).  (Oscar Portela Arjona)").
 
 :- comment(version(1*5+37,2000/01/26,13:12*16+'CET'), "Atom length
-added to the atom structure, and used in all the code.  Minor speedups
-in regular applications.  Look for USE_ATOM_LEN. (MCL)").
+   added to the atom structure, and used in all the code.  Minor
+   speedups in regular applications.  Look for USE_ATOM_LEN. (MCL)").
 
 :- comment(version(1*5+36,2000/01/25,16:37*41+'CET'),
-"new_atom_check() updated to be smarter when reclaiming more atom
-space.  (MCL)").
+   "new_atom_check() updated to be smarter when reclaiming more atom
+   space.  (MCL)").
 
 :- comment(version(1*5+35,2000/01/25,14:16*47+'CET'), "Size of
-user-created atoms is now variable and unbound (look for the macro
-USE_DYNAMIC_ATOM_SIZE).  Some atoms created inside the engine still
-have a fixed, maximum length (STATICMAXATOM).  (MCL)").
+   user-created atoms is now variable and unbound (look for the macro
+   USE_DYNAMIC_ATOM_SIZE).  Some atoms created inside the engine still
+   have a fixed, maximum length (STATICMAXATOM).  (MCL)").
 
 :- comment(version(1*5+33,2000/01/03,17:08*17+'MET'), "Changed thread
-primitives to use pthread_equal() instead of == (MCL)").
+   primitives to use pthread_equal() instead of == (MCL)").
 
 :- comment(version(1*5+32,2000/01/03,13:37*19+'MET'),
-"unload_if_present() was giving a segmentation violation when loading
-.so files; a wrong variable name was the culprit. Solved.  (MCL)").
+   "unload_if_present() was giving a segmentation violation when
+   loading .so files; a wrong variable name was the culprit. Solved.
+   (MCL)").
 
 :- comment(version(1*5+31,1999/12/29,15:44*18+'CET'), "Added a
-heuristic to the loading of incore clauses which avoids traversing a
-list of choices: the last try chain, the number of node inserted, and
-the point of insertion is cached, and used later if possible (look for
-CACHE_INCREMENTAL_CLAUSE_INSERTION); this speeds up things quite a
-lot. Unfortunately, the whole method is still O(N^2). Looking into
-that.  (MCL)").
+   heuristic to the loading of incore clauses which avoids traversing
+   a list of choices: the last try chain, the number of node inserted,
+   and the point of insertion is cached, and used later if possible
+   (look for CACHE_INCREMENTAL_CLAUSE_INSERTION); this speeds up
+   things quite a lot. Unfortunately, the whole method is still
+   O(N^2). Looking into that.  (MCL)").
 
 :- comment(version(1*5+30,1999/12/29,15:41*00+'CET'), "The engine now
-accepts a lot of clauses per predicate (as many as the maximum value
-of an unsigned long int).  Unfortunately inserting N compiled clauses
-is still O(N^2).  (MCL)").
+   accepts a lot of clauses per predicate (as many as the maximum
+   value of an unsigned long int).  Unfortunately inserting N compiled
+   clauses is still O(N^2).  (MCL)").
 
 :- comment(version(1*5+29,1999/12/29,15:40*48+'CET'), "Use an internal
-buffer of QLBFSIZE chars to store the contents of the .po files being
-read in.  When the buffer is full, we fill it again at once; the
-previous method was calling getc() once and again.  Preliminary tests
-show this method to be between 3 times (for dynamic executables, as
-ciaosh) to 5 times (for static stuff, as ciaoc) faster. Look for 
-#defined BUFFERED_PO (MCL)").
+   buffer of QLBFSIZE chars to store the contents of the .po files
+   being read in.  When the buffer is full, we fill it again at once;
+   the previous method was calling getc() once and again.  Preliminary
+   tests show this method to be between 3 times (for dynamic
+   executables, as ciaosh) to 5 times (for static stuff, as ciaoc)
+   faster. Look for #defined BUFFERED_PO (MCL)").
 
 :- comment(version(1*5+28,1999/12/29,15:40*30+'CET'),
-"prolog_new_atom() redesigned to use an atom size and a quasi-linear
-congruential method which behave well with the hash function in the
-atom table routines.  (MCL)").
+   "prolog_new_atom() redesigned to use an atom size and a
+   quasi-linear congruential method which behave well with the hash
+   function in the atom table routines.  (MCL)").
 
 :- comment(version(1*5+22,1999/12/17,16:59*51+'MET'), "Solved yet
-another problem with remote backtrackig (finally, it seems to work);
-additionally, stacks were not being reused in the case of not
-compiling with threads!  (MCL)").
+   another problem with remote backtrackig (finally, it seems to
+   work); additionally, stacks were not being reused in the case of
+   not compiling with threads!  (MCL)").
 
 :- comment(version(1*5+20,1999/12/16,18:23*29+'MET'), "Ciao was
-breaking in Windows after long queries, due to the lack of
-defined(THREADS) in critical parts of the code.  Seems to be solved
-now.  (MCL)").
+   breaking in Windows after long queries, due to the lack of
+   defined(THREADS) in critical parts of the code.  Seems to be solved
+   now.  (MCL)").
 
 :- comment(version(1*5+6,1999/12/06,14:50*37+'MET'), "'behavior' added
-to the Behavior field of 'int_info'.  (MCL)").
+   to the Behavior field of 'int_info'.  (MCL)").
 
 :- comment(version(1*5+5,1999/12/06,14:47*35+'MET'), "Goal# could not
-be deduced from wam; corrected.  (MCL)").
+   be deduced from wam; corrected.  (MCL)").
 
 :- comment(version(1*3+111,1999/11/22,13:00*41+'MET'),
-"backtrack_goal/1 now seems to work correctly.  Changing the low level
-primitives, anyway.  (MCL)").
+   "backtrack_goal/1 now seems to work correctly.  Changing the low
+   level primitives, anyway.  (MCL)").
 
 :- comment(version(1*3+93,1999/11/07,19:05*33+'MET'), "Added a line in
-init_interpreted() to make interpreted predicates not concurrent by
-default; set_property() may change this behavior later.  (MCL)").
+   init_interpreted() to make interpreted predicates not concurrent by
+   default; set_property() may change this behavior later.  (MCL)").
 
 :- comment(version(1*3+86,1999/10/21,19:11*21+'MEST'), "Added in
    unix_utils.c the special prefix '$' for filenames which represents

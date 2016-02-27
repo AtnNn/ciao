@@ -1,13 +1,13 @@
 %% #!/bin/sh
 %% exec ciao-shell $0 "$@"
 
-%% CIAO syntax
+%% Ciao syntax
 :- use_package(assertions).
 
 %% ISO Compat
 :- use_module(library(dynamic)).
 
-%% CIAO libraries
+%% Ciao libraries
 :- use_module(library('compiler/c_itf')).
 :- use_module(library(compiler),[ use_module/3 ]).
 
@@ -16,7 +16,7 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel Hermenegildo").
 
-:- comment(module,"This simple program takes a single CIAO or Prolog
+:- comment(module,"This simple program takes a single Ciao or Prolog
    source filename (which is typically the main file of an
    application). It prints out the list of all the @concept{dependent
    files}, i.e., all files needed in order to build the application,
@@ -122,7 +122,7 @@ append([X|Xs],Ys,[X|Zs]) :- append(Xs,Ys,Zs).
 
 %% Control version comment prompting for the file.
 %% Local Variables: 
-%% mode: CIAO
+%% mode: ciao
 %% update-version-comments: "on"
 %% End:
 

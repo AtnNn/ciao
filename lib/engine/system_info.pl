@@ -14,7 +14,7 @@
 
 :- comment(author,"Daniel Cabeza, Manuel Carro").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(module,"............... In development ...............").
@@ -56,9 +56,9 @@ internal_module_id(M) :-
 
          Computer architectures are identified by a simple atom.
          This atom is implementation-defined, and may suffer any change
-         from one CIAO Prolog version to another.
+         from one Ciao Prolog version to another.
 
-         For example,CIAO Prolog running on an Intel-based machine 
+         For example,Ciao Prolog running on an Intel-based machine 
          will retrieve:
 @begin{verbatim}
 ?- get_arch(I).
@@ -83,9 +83,9 @@ no
 
          Operating Systems are identified by a simple atom.
          This atom is implementation-defined, and may suffer any change
-         from one CIAO Prolog version to another.
+         from one Ciao Prolog version to another.
 
-         For example,CIAO Prolog running on Linux will retrieve:
+         For example,Ciao Prolog running on Linux will retrieve:
 @begin{verbatim}
 ?- get_os(I).
 
@@ -108,7 +108,7 @@ no
 
          When called using a free variable as argument, it will
          retrieve on backtracking all modules currently loaded. This is 
-         usefull when called from the CIAO @apl{toplevel}.
+         usefull when called from the Ciao @apl{toplevel}.
 
          When called using a module name as argument it will check whether
          the given module is loaded or not. This is usefull when called

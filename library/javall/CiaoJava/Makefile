@@ -29,6 +29,9 @@ clean:
 realclean: clean
 	/bin/rm -f $(LIBNAME) $(OBJECTS) $(OBJNAME)
 
+distclean:
+
+
 itfclean:
 	/bin/rm -f -r *.itf
 	/bin/rm -f -r *.po

@@ -1,6 +1,6 @@
 /*#include "fix_path.h" */ /* To rename paths like /mounted/... */
 
-#if !defined(crossWin32i86)
+
 # include <string.h>
 # include <sys/types.h>
 # include <sys/socket.h>
@@ -11,14 +11,7 @@
 # include <stdlib.h>
 # include <dirent.h>
 # include <pwd.h>
-#else
-# include <string.h>
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <dirent.h>
-#endif
+# include <ctype.h>
 
 
 #include "datadefs.h"
@@ -262,7 +255,7 @@ BOOL prolog_unix_cd(Arg)
   }
 
   if (!IsAtom(X(1))){
-    BUILTIN_ERROR(TYPE_ERROR(ATOM),X(1),2)
+    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(1),2)
   }
   
   if (!expand_file_name(GetString(X(1)),pathBuf))
@@ -301,7 +294,7 @@ BOOL prolog_unix_shell2(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   strcpy(cbuf,"exec ");
   strcat(cbuf,getenv("SHELL"));
@@ -325,7 +318,7 @@ BOOL prolog_unix_system2(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   return cunify(Arg,MakeSmall(system(GetString(X(0)))),X(1));
 }
@@ -367,7 +360,7 @@ BOOL prolog_unix_mktemp(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   strcpy(template,GetString(X(0)));
   mktemp(template);
@@ -383,7 +376,7 @@ BOOL prolog_unix_access(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   DEREF(X(1),X(1));
 
@@ -416,7 +409,7 @@ BOOL prolog_directory_files(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   if (!expand_file_name(GetString(X(0)),pathBuf))
     return FALSE;
@@ -459,7 +452,7 @@ BOOL prolog_file_properties(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   if (!expand_file_name(GetString(X(0)),pathBuf))
     return FALSE;
@@ -523,7 +516,7 @@ BOOL prolog_unix_chmod(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   if (!expand_file_name(GetString(X(0)),pathBuf))
     return FALSE;
@@ -571,7 +564,7 @@ BOOL prolog_unix_delete(Arg)
   DEREF(X(0),X(0));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   if (!expand_file_name(GetString(X(0)),pathBuf))
     return FALSE;
@@ -648,7 +641,7 @@ BOOL prolog_getenvstr(Arg)
   DEREF(X(1),X(1));
   
   if (!TagIsATM(X(0)))
-    BUILTIN_ERROR(TYPE_ERROR(ATOM),X(0),1)
+    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1)
 
   if ((s = getenv(GetString(X(0)))) == NULL) return FALSE;
 
@@ -738,10 +731,12 @@ BOOL prolog_find_file(Arg)
 {
   char *libDir, *path, *opt, *suffix;
   char pathBuf[MAXPATHLEN+8];
-  char relBuf[2*MAXATOM+2];
+ /* MAXATOM may change dinamically to make room for longer atoms */
+  char *relBuf = (char *)malloc(2*MAXATOM+2);
   REGISTER char *bp;
   char *cp;
   struct stat file_status;
+  time_t t_opt, t_pri;
 
   DEREF(X(0),X(0));
   libDir = GetString(X(0));
@@ -765,14 +760,18 @@ BOOL prolog_find_file(Arg)
     strcat(relBuf,path);
   }
 
-  if (!expand_file_name(relBuf,pathBuf))
+  if (!expand_file_name(relBuf,pathBuf)){
+    free(relBuf);
     return FALSE;
+  }
 
 #if defined(FIX_PATHS)
   fix_path(pathBuf);
 #endif
 
   cp = pathBuf + strlen(pathBuf);
+
+  t_opt = t_pri = 0;
 
  searchPath:
   
@@ -782,10 +781,8 @@ BOOL prolog_find_file(Arg)
     strcpy(bp,suffix);
     if(!access(pathBuf,F_OK)) {
       stat(pathBuf, &file_status);
-      if (!S_ISDIR(file_status.st_mode)) {
-        Unify_constant(atom_true,X(4));    /* found path+opt+suffix */
-        goto giveVals;
-      }
+      if (!S_ISDIR(file_status.st_mode))
+        t_opt = file_status.st_mtime;    /* found path+opt+suffix */
     }
   }
   
@@ -795,11 +792,21 @@ BOOL prolog_find_file(Arg)
     strcpy(bp,suffix);
     if(!access(pathBuf,F_OK)) {
       stat(pathBuf, &file_status);
-      if (!S_ISDIR(file_status.st_mode)) {
-        Unify_constant(atom_true,X(4));    /* found path+suffix */
-        goto giveVals;
-      }
+      if (!S_ISDIR(file_status.st_mode))
+        t_pri = file_status.st_mtime;    /* found path+suffix */
     }
+  }
+
+  if (t_pri > t_opt) { /* path+suffix exists, path+opt+suffix older|absent */
+    Unify_constant(atom_true,X(4));
+    goto giveVals;
+  } else if (t_opt > 0) { /* newer path+opt+suffix exists */
+    /* recreate opt+suffix */
+    strcpy(cp,opt);
+    bp = cp + strlen(cp);
+    strcpy(bp,suffix);
+    Unify_constant(atom_true,X(4));
+    goto giveVals;
   }
 
   *bp = 0;
@@ -838,6 +845,7 @@ BOOL prolog_find_file(Arg)
 
   Unify_constant(MakeString(pathBuf),X(7));
   
+  free(relBuf);
   return TRUE;
 }
 
@@ -899,7 +907,7 @@ BOOL prolog_exec(Arg)
 
   DEREF(X(0), X(0));
   if (!IsAtom(X(0))){
-    BUILTIN_ERROR(TYPE_ERROR(ATOM),X(0),1)
+    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1)
   }
 
   pipe(pipe_in);

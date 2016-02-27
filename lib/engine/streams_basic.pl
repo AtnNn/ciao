@@ -15,7 +15,7 @@
 :- comment(author, "Daniel Cabeza").
 :- comment(author, "Mats Carlsson").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
 :- comment(module,"This module provides basic predicates for handling
@@ -154,14 +154,14 @@ io_mode(append).
 :- comment(file_search_path(Alias, Path), "The @concept{path alias}
    @var{Alias} is linked to path @var{Path}.  Both arguments must be
    atoms.  New facts (or clauses) of this predicate can be asserted to
-   define new path aliases.  Predefined path aliases in CIAO are:
+   define new path aliases.  Predefined path aliases in Ciao are:
 
 @begin{description}
 
-@item{@tt{library}} Initially points to all CIAO library paths.  See
+@item{@tt{library}} Initially points to all Ciao library paths.  See
    @pred{library_directory/1}.
 
-@item{@tt{engine}} The path of the @concept{CIAO engine builtins}.
+@item{@tt{engine}} The path of the @concept{Ciao engine builtins}.
 
 @item{@tt{.}} The current path (@tt{'.'}).
 
@@ -173,7 +173,7 @@ io_mode(append).
 
 :- comment(library_directory(Path), "@var{Path} is a library path (a
    path represented by the @concept{path alias} @tt{library}).
-   Predefined library paths in CIAO are @tt{'$CIAOLIB/lib'},
+   Predefined library paths in Ciao are @tt{'$CIAOLIB/lib'},
    @tt{'$CIAOLIB/library'}, and @tt{'$CIAOLIB/contrib'}, given that
    @tt{$CIAOLIB} is the path of the root ciao library directory.  More
    library paths can be defined by asserting new facts (or clauses) of

@@ -38,6 +38,7 @@
 :- comment(subtitle,"A Generic Database Interface").
 :- comment(subtitle,"Technical Report CLIP 9/98.0").
 :- comment(subtitle,"RadioWeb (ESPRIT Project 25562) Report D3.1.M1-A1").
+:- comment(subtitle,"ECCOSIC (Fulbright Project 98059)").
 %% :- comment(subtitle,"@em{Draft printed on:} @today{}").
 :- comment(subtitle,"December 26, 1998").
 

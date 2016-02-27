@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
 #include "instrdefs.h"
-#include "threads.h"
 #include "task_areas.h"                 /* For register bank reallocation */
 
 /* declarations for global functions accessed here */
@@ -541,7 +542,9 @@ struct instance *compile_term_aux(Arg, head, body, new_worker)
   TAGGED *trail_origo;
   INSN *current_insn /*, *last_insn */ ;
 
-  insns=1-ANY, cells=CONTPAD, maxtemps=0;
+  insns=1-ANY;
+  cells=CONTPAD;
+  maxtemps=0;
   trail_origo = Arg->trail_top-DynamicPreserved;
 
   DerefHeapSwitch(head,t0,{goto car_done;});
@@ -597,6 +600,8 @@ struct instance *compile_term_aux(Arg, head, body, new_worker)
   INC_MEM_PROG(lsize);
   object->objsize = lsize;
   current_insn = object->emulcode;
+  object->pending_x2 = NULL;
+  object->pending_x5 = NULL;
 
   if (cells>=CALLPAD) {
     REGISTER INSN *P = current_insn;
@@ -908,7 +913,7 @@ static BOOL prolog_constant_codes(Arg,atomp,numberp)
           else
             BUILTIN_ERROR(TYPE_ERROR(NUMBER),X(0),1)
           } else
-            BUILTIN_ERROR(TYPE_ERROR(ATOM),X(0),1)
+            BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1)
 
               s += (i = strlen(s));
     if (HeapDifference(w->global_top,Heap_End)<CONTPAD+(i<<1))
@@ -939,7 +944,7 @@ BOOL prolog_atom_length(Arg)
   DEREF(X(1),X(1));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
 
   if (!IsInteger(X(1)) && !IsVar(X(1)))
     BUILTIN_ERROR(TYPE_ERROR(INTEGER),X(1),2)
@@ -964,7 +969,7 @@ BOOL prolog_sub_atom(Arg)
   DEREF(X(3),X(3));
 
   if (!TagIsATM(X(0)))
-    ERROR_IN_ARG(X(0),1,ATOM);
+    ERROR_IN_ARG(X(0),1,STRICT_ATOM);
   if (!IsInteger(X(1)))
     ERROR_IN_ARG(X(1),2,INTEGER);
   if (!IsInteger(X(2)))
@@ -1016,7 +1021,7 @@ BOOL prolog_atom_concat(Arg)
     if (TagIsATM(X(1))) {
 
       if (!TagIsATM(X(2)) && !IsVar(X(2)))
-        BUILTIN_ERROR(TYPE_ERROR(ATOM),X(2),3)
+        BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(2),3)
 /* atom_concat(+, +, ?) */
       s2 = (unsigned char *)GetString(X(1));
 
@@ -1051,7 +1056,7 @@ BOOL prolog_atom_concat(Arg)
 
     } else if (IsVar(X(1))) {
       if (!TagIsATM(X(2)))
-        { ERROR_IN_ARG(X(2),3,ATOM); }
+        { ERROR_IN_ARG(X(2),3,STRICT_ATOM); }
 /* atom_concat(+, -, +) */
       s2 = (unsigned char *)GetString(X(2));
 
@@ -1075,10 +1080,10 @@ BOOL prolog_atom_concat(Arg)
       return cunify(Arg,init_atom_check(Atom_Buffer),X(1));
 
     } else
-      BUILTIN_ERROR(TYPE_ERROR(ATOM),X(1),2);
+      BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(1),2);
   } else if (IsVar(X(0))) {
     if (!TagIsATM(X(2)))
-        { ERROR_IN_ARG(X(2),3,ATOM); }
+        { ERROR_IN_ARG(X(2),3,STRICT_ATOM); }
 
     if (TagIsATM(X(1))) {
 /* atom_concat(-, +, +) */
@@ -1125,9 +1130,9 @@ BOOL prolog_atom_concat(Arg)
       return nd_atom_concat(Arg);
 
     } else
-      BUILTIN_ERROR(TYPE_ERROR(ATOM),X(1),2);
+      BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(1),2);
   } else
-    BUILTIN_ERROR(TYPE_ERROR(ATOM),X(0),1);
+    BUILTIN_ERROR(TYPE_ERROR(STRICT_ATOM),X(0),1);
 }
 
 /* Precond: 2<=abs(base)<=36 */

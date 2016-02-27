@@ -19,7 +19,7 @@
 :- use_module(library(sort)).
 
 :- comment(author,"Francisco Bueno").
-:- comment(title,"Variable names dictionaries").
+:- comment(title,"Variable name dictionaries").
 
 %-------------------------------------------------------------------------
 :- regtype varnamedict(D) # "@var{D} is a dictionary of variable names.".

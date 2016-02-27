@@ -7,10 +7,10 @@
 
 :- comment(title, "Basic predicates handling names of constants").
 
-:- comment(usage, "These predicates are builtin in CIAO, so nothing special
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
    has to be done to use them.").
 
-:- comment(module, "The CIAO system provides builtin predicates which
+:- comment(module, "The Ciao system provides builtin predicates which
    allow dealing with names of constants (atoms or numbers).  As an atom
    name must be of less than 512 characters, to handle sequences of more
    characters, strings (character code lists) must be used.").

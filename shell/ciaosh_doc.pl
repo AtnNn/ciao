@@ -1,24 +1,28 @@
 :- module(_,[], [assertions]).
 
-:- comment(title, "The interactive top-level shell").
+:- comment(title,  "The interactive top-level shell").
 :- comment(author, "Daniel Cabeza and the CLIP Group").
-:- comment(usage, "The following predicates can be used at the top-level shell
-                   natively (but see also @ref{The interactive debugger}).").
+:- comment(usage,  "The following predicates can be used at the top-level shell
+                    natively (but see also the commands available in 
+                    @ref{The interactive debugger} which are also available
+                    within the top-level shell)."). 
 :- comment(copyright,"
 Copyright @copyright{} 1996-99 Daniel Cabeza/The CLIP Group.
 
 @include{Copyright.Manuals}
 ").
 
-:- comment(module,"@apl{ciaosh} is the CIAO interactive top-level shell.
-It provides the user an interactive programming environment with tools
+:- comment(module,"@apl{ciaosh} is the Ciao interactive top-level shell.
+It provides the user with an interactive programming environment with tools
 for incrementally building programs, debugging programs by following
 their executions, and modifying parts of programs without having to
 start again from scratch.  If available, it is strongly recommended to
 use it with the @concept{emacs interface} provided, as it greatly
 simplifies the operation.  This chapter documents general operation in
-the shell. Subsequent chapters document the relevant exported
-predicates of the modules which provide functionalities to the shell.
+the shell itself. Other chapters document the 
+
+@comment{Subsequent chapters document the relevant exported
+predicates of the modules which provide functionalities to the shell.}
 
 @section{Shell invocation and startup}
 
@@ -26,7 +30,7 @@ When invoked, the shell responds with a message of identification and
 the prompt @tt{?- } as soon as it is ready to accept input, thus:
 
 @begin{verbatim}
-CIAO 0.9 #21: Thu Mar 25 17:20:55 MET 1999
+Ciao-Prolog X.Y #PP: Thu Mar 25 17:20:55 MET 1999
 ?- 
 @end{verbatim}
 
@@ -184,8 +188,10 @@ yes
 
 :- reexport(toplev,
         [use_module/1, use_module/2, ensure_loaded/1,
-         include/1, use_package/1, consult/1, compile/1, '.'/2,
-         make_exec/2]).
+	 make_exec/2,
+         include/1, use_package/1, 
+	 consult/1, compile/1, '.'/2
+         ]).
 :- use_module(library(libpaths), []).
 :- reexport(library(compiler),
         [make_po/1, unload/1,

@@ -177,8 +177,7 @@ BOOL bu2_update_attribute(Arg,x,constr)
    Each pending unification pushes 4 heap elems - cf enter_predicate: wam.c
 */
 
-#if defined(ZERO)
-collect_pending_unifications(Arg,wake_count)
+void collect_pending_unifications(Arg,wake_count)
      Argdecl;
      int wake_count;
 {
@@ -226,13 +225,12 @@ collect_pending_unifications(Arg,wake_count)
     while (TrailYounger(w->trail_top,tr)){
       TAGGED ref;
       
-      if (ref = TrailNext(tr))
+      if ((ref = TrailNext(tr)))
         TrailPush(h,ref);
     }
     w->trail_top = h;
   }
 }                  
-#endif
 
 void collect_one_pending_unification(Arg)
      Argdecl;

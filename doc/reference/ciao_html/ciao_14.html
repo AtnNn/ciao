@@ -1,41 +1,71 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Directives for using code in other files</TITLE>
+<TITLE>The Ciao Prolog System               - The module system</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC73" HREF="ciao_toc.html#TOC73">Directives for using code in other files</A></H1>
+<H1><A NAME="SEC119" HREF="ciao_toc.html#TOC119">The module system</A></H1>
 <P>
-<A NAME="IDX746"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX1101"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.5#1 (1999/11/29, 17:12:34 MET)
+<STRONG>Author(s):</STRONG> Daniel Cabeza and the CLIP Group.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#107 (1999/11/18, 13:6:14 MET)
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+Modularity is a basic notion in a modern computer language. Modules allow dividing programs in several parts, which have its own independent name spaces. The module system in Ciao [CH00b], as in many other Prolog implementations, is procedure based. This means that predicate names are local to a module, but functor/atom names in data are shared. 
+
+
+<P>
+The predicates visible in a module are the predicates defined in that module, plus the predicates imported from other modules. Only predicates exported by a module can be imported from other modules. The default module of a given predicate name is the local one if the predicate is defined locally, else the last module from which the predicate is imported, having explicit imports priority. To refer to a predicate from a module which is not the default for that predicate the name has to be module 
+<A NAME="IDX1102"></A>
+<A NAME="IDX1103"></A>
+qualified. A module qualified predicate name has the form <CODE>Module</CODE>:<CODE>Predicate</CODE> as in the call <CODE>debugger:debug_module(M)</CODE>. Note that this does not allow having access to predicates not imported, nor defining clauses of other modules. 
+
+
+<P>
+All predicates defined in files with no module declaration belong to a special module called 
+<A NAME="IDX1104"></A>
+<A NAME="IDX1105"></A>
+<CODE>user</CODE>, and all are implicitly exported. This allows dividing programs in several files without being aware of the module system at all. Note that this feature is only supported for compatibility reasons, being its use discouraged. Many attractive compilation features of Ciao cannot be performed in <CODE>user</CODE> modules. 
+
+
+<P>
+The case of multifile predicates (defined with the declaration 
+<A NAME="IDX1106"></A>
+<CODE>multifile/1</CODE>) is also special. Multifile predicates can be defined by clauses distributed in several modules, and all modules which define a predicate as multifile can use that predicate. The name space of multifile predicates is independent, as if they belonged to special module <CODE>multifile</CODE>. 
+
+
+<P>
+Every <CODE>user</CODE> or module file imports implicitly a number of modules called 
+<A NAME="IDX1107"></A>
+builtin modules. They are imported before all other importations of the module, allowing thus redefining any of their predicates (with the exception of 
+<A NAME="IDX1108"></A>
+<CODE>true/0</CODE>) by defining local versions or importing them from other modules. Importing explicitly from a builtin module, however, disables the implicit importation of the rest (this feature is used by package 
+<A NAME="IDX1109"></A>
+<CODE>library(pure)</CODE> to define pure prolog code).
 
 
 
 <UL>
-<LI><A HREF="ciao_14.html#SEC74">Usage and interface (loading_code)</A>
-<LI><A HREF="ciao_14.html#SEC75">Documentation on internals (loading_code)</A>
+<LI><A HREF="ciao_14.html#SEC120">Usage and interface (modules)</A>
+<LI><A HREF="ciao_14.html#SEC121">Documentation on internals (modules)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC74" HREF="ciao_toc.html#TOC74">Usage and interface (<CODE>loading_code</CODE>)</A></H2>
+<H2><A NAME="SEC120" HREF="ciao_toc.html#TOC120">Usage and interface (<CODE>modules</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,111 +73,337 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-These directives are builtin in CIAO, so nothing special has to be done to use them.
+Modules are an intrinsic feature of Ciao, so nothing special has to be done to use them.
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC75" HREF="ciao_toc.html#TOC75">Documentation on internals (<CODE>loading_code</CODE>)</A></H2>
+<H2><A NAME="SEC121" HREF="ciao_toc.html#TOC121">Documentation on internals (<CODE>modules</CODE>)</A></H2>
 <P>
-<A NAME="IDX747"></A>
-<A NAME="IDX748"></A>
+<A NAME="IDX1110"></A>
+<A NAME="IDX1111"></A>
 <DL>
-<DT><span class="define">DECLARATION:</span> <B>ensure_loaded/1:</B>
-<DD><A NAME="IDX749"></A>
+<DT><span class="define">DECLARATION:</span> <B>module/3:</B>
+<DD><A NAME="IDX1112"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>ensure_loaded(File)</CODE>.
-<KBD> * ISO * </KBD>
+<STRONG>Usage:</STRONG> :- <CODE>module(Name,Exports,Packages)</CODE>.
 
 <UL>
-<LI><EM>Description:</EM> Specifies that the code present in <CODE>File</CODE> will be included in the executable being prepared, in the <CODE>user</CODE> module. The file <CODE>File</CODE> cannot have a module declaration. This directive is intended to be used by programs not divided in modules. Dividing programs into modules is however strongly encouraged, since most of the attractive features of CIAO (such as static debugging and global optimization) are only partially available for <CODE>user</CODE> modules.
+<LI><EM>Description:</EM> Declares a module of name <CODE>Name</CODE> which exports the predicates in <CODE>Exports</CODE>, and uses the packages in <CODE>Packages</CODE>. <CODE>Name</CODE> must match with the name of the file where the module resides, without extension. For each source in <CODE>Packages</CODE>, a
 
-<LI><EM>The following properties should hold at call time:</EM>
+<A NAME="IDX1113"></A>
+package file is included, as if by an 
+<A NAME="IDX1114"></A>
+<CODE>include/1</CODE> declaration. If the source is specified with a 
+<A NAME="IDX1115"></A>
+path alias, this is the file included, if it is an atom, the library paths are searched. Package files provide functionalities by declaring imports from other modules, defining operators, new declarations, translations of code, etc. 
 
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-</UL>
+This directive must appear the first in the file. 
 
-</DL>
+Also, if the compiler finds an unknown declaration as the first term in a file, the name of the declaration is regarded as a package library to be included, and the arguments of the declaration (if present) are interpreted like the arguments of 
+<A NAME="IDX1116"></A>
+<CODE>module/3</CODE>. 
+<LI><EM>The following properties hold at call time:</EM>
 
-<P>
-<A NAME="IDX750"></A>
-<A NAME="IDX751"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>include/1:</B>
-<DD><A NAME="IDX752"></A>
+<CODE>Name</CODE> is a module name (an atom).
+ (<CODE>modules:modulename/1</CODE>)
 
+<CODE>Exports</CODE> is a list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>include(File)</CODE>.
-<KBD> * ISO * </KBD>
-
-<UL>
-<LI><EM>Description:</EM> The contents of the file <CODE>File</CODE> are included in the current program text exactly as if they had been written in place of this directive.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>File</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX753"></A>
-<A NAME="IDX754"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>use_package/1:</B>
-<DD><A NAME="IDX755"></A>
-
-
-<P>
-:- <CODE>use_package(Package)</CODE>.
-
-
-<P>
-Specifies the use in this file of the packages defined in <CODE>Package</CODE>. See the description of the third argument of 
-<A NAME="IDX756"></A>
-<CODE>module/3</CODE> for an explanation of 
-<A NAME="IDX757"></A>
-package files. 
-
-
-<P>
-This directive must appear the first in the file, or just after a 
-<A NAME="IDX758"></A>
-<CODE>module/3</CODE> declaration. A file with no module declaration, in the absence of this directive, uses an implicit package <CODE>iso</CODE>, which enables to include 
-<A NAME="IDX759"></A>
-ISO-Prolog compatible code (compatibility not 100% yet).
-
-
-<P>
-<STRONG>Usage 1:</STRONG> :- <CODE>use_package(Package)</CODE>.
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Package</CODE> is a source name.
- (<CODE>streams_basic:sourcename/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> :- <CODE>use_package(Package)</CODE>.
-
-<UL>
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Package</CODE> is a list of <CODE>sourcename</CODE>s.
+<CODE>Packages</CODE> is a list of <CODE>sourcename</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX1117"></A>
+<A NAME="IDX1118"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>module/2:</B>
+<DD><A NAME="IDX1119"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>module(Name,Exports)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Same as directive
+
+<A NAME="IDX1120"></A>
+<CODE>module/3</CODE>, with an implicit package <CODE>iso</CODE>, which enables to include 
+<A NAME="IDX1121"></A>
+ISO-Prolog compatible code (compatibility not 100% yet). 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Name</CODE> is a module name (an atom).
+ (<CODE>modules:modulename/1</CODE>)
+
+<CODE>Exports</CODE> is a list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1122"></A>
+<A NAME="IDX1123"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX1124"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> :- <CODE>export(Pred)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Adds <CODE>Pred</CODE> to the set of exported predicates.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Pred</CODE> is a Name/Arity structure denoting a predicate name: 
+
+<PRE>
+predname(P/A) :-
+        atm(P),
+        int(A).
+</PRE>
+
+ (<CODE>basic_props:predname/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> :- <CODE>export(Exports)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Adds <CODE>Exports</CODE> to the set of exported predicates.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Exports</CODE> is a list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1125"></A>
+<A NAME="IDX1126"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_module/2:</B>
+<DD><A NAME="IDX1127"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_module(Module,Imports)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Specifies that this code imports from the module defined in <CODE>Module</CODE> the predicates in <CODE>Imports</CODE>. The imported predicates must be exported by the other module.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Module</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Imports</CODE> is a list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1128"></A>
+<A NAME="IDX1129"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>use_module/1:</B>
+<DD><A NAME="IDX1130"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>use_module(Module)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Specifies that this code imports from the module defined in <CODE>Module</CODE> all the predicates exported by it. The previous version with the explicit import list is preferred to this as it minimizes the chances to have to recompile this code if the other module changes.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Module</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1131"></A>
+<A NAME="IDX1132"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>import/2:</B>
+<DD><A NAME="IDX1133"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>import(Module,Imports)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Declares that this code imports from the module with name <CODE>Module</CODE> the predicates in <CODE>Imports</CODE>.
+
+<STRONG>Important note:</STRONG> this declaration is intended to be used when the current module or the imported module is going to be dynamically loaded, and so the compiler does not include the code of the imported module in the current executable (if only because the compiler cannot know the location of the module file at the time of compilation). For the same reason the predicates imported are not checked to be exported by <CODE>Module</CODE>. Its use in other cases is strongly discouraged, as it disallows many compiler optimizations. 
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Module</CODE> is a module name (an atom).
+ (<CODE>modules:modulename/1</CODE>)
+
+<CODE>Imports</CODE> is a list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1134"></A>
+<A NAME="IDX1135"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>reexport/2:</B>
+<DD><A NAME="IDX1136"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>reexport(Module,Preds)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Specifies that this code reexports from the module defined in <CODE>Module</CODE> the predicates in <CODE>Preds</CODE>. This implies that this module imports from the module defined in <CODE>Module</CODE> the predicates in <CODE>Preds</CODE>, an also that this module exports the predicates in <CODE>Preds</CODE> .
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Module</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+
+<CODE>Preds</CODE> is a list of <CODE>predname</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1137"></A>
+<A NAME="IDX1138"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>reexport/1:</B>
+<DD><A NAME="IDX1139"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>reexport(Module)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Specifies that this code reexports from the module defined in <CODE>Module</CODE> all the predicates exported by it. This implies that this module imports from the module defined in <CODE>Module</CODE> all the predicates exported by it, an also that this module exports all such predicates .
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>Module</CODE> is a source name.
+ (<CODE>streams_basic:sourcename/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1140"></A>
+<A NAME="IDX1141"></A>
+<DL>
+<DT><span class="define">DECLARATION:</span> <B>meta_predicate/1:</B>
+<DD><A NAME="IDX1142"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>meta_predicate MetaSpecs</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> Specifies that the predicates in <CODE>MetaSpecs</CODE> have arguments which represent predicates and thus have to be module expanded. The directive is not mandatory in programs which do not use modules. This directive is defined as a prefix operator in the compiler.
+
+<LI><EM>The following properties hold at call time:</EM>
+
+<CODE>MetaSpecs</CODE> is a sequence of <CODE>metaspec</CODE>s.
+ (<CODE>basic_props:sequence/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1143"></A>
+<A NAME="IDX1144"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>modulename/1:</B>
+<DD><A NAME="IDX1145"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>modulename(M)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>M</CODE> is a module name (an atom).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX1146"></A>
+<A NAME="IDX1147"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>metaspec/1:</B>
+<DD><A NAME="IDX1148"></A>
+
+
+<P>
+A meta-predicate specification for a predicate is the functor of that predicate applied to atoms which represent the kind of module expansion that should be done with the arguments. Possible contents are represented as: 
+
+
+<DL COMPACT>
+
+<DT><CODE>goal</CODE>
+<DD>
+This argument will be a term denoting a goal (either a simple or complex one) which will be called. For commpatibility reasons it can be named as <CODE>:</CODE> as well. 
+
+<DT><CODE>clause</CODE>
+<DD>
+This argument will be a term denoting a clause. 
+
+<DT><CODE>fact</CODE>
+<DD>
+This argument should be instantiated to a term denoting a fact (head-only clause). 
+
+<DT><CODE>spec</CODE>
+<DD>
+This argument should be instantiated to a predicate name, as Functor/Arity. 
+
+<DT><CODE>pred(<EM>N</EM>)</CODE>
+<DD>
+This argument should be instantiated to a predicate construct to be called by means of a <CODE>call/<EM>N</EM></CODE> predicate call (see 
+<A NAME="IDX1149"></A>
+<CODE>call/2</CODE>). Thus, it should be an atom equal to the name of a predicate of arity <EM>N</EM>, or a structure with functor the name of a predicate of arity <EM>M</EM> (greater than <EM>N</EM>) and with <EM>M</EM>-<EM>N</EM> arguments. 
+
+<DT><CODE>?,+,-,_</CODE>
+<DD>
+These other values denote that this argument is not module expanded. 
+
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>metaspec(M)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>M</CODE> is a meta-predicate specification.
+
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, <A HREF="ciao_15.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -64,5 +64,5 @@ attr(v(_)            ) --> [].
    predicates.  (Daniel Cabeza Gras)").
 
 :- comment(version(0*4+5,1998/2/24), "Synchronized file versions with
-   global CIAO version.  (Manuel Hermenegildo)").
+   global Ciao version.  (Manuel Hermenegildo)").
 

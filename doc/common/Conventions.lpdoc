@@ -1,9 +1,18 @@
 
+This manual is not meant to be an introduction to the Prolog
+language. The reader is referred to standard textbooks on Prolog such
+as @cite{SterlingShapiro86,Clome81,apt-log-to-pl,Hogger84}.  However,
+we would like to refresh herein some concepts for the sake of
+establishing terminology.  Also, we will briefly introduce a few of the
+extensions that Ciao brings to the Prolog language.
+
+@subsection{Predicates and their components}
+
 In Prolog, procedures are called @em{predicates} and predicate calls
-@em{literals}. They all have the classical syntax of procedures (and of 
-logic predications and of mathematical functions). Predicates are identified
-in this manual by a keyword 'PREDICATE' at the right margin of the
-place where they are documented.
+@em{literals}. They all have the classical syntax of procedures (and
+of logic predications and of mathematical functions). Predicates are
+identified in this manual by a keyword 'PREDICATE' at the right margin
+of the place where they are documented.
 
 Prolog instructions are expressions made up of control constructs
 (@ref{Control constructs/predicates}) and literals, and are called
@@ -21,7 +30,7 @@ called @em{rules}. A Prolog program is a sequence of predicate definitions.
 We adopt the following convention for delineating character strings in
 the text of this manual: when a string is being used as a Prolog atom
 it is written thus: @tt{user} or @tt{'user'}; but in all other
-circumstances double quotes are used.
+circumstances double quotes are used (as in @tt{"hello"}).
 
 @cindex{keyboard} When referring to keyboard characters, printing
 characters are written thus: @key{a}, while control characters are
@@ -81,15 +90,27 @@ in this manual by a keyword 'REGTYPE'.
 
 @subsection{Declarations}
 
-A @em{declaration} is an instruction to one of the Ciao environment tools
-to do something, which is interspersed in the code of a program.
-Usually the target tool is either the compiler (telling it that a predicate
-is dynamic, or a meta-predicate, etc.) or the preprocessor (which
-understands declarations of properties and types, assertions, etc.).
+A @em{declaration} provides information to one of the Ciao environment
+tools. Declarations are interspersed in the code of a program.
+Usually the target tool is either the compiler (telling it that a
+predicate is dynamic, or a meta-predicate, etc.), the preprocessor
+(which understands declarations of properties and types, assertions,
+etc.), or the autodocumenter (which understands the previous
+declarations and also certain ``comment'' declarations).
 
 A declaration has the form @tt{:- D.} where @tt{D} is syntactically
 the same as a literal. Declarations are identified in this manual by a
 keyword 'DECLARATION'.
+
+In Ciao users can define (and document) new declarations. New
+declarations are typically useful when defining extensions to the
+language (which in Ciao are called packages). Such extensions are
+often implemented as @concept{expansions} (see @ref{Extending the
+syntax}). There are many such extensions in Ciao. The @lib{functions}
+library, which provides fuctional syntax, is an example. The fact that
+in Ciao expansions are local to modules (as operators, see below)
+makes it possible to use a certain language extension in one module
+without affecting other modules.
 
 @subsection{Operators}
 
@@ -99,7 +120,10 @@ instead of the standard procedure-like fashion. E.g., declaring @tt{+}
 as an infix operator allows writing @tt{X+Y} instead of @tt{'+'(X,Y)}
 (which may still, of course, be written).
 
-Operators in Ciao are local to the module/file where they are declared.
-However, some operators are standard and allowed in every program.
-See @ref{Standard operators}. This manual documents the operator declarations
-in each (library) module where they are included.
+@em{Operators in Ciao are local to the module/file where they are
+declared}.  However, some operators are standard and allowed in every
+program (see @ref{Standard operators}). This manual documents the
+operator declarations in each (library) module where they are
+included. As with expansions, the fact that in Ciao operators are
+local to modules makes it possible to use a certain language extension
+in one module without affecting other modules.

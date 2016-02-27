@@ -1,8 +1,9 @@
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 #include <stdlib.h>
+
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
-#include "threads.h"
 
 
 /* declarations for global functions accessed here */

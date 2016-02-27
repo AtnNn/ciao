@@ -48,11 +48,14 @@
 #if defined(DEBUG)
 
 #define INC_MEM_PROG(size) \
-    if (debug_mem) printf("Program memory increased by %ld bytes\n", size);\
+    if (debug_mem) \
+      printf("Program memory increased by %ld bytes\n", \
+             (long int)size);\
     mem_prog_count = mem_prog_count + (size) 
 
 #define DEC_MEM_PROG(size) \
-    if (debug_mem) printf("Program memory decreased by %ld bytes\n", size);\
+    if (debug_mem) printf("Program memory decreased by %ld bytes\n", \
+             (long int)size);\
     mem_prog_count = mem_prog_count - (size)
 
 #else

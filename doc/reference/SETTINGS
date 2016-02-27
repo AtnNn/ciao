@@ -10,7 +10,7 @@ include ../SETTINGS.COMMON
 # ----------------------------------------------------------------------------
 
 FILEPATHS := $(SRC)/doc/reference $(SRC)/shell $(SRC)/ciaoc $(SRC)/engine \
-             $(SRC)/emacs $(SRC)/etc \
+             $(SRC)/emacs-mode $(SRC)/etc \
 	     $(FILEPATHS)
 # Useful for debugging...
 #MAINOPTS  := -v $(MAINOPTS)
@@ -19,8 +19,11 @@ MAIN       = ciao.pl
 # Mini manual for testing. The order is very important!
 #COMPONENTS = $(INSTALLATION) 
 # The order is very important!
+
+# ******** Warning: if you change this you also need to change 
+# ******** ciao.el which gives an outline of the manual
 COMPONENTS = \
-	GetStart.pl \
+	$(GETSTARTED) \
     DevEnv.pl \
 	$(DEVENV) \
     Builtins.pl \
@@ -41,11 +44,19 @@ COMPONENTS = \
 	$(ADTS) \
     ciao-utilities.pl \
 	$(UTILCOMPONENTS) \
+    Contrib.pl \
+	$(CONTRIB) \
     Append.pl \
 	$(INSTALLATION) 
 
+GETSTARTED = \
+	GetStartUnix.pl \
+	GetStartWin32.pl
+
 INSTALLATION = \
-    Install.pl
+    Install.pl \
+    InstallWin32bin.pl \
+    BeyondInstall.pl
 
 DEVENV = \
     ciaoc.pl \
@@ -154,7 +165,6 @@ MISCPROLOG = \
 #     assrt_lib.pl \
 #     byrd.pl \
 # 	traces.pl \
-#     conc_aggregates.pl \
 #     events.pl \
 #     fly.pl \
 #     listing.pl \
@@ -167,17 +177,18 @@ EXTENDPROLOG = \
     argnames.pl \
     andprolog.pl \
     functions.pl \
+    hiord.pl \
     global.pl \
     odd.pl \
+    freeze.pl \
     actmods.pl \
     bf_doc.pl \
+    id_doc.pl \
     clpq_doc.pl \
     clpr_doc.pl \
     ociao_doc.pl \
 	class_doc.pl \
-	class_error_doc.pl \
 	objects_doc.pl \
-	objects_error_doc.pl \
         objects_rt.pl 
 
 # Driven by ociao_doc
@@ -206,6 +217,7 @@ INTERFACES = \
     javart.pl \
 	jtopl.pl \
 	javasock.pl \
+    emacs.pl \
     linda.pl
 
 ADTS = \
@@ -216,6 +228,9 @@ ADTS = \
     numlists.pl \
     patterns.pl \
     graphs.pl \
+     ugraphs.pl \
+     wgraphs.pl \
+     lgraphs.pl \
     queues.pl \
     random.pl \
     sets.pl \
@@ -227,8 +242,6 @@ ADTS = \
 #     keys.pl \
 #     llists.pl \
 #     lsets.pl \
-#     ugraphs.pl \
-#     wgraphs.pl
 
 UTILCOMPONENTS = \
 	fileinfo.pl \
@@ -240,5 +253,8 @@ UTILCOMPONENTS = \
 	ciao_get_arch_doc.pl
 
 #	collect_modules_doc.pl
+
+CONTRIB = \
+	mycin.pl \
 
 # ----------------------------------------------------------------------------

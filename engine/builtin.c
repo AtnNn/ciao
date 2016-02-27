@@ -1,9 +1,9 @@
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
 #include "predtyp.h"
-#include "threads.h"
 #include "task_areas.h"
 
 

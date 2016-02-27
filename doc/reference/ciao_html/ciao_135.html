@@ -1,61 +1,420 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Gathering the dependent files for a file</TITLE>
+<TITLE>The Ciao Prolog System               - sets (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC472" HREF="ciao_toc.html#TOC472">Gathering the dependent files for a file</A></H1>
-
+<H1><A NAME="SEC529" HREF="ciao_toc.html#TOC529">sets (library)</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.0#6 (1998/11/5, 13:56:58 MET)
+<A NAME="IDX5816"></A>
 
 
 <P>
-This simple program takes a single CIAO or Prolog source filename (which is typically the main file of an application). It prints out the list of all the 
-<A NAME="IDX5039"></A>
-dependent files, i.e., all files needed in order to build the application, including those which reside in libraries. This is particularly useful in Makefiles, for 
-<A NAME="IDX5040"></A>
-building standalone distributions (e.g., 
-<A NAME="IDX5041"></A>
-.tar files) automatically. 
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
 
 
 <P>
-The filename should be followed by other arguments which will be taken to be library directory paths in which to look for files used by the file being analyzed. 
+<STRONG>Version of last change:</STRONG> 0.9#17 (1999/3/23, 20:57:20 MET)
+
+
+<P>
+This module implements set operations. Sets are just ordered lists.
 
 
 
 <UL>
-<LI><A HREF="ciao_135.html#SEC473">Usage (get_deps)</A>
+<LI><A HREF="ciao_135.html#SEC530">Usage and interface (sets)</A>
+<LI><A HREF="ciao_135.html#SEC531">Documentation on exports (sets)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC473" HREF="ciao_toc.html#TOC473">Usage (get_deps)</A></H2>
+<H2><A NAME="SEC530" HREF="ciao_toc.html#TOC530">Usage and interface (<CODE>sets</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(sets)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
-<PRE>
-   
-	get_deps [-u &#60;filename&#62;] &#60;filename&#62; [lib_dir1] ... [lib_dirN]
-           : return dependent files for &#60;filename&#62; 
-             found in [lib_dir1] ... [lib_dirN]
+<UL>
 
-	get_deps -h
-           : print this information
+<LI><EM>Predicates:</EM>
 
-</PRE>
+<A NAME="IDX5817"></A>
+<CODE>insert/3</CODE>, 
+<A NAME="IDX5818"></A>
+<CODE>ord_delete/3</CODE>, 
+<A NAME="IDX5819"></A>
+<CODE>ord_member/2</CODE>, 
+<A NAME="IDX5820"></A>
+<CODE>ord_test_member/3</CODE>, 
+<A NAME="IDX5821"></A>
+<CODE>ord_subtract/3</CODE>, 
+<A NAME="IDX5822"></A>
+<CODE>ord_intersection/3</CODE>, 
+<A NAME="IDX5823"></A>
+<CODE>ord_intersection_diff/4</CODE>, 
+<A NAME="IDX5824"></A>
+<CODE>ord_intersect/2</CODE>, 
+<A NAME="IDX5825"></A>
+<CODE>ord_subset/2</CODE>, 
+<A NAME="IDX5826"></A>
+<CODE>ord_subset_diff/3</CODE>, 
+<A NAME="IDX5827"></A>
+<CODE>ord_union/3</CODE>, 
+<A NAME="IDX5828"></A>
+<CODE>ord_union_diff/4</CODE>, 
+<A NAME="IDX5829"></A>
+<CODE>ord_union_symdiff/4</CODE>, 
+<A NAME="IDX5830"></A>
+<CODE>ord_union_change/3</CODE>, 
+<A NAME="IDX5831"></A>
+<CODE>merge/3</CODE>, 
+<A NAME="IDX5832"></A>
+<CODE>ord_disjoint/2</CODE>, 
+<A NAME="IDX5833"></A>
+<CODE>setproduct/3</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX5834"></A>
+<CODE>sort</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC531" HREF="ciao_toc.html#TOC531">Documentation on exports (<CODE>sets</CODE>)</A></H2>
+<P>
+<A NAME="IDX5835"></A>
+<A NAME="IDX5836"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>insert/3:</B>
+<DD><A NAME="IDX5837"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>insert(+Set1,+Element,-(Set2))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Set2</CODE> is <CODE>Set1</CODE> with <CODE>Element</CODE> inserted in it, preserving the order.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5838"></A>
+<A NAME="IDX5839"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_delete/3:</B>
+<DD><A NAME="IDX5840"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_delete(+Set0,+X,-(Set))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds if <CODE>Set</CODE> is <CODE>Set0</CODE> without element <CODE>X</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5841"></A>
+<A NAME="IDX5842"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_member/2:</B>
+<DD><A NAME="IDX5843"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_member(+X,+Set)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds if <CODE>X</CODE> is member of <CODE>Set</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5844"></A>
+<A NAME="IDX5845"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_test_member/3:</B>
+<DD><A NAME="IDX5846"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_test_member(+Set,+X,-(Result))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> If <CODE>X</CODE> is member of <CODE>Set</CODE> then <CODE>Result</CODE>=<CODE>yes</CODE>. Otherwise <CODE>Result</CODE>=<CODE>no</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5847"></A>
+<A NAME="IDX5848"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_subtract/3:</B>
+<DD><A NAME="IDX5849"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_subtract(+Set1,+Set2,?(Difference))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Difference</CODE> contains all and only the elements of <CODE>Set1</CODE> which are not also in <CODE>Set2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5850"></A>
+<A NAME="IDX5851"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersection/3:</B>
+<DD><A NAME="IDX5852"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_intersection(+Set1,+Set2,?(Intersection))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Intersection</CODE> is the ordered representation of <CODE>Set1</CODE> and <CODE>Set2</CODE>, provided that <CODE>Set1</CODE> and <CODE>Set2</CODE> are ordered lists.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5853"></A>
+<A NAME="IDX5854"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersection_diff/4:</B>
+<DD><A NAME="IDX5855"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_intersection_diff(+Set1,+Set2,-(Intersect),-(NotIntersect))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Intersect</CODE> contains those elements which are both in <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>NotIntersect</CODE> those which are in <CODE>Set1</CODE> but not in <CODE>Set2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5856"></A>
+<A NAME="IDX5857"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_intersect/2:</B>
+<DD><A NAME="IDX5858"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_intersect(+Xs,+Ys)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Succeeds when the two ordered lists have at least one element in common.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5859"></A>
+<A NAME="IDX5860"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_subset/2:</B>
+<DD><A NAME="IDX5861"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_subset(+Xs,+Ys)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Succeeds when every element of <CODE>Xs</CODE> appears in <CODE>Ys</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5862"></A>
+<A NAME="IDX5863"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_subset_diff/3:</B>
+<DD><A NAME="IDX5864"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_subset_diff(+Set1,+Set2,-(Difference))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds when every element of <CODE>Set1</CODE> appears in <CODE>Set2</CODE> and <CODE>Difference</CODE> has the elements of <CODE>Set2</CODE> which are not in <CODE>Set1</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5865"></A>
+<A NAME="IDX5866"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union/3:</B>
+<DD><A NAME="IDX5867"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union(+Set1,+Set2,?(Union))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>. When some element occurs in both sets, <CODE>Union</CODE> retains only one copy.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5868"></A>
+<A NAME="IDX5869"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_diff/4:</B>
+<DD><A NAME="IDX5870"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union_diff(+Set1,+Set2,-(Union),-(Difference))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It succeeds when <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE>, and <CODE>Difference</CODE> is <CODE>Set2</CODE> set-minus <CODE>Set1</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5871"></A>
+<A NAME="IDX5872"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_symdiff/4:</B>
+<DD><A NAME="IDX5873"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union_symdiff(+Set1,+Set2,-(Union),-(Diff))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It is true when Diff is the symmetric difference of Set1 and Set2, and Union is the union of Set1 and Set2.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5874"></A>
+<A NAME="IDX5875"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_union_change/3:</B>
+<DD><A NAME="IDX5876"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_union_change(+Set1,+Set2,-(Union))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Union</CODE> is the union of <CODE>Set1</CODE> and <CODE>Set2</CODE> and <CODE>Union</CODE> is different from <CODE>Set2</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5877"></A>
+<A NAME="IDX5878"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>merge/3:</B>
+<DD><A NAME="IDX5879"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>merge(+Set1,+Set2,?(Union))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> See <CODE>ord_union/3</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5880"></A>
+<A NAME="IDX5881"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ord_disjoint/2:</B>
+<DD><A NAME="IDX5882"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ord_disjoint(+Set1,+Set2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Set1</CODE> and <CODE>Set2</CODE> have no element in common.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5883"></A>
+<A NAME="IDX5884"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>setproduct/3:</B>
+<DD><A NAME="IDX5885"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>setproduct(+Set1,+Set2,-(Product))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Product</CODE> has all two element sets such that one element is in <CODE>Set1</CODE> and the other in <CODE>set2</CODE>, except that if the same element belongs to both, then the corresponding one element set is in <CODE>Product</CODE>.
+
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_134.html">previous</A>, <A HREF="ciao_136.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

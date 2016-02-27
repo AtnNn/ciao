@@ -1,5 +1,6 @@
 :- module(c_itf,
         [process_files_from/7, process_file/7, cleanup_c_itf_data/0,
+         activate_translation/3,
          defines_module/2, exports/5, def_multifile/4, decl/2,
          uses/2, adds/2, imports_pred/7, imports_all/2, includes/2, loads/2,
          clause_of/7, defines_pred/3, dyn_decl/4, meta_pred/4,
@@ -16,12 +17,13 @@
          use_mod/3, static_base/1, module_loaded/4, make_po_file/1,
          false/1, old_file_extension/2, load_compile/1, needs_reload/1,
          abolish_module/1, interpret_file/1, interpret_module/1,
-         pred_module/2, addmodule_inc/3
+         interpret_srcdbg/1,pred_module/2, addmodule_inc/3
          ], [assertions]).
 
 :- use_module(library('compiler/translation')).
 :- use_module(library('compiler/pl2wam')).
-:- use_module(library('compiler/srcdbg'),[srcdbg_expand/4]).
+:- use_module(library('compiler/srcdbg'),[srcdbg_expand/5]).
+:- use_module(library(fastrw)).
 
 :- use_module(engine(internals), [
         '$open'/3, builtin_module/1, initialize_module/1,
@@ -47,7 +49,7 @@
 :- use_module(library(lists)).
 :- use_module(library(read)).
 :- use_module(library(operators)).
-:- use_module(library(foreign_interface)). % JFMC
+:- use_module(library('foreign_interface/build_foreign_interface')). % JFMC
 
 :- multifile primitive_meta_predicate/2. % Used by mexpand
 
@@ -57,6 +59,7 @@ define_flag(single_var_warnings, [on,off], on).
 define_flag(discontiguous_warnings, [on,off], on).
 define_flag(multi_arity_warnings, [on,off], on).
 define_flag(verbose_compilation, [on,off], off).
+define_flag(itf_format, [f,r], f). % f=fast{read,write}, r=prolog terms.
 
 :- data opt_suff/1.
 
@@ -649,7 +652,7 @@ read_record_file_(PlName, Base, Type) :-
         ; process_first_term(Data, Base, M, VNs, Sings, PlName, Ln0, Ln1),
           ( M=user(_) ->
               (Type==module -> compiler_error(Ln0, Ln1, module_missing) ; true)
-          ; expand_term(start_of_file(Base), M, _) % For initialization
+          ; expand_term(start_of_file(Base), M, _, _) % For initialization
           ),
           read_record_next(Stream, Base, PlName, M, main)
         ),
@@ -767,7 +770,7 @@ read_record_next(Stream, Base, Pl, M, Caller) :-
         ), !.
 
 process_read_data(RawData, Base, M, VNs, Sings, Pl, Ln0, Ln1) :-
-        expand_term(RawData, M, Data0),
+        expand_term(RawData, M, VNs, Data0),
         expand_list(Data0, Data),
         ( Data = end_of_file
         ; process_expanded_data(Data, Base, M, VNs, Sings, Pl, Ln0, Ln1),
@@ -1421,8 +1424,9 @@ generate_itf(ItfName, Dir, Mode, Base) :-
             current_output(CO),
             set_output(Stream),
             itf_version(V),
-            display_term(v(V)),
-            write_itf_data_of(Base),
+            current_prolog_flag(itf_format, Format),
+            display_term(v(V,Format)),
+            write_itf_data_of(Format, Base),
             set_output(CO),
             close(Stream),
             chmod(ItfName, Mode),
@@ -1433,12 +1437,15 @@ generate_itf(ItfName, Dir, Mode, Base) :-
         assertz_fact(time_of_itf_data(Base,Now)),
         set_prolog_flag(fileerrors, OldFE).
 
-write_itf_data_of(Base) :-
+write_itf_data_of(Format, Base) :-
         itf_data(ITF, Base, _, Fact),
           current_fact(Fact),
-            display_term(ITF),
+            do_write(Format, ITF),
         fail.
-write_itf_data_of(_).
+write_itf_data_of(_, _).
+
+do_write(f,Term) :- fast_write(Term).
+do_write(r,Term) :- display_term(Term).
 
 read_itf(ItfName, ItfTime, Base, Dir, Type) :-
         working_directory(OldDir, Dir),
@@ -1474,21 +1481,21 @@ do_read_itf(ItfName, Base) :-
         current_input(CI),
         set_input(Stream),
         ( itf_version(V),
-          read(v(V)), !
+          read(v(V,Format)), !
         ; set_input(CI),
           close(Stream),
           fail
         ),
         now_doing(['Reading ',ItfName]),
-        read_itf_data_of(Base),
+        read_itf_data_of(Format,Base),
         set_input(CI),
         time(Now),
         close(Stream),
         assertz_fact(time_of_itf_data(Base,Now)).
 
-read_itf_data_of(Base) :-
+read_itf_data_of(Format,Base) :-
         repeat,
-          read(ITF),
+          do_read(Format,ITF),
         ( ITF = end_of_file, !
         ; itf_data(ITF, Base, File, Fact),
           do_get_base_name(File),
@@ -1496,12 +1503,15 @@ read_itf_data_of(Base) :-
           fail
         ).
 
+do_read(f,Term) :- fast_read(Term), ! ; Term = end_of_file.
+do_read(r,Term) :- read(Term).
+
 % Catch file errors now
 do_get_base_name('.') :- !.
 do_get_base_name(user) :- !.
 do_get_base_name(File) :- get_base_name(File, _, _, _).
 
-itf_version(6).
+itf_version(1).
 
 :- meta_predicate itf_data(?, ?, ?, fact).
 
@@ -1807,15 +1817,15 @@ low_dyn_decl(concurrent, concurrent).
 :- data location/3.
 
 compile_clauses(Base, Module, Mode) :-
-        expand_clause(0, 0, Module, _, _), % Translator initialization
-        retract_fact(clause_of(Base,H,B,_,Src,Ln0,Ln1)),
+        expand_clause(0, 0, Module, _, _, _), % Translator initialization
+        retract_fact(clause_of(Base,H,B,Dict,Src,Ln0,Ln1)),
           \+ number(H),
           asserta_fact(location(Src,Ln0,Ln1), Ref),
-          expand_clause(H, B, Module, H0, BX),
-          expand_goal(BX, Module, B0),
+          expand_clause(H, B, Module, Dict, H0, BX),
+          expand_goal(BX, Module, Dict, B0),
           ( Mode = interpreted,
-            current_prolog_flag(trace_lines, on) ->
-              srcdbg_expand(H0,B0,H1,B1)
+            current_fact(interpret_srcdbg(Module)) ->
+              srcdbg_expand(H0,B0,H1,B1,Dict)
           ; H1 = H0, B1 = B0
           ),
           head_expansion(H1, Module, H2),
@@ -1827,8 +1837,8 @@ compile_clauses(_, _, _).
 
 compile_goal_decl(DN, Base, Module, Mode) :-
         functor(Decl, DN, 1),
-        findall(loc(Decl,Src,Ln0,Ln1),
-                clause_of(Base, 1, Decl, _, Src, Ln0, Ln1),
+        findall(loc(Decl,Dict,Src,Ln0,Ln1),
+                clause_of(Base, 1, Decl, Dict, Src, Ln0, Ln1),
                 Decls),
         compile_goal_decls(Decls, DN, Module, Mode).
 
@@ -1840,10 +1850,10 @@ compile_goal_decls(Decls, DN, Module, Mode) :-
         compile_goal_decls_(Decls, DeclM, Module, Mode).
 
 compile_goal_decls_([], _, _, _).
-compile_goal_decls_([loc(Decl,Src,Ln0,Ln1)|_], DeclM, Module, Mode) :-
+compile_goal_decls_([loc(Decl,Dict,Src,Ln0,Ln1)|_], DeclM, Module, Mode) :-
         asserta_fact(location(Src,Ln0,Ln1), Ref),
         arg(1, Decl, Goal),
-        module_expand_goal(Goal, Module, Goal1),
+        module_expand_goal(Goal, Module, Dict, Goal1),
         compile_clause(Mode, DeclM, Goal1, Module),
         erase(Ref),
         fail.
@@ -2100,8 +2110,8 @@ end_brace_if_needed :-
 
 multifile(M, F, N) :- multifile(M, F, N, _DynMode).
 
-module_expand_goal(B, Mod, B1) :-
-        expand_goal(B, Mod, BX),
+module_expand_goal(B, Mod, Dict, B1) :-
+        expand_goal(B, Mod, Dict, BX),
         body_expansion(BX, Mod, -, B1).
 
 %% EXPANSION: heads
@@ -2208,7 +2218,7 @@ compute_load_action(Base, Module, Mode, Load_Action) :-
         defines_module(Base, Module),
         file_data(Base, PlName, Dir),
         compilation_mode(PlName, Module, Mode),
-        ( Mode = interpreted ->
+        ( Mode = interpreted(_) ->
             ( modif_time0(PlName, PlTime),
               not_changed(Module, Base, Mode, PlTime) -> fail
             ; Load_Action =
@@ -2341,8 +2351,11 @@ abolish_module(_).
 
 :- data interpret_file/1.   % SOURCE will be interpreted when loaded
 :- data interpret_module/1. % MODULE will be interpreted when loaded
+:- data interpret_srcdbg/1. % SRCDBG will be expanded when loaded
 
-compilation_mode(Source, Module, interpreted) :-
+compilation_mode(_, Module, interpreted(srcdbg)) :- 
+	current_fact(interpret_srcdbg(Module)), !.
+compilation_mode(Source, Module, interpreted(raw)) :-
         (interpret_file(Source) ; interpret_module(Module)), !.
 compilation_mode(_, _, Profiling) :-
         current_prolog_flag(compiling, Profiling).
@@ -2561,6 +2574,11 @@ retract_clause(Head, Body) :-
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+45,2000/02/05,20:53*37+'CET'), "Added prolog flag
+   itf_format to allow writing itf data in fastrw format instead as
+   terms (and set it default).  Itf's can be always read in any of both
+   formats.  (Daniel Cabeza Gras)").
 
 :- comment(version(1*5+12,1999/12/14,13:27*49+'MET'), "Incorporated
    the changes (expansions) by M.Carlos to support source-level

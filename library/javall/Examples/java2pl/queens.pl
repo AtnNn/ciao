@@ -2,10 +2,10 @@
 
 :- module(queens, [queens/2]).
 :- use_module(library(write)).
-:- use_module(library(dummy)).
+:- use_module(library(prolog_sys)).
 :- use_module(library(format)).
 
-speed:-
+queens:-
         statistics(runtime, _),
         do_queens,
         statistics(runtime, [_|T]),

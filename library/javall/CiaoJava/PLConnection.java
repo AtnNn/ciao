@@ -5,17 +5,17 @@ import java.net.*;
 import java.util.*;
 
 /**
- * Starts and handles a connection to a prolog process
+ * Starts and handles a connection to a Prolog process
  * via sockets.
  * The PLConnection can be used in two ways, so the
- * <tt>CiaoJava</tt> interface can work as a java
+ * <code>CiaoJava</code> interface can work as a Java
  * object server (using the constructor with no arguments),
- * or as a connection to a prolog query server.
- * Working with a prolog server using the java side as a
- * client, the prolog goals can be launched using the <tt>launchGoal</tt>
- * method with a <tt>PLTerm</tt> object representing a goal
+ * or as a connection to a Prolog query server.
+ * Working with a Prolog server using the Java side as a
+ * client, the Prolog goals can be launched using the <code>launchGoal</code>
+ * method with a <code>PLTerm</code> object representing a goal
  * (those terms where the isRunnable() method returns true),
- * or creating and using <tt>PLGoal</tt> objects.
+ * or creating and using <code>PLGoal</code> objects.
  */
 public class PLConnection {
 
@@ -34,14 +34,14 @@ public class PLConnection {
   private static final PLTerm EVENT_SYNC = new PLAtom("event");
 
   /**
-   * Creates a PLConnection to use the java-to-prolog
-   * interface. Starts the prolog server process and
-   * connects to it.
+   * Creates a PLConnection to use the Java-to-Prolog
+   * interface. Starts the Prolog server process and
+   * connects to it creating the sockets.
    *
-   * @param where command used to start the prolog server process.
+   * @param where command used to start the Prolog server process.
    *
    * @exception IOException if there are I/O problems.
-   * @exception PLException if there are problems regarding the prolog
+   * @exception PLException if there are problems regarding the Prolog
    *                        process.
    */
   public PLConnection(String where) throws IOException, PLException {
@@ -54,9 +54,13 @@ public class PLConnection {
   }
 
   /**
-   * Creates a PLConnection for the prolog-to-java
-   * interface: waits for a prolog process that wants to
+   * Creates a PLConnection for the Prolog-to-Java
+   * interface: waits for a Prolog process that wants to
    * connect to it.
+   *
+   * @exception IOException if there are I/O problems.
+   * @exception PLException if there are problems regarding the Prolog
+   *                        process.
    */
   public PLConnection() throws IOException, PLException {
 
@@ -65,9 +69,9 @@ public class PLConnection {
   }
 
   /**
-   * Asks the prolog server if it can work with threads.
+   * Asks the Prolog server if it can work with threads.
    *
-   * @return true if the prolog server can work with threads;
+   * @return true if the Prolog server can work with threads;
    *         false otherwise.
    *
    */
@@ -79,7 +83,7 @@ public class PLConnection {
 
   /**
    * This private method creates and synchronizes the sockets 
-   * for communication with the prolog process.
+   * for communication with the Prolog process.
    */
   private void createSockets(PrintStream out) 
     throws IOException, PLException {
@@ -116,10 +120,16 @@ public class PLConnection {
 
   /**
    * Goal launching. Evaluates the term received as a query and
-   * sends it to prolog for evaluation.
+   * sends it to Prolog for evaluation.
    *
-   * @param	goal	prolog term that will be evaluated as a prolog
+   * @param	goal	Prolog term that will be evaluated as a Prolog
    *              goal.
+   *
+   * @return The <code>PLGoal</code> created to manage the goal.
+   *
+   * @exception IOException if there are I/O problems.
+   * @exception PLException if there are problems regarding the Prolog
+   *                        process.
    */
   public PLGoal query(PLTerm term) throws PLException, IOException {
 
@@ -130,10 +140,13 @@ public class PLConnection {
   }
 
   /**
-   * Low level Java-to-prolog communication. This method sends 
-   * prolog terms from java to prolog.
+   * Low level Java-to-Prolog communication. This method sends 
+   * Prolog terms from Java to Prolog. Transforms the term in
+   * a serialized form (using the Prolog format) and sends the
+   * result to Prolog through the data socket.
    *
-   * @param term is an object representing a prolog term.
+   * @param term is an object representing a Prolog term.
+   *
    */
   protected void toProlog(PLTerm term) {
 
@@ -142,10 +155,10 @@ public class PLConnection {
   }
 
   /**
-   * Low level java-to-prolog event communication. This method sends
-   * prolog terms to prolog through the event socket.
+   * Low level Java-to-Prolog event communication. This method sends
+   * Prolog terms to Prolog through the event socket.
    *
-   * @param term is an object representing a prolog term.
+   * @param term is an object representing a Prolog term.
    */
   protected void toPrologEvent(PLTerm term) {
 
@@ -154,12 +167,12 @@ public class PLConnection {
   }
 
   /**
-   * Low level Java-to-prolog communication. Private method that sends
-   * prolog terms to prolog through a given socket.
+   * Low level Java-to-Prolog communication. Private method that sends
+   * Prolog terms to Prolog through a given socket.
    *
    * @param out   is the socket output stream to send the
    *              term through.
-   * @param term  is an object representing a prolog term.
+   * @param term  is an object representing a Prolog term.
    */
   private void toProlog(PrintWriter out, PLTerm term) {
 
@@ -169,12 +182,14 @@ public class PLConnection {
   }
 
   /**
-   * Prolog-to-java communication. This method listens at the prolog
-   * socket to receive results from the prolog process as terms.
+   * Prolog-to-Java communication. This method listens at the Prolog
+   * socket to receive results from the Prolog process as terms.
    *
    * @return Prolog term received from the socket.
    *
    * @exception IOException if the socket stream has been broken.
+   * @exception PLException if there are problems regarding the Prolog
+   *                        process.
    */
   protected PLTerm fromProlog() throws IOException, PLException {
 
@@ -183,15 +198,17 @@ public class PLConnection {
   }
 
   /**
-   * Low level Prolog-to-java communication. Private method that listens
-   * at a given prolog socket to receive results from the prolog
+   * Low level Prolog-to-Java communication. Private method that listens
+   * at a given Prolog socket to receive results from the Prolog
    * process as terms.
    *
-   * @param in socket input stream to receive the prolog data.
+   * @param in socket input stream to receive the Prolog data.
    *
    * @return Prolog term received from the socket.
    *
    * @exception IOException if the socket stream has been broken.
+   * @exception PLException if there are problems regarding the Prolog
+   *                        process.
    */
   private PLTerm fromProlog(BufferedReader in) 
     throws IOException, PLException {

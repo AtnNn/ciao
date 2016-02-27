@@ -17,7 +17,7 @@
    predicates, except the predicates dealing with exceptions, which are
    in @ref{Exception handling}.").
 
-:- comment(usage, "These predicates/constructs are builtin in CIAO, so
+:- comment(usage, "These predicates/constructs are builtin in Ciao, so
    nothing special has to be done to use them.  In fact, as they are
    hardwired in some parts of the system, most of them cannot be redefined.").
 
@@ -112,23 +112,37 @@ if(P, Q, R) :- undefined_goal(if(P,Q,R)).
 
 :- meta_predicate srcdbg_spy(goal,?,?,?,?,?).
 
-srcdbg_spy(_,_,_,_,_,_):-
- 	'$debugger_state'(State,State),
- 	(  
- 	    arg(1,State,trace)
- 	;
- 	    arg(1,State,debug)
- 	),!.
+srcdbg_spy(Goal, _, _, _, _, _) :-
+	'$debugger_state'(State,State),
+	arg(1, State, X),
+	( X = off ->
+	     term_to_meta(G, Goal),
+	     '$meta_call'(G)
+	;
+	    true
+	).
 
-srcdbg_spy(Goal,_,_,_,_,_):-
- 	'$debugger_state'(State,State),
- 	arg(1,State,off),!,
- 	term_to_meta(G,Goal),
-	'$meta_call'(G).
+% srcdbg_spy(_,_,_,_,_,_):-
+%  	'$debugger_state'(State,State),
+%  	(  
+%  	    arg(1,State,trace)
+%  	;
+%  	    arg(1,State,debug)
+%  	),!.
+
+% srcdbg_spy(Goal,_,_,_,_,_):-
+%  	'$debugger_state'(State,State),
+%  	arg(1,State,off),!,
+%  	term_to_meta(G,Goal),
+% 	'$meta_call'(G).
 
 % ----------------------------------------------------------------------------
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*5+66,2000/03/16,17:03*30+'CET'), "Modified 
+   srcdbg_spy pred to improve the performance on source-level debugging.
+   (Manuel Carlos Rodriguez)").
 
 :- comment(version(1*5+13,1999/12/14,13:37*34+'MET'), "Added
    @pred{srcdbg_spy/6} to support source level debugging.  (M. Carlos 
@@ -138,4 +152,10 @@ srcdbg_spy(Goal,_,_,_,_,_):-
    an exported property (into basic_props).  (Francisco Bueno Carrillo)").
 
 % ----------------------------------------------------------------------------
+
+
+
+
+
+
 

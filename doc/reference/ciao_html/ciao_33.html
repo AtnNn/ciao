@@ -1,28 +1,336 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART III - ISO-Prolog library (iso)</TITLE>
+<TITLE>The Ciao Prolog System               - Gathering some basic internal info</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_32.html">previous</A>, <A HREF="ciao_34.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_32.html">previous</A>, <A HREF="ciao_34.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC137" HREF="ciao_toc.html#TOC137">PART III - ISO-Prolog library (iso)</A></H1>
+<H1><A NAME="SEC182" HREF="ciao_toc.html#TOC182">Gathering some basic internal info</A></H1>
+<P>
+<A NAME="IDX2120"></A>
+
 
 <P>
- This part documents the 
-<A NAME="IDX1732"></A>
-<A NAME="IDX1733"></A>
-<EM>iso</EM> package which provides (most of) the ISO-Prolog functionality to Ciao programs, including most of the 
-<A NAME="IDX1734"></A>
-<A NAME="IDX1735"></A>
-<EM>ISO-Prolog builtins</EM>. 
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
 
+
+<P>
+<STRONG>Version:</STRONG> 1.5#118 (2000/4/19, 18:13:43 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#13 (1999/7/2, 18:49:49 MEST)
+
+
+<P>
+............... In development ...............
+
+
+
+<UL>
+<LI><A HREF="ciao_33.html#SEC183">Usage and interface (system_info)</A>
+<LI><A HREF="ciao_33.html#SEC184">Documentation on exports (system_info)</A>
+<LI><A HREF="ciao_33.html#SEC185">Documentation on internals (system_info)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC183" HREF="ciao_toc.html#TOC183">Usage and interface (<CODE>system_info</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+These predicates are builtin in Ciao, so nothing special has to be done to use them.
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX2121"></A>
+<CODE>get_arch/1</CODE>, 
+<A NAME="IDX2122"></A>
+<CODE>get_os/1</CODE>, 
+<A NAME="IDX2123"></A>
+<CODE>this_module/1</CODE>, 
+<A NAME="IDX2124"></A>
+<CODE>current_module/1</CODE>, 
+<A NAME="IDX2125"></A>
+<CODE>ciaolibdir/1</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC184" HREF="ciao_toc.html#TOC184">Documentation on exports (<CODE>system_info</CODE>)</A></H2>
+<P>
+<A NAME="IDX2126"></A>
+<A NAME="IDX2127"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_arch/1:</B>
+<DD><A NAME="IDX2128"></A>
+
+
+<P>
+This predicate will describe the computer architecture wich is currently executing the predicate. 
+
+
+<P>
+Computer architectures are identified by a simple atom. This atom is implementation-defined, and may suffer any change from one Ciao Prolog version to another. 
+
+
+<P>
+For example,Ciao Prolog running on an Intel-based machine will retrieve: 
+
+<PRE>
+?- get_arch(I).
+
+I = i86 ? ;
+
+no
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>get_arch(?(ArchDescriptor))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>ArchDescriptor</CODE> with a simple atom which describes the computer architecture currently executing the predicate.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>?(ArchDescriptor)</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>get_arch(ArchDescriptor)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>ArchDescriptor</CODE> with a simple atom which describes the computer architecture currently executing the predicate.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>ArchDescriptor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2129"></A>
+<A NAME="IDX2130"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_os/1:</B>
+<DD><A NAME="IDX2131"></A>
+
+
+<P>
+This predicate will describe the Operating System which is running on the machine currently executing the Prolog program. 
+
+
+<P>
+Operating Systems are identified by a simple atom. This atom is implementation-defined, and may suffer any change from one Ciao Prolog version to another. 
+
+
+<P>
+For example,Ciao Prolog running on Linux will retrieve: 
+
+<PRE>
+?- get_os(I).
+
+I = 'LINUX' ? ;
+
+no
+?- 
+</PRE>
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>get_os(?(OsDescriptor))</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>OsDescriptor</CODE> with a simple atom which describes the running Operating System when predicate was called.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>?(OsDescriptor)</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>get_os(OsDescriptor)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>OsDescriptor</CODE> with a simple atom which describes the running Operating System when predicate was called.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>OsDescriptor</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2132"></A>
+<A NAME="IDX2133"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>this_module/1:</B>
+<DD><A NAME="IDX2134"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>this_module(addmodule)</CODE>.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Module</CODE> is the internal module identifier for current module.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is an internal module identifier
+ (<CODE>system_info:internal_module_id/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Module</CODE> is the internal module identifier for current module.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Arg1</CODE> is an internal module identifier
+ (<CODE>system_info:internal_module_id/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2135"></A>
+<A NAME="IDX2136"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>current_module/1:</B>
+<DD><A NAME="IDX2137"></A>
+
+
+<P>
+This predicate will successively unify its argument with all module names currently loaded. Module names will be simple atoms. 
+
+
+<P>
+When called using a free variable as argument, it will retrieve on backtracking all modules currently loaded. This is usefull when called from the Ciao 
+<A NAME="IDX2138"></A>
+<CODE>toplevel</CODE>. 
+
+
+<P>
+When called using a module name as argument it will check whether the given module is loaded or not. This is usefull when called from user programs. 
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>current_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves (on backtracking) all currently loaded modules into your application.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>current_module(Module)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Retrieves (on backtracking) all currently loaded modules into your application.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>Module</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2139"></A>
+<A NAME="IDX2140"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>ciaolibdir/1:</B>
+<DD><A NAME="IDX2141"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>ciaolibdir(CiaoPath)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>CiaoPath</CODE> is the path to the root of the Ciao libraries. Inside this directory, there are the directories 'lib', 'library' and 'contrib', which contain library modules.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>CiaoPath</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>ciaolibdir(CiaoPath)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>CiaoPath</CODE> is the path to the root of the Ciao libraries. Inside this directory, there are the directories 'lib', 'library' and 'contrib', which contain library modules.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>CiaoPath</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC185" HREF="ciao_toc.html#TOC185">Documentation on internals (<CODE>system_info</CODE>)</A></H2>
+<P>
+<A NAME="IDX2142"></A>
+<A NAME="IDX2143"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>internal_module_id/1:</B>
+<DD><A NAME="IDX2144"></A>
+
+
+<P>
+For a user file it is a term user/1 with an argument different for each user file, for other modules is just the name of the module (as an atom).
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>internal_module_id(M)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>M</CODE> is an internal module identifier
+
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_32.html">previous</A>, <A HREF="ciao_34.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_32.html">previous</A>, <A HREF="ciao_34.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -9,7 +9,11 @@ HEADER=header
 
 exe_header:
 	$(SRC)/etc/substitute_string $(TO_CHANGE) $(INSTALLEDENGINE) $(HEADER_SKEL) $(HEADER)
+	chmod $(DATAMODE) $(HEADER)
 
 distclean:
 	/bin/rm -f *.itf *.po *.asr
+	/bin/rm -f browse_builtins
+	/bin/rm -f browse_builtins.cpx
+
 

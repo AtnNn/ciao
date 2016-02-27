@@ -1,22 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 January 2000 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 5 May 2000 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - String processing</TITLE>
+<TITLE>The Ciao Prolog System               - Dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_51.html">previous</A>, <A HREF="ciao_53.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_51.html">previous</A>, <A HREF="ciao_53.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC190" HREF="ciao_toc.html#TOC190">String processing</A></H1>
+<H1><A NAME="SEC236" HREF="ciao_toc.html#TOC236">Dictionaries</A></H1>
 <P>
-<A NAME="IDX2246"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
+<A NAME="IDX2713"></A>
 
 
 <P>
@@ -24,18 +20,18 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_51.html">previous</A>, 
 
 
 <P>
-This module provides predicates for doing input/output with strings (character code lists) and for including in grammars defining strings.
+This module provides predicates for implementing dictionaries. Such dictionaries are currently implemented as ordered binary trees.
 
 
 
 <UL>
-<LI><A HREF="ciao_52.html#SEC191">Usage and interface (strings)</A>
-<LI><A HREF="ciao_52.html#SEC192">Documentation on exports (strings)</A>
+<LI><A HREF="ciao_52.html#SEC237">Usage and interface (dict)</A>
+<LI><A HREF="ciao_52.html#SEC238">Documentation on exports (dict)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC191" HREF="ciao_toc.html#TOC191">Usage and interface (<CODE>strings</CODE>)</A></H2>
+<H2><A NAME="SEC237" HREF="ciao_toc.html#TOC237">Usage and interface (<CODE>dict</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +39,7 @@ This module provides predicates for doing input/output with strings (character c
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(strings)).</CODE>
+<CODE>:- use_module(library(dict)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,20 +48,16 @@ This module provides predicates for doing input/output with strings (character c
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2247"></A>
-<CODE>get_line/2</CODE>, 
-<A NAME="IDX2248"></A>
-<CODE>get_line/1</CODE>, 
-<A NAME="IDX2249"></A>
-<CODE>write_string/2</CODE>, 
-<A NAME="IDX2250"></A>
-<CODE>write_string/1</CODE>, 
-<A NAME="IDX2251"></A>
-<CODE>whitespace/2</CODE>, 
-<A NAME="IDX2252"></A>
-<CODE>whitespace0/2</CODE>, 
-<A NAME="IDX2253"></A>
-<CODE>string/3</CODE>.
+<A NAME="IDX2714"></A>
+<CODE>dic_node/2</CODE>, 
+<A NAME="IDX2715"></A>
+<CODE>dic_lookup/3</CODE>, 
+<A NAME="IDX2716"></A>
+<CODE>dic_lookup/4</CODE>, 
+<A NAME="IDX2717"></A>
+<CODE>dic_get/3</CODE>, 
+<A NAME="IDX2718"></A>
+<CODE>dic_replace/4</CODE>.
 
 </UL>
 
@@ -75,198 +67,78 @@ This module provides predicates for doing input/output with strings (character c
 
 
 
-<H2><A NAME="SEC192" HREF="ciao_toc.html#TOC192">Documentation on exports (<CODE>strings</CODE>)</A></H2>
+<H2><A NAME="SEC238" HREF="ciao_toc.html#TOC238">Documentation on exports (<CODE>dict</CODE>)</A></H2>
 <P>
-<A NAME="IDX2254"></A>
-<A NAME="IDX2255"></A>
+<A NAME="IDX2719"></A>
+<A NAME="IDX2720"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_line/2:</B>
-<DD><A NAME="IDX2256"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_node/2:</B>
+<DD><A NAME="IDX2721"></A>
 
 
 <P>
-<CODE>get_line(Stream,Line)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-Reads from <CODE>Stream</CODE> a line of text and unifies <CODE>Line</CODE> with it. The end of the line can have UNIX [10] or MS-DOS [13 10] termination, which is not included in <CODE>Line</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>get_line(+stream,?(string))</CODE>
-
-<UL>
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2257"></A>
-<A NAME="IDX2258"></A>
+<A NAME="IDX2722"></A>
+<A NAME="IDX2723"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>get_line/1:</B>
-<DD><A NAME="IDX2259"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/3:</B>
+<DD><A NAME="IDX2724"></A>
 
 
 <P>
-<CODE>get_line(Line)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-Behaves like <CODE>current_input(S), get_line(S,Line)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>get_line(?(string))</CODE>
-
-<UL>
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2260"></A>
-<A NAME="IDX2261"></A>
+<A NAME="IDX2725"></A>
+<A NAME="IDX2726"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_string/2:</B>
-<DD><A NAME="IDX2262"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_lookup/4:</B>
+<DD><A NAME="IDX2727"></A>
 
 
 <P>
-<CODE>write_string(Stream,String)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-Writes <CODE>String</CODE> onto <CODE>Stream</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write_string(+stream,+string)</CODE>
-
-<UL>
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2263"></A>
-<A NAME="IDX2264"></A>
+<A NAME="IDX2728"></A>
+<A NAME="IDX2729"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_string/1:</B>
-<DD><A NAME="IDX2265"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_get/3:</B>
+<DD><A NAME="IDX2730"></A>
 
 
 <P>
-<CODE>write_string(String)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-Behaves like <CODE>current_input(S), write_string(S, String)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write_string(+string)</CODE>
-
-<UL>
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2266"></A>
-<A NAME="IDX2267"></A>
+<A NAME="IDX2731"></A>
+<A NAME="IDX2732"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>whitespace/2:</B>
-<DD><A NAME="IDX2268"></A>
+<DT><span class="define">PREDICATE:</span> <B>dic_replace/4:</B>
+<DD><A NAME="IDX2733"></A>
 
 
 <P>
-<CODE>whitespace(String,Rest)</CODE>
+No further documentation available for this predicate.
 
-
-<P>
-In a grammar rule, as <CODE>whitespace/0</CODE>, represents whitespace (a positive number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
-
-<PRE>
-   attrs([]) --&#62; ""
-   attrs([N|Ns]) --&#62;
-       whitespace,
-       attr(N),
-       attrs(Ns).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>whitespace(+string,?(string))</CODE>
-
-<UL>
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2269"></A>
-<A NAME="IDX2270"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>whitespace0/2:</B>
-<DD><A NAME="IDX2271"></A>
-
-
-<P>
-<CODE>whitespace0(String,Rest)</CODE>
-
-
-<P>
-In a grammar rule, as <CODE>whitespace0/0</CODE>, represents possible whitespace (any number of space (32), tab (9), newline (10) or return (13) characters). Thus, <CODE>Rest</CODE> is <CODE>String</CODE> or a proper suffix of <CODE>String</CODE> with one or more whitespace characters removed. An example of use would be: 
-
-
-
-<PRE>
-   assignment(N,V) --&#62;
-       variable_name(N), whitespace0, "=", whitespace0, value(V).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>whitespace0(+string,?(string))</CODE>
-
-<UL>
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX2272"></A>
-<A NAME="IDX2273"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>string/3:</B>
-<DD><A NAME="IDX2274"></A>
-
-
-<P>
-<CODE>string(String,Head,Tail)</CODE>
-
-
-<P>
-In a 
-<A NAME="IDX2275"></A>
-grammar rule, as <CODE>string/1</CODE>, represents literally <CODE>String</CODE>. An example of use would be: 
-
-
-
-<PRE>
-double(A) --&#62;
-        string(A),
-        string(A).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>string(?(string),?(string),?(string))</CODE>
-
-<UL>
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_51.html">previous</A>, <A HREF="ciao_53.html">next</A>, <A HREF="ciao_148.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_51.html">previous</A>, <A HREF="ciao_53.html">next</A>, <A HREF="ciao_158.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

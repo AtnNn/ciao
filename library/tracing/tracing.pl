@@ -5,6 +5,8 @@
 
 % Defines spy/1 and nospy/1
 % Adds expansion (after mine!)
+:- redefining(spy/1).
+:- redefining(nospy/1).
 :- include(library(byrdbox)).
 
 :- use_module(library('tracing/traces')).

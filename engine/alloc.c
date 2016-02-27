@@ -19,9 +19,11 @@
 #include "own_malloc_defs.h"
 #include "main_defs.h"
 #include "alloc_defs.h"
+#include "support_defs.h"
 #include "streams_defs.h"
 #include "wamsupport_defs.h"
 #include "timing_defs.h"
+#include "initial_defs.h"
 
 /* local declarations */
 
@@ -49,8 +51,8 @@ ENG_INT num_of_predicates = 0;                                  /* Shared */
     checkalloc/checkrealloc/checkdealloc (MCL).
  */
 
-/*extern LOCK_ST mem_mng_st;*/  /* Definition of this not needed here */
-extern  LOCK    mem_mng_l;
+
+extern SLOCK    mem_mng_l;
 
            /* From an execution profile, 24 seems a good threshhold (MCL) */
 #define THRESHHOLD 24
@@ -74,7 +76,7 @@ static TAGGED *get_tiny_blocks()
 
   if (!ptr) {
     ENG_perror("% Malloc");
-    Release_lock(mem_mng_l);
+    Release_slock(mem_mng_l);
     SERIOUS_FAULT("Memory allocation failed");
   }
 
@@ -103,7 +105,7 @@ TAGGED *checkalloc(size)
 {
   TAGGED *p;
 
-  Wait_Acquire_lock(mem_mng_l);
+  Wait_Acquire_slock(mem_mng_l);
 
   if (size<=THRESHHOLD) {
     if ((p=tiny_blocks))
@@ -115,7 +117,7 @@ TAGGED *checkalloc(size)
 
     if (!p) {
       ENG_perror("% Malloc");
-      Release_lock(mem_mng_l);
+      Release_slock(mem_mng_l);
       SERIOUS_FAULT("Memory allocation failed");
     }
 #if defined(MallocBase)                                   /* Error by MCL */
@@ -126,7 +128,7 @@ TAGGED *checkalloc(size)
 #endif
       {
         ENG_perror("% Malloc");
-        Release_lock(mem_mng_l);
+        Release_slock(mem_mng_l);
         SERIOUS_FAULT("Memory allocated out of addressable bounds!");
       }
 
@@ -137,7 +139,7 @@ TAGGED *checkalloc(size)
   if (debug_mem)
     printf("checkalloc returned %x, %d chars\n", (unsigned int)p, size);
 #endif
-  Release_lock(mem_mng_l);
+  Release_slock(mem_mng_l);
   return p;
 }
 
@@ -145,13 +147,12 @@ void checkdealloc(ptr,decr)
      TAGGED *ptr;
      int decr;
 {
-  Wait_Acquire_lock(mem_mng_l);
+  Wait_Acquire_slock(mem_mng_l);
 
   if (decr<=THRESHHOLD) {
     ptr[0] = (TAGGED)tiny_blocks;
     tiny_blocks = ptr;
   } else {
-    /* mem_prog_count  -= (decr+sizeof(TAGGED)); */
     total_mem_count -= decr;
     Free(ptr);
   }
@@ -159,7 +160,7 @@ void checkdealloc(ptr,decr)
   if (debug_mem)
     printf("checkdealloc freed %x, %d chars\n", (unsigned int)ptr, decr);
 #endif
-  Release_lock(mem_mng_l);
+  Release_slock(mem_mng_l);
 }
 
 
@@ -169,7 +170,7 @@ TAGGED *checkrealloc(ptr,decr,size)
 {
   TAGGED *p;
 
-  Wait_Acquire_lock(mem_mng_l);
+  Wait_Acquire_slock(mem_mng_l);
 
   if (decr<=THRESHHOLD) {
     if (size<=THRESHHOLD)
@@ -179,7 +180,7 @@ TAGGED *checkrealloc(ptr,decr,size)
       total_mem_count += size;
       if (!p) {
         ENG_perror("% Malloc");
-        Release_lock(mem_mng_l);
+        Release_slock(mem_mng_l);
         SERIOUS_FAULT("Memory allocation failed");
       }
       memcpy(p, ptr, ((decr-1) & -4)+4);
@@ -195,7 +196,7 @@ TAGGED *checkrealloc(ptr,decr,size)
       p = (TAGGED *)Realloc(ptr,size);
       if (!p) {
         ENG_perror("% realloc");
-        Release_lock(mem_mng_l);
+        Release_slock(mem_mng_l);
         SERIOUS_FAULT("Memory allocation failed");
       }
       /* mem_prog_count  += (size-decr); */
@@ -206,9 +207,61 @@ TAGGED *checkrealloc(ptr,decr,size)
   printf("checkrealloc returned %x, %d chars\n",
          (unsigned int)p, size);
 #endif
-  Release_lock(mem_mng_l);
+  Release_slock(mem_mng_l);
   return p;
 }
+
+ /* Creates the wam structure, allocates its areas and initializes them.
+    This returns an empty, fresh wam.  We do not add it here to the task
+    state list; it needs its own thread, which we have after startwam() */
+
+
+extern ENG_INT mem_prog_count;
+
+struct worker *create_and_init_wam()
+{
+  Argdecl;
+  /*ENG_INT saved_program_count = mem_prog_count;  */
+
+  Arg = create_wam_storage();                         /* Just create *Arg */
+  create_wam_areas(Arg);                      /* Make room for the stacks */
+  numstack_init(Arg);                                     /* bignum areas */
+  local_init_each_time(Arg);                               /* Local areas */
+  return Arg;
+}
+
+/* Available workers are enqued here */
+
+struct worker *wam_list = NULL;
+SLOCK    wam_list_l;
+
+struct worker *free_wam()
+{
+  struct worker *free_wam;
+
+  Wait_Acquire_slock(wam_list_l);
+  if (wam_list) {
+    free_wam = wam_list;
+    wam_list = Next_Worker(free_wam);
+    Release_slock(wam_list_l);
+    Next_Worker(free_wam) = NULL;
+  } else {
+    Release_slock(wam_list_l);
+    free_wam = create_and_init_wam();
+  }
+  return free_wam;
+}
+
+void release_wam(wam)
+     struct worker *wam;
+{
+  local_init_each_time(wam);
+  Wait_Acquire_slock(wam_list_l);
+  Next_Worker(wam) = wam_list;
+  wam_list = wam;
+  Release_slock(wam_list_l);
+}
+
 
 #define CREATE_TYPED_STORAGE(T) (struct T *)checkalloc(sizeof(struct T))
 
@@ -255,8 +308,10 @@ void create_wam_areas(Arg)
 
 
  /*  Do not touch the (TAGGED) type casting! Or the emulator will break! */
-  Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
 
+#if defined(USE_TAGGED_CHOICE_START)
+  Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
+#endif
 }
 
 

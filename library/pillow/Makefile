@@ -13,12 +13,12 @@ ICONDIR=http://www.clip.dia.fi.upm.es/images/
 # You should not change anything below this line
 # ------- End of Options ------------------------
 
-pillow: icon_address
+pillow: icon_address.pl
 	ciaoc -c html
 	ciaoc -c http
 
-icon_address:
+icon_address.pl: Makefile
 	echo "icon_base_address('$(ICONDIR)')." > icon_address.pl
 
-distclean:
-	/bin/rm -f *.itf *.dep *.po
+dist: icon_address.pl common.pl html.pl http.pl
+	cd dist ; $(MAKE)

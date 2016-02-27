@@ -4,8 +4,10 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Class PLGoal
- * Represents a prolog goal to be evaluated on a given <tt>PLConnection</tt>.
+ * This class Represents a Prolog goal to be evaluated on a given
+ * <tt>PLConnection</tt>. This class connects to the Prolog side 
+ * of the interface to manage the evaluation of the goals launched
+ * from the Java side.
  * Instances of this class should be generated with the <tt>launchGoal</tt>
  * method of the <tt>PLConnection</tt> class.
  */
@@ -15,7 +17,7 @@ public class PLGoal {
   private PLTerm originalGoal = null; /* Keeps a copy of the original
 				       * goal term to rebind the
 				       * variables included on every
-				       * prolog solution.
+				       * Prolog solution.
 				       */
   private PLTerm actualGoal = null;   /* Stores the actual binding
 				       * of the variables contained
@@ -45,8 +47,8 @@ public class PLGoal {
   private static final int FINISHED = -1;
 
   /**
-   * Goal constructor. Creates a new goal on the <code>where</code> prolog
-   * process, using the prolog term represented with <code>term</code>.
+   * Goal constructor. Creates a new goal on the <code>where</code> Prolog
+   * process, using the Prolog term represented with <code>term</code>.
    *
    * @param		where	Prolog process on which the goal must
    *          			be evaluated.
@@ -62,15 +64,16 @@ public class PLGoal {
   }
 
   /**
-   * Goal constructor. Creates a new goal on the <code>where</code> prolog
-   * process, using the prolog term represented with <code>termString</term>
-   * string. This string must be a well formed prolog term; otherwise a
-   * <code>PLException</code> will be thrown.
+   * Goal constructor. Creates a new goal on the <code>where</code> Prolog
+   * process, using the Prolog term represented with <code>termString</term>
+   * string. This string must be a well formed Prolog term; otherwise a
+   * <code>PLException</code> will be thrown. This method connects to
+   * Prolog to parse the string containing the goal.
    *
    * @param		where	Prolog process on which the goal must
    *          			be evaluated.
    * @param		term	String containing the representation of a
-   *                            well formed prolog term that represents
+   *                            well formed Prolog term that represents
    *                            the goal that will be evaluated.
    */
   public PLGoal(PLConnection where, String term) 
@@ -85,13 +88,16 @@ public class PLGoal {
 
   /**
    * Goal query.
-   * Evaluates on the PLConnection associated object the
+   * Evaluates on the <code>PLConnection</code> associated object the
    * goal represented by this object. To obtain the solutions of this
    * goal, the {@link nextSolution()} method must be called, once for
    * each solution.
    *
-   * @exception IOException, PLException if there is any problem 
-   *            communicating with the prolog process.
+   * @exception <code>IOException</code>, <code>PLException</code>
+   *            if there is any problem 
+   *            communicating with the Prolog process, or in the
+   *            Prolog side (e.g., the predicate to be launched
+   *            does not exist, or the goal has been launched yet).
    */
   public void query() throws IOException, PLException {
 
@@ -130,10 +136,10 @@ public class PLGoal {
   }
 
   /**
-   * Sends to prolog process a request for the next query solution.
-   * Returns a prolog term that corresponds to the goal with the
-   * prolog variables unified with the solution. Later use of this
-   * prolog variable objects will refer the unification performed.
+   * Sends to Prolog process a request for the next query solution.
+   * Returns a Prolog term that corresponds to the goal with the
+   * Prolog variables unified with the solution. Later use of this
+   * Prolog variable objects will refer the unification performed.
    * If there is no more solutions, all the variables of the goal
    * will be set to their original binding before calling this method.
    *
@@ -141,9 +147,11 @@ public class PLGoal {
    *          variables unified with the solution.
    * @return  <code>null</code> if there are no more solutions.
    *
-   * @exception IOException if there are any error on the sockets.
-   * @exception PLException if there are any error on the prolog
-   *            process.
+   * @exception <code>IOException</code> if there are any error on the sockets.
+   * @exception <code>PLException</code> if there are any error on the Prolog
+   *            process. If the Prolog goal raises an exception, it is propagated
+   *            through the interface, and a <code>PLException</code> is
+   *            raised in the user Java program.
    */
   public PLTerm nextSolution() throws IOException, PLException {
 
@@ -186,11 +194,11 @@ public class PLGoal {
   }
 
   /**
-   * Terminates this prolog goal execution.
+   * Terminates this Prolog goal execution.
    *
    * @exception IOException if there are any error on the socket 
    *            communication
-   * @exception PLException if there are any error on the prolog
+   * @exception PLException if there are any error on the Prolog
    *            process
    *
    */
@@ -210,10 +218,15 @@ public class PLGoal {
   }
 
   /**
-   * This method loads a module in the prolog process.
+   * This method loads a module in the Prolog process. This method
+   * brings the possibility of loading Prolog modules dynamically.
+   * The module to be loaded must be accesible to the Prolog server.
    *
    * @param module Prolog term that represents the name of the module
    *               to be loaded. Can be used the library(module) format.
+   *
+   * @exception IOException if there are any I/O error with the sockets 
+   * @exception PLException if there are any error in the Prolog process
    */
   public void useModule(PLTerm module) throws IOException, PLException {
     
@@ -229,20 +242,27 @@ public class PLGoal {
 	throw PLException.translateException(result);
 
       if (result.isPrologFail())
-	throw new PLException("Fail returned using a prolog module");
+	throw new PLException("Fail returned using a Prolog module");
 
       if (!result.isPrologSuccess())
-	throw new PLException("No success returned using a prolog module");
+	throw new PLException("No success returned using a Prolog module");
       
   }
 
   /**
    * 
-   * This method loads a module in the prolog process.
+   * This method loads a module in the Prolog process. This method
+   * brings the possibility of loading Prolog modules dynamically.
+   * The module to be loaded must be accesible to the Prolog server.
    *
-   * @param module String that contains a prolog term with the name of
+   * @param module String that contains a Prolog term with the name of
    *               the module to be loaded. Can be used the
-   *               library(module) format.
+   *               library(module) format. The path must be accesible
+   *               to the Prolog server.
+   *
+   * @exception IOException if there are any I/O error with the sockets 
+   * @exception PLException if there are any error in the Prolog process
+   *
    */
   public void useModule(String module) throws IOException, PLException {
 
@@ -274,7 +294,7 @@ public class PLGoal {
   }
 
   /**
-   * Destructor. Terminates the prolog goal and finalizes itself.
+   * Destructor. Terminates the Prolog goal and finalizes itself.
    */
   protected void finalize() throws IOException, PLException, Throwable {
     
@@ -290,16 +310,16 @@ public class PLGoal {
   }
 
   /**
-   * This method uses the prolog process to parse a prolog term received
+   * This method uses the Prolog process to parse a Prolog term received
    * as a string.
    *
    *  @param     termString <code>String</code> object that represents a well
-   *                        formed prolog term.
-   *  @return    the <code>PLTerm</code> that represents this prolog term.
+   *                        formed Prolog term.
+   *  @return    the <code>PLTerm</code> that represents this Prolog term.
    *  @exception <code>IOException</code> if the socket stream has been
    *             broken.
    *  @exception <code>PLException</code> if there is a problem parsing
-   *             the term on the prolog side.
+   *             the term on the Prolog side.
    **/
   private PLTerm parseTerm(String termString) 
     throws IOException, PLException {
@@ -312,7 +332,7 @@ public class PLGoal {
     g.query();
     PLTerm r =  g.nextSolution();
     if (r == null)
-      throw new PLException("null returned from prolog socket");
+      throw new PLException("null returned from Prolog socket");
 
     g.terminate();
     return v.getBinding();
@@ -320,7 +340,10 @@ public class PLGoal {
   }
 
   /**
-   * String representation of a prolog goal.
+   * String representation of a Prolog goal.
+   *
+   * @return A <code>String</code> object representing
+   *         this Prolog goal.
    */
   public String toString() {
     

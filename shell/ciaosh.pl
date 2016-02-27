@@ -13,7 +13,6 @@
 :- use_module(library(debugger),
         [trace/0, notrace/0, debug/0, nodebug/0, spy/1, nospy/1,
  	nospyall/0, debugging/0, leash/1, maxdepth/1, 
-	trace_lines/0, notrace_lines/0, 
 	breakpt/6,nobreakpt/6,nobreakall/0,list_breakpt/0, 
 	call_in_module/2]).
 :- use_module(library(operators), [op/3]).

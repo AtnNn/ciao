@@ -116,6 +116,11 @@ socket_recv(Stream, String):- socket_recv_code(Stream, String, _).
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*5+127,2000/05/02,16:50*36+'CEST'), "The stream
+associated to a socket was added locally.  Now a call to a new
+function in the engine is made, so that this addition is made
+atomically.  (MCL) (MCL)").
+
 :- comment(version(1*3+5,1999/06/21,14:22*42+'MEST'), "Changed sockets
    library to do reexport (Daniel Cabeza Gras)").
 

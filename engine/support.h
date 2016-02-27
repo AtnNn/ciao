@@ -256,7 +256,8 @@ extern struct worker *create_wam_storage PROTO((void));
 
 
 /* Exit code from wam() when aborting */
-#define WAM_ABORT -32768 /* see intrinsics1.pl */
+#define WAM_ABORT -32768 /* see exceptions.pl */
+#define WAM_INTERRUPTED -32767
 
 #include <setjmp.h>
 #include "compat.h"
@@ -284,7 +285,7 @@ extern void failc(char *mesg);
 #define TYPE_ERROR(Type) (32+Type) /* includes also domain errors */
 
 /* Type codes for TYPE_ERROR  //) */
-#define ATOM 0
+#define STRICT_ATOM 0
 #define ATOMIC 1
 #define BYTE 2
 #define CALLABLE 3

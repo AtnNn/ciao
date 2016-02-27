@@ -1,6 +1,6 @@
 %%------------------------------------------------------------------------
 %%
-%% O'CIAO: Object Oriented Programming in CIAO/Prolog
+%% O'Ciao: Object Oriented Programming in Ciao/Prolog
 %%
 %% SOURCE-TO-SOURCE EXPANSION FOR CLASS DECLARATION
 %%
@@ -8,7 +8,7 @@
 %%
 %% CLIP Laboratory - Technical University Of Madrid.
 %%
-%%         - Distributed under the CIAO Prolog license terms -
+%%         - Distributed under the Ciao Prolog license terms -
 %%
 %%------------------------------------------------------------------------
 
@@ -742,7 +742,7 @@ generate_fixed_clauses(Module,FixedClauses) :-
 	    (:- redefining(mod_exp/5)),
 	    ('$class$'(Module)),
 	    ('$force$runtime$info$'(X) :- call(X))
-                                             % Forces CIAO compiler to generate
+                                             % Forces Ciao compiler to generate
                                              % run-time info for this 
 	                                     % module.
 	],

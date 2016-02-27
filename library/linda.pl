@@ -1,7 +1,7 @@
 % ----------------------------------------------------------------------
 %
 % Linda communication for Distributed CIAO
-% Based on library file linda/client.pl of SICStus 2.1
+% Loosely based on library file linda/client.pl of SICStus 2.1
 % (C) UPM-CLIP 1997
 %
 % ----------------------------------------------------------------------
@@ -28,6 +28,11 @@
 :- use_module(library(fastrw), [fast_read/1, fast_write/1]).
 % :- use_module(library(lists), [member/2]).
 :- use_module(library('sockets/sockets')).
+
+:- comment(module,"This is a SICStus-like linda package. Note that
+   this is essentially quite obsolete, and provided mostly in case it
+   is needed for compatibility, since Ciao now supports all Linda
+   functionality (and more) through the concurrent fact database.").
 
 :- data linda_stream/2, time_out/1.
 

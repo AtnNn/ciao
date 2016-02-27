@@ -6,11 +6,11 @@ import java.awt.*;
 import java.io.*;
 
 /**
- * Listens events directly from the system event queue.
- * Keeps a list of prolog listeners associated with objects and event Ids.
- * A key element of this implementation is that the prolog listeners
+ * This class listens events directly from the system event queue.
+ * Keeps a list of Prolog listeners associated with objects and event Ids.
+ * A key element of this implementation is that the Prolog listeners
  * will be evaluated when the event raises, so the arguments of the
- * listeners will be updated correctly in the prolog side.
+ * listeners will be updated correctly in the Prolog side.
  */
 public class PLEventListener implements AWTEventListener {
 
@@ -41,9 +41,11 @@ public class PLEventListener implements AWTEventListener {
   private PLConnection pl;
 
   /**
-   * Creates a new event listener.
+   * Creates a new event listener. Given a connection and a interpreter,
+   * creates the event listener and adds it to the <code>AWTEventListener</code>
+   * class.
    *
-   * @param pl          Connection to the prolog process
+   * @param pl          Connection to the Prolog process
    * @param interpreter The <code>PLInterpreter</code> object to be
    *                    used for the goal argument calculation.
    */
@@ -59,7 +61,11 @@ public class PLEventListener implements AWTEventListener {
 
   /**
    * Inserts a new listener. Given an object, event class and goal,
-   * updates the listener list.
+   * updates the listener list. If the object list does not contain
+   * this object (there is no listener yet), inserts it in the object
+   * list and creates the events list for that object; else inserts
+   * the event in the event list for the object. Then, inserts
+   * the goal in the goal list of the event.
    *
    * @param obj  object on which the listener listens.
    * @param ec   event class that will be listened.
@@ -102,7 +108,7 @@ public class PLEventListener implements AWTEventListener {
    * Selects and runs the goals that must be launched for the object and
    * event raised.
    *
-   * @param ev <code>AWTEvent</code> object represented the
+   * @param ev <code>AWTEvent</code> object representing the
    *           event raised.
    */
   public synchronized void eventDispatched(AWTEvent eventRaised) {
@@ -183,13 +189,13 @@ class PLEvents {
   }
 
   /**
-   * Launches goals associated to the given event, using the java
+   * Launches goals associated to the given event, using the Java
    * object table of the interpreter given as 2nd argument.
    *
    * @param ec          Event class that is being listened.
-   * @param interpreter prolog to java interpreter.
+   * @param interpreter Prolog to Java interpreter.
    * @param pl          Prolog process on which evaluate the
-   *                    prolog event handlers.
+   *                    Prolog event handlers.
    */
   public void eventDispatched(Class ec,
                           PLInterpreter interpreter,

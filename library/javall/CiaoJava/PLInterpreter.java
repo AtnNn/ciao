@@ -6,16 +6,11 @@ import java.io.*;
 import java.util.*;
 
 /**
- * class PLInterpreter
- * Interprets the terms received via $fast_write
- * and solves the requests:
- *  $java_create_object       object creation
- *  $java_delete_object       object deletion
- *  $java_get_value           field get value
- *  $java_set_value           field set value
- *  $java_invoke_method       method invocation
- *  $java_add_listener        predicate registering to object events
- *  $java_remove_listener     predicate removing from object events
+ * This class interprets the terms received from the Prolog
+ * side and performs the actions requested from that side.
+ * This class is used by almost every class of the <code>CiaoJava</code>
+ * package because contains the object table needed to 
+ * look up the Java objects referred by the Prolog side.
  */
 class PLInterpreter {
   private Hashtable objTable;
@@ -25,7 +20,7 @@ class PLInterpreter {
   //  private PLActionListener javaActionListener;
   private PLEventListener eventListener;
 
-  // Functor names accepted from prolog.
+  // Functor names accepted from Prolog.
   private static final String CREATE_OBJECT = "$java_create_object";
   private static final String DELETE_OBJECT = "$java_delete_object";
   private static final String GET_VALUE = "$java_get_value";
@@ -38,9 +33,9 @@ class PLInterpreter {
 
   /**
    * Creates a new interpreter, with the table of objects
-   * managed by prolog given as argument.
+   * managed by Prolog given as argument.
    *
-   * @param pl Object that represents the connection to the prolog process.
+   * @param pl Object that represents the connection to the Prolog process.
    */
   public PLInterpreter(PLConnection pl) {
     objTable = new Hashtable(STARTING_CAPACITY, FACTOR);
@@ -49,28 +44,57 @@ class PLInterpreter {
   }
 
   /** 
-   * Interprets a string received from prolog (in $fast format)
-   * and runs the related tasks. Possible tasks are:
-   *  $java_create_object(+NAME, +ARGUMENTS, -OBJECT)
-   *  $java_delete_object(+OBJECT)
-   *  $java_get_value(+OBJECT, +FIELD, -VALUE)
-   *  $java_set_value(+OBJECT, +FIELD, +VALUE)
-   *  $java_invoke_method(+OBJECT, +METHOD, +ARGUMENTS, -RESULT)
-   *  $java_add_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
-   *  $java_remove_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
-   *  $quit
+   * Interprets the request received as argument in a <code>PLTerm</code>
+   * object. The possible requests are the following (the arguments of 
+   * the Prolog terms described are marked as input or output arguments
+   * with the plus or minus sign; and the output arguments are not
+   * actually included in the terms, only show what requests send
+   * back results to Prolog):
    *
-   * @param t Prolog term to be interpreted. Are interpreted only the
-   *          prolog terms related above.
+   *  $java_create_object(+NAME, +ARGUMENTS, -OBJECT)
+   *                      Creates a new Java instance of the class
+   *                      given as NAME (full class name), using
+   *                      the appropriate constructor to the arguments
+   *                      given in ARGUMENTS, and returns to Prolog an object
+   *                      identifier.
+   *  $java_delete_object(+OBJECT)
+   *                      Deletes the object with identifier equal
+   *                      to OBJECT.
+   *  $java_get_value(+OBJECT, +FIELD, -VALUE)
+   *                      Gets the value of the field FIELD from the
+   *                      object OBJECT, and returns to Prolog its value.
+   *  $java_set_value(+OBJECT, +FIELD, +VALUE)
+   *                      Sets the value of the field FIELD of the
+   *                      object identified with the OBJECT reference to the
+   *                      value received as VALUE.
+   *  $java_invoke_method(+OBJECT, +METHOD, +ARGUMENTS, -RESULT)
+   *                      Invokes the corresponding method of the object
+   *                      referred as OBJECT using the given arguments,
+   *                      and sends back the result to Prolog (if the
+   *                      method returns a result).
+   *  $java_add_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
+   *                      Adds a goal to the list of Prolog listeners for a
+   *                      given object event. The EVENT argument must
+   *                      be the full class name of the Java event object
+   *                      representing the event (e.g., java.awt.event.ActionListener).
+   *  $java_remove_listener(+OBJECT, +EVENT, +PREDICATE, -RESULT)
+   *                      Removes a Prolog listener from the list
+   *                      of event handlers for a given event and
+   *                      object.
+   *  $quit
+   *                      Closes the connection and terminates the Java process.
+   *
+   * @param t Prolog term to be interpreted. Only Are interpreted the
+   *          Prolog terms related above.
    *
    * @return the term to be sent back to Prolog, corresponding
-   *         to the returning value. If there is no return value,
-   *         success atom is returned. If an error occurs, the fail
-   *         atom is returned.
+   *         to the returning value. If there is no return value, the
+   *         success atom is returned. If an error occurs a <code>java_exception</code> is
+   *         returned to be propagated to the Prolog side.
    */
   public PLTerm interpret(PLTerm t) {
-    // Only for debug
-    System.err.println(t.toString());
+      // Only for debug
+      // System.err.println(t.toString());
 
     switch (t.Type) {
     case PLTerm.STRUCTURE:
@@ -109,15 +133,16 @@ class PLInterpreter {
   }
 
   /**
-   * Gets the value of a java object field.
-   * Evaluates the '$java_get_value' prolog term, given as argument.
+   * Gets the value of a Java object field.
+   * Evaluates the '$java_get_value' Prolog term, given as argument.
    *
    * @param st Prolog structure that contains the data needed for this
    *           operation: object reference and field name.
    *
-   * @return   The prolog representation of the field value requested,
+   * @return   The Prolog representation of the field value requested,
    *           if the command succeeds;
-   *           the prolog representation of fail if the command
+   *           a <code>PLStructure</code> representing a Java exception
+   *           to be sent back to Prolog if the Prolog request
    *           does not succeed.
    */
   private PLTerm getValue(PLStructure st) {
@@ -174,15 +199,16 @@ class PLInterpreter {
   }
 
   /**
-   * Sets the value of a java object field.
-   * Evaluates the '$java_set_value' prolog term, given as argument.
+   * Sets the value of a Java object field.
+   * Evaluates the '$java_set_value' Prolog term, given as argument.
    *
    * @param st Prolog structure that contains the data needed for this
    *           operation: object reference, field name and field value.
    *
-   * @return   the prolog representation of success if the command
+   * @return   the Prolog representation of success if the command
    *           succeeds;
-   *           the prolog representation of fail if the command
+   *           a <code>PLStructure</code> representing a Java exception
+   *           to be sent back to Prolog if the Prolog request
    *           does not succeed.
    */
   private PLTerm setValue(PLStructure st) {
@@ -224,15 +250,16 @@ class PLInterpreter {
   }
 
   /**
-   * Deletes a java object and removes it from the object table.
-   * Evaluates the '$java_delete_object' prolog term, given as argument. 
+   * Deletes a Java object and removes it from the object table.
+   * Evaluates the '$java_delete_object' Prolog term, given as argument. 
    *
    * @param st Prolog structure that contains the data needed for this
    *           operation: object reference.
    *
-   * @return   the prolog representation of success if the command
+   * @return   the Prolog representation of success if the command
    *           succeeds;
-   *           the prolog representation of fail if the command
+   *           a <code>PLStructure</code> representing a Java exception
+   *           to be sent back to Prolog if the Prolog request
    *           does not succeed.
    */
   private PLTerm deleteObject(PLStructure st) {
@@ -268,15 +295,16 @@ class PLInterpreter {
   }
 
   /**
-   * Creates a java object and adds it to the object table.
-   * Evaluates the '$java_create_object' prolog term, given as argument.
+   * Creates a Java object and adds it to the object table.
+   * Evaluates the '$java_create_object' Prolog term, given as argument.
    *
    * @param st Prolog structure that contains the data needed for this
    *           operation: class name and constructor argument list.
    *
-   * @return   the prolog representation of the java object if the command
+   * @return   the Prolog representation of the Java object if the command
    *           succeeds;
-   *           the prolog representation of fail if the command
+   *           a <code>PLStructure</code> representing a Java exception
+   *           to be sent back to Prolog if the Prolog request
    *           does not succeed.
    */
   private PLTerm createObject(PLStructure st) {
@@ -348,17 +376,18 @@ class PLInterpreter {
   }
 
   /**
-   * Invokes a java object method.
-   * Evaluates the '$java_invoke_method' prolog term, given as argument.
+   * Invokes a Java object method.
+   * Evaluates the '$java_invoke_method' Prolog term, given as argument.
    *
    * @param st Prolog structure that contains the data needed for this
    *           operation: object reference, method name and argument list.
    *
-   * @return   the prolog representation of the value returned by the java
+   * @return   the Prolog representation of the value returned by the Java
    *           method call if the command succeeds;
-   *           the prolog representation of success if the method
+   *           the Prolog representation of success if the method
    *           invocation does not return a value;
-   *           the prolog representation of fail if the command
+   *           a <code>PLStructure</code> representing a Java exception
+   *           to be sent back to Prolog if the Prolog request
    *           does not succeed.
    */
   private PLTerm invokeMethod(PLStructure st) {
@@ -453,17 +482,18 @@ class PLInterpreter {
   }
 
   /**
-   * Adds the java object event to the listener predicate.
-   * Evaluates the '$java_add_listener' prolog term, given
+   * Adds the Java object event to the listener predicate.
+   * Evaluates the '$java_add_listener' Prolog term, given
    * as argument.
    *
    * @param st Prolog structure that contains the data needed for this
    *           operation: object reference, event class name and 
    *           exception handler goal.
    *
-   * @return   the prolog representation of success if the command
+   * @return   the Prolog representation of success if the command
    *           succeeds;
-   *           the prolog representation of fail if the command
+   *           a <code>PLStructure</code> representing a Java exception
+   *           to be sent back to Prolog if the Prolog request
    *           does not succeed.
    */
   private PLTerm addListener(PLStructure st) {
@@ -505,17 +535,18 @@ class PLInterpreter {
   }
 
   /**
-   * Removes the java object event from the listener predicate.
-   * Evaluates the '$java_remove_listener' prolog term, given
+   * Removes the Java object event from the listener predicate.
+   * Evaluates the '$java_remove_listener' Prolog term, given
    * as argument.
    *
    * @param st Prolog structure that contains the data needed for this
    *           operation: object reference, event class name and 
    *           exception handler goal.
    *
-   * @return   the prolog representation of success if the command
+   * @return   the Prolog representation of success if the command
    *           succeeds;
-   *           the prolog representation of fail if the command
+   *           a <code>PLStructure</code> representing a Java exception
+   *           to be sent back to Prolog if the Prolog request
    *           does not succeed.
    */
   private PLTerm removeListener(PLStructure st) {
@@ -557,12 +588,12 @@ class PLInterpreter {
   }
 
   /** 
-   * Gets the prolog representation of the object argument.
+   * Gets the Prolog representation of the object argument.
    *
-   * @param v java object from which a prolog representation will
+   * @param v Java object from which a Prolog representation will
    *          be obtained.
    *
-   * @return  the prolog term that represents the java object
+   * @return  the Prolog term that represents the Java object
    *          received as argument.
    */
   private PLTerm prologRepr(Object v) {
@@ -616,15 +647,15 @@ class PLInterpreter {
         (v instanceof PLVariable))
       return (PLTerm)v;
 
-    // The argument v is a java object. Must be returned
-    // its prolog representation.
+    // The argument v is a Java object. Must be returned
+    // its Prolog representation.
     objTable.put(new Integer(v.hashCode()),v);
     return java_object(v.hashCode());
     
   }
 
   /** 
-   * Prolog representation of a java object in the object table.
+   * Prolog representation of a Java object in the object table.
    *
    * @param i hash code in the object table.
    *
@@ -637,93 +668,6 @@ class PLInterpreter {
     return new PLStructure(PLTerm.JAVA_OBJECT, 1, arg);
 
   }
-
-//   /** 
-//    * Gets the method of the class cl that matches the
-//    * parameter type object array. Considers superclass
-//    * and interface matching recursively on the argument
-//    * list.
-//    *
-//    * @param cl     <code>Class</code> object that represents the
-//    *               object class.
-//    * @param mtName Method name.
-//    * @param clsarg Array of <code>Class</code> objects that 
-//    *               represents the method argument list.
-//    *
-//    * @return       the <code>Method</code> object that represents
-//    *               the method found. If there is no method in the
-//    *               inheritance tree, returns null.
-//    */
-//   private Method getMethod(Class cl, String mtName, Class[] clsarg) {
-//     return getSuperclassMethod(cl, mtName, clsarg, 0);
-//   }
-
-//   /**
-//    * Recursive method search. See the previous getMethod method.
-//    *
-//    * @param cl     <code>Class</code> object that represents the
-//    *               object class.
-//    * @param mtName Method name.
-//    * @param clsarg Array of <code>Class</code> objects that 
-//    *               represents the method argument list.
-//    * @param pos    Element of argument list being tested.
-//    *               Used for recursion.
-//    *
-//    * @return       the <code>Method</code> object that represents
-//    *               the method found. If there is no method in the
-//    *               inheritance tree, returns null.
-//    */
-//   private Method getSuperclassMethod(Class cl, String mtName, 
-//                                      Class[] clsarg, int pos) {
-//     boolean found = false;
-//     Method mt = null;
-//     Class oldClass = clsarg[pos];
-//     Class intf[];
-
-//     do {
-//       found = false;
-//       if (pos + 1 < clsarg.length) {
-//         // Searching the rest of the array of parameter types.
-//         mt = getSuperclassMethod(cl, mtName, clsarg, pos + 1);
-//         if (mt != null)
-//           found = true;
-//       }
-//       else {
-//         // Last parameter in the array: Trying to get the method object.
-//         try {
-//           found = true;
-//           mt = cl.getMethod(mtName, clsarg);
-//         } catch (Exception e) {
-//           found = false;
-//         }
-//       }
-
-//       clsarg[pos] = clsarg[pos].getSuperclass();
-//     } while (clsarg[pos] != null && !found);
-
-
-//     // Searching the interface arrays that implements
-//     // the class and its ancestors.
-//     Class ancClass = oldClass;
-//     do {
-//       intf = ancClass.getInterfaces();
-//       for (int i = 0; i < intf.length && !found; i++) {
-//         clsarg[pos] = intf[i];
-//         mt = getSuperclassMethod(cl, mtName, clsarg, pos);
-//         if (mt != null)
-//           found = true;
-//       }
-//       ancClass = ancClass.getSuperclass();
-//     } while (ancClass != null && !found);
-
-//     // Restore the old value of the array component.
-//     clsarg[pos] = oldClass;
-
-//     if (found)
-//       return mt;
-//     else
-//       return null;
-//   }
 
   /** 
    * Gets the method of the class cl that matches the
@@ -738,7 +682,7 @@ class PLInterpreter {
    * one method fits the number and parameter types.
    * The problem raises when given the parameter type array, several
    * methods could be called, mainly because the type correspondence
-   * between java and prolog is not perfect.
+   * between Java and Prolog is not perfect.
    *
    * This method uses the concept of 'distance' to select the best
    * fit for a given parameter array. 
@@ -768,7 +712,25 @@ class PLInterpreter {
     } catch (Exception e) {}
 
     /*
-     * There is no perfect fit; from the method list, the candidates
+     * If there is no perfect fit, we try to convert the args to 
+     * primitive types. (most of the problems are related to this).
+     */
+    Class[] clsargPrim = new Class[clsarg.length];
+    for (int i = 0; i < clsarg.length ; i++) {
+	Class cls = getPrimitiveClass(clsarg[i]);
+	if (cls != null) 
+	    clsargPrim[i] = cls;
+	else
+	    clsargPrim[i] = clsarg[i];
+    }
+    try {
+      mt = cl.getMethod(mtName, clsargPrim);
+      return mt;
+    } catch (Exception e) {}
+
+
+    /*
+     * There is no fit; from the method list, the candidates
      * are chosen and determined their distance. The method with
      * minimum distance is selected.
      */
@@ -780,14 +742,14 @@ class PLInterpreter {
 	  int distance = 0;
 	  boolean compatible = true;
 	  for (int j = 0; j < clsarg.length; j++)
-	    if (!clsfor[j].isAssignableFrom(clsarg[j])) {
-	      compatible = false;
-	      break;
-	    }
-	    else
-	      /*
-	       * Distance Calculation
-	       */
+//  	    if (!clsfor[j].isAssignableFrom(clsarg[j])) {
+//  	      compatible = false;
+//  	      break;
+//  	    }
+//  	    else
+//  	      /*
+//  	       * Distance Calculation
+//  	       */
 	      distance += getDistance(clsfor[j], clsarg[j]);
 
 	  if (compatible && distance < minDist) {
@@ -846,14 +808,14 @@ class PLInterpreter {
 	  int distance = 0;
 	  boolean compatible = true;
 	  for (int j = 0; j < clsarg.length; j++)
-	    if (!clsfor[j].isAssignableFrom(clsarg[j])) {
-	      compatible = false;
-	      break;
-	    }
-	    else
-	      /*
-	       * Distance Calculation
-	       */
+//  	    if (!clsfor[j].isAssignableFrom(clsarg[j])) {
+//  	      compatible = false;
+//  	      break;
+//  	    }
+//  	    else
+//  	      /*
+//  	       * Distance Calculation
+//  	       */
 	      distance += getDistance(clsfor[j], clsarg[j]);
 
 	  if (compatible && distance < minDist) {
@@ -872,11 +834,11 @@ class PLInterpreter {
   /**
    * Gets a measure of the 'distance' between two assignable
    * classes. In order to choose the nearest fit from a list
-   * of java types to a list of methods or constructors, is
+   * of Java types to a list of methods or constructors, is
    * needed to use an heuristic based on the distance between
    * types.
    *
-   * Is supossed that the java classes received as arguments are
+   * Is supossed that the Java classes received as arguments are
    * compatible using the <code>isAssignableFrom</code> method of the
    * <code>Class</code> class.
    *
@@ -884,10 +846,10 @@ class PLInterpreter {
    * primitive.
    *
    * @param assignedTo    <code>Class</code> object that represents the
-   *                      java type to be assigned.
+   *                      Java type to be assigned.
    *
    * @param assignedFrom  <code>Class</code> object that represents the
-   *                      java type from which will be made the
+   *                      Java type from which will be made the
    *                      assignment.
    *
    * @return              an <code>int</code> number representing the
@@ -935,7 +897,7 @@ class PLInterpreter {
 	else if (assignedTo.equals(Short.TYPE))
 	  newAssignedTo = Sht;
 	else if (assignedTo.equals(Integer.TYPE))
-	  newAssignedTo = Int;
+	    newAssignedTo = Int;
 	else if (assignedTo.equals(Long.TYPE))
 	  newAssignedTo = Lng;
 	else if (assignedTo.equals(Float.TYPE))
@@ -992,7 +954,7 @@ class PLInterpreter {
      * argument. The method <code>invoke</code> of the class
      * <code>Method</code> cannot be used directly because the argument
      * types could not correspond exactly to the method ones. A kind
-     * of conversion must be done with the primitive java types.
+     * of conversion must be done with the primitive Java types.
      *
      * @param mt  <code>Method</code> to be invoked.
      * @param obj Object on which the method will be invoked.
@@ -1003,7 +965,7 @@ class PLInterpreter {
      **/
     private Object invoke(Method mt, Object obj, Object arg[])
 	throws Exception {
-System.err.println("::" + mt);
+
 	/*
 	 * Conversion of the arguments.
 	 */
@@ -1014,9 +976,6 @@ System.err.println("::" + mt);
 	/*
 	 * Method invocation.
 	 */
-for (int i = 0; i < arg.length ; i++)
-System.err.println("arg[]=" + arg[i]);
-
 	return mt.invoke(obj, arg);
     }
 
@@ -1064,12 +1023,12 @@ System.err.println("arg[]=" + arg[i]);
 
   /** 
    * Returns true if the term received as argument
-   * can be interpreted by the prolog term interpreter.
+   * can be interpreted by the Prolog term interpreter.
    *
    * @param t Term to be tested for interpretation.
    *
-   * @return  <code>true</code> if the prolog term received
-   *          as argument can be interpreted by the prolog
+   * @return  <code>true</code> if the Prolog term received
+   *          as argument can be interpreted by the Prolog
    *          command interpreter (method interpret above).
    */
   public static boolean isInterpretable(PLTerm t) {
@@ -1102,14 +1061,46 @@ System.err.println("arg[]=" + arg[i]);
    * Gets the object from the object table given the hash code.
    *
    * @param hashCode Hash code that references an object
-   *                 in the java object table.
+   *                 in the Java object table.
    *
-   * @return         a java object referenced by the hash code.
+   * @return         a Java object referenced by the hash code.
    */
   public Object getObject(Integer hashCode) {
     return objTable.get(hashCode);    
   }
+
+    /**
+     * Returns the primitive clas of the <code>Class</code> object
+     * received as argument.
+     *
+     * @param cl <code>Class</code> object to get its primitive class.
+     *
+     * @return   <code>Class</code> object representing the primitive class
+     *           of the given class, if the class received as
+     *           argument is a reflection of the primitive Java
+     *           types; <code>null</code> otherwise.
+     */
+  private Class getPrimitiveClass(Class cl) {
+
+      try {
+	  if (cl.equals(Class.forName("java.lang.Byte")))
+	      return Byte.TYPE;
+	  else if (cl.equals(Class.forName("java.lang.Short")))
+	      return Short.TYPE;
+	  else if (cl.equals(Class.forName("java.lang.Integer")))
+	      return Integer.TYPE;
+	  else if (cl.equals(Class.forName("java.lang.Long")))
+	      return Long.TYPE;
+	  else if (cl.equals(Class.forName("java.lang.Float")))
+	      return Float.TYPE;
+	  else if (cl.equals(Class.forName("java.lang.Double")))
+	      return Double.TYPE;
+	  else if (cl.equals(Class.forName("java.lang.Character")))
+	      return Character.TYPE;
+	  else
+	      return null;
+      } catch(Exception e) {
+	  return null;
+      }
+  }
 }
-
-
-

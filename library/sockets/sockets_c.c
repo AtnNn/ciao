@@ -12,7 +12,7 @@
 void perror(const char *s);
 
 #include <errno.h>
-int errno;
+/*int errno;*/
 
 
 /* Local atoms */
@@ -41,12 +41,16 @@ struct stream_node *new_socket_stream(streamname, socket)
   s->char_count = 0;
   s->pending_char = -100;
 
+  return insert_new_stream(s);
+
+  /*
   s->forward = root_stream_ptr,
   s->backward = root_stream_ptr->backward,
   root_stream_ptr->backward->forward = s,
   root_stream_ptr->backward = s;
 
   return s;
+  */
 }
 
 /* connect_to_socket(+Host, +Port, +Type, -Stream) */
@@ -59,11 +63,9 @@ BOOL prolog_connect_to_socket(Arg)
 
   int sock;
   int port_number;
-  struct sockaddr name;
   TAGGED host_deref;
   struct hostent *host;
   struct sockaddr_in server_inet_addr;
-  TAGGED str_name;
   int    socket_type;
   TAGGED socket_atm;
   char   socket_name[512];
@@ -83,15 +85,15 @@ BOOL prolog_connect_to_socket(Arg)
   if (!TagIsATM(socket_atm))
     USAGE_FAULT("connect_to_socket_type/[3,4]: 3rd argument must be an atom");
 
-  if (socket_atm = atom_stream)
+  if (socket_atm == atom_stream)
     socket_type = SOCK_STREAM;
-  else if (socket_atm = atom_dgram)
+  else if (socket_atm == atom_dgram)
     socket_type = SOCK_DGRAM;
-  else if (socket_atm = atom_raw)
+  else if (socket_atm == atom_raw)
     socket_type = SOCK_RAW;
-  else if (socket_atm = atom_seqpacket)
+  else if (socket_atm == atom_seqpacket)
     socket_type = SOCK_SEQPACKET;
-  else if (socket_atm = atom_stream)
+  else if (socket_atm == atom_stream)
     socket_type = SOCK_STREAM;
   else USAGE_FAULT("connect_to_socket_type/[3,4]: unrecognized connection type");
 
@@ -112,7 +114,7 @@ BOOL prolog_connect_to_socket(Arg)
   if (connect(sock, 
               (struct sockaddr *)&server_inet_addr, 
               sizeof(struct sockaddr)) < 0){
-    perror("prolog_connect_to_socket");
+    perror("connect() in prolog_connect_to_socket");
     MAJOR_FAULT("connect_to_socket_type/[3,4]: cannot connect()");
   }
   
@@ -233,24 +235,14 @@ static TAGGED stream_list(Arg, max_fd, ready_set)
 BOOL prolog_select_socket(Arg)
      Argdecl;
 {
-  int
-    listen_sock, 
-    max_fd = 0;
-  struct timeval 
-    timeout, 
-    *timeoutptr;
+  int listen_sock, max_fd = 0;
+  struct timeval timeout, *timeoutptr;
   fd_set ready;
-  BOOL
-    unify_result = TRUE,
-    watch_connections;
+  BOOL unify_result = TRUE, watch_connections;
   TAGGED car, cdr;
-  struct stream_node
-    *stream,
-    *socket_stream;
+  struct stream_node *stream, *socket_stream;
   char new_s_name[16];
-  int 
-    newsock, 
-    fd_to_include;
+  int newsock, fd_to_include;
   
   DEREF(X(0), X(0));           /* Do we have to wait for new connections? */
   watch_connections = IsInteger(X(0));

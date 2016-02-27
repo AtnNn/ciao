@@ -7,19 +7,21 @@
 
 /* SIMPLE TYPES  & various CONSTANTS    -------------------------------   */
 
-#define ANY 1                   /* ?? or 0  - for dynamic arrays in bytecode */
+#define ANY 1                /* ?? or 0  - for dynamic arrays in bytecode */
 #define SAME 0
 
 typedef unsigned short int INSN;                                /* 16 bit */
 typedef unsigned long int TAGGED;                               /* 32 bit */
 typedef unsigned long int UNTAGGED;                             /* 32 bit */
-typedef int BOOL;
+
+#if !defined(_Win32Threads_H_)
+typedef int BOOL;		/* Win32 includes this definition */
+# define FALSE 0
+# define TRUE 1
+#endif
+
 typedef long ENG_INT;
 typedef double ENG_FLT;
-
-#define FALSE 0
-#define TRUE 1
-
 
 /*** TAGGED DATATYPES --------------------------------***/
 
@@ -343,6 +345,14 @@ struct misc_info{
    /* For error handling through exceptions */
   int errargno;
   TAGGED culprit;
+			/* Access the goal descriptor for this thread */
+  struct goal_str *goal_desc_ptr;
+
+/* Available workers are enqueued in a list. */
+  struct worker *next_worker;
+
+/* This goal should stp right now! */
+  BOOL stop_this_goal;
 };
 
 
@@ -396,8 +406,17 @@ struct worker {
     
   TAGGED *choice_end;
   TAGGED *choice_start;
-  TAGGED *tagged_choice_start;
-    
+
+
+#if defined(USE_TAGGED_CHOICE_START)
+  TAGGED *tagged_choice_start;   /* Not used any more, but I can't just
+                                    remove it: the size of the WRB is
+                                    critical for the compiler and changing
+                                    it is a real hassle */
+#else
+  TAGGED *dummy;                           /* Use up the space, therefore */
+#endif    
+
   TAGGED *trail_start;
   TAGGED *trail_end;
   

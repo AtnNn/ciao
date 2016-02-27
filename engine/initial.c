@@ -9,13 +9,13 @@
 
 /* INITIALIZATIONS   and support functions for initializations  */
 
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
 #include "predtyp.h"
 #include "wambuiltin.h"
 #include "wamfunction.h"
 /*#include "installibdir.h"*/
-#include "threads.h"
 #include "task_areas.h"
 
 /* declarations for global functions accessed here */
@@ -299,6 +299,9 @@ extern BOOL prolog_getos PROTO((struct worker *w));               /* MCL */
 extern BOOL prolog_dynlink PROTO((struct worker *w));              /* MCL */
 extern BOOL prolog_dynunlink PROTO((struct worker *w));            /* JFMC */
 
+extern BOOL prolog_fast_read_on_c PROTO((struct worker *w));      /* OPA */
+extern BOOL prolog_fast_write_on_c PROTO((struct worker *w));     /* OPA */
+
 /* GLOBAL DATA STRUCTURES */
 
 BOOL predtrace     = FALSE;            /* trace predicate calls -- Shared */
@@ -338,50 +341,26 @@ pthread_attr_t detached_thread;
 pthread_attr_t joinable_thread;
 #endif
 
-/* Database locks */
-/* All-predicates lock */
-LOCK_ST prolog_predicates_st;                                  /* Storage */
-LOCK    prolog_predicates_l;                             /* Pointer to it */
-
-/* Per clause lock (but only one; used in '$inserta' and '$insertz') */
-/*
-LOCK_ST clause_insertion_st;
-LOCK    clause_insertion_l;
-*/
+/* All-predicates lock; this might be held for a long time */
+SLOCK    prolog_predicates_l;
 
 /* Memory management lock (for internal structures) */
-LOCK_ST mem_mng_st;
-LOCK    mem_mng_l;
-
-/* Lock to ensure that terms in launch_goal/[1,2,3] are actually copied by the 
-   launched thread before returning to our tasks. */
-LOCK_ST launch_goal_st;
-LOCK    launch_goal_l;
-
-/* Lock to ensure that no two threads try to backtrack at the same time in
-   the same goal. */
-LOCK_ST backtrack_goal_st;
-LOCK    backtrack_goal_l;
+SLOCK    mem_mng_l;
 
 /* We are giving worker IDs from a pool, in order to speed up task
    creation. This pool needs exclusive access. */
-
-LOCK_ST worker_id_pool_st;
-LOCK    worker_id_pool_l;
-
+SLOCK    worker_id_pool_l;
 
 /* Count for new atom names; if accessed concurrently, we want no repeated
-   identifiers */
+   identifiers.  */
+SLOCK    atom_id_l;
 
-LOCK_ST atom_id_st;
-LOCK    atom_id_l;
-
+/* The creation of new streams should be atomic. */
+LOCK stream_list_l;
 
 /* Counts mutually exclusive operations */
 #if defined(DBG)
-unsigned long int ops_counter = 0;
-LOCK_ST ops_counter_st;
-LOCK ops_counter_l;
+SLOCK ops_counter_l;
 #endif
 
 BOOL wam_initialized = FALSE;
@@ -475,6 +454,14 @@ char symbolchar[256];
  TAGGED functor_Dsetarg;
  TAGGED functor_large;
  TAGGED functor_long;
+
+
+ TAGGED functor_active;
+ TAGGED functor_pending;
+ TAGGED functor_failed;
+ TAGGED functor_available;
+
+
 
  TAGGED current_prompt;
  TAGGED current_unknown;
@@ -652,15 +639,17 @@ struct atom *new_atom_check(str, index)
   classify_atom(s);
 
 #if defined(THREADS)
-  s->atom_lock_l = create_dynamic_lock();               /* Already inited */
+  /*s->atom_lock_l = create_dynamic_lock(); */            /* Already inited */
   /*  Quite amazingly, the latter seems to be faster than just
 
     s->atom_lock_l = &s->atom_lock_st;
-    Init_lock(s->atom_lock_l);
+    Init_slock(s->atom_lock_l);
 
     in a i586, probably because it helps to keep the size of the atoms 
     smaller, and so it favours the cache behavior.
   */
+  Init_lock(s->atom_lock_l);
+  Init_slock(s->counter_lock);
   s->atom_lock_counter = 1;                           /* MUTEX by default */
 #endif
   return s;
@@ -719,9 +708,9 @@ static struct definition *define_builtin(pname,instr,arity)
   ENG_INT current_mem = total_mem_count;
   
  /*func = insert_definition(&prolog_predicates,MakeString(pname),arity,TRUE);*/
-  Wait_Acquire_lock(prolog_predicates_l);
+  Wait_Acquire_slock(prolog_predicates_l);
   func = insert_definition(predicates_location,MakeString(pname),arity,TRUE);
-  Release_lock(prolog_predicates_l);
+  Release_slock(prolog_predicates_l);
   /*func->properties.public = 1;*/
   SetEnterInstr(func,instr);
   INC_MEM_PROG((total_mem_count - current_mem));
@@ -745,9 +734,9 @@ struct definition *define_c_predicate(pname,procedure,arity)
   ENG_INT current_mem = total_mem_count;
   
   /*func = insert_definition(&prolog_predicates,MakeString(pname),arity,TRUE);*/
-  Wait_Acquire_lock(prolog_predicates_l);
+  Wait_Acquire_slock(prolog_predicates_l);
   func = insert_definition(predicates_location,MakeString(pname),arity,TRUE);
-  Release_lock(prolog_predicates_l);
+  Release_slock(prolog_predicates_l);
   /* func->properties.public = public; */
   SetEnterInstr(func,ENTER_C);
 #if 0 /* was GAUGE */
@@ -795,7 +784,7 @@ struct definition *define_c_mod_predicate(module,pname,procedure,arity)
   mod_tagpname = MakeString(mod_pname);
   key = SetArity(mod_tagpname, arity);
 
-  Wait_Acquire_lock(prolog_predicates_l);
+  Wait_Acquire_slock(prolog_predicates_l);
 
   keyval = (struct sw_on_key_node *)incore_gethash(prolog_predicates,key);
 
@@ -807,7 +796,7 @@ struct definition *define_c_mod_predicate(module,pname,procedure,arity)
     add_definition(predicates_location,keyval,key,func);
   }
 
-  Release_lock(prolog_predicates_l);
+  Release_slock(prolog_predicates_l);
 
   /* Previously in the else-part (DCG) */
   /*func->properties.public = public;*/
@@ -830,9 +819,9 @@ void undefine_c_mod_predicate(char *module, char *pname, int arity) {
   strcat(mod_pname, pname);
   mod_tagpname = MakeString(mod_pname);
 
-  Wait_Acquire_lock(prolog_predicates_l);
+  Wait_Acquire_slock(prolog_predicates_l);
   f = insert_definition(predicates_location, mod_tagpname, arity, FALSE);
-  Release_lock(prolog_predicates_l);
+  Release_slock(prolog_predicates_l);
 
   abolish(NULL, f);
 }
@@ -932,6 +921,8 @@ static void initialize_intrinsics()
   define_c_predicate("displayq",prolog_displayq,1);
   define_c_predicate("displayq",prolog_displayq2,2);
   define_c_predicate("clearerr",prolog_clearerr,1);
+  define_c_mod_predicate("fastrw","fast_read",prolog_fast_read_on_c,1);
+  define_c_mod_predicate("fastrw","fast_write",prolog_fast_write_on_c,1);
 
 				/* builtin.c */
   
@@ -994,12 +985,13 @@ static void initialize_intrinsics()
   define_c_predicate("eng_call",       prolog_eng_call, 5);
   define_c_predicate("eng_backtrack",  prolog_eng_backtrack, 2);
   define_c_predicate("eng_cut",        prolog_eng_cut, 1);
-  define_c_predicate("eng_release",    prolog_release_goal, 1);
-  define_c_predicate("eng_wait",       prolog_join_goal, 1);
-  define_c_predicate("eng_kill",       prolog_kill_thread, 1);
-  define_c_predicate("eng_killothers", prolog_kill_other_threads, 0);
-  define_c_predicate("eng_status",     prolog_tasks_status, 0);
-  define_c_predicate("eng_self",       prolog_thread_self, 1);
+  define_c_predicate("eng_release",    prolog_eng_release, 1);
+  define_c_predicate("eng_wait",       prolog_eng_wait, 1);
+  define_c_predicate("eng_kill",       prolog_eng_kill, 1);
+  define_c_predicate("eng_killothers", prolog_eng_killothers, 0);
+  define_c_predicate("eng_status",     prolog_eng_status, 0);
+  define_c_predicate("eng_status1",    prolog_eng_status1, 1);
+  define_c_predicate("eng_self",       prolog_eng_self, 1);
   /* The next one not yet finished */ 
   /*  define_c_predicate("eng_clean"      prolog_eng_clean, 1);*/
 
@@ -1270,32 +1262,20 @@ void init_streams()
   stream_user_error = new_stream(ERRORTAG, "a", stderr);
 }
 
+
 void init_locks(){
 #if defined(THREADS)
-  prolog_predicates_l = &prolog_predicates_st;
-  Init_lock(prolog_predicates_l);
-
+  Init_slock(prolog_predicates_l);
 #if defined(DEBUG)
-  ops_counter_l = &ops_counter_st;
-  Init_lock(ops_counter_l);
+  Init_slock(ops_counter_l);
 #endif
 
-  mem_mng_l = &mem_mng_st;
-  Init_lock(mem_mng_l);
-
-  launch_goal_l = &launch_goal_st;
-  Init_lock(launch_goal_l);
-
-  worker_id_pool_l = &worker_id_pool_st;
-  Init_lock(worker_id_pool_l);
-
-  atom_id_l = &atom_id_st;
-  Init_lock(atom_id_l);
-
-  backtrack_goal_l = &backtrack_goal_st;
-  Init_lock(backtrack_goal_l);
-
-  init_dynamic_locks();
+  Init_lock(stream_list_l);
+  Init_slock(mem_mng_l);
+  Init_slock(worker_id_pool_l);
+  Init_slock(atom_id_l);
+  Init_slock(wam_list_l);
+  /*  init_dynamic_locks();*/
 #endif
 }
 
@@ -1500,6 +1480,13 @@ void init_once()
   functor_large = deffunctor("large",2);
   functor_long = deffunctor("long",1);
 
+
+  functor_active = deffunctor("active", 4);
+  functor_pending = deffunctor("pending", 4);
+  functor_failed = deffunctor("failed", 3);
+  functor_available = deffunctor("available", 1);
+
+
 #if defined(INTERNAL_CALLING)
   address_internal_call = define_builtin("user:internal_call",ENTER_UNDEFINED,0);
 #endif
@@ -1545,7 +1532,8 @@ void init_once()
 #if defined(MARKERS)
   init_markercode();
 #endif
-  init_worker_entry_table();
+  
+  /*init_worker_entry_table();*/
 }
 
 
@@ -1594,8 +1582,8 @@ void local_init_each_time(Arg)
 
   Gc_Total_Grey = 0;
 
-  w->node = b;		                    /* set up initial choicepoint */
-  b->frame = w->frame = (struct frame *)Stack_Start;
+  Arg->node = b;		                    /* set up initial choicepoint */
+  b->frame = Arg->frame = (struct frame *)Stack_Start;
 
   TopConcChpt = b;           /* Initialize concurrent topmost choicepoint */
   b->next_insn = exitcode;
@@ -1605,24 +1593,27 @@ void local_init_each_time(Arg)
   printf("exitcode is %lx\n", exitcode);
   printf("bootcode is %lx\n", bootcode);
   */
-  b->local_top = w->local_top = (struct frame *)Offset(w->frame,EToY0);
-  b->global_top = w->global_top = Heap_Start;
-  b->trail_top = w->trail_top = Trail_Start;
+  b->local_top = Arg->local_top = (struct frame *)Offset(Arg->frame,EToY0);
+  b->global_top = Arg->global_top = Heap_Start;
+  b->trail_top = Arg->trail_top = Trail_Start;
   b->term[0] = atom_nil;
   ChoiceptMarkPure(b);
   ChoiceptMarkStatic(b);
   ChoiceptMarkNoCVA(b);
 				
-  w->frame->next_insn = NULL;                     /* set up initial frame */
-  w->frame->frame = NULL;
+  Arg->frame->next_insn = NULL;                     /* set up initial frame */
+  Arg->frame->frame = NULL;
   
-  w->next_insn = bootcode;
-  w->value_trail = InitialValueTrail;
-  NewShadowregs(w->global_top);
-  w->next_alt = NULL;
+  Arg->next_insn = bootcode;
+  Arg->value_trail = InitialValueTrail;
+  NewShadowregs(Arg->global_top);
+  Arg->next_alt = NULL;
 				
-  init_streams_each_time(w);       /* set misc. variables, handle signals */
-  control_c_normal(w);                               /* For threads also? */
+  Stop_This_Goal(Arg) = FALSE;
+  Heap_Warn_Soft = Heap_Warn;
+
+  init_streams_each_time(Arg);       /* set misc. variables, handle signals */
+  control_c_normal(Arg);                               /* For threads also? */
 }
 
 
@@ -1662,11 +1653,15 @@ void reinitialize(Arg)
   GETENV(i,cp,"CHOICESTKSIZE",CHOICESTKSIZE);
   GETENV(j,cp,"TRAILSTKSIZE",TRAILSTKSIZE);
   i += j;
-  if ((j=TrailDifference(Trail_Start,Trail_End)) != i)
+  if ((j=TrailDifference(Trail_Start,Trail_End)) != i) {
     Choice_End = Trail_Start =
-      checkrealloc(Trail_Start,j*sizeof(TAGGED),i*sizeof(TAGGED)),
-    Choice_Start = Trail_End = TrailOffset(Trail_Start,i),
-    Tagged_Choice_Start = Choice_Start + TaggedZero;
+      checkrealloc(Trail_Start,j*sizeof(TAGGED),i*sizeof(TAGGED));
+    Choice_Start = Trail_End = TrailOffset(Trail_Start,i);
+
+#if defined(USE_TAGGED_CHOICE_START)
+    Tagged_Choice_Start = (TAGGED *)((TAGGED)Choice_Start + TaggedZero);
+#endif
+  }
 
   if (Atom_Buffer_Length != STATICMAXATOM){
     Atom_Buffer = (char *)checkrealloc((TAGGED *)Atom_Buffer,

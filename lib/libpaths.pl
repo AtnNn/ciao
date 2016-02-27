@@ -2,9 +2,11 @@
 
 :- comment(title, "Customizing library paths and path aliases").
 
+:- comment(author,"D.Cabeza").
+
 :- comment(module, "This library provides means for customizing, from
    environment variables, the libraries and @concept{path
-   alias}es known by an executable.  Many applications of CIAO,
+   alias}es known by an executable.  Many applications of Ciao,
    including @apl{ciaoc}, @apl{ciaosh}, and @apl{ciao-shell} make use of
    this library.  Note that if an executable is created dynamic, it will
    try to load its components at startup, before the procedures of this

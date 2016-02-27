@@ -14,7 +14,7 @@
 
 :- comment(module, "This module provides two predicates which give the user
    information regarding how to compile external (C) files in order
-   to link them with the CIAO Prolog engine at runtime.
+   to link them with the Ciao Prolog engine at runtime.
 
    These predicates are not intended to be called directly by the end-user.  
    Instead,  a tool or module whose aim is generating dynamically 

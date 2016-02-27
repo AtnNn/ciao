@@ -1,10 +1,10 @@
 /* Copyright (C) 1996,1997,1998, UPM-CLIP */
 
 #include <unistd.h>
+#include "threads.h"
 #include "datadefs.h"
 #include "support.h"
 #include "predtyp.h"
-#include "threads.h"
 
 /* declarations for global functions accessed here */
 
@@ -32,13 +32,12 @@ BOOL prolog_purge(Arg)
   
   DEREF(X(0),X(0));
   inst = TagToInstance(X(0));
-#if defined(THREADS)
-  Wait_Acquire_lock(inst->root->clause_lock_l);
-#endif
-  expunge_instance(inst);  
-#if defined(THREADS)
-  Release_lock(inst->root->clause_lock_l);
-#endif
+
+
+  Cond_Begin(inst->root->clause_insertion_cond);
+  expunge_instance(inst);
+  Broadcast_Cond(inst->root->clause_insertion_cond);
+
   INC_MEM_PROG((total_mem_count - current_mem));
 
   return TRUE;
@@ -70,10 +69,13 @@ BOOL prolog_erase(Arg)
   root = node->root;
 
 #if defined(DEBUG) && defined(THREADS)
-  if (debug_conc && !root->first)
-    fprintf(stderr,
-            "*** %d(%d) entering prolog_erase() without first instance!\n",
+  if (debug_conc) {
+    fprintf(stderr, "*** %d(%d) entering prolog_erase()!\n",
             (int)Thread_Id, (int)GET_INC_COUNTER);
+    if (!root->first)
+      fprintf(stderr, "*** %d(%d) prolog_erase() without first instance!\n",
+              (int)Thread_Id, (int)GET_INC_COUNTER);
+  }
 #endif
 
 #if defined(THREADS)                                               /* MCL */
@@ -88,7 +90,7 @@ BOOL prolog_erase(Arg)
 
   if (root->behavior_on_failure != DYNAMIC) {
 #if defined(DEBUG) && defined(THREADS)
-    if (debug_conc && Lock_is_unset(root->clause_lock_l))
+    if (debug_conc && Cond_Lock_is_unset(root->clause_insertion_cond))
      fprintf(stderr, "prolog_erase: entering for conc. pred. without lock!\n");
 #endif
     x2_ins_h = node->pending_x2;
@@ -140,6 +142,13 @@ BOOL prolog_erase(Arg)
     (void)active_instance(Arg,node,use_clock,TRUE);
 
   INC_MEM_PROG((total_mem_count - current_mem));
+
+#if defined(DEBUG) && defined(THREADS)
+  if (debug_conc) 
+    fprintf(stderr, "*** %d(%d) exiting prolog_erase()!\n",
+            (int)Thread_Id, (int)GET_INC_COUNTER);
+#endif
+
   return TRUE;
 }
 
@@ -202,20 +211,18 @@ BOOL inserta(Arg)
     BOOL move_insts_to_new_clause = FALSE;
 #endif
 
-    Wait_Acquire_lock(root->clause_lock_l);
+    Cond_Begin(root->clause_insertion_cond);
 
-    /*
 #if defined(DEBUG)
-  fprintf(stderr, "Entering inserta (root = %x, first = %x, &first = %x)\n",
-          (unsigned int)root,
-          (unsigned int)root->first,
-          (unsigned int)&(root->first));
+    if (debug_conc) fprintf(stderr,
+              "*** %d(%d) in inserta (root = %x, first = %x, &first = %x)\n",
+              (int)Thread_Id, (int)GET_INC_COUNTER, (unsigned int)root,
+              (unsigned int)root->first, (unsigned int)&(root->first));
 #endif
-    */
 
 #if defined(THREADS)
     if (root->behavior_on_failure == CONC_CLOSED){                 /* MCL */
-      Release_lock(root->clause_lock_l);
+      Broadcast_Cond(root->clause_insertion_cond);
       USAGE_FAULT("$inserta in an already closed concurrent predicate");
     }
 #endif
@@ -226,7 +233,9 @@ BOOL inserta(Arg)
     /* (void)ACTIVE_INSTANCE(root->first,use_clock,TRUE); optional */
     
     if (!root->first){
-      n->rank = TaggedZero, n->forward = NULL, n->backward = n;
+      n->rank = TaggedZero;
+      n->forward = NULL;
+      n->backward = n;
 #if defined(THREADS)
       if (root->behavior_on_failure == CONC_OPEN)
         move_insts_to_new_clause = TRUE;    /* 'n' will be the new clause */
@@ -270,16 +279,16 @@ BOOL inserta(Arg)
     }
 #endif
 
-    Release_lock(root->clause_lock_l);
-    
-    /* 
 #if defined(DEBUG)
-  fprintf(stderr, "Leaving inserta (root = %x, first = %x, &first = %x)\n",
-          (unsigned int)root,
-          (unsigned int)root->first,
-          (unsigned int)&(root->first));
+    if (debug_conc)
+      fprintf(stderr,
+           "*** %d(%d) leaving inserta (root = %x, first = %x, &first = %x)\n",
+              (int)Thread_Id, (int)GET_INC_COUNTER, (unsigned int)root,
+              (unsigned int)root->first, (unsigned int)&(root->first));
 #endif
-    */
+
+    Broadcast_Cond(root->clause_insertion_cond);
+    
     INC_MEM_PROG((total_mem_count - current_mem));
     return TRUE;
 }
@@ -293,22 +302,33 @@ BOOL insertz(Arg)
     REGISTER struct int_info *root = TagToRoot(X(0));
     ENG_INT current_mem = total_mem_count;
 
-    Wait_Acquire_lock(root->clause_lock_l);
+    Cond_Begin(root->clause_insertion_cond);
 
-#if defined(THREADS)
+#if defined(DEBUG)
+    if (debug_conc)
+      fprintf(stderr,
+              "*** %d(%d) in insertz (root = %x, first = %x, &first = %x)\n",
+              (int)Thread_Id, (int)GET_INC_COUNTER,
+              (unsigned int)root,
+              (unsigned int)root->first,
+              (unsigned int)&(root->first));
+#endif
+
     if (root->behavior_on_failure == CONC_CLOSED){                 /* MCL */
-      Release_lock(root->clause_lock_l);
+      Broadcast_Cond(root->clause_insertion_cond);
       USAGE_FAULT("$inserta in an already closed concurrent predicate");
     }
-#endif
 
     DEREF(X(1),X(1));
     n = TagToInstance(X(1));
     
     /* (void)ACTIVE_INSTANCE(root->first,use_clock,TRUE); optional */
     
-    if (!root->first)
-      n->rank = TaggedZero,n->backward = n,root->first = n;
+    if (!root->first){
+      n->rank = TaggedZero;
+      n->backward = n;
+      root->first = n;
+    }
     else if (root->first->backward->rank == TaggedHigh)
       SERIOUS_FAULT("database node full in assert or record")
     else {
@@ -332,12 +352,14 @@ BOOL insertz(Arg)
 	   n->key==functor_list ? &root->lstcase :
 	   &dyn_puthash(&root->indexer,n->key)->value.instp);
     
-    if (!(*loc))
-	n->next_backward = n, (*loc) = n;
-    else
-	n->next_backward = (*loc)->next_backward,
-	(*loc)->next_backward->next_forward = n,
-	(*loc)->next_backward = n;
+    if (!(*loc)) {
+	n->next_backward = n;
+        (*loc) = n;
+    } else {
+      n->next_backward = (*loc)->next_backward;
+      (*loc)->next_backward->next_forward = n;
+      (*loc)->next_backward = n;
+    }
 
 #if defined(DEBUG) && defined(THREADS)
     if (debug_conc && root->behavior_on_failure != DYNAMIC)
@@ -354,7 +376,17 @@ BOOL insertz(Arg)
     }
 #endif
 
-    Release_lock(root->clause_lock_l);
+#if defined(DEBUG)
+    if (debug_conc)
+      fprintf(stderr,
+              "*** %d(%d) leaving insertz (root = %x, first = %x, &first = %x)\n",
+              (int)Thread_Id, (int)GET_INC_COUNTER,
+              (unsigned int)root,
+              (unsigned int)root->first,
+              (unsigned int)&(root->first));
+#endif
+
+    Broadcast_Cond(root->clause_insertion_cond);
 
     INC_MEM_PROG((total_mem_count - current_mem));
     return TRUE;
@@ -735,7 +767,7 @@ void expunge_instance(i)
         fprintf(stderr, "*** %d(%d) expunge_instance: deleting instance %x!\n",
                 (int)Thread_Id, (int)GET_INC_COUNTER, (int)i);
       if (root->behavior_on_failure != DYNAMIC &&
-          Lock_is_unset(root->clause_lock_l))
+          Cond_Lock_is_unset(root->clause_insertion_cond))
         fprintf(stderr,
                 "*** %d(%d) expunge_instance: lock not set!\n",
                 (int)Thread_Id, (int)GET_INC_COUNTER);
@@ -772,4 +804,3 @@ void expunge_instance(i)
 
     checkdealloc((TAGGED *)i,i->objsize);
 }
-

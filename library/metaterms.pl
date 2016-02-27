@@ -95,12 +95,43 @@ vars_in_args([Arg|Rest],[Arg_list|Rest_list]) :-
 :- comment(variant(Term1,Term2),"@var{Term1} and @var{Term2} are identical
 	up to renaming.").
 
+/* Not safe!
 variant(Term1,Term2) :-
 	\+ \+
         (  numbervars(Term1,0,N),
 	   numbervars(Term2,0,N),
-	   Term1 = Term2
+	   Term1 == Term2
         ).
+*/
+
+variant(Term1,Term2) :-
+	samevarpositions(Term1,Term2,VarDic,[]),
+	\+ \+ numbervarpairs(VarDic,0).
+
+samevarpositions(X,Y,Dic,Dic0):- var(X), !, var(Y), Dic=[X=Y|Dic0].
+samevarpositions(X,Y,Dic,Dic0):- atomic(X), !, X==Y, Dic=Dic0.
+samevarpositions(X,Y,Dic,Dic0):-
+	nonvar(Y),
+        functor(X,F,A),
+        functor(Y,F,A),
+	samevarpositions_(0,A,X,Y,Dic,Dic0).
+
+samevarpositions_(A,A,_,_,Dic,Dic):- !.
+samevarpositions_(I,A,X,Y,Dic,Dic1):-
+	I1 is I+1, 
+	arg(I1,X,X1), 
+	arg(I1,Y,Y1), 
+	samevarpositions(X1,Y1,Dic,Dic0), 
+        samevarpositions_(I1,A,X,Y,Dic0,Dic1).
+
+numbervarpairs([X=Y|VarDic],N):-
+	varpair(X,Y,N,N1),
+	numbervarpairs(VarDic,N1).
+numbervarpairs([],_).
+
+varpair(X,Y,N,N1):- var(X), !, X=N, X=Y, N1 is N+1.
+varpair(X,Y,N,N1):- var(Y), !, Y=N, X=Y, N1 is N+1.
+varpair(X,X,N,N).
 
 %-------------------------------------------------------------------------
 %-------------------------------------------------------------------------
@@ -172,6 +203,10 @@ fullname(F/A,Name) :-
 %% update-version-comments: "../version"
 %% End:
 %-------------------------------------------------------------------------
+
+:- comment(version(1*5+43,2000/02/04,19:53*51+'CET'), "Changed
+   @pred{variant/2} to a safe (more efficient?) version.  (Francisco
+   Bueno Carrillo)").
 
 :- comment(version(0*8+30,1998/12/17,09:55*33+'MET'), "Eliminated
    multiple arities.  (Manuel Hermenegildo)").
