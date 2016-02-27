@@ -565,7 +565,7 @@ extern void failc(char *mesg);
 #define NO_SUCH_FILE 5
 #define NO_OPEN_PERMISSION 6
 #define NO_ACCESS_PERMISSION 7
-#define SYSTEM_ERROR 8 OGRAMA: Error de sistema */
+#define SYSTEM_ERROR 8 OGRAMA */
 
 /* Type codes for TYPE_ERROR  //) */
 /* #define STRICT_ATOM 0

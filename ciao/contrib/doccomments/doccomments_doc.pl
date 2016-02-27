@@ -9,7 +9,7 @@
 :- doc(module,"
 
 @begin{alert} 
-This is still a beta version for experimentation. Many functionality
+This is still a beta version for experimentation. Much functionality
 is implemented but syntax may change in the future. The wiki part will
 be integrated soon into LPdoc so that it can be used in bare
 @tt{.lpdoc} files too.

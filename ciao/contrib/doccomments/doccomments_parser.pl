@@ -186,7 +186,7 @@ layout_prevcol(layout(_, _, PrevCol), PrevCol).
 
 % ---------------------------------------------------------------------------
 
-% An pratically infinite column number.
+% A practically infinite column number.
 infcol(0xffffff).
 
 % A base that accepts characeters beyond column `Col`
