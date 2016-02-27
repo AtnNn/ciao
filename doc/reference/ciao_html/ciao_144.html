@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Prolog to SQL translator</TITLE>
@@ -10,9 +10,9 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>,
 <P><HR><P>
 
 
-<H1><A NAME="SEC589" HREF="ciao_toc.html#TOC589">Prolog to SQL translator</A></H1>
+<H1><A NAME="SEC570" HREF="ciao_toc.html#TOC570">Prolog to SQL translator</A></H1>
 <P>
-<A NAME="IDX5845"></A>
+<A NAME="IDX5720"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>,
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
@@ -29,27 +29,27 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>,
 
 <P>
 This library performs translation of Prolog queries into 
-<A NAME="IDX5846"></A>
+<A NAME="IDX5721"></A>
 SQL. The code is an adaptation for Ciao of the 
-<A NAME="IDX5847"></A>
+<A NAME="IDX5722"></A>
 Prolog to SQL compiler written by Christoph Draxler, CIS Centre for Information and Speech Processing, Ludwig-Maximilians-University Munich, <CODE>draxler@cis.uni-muenchen.de</CODE>, Version 1.1. Many thanks to Christoph for allowing us to include this adaptation of his code with Ciao. 
 
 
 <P>
 The translator needs to know the correspondence between Prolog predicates and the 
-<A NAME="IDX5848"></A>
+<A NAME="IDX5723"></A>
 SQL tables in the database. To this end this module exports two multifile predicates, 
-<A NAME="IDX5849"></A>
+<A NAME="IDX5724"></A>
 <CODE>relation/3</CODE> and 
-<A NAME="IDX5850"></A>
+<A NAME="IDX5725"></A>
 <CODE>attribute/4</CODE>. See the description of these predicates for details on how such correspondance is specified. 
 
 
 <P>
 The main entry points to the translator are 
-<A NAME="IDX5851"></A>
+<A NAME="IDX5726"></A>
 <CODE>pl2sqlstring/3</CODE> and 
-<A NAME="IDX5852"></A>
+<A NAME="IDX5727"></A>
 <CODE>pl2sqlterm/3</CODE>. Details on the types of queries allowed can be found in the description of these predicates. 
 
 
@@ -59,29 +59,50 @@ The main entry points to the translator are
 
 
 <PRE>
+:- use_module(library('persdb_sql/pl2sql')).
+:- use_module(library(strings)).
+
+:- multifile [relation/3,attribute/4].
+:- data [relation/3,attribute/4].
+
+relation(product,3,'PRODUCT').
+attribute(1,'PRODUCT','ID',int).
+attribute(2,'PRODUCT','QUANTITY',int).
+attribute(3,'PRODUCT','NAME',string).
+
+main :- 
+     pl2sqlstring( f(L,K), 
+          ((product(L,N,a); product(L,N,b)),
+           \+ product(2,3,b), 
+           L + 2 &#62; avg(Y, Z^product(Z,Y,a)),
+           K is N + max(X, product(X,2,b))
+           ), T),
+     write_string(T).
+     
+%%     printqueries(T).
 
 </PRE>
 
 <P>
 <STRONG>Note:</STRONG> while the translator can be used directly in programs, it is more convenient to use a higher-level abstraction: 
-<A NAME="IDX5853"></A>
+<A NAME="IDX5728"></A>
 persistent predicates (implemented in the 
-<A NAME="IDX5854"></A>
+<A NAME="IDX5729"></A>
 <CODE>persdb</CODE> library). The notion of persistent predicates provides a completely transparent interface between Prolog and relational databases. When using this library, the Prolog to SQL translation is called automatically as needed. 
 
 
 
 <UL>
-<LI><A HREF="ciao_144.html#SEC590">Usage and interface (pl2sql)</A>
-<LI><A HREF="ciao_144.html#SEC591">Documentation on exports (pl2sql)</A>
-<LI><A HREF="ciao_144.html#SEC592">Documentation on multifiles (pl2sql)</A>
-<LI><A HREF="ciao_144.html#SEC593">Documentation on internals (pl2sql)</A>
-<LI><A HREF="ciao_144.html#SEC594">Known bugs and planned improvements (pl2sql)</A>
+<LI><A HREF="ciao_144.html#SEC571">Usage and interface (pl2sql)</A>
+<LI><A HREF="ciao_144.html#SEC572">Documentation on exports (pl2sql)</A>
+<LI><A HREF="ciao_144.html#SEC573">Documentation on multifiles (pl2sql)</A>
+<LI><A HREF="ciao_144.html#SEC574">Documentation on internals (pl2sql)</A>
+<LI><A HREF="ciao_144.html#SEC575">Known bugs and planned improvements (pl2sql)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC590" HREF="ciao_toc.html#TOC590">Usage and interface (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC571" HREF="ciao_toc.html#TOC571">Usage and interface (<CODE>pl2sql</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -98,27 +119,27 @@ persistent predicates (implemented in the
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5855"></A>
+<A NAME="IDX5730"></A>
 <CODE>pl2sqlstring/3</CODE>, 
-<A NAME="IDX5856"></A>
+<A NAME="IDX5731"></A>
 <CODE>pl2sqlterm/3</CODE>, 
-<A NAME="IDX5857"></A>
+<A NAME="IDX5732"></A>
 <CODE>sqlterm2string/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX5858"></A>
+<A NAME="IDX5733"></A>
 <CODE>querybody/1</CODE>, 
-<A NAME="IDX5859"></A>
+<A NAME="IDX5734"></A>
 <CODE>projterm/1</CODE>, 
-<A NAME="IDX5860"></A>
+<A NAME="IDX5735"></A>
 <CODE>sqlstring/1</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX5861"></A>
+<A NAME="IDX5736"></A>
 <CODE>relation/3</CODE>, 
-<A NAME="IDX5862"></A>
+<A NAME="IDX5737"></A>
 <CODE>attribute/4</CODE>.
 
 </UL>
@@ -130,15 +151,15 @@ persistent predicates (implemented in the
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5863"></A>
+<A NAME="IDX5738"></A>
 <CODE>persdb_sql_common/sqltypes</CODE>, 
-<A NAME="IDX5864"></A>
+<A NAME="IDX5739"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX5865"></A>
+<A NAME="IDX5740"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX5866"></A>
+<A NAME="IDX5741"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX5867"></A>
+<A NAME="IDX5742"></A>
 <CODE>messages</CODE>.
 
 </UL>
@@ -149,13 +170,13 @@ persistent predicates (implemented in the
 
 
 
-<H2><A NAME="SEC591" HREF="ciao_toc.html#TOC591">Documentation on exports (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC572" HREF="ciao_toc.html#TOC572">Documentation on exports (<CODE>pl2sql</CODE>)</A></H2>
 <P>
-<A NAME="IDX5868"></A>
-<A NAME="IDX5869"></A>
+<A NAME="IDX5743"></A>
+<A NAME="IDX5744"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>pl2sqlstring/3:</B>
-<DD><A NAME="IDX5870"></A>
+<DD><A NAME="IDX5745"></A>
 
 
 <P>
@@ -165,15 +186,15 @@ persistent predicates (implemented in the
 <LI><EM>Description:</EM> This is the top level predicate which translates complex Prolog goals into the corresponding SQL code.
 
 The query code is prepared in such a way that the result is projected onto the term <CODE>ProjectionTerm</CODE> (also in a similar way to the first argument of 
-<A NAME="IDX5871"></A>
+<A NAME="IDX5746"></A>
 <CODE>setof/3</CODE>)). See the predicate 
-<A NAME="IDX5872"></A>
+<A NAME="IDX5747"></A>
 <CODE>translate_projection/3</CODE> for restrictions on this term. 
 
 <CODE>SQLQueryString</CODE> contains the code of the 
-<A NAME="IDX5873"></A>
+<A NAME="IDX5748"></A>
 SQL query, ready to be sent to an 
-<A NAME="IDX5874"></A>
+<A NAME="IDX5749"></A>
 SQL server. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -190,20 +211,20 @@ SQL server.
 </DL>
 
 <P>
-<A NAME="IDX5875"></A>
-<A NAME="IDX5876"></A>
+<A NAME="IDX5750"></A>
+<A NAME="IDX5751"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
-<DD><A NAME="IDX5877"></A>
+<DD><A NAME="IDX5752"></A>
 
 
 <P>
 <CODE>DBGoal</CODE> is a goal meant to be executed in the external database. It can be a complex term containing 
-<A NAME="IDX5878"></A>
+<A NAME="IDX5753"></A>
 conjunctions, 
-<A NAME="IDX5879"></A>
+<A NAME="IDX5754"></A>
 disjunctions, and 
-<A NAME="IDX5880"></A>
+<A NAME="IDX5755"></A>
 negations, of: 
 
 
@@ -212,27 +233,27 @@ negations, of:
 
 <LI>
 
-<A NAME="IDX5881"></A>
+<A NAME="IDX5756"></A>
 Atomic goals, which must have been defined via 
-<A NAME="IDX5882"></A>
+<A NAME="IDX5757"></A>
 <CODE>relation/3</CODE> and 
-<A NAME="IDX5883"></A>
+<A NAME="IDX5758"></A>
 <CODE>attribute/4</CODE> and reside in the (same) database. Their arguments must be either ground or free variables. If they are ground, they must be bound to constants of the type declared for that argument. If an argument is a free variable, it may <EM>share</EM> with (i.e., be the same variable as) other free variables in other goal arguments. 
 
 <LI>
 
-<A NAME="IDX5884"></A>
+<A NAME="IDX5759"></A>
 Database comparison goals, whose main functor must be a 
-<A NAME="IDX5885"></A>
+<A NAME="IDX5760"></A>
 database comparison operator (see 
-<A NAME="IDX5886"></A>
+<A NAME="IDX5761"></A>
 <CODE>pl2sql</CODE>:
-<A NAME="IDX5887"></A>
+<A NAME="IDX5762"></A>
 <CODE>comparison/2</CODE>) and whose arguments must be <EM>database arithmetic expressions</EM>. 
 
 <LI>
 
-<A NAME="IDX5888"></A>
+<A NAME="IDX5763"></A>
 Database calls to is/2. The left side of such a call may be either unbound, in which case it is bound to the result of evaluating the right side, or bound in which case an equality condition is tested. The right side must be a <EM>database arithmetic expression</EM>. 
 
 </UL>
@@ -246,18 +267,18 @@ The binding of variables follows Prolog rules:
 
 <LI>variables are bound by positive base goals and on the left side of the
 
-<A NAME="IDX5889"></A>
+<A NAME="IDX5764"></A>
 <CODE>is/2</CODE> predicate. 
 
 <LI>Comparison operations, negated goals, and right sides of the
 
-<A NAME="IDX5890"></A>
+<A NAME="IDX5765"></A>
 <CODE>is/2</CODE> predicate do not return variable bindings and may even require all arguments to be bound for a safe evaluation. 
 
 </UL>
 
 <P>
-<A NAME="IDX5891"></A>
+<A NAME="IDX5766"></A>
 Database arithmetic expressions may contain: 
 
 
@@ -270,34 +291,34 @@ Database arithmetic expressions may contain:
 
 <LI>
 
-<A NAME="IDX5892"></A>
+<A NAME="IDX5767"></A>
 Database arithmetic functions, which are a subset of those typically accepted within 
-<A NAME="IDX5893"></A>
+<A NAME="IDX5768"></A>
 <CODE>is/2</CODE> (see 
-<A NAME="IDX5894"></A>
+<A NAME="IDX5769"></A>
 <CODE>pl2sql</CODE>:
-<A NAME="IDX5895"></A>
+<A NAME="IDX5770"></A>
 <CODE>arithmetic_functor/2</CODE>). 
 
 <LI>
 
-<A NAME="IDX5896"></A>
+<A NAME="IDX5771"></A>
 Database aggregation functions, each of which has two arguments: a variable indicating the argument over which the function is to be computed, and a goal argument which must contain in at least one argument position the variable (e.g. <CODE>avg(Seats, plane(Type, Seats))</CODE>). The goal argument may only be a conjunction of (positive or negative) base goals. See 
-<A NAME="IDX5897"></A>
+<A NAME="IDX5772"></A>
 <CODE>pl2sql</CODE>:
-<A NAME="IDX5898"></A>
+<A NAME="IDX5773"></A>
 <CODE>aggregate_functor/2</CODE> for the admissible aggregate functions. 
 
 </UL>
 
 <P>
 In addition, variables 
-<A NAME="IDX5899"></A>
-<A NAME="IDX5900"></A>
+<A NAME="IDX5774"></A>
+<A NAME="IDX5775"></A>
 can be existentially quantified using 
-<A NAME="IDX5901"></A>
+<A NAME="IDX5776"></A>
 <CODE>^/2</CODE> (in a similar way to how it is done in 
-<A NAME="IDX5902"></A>
+<A NAME="IDX5777"></A>
 <CODE>setof/3</CODE>). 
 
 
@@ -316,16 +337,16 @@ Note that it is assumed that the arithmetic operators in Prolog and SQL are the 
 </DL>
 
 <P>
-<A NAME="IDX5903"></A>
-<A NAME="IDX5904"></A>
+<A NAME="IDX5778"></A>
+<A NAME="IDX5779"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
-<DD><A NAME="IDX5905"></A>
+<DD><A NAME="IDX5780"></A>
 
 
 <P>
 <CODE>DBProjTerm</CODE> is a term onto which the result of a database query code is (in a similar way to the first argument of 
-<A NAME="IDX5906"></A>
+<A NAME="IDX5781"></A>
 <CODE>setof/3</CODE>)). 
 
 
@@ -353,11 +374,11 @@ A <CODE>ProjectionTerm</CODE> must meet the following restrictions:
 </DL>
 
 <P>
-<A NAME="IDX5907"></A>
-<A NAME="IDX5908"></A>
+<A NAME="IDX5782"></A>
+<A NAME="IDX5783"></A>
 <DL>
 <DT><span class="define">REGTYPE:</span> <B>sqlstring/1:</B>
-<DD><A NAME="IDX5909"></A>
+<DD><A NAME="IDX5784"></A>
 
 
 
@@ -377,11 +398,11 @@ sqlstring(S) :-
 </DL>
 
 <P>
-<A NAME="IDX5910"></A>
-<A NAME="IDX5911"></A>
+<A NAME="IDX5785"></A>
+<A NAME="IDX5786"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>pl2sqlterm/3:</B>
-<DD><A NAME="IDX5912"></A>
+<DD><A NAME="IDX5787"></A>
 
 
 <P>
@@ -390,7 +411,7 @@ sqlstring(S) :-
 <UL>
 <LI><EM>Description:</EM> Similar to
 
-<A NAME="IDX5913"></A>
+<A NAME="IDX5788"></A>
 <CODE>pl2sqlstring/3</CODE> except that <CODE>SQLQueryTerm</CODE> is a representation of the SQL query as a Prolog term. 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -407,11 +428,11 @@ sqlstring(S) :-
 </DL>
 
 <P>
-<A NAME="IDX5914"></A>
-<A NAME="IDX5915"></A>
+<A NAME="IDX5789"></A>
+<A NAME="IDX5790"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>sqlterm2string/2:</B>
-<DD><A NAME="IDX5916"></A>
+<DD><A NAME="IDX5791"></A>
 
 
 <P>
@@ -432,15 +453,15 @@ sqlstring(S) :-
 </DL>
 
 <P>
-<A NAME="IDX5917"></A>
+<A NAME="IDX5792"></A>
 <DL>
 <DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX5918"></A>
+<DD><A NAME="IDX5793"></A>
 
 
 <P>
  Imported from 
-<A NAME="IDX5919"></A>
+<A NAME="IDX5794"></A>
 <CODE>sqltypes</CODE> (see the corresponding documentation for details).
 
 
@@ -448,13 +469,13 @@ sqlstring(S) :-
 
 
 
-<H2><A NAME="SEC592" HREF="ciao_toc.html#TOC592">Documentation on multifiles (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC573" HREF="ciao_toc.html#TOC573">Documentation on multifiles (<CODE>pl2sql</CODE>)</A></H2>
 <P>
-<A NAME="IDX5920"></A>
-<A NAME="IDX5921"></A>
+<A NAME="IDX5795"></A>
+<A NAME="IDX5796"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>relation/3:</B>
-<DD><A NAME="IDX5922"></A>
+<DD><A NAME="IDX5797"></A>
 
 
 <P>
@@ -471,17 +492,17 @@ The predicate is of type <EM>data</EM>.
 <UL>
 <LI><EM>Description:</EM> This predicate, together with
 
-<A NAME="IDX5923"></A>
+<A NAME="IDX5798"></A>
 <CODE>attribute/4</CODE>, defines the correspondence between Prolog predicates and the 
-<A NAME="IDX5924"></A>
+<A NAME="IDX5799"></A>
 SQL tables in the database. These two relations constitute an extensible meta-database which maps 
-<A NAME="IDX5925"></A>
+<A NAME="IDX5800"></A>
 Prolog predicate names to 
-<A NAME="IDX5926"></A>
+<A NAME="IDX5801"></A>
 SQL table names, and 
-<A NAME="IDX5927"></A>
+<A NAME="IDX5802"></A>
 Prolog predicate argument positions to 
-<A NAME="IDX5928"></A>
+<A NAME="IDX5803"></A>
 SQL attributes. 
 
 <CODE>PredName</CODE> is the chosen Prolog name for an SQL table. <CODE>Arity</CODE> is the number of arguments of the predicate. <CODE>TableName</CODE> is the name of the SQL table in the Database Management System. 
@@ -500,11 +521,11 @@ SQL attributes.
 </DL>
 
 <P>
-<A NAME="IDX5929"></A>
-<A NAME="IDX5930"></A>
+<A NAME="IDX5804"></A>
+<A NAME="IDX5805"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>attribute/4:</B>
-<DD><A NAME="IDX5931"></A>
+<DD><A NAME="IDX5806"></A>
 
 
 <P>
@@ -521,7 +542,7 @@ The predicate is of type <EM>data</EM>.
 <UL>
 <LI><EM>Description:</EM> This predicate maps the argument positions of a Prolog predicate to the SQL attributes of its corresponding table. The types of the arguments need to be specified, and this information is used for consistency checking during the translation and for output formatting. A minimal type system is provided to this end. The allowable types are given by
 
-<A NAME="IDX5932"></A>
+<A NAME="IDX5807"></A>
 <CODE>sqltype/1</CODE>. 
 
 <CODE>ANumber</CODE> is the argument number in the Prolog relation. <CODE>TblName</CODE> is the name of the SQL table in the Database Management System. <CODE>AName</CODE> is the name of the corresponding attribute in the table. <CODE>AType</CODE> is the (translator) data type of the attribute. 
@@ -544,13 +565,13 @@ The predicate is of type <EM>data</EM>.
 
 
 
-<H2><A NAME="SEC593" HREF="ciao_toc.html#TOC593">Documentation on internals (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC574" HREF="ciao_toc.html#TOC574">Documentation on internals (<CODE>pl2sql</CODE>)</A></H2>
 <P>
-<A NAME="IDX5933"></A>
-<A NAME="IDX5934"></A>
+<A NAME="IDX5808"></A>
+<A NAME="IDX5809"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>query_generation/3:</B>
-<DD><A NAME="IDX5935"></A>
+<DD><A NAME="IDX5810"></A>
 
 
 <P>
@@ -559,7 +580,7 @@ The predicate is of type <EM>data</EM>.
 <UL>
 <LI><EM>Description:</EM> For each Conjunction in <CODE>ListOfConjunctions</CODE>, translate the pair <CODE>(ProjectionTerm, Conjunction)</CODE> to an SQL query and connect each such query through a
 
-<A NAME="IDX5936"></A>
+<A NAME="IDX5811"></A>
 UNION-operator to result in the <CODE>ListOfQueries</CODE>. 
 
 A Conjunction consists of positive or negative subgoals. Each subgoal is translated as follows: 
@@ -569,34 +590,34 @@ A Conjunction consists of positive or negative subgoals. Each subgoal is transla
 
 <LI>the
 
-<A NAME="IDX5937"></A>
+<A NAME="IDX5812"></A>
 functor of a goal that is not a comparison operation is translated to a 
-<A NAME="IDX5938"></A>
+<A NAME="IDX5813"></A>
 relation name with a 
-<A NAME="IDX5939"></A>
+<A NAME="IDX5814"></A>
 range variable, 
 
 <LI>
 
-<A NAME="IDX5940"></A>
+<A NAME="IDX5815"></A>
 negated goals are translated to 
-<A NAME="IDX5941"></A>
+<A NAME="IDX5816"></A>
 NOT EXISTS-subqueries with 
-<A NAME="IDX5942"></A>
+<A NAME="IDX5817"></A>
 * projection, 
 
 <LI>
 
-<A NAME="IDX5943"></A>
+<A NAME="IDX5818"></A>
 comparison operations are translated to comparison operations in the 
-<A NAME="IDX5944"></A>
+<A NAME="IDX5819"></A>
 WHERE-clause, 
 
 <LI>
 
-<A NAME="IDX5945"></A>
+<A NAME="IDX5820"></A>
 aggregate function terms are translated to 
-<A NAME="IDX5946"></A>
+<A NAME="IDX5821"></A>
 aggregate function (sub)queries. 
 
 </UL>
@@ -608,29 +629,29 @@ The arguments of a goal are translated as follows:
 
 <LI><CODE>variables of a goal</CODE> are translated to
 
-<A NAME="IDX5947"></A>
+<A NAME="IDX5822"></A>
 qualified attributes, 
 
 <LI>
 
-<A NAME="IDX5948"></A>
+<A NAME="IDX5823"></A>
 variables occurring in several goals are translated to equality comparisons (equi join) in the WHERE-clause, 
-<A NAME="IDX5949"></A>
-<A NAME="IDX5950"></A>
+<A NAME="IDX5824"></A>
+<A NAME="IDX5825"></A>
 
 <LI>
 
-<A NAME="IDX5951"></A>
+<A NAME="IDX5826"></A>
 constant arguments are translated to 
-<A NAME="IDX5952"></A>
+<A NAME="IDX5827"></A>
 equality comparisons in the WHERE-clause. 
 
 </UL>
 
 Arithmetic functions are treated specially (
-<A NAME="IDX5953"></A>
+<A NAME="IDX5828"></A>
 <CODE>translate_arithmetic_function/5</CODE>). See also 
-<A NAME="IDX5954"></A>
+<A NAME="IDX5829"></A>
 <CODE>querybody/1</CODE> for details on the syntax accepted and restrictions. 
 
  
@@ -639,11 +660,11 @@ Arithmetic functions are treated specially (
 </DL>
 
 <P>
-<A NAME="IDX5955"></A>
-<A NAME="IDX5956"></A>
+<A NAME="IDX5830"></A>
+<A NAME="IDX5831"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>translate_conjunction/5:</B>
-<DD><A NAME="IDX5957"></A>
+<DD><A NAME="IDX5832"></A>
 
 
 <P>
@@ -652,20 +673,20 @@ Arithmetic functions are treated specially (
 <UL>
 <LI><EM>Description:</EM> Translates a conjunction of goals (represented as a list of goals preceeded by existentially quantified variables) to
 
-<A NAME="IDX5958"></A>
+<A NAME="IDX5833"></A>
 FROM-clauses and 
-<A NAME="IDX5959"></A>
+<A NAME="IDX5834"></A>
 WHERE-clauses of an SQL query. A dictionary containing the associated SQL table and attribute names is built up as an accumulator pair (arguments <CODE>Dict</CODE> and <CODE>NewDict</CODE>). 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5960"></A>
-<A NAME="IDX5961"></A>
+<A NAME="IDX5835"></A>
+<A NAME="IDX5836"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>translate_goal/5:</B>
-<DD><A NAME="IDX5962"></A>
+<DD><A NAME="IDX5837"></A>
 
 
 <P>
@@ -679,27 +700,27 @@ WHERE-clauses of an SQL query. A dictionary containing the associated SQL table 
 
 <LI>a
 
-<A NAME="IDX5963"></A>
+<A NAME="IDX5838"></A>
 positive database goal to the associated FROM- and WHERE clause of an SQL query, 
 
 <LI>a
 
-<A NAME="IDX5964"></A>
+<A NAME="IDX5839"></A>
 negated database goal to a negated existential subquery, 
 
 <LI>an
 
-<A NAME="IDX5965"></A>
+<A NAME="IDX5840"></A>
 arithmetic goal to an arithmetic expression or an aggregate function query, 
 
 <LI>a
 
-<A NAME="IDX5966"></A>
+<A NAME="IDX5841"></A>
 comparison goal to a comparison expression, and 
 
 <LI>a
 
-<A NAME="IDX5967"></A>
+<A NAME="IDX5842"></A>
 negated comparison goal to a comparison expression with the opposite comparison operator. 
 
 </UL>
@@ -710,11 +731,11 @@ negated comparison goal to a comparison expression with the opposite comparison 
 </DL>
 
 <P>
-<A NAME="IDX5968"></A>
-<A NAME="IDX5969"></A>
+<A NAME="IDX5843"></A>
+<A NAME="IDX5844"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>translate_arithmetic_function/5:</B>
-<DD><A NAME="IDX5970"></A>
+<DD><A NAME="IDX5845"></A>
 
 
 <P>
@@ -738,11 +759,11 @@ Only the equality test shows up in the WHERE clause of an SQLquery.
 </DL>
 
 <P>
-<A NAME="IDX5971"></A>
-<A NAME="IDX5972"></A>
+<A NAME="IDX5846"></A>
+<A NAME="IDX5847"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>translate_comparison/5:</B>
-<DD><A NAME="IDX5973"></A>
+<DD><A NAME="IDX5848"></A>
 
 
 <P>
@@ -756,11 +777,11 @@ Only the equality test shows up in the WHERE clause of an SQLquery.
 </DL>
 
 <P>
-<A NAME="IDX5974"></A>
-<A NAME="IDX5975"></A>
+<A NAME="IDX5849"></A>
+<A NAME="IDX5850"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>aggregate_function/3:</B>
-<DD><A NAME="IDX5976"></A>
+<DD><A NAME="IDX5851"></A>
 
 
 <P>
@@ -769,18 +790,18 @@ Only the equality test shows up in the WHERE clause of an SQLquery.
 <UL>
 <LI><EM>Description:</EM> Supports the Prolog aggregate function terms listed in
 
-<A NAME="IDX5977"></A>
+<A NAME="IDX5852"></A>
 <CODE>aggregate_functor/2</CODE> within arithmetic expressions. Aggregate functions are translated to the corresponding SQL built-in aggregate functions. 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5978"></A>
-<A NAME="IDX5979"></A>
+<A NAME="IDX5853"></A>
+<A NAME="IDX5854"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>comparison/2:</B>
-<DD><A NAME="IDX5980"></A>
+<DD><A NAME="IDX5855"></A>
 
 
 <P>
@@ -811,11 +832,11 @@ comparison(@&#62;,&#62;).
 </DL>
 
 <P>
-<A NAME="IDX5981"></A>
-<A NAME="IDX5982"></A>
+<A NAME="IDX5856"></A>
+<A NAME="IDX5857"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>negated_comparison/2:</B>
-<DD><A NAME="IDX5983"></A>
+<DD><A NAME="IDX5858"></A>
 
 
 <P>
@@ -847,11 +868,11 @@ negated_comparison(&#62;=,&#60;).
 </DL>
 
 <P>
-<A NAME="IDX5984"></A>
-<A NAME="IDX5985"></A>
+<A NAME="IDX5859"></A>
+<A NAME="IDX5860"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>arithmetic_functor/2:</B>
-<DD><A NAME="IDX5986"></A>
+<DD><A NAME="IDX5861"></A>
 
 
 <P>
@@ -881,11 +902,11 @@ arithmetic_functor(/,/).
 </DL>
 
 <P>
-<A NAME="IDX5987"></A>
-<A NAME="IDX5988"></A>
+<A NAME="IDX5862"></A>
+<A NAME="IDX5863"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>aggregate_functor/2:</B>
-<DD><A NAME="IDX5989"></A>
+<DD><A NAME="IDX5864"></A>
 
 
 <P>
@@ -917,7 +938,7 @@ aggregate_functor(count,'COUNT').
 
 
 
-<H2><A NAME="SEC594" HREF="ciao_toc.html#TOC594">Known bugs and planned improvements (<CODE>pl2sql</CODE>)</A></H2>
+<H2><A NAME="SEC575" HREF="ciao_toc.html#TOC575">Known bugs and planned improvements (<CODE>pl2sql</CODE>)</A></H2>
 
 
 <UL>

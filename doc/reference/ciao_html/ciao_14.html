@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - The module system</TITLE>
@@ -10,14 +10,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_13.html">previous</A>, 
 <P><HR><P>
 
 
-<H1><A NAME="SEC121" HREF="ciao_toc.html#TOC121">The module system</A></H1>
+<H1><A NAME="SEC95" HREF="ciao_toc.html#TOC95">The module system</A></H1>
 
 <P>
 <STRONG>Author(s):</STRONG> Daniel Cabeza and the CLIP Group.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
@@ -30,31 +30,31 @@ Modularity is a basic notion in a modern computer language. Modules allow dividi
 
 <P>
 The predicates visible in a module are the predicates defined in that module, plus the predicates imported from other modules. Only predicates exported by a module can be imported from other modules. The default module of a given predicate name is the local one if the predicate is defined locally, else the last module from which the predicate is imported, having explicit imports priority (that is, a predicate imported by an <CODE>use_module/2</CODE> declaration is always preferred above a predicate imported by an <CODE>use_module/1</CODE> declaration). To refer to a predicate from a module which is not the default for that predicate the name has to be module 
-<A NAME="IDX1130"></A>
-<A NAME="IDX1131"></A>
+<A NAME="IDX866"></A>
+<A NAME="IDX867"></A>
 qualified. A module qualified predicate name has the form <CODE>Module</CODE>:<CODE>Predicate</CODE> as in the call <CODE>debugger:debug_module(M)</CODE>. Note that this does not allow having access to predicates not imported, nor defining clauses of other modules. 
 
 
 <P>
 All predicates defined in files with no module declaration belong to a special module called 
-<A NAME="IDX1132"></A>
-<A NAME="IDX1133"></A>
+<A NAME="IDX868"></A>
+<A NAME="IDX869"></A>
 <CODE>user</CODE>, and all are implicitly exported. This allows dividing programs in several files without being aware of the module system at all. Note that this feature is only supported for compatibility reasons, being its use discouraged. Many attractive compilation features of Ciao cannot be performed in <CODE>user</CODE> modules. 
 
 
 <P>
 The case of multifile predicates (defined with the declaration 
-<A NAME="IDX1134"></A>
+<A NAME="IDX870"></A>
 <CODE>multifile/1</CODE>) is also special. Multifile predicates can be defined by clauses distributed in several modules, and all modules which define a predicate as multifile can use that predicate. The name space of multifile predicates is independent, as if they belonged to special module <CODE>multifile</CODE>. 
 
 
 <P>
 Every <CODE>user</CODE> or module file imports implicitly a number of modules called 
-<A NAME="IDX1135"></A>
+<A NAME="IDX871"></A>
 builtin modules. They are imported before all other importations of the module, allowing thus redefining any of their predicates (with the exception of 
-<A NAME="IDX1136"></A>
+<A NAME="IDX872"></A>
 <CODE>true/0</CODE>) by defining local versions or importing them from other modules. Importing explicitly from a builtin module, however, disables the implicit importation of the rest (this feature is used by package 
-<A NAME="IDX1137"></A>
+<A NAME="IDX873"></A>
 <CODE>library(pure)</CODE> to define pure prolog code).
 
 

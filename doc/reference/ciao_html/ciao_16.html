@@ -1,6 +1,6 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 16 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Control constructs/predicates</TITLE>
@@ -10,9 +10,9 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, 
 <P><HR><P>
 
 
-<H1><A NAME="SEC123" HREF="ciao_toc.html#TOC123">Control constructs/predicates</A></H1>
+<H1><A NAME="SEC97" HREF="ciao_toc.html#TOC97">Control constructs/predicates</A></H1>
 <P>
-<A NAME="IDX1138"></A>
+<A NAME="IDX874"></A>
 
 
 <P>
@@ -20,7 +20,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, 
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8 (2002/5/16, 21:20:27 CEST)
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
 
 
 <P>
@@ -28,19 +28,19 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_15.html">previous</A>, 
 
 
 <P>
-This module contains the set of basic control predicates, except the predicates dealing with exceptions, which are in section <A HREF="ciao_26.html#SEC153">Exception handling</A>.
+This module contains the set of basic control predicates, except the predicates dealing with exceptions, which are in section <A HREF="ciao_26.html#SEC127">Exception handling</A>.
 
 
 
 <UL>
-<LI><A HREF="ciao_16.html#SEC124">Usage and interface (basiccontrol)</A>
-<LI><A HREF="ciao_16.html#SEC125">Documentation on exports (basiccontrol)</A>
-<LI><A HREF="ciao_16.html#SEC126">Documentation on internals (basiccontrol)</A>
+<LI><A HREF="ciao_16.html#SEC98">Usage and interface (basiccontrol)</A>
+<LI><A HREF="ciao_16.html#SEC99">Documentation on exports (basiccontrol)</A>
+<LI><A HREF="ciao_16.html#SEC100">Documentation on internals (basiccontrol)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC124" HREF="ciao_toc.html#TOC124">Usage and interface (<CODE>basiccontrol</CODE>)</A></H2>
+<H2><A NAME="SEC98" HREF="ciao_toc.html#TOC98">Usage and interface (<CODE>basiccontrol</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -57,25 +57,25 @@ These predicates/constructs are builtin in Ciao, so nothing special has to be do
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX1139"></A>
+<A NAME="IDX875"></A>
 <CODE>,/2</CODE>, 
-<A NAME="IDX1140"></A>
+<A NAME="IDX876"></A>
 <CODE>;/2</CODE>, 
-<A NAME="IDX1141"></A>
+<A NAME="IDX877"></A>
 <CODE>-&#62;/2</CODE>, 
-<A NAME="IDX1142"></A>
+<A NAME="IDX878"></A>
 <CODE>!/0</CODE>, 
-<A NAME="IDX1143"></A>
+<A NAME="IDX879"></A>
 <CODE>\+/1</CODE>, 
-<A NAME="IDX1144"></A>
+<A NAME="IDX880"></A>
 <CODE>if/3</CODE>, 
-<A NAME="IDX1145"></A>
+<A NAME="IDX881"></A>
 <CODE>true/0</CODE>, 
-<A NAME="IDX1146"></A>
+<A NAME="IDX882"></A>
 <CODE>fail/0</CODE>, 
-<A NAME="IDX1147"></A>
+<A NAME="IDX883"></A>
 <CODE>repeat/0</CODE>, 
-<A NAME="IDX1148"></A>
+<A NAME="IDX884"></A>
 <CODE>call/1</CODE>.
 
 </UL>
@@ -86,13 +86,13 @@ These predicates/constructs are builtin in Ciao, so nothing special has to be do
 
 
 
-<H2><A NAME="SEC125" HREF="ciao_toc.html#TOC125">Documentation on exports (<CODE>basiccontrol</CODE>)</A></H2>
+<H2><A NAME="SEC99" HREF="ciao_toc.html#TOC99">Documentation on exports (<CODE>basiccontrol</CODE>)</A></H2>
 <P>
-<A NAME="IDX1149"></A>
-<A NAME="IDX1150"></A>
+<A NAME="IDX885"></A>
+<A NAME="IDX886"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>,/2:</B>
-<DD><A NAME="IDX1151"></A>
+<DD><A NAME="IDX887"></A>
 
 
 <P>
@@ -103,14 +103,28 @@ These predicates/constructs are builtin in Ciao, so nothing special has to be do
 Conjunction (<CODE>P</CODE> <EM>and</EM> <CODE>Q</CODE>).
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
-<A NAME="IDX1152"></A>
-<A NAME="IDX1153"></A>
+<A NAME="IDX888"></A>
+<A NAME="IDX889"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>;/2:</B>
-<DD><A NAME="IDX1154"></A>
+<DD><A NAME="IDX890"></A>
 
 
 <P>
@@ -121,14 +135,28 @@ Conjunction (<CODE>P</CODE> <EM>and</EM> <CODE>Q</CODE>).
 Disjunction (<CODE>P</CODE> <EM>or</EM> <CODE>Q</CODE>).
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
-<A NAME="IDX1155"></A>
-<A NAME="IDX1156"></A>
+<A NAME="IDX891"></A>
+<A NAME="IDX892"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>-&#62;/2:</B>
-<DD><A NAME="IDX1157"></A>
+<DD><A NAME="IDX893"></A>
 
 
 <P>
@@ -139,18 +167,41 @@ Disjunction (<CODE>P</CODE> <EM>or</EM> <CODE>Q</CODE>).
 If <CODE>P</CODE> then <CODE>Q</CODE> else fail, using first solution of <CODE>P</CODE> only. Also, <CODE>(</CODE><CODE>P</CODE> <CODE>-&#62;</CODE> <CODE>Q</CODE> <CODE>;</CODE> <CODE>R</CODE><CODE>)</CODE>, if <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, using first solution of <CODE>P</CODE> only. No cuts are allowed in <CODE>P</CODE>.
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
-<A NAME="IDX1158"></A>
-<A NAME="IDX1159"></A>
+<A NAME="IDX894"></A>
+<A NAME="IDX895"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>!/0:</B>
-<DD><A NAME="IDX1160"></A>
+<DD><A NAME="IDX896"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Commit to any choices taken in the current predicate.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -161,11 +212,11 @@ If <CODE>P</CODE> then <CODE>Q</CODE> else fail, using first solution of <CODE>P
 </DL>
 
 <P>
-<A NAME="IDX1161"></A>
-<A NAME="IDX1162"></A>
+<A NAME="IDX897"></A>
+<A NAME="IDX898"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>\+/1:</B>
-<DD><A NAME="IDX1163"></A>
+<DD><A NAME="IDX899"></A>
 
 
 <P>
@@ -176,14 +227,25 @@ If <CODE>P</CODE> then <CODE>Q</CODE> else fail, using first solution of <CODE>P
 Goal <CODE>P</CODE> is not provable (negation by failure). Fails if <CODE>P</CODE> has a solution, and succeeds otherwise. No cuts are allowed in <CODE>P</CODE>.
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
-<A NAME="IDX1164"></A>
-<A NAME="IDX1165"></A>
+<A NAME="IDX900"></A>
+<A NAME="IDX901"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>if/3:</B>
-<DD><A NAME="IDX1166"></A>
+<DD><A NAME="IDX902"></A>
 
 
 <P>
@@ -194,18 +256,43 @@ Goal <CODE>P</CODE> is not provable (negation by failure). Fails if <CODE>P</COD
 If <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, exploring all solutions of <CODE>P</CODE>. No cuts are allowed in <CODE>P</CODE>.
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>P</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>Q</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+
+<CODE>R</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
 </DL>
 
 <P>
-<A NAME="IDX1167"></A>
-<A NAME="IDX1168"></A>
+<A NAME="IDX903"></A>
+<A NAME="IDX904"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>true/0:</B>
-<DD><A NAME="IDX1169"></A>
+<DD><A NAME="IDX905"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Succeed (noop).
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -216,15 +303,24 @@ If <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, exploring all solutio
 </DL>
 
 <P>
-<A NAME="IDX1170"></A>
-<A NAME="IDX1171"></A>
+<A NAME="IDX906"></A>
+<A NAME="IDX907"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>fail/0:</B>
-<DD><A NAME="IDX1172"></A>
+<DD><A NAME="IDX908"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Fail, backtrack immediately.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -235,15 +331,24 @@ If <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, exploring all solutio
 </DL>
 
 <P>
-<A NAME="IDX1173"></A>
-<A NAME="IDX1174"></A>
+<A NAME="IDX909"></A>
+<A NAME="IDX910"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>repeat/0:</B>
-<DD><A NAME="IDX1175"></A>
+<DD><A NAME="IDX911"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage 1:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>Description:</EM> Generates an infinite sequence of backtracking choices.
+
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> 
 <KBD> * ISO * </KBD>
 
 <UL>
@@ -254,11 +359,11 @@ If <CODE>P</CODE> then <CODE>Q</CODE> else <CODE>R</CODE>, exploring all solutio
 </DL>
 
 <P>
-<A NAME="IDX1176"></A>
-<A NAME="IDX1177"></A>
+<A NAME="IDX912"></A>
+<A NAME="IDX913"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>call/1:</B>
-<DD><A NAME="IDX1178"></A>
+<DD><A NAME="IDX914"></A>
 
 
 <P>
@@ -273,17 +378,28 @@ Executes goal <CODE>G</CODE>, restricting the scope of the cuts to the execution
 <EM>Meta-predicate</EM> with arguments: <CODE>call(goal)</CODE>.
 
 
+<P>
+<STRONG>Usage 2:</STRONG> 
+<KBD> * ISO * </KBD>
+
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>G</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
 </DL>
 
 
 
-<H2><A NAME="SEC126" HREF="ciao_toc.html#TOC126">Documentation on internals (<CODE>basiccontrol</CODE>)</A></H2>
+<H2><A NAME="SEC100" HREF="ciao_toc.html#TOC100">Documentation on internals (<CODE>basiccontrol</CODE>)</A></H2>
 <P>
-<A NAME="IDX1179"></A>
-<A NAME="IDX1180"></A>
+<A NAME="IDX915"></A>
+<A NAME="IDX916"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>|/2:</B>
-<DD><A NAME="IDX1181"></A>
+<DD><A NAME="IDX917"></A>
 
 
 <P>

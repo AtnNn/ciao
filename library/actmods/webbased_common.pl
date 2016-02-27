@@ -3,8 +3,8 @@
 
 server_public_address(
 	http('www.clip.dia.fi.upm.es',80,
-	      "/ciao/library/actmods/examples/webbased_server/webbased_db/webbased_server_address"),
-'/usr/lib/httpd/ciao/library/actmods/examples/webbased_server/webbased_db/webbased_server_address'
+	      "/actmods_servers/webbased_server_address"),
+	      '/home/clip/public_html/actmods_servers/webbased_server_address'
 		     ).
 
 % URL of script which knows the address of the server
