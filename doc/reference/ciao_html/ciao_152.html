@@ -1,42 +1,48 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Graphs</TITLE>
+<TITLE>The Ciao Prolog System               - Low-level Prolog to Java socket connection</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC595" HREF="ciao_toc.html#TOC595">Graphs</A></H1>
+<H1><A NAME="SEC604" HREF="ciao_toc.html#TOC604">Low-level Prolog to Java socket connection</A></H1>
 <P>
-<A NAME="IDX6047"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> F. Bueno.
+<A NAME="IDX6186"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
+<STRONG>Version:</STRONG> 1.8#2 (2002/6/14, 18:55:4 CEST)
+
+
+<P>
+ 
+<A NAME="IDX6187"></A>
+<A NAME="IDX6188"></A>
+This module defines a low level socket interface, to be used by javart and jtopl. Includes all the code related directly to the handling of sockets. This library should not be used by any user program, because is a very low-level connection to Java. Use 
+<A NAME="IDX6189"></A>
+<CODE>javart</CODE> (Prolog to Java low-level interface) or 
+<A NAME="IDX6190"></A>
+<CODE>jtopl</CODE> (Java to Prolog interface) libraries instead. 
 
 
 
 <UL>
-<LI><A HREF="ciao_152.html#SEC596">Usage and interface (graphs)</A>
-<LI><A HREF="ciao_152.html#SEC597">Documentation on exports (graphs)</A>
-<LI><A HREF="ciao_152.html#SEC598">Documentation on internals (graphs)</A>
+<LI><A HREF="ciao_152.html#SEC605">Usage and interface (javasock)</A>
+<LI><A HREF="ciao_152.html#SEC606">Documentation on exports (javasock)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC596" HREF="ciao_toc.html#TOC596">Usage and interface (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC605" HREF="ciao_toc.html#TOC605">Usage and interface (<CODE>javasock</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -44,7 +50,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(graphs)).</CODE>
+<CODE>:- use_module(library(javasock)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -53,21 +59,24 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6048"></A>
-<CODE>dgraph_to_ugraph/2</CODE>, 
-<A NAME="IDX6049"></A>
-<CODE>dlgraph_to_lgraph/2</CODE>, 
-<A NAME="IDX6050"></A>
-<CODE>edges_to_ugraph/2</CODE>, 
-<A NAME="IDX6051"></A>
-<CODE>edges_to_lgraph/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6052"></A>
-<CODE>dgraph/1</CODE>, 
-<A NAME="IDX6053"></A>
-<CODE>dlgraph/1</CODE>.
+<A NAME="IDX6191"></A>
+<CODE>start_socket_interface/2</CODE>, 
+<A NAME="IDX6192"></A>
+<CODE>stop_socket_interface/0</CODE>, 
+<A NAME="IDX6193"></A>
+<CODE>join_socket_interface/0</CODE>, 
+<A NAME="IDX6194"></A>
+<CODE>java_query/2</CODE>, 
+<A NAME="IDX6195"></A>
+<CODE>java_response/2</CODE>, 
+<A NAME="IDX6196"></A>
+<CODE>prolog_query/2</CODE>, 
+<A NAME="IDX6197"></A>
+<CODE>prolog_response/2</CODE>, 
+<A NAME="IDX6198"></A>
+<CODE>java_stream/4</CODE>, 
+<A NAME="IDX6199"></A>
+<CODE>java_debug/1</CODE>.
 
 </UL>
 
@@ -78,12 +87,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6054"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX6055"></A>
-<CODE>graphs/ugraphs</CODE>, 
-<A NAME="IDX6056"></A>
-<CODE>graphs/lgraphs</CODE>.
+<A NAME="IDX6200"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX6201"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6202"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX6203"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX6204"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX6205"></A>
+<CODE>concurrency/concurrency</CODE>, 
+<A NAME="IDX6206"></A>
+<CODE>javall/jtopl</CODE>.
 
 </UL>
 
@@ -93,227 +110,234 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>,
 
 
 
-<H2><A NAME="SEC597" HREF="ciao_toc.html#TOC597">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC606" HREF="ciao_toc.html#TOC606">Documentation on exports (<CODE>javasock</CODE>)</A></H2>
 <P>
-<A NAME="IDX6057"></A>
-<A NAME="IDX6058"></A>
+<A NAME="IDX6207"></A>
+<A NAME="IDX6208"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
-<DD><A NAME="IDX6059"></A>
+<DT><span class="define">PREDICATE:</span> <B>start_socket_interface/2:</B>
+<DD><A NAME="IDX6209"></A>
 
 
 <P>
-<CODE>dgraph(Graph)</CODE>
-
-
-<P>
-A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>start_socket_interface(+Address,+Stream)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
+<LI><EM>Description:</EM> Given an address in format 'node:port', creates the sockets to connect to the java process, and starts the threads needed to handle the connection.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Address</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6210"></A>
+<A NAME="IDX6211"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>stop_socket_interface/0:</B>
+<DD><A NAME="IDX6212"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM> Closes the sockets to disconnect from the java process, and waits until the threads that handle the connection terminate.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6060"></A>
-<A NAME="IDX6061"></A>
+<A NAME="IDX6213"></A>
+<A NAME="IDX6214"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
-<DD><A NAME="IDX6062"></A>
+<DT><span class="define">PREDICATE:</span> <B>join_socket_interface/0:</B>
+<DD><A NAME="IDX6215"></A>
 
 
 <P>
-<CODE>dlgraph(Graph)</CODE>
-
-
-<P>
-A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
+<STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
+<LI><EM>Description:</EM> Waits until the threads that handle the connection terminate.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6063"></A>
-<A NAME="IDX6064"></A>
+<A NAME="IDX6216"></A>
+<A NAME="IDX6217"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
-<DD><A NAME="IDX6065"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_query/2:</B>
+<DD><A NAME="IDX6218"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_query(ThreadId,Query)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+<LI><EM>Description:</EM> Data predicate containing the queries to be sent to Java. First argument is the Prolog thread Id, and second argument is the query to send to Java.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
+<CODE>ThreadId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
-
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
+<CODE>Query</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6066"></A>
-<A NAME="IDX6067"></A>
+<A NAME="IDX6219"></A>
+<A NAME="IDX6220"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
-<DD><A NAME="IDX6068"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_response/2:</B>
+<DD><A NAME="IDX6221"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_response(Id,Response)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+<LI><EM>Description:</EM> Data predicate that stores the responses to requests received from Java. First argument corresponds to the Prolog thread Id; second argument corresponds to the response itself.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
+<CODE>Id</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
-
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
+<CODE>Response</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6069"></A>
-<A NAME="IDX6070"></A>
+<A NAME="IDX6222"></A>
+<A NAME="IDX6223"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
-<DD><A NAME="IDX6071"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_query/2:</B>
+<DD><A NAME="IDX6224"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_query(Id,Query)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the queries requested to Prolog side from Java side.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>Id</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
+<CODE>Query</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6072"></A>
-<A NAME="IDX6073"></A>
+<A NAME="IDX6225"></A>
+<A NAME="IDX6226"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
-<DD><A NAME="IDX6074"></A>
+<DT><span class="define">PREDICATE:</span> <B>prolog_response/2:</B>
+<DD><A NAME="IDX6227"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
+The predicate is of type <EM>concurrent</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>prolog_response(Id,Response)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+<LI><EM>Description:</EM> Data predicate that keeps a queue of the responses to queries requested to Prolog side from Java side.
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>Id</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC598" HREF="ciao_toc.html#TOC598">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
-<P>
-<A NAME="IDX6075"></A>
-<A NAME="IDX6076"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
-<DD><A NAME="IDX6077"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
-
+<CODE>Response</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6078"></A>
-<A NAME="IDX6079"></A>
+<A NAME="IDX6228"></A>
+<A NAME="IDX6229"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
-<DD><A NAME="IDX6080"></A>
+<DT><span class="define">PREDICATE:</span> <B>java_stream/4:</B>
+<DD><A NAME="IDX6230"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
+The predicate is of type <EM>data</EM>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>java_stream(PJStream,JPStream,Address,Stream)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
+<LI><EM>Description:</EM> Stores the identifiers of the streams used. A fact is asserted when the connection to the Java process is established. It Contains prolog-to-java and java-to-prolog streams, and the network address where the Java process is running. Last argument represents the Java process standard input stream.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>PJStream</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>JPStream</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>Address</CODE> is a valid host name.
+ (<CODE>javasock:machine_name/1</CODE>)
+
+<CODE>Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
 </UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6231"></A>
+<A NAME="IDX6232"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>java_debug/1:</B>
+<DD><A NAME="IDX6233"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_151.html">previous</A>, <A HREF="ciao_153.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

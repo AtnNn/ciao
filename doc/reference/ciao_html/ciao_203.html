@@ -1,33 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - tokeniser (library)</TITLE>
+<TITLE>The Ciao Prolog System               - generator (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC755" HREF="ciao_toc.html#TOC755">tokeniser (library)</A></H1>
+<H1><A NAME="SEC762" HREF="ciao_toc.html#TOC762">generator (library)</A></H1>
 <P>
-<A NAME="IDX7609"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#171 (2002/1/3, 18:20:29 CET)
+<A NAME="IDX7545"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_203.html#SEC756">Usage and interface (tokeniser)</A>
-<LI><A HREF="ciao_203.html#SEC757">Documentation on exports (tokeniser)</A>
+<LI><A HREF="ciao_203.html#SEC763">Usage and interface (generator)</A>
+<LI><A HREF="ciao_203.html#SEC764">Documentation on exports (generator)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC756" HREF="ciao_toc.html#TOC756">Usage and interface (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC763" HREF="ciao_toc.html#TOC763">Usage and interface (<CODE>generator</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(tokeniser)).</CODE>
+<CODE>:- use_module(library(generator)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,10 +40,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7610"></A>
-<CODE>tokeniser/2</CODE>, 
-<A NAME="IDX7611"></A>
-<CODE>token_read/3</CODE>.
+<A NAME="IDX7546"></A>
+<CODE>generator/2</CODE>, 
+<A NAME="IDX7547"></A>
+<CODE>nodeDeclaration/4</CODE>.
 
 </UL>
 
@@ -58,14 +54,34 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7612"></A>
+<A NAME="IDX7548"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7549"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7550"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7551"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7613"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7614"></A>
+<A NAME="IDX7552"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7553"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7554"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7555"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX7615"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX7556"></A>
+<CODE>provrml/lookup</CODE>, 
+<A NAME="IDX7557"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX7558"></A>
+<CODE>provrml/generator_util</CODE>, 
+<A NAME="IDX7559"></A>
+<CODE>provrml/parser_util</CODE>, 
+<A NAME="IDX7560"></A>
+<CODE>provrml/error</CODE>, 
+<A NAME="IDX7561"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -75,38 +91,38 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>,
 
 
 
-<H2><A NAME="SEC757" HREF="ciao_toc.html#TOC757">Documentation on exports (<CODE>tokeniser</CODE>)</A></H2>
+<H2><A NAME="SEC764" HREF="ciao_toc.html#TOC764">Documentation on exports (<CODE>generator</CODE>)</A></H2>
 <P>
-<A NAME="IDX7616"></A>
-<A NAME="IDX7617"></A>
+<A NAME="IDX7562"></A>
+<A NAME="IDX7563"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tokeniser/2:</B>
-<DD><A NAME="IDX7618"></A>
+<DT><span class="define">PREDICATE:</span> <B>generator/2:</B>
+<DD><A NAME="IDX7564"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tokeniser(+VRML,-Tokens)</CODE>
+<STRONG>Usage:</STRONG> <CODE>generator(+Terms,-VRML)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate will perform the parsing of the VRML code. The result will be tokens that will be the source for producing the Prolog terms of the VRML code. This is done in the parser module. From these terms analysis, changing, and any thing that you want to do with VRML code from Prolog programming language. We perform the predicate with a catch call to be able to output error messages if encountered.
+<LI><EM>Description:</EM> This predicate is the generator of VRML code. It accepts a list of terms that is correct VRML code, other kind of terms will be rejected will errormessage accordingly. The output is a string of correct VRML code, acceptable for VRML browsers.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+VRML</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>+Terms</CODE> is a list of <CODE>terms</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 
-<CODE>-Tokens</CODE> is a list of <CODE>term</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>-VRML</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7619"></A>
-<A NAME="IDX7620"></A>
+<A NAME="IDX7565"></A>
+<A NAME="IDX7566"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>token_read/3:</B>
-<DD><A NAME="IDX7621"></A>
+<DT><span class="define">PREDICATE:</span> <B>nodeDeclaration/4:</B>
+<DD><A NAME="IDX7567"></A>
 
 
 <P>
@@ -116,6 +132,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_202.html">previous</A>, <A HREF="ciao_204.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

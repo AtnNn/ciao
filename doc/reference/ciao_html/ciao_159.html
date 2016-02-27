@@ -1,22 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Variable name dictionaries</TITLE>
+<TITLE>The Ciao Prolog System               - Pattern (regular expression) matching</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC617" HREF="ciao_toc.html#TOC617">Variable name dictionaries</A></H1>
+<H1><A NAME="SEC623" HREF="ciao_toc.html#TOC623">Pattern (regular expression) matching</A></H1>
 <P>
-<A NAME="IDX6244"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Francisco Bueno.
+<A NAME="IDX6420"></A>
 
 
 <P>
@@ -24,18 +20,28 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>,
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.8#19 (1998/12/3, 12:53:16 MET)
+<STRONG>Version of last change:</STRONG> 1.3#49 (1999/9/8, 21:8:9 MEST)
+
+
+<P>
+This library provides facilities for matching strings and terms against 
+<A NAME="IDX6421"></A>
+<A NAME="IDX6422"></A>
+<EM>patterns</EM> (i.e., 
+<A NAME="IDX6423"></A>
+<A NAME="IDX6424"></A>
+<EM>regular expressions</EM>).
 
 
 
 <UL>
-<LI><A HREF="ciao_159.html#SEC618">Usage and interface (vndict)</A>
-<LI><A HREF="ciao_159.html#SEC619">Documentation on exports (vndict)</A>
+<LI><A HREF="ciao_159.html#SEC624">Usage and interface (patterns)</A>
+<LI><A HREF="ciao_159.html#SEC625">Documentation on exports (patterns)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC618" HREF="ciao_toc.html#TOC618">Usage and interface (<CODE>vndict</CODE>)</A></H2>
+<H2><A NAME="SEC624" HREF="ciao_toc.html#TOC624">Usage and interface (<CODE>patterns</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +49,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(vndict)).</CODE>
+<CODE>:- use_module(library(patterns)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,35 +58,21 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6245"></A>
-<CODE>create_dict/2</CODE>, 
-<A NAME="IDX6246"></A>
-<CODE>complete_dict/3</CODE>, 
-<A NAME="IDX6247"></A>
-<CODE>complete_vars_dict/3</CODE>, 
-<A NAME="IDX6248"></A>
-<CODE>prune_dict/3</CODE>, 
-<A NAME="IDX6249"></A>
-<CODE>dict2varnamesl/2</CODE>, 
-<A NAME="IDX6250"></A>
-<CODE>varnamesl2dict/2</CODE>, 
-<A NAME="IDX6251"></A>
-<CODE>find_name/4</CODE>, 
-<A NAME="IDX6252"></A>
-<CODE>rename/2</CODE>, 
-<A NAME="IDX6253"></A>
-<CODE>vars_names_dict/3</CODE>.
+<A NAME="IDX6425"></A>
+<CODE>match_pattern/2</CODE>, 
+<A NAME="IDX6426"></A>
+<CODE>match_pattern/3</CODE>, 
+<A NAME="IDX6427"></A>
+<CODE>case_insensitive_match/2</CODE>, 
+<A NAME="IDX6428"></A>
+<CODE>letter_match/2</CODE>, 
+<A NAME="IDX6429"></A>
+<CODE>match_pattern_pred/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6254"></A>
-<CODE>null_dict/1</CODE>, 
-<A NAME="IDX6255"></A>
-<CODE>varname/1</CODE>, 
-<A NAME="IDX6256"></A>
-<CODE>varnamesl/1</CODE>, 
-<A NAME="IDX6257"></A>
-<CODE>varnamedict/1</CODE>.
+<A NAME="IDX6430"></A>
+<CODE>pattern/1</CODE>.
 
 </UL>
 
@@ -91,14 +83,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6258"></A>
-<CODE>idlists</CODE>, 
-<A NAME="IDX6259"></A>
-<CODE>terms_vars</CODE>, 
-<A NAME="IDX6260"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX6261"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX6431"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -108,280 +94,153 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>,
 
 
 
-<H2><A NAME="SEC619" HREF="ciao_toc.html#TOC619">Documentation on exports (<CODE>vndict</CODE>)</A></H2>
+<H2><A NAME="SEC625" HREF="ciao_toc.html#TOC625">Documentation on exports (<CODE>patterns</CODE>)</A></H2>
 <P>
-<A NAME="IDX6262"></A>
-<A NAME="IDX6263"></A>
+<A NAME="IDX6432"></A>
+<A NAME="IDX6433"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>null_dict/1:</B>
-<DD><A NAME="IDX6264"></A>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/2:</B>
+<DD><A NAME="IDX6434"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>null_dict(D)</CODE>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>D</CODE> is an empty dictionary.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6265"></A>
-<A NAME="IDX6266"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>create_dict/2:</B>
-<DD><A NAME="IDX6267"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>create_dict(Term,Dict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Dict</CODE> has names for all variables in <CODE>Term</CODE>.
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. For example, <CODE>match_pattern("*.pl","foo.pl")</CODE> succeeds.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
 
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6268"></A>
-<A NAME="IDX6269"></A>
+<A NAME="IDX6435"></A>
+<A NAME="IDX6436"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>complete_dict/3:</B>
-<DD><A NAME="IDX6270"></A>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern/3:</B>
+<DD><A NAME="IDX6437"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>complete_dict(+Dict,+Term,-NewDict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>match_pattern(Pattern,String,Tail)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of <CODE>Term</CODE> not yet in <CODE>Dict</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6271"></A>
-<A NAME="IDX6272"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>complete_vars_dict/3:</B>
-<DD><A NAME="IDX6273"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>complete_vars_dict(+Dict,+Vars,-NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> augmented with the variables of the list <CODE>Vars</CODE> not yet in <CODE>Dict</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6274"></A>
-<A NAME="IDX6275"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prune_dict/3:</B>
-<DD><A NAME="IDX6276"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>prune_dict(+Term,+Dict,-NewDict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>NewDict</CODE> is <CODE>Dict</CODE> reduced to just the variables of <CODE>Term</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6277"></A>
-<A NAME="IDX6278"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dict2varnamesl/2:</B>
-<DD><A NAME="IDX6279"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dict2varnamesl(Dict,VNs)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Translates <CODE>Dict</CODE> to <CODE>VNs</CODE>.
+<LI><EM>Description:</EM> Matches <CODE>String</CODE> against <CODE>Pattern</CODE>. <CODE>Tail</CODE> is the remainder of the string after the match. For example, <CODE>match_pattern("??*","foo.pl",Tail)</CODE> succeeds, instantiating <CODE>Tail</CODE> to <CODE>"o.pl"</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+<CODE>Pattern</CODE> is a pattern to match against.
+ (<CODE>patterns:pattern/1</CODE>)
 
-<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
- (<CODE>vndict:varnamesl/1</CODE>)
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>Tail</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6280"></A>
-<A NAME="IDX6281"></A>
+<A NAME="IDX6438"></A>
+<A NAME="IDX6439"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>varnamesl2dict/2:</B>
-<DD><A NAME="IDX6282"></A>
+<DT><span class="define">PREDICATE:</span> <B>case_insensitive_match/2:</B>
+<DD><A NAME="IDX6440"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varnamesl2dict(VNs,Dict)</CODE>
+<STRONG>Usage:</STRONG> <CODE>case_insensitive_match(Pred1,Pred2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Translates <CODE>VNs</CODE> to <CODE>Dict</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>VNs</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
- (<CODE>vndict:varnamesl/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6283"></A>
-<A NAME="IDX6284"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>find_name/4:</B>
-<DD><A NAME="IDX6285"></A>
-
-
-<P>
-<CODE>find_name(Vars,Names,V,Name)</CODE>
-
-
-<P>
-Given that <CODE>vars_names_dict(Dict,Vars,Names)</CODE> holds, it acts as <CODE>rename(X,Dict)</CODE>, but the name of <CODE>X</CODE> is given as <CODE>Name</CODE> instead of unified with it.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6286"></A>
-<A NAME="IDX6287"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rename/2:</B>
-<DD><A NAME="IDX6288"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>rename(Term,Dict)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies each variable in <CODE>Term</CODE> with its name in <CODE>Dict</CODE>. If no name is found, a new name is created.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6289"></A>
-<A NAME="IDX6290"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>varname/1:</B>
-<DD><A NAME="IDX6291"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>varname(N)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>N</CODE> is term representing a variable name.
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match in a case-insensitive way.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6292"></A>
-<A NAME="IDX6293"></A>
+<A NAME="IDX6441"></A>
+<A NAME="IDX6442"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>varnamesl/1:</B>
-<DD><A NAME="IDX6294"></A>
+<DT><span class="define">PREDICATE:</span> <B>letter_match/2:</B>
+<DD><A NAME="IDX6443"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varnamesl(D)</CODE>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6444"></A>
+<A NAME="IDX6445"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
+<DD><A NAME="IDX6446"></A>
+
+
+<P>
+Special characters for <CODE>Pattern</CODE> are: 
+<DL COMPACT>
+
+<DT>*
+<DD>
+Matches any string, including the null string. 
+<DT>?
+<DD>
+Matches any single character. 
+<DT>[...]
+<DD>
+Matches any one of the enclosed characters. A pair of characters separated by a minus sign denotes a range; any character lexically between those two characters, inclusive, is matched. If the first character following the [ is a ^ then any character not enclosed is matched. No other character is special inside this construct. To include a ] in a character set, you must make it the first character. To include a `-', you must use it in a context where it cannot possibly indicate a range: that is, as the first character, or immediately after a range. 
+<DT>|
+<DD>
+specifies an alternative. Two regular expressions A and B with | in between form an expression that matches anything that either A or B will match. 
+<DT>{...}
+<DD>
+groups alternatives inside larger patterns. 
+<DT>\
+<DD>
+Quotes a special character (including itself). 
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pattern(P)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>D</CODE> is a list of <CODE>Name=Var</CODE>, for a variable <CODE>Var</CODE> and its name <CODE>Name</CODE>.
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pattern to match against.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6295"></A>
-<A NAME="IDX6296"></A>
+<A NAME="IDX6447"></A>
+<A NAME="IDX6448"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>varnamedict/1:</B>
-<DD><A NAME="IDX6297"></A>
+<DT><span class="define">PREDICATE:</span> <B>match_pattern_pred/2:</B>
+<DD><A NAME="IDX6449"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>varnamedict(D)</CODE>
+<STRONG>Usage:</STRONG> <CODE>match_pattern_pred(Pred1,Pred2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary of variable names.
+<LI><EM>Description:</EM> Tests if two predicates <CODE>Pred1</CODE> and <CODE>Pred2</CODE> match using regular expressions.
 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6298"></A>
-<A NAME="IDX6299"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vars_names_dict/3:</B>
-<DD><A NAME="IDX6300"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>vars_names_dict(Dict,Vars,Names)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Varss</CODE> is a sorted list of variables, and <CODE>Names</CODE> is a list of their names, which correspond in the same order.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Dict</CODE> is a dictionary of variable names.
- (<CODE>vndict:varnamedict/1</CODE>)
-
-<CODE>Vars</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>Names</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_158.html">previous</A>, <A HREF="ciao_160.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

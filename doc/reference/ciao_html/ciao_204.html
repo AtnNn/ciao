@@ -1,32 +1,432 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - PART XII - Appendices</TITLE>
+<TITLE>The Ciao Prolog System               - generator_util (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC758" HREF="ciao_toc.html#TOC758">PART XII - Appendices</A></H1>
+<H1><A NAME="SEC765" HREF="ciao_toc.html#TOC765">generator_util (library)</A></H1>
+<P>
+<A NAME="IDX7568"></A>
+
+
+
+<UL>
+<LI><A HREF="ciao_204.html#SEC766">Usage and interface (generator_util)</A>
+<LI><A HREF="ciao_204.html#SEC767">Documentation on exports (generator_util)</A>
+</UL>
+
+
+
+<H2><A NAME="SEC766" HREF="ciao_toc.html#TOC766">Usage and interface (<CODE>generator_util</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(generator_util)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
+
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX7569"></A>
+<CODE>reading/4</CODE>, 
+<A NAME="IDX7570"></A>
+<CODE>reading/5</CODE>, 
+<A NAME="IDX7571"></A>
+<CODE>reading/6</CODE>, 
+<A NAME="IDX7572"></A>
+<CODE>open_node/6</CODE>, 
+<A NAME="IDX7573"></A>
+<CODE>close_node/5</CODE>, 
+<A NAME="IDX7574"></A>
+<CODE>close_nodeGut/4</CODE>, 
+<A NAME="IDX7575"></A>
+<CODE>open_PROTO/4</CODE>, 
+<A NAME="IDX7576"></A>
+<CODE>close_PROTO/6</CODE>, 
+<A NAME="IDX7577"></A>
+<CODE>open_EXTERNPROTO/5</CODE>, 
+<A NAME="IDX7578"></A>
+<CODE>close_EXTERNPROTO/6</CODE>, 
+<A NAME="IDX7579"></A>
+<CODE>open_DEF/5</CODE>, 
+<A NAME="IDX7580"></A>
+<CODE>close_DEF/5</CODE>, 
+<A NAME="IDX7581"></A>
+<CODE>open_Script/5</CODE>, 
+<A NAME="IDX7582"></A>
+<CODE>close_Script/5</CODE>, 
+<A NAME="IDX7583"></A>
+<CODE>decompose_field/3</CODE>, 
+<A NAME="IDX7584"></A>
+<CODE>indentation_list/2</CODE>, 
+<A NAME="IDX7585"></A>
+<CODE>start_vrmlScene/4</CODE>, 
+<A NAME="IDX7586"></A>
+<CODE>remove_comments/4</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7587"></A>
+<CODE>provrml/error</CODE>, 
+<A NAME="IDX7588"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7589"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX7590"></A>
+<CODE>provrml/field_value_check</CODE>, 
+<A NAME="IDX7591"></A>
+<CODE>provrml/lookup</CODE>, 
+<A NAME="IDX7592"></A>
+<CODE>provrml/parser_util</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC767" HREF="ciao_toc.html#TOC767">Documentation on exports (<CODE>generator_util</CODE>)</A></H2>
+<P>
+<A NAME="IDX7593"></A>
+<A NAME="IDX7594"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>reading/4:</B>
+<DD><A NAME="IDX7595"></A>
+
 
 <P>
-These appendices describe the 
-<A NAME="IDX7622"></A>
-installation of the Ciao environment on different systems and some other issues such as 
-<A NAME="IDX7623"></A>
-reporting bugs, signing up on the Ciao user's 
-<A NAME="IDX7624"></A>
-mailing list, 
-<A NAME="IDX7625"></A>
-downloading new versions, 
-<A NAME="IDX7626"></A>
-limitations, etc. 
+<STRONG>Usage 1:</STRONG> <CODE>reading(+IS,+NodeTypeId,+ParseIn,-ParseOut)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> This predicate will refer to a formerly introduced interface. We do a checkup of the access type and output the values.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+IS</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+NodeTypeId</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+ParseIn</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>-ParseOut</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>reading(+nodeGut,+NodeName,+ParseIn,-ParseOut)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This predicate will read a node gut and will check the field according to the name.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+nodeGut</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+NodeName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+ParseIn</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>-ParseOut</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7596"></A>
+<A NAME="IDX7597"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>reading/5:</B>
+<DD><A NAME="IDX7598"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7599"></A>
+<A NAME="IDX7600"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>reading/6:</B>
+<DD><A NAME="IDX7601"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7602"></A>
+<A NAME="IDX7603"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_node/6:</B>
+<DD><A NAME="IDX7604"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7605"></A>
+<A NAME="IDX7606"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_node/5:</B>
+<DD><A NAME="IDX7607"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7608"></A>
+<A NAME="IDX7609"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_nodeGut/4:</B>
+<DD><A NAME="IDX7610"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7611"></A>
+<A NAME="IDX7612"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_PROTO/4:</B>
+<DD><A NAME="IDX7613"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7614"></A>
+<A NAME="IDX7615"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_PROTO/6:</B>
+<DD><A NAME="IDX7616"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7617"></A>
+<A NAME="IDX7618"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_EXTERNPROTO/5:</B>
+<DD><A NAME="IDX7619"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7620"></A>
+<A NAME="IDX7621"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_EXTERNPROTO/6:</B>
+<DD><A NAME="IDX7622"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7623"></A>
+<A NAME="IDX7624"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_DEF/5:</B>
+<DD><A NAME="IDX7625"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7626"></A>
+<A NAME="IDX7627"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_DEF/5:</B>
+<DD><A NAME="IDX7628"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7629"></A>
+<A NAME="IDX7630"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_Script/5:</B>
+<DD><A NAME="IDX7631"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7632"></A>
+<A NAME="IDX7633"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_Script/5:</B>
+<DD><A NAME="IDX7634"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7635"></A>
+<A NAME="IDX7636"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>decompose_field/3:</B>
+<DD><A NAME="IDX7637"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7638"></A>
+<A NAME="IDX7639"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>indentation_list/2:</B>
+<DD><A NAME="IDX7640"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>indentation_list(+Parse,-IndList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> This predcate will construct a list with indentations to be output before text. The information of the indentations is inside the parse structure.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Parse</CODE> is a parse structure.
+ (<CODE>internal_types:parse/1</CODE>)
+
+<CODE>-IndList</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7641"></A>
+<A NAME="IDX7642"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>start_vrmlScene/4:</B>
+<DD><A NAME="IDX7643"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7644"></A>
+<A NAME="IDX7645"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>remove_comments/4:</B>
+<DD><A NAME="IDX7646"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>remove_comments(+Value,-CommentsBefore,-ValueClean,-CommentsAfter)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will remove comments and return the comments before and after the pure value.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Value</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-CommentsBefore</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-ValueClean</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-CommentsAfter</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

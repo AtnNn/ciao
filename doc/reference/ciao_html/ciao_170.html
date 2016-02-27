@@ -1,143 +1,102 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
+<TITLE>The Ciao Prolog System               - Printing the declarations and code in a file</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC643" HREF="ciao_toc.html#TOC643">Programming MYCIN rules</A></H1>
-<P>
-<A NAME="IDX6361"></A>
-
+<H1><A NAME="SEC655" HREF="ciao_toc.html#TOC655">Printing the declarations and code in a file</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+<STRONG>Author(s):</STRONG> Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<STRONG>Version:</STRONG> 0.5#6 (1999/4/15, 20:33:6 MEST)
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
-
-
-<P>
-MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
-<A NAME="IDX6362"></A>
-<A NAME="IDX6363"></A>
-<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
-
-<UL>
-
-<LI>A value of -1 stands for <EM>surely not</EM>.
-
-<LI>A value of 1 stands for <EM>certainly</EM>.
-
-<LI>A value of 0 stands for <EM>I don't know</EM>.
-
-</UL>
-
-<P>
-Intermediate values are allowed. 
-
-
-<P>
-Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
+A simple program for 
+<A NAME="IDX6705"></A>
+printing assertion information (
+<A NAME="IDX6706"></A>
+predicate declarations, 
+<A NAME="IDX6707"></A>
+property declarations, 
+<A NAME="IDX6708"></A>
+type declarations, etc.) and 
+<A NAME="IDX6709"></A>
+printing code-related information (
+<A NAME="IDX6710"></A>
+imports, 
+<A NAME="IDX6711"></A>
+exports, 
+<A NAME="IDX6712"></A>
+libraries used, etc.) on a file. The file should be a single CIAO or Prolog source file. It uses the CIAO compiler's pass one to do it. This program is specially useful for example to check what the compiler is actually seeing after syntactic expansions, as well as for checking what assertions the 
+<A NAME="IDX6713"></A>
+assertion normalizer is producing from the original assertions in the file. 
 
 
 
 <UL>
-<LI><A HREF="ciao_170.html#SEC644">Usage and interface (mycin)</A>
-<LI><A HREF="ciao_170.html#SEC645">Documentation on new declarations (mycin)</A>
-<LI><A HREF="ciao_170.html#SEC646">Known bugs and planned improvements (mycin)</A>
+<LI><A HREF="ciao_170.html#SEC656">Usage (fileinfo)</A>
+<LI><A HREF="ciao_170.html#SEC657">More detailed explanation of options (fileinfo)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC644" HREF="ciao_toc.html#TOC644">Usage and interface (<CODE>mycin</CODE>)</A></H2>
+<H2><A NAME="SEC656" HREF="ciao_toc.html#TOC656">Usage (fileinfo)</A></H2>
 
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
 <PRE>
-           :- mycin(MycinDataBaseName).
+   
+    fileinfo -asr &#60;filename.asr&#62; 
+       : pretty prints the contents of &#60;filename.asr&#62; 
+
+    fileinfo [-v] [-m] &#60;-a|-c|-e&#62; &#60;filename&#62; [libdir1] ... [libdirN]
+    -v : verbose output (e.g., lists all files read)
+    -m : restrict info to current module
+    -a : print assertions 
+    -c : print code and interface (imports/exports, etc.)
+    -e : print only errors - useful to check syntax of assertions in file
+
+    fileinfo -h
+       : print this information
+
 </PRE>
 
-<LI><STRONG>New declarations defined:</STRONG>
-
-<A NAME="IDX6364"></A>
-<CODE>export/1</CODE>.
-
-</UL>
-
-</div class="cartouche">
 
 
-
-<H2><A NAME="SEC645" HREF="ciao_toc.html#TOC645">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
-<P>
-<A NAME="IDX6365"></A>
-<A NAME="IDX6366"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
-<DD><A NAME="IDX6367"></A>
-
+<H2><A NAME="SEC657" HREF="ciao_toc.html#TOC657">More detailed explanation of options (fileinfo)</A></H2>
 
 <P>
-This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
-
-<PRE>
-:- export p/1.
-</PRE>
-
-<P>
-must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
-<A NAME="IDX6368"></A>
-certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC646" HREF="ciao_toc.html#TOC646">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
-
+ 
 
 <UL>
 
-<LI>
+<LI>If the <CODE>-a</CODE> option is selected, <CODE>fileinfo</CODE> prints the assertions (only code-oriented assertions -- not comment-oriented assertions) in the file <EM>after normalization</EM>. If the <CODE>-c</CODE> option is selected <CODE>fileinfo</CODE> prints the file interface, the declarations contained in the file, and the actual code. If the <CODE>-e</CODE> option is selected <CODE>fileinfo</CODE> prints only any sintactic and import-export errors found in the file, including the assertions.
 
-Not fully implemented.
+<LI><CODE>filename</CODE> must be the name of a Prolog or CIAO source file.
 
-<LI>
+<LI>This filename can be followed by other arguments which will be taken to be library directory paths in which to look for files used by the file being analyzed.
 
-Dynamic mycin predicates not implemented: open question.
+<LI>If the <CODE>-m</CODE> option is selected, only the information related to the current module is printed.
 
-<LI>
+<LI>The <CODE>-v</CODE> option produces verbose output. This is very useful for debugging, since all the files accessed during assertion normalization are listed.
 
-Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
+<LI>In the <CODE>-asr</CODE> usage,
+
+<A NAME="IDX6714"></A>
+<CODE>fileinfo</CODE> can be used to print the contents of a <CODE>.asr</CODE> file in human-readable form. 
+
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_169.html">previous</A>, <A HREF="ciao_171.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

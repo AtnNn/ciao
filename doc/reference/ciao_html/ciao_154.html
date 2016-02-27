@@ -1,37 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - wgraphs (library)</TITLE>
+<TITLE>The Ciao Prolog System               - linda (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC602" HREF="ciao_toc.html#TOC602">wgraphs (library)</A></H1>
+<H1><A NAME="SEC610" HREF="ciao_toc.html#TOC610">linda (library)</A></H1>
 <P>
-<A NAME="IDX6125"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX6280"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Version:</STRONG> 0.9#66 (1999/4/29, 12:28:0 MEST)
+
+
+<P>
+This is a SICStus-like linda package. Note that this is essentially quite obsolete, and provided mostly in case it is needed for compatibility, since Ciao now supports all Linda functionality (and more) through the concurrent fact database.
 
 
 
 <UL>
-<LI><A HREF="ciao_154.html#SEC603">Usage and interface (wgraphs)</A>
-<LI><A HREF="ciao_154.html#SEC604">Documentation on exports (wgraphs)</A>
+<LI><A HREF="ciao_154.html#SEC611">Usage and interface (linda)</A>
+<LI><A HREF="ciao_154.html#SEC612">Documentation on exports (linda)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC603" HREF="ciao_toc.html#TOC603">Usage and interface (<CODE>wgraphs</CODE>)</A></H2>
+<H2><A NAME="SEC611" HREF="ciao_toc.html#TOC611">Usage and interface (<CODE>linda</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +39,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(wgraphs)).</CODE>
+<CODE>:- use_module(library(linda)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,8 +48,36 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6126"></A>
-<CODE>vertices_edges_to_wgraph/3</CODE>.
+<A NAME="IDX6281"></A>
+<CODE>linda_client/1</CODE>, 
+<A NAME="IDX6282"></A>
+<CODE>close_client/0</CODE>, 
+<A NAME="IDX6283"></A>
+<CODE>in/1</CODE>, 
+<A NAME="IDX6284"></A>
+<CODE>in/2</CODE>, 
+<A NAME="IDX6285"></A>
+<CODE>in_noblock/1</CODE>, 
+<A NAME="IDX6286"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX6287"></A>
+<CODE>rd/1</CODE>, 
+<A NAME="IDX6288"></A>
+<CODE>rd/2</CODE>, 
+<A NAME="IDX6289"></A>
+<CODE>rd_noblock/1</CODE>, 
+<A NAME="IDX6290"></A>
+<CODE>rd_findall/3</CODE>, 
+<A NAME="IDX6291"></A>
+<CODE>linda_timeout/2</CODE>, 
+<A NAME="IDX6292"></A>
+<CODE>halt_server/0</CODE>, 
+<A NAME="IDX6293"></A>
+<CODE>open_client/2</CODE>, 
+<A NAME="IDX6294"></A>
+<CODE>in_stream/2</CODE>, 
+<A NAME="IDX6295"></A>
+<CODE>out_stream/2</CODE>.
 
 </UL>
 
@@ -60,10 +88,12 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6127"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX6128"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX6296"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX6297"></A>
+<CODE>fastrw</CODE>, 
+<A NAME="IDX6298"></A>
+<CODE>sockets/sockets</CODE>.
 
 </UL>
 
@@ -73,13 +103,209 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 
 
-<H2><A NAME="SEC604" HREF="ciao_toc.html#TOC604">Documentation on exports (<CODE>wgraphs</CODE>)</A></H2>
+<H2><A NAME="SEC612" HREF="ciao_toc.html#TOC612">Documentation on exports (<CODE>linda</CODE>)</A></H2>
 <P>
-<A NAME="IDX6129"></A>
-<A NAME="IDX6130"></A>
+<A NAME="IDX6299"></A>
+<A NAME="IDX6300"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_wgraph/3:</B>
-<DD><A NAME="IDX6131"></A>
+<DT><span class="define">PREDICATE:</span> <B>linda_client/1:</B>
+<DD><A NAME="IDX6301"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6302"></A>
+<A NAME="IDX6303"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>close_client/0:</B>
+<DD><A NAME="IDX6304"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6305"></A>
+<A NAME="IDX6306"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in/1:</B>
+<DD><A NAME="IDX6307"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6308"></A>
+<A NAME="IDX6309"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in/2:</B>
+<DD><A NAME="IDX6310"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6311"></A>
+<A NAME="IDX6312"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in_noblock/1:</B>
+<DD><A NAME="IDX6313"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6314"></A>
+<A NAME="IDX6315"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
+<DD><A NAME="IDX6316"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6317"></A>
+<A NAME="IDX6318"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd/1:</B>
+<DD><A NAME="IDX6319"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6320"></A>
+<A NAME="IDX6321"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd/2:</B>
+<DD><A NAME="IDX6322"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6323"></A>
+<A NAME="IDX6324"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd_noblock/1:</B>
+<DD><A NAME="IDX6325"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6326"></A>
+<A NAME="IDX6327"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>rd_findall/3:</B>
+<DD><A NAME="IDX6328"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6329"></A>
+<A NAME="IDX6330"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>linda_timeout/2:</B>
+<DD><A NAME="IDX6331"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6332"></A>
+<A NAME="IDX6333"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>halt_server/0:</B>
+<DD><A NAME="IDX6334"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6335"></A>
+<A NAME="IDX6336"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>open_client/2:</B>
+<DD><A NAME="IDX6337"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6338"></A>
+<A NAME="IDX6339"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>in_stream/2:</B>
+<DD><A NAME="IDX6340"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6341"></A>
+<A NAME="IDX6342"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>out_stream/2:</B>
+<DD><A NAME="IDX6343"></A>
 
 
 <P>
@@ -89,6 +315,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

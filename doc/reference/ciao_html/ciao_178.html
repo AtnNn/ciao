@@ -1,38 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - genbar4 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC676" HREF="ciao_toc.html#TOC676">genbar4 (library)</A></H1>
+<H1><A NAME="SEC674" HREF="ciao_toc.html#TOC674">Programming MYCIN rules</A></H1>
 <P>
-<A NAME="IDX6678"></A>
-
-
-<P>
-This module defines predicates which depict barchart widgets. The three predicates exported by this module plot two-variable data as regular bars in a window and are similar to those exported in genbar2 module except in that those defined in this module doesn't display a legend. Thus, the user does not have to define legend element names. 
+<A NAME="IDX6764"></A>
 
 
 <P>
-The predicates test whether the format of the arguments is correct. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error1</CODE> or <CODE>error3</CODE> will be thrown, depending on the error type. <CODE>error1</CODE> means that <CODE>XVector</CODE> and <CODE>YVector</CODE> do not contain the same number of elements and <CODE>error3</CODE> indicates that not all the <CODE>XVector</CODE> elements contain a correct number of attributes . 
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
+
+
+<P>
+MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
+<A NAME="IDX6765"></A>
+<A NAME="IDX6766"></A>
+<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
+
+<UL>
+
+<LI>A value of -1 stands for <EM>surely not</EM>.
+
+<LI>A value of 1 stands for <EM>certainly</EM>.
+
+<LI>A value of 0 stands for <EM>I don't know</EM>.
+
+</UL>
+
+<P>
+Intermediate values are allowed. 
+
+
+<P>
+Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
 
 
 
 <UL>
-<LI><A HREF="ciao_178.html#SEC677">Usage and interface (genbar4)</A>
-<LI><A HREF="ciao_178.html#SEC678">Documentation on exports (genbar4)</A>
-<LI><A HREF="ciao_178.html#SEC679">Documentation on internals (genbar4)</A>
+<LI><A HREF="ciao_178.html#SEC675">Usage and interface (mycin)</A>
+<LI><A HREF="ciao_178.html#SEC676">Documentation on new declarations (mycin)</A>
+<LI><A HREF="ciao_178.html#SEC677">Known bugs and planned improvements (mycin)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC677" HREF="ciao_toc.html#TOC677">Usage and interface (<CODE>genbar4</CODE>)</A></H2>
+<H2><A NAME="SEC675" HREF="ciao_toc.html#TOC675">Usage and interface (<CODE>mycin</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -40,47 +68,16 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(genbar4)).</CODE>
+In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
-<LI><STRONG>Exports:</STRONG>
+<PRE>
+           :- mycin(MycinDataBaseName).
+</PRE>
 
+<LI><STRONG>New declarations defined:</STRONG>
 
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6679"></A>
-<CODE>barchart4/7</CODE>, 
-<A NAME="IDX6680"></A>
-<CODE>barchart4/11</CODE>, 
-<A NAME="IDX6681"></A>
-<CODE>percentbarchart4/7</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6682"></A>
-<CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX6683"></A>
-<CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX6684"></A>
-<CODE>chartlib/color_pattern</CODE>, 
-<A NAME="IDX6685"></A>
-<CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX6686"></A>
-<CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX6687"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6688"></A>
-<CODE>random/random</CODE>.
-
-</UL>
+<A NAME="IDX6767"></A>
+<CODE>export/1</CODE>.
 
 </UL>
 
@@ -88,157 +85,59 @@ The predicates test whether the format of the arguments is correct. If one or bo
 
 
 
-<H2><A NAME="SEC678" HREF="ciao_toc.html#TOC678">Documentation on exports (<CODE>genbar4</CODE>)</A></H2>
+<H2><A NAME="SEC676" HREF="ciao_toc.html#TOC676">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
 <P>
-<A NAME="IDX6689"></A>
-<A NAME="IDX6690"></A>
+<A NAME="IDX6768"></A>
+<A NAME="IDX6769"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart4/7:</B>
-<DD><A NAME="IDX6691"></A>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX6770"></A>
 
 
 <P>
-<CODE>barchart4(Header,BarchartTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-As we mentioned in the above paragraph, this predicate is comparable to 
-<A NAME="IDX6692"></A>
-<CODE>barchart2/8</CODE> except in the <CODE>XVector</CODE> argument type. 
-
-
-<P>
-Example: 
+This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
 
 <PRE>
-barchart4('This is the header text',
-  'Barchart without legend',
-  'My xaxistitle',
-  [[2],[5],[6]],
-  'My yaxixtitle',
-  [20,10,59],
-  'Numeric values in the xaxis').
+:- export p/1.
 </PRE>
+
+<P>
+must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
+<A NAME="IDX6771"></A>
+certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
+
+</UL>
 
 </DL>
 
-<P>
-<A NAME="IDX6693"></A>
-<A NAME="IDX6694"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>barchart4/11:</B>
-<DD><A NAME="IDX6695"></A>
 
 
-<P>
-<CODE>barchart4(Hder,BT,XT,XVector,XMax,XMin,YT,YVector,YMax,YMin,Fter)</CODE>
-
-
-<P>
-As we stated before, this predicate is quite similar to 
-<A NAME="IDX6696"></A>
-<CODE>barchart2/10</CODE> except in the following aspects: 
-
+<H2><A NAME="SEC677" HREF="ciao_toc.html#TOC677">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
 
 
 <UL>
 
-<LI>The <CODE>XVector</CODE> argument type, because the yielded bar chart lacks the legend.
+<LI>
 
-<LI>The user can set limits for both <CODE>x</CODE> axis and <CODE>y</CODE> axis.
+Not fully implemented.
 
+<LI>
+
+Dynamic mycin predicates not implemented: open question.
+
+<LI>
+
+Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
 </UL>
 
-<P>
-Example: 
-
-<PRE>
-barchart4('This is the header text, you can write a graph description',
-  'Barchart without legend',
-  'My xaxistitle',
-  [[2,'Blue','Yellow','pattern1'],
-       [20,'MediumTurquoise','Plum','pattern5'],
-       [30,'MediumTurquoise','Green','pattern5']],
-  50,
-  -10,
-  'My yaxixtitle',
-  [20,10,59],
-  100,
-  -10,
-  'Numeric values in the xaxis').
-</PRE>
-
-</DL>
-
-<P>
-<A NAME="IDX6697"></A>
-<A NAME="IDX6698"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>percentbarchart4/7:</B>
-<DD><A NAME="IDX6699"></A>
-
-
-<P>
-<CODE>percentbarchart4(Header,BTitle,XTitle,XVector,YTitle,YVector,Footer)</CODE>
-
-
-<P>
-The y axis maximum coordinate value is 100. The x axis limits are automatically worked out. This predicate is useful when the bar height represents percentages. 
-
-
-<P>
-Example: 
-
-
-
-<PRE>
-percentbarchart4('This is the header text',
-  'Barchart without legend',
-  'My xaxistitle',
-  [[2,'Blue','Yellow','pattern1'],[5,'Yellow','Plum','pattern5'],
-       [6,'MediumTurquoise','Green','pattern5']],
-  'My yaxixtitle',
-  [20,10,59],
-  'Numeric values in the xaxis').
-</PRE>
-
-</DL>
-
-
-
-<H2><A NAME="SEC679" HREF="ciao_toc.html#TOC679">Documentation on internals (<CODE>genbar4</CODE>)</A></H2>
-<P>
-<A NAME="IDX6700"></A>
-<A NAME="IDX6701"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>xbarelement4/1:</B>
-<DD><A NAME="IDX6702"></A>
-
-
-<P>
-Defines the attributes of the bar. 
-<DL COMPACT>
-
-<DT><CODE>XValue</CODE>
-<DD>
-x-coordinate position of the bar. Different elements with the same abscissas will produce overlapped bars. 
-
-<DT><CODE>ForegColor</CODE>
-<DD>
-It sets the Foreground color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>BackgColor</CODE>
-<DD>
-It sets the Background color of the bar. Its value must be a valid color, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a color chosen by the library. 
-
-<DT><CODE>SPattern</CODE>
-<DD>
-It sets the stipple of the bar. Its value must be a valid pattern, otherwise the system will throw an exception. If the argument value is a variable, it gets instantiated to a pattern chosen by the library. 
-</DL>
-
-</DL>
-
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_177.html">previous</A>, <A HREF="ciao_179.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

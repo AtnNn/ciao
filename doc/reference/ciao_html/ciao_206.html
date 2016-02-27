@@ -1,335 +1,273 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Installing Ciao from a Win32 binary distribution</TITLE>
+<TITLE>The Ciao Prolog System               - io (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_205.html">previous</A>, <A HREF="ciao_207.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_205.html">previous</A>, <A HREF="ciao_207.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC768" HREF="ciao_toc.html#TOC768">Installing Ciao from a Win32 binary distribution</A></H1>
-
+<H1><A NAME="SEC771" HREF="ciao_toc.html#TOC771">io (library)</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro, Manuel Hermenegildo.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+<A NAME="IDX7676"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#92 (2000/3/28, 17:41:25 CEST)
+<STRONG>Version:</STRONG> 0.1#2 (1998/12/2)
 
 
 <P>
- 
-<A NAME="IDX7811"></A>
-<A NAME="IDX7812"></A>
+This file implements I/O predicates of different types. 
 
 
 <P>
-This describes the installation of Ciao after downloading the Windows <EM>binary</EM> (i.e., <EM>precompiled</EM>) distribution. It includes the installation of libraries and manuals and applies to Windows NT/95/98 systems. This is the simplest Windows installation, since it requires no compilation and is highly recommended. However, it is also possible to compile Ciao from the source distribution on these systems (please refer to section <A HREF="ciao_205.html#SEC759">Installing Ciao from the source distribution</A> for details). 
-
-
-<P>
-If you find any problems during installation, please refer to section <A HREF="ciao_205.html#SEC767">Troubleshooting (nasty messages and nifty workarounds)</A>. 
-<A NAME="IDX7813"></A>
-<A NAME="IDX7814"></A>
-See also section <A HREF="ciao_207.html#SEC778">Downloading new versions</A> and section <A HREF="ciao_207.html#SEC779">Reporting bugs</A>. 
+Implemented by G&ouml;ran Smedb&auml;ck 
 
 
 
 <UL>
-<LI><A HREF="ciao_206.html#SEC769">Win32 binary installation summary</A>
-<LI><A HREF="ciao_206.html#SEC770">Checking for correct installation on Win32</A>
-<LI><A HREF="ciao_206.html#SEC771">Compiling the miscellaneous utilities under Windows</A>
-<LI><A HREF="ciao_206.html#SEC772">Server installation under Windows</A>
-<LI><A HREF="ciao_206.html#SEC773">CGI execution under IIS</A>
-<LI><A HREF="ciao_206.html#SEC774">Uninstallation under Windows</A>
+<LI><A HREF="ciao_206.html#SEC772">Usage and interface (io)</A>
+<LI><A HREF="ciao_206.html#SEC773">Documentation on exports (io)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC769" HREF="ciao_toc.html#TOC769">Win32 binary installation summary</A></H2>
+<H2><A NAME="SEC772" HREF="ciao_toc.html#TOC772">Usage and interface (<CODE>io</CODE>)</A></H2>
 
-<P>
-Please follow these steps (below we use the terms <EM>folder</EM> and <EM>directory</EM> interchangeably): 
+<div class="cartouche">
 
+<UL>
 
+<LI><STRONG>Library usage:</STRONG>
 
-<OL>
+<CODE>:- use_module(library(io)).</CODE>
 
-<LI>Download the precompiled distribution and unpack it into any suitable folder, such as, e.g., <CODE>C:\Program Files</CODE>.
-
-This will create there a folder whose name reflects the Ciao version. Due to limitations of Windows related to file associations, do not put Ciao too deep in the folder hierarchy. For unpacking you will need a recent version of a zip archive manager -- there are many freely available such as 
-<A NAME="IDX7815"></A>
-<CODE>WinZip</CODE>, 
-<A NAME="IDX7816"></A>
-<CODE>unzip</CODE>, 
-<A NAME="IDX7817"></A>
-<CODE>pkunzip</CODE>, etc. (see for example <CODE>www.winzip.com</CODE>). Some users have reported some problems with version 6.2 of WinZip, but no problems with, e.g., version 7. With WinZip, simply click on "Extract" and select the extraction folder as indicated above. 
-
-<LI>Stop any Ciao-related applications.
-
-If you have a previous version of Ciao installed, make sure you do not have any Ciao applications (including, e.g., a toplevel shell) running, or the extraction process may not be able to complete. You may also want to delete the entire folder of the previous installation to save space. 
-
-<LI>Open the Ciao source directory created during extraction and run (e.g. by double-clicking on it) the <CODE>install</CODE>(<CODE>.bat</CODE>) script. Answer "yes" to the dialog that pops up and type any character in the installation window to finish the process. You may need to reboot for the changes in the registry to take effect.
-
-This will update the windows registry (the file <CODE>ciao</CODE>(<CODE>.reg</CODE>) lists the additions) and also create some <CODE>.bat</CODE> files which may be useful for running Ciao executables from the command line. It also creates initialization scripts for the 
-<A NAME="IDX7818"></A>
-<CODE>emacs</CODE> editor. The actions performed by the installation script are reported in the installation window. 
-
-<LI>You may want to add a
-
-<A NAME="IDX7819"></A>
-<A NAME="IDX7820"></A>
-<EM>windows shortcut</EM> 
-<A NAME="IDX7821"></A>
-<A NAME="IDX7822"></A>
-in a convenient place, such as the desktop, to 
-<A NAME="IDX7823"></A>
-<CODE>ciaosh.cpx</CODE>, the standard interactive toplevel shell. It is located inside the <CODE>shell</CODE> folder (e.g., click on the file 
-<A NAME="IDX7824"></A>
-<CODE>ciaosh.cpx</CODE> with the right mouse button and select the appropriate option, <CODE>Send to-&#62;Desktop as shortcut</CODE>). 
-
-<LI>You may also want to add another shortcut to the file
-
-<A NAME="IDX7825"></A>
-<CODE>ciao</CODE>(<CODE>.html</CODE>) located inside <CODE>doc\reference\ciao_html</CODE> so that you can open the Ciao manual by simply double-clicking on this shortcut. 
-
-<LI>Finally, if the (freely available)
-
-<A NAME="IDX7826"></A>
-<CODE>emacs</CODE> editor/environment is not installed in your system, we <EM>highly recommend</EM> that you also install it at this point. While it is easy to use Ciao with any editor of your choice, the Ciao distribution includes a very powerful 
-<A NAME="IDX7827"></A>
-<A NAME="IDX7828"></A>
-<EM>application development environment</EM> which is based on 
-<A NAME="IDX7829"></A>
-<CODE>emacs</CODE> and which enables, e.g., source-level debugging, syntax coloring, context-sensitive on-line help, etc. If you are not convinced, consider that many programmers inside Micros*ft use <CODE>emacs</CODE> for developing their programs. 
-
- 
-<A NAME="IDX7830"></A>
-<A NAME="IDX7831"></A>
-<A NAME="IDX7832"></A>
-<A NAME="IDX7833"></A>
-
-The emacs editor (in all its versions: Un*x, Windows, etc.) can be downloaded from, for example, <A HREF="http://www.emacs.org/">http://www.emacs.org/</A>, and also from the many GNU mirror sites worldwide (See <A HREF="http://www.gnu.org/">http://www.gnu.org/</A> for a list), in the <CODE>gnu/emacs</CODE> and <CODE>gnu/windows/emacs</CODE> directories. You can find answers to frequently asked questions (FAQ) about 
-<A NAME="IDX7834"></A>
-<CODE>emacs</CODE> in general at <A HREF="http://www.gnu.org/software/emacs/emacs-faq.text">http://www.gnu.org/software/emacs/emacs-faq.text</A> and about the Windows version at <A HREF="http://www.gnu.org/software/emacs/windows/ntemacs.html">http://www.gnu.org/software/emacs/windows/ntemacs.html</A> (despite the 
-<A NAME="IDX7835"></A>
-<CODE>ntemacs</CODE> name it runs fine also as is on Win9X and Win2000 machines). 
-
-<A NAME="IDX7836"></A>
-<A NAME="IDX7837"></A>
-You need to tell 
-<A NAME="IDX7838"></A>
-<CODE>emacs</CODE> how to load the Ciao mode automatically when editing and how to access the on-line documentation: 
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI>Start
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX7839"></A>
-<CODE>emacs</CODE> (double click on the icon or from the <CODE>Start</CODE> menu). Open (menu <CODE>Files-&#62;Open File</CODE> or simply <KBD>^X</KBD><KBD>^F</KBD>) the file 
-<A NAME="IDX7840"></A>
-<CODE>ForEmacs.txt</CODE> that the installation script has created in directory where you installed the Ciao distribution. 
-
-<LI>Copy the lines in the file (select with the mouse and then menu <CODE>Edit-&#62;Copy</CODE>). Open/Create using
-
-<A NAME="IDX7841"></A>
-<CODE>emacs</CODE> (menu <CODE>Files-&#62;Open File</CODE> or simply <KBD>^X</KBD><KBD>^F</KBD>) the file 
-<A NAME="IDX7842"></A>
-<CODE>~/.emacs</CODE> (or, if this fails, 
-<A NAME="IDX7843"></A>
-<CODE>c:/.emacs</CODE>). 
-
-<LI>Paste the two lines (menu <CODE>Edit-&#62;Paste</CODE> or simply <KBD>^Y</KBD>) into the file and save (menu <CODE>Files-&#62;Save Buffer</CODE> or simply <KBD>^X</KBD><KBD>^S</KBD>).
-
-<LI>Exit
-
-<A NAME="IDX7844"></A>
-<CODE>emacs</CODE> and start it again. 
+<A NAME="IDX7677"></A>
+<CODE>out/1</CODE>, 
+<A NAME="IDX7678"></A>
+<CODE>out/3</CODE>, 
+<A NAME="IDX7679"></A>
+<CODE>convert_atoms_to_string/2</CODE>, 
+<A NAME="IDX7680"></A>
+<CODE>read_terms_file/2</CODE>, 
+<A NAME="IDX7681"></A>
+<CODE>write_terms_file/2</CODE>, 
+<A NAME="IDX7682"></A>
+<CODE>read_vrml_file/2</CODE>, 
+<A NAME="IDX7683"></A>
+<CODE>write_vrml_file/2</CODE>.
 
 </UL>
 
-
-<A NAME="IDX7845"></A>
-<CODE>emacs</CODE> should not report any errors (at least related to Ciao) on startup. At this point the 
-<A NAME="IDX7846"></A>
-<CODE>emacs</CODE> checks in the following section should work. 
-
-</OL>
-
-
-
-<H2><A NAME="SEC770" HREF="ciao_toc.html#TOC770">Checking for correct installation on Win32</A></H2>
-
-<P>
-After the actions and registry changes performed by the installation procedure, you should check that the following should work correctly: 
-
-
-<P>
- 
-
-<UL>
-
-<LI>Ciao-related file types (<CODE>.pl</CODE> source files, <CODE>.cpx</CODE> executables, <CODE>.itf,.po,.asr</CODE> interface files, <CODE>.pls</CODE> scripts, etc.) should have specific icons associated with them (you can look at the files in the folders in the Ciao distribution to check).
-
-<LI>Double-clicking on the shortcut to
-
-<A NAME="IDX7847"></A>
-<CODE>ciaosh</CODE>(<CODE>.cpx</CODE>) on the desktop should start the typical Prolog top-level shell in a window. If this shortcut has not been created on the desktop, then double-clicking on the 
-<A NAME="IDX7848"></A>
-<CODE>ciaosh</CODE>(<CODE>.cpx</CODE>) icon inside the <CODE>shell</CODE> folder within the Ciao source folder should have the same effect. 
-
-<LI>In the top-level shell, Prolog library modules should load correctly. Type for example <CODE>use_module(library(dec10_io)).</CODE> at the Ciao top-level prompt --you should get back a prompt with no errors reported.
-
-<LI>To exit the top level shell, type <CODE>halt.</CODE> as usual, or <KBD>^D</KBD>.
-
-</UL>
-
-<P>
-Also, the following documentation-related actions should work: 
-
+<LI><STRONG>Other modules used:</STRONG>
 
 
 <UL>
 
-<LI>Double-clicking on the shortcut to <CODE>ciao</CODE>(<CODE>.html</CODE>) which appears on the desktop should show the Ciao manual in your default WWW browser. If this shortcut has not been created you can double-click on the <CODE>ciao</CODE>(<CODE>.html</CODE>) file in the <CODE>doc\reference\ciao_html</CODE> folder inside the Ciao source folder. Make sure you configure your browser to use
+<LI><EM>System library modules:</EM>
 
-<A NAME="IDX7849"></A>
-<A NAME="IDX7850"></A>
-<EM>style sheets</EM> for correct formatting of the manual (note, however, that some older versions of 
-<A NAME="IDX7851"></A>
-Explorer did not support style sheets well and will give better results turning them off). 
-
-<A NAME="IDX7852"></A>
-<A NAME="IDX7853"></A>
-<A NAME="IDX7854"></A>
-<A NAME="IDX7855"></A>
-<A NAME="IDX7856"></A>
-<A NAME="IDX7857"></A>
-
-<LI>The <CODE>doc\reference</CODE> folder contains the manual also in the other formats present in the distribution, such as <CODE>info</CODE> (very convenient for users of the
-
-<A NAME="IDX7858"></A>
-<CODE>emacs</CODE> editor/program development system) and <CODE>postscript</CODE> or <CODE>pdf</CODE>, which are specially useful for printing. See section <A HREF="ciao_4.html#SEC53">Printing manuals (Win32)</A> for instructions. 
+<A NAME="IDX7684"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7685"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7686"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7687"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7688"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7689"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7690"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7691"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7692"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7693"></A>
+<CODE>format</CODE>.
 
 </UL>
 
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC773" HREF="ciao_toc.html#TOC773">Documentation on exports (<CODE>io</CODE>)</A></H2>
 <P>
-Finally, if 
-<A NAME="IDX7859"></A>
-<CODE>emacs</CODE> is installed, after starting it (double-clicking on the <CODE>emacs</CODE> icon or from the <CODE>Start</CODE> menu) the following should work: 
+<A NAME="IDX7694"></A>
+<A NAME="IDX7695"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
+<DD><A NAME="IDX7696"></A>
 
 
 <P>
- 
+<STRONG>Usage:</STRONG> <CODE>out(+ListOfOutput)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The predicate used is out/3 (DCG) where we will 'save' the output in the second argument. The tird argument is the rest, nil.
 
-<LI>Typing <KBD>^H</KBD> <KBD>i</KBD> (or in the menus <CODE>Help-&#62;Manuals-&#62;Browse Manuals with Info</CODE>) should open a list of manuals in info format in which the Ciao manual(s) should appear.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI>When opening a Prolog file, i.e., a file with <CODE>.pl</CODE> or <CODE>.pls</CODE> ending, using <KBD>^X</KBD><KBD>^F</KBD><CODE>filename</CODE> (or using the menus) the code should appear highlighted according to syntax (e.g., comments in red), and <CODE>Ciao/Prolog</CODE> menus should appear in the menu bar on top of the
-
-<A NAME="IDX7860"></A>
-<CODE>emacs</CODE> window. 
-
-<LI>Loading the file using the <CODE>Ciao/Prolog</CODE> menu (or typing <KBD>^C</KBD> <KBD>l</KBD>) should start in another emacs buffer the Ciao toplevel shell and load the file. You should now be able to switch the the toplevel shell and make queries from within
-
-<A NAME="IDX7861"></A>
-<CODE>emacs</CODE>. 
-
+<CODE>+ListOfOutput</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
+</DL>
+
 <P>
-<STRONG>Note:</STRONG> when using 
-<A NAME="IDX7862"></A>
-<CODE>emacs</CODE> it is <EM>very convenient</EM> to swap the locations of the (normally not very useful) <KBD>Caps Lock</KBD> key and the (very useful in 
-<A NAME="IDX7863"></A>
-<CODE>emacs</CODE>) <KBD>Ctrl</KBD> key on the keyboard. How to do this is explained in the 
-<A NAME="IDX7864"></A>
-<CODE>emacs</CODE> frequently asked questions FAQs (see the 
-<A NAME="IDX7865"></A>
-<CODE>emacs</CODE> download instructions for their location). 
+<A NAME="IDX7697"></A>
+<A NAME="IDX7698"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>out/3:</B>
+<DD><A NAME="IDX7699"></A>
 
 
 <P>
-If you find that everything works but <CODE>emacs</CODE> cannot start the Ciao toplevel you may want to check if you can open a normal Windows shell within <CODE>emacs</CODE> (just do <KBD>M-x</KBD> <CODE>shell</CODE>). If you cannot, it is possible that you are using some anti-virus software which is causing problems. See <A HREF="http://www.gnu.org/software/emacs/windows/faq3.html#anti-virus for a">http://www.gnu.org/software/emacs/windows/faq3.html#anti-virus for a</A> workaround. 
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX7700"></A>
+<A NAME="IDX7701"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>convert_atoms_to_string/2:</B>
+<DD><A NAME="IDX7702"></A>
 
 
 <P>
-In some Windows versions it is possible that you had to change the <EM>first</EM> backslashes in the DOTemacs.el file in the Ciao Directory. E.g., assuming you have installed in drive <CODE>c:</CODE>, instances of <CODE>c:\</CODE> need to be changed to <CODE>c:/</CODE>. For example: <CODE>c:\prolog/ciao-1.7p30Win32/shell/ciaosh.bat</CODE> should be changed to <CODE>c:/prolog/ciao-1.7p30Win32/shell/ciaosh.bat</CODE>. 
- 
-
-
-
-
-<H2><A NAME="SEC771" HREF="ciao_toc.html#TOC771">Compiling the miscellaneous utilities under Windows</A></H2>
-
-<P>
-The 
-<A NAME="IDX7866"></A>
-<CODE>etc</CODE> folder contains a number of utilities, documented in the manual in <EM>PART V - Miscellaneous Standalone Utilities</EM>. In the Win32 distribution these utilities are not compiled by the installation process. You can create the executable for each of them when needed by compiling the corresponding <CODE>.pl</CODE> file. 
-
-
-
-
-<H2><A NAME="SEC772" HREF="ciao_toc.html#TOC772">Server installation under Windows</A></H2>
-
-<P>
-<A NAME="IDX7867"></A>
-<A NAME="IDX7868"></A>
-<A NAME="IDX7869"></A>
-<A NAME="IDX7870"></A>
-
-
-<P>
-If you would like to install Ciao on a server machine, used by several clients, the following steps are recommended: 
-
-
+<STRONG>Usage:</STRONG> <CODE>convert_atoms_to_string(+Atoms,-String)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> The predicate transforms a list of atoms to a string.
 
-<LI>Follow the standard installation procedure on the server. When selecting the folder in which Ciao is installed make sure you select a folder that is visible by the client machines. Also make sure that the functionality specified in the previous sections is now available on the server.
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<LI>Perform a
+<CODE>+Atoms</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 
-<A NAME="IDX7871"></A>
-<A NAME="IDX7872"></A>
-<EM>client installation</EM> on each client, by running (e.g., double-click on it) the 
-<A NAME="IDX7873"></A>
-<CODE>client.bat</CODE> script. This should update the registry of each client. At this point all the functionality should also be available on the clients. 
-
+<CODE>-String</CODE> is a list of <CODE>num</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 </UL>
 
-
-
-<H2><A NAME="SEC773" HREF="ciao_toc.html#TOC773">CGI execution under IIS</A></H2>
+</DL>
 
 <P>
-The standard installation procedure updates the windows registry so that Ciao executables (ending in <CODE>.cpx</CODE>) are directly executable as CGIs under Microsoft's IIS. In the event you re-install IIS, you probably would lose the entries in the registry which allows this. In that case, processing the file 
-<A NAME="IDX7874"></A>
-<CODE>ciao.reg</CODE> produced during the installation (or simply reinstalling Ciao) will add again those entries. 
+<A NAME="IDX7703"></A>
+<A NAME="IDX7704"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_terms_file/2:</B>
+<DD><A NAME="IDX7705"></A>
 
-
-
-
-<H2><A NAME="SEC774" HREF="ciao_toc.html#TOC774">Uninstallation under Windows</A></H2>
 
 <P>
-To uninstall Ciao under Windows, simply delete the directory in which you put the Ciao distribution. If you also want to delete the registry entries created by the Ciao installation (not strictly needed) this must currently be done by hand. The installation leaves a list of these entries in the file 
-<A NAME="IDX7875"></A>
-<CODE>ciao.reg</CODE> to aid in this task. Also, all the register entries contain the word <EM>ciao</EM>. Thus, to delete all Ciao entries, run the application 
-<A NAME="IDX7876"></A>
-<CODE>regedit</CODE> (for example, by selecting <CODE>Run</CODE> from the Windows <CODE>Start</CODE> menu), search (<KBD>^F</KBD>) for <EM>ciao</EM> in all registry entries (i.e., select all of <CODE>Keys</CODE>, <CODE>Values</CODE>, and <CODE>Data</CODE> in the <CODE>Edit-&#62;Find</CODE> dialog), and delete each matching key (click on the left window to find the matching key for each entry found). 
+<STRONG>Usage:</STRONG> <CODE>read_terms_file(+Filename,-Term)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Given a filename to a file with terms, the predicate reads the terms and are returned in the second argument. <CODE>Filename</CODE> is an atom and <CODE>Term</CODE> is the read prolog terms.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Filename</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Term</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7706"></A>
+<A NAME="IDX7707"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>write_terms_file/2:</B>
+<DD><A NAME="IDX7708"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_terms_file(+FileName,+List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename and a list of terms the predicate will write them down to the file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+List</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7709"></A>
+<A NAME="IDX7710"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>read_vrml_file/2:</B>
+<DD><A NAME="IDX7711"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>read_vrml_file(+FileName,-Data)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename, the predicate returns the substance.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>-Data</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7712"></A>
+<A NAME="IDX7713"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>write_vrml_file/2:</B>
+<DD><A NAME="IDX7714"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>write_vrml_file(+FileName,+Data)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Given a filename and data in form of a string, the predicate will write the data to the named file.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+FileName</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Data</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_205.html">previous</A>, <A HREF="ciao_207.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_205.html">previous</A>, <A HREF="ciao_207.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

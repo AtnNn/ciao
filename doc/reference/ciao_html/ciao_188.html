@@ -1,37 +1,55 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - boundary (library)</TITLE>
+<TITLE>The Ciao Prolog System               - gengraph2 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC710" HREF="ciao_toc.html#TOC710">boundary (library)</A></H1>
+<H1><A NAME="SEC714" HREF="ciao_toc.html#TOC714">gengraph2 (library)</A></H1>
 <P>
-<A NAME="IDX7014"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#1 (1998/12/14, 19:22:27 MET)
+<A NAME="IDX7172"></A>
 
 
 <P>
-This module offers predicate to check values according to their boundaries and offers lists of possible node ascendents.
+This module defines predicates which show line graph widgets. All eight predicates exported by this module plot two-variable data. Each point is defined by its X-Y coordinate values. Every predicate share the following features: 
 
 
 
 <UL>
-<LI><A HREF="ciao_188.html#SEC711">Usage and interface (boundary)</A>
-<LI><A HREF="ciao_188.html#SEC712">Documentation on exports (boundary)</A>
+
+<LI>A dataset is defined by three lists xvector, yvector and attributes. The arguments named <CODE>XVectors</CODE> (or <CODE>XVs</CODE>), <CODE>YVectors</CODE> (or <CODE>YVs</CODE>) and <CODE>LAtts</CODE><A NAME="DOCF6" HREF="ciao_foot.html#FOOT6">(6)</A> contain this information. Those arguments must be lists whose elements are also lists. The first dataset is defined by the firts element of the three lists, the second dataset is defined by the second element of the three lists and so on.
+
+<LI>Numeric values for the vector elements are needed. We will use two vectors to represent the X-Y coordinates of each set of data plotted. In these predicates the vectors can have different number of points. However, the number of elements in xvector and yvector that pertain to a certain dataset must be, obviously, equal.
+
+<LI>The active line color is blue, which means that when you select a legend element, the corresponding line turns into navyblue.
+
+<LI>The user can either select the appearance for the lines and the points or not. See the
+
+<A NAME="IDX7173"></A>
+<CODE>attributes/1</CODE> type definition. Thus, the user can call each predicate in different ways ways. 
+
+<LI>The graph has a legend and one entry (symbol and label) per dataset.
+
+<LI>If you do not want to display text in the elements header, barchart title, xaxis title, yaxis title or footer, simply give <CODE>"</CODE> as the value of the argument.
+
+<LI>The predicates check whether the format of the arguments is correct as well. The testing process involves some verifications. If one or both vectors are empty, the exception <CODE>error2</CODE> will be thrown. If the vectors contains elements but are not correct, the exception <CODE>error4</CODE> will be thrown.
+
+</UL>
+
+
+<UL>
+<LI><A HREF="ciao_188.html#SEC715">Usage and interface (gengraph2)</A>
+<LI><A HREF="ciao_188.html#SEC716">Documentation on exports (gengraph2)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC711" HREF="ciao_toc.html#TOC711">Usage and interface (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC715" HREF="ciao_toc.html#TOC715">Usage and interface (<CODE>gengraph2</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +57,7 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(boundary)).</CODE>
+<CODE>:- use_module(library(gengraph2)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,16 +66,22 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7015"></A>
-<CODE>boundary_check/3</CODE>, 
-<A NAME="IDX7016"></A>
-<CODE>boundary_rotation_first/2</CODE>, 
-<A NAME="IDX7017"></A>
-<CODE>boundary_rotation_last/2</CODE>, 
-<A NAME="IDX7018"></A>
-<CODE>reserved_words/1</CODE>, 
-<A NAME="IDX7019"></A>
-<CODE>children_nodes/1</CODE>.
+<A NAME="IDX7174"></A>
+<CODE>graph_b2/9</CODE>, 
+<A NAME="IDX7175"></A>
+<CODE>graph_b2/13</CODE>, 
+<A NAME="IDX7176"></A>
+<CODE>graph_w2/9</CODE>, 
+<A NAME="IDX7177"></A>
+<CODE>graph_w2/13</CODE>, 
+<A NAME="IDX7178"></A>
+<CODE>scattergraph_b2/8</CODE>, 
+<A NAME="IDX7179"></A>
+<CODE>scattergraph_b2/12</CODE>, 
+<A NAME="IDX7180"></A>
+<CODE>scattergraph_w2/8</CODE>, 
+<A NAME="IDX7181"></A>
+<CODE>scattergraph_w2/12</CODE>.
 
 </UL>
 
@@ -68,26 +92,20 @@ This module offers predicate to check values according to their boundaries and o
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7020"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX7021"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX7022"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX7023"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7024"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7025"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX7026"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX7027"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX7028"></A>
-<CODE>provrml/internal_types</CODE>, 
-<A NAME="IDX7029"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX7182"></A>
+<CODE>chartlib/gengraph1</CODE>, 
+<A NAME="IDX7183"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX7184"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX7185"></A>
+<CODE>chartlib/color_pattern</CODE>, 
+<A NAME="IDX7186"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX7187"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7188"></A>
+<CODE>random/random</CODE>.
 
 </UL>
 
@@ -97,130 +115,376 @@ This module offers predicate to check values according to their boundaries and o
 
 
 
-<H2><A NAME="SEC712" HREF="ciao_toc.html#TOC712">Documentation on exports (<CODE>boundary</CODE>)</A></H2>
+<H2><A NAME="SEC716" HREF="ciao_toc.html#TOC716">Documentation on exports (<CODE>gengraph2</CODE>)</A></H2>
 <P>
-<A NAME="IDX7030"></A>
-<A NAME="IDX7031"></A>
+<A NAME="IDX7189"></A>
+<A NAME="IDX7190"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_check/3:</B>
-<DD><A NAME="IDX7032"></A>
+<DT><span class="define">PREDICATE:</span> <B>graph_b2/9:</B>
+<DD><A NAME="IDX7191"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_check(+Value_to_check,+Init_value,+Bound)</CODE>
+<CODE>graph_b2(Header,GTitle,XTitle,XVectors,YTitle,YVectors,LAtts,Footer,Sm)</CODE>
+
+
+<P>
+Besides the features mentioned at the begining of the module chapter, the displayed graph generated calling this predicate has the following distinguish characteristics: 
+
+
 
 <UL>
-<LI><EM>Description:</EM> This predicate check the boundaries of the given value according to the boudary values. If the value is wrong according to the boundaries, the value is checked according to the initial value given. If the value continues to be wrong, an error will be raised accordingly.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>The plotting area background color is black.
 
-<CODE>+Value_to_check</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<LI>The cross hairs color is white.
 
-<CODE>+Init_value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<LI>The axis limits are determined from the data.
 
-<CODE>+Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
 </UL>
+
+<P>
+Example: 
+
+
+
+<PRE>
+graph_b2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[20,30,59],[25,50]],
+  'yaxixtitle',
+  [[10,35,40],[25,50]],
+  [['line1','Blue','Yellow'],['line2']],
+  'footer',
+  'natural').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7033"></A>
-<A NAME="IDX7034"></A>
+<A NAME="IDX7192"></A>
+<A NAME="IDX7193"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_first/2:</B>
-<DD><A NAME="IDX7035"></A>
+<DT><span class="define">PREDICATE:</span> <B>graph_b2/13:</B>
+<DD><A NAME="IDX7194"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_first(+Bound_double,-Bound)</CODE>
+<CODE>graph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
+
+
+<P>
+In addition to the features brought up at the begining of the module chapter, this graph has the following: 
+
+
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the first bounds from a double bound.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>The plotting area background color is black.
 
-<CODE>+Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
+<LI>The cross hairs color is white.
 
-<CODE>-Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
+<LI>You can set the maximum and minimum values for the graph axes.
+
 </UL>
+
+<P>
+Example: 
+
+
+
+<PRE>
+graph_b2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[20,10,59],[15,30,35]],
+  50,
+  _,
+  'yaxixtitle',
+  [[10,35,40],[25,50,60]],
+  50.5,
+  _,
+  [['line1','Blue','Yellow'],['line','MediumTurquoise','Plum']],
+  'footer',
+  'step').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7036"></A>
-<A NAME="IDX7037"></A>
+<A NAME="IDX7195"></A>
+<A NAME="IDX7196"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_last/2:</B>
-<DD><A NAME="IDX7038"></A>
+<DT><span class="define">PREDICATE:</span> <B>graph_w2/9:</B>
+<DD><A NAME="IDX7197"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>boundary_rotation_last(+Bound_double,-Bound)</CODE>
+<CODE>graph_w2(Header,GT,XT,XVectors,YTitle,YVectors,LAtts,Footer,Smooth)</CODE>
+
+
+<P>
+This predicate is quite similar to 
+<A NAME="IDX7198"></A>
+<CODE>graph_b2/9</CODE>. The difference lies in the graph appearance, as you can see below. 
+
+
 
 <UL>
-<LI><EM>Description:</EM> The predicate will extract the last bounds from a double bound.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>The plotting area background color is white.
 
-<CODE>+Bound_double</CODE> is a variable interval.
- (<CODE>internal_types:bound_double/1</CODE>)
+<LI>The cross hairs color is black.
 
-<CODE>-Bound</CODE> is a variable interval.
- (<CODE>internal_types:bound/1</CODE>)
 </UL>
+
+<P>
+Example: 
+
+
+
+<PRE>
+graph_w2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[10,30,59],[25,50]],
+  'yaxixtitle',
+  [[10,35,40],[25,40]],
+  [['element1','Blue','DarkOrchid'],['element2','DarkOliveGreen',
+    'Firebrick']],
+  'footer',
+  'natural').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7039"></A>
-<A NAME="IDX7040"></A>
+<A NAME="IDX7199"></A>
+<A NAME="IDX7200"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>reserved_words/1:</B>
-<DD><A NAME="IDX7041"></A>
+<DT><span class="define">PREDICATE:</span> <B>graph_w2/13:</B>
+<DD><A NAME="IDX7201"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>reserved_words(-List)</CODE>
+<CODE>graph_w2(Header,GT,XT,XV,XMax,XMin,YT,YVs,YMax,YMin,LAtts,Footer,Smooth)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Returns a list with the reserved words, words prohibited to use in cases not appropiated.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+This predicate is comparable to 
+<A NAME="IDX7202"></A>
+<CODE>graph_b2/13</CODE>. The differences lie in the plot background color and in the cross hairs color, wich are white and black respectively. 
 
-<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
+
+<P>
+Example: 
+
+<PRE>
+graph_w2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[10,30,59],[10,35,40]],
+  80,
+  _,
+  'yaxixtitle',
+  [[10,35,40],[25,50,60]],
+  50,
+  _,
+  [['element1','Blue','Green'],['element2','Turquoise','Black']],
+  'footer',
+  'linear').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7042"></A>
-<A NAME="IDX7043"></A>
+<A NAME="IDX7203"></A>
+<A NAME="IDX7204"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>children_nodes/1:</B>
-<DD><A NAME="IDX7044"></A>
+<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/8:</B>
+<DD><A NAME="IDX7205"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>children_nodes(-List)</CODE>
+<CODE>scattergraph_b2(Header,GT,XT,XVectors,YT,YVectors,PAtts,Footer)</CODE>
+
+
+<P>
+Apart from the features brought up at the beginning of the chapter, the scatter graph displayed when invoking this predicate has the following features: 
+
+
 
 <UL>
-<LI><EM>Description:</EM> Returns a list of all nodes possible as children nodes.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI>The plotting area background color is black.
 
-<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<LI>The cross hairs color is white.
+
+<LI>The axis limits are determined from the data.
+
 </UL>
+
+<P>
+Example: 
+
+<PRE>
+scattergraph_b2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[10,15,20],[8,30,40]],
+  'yaxixtitle',
+  [[10,35,20],[15,11,21]],
+  [['element1','Blue','Yellow'],['element2','MediumTurquoise','Plum']],
+  'footer').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7206"></A>
+<A NAME="IDX7207"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>scattergraph_b2/12:</B>
+<DD><A NAME="IDX7208"></A>
+
+
+<P>
+<CODE>scattergraph_b2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
+
+
+<P>
+The particular features related to this predicate are described below: 
+
+
+
+<UL>
+
+<LI>The plotting area background color is black.
+
+<LI>The cross hairs color is white.
+
+<LI>You can set the minimum and maximum limits of the axes. Data outside the limits will not be plotted.
+
+</UL>
+
+<P>
+Example: 
+
+<PRE>
+scattergraph_b2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[20,30,50],[18,40,59]],
+  50,
+  _,
+  'yaxixtitle',
+  [[10,35,40],[25,50,60]],
+  50,
+  _,
+  [['point dataset1'],['point dataset2']],
+  'footer').
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7209"></A>
+<A NAME="IDX7210"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/8:</B>
+<DD><A NAME="IDX7211"></A>
+
+
+<P>
+<CODE>scattergraph_w2(Header,GTitle,XTitle,XVs,YTitle,YVs,PAtts,Footer)</CODE>
+
+
+<P>
+This predicate is quite similar to 
+<A NAME="IDX7212"></A>
+<CODE>scattergraph_w1/8</CODE> except in the following: 
+
+
+
+<UL>
+
+<LI>The plotting area background color is black.
+
+<LI>The cross hairs color is white.
+
+<LI>If the user do not provide the colors of the points, they will be chosen among the lighter ones.
+
+</UL>
+
+<P>
+Example: 
+
+<PRE>
+scattergraph_w2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[20,30,40,15,30,35,20,30]],
+  'yaxixtitle',
+  [[10,30,40,25,20,25,20,25]],
+  [['set1','cross',4]],
+  'footer').
+</PRE>
+
+<P>
+ 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7213"></A>
+<A NAME="IDX7214"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>scattergraph_w2/12:</B>
+<DD><A NAME="IDX7215"></A>
+
+
+<P>
+<CODE>scattergraph_w2(Header,GT,XT,XVs,XMax,XMin,YT,YVs,YMax,YMin,PAtts,Footer)</CODE>
+
+
+<P>
+This predicate is comparable to 
+<A NAME="IDX7216"></A>
+<CODE>scattergraph_w2/13</CODE>, the differences between them are listed below: 
+
+
+
+<UL>
+
+<LI>The plotting area background color is white.
+
+<LI>The cross hairs color is black.
+
+</UL>
+
+<P>
+Example: 
+
+<PRE>
+scattergraph_w2('This is the header text',
+  'Graph_title',
+  'xaxistitle',
+  [[20,10,59],[15,30,50]],
+  150,
+  5,
+  'yaxixtitle',
+  [[10,35,40],[25,20,60]],
+  _,
+  -10,
+  [['e1','Blue','Yellow'],['e2','MediumTurquoise','Plum']],
+  'footer').
+</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_187.html">previous</A>, <A HREF="ciao_189.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

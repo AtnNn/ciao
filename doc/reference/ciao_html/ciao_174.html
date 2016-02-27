@@ -1,334 +1,68 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Color and Pattern Library</TITLE>
+<TITLE>The Ciao Prolog System               - Finding differences between two Prolog files</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC662" HREF="ciao_toc.html#TOC662">Color and Pattern Library</A></H1>
+<H1><A NAME="SEC663" HREF="ciao_toc.html#TOC663">Finding differences between two Prolog files</A></H1>
+
 <P>
-<A NAME="IDX6546"></A>
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-This module contains predicates to access and check conformance to the available colors and patterns.
+This simple program works like the good old diff but for files that contain Prolog code. It prints out the clauses that it finds are different in the files. Its use avoids textual differences such as different variable names and different formatting of the code in the files. 
 
 
 
 <UL>
-<LI><A HREF="ciao_174.html#SEC663">Usage and interface (color_pattern)</A>
-<LI><A HREF="ciao_174.html#SEC664">Documentation on exports (color_pattern)</A>
+<LI><A HREF="ciao_174.html#SEC664">Usage (pldiff)</A>
+<LI><A HREF="ciao_174.html#SEC665">Known bugs and planned improvements (pldiff)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC663" HREF="ciao_toc.html#TOC663">Usage and interface (<CODE>color_pattern</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(color_pattern)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
+<H2><A NAME="SEC664" HREF="ciao_toc.html#TOC664">Usage (pldiff)</A></H2>
 
 
-<UL>
+<PRE>
+   
+	pldiff &#60;file1&#62; &#60;file2&#62;
+	   : find differences 
 
-<LI><EM>Predicates:</EM>
+	pldiff -h
+	   : print this information
 
-<A NAME="IDX6547"></A>
-<CODE>color/2</CODE>, 
-<A NAME="IDX6548"></A>
-<CODE>pattern/2</CODE>, 
-<A NAME="IDX6549"></A>
-<CODE>random_color/1</CODE>, 
-<A NAME="IDX6550"></A>
-<CODE>random_lightcolor/1</CODE>, 
-<A NAME="IDX6551"></A>
-<CODE>random_darkcolor/1</CODE>, 
-<A NAME="IDX6552"></A>
-<CODE>random_pattern/1</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6553"></A>
-<CODE>color/1</CODE>, 
-<A NAME="IDX6554"></A>
-<CODE>pattern/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6555"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6556"></A>
-<CODE>random/random</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC664" HREF="ciao_toc.html#TOC664">Documentation on exports (<CODE>color_pattern</CODE>)</A></H2>
-<P>
-<A NAME="IDX6557"></A>
-<A NAME="IDX6558"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>color/1:</B>
-<DD><A NAME="IDX6559"></A>
-
+</PRE>
 
 <P>
-<CODE>color(Color)</CODE>
+but you can also use the program as a library and invoke the predicate: 
 
 
 
 <PRE>
-color('GreenYellow').
-color('Yellow').
-color('White').
-color('Wheat').
-color('BlueViolet').
-color('Violet').
-color('MediumTurquoise').
-color('DarkTurquoise').
-color('Turquoise').
-color('Thistle').
-color('Tan').
-color('Sienna').
-color('Salmon').
-color('VioletRed').
-color('OrangeRed').
-color('MediumVioletRed').
-color('IndianRed').
-color('Red').
-color('Plum').
-color('Pink').
-color('MediumOrchid').
-color('DarkOrchid').
-color('Orchid').
-color('Orange').
-color('Maroon').
-color('Magenta').
-color('Khaki').
-color('Grey').
-color('LightGray').
-color('DimGray').
-color('DarkSlateGray').
-color('YellowGreen').
-color('SpringGreen').
-color('SeaGreen').
-color('PaleGreen').
-color('MediumSpringGreen').
-color('MediumSeaGreen').
-color('LimeGreen').
-color('ForestGreen').
-color('DarkOliveGreen').
-color('DarkGreen').
-color('Green').
-color('Goldenrod').
-color('Gold').
-color('Brown').
-color('Firebrick').
-color('Cyan').
-color('Coral').
-color('SteelBlue').
-color('SlateBlue').
-color('SkyBlue').
-color('Navy').
-color('MidnightBlue').
-color('MediumSlateBlue').
-color('MediumBlue').
-color('LightSteelBlue').
-color('LightBlue').
-color('DarkSlateBlue').
-color('CornflowerBlue').
-color('CadetBlue').
-color('Blue').
-color('Black').
-color('MediumAquamarine').
-color('Aquamarine').
+   pldiff( &#60;filename&#62; , &#60;filename&#62; )
 </PRE>
 
-<P>
-Defines available colors for elements such as points, lines or bars. 
 
 
-</DL>
+<H2><A NAME="SEC665" HREF="ciao_toc.html#TOC665">Known bugs and planned improvements (<CODE>pldiff</CODE>)</A></H2>
 
-<P>
-<A NAME="IDX6560"></A>
-<A NAME="IDX6561"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>color/2:</B>
-<DD><A NAME="IDX6562"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>color(C1,C2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Test whether the color <CODE>C1</CODE> is a valid color or not. If <CODE>C1</CODE> is a variable the predicate will choose a valid color randomly. If <CODE>C1</CODE> is a ground term that is not a valid color an exception (error9) will be thrown
 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI>
 
-<CODE>color_pattern:color(C1)</CODE>
- (<CODE>color_pattern:color/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>color_pattern:color(C2)</CODE>
- (<CODE>color_pattern:color/1</CODE>)
+Currently uses variant/2 to compare clauses. This is useful, but there should be an option to select the way clauses are compared, e.g., some form of equivalence defined by the user.
 </UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6563"></A>
-<A NAME="IDX6564"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
-<DD><A NAME="IDX6565"></A>
-
-
-<P>
-<CODE>pattern(Pattern)</CODE>
-
-
-
-<PRE>
-pattern(pattern1).
-pattern(pattern2).
-pattern(pattern3).
-pattern(pattern4).
-pattern(pattern5).
-pattern(pattern6).
-pattern(pattern7).
-pattern(pattern8).
-pattern(pattern9).
-</PRE>
-
-<P>
-Defines valid patterns used in the stipple style bar attribute. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6566"></A>
-<A NAME="IDX6567"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pattern/2:</B>
-<DD><A NAME="IDX6568"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pattern(P1,P2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Test whether the pattern <CODE>P1</CODE> is a valid pattern or not. If <CODE>P1</CODE> is a variable the predicate will choose a valid pattern randomly. If <CODE>P1</CODE> is a ground term that is not a valid pattern an exception (error10) will be thrown.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>color_pattern:pattern(P1)</CODE>
- (<CODE>color_pattern:pattern/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>color_pattern:pattern(P2)</CODE>
- (<CODE>color_pattern:pattern/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6569"></A>
-<A NAME="IDX6570"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_color/1:</B>
-<DD><A NAME="IDX6571"></A>
-
-
-<P>
-<CODE>random_color(Color)</CODE>
-
-
-<P>
-This predicate choose a valid color among the availables randomly. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6572"></A>
-<A NAME="IDX6573"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_lightcolor/1:</B>
-<DD><A NAME="IDX6574"></A>
-
-
-<P>
-<CODE>random_lightcolor(Color)</CODE>
-
-
-<P>
-This predicate choose a valid light color among the availables randomly. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6575"></A>
-<A NAME="IDX6576"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_darkcolor/1:</B>
-<DD><A NAME="IDX6577"></A>
-
-
-<P>
-<CODE>random_darkcolor(Color)</CODE>
-
-
-<P>
-This predicate choose a valid dark color among the availables randomly. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX6578"></A>
-<A NAME="IDX6579"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_pattern/1:</B>
-<DD><A NAME="IDX6580"></A>
-
-
-<P>
-<CODE>random_pattern(Pattern)</CODE>
-
-
-<P>
-This predicate choose a valid pattern among the availables randomly. 
-
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

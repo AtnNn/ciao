@@ -155,6 +155,10 @@ answer(prolog_query_id(X)) :- nonvar(X).
 answer(prolog_exception(X)) :- nonvar(X).
 answer(prolog_exception(X,Y)) :- int(X), nonvar(Y).
 
+:- regtype prolog_query_id(X) # "@var{X} is a prolog query identifier.".
+prolog_query_id(prolog_query_id(X)) :- nonvar(X).
+
+
 %----------------------------------------------------------------------------
 :- pred prolog_server/0
 	# "Prolog server entry point. Reads from the standard
@@ -191,7 +195,7 @@ prolog_server(Port) :-
 	eng_killothers.
 
 %% -----------------------------------------------------------------------
-:- pred get_port(+stream,-port)
+:- pred get_port(+Stream,-Port)
 	:: atom * atom # "Gets the port number to connect to Java
 	server, reading it from the stream received as argument.".
 %% -----------------------------------------------------------------------

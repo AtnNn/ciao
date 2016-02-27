@@ -1,41 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - io (library)</TITLE>
+<TITLE>The Ciao Prolog System               - dictionary_tree (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC740" HREF="ciao_toc.html#TOC740">io (library)</A></H1>
+<H1><A NAME="SEC747" HREF="ciao_toc.html#TOC747">dictionary_tree (library)</A></H1>
 <P>
-<A NAME="IDX7273"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#2 (1998/12/2)
+<A NAME="IDX7463"></A>
 
 
 <P>
-This file implements I/O predicates of different types. 
+<STRONG>Version:</STRONG> 0.1 (1999/1/14, 15:57:36 MET)
 
 
 <P>
-Implemented by G&ouml;ran Smedb&auml;ck 
+This module offers a dynamic tree structured dictionary a bit combined with predicates that gives it the useability to be the dictionary for the parser.
 
 
 
 <UL>
-<LI><A HREF="ciao_198.html#SEC741">Usage and interface (io)</A>
-<LI><A HREF="ciao_198.html#SEC742">Documentation on exports (io)</A>
+<LI><A HREF="ciao_198.html#SEC748">Usage and interface (dictionary_tree)</A>
+<LI><A HREF="ciao_198.html#SEC749">Documentation on exports (dictionary_tree)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC741" HREF="ciao_toc.html#TOC741">Usage and interface (<CODE>io</CODE>)</A></H2>
+<H2><A NAME="SEC748" HREF="ciao_toc.html#TOC748">Usage and interface (<CODE>dictionary_tree</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -43,7 +39,7 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(io)).</CODE>
+<CODE>:- use_module(library(dictionary_tree)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -52,20 +48,20 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7274"></A>
-<CODE>out/1</CODE>, 
-<A NAME="IDX7275"></A>
-<CODE>out/3</CODE>, 
-<A NAME="IDX7276"></A>
-<CODE>convert_atoms_to_string/2</CODE>, 
-<A NAME="IDX7277"></A>
-<CODE>read_terms_file/2</CODE>, 
-<A NAME="IDX7278"></A>
-<CODE>write_terms_file/2</CODE>, 
-<A NAME="IDX7279"></A>
-<CODE>read_vrml_file/2</CODE>, 
-<A NAME="IDX7280"></A>
-<CODE>write_vrml_file/2</CODE>.
+<A NAME="IDX7464"></A>
+<CODE>create_dictionaries/1</CODE>, 
+<A NAME="IDX7465"></A>
+<CODE>is_dictionaries/1</CODE>, 
+<A NAME="IDX7466"></A>
+<CODE>get_definition_dictionary/2</CODE>, 
+<A NAME="IDX7467"></A>
+<CODE>get_prototype_dictionary/2</CODE>, 
+<A NAME="IDX7468"></A>
+<CODE>dictionary_insert/5</CODE>, 
+<A NAME="IDX7469"></A>
+<CODE>dictionary_lookup/5</CODE>, 
+<A NAME="IDX7470"></A>
+<CODE>merge_tree/2</CODE>.
 
 </UL>
 
@@ -76,26 +72,26 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7281"></A>
+<A NAME="IDX7471"></A>
 <CODE>aggregates</CODE>, 
-<A NAME="IDX7282"></A>
+<A NAME="IDX7472"></A>
 <CODE>dynamic</CODE>, 
-<A NAME="IDX7283"></A>
+<A NAME="IDX7473"></A>
 <CODE>iso_misc</CODE>, 
-<A NAME="IDX7284"></A>
+<A NAME="IDX7474"></A>
 <CODE>iso_byte_char</CODE>, 
-<A NAME="IDX7285"></A>
+<A NAME="IDX7475"></A>
 <CODE>iso_incomplete</CODE>, 
-<A NAME="IDX7286"></A>
+<A NAME="IDX7476"></A>
 <CODE>operators</CODE>, 
-<A NAME="IDX7287"></A>
+<A NAME="IDX7477"></A>
 <CODE>read</CODE>, 
-<A NAME="IDX7288"></A>
+<A NAME="IDX7478"></A>
 <CODE>write</CODE>, 
-<A NAME="IDX7289"></A>
+<A NAME="IDX7479"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX7290"></A>
-<CODE>format</CODE>.
+<A NAME="IDX7480"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -105,169 +101,195 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 
 
-<H2><A NAME="SEC742" HREF="ciao_toc.html#TOC742">Documentation on exports (<CODE>io</CODE>)</A></H2>
+<H2><A NAME="SEC749" HREF="ciao_toc.html#TOC749">Documentation on exports (<CODE>dictionary_tree</CODE>)</A></H2>
 <P>
-<A NAME="IDX7291"></A>
-<A NAME="IDX7292"></A>
+<A NAME="IDX7481"></A>
+<A NAME="IDX7482"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>out/1:</B>
-<DD><A NAME="IDX7293"></A>
+<DT><span class="define">PREDICATE:</span> <B>create_dictionaries/1:</B>
+<DD><A NAME="IDX7483"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>out(+ListOfOutput)</CODE>
+<STRONG>Usage:</STRONG> <CODE>create_dictionaries(-Dictionary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate used is out/3 (DCG) where we will 'save' the output in the second argument. The tird argument is the rest, nil.
+<LI><EM>Description:</EM> Returns a dictionary. A general name was used if the user would like to change the code to include more dictionaries.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ListOfOutput</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>-Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7294"></A>
-<A NAME="IDX7295"></A>
+<A NAME="IDX7484"></A>
+<A NAME="IDX7485"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>out/3:</B>
-<DD><A NAME="IDX7296"></A>
+<DT><span class="define">PREDICATE:</span> <B>is_dictionaries/1:</B>
+<DD><A NAME="IDX7486"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7297"></A>
-<A NAME="IDX7298"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>convert_atoms_to_string/2:</B>
-<DD><A NAME="IDX7299"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>convert_atoms_to_string(+Atoms,-String)</CODE>
+<STRONG>Usage:</STRONG> <CODE>is_dictionaries(?Dictionary)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate transforms a list of atoms to a string.
+<LI><EM>Description:</EM> Is the argument a dictionary is solved by this predicate.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Atoms</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-String</CODE> is a list of <CODE>num</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>?Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7300"></A>
-<A NAME="IDX7301"></A>
+<A NAME="IDX7487"></A>
+<A NAME="IDX7488"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_terms_file/2:</B>
-<DD><A NAME="IDX7302"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_definition_dictionary/2:</B>
+<DD><A NAME="IDX7489"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>read_terms_file(+Filename,-Term)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_definition_dictionary(+Dictionary,-Tree)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Given a filename to a file with terms, the predicate reads the terms and are returned in the second argument. <CODE>Filename</CODE> is an atom and <CODE>Term</CODE> is the read prolog terms.
+<LI><EM>Description:</EM> Returns the definition dictionary (for the moment there is only one dictionary), which is a tree representation.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Filename</CODE> is an atom.
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7490"></A>
+<A NAME="IDX7491"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_prototype_dictionary/2:</B>
+<DD><A NAME="IDX7492"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_prototype_dictionary(+Dictionary,-Tree)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns the prototype dictionary (for the moment there is only one dictionary), which is a tree representation.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7493"></A>
+<A NAME="IDX7494"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_insert/5:</B>
+<DD><A NAME="IDX7495"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary_insert(+Key,+Type,+Field,+Dictionary,?Info)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will search for the place for the Key and return Info, if the element inserted had a post before (same key value) multiple else new. The dictionary is dynamic and do not need output because of using unbinded variables.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Key</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>-Term</CODE> is an atom.
+<CODE>+Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
+
+<CODE>?Info</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7303"></A>
-<A NAME="IDX7304"></A>
+<A NAME="IDX7496"></A>
+<A NAME="IDX7497"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_terms_file/2:</B>
-<DD><A NAME="IDX7305"></A>
+<DT><span class="define">PREDICATE:</span> <B>dictionary_lookup/5:</B>
+<DD><A NAME="IDX7498"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_terms_file(+FileName,+List)</CODE>
+<STRONG>Usage:</STRONG> <CODE>dictionary_lookup(+Key,?Type,?Field,+Dictionary,-Info)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Given a filename and a list of terms the predicate will write them down to the file.
+<LI><EM>Description:</EM> The predicate will search for the Key and return Info;defined or undefined accordingly. If defined the fields will be filled as well. The predicate do not insert the element.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+FileName</CODE> is an atom.
+<CODE>+Key</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+List</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>?Type</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Field</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+
+<CODE>+Dictionary</CODE> is a dictionary.
+ (<CODE>internal_types:dictionary/1</CODE>)
+
+<CODE>-Info</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7306"></A>
-<A NAME="IDX7307"></A>
+<A NAME="IDX7499"></A>
+<A NAME="IDX7500"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_vrml_file/2:</B>
-<DD><A NAME="IDX7308"></A>
+<DT><span class="define">PREDICATE:</span> <B>merge_tree/2:</B>
+<DD><A NAME="IDX7501"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>read_vrml_file(+FileName,-Data)</CODE>
+<STRONG>Usage:</STRONG> <CODE>merge_tree(+Tree,+Tree)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Given a filename, the predicate returns the substance.
+<LI><EM>Description:</EM> The predicate can be used for adding a tree dictionary to another one (the second). It will remove equal posts but posts with a slight difference will be inserted. The resulting tree will be the second tree.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 
-<CODE>-Data</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7309"></A>
-<A NAME="IDX7310"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>write_vrml_file/2:</B>
-<DD><A NAME="IDX7311"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>write_vrml_file(+FileName,+Data)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Given a filename and data in form of a string, the predicate will write the data to the named file.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+FileName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+Data</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>+Tree</CODE> is a tree structure.
+ (<CODE>internal_types:tree/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_197.html">previous</A>, <A HREF="ciao_199.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

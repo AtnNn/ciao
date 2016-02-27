@@ -37,7 +37,7 @@ or @lib{jtopl} (Java to Prolog interface) libraries instead.
 :- regtype machine_name(?Name) # "@var{Name} is a valid host name.".
 machine_name(X) :- atm(X).
 
-:- pred java_stream(pjStream, jpStream, Address,Stream)
+:- pred java_stream(PJStream, JPStream, Address,Stream)
 	:: struct * struct * machine_name * stream # "Stores the identifiers
         of the streams used. A fact is asserted when the connection 
         to the Java process is established. It Contains 
@@ -46,7 +46,7 @@ machine_name(X) :- atm(X).
         Last argument represents the Java process standard input stream.".
 :- data java_stream/4.
 
-:- pred java_threads(pjIn,pjOut,jpIn,jpOut,plServer)
+:- pred java_threads(PJIn,PJOut,JPIn,JPOut,PLServer)
 	:: int * int * int * int * int # "Stores the threads used to
         handle the sockets and the goal server.".
 :- data java_threads/5.
@@ -57,7 +57,7 @@ machine_name(X) :- atm(X).
 %% socket handling threads.
 %% -----------------------------------------------------------------------
 %% -----------------------------------------------------------------------
-:- pred java_query(threadId,query)
+:- pred java_query(ThreadId,Query)
 	:: atm * term # "Data predicate containing the queries to be sent
         to Java. First argument is the Prolog thread Id, and second
         argument is the query to send to Java.".
@@ -65,7 +65,7 @@ machine_name(X) :- atm(X).
 :- concurrent java_query/2.
 
 %% -----------------------------------------------------------------------
-:- pred java_response(id,response)
+:- pred java_response(Id,Response)
 	:: atm * term # "Data predicate that stores the responses to
         requests received from Java. First argument corresponds to
         the Prolog thread Id; second argument corresponds to the
@@ -74,14 +74,14 @@ machine_name(X) :- atm(X).
 :- concurrent java_response/2.
 
 %% -----------------------------------------------------------------------
-:- pred prolog_query(id, query)
+:- pred prolog_query(Id, Query)
 	:: int * term # "Data predicate that keeps a queue of the queries
         requested to Prolog side from Java side.".
 %% -----------------------------------------------------------------------
 :- concurrent prolog_query/2.
 
 %% -----------------------------------------------------------------------
-:- pred prolog_response(id, response)
+:- pred prolog_response(Id, Response)
 	:: int * term # "Data predicate that keeps a queue of the responses
         to queries requested to Prolog side from Java side.".
 %% -----------------------------------------------------------------------
@@ -345,6 +345,9 @@ java_debug(_) :- !.
 %%------------------------------------------------------------------------
  
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*8+2,2002/06/14,18:55*04+'CEST'), "Patched
+   documentation for Java interface.  (Francisco Bueno Carrillo)").
 
 :- comment(version(1*7+82,2001/03/30,13:16*44+'CEST'), "Added some
 cuts & changed socket dispatch loop to be a fail loop.  (MCL)").

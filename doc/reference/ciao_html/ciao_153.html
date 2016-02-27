@@ -1,22 +1,18 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
+<TITLE>The Ciao Prolog System               - Calling emacs from Prolog</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC599" HREF="ciao_toc.html#TOC599">Unweighted graph-processing utilities</A></H1>
+<H1><A NAME="SEC607" HREF="ciao_toc.html#TOC607">Calling emacs from Prolog</A></H1>
 <P>
-<A NAME="IDX6081"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
+<A NAME="IDX6234"></A>
 
 
 <P>
@@ -24,40 +20,128 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>,
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.9#105 (1999/6/4, 12:24:49 MEST)
+<STRONG>Version of last change:</STRONG> 1.5#54 (2000/2/10, 21:32:23 CET)
 
 
 <P>
-An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
-
-
-<P>
-An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
-
-
-<P>
-An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
-
-
-<P>
-A vertex can be any term. Two vertices are distinct iff they are not identical (
-<A NAME="IDX6082"></A>
-<CODE>==/2</CODE>). 
-
-
-<P>
-A path is represented as a list of vertices. No vertex can appear twice in a path. 
+This library provides a 
+<A NAME="IDX6235"></A>
+<A NAME="IDX6236"></A>
+<EM>prolog-emacs interface</EM>. This interface is complementary to (and independent from) the 
+<A NAME="IDX6237"></A>
+emacs mode, which is used to develop programs from within the 
+<A NAME="IDX6238"></A>
+<CODE>emacs</CODE> editor/environment. Instead, this library allows calling 
+<A NAME="IDX6239"></A>
+<CODE>emacs</CODE> from a running Prolog program. This facilitates the use of 
+<A NAME="IDX6240"></A>
+<CODE>emacs</CODE> as a "user interface" for a Prolog program. Emacs can be made to: 
 
 
 
 <UL>
-<LI><A HREF="ciao_153.html#SEC600">Usage and interface (ugraphs)</A>
-<LI><A HREF="ciao_153.html#SEC601">Documentation on exports (ugraphs)</A>
+
+<LI>Visit a file, which can then be edited.
+
+<LI>Execute arbitrary
+
+<A NAME="IDX6241"></A>
+<A NAME="IDX6242"></A>
+<EM>emacs lisp</EM> code, sent from Prolog. 
+
+</UL>
+
+<P>
+In order for this library to work correctly, the following is needed: 
+
+
+
+<UL>
+
+<LI>You should be running the
+
+<A NAME="IDX6243"></A>
+<CODE>emacs</CODE> editor on the same machine where the executable calling this library is executing. 
+
+<LI>This
+
+<A NAME="IDX6244"></A>
+<CODE>emacs</CODE> should be running the 
+<A NAME="IDX6245"></A>
+<A NAME="IDX6246"></A>
+<EM>emacs server</EM>. This can be done by including the following line in your 
+<A NAME="IDX6247"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<PRE>
+;; Start a server that emacsclient can connect to.
+(server-start)
+</PRE>
+
+Or typing <CODE>M-x server-start</CODE> within 
+<A NAME="IDX6248"></A>
+<CODE>emacs</CODE>. 
+
+</UL>
+
+<P>
+This suffices for using 
+<A NAME="IDX6249"></A>
+<CODE>emacs</CODE> to edit files. For running arbitrary code the following also needs to be added to the 
+<A NAME="IDX6250"></A>
+<CODE>.emacs</CODE> file: 
+
+
+<DL COMPACT>
+
+<DT><CODE>(setq enable-local-eval t)</CODE>
+<DD>
+Allows executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval nil)</CODE>
+<DD>
+Does not allow executing lisp code without asking. 
+
+<DT><CODE>(setq enable-local-eval 'maybe)</CODE>
+<DD>
+Allows executing lisp code only if user agrees after asking (asks interactively for every invocation). 
+
+</DL>
+
+<P>
+<STRONG>Examples:</STRONG> 
+
+
+<P>
+Assuming that a <CODE>.pl</CODE> file loads this library, then: 
+
+
+<DL COMPACT>
+
+<DT><CODE>..., emacs_edit('foo'), ...</CODE>
+<DD>
+Opens file <CODE>foo</CODE> for editing in 
+<A NAME="IDX6251"></A>
+<CODE>emacs</CODE>. 
+
+<DT><CODE>..., emacs_eval_nowait("(run-ciao-toplevel)"), ...</CODE>
+<DD>
+Starts execution of a Ciao top-level within 
+<A NAME="IDX6252"></A>
+<CODE>emacs</CODE>. 
+
+</DL>
+
+
+<UL>
+<LI><A HREF="ciao_153.html#SEC608">Usage and interface (emacs)</A>
+<LI><A HREF="ciao_153.html#SEC609">Documentation on exports (emacs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC600" HREF="ciao_toc.html#TOC600">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
+<H2><A NAME="SEC608" HREF="ciao_toc.html#TOC608">Usage and interface (<CODE>emacs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -65,7 +149,7 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(ugraphs)).</CODE>
+<CODE>:- use_module(library(emacs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -74,29 +158,19 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6083"></A>
-<CODE>vertices_edges_to_ugraph/3</CODE>, 
-<A NAME="IDX6084"></A>
-<CODE>neighbors/3</CODE>, 
-<A NAME="IDX6085"></A>
-<CODE>edges/2</CODE>, 
-<A NAME="IDX6086"></A>
-<CODE>del_vertices/3</CODE>, 
-<A NAME="IDX6087"></A>
-<CODE>vertices/2</CODE>, 
-<A NAME="IDX6088"></A>
-<CODE>add_vertices/3</CODE>, 
-<A NAME="IDX6089"></A>
-<CODE>add_edges/3</CODE>, 
-<A NAME="IDX6090"></A>
-<CODE>transpose/2</CODE>, 
-<A NAME="IDX6091"></A>
-<CODE>point_to/3</CODE>.
+<A NAME="IDX6253"></A>
+<CODE>emacs_edit/1</CODE>, 
+<A NAME="IDX6254"></A>
+<CODE>emacs_edit_nowait/1</CODE>, 
+<A NAME="IDX6255"></A>
+<CODE>emacs_eval/1</CODE>, 
+<A NAME="IDX6256"></A>
+<CODE>emacs_eval_nowait/1</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6092"></A>
-<CODE>ugraph/1</CODE>.
+<A NAME="IDX6257"></A>
+<CODE>elisp_string/1</CODE>.
 
 </UL>
 
@@ -107,10 +181,14 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6093"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX6094"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX6258"></A>
+<CODE>terms_check</CODE>, 
+<A NAME="IDX6259"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX6260"></A>
+<CODE>terms</CODE>, 
+<A NAME="IDX6261"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -120,184 +198,104 @@ A path is represented as a list of vertices. No vertex can appear twice in a pat
 
 
 
-<H2><A NAME="SEC601" HREF="ciao_toc.html#TOC601">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
+<H2><A NAME="SEC609" HREF="ciao_toc.html#TOC609">Documentation on exports (<CODE>emacs</CODE>)</A></H2>
 <P>
-<A NAME="IDX6095"></A>
-<A NAME="IDX6096"></A>
+<A NAME="IDX6262"></A>
+<A NAME="IDX6263"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
-<DD><A NAME="IDX6097"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit/1:</B>
+<DD><A NAME="IDX6264"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>emacs_edit(+filename)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX6265"></A>
+<CODE>emacs</CODE>. Waits for editing to finish before continuing. 
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6098"></A>
-<A NAME="IDX6099"></A>
+<A NAME="IDX6266"></A>
+<A NAME="IDX6267"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
-<DD><A NAME="IDX6100"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_edit_nowait/1:</B>
+<DD><A NAME="IDX6268"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex,+Graph,-Neighbors)</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_edit_nowait(+filename)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
+<LI><EM>Description:</EM> Opens the given file for editing in
+
+<A NAME="IDX6269"></A>
+<CODE>emacs</CODE> and continues without waiting for editing to finish. 
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6270"></A>
+<A NAME="IDX6271"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval/1:</B>
+<DD><A NAME="IDX6272"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval(+elisp_string)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument. Waits for the command to finish before continuing.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6101"></A>
-<A NAME="IDX6102"></A>
+<A NAME="IDX6273"></A>
+<A NAME="IDX6274"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
-<DD><A NAME="IDX6103"></A>
+<DT><span class="define">PREDICATE:</span> <B>emacs_eval_nowait/1:</B>
+<DD><A NAME="IDX6275"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges(+Graph,-Edges)</CODE>
+<STRONG>Usage:</STRONG> <CODE>emacs_eval_nowait(+elisp_string)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
+<LI><EM>Description:</EM> Executes in emacs the lisp code given as argument and continues without waiting for it to finish.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6104"></A>
-<A NAME="IDX6105"></A>
+<A NAME="IDX6276"></A>
+<A NAME="IDX6277"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
-<DD><A NAME="IDX6106"></A>
+<DT><span class="define">REGTYPE:</span> <B>elisp_string/1:</B>
+<DD><A NAME="IDX6278"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1,+Vertices,-Graph2)</CODE>
+<STRONG>Usage:</STRONG> <CODE>elisp_string(L)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
+<LI><EM>Description:</EM> <CODE>L</CODE> is a string containing
 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6107"></A>
-<A NAME="IDX6108"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
-<DD><A NAME="IDX6109"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>vertices(+Graph,-Vertices)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6110"></A>
-<A NAME="IDX6111"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
-<DD><A NAME="IDX6112"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1,+Vertices,-Graph2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6113"></A>
-<A NAME="IDX6114"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
-<DD><A NAME="IDX6115"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1,+Edges,-Graph2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6116"></A>
-<A NAME="IDX6117"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
-<DD><A NAME="IDX6118"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>transpose(+Graph,-Transpose)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6119"></A>
-<A NAME="IDX6120"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
-<DD><A NAME="IDX6121"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex,+Graph,-Point_to)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6122"></A>
-<A NAME="IDX6123"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
-<DD><A NAME="IDX6124"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
-
+<A NAME="IDX6279"></A>
+<CODE>emacs</CODE> lisp code. 
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_152.html">previous</A>, <A HREF="ciao_154.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,33 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - field_value (library)</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget4 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC725" HREF="ciao_toc.html#TOC725">field_value (library)</A></H1>
+<H1><A NAME="SEC731" HREF="ciao_toc.html#TOC731">table_widget4 (library)</A></H1>
 <P>
-<A NAME="IDX7113"></A>
+<A NAME="IDX7305"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 0.1 (1998/12/9, 13:51:13 MET)
+In addition to the features explained in the introduction, predicates exported by this module display tables in which the font weight for the elements placed in the first row and column is bold. The remaining elements are in medium weight font. 
+
+
+<P>
+If the arguments are not in a correct format the exception <CODE>error8</CODE> will be thrown. 
 
 
 
 <UL>
-<LI><A HREF="ciao_193.html#SEC726">Usage and interface (field_value)</A>
-<LI><A HREF="ciao_193.html#SEC727">Documentation on exports (field_value)</A>
+<LI><A HREF="ciao_193.html#SEC732">Usage and interface (table_widget4)</A>
+<LI><A HREF="ciao_193.html#SEC733">Documentation on exports (table_widget4)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC726" HREF="ciao_toc.html#TOC726">Usage and interface (<CODE>field_value</CODE>)</A></H2>
+<H2><A NAME="SEC732" HREF="ciao_toc.html#TOC732">Usage and interface (<CODE>table_widget4</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +39,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(field_value)).</CODE>
+<CODE>:- use_module(library(table_widget4)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,10 +48,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7114"></A>
-<CODE>fieldValue/6</CODE>, 
-<A NAME="IDX7115"></A>
-<CODE>mfstringValue/5</CODE>.
+<A NAME="IDX7306"></A>
+<CODE>tablewidget4/4</CODE>, 
+<A NAME="IDX7307"></A>
+<CODE>tablewidget4/5</CODE>.
 
 </UL>
 
@@ -58,14 +62,18 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7116"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7117"></A>
-<CODE>provrml/parser</CODE>, 
-<A NAME="IDX7118"></A>
-<CODE>provrml/parser_util</CODE>, 
-<A NAME="IDX7119"></A>
-<CODE>provrml/error</CODE>.
+<A NAME="IDX7308"></A>
+<CODE>chartlib/genbar1</CODE>, 
+<A NAME="IDX7309"></A>
+<CODE>chartlib/bltclass</CODE>, 
+<A NAME="IDX7310"></A>
+<CODE>chartlib/table_widget1</CODE>, 
+<A NAME="IDX7311"></A>
+<CODE>chartlib/test_format</CODE>, 
+<A NAME="IDX7312"></A>
+<CODE>chartlib/install_utils</CODE>, 
+<A NAME="IDX7313"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -75,36 +83,77 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>,
 
 
 
-<H2><A NAME="SEC727" HREF="ciao_toc.html#TOC727">Documentation on exports (<CODE>field_value</CODE>)</A></H2>
+<H2><A NAME="SEC733" HREF="ciao_toc.html#TOC733">Documentation on exports (<CODE>table_widget4</CODE>)</A></H2>
 <P>
-<A NAME="IDX7120"></A>
-<A NAME="IDX7121"></A>
+<A NAME="IDX7314"></A>
+<A NAME="IDX7315"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fieldValue/6:</B>
-<DD><A NAME="IDX7122"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget4/4:</B>
+<DD><A NAME="IDX7316"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>tablewidget4(Title,Header,ElementTable,Footer)</CODE>
 
+
+<P>
+Shows a regular table in a window. The system sets a default background image for the widget. 
+
+
+<P>
+Example: 
+
+<PRE>
+tablewidget4('Some sterEUtypes',
+  'Source: Eurostat yearbook, 1999',
+  [['Country','Adult alcohol intake per year (litres)',
+       'Cigarettes smoked per day per adult',
+             'Suicides per 100000 people'],
+      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
+      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
+      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
+  'This is part of the published table').
+</PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7123"></A>
-<A NAME="IDX7124"></A>
+<A NAME="IDX7317"></A>
+<A NAME="IDX7318"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>mfstringValue/5:</B>
-<DD><A NAME="IDX7125"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget4/5:</B>
+<DD><A NAME="IDX7319"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>tablewidget4(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
 
+
+<P>
+This predicate and 
+<A NAME="IDX7320"></A>
+<CODE>tablewidget4/4</CODE> are comparable, except that in the already defined you must set the background image. 
+
+
+<P>
+Example: 
+
+<PRE>
+tablewidget4('Some sterEUtypes',
+  'Source: Eurostat yearbook, 1999',
+  [['Country','Adult alcohol intake per year (litres)',
+       'Cigarettes smoked per day per adult',
+           'Suicides per 100000 people'],
+      ['Finland','8.4','2.2','26.3'],['Spain','11.4','5.3','7.5'],
+      ['Austria','11.9','4.6','20.7'],['Britain','9.4','4.2','7.1'],
+      ['USA','4.7','4.9','13'],['European Union','11.1','4.5','11.9']],
+  'This is part of the published table',
+  './images/rain.gif').
+</PRE>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_192.html">previous</A>, <A HREF="ciao_194.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,84 +1,303 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - A Program to Help Cleaning your Directories</TITLE>
+<TITLE>The Ciao Prolog System               - Unweighted graph-processing utilities</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC621" HREF="ciao_toc.html#TOC621">A Program to Help Cleaning your Directories</A></H1>
-
+<H1><A NAME="SEC630" HREF="ciao_toc.html#TOC630">Unweighted graph-processing utilities</A></H1>
 <P>
-<STRONG>Author(s):</STRONG> Manuel Carro.
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#3 (2001/10/25, 14:31:59 CEST)
+<A NAME="IDX6484"></A>
 
 
 <P>
-A simple program for traversing a directory tree and deciding which files may be deleted in order to save space and not to loose information. 
+<STRONG>Author(s):</STRONG> M. Carlsson, adapted from shared code written by Richard A O'Keefe. Mods by F.Bueno and M.Carro..
+
+
+<P>
+<STRONG>Version:</STRONG> 1.8#1 (2002/5/27, 19:57:48 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 0.9#105 (1999/6/4, 12:24:49 MEST)
+
+
+<P>
+An unweighted directed graph (ugraph) is represented as a list of (vertex-neighbors) pairs, where the pairs are in standard order (as produced by keysort with unique keys) and the neighbors of each vertex are also in standard order (as produced by sort), and every neighbor appears as a vertex even if it has no neighbors itself. 
+
+
+<P>
+An undirected graph is represented as a directed graph where for each edge <CODE>(U,V)</CODE> there is a symmetric edge <CODE>(V,U)</CODE>. 
+
+
+<P>
+An edge <CODE>(U,V)</CODE> is represented as the term <CODE>U-V</CODE>. 
+
+
+<P>
+A vertex can be any term. Two vertices are distinct iff they are not identical (
+<A NAME="IDX6485"></A>
+<CODE>==/2</CODE>). 
+
+
+<P>
+A path is represented as a list of vertices. No vertex can appear twice in a path. 
 
 
 
 <UL>
-<LI><A HREF="ciao_161.html#SEC622">Usage (cleandirs)</A>
-<LI><A HREF="ciao_161.html#SEC623">Known bugs and planned improvements (cleandirs)</A>
+<LI><A HREF="ciao_161.html#SEC631">Usage and interface (ugraphs)</A>
+<LI><A HREF="ciao_161.html#SEC632">Documentation on exports (ugraphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC622" HREF="ciao_toc.html#TOC622">Usage (cleandirs)</A></H2>
+<H2><A NAME="SEC631" HREF="ciao_toc.html#TOC631">Usage and interface (<CODE>ugraphs</CODE>)</A></H2>
 
+<div class="cartouche">
 
-<PRE>
-   
-cleandirs: &#60;initial_dir&#62; &#60;delete_options&#62; &#60;backup_options&#62;
-cleandirs explores &#60;initial_dir&#62; (which should be an absolute path)
-and looks for backup files and files which can be generated from other
-files, using a plausible heuristic aimed at retaining the same amount
-of information while recovering some disk space.  The heuristic is
-based on the extension of the filename.
+<UL>
 
-Delete options is one of:
-   --list: just list the files/directories which are amenable to be deleted,
-           but do not delete them. SAFE.
-    --ask: list the files/directories and ask for deletion. UNSAFE if you
-           make a mistake.
- --delete: just delete the files/directories without asking.  I envy your
-           brave soul if you choose this option.
+<LI><STRONG>Library usage:</STRONG>
 
-Backup options is one of:
- --includebackups: include backup files in the list of files to check.
- --excludebackups: do not include backup files in the list of files to check.
-    --onlybackups: include only backup files in the list of files to check.
+<CODE>:- use_module(library(ugraphs)).</CODE>
 
-Symbolic links are not traversed.  Special files are not checked.
-
-</PRE>
-
-<P>
- 
-Invoking the program with no arguments will return an up-to-date information on the options.
-
-
-
-
-<H2><A NAME="SEC623" HREF="ciao_toc.html#TOC623">Known bugs and planned improvements (<CODE>cleandirs</CODE>)</A></H2>
+<LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI>
+<LI><EM>Predicates:</EM>
 
-Recursive removal of subdirectories relies on the existence of a recursive /bin/rm command in your system.
+<A NAME="IDX6486"></A>
+<CODE>vertices_edges_to_ugraph/3</CODE>, 
+<A NAME="IDX6487"></A>
+<CODE>neighbors/3</CODE>, 
+<A NAME="IDX6488"></A>
+<CODE>edges/2</CODE>, 
+<A NAME="IDX6489"></A>
+<CODE>del_vertices/3</CODE>, 
+<A NAME="IDX6490"></A>
+<CODE>vertices/2</CODE>, 
+<A NAME="IDX6491"></A>
+<CODE>add_vertices/3</CODE>, 
+<A NAME="IDX6492"></A>
+<CODE>add_edges/3</CODE>, 
+<A NAME="IDX6493"></A>
+<CODE>transpose/2</CODE>, 
+<A NAME="IDX6494"></A>
+<CODE>point_to/3</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6495"></A>
+<CODE>ugraph/1</CODE>.
+
 </UL>
 
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX6496"></A>
+<CODE>sets</CODE>, 
+<A NAME="IDX6497"></A>
+<CODE>sort</CODE>.
+
+</UL>
+
+</UL>
+
+</div class="cartouche">
+
+
+
+<H2><A NAME="SEC632" HREF="ciao_toc.html#TOC632">Documentation on exports (<CODE>ugraphs</CODE>)</A></H2>
+<P>
+<A NAME="IDX6498"></A>
+<A NAME="IDX6499"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_ugraph/3:</B>
+<DD><A NAME="IDX6500"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX6501"></A>
+<A NAME="IDX6502"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>neighbors/3:</B>
+<DD><A NAME="IDX6503"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>neighbors(+Vertex,+Graph,-Neighbors)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Vertex</CODE> is a vertex in <CODE>Graph</CODE> and <CODE>Neighbors</CODE> are its neighbors.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6504"></A>
+<A NAME="IDX6505"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges/2:</B>
+<DD><A NAME="IDX6506"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges(+Graph,-Edges)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Edges</CODE> with the edges in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6507"></A>
+<A NAME="IDX6508"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>del_vertices/3:</B>
+<DD><A NAME="IDX6509"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>del_vertices(+Graph1,+Vertices,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> and all edges to and from <CODE>Vertices</CODE> removed from it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6510"></A>
+<A NAME="IDX6511"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>vertices/2:</B>
+<DD><A NAME="IDX6512"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>vertices(+Graph,-Vertices)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Vertices</CODE> with the vertices in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6513"></A>
+<A NAME="IDX6514"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_vertices/3:</B>
+<DD><A NAME="IDX6515"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_vertices(+Graph1,+Vertices,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Vertices</CODE> added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6516"></A>
+<A NAME="IDX6517"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>add_edges/3:</B>
+<DD><A NAME="IDX6518"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>add_edges(+Graph1,+Edges,-Graph2)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Graph2</CODE> is <CODE>Graph1</CODE> with <CODE>Edges</CODE> and their 'to' and 'from' vertices added to it.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6519"></A>
+<A NAME="IDX6520"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>transpose/2:</B>
+<DD><A NAME="IDX6521"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>transpose(+Graph,-Transpose)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Transpose</CODE> is the graph computed by replacing each edge <CODE>(u,v)</CODE> in <CODE>Graph</CODE> by its symmetric edge <CODE>(v,u)</CODE>. It can only be used one way around. The cost is O(N^2).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6522"></A>
+<A NAME="IDX6523"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>point_to/3:</B>
+<DD><A NAME="IDX6524"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>point_to(+Vertex,+Graph,-Point_to)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Is true if <CODE>Point_to</CODE> is the list of nodes which go directly to <CODE>Vertex</CODE> in <CODE>Graph</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6525"></A>
+<A NAME="IDX6526"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>ugraph/1:</B>
+<DD><A NAME="IDX6527"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>ugraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is an ugraph.
+
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_160.html">previous</A>, <A HREF="ciao_162.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,29 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 27 May 2002 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 14 June 2002 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - generator_util (library)</TITLE>
+<TITLE>The Ciao Prolog System               - boundary (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC734" HREF="ciao_toc.html#TOC734">generator_util (library)</A></H1>
+<H1><A NAME="SEC741" HREF="ciao_toc.html#TOC741">boundary (library)</A></H1>
 <P>
-<A NAME="IDX7165"></A>
+<A NAME="IDX7417"></A>
+
+
+<P>
+<STRONG>Version:</STRONG> 0.1#1 (1998/12/14, 19:22:27 MET)
+
+
+<P>
+This module offers predicate to check values according to their boundaries and offers lists of possible node ascendents.
 
 
 
 <UL>
-<LI><A HREF="ciao_196.html#SEC735">Usage and interface (generator_util)</A>
-<LI><A HREF="ciao_196.html#SEC736">Documentation on exports (generator_util)</A>
+<LI><A HREF="ciao_196.html#SEC742">Usage and interface (boundary)</A>
+<LI><A HREF="ciao_196.html#SEC743">Documentation on exports (boundary)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC735" HREF="ciao_toc.html#TOC735">Usage and interface (<CODE>generator_util</CODE>)</A></H2>
+<H2><A NAME="SEC742" HREF="ciao_toc.html#TOC742">Usage and interface (<CODE>boundary</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +39,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(generator_util)).</CODE>
+<CODE>:- use_module(library(boundary)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,42 +48,16 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7166"></A>
-<CODE>reading/4</CODE>, 
-<A NAME="IDX7167"></A>
-<CODE>reading/5</CODE>, 
-<A NAME="IDX7168"></A>
-<CODE>reading/6</CODE>, 
-<A NAME="IDX7169"></A>
-<CODE>open_node/6</CODE>, 
-<A NAME="IDX7170"></A>
-<CODE>close_node/5</CODE>, 
-<A NAME="IDX7171"></A>
-<CODE>close_nodeGut/4</CODE>, 
-<A NAME="IDX7172"></A>
-<CODE>open_PROTO/4</CODE>, 
-<A NAME="IDX7173"></A>
-<CODE>close_PROTO/6</CODE>, 
-<A NAME="IDX7174"></A>
-<CODE>open_EXTERNPROTO/5</CODE>, 
-<A NAME="IDX7175"></A>
-<CODE>close_EXTERNPROTO/6</CODE>, 
-<A NAME="IDX7176"></A>
-<CODE>open_DEF/5</CODE>, 
-<A NAME="IDX7177"></A>
-<CODE>close_DEF/5</CODE>, 
-<A NAME="IDX7178"></A>
-<CODE>open_Script/5</CODE>, 
-<A NAME="IDX7179"></A>
-<CODE>close_Script/5</CODE>, 
-<A NAME="IDX7180"></A>
-<CODE>decompose_field/3</CODE>, 
-<A NAME="IDX7181"></A>
-<CODE>indentation_list/2</CODE>, 
-<A NAME="IDX7182"></A>
-<CODE>start_vrmlScene/4</CODE>, 
-<A NAME="IDX7183"></A>
-<CODE>remove_comments/4</CODE>.
+<A NAME="IDX7418"></A>
+<CODE>boundary_check/3</CODE>, 
+<A NAME="IDX7419"></A>
+<CODE>boundary_rotation_first/2</CODE>, 
+<A NAME="IDX7420"></A>
+<CODE>boundary_rotation_last/2</CODE>, 
+<A NAME="IDX7421"></A>
+<CODE>reserved_words/1</CODE>, 
+<A NAME="IDX7422"></A>
+<CODE>children_nodes/1</CODE>.
 
 </UL>
 
@@ -86,18 +68,26 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7184"></A>
-<CODE>provrml/error</CODE>, 
-<A NAME="IDX7185"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7186"></A>
-<CODE>provrml/io</CODE>, 
-<A NAME="IDX7187"></A>
-<CODE>provrml/field_value_check</CODE>, 
-<A NAME="IDX7188"></A>
-<CODE>provrml/lookup</CODE>, 
-<A NAME="IDX7189"></A>
-<CODE>provrml/parser_util</CODE>.
+<A NAME="IDX7423"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7424"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7425"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7426"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7427"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7428"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7429"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7430"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7431"></A>
+<CODE>provrml/internal_types</CODE>, 
+<A NAME="IDX7432"></A>
+<CODE>provrml/error</CODE>.
 
 </UL>
 
@@ -107,326 +97,130 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>,
 
 
 
-<H2><A NAME="SEC736" HREF="ciao_toc.html#TOC736">Documentation on exports (<CODE>generator_util</CODE>)</A></H2>
+<H2><A NAME="SEC743" HREF="ciao_toc.html#TOC743">Documentation on exports (<CODE>boundary</CODE>)</A></H2>
 <P>
-<A NAME="IDX7190"></A>
-<A NAME="IDX7191"></A>
+<A NAME="IDX7433"></A>
+<A NAME="IDX7434"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>reading/4:</B>
-<DD><A NAME="IDX7192"></A>
+<DT><span class="define">PREDICATE:</span> <B>boundary_check/3:</B>
+<DD><A NAME="IDX7435"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>reading(+IS,+NodeTypeId,+ParseIn,-ParseOut)</CODE>
+<STRONG>Usage:</STRONG> <CODE>boundary_check(+Value_to_check,+Init_value,+Bound)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predicate will refer to a formerly introduced interface. We do a checkup of the access type and output the values.
+<LI><EM>Description:</EM> This predicate check the boundaries of the given value according to the boudary values. If the value is wrong according to the boundaries, the value is checked according to the initial value given. If the value continues to be wrong, an error will be raised accordingly.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+IS</CODE> is an atom.
+<CODE>+Value_to_check</CODE> is an atom.
  (<CODE>basic_props:atm/1</CODE>)
 
-<CODE>+NodeTypeId</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
+<CODE>+Init_value</CODE> is a list of <CODE>atm</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
 
-<CODE>+ParseIn</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>-ParseOut</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>reading(+nodeGut,+NodeName,+ParseIn,-ParseOut)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> This predicate will read a node gut and will check the field according to the name.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+nodeGut</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+NodeName</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>+ParseIn</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
-
-<CODE>-ParseOut</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
+<CODE>+Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7193"></A>
-<A NAME="IDX7194"></A>
+<A NAME="IDX7436"></A>
+<A NAME="IDX7437"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>reading/5:</B>
-<DD><A NAME="IDX7195"></A>
+<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_first/2:</B>
+<DD><A NAME="IDX7438"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7196"></A>
-<A NAME="IDX7197"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>reading/6:</B>
-<DD><A NAME="IDX7198"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7199"></A>
-<A NAME="IDX7200"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>open_node/6:</B>
-<DD><A NAME="IDX7201"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7202"></A>
-<A NAME="IDX7203"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>close_node/5:</B>
-<DD><A NAME="IDX7204"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7205"></A>
-<A NAME="IDX7206"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>close_nodeGut/4:</B>
-<DD><A NAME="IDX7207"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7208"></A>
-<A NAME="IDX7209"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>open_PROTO/4:</B>
-<DD><A NAME="IDX7210"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7211"></A>
-<A NAME="IDX7212"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>close_PROTO/6:</B>
-<DD><A NAME="IDX7213"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7214"></A>
-<A NAME="IDX7215"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>open_EXTERNPROTO/5:</B>
-<DD><A NAME="IDX7216"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7217"></A>
-<A NAME="IDX7218"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>close_EXTERNPROTO/6:</B>
-<DD><A NAME="IDX7219"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7220"></A>
-<A NAME="IDX7221"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>open_DEF/5:</B>
-<DD><A NAME="IDX7222"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7223"></A>
-<A NAME="IDX7224"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>close_DEF/5:</B>
-<DD><A NAME="IDX7225"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7226"></A>
-<A NAME="IDX7227"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>open_Script/5:</B>
-<DD><A NAME="IDX7228"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7229"></A>
-<A NAME="IDX7230"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>close_Script/5:</B>
-<DD><A NAME="IDX7231"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7232"></A>
-<A NAME="IDX7233"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>decompose_field/3:</B>
-<DD><A NAME="IDX7234"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7235"></A>
-<A NAME="IDX7236"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>indentation_list/2:</B>
-<DD><A NAME="IDX7237"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>indentation_list(+Parse,-IndList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>boundary_rotation_first(+Bound_double,-Bound)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> This predcate will construct a list with indentations to be output before text. The information of the indentations is inside the parse structure.
+<LI><EM>Description:</EM> The predicate will extract the first bounds from a double bound.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Parse</CODE> is a parse structure.
- (<CODE>internal_types:parse/1</CODE>)
+<CODE>+Bound_double</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
 
-<CODE>-IndList</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>-Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7439"></A>
+<A NAME="IDX7440"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>boundary_rotation_last/2:</B>
+<DD><A NAME="IDX7441"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>boundary_rotation_last(+Bound_double,-Bound)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The predicate will extract the last bounds from a double bound.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Bound_double</CODE> is a variable interval.
+ (<CODE>internal_types:bound_double/1</CODE>)
+
+<CODE>-Bound</CODE> is a variable interval.
+ (<CODE>internal_types:bound/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7442"></A>
+<A NAME="IDX7443"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>reserved_words/1:</B>
+<DD><A NAME="IDX7444"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>reserved_words(-List)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns a list with the reserved words, words prohibited to use in cases not appropiated.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7238"></A>
-<A NAME="IDX7239"></A>
+<A NAME="IDX7445"></A>
+<A NAME="IDX7446"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>start_vrmlScene/4:</B>
-<DD><A NAME="IDX7240"></A>
+<DT><span class="define">PREDICATE:</span> <B>children_nodes/1:</B>
+<DD><A NAME="IDX7447"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX7241"></A>
-<A NAME="IDX7242"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>remove_comments/4:</B>
-<DD><A NAME="IDX7243"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>remove_comments(+Value,-CommentsBefore,-ValueClean,-CommentsAfter)</CODE>
+<STRONG>Usage:</STRONG> <CODE>children_nodes(-List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The predicate will remove comments and return the comments before and after the pure value.
+<LI><EM>Description:</EM> Returns a list of all nodes possible as children nodes.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Value</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-CommentsBefore</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-ValueClean</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-CommentsAfter</CODE> is a list of <CODE>atm</CODE>s.
+<CODE>-List</CODE> is a list of <CODE>atm</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_215.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_195.html">previous</A>, <A HREF="ciao_197.html">next</A>, <A HREF="ciao_223.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>
