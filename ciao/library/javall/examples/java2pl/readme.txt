@@ -10,11 +10,11 @@ output.
 
 To start this example, type:
 
-$ java -cp ../../:./ example1 ../../plserver
+$ java -cp ../../:./ example0 ../../plserver
 
 or, if you are using Windows:
 
-  java -cp ..\..\;.\ example1 <ciao-home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx 
+  java -cp ..\..\;.\ example0 <ciao-home>\Win32\bin\ciaoengine -C -b ..\..\plserver.cpx 
 
 where java must be on version 1.2 or higher, and <ciao-home>
 represents the Ciao home directory.
