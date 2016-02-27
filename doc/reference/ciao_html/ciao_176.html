@@ -1,33 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Color and Pattern Library</TITLE>
+<TITLE>The Ciao Prolog System               - Low level Interface between Prolog and blt</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_175.html">previous</A>, <A HREF="ciao_177.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_175.html">previous</A>, <A HREF="ciao_177.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC678" HREF="ciao_toc.html#TOC678">Color and Pattern Library</A></H1>
+<H1><A NAME="SEC691" HREF="ciao_toc.html#TOC691">Low level Interface between Prolog and blt</A></H1>
 <P>
-<A NAME="IDX7033"></A>
+<A NAME="IDX7058"></A>
 
 
 <P>
-This module contains predicates to access and check conformance to the available colors and patterns.
+This module exports some predicates to interact with Tcl-tk, particularly with the bltwish program. Bltwish is a windowing shell consisting of the Tcl command languaje, the Tk toolkit plus the additional commands that comes with the BLT library and a main program that reads commands. It creates a main window and then processes Tcl commands. 
 
 
 
 <UL>
-<LI><A HREF="ciao_176.html#SEC679">Usage and interface (color_pattern)</A>
-<LI><A HREF="ciao_176.html#SEC680">Documentation on exports (color_pattern)</A>
+<LI><A HREF="ciao_176.html#SEC692">Usage and interface (bltclass)</A>
+<LI><A HREF="ciao_176.html#SEC693">Documentation on exports (bltclass)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC679" HREF="ciao_toc.html#TOC679">Usage and interface (<CODE>color_pattern</CODE>)</A></H2>
+<H2><A NAME="SEC692" HREF="ciao_toc.html#TOC692">Usage and interface (<CODE>bltclass</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +35,7 @@ This module contains predicates to access and check conformance to the available
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(color_pattern)).</CODE>
+<CODE>:- use_module(library(bltclass)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,25 +44,17 @@ This module contains predicates to access and check conformance to the available
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7034"></A>
-<CODE>color/2</CODE>, 
-<A NAME="IDX7035"></A>
-<CODE>pattern/2</CODE>, 
-<A NAME="IDX7036"></A>
-<CODE>random_color/1</CODE>, 
-<A NAME="IDX7037"></A>
-<CODE>random_lightcolor/1</CODE>, 
-<A NAME="IDX7038"></A>
-<CODE>random_darkcolor/1</CODE>, 
-<A NAME="IDX7039"></A>
-<CODE>random_pattern/1</CODE>.
+<A NAME="IDX7059"></A>
+<CODE>new_interp/1</CODE>, 
+<A NAME="IDX7060"></A>
+<CODE>tcltk_raw_code/2</CODE>, 
+<A NAME="IDX7061"></A>
+<CODE>interp_file/2</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX7040"></A>
-<CODE>color/1</CODE>, 
-<A NAME="IDX7041"></A>
-<CODE>pattern/1</CODE>.
+<A NAME="IDX7062"></A>
+<CODE>bltwish_interp/1</CODE>.
 
 </UL>
 
@@ -73,10 +65,20 @@ This module contains predicates to access and check conformance to the available
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7042"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX7043"></A>
-<CODE>random/random</CODE>.
+<A NAME="IDX7063"></A>
+<CODE>sockets/sockets</CODE>, 
+<A NAME="IDX7064"></A>
+<CODE>system</CODE>, 
+<A NAME="IDX7065"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7066"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7067"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX7068"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX7069"></A>
+<CODE>terms</CODE>.
 
 </UL>
 
@@ -86,249 +88,84 @@ This module contains predicates to access and check conformance to the available
 
 
 
-<H2><A NAME="SEC680" HREF="ciao_toc.html#TOC680">Documentation on exports (<CODE>color_pattern</CODE>)</A></H2>
+<H2><A NAME="SEC693" HREF="ciao_toc.html#TOC693">Documentation on exports (<CODE>bltclass</CODE>)</A></H2>
 <P>
-<A NAME="IDX7044"></A>
-<A NAME="IDX7045"></A>
+<A NAME="IDX7070"></A>
+<A NAME="IDX7071"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>color/1:</B>
-<DD><A NAME="IDX7046"></A>
+<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
+<DD><A NAME="IDX7072"></A>
 
 
 <P>
-<CODE>color(Color)</CODE>
+<CODE>new_interp(Interp)</CODE>
 
 
+<P>
+Creates a bltwish interprter and returns a socket. The socket allows the comunication between Prolog and Tcl-tk. Thus, bltwish receives the commands through the socket. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7073"></A>
+<A NAME="IDX7074"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
+<DD><A NAME="IDX7075"></A>
+
+
+<P>
+<CODE>tcltk_raw_code(Command_Line,Interp)</CODE>
+
+
+<P>
+Sends a command line to the interpreter. Tcl-tk parses and executes it. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7076"></A>
+<A NAME="IDX7077"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>bltwish_interp/1:</B>
+<DD><A NAME="IDX7078"></A>
+
+
+<P>
+<CODE>bltwish_interp(Interp)</CODE>
+
+
+<P>
+This type defines a bltwish interpreter. In fact, the bltwish interpreter receives the commands through the socket created. 
 
 <PRE>
-color('GreenYellow').
-color('Yellow').
-color('White').
-color('Wheat').
-color('BlueViolet').
-color('Violet').
-color('MediumTurquoise').
-color('DarkTurquoise').
-color('Turquoise').
-color('Thistle').
-color('Tan').
-color('Sienna').
-color('Salmon').
-color('VioletRed').
-color('OrangeRed').
-color('MediumVioletRed').
-color('IndianRed').
-color('Red').
-color('Plum').
-color('Pink').
-color('MediumOrchid').
-color('DarkOrchid').
-color('Orchid').
-color('Orange').
-color('Maroon').
-color('Magenta').
-color('Khaki').
-color('Grey').
-color('LightGray').
-color('DimGray').
-color('DarkSlateGray').
-color('YellowGreen').
-color('SpringGreen').
-color('SeaGreen').
-color('PaleGreen').
-color('MediumSpringGreen').
-color('MediumSeaGreen').
-color('LimeGreen').
-color('ForestGreen').
-color('DarkOliveGreen').
-color('DarkGreen').
-color('Green').
-color('Goldenrod').
-color('Gold').
-color('Brown').
-color('Firebrick').
-color('Cyan').
-color('Coral').
-color('SteelBlue').
-color('SlateBlue').
-color('SkyBlue').
-color('Navy').
-color('MidnightBlue').
-color('MediumSlateBlue').
-color('MediumBlue').
-color('LightSteelBlue').
-color('LightBlue').
-color('DarkSlateBlue').
-color('CornflowerBlue').
-color('CadetBlue').
-color('Blue').
-color('Black').
-color('MediumAquamarine').
-color('Aquamarine').
+bltwish_interp(Interp) :-
+        stream(Interp).
 </PRE>
 
-<P>
-Defines available colors for elements such as points, lines or bars. 
-
-
 </DL>
 
 <P>
-<A NAME="IDX7047"></A>
-<A NAME="IDX7048"></A>
+<A NAME="IDX7079"></A>
+<A NAME="IDX7080"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>color/2:</B>
-<DD><A NAME="IDX7049"></A>
+<DT><span class="define">PREDICATE:</span> <B>interp_file/2:</B>
+<DD><A NAME="IDX7081"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>color(C1,C2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Test whether the color <CODE>C1</CODE> is a valid color or not. If <CODE>C1</CODE> is a variable the predicate will choose a valid color randomly. If <CODE>C1</CODE> is a ground term that is not a valid color an exception (error9) will be thrown
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>color_pattern:color(C1)</CODE>
- (<CODE>color_pattern:color/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>color_pattern:color(C2)</CODE>
- (<CODE>color_pattern:color/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7050"></A>
-<A NAME="IDX7051"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pattern/1:</B>
-<DD><A NAME="IDX7052"></A>
+<CODE>interp_file(File,Interp)</CODE>
 
 
 <P>
-<CODE>pattern(Pattern)</CODE>
-
-
-
-<PRE>
-pattern(pattern1).
-pattern(pattern2).
-pattern(pattern3).
-pattern(pattern4).
-pattern(pattern5).
-pattern(pattern6).
-pattern(pattern7).
-pattern(pattern8).
-pattern(pattern9).
-</PRE>
-
-<P>
-Defines valid patterns used in the stipple style bar attribute. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7053"></A>
-<A NAME="IDX7054"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pattern/2:</B>
-<DD><A NAME="IDX7055"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pattern(P1,P2)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Test whether the pattern <CODE>P1</CODE> is a valid pattern or not. If <CODE>P1</CODE> is a variable the predicate will choose a valid pattern randomly. If <CODE>P1</CODE> is a ground term that is not a valid pattern an exception (error10) will be thrown.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>color_pattern:pattern(P1)</CODE>
- (<CODE>color_pattern:pattern/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>color_pattern:pattern(P2)</CODE>
- (<CODE>color_pattern:pattern/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7056"></A>
-<A NAME="IDX7057"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_color/1:</B>
-<DD><A NAME="IDX7058"></A>
-
-
-<P>
-<CODE>random_color(Color)</CODE>
-
-
-<P>
-This predicate choose a valid color among the availables randomly. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7059"></A>
-<A NAME="IDX7060"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_lightcolor/1:</B>
-<DD><A NAME="IDX7061"></A>
-
-
-<P>
-<CODE>random_lightcolor(Color)</CODE>
-
-
-<P>
-This predicate choose a valid light color among the availables randomly. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7062"></A>
-<A NAME="IDX7063"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_darkcolor/1:</B>
-<DD><A NAME="IDX7064"></A>
-
-
-<P>
-<CODE>random_darkcolor(Color)</CODE>
-
-
-<P>
-This predicate choose a valid dark color among the availables randomly. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7065"></A>
-<A NAME="IDX7066"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>random_pattern/1:</B>
-<DD><A NAME="IDX7067"></A>
-
-
-<P>
-<CODE>random_pattern(Pattern)</CODE>
-
-
-<P>
-This predicate choose a valid pattern among the availables randomly. 
+Sends the script file (File) to the interpreter through the socket. A script file is a file that contains commands that Tcl-tk can execute. 
 
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_175.html">previous</A>, <A HREF="ciao_177.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_175.html">previous</A>, <A HREF="ciao_177.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -34,6 +34,8 @@
 
 #define USAGE_STRING "Usage: %s [prolog_args] -C [-i] [-q] [-v] -b bootfile\n"
 
+#define SUBDIR_WINDOWS_BIN "/Win32/bin"
+
 BOOL interactive = FALSE;
 char emulatorlength[] = "This emulator executable has a size of        ";
 
@@ -259,7 +261,7 @@ int start(argc, argv)
     while(p >= library_directory && slashcount<3)
       if (*p-- == '/') slashcount++;
 
-    if (strcasecmp(++p,"/Win32/bin") == SAME)
+    if (strcasecmp(++p, SUBDIR_WINDOWS_BIN) == SAME)
       *p = (char)0;
     else {
       fprintf(stderr,
@@ -283,18 +285,60 @@ int start(argc, argv)
 	  ( RegOpenKeyEx(SOFTWAREKey, TEXT("Ciao Prolog"), 0, KEY_READ,
 			 &CiaoPrologKey) == ERROR_SUCCESS ) &&
 	  ( RegQueryValueEx(CiaoPrologKey, TEXT("ciao_dir"), NULL, NULL,
-		            library_directory, &buffer_size) == ERROR_SUCCESS ))
+		           library_directory, &buffer_size) == ERROR_SUCCESS ))
 	{
 	  RegCloseKey(SOFTWAREKey);
 	  RegCloseKey(CiaoPrologKey);
 	} else {
 	  fprintf(stderr,
-		  "Registry key not found. Remember to install Ciao Prolog!\n");
+                 "Registry key not found. Remember to install Ciao Prolog!\n");
 	  at_exit(1); 
 	}
     }
 #else
     library_directory = installibdir;
+#endif
+
+#if defined(Win32)
+    {
+      /* Now, we adjust a couple of things to be used inside Windows;
+         outstandingly, the PATH and the presence of the SHELL variable.
+         The PATH should include the Win32/bin directory under the Windows
+         distribution; inside it there is a sh.exe which we assign to the
+         SHELL variable if it has not been already set by the user.  */
+    
+    /* Construct the Win32/bin directory */
+
+      char *temp_path = (char *)checkalloc(MAXPATHLEN+1);
+      char *current_path;
+      char *current_path_local;
+      
+      strcpy(temp_path, library_directory);
+      strcat(temp_path, SUBDIR_WINDOWS_BIN);             /* .../Win32/bin */
+
+       /* Is it already in the PATH? */
+      if (!(current_path = getenv("PATH")) ||               /* No path or */
+          !strstr(current_path, temp_path)) {      /* does not contain it */
+         /* Add to $PATH at the end */
+        if (current_path == NULL)
+          current_path_local = temp_path;
+        else {                           /* Do not alter the env. itself! */
+          current_path_local = 
+            (char *)checkalloc(strlen(current_path) + MAXPATHLEN + 2);
+          strcpy(current_path_local, current_path);
+          strcat(current_path_local, ":");
+          strcat(current_path_local, temp_path);
+        }
+        setenv("PATH", current_path_local, 1);
+      }
+
+      /* Check now if the SHELL variable has been defined --- the
+         shell/{0,3} call depends on it. */
+      if (!getenv("SHELL")){
+        strcat(temp_path, "/sh.exe");  /* CygWin shell */
+        setenv("SHELL", temp_path, 1);
+      }
+    }
 #endif
 
   if (raw_source_path == NULL) {

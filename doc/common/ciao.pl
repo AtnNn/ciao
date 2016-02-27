@@ -38,7 +38,7 @@
    This is the @em{Reference Manual} for the Ciao Prolog development
    system. It contains basic information on how to install Ciao Prolog
    and how to write, debug, and run Ciao Prolog programs from the
-   command line, from inside GNU @apl{emacs}, or form a windowing
+   command line, from inside GNU @apl{emacs}, or from a windowing
    desktop. It also documents all the libraries available in the
    standard distribution.
 
@@ -154,6 +154,13 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+155,2001/11/24,11:53*36+'CET'), "Minor changes
+   to installation scripts to make sure permissions are left correctly
+   if installation is aborted.  (Manuel Hermenegildo)").
+
+:- comment(version(1*7+154,2001/11/23,18:02*30+'CET'), "'ciao' script
+now locally adds CIAOBIN path to PATH if not already present (MCL)").
+
 :- comment(version(1*7+108,2001/06/02,12:17*18+'CEST'), "Minor bug in
    main Makefile during uninstallation fixed: added rm -f of engine
    Makefile before linking.  (Manuel Hermenegildo)").
@@ -181,6 +188,8 @@ main.
 
 :- comment(version(1*7+0,2000/07/12,19:01*20+'CEST'), "Development
    version following even 1.6 distribution.").
+
+
 
 :- comment(version(1*6+0,2000/07/12,18:55*50+'CEST'), "
 @begin{itemize}

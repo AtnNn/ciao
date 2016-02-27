@@ -1,37 +1,46 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - terms (library)</TITLE>
+<TITLE>The Ciao Prolog System               - File locks</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC318" HREF="ciao_toc.html#TOC318">terms (library)</A></H1>
+<H1><A NAME="SEC320" HREF="ciao_toc.html#TOC320">File locks</A></H1>
 <P>
-<A NAME="IDX3778"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
+<A NAME="IDX3790"></A>
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.3#124 (1999/11/27, 4:4:5 MET)
+<STRONG>Author(s):</STRONG> J. Gomez, D. Cabeza, M. Carro.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#161 (2001/11/27, 12:53:26 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#159 (2001/11/27, 11:58:24 CET)
+
+
+<P>
+This module implements file locks: the ability to lock a fiel so that other processes cannot access it until the file is unlocked. <STRONG>It is, however, not working.</STRONG> The predicates do nothing. Proper implementation is planned for a near future.
 
 
 
 <UL>
-<LI><A HREF="ciao_76.html#SEC319">Usage and interface (terms)</A>
-<LI><A HREF="ciao_76.html#SEC320">Documentation on exports (terms)</A>
+<LI><A HREF="ciao_76.html#SEC321">Usage and interface (file_locks)</A>
+<LI><A HREF="ciao_76.html#SEC322">Documentation on exports (file_locks)</A>
+<LI><A HREF="ciao_76.html#SEC323">Known bugs and planned improvements (file_locks)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC319" HREF="ciao_toc.html#TOC319">Usage and interface (<CODE>terms</CODE>)</A></H2>
+<H2><A NAME="SEC321" HREF="ciao_toc.html#TOC321">Usage and interface (<CODE>file_locks</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +48,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(terms)).</CODE>
+<CODE>:- use_module(library(file_locks)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,12 +57,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX3779"></A>
-<CODE>copy_args/3</CODE>, 
-<A NAME="IDX3780"></A>
-<CODE>arg/2</CODE>, 
-<A NAME="IDX3781"></A>
-<CODE>atom_concat/2</CODE>.
+<A NAME="IDX3791"></A>
+<CODE>lock_file/3</CODE>, 
+<A NAME="IDX3792"></A>
+<CODE>unlock_file/2</CODE>.
 
 </UL>
 
@@ -63,54 +70,73 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC320" HREF="ciao_toc.html#TOC320">Documentation on exports (<CODE>terms</CODE>)</A></H2>
+<H2><A NAME="SEC322" HREF="ciao_toc.html#TOC322">Documentation on exports (<CODE>file_locks</CODE>)</A></H2>
 <P>
-<A NAME="IDX3782"></A>
-<A NAME="IDX3783"></A>
+<A NAME="IDX3793"></A>
+<A NAME="IDX3794"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>copy_args/3:</B>
-<DD><A NAME="IDX3784"></A>
+<DT><span class="define">PREDICATE:</span> <B>lock_file/3:</B>
+<DD><A NAME="IDX3795"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>lock_file(File,LockType,Result)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Tries to lock <CODE>File</CODE> with <CODE>LockType</CODE> and returns the result (either <CODE>true</CODE> or <CODE>false</CODE>) in <CODE>Result</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>LockType</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Result</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX3785"></A>
-<A NAME="IDX3786"></A>
+<A NAME="IDX3796"></A>
+<A NAME="IDX3797"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arg/2:</B>
-<DD><A NAME="IDX3787"></A>
+<DT><span class="define">PREDICATE:</span> <B>unlock_file/2:</B>
+<DD><A NAME="IDX3798"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>unlock_file(File,Result)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Tries to unlock <CODE>File</CODE> the result (either <CODE>true</CODE> or <CODE>false</CODE>) in <CODE>Result</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>File</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>Result</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
 
 </DL>
 
-<P>
-<A NAME="IDX3788"></A>
-<A NAME="IDX3789"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>atom_concat/2:</B>
-<DD><A NAME="IDX3790"></A>
 
 
-<P>
-<CODE>atom_concat(Atms,Atm)</CODE>
+<H2><A NAME="SEC323" HREF="ciao_toc.html#TOC323">Known bugs and planned improvements (<CODE>file_locks</CODE>)</A></H2>
 
 
-<P>
-<CODE>Atm</CODE> is the atom resulting from concatenating all atoms in the list <CODE>Atms</CODE> in the order in which they appear.
+<UL>
 
+<LI>
 
-</DL>
+No doing anything helpful.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_75.html">previous</A>, <A HREF="ciao_77.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

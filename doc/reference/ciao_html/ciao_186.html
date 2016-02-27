@@ -1,22 +1,22 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - table_widget3 (library)</TITLE>
+<TITLE>The Ciao Prolog System               - table_widget1 (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC713" HREF="ciao_toc.html#TOC713">table_widget3 (library)</A></H1>
+<H1><A NAME="SEC726" HREF="ciao_toc.html#TOC726">table_widget1 (library)</A></H1>
 <P>
-<A NAME="IDX7374"></A>
+<A NAME="IDX7393"></A>
 
 
 <P>
-The predicates exported by this module display data in a regular table, as we brought up in the introduction. Both predicates have in common that the font weight for the elements placed in the first column is bold and the remaining elements are in medium font weight. 
+In addition to the features explained in the introduction, the predicates exported by this module depict tables in which the font weight for the table elements is bold. 
 
 
 <P>
@@ -25,13 +25,14 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 <UL>
-<LI><A HREF="ciao_186.html#SEC714">Usage and interface (table_widget3)</A>
-<LI><A HREF="ciao_186.html#SEC715">Documentation on exports (table_widget3)</A>
+<LI><A HREF="ciao_186.html#SEC727">Usage and interface (table_widget1)</A>
+<LI><A HREF="ciao_186.html#SEC728">Documentation on exports (table_widget1)</A>
+<LI><A HREF="ciao_186.html#SEC729">Documentation on internals (table_widget1)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC714" HREF="ciao_toc.html#TOC714">Usage and interface (<CODE>table_widget3</CODE>)</A></H2>
+<H2><A NAME="SEC727" HREF="ciao_toc.html#TOC727">Usage and interface (<CODE>table_widget1</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +40,7 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(table_widget3)).</CODE>
+<CODE>:- use_module(library(table_widget1)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,10 +49,17 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX7375"></A>
-<CODE>tablewidget3/4</CODE>, 
-<A NAME="IDX7376"></A>
-<CODE>tablewidget3/5</CODE>.
+<A NAME="IDX7394"></A>
+<CODE>tablewidget1/4</CODE>, 
+<A NAME="IDX7395"></A>
+<CODE>tablewidget1/5</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX7396"></A>
+<CODE>table/1</CODE>, 
+<A NAME="IDX7397"></A>
+<CODE>image/1</CODE>.
 
 </UL>
 
@@ -62,17 +70,15 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX7377"></A>
+<A NAME="IDX7398"></A>
 <CODE>chartlib/genbar1</CODE>, 
-<A NAME="IDX7378"></A>
+<A NAME="IDX7399"></A>
 <CODE>chartlib/bltclass</CODE>, 
-<A NAME="IDX7379"></A>
-<CODE>chartlib/table_widget1</CODE>, 
-<A NAME="IDX7380"></A>
+<A NAME="IDX7400"></A>
 <CODE>chartlib/test_format</CODE>, 
-<A NAME="IDX7381"></A>
+<A NAME="IDX7401"></A>
 <CODE>chartlib/install_utils</CODE>, 
-<A NAME="IDX7382"></A>
+<A NAME="IDX7402"></A>
 <CODE>lists</CODE>.
 
 </UL>
@@ -83,17 +89,17 @@ If the arguments are not in a correct format the exception <CODE>error8</CODE> w
 
 
 
-<H2><A NAME="SEC715" HREF="ciao_toc.html#TOC715">Documentation on exports (<CODE>table_widget3</CODE>)</A></H2>
+<H2><A NAME="SEC728" HREF="ciao_toc.html#TOC728">Documentation on exports (<CODE>table_widget1</CODE>)</A></H2>
 <P>
-<A NAME="IDX7383"></A>
-<A NAME="IDX7384"></A>
+<A NAME="IDX7403"></A>
+<A NAME="IDX7404"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget3/4:</B>
-<DD><A NAME="IDX7385"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget1/4:</B>
+<DD><A NAME="IDX7405"></A>
 
 
 <P>
-<CODE>tablewidget3(Title,Header,ElementTable,Footer)</CODE>
+<CODE>tablewidget1(Title,Header,ElementTable,Footer)</CODE>
 
 
 <P>
@@ -104,36 +110,38 @@ Shows a regular table in a window. The user does not choose a background image.
 Example: 
 
 <PRE>
-tablewidget3('This is the title',
+tablewidget1('This is the title',
 	     'Header text',
 	     [['Number of processors','8'],['Average processors','95'],
-	       ['Tasks per fork','7.5']],
+	         ['Average Tasks per fork','7.5']],
 	     'Footer text').
 </PRE>
 
 </DL>
 
 <P>
-<A NAME="IDX7386"></A>
-<A NAME="IDX7387"></A>
+<A NAME="IDX7406"></A>
+<A NAME="IDX7407"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>tablewidget3/5:</B>
-<DD><A NAME="IDX7388"></A>
+<DT><span class="define">PREDICATE:</span> <B>tablewidget1/5:</B>
+<DD><A NAME="IDX7408"></A>
 
 
 <P>
-<CODE>tablewidget3(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
+<CODE>tablewidget1(Title,Header,ElementTable,Footer,BackgroundImage)</CODE>
 
 
 <P>
-Shows a regular table in a window. The user must set a background image. 
+Shows a regular table in a window. The user must set a background image. See the 
+<A NAME="IDX7409"></A>
+<CODE>image/1</CODE> type definition. 
 
 
 <P>
 Example: 
 
 <PRE>
-tablewidget3('This is the title',
+tablewidget1('This is the title',
 	     'Header text',
 	     [['Number of processors','8'],['Average processors','95'],
 	         ['Average Tasks per fork','7.5']],
@@ -143,7 +151,122 @@ tablewidget3('This is the title',
 
 </DL>
 
+<P>
+<A NAME="IDX7410"></A>
+<A NAME="IDX7411"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>table/1:</B>
+<DD><A NAME="IDX7412"></A>
+
+
+<P>
+A table is a list of rows, each row must contain the same number of elements, otherwise the table wouldn't be regular and an exception will be thrown by the library. The rows list may not be empty. 
+
+<PRE>
+table([X]) :-
+        row(X).
+table([X|Xs]) :-
+        row(X),
+        table(Xs).
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX7413"></A>
+<A NAME="IDX7414"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>image/1:</B>
+<DD><A NAME="IDX7415"></A>
+
+
+<P>
+Some predicates allow the user to set the widget background image, whose is what this type is intended for. The user has to take into account the following restrictions: 
+
+
+
+<UL>
+
+<LI>The image must be in gif format.
+
+<LI>The file path must be absolute.
+
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC729" HREF="ciao_toc.html#TOC729">Documentation on internals (<CODE>table_widget1</CODE>)</A></H2>
+<P>
+<A NAME="IDX7416"></A>
+<A NAME="IDX7417"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>row/1:</B>
+<DD><A NAME="IDX7418"></A>
+
+
+
+<PRE>
+row([X]) :-
+        cell_value(X).
+row([X|Xs]) :-
+        cell_value(X),
+        row(Xs).
+</PRE>
+
+<P>
+Each row is a list of elements whose type is 
+<A NAME="IDX7419"></A>
+<CODE>cell_value/1</CODE>. A row cannot be an empty list, as you can see in the definition type. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7420"></A>
+<A NAME="IDX7421"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>row/1:</B>
+<DD><A NAME="IDX7422"></A>
+
+
+
+<PRE>
+row([X]) :-
+        cell_value(X).
+row([X|Xs]) :-
+        cell_value(X),
+        row(Xs).
+</PRE>
+
+<P>
+Each row is a list of elements whose type is 
+<A NAME="IDX7423"></A>
+<CODE>cell_value/1</CODE>. A row cannot be an empty list, as you can see in the definition type. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX7424"></A>
+<A NAME="IDX7425"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>cell_value/1:</B>
+<DD><A NAME="IDX7426"></A>
+
+
+<P>
+This type defines the possible values that a table element have. If any cell value is <CODE>"</CODE>, the cell will be displayed empty. 
+
+<PRE>
+cell_value(X) :-
+        atomic(X).
+</PRE>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_185.html">previous</A>, <A HREF="ciao_187.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -340,6 +340,7 @@ distclean: engclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/library $(MAKE) distclean
 	$(SRC)/etc/recursive_make_or_clean $(SRC)/contrib $(MAKE) distclean
 	cd examples && $(MAKE) distclean
+	/bin/rm -f *~
 
 cflow:
 	cd ${OBJDIR} && cflow -i -D${CIAOARCH} *.c > ${SRC}/etc/cflow.out

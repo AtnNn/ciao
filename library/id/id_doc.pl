@@ -8,7 +8,7 @@
 
 :- comment(module,"This package applies a @em{compiling control} technique
 to implement @index{depth first iterative deepening} execution
-@cite{Stickel84}. It changes the usual @em{depth-first}
+@cite{iterative-deepening}. It changes the usual @em{depth-first}
 computation rule by @index{iterative-deepening} on those predicates
 specifically marked. This is very useful in search problems when a
 @concept{complete proof procedure} is needed.

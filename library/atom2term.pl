@@ -4,21 +4,20 @@
 	  string2term/2,
           parse_term/3
 	],
-	[
-	  assertions,
+	[ assertions,
 	  basicmodes
 	]).
 
-:- comment(title,"Atom to Term Conversion").
-
+:- comment(title,"Atom to term conversion").
 :- comment(author,"Francisco Bueno").
 :- comment(author,"Daniel Cabeza").
+:- comment(bug,"This is just a quick hack written mainly for parsing 
+   daVinci's messages. There should be a call to the standard reader
+   to do this!").
 
 :- pred atom2term(+Atom,-Term) # "Convert an atom into a term.
    @var{Atom} is an atom, but must have term syntax.  @var{Term} is a
-   term resulting from parsing @var{Atom} char by char.  Note: this is
-   just a simple version written for parsing daVinci's messages. There
-   should be a call to the standard reader to do this!".
+   term resulting from parsing @var{Atom} char by char.".
 
 atom2term(Atom,Term):-
 	name(Atom,String),
@@ -30,8 +29,9 @@ atom2term(Atom,Term):-
 string2term(String,Term):-
 	parse_term(String,Term, _).
 
-
-:- pred parse_term(+String, -Term, ?Dummy).
+:- pred parse_term(+String, -Term, ?Dummy)
+      # "@var{String} is parsed into @var{Term} upto @var{Dummy}
+         (which is the non-parsed rest of the list).".
 
 parse_term([],'',[]).
 parse_term([C|String0],Term,String):-
@@ -106,6 +106,3 @@ parse_string0(C,String,[C|List],String1):-
 :- comment(version(0*9+39,1999/04/07,09:20*47+'MEST'), "Added some
    comments - but this should go eventually.  (Manuel Hermenegildo)").
 % ----------------------------------------------------------------------------
-
-
-

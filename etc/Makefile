@@ -48,6 +48,7 @@ install:
 	@./substitute_string '<CIAOLIBDIR>' $(LIBDIR) \
 	                     'CIAOVERSION=' 'CIAOVERSION=-$(VERSION)' \
 	                     '<CIAODOCDIR>' $(DOCDIR) \
+				binary_directory $(BINDIR) \
 	     ./ciao.skel $(BINDIR)/ciao-$(VERSION)
 	@-chmod $(EXECMODE) $(BINDIR)/ciao-$(VERSION)
 	@-rm -f $(BINDIR)/ciao

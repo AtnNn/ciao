@@ -322,7 +322,7 @@ java_fast_read0(Stream,T) :-
 
 :- data debugging/0.
 % Comment/uncomment next line to set debugging off/on.
-%debugging.
+debugging.
 
 java_debug(T) :-
 	debugging,

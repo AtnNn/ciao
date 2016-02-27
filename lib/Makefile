@@ -32,6 +32,10 @@ autolibs:
 	$(SRC)/etc/generate_foreign_compile_options $(MAKE) $(SRC)/makefile-sysdep $(SRC)/lib/auto_compile_options.pl
 	-chmod $(DATAMODE) $(SRC)/lib/auto_compile_options.pl
 	'rm' -f all_modules all_module_messages
+# This is so that if installation is aborted, the permissions are left 
+# set properly and *another user* can reinstall
+	-touch all_modules all_module_messages
+	-chmod $(DATAMODE) all_modules all_module_messages
 	echo "set_prolog_flag(compress_lib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
 	$(SETLOCALCIAO) $(CIAOSHELL) < all_modules > all_module_messages

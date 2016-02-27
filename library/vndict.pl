@@ -14,7 +14,7 @@
 	]).
 
 :- use_module(library(idlists),[memberchk/2]).
-:- use_module(library(metaterms)).
+:- use_module(library(terms_vars)).
 :- use_module(library(sets)).
 :- use_module(library(sort)).
 

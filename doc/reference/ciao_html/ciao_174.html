@@ -1,33 +1,66 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low level Interface between Prolog and blt</TITLE>
+<TITLE>The Ciao Prolog System               - Programming MYCIN rules</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC671" HREF="ciao_toc.html#TOC671">Low level Interface between Prolog and blt</A></H1>
+<H1><A NAME="SEC679" HREF="ciao_toc.html#TOC679">Programming MYCIN rules</A></H1>
 <P>
-<A NAME="IDX6989"></A>
+<A NAME="IDX6917"></A>
 
 
 <P>
-This module exports some predicates to interact with Tcl-tk, particularly with the bltwish program. Bltwish is a windowing shell consisting of the Tcl command languaje, the Tk toolkit plus the additional commands that comes with the BLT library and a main program that reads commands. It creates a main window and then processes Tcl commands. 
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.5#59 (2000/2/29, 14:51:54 CET)
+
+
+<P>
+MYCIN databases are declared as Prolog modules containing mycin rules. Those rules are given a 
+<A NAME="IDX6918"></A>
+<A NAME="IDX6919"></A>
+<EM>certainty factor</EM> (<EM>CF</EM>) which denotates an expert's credibility on that rule: 
+
+<UL>
+
+<LI>A value of -1 stands for <EM>surely not</EM>.
+
+<LI>A value of 1 stands for <EM>certainly</EM>.
+
+<LI>A value of 0 stands for <EM>I don't know</EM>.
+
+</UL>
+
+<P>
+Intermediate values are allowed. 
+
+
+<P>
+Mycin rules work on a different way as Prolog clauses: a rule will never fail (in the Prolog sense), it will return a certainty value instead. As a consequence <STRONG>all</STRONG> mycin rules will be explored during inference, so the order in which rules are written is not significant. For this reason, the usage of the Prolog <EM>cut</EM> (!) is discouraged. 
 
 
 
 <UL>
-<LI><A HREF="ciao_174.html#SEC672">Usage and interface (bltclass)</A>
-<LI><A HREF="ciao_174.html#SEC673">Documentation on exports (bltclass)</A>
+<LI><A HREF="ciao_174.html#SEC680">Usage and interface (mycin)</A>
+<LI><A HREF="ciao_174.html#SEC681">Documentation on new declarations (mycin)</A>
+<LI><A HREF="ciao_174.html#SEC682">Known bugs and planned improvements (mycin)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC672" HREF="ciao_toc.html#TOC672">Usage and interface (<CODE>bltclass</CODE>)</A></H2>
+<H2><A NAME="SEC680" HREF="ciao_toc.html#TOC680">Usage and interface (<CODE>mycin</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,52 +68,16 @@ This module exports some predicates to interact with Tcl-tk, particularly with t
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(bltclass)).</CODE>
+In order to declare a mycin database you must include the following declaration as the first one in your file: 
 
-<LI><STRONG>Exports:</STRONG>
+<PRE>
+           :- mycin(MycinDataBaseName).
+</PRE>
 
+<LI><STRONG>New declarations defined:</STRONG>
 
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX6990"></A>
-<CODE>new_interp/1</CODE>, 
-<A NAME="IDX6991"></A>
-<CODE>tcltk_raw_code/2</CODE>, 
-<A NAME="IDX6992"></A>
-<CODE>interp_file/2</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX6993"></A>
-<CODE>bltwish_interp/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6994"></A>
-<CODE>sockets/sockets</CODE>, 
-<A NAME="IDX6995"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX6996"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6997"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6998"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX6999"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX7000"></A>
-<CODE>terms</CODE>.
-
-</UL>
+<A NAME="IDX6920"></A>
+<CODE>export/1</CODE>.
 
 </UL>
 
@@ -88,84 +85,59 @@ This module exports some predicates to interact with Tcl-tk, particularly with t
 
 
 
-<H2><A NAME="SEC673" HREF="ciao_toc.html#TOC673">Documentation on exports (<CODE>bltclass</CODE>)</A></H2>
+<H2><A NAME="SEC681" HREF="ciao_toc.html#TOC681">Documentation on new declarations (<CODE>mycin</CODE>)</A></H2>
 <P>
-<A NAME="IDX7001"></A>
-<A NAME="IDX7002"></A>
+<A NAME="IDX6921"></A>
+<A NAME="IDX6922"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>new_interp/1:</B>
-<DD><A NAME="IDX7003"></A>
+<DT><span class="define">DECLARATION:</span> <B>export/1:</B>
+<DD><A NAME="IDX6923"></A>
 
 
 <P>
-<CODE>new_interp(Interp)</CODE>
-
-
-<P>
-Creates a bltwish interprter and returns a socket. The socket allows the comunication between Prolog and Tcl-tk. Thus, bltwish receives the commands through the socket. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7004"></A>
-<A NAME="IDX7005"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>tcltk_raw_code/2:</B>
-<DD><A NAME="IDX7006"></A>
-
-
-<P>
-<CODE>tcltk_raw_code(Command_Line,Interp)</CODE>
-
-
-<P>
-Sends a command line to the interpreter. Tcl-tk parses and executes it. 
-
-
-</DL>
-
-<P>
-<A NAME="IDX7007"></A>
-<A NAME="IDX7008"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>bltwish_interp/1:</B>
-<DD><A NAME="IDX7009"></A>
-
-
-<P>
-<CODE>bltwish_interp(Interp)</CODE>
-
-
-<P>
-This type defines a bltwish interpreter. In fact, the bltwish interpreter receives the commands through the socket created. 
+This directive allows a given mycin predicate to be called from Prolog programs. The way in which mycin rules are called departs from Prolog ones. For instance, the followin mycin predicate: 
 
 <PRE>
-bltwish_interp(Interp) :-
-        stream(Interp).
+:- export p/1.
 </PRE>
 
+<P>
+must be called from Prolog Programs as: <CODE>mycin(p(X),CF)</CODE>, where CF will be binded to the resulting 
+<A NAME="IDX6924"></A>
+certainty factor. Obviously, the variables on <EM>P/1</EM> may be instantiated as you wish. Since the Prolog predicate <EM>mycin/2</EM> may be imported from several mycin databases, it is recommended to fully qualify those predicate goals. For example : <CODE>mydatabase:mycin(p(X),CF)</CODE>. 
+
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>export(Spec)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Spec</CODE> will be a callable mycin predicate.
+
+</UL>
+
 </DL>
 
-<P>
-<A NAME="IDX7010"></A>
-<A NAME="IDX7011"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>interp_file/2:</B>
-<DD><A NAME="IDX7012"></A>
 
 
-<P>
-<CODE>interp_file(File,Interp)</CODE>
+<H2><A NAME="SEC682" HREF="ciao_toc.html#TOC682">Known bugs and planned improvements (<CODE>mycin</CODE>)</A></H2>
 
 
-<P>
-Sends the script file (File) to the interpreter through the socket. A script file is a file that contains commands that Tcl-tk can execute. 
+<UL>
 
+<LI>
 
-</DL>
+Not fully implemented.
+
+<LI>
+
+Dynamic mycin predicates not implemented: open question.
+
+<LI>
+
+Importation of user-defined mycin predicates requires further design. This includes importation of mycin databases from another mycin database.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_173.html">previous</A>, <A HREF="ciao_175.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

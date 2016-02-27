@@ -192,7 +192,7 @@ obj_clause_trans(clause('$static_instance_creation$',_),
 	static_instance_definition(Module,InstCreation),
 	Body = intercept(InstCreation,Error,
 	   inform_user(['Static instances declared on ',Module,
-                        'could not be created due to exception: ',Error])),
+                        ' could not be created due to exception: ',Error])),
 	( debug ->
 	  (
 	      inform_user(['* instance creation:']),nl,

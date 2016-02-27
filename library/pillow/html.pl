@@ -560,8 +560,8 @@ html_tag_rest([C|Cs]) -->
         html_tag_rest(Cs).
 html_tag_rest([]) --> "".
 
-html_tag_char(C) --> loupalpha(C).
-html_tag_char(C) --> digit(C).
+html_tag_char(C) --> loupalpha(C), !.
+html_tag_char(C) --> digit(C), !.
 html_tag_char(0'.) --> ".".
 html_tag_char(0'-) --> "-".
 
@@ -574,7 +574,7 @@ html_tag_atts([A|As],Dict) -->
 
 % template variable
 html_tag_att(A,Dict) -->
-        "_", html_tag(N),
+        "_", !, html_tag(N),
         {list_lookup(Dict, (=), N, V)},
         html_opt_value(A, V, Dict).
 html_tag_att(A,Dict) -->
@@ -590,12 +590,22 @@ html_opt_value(N, N,_Dict) --> "".
 
 % template variable
 html_value(V, Dict) -->
-        "_", 
+        "_", !,
         html_tag(N),
         {list_lookup(Dict, (=), N, V)}.
 % html_value(V,_Dict) --> http_lo_up_token(V). % People do not write valid HTML
-html_value(V,_Dict) --> http_quoted_string(V).
+html_value(V,_Dict) -->
+        """", !,
+        html_quoted_string(0'",V).
+html_value(V,_Dict) -->
+        "'", !,
+        html_quoted_string(0'',V).
 html_value(V,_Dict) --> html_lax_value(V).
+
+html_quoted_string(Q, []) --> [Q], !.
+html_quoted_string(Q, [C|Cs]) -->
+        [C],
+        html_quoted_string(Q, Cs).
 
 html_lax_value([C|Cs]) --> [C], { C \== 0'> , C > 32 },
         html_lax_value(Cs).
@@ -704,21 +714,21 @@ xml_tag_att(N=V,Dict) -->
         xml_value(V, Dict).
 
 xml_value(V, Dict) -->
-        "_", 
+        "_", !,
         xml_tag(N),
         {list_lookup(Dict, (=), N, V)}.
 xml_value(V,_Dict) -->
-        """",
+        """", !,
         xml_quoted_string(0'",V).
 xml_value(V,_Dict) -->
-        "'",
+        "'", !,
         xml_quoted_string(0'',V).
 xml_value(V,_Dict) --> % This is not correct syntax
         xml_bad_value(V).
 
 xml_quoted_string(Q, []) --> [Q], !.
 xml_quoted_string(Q, [0'&,0'q,0'u,0'o,0't,0';|Cs]) -->
-        """",
+        """", !,
         xml_quoted_string(Q, Cs).
 xml_quoted_string(Q, [C|Cs]) -->
         [C],
@@ -729,8 +739,8 @@ xml_bad_value([C|Cs]) -->
         [C],
         xml_bad_value(Cs).
 
-xml_tag_start(C) --> loalpha(C).
-xml_tag_start(C) --> upalpha(C).
+xml_tag_start(C) --> loalpha(C), !.
+xml_tag_start(C) --> upalpha(C), !.
 xml_tag_start(0'_) --> "_".
 xml_tag_start(0':) --> ":".
 
@@ -739,9 +749,9 @@ xml_tag_rest([C|Cs]) -->
         xml_tag_rest(Cs).
 xml_tag_rest([]) --> "".
 
-xml_tag_char(C) --> loalpha(C).
-xml_tag_char(C) --> upalpha(C).
-xml_tag_char(C) --> digit(C).
+xml_tag_char(C) --> loalpha(C), !.
+xml_tag_char(C) --> upalpha(C), !.
+xml_tag_char(C) --> digit(C), !.
 xml_tag_char(0'_) --> "_".
 xml_tag_char(0':) --> ":".
 xml_tag_char(0'.) --> ".".
@@ -766,14 +776,15 @@ get_form_input(Dic) :-
 get_form_input([]).
 
 get_form_input_method('GET', Dic) :-
-        getenvstr('QUERY_STRING',Q), Q \== [] ->
+        ( getenvstr('QUERY_STRING',Q), Q \== [] ->
             append(Q,"&",Cs),
             form_urlencoded_to_dic(Dic, Cs, [])
-      ; Dic = [].
+        ; Dic = []
+        ), !.
 get_form_input_method('POST', Dic) :-
         getenvstr('CONTENT_TYPE', ContentType),
         http_media_type(Type,Subtype,Params,ContentType,[]),
-        get_form_input_of_type(Type,Subtype,Params,Dic).
+        get_form_input_of_type(Type,Subtype,Params,Dic), !.
 get_form_input_method(M, _) :-
         html_report_error(['Unknown request method ', tt(M),
                            ' or bad request.']).
@@ -785,13 +796,13 @@ get_form_input_of_type(application, 'x-www-form-urlencoded', _, Dic) :-
             read_all(No,Cs,"&"),
             form_urlencoded_to_dic(Dic, Cs, [])
         ; Dic = []
-        ).
+        ), !.
 get_form_input_of_type(multipart, 'form-data', Params, Dic) :-
         member((boundary=B), Params),
         name(B, BS),
         Boundary = [0'-,0'-|BS],
         get_lines_to_boundary(Boundary, _, End),
-        get_multipart_form_data(End, Boundary, Dic).
+        get_multipart_form_data(End, Boundary, Dic), !.
 get_form_input_of_type(Type,Subtype,_,_) :-
         html_report_error(['Unknown Content-type ',tt([Type,"/",Subtype]),
                            ' or bad request.']).
@@ -1046,11 +1057,11 @@ cookies([C=V|Cs]) -->
         },
 	cookies(Cs).
 
-cookie_str([C]) -->
-	legal_cookie_char(C).
 cookie_str([C|Cs]) -->
 	legal_cookie_char(C),
-	cookie_str(Cs).
+	cookie_str(Cs), !.
+cookie_str([C]) -->
+	legal_cookie_char(C).
 
 legal_cookie_char(C) -->
 	[C],
@@ -1095,9 +1106,9 @@ no_conversion(0'*).
 no_conversion(0'-).
 no_conversion(0'.).
 no_conversion(0'_).
-no_conversion(C) :- C >= 0'0, C =< 0'9.
-no_conversion(C) :- C >= 0'@, C =< 0'Z.
-no_conversion(C) :- C >= 0'a, C =< 0'z.
+no_conversion(C) :- C >= 0'0, C =< 0'9, !.
+no_conversion(C) :- C >= 0'@, C =< 0'Z, !.
+no_conversion(C) :- C >= 0'a, C =< 0'z, !.
 
 hex_chars(C, H, L) :-
         Hn is C >> 4,
@@ -1151,8 +1162,8 @@ internet_host_char_rest([C|Cs]) -->
         internet_host_char_rest(Cs).
 internet_host_char_rest([]) --> "".
 
-internet_host_char(C) --> digit(C).
-internet_host_char(C) --> loupalpha(C).
+internet_host_char(C) --> digit(C), !.
+internet_host_char(C) --> loupalpha(C), !.
 internet_host_char(0'-) --> "-".
 internet_host_char(0'.) --> ".".
 
@@ -1226,7 +1237,7 @@ atomic_or_string(X) -->
 atomic_or_string(S) -->
         string(S).
 
-textarea_data('$empty') --> [].
+textarea_data('$empty') --> [], !.
 textarea_data(X) -->
         {atomic(X), name(X,S)}, !,
         string(S).
@@ -1259,6 +1270,10 @@ mappend([S|Ss], R) :-
 
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+131,2001/10/29,20:47*56+'CET'), "The HTML parser
+   now understands tag attributes between sigle quotes. (Daniel Cabeza
+   Gras)").
 
 :- comment(version(1*5+114,2000/04/11,20:23*43+'CEST'), "Added pillow
    term prolog_term/1.  (Daniel Cabeza Gras)").

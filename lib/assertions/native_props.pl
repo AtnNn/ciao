@@ -20,11 +20,11 @@
         ],
         [assertions]).
 
-:- reexport(library(andprolog),[indep/1,indep/2]).
+:- reexport(library('andprolog/andprolog_rt'),[indep/1,indep/2]).
 :- comment(doinclude,indep/1).
 :- comment(doinclude,indep/2).
 
-:- use_module(library(metaterms),[varsbag/3]).
+:- use_module(library(terms_vars),[varsbag/3]).
 :- use_module(library(sort),[sort/2]).
 :- use_module(library(lists)).
 

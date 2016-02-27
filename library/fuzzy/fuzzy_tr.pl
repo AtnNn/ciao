@@ -13,9 +13,10 @@
 :- data fnegclause/3.
 %:- data fagrclause/5.
 
+:- data faggr/1.
+
 :- include(library('fuzzy/ops')).
 :- include(library('clpr/ops')).
-
 
 build_cl(X1,M1,X2,M2,Name,(H :- ExpMax , ExpMin  ),Comp):-
 	M1 == M2,!,
@@ -186,64 +187,22 @@ fuzzy_pred((H :~  ),[],_):-
 	),
 	assertz_fact(frule(H,true,fact)).
 
-
-
-fuzzy_pred((H :~ min B),[],_):-
-	!,
+% explicit aggregator:
+fuzzy_pred((H :~ B0),[],_):-
+	nonvar(B0),
+	functor(B0,Aggr,1),
+	faggr(Aggr), !,
+	arg(1,B0,B),
 	functor(H,F,A),
 	(
 	    fpred(F/A) -> true
 	;
 	    assertz_fact(fpred(F/A))
 	),
-	assertz_fact(frule(H,B,min)).
+	assertz_fact(frule(H,B,Aggr)).
 
-
-fuzzy_pred((H :~ prod B),[],_):-
-	functor(H,F,A),
-	(
-	    fpred(F/A) -> true
-	;
-	    assertz_fact(fpred(F/A))
-	),
-	assertz_fact(frule(H,B,prod)).
-
-fuzzy_pred((H :~ luka B),[],_):-
-	functor(H,F,A),
-	(
-	    fpred(F/A) -> true
-	;
-	    assertz_fact(fpred(F/A))
-	),
-	assertz_fact(frule(H,B,luka)).
-
-fuzzy_pred((H :~ max B),[],_):-
-	functor(H,F,A),
-	(
-	    fpred(F/A) -> true
-	;
-	    assertz_fact(fpred(F/A))
-	),
-	assertz_fact(frule(H,B,max)).
-
-fuzzy_pred((H :~ dluka B),[],_):-
-	functor(H,F,A),
-	(
-	    fpred(F/A) -> true
-	;
-	    assertz_fact(fpred(F/A))
-	),
-	assertz_fact(frule(H,B,dluka)).
-
-fuzzy_pred((H :~ dprod B),[],_):-
-	functor(H,F,A),
-	(
-	    fpred(F/A) -> true
-	;
-	    assertz_fact(fpred(F/A))
-	),
-	assertz_fact(frule(H,B,dprod)).
-
+fuzzy_pred((:- aggr A),(:- op(1190,fx,A)),_):-
+	asserta_fact(faggr(A)), !.
 
 % default
 fuzzy_pred((H :~  B),[],_):-
@@ -392,6 +351,12 @@ add_contr(H,B,dprod,(H :- B,AB)):- !,
  	memfunct(B,ListVar,[]),
 	AB = (dprodlist(ListVar,Mu),Mu .>=.0,Mu .=<.1).
  
+add_contr(H,B,Any,(H :- B,AB)):-
+ 	functor(H,_,Ar),
+ 	arg(Ar,H,Mu),
+ 	memfunct(B,ListVar,[]),
+	AB = (inject(ListVar,Any,Mu),Mu .>=.0,Mu .=<.1).
+ 
 add_neg(N,O,A,(NewPred :- OldPred,Mu .=. 1 - MuO)):-
 	(
 	    fpred(O/A) ->
@@ -443,15 +408,3 @@ memfunct(A,[X|R],R):-
  	fpred(F/Ar),!,
  	arg(Ar,A,X).
 memfunct(_,R,R).
-
-
-
-
-
-
-
-
-
-
-
-

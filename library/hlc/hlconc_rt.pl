@@ -60,7 +60,7 @@ total_threads(0).
 <&&(Handle):-
         Handle = '$handle'(Ident, InitialGoal),
         retract_fact(ident_and_answer(Ident, NewGoal)), !,
-        display(NewGoal), nl,
+%        display(NewGoal), nl,
         NewGoal = InitialGoal.
 
 <&(Handle):- <&&(Handle).
@@ -80,12 +80,12 @@ agent:-
         increase_num_of_agents,
 %% Wait for a new goal to execute
         retract_fact(ident_and_goal(Ident, Goal)),
-        display(picked_up(Ident, Goal)), nl,
+%        display(picked_up(Ident, Goal)), nl,
 %% Once we have it, execute it --- but there is an agent less to execute
         decrease_active_agents,
         once(Goal),
         assertz_fact(ident_and_answer(Ident, Goal)),
-        display(put(Ident, Goal)), nl,
+%        display(put(Ident, Goal)), nl,
 %% And now there is again a new agent to run goals
         increase_num_of_agents,
 %% Back to get a new goal

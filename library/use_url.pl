@@ -7,7 +7,7 @@
 	[delete_directory/1,delete_file/1,directory_files/2,
 	 make_directory/1,mktemp/2]). 
 
-:- true pred use_module_url(Module, Url) : modulename * string
+:- true pred use_module_url(Module, Url) : sourcename * string
         # "Imports from module @var{Module} all the predicates exported 
           by it into the calling module. @var{Module} is loaded from
           @var{Url}. If @var{Url} is not accesible, it fails.".
@@ -17,7 +17,7 @@
 use_module_url(Mod,Url,This):- use_module_url(Mod,Url,all,This).
 
 :- true pred use_module_url(Module, Url, Imports) 
-	: modulename * string * list(predname)
+	: sourcename * string * list(predname)
         # "Imports from module @var{Module} the predicates in @var{Imports}
           (if exported) into the calling module. @var{Module} is loaded from
           @var{Url}. If @var{Url} is not accesible, it fails.".

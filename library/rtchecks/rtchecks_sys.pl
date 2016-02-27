@@ -18,7 +18,7 @@
 	[
 	]).
 
-:- use_module(library(metaterms), [ instance/2 ]).
+:- use_module(library(terms_check), [ instance/2 ]).
 :- use_module(library(write), [ write/1 ]).
 
 :- include(library('rtchecks/rtchecks_sys_indep')).

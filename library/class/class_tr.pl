@@ -240,8 +240,8 @@ class_sentence_trans((:- multifile([])),[],_Mod) :-
 
 class_sentence_trans((:- multifile([Spec|Nsp])),Exp,Mod) :-
 	!,
-	class_sentence_trans((:- concurrent(Spec)),OneDeclExp,Mod),
-	class_sentence_trans((:- concurrent(Nsp)),NExp,Mod),
+	class_sentence_trans((:- multifile(Spec)),OneDeclExp,Mod),
+	class_sentence_trans((:- multifile(Nsp)),NExp,Mod),
 	append(OneDeclExp,NExp,Exp).
 
 class_sentence_trans((:- meta_predicate([])),[],_) :-
@@ -249,8 +249,8 @@ class_sentence_trans((:- meta_predicate([])),[],_) :-
 
 class_sentence_trans((:- meta_predicate([Spec|Nsp])),Exp,Mod) :-
 	!,
-	class_sentence_trans((:- concurrent(Spec)),OneDeclExp,Mod),
-	class_sentence_trans((:- concurrent(Nsp)),NExp,Mod),
+	class_sentence_trans((:- meta_predicate(Spec)),OneDeclExp,Mod),
+	class_sentence_trans((:- meta_predicate(Nsp)),NExp,Mod),
 	append(OneDeclExp,NExp,Exp).
 
 class_sentence_trans((:- discontiguous([])),[],_) :-
@@ -388,7 +388,8 @@ class_sentence_trans((:- data(F/A)),[],Mod) :-
 class_sentence_trans((:- data(F/A)),[],Mod) :-
 	is_multifile(Mod,F,A),
 	!,
-	fail.
+%PBC	fail.
+	true.
 
 % 6th case: predicate is reserved.
 
@@ -407,7 +408,8 @@ class_sentence_trans((:- data(Module/A)),[],Module) :-
 class_sentence_trans((:- data(F/A)),[],Mod) :-
 	asserta_fact(is_state(Mod,F,A)),
 	!,
-	fail.
+%PBC	fail.
+	true.
 
 %%------------------------------------------------------------------------
 %% KEEP TRACKING OF MULTIFILE DECLARATIONS
@@ -432,7 +434,8 @@ class_sentence_trans((:- multifile(F/A)),[],Mod) :-
 	!,
 	retract_fact(is_state(Mod,F,A)),
 	asserta_fact(is_multifile(Mod,F,A)),
-	fail.
+%PBC	fail.
+	true.
 
 % 2nd case : F/A was declared method before multifile
 
@@ -451,7 +454,8 @@ class_sentence_trans((:- multifile(F/A)),[],Mod) :-
 	integer(A),
 	!,
 	asserta_fact(is_multifile(Mod,F,A)),
-	fail.
+%PBC	fail.
+	true.
 
 % 4th case : invalid multifile declaration.
 
@@ -471,7 +475,8 @@ class_sentence_trans((:- discontiguous(F/A)),[],Mod) :-
 class_sentence_trans((:- discontiguous(F/A)),[],Mod) :-
 	is_multifile(Mod,F,A),
 	!,
-	fail.
+%PBC	fail.
+	true.
 
 class_sentence_trans((:-discontiguous(F/A)),[(:-discontiguous(NF/NA))],Mod) :-
 	is_method(Mod,F,A),
@@ -492,13 +497,15 @@ class_sentence_trans((:- discontiguous(F/A)),
 class_sentence_trans((:- concurrent(F/A)),[],Mod) :-
 	is_multifile(Mod,F,A),
 	!,
-	fail.
+%PBC	fail.
+	true.
 
 class_sentence_trans((:- concurrent(F/A)),Exp,Mod) :-
 	!,
-	class_sentence_trans((:- data(F/A)),Exp,Mod),
+%PBC	class_sentence_trans((:- data(F/A)),Exp,Mod),
 	( is_concurrent(Mod,F,A) -> true ; 
-          asserta_fact(is_concurrent(Mod,F,A)) ).
+          asserta_fact(is_concurrent(Mod,F,A)) ),
+	class_sentence_trans((:- data(F/A)),Exp,Mod).
 
 %%------------------------------------------------------------------------
 %% PUBLIC PREDICATE DECLARATION

@@ -1,125 +1,131 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
+<TITLE>The Ciao Prolog System               - HTTP conectivity</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_136.html">previous</A>, <A HREF="ciao_138.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_136.html">previous</A>, <A HREF="ciao_138.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC547" HREF="ciao_toc.html#TOC547">Using the persdb library</A></H1>
+<H1><A NAME="SEC552" HREF="ciao_toc.html#TOC552">HTTP conectivity</A></H1>
+<P>
+<A NAME="IDX5554"></A>
+
 
 <P>
-Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#131 (2001/10/29, 20:47:56 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
+
+
+<P>
+This module implements the 
+<A NAME="IDX5555"></A>
+HTTP protocol, which allows retrieving data from HTTP servers.
 
 
 
 <UL>
-<LI><A HREF="ciao_137.html#SEC548">An example of persistent predicates (static version)</A>
-<LI><A HREF="ciao_137.html#SEC549">An example of persistent predicates (dynamic version)</A>
-<LI><A HREF="ciao_137.html#SEC550">A simple application / a persistent queue</A>
+<LI><A HREF="ciao_137.html#SEC553">Usage and interface (http)</A>
+<LI><A HREF="ciao_137.html#SEC554">Documentation on exports (http)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC548" HREF="ciao_toc.html#TOC548">An example of persistent predicates (static version)</A></H2>
+<H2><A NAME="SEC553" HREF="ciao_toc.html#TOC553">Usage and interface (<CODE>http</CODE>)</A></H2>
+
+<div class="cartouche">
+
+<UL>
+
+<LI><STRONG>Library usage:</STRONG>
+
+<CODE>:- use_module(library(http)).</CODE>
+
+<LI><STRONG>Exports:</STRONG>
 
 
-<PRE>
-:- include(library(persdb)).
+<UL>
 
-%% Declare the directory associated to the key "db" where the
-%% persistence sets of the persistent predicates are stored:
-persistent_dir(db,'./').
+<LI><EM>Predicates:</EM>
 
-%% Declare a persistent predicate:
-:- persistent(bar/1, db).
+<A NAME="IDX5556"></A>
+<CODE>fetch_url/3</CODE>.
 
-%% Read a term, storing it in a new fact of the persistent predicate
-%% and list all the current facts of that predicate
-main:-
-     read(X),
-     assertz_fact(bar(X)),
-     findall(Y,bar(Y),L),
-     write(L).
+</UL>
 
-</PRE>
+<LI><STRONG>Other modules used:</STRONG>
 
 
+<UL>
 
-<H2><A NAME="SEC549" HREF="ciao_toc.html#TOC549">An example of persistent predicates (dynamic version)</A></H2>
+<LI><EM>System library modules:</EM>
 
+<A NAME="IDX5557"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX5558"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX5559"></A>
+<CODE>pillow/pillow_aux</CODE>, 
+<A NAME="IDX5560"></A>
+<CODE>pillow/pillow_types</CODE>, 
+<A NAME="IDX5561"></A>
+<CODE>pillow/http_ll</CODE>.
 
-<PRE>
-:- include(library(persdb)).
+</UL>
 
-main([X]):-
-%%   Declare the directory associated to the key "db" 
-     asserta_fact(persistent_dir(db,'./')),
-%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
-     data(bar/1),
-%%   Declare the predicate bar/1 as persistent at run-time  
-     make_persistent(bar/1, db),
-     assertz_fact(bar(X)),
-     findall(Y, bar(Y), L),
-     write(L).    
+</UL>
 
-</PRE>
+</div class="cartouche">
 
 
 
-<H2><A NAME="SEC550" HREF="ciao_toc.html#TOC550">A simple application / a persistent queue</A></H2>
+<H2><A NAME="SEC554" HREF="ciao_toc.html#TOC554">Documentation on exports (<CODE>http</CODE>)</A></H2>
+<P>
+<A NAME="IDX5562"></A>
+<A NAME="IDX5563"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
+<DD><A NAME="IDX5564"></A>
 
-<PRE>
-:- module(queue, [main/0],[persdb]).
 
-:- use_module(library(read)).
-:- use_module(library(write)).
-:- use_module(library(aggregates)).
+<P>
+<CODE>fetch_url(URL,Request,Response)</CODE>
 
-persistent_dir(queue_dir,'./pers').
 
-:- persistent(queue/1, queue_dir).
+<P>
+Fetches the document pointed to by <CODE>URL</CODE> from Internet, using request parameters <CODE>Request</CODE>, and unifies <CODE>Response</CODE> with the parameters of the response. Fails on timeout. Note that redirections are not handled automatically, that is, if <CODE>Response</CODE> contains terms of the form <CODE>status(redirection,301,_)</CODE> and <CODE>location(NewURL)</CODE>, the program should in most cases access location <CODE>NewURL</CODE>.
 
-queue(first).
-queue(second).
 
-main:-
-     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
-     read(A),
-     (  handle_action(A)
-     -&#62; true
-     ;  write('Unknown command.'), nl ),
-     main.
+<P>
+<STRONG>Usage:</STRONG> <CODE>fetch_url(URL,Request,Response)</CODE>
 
-handle_action(end_of_file) :-
-     halt.
-handle_action(halt) :-
-     halt.
-handle_action(in(Term)) :-
-     assertz_fact(queue(Term)),
-     main.
-handle_action(slip(Term)) :-
-     asserta_fact(queue(Term)),
-     main.
-handle_action(out) :-
-     (  retract_fact(queue(Term))
-     -&#62; write('Out '), write(Term)
-     ;  write('FIFO empty.') ),
-     nl,
-     main.
-handle_action(list) :-
-     findall(Term,queue(Term),Terms),
-     write('Contents: '), write(Terms), nl,
-     main.
-     
+<UL>
+<LI><EM>The following properties should hold at call time:</EM>
 
-</PRE>
+<CODE>URL</CODE> specifies a URL.
+ (<CODE>pillow_types:url_term/1</CODE>)
+
+<CODE>Request</CODE> is a list of <CODE>http_request_param</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Response</CODE> is a list of <CODE>http_response_param</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_136.html">previous</A>, <A HREF="ciao_138.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_136.html">previous</A>, <A HREF="ciao_138.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

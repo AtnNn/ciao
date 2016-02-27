@@ -34,14 +34,17 @@ Ciao-Prolog X.Y #PP: Thu Mar 25 17:20:55 MET 1999
 ?- 
 @end{verbatim}
 
-When the shell is initialized it looks for a file @file{.ciaorc} in the
-HOME directory and makes an @tt{include} of it, if it exists.  This file
-is useful for including @decl{use_module/1} declarations for the modules
-one wants to be loaded by default, changing @concept{prolog flag}s, etc.
-If the initialization file does not exist, the @concept{ISO-Prolog}
-compatibility package @lib{iso} is included, to provide (almost) all the
-ISO builtins by default.  Two command-line options control the loading of
-the initialization file:
+When the shell is initialized it looks for a file @file{.ciaorc} in
+the HOME directory and makes an @tt{include} of it, if it exists.
+This file is useful for including @decl{use_module/1} declarations for
+the modules one wants to be loaded by default, changing
+@concept{prolog flag}s, etc.  (Note that the @file{.ciaorc} file can
+only contain directives, not actual code; to load some code at startup
+put it in a separate file and load it using e.g. a @decl{use_module/1}
+declaration.)  If the initialization file does not exist, the
+@concept{ISO-Prolog} compatibility package @lib{iso} is included, to
+provide (almost) all the ISO builtins by default.  Two command-line
+options control the loading of the initialization file:
 
 @begin{description}
 
@@ -304,6 +307,10 @@ sourcenames(Files) :- list(Files, sourcename).
 
 %----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+129,2001/10/28,15:38*52+'CET'), "Manual now
+   explains that @file{.ciaorc} can only contain directives.  (Manuel
+   Hermenegildo)").
 
 :- comment(version(1*7+72,2001/03/25,19:56*27+'CEST'), "Wrapped ciaosh
    reexport in 'library()' so that lpdoc documenter will find it.

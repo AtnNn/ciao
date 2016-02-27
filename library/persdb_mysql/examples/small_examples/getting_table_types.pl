@@ -1,3 +1,5 @@
+:- module(getting_table_types, [main/0], []).
+
 :- use_module(library('persdb_mysql/mysql_client')).
 :- use_package(persdb_mysql).
 :- use_module(library(format)).
@@ -12,7 +14,7 @@
 database_name(mysql).
 table_name(user).
 
-main0 :-
+main :-
         mysql_user(User),
         mysql_password(Password),
         mysql_host_and_port(HP),

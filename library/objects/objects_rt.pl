@@ -681,6 +681,11 @@ static_new_aux(_).
 %%------------------------------------------------------------------------
 
 :- comment(bug,
+        "Usage of objects from the @tt{user} module does not work
+         properly. It is better to use the @tt{objects} package
+         in a (proper) module.").
+
+:- comment(bug,
 	"Not really a bug: when loading code which declares 
          static instances from the toplevel shell, 
          predicate @pred{use_module/1}) will not work

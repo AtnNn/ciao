@@ -307,15 +307,14 @@ TAGGED fu2_mod(Arg,X0,X1,p)
   if (TagIsSmall(t) && TagIsSmall(u)) {
     denom = (int)(u-TaggedZero);
     rem = (int)(t-TaggedZero)%denom;
-    return (rem < 0 ? rem+denom : rem )+TaggedZero;
+    return ( (denom > 0 && rem < 0) || (denom < 0 && rem > 0) ?
+              rem+denom : rem ) + TaggedZero;
   } else {
     /*bn_quotient_wanted = FALSE;*/
     T_rem = bn_call(Arg,bn_quotient_remainder_quot_not_wanted,t,u,p);
-    if (TagIsSmall(T_rem))
-      return ( T_rem < TaggedZero ? fu2_plus(Arg,T_rem,u,p) : T_rem);
-    else
-      return ( !bn_positive(TagToSTR(T_rem)) ?
-               bn_call(Arg,bn_add,T_rem,u,p) : T_rem );
+    return ( T_rem != TaggedZero &&
+             fu1_sign(Arg,u,p) != fu1_sign(Arg,T_rem,p)
+             ? bn_call(Arg,bn_add,T_rem,u,p) : T_rem );
   }
 }
 

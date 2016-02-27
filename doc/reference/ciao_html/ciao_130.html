@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - line_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - arc_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC515" HREF="ciao_toc.html#TOC515">line_class (library)</A></H1>
+<H1><A NAME="SEC529" HREF="ciao_toc.html#TOC529">arc_class (library)</A></H1>
 <P>
-<A NAME="IDX5310"></A>
+<A NAME="IDX5340"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_130.html#SEC516">Usage and interface (line_class)</A>
-<LI><A HREF="ciao_130.html#SEC517">Documentation on exports (line_class)</A>
+<LI><A HREF="ciao_130.html#SEC530">Usage and interface (arc_class)</A>
+<LI><A HREF="ciao_130.html#SEC531">Documentation on exports (arc_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC516" HREF="ciao_toc.html#TOC516">Usage and interface (<CODE>line_class</CODE>)</A></H2>
+<H2><A NAME="SEC530" HREF="ciao_toc.html#TOC530">Usage and interface (<CODE>arc_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(line_class)).</CODE>
+<CODE>:- use_module(library(arc_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,10 +40,20 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5311"></A>
-<CODE>vertices/1</CODE>, 
-<A NAME="IDX5312"></A>
-<CODE>arrowheads/1</CODE>.
+<A NAME="IDX5341"></A>
+<CODE>coord/4</CODE>, 
+<A NAME="IDX5342"></A>
+<CODE>width/1</CODE>, 
+<A NAME="IDX5343"></A>
+<CODE>height/1</CODE>, 
+<A NAME="IDX5344"></A>
+<CODE>center/2</CODE>, 
+<A NAME="IDX5345"></A>
+<CODE>angle_start/1</CODE>, 
+<A NAME="IDX5346"></A>
+<CODE>style_type/1</CODE>, 
+<A NAME="IDX5347"></A>
+<CODE>outline_color/1</CODE>.
 
 </UL>
 
@@ -54,10 +64,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5313"></A>
-<CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX5314"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX5348"></A>
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -67,76 +75,249 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>,
 
 
 
-<H2><A NAME="SEC517" HREF="ciao_toc.html#TOC517">Documentation on exports (<CODE>line_class</CODE>)</A></H2>
+<H2><A NAME="SEC531" HREF="ciao_toc.html#TOC531">Documentation on exports (<CODE>arc_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5315"></A>
-<A NAME="IDX5316"></A>
+<A NAME="IDX5349"></A>
+<A NAME="IDX5350"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
-<DD><A NAME="IDX5317"></A>
+<DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
+<DD><A NAME="IDX5351"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X1,+Y1,+X2,+Y2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The arguments of the list specify the coordinates for two or more points that describe a serie of connected line segments.
+<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval that defines the arc.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
+<CODE>+X1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
+<CODE>+Y1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<UL>
-<LI><EM>Description:</EM> Gets the list of points of the line.
+<CODE>+X2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+Y2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5318"></A>
-<A NAME="IDX5319"></A>
+<A NAME="IDX5352"></A>
+<A NAME="IDX5353"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>arrowheads/1:</B>
-<DD><A NAME="IDX5320"></A>
+<DT><span class="define">PREDICATE:</span> <B>width/1:</B>
+<DD><A NAME="IDX5354"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>arrowheads(+Where)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Where</CODE> indicates whether or not arrowheads are to be drawn at one or both ends of the line. <CODE>Where</CODE> must have one of the next values: none ( for no arrowheads ), first (for an arrowhead at the first point of the line), last (for an arrowhead at the last point of the line), or both (for arrowheads at both ends). This option defaults to none.
+<LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Where</CODE> is currently instantiated to an atom.
+<CODE>+Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5355"></A>
+<A NAME="IDX5356"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>height/1:</B>
+<DD><A NAME="IDX5357"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Height</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5358"></A>
+<A NAME="IDX5359"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>center/2:</B>
+<DD><A NAME="IDX5360"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>center(+X,+Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>center(-X,-Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5361"></A>
+<A NAME="IDX5362"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>angle_start/1:</B>
+<DD><A NAME="IDX5363"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>angle_start(+Angle)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Angle</CODE> specifies the beginning of the angular range occupied by the arc. Degrees are given in units of degrees measured counter-clockwise from the 3-o'clock position; it may be either positive or negative.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Angle</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>angle_start(-Angle)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the value of the <CODE>Angle</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Angle</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5364"></A>
+<A NAME="IDX5365"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>style_type/1:</B>
+<DD><A NAME="IDX5366"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>style_type(+Style)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Style</CODE> specifies how to draw the arc. If type is pieslice (the default) then the arc's region is defined by a section of the oval's perimeter plus two line segments, one between the center of the oval and each end of the perimeter section. If type is chord then the arc's region is defined by a section of the oval's perimeter plus a single line segment connecting the two end points of the perimeter section. If type is arc then the arc's region consists of a section of the perimeter alone. In this last case the -fill option is ignored.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Style</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>arrowheads(-Where)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>style_type(-Style)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets position of the arrowheads.
+<LI><EM>Description:</EM> Gets the <CODE>Style</CODE> of the arc.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Where</CODE> is currently instantiated to an atom.
+<CODE>-Style</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5367"></A>
+<A NAME="IDX5368"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
+<DD><A NAME="IDX5369"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color used for drawing the arc's outline. This option defaults to black.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Color</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> It gets arc's outline <CODE>Color</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Color</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_129.html">previous</A>, <A HREF="ciao_131.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

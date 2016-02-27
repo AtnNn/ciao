@@ -7,9 +7,9 @@
 :- comment(module,"
 
 This part guides you through some very basic first steps with Ciao on
-a Un*x system.  It assumes that Ciao is already installed correctly on
-your Windows system. If this is not the case, then follow the
-instructions in @ref{Installing Ciao from the source distribution}
+a Un*x-like system.  It assumes that Ciao is already installed
+correctly on your Un*x system. If this is not the case, then follow
+the instructions in @ref{Installing Ciao from the source distribution}
 first.
 
 We start with by describing the basics of using Ciao from a normal
@@ -18,7 +18,7 @@ recommend reading also @ref{An introduction to the Ciao emacs
 environment (Un*x)} for the basics on using Ciao under @apl{emacs},
 which is a much simpler and much more powerful way of developing Ciao
 programs, and has the advantage of offering an almost identical
-environment under Windows and Un*x.
+environment under Un*x and Windows.
 
 @section{Testing your Ciao Un*x installation}
 
@@ -240,3 +240,7 @@ main.
 %% --------------------------------------------------------------------------- 
 :- comment(version_maintenance,dir('../../version')).
 %% --------------------------------------------------------------------------- 
+
+:- comment(version(1*7+133,2001/11/01,16:34*06+'CET'), "Fixed minor
+   typos.  (Manuel Hermenegildo)").
+

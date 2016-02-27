@@ -1,99 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - det_hook_rt (library)</TITLE>
+<TITLE>The Ciao Prolog System               - global (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_93.html">previous</A>, <A HREF="ciao_95.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_93.html">previous</A>, <A HREF="ciao_95.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC381" HREF="ciao_toc.html#TOC381">det_hook_rt (library)</A></H1>
+<H1><A NAME="SEC385" HREF="ciao_toc.html#TOC385">global (library)</A></H1>
 <P>
-<A NAME="IDX4270"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jos&eacute; Morales, Manuel Carro.
+<A NAME="IDX4259"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#83 (2001/4/2, 14:30:17 CEST)
-
-
-<P>
-Offers an enriched variant of call and cut <CODE>!!/0</CODE> which executes pending goals when the computation has no more alternatives. As an example, the program 
-
-
-
-<PRE>
-:- module(_, _, [det_hook]).
-
-enumerate(X):-
-        display(enumerating), nl,
-	OnCut = (display('goal cut'), nl),
-	OnFail = (display('goal failed'), nl),
-	det_try(enum(X), OnCut, OnFail).
-
-enum(1).
-enum(2).
-enum(3).
-</PRE>
-
-<P>
-behaves as follows: 
-
-
-
-<PRE>
-?- enumerate(X).
-enumerating
-
-X = 1 ? ;
-
-X = 2 ? ;
-
-X = 3 ? ;
-goal failed
-</PRE>
-
-<P>
-(note the message inserted on failure). The execution can be cut as follows: 
-
-
-
-<PRE>
-?- use_package(det_hook).
-{Including /home/clip/lib/ciao/ciao-1.7/library/det_hook/det_hook.pl
-}
-
-yes
-?- enumerate(X), '!!'.
-enumerating
-goal cut
-
-X = 1 ? ;
-
-no
-</PRE>
-
-<P>
-This library is useful to, for example, get rid of external connections once the necessary data has been obtained.
+<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
 
 
 
 <UL>
-<LI><A HREF="ciao_94.html#SEC382">Usage and interface (det_hook_rt)</A>
-<LI><A HREF="ciao_94.html#SEC383">Documentation on exports (det_hook_rt)</A>
-<LI><A HREF="ciao_94.html#SEC384">Documentation on internals (det_hook_rt)</A>
-<LI><A HREF="ciao_94.html#SEC385">Known bugs and planned improvements (det_hook_rt)</A>
+<LI><A HREF="ciao_94.html#SEC386">Usage and interface (global)</A>
+<LI><A HREF="ciao_94.html#SEC387">Documentation on exports (global)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC382" HREF="ciao_toc.html#TOC382">Usage and interface (<CODE>det_hook_rt</CODE>)</A></H2>
+<H2><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Usage and interface (<CODE>global</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -101,9 +35,7 @@ This library is useful to, for example, get rid of external connections once the
 
 <LI><STRONG>Library usage:</STRONG>
 
-Typically, this library is used including the 'det_hook' package into the package list of the module, or using the 
-<A NAME="IDX4271"></A>
-<CODE>use_package/1</CODE> declaration
+<CODE>:- use_module(library(global)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -112,20 +44,16 @@ Typically, this library is used including the 'det_hook' package into the packag
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4272"></A>
-<CODE>det_try/3</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4273"></A>
-<CODE>hiord_rt</CODE>.
+<A NAME="IDX4260"></A>
+<CODE>set_global/2</CODE>, 
+<A NAME="IDX4261"></A>
+<CODE>get_global/2</CODE>, 
+<A NAME="IDX4262"></A>
+<CODE>push_global/2</CODE>, 
+<A NAME="IDX4263"></A>
+<CODE>pop_global/2</CODE>, 
+<A NAME="IDX4264"></A>
+<CODE>del_global/1</CODE>.
 
 </UL>
 
@@ -135,75 +63,78 @@ Typically, this library is used including the 'det_hook' package into the packag
 
 
 
-<H2><A NAME="SEC383" HREF="ciao_toc.html#TOC383">Documentation on exports (<CODE>det_hook_rt</CODE>)</A></H2>
+<H2><A NAME="SEC387" HREF="ciao_toc.html#TOC387">Documentation on exports (<CODE>global</CODE>)</A></H2>
+<P>
+<A NAME="IDX4265"></A>
+<A NAME="IDX4266"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_global/2:</B>
+<DD><A NAME="IDX4267"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4268"></A>
+<A NAME="IDX4269"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_global/2:</B>
+<DD><A NAME="IDX4270"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4271"></A>
+<A NAME="IDX4272"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>push_global/2:</B>
+<DD><A NAME="IDX4273"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+</DL>
+
 <P>
 <A NAME="IDX4274"></A>
 <A NAME="IDX4275"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>det_try/3:</B>
+<DT><span class="define">PREDICATE:</span> <B>pop_global/2:</B>
 <DD><A NAME="IDX4276"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>det_try(pred(0),pred(0),pred(0))</CODE>.
+No further documentation available for this predicate.
 
+
+</DL>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>det_try(Goal,OnCut,OnFail)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Action</CODE> is called, and <CODE>OnCut</CODE> and <CODE>OnFail</CODE> are goals to be executed when <CODE>Goal</CODE> is cut or when it finitely fails, respectively. In order for this to work, cutting must be performed in a special way, by usin the
-
 <A NAME="IDX4277"></A>
-<CODE>!!/0</CODE> predicate, also provided by this module. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>OnCut</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-
-<CODE>OnFail</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC384" HREF="ciao_toc.html#TOC384">Documentation on internals (<CODE>det_hook_rt</CODE>)</A></H2>
-<P>
 <A NAME="IDX4278"></A>
-<A NAME="IDX4279"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>!!/0:</B>
-<DD><A NAME="IDX4280"></A>
+<DT><span class="define">PREDICATE:</span> <B>del_global/1:</B>
+<DD><A NAME="IDX4279"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> Performs a special cut which prunes alternatives away, as the usual cut, but which also executes the goals specified as <CODE>OnCut</CODE> for any call in the scope of the cut.
-
-</UL>
 
 </DL>
-
-
-
-<H2><A NAME="SEC385" HREF="ciao_toc.html#TOC385">Known bugs and planned improvements (<CODE>det_hook_rt</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-If the started goals do not exhaust their solutions, and '!!'/0 is not used, the database will populate with facts which will be consulted the next time a '!!'/0 is used. This could cause incorrect executions.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_93.html">previous</A>, <A HREF="ciao_95.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_93.html">previous</A>, <A HREF="ciao_95.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

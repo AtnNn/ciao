@@ -1,7 +1,7 @@
 foreign_compiler_options('LINUX','i86','gcc',['-fPIC']).
 foreign_linker_options('LINUX','i86','ld',['-shared']).
 foreign_compiler_options('DARWIN','ppc','cc',['-fPIC']).
-foreign_linker_options('DARWIN','ppc','cc',['-bundle -undefined suppress']).
+foreign_linker_options('DARWIN','ppc','cc',['-flat_namespace -bundle -undefined suppress']).
 foreign_compiler_options('IRIX','mips','cc',[]).
 foreign_linker_options('IRIX','mips','ld',['-shared']).
 foreign_compiler_options('LINUX','Sparc','gcc',['-fPIC']).

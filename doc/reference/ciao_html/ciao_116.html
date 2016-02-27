@@ -1,29 +1,71 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - widget_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - The Tcl/Tk interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC473" HREF="ciao_toc.html#TOC473">widget_class (library)</A></H1>
+<H1><A NAME="SEC485" HREF="ciao_toc.html#TOC485">The Tcl/Tk interface</A></H1>
 <P>
-<A NAME="IDX4949"></A>
+<A NAME="IDX4869"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Montse Iglesias Urraca, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#125 (2001/10/17, 13:42:47 CEST)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#123 (2001/9/2, 14:13:25 CEST)
+
+
+<P>
+The 
+<A NAME="IDX4870"></A>
+<CODE>tcltk</CODE> library package is a bidirectional interface to the <EM>Tcl</EM> (pronounced Tickle) language and <EM>Tk</EM> toolkit. Tcl is an interpreter scripting language with many extension packages, in particular the graphical interface toolkit Tk. The interaction between both languages is implemented as an interface between two processes, a Tcl/Tk process and a Prolog process. The approach allows programmers to program both in Tcl/Tk and Prolog. 
+
+
+<P>
+<STRONG>Prolog - Tcl/Tk interface structure</STRONG> 
+
+
+<P>
+The interface is made up of two parts: a Prolog part and a Tcl/Tk part. The Prolog part encodes the requests from a Prolog program and sends them to the Tcl/Tk part via a socket. The Tcl/Tk part receives from this socket and performs the actions included implied by the requests. 
+
+
+<P>
+<STRONG>Prolog side of the Prolog - Tcl/Tk interface</STRONG> 
+
+
+<P>
+The Prolog side receives the actions to perform in the Tcl/Tk side from the user program and sends them to the Tcl/Tk side through the socket connection. When the action is finished in the Tcl/Tk side, the result is returned to the user program, or the action fails if any problem occurs. 
+
+
+<P>
+<STRONG>Tcl/Tk side of the Prolog - Tcl/Tk interface</STRONG> 
+
+
+<P>
+The Tcl/Tk side waits for requests from the Prolog side, executes the Tcl/Tk code sent from the Prolog side. At the same time, the Tcl/Tk side handles the events and exceptions raised in the Tcl/Tk side, possibly passing on control to the Prolog side. 
 
 
 
 <UL>
-<LI><A HREF="ciao_116.html#SEC474">Usage and interface (widget_class)</A>
-<LI><A HREF="ciao_116.html#SEC475">Documentation on exports (widget_class)</A>
+<LI><A HREF="ciao_116.html#SEC486">Usage and interface (tcltk)</A>
+<LI><A HREF="ciao_116.html#SEC487">Documentation on exports (tcltk)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC474" HREF="ciao_toc.html#TOC474">Usage and interface (<CODE>widget_class</CODE>)</A></H2>
+<H2><A NAME="SEC486" HREF="ciao_toc.html#TOC486">Usage and interface (<CODE>tcltk</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +73,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(widget_class)).</CODE>
+<CODE>:- use_module(library(tcltk)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,56 +82,29 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4950"></A>
-<CODE>text_characters/1</CODE>, 
-<A NAME="IDX4951"></A>
-<CODE>font_type/1</CODE>, 
-<A NAME="IDX4952"></A>
-<CODE>background_color/1</CODE>, 
-<A NAME="IDX4953"></A>
-<CODE>borderwidth_value/1</CODE>, 
-<A NAME="IDX4954"></A>
-<CODE>foreground_color/1</CODE>, 
-<A NAME="IDX4955"></A>
-<CODE>highlightbackground_color/1</CODE>, 
-<A NAME="IDX4956"></A>
-<CODE>highlight_color/1</CODE>, 
-<A NAME="IDX4957"></A>
-<CODE>width_value/1</CODE>, 
-<A NAME="IDX4958"></A>
-<CODE>relief_type/1</CODE>, 
-<A NAME="IDX4959"></A>
-<CODE>side_type/1</CODE>, 
-<A NAME="IDX4960"></A>
-<CODE>expand_value/1</CODE>, 
-<A NAME="IDX4961"></A>
-<CODE>fill_type/1</CODE>, 
-<A NAME="IDX4962"></A>
-<CODE>padx_value/1</CODE>, 
-<A NAME="IDX4963"></A>
-<CODE>pady_value/1</CODE>, 
-<A NAME="IDX4964"></A>
-<CODE>row_value/1</CODE>, 
-<A NAME="IDX4965"></A>
-<CODE>rowspan_value/1</CODE>, 
-<A NAME="IDX4966"></A>
-<CODE>column_value/1</CODE>, 
-<A NAME="IDX4967"></A>
-<CODE>columnspan_value/1</CODE>, 
-<A NAME="IDX4968"></A>
-<CODE>event_type_widget/1</CODE>, 
-<A NAME="IDX4969"></A>
-<CODE>action_widget/3</CODE>, 
-<A NAME="IDX4970"></A>
-<CODE>action_widget/1</CODE>, 
-<A NAME="IDX4971"></A>
-<CODE>creation_options/1</CODE>, 
-<A NAME="IDX4972"></A>
-<CODE>creation_position/1</CODE>, 
-<A NAME="IDX4973"></A>
-<CODE>creation_position_grid/1</CODE>, 
-<A NAME="IDX4974"></A>
-<CODE>creation_bind/1</CODE>.
+<A NAME="IDX4871"></A>
+<CODE>tcl_new/1</CODE>, 
+<A NAME="IDX4872"></A>
+<CODE>tcl_eval/3</CODE>, 
+<A NAME="IDX4873"></A>
+<CODE>tcl_delete/1</CODE>, 
+<A NAME="IDX4874"></A>
+<CODE>tcl_event/3</CODE>, 
+<A NAME="IDX4875"></A>
+<CODE>tk_event_loop/1</CODE>, 
+<A NAME="IDX4876"></A>
+<CODE>tk_loop/1</CODE>, 
+<A NAME="IDX4877"></A>
+<CODE>tk_new/2</CODE>, 
+<A NAME="IDX4878"></A>
+<CODE>tk_next_event/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4879"></A>
+<CODE>tclInterpreter/1</CODE>, 
+<A NAME="IDX4880"></A>
+<CODE>tclCommand/1</CODE>.
 
 </UL>
 
@@ -100,10 +115,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4975"></A>
-<CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX4976"></A>
-<CODE>tcltk_obj/window_class</CODE>.
+<A NAME="IDX4881"></A>
+<CODE>tcltk/tcltk_low_level</CODE>, 
+<A NAME="IDX4882"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX4883"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX4884"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -113,822 +132,325 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>,
 
 
 
-<H2><A NAME="SEC475" HREF="ciao_toc.html#TOC475">Documentation on exports (<CODE>widget_class</CODE>)</A></H2>
+<H2><A NAME="SEC487" HREF="ciao_toc.html#TOC487">Documentation on exports (<CODE>tcltk</CODE>)</A></H2>
 <P>
-<A NAME="IDX4977"></A>
-<A NAME="IDX4978"></A>
+<A NAME="IDX4885"></A>
+<A NAME="IDX4886"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
-<DD><A NAME="IDX4979"></A>
+<DT><span class="define">REGTYPE:</span> <B>tclInterpreter/1:</B>
+<DD><A NAME="IDX4887"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
+ To use Tcl, you must create a <EM>Tcl interpreter</EM> object and send commands to it.
 
-<UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Text</CODE> to be displayed in the widget.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Text</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tclInterpreter(I)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Text</CODE> which is displayed in the widget.
+<LI><EM>Description:</EM> <CODE>I</CODE> is a reference to a <EM>Tcl</EM> interpreter.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Text</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4980"></A>
-<A NAME="IDX4981"></A>
+<A NAME="IDX4888"></A>
+<A NAME="IDX4889"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
-<DD><A NAME="IDX4982"></A>
+<DT><span class="define">REGTYPE:</span> <B>tclCommand/1:</B>
+<DD><A NAME="IDX4890"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
+ A <EM>Tcl</EM> command is specified as follows: 
 
-<UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Font</CODE> of the widget's text.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
+<PRE>
+      Command         --&#62; Atom  { other than [] }
+                        | Number
+                        | chars(PrologString)
+                        | write(Term)
+                        | format(Fmt,Args)
+                        | dq(Command)
+                        | br(Command)
+                        | sqb(Command)
+                        | min(Command)
+                        | ListOfCommands
+      ListOfCommands  --&#62; []
+                        |[Command|ListOfCommands]
+</PRE>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
+where: 
+
+
+<DL COMPACT>
+
+<DT><CODE>Atom</CODE>
+<DD>
+denotes the printed representation of the atom. 
+
+<DT><CODE>Number</CODE>
+<DD>
+denotes their printed representations. 
+
+<DT><CODE>chars(PrologString)</CODE>
+<DD>
+denotes the string represented by <EM>PrologString</EM> (a list of character codes). 
+
+<DT><CODE>write(Term)</CODE>
+<DD>
+denotes the string that is printed by the corresponding built-in predicate. 
+
+<DT><CODE>format(Term)</CODE>
+<DD>
+denotes the string that is printed by the corresponding built-in predicate. 
+
+<DT><CODE>dq(Command)</CODE>
+<DD>
+denotes the string specified by <EM>Command</EM>, enclosed in double quotes. 
+
+<DT><CODE>br(Command)</CODE>
+<DD>
+denotes the string specified by <EM>Command</EM>, enclosed in braces. 
+
+<DT><CODE>sqb(Command)</CODE>
+<DD>
+denotes the string specified by <EM>Command</EM>, enclosed in square brackets. 
+
+<DT><CODE>min(Command)</CODE>
+<DD>
+denotes the string specified by <EM>Command</EM>, immediately preceded by a hyphen. 
+
+<DT><CODE>ListOfCommands</CODE>
+<DD>
+denotes the strings denoted by each element, separated by spaces. 
+
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tclCommand(C)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the <CODE>Font</CODE> of the widget's text.
+<LI><EM>Description:</EM> <CODE>C</CODE> is a <EM>Tcl</EM> command.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4983"></A>
-<A NAME="IDX4984"></A>
+<A NAME="IDX4891"></A>
+<A NAME="IDX4892"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>background_color/1:</B>
-<DD><A NAME="IDX4985"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcl_new/1:</B>
+<DD><A NAME="IDX4893"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>background_color(+Background)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tcl_new(-TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Background</CODE> color. Default to gray.
+<LI><EM>Description:</EM> Creates a new interpreter, initializes it, and returns a handle to it in <CODE>TclInterpreter</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Background</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>background_color(-Background)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Returns the <CODE>Background</CODE> color.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Background</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4986"></A>
-<A NAME="IDX4987"></A>
+<A NAME="IDX4894"></A>
+<A NAME="IDX4895"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>borderwidth_value/1:</B>
-<DD><A NAME="IDX4988"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcl_eval/3:</B>
+<DD><A NAME="IDX4896"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>borderwidth_value(+BorderWidth)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tcl_eval(+TclInterpreter,+Command,-Result)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the width's border. Default to 2.
+<LI><EM>Description:</EM> Evaluates the commands given in <CODE>Command</CODE> in the Tcl interpreter <CODE>TclInterpreter</CODE>. The result will be stored as a string in <CODE>Result</CODE>. If there is an error in <EM>Command</EM> an exception is raised. The error messages will be <EM>Tcl Exception:</EM> if the error is in the syntax of the tcltk code or <EM>Prolog Exception:</EM>, if the error is in the prolog term.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+BorderWidth</CODE> is a number.
- (<CODE>basic_props:num/1</CODE>)
-</UL>
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>borderwidth_value(-BorderWidth)</CODE>
+<CODE>+Command</CODE> is a <EM>Tcl</EM> command.
+ (<CODE>tcltk:tclCommand/1</CODE>)
 
-<UL>
-<LI><EM>Description:</EM> Gets the width's border.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-BorderWidth</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>-Result</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4989"></A>
-<A NAME="IDX4990"></A>
+<A NAME="IDX4897"></A>
+<A NAME="IDX4898"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>foreground_color/1:</B>
-<DD><A NAME="IDX4991"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcl_delete/1:</B>
+<DD><A NAME="IDX4899"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>foreground_color(+Foreground)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tcl_delete(+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Foreground</CODE> color. Default to black
+<LI><EM>Description:</EM> Given a handle to a Tcl interpreter in variable <CODE>TclInterpreter</CODE>, it deletes the interpreter from the system.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Foreground</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>foreground_color(-Foreground)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Foreground</CODE> color.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Foreground</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4992"></A>
-<A NAME="IDX4993"></A>
+<A NAME="IDX4900"></A>
+<A NAME="IDX4901"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>highlightbackground_color/1:</B>
-<DD><A NAME="IDX4994"></A>
+<DT><span class="define">PREDICATE:</span> <B>tcl_event/3:</B>
+<DD><A NAME="IDX4902"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>highlightbackground_color(+Color)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tcl_event(+TclInterpreter,+Command,-Events)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the highlight background color. Default to white
+<LI><EM>Description:</EM> Evaluates the commands given in <CODE>Command</CODE> in the Tcl interpreter whose handle is provided in <CODE>TclInterpreter</CODE>. <CODE>Events</CODE> is a list of terms stored from Tcl by <EM>prolog_event</EM>. Blocks until there is something on the event queue
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>highlightbackground_color(-Color)</CODE>
+<CODE>+Command</CODE> is a <EM>Tcl</EM> command.
+ (<CODE>tcltk:tclCommand/1</CODE>)
 
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Color</CODE> of the highlight background.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4995"></A>
-<A NAME="IDX4996"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>highlight_color/1:</B>
-<DD><A NAME="IDX4997"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>highlight_color(+Color)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the highlight color. Default to white
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>highlight_color(-Color)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Color</CODE> of the highlight.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4998"></A>
-<A NAME="IDX4999"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>width_value/1:</B>
-<DD><A NAME="IDX5000"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>width_value(+Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies the <CODE>Width</CODE> for the widget. Default to 0
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>width_value(+Width)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Width</CODE> specified for the widget.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Width</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5001"></A>
-<A NAME="IDX5002"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>relief_type/1:</B>
-<DD><A NAME="IDX5003"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>relief_type(+Relief)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies a desired <CODE>Relief</CODE> for the widget. Default to sunken
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Relief</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>relief_type(-Relief)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Relief</CODE> of the widget.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Relief</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5004"></A>
-<A NAME="IDX5005"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>side_type/1:</B>
-<DD><A NAME="IDX5006"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>side_type(+Side)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies which <CODE>Side</CODE> of the master, the slave(s) will be packed against. Must be left, right, top or bottom. Defaults to top
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Side</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>side_type(-Side)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the position of the canvas.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Side</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5007"></A>
-<A NAME="IDX5008"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>expand_value/1:</B>
-<DD><A NAME="IDX5009"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>expand_value(+Value)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Specifies whether the slaves should be expanded to consume extra space in their master. <CODE>Value</CODE> may have any proper boolean value, such as 1 or 0. Defaults to 0
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Value</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>expand_value(-Value)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the boolean value which indicates if the slaves should be expanded or no.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Value</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5010"></A>
-<A NAME="IDX5011"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>fill_type/1:</B>
-<DD><A NAME="IDX5012"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>fill_type(+Option)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If a slave's parcel is larger than its requested dimensions, this option may be used to stretch the slave. <CODE>Option</CODE> must have one of the following values: none ( this is the default), x, y, both
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Option</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>fill_type(-Option)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the fill value of the canvas
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Option</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5013"></A>
-<A NAME="IDX5014"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>padx_value/1:</B>
-<DD><A NAME="IDX5015"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>padx_value(+Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much horizontal external padding to leave on each side of the slave(s). Amount defaults to 0
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>padx_value(-Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much horizontal external padding to leave on each side of the slaves.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5016"></A>
-<A NAME="IDX5017"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>pady_value/1:</B>
-<DD><A NAME="IDX5018"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>pady_value(+Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Amount</CODE> specifies how much vertical external padding to leave on each side of the slave(s). Amount defaults to 0
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>pady_value(-Amount)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Amount</CODE> which specifies how much vertical external padding to leave on each side of the slaves.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Amount</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5019"></A>
-<A NAME="IDX5020"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>row_value/1:</B>
-<DD><A NAME="IDX5021"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>row_value(+Row)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Row</CODE> in which the widget should be allocated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>row_value(-Row)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Row</CODE> in which the widget is allocated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5022"></A>
-<A NAME="IDX5023"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>rowspan_value/1:</B>
-<DD><A NAME="IDX5024"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>rowspan_value(+Row)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Indicates the number of <CODE>Row</CODE> which are going to be occupied in the grid.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>rowspan_value(-Row)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the number of <CODE>Row</CODE> which are occupied by the widget in the grid.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Row</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5025"></A>
-<A NAME="IDX5026"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>column_value/1:</B>
-<DD><A NAME="IDX5027"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>column_value(+Column)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Indicates the <CODE>Column</CODE> in which the widget should be allocated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>column_value(-Column)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the <CODE>Column</CODE> in which the widget is allocated.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5028"></A>
-<A NAME="IDX5029"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>columnspan_value/1:</B>
-<DD><A NAME="IDX5030"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>columnspan_value(+Column)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Indicates the number of <CODE>Column</CODE> which are going to be occupied in the grid.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>columnspan_value(-Column)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the number of <CODE>Column</CODE> which are occupied by the widget in the grid.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Column</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5031"></A>
-<A NAME="IDX5032"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>event_type_widget/1:</B>
-<DD><A NAME="IDX5033"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>event_type_widget(+EventType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> The event <CODE>EventType</CODE> is going to be manage by the interface.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+EventType</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>event_type_widget(-EventType)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the event <CODE>EventType</CODE> which is going to be manage by the interface.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-EventType</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5034"></A>
-<A NAME="IDX5035"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>action_widget/3:</B>
-<DD><A NAME="IDX5036"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>action_widget(+Input,+Output,+Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Executes <CODE>Term</CODE> with <CODE>Input</CODE> value and <CODE>Output</CODE> variable.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Input</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+Output</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>action_widget(+Input,+Output,-Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Term</CODE> is associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Input</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>+Output</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-
-<CODE>-Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5037"></A>
-<A NAME="IDX5038"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>action_widget/1:</B>
-<DD><A NAME="IDX5039"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>action_widget(+Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Term</CODE> is going to be associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>action_widget(-Term)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Term</CODE> is associated to the action of the object indicated with the operacion <EM>event_type_widget</EM>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Term</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5040"></A>
-<A NAME="IDX5041"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_options/1:</B>
-<DD><A NAME="IDX5042"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>creation_options(-OptionsList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Creates a list with the options supported by the widget.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-OptionsList</CODE> is a list.
+<CODE>-Events</CODE> is a list.
  (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5043"></A>
-<A NAME="IDX5044"></A>
+<A NAME="IDX4903"></A>
+<A NAME="IDX4904"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_position/1:</B>
-<DD><A NAME="IDX5045"></A>
+<DT><span class="define">PREDICATE:</span> <B>tk_event_loop/1:</B>
+<DD><A NAME="IDX4905"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>creation_position(-OptionsList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tk_event_loop(+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Creates a list with the options supported by the pack command.
+<LI><EM>Description:</EM> Waits for an event and executes the goal associated to it. Events are stored from Tcl with the <EM>prolog</EM> command. The unified term is sent to the Tcl interpreter in order to obtain the value of the tcl array of <EM>prolog_variables</EM>. If the term received does not have the form <CODE>execute(Goal)</CODE>, the predicate silently exits. If the execution of <CODE>Goal</CODE> raises a Prolog error, the interpreter is deleted and an error message is given.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-OptionsList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5046"></A>
-<A NAME="IDX5047"></A>
+<A NAME="IDX4906"></A>
+<A NAME="IDX4907"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_position_grid/1:</B>
-<DD><A NAME="IDX5048"></A>
+<DT><span class="define">PREDICATE:</span> <B>tk_loop/1:</B>
+<DD><A NAME="IDX4908"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>creation_position_grid(-OptionsList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tk_loop(+TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Creates a list with the options supported by the grid command.
+<LI><EM>Description:</EM> Passes control to Tk until all windows are gone.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-OptionsList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5049"></A>
-<A NAME="IDX5050"></A>
+<A NAME="IDX4909"></A>
+<A NAME="IDX4910"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>creation_bind/1:</B>
-<DD><A NAME="IDX5051"></A>
+<DT><span class="define">PREDICATE:</span> <B>tk_new/2:</B>
+<DD><A NAME="IDX4911"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>creation_bind(-BindList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>tk_new(+Options,-TclInterpreter)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Creates a list with the event to be manage and the action associated to this event.
+<LI><EM>Description:</EM> Performs basic Tcl and Tk initialization and creates the main window of a Tk application.<CODE>Options</CODE> is a list of optional elements according to:
+
+<DL COMPACT>
+
+<DT><CODE>name(+ApplicationName)</CODE>
+<DD>
+Sets the Tk main window title to <CODE>ApplicationName</CODE>. It is also used for communicating between Tcl/Tk applications via the Tcl <EM>send</EM> command. Default name is an empty string. 
+
+<DT><CODE>display(+Display)</CODE>
+<DD>
+Gives the name of the screen on which to create the main window. Default is normally determined by the <CODE>DISPLAY</CODE> environment variable. 
+
+<DT><CODE>file</CODE>
+<DD>
+Opens the sript <CODE>file</CODE>. Commands will not be read from standard input and the execution returns back to Prolog only after all windows (and the interpreter) have been deleted. 
+
+</DL>
+
+ 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Options</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>-TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4912"></A>
+<A NAME="IDX4913"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>tk_next_event/2:</B>
+<DD><A NAME="IDX4914"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>tk_next_event(+TclInterpreter,-Event)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Processes events until there is at least one Prolog event associated with <CODE>TclInterpreter</CODE>. <CODE>Event</CODE> is the term correspondig to the head of a queue of events stored from Tcl with the <EM>prolog_event</EM> command.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-BindList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+TclInterpreter</CODE> is a reference to a <EM>Tcl</EM> interpreter.
+ (<CODE>tcltk:tclInterpreter/1</CODE>)
+
+<CODE>-Event</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_115.html">previous</A>, <A HREF="ciao_117.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -1,43 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - The Tcl/Tk Class Interface</TITLE>
+<TITLE>The Ciao Prolog System               - Interface to daVinci</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_114.html">previous</A>, <A HREF="ciao_116.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_114.html">previous</A>, <A HREF="ciao_116.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC470" HREF="ciao_toc.html#TOC470">The Tcl/Tk Class Interface</A></H1>
+<H1><A NAME="SEC481" HREF="ciao_toc.html#TOC481">Interface to daVinci</A></H1>
 <P>
-<A NAME="IDX4884"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Montserrat Iglesias Urraca, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+<A NAME="IDX4811"></A>
 
 
 <P>
-This library implements an object-orented graphical library with a number of predefined objects, using the Prolog Tcl/Tk interface. This interface allows creating and destroying objects and modifying their properties. The 
-<A NAME="IDX4885"></A>
-<CODE>window_class</CODE> contains three clases: widget class, menu class, and canvas class. The constructor class is window_class. 
+<STRONG>Author(s):</STRONG> Francisco Bueno.
 
 
 <P>
-<STRONG>Note:</STRONG> This library (and the documentation) are still under development. 
+This library allows connecting a Ciao Prolog application with daVinci V2.X. 
+
+
+<P>
+The communication is based on a two-way channel: after daVinci is started, messages are sent in to it and read in from it on demand by different Prolog predicates. Messages are sent via writing the term as text; messages are received by reading text and returning an atom. Commands sent and answers received are treated as terms from the Prolog side, since for daVinci they are text but have term syntax; the only difficulty lies in strings, for which special Prolog syntax is provided. 
+
+
+<P>
+See accompanying file <CODE>library('davinci/commands')</CODE> for examples on the use of this library. 
+
+
+<P>
+daVinci is developed by U. of Bremen, Germany.
 
 
 
 <UL>
-<LI><A HREF="ciao_115.html#SEC471">Usage and interface (window_class)</A>
-<LI><A HREF="ciao_115.html#SEC472">Documentation on exports (window_class)</A>
+<LI><A HREF="ciao_115.html#SEC482">Usage and interface (davinci)</A>
+<LI><A HREF="ciao_115.html#SEC483">Documentation on exports (davinci)</A>
+<LI><A HREF="ciao_115.html#SEC484">Documentation on internals (davinci)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC471" HREF="ciao_toc.html#TOC471">Usage and interface (<CODE>window_class</CODE>)</A></H2>
+<H2><A NAME="SEC482" HREF="ciao_toc.html#TOC482">Usage and interface (<CODE>davinci</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -45,7 +52,7 @@ This library implements an object-orented graphical library with a number of pre
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(window_class)).</CODE>
+<CODE>:- use_module(library(davinci)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -54,37 +61,26 @@ This library implements an object-orented graphical library with a number of pre
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4886"></A>
-<CODE>window_class/0</CODE>, 
-<A NAME="IDX4887"></A>
-<CODE>window_class/3</CODE>, 
-<A NAME="IDX4888"></A>
-<CODE>destructor/0</CODE>, 
-<A NAME="IDX4889"></A>
-<CODE>show/0</CODE>, 
-<A NAME="IDX4890"></A>
-<CODE>hide_/0</CODE>, 
-<A NAME="IDX4891"></A>
-<CODE>title/1</CODE>, 
-<A NAME="IDX4892"></A>
-<CODE>maxsize/2</CODE>, 
-<A NAME="IDX4893"></A>
-<CODE>minsize/2</CODE>, 
-<A NAME="IDX4894"></A>
-<CODE>withdraw/0</CODE>, 
-<A NAME="IDX4895"></A>
-<CODE>event_loop/0</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX4896"></A>
-<CODE>widget/1</CODE>, 
-<A NAME="IDX4897"></A>
-<CODE>option/1</CODE>, 
-<A NAME="IDX4898"></A>
-<CODE>menu/1</CODE>, 
-<A NAME="IDX4899"></A>
-<CODE>canvas/1</CODE>.
+<A NAME="IDX4812"></A>
+<CODE>davinci/0</CODE>, 
+<A NAME="IDX4813"></A>
+<CODE>topd/0</CODE>, 
+<A NAME="IDX4814"></A>
+<CODE>davinci_get/1</CODE>, 
+<A NAME="IDX4815"></A>
+<CODE>davinci_get_all/1</CODE>, 
+<A NAME="IDX4816"></A>
+<CODE>davinci_put/1</CODE>, 
+<A NAME="IDX4817"></A>
+<CODE>davinci_quit/0</CODE>, 
+<A NAME="IDX4818"></A>
+<CODE>davinci_ugraph/1</CODE>, 
+<A NAME="IDX4819"></A>
+<CODE>davinci_lgraph/1</CODE>, 
+<A NAME="IDX4820"></A>
+<CODE>ugraph2term/2</CODE>, 
+<A NAME="IDX4821"></A>
+<CODE>formatting/2</CODE>.
 
 </UL>
 
@@ -95,20 +91,22 @@ This library implements an object-orented graphical library with a number of pre
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX4900"></A>
-<CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX4901"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX4902"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX4903"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX4904"></A>
-<CODE>tcltk/tcltk</CODE>, 
-<A NAME="IDX4905"></A>
-<CODE>tcltk/tcltk_low_level</CODE>, 
-<A NAME="IDX4906"></A>
-<CODE>aggregates</CODE>.
+<A NAME="IDX4822"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX4823"></A>
+<CODE>prompt</CODE>, 
+<A NAME="IDX4824"></A>
+<CODE>errhandle</CODE>, 
+<A NAME="IDX4825"></A>
+<CODE>format</CODE>, 
+<A NAME="IDX4826"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX4827"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX4828"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX4829"></A>
+<CODE>system</CODE>.
 
 </UL>
 
@@ -118,292 +116,237 @@ This library implements an object-orented graphical library with a number of pre
 
 
 
-<H2><A NAME="SEC472" HREF="ciao_toc.html#TOC472">Documentation on exports (<CODE>window_class</CODE>)</A></H2>
+<H2><A NAME="SEC483" HREF="ciao_toc.html#TOC483">Documentation on exports (<CODE>davinci</CODE>)</A></H2>
 <P>
-<A NAME="IDX4907"></A>
-<A NAME="IDX4908"></A>
+<A NAME="IDX4830"></A>
+<A NAME="IDX4831"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>widget/1:</B>
-<DD><A NAME="IDX4909"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci/0:</B>
+<DD><A NAME="IDX4832"></A>
 
 
 <P>
-Each <CODE>Widget</CODE> type is characterized in two ways: first, the form of the create command used to create instances of the type; and second, a set of configuration options for items of that type, which may be used in the create and itemconfigure widget commands.
+Start up a daVinci process.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4833"></A>
+<A NAME="IDX4834"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>topd/0:</B>
+<DD><A NAME="IDX4835"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>widget(W)</CODE>
+A toplevel to send to daVinci commands from standard input.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4836"></A>
+<A NAME="IDX4837"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_get/1:</B>
+<DD><A NAME="IDX4838"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>davinci_get(Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>W</CODE> is a reference to one type of the widget widgets.
+<LI><EM>Description:</EM> Get a message from daVinci. <CODE>Term</CODE> is a term corresponding to daVinci's message.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4910"></A>
-<A NAME="IDX4911"></A>
+<A NAME="IDX4839"></A>
+<A NAME="IDX4840"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>option/1:</B>
-<DD><A NAME="IDX4912"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_get_all/1:</B>
+<DD><A NAME="IDX4841"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>option(O)</CODE>
+<STRONG>Usage:</STRONG> <CODE>davinci_get_all(List)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>O</CODE> is <EM>hidden</EM> if the Widget is not visible or <EM>shown</EM> if its visible.
+<LI><EM>Description:</EM> Get all pending messages. <CODE>List</CODE> is a list of terms as in <CODE>davinci_get/1</CODE>.
 
-</UL>
+<LI><EM>The following properties should hold upon exit:</EM>
 
-</DL>
-
-<P>
-<A NAME="IDX4913"></A>
-<A NAME="IDX4914"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>menu/1:</B>
-<DD><A NAME="IDX4915"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>menu(M)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>M</CODE> is a reference to one type of the menu.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4916"></A>
-<A NAME="IDX4917"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>canvas/1:</B>
-<DD><A NAME="IDX4918"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>canvas(C)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>C</CODE> is a reference to one type of the canvas.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4919"></A>
-<A NAME="IDX4920"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>window_class/0:</B>
-<DD><A NAME="IDX4921"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Creates a new interpreter, asserting the predicate <EM>interp(I)</EM>, and the widgets, menus and canvases objects.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4922"></A>
-<A NAME="IDX4923"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>window_class/3:</B>
-<DD><A NAME="IDX4924"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>window_class(+WidgetList,+MenusList,+CanvasList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Adds the widgets, menus and canvases in the list to the window object.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+WidgetList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>+MenusList</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-
-<CODE>+CanvasList</CODE> is a list.
+<CODE>List</CODE> is a list.
  (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4925"></A>
-<A NAME="IDX4926"></A>
+<A NAME="IDX4842"></A>
+<A NAME="IDX4843"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>destructor/0:</B>
-<DD><A NAME="IDX4927"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_put/1:</B>
+<DD><A NAME="IDX4844"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>davinci_put(Term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Deletes the widgets, menus and canvases of the window object and the window object.
+<LI><EM>Description:</EM> Send a command to daVinci.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>davinci:davinci_command(Term)</CODE>
+ (<CODE>davinci:davinci_command/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4928"></A>
-<A NAME="IDX4929"></A>
+<A NAME="IDX4845"></A>
+<A NAME="IDX4846"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>show/0:</B>
-<DD><A NAME="IDX4930"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_quit/0:</B>
+<DD><A NAME="IDX4847"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+Exit daVinci process. All pending answers are lost!
+
+
+</DL>
+
+<P>
+<A NAME="IDX4848"></A>
+<A NAME="IDX4849"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>davinci_ugraph/1:</B>
+<DD><A NAME="IDX4850"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>davinci_ugraph(Graph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Adds widgets, menus and canvas to the window object.
+<LI><EM>Description:</EM> Send a graph to daVinci.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>davinci:ugraph(Graph)</CODE>
+ (<CODE>davinci:ugraph/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4931"></A>
-<A NAME="IDX4932"></A>
+<A NAME="IDX4851"></A>
+<A NAME="IDX4852"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>hide_/0:</B>
-<DD><A NAME="IDX4933"></A>
+<DT><span class="define">PREDICATE:</span> <B>davinci_lgraph/1:</B>
+<DD><A NAME="IDX4853"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>davinci_lgraph(Graph)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Removes widgets, menus and canvas from the window object.
+<LI><EM>Description:</EM> Send a labeled graph to daVinci.
 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>davinci:lgraph(Graph)</CODE>
+ (<CODE>davinci:lgraph/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4934"></A>
-<A NAME="IDX4935"></A>
+<A NAME="IDX4854"></A>
+<A NAME="IDX4855"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>title/1:</B>
-<DD><A NAME="IDX4936"></A>
+<DT><span class="define">PREDICATE:</span> <B>ugraph2term/2:</B>
+<DD><A NAME="IDX4856"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>title(+X)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> specifies the title for window. The default window title is the name of the window.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+X</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4937"></A>
-<A NAME="IDX4938"></A>
+<A NAME="IDX4857"></A>
+<A NAME="IDX4858"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>maxsize/2:</B>
-<DD><A NAME="IDX4939"></A>
+<DT><span class="define">PREDICATE:</span> <B>formatting/2:</B>
+<DD><A NAME="IDX4859"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>maxsize(+X,+Y)</CODE>
+No further documentation available for this predicate.
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> specifies the maximum width and <CODE>Y</CODE> the maximum height for the window.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+</DL>
 
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
 
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
+
+<H2><A NAME="SEC484" HREF="ciao_toc.html#TOC484">Documentation on internals (<CODE>davinci</CODE>)</A></H2>
+<P>
+<A NAME="IDX4860"></A>
+<A NAME="IDX4861"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>davinci_command/1:</B>
+<DD><A NAME="IDX4862"></A>
+
+
+<P>
+Syntactically, a command is a term. Semantically, it has to correspond to a command understood by daVinci. Two terms are interpreted in a special way: <CODE>string/1</CODE> and <CODE>text/1</CODE>: <CODE>string(Term)</CODE> is given to daVinci as <CODE>"Term"</CODE>; <CODE>text(List)</CODE> is given as <CODE>"Term1 Term2 ...Term "</CODE> for each <CODE>Term</CODE> in <CODE>List</CODE>. If your term has functors <CODE>string/1</CODE> and <CODE>text/1</CODE> that you don't want to be interpreted this way, use it twice, i.e., <CODE>string(string(Term))</CODE> is given to daVinci as <CODE>string(Term')</CODE> where <CODE>Term'</CODE> is the interpretation of <CODE>Term</CODE>.
+
 
 </DL>
 
 <P>
-<A NAME="IDX4940"></A>
-<A NAME="IDX4941"></A>
+<A NAME="IDX4863"></A>
+<A NAME="IDX4864"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>minsize/2:</B>
-<DD><A NAME="IDX4942"></A>
+<DT><span class="define">PROPERTY:</span> <B>ugraph/1:</B>
+<DD><A NAME="IDX4865"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>minsize(+X,+Y)</CODE>
+<CODE>ugraph(Graph)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> specifies the minimum width and <CODE>Y</CODE> the minimum height for the window.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<P>
+<CODE>Graph</CODE> is a term which denotes an ugraph as in <CODE>library(ugraphs)</CODE>. Vertices of the form <CODE>node/2</CODE> are interpreted in a special way: <CODE>node(Term,List)</CODE> is interpreted as a vertex <CODE>Term</CODE> with attributes <CODE>List</CODE>. <CODE>List</CODE> is a list of terms conforming the syntax of <CODE>davinci_put/1</CODE> and corresponding to daVinci's graph nodes attributes. If your vertex has functor <CODE>node/2</CODE> and you don't want it to be interpreted this way, use it twice, i.e., <CODE>node(node(T1,T2),[])</CODE> is given to daVinci as vertex <CODE>node(T1,T2)</CODE>. A vertex is used both as label and name of daVinci's graph node. daVinci's graph edges have label <CODE>V1-V2</CODE> where <CODE>V1</CODE> is the source and <CODE>V2</CODE> the sink of the edge. There is no support for multiple edges between the same two vertices.
 
-<CODE>+X</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-
-<CODE>+Y</CODE> is an integer.
- (<CODE>basic_props:int/1</CODE>)
-</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX4943"></A>
-<A NAME="IDX4944"></A>
+<A NAME="IDX4866"></A>
+<A NAME="IDX4867"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>withdraw/0:</B>
-<DD><A NAME="IDX4945"></A>
+<DT><span class="define">PROPERTY:</span> <B>lgraph/1:</B>
+<DD><A NAME="IDX4868"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Arranges for window to be withdrawn from the screen.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4946"></A>
-<A NAME="IDX4947"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>event_loop/0:</B>
-<DD><A NAME="IDX4948"></A>
+<CODE>lgraph(Graph)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<CODE>Graph</CODE> is a term which denotes a wgraph as in <CODE>library(wgraphs)</CODE>, except that the weights are labels, i.e., they do not need to be integers. Vertices of the form <CODE>node/2</CODE> are interpreted in a special way. Edge labels are converted into special intermediate vertices. Duplicated labels are solved by adding dummy atoms <CODE>"</CODE>. There is no support for multiple edges between the same two vertices.
 
-<UL>
-<LI><EM>Description:</EM> Waits for a <EM>Tcl/Tk</EM> event.
-
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_114.html">previous</A>, <A HREF="ciao_116.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_114.html">previous</A>, <A HREF="ciao_116.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

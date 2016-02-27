@@ -58,8 +58,8 @@ make_exec_prot(Files, ExecName) :-
         compute_main_def(Module, Base, MainDef),
         current_prolog_flag(executables, ExecMode),
         compute_objects_loads(ExecMode, ExecFiles, InitLoads),
-        create_loader(ExecMode, MainDef, InitLoads, ExecFiles, ExecFiles1),
-        create_exec(ExecName, Base, ExecFiles1),
+        create_init(Module, ExecMode, MainDef, InitLoads, InitFile),
+        create_exec(ExecName, Base, [InitFile|ExecFiles]),
 	create_interfaces, % JFMC
         !,
         delete_temp,
@@ -315,16 +315,15 @@ define_stump_pred :-
 %%% --- Making executable file --- %%%
 
 
-create_loader(static, void, fail, PoFiles, PoFiles) :- !. % Nothing to do
-create_loader(lazyload, void, fail, PoFiles, PoFiles) :- !. % Nothing to do
-create_loader(ExecMode, MainDef, Loads, PoFiles, [TmpPoFile|PoFiles]) :-
+create_init(Module, ExecMode, MainDef, Loads, TmpPoFile) :-
         temp_filename(TmpPoFile),
         delete_on_ctrlc(TmpPoFile, Ref),
         open(TmpPoFile, write, Out),
         verbose_message(['{Compiling auxiliary file ',TmpPoFile]),
         Mode = ql(unprofiled),
         set_compiler_mode(Mode),
-        set_compiler_out(Out),        
+        set_compiler_out(Out),
+        compile_clause(main_module(Module),true), % used in engine(internals)
         compile_loads(ExecMode, Loads),
         compile_main_def(MainDef),
         cleanup_compilation_data,

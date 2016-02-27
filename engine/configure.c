@@ -44,7 +44,7 @@
 #if defined(__svr4__) || defined(DARWIN)              /* Solaris or Darwin */
 # include <unistd.h>                                            /* sbrk () */
 # if !defined(MALLOC_DEBUG)
-#  include <stdlib.h>                                           /* malloc() */
+#  include <stdlib.h>                                         /* malloc() */
 # endif
 #else                                                            /* SunOS */
 # include <sys/types.h>

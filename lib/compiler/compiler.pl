@@ -35,14 +35,20 @@ use_module(File, Imports, ByThisModule) :-
 ensure_loaded(File) :-
         process_files_from(File, in, any, load_compile, static_base,
                            false, needs_reload),
-        check_static_module(File),
 	( make_delayed_dynlinks -> true % JFMC
 	; message(['{Dynamic link failed}']),
 	  fail
-	), !.
+	), !,
+        do_file_initialization(File),
+        check_static_module(File).
 ensure_loaded(_) :- !, % JFMC
 	discard_delayed_dynlinks,
 	fail.
+
+do_file_initialization(File) :-
+        base_name(File, Base),
+        defines_module(Base, Module),
+        do_initialization(Module).
 
 check_static_module(File) :-
         base_name(File, Base),

@@ -6,6 +6,8 @@
 #include <sys/types.h>                                    /* For getpid() */
 #endif
 
+#include <string.h>
+
 #include "threads.h"                                     /* For debugging */
 #include "datadefs.h"
 #include "support.h"

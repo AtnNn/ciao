@@ -383,13 +383,13 @@ describe(_).
 :- comment(apropos/1,
 	"This tool makes use of @concept{regular expresions} in order
 	 to find predicate specifications. It is very usefull whether
-         you can't renember the full name of a predicate.
+         you can't remember the full name of a predicate.
          Regular expresions take the same format as described in
          library @lib{patterns}. Example:
 @begin{verbatim}
 ?- apropos('atom_*').
 
-metaterms: atom_concat/2
+terms: atom_concat/2
 concurrency: atom_lock_state/2
 atomic_basic: atom_concat/3,atom_length/2,atom_codes/2
 iso_byte_char: atom_chars/2

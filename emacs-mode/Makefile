@@ -32,8 +32,16 @@
 #-----------------------------------------------------------------------------
 include ../SETTINGS
 include ../SHARED
+SUBSTITUTE_STRING=../etc/substitute_string
+#include /home/clip/Systems/ciao/SETTINGS
+#include /home/clip/Systems/ciao/SHARED
+#SUBSTITUTE_STRING = /home/clip/Systems/ciao/etc/substitute_string
 #-----------------------------------------------------------------------------
-LIBFILES = word-help.el
+LIBFILES = word-help.el ciao.xpm ciaoload.xpm ciaoasr.xpm ciaoexeout.xpm \
+           ciaoitf.xpm ciaopl.xpm ciaopo.xpm ciaoscrt.xpm lpdocview.xpm \
+	   clear.xpm complete.xpm wordhelp.xpm ciaomanuals.xpm manuals.xpm \
+           ciaodebug.xpm stop.xpm ciaoprompt.xpm ciaostorequery.xpm \
+	   ciaoclearquery.xpm
 REALLIBDIR = $(LIBDIR)/$(VERSIONMAIN)
 #-----------------------------------------------------------------------------
 install: 
@@ -44,17 +52,17 @@ install:
 	-chmod $(EXECMODE) $(REALLIBDIR)
 	cp $(LIBFILES) $(REALLIBDIR)
 	-cd $(REALLIBDIR); chmod $(DATAMODE) $(LIBFILES); 'rm' -f *~
-	../etc/substitute_string "<CIAOLIBDIR>" $(LIBDIR) \
+	$(SUBSTITUTE_STRING) "<CIAOLIBDIR>" $(LIBDIR) \
                                  "<LPDOCDIR>" $(DOCDIR) \
 	     DOTemacs.skel $(REALLIBDIR)/DOTemacs.el
 	-chmod $(DATAMODE) $(REALLIBDIR)/DOTemacs.el
-	../etc/substitute_string '^' ';;' \
+	$(SUBSTITUTE_STRING) '^' ';;' \
 	     $(REALLIBDIR)/DOTemacs.el \
 	     $(REALLIBDIR)/DOTemacs.tmp
-	../etc/substitute_string '^' ';;' \
+	$(SUBSTITUTE_STRING) '^' ';;' \
 	     CiaoMode.pl \
 	     $(REALLIBDIR)/CiaoMode.pl.tmp
-	../etc/substitute_string 'ciao-mode-version "Development Version"' \
+	$(SUBSTITUTE_STRING) 'ciao-mode-version "Development Version"' \
 	     'ciao-mode-version "$(VERSION)p$(PATCH)"' \
 	     ciao.el.body $(REALLIBDIR)/ciao.el.body.tmp
 	cat ciao.el.header $(REALLIBDIR)/DOTemacs.tmp \
@@ -63,7 +71,7 @@ install:
 	-rm -f $(REALLIBDIR)/DOTemacs.tmp
 	-rm -f $(REALLIBDIR)/CiaoMode.pl.tmp
 	-rm -f $(REALLIBDIR)/ciao.el.body.tmp
-	../etc/substitute_string '<CIAOREALLIBDIR>' \
+	$(SUBSTITUTE_STRING) '<CIAOREALLIBDIR>' \
              $(REALLIBDIR) \
 	     $(REALLIBDIR)/ciao.el.tmp \
 	     $(REALLIBDIR)/ciao.el
@@ -110,7 +118,7 @@ uninstall:
 	@echo "*** ---------------------------------------------------------"
 	@echo "*** Uninstalling emacs library files from $(REALLIBDIR) ..."
 	@echo "*** ---------------------------------------------------------"
-	-\(cd $(REALLIBDIR); 'rm' -f $(LIBFILES)\)
+	-( cd $(REALLIBDIR); 'rm' -f $(LIBFILES) )
 	'rm' -f $(LIBDIR)/DOTemacs.el $(LIBDIR)/ciao.el $(LIBDIR)/ciao.elc 
 	'rm' -f $(LIBDIR)/prolog.el $(LIBDIR)/prolog.elc 
 	-rmdir $(REALLIBDIR)

@@ -5,7 +5,7 @@
   	        [assertions,regtypes,isomodes,functions,hiord]).
 
 %% For checking below...
-:- use_module(library(metaterms), [ instance/2 ]).
+:- use_module(library(terms_check), [ instance/2 ]).
 
 :- use_module(library(lists),[list_concat/2]).
 :- use_module(library(terms),[atom_concat/2]).

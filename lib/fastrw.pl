@@ -10,7 +10,7 @@
         [fast_read/1,
          fast_write/1]).
 
-:- comment(title, "Fast Reading and Writing of Terms").
+:- comment(title, "Fast reading and writing of terms").
 
 :- comment(author, "Daniel Cabeza").
 :- comment(author, "Oscar Portela Arjona").

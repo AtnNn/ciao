@@ -5,7 +5,7 @@
             reinstall_attributes/1
         ], [dcg,assertions]).
 
-:- use_module(library(dict), [dic_lookup/4]).
+:- use_module(library(dict), [dic_lookup/4,dictionary/5]).
 
  %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %% Copy is a copy of Term with fresh, non-attributed variables, and
@@ -54,7 +54,7 @@ cp_attr_args(N, Term, Copy, Dict) :-
 
 
 attrlist(Dict) --> {var(Dict)}, !, [].
-attrlist(dic(_,Val,L,R)) -->
+attrlist(Dict) --> {dictionary(Dict,_,Val,L,R)},
         attrlist(L),
         attr(Val),
         attrlist(R).
@@ -69,6 +69,10 @@ reinstall_attributes([attach_attribute(Copy, Constr)|Rest]):-
         reinstall_attributes(Rest).
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+145,2001/11/12,19:13*34+'CET'), "Make use of
+   dictionary/5 for data type transparency.  (Francisco Bueno
+   Carrillo)").
 
 :- comment(version(0*9+90,1999/05/11,18:41*14+'MEST'), "Exported
    cp_attr/3 which may be useful to define dump/3 constraint extraction

@@ -1,24 +1,30 @@
 :- module(det_hook_rt,
 	[det_try/3, '$pending_cut_goals'/0],
-	[hiord, assertions, isomodes]).
+	[assertions, isomodes]).
 
 :- use_module(engine(internals)).
 
 :- comment(author, "Jos@'{e} Morales").
 :- comment(author, "Manuel Carro").
 
+:- comment(title, "Call on determinate").
 :- comment(module, "Offers an enriched variant of call and cut
 @tt{!!/0} which executes pending goals when the computation has no
-more alternatives.  As an example, the program
+more alternatives.  
+
+This library is useful to, for example, get rid of external
+connections once the necessary data has been obtained.").
+
+:- comment(appendix, "As an example, the program
 
 @begin{verbatim}
 :- module(_, _, [det_hook]).
 
 enumerate(X):-
         display(enumerating), nl,
-	OnCut = (display('goal cut'), nl),
-	OnFail = (display('goal failed'), nl),
-	det_try(enum(X), OnCut, OnFail).
+        OnCut = (display('goal cut'), nl),
+        OnFail = (display('goal failed'), nl),
+        det_try(enum(X), OnCut, OnFail).
 
 enum(1).
 enum(2).
@@ -54,21 +60,22 @@ goal cut
 X = 1 ? ;
 
 no
-@end{verbatim}
-
-This library is useful to, for example, get rid of external
-connections once the necessary data has been obtained.").
+@end{verbatim}").
 
 :- comment(bug, "If the started goals do not exhaust their solutions,
 and '!!'/0 is not used, the database will populate with facts which
 will be consulted the next time a '!!'/0 is used.  This could cause
 incorrect executions.").
 
+:- comment(usage, "@begin{verbatim}
+:- use_module(library(det_hook_rt)).
+@end{verbatim}
+in which case, @tt{!!/0} is not available.
 
-
-:- comment(usage, "Typically, this library is used including the
-'det_hook' package into the package list of the module, or using the
-@decl{use_package/1} declaration").
+Typically, this library is used as a package:
+@begin{verbatim}
+:- use_package(det_hook).
+@end{verbatim}").
 
 :- data cut_goal/2.
 
@@ -79,7 +86,7 @@ fails, respectively.  In order for this to work, cutting must be
 performed in a special way, by usin the @pred{!!/0} predicate, also
 provided by this module.".
 
-:- meta_predicate det_try(pred(0), pred(0), pred(0)).
+:- meta_predicate det_try(goal, goal, goal).
 
 det_try(Action, OnCutGoal, OnFailGoal) :-
 	cut_goal(OnCutGoal),
@@ -127,6 +134,9 @@ as the usual cut, but which also executes the goals specified as
 %% Subsequent version comments will be placed above the last one
 %% inserted.
 
+:- comment(version(1*7+149,2001/11/19,19:17*51+'CET'), "Changed pred(0)
+   to goal, use of hiord discontinued.  (Daniel Cabeza Gras)").
+
 :- comment(version(1*7+83,2001/04/02,14:30*17+'CEST'), "Added det_hook
-(MCL)").
+   (MCL)").
 

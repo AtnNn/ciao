@@ -1,7 +1,7 @@
 :- use_package([assertions]).
 :- comment(nodoc,assertions).
 
-:- comment(title, "The PiLLoW Web Programming Library").
+:- comment(title, "The PiLLoW Web programming library").
 :- comment(subtitle,"REFERENCE MANUAL").
 :- comment(subtitle,"@em{Generated/Printed on:} @today{}").
 

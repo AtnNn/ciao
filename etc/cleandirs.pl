@@ -1,7 +1,5 @@
 :- module(cleandirs, [main/1], []).
 
-
-
 :- use_package(assertions).
 
 :- comment(title,"A Program to Help Cleaning your Directories ").
@@ -156,35 +154,45 @@ Combinations of these extensions (e.g., .tar.gz) are also sought for~n", []).
 
 
 recurse_all_entries([], _Action).
-recurse_all_entries([Directory|Files],Action):-
-        file_property(Directory, type(directory)), !,
-        (
-            Directory \== '..', Directory \== '.' ->
-            check_what_to_do(Directory, Action, Erased),
-            (
-                Erased = no ->
-                (
-                    directory_files(Directory, DirFiles), cd(Directory) ->
-                    recurse_all_entries(DirFiles, Action),
-                    cd('..')
-                ;
-                    format("*** Skipping directory '~w' (insuficient permissions)~n",
-                           [Directory])
-                ),
-                recurse_all_entries(Files, Action)
-            ;
-                recurse_all_entries(Files, Action)
-            )
-        ;
-            recurse_all_entries(Files, Action)
-        ).
 recurse_all_entries([File|Files], Action):-
-        file_property(File, type(regular)), !,
+        check_file_property(File, regular), !,
         check_what_to_do(File, Action, _Erased),
         recurse_all_entries(Files, Action).
+recurse_all_entries([Directory|Files],Action):-
+        check_file_property(Directory, directory), !,
+        ( Directory \== '..', Directory \== '.'
+	-> check_what_to_do(Directory, Action, Erased),
+           ( Erased = no
+	   -> working_directory(Old, Old),
+	      ( file_property(Directory, linkto(_))
+	      -> format("*** Skipping directory '~w/~w' (symbolic link)~n",
+	                [Old,Directory])
+	       ; ( directory_files(Directory, DirFiles),
+		   cd(Directory)
+		 -> recurse_all_entries(DirFiles, Action),
+		    cd(Old)
+		  ; format("*** Skipping directory '~w/~w' (insuficient permissions)~n",
+		           [Old,Directory])
+		 )
+	      )
+	    ; true
+	   )
+	 ; true
+        ),
+	recurse_all_entries(Files, Action).
 recurse_all_entries([_File|Files], Action):-
         recurse_all_entries(Files, Action).
 
+check_file_property(File, Prop):-
+	catch( file_property(File, type(Prop)),
+	       error(existence_error(source_sink,_),_),
+	       ignore_file(Prop, File)
+	     ).
+
+ignore_file(regular, File):-
+	working_directory(Old, Old),
+	format("*** Looks like a dangling symlink: '~w/~w'~n",[Old,File]),
+	fail.
 
 %% Files with a generator
 check_what_to_do(File, action(AskRemList, CheckBackups), Erased):-
@@ -212,11 +220,11 @@ decide_action_generator(File, GeneratorFile, AskRemList, Erased):-
             TGen > TFile ->
             format("(~w has been modified or created after ~w)~n",
                     [GeneratorFile, File]),
-            erase_or_not(AskRemList, [Generator, File], Erased)
+            erase_or_not(AskRemList, File, Erased)
         ;
             format("(~w has been modified or created after ~w)~n",
                     [File, GeneratorFile]),
-            erase_or_not(AskRemList, [Generator, File], Erased)
+            erase_or_not(AskRemList, File, Erased)
         ).
 
 
@@ -344,15 +352,9 @@ can_generate(FileX, FileZ):-
 
 :- comment(version_maintenance,on).
 
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
-
 :- comment(version(0*1+3,2001/10/25,14:31*59+'CEST'), "Eliminated bug in
-   decide_action_backup. (Francisco Bueno Carrillo)").
+calls to erase_or_not/3 (second arguments were lists) and added check
+for dangling symlinks. (Francisco Bueno Carrillo)").
 
 :- comment(version(0*1+2,2000/06/01,17:57*19+'CEST'), "Changed name of
 options, added --onlybackups option.  (MCL)").

@@ -1,216 +1,49 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Persistent predicate database</TITLE>
+<TITLE>The Ciao Prolog System               - HTML/XML/CGI programming</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC535" HREF="ciao_toc.html#TOC535">Persistent predicate database</A></H1>
+<H1><A NAME="SEC547" HREF="ciao_toc.html#TOC547">HTML/XML/CGI programming</A></H1>
 <P>
-<A NAME="IDX5539"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> J.M. Gomez, D. Cabeza, and M. Hermenegildo, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+<A NAME="IDX5461"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#125 (2001/10/17, 13:42:47 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Hermenegildo, Sacha Varma.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#96 (2001/5/2, 12:29:31 CEST)
+<STRONG>Version:</STRONG> 1.7#131 (2001/10/29, 20:47:56 CET)
 
 
 <P>
- 
+This module implements the predicates of the PiLLoW package related to 
+<A NAME="IDX5462"></A>
+HTML/
+<A NAME="IDX5463"></A>
+XML generation and parsing, 
+<A NAME="IDX5464"></A>
+CGI and form handlers programming, and in general all the predicates which do not imply the use of the HTTP protocol.
 
 
 
 <UL>
-<LI><A HREF="ciao_136.html#SEC536">Introduction to persistent predicates</A>
-<LI><A HREF="ciao_136.html#SEC537">Persistent predicates</A>
-<LI><A HREF="ciao_136.html#SEC538">Using file-based persistent predicates</A>
-<LI><A HREF="ciao_136.html#SEC539">Implementation Issues</A>
-<LI><A HREF="ciao_136.html#SEC540">Defining an initial database</A>
-<LI><A HREF="ciao_136.html#SEC541">Using persistent predicates from the top level</A>
-<LI><A HREF="ciao_136.html#SEC542">Usage and interface (persdbrt)</A>
-<LI><A HREF="ciao_136.html#SEC543">Documentation on exports (persdbrt)</A>
-<LI><A HREF="ciao_136.html#SEC544">Documentation on multifiles (persdbrt)</A>
-<LI><A HREF="ciao_136.html#SEC545">Documentation on internals (persdbrt)</A>
-<LI><A HREF="ciao_136.html#SEC546">Known bugs and planned improvements (persdbrt)</A>
+<LI><A HREF="ciao_136.html#SEC548">Usage and interface (html)</A>
+<LI><A HREF="ciao_136.html#SEC549">Documentation on exports (html)</A>
+<LI><A HREF="ciao_136.html#SEC550">Documentation on multifiles (html)</A>
+<LI><A HREF="ciao_136.html#SEC551">Other information (html)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC536" HREF="ciao_toc.html#TOC536">Introduction to persistent predicates</A></H2>
-
-<P>
-This library implements a <EM>generic persistent predicate database</EM>. The basic notion implemented by the library is that of a 
-<A NAME="IDX5540"></A>
-persistent predicate. The persistent predicate concept provides a simple, yet powerful generic persistent data access method [BibRef: radioweb-D3.1.M1-A1,radioweb-ta]. A persistent predicate is a special kind of dynamic, data predicate that "resides" in some persistent medium (such as a set of files, a database, etc.) that is typically external to the program using such predicates. The main effect is that any changes made to to a persistent predicate from a program "survive" across executions. I.e., if the program is halted and restarted the predicate that the new process sees is in precisely the same state as it was when the old process was halted (provided no change was made in the meantime to the storage by other processes or the user). 
-
-
-<P>
-Persistent predicates appear to a program as ordinary predicates, and calls to these predicates can appear in clause bodies in the usual way. However, the definitions of these predicates do not appear in the program. Instead, the library maintains automatically the definitions of predicates which have been declared as persistent in the persistent storage. 
-
-
-<P>
-<A NAME="IDX5541"></A>
-Updates to persistent predicates can be made using enhanced versions of 
-<A NAME="IDX5542"></A>
-<CODE>asserta_fact/1</CODE>, 
-<A NAME="IDX5543"></A>
-<CODE>assertz_fact/1</CODE> and 
-<A NAME="IDX5544"></A>
-<CODE>retract_fact/1</CODE>. The library makes sure that each update is a 
-<A NAME="IDX5545"></A>
-transactional update, in the sense that if the update terminates, then the permanent storage has definitely been modified. For example, if the program making the updates is halted just after the update and then restarted, then the updated state of the predicate will be seen. This provides security against possible data loss due to, for example, a system crash. Also, due to the atomicity of the transactions, persistent predicates allow 
-<A NAME="IDX5546"></A>
-concurrent updates from several programs. 
-
-
-
-
-<H2><A NAME="SEC537" HREF="ciao_toc.html#TOC537">Persistent predicates, files, and relational databases</A></H2>
-
-<P>
-The concept of persistent predicates provided by this library essentially implements a light-weight, simple, and at the same time powerful form of relational database (a 
-<A NAME="IDX5547"></A>
-deductive database), and which is standalone, in the sense that it does not require external support, other than the file management capabilities provided by the operating system. This is due to the fact that the persistent predicates are in fact stored in one or more auxiliary files below a given directory. 
-
-
-<P>
-This type of database is specially useful when building small to medium-sized standalone applications in Prolog which require persistent storage. In many cases it provides a much easier way of implementing such storage than using files under direct program control. For example, interactive applications can use persistent predicates to represent their internal state in a way that is close to the application. The persistence of such predicates then allows automatically restoring the state to that at the end of a previous session. Using persistent predicates amounts to simply declaring some predicates as such and eliminates having to worry about opening files, closing them, recovering from system crashes, etc. 
-
-
-<P>
-In other cases, however, it may be convenient to use a relational database as persistent storage. This may be the case, for example, when the data already resides in such a database (where it is perhaps accessed also by other applications) or the volume of data is very large. 
-<A NAME="IDX5548"></A>
-<CODE>persdb_sql</CODE> [BibRef: radioweb-D3.1.M2-A2] is a companion library which implements the same notion of persistent predicates used herein, but keeping the storage in a relational database. This provides a very natural and transparent way to access SQL database relations from a Prolog program. In that library, facilities are also provided for reflecting more complex <EM>views</EM> of the database relations as predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations, and may include SQL-like aggregation operations. 
-
-
-<P>
-A nice characteristic of the notion of persistent predicates used in both of these libraries is that it abstracts away how the predicate is actually stored. Thus, a program can use persistent predicates stored in files or in external relational databases interchangeably, and the type of storage used for a given predicate can be changed without having to modify the program (except for replacing the corresponding 
-<A NAME="IDX5549"></A>
-<CODE>persistent/2</CODE> declarations). 
-
-
-<P>
-An example application of the 
-<A NAME="IDX5550"></A>
-<CODE>persdb</CODE> and 
-<A NAME="IDX5551"></A>
-<CODE>persdb_sql</CODE> libraries (and also the 
-<A NAME="IDX5552"></A>
-<CODE>pillow</CODE> library [BibRef: pillow-www6]), is 
-<A NAME="IDX5553"></A>
-<CODE>WebDB</CODE> [BibRef: radioweb-D3.1.M2-A3]. 
-<A NAME="IDX5554"></A>
-<CODE>WebDB</CODE> is a generic, highly customizable <EM>deductive database engine</EM> with an <EM>html interface</EM>. 
-<A NAME="IDX5555"></A>
-<CODE>WebDB</CODE> allows creating and maintaining Prolog-based databases as well as relational databases (residing in conventional relational database engines) using any standard WWW browser. 
-
-
-
-
-<H2><A NAME="SEC538" HREF="ciao_toc.html#TOC538">Using file-based persistent predicates</A></H2>
-
-<P>
-Persistent predicates can be declared statically, using 
-<A NAME="IDX5556"></A>
-<CODE>persistent/2</CODE> declarations (which is the preferred method, when possible), or dynamically via calls to 
-<A NAME="IDX5557"></A>
-<CODE>make_persistent/2</CODE>. Currently, persistent predicates may only contain facts, i.e., they are <EM>dynamic</EM> predicates of type 
-<A NAME="IDX5558"></A>
-<CODE>data/1</CODE>. 
-
-
-<P>
-Predicates declared as persistent are linked to a directory, and the persistent state of the predicate will be kept in several files below that directory. The files in which the persistent predicates are stored are in readable, plain ASCII format, and in Prolog syntax. One advantage of this approach is that such files can also be created or edited by hand, in a text editor, or even by other applications. 
-
-
-<P>
-An example definition of a persistent predicate implemented by files follows: 
-
-
-
-<PRE>
-:- persistent(p/3,dbdir).
-
-persistent_dir(dbdir, '/home/clip/public_html/db').
-</PRE>
-
-<P>
-The first line declares the predicate <CODE>p/3</CODE> persistent. The argument <CODE>dbdir</CODE> is a key used to index into a fact of the relation 
-<A NAME="IDX5559"></A>
-<CODE>persistent_dir/2</CODE>, which specifies the directory where the corresponding files will be kept. The effect of the declaration, together with the 
-<A NAME="IDX5560"></A>
-<CODE>persistent_dir/2</CODE> fact, is that, although the predicate is handled in the same way as a normal data predicate, in addition the system will create and maintain efficiently a persistent version of <CODE>p/3</CODE> via files in the directory <CODE>/home/clip/public_html/db</CODE>. 
-
-
-<P>
-The level of indirection provided by the <CODE>dbdir</CODE> argument makes it easy to place the storage of several persistent predicates in a common directory, by specifying the same key for all of them. It also allows changing the directory for several such persistent predicates by modifying only one fact in the program. Furthermore, the 
-<A NAME="IDX5561"></A>
-<CODE>persistent_dir/2</CODE> predicate can even be dynamic and specified at run-time. 
-
-
-
-
-<H2><A NAME="SEC539" HREF="ciao_toc.html#TOC539">Implementation Issues</A></H2>
-
-<P>
-We outline the current implementation approach. This implementation attempts to provide at the same time efficiency and security. To this end, up to three files are used for each predicate (the 
-<A NAME="IDX5562"></A>
-persistence set): the 
-<A NAME="IDX5563"></A>
-data file, the 
-<A NAME="IDX5564"></A>
-operations file, and the 
-<A NAME="IDX5565"></A>
-backup file. In the 
-<A NAME="IDX5566"></A>
-updated state the facts (tuples) that define the predicate are stored in the data file and the operations file is empty (the backup file, which contains a security copy of the data file, may or may not exist). 
-
-
-<P>
-While a program using a persistent predicate is running, any insertion (assert) or deletion (retract) operations on the predicate are performed on both the program memory and on the persistence set. However, in order to incurr only a small overhead in the execution, rather than changing the data file directly, a record of each of the insertion and deletion operations is <EM>appended</EM> to the operations file. The predicate is then in a 
-<A NAME="IDX5567"></A>
-transient state, in that the contents of the data file do not reflect exactly the current state of the corresponding predicate. However, the complete persistence set does. 
-
-
-<P>
-When a program starts, all pending operations in the operations file are performed on the data file. A backup of the data file is created first to prevent data loss if the system crashes during this operation. The order in which this updating of files is done ensures that, if at any point the process dies, on restart the data will be completely recovered. This process of updating the persistence set can also be triggered at any point in the execution of the program (for example, when halting) by calling 
-<A NAME="IDX5568"></A>
-<CODE>update_files</CODE>. 
-
-
-
-
-<H2><A NAME="SEC540" HREF="ciao_toc.html#TOC540">Defining an initial database</A></H2>
-
-<P>
-It is possible to define an initial database by simply including in the program code facts of persistent predicates. They will be included in the persistent database when it is created. They are ignored in successive executions. 
-
-
-
-
-<H2><A NAME="SEC541" HREF="ciao_toc.html#TOC541">Using persistent predicates from the top level</A></H2>
-
-<P>
-Special care must be taken when loading into the top level modules or user files which use persistent predicates. Beforehand, a goal <CODE>use_module(library('persdb/persdbrt'))</CODE> must be issued. Furthermore, since persistent predicates defined by the loaded files are in this way defined dynamically, a call to 
-<A NAME="IDX5569"></A>
-<CODE>initialize_db/0</CODE> is commonly needed after loading and before calling predicates of these files. 
-
-
-
-
-<H2><A NAME="SEC542" HREF="ciao_toc.html#TOC542">Usage and interface (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC548" HREF="ciao_toc.html#TOC548">Usage and interface (<CODE>html</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -218,19 +51,7 @@ Special care must be taken when loading into the top level modules or user files
 
 <LI><STRONG>Library usage:</STRONG>
 
-There are two packages which implement persistence: 
-<A NAME="IDX5570"></A>
-<CODE>persdb</CODE> and 
-<A NAME="IDX5571"></A>
-<CODE>'persdb/ll'</CODE> (for low level). In the first, the standard builtins 
-<A NAME="IDX5572"></A>
-<CODE>asserta_fact/1</CODE>, 
-<A NAME="IDX5573"></A>
-<CODE>assertz_fact/1</CODE>, and 
-<A NAME="IDX5574"></A>
-<CODE>retract_fact/1</CODE> are replaced by new versions which handle persistent data predicates, behaving as usual for normal data predicates. In the second package, predicates with names starting with <CODE>p</CODE> are defined, so that there is not overhead in calling the standard builtins. In any case, each package is used as usual: including it in the package list of the module, or using the 
-<A NAME="IDX5575"></A>
-<CODE>use_package/1</CODE> declaration.
+<CODE>:- use_module(library(html)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -239,31 +60,49 @@ There are two packages which implement persistence:
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5576"></A>
-<CODE>passerta_fact/1</CODE>, 
-<A NAME="IDX5577"></A>
-<CODE>passertz_fact/1</CODE>, 
-<A NAME="IDX5578"></A>
-<CODE>pretract_fact/1</CODE>, 
-<A NAME="IDX5579"></A>
-<CODE>asserta_fact/1</CODE>, 
-<A NAME="IDX5580"></A>
-<CODE>assertz_fact/1</CODE>, 
-<A NAME="IDX5581"></A>
-<CODE>retract_fact/1</CODE>, 
-<A NAME="IDX5582"></A>
-<CODE>initialize_db/0</CODE>, 
-<A NAME="IDX5583"></A>
-<CODE>make_persistent/2</CODE>, 
-<A NAME="IDX5584"></A>
-<CODE>update_files/0</CODE>, 
-<A NAME="IDX5585"></A>
-<CODE>update_files/1</CODE>.
+<A NAME="IDX5465"></A>
+<CODE>output_html/1</CODE>, 
+<A NAME="IDX5466"></A>
+<CODE>html2terms/2</CODE>, 
+<A NAME="IDX5467"></A>
+<CODE>xml2terms/2</CODE>, 
+<A NAME="IDX5468"></A>
+<CODE>html_template/3</CODE>, 
+<A NAME="IDX5469"></A>
+<CODE>html_report_error/1</CODE>, 
+<A NAME="IDX5470"></A>
+<CODE>get_form_input/1</CODE>, 
+<A NAME="IDX5471"></A>
+<CODE>get_form_value/3</CODE>, 
+<A NAME="IDX5472"></A>
+<CODE>form_empty_value/1</CODE>, 
+<A NAME="IDX5473"></A>
+<CODE>form_default/3</CODE>, 
+<A NAME="IDX5474"></A>
+<CODE>set_cookie/2</CODE>, 
+<A NAME="IDX5475"></A>
+<CODE>get_cookies/1</CODE>, 
+<A NAME="IDX5476"></A>
+<CODE>url_query/2</CODE>, 
+<A NAME="IDX5477"></A>
+<CODE>my_url/1</CODE>, 
+<A NAME="IDX5478"></A>
+<CODE>url_info/2</CODE>, 
+<A NAME="IDX5479"></A>
+<CODE>url_info_relative/3</CODE>, 
+<A NAME="IDX5480"></A>
+<CODE>form_request_method/1</CODE>, 
+<A NAME="IDX5481"></A>
+<CODE>icon_address/2</CODE>, 
+<A NAME="IDX5482"></A>
+<CODE>html_protect/1</CODE>, 
+<A NAME="IDX5483"></A>
+<CODE>http_lines/3</CODE>.
 
 <LI><EM>Multifiles:</EM>
 
-<A NAME="IDX5586"></A>
-<CODE>persistent_dir/2</CODE>.
+<A NAME="IDX5484"></A>
+<CODE>html_expansion/2</CODE>.
 
 </UL>
 
@@ -274,18 +113,16 @@ There are two packages which implement persistence:
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5587"></A>
+<A NAME="IDX5485"></A>
+<CODE>strings</CODE>, 
+<A NAME="IDX5486"></A>
 <CODE>lists</CODE>, 
-<A NAME="IDX5588"></A>
-<CODE>streams</CODE>, 
-<A NAME="IDX5589"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX5590"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX5591"></A>
+<A NAME="IDX5487"></A>
 <CODE>system</CODE>, 
-<A NAME="IDX5592"></A>
-<CODE>file_locks/file_locks</CODE>.
+<A NAME="IDX5488"></A>
+<CODE>pillow/pillow_aux</CODE>, 
+<A NAME="IDX5489"></A>
+<CODE>pillow/pillow_types</CODE>.
 
 </UL>
 
@@ -295,307 +132,485 @@ There are two packages which implement persistence:
 
 
 
-<H2><A NAME="SEC543" HREF="ciao_toc.html#TOC543">Documentation on exports (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC549" HREF="ciao_toc.html#TOC549">Documentation on exports (<CODE>html</CODE>)</A></H2>
 <P>
-<A NAME="IDX5593"></A>
-<A NAME="IDX5594"></A>
+<A NAME="IDX5490"></A>
+<A NAME="IDX5491"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>passerta_fact/1:</B>
-<DD><A NAME="IDX5595"></A>
+<DT><span class="define">PREDICATE:</span> <B>output_html/1:</B>
+<DD><A NAME="IDX5492"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>passerta_fact(fact)</CODE>.
+<CODE>output_html(HTMLTerm)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>passerta_fact(Fact)</CODE>
+Outputs <CODE>HTMLTerm</CODE>, interpreted as an 
+<A NAME="IDX5493"></A>
+<CODE>html_term/1</CODE>, to current output stream.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5494"></A>
+<A NAME="IDX5495"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>html2terms/2:</B>
+<DD><A NAME="IDX5496"></A>
+
+
+<P>
+<CODE>html2terms(String,Terms)</CODE>
+
+
+<P>
+<CODE>String</CODE> is a character list containing HTML code and <CODE>Terms</CODE> is its prolog structured representation.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>html2terms(-string,+html_term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Persistent version of
+<LI><EM>Description:</EM> Translates an HTML-term into the HTML code it represents.
 
-<A NAME="IDX5596"></A>
-<CODE>asserta_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added at the beginning of the definition of the corresponding predicate. The predicate concerned must be declared 
-<A NAME="IDX5597"></A>
-<CODE>persistent</CODE>. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. Defined in the 
-<A NAME="IDX5598"></A>
-<CODE>'persdb/ll'</CODE> package. 
-<LI><EM>The following properties should hold at call time:</EM>
+</UL>
 
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>html2terms(+string,?canonic_html_term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates HTML code into a structured HTML-term.
+
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5599"></A>
-<A NAME="IDX5600"></A>
+<A NAME="IDX5497"></A>
+<A NAME="IDX5498"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>passertz_fact/1:</B>
-<DD><A NAME="IDX5601"></A>
+<DT><span class="define">PREDICATE:</span> <B>xml2terms/2:</B>
+<DD><A NAME="IDX5499"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>passertz_fact(fact)</CODE>.
+<CODE>xml2terms(String,Terms)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>passertz_fact(Fact)</CODE>
+<CODE>String</CODE> is a character list containing XML code and <CODE>Terms</CODE> is its prolog structured representation.
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>xml2terms(-string,+html_term)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Persistent version of
+<LI><EM>Description:</EM> Translates a XML-term into the XML code it represents.
 
-<A NAME="IDX5602"></A>
-<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added at the end of the definition of the corresponding predicate. The predicate concerned must be declared 
-<A NAME="IDX5603"></A>
-<CODE>persistent</CODE>. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. Defined in the 
-<A NAME="IDX5604"></A>
-<CODE>'persdb/ll'</CODE> package. 
-<LI><EM>The following properties should hold at call time:</EM>
+</UL>
 
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>xml2terms(+string,?canonic_xml_term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Translates XML code into a structured XML-term.
+
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5605"></A>
-<A NAME="IDX5606"></A>
+<A NAME="IDX5500"></A>
+<A NAME="IDX5501"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>pretract_fact/1:</B>
-<DD><A NAME="IDX5607"></A>
+<DT><span class="define">PREDICATE:</span> <B>html_template/3:</B>
+<DD><A NAME="IDX5502"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>pretract_fact(fact)</CODE>.
+<CODE>html_template(Chars,Terms,Dict)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>pretract_fact(Fact)</CODE>
+Interprets <CODE>Chars</CODE> as an HTML template returning in <CODE>Terms</CODE> the corresponding structured HTML-term, which includes variables, and unifying <CODE>Dict</CODE> with a dictionary of those variables (an incomplete list of <EM>name</EM><CODE>=</CODE><EM>Var</EM> pairs). An HTML template is standard HTML code, but in which "slots" can be defined and given an identifier. These slots represent parts of the HTML code in which other HTML code can be inserted, and are represented in the HTML-term as free variables. There are two kinds of variables in templates: 
 
 <UL>
-<LI><EM>Description:</EM> Persistent version of
 
-<A NAME="IDX5608"></A>
-<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be declared 
-<A NAME="IDX5609"></A>
-<CODE>persistent</CODE>. Defined in the 
-<A NAME="IDX5610"></A>
-<CODE>'persdb/ll'</CODE> package. 
-<LI><EM>The following properties should hold at call time:</EM>
+<LI>Variables representing page contents. A variable with name <EM>name</EM> is defined with the special tag <CODE>&#60;V&#62;</CODE><EM>name</EM><CODE>&#60;/V&#62;</CODE>.
 
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<LI>Variables representing tag attributes. They occur as an attribute or an attribute value starting with <CODE>_</CODE>, followed by its name, which must be formed by alphabetic characters.
+
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX5611"></A>
-<A NAME="IDX5612"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>asserta_fact/1:</B>
-<DD><A NAME="IDX5613"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>asserta_fact(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>asserta_fact(Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Same as
-
-<A NAME="IDX5614"></A>
-<CODE>passerta_fact/1</CODE>, but if the predicate concerned is not persistent then behaves as the builtin of the same name. Defined in the 
-<A NAME="IDX5615"></A>
-<CODE>persdb</CODE> package. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5616"></A>
-<A NAME="IDX5617"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>assertz_fact/1:</B>
-<DD><A NAME="IDX5618"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>assertz_fact(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>assertz_fact(Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Same as
-
-<A NAME="IDX5619"></A>
-<CODE>passertz_fact/1</CODE>, but if the predicate concerned is not persistent then behaves as the builtin of the same name. Defined in the 
-<A NAME="IDX5620"></A>
-<CODE>persdb</CODE> package. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5621"></A>
-<A NAME="IDX5622"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>retract_fact/1:</B>
-<DD><A NAME="IDX5623"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>retract_fact(fact)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>retract_fact(Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Same as
-
-<A NAME="IDX5624"></A>
-<CODE>pretract_fact/1</CODE>, but if the predicate concerned is not persistent then behaves as the builtin of the same name. Defined in the 
-<A NAME="IDX5625"></A>
-<CODE>persdb</CODE> package. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Fact</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5626"></A>
-<A NAME="IDX5627"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>initialize_db/0:</B>
-<DD><A NAME="IDX5628"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM>
-
-<A NAME="IDX5629"></A>
-<A NAME="IDX5630"></A>
-Initializes the whole database, updating the state of the declared persistent predicates. Must be called explicitly after dynamically defining clauses for 
-<A NAME="IDX5631"></A>
-<CODE>persistent_dir/2</CODE>. 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5632"></A>
-<A NAME="IDX5633"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_persistent/2:</B>
-<DD><A NAME="IDX5634"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>make_persistent(spec,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>make_persistent(PredDesc,Keyword)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Dynamic version of the
-
-<A NAME="IDX5635"></A>
-<CODE>persistent</CODE> declaration. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
+As an example, suposse the following HTML template: 
 
 <PRE>
-predname(P/A) :-
-        atm(P),
-        nnegint(A).
+&#60;html&#62;
+&#60;body bgcolor=_bgcolor&#62;
+&#60;v&#62;content&#60;/v&#62;
+&#60;/body&#62;
+&#60;/html&#62;
+
 </PRE>
 
- (<CODE>basic_props:predname/1</CODE>)
+<P>
+The following query in the Ciao toplevel shows how the template is parsed, and the dictionary returned: 
 
-<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
- (<CODE>persdbrt:keyword/1</CODE>)
+<PRE>
+?- file_to_string('template.html',_S), html_template(_S,Terms,Dict). 
+
+Dict = [bgcolor=_A,content=_B|_],
+Terms = [env(html,[],["
+",env(body,[bgcolor=_A],["
+",_B,"
+"]),"
+"]),"
+"] ? 
+
+yes
+</PRE>
+
+<P>
+If a dictionary with values is supplied at call time, then variables are unified accordingly inside the template: 
+
+<PRE>
+?- file_to_string('template.html',_S),
+   html_template(_S,Terms,[content=b("hello world!"),bgcolor="white"]). 
+
+Terms = [env(html,[],["
+",env(body,[bgcolor="white"],["
+",b("hello world!"),"
+"]),"
+"]),"
+"] ? 
+
+yes
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX5503"></A>
+<A NAME="IDX5504"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>html_report_error/1:</B>
+<DD><A NAME="IDX5505"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>html_report_error(Error)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Outputs error <CODE>Error</CODE> as a standard HTML page.
+
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5636"></A>
-<A NAME="IDX5637"></A>
+<A NAME="IDX5506"></A>
+<A NAME="IDX5507"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>update_files/0:</B>
-<DD><A NAME="IDX5638"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_form_input/1:</B>
+<DD><A NAME="IDX5508"></A>
+
+
+<P>
+<CODE>get_form_input(Dict)</CODE>
+
+
+<P>
+Translates input from the form (with either the POST or GET methods, and even with CONTENT_TYPE multipart/form-data) to a dictionary <CODE>Dict</CODE> of <EM>attribute</EM>=<EM>value</EM> pairs. It translates empty values (which indicate only the presence of an attribute) to the atom <CODE>'$empty'</CODE>, values with more than one line (from text areas or files) to a list of lines as strings, the rest to atoms or numbers (using 
+<A NAME="IDX5509"></A>
+<CODE>name/2</CODE>).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5510"></A>
+<A NAME="IDX5511"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_form_value/3:</B>
+<DD><A NAME="IDX5512"></A>
+
+
+<P>
+<CODE>get_form_value(Dict,Var,Val)</CODE>
+
+
+<P>
+Unifies <CODE>Val</CODE> with the value for attribute <CODE>Var</CODE> in dictionary <CODE>Dict</CODE>. Does not fail: value is <CODE>"</CODE> if not found (this simplifies the programming of form handlers when they can be accessed directly).
+
+
+</DL>
+
+<P>
+<A NAME="IDX5513"></A>
+<A NAME="IDX5514"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>form_empty_value/1:</B>
+<DD><A NAME="IDX5515"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>form_empty_value(Term)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Checks that <CODE>Term</CODE>, a value comming from a text area is empty (can have spaces, newlines and linefeeds).
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5516"></A>
+<A NAME="IDX5517"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>form_default/3:</B>
+<DD><A NAME="IDX5518"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>form_default(+Val,+Default,-NewVal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Useful when a form is only partially filled, or when the executable can be invoked either by a link or by a form, to set form defaults. If the value of <CODE>Val</CODE> is empty then <CODE>NewVal</CODE>=<CODE>Default</CODE>, else <CODE>NewVal</CODE>=<CODE>Val</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5519"></A>
+<A NAME="IDX5520"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>set_cookie/2:</B>
+<DD><A NAME="IDX5521"></A>
+
+
+<P>
+<CODE>set_cookie(Name,Value)</CODE>
+
+
+<P>
+Sets a cookie of name <CODE>Name</CODE> and value <CODE>Value</CODE>. Must be invoked before outputting any data, including the <CODE>cgi_reply</CODE> html-term.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5522"></A>
+<A NAME="IDX5523"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_cookies/1:</B>
+<DD><A NAME="IDX5524"></A>
+
+
+<P>
+<CODE>get_cookies(Cookies)</CODE>
+
+
+<P>
+Unifies <CODE>Cookies</CODE> with a dictionary of <EM>attribute</EM>=<EM>value</EM> pairs of the active cookies for this URL.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5525"></A>
+<A NAME="IDX5526"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>url_query/2:</B>
+<DD><A NAME="IDX5527"></A>
+
+
+<P>
+<CODE>url_query(Dict,URLArgs)</CODE>
+
+
+<P>
+Translates a dictionary <CODE>Dict</CODE> of parameter values into a string <CODE>URLArgs</CODE> for appending to a URL pointing to a form handler.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5528"></A>
+<A NAME="IDX5529"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>my_url/1:</B>
+<DD><A NAME="IDX5530"></A>
+
+
+<P>
+<CODE>my_url(URL)</CODE>
+
+
+<P>
+Unifies <CODE>URL</CODE> with the Uniform Resource Locator (WWW address) of this cgi executable.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5531"></A>
+<A NAME="IDX5532"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>url_info/2:</B>
+<DD><A NAME="IDX5533"></A>
+
+
+<P>
+<CODE>url_info(URL,URLTerm)</CODE>
+
+
+<P>
+Translates a URL <CODE>URL</CODE> to a Prolog structure <CODE>URLTerm</CODE> which details its various components, and vice-versa. For now non-HTTP URLs make the predicate fail.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5534"></A>
+<A NAME="IDX5535"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>url_info_relative/3:</B>
+<DD><A NAME="IDX5536"></A>
+
+
+<P>
+<CODE>url_info_relative(URL,BaseURLTerm,URLTerm)</CODE>
+
+
+<P>
+Translates a relative URL <CODE>URL</CODE> which appears in the HTML page refered to by <CODE>BaseURLTerm</CODE> into <CODE>URLTerm</CODE>, a Prolog structure containing its absolute parameters. Absolute URLs are translated as with 
+<A NAME="IDX5537"></A>
+<CODE>url_info/2</CODE>. E.g. 
+
+<PRE>
+url_info_relative("dadu.html",
+                  http('www.foo.com',80,"/bar/scoob.html"), Info)
+</PRE>
+
+<P>
+gives <CODE>Info = http('www.foo.com',80,"/bar/dadu.html")</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5538"></A>
+<A NAME="IDX5539"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>form_request_method/1:</B>
+<DD><A NAME="IDX5540"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>form_request_method(Method)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Unifies <CODE>Method</CODE> with the method of invocation of the form handler (<CODE>GET</CODE> or <CODE>POST</CODE>).
+
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Method</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5541"></A>
+<A NAME="IDX5542"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>icon_address/2:</B>
+<DD><A NAME="IDX5543"></A>
+
+
+<P>
+<CODE>icon_address(Img,IAddress)</CODE>
+
+
+<P>
+The PiLLoW image <CODE>Img</CODE> has URL <CODE>IAddress</CODE>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX5544"></A>
+<A NAME="IDX5545"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>html_protect/1:</B>
+<DD><A NAME="IDX5546"></A>
+
+
+<P>
+<CODE>html_protect(Goal)</CODE>
+
+
+<P>
+Calls <CODE>Goal</CODE>. If an error occurs during its execution, or it fails, an HTML page is output informing about the incident. Normaly the whole execution of a CGI is protected thus.
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>html_protect(goal)</CODE>.
 
 
 <P>
 <STRONG>Usage:</STRONG> 
 
 <UL>
-<LI><EM>Description:</EM> Updates the files comprising the persistence set of all persistent predicates defined in the application.
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5639"></A>
-<A NAME="IDX5640"></A>
+<A NAME="IDX5547"></A>
+<A NAME="IDX5548"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>update_files/1:</B>
-<DD><A NAME="IDX5641"></A>
+<DT><span class="define">PREDICATE:</span> <B>http_lines/3:</B>
+<DD><A NAME="IDX5549"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>update_files(list(spec))</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>update_files(PredSpecList)</CODE>
+<STRONG>Usage:</STRONG> <CODE>http_lines(Lines,String,Tail)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Updates the files comprising the persistence set of the persistent predicates in <CODE>PredSpecList</CODE>.
+<LI><EM>Description:</EM> <CODE>Lines</CODE> is a list of the lines with occur in <CODE>String</CODE> until <CODE>Tail</CODE>. The lines may end UNIX-style or DOS-style in <CODE>String</CODE>, in <CODE>Lines</CODE> they have not end of line characters. Suitable to be used in DCGs.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+<LI><EM>Calls should, and exit will be compatible with:</EM>
 
-<CODE>PredSpecList</CODE> is a list of <CODE>predname</CODE>s.
+<CODE>Lines</CODE> is a list of <CODE>string</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
+
+<CODE>String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>Tail</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC544" HREF="ciao_toc.html#TOC544">Documentation on multifiles (<CODE>persdbrt</CODE>)</A></H2>
+<H2><A NAME="SEC550" HREF="ciao_toc.html#TOC550">Documentation on multifiles (<CODE>html</CODE>)</A></H2>
 <P>
-<A NAME="IDX5642"></A>
-<A NAME="IDX5643"></A>
+<A NAME="IDX5550"></A>
+<A NAME="IDX5551"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>persistent_dir/2:</B>
-<DD><A NAME="IDX5644"></A>
+<DT><span class="define">PREDICATE:</span> <B>html_expansion/2:</B>
+<DD><A NAME="IDX5552"></A>
 
 
 <P>
@@ -603,120 +618,26 @@ The predicate is <EM>multifile</EM>.
 
 
 <P>
-The predicate is of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>persistent_dir(Keyword,Location_Path)</CODE>
+<STRONG>Usage:</STRONG> <CODE>html_expansion(Term,Expansion)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Relates identifiers of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location_Path</CODE>s). <CODE>Location_Path</CODE> is <STRONG>a directory</STRONG> and it means that the definition for the persistent predicates associated with <CODE>Keyword</CODE> is kept in files below that directory (which must exist). These files, in the updated state, contain the actual definition of the predicate in Prolog syntax (but with module names resolved).
+<LI><EM>Description:</EM> Hook predicate to define macros. Expand occurrences of <CODE>Term</CODE> into <CODE>Expansion</CODE>, in
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
- (<CODE>persdbrt:keyword/1</CODE>)
-
-<CODE>Location_Path</CODE> is an atom, the name of a directory.
- (<CODE>persdbrt:directoryname/1</CODE>)
+<A NAME="IDX5553"></A>
+<CODE>output_html/1</CODE>. Take care to not transform something into itself! 
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC545" HREF="ciao_toc.html#TOC545">Documentation on internals (<CODE>persdbrt</CODE>)</A></H2>
-<P>
-<A NAME="IDX5645"></A>
-<A NAME="IDX5646"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>persistent/2:</B>
-<DD><A NAME="IDX5647"></A>
-
+<H2><A NAME="SEC551" HREF="ciao_toc.html#TOC551">Other information (<CODE>html</CODE>)</A></H2>
 
 <P>
-<STRONG>Usage:</STRONG> :- <CODE>persistent(PredDesc,Keyword)</CODE>.
+The code uses input from from L. Naish's forms and F. Bueno's previous Chat interface. Other people who have contributed is (please inform us if we leave out anybody): Markus Fromherz, Samir Genaim.
 
-<UL>
-<LI><EM>Description:</EM> Declares the predicate <CODE>PredDesc</CODE> as persistent. <CODE>Keyword</CODE> is the
-
-<A NAME="IDX5648"></A>
-identifier of a location where the persistent storage for the predicate is kept. The location <CODE>Keyword</CODE> is described in the 
-<A NAME="IDX5649"></A>
-<CODE>persistent_dir</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>PredDesc</CODE> is a Name/Arity structure denoting a predicate name: 
-
-<PRE>
-predname(P/A) :-
-        atm(P),
-        nnegint(A).
-</PRE>
-
- (<CODE>basic_props:predname/1</CODE>)
-
-<CODE>Keyword</CODE> is an atom corresponding to a directory identifier.
- (<CODE>persdbrt:keyword/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5650"></A>
-<A NAME="IDX5651"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>keyword/1:</B>
-<DD><A NAME="IDX5652"></A>
-
-
-<P>
-An atom which identifies a fact of the 
-<A NAME="IDX5653"></A>
-<CODE>persistent_dir/2</CODE> relation. This fact relates this atom to a directory in which the persistent storage for one or more persistent predicates is kept.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>keyword(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is an atom corresponding to a directory identifier.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5654"></A>
-<A NAME="IDX5655"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>directoryname/1:</B>
-<DD><A NAME="IDX5656"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>directoryname(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is an atom, the name of a directory.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC546" HREF="ciao_toc.html#TOC546">Known bugs and planned improvements (<CODE>persdbrt</CODE>)</A></H2>
-
-
-<UL>
-
-<LI>
-
-To load in the toplevel a file which uses this package, module <CODE>library('persdb/persdbrt')</CODE> has to be previously loaded.
-</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_135.html">previous</A>, <A HREF="ciao_137.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

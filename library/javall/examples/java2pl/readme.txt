@@ -13,12 +13,15 @@ $ java -cp ../../:./ example1 ./plserver
 
 or, if you are using Windows:
 
-> java -cp ..\..\;.\ example1 <home>\Win32\bin\ciaoengine -C -b plserver.cpx 
+  java -cp ..\..\;.\ example1 <home>\Win32\bin\ciaoengine -C -b plserver.cpx 
 
 where java must be on version 1.2 or higher, and <home> represents the
 Ciao home directory.
 
-Important: be sure plserver.pl is compiled using option -s.
+Important: be sure plserver.pl is compiled using the following
+command:
+
+  ciaoc plserver.pl
 
 N-QUEENS PROBLEM
 ----------------
@@ -34,10 +37,15 @@ $ java -cp ../../:./ queens ./plserver
 
 or, if you are using Windows:
 
-> java -cp ..\..\;.\ queens <home>\Win32\bin\ciaoengine -C -b plserver.cpx
+  java -cp ..\..\;.\ queens <home>\Win32\bin\ciaoengine -C -b plserver.cpx
 
 where java must be on version 1.2 or higher, and <home> represents the
 Ciao home directory.
 
-Important: be sure plserver.pl is compiled using option -s.
+Important: be sure plserver.pl is compiled using the following
+command:
+
+  ciaoc plserver.pl
+
+
 

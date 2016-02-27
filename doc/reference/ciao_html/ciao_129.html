@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - poly_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - shape_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC512" HREF="ciao_toc.html#TOC512">poly_class (library)</A></H1>
+<H1><A NAME="SEC526" HREF="ciao_toc.html#TOC526">shape_class (library)</A></H1>
 <P>
-<A NAME="IDX5299"></A>
+<A NAME="IDX5321"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_129.html#SEC513">Usage and interface (poly_class)</A>
-<LI><A HREF="ciao_129.html#SEC514">Documentation on exports (poly_class)</A>
+<LI><A HREF="ciao_129.html#SEC527">Usage and interface (shape_class)</A>
+<LI><A HREF="ciao_129.html#SEC528">Documentation on exports (shape_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC513" HREF="ciao_toc.html#TOC513">Usage and interface (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC527" HREF="ciao_toc.html#TOC527">Usage and interface (<CODE>shape_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(poly_class)).</CODE>
+<CODE>:- use_module(library(shape_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,10 +40,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5300"></A>
-<CODE>vertices/1</CODE>, 
-<A NAME="IDX5301"></A>
-<CODE>outline_color/1</CODE>.
+<A NAME="IDX5322"></A>
+<CODE>bg_color/1</CODE>, 
+<A NAME="IDX5323"></A>
+<CODE>border_width/1</CODE>, 
+<A NAME="IDX5324"></A>
+<CODE>shape_class/0</CODE>, 
+<A NAME="IDX5325"></A>
+<CODE>shape_class/1</CODE>.
 
 </UL>
 
@@ -54,10 +58,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5302"></A>
+<A NAME="IDX5326"></A>
 <CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX5303"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX5327"></A>
+<CODE>tcltk_obj/canvas_class</CODE>.
 
 </UL>
 
@@ -67,76 +71,116 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>,
 
 
 
-<H2><A NAME="SEC514" HREF="ciao_toc.html#TOC514">Documentation on exports (<CODE>poly_class</CODE>)</A></H2>
+<H2><A NAME="SEC528" HREF="ciao_toc.html#TOC528">Documentation on exports (<CODE>shape_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5304"></A>
-<A NAME="IDX5305"></A>
+<A NAME="IDX5328"></A>
+<A NAME="IDX5329"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices/1:</B>
-<DD><A NAME="IDX5306"></A>
+<DT><span class="define">PREDICATE:</span> <B>bg_color/1:</B>
+<DD><A NAME="IDX5330"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>vertices(+ListofPoints)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>bg_color(+BackgroundColor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> The arguments of the list specify the coordinates for three or more points that define a closed polygon. The first and last points may be the same. After the coordinates there may be any number of option-value pairs, each of which sets one of the configu- ration options for the item.
+<LI><EM>Description:</EM> <CODE>Background Color</CODE> specifies the color to use for drawing the shape's outline. This option defaults to black.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>+BackgroundColor</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>vertices(-ListofPoints)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>bg_color(-BackgroundColor)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the list of vertices of the polygon.
+<LI><EM>Description:</EM> Gets the shape <CODE>Background Color</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-ListofPoints</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
+<CODE>-BackgroundColor</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5307"></A>
-<A NAME="IDX5308"></A>
+<A NAME="IDX5331"></A>
+<A NAME="IDX5332"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
-<DD><A NAME="IDX5309"></A>
+<DT><span class="define">PREDICATE:</span> <B>border_width/1:</B>
+<DD><A NAME="IDX5333"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>border_width(+Width)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the polygon's outline. This option defaults to black.
+<LI><EM>Description:</EM> Specifies the <CODE>Width</CODE> that the canvas widget should request from its geometry manager.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>+Width</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>border_width(-Width)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets poly's outline <CODE>Color</CODE>.
+<LI><EM>Description:</EM> Gets the <CODE>Width</CODE> of the canvas widget.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Color</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>-Width</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5334"></A>
+<A NAME="IDX5335"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>shape_class/0:</B>
+<DD><A NAME="IDX5336"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> 
+
+<UL>
+<LI><EM>Description:</EM>  Creates a new shape object.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5337"></A>
+<A NAME="IDX5338"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>shape_class/1:</B>
+<DD><A NAME="IDX5339"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>shape_class(+ShapeList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Adds shapes of the list to the canvas object.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+ShapeList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_128.html">previous</A>, <A HREF="ciao_130.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -12,6 +12,20 @@ EOF
 #  exit 1
 fi
 
+CIAOBINDIR=binary_directory
+
+if [ ${PATH:-0} = 0 ]
+then
+    PATH=${CIAOBINDIR} ; export PATH
+else
+    case ${PATH} in
+	${CIAOBINDIR}:* | *:${CIAOBINDIR} | *:${CIAOBINDIR}:* ) ;;
+	* )
+	    PATH=${CIAOBINDIR}:${PATH} ;;
+    esac
+fi
+
+
 if test $# = 0 ; then
   exec ciaosh$CIAOVERSION
 elif test $1 = -c; then

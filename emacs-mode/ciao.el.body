@@ -314,12 +314,6 @@ CiaoPP and LPdoc."
   "The LPdoc documentation generator."
   :group 'ciao-environment)
 
-(defcustom ciao-toplevel-buffer-name "Ciao/Prolog"
-  "Basic name of the buffer running the Ciao/Prolog toplevel inferior 
-process."
-  :group 'ciao
-  :type 'string)
-
 (defcustom ciao-system (or (getenv "CIAO") "ciao")
   "Name of Ciao or Prolog executable which runs the classical Prolog-like
 top level."
@@ -348,6 +342,12 @@ is defined. @cindex{toplevel command args, setting}"
   (setq ciao-system-args
 	(read-file-name "Change args passed to Ciao/Prolog executable ?" 
 			"" ciao-system-args nil ciao-system-args)))
+
+(defcustom ciao-toplevel-buffer-name "Ciao/Prolog"
+  "Basic name of the buffer running the Ciao/Prolog toplevel inferior 
+process."
+  :group 'ciao
+  :type 'string)
 
 (defcustom ciao-indent-width 4
   "Indentation for a new goal."
@@ -409,30 +409,48 @@ file) and in the inferior mode (i.e., from the buffer running the
 top-level shell). When called from the major mode (i.e., from window
 containing a source file) then the user is prompted in the minibuffer
 for the query. When called from the inferior mode
-(i.e., from a top-level window) then the
-query on the current line, following the Ciao prompt, is taken as the
-default query."
+(i.e., from a top-level window) then the query on the current line,
+following the Ciao prompt, is taken as the default query.
+
+To clear the default query use \\[ciao-clear-query] or simply set it
+to an empty query: i.e., in a source buffer select \\[ciao-set-query]
+and enter an empty query. In an inferior mode simply select
+\\[ciao-set-query] on a line that contains only the system prompt."
+
 
   (interactive)
-  (cond ((string= (buffer-name) (concat "*" ciao-toplevel-buffer-name "*"))
-	 (let (beg)
+  (let (beg query)
+    (cond ((string= (buffer-name) (concat "*" ciao-toplevel-buffer-name "*"))
 	   (save-excursion
-	     (beginning-of-line)
-	     (goto-char (+ (point) 3))
+             ;; MH This approach does not work in 21.1
+             ;; (beginning-of-line) 
+             (search-backward "?-" nil t)
+             (goto-char (+ (point) 3))
 	     (setq beg (point))
 	     (end-of-line)
 	     (setq ciao-query 
-		   (buffer-substring-no-properties beg (point))))))
-	((eq major-mode 'ciao-mode)
-	 (setq ciao-query (read-string "Query? " "")))))
+		   (buffer-substring-no-properties beg (point)))))
+	  ((eq major-mode 'ciao-mode)
+	   (setq query (read-string "Set default query to: " ciao-query))
+	   (setq ciao-query query)
+	   )))
+  (if (string= ciao-query "")
+      (message "Default query cleared")
+    (message (concat "Default query set to: '" ciao-query "'" ))))
 
-;; MCarlos: In xemacs does not exist the match-string-no-properties
-;; function. This will fix that, but when using ciao-match-string you
+;; MCarlos: In xemacs function match-string-no-properties does not exist.
+;; This will fix that, but when using ciao-match-string you
 ;; should use (funcall ciao-match-string <args>)
 (defvar ciao-match-string nil)
 (if (not (boundp 'xemacs-logo))
     (setq ciao-match-string 'match-string-no-properties)
   (setq ciao-match-string 'match-string))
+
+(defun ciao-clear-query ()
+  "Clear the default query."
+  (interactive)
+  (setq ciao-query "")
+  (message "Default query cleared"))
 
 ;; ---------------------------------------------------------------------------
 ;; Source debugger variables
@@ -507,11 +525,6 @@ right now. It is saved for when flag is not set.")
 ;; CiaoPP variables
 ;; ---------------------------------------------------------------------------
 
-(defcustom ciao-ciaopp-buffer-name "Ciao-Preprocessor"
-  "Basic name of the buffer running the Ciao preprocessor inferior process."
-  :group 'ciaopp
-  :type 'string) 
-
 (defcustom ciao-ciaopp-system (or (getenv "CIAOPP") "ciaopp")
   "Name of Ciao preprocessor executable."
   :group 'ciaopp
@@ -540,6 +553,11 @@ is defined. @cindex{preprocessor command args, setting}"
 	(read-file-name "Change args passed to Ciao preprocessor executable ?"
 	        "" ciao-ciaopp-system-args nil ciao-ciaopp-system-args))) 
 
+(defcustom ciao-ciaopp-buffer-name "Ciao-Preprocessor"
+  "Basic name of the buffer running the Ciao preprocessor inferior process."
+  :group 'ciaopp
+  :type 'string) 
+
 (defvar ciao-ciaopp-prompt-emacs-hook nil
   "Things to do in emacs ones the prompt is found in the Ciao/Prolog buffer.")
 
@@ -555,12 +573,7 @@ for the prompt due than prompt should be after a newline.")
 ;; LPdoc variables
 ;; ---------------------------------------------------------------------------
 
-(defcustom ciao-lpdoc-buffer-name "LPdoc"
-  "Basic name of the buffer running the auto-documenter inferior process."
-  :group 'lpdoc
-  :type 'string) 
-
-;; This for lpdc-1.9; set to "lpdoc" for 2.0
+;; This for lpdoc-1.9; set to "lpdoc" for 2.0
 (defcustom ciao-lpdoc-system (or (getenv "LPDOC") "gmake")
   "Name of LPdoc auto-documenter executable."
   :group 'lpdoc
@@ -641,6 +654,11 @@ variable @tt{LPDOCLIB} if it is defined. @cindex{lpdoc lib path, setting}
   (setq ciao-lpdoc-libpath
 	(read-file-name "Change path in which LPdoc lib is installed ?"
    		        "" ciao-lpdoc-libpath nil ciao-lpdoc-libpath))) 
+
+(defcustom ciao-lpdoc-buffer-name "LPdoc"
+  "Basic name of the buffer running the auto-documenter inferior process."
+  :group 'lpdoc
+  :type 'string) 
 
 (defvar ciao-lpdoc-prompt-emacs-hook nil
   "Things to do in emacs ones the prompt is found in the Ciao/Prolog buffer.")
@@ -910,7 +928,7 @@ has been loaded or not (see ciao-check-buffer-syntax).")
 	("^yes$" . font-lock-ForestGreen-bold)           ;; Answer
 	("^no$" . font-lock-Goldenrod-bold)              ;; Answer
 	("^Select[^:]*:" . font-lock-ForestGreen)        ;; Preproc prompt
-;       ("^Select" " \\? " keyword)                       ;; Preproc prompt
+;       ("^Select" " \\? " keyword)                      ;; Preproc prompt
 ;	("^Select.*$" . font-lock-Blue-bold)             ;; Preproc prompt
 	("^{?ERROR.*$" . font-lock-warning-face)         ;; Error messages
 	("^\\*\\* here \\*\\*$" . font-lock-Brown)       ;; Error messages
@@ -1144,6 +1162,7 @@ the communication with the Ciao/Prolog top level:
   (ciao-define-key map "\C-cL" 'ciao-load-from-main-module)
 
   (ciao-define-key map "\C-cq" 'ciao-set-query)
+;; (ciao-define-key map "???" 'ciao-clear-query)
   (ciao-define-key map "\C-cQ" 'ciao-load-query)
 
   (ciao-documentation-section
@@ -1168,7 +1187,9 @@ include:
   (ciao-define-key inferior-map "\C-c\C-i" 'ciao-help-on-current-symbol)
   (ciao-define-key inferior-map "\C-c/"    'ciao-complete-current-symbol)
   (ciao-define-key inferior-map "\C-c`"    'ciao-find-last-run-errors-here)
+  (ciao-define-key inferior-map "\C-ce" 'ciao-unmark-last-run-errors)
   (ciao-define-key inferior-map "\C-cq" 'ciao-set-query)
+;; (ciao-define-key map "???" 'ciao-clear-query)
   (ciao-define-key inferior-map "\C-cQ" 'ciao-load-query)
 
 
@@ -1479,20 +1500,24 @@ how things are set up in your @tt{.emacs} file).")
   (list "Ciao/Prolog"
      ;; "----"
      "HELP"
-     ["Help (for symbol under cursor)"      ciao-help-on-current-symbol t]
+     ["Go to manual page for symbol under cursor)" ciao-help-on-current-symbol]
+;; MH Not backwards compatible...
+;;      :help "Go to manual page describing the symbol under the cursor" ]
      ["Complete symbol under cursor"        ciao-complete-current-symbol t]
-     ["Ciao system manual"                  (ciao-goto-ciao-manual) t]
-     ["List all key bindings"               (ciao-describe-mode) t]
+                                            ;; These had ( ) 
+     ["Ciao system manual"                  ciao-goto-ciao-manual t]
+     ["List all key bindings"               ciao-describe-mode t]
      "----"
      "TOP-LEVEL/COMPILER"
-     ["Start ciao top level"                     run-ciao-toplevel t]
+     ["(Re)Start ciao top level"                 run-ciao-toplevel t]
      ["(Re)Load buffer into top level"           ciao-load-buffer  t]
      ["(Re)Load all modules as necessary"        ciao-load-from-main-module t]
      ["Locate (next) preproc/compiler error msg" ciao-find-last-run-errors t]
-     ["Remove preproc/compiler error mark"       ciao-unmark-last-run-errors t]
+     ["Remove error marks in buffers"            ciao-unmark-last-run-errors t]
      (list "Query and main file"
-	   ["Set query"                          ciao-set-query t]
-	   ["Call query"                         ciao-load-query t]            
+	   ["Set default query"                  ciao-set-query t]
+	   ["Call default query"                 ciao-load-query t]            
+	   ["Clear default query"                ciao-clear-query t]
 	   ["(Un)Set main module"                ciao-set-main-buffer t]
 	   )
      ["Check buffer syntax (incl. assertions)"   ciao-check-buffer-syntax t]
@@ -1517,6 +1542,7 @@ how things are set up in your @tt{.emacs} file).")
      ["(Re)Load predicate (for debug)"           ciao-load-predicate t]
      "----"
      (list "SET MODE DEFAULTS"
+       ["Customize Ciao mode settings"           (customize-group 'ciao) t]
        ["Set Ciao/Prolog toplevel executable"    ciao-set-ciao-system t]
        ["Set Ciao/Prolog toplevel args"          ciao-set-ciao-system-args t]
        ["Set Ciao library path"                  ciao-set-library-path t]
@@ -1535,12 +1561,101 @@ how things are set up in your @tt{.emacs} file).")
      )
   "Menus for Ciao/Prolog mode.")
 
+
+;; MH Tool bar stuff (21.1 onwards)
+;; Made a function, so that it is done when maps and menus are active.
+;; - This one is for adding to the default toolbar (but modifies
+;;   others :-( ).
+;; (defun ciao-setup-tool-bar () 
+;;   (set (make-local-variable 'tool-bar-map) 
+;;        (if (display-graphic-p)
+;; 	   (progn 
+;; 	     (tool-bar-setup) ;; from tool-bar.el
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-help-on-current-symbol "left_arrow" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-make-exec "ciaoexe" ciao-mode-map)
+;; 	     tool-bar-map))))
+;; - This one is for an independent tool bar (we add all stuff by hand):
+(defun ciao-setup-tool-bar () 
+  (set (make-local-variable 'tool-bar-map) 
+       (if (display-graphic-p) 
+	   (let ((tool-bar-map (make-sparse-keymap)))
+;; General stuff
+	     (tool-bar-add-item "ciaopl" 'find-file 'find-file 
+              :help "Open or create a (Prolog) file") 
+	     (tool-bar-add-item-from-menu 'dired "open")
+	     (tool-bar-add-item-from-menu 'kill-this-buffer "close")
+	     (tool-bar-add-item-from-menu 'save-buffer "save" nil
+			       :visible '(or buffer-file-name
+					     (not (eq 'special
+						      (get major-mode
+							   'mode-class)))))
+	     (tool-bar-add-item-from-menu 'write-file "saveas" nil
+			       :visible '(or buffer-file-name
+					     (not (eq 'special
+						      (get major-mode
+							   'mode-class)))))
+	     (tool-bar-add-item-from-menu 'undo "undo" nil
+			       :visible '(not (eq 'special (get major-mode
+								'mode-class))))
+	     (tool-bar-add-item-from-menu 'kill-region "cut" nil
+			       :visible '(not (eq 'special (get major-mode
+								'mode-class))))
+	     (tool-bar-add-item-from-menu 'menu-bar-kill-ring-save "copy")
+	     (tool-bar-add-item-from-menu 'yank "paste" nil
+			       :visible '(not (eq 'special (get major-mode
+								'mode-class))))
+	     (tool-bar-add-item-from-menu 
+                               'nonincremental-search-forward "search")
+	     (tool-bar-add-item-from-menu 'print-buffer "print")
+;; Ciao-specific stuff
+	     (tool-bar-add-item-from-menu 
+	      'run-ciao-toplevel "ciao" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-load-buffer "ciaoload" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-find-last-run-errors "jump_to" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-unmark-last-run-errors "clear" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-check-buffer-syntax "ciaoasr" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-debug-buffer "ciaodebug" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-gen-buffer-doc "new" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-start-viewer "lpdocview" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-make-exec "ciaoexeout" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-insert-script-header "ciaoscrt" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-make-po "ciaopo" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-make-exec "ciaoitf" ciao-mode-map)
+;;	     (tool-bar-add-item "ciaomanuals" 
+	     (tool-bar-add-item "manuals" 
+              'ciao-goto-ciao-manuals 'ciao-goto-ciao-manuals 
+	      :help "Go to area containing the Ciao system manuals")
+	     (tool-bar-add-item-from-menu 
+	      'ciao-help-on-current-symbol "wordhelp" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-complete-current-symbol "complete" ciao-mode-map)
+	     (tool-bar-add-item "preferences" 
+				(lambda ()
+				  (interactive)
+				  (customize-group 'ciao-environment))
+				'ciao-customize
+ 	      :help "Edit  (customize) preferences for Ciao, CIaoPP, LPdoc")
+	     tool-bar-map))))
+
 (defconst ciao-mode-ciaopp-menus
   (list "CiaoPP"
      "----"
      "HELP"
-     ["CiaoPP preprocessor manual" (ciao-goto-ciaopp-manual) t]
-     ["List all key bindings" (ciao-describe-mode) t]
+     ["CiaoPP preprocessor manual" ciao-goto-ciaopp-manual t]
+     ["List all key bindings" ciao-describe-mode t]
      "----"
      "CIAO PREPROCESSOR (in development)"
      ["Preprocess buffer (choosing options)"   ciao-preprocess-buffer-menu t]
@@ -1552,6 +1667,7 @@ how things are set up in your @tt{.emacs} file).")
      ["Start ciao preprocessor"                run-ciao-preprocessor t]
      "----"
      (list "SET MODE DEFAULTS"
+       ["Customize CiaoPP mode settings"        (customize-group 'ciaopp) t]
        ["Set Ciao Preprocessor executable"      ciao-set-ciaopp-system t]
        ["Set Ciao Preprocessor executable args" ciao-set-ciaopp-system-args t]
        ["Set Ciao library path"                 ciao-set-library-path t]
@@ -1565,8 +1681,8 @@ how things are set up in your @tt{.emacs} file).")
   (list "LPdoc"
      "----"
      "HELP"
-     ["LPdoc automatic documenter manual" (ciao-goto-lpdoc-manual) t]
-     ["List all key bindings" (ciao-describe-mode) t]
+     ["LPdoc automatic documenter manual" ciao-goto-lpdoc-manual t]
+     ["List all key bindings" ciao-describe-mode t]
      "----"
      "CHANGELOG / VERSION CONTROL"
      ["Insert changelog entry/increase patch #" ciao-add-comment-and-save t]
@@ -1582,6 +1698,7 @@ how things are set up in your @tt{.emacs} file).")
      ["Generate documentation"                   ciao-gen-doc t]
      "----"
      (list "SET MODE DEFAULTS"
+       ["Customize LPdoc mode settings"     (customize-group 'lpdoc) t]
        ["Set LPdoc executable"              ciao-set-lpdoc-system t]
        ["Set LPdoc executable args"         ciao-set-lpdoc-system-args t]
        ["Set LPdoc root working directory"  ciao-set-lpdoc-wdir-root t]
@@ -1598,13 +1715,14 @@ how things are set up in your @tt{.emacs} file).")
      "HELP"
      ["Help (for symbol under cursor)" ciao-help-on-current-symbol t]
      ["Complete symbol under cursor" ciao-complete-current-symbol t]
-     ["Ciao system manual" (ciao-goto-ciao-manual) t]
-     ["CiaoPP preprocessor manual" (ciao-goto-ciaopp-manual) t]
-     ["LPdoc automatic documenter manual" (ciao-goto-lpdoc-manual) t]
-     ["List all key bindings" (ciao-describe-mode) t]
+     ["Ciao system manual" ciao-goto-ciao-manual t]
+     ["CiaoPP preprocessor manual" ciao-goto-ciaopp-manual t]
+     ["LPdoc automatic documenter manual" ciao-goto-lpdoc-manual t]
+     ["List all key bindings" ciao-describe-mode t]
      "----"
      "ERRORS"
      ["Locate (next) preproc/compiler error msg" ciao-find-last-run-errors t]
+     ["Remove error marks in buffers"            ciao-unmark-last-run-errors t]
      "----"
      "PREPROCESSOR (in development)"
      ["Show last preprocessor output file"     ciao-show-preprocessor-output t]
@@ -1613,6 +1731,7 @@ how things are set up in your @tt{.emacs} file).")
      "COMPILER/TOP-LEVEL/DEBUGGER"
      ["Start ciao top level"               run-ciao-toplevel t]
      ["Set query as default"               ciao-set-query t]
+     ["Clear default query"                ciao-clear-query t]
      ["Load default query"                 ciao-load-query t]
      "----"
      (list "SET MODE DEFAULTS"
@@ -1626,6 +1745,94 @@ how things are set up in your @tt{.emacs} file).")
      ["Ciao/Prolog mode version" ciao-report-mode-version t]
      )
   "Menus for Ciao/Prolog (inferior) mode.")
+
+(defun ciao-setup-inferior-tool-bar () 
+  (set (make-local-variable 'tool-bar-map) 
+       (if (display-graphic-p) 
+	   (let ((tool-bar-map (make-sparse-keymap)))
+;; General stuff
+	     (tool-bar-add-item "ciaopl" 'find-file 'find-file 
+              :help "Open or create a (Prolog) file") 
+	     (tool-bar-add-item-from-menu 'dired "open")
+	     (tool-bar-add-item-from-menu 'kill-this-buffer "close")
+;; 	     (tool-bar-add-item-from-menu 'save-buffer "save" nil
+;; 			       :visible '(or buffer-file-name
+;; 					     (not (eq 'special
+;; 						      (get major-mode
+;; 							   'mode-class)))))
+	     (tool-bar-add-item-from-menu 'write-file "saveas" nil
+			       :visible '(or buffer-file-name
+					     (not (eq 'special
+						      (get major-mode
+							   'mode-class)))))
+	     (tool-bar-add-item-from-menu 'undo "undo" nil
+			       :visible '(not (eq 'special (get major-mode
+								'mode-class))))
+	     (tool-bar-add-item-from-menu 'kill-region "cut" nil
+			       :visible '(not (eq 'special (get major-mode
+								'mode-class))))
+	     (tool-bar-add-item-from-menu 'menu-bar-kill-ring-save "copy")
+	     (tool-bar-add-item-from-menu 'yank "paste" nil
+			       :visible '(not (eq 'special (get major-mode
+								'mode-class))))
+	     (tool-bar-add-item-from-menu 
+                               'nonincremental-search-forward "search")
+;; 	     (tool-bar-add-item-from-menu 'print-buffer "print")
+;; Ciao-specific stuff
+	     (tool-bar-add-item-from-menu 
+	      'run-ciao-toplevel "ciao" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-help-on-current-symbol "wordhelp" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-complete-current-symbol "complete" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-load-buffer "ciaoload" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-find-last-run-errors "jump_to" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-unmark-last-run-errors "clear" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-set-query "ciaostorequery" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-load-query "ciaoprompt" ciao-mode-map)
+	     (tool-bar-add-item-from-menu 
+	      'ciao-clear-query "ciaoclearquery" ciao-mode-map)
+	     (tool-bar-add-item "stop" 
+              'comint-interrupt-subjob 'comint-interrupt-subjob
+              :help "Interrupt toplevel") 
+	     (tool-bar-add-item "left_arrow" 
+              'comint-previous-input 'comint-previous-input
+              :help "Insert previous inputs at prompt") 
+	     (tool-bar-add-item "right_arrow" 
+              'comint-next-input 'comint-next-input
+              :help "Insert later inputs at prompt") 
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-check-buffer-syntax "ciaoasr" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-debug-buffer "ciaodebug" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-gen-buffer-doc "new" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-start-viewer "lpdocview" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-make-exec "ciaoexeout" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-insert-script-header "ciaoscrt" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-make-po "ciaopo" ciao-mode-map)
+;; 	     (tool-bar-add-item-from-menu 
+;; 	      'ciao-make-exec "ciaoitf" ciao-mode-map)
+;;	     (tool-bar-add-item "ciaomanuals" 
+	     (tool-bar-add-item "manuals" 
+              'ciao-goto-ciao-manuals 'ciao-goto-ciao-manuals 
+	      :help "Go to area containing the Ciao system manuals")
+	     (tool-bar-add-item "preferences" 
+				(lambda ()
+				  (interactive)
+				  (customize-group 'ciao-environment))
+				'ciao-customize
+ 	      :help "Edit  (customize) preferences for Ciao, CIaoPP, LPdoc")
+	     tool-bar-map))))
 
 ;;------------------------------------------------------------
 ;; Syntax and movement
@@ -1669,8 +1876,11 @@ how things are set up in your @tt{.emacs} file).")
   (setq comment-start-skip "%+ *")
   (make-local-variable 'comment-column)
   (setq comment-column 48)
-  (make-local-variable 'comment-indent-hook)
-  (setq comment-indent-hook 'ciao-comment-indent)
+;; Obsolete since before 19.5
+;;   (make-local-variable 'comment-indent-hook)
+;;   (setq comment-indent-hook 'ciao-comment-indent)
+  (make-local-variable 'comment-indent-function)
+  (setq comment-indent-function 'ciao-comment-indent)
   (make-local-variable 'update-version-comments)
   (setq update-version-comments 0) ; 0 means "uninitialized"
   (make-local-variable 'last-process-buffer-used)
@@ -1818,7 +2028,8 @@ requirements as for finding help for the symbol."
 (defun ciao-goto-ciao-manuals () 
   "Go to the part of the info directory containing the Ciao manuals."
   (interactive) 
-  (ciao-locate-manual-in-info-dir "ciao:"))
+
+  (ciao-locate-manual-in-info-dir "Ciao system"))
 
 (defun ciao-goto-ciao-manual () 
   "Go to the part of the info directory containing the Ciao manual."
@@ -2498,6 +2709,10 @@ non-nil."
   ;; MR added to support font-lock
   (if (not window-system)
       nil
+    ;; MH Tool bar stuff (21.1 onwards)
+    (if  (fboundp 'tool-bar-mode)
+	(ciao-setup-tool-bar))
+    ;; 
     (make-local-variable 'font-lock-defaults)
     (setq font-lock-defaults '(ciao-mode-font-lock-keywords t)))
   (run-hooks 'ciao-mode-hook))
@@ -2591,6 +2806,10 @@ ciao-mode-hook is called after comint-mode-hook.
 	 ;; MR added to support font-lock
  	 (if (not window-system)
  	     nil
+	   ;; MH Tool bar stuff (21.1 onwards)
+	   (if  (fboundp 'tool-bar-mode)
+	       (ciao-setup-inferior-tool-bar))
+	   ;; 
  	   (make-local-variable 'font-lock-defaults)
  	   (setq font-lock-defaults '(ciao-inferior-font-lock-keywords t)))
 	 (run-hooks 'ciao-mode-hook))))
@@ -2601,6 +2820,16 @@ ciao-mode-hook is called after comint-mode-hook.
 	((= (length str) 1) nil)	;one character
 	((string-match "\\`[rf] *[0-9]*\\'" str) nil) ;r(edo) or f(ail)
 	(t t)))
+
+(defun ciao ()
+  "Same as \\[run-ciao-toplevel]"
+  (interactive)
+  (run-ciao-toplevel))
+
+(defun prolog ()
+  "Same as \\[run-ciao-toplevel]"
+  (interactive)
+  (run-ciao-toplevel))
 
 (defun run-ciao-toplevel ()
   "Ensure that an inferior Ciao/Prolog top-level process is
@@ -2626,6 +2855,11 @@ buffers into the top level) ensures that a top level is started
 (starting one if required)."
   (interactive)
   (ciao-ensure-inferior-process ciao-toplevel-buffer-name))
+
+(defun ciaopp ()
+  "Same as \\[run-ciao-preprocessor]"
+  (interactive)
+  (run-ciao-preprocessor))
 
 (defun run-ciao-preprocessor ()
   "Ensure that an inferior Ciao preprocessor process is running. 
@@ -2728,7 +2962,10 @@ buffers into the top level) ensures that a top level is started
 	      ((string= buffername ciao-ciaopp-buffer-name)
 	       (add-hook 'ciao-ciaopp-prompt-inferior-hook 
 			 'ciao-do-send-command-global t))))
-    (ciao-do-send-command buffername command recenter-opt)))
+    (ciao-do-send-command buffername command recenter-opt))
+  ;; MH Added to improve tracking of last inferior buffer used.
+  (setq last-process-buffer-used buffername)
+  )
 
 ;; Terrible kludge to pass arguments (just for the first command)
 (defun ciao-do-send-command-global ()
@@ -2799,7 +3036,8 @@ the last Ciao/Prolog subprocess (preprocessor or toplevel) which was run."
       (setq ciao-previous-error nil))
     (if ciao-inferior-error
 	(progn
-	  (set-buffer (concat "*" ciao-toplevel-buffer-name "*"))
+	  ;; (set-buffer (concat "*" ciao-toplevel-buffer-name "*"))
+	  (set-buffer (concat "*" last-process-buffer-used "*"))
 	  (ciao-uncolor ciao-inferior-error
 			ciao-inferior-error
 			'ciao-error)
@@ -2896,9 +3134,11 @@ buffer"
 		      'ciao-error)
 	(setq ciao-inferior-error nil)))
 
-  (beginning-of-line)
+;; From 21.1 on , this does not go over the prompt. Using column instead:
+;;  (beginning-of-line)
+  (move-to-column 0)
   (if (or (not (search-backward-regexp 
-               "^\\({?WARNING.*:\\|{?ERROR.*:\\|\\?-\\)" 
+               "^\\({?WARNING.*:\\|{?ERROR.*:\\|{?NOTE.*:\\|\\?-\\)" 
                nil t))
           (string=  (buffer-substring-no-properties (point) (+ (point) 1))
 		    "?"))
@@ -3259,7 +3499,10 @@ defined it asks the user if this query should be called."
 		     (ciao-load-command (buffer-file-name) nil) t)
   (if (string= ciao-query "")
       t
-    (add-hook 'ciao-prompt-inferior-hook 'ciao-load-query t)))
+    ;; MH (add-hook 'ciao-prompt-inferior-hook 'ciao-load-query-ask t)
+    (add-hook 'ciao-prompt-inferior-hook 'ciao-load-query t)
+    ))
+
 
 (defun ciao-load-from-main-module ()
   "Load the module designated as @index{main module} (and all related files
@@ -3291,9 +3534,14 @@ if there is a defined query, the user is asked whether is should be called."
 		       (concat "use_module('" ciao-main-buffer "').") t)))
 
 (defun ciao-load-query ()
-  "Insert predefined query (asking the user first)."
+  "Issue predefined query."
   (interactive)
-  (if (y-or-n-p (concat "Do you wish call the query `" ciao-query "'? "))
+  (ciao-send-command ciao-toplevel-buffer-name ciao-query t))
+
+(defun ciao-load-query-ask ()
+  "Issue predefined query (asking the user first)."
+  (interactive)
+  (if (y-or-n-p (concat "Do you wish call the query '" ciao-query "'? "))
       (ciao-send-command ciao-toplevel-buffer-name ciao-query t)
     t))
 
@@ -3345,7 +3593,6 @@ traditional debug."
       (setq buffers-debug (ciao-how-debugged)))
     (if (string-match (concat "\\<" module "\\>") (car buffers-debug))
 	(setq actually "D"))
-
     (if (string-match (concat "\\<" module "\\>") (cdr buffers-debug))
 	(setq actually "S"))
     (cond ((string= actually "N")
@@ -3411,8 +3658,8 @@ execute until the end, without stopping in any step of the program."
 
 (defun ciao-debug-buffer ()
   "Debug (or stop debugging) buffer source. This is a shortcut which
-is particularly useful to use the source debugger on a single module
-or file. It corresponds to several lower-level actions.  Those
+is particularly useful when using the source debugger on a single
+module. It corresponds to several lower-level actions.  Those 
 lower-level actions depend on how the module was selected for
 debugging. In case the module was not marked for source-level
 debugging, it marks the module corresponding to the current buffer for
@@ -3435,9 +3682,9 @@ the debugger to non-debug mode."
 	(actually "N"))
     (setq buffers-debug (cdr (ciao-how-debugged)))
     (if (string-match (concat "\\<" module "\\>") buffers-debug)
- 		(setq actually "S"))    
+	(setq actually "S"))
     (cond ((string= actually "S")
-	   ;; Buffer is mark for source debug
+	   ;; Buffer is marked for source debug
 	   (add-hook 'ciao-prompt-inferior-hook 'ciao-no-debug t)
 	   (add-hook 'ciao-prompt-inferior-hook 'ciao-load-buffer t)
 	   (ciao-un-mark-buffer-debug))

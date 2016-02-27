@@ -10,7 +10,7 @@
 :-export(phone_book_search/2).
 :-export(phone_book_store/2).
 
-persistent_dir(phb_dir,'/home/montse/pers').
+persistent_dir(phb_dir,'./pers').
 
 :- persistent(phb/2, phb_dir).
 

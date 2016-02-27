@@ -1,9 +1,9 @@
 This describes the installation procedure for the Ciao Prolog system,
 including libraries and manuals, from a @em{source} distribution.
-This applies primarily to Unix-type systems (Linux, SunOS, Solaris,
-etc.). However, the sources can also be compiled on Windows NT/95/98
-systems -- see @ref{Installation and compilation under Windows} for
-details.
+This applies primarily to Unix-type systems (Linux, Mac OS X, Solaris,
+SunOS, etc.).  However, the sources can also be compiled on Windows
+NT/95/98 systems -- see @ref{Installation and compilation under
+Windows} for details.
 
 If you find any problems during installation, please refer to
 @ref{Troubleshooting (nasty messages and nifty workarounds)}.
@@ -12,6 +12,7 @@ If you find any problems during installation, please refer to
 
 @section{Un*x installation summary} 
 @cindex{installation, Un*x, summary}
+@cindex{installation, Mac OS X, summary}
 
 @noindent @bf{Note:} it is recommended that you read the full
 installation instructions (specially if the installation will be
@@ -37,7 +38,7 @@ to follow this summary:
 
       Note that @tt{gmake} refers to the @concept{GNU} implementation
       of the @concept{make} Un*x command, which is available in many
-      systems (including all Linux systems) simply as
+      systems (including all Linux systems and Mac OS X) simply as
       @apl{make}. I.e., you can try simply typing @tt{make install} if
       @tt{gmake install} does not work. If typing @tt{make} stops
       right away with error messages it is probably an older version
@@ -87,6 +88,7 @@ to follow this summary:
 
 @section{Un*x full installation instructions}
 @cindex{installation, Un*x, full instructions}
+@cindex{installation, Mac OS X, full instructions}
 
 @begin{enumerate}
 
@@ -511,6 +513,19 @@ The following a list of common installation problems reported by
 users: 
 
 @begin{itemize}
+
+@item @bf{Problem:} Ciao Prolog seems to work correctly, but it gives
+        wrong results, specially in computations involvig floating point
+ numbers (e.g., clpr and clpq).
+
+      @bf{Possible reason and solution:} Some versions of gcc (gcc
+      2.96, for example) are known to generate wrong code when using
+      aggressive (-O3 and above) optimizations.  If you suspect this is the
+      case, please recompile Ciao Prolog from scratch using no optimization
+      (look in the SETTINGS file, set @tt{OPTIM_LEVEL=normal}, make
+      distclean, make install).  Try again the example which was giving a
+      wrong result, and contact ciao-users if the problem persists.
+
 
 @item @bf{Problem:} Compilation errors appear when trying a new
       installation/compilation after the previous one was aborted

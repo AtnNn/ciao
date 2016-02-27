@@ -24,10 +24,11 @@ $(LIBNAME): headers $(OBJNAME)
 	$(LD) $(LDSHARED) -o $(LIBNAME) $(OBJNAME) $(REQLIBS)
 	$(SETLOCALCIAO) $(CIAOC) -c $(MODULE)
 	$(SETLOCALCIAO) $(CIAOC) -c $(ADDITIONAL_FILES)
-	chmod $(EXECMODE) $(LIBNAME)
+	-chmod $(DATAMODE) $(LIBNAME)
 
 $(OBJNAME): headers $(SRCNAME)
 	$(CC) $(CFLAGS) $(CCSHARED) -c $(SRCNAME) -o $(OBJNAME)
+	-chmod $(DATAMODE) *.o
 
 headers:
 	/bin/rm -f  $(HEADERS)
@@ -35,7 +36,7 @@ headers:
 	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support.h\" >> $(HEADERS)
 	echo \#include \"$(SRC)/bin/$(CIAOARCH)/support_defs.h\" >> $(HEADERS)
 	echo \#include \"$(SRC)/bin/$(CIAOARCH)/stacks_defs.h\" >> $(HEADERS)
-	chmod $(DATAMODE) $(HEADERS)
+	-chmod $(DATAMODE) $(HEADERS)
 
 clean:
 	/bin/rm -f $(OBJNAME)

@@ -1,0 +1,101 @@
+@item Improvements related to supported platforms:
+    @begin{itemize}
+    @item Support for Mac OS X, based on the Darwin kernel
+    @item Initial support for compilation on Linux for Power PC
+        (contributed by Paulo Moura) 
+    @item Workaround for incorrect C compilation while using newer
+         (> 2.95) gcc compilers.
+    @end{itemize}
+
+@item Changes in behavior and user interface:
+    @begin{itemize}
+    @item Changed execution of initialization directives.  Now the
+            initialization of a module/file never runs before the
+            initializations of the modules from which the module/file
+            imports (excluding circular dependences).
+    @item Fixed bugs in the toplevel: behaviour of @{module:main} calls and 
+            initialization of a module (now happens after related
+	    modules are loaded).
+    @item Layout char not needed any more to end Prolog files.
+    @item Syntax errors now disable .itf creation, so that they show next
+        time the code is used without change.
+    @item Context menu in Windows can now load a file into the toplevel.
+    @item Updated Windows installation in order to run CGI executables under
+            Windows: a new information item is added to the registry.
+    @item Added new directories found in recent Linux distributions to
+            INFOPATH. 
+    @item Emacs-based environment and debugger improved:
+
+	@begin{itemize}
+	@item Specific tool bar now available, with icons for main fuctions 
+	(works from emacs 21.1 on). Also, other minor adaptations for 
+        working with emacs 21.1 and later.
+	@item Inferior modes for Ciao and CiaoPP improved: contextual
+         help turned on by default.
+	@item Fixes to set-query. Also, previous query now appears in prompt.
+	@item Added new interactive entry points (M-x): ciao, prolog, ciaopp.
+	@item Better tracking of last inferior buffer used.
+	@end{itemize}
+
+    @end{itemize}
+
+@item New libraries added to the system:
+    @begin{itemize}
+    @item hiord: now needs to be loaded in order to use higher-order
+            call/N and P(X) syntax.
+            Improved model for predicate abstractions.
+    @item fuzzy: allows representing fuzzy information in the form or
+            Prolog rules.
+    @item use_url: allows loading a module remotely by using a WWW
+            address of the module source code
+    @item andorra: alternative search method where goals which become
+            deterministic at run time are executed before others.
+    @item iterative deepening (id): alternative search method which makes a
+            depth-first search until a predetermined depth is reached.
+            Complete but in general cheaper than breadth first.
+    @item det_hook: allows making actions when a deterministic
+            situation is reached.
+    @item ProVRML: read VRML code and translate it into Prolog terms,
+            and the other way around.
+    @item io_alias_redirection: change where stdin/stdout/stderr point to
+            from within Ciao Prolog programs.
+    @item tcl_tk: an interface to Tcl/Tk programs.
+    @item tcl_tk_obj: object-based interface to Tcl/Tk graphical objects.
+    @end{itemize}
+
+@item Some libraries greatly improved:
+    @begin{itemize}
+    @item persdb: user-transparent persistent predicate
+          database. Also, SQL version now  works with more databases
+          (e.g., mysql).
+    @item system: expanded to contain more predicates which
+            act as interface to the underlying system /  operating system.
+    @item Greatly improved java interface implementation (this forced
+            renaming some interface primitives). 
+    @item WebDB: utilities to create WWW-based database interfaces.
+@end{itemize}
+
+@item Other libraries improved:
+    @begin{itemize}
+    @item xref: creates cross-references among Prolog files.
+    @item concurrency: new predicates to create new concurrent
+          predicates on-the-fly.
+    @item sockets: bugs corrected.
+    @item fast read/write: bugs corrected.
+    @item Added 'webbased' protocol for active modules: publication of
+            active module address can now be made through WWW.
+    @item Predicates in library(dynmods) moved to library(compiler).
+    @item Expansion and meta predicates improved.
+    @item Pretty printing.
+    @item Assertion processing.
+    @item Foreign interface.
+    @end{itemize}
+
+@item Updates to builtins (there are a few more; these are the most relevant):
+    @begin{itemize}
+    @item current_predicate/1 in library(dynamic) now enumerates
+            non-engine modules, prolog_sys:current_predicate/2 no longer
+            exists.
+    @item exec/* bug fixed.
+    @end{itemize}
+@end{itemize}

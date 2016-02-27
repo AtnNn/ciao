@@ -2,7 +2,7 @@
 
 
 
-young_couple(X,Y,Mu) :~
+young_couple(X,Y,Mu) :~ prod
 	age(X,X1),
 	age(Y,Y1),
 	young(X1,MuX),

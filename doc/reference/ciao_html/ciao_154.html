@@ -1,42 +1,33 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Graphs</TITLE>
+<TITLE>The Ciao Prolog System               - Lists of numbers</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC611" HREF="ciao_toc.html#TOC611">Graphs</A></H1>
+<H1><A NAME="SEC625" HREF="ciao_toc.html#TOC625">Lists of numbers</A></H1>
 <P>
-<A NAME="IDX6534"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> F. Bueno.
+<A NAME="IDX6543"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
+<STRONG>Version:</STRONG> 0.9#99 (1999/5/26, 11:33:15 MEST)
 
 
 
 <UL>
-<LI><A HREF="ciao_154.html#SEC612">Usage and interface (graphs)</A>
-<LI><A HREF="ciao_154.html#SEC613">Documentation on exports (graphs)</A>
-<LI><A HREF="ciao_154.html#SEC614">Documentation on internals (graphs)</A>
+<LI><A HREF="ciao_154.html#SEC626">Usage and interface (numlists)</A>
+<LI><A HREF="ciao_154.html#SEC627">Documentation on exports (numlists)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC612" HREF="ciao_toc.html#TOC612">Usage and interface (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC626" HREF="ciao_toc.html#TOC626">Usage and interface (<CODE>numlists</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -44,7 +35,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(graphs)).</CODE>
+<CODE>:- use_module(library(numlists)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -53,21 +44,23 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6535"></A>
-<CODE>dgraph_to_ugraph/2</CODE>, 
-<A NAME="IDX6536"></A>
-<CODE>dlgraph_to_lgraph/2</CODE>, 
-<A NAME="IDX6537"></A>
-<CODE>edges_to_ugraph/2</CODE>, 
-<A NAME="IDX6538"></A>
-<CODE>edges_to_lgraph/2</CODE>.
+<A NAME="IDX6544"></A>
+<CODE>get_primes/2</CODE>, 
+<A NAME="IDX6545"></A>
+<CODE>sum_list/2</CODE>, 
+<A NAME="IDX6546"></A>
+<CODE>sum_list/3</CODE>, 
+<A NAME="IDX6547"></A>
+<CODE>sum_list_of_lists/2</CODE>, 
+<A NAME="IDX6548"></A>
+<CODE>sum_list_of_lists/3</CODE>.
 
 <LI><EM>Regular Types:</EM>
 
-<A NAME="IDX6539"></A>
-<CODE>dgraph/1</CODE>, 
-<A NAME="IDX6540"></A>
-<CODE>dlgraph/1</CODE>.
+<A NAME="IDX6549"></A>
+<CODE>intlist/1</CODE>, 
+<A NAME="IDX6550"></A>
+<CODE>numlist/1</CODE>.
 
 </UL>
 
@@ -78,12 +71,8 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6541"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX6542"></A>
-<CODE>graphs/ugraphs</CODE>, 
-<A NAME="IDX6543"></A>
-<CODE>graphs/lgraphs</CODE>.
+<A NAME="IDX6551"></A>
+<CODE>lists</CODE>.
 
 </UL>
 
@@ -93,227 +82,180 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>,
 
 
 
-<H2><A NAME="SEC613" HREF="ciao_toc.html#TOC613">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
+<H2><A NAME="SEC627" HREF="ciao_toc.html#TOC627">Documentation on exports (<CODE>numlists</CODE>)</A></H2>
 <P>
-<A NAME="IDX6544"></A>
-<A NAME="IDX6545"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
-<DD><A NAME="IDX6546"></A>
-
-
-<P>
-<CODE>dgraph(Graph)</CODE>
-
-
-<P>
-A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6547"></A>
-<A NAME="IDX6548"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
-<DD><A NAME="IDX6549"></A>
-
-
-<P>
-<CODE>dlgraph(Graph)</CODE>
-
-
-<P>
-A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6550"></A>
-<A NAME="IDX6551"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
-<DD><A NAME="IDX6552"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
-
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Graph</CODE> is a directed graph.
- (<CODE>graphs:dgraph/1</CODE>)
-
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
+<A NAME="IDX6552"></A>
 <A NAME="IDX6553"></A>
-<A NAME="IDX6554"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
-<DD><A NAME="IDX6555"></A>
+<DT><span class="define">PREDICATE:</span> <B>get_primes/2:</B>
+<DD><A NAME="IDX6554"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>get_primes(N,Primes)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+<LI><EM>Description:</EM> Computes the <CODE>N</CODE>th first prime numbers in ascending order.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
-
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<CODE>N</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 <LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>+Graph</CODE> is a directed labeled graph.
- (<CODE>graphs:dlgraph/1</CODE>)
-
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
+<CODE>Primes</CODE> is a list of integers.
+ (<CODE>numlists:intlist/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
+<A NAME="IDX6555"></A>
 <A NAME="IDX6556"></A>
-<A NAME="IDX6557"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
-<DD><A NAME="IDX6558"></A>
+<DT><span class="define">REGTYPE:</span> <B>intlist/1:</B>
+<DD><A NAME="IDX6557"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>intlist(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a list of integers.
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-UGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-UGraph</CODE> is an ugraph.
- (<CODE>ugraphs:ugraph/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
+<A NAME="IDX6558"></A>
 <A NAME="IDX6559"></A>
-<A NAME="IDX6560"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
-<DD><A NAME="IDX6561"></A>
+<DT><span class="define">REGTYPE:</span> <B>numlist/1:</B>
+<DD><A NAME="IDX6560"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
+<STRONG>Usage:</STRONG> <CODE>numlist(X)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+<LI><EM>Description:</EM> <CODE>X</CODE> is a list of numbers.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6561"></A>
+<A NAME="IDX6562"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sum_list/2:</B>
+<DD><A NAME="IDX6563"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sum_list(List,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE>.
 
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-
-<CODE>-LGraph</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+<CODE>List</CODE> is a list of numbers.
+ (<CODE>numlists:numlist/1</CODE>)
 <LI><EM>The following properties should hold upon exit:</EM>
 
-<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6564"></A>
+<A NAME="IDX6565"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sum_list/3:</B>
+<DD><A NAME="IDX6566"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sum_list(List,N0,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of <CODE>List</CODE> plus <CODE>N0</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>List</CODE> is a list of numbers.
+ (<CODE>numlists:numlist/1</CODE>)
+
+<CODE>N0</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6567"></A>
+<A NAME="IDX6568"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/2:</B>
+<DD><A NAME="IDX6569"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6570"></A>
+<A NAME="IDX6571"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sum_list_of_lists/3:</B>
+<DD><A NAME="IDX6572"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sum_list_of_lists(Lists,N0,N)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is the total sum of the elements of the lists of <CODE>Lists</CODE> plus <CODE>N0</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>List</CODE> is a list of <CODE>numlist</CODE>s.
  (<CODE>basic_props:list/2</CODE>)
 
-<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
- (<CODE>lgraphs:lgraph/2</CODE>)
-</UL>
+<CODE>N0</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
 
-</DL>
-
-
-
-<H2><A NAME="SEC614" HREF="ciao_toc.html#TOC614">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
-<P>
-<A NAME="IDX6562"></A>
-<A NAME="IDX6563"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
-<DD><A NAME="IDX6564"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6565"></A>
-<A NAME="IDX6566"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
-<DD><A NAME="IDX6567"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
-
+<CODE>N</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_153.html">previous</A>, <A HREF="ciao_155.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

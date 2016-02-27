@@ -574,9 +574,9 @@ match([],I,I).
 match([H|T],[H|IT],RI) :-
 	match(T,IT,RI).
 	
-cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !,
+cyg2win("/cygdrive/"||[D,0'/ | Dir], [D,0':| Path],Swap) :- !,
 						             % New Drive notat.
-        swapslash(Swap,Dir,Path).
+        swapslash(Swap,[0'/ | Dir],Path).
 cyg2win("//"||[D,0'/ | Dir], [D,0':,0'\\ | Path],Swap) :- !, % Drive letter
         swapslash(Swap,Dir,Path).
 cyg2win("//"||Dir, "\\\\"||Path,Swap) :- !,                  % Network drive
@@ -599,4 +599,21 @@ do_swapslash([0'/|D],[0'\\|ND]) :- !,
         do_swapslash(D,ND).
 do_swapslash([C|D],[C|ND]) :-
         do_swapslash(D,ND).
+
+%%------------------------------------------------------------------------
+%% VERSION CONTROL
+%%------------------------------------------------------------------------
+ 
+:- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+128,2001/10/26,18:27*47+'CEST'), "Bug fixed in
+   cyg2win/3: when third argument was 'swap', the slash after the
+   drive letter colon keept unchanged.  (Jesus Correas Fernandez)").
+
+
+%%------------------------------------------------------------------------
+
+
+
+
 

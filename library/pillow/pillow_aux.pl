@@ -29,7 +29,7 @@ http_type_param(A = V) -->
         "=",
         http_token_or_quoted(V).
 
-http_token_or_quoted(V) --> http_token(V).
+http_token_or_quoted(V) --> http_token(V), !.
 http_token_or_quoted(V) --> http_quoted_string(V).
 
 http_token(T) -->
@@ -44,9 +44,9 @@ http_token_rest([C|Cs]) -->
         http_token_rest(Cs).
 http_token_rest([]) --> "".
 
-http_token_char(C) --> loalpha(C).
-http_token_char(C) --> upalpha(C).
-http_token_char(C) --> digit(C).
+http_token_char(C) --> loalpha(C), !.
+http_token_char(C) --> upalpha(C), !.
+http_token_char(C) --> digit(C), !.
 http_token_char(C) --> http_token_symb(C).
 
 http_token_symb(0'!) --> "!".
@@ -101,8 +101,8 @@ http_lo_up_token_rest([C|Cs]) -->
         http_lo_up_token_rest(Cs).
 http_lo_up_token_rest([]) --> "".
 
-http_lo_up_token_char(C) --> loupalpha(C).
-http_lo_up_token_char(C) --> digit(C).
+http_lo_up_token_char(C) --> loupalpha(C), !.
+http_lo_up_token_char(C) --> digit(C), !.
 http_lo_up_token_char(C) --> http_token_symb(C).
 
 loupalpha(C) --> loalpha(C), !.
@@ -127,11 +127,11 @@ http_sp -->
         [9],
         http_sp0.
 
+http_sp0 --> http_sp, !.
 http_sp0 --> [].
-http_sp0 --> http_sp.
 
 http_lws -->
-        http_sp.
+        http_sp, !.
 http_lws -->
         http_crlf,
         http_sp.

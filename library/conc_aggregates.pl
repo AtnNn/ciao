@@ -5,6 +5,7 @@
 
 :- use_module(library(prolog_sys), [new_atom/1]).
 
+:- comment(title,"All solutions concurrent predicates").
 :- comment(author,"Concurrent-safe (and incomplete) version of the
    aggregates predicates, based on the regular versions by Richard
    A. O'Keefe and David H.D. Warren.  Concurrency-safeness provided by
@@ -34,7 +35,7 @@ particular implementation is completely based on the one used in the
 :- concurrent '$$temp_sol_conc_findall'/2.
 
 :- pred setof(@Template, +Goal, ?Set) => (term(Template),
-body_term(Goal), list(Set)) + iso # "Finds the @var{Set} of instances
+callable(Goal), list(Set)) + iso # "Finds the @var{Set} of instances
 of the @var{Template} satisfying the @var{Generator}.  The set is in
 ascending order (see @pred{compare/3} for a definition of this order)
 without duplicates, and is non-empty.  If there are no solutions,
@@ -47,7 +48,8 @@ quantified.  Safe in concurrent apllications.".
 
 :- comment(bug, "Thread-safe @pred{setof/3} is not yet implemented.").
 
-:- pred bagof(@Template, +Generator, ?Bag) + iso # "Finds all the
+:- pred bagof(@Template, +Generator, ?Bag) => (term(Template),
+callable(Goal), list(Set)) + iso # "Finds all the
 instances of the @var{Template} produced by the @var{Generator}, and
 returns them in the @var{Bag} in the order in which they were found.
 If the @var{Generator} contains free variables which are not bound in
@@ -59,7 +61,8 @@ applications.".
 
 :- comment(bug, "Thread-safe @pred{bagof/3} is not yet implemented.").
 
-:- pred findall(?Template, +Generator, ?List) + iso # "A special case
+:- pred findall(?Template, +Generator, ?List) => (term(Template),
+callable(Goal), list(Set)) + iso # "A special case
 of bagof, where all free variables in the @var{Generator} are taken to
 be existentially quantified. Safe in concurrent applications.".
 

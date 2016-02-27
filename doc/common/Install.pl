@@ -14,6 +14,10 @@ main.
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+130,2001/10/28,17:06*47+'CET'), "Mac OS X
+   installation instructions now merged into common instructions for
+   all other Un*x-like systems.  (Manuel Hermenegildo)").
+
 :- comment(version(1*5+104,2000/04/03,10:41*02+'CEST'), "Several permission
    bugs fixed in installation scripts.  (Manuel Carlos Rodriguez)").
 

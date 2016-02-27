@@ -1,22 +1,22 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Breadth-first execution</TITLE>
+<TITLE>The Ciao Prolog System               - Miscellaneous predicates</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC399" HREF="ciao_toc.html#TOC399">Breadth-first execution</A></H1>
+<H1><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Miscellaneous predicates</A></H1>
 <P>
-<A NAME="IDX4346"></A>
+<A NAME="IDX4327"></A>
 
 
 <P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza, Manuel Carro.
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
 
 
 <P>
@@ -24,63 +24,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, 
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#143 (2000/5/12, 13:54:34 CEST)
+<STRONG>Version of last change:</STRONG> 1.3#95 (1999/11/8, 18:37:30 MET)
 
 
 <P>
-This package implements breadth-first execution of predicates. Predicates written with operators 
-<A NAME="IDX4347"></A>
-<CODE>'&#60;-'/1</CODE> (facts) and 
-<A NAME="IDX4348"></A>
-<CODE>'&#60;-'/2</CODE> (clauses) are executed using breadth-first search. This may be useful in search problems when a 
-<A NAME="IDX4349"></A>
-complete proof procedure is needed. An example of code would be: 
+This module implements some miscellaneous non-logical (but sometimes very useful) predicates.
 
-<PRE>
-:- module(chain, _, [bf]).
-
-test(bf) :- bfchain(a,d).
-test(df) :- chain(a,d).   % loops!
-
-bfchain(X,X) &#60;- .
-bfchain(X,Y) &#60;- arc(X,Z), bfchain(Z,Y).
-
-chain(X,X).
-chain(X,Y) :- arc(X,Z), chain(Z,Y).
-
-arc(a,b).
-arc(a,d).
-arc(b,c).
-arc(c,a).
-
-</PRE>
-
-<P>
-There is another version, called 
-<A NAME="IDX4350"></A>
-<CODE>bf/af</CODE>, which ensures AND-fairness by goal shuffling. This version correctly says "<CODE>no</CODE>" executing the following test: 
-
-<PRE>
-:- module(sublistapp, [test/0,sublistapp/2], ['bf/af']).
-
-test :- sublistapp([a],[b]).
-
-sublistapp(S,L) &#60;- append(_,S,Y), append(Y,_,L).
-
-append([], L, L) &#60;- .
-append([X|Xs], L, [X|Ys]) &#60;- append(Xs, L, Ys).
-
-</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_98.html#SEC400">Usage and interface (bf)</A>
-<LI><A HREF="ciao_98.html#SEC401">Known bugs and planned improvements (bf)</A>
+<LI><A HREF="ciao_98.html#SEC404">Usage and interface (odd)</A>
+<LI><A HREF="ciao_98.html#SEC405">Documentation on exports (odd)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC400" HREF="ciao_toc.html#TOC400">Usage and interface (<CODE>bf</CODE>)</A></H2>
+<H2><A NAME="SEC404" HREF="ciao_toc.html#TOC404">Usage and interface (<CODE>odd</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -88,35 +47,96 @@ append([X|Xs], L, [X|Ys]) &#60;- append(Xs, L, Ys).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(bf).</CODE>
+<CODE>:- use_module(library(odd)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[bf]).</CODE>
 
-<LI><STRONG>New operators defined:</STRONG>
+<UL>
 
-<A NAME="IDX4351"></A>
-<CODE>&#60;-/2</CODE> [1200,xfx], 
-<A NAME="IDX4352"></A>
-<CODE>&#60;-/1</CODE> [1200,xf].
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4328"></A>
+<CODE>setarg/3</CODE>, 
+<A NAME="IDX4329"></A>
+<CODE>undo/1</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC401" HREF="ciao_toc.html#TOC401">Known bugs and planned improvements (<CODE>bf</CODE>)</A></H2>
+<H2><A NAME="SEC405" HREF="ciao_toc.html#TOC405">Documentation on exports (<CODE>odd</CODE>)</A></H2>
+<P>
+<A NAME="IDX4330"></A>
+<A NAME="IDX4331"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>setarg/3:</B>
+<DD><A NAME="IDX4332"></A>
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>setarg(Index,Term,NewArg)</CODE>
 
 <UL>
+<LI><EM>Description:</EM> Replace destructively argument <CODE>Index</CODE> in <CODE>Term</CODE> by <CODE>NewArg</CODE>. The assignment is undone on backtracking. This is a major change to the normal behavior of data assignment in Ciao Prolog.
 
-<LI>
+<LI><EM>The following properties should hold at call time:</EM>
 
-Does not correctly work in user files.
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Index</CODE> is currently instantiated to an integer.
+ (<CODE>term_typing:integer/1</CODE>)
+
+<CODE>Term</CODE> is a compound term.
+ (<CODE>basic_props:struct/1</CODE>)
+
+<CODE>NewArg</CODE> is any term.
+ (<CODE>basic_props:term/1</CODE>)
 </UL>
 
+</DL>
+
+<P>
+<A NAME="IDX4333"></A>
+<A NAME="IDX4334"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>undo/1:</B>
+<DD><A NAME="IDX4335"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>undo(Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>call(<CODE>Goal</CODE>)</CODE> is executed on backtracking. This is a major change to the normal
+
+<A NAME="IDX4336"></A>
+control of Ciao Prolog execution. 
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+<LI><EM>The following properties hold upon exit:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_97.html">previous</A>, <A HREF="ciao_99.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

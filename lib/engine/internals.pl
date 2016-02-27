@@ -1,7 +1,7 @@
 :- module(internals, [
         builtin_module/1,
         load_lib/2, load_so/2, dynlink/2, dynunlink/1,
-        initialize_module/1,
+        initialize_module/1, initialized/1,
         term_to_meta/2,
         module_concat/3,
         last_module_exp/5,
@@ -44,7 +44,7 @@
         '$emulated_clause_counters'/4, '$counter_values'/3,
         '$close_predicate'/1, '$open_predicate'/1, '$unlock_predicate'/1,
         '$reset_counters'/2, poversion/1, undefined_goal/1,
-        initialization/1, on_abort/1,                  % implicit
+        initialization/1, u/2, on_abort/1,             % implicit
         imports/5, meta_args/2, multifile/3, defines/3 %
         ],
 	[assertions, .(metadefs)]).
@@ -91,7 +91,7 @@ provides handles for the module system into the internal definitions.
         '$first_instance'/2, '$current_instance'/5,
         '$emulated_clause_counters'/4, '$counter_values'/3,
         '$close_predicate'/1, '$open_predicate'/1, '$unlock_predicate'/1,
-        '$reset_counters'/2, initialization/1, on_abort/1,
+        '$reset_counters'/2, main_module/1, initialization/1, u/2, on_abort/1,
         imports/5, meta_args/2, multifile/3, defines/3, ldlibs/1, 'SYSCALL'/1,
         'CHOICE IDIOM'/1, 'CUT IDIOM'/1]).
 
@@ -137,9 +137,25 @@ reboot:-
 	'$nodebug_call'(aborting), !.
 
 initialize:-
-	initialization(_),
+	main_module(M),
+        initialize_module(M),
 	fail.
 initialize.
+
+:- data initialized/1.
+
+initialize_module(M) :- current_fact(initialized(M)), !.
+initialize_module(M) :- asserta_fact(initialized(M)),
+                        do_initialize_module(M).
+
+do_initialize_module(M) :-
+        u(M, N),
+        initialize_module(N),
+        fail.
+do_initialize_module(M) :-
+        initialization(M),
+        fail.
+do_initialize_module(_).
 
 reinitialize:-
 	on_abort(_),
@@ -313,7 +329,6 @@ load_lib_lazy(Module, File) :- % loads both .so and .po - JFMC
         ( absolute_file_name(File, '_opt', '.po', '.', Abs, Base, _),
           Abs \== Base, % Has .po extension
             poload(Abs),
-            initialize_module(Module),
 	    fail
         ; true
 	),
@@ -326,6 +341,8 @@ load_lib_lazy(Module, File) :- % loads both .so and .po - JFMC
         ; true
 	),
         set_prolog_flag(fileerrors, OldFE),
+        retractall_fact(initialized(Module)),
+        initialize_module(Module),
         check_module_loaded(Module, File).
 
 getOsArchSuf(OsArchSuff) :-
@@ -347,11 +364,6 @@ del_stumps(Module) :-
         '$abolish'(Pred),
         fail.
 del_stumps(_).
-
-initialize_module(M) :-
-        initialization(M),
-        fail.
-initialize_module(_).
 
 %------ low-level loading of objects ------%
 
@@ -383,7 +395,7 @@ load_po(File) :-
         absolute_file_name(File, '_opt', '.po', '.', Abs, _, _),
         poload(Abs).
 
-poversion(version(66)).
+poversion(version(67)).
 
 %------ attributed variables ------%
 
@@ -535,6 +547,15 @@ do_undefined(warning, X) :-
 % do_undefined(fail, X) :- fail.
 
 :- comment(version_maintenance,dir('../../version')).
+
+:- comment(version(1*7+147,2001/11/15,19:38*07+'CET'), "Changed
+   execution of initialization directives.  Now the initialization of a
+   module/file never runs before the initializations of the modules from
+   which the module/file imports (excluding circular dependences).
+   This is so in executables and in the toplevel shell, so the bug which
+   made the toplevel try the initialization of a module before related
+   modules were loaded is gone.  Hurray!
+   Version of .po files is also changed. (Daniel Cabeza Gras)").
 
 :- comment(version(1*7+98,2001/05/10,20:57*09+'CEST'), "Fixed a bug in
    predicate abstractions, when unification of the head failed an

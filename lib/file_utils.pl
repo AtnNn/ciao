@@ -5,6 +5,8 @@
 :- use_module(library(read), [read/1]).
 :- use_module(library(streams)).
 
+:- comment(title,"File I/O utilities").
+
 :- pred file_terms(@File, ?Terms) => sourcename * list 
    # "Transform a file @var{File} to/from a list of terms @var{Terms}.".
 

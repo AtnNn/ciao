@@ -33,6 +33,16 @@
 
 :- comment(author,"Manuel Hermenegildo").
 
+:- comment(module,"This module is part of the @lib{assertions}
+   library. It provides the formal definition of the syntax of several
+   forms of assertions and describes their meaning. It does so by
+   defining types and properties related to the assertions
+   themselves. The text describes, for example, the overall fields
+   which are admissible in the bodies of assertions, where properties
+   can be used inside these bodies, how to combine properties for a
+   given predicate argument (e.g., conjunctions) , etc. and provides
+   some examples.").
+
 % ----------------------------------------------------------------------------
 
 :- prop assrt_body(X) + regtype
@@ -565,6 +575,9 @@ docstring(String):- string(String).
 
 :- comment(version_maintenance,dir('../../version')).
 
+:- comment(version(1*7+156,2001/11/24,13:23*30+'CET'), "Description of
+   assertion syntax improved a bit.  (Manuel Hermenegildo)").
+
 :- comment(version(1*5+25,1999/12/29,12:46*08+'CET'), "Added
    properties @tt{nabody/1} and @tt{dictionary/1}.  (Francisco Bueno
    Carrillo)").
@@ -585,9 +598,6 @@ docstring(String):- string(String).
 
 :- comment(version(0*4+6,1997/12/16), "Split out properties and
    types. (Manuel Hermenegildo)").
-
-:- comment(module,"This module is part of the @lib{assertions}
-   library. It defines types and properties related to assertions.").
 
 % ----------------------------------------------------------------------------
 

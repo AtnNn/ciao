@@ -1,9 +1,4 @@
-:- module(fibo, [fibo/2, test/3], []).
-
-:- use_module(library(andprolog)).
-
-:- reexport(library(andprolog),[active_agents/1, (&)/2]).
-
+:- module(fibo, [fibo/2, test/3], [andprolog]).
 
 :- use_module(library(prolog_sys), [statistics/2]).
 :- use_module(library(format), [format/2]).
@@ -40,5 +35,8 @@ test(N, F, Time):-
         statistics(walltime, _),
         fibo(N, F),
         statistics(walltime, [_,Time]).
+
+
+
 
 

@@ -1,61 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level Java to Prolog interface</TITLE>
+<TITLE>The Ciao Prolog System               - sqltypes (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC582" HREF="ciao_toc.html#TOC582">Low-level Java to Prolog interface</A></H1>
+<H1><A NAME="SEC591" HREF="ciao_toc.html#TOC591">sqltypes (library)</A></H1>
 <P>
-<A NAME="IDX6175"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Jes&uacute;s Correas.
+<A NAME="IDX6087"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#125 (2001/10/17, 13:42:47 CEST)
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
 
 
 <P>
- 
-<A NAME="IDX6176"></A>
-<A NAME="IDX6177"></A>
-This module defines a low level Java to Prolog interface. This Prolog side of the Java to Prolog interface only has one public predicate: a server that listens at the socket connection with Java, and executes the commands received from the Java side. 
-
-
-<P>
-In order to evaluate the goals received from the Java side, this module can work in two ways: executing them in the same engine, or starting a thread for each goal. The easiest way is to launch them in the same engine, but the goals must be evaluated sequentially: once a goal provides the first solution, all the subsequent goals must be finished before this goal can backtrack to provide another solution. The Prolog side of this interface works as a top-level, and the goals partially evaluated are not independent. 
-
-
-<P>
-The solution of this goal dependence is to evaluate the goals in a different prolog engine. Although Ciao includes a mechanism to evaluate goals in different engines, the approach used in this interface is to launch each goal in a different thread. 
-
-
-<P>
-The decision of what kind of goal evaluation is selected is done by the Java side. Each evaluation type has its own command terms, so the Java side can choose the type it needs. 
-
-
-<P>
-A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or by calling <CODE>prolog_server/1</CODE> predicate and providing the port number as argument. The user predicates and libraries to be called from Java must be included in the executable file, or be accesible using the built-in predicates dealing with code loading. 
+<STRONG>Version of last change:</STRONG> 1.3#19 (1999/7/6, 12:21:10 MEST)
 
 
 
 <UL>
-<LI><A HREF="ciao_144.html#SEC583">Usage and interface (jtopl)</A>
-<LI><A HREF="ciao_144.html#SEC584">Documentation on exports (jtopl)</A>
-<LI><A HREF="ciao_144.html#SEC585">Documentation on internals (jtopl)</A>
+<LI><A HREF="ciao_144.html#SEC592">Usage and interface (sqltypes)</A>
+<LI><A HREF="ciao_144.html#SEC593">Documentation on exports (sqltypes)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC583" HREF="ciao_toc.html#TOC583">Usage and interface (<CODE>jtopl</CODE>)</A></H2>
+<H2><A NAME="SEC592" HREF="ciao_toc.html#TOC592">Usage and interface (<CODE>sqltypes</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -63,7 +39,7 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(jtopl)).</CODE>
+<CODE>:- use_module(library(sqltypes)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -72,50 +48,31 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6178"></A>
-<CODE>prolog_server/0</CODE>, 
-<A NAME="IDX6179"></A>
-<CODE>prolog_server/1</CODE>, 
-<A NAME="IDX6180"></A>
-<CODE>shell_s/0</CODE>, 
-<A NAME="IDX6181"></A>
-<CODE>query_solutions/2</CODE>, 
-<A NAME="IDX6182"></A>
-<CODE>query_requests/2</CODE>, 
-<A NAME="IDX6183"></A>
-<CODE>running_queries/2</CODE>.
+<A NAME="IDX6088"></A>
+<CODE>accepted_type/2</CODE>, 
+<A NAME="IDX6089"></A>
+<CODE>get_type/2</CODE>, 
+<A NAME="IDX6090"></A>
+<CODE>type_compatible/2</CODE>, 
+<A NAME="IDX6091"></A>
+<CODE>type_union/3</CODE>, 
+<A NAME="IDX6092"></A>
+<CODE>sybase2sqltypes_list/2</CODE>, 
+<A NAME="IDX6093"></A>
+<CODE>sybase2sqltype/2</CODE>, 
+<A NAME="IDX6094"></A>
+<CODE>postgres2sqltypes_list/2</CODE>, 
+<A NAME="IDX6095"></A>
+<CODE>postgres2sqltype/2</CODE>.
 
-</UL>
+<LI><EM>Regular Types:</EM>
 
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX6184"></A>
-<CODE>concurrency/concurrency</CODE>, 
-<A NAME="IDX6185"></A>
-<CODE>system</CODE>, 
-<A NAME="IDX6186"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX6187"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX6188"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX6189"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX6190"></A>
-<CODE>format</CODE>, 
-<A NAME="IDX6191"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX6192"></A>
-<CODE>atom2term</CODE>, 
-<A NAME="IDX6193"></A>
-<CODE>javall/javasock</CODE>, 
-<A NAME="IDX6194"></A>
-<CODE>prolog_sys</CODE>.
+<A NAME="IDX6096"></A>
+<CODE>sqltype/1</CODE>, 
+<A NAME="IDX6097"></A>
+<CODE>sybasetype/1</CODE>, 
+<A NAME="IDX6098"></A>
+<CODE>postgrestype/1</CODE>.
 
 </UL>
 
@@ -125,297 +82,323 @@ A Prolog server starts by calling the <CODE>prolog_server/0</CODE> predicate, or
 
 
 
-<H2><A NAME="SEC584" HREF="ciao_toc.html#TOC584">Documentation on exports (<CODE>jtopl</CODE>)</A></H2>
+<H2><A NAME="SEC593" HREF="ciao_toc.html#TOC593">Documentation on exports (<CODE>sqltypes</CODE>)</A></H2>
 <P>
-<A NAME="IDX6195"></A>
-<A NAME="IDX6196"></A>
+<A NAME="IDX6099"></A>
+<A NAME="IDX6100"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_server/0:</B>
-<DD><A NAME="IDX6197"></A>
+<DT><span class="define">REGTYPE:</span> <B>sqltype/1:</B>
+<DD><A NAME="IDX6101"></A>
+
+
+
+<PRE>
+sqltype(int).
+sqltype(flt).
+sqltype(num).
+sqltype(string).
+sqltype(date).
+sqltype(time).
+sqltype(datetime).
+</PRE>
+
+<P>
+These types have the same meaning as the corresponding standard types in the 
+<A NAME="IDX6102"></A>
+<CODE>basictypes</CODE> library.
 
 
 <P>
-<STRONG>Usage:</STRONG> 
+<STRONG>Usage:</STRONG> <CODE>sqltype(Type)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Prolog server entry point. Reads from the standard input the node name and port number where the java client resides, and starts the prolog server listening at the jp socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
-
-<A NAME="IDX6198"></A>
-<A NAME="IDX6199"></A>
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6200"></A>
-<A NAME="IDX6201"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_server/1:</B>
-<DD><A NAME="IDX6202"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Prolog server entry point. Given a port number, starts the prolog server listening at the jp socket. This predicate acts as a server: it includes an endless read-process loop until the <CODE>prolog_halt</CODE> command is received.
-
-<A NAME="IDX6203"></A>
-<A NAME="IDX6204"></A>
- 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Arg1</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6205"></A>
-<A NAME="IDX6206"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>shell_s/0:</B>
-<DD><A NAME="IDX6207"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Command execution loop. This predicate is called when the connection to Java is established, and performs an endless loop processing the commands received.
+<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by the translator.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6208"></A>
-<A NAME="IDX6209"></A>
+<A NAME="IDX6103"></A>
+<A NAME="IDX6104"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>query_solutions/2:</B>
-<DD><A NAME="IDX6210"></A>
+<DT><span class="define">PREDICATE:</span> <B>accepted_type/2:</B>
+<DD><A NAME="IDX6105"></A>
 
 
 <P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6211"></A>
-<A NAME="IDX6212"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>query_requests/2:</B>
-<DD><A NAME="IDX6213"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6214"></A>
-<A NAME="IDX6215"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>running_queries/2:</B>
-<DD><A NAME="IDX6216"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is of type <EM>concurrent</EM>.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC585" HREF="ciao_toc.html#TOC585">Documentation on internals (<CODE>jtopl</CODE>)</A></H2>
-<P>
-<A NAME="IDX6217"></A>
-<A NAME="IDX6218"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>command/1:</B>
-<DD><A NAME="IDX6219"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>command(X)</CODE>
+<STRONG>Usage:</STRONG> <CODE>accepted_type(SystemType,NativeType)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a command received from the java client, to be executed by the Prolog process. The command is represented as an atom or a functor with arity 1. The command to be executed must be one of the following types:
-
-<A NAME="IDX6220"></A>
-<A NAME="IDX6221"></A>
-
-<UL>
-
-<LI><CODE>prolog_launch_query(Q)</CODE> Compound term to create a new query, received as single argument of this structure. A reference to the new query is returned to Java.
-
-<LI><CODE>prolog_next_solution</CODE> Atom to get the next solution of a goal. A term representing the goal instantiated with the next solution is returned to Java.
-
-<LI><CODE>prolog_execute</CODE> Atom to indicate that next solution of a goal must be got, without blocking the requester (it has to check if this goal is still running using prolog_is_running command).
-
-<LI><CODE>prolog_terminate_query</CODE> Atom to indicate that a goal must be terminated.
-
-<LI><CODE>prolog_use_module(M)</CODE> Compound term to load dynamically a module given as argument.
-
-<LI><CODE>prolog_is_running</CODE> Atom to check if a goal is yet running a prolog_execute command.
-
-<LI><CODE>prolog_halt</CODE> Atom to terminate the current Prolog process.
-
-</UL>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6222"></A>
-<A NAME="IDX6223"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>answer/1:</B>
-<DD><A NAME="IDX6224"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>answer(X)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> is a response sent from the prolog server. Is represented as an atom or a functor with arity 1 or 2, depending on the functor name.
-
-<A NAME="IDX6225"></A>
-<A NAME="IDX6226"></A>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX6227"></A>
-<A NAME="IDX6228"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>process_command/1:</B>
-<DD><A NAME="IDX6229"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX6230"></A>
-<A NAME="IDX6231"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>solve/2:</B>
-<DD><A NAME="IDX6232"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>solve(+Query,+JId)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Runs the query on a separate thread and stores the solutions on the <CODE>query_solutions/2</CODE> data predicate.
+<LI><EM>Description:</EM> For the moment, tests wether the <CODE>SystemType</CODE> received is a sybase or a postgres type (in the future other systems should be supported) and obtains its equivalent <CODE>NativeType</CODE> sqltype.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Query</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
+<CODE>SystemType</CODE> is an SQL data type supported by Sybase.
+ (<CODE>sqltypes:sybasetype/1</CODE>)
 
-<CODE>+JId</CODE> is any term.
+<CODE>NativeType</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6106"></A>
+<A NAME="IDX6107"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>get_type/2:</B>
+<DD><A NAME="IDX6108"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>get_type(+Constant,Type)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Prolog implementation-specific definition of type retrievals. CIAO Prolog version given here (ISO).
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Constant</CODE> is any term.
  (<CODE>basic_props:term/1</CODE>)
+
+<CODE>Type</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6233"></A>
-<A NAME="IDX6234"></A>
+<A NAME="IDX6109"></A>
+<A NAME="IDX6110"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>prolog_parse/2:</B>
-<DD><A NAME="IDX6235"></A>
+<DT><span class="define">PREDICATE:</span> <B>type_compatible/2:</B>
+<DD><A NAME="IDX6111"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>prolog_parse(+String,-Term)</CODE>
+<STRONG>Usage:</STRONG> <CODE>type_compatible(TypeA,TypeB)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Parses the string received as first argument and returns the prolog term as second argument. <STRONG>Important:</STRONG> This is a private predicate but could be called from java side, to parse strings to Prolog terms.
+<LI><EM>Description:</EM> Checks if <CODE>TypeA</CODE> and <CODE>TypeB</CODE> are compatible types, i.e., they are the same or one is a subtype of the other.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
+<CODE>TypeA</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
 
-<CODE>-Term</CODE> is any term.
- (<CODE>basic_props:term/1</CODE>)
+<CODE>TypeB</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6236"></A>
-<A NAME="IDX6237"></A>
+<A NAME="IDX6112"></A>
+<A NAME="IDX6113"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>read_command/1:</B>
-<DD><A NAME="IDX6238"></A>
+<DT><span class="define">PREDICATE:</span> <B>type_union/3:</B>
+<DD><A NAME="IDX6114"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>type_union(TypeA,TypeB,Union)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>Union</CODE> is the union type of <CODE>TypeA</CODE> and <CODE>TypeB</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>TypeA</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+
+<CODE>TypeB</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+
+<CODE>Union</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX6239"></A>
-<A NAME="IDX6240"></A>
+<A NAME="IDX6115"></A>
+<A NAME="IDX6116"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>write_answer/2:</B>
-<DD><A NAME="IDX6241"></A>
+<DT><span class="define">REGTYPE:</span> <B>sybasetype/1:</B>
+<DD><A NAME="IDX6117"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>write_answer(+Id,+Answer)</CODE>
+SQL datatypes supported by Sybase for which a translation is defined: 
+
+
+
+<PRE>
+sybasetype(integer).
+sybasetype(numeric).
+sybasetype(float).
+sybasetype(double).
+sybasetype(date).
+sybasetype(char).
+sybasetype(varchar).
+sybasetype('long varchar').
+sybasetype(binary).
+sybasetype('long binary').
+sybasetype(timestamp).
+sybasetype(time).
+sybasetype(tinyint).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sybasetype(Type)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> writes to the output socket stream the given answer.
+<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by Sybase.
 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+</UL>
 
-<CODE>undefined:prolog_query_id(+Id)</CODE>
- (undefined property)
+</DL>
 
-<CODE>+Answer</CODE> is a response sent from the prolog server. Is represented as an atom or a functor with arity 1 or 2, depending on the functor name. 
-<A NAME="IDX6242"></A>
-<A NAME="IDX6243"></A>
+<P>
+<A NAME="IDX6118"></A>
+<A NAME="IDX6119"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sybase2sqltypes_list/2:</B>
+<DD><A NAME="IDX6120"></A>
 
- (<CODE>jtopl:answer/1</CODE>)
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sybase2sqltypes_list(SybaseTypesList,SQLTypesList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>SybaseTypesList</CODE> is a list of Sybase SQL types. <CODE>PrologTypesList</CODE> contains their equivalent SQL-type names in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>SybaseTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>SQLTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6121"></A>
+<A NAME="IDX6122"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>sybase2sqltype/2:</B>
+<DD><A NAME="IDX6123"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>sybase2sqltype(SybaseType,SQLType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>SybaseType</CODE> is a Sybase SQL type name, and <CODE>SQLType</CODE> is its equivalent SQL-type name in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>SybaseType</CODE> is an SQL data type supported by Sybase.
+ (<CODE>sqltypes:sybasetype/1</CODE>)
+
+<CODE>SQLType</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6124"></A>
+<A NAME="IDX6125"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>postgrestype/1:</B>
+<DD><A NAME="IDX6126"></A>
+
+
+<P>
+SQL datatypes supported by postgreSQL for which a translation is defined: 
+
+
+
+<PRE>
+postgrestype(int2).
+postgrestype(int4).
+postgrestype(int8).
+postgrestype(float4).
+postgrestype(float8).
+postgrestype(date).
+postgrestype(timestamp).
+postgrestype(time).
+postgrestype(char).
+postgrestype(varchar).
+postgrestype(text).
+postgrestype(bool).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>postgrestype(Type)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Type</CODE> is an SQL data type supported by postgres.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6127"></A>
+<A NAME="IDX6128"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>postgres2sqltypes_list/2:</B>
+<DD><A NAME="IDX6129"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>postgres2sqltypes_list(PostgresTypesList,SQLTypesList)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>PostgresTypesList</CODE> is a list of postgres SQL types. <CODE>PrologTypesList</CODE> contains their equivalent SQL-type names in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PostgresTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+
+<CODE>SQLTypesList</CODE> is a list.
+ (<CODE>basic_props:list/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6130"></A>
+<A NAME="IDX6131"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>postgres2sqltype/2:</B>
+<DD><A NAME="IDX6132"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>postgres2sqltype(PostgresType,SQLType)</CODE>
+
+<UL>
+<LI><EM>Description:</EM>  <CODE>PostgresType</CODE> is a postgres SQL type name, and <CODE>SQLType</CODE> is its equivalent SQL-type name in CIAO.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>PostgresType</CODE> is an SQL data type supported by postgres.
+ (<CODE>sqltypes:postgrestype/1</CODE>)
+
+<CODE>SQLType</CODE> is an SQL data type supported by the translator.
+ (<CODE>sqltypes:sqltype/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_143.html">previous</A>, <A HREF="ciao_145.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

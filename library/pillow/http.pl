@@ -173,30 +173,30 @@ http_status_code(Ty,SC) -->
             number_codes(SC,[X,Y,Z])
         }.
 
-type_of_status_code(0'1, informational).
-type_of_status_code(0'2, success).
-type_of_status_code(0'3, redirection).
-type_of_status_code(0'4, request_error).
-type_of_status_code(0'5, server_error).
+type_of_status_code(0'1, informational) :- !.
+type_of_status_code(0'2, success) :- !.
+type_of_status_code(0'3, redirection) :- !.
+type_of_status_code(0'4, request_error) :- !.
+type_of_status_code(0'5, server_error) :- !.
 type_of_status_code(_, extension_code).
 
 % ----------------------------------------------------------------------------
 
 % General header
-http_response_header(P) --> http_pragma(P).
-http_response_header(D) --> http_message_date(D).
+http_response_header(P) --> http_pragma(P), !.
+http_response_header(D) --> http_message_date(D), !.
 % Response header
-http_response_header(L) --> http_location(L).
-http_response_header(S) --> http_server(S).
-http_response_header(A) --> http_authenticate(A).
+http_response_header(L) --> http_location(L), !.
+http_response_header(S) --> http_server(S), !.
+http_response_header(A) --> http_authenticate(A), !.
 % Entity header
-http_response_header(A) --> http_allow(A).
-http_response_header(E) --> http_content_encoding(E).
-http_response_header(L) --> http_content_length(L).
-http_response_header(T) --> http_content_type(T).
-http_response_header(X) --> http_expires(X).
-http_response_header(M) --> http_last_modified(M).
-http_response_header(E) --> http_extension_header(E).
+http_response_header(A) --> http_allow(A), !.
+http_response_header(E) --> http_content_encoding(E), !.
+http_response_header(L) --> http_content_length(L), !.
+http_response_header(T) --> http_content_type(T), !.
+http_response_header(X) --> http_expires(X), !.
+http_response_header(M) --> http_last_modified(M), !.
+http_response_header(E) --> http_extension_header(E), !.
 
 % ----------------------------------------------------------------------------
 
@@ -268,7 +268,7 @@ http_extension_header(T) -->
 % ----------------------------------------------------------------------------
 
 http_date(date(WeekDay,Day,Month,Year,Time)) -->
-        http_internet_date(WeekDay,Day,Month,Year,Time)
+        http_internet_date(WeekDay,Day,Month,Year,Time), !
  ;
         http_asctime_date(WeekDay,Day,Month,Year,Time).
 
@@ -277,14 +277,17 @@ http_internet_date(WeekDay,Day,Month,Year,Time) -->
         ",",
         http_sp,
         http_day(Day),
-        (http_sp ; "-"),
+        http_sp_or_minus,
         http_month(Month),
-        (http_sp ; "-"),
+        http_sp_or_minus,
         http_year(Year),
         http_sp,
         http_time(Time),
         http_sp,
         "GMT".
+
+http_sp_or_minus --> "-", !.
+http_sp_or_minus --> http_sp.
 
 http_asctime_date(WeekDay,Day,Month,Year,Time) -->
         http_weekday(WeekDay),
@@ -297,31 +300,26 @@ http_asctime_date(WeekDay,Day,Month,Year,Time) -->
         http_sp,
         http_year(Year).
 
-http_weekday('Monday') --> "Mon".
-http_weekday('Tuesday') --> "Tue".
-http_weekday('Wednesday') --> "Wed".
-http_weekday('Thursday') --> "Thu".
-http_weekday('Friday') --> "Fri".
-http_weekday('Saturday') --> "Sat".
-http_weekday('Sunday') --> "Sun".
-http_weekday('Monday') --> "Monday".
-http_weekday('Tuesday') --> "Tuesday".
-http_weekday('Wednesday') --> "Wednesday".
-http_weekday('Thursday') --> "Thursday".
-http_weekday('Friday') --> "Friday".
-http_weekday('Saturday') --> "Saturday".
-http_weekday('Sunday') --> "Sunday".
+http_weekday('Monday') --> "Monday", !.
+http_weekday('Tuesday') --> "Tuesday", !.
+http_weekday('Wednesday') --> "Wednesday", !.
+http_weekday('Thursday') --> "Thursday", !.
+http_weekday('Friday') --> "Friday", !.
+http_weekday('Saturday') --> "Saturday", !.
+http_weekday('Sunday') --> "Sunday", !.
+http_weekday('Monday') --> "Mon", !.
+http_weekday('Tuesday') --> "Tue", !.
+http_weekday('Wednesday') --> "Wed", !.
+http_weekday('Thursday') --> "Thu", !.
+http_weekday('Friday') --> "Fri", !.
+http_weekday('Saturday') --> "Sat", !.
+http_weekday('Sunday') --> "Sun", !.
 
 http_day(Day) -->
         [D1,D2],
         {
             number_codes(Day,[D1,D2])
-        }.
-http_day(Day) -->
-        [0'0,D2],
-        {
-            number_codes(Day,[D2])
-        }.
+        }, !.
 http_day(Day) -->
         http_sp,
         [D],
@@ -347,12 +345,12 @@ http_year(Year) -->
         [Y1,Y2,Y3,Y4],
         {
             number_codes(Year,[Y1,Y2,Y3,Y4])
-        }.
+        }, !.
 http_year(Year) -->
         [Y1,Y2],
         {
             number_codes(Y,[Y1,Y2]),
-            ( Y >= 70 -> Year is 1900+Y ; Year is 2000+Y )
+            ( Y >= 90 -> Year is 1900+Y ; Year is 2000+Y )
         }.
 
 http_time(Time) -->
@@ -411,10 +409,10 @@ http_commas -->
         http_lws0,",",http_lws0,
         http_maybe_commas.
 
-http_maybe_commas --> "".
 http_maybe_commas -->
-        ",", http_lws0,
+        ",", !, http_lws0,
         http_maybe_commas.
+http_maybe_commas --> "".
 
 
 

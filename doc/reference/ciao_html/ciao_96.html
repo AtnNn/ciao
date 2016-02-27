@@ -1,120 +1,62 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Delaying predicates (when)</TITLE>
+<TITLE>The Ciao Prolog System               - Andorra execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC390" HREF="ciao_toc.html#TOC390">Delaying predicates (when)</A></H1>
-<P>
-<A NAME="IDX4300"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.7#3 (2000/7/21, 11:54:59 CEST)
-
-
-<P>
- 
-
-
+<H1><A NAME="SEC392" HREF="ciao_toc.html#TOC392">Andorra execution</A></H1>
 <P>
 <A NAME="IDX4301"></A>
-<CODE>when/2</CODE> delays a predicate until some condition in its variable is met. For example, we may want to find out the maximum of two numbers, but we are not sure when they will be instantiated. We can write the standard 
+
+
+<P>
+<STRONG>Author(s):</STRONG> Claudio Vaucheret, Francisco Bueno.
+
+
+<P>
+<STRONG>Version:</STRONG> 1.7#149 (2001/11/19, 19:17:51 CET)
+
+
+<P>
+<STRONG>Version of last change:</STRONG> 1.7#144 (2001/11/12, 17:57:47 CET)
+
+
+<P>
+This package allows the execution under the Basic Andorra Model [BibRef: andorra-principle]. The model classifies goals as a 
 <A NAME="IDX4302"></A>
-<CODE>max/3</CODE> predicate (but changing its name to 
 <A NAME="IDX4303"></A>
-<CODE>gmax/3</CODE> to denote that the first and second arguments must be ground) as 
+<EM>determinate goal</EM>, if at most one clause matches the goal, or nondeterminate goal, otherwise. In this model a goal is delayed until either it becomes determinate or it becomes the leftmost goal and no determinate goal is available. The implementation of this selection rule is based on the use of attributed variables [BibRef: holzbaur-plilp92,holzbaur-phd]. 
 
-
-
-<PRE>
-gmax(X, Y, X):- X &#62; Y, !.
-gmax(X, Y, Y):- X =&#60; Y.
-</PRE>
 
 <P>
-and then define a 'safe' 
-<A NAME="IDX4304"></A>
-<CODE>max/3</CODE> as 
- 
+In order to test determinacy we verify only the heads of clauses and builtins in the bodies of clauses before the first cut, if any. By default, determinacy of a goal is detected dynamically: when called, if at most one clause matches, it is executed; otherwise, it is delayed. For goals delayed the test is repeated each time a variable appearing in the goal is instantiated. In addition, efficiency can be improved by using declarations that specify the determinacy conditions. These will be considered for testing instead of the generic test on all clauses that can match. 
 
-<PRE>
-max(X, Y, Z):-
-        when((ground(X),ground(Y)), gmax(X, Y, Z)).
-</PRE>
 
 <P>
-which can be called as follows: 
+As with any other Ciao package, the andorra computation rule affects only the module that uses the package. If execution passes across two modules that use the computation rule, determinate goals are run in advance <EM>within</EM> one module and also within the other module. But determinate goals of one module do not run ahead of goals of the other module. 
 
-
-
-<PRE>
-?- max(X, Y, Z) , Y = 0, X = 8.
-
-X = 8,
-Y = 0,
-Z = 8 ? 
-
-yes
-</PRE>
 
 <P>
-Alternatively, 
-<A NAME="IDX4305"></A>
-<CODE>max/3</CODE> could have been defined as 
+It is however possible to preserve the computation rule for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will only be called when they became the leftmost goal. 
 
-
-
-<PRE>
-max(X, Y, Z):-
-        when(ground((X, Y)), gmax(X, Y, Z)).
-</PRE>
-
-<P>
-with the same effects as above. More complex implementations are possible. Look, for example, at the <CODE>max.pl</CODE> implementation under the <CODE>when</CODE> library directory, where a 
-<A NAME="IDX4306"></A>
-<CODE>max/3</CODE> predicate is implemented which waits on all the arguments until there is enough information to determine their values: 
-
-
-
-<PRE>
-?- use_module(library('when/max')).
-
-yes
-?- max(X, Y, Z), Z = 5, Y = 4.
-
-X = 5,
-Y = 4,
-Z = 5 ? 
-
-yes
-</PRE>
 
 
 <UL>
-<LI><A HREF="ciao_96.html#SEC391">Usage and interface (when)</A>
-<LI><A HREF="ciao_96.html#SEC392">Documentation on exports (when)</A>
-<LI><A HREF="ciao_96.html#SEC393">Documentation on multifiles (when)</A>
-<LI><A HREF="ciao_96.html#SEC394">Known bugs and planned improvements (when)</A>
+<LI><A HREF="ciao_96.html#SEC393">Usage and interface (andorra)</A>
+<LI><A HREF="ciao_96.html#SEC394">Documentation on new declarations (andorra)</A>
+<LI><A HREF="ciao_96.html#SEC395">Documentation on exports (andorra)</A>
+<LI><A HREF="ciao_96.html#SEC396">Other information (andorra)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Usage and interface (<CODE>when</CODE>)</A></H2>
+<H2><A NAME="SEC393" HREF="ciao_toc.html#TOC393">Usage and interface (<CODE>andorra</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -122,47 +64,37 @@ yes
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(when)).</CODE>
+<CODE>:- use_package(andorra).</CODE>
+
+or
+
+<CODE>:- module(...,...,[andorra]).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4307"></A>
-<CODE>when/2</CODE>.
-
 <LI><EM>Regular Types:</EM>
 
+<A NAME="IDX4304"></A>
+<CODE>detcond/1</CODE>, 
+<A NAME="IDX4305"></A>
+<CODE>path/1</CODE>.
+
+</UL>
+
+<LI><STRONG>New operators defined:</STRONG>
+
+<A NAME="IDX4306"></A>
+<CODE>?\=/2</CODE> [700,xfx], 
+<A NAME="IDX4307"></A>
+<CODE>?=/2</CODE> [700,xfx].
+
+<LI><STRONG>New declarations defined:</STRONG>
+
 <A NAME="IDX4308"></A>
-<CODE>wakeup_exp/1</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX4309"></A>
-<CODE>verify_attribute/2</CODE>, 
-<A NAME="IDX4310"></A>
-<CODE>combine_attributes/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4311"></A>
-<CODE>metaterms</CODE>, 
-<A NAME="IDX4312"></A>
-<CODE>sort</CODE>, 
-<A NAME="IDX4313"></A>
-<CODE>sets</CODE>.
-
-</UL>
+<CODE>determinate/2</CODE>.
 
 </UL>
 
@@ -170,131 +102,158 @@ yes
 
 
 
-<H2><A NAME="SEC392" HREF="ciao_toc.html#TOC392">Documentation on exports (<CODE>when</CODE>)</A></H2>
+<H2><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Documentation on new declarations (<CODE>andorra</CODE>)</A></H2>
 <P>
-<A NAME="IDX4314"></A>
-<A NAME="IDX4315"></A>
+<A NAME="IDX4309"></A>
+<A NAME="IDX4310"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>when/2:</B>
-<DD><A NAME="IDX4316"></A>
+<DT><span class="define">DECLARATION:</span> <B>determinate/2:</B>
+<DD><A NAME="IDX4311"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>when(?,goal)</CODE>.
+:- <CODE>determinate(Pred,Cond)</CODE>.
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>when(WakeupCond,Goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Delays / executes <CODE>Goal</CODE> according to <CODE>WakeupCond</CODE> given. The <CODE>WakeupCond</CODE>s now acceptable are <CODE>ground(T)</CODE> (
-
-<A NAME="IDX4317"></A>
-<CODE>Goal</CODE> is delayed until <CODE>T</CODE> is ground), <CODE>nonvar(T)</CODE> (
-<A NAME="IDX4318"></A>
-<CODE>Goal</CODE> is delayed until <CODE>T</CODE> is not a variable), and conjunctions and disjunctions of conditions: 
-
+Declares determinacy conditions for a predicate. Conditions <CODE>Cond</CODE> are on variables of arguments of <CODE>Pred</CODE>. For example, in: 
 
 <PRE>
-wakeup_exp(ground(_1)).
-wakeup_exp(nonvar(_1)).
-wakeup_exp((C1,C2)) :-
-        wakeup_exp(C1),
-        wakeup_exp(C2).
-wakeup_exp((C1;C2)) :-
-        wakeup_exp(C1),
-        wakeup_exp(C2).
+:- determinate(member(A,B,C), ( A ?= term(B,[1])  ; C?=[_|_]) ).
+
+member(A,[A|B],B).
+member(A,[B|C],[B|D]) :-
+        A==B,
+        member(A,C,D).
 </PRE>
 
-<A NAME="IDX4319"></A>
-<CODE>when/2</CODE> only fails it the <CODE>WakeupCond</CODE> is not legally formed. If <CODE>WakeupCond</CODE> is met at the time of the call no delay mechanism is involved -- but there exists a time penalty in the condition checking. 
+<P>
+the declaration states that a call <CODE>member(A,B,C)</CODE> is determinate when either <CODE>A</CODE> doesn't unify with the first argument of <CODE>B</CODE> or <CODE>C</CODE> doesn't unify with <CODE>[_|_]</CODE>.
 
-In case that an instantiation fires the execution of several predicates, the order in which these are executed is not defined. 
+
+<P>
+<STRONG>Usage:</STRONG> :- <CODE>determinate(Pred,Cond)</CODE>.
+
+<UL>
+<LI><EM>Description:</EM> States that the predicate <CODE>Pred</CODE> is determinate when <CODE>Cond</CODE> holds.
+
 <LI><EM>The following properties should hold at call time:</EM>
 
-<CODE>WakeupCond</CODE> is a legal expression for delaying goals.
- (<CODE>when:wakeup_exp/1</CODE>)
+<CODE>Pred</CODE> is a Name/Arity structure denoting a predicate name: 
 
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
+<PRE>
+predname(P/A) :-
+        atm(P),
+        nnegint(A).
+</PRE>
 
-</DL>
+ (<CODE>basic_props:predname/1</CODE>)
 
-<P>
-<A NAME="IDX4320"></A>
-<A NAME="IDX4321"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>wakeup_exp/1:</B>
-<DD><A NAME="IDX4322"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>wakeup_exp(T)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a legal expression for delaying goals.
-
+<CODE>Cond</CODE> is a determinacy condition.
+ (<CODE>user(... /andorra_doc):detcond/1</CODE>)
 </UL>
 
 </DL>
 
 
 
-<H2><A NAME="SEC393" HREF="ciao_toc.html#TOC393">Documentation on multifiles (<CODE>when</CODE>)</A></H2>
+<H2><A NAME="SEC395" HREF="ciao_toc.html#TOC395">Documentation on exports (<CODE>andorra</CODE>)</A></H2>
 <P>
-<A NAME="IDX4323"></A>
-<A NAME="IDX4324"></A>
+<A NAME="IDX4312"></A>
+<A NAME="IDX4313"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>verify_attribute/2:</B>
-<DD><A NAME="IDX4325"></A>
+<DT><span class="define">REGTYPE:</span> <B>detcond/1:</B>
+<DD><A NAME="IDX4314"></A>
 
 
 <P>
-No further documentation available for this predicate.
+Defined by: 
 
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-<P>
-<A NAME="IDX4326"></A>
-<A NAME="IDX4327"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>combine_attributes/2:</B>
-<DD><A NAME="IDX4328"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC394" HREF="ciao_toc.html#TOC394">Known bugs and planned improvements (<CODE>when</CODE>)</A></H2>
+<PRE>
+detcond(ground(X)) :-
+        var(X).
+detcond(nonvar(X)) :-
+        var(X).
+detcond(instatiated(A,Path)) :-
+        var(A),
+        list(Path,int).
+detcond(?\=(Term1,Term2)) :-
+        path(Term1),
+        path(Term2).
+detcond(?=(Term1,Term2)) :-
+        path(Term1),
+        path(Term2).
+detcond(Test) :-
+        test(Test).
+</PRE>
 
 
 <UL>
+<LI><CODE>ground/1</CODE> and <CODE>nonvar/1</CODE> have the usual meaning.
 
-<LI>
+<LI><CODE>instatiated(A,Path)</CODE> means that the subterm of <CODE>A</CODE> addressed by <CODE>Path</CODE> is not a variable. <CODE>Path</CODE> is a list of integer numbers describing a path to the subterm regarding the whole term A as a tree. For example, <CODE>instantiated(f(g(X),h(i(Z),Y)),[2,1])</CODE> tests whether <CODE>i(Z)</CODE> is not a variable.
 
-Redundant conditions are not removed.
+<LI><CODE>Term1 ?\= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> do not unify (when instantiated)". <CODE>Term1</CODE> and <CODE>Term2</CODE> can be either an argument of the predicate or a term <CODE>term(V,Path)</CODE>, which refers to the subterm of <CODE>V</CODE> addressed by <CODE>Path</CODE>.
 
-<LI>
+<LI><CODE>Term1 ?= Term2</CODE> means "terms <CODE>Term1</CODE> and <CODE>Term2</CODE> unify (when instantiated)". The same considerations above apply to <CODE>Term1</CODE> and <CODE>Term2</CODE>.
 
-Floundered goals are not appropriately printed.
+<LI>any other test that does not unify variables can also be used ( <CODE>==/2</CODE>, <CODE>\==/2</CODE>, <CODE>atomic/1</CODE>).
+
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>detcond(X)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> is a determinacy condition.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4315"></A>
+<A NAME="IDX4316"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>path/1:</B>
+<DD><A NAME="IDX4317"></A>
+
+
+<P>
+Defined by: 
+
+<PRE>
+path(X) :-
+        var(X).
+path(X) :-
+        list(X,int).
+</PRE>
+
+</DL>
+
+
+
+<H2><A NAME="SEC396" HREF="ciao_toc.html#TOC396">Other information (<CODE>andorra</CODE>)</A></H2>
+
+<P>
+The andorra transformation will include the following predicates into the code of the module that uses the package. Be careful not to define predicates by these names: 
+
+<UL>
+<LI><CODE>detcond_andorra/4</CODE>
+
+<LI><CODE>path_andorra/4</CODE>
+
+<LI><CODE>detcond_susp/4</CODE>
+
+<LI><CODE>path_susp/4</CODE>
+
+<LI><CODE>list_andorra2/5</CODE>
+
+<LI><CODE>test_andorra2/4</CODE>
+
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_95.html">previous</A>, <A HREF="ciao_97.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

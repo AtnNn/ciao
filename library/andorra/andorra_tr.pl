@@ -1,7 +1,7 @@
 :- module(_,[translation1/3,translation2/3],[]).
 
 :- use_module(library(aggregates), [findall/4]).
-:- use_module(library(metaterms),[varsbag/3]).
+:- use_module(library(terms_vars),[varsbag/3]).
 
 
 :- use_module(library('compiler/c_itf')).

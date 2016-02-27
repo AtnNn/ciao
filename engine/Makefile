@@ -45,15 +45,17 @@ CIAOSHLIB=lib$(ENGINENAME).so
 
 install: # $(ENGINENAME)
 	-mkdir -p $(ENGINEDIR)
+	-chmod $(EXECMODE) $(ENGINEDIR)
 	-rm -f $(INSTALLEDENGINE).$(CIAOARCH)
 	-rm -f $(INSTALLEDENGINE).$(CIAOARCH).sta
 	-rm -f $(INSTALLEDENGINE)
 	-cp $(ENGINENAME) $(INSTALLEDENGINE).$(CIAOARCH)
 	-cp $(ENGINENAME).sta $(INSTALLEDENGINE).$(CIAOARCH).sta
+# MH fixed these permissions
+	-chmod $(EXECMODE) $(INSTALLEDENGINE).$(CIAOARCH)
+	-chmod $(EXECMODE) $(INSTALLEDENGINE).$(CIAOARCH).sta
 	-ln -s $(INSTALLEDENGINE).$(CIAOARCH) $(INSTALLEDENGINE)
 	-ln -s $(INSTALLEDENGINE).$(CIAOARCH).sta $(INSTALLEDENGINE).sta
-	-chmod $(EXECMODE) $(ENGINEDIR)
-	-chmod $(EXECMODE) $(INSTALLEDENGINE)
 ifeq ($(OSNAME),Win32)
 	-rm -f $(INSTALLEDENGINE)_nc.$(CIAOARCH)
 	-rm -f $(INSTALLEDENGINE)_nc.$(CIAOARCH).sta
@@ -62,6 +64,7 @@ ifeq ($(OSNAME),Win32)
 	-cp $(ENGINENAME)_nc.sta $(INSTALLEDENGINE)_nc.$(CIAOARCH).sta
 	-ln -s $(INSTALLEDENGINE)_nc.$(CIAOARCH) $(INSTALLEDENGINE)_nc
 	-ln -s $(INSTALLEDENGINE)_nc.$(CIAOARCH).sta $(INSTALLEDENGINE)_nc.sta
+# MH these permissions need to looked at
 	-chmod $(EXECMODE)_nc $(ENGINEDIR)
 	-chmod $(EXECMODE)_nc $(INSTALLEDENGINE)_nc
 endif
@@ -87,6 +90,7 @@ $(ENGINENAME): configure.h ciaoemulator
 
 ciaoemulator: $(OBJ)
 	$(CC) $(CONSOLEFLAG) $(LDFLAGS) $(OBJ) $(CURRLIBS) -o $(ENGINENAME)
+	chmod $(DATAMODE) *.o
 	( cd ../../etc && rm -f fix_size && $(MAKE) fix_size; );
 	../../etc/fix_size $(ENGINENAME)
 	chmod $(EXECMODE) $(ENGINENAME)

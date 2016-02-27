@@ -1,5 +1,11 @@
-:- module(terms, [copy_args/3, arg/2, atom_concat/2],[assertions]).
+:- module(terms,[ copy_args/3, arg/2, atom_concat/2 ],[assertions]).
 
+:- comment(title,"Term manipulation utilities").
+
+%-------------------------------------------------------------------------
+:- pred copy_args(N,Term,Copy) : nnegint(N)
+      # "@var{Term} and @var{Copy} have the same first @var{N}
+         arguments.".
 
 copy_args(0, _, _) :- !.
 copy_args(I, F1, F2) :-
@@ -8,7 +14,11 @@ copy_args(I, F1, F2) :-
 	I1 is I-1,
 	copy_args(I1, F1, F2).
 
-% Gives on backtracking the arguments of a term
+%-------------------------------------------------------------------------
+:- pred arg(Term,Arg) 
+      # "@var{Arg} is an argument of @var{Term}. Gives each of the
+         arguments on backtracking.".
+
 arg(T, A) :-
         functor(T, _, N),
         args(1, N, T, A).
@@ -38,6 +48,9 @@ atoms_concat([A1|Atoms], A2, Atom) :-
 % ----------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*7+141,2001/11/12,17:47*36+'CET'), "Added doc for
+   all preds.  (Francisco Bueno Carrillo)").
+
 :- comment(version(1*3+124,1999/11/27,04:04*05+'MET'),
    "@pred{atom_concat/2} was moved here.  (Manuel Hermenegildo)").
 
@@ -48,5 +61,3 @@ atoms_concat([A1|Atoms], A2, Atom) :-
    global CIAO version.  (Manuel Hermenegildo)").
 
 % ----------------------------------------------------------------------------
-
-

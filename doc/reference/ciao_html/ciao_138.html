@@ -1,227 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - SQL persistent database interface</TITLE>
+<TITLE>The Ciao Prolog System               - PiLLoW types</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC551" HREF="ciao_toc.html#TOC551">SQL persistent database interface</A></H1>
+<H1><A NAME="SEC555" HREF="ciao_toc.html#TOC555">PiLLoW types</A></H1>
 <P>
-<A NAME="IDX5657"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> I. Caballero, D. Cabeza, J.M. G&oacute;mez, M. Hermenegildo, J. F. Morales, and M. Carro, <CODE>clip@dia.fi.upm.es</CODE>, <CODE>http://www.clip.dia.fi.upm.es/</CODE>, The CLIP Group, Facultad de Inform&aacute;tica, Universidad Polit&eacute;cnica de Madrid.
+<A NAME="IDX5565"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#125 (2001/10/17, 13:42:47 CEST)
+<STRONG>Author(s):</STRONG> Daniel Cabeza.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#109 (2001/6/3, 17:8:19 CEST)
-
-
-<P>
-The purpose of this library is to implement an instance of the generic concept of 
-<A NAME="IDX5658"></A>
-persistent predicates, where external 
-<A NAME="IDX5659"></A>
-relational databases are used for storage (see the documentation of the 
-<A NAME="IDX5660"></A>
-<CODE>persdb</CODE> library and [BibRef: radioweb-D3.1.M1-A1,radioweb-ta] for details). To this end, this library exports SQL persistent versions of the 
-<A NAME="IDX5661"></A>
-<CODE>assertz_fact/1</CODE>, 
-<A NAME="IDX5662"></A>
-<CODE>retract_fact/1</CODE> and 
-<A NAME="IDX5663"></A>
-<CODE>retractall_fact/1</CODE> builtin predicates. Persistent predicates also allow 
-<A NAME="IDX5664"></A>
-concurrent updates from several programs, since each update is atomic. 
-
-
-<P>
-The notion of persistence provides a very natural and transparent way to access database relations from a Prolog program. Stub definitions are provided for such predicates which access the database when the predicate is called (using the 
-<A NAME="IDX5665"></A>
-<CODE>db_client</CODE> library). A 
-<A NAME="IDX5666"></A>
-Prolog to SQL translator is used to generate the required 
-<A NAME="IDX5667"></A>
-SQL code dynamically (see library 
-<A NAME="IDX5668"></A>
-<CODE>pl2sql</CODE>). 
-
-
-<P>
-This library also provides facilities for reflecting more complex 
-<A NAME="IDX5669"></A>
-views of the database relations as Prolog predicates. Such views can be constructed as conjunctions, disjunctions, projections, etc. of database relations. Also, 
-<A NAME="IDX5670"></A>
-SQL-like 
-<A NAME="IDX5671"></A>
-aggregation operations are supported. 
+Here are defined the regular types used in the documentation of the predicates of the PiLLoW package.
 
 
 
 <UL>
-<LI><A HREF="ciao_138.html#SEC552">Implementation of the Database Interface</A>
-<LI><A HREF="ciao_138.html#SEC553">Example(s)</A>
-<LI><A HREF="ciao_138.html#SEC554">Usage and interface (persdbrtmysql)</A>
-<LI><A HREF="ciao_138.html#SEC555">Documentation on exports (persdbrtmysql)</A>
-<LI><A HREF="ciao_138.html#SEC556">Documentation on multifiles (persdbrtmysql)</A>
-<LI><A HREF="ciao_138.html#SEC557">Documentation on internals (persdbrtmysql)</A>
-<LI><A HREF="ciao_138.html#SEC558">Known bugs and planned improvements (persdbrtmysql)</A>
+<LI><A HREF="ciao_138.html#SEC556">Usage and interface (pillow_types)</A>
+<LI><A HREF="ciao_138.html#SEC557">Documentation on exports (pillow_types)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC552" HREF="ciao_toc.html#TOC552">Implementation of the Database Interface</A></H2>
-
-<P>
-The architecture of the low-level implementation of the database interface was defined with two goals in mind: 
-
-
-
-<UL>
-<LI>to simplify the communication between the Prolog system and the relational database engines as much as possible, and
-
-<LI>to give as much flexibility as possible to the overall system. This includes simultaneous access to several databases, allowing both the databases and clients to reside on the same physical machine or different machines, and allowing the clients to reside in Win95/NT or Unix machines.
-
-</UL>
-
-<P>
- 
-In order to allow the flexibility mentioned above, a client-sever architecture was chosen. At the server side, a MySQL server connects to the databases using the MySQL. At the client side, a MySQL client interface connects to this server. The server daemon (mysqld) should be running in the server machine; check your MySQL documentation on how to do that. 
-
-
-<P>
-After the connection is established a client can send commands to the mediator server which will pass them to the corresponding database server, and then the data will traverse in the opposite direction. These messages include logging on and off from the database, sending SQL queries, and receiving the responses. 
-
-
-<P>
-The low level implementation of the current library is accomplished by providing abstraction levels over the MySQL interface library. These layers of abstraction implement the persistent predicate view, build the appropriate commands for the database using a translator of Prolog goals to SQL commands, issue such commands using the mediator send/receive procedures, parse the responses, and present such responses to the Prolog engine via backtracking. 
-
-
-
-
-<H2><A NAME="SEC553" HREF="ciao_toc.html#TOC553">Example(s)</A></H2>
-
-
-<PRE>
-:- module(_, _, [persdb_mysql, functions]).
-
-:- use_module(library(write)).
-:- use_module(library(format)).
-
-:- use_module(user_and_password).
-
-sql_persistent_location(people, db(people, User, Password, HP)):-
-        mysql_host_and_port(HP),
-        mysql_user(User),
-        mysql_password(Password).
-
-:- sql_persistent(
-        people(string, string, int),   %% Prolog predicate and types
-        people(name, sex, age),        %% Table name and attributes
-        people).                       %% Database local id
-
-% Low level MySQL interface.
-
-:- use_module(library('persdb_mysql/mysql_client')).
-
-main :-
-        nl,
-        display('Creating database'), nl,nl,
-        create_people_db,
-        nl,
-        display('Inserting people'), nl,nl,
-        insert_people,
-        nl,
-        display('Showing people'), nl,nl,
-        show_people.
-
-% Create a database and a table of people.  Still needs to be ironed out.
-
-create_people_db :-
-        mysql_user(User),
-        mysql_password(Password),
-        mysql_host_and_port(HP),
-        mysql_connect(HP, '', User, Password, DbConnection),
-        
-        write(~mysql_query(DbConnection, "drop database if exists people")), nl,
-        write(~mysql_query(DbConnection, "create database people")), nl,
-        write(~mysql_query(DbConnection, "use people")), nl,
-        write(~mysql_query(DbConnection, "create table people(name char(16) not null, sex text, age int, primary key(name))")), nl,
-        mysql_disconnect(DbConnection).
-
-% Inserts people into the 'people' table.
-
-male(john, 15).
-male(peter, 24).
-male(ralph, 24).
-male(bart, 50).
-female(kirsten, 24).
-female(mary, 17).
-female(jona, 12).
-female(maija, 34).
-
-%% Tuples are inserted as in the local Prolog dynamic database
-insert_people :-
-        (
-            male(N, A),
-            display('Inserting '), 
-            display(male(N, A)), 
-            nl,
-            dbassertz_fact(people(N, male, A)), 
-            fail 
-        ; 
-            true
-        ),
-        (
-            female(N, A), 
-            display('Inserting '), 
-            display(female(N, A)), 
-            nl,
-            dbassertz_fact(people(N, female, A)),
-            fail 
-        ; 
-            true
-        ).
-
- %% Removes people from the 'people' table.
-
- %% Still not working in MySQL due to differences in SQL: working on it.
-
-remove_people(A, B, C) :-
-        dbretractall_fact(people(A, B, C)).
- 
-remove_people_2(A, B, C) :-
-        dbretract_fact(people(A, B, C)),
-        display('Removed row '), display(people(A, B, C)), nl,
-        fail.
-remove_people_2(_, _, _) :-
-         display('No more rows'), nl.
- 
-
-show_people :-
-        people(Name, Sex, Age),
-        display(people(Name, Sex, Age)),
-        nl,
-        fail.
-show_people :-
-        display('No more rows'), nl.
-        
-
-</PRE>
-
-
-
-<H2><A NAME="SEC554" HREF="ciao_toc.html#TOC554">Usage and interface (<CODE>persdbrtmysql</CODE>)</A></H2>
+<H2><A NAME="SEC556" HREF="ciao_toc.html#TOC556">Usage and interface (<CODE>pillow_types</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -229,111 +39,43 @@ show_people :-
 
 <LI><STRONG>Library usage:</STRONG>
 
-Typically, this library is used including the 'persdb_mysql' package into the package list of the module, or using the 
-<A NAME="IDX5672"></A>
-<CODE>use_package/1</CODE> declaration: 
-<DL COMPACT>
-
-<DT>In a module:
-<DD>
-
-<PRE>
-	:- module(bar, [main/1], [persdb_mysql]).
-</PRE>
-
-or 
-
-<PRE>
-        :- module(bar, [main/1]).
-        :- include(library(persdb_mysql)).
-</PRE>
-
-<DT>In a <EM>user</EM> file:
-<DD>
-
-<PRE>
-	:- use_package([persdb_mysql]).
-</PRE>
-
-or 
-
-<PRE>
-        :- include(library(persdb_mysql)).
-</PRE>
-
-</DL>
-This loads the run-time and compile-time versions of the library (<CODE>persdbtr_mysql.pl</CODE> and <CODE>persdbrt_mysql.pl</CODE>) and includes some needed declarations.
+<CODE>:- use_module(library(pillow_types)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Predicates:</EM>
+<LI><EM>Regular Types:</EM>
 
-<A NAME="IDX5673"></A>
-<CODE>init_sql_persdb/0</CODE>, 
-<A NAME="IDX5674"></A>
-<CODE>dbassertz_fact/1</CODE>, 
-<A NAME="IDX5675"></A>
-<CODE>dbretract_fact/1</CODE>, 
-<A NAME="IDX5676"></A>
-<CODE>dbcurrent_fact/1</CODE>, 
-<A NAME="IDX5677"></A>
-<CODE>dbretractall_fact/1</CODE>, 
-<A NAME="IDX5678"></A>
-<CODE>make_sql_persistent/3</CODE>, 
-<A NAME="IDX5679"></A>
-<CODE>dbfindall/4</CODE>, 
-<A NAME="IDX5680"></A>
-<CODE>dbcall/2</CODE>, 
-<A NAME="IDX5681"></A>
-<CODE>sql_query/3</CODE>, 
-<A NAME="IDX5682"></A>
-<CODE>sql_get_tables/2</CODE>, 
-<A NAME="IDX5683"></A>
-<CODE>sql_table_types/3</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX5684"></A>
-<CODE>sql_persistent_location/2</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX5685"></A>
-<CODE>det_hook/det_hook_rt</CODE>, 
-<A NAME="IDX5686"></A>
-<CODE>persdb_mysql/db_client_types</CODE>, 
-<A NAME="IDX5687"></A>
-<CODE>persdb_mysql/pl2sql</CODE>, 
-<A NAME="IDX5688"></A>
-<CODE>persdb_mysql/sqltypes</CODE>, 
-<A NAME="IDX5689"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX5690"></A>
-<CODE>terms</CODE>, 
-<A NAME="IDX5691"></A>
-<CODE>metaterms</CODE>, 
-<A NAME="IDX5692"></A>
-<CODE>messages</CODE>, 
-<A NAME="IDX5693"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX5694"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX5695"></A>
-<CODE>persdb_mysql/mysql_client</CODE>, 
-<A NAME="IDX5696"></A>
-<CODE>persdb_mysql/insert_compiler/pl2sqlinsert</CODE>, 
-<A NAME="IDX5697"></A>
-<CODE>persdb_mysql/delete_compiler/pl2sqldelete</CODE>.
+<A NAME="IDX5566"></A>
+<CODE>canonic_html_term/1</CODE>, 
+<A NAME="IDX5567"></A>
+<CODE>canonic_xml_term/1</CODE>, 
+<A NAME="IDX5568"></A>
+<CODE>html_term/1</CODE>, 
+<A NAME="IDX5569"></A>
+<CODE>form_dict/1</CODE>, 
+<A NAME="IDX5570"></A>
+<CODE>form_assignment/1</CODE>, 
+<A NAME="IDX5571"></A>
+<CODE>form_value/1</CODE>, 
+<A NAME="IDX5572"></A>
+<CODE>value_dict/1</CODE>, 
+<A NAME="IDX5573"></A>
+<CODE>url_term/1</CODE>, 
+<A NAME="IDX5574"></A>
+<CODE>http_request_param/1</CODE>, 
+<A NAME="IDX5575"></A>
+<CODE>http_response_param/1</CODE>, 
+<A NAME="IDX5576"></A>
+<CODE>http_date/1</CODE>, 
+<A NAME="IDX5577"></A>
+<CODE>weekday/1</CODE>, 
+<A NAME="IDX5578"></A>
+<CODE>month/1</CODE>, 
+<A NAME="IDX5579"></A>
+<CODE>hms_time/1</CODE>.
 
 </UL>
 
@@ -343,766 +85,683 @@ This loads the run-time and compile-time versions of the library (<CODE>persdbtr
 
 
 
-<H2><A NAME="SEC555" HREF="ciao_toc.html#TOC555">Documentation on exports (<CODE>persdbrtmysql</CODE>)</A></H2>
+<H2><A NAME="SEC557" HREF="ciao_toc.html#TOC557">Documentation on exports (<CODE>pillow_types</CODE>)</A></H2>
 <P>
-<A NAME="IDX5698"></A>
-<A NAME="IDX5699"></A>
+<A NAME="IDX5580"></A>
+<A NAME="IDX5581"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>init_sql_persdb/0:</B>
-<DD><A NAME="IDX5700"></A>
+<DT><span class="define">REGTYPE:</span> <B>canonic_html_term/1:</B>
+<DD><A NAME="IDX5582"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> 
-
-<UL>
-<LI><EM>Description:</EM> Internal predicate, used to transform predicates statically declared as persistent (see
-
-<A NAME="IDX5701"></A>
-<CODE>sql_persistent/3</CODE>) into real persistent predicates.  
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5702"></A>
-<A NAME="IDX5703"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbassertz_fact/1:</B>
-<DD><A NAME="IDX5704"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbassertz_fact(+Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Persistent extension of
-
-<A NAME="IDX5705"></A>
-<CODE>assertz_fact/1</CODE>: the current instance of <CODE>Fact</CODE> is interpreted as a fact (i.e., a relation tuple) and is added to the end of the definition of the corresponding predicate. If any integrity constraint violation is done (database stored predicates), an error will be displayed. The predicate concerned must be statically (
-<A NAME="IDX5706"></A>
-<CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX5707"></A>
-<CODE>make_sql_persistent/3</CODE>) declared. Any uninstantiated variables in the <CODE>Fact</CODE> will be replaced by new, private variables. <STRONG>Note:</STRONG> <EM>assertion of facts with uninstantiated variables not implemented at this time.</EM> 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtmysql:fact/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5708"></A>
-<A NAME="IDX5709"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbretract_fact/1:</B>
-<DD><A NAME="IDX5710"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbretract_fact(+Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Persistent extension of
-
-<A NAME="IDX5711"></A>
-<CODE>retract_fact/1</CODE>: deletes on backtracking all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
-<A NAME="IDX5712"></A>
-<CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX5713"></A>
-<CODE>make_sql_persistent/3</CODE>) declared. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtmysql:fact/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5714"></A>
-<A NAME="IDX5715"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbcurrent_fact/1:</B>
-<DD><A NAME="IDX5716"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbcurrent_fact(+Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Persistent extension of
-
-<A NAME="IDX5717"></A>
-<CODE>current_fact/1</CODE>: the fact <CODE>Fact</CODE> exists in the current database. The predicate concerned must be declared 
-<A NAME="IDX5718"></A>
-<CODE>sql_persistent/3</CODE>. Provides on backtracking all the facts (tuples) which unify with <CODE>Fact</CODE>. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtmysql:fact/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5719"></A>
-<A NAME="IDX5720"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbretractall_fact/1:</B>
-<DD><A NAME="IDX5721"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbretractall_fact(+Fact)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Persistent extension of
-
-<A NAME="IDX5722"></A>
-<CODE>retractall_fact/1</CODE>: when called deletes all the facts which unify with <CODE>Fact</CODE>. The predicate concerned must be statically (
-<A NAME="IDX5723"></A>
-<CODE>sql_persistent/3</CODE>) or dinamically (
-<A NAME="IDX5724"></A>
-<CODE>make_sql_persistent/3</CODE>) declared. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Fact</CODE> is a fact (a term whose main functor is not <CODE>':-'/2</CODE>).
- (<CODE>persdbrtmysql:fact/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5725"></A>
-<A NAME="IDX5726"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>make_sql_persistent/3:</B>
-<DD><A NAME="IDX5727"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>make_sql_persistent(addmodule,?,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>make_sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Dynamic version of the
-
-<A NAME="IDX5728"></A>
-<CODE>sql_persistent/3</CODE> declaration. 
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
- (<CODE>persdbrtmysql:prologPredTypes/1</CODE>)
-
-<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
- (<CODE>persdbrtmysql:tableAttributes/1</CODE>)
-
-<CODE>Keyword</CODE> is the name of a persistent storage location.
- (<CODE>persdbrtmysql:persLocId/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5729"></A>
-<A NAME="IDX5730"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbfindall/4:</B>
-<DD><A NAME="IDX5731"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>dbfindall(?,?,goal,?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbfindall(+DBId,+Pattern,+ComplexGoal,-Results)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Similar to
-
-<A NAME="IDX5732"></A>
-<CODE>findall/3</CODE>, but <CODE>Goal</CODE> is executed in database <CODE>DBId</CODE>. Certain restrictions and extensions apply to both <CODE>Pattern</CODE> and <CODE>ComplexGoal</CODE> stemming from the Prolog to SQL translation involved (see the corresponding type definitions for details). 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>+Pattern</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+ComplexGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>-Results</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5733"></A>
-<A NAME="IDX5734"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>dbcall/2:</B>
-<DD><A NAME="IDX5735"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbcall(+DBId,+ComplexGoal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Internal predicate, used by the transformed versions of the persistent predicates. Not meant to be called directly by users. It is exported by the library so that it can be used by the transformed versions of the persistent predicates in the modules in which they reside. Sends <CODE>ComplexGoal</CODE> to database <CODE>DBId</CODE> for evaluation. <CODE>ComplexGoal</CODE> must be a call to a persistent predicate which resides in database <CODE>DBId</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>+ComplexGoal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5736"></A>
-<A NAME="IDX5737"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_query/3:</B>
-<DD><A NAME="IDX5738"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sql_query(+DBId,+SQLString,AnswerTableTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is the response from database <CODE>DBId</CODE> to the
-
-<A NAME="IDX5739"></A>
-SQL query in <CODE>SQLString</CODE> to database <CODE>DBId</CODE>. <CODE>AnswerTableTerm</CODE> can express a set of tuples, an error answer or a 'ok' response (see 
-<A NAME="IDX5740"></A>
-<CODE>answertableterm/1</CODE> for details). At the moment, 
-<A NAME="IDX5741"></A>
-<CODE>sql_query/3</CODE> log in and out for each query. This should be changed to log in only the first time and log out on exit and/or via a timer in the standard way. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>+SQLString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
-
-<CODE>AnswerTableTerm</CODE> is a response from the ODBC database interface.
- (<CODE>persdbrtmysql:answertableterm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5742"></A>
-<A NAME="IDX5743"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_get_tables/2:</B>
-<DD><A NAME="IDX5744"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>sql_get_tables(+Location,-Tables)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>Location</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>persdbrtmysql:persLocation(+Location)</CODE>
- (<CODE>persdbrtmysql:persLocation/1</CODE>)
-
-<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>sql_get_tables(+DbConnection,-Tables)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Tables</CODE> contains the tables available in <CODE>DbConnection</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>-Tables</CODE> is a list of <CODE>atm</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5745"></A>
-<A NAME="IDX5746"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_table_types/3:</B>
-<DD><A NAME="IDX5747"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>sql_table_types(+Location,+Table,-AttrTypes)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>Location</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>persdbrtmysql:persLocation(+Location)</CODE>
- (<CODE>persdbrtmysql:persLocation/1</CODE>)
-
-<CODE>+Table</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-AttrTypes</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>sql_table_types(+DbConnection,+Table,-AttrTypes)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AttrTypes</CODE> are the attributes and types of <CODE>Table</CODE> in <CODE>DbConnection</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DbConnection</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>+Table</CODE> is an atom.
- (<CODE>basic_props:atm/1</CODE>)
-
-<CODE>-AttrTypes</CODE> is a list.
- (<CODE>basic_props:list/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5748"></A>
-<A NAME="IDX5749"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>socketname/1:</B>
-<DD><A NAME="IDX5750"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>socketname(IPP)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>IPP</CODE> is a structure describing a complete TCP/IP port address.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5751"></A>
-<A NAME="IDX5752"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbname/1:</B>
-<DD><A NAME="IDX5753"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbname(DBId)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBId</CODE> is the identifier of an database.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5754"></A>
-<A NAME="IDX5755"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>user/1:</B>
-<DD><A NAME="IDX5756"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>user(User)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>User</CODE> is a user name in the database.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5757"></A>
-<A NAME="IDX5758"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>passwd/1:</B>
-<DD><A NAME="IDX5759"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>passwd(Passwd)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Passwd</CODE> is the password for the user name in the database.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5760"></A>
-<A NAME="IDX5761"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>projterm/1:</B>
-<DD><A NAME="IDX5762"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>projterm(DBProjTerm)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBProjTerm</CODE> is a database projection term.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5763"></A>
-<A NAME="IDX5764"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>querybody/1:</B>
-<DD><A NAME="IDX5765"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>querybody(DBGoal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>DBGoal</CODE> is a database query goal.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5766"></A>
-<DL>
-<DT><span class="define">(UNDOC_REEXPORT):</span> <B>sqltype/1:</B>
-<DD><A NAME="IDX5767"></A>
-
-
-<P>
- Imported from 
-<A NAME="IDX5768"></A>
-<CODE>sqltypes</CODE> (see the corresponding documentation for details).
-
-
-</DL>
-
-
-
-<H2><A NAME="SEC556" HREF="ciao_toc.html#TOC556">Documentation on multifiles (<CODE>persdbrtmysql</CODE>)</A></H2>
-<P>
-<A NAME="IDX5769"></A>
-<A NAME="IDX5770"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_persistent_location/2:</B>
-<DD><A NAME="IDX5771"></A>
-
-
-<P>
-Relates names of locations (the <CODE>Keyword</CODE>s) with descriptions of such locations (<CODE>Location</CODE>s).
-
-
-<P>
-The predicate is <EM>multifile</EM>.
-
-
-<P>
-The predicate is of type <EM>data</EM>.
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>sql_persistent_location(Keyword,Location)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Keyword</CODE> is an identifier for the persistent data location <CODE>Location</CODE>.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>Keyword</CODE> is the name of a persistent storage location.
- (<CODE>persdbrtmysql:persLocId/1</CODE>)
-
-<CODE>persdbrtmysql:persLocation(Location)</CODE>
- (<CODE>persdbrtmysql:persLocation/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>sql_persistent_location(Keyword,DBLocation)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> In this usage, <CODE>DBLocation</CODE> is a <EM>relational database</EM>, in which case the predicate is stored as tuples in the database.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Keyword</CODE> is the name of a persistent storage location.
- (<CODE>persdbrtmysql:persLocId/1</CODE>)
-
-<CODE>DBLocation</CODE> is a structure describing a database.
- (<CODE>persdbrtmysql:database_desc/1</CODE>)
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC557" HREF="ciao_toc.html#TOC557">Documentation on internals (<CODE>persdbrtmysql</CODE>)</A></H2>
-<P>
-<A NAME="IDX5772"></A>
-<A NAME="IDX5773"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>sql_persistent/3:</B>
-<DD><A NAME="IDX5774"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>sql_persistent(PrologPredTypes,TableAttributes,Keyword)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> Declares the predicate corresponding to the main functor of <CODE>PrologPredTypes</CODE> as SQL persistent. <CODE>Keyword</CODE> is the
-
-<A NAME="IDX5775"></A>
-name of a location where the 
-<A NAME="IDX5776"></A>
-persistent storage for the predicate is kept, which in this case must be an external relational database. The description of this database is given through the 
-<A NAME="IDX5777"></A>
-<CODE>sql_persistent_location</CODE> predicate, which must contain a fact in which the first argument unifies with <CODE>Keyword</CODE>. <CODE>TableAttributes</CODE> provides the 
-<A NAME="IDX5778"></A>
-table name and 
-<A NAME="IDX5779"></A>
-attributes in the database corresponding respectively to the predicate name and arguments of the (virtual) Prolog predicate. 
-
-<STRONG>Example:</STRONG> 
+A term representing HTML code in canonical, structured way. It is a list of terms defined by the following predicate: 
+
+<PRE>
+canonic_html_item(comment(S)) :-
+        string(S).
+canonic_html_item(declare(S)) :-
+        string(S).
+canonic_html_item(env(Tag,Atts,Terms)) :-
+        atm(Tag),
+        list(Atts,tag_attrib),
+        canonic_html_term(Terms).
+canonic_html_item($(Tag,Atts)) :-
+        atm(Tag),
+        list(Atts,tag_attrib).
+canonic_html_item(S) :-
+        string(S).
+</PRE>
 
 
 <PRE>
-:- sql_persistent(product( integer,    integer, string, string ),
-              product( quantity,   id,      name,   size   ),
-              radiowebdb).
+tag_attrib(Att) :-
+        atm(Att).
+tag_attrib(Att=Val) :-
+        atm(Att),
+        string(Val).
+</PRE>
 
-sql_persistent_location(radiowebdb,
-   db('SQL Anywhere 5.0 Sample', user, pass,
-      'r2d5.dia.fi.upm.es':2020)).
+<P>
+Each structure represents one HTML construction: 
+<DL COMPACT>
+
+<DT><STRONG>env(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>attribs</EM><STRONG>,</STRONG><EM>terms</EM><STRONG>)</STRONG>
+<DD>
+An HTML environment, with name <EM>tag</EM>, list of attributes <EM>attribs</EM> and contents <EM>terms</EM>. 
+
+<DT><STRONG>$(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>attribs</EM><STRONG>)</STRONG>
+<DD>
+An HTML element of name <EM>tag</EM> and list of attributes <EM>attribs</EM>. <CODE>($)/2</CODE> is defined by the pillow package as an infix, binary operator. 
+
+<DT><STRONG>comment(</STRONG><EM>string</EM><STRONG>)</STRONG>
+<DD>
+An HTML comment (translates to/from <CODE>&#60;!--</CODE><EM>string</EM><CODE>--&#62;</CODE>). 
+
+<DT><STRONG>declare(</STRONG><EM>string</EM><STRONG>)</STRONG>
+<DD>
+An HTML declaration, they are used only in the header (translates to/from <CODE>&#60;!</CODE><EM>string</EM><CODE>&#62;</CODE>). 
+
+<DT><EM>string</EM>
+<DD>
+Normal text is represented as a list of character codes. 
+
+</DL>
+
+<P>
+For example, the term 
+
+<PRE>
+env(a,[href="www.therainforestsite.com"],
+      ["Visit ",img$[src="TRFS.gif"]])
+</PRE>
+
+<P>
+is output to (or parsed from): 
+
+<PRE>
+&#60;a href="www.therainforestsite.com"&#62;Visit &#60;img src="TRFS.gif"&#62;&#60;/a&#62;
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>canonic_html_term(HTMLTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>HTMLTerm</CODE> is a term representing HTML code in canonical form.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5583"></A>
+<A NAME="IDX5584"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>canonic_xml_term/1:</B>
+<DD><A NAME="IDX5585"></A>
+
+
+<P>
+A term representing XML code in canonical, structured way. It is a list of terms defined by the following predicate (see 
+<A NAME="IDX5586"></A>
+<CODE>tag_attrib/1</CODE> definition in 
+<A NAME="IDX5587"></A>
+<CODE>canonic_html_term/1</CODE>): 
+
+<PRE>
+canonic_xml_item(Term) :-
+        canonic_html_item(Term).
+canonic_xml_item(xmldecl(Atts)) :-
+        list(Atts,tag_attrib).
+canonic_xml_item(env(Tag,Atts,Terms)) :-
+        atm(Tag),
+        list(Atts,tag_attrib),
+        canonic_xml_term(Terms).
+canonic_xml_item(elem(Tag,Atts)) :-
+        atm(Tag),
+        list(Atts,tag_attrib).
+</PRE>
+
+<P>
+In addition to the structures defined by 
+<A NAME="IDX5588"></A>
+<CODE>canonic_html_term/1</CODE> (the <CODE>($)/2</CODE> structure appears only in malformed XML code), the following structures can be used: 
+<DL COMPACT>
+
+<DT><STRONG>elem(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
+<DD>
+Specifies an XML empty element of name <EM>tag</EM> and list of attributes <EM>atts</EM>. For example, the term 
+
+<PRE>
+elem(arc,[weigh="3",begin="n1",end="n2"])
+</PRE>
+
+is output to (or parsed from): 
+
+<PRE>
+&#60;arc weigh="3" begin="n1" end="n2"/&#62;
+</PRE>
+
+<DT><STRONG>xmldecl(</STRONG><EM>atts</EM><STRONG>)</STRONG>
+<DD>
+Specifies an XML declaration with attributes <EM>atts</EM> (translates to/from <CODE>&#60;?xml </CODE><EM>atts</EM><CODE>?&#62;</CODE>) 
+
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>canonic_xml_term(XMLTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>XMLTerm</CODE> is a term representing XML code in canonical form.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5589"></A>
+<A NAME="IDX5590"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>html_term/1:</B>
+<DD><A NAME="IDX5591"></A>
+
+
+<P>
+A term which represents HTML or XML code in a structured way. In addition to the structures defined by 
+<A NAME="IDX5592"></A>
+<CODE>canonic_html_term/1</CODE> or 
+<A NAME="IDX5593"></A>
+<CODE>canonic_xml_term/1</CODE>, the following structures can be used: 
+<DL COMPACT>
+
+<DT><STRONG>begin(</STRONG><EM>tag</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
+<DD>
+It translates to the start of an HTML environment of name <EM>tag</EM> and attributes <EM>atts</EM>. There exists also a <STRONG>begin(<EM>tag</EM>)</STRONG> structure. Useful, in conjunction with the next structure, when including in a document output generated by an existing piece of code (e.g. <EM>tag</EM> = <CODE>pre</CODE>). Its use is otherwise discouraged. 
+
+<DT><STRONG>end(</STRONG><EM>tag</EM><STRONG>)</STRONG>
+<DD>
+Translates to the end of an HTML environment of name <EM>tag</EM>. 
+
+<DT><STRONG>start</STRONG>
+<DD>
+Used at the beginning of a document (translates to <CODE>&#60;html&#62;</CODE>). 
+
+<DT><STRONG>end</STRONG>
+<DD>
+Used at the end of a document (translates to <CODE>&#60;/html&#62;</CODE>). 
+
+<DT><CODE>--</CODE>
+<DD>
+Produces a horizontal rule (translates to <CODE>&#60;hr&#62;</CODE>). 
+
+<DT><STRONG>\\</STRONG>
+<DD>
+Produces a line break (translates to <CODE>&#60;br&#62;</CODE>). 
+
+<DT><STRONG>$</STRONG>
+<DD>
+Produces a paragraph break (translates to <CODE>&#60;p&#62;</CODE>). 
+
+<DT><STRONG>image(</STRONG><EM>address</EM><STRONG>)</STRONG>
+<DD>
+Used to include an image of address (URL) <EM>address</EM> (equivalent to <CODE>img$[src=</CODE><EM>address</EM><CODE>]</CODE>). 
+
+<DT><STRONG>image(</STRONG><EM>address</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
+<DD>
+As above with the list of attributes <EM>atts</EM>. 
+
+<DT><STRONG>ref(</STRONG><EM>address</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+Produces a hypertext link, <EM>address</EM> is the URL of the referenced resource, <EM>text</EM> is the text of the reference (equivalent to <CODE>a([href=</CODE><EM>address</EM><CODE>],</CODE><EM>text</EM><CODE>)</CODE>). 
+
+<DT><STRONG>label(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+Labels <EM>text</EM> as a target destination with label <EM>name</EM> (equivalent to <CODE>a([name=</CODE><EM>name</EM><CODE>],</CODE><EM>text</EM><CODE>)</CODE>). 
+
+<DT><STRONG>heading(</STRONG><EM>n</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+Produces a heading of level <EM>n</EM> (between 1 and 6), <EM>text</EM> is the text to be used as heading. Useful when one wants a heading level relative to another heading (equivalent to <CODE>h</CODE><EM>n</EM><CODE>(</CODE><EM>text</EM><CODE>)</CODE>). 
+
+<DT><STRONG>itemize(</STRONG><EM>items</EM><STRONG>)</STRONG>
+<DD>
+Produces a list of bulleted items, <EM>items</EM> is a list of corresponding HTML terms (translates to a <CODE>&#60;ul&#62;</CODE> environment). 
+
+<DT><STRONG>enumerate(</STRONG><EM>items</EM><STRONG>)</STRONG>
+<DD>
+Produces a list of numbered items, <EM>items</EM> is a list of corresponding HTML terms (translates to a <CODE>&#60;ol&#62;</CODE> environment). 
+
+<DT><STRONG>description(</STRONG><EM>defs</EM><STRONG>)</STRONG>
+<DD>
+Produces a list of defined items, <EM>defs</EM> is a list whose elements are definitions, each of them being a Prolog sequence (composed by <CODE>','/2</CODE> operators). The last element of the sequence is the definition, the other (if any) are the defined terms (translates to a <CODE>&#60;dl&#62;</CODE> environment). 
+
+<DT><STRONG>nice_itemize(</STRONG><EM>img</EM><STRONG>,</STRONG><EM>items</EM><STRONG>)</STRONG>
+<DD>
+Produces a list of bulleted items, using the image <EM>img</EM> as bullet. The predicate 
+<A NAME="IDX5594"></A>
+<CODE>icon_address/2</CODE> provides a colored bullet. 
+
+<DT><STRONG>preformatted(</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+Used to include preformatted text, <EM>text</EM> is a list of HTML terms, each element of the list being a line of the resulting document (translates to a <CODE>&#60;pre&#62;</CODE> environment). 
+
+<DT><STRONG>verbatim(</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+Used to include text verbatim, special HTML characters (<CODE>&#60;,&#62;,&#38;,"</CODE> and space) are translated into its quoted HTML equivalent. 
+
+<DT><STRONG>prolog_term(</STRONG><EM>term</EM><STRONG>)</STRONG>
+<DD>
+Includes any prolog term <EM>term</EM>, represented in functional notation. Variables are output as <CODE>_</CODE>. 
+
+<DT><STRONG>nl</STRONG>
+<DD>
+Used to include a newline in the HTML source (just to improve human readability). 
+
+<DT><STRONG>entity(</STRONG><EM>name</EM><STRONG>)</STRONG>
+<DD>
+Includes the entity of name <EM>name</EM> (ISO-8859-1 special character). 
+
+<DT><STRONG>start_form(</STRONG><EM>addr</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
+<DD>
+Specifies the beginning of a form. <EM>addr</EM> is the address (URL) of the program that will handle the form, and <EM>atts</EM> other attributes of the form, as the method used to invoke it. If <EM>atts</EM> is not present (there is only one argument) the method defaults to POST. 
+
+<DT><STRONG>start_form</STRONG>
+<DD>
+Specifies the beginning of a form without assigning address to the handler, so that the form handler will be the cgi-bin executable producing the form. 
+
+<DT><STRONG>end_form</STRONG>
+<DD>
+Specifies the end of a form. 
+
+<DT><STRONG>checkbox(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>state</EM><STRONG>)</STRONG>
+<DD>
+Specifies an input of type <CODE>checkbox</CODE> with name <EM>name</EM>, <EM>state</EM> is <CODE>on</CODE> if the checkbox is initially checked. 
+
+<DT><STRONG>radio(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>value</EM><STRONG>,</STRONG><EM>selected</EM><STRONG>)</STRONG>
+<DD>
+Specifies an input of type <CODE>radio</CODE> with name <EM>name</EM> (several radio buttons which are interlocked must share their name), <EM>value</EM> is the the value returned by the button, if <EM>selected</EM>=<EM>value</EM> the button is initially checked. 
+
+<DT><STRONG>input(</STRONG><EM>type</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>)</STRONG>
+<DD>
+Specifies an input of type <EM>type</EM> with a list of attributes <EM>atts</EM>. Possible values of <EM>type</EM> are <CODE>text</CODE>, <CODE>hidden</CODE>, <CODE>submit</CODE>, <CODE>reset</CODE>, ldots 
+
+<DT><STRONG>textinput(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+Specifies an input text area of name <EM>name</EM>. <EM>text</EM> provides the default text to be shown in the area, <EM>atts</EM> a list of attributes. 
+
+<DT><STRONG>option(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>val</EM><STRONG>,</STRONG><EM>options</EM><STRONG>)</STRONG>
+<DD>
+Specifies a simple option selector of name <EM>name</EM>, <EM>options</EM> is the list of available options and <EM>val</EM> is the initial selected option (if <EM>val</EM> is not in <EM>options</EM> the first item is selected by default) (translates to a <CODE>&#60;select&#62;</CODE> environment). 
+
+<DT><STRONG>menu(</STRONG><EM>name</EM><STRONG>,</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>items</EM><STRONG>)</STRONG>
+<DD>
+Specifies a menu of name <EM>name</EM>, list of attributes <EM>atts</EM> and list of options <EM>items</EM>. The elements of the list <EM>items</EM> are marked with the prefix operator <CODE>$</CODE> to indicate that they are selected (translates to a <CODE>&#60;select&#62;</CODE> environment). 
+
+<DT><STRONG>form_reply</STRONG>
+<DD>
+<DT><STRONG>cgi_reply</STRONG>
+<DD>
+This two are equivalent, they do not generate HTML, rather, the CGI protocol requires this content descriptor to be used at the beginning by CGI executables (including form handlers) when replying (translates to <CODE>Content-type: text/html</CODE>). 
+
+<DT><STRONG>pr</STRONG>
+<DD>
+Includes in the page a graphical logo with the message "Developed using the PiLLoW Web programming library", which points to the manual and library source. 
+
+<DT><EM>name</EM><STRONG>(</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+A term with functor <EM>name</EM>/1, different from the special functors defined herein, represents an HTML environment of name <EM>name</EM> and included text <EM>text</EM>. For example, the term 
+
+<PRE>
+   address('clip@clip.dia.fi.upm.es')
+</PRE>
+
+is translated into the HTML source 
+
+<PRE>
+   &#60;address&#62;clip@clip.dia.fi.upm.es&#60;/address&#62;
+</PRE>
+
+<DT><EM>name</EM><STRONG>(</STRONG><EM>atts</EM><STRONG>,</STRONG><EM>text</EM><STRONG>)</STRONG>
+<DD>
+A term with functor <EM>name</EM>/2, different from the special functors defined herein, represents an HTML environment of name <EM>name</EM>, attributes <EM>atts</EM> and included text <EM>text</EM>. For example, the term 
+
+<PRE>
+
+   a([href='http://www.clip.dia.fi.upm.es/'],"Clip home")
+</PRE>
+
+represents the HTML source 
+
+<PRE>
+   &#60;a href="http://www.clip.dia.fi.upm.es/"&#62;Clip home&#60;/a&#62;
+</PRE>
+
+</DL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>html_term(HTMLTerm)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>HTMLTerm</CODE> is a term representing HTML code.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5595"></A>
+<A NAME="IDX5596"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>form_dict/1:</B>
+<DD><A NAME="IDX5597"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>form_dict(Dict)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Dict</CODE> is a dictionary of values of the attributes of a form. It is a list of <CODE>form_assignment</CODE>
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5598"></A>
+<A NAME="IDX5599"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>form_assignment/1:</B>
+<DD><A NAME="IDX5600"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>form_assignment(Eq)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Eq</CODE> is an assignment of value of an attribute of a form. It is defined by:
+
+
+<PRE>
+form_assignment(A=V) :-
+        atm(A),
+        form_value(V).
+</PRE>
+
+
+<PRE>
+form_value(A) :-
+        atm(A).
+form_value(N) :-
+        num(N).
+form_value(L) :-
+        list(L,string).
 </PRE>
 
  
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>PrologPredTypes</CODE> is a structure describing a Prolog predicate name with its types.
- (<CODE>persdbrtmysql:prologPredTypes/1</CODE>)
-
-<CODE>TableAttributes</CODE> is a structure describing a table name and some attributes.
- (<CODE>persdbrtmysql:tableAttributes/1</CODE>)
-
-<CODE>Keyword</CODE> is the name of a persistent storage location.
- (<CODE>persdbrtmysql:persLocId/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5780"></A>
-<A NAME="IDX5781"></A>
+<A NAME="IDX5601"></A>
+<A NAME="IDX5602"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>db_query/4:</B>
-<DD><A NAME="IDX5782"></A>
+<DT><span class="define">REGTYPE:</span> <B>form_value/1:</B>
+<DD><A NAME="IDX5603"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>db_query(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
+<STRONG>Usage:</STRONG> <CODE>form_value(V)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> contains all the
+<LI><EM>Description:</EM> <CODE>V</CODE> is a value of an attribute of a form.
 
-<A NAME="IDX5783"></A>
-tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
-<A NAME="IDX5784"></A>
-<CODE>pl2sqlstring/3</CODE> for the 
-<A NAME="IDX5785"></A>
-Prolog to SQL translation and 
-<A NAME="IDX5786"></A>
-<CODE>sql_query/3</CODE> for posing the actual query. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>+ProjTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+Goal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>ResultTerm</CODE> is a tuple of values from the ODBC database interface.
- (<CODE>persdbrtmysql:tuple/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5787"></A>
-<A NAME="IDX5788"></A>
+<A NAME="IDX5604"></A>
+<A NAME="IDX5605"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>db_query_one_tuple/4:</B>
-<DD><A NAME="IDX5789"></A>
+<DT><span class="define">REGTYPE:</span> <B>value_dict/1:</B>
+<DD><A NAME="IDX5606"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>db_query_one_tuple(+DBId,+ProjTerm,+Goal,ResultTerm)</CODE>
+<STRONG>Usage:</STRONG> <CODE>value_dict(Dict)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>ResultTerm</CODE> is one of the
-
-<A NAME="IDX5790"></A>
-tuples which are the response from database <CODE>DBId</CODE> to the Prolog query <CODE>Goal</CODE>, projected onto <CODE>ProjTerm</CODE>. Uses 
-<A NAME="IDX5791"></A>
-<CODE>pl2sqlstring/3</CODE> for the 
-<A NAME="IDX5792"></A>
-Prolog to SQL translation and 
-<A NAME="IDX5793"></A>
-<CODE>sql_query_one_tuple/3</CODE> for posing the actual query. After last tuple has been reached, a null tuple is unified with ResultTerm, and the connection to the database finishes. 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>+ProjTerm</CODE> is a database projection term.
- (<CODE>pl2sql:projterm/1</CODE>)
-
-<CODE>+Goal</CODE> is a database query goal.
- (<CODE>pl2sql:querybody/1</CODE>)
-
-<CODE>ResultTerm</CODE> is a predicate containing a tuple.
- (<CODE>persdbrtmysql:answertupleterm/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5794"></A>
-<A NAME="IDX5795"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>sql_query_one_tuple/3:</B>
-<DD><A NAME="IDX5796"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>sql_query_one_tuple(+DBId,+SQLString,ResultTuple)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ResultTuple</CODE> contains an element from the set of tuples which represents the response in <CODE>DBId</CODE> to the
-
-<A NAME="IDX5797"></A>
-SQL query <CODE>SQLString</CODE>. If the connection is kept, succesive calls return consecutive tuples, until the last tuple is reached. Then a null tuple is unified with <CODE>ResultTuple</CODE> and the connection is finished (calls to 
-<A NAME="IDX5798"></A>
-<CODE>mysql_disconnect/1</CODE>). 
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+DBId</CODE> a unique identifier of a database session connection.
- (<CODE>mysql_client:dbconnection/1</CODE>)
-
-<CODE>+SQLString</CODE> is a string containing SQL code.
- (<CODE>pl2sql:sqlstring/1</CODE>)
-
-<CODE>ResultTuple</CODE> is a tuple of values from the ODBC database interface.
- (<CODE>persdbrtmysql:tuple/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5799"></A>
-<A NAME="IDX5800"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX5801"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
+<LI><EM>Description:</EM> <CODE>Dict</CODE> is a dictionary of values. It is a list of pairs <EM>atom</EM>=<EM>constant</EM>.
 
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5802"></A>
-<A NAME="IDX5803"></A>
+<A NAME="IDX5607"></A>
+<A NAME="IDX5608"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>tuple/1:</B>
-<DD><A NAME="IDX5804"></A>
+<DT><span class="define">REGTYPE:</span> <B>url_term/1:</B>
+<DD><A NAME="IDX5609"></A>
 
 
+<P>
+A term specifying an Internet Uniform Resource Locator. Currently only HTTP URLs are supported. Example: <CODE>http('www.clip.dia.fi.upm.es',80,"/Software/Ciao/")</CODE>. Defined as 
 
 <PRE>
-tuple(T) :-
-        list(T,atm).
-tuple(T) :-
-        list(T,atm).
+url_term(http(Host,Port,Document)) :-
+        atm(Host),
+        int(Port),
+        string(Document).
 </PRE>
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>tuple(T)</CODE>
+<STRONG>Usage:</STRONG> <CODE>url_term(URL)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>T</CODE> is a tuple of values from the ODBC database interface.
+<LI><EM>Description:</EM> <CODE>URL</CODE> specifies a URL.
 
 </UL>
 
 </DL>
 
+<P>
+<A NAME="IDX5610"></A>
+<A NAME="IDX5611"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>http_request_param/1:</B>
+<DD><A NAME="IDX5612"></A>
 
 
-<H2><A NAME="SEC558" HREF="ciao_toc.html#TOC558">Known bugs and planned improvements (<CODE>persdbrtmysql</CODE>)</A></H2>
+<P>
+A parameter of an HTTP request: 
 
+<UL>
+<LI><STRONG>head:</STRONG> Specify that the document content is not wanted.
+
+<LI><STRONG>timeout(</STRONG><EM>T</EM><STRONG>):</STRONG> <EM>T</EM> specifies the time in seconds to wait for the response. Default is 300 seconds.
+
+<LI><STRONG>if_modified_since(</STRONG><EM>Date</EM><STRONG>):</STRONG> Get document only if newer than <EM>Date</EM>. <EM>Date</EM> has the format defined by
+
+<A NAME="IDX5613"></A>
+<CODE>http_date/1</CODE>. 
+
+<LI><STRONG>user_agent(</STRONG><EM>Agent</EM><STRONG>):</STRONG> Provides a user-agent field, <EM>Agent</EM> is an atom. The string <CODE>"PiLLoW/1.1"</CODE> (or whatever version of PiLLoW is used) is appended.
+
+<LI><STRONG>authorization(</STRONG><EM>Scheme</EM>,<EM>Params</EM><STRONG>):</STRONG> To provide credentials. See RFC 1945 for details.
+
+<LI><STRONG><EM>option</EM>(</STRONG><EM>Value</EM><STRONG>):</STRONG> Any unary term, being <EM>Value</EM> an atom, can be used to provide another valid option (e.g. <CODE>from('user@machine')</CODE>).
+
+</UL>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>http_request_param(Request)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Request</CODE> is a parameter of an HTTP request.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5614"></A>
+<A NAME="IDX5615"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>http_response_param/1:</B>
+<DD><A NAME="IDX5616"></A>
+
+
+<P>
+A parameter of an HTTP response: 
 
 <UL>
 
-<LI>
+<LI><STRONG>content(</STRONG><EM>String</EM><STRONG>):</STRONG> <EM>String</EM> is the document content (list of bytes). If the <CODE>head</CODE> parameter of the HTTP request is used, an empty list is get here.
 
-At least in the shell, reloading a file after changing the definition of a persistent predicate does not eliminate the old definition...
+<LI><STRONG>status(</STRONG><EM>Type,Code,Reason</EM><STRONG>):</STRONG> <EM>Type</EM> is an atom denoting the response type, <EM>Code</EM> is the status code (an integer), and <EM>Reason</EM> is a string holding the reason phrase.
 
-<LI>
+<LI><STRONG>message_date(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date of the response, with format defined by
 
-Functionality missing: some questions need to be debugged.
+<A NAME="IDX5617"></A>
+<CODE>http_date/1</CODE>. 
 
-<LI>
+<LI><STRONG>location(</STRONG><EM>Loc</EM><STRONG>):</STRONG> This parameter appears when the document has moved, <EM>Loc</EM> is an atom holding the new location.
 
-Warning: still using kludgey string2term and still using some non-uniquified temp files.
+<LI><STRONG>http_server(</STRONG><EM>Server</EM><STRONG>):</STRONG> <EM>Server</EM> is the server responding, as a string.
 
-<LI>
+<LI><STRONG>authenticate(</STRONG><EM>Params</EM><STRONG>):</STRONG> Returned if document is protected, <EM>Params</EM> is a list of chagenges. See RFC 1945 for details.
 
-Needs to be unified with the file-based library.
+<LI><STRONG>allow(</STRONG><EM>Methods</EM><STRONG>):</STRONG> <EM>Methods</EM> are the methods allowed by the server, as a list of atoms.
+
+<LI><STRONG>content_encoding(</STRONG><EM>Encoding</EM><STRONG>):</STRONG> <EM>Encoding</EM> is an atom defining the encoding.
+
+<LI><STRONG>content_length(</STRONG><EM>Length</EM><STRONG>):</STRONG> <EM>Length</EM> is the length of the document (an integer).
+
+<LI><STRONG>content_type(</STRONG><EM>Type,Subtype,Params</EM><STRONG>):</STRONG> Specifies the document content type, <EM>Type</EM> and <EM>Subtype</EM> are atoms, <EM>Params</EM> a list of parameters (e.g. <CODE>content_type(text,html,[])</CODE>).
+
+<LI><STRONG>expires(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date after which the entity should be considered stale. Format defined by
+
+<A NAME="IDX5618"></A>
+<CODE>http_date/1</CODE>. 
+
+<LI><STRONG>last_modified(</STRONG><EM>Date</EM><STRONG>):</STRONG> <EM>Date</EM> is the date at which the sender believes the resource was last modified. Format defined by
+
+<A NAME="IDX5619"></A>
+<CODE>http_date/1</CODE>. 
+
+<LI><STRONG>pragma(</STRONG><EM>String</EM><STRONG>):</STRONG> Miscellaneous data.
+
+<LI><STRONG><EM>header</EM>(</STRONG><EM>String</EM><STRONG>):</STRONG> Any other functor <EM>header</EM>/1 is an extension header.
+
 </UL>
 
+<P>
+<STRONG>Usage:</STRONG> <CODE>http_response_param(Response)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Response</CODE> is a parameter of an HTTP response.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5620"></A>
+<A NAME="IDX5621"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>http_date/1:</B>
+<DD><A NAME="IDX5622"></A>
+
+
+<P>
+<CODE>http_date(Date)</CODE>
+
+
+<P>
+<CODE>Date</CODE> is a term defined as 
+
+<PRE>
+http_date(date(WeekDay,Day,Month,Year,Time)) :-
+        weekday(WeekDay),
+        int(Day),
+        month(Month),
+        int(Year),
+        hms_time(Time).
+</PRE>
+
+<P>
+.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>http_date(Date)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Date</CODE> is a term denoting a date.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5623"></A>
+<A NAME="IDX5624"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>weekday/1:</B>
+<DD><A NAME="IDX5625"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+weekday('Monday').
+weekday('Tuesday').
+weekday('Wednesday').
+weekday('Thursday').
+weekday('Friday').
+weekday('Saturday').
+weekday('Sunday').
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX5626"></A>
+<A NAME="IDX5627"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>month/1:</B>
+<DD><A NAME="IDX5628"></A>
+
+
+<P>
+A regular type, defined as follows:
+
+<PRE>
+
+<PRE>
+month('January').
+month('February').
+month('March').
+month('April').
+month('May').
+month('June').
+month('July').
+month('August').
+month('September').
+month('October').
+month('November').
+month('December').
+</PRE>
+
+</PRE>
+
+</DL>
+
+<P>
+<A NAME="IDX5629"></A>
+<A NAME="IDX5630"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>hms_time/1:</B>
+<DD><A NAME="IDX5631"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>hms_time(Time)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Time</CODE> is an atom of the form <CODE>hh:mm:ss</CODE>
+
+</UL>
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_137.html">previous</A>, <A HREF="ciao_139.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

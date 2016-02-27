@@ -1,6 +1,6 @@
 :- module(hiordlib, [map/3,foldl/4], [assertions,functions,hiord]).
 
-:- comment(title,"Some Higher-Order Predicates").
+:- comment(title,"Some higher-order predicates").
 
 :- comment(author,"Daniel Cabeza").
 

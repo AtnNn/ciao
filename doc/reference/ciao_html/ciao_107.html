@@ -1,22 +1,19 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Run time usage of objects</TITLE>
+<TITLE>The Ciao Prolog System               - Object oriented programming</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC435" HREF="ciao_toc.html#TOC435">Run time usage of objects</A></H1>
-<P>
-<A NAME="IDX4534"></A>
-
+<H1><A NAME="SEC438" HREF="ciao_toc.html#TOC438">Object oriented programming</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Angel Fernandez Pineda, Angel Fernandez Pineda.
+<STRONG>Author(s):</STRONG> Angel Fernandez Pineda.
 
 
 <P>
@@ -24,676 +21,330 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>,
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#51 (2001/1/25, 21:33:0 CET)
+<STRONG>Version of last change:</STRONG> 1.3#63 (1999/9/29, 19:54:17 MEST)
 
 
 <P>
-This library provides run-time support for 
-<A NAME="IDX4535"></A>
-object creation and manipulation. Objects are also called 
-<A NAME="IDX4536"></A>
-class instances, or simply 
-<A NAME="IDX4537"></A>
-instances. 
+O'Ciao is a set of libraries which allows object-oriented programming in Ciao Prolog. It extends the Ciao Prolog module system by introducing two new concepts: 
+
+
+
+<UL>
+<LI>Inheritance.
+
+<LI>Instantiation.
+
+</UL>
+
+<P>
+<A NAME="IDX4469"></A>
+<A NAME="IDX4470"></A>
+<EM>Polymorphism</EM> is the third fundamental concept provided by object oriented programming. This concept is not mentioned here since <STRONG>traditional PROLOG systems are polymorphic by nature</STRONG>. 
 
 
 <P>
-Objects in Ciao are treated as normal modules. This is, an object is a run-time generated Prolog module, which may be identified by an unique term across the whole application. 
+Classes are declared in the same way as modules. However, they may be enriched with inheritance declarations and other object-oriented constructs. For an overview of the fundamentals of O'Ciao, see <A HREF="http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz">http://www.clip.dia.fi.upm.es/~clip/papers/ociao-tr.ps.gz</A>. However, we will introduce the concepts in a tutorial way via examples. 
 
+
+
+<UL>
+<LI><A HREF="ciao_107.html#SEC439">Early examples</A>
+<LI><A HREF="ciao_107.html#SEC440">Recommendations on when to use objects</A>
+<LI><A HREF="ciao_107.html#SEC441">Limitations on object usage</A>
+</UL>
+
+
+
+<H2><A NAME="SEC439" HREF="ciao_toc.html#TOC439">Early examples</A></H2>
 
 <P>
-This is a very simple example of how to create an instance, and how to make calls to it: 
+The following one is a very simple example which declares a class -- a simple stack. Note that if you replace <EM>class/1</EM> declaration with a <EM>module/1</EM> declaration, it will compile correctly, and can be used as a normal Prolog module. 
 
 
 
 <PRE>
-            AnObj new myclass,
-            AnObj:mymethod.
+%%----------------------------------------------%%
+%% A class for stacks.                          %%
+%%----------------------------------------------%%
+
+%% Class declaration: the current source defines a class.
+:- class(stack,[],[]).
+
+% State declaration: storage/1 is an attribute.
+:- dynamic storage/1.
+
+% Interface declaration: the following predicates will
+% be available at run-time.
+:- export(push/1).
+:- export(pop/1).
+:- export(top/1).
+:- export(is_empty/0).
+
+% Methods
+
+push(Item) :-
+        nonvar(Item), 
+        asserta_fact(storage(Item)).
+
+pop(Item) :-
+        var(Item),
+        retract_fact(storage(Item)).
+
+top(Top) :-
+        storage(Top), !.
+
+is_empty :-
+        storage(_), !, fail.
+is_empty.
+
 </PRE>
 
 <P>
-In order to make any object accessible from code, an usage relationship must be established between the class (from which instances are derived) and the code itself. Refer to 
-<A NAME="IDX4538"></A>
-<CODE>use_class/1</CODE> predicate or 
-<A NAME="IDX4539"></A>
-<CODE>use_class/1</CODE> declaration in order to do so. 
-
-
-
-<UL>
-<LI><A HREF="ciao_107.html#SEC436">Usage and interface (objects_rt)</A>
-<LI><A HREF="ciao_107.html#SEC437">Documentation on exports (objects_rt)</A>
-<LI><A HREF="ciao_107.html#SEC438">Known bugs and planned improvements (objects_rt)</A>
-</UL>
-
-
-
-<H2><A NAME="SEC436" HREF="ciao_toc.html#TOC436">Usage and interface (<CODE>objects_rt</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-This library is automatically loaded when using the <EM>objects</EM> package: 
-
-<PRE>
-    :- module(<EM>ModuleName</EM>,<EM>Exports</EM>,[objects]).
-</PRE>
-
-Nothing special needs to be done. 
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4540"></A>
-<CODE>new/2</CODE>, 
-<A NAME="IDX4541"></A>
-<CODE>instance_of/2</CODE>, 
-<A NAME="IDX4542"></A>
-<CODE>derived_from/2</CODE>, 
-<A NAME="IDX4543"></A>
-<CODE>interface/2</CODE>, 
-<A NAME="IDX4544"></A>
-<CODE>instance_codes/2</CODE>, 
-<A NAME="IDX4545"></A>
-<CODE>destroy/1</CODE>, 
-<A NAME="IDX4546"></A>
-<CODE>use_class/1</CODE>.
-
-<LI><EM>Properties:</EM>
-
-<A NAME="IDX4547"></A>
-<CODE>constructor/1</CODE>, 
-<A NAME="IDX4548"></A>
-<CODE>class_name/1</CODE>, 
-<A NAME="IDX4549"></A>
-<CODE>interface_name/1</CODE>, 
-<A NAME="IDX4550"></A>
-<CODE>instance_id/1</CODE>, 
-<A NAME="IDX4551"></A>
-<CODE>class_source/1</CODE>, 
-<A NAME="IDX4552"></A>
-<CODE>interface_source/1</CODE>, 
-<A NAME="IDX4553"></A>
-<CODE>method_spec/1</CODE>, 
-<A NAME="IDX4554"></A>
-<CODE>virtual_method_spec/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4555"></A>
-<CODE>aggregates</CODE>, 
-<A NAME="IDX4556"></A>
-<CODE>dynamic</CODE>, 
-<A NAME="IDX4557"></A>
-<CODE>iso_misc</CODE>, 
-<A NAME="IDX4558"></A>
-<CODE>iso_byte_char</CODE>, 
-<A NAME="IDX4559"></A>
-<CODE>iso_incomplete</CODE>, 
-<A NAME="IDX4560"></A>
-<CODE>operators</CODE>, 
-<A NAME="IDX4561"></A>
-<CODE>read</CODE>, 
-<A NAME="IDX4562"></A>
-<CODE>write</CODE>, 
-<A NAME="IDX4563"></A>
-<CODE>compiler/compiler</CODE>, 
-<A NAME="IDX4564"></A>
-<CODE>prolog_sys</CODE>, 
-<A NAME="IDX4565"></A>
-<CODE>system</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC437" HREF="ciao_toc.html#TOC437">Documentation on exports (<CODE>objects_rt</CODE>)</A></H2>
-<P>
-<A NAME="IDX4566"></A>
-<A NAME="IDX4567"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>new/2:</B>
-<DD><A NAME="IDX4568"></A>
-
-
-<P>
-Dynamic instance creation takes place by the ways of this predicate. 
-
-
-<P>
-It takes a free variable as first argument which will be instantiated to an internal object identifier. 
-
-
-<P>
-Second argument must be instantiated to a 
-<A NAME="IDX4569"></A>
-class constructor. Class constructors are designed to perform an initialization on the new created instance. Notice that instance initialization may involve some kind of computation, not only <EM>state initialization</EM>. 
-
-
-<P>
-A class constructor is made by a functor, which must match the intended class name, and any number of parameters. For example: 
+If we load this code at the Ciao toplevel shell: 
 
 
 
 <PRE>
-            Obj new myclass(1500,'hello, world!!!')
+        ?- use_package(objects).
+
+        yes
+        ?- use_class(library('class/examples/stack')).
+
+        yes
+        ?-
 </PRE>
 
 <P>
-Those parameters depends (obviously) on the constructors defined at the class source. If no constructors where defined, no parameters are needed. This is called the 
-<A NAME="IDX4570"></A>
-default constructor. An example: 
+we can create two stack <EM>instances</EM> : 
 
 
 
 <PRE>
-            Obj new myclass
+        ?- St1 new stack,St2 new stack.
+
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? ,
 </PRE>
 
 <P>
-The default constructor can not be called if there is any constructor available at the class source. 
+and then, we can operate on them separately: 
+
+
+
+<PRE>
+        1 ?- St1:push(8),St2:push(9).
+
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
+
+        yes
+        1 ?- St1:top(I),St2:top(K).
+
+        I = 8,
+        K = 9,
+        St1 = stack('9254074093385163'),
+        St2 = stack('9254074091') ? 
+
+        yes
+        1 ?-
+</PRE>
+
+<P>
+The interesting point is that there are two stacks. If the previous example had been a normal module, we would have a stack , but <STRONG>only one</STRONG> stack. 
 
 
 <P>
-Instantiation will raise an exception and fail whenever any of this conditions occur: 
-
-<UL>
-<LI>First argument is not a free variable.
-
-<LI>Second argument functor is a class, but there is no usage relationship with it.
-
-<LI>Second argument functor is not a class.
-
-<LI>The given constructor is unknown.
-
-<LI>The given constructor fails (notice that default constructor never fails).
-
-</UL>
-
-<P>
-Objects may also be statically declared, refer to 
-<A NAME="IDX4571"></A>
-<CODE>instance_of/2</CODE> declaration. 
+The next example introduces the concepts of <EM>inheritable</EM> predicate, <EM>constructor</EM>, <EM>destructor</EM> and <EM>virtual method</EM>. Refer to the following sections for further explanation. 
 
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>new(InstanceVar,Constructor)</CODE>
 
-<UL>
-<LI><EM>Description:</EM> Creates a new instance of the class specified by <CODE>Constructor</CODE> returning its identifier in <CODE>InstanceVar</CODE>
+<PRE>
+%%----------------------------------------------%%
+%% A generic class for item storage.            %%
+%%----------------------------------------------%%
+:- class(generic).
 
-<LI><EM>The following properties should hold at call time:</EM>
+% Public interface declaration:
+:- export([set/1,get/1,callme/0]).
 
-<CODE>InstanceVar</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
+% An attribute
+:- data datum/1.
 
-<CODE>Constructor</CODE> is a term whose functor matches a class name.
- (<CODE>objects_rt:constructor/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+% Inheritance declaration: datum/1 will be available to 
+% descendant classes (if any).
+:- inheritable(datum/1).
 
-<CODE>InstanceVar</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-</UL>
+% Attribute initialization: attributes are easily initialized
+% by writing clauses for them.
+datum(none).
 
-</DL>
+% Methods
 
-<P>
-<A NAME="IDX4572"></A>
-<A NAME="IDX4573"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>instance_of/2:</B>
-<DD><A NAME="IDX4574"></A>
+set(X) :-
+        type_check(X),
+        set_fact(datum(X)).
 
+get(X) :-
+        datum(X).
 
-<P>
-This predicate is used to perform dynamic type checking. You may check whether a particular instance belongs to a particular class or related descendants. 
+callme :-
+        a_virtual(IMPL),
+        display(IMPL),
+        display(' implementation of a_virtual/0 '),
+        nl.
 
+% Constructor: in this case, every time an instance
+% of this class is created, it will display a message.
+generic :-
+        display(' generic class constructor '),
+        nl.
 
-<P>
-instance_of/2 is used to perform static 
-<A NAME="IDX4575"></A>
-semantic analisys over object oriented code constructions. 
+% Destructor: analogous to the previous constructor,
+% it will display a message every time an instance
+% of this class is eliminated.
+destructor :-
+        display(' generic class destructor '),
+        nl.
 
+% Predicates:
+% cannot be called as messages (X:method)
 
-<P>
-By the use of instance_of/2 you may help to perform such analisys. 
+% Virtual declaration: tells the system to use the most
+% descendant implementation of a_virtual/1 when calling
+% it from inside this code (see callme/0).
+% If there is no descendant implementation for it, 
+% the one defined bellow will be used.
+:- virtual a_virtual/1.
 
+a_virtual(generic).
 
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>instance_of(Instance,Class)</CODE>
+:- virtual type_check/1.
 
-<UL>
-<LI><EM>Description:</EM> Test whether <CODE>Instance</CODE> was derived from any descendant of <CODE>Class</CODE>, or that class itself
+type_check(X) :-
+        nonvar(X).
 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
+</PRE>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>instance_of(Instance,Class)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves, on backtracking, the inheritance line of <CODE>Instance</CODE> commencing on the creation class (that specified on call to
-
-<A NAME="IDX4576"></A>
-<CODE>new/2</CODE>) and continuing on the rest of ascendant classes, if any. 
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Class</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4577"></A>
-<A NAME="IDX4578"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>derived_from/2:</B>
-<DD><A NAME="IDX4579"></A>
+And the following example, is an extension of previous class. This is performed by establishing an inheritance relationship: 
 
 
-<P>
-Test whether an object identifier was derived directly from a class, by the usage of 
-<A NAME="IDX4580"></A>
-<CODE>new/2</CODE> or a static instance declaration (
-<A NAME="IDX4581"></A>
-<CODE>instance_of/2</CODE>). 
 
+<PRE>
+%%----------------------------------------------%%
+%% This class provides additional functionality %%
+%% to the "generic" class.                      %%
+%%----------------------------------------------%%
+:- class(specific).
 
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>derived_from(Instance,Class)</CODE>
+% Establish an inheritance relationship with class "generic".
+:- inherit_class(library('class/examples/generic')).
 
-<UL>
-<LI><EM>Description:</EM> Test derivation of <CODE>Instance</CODE> from <CODE>Class</CODE>
+% Override inherited datum/1.
+% datum/1 is said to be overriden because there are both an
+% inherited definition (from class "generic") and a local one,
+% which overrides the one inherited.
+:- data datum/1. 
+:- inheritable datum/1.
 
-<LI><EM>The following properties should hold at call time:</EM>
+% Extend the public interface inherited from "generic".
+% note that set/1 and a_virtual/0 are also overriden. 
+% undo/0 is a new functionality added.
+:- export([set/1,undo/0]).
 
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
+% Methods
 
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
+set(Value) :-
+        inherited datum(OldValue),
+        !,
+        inherited set(Value),
+        asserta_fact(datum(OldValue)).
+set(Value) :-
+        inherited set(Value).
 
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>derived_from(Instance,Class)</CODE>
+undo :-
+        retract_fact(datum(Last)), !,
+        asserta_fact(inherited(datum(Last))).
+undo :-
+        retractall_fact(inherited(datum(_))).
 
-<UL>
-<LI><EM>Description:</EM> Retrieves the <CODE>Class</CODE> responsable of the derivation of <CODE>Instance</CODE>.
+% Constructor
+specific :-
+        generic,
+        retractall_fact(inherited(datum(_))),
+        display(' specific class constructor '),
+        nl.
 
-<LI><EM>The following properties should hold at call time:</EM>
+% Destructor
+destructor :-
+        display(' specific class destructor '),
+        nl.
 
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
+% Predicates
 
-<CODE>Class</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
+% New implementation of a_virtual/1. 
+% Since this predicate was declared virtual, the
+% implementation below will be called from the inherited 
+% method callme/0 instead of the version defined at "generic".
+a_virtual(specific).
 
-<CODE>Class</CODE> is an atom denoting a class.
- (<CODE>objects_rt:class_name/1</CODE>)
-</UL>
-
-</DL>
+</PRE>
 
 <P>
-<A NAME="IDX4582"></A>
-<A NAME="IDX4583"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>interface/2:</B>
-<DD><A NAME="IDX4584"></A>
+<STRONG>Additional examples</STRONG> may be found on the <EM>library/class/examples</EM> directory relative to your Ciao Prolog instalation. 
+
+
+
+
+<H2><A NAME="SEC440" HREF="ciao_toc.html#TOC440">Recommendations on when to use objects</A></H2>
+
+<P>
+We would like to give some advice in the use of object oriented programming, in conjunction with the declarative paradigm. 
 
 
 <P>
-This predicate is used to ensure a given interface to be implemented by a given instance. 
+You should reconsider using O'Ciao in the following cases: 
 
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>interface(Instance,Interface)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Check whether <CODE>Instance</CODE> implements the given <CODE>Interface</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Interface</CODE> is an unique atom which identifies a public interface.
- (<CODE>objects_rt:interface_name/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>interface(Instance,Interfaces)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves on backtracking all the implemented <CODE>Interfaces</CODE> of <CODE>Instance</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>Interfaces</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Interfaces</CODE> is an unique atom which identifies a public interface.
- (<CODE>objects_rt:interface_name/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4585"></A>
-<A NAME="IDX4586"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>instance_codes/2:</B>
-<DD><A NAME="IDX4587"></A>
-
-
-<P>
-Retrieves a character string representation from an object identifier and vice-versa. 
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>instance_codes(Instance,String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Retrieves a <CODE>String</CODE> representation of given <CODE>Instance</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-
-<CODE>String</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>instance_codes(Instance,String)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Reproduces an <CODE>Instance</CODE> from its <CODE>String</CODE> representation. Such an instance must be alive across the application: this predicate will fail whether the involved instance has been destroyed.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is a free variable.
- (<CODE>term_typing:var/1</CODE>)
-
-<CODE>String</CODE> is a string (a list of character codes).
- (<CODE>basic_props:string/1</CODE>)
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4588"></A>
-<A NAME="IDX4589"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>destroy/1:</B>
-<DD><A NAME="IDX4590"></A>
-
-
-<P>
-As well as instances are created, they must be destroyed when no longer needed in order to release system resources. 
-
-
-<P>
-Unfortunately, current O'Ciao implementation does not support automatic instance destruction, so user must manually call <EM>destroy/1</EM> in order to do so. 
-
-
-<P>
-The programmer <STRONG>must ensure</STRONG> that no other references to the involved object are left in memory when destroy/1 is called. If not, unexpected results may be obtained. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>destroy(Instance)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Destroys the object identified by <CODE>Instance</CODE>.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Instance</CODE> is an unique term which identifies an object.
- (<CODE>objects_rt:instance_id/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4591"></A>
-<A NAME="IDX4592"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>use_class/1:</B>
-<DD><A NAME="IDX4593"></A>
-
-
-<P>
-The behaviour of this predicate is identical to that provided by the declaration of the same name 
-<A NAME="IDX4594"></A>
-<CODE>use_class/1</CODE>. It allows user programs to dynamically load classes. Whether the given source is not a class it will perform a 
-<A NAME="IDX4595"></A>
-<CODE>use_module/1</CODE> predicate call.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>use_class(ClassSource)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Dynamically loads the given <CODE>ClassSource</CODE>
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>ClassSource</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
- (<CODE>objects_rt:class_source/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4596"></A>
-<A NAME="IDX4597"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>constructor/1:</B>
-<DD><A NAME="IDX4598"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>constructor(Cons)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Cons</CODE> is a term whose functor matches a class name.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4599"></A>
-<A NAME="IDX4600"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>class_name/1:</B>
-<DD><A NAME="IDX4601"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>class_name(ClassName)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ClassName</CODE> is an atom denoting a class.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4602"></A>
-<A NAME="IDX4603"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>interface_name/1:</B>
-<DD><A NAME="IDX4604"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>interface_name(Interface)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Interface</CODE> is an unique atom which identifies a public interface.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4605"></A>
-<A NAME="IDX4606"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>instance_id/1:</B>
-<DD><A NAME="IDX4607"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>instance_id(ID)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>ID</CODE> is an unique term which identifies an object.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4608"></A>
-<A NAME="IDX4609"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>class_source/1:</B>
-<DD><A NAME="IDX4610"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>class_source(Source)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration (without .pl extension).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4611"></A>
-<A NAME="IDX4612"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>interface_source/1:</B>
-<DD><A NAME="IDX4613"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>interface_source(Source)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Source</CODE> is a valid path to a prolog file containing a class declaration or an interface declaration (without .pl extension).
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4614"></A>
-<A NAME="IDX4615"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>method_spec/1:</B>
-<DD><A NAME="IDX4616"></A>
-
-
-<P>
-There is no difference between method or attribute specifications, and habitual predicate specifications. It is just a Functor/Arity term. 
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>method_spec(Spec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method or attribute specification.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4617"></A>
-<A NAME="IDX4618"></A>
-<DL>
-<DT><span class="define">PROPERTY:</span> <B>virtual_method_spec/1:</B>
-<DD><A NAME="IDX4619"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>virtual_method_spec(Spec)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Spec</CODE> is a method specification.
-
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC438" HREF="ciao_toc.html#TOC438">Known bugs and planned improvements (<CODE>objects_rt</CODE>)</A></H2>
 
 
 <UL>
 
-<LI>
+<LI>The pretended "objects" have no state,i.e., no data or dynamic predicates. In this case, a normal module will suffice.
 
-Not really a bug: when loading code which declares static instances from the toplevel shell, predicate 
-<A NAME="IDX4620"></A>
-<CODE>use_module/1</CODE>) will not work properly: those instances may be not correctly created, and predicates will fail whenever they are not supposed to do. This may be avoided by reloading again the involved module, but make sure it is modified and saved to disk before doing so. 
+<LI>There is state, but there will be only one instance of a pretended class. Again, a module suffices.
+
+<LI>The "objects" are data structures (list,trees,etc) already supported by Prolog. However, it does make sense to model, using objects, data structures whose change implies a side-effect such as drawing a particular window on the screen.
+
 </UL>
+
+<P>
+We recommend the usage of O'Ciao in the following cases: 
+
+
+
+<UL>
+
+<LI>You feel you will need to have several copies of a "module".
+
+<LI>Local copies of a module are needed instead of a global module beeing modified by several ones.
+
+<LI>The "classes" are a representation of external entities to Prolog. For example: the X-Window system.
+
+<LI>There is state or code outside the Prolog system which needs to be manipulated. For example: interfaces to Java or Tcl/Tk code.
+
+<LI>You are not familiar with Prolog, but you know about object oriented programming. O'Ciao may be used as a learning tool to introduce yourself on the declarative programming paradigm.
+
+</UL>
+
+
+
+<H2><A NAME="SEC441" HREF="ciao_toc.html#TOC441">Limitations on object usage</A></H2>
+
+<P>
+O'Ciao run-time speed is limited by the usage of meta-programming structures, for instance: <CODE>X = (Object:mymethod(25)), call(X)</CODE>. O'Ciao will optimize static manipulation of objects (those that can be determined at compile time). 
+
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_106.html">previous</A>, <A HREF="ciao_108.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

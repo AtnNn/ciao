@@ -1,33 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - possible (library)</TITLE>
+<TITLE>The Ciao Prolog System               - parser (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC768" HREF="ciao_toc.html#TOC768">possible (library)</A></H1>
+<H1><A NAME="SEC782" HREF="ciao_toc.html#TOC782">parser (library)</A></H1>
 <P>
-<A NAME="IDX8098"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1 (1999/2/19, 6:32:46 MET)
+<A NAME="IDX7951"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_204.html#SEC769">Usage and interface (possible)</A>
-<LI><A HREF="ciao_204.html#SEC770">Documentation on exports (possible)</A>
+<LI><A HREF="ciao_204.html#SEC783">Usage and interface (parser)</A>
+<LI><A HREF="ciao_204.html#SEC784">Documentation on exports (parser)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC769" HREF="ciao_toc.html#TOC769">Usage and interface (<CODE>possible</CODE>)</A></H2>
+<H2><A NAME="SEC783" HREF="ciao_toc.html#TOC783">Usage and interface (<CODE>parser</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -35,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(possible)).</CODE>
+<CODE>:- use_module(library(parser)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -44,8 +40,10 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX8099"></A>
-<CODE>continue/3</CODE>.
+<A NAME="IDX7952"></A>
+<CODE>parser/2</CODE>, 
+<A NAME="IDX7953"></A>
+<CODE>nodeDeclaration/4</CODE>.
 
 </UL>
 
@@ -56,8 +54,36 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX8100"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX7954"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7955"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7956"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7957"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7958"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7959"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7960"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7961"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7962"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX7963"></A>
+<CODE>provrml/lookup</CODE>, 
+<A NAME="IDX7964"></A>
+<CODE>provrml/field_value</CODE>, 
+<A NAME="IDX7965"></A>
+<CODE>provrml/tokeniser</CODE>, 
+<A NAME="IDX7966"></A>
+<CODE>provrml/parser_util</CODE>, 
+<A NAME="IDX7967"></A>
+<CODE>provrml/possible</CODE>, 
+<A NAME="IDX7968"></A>
+<CODE>provrml/error</CODE>.
 
 </UL>
 
@@ -67,13 +93,38 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>,
 
 
 
-<H2><A NAME="SEC770" HREF="ciao_toc.html#TOC770">Documentation on exports (<CODE>possible</CODE>)</A></H2>
+<H2><A NAME="SEC784" HREF="ciao_toc.html#TOC784">Documentation on exports (<CODE>parser</CODE>)</A></H2>
 <P>
-<A NAME="IDX8101"></A>
-<A NAME="IDX8102"></A>
+<A NAME="IDX7969"></A>
+<A NAME="IDX7970"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>continue/3:</B>
-<DD><A NAME="IDX8103"></A>
+<DT><span class="define">PREDICATE:</span> <B>parser/2:</B>
+<DD><A NAME="IDX7971"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>parser(+VRML,-Terms)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The parser uses a tokeniser to read the input text string of VRML code and returns a list with the corresponding terms. The tokens will be read in this parser as the grammar says. The parser is according to the specification of the VRML grammar, accept that it is performed over tokens in sted of the actual code.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+VRML</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>-Terms</CODE> is a list of <CODE>terms</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX7972"></A>
+<A NAME="IDX7973"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>nodeDeclaration/4:</B>
+<DD><A NAME="IDX7974"></A>
 
 
 <P>
@@ -83,6 +134,6 @@ No further documentation available for this predicate.
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_203.html">previous</A>, <A HREF="ciao_205.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

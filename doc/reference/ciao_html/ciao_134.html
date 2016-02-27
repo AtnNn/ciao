@@ -1,47 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - HTTP conectivity</TITLE>
+<TITLE>The Ciao Prolog System               - text_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC529" HREF="ciao_toc.html#TOC529">HTTP conectivity</A></H1>
+<H1><A NAME="SEC541" HREF="ciao_toc.html#TOC541">text_class (library)</A></H1>
 <P>
-<A NAME="IDX5461"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.3#114 (1999/11/24, 0:57:16 MET)
-
-
-<P>
-This module implements the 
-<A NAME="IDX5462"></A>
-HTTP protocol, which allows retrieving data from HTTP servers.
+<A NAME="IDX5414"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_134.html#SEC530">Usage and interface (http)</A>
-<LI><A HREF="ciao_134.html#SEC531">Documentation on exports (http)</A>
+<LI><A HREF="ciao_134.html#SEC542">Usage and interface (text_class)</A>
+<LI><A HREF="ciao_134.html#SEC543">Documentation on exports (text_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC530" HREF="ciao_toc.html#TOC530">Usage and interface (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC542" HREF="ciao_toc.html#TOC542">Usage and interface (<CODE>text_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -49,7 +31,7 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(http)).</CODE>
+<CODE>:- use_module(library(text_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -58,8 +40,18 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5463"></A>
-<CODE>fetch_url/3</CODE>.
+<A NAME="IDX5415"></A>
+<CODE>coord/2</CODE>, 
+<A NAME="IDX5416"></A>
+<CODE>point/2</CODE>, 
+<A NAME="IDX5417"></A>
+<CODE>text_characters/1</CODE>, 
+<A NAME="IDX5418"></A>
+<CODE>anchor/1</CODE>, 
+<A NAME="IDX5419"></A>
+<CODE>font_type/1</CODE>, 
+<A NAME="IDX5420"></A>
+<CODE>justify_text/1</CODE>.
 
 </UL>
 
@@ -70,16 +62,8 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5464"></A>
-<CODE>strings</CODE>, 
-<A NAME="IDX5465"></A>
-<CODE>lists</CODE>, 
-<A NAME="IDX5466"></A>
-<CODE>pillow/pillow_aux</CODE>, 
-<A NAME="IDX5467"></A>
-<CODE>pillow/pillow_types</CODE>, 
-<A NAME="IDX5468"></A>
-<CODE>pillow/http_ll</CODE>.
+<A NAME="IDX5421"></A>
+<CODE>objects/objects_rt</CODE>.
 
 </UL>
 
@@ -89,43 +73,194 @@ HTTP protocol, which allows retrieving data from HTTP servers.
 
 
 
-<H2><A NAME="SEC531" HREF="ciao_toc.html#TOC531">Documentation on exports (<CODE>http</CODE>)</A></H2>
+<H2><A NAME="SEC543" HREF="ciao_toc.html#TOC543">Documentation on exports (<CODE>text_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5469"></A>
-<A NAME="IDX5470"></A>
+<A NAME="IDX5422"></A>
+<A NAME="IDX5423"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>fetch_url/3:</B>
-<DD><A NAME="IDX5471"></A>
+<DT><span class="define">PREDICATE:</span> <B>coord/2:</B>
+<DD><A NAME="IDX5424"></A>
 
 
 <P>
-<CODE>fetch_url(URL,Request,Response)</CODE>
-
-
-<P>
-Fetches the document pointed to by <CODE>URL</CODE> from Internet, using request parameters <CODE>Request</CODE>, and unifies <CODE>Response</CODE> with the parameters of the response. Fails on timeout. Note that redirections are not handled automatically, that is, if <CODE>Response</CODE> contains terms of the form <CODE>status(redirection,301,_)</CODE> and <CODE>location(NewURL)</CODE>, the program should in most cases access location <CODE>NewURL</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>fetch_url(URL,Request,Response)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X,+Y)</CODE>
 
 <UL>
-<LI><EM>The following properties should hold at call time:</EM>
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> specify the coordinates of a point used to position the text on the display.
 
-<CODE>URL</CODE> specifies a URL.
- (<CODE>pillow_types:url_term/1</CODE>)
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>Request</CODE> is a list of <CODE>http_request_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
-<LI><EM>The following properties hold upon exit:</EM>
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
 
-<CODE>Response</CODE> is a list of <CODE>http_response_param</CODE>s.
- (<CODE>basic_props:list/2</CODE>)
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5425"></A>
+<A NAME="IDX5426"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>point/2:</B>
+<DD><A NAME="IDX5427"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>point(+X,+Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> change the coordinates of a point used to position the text on the display.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5428"></A>
+<A NAME="IDX5429"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
+<DD><A NAME="IDX5430"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Text</CODE> specifies the characters to be displayed in the text item. This option defaults to an empty string.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the text displayed in the text item.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Text</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5431"></A>
+<A NAME="IDX5432"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>anchor/1:</B>
+<DD><A NAME="IDX5433"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>anchor(+AnchorPos)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>AnchorPos</CODE> tells how to position the text relative to the positioning point for the text. This option defaluts to center.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+AnchorPos</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>anchor(-AnchorPos)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the position of the text relative to the positioning point.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-AnchorPos</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5434"></A>
+<A NAME="IDX5435"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
+<DD><A NAME="IDX5436"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Font</CODE> specifies the font to use for the text item. This option defaluts to arial.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the value of the <CODE>Font</CODE> used for the text item.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Font</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5437"></A>
+<A NAME="IDX5438"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>justify_text/1:</B>
+<DD><A NAME="IDX5439"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>justify_text(+How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text within its bounding region. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+How</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>justify_text(-How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-How</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_133.html">previous</A>, <A HREF="ciao_135.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

@@ -40,6 +40,26 @@ main.
 
 :- comment(version_maintenance,dir('../version/')).
 
+:- comment(version(1*7+152,2001/11/23,16:11*27+'CET'), "Modified
+Makefile: -\(cd ....\) was erroneously interpreted; changed to -( cd
+... ) (MCL)").
+
+:- comment(version(1*7+148,2001/11/17,20:40*45+'CET'), "Several
+   improvements to emacs-based environment:
+
+   @begin{itemize}
+   @item Specific tool bar now available, with icons for main fuctions 
+         (works from emacs 21.1 on). 
+   @item Other minor adaptations for working with emacs 21.1.
+   @item Fixes to set-query. Also, previous query now appears in prompt.
+   @item Added new interactive entry points (M-x): ciao, prolog, ciaopp.
+   @item Fixed minor bug with tracking of last inferior buffer used.
+   @item Several other minor improvements.
+
+   @end{itemize}
+
+   (Manuel Hermenegildo)").
+
 :- comment(version(1*7+122,2001/08/30,20:49*07+'CEST'), "The commands
    available in the interactive buffers (used by toplevel,
    preprocessor, etc.) are now documented in order to help users not

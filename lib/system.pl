@@ -13,6 +13,8 @@
             umask/2,
             make_directory/2,
             make_directory/1,
+	    make_dirpath/2,
+	    make_dirpath/1,
             working_directory/2,
             cd/1,
             shell/0,
@@ -471,9 +473,48 @@ chmod(Path, OldMode, NewMode) :-
 
 :- pred make_directory(+atm).
 
-make_directory(D) :- make_directory(D,0o777).
+make_directory(D) :-
+        make_directory(D,0o777).
+
+:- pred make_dirpath(+atm, +int).
+
+:- comment(make_dirpath(Path, Mode),
+        "Creates the whole @var{Path} for a given directory with a given @var{Mode}. As an example, @tt{make_dirpath('/tmp/var/mydir/otherdir')}."). 
+
+make_dirpath(Path, Mode) :-
+	working_directory(CurrentDir, CurrentDir),
+	make_dirpath_aux(Path, Mode),
+	working_directory(_, CurrentDir).
+
+make_dirpath_aux(Path, Mode) :-
+	atom_concat(Head, Tail, Path),
+	atom_concat('/', SubTail, Tail), !,
+	(Head = '' ->
+	 working_directory(CurrentDir, '/')
+	;
+	 ((file_exists(Head), file_property(Head, type(directory)))
+	  ;
+	   make_directory(Head, Mode) 
+	 ),
+	 working_directory(CurrentDir, Head)),
+	make_dirpath_aux(SubTail, Mode).
+make_dirpath_aux(Dir, Mode) :-
+	make_directory(Dir, Mode).
+	 
+:- pred make_dirpath(+atm).
+
+:- comment(make_dirpath(Path),
+                "Equivalent to @tt{make_dirpath(D,0o777)}.").
+
+:- pred make_dirpath(+atm).
+	  
+make_dirpath(Path) :-
+	  make_dirpath(Path, 0o777) .
 
 :- comment(version_maintenance,dir('../version')).
+
+:- comment(version(1*7+158,2001/11/27,10:12*07+'CET'), "make_dirpath/1 and
+   make_dirpath/2 added to system (Jose Manuel Gomez Perez)").
 
 :- comment(version(1*3+50,1999/09/08,22:35*15+'MEST'), "Commented and
    exported. Other minor changes in comments. @prop{datime_struct/1}.

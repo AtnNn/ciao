@@ -6,7 +6,7 @@
 :- use_module(nf,[normalize/3,normalize/4]).
 :- use_module(clp_dump, [dump_internal/3]).
 :- use_module(solve).
-:- use_module(library(metaterms),[varsbag/3]).
+:- use_module(library(terms_vars),[varsbag/3]).
 :- use_module(library(terms),[atom_concat/2]).
 :- use_module(library(lists), [length/2,append/3,nocontainsx/2]).
 

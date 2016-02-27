@@ -5,10 +5,10 @@ INSTALL
 
    This describes the installation procedure for the Ciao Prolog
 system, including libraries and manuals, from a _source_
-distribution. This applies primarily to Unix-type systems (Linux,
-SunOS, Solaris, etc.). However, the sources can also be compiled on
-Windows NT/95/98 systems - see *Note Installation and compilation
-under Windows:: for details.
+distribution. This applies primarily to Unix-type systems (Linux, Mac
+OS X, Solaris, SunOS, etc.). However, the sources can also be
+compiled on Windows NT/95/98 systems - see *Note Installation and
+compilation under Windows:: for details.
 
    If you find any problems during installation, please refer to
 *Note Troubleshooting (nasty messages and nifty workarounds)::.  See
@@ -38,10 +38,10 @@ follow this summary:
 
      Note that `gmake' refers to the GNU implementation of the make
      Un*x command, which is available in many systems (including all
-     Linux systems) simply as `make'. I.e., you can try simply typing
-     `make install' if `gmake install' does not work. If typing
-     `make' stops right away with error messages it is probably an
-     older version and you need to install `gmake'.
+     Linux systems and Mac OS X) simply as `make'. I.e., you can try
+     simply typing `make install' if `gmake install' does not work.
+     If typing `make' stops right away with error messages it is
+     probably an older version and you need to install `gmake'.
 
   4. Make the following modifications in your startup scripts. This
      will make the documentation accessible, set the correct mode
@@ -575,6 +575,19 @@ Troubleshooting (nasty messages and nifty workarounds)
 
    The following a list of common installation problems reported by
 users:
+
+   * *Problem:* Ciao Prolog seems to work correctly, but it gives
+     wrong results, specially in computations involvig floating point
+     numbers (e.g., clpr and clpq).
+
+     *Possible reason and solution:* Some versions of gcc (gcc 2.96,
+     for example) are known to generate wrong code when using
+     aggressive (-O3 and above) optimizations. If you suspect this is
+     the case, please recompile Ciao Prolog from scratch using no
+     optimization (look in the SETTINGS file, set
+     `OPTIM_LEVEL=normal', make distclean, make install). Try again
+     the example which was giving a wrong result, and contact
+     ciao-users if the problem persists.
 
    * *Problem:* Compilation errors appear when trying a new
      installation/compilation after the previous one was aborted

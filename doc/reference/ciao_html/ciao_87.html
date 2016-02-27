@@ -1,18 +1,22 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Higher-order</TITLE>
+<TITLE>The Ciao Prolog System               - The socket interface</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, <A HREF="ciao_88.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, <A HREF="ciao_88.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC356" HREF="ciao_toc.html#TOC356">Higher-order</A></H1>
+<H1><A NAME="SEC363" HREF="ciao_toc.html#TOC363">The socket interface</A></H1>
 <P>
-<A NAME="IDX4160"></A>
+<A NAME="IDX4130"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
 
 
 <P>
@@ -20,18 +24,22 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, 
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.7#99 (2001/5/10, 21:6:35 CEST)
+<STRONG>Version of last change:</STRONG> 1.7#58 (2001/2/8, 11:46:41 CET)
+
+
+<P>
+This module defines primitives to open sockets, send, and receive data from them. This allows communicating with other processes, on the same machine or across the Internet. The reader should also consult standard bibliography on the topic for a proper use of these primitives.
 
 
 
 <UL>
-<LI><A HREF="ciao_87.html#SEC357">Usage and interface (hiord_rt)</A>
-<LI><A HREF="ciao_87.html#SEC358">Documentation on exports (hiord_rt)</A>
+<LI><A HREF="ciao_87.html#SEC364">Usage and interface (sockets)</A>
+<LI><A HREF="ciao_87.html#SEC365">Documentation on exports (sockets)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC357" HREF="ciao_toc.html#TOC357">Usage and interface (<CODE>hiord_rt</CODE>)</A></H2>
+<H2><A NAME="SEC364" HREF="ciao_toc.html#TOC364">Usage and interface (<CODE>sockets</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +47,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, 
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(hiord_rt)).</CODE>
+<CODE>:- use_module(library(sockets)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,8 +56,45 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, 
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX4161"></A>
-<CODE>call/2</CODE>.
+<A NAME="IDX4131"></A>
+<CODE>connect_to_socket/3</CODE>, 
+<A NAME="IDX4132"></A>
+<CODE>socket_recv/2</CODE>, 
+<A NAME="IDX4133"></A>
+<CODE>hostname_address/2</CODE>, 
+<A NAME="IDX4134"></A>
+<CODE>socket_shutdown/2</CODE>, 
+<A NAME="IDX4135"></A>
+<CODE>socket_recv_code/3</CODE>, 
+<A NAME="IDX4136"></A>
+<CODE>socket_send/2</CODE>, 
+<A NAME="IDX4137"></A>
+<CODE>select_socket/5</CODE>, 
+<A NAME="IDX4138"></A>
+<CODE>socket_accept/2</CODE>, 
+<A NAME="IDX4139"></A>
+<CODE>bind_socket/3</CODE>, 
+<A NAME="IDX4140"></A>
+<CODE>connect_to_socket_type/4</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX4141"></A>
+<CODE>socket_type/1</CODE>, 
+<A NAME="IDX4142"></A>
+<CODE>shutdown_type/1</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX4143"></A>
+<CODE>sockets/sockets_c</CODE>.
 
 </UL>
 
@@ -59,28 +104,349 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, 
 
 
 
-<H2><A NAME="SEC358" HREF="ciao_toc.html#TOC358">Documentation on exports (<CODE>hiord_rt</CODE>)</A></H2>
+<H2><A NAME="SEC365" HREF="ciao_toc.html#TOC365">Documentation on exports (<CODE>sockets</CODE>)</A></H2>
 <P>
-<A NAME="IDX4162"></A>
-<A NAME="IDX4163"></A>
+<A NAME="IDX4144"></A>
+<A NAME="IDX4145"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>call/2:</B>
-<DD><A NAME="IDX4164"></A>
+<DT><span class="define">PREDICATE:</span> <B>connect_to_socket/3:</B>
+<DD><A NAME="IDX4146"></A>
 
 
 <P>
-<CODE>call(Pred,Arg1)</CODE>
+<STRONG>Usage:</STRONG> <CODE>connect_to_socket(+Host,+Port,-Stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Calls
+
+<A NAME="IDX4147"></A>
+<CODE>connect_to_socket_type/4</CODE> with SOCK_STREAM connection type. This is the connection type you want in order to use the 
+<A NAME="IDX4148"></A>
+<CODE>write/2</CODE> and 
+<A NAME="IDX4149"></A>
+<CODE>read/2</CODE> predicates (and other stream IO related predicates). 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Host</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>+Port</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4150"></A>
+<A NAME="IDX4151"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>socket_recv/2:</B>
+<DD><A NAME="IDX4152"></A>
 
 
 <P>
-There exists a set of builtin predicates of the form 
+<STRONG>Usage:</STRONG> <CODE>socket_recv(+Stream,?String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> As
+
+<A NAME="IDX4153"></A>
+<CODE>socket_recv_code/3</CODE>, but the return code is ignored. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4154"></A>
+<A NAME="IDX4155"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>socket_type/1:</B>
+<DD><A NAME="IDX4156"></A>
+
+
+<P>
+Defines the atoms which can be used to specify the socket type recognized by 
+<A NAME="IDX4157"></A>
+<CODE>connect_to_socket_type/4</CODE>. Defined as follows: 
+
+<PRE>
+socket_type(stream).
+socket_type(dgram).
+socket_type(raw).
+socket_type(seqpacket).
+socket_type(rdm).
+</PRE>
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socket_type(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a valid socket type.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4158"></A>
+<A NAME="IDX4159"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>shutdown_type/1:</B>
+<DD><A NAME="IDX4160"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>shutdown_type(T)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>T</CODE> is a valid shutdown type.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4161"></A>
+<A NAME="IDX4162"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>hostname_address/2:</B>
+<DD><A NAME="IDX4163"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>hostname_address(+Hostname,?Address)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Address</CODE> is unified with the atom representing the address (in AF_INET format) corresponding to <CODE>Hostname</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Hostname</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+
+<CODE>?Address</CODE> is an atom.
+ (<CODE>basic_props:atm/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4164"></A>
 <A NAME="IDX4165"></A>
-<CODE>call/N</CODE> with <CODE>N &#62; 1</CODE> which execute predicate <CODE>Pred</CODE> given arguments <CODE>Arg1</CODE> ... <CODE>ArgX</CODE>. If <CODE>Pred</CODE> has already arguments <CODE>Arg1</CODE> is added to the start, the rest to the end. This predicate, when <CODE>Pred</CODE> is a variable, can be written using the special Ciao syntax <CODE>Pred(Arg1,...,ArgX)</CODE>.
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>socket_shutdown/2:</B>
+<DD><A NAME="IDX4166"></A>
 
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socket_shutdown(+Stream,+How)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Shut down a duplex communication socket with which <CODE>Stream</CODE> is associated. All or part of the communication can be shutdown, depending on the value of <CODE>How</CODE>. The atoms <CODE>read</CODE>, <CODE>write</CODE>, or <CODE>read_write</CODE> should be used to denote the type of closing required.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>+How</CODE> is a valid shutdown type.
+ (<CODE>sockets:shutdown_type/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4167"></A>
+<A NAME="IDX4168"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>socket_recv_code/3:</B>
+<DD><A NAME="IDX4169"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socket_recv_code(+Stream,?String,?Length)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Receives a <CODE>String</CODE> from the socket associated to <CODE>Stream</CODE>, and returns its <CODE>Length</CODE>. If <CODE>Length</CODE> is -1, no more data is available.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>?String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+
+<CODE>?Length</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4170"></A>
+<A NAME="IDX4171"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>socket_send/2:</B>
+<DD><A NAME="IDX4172"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socket_send(+Stream,+String)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Sends <CODE>String</CODE> to the socket associated to <CODE>Stream</CODE>. The socket has to be in connected state. <CODE>String</CODE> is not supposed to be NULL terminated, since it is a Prolog string. If a NULL terminated string is needed at the other side, it has to be explicitly created in Prolog.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>+String</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4173"></A>
+<A NAME="IDX4174"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>select_socket/5:</B>
+<DD><A NAME="IDX4175"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>select_socket(+Socket,-NewStream,+TO_ms,+Streams,-ReadStreams)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Wait for data available in a list of <CODE>Streams</CODE> and in a <CODE>Socket</CODE>. <CODE>Streams</CODE> is a list of Prolog streams which will be tested for reading. <CODE>Socket</CODE> is a socket (i.e., an integer denoting the O.S. port number) or a
+
+<A NAME="IDX4176"></A>
+free variable. <CODE>TO_ms</CODE> is a number denoting a timeout. Within this timeout the <CODE>Streams</CODE> and the <CODE>Socket</CODE> are checked for the availability of data to be read. <CODE>ReadStreams</CODE> is the list of streams belonging to <CODE>Streams</CODE> which have data pending to be read. If <CODE>Socket</CODE> was a free variable, it is ignored, and <CODE>NewStream</CODE> is not checked. If <CODE>Socket</CODE> was instantiated to a port number and there are connections pending, a connection is accepted and connected with the Prolog stream in <CODE>NewStream</CODE>. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Socket</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-NewStream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+
+<CODE>+TO_ms</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Streams</CODE> is a list of <CODE>stream</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-ReadStreams</CODE> is a list of <CODE>stream</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4177"></A>
+<A NAME="IDX4178"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>socket_accept/2:</B>
+<DD><A NAME="IDX4179"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>socket_accept(+Sock,-Stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Creates a new <CODE>Stream</CODE> connected to <CODE>Sock</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Sock</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4180"></A>
+<A NAME="IDX4181"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>bind_socket/3:</B>
+<DD><A NAME="IDX4182"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>bind_socket(?Port,+Length,-Socket)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returs an AF_INET <CODE>Socket</CODE> bound to <CODE>Port</CODE> (which may be assigned by the OS or defined by the caller), and listens to it (hence no listen call in this set of primitives). <CODE>Length</CODE> specifies the maximum number of pending connections.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>?Port</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Length</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>-Socket</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4183"></A>
+<A NAME="IDX4184"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>connect_to_socket_type/4:</B>
+<DD><A NAME="IDX4185"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>connect_to_socket_type(+Host,+Port,+Type,-Stream)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Returns a <CODE>Stream</CODE> which connects to <CODE>Host</CODE>. The <CODE>Type</CODE> of connection can be defined. A <CODE>Stream</CODE> is returned, which can be used to
+
+<A NAME="IDX4186"></A>
+<CODE>write/2</CODE> to, to 
+<A NAME="IDX4187"></A>
+<CODE>read/2</CODE>, to 
+<A NAME="IDX4188"></A>
+<CODE>socket_send/2</CODE> to, or to 
+<A NAME="IDX4189"></A>
+<CODE>socket_recv/2</CODE> from the socket. 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Host</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+
+<CODE>+Port</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Type</CODE> is a valid socket type.
+ (<CODE>sockets:socket_type/1</CODE>)
+
+<CODE>-Stream</CODE> is an open stream.
+ (<CODE>streams_basic:stream/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, <A HREF="ciao_88.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_86.html">previous</A>, <A HREF="ciao_88.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

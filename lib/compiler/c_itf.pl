@@ -18,7 +18,8 @@
          false/1, old_file_extension/2, load_compile/1, needs_reload/1,
          abolish_module/1, interpret_file/1, interpret_module/1,
          interpret_srcdbg/1,pred_module/2, addmodule_inc/3,
-	 make_delayed_dynlinks/0, discard_delayed_dynlinks/0
+	 make_delayed_dynlinks/0, discard_delayed_dynlinks/0,
+         do_initialization/1
          ], [assertions,hiord]).
 
 :- use_module(library('compiler/translation')).
@@ -27,7 +28,7 @@
 :- use_module(library(fastrw)).
 
 :- use_module(engine(internals), [
-        '$open'/3, builtin_module/1, initialize_module/1,
+        '$open'/3, builtin_module/1, initialize_module/1, initialized/1, u/2,
         '$define_predicate'/2, '$set_property'/2,
         '$interpreted_clause'/2, '$compiled_clause'/4,
         '$compile_term'/2, '$current_clauses'/2, '$insertz'/2, '$abolish'/1,
@@ -1786,6 +1787,7 @@ compiler_pass(Source, Base, Module, Mode) :-
         compile_goal_decl(on_abort, Base, Module, Mode),
         compile_clauses(Base, Module, Mode),
         compile_ldlibs(Base, Module, Mode),
+        compile_dependences(Base, Module, Mode),
         include_module_data(Mode, Module),
         del_clause_trans(Module),
         del_goal_trans(Module),
@@ -1901,14 +1903,25 @@ compile_ldlibs(Base, Module, Mode) :-
 
 module_lib(Base, Lib, LibMod) :-
         Lib = library(_),
-        ( uses(Base, Lib) ; adds(Base, Lib) ),
+        uses_or_adds(Base, Lib),
         base_name(Lib, LibBase),
         defines_module(LibBase, LibMod).
+
+uses_or_adds(Base, File) :- uses(Base, File).
+uses_or_adds(Base, File) :- adds(Base, File).
 
 list_to_conjunction([X],X):- !.
 list_to_conjunction([X|More],(X,Next)):-
         list_to_conjunction(More,Next).
 list_to_conjunction([],true).
+
+compile_dependences(Base, Module, Mode) :-
+        include_decl(Mode, multifile, u, 2),
+        uses_or_adds(Base, File2),
+          base_name(File2, Base2), defines_module(Base2, Module2),
+          compile_clause(Mode, u(Module, Module2), true, Module),
+        fail
+      ; true.
 
 include_module_data(Mode, Module) :-
         include_decl(Mode, multifile, current_module, 1),
@@ -2212,8 +2225,24 @@ use_mod(File, Imports, ByThisModule) :-
           include_dyn_imports(ByThisModule, Module, Fake_Base),
           ( make_delayed_dynlinks -> true % JFMC
           ; message(['{Dynamic link failed}'])
-          )
+          ),
+          do_initialization(Module)
         ).
+
+:- data needs_ini/1.
+
+do_initialization(Module) :-
+        findall(M, retract_fact(needs_ini(M)), L),
+        comps_needs_ini(L),
+        initialize_module(Module).
+
+comps_needs_ini([]).
+comps_needs_ini([M|Ms]) :-
+        u(N,M),
+        retract_fact(initialized(N)), !,
+        comps_needs_ini([N,M|Ms]).
+comps_needs_ini([_|Ms]) :-
+        comps_needs_ini(Ms).
 
 :- data dyn_imports/2. % MODULE was imported dynamically from OTHERMODULE
 
@@ -2268,6 +2297,7 @@ compute_load_action(Base, Module, Mode, Load_Action) :-
             generate_multifile_data(Base, Module),
             qload_dyn(PoName, Module),
             retractall_fact(multifile(_,_,_,_)),
+            asserta_fact(needs_ini(Module)),
             module_loaded_now(Module, Base, Mode),
             fail
           )
@@ -2338,6 +2368,7 @@ load_so(Base) :- % JFMC
 do_load_action(Base, Module, Mode, Goal) :-
         abolish_module(Module),
         call(Goal),
+        asserta_fact(needs_ini(Module)),
         module_loaded_now(Module, Base, Mode).
 
 not_changed(Module, Base, Mode, Time) :-
@@ -2361,6 +2392,9 @@ do_on_abolish(Head) :- retract_fact(pred_module(Head, _M)).
 
 :- data renamed_multifile/4. % Predicate HEAD was renamed to F/A in MODULE
 
+abolish_module(Module) :-
+        retract_fact(initialized(Module)),
+        fail.
 abolish_module(Module) :-
         retract_fact(dyn_imports(M, Module)),
         retract_clause(imports(M, Module, _, _, _), true),
@@ -2400,8 +2434,7 @@ load_interpreted(Source, Base, Module) :-
         now_doing(['Consulting ',Source]),
         compiler_pass(Source, Base, Module, interpreted),
         end_doing,
-        compute_pred_module(Module),
-        initialize_module(Module).
+        compute_pred_module(Module).
 
 load_make_po(Base, Source, Dir, PoName, Profiling, Module) :-
         now_doing(['Compiling ',Source]),
@@ -2419,8 +2452,7 @@ load_make_po(Base, Source, Dir, PoName, Profiling, Module) :-
           compiler_pass(Source, Base, Module, Mode)
         ),
         end_doing,
-        compute_pred_module(Module),
-        initialize_module(Module).
+        compute_pred_module(Module).
 
 compute_pred_module(M) :-
         retract_fact(incore_mode_of(Head, Mode)),
@@ -2442,8 +2474,7 @@ qload_dyn(File, Module) :-
         cleanup_compilation_data,
         close(Stream),
         end_doing,
-        compute_pred_module(Module),
-        initialize_module(Module).
+        compute_pred_module(Module).
 
 qload_dyn_s(Stream, Module) :-
         '$qread'(Stream, Version),

@@ -2,7 +2,7 @@
 
 :- set_prolog_flag(multi_arity_warnings,off).
 
-:- use_module(library(metaterms),[varset/2]).
+:- use_module(library(terms_vars),[varset/2]).
 :- use_module(library('andorra/andorra_rt'),[suspend_andorra/5]).
 
 

@@ -1,51 +1,94 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Terms with named arguments -records/feature terms</TITLE>
+<TITLE>The Ciao Prolog System               - Pure Prolog package</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_88.html">previous</A>, <A HREF="ciao_90.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_88.html">previous</A>, <A HREF="ciao_90.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC362" HREF="ciao_toc.html#TOC362">Terms with named arguments -records/feature terms</A></H1>
+<H1><A NAME="SEC367" HREF="ciao_toc.html#TOC367">Pure Prolog package</A></H1>
 <P>
-<A NAME="IDX4176"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza and Manuel Hermenegildo.
+<A NAME="IDX4204"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#118 (2001/8/28, 15:7:22 CEST)
+This library package allows the use of 
+<A NAME="IDX4205"></A>
+<A NAME="IDX4206"></A>
+<EM>pure Prolog</EM> in a Ciao module/program. It is based on the fact that if an 
+<A NAME="IDX4207"></A>
+<A NAME="IDX4208"></A>
+<EM>engine module</EM> is imported explicitly then all of them have to be imported explicitly. The engine modules are: 
+
+<UL>
+<LI><CODE>engine(arithmetic)</CODE>
+
+section <A HREF="ciao_23.html#SEC149">Arithmetic</A>. 
+<LI><CODE>engine(atomic_basic)</CODE>
+
+section <A HREF="ciao_22.html#SEC146">Basic predicates handling names of constants</A>. 
+<LI><CODE>engine(attributes)</CODE>
+
+section <A HREF="ciao_31.html#SEC177">Attributed variables</A>. 
+<LI><CODE>engine(basic_props)</CODE>
+
+section <A HREF="ciao_18.html#SEC134">Basic data types and properties</A>. 
+<LI><CODE>engine(basiccontrol)</CODE>
+
+section <A HREF="ciao_16.html#SEC127">Control constructs/predicates</A>. 
+<LI><CODE>engine(data_facts)</CODE>
+
+section <A HREF="ciao_28.html#SEC166">Fast/concurrent update of facts</A>. 
+<LI><CODE>engine(exceptions)</CODE>
+
+section <A HREF="ciao_26.html#SEC159">Exception handling</A>. 
+<LI><CODE>engine(io_aux)</CODE>
+
+section <A HREF="ciao_30.html#SEC173">Message printing primitives</A>. 
+<LI><CODE>engine(io_basic)</CODE>
+
+section <A HREF="ciao_25.html#SEC156">Basic input/output</A>. 
+<LI><CODE>engine(prolog_flags)</CODE>
+
+section <A HREF="ciao_27.html#SEC162">Changing system behaviour and various flags</A>. 
+<LI><CODE>engine(streams_basic)</CODE>
+
+section <A HREF="ciao_24.html#SEC152">Basic file/stream handling</A>. 
+<LI><CODE>engine(system_info)</CODE>
+
+section <A HREF="ciao_32.html#SEC182">Gathering some basic internal info</A>. 
+<LI><CODE>engine(term_basic)</CODE>
+
+section <A HREF="ciao_20.html#SEC140">Basic term manipulation</A>. 
+<LI><CODE>engine(term_compare)</CODE>
+
+section <A HREF="ciao_21.html#SEC143">Comparing terms</A>. 
+<LI><CODE>engine(term_typing)</CODE>
+
+section <A HREF="ciao_19.html#SEC137">Extra-logical properties for typing</A>. 
+</UL>
+
+<P>
+Note that if any of these modules is explicitely imported in a program then the language defaults to Pure Prolog, plus the functionality added by the modules explicitely imported. 
 
 
 <P>
-<A NAME="IDX4177"></A>
-<A NAME="IDX4178"></A>
-This library package provides syntax which allows accessing term arguments by name (these terms are sometimes also referred to as 
-<A NAME="IDX4179"></A>
-<A NAME="IDX4180"></A>
-<EM>records</EM>, and are also similar to 
-<A NAME="IDX4181"></A>
-<A NAME="IDX4182"></A>
-<EM>feature terms</EM> [BibRef: Ait-KaciPodelskiSmolka92]).
+It is recommended that if you explicitely import an engine module you also use this package, which will guarantee that the predicate <CODE>true/0</CODE> is defined (note that this is the only Ciao builtin which cannot be redefined). 
 
 
 
 <UL>
-<LI><A HREF="ciao_89.html#SEC363">Usage and interface (argnames)</A>
-<LI><A HREF="ciao_89.html#SEC364">Documentation on new declarations (argnames)</A>
-<LI><A HREF="ciao_89.html#SEC365">Other information (argnames)</A>
-<LI><A HREF="ciao_89.html#SEC368">Known bugs and planned improvements (argnames)</A>
+<LI><A HREF="ciao_89.html#SEC368">Usage and interface (pure)</A>
+<LI><A HREF="ciao_89.html#SEC369">Known bugs and planned improvements (pure)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC363" HREF="ciao_toc.html#TOC363">Usage and interface (<CODE>argnames</CODE>)</A></H2>
+<H2><A NAME="SEC368" HREF="ciao_toc.html#TOC368">Usage and interface (<CODE>pure</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -53,237 +96,28 @@ This library package provides syntax which allows accessing term arguments by na
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(argnames).</CODE>
+<CODE>:- use_package(pure).</CODE>
 
 or
 
-<CODE>:- module(...,...,[argnames]).</CODE>
-
-<LI><STRONG>New operators defined:</STRONG>
-
-<A NAME="IDX4183"></A>
-<CODE>$/2</CODE> [150,xfx], 
-<A NAME="IDX4184"></A>
-<CODE>=&#62;/2</CODE> [950,xfx], 
-<A NAME="IDX4185"></A>
-<CODE>argnames/1</CODE> [1150,fx].
-
-<LI><STRONG>New declarations defined:</STRONG>
-
-<A NAME="IDX4186"></A>
-<CODE>argname/1</CODE>.
-
+<CODE>:- module(...,...,[pure]).</CODE>
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC364" HREF="ciao_toc.html#TOC364">Documentation on new declarations (<CODE>argnames</CODE>)</A></H2>
-<P>
-<A NAME="IDX4187"></A>
-<A NAME="IDX4188"></A>
-<DL>
-<DT><span class="define">DECLARATION:</span> <B>argname/1:</B>
-<DD><A NAME="IDX4189"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> :- <CODE>argname(ArgNamedPredSpec)</CODE>.
-
-<UL>
-<LI><EM>Description:</EM> An
-
-<A NAME="IDX4190"></A>
-<CODE>argnames/1</CODE> declaration assigns names to the argument positions of terms (or literal/goals) which use a certain functor/arity. This allows referring to these arguments by their name rather than by their argument position. Sometimes, argument names may be clearer and easier to remember than argument positions, specially for predicates with many arguments. Also, in some cases this may allow adding arguments to certain predicates without having to change the code that uses them. These terms with named arguments are sometimes also referred to as 
-<A NAME="IDX4191"></A>
-records, and are also similar to 
-<A NAME="IDX4192"></A>
-feature terms [BibRef: Ait-KaciPodelskiSmolka92]. For example, in order to write a program for the <EM>zebra</EM> puzzle we might declare: 
-
-
-
-<PRE>
-:- use_package([argnames]).
-:- argnames house(color, nation, pet, drink, car).
-</PRE>
-
-which first includes the package and then assigns a name to each of the arguments of any term (or literal/goal) with <CODE>house/5</CODE> as the main functor. 
-
-Once an 
-<A NAME="IDX4193"></A>
-<CODE>argnames/1</CODE> is given, is possible to use the names to refer to the arguments of any term (or literal/goal) which has the same main functor as that of the term which appears in the 
-<A NAME="IDX4194"></A>
-<CODE>argname/1</CODE> declaration. This is done by first writing the functor name, then the infix operator <CODE>$</CODE>, and then, between curly brackets, zero, one, or more pairs <EM>argument-name</EM><CODE>=&#62;</CODE><EM>argument-value</EM>, separated by commas (i.e., the infix operator <CODE>=&#62;</CODE> is used between the name and the value). Again, argument names must be atomic. Argument values can be any term. Arguments which are not specified are assumed to have a value of "<CODE>_</CODE>" (i.e., they are left unconstrained). 
-
-Thus, after the declaration for <CODE>house/5</CODE> in the example above, any ocurrence in that code of, for example, <CODE>house${nation=&#62;Owns_zebra,pet=&#62;zebra}</CODE> is exactly equivalent to <CODE>house(_,Owns_zebra,zebra,_,_)</CODE>. Also, <CODE>house${}</CODE> is equivalent to <CODE>house(_,_,_,_,_)</CODE>. The actual zebra puzzle specification might include a clause such as: 
-
-
-
-<PRE>
-zebra(Owns_zebra, Drinks_water, Street) :-
-   Street = [house${},house${},house${},house${},house${}],
-   member(house${nation=&#62;Owns_zebra,pet=&#62;zebra}, Street),
-   member(house${nation=&#62;Drinks_water,drink=&#62;water}, Street),
-   member(house${drink=&#62;coffee,color=&#62;green}, Street),
-   left_right(house${color=&#62;ivory}, house${color=&#62;green}, Street),
-   member(house${car=&#62;porsche,pet=&#62;snails}, Street),
-        ...
-</PRE>
-
-Any number of 
-<A NAME="IDX4195"></A>
-<CODE>argname/1</CODE> declarations can appear in a file, one for each functor whose arguments are to be accessed by name. As with other packages, argument name declarations are <EM>local to the file</EM> in which they appear. The 
-<A NAME="IDX4196"></A>
-<CODE>argname/1</CODE> declarations affect only program text which appears after the declaration. It is easy to make a set of declarations affect several files for example by putting such declarations in a sepatate file which is included by all such files. 
-
-An 
-<A NAME="IDX4197"></A>
-<CODE>argname/1</CODE> declaration does not change in any way the internal representation of the associated terms and does not affect run-time efficiency. It is simply syntactic sugar. 
-
- 
-</UL>
-
-</DL>
-
-
-
-<H2><A NAME="SEC365" HREF="ciao_toc.html#TOC365">Other information (<CODE>argnames</CODE>)</A></H2>
-
-<P>
- 
-
-
-<P>
-Two simple examples of the use of the argnames library follow. 
-
-
-
-<UL>
-<LI><A HREF="ciao_89.html#SEC366">Using argument names in a toy database</A>
-<LI><A HREF="ciao_89.html#SEC367">Complete code for the zebra example</A>
-</UL>
-
-
-
-<H3><A NAME="SEC366" HREF="ciao_toc.html#TOC366">Using argument names in a toy database</A></H3>
-
-<P>
-
-
-
-<PRE>
-:- module(simple_db,_,[argnames,assertions,regtypes]).
-:- use_module(library(aggregates)).
-
-:- comment(title,"A simple database application using argument names").
-
-:- pred product/4 :: int * string * string * int.
-
-:- argnames 
-product( id,    description,    brand,          quantity        ).
-%       ----------------------------------------------------------
-product(  1,    "Keyboard",     "Logitech",     6               ).
-product(  2,    "Mouse",        "Logitech",     5               ).
-product(  3,    "Monitor",      "Philips",      3               ).
-product(  4,    "Laptop",       "Dell",         4               ).
-
-% Compute the stock of products from a given brand.
-% Note call to findall is equivalent to: findall(Q,product(_,_,Brand,Q),L).
-brand_stock(Brand,Stock) :-
-        findall(Q,product${brand=&#62;Brand,quantity=&#62;Q},L),
-        sumlist(L,Stock).
-
-sumlist([],0).
-sumlist([X|T],S) :- 
-        sumlist(T,S1),
-        S is X + S1.
-
-</PRE>
-
-
-
-<H3><A NAME="SEC367" HREF="ciao_toc.html#TOC367">Complete code for the zebra example</A></H3>
-
-<P>
-
-
-
-<PRE>
-:- module(_,zebra/3,[argnames]).
-
-/*     There are five consecutive houses, each of a different
-color and inhabited by men of different nationalities. They each
-own a different pet, have a different favorite drink, and drive a
-different car.
-
-1.   The Englishman lives in the red house.
-2.   The Spaniard owns the dog.
-3.   Coffee is drunk in the green house.
-4.   The Ukrainian drinks tea.
-5.   The green house is immediately to the right of the ivory
-     house.
-6.   The Porsche driver owns snails.
-7.   The Masserati is driven by the man who lives in the yellow
-     house.
-8.   Milk is drunk in the middle house.
-9.   The Norwegian lives in the first house on the left.
-10.  The man who drives a Saab lives in the house next to the man
-     with the fox.
-11.  The Masserati is driven by the man in the house next to the
-     house where the horse is kept.
-12.  The Honda driver drinks orange juice.
-13.  The Japanese drives a Jaguar.
-14.  The Norwegian lives next to the blue house.
-
-The problem is: Who owns the Zebra?  Who drinks water?
-*/
-
-:- argnames house(color, nation, pet, drink, car).
-
-zebra(Owns_zebra, Drinks_water, Street) :-
-        Street = [house${},house${},house${},house${},house${}],
-        member(house${nation =&#62; Owns_zebra, pet =&#62; zebra}, Street),
-        member(house${nation =&#62; Drinks_water, drink =&#62; water}, Street),
-        member(house${nation =&#62; englishman, color =&#62; red}, Street),
-        member(house${nation =&#62; spaniard, pet =&#62; dog}, Street),
-        member(house${drink =&#62; coffee, color =&#62; green}, Street),
-        member(house${nation =&#62; ukrainian, drink =&#62; tea}, Street),
-        left_right(house${color =&#62; ivory}, house${color =&#62; green}, Street),
-        member(house${car =&#62; porsche, pet =&#62; snails}, Street),
-        member(house${car =&#62; masserati, color =&#62; yellow}, Street),
-        Street = [_, _, house${drink =&#62; milk}, _, _],
-        Street = [house${nation =&#62; norwegian}|_],
-        next_to(house${car =&#62; saab}, house${pet =&#62; fox}, Street),
-        next_to(house${car =&#62; masserati}, house${pet =&#62; horse}, Street),
-        member(house${car =&#62; honda, drink =&#62; orange_juice}, Street),
-        member(house${nation =&#62; japanese, car =&#62; jaguar}, Street),
-        next_to(house${nation =&#62; norwegian}, house${color =&#62; blue}, Street).
-
-member(X,[X|_]).
-member(X,[_|Y]) :- member(X,Y).
-
-left_right(L,R,[L,R|_]).
-left_right(L,R,[_|T]) :- left_right(L,R,T).
-
-next_to(X,Y,L) :- left_right(X,Y,L).
-next_to(X,Y,L) :- left_right(Y,X,L).
-
-</PRE>
-
-
-
-<H2><A NAME="SEC368" HREF="ciao_toc.html#TOC368">Known bugs and planned improvements (<CODE>argnames</CODE>)</A></H2>
+<H2><A NAME="SEC369" HREF="ciao_toc.html#TOC369">Known bugs and planned improvements (<CODE>pure</CODE>)</A></H2>
 
 
 <UL>
 
 <LI>
 
-It would be nice to add a mechanism to portray terms with named arguments in a special (user definable) way.
+Currently, the following builtin predicates/program constructs cannot be redefined, in addition to <CODE>true/0</CODE>: <CODE>(-&#62;)/2</CODE> <CODE>(,)/2</CODE> <CODE>(+)/1</CODE> <CODE>if/3</CODE>
 </UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_88.html">previous</A>, <A HREF="ciao_90.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_88.html">previous</A>, <A HREF="ciao_90.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

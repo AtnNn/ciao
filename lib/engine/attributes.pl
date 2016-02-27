@@ -11,8 +11,15 @@
 :- comment(author,"Daniel Cabeza").
 :- comment(author,"Manuel Carro").
 
-:- comment(module, "These predicates are builtin in Ciao, so nothing special
-   has to be done to use them.").
+:- comment(module, "These predicates allow the manipulation of
+   @index{attributed variables}. Attributes are special terms 
+   which are attached to a (free) variable, and are hidden from
+   the normal Prolog computation. They can only be treated by
+   using the predicates below.").
+
+:- comment(summary, "This library implements @index{attributed
+variables}, which provide a mechanism for extensible unification.  The
+library is based on the DMCAI CLP Library by Christian Holzbaur.  ").
 
 :- comment(copyright,"Original copyright @copyright{} 1992 DMCAI
 
@@ -21,10 +28,8 @@ University of Vienna
 Freyung 6 
 A-1010 Vienna, Austria").
 
-
-:- comment(summary, "This library implements @index{attributed
-variables}, which provide a mechanism for extensible unification.  The
-library is based on the DMCAI CLP Library by Christian Holzbaur.  ").
+:- comment(usage, "These predicates are builtin in Ciao, so nothing special
+   has to be done to use them.").
 
 % Compiled inline -- these are hooks for the interpreter.
 
@@ -68,7 +73,7 @@ variables with attributes @var{Var1} and @var{Var2} are about to be
 unified.  The user should define this predicate (as multifile) in the
 modules implementing special unification.".
 
-:- comment(usage, "Note that @pred{combine_attributes/2} and
+:- comment(appendix, "Note that @pred{combine_attributes/2} and
 @pred{verify_attribute/2} are not called with the attributed variables
 involved, but with the corresponding attributes instead.  The reasons
 are:
@@ -104,13 +109,6 @@ documentation of the predicate @pred{portray_attribute/2}.  ").
 
 
 :- comment(version_maintenance,dir('../../version')).
-
-
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
 
 :- comment(version(1*5+157,2000/05/30,13:04*47+'CEST'), "Updated
 documentation: added combine and verify.  (MCL)").

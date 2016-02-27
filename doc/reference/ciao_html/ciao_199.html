@@ -1,39 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - internal_types (library)</TITLE>
+<TITLE>The Ciao Prolog System               - generator (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC753" HREF="ciao_toc.html#TOC753">internal_types (library)</A></H1>
+<H1><A NAME="SEC767" HREF="ciao_toc.html#TOC767">generator (library)</A></H1>
 <P>
-<A NAME="IDX7739"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.1#2 (1998/12/17, 12:37:23 MET)
-
-
-<P>
-These are the internal data types used in the predicates. They are only used to simplify this documentation and make it more understandable. 
- 
-Implemented by G&ouml;ran Smedb&auml;ck 
+<A NAME="IDX7706"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_199.html#SEC754">Usage and interface (internal_types)</A>
-<LI><A HREF="ciao_199.html#SEC755">Documentation on exports (internal_types)</A>
+<LI><A HREF="ciao_199.html#SEC768">Usage and interface (generator)</A>
+<LI><A HREF="ciao_199.html#SEC769">Documentation on exports (generator)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC754" HREF="ciao_toc.html#TOC754">Usage and interface (<CODE>internal_types</CODE>)</A></H2>
+<H2><A NAME="SEC768" HREF="ciao_toc.html#TOC768">Usage and interface (<CODE>generator</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -41,29 +31,57 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(internal_types)).</CODE>
+<CODE>:- use_module(library(generator)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
 
 <UL>
 
-<LI><EM>Regular Types:</EM>
+<LI><EM>Predicates:</EM>
 
-<A NAME="IDX7740"></A>
-<CODE>bound/1</CODE>, 
-<A NAME="IDX7741"></A>
-<CODE>bound_double/1</CODE>, 
-<A NAME="IDX7742"></A>
-<CODE>dictionary/1</CODE>, 
-<A NAME="IDX7743"></A>
-<CODE>environment/1</CODE>, 
-<A NAME="IDX7744"></A>
-<CODE>parse/1</CODE>, 
-<A NAME="IDX7745"></A>
-<CODE>tree/1</CODE>, 
-<A NAME="IDX7746"></A>
-<CODE>whitespace/1</CODE>.
+<A NAME="IDX7707"></A>
+<CODE>generator/2</CODE>, 
+<A NAME="IDX7708"></A>
+<CODE>nodeDeclaration/4</CODE>.
+
+</UL>
+
+<LI><STRONG>Other modules used:</STRONG>
+
+
+<UL>
+
+<LI><EM>System library modules:</EM>
+
+<A NAME="IDX7709"></A>
+<CODE>aggregates</CODE>, 
+<A NAME="IDX7710"></A>
+<CODE>dynamic</CODE>, 
+<A NAME="IDX7711"></A>
+<CODE>iso_misc</CODE>, 
+<A NAME="IDX7712"></A>
+<CODE>iso_byte_char</CODE>, 
+<A NAME="IDX7713"></A>
+<CODE>iso_incomplete</CODE>, 
+<A NAME="IDX7714"></A>
+<CODE>operators</CODE>, 
+<A NAME="IDX7715"></A>
+<CODE>read</CODE>, 
+<A NAME="IDX7716"></A>
+<CODE>write</CODE>, 
+<A NAME="IDX7717"></A>
+<CODE>provrml/lookup</CODE>, 
+<A NAME="IDX7718"></A>
+<CODE>provrml/io</CODE>, 
+<A NAME="IDX7719"></A>
+<CODE>provrml/generator_util</CODE>, 
+<A NAME="IDX7720"></A>
+<CODE>provrml/parser_util</CODE>, 
+<A NAME="IDX7721"></A>
+<CODE>provrml/error</CODE>, 
+<A NAME="IDX7722"></A>
+<CODE>provrml/internal_types</CODE>.
 
 </UL>
 
@@ -73,203 +91,47 @@ Implemented by G&ouml;ran Smedb&auml;ck
 
 
 
-<H2><A NAME="SEC755" HREF="ciao_toc.html#TOC755">Documentation on exports (<CODE>internal_types</CODE>)</A></H2>
+<H2><A NAME="SEC769" HREF="ciao_toc.html#TOC769">Documentation on exports (<CODE>generator</CODE>)</A></H2>
 <P>
-<A NAME="IDX7747"></A>
-<A NAME="IDX7748"></A>
+<A NAME="IDX7723"></A>
+<A NAME="IDX7724"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>bound/1:</B>
-<DD><A NAME="IDX7749"></A>
+<DT><span class="define">PREDICATE:</span> <B>generator/2:</B>
+<DD><A NAME="IDX7725"></A>
 
 
 <P>
-Min is a number or an atom that indicates the minimal value, Max indicates the maximal. 
-
-<PRE>
-bound(bound(Min,Max)) :-
-        atm(Min),
-        atm(Max).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>bound(Bound)</CODE>
+<STRONG>Usage:</STRONG> <CODE>generator(+Terms,-VRML)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Bound</CODE> is a variable interval.
+<LI><EM>Description:</EM> This predicate is the generator of VRML code. It accepts a list of terms that is correct VRML code, other kind of terms will be rejected will errormessage accordingly. The output is a string of correct VRML code, acceptable for VRML browsers.
 
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Terms</CODE> is a list of <CODE>terms</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-VRML</CODE> is a string (a list of character codes).
+ (<CODE>basic_props:string/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX7750"></A>
-<A NAME="IDX7751"></A>
+<A NAME="IDX7726"></A>
+<A NAME="IDX7727"></A>
 <DL>
-<DT><span class="define">REGTYPE:</span> <B>bound_double/1:</B>
-<DD><A NAME="IDX7752"></A>
+<DT><span class="define">PREDICATE:</span> <B>nodeDeclaration/4:</B>
+<DD><A NAME="IDX7728"></A>
 
 
 <P>
-Min is a number or an atom that indicates the minimal value, Max indicates the maximal. The first two for some value and the second pair for some other. Typically used for types that are compound, e.g., rotationvalue. 
+No further documentation available for this predicate.
 
-<PRE>
-bound_double(bound(Min0,Max0,Min1,Max1)) :-
-        atm(Min0),
-        atm(Max0),
-        atm(Min1),
-        atm(Max1).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>bound_double(Bound)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Bound</CODE> is a variable interval.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7753"></A>
-<A NAME="IDX7754"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dictionary/1:</B>
-<DD><A NAME="IDX7755"></A>
-
-
-<P>
-Dic is a tree structure and is used as the internal representation of the dictionary. 
-
-<PRE>
-dictionary(dic(Dic)) :-
-        tree(Dic).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>dictionary(Dictionary)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Dictionary</CODE> is a dictionary.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7756"></A>
-<A NAME="IDX7757"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>environment/1:</B>
-<DD><A NAME="IDX7758"></A>
-
-
-<P>
-EnvironmentType one of 'DEF','PROTO','EXTERNPROTO' with the name Name. Whitespace is a structure with whitespace information. 
-
-<PRE>
-environment(env(Env,Name,WhiteSpace)) :-
-        atm(Env),
-        atm(Name),
-        whitespace(WhiteSpace).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>environment(Environment)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Environment</CODE> is an environment structure.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7759"></A>
-<A NAME="IDX7760"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>parse/1:</B>
-<DD><A NAME="IDX7761"></A>
-
-
-<P>
-In is the list of tokens to parse and Out is the resulting list after the parsing. Env is of type env and is the environment-structure.The dictinonary Dic contains created information and structures. 
-
-<PRE>
-parse(parse(In,Out,Env,Dic)) :-
-        list(In),
-        list(Out),
-        environment(Env),
-        dictionary(Dic).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>parse(Parse)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Parse</CODE> is a parse structure.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7762"></A>
-<A NAME="IDX7763"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>tree/1:</B>
-<DD><A NAME="IDX7764"></A>
-
-
-<P>
-Key is the search-key, Leaf is the information, Left and Right are more dictionary posts, where Left have less Key-value. 
-
-<PRE>
-tree(tree(Key,Leaf,Left,Right)) :-
-        atm(Key),
-        leaf(Leaf),
-        tree(Left),
-        tree(Right).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>tree(Tree)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Tree</CODE> is a tree structure.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX7765"></A>
-<A NAME="IDX7766"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>whitespace/1:</B>
-<DD><A NAME="IDX7767"></A>
-
-
-<P>
-The Row and Indentation information. The row information used when parsing the VRML code to give accurate error position and the indentation is used when generating VRML code from terms. 
-
-<PRE>
-whitespace(w(Row,Indentation)) :-
-        number(Row),
-        number(Indentation).
-</PRE>
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>whitespace(Whitespace)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Whitespace</CODE> is a whitespace structure.
-
-</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_198.html">previous</A>, <A HREF="ciao_200.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

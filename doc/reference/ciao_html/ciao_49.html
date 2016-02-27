@@ -1,37 +1,37 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
 <TITLE>The Ciao Prolog System               - Dictionaries</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC230" HREF="ciao_toc.html#TOC230">Dictionaries</A></H1>
+<H1><A NAME="SEC231" HREF="ciao_toc.html#TOC231">Dictionaries</A></H1>
 <P>
-<A NAME="IDX2618"></A>
-
-
-<P>
-<STRONG>Version:</STRONG> 0.4#5 (1998/2/24)
+<A NAME="IDX2621"></A>
 
 
 <P>
-This module provides predicates for implementing dictionaries. Such dictionaries are currently implemented as ordered binary trees.
+<STRONG>Version:</STRONG> 1.7#139 (2001/11/12, 17:24:35 CET)
+
+
+<P>
+This module provides predicates for implementing dictionaries. Such dictionaries are currently implemented as ordered binary trees of key-value pairs.
 
 
 
 <UL>
-<LI><A HREF="ciao_49.html#SEC231">Usage and interface (dict)</A>
-<LI><A HREF="ciao_49.html#SEC232">Documentation on exports (dict)</A>
+<LI><A HREF="ciao_49.html#SEC232">Usage and interface (dict)</A>
+<LI><A HREF="ciao_49.html#SEC233">Documentation on exports (dict)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC231" HREF="ciao_toc.html#TOC231">Usage and interface (<CODE>dict</CODE>)</A></H2>
+<H2><A NAME="SEC232" HREF="ciao_toc.html#TOC232">Usage and interface (<CODE>dict</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -48,16 +48,23 @@ This module provides predicates for implementing dictionaries. Such dictionaries
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX2619"></A>
-<CODE>dic_node/2</CODE>, 
-<A NAME="IDX2620"></A>
-<CODE>dic_lookup/3</CODE>, 
-<A NAME="IDX2621"></A>
-<CODE>dic_lookup/4</CODE>, 
 <A NAME="IDX2622"></A>
-<CODE>dic_get/3</CODE>, 
+<CODE>dictionary/5</CODE>, 
 <A NAME="IDX2623"></A>
+<CODE>dic_node/2</CODE>, 
+<A NAME="IDX2624"></A>
+<CODE>dic_lookup/3</CODE>, 
+<A NAME="IDX2625"></A>
+<CODE>dic_lookup/4</CODE>, 
+<A NAME="IDX2626"></A>
+<CODE>dic_get/3</CODE>, 
+<A NAME="IDX2627"></A>
 <CODE>dic_replace/4</CODE>.
+
+<LI><EM>Properties:</EM>
+
+<A NAME="IDX2628"></A>
+<CODE>dictionary/1</CODE>.
 
 </UL>
 
@@ -67,78 +74,160 @@ This module provides predicates for implementing dictionaries. Such dictionaries
 
 
 
-<H2><A NAME="SEC232" HREF="ciao_toc.html#TOC232">Documentation on exports (<CODE>dict</CODE>)</A></H2>
+<H2><A NAME="SEC233" HREF="ciao_toc.html#TOC233">Documentation on exports (<CODE>dict</CODE>)</A></H2>
 <P>
-<A NAME="IDX2624"></A>
-<A NAME="IDX2625"></A>
+<A NAME="IDX2629"></A>
+<A NAME="IDX2630"></A>
+<DL>
+<DT><span class="define">PROPERTY:</span> <B>dictionary/1:</B>
+<DD><A NAME="IDX2631"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary(D)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> is a dictionary.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2632"></A>
+<A NAME="IDX2633"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dictionary/5:</B>
+<DD><A NAME="IDX2634"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dictionary(D,K,V,L,R)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> The dictionary node <CODE>D</CODE> has key <CODE>K</CODE>, value <CODE>V</CODE>, left child <CODE>L</CODE>, and right child <CODE>R</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX2635"></A>
+<A NAME="IDX2636"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dic_node/2:</B>
-<DD><A NAME="IDX2626"></A>
+<DD><A NAME="IDX2637"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>dic_node(D,N)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>N</CODE> is a sub-dictionary of <CODE>D</CODE>.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+
+<CODE>N</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2627"></A>
-<A NAME="IDX2628"></A>
+<A NAME="IDX2638"></A>
+<A NAME="IDX2639"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dic_lookup/3:</B>
-<DD><A NAME="IDX2629"></A>
+<DD><A NAME="IDX2640"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>dic_lookup(D,K,V)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> contains value <CODE>V</CODE> at key <CODE>K</CODE>. If it was not already in <CODE>D</CODE> it is added.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2630"></A>
-<A NAME="IDX2631"></A>
+<A NAME="IDX2641"></A>
+<A NAME="IDX2642"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dic_lookup/4:</B>
-<DD><A NAME="IDX2632"></A>
+<DD><A NAME="IDX2643"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>dic_lookup(D,K,V,O)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> Same as <CODE>dic_lookup(D,K,V)</CODE>. <CODE>O</CODE> indicates if it was already in <CODE>D</CODE> (<CODE>old</CODE>) or not (<CODE>new</CODE>).
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2633"></A>
-<A NAME="IDX2634"></A>
+<A NAME="IDX2644"></A>
+<A NAME="IDX2645"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dic_get/3:</B>
-<DD><A NAME="IDX2635"></A>
+<DD><A NAME="IDX2646"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>dic_get(D,K,V)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> contains value <CODE>V</CODE> at key <CODE>K</CODE>. Fails if it is not already in <CODE>D</CODE>.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P>
-<A NAME="IDX2636"></A>
-<A NAME="IDX2637"></A>
+<A NAME="IDX2647"></A>
+<A NAME="IDX2648"></A>
 <DL>
 <DT><span class="define">PREDICATE:</span> <B>dic_replace/4:</B>
-<DD><A NAME="IDX2638"></A>
+<DD><A NAME="IDX2649"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<STRONG>Usage:</STRONG> <CODE>dic_replace(D,K,V,D1)</CODE>
 
+<UL>
+<LI><EM>Description:</EM> <CODE>D</CODE> and <CODE>D1</CODE> are identical except for the element at key <CODE>K</CODE>, which in <CODE>D1</CODE> contains value <CODE>V</CODE>, whatever has (or whether it is) in <CODE>D</CODE>.
+
+<LI><EM>Calls should, and exit will be compatible with:</EM>
+
+<CODE>D</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+
+<CODE>D1</CODE> is a dictionary.
+ (<CODE>dict:dictionary/1</CODE>)
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_48.html">previous</A>, <A HREF="ciao_50.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

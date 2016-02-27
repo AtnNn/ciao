@@ -25,6 +25,24 @@ main.
 % ---------------------------------------------------------------------------
 :- comment(version_maintenance,dir('../version')).
 
+:- comment(version(1*7+161,2001/11/27,12:53*26+'CET'), "Removed some
+warnings.  (MCL)").
+
+:- comment(version(1*7+151,2001/11/23,15:08*49+'CET'), " added
+-fno-strict-aliasing to the C command line options in order to work
+around (wrong?) optimizations and inconvenient ANSI casting
+conventions.  The Ciao engine now seems to compile correctly with the
+later gcc suite.
+
+    (MCL)").
+
+:- comment(version(1*7+150,2001/11/23,14:57*54+'CET'), "Added patch
+for Mac Os X developer tools 10.1 (thanks to @index{Kris Gybels}) (MCL)").
+
+:- comment(version(1*7+132,2001/10/31,10:14*18+'CET'), "Added
+initialization of SHELL environment variable under Windows when it is
+not set.  (MCL)").
+
 :- comment(version(1*7+115,2001/07/09,19:10*00+'CEST'), "Solved a
    problem with '$/' in Windows.  (Daniel Cabeza Gras)").
 

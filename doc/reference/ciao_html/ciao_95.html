@@ -1,50 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Delaying predicates (freeze)</TITLE>
+<TITLE>The Ciao Prolog System               - Independent and-parallel execution</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC386" HREF="ciao_toc.html#TOC386">Delaying predicates (freeze)</A></H1>
+<H1><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Independent and-parallel execution</A></H1>
 <P>
-<A NAME="IDX4281"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
+<A NAME="IDX4280"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
+<STRONG>Author(s):</STRONG> Manuel Carro, Manuel Hermenegildo.
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 1.5#72 (2000/3/19, 19:9:14 CET)
+<STRONG>Version:</STRONG> 1.7#161 (2001/11/27, 12:53:26 CET)
 
 
 <P>
-This library offers a simple implementation of 
-<A NAME="IDX4282"></A>
-<CODE>freeze/2</CODE>, 
-<A NAME="IDX4283"></A>
-<CODE>frozen/2</CODE>, etc. [BibRef: Prologii,MU-Prolog,naish:nu-prolog,Carlsson] based on the use of attributed variables [BibRef: holzbaur-plilp92,holzbaur-phd].
+<STRONG>Version of last change:</STRONG> 1.7#160 (2001/11/27, 12:35:53 CET)
+
+
+<P>
+<STRONG>Note:</STRONG> This is just a partial first shot. The real library still needs to be written. Not difficult, just no time... 
+
+
+<P>
+This library will eventually allow and-parallel execution of goals in (Herbrand-)independent fashion. It resembles the execution rules of &#38;-Prolog [BibRef: iclp90-performance]. Basically, goals are run in and-parallel <EM>provided that their arguments do not share bindings</EM>, i.e., are not bound to terms which contain a common variable.
 
 
 
 <UL>
-<LI><A HREF="ciao_95.html#SEC387">Usage and interface (freeze)</A>
-<LI><A HREF="ciao_95.html#SEC388">Documentation on exports (freeze)</A>
-<LI><A HREF="ciao_95.html#SEC389">Documentation on multifiles (freeze)</A>
+<LI><A HREF="ciao_95.html#SEC389">Usage and interface (andprolog)</A>
+<LI><A HREF="ciao_95.html#SEC390">Documentation on internals (andprolog)</A>
+<LI><A HREF="ciao_95.html#SEC391">Known bugs and planned improvements (andprolog)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC387" HREF="ciao_toc.html#TOC387">Usage and interface (<CODE>freeze</CODE>)</A></H2>
+<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Usage and interface (<CODE>andprolog</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -52,128 +52,142 @@ This library offers a simple implementation of
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(freeze)).</CODE>
+<CODE>:- use_package(andprolog).</CODE>
 
-<LI><STRONG>Exports:</STRONG>
+or
 
+<CODE>:- module(...,...,[andprolog]).</CODE>
 
-<UL>
+<LI><STRONG>New operators defined:</STRONG>
 
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4284"></A>
-<CODE>freeze/2</CODE>, 
-<A NAME="IDX4285"></A>
-<CODE>frozen/2</CODE>.
-
-<LI><EM>Multifiles:</EM>
-
-<A NAME="IDX4286"></A>
-<CODE>verify_attribute/2</CODE>, 
-<A NAME="IDX4287"></A>
-<CODE>combine_attributes/2</CODE>.
-
-</UL>
-
+<A NAME="IDX4281"></A>
+<CODE>@&#38;/2</CODE> [950,xfy].
 </UL>
 
 </div class="cartouche">
 
 
 
-<H2><A NAME="SEC388" HREF="ciao_toc.html#TOC388">Documentation on exports (<CODE>freeze</CODE>)</A></H2>
+<H2><A NAME="SEC390" HREF="ciao_toc.html#TOC390">Documentation on internals (<CODE>andprolog</CODE>)</A></H2>
 <P>
-<A NAME="IDX4288"></A>
+<A NAME="IDX4282"></A>
+<A NAME="IDX4283"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>@&#38;/2:</B>
+<DD><A NAME="IDX4284"></A>
+
+
+<P>
+<CODE>@&#38;(GoalA,GoalB)</CODE>
+
+
+<P>
+<CODE>GoalA</CODE> and <CODE>GoalB</CODE> are run in independent and-parallel fashion. This is just a first sketch, and valid only for deterministic independent goals. The use is as 
+
+
+
+<PRE>
+q:- a &#38; b.
+</PRE>
+
+<P>
+which would start <CODE>a</CODE> and <CODE>b</CODE> in separate threads (possibly in parallalel, if the machine architecture and operating system allows that), and continue when <STRONG>both</STRONG> have finished. This type of execution is safe only when <CODE>a</CODE> and <CODE>b</CODE> are independent in the sense of variable sharing. This condition can be tested with the 
+<A NAME="IDX4285"></A>
+<CODE>indep/2</CODE> predicate. 
+
+
+</DL>
+
+<P>
+<A NAME="IDX4286"></A>
+<A NAME="IDX4287"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>active_agents/1:</B>
+<DD><A NAME="IDX4288"></A>
+
+
+<P>
+<CODE>active_agents(NumberOfAgents)</CODE>
+
+
+<P>
+Tests/sets the <CODE>NumberOfAgents</CODE> which are active looking for goals to execute. As for now, those agents are resource-consuming, even when they are just looking for work, and not executing any user goals.
+
+
+</DL>
+
+<P>
 <A NAME="IDX4289"></A>
+<A NAME="IDX4290"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>freeze/2:</B>
-<DD><A NAME="IDX4290"></A>
+<DT><span class="define">PREDICATE:</span> <B>indep/2:</B>
+<DD><A NAME="IDX4291"></A>
 
 
 <P>
-<EM>Meta-predicate</EM> with arguments: <CODE>freeze(?,goal)</CODE>.
+<CODE>indep(X,Y)</CODE>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>freeze(X,Goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> If <CODE>X</CODE> is free delay <CODE>Goal</CODE> until <CODE>X</CODE> is non-variable.
-
-<LI><EM>The following properties should hold at call time:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4291"></A>
+<CODE>X</CODE> and <CODE>Y</CODE> are 
 <A NAME="IDX4292"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>frozen/2:</B>
-<DD><A NAME="IDX4293"></A>
+<A NAME="IDX4293"></A>
+<EM>independent</EM>, i.e., they are bound to terms which have no variables in common. For example, <CODE>indep(X,Y)</CODE> holds for <CODE>X=f(Z),Y=g(K)</CODE> and also for <CODE>X=f(a),Y=X</CODE> (since both <CODE>X</CODE> and <CODE>Y</CODE> are bound to ground terms). It does not hold for <CODE>X=f(Z),Y=g(Z)</CODE> and for <CODE>X=Y</CODE>.
 
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>frozen(?,goal)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>frozen(X,Goal)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Goal</CODE> is currently delayed until variable <CODE>X</CODE> becomes bound.
-
-<LI><EM>The following properties should hold upon exit:</EM>
-
-<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
- (<CODE>basic_props:callable/1</CODE>)
-</UL>
 
 </DL>
 
-
-
-<H2><A NAME="SEC389" HREF="ciao_toc.html#TOC389">Documentation on multifiles (<CODE>freeze</CODE>)</A></H2>
 <P>
 <A NAME="IDX4294"></A>
 <A NAME="IDX4295"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>verify_attribute/2:</B>
+<DT><span class="define">PREDICATE:</span> <B>indep/1:</B>
 <DD><A NAME="IDX4296"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>indep(X)</CODE>
 
 
 <P>
-The predicate is <EM>multifile</EM>.
-
-
-</DL>
-
-<P>
+<CODE>X</CODE> is a list of lists of length two, i.e., a list of the form <CODE>[[T1, T2], [T3, T4], ...]</CODE>. The variables in each pair of the list <CODE><CODE>X</CODE></CODE> are tested for independence using 
 <A NAME="IDX4297"></A>
-<A NAME="IDX4298"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>combine_attributes/2:</B>
-<DD><A NAME="IDX4299"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-<P>
-The predicate is <EM>multifile</EM>.
+<CODE>indep/2</CODE>. This list-of-pairs format is the output of several independdnce analyzers for pair sharing.
 
 
 </DL>
+
+
+
+<H2><A NAME="SEC391" HREF="ciao_toc.html#TOC391">Known bugs and planned improvements (<CODE>andprolog</CODE>)</A></H2>
+
+
+<UL>
+
+<LI>
+
+<STRONG>Beware:</STRONG> the current code is just a partial first shot. It is provided for the sole purpose of experimentation and development.
+
+<LI>
+
+The fact that only the first solution is returned for the conjunction is due to performance issues (and lack of time), and we expect to remove it in a near future.
+
+<LI>
+
+CGEs (i.e., <CODE>=&#62;</CODE>) are not supported.
+
+<LI>
+
+The 
+<A NAME="IDX4298"></A>
+<CODE>indep/1</CODE>, 
+<A NAME="IDX4299"></A>
+<CODE>indep/2</CODE>, and 
+<A NAME="IDX4300"></A>
+<CODE>ground/1</CODE> tests are not very efficient; they will be replaced by native versions (taken from the &#38;-Prolog code) in the future.
+</UL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_94.html">previous</A>, <A HREF="ciao_96.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

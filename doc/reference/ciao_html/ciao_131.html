@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - text_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - oval_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>, <A HREF="ciao_132.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>, <A HREF="ciao_132.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC518" HREF="ciao_toc.html#TOC518">text_class (library)</A></H1>
+<H1><A NAME="SEC532" HREF="ciao_toc.html#TOC532">oval_class (library)</A></H1>
 <P>
-<A NAME="IDX5321"></A>
+<A NAME="IDX5370"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_131.html#SEC519">Usage and interface (text_class)</A>
-<LI><A HREF="ciao_131.html#SEC520">Documentation on exports (text_class)</A>
+<LI><A HREF="ciao_131.html#SEC533">Usage and interface (oval_class)</A>
+<LI><A HREF="ciao_131.html#SEC534">Documentation on exports (oval_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC519" HREF="ciao_toc.html#TOC519">Usage and interface (<CODE>text_class</CODE>)</A></H2>
+<H2><A NAME="SEC533" HREF="ciao_toc.html#TOC533">Usage and interface (<CODE>oval_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(text_class)).</CODE>
+<CODE>:- use_module(library(oval_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,18 +40,16 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5322"></A>
-<CODE>coord/2</CODE>, 
-<A NAME="IDX5323"></A>
-<CODE>point/2</CODE>, 
-<A NAME="IDX5324"></A>
-<CODE>text_characters/1</CODE>, 
-<A NAME="IDX5325"></A>
-<CODE>anchor/1</CODE>, 
-<A NAME="IDX5326"></A>
-<CODE>font_type/1</CODE>, 
-<A NAME="IDX5327"></A>
-<CODE>justify_text/1</CODE>.
+<A NAME="IDX5371"></A>
+<CODE>coord/4</CODE>, 
+<A NAME="IDX5372"></A>
+<CODE>width/1</CODE>, 
+<A NAME="IDX5373"></A>
+<CODE>height/1</CODE>, 
+<A NAME="IDX5374"></A>
+<CODE>center/2</CODE>, 
+<A NAME="IDX5375"></A>
+<CODE>outline_color/1</CODE>.
 
 </UL>
 
@@ -62,7 +60,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5328"></A>
+<A NAME="IDX5376"></A>
 <CODE>objects/objects_rt</CODE>.
 
 </UL>
@@ -73,20 +71,119 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>,
 
 
 
-<H2><A NAME="SEC520" HREF="ciao_toc.html#TOC520">Documentation on exports (<CODE>text_class</CODE>)</A></H2>
+<H2><A NAME="SEC534" HREF="ciao_toc.html#TOC534">Documentation on exports (<CODE>oval_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5329"></A>
-<A NAME="IDX5330"></A>
+<A NAME="IDX5377"></A>
+<A NAME="IDX5378"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>coord/2:</B>
-<DD><A NAME="IDX5331"></A>
+<DT><span class="define">PREDICATE:</span> <B>coord/4:</B>
+<DD><A NAME="IDX5379"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>coord(+X,+Y)</CODE>
+<STRONG>Usage:</STRONG> <CODE>coord(+X1,+Y1,+X2,+Y2)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> specify the coordinates of a point used to position the text on the display.
+<LI><EM>Description:</EM> <CODE>X1</CODE>, <CODE>Y1</CODE>, <CODE>X2</CODE>, and <CODE>Y2</CODE> give the coordinates of two diagonally opposite corners of a rectangular region enclosing the oval.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+X1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y1</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+X2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+
+<CODE>+Y2</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5380"></A>
+<A NAME="IDX5381"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>width/1:</B>
+<DD><A NAME="IDX5382"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>width(+Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>width(-Width)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Width</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Width</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5383"></A>
+<A NAME="IDX5384"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>height/1:</B>
+<DD><A NAME="IDX5385"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>height(+Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's <CODE>Heigh</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>+Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>height(-Height)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets shape's <CODE>Height</CODE>.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Height</CODE> is an integer.
+ (<CODE>basic_props:int/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX5386"></A>
+<A NAME="IDX5387"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>center/2:</B>
+<DD><A NAME="IDX5388"></A>
+
+
+<P>
+<STRONG>Usage 1:</STRONG> <CODE>center(+X,+Y)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Specifies shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
@@ -97,170 +194,58 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>,
  (<CODE>basic_props:int/1</CODE>)
 </UL>
 
-</DL>
-
 <P>
-<A NAME="IDX5332"></A>
-<A NAME="IDX5333"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>point/2:</B>
-<DD><A NAME="IDX5334"></A>
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>point(+X,+Y)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>center(-X,-Y)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>X</CODE> and <CODE>Y</CODE> change the coordinates of a point used to position the text on the display.
+<LI><EM>Description:</EM> Gets shape's center with <CODE>X</CODE> and <CODE>Y</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+X</CODE> is an integer.
+<CODE>-X</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 
-<CODE>+Y</CODE> is an integer.
+<CODE>-Y</CODE> is an integer.
  (<CODE>basic_props:int/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5335"></A>
-<A NAME="IDX5336"></A>
+<A NAME="IDX5389"></A>
+<A NAME="IDX5390"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>text_characters/1:</B>
-<DD><A NAME="IDX5337"></A>
+<DT><span class="define">PREDICATE:</span> <B>outline_color/1:</B>
+<DD><A NAME="IDX5391"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>text_characters(+Text)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>outline_color(+Color)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Text</CODE> specifies the characters to be displayed in the text item. This option defaults to an empty string.
+<LI><EM>Description:</EM> <CODE>Color</CODE> specifies the color to be used for drawing the oval's outline. This option defaults to black.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Text</CODE> is currently instantiated to an atom.
+<CODE>+Color</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>text_characters(-Text)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>outline_color(-Color)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the text displayed in the text item.
+<LI><EM>Description:</EM> Gets oval's outline <CODE>Color</CODE>.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Text</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5338"></A>
-<A NAME="IDX5339"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>anchor/1:</B>
-<DD><A NAME="IDX5340"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>anchor(+AnchorPos)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>AnchorPos</CODE> tells how to position the text relative to the positioning point for the text. This option defaluts to center.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+AnchorPos</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>anchor(-AnchorPos)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the position of the text relative to the positioning point.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-AnchorPos</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5341"></A>
-<A NAME="IDX5342"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>font_type/1:</B>
-<DD><A NAME="IDX5343"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>font_type(+Font)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>Font</CODE> specifies the font to use for the text item. This option defaluts to arial.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>font_type(-Font)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets the value of the <CODE>Font</CODE> used for the text item.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-Font</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5344"></A>
-<A NAME="IDX5345"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>justify_text/1:</B>
-<DD><A NAME="IDX5346"></A>
-
-
-<P>
-<STRONG>Usage 1:</STRONG> <CODE>justify_text(+How)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text within its bounding region. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>+How</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
-</UL>
-
-<P>
-<STRONG>Usage 2:</STRONG> <CODE>justify_text(-How)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
-
-<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
-
-<CODE>-How</CODE> is currently instantiated to an atom.
+<CODE>-Color</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>, <A HREF="ciao_132.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_130.html">previous</A>, <A HREF="ciao_132.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

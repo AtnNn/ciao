@@ -361,7 +361,10 @@ solve(Query,_JId) :-
 solve2(Query,Id) :-
 %% Oops! Query launching should be intercepted, but some strange 
 %%       behaviours prevent from using intercept/3.
-        intercept(Query, Error, assertz_fact(exception_flag(Id, Error))),
+%        intercept(Query, Error, assertz_fact(exception_flag(Id, Error))),
+	java_debug(solve2(Query,Id)),
+	Query,
+	java_debug(solve2(Query,Id)),
 %%
 	(current_fact_nb(exception_flag(Id, Error)) ->
 	 assertz_fact(query_solutions(Id, prolog_exception(Id, Error))),
@@ -375,6 +378,7 @@ solve2(Query,Id) :-
 	retract_fact_nb(running_queries(Id, Query)).
 
 solve2(Query,Id) :-
+	java_debug('solve2 failing'),
 	% No more solutions. Query is terminated.
 	assertz_fact(query_solutions(Id, prolog_fail)),
 	retract_fact(running_queries(Id, Query)).

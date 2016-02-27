@@ -1,18 +1,22 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - wgraphs (library)</TITLE>
+<TITLE>The Ciao Prolog System               - Graphs</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>, <A HREF="ciao_157.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>, <A HREF="ciao_157.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC618" HREF="ciao_toc.html#TOC618">wgraphs (library)</A></H1>
+<H1><A NAME="SEC631" HREF="ciao_toc.html#TOC631">Graphs</A></H1>
 <P>
-<A NAME="IDX6612"></A>
+<A NAME="IDX6603"></A>
+
+
+<P>
+<STRONG>Author(s):</STRONG> F. Bueno.
 
 
 <P>
@@ -20,18 +24,19 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>,
 
 
 <P>
-<STRONG>Version of last change:</STRONG> 0.4#5 (1998/2/24)
+<STRONG>Version of last change:</STRONG> 1.5#83 (2000/3/23, 19:23:58 CET)
 
 
 
 <UL>
-<LI><A HREF="ciao_156.html#SEC619">Usage and interface (wgraphs)</A>
-<LI><A HREF="ciao_156.html#SEC620">Documentation on exports (wgraphs)</A>
+<LI><A HREF="ciao_156.html#SEC632">Usage and interface (graphs)</A>
+<LI><A HREF="ciao_156.html#SEC633">Documentation on exports (graphs)</A>
+<LI><A HREF="ciao_156.html#SEC634">Documentation on internals (graphs)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC619" HREF="ciao_toc.html#TOC619">Usage and interface (<CODE>wgraphs</CODE>)</A></H2>
+<H2><A NAME="SEC632" HREF="ciao_toc.html#TOC632">Usage and interface (<CODE>graphs</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -39,7 +44,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(wgraphs)).</CODE>
+<CODE>:- use_module(library(graphs)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -48,8 +53,21 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX6613"></A>
-<CODE>vertices_edges_to_wgraph/3</CODE>.
+<A NAME="IDX6604"></A>
+<CODE>dgraph_to_ugraph/2</CODE>, 
+<A NAME="IDX6605"></A>
+<CODE>dlgraph_to_lgraph/2</CODE>, 
+<A NAME="IDX6606"></A>
+<CODE>edges_to_ugraph/2</CODE>, 
+<A NAME="IDX6607"></A>
+<CODE>edges_to_lgraph/2</CODE>.
+
+<LI><EM>Regular Types:</EM>
+
+<A NAME="IDX6608"></A>
+<CODE>dgraph/1</CODE>, 
+<A NAME="IDX6609"></A>
+<CODE>dlgraph/1</CODE>.
 
 </UL>
 
@@ -60,10 +78,12 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX6614"></A>
-<CODE>sets</CODE>, 
-<A NAME="IDX6615"></A>
-<CODE>sort</CODE>.
+<A NAME="IDX6610"></A>
+<CODE>sort</CODE>, 
+<A NAME="IDX6611"></A>
+<CODE>graphs/ugraphs</CODE>, 
+<A NAME="IDX6612"></A>
+<CODE>graphs/lgraphs</CODE>.
 
 </UL>
 
@@ -73,22 +93,227 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>,
 
 
 
-<H2><A NAME="SEC620" HREF="ciao_toc.html#TOC620">Documentation on exports (<CODE>wgraphs</CODE>)</A></H2>
+<H2><A NAME="SEC633" HREF="ciao_toc.html#TOC633">Documentation on exports (<CODE>graphs</CODE>)</A></H2>
+<P>
+<A NAME="IDX6613"></A>
+<A NAME="IDX6614"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>dgraph/1:</B>
+<DD><A NAME="IDX6615"></A>
+
+
+<P>
+<CODE>dgraph(Graph)</CODE>
+
+
+<P>
+A directed graph is a term <CODE>graph(V,E)</CODE> where <CODE>V</CODE> is a list of vertices and <CODE>E</CODE> is a list of edges (none necessarily sorted). Edges are pairs of vertices which are directed, i.e., <CODE>(a,b)</CODE> represents <CODE>a-&#62;b</CODE>. Two vertices <CODE>a</CODE> and <CODE>b</CODE> are equal only if <CODE>a==b</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dgraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed graph.
+
+</UL>
+
+</DL>
+
 <P>
 <A NAME="IDX6616"></A>
 <A NAME="IDX6617"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>vertices_edges_to_wgraph/3:</B>
+<DT><span class="define">REGTYPE:</span> <B>dlgraph/1:</B>
 <DD><A NAME="IDX6618"></A>
 
 
 <P>
-No further documentation available for this predicate.
+<CODE>dlgraph(Graph)</CODE>
 
+
+<P>
+A labeled directed graph is a directed graph where edges are triples of the form <CODE>(a,l,b)</CODE> where <CODE>l</CODE> is the label of the edge <CODE>(a,b)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlgraph(Graph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Graph</CODE> is a directed labeled graph.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6619"></A>
+<A NAME="IDX6620"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dgraph_to_ugraph/2:</B>
+<DD><A NAME="IDX6621"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dgraph_to_ugraph(+Graph,-UGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed graph.
+ (<CODE>graphs:dgraph/1</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6622"></A>
+<A NAME="IDX6623"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>dlgraph_to_lgraph/2:</B>
+<DD><A NAME="IDX6624"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>dlgraph_to_lgraph(+Graph,-LGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Graph</CODE> is a directed labeled graph.
+ (<CODE>graphs:dlgraph/1</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6625"></A>
+<A NAME="IDX6626"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_ugraph/2:</B>
+<DD><A NAME="IDX6627"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges_to_ugraph(+Edges,-UGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Graph</CODE> to <CODE>UGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>pair</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-UGraph</CODE> is an ugraph.
+ (<CODE>ugraphs:ugraph/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6628"></A>
+<A NAME="IDX6629"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>edges_to_lgraph/2:</B>
+<DD><A NAME="IDX6630"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>edges_to_lgraph(+Edges,-LGraph)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Converts <CODE>Edges</CODE> to <CODE>LGraph</CODE>.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a free variable.
+ (<CODE>term_typing:var/1</CODE>)
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>+Edges</CODE> is a list of <CODE>triple</CODE>s.
+ (<CODE>basic_props:list/2</CODE>)
+
+<CODE>-LGraph</CODE> is a labeled graph of <CODE>term</CODE> terms.
+ (<CODE>lgraphs:lgraph/2</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC634" HREF="ciao_toc.html#TOC634">Documentation on internals (<CODE>graphs</CODE>)</A></H2>
+<P>
+<A NAME="IDX6631"></A>
+<A NAME="IDX6632"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>pair/1:</B>
+<DD><A NAME="IDX6633"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>pair(P)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a pair <CODE>(_,_)</CODE>.
+
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX6634"></A>
+<A NAME="IDX6635"></A>
+<DL>
+<DT><span class="define">REGTYPE:</span> <B>triple/1:</B>
+<DD><A NAME="IDX6636"></A>
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>triple(P)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>P</CODE> is a triple <CODE>(_,_,_)</CODE>.
+
+</UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>, <A HREF="ciao_157.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_155.html">previous</A>, <A HREF="ciao_157.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

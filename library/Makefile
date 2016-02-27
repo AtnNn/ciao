@@ -48,6 +48,10 @@ ciao_special_libs:
 
 autolibs:
 	'rm' -f all_modules all_module_messages
+# This is so that if installation is aborted, the permissions are left 
+# set properly and *another user* can reinstall
+	-touch all_modules all_module_messages
+	-chmod $(DATAMODE) all_modules all_module_messages
 	echo "set_prolog_flag(compress_lib," $(COMPRESS_LIBS) ")." >> all_modules
 	$(SRC)/etc/collect_modules all_modules
 	$(SETLOCALCIAO) $(CIAOSHELL) < all_modules > all_module_messages

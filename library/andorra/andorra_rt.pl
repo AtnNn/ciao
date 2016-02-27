@@ -8,7 +8,7 @@
 
 
 :- use_module(library(lists),[append/3]).
-:- use_module(library(metaterms), [varset/2]).
+:- use_module(library(terms_vars), [varset/2]).
 :- use_module(library(sort), [sort/2]).
 :- use_module(library(sets), 
         [

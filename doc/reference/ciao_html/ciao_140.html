@@ -1,269 +1,125 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Low-level socket interface to SQL/ODBC databases</TITLE>
+<TITLE>The Ciao Prolog System               - Using the persdb library</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC565" HREF="ciao_toc.html#TOC565">Low-level socket interface to SQL/ODBC databases</A></H1>
-<P>
-<A NAME="IDX5950"></A>
-
+<H1><A NAME="SEC570" HREF="ciao_toc.html#TOC570">Using the persdb library</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Jose Morales.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.7#105 (2001/5/28, 11:16:19 CEST)
-
-
-<P>
-This library provides a low-level interface to MySQL using the MySQL C API and the Ciao foreign interface to C.
+Through the following examples we will try to illustrate the two mains ways of declaring and using persistent predicates: statically (the preferred method) and dynamically (necessary when the new persistent predicates have to be defined at run-time). The final example is a small application implementing a simple persistent queue. 
 
 
 
 <UL>
-<LI><A HREF="ciao_140.html#SEC566">Usage and interface (mysql_client)</A>
-<LI><A HREF="ciao_140.html#SEC567">Documentation on exports (mysql_client)</A>
+<LI><A HREF="ciao_140.html#SEC571">An example of persistent predicates (static version)</A>
+<LI><A HREF="ciao_140.html#SEC572">An example of persistent predicates (dynamic version)</A>
+<LI><A HREF="ciao_140.html#SEC573">A simple application / a persistent queue</A>
 </UL>
 
 
 
-<H2><A NAME="SEC566" HREF="ciao_toc.html#TOC566">Usage and interface (<CODE>mysql_client</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(mysql_client)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX5951"></A>
-<CODE>mysql_connect/5</CODE>, 
-<A NAME="IDX5952"></A>
-<CODE>mysql_query/3</CODE>, 
-<A NAME="IDX5953"></A>
-<CODE>mysql_query_one_tuple/3</CODE>, 
-<A NAME="IDX5954"></A>
-<CODE>mysql_free_query_connection/1</CODE>, 
-<A NAME="IDX5955"></A>
-<CODE>mysql_fetch/2</CODE>, 
-<A NAME="IDX5956"></A>
-<CODE>mysql_get_tables/2</CODE>, 
-<A NAME="IDX5957"></A>
-<CODE>mysql_table_types/3</CODE>, 
-<A NAME="IDX5958"></A>
-<CODE>mysql_disconnect/1</CODE>.
-
-<LI><EM>Regular Types:</EM>
-
-<A NAME="IDX5959"></A>
-<CODE>dbconnection/1</CODE>, 
-<A NAME="IDX5960"></A>
-<CODE>dbqueryconnection/1</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX5961"></A>
-<CODE>foreign_interface/foreign_interface_properties</CODE>, 
-<A NAME="IDX5962"></A>
-<CODE>persdb_mysql/db_client_types</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC567" HREF="ciao_toc.html#TOC567">Documentation on exports (<CODE>mysql_client</CODE>)</A></H2>
-<P>
-<A NAME="IDX5963"></A>
-<A NAME="IDX5964"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_connect/5:</B>
-<DD><A NAME="IDX5965"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5966"></A>
-<A NAME="IDX5967"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbconnection/1:</B>
-<DD><A NAME="IDX5968"></A>
-
+<H2><A NAME="SEC571" HREF="ciao_toc.html#TOC571">An example of persistent predicates (static version)</A></H2>
 
 
 <PRE>
-dbconnection(_1) :-
-        address(_1).
+:- include(library(persdb)).
+
+%% Declare the directory associated to the key "db" where the
+%% persistence sets of the persistent predicates are stored:
+persistent_dir(db,'./').
+
+%% Declare a persistent predicate:
+:- persistent(bar/1, db).
+
+%% Read a term, storing it in a new fact of the persistent predicate
+%% and list all the current facts of that predicate
+main:-
+     read(X),
+     assertz_fact(bar(X)),
+     findall(Y,bar(Y),L),
+     write(L).
+
 </PRE>
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbconnection(H)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> a unique identifier of a database session connection.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5969"></A>
-<A NAME="IDX5970"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_query/3:</B>
-<DD><A NAME="IDX5971"></A>
 
 
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5972"></A>
-<A NAME="IDX5973"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_query_one_tuple/3:</B>
-<DD><A NAME="IDX5974"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5975"></A>
-<A NAME="IDX5976"></A>
-<DL>
-<DT><span class="define">REGTYPE:</span> <B>dbqueryconnection/1:</B>
-<DD><A NAME="IDX5977"></A>
-
+<H2><A NAME="SEC572" HREF="ciao_toc.html#TOC572">An example of persistent predicates (dynamic version)</A></H2>
 
 
 <PRE>
-dbqueryconnection(_1) :-
-        address(_1).
+:- include(library(persdb)).
+
+main([X]):-
+%%   Declare the directory associated to the key "db" 
+     asserta_fact(persistent_dir(db,'./')),
+%%   Declare the predicate bar/1 as dynamic (and data) at run-time  
+     data(bar/1),
+%%   Declare the predicate bar/1 as persistent at run-time  
+     make_persistent(bar/1, db),
+     assertz_fact(bar(X)),
+     findall(Y, bar(Y), L),
+     write(L).    
+
 </PRE>
 
-<P>
-<STRONG>Usage:</STRONG> <CODE>dbqueryconnection(H)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> <CODE>H</CODE> is a unique identifier of a query answer in a database session connection.
-
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX5978"></A>
-<A NAME="IDX5979"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_free_query_connection/1:</B>
-<DD><A NAME="IDX5980"></A>
 
 
-<P>
-No further documentation available for this predicate.
+<H2><A NAME="SEC573" HREF="ciao_toc.html#TOC573">A simple application / a persistent queue</A></H2>
 
+<PRE>
+:- module(queue, [main/0],[persdb]).
 
-</DL>
+:- use_module(library(read)).
+:- use_module(library(write)).
+:- use_module(library(aggregates)).
 
-<P>
-<A NAME="IDX5981"></A>
-<A NAME="IDX5982"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_fetch/2:</B>
-<DD><A NAME="IDX5983"></A>
+persistent_dir(queue_dir,'./pers').
 
+:- persistent(queue/1, queue_dir).
 
-<P>
-No further documentation available for this predicate.
+queue(first).
+queue(second).
 
+main:-
+     write('Action ( in(Term). | slip(Term) | out. | list. | halt. ): '),
+     read(A),
+     (  handle_action(A)
+     -&#62; true
+     ;  write('Unknown command.'), nl ),
+     main.
 
-</DL>
+handle_action(end_of_file) :-
+     halt.
+handle_action(halt) :-
+     halt.
+handle_action(in(Term)) :-
+     assertz_fact(queue(Term)),
+     main.
+handle_action(slip(Term)) :-
+     asserta_fact(queue(Term)),
+     main.
+handle_action(out) :-
+     (  retract_fact(queue(Term))
+     -&#62; write('Out '), write(Term)
+     ;  write('FIFO empty.') ),
+     nl,
+     main.
+handle_action(list) :-
+     findall(Term,queue(Term),Terms),
+     write('Contents: '), write(Terms), nl,
+     main.
+     
 
-<P>
-<A NAME="IDX5984"></A>
-<A NAME="IDX5985"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_get_tables/2:</B>
-<DD><A NAME="IDX5986"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5987"></A>
-<A NAME="IDX5988"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_table_types/3:</B>
-<DD><A NAME="IDX5989"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
-
-<P>
-<A NAME="IDX5990"></A>
-<A NAME="IDX5991"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>mysql_disconnect/1:</B>
-<DD><A NAME="IDX5992"></A>
-
-
-<P>
-No further documentation available for this predicate.
-
-
-</DL>
+</PRE>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_139.html">previous</A>, <A HREF="ciao_141.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

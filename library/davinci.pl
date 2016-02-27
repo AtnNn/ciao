@@ -22,6 +22,7 @@
 :- use_module(library(write), [write/2,writeq/1]).
 :- use_module(library(system),[exec/3,popen/3]).
 
+:- comment(title,"Interface to daVinci").
 :- comment(author,"Francisco Bueno").
 :- comment(module,
 	"This library allows connecting a Ciao Prolog application
@@ -63,8 +64,8 @@ error(communication_error(_)).
 quit(quit).
 
 % -------------------------------------------------------------------------
-% davinci/0
-% start up a daVinci process
+:- comment(davinci/0,
+"Start up a daVinci process.").
 % -------------------------------------------------------------------------
 
 davinci :-
@@ -92,8 +93,8 @@ handle_error(Error, Where) :-
         fail.
 
 % -------------------------------------------------------------------------
-% topd/0
-% a toplevel to send to daVinci commands from standard input
+:- comment(topd/0,
+"A toplevel to send to daVinci commands from standard input.").
 % -------------------------------------------------------------------------
 
 topd :-
@@ -113,9 +114,8 @@ topd :-
 	davinci_quit.
 
 % -------------------------------------------------------------------------
-% davinci_quit/0
-% exit daVinci process
-% all pending answers are lost!
+:- comment(davinci_quit/0,
+"Exit daVinci process. All pending answers are lost!").
 % -------------------------------------------------------------------------
 
 davinci_quit :-
@@ -128,17 +128,23 @@ davinci_quit :-
 	retractall_fact(answer(_)).
 
 % -------------------------------------------------------------------------
-% davinci_put(+Term)
-% send a command
-% syntactically, a command is a term
-% semantically, it has to correspond to a command understood by daVinci
-% two terms are interpreted in a special way: string/1 and text/1
-% string(Term) is given to daVinci as "Term"
-% text(List) is given as "Term1\nTerm2\n...Term\n" for each Term in List
-% if your term has functors string/1 and text/1 that you don't want to
-%    be interpreted this way, use it twice, i.e.,
-%    string(string(Term)) is given to daVinci as string(Term')
-%    where Term' is the interpretation of Term
+:- pred davinci_put(Term) : davinci_command
+      # "Send a command to daVinci.".
+:- prop davinci_command/1.
+:- impl_defined(davinci_command/1).
+:- comment(doinclude,davinci_command/1).
+:- comment(davinci_command/1,
+"Syntactically, a command is a term.
+ Semantically, it has to correspond to a command understood by daVinci.
+ Two terms are interpreted in a special way: @tt{string/1} and 
+     @tt{text/1}:
+ @tt{string(Term)} is given to daVinci as @tt{""Term""};
+ @tt{text(List)} is given as @tt{""Term1\nTerm2\n...Term\n""}
+     for each @tt{Term} in @tt{List}.
+ If your term has functors @tt{string/1} and @tt{text/1} that you don't 
+     want to be interpreted this way, use it twice, i.e.,
+     @tt{string(string(Term))} is given to daVinci as @tt{string(Term')}
+     where @tt{Term'} is the interpretation of @tt{Term}.").
 % -------------------------------------------------------------------------
 
 davinci_put(Term):-
@@ -225,10 +231,8 @@ write_list([A|As],In):-
 write_list([],_In).
 
 % -------------------------------------------------------------------------
-% davinci_sync
-% wait for daVinci to answer back
-% Term is as in davinci_put/1, but has to be a valid question (question/3)
-% Answer is a term corresponding to daVinci's answer
+:- comment(davinci_sync,
+"Wait for daVinci to answer back.").
 % -------------------------------------------------------------------------
 
 davinci_sync:-
@@ -245,9 +249,9 @@ davinci_sync:-
 	  ), !.
 
 % -------------------------------------------------------------------------
-% davinci_get(-Term)
-% get a message from daVinci
-% Term is a term corresponding to daVinci's message
+:- pred davinci_get(Term)
+      # "Get a message from daVinci.
+         @var{Term} is a term corresponding to daVinci's message.".
 % -------------------------------------------------------------------------
 
 davinci_get(Term):-
@@ -260,9 +264,9 @@ davinci_get(Term):-
 	).
 
 % -------------------------------------------------------------------------
-% davinci_get_all(-List)
-% get all pending messages
-% List is a list of terms as in davinci_get/1
+:- pred davinci_get_all(List) => list
+      # "Get all pending messages.
+         @var{List} is a list of terms as in @tt{davinci_get/1}.".
 % -------------------------------------------------------------------------
 
 davinci_get_all(List):-
@@ -270,20 +274,26 @@ davinci_get_all(List):-
 	findall(Answer,retract_fact(answer(Answer)),List).
 
 % -------------------------------------------------------------------------
-% davinci_ugraph(+Graph)
-% send a graph
-% Graph is a term which denotes an ugraph as in SICStus3 library(ugraphs)
-% vertices of the form node/2 are interpreted in a special way
-% node(Term,List) is interpreted as a vertex Term with attributes List
-% List is a list of terms conforming the syntax of davinci_put/1 and
-%      corresponding to daVinci's graph nodes attributes
-% if your vertex has functor node/2 and you don't want it to be interpreted
-%      this way, use it twice, i.e.,
-%      node(node(T1,T2),[]) is given to daVinci as vertex node(T1,T2)
-% a vertex is used both as label and name of daVinci's graph node
-% daVinci's graph edges have label V1-V2 where V1 is the source and
-%      V2 the sink of the edge
-% there is no support for multiple edges between the same two vertices
+:- pred davinci_ugraph(Graph) : ugraph
+      # "Send a graph to daVinci.".
+:- prop ugraph/1.
+:- impl_defined(ugraph/1).
+:- comment(doinclude,ugraph/1).
+:- comment(ugraph(Graph),
+"@var{Graph} is a term which denotes an ugraph as in @tt{library(ugraphs)}.
+ Vertices of the form @tt{node/2} are interpreted in a special way:
+ @tt{node(Term,List)} is interpreted as a vertex @tt{Term} with attributes
+           @tt{List}. 
+ @tt{List} is a list of terms conforming the syntax of @tt{davinci_put/1}
+           and corresponding to daVinci's graph nodes attributes.
+ If your vertex has functor @tt{node/2} and you don't want it to be 
+           interpreted this way, use it twice, i.e.,
+           @tt{node(node(T1,T2),[])} is given to daVinci as vertex 
+           @tt{node(T1,T2)}.
+ A vertex is used both as label and name of daVinci's graph node.
+ daVinci's graph edges have label @tt{V1-V2} where @tt{V1} is the source and
+           @tt{V2} the sink of the edge.
+ There is no support for multiple edges between the same two vertices.").
 % -------------------------------------------------------------------------
 
 davinci_ugraph(Graph):-
@@ -316,15 +326,19 @@ edges([],_Source,[]).
  %%         formatting(T, user_output).
 
 % -------------------------------------------------------------------------
-% davinci_lgraph(+Graph)
-% send a labeled graph
-% Graph is a term which denotes a wgraph as in SICStus3 library(wgraphs)
-%       except that the weights are labels, i.e.,
-%       they do not need to be integers
-% vertices of the form node/2 are interpreted in a special way
-% edge labels are converted into special intermediate vertices
-% duplicated labels are solved by adding dummy atoms ''
-% there is no support for multiple edges between the same two vertices
+:- pred davinci_lgraph(Graph) : lgraph
+      # "Send a labeled graph to daVinci.".
+:- prop lgraph/1.
+:- impl_defined(lgraph/1).
+:- comment(doinclude,lgraph/1).
+:- comment(lgraph(Graph),
+"@var{Graph} is a term which denotes a wgraph as in @tt{library(wgraphs)},
+      except that the weights are labels, i.e.,
+      they do not need to be integers.
+ Vertices of the form @tt{node/2} are interpreted in a special way.
+ Edge labels are converted into special intermediate vertices.
+ Duplicated labels are solved by adding dummy atoms @tt{''}.
+ There is no support for multiple edges between the same two vertices.").
 % -------------------------------------------------------------------------
 
 davinci_lgraph(Graph):-
@@ -332,7 +346,7 @@ davinci_lgraph(Graph):-
 	lgraph2ugraph(Graph,UGraph),
 	davinci_ugraph(UGraph).
 
-% This one is similar to wgraph_to_ugraph/2 in SICStus3 library(wgraphs)
+% This one is similar to wgraph_to_ugraph/2 in library(wgraphs)
 % except that the labels (weights) are converted into new vertices
 % These new vertices are special, in the sense that they have daVinci
 % attributes so that they will appear as text instead of box nodes

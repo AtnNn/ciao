@@ -1,162 +1,77 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Some Higher-Order Predicates</TITLE>
+<TITLE>The Ciao Prolog System               - PART VII - Ciao Prolog extensions</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC359" HREF="ciao_toc.html#TOC359">Some Higher-Order Predicates</A></H1>
-<P>
-<A NAME="IDX4166"></A>
-
+<H1><A NAME="SEC366" HREF="ciao_toc.html#TOC366">PART VII - Ciao Prolog extensions</A></H1>
 
 <P>
-<STRONG>Author(s):</STRONG> Daniel Cabeza.
-
-
-<P>
-<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
-
-
-<P>
-<STRONG>Version of last change:</STRONG> 1.5#65 (2000/3/15, 22:9:28 CET)
-
-
-<P>
-This library implements a few basic higher-order predicates. These add functionality to the basic higher-order functionality of Ciao. Examples of the latter are: 
- 
-Using pred(1): 
-
-
-
-<PRE>
-  list(L, between(1,6))
-  list(L, functor(_,2))
-  list(L, &#62;(0))
-</PRE>
-
-<P>
-Using pred(2): 
-
-
+The libraries documented in this part extend the Ciao language in several different ways. The extensions include: 
 
 <UL>
-<LI><A HREF="ciao_88.html#SEC360">Usage and interface (hiordlib)</A>
-<LI><A HREF="ciao_88.html#SEC361">Documentation on exports (hiordlib)</A>
+<LI>
+
+<A NAME="IDX4190"></A>
+pure Prolog programming (well, this can be viewed more as a restriction than an extension); 
+<LI>
+
+<A NAME="IDX4191"></A>
+feature terms or 
+<A NAME="IDX4192"></A>
+<A NAME="IDX4193"></A>
+<EM>records</EM> (i.e., structures with names for each field); 
+<LI>
+
+<A NAME="IDX4194"></A>
+parallel programming (e.g., &#38;-Prolog style); 
+<LI>
+
+<A NAME="IDX4195"></A>
+functional syntax; 
+<LI>
+
+<A NAME="IDX4196"></A>
+higher-order library; 
+<LI>
+
+<A NAME="IDX4197"></A>
+global variables; 
+<LI><CODE>setarg</CODE> and <CODE>undo</CODE>;
+
+<LI>
+
+<A NAME="IDX4198"></A>
+delaying predicate execution; 
+<LI>
+
+<A NAME="IDX4199"></A>
+active modules; 
+<LI>
+
+<A NAME="IDX4200"></A>
+breadth-first execution; 
+<LI>
+
+<A NAME="IDX4201"></A>
+iterative deepening-based execution; 
+<LI>
+
+<A NAME="IDX4202"></A>
+constraint logic programming; 
+<LI>
+
+<A NAME="IDX4203"></A>
+object oriented programming. 
 </UL>
-
-
-
-<H2><A NAME="SEC360" HREF="ciao_toc.html#TOC360">Usage and interface (<CODE>hiordlib</CODE>)</A></H2>
-
-<div class="cartouche">
-
-<UL>
-
-<LI><STRONG>Library usage:</STRONG>
-
-<CODE>:- use_module(library(hiordlib)).</CODE>
-
-<LI><STRONG>Exports:</STRONG>
-
-
-<UL>
-
-<LI><EM>Predicates:</EM>
-
-<A NAME="IDX4167"></A>
-<CODE>map/3</CODE>, 
-<A NAME="IDX4168"></A>
-<CODE>foldl/4</CODE>.
-
-</UL>
-
-<LI><STRONG>Other modules used:</STRONG>
-
-
-<UL>
-
-<LI><EM>System library modules:</EM>
-
-<A NAME="IDX4169"></A>
-<CODE>hiord_rt</CODE>.
-
-</UL>
-
-</UL>
-
-</div class="cartouche">
-
-
-
-<H2><A NAME="SEC361" HREF="ciao_toc.html#TOC361">Documentation on exports (<CODE>hiordlib</CODE>)</A></H2>
-<P>
-<A NAME="IDX4170"></A>
-<A NAME="IDX4171"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>map/3:</B>
-<DD><A NAME="IDX4172"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>map(?,pred(2),?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>map(LList,Op,RList)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Examples of use:
-
-
-<PRE>
-  map([1,3,2], arg(f(a,b,c,d)), [a,c,b]) or
-  map([1,3,2], nth([a,b,c,d]), [a,c,b])
-  map(["D","C"], append("."), ["D.","C."])
-</PRE>
-
- 
-</UL>
-
-</DL>
-
-<P>
-<A NAME="IDX4173"></A>
-<A NAME="IDX4174"></A>
-<DL>
-<DT><span class="define">PREDICATE:</span> <B>foldl/4:</B>
-<DD><A NAME="IDX4175"></A>
-
-
-<P>
-<EM>Meta-predicate</EM> with arguments: <CODE>foldl(?,?,pred(3),?)</CODE>.
-
-
-<P>
-<STRONG>Usage:</STRONG> <CODE>foldl(List,Seed,Op,Result)</CODE>
-
-<UL>
-<LI><EM>Description:</EM> Example of use:
-
-
-<PRE>
-?- foldl(["daniel","cabeza","gras"], "", 
-         (''(X,Y,Z) :- append(X, " "||Y, Z)), R).
-
-R = "daniel cabeza gras " ? 
-</PRE>
-
- 
-</UL>
-
-</DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_87.html">previous</A>, <A HREF="ciao_89.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

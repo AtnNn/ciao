@@ -1,4 +1,4 @@
-:- module(getting_user_table, [test/0], [persdb_mysql]).
+:- module(getting_user_table, [main/0], [persdb_mysql]).
 
 % This example dumps the contents of the 'user' table from the 'mysql' 
 % database.
@@ -20,14 +20,14 @@ sql_persistent_location(user, db(mysql, User, Password, HP)):-
 	user).
 
 
-test :-
+main :-
         % We access the tuples as calls to a Prolog predicate
 	user(Host, User, Password, Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv, Drop_priv, Reload_priv, Shutdown_priv, Process_priv, File_priv, Grant_priv, References_priv, Index_priv, Alter_priv),
 	display(user(Host, User, Password, Select_priv, Insert_priv, Update_priv, Delete_priv, Create_priv, Drop_priv, Reload_priv, Shutdown_priv, Process_priv, File_priv, Grant_priv, References_priv, Index_priv, Alter_priv)),
 	nl,
         fail.
 
-test :-
+main :-
 	display('DONE'), nl.
 	
 	

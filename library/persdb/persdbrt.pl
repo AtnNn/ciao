@@ -13,6 +13,7 @@
         [assertions,regtypes]).
 
 :- use_module(engine(internals), [term_to_meta/2]).
+:- use_module(library(terms), [atom_concat/2]).
 :- use_module(library(lists)).
 :- use_module(library(streams)).
 :- use_module(library(read)).
@@ -167,13 +168,12 @@ Copyright @copyright{} 1997-2000 The Clip Group.
    only contain facts, i.e., they are @em{dynamic} predicates of type
    @pred{data/1}.
 
-   Predicates declared as persistent are linked to a directory, and
-   the persistent state of the predicate will be kept in several files
-   below that directory.  The files in which the persistent predicates
-   are stored are in readable, plain ASCII format, and in Prolog
-   syntax. One advantage of this approach is that such files can also
-   be created or edited by hand, in a text editor, or even by other
-   applications.
+   Predicates declared as persistent are linked to directory, and the 
+   persistent state of the predicate will be kept in several files below that 
+   directory.  The files in which the persistent predicates are stored are in 
+   readable, plain ASCII format, and in Prolog syntax. One advantage of this 
+   approach is that such files can also be created or edited by hand, in a 
+   text editor, or even by other applications.
 
    An example definition of a persistent predicate implemented by files
    follows:
@@ -282,7 +282,7 @@ persistent_dir(dbdir, '/home/clip/public_html/db').
    descriptions of such locations (@var{Location_Path}s).
    @var{Location_Path} is @bf{a directory} and it means that the
    definition for the persistent predicates associated with
-   @var{Keyword} is kept in files below that directory (which must
+   @var{Keyword} is kept in files below that directory (which must previously 
    exist). These files, in the updated state, contain the actual
    definition of the predicate in Prolog syntax (but with module names
    resolved).".
@@ -637,7 +637,7 @@ get_pred_files(Dir, Name, Arity, File, File_ops, File_bak):-
         atom_concat(PathName, '_bak.pl', File_bak).
 
 create_dir(Dir) :-
-        file_exists(Dir), !.  % Supposing it's a directory
+        file_exists(Dir), !.  % Assuming it's a directory
 create_dir(Dir) :-
         make_directory(Dir, 0xfff).
 

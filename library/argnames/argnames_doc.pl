@@ -16,7 +16,7 @@
 
 :- include(library(argnames)).
 
-:- decl argname(ArgNamedPredSpec) 
+:- decl argnames(ArgNamedPredSpec) 
 
 # "An @decl{argnames/1} declaration assigns names to the argument
    positions of terms (or literal/goals) which use a certain
@@ -44,7 +44,7 @@
    Once an @decl{argnames/1} is given, is possible to use the names to
    refer to the arguments of any term (or literal/goal) which has the
    same main functor as that of the term which appears in the
-   @decl{argname/1} declaration. This is done by first writing the
+   @decl{argnames/1} declaration. This is done by first writing the
    functor name, then the infix operator @tt{$}, and then, between
    curly brackets, zero, one, or more pairs
    @em{argument-name}@tt{=>}@em{argument-value}, separated by commas
@@ -72,16 +72,16 @@ zebra(Owns_zebra, Drinks_water, Street) :-
         ...
 @end{verbatim}
 
-   Any number of @decl{argname/1} declarations can appear in a file,
+   Any number of @decl{argnames/1} declarations can appear in a file,
    one for each functor whose arguments are to be accessed by name.
    As with other packages, argument name declarations are @em{local to
-   the file} in which they appear. The @decl{argname/1} declarations
+   the file} in which they appear. The @decl{argnames/1} declarations
    affect only program text which appears after the
    declaration. It is easy to make a set of declarations affect
    several files for example by putting such declarations in a
    sepatate file which is included by all such files.
 
-   An @decl{argname/1} declaration does not change in any way the
+   An @decl{argnames/1} declaration does not change in any way the
    internal representation of the associated terms and does not affect
    run-time efficiency. It is simply syntactic sugar.
 
@@ -89,7 +89,8 @@ zebra(Owns_zebra, Drinks_water, Street) :-
 
 :- comment(appendix,"
 
-   Two simple examples of the use of the argnames library follow. 
+   Two simple examples of the use of the argnames library package
+   follow.  
 
     @subsection{Using argument names in a toy database}
 

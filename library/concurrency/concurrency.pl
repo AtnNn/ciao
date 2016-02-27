@@ -33,9 +33,6 @@
 
 :- comment(author,"Manuel Carro").
 
-:- comment(usage, "These predicates are builtin in Ciao, so nothing special
-   has to be done to use them.").
-
 :- impl_defined([
         '$eng_call'/6,
         '$eng_backtrack'/2,
@@ -337,11 +334,9 @@ table, causing Ciao Prolog to abort.").
 
 :- comment(version_maintenance,dir('../../version')).
 
-%% Note that the "assertions" library needs to be included in order
-%% to support ":- comment(...,...)." declarations such as these.
-%% These version comment(s) can be moved elsewhere in the file.
-%% Subsequent version comments will be placed above the last one
-%% inserted.
+:- comment(version(1*7+138,2001/11/08,19:50*32+'CET'), "The fact that
+   the currency library now needs to be loaded explicitly is now
+   correctly documented.  (Manuel Hermenegildo)").
 
 :- comment(version(1*7+114,2001/07/09,13:20*42+'CEST'), "eng_self/1
    deprecation message corrected (JCF) (Jesus Correas Fernandez)").

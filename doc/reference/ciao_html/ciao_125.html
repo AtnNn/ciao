@@ -1,29 +1,29 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - menu_entry_class (library)</TITLE>
+<TITLE>The Ciao Prolog System               - entry_class (library)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC500" HREF="ciao_toc.html#TOC500">menu_entry_class (library)</A></H1>
+<H1><A NAME="SEC514" HREF="ciao_toc.html#TOC514">entry_class (library)</A></H1>
 <P>
-<A NAME="IDX5208"></A>
+<A NAME="IDX5267"></A>
 
 
 
 <UL>
-<LI><A HREF="ciao_125.html#SEC501">Usage and interface (menu_entry_class)</A>
-<LI><A HREF="ciao_125.html#SEC502">Documentation on exports (menu_entry_class)</A>
+<LI><A HREF="ciao_125.html#SEC515">Usage and interface (entry_class)</A>
+<LI><A HREF="ciao_125.html#SEC516">Documentation on exports (entry_class)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC501" HREF="ciao_toc.html#TOC501">Usage and interface (<CODE>menu_entry_class</CODE>)</A></H2>
+<H2><A NAME="SEC515" HREF="ciao_toc.html#TOC515">Usage and interface (<CODE>entry_class</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -31,7 +31,7 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>,
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_module(library(menu_entry_class)).</CODE>
+<CODE>:- use_module(library(entry_class)).</CODE>
 
 <LI><STRONG>Exports:</STRONG>
 
@@ -40,14 +40,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>,
 
 <LI><EM>Predicates:</EM>
 
-<A NAME="IDX5209"></A>
-<CODE>set_name/1</CODE>, 
-<A NAME="IDX5210"></A>
-<CODE>set_action/1</CODE>, 
-<A NAME="IDX5211"></A>
-<CODE>label_value/1</CODE>, 
-<A NAME="IDX5212"></A>
-<CODE>menu_name/1</CODE>.
+<A NAME="IDX5268"></A>
+<CODE>textvariable_entry/1</CODE>, 
+<A NAME="IDX5269"></A>
+<CODE>textvariablevalue_string/1</CODE>, 
+<A NAME="IDX5270"></A>
+<CODE>textvariablevalue_number/1</CODE>, 
+<A NAME="IDX5271"></A>
+<CODE>justify_entry/1</CODE>.
 
 </UL>
 
@@ -58,12 +58,14 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>,
 
 <LI><EM>System library modules:</EM>
 
-<A NAME="IDX5213"></A>
+<A NAME="IDX5272"></A>
 <CODE>objects/objects_rt</CODE>, 
-<A NAME="IDX5214"></A>
-<CODE>tcltk_obj/menu_class</CODE>, 
-<A NAME="IDX5215"></A>
-<CODE>lists</CODE>.
+<A NAME="IDX5273"></A>
+<CODE>lists</CODE>, 
+<A NAME="IDX5274"></A>
+<CODE>tcltk/examples/tk_test_aux</CODE>, 
+<A NAME="IDX5275"></A>
+<CODE>tcltk/tcltk</CODE>.
 
 </UL>
 
@@ -73,120 +75,144 @@ Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>,
 
 
 
-<H2><A NAME="SEC502" HREF="ciao_toc.html#TOC502">Documentation on exports (<CODE>menu_entry_class</CODE>)</A></H2>
+<H2><A NAME="SEC516" HREF="ciao_toc.html#TOC516">Documentation on exports (<CODE>entry_class</CODE>)</A></H2>
 <P>
-<A NAME="IDX5216"></A>
-<A NAME="IDX5217"></A>
+<A NAME="IDX5276"></A>
+<A NAME="IDX5277"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>set_name/1:</B>
-<DD><A NAME="IDX5218"></A>
+<DT><span class="define">PREDICATE:</span> <B>textvariable_entry/1:</B>
+<DD><A NAME="IDX5278"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>set_name(+Name)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>textvariable_entry(+Variable)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Name</CODE> of the menubutton associated.
+<LI><EM>Description:</EM> <CODE>Variable</CODE> specifies the name of the Tcl variable
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Name</CODE> is currently instantiated to an atom.
+<CODE>+Variable</CODE> is currently instantiated to an atom.
+ (<CODE>term_typing:atom/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>textvariable_entry(-Variable)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> Gets the name of the Tcl <CODE>Variable</CODE> associated to the entry
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Variable</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5219"></A>
-<A NAME="IDX5220"></A>
+<A NAME="IDX5279"></A>
+<A NAME="IDX5280"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>set_action/1:</B>
-<DD><A NAME="IDX5221"></A>
+<DT><span class="define">PREDICATE:</span> <B>textvariablevalue_string/1:</B>
+<DD><A NAME="IDX5281"></A>
 
 
 <P>
-<STRONG>Usage:</STRONG> <CODE>set_action(+Predicate)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>textvariablevalue_string(+Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Specifies <CODE>Predicate</CODE> asociated to the menu entry.
+<LI><EM>Description:</EM> Specifies the <CODE>Value</CODE> of the Tcl variable associated to the entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Predicate</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>+Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
+</UL>
+
+<P>
+<STRONG>Usage 2:</STRONG> <CODE>textvariablevalue_string(-Value)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Value</CODE> is the value of the Tcl variable associated to the entry.
+
+<LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
+
+<CODE>-Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5222"></A>
-<A NAME="IDX5223"></A>
+<A NAME="IDX5282"></A>
+<A NAME="IDX5283"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>label_value/1:</B>
-<DD><A NAME="IDX5224"></A>
+<DT><span class="define">PREDICATE:</span> <B>textvariablevalue_number/1:</B>
+<DD><A NAME="IDX5284"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>label_value(+Value)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>textvariablevalue_number(+Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Value</CODE> specifies a value to be displayed as an identifying label in the menu entry.
+<LI><EM>Description:</EM> Specifies the <CODE>Value</CODE> of the Tcl variable associated to the entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Value</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>+Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>label_value(-Value)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>textvariablevalue_number(-Value)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the string which identify label in the menu entry.
+<LI><EM>Description:</EM> <CODE>Value</CODE> is the value of the Tcl variable associated to the entry.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Value</CODE> is currently instantiated to an atom.
- (<CODE>term_typing:atom/1</CODE>)
+<CODE>-Value</CODE> is a number.
+ (<CODE>basic_props:num/1</CODE>)
 </UL>
 
 </DL>
 
 <P>
-<A NAME="IDX5225"></A>
-<A NAME="IDX5226"></A>
+<A NAME="IDX5285"></A>
+<A NAME="IDX5286"></A>
 <DL>
-<DT><span class="define">PREDICATE:</span> <B>menu_name/1:</B>
-<DD><A NAME="IDX5227"></A>
+<DT><span class="define">PREDICATE:</span> <B>justify_entry/1:</B>
+<DD><A NAME="IDX5287"></A>
 
 
 <P>
-<STRONG>Usage 1:</STRONG> <CODE>menu_name(+Menu)</CODE>
+<STRONG>Usage 1:</STRONG> <CODE>justify_entry(+How)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> <CODE>Menu</CODE> posted when cascade entry is invoked.
+<LI><EM>Description:</EM> <CODE>How</CODE> specifies how to justify the text in the entry. <CODE>How</CODE> must be one of the values left, right or center. This option defaluts to left.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>+Menu</CODE> is currently instantiated to an atom.
+<CODE>+How</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 <P>
-<STRONG>Usage 2:</STRONG> <CODE>menu_name(-Menu)</CODE>
+<STRONG>Usage 2:</STRONG> <CODE>justify_entry(-How)</CODE>
 
 <UL>
-<LI><EM>Description:</EM> Gets the <CODE>Menu</CODE> asociated to the cascade entry.
+<LI><EM>Description:</EM> Gets <CODE>How</CODE> is justified the text.
 
 <LI><EM>Call and exit should be <EM>compatible</EM> with:</EM>
 
-<CODE>-Menu</CODE> is currently instantiated to an atom.
+<CODE>-How</CODE> is currently instantiated to an atom.
  (<CODE>term_typing:atom/1</CODE>)
 </UL>
 
 </DL>
 
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_124.html">previous</A>, <A HREF="ciao_126.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

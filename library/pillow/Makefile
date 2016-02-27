@@ -7,16 +7,16 @@ include ../../SETTINGS
 include ../../SHARED
 
 pillow: icon_address.pl
-	$(SETLOCALCIAO) $(CIAOC) -x aux.pl ; rm -f aux aux.itf aux.po
+	$(SETLOCALCIAO) $(CIAOC) -x Make_aux.pl ; rm -f Make_au*[^l]
 
 icon_address.pl: ../../SETTINGS
 	echo "icon_base_address('$(WEB_IMAGES_URL)')." > icon_address.pl
 
 install:
-	@if test ! -d $(WEB_IMAGES_PATH) ; then \
+	@-if test ! -d $(WEB_IMAGES_PATH) ; then \
           echo 'Warning: The value of WEB_IMAGES_PATH=$(WEB_IMAGES_PATH) is not properly set, Pillow will not be correctly configured'; \
 	else \
-          /bin/cp -pfr images/* $(WEB_IMAGES_PATH); \
+          cp -pr images/* $(WEB_IMAGES_PATH); \
 	fi
 
 dist: Makefile \

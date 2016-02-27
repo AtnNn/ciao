@@ -562,7 +562,9 @@ destructor.
 
 :- comment(version_maintenance,dir('../../version')).
 
-
+:- comment(version(1*7+162,2001/12/04,16:02*58+'CET'), "Fixed bug that
+   prevented concurrent attributes from being recognized. 
+   (Francisco Bueno Carrillo)").
 
 :- comment(version(1*5+162,2000/06/14,17:07*15+'CEST'), "Changed 
    @code{goal_expansion(Goal,Exp,Module,InstanceID)} to

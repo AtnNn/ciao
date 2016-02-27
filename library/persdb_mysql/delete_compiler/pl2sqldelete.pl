@@ -2,7 +2,7 @@
 	[
 	    pl2sqlDelete/2,
 	    substringAfterPattern/3
-	],[isomodes,assertions]).
+	],[assertions,isomodes]).
 
 :- use_module(library('persdb_mysql/pl2sql'),
 	[pl2sqlstring/3,pl2sqlterm/3]).

@@ -1,165 +1,50 @@
 <HTML>
 <HEAD>
-<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 26 October 2001 -->
+<!-- Created by texi2html 1.56k + clip patches and <A href="http://www.clip.dia.fi.upm.es/Software">lpdoc</A> from ciao.texi on 20 December 2001 -->
 
 <LINK rel="stylesheet" href="ciao.css" type="text/css">
-<TITLE>The Ciao Prolog System               - Iterative-deepening execution</TITLE>
+<TITLE>The Ciao Prolog System               - Delaying predicates (freeze)</TITLE>
 </HEAD>
 <BODY> 
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 <P><HR><P>
 
 
-<H1><A NAME="SEC402" HREF="ciao_toc.html#TOC402">Iterative-deepening execution</A></H1>
+<H1><A NAME="SEC406" HREF="ciao_toc.html#TOC406">Delaying predicates (freeze)</A></H1>
 <P>
-<A NAME="IDX4353"></A>
-
-
-<P>
-<STRONG>Author(s):</STRONG> Claudio Vaucheret, Manuel Hermenegildo.
+<A NAME="IDX4337"></A>
 
 
 <P>
-<STRONG>Version:</STRONG> 1.7#119 (2001/8/28, 15:39:1 CEST)
+<STRONG>Author(s):</STRONG> Manuel Carro, Daniel Cabeza.
 
 
 <P>
-This package applies a <EM>compiling control</EM> technique to implement 
-<A NAME="IDX4354"></A>
-<A NAME="IDX4355"></A>
-<EM>depth first iterative deepening</EM> execution [BibRef: Stickel84]. It changes the usual <EM>depth-first</EM> computation rule by 
-<A NAME="IDX4356"></A>
-<A NAME="IDX4357"></A>
-<EM>iterative-deepening</EM> on those predicates specifically marked. This is very useful in search problems when a 
-<A NAME="IDX4358"></A>
-complete proof procedure is needed. 
+<STRONG>Version:</STRONG> 1.7#116 (2001/8/9, 17:56:37 CEST)
 
 
 <P>
-When this computation rule is used, first all goals are expanded only up to a given depth. If no solution is found or more solutions are needed by backtracking, the depth limit is incremented and the whole goal is repeated. Although it might seem that this approach is very inefficient because all higher levels are repeated for the deeper ones, it has been shown that is performs only about b/(b - 1) times as many operations than the corresponding breadth-first search, (where b is the branching factor of the proof tree) while the waste of memory is the same as depth first. 
+<STRONG>Version of last change:</STRONG> 1.5#72 (2000/3/19, 19:9:14 CET)
 
 
 <P>
-The usage is by means of the following directive: 
-
-
-<P>
-<CODE>:- iterative(Name, FirstCut, Formula).</CODE> 
-
-
-<P>
-which states than the predicate 'Name' given in functor/arity form will be executed using iterative deepening rule starting at the depth 'FirstCut' with depth being incremented by the predicate 'Formula'. This predicate compute the new depth using the previous one. It must implement a dilating function i.e. the new depth must be greater. For example, to start with depth 5 and increment by 10 you can write: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,f).</CODE> 
-
-
-<P>
-<CODE>f(X,Y) :- Y is X + 10.</CODE> 
-
-
-<P>
-or if you prefer, 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10)).</CODE> 
-
-
-<P>
-<A NAME="IDX4359"></A>
-<A NAME="IDX4360"></A>
-You can also use a fourth parameter to set a limiting depth. All goals below the given depth limit simply fail. Thus, with the following directive: 
-
-
-<P>
-<CODE>:- iterative(p/1,5,(_(X,Y):- Y is X + 10),100).</CODE> 
-
-
-<P>
-all goals deeper than 100 will fail. 
-
-
-<P>
-An example of code using this package would be: 
-
-
-
-<PRE>
-:- module(example_id, _,[id]).
-
-test(id) :- 
-        idchain(a,d).
-test(df) :- 
-        chain(a,d).   % loops!
-
-:- iterative(idchain/2, 3, ( _(X,Z) :- Z is X + 1) ).
-
-idchain(X,X).
-idchain(X,Y) :- 
-        arc(X,Z), 
-        idchain(Z,Y).
-
-chain(X,X).
-chain(X,Y) :- 
-        arc(X,Z), 
-        chain(Z,Y).
-
-arc(a,b).
-arc(a,d).
-arc(b,c).
-arc(c,a).
-
-</PRE>
-
-<P>
-The order of solutions are first the shallower and then the deeper. Solutions which are between two cutoff are given in the usual left to right order. For example, 
-
-
-
-<PRE>
-:- module(_,_,[id]).
-
-% All goals deeper than 2 will fail
-:- iterative(p/1,0,(_(X,Z) :- Z is X + 1),2).
-
-% Change the solutions' order to goal p(X). 
-%:- iterative(p/1,1,(_(X,Z) :- Z is X + 3)).
-
-p(X) :- q(X).
-p(a).
-
-q(X) :- r(X).
-q(b).
-
-r(X) :- s(X).
-r(c).
-
-s(d).
-
-</PRE>
-
-<P>
-It is possible to preserve the iterative-deepening behavior for calls to predicates defined in other modules. These modules should obviously also use this package. In addition <EM>all</EM> predicates from such modules should imported, i.e., the directive <CODE>:- use_module(module)</CODE>, should be used in this case instead of <CODE>:- use_module(module,[...])</CODE>. Otherwise calls to predicates outside the module will be treated in the usual way i.e. by depth-first computation. 
-
-
-<P>
-Another complete proof procedure implemented is the 
-<A NAME="IDX4361"></A>
-<CODE>bf</CODE> package (
-<A NAME="IDX4362"></A>
-breadth first execution). 
+This library offers a simple implementation of 
+<A NAME="IDX4338"></A>
+<CODE>freeze/2</CODE>, 
+<A NAME="IDX4339"></A>
+<CODE>frozen/2</CODE>, etc. [BibRef: Prologii,MU-Prolog,naish:nu-prolog,Carlsson] based on the use of attributed variables [BibRef: holzbaur-plilp92,holzbaur-phd].
 
 
 
 <UL>
-<LI><A HREF="ciao_99.html#SEC403">Usage and interface (id)</A>
+<LI><A HREF="ciao_99.html#SEC407">Usage and interface (freeze)</A>
+<LI><A HREF="ciao_99.html#SEC408">Documentation on exports (freeze)</A>
+<LI><A HREF="ciao_99.html#SEC409">Documentation on multifiles (freeze)</A>
 </UL>
 
 
 
-<H2><A NAME="SEC403" HREF="ciao_toc.html#TOC403">Usage and interface (<CODE>id</CODE>)</A></H2>
+<H2><A NAME="SEC407" HREF="ciao_toc.html#TOC407">Usage and interface (<CODE>freeze</CODE>)</A></H2>
 
 <div class="cartouche">
 
@@ -167,16 +52,128 @@ breadth first execution).
 
 <LI><STRONG>Library usage:</STRONG>
 
-<CODE>:- use_package(id).</CODE>
+<CODE>:- use_module(library(freeze)).</CODE>
 
-or
+<LI><STRONG>Exports:</STRONG>
 
-<CODE>:- module(...,...,[id]).</CODE>
+
+<UL>
+
+<LI><EM>Predicates:</EM>
+
+<A NAME="IDX4340"></A>
+<CODE>freeze/2</CODE>, 
+<A NAME="IDX4341"></A>
+<CODE>frozen/2</CODE>.
+
+<LI><EM>Multifiles:</EM>
+
+<A NAME="IDX4342"></A>
+<CODE>verify_attribute/2</CODE>, 
+<A NAME="IDX4343"></A>
+<CODE>combine_attributes/2</CODE>.
+
+</UL>
+
 </UL>
 
 </div class="cartouche">
 
+
+
+<H2><A NAME="SEC408" HREF="ciao_toc.html#TOC408">Documentation on exports (<CODE>freeze</CODE>)</A></H2>
+<P>
+<A NAME="IDX4344"></A>
+<A NAME="IDX4345"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>freeze/2:</B>
+<DD><A NAME="IDX4346"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>freeze(?,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>freeze(X,Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> If <CODE>X</CODE> is free delay <CODE>Goal</CODE> until <CODE>X</CODE> is non-variable.
+
+<LI><EM>The following properties should hold at call time:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+<P>
+<A NAME="IDX4347"></A>
+<A NAME="IDX4348"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>frozen/2:</B>
+<DD><A NAME="IDX4349"></A>
+
+
+<P>
+<EM>Meta-predicate</EM> with arguments: <CODE>frozen(?,goal)</CODE>.
+
+
+<P>
+<STRONG>Usage:</STRONG> <CODE>frozen(X,Goal)</CODE>
+
+<UL>
+<LI><EM>Description:</EM> <CODE>Goal</CODE> is currently delayed until variable <CODE>X</CODE> becomes bound.
+
+<LI><EM>The following properties should hold upon exit:</EM>
+
+<CODE>Goal</CODE> is a term which represents a goal, i.e., an atom or a structure.
+ (<CODE>basic_props:callable/1</CODE>)
+</UL>
+
+</DL>
+
+
+
+<H2><A NAME="SEC409" HREF="ciao_toc.html#TOC409">Documentation on multifiles (<CODE>freeze</CODE>)</A></H2>
+<P>
+<A NAME="IDX4350"></A>
+<A NAME="IDX4351"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>verify_attribute/2:</B>
+<DD><A NAME="IDX4352"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
+<P>
+<A NAME="IDX4353"></A>
+<A NAME="IDX4354"></A>
+<DL>
+<DT><span class="define">PREDICATE:</span> <B>combine_attributes/2:</B>
+<DD><A NAME="IDX4355"></A>
+
+
+<P>
+No further documentation available for this predicate.
+
+
+<P>
+The predicate is <EM>multifile</EM>.
+
+
+</DL>
+
 <P><HR><P>
-Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_218.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
+Go to the <A HREF="ciao_1.html">first</A>, <A HREF="ciao_98.html">previous</A>, <A HREF="ciao_100.html">next</A>, <A HREF="ciao_219.html">last</A> section, <A HREF="ciao_toc.html">table of contents</A>.
 </BODY>
 </HTML>

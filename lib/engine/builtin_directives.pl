@@ -72,7 +72,10 @@
 :- comment(doinclude,initialization/1).
 :- decl initialization(Goal) : callable + iso
         # "@var{Goal} will be executed at the start of the execution of
-          any program containing the current code.".
+          any program containing the current code. The initialization of a
+          module/file never runs before the initializations of the modules
+          from which the module/file imports (excluding circular 
+          dependences).".
 
 :- comment(doinclude,on_abort/1).
 :- decl on_abort(Goal) : callable

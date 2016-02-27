@@ -2,6 +2,7 @@
 
 /* Support for the format/2, format/3 predicates */
 
+#include <string.h>
 #include "datadefs.h"
 #include "support.h"
 
