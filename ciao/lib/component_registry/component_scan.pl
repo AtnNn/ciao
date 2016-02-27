@@ -1,4 +1,4 @@
-:- module(_, _, [dcg]).
+:- module(_, [], [dcg]).
 
 :- use_module(library(file_utils)).
 :- use_module(library(read)).
@@ -19,7 +19,9 @@
 % TODO: Duplicated in DOCCOMMON.pl (what would be the right place to put it?)
 perms(perm(rwX, rwX, rX)).
 
-config_source_components(Src) :-
+% Scan all the components under @var{Src} directory
+:- export(component_scan/1).
+component_scan(Src) :-
 	component_setup_dir(all, SetupDir),
 	perms(Perms),
 	mkdir_perm(SetupDir, Perms),
@@ -75,9 +77,9 @@ loop_read(SO, [T|Ts]) :-
 loop_read(_SO, []).
 
 member_chk(A, B) :-
-	member(A, B) -> true
-    ;
-	warning_message("Element ~w not found in ~w", [A, B]).
+	( member(A, B) -> true
+	; warning_message("Element ~w not found in ~w", [A, B])
+	).
 
 generate_auto_loadable_file(ConfigList, ComponentPath, SetupDir) :-
 	member_chk(component_name(ComponentName),     ConfigList),

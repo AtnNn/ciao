@@ -1,11 +1,10 @@
 :- module(_, [main/1], []).
 
-:- use_module(library(system)).
-
-:- use_module(.(config_stage1)).
+:- use_module(library(system), [working_directory/2]).
+:- use_module(library(component_registry(component_scan))).
 
 main([]) :-
-	working_directory(CiaoDESrc, CiaoDESrc),
-	config_source_components(CiaoDESrc).
-main([CiaoDESrc]) :-
-	config_source_components(CiaoDESrc).
+	working_directory(Dir, Dir),
+	component_scan(Dir).
+main([Dir]) :-
+	component_scan(Dir).

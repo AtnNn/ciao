@@ -59,6 +59,8 @@ include ../makedir/ciaosetup_modules/makefile__common
 -include SETTINGS
 -include SHARED
 
+CONFIG_SOURCE_COMPONENTS:=$(SRCBINDIR)/config_source_components$(CIAOSUFFIX)
+
 MFLAGS=-j$(PROCESSORS)
 
 GMAKEOPTS="--no-print-directory"
@@ -437,15 +439,9 @@ init_library:
 	$(GMAKE) config_source_components
 
 config_source_components:
-	$(GMAKE) build_config_source_components
-	$(GMAKE) run_config_source_components
-
-build_config_source_components:
 	mkdir -p $(SRCBINDIR)
 	$(SETLOCALCIAO) $(BOOTSTRAP_CIAOC) $(CIAOCOPTS_NORTCHECKS) -s -x -o $(CONFIG_SOURCE_COMPONENTS) \
 		$(CIAODESRC)/makedir/config_source_components
-
-run_config_source_components:
 	$(SETLOCALCIAO) $(CONFIG_SOURCE_COMPONENTS) $(CIAODESRC)
 
 force_compile_options_auto:

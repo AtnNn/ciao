@@ -455,12 +455,12 @@ fmt_layout(nav_searchbox_menu_main, _SectPathR, _PrevNextR, SidebarR, FrameR, R)
 	R = [%
 	     htmlenv(div, [class="documentwrapper"], [
 	       htmlenv(div, [class="title"], [
+	         SearchBoxR, % must precede the image (due to float:right)
                  htmlenv(a, [href="index.html"], [
                    htmlenv1(img, [src=LogoSrc,
                                   'ALT'="Ciao",
                                   class="logo"])
-                 ]),
-	         SearchBoxR
+                 ])
                ]),
 	       htmlenv(div, [class="document"], [
 	         htmlenv(div, [class="mainwrapper"], [
